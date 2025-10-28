@@ -44,59 +44,60 @@ PropertyDialogUtil::~PropertyDialogUtil()
 
 void PropertyDialogUtil::showPropertyDialog(const QList<QUrl> &urls, const QVariantHash &option)
 {
-    QList<QUrl> fileUrls;
-    foreach (const QUrl &url, urls) {
-        bool ret = dpfHookSequence->run("dfmplugin_propertydialog", "hook_PropertyDialog_Disable", url);
-        if (ret)
-            continue;
-
-        if (!showCustomDialog(url))
-            fileUrls.append(url);
-    }
-    if (!fileUrls.empty())
-        showFilePropertyDialog(fileUrls, option);
-}
-
-void PropertyDialogUtil::showFilePropertyDialog(const QList<QUrl> &urls, const QVariantHash &option)
-{
     int count = urls.count();
     if (count < kMaxPropertyDialogNumber) {
-        for (const QUrl &url : urls) {
-            int index = urls.indexOf(url);
-            if (!filePropertyDialogs.contains(url)) {
-                FilePropertyDialog *dialog = new FilePropertyDialog();
-                dialog->selectFileUrl(url);
-                dialog->filterControlView();
-                filePropertyDialogs.insert(url, dialog);
-                if (!option.isEmpty()) {   // The expand state of basic widget mybe ajusted.
-                    bool expand = option.value(kOption_Key_BasicInfoExpand).toBool();
-                    dialog->setBasicInfoExpand(expand);
-                }
-                createControlView(url, option);
-                connect(dialog, &FilePropertyDialog::closed, this, &PropertyDialogUtil::closeFilePropertyDialog);
-                if (1 == count) {
-                    QPoint pos = getPropertyPos(dialog->size().width(), dialog->initalHeightOfView());
-                    dialog->move(pos);
-                } else {
-                    QPoint pos = getPerportyPos(dialog->size().width(), dialog->size().height(), count, index);
-                    dialog->move(pos);
-                }
-                dialog->show();
-            } else {
-                filePropertyDialogs.value(url)->show();
-                filePropertyDialogs.value(url)->activateWindow();
-            }
-        }
+        QList<QUrl> fileUrls;
+        foreach (const QUrl &url, urls) {
+            bool ret = dpfHookSequence->run("dfmplugin_propertydialog", "hook_PropertyDialog_Disable", url);
+            if (ret)
+                continue;
 
-        if (urls.count() >= 2) {
-            closeAllDialog->show();
-            closeIndicatorTimer->start();
+            if (!showCustomDialog(url))
+                fileUrls.append(url);
         }
+        if (!fileUrls.empty())
+            showFilePropertyDialog(fileUrls, option);
     } else {
         MultiFilePropertyDialog *multiFilePropertyDialog = new MultiFilePropertyDialog(urls);
         multiFilePropertyDialog->show();
         multiFilePropertyDialog->moveToCenter();
         multiFilePropertyDialog->raise();
+    }
+}
+
+void PropertyDialogUtil::showFilePropertyDialog(const QList<QUrl> &urls, const QVariantHash &option)
+{
+    int count = urls.count();
+    for (const QUrl &url : urls) {
+        int index = urls.indexOf(url);
+        if (!filePropertyDialogs.contains(url)) {
+            FilePropertyDialog *dialog = new FilePropertyDialog();
+            dialog->selectFileUrl(url);
+            dialog->filterControlView();
+            filePropertyDialogs.insert(url, dialog);
+            if (!option.isEmpty()) {   // The expand state of basic widget mybe ajusted.
+                bool expand = option.value(kOption_Key_BasicInfoExpand).toBool();
+                dialog->setBasicInfoExpand(expand);
+            }
+            createControlView(url, option);
+            connect(dialog, &FilePropertyDialog::closed, this, &PropertyDialogUtil::closeFilePropertyDialog);
+            if (1 == count) {
+                QPoint pos = getPropertyPos(dialog->size().width(), dialog->initalHeightOfView());
+                dialog->move(pos);
+            } else {
+                QPoint pos = getPerportyPos(dialog->size().width(), dialog->size().height(), count, index);
+                dialog->move(pos);
+            }
+            dialog->show();
+        } else {
+            filePropertyDialogs.value(url)->show();
+            filePropertyDialogs.value(url)->activateWindow();
+        }
+    }
+
+    if (urls.count() >= 2) {
+        closeAllDialog->show();
+        closeIndicatorTimer->start();
     }
 }
 

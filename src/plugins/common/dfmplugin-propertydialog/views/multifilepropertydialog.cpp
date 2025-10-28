@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "multifilepropertydialog.h"
+#include "utils/filecountcalculator.h"
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/universalutils.h>
@@ -14,7 +15,6 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 
-DFMBASE_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_propertydialog;
 
@@ -35,6 +35,12 @@ MultiFilePropertyDialog::MultiFilePropertyDialog(const QList<QUrl> &urls, QWidge
 
 MultiFilePropertyDialog::~MultiFilePropertyDialog()
 {
+    if (fileCountCalculator) {
+        fileCountCalculator->stop();
+        delete fileCountCalculator;
+        fileCountCalculator = nullptr;
+    }
+
     fileCalculationUtils->stop();
     fileCalculationUtils->deleteLater();
 }
@@ -117,33 +123,20 @@ void MultiFilePropertyDialog::initHeadUi()
 
 void MultiFilePropertyDialog::calculateFileCount()
 {
-    int dirCount = 0;
-    int fileCount = 0;
+    // 创建并启动文件计数器
+    fileCountCalculator = new FileCountCalculator(this);
 
-    for (QUrl &url : urlList) {
-        FileInfoPointer info = InfoFactory::create<FileInfo>(url);
-        if (info.isNull())
-            return;
+    // 连接进度信号 - 实现动态更新效果
+    connect(fileCountCalculator, &FileCountCalculator::progressNotify,
+            this, &MultiFilePropertyDialog::onFileCountProgress);
 
-        if (info->isAttributes(OptInfoType::kIsSymLink)) {
-            if (info->isAttributes(OptInfoType::kIsDir))
-                ++dirCount;
-            else
-                ++fileCount;
-            continue;
-        }
+    // 启动异步统计（批处理大小 100，平衡性能和 UI 更新频率）
+    fileCountCalculator->start(urlList, 100);
+}
 
-        if (info->isAttributes(OptInfoType::kIsDir)) {
-            ++dirCount;
-            continue;
-        }
-
-        if (info->isAttributes(OptInfoType::kIsFile)) {
-            ++fileCount;
-            continue;
-        }
-    }
-
+void MultiFilePropertyDialog::onFileCountProgress(int fileCount, int dirCount)
+{
+    // 动态更新 UI - 在文件很多时会看到数字逐渐增加的效果
     fileCountValueLabel->setText(tr("%1 file(s), %2 folder(s)").arg(fileCount).arg(dirCount));
 }
 
