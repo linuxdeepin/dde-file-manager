@@ -41,7 +41,7 @@ public:
 
     QUrl pathToVaultVirtualUrl(const QString &path);
 
-    VaultState state(const QString &baseDir) const;
+    VaultState state(const QString &baseDir, bool useCache = true) const;
     bool updateState(VaultState curState);
 
     /*!
