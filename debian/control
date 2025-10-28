@@ -110,6 +110,7 @@ Depends:
  libpoppler-cpp0v5 (>= 0.48.0),
  gvfs-backends (>=1.27.3),
  cryptsetup,
+ gnome-keyring,
  libdfm-extension (=${binary:Version}),
  dlnfs | hello
 Multi-Arch: same
