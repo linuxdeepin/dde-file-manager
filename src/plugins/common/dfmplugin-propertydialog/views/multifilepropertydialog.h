@@ -18,15 +18,15 @@
 #include <QSharedPointer>
 #include <QGraphicsItem>
 
-#include <tuple>
-#include <memory>
-
 class QWidget;
 class QLabel;
 class QVBoxLayout;
 class QGridLayout;
 
 namespace dfmplugin_propertydialog {
+
+class FileCountCalculator;
+
 class MultiFilePropertyDialog : public DTK_WIDGET_NAMESPACE::DDialog
 {
     Q_OBJECT
@@ -45,8 +45,10 @@ private:
 private slots:
     void updateFolderSizeLabel(qint64 size, int filesCount, int directoryCount);
 
+    void onFileCountProgress(int fileCount, int dirCount);
+
 private:
-    QList<QUrl> urlList {};   //###: this list contains all the urls which are selected!
+    QList<QUrl> urlList {};   // ###: this list contains all the urls which are selected!
     QLabel *iconLabel { nullptr };
     QLabel *multiFileLable { nullptr };
     QLabel *basicInfoLabel { nullptr };
@@ -59,6 +61,7 @@ private:
     QLabel *modifyTimeLable { nullptr };
     QLabel *modifyTimeValueLable { nullptr };
     DFMBASE_NAMESPACE::FileStatisticsJob *fileCalculationUtils { nullptr };
+    FileCountCalculator *fileCountCalculator { nullptr };
 };
 }
 #endif   // MULTIFILEPROPERTYDIALOG_H
