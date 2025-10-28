@@ -8,8 +8,7 @@
       <arg name="code" type="i" direction="out"/>
     </signal>
     <method name="ChangeDiskPassword">
-      <arg name="oldPwd" type="s" direction="in"/>
-      <arg name="newPwd" type="s" direction="in"/>
+      <arg name="credentialsFd" type="h" direction="in"/>
     </method>
     <method name="Chmod">
       <arg type="b" direction="out"/>
