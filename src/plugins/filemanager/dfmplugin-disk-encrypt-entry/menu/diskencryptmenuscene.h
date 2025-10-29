@@ -13,6 +13,7 @@
 #include <dfm-mount/dmount.h>
 
 #include <QUrl>
+#include <QDBusInterface>
 
 class QAction;
 
@@ -59,6 +60,10 @@ protected:
     static QString generateTPMConfig();
     static QString generateTPMToken(const QString &device, bool pin);
     static QString getBase64Of(const QString &fileName);
+
+    // Send credentials via file descriptor for secure D-Bus transmission
+    static bool sendCredentialsViaFd(QDBusInterface &iface, const QString &method,
+                                     const QVariantMap &params, bool asyncCall = false);
 
     static void onUnlocked(bool ok, dfmmount::OperationErrorInfo, QString);
     static void onMounted(bool ok, dfmmount::OperationErrorInfo, QString);
