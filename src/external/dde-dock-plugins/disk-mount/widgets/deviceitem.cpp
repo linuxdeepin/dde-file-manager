@@ -165,13 +165,18 @@ void DeviceItem::openDevice()
 
 void DeviceItem::updateDeviceName()
 {
+    static QStringList schemeList { "ftp", "sftp", "nfs", "dav", "davs" };
+
     QString devName = data.displayName;
     if (data.isProtocolDevice) {
         QString host, share, alias;
         int port;
         if (smb_utils::parseSmbInfo(data.targetFileUrl.toString(), &host, &share, &port)) {
             alias = device_utils::protocolDeviceAlias("smb", host);
-        } else if (data.id.startsWith("ftp") || data.id.startsWith("sftp")) {
+        } else if (std::any_of(schemeList.cbegin(), schemeList.cend(),
+                               [this](const QString &scheme) {
+                                   return data.id.startsWith(scheme);
+                               })) {
             QUrl url(data.id);
             host = url.host();
             alias = device_utils::protocolDeviceAlias(url.scheme(), url.host());
