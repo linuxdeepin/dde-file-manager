@@ -8,8 +8,19 @@
 set -e
 
 function run_pkexec() {
-    # 使用一个临时文件来传递所有必要的环境变量，而不仅仅是会话类型
-    local TEMP_ENV_FILE="/tmp/.dde-fm-env-$$"
+    # 使用 XDG_RUNTIME_DIR 而非 /tmp，更安全且符合 FHS 标准
+    local uid="$(id -u)"
+    local runtime_dir="${XDG_RUNTIME_DIR:-/run/user/$uid}"
+
+    # 使用 mktemp 创建真正随机的临时文件，防止竞态条件和符号链接攻击
+    local TEMP_ENV_FILE
+    TEMP_ENV_FILE=$(mktemp "$runtime_dir/dde-fm-env.XXXXXXXXXX") || {
+        echo "Error: Failed to create secure temp file" >&2
+        return 1
+    }
+
+    # 确保文件权限安全：仅当前用户可读写
+    chmod 600 "$TEMP_ENV_FILE"
 
     echo "Capturing environment before elevating..."
     # 捕获 DISPLAY, XAUTHORITY, 和 XDG_SESSION_TYPE
@@ -23,10 +34,10 @@ function run_pkexec() {
 
     echo "run in pkexec: $@"
     # 将 uid 和临时环境文件路径作为最后两个参数传递，确保解析的稳定性
-    pkexec --disable-internal-agent "$0" "$@" "$(id -u)" "$TEMP_ENV_FILE"
+    pkexec --disable-internal-agent "$0" "$@" "$uid" "$TEMP_ENV_FILE"
 
-    # 清理
-    rm -f "$TEMP_ENV_FILE"
+    # 安全清理：强制删除并忽略错误
+    rm -f "$TEMP_ENV_FILE" 2>/dev/null
     xhost -SI:localuser:root &>/dev/null
 }
 
