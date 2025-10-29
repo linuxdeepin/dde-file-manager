@@ -27,7 +27,11 @@ install(FILES org.deepin.Filemanager.DiskEncrypt.service DESTINATION share/dbus-
 install(FILES ${CMAKE_SOURCE_DIR}/assets/rules/99-dfm-encrypt.rules DESTINATION /etc/udev/rules.d)
 
 set(PolicyDir "${CMAKE_INSTALL_PREFIX}/share/polkit-1/actions")
+set(RulesDir "${CMAKE_INSTALL_PREFIX}/share/polkit-1/rules.d")
+
 install(FILES polkit/policy/org.deepin.filemanager.diskencrypt.policy
     DESTINATION ${PolicyDir})
-install(FILES polkit/rules/99-dde-file-manager-encrypt.pkla
-    DESTINATION /etc/polkit-1/localauthority/10-vendor.d)
+
+# Install polkit rules (JavaScript format, replaces deprecated .pkla)
+install(FILES polkit/rules/99-dde-file-manager-encrypt.rules
+    DESTINATION ${RulesDir})
