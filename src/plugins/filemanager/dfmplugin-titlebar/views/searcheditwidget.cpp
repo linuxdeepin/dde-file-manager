@@ -159,7 +159,9 @@ void SearchEditWidget::onUrlChanged(const QUrl &url)
 
     lastSearchTime = 0;
     lastExecutedSearchText.clear();
-    searchEdit->setText("");
+    searchEdit->clearEdit();
+    if (delayTimer && delayTimer->isActive())
+        delayTimer->stop();
     advancedButton->setVisible(false);
     advancedButton->setChecked(false);
 }

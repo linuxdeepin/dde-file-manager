@@ -11,6 +11,7 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/windowutils.h>
+#include <dfm-base/utils/sysinfoutils.h>
 #include <dfm-base/base/device/deviceproxymanager.h>
 #include <dfm-base/file/local/localfilehandler.h>
 #include <dfm-base/dbusservice/global_server_defines.h>
@@ -22,6 +23,7 @@
 
 #include <DDialog>
 #include <DRecentManager>
+#include <DDesktopServices>
 
 #include <QFile>
 #include <QMenu>
@@ -36,6 +38,7 @@ DPF_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
 DCORE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
+DGUI_USE_NAMESPACE
 using namespace GlobalServerDefines;
 
 RecentManager *RecentManager::instance()
@@ -229,7 +232,7 @@ QUrl RecentHelper::rootUrl()
 
 void RecentHelper::removeRecent(const QList<QUrl> &urls)
 {
-    //In wayland , dialog needs to set a parent , otherwise it will enter the window modal incorrectly
+    // In wayland , dialog needs to set a parent , otherwise it will enter the window modal incorrectly
     DDialog dlg(qApp->activeWindow());
     dlg.setIcon(QIcon::fromTheme("dialog-warning"));
     dlg.addButton(QObject::tr("Cancel", "button"));
@@ -277,11 +280,12 @@ bool RecentHelper::openFileLocation(const QUrl &url)
     if (ok && !urls.isEmpty())
         localUrl = urls.first();
 
-    const auto &fileInfo { InfoFactory::create<FileInfo>(localUrl) };
-    QUrl parentUrl { fileInfo->urlOf(UrlInfoType::kParentUrl) };
-    parentUrl.setQuery("selectUrl=" + localUrl.toString());
+    if (SysInfoUtils::isRootUser()) {
+        QStringList urls { url.toString() };
+        return QProcess::startDetached("dde-file-manager", QStringList() << "--show-item" << urls << "--raw");
+    }
 
-    return dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, parentUrl);
+    return DDesktopServices::showFileItem(localUrl);
 }
 
 void RecentHelper::openFileLocation(const QList<QUrl> &urls)
