@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include "views/radioframe.h"
 #include "vaultactivesavekeyfileview.h"
 #include "utils/vaultdefine.h"
 #include "utils/encryption/operatorcenter.h"
@@ -38,9 +39,7 @@ VaultActiveSaveKeyFileView::VaultActiveSaveKeyFileView(QWidget *parent)
 
 void VaultActiveSaveKeyFileView::setEncryptInfo(EncryptInfo &info)
 {
-    info.keyPath = defaultPathRadioBtn->isChecked()
-            ? kVaultBasePath + QString("/") + (kRSAPUBKeyFileName) + QString(".key")
-            : selectfileSavePathEdit->text();
+    info.keyPath = selectfileSavePathEdit->text();
 }
 
 void VaultActiveSaveKeyFileView::initUI()
@@ -55,18 +54,11 @@ void VaultActiveSaveKeyFileView::initUI()
     hintMsg->setForegroundRole(DPalette::TextTips);
     hintMsg->setWordWrap(true);
     hintMsg->setAlignment(Qt::AlignCenter);
-    hintMsg->setText(tr("Keep the key safe to retrieve the vault password later"));
-
-    defaultPathRadioBtn = new QRadioButton(this);
-    DFontSizeManager::instance()->bind(defaultPathRadioBtn, DFontSizeManager::T7, QFont::Medium);
-    defaultPathRadioBtn->setForegroundRole(DPalette::ButtonText);
-    defaultPathRadioBtn->setChecked(true);
-    defaultPathRadioBtn->setText(tr("Save to default path"));
-
-    otherPathRadioBtn = new QRadioButton(this);
-    DFontSizeManager::instance()->bind(otherPathRadioBtn, DFontSizeManager::T7, QFont::Medium);
-    otherPathRadioBtn->setForegroundRole(DPalette::ButtonText);
-    otherPathRadioBtn->setText(tr("Save to other locations"));
+    hintMsg->setText(tr("Key files can be used to unlock the safe, please keep it in a safe place"));
+    otherPathLabel = new DLabel(this);
+    DFontSizeManager::instance()->bind(otherPathLabel, DFontSizeManager::T8, QFont::Medium);
+    otherPathLabel->setForegroundRole(DPalette::ButtonText);
+    otherPathLabel->setText(tr("It is recommended to save it to external storage devices such as a USB drive"));
 
     otherRadioBtnHitMsg = new DLabel(tr("No permission, please reselect"), this);
     otherRadioBtnHitMsg->hide();
@@ -74,7 +66,6 @@ void VaultActiveSaveKeyFileView::initUI()
     otherRadioBtnHitMsg->setForegroundRole(DPalette::TextWarning);
 
     selectfileSavePathEdit = new DFileChooserEdit(this);
-    DFontSizeManager::instance()->bind(otherPathRadioBtn, DFontSizeManager::T8, QFont::Medium);
     selectfileSavePathEdit->lineEdit()->setPlaceholderText(tr("Select a path"));
     selectfileSavePathEdit->lineEdit()->setReadOnly(true);
     selectfileSavePathEdit->lineEdit()->setClearButtonEnabled(false);
@@ -85,40 +76,14 @@ void VaultActiveSaveKeyFileView::initUI()
     selectfileSavePathEdit->setFileMode(QFileDialog::Directory);
     selectfileSavePathEdit->setNameFilters({ "KEY file(*.key)" });
     selectfileSavePathEdit->setFileDialog(filedialog);
-    selectfileSavePathEdit->setEnabled(false);
-
-    group = new QButtonGroup(this);
-    group->addButton(defaultPathRadioBtn, 1);
-    group->addButton(otherPathRadioBtn, 2);
+    selectfileSavePathEdit->setEnabled(true);
 
     // 下一步按钮
     nextBtn = new DSuggestButton(tr("Next"), this);
     nextBtn->setFixedWidth(200);
+    nextBtn->setEnabled(false);
 
     RadioFrame *frame = new RadioFrame;
-
-    DLabel *checkBoxLabel = new DLabel(frame);
-    DFontSizeManager::instance()->bind(checkBoxLabel, DFontSizeManager::T10, QFont::Normal);
-    checkBoxLabel->setForegroundRole(DPalette::TextTips);
-    checkBoxLabel->setWordWrap(true);
-    checkBoxLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-    checkBoxLabel->setText(tr("The default path is invisible to other users, and the path information will not be shown."));
-
-    QHBoxLayout *layout = new QHBoxLayout();
-    layout->setContentsMargins(0, 0, 0, 0);
-    layout->addWidget(defaultPathRadioBtn);
-
-    QHBoxLayout *layout1 = new QHBoxLayout();
-    layout1->setContentsMargins(30, 0, 0, 0);
-    layout1->addWidget(checkBoxLabel);
-
-    QVBoxLayout *layout2 = new QVBoxLayout(frame);
-    layout2->setContentsMargins(8, 5, 8, 5);
-    layout2->setSpacing(0);
-    layout2->addLayout(layout);
-    layout2->addLayout(layout1);
-    layout2->addStretch(2);
-
     RadioFrame *frame1 = new RadioFrame;
 
     DFrame *line = new DFrame(this);
@@ -128,7 +93,7 @@ void VaultActiveSaveKeyFileView::initUI()
 
     QHBoxLayout *layout3 = new QHBoxLayout();
     layout3->setContentsMargins(0, 0, 0, 0);
-    layout3->addWidget(otherPathRadioBtn);
+    layout3->addWidget(otherPathLabel);
     layout3->addWidget(otherRadioBtnHitMsg);
     layout3->addStretch(1);
 
@@ -168,9 +133,6 @@ void VaultActiveSaveKeyFileView::initUI()
 #ifdef ENABLE_TESTING
     AddATTag(qobject_cast<QWidget *>(titleLabel), AcName::kAcLabelVaultSaveKeyTitle);
     AddATTag(qobject_cast<QWidget *>(hintMsg), AcName::kAcLabelVaultSaveKeyContent);
-    AddATTag(qobject_cast<QWidget *>(defaultPathRadioBtn), AcName::kAcRadioVaultSaveKeyDefault);
-    AddATTag(qobject_cast<QWidget *>(checkBoxLabel), AcName::kAcLabelVaultSaveKeyDefaultMsg);
-    AddATTag(qobject_cast<QWidget *>(otherPathRadioBtn), AcName::kAcRadioVaultSaveKeyOther);
     AddATTag(qobject_cast<QWidget *>(selectfileSavePathEdit), AcName::kAcEditVaultSaveKeyPath);
     AddATTag(qobject_cast<QWidget *>(nextBtn), AcName::kAcBtnVaultSaveKeyNext);
 #endif
@@ -187,7 +149,6 @@ void VaultActiveSaveKeyFileView::initUiForSizeMode()
 
 void VaultActiveSaveKeyFileView::initConnect()
 {
-    connect(group, SIGNAL(buttonClicked(QAbstractButton *)), this, SLOT(slotSelectRadioBtn(QAbstractButton *)));
     connect(selectfileSavePathEdit, &DFileChooserEdit::fileChoosed, this, &VaultActiveSaveKeyFileView::slotChangeEdit);
     connect(filedialog, &DFileDialog::fileSelected, this, &VaultActiveSaveKeyFileView::slotSelectCurrentFile);
     connect(nextBtn, &DPushButton::clicked,
@@ -198,20 +159,6 @@ void VaultActiveSaveKeyFileView::initConnect()
         initUiForSizeMode();
     });
 #endif
-}
-
-void VaultActiveSaveKeyFileView::slotSelectRadioBtn(QAbstractButton *btn)
-{
-    fmDebug() << "Vault: Select radio button triggered, button text:" << btn->text();
-    if (btn == defaultPathRadioBtn) {
-        selectfileSavePathEdit->setEnabled(false);
-        nextBtn->setEnabled(true);
-    } else if (btn == otherPathRadioBtn) {
-        selectfileSavePathEdit->setEnabled(true);
-        filedialog->setWindowFlags(Qt::WindowStaysOnTopHint);
-        if (selectfileSavePathEdit->text().isEmpty())
-            nextBtn->setEnabled(false);
-    }
 }
 
 void VaultActiveSaveKeyFileView::slotChangeEdit(const QString &fileName)
@@ -245,7 +192,6 @@ void VaultActiveSaveKeyFileView::slotSelectCurrentFile(const QString &file)
 
 void VaultActiveSaveKeyFileView::showEvent(QShowEvent *event)
 {
-    defaultPathRadioBtn->setChecked(true);
     selectfileSavePathEdit->clear();
     otherRadioBtnHitMsg->hide();
     QWidget::showEvent(event);
@@ -272,40 +218,4 @@ bool VaultActiveSaveKeyFileView::eventFilter(QObject *watched, QEvent *event)
     }
 
     return QWidget::eventFilter(watched, event);
-}
-
-RadioFrame::RadioFrame(QFrame *parent)
-    : QFrame(parent)
-{
-    DPalette pal;
-    QColor color;
-    color.setRgbF(0.9, 0.9, 0.9, 0.03);
-    pal.setColor(DPalette::Light, color);
-    this->setPalette(pal);
-}
-
-void RadioFrame::paintEvent(QPaintEvent *event)
-{
-    QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing);   // 反锯齿;
-    if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType) {
-        painter.setBrush(QBrush(QColor("#4c252525")));
-    } else if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType) {
-        QColor color;
-        color.setRgbF(0.0, 0.0, 0.0, 0.03);
-        painter.setBrush(QBrush(color));
-    }
-
-    painter.setPen(Qt::transparent);
-    QRect rect = this->rect();
-    rect.setWidth(rect.width() - 1);
-    rect.setHeight(rect.height() - 1);
-    painter.drawRoundedRect(rect, 8, 8);
-    // 也可用QPainterPath 绘制代替 painter.drawRoundedRect(rect, 8, 8);
-    {
-        QPainterPath painterPath;
-        painterPath.addRoundedRect(rect, 8, 8);
-        painter.drawPath(painterPath);
-    }
-    QFrame::paintEvent(event);
 }
