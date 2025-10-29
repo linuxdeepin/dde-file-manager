@@ -261,6 +261,9 @@ void TabBarPrivate::handleTabClicked(int index)
 
 void TabBarPrivate::handleIndexChanged(int index)
 {
+    if (currentTabIndex == index)
+        return;
+
     const auto &tab = tabInfo(index);
     if (tab.isInactive) {
         Q_EMIT q->requestCreateView(tab.uniqueId);
