@@ -26,10 +26,6 @@
 #include <QMimeData>
 #include <QTimer>
 
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-#    include <QGSettings>
-#endif
-
 DFMBASE_USE_NAMESPACE
 using namespace ddplugin_canvas;
 
@@ -961,11 +957,6 @@ bool CanvasViewPrivate::itemGridpos(const QString &item, QPoint &gridPos) const
 
 bool CanvasViewPrivate::isWaterMaskOn()
 {
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-    QGSettings desktopSettings("com.deepin.dde.filemanager.desktop", "/com/deepin/dde/filemanager/desktop/");
-    if (desktopSettings.keys().contains("waterMask"))
-        return desktopSettings.get("waterMask").toBool();
-#endif
     return true;
 }
 

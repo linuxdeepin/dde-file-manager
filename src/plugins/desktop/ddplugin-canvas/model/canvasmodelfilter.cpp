@@ -115,29 +115,6 @@ InnerDesktopAppFilter::InnerDesktopAppFilter(CanvasProxyModel *model, QObject *p
     hidden.insert("desktopComputer", false);
     hidden.insert("desktopTrash", false);
     hidden.insert("desktopHomeDirectory", false);
-
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-    if (QGSettings::isSchemaInstalled("com.deepin.dde.filemanager.desktop")) {
-        gsettings = new QGSettings("com.deepin.dde.filemanager.desktop", "/com/deepin/dde/filemanager/desktop/");
-        connect(gsettings, &QGSettings::changed, this, &InnerDesktopAppFilter::changed);
-        update();
-    }
-#endif
-}
-
-void InnerDesktopAppFilter::update()
-{
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-    if (gsettings) {
-        for (auto iter = hidden.begin(); iter != hidden.end(); ++iter) {
-            auto var = gsettings->get(iter.key());
-            if (var.isValid())
-                iter.value() = !var.toBool();
-            else
-                iter.value() = false;
-        }
-    }
-#endif
 }
 
 void InnerDesktopAppFilter::refreshModel()
@@ -177,11 +154,7 @@ bool InnerDesktopAppFilter::renameFilter(const QUrl &oldUrl, const QUrl &newUrl)
 void InnerDesktopAppFilter::changed(const QString &key)
 {
     if (hidden.contains(key)) {
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-        auto var = gsettings->get(key);
-#else
         QVariant var;
-#endif
         bool old = hidden.value(key);
         if (var.isValid())
             hidden[key] = !var.toBool();
