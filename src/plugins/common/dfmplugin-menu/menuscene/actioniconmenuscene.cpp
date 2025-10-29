@@ -10,10 +10,6 @@
 #include <QMenu>
 #include <QDebug>
 
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-#    include <QGSettings>
-#endif
-
 DPMENU_USE_NAMESPACE
 
 AbstractMenuScene *ActionIconMenuCreator::create()
@@ -91,19 +87,5 @@ void ActionIconMenuScene::updateState(QMenu *parent)
 
 bool ActionIconMenuScene::actionIconVisible() const
 {
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-    // the gsetting control for action icon visible
-    if (QGSettings::isSchemaInstalled("com.deepin.dde.filemanager.general")) {
-        const QGSettings setting("com.deepin.dde.filemanager.general",
-                                 "/com/deepin/dde/filemanager/general/");
-
-        if (setting.keys().contains("contextMenuIcons")) {
-            auto visible = setting.get("contextMenuIcons");
-            if (visible.isValid())
-                return visible.toBool();
-        }
-    }
-#endif
-
     return false;
 }

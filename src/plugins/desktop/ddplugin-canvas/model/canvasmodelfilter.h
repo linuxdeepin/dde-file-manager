@@ -8,10 +8,6 @@
 #include "ddplugin_canvas_global.h"
 #include "canvasproxymodel.h"
 
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-#    include <QGSettings>
-#endif
-
 namespace ddplugin_canvas {
 
 class CanvasModelFilter
@@ -44,7 +40,6 @@ class InnerDesktopAppFilter : public QObject, public CanvasModelFilter
     Q_OBJECT
 public:
     explicit InnerDesktopAppFilter(CanvasProxyModel *model, QObject *parent = nullptr);
-    void update();
     void refreshModel();
     bool resetFilter(QList<QUrl> &urls) override;
     bool insertFilter(const QUrl &url) override;
@@ -53,9 +48,6 @@ public slots:
     void changed(const QString &key);
 
 protected:
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-    QGSettings *gsettings = nullptr;
-#endif
     QMap<QString, QUrl> keys;
     QMap<QString, bool> hidden;
 };
