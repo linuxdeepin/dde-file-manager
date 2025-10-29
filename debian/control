@@ -2,10 +2,10 @@ Source: dde-file-manager
 Section: libdevel
 Priority: optional
 Maintainer: Deepin Packages Builder <packages@linuxdeepin.com>
-Build-Depends:
+Build-Depends: 
+ debhelper-compat (= 12),
  cmake,
  doxygen,
- debhelper (>=9),
  pkg-config,
  libffmpegthumbnailer-dev,
  libpolkit-agent-1-dev,
@@ -26,7 +26,6 @@ Build-Depends:
  libcryptsetup-dev,
  libpcre2-dev,
  libdde-shell-dev (>= 0.0.10),
- deepin-desktop-base | deepin-desktop-server | deepin-desktop-device,
  qt6-base-dev,
  qt6-base-private-dev,
  qt6-svg-dev,
@@ -51,7 +50,7 @@ Build-Depends:
  libdeepin-service-framework-dev,
  libheif-dev,
  libappimage-dev
-Standards-Version: 3.9.8
+Standards-Version: 4.5.0
 Homepage: http://www.deepin.org
 
 Package: dde-desktop
@@ -74,6 +73,8 @@ Architecture: any
 Depends:
  ${shlibs:Depends},
  ${misc:Depends},
+ pkexec,
+ deepin-desktop-base | deepin-desktop-server | deepin-desktop-device,
  libdde-file-manager (=${binary:Version}),
  socat,
  cryfs,
@@ -146,7 +147,7 @@ Description: Development package for libdfm-extension
 
 Package: dde-file-manager-dev
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, dde-file-manager (=${binary:Version}),
+Depends: ${shlibs:Depends}, ${misc:Depends}, libdde-file-manager (=${binary:Version}),
  libdfm6-io-dev, libdfm6-mount-dev, libdfm6-burn-dev
 Description: DDE File Manager Devel library
  This package contains the header files and static libraries
