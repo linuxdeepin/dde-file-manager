@@ -33,14 +33,14 @@ void CustomTabSettingWidget::setOption(QObject *opt)
 {
     auto option = qobject_cast<DSettingsOption *>(opt);
     const auto &itemList = option->value().toStringList();
-    updateAddItemLabel(itemList.size() < 4);
+    addItemBtn->setEnabled(itemList.size() < 4);
 
     for (const auto &item : itemList) {
         addCustomItem(option, item);
     }
 
     using namespace std::placeholders;
-    connect(addItemLabel, &QLabel::linkActivated, this, std::bind(&CustomTabSettingWidget::handleAddCustomItem, this, option));
+    connect(addItemBtn, &DCommandLinkButton::clicked, this, std::bind(&CustomTabSettingWidget::handleAddCustomItem, this, option));
     connect(option, &DSettingsOption::valueChanged, this, &CustomTabSettingWidget::handleOptionChanged);
 }
 
@@ -50,12 +50,11 @@ void CustomTabSettingWidget::initUI()
     mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setVerticalSpacing(10);
 
-    addItemLabel = new QLabel(this);
-    addItemLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    updateAddItemLabel(true);
+    addItemBtn = new DCommandLinkButton(tr("Add Directory"), this);
+    addItemBtn->setEnabled(true);
 
     mainLayout->addWidget(new QLabel(tr("Custom Directory"), this), 0, 0);
-    mainLayout->addWidget(addItemLabel, 0, 1);
+    mainLayout->addWidget(addItemBtn, 0, 1);
     mainLayout->setColumnStretch(0, 1);
     mainLayout->setColumnStretch(1, 0);
 }
@@ -73,7 +72,7 @@ void CustomTabSettingWidget::addCustomItem(DSettingsOption *opt, const QUrl &url
                     auto itemList = opt->value().toStringList();
                     itemList.removeOne(url.toString());
                     opt->setValue(itemList);
-                    updateAddItemLabel(itemList.size() < 4);
+                    addItemBtn->setEnabled(itemList.size() < 4);
                 }
             });
 
@@ -114,7 +113,7 @@ void CustomTabSettingWidget::handleAddCustomItem(Dtk::Core::DSettingsOption *opt
     opt->setValue(itemList);
 
     if (itemList.size() > 3)
-        updateAddItemLabel(false);
+        addItemBtn->setEnabled(false);
 }
 
 void CustomTabSettingWidget::handleOptionChanged(const QVariant &value)
@@ -130,16 +129,7 @@ void CustomTabSettingWidget::handleOptionChanged(const QVariant &value)
             addCustomItem(opt, item);
         }
     }
-    updateAddItemLabel(itemList.size() < 4);
-}
-
-void CustomTabSettingWidget::updateAddItemLabel(bool enable)
-{
-    QString color = enable ? "#0082fa" : "#c7ddf7";
-    QString format = "<a href='Add'><span style=' text-decoration: none; color:%1;'>%2</span></a>";
-
-    addItemLabel->setText(format.arg(color, tr("Add Directory")));
-    addItemLabel->setEnabled(enable);
+    addItemBtn->setEnabled(itemList.size() < 4);
 }
 
 void CustomTabSettingWidget::clearCustomItems()

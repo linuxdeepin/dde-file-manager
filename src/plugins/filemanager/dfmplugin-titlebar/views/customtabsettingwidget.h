@@ -7,6 +7,8 @@
 
 #include "dfmplugin_titlebar_global.h"
 
+#include <DCommandLinkButton>
+
 #include <QWidget>
 
 class QLabel;
@@ -34,12 +36,11 @@ private:
     QUrl selectCustomDirectory();
     void handleAddCustomItem(Dtk::Core::DSettingsOption *opt);
     void handleOptionChanged(const QVariant &value);
-    void updateAddItemLabel(bool enable);
     void clearCustomItems();
     bool removeRow(QWidget *w);
 
 private:
-    QLabel *addItemLabel { nullptr };
+    DTK_WIDGET_NAMESPACE::DCommandLinkButton *addItemBtn { nullptr };
     QGridLayout *mainLayout { nullptr };
 };
 }
