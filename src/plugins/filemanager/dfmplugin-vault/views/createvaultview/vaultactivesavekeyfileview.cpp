@@ -115,16 +115,15 @@ void VaultActiveSaveKeyFileView::initUI()
     QVBoxLayout *vlayout3 = new QVBoxLayout;
     vlayout3->setContentsMargins(20, 0, 20, 0);
     vlayout3->addWidget(frame, 1);
-    vlayout3->addSpacing(3);
     vlayout3->addWidget(frame1, 1);
 
     QVBoxLayout *vlayout1 = new QVBoxLayout;
     vlayout1->setContentsMargins(0, 0, 0, 0);
     vlayout1->addWidget(titleLabel);
     vlayout1->addWidget(hintMsg);
-    vlayout1->addStretch(2);
+    vlayout1->addStretch(1);
     vlayout1->addLayout(vlayout3);
-    vlayout1->addStretch(2);
+    vlayout1->addStretch(3);
     vlayout1->addWidget(nextBtn, 0, Qt::AlignCenter);
 
     setLayout(vlayout1);
