@@ -7,7 +7,6 @@ Type=dbus
 BusName=org.deepin.Filemanager.Daemon
 ExecStart=/usr/bin/dde-file-manager-daemon
 CapabilityBoundingSet=~CAP_NET_RAW
-MemoryLimit=8G
 
 [Install]
 WantedBy=multi-user.target
