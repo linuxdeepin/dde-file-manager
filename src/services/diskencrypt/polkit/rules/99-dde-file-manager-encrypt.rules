@@ -1,0 +1,26 @@
+// Polkit rules for DDE File Manager disk encryption
+// This file replaces the deprecated .pkla configuration
+//
+// Location: /etc/polkit-1/rules.d/99-dde-file-manager-encrypt.rules
+// or /usr/share/polkit-1/rules.d/99-dde-file-manager-encrypt.rules
+//
+// Priority: 99 ensures these rules are evaluated late, allowing
+// other rules to override if needed.
+
+// Skip authentication when unlocking system encrypted devices
+polkit.addRule(function(action, subject) {
+    if (action.id == "org.freedesktop.udisks2.encrypted-unlock-system" &&
+        subject.isInGroup("*") &&
+        subject.active) {
+        return polkit.Result.YES;
+    }
+});
+
+// Skip authentication when unlocking regular encrypted devices
+polkit.addRule(function(action, subject) {
+    if (action.id == "org.freedesktop.udisks2.encrypted-unlock" &&
+        subject.isInGroup("*") &&
+        subject.active) {
+        return polkit.Result.YES;
+    }
+});
