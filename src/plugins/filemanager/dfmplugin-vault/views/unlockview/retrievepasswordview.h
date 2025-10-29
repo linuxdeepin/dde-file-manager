@@ -54,27 +54,14 @@ signals:
     void sigBtnEnabled(const int &index, const bool &state);
 
     void sigResults(QString message);
+    void sigCloseDialog();
 
 public slots:
-
-    /*!
-     * /brief onComboBoxIndex   选择密钥文件的方式
-     * /param index             0默认路径选择，1用户自己选择
-     */
-    void onComboBoxIndex(int index);
-
     /*!
      * /brief onBtnSelectFilePath   设置用户选择的密钥文件路径
      * /param path                  选择的密钥文件路径
      */
     void onBtnSelectFilePath(const QString &path);
-
-private slots:
-    /*!
-     * /brief slotCheckAuthorizationFinished 异步授权时，此函数接收授权完成的结果
-     * /param result 授权结果 成功或失败
-     */
-    void slotCheckAuthorizationFinished(bool result);
 
 private:
     /*!
@@ -88,9 +75,7 @@ protected:
 private:
     //! 找回密码页面标题
     DTK_WIDGET_NAMESPACE::DLabel *currentPageTitle { nullptr };
-
-    //! 选择要验证的密钥路径
-    QComboBox *savePathTypeComboBox { nullptr };
+    DTK_WIDGET_NAMESPACE::DLabel *savePathTypeLabel { Q_NULLPTR };
 
     //! 用户自选密钥文件路径编辑框
     DTK_WIDGET_NAMESPACE::DFileChooserEdit *filePathEdit { nullptr };
