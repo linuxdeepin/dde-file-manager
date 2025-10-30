@@ -22,7 +22,6 @@ public:
 public slots:
     Q_SCRIPTABLE bool CloseSmbShareByShareName(const QString &name, bool show);
     Q_SCRIPTABLE bool SetUserSharePassword(const QDBusUnixFileDescriptor &credentialsFd);
-    Q_SCRIPTABLE bool EnableSmbServices();
     Q_SCRIPTABLE bool IsUserSharePasswordSet(const QString &username);
 
 protected:

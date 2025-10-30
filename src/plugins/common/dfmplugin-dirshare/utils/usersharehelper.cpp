@@ -11,6 +11,7 @@
 #include <dfm-base/utils/sysinfoutils.h>
 #include <dfm-base/utils/networkutils.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/systemservicemanager.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <dfm-framework/event/event.h>
@@ -46,8 +47,7 @@ static constexpr char kInterfaceInterface[] { "org.deepin.Filemanager.UserShareM
 static constexpr char kFuncIsPasswordSet[] { "IsUserSharePasswordSet" };
 static constexpr char kFuncSetPasswd[] { "SetUserSharePassword" };
 static constexpr char kFuncCloseShare[] { "CloseSmbShareByShareName" };
-static constexpr char kFuncEnableSmbServices[] { "EnableSmbServices" };
-}   // namespace DBusINterfaceInfo
+}   // namespace DaemonServiceIFace
 
 namespace ShareConfig {
 static constexpr char kShareConfigPath[] { "/var/lib/samba/usershares" };
@@ -57,18 +57,6 @@ static constexpr char kSharePath[] { "path" };
 static constexpr char kShareComment[] { "comment" };
 static constexpr char kGuestOk[] { "guest_ok" };
 }   // namespace ShareConfig
-
-namespace SambaServiceIFace {
-static constexpr char kService[] { "org.freedesktop.systemd1" };
-static constexpr char kPath[] { "/org/freedesktop/systemd1/unit/smbd_2eservice" };
-static constexpr char kInterface[] { "org.freedesktop.systemd1.Unit" };
-
-static constexpr char kPropertySubState[] { "SubState" };
-static constexpr char kExpectedSubState[] { "running" };
-
-static constexpr char kFuncStart[] { "Start" };
-static constexpr char kParamReplace[] { "replace" };
-}
 
 UserShareHelper *UserShareHelper::instance()
 {
@@ -266,14 +254,8 @@ void UserShareHelper::handleSetPassword(const QString &newPassword)
 
 bool UserShareHelper::isSambaServiceRunning()
 {
-    QDBusInterface iface(SambaServiceIFace::kService, SambaServiceIFace::kPath, SambaServiceIFace::kInterface, QDBusConnection::systemBus());
-
-    if (iface.isValid()) {
-        const QVariant &variantStatus = iface.property(SambaServiceIFace::kPropertySubState);   // 获取属性 SubState，等同于 systemctl status smbd 结果 Active 值
-        if (variantStatus.isValid())
-            return SambaServiceIFace::kExpectedSubState == variantStatus.toString();
-    }
-    return false;
+    // 使用 SystemServiceManager 统一检查服务状态（遵循 DRY 原则）
+    return SystemServiceManager::instance().isServiceRunning("smbd.service");
 }
 
 void UserShareHelper::startSambaServiceAsync(StartSambaFinished onFinished)
@@ -653,31 +635,32 @@ int UserShareHelper::validShareInfoCount() const
 
 QPair<bool, QString> UserShareHelper::startSmbService()
 {
-    QDBusInterface iface(SambaServiceIFace::kService, SambaServiceIFace::kPath, SambaServiceIFace::kInterface, QDBusConnection::systemBus());
-    QDBusPendingReply<QDBusObjectPath> reply = iface.asyncCall(SambaServiceIFace::kFuncStart, SambaServiceIFace::kParamReplace);
-    reply.waitForFinished();
-    if (reply.isValid()) {
-        const QString &errMsg = reply.error().message();
-        if (errMsg.isEmpty()) {
-            if (!setSmbdAutoStart())
-                fmWarning() << "auto start smbd failed.";
-            return { true, "" };
+    QString errMsg;
+    // 使用 SystemServiceManager 统一管理服务启动和启用
+    bool smbdOk = SystemServiceManager::instance().enableServiceNow("smbd.service");
+    if (!smbdOk) {
+        errMsg = "Failed to start and enable smbd.service";
+        return { false, errMsg };
+    }
+
+    bool nmbdOk = SystemServiceManager::instance().enableServiceNow("nmbd.service");
+    if (!smbdOk || !nmbdOk) {
+        if (!smbdOk) {
+            errMsg = "Failed to start and enable smbd.service";
+            fmWarning() << errMsg;
+        }
+        if (!nmbdOk) {
+            QString nmbdErr = "Failed to start and enable nmbd.service";
+            fmWarning() << nmbdErr;
+            if (!errMsg.isEmpty())
+                errMsg += "; " + nmbdErr;
+            else
+                errMsg = nmbdErr;
         }
         return { false, errMsg };
     }
-    return { false, "restart smbd failed" };
-}
 
-bool UserShareHelper::setSmbdAutoStart()
-{
-    QDBusInterface *interface = getUserShareInterface();
-    if (!interface || !interface->isValid()) {
-        fmWarning() << "UserShare D-Bus interface is not available when setting auto start";
-        return false;
-    }
-
-    QDBusReply<bool> reply = interface->call(DaemonServiceIFace::kFuncEnableSmbServices);
-    return reply.value();
+    return { true, "" };
 }
 
 bool UserShareHelper::isValidShare(const QVariantMap &info) const

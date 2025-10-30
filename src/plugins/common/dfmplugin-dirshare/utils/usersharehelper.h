@@ -83,7 +83,6 @@ private:
     int validShareInfoCount() const;
 
     QPair<bool, QString> startSmbService();
-    bool setSmbdAutoStart();
 
     bool isValidShare(const ShareInfo &info) const;
 

@@ -10,9 +10,6 @@
       <arg type="b" direction="out"/>
       <arg name="credentialsFd" type="h" direction="in"/>
     </method>
-    <method name="EnableSmbServices">
-      <arg type="b" direction="out"/>
-    </method>
     <method name="IsUserSharePasswordSet">
       <arg type="b" direction="out"/>
       <arg name="username" type="s" direction="in"/>

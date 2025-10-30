@@ -12,6 +12,7 @@
 #include <dfm-base/base/configs/settingbackend.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/utils/dialogmanager.h>
+#include <dfm-base/utils/systemservicemanager.h>
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/dfm_global_defines.h>
 
@@ -20,6 +21,7 @@
 #include <QUrl>
 #include <QDBusInterface>
 #include <QDBusPendingCall>
+#include <QtConcurrent>
 
 Q_DECLARE_METATYPE(const char *)
 using namespace GlobalDConfDefines::ConfigPath;
@@ -86,53 +88,22 @@ bool isServiceRuning(const QString &service)
         return false;
     }
 
-    QDBusInterface iface("org.freedesktop.systemd1",
-                         QString("/org/freedesktop/systemd1/unit/%1d_2eservice").arg(service),
-                         "org.freedesktop.systemd1.Unit",
-                         QDBusConnection::systemBus());
-
-    if (iface.isValid()) {
-        const QVariant &variantStatus = iface.property("SubState");   // 获取属性 SubState，等同于 systemctl status smbd 结果 Active 值
-        if (variantStatus.isValid())
-            return "running" == variantStatus.toString();
-    } else {
-        fmWarning() << "Failed to create D-Bus interface for service:" << service;
-    }
-    return false;
+    // 使用 SystemServiceManager 检查服务状态
+    QString serviceName = QString("%1d.service").arg(service);
+    return dfmbase::SystemServiceManager::instance().isServiceRunning(serviceName);
 }
 
-/*!
- * \brief startService
- * \param service: options { "smb" | "nmb" }
- * \return
- */
-bool startService(const QString &service)
+bool enableServiceNow(const QString &service)
 {
     if (service.isEmpty() || (service != "smb" && service != "nmb")) {
-        fmWarning() << "Invalid service name for start operation:" << service;
+        fmWarning() << "Invalid service name for enable operation:" << service;
         return false;
     }
-
-    fmDebug() << QString("activate smbd: construct %1d interface").arg(service);
-    QDBusInterface iface("org.freedesktop.systemd1",
-                         QString("/org/freedesktop/systemd1/unit/%1d_2eservice").arg(service),
-                         "org.freedesktop.systemd1.Unit",
-                         QDBusConnection::systemBus());
-    fmDebug() << QString("activate smbd: constructed %1d interface").arg(service);
-
-    QDBusPendingCall call = iface.asyncCall("Start", "replace");
-    call.waitForFinished();
-    fmDebug() << QString("activate smbd: calling the %1d::Start method: ").arg(service) << call.isValid();
-    return call.isValid();
-}
-
-void enableServiceAsync()
-{
-    QDBusInterface iface("org.deepin.Filemanager.UserShareManager",
-                         "/org/deepin/Filemanager/UserShareManager",
-                         "org.deepin.Filemanager.UserShareManager",
-                         QDBusConnection::systemBus());
-    iface.asyncCall("EnableSmbServices");
+    fmDebug() << "Enable service:" << service;
+    QString serviceName = QString("%1d.service").arg(service);
+    bool result = dfmbase::SystemServiceManager::instance().enableServiceNow(serviceName);
+    fmDebug() << "Service enable result for" << service << ":" << result;
+    return result;
 }
 
 bool checkAndEnableService(const QString &service)
@@ -143,8 +114,7 @@ bool checkAndEnableService(const QString &service)
     }
 
     fmDebug() << "Service not running, attempting to start:" << service;
-    if (startService(service)) {
-        enableServiceAsync();
+    if (enableServiceNow(service)) {
         fmDebug() << "Successfully started and enabled service:" << service;
         return true;
     }
