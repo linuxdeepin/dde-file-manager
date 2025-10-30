@@ -25,8 +25,7 @@ QString getDeviceIdByStdSmb(const QString &stdSmb);
 
 // service utils
 bool isServiceRuning(const QString &service);
-bool startService(const QString &service);
-void enableServiceAsync();
+bool enableServiceNow(const QString &service);
 bool checkAndEnableService(const QString &service);
 
 void initSettingPane();

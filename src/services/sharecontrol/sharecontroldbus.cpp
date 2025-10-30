@@ -179,38 +179,6 @@ bool ShareControlDBus::SetUserSharePassword(const QDBusUnixFileDescriptor &crede
     return r;
 }
 
-bool ShareControlDBus::EnableSmbServices()
-{
-    fmInfo() << "[ShareControlDBus::EnableSmbServices] Request to enable SMB services";
-
-    if (!checkAuthentication()) {
-        fmWarning() << "[ShareControlDBus::EnableSmbServices] Authentication failed for enabling SMB services";
-        return false;
-    }
-
-    QProcess sh;
-    fmInfo() << "[ShareControlDBus::EnableSmbServices] Enabling smbd service";
-    sh.start("ln", { "-sf", "/lib/systemd/system/smbd.service", "/etc/systemd/system/multi-user.target.wants/smbd.service" });
-    auto ret = sh.waitForFinished();
-    if (ret) {
-        fmInfo() << "[ShareControlDBus::EnableSmbServices] Successfully enabled smbd service";
-    } else {
-        fmCritical() << "[ShareControlDBus::EnableSmbServices] Failed to enable smbd service";
-    }
-
-    fmInfo() << "[ShareControlDBus::EnableSmbServices] Enabling nmbd service";
-    sh.start("ln", { "-sf", "/lib/systemd/system/nmbd.service", "/etc/systemd/system/multi-user.target.wants/nmbd.service" });
-    ret &= sh.waitForFinished();
-    if (ret) {
-        fmInfo() << "[ShareControlDBus::EnableSmbServices] Successfully enabled nmbd service";
-    } else {
-        fmCritical() << "[ShareControlDBus::EnableSmbServices] Failed to enable nmbd service";
-    }
-
-    fmInfo() << "[ShareControlDBus::EnableSmbServices] SMB services enablement completed with result:" << ret;
-    return ret;
-}
-
 bool ShareControlDBus::IsUserSharePasswordSet(const QString &username)
 {
     fmInfo() << "[ShareControlDBus::IsUserSharePasswordSet] Checking if password is set for user:" << username;
