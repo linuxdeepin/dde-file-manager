@@ -11,6 +11,12 @@
 #include <QDBusUnixFileDescriptor>
 #include <QVariantMap>
 
+namespace Dtk {
+namespace Core {
+class DConfig;
+}
+}
+
 class DiskEncryptSetup;
 class DiskEncryptSetupPrivate : public QObject
 {
@@ -18,9 +24,17 @@ class DiskEncryptSetupPrivate : public QObject
     friend class DiskEncryptSetup;
     DiskEncryptSetup *qptr { nullptr };
     bool jobRunning { false };
+    Dtk::Core::DConfig *config { nullptr };
+
+    // Config change handling state - prevent concurrent operations
+    bool isHandlingConfigChange { false };     // 是否正在处理配置变更
+    bool currentTargetValue { false };         // 当前正在执行的目标值
+    bool hasPendingConfigChange { false };     // 是否有待处理的变更
+    bool pendingTargetValue { false };         // 待处理的目标值
 
     explicit DiskEncryptSetupPrivate(DiskEncryptSetup *parent);
     void initialize();
+    void setupConfigWatcher();
     void resumeEncryption(const QVariantMap &args = QVariantMap());
     bool checkAuth(const QString &action);
     bool validateInitArgs(const QVariantMap &args);
@@ -46,6 +60,18 @@ public Q_SLOTS:
 
     void onLongTimeJobStarted();
     void onLongTimeJobStopped();
+
+    void onConfigValueChanged(const QString &key);
+    void onOverlayDMModeChangeFinished(bool success, bool targetValue);
+
+private:
+    bool handleOverlayDMModeChange(bool enabled);
+    void handleOverlayDMModeChangeAsync(bool enabled);
+    void processPendingConfigChange();
+    void syncConfigWithFileSystem();
+    bool createOverlayDMFlagFile();
+    bool removeOverlayDMFlagFile();
+    bool updateInitramfs();
 };
 
 #endif   // DISKENCRYPTSETUP_P_H

@@ -21,6 +21,7 @@
 #include <QDBusReply>
 
 #include <DDialog>
+#include <DDBusSender>
 
 #ifdef COMPILE_ON_V2X
 #    define APP_MANAGER_SERVICE "org.deepin.dde.SessionManager1"
@@ -71,6 +72,7 @@ void EventsHandler::bindDaemonSignals()
     conn("DecryptResult", SLOT(onDecryptFinished(const QVariantMap &)));
     conn("ChangePassResult", SLOT(onChgPwdFinished(const QVariantMap &)));
     conn("WaitAuthInput", SLOT(onRequestAuthArgs(const QVariantMap &)));
+    conn("OverlayDMModeChanged", SLOT(onOverlayDMModeChanged(bool, int)));
 }
 
 void EventsHandler::hookEvents()
@@ -644,6 +646,61 @@ void EventsHandler::autoStartDFM()
                            APP_MANAGER_INTERFACE);
     sessMng.asyncCall("AddAutostart", QString(kReencryptDesktopFile));
 }
+
+void EventsHandler::onOverlayDMModeChanged(bool enabled, int result)
+{
+    fmInfo() << "Overlay DM mode changed, enabled:" << enabled << "result:" << result;
+
+    QString title, message, icon;
+    bool isSuccess = (result == 0);
+
+    if (isSuccess) {
+        // Operation succeeded, reboot required
+        icon = "dde-file-manager";
+        if (enabled) {
+            title = tr("Partition Encryption Non-Reboot Mode Enabled");
+            message = tr("Partition Encryption Non-Reboot Mode has been enabled successfully. "
+                         "Please reboot your system for the changes to take effect. After reboot, "
+                         "partition encryption operations will not require system restart.");
+        } else {
+            title = tr("Partition Encryption Non-Reboot Mode Disabled");
+            message = tr("Partition Encryption Non-Reboot Mode has been disabled successfully. "
+                         "Please reboot your system for the changes to take effect. After reboot, "
+                         "partition encryption operations will require system restart.");
+        }
+        fmInfo() << "Sending success notification:" << title << message;
+    } else {
+        // Operation failed
+        icon = "dialog-error";
+        title = tr("Operation Failed");
+        if (enabled) {
+            message = tr("Failed to enable Partition Encryption Non-Reboot Mode. "
+                         "The system may not support this feature or encountered an error during initramfs update.");
+        } else {
+            message = tr("Failed to disable Partition Encryption Non-Reboot Mode. "
+                         "An error occurred during initramfs update.");
+        }
+        fmCritical() << "Sending failure notification:" << title << message;
+    }
+
+    // Send desktop notification
+    DDBusSender()
+            .service("org.freedesktop.Notifications")
+            .path("/org/freedesktop/Notifications")
+            .interface("org.freedesktop.Notifications")
+            .method("Notify")
+            .arg(tr("dde-file-manager"))
+            .arg(static_cast<uint>(0))
+            .arg(icon)
+            .arg(title)
+            .arg(message)
+            .arg(QStringList())
+            .arg(QVariantMap())
+            .arg(10000)  // 10 seconds timeout
+            .call();
+}
+
+
 
 EventsHandler::EventsHandler(QObject *parent)
     : QObject { parent }

@@ -1,7 +1,6 @@
 {
     "name": "org.deepin.Filemanager.DiskEncrypt",
-    "policyStartType": "OnDemand",
-    "idleTime": 10,
+    "policyStartType": "Resident",
     "policy": [
         {
             "path": "/org/deepin/Filemanager/DiskEncrypt"

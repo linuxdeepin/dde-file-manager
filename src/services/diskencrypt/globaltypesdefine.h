@@ -35,6 +35,7 @@ static const char *TypeNormal { "normal" };
 
 namespace encrypt_param_keys {
 inline constexpr char kKeyDevice[] { "device-path" };
+inline constexpr char kKeyPhyDevice[] { "physical-device-path" };
 inline constexpr char kKeyUUID[] { "uuid" };
 inline constexpr char kKeyPassphrase[] { "passphrase" };
 inline constexpr char kKeyOldPassphrase[] { "old-passphrase" };

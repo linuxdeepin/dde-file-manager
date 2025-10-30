@@ -4,6 +4,7 @@
 
 #include "dfmplugin_disk_encrypt_global.h"
 #include "diskencryptmenuscene.h"
+#include "globaltypesdefine.h"
 #include "gui/decryptparamsinputdialog.h"
 #include "gui/chgpassphrasedialog.h"
 #include "gui/unlockpartitiondialog.h"
@@ -135,6 +136,10 @@ bool DiskEncryptMenuScene::initialize(const QVariantHash &params)
         param.jobType = job_type::TypeOverlay;
     } else {
         auto configJson = selectedItemInfo.value("Configuration", "").toString();
+        if (selectedItemInfo.value("ClearBlockDeviceInfo").toHash().contains("Configuration")) {
+            configJson = selectedItemInfo.value("ClearBlockDeviceInfo").toHash().value("Configuration").toString();
+        }
+
         if (!configJson.isEmpty()) {
             QJsonParseError err;
             QJsonDocument doc = QJsonDocument::fromJson(configJson.toLocal8Bit(), &err);
@@ -143,7 +148,9 @@ bool DiskEncryptMenuScene::initialize(const QVariantHash &params)
                 return false;
             }
             auto obj = doc.object();
-            param.jobType = job_type::TypeFstab;
+            if (obj.contains("fstab"))
+                param.jobType = job_type::TypeFstab;
+            fmInfo() << device << "device configuration" << configJson << ", job type set to" << param.jobType;
         }
     }
 
@@ -208,16 +215,19 @@ bool DiskEncryptMenuScene::triggered(QAction *action)
     } else if (actID == kActIDDecrypt || actID == kActIDResumeDecrypt) {
         fmInfo() << "Decrypt/resume decrypt action triggered for device:" << param.devDesc;
         QString displayName = QString("%1(%2)").arg(param.deviceDisplayName).arg(param.devDesc.mid(5));
-        if (dialog_utils::showConfirmDecryptionDialog(displayName, param.jobType == job_type::TypeFstab) != QDialog::Accepted) {
+
+        if (dialog_utils::showConfirmDecryptionDialog(displayName, false) != QDialog::Accepted) {
             fmDebug() << "Decryption dialog cancelled by user";
             return true;
         }
-        if (param.jobType == job_type::TypeNormal)
+
+        if (param.jobType == job_type::TypeNormal) {
             unmountBefore(decryptDevice, param);
-        else if (param.jobType == job_type::TypeOverlay)
+        } else if (param.jobType == job_type::TypeOverlay) {
+            // 在新的方案中，即便是需要重启的加密方案，在卷头初始化完成后，都会堆叠一层 dm 设备
+            // 以便可以进行非重启的取消加密动作。复用 overlay 的方案。
             decryptDevice(param);
-        else if (param.jobType == job_type::TypeFstab)
-            doDecryptDevice(param);
+        }
     } else if (actID == kActIDChangePwd) {
         fmInfo() << "Change passphrase action triggered for device:" << param.devDesc;
         changePassphrase(param);
@@ -240,7 +250,14 @@ void DiskEncryptMenuScene::updateState(QMenu *parent)
 void DiskEncryptMenuScene::encryptDevice(const DeviceEncryptParam &param)
 {
     QString displayName = QString("%1(%2)").arg(param.deviceDisplayName).arg(param.devDesc.mid(5));
-    bool needreboot = param.jobType == job_type::TypeFstab;
+
+    // TypeFstab 始终需要重启
+    // TypeOverlay 在禁用 useOverlayDMMode 配置时需要重启
+    //   当以 fstab 方式加密完成后，设备会被堆叠一层 dm 设备，以便可以在运行时取消加密；取消加密之后，再次
+    //   启动加密动作，设备会被识别为 overlay 类型，所以是否需要重启，在此时要考虑 useOverlayDMMode 配置项
+    bool needreboot = (param.jobType == job_type::TypeFstab)
+            || (param.jobType == job_type::TypeOverlay && !config_utils::useOverlayDMMode());
+
     int ret = dialog_utils::showConfirmEncryptionDialog(displayName, needreboot);
     if (ret != QDialog::Accepted) return;
 
@@ -249,7 +266,9 @@ void DiskEncryptMenuScene::encryptDevice(const DeviceEncryptParam &param)
         unmountBefore(doEncryptDevice, param);
     } else {
         fmDebug() << "Special job type, proceeding directly to encryption";
-        doEncryptDevice(param);
+        auto _param = param;
+        _param.jobType = needreboot ? job_type::TypeFstab : job_type::TypeOverlay;
+        doEncryptDevice(_param);
     }
 }
 
@@ -370,7 +389,8 @@ void DiskEncryptMenuScene::doEncryptDevice(const DeviceEncryptParam &param)
             { encrypt_param_keys::kKeyDevice, param.devDesc },
             { encrypt_param_keys::kKeyDeviceName, param.deviceDisplayName },
             { encrypt_param_keys::kKeyMountPoint, param.mountPoint },
-            { encrypt_param_keys::kKeyJobType, param.jobType }
+            { encrypt_param_keys::kKeyJobType, param.jobType },
+            { encrypt_param_keys::kKeyPhyDevice, param.devPhy }
         };
 
         fmDebug() << "Calling InitEncryption D-Bus method";

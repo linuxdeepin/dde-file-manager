@@ -31,6 +31,10 @@
       <arg name="devInfo" type="a{sv}" direction="out"/>
       <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
     </signal>
+    <signal name="OverlayDMModeChanged">
+      <arg name="enabled" type="b" direction="out"/>
+      <arg name="result" type="i" direction="out"/>
+    </signal>
     <method name="InitEncryption">
       <arg type="b" direction="out"/>
       <arg name="args" type="a{sv}" direction="in"/>

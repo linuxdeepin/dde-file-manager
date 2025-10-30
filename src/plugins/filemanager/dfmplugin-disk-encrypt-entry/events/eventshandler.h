@@ -35,6 +35,7 @@ private Q_SLOTS:
     void onDecryptFinished(const QVariantMap &);
     void onChgPwdFinished(const QVariantMap &);
     void onRequestAuthArgs(const QVariantMap &);
+    void onOverlayDMModeChanged(bool enabled, int result);
 
     void ignoreParamRequest();
 
