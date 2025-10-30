@@ -13,6 +13,12 @@
 
 // see https://github.com/linuxdeepin/deepin-service-manager/blob/master/develop-guide.md for more information
 
+// Overlay DM Mode change result codes
+enum OverlayDMModeChangeResult {
+    OverlayDMSuccess = 0,              // Operation succeeded, reboot required
+    OverlayDMFailedUpdateInitramfs = 1 // Failed to update initramfs
+};
+
 class DiskEncryptSetupPrivate;
 class DiskEncryptSetup : public QDBusService, public QDBusContext
 {
@@ -48,6 +54,7 @@ Q_SIGNALS:
     void ChangePassResult(const QVariantMap &result);
 
     void WaitAuthInput(const QVariantMap &devInfo);
+    void OverlayDMModeChanged(bool enabled, int result);
 
 private:
     DiskEncryptSetupPrivate *m_dptr { nullptr };

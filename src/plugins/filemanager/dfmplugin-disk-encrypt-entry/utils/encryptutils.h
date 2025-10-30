@@ -57,6 +57,7 @@ bool tpmAlgoFromDConfig(QString *sessionHash, QString *sessionKey,
                         QString *primaryHash, QString *primaryKey,
                         QString *minorHash, QString *minorKey,
                         QString *pcr, QString *pcrBank);
+bool useOverlayDMMode();
 }   // namespace config_utils
 
 namespace recovery_key_utils {

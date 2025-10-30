@@ -12,12 +12,19 @@
 #include "helpers/crypttabhelper.h"
 #include "helpers/commonhelper.h"
 #include "helpers/filesystemhelper.h"
+#include "helpers/inhibithelper.h"
 
 #include <dfm-mount/dmount.h>
+
+#include <DConfig>
 
 #include <QDBusMessage>
 #include <QtConcurrent>
 #include <QDataStream>
+#include <QFutureWatcher>
+#include <QDir>
+#include <QFile>
+#include <QProcess>
 
 #include <polkit-qt6-1/PolkitQt1/Authority>
 
@@ -276,18 +283,52 @@ DiskEncryptSetupPrivate::DiskEncryptSetupPrivate(DiskEncryptSetup *parent)
       qptr(parent)
 {
     qInfo() << "[DiskEncryptSetupPrivate] Initializing private implementation";
+
+    // Initialize DConfig
+    config = Dtk::Core::DConfig::create("org.deepin.dde.file-manager",
+                                        "org.deepin.dde.file-manager.diskencrypt",
+                                        QString(), this);
+    if (!config) {
+        qWarning() << "[DiskEncryptSetupPrivate] Failed to create DConfig object";
+    } else if (!config->isValid()) {
+        qWarning() << "[DiskEncryptSetupPrivate] DConfig object is not valid";
+        config->deleteLater();
+        config = nullptr;
+    } else {
+        qInfo() << "[DiskEncryptSetupPrivate] DConfig initialized successfully";
+    }
+
+    qptr->lockTimer(true);
 }
 
 void DiskEncryptSetupPrivate::initialize()
 {
     qInfo() << "[DiskEncryptSetupPrivate::initialize] Starting initialization process";
-    QtConcurrent::run([] {
+    auto future = QtConcurrent::run([] {
         filesystem_helper::remountBoot();
         common_helper::createDFMDesktopEntry();
         crypttab_helper::mergeCryptTab();
     });
+    Q_UNUSED(future);
     job_file_helper::checkJobs();
+    setupConfigWatcher();
+
+    // 同步 DConfig 配置与标志文件状态
+    syncConfigWithFileSystem();
+
     resumeEncryption();
+}
+
+void DiskEncryptSetupPrivate::setupConfigWatcher()
+{
+    if (!config) {
+        qWarning() << "[DiskEncryptSetupPrivate::setupConfigWatcher] DConfig is null, cannot setup watcher";
+        return;
+    }
+
+    connect(config, &Dtk::Core::DConfig::valueChanged,
+            this, &DiskEncryptSetupPrivate::onConfigValueChanged);
+    qInfo() << "[DiskEncryptSetupPrivate::setupConfigWatcher] Config watcher setup complete";
 }
 
 void DiskEncryptSetupPrivate::resumeEncryption(const QVariantMap &args)
@@ -533,13 +574,352 @@ void DiskEncryptSetupPrivate::onPassphraseChanged()
 void DiskEncryptSetupPrivate::onLongTimeJobStarted()
 {
     jobRunning = true;
-    qptr->lockTimer(true);
-    qInfo() << "auto quit timer is locked.";
+    // qptr->lockTimer(true);
+    // qInfo() << "auto quit timer is locked.";
 }
 
 void DiskEncryptSetupPrivate::onLongTimeJobStopped()
 {
     jobRunning = false;
-    qptr->lockTimer(false);
-    qInfo() << "auto quite timer is unlocked";
+    // qptr->lockTimer(false);
+    // qInfo() << "auto quite timer is unlocked";
+}
+
+void DiskEncryptSetupPrivate::onConfigValueChanged(const QString &key)
+{
+    qInfo() << "[DiskEncryptSetupPrivate::onConfigValueChanged] Config value changed:" << key;
+
+    if (key == "useOverlayDMMode") {
+        if (!config) {
+            qWarning() << "[DiskEncryptSetupPrivate::onConfigValueChanged] DConfig is null";
+            return;
+        }
+
+        bool newValue = config->value("useOverlayDMMode", false).toBool();
+        qInfo() << "[DiskEncryptSetupPrivate::onConfigValueChanged] useOverlayDMMode changed to:" << newValue;
+
+        // Check if already handling a config change
+        if (isHandlingConfigChange) {
+            // 正在处理配置变更
+            if (newValue == currentTargetValue) {
+                // 新值等于正在执行的目标值，可以忽略
+                qInfo() << "[DiskEncryptSetupPrivate::onConfigValueChanged] New value equals current target value, ignoring";
+                hasPendingConfigChange = false;   // 清除待处理标记
+                return;
+            } else {
+                // 新值不同于正在执行的目标值，记录为待处理
+                qWarning() << "[DiskEncryptSetupPrivate::onConfigValueChanged] Already handling config change to"
+                           << currentTargetValue << ", queueing new target:" << newValue;
+                hasPendingConfigChange = true;
+                pendingTargetValue = newValue;
+                return;
+            }
+        }
+
+        // 没有正在执行的操作，直接开始异步处理
+        currentTargetValue = newValue;
+        handleOverlayDMModeChangeAsync(newValue);
+    }
+}
+
+bool DiskEncryptSetupPrivate::handleOverlayDMModeChange(bool enabled)
+{
+    qInfo() << "[DiskEncryptSetupPrivate::handleOverlayDMModeChange] Handling mode change, enabled:" << enabled;
+
+    if (enabled) {
+        // Create flag file
+        if (!createOverlayDMFlagFile()) {
+            qCritical() << "[DiskEncryptSetupPrivate::handleOverlayDMModeChange] Failed to create overlay DM flag file";
+            return false;
+        }
+
+        // Update initramfs
+        if (!updateInitramfs()) {
+            qCritical() << "[DiskEncryptSetupPrivate::handleOverlayDMModeChange] Failed to update initramfs, rolling back";
+            // Rollback: remove the flag file
+            if (!removeOverlayDMFlagFile()) {
+                qCritical() << "[DiskEncryptSetupPrivate::handleOverlayDMModeChange] Failed to rollback flag file removal";
+            }
+
+            // Rollback config value
+            if (config) {
+                config->setValue("useOverlayDMMode", false);
+                qInfo() << "[DiskEncryptSetupPrivate::handleOverlayDMModeChange] Config value rolled back to false";
+            }
+            return false;
+        }
+
+        qInfo() << "[DiskEncryptSetupPrivate::handleOverlayDMModeChange] Overlay DM mode enabled successfully";
+        return true;
+    } else {
+        // Disable mode: remove flag file
+        if (!removeOverlayDMFlagFile()) {
+            qCritical() << "[DiskEncryptSetupPrivate::handleOverlayDMModeChange] Failed to remove overlay DM flag file";
+            return false;
+        }
+
+        // Update initramfs to sync the change
+        if (!updateInitramfs()) {
+            qCritical() << "[DiskEncryptSetupPrivate::handleOverlayDMModeChange] Failed to update initramfs, rolling back";
+            // Rollback: recreate the flag file
+            if (!createOverlayDMFlagFile()) {
+                qCritical() << "[DiskEncryptSetupPrivate::handleOverlayDMModeChange] Failed to rollback flag file creation";
+            }
+
+            // Rollback config value
+            if (config) {
+                config->setValue("useOverlayDMMode", true);
+                qInfo() << "[DiskEncryptSetupPrivate::handleOverlayDMModeChange] Config value rolled back to true";
+            }
+            return false;
+        }
+
+        qInfo() << "[DiskEncryptSetupPrivate::handleOverlayDMModeChange] Overlay DM mode disabled successfully";
+        return true;
+    }
+}
+
+bool DiskEncryptSetupPrivate::createOverlayDMFlagFile()
+{
+    static constexpr char kSettingsDir[] { "/etc/usec-crypt/settings" };
+    static constexpr char kFlagFile[] { "/etc/usec-crypt/settings/overlay-dm" };
+
+    qInfo() << "[DiskEncryptSetupPrivate::createOverlayDMFlagFile] Creating overlay DM flag file";
+
+    // Create directory if not exists
+    QDir dir(kSettingsDir);
+    if (!dir.exists()) {
+        if (!dir.mkpath(kSettingsDir)) {
+            qCritical() << "[DiskEncryptSetupPrivate::createOverlayDMFlagFile] Failed to create settings directory:" << kSettingsDir;
+            return false;
+        }
+        qInfo() << "[DiskEncryptSetupPrivate::createOverlayDMFlagFile] Settings directory created:" << kSettingsDir;
+    }
+
+    // Create empty flag file
+    QFile file(kFlagFile);
+    if (file.exists()) {
+        qInfo() << "[DiskEncryptSetupPrivate::createOverlayDMFlagFile] Flag file already exists:" << kFlagFile;
+        return true;
+    }
+
+    if (!file.open(QIODevice::WriteOnly)) {
+        qCritical() << "[DiskEncryptSetupPrivate::createOverlayDMFlagFile] Failed to create flag file:" << kFlagFile
+                    << "Error:" << file.errorString();
+        return false;
+    }
+
+    file.close();
+    qInfo() << "[DiskEncryptSetupPrivate::createOverlayDMFlagFile] Flag file created successfully:" << kFlagFile;
+    return true;
+}
+
+bool DiskEncryptSetupPrivate::removeOverlayDMFlagFile()
+{
+    static constexpr char kFlagFile[] { "/etc/usec-crypt/settings/overlay-dm" };
+
+    qInfo() << "[DiskEncryptSetupPrivate::removeOverlayDMFlagFile] Removing overlay DM flag file";
+
+    QFile file(kFlagFile);
+    if (!file.exists()) {
+        qInfo() << "[DiskEncryptSetupPrivate::removeOverlayDMFlagFile] Flag file does not exist:" << kFlagFile;
+        return true;
+    }
+
+    if (!file.remove()) {
+        qCritical() << "[DiskEncryptSetupPrivate::removeOverlayDMFlagFile] Failed to remove flag file:" << kFlagFile
+                    << "Error:" << file.errorString();
+        return false;
+    }
+
+    qInfo() << "[DiskEncryptSetupPrivate::removeOverlayDMFlagFile] Flag file removed successfully:" << kFlagFile;
+    return true;
+}
+
+bool DiskEncryptSetupPrivate::updateInitramfs()
+{
+    static constexpr char kSudoCmd[] { "/usr/bin/sudo" };
+    static constexpr char kUpdateInitramfsCmd[] { "/sbin/update-initramfs" };
+
+    qInfo() << "[DiskEncryptSetupPrivate::updateInitramfs] Executing update-initramfs command via sudo -E";
+
+    // Create inhibit lock to prevent shutdown/sleep during update-initramfs
+    QString inhibitMessage = "Updating initramfs, please do not shutdown or suspend the system";
+    auto inhibitReply = inhibit_helper::inhibit(inhibitMessage);
+
+    QDBusUnixFileDescriptor inhibitFd;
+    bool hasInhibitLock = false;
+
+    if (inhibitReply.isValid()) {
+        inhibitFd = inhibitReply.value();
+        hasInhibitLock = true;
+        qInfo() << "[DiskEncryptSetupPrivate::updateInitramfs] Inhibit lock acquired, fd:" << inhibitFd.fileDescriptor();
+    } else {
+        qWarning() << "[DiskEncryptSetupPrivate::updateInitramfs] Failed to acquire inhibit lock:" << inhibitReply.error().message();
+        qWarning() << "[DiskEncryptSetupPrivate::updateInitramfs] Continuing without inhibit lock (user may be able to shutdown)";
+    }
+
+    QProcess process;
+    process.start(kSudoCmd, QStringList() << "-E" << kUpdateInitramfsCmd << "-u");
+
+    if (!process.waitForStarted()) {
+        QString errorMsg = process.errorString();
+        qCritical() << "[DiskEncryptSetupPrivate::updateInitramfs] Failed to start update-initramfs process"
+                    << "Error:" << errorMsg << "Error code:" << process.error();
+        // Inhibit lock will be released when inhibitFd goes out of scope
+        return false;
+    }
+
+    // Wait for process to finish (max 5 minutes)
+    if (!process.waitForFinished(300000)) {
+        qCritical() << "[DiskEncryptSetupPrivate::updateInitramfs] update-initramfs process timed out or failed to finish";
+        process.kill();
+        // Inhibit lock will be released when inhibitFd goes out of scope
+        return false;
+    }
+
+    int exitCode = process.exitCode();
+    QString stdOut = QString::fromLocal8Bit(process.readAllStandardOutput());
+    QString stdErr = QString::fromLocal8Bit(process.readAllStandardError());
+
+    qInfo() << "[DiskEncryptSetupPrivate::updateInitramfs] update-initramfs exit code:" << exitCode;
+    if (!stdOut.isEmpty()) {
+        qInfo() << "[DiskEncryptSetupPrivate::updateInitramfs] stdout:" << stdOut;
+    }
+    if (!stdErr.isEmpty()) {
+        qWarning() << "[DiskEncryptSetupPrivate::updateInitramfs] stderr:" << stdErr;
+    }
+
+    if (exitCode != 0) {
+        qCritical() << "[DiskEncryptSetupPrivate::updateInitramfs] update-initramfs failed with exit code:" << exitCode;
+        // Inhibit lock will be released when inhibitFd goes out of scope
+        return false;
+    }
+
+    qInfo() << "[DiskEncryptSetupPrivate::updateInitramfs] update-initramfs completed successfully";
+
+    // Inhibit lock will be automatically released when inhibitFd goes out of scope
+    if (hasInhibitLock) {
+        qInfo() << "[DiskEncryptSetupPrivate::updateInitramfs] Releasing inhibit lock";
+    }
+
+    return true;
+}
+
+void DiskEncryptSetupPrivate::syncConfigWithFileSystem()
+{
+    static constexpr char kFlagFile[] { "/etc/usec-crypt/settings/overlay-dm" };
+
+    if (!config) {
+        qWarning() << "[DiskEncryptSetupPrivate::syncConfigWithFileSystem] DConfig is null, cannot sync";
+        return;
+    }
+
+    // 读取 DConfig 配置值
+    bool configValue = config->value("useOverlayDMMode", false).toBool();
+
+    // 检查标志文件是否存在
+    bool flagFileExists = QFile::exists(kFlagFile);
+
+    qInfo() << "[DiskEncryptSetupPrivate::syncConfigWithFileSystem] DConfig value:" << configValue
+            << "Flag file exists:" << flagFileExists;
+
+    // 更新 currentTargetValue 以反映实际文件系统状态
+    currentTargetValue = flagFileExists;
+
+    // 如果 DConfig 和文件系统状态不一致，需要同步
+    if (configValue != flagFileExists) {
+        qWarning() << "[DiskEncryptSetupPrivate::syncConfigWithFileSystem] State mismatch detected!"
+                   << "DConfig says:" << configValue << "but file system is:" << flagFileExists;
+        qInfo() << "[DiskEncryptSetupPrivate::syncConfigWithFileSystem] Syncing to match DConfig value:" << configValue;
+
+        // 异步执行同步操作（以 DConfig 为准）
+        currentTargetValue = configValue;
+        handleOverlayDMModeChangeAsync(configValue);
+    } else {
+        qInfo() << "[DiskEncryptSetupPrivate::syncConfigWithFileSystem] DConfig and file system are in sync, no action needed";
+    }
+}
+
+void DiskEncryptSetupPrivate::handleOverlayDMModeChangeAsync(bool enabled)
+{
+    qInfo() << "[DiskEncryptSetupPrivate::handleOverlayDMModeChangeAsync] Starting async mode change to:" << enabled;
+
+    isHandlingConfigChange = true;
+
+    // Use QtConcurrent to run in background thread
+    auto future = QtConcurrent::run([this, enabled]() -> bool {
+        return this->handleOverlayDMModeChange(enabled);
+    });
+
+    // Watch the future and call callback when done
+    auto watcher = new QFutureWatcher<bool>(this);
+    connect(watcher, &QFutureWatcher<bool>::finished, this, [this, watcher, enabled]() {
+        bool success = watcher->result();
+        watcher->deleteLater();
+        this->onOverlayDMModeChangeFinished(success, enabled);
+    });
+    watcher->setFuture(future);
+}
+
+void DiskEncryptSetupPrivate::onOverlayDMModeChangeFinished(bool success, bool targetValue)
+{
+    qInfo() << "[DiskEncryptSetupPrivate::onOverlayDMModeChangeFinished] Mode change finished, success:" << success
+            << "target value:" << targetValue;
+
+    isHandlingConfigChange = false;
+
+    // Determine result code
+    int resultCode = success ? OverlayDMSuccess : OverlayDMFailedUpdateInitramfs;
+
+    if (!success) {
+        qCritical() << "[DiskEncryptSetupPrivate::onOverlayDMModeChangeFinished] Mode change failed for target:" << targetValue;
+
+        // Config value already rolled back in handleOverlayDMModeChange
+        // Reset currentTargetValue to match the rolled back config
+        if (config) {
+            currentTargetValue = config->value("useOverlayDMMode", false).toBool();
+            qInfo() << "[DiskEncryptSetupPrivate::onOverlayDMModeChangeFinished] Reset currentTargetValue to:" << currentTargetValue;
+        }
+    } else {
+        qInfo() << "[DiskEncryptSetupPrivate::onOverlayDMModeChangeFinished] Mode change succeeded for target:" << targetValue;
+
+        // Update currentTargetValue to ensure consistency
+        currentTargetValue = targetValue;
+    }
+
+    // Emit DBus signal to notify upper layer application
+    qInfo() << "[DiskEncryptSetupPrivate::onOverlayDMModeChangeFinished] Emitting DBus signal, enabled:" << targetValue
+            << "result code:" << resultCode;
+    Q_EMIT qptr->OverlayDMModeChanged(targetValue, resultCode);
+
+    // Check if there's a pending config change
+    processPendingConfigChange();
+}
+
+void DiskEncryptSetupPrivate::processPendingConfigChange()
+{
+    if (!hasPendingConfigChange) {
+        qInfo() << "[DiskEncryptSetupPrivate::processPendingConfigChange] No pending config change";
+        return;
+    }
+
+    qInfo() << "[DiskEncryptSetupPrivate::processPendingConfigChange] Processing pending config change to:" << pendingTargetValue;
+
+    // 与 currentTargetValue（实际文件系统状态）比较，而不是与 DConfig 值比较
+    // 因为 DConfig 值在用户修改时会立即变化，
+    // 但 currentTargetValue 反映的是已完成操作的实际结果
+    if (pendingTargetValue == currentTargetValue) {
+        // 待处理的目标值和当前实际状态相同，无需执行
+        qInfo() << "[DiskEncryptSetupPrivate::processPendingConfigChange] Pending value" << pendingTargetValue
+                << "equals current actual state" << currentTargetValue << ", no action needed";
+        hasPendingConfigChange = false;
+    } else {
+        // 待处理的目标值和当前实际状态不同，需要执行变更
+        qInfo() << "[DiskEncryptSetupPrivate::processPendingConfigChange] Executing pending change from actual state" << currentTargetValue
+                << "to" << pendingTargetValue;
+        hasPendingConfigChange = false;
+        currentTargetValue = pendingTargetValue;
+        handleOverlayDMModeChangeAsync(pendingTargetValue);
+    }
 }

@@ -133,6 +133,17 @@
             "description[zh_CN]": "寄存器哈希算法，取值范围(sm3_256,sha256)",
             "permissions": "readwrite",
             "visibility": "private"
+        },
+        "useOverlayDMMode": {
+            "value": false,
+            "serial": 0,
+            "flags": ["global"],
+            "name": "Use Overlay DM Mode",
+            "name[zh_CN]": "使用 Overlay DM 模式",
+            "description": "Enable overlay device mapper mode for partition encryption. When this option is enabled and system rebooted, subsequent partition encryption operations will not require reboot. When disabled and system rebooted, partition encryption operations will require reboot to complete.",
+            "description[zh_CN]": "启用 Overlay Device Mapper 分区加密模式。当启用该选项并重启系统后，后续的分区加密操作将无需重启；当关闭该选项并重启系统后，后续的分区加密操作将需要重启才能完成。",
+            "permissions": "readwrite",
+            "visibility": "public"
         }
     }
 }
