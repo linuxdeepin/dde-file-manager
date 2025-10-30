@@ -23,6 +23,8 @@ DFMBASE_USE_NAMESPACE
 static constexpr int kFolderBatchSize = { 2000 };
 static constexpr int kFolderListItemMargin { 6 };
 static constexpr int kFloderListMargin = { 10 };
+static constexpr int kMaxAvailableWidth { 800 };
+static constexpr int kMinAvailableWidth { 173 };
 
 FolderListWidgetPrivate::FolderListWidgetPrivate(FolderListWidget *qq)
     : QObject(qq), q(qq)
@@ -96,8 +98,7 @@ QModelIndex FolderListWidgetPrivate::getStartIndexFromHover(bool isUp)
     QModelIndex currentIndex = folderView->currentIndex();
     if (currentIndex.isValid()) {
         nextRow = currentIndex.row();
-    }
-    else {
+    } else {
         QPoint mousePos = q->mapFromGlobal(QCursor::pos());
         QModelIndex hoverIndex = folderView->indexAt(mousePos);
         nextRow = hoverIndex.isValid() ? hoverIndex.row() : (isUp ? rowCount - 1 : 0);
@@ -186,26 +187,23 @@ FolderListWidget::~FolderListWidget() = default;
 void FolderListWidget::setFolderList(const QList<CrumbData> &datas, bool stacked)
 {
     d->folderModel->clear();
-    int dataNum = 0;
     d->crumbDatas = datas;
     bool isShowedHiddenFiles = true;
     if (!stacked)
         isShowedHiddenFiles = Application::instance()->genericAttribute(Application::kShowedHiddenFiles).toBool();
 
     // Calculate max text width
-    int maxTextWidth = 0;
-    QFontMetrics fm(font());
+    int itemMaxWidth = kMinAvailableWidth;
     for (int i = 0; i < datas.size(); ++i) {
         auto info = InfoFactory::create<FileInfo>(datas[i].url);
         if (!info.isNull() && (isShowedHiddenFiles || !info->isAttributes(FileInfo::FileIsType::kIsHidden))) {
             QStandardItem *item = new QStandardItem(info->fileIcon(), datas[i].displayText);
             item->setData(i, Qt::UserRole);
-            d->folderModel->insertRow(dataNum, item);
-            dataNum++;
+            d->folderModel->appendRow(item);
 
             // Calculate text width
-            int textWidth = fm.horizontalAdvance(datas[i].displayText);
-            maxTextWidth = qMax(maxTextWidth, textWidth);
+            int textWidth = d->folderView->sizeHintForIndex(d->folderModel->index(i, 0)).width();
+            itemMaxWidth = qMax(itemMaxWidth, textWidth);
         }
     }
 
@@ -215,19 +213,20 @@ void FolderListWidget::setFolderList(const QList<CrumbData> &datas, bool stacked
 
     // 计算实际需要的总高度
     int totalHeight;
-    if (dataNum > 1) {
+    int rowCount = d->folderModel->rowCount();
+    if (rowCount > 1) {
         d->folderView->setViewportMargins(kItemMargin, kItemMargin, kItemMargin, kItemMargin);
-        totalHeight = kItemMargin * 2 + kFolderItemHeight * dataNum;
+        totalHeight = kItemMargin * 2 + kFolderItemHeight * rowCount;
     } else {
         d->folderView->setViewportMargins(kItemMargin, kItemMargin * 3 / 2, kItemMargin, kItemMargin * 3 / 2);
-        totalHeight = kItemMargin * 3 + kFolderItemHeight * dataNum;
+        totalHeight = kItemMargin * 3 + kFolderItemHeight * rowCount;
     }
-    setFixedHeight(qMin(totalHeight, maxAvailableHeight));
+    setFixedSize(qMin(itemMaxWidth, kMaxAvailableWidth), qMin(totalHeight, maxAvailableHeight));
 }
 
-void FolderListWidget::popUp(const QPoint& popupPos)
+void FolderListWidget::popUp(const QPoint &popupPos)
 {
-    QPoint adjustedPos = popupPos;  // 初始位置
+    QPoint adjustedPos = popupPos;   // 初始位置
     QSize popupSize = size();
     const QRect availableRect = this->availableGeometry(popupPos);
 
@@ -325,7 +324,7 @@ bool FolderListWidgetPrivate::findAndSelectMatch(const QString &text, int startR
     return false;
 }
 
-QRect FolderListWidget::availableGeometry(const QPoint& popUpPos) const
+QRect FolderListWidget::availableGeometry(const QPoint &popUpPos) const
 {
     QScreen *screen = nullptr;
 
