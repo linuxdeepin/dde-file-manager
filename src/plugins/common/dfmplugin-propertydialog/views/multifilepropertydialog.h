@@ -40,12 +40,8 @@ private:
 
     void initInfoUi();
 
-    void calculateFileCount();
-
 private slots:
     void updateFolderSizeLabel(qint64 size, int filesCount, int directoryCount);
-
-    void onFileCountProgress(int fileCount, int dirCount);
 
 private:
     QList<QUrl> urlList {};   // ###: this list contains all the urls which are selected!
