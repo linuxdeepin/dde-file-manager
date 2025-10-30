@@ -71,9 +71,8 @@ void ViewOptionsButton::setVisible(bool visible)
         fmDebug() << "Display preview is disabled in config, skipping preview visibility change";
         return;
     }
-    QTimer::singleShot(200, [this, visible]() {
-        Q_EMIT displayPreviewVisibleChanged(visible);
-    });
+
+    Q_EMIT displayPreviewVisibleChanged(visible);
 }
 
 ViewOptionsButton::~ViewOptionsButton() = default;
@@ -91,7 +90,7 @@ void ViewOptionsButton::paintEvent(QPaintEvent *event)
         option.state |= QStyle::State_MouseOver;
 
         bool isDarkTheme = DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType;
-        
+
         QColor hoverColor;
         if (isDown()) {
             // 按下状态 - 20%不透明度
