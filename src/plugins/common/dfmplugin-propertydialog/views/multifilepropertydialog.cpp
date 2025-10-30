@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "multifilepropertydialog.h"
-#include "utils/filecountcalculator.h"
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/universalutils.h>
@@ -29,18 +28,11 @@ MultiFilePropertyDialog::MultiFilePropertyDialog(const QList<QUrl> &urls, QWidge
     QList<QUrl> targets;
     UniversalUtils::urlsTransformToLocal(urlList, &targets);
     fileCalculationUtils->start(targets);
-    calculateFileCount();
     this->setAttribute(Qt::WA_DeleteOnClose, true);
 }
 
 MultiFilePropertyDialog::~MultiFilePropertyDialog()
 {
-    if (fileCountCalculator) {
-        fileCountCalculator->stop();
-        delete fileCountCalculator;
-        fileCountCalculator = nullptr;
-    }
-
     fileCalculationUtils->stop();
     fileCalculationUtils->deleteLater();
 }
@@ -121,28 +113,8 @@ void MultiFilePropertyDialog::initHeadUi()
     addContent(frame);
 }
 
-void MultiFilePropertyDialog::calculateFileCount()
-{
-    // 创建并启动文件计数器
-    fileCountCalculator = new FileCountCalculator(this);
-
-    // 连接进度信号 - 实现动态更新效果
-    connect(fileCountCalculator, &FileCountCalculator::progressNotify,
-            this, &MultiFilePropertyDialog::onFileCountProgress);
-
-    // 启动异步统计（批处理大小 100，平衡性能和 UI 更新频率）
-    fileCountCalculator->start(urlList, 100);
-}
-
-void MultiFilePropertyDialog::onFileCountProgress(int fileCount, int dirCount)
-{
-    // 动态更新 UI - 在文件很多时会看到数字逐渐增加的效果
-    fileCountValueLabel->setText(tr("%1 file(s), %2 folder(s)").arg(fileCount).arg(dirCount));
-}
-
 void MultiFilePropertyDialog::updateFolderSizeLabel(qint64 size, int filesCount, int directoryCount)
 {
-    Q_UNUSED(filesCount)
-    Q_UNUSED(directoryCount)
+    fileCountValueLabel->setText(tr("%1 file(s), %2 folder(s)").arg(filesCount).arg(directoryCount));
     totalSizeValueLabel->setText(FileUtils::formatSize(size));
 }
