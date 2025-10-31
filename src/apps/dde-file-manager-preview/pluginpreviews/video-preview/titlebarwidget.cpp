@@ -165,11 +165,11 @@ void TitleBarWidget::paintEvent(QPaintEvent *event)
         QRect textRect = fontMetrics.boundingRect(m_text);
 
         // Calculate centered position
-        int x = (width() - textRect.width()) / 2;
+        int x = qMax((width() - textRect.width()) / 2, 40);
         int y = (height() + fontMetrics.ascent()) / 2;
 
         // Draw text with eliding if too long
-        QString elidedText = fontMetrics.elidedText(m_text, Qt::ElideRight, width() - 20); // 10px margin on each side
+        QString elidedText = fontMetrics.elidedText(m_text, Qt::ElideMiddle, width() - 80); // 40px margin on each side
         painter.drawText(x, y, elidedText);
     }
 }
