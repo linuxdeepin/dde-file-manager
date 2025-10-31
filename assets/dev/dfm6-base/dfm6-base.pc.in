@@ -2,7 +2,7 @@ Name: @BIN_NAME@
 Description: @CMAKE_PROJECT_DESCRIPTION@
 URL: @CMAKE_PROJECT_HOMEPAGE_URL@
 Version: @PROJECT_VERSION@
-Requires: dfm6-io dfm6-mount dfm6-burn Qt6Core Qt6Widgets Qt6Gui Qt6Concurrent Qt6DBus Qt6Sql Qt6Network dtk6core dtk6gui dtk6widget
+Requires: dfm6-io dfm6-mount dfm6-burn Qt6Core Qt6Widgets Qt6Gui Qt6Concurrent Qt6DBus Qt6Sql Qt6Network dtk6core dtk6gui dtk6widget libappimage libheif poppler-cpp gio-unix-2.0 mount x11
 Cflags: -I"@CMAKE_INSTALL_FULL_INCLUDEDIR@"
 Libs: -L"@CMAKE_INSTALL_FULL_LIBDIR@" -l@BIN_NAME@
 Libs.private: -L"@CMAKE_INSTALL_FULL_LIBDIR@" -l@BIN_NAME@
