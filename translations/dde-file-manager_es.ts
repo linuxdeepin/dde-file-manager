@@ -6875,7 +6875,7 @@ Ingrese el usuario y la contraseña para %1</translation>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="487"/>
         <source>Remove</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Quitar</translation>
     </message>
 </context>
 <context>
@@ -7124,7 +7124,7 @@ Ingrese el usuario y la contraseña para %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="39"/>
         <source>Analyzing files...</source>
-        <translation type="unfinished"/>
+        <translation>Analizando archivos...</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="43"/>
