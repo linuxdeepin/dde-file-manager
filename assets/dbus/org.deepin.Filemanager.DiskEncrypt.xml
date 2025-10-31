@@ -43,17 +43,14 @@
     </method>
     <method name="Decryption">
       <arg type="b" direction="out"/>
-      <arg name="args" type="a{sv}" direction="in"/>
-      <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QVariantMap"/>
+      <arg name="credentialsFd" type="h" direction="in"/>
     </method>
     <method name="ChangePassphrase">
       <arg type="b" direction="out"/>
-      <arg name="args" type="a{sv}" direction="in"/>
-      <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QVariantMap"/>
+      <arg name="credentialsFd" type="h" direction="in"/>
     </method>
     <method name="SetupAuthArgs">
-      <arg name="args" type="a{sv}" direction="in"/>
-      <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QVariantMap"/>
+      <arg name="credentialsFd" type="h" direction="in"/>
     </method>
     <method name="IgnoreAuthSetup">
     </method>

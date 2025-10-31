@@ -17,8 +17,11 @@
 
 #include <QDBusMessage>
 #include <QtConcurrent>
+#include <QDataStream>
 
 #include <polkit-qt6-1/PolkitQt1/Authority>
+
+#include <unistd.h>
 
 static constexpr char kActionEncrypt[] { "org.deepin.Filemanager.DiskEncrypt.Encrypt" };
 static constexpr char kActionDecrypt[] { "org.deepin.Filemanager.DiskEncrypt.Decrypt" };
@@ -47,7 +50,7 @@ DiskEncryptSetup::DiskEncryptSetup(QObject *parent)
 bool DiskEncryptSetup::InitEncryption(const QVariantMap &args)
 {
     qInfo() << "[DiskEncryptSetup::InitEncryption] Encryption initialization request received";
-    
+
     if (m_dptr->jobRunning) {
         qWarning() << "[DiskEncryptSetup::InitEncryption] Job already running, cannot create new job";
         return false;
@@ -65,13 +68,13 @@ bool DiskEncryptSetup::InitEncryption(const QVariantMap &args)
 
     auto type = args.value(disk_encrypt::encrypt_param_keys::kKeyJobType).toString();
     qInfo() << "[DiskEncryptSetup::InitEncryption] Creating encryption worker for job type:" << type;
-    
+
     auto worker = m_dptr->createInitWorker(type, args);
     if (!worker) {
         qCritical() << "[DiskEncryptSetup::InitEncryption] Failed to create encryption worker for type:" << type;
         return false;
     }
-    
+
     m_dptr->initThreadConnection(worker);
     connect(worker, &QThread::finished,
             m_dptr, &DiskEncryptSetupPrivate::onInitEncryptFinished);
@@ -83,7 +86,7 @@ bool DiskEncryptSetup::InitEncryption(const QVariantMap &args)
 bool DiskEncryptSetup::ResumeEncryption(const QVariantMap &args)
 {
     qInfo() << "[DiskEncryptSetup::ResumeEncryption] Encryption resume request received";
-    
+
     if (m_dptr->jobRunning) {
         qWarning() << "[DiskEncryptSetup::ResumeEncryption] Job already running, cannot resume encryption";
         return false;
@@ -93,16 +96,16 @@ bool DiskEncryptSetup::ResumeEncryption(const QVariantMap &args)
         qCritical() << "[DiskEncryptSetup::ResumeEncryption] Invalid resume arguments provided:" << args;
         return false;
     }
-    
+
     qInfo() << "[DiskEncryptSetup::ResumeEncryption] Resuming encryption with validated arguments";
     m_dptr->resumeEncryption(args);
     return true;
 }
 
-bool DiskEncryptSetup::Decryption(const QVariantMap &args)
+bool DiskEncryptSetup::Decryption(const QDBusUnixFileDescriptor &credentialsFd)
 {
-    qInfo() << "[DiskEncryptSetup::Decryption] Decryption request received";
-    
+    qInfo() << "[DiskEncryptSetup::Decryption] Decryption request received via fd";
+
     if (m_dptr->jobRunning) {
         qWarning() << "[DiskEncryptSetup::Decryption] Job already running, cannot start decryption";
         return false;
@@ -113,6 +116,13 @@ bool DiskEncryptSetup::Decryption(const QVariantMap &args)
         return false;
     }
 
+    // Parse credentials from fd using common method
+    QVariantMap args;
+    if (!m_dptr->parseCredentialsFromFd(credentialsFd, &args)) {
+        qCritical() << "[DiskEncryptSetup::Decryption] Failed to parse credentials from fd";
+        return false;
+    }
+
     if (!m_dptr->validateDecryptArgs(args)) {
         qCritical() << "[DiskEncryptSetup::Decryption] Invalid decryption arguments provided:" << args;
         return false;
@@ -120,13 +130,13 @@ bool DiskEncryptSetup::Decryption(const QVariantMap &args)
 
     auto type = args.value(disk_encrypt::encrypt_param_keys::kKeyJobType).toString();
     qInfo() << "[DiskEncryptSetup::Decryption] Creating decryption worker for job type:" << type;
-    
+
     auto worker = m_dptr->createDecryptWorker(type, args);
     if (!worker) {
         qCritical() << "[DiskEncryptSetup::Decryption] Failed to create decryption worker for type:" << type;
         return false;
     }
-    
+
     m_dptr->initThreadConnection(worker);
     connect(worker, &QThread::finished,
             m_dptr, &DiskEncryptSetupPrivate::onDecryptFinished);
@@ -135,12 +145,19 @@ bool DiskEncryptSetup::Decryption(const QVariantMap &args)
     return true;
 }
 
-bool DiskEncryptSetup::ChangePassphrase(const QVariantMap &args)
+bool DiskEncryptSetup::ChangePassphrase(const QDBusUnixFileDescriptor &credentialsFd)
 {
-    qInfo() << "[DiskEncryptSetup::ChangePassphrase] Passphrase change request received";
-    
+    qInfo() << "[DiskEncryptSetup::ChangePassphrase] Passphrase change request received via fd";
+
     if (!m_dptr->checkAuth(kActionChgPwd)) {
         qWarning() << "[DiskEncryptSetup::ChangePassphrase] Authentication failed for passphrase change action";
+        return false;
+    }
+
+    // Parse credentials from fd using common method
+    QVariantMap args;
+    if (!m_dptr->parseCredentialsFromFd(credentialsFd, &args)) {
+        qCritical() << "[DiskEncryptSetup::ChangePassphrase] Failed to parse credentials from fd";
         return false;
     }
 
@@ -158,9 +175,18 @@ bool DiskEncryptSetup::ChangePassphrase(const QVariantMap &args)
     return true;
 }
 
-void DiskEncryptSetup::SetupAuthArgs(const QVariantMap &args)
+void DiskEncryptSetup::SetupAuthArgs(const QDBusUnixFileDescriptor &credentialsFd)
 {
-    qInfo() << "[DiskEncryptSetup::SetupAuthArgs] Setting up authentication arguments";
+    qInfo() << "[DiskEncryptSetup::SetupAuthArgs] Setting up authentication arguments via fd";
+
+    // Parse credentials from fd using common method
+    QVariantMap args;
+    if (!m_dptr->parseCredentialsFromFd(credentialsFd, &args)) {
+        qCritical() << "[DiskEncryptSetup::SetupAuthArgs] Failed to parse credentials from fd";
+        return;
+    }
+
+    qInfo() << "[DiskEncryptSetup::SetupAuthArgs] Successfully parsed authentication arguments from fd";
     Q_EMIT NotificationHelper::instance()->replyAuthArgs(args);
 }
 
@@ -173,7 +199,7 @@ void DiskEncryptSetup::IgnoreAuthSetup()
 QString DiskEncryptSetup::TpmToken(const QString &dev)
 {
     qInfo() << "[DiskEncryptSetup::TpmToken] Retrieving TPM token for device:" << dev;
-    
+
     QString token;
     crypt_setup_helper::getToken(dev, &token);
     if (token.isEmpty()) {
@@ -186,14 +212,14 @@ QString DiskEncryptSetup::TpmToken(const QString &dev)
     } else {
         qInfo() << "[DiskEncryptSetup::TpmToken] TPM token found for device:" << dev;
     }
-    
+
     return token;
 }
 
 int DiskEncryptSetup::DeviceStatus(const QString &dev)
 {
     qInfo() << "[DiskEncryptSetup::DeviceStatus] Checking encryption status for device:" << dev;
-    
+
     // check status of device itself.
     auto status = crypt_setup_helper::encryptStatus(dev);
     if (status != disk_encrypt::kStatusNotEncrypted) {
@@ -231,7 +257,7 @@ bool DiskEncryptSetup::IsTaskRunning()
 QString DiskEncryptSetup::PendingDecryptionDevice()
 {
     qInfo() << "[DiskEncryptSetup::PendingDecryptionDevice] Checking for pending decryption devices";
-    
+
     QDir d(kUSecBootRoot);
     auto files = d.entryList(QDir::AllEntries | QDir::NoDotAndDotDot);
     for (auto f : files) {
@@ -247,7 +273,8 @@ QString DiskEncryptSetup::PendingDecryptionDevice()
 
 DiskEncryptSetupPrivate::DiskEncryptSetupPrivate(DiskEncryptSetup *parent)
     : QObject(parent),
-      qptr(parent) { 
+      qptr(parent)
+{
     qInfo() << "[DiskEncryptSetupPrivate] Initializing private implementation";
 }
 
@@ -375,6 +402,48 @@ BaseEncryptWorker *DiskEncryptSetupPrivate::createDecryptWorker(const QString &t
     else if (type == disk_encrypt::job_type::TypeNormal)
         return new NormalDecryptWorker(args);
     return nullptr;
+}
+
+bool DiskEncryptSetupPrivate::parseCredentialsFromFd(const QDBusUnixFileDescriptor &credentialsFd, QVariantMap *args)
+{
+    Q_ASSERT(args);
+    // Validate file descriptor
+    if (!credentialsFd.isValid()) {
+        qWarning() << "[DiskEncryptSetupPrivate::parseCredentialsFromFd] Invalid file descriptor provided";
+        return false;
+    }
+
+    int fd = credentialsFd.fileDescriptor();
+    if (fd < 0) {
+        qWarning() << "[DiskEncryptSetupPrivate::parseCredentialsFromFd] Invalid file descriptor value:" << fd;
+        return false;
+    }
+
+    // Read all data from pipe into buffer
+    QByteArray buffer;
+    char readBuffer[1024];
+    ssize_t bytesRead;
+
+    while ((bytesRead = read(fd, readBuffer, sizeof(readBuffer))) > 0) {
+        buffer.append(readBuffer, bytesRead);
+    }
+
+    if (buffer.isEmpty()) {
+        qWarning() << "[DiskEncryptSetupPrivate::parseCredentialsFromFd] No data received from pipe";
+        return false;
+    }
+
+    // Parse credentials using QDataStream
+    QDataStream stream(&buffer, QIODevice::ReadOnly);
+    stream >> *args;
+
+    if (stream.status() != QDataStream::Ok) {
+        qWarning() << "[DiskEncryptSetupPrivate::parseCredentialsFromFd] Failed to parse credentials from pipe data, stream status:" << stream.status();
+        return false;
+    }
+
+    qInfo() << "[DiskEncryptSetupPrivate::parseCredentialsFromFd] Successfully parsed credentials from fd";
+    return true;
 }
 
 void DiskEncryptSetupPrivate::initThreadConnection(const QThread *thread)

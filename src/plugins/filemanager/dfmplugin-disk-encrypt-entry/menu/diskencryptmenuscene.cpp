@@ -26,11 +26,14 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonParseError>
+#include <QDBusUnixFileDescriptor>
+#include <QDataStream>
 
 #include <ddialog.h>
 #include <dconfig.h>
 
 #include <fstab.h>
+#include <unistd.h>
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_diskenc;
@@ -395,23 +398,24 @@ void DiskEncryptMenuScene::doReencryptDevice(const DeviceEncryptParam &param)
                          kDaemonBusPath,
                          kDaemonBusIface,
                          QDBusConnection::systemBus());
-    if (iface.isValid()) {
-        QVariantMap params {
-            { encrypt_param_keys::kKeyDevice, param.devDesc },
-            { encrypt_param_keys::kKeyPassphrase, toBase64(param.key) },
-            { encrypt_param_keys::kKeyExportToPath, param.exportPath },
-        };
-        if (!tpmToken.isEmpty()) params.insert(encrypt_param_keys::kKeyTPMToken, tpmToken);
-
-        fmDebug() << "Starting device re-encryption";
-        QDBusReply<bool> ret = iface.call("SetupAuthArgs", params);
-        if (ret.value()) {
-            QApplication::setOverrideCursor(Qt::WaitCursor);
-        } else {
-            fmCritical() << "Re-encryption setup failed";
-        }
-    } else {
+    if (!iface.isValid()) {
         fmCritical() << "Failed to create D-Bus interface for re-encryption";
+        return;
+    }
+
+    // Prepare credentials data
+    QVariantMap params {
+        { encrypt_param_keys::kKeyDevice, param.devDesc },
+        { encrypt_param_keys::kKeyPassphrase, toBase64(param.key) },
+        { encrypt_param_keys::kKeyExportToPath, param.exportPath },
+    };
+    if (!tpmToken.isEmpty())
+        params.insert(encrypt_param_keys::kKeyTPMToken, tpmToken);
+
+    // Send credentials via fd
+    fmDebug() << "Starting device re-encryption via fd";
+    if (sendCredentialsViaFd(iface, "SetupAuthArgs", params, true)) {
+        QApplication::setOverrideCursor(Qt::WaitCursor);
     }
 }
 
@@ -421,25 +425,26 @@ void DiskEncryptMenuScene::doDecryptDevice(const DeviceEncryptParam &param)
                          kDaemonBusPath,
                          kDaemonBusIface,
                          QDBusConnection::systemBus());
-    if (iface.isValid()) {
-        QVariantMap params {
-            { encrypt_param_keys::kKeyJobType, param.jobType },
-            { encrypt_param_keys::kKeyDevice, param.devDesc },
-            { encrypt_param_keys::kKeyDeviceName, param.deviceDisplayName },
-            { encrypt_param_keys::kKeyPassphrase, toBase64(param.key) }
-        };
+    if (!iface.isValid()) {
+        fmCritical() << "Failed to create D-Bus interface for decryption";
+        return;
+    }
 
-        fmDebug() << "Calling Decryption D-Bus method";
-        QDBusReply<bool> ret = iface.call("Decryption", params);
-        if (ret.value()) {
-            QApplication::setOverrideCursor(Qt::WaitCursor);
-        } else {
-            fmCritical() << "Decryption failed to start";
-        }
+    // Prepare credentials data
+    QVariantMap params {
+        { encrypt_param_keys::kKeyJobType, param.jobType },
+        { encrypt_param_keys::kKeyDevice, param.devDesc },
+        { encrypt_param_keys::kKeyDeviceName, param.deviceDisplayName },
+        { encrypt_param_keys::kKeyPassphrase, toBase64(param.key) }
+    };
 
+    // Send credentials via fd
+    fmDebug() << "Calling Decryption D-Bus method via fd";
+    if (sendCredentialsViaFd(iface, "Decryption", params, false)) {
+        QApplication::setOverrideCursor(Qt::WaitCursor);
         EventsHandler::instance()->autoStartDFM();
     } else {
-        fmCritical() << "Failed to create D-Bus interface for decryption";
+        fmCritical() << "Decryption failed to start";
     }
 }
 
@@ -474,6 +479,16 @@ void DiskEncryptMenuScene::doChangePassphrase(const DeviceEncryptParam &param)
                          kDaemonBusIface,
                          QDBusConnection::systemBus());
     if (iface.isValid()) {
+        // Create anonymous pipe for secure credential transmission
+        int pipefd[2];
+        if (pipe(pipefd) == -1) {
+            fmCritical() << "Failed to create anonymous pipe for credentials";
+            return;
+        }
+
+        // Prepare credentials data using QDataStream for reliable serialization
+        QByteArray credentials;
+        QDataStream stream(&credentials, QIODevice::WriteOnly);
         QVariantMap params {
             { encrypt_param_keys::kKeyDevice, param.devDesc },
             { encrypt_param_keys::kKeyPassphrase, toBase64(param.newKey) },
@@ -482,14 +497,36 @@ void DiskEncryptMenuScene::doChangePassphrase(const DeviceEncryptParam &param)
             { encrypt_param_keys::kKeyTPMToken, token },
             { encrypt_param_keys::kKeyDeviceName, param.deviceDisplayName }
         };
+        stream << params;
 
-        fmDebug() << "Calling ChangePassphrase D-Bus method";
-        QDBusReply<bool> ret = iface.call("ChangePassphrase", params);
+        // Write credentials to pipe and close write end immediately
+        ssize_t written = write(pipefd[1], credentials.constData(), credentials.size());
+        close(pipefd[1]);   // Close write end immediately after writing
+
+        if (written != credentials.size()) {
+            fmCritical() << "Failed to write credentials to pipe, written:" << written << "expected:" << credentials.size();
+            close(pipefd[0]);
+            return;
+        }
+
+        // Create file descriptor for D-Bus transmission
+        QDBusUnixFileDescriptor fd(pipefd[0]);
+        if (!fd.isValid()) {
+            fmCritical() << "Failed to create valid file descriptor from pipe";
+            close(pipefd[0]);
+            return;
+        }
+
+        fmDebug() << "Calling ChangePassphrase D-Bus method via fd";
+        QDBusReply<bool> ret = iface.call("ChangePassphrase", QVariant::fromValue(fd));
         if (ret.value()) {
             QApplication::setOverrideCursor(Qt::WaitCursor);
         } else {
             fmCritical() << "Passphrase change failed to start";
         }
+
+        // Close read end (D-Bus service will have its own copy)
+        close(pipefd[0]);
     } else {
         fmCritical() << "Failed to create D-Bus interface for passphrase change";
     }
@@ -561,6 +598,54 @@ QString DiskEncryptMenuScene::getBase64Of(const QString &fileName)
     QByteArray contents = f.readAll();
     f.close();
     return QString(contents.toBase64());
+}
+
+bool DiskEncryptMenuScene::sendCredentialsViaFd(QDBusInterface &iface, const QString &method,
+                                                  const QVariantMap &params, bool asyncCall)
+{
+    // Create anonymous pipe for secure credential transmission
+    int pipefd[2];
+    if (pipe(pipefd) == -1) {
+        fmCritical() << "[sendCredentialsViaFd] Failed to create anonymous pipe for credentials";
+        return false;
+    }
+
+    // Prepare credentials data using QDataStream for reliable serialization
+    QByteArray credentials;
+    QDataStream stream(&credentials, QIODevice::WriteOnly);
+    stream << params;
+
+    // Write credentials to pipe and close write end immediately
+    ssize_t written = write(pipefd[1], credentials.constData(), credentials.size());
+    close(pipefd[1]);   // Close write end immediately after writing
+
+    if (written != credentials.size()) {
+        fmCritical() << "[sendCredentialsViaFd] Failed to write credentials to pipe, written:" << written << "expected:" << credentials.size();
+        close(pipefd[0]);
+        return false;
+    }
+
+    // Create file descriptor for D-Bus transmission
+    QDBusUnixFileDescriptor fd(pipefd[0]);
+    if (!fd.isValid()) {
+        fmCritical() << "[sendCredentialsViaFd] Failed to create valid file descriptor from pipe";
+        close(pipefd[0]);
+        return false;
+    }
+
+    // Call D-Bus method with file descriptor
+    fmDebug() << "[sendCredentialsViaFd] Calling D-Bus method:" << method << "via fd";
+    if (asyncCall) {
+        iface.asyncCall(method, QVariant::fromValue(fd));
+    } else {
+        QDBusReply<bool> reply = iface.call(method, QVariant::fromValue(fd));
+        close(pipefd[0]);
+        return reply.value();
+    }
+
+    // Close read end (D-Bus service will have its own copy)
+    close(pipefd[0]);
+    return true;
 }
 
 void DiskEncryptMenuScene::onUnlocked(bool ok, dfmmount::OperationErrorInfo info, QString clearDev)
