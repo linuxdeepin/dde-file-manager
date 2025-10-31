@@ -86,7 +86,7 @@ Depends:
  qml6-module-qtquick-window,
  tpm2-abrmd,
  libtss2-tcti-pcap0,
- libtss2-tcti-tabrmd0
+ libtss2-tcti-tabrmd0@PROFESSIONAL_DEPS@
 Replaces: dde-file-manager-oem, dde-desktop (<< 6.0.1),
  dde-file-manager-preview,
  dde-file-manager-preview-plugins,
@@ -111,7 +111,7 @@ Depends:
  gvfs-backends (>=1.27.3),
  cryptsetup,
  gnome-keyring,
- libdfm-extension (=${binary:Version})
+ libdfm-extension (=${binary:Version})@PROFESSIONAL_DEPS2@
 Multi-Arch: same
 Description: DDE File Manager core librarys
  This package contains the shared libraries.

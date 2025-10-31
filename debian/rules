@@ -8,6 +8,25 @@ DEB_BUILD_OPTIONS=nocheck
 
 SYSTYPE = $(shell cat /usr/lib/deepin/desktop-version | grep Type= | awk -F'=' '{print $$2}')
 
+# 检测是否为 Professional 版本
+define detect_edition
+ifneq (,$(shell test -f /etc/os-version && grep -q "EditionName=Professional" /etc/os-version && echo yes))
+    PROFESSIONAL_DEPS=,\\n libusec-recoverykey
+    PROFESSIONAL_DEPS2=,\\n dlnfs
+else
+    PROFESSIONAL_DEPS=
+    PROFESSIONAL_DEPS2=
+endif
+endef
+
+# 调用版本检测
+$(eval $(call detect_edition))
+
+# 生成 control 文件（需要处理换行符）
+$(shell sed -e 's|@PROFESSIONAL_DEPS@|$(PROFESSIONAL_DEPS)|g' \
+            -e 's|@PROFESSIONAL_DEPS2@|$(PROFESSIONAL_DEPS2)|g' \
+            debian/control.in | sed 's|\\n|\n|g' > debian/control)
+
 %:
 	dh $@ --parallel
 
