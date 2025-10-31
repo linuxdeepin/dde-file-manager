@@ -375,12 +375,12 @@ Ingrese el usuario y la contraseña para %1</translation>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="425"/>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="475"/>
         <source>Specify directory %1</source>
-        <translation type="unfinished"/>
+        <translation>Especifique un directorio %1</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="470"/>
         <source>Invalid Directory</source>
-        <translation type="unfinished"/>
+        <translation>Directorio inválido</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="471"/>
@@ -1909,13 +1909,13 @@ Ingrese el usuario y la contraseña para %1</translation>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="127"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="41"/>
         <source>Group by</source>
-        <translation type="unfinished"/>
+        <translation>Agrupar por</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="111"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="52"/>
         <source>None</source>
-        <translation type="unfinished"/>
+        <translation>Ninguno</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="53"/>
@@ -1965,12 +1965,12 @@ Ingrese el usuario y la contraseña para %1</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="31"/>
         <source>Today</source>
-        <translation type="unfinished"/>
+        <translation>Hoy</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="32"/>
         <source>Yesterday</source>
-        <translation type="unfinished"/>
+        <translation>Ayer</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="33"/>
@@ -6654,7 +6654,7 @@ Ingrese el usuario y la contraseña para %1</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="57"/>
         <source>Custom Directory</source>
-        <translation type="unfinished"/>
+        <translation>Directorio personalizado</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="97"/>
