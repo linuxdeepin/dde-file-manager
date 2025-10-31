@@ -218,8 +218,7 @@ void DetailView::setDetailIcon(const QUrl &url)
     if (icon.isNull())
         icon = info->fileIcon();
 
-    QPixmap px = icon.pixmap(targetSize);
-    px.setDevicePixelRatio(qApp->devicePixelRatio());
+    QPixmap px = icon.pixmap(targetSize, qApp->devicePixelRatio());
     iconLabel->setPixmap(px);
     iconLabel->setAlignment(Qt::AlignCenter);
 }
