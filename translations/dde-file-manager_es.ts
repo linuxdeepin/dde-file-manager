@@ -385,7 +385,7 @@ Ingrese el usuario y la contraseña para %1</translation>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="471"/>
         <source>This directory does not support pinning</source>
-        <translation type="unfinished"/>
+        <translation>El directorio no admite el anclaje.</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskdialog.cpp" line="151"/>
@@ -1903,7 +1903,7 @@ Ingrese el usuario y la contraseña para %1</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="211"/>
         <source>Last access</source>
-        <translation type="unfinished"/>
+        <translation>Ultimo acceso</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="127"/>
@@ -3410,7 +3410,7 @@ Ingrese el usuario y la contraseña para %1</translation>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="274"/>
         <source>New window</source>
-        <translation type="unfinished"/>
+        <translation>Nueva ventana</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="277"/>
@@ -3420,12 +3420,12 @@ Ingrese el usuario y la contraseña para %1</translation>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="280"/>
         <source>Default Directory</source>
-        <translation type="unfinished"/>
+        <translation>Directorio predeterminado</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="301"/>
         <source>New tab</source>
-        <translation type="unfinished"/>
+        <translation>Nueva pestaña</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="349"/>
@@ -3623,7 +3623,7 @@ Ingrese el usuario y la contraseña para %1</translation>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="34"/>
         <source>Copy file path</source>
-        <translation type="unfinished"/>
+        <translation>Copiar ruta del archivo</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="35"/>
@@ -3917,7 +3917,7 @@ Ingrese el usuario y la contraseña para %1</translation>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="578"/>
         <source>Permanently delete</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Borrar permanentemente</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="605"/>
@@ -4066,7 +4066,7 @@ Ingrese el usuario y la contraseña para %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="47"/>
         <source>Erase failed</source>
-        <translation type="unfinished"/>
+        <translation>Error al borrar</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="48"/>
@@ -6869,7 +6869,7 @@ Ingrese el usuario y la contraseña para %1</translation>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="487"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="487"/>
