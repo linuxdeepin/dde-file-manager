@@ -6599,7 +6599,7 @@ Ingrese el usuario y la contraseña para %1</translation>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="140"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="289"/>
         <source>No history</source>
-        <translation type="unfinished"/>
+        <translation>Sin historial</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="308"/>
@@ -6659,17 +6659,17 @@ Ingrese el usuario y la contraseña para %1</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="97"/>
         <source>Invalid Directory</source>
-        <translation type="unfinished"/>
+        <translation>Directorio inválido</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="98"/>
         <source>This directory does not support pinning</source>
-        <translation type="unfinished"/>
+        <translation>El directorio no admite el anclaje.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="141"/>
         <source>Add Directory</source>
-        <translation type="unfinished"/>
+        <translation>Agregar directorio</translation>
     </message>
 </context>
 <context>
@@ -6835,22 +6835,22 @@ Ingrese el usuario y la contraseña para %1</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="225"/>
         <source>Close tab</source>
-        <translation type="unfinished"/>
+        <translation>Cerrar pestaña</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="226"/>
         <source>Close other tabs</source>
-        <translation type="unfinished"/>
+        <translation>Cerrar las demás pestañas.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="234"/>
         <source>Close tabs to the left</source>
-        <translation type="unfinished"/>
+        <translation>Cerrar las pestañas de la izquierda</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="242"/>
         <source>Close tabs to the right</source>
-        <translation type="unfinished"/>
+        <translation>Cerrar las pestañas de la derecha</translation>
     </message>
 </context>
 <context>
@@ -6858,7 +6858,7 @@ Ingrese el usuario y la contraseña para %1</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="485"/>
         <source>Directory not found</source>
-        <translation type="unfinished"/>
+        <translation>Directorio no encontrado</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="486"/>
