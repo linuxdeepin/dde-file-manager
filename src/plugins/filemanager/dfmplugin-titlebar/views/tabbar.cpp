@@ -775,21 +775,19 @@ QMimeData *TabBar::createMimeDataFromTab(int index, const QStyleOptionTab &optio
 
 QPixmap TabBar::createDragPixmapFromTab(int index, const QStyleOptionTab &option, QPoint *hotspot) const
 {
-    const qreal ratio = qApp->devicePixelRatio();
     auto winid = FMWindowsIns.findWindowId(this);
     auto window = FMWindowsIns.findWindowById(winid);
     if (!window)
         return DTabBar::createDragPixmapFromTab(index, option, hotspot);
 
-    int width = window->width() * ratio;
-    int height = window->height() * ratio;
+    int width = window->width();
+    int height = window->height();
     QImage screenshotImage(width, height, QImage::Format_ARGB32_Premultiplied);
-    screenshotImage.setDevicePixelRatio(ratio);
     window->render(&screenshotImage, QPoint(), QRegion(0, 0, width, height));
 
     // scaled image to smaller.
-    int scaledWidth = width * ratio / 5;
-    int scaledHeight = height * ratio / 5;
+    int scaledWidth = width / 5;
+    int scaledHeight = height / 5;
     auto scaledImage = screenshotImage.scaled(scaledWidth, scaledHeight, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 
     QImage backgroundImage(scaledWidth + 10, scaledHeight + 10, QImage::Format_ARGB32_Premultiplied);
@@ -806,7 +804,7 @@ QPixmap TabBar::createDragPixmapFromTab(int index, const QStyleOptionTab &option
     QPainterPath rectPath;
     QPainterPath roundedRectPath;
     rectPath.addRect(0, 0, scaledWidth + 10, scaledHeight + 10);
-    roundedRectPath.addRoundedRect(QRect(0, 0, scaledWidth / ratio + 10, scaledHeight / ratio + 10), 6, 6);
+    roundedRectPath.addRoundedRect(QRect(0, 0, scaledWidth + 10, scaledHeight + 10), 6, 6);
     rectPath -= roundedRectPath;
 
     painter.setCompositionMode(QPainter::CompositionMode_Source);
