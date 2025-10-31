@@ -81,13 +81,13 @@ QIcon FileItemData::fileIcon() const
     if (!info)
         return QIcon::fromTheme("empty");
 
-    const auto &vaule = info->extendAttributes(ExtInfoType::kFileThumbnail);
-    if (!vaule.isValid()) {
+    const auto &value = info->extendAttributes(ExtInfoType::kFileThumbnail);
+    if (!value.isValid()) {
         ThumbnailFactory::instance()->joinThumbnailJob(url, Global::kLarge);
         // make sure the thumbnail is generated only once
         info->setExtendedAttributes(ExtInfoType::kFileThumbnail, QIcon());
     } else {
-        const auto &thumbIcon = vaule.value<QIcon>();
+        const auto &thumbIcon = value.value<QIcon>();
         if (!thumbIcon.isNull())
             return thumbIcon;
     }

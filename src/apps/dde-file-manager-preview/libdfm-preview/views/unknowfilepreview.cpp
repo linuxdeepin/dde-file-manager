@@ -6,6 +6,7 @@
 
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/utils/elidetextlayout.h>
+#include <dfm-base/utils/thumbnail/thumbnailhelper.h>
 #include <dfm-base/base/schemefactory.h>
 
 #include <QVBoxLayout>
@@ -119,7 +120,21 @@ void UnknowFilePreview::setFileInfo(const FileInfoPointer &info)
         fileCalculationUtils->stop();
     }
 
-    const QIcon &icon = info->fileIcon();
+    QIcon icon;
+    ThumbnailHelper helper;
+    if (helper.checkThumbEnable(url)) {
+        icon = info->extendAttributes(ExtInfoType::kFileThumbnail).value<QIcon>();
+        if (icon.isNull()) {
+            const auto &img = helper.thumbnailImage(url, Global::kLarge);
+            icon = QPixmap::fromImage(img);
+            if (!icon.isNull())
+                info->setExtendedAttributes(ExtInfoType::kFileThumbnail, icon);
+            else
+                icon = info->fileIcon();
+        }
+    } else {
+        icon = info->fileIcon();
+    }
     iconLabel->setPixmap(icon.pixmap(180));
 
     QFont font = nameLabel->font();
