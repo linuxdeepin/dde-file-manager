@@ -6,6 +6,14 @@ find_dependency(dfm6-mount)
 find_dependency(dfm6-burn)
 find_dependency(Qt6 COMPONENTS Core Widgets Gui Concurrent DBus Sql Network)
 find_dependency(Dtk6 COMPONENTS Core Widget Gui)
+find_dependency(libappimage)
+
+# 添加 PkgConfig 依赖
+find_dependency(PkgConfig)
+pkg_check_modules(gio REQUIRED IMPORTED_TARGET gio-unix-2.0)
+pkg_check_modules(mount REQUIRED IMPORTED_TARGET mount)
+pkg_check_modules(LIBHEIF REQUIRED libheif)
+pkg_search_module(X11 REQUIRED IMPORTED_TARGET x11)
 
 set(@BIN_NAME@_INCLUDE_DIR @CMAKE_INSTALL_FULL_INCLUDEDIR@)
 set(@BIN_NAME@_LIBRARIES @BIN_NAME@)
