@@ -211,7 +211,7 @@ DLabel *KeyValueLabel::leftWidget()
     return leftValueLabel;
 }
 
-void KeyValueLabel::setLeftVauleLabelFixedWidth(int width)
+void KeyValueLabel::setLeftValueLabelFixedWidth(int width)
 {
     leftValueLabel->setFixedWidth(width);
 }

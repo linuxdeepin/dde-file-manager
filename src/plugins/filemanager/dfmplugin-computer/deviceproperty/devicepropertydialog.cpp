@@ -44,7 +44,7 @@ void DevicePropertyDialog::iniUI()
 
     basicInfo = new KeyValueLabel(this);
     basicInfo->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7, QFont::DemiBold);
-    basicInfo->setLeftVauleLabelFixedWidth(150);
+    basicInfo->setLeftValueLabelFixedWidth(150);
 
     devicesProgressBar = new DColoredProgressBar();
     devicesProgressBar->addThreshold(0, QColor(0xFF0080FF));

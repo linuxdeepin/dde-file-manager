@@ -94,7 +94,7 @@ public:
 
     RightValueWidget *rightWidget();
 
-    void setLeftVauleLabelFixedWidth(int width);
+    void setLeftValueLabelFixedWidth(int width);
 
 Q_SIGNALS:
     void valueAreaClicked();
