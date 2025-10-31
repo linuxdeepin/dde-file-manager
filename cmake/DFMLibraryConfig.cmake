@@ -56,7 +56,9 @@ function(dfm_configure_base_library target_name)
     endif()
     
     # Link libraries
-    target_link_libraries(${target_name} 
+    # PUBLIC: Dependencies exposed in public API (headers)
+    # PRIVATE: Internal implementation dependencies
+    target_link_libraries(${target_name}
         PUBLIC
             Qt${QT_VERSION_MAJOR}::Core
             Qt${QT_VERSION_MAJOR}::Widgets
@@ -74,9 +76,10 @@ function(dfm_configure_base_library target_name)
             PkgConfig::mount
             PkgConfig::gio
             PkgConfig::X11
+            ${DFM_EXTRA_LIBRARIES}
+        PRIVATE
             poppler-cpp
             ${LIBHEIF_LIBRARIES}
-            ${DFM_EXTRA_LIBRARIES}  
             libappimage
     )
     
@@ -153,6 +156,7 @@ endfunction()
 # Function to get library dependencies for testing
 function(dfm_get_library_test_dependencies lib_name result_var)
     if(lib_name STREQUAL "dfm-base")
+        # For testing, we need both public and private dependencies
         set(${result_var} "Qt6::Core;Qt6::Widgets;Qt6::Gui;Qt6::Concurrent;Qt6::DBus;Qt6::Sql;Qt6::Network;Dtk6::Core;Dtk6::Widget;Dtk6::Gui;dfm6-io;dfm6-mount;dfm6-burn;PkgConfig::mount;PkgConfig::gio;PkgConfig::X11;poppler-cpp;${LIBHEIF_LIBRARIES};libappimage" PARENT_SCOPE)
     elseif(lib_name STREQUAL "dfm-framework")
         set(${result_var} "Qt6::Core;Qt6::Concurrent;Dtk6::Core;${CMAKE_DL_LIBS}" PARENT_SCOPE)
