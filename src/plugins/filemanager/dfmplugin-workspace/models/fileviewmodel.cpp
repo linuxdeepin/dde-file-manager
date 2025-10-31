@@ -431,9 +431,9 @@ QVariant FileViewModel::data(const QModelIndex &index, int role) const
     }
 
     if (itemData->data(ItemRoles::kItemUrlRole).toUrl().scheme() == "group-header") {
-        QVariant groupHeaderVaule = filterSortWorker->groupHeaderData(index.row(), role);
-        if (groupHeaderVaule.isValid())
-            return groupHeaderVaule;
+        QVariant groupHeaderValue = filterSortWorker->groupHeaderData(index.row(), role);
+        if (groupHeaderValue.isValid())
+            return groupHeaderValue;
     }
 
     return itemData->data(columnRole);

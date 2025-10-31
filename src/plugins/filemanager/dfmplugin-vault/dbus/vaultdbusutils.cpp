@@ -24,11 +24,11 @@ VaultDBusUtils *VaultDBusUtils::instance()
     return &ins;
 }
 
-QVariant VaultDBusUtils::vaultManagerDBusCall(QString function, const QVariant &vaule)
+QVariant VaultDBusUtils::vaultManagerDBusCall(QString function, const QVariant &value)
 {
-    fmDebug() << "Vault: Calling vault manager DBus method:" << function << "with value:" << vaule;
+    fmDebug() << "Vault: Calling vault manager DBus method:" << function << "with value:" << value;
 
-    QVariant value;
+    QVariant result;
     QDBusInterface sessionManagerIface(kFileManagerDBusDaemonName,
                                        kFileManagerVaultDBusPath,
                                        kFileManagerVaultDBusInterfaces,
@@ -37,21 +37,21 @@ QVariant VaultDBusUtils::vaultManagerDBusCall(QString function, const QVariant &
     if (sessionManagerIface.isValid()) {
         fmDebug() << "Vault: DBus interface is valid, proceeding with call";
 
-        if (vaule.isNull()) {
+        if (value.isNull()) {
             QDBusPendingCall call = sessionManagerIface.asyncCall(function);
             call.waitForFinished();
             if (!call.isError()) {
                 QDBusReply<quint64> reply = call.reply();
-                value = QVariant::fromValue(reply.value());
-                fmDebug() << "Vault: DBus call successful, returned value:" << value;
+                result = QVariant::fromValue(reply.value());
+                fmDebug() << "Vault: DBus call successful, returned value:" << result;
             } else {
                 fmWarning() << "Vault: DBus call failed for method" << function << "error:" << call.error().message();
             }
         } else {
-            QDBusPendingCall call = sessionManagerIface.asyncCall(function, vaule);
+            QDBusPendingCall call = sessionManagerIface.asyncCall(function, value);
             call.waitForFinished();
             if (call.isError()) {
-                value = call.error().message();
+                result = call.error().message();
                 fmWarning() << "Vault: DBus call failed for method" << function << "error:" << call.error().message();
             } else {
                 fmDebug() << "Vault: DBus call successful for method" << function;
@@ -61,7 +61,7 @@ QVariant VaultDBusUtils::vaultManagerDBusCall(QString function, const QVariant &
         fmWarning() << "Vault: DBus interface is not valid for vault manager";
     }
 
-    return value;
+    return result;
 }
 
 void VaultDBusUtils::lockEventTriggered(QObject *obj, const char *cslot)

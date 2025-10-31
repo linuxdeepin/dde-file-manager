@@ -18,7 +18,7 @@ class VaultDBusUtils : public QObject
 public:
     static VaultDBusUtils *instance();
 
-    static QVariant vaultManagerDBusCall(QString function, const QVariant &vaule = {});
+    static QVariant vaultManagerDBusCall(QString function, const QVariant &value = {});
 
     static void lockEventTriggered(QObject *obj, const char *cslot = nullptr);
 
