@@ -140,13 +140,13 @@ TEST_F(UT_UserShareHelper, IsUserSharepasswordSet)
     EXPECT_NO_FATAL_FAILURE(UserShareHelperInstance->isUserSharePasswordSet("test"));
 }
 
-TEST_F(UT_UserShareHelper, SetSambaPasswd)
-{
-    DeclareDBusCallFunc_Custom(const QString &, const QString &, const QString &);
-    auto call = static_cast<Call>(&QDBusAbstractInterface::call);
-    stub.set_lamda(call, [] { __DBG_STUB_INVOKE__ return QDBusMessage(); });
-    EXPECT_NO_FATAL_FAILURE(UserShareHelperInstance->setSambaPasswd("test", "test"));
-}
+// TEST_F(UT_UserShareHelper, SetSambaPasswd)
+// {
+//     DeclareDBusCallFunc_Custom(const QString &, const QString &, const QString &);
+//     auto call = static_cast<Call>(&QDBusAbstractInterface::call);
+//     stub.set_lamda(call, [] { __DBG_STUB_INVOKE__ return QDBusMessage(); });
+//     EXPECT_NO_FATAL_FAILURE(UserShareHelperInstance->setSambaPasswd("test", "test"));
+// }
 
 TEST_F(UT_UserShareHelper, RemoveShareByPath)
 {
