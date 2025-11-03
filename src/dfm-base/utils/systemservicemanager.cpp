@@ -131,16 +131,6 @@ bool SystemServiceManager::enableServiceNow(const QString &serviceName)
 
     if (success) {
         qCInfo(logDFMBase) << "SystemServiceManager: Successfully enabled service" << serviceName;
-        // 启用服务后，systemd 会自动重载，但显式调用 Reload 以确保状态同步
-        // 这一步也可以省略，因为 --now 已经启动了服务，enable 也已持久化
-        QDBusInterface managerIface(
-                kSystemdService,
-                kSystemdManagerPath,
-                kSystemdManagerInterface,
-                QDBusConnection::systemBus());
-        if (managerIface.isValid()) {
-            managerIface.call("Reload");
-        }
     } else {
         // pkexec 的退出码有特殊含义：
         // 127: 命令未找到
