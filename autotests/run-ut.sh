@@ -315,6 +315,7 @@ fi
 echo ""
 echo "📋 Generated reports:"
 echo "  Test report: file://$REPORT_DIR/test_report.html"
+echo "  Coverage CSV: file://$REPORT_DIR/coverage_report.csv"
 if [ "$COVERAGE_SUCCESS" = true ]; then
     echo "  Coverage report: file://$BUILD_DIR/coverage/html/index.html"
 fi
