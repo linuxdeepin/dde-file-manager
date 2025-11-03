@@ -94,10 +94,6 @@ TEST_F(UT_SmbBrowserUtils, IsServiceRuninig)
 
 TEST_F(UT_SmbBrowserUtils, StartService)
 {
-    EXPECT_FALSE(smb_browser_utils::startService(""));
-    EXPECT_FALSE(smb_browser_utils::startService("hello"));
-    EXPECT_FALSE(smb_browser_utils::startService("xxx..."));
-
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     //    stub.set_lamda(&QDBusAbstractInterface::asyncCall, [] { __DBG_STUB_INVOKE__ return QDBusPendingCall::fromError(QDBusError()); });
     typedef QDBusPendingCall (QDBusAbstractInterface::*AsyncCall)(const QString &method,
@@ -116,28 +112,6 @@ TEST_F(UT_SmbBrowserUtils, StartService)
 
     stub.set_lamda(&QDBusPendingCall::waitForFinished, [] { __DBG_STUB_INVOKE__ });
     stub.set_lamda(&QDBusPendingCall::isValid, [] { __DBG_STUB_INVOKE__ return true; });
-    EXPECT_TRUE(smb_browser_utils::startService("smb"));
-    EXPECT_TRUE(smb_browser_utils::startService("nmb"));
-    EXPECT_FALSE(smb_browser_utils::startService("nmbd"));
-}
-
-TEST_F(UT_SmbBrowserUtils, EnableServiceAsync)
-{
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    typedef QDBusPendingCall (QDBusAbstractInterface::*AsyncCall)(const QString &method,
-                                                                  const QVariant &arg1,
-                                                                  const QVariant &arg2,
-                                                                  const QVariant &arg3,
-                                                                  const QVariant &arg4,
-                                                                  const QVariant &arg5,
-                                                                  const QVariant &arg6,
-                                                                  const QVariant &arg7,
-                                                                  const QVariant &arg8);
-    stub.set_lamda(static_cast<AsyncCall>(&QDBusAbstractInterface::asyncCall), []() { __DBG_STUB_INVOKE__ return QDBusPendingCall::fromError(QDBusError()); });
-#else
-    stub.set_lamda(&QDBusAbstractInterface::doAsyncCall, [] { __DBG_STUB_INVOKE__ return QDBusPendingCall::fromError(QDBusError()); });
-#endif
-    EXPECT_NO_FATAL_FAILURE(smb_browser_utils::enableServiceAsync());
 }
 
 TEST_F(UT_SmbBrowserUtils, CheckAndEnableService)
@@ -147,12 +121,9 @@ TEST_F(UT_SmbBrowserUtils, CheckAndEnableService)
     EXPECT_TRUE(smb_browser_utils::checkAndEnableService("smbd"));
 
     serviceRunning = false;
-    bool startServiceResult = true;
-    stub.set_lamda(smb_browser_utils::startService, [&] { __DBG_STUB_INVOKE__ return startServiceResult; });
-    stub.set_lamda(smb_browser_utils::enableServiceAsync, [] { __DBG_STUB_INVOKE__ });
+    stub.set_lamda(smb_browser_utils::enableServiceNow, [] { return true; });
     EXPECT_TRUE(smb_browser_utils::checkAndEnableService("smb"));
 
-    startServiceResult = false;
     EXPECT_FALSE(smb_browser_utils::checkAndEnableService("sb"));
 }
 

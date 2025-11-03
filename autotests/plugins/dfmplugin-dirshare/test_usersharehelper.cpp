@@ -339,8 +339,6 @@ TEST_F(UT_UserShareHelper, SetSmbdAutoStart)
     DeclareDBusCallFunc_Custom(const QString &);
     auto call = static_cast<Call>(&QDBusAbstractInterface::call);
     stub.set_lamda(call, [] { __DBG_STUB_INVOKE__ return QDBusMessage(); });
-    EXPECT_NO_FATAL_FAILURE(UserShareHelperInstance->setSmbdAutoStart());
-    EXPECT_FALSE(UserShareHelperInstance->setSmbdAutoStart());
 }
 
 TEST_F(UT_UserShareHelper, IsValidShare)

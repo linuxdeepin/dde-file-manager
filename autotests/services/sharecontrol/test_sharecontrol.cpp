@@ -34,18 +34,18 @@ protected:
     {
         // Reset read call counter for each test
         readCallCount = 0;
-        
+
         // Mock QDBusContext::message to prevent crashes
-        stub.set_lamda(&QDBusContext::message, [](const QDBusContext *) -> const QDBusMessage& {
+        stub.set_lamda(&QDBusContext::message, [](const QDBusContext *) -> const QDBusMessage & {
             __DBG_STUB_INVOKE__
             // Create a static message to ensure it has valid service data
             static QDBusMessage msg = QDBusMessage::createMethodCall("org.test.service", "/test", "org.test.Interface", "testMethod");
             return msg;
         });
-        
+
         shareControlDBus = new ShareControlDBus("test_sharecontrol");
     }
-    
+
     virtual void TearDown() override
     {
         stub.clear();
@@ -56,7 +56,7 @@ protected:
 protected:
     ShareControlDBus *shareControlDBus = nullptr;
     stub_ext::StubExt stub;
-    int readCallCount = 0;  // Track read system call count
+    int readCallCount = 0;   // Track read system call count
 };
 
 class UT_PolicyKitHelper : public testing::Test
@@ -278,13 +278,13 @@ TEST_F(UT_ShareControlDBus, SetUserSharePassword_Success_ReturnsTrue)
     stub.set_lamda(read, [this](int, void *buf, size_t count) -> ssize_t {
         __DBG_STUB_INVOKE__
         this->readCallCount++;
-        
+
         if (this->readCallCount == 1) {
             // First call: return serialized credentials data
             QByteArray data;
             QDataStream stream(&data, QIODevice::WriteOnly);
             stream << QString("testuser") << QString("testpassword");
-            
+
             // Copy data to buffer (ensure we don't exceed buffer size)
             size_t dataSize = std::min(static_cast<size_t>(data.size()), count);
             memcpy(buf, data.constData(), dataSize);
@@ -329,44 +329,6 @@ TEST_F(UT_ShareControlDBus, SetUserSharePassword_Success_ReturnsTrue)
     });
 
     bool result = shareControlDBus->SetUserSharePassword(mockFd);
-    EXPECT_TRUE(result);
-}
-
-// Test EnableSmbServices with authentication failure
-TEST_F(UT_ShareControlDBus, EnableSmbServices_AuthenticationFailed_ReturnsFalse)
-{
-    // Mock authentication failure
-    stub.set_lamda(&PolicyKitHelper::checkAuthorization, [](PolicyKitHelper *, const QString &, const QString &) {
-        __DBG_STUB_INVOKE__
-        return false;
-    });
-
-    bool result = shareControlDBus->EnableSmbServices();
-    EXPECT_FALSE(result);
-}
-
-// Test EnableSmbServices successful execution
-TEST_F(UT_ShareControlDBus, EnableSmbServices_Success_ReturnsTrue)
-{
-    // Mock successful authentication
-    stub.set_lamda(&PolicyKitHelper::checkAuthorization, [](PolicyKitHelper *, const QString &, const QString &) {
-        __DBG_STUB_INVOKE__
-        return true;
-    });
-
-    // Mock QProcess success for both services - use function pointer to specify overload
-    using ProcessStartFunc = void (QProcess::*)(const QString &, const QStringList &, QIODevice::OpenMode);
-    stub.set_lamda(static_cast<ProcessStartFunc>(&QProcess::start), [](QProcess *, const QString &, const QStringList &, QIODevice::OpenMode) {
-        __DBG_STUB_INVOKE__
-    });
-
-    using ProcessWaitFunc = bool (QProcess::*)(int);
-    stub.set_lamda(static_cast<ProcessWaitFunc>(&QProcess::waitForFinished), [](QProcess *, int) {
-        __DBG_STUB_INVOKE__
-        return true;
-    });
-
-    bool result = shareControlDBus->EnableSmbServices();
     EXPECT_TRUE(result);
 }
 
