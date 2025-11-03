@@ -11,6 +11,11 @@
 
 #include <dfm-base/interfaces/abstractmenuscene.h>
 #include <dfm-base/dfm_menu_defines.h>
+#include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/file/local/syncfileinfo.h>
+#include <dfm-base/file/local/asyncfileinfo.h>
+#include <dfm-base/base/schemefactory.h>
+
 #include <dfm-framework/dpf.h>
 
 #include <QMenu>
@@ -27,6 +32,11 @@ class UT_DirShareMenuScene : public testing::Test
 protected:
     virtual void SetUp() override
     {
+        UrlRoute::regScheme(Global::Scheme::kFile, "/");
+        UrlRoute::regScheme(Global::Scheme::kAsyncFile, "/");
+        InfoFactory::regClass<SyncFileInfo>(Global::Scheme::kFile);
+        InfoFactory::regClass<AsyncFileInfo>(Global::Scheme::kAsyncFile);
+
         scene = qobject_cast<DirShareMenuScene *>(DirShareMenuCreator().create());
     }
     virtual void TearDown() override
