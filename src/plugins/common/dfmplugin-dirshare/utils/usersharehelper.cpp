@@ -644,19 +644,8 @@ QPair<bool, QString> UserShareHelper::startSmbService()
     }
 
     bool nmbdOk = SystemServiceManager::instance().enableServiceNow("nmbd.service");
-    if (!smbdOk || !nmbdOk) {
-        if (!smbdOk) {
-            errMsg = "Failed to start and enable smbd.service";
-            fmWarning() << errMsg;
-        }
-        if (!nmbdOk) {
-            QString nmbdErr = "Failed to start and enable nmbd.service";
-            fmWarning() << nmbdErr;
-            if (!errMsg.isEmpty())
-                errMsg += "; " + nmbdErr;
-            else
-                errMsg = nmbdErr;
-        }
+    if (!nmbdOk) {
+        errMsg = "Failed to start and enable nmbd.service";
         return { false, errMsg };
     }
 
