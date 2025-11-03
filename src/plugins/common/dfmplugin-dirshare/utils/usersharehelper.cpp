@@ -181,7 +181,15 @@ void UserShareHelper::setSambaPasswd(const QString &userName, const QString &pas
     }
 
     // Call D-Bus interface with pipe file descriptor
-    QDBusReply<bool> reply = userShareInter->call(DaemonServiceIFace::kFuncSetPasswd, QVariant::fromValue(fd));
+    QDBusInterface *interface = getUserShareInterface();
+    if (!interface || !interface->isValid()) {
+        fmWarning() << "UserShare D-Bus interface is not available";
+        close(pipefd[0]);
+        Q_EMIT sambaPasswordSet(false);
+        return;
+    }
+
+    QDBusReply<bool> reply = interface->call(DaemonServiceIFace::kFuncSetPasswd, QVariant::fromValue(fd));
     bool success = reply.isValid() && reply.value();
     fmInfo() << "Samba password set result:" << success
              << ", error msg:" << (reply.isValid() ? "none" : reply.error().message());
@@ -369,7 +377,13 @@ bool UserShareHelper::needDisableShareWidget(FileInfoPointer info)
 
 bool UserShareHelper::isUserSharePasswordSet(const QString &username)
 {
-    QDBusReply<bool> reply = userShareInter->call(DaemonServiceIFace::kFuncIsPasswordSet, username);
+    QDBusInterface *interface = getUserShareInterface();
+    if (!interface || !interface->isValid()) {
+        fmWarning() << "UserShare D-Bus interface is not available when checking password";
+        return false;
+    }
+
+    QDBusReply<bool> reply = interface->call(DaemonServiceIFace::kFuncIsPasswordSet, username);
     bool result = reply.isValid() ? reply.value() : false;
     fmDebug() << "isSharePasswordSet result: " << result << ", error: " << reply.error();
 
@@ -501,7 +515,13 @@ void UserShareHelper::initMonitorPath()
 
 bool UserShareHelper::removeShareByShareName(const QString &name, bool silent)
 {
-    QDBusReply<bool> reply = userShareInter->asyncCall(DaemonServiceIFace::kFuncCloseShare, name, !silent);
+    QDBusInterface *interface = getUserShareInterface();
+    if (!interface || !interface->isValid()) {
+        fmWarning() << "UserShare D-Bus interface is not available when removing share:" << name;
+        return false;
+    }
+
+    QDBusReply<bool> reply = interface->asyncCall(DaemonServiceIFace::kFuncCloseShare, name, !silent);
     if (reply.isValid() && reply.value()) {
         fmDebug() << "share closed: " << name;
         runNetCmd(QStringList() << "usershare"
@@ -650,7 +670,13 @@ QPair<bool, QString> UserShareHelper::startSmbService()
 
 bool UserShareHelper::setSmbdAutoStart()
 {
-    QDBusReply<bool> reply = userShareInter->call(DaemonServiceIFace::kFuncEnableSmbServices);
+    QDBusInterface *interface = getUserShareInterface();
+    if (!interface || !interface->isValid()) {
+        fmWarning() << "UserShare D-Bus interface is not available when setting auto start";
+        return false;
+    }
+
+    QDBusReply<bool> reply = interface->call(DaemonServiceIFace::kFuncEnableSmbServices);
     return reply.value();
 }
 
@@ -686,8 +712,7 @@ void UserShareHelper::emitShareRemoveFailed(const QString &path)
 UserShareHelper::UserShareHelper(QObject *parent)
     : QObject(parent)
 {
-    userShareInter.reset(new QDBusInterface(DaemonServiceIFace::kInterfaceService, DaemonServiceIFace::kInterfacePath, DaemonServiceIFace::kInterfaceInterface, QDBusConnection::systemBus(), this));
-
+    // D-Bus interface will be lazily initialized on first use to avoid unnecessary service activation
     watcherManager = new ShareWatcherManager(this);
     watcherManager->add(ShareConfig::kShareConfigPath);
 
@@ -695,5 +720,23 @@ UserShareHelper::UserShareHelper(QObject *parent)
     readShareInfos();
 
     initMonitorPath();
+}
+
+QDBusInterface *UserShareHelper::getUserShareInterface()
+{
+    if (!userShareInter) {
+        fmInfo() << "Initializing UserShare D-Bus interface on first use";
+        userShareInter.reset(new QDBusInterface(
+                DaemonServiceIFace::kInterfaceService,
+                DaemonServiceIFace::kInterfacePath,
+                DaemonServiceIFace::kInterfaceInterface,
+                QDBusConnection::systemBus(),
+                this));
+
+        if (!userShareInter->isValid()) {
+            fmWarning() << "Failed to create UserShare D-Bus interface:" << userShareInter->lastError().message();
+        }
+    }
+    return userShareInter.data();
 }
 }

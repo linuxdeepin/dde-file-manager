@@ -92,6 +92,9 @@ private:
     void emitShareRemoved(const QString &path);
     void emitShareRemoveFailed(const QString &path);
 
+    // Lazy initialization for D-Bus interface to avoid unnecessary service activation
+    QDBusInterface *getUserShareInterface();
+
 private:
     QTimer *pollingSharesTimer;
     QSharedPointer<QDBusInterface> userShareInter { nullptr };
