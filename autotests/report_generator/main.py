@@ -20,6 +20,7 @@ from typing import Dict
 from .parsers.test_parser import TestOutputParser
 from .parsers.coverage_parser import CoverageParser
 from .generators.html_generator import HtmlReportGenerator
+from .generators.csv_generator import CsvReportGenerator
 
 
 class TestReportGenerator:
@@ -35,6 +36,7 @@ class TestReportGenerator:
         self.test_parser = TestOutputParser(self.report_dir)
         self.coverage_parser = CoverageParser(self.build_dir, self.report_dir, self.project_root)
         self.html_generator = HtmlReportGenerator(self.build_dir, self.project_root)
+        self.csv_generator = CsvReportGenerator(self.report_dir)
     
     def parse_test_output(self, test_passed: bool, test_duration: int) -> Dict:
         """Parse test output using TestOutputParser"""
@@ -115,7 +117,11 @@ class TestReportGenerator:
             json_file = self.report_dir / "test_data.json"
             with open(json_file, 'w', encoding='utf-8') as f:
                 json.dump(json_data, f, indent=2, ensure_ascii=False)
-            
+
+            # Generate CSV coverage report
+            print("📊 Generating CSV coverage report...")
+            self.csv_generator.generate_coverage_csv(coverage_info)
+
             print(f"✅ Report generated successfully: {report_file}")
             return True
             

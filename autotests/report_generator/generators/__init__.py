@@ -10,5 +10,6 @@ Generators package for test report generation
 """
 
 from .html_generator import HtmlReportGenerator
+from .csv_generator import CsvReportGenerator
 
-__all__ = ['HtmlReportGenerator'] 
+__all__ = ['HtmlReportGenerator', 'CsvReportGenerator'] 
