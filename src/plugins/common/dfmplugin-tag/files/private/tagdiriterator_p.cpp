@@ -43,7 +43,7 @@ void TagDirIteratorPrivate::loadTagsUrls(const QUrl &url)
         for (const QString &path : pathList) {
             QUrl tagUrl = QUrl::fromLocalFile(path);
             const FileInfoPointer &info = InfoFactory::create<FileInfo>(tagUrl);
-            if (!info->exists())
+            if (!info || !info->exists())
                 continue;
 
             tagNodes.insert(tagUrl, info);
