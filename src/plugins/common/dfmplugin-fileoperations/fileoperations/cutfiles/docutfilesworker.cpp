@@ -227,11 +227,13 @@ void DoCutFilesWorker::endWork()
     // delete all cut source files
     if (localFileHandler) {
         for (const auto &info : cutAndDeleteFiles) {
-            bool ret = localFileHandler->deleteFile(info->uri());
+            const auto &uri = info->uri();
+            bool ret = localFileHandler->deleteFile(uri);
             if (!ret) {
-                fmWarning() << "Failed to delete source file after cut - file:" << info->uri() << "error:" << localFileHandler->errorString();
+                fmWarning() << "Failed to delete source file after cut - file:" << uri << "error:" << localFileHandler->errorString();
                 continue;
             }
+            FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType::kFileDeleted, uri);
         }
     }
 
