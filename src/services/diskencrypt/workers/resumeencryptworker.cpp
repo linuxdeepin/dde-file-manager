@@ -72,10 +72,6 @@ void ResumeEncryptWorker::run()
     m_args.insert(disk_encrypt::encrypt_param_keys::kKeyDevice, m_jobArgs.devPath);
     m_args.insert(disk_encrypt::encrypt_param_keys::kKeyDeviceName, m_jobArgs.devName);
 
-    if (m_jobArgs.devType == disk_encrypt::job_type::TypeFstab) {
-        abrecovery_helper::disableRecovery();
-    }
-
     if (!waitForAuthInfo()) {
         setExitCode(-disk_encrypt::kIgnoreRequest);
         return;
