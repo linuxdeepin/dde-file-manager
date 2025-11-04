@@ -131,6 +131,12 @@ bool DiskEncryptMenuScene::initialize(const QVariantHash &params)
         return false;
     }
 
+    auto mpts = selectedItemInfo.value("MountPoints").toStringList();
+    if (mpts.contains("/") && QStorageInfo("/").device() == QStorageInfo("/boot").device()) {
+        fmInfo() << "No separated Boot device, / cannot be encrypted.";
+        return false;
+    }
+
     param.jobType = job_type::TypeNormal;
     if (isOverlay) {
         param.jobType = job_type::TypeOverlay;
@@ -227,6 +233,12 @@ bool DiskEncryptMenuScene::triggered(QAction *action)
             // 在新的方案中，即便是需要重启的加密方案，在卷头初始化完成后，都会堆叠一层 dm 设备
             // 以便可以进行非重启的取消加密动作。复用 overlay 的方案。
             decryptDevice(param);
+        } else {
+            // 原 fstab 类型设备的取消加密动作，现应该走 overlay 的取消加密流程
+            qWarning() << "something might be wrong, unsupported job type for decryption:"
+                       << param.jobType
+                       << param.devDesc;
+            return false;
         }
     } else if (actID == kActIDChangePwd) {
         fmInfo() << "Change passphrase action triggered for device:" << param.devDesc;

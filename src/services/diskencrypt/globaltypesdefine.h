@@ -50,11 +50,11 @@ inline constexpr char kKeyValidateWithRecKey[] { "validate-with-reckey" };
 }   // namespace encrypt_param_keys
 
 inline const QStringList kDisabledEncryptPath {
-    "/",
+    // "/",
     "/boot",
     "/boot/efi",
     "/recovery",
-    "/sysroot"
+    // "/sysroot"
 };
 
 enum EncryptOperationStatus {
