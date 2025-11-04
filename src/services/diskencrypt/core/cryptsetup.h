@@ -30,6 +30,7 @@ int csDecryptMoveHead(const QString &dev, const QString &passphrase,
                       const QString &displayName);
 int csAddPassphrase(const QString &dev, const QString &validPwd, const QString &newPwd);
 int csChangePassphrase(const QString &dev, const QString &oldPwd, const QString &newPwd);
+int csRemoveKeyslot(const QString &dev, int keyslot);
 int csActivateDevice(const QString &dev, const QString &activateName, const QString &passphrase = QString());
 int csActivateDeviceByVolume(const QString &dev, const QString &activateName, const QByteArray &volume);
 int csSetLabel(const QString &dev, const QString &label);
@@ -46,6 +47,7 @@ int headerStatus(const QString &fileHeader);
 int encryptStatus(const QString &dev);
 int setToken(const QString &dev, const QString &token);
 int getToken(const QString &dev, QString *token);
+int getRecoveryKeySlots(const QString &dev, QList<int> *keySlots);
 int onEncrypting(uint64_t size, uint64_t offset, void *usrptr);
 int onDecrypting(uint64_t size, uint64_t offset, void *usrptr);
 

@@ -13,6 +13,7 @@
 #include <dfm-base/utils/finallyutil.h>
 
 #include <QFile>
+#include <QList>
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
@@ -705,6 +706,36 @@ int crypt_setup::csChangePassphrase(const QString &dev, const QString &oldPwd, c
     return r;   // the key slot number.
 }
 
+int crypt_setup::csRemoveKeyslot(const QString &dev, int keyslot)
+{
+    struct crypt_device *cdev { nullptr };
+    dfmbase::FinallyUtil atFinish([&] {if (cdev) crypt_free(cdev); });
+    int r = crypt_init_data_device(&cdev,
+                                   dev.toStdString().c_str(),
+                                   nullptr);
+    if (r < 0) {
+        qWarning() << "cannot init crypt device!" << dev << r;
+        return -disk_encrypt::kErrorInitCrypt;
+    }
+
+    r = crypt_load(cdev,
+                   CRYPT_LUKS,
+                   nullptr);
+    if (r < 0) {
+        qWarning() << "cannot load crypt device!" << dev << r;
+        return -disk_encrypt::kErrorLoadCrypt;
+    }
+
+    r = crypt_keyslot_destroy(cdev, keyslot);
+    if (r < 0) {
+        qWarning() << "remove keyslot failed!" << dev << keyslot << r;
+        return r;
+    }
+
+    qInfo() << "keyslot removed successfully:" << dev << keyslot;
+    return disk_encrypt::kSuccess;
+}
+
 int crypt_setup_helper::setToken(const QString &dev, const QString &token)
 {
     if (token.isEmpty())
@@ -777,6 +808,64 @@ int crypt_setup_helper::getToken(const QString &dev, QString *token)
     }
 
     qInfo() << "token not found." << dev;
+    return disk_encrypt::kSuccess;
+}
+
+int crypt_setup_helper::getRecoveryKeySlots(const QString &dev, QList<int> *keySlots)
+{
+    if (!keySlots) {
+        qWarning() << "keySlots parameter is null";
+        return -disk_encrypt::kErrorUnknown;
+    }
+
+    keySlots->clear();
+
+    struct crypt_device *cdev { nullptr };
+    dfmbase::FinallyUtil atFinish([&] {if (cdev) crypt_free(cdev); });
+
+    int r = crypt_init(&cdev,
+                       dev.toStdString().c_str());
+    if (r < 0) {
+        qWarning() << "cannot init crypt device!" << dev << r;
+        return -disk_encrypt::kErrorInitCrypt;
+    }
+
+    r = crypt_load(cdev,
+                   CRYPT_LUKS,
+                   nullptr);
+    if (r < 0) {
+        qWarning() << "cannot load crypt device!" << dev << r;
+        return -disk_encrypt::kErrorLoadCrypt;
+    }
+
+    // 遍历所有 token，找到 usec-recoverykey 类型的
+    for (int i = 0; i < 32 /* LUKS2_TOKENS_MAX */; ++i) {
+        const char *tokenStr { nullptr };
+        if ((r = crypt_token_json_get(cdev, i, &tokenStr)) < 0)
+            continue;
+
+        QString json(tokenStr);
+        if (json.contains("usec-recoverykey")) {
+            // 解析 token 中的 keyslots 字段
+            QJsonDocument doc = QJsonDocument::fromJson(tokenStr);
+            QJsonObject obj = doc.object();
+            QJsonArray keyslots = obj.value("keyslots").toArray();
+
+            for (const auto &slot : keyslots) {
+                bool ok = false;
+                int slotNum = slot.toString().toInt(&ok);
+                if (ok) {
+                    keySlots->append(slotNum);
+                    qInfo() << "found recovery key in slot:" << slotNum;
+                }
+            }
+        }
+    }
+
+    if (keySlots->isEmpty()) {
+        qInfo() << "no recovery key slots found." << dev;
+    }
+
     return disk_encrypt::kSuccess;
 }
 
