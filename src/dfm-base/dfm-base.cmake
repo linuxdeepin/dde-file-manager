@@ -86,10 +86,6 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${BIN_NAME}.pc DESTINATION ${CMAKE_INS
 configure_file(${PROJECT_SOURCE_DIR}/assets/dev/${BIN_NAME}/${BIN_NAME}Config.cmake.in ${BIN_NAME}Config.cmake @ONLY)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${BIN_NAME}Config.cmake DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${BIN_NAME})
 
-FILE(GLOB SCHEMA_FILES ${AssetsPath}/gschema/*)
-install(FILES ${SCHEMA_FILES} DESTINATION share/glib-2.0/schemas)
-install(CODE "execute_process(COMMAND glib-compile-schemas ${CMAKE_INSTALL_PREFIX}/share/glib-2.0/schemas)")
-
 set(DLNFS_SCRIPT ${AssetsPath}/scripts/dfm-dlnfs-automount)
 install(FILES ${DLNFS_SCRIPT} DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/deepin/dde-file-manager)
 
