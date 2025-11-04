@@ -494,16 +494,6 @@ int dialog_utils::showConfirmEncryptionDialog(const QString &device, bool needRe
     hint1->setWordWrap(true);
     lay->addWidget(hint1);
 
-    QLabel *hint2 = new QLabel(QObject::tr("* After encrypting the partition, "
-                                           "the system cannot be rolled back to a lower version, "
-                                           "please confirm the encryption"),
-                               wid);
-    hint2->setAlignment(Qt::AlignLeft);
-    hint2->setWordWrap(true);
-    QPalette pal = hint2->palette();
-    pal.setColor(QPalette::WindowText, QColor("red"));
-    hint2->setPalette(pal);
-    lay->addWidget(hint2);
     dlg.addContent(wid);
     dlg.addButton(QObject::tr("Cancel"));
     needReboot ? dlg.addButton(QObject::tr("Confirm and Reboot"), true, Dtk::Widget::DDialog::ButtonRecommend)
