@@ -918,6 +918,8 @@ void FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType type,
             return true;
         if (ProtocolUtils::isNFSFile(url))
             return true;
+        if (ProtocolUtils::isDavFile(url) || ProtocolUtils::isDavsFile(url))
+            return true;
 
         return false;
     };
