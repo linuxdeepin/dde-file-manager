@@ -7,7 +7,7 @@
     "idleTime": 1,
     "policy": [
         {
-            "path": "org/deepin/Filemanager/UserShareManager"
+            "path": "/org/deepin/Filemanager/UserShareManager"
         }
     ]
 }
