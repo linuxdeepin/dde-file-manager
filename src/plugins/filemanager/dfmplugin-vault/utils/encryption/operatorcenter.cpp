@@ -268,6 +268,7 @@ bool OperatorCenter::verificationRetrievePassword(const QString keypath, QString
         return false;
     }
 
+    password = temp;
     return true;
 }
 
