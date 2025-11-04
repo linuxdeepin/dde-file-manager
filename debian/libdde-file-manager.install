@@ -6,7 +6,6 @@ usr/lib/*/dde-file-manager/tools/*
 usr/share/dde-file-manager/templates/*
 usr/share/dde-file-manager/mimetypes/*.mimetype
 usr/share/dde-file-manager/mimetypeassociations/*.json
-usr/share/glib-2.0/schemas/*.filemanager.gschema.xml
 usr/share/deepin/dde-file-manager/oem-menuextensions/.readme
 usr/share/applications/context-menus/.readme
 usr/share/dde-file-manager/extensions/appEntry/.readme
