@@ -20,6 +20,7 @@
 #include <QApplication>
 #include <QPointer>
 #include <QPainterPath>
+#include <QResizeEvent>
 
 DWIDGET_USE_NAMESPACE
 using namespace dfmbase;
@@ -332,7 +333,6 @@ void TaskWidget::onShowTaskInfo(const JobInfoPointer JobInfo)
     QString target = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kTargetMsgKey).toString();
     lbSrcPath->setText(source);
     lbDstPath->setText(target);
-    auto oldheight = height();
     if (lbErrorMsg->isVisible()) {
         lbErrorMsg->setText("");
         lbErrorMsg->hide();
@@ -343,10 +343,7 @@ void TaskWidget::onShowTaskInfo(const JobInfoPointer JobInfo)
         widButton->hide();
 
     adjustSize();
-    auto newhight = height();
-
-    if (oldheight != newhight)
-        emit heightChanged(newhight);
+    // heightChanged 信号会在 resizeEvent 中自动发送
 }
 /*!
  * \brief TaskWidget::showTaskProccess 显示当前任务进度
@@ -765,9 +762,8 @@ void TaskWidget::showConflictButtons(bool showBtns, bool showConflict)
     }
 
     adjustSize();
-    QTimer::singleShot(0, this, [this] {
-        emit heightChanged(this->height());
-    });
+    // 移除了不可靠的 QTimer::singleShot
+    // heightChanged 信号会在 resizeEvent 中自动发送，更加可靠
 }
 
 void TaskWidget::onMouseHover(const bool hover)
@@ -910,6 +906,15 @@ void TaskWidget::leaveEvent(QEvent *event)
     onMouseHover(false);
 
     return QWidget::leaveEvent(event);
+}
+
+void TaskWidget::resizeEvent(QResizeEvent *event)
+{
+    QWidget::resizeEvent(event);
+
+    // 当widget真正resize时，发送高度变化信号
+    // 这比使用定时器更可靠，因为它在实际几何变化后触发
+    emit heightChanged(event->size().height());
 }
 
 void TaskWidget::paintEvent(QPaintEvent *event)
