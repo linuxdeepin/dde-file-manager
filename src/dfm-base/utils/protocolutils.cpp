@@ -9,11 +9,10 @@ DFMBASE_BEGIN_NAMESPACE
 
 namespace ProtocolUtils {
 
-static bool hasMatch(const QString &txt, const QString &rex)
+// Helper function: match with cached compiled regex
+static bool hasMatch(const QString &txt, const QRegularExpression &re)
 {
-    QRegularExpression re(rex);
-    QRegularExpressionMatch match = re.match(txt);
-    return match.hasMatch();
+    return re.match(txt).hasMatch();
 }
 
 bool isRemoteFile(const QUrl &url)
@@ -22,7 +21,7 @@ bool isRemoteFile(const QUrl &url)
         return false;
 
     // TODO(xust) smbmounts path might be changed in the future.
-    static const QString gvfsMatch { R"((^/run/user/\d+/gvfs/|^/root/.gvfs/|^/(?:run/)?media/[\s\S]*/smbmounts))" };
+    static const QRegularExpression gvfsMatch { R"((^/run/user/\d+/gvfs/|^/root/.gvfs/|^/(?:run/)?media/[\s\S]*/smbmounts))" };
     return hasMatch(url.toLocalFile(), gvfsMatch);
 }
 
@@ -31,7 +30,7 @@ bool isMTPFile(const QUrl &url)
     if (!url.isValid())
         return false;
 
-    static const QString gvfsMatch { R"(^/run/user/\d+/gvfs/mtp:host|^/root/.gvfs/mtp:host)" };
+    static const QRegularExpression gvfsMatch { R"(^/run/user/\d+/gvfs/mtp:host|^/root/.gvfs/mtp:host)" };
     return hasMatch(url.toLocalFile(), gvfsMatch);
 }
 
@@ -40,7 +39,7 @@ bool isGphotoFile(const QUrl &url)
     if (!url.isValid())
         return false;
 
-    static const QString gvfsMatch { R"(^/run/user/\d+/gvfs/gphoto2:host|^/root/.gvfs/gphoto2:host)" };
+    static const QRegularExpression gvfsMatch { R"(^/run/user/\d+/gvfs/gphoto2:host|^/root/.gvfs/gphoto2:host)" };
     return hasMatch(url.toLocalFile(), gvfsMatch);
 }
 
@@ -49,7 +48,7 @@ bool isFTPFile(const QUrl &url)
     if (!url.isValid())
         return false;
 
-    static const QString smbMatch { R"((^/run/user/\d+/gvfs/s?ftp|^/root/.gvfs/s?ftp))" };
+    static const QRegularExpression smbMatch { R"((^/run/user/\d+/gvfs/s?ftp|^/root/.gvfs/s?ftp))" };
     return hasMatch(url.path(), smbMatch);
 }
 
@@ -58,7 +57,7 @@ bool isSFTPFile(const QUrl &url)
     if (!url.isValid())
         return false;
 
-    static const QString smbMatch { R"((^/run/user/\d+/gvfs/sftp|^/root/.gvfs/sftp))" };
+    static const QRegularExpression smbMatch { R"((^/run/user/\d+/gvfs/sftp|^/root/.gvfs/sftp))" };
     return hasMatch(url.path(), smbMatch);
 }
 
@@ -69,7 +68,7 @@ bool isSMBFile(const QUrl &url)
     if (url.scheme() == Global::Scheme::kSmb)
         return true;
     // TODO(xust) smbmounts path might be changed in the future.
-    static const QString smbMatch { R"((^/run/user/\d+/gvfs/smb|^/root/.gvfs/smb|^/(?:run/)?media/[\s\S]*/smbmounts))" };
+    static const QRegularExpression smbMatch { R"((^/run/user/\d+/gvfs/smb|^/root/.gvfs/smb|^/(?:run/)?media/[\s\S]*/smbmounts))" };
     return hasMatch(url.path(), smbMatch);
 }
 
@@ -94,7 +93,7 @@ bool isNFSFile(const QUrl &url)
     if (!url.isValid())
         return false;
 
-    static const QString nfsMatch { R"((^/run/user/\d+/gvfs/nfs|^/root/.gvfs/nfs))" };
+    static const QRegularExpression nfsMatch { R"((^/run/user/\d+/gvfs/nfs|^/root/.gvfs/nfs))" };
     return hasMatch(url.path(), nfsMatch);
 }
 
@@ -103,7 +102,7 @@ bool isDavFile(const QUrl &url)
     if (!url.isValid())
         return false;
 
-    static const QString davMatch { R"((^/run/user/\d+/gvfs/dav.*ssl=false|^/root/.gvfs/dav.*ssl=false))" };
+    static const QRegularExpression davMatch { R"((^/run/user/\d+/gvfs/dav.*ssl=false|^/root/.gvfs/dav.*ssl=false))" };
     return hasMatch(url.path(), davMatch);
 }
 
@@ -112,7 +111,7 @@ bool isDavsFile(const QUrl &url)
     if (!url.isValid())
         return false;
 
-    static const QString davsMatch { R"((^/run/user/\d+/gvfs/dav.*ssl=true|^/root/.gvfs/dav.*ssl=true))" };
+    static const QRegularExpression davsMatch { R"((^/run/user/\d+/gvfs/dav.*ssl=true|^/root/.gvfs/dav.*ssl=true))" };
     return hasMatch(url.path(), davsMatch);
 }
 

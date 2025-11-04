@@ -42,6 +42,8 @@
 #include <unistd.h>
 #include <utime.h>
 #include <cstdio>
+#include <cerrno>
+#include <cstring>
 
 #undef signals
 extern "C" {
@@ -581,6 +583,33 @@ bool LocalFileHandler::deleteFile(const QUrl &url)
 {
     qCDebug(logDFMBase) << "LocalFileHandler::deleteFile: Deleting file:" << url;
 
+    // Fast path: For local files, try unlink directly to avoid DOperator overhead
+    if (url.isLocalFile()) {
+        const QByteArray localPath = url.toLocalFile().toUtf8();
+        const char *path = localPath.constData();
+
+        if (::unlink(path) == 0) {
+            // Successfully deleted file or symlink
+            qCDebug(logDFMBase) << "LocalFileHandler::deleteFile: Successfully deleted (fast path):" << url;
+            return true;
+        }
+
+        // If it's a directory, try rmdir (for empty directories)
+        if (errno == EISDIR && ::rmdir(path) == 0) {
+            qCDebug(logDFMBase) << "LocalFileHandler::deleteFile: Successfully deleted directory (fast path):" << url;
+            return true;
+        }
+
+        // Fast path failed, log and fall through to DOperator
+        qCDebug(logDFMBase) << "LocalFileHandler::deleteFile: Fast path failed (errno:" << errno
+                            << strerror(errno) << "), using DOperator for:" << url;
+    } else {
+        // Non-file scheme (e.g., trash://) or non-local file, use DOperator directly
+        qCDebug(logDFMBase) << "LocalFileHandler::deleteFile: Non-local file scheme:" << url.scheme()
+                            << ", using DOperator for:" << url;
+    }
+
+    // Slow path: Use DOperator for special schemes, errors, or detailed error information
     QSharedPointer<DFMIO::DOperator> dOperator { new DFMIO::DOperator(url) };
 
     if (!dOperator) {
@@ -595,9 +624,6 @@ bool LocalFileHandler::deleteFile(const QUrl &url)
         d->setError(dOperator->lastError());
         return false;
     }
-
-    FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType::kFileDeleted, url);
-    qCWarning(logDFMBase) << "LocalFileHandler::deleteFile: Successfully deleted file:" << url;
 
     return true;
 }

@@ -7,7 +7,6 @@
 
 #include <QUrl>
 
-
 DPFILEOPERATIONS_USE_NAMESPACE
 DoDeleteFilesWorker::DoDeleteFilesWorker(QObject *parent)
     : AbstractWorker(parent)
@@ -70,7 +69,7 @@ bool DoDeleteFilesWorker::deleteAllFiles()
 bool DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice()
 {
     fmDebug() << "Deleting files on non-removable device - file count:" << allFilesList.count();
-    
+
     if (allFilesList.count() == 1 && isConvert) {
         auto info = InfoFactory::create<FileInfo>(allFilesList.first(), Global::CreateFileInfoType::kCreateFileInfoSync);
         if (info) {
@@ -84,7 +83,6 @@ bool DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice()
         if (!stateCheck())
             return false;
         const QUrl &url = *it;
-        auto info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
         emitCurrentTaskNotify(url, QUrl());
         do {
             action = AbstractJobHandler::SupportAction::kNoAction;
@@ -116,7 +114,7 @@ bool DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice()
 
         emit fileDeleted(url);
     }
-    
+
     fmInfo() << "Completed deletion on non-removable device - deleted count:" << deleteFilesCount;
     return true;
 }
@@ -127,7 +125,7 @@ bool DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice()
 bool DoDeleteFilesWorker::deleteFilesOnOtherDevice()
 {
     fmDebug() << "Deleting files on other device - source count:" << sourceUrls.count();
-    
+
     bool ok = true;
     if (sourceUrls.count() == 1 && isConvert) {
         auto info = InfoFactory::create<FileInfo>(sourceUrls.first(), Global::CreateFileInfoType::kCreateFileInfoSync);
@@ -136,7 +134,7 @@ bool DoDeleteFilesWorker::deleteFilesOnOtherDevice()
             fmDebug() << "Single file deletion on other device - size:" << deleteFirstFileSize;
         }
     }
-    
+
     for (auto &url : sourceUrls) {
         const auto &info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
         if (!info) {
@@ -161,13 +159,13 @@ bool DoDeleteFilesWorker::deleteFilesOnOtherDevice()
             fmWarning() << "Failed to delete item:" << url;
             return false;
         }
-        
+
         completeTargetFiles.append(url);
         completeSourceFiles.append(url);
         emit fileDeleted(url);
         fmDebug() << "Successfully deleted item:" << url;
     }
-    
+
     fmInfo() << "Completed deletion on other device - processed count:" << sourceUrls.count();
     return true;
 }
@@ -191,6 +189,7 @@ bool DoDeleteFilesWorker::deleteFileOnOtherDevice(const QUrl &url)
             action = doHandleErrorAndWait(url, AbstractJobHandler::JobErrorType::kDeleteFileError,
                                           localFileHandler->errorString());
         } else {
+            FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType::kFileDeleted, url);
             fmDebug() << "Successfully deleted file on other device:" << url;
         }
     } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
@@ -246,7 +245,7 @@ bool DoDeleteFilesWorker::deleteDirOnOtherDevice(const FileInfoPointer &dir)
         const QUrl &url = iterator->next();
         childCount++;
 
-        const auto &info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);;
+        const auto &info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
         if (!info) {
             fmCritical() << "Failed to create file info for directory child - URL:" << url;
             // pause and emit error msg
@@ -292,7 +291,7 @@ DoDeleteFilesWorker::doHandleErrorAndWait(const QUrl &from,
                                           const QString &errorMsg)
 {
     fmWarning() << "Delete error - file:" << from << "error:" << static_cast<int>(error) << "message:" << errorMsg;
-    
+
     setStat(AbstractJobHandler::JobState::kPauseState);
     emitErrorNotify(from, QUrl(), error, false, 0, errorMsg);
 
