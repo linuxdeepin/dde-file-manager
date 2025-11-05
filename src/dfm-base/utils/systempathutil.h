@@ -29,7 +29,6 @@ public:
     QString systemPathIconNameByPath(QString path);
     bool isSystemPath(QString path) const;
     bool checkContainsSystemPath(const QList<QUrl> &urlList);
-    QList<QUrl> canonicalUrlList(const QList<QUrl> &urls);
     QString getRealpathSafely(const QString &path) const;
 
 private:

@@ -203,43 +203,6 @@ void SystemPathUtil::loadSystemPaths()
     }
 }
 
-QList<QUrl> SystemPathUtil::canonicalUrlList(const QList<QUrl> &urls)
-{
-    QList<QUrl> processedUrls;
-    processedUrls.reserve(urls.size());
-
-    for (const QUrl &url : urls) {
-        if (!url.isLocalFile()) {
-            processedUrls << url;
-            continue;
-        }
-
-        auto info = InfoFactory::create<FileInfo>(url);
-        if (!info) {
-            processedUrls << url;
-            continue;
-        }
-
-        // 如果是符号链接文件
-        if (info->isAttributes(OptInfoType::kIsSymLink)) {
-            // 获取链接文件所在目录的真实路径
-            QString parentPath = QFileInfo(url.path()).dir().canonicalPath();
-            // 获取链接文件的名称
-            QString fileName = QFileInfo(url.path()).fileName();
-            // 组合出正确的路径
-            QString realLinkPath = parentPath + "/" + fileName;
-            processedUrls << QUrl::fromLocalFile(realLinkPath);
-            continue;
-        }
-
-        // 非符号链接使用canonicalFilePath
-        const QString canonicalPath = QFileInfo(url.path()).canonicalFilePath();
-        processedUrls << (canonicalPath.isEmpty() ? url : QUrl::fromLocalFile(canonicalPath));
-    }
-
-    return processedUrls;
-}
-
 QString SystemPathUtil::getRealpathSafely(const QString &path) const
 {
     QStringList components = path.split('/', Qt::SkipEmptyParts);

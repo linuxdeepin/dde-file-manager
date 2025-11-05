@@ -53,7 +53,7 @@ TrashFileEventReceiver::TrashFileEventReceiver(QObject *parent)
         future.waitForFinished();
         fmInfo() << "TrashFileEventReceiver cleanup completed";
     });
-    
+
     fmInfo() << "TrashFileEventReceiver initialized successfully";
 }
 
@@ -83,11 +83,10 @@ JobHandlePointer TrashFileEventReceiver::doMoveToTrash(const quint64 windowId, c
     }
 
     // gio can only handle canonical file paths
-    QList<QUrl> processedSources = SystemPathUtil::instance()->canonicalUrlList(sources);
-    const QUrl &sourceFirst = processedSources.first();
+    const QUrl &sourceFirst = sources.first();
     JobHandlePointer handle = nullptr;
     bool nullDirDelete = false;
-    if (processedSources.count() == 1) {
+    if (sources.count() == 1) {
         auto info = InfoFactory::create<FileInfo>(sourceFirst);
         nullDirDelete = info && info->isAttributes(OptInfoType::kIsDir)
                 && !info->isAttributes(OptInfoType::kIsSymLink)
@@ -95,22 +94,22 @@ JobHandlePointer TrashFileEventReceiver::doMoveToTrash(const quint64 windowId, c
     }
 
     if (nullDirDelete || !FileUtils::fileCanTrash(sourceFirst)) {
-        fmInfo() << "File cannot be moved to trash, will perform direct delete operation:" 
-                 << "nullDirDelete=" << nullDirDelete 
+        fmInfo() << "File cannot be moved to trash, will perform direct delete operation:"
+                 << "nullDirDelete=" << nullDirDelete
                  << "canTrash=" << FileUtils::fileCanTrash(sourceFirst);
-        
-        if (DialogManagerInstance->showDeleteFilesDialog(processedSources, true) != QDialog::Accepted) {
+
+        if (DialogManagerInstance->showDeleteFilesDialog(sources, true) != QDialog::Accepted) {
             fmInfo() << "Delete operation cancelled by user";
             return nullptr;
         }
-        handle = copyMoveJob->deletes(processedSources, flags, isInit);
+        handle = copyMoveJob->deletes(sources, flags, isInit);
         if (!isInit)
             return handle;
     } else {
         fmInfo() << "Processing normal move to trash operation";
-        
+
         // check url permission
-        QList<QUrl> urlsCanTrash = processedSources;
+        QList<QUrl> urlsCanTrash = sources;
         if (!flags.testFlag(AbstractJobHandler::JobFlag::kRevocation) && Application::instance()->genericAttribute(Application::kShowDeleteConfirmDialog).toBool()) {
             if (DialogManagerInstance->showNormalDeleteConfirmDialog(urlsCanTrash) != QDialog::Accepted) {
                 fmInfo() << "Move to trash operation cancelled by user";
@@ -123,7 +122,7 @@ JobHandlePointer TrashFileEventReceiver::doMoveToTrash(const quint64 windowId, c
     }
     if (handleCallback)
         handleCallback(handle);
-    
+
     fmInfo() << "Move to trash operation completed successfully";
     return handle;
 }
@@ -145,7 +144,7 @@ JobHandlePointer TrashFileEventReceiver::doRestoreFromTrash(const quint64 window
         return handle;
     if (handleCallback)
         handleCallback(handle);
-    
+
     fmInfo() << "Restore from trash operation completed successfully";
     return handle;
 }
@@ -166,7 +165,7 @@ JobHandlePointer TrashFileEventReceiver::doCopyFromTrash(const quint64 windowId,
     JobHandlePointer handle = copyMoveJob->copyFromTrash(sources, target, flags);
     if (handleCallback)
         handleCallback(handle);
-    
+
     fmInfo() << "Copy from trash operation completed successfully";
     return handle;
 }
@@ -220,7 +219,7 @@ JobHandlePointer TrashFileEventReceiver::doCleanTrash(const quint64 windowId, co
     FileOperationsEventHandler::instance()->handleJobResult(AbstractJobHandler::JobType::kCleanTrashType, handle);
     if (handleCallback)
         handleCallback(handle);
-    
+
     fmInfo() << "Clean trash operation completed successfully";
     return handle;
 }
@@ -232,12 +231,12 @@ void TrashFileEventReceiver::countTrashFile(const quint64 windowId, const DFMBAS
         fmWarning() << "Count trash file operation aborted: receiver is stopping";
         return;
     }
-    
+
     fmInfo() << "Starting trash file enumeration";
     DFMIO::DEnumerator enumerator(FileUtils::trashRootUrl());
     QList<QUrl> allFilesList;
     int processedCount = 0;
-    
+
     while (enumerator.hasNext()) {
         if (stoped) {
             fmWarning() << "Count trash file operation interrupted by stop signal";
@@ -323,7 +322,7 @@ void TrashFileEventReceiver::handleOperationRestoreFromTrash(const quint64 windo
                                                              DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback)
 {
     fmInfo() << "Handling restore from trash operation with callback, window ID:" << windowId << "items count:" << sources.count();
-    
+
     JobHandlePointer handle = doRestoreFromTrash(windowId, sources, target, flags, handleCallback);
     if (callback) {
         AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
@@ -341,7 +340,7 @@ void TrashFileEventReceiver::handleOperationCleanTrash(const quint64 windowId, c
                                                        const QVariant custom, AbstractJobHandler::OperatorCallback callback)
 {
     fmInfo() << "Handling clean trash operation with callback, window ID:" << windowId << "items count:" << sources.count();
-    
+
     JobHandlePointer handle = doCleanTrash(windowId, sources, AbstractJobHandler::DeleteDialogNoticeType::kEmptyTrash, handleCallback);
     if (callback) {
         AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
@@ -371,7 +370,7 @@ void TrashFileEventReceiver::handleOperationCopyFromTrash(const quint64 windowId
                                                           AbstractJobHandler::OperatorCallback callback)
 {
     fmInfo() << "Handling copy from trash operation with callback, window ID:" << windowId << "items count:" << sources.count();
-    
+
     JobHandlePointer handle = doCopyFromTrash(windowId, sources, target, flags, handleCallback);
     if (callback) {
         AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
@@ -387,7 +386,7 @@ void TrashFileEventReceiver::handleOperationCopyFromTrash(const quint64 windowId
 void TrashFileEventReceiver::handleSaveRedoOpt(const QString &token, const bool moreThanZero)
 {
     fmInfo() << "Processing save redo operation for token:" << token << "moreThanZero:" << moreThanZero;
-    
+
     QVariantMap ret;
     {
         QMutexLocker lk(&undoLock);
@@ -401,24 +400,24 @@ void TrashFileEventReceiver::handleSaveRedoOpt(const QString &token, const bool 
         fmWarning() << "Empty undo operation data for token:" << token;
         return;
     }
-    
+
     GlobalEventType undoEventType = static_cast<GlobalEventType>(ret.value("undoevent").value<uint16_t>());
     QList<QUrl> undoSources = QUrl::fromStringList(ret.value("undosources").toStringList());
     QList<QUrl> undoTargets = QUrl::fromStringList(ret.value("undotargets").toStringList());
     GlobalEventType redoEventType = static_cast<GlobalEventType>(ret.value("redoevent").value<uint16_t>());
     QList<QUrl> redoSources = QUrl::fromStringList(ret.value("redosources").toStringList());
     QList<QUrl> redoTargets = QUrl::fromStringList(ret.value("redotargets").toStringList());
-    
+
     if (redoEventType == GlobalEventType::kTouchFile && moreThanZero) {
         fmInfo() << "Skipping touch file redo operation due to size constraint";
         return;
     }
-    
-    fmInfo() << "Saving redo operation: undoType=" << static_cast<int>(undoEventType) 
+
+    fmInfo() << "Saving redo operation: undoType=" << static_cast<int>(undoEventType)
              << "redoType=" << static_cast<int>(redoEventType)
-             << "undoSources=" << undoSources.count() 
+             << "undoSources=" << undoSources.count()
              << "redoSources=" << redoSources.count();
-    
+
     // save operation by dbus
     QVariantMap values;
     values.insert("undoevent", QVariant::fromValue(static_cast<uint16_t>(redoEventType)));
@@ -428,7 +427,7 @@ void TrashFileEventReceiver::handleSaveRedoOpt(const QString &token, const bool 
     values.insert("redosources", QUrl::toStringList(undoSources));
     values.insert("redotargets", QUrl::toStringList(undoTargets));
     dpfSignalDispatcher->publish(GlobalEventType::kSaveRedoOperator, values);
-    
+
     fmInfo() << "Redo operation saved successfully";
 }
 
@@ -439,14 +438,14 @@ void TrashFileEventReceiver::handleOperationUndoMoveToTrash(const quint64 window
                                                             const QVariantMap &op)
 {
     fmInfo() << "Processing undo move to trash operation, window ID:" << windowId << "items count:" << sources.count();
-    
+
     auto handle = doMoveToTrash(windowId, sources, flags, handleCallback, false);
 
     if (!handle) {
         fmWarning() << "Failed to create job handle for undo move to trash operation";
         return;
     }
-    
+
     connect(handle.get(), &AbstractJobHandler::requestSaveRedoOperation, this,
             &TrashFileEventReceiver::handleSaveRedoOpt);
     {
@@ -459,20 +458,20 @@ void TrashFileEventReceiver::handleOperationUndoMoveToTrash(const quint64 window
     if (handleCallback)
         handleCallback(handle);
     FileOperationsEventHandler::instance()->handleJobResult(AbstractJobHandler::JobType::kMoveToTrashType, handle);
-    
+
     fmInfo() << "Undo move to trash operation setup completed";
 }
 
 void TrashFileEventReceiver::handleOperationUndoRestoreFromTrash(const quint64 windowId, const QList<QUrl> &sources, const QUrl &target, const AbstractJobHandler::JobFlag flags, AbstractJobHandler::OperatorHandleCallback handleCallback, const QVariantMap &op)
 {
     fmInfo() << "Processing undo restore from trash operation, window ID:" << windowId << "items count:" << sources.count();
-    
+
     auto handle = doRestoreFromTrash(windowId, sources, target, flags, handleCallback, false);
     if (!handle) {
         fmWarning() << "Failed to create job handle for undo restore from trash operation";
         return;
     }
-    
+
     connect(handle.get(), &AbstractJobHandler::requestSaveRedoOperation, this,
             &TrashFileEventReceiver::handleSaveRedoOpt);
     {
@@ -485,7 +484,7 @@ void TrashFileEventReceiver::handleOperationUndoRestoreFromTrash(const quint64 w
     if (handleCallback)
         handleCallback(handle);
     FileOperationsEventHandler::instance()->handleJobResult(AbstractJobHandler::JobType::kRestoreType, handle);
-    
+
     fmInfo() << "Undo restore from trash operation setup completed";
 }
 
@@ -497,7 +496,7 @@ JobHandlePointer TrashFileEventReceiver::onCleanTrashUrls(const quint64 windowId
         fmWarning() << "Clean trash URLs operation aborted: receiver is stopping";
         return nullptr;
     }
-    
+
     fmInfo() << "Executing clean trash URLs operation for" << sources.count() << "items";
     return doCleanTrash(windowId, sources, deleteNoticeType, handleCallback, false);
 }
