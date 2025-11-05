@@ -2497,7 +2497,7 @@ void FileView::updateLoadingIndicator()
     if (state == ModelState::kBusy) {
         QString tip;
 
-        const FileInfoPointer &fileInfo = model()->fileInfo(rootIndex());
+        FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(rootUrl());
         if (fileInfo)
             tip = fileInfo->viewOfTip(ViewInfoType::kLoading);
 
