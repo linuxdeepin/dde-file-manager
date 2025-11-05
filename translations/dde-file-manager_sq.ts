@@ -129,7 +129,7 @@
 <context>
     <name>FstabInitEncryptWorker</name>
     <message>
-        <location filename="../src/services/diskencrypt/workers/fstabinitencryptworker.cpp" line="24"/>
+        <location filename="../src/services/diskencrypt/workers/fstabinitencryptworker.cpp" line="25"/>
         <source>Initialize encryption </source>
         <translation>Fillo fshehtëzimin</translation>
     </message>
@@ -1002,7 +1002,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="298"/>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="186"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="87"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="305"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="312"/>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="62"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="269"/>
         <source>Open in new window</source>
@@ -1016,7 +1016,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="302"/>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="190"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="90"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="309"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="316"/>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="66"/>
         <source>Open in new tab</source>
         <translation>Hape në skedë të re</translation>
@@ -1480,12 +1480,12 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
         <translation>Rregullime</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="296"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="303"/>
         <source>Copy path</source>
         <translation>Kopjo shtegun</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="318"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="325"/>
         <source>Edit address</source>
         <translation>Përpunoni adresë</translation>
     </message>
@@ -1842,45 +1842,40 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
         <translation>TPM-ja është e kyçur.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="479"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="487"/>
         <source>Confirm encrypt %1?</source>
         <translation>E ripohoni fshehtëzimin e %1?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="482"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="490"/>
         <source>The current partition is about to be encrypted and cannot be canceled during the encryption process, please confirm the encryption.</source>
         <translation>Është gati të fshehtëzohet pjesa e tanishme dhe kjo s’mund të anulohet gjatë procesit të fshehtëzimit, ju lutemi, ripohoni fshehtëzimin.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="489"/>
-        <source>* After encrypting the partition, the system cannot be rolled back to a lower version, please confirm the encryption</source>
-        <translation>* Pas fshehtëzimit të pjesës, sistemi s’mund të kthehet prapa te një version më i ulët, ju lutemi, ripohoni fshehtëzimin</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="500"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="515"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="498"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="513"/>
         <source>Cancel</source>
         <translation>Anuloje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="501"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="516"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="499"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="514"/>
         <source>Confirm and Reboot</source>
         <translation>Ripohojeni dhe Riniseni</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="502"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="516"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="500"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="514"/>
         <source>Confirm</source>
         <translation>Ripohojeni</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="512"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="510"/>
         <source>Decrypt %1?</source>
         <translation>Të shfshehtëzohet %1?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="513"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="511"/>
         <source>Decryption can take a long time, so make sure power is connected until the decryption is complete.</source>
         <translation>Shfshehtëzimi mund të zgjasë një kohë të madhe, ndaj sigurohuni se është i lidhur me rrjetin e energjisë deri sa të je të plotësuar shfshehtëzimi.</translation>
     </message>
@@ -4816,105 +4811,105 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
 <context>
     <name>dfmplugin_diskenc::DiskEncryptMenuScene</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="167"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="180"/>
         <source>Unlock encrypted partition</source>
         <translation>Shkyç pjesë të fshehtëzuar</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="171"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="184"/>
         <source>Cancel partition encryption</source>
         <translation>Anulo fshehtëzim pjesësh</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="175"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="188"/>
         <source>passphrase</source>
         <translation>frazëkalim</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="176"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="189"/>
         <source>Changing the encryption %1</source>
         <translation>Po ndryshohet %1 fshehtëzimi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="180"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="193"/>
         <source>Continue partition encryption</source>
         <translation>Vazhdo fshehtëzimin e pjesës</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="184"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="197"/>
         <source>Continue partition decryption</source>
         <translation>Vazhdo shfshehtëzim pjese</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="188"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="201"/>
         <source>Enable partition encryption</source>
         <translation>Aktivizo fshehtëzim pjesësh</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="262"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="295"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="320"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="293"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="326"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="351"/>
         <source>Error</source>
         <translation>Gabim</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="263"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="294"/>
         <source>Cannot resolve passphrase from TPM</source>
         <translation>S’ftillohet dot frazëkalim nga TPM</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="295"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="320"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="326"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="351"/>
         <source>PIN error</source>
         <translation>Gabim PIN-i</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="328"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="359"/>
         <source>Change passphrase failed</source>
         <translation>Ndryshimi i frazëkalimit dështoi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="571"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="603"/>
         <source>Unlock device failed</source>
         <translation>Shkyçja e pajisjes dështoi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="572"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="604"/>
         <source>Wrong passphrase</source>
         <translation>Frazëkalim i gabuar</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="592"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="624"/>
         <source>Mount device failed</source>
         <translation>Montimi i pajisjes dështoi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="641"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="673"/>
         <source>unmount</source>
         <translation>Çmontoje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="641"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="673"/>
         <source>lock</source>
         <translation>kyçje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="642"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="674"/>
         <source>Encrypt failed</source>
         <translation>Fshehtëzimi dështoi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="643"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="675"/>
         <source>Cannot %1 device %2</source>
         <translation>S’mund të %1 pajisjen %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="728"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="760"/>
         <source>Reboot to continue encrypt</source>
         <translation>Që të vazhdohet fshehtëzimi, bëni rinisjen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="729"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="761"/>
         <source>Reboot to finish decrypt</source>
         <translation>Që të përfundojë shfshehtëzimi, bëni rinisjen</translation>
     </message>
@@ -5137,182 +5132,222 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
 <context>
     <name>dfmplugin_diskenc::EventsHandler</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="211"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="213"/>
         <source>Encrypt done</source>
         <translation>Fshehtëzimi u bë</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="212"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="214"/>
         <source>Device %1 has been encrypted</source>
         <translation>Pajisja %1 është fshehtëzuar</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="217"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="219"/>
         <source>Encrypt failed</source>
         <translation>Fshehtëzimi dështoi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="218"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="220"/>
         <source>Device %1 encrypt failed, please see log for more information.(%2)</source>
         <translation>Fshehtëzimi i pajisjes %1 dështoi, ju lutemi, për më tepër hollësi shihni regjistrat.(%2)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="329"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="331"/>
         <source>%1 is under encrypting...</source>
         <translation>%1 është nën fshehtëzim…</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="330"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="332"/>
         <source>The encrypting process may have system lag, please minimize the system operation</source>
         <translation>Procesi i fshehtëzimit mund të sjellë vonesë në sistem, ju lutemi, minimizoni funksionimin e sistemit </translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="350"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="352"/>
         <source>%1 is under decrypting...</source>
         <translation>%1 është nën shfshehtëzim…</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="351"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="353"/>
         <source>The decrypting process may have system lag, please minimize the system operation</source>
         <translation>Procesi i shfshehtëzimit mund të sjellë vonesë në sistem, ju lutemi, minimizoni funksionimin e sistemit </translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="381"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="621"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="383"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="623"/>
         <source>Error</source>
         <translation>Gabim</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="381"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="383"/>
         <source>TPM status is abnormal, please use the recovery key to unlock it</source>
         <translation>Gjendja e TPM-së është jonormale, ju lutemi, përdorni kyçin e rimarrjeve për ta shkyçur</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="412"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="414"/>
         <source>Wrong PIN</source>
         <translation>PIN i Gabuar</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="414"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="416"/>
         <source>Wrong passphrase</source>
         <translation>Frazëkalim i gabuar</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="416"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="418"/>
         <source>TPM error</source>
         <translation>Gabim TPM-je</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="418"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="420"/>
         <source>Please use recovery key to unlock device.</source>
         <translation>Ju lutemi, që të shkyçet pajisja, përdorni kyç rimarrjesh.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="485"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="487"/>
         <source>Preencrypt done</source>
         <translation>Parafshehtëzimi u bë</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="486"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="488"/>
         <source>Device %1 has been preencrypt, please reboot to finish encryption.</source>
         <translation>Pajisja %1 është parafshehtëzuar, ju lutemi, që të përfundojë fshehtëzimi, bëni rinisjen.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="494"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="496"/>
         <source>Preencrypt failed</source>
         <translation>Parafshehtëzimi dështoi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="495"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="497"/>
         <source>Device %1 preencrypt failed, please see log for more information.(%2)</source>
         <translation>Parafshehtëzimi i pajisjes %1 dështoi, për më tepër hollësi, shihni regjistrat.(%2)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="516"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="518"/>
         <source>Decrypt done</source>
         <translation>Shfshehtëzimi u bë</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="517"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="519"/>
         <source>Device %1 has been decrypted</source>
         <translation>Pajisja %1 është shfshehtëzuar</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="525"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="527"/>
         <source>Decrypt disk</source>
         <translation>Shfshehtëzoje diskun</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="526"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="528"/>
         <source>Wrong passpharse or PIN</source>
         <translation>Frazëkalim, ose PIN i gabuar</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="530"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="536"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="532"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="538"/>
         <source>Decrypt failed</source>
         <translation>Shfshehtëzimi dështoi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="531"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="533"/>
         <source>Device %1 is under encrypting, please decrypt after encryption finished.</source>
         <translation>Pajisja %1 gjendet nën fshehtëzim, ju lutemi, shfshehtëzojeni pasi të ketë përfunduar fshehtëzimi.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="537"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="539"/>
         <source>Device %1 Decrypt failed, please see log for more information.(%2)</source>
         <translation>Shfshehtëzimi i pajisjes %1 dështoi, ju lutemi, për më tepër hollësi shihni regjistrat.(%2)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="565"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="567"/>
         <source>passphrase</source>
         <translation>frazëkalim</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="568"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="570"/>
         <source>PIN</source>
         <translation>PIN</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="575"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="577"/>
         <source>Change %1 done</source>
         <translation>Ndryshimi i %1 u bë</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="576"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="578"/>
         <source>%1&apos;s %2 has been changed</source>
         <translation>%2 i %1 u ndryshua</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="583"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="589"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="585"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="591"/>
         <source>Change %1 failed</source>
         <translation>Ndryshimi i %1 dështoi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="584"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="586"/>
         <source>Wrong %1</source>
         <translation>%1 i gabuar</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="590"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="592"/>
         <source>Device %1 change %2 failed, please see log for more information.(%3)</source>
         <translation>Ndryshimi i %2 për pajisjen %1 dështoi, ju lutemi, për më tepër hollësi, shihni regjistrat.(%3)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="622"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="624"/>
         <source>Device is not fully decrypted, please finish decryption before access.</source>
         <translation>Pajisja s’është shfshehtëzuar plotësisht, ju lutemi, përfundoni shfshehtëzimin, para se ta përdorni.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="630"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="632"/>
         <source>Unlocking device failed</source>
         <translation>Shkyçja e pajisjes dështoi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="631"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="633"/>
         <source>Please click the right disk menu &quot;Continue partition encryption&quot; to complete partition encryption.</source>
         <translation>Ju lutemi, klikoni mbi “Vazhdo fshehtëzimin e pjesës”, që të plotësohet fshehtëzimi i pjesës.</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="661"/>
+        <source>Partition Encryption Non-Reboot Mode Enabled</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="662"/>
+        <source>Partition Encryption Non-Reboot Mode has been enabled successfully. Please reboot your system for the changes to take effect. After reboot, partition encryption operations will not require system restart.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="666"/>
+        <source>Partition Encryption Non-Reboot Mode Disabled</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="667"/>
+        <source>Partition Encryption Non-Reboot Mode has been disabled successfully. Please reboot your system for the changes to take effect. After reboot, partition encryption operations will require system restart.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="675"/>
+        <source>Operation Failed</source>
+        <translation>Veprimi Dështoi</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="677"/>
+        <source>Failed to enable Partition Encryption Non-Reboot Mode. The system may not support this feature or encountered an error during initramfs update.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="680"/>
+        <source>Failed to disable Partition Encryption Non-Reboot Mode. An error occurred during initramfs update.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="692"/>
+        <source>dde-file-manager</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6107,37 +6142,37 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
 <context>
     <name>dfmplugin_propertydialog::MultiFilePropertyDialog</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="52"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="58"/>
         <source>Multiple Files</source>
         <translation>Disa Kartela Njëherësh</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="56"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="62"/>
         <source>Basic info</source>
         <translation>Hollësi elementare</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="61"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="67"/>
         <source>Total size</source>
         <translation>Madhësi gjithsej</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="68"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="74"/>
         <source>Number of files</source>
         <translation>Numër kartelash</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="75"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="81"/>
         <source>Time accessed</source>
         <translation>Kohë përdorimi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="81"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="87"/>
         <source>Time modified</source>
         <translation>Kohë ndryshimi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="147"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="140"/>
         <source>%1 file(s), %2 folder(s)</source>
         <translation>%1 kartelë(a), %2 dosje(e)</translation>
     </message>
@@ -8058,12 +8093,12 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
 <context>
     <name>dfmplugin_workspace::FileView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2360"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2391"/>
         <source>Mount error</source>
         <translation>Gabim montimi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2361"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2392"/>
         <source>Server login credentials are invalid. Please uninstall and remount</source>
         <translation>Kredencialet për hyrje në shërbyes janë të pavlefshme. Ju lutemi, çinstalojeni dhe rimontojeni</translation>
     </message>
@@ -8135,32 +8170,32 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="36"/>
         <source>Tiny</source>
-        <translation type="unfinished"/>
+        <translation>E vockël</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="37"/>
         <source>Small</source>
-        <translation type="unfinished"/>
+        <translation>E vogël</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="38"/>
         <source>Medium</source>
-        <translation type="unfinished"/>
+        <translation>Mesatare</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="39"/>
         <source>Large</source>
-        <translation type="unfinished"/>
+        <translation>E madhe</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="40"/>
         <source>Huge</source>
-        <translation type="unfinished"/>
+        <translation>E stërmadhe</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="41"/>
         <source>Gigantic</source>
-        <translation type="unfinished"/>
+        <translation>Gjigante</translation>
     </message>
 </context>
 <context>
