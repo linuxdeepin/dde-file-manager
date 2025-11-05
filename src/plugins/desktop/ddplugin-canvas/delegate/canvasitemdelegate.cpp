@@ -845,7 +845,8 @@ QRectF CanvasItemDelegate::paintEmblems(QPainter *painter, const QRectF &rect, c
 
 void CanvasItemDelegate::paintBackground(QPainter *painter, const QStyleOptionViewItem &option, const QRect &iconRect) const
 {
-    bool isSelected = (option.state & QStyle::State_Selected) && option.showDecorationSelected;
+    bool isDragMode = (static_cast<QPaintDevice *>(parent()->viewport()) != painter->device());
+    bool isSelected = !isDragMode && (option.state & QStyle::State_Selected) && option.showDecorationSelected;
     if (!isSelected)
         return;
 
