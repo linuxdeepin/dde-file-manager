@@ -5337,17 +5337,17 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="677"/>
         <source>Failed to enable Partition Encryption Non-Reboot Mode. The system may not support this feature or encountered an error during initramfs update.</source>
-        <translation>No s&apos;ha pogut habilitar el mode de no reinici d&apos;encriptació de partició. És possible que el sistema no admeti aquesta funció o que s&apos;hagi trobat un error durant l&apos;actualització de l&apos;initramfs.</translation>
+        <translation>No s&apos;ha pogut habilitar el mode d&apos;encriptació de partició sense reinici. És possible que el sistema no admeti aquesta funció o que s&apos;hagi trobat un error durant l&apos;actualització de l&apos;initramfs.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="680"/>
         <source>Failed to disable Partition Encryption Non-Reboot Mode. An error occurred during initramfs update.</source>
-        <translation type="unfinished"/>
+        <translation>No s&apos;ha pogut inhabilitar el mode d&apos;encriptació de partició sense reinici. S&apos;ha trobat un error durant l&apos;actualització de l&apos;initramfs.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="692"/>
         <source>dde-file-manager</source>
-        <translation type="unfinished"/>
+        <translation>dde-file-manager</translation>
     </message>
 </context>
 <context>
