@@ -353,7 +353,7 @@ void TitleBarWidget::initConnect()
 
     connect(bottomBar, &TabBar::newTabCreated, this, &TitleBarWidget::onTabCreated);
     connect(bottomBar, &TabBar::requestCreateView, this, &TitleBarWidget::handleCreateView);
-    connect(bottomBar, &TabBar::tabHasRemoved, this, &TitleBarWidget::onTabRemoved);
+    connect(bottomBar, &TabBar::tabAboutToRemove, this, &TitleBarWidget::onTabAboutToRemove);
     connect(bottomBar, &TabBar::tabMoved, this, &TitleBarWidget::onTabMoved);
     connect(bottomBar, &TabBar::currentTabChanged, this, &TitleBarWidget::onTabCurrentChanged);
     connect(bottomBar, &TabBar::tabCloseRequested, this, &TitleBarWidget::onTabCloseRequested);
@@ -512,7 +512,7 @@ void TitleBarWidget::onTabCreated()
     curNavWidget->addHistroyStack();
 }
 
-void TitleBarWidget::onTabRemoved(int oldIndex, int nextIndex)
+void TitleBarWidget::onTabAboutToRemove(int oldIndex, int nextIndex)
 {
     TitleBarEventCaller::sendTabRemoved(this, tabBar()->tabUniqueId(oldIndex), tabBar()->tabUniqueId(nextIndex));
     curNavWidget->removeNavStackAt(oldIndex);

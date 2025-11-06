@@ -617,14 +617,14 @@ void TabBar::removeTab(int index, int selectIndex)
             newIndex = curIndex;
         } else if (curIndex == index) {
             // Delete current tab, select next tab (if last tab then select previous)
-            newIndex = (index == count() - 1) ? qMax(index - 1, 0) : index;
+            newIndex = (index == count() - 1) ? qMax(index - 1, 0) : index + 1;
         } else {
             // Current tab is after deleted tab, decrease index by 1
             newIndex = curIndex - 1;
         }
     }
 
-    Q_EMIT tabHasRemoved(index, newIndex);
+    Q_EMIT tabAboutToRemove(index, newIndex);
     setCurrentIndex(newIndex);
     DTabBar::removeTab(index);
 }
