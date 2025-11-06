@@ -77,7 +77,7 @@ private slots:
     void onAddressBarJump();
     void onTabCreated();
     void handleCreateView(const QString &uniqueId);
-    void onTabRemoved(int oldIndex, int nextIndex);
+    void onTabAboutToRemove(int oldIndex, int nextIndex);
     void onTabMoved(int from, int to);
     void onTabCurrentChanged(int oldIndex, int newIndex);
     void onTabCloseRequested(int index);

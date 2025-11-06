@@ -46,7 +46,7 @@ Q_SIGNALS:
     void requestNewWindow(const QUrl &url);
     void newTabCreated();
     void requestCreateView(const QString &uniqueId);
-    void tabHasRemoved(int oldIndex, int nextIndex);
+    void tabAboutToRemove(int oldIndex, int nextIndex);
 
 protected:
     void paintTab(QPainter *painter, int index, const QStyleOptionTab &option) const override;
