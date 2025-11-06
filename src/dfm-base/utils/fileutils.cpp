@@ -359,11 +359,8 @@ bool FileUtils::isCdRomDevice(const QUrl &url)
 
 bool FileUtils::trashIsEmpty()
 {
-    const auto &cifsHost = NetworkUtils::cifsMountHostInfo();
-    if (!cifsHost.isEmpty()) {
-        const auto &mountPoint = cifsHost.constKeyValueBegin()->first;
-        if (NetworkUtils::instance()->checkFtpOrSmbBusy(QUrl::fromLocalFile(mountPoint)))
-            return true;
+    if (NetworkUtils::instance()->checkAllCIFSBusy()) {
+        return true;
     }
 
     // not use cache, because some times info unreliable, such as watcher inited temporality

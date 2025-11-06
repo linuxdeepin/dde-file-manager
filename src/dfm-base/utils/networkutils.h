@@ -27,6 +27,7 @@ public:
                          std::function<void(bool)> callback = nullptr, int msecs = 3000);
     bool parseIp(const QString &mpt, QString &ip, QString &port);
     bool parseIp(const QString &mpt, QString &ip, QStringList &ports);
+    bool checkAllCIFSBusy();
     bool checkFtpOrSmbBusy(const QUrl &url);
     // if network mount，get network mount
     static QMap<QString, QString> cifsMountHostInfo();

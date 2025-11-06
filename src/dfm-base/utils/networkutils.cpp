@@ -83,7 +83,7 @@ void NetworkUtils::doAfterCheckNet(const QString &host, const QStringList &ports
     watcher->setFuture(QtConcurrent::run([host, ports, msecs]() {
         if (ports.isEmpty()) {
             qCInfo(logDFMBase) << "Network check skipped: no ports specified for host:" << host;
-            return true; // skip check if ports are empty.
+            return true;   // skip check if ports are empty.
         }
 
         for (const auto &port : ports) {
@@ -164,6 +164,18 @@ bool NetworkUtils::parseIp(const QString &mpt, QString &ip, QStringList &ports)
             ports.append(kSmbPortOther);
         return true;
     }
+    return false;
+}
+
+bool NetworkUtils::checkAllCIFSBusy()
+{
+    const auto &cifsHost = NetworkUtils::cifsMountHostInfo();
+    for (const auto &mountPoint : cifsHost.keys()) {
+        if (NetworkUtils::instance()->checkFtpOrSmbBusy(QUrl::fromLocalFile(mountPoint))) {
+            return true;
+        }
+    }
+
     return false;
 }
 

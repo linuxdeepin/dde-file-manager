@@ -48,13 +48,9 @@ void TrashCoreEventSender::initTrashWatcher()
 
 bool TrashCoreEventSender::checkAndStartWatcher()
 {
-    const auto &cifsHost = NetworkUtils::cifsMountHostInfo();
-    if (!cifsHost.isEmpty()) {
-        const auto &mountPoint = cifsHost.constKeyValueBegin()->first;
-        if (NetworkUtils::instance()->checkFtpOrSmbBusy(QUrl::fromLocalFile(mountPoint))) {
-            timer.start();
-            return false;
-        }
+    if (NetworkUtils::instance()->checkAllCIFSBusy()) {
+        timer.start();
+        return false;
     }
     return trashFileWatcher->startWatcher();
 }
@@ -66,14 +62,14 @@ TrashCoreEventSender *TrashCoreEventSender::instance()
 }
 
 void TrashCoreEventSender::sendTrashStateChangedDel()
-{    
+{
     bool actuallyEmpty = FileUtils::trashIsEmpty();
     TrashState newState = actuallyEmpty ? TrashState::Empty : TrashState::NotEmpty;
-    
+
     // Only send signal if state actually changed
     if (trashState == TrashState::Unknown || newState != trashState) {
         trashState = newState;
-        
+
         // Only send signal when trash becomes empty (files deleted)
         if (trashState == TrashState::Empty) {
             qInfo() << "TrashCore: Trash became empty, sending state changed signal";
