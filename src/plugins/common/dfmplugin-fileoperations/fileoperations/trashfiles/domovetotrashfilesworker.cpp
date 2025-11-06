@@ -160,6 +160,8 @@ bool DoMoveToTrashFilesWorker::doMoveToTrash()
             }
         } while (action == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
 
+        checkRetry();
+
         if (action == AbstractJobHandler::SupportAction::kNoAction
             || action == AbstractJobHandler::SupportAction::kSkipAction
             || action == AbstractJobHandler::SupportAction::kPermanentlyDelete) {
