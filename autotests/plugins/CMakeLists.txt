@@ -38,7 +38,7 @@ add_subdirectory(filedialog-core)
 add_subdirectory(dfmdaemon-core)
 add_subdirectory(dfmdaemon-filemanager1)
 add_subdirectory(dfmdaemon-tag)
-add_subdirectory(dfmdaemon-vault)
+# add_subdirectory(dfmdaemon-vault)
 add_subdirectory(dfmdaemon-recent)
 
 # Desktop plugins unit tests
