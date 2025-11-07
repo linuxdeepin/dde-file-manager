@@ -88,15 +88,15 @@ Depends:
  libtss2-tcti-pcap0,
  libtss2-tcti-tabrmd0@PROFESSIONAL_DEPS@
 Replaces: dde-file-manager-oem,
- dde-desktop (<< 6.5.101),
+ dde-desktop (<< 6.5.102),
  dde-file-manager-preview,
  dde-file-manager-preview-plugins,
  dde-file-manager-plugins,
  dde-file-manager-daemon-plugins,
  dde-file-manager-common-plugins,
- dde-file-manager-services-plugins (<< 6.5.101)
-Breaks: dde-desktop (<< 6.5.101),
- dde-file-manager-services-plugins (<< 6.5.101)
+ dde-file-manager-services-plugins (<< 6.5.102)
+Breaks: dde-desktop (<< 6.5.102),
+ dde-file-manager-services-plugins (<< 6.5.102)
 Conflicts: dde-file-manager-preview,
  dde-file-manager-preview-plugins,
  dde-file-manager-plugins,
