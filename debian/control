@@ -57,14 +57,7 @@ Package: dde-desktop
 Architecture: any
 Depends:
  ${shlibs:Depends},
- ${misc:Depends},
- libdde-file-manager (=${binary:Version}),
- libqt6sql6-sqlite,
- qt6-translations-l10n,
- libimageeditor6
-Conflicts: dde-workspace (<< 2.90.5), dde-file-manager-oem, dde-desktop-plugins
-Replaces: dde-file-manager-oem, dde-file-manager (<< 6.0.1), dde-desktop-plugins
-Recommends: deepin-screensaver
+ ${misc:Depends}
 Description: deepin desktop-environment - desktop module
  Deepin Desktop Environment (DDE) - desktop module.
 
@@ -73,36 +66,6 @@ Architecture: any
 Depends:
  ${shlibs:Depends},
  ${misc:Depends},
- pkexec,
- deepin-desktop-base | deepin-desktop-server | deepin-desktop-device,
- libdde-file-manager (=${binary:Version}),
- socat,
- cryfs,
- dde-device-formatter,
- libblockdev-crypto2 | libblockdev-crypto3,
- dde-file-manager-services-plugins (=${binary:Version}),
- qml6-module-qtquick-controls,
- qml6-module-qtquick-layouts,
- qml6-module-qtquick-window,
- tpm2-abrmd,
- libtss2-tcti-pcap0,
- libtss2-tcti-tabrmd0
-Replaces: dde-file-manager-oem,
- dde-desktop (<< 6.5.102),
- dde-file-manager-preview,
- dde-file-manager-preview-plugins,
- dde-file-manager-plugins,
- dde-file-manager-daemon-plugins,
- dde-file-manager-common-plugins,
- dde-file-manager-services-plugins (<< 6.5.102)
-Breaks: dde-desktop (<< 6.5.102),
- dde-file-manager-services-plugins (<< 6.5.102)
-Conflicts: dde-file-manager-preview,
- dde-file-manager-preview-plugins,
- dde-file-manager-plugins,
- dde-file-manager-daemon-plugins,
- dde-file-manager-common-plugins
-Recommends: avfs, samba, deepin-anything-server
 Description: File manager front end
  File manager front-end of Deepin OS
 
@@ -110,17 +73,9 @@ Package: libdde-file-manager
 Architecture: any
 Depends:
  ${shlibs:Depends},
- ${misc:Depends},
- libpoppler-cpp0v5 (>= 0.48.0),
- gvfs-backends (>=1.27.3),
- cryptsetup,
- gnome-keyring,
- libdfm-extension (=${binary:Version})
-Multi-Arch: same
+ ${misc:Depends}
 Description: DDE File Manager core librarys
  This package contains the shared libraries.
-Replaces: dfmplugin-disk-encrypt
-Conflicts: dfmplugin-disk-encrypt
 
 Package: dde-disk-mount-plugin
 Architecture: any
@@ -142,15 +97,14 @@ Description: deepin desktop-environment - deepin-service-manager plugins module
 
 Package: libdfm-extension-dev
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libdfm-extension (=${binary:Version})
+Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Development package for libdfm-extension
  This package contains the header files and pkgconfig
  of libdfm-extension
 
 Package: dde-file-manager-dev
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libdde-file-manager (=${binary:Version}),
- libdfm6-io-dev, libdfm6-mount-dev, libdfm6-burn-dev
+Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: DDE File Manager Devel library
  This package contains the header files and static libraries
  of dde-file-manager
