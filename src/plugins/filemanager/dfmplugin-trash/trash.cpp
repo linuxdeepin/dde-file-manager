@@ -13,6 +13,7 @@
 
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/base/schemefactory.h>
+#include <dfm-base/dfm_event_defines.h>
 
 #include <dfm-base/utils/systempathutil.h>
 
@@ -154,6 +155,7 @@ void Trash::addCustomTopWidget()
 void Trash::followEvents()
 {
     dpfSignalDispatcher->subscribe("dfmplugin_workspace", "signal_Model_EmptyDir", TrashHelper::instance(), &TrashHelper::onTrashEmptyState);
+    dpfSignalDispatcher->subscribe(GlobalEventType::kChangeCurrentUrl, TrashHelper::instance(), &TrashHelper::handleWindowUrlChanged);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_DragDrop_CheckDragDropAction", TrashHelper::instance(), &TrashHelper::checkDragDropAction);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_DragDrop_FileCanMove", TrashHelper::instance(), &TrashHelper::checkCanMove);
     dpfHookSequence->follow("dfmplugin_detailspace", "hook_Icon_Fetch", TrashHelper::instance(), &TrashHelper::detailViewIcon);

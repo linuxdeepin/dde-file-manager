@@ -287,10 +287,10 @@ void TrashHelper::onTrashStateChanged()
 {
     // Ensure we know the current state before processing state change
     ensureTrashStateInitialized();
-    
+
     bool actuallyEmpty = FileUtils::trashIsEmpty();
     TrashState newState = actuallyEmpty ? TrashState::Empty : TrashState::NotEmpty;
-    
+
     // Only process if state actually changed
     if (newState == trashState)
         return;
@@ -298,7 +298,7 @@ void TrashHelper::onTrashStateChanged()
     trashState = newState;
 
     // Update UI for any state change, but only when trash becomes non-empty
-    // This matches the original logic: if (isTrashEmpty) return; 
+    // This matches the original logic: if (isTrashEmpty) return;
     if (trashState == TrashState::Empty) {
         fmDebug() << "Trash: State changed to empty, no UI update needed";
         return;
@@ -325,7 +325,7 @@ void TrashHelper::onTrashEmptyState()
     // Force refresh the actual state
     bool actuallyEmpty = FileUtils::trashIsEmpty();
     trashState = actuallyEmpty ? TrashState::Empty : TrashState::NotEmpty;
-    
+
     if (trashState != TrashState::Empty) {
         fmDebug() << "Trash: Trash is not empty, no action needed";
         return;
@@ -337,7 +337,7 @@ void TrashHelper::onTrashEmptyState()
         if (window) {
             const QUrl &url = window->currentUrl();
             if (url.scheme() == scheme())
-                TrashEventCaller::sendShowEmptyTrash(winId, false); // false means empty
+                TrashEventCaller::sendShowEmptyTrash(winId, false);   // false means empty
         }
     }
     fmDebug() << "Trash: State updated to empty, UI refreshed";
@@ -346,6 +346,13 @@ void TrashHelper::onTrashEmptyState()
 void TrashHelper::trashNotEmpty()
 {
     emit trashNotEmptyState();
+}
+
+void TrashHelper::handleWindowUrlChanged(quint64 winId, const QUrl &url)
+{
+    // url切换时，更新回收站顶部控件显示状态，主要针对标签切换
+    if (url.scheme() == scheme() && trashState != TrashState::Unknown)
+        TrashEventCaller::sendShowEmptyTrash(winId, trashState == TrashState::NotEmpty);
 }
 
 void TrashHelper::onTrashNotEmptyState()
@@ -357,7 +364,7 @@ void TrashHelper::onTrashNotEmptyState()
         if (window) {
             const QUrl &url = window->currentUrl();
             if (url.scheme() == scheme())
-                TrashEventCaller::sendShowEmptyTrash(winId, true); // true means not empty
+                TrashEventCaller::sendShowEmptyTrash(winId, true);   // true means not empty
         }
     }
     fmDebug() << "Trash: State explicitly set to non-empty";
@@ -385,7 +392,7 @@ void TrashHelper::ensureTrashStateInitialized()
         // Lazy initialization: determine actual trash state only when needed
         bool actuallyEmpty = FileUtils::trashIsEmpty();
         trashState = actuallyEmpty ? TrashState::Empty : TrashState::NotEmpty;
-        fmDebug() << "Trash: Lazy initialized trash state to" 
-                 << (trashState == TrashState::Empty ? "Empty" : "NotEmpty");
+        fmDebug() << "Trash: Lazy initialized trash state to"
+                  << (trashState == TrashState::Empty ? "Empty" : "NotEmpty");
     }
 }

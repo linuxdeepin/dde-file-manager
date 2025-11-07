@@ -70,6 +70,7 @@ public:
     bool customRoleDisplayName(const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role, QString *displayName);
     void onTrashEmptyState();
     void trashNotEmpty();
+    void handleWindowUrlChanged(quint64 winId, const QUrl &url);
 
 private Q_SLOTS:
     void onTrashNotEmptyState();
