@@ -674,6 +674,10 @@ void ComputerItemWatcher::removeDevice(const QUrl &url)
     auto ret = std::find_if(initedDatas.cbegin(), initedDatas.cend(), [url](const ComputerItemData &item) { return UniversalUtils::urlEquals(url, item.url); });
     if (ret != initedDatas.cend())
         initedDatas.removeAt(ret - initedDatas.cbegin());
+
+    ret = std::find_if(thirdItemList.cbegin(), thirdItemList.cend(), [url](const ComputerItemData &item) { return UniversalUtils::urlEquals(url, item.url); });
+    if (ret != thirdItemList.cend())
+        thirdItemList.removeAt(ret - thirdItemList.cbegin());
 }
 
 QVariantMap ComputerItemWatcher::makeSidebarItem(DFMEntryFileInfoPointer info)
@@ -819,6 +823,8 @@ void ComputerItemWatcher::startQueryItems(bool async)
             if (!fw)
                 return;
             initedDatas = fw->result();
+            for (const auto &item : std::as_const(thirdItemList))
+                cacheItem(item);
             afterQueryFunc();
             fw->deleteLater();
             fw = nullptr;
@@ -832,6 +838,8 @@ void ComputerItemWatcher::startQueryItems(bool async)
     }
 
     initedDatas = items();
+    for (const auto &item : std::as_const(thirdItemList))
+        cacheItem(item);
     afterQueryFunc();
 }
 
@@ -881,6 +889,8 @@ void ComputerItemWatcher::onDeviceAdded(const QUrl &devUrl, int groupId, Compute
     Q_EMIT itemAdded(data);
 
     cacheItem(data);
+    if (!ComputerUtils::isNativeDevice(info->nameOf(NameInfoType::kSuffix)))
+        thirdItemList << data;
 
     if (needSidebarItem && !disksHiddenByDConf().contains(devUrl))
         addSidebarItem(info);

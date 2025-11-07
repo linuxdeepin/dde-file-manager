@@ -291,6 +291,16 @@ QList<QVariantMap> ComputerUtils::allPreDefineItemCustomDatas()
     return list;
 }
 
+bool ComputerUtils::isNativeDevice(const QString &suffix)
+{
+    static QStringList suffixList { SuffixInfo::kUserDir,
+                                    SuffixInfo::kBlock,
+                                    SuffixInfo::kProtocol,
+                                    "vault",
+                                    "ventry" };
+    return suffixList.contains(suffix);
+}
+
 QString ComputerUtils::deviceTypeInfo(DFMEntryFileInfoPointer info)
 {
     DFMBASE_USE_NAMESPACE
@@ -363,7 +373,7 @@ QUrl ComputerUtils::convertToDevUrl(const QUrl &url)
     // so find device url of the root dir by checking all blocks
     if (converted.scheme() == Global::Scheme::kFile) {
         auto devIds = DevProxyMng->getAllBlockIds();
-        for ( auto id : devIds) {
+        for (auto id : devIds) {
             QUrl devUrl(makeBlockDevUrl(id));
             DFMEntryFileInfoPointer entryInfo(new EntryFileInfo(devUrl));
             if (UniversalUtils::urlEquals(converted, entryInfo->targetUrl())) {
