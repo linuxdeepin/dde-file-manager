@@ -33,3 +33,11 @@ install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_LIBDIR}/deepin-servi
 install(FILES ${PROJECT_NAME}.json DESTINATION share/deepin-service-manager/user/)
 INSTALL_DBUS_SERVICE(org.deepin.Filemanager.TextIndex)
 INSTALL_DCONFIG("org.deepin.dde.file-manager.textindex.json")
+
+# Install systemd drop-in configuration for resource limits
+# This prevents OOM issues without modifying the shared service template
+install(FILES
+    systemd/memory-limit.conf
+    DESTINATION
+    lib/systemd/user/deepin-service-plugin@org.deepin.Filemanager.TextIndex.service.d/
+)
