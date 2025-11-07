@@ -4061,7 +4061,7 @@ Wprowadź nazwę użytkownika i hasło dla %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="47"/>
         <source>Erase failed</source>
-        <translation>Wyczyszczono pomyślnie</translation>
+        <translation>Wystąpił błąd podczas kasowania</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="48"/>
@@ -5317,7 +5317,7 @@ Wprowadź nazwę użytkownika i hasło dla %1</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="662"/>
         <source>Partition Encryption Non-Reboot Mode has been enabled successfully. Please reboot your system for the changes to take effect. After reboot, partition encryption operations will not require system restart.</source>
-        <translation type="unfinished"/>
+        <translation>Szyfrowanie partycji bez ponownego uruchamiania zostało włączone pomyślnie. Uruchom system ponownie, aby zastosować zmiany. Operacje szyfrowania partycji będą wymagały ponownego uruchomienia.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="666"/>
@@ -5327,7 +5327,7 @@ Wprowadź nazwę użytkownika i hasło dla %1</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="667"/>
         <source>Partition Encryption Non-Reboot Mode has been disabled successfully. Please reboot your system for the changes to take effect. After reboot, partition encryption operations will require system restart.</source>
-        <translation type="unfinished"/>
+        <translation>Szyfrowanie partycji bez ponownego uruchamiania zostało wyłączone pomyślnie. Uruchom system ponownie, aby zastosować zmiany. Operacje szyfrowania partycji będą wymagały ponownego uruchomienia.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="675"/>
