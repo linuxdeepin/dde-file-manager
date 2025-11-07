@@ -126,6 +126,7 @@ private:
 private:
     bool isItemQueryFinished { false };
     ComputerDataList initedDatas;
+    ComputerDataList thirdItemList;
     QHash<QUrl, QVariantMap> sidebarInfos;
     QHash<QUrl, QVariantMap> computerInfos;
     QSharedPointer<DFMBASE_NAMESPACE::LocalFileWatcher> appEntryWatcher { nullptr };

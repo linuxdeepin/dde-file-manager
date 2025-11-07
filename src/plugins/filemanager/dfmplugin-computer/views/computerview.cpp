@@ -383,15 +383,10 @@ void ComputerView::handleUserDirVisible()
 void ComputerView::handle3rdEntriesVisible()
 {
     bool hide3rdEntries = ComputerItemWatcher::hide3rdEntries();
-    const static QStringList kNativaSuffixes { SuffixInfo::kUserDir,
-                                               SuffixInfo::kBlock,
-                                               SuffixInfo::kProtocol,
-                                               "vault",
-                                               "ventry" };
 
     for (int i = 0; i < model()->rowCount(); ++i) {
         QString currSuffix = model()->data(model()->index(i, 0), ComputerModel::kSuffixRole).toString();
-        if (kNativaSuffixes.contains(currSuffix))
+        if (ComputerUtils::isNativeDevice(currSuffix))
             continue;
 
         int shape = model()->data(model()->index(i, 0), ComputerModel::kItemShapeTypeRole).toInt();
