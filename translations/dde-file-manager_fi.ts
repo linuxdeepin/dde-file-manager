@@ -7556,12 +7556,12 @@ tyhjennä kansion tiedostot ja yritä avata lukitus uudelleen.</translation>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="127"/>
         <source>Key Unlock</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Avausavain</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="132"/>
         <source>Key Unlocks Safe</source>
-        <translation>Holvin avaaminen avaimella</translation>
+        <translation>Holvin avausavain</translation>
     </message>
 </context>
 <context>
@@ -7713,12 +7713,12 @@ tyhjennä kansion tiedostot ja yritä avata lukitus uudelleen.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="57"/>
         <source>Key files can be used to unlock the safe, please keep it in a safe place</source>
-        <translation type="unfinished"/>
+        <translation>Avaintiedostoa voidaan käyttää holvin avaamiseen, säilytä turvallisessa paikassa.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="61"/>
         <source>It is recommended to save it to external storage devices such as a USB drive</source>
-        <translation type="unfinished"/>
+        <translation>Suositus on tallentaa se ulkoiselle medialle, kuten USB-muistitikulle.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="63"/>
