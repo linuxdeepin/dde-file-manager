@@ -1975,12 +1975,12 @@ Ingrese el usuario y la contraseña para %1</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="34"/>
         <source>Past 30 Days</source>
-        <translation type="unfinished"/>
+        <translation>Últimos 30 días</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="35"/>
         <source>Earlier</source>
-        <translation type="unfinished"/>
+        <translation>Anterior</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/typegroupstrategy.cpp" line="34"/>
@@ -3395,7 +3395,7 @@ Ingrese el usuario y la contraseña para %1</translation>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="249"/>
         <source>Open new folder in a new tab</source>
-        <translation type="unfinished"/>
+        <translation>Abrir nueva carpeta en nueva pestaña</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="252"/>
@@ -3410,7 +3410,7 @@ Ingrese el usuario y la contraseña para %1</translation>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="277"/>
         <source>Display when launching a new window:</source>
-        <translation type="unfinished"/>
+        <translation>Mostrar al abrir una nueva ventana:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="280"/>
