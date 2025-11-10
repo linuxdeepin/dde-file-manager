@@ -385,12 +385,27 @@ void OemMenuPrivate::appendParentMineType(const QStringList &parentmimeTypes, QS
         return;
 
     DFMBASE_NAMESPACE::DMimeDatabase db;
-    for (const QString &mtName : parentmimeTypes) {
+    QSet<QString> mimeTypeNames;
+    QStringList allparentmimeTypes = parentmimeTypes;
+    int count = 0;
+    while (!allparentmimeTypes.isEmpty()) {
+        if (count > 10000)   // 预防死循环
+            break;
+        const QString &mtName = allparentmimeTypes.takeFirst();
+        if (mimeTypeNames.contains(mtName))
+            continue;
+        mimeTypeNames.insert(mtName);
+        count++;
         QMimeType mt = db.mimeTypeForName(mtName);
         mimeTypes.append(mt.name());
         mimeTypes.append(mt.aliases());
-        QStringList pmts = mt.parentMimeTypes();
-        appendParentMineType(pmts, mimeTypes);
+        QStringList parentMimeTypes = mt.parentMimeTypes();
+
+        for (const auto &type : parentMimeTypes) {
+            if (mimeTypeNames.contains(type))
+                continue;
+            allparentmimeTypes.push_back(type);
+        }
     }
 }
 
