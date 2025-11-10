@@ -89,10 +89,11 @@ dde-file-manager-lib/test_shutil/property/oneProperty.pro
 # clangd cache files
 .cache
 
-# cursor
+# cursor & AI config
 .cursorindexingignore
 .cursor
 .specstory
+.spec-workflow/
 
 # autotests
 Testing
