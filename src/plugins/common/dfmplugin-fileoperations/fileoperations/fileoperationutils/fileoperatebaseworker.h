@@ -51,7 +51,6 @@ public:
                        const QUrl &toUrl, bool *skip);
     bool checkDiskSpaceAvailable(const QUrl &fromUrl, const QUrl &toUrl, bool *skip);
     bool checkTotalDiskSpaceAvailable(const QUrl &fromUrl, const QUrl &toUrl, bool *skip);
-    void setTargetPermissions(const QUrl &fromUrl, const QUrl &toUrl);
     void setAllDirPermisson();
     void determineCountProcessType();
     qint64 getWriteDataSize();
