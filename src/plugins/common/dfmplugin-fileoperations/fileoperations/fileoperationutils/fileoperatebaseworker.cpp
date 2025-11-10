@@ -104,26 +104,6 @@ void FileOperateBaseWorker::emitSpeedUpdatedNotify(const qint64 &writSize)
 }
 
 /*!
- * \brief FileOperateBaseWorker::setTargetPermissions Set permissions on the target file
- * \param fromInfo File information of source file
- * \param toInfo File information of target file
- */
-void FileOperateBaseWorker::setTargetPermissions(const QUrl &fromUrl, const QUrl &toUrl)
-{
-    // 修改文件修改时间
-    const auto &fromInfo = InfoFactory::create<FileInfo>(fromUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
-    const auto &toInfo = InfoFactory::create<FileInfo>(toUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
-    localFileHandler->setFileTime(toInfo->urlOf(UrlInfoType::kUrl),
-                                  fromInfo->timeOf(TimeInfoType::kLastRead).value<QDateTime>(),
-                                  fromInfo->timeOf(TimeInfoType::kLastModified).value<QDateTime>());
-    QFileDevice::Permissions permissions = fromInfo->permissions();
-    QString path = fromInfo->urlOf(UrlInfoType::kUrl).path();
-    // 权限为0000时，源文件已经被删除，无需修改新建的文件的权限为0000
-    if (permissions != 0000 && !ProtocolUtils::isMTPFile(toInfo->urlOf(UrlInfoType::kUrl)))
-        localFileHandler->setPermissions(toInfo->urlOf(UrlInfoType::kUrl), permissions);
-}
-
-/*!
  * \brief FileOperateBaseWorker::readAheadSourceFile Pre read source file content
  * \param fileInfo File information of source file
  */

@@ -133,7 +133,6 @@ private:   // file copy
                                  const QSharedPointer<DFMIO::DFile> &toDevice, const QSharedPointer<DFMIO::DFile> &fromDevice, const qint64 readSize, bool *skip,
                                  const qint64 currentPos,
                                  const qint64 &surplusSize, qint64 &curWrite);
-    void setTargetPermissions(const FileInfoPointer &fromInfo, const FileInfoPointer &toInfo);
     void setTargetPermissions(const QUrl &fromUrl, const QUrl &toUrl);
     bool verifyFileIntegrity(const qint64 &blockSize, const ulong &sourceCheckSum,
                              const DFileInfoPointer &fromInfo, const DFileInfoPointer &toInfo,
