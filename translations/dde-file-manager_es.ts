@@ -970,7 +970,7 @@ Ingrese el usuario y la contraseña para %1</translation>
         <location filename="../src/dfm-base/utils/universalutils.cpp" line="105"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="110"/>
         <source>dde-file-manager</source>
-        <translation>dde-file-manager</translation>
+        <translation>Administradora de archivos dde</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/universalutils.cpp" line="180"/>
@@ -5332,7 +5332,7 @@ Ingrese el usuario y la contraseña para %1</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="675"/>
         <source>Operation Failed</source>
-        <translation type="unfinished"/>
+        <translation>La operación falló</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="677"/>
@@ -5347,7 +5347,7 @@ Ingrese el usuario y la contraseña para %1</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="692"/>
         <source>dde-file-manager</source>
-        <translation type="unfinished"/>
+        <translation>Administradora de archivos dde</translation>
     </message>
 </context>
 <context>
