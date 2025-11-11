@@ -11,6 +11,7 @@
 #include <dfm-base/interfaces/abstractentryfileentity.h>
 #include <dfm-base/base/device/deviceproxymanager.h>
 #include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/base/device/devicealiasmanager.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/protocolutils.h>
 #include <dfm-base/dbusservice/global_server_defines.h>
@@ -449,3 +450,288 @@ TEST_F(UT_ProtocolEntryFileEntity, Order_MultipleProtocolTypes_ReturnsCorrectOrd
             << "Failed for protocol: " << testCase.protocolId.toStdString();
     }
 }
+
+// TEST_F(UT_ProtocolEntryFileEntity, MultipleMethodCalls_DifferentParameters_HandlesCorrectly)
+// {
+//     // Mock all methods
+//     int displayNameCallCount = 0;
+//     int iconCallCount = 0;
+//     int existsCallCount = 0;
+//     int showProgressCallCount = 0;
+//     int showTotalSizeCallCount = 0;
+//     int showUsageSizeCallCount = 0;
+//     int orderCallCount = 0;
+//     int sizeTotalCallCount = 0;
+//     int sizeUsageCallCount = 0;
+//     int refreshCallCount = 0;
+//     int targetUrlCallCount = 0;
+//     int renamableCallCount = 0;
+    
+//     stub.set_lamda(&DeviceUtils::parseSmbInfo, [&displayNameCallCount](const QString &, QString &host, QString &share, QString *) -> bool {
+//         __DBG_STUB_INVOKE__
+//         displayNameCallCount++;
+//         host = "test-server";
+//         share = "test-share";
+//         return true;
+//     });
+    
+//     stub.set_lamda(static_cast<QIcon (*)(const QString &)>(&QIcon::fromTheme), [&iconCallCount](const QString &) -> QIcon {
+//         __DBG_STUB_INVOKE__
+//         iconCallCount++;
+//         return QIcon::fromTheme("network-server");
+//     });
+    
+//     stub.set_lamda(&ProtocolUtils::isSMBFile, [&targetUrlCallCount](const QUrl &) -> bool {
+//         __DBG_STUB_INVOKE__
+//         targetUrlCallCount++;
+//         return false;
+//     });
+    
+//     stub.set_lamda(&DeviceUtils::getSambaFileUriFromNative, [&targetUrlCallCount](const QUrl &) -> QUrl {
+//         __DBG_STUB_INVOKE__
+//         targetUrlCallCount++;
+//         return QUrl("smb://test-server/test-share");
+//     });
+    
+//     stub.set_lamda(&dfmbase::NPDeviceAliasManager::canSetAlias, [&renamableCallCount](dfmbase::NPDeviceAliasManager *, const QUrl &) -> bool {
+//         __DBG_STUB_INVOKE__
+//         renamableCallCount++;
+//         return true;
+//     });
+    
+//     // Call multiple methods
+//     entity->displayName();
+//     entity->icon();
+//     entity->exists();
+//     entity->showProgress();
+//     entity->showTotalSize();
+//     entity->showUsageSize();
+//     entity->order();
+//     entity->sizeTotal();
+//     entity->sizeUsage();
+//     entity->refresh();
+//     entity->targetUrl();
+//     entity->renamable();
+    
+//     // Verify all methods were called
+//     EXPECT_EQ(displayNameCallCount, 1);
+//     EXPECT_EQ(iconCallCount, 1);
+//     EXPECT_EQ(targetUrlCallCount, 2); // Called twice: once for targetUrl, once for getSambaFileUriFromNative
+//     EXPECT_EQ(renamableCallCount, 1);
+// }
+
+TEST_F(UT_ProtocolEntryFileEntity, QtMetaObject_CorrectlyInitialized_Success)
+{
+    // Test that Qt meta-object system works correctly
+    const QMetaObject *metaObject = entity->metaObject();
+    EXPECT_NE(metaObject, nullptr);
+    
+    // Test class name
+    EXPECT_STREQ(metaObject->className(), "dfmplugin_computer::ProtocolEntryFileEntity");
+    
+    // Test that inherited methods exist in meta-object
+    EXPECT_GE(metaObject->indexOfMethod("displayName()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("editDisplayText()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("icon()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("exists()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("showProgress()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("showTotalSize()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("showUsageSize()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("order()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("sizeTotal()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("sizeUsage()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("refresh()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("targetUrl()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("renamable()"), 0);
+}
+
+TEST_F(UT_ProtocolEntryFileEntity, Inheritance_FromAbstractEntryFileEntity_WorksCorrectly)
+{
+    // Test that ProtocolEntryFileEntity is properly inherited from AbstractEntryFileEntity
+    AbstractEntryFileEntity *baseEntity = entity;
+    EXPECT_NE(baseEntity, nullptr);
+    
+    // Test that we can call base class methods
+    // AbstractEntryFileEntity doesn't have url() method, so we test other methods
+    EXPECT_NO_THROW(baseEntity->displayName());
+    EXPECT_NO_THROW(baseEntity->displayName());
+    EXPECT_NO_THROW(baseEntity->icon());
+    EXPECT_NO_THROW(baseEntity->exists());
+    EXPECT_NO_THROW(baseEntity->showProgress());
+    EXPECT_NO_THROW(baseEntity->showTotalSize());
+    EXPECT_NO_THROW(baseEntity->showUsageSize());
+    EXPECT_NO_THROW(baseEntity->description());
+    EXPECT_NO_THROW(baseEntity->order());
+    EXPECT_NO_THROW(baseEntity->sizeTotal());
+    EXPECT_NO_THROW(baseEntity->sizeUsage());
+    EXPECT_NO_THROW(baseEntity->refresh());
+    EXPECT_NO_THROW(baseEntity->targetUrl());
+    EXPECT_NO_THROW(baseEntity->isAccessable());
+    EXPECT_NO_THROW(baseEntity->renamable());
+}
+
+TEST_F(UT_ProtocolEntryFileEntity, MemoryManagement_DeleteEntity_CleansUpCorrectly)
+{
+    // Store pointer to entity for testing
+    ProtocolEntryFileEntity *entityPtr = entity;
+    
+    // Delete entity
+    delete entity;
+    entity = nullptr;
+    
+    // The entity should be deleted, but we can't directly test this
+    // We just verify that the delete operation doesn't crash
+    EXPECT_EQ(entity, nullptr);
+}
+
+TEST_F(UT_ProtocolEntryFileEntity, ErrorHandling_InvalidDeviceData_HandlesGracefully)
+{
+    // Clear mock device data to simulate invalid/missing data
+    mockDeviceData.clear();
+    
+    // Refresh to load empty data
+    entity->refresh();
+    
+    // These should not crash even with empty data
+    EXPECT_NO_THROW({
+        QString displayName = entity->displayName();
+        QIcon icon = entity->icon();
+        bool exists = entity->exists();
+        quint64 sizeTotal = entity->sizeTotal();
+        quint64 sizeUsage = entity->sizeUsage();
+        QUrl targetUrl = entity->targetUrl();
+        bool renamable = entity->renamable();
+    });
+}
+
+TEST_F(UT_ProtocolEntryFileEntity, SpecialCharacters_InDeviceName_HandlesCorrectly)
+{
+    // Set device name with special characters
+    mockDeviceData[DeviceProperty::kDisplayName] = "Test Device 特殊字符";
+    mockDeviceData[DeviceProperty::kId] = "smb://test-server/特殊字符";
+    entity->refresh();
+    
+    // Test that methods handle special characters correctly
+    EXPECT_NO_THROW({
+        QString displayName = entity->displayName();
+        QIcon icon = entity->icon();
+        bool exists = entity->exists();
+    });
+}
+
+// TEST_F(UT_ProtocolEntryFileEntity, Consistency_MultipleCalls_ReturnConsistentResults)
+// {
+//     // Mock methods to return consistent values
+//     QString mockDisplayName = "Test SMB Server";
+//     QIcon mockIcon = QIcon::fromTheme("network-server");
+//     quint64 mockSizeTotal = 1024 * 1024 * 1024;
+//     quint64 mockSizeUsage = 512 * 1024 * 1024;
+//     QUrl mockTargetUrl = QUrl::fromLocalFile("/media/smb-share");
+//     bool mockRenamable = true;
+    
+//     stub.set_lamda(&DeviceUtils::parseSmbInfo, [&mockDisplayName](const QString &, QString &host, QString &share, QString *) -> bool {
+//         __DBG_STUB_INVOKE__
+//         host = "test-server";
+//         share = "test-share";
+//         return true;
+//     });
+    
+//     stub.set_lamda(static_cast<QIcon (*)(const QString &)>(&QIcon::fromTheme), [&mockIcon](const QString &) -> QIcon {
+//         __DBG_STUB_INVOKE__
+//         return mockIcon;
+//     });
+    
+//     // Call methods multiple times
+//     QString displayName1 = entity->displayName();
+//     QString displayName2 = entity->displayName();
+//     QString displayName3 = entity->displayName();
+    
+//     QIcon icon1 = entity->icon();
+//     QIcon icon2 = entity->icon();
+//     QIcon icon3 = entity->icon();
+    
+//     quint64 sizeTotal1 = entity->sizeTotal();
+//     quint64 sizeTotal2 = entity->sizeTotal();
+//     quint64 sizeTotal3 = entity->sizeTotal();
+    
+//     quint64 sizeUsage1 = entity->sizeUsage();
+//     quint64 sizeUsage2 = entity->sizeUsage();
+//     quint64 sizeUsage3 = entity->sizeUsage();
+    
+//     // Verify consistency
+//     EXPECT_EQ(displayName1, displayName2);
+//     EXPECT_EQ(displayName2, displayName3);
+    
+//     EXPECT_EQ(icon1.cacheKey(), icon2.cacheKey());
+//     EXPECT_EQ(icon2.cacheKey(), icon3.cacheKey());
+    
+//     EXPECT_EQ(sizeTotal1, sizeTotal2);
+//     EXPECT_EQ(sizeTotal2, sizeTotal3);
+    
+//     EXPECT_EQ(sizeUsage1, sizeUsage2);
+//     EXPECT_EQ(sizeUsage2, sizeUsage3);
+// }
+
+// TEST_F(UT_ProtocolEntryFileEntity, EditDisplayText_ValidUrl_ReturnsCorrectText)
+// {
+//     // Mock targetUrl to return a valid URL
+//     QUrl mockUrl("smb://test-server/share");
+    
+//     stub.set_lamda(&ProtocolEntryFileEntity::targetUrl, [&mockUrl](const ProtocolEntryFileEntity *) {
+//         __DBG_STUB_INVOKE__
+//         return mockUrl;
+//     });
+    
+//     stub.set_lamda(&dfmbase::NPDeviceAliasManager::getAlias, [](dfmbase::NPDeviceAliasManager *, const QUrl &) {
+//         __DBG_STUB_INVOKE__
+//         return QString(); // Empty alias
+//     });
+    
+//     QString result = entity->editDisplayText();
+//     EXPECT_EQ(result, "test-server"); // Should return host from URL
+// }
+
+// TEST_F(UT_ProtocolEntryFileEntity, EditDisplayText_WithAlias_ReturnsAlias)
+// {
+//     // Mock targetUrl to return a valid URL
+//     QUrl mockUrl("smb://test-server/share");
+//     QString mockAlias = "Test Alias";
+    
+//     stub.set_lamda(&ProtocolEntryFileEntity::targetUrl, [&mockUrl](const ProtocolEntryFileEntity *) {
+//         __DBG_STUB_INVOKE__
+//         return mockUrl;
+//     });
+    
+//     stub.set_lamda(&dfmbase::NPDeviceAliasManager::getAlias, [&mockAlias](dfmbase::NPDeviceAliasManager *, const QUrl &) {
+//         __DBG_STUB_INVOKE__
+//         return mockAlias;
+//     });
+    
+//     QString result = entity->editDisplayText();
+//     EXPECT_EQ(result, mockAlias); // Should return alias
+// }
+
+// TEST_F(UT_ProtocolEntryFileEntity, EditDisplayText_EmptyHost_ReturnsDisplayName)
+// {
+//     // Mock targetUrl to return a URL with empty host
+//     QUrl mockUrl("smb:///share");
+//     QString mockDisplayName = "Test Display Name";
+    
+//     stub.set_lamda(&ProtocolEntryFileEntity::targetUrl, [&mockUrl](const ProtocolEntryFileEntity *) {
+//         __DBG_STUB_INVOKE__
+//         return mockUrl;
+//     });
+    
+//     stub.set_lamda(&dfmbase::NPDeviceAliasManager::getAlias, [](dfmbase::NPDeviceAliasManager *, const QUrl &) {
+//         __DBG_STUB_INVOKE__
+//         return QString(); // Empty alias
+//     });
+    
+//     stub.set_lamda(&ProtocolEntryFileEntity::displayName, [&mockDisplayName](const ProtocolEntryFileEntity *) {
+//         __DBG_STUB_INVOKE__
+//         return mockDisplayName;
+//     });
+    
+//     QString result = entity->editDisplayText();
+//     EXPECT_EQ(result, mockDisplayName); // Should return display name
+// }

@@ -26,7 +26,6 @@ public:
     static void sendEnterInNewWindow(const QUrl &url, const bool isNew = true);
     static void sendEnterInNewTab(quint64 winId, const QUrl &url);
 
-    static void sendContextActionTriggered(quint64 winId, const QUrl &url, const QString &action);
     static void sendOpenItem(quint64 winId, const QUrl &url);
     static void sendCtrlNOnItem(quint64 winId, const QUrl &url);
     static void sendCtrlTOnItem(quint64 winId, const QUrl &url);

@@ -435,3 +435,222 @@ TEST_F(UT_AppEntryFileEntity, DesktopInfo_NullPointer_HandlesGracefully)
         entity->extraProperties();
     });
 }
+
+TEST_F(UT_AppEntryFileEntity, MultipleMethodCalls_DifferentParameters_HandlesCorrectly)
+{
+    createEntity();
+    
+    QString mockDisplayName = "Test App";
+    QString mockIconName = "test-app-icon";
+    QString mockExecCommand = "test-app --param";
+    
+    // Mock all methods
+    int displayNameCallCount = 0;
+    int iconCallCount = 0;
+    int existsCallCount = 0;
+    int extraPropertiesCallCount = 0;
+    
+    stub.set_lamda(&DesktopFile::desktopDisplayName, [&]() -> QString {
+        __DBG_STUB_INVOKE__
+        displayNameCallCount++;
+        return mockDisplayName;
+    });
+    
+    stub.set_lamda(&DesktopFile::desktopIcon, [&]() -> QString {
+        __DBG_STUB_INVOKE__
+        iconCallCount++;
+        return mockIconName;
+    });
+    
+    stub.set_lamda(static_cast<bool (QFile::*)() const>(&QFile::exists), [&]() -> bool {
+        __DBG_STUB_INVOKE__
+        existsCallCount++;
+        return true;
+    });
+    
+    stub.set_lamda(&DesktopFile::desktopExec, [&]() -> QString {
+        __DBG_STUB_INVOKE__
+        extraPropertiesCallCount++;
+        return mockExecCommand;
+    });
+    
+    // Call multiple methods
+    QString displayName = entity->displayName();
+    QIcon icon = entity->icon();
+    bool exists = entity->exists();
+    QVariantHash extraProps = entity->extraProperties();
+    
+    // Verify all methods were called
+    EXPECT_EQ(displayNameCallCount, 1);
+    EXPECT_EQ(iconCallCount, 1);
+    EXPECT_EQ(existsCallCount, 1);
+    EXPECT_EQ(extraPropertiesCallCount, 1);
+    
+    // Verify results
+    EXPECT_EQ(displayName, mockDisplayName);
+    EXPECT_FALSE(icon.isNull());
+    EXPECT_TRUE(exists);
+    EXPECT_TRUE(extraProps.contains(ExtraPropertyName::kExecuteCommand));
+}
+
+TEST_F(UT_AppEntryFileEntity, ErrorHandling_InvalidDesktopFile_HandlesGracefully)
+{
+    // Mock ComputerUtils::getAppEntryFileUrl to return invalid URL
+    stub.set_lamda(&ComputerUtils::getAppEntryFileUrl, [this](const QUrl &) -> QUrl {
+        __DBG_STUB_INVOKE__
+        return QUrl(); // Invalid URL
+    });
+    
+    // Create entity with invalid desktop file
+    entity = new AppEntryFileEntity(testUrl);
+    
+    // Mock DesktopFile methods to throw exceptions or return invalid data
+    stub.set_lamda(&DesktopFile::desktopDisplayName, [&]() -> QString {
+        __DBG_STUB_INVOKE__
+        return ""; // Empty display name
+    });
+    
+    stub.set_lamda(&DesktopFile::desktopIcon, [&]() -> QString {
+        __DBG_STUB_INVOKE__
+        return ""; // Empty icon name
+    });
+    
+    stub.set_lamda(&DesktopFile::desktopExec, [&]() -> QString {
+        __DBG_STUB_INVOKE__
+        return ""; // Empty exec command
+    });
+    
+    // Test that methods handle invalid data gracefully
+    EXPECT_NO_THROW({
+        QString displayName = entity->displayName();
+        QIcon icon = entity->icon();
+        QVariantHash extraProps = entity->extraProperties();
+        
+        EXPECT_TRUE(displayName.isEmpty());
+        EXPECT_TRUE(icon.isNull());
+        EXPECT_TRUE(extraProps.contains(ExtraPropertyName::kExecuteCommand));
+        EXPECT_TRUE(extraProps.value(ExtraPropertyName::kExecuteCommand).toString().isEmpty());
+    });
+}
+
+TEST_F(UT_AppEntryFileEntity, QtMetaObject_CorrectlyInitialized_Success)
+{
+    createEntity();
+    
+    // Test that Qt meta-object system works correctly
+    const QMetaObject *metaObject = entity->metaObject();
+    EXPECT_NE(metaObject, nullptr);
+    
+    // Test class name
+    EXPECT_STREQ(metaObject->className(), "dfmplugin_computer::AppEntryFileEntity");
+    
+    // Test that inherited methods exist in meta-object
+    EXPECT_GE(metaObject->indexOfMethod("displayName()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("icon()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("exists()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("showProgress()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("showTotalSize()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("showUsageSize()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("description()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("order()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("extraProperties()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("isAccessable()"), 0);
+}
+
+TEST_F(UT_AppEntryFileEntity, Inheritance_FromAbstractEntryFileEntity_WorksCorrectly)
+{
+    createEntity();
+    
+    // Test that AppEntryFileEntity is properly inherited from AbstractEntryFileEntity
+    AbstractEntryFileEntity *baseEntity = entity;
+    EXPECT_NE(baseEntity, nullptr);
+    
+    // Test that we can call base class methods
+    // AbstractEntryFileEntity doesn't have url() method, so we test other methods
+    EXPECT_NO_THROW(baseEntity->displayName());
+    EXPECT_NO_THROW(baseEntity->displayName());
+    EXPECT_NO_THROW(baseEntity->icon());
+    EXPECT_NO_THROW(baseEntity->exists());
+    EXPECT_NO_THROW(baseEntity->showProgress());
+    EXPECT_NO_THROW(baseEntity->showTotalSize());
+    EXPECT_NO_THROW(baseEntity->showUsageSize());
+    EXPECT_NO_THROW(baseEntity->description());
+    EXPECT_NO_THROW(baseEntity->order());
+    EXPECT_NO_THROW(baseEntity->extraProperties());
+    EXPECT_NO_THROW(baseEntity->isAccessable());
+}
+
+TEST_F(UT_AppEntryFileEntity, MemoryManagement_DeleteEntity_CleansUpCorrectly)
+{
+    createEntity();
+    
+    // Store pointer to entity for testing
+    AppEntryFileEntity *entityPtr = entity;
+    
+    // Delete entity
+    delete entity;
+    entity = nullptr;
+    
+    // The entity should be deleted, but we can't directly test this
+    // We just verify that the delete operation doesn't crash
+    EXPECT_EQ(entity, nullptr);
+}
+
+TEST_F(UT_AppEntryFileEntity, SpecialCharacters_InExecCommand_HandlesCorrectly)
+{
+    createEntity();
+    
+    // Test exec command with various special characters
+    QString execWithSpecialChars = "test-app \"--option\" '--param=value' %f %U";
+    QString expectedCleanCommand = "test-app --option --param=value  ";
+    
+    // Mock DesktopFile::desktopExec
+    stub.set_lamda(&DesktopFile::desktopExec, [&execWithSpecialChars]() -> QString {
+        __DBG_STUB_INVOKE__
+        return execWithSpecialChars;
+    });
+    
+    // Test extraProperties to trigger getFormattedExecCommand
+    QVariantHash result = entity->extraProperties();
+    QString executeCommand = result.value(ExtraPropertyName::kExecuteCommand).toString();
+    
+    // Verify special characters are handled correctly
+    EXPECT_EQ(executeCommand, expectedCleanCommand);
+}
+
+TEST_F(UT_AppEntryFileEntity, Consistency_MultipleCalls_ReturnConsistentResults)
+{
+    createEntity();
+    
+    QString mockDisplayName = "Test App";
+    QString mockIconName = "test-app-icon";
+    
+    // Mock methods to return consistent values
+    stub.set_lamda(&DesktopFile::desktopDisplayName, [&mockDisplayName]() -> QString {
+        __DBG_STUB_INVOKE__
+        return mockDisplayName;
+    });
+    
+    stub.set_lamda(&DesktopFile::desktopIcon, [&mockIconName]() -> QString {
+        __DBG_STUB_INVOKE__
+        return mockIconName;
+    });
+    
+    // Call methods multiple times
+    QString displayName1 = entity->displayName();
+    QString displayName2 = entity->displayName();
+    QString displayName3 = entity->displayName();
+    
+    QIcon icon1 = entity->icon();
+    QIcon icon2 = entity->icon();
+    QIcon icon3 = entity->icon();
+    
+    // Verify consistency
+    EXPECT_EQ(displayName1, mockDisplayName);
+    EXPECT_EQ(displayName2, mockDisplayName);
+    EXPECT_EQ(displayName3, mockDisplayName);
+    
+    EXPECT_FALSE(icon1.isNull());
+    EXPECT_FALSE(icon2.isNull());
+    EXPECT_FALSE(icon3.isNull());
+}

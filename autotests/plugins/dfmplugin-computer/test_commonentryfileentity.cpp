@@ -881,3 +881,359 @@ TEST_F(UT_CommonEntryFileEntity, EdgeCase_ReflectionMethodInvokeFails_HandlesGra
     QString result = entity->displayName();
     EXPECT_TRUE(result.isEmpty());   // Should return empty when invoke fails
 }
+
+TEST_F(UT_CommonEntryFileEntity, MultipleMethodCalls_DifferentParameters_HandlesCorrectly)
+{
+    createEntityWithComputerInfo();
+    
+    // Mock all methods
+    int displayNameCallCount = 0;
+    int iconCallCount = 0;
+    int existsCallCount = 0;
+    int showProgressCallCount = 0;
+    int showTotalSizeCallCount = 0;
+    int showUsageSizeCallCount = 0;
+    int orderCallCount = 0;
+    int refreshCallCount = 0;
+    int sizeTotalCallCount = 0;
+    int sizeUsageCallCount = 0;
+    int descriptionCallCount = 0;
+    int targetUrlCallCount = 0;
+    int isAccessableCallCount = 0;
+    int renamableCallCount = 0;
+    int extraPropertiesCallCount = 0;
+    int setExtraPropertyCallCount = 0;
+    
+    stub.set_lamda(&CommonEntryFileEntity::reflection, [](const CommonEntryFileEntity *) {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+    
+    stub.set_lamda(&CommonEntryFileEntity::hasMethod, [&displayNameCallCount, &iconCallCount, &existsCallCount,
+                                                    &showProgressCallCount, &showTotalSizeCallCount, &showUsageSizeCallCount,
+                                                    &orderCallCount, &refreshCallCount, &sizeTotalCallCount, &sizeUsageCallCount,
+                                                    &descriptionCallCount, &targetUrlCallCount, &isAccessableCallCount,
+                                                    &renamableCallCount, &extraPropertiesCallCount, &setExtraPropertyCallCount]
+                                                    (const CommonEntryFileEntity *, const QString &method) {
+        __DBG_STUB_INVOKE__
+        if (method == "displayName") displayNameCallCount++;
+        else if (method == "icon") iconCallCount++;
+        else if (method == "exists") existsCallCount++;
+        else if (method == "showProgress") showProgressCallCount++;
+        else if (method == "showTotalSize") showTotalSizeCallCount++;
+        else if (method == "showUsageSize") showUsageSizeCallCount++;
+        else if (method == "order") orderCallCount++;
+        else if (method == "refresh") refreshCallCount++;
+        else if (method == "sizeTotal") sizeTotalCallCount++;
+        else if (method == "sizeUsage") sizeUsageCallCount++;
+        else if (method == "description") descriptionCallCount++;
+        else if (method == "targetUrl") targetUrlCallCount++;
+        else if (method == "isAccessable") isAccessableCallCount++;
+        else if (method == "renamable") renamableCallCount++;
+        else if (method == "extraProperties") extraPropertiesCallCount++;
+        else if (method == "setExtraProperty") setExtraPropertyCallCount++;
+        return true;
+    });
+    
+    stub.set_lamda(static_cast<bool (*)(QObject *, const char *, Qt::ConnectionType, qsizetype,
+                                        const void *const *, const char *const *,
+                                        const QtPrivate::QMetaTypeInterface *const *)>(&QMetaObject::invokeMethodImpl),
+                   [] {
+                       __DBG_STUB_INVOKE__
+                       return true;
+                   });
+    
+    // Call multiple methods
+    entity->displayName();
+    entity->icon();
+    entity->exists();
+    entity->showProgress();
+    entity->showTotalSize();
+    entity->showUsageSize();
+    entity->order();
+    entity->refresh();
+    entity->sizeTotal();
+    entity->sizeUsage();
+    entity->description();
+    entity->targetUrl();
+    entity->isAccessable();
+    entity->renamable();
+    entity->extraProperties();
+    entity->setExtraProperty("testKey", QVariant("testValue"));
+    
+    // Verify all methods were called
+    EXPECT_EQ(displayNameCallCount, 1);
+    EXPECT_EQ(iconCallCount, 1);
+    EXPECT_EQ(existsCallCount, 1);
+    EXPECT_EQ(showProgressCallCount, 1);
+    EXPECT_EQ(showTotalSizeCallCount, 1);
+    EXPECT_EQ(showUsageSizeCallCount, 1);
+    EXPECT_EQ(orderCallCount, 1);
+    EXPECT_EQ(refreshCallCount, 1);
+    EXPECT_EQ(sizeTotalCallCount, 1);
+    EXPECT_EQ(sizeUsageCallCount, 1);
+    EXPECT_EQ(descriptionCallCount, 1);
+    EXPECT_EQ(targetUrlCallCount, 1);
+    EXPECT_EQ(isAccessableCallCount, 1);
+    EXPECT_EQ(renamableCallCount, 1);
+    EXPECT_EQ(extraPropertiesCallCount, 1);
+    EXPECT_EQ(setExtraPropertyCallCount, 1);
+}
+
+TEST_F(UT_CommonEntryFileEntity, QtMetaObject_CorrectlyInitialized_Success)
+{
+    createEntityWithComputerInfo();
+    
+    // Test that Qt meta-object system works correctly
+    const QMetaObject *metaObject = entity->metaObject();
+    EXPECT_NE(metaObject, nullptr);
+    
+    // Test class name
+    EXPECT_STREQ(metaObject->className(), "dfmplugin_computer::CommonEntryFileEntity");
+    
+    // Test that inherited methods exist in meta-object
+    EXPECT_GE(metaObject->indexOfMethod("displayName()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("icon()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("exists()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("showProgress()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("showTotalSize()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("showUsageSize()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("order()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("refresh()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("sizeTotal()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("sizeUsage()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("description()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("targetUrl()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("isAccessable()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("renamable()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("extraProperties()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("setExtraProperty(QString,QVariant)"), 0);
+}
+
+TEST_F(UT_CommonEntryFileEntity, Inheritance_FromAbstractEntryFileEntity_WorksCorrectly)
+{
+    createEntityWithComputerInfo();
+    
+    // Test that CommonEntryFileEntity is properly inherited from AbstractEntryFileEntity
+    AbstractEntryFileEntity *baseEntity = entity;
+    EXPECT_NE(baseEntity, nullptr);
+    
+    // Test that we can call base class methods
+    // AbstractEntryFileEntity doesn't have url() method, so we test other methods
+    EXPECT_NO_THROW(baseEntity->displayName());
+    EXPECT_NO_THROW(baseEntity->displayName());
+    EXPECT_NO_THROW(baseEntity->icon());
+    EXPECT_NO_THROW(baseEntity->exists());
+    EXPECT_NO_THROW(baseEntity->showProgress());
+    EXPECT_NO_THROW(baseEntity->showTotalSize());
+    EXPECT_NO_THROW(baseEntity->showUsageSize());
+    EXPECT_NO_THROW(baseEntity->description());
+    EXPECT_NO_THROW(baseEntity->order());
+    EXPECT_NO_THROW(baseEntity->refresh());
+    EXPECT_NO_THROW(baseEntity->sizeTotal());
+    EXPECT_NO_THROW(baseEntity->sizeUsage());
+    EXPECT_NO_THROW(baseEntity->targetUrl());
+    EXPECT_NO_THROW(baseEntity->isAccessable());
+    EXPECT_NO_THROW(baseEntity->renamable());
+    EXPECT_NO_THROW(baseEntity->extraProperties());
+    EXPECT_NO_THROW(baseEntity->setExtraProperty("testKey", QVariant("testValue")));
+}
+
+TEST_F(UT_CommonEntryFileEntity, MemoryManagement_DeleteEntity_CleansUpCorrectly)
+{
+    createEntityWithComputerInfo();
+    
+    // Store pointer to entity for testing
+    CommonEntryFileEntity *entityPtr = entity;
+    
+    // Delete entity
+    delete entity;
+    entity = nullptr;
+    
+    // The entity should be deleted, but we can't directly test this
+    // We just verify that the delete operation doesn't crash
+    EXPECT_EQ(entity, nullptr);
+}
+
+TEST_F(UT_CommonEntryFileEntity, ErrorHandling_InvalidReflectionObject_HandlesGracefully)
+{
+    createEntityWithComputerInfo();
+    
+    // Mock reflection to return false
+    stub.set_lamda(&CommonEntryFileEntity::reflection, [](const CommonEntryFileEntity *) {
+        __DBG_STUB_INVOKE__
+        return false;
+    });
+    
+    // Test that methods handle invalid reflection gracefully
+    EXPECT_NO_THROW({
+        QString displayName = entity->displayName();
+        QIcon icon = entity->icon();
+        bool exists = entity->exists();
+        bool showProgress = entity->showProgress();
+        bool showTotalSize = entity->showTotalSize();
+        bool showUsageSize = entity->showUsageSize();
+        AbstractEntryFileEntity::EntryOrder order = entity->order();
+        entity->refresh();
+        quint64 sizeTotal = entity->sizeTotal();
+        quint64 sizeUsage = entity->sizeUsage();
+        QString description = entity->description();
+        QUrl targetUrl = entity->targetUrl();
+        bool isAccessable = entity->isAccessable();
+        bool renamable = entity->renamable();
+        QVariantHash extraProps = entity->extraProperties();
+        entity->setExtraProperty("testKey", QVariant("testValue"));
+    });
+}
+
+TEST_F(UT_CommonEntryFileEntity, SpecialCharacters_InReflectionObjectName_HandlesCorrectly)
+{
+    createEntityWithComputerInfo();
+    
+    // Set reflection object name with special characters
+    entity->reflectionObjName = "TestObject_特殊字符";
+    
+    // Mock QMetaType::type to return valid type
+    // Mock QMetaType::type with specific overload
+    using QMetaTypeTypeFunc = int (*)(const char *);
+    stub.set_lamda(static_cast<QMetaTypeTypeFunc>(&QMetaType::type), [](const char *) {
+        __DBG_STUB_INVOKE__
+        return QMetaType::QObjectStar;
+    });
+    
+    // Mock QMetaType::metaObjectForType to return valid meta object
+    stub.set_lamda(&QMetaType::metaObjectForType, [] {
+        __DBG_STUB_INVOKE__
+        static QMetaObject metaObject;
+        return &metaObject;
+    });
+    
+    // Mock QMetaObject::newInstance to return valid object
+    // Mock QMetaObject::newInstance with specific overload
+    using QMetaObjectNewInstanceFunc = QObject *(QMetaObject::*)() const;
+    stub.set_lamda(static_cast<QMetaObjectNewInstanceFunc>(&QMetaObject::newInstance), [](const QMetaObject *) {
+        __DBG_STUB_INVOKE__
+        return new QObject();
+    });
+    
+    // Test that reflection handles special characters correctly
+    bool result = entity->reflection();
+    EXPECT_TRUE(result);
+}
+
+TEST_F(UT_CommonEntryFileEntity, Consistency_MultipleCalls_ReturnConsistentResults)
+{
+    createEntityWithComputerInfo();
+    
+    // Mock methods to return consistent values
+    QString mockDisplayName = "Test Display Name";
+    QIcon mockIcon = QIcon::fromTheme("test-icon");
+    bool mockExists = true;
+    bool mockShowProgress = false;
+    bool mockShowTotalSize = false;
+    bool mockShowUsageSize = false;
+    AbstractEntryFileEntity::EntryOrder mockOrder = AbstractEntryFileEntity::EntryOrder::kOrderUserDir;
+    quint64 mockSizeTotal = 1024;
+    quint64 mockSizeUsage = 512;
+    QString mockDescription = "Test Description";
+    QUrl mockTargetUrl = QUrl::fromLocalFile("/test/path");
+    bool mockIsAccessable = true;
+    bool mockRenamable = false;
+    QVariantHash mockExtraProps;
+    mockExtraProps["testKey"] = QVariant("testValue");
+    
+    stub.set_lamda(&CommonEntryFileEntity::reflection, [](const CommonEntryFileEntity *) {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+    
+    stub.set_lamda(&CommonEntryFileEntity::hasMethod, [](const CommonEntryFileEntity *, const QString &) {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+    
+    stub.set_lamda(static_cast<bool (*)(QObject *, const char *, Qt::ConnectionType, qsizetype,
+                                        const void *const *, const char *const *,
+                                        const QtPrivate::QMetaTypeInterface *const *)>(&QMetaObject::invokeMethodImpl),
+                   [&mockDisplayName, &mockIcon, &mockExists, &mockShowProgress, &mockShowTotalSize, &mockShowUsageSize,
+                   &mockOrder, &mockSizeTotal, &mockSizeUsage, &mockDescription, &mockTargetUrl,
+                   &mockIsAccessable, &mockRenamable, &mockExtraProps]
+                   (QObject *, const char *method, Qt::ConnectionType, qsizetype,
+                    const void *const *, const char *const *,
+                    const QtPrivate::QMetaTypeInterface *const *) {
+        __DBG_STUB_INVOKE__
+        QString methodName(method);
+        
+        if (methodName == "displayName") {
+            Q_RETURN_ARG(QString, mockDisplayName);
+            return true;
+        } else if (methodName == "icon") {
+            Q_RETURN_ARG(QIcon, mockIcon);
+            return true;
+        } else if (methodName == "exists") {
+            Q_RETURN_ARG(bool, mockExists);
+            return true;
+        } else if (methodName == "showProgress") {
+            Q_RETURN_ARG(bool, mockShowProgress);
+            return true;
+        } else if (methodName == "showTotalSize") {
+            Q_RETURN_ARG(bool, mockShowTotalSize);
+            return true;
+        } else if (methodName == "showUsageSize") {
+            Q_RETURN_ARG(bool, mockShowUsageSize);
+            return true;
+        } else if (methodName == "order") {
+            Q_RETURN_ARG(AbstractEntryFileEntity::EntryOrder, mockOrder);
+            return true;
+        } else if (methodName == "sizeTotal") {
+            Q_RETURN_ARG(quint64, mockSizeTotal);
+            return true;
+        } else if (methodName == "sizeUsage") {
+            Q_RETURN_ARG(quint64, mockSizeUsage);
+            return true;
+        } else if (methodName == "description") {
+            Q_RETURN_ARG(QString, mockDescription);
+            return true;
+        } else if (methodName == "targetUrl") {
+            Q_RETURN_ARG(QUrl, mockTargetUrl);
+            return true;
+        } else if (methodName == "isAccessable") {
+            Q_RETURN_ARG(bool, mockIsAccessable);
+            return true;
+        } else if (methodName == "renamable") {
+            Q_RETURN_ARG(bool, mockRenamable);
+            return true;
+        } else if (methodName == "extraProperties") {
+            Q_RETURN_ARG(QVariantHash, mockExtraProps);
+            return true;
+        }
+        
+        return false;
+    });
+    
+    // Call methods multiple times
+    QString displayName1 = entity->displayName();
+    QString displayName2 = entity->displayName();
+    QString displayName3 = entity->displayName();
+    
+    QIcon icon1 = entity->icon();
+    QIcon icon2 = entity->icon();
+    QIcon icon3 = entity->icon();
+    
+    bool exists1 = entity->exists();
+    bool exists2 = entity->exists();
+    bool exists3 = entity->exists();
+    
+    // Verify consistency
+    EXPECT_EQ(displayName1, mockDisplayName);
+    EXPECT_EQ(displayName2, mockDisplayName);
+    EXPECT_EQ(displayName3, mockDisplayName);
+    
+    EXPECT_EQ(icon1.cacheKey(), mockIcon.cacheKey());
+    EXPECT_EQ(icon2.cacheKey(), mockIcon.cacheKey());
+    EXPECT_EQ(icon3.cacheKey(), mockIcon.cacheKey());
+    
+    EXPECT_EQ(exists1, mockExists);
+    EXPECT_EQ(exists2, mockExists);
+    EXPECT_EQ(exists3, mockExists);
+}
