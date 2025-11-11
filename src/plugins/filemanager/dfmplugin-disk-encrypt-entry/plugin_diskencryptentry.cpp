@@ -27,9 +27,9 @@ bool hasComputerMenuRegisted()
 
 void DiskEncryptEntry::initialize()
 {
-    auto i18n = new QTranslator(this);
-    i18n->load(QLocale(), "disk-encrypt", "_", "/usr/share/dde-file-manager/translations");
-    QCoreApplication::installTranslator(i18n);
+    // auto i18n = new QTranslator(this);
+    // i18n->load(QLocale(), "disk-encrypt", "_", "/usr/share/dde-file-manager/translations");
+    // QCoreApplication::installTranslator(i18n);
 
     auto mng = dfmbase::DConfigManager::instance();
     mng->addConfig(kEncryptDConfig);
