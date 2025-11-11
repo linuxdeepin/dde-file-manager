@@ -413,6 +413,7 @@ void EncryptParamsInputDialog::onExpPathChanged(const QString &path, bool silent
 
     QString msg;
     btnNext->setEnabled(validateExportPath(path, &msg));
+    if (!msg.isEmpty() && !silent)
         keyExportInput->showAlertMessage(msg);
 }
 
