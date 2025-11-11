@@ -476,7 +476,7 @@ void OptionButtonBox::setListViewButton(DToolButton *listViewButton)
             d->listViewButton = nullptr;
         }
 
-        if (!listViewButton)
+        if (listViewButton)
             d->listViewButton = listViewButton;
 
         if (d->listViewButton->icon().isNull())
