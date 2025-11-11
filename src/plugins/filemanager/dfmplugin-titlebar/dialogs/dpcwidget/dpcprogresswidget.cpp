@@ -107,7 +107,7 @@ void DPCProgressWidget::onDiskPwdChanged(int result)
             progressTimer->stop();
 
         changeProgress->setValue(100);
-        QTimer::singleShot(500, [this] {
+        QTimer::singleShot(500, this, [this] {
             emit sigCompleted(true, "");
         });
 
