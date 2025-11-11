@@ -78,7 +78,7 @@ void AbstractWorker::doOperateWork(AbstractJobHandler::SupportActions actions, A
         workData->errorOfAction.insert(error, currentAction);
 
     // dealing error thread
-    if (workData->signalThread) {
+    if (workData->singleThread) {
         if (copyOtherFileWorker)
             copyOtherFileWorker->operateAction(currentAction);
         resume();
@@ -87,6 +87,13 @@ void AbstractWorker::doOperateWork(AbstractJobHandler::SupportActions actions, A
 
     if (id == quintptr(this)) {
         return resume();
+    }
+
+    for (auto worker : threadCopyWorker) {
+        if (id == quintptr(worker.data())) {
+            worker->operateAction(currentAction);
+            return;
+        }
     }
 }
 
@@ -154,7 +161,7 @@ void AbstractWorker::getAction(AbstractJobHandler::SupportActions actions)
         currentAction = AbstractJobHandler::SupportAction::kReplaceAction;
     } else if (actions.testFlag(AbstractJobHandler::SupportAction::kRetryAction)) {
         currentAction = AbstractJobHandler::SupportAction::kRetryAction;
-        retry = workData->signalThread ? false : true;
+        retry = workData->singleThread ? false : true;
     } else if (actions.testFlag(AbstractJobHandler::SupportAction::kEnforceAction)) {
         currentAction = AbstractJobHandler::SupportAction::kEnforceAction;
     } else if (actions.testFlag(AbstractJobHandler::SupportAction::kPermanentlyDelete)) {
@@ -467,12 +474,21 @@ void AbstractWorker::resumeAllThread()
     resume();
     if (copyOtherFileWorker)
         copyOtherFileWorker->resume();
+
+    for (auto worker : threadCopyWorker) {
+        worker->resume();
+    }
 }
 
 void AbstractWorker::resumeThread(const QList<quint64> &errorIds)
 {
     if (!errorIds.contains(quintptr(this)) && (!copyOtherFileWorker || !errorIds.contains(quintptr(copyOtherFileWorker.data()))))
         resume();
+
+    for (auto worker : threadCopyWorker) {
+        if (!errorIds.contains(quintptr(worker.data())))
+            worker->resume();
+    }
 }
 
 void AbstractWorker::pauseAllThread()
@@ -480,18 +496,27 @@ void AbstractWorker::pauseAllThread()
     pause();
     if (copyOtherFileWorker)
         copyOtherFileWorker->pause();
+
+    for (auto worker : threadCopyWorker) {
+        worker->pause();
+    }
 }
 
 void AbstractWorker::stopAllThread()
 {
     if (copyOtherFileWorker)
         copyOtherFileWorker->stop();
+
+    for (auto worker : threadCopyWorker) {
+        worker->stop();
+    }
+
     stop();
 }
 
 void AbstractWorker::checkRetry()
 {
-    if (workData->signalThread || !retry)
+    if (workData->singleThread || !retry)
         return;
     emit retryErrSuccess(quintptr(this));
 }

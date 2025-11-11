@@ -196,7 +196,8 @@ public:
 
     QWaitCondition waitCondition;
     QMutex mutex;
-    int threadCount { 8 };
+    QVector<QSharedPointer<DoCopyFileWorker>> threadCopyWorker;
+    int threadCount { 4 };
     std::atomic_bool retry { false };
     QSharedPointer<QThreadPool> threadPool { nullptr };
     static std::atomic_bool bigFileCopy;
