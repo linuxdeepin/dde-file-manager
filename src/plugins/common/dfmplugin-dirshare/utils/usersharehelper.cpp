@@ -170,13 +170,6 @@ void UserShareHelper::setSambaPasswd(const QString &userName, const QString &pas
 
     // Call D-Bus interface with pipe file descriptor
     QDBusInterface *interface = getUserShareInterface();
-    if (!interface || !interface->isValid()) {
-        fmWarning() << "UserShare D-Bus interface is not available";
-        close(pipefd[0]);
-        Q_EMIT sambaPasswordSet(false);
-        return;
-    }
-
     QDBusReply<bool> reply = interface->call(DaemonServiceIFace::kFuncSetPasswd, QVariant::fromValue(fd));
     bool success = reply.isValid() && reply.value();
     fmInfo() << "Samba password set result:" << success
@@ -360,11 +353,6 @@ bool UserShareHelper::needDisableShareWidget(FileInfoPointer info)
 bool UserShareHelper::isUserSharePasswordSet(const QString &username)
 {
     QDBusInterface *interface = getUserShareInterface();
-    if (!interface || !interface->isValid()) {
-        fmWarning() << "UserShare D-Bus interface is not available when checking password";
-        return false;
-    }
-
     QDBusReply<bool> reply = interface->call(DaemonServiceIFace::kFuncIsPasswordSet, username);
     bool result = reply.isValid() ? reply.value() : false;
     fmDebug() << "isSharePasswordSet result: " << result << ", error: " << reply.error();
@@ -498,11 +486,6 @@ void UserShareHelper::initMonitorPath()
 bool UserShareHelper::removeShareByShareName(const QString &name, bool silent)
 {
     QDBusInterface *interface = getUserShareInterface();
-    if (!interface || !interface->isValid()) {
-        fmWarning() << "UserShare D-Bus interface is not available when removing share:" << name;
-        return false;
-    }
-
     QDBusReply<bool> reply = interface->asyncCall(DaemonServiceIFace::kFuncCloseShare, name, !silent);
     if (reply.isValid() && reply.value()) {
         fmDebug() << "share closed: " << name;
