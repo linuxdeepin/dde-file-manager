@@ -71,7 +71,6 @@ public:
     void pause();
     void resume();
     void stop();
-    void skipMemcpyBigFile(const QUrl url);
     void operateAction(const AbstractJobHandler::SupportAction action);
     // normal copy
     NextDo doCopyFilePractically(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo,
@@ -97,7 +96,6 @@ signals:
                      const bool isTo, const quint64 id, const QString &errorMsg,
                      const bool allUsErrorMsg);
     void retryErrSuccess(const quint64 id);
-    void skipCopyLocalBigFile(const QUrl fromUrl);
 
 private:   // file copy
     bool stateCheck();
@@ -163,7 +161,6 @@ private:
     std::atomic_bool retry { false };
     int blockFileFd { -1 };
     QList<QUrl> skipUrls;
-    QUrl memcpySkipUrl;
     DThreadList<QSharedPointer<dfmio::DOperator>> fileOps;
 };
 DPFILEOPERATIONS_END_NAMESPACE

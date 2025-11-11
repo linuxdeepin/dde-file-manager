@@ -69,20 +69,16 @@ void DoCopyFileWorker::stop()
     }
 }
 
-void DoCopyFileWorker::skipMemcpyBigFile(const QUrl url)
-{
-    memcpySkipUrl = url;
-}
 // main thread using
 void DoCopyFileWorker::operateAction(const AbstractJobHandler::SupportAction action)
 {
-    retry = !workData->signalThread && AbstractJobHandler::SupportAction::kRetryAction == action;
+    retry = !workData->singleThread && AbstractJobHandler::SupportAction::kRetryAction == action;
     currentAction = action;
     resume();
 }
 void DoCopyFileWorker::doFileCopy(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo)
 {
-    doDfmioFileCopy(fromInfo, toInfo, nullptr);
+    doCopyFileByRange(fromInfo, toInfo, nullptr);
     workData->completeFileCount++;
 }
 
@@ -1014,7 +1010,7 @@ bool DoCopyFileWorker::verifyFileIntegrity(const qint64 &blockSize, const ulong 
 
 void DoCopyFileWorker::checkRetry()
 {
-    if (!workData->signalThread && retry && !isStopped()) {
+    if (!workData->singleThread && retry && !isStopped()) {
         retry = false;
         emit retryErrSuccess(quintptr(this));
     }
