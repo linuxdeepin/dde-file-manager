@@ -250,3 +250,212 @@ TEST_F(UT_ComputerDataStruct, ComputerItemData_Assignment_AssignsAllFields)
     EXPECT_EQ(assigned.widget, original.widget);
     EXPECT_EQ(assigned.info, original.info);
 }
+
+TEST_F(UT_ComputerDataStruct, ComputerItemData_VisibleFlag_DefaultsToTrue)
+{
+    ComputerItemData data;
+    EXPECT_TRUE(data.isVisible);
+}
+
+TEST_F(UT_ComputerDataStruct, ComputerItemData_VisibleFlag_CanBeSetToFalse)
+{
+    ComputerItemData data;
+    data.isVisible = false;
+    EXPECT_FALSE(data.isVisible);
+}
+
+TEST_F(UT_ComputerDataStruct, ComputerItemData_Comparison_OperatorsWorkCorrectly)
+{
+    ComputerItemData data1, data2;
+    
+    // Set same values
+    data1.url = QUrl("entry://test.blockdev");
+    data1.shape = ComputerItemData::kLargeItem;
+    data1.itemName = "Test Device";
+    data1.groupId = 1;
+    
+    data2.url = QUrl("entry://test.blockdev");
+    data2.shape = ComputerItemData::kLargeItem;
+    data2.itemName = "Test Device";
+    data2.groupId = 1;
+    
+    // Test equality (implicitly through field comparison)
+    EXPECT_EQ(data1.url, data2.url);
+    EXPECT_EQ(data1.shape, data2.shape);
+    EXPECT_EQ(data1.itemName, data2.itemName);
+    EXPECT_EQ(data1.groupId, data2.groupId);
+}
+
+TEST_F(UT_ComputerDataStruct, ComputerItemData_DifferentShapeTypes_HaveCorrectValues)
+{
+    ComputerItemData smallItem, largeItem, splitterItem, widgetItem;
+    
+    smallItem.shape = ComputerItemData::kSmallItem;
+    largeItem.shape = ComputerItemData::kLargeItem;
+    splitterItem.shape = ComputerItemData::kSplitterItem;
+    widgetItem.shape = ComputerItemData::kWidgetItem;
+    
+    EXPECT_EQ(smallItem.shape, 0);
+    EXPECT_EQ(largeItem.shape, 1);
+    EXPECT_EQ(splitterItem.shape, 2);
+    EXPECT_EQ(widgetItem.shape, 3);
+    
+    EXPECT_NE(smallItem.shape, largeItem.shape);
+    EXPECT_NE(largeItem.shape, splitterItem.shape);
+    EXPECT_NE(splitterItem.shape, widgetItem.shape);
+}
+
+TEST_F(UT_ComputerDataStruct, SuffixInfo_StringOperations_WorkCorrectly)
+{
+    QString common(SuffixInfo::kCommon);
+    QString appEntry(SuffixInfo::kAppEntry);
+    QString block(SuffixInfo::kBlock);
+    QString protocol(SuffixInfo::kProtocol);
+    QString userDir(SuffixInfo::kUserDir);
+    
+    // Test string operations
+    EXPECT_TRUE(common.contains("_"));
+    EXPECT_TRUE(appEntry.contains("app"));
+    EXPECT_TRUE(block.contains("dev"));
+    EXPECT_TRUE(protocol.contains("proto"));
+    EXPECT_TRUE(userDir.contains("dir"));
+    
+    // Test that they are different
+    EXPECT_NE(common, appEntry);
+    EXPECT_NE(appEntry, block);
+    EXPECT_NE(block, protocol);
+    EXPECT_NE(protocol, userDir);
+}
+
+TEST_F(UT_ComputerDataStruct, DeviceId_PrefixOperations_WorkCorrectly)
+{
+    QString prefix(DeviceId::kBlockDeviceIdPrefix);
+    
+    // Test prefix operations
+    EXPECT_TRUE(prefix.startsWith("/org/"));
+    EXPECT_TRUE(prefix.contains("freedesktop"));
+    EXPECT_TRUE(prefix.contains("UDisks2"));
+    EXPECT_TRUE(prefix.contains("block_devices"));
+    
+    // Test building a full device ID
+    QString deviceId = prefix + "sda1";
+    EXPECT_TRUE(deviceId.endsWith("sda1"));
+    EXPECT_TRUE(deviceId.contains("block_devices/sda1"));
+}
+
+TEST_F(UT_ComputerDataStruct, ContextMenuAction_SpecialConstants_HaveCorrectValues)
+{
+    EXPECT_STREQ(ContextMenuAction::kActionTriggeredFromSidebar, "trigger-from-sidebar");
+    
+    QString sidebarTrigger(ContextMenuAction::kActionTriggeredFromSidebar);
+    EXPECT_TRUE(sidebarTrigger.contains("sidebar"));
+    EXPECT_TRUE(sidebarTrigger.contains("trigger"));
+}
+
+TEST_F(UT_ComputerDataStruct, ContextMenuAction_AllConstants_AreUnique)
+{
+    // Collect all action strings
+    QStringList actions;
+    actions << ContextMenuAction::kOpen
+             << ContextMenuAction::kOpenInNewWin
+             << ContextMenuAction::kOpenInNewTab
+             << ContextMenuAction::kMount
+             << ContextMenuAction::kUnmount
+             << ContextMenuAction::kRename
+             << ContextMenuAction::kFormat
+             << ContextMenuAction::kEject
+             << ContextMenuAction::kErase
+             << ContextMenuAction::kSafelyRemove
+             << ContextMenuAction::kLogoutAndForget
+             << ContextMenuAction::kProperty
+             << ContextMenuAction::kActionTriggeredFromSidebar;
+    
+    // Check for uniqueness
+    QSet<QString> uniqueActions;
+    for (const QString &action : actions) {
+        EXPECT_FALSE(uniqueActions.contains(action)) << "Duplicate action found: " << action.toStdString();
+        uniqueActions.insert(action);
+    }
+    
+    EXPECT_EQ(uniqueActions.size(), actions.size());
+}
+
+TEST_F(UT_ComputerDataStruct, ContextMenuAction_TranslationFunctions_HandleMultipleCalls_Success)
+{
+    // Test that translation functions can be called multiple times without issues
+    for (int i = 0; i < 3; ++i) {
+        QString openText = ContextMenuAction::trOpen();
+        QString mountText = ContextMenuAction::trMount();
+        QString ejectText = ContextMenuAction::trEject();
+        
+        EXPECT_FALSE(openText.isEmpty());
+        EXPECT_FALSE(mountText.isEmpty());
+        EXPECT_FALSE(ejectText.isEmpty());
+    }
+}
+
+TEST_F(UT_ComputerDataStruct, ComputerItemData_MutableFields_CanBeModified)
+{
+    ComputerItemData data;
+    
+    // Test mutable fields
+    data.itemName = "Initial Name";
+    EXPECT_EQ(data.itemName, "Initial Name");
+    
+    data.itemName = "Modified Name";
+    EXPECT_EQ(data.itemName, "Modified Name");
+    
+    data.isEditing = false;
+    EXPECT_FALSE(data.isEditing);
+    
+    data.isEditing = true;
+    EXPECT_TRUE(data.isEditing);
+    
+    data.isElided = false;
+    EXPECT_FALSE(data.isElided);
+    
+    data.isElided = true;
+    EXPECT_TRUE(data.isElided);
+}
+
+TEST_F(UT_ComputerDataStruct, ComputerItemData_PointerFields_CanBeNull)
+{
+    ComputerItemData data;
+    
+    // Test that pointer fields can be null
+    EXPECT_EQ(data.widget, nullptr);
+    EXPECT_EQ(data.info, nullptr);
+    
+    // Test that pointer fields can be set (without actually creating objects)
+    QWidget *testWidget = reinterpret_cast<QWidget *>(0x1234);
+    DFMEntryFileInfoPointer testInfo = DFMEntryFileInfoPointer(nullptr);
+    
+    data.widget = testWidget;
+    data.info = testInfo;
+    
+    EXPECT_EQ(data.widget, testWidget);
+    EXPECT_EQ(data.info, testInfo);
+}
+
+TEST_F(UT_ComputerDataStruct, ComputerItemData_UrlOperations_WorkCorrectly)
+{
+    ComputerItemData data;
+    
+    // Test URL operations
+    QUrl testUrl1("entry://test1.blockdev");
+    QUrl testUrl2("entry://test2.userdir");
+    
+    data.url = testUrl1;
+    EXPECT_EQ(data.url, testUrl1);
+    EXPECT_NE(data.url, testUrl2);
+    
+    data.url = testUrl2;
+    EXPECT_EQ(data.url, testUrl2);
+    EXPECT_NE(data.url, testUrl1);
+    
+    // Test URL scheme
+    EXPECT_EQ(data.url.scheme(), QString("entry"));
+    
+    // Test URL path
+    EXPECT_TRUE(data.url.path().endsWith(".userdir"));
+}

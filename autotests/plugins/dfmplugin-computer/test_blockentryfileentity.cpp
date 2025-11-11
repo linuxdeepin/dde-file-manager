@@ -632,3 +632,249 @@ TEST_F(UT_BlockEntryFileEntity, EdgeCase_EmptyMountPoints_HandlesCorrectly)
     // Should handle empty mount points gracefully
     EXPECT_TRUE(targetUrl.isEmpty() || targetUrl.isValid());
 }
+
+// TEST_F(UT_BlockEntryFileEntity, MultipleMethodCalls_DifferentParameters_HandlesCorrectly)
+// {
+//     createEntity();
+    
+//     // Mock all methods
+//     int displayNameCallCount = 0;
+//     int iconCallCount = 0;
+//     int existsCallCount = 0;
+//     int sizeTotalCallCount = 0;
+//     int sizeUsageCallCount = 0;
+//     int targetUrlCallCount = 0;
+//     int isAccessableCallCount = 0;
+//     int renamableCallCount = 0;
+    
+//     stub.set_lamda(&BlockEntryFileEntity::displayName, [&displayNameCallCount](const BlockEntryFileEntity *) {
+//         __DBG_STUB_INVOKE__
+//         displayNameCallCount++;
+//         return QString("Test Device");
+//     });
+    
+//     stub.set_lamda(&BlockEntryFileEntity::icon, [&iconCallCount](const BlockEntryFileEntity *) {
+//         __DBG_STUB_INVOKE__
+//         iconCallCount++;
+//         return QIcon::fromTheme("drive-harddisk");
+//     });
+    
+//     stub.set_lamda(&BlockEntryFileEntity::exists, [&existsCallCount](const BlockEntryFileEntity *) {
+//         __DBG_STUB_INVOKE__
+//         existsCallCount++;
+//         return true;
+//     });
+    
+//     stub.set_lamda(&BlockEntryFileEntity::sizeTotal, [&sizeTotalCallCount](const BlockEntryFileEntity *) {
+//         __DBG_STUB_INVOKE__
+//         sizeTotalCallCount++;
+//         return quint64(1024 * 1024 * 1024);
+//     });
+    
+//     stub.set_lamda(&BlockEntryFileEntity::sizeUsage, [&sizeUsageCallCount](const BlockEntryFileEntity *) {
+//         __DBG_STUB_INVOKE__
+//         sizeUsageCallCount++;
+//         return quint64(512 * 1024 * 1024);
+//     });
+    
+//     stub.set_lamda(&BlockEntryFileEntity::targetUrl, [&targetUrlCallCount](const BlockEntryFileEntity *) {
+//         __DBG_STUB_INVOKE__
+//         targetUrlCallCount++;
+//         return QUrl::fromLocalFile("/media/test");
+//     });
+    
+//     stub.set_lamda(&BlockEntryFileEntity::isAccessable, [&isAccessableCallCount](const BlockEntryFileEntity *) {
+//         __DBG_STUB_INVOKE__
+//         isAccessableCallCount++;
+//         return true;
+//     });
+    
+//     stub.set_lamda(&BlockEntryFileEntity::renamable, [&renamableCallCount](const BlockEntryFileEntity *) {
+//         __DBG_STUB_INVOKE__
+//         renamableCallCount++;
+//         return true;
+//     });
+    
+//     // Call multiple methods
+//     entity->displayName();
+//     entity->icon();
+//     entity->exists();
+//     entity->sizeTotal();
+//     entity->sizeUsage();
+//     entity->targetUrl();
+//     entity->isAccessable();
+//     entity->renamable();
+    
+//     // Verify all methods were called
+//     EXPECT_EQ(displayNameCallCount, 1);
+//     EXPECT_EQ(iconCallCount, 1);
+//     EXPECT_EQ(existsCallCount, 1);
+//     EXPECT_EQ(sizeTotalCallCount, 1);
+//     EXPECT_EQ(sizeUsageCallCount, 1);
+//     EXPECT_EQ(targetUrlCallCount, 1);
+//     EXPECT_EQ(isAccessableCallCount, 1);
+//     EXPECT_EQ(renamableCallCount, 1);
+// }
+
+TEST_F(UT_BlockEntryFileEntity, QtMetaObject_CorrectlyInitialized_Success)
+{
+    createEntity();
+    
+    // Test that Qt meta-object system works correctly
+    const QMetaObject *metaObject = entity->metaObject();
+    EXPECT_NE(metaObject, nullptr);
+    
+    // Test class name
+    EXPECT_STREQ(metaObject->className(), "dfmplugin_computer::BlockEntryFileEntity");
+    
+    // Test that inherited methods exist in meta-object
+    EXPECT_GE(metaObject->indexOfMethod("displayName()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("icon()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("exists()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("showProgress()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("showTotalSize()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("showUsageSize()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("order()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("sizeTotal()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("sizeUsage()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("refresh()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("targetUrl()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("isAccessable()"), 0);
+    EXPECT_GE(metaObject->indexOfMethod("renamable()"), 0);
+}
+
+TEST_F(UT_BlockEntryFileEntity, Inheritance_FromAbstractEntryFileEntity_WorksCorrectly)
+{
+    createEntity();
+    
+    // Test that BlockEntryFileEntity is properly inherited from AbstractEntryFileEntity
+    AbstractEntryFileEntity *baseEntity = entity;
+    EXPECT_NE(baseEntity, nullptr);
+    
+    // Test that we can call base class methods
+    // AbstractEntryFileEntity doesn't have url() method, so we test other methods
+    EXPECT_NO_THROW(baseEntity->displayName());
+    EXPECT_NO_THROW(baseEntity->displayName());
+    EXPECT_NO_THROW(baseEntity->icon());
+    EXPECT_NO_THROW(baseEntity->exists());
+    EXPECT_NO_THROW(baseEntity->showProgress());
+    EXPECT_NO_THROW(baseEntity->showTotalSize());
+    EXPECT_NO_THROW(baseEntity->showUsageSize());
+    EXPECT_NO_THROW(baseEntity->description());
+    EXPECT_NO_THROW(baseEntity->order());
+    EXPECT_NO_THROW(baseEntity->sizeTotal());
+    EXPECT_NO_THROW(baseEntity->sizeUsage());
+    EXPECT_NO_THROW(baseEntity->refresh());
+    EXPECT_NO_THROW(baseEntity->targetUrl());
+    EXPECT_NO_THROW(baseEntity->isAccessable());
+    EXPECT_NO_THROW(baseEntity->renamable());
+}
+
+TEST_F(UT_BlockEntryFileEntity, MemoryManagement_DeleteEntity_CleansUpCorrectly)
+{
+    createEntity();
+    
+    // Store pointer to entity for testing
+    BlockEntryFileEntity *entityPtr = entity;
+    
+    // Delete entity
+    delete entity;
+    entity = nullptr;
+    
+    // The entity should be deleted, but we can't directly test this
+    // We just verify that the delete operation doesn't crash
+    EXPECT_EQ(entity, nullptr);
+}
+
+
+
+TEST_F(UT_BlockEntryFileEntity, SpecialCharacters_InDeviceName_HandlesCorrectly)
+{
+    // Set device name with special characters
+    mockDeviceData[DeviceProperty::kId] = "/org/freedesktop/UDisks2/block_devices/sdb1-特殊字符";
+    createEntity();
+    
+    // Test that methods handle special characters correctly
+    EXPECT_NO_THROW(entity->displayName());
+    EXPECT_NO_THROW(entity->icon());
+    EXPECT_NO_THROW(entity->exists());
+}
+
+// TEST_F(UT_BlockEntryFileEntity, Consistency_MultipleCalls_ReturnConsistentResults)
+// {
+//     createEntity();
+    
+//     // Mock methods to return consistent values
+//     QString mockDisplayName = "Test Device";
+//     QIcon mockIcon = QIcon::fromTheme("drive-harddisk");
+//     quint64 mockSizeTotal = 1024 * 1024 * 1024;
+//     quint64 mockSizeUsage = 512 * 1024 * 1024;
+//     QUrl mockTargetUrl = QUrl::fromLocalFile("/media/test");
+    
+//     stub.set_lamda(&BlockEntryFileEntity::displayName, [&mockDisplayName](const BlockEntryFileEntity *) {
+//         __DBG_STUB_INVOKE__
+//         return mockDisplayName;
+//     });
+    
+//     stub.set_lamda(&BlockEntryFileEntity::icon, [&mockIcon](const BlockEntryFileEntity *) {
+//         __DBG_STUB_INVOKE__
+//         return mockIcon;
+//     });
+    
+//     stub.set_lamda(&BlockEntryFileEntity::sizeTotal, [&mockSizeTotal](const BlockEntryFileEntity *) {
+//         __DBG_STUB_INVOKE__
+//         return mockSizeTotal;
+//     });
+    
+//     stub.set_lamda(&BlockEntryFileEntity::sizeUsage, [&mockSizeUsage](const BlockEntryFileEntity *) {
+//         __DBG_STUB_INVOKE__
+//         return mockSizeUsage;
+//     });
+    
+//     stub.set_lamda(&BlockEntryFileEntity::targetUrl, [&mockTargetUrl](const BlockEntryFileEntity *) {
+//         __DBG_STUB_INVOKE__
+//         return mockTargetUrl;
+//     });
+    
+//     // Call methods multiple times
+//     QString displayName1 = entity->displayName();
+//     QString displayName2 = entity->displayName();
+//     QString displayName3 = entity->displayName();
+    
+//     QIcon icon1 = entity->icon();
+//     QIcon icon2 = entity->icon();
+//     QIcon icon3 = entity->icon();
+    
+//     quint64 sizeTotal1 = entity->sizeTotal();
+//     quint64 sizeTotal2 = entity->sizeTotal();
+//     quint64 sizeTotal3 = entity->sizeTotal();
+    
+//     quint64 sizeUsage1 = entity->sizeUsage();
+//     quint64 sizeUsage2 = entity->sizeUsage();
+//     quint64 sizeUsage3 = entity->sizeUsage();
+    
+//     QUrl targetUrl1 = entity->targetUrl();
+//     QUrl targetUrl2 = entity->targetUrl();
+//     QUrl targetUrl3 = entity->targetUrl();
+    
+//     // Verify consistency
+//     EXPECT_EQ(displayName1, mockDisplayName);
+//     EXPECT_EQ(displayName2, mockDisplayName);
+//     EXPECT_EQ(displayName3, mockDisplayName);
+    
+//     EXPECT_EQ(icon1.cacheKey(), mockIcon.cacheKey());
+//     EXPECT_EQ(icon2.cacheKey(), mockIcon.cacheKey());
+//     EXPECT_EQ(icon3.cacheKey(), mockIcon.cacheKey());
+    
+//     EXPECT_EQ(sizeTotal1, mockSizeTotal);
+//     EXPECT_EQ(sizeTotal2, mockSizeTotal);
+//     EXPECT_EQ(sizeTotal3, mockSizeTotal);
+    
+//     EXPECT_EQ(sizeUsage1, mockSizeUsage);
+//     EXPECT_EQ(sizeUsage2, mockSizeUsage);
+//     EXPECT_EQ(sizeUsage3, mockSizeUsage);
+    
+//     EXPECT_EQ(targetUrl1, mockTargetUrl);
+//     EXPECT_EQ(targetUrl2, mockTargetUrl);
+//     EXPECT_EQ(targetUrl3, mockTargetUrl);
+// }

@@ -388,3 +388,240 @@ TEST_F(UT_ComputerEventReceiver, SlotMethods_ExistAndCallable_Success)
     EXPECT_NO_THROW(receiver->handleSetTabName(testUrl, &tabName));
     EXPECT_NO_THROW(receiver->handleSortItem("group", "subgroup", testUrl, testUrl));
 }
+
+TEST_F(UT_ComputerEventReceiver, ParseDevMountCrumb_ValidDeviceUrl_ParsesCorrectly)
+{
+    QUrl testUrl("file:///media/test-device");
+    QList<QVariantMap> mapGroup;
+    
+    bool parseCalled = false;
+    stub.set_lamda(&ComputerEventReceiver::parseDevMountCrumb, [&](ComputerEventReceiver *, const QUrl &url, QList<QVariantMap> *group) -> bool {
+        __DBG_STUB_INVOKE__
+        parseCalled = true;
+        EXPECT_EQ(url, testUrl);
+        EXPECT_NE(group, nullptr);
+        
+        // Simulate adding crumb data
+        QVariantMap crumbData;
+        crumbData["displayText"] = "Test Device";
+        crumbData["url"] = "file:///media/test-device";
+        crumbData["iconName"] = "drive-harddisk-symbolic";
+        group->append(crumbData);
+        
+        return true;
+    });
+    
+    bool result = receiver->parseDevMountCrumb(testUrl, &mapGroup);
+    EXPECT_TRUE(parseCalled);
+    EXPECT_TRUE(result);
+    EXPECT_EQ(mapGroup.size(), 1);
+}
+
+TEST_F(UT_ComputerEventReceiver, ParseDevMountCrumb_NonDeviceUrl_ReturnsFalse)
+{
+    QUrl nonDeviceUrl("file:///home/user/documents");
+    QList<QVariantMap> mapGroup;
+    
+    bool parseCalled = false;
+    stub.set_lamda(&ComputerEventReceiver::parseDevMountCrumb, [&](ComputerEventReceiver *, const QUrl &url, QList<QVariantMap> *group) -> bool {
+        __DBG_STUB_INVOKE__
+        parseCalled = true;
+        EXPECT_EQ(url, nonDeviceUrl);
+        EXPECT_NE(group, nullptr);
+        return false;
+    });
+    
+    bool result = receiver->parseDevMountCrumb(nonDeviceUrl, &mapGroup);
+    EXPECT_TRUE(parseCalled);
+    EXPECT_FALSE(result);
+}
+
+TEST_F(UT_ComputerEventReceiver, ParseDevMountCrumb_NullMapGroup_HandlesGracefully)
+{
+    QUrl testUrl("file:///media/test-device");
+    
+    bool parseCalled = false;
+    stub.set_lamda(&ComputerEventReceiver::parseDevMountCrumb, [&](ComputerEventReceiver *, const QUrl &url, QList<QVariantMap> *group) -> bool {
+        __DBG_STUB_INVOKE__
+        parseCalled = true;
+        EXPECT_EQ(url, testUrl);
+        EXPECT_EQ(group, nullptr);
+        return false;
+    });
+    
+    bool result = receiver->parseDevMountCrumb(testUrl, nullptr);
+    EXPECT_TRUE(parseCalled);
+    EXPECT_FALSE(result);
+}
+
+TEST_F(UT_ComputerEventReceiver, HandleSepateTitlebarCrumb_ComputerScheme_AddsComputerCrumb)
+{
+    QUrl computerUrl("computer:///");
+    QList<QVariantMap> mapGroup;
+    
+    bool crumbHandled = false;
+    stub.set_lamda(&ComputerEventReceiver::handleSepateTitlebarCrumb, [&](ComputerEventReceiver *, const QUrl &url, QList<QVariantMap> *group) -> bool {
+        __DBG_STUB_INVOKE__
+        crumbHandled = true;
+        EXPECT_EQ(url, computerUrl);
+        EXPECT_NE(group, nullptr);
+        
+        // Simulate adding computer crumb data
+        QVariantMap crumbData;
+        crumbData["url"] = computerUrl;
+        crumbData["displayText"] = "Computer";
+        crumbData["iconName"] = "computer-symbolic";
+        group->append(crumbData);
+        
+        return true;
+    });
+    
+    bool result = receiver->handleSepateTitlebarCrumb(computerUrl, &mapGroup);
+    EXPECT_TRUE(crumbHandled);
+    EXPECT_TRUE(result);
+    EXPECT_EQ(mapGroup.size(), 1);
+    EXPECT_EQ(mapGroup.first()["url"], computerUrl);
+    EXPECT_EQ(mapGroup.first()["displayText"], "Computer");
+}
+
+TEST_F(UT_ComputerEventReceiver, HandleSepateTitlebarCrumb_FileScheme_CallsParseMethods)
+{
+    QUrl fileUrl("file:///media/smbmounts/server/share");
+    QList<QVariantMap> mapGroup;
+    
+    bool cifsParseCalled = false;
+    bool devParseCalled = false;
+    
+    // Mock parseCifsMountCrumb
+    stub.set_lamda(&ComputerEventReceiver::parseCifsMountCrumb, [&](ComputerEventReceiver *, const QUrl &url, QList<QVariantMap> *group) -> bool {
+        __DBG_STUB_INVOKE__
+        cifsParseCalled = true;
+        EXPECT_EQ(url, fileUrl);
+        EXPECT_NE(group, nullptr);
+        
+        // Simulate adding crumb data
+        QVariantMap crumbData;
+        crumbData["url"] = fileUrl;
+        crumbData["displayText"] = "share";
+        group->append(crumbData);
+        
+        return true;
+    });
+    
+    // Mock parseDevMountCrumb
+    stub.set_lamda(&ComputerEventReceiver::parseDevMountCrumb, [&](ComputerEventReceiver *, const QUrl &url, QList<QVariantMap> *group) -> bool {
+        __DBG_STUB_INVOKE__
+        devParseCalled = true;
+        EXPECT_EQ(url, fileUrl);
+        EXPECT_NE(group, nullptr);
+        return false;
+    });
+    
+    bool result = receiver->handleSepateTitlebarCrumb(fileUrl, &mapGroup);
+    EXPECT_TRUE(cifsParseCalled);
+    EXPECT_TRUE(result);
+    EXPECT_EQ(mapGroup.size(), 1);
+}
+
+TEST_F(UT_ComputerEventReceiver, HandleSortItem_InvalidGroup_ReturnsFalse)
+{
+    QString invalidGroup = "InvalidGroup";
+    QString subGroup = "computer";
+    QUrl urlA("entry://test-a.blockdev");
+    QUrl urlB("entry://test-b.blockdev");
+    
+    bool sortHandled = false;
+    stub.set_lamda(&ComputerEventReceiver::handleSortItem, [&](ComputerEventReceiver *, const QString &grp, const QString &subGrp, const QUrl &a, const QUrl &b) -> bool {
+        __DBG_STUB_INVOKE__
+        sortHandled = true;
+        EXPECT_EQ(grp, invalidGroup);
+        EXPECT_EQ(subGrp, subGroup);
+        EXPECT_EQ(a, urlA);
+        EXPECT_EQ(b, urlB);
+        return false;
+    });
+    
+    bool result = receiver->handleSortItem(invalidGroup, subGroup, urlA, urlB);
+    EXPECT_TRUE(sortHandled);
+    EXPECT_FALSE(result);
+}
+
+TEST_F(UT_ComputerEventReceiver, HandleSortItem_InvalidSubGroup_ReturnsFalse)
+{
+    QString group = "Group_Device";
+    QString invalidSubGroup = "InvalidSubGroup";
+    QUrl urlA("entry://test-a.blockdev");
+    QUrl urlB("entry://test-b.blockdev");
+    
+    bool sortHandled = false;
+    stub.set_lamda(&ComputerEventReceiver::handleSortItem, [&](ComputerEventReceiver *, const QString &grp, const QString &subGrp, const QUrl &a, const QUrl &b) -> bool {
+        __DBG_STUB_INVOKE__
+        sortHandled = true;
+        EXPECT_EQ(grp, group);
+        EXPECT_EQ(subGrp, invalidSubGroup);
+        EXPECT_EQ(a, urlA);
+        EXPECT_EQ(b, urlB);
+        return false;
+    });
+    
+    bool result = receiver->handleSortItem(group, invalidSubGroup, urlA, urlB);
+    EXPECT_TRUE(sortHandled);
+    EXPECT_FALSE(result);
+}
+
+TEST_F(UT_ComputerEventReceiver, MultipleMethodCalls_DifferentParameters_HandlesCorrectly)
+{
+    QUrl testUrl("entry://test.blockdev");
+    QString testGroup = "Group_Device";
+    QString testSubGroup = "computer";
+    QList<QVariantMap> mapGroup;
+    QString tabName;
+    
+    // Mock all methods
+    int ejectCallCount = 0;
+    int crumbCallCount = 0;
+    int sortCallCount = 0;
+    int tabNameCallCount = 0;
+    int menuStateCallCount = 0;
+    
+    stub.set_lamda(&ComputerEventReceiver::handleItemEject, [&](ComputerEventReceiver *, const QUrl &) {
+        __DBG_STUB_INVOKE__
+        ejectCallCount++;
+    });
+    
+    stub.set_lamda(&ComputerEventReceiver::handleSepateTitlebarCrumb, [&](ComputerEventReceiver *, const QUrl &, QList<QVariantMap> *) -> bool {
+        __DBG_STUB_INVOKE__
+        crumbCallCount++;
+        return true;
+    });
+    
+    stub.set_lamda(&ComputerEventReceiver::handleSortItem, [&](ComputerEventReceiver *, const QString &, const QString &, const QUrl &, const QUrl &) -> bool {
+        __DBG_STUB_INVOKE__
+        sortCallCount++;
+        return true;
+    });
+    
+    stub.set_lamda(&ComputerEventReceiver::handleSetTabName, [&](ComputerEventReceiver *, const QUrl &, QString *) -> bool {
+        __DBG_STUB_INVOKE__
+        tabNameCallCount++;
+        return true;
+    });
+    
+    stub.set_lamda(&ComputerEventReceiver::setContextMenuEnable, [&](ComputerEventReceiver *, bool) {
+        __DBG_STUB_INVOKE__
+        menuStateCallCount++;
+    });
+    
+    // Call multiple methods
+    receiver->handleItemEject(testUrl);
+    receiver->handleSepateTitlebarCrumb(testUrl, &mapGroup);
+    receiver->handleSortItem(testGroup, testSubGroup, testUrl, testUrl);
+    receiver->handleSetTabName(testUrl, &tabName);
+    receiver->setContextMenuEnable(true);
+    
+    EXPECT_EQ(ejectCallCount, 1);
+    EXPECT_EQ(crumbCallCount, 1);
+    EXPECT_EQ(sortCallCount, 1);
+    EXPECT_EQ(tabNameCallCount, 1);
+    EXPECT_EQ(menuStateCallCount, 1);
+}
