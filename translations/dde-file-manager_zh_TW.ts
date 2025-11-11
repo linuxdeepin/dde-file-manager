@@ -4913,7 +4913,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="846"/>
         <source>Reboot to finish decrypt</source>
-        <translation>重新啟動以完成加密</translation>
+        <translation>重新啟動以完成取消加密</translation>
     </message>
 </context>
 <context>
@@ -4988,7 +4988,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="287"/>
         <source>This partition is read-only, please export to a writable partition</source>
-        <translation>該分區為唯讀權限，請匯出到可寫分區。</translation>
+        <translation>該分區為唯讀權限，請匯出到可寫分區</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="301"/>
@@ -5118,7 +5118,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="162"/>
         <source>This partition is read-only, please export to a writable partition</source>
-        <translation>該分區為唯讀權限，請匯出到可寫分區。</translation>
+        <translation>該分區為唯讀權限，請匯出到可寫分區</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="177"/>
@@ -5141,7 +5141,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="214"/>
         <source>Device %1 has been encrypted</source>
-        <translation>裝置%1已完成加密</translation>
+        <translation>裝置%1已加密</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="219"/>
@@ -5156,7 +5156,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="331"/>
         <source>%1 is under encrypting...</source>
-        <translation>%1 正在加密...</translation>
+        <translation>%1正在加密...</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="332"/>
@@ -5166,7 +5166,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="352"/>
         <source>%1 is under decrypting...</source>
-        <translation>%1 正在取消加密...</translation>
+        <translation>%1正在取消加密...</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="353"/>
