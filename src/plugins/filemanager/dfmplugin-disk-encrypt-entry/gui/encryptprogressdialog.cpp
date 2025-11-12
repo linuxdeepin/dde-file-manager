@@ -114,6 +114,8 @@ void EncryptProgressDialog::initUI()
     progress->start();
 
     message = new QLabel(this);
+    message->setWordWrap(true);
+    message->setAlignment(Qt::AlignCenter);
     progressLay->addWidget(message, 0, Qt::AlignCenter);
 
     QFrame *resultPage = new QFrame(this);
@@ -126,6 +128,8 @@ void EncryptProgressDialog::initUI()
     resultLay->addWidget(iconLabel, 0, Qt::AlignCenter);
 
     resultMsg = new QLabel(this);
+    resultMsg->setWordWrap(true);
+    resultMsg->setAlignment(Qt::AlignCenter);
     resultLay->addWidget(resultMsg, 0, Qt::AlignCenter);
 
     warningLabel = new QLabel(this);
