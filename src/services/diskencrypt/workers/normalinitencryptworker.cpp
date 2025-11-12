@@ -24,8 +24,13 @@ void NormalInitEncryptWorker::run()
 
     auto blkPtr = blockdev_helper::createDevPtr(devPath);
     if (blkPtr && !blkPtr->mountPoints().isEmpty()) {
-        setExitCode(-disk_encrypt::kErrorDeviceMounted);
-        return;
+        if (!blkPtr->unmount()) {
+            qWarning() << "Cannot unmount device" << devPath
+                       << ", encryption stopped.";
+            setExitCode(-disk_encrypt::kErrorDeviceMounted);
+            return;
+        }
+        qInfo() << "Device has been unmounted." << devPath;
     }
 
     int r = crypt_setup::csInitEncrypt(devPath,
