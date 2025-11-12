@@ -228,14 +228,13 @@ void EventsHandler::onEncryptFinished(const QVariantMap &result)
     if (!dialog)
         dialog_utils::showDialog(title, msg, code != 0 ? dialog_utils::kError : dialog_utils::kInfo);
     else {
-        auto pos = dialog->geometry().topLeft();
         dialog->showResultPage(success, title, msg);
         if (code == -KErrorRequestExportRecKey) {
             auto recKey = result.value(encrypt_param_keys::kKeyRecoveryKey).toString();
             dialog->setRecoveryKey(recKey, dev);
             dialog->showExportPage();
         }
-        dialog->move(pos);
+        dialog->raise();
     }
 
     // delete auto start file.
@@ -327,7 +326,7 @@ void EventsHandler::onEncryptProgress(const QString &dev, const QString &devName
         QString device = QString("%1(%2)").arg(devName).arg(dev.mid(5));
 
         QApplication::restoreOverrideCursor();
-        auto dlg = new EncryptProgressDialog(qApp->activeWindow());
+        auto dlg = new EncryptProgressDialog();
         dlg->setText(tr("%1 is under encrypting...").arg(device),
                      tr("The encrypting process may have system lag, please minimize the system operation"));
         encryptDialogs.insert(dev, dlg);
@@ -348,7 +347,7 @@ void EventsHandler::onDecryptProgress(const QString &dev, const QString &devName
         QString device = QString("%1(%2)").arg(devName).arg(dev.mid(5));
 
         QApplication::restoreOverrideCursor();
-        auto dlg = new EncryptProgressDialog(qApp->activeWindow());
+        auto dlg = new EncryptProgressDialog();
         dlg->setText(tr("%1 is under decrypting...").arg(device),
                      tr("The decrypting process may have system lag, please minimize the system operation"));
         decryptDialogs.insert(dev, dlg);
@@ -545,9 +544,8 @@ void EventsHandler::showDecryptError(const QString &dev, const QString &devName,
 
     auto dialog = decryptDialogs.take(dev);
     if (dialog) {
-        auto pos = dialog->geometry().topLeft();
         dialog->showResultPage(code == 0, title, msg);
-        dialog->move(pos);
+        dialog->raise();
     } else {
         dialog_utils::showDialog(title, msg,
                                  showFailed ? dialog_utils::kError : dialog_utils::kInfo);
