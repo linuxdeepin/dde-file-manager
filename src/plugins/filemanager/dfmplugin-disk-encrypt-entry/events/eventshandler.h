@@ -6,6 +6,7 @@
 
 #include <QObject>
 #include <QMap>
+#include <QPointer>
 
 namespace dfmplugin_diskenc {
 class EncryptProgressDialog;
@@ -54,9 +55,9 @@ private Q_SLOTS:
 private:
     explicit EventsHandler(QObject *parent = nullptr);
 
-    QMap<QString, EncryptProgressDialog *> encryptDialogs;
-    QMap<QString, EncryptProgressDialog *> decryptDialogs;
-    QMap<QString, EncryptParamsInputDialog *> encryptInputs;
+    QMap<QString, QPointer<EncryptProgressDialog>> encryptDialogs;
+    QMap<QString, QPointer<EncryptProgressDialog>> decryptDialogs;
+    QMap<QString, QPointer<EncryptParamsInputDialog>> encryptInputs;
 signals:
 };
 }

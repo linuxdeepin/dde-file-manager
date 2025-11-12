@@ -54,7 +54,6 @@ void EncryptProgressDialog::showResultPage(bool success, const QString &title, c
     iconLabel->setPixmap(icon.pixmap(64, 64));
 
     addButton(tr("Confirm"));
-    setCloseButtonVisible(true);
     setAttribute(Qt::WA_DeleteOnClose);
     setOnButtonClickedClose(true);
 }
