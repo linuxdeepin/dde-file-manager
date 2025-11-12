@@ -7,10 +7,10 @@
   <vendor_url />
   <action id="org.deepin.Filemanager.DiskEncrypt.Encrypt">
     <description>Disk encryption</description>
-    <message>Authentication is required to encrypt the disk</message>
-    <message xml:lang="zh_CN">加密磁盘需要认证</message>
-    <message xml:lang="zh_HK">加密磁片需要認證</message>
-    <message xml:lang="zh_TW">加密磁片需要認證</message>
+    <message>Authentication is required to encrypt the partition</message>
+    <message xml:lang="zh_CN">加密分区需要认证</message>
+    <message xml:lang="zh_HK">加密分區需要認證</message>
+    <message xml:lang="zh_TW">加密分割區需要認證</message>
     <icon_name>folder</icon_name>
     <defaults>
       <allow_any>no</allow_any>
@@ -20,10 +20,10 @@
   </action>
   <action id="org.deepin.Filemanager.DiskEncrypt.Decrypt">
     <description>Disk encryption</description>
-    <message>Authentication is required to decrypt the disk</message>
-    <message xml:lang="zh_CN">取消加密磁盘需要认证</message>
-    <message xml:lang="zh_HK">取消加密磁片需要認證</message>
-    <message xml:lang="zh_TW">取消加密磁片需要認證</message>
+    <message>Authentication is required to decrypt the partition</message>
+    <message xml:lang="zh_CN">取消加密分区需要认证</message>
+    <message xml:lang="zh_HK">取消加密分區需要認證</message>
+    <message xml:lang="zh_TW">取消加密分割區需要認證</message>
     <icon_name>folder</icon_name>
     <defaults>
       <allow_any>no</allow_any>
@@ -33,10 +33,10 @@
   </action>
   <action id="org.deepin.Filemanager.DiskEncrypt.ChangePassphrase">
     <description>Disk encryption</description>
-    <message>Authentication is required to change the passphrase of disk</message>
-    <message xml:lang="zh_CN">修改磁盘密码需要认证</message>
-    <message xml:lang="zh_HK">修改磁碟密碼需要認證</message>
-    <message xml:lang="zh_TW">修改磁碟密碼需要認證</message>
+    <message>Authentication is required to change the passphrase of partition</message>
+    <message xml:lang="zh_CN">修改分区密码需要认证</message>
+    <message xml:lang="zh_HK">修改分區密碼需要認證</message>
+    <message xml:lang="zh_TW">修改分割區密碼需要認證</message>
     <icon_name>folder</icon_name>
     <defaults>
       <allow_any>no</allow_any>

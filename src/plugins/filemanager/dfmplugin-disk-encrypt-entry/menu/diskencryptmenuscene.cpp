@@ -685,7 +685,7 @@ void DiskEncryptMenuScene::onUnlocked(bool ok, dfmmount::OperationErrorInfo info
     QApplication::restoreOverrideCursor();
     if (!ok && info.code != dfmmount::DeviceError::kUDisksErrorNotAuthorizedDismissed) {
         fmWarning() << "Unlock device failed:" << info.message;
-        dialog_utils::showDialog(tr("Unlock device failed"),
+        dialog_utils::showDialog(tr("Unlock partition failed"),
                                  tr("Wrong passphrase"),
                                  dialog_utils::kError);
         return;

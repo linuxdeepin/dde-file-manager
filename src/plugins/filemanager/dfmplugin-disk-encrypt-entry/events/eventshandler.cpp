@@ -211,13 +211,13 @@ void EventsHandler::onEncryptFinished(const QVariantMap &result)
     case kSuccess:
     case KErrorRequestExportRecKey:
         title = tr("Encrypt done");
-        msg = tr("Device %1 has been encrypted").arg(device);
+        msg = tr("Partition %1 has been encrypted").arg(device);
         success = true;
         fmInfo() << "Encryption completed successfully for device:" << device;
         break;
     default:
         title = tr("Encrypt failed");
-        msg = tr("Device %1 encrypt failed, please see log for more information.(%2)")
+        msg = tr("Partition %1 encrypt failed, please see log for more information.(%2)")
                       .arg(device)
                       .arg(code);
         fmWarning() << "Encryption failed for device:" << device << "with code:" << code;
@@ -485,7 +485,7 @@ void EventsHandler::showPreEncryptError(const QString &dev, const QString &devNa
     switch (-code) {
     case (kSuccess):
         title = tr("Preencrypt done");
-        msg = tr("Device %1 has been preencrypt, please reboot to finish encryption.")
+        msg = tr("Partition %1 has been preencrypt, please reboot to finish encryption.")
                       .arg(device);
         fmInfo() << "Pre-encryption successful for device:" << device;
         break;
@@ -494,7 +494,7 @@ void EventsHandler::showPreEncryptError(const QString &dev, const QString &devNa
         return;
     default:
         title = tr("Preencrypt failed");
-        msg = tr("Device %1 preencrypt failed, please see log for more information.(%2)")
+        msg = tr("Partition %1 preencrypt failed, please see log for more information.(%2)")
                       .arg(device)
                       .arg(code);
         showError = true;
@@ -516,7 +516,7 @@ void EventsHandler::showDecryptError(const QString &dev, const QString &devName,
     switch (-code) {
     case (kSuccess):
         title = tr("Decrypt done");
-        msg = tr("Device %1 has been decrypted").arg(device);
+        msg = tr("Partition %1 has been decrypted").arg(device);
         showFailed = false;
         fmInfo() << "Decryption successful for device:" << device;
         break;
@@ -524,19 +524,19 @@ void EventsHandler::showDecryptError(const QString &dev, const QString &devName,
         fmInfo() << "Decryption cancelled by user for device:" << device;
         return;
     case kErrorWrongPassphrase:
-        title = tr("Decrypt disk");
+        title = tr("Decrypt partition");
         msg = tr("Wrong passpharse or PIN");
         fmWarning() << "Wrong passphrase/PIN for device:" << device;
         break;
     case kErrorNotFullyEncrypted:
         title = tr("Decrypt failed");
-        msg = tr("Device %1 is under encrypting, please decrypt after encryption finished.")
+        msg = tr("Partition %1 is under encrypting, please decrypt after encryption finished.")
                       .arg(device);
         fmWarning() << "Device not fully encrypted:" << device;
         break;
     default:
         title = tr("Decrypt failed");
-        msg = tr("Device %1 Decrypt failed, please see log for more information.(%2)")
+        msg = tr("Partition %1 Decrypt failed, please see log for more information.(%2)")
                       .arg(device)
                       .arg(code);
         fmWarning() << "Decryption failed for device:" << device << "code:" << code;
@@ -589,7 +589,7 @@ void EventsHandler::showChgPwdError(const QString &dev, const QString &devName, 
         break;
     default:
         title = tr("Change %1 failed").arg(codeType);
-        msg = tr("Device %1 change %2 failed, please see log for more information.(%3)")
+        msg = tr("Partition %1 change %2 failed, please see log for more information.(%3)")
                       .arg(device)
                       .arg(codeType)
                       .arg(code);
@@ -621,7 +621,7 @@ bool EventsHandler::canUnlock(const QString &device)
     if (device == unfinishedDecryptJob()) {
         fmWarning() << "Device has unfinished decryption job:" << device;
         dialog_utils::showDialog(tr("Error"),
-                                 tr("Device is not fully decrypted, please finish decryption before access."),
+                                 tr("Partition is not fully decrypted, please finish decryption before access."),
                                  dialog_utils::DialogType::kInfo);
         return false;
     }
@@ -629,8 +629,8 @@ bool EventsHandler::canUnlock(const QString &device)
     int states = EventsHandler::instance()->deviceEncryptStatus(device);
     if ((states & kStatusOnline) && (states & kStatusEncrypt)) {
         fmWarning() << "Device is online and encrypting, cannot unlock:" << device << "status:" << states;
-        dialog_utils::showDialog(tr("Unlocking device failed"),
-                                 tr("Please click the right disk menu \"Continue partition encryption\" to complete partition encryption."),
+        dialog_utils::showDialog(tr("Unlocking partition failed"),
+                                 tr("Please click \"Continue Partition Encryption\" in the right-click menu to complete the partition encryption."),
                                  dialog_utils::DialogType::kError);
         return false;
     }

@@ -51,13 +51,13 @@ void DecryptParamsInputDialog::onRecSwitchClicked()
     if (useRecKey) {
         editor->setEchoMode(QLineEdit::Normal);
         editor->setEchoButtonIsVisible(false);
-        editor->setPlaceholderText(tr("Please input recovery key to decrypt device"));
+        editor->setPlaceholderText(tr("Please input recovery key to decrypt partition"));
         recSwitch->setText(tr("Validate with %1").arg(requestPIN ? tr("PIN") : tr("passphrase")));
         fmDebug() << "Switched to recovery key mode";
     } else {
         editor->setEchoMode(QLineEdit::Password);
         editor->setEchoButtonIsVisible(true);
-        editor->setPlaceholderText(tr("Please input %1 to decrypt device").arg(requestPIN ? tr("PIN") : tr("passphrase")));
+        editor->setPlaceholderText(tr("Please input %1 to decrypt partition").arg(requestPIN ? tr("PIN") : tr("passphrase")));
         recSwitch->setText(tr("Validate with recovery key"));
         fmDebug() << "Switched to" << (requestPIN ? "PIN" : "passphrase") << "mode";
     }
@@ -108,7 +108,7 @@ void DecryptParamsInputDialog::updateUserHints()
 void DecryptParamsInputDialog::initUI()
 {
     setIcon(QIcon::fromTheme("drive-harddisk-root"));
-    setTitle(tr("Decrypt device"));
+    setTitle(tr("Decrypt partition"));
     QFrame *content = new QFrame(this);
     QVBoxLayout *lay = new QVBoxLayout(content);
     editor = new Dtk::Widget::DPasswordEdit(this);
