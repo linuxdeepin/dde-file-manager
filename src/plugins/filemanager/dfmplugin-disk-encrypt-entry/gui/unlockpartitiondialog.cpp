@@ -103,11 +103,11 @@ void UnlockPartitionDialog::updateUserHint()
     }
     case kPwd:
         fmInfo() << "Setting up passphrase unlock mode";
-        passwordLineEdit->setPlaceholderText(tr("Please input passphrase to unlock device"));
+        passwordLineEdit->setPlaceholderText(tr("Please input passphrase to unlock partition"));
         break;
     case kPin:
         fmInfo() << "Setting up PIN unlock mode";
-        passwordLineEdit->setPlaceholderText(tr("Please input PIN to unlock device"));
+        passwordLineEdit->setPlaceholderText(tr("Please input PIN to unlock partition"));
         break;
     }
 }
