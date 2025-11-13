@@ -19,22 +19,26 @@ FstabInitEncryptWorker::FstabInitEncryptWorker(const QVariantMap &args, QObject 
 
 void FstabInitEncryptWorker::run()
 {
-    qInfo() << "about to encrypt fstab device...";
+    qInfo() << "==> FstabInitEncryptWorker::run()";
 
     auto devPath = m_args.value(disk_encrypt::encrypt_param_keys::kKeyDevice).toString();
+    qInfo() << "About to encrypt fstab device:" << devPath;
+
     auto fd = inhibit_helper::inhibit(tr("Initialize encryption ") + devPath);
 
     auto ptr = blockdev_helper::createDevPtr(devPath);
     if (!ptr) {
-        qWarning() << "cannot create device object!" << devPath;
+        qCritical() << "Cannot create device object:" << devPath;
         setExitCode(-disk_encrypt::kErrorUnknown);
         return;
     }
 
     auto mpt = ptr->mountPoint();
     auto devUUID = ptr->getProperty(dfmmount::Property::kBlockIDUUID).toString();
+    qDebug() << "Device mount point:" << mpt << ", UUID:" << devUUID;
+
     if (disk_encrypt::kDisabledEncryptPath.contains(mpt)) {
-        qInfo() << "cannot encrypt device which mounted at" << mpt;
+        qWarning() << "Cannot encrypt device mounted at disabled path, mount point:" << mpt;
         setExitCode(-disk_encrypt::kErrorDisabledMountPoint);
         return;
     }
@@ -46,27 +50,33 @@ void FstabInitEncryptWorker::run()
     // 设备在经过初始化之后，会叠加一层 dm 设备，以便可以在系统运行时将其取消加密。此时再次触发加密，会按需走到 fstab 加密流程
     auto phyPath = m_args.value(disk_encrypt::encrypt_param_keys::kKeyPhyDevice).toString();
     if (phyPath.isEmpty()) phyPath = devPath;
+    qDebug() << "Physical device path:" << phyPath;
+
     auto jobArgs = initJobArgs(phyPath);
     job_file_helper::createEncryptJobFile(jobArgs);
+    qInfo() << "Encrypt job file created";
 
     auto phyPtr = blockdev_helper::createDevPtr(phyPath);
     auto source = phyPtr
             ? "PARTUUID=" + phyPtr->getProperty(dfmmount::Property::kPartitionUUID).toString()
             : devPath;
+    qDebug() << "Crypttab source:" << source;
     crypttab_helper::insertCryptItem({ jobArgs.volume, source, "none", { "luks", "initramfs", "keyscript=/lib/usec-crypt-kit/usec-askpass" } });
-    
+    qInfo() << "Crypttab item inserted";
+
     setExitCode(-disk_encrypt::kRebootRequired);
 
-    qInfo() << "fstab device encrypt job created, request for reboot.";
+    qInfo() << "Fstab device encrypt job created, reboot required";
 }
 
 job_file_helper::JobDescArgs FstabInitEncryptWorker::initJobArgs(const QString &dev)
 {
+    qDebug() << "==> FstabInitEncryptWorker::initJobArgs()";
     job_file_helper::JobDescArgs args;
 
     auto ptr = blockdev_helper::createDevPtr(dev);
     if (!ptr) {
-        qWarning() << "cannot create block for init job desc!" << dev;
+        qCritical() << "Cannot create block device for init job desc, device:" << dev;
         return args;
     }
 
@@ -79,6 +89,8 @@ job_file_helper::JobDescArgs FstabInitEncryptWorker::initJobArgs(const QString &
     args.prefferPath = ptr->getProperty(dfmmount::Property::kBlockPreferredDevice).toString();
     args.devType = disk_encrypt::job_type::TypeFstab;
     args.devName = m_args.value(disk_encrypt::encrypt_param_keys::kKeyDeviceName).toString();
+
+    qDebug() << "Job args initialized, device:" << args.device << ", volume:" << args.volume;
 
     return args;
 }

@@ -17,25 +17,28 @@ NormalInitEncryptWorker::NormalInitEncryptWorker(const QVariantMap &args, QObjec
 
 void NormalInitEncryptWorker::run()
 {
-    qInfo() << "about to encrypt normal device...";
+    qInfo() << "==> NormalInitEncryptWorker::run()";
 
     auto devPath = m_args.value(disk_encrypt::encrypt_param_keys::kKeyDevice).toString();
+    qInfo() << "About to encrypt normal device:" << devPath;
+
     auto fd = inhibit_helper::inhibit(tr("Initialize encryption ") + devPath);
 
     auto blkPtr = blockdev_helper::createDevPtr(devPath);
     if (blkPtr && !blkPtr->mountPoints().isEmpty()) {
+        qInfo() << "Device is mounted, attempting to unmount:" << devPath;
         if (!blkPtr->unmount()) {
-            qWarning() << "Cannot unmount device" << devPath
-                       << ", encryption stopped.";
+            qCritical() << "Cannot unmount device, encryption stopped, device:" << devPath;
             setExitCode(-disk_encrypt::kErrorDeviceMounted);
             return;
         }
-        qInfo() << "Device has been unmounted." << devPath;
+        qInfo() << "Device unmounted successfully:" << devPath;
     }
 
     int r = crypt_setup::csInitEncrypt(devPath,
                                        m_args.value(disk_encrypt::encrypt_param_keys::kKeyDeviceName).toString());
     if (r < 0) {
+        qCritical() << "Init encrypt failed, device:" << devPath << "error:" << r;
         setExitCode(r);
         return;
     }
@@ -43,7 +46,7 @@ void NormalInitEncryptWorker::run()
     auto jobArgs = initJobArgs(blkPtr);
     job_file_helper::createEncryptJobFile(jobArgs);
     setExitCode(disk_encrypt::kSuccess);
-    qInfo() << "normal device encryption inited." << devPath;
+    qInfo() << "Normal device encryption initialized successfully, device:" << devPath;
 
     sleep(1);
     system("udevadm trigger");
@@ -51,10 +54,12 @@ void NormalInitEncryptWorker::run()
 
 job_file_helper::JobDescArgs NormalInitEncryptWorker::initJobArgs(DevPtr ptr)
 {
+    qDebug() << "==> NormalInitEncryptWorker::initJobArgs()";
     job_file_helper::JobDescArgs args;
     args.device = "PARTUUID=" + ptr->getProperty(dfmmount::Property::kPartitionUUID).toString();
     args.devType = disk_encrypt::job_type::TypeNormal;
     args.devPath = ptr->device();
     args.devName = m_args.value(disk_encrypt::encrypt_param_keys::kKeyDeviceName).toString();
+    qDebug() << "Job args initialized, device:" << args.device << ", path:" << args.devPath;
     return args;
 }

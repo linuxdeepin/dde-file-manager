@@ -17,14 +17,14 @@
         int r = ret;           \
         if (r < 0) {           \
             setExitCode(r);    \
-            qWarning() << msg; \
+            qCritical() << msg << "error:" << r; \
             return;            \
         }                      \
     }
 
-#define ESuspend "error when SUSPEND dm device"
-#define EResume "error when RESUME dm device"
-#define EReload "error when RELOAD dm device"
+#define ESuspend "Error when suspending dm device"
+#define EResume "Error when resuming dm device"
+#define EReload "Error when reloading dm device"
 
 FILE_ENCRYPT_USE_NS
 
@@ -35,105 +35,118 @@ DMDecryptWorker::DMDecryptWorker(const QVariantMap &args, QObject *parent)
 
 void DMDecryptWorker::run()
 {
-    qInfo() << "about to decrypt overlay device...";
+    qInfo() << "==> DMDecryptWorker::run()";
 
     auto dev = m_args.value(disk_encrypt::encrypt_param_keys::kKeyDevice).toString();
+    qInfo() << "About to decrypt overlay device:" << dev;
+
     auto fd = inhibit_helper::inhibit("Decrypting " + dev);
 
     auto passphrase = disk_encrypt::fromBase64(m_args.value(disk_encrypt::encrypt_param_keys::kKeyPassphrase).toString());
     auto displayName = m_args.value(disk_encrypt::encrypt_param_keys::kKeyDeviceName).toString();
+    qDebug() << "Display name:" << displayName;
+
     QString phyDev, clearDev;
     getDevPath(&phyDev, &clearDev);
     if (phyDev.isEmpty() || clearDev.isEmpty()) {
-        qWarning() << "associated device not found." << dev;
+        qCritical() << "Associated device not found, device:" << dev;
         setExitCode(-disk_encrypt::kErrorUnknown);
         return;
     }
+    qInfo() << "Physical device:" << phyDev << ", clear device:" << clearDev;
 
     QString usecName = blockdev_helper::getUSecName(dev);
     if (usecName.isEmpty()) {
-        qWarning() << "cannot find usec-overlay name from" << dev;
+        qCritical() << "Cannot find usec-overlay name from device:" << dev;
         setExitCode(-disk_encrypt::kErrorUnknown);
         return;
     }
+    qDebug() << "USec overlay name:" << usecName;
 
     m_args.insert(disk_encrypt::encrypt_param_keys::kKeyDevice, phyDev);
-    qInfo() << "about to decrypt device" << phyDev;
     auto actName = clearDev.mid(sizeof("/dev/mapper/") - 1);
+    qInfo() << "Starting decrypt process for physical device:" << phyDev << ", activation name:" << actName;
 
     QString detachHeader;
     crypt_setup_helper::genDetachHeaderPath(phyDev, &detachHeader);
     if (!detachHeader.isEmpty()) {
         crypttab_helper::addCryptOption(actName, "header="+detachHeader);
-        qInfo() << "crypttab updated, detach header setted.";
+        qInfo() << "Crypttab updated, detach header set:" << detachHeader;
     }
 
     auto r = crypt_setup::csDecrypt(phyDev, passphrase, displayName, actName);
     if (r < 0) {
-        qWarning() << "decrypt failed!" << dev << r;
+        qCritical() << "Decrypt failed, device:" << dev << "error:" << r;
         setExitCode(r);
         return;
     }
+    qInfo() << "Decrypt completed successfully";
 
     // system("udevadm trigger");
 
     RetOnFail(dm_setup::dmSuspendDevice(usecName), ESuspend);
-    qInfo() << usecName << "suspended.";
+    qInfo() << "Device suspended:" << usecName;
 
     auto size = blockdev_helper::devBlockSize(phyDev);
+    qDebug() << "Device block size:" << size;
     dm_setup::DMTable tab { "linear", phyDev + " 0", 0, size };
     r = dm_setup::dmReloadDevice(usecName, tab);
     if (r < 0) {
-        qWarning() << "reload device failed!" << usecName << phyDev << size;
+        qCritical() << "Reload device failed, device:" << usecName << "physical:" << phyDev << "size:" << size << "error:" << r;
         setExitCode(r);
         r = dm_setup::dmResumeDevice(usecName);
-        qWarning() << "device resumed." << usecName << r;
+        qWarning() << "Device resumed after reload failure, device:" << usecName << "result:" << r;
         return;
     }
-    qInfo() << usecName << "reloaded." << phyDev << size;
+    qInfo() << "Device reloaded successfully:" << usecName;
 
     RetOnFail(dm_setup::dmResumeDevice(usecName), EResume);
-    qInfo() << usecName << "resumed.";
+    qInfo() << "Device resumed:" << usecName;
 
     // system("udevadm trigger");
 
     auto midName = usecName.replace("overlay", "overlay-mid");
     if (!QFile("/dev/mapper/" + midName).exists()) {
-        qInfo() << midName << "do not exist.";
+        qDebug() << "Mid device does not exist:" << midName;
     } else {
         r = dm_setup::dmRemoveDevice(midName);
         if (r < 0)
-            qWarning() << "cannot remove temp middle device!" << midName;
+            qWarning() << "Cannot remove temp middle device, name:" << midName << "error:" << r;
         else
-            qInfo() << midName << "removed.";
+            qInfo() << "Temp middle device removed:" << midName;
     }
 
-    qInfo() << "overlay device decrypted." << phyDev;
+    qInfo() << "Overlay device decrypted successfully:" << phyDev;
     crypttab_helper::removeCryptItem(actName);
 }
 
 void DMDecryptWorker::getDevPath(QString *phyDev, QString *clearDev)
 {
     Q_ASSERT(phyDev && clearDev);
+    qDebug() << "==> DMDecryptWorker::getDevPath()";
 
     auto dev = m_args.value(disk_encrypt::encrypt_param_keys::kKeyDevice).toString();   // /dev/dm-?
+    qDebug() << "Resolving device paths for:" << dev;
+
     *phyDev = dm_setup_helper::findHolderDev(dev);   // /dev/sd?
     if (phyDev->isEmpty()) {
-        qWarning() << "cannot find physical device!" << dev;
+        qCritical() << "Cannot find physical device for:" << dev;
         return;
     }
+    qDebug() << "Physical device found:" << *phyDev;
 
     auto ptr = blockdev_helper::createDevPtr(*phyDev);
     if (!ptr) {
-        qWarning() << "cannot create device object!" << dev << *phyDev;
+        qCritical() << "Cannot create device object, mapper device:" << dev << ", physical device:" << *phyDev;
         return;
     }
 
     *clearDev = ptr->getProperty(dfmmount::Property::kEncryptedCleartextDevice).toString();
     if (clearDev->isEmpty()) {
-        qWarning() << "device not unlock or not encrypt." << dev << *phyDev;
+        qWarning() << "Device not unlocked or not encrypted, device:" << dev << ", physical:" << *phyDev;
 
         auto items = crypttab_helper::cryptItems();
+        qDebug() << "Searching cleartext device in crypttab, items count:" << items.size();
         for (auto item: items) {
             bool matchPartUUID = item.source.startsWith("PARTUUID=")
                     && item.source.contains(ptr->getProperty(dfmmount::Property::kPartitionUUID).toString());
@@ -143,7 +156,7 @@ void DMDecryptWorker::getDevPath(QString *phyDev, QString *clearDev)
                     && item.source == *phyDev;
             if (matchPartUUID || matchUUID || matchDesc) {
                 *clearDev = "/dev/mapper/" + item.target;
-                qInfo() << "found clear device in crypttab:" << *phyDev << *clearDev;
+                qInfo() << "Found clear device in crypttab, physical:" << *phyDev << ", clear:" << *clearDev;
                 return;
             }
         }
@@ -153,9 +166,10 @@ void DMDecryptWorker::getDevPath(QString *phyDev, QString *clearDev)
 
     auto clearPtr = blockdev_helper::createDevPtr2(*clearDev);
     if (!clearPtr) {
-        qWarning() << "cannot create clear device object!" << dev << phyDev << clearDev;
+        qCritical() << "Cannot create clear device object, mapper:" << dev << ", physical:" << *phyDev << ", clear:" << *clearDev;
         return;
     }
     auto name = clearPtr->getProperty(dfmmount::Property::kBlockPreferredDevice).toString();
     *clearDev = name;   // /dev/mapper/???
+    qDebug() << "Clear device resolved:" << *clearDev;
 }
