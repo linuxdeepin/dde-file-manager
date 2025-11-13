@@ -52,43 +52,43 @@ void ResumeEncryptWorker::ignoreAuthRequest()
 
 void ResumeEncryptWorker::run()
 {
-    qInfo() << "==> ResumeEncryptWorker::run()";
+    qInfo() << "[ResumeEncryptWorker::run] Starting resume encrypt operation";
 
     job_file_helper::loadEncryptJobFile(&m_jobArgs);
     if (m_jobArgs.jobFile.isEmpty()) {
-        qInfo() << "No unfinished reencrypt job found, checking device";
+        qInfo() << "[ResumeEncryptWorker::run] No unfinished reencrypt job found, checking device";
         loadJobFromDevice();
         if (m_jobArgs.devPath.isEmpty()) {
-            qInfo() << "No encryption job to resume";
+            qInfo() << "[ResumeEncryptWorker::run] No encryption job to resume";
             return;
         }
     }
-    qInfo() << "Resuming encryption for device:" << m_jobArgs.devPath;
+    qInfo() << "[ResumeEncryptWorker::run] Resuming encryption for device:" << m_jobArgs.devPath;
 
     auto fd = inhibit_helper::inhibit(tr("Encrypting ") + m_jobArgs.devPath);
 
     auto status = crypt_setup_helper::encryptStatus(m_jobArgs.devPath);
     if (!(status & disk_encrypt::EncryptState::kStatusEncrypt)) {
-        qInfo() << "Device is not under encrypting, giving up, device:" << m_jobArgs.devPath << "status:" << status;
+        qInfo() << "[ResumeEncryptWorker::run] Device is not under encrypting, giving up, device:" << m_jobArgs.devPath << "status:" << status;
         return;
     }
-    qDebug() << "Device encryption status:" << status;
+    qDebug() << "[ResumeEncryptWorker::run] Device encryption status:" << status;
 
     m_args.insert(disk_encrypt::encrypt_param_keys::kKeyDevice, m_jobArgs.devPath);
     m_args.insert(disk_encrypt::encrypt_param_keys::kKeyDeviceName, m_jobArgs.devName);
 
     if (!waitForAuthInfo()) {
-        qWarning() << "Authentication request ignored by user";
+        qWarning() << "[ResumeEncryptWorker::run] Authentication request ignored by user";
         setExitCode(-disk_encrypt::kIgnoreRequest);
         return;
     }
 
-    qInfo() << "Starting encryption resume";
+    qInfo() << "[ResumeEncryptWorker::run] Starting encryption resume";
     int r = crypt_setup::csResumeEncrypt(m_jobArgs.devPath,
                                          m_jobArgs.volume,
                                          m_jobArgs.devName);
     if (r < 0) {
-        qCritical() << "Resume encrypt failed, device:" << m_jobArgs.devPath << "error:" << r;
+        qCritical() << "[ResumeEncryptWorker::run] Resume encrypt failed, device:" << m_jobArgs.devPath << "error:" << r;
         setExitCode(r);
         return;
     }
@@ -99,30 +99,30 @@ void ResumeEncryptWorker::run()
     updateCryptTab();
     job_file_helper::removeJobFile(m_jobArgs.jobFile);
 
-    qInfo() << "Device encryption finished successfully, device:" << m_jobArgs.devPath;
+    qInfo() << "[ResumeEncryptWorker::run] Device encryption finished successfully, device:" << m_jobArgs.devPath;
 }
 
 bool ResumeEncryptWorker::waitForAuthInfo()
 {
-    qDebug() << "==> ResumeEncryptWorker::waitForAuthInfo()";
+    qDebug() << "[ResumeEncryptWorker::waitForAuthInfo] Waiting for authentication info";
     while (1) {
         {
             QReadLocker lk(&m_lock);
 
             if (m_ignoreFlag) {
-                qInfo() << "Authentication ignored by user";
+                qInfo() << "[ResumeEncryptWorker::waitForAuthInfo] Authentication ignored by user";
                 return false;
             }
             if (!m_authArgs.device.isEmpty()
                 && !m_authArgs.passphrase.isEmpty()) {
-                qInfo() << "Authentication info received";
+                qInfo() << "[ResumeEncryptWorker::waitForAuthInfo] Authentication info received";
                 return true;
             }
         }
 
         Q_EMIT requestAuthInfo({ { disk_encrypt::encrypt_param_keys::kKeyDevice, m_jobArgs.devPath },
                                  { disk_encrypt::encrypt_param_keys::kKeyDeviceName, m_jobArgs.devName } });
-        qDebug() << "Waiting for authentication info, device:" << m_jobArgs.devPath;
+        qDebug() << "[ResumeEncryptWorker::waitForAuthInfo] Waiting for authentication info, device:" << m_jobArgs.devPath;
         QThread::sleep(3);
     }
     return false;
@@ -130,17 +130,17 @@ bool ResumeEncryptWorker::waitForAuthInfo()
 
 void ResumeEncryptWorker::setPassphrase()
 {
-    qDebug() << "==> ResumeEncryptWorker::setPassphrase()";
+    qDebug() << "[ResumeEncryptWorker::setPassphrase] Setting passphrase";
     int r = crypt_setup::csChangePassphrase(m_jobArgs.devPath,
                                             "",
                                             m_authArgs.passphrase);
     if (r < 0) {
-        qCritical() << "Set passphrase failed, device:" << m_jobArgs.devPath << "error:" << r;
+        qCritical() << "[ResumeEncryptWorker::setPassphrase] Set passphrase failed, device:" << m_jobArgs.devPath << "error:" << r;
         return;
     }
 
     if (!m_authArgs.tpmToken.isEmpty()) {
-        qInfo() << "Setting TPM token";
+        qInfo() << "[ResumeEncryptWorker::setPassphrase] Setting TPM token";
         auto doc = QJsonDocument::fromJson(m_authArgs.tpmToken.toLocal8Bit());
         auto obj = doc.object();
         obj.insert("keyslots", QJsonArray::fromStringList({ QString::number(r) }));
@@ -148,102 +148,102 @@ void ResumeEncryptWorker::setPassphrase()
         auto tk = doc.toJson(QJsonDocument::Compact);
         r = crypt_setup_helper::setToken(m_jobArgs.devPath, tk);
         if (r < 0) {
-            qCritical() << "TPM token set failed, device:" << m_jobArgs.devPath << "error:" << r;
+            qCritical() << "[ResumeEncryptWorker::setPassphrase] TPM token set failed, device:" << m_jobArgs.devPath << "error:" << r;
             return;
         }
     }
-    qInfo() << "Passphrase set successfully, device:" << m_jobArgs.devPath;
+    qInfo() << "[ResumeEncryptWorker::setPassphrase] Passphrase set successfully, device:" << m_jobArgs.devPath;
 }
 
 void ResumeEncryptWorker::setRecoveryKey()
 {
-    qDebug() << "==> ResumeEncryptWorker::setRecoveryKey()";
+    qDebug() << "[ResumeEncryptWorker::setRecoveryKey] Setting recovery key";
     if (m_authArgs.recoveryPath.isEmpty()) {
-        qDebug() << "Recovery path is empty, skipping recovery key setup";
+        qDebug() << "[ResumeEncryptWorker::setRecoveryKey] Recovery path is empty, skipping recovery key setup";
         return;
     }
 
-    qInfo() << "Generating recovery key";
+    qInfo() << "[ResumeEncryptWorker::setRecoveryKey] Generating recovery key";
     m_authArgs.recoveryKey = common_helper::genRecoveryKey();
     int r = crypt_setup::csAddPassphrase(m_jobArgs.devPath,
                                          m_authArgs.passphrase,
                                          m_authArgs.recoveryKey);
     if (r < 0) {
-        qCritical() << "Cannot add recovery key, device:" << m_jobArgs.devPath << "error:" << r;
+        qCritical() << "[ResumeEncryptWorker::setRecoveryKey] Cannot add recovery key, device:" << m_jobArgs.devPath << "error:" << r;
         return;
     }
     QString token = QString("{ 'type': 'usec-recoverykey', 'keyslots': ['%1'] }").arg(r);
     r = crypt_setup_helper::setToken(m_jobArgs.devPath, token);
     if (r < 0) {
-        qCritical() << "Recovery token set failed, device:" << m_jobArgs.devPath << "error:" << r;
+        qCritical() << "[ResumeEncryptWorker::setRecoveryKey] Recovery token set failed, device:" << m_jobArgs.devPath << "error:" << r;
         return;
     }
 
-    qInfo() << "Recovery key set successfully, device:" << m_jobArgs.devPath;
+    qInfo() << "[ResumeEncryptWorker::setRecoveryKey] Recovery key set successfully, device:" << m_jobArgs.devPath;
 
     saveRecoveryKey();
 }
 
 void ResumeEncryptWorker::setPhyDevLabel()
 {
-    qDebug() << "==> ResumeEncryptWorker::setPhyDevLabel()";
+    qDebug() << "[ResumeEncryptWorker::setPhyDevLabel] Setting physical device label";
     int r = crypt_setup::csSetLabel(m_jobArgs.devPath, m_jobArgs.devName);
     if (r < 0) {
-        qCritical() << "Cannot set label, device:" << m_jobArgs.devPath << "name:" << m_jobArgs.devName << "error:" << r;
+        qCritical() << "[ResumeEncryptWorker::setPhyDevLabel] Cannot set label, device:" << m_jobArgs.devPath << "name:" << m_jobArgs.devName << "error:" << r;
         return;
     }
-    qInfo() << "Device label set successfully, device:" << m_jobArgs.devPath << "label:" << m_jobArgs.devName;
+    qInfo() << "[ResumeEncryptWorker::setPhyDevLabel] Device label set successfully, device:" << m_jobArgs.devPath << "label:" << m_jobArgs.devName;
 }
 
 void ResumeEncryptWorker::updateCryptTab()
 {
-    qDebug() << "==> ResumeEncryptWorker::updateCryptTab()";
+    qDebug() << "[ResumeEncryptWorker::updateCryptTab] Updating crypttab";
     if (m_authArgs.tpmToken.isEmpty()) {
-        qDebug() << "TPM token is empty, skipping crypttab update";
+        qDebug() << "[ResumeEncryptWorker::updateCryptTab] TPM token is empty, skipping crypttab update";
         return;
     }
     crypttab_helper::addCryptOption(m_jobArgs.volume, "tpm2-device=auto");
-    qInfo() << "Crypttab updated with TPM option";
+    qInfo() << "[ResumeEncryptWorker::updateCryptTab] Crypttab updated with TPM option";
 }
 
 void ResumeEncryptWorker::saveRecoveryKey()
 {
-    qDebug() << "==> ResumeEncryptWorker::saveRecoveryKey()";
+    qDebug() << "[ResumeEncryptWorker::saveRecoveryKey] Saving recovery key";
     setExitCode(-disk_encrypt::KErrorRequestExportRecKey);
     if (!QDir(m_authArgs.recoveryPath).exists()) {
-        qCritical() << "Export path does not exist:" << m_authArgs.recoveryPath;
+        qCritical() << "[ResumeEncryptWorker::saveRecoveryKey] Export path does not exist:" << m_authArgs.recoveryPath;
         return;
     }
 
     auto fileName = QString("%1/%2_recovery_key.txt")
                             .arg(m_authArgs.recoveryPath)
                             .arg(m_authArgs.device.mid(5));
-    qDebug() << "Saving recovery key to:" << fileName;
+    qDebug() << "[ResumeEncryptWorker::saveRecoveryKey] Saving recovery key to:" << fileName;
 
     QFile f(fileName);
     if (!f.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-        qCritical() << "Cannot create recovery file:" << fileName;
+        qCritical() << "[ResumeEncryptWorker::saveRecoveryKey] Cannot create recovery file:" << fileName;
         return;
     }
     f.write(m_authArgs.recoveryKey.toLocal8Bit());
     f.flush();
     f.close();
-    qInfo() << "Recovery key saved successfully, device:" << m_jobArgs.devPath;
+    qInfo() << "[ResumeEncryptWorker::saveRecoveryKey] Recovery key saved successfully, device:" << m_jobArgs.devPath;
     setExitCode(disk_encrypt::kSuccess);
 }
 
 void ResumeEncryptWorker::loadJobFromDevice()
 {
-    qDebug() << "==> ResumeEncryptWorker::loadJobFromDevice()";
+    qDebug() << "[ResumeEncryptWorker::loadJobFromDevice] Loading job from device";
     auto dev = m_args.value(disk_encrypt::encrypt_param_keys::kKeyDevice).toString();
     if (dev.startsWith("/dev/dm-")) {
         dev = dm_setup_helper::findHolderDev(dev);
-        qDebug() << "Resolved physical device:" << dev;
+        qDebug() << "[ResumeEncryptWorker::loadJobFromDevice] Resolved physical device:" << dev;
     }
 
     auto ptr = blockdev_helper::createDevPtr(dev);
     if (!ptr) {
-        qCritical() << "Cannot create device object:" << dev;
+        qCritical() << "[ResumeEncryptWorker::loadJobFromDevice] Cannot create device object:" << dev;
         return;
     }
     auto name = ptr->idLabel();
@@ -254,6 +254,6 @@ void ResumeEncryptWorker::loadJobFromDevice()
         m_jobArgs.devPath = dev;
         m_jobArgs.devName = name;
 
-        qInfo() << "Found encryption job from device header, device:" << dev << "name:" << name;
+        qInfo() << "[ResumeEncryptWorker::loadJobFromDevice] Found encryption job from device header, device:" << dev << "name:" << name;
     }
 }

@@ -19,85 +19,85 @@ FstabDecryptWorker::FstabDecryptWorker(const QVariantMap &args, QObject *parent)
 
 void FstabDecryptWorker::run()
 {
-    qInfo() << "==> FstabDecryptWorker::run()";
+    qInfo() << "[FstabDecryptWorker::run] Starting fstab decryption";
 
     using namespace disk_encrypt::encrypt_param_keys;
     auto devPath = m_args.value(kKeyDevice, "").toString();
-    qInfo() << "About to decrypt fstab device:" << devPath;
+    qInfo() << "[FstabDecryptWorker::run] About to decrypt fstab device:" << devPath;
 
     auto fd = inhibit_helper::inhibit(tr("Decrypting ") + devPath);
 
     auto status = crypt_setup_helper::encryptStatus(devPath);
     if (status & disk_encrypt::kStatusOnline && status & disk_encrypt::kStatusEncrypt) {
-        qCritical() << "Device is not fully encrypted, cannot decrypt, device:" << devPath << "status:" << status;
+        qCritical() << "[FstabDecryptWorker::run] Device is not fully encrypted, cannot decrypt, device:" << devPath << "status:" << status;
         setExitCode(-disk_encrypt::kErrorNotFullyEncrypted);
         return;
     }
-    qDebug() << "Device encryption status:" << status;
+    qDebug() << "[FstabDecryptWorker::run] Device encryption status:" << status;
 
     auto partUUID = partitionUUID(devPath);
     if (partUUID.isEmpty()) {
-        qCritical() << "Cannot obtain partition UUID of device:" << devPath;
+        qCritical() << "[FstabDecryptWorker::run] Cannot obtain partition UUID of device:" << devPath;
         setExitCode(-disk_encrypt::kErrorUnknown);
         return;
     }
-    qDebug() << "Partition UUID:" << partUUID;
+    qDebug() << "[FstabDecryptWorker::run] Partition UUID:" << partUUID;
 
     job_file_helper::JobDescArgs jobArgs {.device = "PARTUUID=" + partUUID,
                                            .devPath = devPath,
                                            .devType = disk_encrypt::job_type::TypeFstab };
     job_file_helper::createDecryptJobFile(jobArgs);
-    qInfo() << "Decrypt job file created";
+    qInfo() << "[FstabDecryptWorker::run] Decrypt job file created";
 
     auto clearUUID = clearDeviceUUID(devPath);
     if (!clearUUID.isEmpty()) {
         fstab_helper::setFstabPassno("UUID=" + clearUUID, 0);
-        qDebug() << "Fstab passno set for clear device UUID:" << clearUUID;
+        qDebug() << "[FstabDecryptWorker::run] Fstab passno set for clear device UUID:" << clearUUID;
     }
 
     common_helper::createRebootFlagFile(devPath);
     setExitCode(-disk_encrypt::kRebootRequired);
 
-    qInfo() << "Fstab device decrypt job created, reboot required";
+    qInfo() << "[FstabDecryptWorker::run] Fstab device decrypt job created, reboot required";
 }
 
 QString FstabDecryptWorker::clearDeviceUUID(const QString &dev)
 {
-    qDebug() << "==> FstabDecryptWorker::clearDeviceUUID()";
+    qDebug() << "[FstabDecryptWorker::clearDeviceUUID] Getting clear device UUID";
     setExitCode(-disk_encrypt::kErrorUnknown);
     auto ptr = blockdev_helper::createDevPtr(dev);
     if (!ptr) {
-        qCritical() << "Cannot create device object:" << dev;
+        qCritical() << "[FstabDecryptWorker::clearDeviceUUID] Cannot create device object:" << dev;
         return "";
     }
 
     auto clearDev = ptr->getProperty(dfmmount::Property::kEncryptedCleartextDevice).toString();
-    qDebug() << "Clear device path:" << clearDev;
+    qDebug() << "[FstabDecryptWorker::clearDeviceUUID] Clear device path:" << clearDev;
 
     auto clearPtr = blockdev_helper::createDevPtr2(clearDev);
     if (!clearPtr) {
-        qCritical() << "Cannot create clear device object, device:" << dev << "clear device:" << clearDev;
+        qCritical() << "[FstabDecryptWorker::clearDeviceUUID] Cannot create clear device object, device:" << dev << "clear device:" << clearDev;
         return "";
     }
 
     setExitCode(disk_encrypt::kSuccess);
     auto uuid = clearPtr->getProperty(dfmmount::Property::kBlockIDUUID).toString();
-    qDebug() << "Clear device UUID:" << uuid;
+    qDebug() << "[FstabDecryptWorker::clearDeviceUUID] Clear device UUID:" << uuid;
     return uuid;
 }
 
 QString FstabDecryptWorker::partitionUUID(const QString &dev)
 {
-    qDebug() << "==> FstabDecryptWorker::partitionUUID()";
+    qDebug() << "[FstabDecryptWorker::partitionUUID] Getting partition UUID";
     setExitCode(-disk_encrypt::kErrorUnknown);
     auto ptr = blockdev_helper::createDevPtr(dev);
     if (!ptr) {
-        qCritical() << "Cannot create device object:" << dev;
+        qCritical() << "[FstabDecryptWorker::clearDeviceUUID] Cannot create device object:" << dev;
         return "";
     }
 
     setExitCode(disk_encrypt::kSuccess);
     auto uuid = ptr->getProperty(dfmmount::Property::kPartitionUUID).toString();
-    qDebug() << "Partition UUID:" << uuid;
+    qDebug() << "[FstabDecryptWorker::partitionUUID] Partition UUID:" << uuid;
     return uuid;
 }
