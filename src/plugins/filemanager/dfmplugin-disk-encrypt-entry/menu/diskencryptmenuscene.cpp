@@ -633,7 +633,7 @@ QString DiskEncryptMenuScene::getBase64Of(const QString &fileName)
 }
 
 bool DiskEncryptMenuScene::sendCredentialsViaFd(QDBusInterface &iface, const QString &method,
-                                                  const QVariantMap &params, bool asyncCall)
+                                                const QVariantMap &params, bool asyncCall)
 {
     // Create anonymous pipe for secure credential transmission
     int pipefd[2];
@@ -798,7 +798,8 @@ void DiskEncryptMenuScene::updateActions()
     bool taskWorking = EventsHandler::instance()->isTaskWorking();
     bool currDevOperating = EventsHandler::instance()->isUnderOperating(param.devDesc)
             || EventsHandler::instance()->isUnderOperating(param.devPhy);
-    bool hasPendingJob = EventsHandler::instance()->hasPendingTask();
+    // 允许在存在加密配置的时候操作其他分区的加解密动作
+    bool hasPendingJob = 0 && EventsHandler::instance()->hasPendingTask();
     actions[kActIDEncrypt]->setEnabled(!taskWorking && !hasPendingJob);
     actions[kActIDDecrypt]->setEnabled(!taskWorking && !hasPendingJob && !currDevOperating);
     actions[kActIDChangePwd]->setEnabled(!taskWorking);
