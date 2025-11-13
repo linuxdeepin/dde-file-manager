@@ -249,7 +249,7 @@ int crypt_setup_helper::initEncryptHeaderFile(const QString &dev, const QString 
                                                &encArgs);
     }
     if (r < 0) {
-        qWarning() << "cannot init reencrypt!" << dev << r;
+        qCritical() << "[crypt_setup_helper::initEncryptHeaderFile] Cannot initialize reencrypt, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorInitReencrypt;
     }
 
@@ -264,7 +264,7 @@ int crypt_setup_helper::initEncryptHeaderFile(const QString &dev, const QString 
                                  nullptr,   // use null so that volume key can be get directly from cdev rather than calculate by passphrase
                                  kDefaultPassphraseLen);
         if (r < 0) {
-            qWarning() << "cannot get volume key!" << dev << r;
+            qCritical() << "[crypt_setup_helper::initEncryptHeaderFile] Cannot get volume key, device:" << dev << "error:" << r;
             return -disk_encrypt::kErrorUnknown;
         }
         processor->volumeKey = key.data();
@@ -276,8 +276,10 @@ int crypt_setup_helper::initEncryptHeaderFile(const QString &dev, const QString 
 
 int crypt_setup_helper::initDeviceHeader(const QString &dev, const QString &fileHeader)
 {
+    qDebug() << "[crypt_setup_helper::initDeviceHeader] Initializing device header, device:" << dev << "header file:" << fileHeader;
+
     if (fileHeader.isEmpty() || !QFile(fileHeader).exists()) {
-        qWarning() << "header file not exist!" << dev << fileHeader;
+        qCritical() << "[crypt_setup_helper::initDeviceHeader] Header file does not exist, device:" << dev << "file:" << fileHeader;
         return -disk_encrypt::kErrorHeaderNotExist;
     }
 
@@ -292,7 +294,7 @@ int crypt_setup_helper::initDeviceHeader(const QString &dev, const QString &file
     r = crypt_init(&cdev,
                    dev.toStdString().c_str());
     if (r < 0) {
-        qWarning() << "cannot init crypt!" << dev << r;
+        qCritical() << "[crypt_setup_helper::initDeviceHeader] Cannot initialize crypt device, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorInitCrypt;
     }
 
@@ -300,14 +302,17 @@ int crypt_setup_helper::initDeviceHeader(const QString &dev, const QString &file
                              CRYPT_LUKS2,
                              fileHeader.toStdString().c_str());
     if (r < 0) {
-        qWarning() << "cannot restore header from file!" << dev << r << fileHeader;
+        qCritical() << "[crypt_setup_helper::initDeviceHeader] Cannot restore header from file, device:" << dev << "file:" << fileHeader << "error:" << r;
         return -disk_encrypt::kErrorRestoreFromFile;
     }
+    qInfo() << "[crypt_setup_helper::initDeviceHeader] Device header initialized successfully, device:" << dev;
     return disk_encrypt::kSuccess;
 }
 
 int crypt_setup::csResumeEncrypt(const QString &dev, const QString &activeName, const QString &displayName)
 {
+    qInfo() << "[crypt_setup::csResumeEncrypt] Starting encryption resume, device:" << dev << "activeName:" << activeName;
+
     struct crypt_device *cdev { nullptr };
     dfmbase::FinallyUtil atFinish([&] {
         if (cdev) crypt_free(cdev);
@@ -317,7 +322,7 @@ int crypt_setup::csResumeEncrypt(const QString &dev, const QString &activeName, 
                                    dev.toStdString().c_str(),
                                    dev.toStdString().c_str());
     if (r < 0) {
-        qWarning() << "cannot init crypt device!" << dev << r;
+        qCritical() << "[crypt_setup::csResumeEncrypt] Cannot initialize crypt device, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorInitCrypt;
     }
 
@@ -325,7 +330,7 @@ int crypt_setup::csResumeEncrypt(const QString &dev, const QString &activeName, 
                    CRYPT_LUKS,
                    nullptr);
     if (r < 0) {
-        qWarning() << "cannot load crypt device!" << dev << r;
+        qCritical() << "[crypt_setup::csResumeEncrypt] Cannot load crypt device, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorLoadCrypt;
     }
 
@@ -334,11 +339,11 @@ int crypt_setup::csResumeEncrypt(const QString &dev, const QString &activeName, 
                                    CRYPT_FLAGS_REQUIREMENTS,
                                    &flags);
     if (r < 0) {
-        qWarning() << "cannot get persistent flag!" << dev << r;
+        qCritical() << "[crypt_setup::csResumeEncrypt] Cannot get persistent flags, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorGetReencryptFlag;
     }
     if (!(flags & CRYPT_REQUIREMENT_ONLINE_REENCRYPT)) {
-        qWarning() << "flag is not satisfy for resume!" << dev << r << flags;
+        qCritical() << "[crypt_setup::csResumeEncrypt] Flags do not satisfy resume requirements, device:" << dev << "flags:" << flags;
         return -disk_encrypt::kErrorWrongFlags;
     }
 
@@ -346,6 +351,7 @@ int crypt_setup::csResumeEncrypt(const QString &dev, const QString &activeName, 
     r = crypt_reencrypt_status(cdev,
                                &args);
     if (r == CRYPT_REENCRYPT_CRASH) {
+        qInfo() << "[crypt_setup::csResumeEncrypt] Reencrypt crashed, attempting recovery for device:" << dev;
         // open and close to repair the decrypt process.
         auto name = "dm-" + dev.mid(5);
         r = crypt_activate_by_passphrase(cdev,
@@ -355,7 +361,7 @@ int crypt_setup::csResumeEncrypt(const QString &dev, const QString &activeName, 
                                          kDefaultPassphraseLen,
                                          CRYPT_ACTIVATE_RECOVERY);
         if (r < 0) {
-            qWarning() << "cannot activate device by name!" << dev << r << name;
+            qCritical() << "[crypt_setup::csResumeEncrypt] Cannot activate device for recovery, device:" << dev << "name:" << name << "error:" << r;
             return -disk_encrypt::kErrorActive;
         }
         crypt_deactivate(cdev,
@@ -385,18 +391,18 @@ int crypt_setup::csResumeEncrypt(const QString &dev, const QString &activeName, 
                                            nullptr,
                                            &encArgs);
     if (r < 0) {
-        qWarning() << "cannot init reencrypt!" << dev << r;
+        qCritical() << "[crypt_setup::csResumeEncrypt] Cannot initialize reencrypt, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorInitReencrypt;
     }
 
-    qInfo() << "processing encryption..." << dev;
+    qInfo() << "[crypt_setup::csResumeEncrypt] Processing encryption, device:" << dev;
     QPair<QString, QString> devInfo { dev, displayName };
     r = crypt_reencrypt_run(cdev,
                             crypt_setup_helper::onEncrypting,
                             (void *)&devInfo);
-    qInfo() << "encryption process finished" << dev << r;
+    qInfo() << "[crypt_setup::csResumeEncrypt] Encryption process finished, device:" << dev << "result:" << r;
     if (r < 0) {
-        qWarning() << "run reencrypt failed!" << dev << r;
+        qCritical() << "[crypt_setup::csResumeEncrypt] Reencrypt failed, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorReencryptFailed;
     }
     return disk_encrypt::kSuccess;
@@ -422,9 +428,13 @@ int crypt_setup_helper::onDecrypting(uint64_t size, uint64_t offset, void *usrpt
 
 int crypt_setup_helper::backupDetachHeader(const QString &dev, QString *fileHeader)
 {
+    qDebug() << "[crypt_setup_helper::backupDetachHeader] Backing up detach header, device:" << dev;
+
     QString headerPath;
-    if (genDetachHeaderPath(dev, &headerPath) != disk_encrypt::kSuccess)
+    if (genDetachHeaderPath(dev, &headerPath) != disk_encrypt::kSuccess) {
+        qCritical() << "[crypt_setup_helper::backupDetachHeader] Cannot generate detach header path, device:" << dev;
         return -disk_encrypt::kErrorUnknown;
+    }
 
     struct crypt_device *cdev = nullptr;
     dfmbase::FinallyUtil atFinish([&] {
@@ -432,7 +442,7 @@ int crypt_setup_helper::backupDetachHeader(const QString &dev, QString *fileHead
     });
 
     if (QFile(headerPath).exists()) {
-        qInfo() << "backup header already exists.";
+        qInfo() << "[crypt_setup_helper::backupDetachHeader] Backup header already exists:" << headerPath;
         if (fileHeader) *fileHeader = headerPath;
         return disk_encrypt::kSuccess;
     }
@@ -440,7 +450,7 @@ int crypt_setup_helper::backupDetachHeader(const QString &dev, QString *fileHead
     int r = crypt_init(&cdev,
                        dev.toStdString().c_str());
     if (r < 0) {
-        qWarning() << "cannot init crypt device!" << dev << r;
+        qCritical() << "[crypt_setup_helper::backupDetachHeader] Cannot initialize crypt device, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorInitCrypt;
     }
 
@@ -448,19 +458,22 @@ int crypt_setup_helper::backupDetachHeader(const QString &dev, QString *fileHead
                             nullptr,
                             headerPath.toStdString().c_str());
     if (r < 0) {
-        qWarning() << "cannot backup device header!" << dev << r;
+        qCritical() << "[crypt_setup_helper::backupDetachHeader] Cannot backup device header, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorBackupHeader;
     }
 
+    qInfo() << "[crypt_setup_helper::backupDetachHeader] Header backed up successfully to:" << headerPath;
     if (fileHeader) *fileHeader = headerPath;
     return disk_encrypt::kSuccess;
 }
 
 int crypt_setup_helper::headerStatus(const QString &fileHeader)
 {
+    qDebug() << "[crypt_setup_helper::headerStatus] Checking header status, file:" << fileHeader;
+
     QFile headerFile(fileHeader);
     if (!headerFile.open(QIODevice::ReadOnly)) {
-        qWarning() << "open header failed!";
+        qCritical() << "[crypt_setup_helper::headerStatus] Cannot open header file:" << fileHeader;
         return kInvalidHeader;
     }
 
@@ -474,7 +487,7 @@ int crypt_setup_helper::headerStatus(const QString &fileHeader)
     // read segments
     auto segments = obj.value("segments").toObject();
     if (segments.isEmpty()) {
-        qWarning() << "segments not found";
+        qWarning() << "[crypt_setup_helper::headerStatus] Segments not found in header:" << fileHeader;
         return kInvalidHeader;
     }
     bool hasLinear = false, hasCrypt = false;
@@ -497,6 +510,8 @@ int crypt_setup_helper::headerStatus(const QString &fileHeader)
             break;
         }
     }
+
+    qDebug() << "[crypt_setup_helper::headerStatus] Header analysis - mode:" << mode << "hasLinear:" << hasLinear << "hasCrypt:" << hasCrypt;
 
     if (mode == "encrypt") {
         if (hasLinear && hasCrypt)
@@ -541,7 +556,7 @@ int crypt_setup::csDecrypt(const QString &dev, const QString &passphrase, const 
                                backupHeader.toStdString().c_str(),
                                dev.toStdString().c_str());
     if (r < 0) {
-        qWarning() << "cannot init crypt device!" << dev << r;
+        qCritical() << "[crypt_setup::csDecrypt] Cannot initialize crypt device, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorInitCrypt;
     }
 
@@ -549,7 +564,7 @@ int crypt_setup::csDecrypt(const QString &dev, const QString &passphrase, const 
                    CRYPT_LUKS,
                    nullptr);
     if (r < 0) {
-        qWarning() << "cannot load crypt device!" << dev << r;
+        qCritical() << "[crypt_setup::csDecrypt] Cannot load crypt device, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorLoadCrypt;
     }
 
@@ -558,14 +573,14 @@ int crypt_setup::csDecrypt(const QString &dev, const QString &passphrase, const 
                                    CRYPT_FLAGS_REQUIREMENTS,
                                    &flags);
     if (r < 0) {
-        qWarning() << "cannot get persistent flag!" << dev << r;
+        qCritical() << "[crypt_setup::csDecrypt] Cannot get persistent flags, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorGetReencryptFlag;
     }
     crypt_params_reencrypt args;
     r = crypt_reencrypt_status(cdev,
                                &args);
     if (r < 0) {
-        qWarning() << "get reencrypt status failed!" << dev << r;
+        qCritical() << "[crypt_setup::csDecrypt] Cannot get reencrypt status, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorCheckReencryptStatus;
     }
 
@@ -573,7 +588,7 @@ int crypt_setup::csDecrypt(const QString &dev, const QString &passphrase, const 
             || (flags & CRYPT_REQUIREMENT_ONLINE_REENCRYPT);
     encrypting &= (args.mode == CRYPT_REENCRYPT_ENCRYPT);
     if (encrypting) {
-        qWarning() << "device is under encrypting, cannot decrypt!" << dev << flags;
+        qCritical() << "[crypt_setup::csDecrypt] Device is under encryption, cannot decrypt, device:" << dev << "flags:" << flags;
         return -disk_encrypt::kErrorWrongFlags;
     }
     if (r == CRYPT_REENCRYPT_CRASH) {
@@ -586,7 +601,7 @@ int crypt_setup::csDecrypt(const QString &dev, const QString &passphrase, const 
                                          passphrase.length(),
                                          CRYPT_ACTIVATE_RECOVERY);
         if (r < 0) {
-            qWarning() << "cannot activate device by name!" << dev << r << name;
+            qCritical() << "[crypt_setup::csDecrypt] Cannot activate device, device:" << dev << "name:" << name << "error:" << r;
             return -disk_encrypt::kErrorActive;
         }
         crypt_deactivate(cdev,
@@ -618,18 +633,18 @@ int crypt_setup::csDecrypt(const QString &dev, const QString &passphrase, const 
                                            nullptr,
                                            &encArgs);
     if (r < 0) {
-        qWarning() << "cannot init reencrypt process!" << dev << r;
+        qCritical() << "[crypt_setup::csDecrypt] Cannot initialize reencrypt process, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorWrongPassphrase;   // might not pass wrong.
     }
 
-    qInfo() << "processing decryption..." << dev;
+    qInfo() << "[crypt_setup::csDecrypt] Processing decryption, device:" << dev;
     QPair<QString, QString> devInfo { dev, displayName };
     r = crypt_reencrypt_run(cdev,
                             crypt_setup_helper::onDecrypting,
                             (void *)&devInfo);
-    qInfo() << "decryption process finished" << dev << r;
+    qInfo() << "[crypt_setup::csDecrypt] Decryption process finished, device:" << dev << "result:" << r;
     if (r < 0) {
-        qWarning() << "decrypt device failed!" << dev << r;
+        qCritical() << "[crypt_setup::csDecrypt] Decrypt device failed, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorReencryptFailed;
     }
 
@@ -647,7 +662,7 @@ int crypt_setup::csAddPassphrase(const QString &dev, const QString &validPwd, co
                                    dev.toStdString().c_str(),
                                    nullptr);
     if (r < 0) {
-        qWarning() << "cannot init crypt device!" << dev << r;
+        qCritical() << "[crypt_setup::csAddPassphrase] Cannot initialize crypt device, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorInitCrypt;
     }
 
@@ -655,7 +670,7 @@ int crypt_setup::csAddPassphrase(const QString &dev, const QString &validPwd, co
                    CRYPT_LUKS,
                    nullptr);
     if (r < 0) {
-        qWarning() << "cannot load crypt device!" << dev << r;
+        qCritical() << "[crypt_setup::csAddPassphrase] Cannot load crypt device, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorLoadCrypt;
     }
 
@@ -666,7 +681,7 @@ int crypt_setup::csAddPassphrase(const QString &dev, const QString &validPwd, co
                                         newPwd.toStdString().c_str(),
                                         newPwd.length());
     if (r < 0) {
-        qWarning() << "change passphrase failed!" << dev << r;
+        qCritical() << "[crypt_setup::csAddPassphrase] Change passphrase failed, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorAddKeyslot;
     }
     return r;   // the key slot number.
@@ -680,7 +695,7 @@ int crypt_setup::csChangePassphrase(const QString &dev, const QString &oldPwd, c
                                    dev.toStdString().c_str(),
                                    nullptr);
     if (r < 0) {
-        qWarning() << "cannot init crypt device!" << dev << r;
+        qCritical() << "[crypt_setup::csChangePassphrase] Cannot initialize crypt device, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorInitCrypt;
     }
 
@@ -688,7 +703,7 @@ int crypt_setup::csChangePassphrase(const QString &dev, const QString &oldPwd, c
                    CRYPT_LUKS,
                    nullptr);
     if (r < 0) {
-        qWarning() << "cannot load crypt device!" << dev << r;
+        qCritical() << "[crypt_setup::csChangePassphrase] Cannot load crypt device, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorLoadCrypt;
     }
 
@@ -700,7 +715,7 @@ int crypt_setup::csChangePassphrase(const QString &dev, const QString &oldPwd, c
                                            newPwd.toStdString().c_str(),
                                            newPwd.length());
     if (r < 0) {
-        qWarning() << "change passphrase failed!" << dev << r;
+        qCritical() << "[crypt_setup::csChangePassphrase] Change passphrase failed, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorChangePassphraseFailed;
     }
     return r;   // the key slot number.
@@ -714,7 +729,7 @@ int crypt_setup::csRemoveKeyslot(const QString &dev, int keyslot)
                                    dev.toStdString().c_str(),
                                    nullptr);
     if (r < 0) {
-        qWarning() << "cannot init crypt device!" << dev << r;
+        qCritical() << "[crypt_setup::csRemoveKeyslot] Cannot initialize crypt device, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorInitCrypt;
     }
 
@@ -722,17 +737,17 @@ int crypt_setup::csRemoveKeyslot(const QString &dev, int keyslot)
                    CRYPT_LUKS,
                    nullptr);
     if (r < 0) {
-        qWarning() << "cannot load crypt device!" << dev << r;
+        qCritical() << "[crypt_setup::csRemoveKeyslot] Cannot load crypt device, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorLoadCrypt;
     }
 
     r = crypt_keyslot_destroy(cdev, keyslot);
     if (r < 0) {
-        qWarning() << "remove keyslot failed!" << dev << keyslot << r;
+        qCritical() << "[crypt_setup::csRemoveKeyslot] Remove keyslot failed, device:" << dev << "keyslot:" << keyslot << "error:" << r;
         return r;
     }
 
-    qInfo() << "keyslot removed successfully:" << dev << keyslot;
+    qInfo() << "[crypt_setup::csRemoveKeyslot] Keyslot removed successfully, device:" << dev << "keyslot:" << keyslot;
     return disk_encrypt::kSuccess;
 }
 
@@ -751,7 +766,7 @@ int crypt_setup_helper::setToken(const QString &dev, const QString &token)
     int r = crypt_init(&cdev,
                        dev.toStdString().c_str());
     if (r < 0) {
-        qWarning() << "cannot init crypt device!" << dev << r;
+        qCritical() << "[crypt_setup_helper::setToken] Cannot initialize crypt device, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorInitCrypt;
     }
 
@@ -759,14 +774,14 @@ int crypt_setup_helper::setToken(const QString &dev, const QString &token)
                    CRYPT_LUKS,
                    nullptr);
     if (r < 0) {
-        qWarning() << "cannot load crypt device!" << dev << r;
+        qCritical() << "[crypt_setup_helper::setToken] Cannot load crypt device, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorLoadCrypt;
     }
     r = crypt_token_json_set(cdev,
                              tokenIndex,
                              token.toStdString().c_str());
     if (r < 0) {
-        qWarning() << "cannot set token at index" << dev << r << tokenIndex;
+        qCritical() << "[crypt_setup_helper::setToken] Cannot set token, device:" << dev << "index:" << tokenIndex << "error:" << r;
         return -disk_encrypt::kErrorSetTokenFailed;
     }
     return disk_encrypt::kSuccess;
@@ -780,7 +795,7 @@ int crypt_setup_helper::getToken(const QString &dev, QString *token)
     int r = crypt_init(&cdev,
                        dev.toStdString().c_str());
     if (r < 0) {
-        qWarning() << "cannot init crypt device!" << dev << r;
+        qCritical() << "[crypt_setup_helper::getToken] Cannot initialize crypt device, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorInitCrypt;
     }
 
@@ -788,7 +803,7 @@ int crypt_setup_helper::getToken(const QString &dev, QString *token)
                    CRYPT_LUKS,
                    nullptr);
     if (r < 0) {
-        qWarning() << "cannot load crypt device!" << dev << r;
+        qCritical() << "[crypt_setup_helper::getToken] Cannot load crypt device, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorLoadCrypt;
     }
 
@@ -807,14 +822,14 @@ int crypt_setup_helper::getToken(const QString &dev, QString *token)
         }
     }
 
-    qInfo() << "token not found." << dev;
+    qInfo() << "[crypt_setup_helper::getToken] Token not found, device:" << dev;
     return disk_encrypt::kSuccess;
 }
 
 int crypt_setup_helper::getRecoveryKeySlots(const QString &dev, QList<int> *keySlots)
 {
     if (!keySlots) {
-        qWarning() << "keySlots parameter is null";
+        qCritical() << "[crypt_setup_helper::getRecoveryKeySlots] KeySlots parameter is null";
         return -disk_encrypt::kErrorUnknown;
     }
 
@@ -826,7 +841,7 @@ int crypt_setup_helper::getRecoveryKeySlots(const QString &dev, QList<int> *keyS
     int r = crypt_init(&cdev,
                        dev.toStdString().c_str());
     if (r < 0) {
-        qWarning() << "cannot init crypt device!" << dev << r;
+        qCritical() << "[crypt_setup_helper::getRecoveryKeySlots] Cannot initialize crypt device, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorInitCrypt;
     }
 
@@ -834,7 +849,7 @@ int crypt_setup_helper::getRecoveryKeySlots(const QString &dev, QList<int> *keyS
                    CRYPT_LUKS,
                    nullptr);
     if (r < 0) {
-        qWarning() << "cannot load crypt device!" << dev << r;
+        qCritical() << "[crypt_setup_helper::getRecoveryKeySlots] Cannot load crypt device, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorLoadCrypt;
     }
 
@@ -856,14 +871,14 @@ int crypt_setup_helper::getRecoveryKeySlots(const QString &dev, QList<int> *keyS
                 int slotNum = slot.toString().toInt(&ok);
                 if (ok) {
                     keySlots->append(slotNum);
-                    qInfo() << "found recovery key in slot:" << slotNum;
+                    qInfo() << "[crypt_setup_helper::getRecoveryKeySlots] Found recovery key in slot:" << slotNum;
                 }
             }
         }
     }
 
     if (keySlots->isEmpty()) {
-        qInfo() << "no recovery key slots found." << dev;
+        qInfo() << "[crypt_setup_helper::getRecoveryKeySlots] No recovery key slots found, device:" << dev;
     }
 
     return disk_encrypt::kSuccess;
@@ -877,7 +892,7 @@ int crypt_setup::csActivateDevice(const QString &dev, const QString &activateNam
     int r = crypt_init(&cdev,
                        dev.toStdString().c_str());
     if (r < 0) {
-        qWarning() << "cannot init crypt device!" << dev << r;
+        qCritical() << "[crypt_setup::csActivateDevice] Cannot initialize crypt device, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorInitCrypt;
     }
 
@@ -885,7 +900,7 @@ int crypt_setup::csActivateDevice(const QString &dev, const QString &activateNam
                    CRYPT_LUKS,
                    nullptr);
     if (r < 0) {
-        qWarning() << "cannot load crypt device!" << dev << r;
+        qCritical() << "[crypt_setup::csActivateDevice] Cannot load crypt device, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorLoadCrypt;
     }
 
@@ -899,7 +914,7 @@ int crypt_setup::csActivateDevice(const QString &dev, const QString &activateNam
                                          passphrase.length(),
                                          CRYPT_ACTIVATE_SHARED);
         if (r < 0) {
-            qWarning() << "cannot activate device!" << dev << r;
+            qCritical() << "[crypt_setup::csActivateDevice] Cannot activate device, device:" << dev << "error:" << r;
             return -disk_encrypt::kErrorActive;
         }
     }
@@ -931,7 +946,7 @@ int crypt_setup_helper::encryptStatus(const QString &dev)
                        dev.toStdString().c_str());
     }
     if (r < 0) {
-        qWarning() << "cannot init crypt device" << dev << r;
+        qCritical() << "[crypt_setup_helper::encryptStatus] Cannot initialize crypt device, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorInitCrypt;
     }
 
@@ -939,7 +954,7 @@ int crypt_setup_helper::encryptStatus(const QString &dev)
                    CRYPT_LUKS,
                    nullptr);
     if (r < 0) {
-        qWarning() << "cannot load crypt device!" << dev << r;
+        qCritical() << "[crypt_setup_helper::encryptStatus] Cannot load crypt device, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorLoadCrypt;
     }
 
@@ -958,7 +973,7 @@ int crypt_setup_helper::encryptStatus(const QString &dev)
                                    CRYPT_FLAGS_REQUIREMENTS,
                                    &flags);
     if (r < 0) {
-        qWarning() << "cannot get persistent flag!" << dev << r;
+        qCritical() << "[crypt_setup_helper::encryptStatus] Cannot get persistent flags, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorGetReencryptFlag;
     }
     if (flags & CRYPT_REQUIREMENT_OFFLINE_REENCRYPT)
@@ -978,7 +993,7 @@ int crypt_setup::csActivateDeviceByVolume(const QString &dev, const QString &act
     int r = crypt_init(&cdev,
                        dev.toStdString().c_str());
     if (r < 0) {
-        qWarning() << "cannot init crypt device!" << dev << r;
+        qCritical() << "[crypt_setup::csActivateDeviceByVolume] Cannot initialize crypt device, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorInitCrypt;
     }
 
@@ -986,7 +1001,7 @@ int crypt_setup::csActivateDeviceByVolume(const QString &dev, const QString &act
                    CRYPT_LUKS,
                    nullptr);
     if (r < 0) {
-        qWarning() << "cannot load crypt device!" << dev << r;
+        qCritical() << "[crypt_setup::csActivateDeviceByVolume] Cannot load crypt device, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorLoadCrypt;
     }
 
@@ -999,7 +1014,7 @@ int crypt_setup::csActivateDeviceByVolume(const QString &dev, const QString &act
                                          volume.length(),
                                          CRYPT_ACTIVATE_SHARED);
         if (r < 0) {
-            qWarning() << "cannot activate device!" << dev << r;
+            qCritical() << "[crypt_setup::csActivateDeviceByVolume] Cannot activate device, device:" << dev << "error:" << r;
             return -disk_encrypt::kErrorActive;
         }
     }
@@ -1014,19 +1029,19 @@ int crypt_setup::csSetLabel(const QString &dev, const QString &label)
     int r = crypt_init(&cdev,
                        dev.toStdString().c_str());
     if (r < 0) {
-        qWarning() << "cannot init crypt device!" << dev << r;
+        qCritical() << "[crypt_setup::csSetLabel] Cannot initialize crypt device, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorInitCrypt;
     }
 
     r = crypt_load(cdev, CRYPT_LUKS, nullptr);
     if (r < 0) {
-        qWarning() << "cannot load crypt device!" << dev << r;
+        qCritical() << "[crypt_setup::csSetLabel] Cannot load crypt device, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorLoadCrypt;
     }
 
     r = crypt_set_label(cdev, label.toStdString().c_str(), nullptr);
     if (r < 0) {
-        qWarning() << "cannot set lable on device!" << label << dev << r;
+        qCritical() << "[crypt_setup::csSetLabel] Cannot set label on device, label:" << label << "device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorSetLabel;
     }
     return disk_encrypt::kSuccess;
@@ -1036,7 +1051,7 @@ int crypt_setup_helper::genDetachHeaderPath(const QString &dev, QString *name)
 {
     auto ptr = blockdev_helper::createDevPtr(dev);
     if (!ptr) {
-        qWarning() << "cannot create device object!" << dev;
+        qCritical() << "[crypt_setup_helper::genDetachHeaderPath] Cannot create device object, device:" << dev;
         return -disk_encrypt::kErrorUnknown;
     }
 
@@ -1073,7 +1088,7 @@ int crypt_setup::csDecryptMoveHead(const QString &dev, const QString &passphrase
                                backupHeader.toStdString().c_str(),
                                dev.toStdString().c_str());
     if (r < 0) {
-        qWarning() << "cannot init crypt device!" << dev << r;
+        qCritical() << "[crypt_setup::csDecryptMoveHead] Cannot initialize crypt device, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorInitCrypt;
     }
 
@@ -1081,7 +1096,7 @@ int crypt_setup::csDecryptMoveHead(const QString &dev, const QString &passphrase
                    CRYPT_LUKS,
                    nullptr);
     if (r < 0) {
-        qWarning() << "cannot load crypt device!" << dev << r;
+        qCritical() << "[crypt_setup::csDecryptMoveHead] Cannot load crypt device, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorLoadCrypt;
     }
 
@@ -1090,14 +1105,14 @@ int crypt_setup::csDecryptMoveHead(const QString &dev, const QString &passphrase
                                    CRYPT_FLAGS_REQUIREMENTS,
                                    &flags);
     if (r < 0) {
-        qWarning() << "cannot get persistent flag!" << dev << r;
+        qCritical() << "[crypt_setup::csDecryptMoveHead] Cannot get persistent flags, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorGetReencryptFlag;
     }
     crypt_params_reencrypt args;
     r = crypt_reencrypt_status(cdev,
                                &args);
     if (r < 0) {
-        qWarning() << "get reencrypt status failed!" << dev << r;
+        qCritical() << "[crypt_setup::csDecryptMoveHead] Cannot get reencrypt status, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorCheckReencryptStatus;
     }
 
@@ -1105,7 +1120,7 @@ int crypt_setup::csDecryptMoveHead(const QString &dev, const QString &passphrase
             || (flags & CRYPT_REQUIREMENT_ONLINE_REENCRYPT);
     encrypting &= (args.mode == CRYPT_REENCRYPT_ENCRYPT);
     if (encrypting) {
-        qWarning() << "device is under encrypting, cannot decrypt!" << dev << flags;
+        qCritical() << "[crypt_setup::csDecryptMoveHead] Device is under encryption, cannot decrypt, device:" << dev << "flags:" << flags;
         return -disk_encrypt::kErrorWrongFlags;
     }
     if (r == CRYPT_REENCRYPT_CRASH) {
@@ -1118,7 +1133,7 @@ int crypt_setup::csDecryptMoveHead(const QString &dev, const QString &passphrase
                                          passphrase.length(),
                                          CRYPT_ACTIVATE_RECOVERY);
         if (r < 0) {
-            qWarning() << "cannot activate device by name!" << dev << r << name;
+            qCritical() << "[crypt_setup::csDecryptMoveHead] Cannot activate device, device:" << dev << "name:" << name << "error:" << r;
             return -disk_encrypt::kErrorActive;
         }
         crypt_deactivate(cdev,
@@ -1149,7 +1164,7 @@ int crypt_setup::csDecryptMoveHead(const QString &dev, const QString &passphrase
                                            nullptr,
                                            &encArgs);
     if (r < 0) {
-        qWarning() << "cannot init reencrypt process!" << dev << r;
+        qCritical() << "[crypt_setup::csDecryptMoveHead] Cannot initialize reencrypt process, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorWrongPassphrase;   // might not pass wrong.
     }
 
@@ -1158,18 +1173,18 @@ int crypt_setup::csDecryptMoveHead(const QString &dev, const QString &passphrase
                             crypt_setup_helper::onDecrypting,
                             (void *)&devInfo);
     if (r < 0) {
-        qWarning() << "decrypt device failed!" << dev << r;
+        qCritical() << "[crypt_setup::csDecryptMoveHead] Decrypt device failed, device:" << dev << "error:" << r;
         return -disk_encrypt::kErrorReencryptFailed;
     }
 
-    qInfo() << "start move device superblock area.";
+    qInfo() << "[crypt_setup::csDecryptMoveHead] Start moving device superblock area";
     Q_EMIT NotificationHelper::instance()->notifyDecryptProgress(dev, displayName, 0.99);
     if (!filesystem_helper::moveFsForward(dev)) {
-        qWarning() << "recovery filesystem failed!" << dev;
+        qCritical() << "[crypt_setup::csDecryptMoveHead] Recovery filesystem failed, device:" << dev;
         return -disk_encrypt::kErrorResizeFs;
     }
     Q_EMIT NotificationHelper::instance()->notifyDecryptProgress(dev, displayName, 1);
-    qInfo() << "device superblock has been moved.";
+    qInfo() << "[crypt_setup::csDecryptMoveHead] Device superblock has been moved successfully";
 
     ::remove(backupHeader.toStdString().c_str());
 
