@@ -166,7 +166,7 @@ bool DiskEncryptMenuScene::initialize(const QVariantHash &params)
     param.deviceDisplayName = info->displayOf(dfmbase::FileInfo::kFileDisplayName);
     param.secType = SecKeyType::kPwd;
 
-    if (param.states & EncryptState::kStatusFinished) {
+    if (param.states != kStatusNotEncrypted) {
         param.secType = static_cast<SecKeyType>(device_utils::encKeyType(device));
         fmDebug() << "Device encryption finished, security type:" << param.secType;
     }
