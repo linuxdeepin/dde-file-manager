@@ -20,7 +20,7 @@ inline constexpr int kIconModeTextPadding = { 4 };   // 选中背景和文字之
 inline constexpr int kIconModeIconSpacing = { 3 };   // icon与背景的边距
 
 inline constexpr int kIconModeRectRadius = kIconModeTextPadding;
-inline constexpr int kIconModeBackRadius = { 6 };
+inline constexpr int kIconModeBackRadiusCoefficient = { 16 };
 inline constexpr int kIconModeColumuPadding { 10 };
 // end
 
