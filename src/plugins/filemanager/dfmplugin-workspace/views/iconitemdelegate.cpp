@@ -586,7 +586,8 @@ QPainterPath IconItemDelegate::paintItemBackgroundAndGeomerty(QPainter *painter,
     QRectF outLineRect = backgroundRect;
     outLineRect.setSize(outLineRect.size() - QSizeF(2, 2));
     outLineRect.moveCenter(backgroundRect.center());
-    path.addRoundedRect(outLineRect, kIconModeBackRadius, kIconModeBackRadius);
+    int radius = iconSize.width() / kIconModeBackRadiusCoefficient;
+    path.addRoundedRect(outLineRect, radius, radius);
 
     if (isDropTarget || isSelected || isHover) {   // 只有选中和mouseover才绘制背景
         painter->setRenderHint(QPainter::Antialiasing, true);

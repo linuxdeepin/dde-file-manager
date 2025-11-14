@@ -60,10 +60,12 @@ QPixmap ViewDrawHelper::renderDragPixmap(dfmbase::Global::ViewMode mode, QModelI
         QPainter painter(&pixmap);
 
         drawDragIcons(&painter, option, pixRect, indexes, topIndex);
-        if (dragCount != 1)
+        if (dragCount != 1) {
             drawDragCount(&painter, topIndex, option, dragCount);
-        else
-            drawDragText(&painter, topIndex, rect.width() - 2 * kIconModeTextPadding - 2 * kIconModeColumuPadding - kIconModeBackRadius);
+        } else {
+            int radius = view->iconSize().width() / kIconModeBackRadiusCoefficient;
+            drawDragText(&painter, topIndex, rect.width() - 2 * kIconModeTextPadding - 2 * kIconModeColumuPadding - radius);
+        }
 
         return pixmap;
     } else if (mode == ViewMode::kListMode || mode == ViewMode::kTreeMode) {
@@ -116,7 +118,7 @@ void ViewDrawHelper::drawDragIcons(QPainter *painter, const QStyleOptionViewItem
         painter->translate(-offsetX, -offsetY);
     }
 
-    //draw top icon
+    // draw top icon
     painter->setOpacity(0.8);
     view->itemDelegate()->paintDragIcon(painter, option, topIndex, defaultIconSize);
 }
@@ -124,7 +126,7 @@ void ViewDrawHelper::drawDragIcons(QPainter *painter, const QStyleOptionViewItem
 void ViewDrawHelper::drawDragCount(QPainter *painter, const QModelIndex &topIndex, const QStyleOptionViewItem &option, int count) const
 {
     QSize defaultIconSize = QSize(dragIconSize, dragIconSize);
-    int length = count > kDragIconMaxCount ? 28 : 24;   //diffrent size for diffrent number of chars
+    int length = count > kDragIconMaxCount ? 28 : 24;   // diffrent size for diffrent number of chars
     QSize iconRealSize = view->itemDelegate()->getIndexIconSize(option, topIndex, defaultIconSize);
     if (iconRealSize.width() > defaultIconSize.width() || iconRealSize.height() > defaultIconSize.height())
         iconRealSize.scale(defaultIconSize, Qt::KeepAspectRatio);
