@@ -5245,17 +5245,17 @@ Kirjoita käyttäjä ja salasana kohteelle %1</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="624"/>
         <source>Partition is not fully decrypted, please finish decryption before access.</source>
-        <translation type="unfinished"/>
+        <translation>Salausta ei ole purettu kokonaan, pura loppuun ennen käyttöä.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="632"/>
         <source>Unlocking partition failed</source>
-        <translation type="unfinished"/>
+        <translation>Lukituksen avaaminen epäonnistui</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="633"/>
         <source>Please click &quot;Continue Partition Encryption&quot; in the right-click menu to complete the partition encryption.</source>
-        <translation type="unfinished"/>
+        <translation>Paina hiiren oikeaa avautuvassa valikossa &quot;Jatka osion salausta&quot; salauksen saattamiseksi loppuun.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="496"/>
@@ -5312,7 +5312,7 @@ Kirjoita käyttäjä ja salasana kohteelle %1</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="661"/>
         <source>Partition Encryption Non-Reboot Mode Enabled</source>
-        <translation type="unfinished"/>
+        <translation>Osion salaus kun &quot;Ilman käynnistystä uudelleen&quot; on käytössä</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="662"/>
