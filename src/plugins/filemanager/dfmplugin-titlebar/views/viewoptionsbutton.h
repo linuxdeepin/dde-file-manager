@@ -23,8 +23,6 @@ public:
     ~ViewOptionsButton() override;
     void switchMode(DFMBASE_NAMESPACE::Global::ViewMode mode, const QUrl &url);
 
-    void setVisible(bool visible) override;
-
 Q_SIGNALS:
     void displayPreviewVisibleChanged(bool visible);
 
@@ -39,6 +37,7 @@ protected:
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
+    bool event(QEvent *event) override;
 };
 
 }   // namespace dfmplugin_titlebar
