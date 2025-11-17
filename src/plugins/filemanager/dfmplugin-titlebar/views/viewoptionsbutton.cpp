@@ -64,17 +64,6 @@ void ViewOptionsButton::switchMode(ViewMode mode, const QUrl &url)
     d->fileUrl = url;
 }
 
-void ViewOptionsButton::setVisible(bool visible)
-{
-    DToolButton::setVisible(visible);
-    if (!DConfigManager::instance()->value(kViewDConfName, kDisplayPreviewVisibleKey).toBool()) {
-        fmDebug() << "Display preview is disabled in config, skipping preview visibility change";
-        return;
-    }
-
-    Q_EMIT displayPreviewVisibleChanged(visible);
-}
-
 ViewOptionsButton::~ViewOptionsButton() = default;
 
 void ViewOptionsButton::paintEvent(QPaintEvent *event)
@@ -133,6 +122,21 @@ void ViewOptionsButton::mouseReleaseEvent(QMouseEvent *event)
 {
     DToolButton::mouseReleaseEvent(event);
     update();
+}
+
+bool ViewOptionsButton::event(QEvent *event)
+{
+    const auto type = event->type();
+    if (type == QEvent::Show || type == QEvent::Hide) {
+        if (!DConfigManager::instance()->value(kViewDConfName, kDisplayPreviewVisibleKey).toBool()) {
+            fmDebug() << "Display preview is disabled in config, skipping preview visibility change";
+            return DToolButton::event(event);
+        }
+
+        Q_EMIT displayPreviewVisibleChanged(type == QEvent::Show);
+    }
+
+    return DToolButton::event(event);
 }
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
