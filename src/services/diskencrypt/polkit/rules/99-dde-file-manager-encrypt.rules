@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // Polkit rules for DDE File Manager disk encryption
 // This file replaces the deprecated .pkla configuration
 //
