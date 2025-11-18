@@ -164,7 +164,7 @@ void DialogManager::showErrorDialogWhenOperateDeviceFailed(OperateType type, DFM
         else if (err.code == DeviceError::kDaemonErrorCannotMkdirMountPoint)
             errMsg = tr("Cannot create the mountpoint: the file name is too long");
         else if (static_cast<int>(err.code) == EACCES)
-            errMsg = tr("Authentication failed");
+            errMsg = tr("Permission denied");
         else if (static_cast<int>(err.code) == ENOENT)
             errMsg = tr("No such file or directory");
         else
