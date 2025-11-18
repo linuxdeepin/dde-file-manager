@@ -1064,8 +1064,9 @@ bool LocalFileHandlerPrivate::doOpenFiles(const QList<QUrl> &urls, const QString
             continue;
         }
 
+        // Do not check the file exists, as it may affect the SMB connection mounting
         FileInfoPointer info = InfoFactory::create<FileInfo>(url);
-        if (!info || !info->exists()) {
+        if (!info) {
             qCWarning(logDFMBase) << "Failed to create FileInfo for:" << url;
             transUrls.removeOne(url);
             continue;
