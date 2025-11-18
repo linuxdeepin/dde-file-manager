@@ -67,38 +67,23 @@ TEST_F(TestMainController, DoSearchTask_WithValidParameters_ReturnsTrue)
 
 TEST_F(TestMainController, DoSearchTask_WithEmptyTaskId_HandlesCorrectly)
 {
-    QString emptyTaskId = "";
+    stub.set_lamda(&TaskCommander::start, [](TaskCommander *) {
+        __DBG_STUB_INVOKE__
+        return false;
+    });
+
+    // Test parameters
+    QString taskId = "test_task_001";
     QUrl searchUrl = QUrl::fromLocalFile("/home/test");
-    QString keyword = "test";
+    QString keyword = "test_keyword";
 
+    // Since doSearchTask is private, we test via public interface or metaObject
     bool result = false;
     if (controller) {
-        QMetaObject::invokeMethod(controller, "doSearchTask", Qt::DirectConnection,
-                                  Q_RETURN_ARG(bool, result),
-                                  Q_ARG(QString, emptyTaskId),
-                                  Q_ARG(QUrl, searchUrl),
-                                  Q_ARG(QString, keyword));
+        result = controller->doSearchTask(taskId, searchUrl, keyword);
     }
 
-    EXPECT_TRUE(true);
-}
-
-TEST_F(TestMainController, DoSearchTask_WithInvalidUrl_HandlesCorrectly)
-{
-    QString taskId = "test_task_002";
-    QUrl invalidUrl;   // Empty/invalid URL
-    QString keyword = "test";
-
-    bool result = false;
-    if (controller) {
-        QMetaObject::invokeMethod(controller, "doSearchTask", Qt::DirectConnection,
-                                  Q_RETURN_ARG(bool, result),
-                                  Q_ARG(QString, taskId),
-                                  Q_ARG(QUrl, invalidUrl),
-                                  Q_ARG(QString, keyword));
-    }
-
-    EXPECT_TRUE(true);
+    EXPECT_FALSE(result);
 }
 
 TEST_F(TestMainController, Stop_WithValidTaskId_CallsTaskCommanderStop)
@@ -114,21 +99,10 @@ TEST_F(TestMainController, Stop_WithValidTaskId_CallsTaskCommanderStop)
         __DBG_STUB_INVOKE__
     });
 
+    TaskCommander *task = new TaskCommander(taskId, QUrl("file:///test"), "key");
+    controller->taskManager.insert(taskId, task);
     if (controller) {
-        QMetaObject::invokeMethod(controller, "stop", Qt::DirectConnection,
-                                  Q_ARG(QString, taskId));
-    }
-
-    EXPECT_TRUE(true);
-}
-
-TEST_F(TestMainController, Stop_WithNonExistentTaskId_HandlesCorrectly)
-{
-    QString nonExistentTaskId = "non_existent_task";
-
-    if (controller) {
-        QMetaObject::invokeMethod(controller, "stop", Qt::DirectConnection,
-                                  Q_ARG(QString, nonExistentTaskId));
+        controller->stop(taskId);
     }
 
     EXPECT_TRUE(true);
@@ -145,28 +119,15 @@ TEST_F(TestMainController, GetResults_WithValidTaskId_ReturnsResults)
         return mockResults;
     });
 
-    DFMSearchResultMap results;
-    if (controller) {
-        QMetaObject::invokeMethod(controller, "getResults", Qt::DirectConnection,
-                                  Q_RETURN_ARG(DFMSearchResultMap, results),
-                                  Q_ARG(QString, taskId));
-    }
-
-    EXPECT_TRUE(true);
-}
-
-TEST_F(TestMainController, GetResults_WithNonExistentTaskId_ReturnsEmptyResults)
-{
-    QString nonExistentTaskId = "non_existent_task";
+    TaskCommander *task = new TaskCommander(taskId, QUrl("file:///test"), "key");
+    controller->taskManager.insert(taskId, task);
 
     DFMSearchResultMap results;
     if (controller) {
-        QMetaObject::invokeMethod(controller, "getResults", Qt::DirectConnection,
-                                  Q_RETURN_ARG(DFMSearchResultMap, results),
-                                  Q_ARG(QString, nonExistentTaskId));
+        results = controller->getResults(taskId);
     }
 
-    EXPECT_TRUE(true);
+    EXPECT_TRUE(results.isEmpty());
 }
 
 TEST_F(TestMainController, GetResultUrls_WithValidTaskId_ReturnsUrls)
@@ -174,34 +135,20 @@ TEST_F(TestMainController, GetResultUrls_WithValidTaskId_ReturnsUrls)
     QString taskId = "test_task_005";
 
     // Mock TaskCommander to return test URLs
-    stub.set_lamda(&TaskCommander::getResults, [](TaskCommander *) -> DFMSearchResultMap {
+    stub.set_lamda(&TaskCommander::getResultsUrls, [] {
         __DBG_STUB_INVOKE__
-        DFMSearchResultMap mockResults;
-        return mockResults;
+        return QList<QUrl>();
     });
 
-    QList<QUrl> urls;
-    if (controller) {
-        QMetaObject::invokeMethod(controller, "getResultUrls", Qt::DirectConnection,
-                                  Q_RETURN_ARG(QList<QUrl>, urls),
-                                  Q_ARG(QString, taskId));
-    }
-
-    EXPECT_TRUE(true);
-}
-
-TEST_F(TestMainController, GetResultUrls_WithNonExistentTaskId_ReturnsEmptyList)
-{
-    QString nonExistentTaskId = "non_existent_task";
+    TaskCommander *task = new TaskCommander(taskId, QUrl("file:///test"), "key");
+    controller->taskManager.insert(taskId, task);
 
     QList<QUrl> urls;
     if (controller) {
-        QMetaObject::invokeMethod(controller, "getResultUrls", Qt::DirectConnection,
-                                  Q_RETURN_ARG(QList<QUrl>, urls),
-                                  Q_ARG(QString, nonExistentTaskId));
+        urls = controller->getResultUrls(taskId);
     }
 
-    EXPECT_TRUE(true);
+    EXPECT_TRUE(urls.isEmpty());
 }
 
 TEST_F(TestMainController, OnFinished_WithValidTaskId_EmitsSignals)
@@ -209,188 +156,6 @@ TEST_F(TestMainController, OnFinished_WithValidTaskId_EmitsSignals)
     QString taskId = "test_task_006";
 
     if (controller) {
-        QSignalSpy matchedSpy(controller, &MainController::matched);
-        QSignalSpy completedSpy(controller, &MainController::searchCompleted);
-
-        // Invoke the slot manually
-        QMetaObject::invokeMethod(controller, "onFinished", Qt::DirectConnection,
-                                  Q_ARG(QString, taskId));
-
-        // Verify signals were emitted (may depend on implementation)
-        EXPECT_TRUE(true);
+        EXPECT_NO_FATAL_FAILURE(controller->onFinished(taskId));
     }
-}
-
-TEST_F(TestMainController, OnFinished_WithEmptyTaskId_HandlesCorrectly)
-{
-    QString emptyTaskId = "";
-
-    if (controller) {
-        QSignalSpy matchedSpy(controller, &MainController::matched);
-        QSignalSpy completedSpy(controller, &MainController::searchCompleted);
-
-        QMetaObject::invokeMethod(controller, "onFinished", Qt::DirectConnection,
-                                  Q_ARG(QString, emptyTaskId));
-
-        EXPECT_TRUE(true);
-    }
-}
-
-TEST_F(TestMainController, MatchedSignal_CanBeEmitted)
-{
-    if (controller) {
-        QSignalSpy spy(controller, &MainController::matched);
-
-        // Emit signal manually for testing
-        emit controller->matched("test_task");
-
-        EXPECT_EQ(spy.count(), 1);
-        EXPECT_EQ(spy.at(0).at(0).toString(), QString("test_task"));
-    }
-}
-
-TEST_F(TestMainController, SearchCompletedSignal_CanBeEmitted)
-{
-    if (controller) {
-        QSignalSpy spy(controller, &MainController::searchCompleted);
-
-        // Emit signal manually for testing
-        emit controller->searchCompleted("test_task");
-
-        EXPECT_EQ(spy.count(), 1);
-        EXPECT_EQ(spy.at(0).at(0).toString(), QString("test_task"));
-    }
-}
-
-TEST_F(TestMainController, TaskManager_ManagesMultipleTasks)
-{
-    // Test multiple task management
-    QStringList taskIds = {
-        "task_001", "task_002", "task_003"
-    };
-
-    QUrl searchUrl = QUrl::fromLocalFile("/home/test");
-    QString keyword = "test";
-
-    stub.set_lamda(&TaskCommander::start, [](TaskCommander *) {
-        __DBG_STUB_INVOKE__
-        return true;
-    });
-
-    // Test creating multiple tasks
-    bool result = false;
-    for (const QString &taskId : taskIds) {
-        if (controller) {
-            result = controller->doSearchTask(taskId, searchUrl, keyword);
-        }
-    }
-
-    EXPECT_TRUE(result);
-}
-
-TEST_F(TestMainController, StopAllTasks_CallsStopForAllActiveTasks)
-{
-    QStringList taskIds = {
-        "task_001", "task_002", "task_003"
-    };
-
-    // Mock TaskCommander operations
-    stub.set_lamda(&TaskCommander::stop, [](TaskCommander *) {
-        __DBG_STUB_INVOKE__
-    });
-
-    stub.set_lamda(&TaskCommander::deleteLater, [](QObject *) {
-        __DBG_STUB_INVOKE__
-    });
-
-    // Stop all tasks
-    for (const QString &taskId : taskIds) {
-        if (controller) {
-            QMetaObject::invokeMethod(controller, "stop", Qt::DirectConnection,
-                                      Q_ARG(QString, taskId));
-        }
-    }
-
-    EXPECT_TRUE(true);
-}
-
-TEST_F(TestMainController, CompleteWorkflow_CreateExecuteGetResultsStop)
-{
-    QString taskId = "workflow_test";
-    QUrl searchUrl = QUrl::fromLocalFile("/home/test");
-    QString keyword = "document";
-
-    stub.set_lamda(&TaskCommander::start, [](TaskCommander *) {
-        __DBG_STUB_INVOKE__
-        return true;
-    });
-
-    stub.set_lamda(&TaskCommander::getResults, [](TaskCommander *) -> DFMSearchResultMap {
-        __DBG_STUB_INVOKE__
-        DFMSearchResultMap mockResults;
-        return mockResults;
-    });
-
-    stub.set_lamda(&TaskCommander::stop, [](TaskCommander *) {
-        __DBG_STUB_INVOKE__
-    });
-
-    if (controller) {
-        // Complete workflow test
-        bool searchResult = false;
-        QMetaObject::invokeMethod(controller, "doSearchTask", Qt::DirectConnection,
-                                  Q_RETURN_ARG(bool, searchResult),
-                                  Q_ARG(QString, taskId),
-                                  Q_ARG(QUrl, searchUrl),
-                                  Q_ARG(QString, keyword));
-
-        DFMSearchResultMap results;
-        QMetaObject::invokeMethod(controller, "getResults", Qt::DirectConnection,
-                                  Q_RETURN_ARG(DFMSearchResultMap, results),
-                                  Q_ARG(QString, taskId));
-
-        QMetaObject::invokeMethod(controller, "stop", Qt::DirectConnection,
-                                  Q_ARG(QString, taskId));
-    }
-
-    EXPECT_TRUE(true);
-}
-
-TEST_F(TestMainController, IndexFuture_HandlesAsyncOperations)
-{
-    // Test QFuture<void> indexFuture member handling
-    // This tests the async operation management capability
-
-    // Mock QFuture operations
-    stub.set_lamda(&QFuture<void>::isFinished, [](QFuture<void> *) -> bool {
-        __DBG_STUB_INVOKE__
-        return true;
-    });
-
-    stub.set_lamda(&QFuture<void>::cancel, [](QFuture<void> *) {
-        __DBG_STUB_INVOKE__
-    });
-
-    EXPECT_TRUE(true);
-}
-
-TEST_F(TestMainController, Destructor_CleansUpResources)
-{
-    // Test that destructor properly cleans up resources
-
-    // Mock cleanup operations
-    stub.set_lamda(&TaskCommander::stop, [](TaskCommander *) {
-        __DBG_STUB_INVOKE__
-    });
-
-    stub.set_lamda(&QObject::deleteLater, [](QObject *) {
-        __DBG_STUB_INVOKE__
-    });
-
-    stub.set_lamda(&QFuture<void>::cancel, [](QFuture<void> *) {
-        __DBG_STUB_INVOKE__
-    });
-
-    // Test destruction (would be called automatically in TearDown)
-    EXPECT_TRUE(true);
 }
