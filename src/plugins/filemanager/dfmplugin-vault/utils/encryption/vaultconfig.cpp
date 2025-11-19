@@ -44,3 +44,18 @@ QVariant VaultConfig::get(const QString &nodeName, const QString &keyName, const
 {
     return pSetting->value(QString("/%1/%2").arg(nodeName).arg(keyName), defaultValue);
 }
+
+void VaultConfig::setVaultCreationType(const QString &type)
+{
+    set(kConfigNodeName, kConfigKeyVaultCreationType, type);
+}
+
+QString VaultConfig::getVaultCreationType() const
+{
+    return pSetting->value(QString("/%1/%2").arg(kConfigNodeName).arg(kConfigKeyVaultCreationType), "").toString();
+}
+
+bool VaultConfig::isNewCreated() const
+{
+    return getVaultCreationType() == kConfigValueVaultCreationTypeNew;
+}
