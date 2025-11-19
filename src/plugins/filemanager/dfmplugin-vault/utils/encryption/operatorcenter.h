@@ -144,6 +144,12 @@ public:
      */
     bool verificationRetrievePassword(const QString keypath, QString &password);
 
+    /*!
+     * \brief isNewVaultVersion 检测保险箱是否使用新密码管理方案
+     * \return true表示新版本（存在LUKS容器），false表示旧版本
+     */
+    bool isNewVaultVersion() const;
+
 private:
     Dtk::Core::DSecureString strCryfsPassword;   // cryfs密码
     QString strUserKey;

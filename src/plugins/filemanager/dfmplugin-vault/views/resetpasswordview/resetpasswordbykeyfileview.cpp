@@ -54,7 +54,6 @@ void ResetPasswordByKeyFileView::initUI()
     newPasswordEdit->lineEdit()->setValidator(validator);
     newPasswordEdit->lineEdit()->setPlaceholderText(tr("At least 8 characters, including A-Z, a-z, 0-9, and symbols"));
     newPasswordEdit->lineEdit()->setAttribute(Qt::WA_InputMethodEnabled, false);
-    newPasswordEdit->setEchoButtonIsVisible(false);
 
     // 重复密码输入框
     DLabel *repeatPasswordLabel = new DLabel(tr("Repeat Password"), this);
@@ -62,7 +61,6 @@ void ResetPasswordByKeyFileView::initUI()
     repeatPasswordEdit->lineEdit()->setValidator(validator);
     repeatPasswordEdit->lineEdit()->setPlaceholderText(tr("Enter new password again"));
     repeatPasswordEdit->lineEdit()->setAttribute(Qt::WA_InputMethodEnabled, false);
-    repeatPasswordEdit->setEchoButtonIsVisible(false);
 
     // 切换方式标签
     switchMethodLabel = new DLabel(tr("Use old password verification"), this);
