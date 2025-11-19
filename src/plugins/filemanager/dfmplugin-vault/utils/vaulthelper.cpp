@@ -9,6 +9,7 @@
 #include "views/vaultunlockpages.h"
 #include "views/vaultremovepages.h"
 #include "views/vaultpropertyview/vaultpropertydialog.h"
+#include "views/resetpasswordview/vaultresetpasswordpages.h"
 #include "utils/encryption/vaultconfig.h"
 #include "utils/encryption/operatorcenter.h"
 #include "utils/vaultautolock.h"
@@ -261,6 +262,8 @@ DMenu *VaultHelper::createMenu()
     case VaultState::kEncrypted:
         fmDebug() << "Vault: Adding 'Unlock' menu item";
         menu->addAction(QObject::tr("Unlock"), VaultHelper::instance(), &VaultHelper::unlockVaultDialog);
+        menu->addSeparator();
+        menu->addAction(QObject::tr("Reset Password"), VaultHelper::instance(), &VaultHelper::showResetPasswordDialog);
         break;
     case VaultState::kUnlocked: {
         fmDebug() << "Vault: Adding unlocked state menu items";
@@ -323,6 +326,7 @@ DMenu *VaultHelper::createMenu()
             fmDebug() << "Vault: Auto-lock menu items added";
         }
 
+        menu->addAction(QObject::tr("Reset Password"), VaultHelper::instance(), &VaultHelper::showResetPasswordDialog);
         menu->addAction(QObject::tr("Delete File Vault"), VaultHelper::instance(), &VaultHelper::showRemoveVaultDialog);
         menu->addAction(QObject::tr("Properties"), []() {
             fmInfo() << "Vault: Properties action triggered";
@@ -476,6 +480,13 @@ void VaultHelper::showRemoveVaultDialog()
         page->pageSelect(kNoneWidget);
         page->exec();
     }
+}
+
+void VaultHelper::showResetPasswordDialog()
+{
+    VaultResetPasswordPages *page = new VaultResetPasswordPages();
+    page->switchToOldPasswordView();
+    page->exec();
 }
 
 void VaultHelper::openWindow()
