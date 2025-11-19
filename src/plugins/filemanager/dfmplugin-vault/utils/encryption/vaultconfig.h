@@ -25,6 +25,9 @@ inline constexpr char kConfigValueMethodKey[] { "key_encryption" };
 inline constexpr char kConfigValueMethodTransparent[] { "transparent_encryption" };
 inline constexpr char kConfigKeyNotExist[] { "NoExist" };
 inline constexpr char kGroupPolicyKeyVaultAlgoName[] { "dfm.vault.algo.name" };
+inline constexpr char kConfigKeyVaultCreationType[] { "creation_type" };
+inline constexpr char kConfigValueVaultCreationTypeNew[] { "new_created" };
+inline constexpr char kConfigValueVaultCreationTypeMigrated[] { "migrated" };
 
 class VaultConfig
 {
@@ -34,6 +37,10 @@ public:
     void set(const QString &nodeName, const QString &keyName, QVariant value);
     QVariant get(const QString &nodeName, const QString &keyName);
     QVariant get(const QString &nodeName, const QString &keyName, const QVariant &defaultValue);
+
+    void setVaultCreationType(const QString &type);
+    QString getVaultCreationType() const;
+    bool isNewCreated() const;
 
 private:
     QString currentFilePath;

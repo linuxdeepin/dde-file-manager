@@ -5,6 +5,9 @@
 #include "fileencrypthandle.h"
 #include "fileencrypthandle_p.h"
 #include "encryption/vaultconfig.h"
+#include "encryption/passwordmanager.h"
+#include "encryption/masterkeymanager.h"
+#include "encryption/operatorcenter.h"
 #include "pathmanager.h"
 
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
@@ -82,19 +85,99 @@ void FileEncryptHandle::createVault(const QString &lockBaseDir, const QString &u
     d->mutex->lock();
     d->activeState.insert(1, static_cast<int>(ErrorCode::kSuccess));
 
+    QString cryfsConfigPath = lockBaseDir;
+    if (!cryfsConfigPath.endsWith("/"))
+        cryfsConfigPath += "/";
+    cryfsConfigPath += kCryfsConfigFileName;
+
     const QString &algoName = d->encryptTypeMap.value(type);
     DConfigManager::instance()->setValue(kDefaultCfgPath, kGroupPolicyKeyVaultAlgoName, algoName);
     VaultConfig config;
     config.set(kConfigNodeName, kConfigKeyAlgoName, QVariant(algoName));
 
-    int flg = d->runVaultProcess(lockBaseDir, unlockFileDir, passWord, type, blockSize);
-    if (d->activeState.value(1) != static_cast<int>(ErrorCode::kSuccess)) {
-        emit signalCreateVault(d->activeState.value(1));
-        fmWarning() << "Vault: create vault failed!";
+    if (!QFile::exists(cryfsConfigPath)) {
+        fmInfo() << "Vault: Creating new vault with password management scheme";
+
+        QByteArray masterKey = MasterKeyManager::generateMasterKey();
+        if (masterKey.isEmpty()) {
+            d->activeState[1] = static_cast<int>(ErrorCode::kUnspecifiedError);
+            emit signalCreateVault(d->activeState.value(1));
+            fmWarning() << "Vault: Failed to generate master key";
+            d->activeState.clear();
+            d->mutex->unlock();
+            return;
+        }
+
+        QString containerPath = MasterKeyManager::getContainerPath();
+        int ret = PasswordManager::createPasswordContainerFile(containerPath.toUtf8().constData());
+        if (ret != 0) {
+            d->activeState[1] = static_cast<int>(ErrorCode::kUnspecifiedError);
+            emit signalCreateVault(d->activeState.value(1));
+            fmWarning() << "Vault: Failed to create password container file";
+            d->activeState.clear();
+            d->mutex->unlock();
+            return;
+        }
+
+        int slotID = 0;
+        ret = PasswordManager::createLuksContainer(containerPath.toUtf8().constData(),
+                                                    masterKey.data(), masterKey.size(),
+                                                    passWord.toUtf8().constData(), slotID);
+        if (ret != 0) {
+            d->activeState[1] = static_cast<int>(ErrorCode::kUnspecifiedError);
+            emit signalCreateVault(d->activeState.value(1));
+            fmWarning() << "Vault: Failed to create LUKS container";
+            d->activeState.clear();
+            d->mutex->unlock();
+            return;
+        }
+
+        char recoveryKey[33];
+        ret = PasswordManager::generateSecureRecoveryKey(recoveryKey, sizeof(recoveryKey));
+        if (ret != 0) {
+            d->activeState[1] = static_cast<int>(ErrorCode::kUnspecifiedError);
+            emit signalCreateVault(d->activeState.value(1));
+            fmWarning() << "Vault: Failed to generate recovery key";
+            d->activeState.clear();
+            d->mutex->unlock();
+            return;
+        }
+
+        int recoveryKeySlotID = 0;
+        ret = PasswordManager::addNewPassword(containerPath.toUtf8().constData(),
+                                             passWord.toUtf8().constData(),
+                                             recoveryKey, recoveryKeySlotID);
+        if (ret != 0) {
+            d->activeState[1] = static_cast<int>(ErrorCode::kUnspecifiedError);
+            emit signalCreateVault(d->activeState.value(1));
+            fmWarning() << "Vault: Failed to add recovery key";
+            d->activeState.clear();
+            d->mutex->unlock();
+            return;
+        }
+
+        Dtk::Core::DSecureString masterKeySecure = Dtk::Core::DSecureString::fromUtf8(masterKey);
+        int flg = d->runVaultProcess(lockBaseDir, unlockFileDir, masterKeySecure, type, blockSize);
+        if (d->activeState.value(1) != static_cast<int>(ErrorCode::kSuccess)) {
+            emit signalCreateVault(d->activeState.value(1));
+            fmWarning() << "Vault: create vault failed!";
+        } else {
+            config.setVaultCreationType(kConfigValueVaultCreationTypeNew);
+            d->curState = kUnlocked;
+            emit signalCreateVault(flg);
+            fmInfo() << "Vault: create vault success! Recovery key:" << QString::fromUtf8(recoveryKey, 32);
+        }
     } else {
-        d->curState = kUnlocked;
-        emit signalCreateVault(flg);
-        fmInfo() << "Vault: create vault success!";
+        fmWarning() << "Vault: Vault already exists when creating, this should not happen normally";
+        int flg = d->runVaultProcess(lockBaseDir, unlockFileDir, passWord, type, blockSize);
+        if (d->activeState.value(1) != static_cast<int>(ErrorCode::kSuccess)) {
+            emit signalCreateVault(d->activeState.value(1));
+            fmWarning() << "Vault: create vault failed!";
+        } else {
+            d->curState = kUnlocked;
+            emit signalCreateVault(flg);
+            fmInfo() << "Vault: create vault success!";
+        }
     }
     d->activeState.clear();
     d->mutex->unlock();
@@ -124,16 +207,95 @@ bool FileEncryptHandle::unlockVault(const QString &lockBaseDir, const QString &u
     d->activeState.insert(3, static_cast<int>(ErrorCode::kSuccess));
     d->syncGroupPolicyAlgoName();
 
-    int flg = d->runVaultProcess(lockBaseDir, unlockFileDir, DSecureString);
-    if (d->activeState.value(3) != static_cast<int>(ErrorCode::kSuccess)) {
-        result = false;
-        emit signalUnlockVault(d->activeState.value(3));
-        fmWarning() << "Vault: Unlock vault failed with error code:" << d->activeState.value(3);
+    // 检测保险箱版本（通过检查 password_container.bin 文件是否存在）
+    OperatorCenter *operatorCenter = OperatorCenter::getInstance();
+    bool isNewVersion = operatorCenter->isNewVaultVersion();
+
+    if (isNewVersion) {
+        // 新版本：从LUKS容器获取主密钥
+        fmInfo() << "Vault: Unlocking new version vault";
+
+        QString containerPath = MasterKeyManager::getContainerPath();
+        QString password = DSecureString;
+
+        // 1. 验证密码
+        bool isValid = false;
+        int ret = PasswordManager::verifyPassword(containerPath.toUtf8().constData(),
+                                                  password.toUtf8().constData(), isValid);
+        if (ret != 0 || !isValid) {
+            result = false;
+            d->activeState[3] = static_cast<int>(ErrorCode::kWrongPassword);
+            emit signalUnlockVault(d->activeState.value(3));
+            fmWarning() << "Vault: Password verification failed";
+            d->activeState.clear();
+            d->mutex->unlock();
+            return result;
+        }
+
+        // 2. 从LUKS容器导出主密钥
+        char masterKeyBuf[64];
+        size_t masterKeySize = 64;
+        ret = PasswordManager::exportMasterKey(containerPath.toUtf8().constData(),
+                                               password.toUtf8().constData(),
+                                               masterKeyBuf, &masterKeySize);
+        if (ret != 0) {
+            result = false;
+            d->activeState[3] = static_cast<int>(ErrorCode::kUnspecifiedError);
+            emit signalUnlockVault(d->activeState.value(3));
+            fmWarning() << "Vault: Failed to export master key";
+            d->activeState.clear();
+            d->mutex->unlock();
+            return result;
+        }
+
+        QByteArray masterKey = QByteArray(masterKeyBuf, 64);
+
+        // 3. 根据创建方式处理主密钥
+        VaultConfig config;
+        QString creationType = config.getVaultCreationType();
+
+        QByteArray cryfsPassword;
+        if (creationType == kConfigValueVaultCreationTypeNew) {
+            // 新创建的保险箱：主密钥是64字节随机数，直接使用
+            cryfsPassword = masterKey;
+        } else if (creationType == kConfigValueVaultCreationTypeMigrated) {
+            // 迁移的保险箱：主密钥是旧密码+补零，需要去除末尾零还原原始密码
+            cryfsPassword = masterKey;
+            while (cryfsPassword.endsWith('\0')) {
+                cryfsPassword.chop(1);
+            }
+        } else {
+            // 兼容处理：如果没有设置创建方式，默认按新创建处理
+            cryfsPassword = masterKey;
+        }
+
+        // 4. 使用处理后的密码解锁CryFS
+        Dtk::Core::DSecureString cryfsPasswordSecure = Dtk::Core::DSecureString::fromUtf8(cryfsPassword);
+        int flg = d->runVaultProcess(lockBaseDir, unlockFileDir, cryfsPasswordSecure);
+        if (d->activeState.value(3) != static_cast<int>(ErrorCode::kSuccess)) {
+            result = false;
+            emit signalUnlockVault(d->activeState.value(3));
+            fmWarning() << "Vault: Unlock vault failed with error code:" << d->activeState.value(3);
+        } else {
+            result = true;
+            d->curState = kUnlocked;
+            emit signalUnlockVault(flg);
+            fmInfo() << "Vault: unlock vault success!";
+        }
     } else {
-        result = true;
-        d->curState = kUnlocked;
-        emit signalUnlockVault(flg);
-        fmInfo() << "Vault: unlock vault success!";
+        // 旧版本：保持原有逻辑不变（从用户密码生成主密钥）
+        fmInfo() << "Vault: Unlocking old version vault";
+        int flg = d->runVaultProcess(lockBaseDir, unlockFileDir, DSecureString);
+        if (d->activeState.value(3) != static_cast<int>(ErrorCode::kSuccess)) {
+            result = false;
+            emit signalUnlockVault(d->activeState.value(3));
+            fmWarning() << "Vault: Unlock vault failed with error code:" << d->activeState.value(3);
+        } else {
+            result = true;
+            d->curState = kUnlocked;
+            emit signalUnlockVault(flg);
+            fmInfo() << "Vault: unlock vault success!";
+        }
     }
     d->activeState.clear();
     d->mutex->unlock();
