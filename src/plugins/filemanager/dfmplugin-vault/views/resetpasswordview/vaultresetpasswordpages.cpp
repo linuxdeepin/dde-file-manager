@@ -17,7 +17,7 @@ VaultResetPasswordPages::VaultResetPasswordPages(QWidget *parent)
     setWindowFlags(windowFlags() & ~Qt::WindowMinMaxButtonsHint);
     setIcon(QIcon::fromTheme("dfm_vault"));
     setSpacing(10);
-    setFixedWidth(396);
+    setFixedWidth(496);
     connect(this, &VaultResetPasswordPages::buttonClicked, this, &VaultResetPasswordPages::onButtonClicked);
     setOnButtonClickedClose(false);
 }
