@@ -99,6 +99,8 @@ public slots:
 
     void showRemoveVaultDialog();
 
+    void showResetPasswordDialog();
+
     void openWindow();
 
     void openWidWindow(quint64 winID, const QUrl &url);
