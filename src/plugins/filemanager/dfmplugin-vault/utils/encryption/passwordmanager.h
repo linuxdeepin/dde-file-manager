@@ -26,11 +26,25 @@ public:
                                char *masterKey,
                                size_t *masterKeySize);
 
+    // 导出主密钥（根据指定的槽号）
+    static int exportMasterKeyByKeyslot(const char *path,
+                                        const char *password,
+                                        int keyslot,
+                                        char *masterKey,
+                                        size_t *masterKeySize);
+
     // 添加新密码
     static int addNewPassword(const char *path,
                               const char *existingPassword,
                               const char *newPassword,
                               int &newKeySlotId);
+
+    // 添加新密码（根据已知的 existingPassword 槽号）
+    static int addNewPasswordByKeyslot(const char *path,
+                                       const char *existingPassword,
+                                       int existingPasswordKeyslot,
+                                       const char *newPassword,
+                                       int &newKeySlotId);
 
     // 修改密码
     static int changePassword(const char *path,
@@ -41,6 +55,11 @@ public:
     // 删除 keyslot
     static int deleteKeyslot(const char *path,
                              int keyslot);
+
+    // 查找密码对应的 keyslot ID
+    static int findKeyslotByPassword(const char *path,
+                                      const char *password,
+                                      int &keyslotId);
 
     // 验证密码是否正确
     static int verifyPassword(const char *path,

@@ -123,8 +123,8 @@ public:
     Result createKeyNew(const QString &password);
 
     /*!
-     * \brief saveKey 保存公钥
-     * \param key  公钥
+     * \brief saveKey 保存恢复密钥
+     * \param key  恢复密钥（新版本是LUKS恢复密钥，旧版本是RSA用户密钥部分）
      * \param path 保存路径
      * \return
      */
@@ -135,6 +135,24 @@ public:
      * \return 密码公钥
      */
     QString getPubKey();
+
+    /*!
+     * \brief setRecoveryKey 设置恢复密钥（用于保存到文件）
+     * \param recoveryKey 恢复密钥
+     */
+    void setRecoveryKey(const QString &recoveryKey);
+
+    /*!
+     * \brief getRecoveryKey 获得恢复密钥
+     * \return 恢复密钥
+     */
+    QString getRecoveryKey();
+
+    /*!
+     * \brief generateRecoveryKeyForNewVault 为新版本保险箱预生成恢复密钥（在创建保险箱之前）
+     * \return 生成的恢复密钥
+     */
+    QString generateRecoveryKeyForNewVault();
 
     /*!
      * \brief verificationRetrievePassword 验证用户密钥是否正确
@@ -150,11 +168,50 @@ public:
      */
     bool isNewVaultVersion() const;
 
+    /*!
+     * \brief resetPasswordByOldPassword 通过旧密码重置密码
+     * \param oldPassword 旧密码
+     * \param newPassword 新密码
+     * \return 是否成功
+     */
+    bool resetPasswordByOldPassword(const QString &oldPassword, const QString &newPassword);
+
+    /*!
+     * \brief resetPasswordByRecoveryKey 通过恢复密钥重置密码
+     * \param recoveryKey 恢复密钥（新版本是字符串，旧版本是密钥文件路径）
+     * \param newPassword 新密码
+     * \return 是否成功
+     */
+    bool resetPasswordByRecoveryKey(const QString &recoveryKey, const QString &newPassword);
+
+    /*!
+     * \brief migrateOldVaultByPassword 通过旧密码将老版本保险箱迁移到新密码管理方案
+     * \param oldPassword 旧版本保险箱的用户密码
+     * \param newPassword 迁移后用于 LUKS 的新用户密码
+     * \param outRecoveryKey 迁移后生成或复用的恢复密钥（用于界面保存到文件）
+     * \return 是否成功
+     */
+    bool migrateOldVaultByPassword(const QString &oldPassword,
+                                   const QString &newPassword,
+                                   QString &outRecoveryKey);
+
+    /*!
+     * \brief migrateOldVaultByRecoveryKey 通过恢复密钥将老版本保险箱迁移到新密码管理方案
+     * \param recoveryKey 恢复密钥（旧版本从密钥文件中解析得到的字符串）
+     * \param newPassword 迁移后用于 LUKS 的新用户密码
+     * \param outRecoveryKey 迁移后生成或复用的恢复密钥（用于界面保存到文件）
+     * \return 是否成功
+     */
+    bool migrateOldVaultByRecoveryKey(const QString &recoveryKey,
+                                      const QString &newPassword,
+                                      QString &outRecoveryKey);
+
 private:
     Dtk::Core::DSecureString strCryfsPassword;   // cryfs密码
     QString strUserKey;
     QString standOutput;
     QString strPubKey;
+    QString strRecoveryKey;   // 恢复密钥（新版本保险箱使用）
 };
 }
 #endif   // OPERATORCENTER_H

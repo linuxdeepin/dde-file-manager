@@ -9,8 +9,10 @@
 
 #include <DPasswordEdit>
 #include <DLabel>
+#include <DSpinner>
 
 #include <QFrame>
+#include <QFutureWatcher>
 
 DWIDGET_BEGIN_NAMESPACE
 class DPasswordEdit;
@@ -57,6 +59,15 @@ private:
     DTK_WIDGET_NAMESPACE::DPasswordEdit *newPasswordEdit { nullptr };
     DTK_WIDGET_NAMESPACE::DPasswordEdit *repeatPasswordEdit { nullptr };
     DTK_WIDGET_NAMESPACE::DLabel *switchMethodLabel { nullptr };
+    DTK_WIDGET_NAMESPACE::DSpinner *spinner { nullptr };
+
+    struct ResetPasswordResult {
+        bool success;
+    };
+    QFutureWatcher<ResetPasswordResult> *resetPasswordWatcher { nullptr };
+
+private slots:
+    void onResetPasswordFinished();
 };
 }
 #endif   // RESETPASSWORDBYOLDPASSWORDVIEW_H

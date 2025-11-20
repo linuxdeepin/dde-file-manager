@@ -18,11 +18,16 @@
 
 #include <DFontSizeManager>
 #include <DDialog>
+#include <DSpinner>
 
 #include <QMouseEvent>
 #include <QProcess>
 #include <QDateTime>
 #include <QStandardPaths>
+#include <QApplication>
+#include <QEventLoop>
+#include <QtConcurrent>
+#include <QFutureWatcher>
 
 constexpr int kToolTipShowDuration = 3000;
 
@@ -89,6 +94,13 @@ void UnlockView::initUI()
 
     this->setLayout(mainLayout);
 
+    // 加载动画（放在窗口中间，覆盖在内容上方）
+    spinner = new DSpinner(this);
+    spinner->setFixedSize(48, 48);
+    spinner->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    spinner->setFocusPolicy(Qt::NoFocus);
+    spinner->hide();
+
     connect(passwordEdit, &DPasswordEdit::textChanged, this, &UnlockView::onPasswordChanged);
     connect(VaultHelper::instance(), &VaultHelper::sigUnlocked, this, &UnlockView::onVaultUlocked);
     connect(tipsButton, &QPushButton::clicked, this, [this] {
@@ -101,6 +113,10 @@ void UnlockView::initUI()
 
     tooltipTimer = new QTimer(this);
     connect(tooltipTimer, &QTimer::timeout, this, &UnlockView::slotTooltipTimerTimeout);
+
+    // 初始化密码验证异步操作
+    passwordCheckWatcher = new QFutureWatcher<PasswordCheckResult>(this);
+    connect(passwordCheckWatcher, &QFutureWatcher<PasswordCheckResult>::finished, this, &UnlockView::onPasswordCheckFinished);
 
 #ifdef ENABLE_TESTING
     AddATTag(qobject_cast<QWidget *>(forgetPassword), AcName::kAcLabelVaultUnlockForget);
@@ -132,48 +148,79 @@ void UnlockView::buttonClicked(int index, const QString &text)
         }
 
         QString strPwd = passwordEdit->text();
+        pendingPassword = strPwd;
 
-        QString strCipher("");
-        if (InterfaceActiveVault::checkPassword(strPwd, strCipher)) {
-            fmInfo() << "Vault: Password validation successful, unlocking vault";
-            unlockByPwd = true;
-            VaultHelper::instance()->unlockVault(strCipher);
-            // 密码输入正确后，剩余输入次数还原,需要等待的分钟数还原
-            VaultDBusUtils::restoreLeftoverErrorInputTimes();
-            VaultDBusUtils::restoreNeedWaitMinutes();
-        } else {
-            fmWarning() << "Vault: Password validation failed";
-            //! 设置密码输入框颜色
-            //! 修复bug-51508 激活密码框警告状态
-            passwordEdit->setAlert(true);
+        // 显示加载动画
+        spinner->move((width() - spinner->width()) / 2, (height() - spinner->height()) / 2);
+        spinner->show();
+        spinner->raise();
+        spinner->start();
+        passwordEdit->setEnabled(false);
 
-            // 保险箱剩余错误密码输入次数减1
-            VaultDBusUtils::leftoverErrorInputTimesMinusOne();
-
-            // 显示错误输入提示
-            nLeftoverErrorTimes = VaultDBusUtils::getLeftoverErrorInputTimes();
-            fmDebug() << "Vault: Remaining error attempts after failure:" << nLeftoverErrorTimes;
-
-            if (nLeftoverErrorTimes < 1) {
-                fmWarning() << "Vault: Maximum error attempts reached, starting wait timer";
-                // 计时10分钟后，恢复密码编辑框
-                VaultDBusUtils::startTimerOfRestorePasswordInput();
-                // 错误输入次数超过了限制
-                int nNeedWaitMinutes = VaultDBusUtils::getNeedWaitMinutes();
-                passwordEdit->showAlertMessage(tr("Wrong password, please try again %1 minutes later").arg(nNeedWaitMinutes));
-            } else {
-                if (nLeftoverErrorTimes == 1) {
-                    fmWarning() << "Vault: Wrong password, one chance left";
-                    passwordEdit->showAlertMessage(tr("Wrong password, one chance left"));
-                } else {
-                    fmWarning() << "Vault: Wrong password," << nLeftoverErrorTimes << "chances left";
-                    passwordEdit->showAlertMessage(tr("Wrong password, %1 chances left").arg(nLeftoverErrorTimes));
-                }
-            }
-        }
+        // 在子线程中执行密码验证并获取主密钥
+        QFuture<PasswordCheckResult> future = QtConcurrent::run([strPwd]() -> PasswordCheckResult {
+            PasswordCheckResult result;
+            QString strCipher("");
+            result.isValid = InterfaceActiveVault::checkPassword(strPwd, strCipher);
+            result.masterKey = strCipher;   // checkPassword返回的是Base64编码的主密钥
+            return result;
+        });
+        passwordCheckWatcher->setFuture(future);
         return;
     } else {
         emit sigCloseDialog();
+    }
+}
+
+void UnlockView::onPasswordCheckFinished()
+{
+    PasswordCheckResult result = passwordCheckWatcher->result();
+    QString strPwd = pendingPassword;
+    pendingPassword.clear();
+
+    // 隐藏加载动画
+    spinner->stop();
+    spinner->hide();
+    passwordEdit->setEnabled(true);
+
+    if (result.isValid) {
+        // 直接使用已获取的主密钥（Base64编码），避免再次调用checkPassword
+        unlockByPwd = true;
+
+        // 保持 spinner 显示，等待解锁完成
+        spinner->show();
+        spinner->start();
+        passwordEdit->setEnabled(false);
+        // 在子线程中执行解锁操作（unlockVault内部会调用runVaultProcess，会阻塞）
+        QtConcurrent::run([masterKey = result.masterKey]() {
+            VaultHelper::instance()->unlockVault(masterKey);
+        });
+        // 密码输入正确后，剩余输入次数还原,需要等待的分钟数还原
+        VaultDBusUtils::restoreLeftoverErrorInputTimes();
+        VaultDBusUtils::restoreNeedWaitMinutes();
+    } else {
+        //! 设置密码输入框颜色
+        //! 修复bug-51508 激活密码框警告状态
+        passwordEdit->setAlert(true);
+
+        // 保险箱剩余错误密码输入次数减1
+        VaultDBusUtils::leftoverErrorInputTimesMinusOne();
+
+        // 显示错误输入提示
+        int nLeftoverErrorTimes = VaultDBusUtils::getLeftoverErrorInputTimes();
+
+        if (nLeftoverErrorTimes < 1) {
+            // 计时10分钟后，恢复密码编辑框
+            VaultDBusUtils::startTimerOfRestorePasswordInput();
+            // 错误输入次数超过了限制
+            int nNeedWaitMinutes = VaultDBusUtils::getNeedWaitMinutes();
+            passwordEdit->showAlertMessage(tr("Wrong password, please try again %1 minutes later").arg(nNeedWaitMinutes));
+        } else {
+            if (nLeftoverErrorTimes == 1)
+                passwordEdit->showAlertMessage(tr("Wrong password, one chance left"));
+            else
+                passwordEdit->showAlertMessage(tr("Wrong password, %1 chances left").arg(nLeftoverErrorTimes));
+        }
     }
 }
 
@@ -191,6 +238,11 @@ void UnlockView::onPasswordChanged(const QString &pwd)
 void UnlockView::onVaultUlocked(int state)
 {
     if (unlockByPwd) {
+        // 隐藏加载动画
+        spinner->stop();
+        spinner->hide();
+        passwordEdit->setEnabled(true);
+
         if (state == static_cast<int>(ErrorCode::kSuccess)) {
             fmInfo() << "Vault: Vault unlocked successfully";
             VaultHelper::instance()->defaultCdAction(VaultHelper::instance()->currentWindowId(),
@@ -261,6 +313,13 @@ void UnlockView::showEvent(QShowEvent *event)
     QPalette palette = edit.palette();
     passwordEdit->lineEdit()->setPalette(palette);
     passwordEdit->setEchoMode(QLineEdit::Password);
+    passwordEdit->setEnabled(true);
+    spinner->stop();
+    spinner->hide();
+    pendingPassword.clear();
+    if (passwordCheckWatcher && passwordCheckWatcher->isRunning()) {
+        passwordCheckWatcher->cancel();
+    }
     unlockByPwd = false;
 
     //! 如果密码提示信息为空，则隐藏提示按钮
