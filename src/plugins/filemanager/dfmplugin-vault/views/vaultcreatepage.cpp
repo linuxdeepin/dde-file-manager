@@ -219,22 +219,15 @@ bool VaultActiveView::handleKeyModeEncryption()
         return false;
     }
 
-    ret = OperatorCenter::getInstance()->createKeyNew(encryptInfo.password);
-    if (!ret.result) {
-        fmWarning() << "Vault: Failed to create new key:" << ret.message;
-        activeVaultFinishedWidget->encryptFinished(false, ret.message);
+    // 预生成恢复密钥，供保存密钥文件页面使用
+    QString recoveryKey = OperatorCenter::getInstance()->generateRecoveryKeyForNewVault();
+    if (recoveryKey.isEmpty()) {
+        fmWarning() << "Vault: Failed to generate recovery key for new vault";
+        activeVaultFinishedWidget->encryptFinished(false, tr("Failed to generate recovery key"));
         return false;
     }
+    fmDebug() << "Vault: Recovery key generated successfully for new vault";
     activeVaultFinishedWidget->setProgressValue(20);
-
-    //! 获取密钥字符串
-    QString pubKey = OperatorCenter::getInstance()->getPubKey();
-    ret = OperatorCenter::getInstance()->saveKey(pubKey, encryptInfo.keyPath);
-    if (!ret.result) {
-        fmWarning() << "Vault: Failed to save key to path" << encryptInfo.keyPath << ":" << ret.message;
-        activeVaultFinishedWidget->encryptFinished(false, ret.message);
-        return false;
-    }
 
     return true;
 }

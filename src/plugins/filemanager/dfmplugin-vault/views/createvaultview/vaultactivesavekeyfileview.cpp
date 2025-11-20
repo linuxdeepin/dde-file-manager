@@ -6,6 +6,9 @@
 #include "vaultactivesavekeyfileview.h"
 #include "utils/vaultdefine.h"
 #include "utils/encryption/operatorcenter.h"
+#include "dfmplugin_vault_global.h"
+
+#include <dfm-base/utils/dialogmanager.h>
 
 #include <dfm-framework/event/event.h>
 
@@ -28,6 +31,7 @@
 
 DGUI_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_vault;
 
 VaultActiveSaveKeyFileView::VaultActiveSaveKeyFileView(QWidget *parent)
@@ -69,16 +73,15 @@ void VaultActiveSaveKeyFileView::initUI()
     selectfileSavePathEdit->lineEdit()->setPlaceholderText(tr("Select a path"));
     selectfileSavePathEdit->lineEdit()->setReadOnly(true);
     selectfileSavePathEdit->lineEdit()->setClearButtonEnabled(false);
-    filedialog = new DFileDialog(this, QDir::homePath(), QString("pubKey.key"));
+    filedialog = new DFileDialog(this, QDir::homePath(), QString("recoveryKey.key"));
     filedialog->setAcceptMode(QFileDialog::AcceptMode::AcceptSave);
     filedialog->setDefaultSuffix(QString("key"));
     selectfileSavePathEdit->setDirectoryUrl(QDir::homePath());
-    selectfileSavePathEdit->setFileMode(QFileDialog::Directory);
+    selectfileSavePathEdit->setFileMode(QFileDialog::AnyFile);
     selectfileSavePathEdit->setNameFilters({ "KEY file(*.key)" });
     selectfileSavePathEdit->setFileDialog(filedialog);
     selectfileSavePathEdit->setEnabled(true);
 
-    // 下一步按钮
     nextBtn = new DSuggestButton(tr("Next"), this);
     nextBtn->setFixedWidth(200);
     nextBtn->setEnabled(false);
@@ -160,12 +163,57 @@ void VaultActiveSaveKeyFileView::initConnect()
 #endif
 }
 
+void VaultActiveSaveKeyFileView::slotNextBtnClicked()
+{
+    QString recoveryKey = OperatorCenter::getInstance()->getRecoveryKey();
+    if (recoveryKey.isEmpty()) {
+        recoveryKey = OperatorCenter::getInstance()->getUserKey();
+    }
+
+    if (recoveryKey.isEmpty()) {
+        fmWarning() << "Vault: Recovery key is empty, cannot save key file";
+        DialogManager::instance()->showMessageDialog(DialogManager::kMsgWarn, "", tr("Recovery key is not available. Please try again."));
+        return;
+    }
+
+    QString path = selectfileSavePathEdit->text();
+    if (path.isEmpty()) {
+        fmWarning() << "Vault: Save path is empty";
+        DialogManager::instance()->showMessageDialog(DialogManager::kMsgWarn, "", tr("Please select a path to save the recovery key."));
+        return;
+    }
+
+    // 确保路径是文件路径，如果是目录则添加默认文件名
+    QFileInfo fileInfo(path);
+    if (fileInfo.isDir() || fileInfo.isRelative()) {
+        if (!path.endsWith(".key")) {
+            if (!path.endsWith("/")) {
+                path += "/";
+            }
+            path += "recoveryKey.key";
+        }
+    }
+
+    if (OperatorCenter::getInstance()->saveKey(recoveryKey, path)) {
+        fmInfo() << "Vault: Recovery key saved successfully to:" << path;
+        emit sigAccepted();
+    } else {
+        fmWarning() << "Vault: Failed to save recovery key to file:" << path;
+        DialogManager::instance()->showMessageDialog(DialogManager::kMsgErr, "", tr("Failed to save recovery key. Please check the path and try again."));
+    }
+}
+
 void VaultActiveSaveKeyFileView::slotChangeEdit(const QString &fileName)
 {
     fmDebug() << "Vault: File chooser edit changed, fileName:" << fileName;
-    QDir dir(fileName);
-    dir.cdUp();
-    QString path = dir.absolutePath();
+
+    if (fileName.isEmpty()) {
+        nextBtn->setEnabled(false);
+        return;
+    }
+
+    QFileInfo fileInfo(fileName);
+    QString path = fileInfo.isDir() ? fileName : fileInfo.absolutePath();
     QFile file(path);
     QFileDevice::Permissions ps = file.permissions();
     auto temp = ps & QFileDevice::WriteUser;
@@ -183,7 +231,7 @@ void VaultActiveSaveKeyFileView::slotSelectCurrentFile(const QString &file)
 {
     QFileInfo fileInfo(file);
     if (fileInfo.isDir()) {
-        selectfileSavePathEdit->fileDialog()->selectFile(QString("pubKey.key"));
+        selectfileSavePathEdit->fileDialog()->selectFile(QString("recoveryKey.key"));
     } else if (!file.endsWith(QString(".key"))) {
         selectfileSavePathEdit->fileDialog()->selectFile(file + QString(".key"));
     }

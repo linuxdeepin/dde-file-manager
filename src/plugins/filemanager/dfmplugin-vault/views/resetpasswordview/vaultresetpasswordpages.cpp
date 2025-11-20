@@ -87,7 +87,7 @@ void VaultResetPasswordPages::switchToKeyFileView()
         clearContents(false);
     }
     clearButtons();
-
+ 
     if (oldPasswordView) {
         disconnect(oldPasswordView, &ResetPasswordByOldPasswordView::sigBtnEnabled, this, nullptr);
     }

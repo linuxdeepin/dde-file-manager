@@ -447,6 +447,29 @@ void VaultHelper::unlockVaultDialog()
         }
     } else {
         fmDebug() << "Vault: Using key-based encryption method, showing unlock pages";
+        // 非透明加密方式下，如果当前是老版本保险箱，优先引导用户执行升级/迁移
+        bool isNewVersion = OperatorCenter::getInstance()->isNewVaultVersion();
+        if (!isNewVersion) {
+            DDialog upgradeDialog;
+            upgradeDialog.setTitle(QObject::tr("Upgrade File Vault"));
+            upgradeDialog.setMessage(QObject::tr("The file vault encryption scheme has been upgraded.\n"
+                                              "You need to upgrade this vault to continue using it."));
+            upgradeDialog.addButton(QObject::tr("Later"), true, DDialog::ButtonNormal);
+            upgradeDialog.addButton(QObject::tr("Upgrade now"), true, DDialog::ButtonRecommend);
+
+            int ret = upgradeDialog.exec();
+            // 用户选择“稍后处理”或关闭对话框，直接返回，不解锁保险箱
+            if (ret != 1) {
+                return;
+            }
+
+            // 用户选择“立即升级”，复用重置密码页面，引导用户通过旧密码或密钥文件完成迁移
+            VaultResetPasswordPages *page = new VaultResetPasswordPages();
+            page->switchToOldPasswordView();
+            page->exec();
+            page->deleteLater();
+            return;
+        }
 
         VaultUnlockPages *page = new VaultUnlockPages();
         page->pageSelect(PageType::kUnlockPage);

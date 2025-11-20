@@ -72,9 +72,41 @@ int PasswordManager::exportMasterKey(const char *path,
     ret = crypt_load(cd, CRYPT_LUKS2, Q_NULLPTR);
     CHECK_ERROR(ret < 0, "Failed to load LUKS container");
 
-    // 通过密码获取主密钥
-    ret = crypt_volume_key_get(cd, CRYPT_ANY_SLOT, masterKey, masterKeySize, password, strlen(password));
+    int possibleSlots[] = { 0, 1, 2 };
+    ret = -1;
+    for (int i = 0; i < 3; i++) {
+        ret = crypt_volume_key_get(cd, possibleSlots[i], masterKey, masterKeySize, password, strlen(password));
+        if (ret >= 0) {
+            break;  // 找到正确的槽，退出循环
+        }
+    }
     CHECK_ERROR(ret < 0, QString("Failed to export master key, error code: %1").arg(ret));
+
+    if (cd) {
+        crypt_free(cd);
+        cd = Q_NULLPTR;
+    }
+
+    return 0;
+}
+
+int PasswordManager::exportMasterKeyByKeyslot(const char *path,
+                                              const char *password,
+                                              int keyslot,
+                                              char *masterKey,
+                                              size_t *masterKeySize)
+{
+    int ret = -1;
+    crypt_device *cd = Q_NULLPTR;
+
+    ret = crypt_init(&cd, path);
+    CHECK_ERROR(ret < 0, "Failed to initialize crypt_device");
+
+    ret = crypt_load(cd, CRYPT_LUKS2, Q_NULLPTR);
+    CHECK_ERROR(ret < 0, "Failed to load LUKS container");
+
+    ret = crypt_volume_key_get(cd, keyslot, masterKey, masterKeySize, password, strlen(password));
+    CHECK_ERROR(ret < 0, QString("Failed to export master key from keyslot %1, error code: %2").arg(keyslot).arg(ret));
 
     if (cd) {
         crypt_free(cd);
@@ -98,13 +130,48 @@ int PasswordManager::addNewPassword(const char *path,
     ret = crypt_load(cd, CRYPT_LUKS2, Q_NULLPTR);
     CHECK_ERROR(ret < 0, "Failed to load LUKS container");
 
-    // 添加新密码
+    // crypt_keyslot_add_by_passphrase 的 keyslot 参数是指新密码添加到哪个槽（可以指定具体槽或 CRYPT_ANY_SLOT）
     ret = crypt_keyslot_add_by_passphrase(cd,
                                           CRYPT_ANY_SLOT,
                                           existingPassword,
                                           strlen(existingPassword),
                                           newPassword,
                                           strlen(newPassword));
+    CHECK_ERROR(ret < 0, "Failed to add new password");
+    newKeySlotId = ret;
+
+    if (cd) {
+        crypt_free(cd);
+        cd = Q_NULLPTR;
+    }
+
+    return 0;
+}
+
+int PasswordManager::addNewPasswordByKeyslot(const char *path,
+                                              const char *existingPassword,
+                                              int existingPasswordKeyslot,
+                                              const char *newPassword,
+                                              int &newKeySlotId)
+{
+    int ret = -1;
+    crypt_device *cd = Q_NULLPTR;
+
+    ret = crypt_init(&cd, path);
+    CHECK_ERROR(ret < 0, "Failed to initialize crypt_device");
+
+    ret = crypt_load(cd, CRYPT_LUKS2, Q_NULLPTR);
+    CHECK_ERROR(ret < 0, "Failed to load LUKS container");
+
+    char masterKey[64];
+    size_t masterKeySize = 64;
+    ret = crypt_volume_key_get(cd, existingPasswordKeyslot, masterKey, &masterKeySize,
+                               existingPassword, strlen(existingPassword));
+    CHECK_ERROR(ret < 0, "Failed to get master key from existing password keyslot");
+
+    // 使用主密钥添加新密码
+    ret = crypt_keyslot_add_by_volume_key(cd, CRYPT_ANY_SLOT, masterKey, masterKeySize,
+                                          newPassword, strlen(newPassword));
     CHECK_ERROR(ret < 0, "Failed to add new password");
     newKeySlotId = ret;
 
@@ -130,12 +197,24 @@ int PasswordManager::changePassword(const char *path,
     ret = crypt_load(cd, CRYPT_LUKS2, Q_NULLPTR);
     CHECK_ERROR(ret < 0, "Failed to load LUKS container");
 
-    // 修改密码
-    ret = crypt_keyslot_change_by_passphrase(cd, CRYPT_ANY_SLOT, CRYPT_ANY_SLOT,
-                                             oldPassword, strlen(oldPassword),
-                                             newPassword, strlen(newPassword));
+    // 用户密码可能在槽0或槽2，先尝试槽0，如果失败再尝试槽2（槽1是恢复密钥，不修改）
+    int possibleSlots[] = { 0, 2 };
+    ret = -1;
+    for (int i = 0; i < 2; i++) {
+        // 先检查槽是否存在且激活
+        crypt_keyslot_info keyslotStatus = crypt_keyslot_status(cd, possibleSlots[i]);
+        if (keyslotStatus != CRYPT_SLOT_ACTIVE) {
+            continue;  // 槽不存在，跳过，不产生错误日志
+        }
+        ret = crypt_keyslot_change_by_passphrase(cd, possibleSlots[i], possibleSlots[i],
+                                                 oldPassword, strlen(oldPassword),
+                                                 newPassword, strlen(newPassword));
+        if (ret >= 0) {
+            newKeySlotId = ret;
+            break;  // 找到正确的槽并成功修改，退出循环
+        }
+    }
     CHECK_ERROR(ret < 0, "Failed to change password");
-    newKeySlotId = ret;
 
     if (cd) {
         crypt_free(cd);
@@ -159,7 +238,14 @@ int PasswordManager::deleteKeyslot(const char *path,
 
     // 检查 keyslot 是否存在且激活
     crypt_keyslot_info keyslotStatus = crypt_keyslot_status(cd, keyslot);
-    CHECK_ERROR(keyslotStatus != CRYPT_SLOT_ACTIVE, QString("Keyslot status is invalid, status: %1, cannot delete").arg(keyslotStatus));
+    if (keyslotStatus != CRYPT_SLOT_ACTIVE) {
+        // KeySlot 未激活（不存在），视为已删除，直接返回成功
+        if (cd) {
+            crypt_free(cd);
+            cd = Q_NULLPTR;
+        }
+        return 0;
+    }
 
     // 删除 keyslot
     ret = crypt_keyslot_destroy(cd, keyslot);
@@ -171,6 +257,45 @@ int PasswordManager::deleteKeyslot(const char *path,
     }
 
     return 0;
+}
+
+int PasswordManager::findKeyslotByPassword(const char *path,
+                                            const char *password,
+                                            int &keyslotId)
+{
+    int ret = -1;
+    crypt_device *cd = Q_NULLPTR;
+    keyslotId = -1;
+
+    ret = crypt_init(&cd, path);
+    CHECK_ERROR(ret < 0, "Failed to initialize crypt_device");
+
+    ret = crypt_load(cd, CRYPT_LUKS2, Q_NULLPTR);
+    CHECK_ERROR(ret < 0, "Failed to load LUKS container");
+
+    int possibleSlots[] = { 0, 1, 2 };
+    ret = -1;
+    for (int i = 0; i < 3; i++) {
+        ret = crypt_activate_by_passphrase(cd, Q_NULLPTR, possibleSlots[i],
+                                           password, strlen(password),
+                                           0);
+        if (ret >= 0) {
+            keyslotId = possibleSlots[i];
+            ret = 0;
+            break;  // 找到正确的槽，退出循环
+        }
+    }
+    if (ret < 0) {
+        keyslotId = -1;
+        ret = -1;
+    }
+
+    if (cd) {
+        crypt_free(cd);
+        cd = Q_NULLPTR;
+    }
+
+    return ret;
 }
 
 int PasswordManager::verifyPassword(const char *path,
@@ -187,17 +312,22 @@ int PasswordManager::verifyPassword(const char *path,
     ret = crypt_load(cd, CRYPT_LUKS2, Q_NULLPTR);
     CHECK_ERROR(ret < 0, "Failed to load LUKS container");
 
-    // 仅验证密码，不创建设备映射（更简洁的方式）
-    ret = crypt_activate_by_passphrase(cd, Q_NULLPTR, CRYPT_ANY_SLOT,
-                                       password, strlen(password),
-                                       0);
-
-    if (ret >= 0) {
-        isRight = true;
-    } else {
-        isRight = false;
+    int possibleSlots[] = { 0, 1, 2 };
+    ret = -1;
+    for (int i = 0; i < 3; i++) {
+        ret = crypt_activate_by_passphrase(cd, Q_NULLPTR, possibleSlots[i],
+                                           password, strlen(password),
+                                           0);
+        if (ret >= 0) {
+            isRight = true;
+            ret = 0;
+            break;  // 找到正确的槽，退出循环
+        }
     }
-    ret = 0;
+    if (ret < 0) {
+        isRight = false;
+        ret = 0;  // 验证失败但不返回错误，只设置 isRight = false
+    }
 
     if (cd) {
         crypt_free(cd);

@@ -4,6 +4,8 @@
 
 #include "operatorcenter.h"
 #include "vaultconfig.h"
+#include "passwordmanager.h"
+#include "masterkeymanager.h"
 #include "utils/operator/pbkdf2.h"
 #include "utils/operator/rsam.h"
 
@@ -12,6 +14,7 @@
 #include <dfm-framework/dpf.h>
 
 #include <QDir>
+#include <QFile>
 #include <QDebug>
 #include <QPixmap>
 #include <QPainter>
@@ -21,6 +24,7 @@
 #include <QtGlobal>
 #include <QProcess>
 #include <QtConcurrent>
+#include <QRegExp>
 
 #undef signals
 extern "C" {
@@ -31,7 +35,7 @@ extern "C" {
 using namespace dfmplugin_vault;
 
 OperatorCenter::OperatorCenter(QObject *parent)
-    : QObject(parent), strCryfsPassword(""), strUserKey(""), standOutput("")
+    : QObject(parent), strCryfsPassword(""), strUserKey(""), standOutput(""), strRecoveryKey("")
 {
     fmDebug() << "Vault: OperatorCenter initialized";
 }
@@ -219,8 +223,8 @@ Result OperatorCenter::saveKey(QString key, QString path)
         fmCritical() << "Vault: open public key file failure!";
         return { false, tr("Failed to save public key file: %1").arg(strerror(errno)) };
     }
-    publicFile.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ReadGroup);
-    QTextStream out(&publicFile);
+    keyFile.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ReadGroup);
+    QTextStream out(&keyFile);
     out << key;
     publicFile.close();
     fmDebug() << "Vault: Public key saved successfully";
@@ -232,44 +236,96 @@ QString OperatorCenter::getPubKey()
     return strPubKey;
 }
 
+void OperatorCenter::setRecoveryKey(const QString &recoveryKey)
+{
+    strRecoveryKey = recoveryKey;
+}
+
+QString OperatorCenter::getRecoveryKey()
+{
+    return strRecoveryKey;
+}
+
+QString OperatorCenter::generateRecoveryKeyForNewVault()
+{
+    char recoveryKeyBuf[33];
+    int ret = PasswordManager::generateSecureRecoveryKey(recoveryKeyBuf, sizeof(recoveryKeyBuf));
+    if (ret != 0) {
+        fmWarning() << "Vault: Failed to generate recovery key for new vault";
+        return QString();
+    }
+
+    QString recoveryKey = QString::fromUtf8(recoveryKeyBuf, 32);
+    setRecoveryKey(recoveryKey);
+    return recoveryKey;
+}
+
 bool OperatorCenter::verificationRetrievePassword(const QString keypath, QString &password)
 {
-    fmDebug() << "Vault: Verifying and retrieving password from keypath:" << keypath;
+    bool isNewVersion = isNewVaultVersion();
 
-    QFile localPubKeyfile(keypath);
-    if (!localPubKeyfile.open(QIODevice::Text | QIODevice::ReadOnly)) {
-        fmCritical() << "Vault: cant't open local public key file!";
-        return false;
+    if (isNewVersion) {
+        QFile keyFile(keypath);
+        if (!keyFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            fmCritical() << "Vault: Cannot open recovery key file!";
+            return false;
+        }
+
+        QByteArray keyData = keyFile.readAll();
+        keyFile.close();
+        keyData = keyData.trimmed();
+        QString recoveryKey = QString::fromUtf8(keyData).trimmed();
+
+        if (recoveryKey.length() != 32) {
+            fmWarning() << "Vault: Invalid recovery key format, expected 32 characters, got" << recoveryKey.length();
+            return false;
+        }
+
+        QRegExp keyFormat("^[A-Za-z0-9]{32}$");
+        if (!keyFormat.exactMatch(recoveryKey)) {
+            fmWarning() << "Vault: Invalid recovery key format, must contain only letters and numbers";
+            return false;
+        }
+
+        QString cipher;
+        if (!checkPassword(recoveryKey, cipher)) {
+            fmWarning() << "Vault: Recovery key verification failed";
+            return false;
+        }
+
+        password = cipher;
+        return true;
+    } else {
+        QFile localPubKeyfile(keypath);
+        if (!localPubKeyfile.open(QIODevice::Text | QIODevice::ReadOnly)) {
+            fmCritical() << "Vault: Cannot open local public key file!";
+            return false;
+        }
+
+        QString strLocalPubKey(localPubKeyfile.readAll());
+        localPubKeyfile.close();
+
+        QString strRSACipherFilePath = makeVaultLocalPath(kRSACiphertextFileName);
+        QFile rsaCipherfile(strRSACipherFilePath);
+        if (!rsaCipherfile.open(QIODevice::Text | QIODevice::ReadOnly)) {
+            fmCritical() << "Vault: Cannot open rsa cipher file!";
+            return false;
+        }
+
+        QString strRsaCipher(rsaCipherfile.readAll());
+        rsaCipherfile.close();
+
+        password = rsam::publicKeyDecrypt(strRsaCipher, strLocalPubKey);
+
+        QString temp = "";
+        if (!checkPassword(password, temp)) {
+            fmCritical() << "Vault: User key error!";
+            return false;
+        }
+
+        password = temp;
+        return true;
     }
-
-    QString strLocalPubKey(localPubKeyfile.readAll());
-    localPubKeyfile.close();
-    fmDebug() << "Vault: Local public key loaded, length:" << strLocalPubKey.length();
-
-    // 利用完整公钥解密密文，得到密码
-    QString strRSACipherFilePath = makeVaultLocalPath(kRSACiphertextFileName);
-    QFile rsaCipherfile(strRSACipherFilePath);
-    if (!rsaCipherfile.open(QIODevice::Text | QIODevice::ReadOnly)) {
-        fmCritical() << "Vault: cant't open rsa cipher file!";
-        return false;
-    }
-
-    QString strRsaCipher(rsaCipherfile.readAll());
-    rsaCipherfile.close();
-    fmDebug() << "Vault: RSA cipher loaded, length:" << strRsaCipher.length();
-
-    password = rsam::publicKeyDecrypt(strRsaCipher, strLocalPubKey);
-    fmDebug() << "Vault: Password decrypted from RSA cipher";
-
-    // 判断密码的正确性，如果密码正确，则用户密钥正确，否则用户密钥错误
-    QString temp = "";
-    if (!checkPassword(password, temp)) {
-        fmCritical() << "Vault: user key error!";
-        return false;
-    }
-
-    password = temp;
-    return true;
 }
 
 OperatorCenter *OperatorCenter::getInstance()
@@ -456,6 +512,40 @@ bool OperatorCenter::checkPassword(const QString &password, QString &cipher)
     fmDebug() << "Vault: Checking password";
 
     // 获得版本信息
+    bool isNewVersion = isNewVaultVersion();
+
+    if (isNewVersion) {
+        QString containerPath = MasterKeyManager::getContainerPath();
+
+        char masterKeyBuf[64];
+        size_t masterKeySize = 64;
+        int ret = PasswordManager::exportMasterKey(containerPath.toUtf8().constData(),
+                                                   password.toUtf8().constData(),
+                                                   masterKeyBuf, &masterKeySize);
+        if (ret != 0) {
+            return false;
+        }
+
+        QByteArray masterKey = QByteArray(masterKeyBuf, 64);
+        VaultConfig config;
+        QString creationType = config.getVaultCreationType();
+
+        QByteArray cryfsPassword;
+        if (creationType == kConfigValueVaultCreationTypeNew) {
+            cryfsPassword = masterKey;
+        } else if (creationType == kConfigValueVaultCreationTypeMigrated) {
+            cryfsPassword = masterKey;
+            while (cryfsPassword.endsWith('\0')) {
+                cryfsPassword.chop(1);
+            }
+        } else {
+            cryfsPassword = masterKey;
+        }
+
+        cipher = QString::fromLatin1(cryfsPassword.toBase64());
+        return true;
+    }
+
     VaultConfig config;
     const QString &strVersion = config.get(kConfigNodeName, kConfigKeyVersion).toString();
 
@@ -798,4 +888,253 @@ bool OperatorCenter::isNewVaultVersion() const
 
     // 检查文件是否存在
     return QFile::exists(containerPath);
+}
+
+/*!
+ * \brief 通过旧密码将老版本保险箱迁移到新密码管理方案
+ *
+ * 流程：
+ * 1. 使用老版本 pbkdf2 流程验证旧密码；
+ * 2. 使用旧密码通过 MasterKeyManager 生成主密钥（补零方案）；
+ * 3. 创建 LUKS 容器并使用新密码添加用户密码 KeySlot；
+ * 4. 为新方案准备恢复密钥（复用现有逻辑：保持恢复密钥不变或生成新的恢复密钥）；
+ * 5. 在配置中标记为 \"migrated\"，后续解锁走新方案。
+ */
+bool OperatorCenter::migrateOldVaultByPassword(const QString &oldPassword,
+                                               const QString &newPassword,
+                                               QString &outRecoveryKey)
+{
+    if (isNewVaultVersion()) {
+        fmWarning() << "Vault: migrateOldVaultByPassword called on new version vault, skip";
+        return false;
+    }
+
+    QString cipher;
+    if (!checkPassword(oldPassword, cipher)) {
+        fmWarning() << "Vault: migrateOldVaultByPassword old password verification failed";
+        return false;
+    }
+
+    QByteArray oldPasswordBytes = oldPassword.toUtf8();
+    QByteArray masterKey = MasterKeyManager::generateMasterKeyFromPassword(oldPasswordBytes);
+    if (masterKey.isEmpty()) {
+        fmWarning() << "Vault: migrateOldVaultByPassword failed to generate master key from old password";
+        return false;
+    }
+
+    QString containerPath = MasterKeyManager::getContainerPath();
+    int slotID = 0;
+    int ret = PasswordManager::createLuksContainer(containerPath.toUtf8().constData(),
+                                                   masterKey.constData(),
+                                                   static_cast<size_t>(masterKey.size()),
+                                                   newPassword.toUtf8().constData(),
+                                                   slotID);
+    if (ret != 0) {
+        fmWarning() << "Vault: migrateOldVaultByPassword failed to create LUKS container, ret =" << ret;
+        return false;
+    }
+
+    QString recoveryKey = generateRecoveryKeyForNewVault();
+    if (recoveryKey.isEmpty()) {
+        fmWarning() << "Vault: migrateOldVaultByPassword failed to generate recovery key";
+        return false;
+    }
+
+    int recoveryKeySlotId = 0;
+    ret = PasswordManager::addNewPassword(containerPath.toUtf8().constData(),
+                                          newPassword.toUtf8().constData(),
+                                          recoveryKey.toUtf8().constData(),
+                                          recoveryKeySlotId);
+    if (ret != 0) {
+        fmWarning() << "Vault: migrateOldVaultByPassword failed to add recovery key to LUKS";
+        return false;
+    }
+
+    VaultConfig config;
+    config.setVaultCreationType(kConfigValueVaultCreationTypeMigrated);
+
+    outRecoveryKey = recoveryKey;
+    fmInfo() << "Vault: migrateOldVaultByPassword finished successfully";
+    return true;
+}
+
+/*!
+ * \brief 通过恢复密钥将老版本保险箱迁移到新密码管理方案
+ *
+ * 恢复密钥场景下，调用方需要先从密钥文件中解析出恢复密钥字符串。
+ * 这里直接使用恢复密钥作为“等效旧密码”，后续流程与 migrateOldVaultByPassword 类似。
+ */
+bool OperatorCenter::migrateOldVaultByRecoveryKey(const QString &recoveryKey,
+                                                  const QString &newPassword,
+                                                  QString &outRecoveryKey)
+{
+    // 仅在老版本保险箱上执行迁移
+    if (isNewVaultVersion()) {
+        fmWarning() << "Vault: migrateOldVaultByRecoveryKey called on new version vault, skip";
+        return false;
+    }
+
+    if (recoveryKey.isEmpty()) {
+        fmWarning() << "Vault: migrateOldVaultByRecoveryKey recovery key is empty";
+        return false;
+    }
+
+    QString cipher;
+    if (!checkPassword(recoveryKey, cipher)) {
+        fmWarning() << "Vault: migrateOldVaultByRecoveryKey recovery key verification failed";
+        return false;
+    }
+
+    QByteArray recoveryKeyBytes = recoveryKey.toUtf8();
+    QByteArray masterKey = MasterKeyManager::generateMasterKeyFromPassword(recoveryKeyBytes);
+    if (masterKey.isEmpty()) {
+        fmWarning() << "Vault: migrateOldVaultByRecoveryKey failed to generate master key from recovery key";
+        return false;
+    }
+
+    int slotID = 0;
+    QString containerPath = MasterKeyManager::getContainerPath();
+    int ret = PasswordManager::createLuksContainer(containerPath.toUtf8().constData(),
+                                                   masterKey.constData(),
+                                                   static_cast<size_t>(masterKey.size()),
+                                                   newPassword.toUtf8().constData(),
+                                                   slotID);
+    if (ret != 0) {
+        fmWarning() << "Vault: migrateOldVaultByRecoveryKey failed to create LUKS container, ret =" << ret;
+        return false;
+    }
+
+    QString newRecoveryKey = generateRecoveryKeyForNewVault();
+    if (newRecoveryKey.isEmpty()) {
+        fmWarning() << "Vault: migrateOldVaultByRecoveryKey failed to generate new recovery key";
+        return false;
+    }
+
+    int recoveryKeySlotId = 0;
+    ret = PasswordManager::addNewPassword(containerPath.toUtf8().constData(),
+                                          newPassword.toUtf8().constData(),
+                                          newRecoveryKey.toUtf8().constData(),
+                                          recoveryKeySlotId);
+    if (ret != 0) {
+        fmWarning() << "Vault: migrateOldVaultByRecoveryKey failed to add new recovery key to LUKS";
+        return false;
+    }
+
+    VaultConfig config;
+    config.setVaultCreationType(kConfigValueVaultCreationTypeMigrated);
+
+    outRecoveryKey = newRecoveryKey;
+    fmInfo() << "Vault: migrateOldVaultByRecoveryKey finished successfully";
+    return true;
+}
+
+
+bool OperatorCenter::resetPasswordByOldPassword(const QString &oldPassword, const QString &newPassword)
+{
+    bool isNewVersion = isNewVaultVersion();
+
+    if (isNewVersion) {
+        fmInfo() << "Vault: Resetting password for new version vault";
+
+        QString containerPath = MasterKeyManager::getContainerPath();
+
+        int newKeySlotId = 0;
+        int ret = PasswordManager::changePassword(containerPath.toUtf8().constData(),
+                                                  oldPassword.toUtf8().constData(),
+                                                  newPassword.toUtf8().constData(),
+                                                  newKeySlotId);
+
+        if (ret != 0) {
+            fmWarning() << "Vault: Old password verification failed or failed to change password";
+            return false;
+        }
+
+        // 恢复密钥保持不变，不需要修改
+        fmInfo() << "Vault: Password reset successfully";
+        return true;
+    } else {
+        // 旧版本保险箱（在老版本软件中创建的）：执行迁移到新密码管理方案
+        QString recoveryKey;
+        bool ok = migrateOldVaultByPassword(oldPassword, newPassword, recoveryKey);
+        if (!ok) {
+            fmWarning() << "Vault: Failed to migrate old version vault by old password";
+            return false;
+        }
+
+        // 迁移成功后，将恢复密钥暂存在内存，供界面保存到文件
+        if (!recoveryKey.isEmpty()) {
+            setRecoveryKey(recoveryKey);
+        }
+
+        fmInfo() << "Vault: Old version vault migrated successfully by old password";
+        return true;
+    }
+}
+
+bool OperatorCenter::resetPasswordByRecoveryKey(const QString &recoveryKey, const QString &newPassword)
+{
+    bool isNewVersion = isNewVaultVersion();
+
+    if (isNewVersion) {
+        fmInfo() << "Vault: Resetting password by recovery key for new version vault";
+
+        QString containerPath = MasterKeyManager::getContainerPath();
+
+        if (recoveryKey.length() != 32) {
+            fmWarning() << "Vault: Recovery key length is invalid, expected 32, got" << recoveryKey.length();
+            return false;
+        }
+
+        QByteArray recoveryKeyBytes = recoveryKey.toLatin1();
+        char masterKeyBuf[64];
+        size_t masterKeySize = 64;
+        int ret = PasswordManager::exportMasterKeyByKeyslot(containerPath.toUtf8().constData(),
+                                                            recoveryKeyBytes.constData(),
+                                                            1,  // 恢复密钥在槽1
+                                                            masterKeyBuf, &masterKeySize);
+        if (ret != 0) {
+            fmWarning() << "Vault: Recovery key verification failed";
+            return false;
+        }
+
+        int recoveryKeyKeyslot = 1;
+
+        int newKeySlotId = 0;
+        ret = PasswordManager::addNewPasswordByKeyslot(
+            containerPath.toUtf8().constData(),
+            recoveryKeyBytes.constData(),
+            1,  // 恢复密钥在槽1
+            newPassword.toUtf8().constData(),
+            newKeySlotId);
+
+        if (ret != 0) {
+            fmWarning() << "Vault: Failed to add new password";
+            return false;
+        }
+
+        int commonKeyslots[] = { 0, 1, 2 };
+        for (int i = 0; i < 3; i++) {
+            int keyslot = commonKeyslots[i];
+            if (keyslot != newKeySlotId && keyslot != recoveryKeyKeyslot) {
+                PasswordManager::deleteKeyslot(containerPath.toUtf8().constData(), keyslot);
+            }
+        }
+
+        fmInfo() << "Vault: Password reset successfully by recovery key";
+        return true;
+    } else {
+        QString newRecoveryKey;
+        bool ok = migrateOldVaultByRecoveryKey(recoveryKey, newPassword, newRecoveryKey);
+        if (!ok) {
+            fmWarning() << "Vault: Failed to migrate old version vault by recovery key";
+            return false;
+        }
+
+        if (!newRecoveryKey.isEmpty()) {
+            setRecoveryKey(newRecoveryKey);
+        }
+
+        fmInfo() << "Vault: Old version vault migrated successfully by recovery key";
+        return true;
+    }
 }
