@@ -658,10 +658,10 @@ void ListItemDelegate::paintFileName(QPainter *painter, const QStyleOptionViewIt
 QString ListItemDelegate::getCorrectDisplayName(QPainter *painter, const QModelIndex &index, const QStyleOptionViewItem &option,
                                                 const QUrl &url, const int &role, const int &textLineHeight, const QRectF &rect) const
 {
-    QScopedPointer<ElideTextLayout> layout(ItemDelegateHelper::createTextLayout("", QTextOption::WrapAtWordBoundaryOrAnywhere,
-                                                                                textLineHeight, index.data(Qt::TextAlignmentRole).toInt(),
-                                                                                painter));
     QString displayName { "" };
+
+    // 获取完整的显示名称，不进行省略处理
+    // 省略处理将由 ElideTextLayout::layout 统一完成，以确保高亮功能正常工作
     if (Q_LIKELY(!FileUtils::isDesktopFileSuffix(url))) {
         do {
             if (role != kItemNameRole && role != kItemFileDisplayNameRole)
@@ -679,21 +679,10 @@ QString ListItemDelegate::getCorrectDisplayName(QPainter *painter, const QModelI
             if (suffix == ".")
                 break;
 
-            QStringList textList {};
-            layout->setText(index.data(kItemFileBaseNameRole).toString().remove('\n'));
-            QRectF baseNameRect = rect;
-            baseNameRect.adjust(0, 0, -option.fontMetrics.horizontalAdvance(suffix), 0);
-            layout->layout(baseNameRect, Qt::ElideRight, nullptr, Qt::NoBrush, &textList);
+            // 获取基础名称（不含后缀）
+            displayName = index.data(kItemFileBaseNameRole).toString().remove('\n');
 
-            displayName = textList.join('\n');
-
-            auto tmpFileName = displayName;
-            // get error suffix, so show the file displayname
-            if (tmpFileName.append(suffix) != itemFileDisplayName.toString()) {
-                displayName = itemFileDisplayName.toString();
-                break;
-            }
-
+            // 根据设置决定是否显示后缀
             bool showSuffix { Application::instance()->genericAttribute(Application::kShowedFileSuffix).toBool() };
             if (showSuffix)
                 displayName.append(suffix);
@@ -701,11 +690,7 @@ QString ListItemDelegate::getCorrectDisplayName(QPainter *painter, const QModelI
     }
 
     if (displayName.isEmpty()) {
-        QStringList textList {};
-        layout->setText(index.data(role).toString().remove('\n'));
-        layout->layout(rect, Qt::ElideRight, nullptr, Qt::NoBrush, &textList);
-
-        displayName = textList.join('\n');
+        displayName = index.data(role).toString().remove('\n');
     }
 
     return displayName;
