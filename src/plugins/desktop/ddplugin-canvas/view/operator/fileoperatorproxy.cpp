@@ -13,6 +13,11 @@
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/utils/clipboard.h>
 #include <dfm-base/utils/fileutils.h>
+#include <QClipboard>
+#include <QMimeData>
+#include <QImage>
+#include <QDateTime>
+#include <QApplication>
 
 #include <dfm-framework/dpf.h>
 
@@ -261,7 +266,43 @@ void FileOperatorProxy::pasteFiles(const CanvasView *view, const QPoint pos)
     }
 
     if (urls.isEmpty()) {
-        fmDebug() << "No URLs in clipboard to paste";
+        // Check for clipboard image
+        const QMimeData *mimeData = QApplication::clipboard()->mimeData();
+        if (mimeData && mimeData->hasImage()) {
+            fmInfo() << "Detected clipboard image, creating file via kTouchFile event";
+
+            // Prepare custom data to identify this is a clipboard image
+            QVariantMap clipboardData;
+            clipboardData.insert("clipboardImage", true);
+
+            // Define callback to select newly created file
+            AbstractJobHandler::OperatorCallback callback = [this](const AbstractJobHandler::CallbackArgus args) {
+                if (args->value(AbstractJobHandler::CallbackKey::kSuccessed).toBool() != false) {
+                    auto targets = args->value(AbstractJobHandler::CallbackKey::kTargets)
+                                      .value<QList<QUrl>>();
+                    if (!targets.isEmpty()) {
+                        fmDebug() << "Canvas: Requesting selection for created image file:" << targets;
+                        // Add to pasteFileData to trigger selection via existing mechanism
+                        d->pasteFileData.insert(targets.first());
+                        emit filePastedCallback();
+                    }
+                }
+            };
+
+            // Publish kTouchFile event with png suffix
+            dpfSignalDispatcher->publish(
+                GlobalEventType::kTouchFile,
+                view->winId(),
+                view->model()->rootUrl(),
+                CreateFileType::kCreateFileTypeDefault,
+                QString("png"),  // Image suffix
+                QVariant::fromValue(clipboardData),
+                callback);
+
+            return;
+        }
+
+        fmDebug() << "No URLs or image data in clipboard to paste";
         return;
     }
 

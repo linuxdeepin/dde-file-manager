@@ -48,6 +48,8 @@ public:
 private:
     explicit FileOperatorHelper(QObject *parent = nullptr);
     void callBackFunction(const DFMBASE_NAMESPACE::AbstractJobHandler::CallbackArgus args);
+    bool pasteTraditionalFiles(const FileView *view);
+    void pasteClipboardImage(const FileView *view);
     void undoCallBackFunction(QSharedPointer<DFMBASE_NAMESPACE::AbstractJobHandler> handler);
 
     DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callBack;

@@ -19,6 +19,12 @@
 
 #include <dfm-framework/dpf.h>
 
+#include <QClipboard>
+#include <QMimeData>
+#include <QImage>
+#include <QDateTime>
+#include <QApplication>
+
 Q_DECLARE_METATYPE(QList<QUrl> *)
 
 DFMGLOBAL_USE_NAMESPACE
@@ -252,15 +258,31 @@ void FileOperatorHelper::cutFiles(const FileView *view)
 void FileOperatorHelper::pasteFiles(const FileView *view)
 {
     fmInfo() << "Paste file by clipboard and current dir: " << view->rootUrl();
-    auto action = ClipBoard::instance()->clipboardAction();
-    // trash dir can't paste files for copy
+
+    // Check if target directory is trash
     if (FileUtils::isTrashFile(view->rootUrl())) {
         fmDebug() << "Paste operation blocked - target is trash directory";
         return;
     }
 
+    // Try traditional file paste
+    if (pasteTraditionalFiles(view)) {
+        return;
+    }
+
+    // Try clipboard image paste
+    pasteClipboardImage(view);
+}
+
+bool FileOperatorHelper::pasteTraditionalFiles(const FileView *view)
+{
+    auto action = ClipBoard::instance()->clipboardAction();
     auto sourceUrls = ClipBoard::instance()->clipboardFileUrlList();
     auto windowId = WorkspaceHelper::instance()->windowId(view);
+
+    if (action == ClipBoard::kUnknownAction || sourceUrls.isEmpty()) {
+        return false;
+    }
 
     if (ClipBoard::kCopyAction == action) {
         fmDebug() << "Executing copy action";
@@ -270,7 +292,6 @@ void FileOperatorHelper::pasteFiles(const FileView *view)
                                      view->rootUrl(),
                                      AbstractJobHandler::JobFlag::kNoHint, nullptr);
     } else if (ClipBoard::kCutAction == action) {
-
         if (ClipBoard::supportCut()) {
             fmDebug() << "Executing cut action and clearing clipboard";
             dpfSignalDispatcher->publish(GlobalEventType::kCutFile,
@@ -294,8 +315,49 @@ void FileOperatorHelper::pasteFiles(const FileView *view)
                                      AbstractJobHandler::JobFlag::kCopyRemote,
                                      nullptr);
     } else {
-        fmWarning() << "Unknown clipboard past action:" << action << " urls:" << sourceUrls;
+        return false;
     }
+
+    return true;
+}
+
+void FileOperatorHelper::pasteClipboardImage(const FileView *view)
+{
+    const QMimeData *mimeData = QApplication::clipboard()->mimeData();
+    if (!mimeData || !mimeData->hasImage()) {
+        fmDebug() << "No image data in clipboard to paste";
+        return;
+    }
+
+    fmInfo() << "Detected clipboard image, creating file via kTouchFile event";
+
+    // Prepare custom data
+    QVariantMap clipboardData;
+    clipboardData.insert("clipboardImage", true);
+
+    // Define callback to select newly created file
+    AbstractJobHandler::OperatorCallback callback = [](const AbstractJobHandler::CallbackArgus args) {
+        if (args->value(AbstractJobHandler::CallbackKey::kSuccessed).toBool() != false) {
+            auto targets = args->value(AbstractJobHandler::CallbackKey::kTargets)
+                              .value<QList<QUrl>>();
+            if (!targets.isEmpty()) {
+                fmDebug() << "Requesting selection for created image file:" << targets;
+                WorkspaceHelper::instance()->laterRequestSelectFiles(targets);
+            }
+        }
+    };
+
+    auto windowId = WorkspaceHelper::instance()->windowId(view);
+
+    // Publish kTouchFile event
+    dpfSignalDispatcher->publish(
+        GlobalEventType::kTouchFile,
+        windowId,
+        view->rootUrl(),
+        CreateFileType::kCreateFileTypeDefault,
+        QString("png"),
+        QVariant::fromValue(clipboardData),
+        callback);
 }
 
 void FileOperatorHelper::undoFiles(const FileView *view)
