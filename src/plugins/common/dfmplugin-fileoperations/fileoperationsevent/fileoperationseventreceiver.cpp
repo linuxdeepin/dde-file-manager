@@ -30,6 +30,11 @@
 
 #include <QFileDialog>
 #include <QDir>
+#include <QApplication>
+#include <QClipboard>
+#include <QMimeData>
+#include <QImage>
+#include <QDateTime>
 
 Q_DECLARE_METATYPE(QList<QUrl> *)
 Q_DECLARE_METATYPE(bool *)
@@ -667,6 +672,15 @@ bool FileOperationsEventReceiver::doMkdir(const quint64 windowId, const QUrl &ur
 QString FileOperationsEventReceiver::doTouchFilePremature(const quint64 windowId, const QUrl &url, const CreateFileType fileType, const QString &suffix,
                                                           const QVariant &custom, AbstractJobHandler::OperatorCallback callbackImmediately)
 {
+    // Check if this is a clipboard image creation request
+    if (custom.isValid() && custom.canConvert<QVariantMap>()) {
+        QVariantMap customData = custom.toMap();
+        if (customData.contains("clipboardImage") && customData.value("clipboardImage").toBool()) {
+            fmInfo() << "Detected clipboard image creation request";
+            return doTouchFileFromClipboard(windowId, url, suffix, custom, callbackImmediately);
+        }
+    }
+
     const QString newPath = newDocmentName(url, suffix, fileType);
     if (newPath.isEmpty())
         return newPath;
@@ -734,6 +748,106 @@ QString FileOperationsEventReceiver::doTouchFilePremature(const quint64 windowId
 
         return doTouchFilePractically(windowId, url, tempUrl) ? url.path() : QString();
     }
+}
+
+QString FileOperationsEventReceiver::doTouchFileFromClipboard(
+        const quint64 windowId,
+        const QUrl &url,
+        const QString &suffix,
+        const QVariant &custom,
+        AbstractJobHandler::OperatorCallback callbackImmediately)
+{
+    fmInfo() << "Creating file from clipboard image at:" << url;
+
+    // 1. Get clipboard image
+    const QMimeData *mimeData = QApplication::clipboard()->mimeData();
+    if (!mimeData || !mimeData->hasImage()) {
+        fmWarning() << "Clipboard does not contain image data";
+        if (callbackImmediately) {
+            AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
+            args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
+            args->insert(AbstractJobHandler::CallbackKey::kSuccessed, false);
+            args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
+            callbackImmediately(args);
+        }
+        return QString();
+    }
+
+    QImage image = qvariant_cast<QImage>(mimeData->imageData());
+    if (image.isNull()) {
+        fmWarning() << "Failed to get valid image from clipboard";
+        if (callbackImmediately) {
+            AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
+            args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
+            args->insert(AbstractJobHandler::CallbackKey::kSuccessed, false);
+            args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
+            callbackImmediately(args);
+        }
+        return QString();
+    }
+
+    // 2. Generate unique filename (reuse existing naming logic)
+    QDateTime now = QDateTime::currentDateTime();
+    QString timeStr = now.toString("yyyyMMdd_HHmmss_zzz");
+    QString baseName = QString("image_%1").arg(timeStr);
+    QString effectiveSuffix = suffix.isEmpty() ? "png" : suffix;
+
+    const QString newPath = newDocmentName(url, baseName, effectiveSuffix);
+    if (newPath.isEmpty()) {
+        fmWarning() << "Failed to generate file path for clipboard image";
+        if (callbackImmediately) {
+            AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
+            args->insert(AbstractJobHandler::CallbackKey::kSuccessed, false);
+            callbackImmediately(args);
+        }
+        return QString();
+    }
+
+    QUrl targetUrl = QUrl::fromLocalFile(newPath);
+
+    // 3. Synchronously save image (typically fast, no need for async)
+    bool success = image.save(newPath, effectiveSuffix.toUpper().toUtf8().constData());
+
+    if (success) {
+        fmInfo() << "Clipboard image saved successfully:" << newPath;
+
+        // 4. Save operation record for undo/redo
+        saveFileOperation(
+                { targetUrl }, {},
+                GlobalEventType::kDeleteFiles,
+                { targetUrl }, {},
+                GlobalEventType::kTouchFile);
+
+        // 5. Publish result event
+        dpfSignalDispatcher->publish(
+                DFMBASE_NAMESPACE::GlobalEventType::kTouchFileResult,
+                windowId,
+                QList<QUrl>() << url,
+                true,
+                QString());
+    } else {
+        fmWarning() << "Failed to save clipboard image:" << newPath;
+
+        dpfSignalDispatcher->publish(
+                DFMBASE_NAMESPACE::GlobalEventType::kTouchFileResult,
+                windowId,
+                QList<QUrl>() << url,
+                false,
+                "Failed to save image");
+    }
+
+    // 6. Invoke callback after saving (with success status)
+    if (callbackImmediately) {
+        AbstractJobHandler::CallbackArgus args(new QMap<AbstractJobHandler::CallbackKey, QVariant>);
+        args->insert(AbstractJobHandler::CallbackKey::kWindowId, QVariant::fromValue(windowId));
+        args->insert(AbstractJobHandler::CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
+        args->insert(AbstractJobHandler::CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << targetUrl));
+        args->insert(AbstractJobHandler::CallbackKey::kSuccessed, success);
+        args->insert(AbstractJobHandler::CallbackKey::kCustom, custom);
+        callbackImmediately(args);
+    }
+
+    return success ? newPath : QString();
 }
 
 void FileOperationsEventReceiver::saveFileOperation(const QList<QUrl> &sourcesUrls,

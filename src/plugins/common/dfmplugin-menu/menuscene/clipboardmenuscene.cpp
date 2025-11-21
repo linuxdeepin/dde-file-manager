@@ -17,6 +17,9 @@
 
 #include <QMenu>
 #include <QVariant>
+#include <QClipboard>
+#include <QMimeData>
+#include <QApplication>
 
 Q_DECLARE_METATYPE(QList<QUrl> *)
 
@@ -121,7 +124,13 @@ void ClipBoardMenuScene::updateState(QMenu *parent)
                 return;
 
             curDirInfo->refresh();
-            bool disabled = (ClipBoard::instance()->clipboardAction() == ClipBoard::kUnknownAction)
+
+            // 检查是否有传统的剪贴板action或者是否有图像数据
+            const QMimeData *mimeData = QApplication::clipboard()->mimeData();
+            bool hasValidClipboardData = (ClipBoard::instance()->clipboardAction() != ClipBoard::kUnknownAction)
+                                        || (mimeData && mimeData->hasImage());
+
+            bool disabled = !hasValidClipboardData
                     || !curDirInfo->isAttributes(OptInfoType::kIsWritable);
             paste->setDisabled(disabled);
         }

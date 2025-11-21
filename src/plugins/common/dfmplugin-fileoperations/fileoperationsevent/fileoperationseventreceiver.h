@@ -275,6 +275,9 @@ private:
                                  const QVariant &custom,
                                  DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callbackImmediately);
     bool doTouchFilePractically(const quint64 windowId, const QUrl &url, const QUrl &tempUrl = QUrl());
+    QString doTouchFileFromClipboard(const quint64 windowId, const QUrl &url,
+                                     const QString &suffix, const QVariant &custom,
+                                     DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callbackImmediately);
     void saveFileOperation(const QList<QUrl> &sourcesUrls, const QList<QUrl> &targetUrls,
                            DFMBASE_NAMESPACE::GlobalEventType type,
                            const QList<QUrl> &redoSourcesUrls, const QList<QUrl> &redoTargetUrls,
