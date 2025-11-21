@@ -27,7 +27,6 @@ add_subdirectory(dfmplugin-avfsbrowser)
 add_subdirectory(dfmplugin-computer)
 add_subdirectory(dfmplugin-search)
 if(DFM_TEST_ENABLE_DISKENCRYPT)
-    add_subdirectory(dfmplugin-encrypt-manager)
     add_subdirectory(dfmplugin-disk-encrypt-entry)
 endif()
 

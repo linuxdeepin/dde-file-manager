@@ -103,7 +103,7 @@ static bool blackListFilter(const QString &name)
     {
         // FIXME(zhangsheng) FIXME(xust): find another way to solve this.
         static const QStringList tmpWhiteList {
-            "dfmplugin-disk-encrypt", "dfmplugin-encrypt-manager"
+            "dfmplugin-disk-encrypt"
         };
         if (tmpWhiteList.contains(name))
             return false;

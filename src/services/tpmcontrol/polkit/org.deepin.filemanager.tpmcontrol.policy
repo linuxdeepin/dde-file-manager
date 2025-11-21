@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE policyconfig PUBLIC
+ "-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN"
+ "http://www.freedesktop.org/standards/PolicyKit/1/policyconfig.dtd">
+<policyconfig>
+  <vendor>Deepin</vendor>
+  <vendor_url>https://www.deepin.org</vendor_url>
+
+  <action id="org.deepin.Filemanager.TPMControl.Query">
+    <description>Query TPM status</description>
+    <message>Authentication is required to query TPM status</message>
+    <message xml:lang="zh_CN">查询 TPM 状态需要认证</message>
+    <message xml:lang="zh_HK">查詢 TPM 狀態需要認證</message>
+    <message xml:lang="zh_TW">查詢 TPM 狀態需要認證</message>
+    <icon_name>folder</icon_name>
+    <defaults>
+      <allow_any>auth_admin</allow_any>
+      <allow_inactive>auth_admin</allow_inactive>
+      <allow_active>yes</allow_active>
+    </defaults>
+  </action>
+
+  <action id="org.deepin.Filemanager.TPMControl.Encrypt">
+    <description>Encrypt data with TPM</description>
+    <message>Authentication is required to encrypt data with TPM</message>
+    <message xml:lang="zh_CN">使用 TPM 加密数据需要管理员认证</message>
+    <message xml:lang="zh_HK">使用 TPM 加密數據需要管理員認證</message>
+    <message xml:lang="zh_TW">使用 TPM 加密資料需要管理員認證</message>
+    <icon_name>folder</icon_name>
+    <defaults>
+      <allow_any>no</allow_any>
+      <allow_inactive>no</allow_inactive>
+      <allow_active>auth_admin_keep</allow_active>
+    </defaults>
+  </action>
+
+  <action id="org.deepin.Filemanager.TPMControl.Decrypt">
+    <description>Decrypt data with TPM</description>
+    <message>Authentication is required to decrypt data with TPM</message>
+    <message xml:lang="zh_CN">使用 TPM 解密数据需要管理员认证</message>
+    <message xml:lang="zh_HK">使用 TPM 解密數據需要管理員認證</message>
+    <message xml:lang="zh_TW">使用 TPM 解密資料需要管理員認證</message>
+    <icon_name>folder</icon_name>
+    <defaults>
+      <allow_any>no</allow_any>
+      <allow_inactive>no</allow_inactive>
+      <allow_active>auth_admin</allow_active>
+    </defaults>
+  </action>
+
+</policyconfig>
