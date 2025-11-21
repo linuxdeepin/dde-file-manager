@@ -1,0 +1,13 @@
+{
+    "name": "org.deepin.Filemanager.TPMControl",
+    "libPath": "libdde-filemanager-tpmcontrol.so",
+    "group": "app",
+    "policyStartType": "OnDemand",
+    "pluginType": "qt",
+    "idleTime": 600,
+    "policy": [
+        {
+            "path": "/org/deepin/Filemanager/TPMControl"
+        }
+    ]
+}

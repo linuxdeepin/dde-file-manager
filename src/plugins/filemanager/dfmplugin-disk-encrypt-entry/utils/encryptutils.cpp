@@ -14,6 +14,9 @@
 #include <QSettings>
 #include <QDBusInterface>
 #include <QDBusReply>
+#include <QDBusUnixFileDescriptor>
+#include <QDBusMessage>
+#include <QDataStream>
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <QDir>
@@ -25,6 +28,8 @@
 #include <DDialog>
 
 #include <fstab.h>
+#include <unistd.h>
+#include <cerrno>
 
 Q_DECLARE_METATYPE(bool *)
 Q_DECLARE_METATYPE(QString *)
@@ -55,37 +60,281 @@ QString config_utils::cipherType()
 
 int tpm_utils::checkTPM()
 {
-    return dpfSlotChannel->push("dfmplugin_encrypt_manager", "slot_TPMIsAvailablePro").toInt();
+    QDBusInterface iface("org.deepin.Filemanager.TPMControl",
+                         "/org/deepin/Filemanager/TPMControl",
+                         "org.deepin.Filemanager.TPMControl",
+                         QDBusConnection::systemBus());
+
+    if (!iface.isValid()) {
+        fmWarning() << "TPMControl DBus interface is invalid";
+        return -1;
+    }
+
+    QDBusReply<int> reply = iface.call("IsTPMAvailable");
+    return reply.isValid() ? reply.value() : -1;
 }
 
 int tpm_utils::checkTPMLockoutStatus()
 {
-    return dpfSlotChannel->push("dfmplugin_encrypt_manager", "slot_CheckTPMLockoutPro").toInt();
+    QDBusInterface iface("org.deepin.Filemanager.TPMControl",
+                         "/org/deepin/Filemanager/TPMControl",
+                         "org.deepin.Filemanager.TPMControl",
+                         QDBusConnection::systemBus());
+
+    if (!iface.isValid()) {
+        fmWarning() << "TPMControl DBus interface is invalid";
+        return -1;
+    }
+
+    QDBusReply<int> reply = iface.call("CheckTPMLockout");
+    return reply.isValid() ? reply.value() : -1;
 }
 
 int tpm_utils::getRandomByTPM(int size, QString *output)
 {
-    return dpfSlotChannel->push("dfmplugin_encrypt_manager", "slot_GetRandomByTPMPro", size, output).toInt();
+    QDBusInterface iface("org.deepin.Filemanager.TPMControl",
+                         "/org/deepin/Filemanager/TPMControl",
+                         "org.deepin.Filemanager.TPMControl",
+                         QDBusConnection::systemBus());
+
+    if (!iface.isValid()) {
+        fmWarning() << "TPMControl DBus interface is invalid";
+        return -1;
+    }
+
+    QDBusMessage reply = iface.call("GetRandom", size);
+    if (reply.type() != QDBusMessage::ReplyMessage) {
+        fmWarning() << "GetRandom DBus call failed";
+        return -1;
+    }
+
+    // Check reply arguments bounds before accessing
+    if (reply.arguments().size() < 2) {
+        fmWarning() << "Invalid DBus reply from GetRandom, expected 2 arguments, got:" << reply.arguments().size();
+        return -1;
+    }
+
+    int result = reply.arguments().at(0).toInt();
+    if (result != 0) {
+        return result;
+    }
+
+    // Read random data from file descriptor
+    QDBusUnixFileDescriptor fd = qdbus_cast<QDBusUnixFileDescriptor>(reply.arguments().at(1));
+    if (!fd.isValid()) {
+        fmWarning() << "Invalid file descriptor from GetRandom";
+        return -1;
+    }
+
+    int rawFd = fd.fileDescriptor();
+    QByteArray buffer;
+    char readBuffer[1024];
+    ssize_t bytesRead;
+
+    // Read with proper error handling
+    while (true) {
+        bytesRead = read(rawFd, readBuffer, sizeof(readBuffer));
+        if (bytesRead > 0) {
+            buffer.append(readBuffer, bytesRead);
+        } else if (bytesRead == 0) {
+            break;  // EOF
+        } else {
+            // Error occurred
+            if (errno == EINTR) {
+                continue;  // Retry on interrupt
+            }
+            fmWarning() << "Read error from GetRandom fd, errno:" << errno;
+            return -1;
+        }
+    }
+
+    *output = QString::fromUtf8(buffer);
+    return 0;
 }
 
 int tpm_utils::isSupportAlgoByTPM(const QString &algoName, bool *support)
 {
-    return dpfSlotChannel->push("dfmplugin_encrypt_manager", "slot_IsTPMSupportAlgoPro", algoName, support).toInt();
+    QDBusInterface iface("org.deepin.Filemanager.TPMControl",
+                         "/org/deepin/Filemanager/TPMControl",
+                         "org.deepin.Filemanager.TPMControl",
+                         QDBusConnection::systemBus());
+
+    if (!iface.isValid()) {
+        fmWarning() << "TPMControl DBus interface is invalid";
+        return -1;
+    }
+
+    QDBusMessage reply = iface.call("IsSupportAlgo", algoName);
+    if (reply.type() != QDBusMessage::ReplyMessage) {
+        fmWarning() << "IsSupportAlgo DBus call failed";
+        return -1;
+    }
+
+    // Check reply arguments bounds before accessing
+    if (reply.arguments().size() < 2) {
+        fmWarning() << "Invalid DBus reply from IsSupportAlgo, expected 2 arguments, got:" << reply.arguments().size();
+        return -1;
+    }
+
+    int result = reply.arguments().at(0).toInt();
+    *support = reply.arguments().at(1).toBool();
+    return result;
 }
 
 int tpm_utils::encryptByTPM(const QVariantMap &map)
 {
-    return dpfSlotChannel->push("dfmplugin_encrypt_manager", "slot_EncryptByTPMPro", map).toInt();
+    QDBusInterface iface("org.deepin.Filemanager.TPMControl",
+                         "/org/deepin/Filemanager/TPMControl",
+                         "org.deepin.Filemanager.TPMControl",
+                         QDBusConnection::systemBus());
+
+    if (!iface.isValid()) {
+        fmWarning() << "TPMControl DBus interface is invalid";
+        return -1;
+    }
+
+    // Create pipe and send parameters via file descriptor
+    int pipefd[2];
+    if (pipe(pipefd) == -1) {
+        fmCritical() << "Failed to create pipe for encrypt params";
+        return -1;
+    }
+
+    // Serialize parameters
+    QByteArray data;
+    QDataStream stream(&data, QIODevice::WriteOnly);
+    stream << map;
+
+    // Write to pipe
+    ssize_t written = write(pipefd[1], data.constData(), data.size());
+    close(pipefd[1]);
+
+    if (written != data.size()) {
+        fmCritical() << "Failed to write encrypt params to pipe";
+        close(pipefd[0]);
+        return -1;
+    }
+
+    // Create file descriptor
+    QDBusUnixFileDescriptor fd(pipefd[0]);
+    close(pipefd[0]);
+
+    if (!fd.isValid()) {
+        fmCritical() << "Failed to create valid file descriptor";
+        return -1;
+    }
+
+    QDBusReply<int> reply = iface.call("Encrypt", QVariant::fromValue(fd));
+    return reply.isValid() ? reply.value() : -1;
 }
 
 int tpm_utils::decryptByTPM(const QVariantMap &map, QString *psw)
 {
-    return dpfSlotChannel->push("dfmplugin_encrypt_manager", "slot_DecryptByTPMPro", map, psw).toInt();
+    QDBusInterface iface("org.deepin.Filemanager.TPMControl",
+                         "/org/deepin/Filemanager/TPMControl",
+                         "org.deepin.Filemanager.TPMControl",
+                         QDBusConnection::systemBus());
+
+    if (!iface.isValid()) {
+        fmWarning() << "TPMControl DBus interface is invalid";
+        return -1;
+    }
+
+    // Create pipe and send parameters via file descriptor
+    int pipefd[2];
+    if (pipe(pipefd) == -1) {
+        fmCritical() << "Failed to create pipe for decrypt params";
+        return -1;
+    }
+
+    // Serialize parameters
+    QByteArray data;
+    QDataStream stream(&data, QIODevice::WriteOnly);
+    stream << map;
+
+    // Write to pipe
+    ssize_t written = write(pipefd[1], data.constData(), data.size());
+    close(pipefd[1]);
+
+    if (written != data.size()) {
+        fmCritical() << "Failed to write decrypt params to pipe";
+        close(pipefd[0]);
+        return -1;
+    }
+
+    // Create file descriptor
+    QDBusUnixFileDescriptor fd(pipefd[0]);
+    close(pipefd[0]);
+
+    if (!fd.isValid()) {
+        fmCritical() << "Failed to create valid file descriptor";
+        return -1;
+    }
+
+    QDBusMessage reply = iface.call("Decrypt", QVariant::fromValue(fd));
+    if (reply.type() != QDBusMessage::ReplyMessage) {
+        fmWarning() << "Decrypt DBus call failed";
+        return -1;
+    }
+
+    // Check reply arguments bounds before accessing
+    if (reply.arguments().size() < 2) {
+        fmWarning() << "Invalid DBus reply from Decrypt, expected 2 arguments, got:" << reply.arguments().size();
+        return -1;
+    }
+
+    int result = reply.arguments().at(0).toInt();
+    if (result != 0) {
+        return result;
+    }
+
+    // Read decrypted password from file descriptor
+    QDBusUnixFileDescriptor pwdFd = qdbus_cast<QDBusUnixFileDescriptor>(reply.arguments().at(1));
+    if (!pwdFd.isValid()) {
+        fmWarning() << "Invalid file descriptor from Decrypt";
+        return -1;
+    }
+
+    int rawFd = pwdFd.fileDescriptor();
+    QByteArray buffer;
+    char readBuffer[1024];
+    ssize_t bytesRead;
+
+    // Read with proper error handling
+    while (true) {
+        bytesRead = read(rawFd, readBuffer, sizeof(readBuffer));
+        if (bytesRead > 0) {
+            buffer.append(readBuffer, bytesRead);
+        } else if (bytesRead == 0) {
+            break;  // EOF
+        } else {
+            // Error occurred
+            if (errno == EINTR) {
+                continue;  // Retry on interrupt
+            }
+            fmWarning() << "Read error from Decrypt fd, errno:" << errno;
+            return -1;
+        }
+    }
+
+    *psw = QString::fromUtf8(buffer);
+    return 0;
 }
 
 int tpm_utils::ownerAuthStatus()
 {
-    return dpfSlotChannel->push("dfmplugin_encrypt_manager", "slot_OwnerAuthStatus").toInt();
+    QDBusInterface iface("org.deepin.Filemanager.TPMControl",
+                         "/org/deepin/Filemanager/TPMControl",
+                         "org.deepin.Filemanager.TPMControl",
+                         QDBusConnection::systemBus());
+
+    if (!iface.isValid()) {
+        fmWarning() << "TPMControl DBus interface is invalid";
+        return -1;
+    }
+
+    QDBusReply<int> reply = iface.call("OwnerAuthStatus");
+    return reply.isValid() ? reply.value() : -1;
 }
 
 int device_utils::encKeyType(const QString &dev)

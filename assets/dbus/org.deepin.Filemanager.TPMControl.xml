@@ -1,0 +1,52 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+    "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.deepin.Filemanager.TPMControl">
+
+    <!-- Simple query methods (no sensitive data) -->
+    <method name="IsTPMAvailable">
+      <arg type="i" direction="out" name="result"/>
+    </method>
+
+    <method name="CheckTPMLockout">
+      <arg type="i" direction="out" name="result"/>
+    </method>
+
+    <method name="IsSupportAlgo">
+      <arg type="s" direction="in" name="algoName"/>
+      <arg type="i" direction="out" name="result"/>
+      <arg type="b" direction="out" name="support"/>
+    </method>
+
+    <method name="OwnerAuthStatus">
+      <arg type="i" direction="out" name="result"/>
+    </method>
+
+    <!-- Sensitive data methods (using file descriptors) -->
+    <method name="GetRandom">
+      <arg type="i" direction="in" name="size"/>
+      <arg type="i" direction="out" name="result"/>
+      <arg type="h" direction="out" name="randomData"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out1"
+                  value="QDBusUnixFileDescriptor"/>
+    </method>
+
+    <method name="Encrypt">
+      <arg type="h" direction="in" name="params"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In0"
+                  value="QDBusUnixFileDescriptor"/>
+      <arg type="i" direction="out" name="result"/>
+    </method>
+
+    <method name="Decrypt">
+      <arg type="h" direction="in" name="params"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In0"
+                  value="QDBusUnixFileDescriptor"/>
+      <arg type="i" direction="out" name="result"/>
+      <arg type="h" direction="out" name="password"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out1"
+                  value="QDBusUnixFileDescriptor"/>
+    </method>
+
+  </interface>
+</node>
