@@ -32,6 +32,8 @@ DFM_LOG_REGISTER_CATEGORY(SERVICEACCESSCONTROL_NAMESPACE)
 DFMBASE_USE_NAMESPACE
 SERVICEACCESSCONTROL_USE_NAMESPACE
 
+using ServiceCommon::PolicyKitHelper;
+
 /*!
  * \class AccessControlDBus
  * \brief D-Bus interface class, Don't nedd a namespace

@@ -22,6 +22,8 @@ DFM_LOG_REGISTER_CATEGORY(SERVICEMOUNTCONTROL_NAMESPACE)
 
 SERVICEMOUNTCONTROL_USE_NAMESPACE
 
+using ServiceCommon::PolicyKitHelper;
+
 MountControlDBus::MountControlDBus(const char *name, QObject *parent)
     : QObject(parent), QDBusContext(), d(new MountControlDBusPrivate(this))
 {
@@ -102,7 +104,7 @@ QStringList MountControlDBus::SupportedFileSystems()
 
 bool MountControlDBus::checkAuthentication()
 {
-    if (!SERVICEMOUNTCONTROL_NAMESPACE::PolicyKitHelper::instance()->checkAuthorization(kPolicyKitActionId, message().service())) {
+    if (!PolicyKitHelper::instance()->checkAuthorization(kPolicyKitActionId, message().service())) {
         fmInfo() << "Authentication failed !!";
         return false;
     }

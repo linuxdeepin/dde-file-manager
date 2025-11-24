@@ -1,16 +1,14 @@
-// SPDX-FileCopyrightText: 2022 - 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2022 - 2025 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef POLICYKITHELPER_H
-#define POLICYKITHELPER_H
-
-#include "service_sharecontrol_global.h"
+#ifndef SERVICECOMMON_POLICYKITHELPER_H
+#define SERVICECOMMON_POLICYKITHELPER_H
 
 #include <QObject>
 #include <polkit-qt6-1/PolkitQt1/Authority>
 
-SERVICESHARECONTROL_BEGIN_NAMESPACE
+namespace ServiceCommon {
 
 class PolicyKitHelper
 {
@@ -26,6 +24,6 @@ private:
     Q_DISABLE_COPY(PolicyKitHelper)
 };
 
-SERVICESHARECONTROL_END_NAMESPACE
+}  // namespace ServiceCommon
 
-#endif   // POLICYKITHELPER_H
+#endif   // SERVICECOMMON_POLICYKITHELPER_H

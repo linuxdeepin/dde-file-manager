@@ -1,10 +1,14 @@
-// SPDX-FileCopyrightText: 2023 - 2025 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2022 - 2025 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "policykithelper.h"
 
-SERVICETPMCONTROL_USE_NAMESPACE
+#include <QLoggingCategory>
+
+namespace ServiceCommon {
+
+Q_LOGGING_CATEGORY(serviceCommonLog, "org.deepin.dde.filemanager.service.common")
 
 PolicyKitHelper *PolicyKitHelper::instance()
 {
@@ -17,7 +21,7 @@ bool PolicyKitHelper::checkAuthorization(const QString &actionId, const QString 
     using namespace PolkitQt1;
 
     if (appBusName.isEmpty()) {
-        fmWarning() << "PolicyKit check failed: empty bus name";
+        qCWarning(serviceCommonLog) << "PolicyKit check failed: empty bus name";
         return false;
     }
 
@@ -27,10 +31,10 @@ bool PolicyKitHelper::checkAuthorization(const QString &actionId, const QString 
             Authority::AllowUserInteraction);
 
     if (result == Authority::Yes) {
-        fmDebug() << "PolicyKit authorization granted for action:" << actionId;
+        qCDebug(serviceCommonLog) << "PolicyKit authorization granted for action:" << actionId;
         return true;
     } else {
-        fmWarning() << "PolicyKit authorization denied for action:" << actionId;
+        qCWarning(serviceCommonLog) << "PolicyKit authorization denied for action:" << actionId;
         return false;
     }
 }
@@ -42,3 +46,5 @@ PolicyKitHelper::PolicyKitHelper()
 PolicyKitHelper::~PolicyKitHelper()
 {
 }
+
+}  // namespace ServiceCommon

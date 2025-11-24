@@ -20,6 +20,8 @@ DFM_LOG_REGISTER_CATEGORY(SERVICETPMCONTROL_NAMESPACE)
 
 SERVICETPMCONTROL_USE_NAMESPACE
 
+using ServiceCommon::PolicyKitHelper;
+
 TPMControlDBus::TPMControlDBus(const char *name, QObject *parent)
     : QObject(parent), QDBusContext(), m_tpmWork(new TPMWork(this))
 {
