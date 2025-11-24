@@ -6,6 +6,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # Include service configuration
 include(${CMAKE_CURRENT_SOURCE_DIR}/dependencies.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/../DFMServiceCommon.cmake)
 
 FILE(GLOB FILEOPERATIONS_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
@@ -16,6 +17,9 @@ FILE(GLOB FILEOPERATIONS_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.xml"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.policy"
     )
+
+# Setup common service resources (polkit helper, etc.)
+dfm_setup_service_polkit(FILEOPERATIONS_FILES)
 
 add_library(${PROJECT_NAME}
     SHARED

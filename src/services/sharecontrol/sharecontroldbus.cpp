@@ -29,6 +29,8 @@ DFM_LOG_REGISTER_CATEGORY(SERVICESHARECONTROL_NAMESPACE)
 
 SERVICESHARECONTROL_USE_NAMESPACE
 
+using ServiceCommon::PolicyKitHelper;
+
 ShareControlDBus::ShareControlDBus(const char *name, QObject *parent)
     : QObject(parent), QDBusContext()
 {
@@ -207,7 +209,7 @@ bool ShareControlDBus::IsUserSharePasswordSet(const QString &username)
 
 bool ShareControlDBus::checkAuthentication()
 {
-    if (!SERVICESHARECONTROL_NAMESPACE::PolicyKitHelper::instance()->checkAuthorization(kPolicyKitActionId, message().service())) {
+    if (!PolicyKitHelper::instance()->checkAuthorization(kPolicyKitActionId, message().service())) {
         fmWarning() << "[ShareControlDBus::checkAuthentication] Authentication failed for action ID:" << kPolicyKitActionId << "service:" << message().service();
         return false;
     }
