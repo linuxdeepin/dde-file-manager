@@ -279,11 +279,6 @@ void FilePreviewDialog::initUI()
     layout->addLayout(separatorLayout, 1);
     layout->addWidget(statusBar, 0, Qt::AlignBottom);
 
-    QAction *shortcutAction = new QAction(this);
-
-    shortcutAction->setShortcut(QKeySequence::Copy);
-    addAction(shortcutAction);
-
     connect(statusBar->preButton(), &QPushButton::clicked, this, &FilePreviewDialog::previousPage);
     connect(statusBar->nextButton(), &QPushButton::clicked, this, &FilePreviewDialog::nextPage);
     connect(statusBar->openButton(), &QPushButton::clicked, this, &FilePreviewDialog::openFile);

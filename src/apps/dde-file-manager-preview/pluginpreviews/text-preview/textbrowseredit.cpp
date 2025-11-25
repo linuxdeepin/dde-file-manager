@@ -18,8 +18,6 @@ TextBrowserEdit::TextBrowserEdit(QWidget *parent)
     setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::TextSelectableByKeyboard);
     setLineWrapMode(QPlainTextEdit::WidgetWidth);
     setFixedSize(800, 500);
-    setFocusPolicy(Qt::NoFocus);
-    setContextMenuPolicy(Qt::NoContextMenu);
     setFrameStyle(QFrame::NoFrame);
 
     connect(verticalScrollBar(), &QScrollBar::valueChanged, this, &TextBrowserEdit::scrollbarValueChange);
