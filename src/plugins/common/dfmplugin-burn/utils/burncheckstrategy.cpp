@@ -15,8 +15,8 @@ static constexpr int kMaxCommontFilePathBytes { 1024 };
 
 static constexpr int kMaxISO9660FileNameSize { 32 };
 
-static constexpr int kMaxJolietFileNameSize { 64 };
-static constexpr int kMaxJolietFilePathSize { 120 };
+static constexpr int kMaxJolietFileNameSize { 103 };
+static constexpr int kMaxJolietFilePathSize { 800 };
 
 BurnCheckStrategy::BurnCheckStrategy(const QString &path, QObject *parent)
     : QObject(parent), currentStagePath(path)
