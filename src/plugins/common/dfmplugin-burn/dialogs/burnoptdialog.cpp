@@ -297,7 +297,7 @@ void BurnOptDialog::onIndexChanged(int index)
         checkdiscCheckbox->setChecked(false);
         checkdiscCheckbox->setEnabled(false);
         donotcloseComb->setChecked(true);
-        donotcloseComb->setEnabled(false);
+        // donotcloseComb->setEnabled(false);
         writespeedComb->setCurrentIndex(0);
         writespeedComb->setEnabled(false);
     } else {
