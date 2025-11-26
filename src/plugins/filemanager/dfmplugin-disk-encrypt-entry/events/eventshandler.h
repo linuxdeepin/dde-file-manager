@@ -26,7 +26,7 @@ public:
     void resumeEncrypt(const QString &device);
     QString holderDevice(const QString &device);
     bool onAcquireDevicePwd(const QString &dev, QString *pwd, bool *giveup);
-    void autoStartDFM();
+    void setAutoStartDFM(bool enable);
 
 private Q_SLOTS:
     void onEncryptProgress(const QString &, const QString &, double);

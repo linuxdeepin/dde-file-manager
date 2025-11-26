@@ -22,6 +22,7 @@
 
 #include <DDialog>
 #include <DDBusSender>
+#include <DUtil>
 
 #ifdef COMPILE_ON_V2X
 #    define APP_MANAGER_SERVICE "org.deepin.dde.SessionManager1"
@@ -183,7 +184,7 @@ void EventsHandler::onInitEncryptFinished(const QVariantMap &result)
         return;
     }
 
-    autoStartDFM();
+    setAutoStartDFM(true);
 }
 
 void EventsHandler::onEncryptFinished(const QVariantMap &result)
@@ -237,11 +238,9 @@ void EventsHandler::onEncryptFinished(const QVariantMap &result)
         dialog->raise();
     }
 
-    // delete auto start file.
-    auto configPath = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
-    auto autoStartFilePath = configPath + "/autostart/dfm-reencrypt.desktop";
-    int ret = ::remove(autoStartFilePath.toStdString().c_str());
-    fmDebug() << "Autostart file removal result:" << ret << "for path:" << autoStartFilePath;
+    // Disable autostart after encryption is done
+    fmInfo() << "Disabling autostart after encryption completion";
+    setAutoStartDFM(false);
 }
 
 void EventsHandler::onDecryptFinished(const QVariantMap &result)
@@ -258,11 +257,9 @@ void EventsHandler::onDecryptFinished(const QVariantMap &result)
     } else {
         showDecryptError(dev, name, code);
 
-        // delete auto start file.
-        auto configPath = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
-        auto autoStartFilePath = configPath + "/autostart/dfm-reencrypt.desktop";
-        int ret = ::remove(autoStartFilePath.toStdString().c_str());
-        fmDebug() << "Autostart file removal result:" << ret << "for path:" << autoStartFilePath;
+        // Disable autostart after decryption is done
+        fmInfo() << "Disabling autostart after decryption completion";
+        setAutoStartDFM(false);
     }
 }
 
@@ -636,13 +633,46 @@ bool EventsHandler::canUnlock(const QString &device)
     return true;
 }
 
-void EventsHandler::autoStartDFM()
+void EventsHandler::setAutoStartDFM(bool enable)
 {
-    fmInfo() << "Adding file manager to autostart";
-    QDBusInterface sessMng(APP_MANAGER_SERVICE,
-                           APP_MANAGER_PATH,
-                           APP_MANAGER_INTERFACE);
-    sessMng.asyncCall("AddAutostart", QString(kReencryptDesktopFile));
+    fmInfo() << "Setting file manager autostart to:" << enable;
+
+    // Get app ID from desktop file path
+    auto appId = DUtil::getAppIdFromAbsolutePath(QString(kReencryptDesktopFile));
+    if (appId.isEmpty()) {
+        fmWarning() << "Failed to get app ID from desktop file, using fallback";
+        appId = "dfm-reencrypt";  // fallback to basename
+    }
+
+    // Escape app ID to DBus object path format
+    const auto &dbusAppId = DUtil::escapeToObjectPath(appId);
+    const auto &objectPath = QString("/org/desktopspec/ApplicationManager1/%1").arg(dbusAppId);
+
+    fmInfo() << "Setting AutoStart via ApplicationManager1:"
+             << "appId=" << appId
+             << "objectPath=" << objectPath
+             << "enable=" << enable;
+
+    // Create DBus interface for the application
+    QDBusInterface appMng("org.desktopspec.ApplicationManager1",
+                         objectPath,
+                         "org.desktopspec.ApplicationManager1.Application",
+                         QDBusConnection::sessionBus());
+
+    if (!appMng.isValid()) {
+        fmWarning() << "Failed to create ApplicationManager interface:"
+                    << appMng.lastError().message();
+        return;
+    }
+
+    // Set AutoStart property
+    if (!appMng.setProperty("AutoStart", enable)) {
+        fmWarning() << "Failed to set AutoStart property:"
+                    << appMng.lastError().message();
+        return;
+    }
+
+    fmInfo() << "AutoStart set successfully for" << appId << "to" << enable;
 }
 
 void EventsHandler::onOverlayDMModeChanged(bool enabled, int result)

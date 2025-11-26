@@ -474,7 +474,7 @@ void DiskEncryptMenuScene::doDecryptDevice(const DeviceEncryptParam &param)
     fmDebug() << "Calling Decryption D-Bus method via fd";
     if (sendCredentialsViaFd(iface, "Decryption", params, false)) {
         QApplication::setOverrideCursor(Qt::WaitCursor);
-        EventsHandler::instance()->autoStartDFM();
+        EventsHandler::instance()->setAutoStartDFM(true);
     } else {
         fmCritical() << "Decryption failed to start";
     }
