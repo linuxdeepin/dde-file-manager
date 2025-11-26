@@ -7,6 +7,7 @@
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/base/application/application.h>
+#include <dfm-base/base/device/deviceproxymanager.h>
 
 #include <dfm-search/searchfactory.h>
 
@@ -220,6 +221,12 @@ bool DFMSearcher::shouldExcludeIndexedPaths(const QString &transformedPath) cons
         return false;
     }
 
+    // 其他挂载点
+    if (DevProxyMng->isFileOfExternalMounts(transformedPath)) {
+        fmDebug() << "Not excluding indexed paths due to external mounts search";
+        return false;
+    }
+
     // 其他情况下，排除索引路径以避免重复搜索
     return true;
 }
@@ -271,11 +278,20 @@ SearchMethod DFMSearcher::getSearchMethod(const QString &path) const
     }
 
     // 对于文件名搜索，检查是否需要使用实时搜索
-    const bool notInIndexDir = !DFMSEARCH::Global::isPathInFileNameIndexDirectory(path);
+    const bool inIndexDir = DFMSEARCH::Global::isPathInFileNameIndexDirectory(path);
     const bool inHiddenDir = DFMSEARCH::Global::isHiddenPathOrInHiddenDir(path);
 
-    if (notInIndexDir || inHiddenDir) {
-        fmInfo() << "Use realtime method to: " << path << "- not in index dir:" << notInIndexDir << "in hidden dir:" << inHiddenDir;
+    if (!inIndexDir || inHiddenDir) {
+        fmInfo() << "Use realtime method to: " << path << "- in index dir:" << inIndexDir << "in hidden dir:" << inHiddenDir;
+        return SearchMethod::Realtime;
+    }
+
+    // 一个文件即使在anything的索引挂载点下，但是用户依然可能继续
+    // 手动挂载其他文件系统，这种情况下anything并不会生成索引，
+    // 因此需要切换搜索方法
+    const auto &defaultDirs = DFMSEARCH::Global::defaultIndexedDirectory();
+    if (inIndexDir && DevProxyMng->isFileOfExternalMounts(path)) {
+        fmInfo() << "Use reltime method to: " << path << " - is external mount";
         return SearchMethod::Realtime;
     }
 
