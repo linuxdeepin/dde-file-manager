@@ -297,7 +297,7 @@ QByteArray AbstractBurnJob::updatedInSubProcess(JobStatus status, int progress, 
     obj[kMapKeyStatus] = int(status);
     obj[kMapKeyProgress] = progress;
     obj[kMapKeySpeed] = speed;
-    obj[kMapKeyMsg] = QJsonArray::fromStringList(message);
+    obj[kMapKeyMsg] = QJsonArray::fromStringList(message.mid(0, 3));
     obj[kMapKeyPhase] = curPhase;
     return QJsonDocument(obj).toJson();
 }
@@ -565,6 +565,25 @@ void BurnUDFFilesJob::work()
     onJobUpdated(JobStatus::kIdle, 0, {}, {});
     workingInSubProcess();
     fmInfo() << "End burn UDF files: " << curDev;
+}
+
+void BurnUDFFilesJob::finishFunc(bool verify, bool verifyRet)
+{
+    // 检查错误消息，处理特定的 UDF 刻录错误
+    if (lastStatus == JobStatus::kFailed) {
+        for (const QString &msg : lastSrcMessages) {
+            if (msg.contains("free size is not enough to burn files", Qt::CaseInsensitive)) {
+                lastError = tr("Not enough free space on the disc");
+                lastSrcMessages.prepend(tr("The remaining space on the current disc is insufficient "
+                                           "to hold the files to be burned. Please reduce the number "
+                                           "of files and try again."));
+                break;
+            }
+        }
+    }
+
+    // 调用父类的 finishFunc 处理通用逻辑
+    AbstractBurnJob::finishFunc(verify, verifyRet);
 }
 
 DumpISOImageJob::DumpISOImageJob(const QString &dev, const JobHandlePointer handler)
