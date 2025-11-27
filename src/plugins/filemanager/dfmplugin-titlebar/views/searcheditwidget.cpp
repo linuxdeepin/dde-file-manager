@@ -328,6 +328,10 @@ void SearchEditWidget::handleFocusInEvent(QFocusEvent *e)
 
 void SearchEditWidget::handleFocusOutEvent(QFocusEvent *e)
 {
+    fmDebug() << "Focus out event, reason:" << e->reason()
+              << "hasText:" << !searchEdit->text().isEmpty()
+              << "focusWidget:" << (QApplication::focusWidget() ? QApplication::focusWidget()->metaObject()->className() : "nullptr");
+
     if (searchEdit->lineEdit()->text().isEmpty() && !advancedButton->isChecked()) {
         advancedButton->setVisible(false);
         updateSpacing(false);   // Advanced button is now hidden
@@ -335,8 +339,12 @@ void SearchEditWidget::handleFocusOutEvent(QFocusEvent *e)
 
     // Helper lambda to restore focus if needed
     auto restoreFocusIfNeeded = [this]() {
-        if (!searchEdit->text().isEmpty())
-            searchEdit->lineEdit()->setFocus(Qt::MouseFocusReason);
+        if (!searchEdit->text().isEmpty()) {
+            // Use QTimer to defer the focus restoration to ensure proper cursor blink
+            QTimer::singleShot(0, this, [this]() {
+                searchEdit->lineEdit()->setFocus(Qt::OtherFocusReason);
+            });
+        }
     };
 
     // Handle special focus reasons that should not trigger collapse
