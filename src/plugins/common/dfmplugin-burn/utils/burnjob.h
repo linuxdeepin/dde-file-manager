@@ -151,6 +151,7 @@ protected:
     virtual bool fileSystemLimitsValid() override;
     virtual void writeFunc(int progressFd, int checkFd) override;
     virtual void work() override;
+    virtual void finishFunc(bool verify, bool verifyRet) override;
 };
 
 class DumpISOImageJob : public AbstractBurnJob
