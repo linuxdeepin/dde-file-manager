@@ -113,7 +113,10 @@ void EncryptProgressDialog::initUI()
     progressLay->addWidget(progress, 0, Qt::AlignCenter);
     progress->start();
 
+    const int kMessageLabelLen = 380;
+
     message = new QLabel(this);
+    message->setMinimumWidth(kMessageLabelLen);
     message->setWordWrap(true);
     message->setAlignment(Qt::AlignCenter);
     progressLay->addWidget(message, 0, Qt::AlignCenter);
@@ -128,11 +131,13 @@ void EncryptProgressDialog::initUI()
     resultLay->addWidget(iconLabel, 0, Qt::AlignCenter);
 
     resultMsg = new QLabel(this);
+    resultMsg->setMinimumWidth(kMessageLabelLen);
     resultMsg->setWordWrap(true);
     resultMsg->setAlignment(Qt::AlignCenter);
     resultLay->addWidget(resultMsg, 0, Qt::AlignCenter);
 
     warningLabel = new QLabel(this);
+    warningLabel->setMinimumWidth(kMessageLabelLen);
     resultLay->addWidget(warningLabel);
     QPalette pal = warningLabel->palette();
     pal.setColor(QPalette::WindowText, QColor("red"));
