@@ -289,8 +289,7 @@ SearchMethod DFMSearcher::getSearchMethod(const QString &path) const
     // 一个文件即使在anything的索引挂载点下，但是用户依然可能继续
     // 手动挂载其他文件系统，这种情况下anything并不会生成索引，
     // 因此需要切换搜索方法
-    const auto &defaultDirs = DFMSEARCH::Global::defaultIndexedDirectory();
-    if (inIndexDir && DevProxyMng->isFileOfExternalMounts(path)) {
+    if (DevProxyMng->isFileOfExternalMounts(path)) {
         fmInfo() << "Use reltime method to: " << path << " - is external mount";
         return SearchMethod::Realtime;
     }
