@@ -1,3 +1,11 @@
+dde-file-manager (6.5.107) unstable; urgency=medium
+
+  *feat: Better burn feedback, Joliet long names, UDF finalize, image paste, TPM DBus.
+  *fix: Search state, focus indicator, search logic, autostart.
+  *refactor: Clean UI configs, deduplicate PolicyKit. 
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 27 Nov 2025 15:32:28 +0800
+
 dde-file-manager (6.5.106) unstable; urgency=medium
 
   * fix bugs
