@@ -270,6 +270,10 @@ void OpticalMediaWidget::onBurnButtonClicked()
         return;
     }
 
+    // Set busy state while calculating file sizes
+    setCursor(Qt::WaitCursor);
+    pbBurn->setEnabled(false);
+
     statisticWorker->start({ urlOfStage });
 }
 
@@ -281,8 +285,16 @@ void OpticalMediaWidget::onDumpButtonClicked()
 
 void OpticalMediaWidget::onStagingFileStatisticsFinished()
 {
+    // Restore cursor and button state
+    unsetCursor();
+
     auto &&map = DevProxyMng->queryBlockInfo(devId);
     qint64 avil { qvariant_cast<qint64>(map[DeviceProperty::kSizeFree]) };
+
+    // Update available space and UI state
+    curAvial = avil;
+    updateUi();
+
     qint64 total { statisticWorker->totalSize() };
     if (avil == 0 || total > avil) {
         fmWarning() << "Insufficient space for burn operation - Available:" << avil << "Required:" << total;
