@@ -2,21 +2,24 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# Setup service common resources (e.g. shared PolicyKitHelper)
-# Usage:
-#   FILE(GLOB YOUR_FILES ...)
-#   dfm_setup_service_polkit(YOUR_FILES)
-#   add_library(${PROJECT_NAME} SHARED ${YOUR_FILES})
-function(dfm_setup_service_polkit FILES_VAR)
-    # Exclude old polkit files from individual services
-    list(FILTER ${FILES_VAR} EXCLUDE REGEX "polkit/policykithelper\\.(h|cpp)$")
+# Setup service polkit helper for existing target (after add_library)
+# Usage for target mode (in dependencies.cmake):
+#   function(dfm_setup_xxx_dependencies target_name)
+#       dfm_apply_service_polkit_to_target(${target_name})
+#       ...
+#   endfunction()
+function(dfm_apply_service_polkit_to_target target_name)
+    message(STATUS "DFM: Applying shared polkit helper to target: ${target_name}")
 
     # Add common polkit helper implementation
-    list(APPEND ${FILES_VAR} "${CMAKE_CURRENT_SOURCE_DIR}/../common/polkit/policykithelper.cpp")
-
-    # Return modified list to caller
-    set(${FILES_VAR} ${${FILES_VAR}} PARENT_SCOPE)
+    target_sources(${target_name} PRIVATE
+        ${DFM_SOURCE_DIR}/services/common/polkit/policykithelper.cpp
+    )
 
     # Include common directory for shared headers
-    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../common)
+    target_include_directories(${target_name} PRIVATE
+        ${DFM_SOURCE_DIR}/services/common
+    )
+
+    message(STATUS "DFM: Shared polkit helper applied successfully")
 endfunction()

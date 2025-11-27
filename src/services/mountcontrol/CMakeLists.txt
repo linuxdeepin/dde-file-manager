@@ -18,9 +18,6 @@ FILE(GLOB FILEOPERATIONS_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.policy"
     )
 
-# Setup common service resources (polkit helper, etc.)
-dfm_setup_service_polkit(FILEOPERATIONS_FILES)
-
 add_library(${PROJECT_NAME}
     SHARED
     ${FILEOPERATIONS_FILES}

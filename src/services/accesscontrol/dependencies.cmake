@@ -6,19 +6,23 @@ cmake_minimum_required(VERSION 3.10)
 # Function to setup accesscontrol service dependencies
 function(dfm_setup_accesscontrol_dependencies target_name)
     message(STATUS "DFM: Setting up accesscontrol service dependencies for: ${target_name}")
-    
+
     # Find required packages
     find_package(PkgConfig REQUIRED)
     find_package(Qt6 REQUIRED COMPONENTS DBus)
-    
+
     # Find system dependencies using pkg-config
     pkg_search_module(crypt REQUIRED libcryptsetup IMPORTED_TARGET)
     pkg_check_modules(PolkitAgent REQUIRED polkit-agent-1 IMPORTED_TARGET)
     pkg_check_modules(PolkitQt6 REQUIRED polkit-qt6-1 IMPORTED_TARGET)
-    
+
     # Apply default service configuration first
     dfm_apply_default_service_config(${target_name})
-    
+
+    # Include service common utilities and apply shared polkit helper
+    include(${DFM_SOURCE_DIR}/services/DFMServiceCommon.cmake)
+    dfm_apply_service_polkit_to_target(${target_name})
+
     # Add accesscontrol-specific dependencies
     target_link_libraries(${target_name} PRIVATE
         Qt6::DBus
@@ -26,10 +30,10 @@ function(dfm_setup_accesscontrol_dependencies target_name)
         PkgConfig::PolkitAgent
         PkgConfig::PolkitQt6
     )
-    
+
     # Setup DBus adaptor for accesscontrol
     dfm_setup_accesscontrol_dbus_interfaces(${target_name})
-    
+
     message(STATUS "DFM: Access control service dependencies configured successfully")
 endfunction()
 

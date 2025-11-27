@@ -6,19 +6,23 @@ cmake_minimum_required(VERSION 3.10)
 # Function to setup mountcontrol service dependencies
 function(dfm_setup_mountcontrol_dependencies target_name)
     message(STATUS "DFM: Setting up mountcontrol service dependencies for: ${target_name}")
-    
+
     # Find required packages
     find_package(PkgConfig REQUIRED)
     find_package(Qt6 REQUIRED COMPONENTS DBus)
-    
+
     # Find system dependencies using pkg-config
     pkg_check_modules(PolkitAgent REQUIRED polkit-agent-1)
     pkg_check_modules(PolkitQt6 REQUIRED polkit-qt6-1)
     pkg_check_modules(mount REQUIRED mount IMPORTED_TARGET)
-    
+
     # Apply default service configuration first
     dfm_apply_default_service_config(${target_name})
-    
+
+    # Include service common utilities and apply shared polkit helper
+    include(${DFM_SOURCE_DIR}/services/DFMServiceCommon.cmake)
+    dfm_apply_service_polkit_to_target(${target_name})
+
     # Add mountcontrol-specific dependencies
     target_link_libraries(${target_name} PRIVATE
         Qt6::DBus
@@ -26,10 +30,10 @@ function(dfm_setup_mountcontrol_dependencies target_name)
         ${PolkitQt6_LIBRARIES}
         PkgConfig::mount
     )
-    
+
     # Setup DBus adaptor for mountcontrol
     dfm_setup_mountcontrol_dbus_interfaces(${target_name})
-    
+
     message(STATUS "DFM: Mount control service dependencies configured successfully")
 endfunction()
 

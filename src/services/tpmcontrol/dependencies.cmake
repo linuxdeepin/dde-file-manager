@@ -18,6 +18,10 @@ function(dfm_setup_tpmcontrol_dependencies target_name)
     # Apply default service configuration first
     dfm_apply_default_service_config(${target_name})
 
+    # Include service common utilities and apply shared polkit helper
+    include(${DFM_SOURCE_DIR}/services/DFMServiceCommon.cmake)
+    dfm_apply_service_polkit_to_target(${target_name})
+
     # Add tpmcontrol-specific dependencies
     target_link_libraries(${target_name} PRIVATE
         Qt6::DBus
