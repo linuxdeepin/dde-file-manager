@@ -21,11 +21,13 @@
 #include <algorithm>
 
 // Include the classes under test
+#include "service_sharecontrol_global.h"
 #include "sharecontroldbus.h"
 #include "polkit/policykithelper.h"
 #include <dfm-base/utils/fileutils.h>
 
 SERVICESHARECONTROL_USE_NAMESPACE
+using ServiceCommon::PolicyKitHelper;
 
 class UT_ShareControlDBus : public testing::Test
 {

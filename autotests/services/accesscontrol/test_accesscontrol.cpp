@@ -20,12 +20,14 @@
 #include "accesscontroldbus.h"
 #include "polkit/policykithelper.h"
 #include "utils.h"
+
 #include <dfm-base/base/device/deviceutils.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-mount/dblockmonitor.h>
 #include <dfm-mount/dblockdevice.h>
 
 SERVICEACCESSCONTROL_USE_NAMESPACE
+using ServiceCommon::PolicyKitHelper;
 
 class UT_AccessControlDBus : public testing::Test
 {
@@ -380,8 +382,8 @@ TEST_F(UT_AccessControlDBus, OnBlockDevMounted_SystemDevice_NoAction)
 // PolicyKitHelper Tests
 TEST_F(UT_AccessControlPolicyKitHelper, Instance_Singleton_ReturnsSameInstance)
 {
-    SERVICEACCESSCONTROL_NAMESPACE::PolicyKitHelper *instance1 = SERVICEACCESSCONTROL_NAMESPACE::PolicyKitHelper::instance();
-    SERVICEACCESSCONTROL_NAMESPACE::PolicyKitHelper *instance2 = SERVICEACCESSCONTROL_NAMESPACE::PolicyKitHelper::instance();
+    PolicyKitHelper *instance1 = PolicyKitHelper::instance();
+    PolicyKitHelper *instance2 = PolicyKitHelper::instance();
 
     EXPECT_EQ(instance1, instance2);
     EXPECT_NE(instance1, nullptr);
@@ -389,14 +391,14 @@ TEST_F(UT_AccessControlPolicyKitHelper, Instance_Singleton_ReturnsSameInstance)
 
 TEST_F(UT_AccessControlPolicyKitHelper, CheckAuthorization_EmptyBusName_ReturnsFalse)
 {
-    SERVICEACCESSCONTROL_NAMESPACE::PolicyKitHelper *helper = SERVICEACCESSCONTROL_NAMESPACE::PolicyKitHelper::instance();
+    PolicyKitHelper *helper = PolicyKitHelper::instance();
     bool result = helper->checkAuthorization("test.action", "");
     EXPECT_FALSE(result);
 }
 
 TEST_F(UT_AccessControlPolicyKitHelper, CheckAuthorization_ValidParameters_CallsPolkitQt)
 {
-    SERVICEACCESSCONTROL_NAMESPACE::PolicyKitHelper *helper = SERVICEACCESSCONTROL_NAMESPACE::PolicyKitHelper::instance();
+    PolicyKitHelper *helper = PolicyKitHelper::instance();
     // This test would require more complex mocking of PolkitQt1 classes
     // For now, we test the basic parameter validation
     bool result = helper->checkAuthorization("test.action", "org.test.service");

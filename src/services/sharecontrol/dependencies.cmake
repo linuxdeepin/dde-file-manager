@@ -6,27 +6,31 @@ cmake_minimum_required(VERSION 3.10)
 # Function to setup sharecontrol service dependencies
 function(dfm_setup_sharecontrol_dependencies target_name)
     message(STATUS "DFM: Setting up sharecontrol service dependencies for: ${target_name}")
-    
+
     # Find required packages
     find_package(PkgConfig REQUIRED)
     find_package(Qt6 REQUIRED COMPONENTS DBus)
-    
+
     # Find system dependencies using pkg-config
     pkg_check_modules(PolkitAgent REQUIRED polkit-agent-1)
     pkg_check_modules(PolkitQt6 REQUIRED polkit-qt6-1)
-    
+
     # Apply default service configuration first
     dfm_apply_default_service_config(${target_name})
-    
+
+    # Include service common utilities and apply shared polkit helper
+    include(${DFM_SOURCE_DIR}/services/DFMServiceCommon.cmake)
+    dfm_apply_service_polkit_to_target(${target_name})
+
     # Add sharecontrol-specific dependencies
     target_link_libraries(${target_name} PRIVATE
         ${PolkitAgent_LIBRARIES}
         ${PolkitQt6_LIBRARIES}
     )
-    
+
     # Setup DBus adaptor for sharecontrol
     dfm_setup_sharecontrol_dbus_interfaces(${target_name})
-    
+
     message(STATUS "DFM: Share control service dependencies configured successfully")
 endfunction()
 
