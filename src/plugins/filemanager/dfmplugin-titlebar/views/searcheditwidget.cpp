@@ -157,6 +157,7 @@ void SearchEditWidget::onUrlChanged(const QUrl &url)
         return;
     }
 
+    fmDebug() << "URL changed to non-search view, cleaning up search edit state";
     lastSearchTime = 0;
     lastExecutedSearchText.clear();
     searchEdit->clearEdit();
@@ -164,6 +165,14 @@ void SearchEditWidget::onUrlChanged(const QUrl &url)
         delayTimer->stop();
     advancedButton->setVisible(false);
     advancedButton->setChecked(false);
+
+    // Clear focus to allow mode change
+    searchEdit->clearFocus();
+
+    // Force update layout to collapse search edit
+    if (parentWidget()) {
+        updateSearchEditWidget(parentWidget()->width());
+    }
 }
 
 void SearchEditWidget::onAdvancedButtonClicked()
