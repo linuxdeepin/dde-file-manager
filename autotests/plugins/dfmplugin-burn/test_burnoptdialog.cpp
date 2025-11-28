@@ -111,7 +111,7 @@ TEST_F(UT_BurnOptDialog, setISOImage_ValidImage)
     dialog->setISOImage(imageUrl);
 
     EXPECT_EQ(dialog->imageFile, imageUrl);
-    EXPECT_FALSE(dialog->donotcloseComb->isVisible());
+    EXPECT_FALSE(dialog->finalizeDiscCheckbox->isVisible());
     EXPECT_FALSE(dialog->fsComb->isVisible());
     EXPECT_FALSE(dialog->volnameEdit->isEnabled());
 }
@@ -209,7 +209,7 @@ TEST_F(UT_BurnOptDialog, currentBurnOptions_NoEject)
 
 TEST_F(UT_BurnOptDialog, currentBurnOptions_NoAppendable)
 {
-    dialog->donotcloseComb->setChecked(false);
+    dialog->finalizeDiscCheckbox->setChecked(false);
 
     DFMBURN::BurnOptions opts = dialog->currentBurnOptions();
 
@@ -336,8 +336,8 @@ TEST_F(UT_BurnOptDialog, onIndexChanged_UDFSelected)
 
     EXPECT_FALSE(dialog->checkdiscCheckbox->isChecked());
     EXPECT_FALSE(dialog->checkdiscCheckbox->isEnabled());
-    EXPECT_TRUE(dialog->donotcloseComb->isChecked());
-    EXPECT_FALSE(dialog->donotcloseComb->isEnabled());
+    EXPECT_TRUE(dialog->finalizeDiscCheckbox->isChecked());
+    EXPECT_FALSE(dialog->finalizeDiscCheckbox->isEnabled());
     EXPECT_EQ(dialog->writespeedComb->currentIndex(), 0);
     EXPECT_FALSE(dialog->writespeedComb->isEnabled());
 }
@@ -351,7 +351,7 @@ TEST_F(UT_BurnOptDialog, onIndexChanged_NonUDFSelected)
     dialog->onIndexChanged(1);   // Joliet
 
     EXPECT_TRUE(dialog->checkdiscCheckbox->isEnabled());
-    EXPECT_TRUE(dialog->donotcloseComb->isEnabled());
+    EXPECT_TRUE(dialog->finalizeDiscCheckbox->isEnabled());
     EXPECT_TRUE(dialog->writespeedComb->isEnabled());
 }
 
@@ -479,7 +479,7 @@ TEST_F(UT_BurnOptDialog, UI_Components_Existence)
     EXPECT_TRUE(dialog->fsComb != nullptr);
     EXPECT_TRUE(dialog->writespeedLabel != nullptr);
     EXPECT_TRUE(dialog->writespeedComb != nullptr);
-    EXPECT_TRUE(dialog->donotcloseComb != nullptr);
+    EXPECT_TRUE(dialog->finalizeDiscCheckbox != nullptr);
     EXPECT_TRUE(dialog->checkdiscCheckbox != nullptr);
     EXPECT_TRUE(dialog->ejectCheckbox != nullptr);
 }
@@ -488,7 +488,7 @@ TEST_F(UT_BurnOptDialog, UI_DefaultValues)
 {
     // Test default values
     EXPECT_EQ(dialog->fsComb->currentIndex(), 1);   // Default to Joliet
-    EXPECT_TRUE(dialog->donotcloseComb->isChecked());
+    EXPECT_TRUE(dialog->finalizeDiscCheckbox->isChecked());
     EXPECT_TRUE(dialog->ejectCheckbox->isChecked());
     EXPECT_FALSE(dialog->checkdiscCheckbox->isChecked());
     EXPECT_EQ(dialog->writespeedComb->itemText(0), QObject::tr("Maximum"));
