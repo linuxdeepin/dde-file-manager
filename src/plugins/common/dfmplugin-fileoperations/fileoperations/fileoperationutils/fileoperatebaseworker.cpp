@@ -56,6 +56,9 @@ AbstractJobHandler::SupportAction FileOperateBaseWorker::doHandleErrorAndWait(co
                                                                               const AbstractJobHandler::JobErrorType &error, const bool isTo,
                                                                               const QString &errorMsg, const bool errorMsgAll)
 {
+    if (!workData) {
+        return currentAction;
+    }
     if (workData->errorOfAction.contains(error)) {
         currentAction = workData->errorOfAction.value(error);
         return currentAction;
@@ -1186,6 +1189,8 @@ void FileOperateBaseWorker::setAllDirPermisson()
 qint64 FileOperateBaseWorker::getWriteDataSize()
 {
     qint64 writeSize = 0;
+    if (!workData)
+        return writeSize;
 
     if (CountWriteSizeType::kTidType == countWriteType) {
         writeSize = getTidWriteSize();

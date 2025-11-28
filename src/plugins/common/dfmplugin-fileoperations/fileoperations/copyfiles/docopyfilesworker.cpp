@@ -38,6 +38,9 @@ DoCopyFilesWorker::~DoCopyFilesWorker()
 
 bool DoCopyFilesWorker::doWork()
 {
+    if (!workData) {
+        return false;
+    }
     // 深信服远程下载
     if (sourceUrls.isEmpty() && workData->jobFlags.testFlag(DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kCopyRemote)) {
         sourceUrls = dfmbase::ClipBoard::instance()->getRemoteUrls();
