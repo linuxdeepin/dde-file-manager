@@ -2,12 +2,12 @@
 <context>
     <name>AccessControlDBus</name>
     <message>
-        <location filename="../src/services/accesscontrol/accesscontroldbus.cpp" line="51"/>
+        <location filename="../src/services/accesscontrol/accesscontroldbus.cpp" line="53"/>
         <source>Invalid args</source>
         <translation>Arguments no vàlids</translation>
     </message>
     <message>
-        <location filename="../src/services/accesscontrol/accesscontroldbus.cpp" line="52"/>
+        <location filename="../src/services/accesscontrol/accesscontroldbus.cpp" line="54"/>
         <source>Invalid invoker</source>
         <translation>Invocador no vàlid</translation>
     </message>
@@ -28,7 +28,7 @@
 <context>
     <name>DMInitEncryptWorker</name>
     <message>
-        <location filename="../src/services/diskencrypt/workers/dminitencryptworker.cpp" line="49"/>
+        <location filename="../src/services/diskencrypt/workers/dminitencryptworker.cpp" line="51"/>
         <source>Initialize encryption </source>
         <translation>Inicia l&apos;encriptació</translation>
     </message>
@@ -121,7 +121,7 @@
 <context>
     <name>FstabDecryptWorker</name>
     <message>
-        <location filename="../src/services/diskencrypt/workers/fstabdecryptworker.cpp" line="27"/>
+        <location filename="../src/services/diskencrypt/workers/fstabdecryptworker.cpp" line="28"/>
         <source>Decrypting </source>
         <translation>Es desencripta</translation>
     </message>
@@ -129,7 +129,7 @@
 <context>
     <name>FstabInitEncryptWorker</name>
     <message>
-        <location filename="../src/services/diskencrypt/workers/fstabinitencryptworker.cpp" line="25"/>
+        <location filename="../src/services/diskencrypt/workers/fstabinitencryptworker.cpp" line="27"/>
         <source>Initialize encryption </source>
         <translation>Inicia l&apos;encriptació</translation>
     </message>
@@ -145,7 +145,7 @@
 <context>
     <name>NormalDecryptWorker</name>
     <message>
-        <location filename="../src/services/diskencrypt/workers/normaldecryptworker.cpp" line="22"/>
+        <location filename="../src/services/diskencrypt/workers/normaldecryptworker.cpp" line="24"/>
         <source>Decrypting </source>
         <translation>Es desencripta</translation>
     </message>
@@ -153,7 +153,7 @@
 <context>
     <name>NormalInitEncryptWorker</name>
     <message>
-        <location filename="../src/services/diskencrypt/workers/normalinitencryptworker.cpp" line="23"/>
+        <location filename="../src/services/diskencrypt/workers/normalinitencryptworker.cpp" line="25"/>
         <source>Initialize encryption </source>
         <translation>Inicia l&apos;encriptació</translation>
     </message>
@@ -405,7 +405,7 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
         <translation>%1 elements</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="1364"/>
+        <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="1365"/>
         <source>Unable to find the original file</source>
         <translation>No es pot trobar el fitxer original.</translation>
     </message>
@@ -968,7 +968,7 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
         <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/utils/previewfileoperation.cpp" line="40"/>
         <location filename="../src/dfm-base/utils/universalutils.cpp" line="82"/>
         <location filename="../src/dfm-base/utils/universalutils.cpp" line="105"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="110"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="116"/>
         <source>dde-file-manager</source>
         <translation>dde-file-manager</translation>
     </message>
@@ -1043,37 +1043,37 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
         <translation>Propietats</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="58"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="63"/>
         <source>New Folder</source>
         <translation>Carpeta nova</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="61"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="66"/>
         <source>New Text</source>
         <translation>Text nou</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="65"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="70"/>
         <source>Document</source>
         <translation>Document</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="69"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="74"/>
         <source>Spreadsheet</source>
         <translation>Full de càlcul</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="73"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="78"/>
         <source>Presentation</source>
         <translation>Presentació</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="77"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="82"/>
         <source>New File</source>
         <translation>Fitxer nou</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="819"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="933"/>
         <source>Create symlink</source>
         <translation>Crea un enllaç simbòlic</translation>
     </message>
@@ -1142,8 +1142,9 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="198"/>
-        <source>Allow files to be added later</source>
-        <translation>Permet afegir-hi fitxers després.</translation>
+        <source>Finalize disc after burning 
+(no additional data can be appended)</source>
+        <translation>Clou el disc després de gravar-lo (no s&apos;hi poden afegir dades addicionals)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="208"/>
@@ -1812,70 +1813,70 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
         <translation>Deconegut</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="270"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="279"/>
         <source>search</source>
         <translation>cerca</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="285"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="294"/>
         <source>advanced search</source>
         <translation>cerca avançada</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="405"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="654"/>
         <source>Cannot generate random number by TPM</source>
         <translation>No es pot generar un nombre aleatori per TPM</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="408"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="657"/>
         <source>No available encrypt algorithm.</source>
         <translation>No hi ha cap algorisme d&apos;encriptació disponible.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="411"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="660"/>
         <source>TPM encrypt failed.</source>
         <translation>L&apos;encriptació de TPM ha fallat.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="414"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="663"/>
         <source>TPM is locked.</source>
         <translation>El TPM està blocat.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="487"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="736"/>
         <source>Confirm encrypt %1?</source>
         <translation>Confirmeu l&apos;encriptació de %1?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="490"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="739"/>
         <source>The current partition is about to be encrypted and cannot be canceled during the encryption process, please confirm the encryption.</source>
         <translation>La partició actual s&apos;està a punt d&apos;encriptar i no es pot cancel·lar durant el procés. Confirmeu-ho.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="498"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="513"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="747"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="762"/>
         <source>Cancel</source>
         <translation>Cancel·la</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="499"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="514"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="748"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="763"/>
         <source>Confirm and Reboot</source>
         <translation>Ho confirmo i reinicia&apos;t</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="500"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="514"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="749"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="763"/>
         <source>Confirm</source>
         <translation>Confirmeu-ho</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="510"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="759"/>
         <source>Decrypt %1?</source>
         <translation>Desencripto %1?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="511"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="760"/>
         <source>Decryption can take a long time, so make sure power is connected until the decryption is complete.</source>
         <translation>La desencriptació pot trigar molt de temps, així que assegureu-vos que l&apos;alimentació d&apos;energia estigui connectada fins que s&apos;hagi completat.</translation>
     </message>
@@ -2021,7 +2022,7 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
 <context>
     <name>ResumeEncryptWorker</name>
     <message>
-        <location filename="../src/services/diskencrypt/workers/resumeencryptworker.cpp" line="64"/>
+        <location filename="../src/services/diskencrypt/workers/resumeencryptworker.cpp" line="68"/>
         <source>Encrypting </source>
         <translation>S&apos;encripta</translation>
     </message>
@@ -2869,7 +2870,6 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
         <translation>No es pot crear el punt de muntatge: el nom del fitxer és massa llarg.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="167"/>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="171"/>
         <source>Authentication failed</source>
         <translation>Ha fallat l&apos;autenticació.</translation>
@@ -3013,6 +3013,11 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
         <source>Delete</source>
         <comment>button</comment>
         <translation>Elimina</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="167"/>
+        <source>Permission denied</source>
+        <translation>Permís denegat</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="426"/>
@@ -4171,12 +4176,12 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
         <translation>%1 (compatible amb el mode de CD / DVD de Windows)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="315"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="314"/>
         <source>Device error</source>
         <translation>Error del dispositiu</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="315"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="314"/>
         <source>Optical device %1 doesn&apos;t exist</source>
         <translation>El dispositiu òptic %1 no existeix.</translation>
     </message>
@@ -4188,16 +4193,26 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
         <source>The file name or the path is too long. Please shorten the file name or the path and try again.</source>
         <translation>El nom del fitxer o del camí és massa llarg. Escurceu el nom del fitxer o el camí i torneu-ho a provar.</translation>
     </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="576"/>
+        <source>Not enough free space on the disc</source>
+        <translation>No hi ha prou espai lliure al disc.</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="577"/>
+        <source>The remaining space on the current disc is insufficient to hold the files to be burned. Please reduce the number of files and try again.</source>
+        <translation>L&apos;espai restant al disc actual no és suficient per contenir els fitxers que es gravaran. Reduïu el nombre de fitxers i torneu-ho a intentar.</translation>
+    </message>
 </context>
 <context>
     <name>dfmplugin_burn::DumpISOImageJob</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="582"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="601"/>
         <source>Creating an ISO image</source>
         <translation>Es crea una imatge ISO</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="583"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="602"/>
         <source>to %1</source>
         <translation>a %1</translation>
     </message>
@@ -4688,7 +4703,7 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="80"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="345"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="594"/>
         <source>Confirm</source>
         <translation>Confirma</translation>
     </message>
@@ -4904,12 +4919,12 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
         <translation>No es pot %1 el dispositiu %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="845"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="846"/>
         <source>Reboot to continue encrypt</source>
         <translation>Reinicia per continuar l&apos;encriptació</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="846"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="847"/>
         <source>Reboot to finish decrypt</source>
         <translation>Reinicia per acabar l&apos;encriptació</translation>
     </message>
@@ -5063,18 +5078,18 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
         <translation>L&apos;accés a la partició es desblocarà automàticament mitjançant el xip de seguretat TPM. No cal comprovar la contrasenya.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="461"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="462"/>
         <source>TPM is locked and cannot be used for partition encryption. Please cancel the TPM password or choose another unlocking method.</source>
         <translation>El TPM està blocat i no es pot usar per a l&apos;encriptació de particions. Cancel·leu la contrasenya del TPM o trieu un altre mètode de desblocatge.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="463"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="468"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="464"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="469"/>
         <source>TPM error</source>
         <translation>Error de TPM</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="468"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="469"/>
         <source>TPM status error!</source>
         <translation>Error de l&apos;estat de TPM!</translation>
     </message>
@@ -5087,44 +5102,44 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
         <translation>Confirmeu-ho</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="65"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="79"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="64"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="78"/>
         <source>Re-export the recovery key</source>
         <translation>Torna a exportar la clau de recuperació</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="69"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="68"/>
         <source>*Recovery key saving failed, please re-save the recovery key to a non-encrypted partition and keep it in a safe place!</source>
         <translation>*No s&apos;ha pogut desar la clau de recuperació. Torneu a desar-la en una partició no encriptada i guardeu-la en un lloc segur.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="88"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="194"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="87"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="202"/>
         <source>Error</source>
         <translation>Error</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="149"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="157"/>
         <source>Recovery key export path cannot be empty!</source>
         <translation>El camí d&apos;exportació de la clau de recuperació no pot estar buit!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="155"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="163"/>
         <source>Recovery key export path is not exists!</source>
         <translation>El camí d&apos;exportació de la clau de recuperació no existeix!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="162"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="170"/>
         <source>This partition is read-only, please export to a writable partition</source>
         <translation>Aquesta partició és només de lectura. Exporteu-ho a una partició en què es pugui escriure.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="177"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="185"/>
         <source>The partition is encrypted, please export to a non-encrypted partition or external device such as a USB flash drive.</source>
         <translation>La partició està encriptada. Exporteu-la a una partició no encriptada o a un dispositiu extern, com ara una unitat USB.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="194"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="202"/>
         <source>Cannot create recovery key file!</source>
         <translation>No es pot crear un fitxer de clau de recuperació!</translation>
     </message>
@@ -5132,220 +5147,220 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
 <context>
     <name>dfmplugin_diskenc::EventsHandler</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="213"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="214"/>
         <source>Encrypt done</source>
         <translation>Encriptació feta</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="219"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="220"/>
         <source>Encrypt failed</source>
         <translation>Ha fallat l&apos;encriptació.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="214"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="215"/>
         <source>Partition %1 has been encrypted</source>
         <translation>La partició %1 s&apos;ha encriptat.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="220"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="221"/>
         <source>Partition %1 encrypt failed, please see log for more information.(%2)</source>
         <translation>Ha fallat encriptar la partició %1. Consulteu el registre per obtenir-ne més informació. (%2)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="331"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="327"/>
         <source>%1 is under encrypting...</source>
         <translation>%1 s&apos;encripta...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="332"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="328"/>
         <source>The encrypting process may have system lag, please minimize the system operation</source>
         <translation>El procés d&apos;encriptació pot tenir un retard de sistema; minimitzeu-ne el funcionament.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="352"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="348"/>
         <source>%1 is under decrypting...</source>
         <translation>%1 es desencripta...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="353"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="349"/>
         <source>The decrypting process may have system lag, please minimize the system operation</source>
         <translation>El procés de desencriptació pot tenir un retard de sistema; minimitzeu-ne el funcionament.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="383"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="623"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="379"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="618"/>
         <source>Error</source>
         <translation>Error</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="383"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="379"/>
         <source>TPM status is abnormal, please use the recovery key to unlock it</source>
         <translation>L&apos;estat del TPM és anormal, utilitzeu la clau de recuperació per desblocar-lo</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="414"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="410"/>
         <source>Wrong PIN</source>
         <translation>PIN incorrecte</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="416"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="412"/>
         <source>Wrong passphrase</source>
         <translation>Contrasenya incorrecta</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="418"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="414"/>
         <source>TPM error</source>
         <translation>Error de TPM</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="420"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="416"/>
         <source>Please use recovery key to unlock device.</source>
         <translation>Utilitzeu la clau de recuperació per desblocar el dispositiu.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="487"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="483"/>
         <source>Preencrypt done</source>
         <translation>Preencriptació feta</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="488"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="484"/>
         <source>Partition %1 has been preencrypt, please reboot to finish encryption.</source>
         <translation>La partició %1 s&apos;ha preencriptat; si us plau, reinicieu per acabar-la.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="497"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="493"/>
         <source>Partition %1 preencrypt failed, please see log for more information.(%2)</source>
         <translation>Ha fallat la preencriptació de la partició %1. Consulteu el registre per obtenir-ne més informació. (%2)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="519"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="515"/>
         <source>Partition %1 has been decrypted</source>
         <translation>La partició %1 s&apos;ha desencriptat.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="527"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="523"/>
         <source>Decrypt partition</source>
         <translation>Desencripta la partició</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="533"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="529"/>
         <source>Partition %1 is under encrypting, please decrypt after encryption finished.</source>
         <translation>La partició %1 s&apos;encripta. Si us plau, feu-ne la desencriptació un cop hagi acabat.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="539"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="535"/>
         <source>Partition %1 Decrypt failed, please see log for more information.(%2)</source>
         <translation>Ha fallat desencriptar la partició %1. Consulteu el registre per obtenir-ne més informació. (%2)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="592"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="587"/>
         <source>Partition %1 change %2 failed, please see log for more information.(%3)</source>
         <translation>Ha fallat el canvi %2 de la partició %1. Consulteu el registre per obtenir-ne més informació. (%3)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="624"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="619"/>
         <source>Partition is not fully decrypted, please finish decryption before access.</source>
         <translation>La partició no està completament desencriptada; si us plau, acabeu la desencriptació abans d&apos;accedir-hi.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="632"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="627"/>
         <source>Unlocking partition failed</source>
         <translation>Ha fallat desblocar la partició.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="633"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="628"/>
         <source>Please click &quot;Continue Partition Encryption&quot; in the right-click menu to complete the partition encryption.</source>
         <translation>Cliqueu a l&apos;opció de continuar l&apos;encriptació de la partició al menú contextual per completar-ne l&apos;encriptació.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="496"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="492"/>
         <source>Preencrypt failed</source>
         <translation>La preencriptació ha fallat.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="518"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="514"/>
         <source>Decrypt done</source>
         <translation>Desencriptació feta</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="528"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="524"/>
         <source>Wrong passpharse or PIN</source>
         <translation>Contrasenya o PIN incorrecte</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="532"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="538"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="528"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="534"/>
         <source>Decrypt failed</source>
         <translation>Ha fallat la desencriptació.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="567"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="562"/>
         <source>passphrase</source>
         <translation>contrasenya</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="570"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="565"/>
         <source>PIN</source>
         <translation>PIN</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="577"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="572"/>
         <source>Change %1 done</source>
         <translation>Canvi %1 fet</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="578"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="573"/>
         <source>%1&apos;s %2 has been changed</source>
         <translation>El %2 de %1 s&apos;ha canviat.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="585"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="591"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="580"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="586"/>
         <source>Change %1 failed</source>
         <translation>El canvi %1 ha fallat.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="586"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="581"/>
         <source>Wrong %1</source>
         <translation>%1 incorrecte</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="661"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="689"/>
         <source>Partition Encryption Non-Reboot Mode Enabled</source>
         <translation>Mode d&apos;encriptació de partició sense reinici habilitat</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="662"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="690"/>
         <source>Partition Encryption Non-Reboot Mode has been enabled successfully. Please reboot your system for the changes to take effect. After reboot, partition encryption operations will not require system restart.</source>
         <translation>El mode d&apos;encriptació de partició sense reinici s&apos;ha habilitat correctament. Reinicieu el sistema perquè els canvis tinguin efecte. Després de reiniciar, les operacions d&apos;encriptació de partició no requeriran el reinici del sistema.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="666"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="694"/>
         <source>Partition Encryption Non-Reboot Mode Disabled</source>
         <translation>Mode d&apos;encriptació de partició sense reinici inhabilitat</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="667"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="695"/>
         <source>Partition Encryption Non-Reboot Mode has been disabled successfully. Please reboot your system for the changes to take effect. After reboot, partition encryption operations will require system restart.</source>
         <translation>El mode d&apos;encriptació de partició sense reinici s&apos;ha inhabilitat correctament. Reinicieu el sistema perquè els canvis tinguin efecte. Després de reiniciar, les operacions d&apos;encriptació de partició requeriran el reinici del sistema.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="675"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="703"/>
         <source>Operation Failed</source>
         <translation>Ha fallat l&apos;operació.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="677"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="705"/>
         <source>Failed to enable Partition Encryption Non-Reboot Mode. The system may not support this feature or encountered an error during initramfs update.</source>
         <translation>No s&apos;ha pogut habilitar el mode d&apos;encriptació de partició sense reinici. És possible que el sistema no admeti aquesta funció o que s&apos;hagi trobat un error durant l&apos;actualització de l&apos;initramfs.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="680"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="708"/>
         <source>Failed to disable Partition Encryption Non-Reboot Mode. An error occurred during initramfs update.</source>
         <translation>No s&apos;ha pogut inhabilitar el mode d&apos;encriptació de partició sense reinici. S&apos;ha trobat un error durant l&apos;actualització de l&apos;initramfs.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="692"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="720"/>
         <source>dde-file-manager</source>
         <translation>dde-file-manager</translation>
     </message>
@@ -5679,28 +5694,28 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
 <context>
     <name>dfmplugin_fileoperations::FileOperationsEventReceiver</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="356"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="361"/>
         <source>Rename file error</source>
         <translation>Error de canvi de nom del fitxer</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="647"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="652"/>
         <source>Failed to create the directory</source>
         <translation>Ha fallat crear el directori.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1227"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1341"/>
         <source>Failed to create the file</source>
         <translation>Ha fallat crear el fitxer</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1328"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1442"/>
         <source>link file error</source>
         <translation>error del fitxer d&apos;enllaç</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1370"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1379"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1484"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1493"/>
         <source>Failed to modify file permissions</source>
         <translation>No s&apos;han pogut modificar els permisos dels fitxers.</translation>
     </message>
@@ -5747,17 +5762,17 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
 <context>
     <name>dfmplugin_menu::ClipBoardMenuScenePrivate</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="34"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="37"/>
         <source>&amp;Paste</source>
         <translation>En&amp;ganxa</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="35"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="38"/>
         <source>Cu&amp;t</source>
         <translation>Re&amp;talla</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="36"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="39"/>
         <source>&amp;Copy</source>
         <translation>&amp;Copia</translation>
     </message>
@@ -5976,7 +5991,7 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
         <translation>No hi ha fitxers per gravar.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="289"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="301"/>
         <source>Unable to burn. Not enough free space on the target disk.</source>
         <translation>No es pot fer la gravació. No hi ha prou espai lliure al disc de destinació.</translation>
     </message>
@@ -8069,7 +8084,7 @@ Si us plau, esborreu els fitxers d&apos;aquest directori i intenteu tornar a des
 <context>
     <name>dfmplugin_workspace::FileOperatorHelper</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="111"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="117"/>
         <source>Failed to open %1, which may be moved or renamed</source>
         <translation>Ha fallat obrir %1, que es pot haver mogut o canviat de nom.</translation>
     </message>
