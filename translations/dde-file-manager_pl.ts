@@ -2,12 +2,12 @@
 <context>
     <name>AccessControlDBus</name>
     <message>
-        <location filename="../src/services/accesscontrol/accesscontroldbus.cpp" line="51"/>
+        <location filename="../src/services/accesscontrol/accesscontroldbus.cpp" line="53"/>
         <source>Invalid args</source>
         <translation>Nieprawidłowe argumenty</translation>
     </message>
     <message>
-        <location filename="../src/services/accesscontrol/accesscontroldbus.cpp" line="52"/>
+        <location filename="../src/services/accesscontrol/accesscontroldbus.cpp" line="54"/>
         <source>Invalid invoker</source>
         <translation>Nieprawidłowy wywoływacz</translation>
     </message>
@@ -28,7 +28,7 @@
 <context>
     <name>DMInitEncryptWorker</name>
     <message>
-        <location filename="../src/services/diskencrypt/workers/dminitencryptworker.cpp" line="49"/>
+        <location filename="../src/services/diskencrypt/workers/dminitencryptworker.cpp" line="51"/>
         <source>Initialize encryption </source>
         <translation>Inicjowanie szyfrowania </translation>
     </message>
@@ -121,7 +121,7 @@
 <context>
     <name>FstabDecryptWorker</name>
     <message>
-        <location filename="../src/services/diskencrypt/workers/fstabdecryptworker.cpp" line="27"/>
+        <location filename="../src/services/diskencrypt/workers/fstabdecryptworker.cpp" line="28"/>
         <source>Decrypting </source>
         <translation>Rozszyfrowuję </translation>
     </message>
@@ -129,7 +129,7 @@
 <context>
     <name>FstabInitEncryptWorker</name>
     <message>
-        <location filename="../src/services/diskencrypt/workers/fstabinitencryptworker.cpp" line="25"/>
+        <location filename="../src/services/diskencrypt/workers/fstabinitencryptworker.cpp" line="27"/>
         <source>Initialize encryption </source>
         <translation>Inicjowanie szyfrowania </translation>
     </message>
@@ -145,7 +145,7 @@
 <context>
     <name>NormalDecryptWorker</name>
     <message>
-        <location filename="../src/services/diskencrypt/workers/normaldecryptworker.cpp" line="22"/>
+        <location filename="../src/services/diskencrypt/workers/normaldecryptworker.cpp" line="24"/>
         <source>Decrypting </source>
         <translation>Rozszyfrowuję </translation>
     </message>
@@ -153,7 +153,7 @@
 <context>
     <name>NormalInitEncryptWorker</name>
     <message>
-        <location filename="../src/services/diskencrypt/workers/normalinitencryptworker.cpp" line="23"/>
+        <location filename="../src/services/diskencrypt/workers/normalinitencryptworker.cpp" line="25"/>
         <source>Initialize encryption </source>
         <translation>Inicjowanie szyfrowania </translation>
     </message>
@@ -405,7 +405,7 @@ Wprowadź nazwę użytkownika i hasło dla %1</translation>
         <translation>%1 przedmiotów</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="1364"/>
+        <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="1365"/>
         <source>Unable to find the original file</source>
         <translation>Brak możliwości znalezienia pierwotnego pliku</translation>
     </message>
@@ -968,7 +968,7 @@ Wprowadź nazwę użytkownika i hasło dla %1</translation>
         <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/utils/previewfileoperation.cpp" line="40"/>
         <location filename="../src/dfm-base/utils/universalutils.cpp" line="82"/>
         <location filename="../src/dfm-base/utils/universalutils.cpp" line="105"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="110"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="116"/>
         <source>dde-file-manager</source>
         <translation>dde-file-manager</translation>
     </message>
@@ -1043,37 +1043,37 @@ Wprowadź nazwę użytkownika i hasło dla %1</translation>
         <translation>Właściwości</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="58"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="63"/>
         <source>New Folder</source>
         <translation>Nowy folder</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="61"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="66"/>
         <source>New Text</source>
         <translation>Nowy tekst</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="65"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="70"/>
         <source>Document</source>
         <translation>Dokument</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="69"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="74"/>
         <source>Spreadsheet</source>
         <translation>Arkusz kalkulacyjny</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="73"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="78"/>
         <source>Presentation</source>
         <translation>Prezentacja</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="77"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="82"/>
         <source>New File</source>
         <translation>Nowy plik</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="819"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="933"/>
         <source>Create symlink</source>
         <translation>Utwórz dowiązanie symboliczne</translation>
     </message>
@@ -1142,8 +1142,9 @@ Wprowadź nazwę użytkownika i hasło dla %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="198"/>
-        <source>Allow files to be added later</source>
-        <translation>Zezwól na dodawanie plików później</translation>
+        <source>Finalize disc after burning 
+(no additional data can be appended)</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="208"/>
@@ -1812,70 +1813,70 @@ Wprowadź nazwę użytkownika i hasło dla %1</translation>
         <translation>Nieznany</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="270"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="279"/>
         <source>search</source>
         <translation>szukaj</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="285"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="294"/>
         <source>advanced search</source>
         <translation>szukanie zaawansowane</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="405"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="654"/>
         <source>Cannot generate random number by TPM</source>
         <translation>Nie można wygenerować losowej liczby poprzez TPM</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="408"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="657"/>
         <source>No available encrypt algorithm.</source>
         <translation>Brak dostępnego algorytmu szyfrowania</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="411"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="660"/>
         <source>TPM encrypt failed.</source>
         <translation>Błąd szyfrowania TPM.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="414"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="663"/>
         <source>TPM is locked.</source>
         <translation>TPM jest zablokowany.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="487"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="736"/>
         <source>Confirm encrypt %1?</source>
         <translation>Potwierdź szyfrowanie %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="490"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="739"/>
         <source>The current partition is about to be encrypted and cannot be canceled during the encryption process, please confirm the encryption.</source>
         <translation>Bieżąca partycja zostanie zaszyfrowana, a procesu nie będzie można przerwać. Potwierdź szyfrowanie.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="498"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="513"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="747"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="762"/>
         <source>Cancel</source>
         <translation>Anuluj</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="499"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="514"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="748"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="763"/>
         <source>Confirm and Reboot</source>
         <translation>Potwierdź i uruchom ponownie</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="500"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="514"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="749"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="763"/>
         <source>Confirm</source>
         <translation>Potwierdź</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="510"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="759"/>
         <source>Decrypt %1?</source>
         <translation>Rozszyfrować %1?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="511"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="760"/>
         <source>Decryption can take a long time, so make sure power is connected until the decryption is complete.</source>
         <translation>Proces rozszyfrowania może zająć dużo czasu, więc upewnij się, że masz stały dostęp do zasilania.</translation>
     </message>
@@ -2021,7 +2022,7 @@ Wprowadź nazwę użytkownika i hasło dla %1</translation>
 <context>
     <name>ResumeEncryptWorker</name>
     <message>
-        <location filename="../src/services/diskencrypt/workers/resumeencryptworker.cpp" line="64"/>
+        <location filename="../src/services/diskencrypt/workers/resumeencryptworker.cpp" line="68"/>
         <source>Encrypting </source>
         <translation>Szyfruję </translation>
     </message>
@@ -2869,7 +2870,6 @@ Wprowadź nazwę użytkownika i hasło dla %1</translation>
         <translation>Nie można utworzyć punktu montowania: za długa nazwa pliku</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="167"/>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="171"/>
         <source>Authentication failed</source>
         <translation>Błąd uwierzytelniania</translation>
@@ -3013,6 +3013,11 @@ Wprowadź nazwę użytkownika i hasło dla %1</translation>
         <source>Delete</source>
         <comment>button</comment>
         <translation>Usuń</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="167"/>
+        <source>Permission denied</source>
+        <translation>Odmowa dostępu</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="426"/>
@@ -4171,12 +4176,12 @@ Wprowadź nazwę użytkownika i hasło dla %1</translation>
         <translation>%1 (Kompatybilny z trybem Windows CD-DVD)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="315"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="314"/>
         <source>Device error</source>
         <translation>Błąd urządzenia</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="315"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="314"/>
         <source>Optical device %1 doesn&apos;t exist</source>
         <translation>Urządzenie optyczne %1 nie istnieje</translation>
     </message>
@@ -4188,16 +4193,26 @@ Wprowadź nazwę użytkownika i hasło dla %1</translation>
         <source>The file name or the path is too long. Please shorten the file name or the path and try again.</source>
         <translation>Nazwa pliku lub ścieżka jest za długa. Skróć nazwę pliku lub ścieżkę, a następnie spróbuj ponownie.</translation>
     </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="576"/>
+        <source>Not enough free space on the disc</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="577"/>
+        <source>The remaining space on the current disc is insufficient to hold the files to be burned. Please reduce the number of files and try again.</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>dfmplugin_burn::DumpISOImageJob</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="582"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="601"/>
         <source>Creating an ISO image</source>
         <translation>Tworzenie obrazu ISO</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="583"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="602"/>
         <source>to %1</source>
         <translation>do %1</translation>
     </message>
@@ -4688,7 +4703,7 @@ Wprowadź nazwę użytkownika i hasło dla %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="80"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="345"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="594"/>
         <source>Confirm</source>
         <translation>Potwierdź</translation>
     </message>
@@ -4904,12 +4919,12 @@ Wprowadź nazwę użytkownika i hasło dla %1</translation>
         <translation>Nie można %1 urządzenia %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="845"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="846"/>
         <source>Reboot to continue encrypt</source>
         <translation>Uruchom ponownie, aby kontynuować szyfrowanie</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="846"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="847"/>
         <source>Reboot to finish decrypt</source>
         <translation>Uruchom ponownie, aby zakończyć rozszyfrowywanie</translation>
     </message>
@@ -5063,18 +5078,18 @@ Wprowadź nazwę użytkownika i hasło dla %1</translation>
         <translation>Partycja zostanie automatycznie odblokowana za pomocą modułu TPM, podanie hasła nie będzie wymagane.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="461"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="462"/>
         <source>TPM is locked and cannot be used for partition encryption. Please cancel the TPM password or choose another unlocking method.</source>
         <translation>Nie można zaszyfrować partycji, ponieważ TPM jest zablokowany. Odblokuj TPM lub wybierz inną metodę odblokowania.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="463"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="468"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="464"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="469"/>
         <source>TPM error</source>
         <translation>Błąd TPM</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="468"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="469"/>
         <source>TPM status error!</source>
         <translation>Błąd statusu TPM!</translation>
     </message>
@@ -5087,44 +5102,44 @@ Wprowadź nazwę użytkownika i hasło dla %1</translation>
         <translation>Potwierdź</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="65"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="79"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="64"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="78"/>
         <source>Re-export the recovery key</source>
         <translation>Eksportuj ponownie klucz przywracania</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="69"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="68"/>
         <source>*Recovery key saving failed, please re-save the recovery key to a non-encrypted partition and keep it in a safe place!</source>
         <translation>* Nie udało się zapisać klucza przywracania, zapisz klucz na partycji nieszyfrowanej w bezpiecznym miejscu!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="88"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="194"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="87"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="202"/>
         <source>Error</source>
         <translation>Błąd</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="149"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="157"/>
         <source>Recovery key export path cannot be empty!</source>
         <translation>Ścieżka eksportu klucza przywracania nie może być pusta!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="155"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="163"/>
         <source>Recovery key export path is not exists!</source>
         <translation>Ścieżka eksportu klucza przywracania nie istnieje!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="162"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="170"/>
         <source>This partition is read-only, please export to a writable partition</source>
         <translation>Partycja jest tylko-do-odczytu, eksportuj partycję zapisywalną</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="177"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="185"/>
         <source>The partition is encrypted, please export to a non-encrypted partition or external device such as a USB flash drive.</source>
         <translation>Ta partycja jest szyfrowana, eksportuj do partycji nieszyfrowanej lub urządzenia zewnętrznego takiego jak pamięć USB.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="194"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="202"/>
         <source>Cannot create recovery key file!</source>
         <translation>Nie można utworzyć klucza przywracania!</translation>
     </message>
@@ -5132,220 +5147,220 @@ Wprowadź nazwę użytkownika i hasło dla %1</translation>
 <context>
     <name>dfmplugin_diskenc::EventsHandler</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="213"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="214"/>
         <source>Encrypt done</source>
         <translation>Szyfrowanie zakończone</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="219"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="220"/>
         <source>Encrypt failed</source>
         <translation>Błąd szyfrowania</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="214"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="215"/>
         <source>Partition %1 has been encrypted</source>
         <translation>Partycja %1 została zaszyfrowana</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="220"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="221"/>
         <source>Partition %1 encrypt failed, please see log for more information.(%2)</source>
         <translation>Nie udało się zaszyfrować partycji %1, zobacz dziennik zdarzeń po więcej informacji. (%2)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="331"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="327"/>
         <source>%1 is under encrypting...</source>
         <translation>%1 jest w trakcie szyfrowania...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="332"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="328"/>
         <source>The encrypting process may have system lag, please minimize the system operation</source>
         <translation>Proces szyfrowania może obciążyć system, prosimy o zamknięcie aplikacji w tle</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="352"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="348"/>
         <source>%1 is under decrypting...</source>
         <translation>%1 jest w trakcie odszyfrowywania...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="353"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="349"/>
         <source>The decrypting process may have system lag, please minimize the system operation</source>
         <translation>Proces odszyfrowywania może obciążyć system, prosimy o zamknięcie aplikacji w tle</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="383"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="623"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="379"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="618"/>
         <source>Error</source>
         <translation>Błąd</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="383"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="379"/>
         <source>TPM status is abnormal, please use the recovery key to unlock it</source>
         <translation>Status TPM jest nieprawidłowy, użyj klucza przywracania, aby odblokować</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="414"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="410"/>
         <source>Wrong PIN</source>
         <translation>Błędny PIN</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="416"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="412"/>
         <source>Wrong passphrase</source>
         <translation>Błędne hasło</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="418"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="414"/>
         <source>TPM error</source>
         <translation>Błąd TPM</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="420"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="416"/>
         <source>Please use recovery key to unlock device.</source>
         <translation>Użyj klucza przywracania, aby odblokować urządzenie.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="487"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="483"/>
         <source>Preencrypt done</source>
         <translation>Szyfrowanie wstępne zakończone</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="488"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="484"/>
         <source>Partition %1 has been preencrypt, please reboot to finish encryption.</source>
         <translation>Partycja %1 została wstępnie zaszyfrowana, uruchom ponownie, aby zakończyć proces.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="497"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="493"/>
         <source>Partition %1 preencrypt failed, please see log for more information.(%2)</source>
         <translation>Partycja %1 napotkała błąd szyfrowania wstępnego, zaloguj się po więcej informacji. (%2)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="519"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="515"/>
         <source>Partition %1 has been decrypted</source>
         <translation>Partycja %1 została rozszyfrowana</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="527"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="523"/>
         <source>Decrypt partition</source>
         <translation>Rozszyfruj partycję</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="533"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="529"/>
         <source>Partition %1 is under encrypting, please decrypt after encryption finished.</source>
         <translation>Partycja %1 jest w trakcie szyfrowania, rozszyfruj ją po zakończeniu.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="539"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="535"/>
         <source>Partition %1 Decrypt failed, please see log for more information.(%2)</source>
         <translation>Nie udało się rozszyfrować partycji %1, zaloguj się po więcej informacji. (%2)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="592"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="587"/>
         <source>Partition %1 change %2 failed, please see log for more information.(%3)</source>
         <translation>Partycja %1 zmiana %2 zakończona niepowodzeniem, sprawdź logi po więcej informacji. (%3)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="624"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="619"/>
         <source>Partition is not fully decrypted, please finish decryption before access.</source>
         <translation>Partycja nie została w pełni rozszyfrowana, dokończ proces przed przejściem dalej.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="632"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="627"/>
         <source>Unlocking partition failed</source>
         <translation>Nie udało się rozszyfrować partycji</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="633"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="628"/>
         <source>Please click &quot;Continue Partition Encryption&quot; in the right-click menu to complete the partition encryption.</source>
         <translation>Kliknij &quot;Kontynuuj szyfrowanie partycji&quot; w menu kontekstowym, aby zakończyć proces szyfrowania.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="496"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="492"/>
         <source>Preencrypt failed</source>
         <translation>Błąd szyfrowania wstępnego</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="518"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="514"/>
         <source>Decrypt done</source>
         <translation>Rozszyfrowanie zakończone</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="528"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="524"/>
         <source>Wrong passpharse or PIN</source>
         <translation>Błędne hasło lub PIN</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="532"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="538"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="528"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="534"/>
         <source>Decrypt failed</source>
         <translation>Błąd rozszyfrowania</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="567"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="562"/>
         <source>passphrase</source>
         <translation>hasło</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="570"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="565"/>
         <source>PIN</source>
         <translation>PIN</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="577"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="572"/>
         <source>Change %1 done</source>
         <translation>Zmiana %1 zakończona</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="578"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="573"/>
         <source>%1&apos;s %2 has been changed</source>
         <translation>%1 %2 został zmieniony</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="585"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="591"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="580"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="586"/>
         <source>Change %1 failed</source>
         <translation>Nie udało się zmienić %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="586"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="581"/>
         <source>Wrong %1</source>
         <translation>Błędny %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="661"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="689"/>
         <source>Partition Encryption Non-Reboot Mode Enabled</source>
         <translation>Szyfrowanie partycji bez ponownego uruchamiania włączone</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="662"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="690"/>
         <source>Partition Encryption Non-Reboot Mode has been enabled successfully. Please reboot your system for the changes to take effect. After reboot, partition encryption operations will not require system restart.</source>
         <translation>Szyfrowanie partycji bez ponownego uruchamiania zostało włączone pomyślnie. Uruchom system ponownie, aby zastosować zmiany. Operacje szyfrowania partycji będą wymagały ponownego uruchomienia.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="666"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="694"/>
         <source>Partition Encryption Non-Reboot Mode Disabled</source>
         <translation>Szyfrowanie partycji bez ponownego uruchamiania wyłączone</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="667"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="695"/>
         <source>Partition Encryption Non-Reboot Mode has been disabled successfully. Please reboot your system for the changes to take effect. After reboot, partition encryption operations will require system restart.</source>
         <translation>Szyfrowanie partycji bez ponownego uruchamiania zostało wyłączone pomyślnie. Uruchom system ponownie, aby zastosować zmiany. Operacje szyfrowania partycji będą wymagały ponownego uruchomienia.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="675"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="703"/>
         <source>Operation Failed</source>
         <translation>Operacja zakończona niepowodzeniem</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="677"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="705"/>
         <source>Failed to enable Partition Encryption Non-Reboot Mode. The system may not support this feature or encountered an error during initramfs update.</source>
         <translation>Nie udało się włączyć szyfrowania partycji bez ponownego uruchamiania. System może nie wspierać tej funkcji lub wystąpił błąd podczas aktualizacji initramfs.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="680"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="708"/>
         <source>Failed to disable Partition Encryption Non-Reboot Mode. An error occurred during initramfs update.</source>
         <translation>Nie udało się wyłączyć szyfrowania partycji bez ponownego uruchamiania. Wystąpił błąd podczas aktualizacji initramfs.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="692"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="720"/>
         <source>dde-file-manager</source>
         <translation>dde-file-manager</translation>
     </message>
@@ -5679,28 +5694,28 @@ Wprowadź nazwę użytkownika i hasło dla %1</translation>
 <context>
     <name>dfmplugin_fileoperations::FileOperationsEventReceiver</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="356"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="361"/>
         <source>Rename file error</source>
         <translation>Błąd zmiany nazwy pliku</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="647"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="652"/>
         <source>Failed to create the directory</source>
         <translation>Nie udało się utworzyć katalogu</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1227"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1341"/>
         <source>Failed to create the file</source>
         <translation>Nie udało się utworzyć pliku</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1328"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1442"/>
         <source>link file error</source>
         <translation>błąd dowiązania pliku</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1370"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1379"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1484"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1493"/>
         <source>Failed to modify file permissions</source>
         <translation>Nie udało się zmodyfikować uprawnień pliku</translation>
     </message>
@@ -5747,17 +5762,17 @@ Wprowadź nazwę użytkownika i hasło dla %1</translation>
 <context>
     <name>dfmplugin_menu::ClipBoardMenuScenePrivate</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="34"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="37"/>
         <source>&amp;Paste</source>
         <translation>&amp;Paste</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="35"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="38"/>
         <source>Cu&amp;t</source>
         <translation>Cu&amp;t</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="36"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="39"/>
         <source>&amp;Copy</source>
         <translation>&amp;Copy</translation>
     </message>
@@ -5976,7 +5991,7 @@ Wprowadź nazwę użytkownika i hasło dla %1</translation>
         <translation>Brak plików do wypalenia</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="289"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="301"/>
         <source>Unable to burn. Not enough free space on the target disk.</source>
         <translation>Nie można wypalić. Za mało miejsca na dysku docelowym.</translation>
     </message>
@@ -8069,7 +8084,7 @@ Wprowadź nazwę użytkownika i hasło dla %1</translation>
 <context>
     <name>dfmplugin_workspace::FileOperatorHelper</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="111"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="117"/>
         <source>Failed to open %1, which may be moved or renamed</source>
         <translation>Nie udało się otworzyć %1, mógł zostać przeniesiony lub usunięty</translation>
     </message>
