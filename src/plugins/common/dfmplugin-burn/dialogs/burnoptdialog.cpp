@@ -55,7 +55,7 @@ void BurnOptDialog::setISOImage(const QUrl &image)
     DFM_BURN_USE_NS
 
     imageFile = image;
-    donotcloseComb->hide();
+    finalizeDiscCheckbox->hide();
 
     fsLabel->hide();
     fsComb->hide();
@@ -194,15 +194,15 @@ void BurnOptDialog::initializeUi()
     writespeedLabel->setFont(f13);
     writespeedComb->setFont(f14);
 
-    // 刻录选项-允许追加
-    donotcloseComb = new QCheckBox(QObject::tr("Allow files to be added later"));
-    donotcloseComb->setChecked(true);
-    vLay->addWidget(donotcloseComb, 0, Qt::AlignTop);
+    // 刻录选项-封盘设置
+    finalizeDiscCheckbox = new QCheckBox(QObject::tr("Finalize disc after burning \n(no additional data can be appended)"));
+    finalizeDiscCheckbox->setChecked(false);
+    vLay->addWidget(finalizeDiscCheckbox, 0, Qt::AlignTop);
     QWidget *wpostburn = new QWidget();
     wpostburn->setLayout(new QHBoxLayout);
     vLay->addWidget(wpostburn, 0, Qt::AlignTop);
     wpostburn->layout()->setContentsMargins(0, 0, 0, 0);
-    donotcloseComb->setFont(f12);
+    finalizeDiscCheckbox->setFont(f12);
 
     // 刻录选项-校验数据
     checkdiscCheckbox = new QCheckBox(QObject::tr("Verify data"));
@@ -243,7 +243,7 @@ DFMBURN::BurnOptions BurnOptDialog::currentBurnOptions()
         opts |= DFMBURN::BurnOption::kVerifyDatas;
     if (ejectCheckbox->isChecked())
         opts |= DFMBURN::BurnOption::kEjectDisc;
-    if (donotcloseComb->isChecked())
+    if (!finalizeDiscCheckbox->isChecked())
         opts |= DFMBURN::BurnOption::kKeepAppendable;
 
     // 文件系统
@@ -296,13 +296,12 @@ void BurnOptDialog::onIndexChanged(int index)
     if (index == 3) {   // 3 is UDF
         checkdiscCheckbox->setChecked(false);
         checkdiscCheckbox->setEnabled(false);
-        donotcloseComb->setChecked(true);
-        // donotcloseComb->setEnabled(false);
+        finalizeDiscCheckbox->setChecked(true);
         writespeedComb->setCurrentIndex(0);
         writespeedComb->setEnabled(false);
     } else {
         checkdiscCheckbox->setEnabled(true);
-        donotcloseComb->setEnabled(true);
+        finalizeDiscCheckbox->setEnabled(true);
         writespeedComb->setEnabled(true);
     }
 }
