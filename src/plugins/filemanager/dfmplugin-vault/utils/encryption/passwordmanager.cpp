@@ -197,21 +197,19 @@ int PasswordManager::changePassword(const char *path,
     ret = crypt_load(cd, CRYPT_LUKS2, Q_NULLPTR);
     CHECK_ERROR(ret < 0, "Failed to load LUKS container");
 
-    // 用户密码可能在槽0或槽2，先尝试槽0，如果失败再尝试槽2（槽1是恢复密钥，不修改）
     int possibleSlots[] = { 0, 2 };
     ret = -1;
     for (int i = 0; i < 2; i++) {
-        // 先检查槽是否存在且激活
         crypt_keyslot_info keyslotStatus = crypt_keyslot_status(cd, possibleSlots[i]);
         if (keyslotStatus != CRYPT_SLOT_ACTIVE) {
-            continue;  // 槽不存在，跳过，不产生错误日志
+            continue;
         }
         ret = crypt_keyslot_change_by_passphrase(cd, possibleSlots[i], possibleSlots[i],
                                                  oldPassword, strlen(oldPassword),
                                                  newPassword, strlen(newPassword));
         if (ret >= 0) {
             newKeySlotId = ret;
-            break;  // 找到正确的槽并成功修改，退出循环
+            break;
         }
     }
     CHECK_ERROR(ret < 0, "Failed to change password");

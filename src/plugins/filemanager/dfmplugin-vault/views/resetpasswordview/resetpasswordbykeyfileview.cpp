@@ -13,8 +13,8 @@
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-#include <QRegExp>
-#include <QRegExpValidator>
+#include <QRegularExpression>
+#include <QRegularExpressionValidator>
 #include <QMouseEvent>
 #include <QEvent>
 #include <QFile>
@@ -54,8 +54,8 @@ void ResetPasswordByKeyFileView::initUI()
 
     DLabel *newPasswordLabel = new DLabel(tr("Enter New Password"), this);
     newPasswordEdit = new DPasswordEdit(this);
-    QRegExp regx("[A-Za-z0-9,.;?@/=()<>_+*&^%$#!`~'\"|]+");
-    QValidator *validator = new QRegExpValidator(regx, this);
+    QRegularExpression regx("[A-Za-z0-9,.;?@/=()<>_+*&^%$#!`~'\"|]+");
+    QValidator *validator = new QRegularExpressionValidator(regx, this);
     newPasswordEdit->lineEdit()->setValidator(validator);
     newPasswordEdit->lineEdit()->setPlaceholderText(tr("At least 8 characters, including A-Z, a-z, 0-9, and symbols"));
     newPasswordEdit->lineEdit()->setAttribute(Qt::WA_InputMethodEnabled, false);
@@ -66,17 +66,22 @@ void ResetPasswordByKeyFileView::initUI()
     repeatPasswordEdit->lineEdit()->setPlaceholderText(tr("Enter new password again"));
     repeatPasswordEdit->lineEdit()->setAttribute(Qt::WA_InputMethodEnabled, false);
 
+    DLabel *passwordHintLabel = new DLabel(tr("Password hint"), this);
+    passwordHintEdit = new DLineEdit(this);
+    passwordHintEdit->lineEdit()->setMaxLength(14);
+    passwordHintEdit->setPlaceholderText(tr("Optional"));
+
     switchMethodLabel = new DLabel(tr("Use old password verification"), this);
     DFontSizeManager::instance()->bind(switchMethodLabel, DFontSizeManager::T8, QFont::Medium);
     switchMethodLabel->setForegroundRole(DPalette::ColorType::LightLively);
     switchMethodLabel->installEventFilter(this);
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
-    mainLayout->setMargin(0);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setSpacing(10);
 
     QHBoxLayout *keyFileLayout = new QHBoxLayout();
-    keyFileLayout->setMargin(0);
+    keyFileLayout->setContentsMargins(0, 0, 0, 0);
     keyFileLayout->setSpacing(10);
     keyFileLabel->setFixedWidth(120);
     keyFileLayout->addWidget(keyFileLabel);
@@ -84,7 +89,7 @@ void ResetPasswordByKeyFileView::initUI()
     mainLayout->addLayout(keyFileLayout);
 
     QHBoxLayout *newPasswordLayout = new QHBoxLayout();
-    newPasswordLayout->setMargin(0);
+    newPasswordLayout->setContentsMargins(0, 0, 0, 0);
     newPasswordLayout->setSpacing(10);
     newPasswordLabel->setFixedWidth(120);
     newPasswordLayout->addWidget(newPasswordLabel);
@@ -92,31 +97,37 @@ void ResetPasswordByKeyFileView::initUI()
     mainLayout->addLayout(newPasswordLayout);
 
     QHBoxLayout *repeatPasswordLayout = new QHBoxLayout();
-    repeatPasswordLayout->setMargin(0);
+    repeatPasswordLayout->setContentsMargins(0, 0, 0, 0);
     repeatPasswordLayout->setSpacing(10);
     repeatPasswordLabel->setFixedWidth(120);
     repeatPasswordLayout->addWidget(repeatPasswordLabel);
     repeatPasswordLayout->addWidget(repeatPasswordEdit);
     mainLayout->addLayout(repeatPasswordLayout);
 
+    QHBoxLayout *passwordHintLayout = new QHBoxLayout();
+    passwordHintLayout->setContentsMargins(0, 0, 0, 0);
+    passwordHintLayout->setSpacing(10);
+    passwordHintLabel->setFixedWidth(120);
+    passwordHintLayout->addWidget(passwordHintLabel);
+    passwordHintLayout->addWidget(passwordHintEdit);
+    mainLayout->addLayout(passwordHintLayout);
+
     mainLayout->addStretch();
 
     QHBoxLayout *switchLayout = new QHBoxLayout();
-    switchLayout->setMargin(0);
+    switchLayout->setContentsMargins(0, 0, 0, 0);
     switchLayout->addStretch();
     switchLayout->addWidget(switchMethodLabel);
     mainLayout->addLayout(switchLayout);
 
     this->setLayout(mainLayout);
 
-    // 加载动画（放在窗口中间，覆盖在内容上方）
     spinner = new DSpinner(this);
     spinner->setFixedSize(48, 48);
     spinner->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     spinner->setFocusPolicy(Qt::NoFocus);
     spinner->hide();
 
-    // 初始化重置密码异步操作
     resetPasswordWatcher = new QFutureWatcher<ResetPasswordResult>(this);
     connect(resetPasswordWatcher, &QFutureWatcher<ResetPasswordResult>::finished, this, &ResetPasswordByKeyFileView::onResetPasswordFinished);
 
@@ -149,6 +160,7 @@ void ResetPasswordByKeyFileView::buttonClicked(int index, const QString &text)
             keyFileEdit->lineEdit()->setPlaceholderText(tr("Unable to get the key file"));
             keyFileEdit->setText("");
             emit sigBtnEnabled(1, true);
+            emit sigBtnEnabled(0, true);
             return;
         }
 
@@ -158,6 +170,7 @@ void ResetPasswordByKeyFileView::buttonClicked(int index, const QString &text)
             newPasswordEdit->setAlert(true);
             newPasswordEdit->showAlertMessage(tr("≥ 8 chars, contains A-Z, a-z, 0-9, and symbols"), kToolTipShowDuration);
             emit sigBtnEnabled(1, true);
+            emit sigBtnEnabled(0, true);
             return;
         }
 
@@ -166,53 +179,51 @@ void ResetPasswordByKeyFileView::buttonClicked(int index, const QString &text)
             repeatPasswordEdit->setAlert(true);
             repeatPasswordEdit->showAlertMessage(tr("Passwords do not match"), kToolTipShowDuration);
             emit sigBtnEnabled(1, true);
+            emit sigBtnEnabled(0, true);
             return;
         }
 
-        // 从密钥文件获取恢复密钥
-        QString recoveryKey;
-        bool isNewVersion = OperatorCenter::getInstance()->isNewVaultVersion();
-
-        if (isNewVersion) {
-            QFile keyFile(keyPath);
-            if (!keyFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                keyFileEdit->lineEdit()->setPlaceholderText(tr("Unable to read key file"));
-                keyFileEdit->setText("");
-                emit sigBtnEnabled(1, true);
-                return;
-            }
-            QByteArray keyData = keyFile.readAll();
-            keyFile.close();
-
-            // 去除所有空白字符（包括换行符、空格、制表符等）
-            keyData = keyData.trimmed();
-            recoveryKey = QString::fromUtf8(keyData).trimmed();
-
-            // 验证恢复密钥格式（应该是32个字符，只包含字母和数字）
-            if (recoveryKey.length() != 32) {
-                keyFileEdit->lineEdit()->setPlaceholderText(tr("Invalid recovery key format: expected 32 characters, got %1").arg(recoveryKey.length()));
-                keyFileEdit->setText("");
-                emit sigBtnEnabled(1, true);
-                return;
-            }
-
-            // 验证恢复密钥只包含字母和数字
-            QRegExp keyFormat("^[A-Za-z0-9]{32}$");
-            if (!keyFormat.exactMatch(recoveryKey)) {
-                keyFileEdit->lineEdit()->setPlaceholderText(tr("Invalid recovery key format: must contain only letters and numbers"));
-                keyFileEdit->setText("");
-                emit sigBtnEnabled(1, true);
-                return;
-            }
-        } else {
-            // 旧版本：暂时不支持，显示错误
-            keyFileEdit->lineEdit()->setPlaceholderText(tr("Old version migration not supported yet"));
+        // 重置密码只支持新版本保险箱
+        if (!OperatorCenter::getInstance()->isNewVaultVersion()) {
+            keyFileEdit->lineEdit()->setPlaceholderText(tr("Cannot reset password for old version vault. Please upgrade the vault first."));
             keyFileEdit->setText("");
             emit sigBtnEnabled(1, true);
+            emit sigBtnEnabled(0, true);
             return;
         }
 
-        // 显示加载动画
+        QFile keyFile(keyPath);
+        if (!keyFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            keyFileEdit->lineEdit()->setPlaceholderText(tr("Unable to read key file"));
+            keyFileEdit->setText("");
+            emit sigBtnEnabled(1, true);
+            emit sigBtnEnabled(0, true);
+            return;
+        }
+        QByteArray keyData = keyFile.readAll();
+        keyFile.close();
+
+        keyData = keyData.trimmed();
+        QString recoveryKey = QString::fromUtf8(keyData).trimmed();
+
+        if (recoveryKey.length() != 32) {
+            keyFileEdit->lineEdit()->setPlaceholderText(tr("Invalid recovery key format: expected 32 characters, got %1").arg(recoveryKey.length()));
+            keyFileEdit->setText("");
+            emit sigBtnEnabled(1, true);
+            emit sigBtnEnabled(0, true);
+            return;
+        }
+
+        QRegularExpression keyFormat("^[A-Za-z0-9]{32}$");
+        QRegularExpressionMatch match = keyFormat.match(recoveryKey);
+        if (!match.hasMatch()) {
+            keyFileEdit->lineEdit()->setPlaceholderText(tr("Invalid recovery key format: must contain only letters and numbers"));
+            keyFileEdit->setText("");
+            emit sigBtnEnabled(1, true);
+            emit sigBtnEnabled(0, true);
+            return;
+        }
+
         spinner->move((width() - spinner->width()) / 2, (height() - spinner->height()) / 2);
         spinner->show();
         spinner->raise();
@@ -220,11 +231,15 @@ void ResetPasswordByKeyFileView::buttonClicked(int index, const QString &text)
         keyFileEdit->setEnabled(false);
         newPasswordEdit->setEnabled(false);
         repeatPasswordEdit->setEnabled(false);
+        passwordHintEdit->setEnabled(false);
+        emit sigBtnEnabled(0, false);
+        if (switchMethodLabel)
+            switchMethodLabel->setEnabled(false);
 
-        // 在子线程中执行重置密码操作
-        QFuture<ResetPasswordResult> future = QtConcurrent::run([recoveryKey, newPwd]() -> ResetPasswordResult {
+        QString passwordHint = passwordHintEdit ? passwordHintEdit->text() : QString();
+        QFuture<ResetPasswordResult> future = QtConcurrent::run([recoveryKey, newPwd, passwordHint]() -> ResetPasswordResult {
             ResetPasswordResult result;
-            result.success = OperatorCenter::getInstance()->resetPasswordByRecoveryKey(recoveryKey, newPwd);
+            result.success = OperatorCenter::getInstance()->resetPasswordByRecoveryKey(recoveryKey, newPwd, passwordHint);
             return result;
         });
         resetPasswordWatcher->setFuture(future);
@@ -286,8 +301,8 @@ bool ResetPasswordByKeyFileView::checkPassword(const QString &password)
         return false;
     }
 
-    QRegExp rx("^(?![^a-z]+$)(?![^A-Z]+$)(?!\\D+$)(?![a-zA-Z0-9]+$).{8,}$");
-    QRegExpValidator v(rx);
+    QRegularExpression rx("^(?![^a-z]+$)(?![^A-Z]+$)(?!\\D+$)(?![a-zA-Z0-9]+$).{8,}$");
+    QRegularExpressionValidator v(rx);
     int pos = 0;
     QValidator::State res;
     res = v.validate(strPassword, pos);
@@ -322,6 +337,11 @@ void ResetPasswordByKeyFileView::showEvent(QShowEvent *event)
     repeatPasswordEdit->setAlert(false);
     repeatPasswordEdit->hideAlertMessage();
     repeatPasswordEdit->setEnabled(true);
+    if (passwordHintEdit) {
+        passwordHintEdit->clear();
+        passwordHintEdit->setPlaceholderText(tr("Optional"));
+        passwordHintEdit->setEnabled(true);
+    }
     spinner->stop();
     spinner->hide();
     if (resetPasswordWatcher && resetPasswordWatcher->isRunning()) {
@@ -333,6 +353,9 @@ void ResetPasswordByKeyFileView::showEvent(QShowEvent *event)
 bool ResetPasswordByKeyFileView::eventFilter(QObject *obj, QEvent *evt)
 {
     if (obj == switchMethodLabel) {
+        if (!switchMethodLabel->isEnabled()) {
+            return false;
+        }
         if (evt->type() == QEvent::MouseButtonPress) {
             QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(evt);
             if (mouseEvent->button() == Qt::LeftButton) {
@@ -348,19 +371,20 @@ void ResetPasswordByKeyFileView::onResetPasswordFinished()
 {
     ResetPasswordResult result = resetPasswordWatcher->result();
 
-    // 隐藏加载动画
     spinner->stop();
     spinner->hide();
     keyFileEdit->setEnabled(true);
     newPasswordEdit->setEnabled(true);
     repeatPasswordEdit->setEnabled(true);
+    passwordHintEdit->setEnabled(true);
+    emit sigBtnEnabled(0, true);
+    if (switchMethodLabel)
+        switchMethodLabel->setEnabled(true);
 
     if (result.success) {
-        // 密码重置成功
-        DialogManager::instance()->showMessageDialog(DialogManager::kMsgInfo, tr("Success"), tr("Password reset successfully"));
+        DialogManager::instance()->showMessageDialog(tr("Success"), tr("Password reset successfully"));
         emit sigCloseDialog();
     } else {
-        // 重置失败
         keyFileEdit->lineEdit()->setPlaceholderText(tr("Failed to reset password. Please check your key file."));
         keyFileEdit->setText("");
         emit sigBtnEnabled(1, true);

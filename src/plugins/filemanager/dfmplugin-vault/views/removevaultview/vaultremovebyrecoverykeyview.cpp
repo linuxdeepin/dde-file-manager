@@ -10,10 +10,13 @@
 #include <DToolTip>
 #include <DFloatingWidget>
 #include <DDialog>
+#include <DSpinner>
 
 #include <QVBoxLayout>
 #include <QTimer>
 #include <QPlainTextEdit>
+#include <QtConcurrent>
+#include <QFutureWatcher>
 
 #define MAX_KEY_LENGTH (32)   //!凭证最大值，4的倍数
 
@@ -33,6 +36,13 @@ VaultRemoveByRecoverykeyView::VaultRemoveByRecoverykeyView(QWidget *parent)
     this->setLayout(layout);
 
     connect(keyEdit, &QPlainTextEdit::textChanged, this, &VaultRemoveByRecoverykeyView::onRecoveryKeyChanged);
+
+    // 加载动画（放在窗口中间，覆盖在内容上方）
+    spinner = new DSpinner(this);
+    spinner->setFixedSize(48, 48);
+    spinner->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    spinner->setFocusPolicy(Qt::NoFocus);
+    spinner->hide();
 }
 
 VaultRemoveByRecoverykeyView::~VaultRemoveByRecoverykeyView()
@@ -112,17 +122,60 @@ void VaultRemoveByRecoverykeyView::buttonClicked(int index, const QString &text)
     case 1: {   // ok
         fmInfo() << "Vault: Delete button clicked, validating recovery key";
         const QString key = getRecoverykey();
-        QString cipher;
-        if (!OperatorCenter::getInstance()->checkUserKey(key, cipher)) {
-            fmWarning() << "Vault: Recovery key validation failed";
-            showAlertMessage(tr("Wrong recovery key"));
-            return;
-        }
+        // Show loading animation
+        spinner->move((width() - spinner->width()) / 2, (height() - spinner->height()) / 2);
+        spinner->show();
+        spinner->raise();
+        spinner->start();
+        keyEdit->setEnabled(false);
 
-        fmInfo() << "Vault: Recovery key validated successfully, requesting authorization";
-        VaultUtils::instance().showAuthorityDialog(kPolkitVaultRemove);
-        connect(&VaultUtils::instance(), &VaultUtils::resultOfAuthority,
-                this, &VaultRemoveByRecoverykeyView::slotCheckAuthorizationFinished);
+        // Validate recovery key in a separate thread
+        // 根据版本选择验证方法
+        QFuture<bool> future = QtConcurrent::run([key]() -> bool {
+            OperatorCenter *operatorCenter = OperatorCenter::getInstance();
+            QString cipher;
+            bool isValid = false;
+            
+            if (operatorCenter->isNewVaultVersion()) {
+                // 新版本：直接使用恢复密钥（32字符字符串）验证
+                if (key.length() != 32) {
+                    fmWarning() << "Vault: Invalid recovery key format, expected 32 characters, got" << key.length();
+                    return false;
+                }
+                isValid = operatorCenter->checkPassword(key, cipher);
+                fmDebug() << "Vault: New version recovery key validation result:" << isValid;
+            } else {
+                // 旧版本：使用RSA用户密钥验证
+                isValid = operatorCenter->checkUserKey(key, cipher);
+                fmDebug() << "Vault: Old version user key validation result:" << isValid;
+            }
+            
+            return isValid;
+        });
+
+        // Use QFutureWatcher to wait for result
+        QFutureWatcher<bool> *watcher = new QFutureWatcher<bool>(this);
+        connect(watcher, &QFutureWatcher<bool>::finished, this, [this, watcher]() {
+            bool isValid = watcher->result();
+            watcher->deleteLater();
+
+            // Hide loading animation
+            spinner->stop();
+            spinner->hide();
+            keyEdit->setEnabled(true);
+
+            if (!isValid) {
+                fmWarning() << "Vault: Recovery key validation failed";
+                showAlertMessage(tr("Wrong recovery key"));
+                return;
+            }
+
+            fmInfo() << "Vault: Recovery key validated successfully, requesting authorization";
+            VaultUtils::instance().showAuthorityDialog(kPolkitVaultRemove);
+            connect(&VaultUtils::instance(), &VaultUtils::resultOfAuthority,
+                    this, &VaultRemoveByRecoverykeyView::slotCheckAuthorizationFinished);
+        });
+        watcher->setFuture(future);
     } break;
     default:
         break;

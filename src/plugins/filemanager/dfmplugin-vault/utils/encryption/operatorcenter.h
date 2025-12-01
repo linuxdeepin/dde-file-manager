@@ -149,6 +149,18 @@ public:
     QString getRecoveryKey();
 
     /*!
+     * \brief setPendingOldPasswordSchemeMigrationPassword 设置待迁移的老密码（用于老密码方案迁移流程）
+     * \param password 老密码
+     */
+    void setPendingOldPasswordSchemeMigrationPassword(const QString &password);
+
+    /*!
+     * \brief getPendingOldPasswordSchemeMigrationPassword 获得待迁移的老密码
+     * \return 老密码
+     */
+    QString getPendingOldPasswordSchemeMigrationPassword() const;
+
+    /*!
      * \brief generateRecoveryKeyForNewVault 为新版本保险箱预生成恢复密钥（在创建保险箱之前）
      * \return 生成的恢复密钥
      */
@@ -172,17 +184,19 @@ public:
      * \brief resetPasswordByOldPassword 通过旧密码重置密码
      * \param oldPassword 旧密码
      * \param newPassword 新密码
+     * \param passwordHint 新密码提示（可选，可以为空）
      * \return 是否成功
      */
-    bool resetPasswordByOldPassword(const QString &oldPassword, const QString &newPassword);
+    bool resetPasswordByOldPassword(const QString &oldPassword, const QString &newPassword, const QString &passwordHint);
 
     /*!
      * \brief resetPasswordByRecoveryKey 通过恢复密钥重置密码
      * \param recoveryKey 恢复密钥（新版本是字符串，旧版本是密钥文件路径）
      * \param newPassword 新密码
+     * \param passwordHint 新密码提示（可选，可以为空）
      * \return 是否成功
      */
-    bool resetPasswordByRecoveryKey(const QString &recoveryKey, const QString &newPassword);
+    bool resetPasswordByRecoveryKey(const QString &recoveryKey, const QString &newPassword, const QString &passwordHint);
 
     /*!
      * \brief migrateOldVaultByPassword 通过旧密码将老版本保险箱迁移到新密码管理方案
@@ -206,12 +220,22 @@ public:
                                       const QString &newPassword,
                                       QString &outRecoveryKey);
 
+    /*!
+     * \brief upgradeOldVaultByPassword 通过验证密码将老版本保险箱迁移到新密码管理方案（不重置密码）
+     * \brief 这是从老密码方案（pbkdf2）迁移到新密码管理方案（LUKS）的特定流程
+     * \param oldPassword 老密码（用于验证和作为新 LUKS 容器的用户密码）
+     * \param outRecoveryKey 迁移后生成的新恢复密钥（用于界面保存到文件）
+     * \return 是否成功
+     */
+    bool upgradeOldVaultByPassword(const QString &oldPassword, QString &outRecoveryKey);
+
 private:
     Dtk::Core::DSecureString strCryfsPassword;   // cryfs密码
     QString strUserKey;
     QString standOutput;
     QString strPubKey;
     QString strRecoveryKey;   // 恢复密钥（新版本保险箱使用）
+    QString pendingOldPasswordSchemeMigrationPassword;   // 待迁移的老密码（用于老密码方案迁移流程）
 };
 }
 #endif   // OPERATORCENTER_H

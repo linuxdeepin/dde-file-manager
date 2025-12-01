@@ -43,8 +43,14 @@ public slots:
 
     void onSetBtnEnabled(int index, const bool &state);
 
+    // 老密码方案迁移模式（从pbkdf2迁移到LUKS）
+    void setOldPasswordSchemeMigrationMode(bool enabled);
+    bool isOldPasswordSchemeMigrationMode() const;
+
 private:
     QStackedWidget *stackedWidget { nullptr };
+
+    bool isOldPasswordSchemeMigrationModeFlag { false };
 
     //! retrieve password
     RetrievePasswordView *retrievePasswordView { nullptr };

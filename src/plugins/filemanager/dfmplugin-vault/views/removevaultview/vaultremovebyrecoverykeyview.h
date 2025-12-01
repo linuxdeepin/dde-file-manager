@@ -16,6 +16,7 @@ class QPlainTextEdit;
 DWIDGET_BEGIN_NAMESPACE
 class DToolTip;
 class DFloatingWidget;
+class DSpinner;
 DWIDGET_END_NAMESPACE
 
 namespace dfmplugin_vault {
@@ -54,6 +55,7 @@ private:
 
     DTK_WIDGET_NAMESPACE::DToolTip *tooltip { nullptr };
     DTK_WIDGET_NAMESPACE::DFloatingWidget *floatWidget { nullptr };
+    DTK_WIDGET_NAMESPACE::DSpinner *spinner { nullptr };
 };
 }
 #endif   // VAULTREMOVEBYRECOVERYKEYVIEW_H

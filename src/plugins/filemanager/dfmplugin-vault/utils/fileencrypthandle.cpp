@@ -178,7 +178,6 @@ void FileEncryptHandle::createVault(const QString &lockBaseDir, const QString &u
             }
             d->curState = kUnlocked;
             emit signalCreateVault(flg);
-            fmInfo() << "Vault: create vault success! Recovery key:" << recoveryKeyStr;
         }
     } else {
         fmWarning() << "Vault: Vault already exists when creating, this should not happen normally";

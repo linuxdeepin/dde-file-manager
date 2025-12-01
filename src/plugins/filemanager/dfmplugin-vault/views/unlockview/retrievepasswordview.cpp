@@ -4,15 +4,21 @@
 
 #include "retrievepasswordview.h"
 #include "views/radioframe.h"
+#include "views/createvaultview/vaultactivesavekeyfileview.h"
+#include "views/vaultpagebase.h"
 #include "utils/vaultutils.h"
 #include "utils/vaulthelper.h"
 #include "utils/vaultautolock.h"
 #include "utils/encryption/operatorcenter.h"
 
+#include <dfm-base/utils/dialogmanager.h>
 #include <dfm-framework/event/event.h>
 
 #include <DFontSizeManager>
 #include <DFileDialog>
+#include <DDialog>
+#include <DLabel>
+#include <DSpinner>
 
 #include <QStringList>
 #include <QFrame>
@@ -28,6 +34,8 @@
 #include <QLineEdit>
 #include <QShowEvent>
 #include <QGridLayout>
+#include <QFutureWatcher>
+#include <QtConcurrent>
 
 DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_vault;
@@ -71,6 +79,21 @@ RetrievePasswordView::RetrievePasswordView(QWidget *parent)
     this->setLayout(mainLayout);
     connect(filePathEdit, &DFileChooserEdit::fileChoosed, this, &RetrievePasswordView::onBtnSelectFilePath);
     connect(filePathEdit->lineEdit(), &QLineEdit::textChanged, this, &RetrievePasswordView::onTextChanged);
+
+    spinner = new DSpinner(this);
+    spinner->setFixedSize(48, 48);
+    spinner->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    spinner->setFocusPolicy(Qt::NoFocus);
+    spinner->hide();
+
+    keyVerificationWatcher = new QFutureWatcher<KeyVerificationResult>(this);
+    connect(keyVerificationWatcher, &QFutureWatcher<KeyVerificationResult>::finished,
+            this, &RetrievePasswordView::onKeyVerificationFinished);
+
+    unlockWatcher = new QFutureWatcher<bool>(this);
+    connect(unlockWatcher, &QFutureWatcher<bool>::finished,
+            this, &RetrievePasswordView::onUnlockFinished);
+
 #ifdef ENABLE_TESTING
     AddATTag(qobject_cast<QWidget *>(filePathEdit), AcName::kAcEditVaultRetrieveOtherPath);
     fmDebug() << "Vault: Testing accessibility tags added";
@@ -85,32 +108,118 @@ void RetrievePasswordView::setVerificationPage()
 
 void RetrievePasswordView::verificationKey()
 {
-    QString password;
-    QString keyPath;
-    keyPath = filePathEdit->text();
+    QString keyPath = filePathEdit->text();
     if (!QFile::exists(keyPath)) {
         filePathEdit->lineEdit()->setPlaceholderText(tr("Unable to get the key file"));
         filePathEdit->setText("");
         emit sigBtnEnabled(1, false);
-    } else {
-        emit sigBtnEnabled(1, true);
+        return;
     }
 
-    if (OperatorCenter::getInstance()->verificationRetrievePassword(keyPath, password)) {
-        validationResults = password;
-        fmInfo() << "Vault: Key verification successful, password retrieved (length:" << password.length() << ")";
-        if (VaultHelper::instance()->unlockVault(password)) {
-            VaultHelper::recordTime(kjsonGroupName, kjsonKeyInterviewItme);
-            VaultAutoLock::instance()->slotUnlockVault(0);
+    emit sigBtnEnabled(1, false);
+    emit sigBtnEnabled(0, false);
+
+    spinner->move((width() - spinner->width()) / 2, (height() - spinner->height()) / 2);
+    spinner->show();
+    spinner->raise();
+    spinner->start();
+    filePathEdit->setEnabled(false);
+
+    QFuture<KeyVerificationResult> future = QtConcurrent::run([keyPath]() -> KeyVerificationResult {
+        KeyVerificationResult result;
+        QString password;
+        result.isValid = OperatorCenter::getInstance()->verificationRetrievePassword(keyPath, password);
+        result.password = password;
+        return result;
+    });
+    keyVerificationWatcher->setFuture(future);
+}
+
+void RetrievePasswordView::onKeyVerificationFinished()
+{
+    KeyVerificationResult result = keyVerificationWatcher->result();
+
+    if (!result.isValid) {
+        spinner->stop();
+        spinner->hide();
+        filePathEdit->setEnabled(true);
+        verificationPrompt->setText(tr("Verification failed"));
+        emit sigBtnEnabled(1, true);
+        emit sigBtnEnabled(0, true);
+        return;
+    }
+
+    validationResults = result.password;
+    QString password = result.password;
+
+    if (isOldPasswordSchemeMigrationModeFlag) {
+        spinner->stop();
+        spinner->hide();
+        filePathEdit->setEnabled(true);
+
+        QString oldPassword = password;
+        OperatorCenter::getInstance()->setPendingOldPasswordSchemeMigrationPassword(oldPassword);
+
+        QString recoveryKey = OperatorCenter::getInstance()->generateRecoveryKeyForNewVault();
+        if (recoveryKey.isEmpty()) {
+            verificationPrompt->setText(tr("Failed to generate recovery key. Please try again."));
+            emit sigBtnEnabled(1, true);
+            emit sigBtnEnabled(0, true);
+            return;
+        }
+
+        VaultPageBase saveDialog;
+        saveDialog.setWindowFlags(saveDialog.windowFlags() & ~Qt::WindowMinMaxButtonsHint);
+        saveDialog.setIcon(QIcon::fromTheme("dfm_vault"));
+        saveDialog.setFixedWidth(520);
+
+        auto *saveView = new VaultActiveSaveKeyFileView(&saveDialog);
+        saveView->setNextButtonText(tr("Upgrade vault"));
+        saveView->setOldPasswordSchemeMigrationMode(true);
+        saveDialog.setTitle(tr("Upgrade vault"));
+        saveDialog.addContent(saveView);
+        saveDialog.clearButtons();
+
+        bool saved = false;
+        QObject::connect(saveView, &VaultActiveSaveKeyFileView::sigAccepted, &saveDialog, [&saveDialog, &saved]() {
+            saved = true;
+            saveDialog.accept();
+        });
+
+        saveDialog.exec();
+
+        if (saved) {
             emit sigCloseDialog();
-            VaultHelper::instance()->defaultCdAction(VaultHelper::instance()->currentWindowId(),
-                                                     VaultHelper::instance()->rootUrl());
         } else {
-            verificationPrompt->setText(tr("Unlock vault failed"));
+            emit sigBtnEnabled(1, true);
+            emit sigBtnEnabled(0, true);
         }
     } else {
-        fmWarning() << "Vault: Key verification failed for path:" << keyPath;
-        verificationPrompt->setText(tr("Verification failed"));
+        QFuture<bool> unlockFuture = QtConcurrent::run([password]() -> bool {
+            return VaultHelper::instance()->unlockVault(password);
+        });
+        unlockWatcher->setFuture(unlockFuture);
+    }
+}
+
+void RetrievePasswordView::onUnlockFinished()
+{
+    bool result = unlockWatcher->result();
+
+    spinner->stop();
+    spinner->hide();
+    filePathEdit->setEnabled(true);
+
+    if (result) {
+        VaultHelper::recordTime(kjsonGroupName, kjsonKeyInterviewItme);
+        VaultAutoLock::instance()->slotUnlockVault(0);
+        emit sigCloseDialog();
+        VaultHelper::instance()->defaultCdAction(VaultHelper::instance()->currentWindowId(),
+                                                 VaultHelper::instance()->rootUrl());
+    } else {
+        verificationPrompt->setText(tr("Unlock vault failed"));
+        emit sigBtnEnabled(1, true);
+        emit sigBtnEnabled(0, true);
     }
 }
 
@@ -172,3 +281,14 @@ void RetrievePasswordView::showEvent(QShowEvent *event)
 
     QFrame::showEvent(event);
 }
+
+void RetrievePasswordView::setOldPasswordSchemeMigrationMode(bool enabled)
+{
+    isOldPasswordSchemeMigrationModeFlag = enabled;
+}
+
+bool RetrievePasswordView::isOldPasswordSchemeMigrationMode() const
+{
+    return isOldPasswordSchemeMigrationModeFlag;
+}
+

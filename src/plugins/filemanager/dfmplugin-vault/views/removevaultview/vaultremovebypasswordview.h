@@ -19,6 +19,7 @@ class DPasswordEdit;
 class DToolTip;
 class DFloatingWidget;
 class DLabel;
+class DSpinner;
 DWIDGET_END_NAMESPACE
 
 namespace dfmplugin_vault {
@@ -59,6 +60,7 @@ private:
     DTK_WIDGET_NAMESPACE::DToolTip *tooltip { nullptr };
     DTK_WIDGET_NAMESPACE::DFloatingWidget *floatWidget { nullptr };
     DTK_WIDGET_NAMESPACE::DLabel *keyDeleteLabel { Q_NULLPTR };
+    DTK_WIDGET_NAMESPACE::DSpinner *spinner { nullptr };
 };
 }
 #endif   // VAULTREMOVEBYPASSWORDVIEW_H

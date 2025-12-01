@@ -452,8 +452,29 @@ void VaultHelper::unlockVaultDialog()
         if (!isNewVersion) {
             DDialog upgradeDialog;
             upgradeDialog.setTitle(QObject::tr("Upgrade File Vault"));
-            upgradeDialog.setMessage(QObject::tr("The file vault encryption scheme has been upgraded.\n"
-                                              "You need to upgrade this vault to continue using it."));
+
+            // 自定义内容：在标题和文本之间插入一张图片
+            QFrame *contentFrame = new QFrame(&upgradeDialog);
+            QVBoxLayout *layout = new QVBoxLayout(contentFrame);
+            layout->setContentsMargins(0, 0, 0, 0);
+            layout->setSpacing(12);
+
+            QLabel *iconLabel = new QLabel(contentFrame);
+            iconLabel->setAlignment(Qt::AlignCenter);
+            iconLabel->setPixmap(QIcon::fromTheme("dfm_vault_upgrade").pixmap(64, 64));
+
+            QLabel *textLabel = new QLabel(contentFrame);
+            textLabel->setAlignment(Qt::AlignCenter);
+            textLabel->setWordWrap(true);
+            textLabel->setText(QObject::tr("The file vault encryption scheme has been upgraded.\n"
+                                           "You need to upgrade this vault to continue using it."));
+
+            layout->addWidget(iconLabel);
+            layout->addWidget(textLabel);
+
+            upgradeDialog.setMessage("");
+            upgradeDialog.addContent(contentFrame);
+
             upgradeDialog.addButton(QObject::tr("Later"), true, DDialog::ButtonNormal);
             upgradeDialog.addButton(QObject::tr("Upgrade now"), true, DDialog::ButtonRecommend);
 
@@ -463,9 +484,10 @@ void VaultHelper::unlockVaultDialog()
                 return;
             }
 
-            // 用户选择“立即升级”，复用重置密码页面，引导用户通过旧密码或密钥文件完成迁移
-            VaultResetPasswordPages *page = new VaultResetPasswordPages();
-            page->switchToOldPasswordView();
+            // 用户选择"立即升级"，打开解锁页面，标记为老密码方案迁移模式
+            VaultUnlockPages *page = new VaultUnlockPages();
+            page->setOldPasswordSchemeMigrationMode(true);
+            page->pageSelect(PageType::kUnlockPage);
             page->exec();
             page->deleteLater();
             return;
