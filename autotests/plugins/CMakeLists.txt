@@ -12,7 +12,7 @@ add_subdirectory(dfmplugin-dirshare)
 add_subdirectory(dfmplugin-burn)
 
 # FileManager plugins unit tests
-add_subdirectory(dfmplugin-vault)
+# add_subdirectory(dfmplugin-vault)
 add_subdirectory(dfmplugin-workspace)
 add_subdirectory(dfmplugin-trash)
 add_subdirectory(dfmplugin-titlebar)

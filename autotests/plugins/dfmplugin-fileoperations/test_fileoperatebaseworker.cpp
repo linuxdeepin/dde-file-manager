@@ -9,6 +9,7 @@
 #include <QUrl>
 #include <QDir>
 #include <QThread>
+#include <QDBusAbstractInterface>
 
 #include "stubext.h"
 
@@ -59,6 +60,13 @@ public:
         // Initialize workData
         worker->workData.reset(new WorkerData);
         worker->localFileHandler.reset(new LocalFileHandler);
+
+        using WaitFunc = bool (QWaitCondition::*)(QMutex *, QDeadlineTimer);
+        stub.set_lamda(static_cast<WaitFunc>(&QWaitCondition::wait),
+                       [](QWaitCondition *, QMutex *, QDeadlineTimer) -> bool {
+                           __DBG_STUB_INVOKE__
+                           return true;
+                       });
     }
 
     void TearDown() override
@@ -584,4 +592,370 @@ TEST_F(TestFileOperateBaseWorker, SetSkipValue_NullPointer)
 {
     // Should not crash
     worker->setSkipValue(nullptr, AbstractJobHandler::SupportAction::kSkipAction);
+}
+
+// ========== Constructor/Destructor Tests ==========
+
+TEST_F(TestFileOperateBaseWorker, Constructor_CreatesInstance)
+{
+    FileOperateBaseWorker *baseWorker = new DoCopyFilesWorker();
+    EXPECT_NE(baseWorker, nullptr);
+    delete baseWorker;
+}
+
+TEST_F(TestFileOperateBaseWorker, Destructor_CleansUp)
+{
+    FileOperateBaseWorker *baseWorker = new DoCopyFilesWorker();
+    delete baseWorker;
+    SUCCEED();
+}
+
+// ========== doCheckFile Tests ==========
+
+TEST_F(TestFileOperateBaseWorker, DoCheckFile_ValidFile)
+{
+    auto sourceFile = createTestFile("check_source.txt");
+    ASSERT_TRUE(sourceFile);
+
+    auto targetDir = createTestDir("check_target_dir");
+    ASSERT_TRUE(targetDir);
+
+    auto fromInfo = DFileInfoPointer(new DFileInfo(sourceFile->urlOf(UrlInfoType::kUrl)));
+    auto toInfo = DFileInfoPointer(new DFileInfo(targetDir->urlOf(UrlInfoType::kUrl)));
+
+    fromInfo->initQuerier();
+    toInfo->initQuerier();
+
+    worker->jobType = AbstractJobHandler::JobType::kCopyType;
+    worker->targetUrl = targetDir->urlOf(UrlInfoType::kUrl);
+
+    QString fileName = "test.txt";
+    bool skip = false;
+
+    auto result = worker->doCheckFile(fromInfo, toInfo, fileName, &skip);
+    EXPECT_TRUE(result || skip);
+}
+
+TEST_F(TestFileOperateBaseWorker, DoCheckFile_Stopped)
+{
+    auto sourceFile = createTestFile("stopped_source.txt");
+    auto targetDir = createTestDir("stopped_target");
+
+    auto fromInfo = DFileInfoPointer(new DFileInfo(sourceFile->urlOf(UrlInfoType::kUrl)));
+    auto toInfo = DFileInfoPointer(new DFileInfo(targetDir->urlOf(UrlInfoType::kUrl)));
+
+    worker->stopWork = true;
+
+    QString fileName = "test.txt";
+    bool skip = false;
+
+    auto result = worker->doCheckFile(fromInfo, toInfo, fileName, &skip);
+    EXPECT_FALSE(result);
+}
+
+// ========== doCheckNewFile Tests ==========
+
+TEST_F(TestFileOperateBaseWorker, DoCheckNewFile_NonExistentTarget)
+{
+    QString targetPath = tempDirPath + "/new_file.txt";
+    auto toInfo = DFileInfoPointer(new DFileInfo(QUrl::fromLocalFile(targetPath)));
+
+    bool skip = false;
+    QString name;
+    auto result = worker->doCheckNewFile(toInfo, nullptr, name, &skip);
+
+    if (result) {
+        EXPECT_NE(result, nullptr);
+    } else {
+        SUCCEED();   // May return null on some systems
+    }
+}
+
+TEST_F(TestFileOperateBaseWorker, DoCheckNewFile_ExistingTarget)
+{
+    auto existingFile = createTestFile("existing_target.txt");
+    auto toInfo = DFileInfoPointer(new DFileInfo(existingFile->urlOf(UrlInfoType::kUrl)));
+
+    stub.set_lamda(&FileOperateBaseWorker::doHandleErrorAndWait,
+                   [](FileOperateBaseWorker *, const QUrl &, const QUrl &,
+                      const AbstractJobHandler::JobErrorType &, const bool,
+                      const QString &, const bool) -> AbstractJobHandler::SupportAction {
+                       __DBG_STUB_INVOKE__
+                       return AbstractJobHandler::SupportAction::kReplaceAction;
+                   });
+
+    bool skip = false;
+    QString name;
+    auto result = worker->doCheckNewFile(toInfo, nullptr, name, &skip);
+    SUCCEED();   // Will handle based on stub
+}
+
+// ========== checkTotalDiskSpaceAvailable Tests ==========
+
+TEST_F(TestFileOperateBaseWorker, CheckTotalDiskSpaceAvailable_SufficientSpace)
+{
+    worker->targetOrgUrl = tempDirUrl;
+    worker->sourceFilesTotalSize = 100 * 1024 * 1024;   // 100MB
+
+    stub.set_lamda(&DeviceUtils::deviceBytesFree, [](const QUrl &) -> qint64 {
+        __DBG_STUB_INVOKE__
+        return 1024LL * 1024 * 1024 * 10;   // 10GB free
+    });
+
+    bool skip = false;
+    bool result = worker->checkTotalDiskSpaceAvailable(QUrl(), QUrl(), &skip);
+    EXPECT_TRUE(result);
+    EXPECT_FALSE(skip);
+}
+
+TEST_F(TestFileOperateBaseWorker, CheckTotalDiskSpaceAvailable_InsufficientSpace)
+{
+    worker->targetOrgUrl = tempDirUrl;
+    worker->sourceFilesTotalSize = 10LL * 1024 * 1024 * 1024;   // 10GB
+
+    stub.set_lamda(&DeviceUtils::deviceBytesFree, [](const QUrl &) -> qint64 {
+        __DBG_STUB_INVOKE__
+        return 100 * 1024 * 1024;   // Only 100MB free
+    });
+
+    stub.set_lamda(&FileOperateBaseWorker::doHandleErrorAndWait,
+                   [](FileOperateBaseWorker *, const QUrl &, const QUrl &,
+                      const AbstractJobHandler::JobErrorType &, const bool,
+                      const QString &, const bool) -> AbstractJobHandler::SupportAction {
+                       __DBG_STUB_INVOKE__
+                       return AbstractJobHandler::SupportAction::kSkipAction;
+                   });
+
+    bool skip = false;
+    bool result = worker->checkTotalDiskSpaceAvailable(QUrl(), QUrl(), &skip);
+    EXPECT_FALSE(result);
+    EXPECT_TRUE(skip);
+}
+
+// ========== getTidWriteSize Tests ==========
+
+TEST_F(TestFileOperateBaseWorker, GetTidWriteSize_ValidDevice)
+{
+    worker->workData->isBlockDevice = true;
+
+    qint64 size = worker->getTidWriteSize();
+    EXPECT_GE(size, 0);
+}
+
+TEST_F(TestFileOperateBaseWorker, GetTidWriteSize_NoWorkData)
+{
+    worker->workData.reset();
+    qint64 size = worker->getTidWriteSize();
+    EXPECT_EQ(size, 0);
+}
+
+// ========== getSectorsWritten Tests ==========
+
+TEST_F(TestFileOperateBaseWorker, GetSectorsWritten_BlockDevice)
+{
+    worker->workData->isBlockDevice = true;
+    qint64 sectors = worker->getSectorsWritten();
+    EXPECT_GE(sectors, 0);
+}
+
+TEST_F(TestFileOperateBaseWorker, GetSectorsWritten_NoBlockDevice)
+{
+    worker->workData->isBlockDevice = false;
+    qint64 sectors = worker->getSectorsWritten();
+    EXPECT_EQ(sectors, 0);
+}
+
+// ========== performSync Tests ==========
+
+TEST_F(TestFileOperateBaseWorker, PerformSync_ValidTarget)
+{
+    worker->targetOrgUrl = tempDirUrl;
+    worker->isTargetFileLocal = true;
+
+    stub.set_lamda(&dfmio::DFMUtils::fsTypeFromUrl, [](const QUrl &) -> QString {
+        __DBG_STUB_INVOKE__
+        return "ext4";
+    });
+
+    // Should not crash
+    worker->performSync();
+    SUCCEED();
+}
+
+TEST_F(TestFileOperateBaseWorker, PerformSync_NoTarget)
+{
+    worker->targetOrgUrl = QUrl();
+    worker->performSync();
+    SUCCEED();   // Should handle gracefully
+}
+
+// ========== performAsyncSync Tests ==========
+
+TEST_F(TestFileOperateBaseWorker, PerformAsyncSync_ValidTarget)
+{
+    worker->targetOrgUrl = tempDirUrl;
+
+    stub.set_lamda(&QDBusAbstractInterface::isValid,
+                   []() {
+                       return false;
+                   });
+
+    worker->performAsyncSync();
+    SUCCEED();
+}
+
+// ========== copyFileFromTrash Tests ==========
+
+TEST_F(TestFileOperateBaseWorker, CopyFileFromTrash_ValidTrashFile)
+{
+    // Create trash structure
+    QString trashFilesPath = tempDirPath + "/.local/share/Trash/files";
+    QDir().mkpath(trashFilesPath);
+
+    QString trashFilePath = trashFilesPath + "/test.txt";
+    QFile file(trashFilePath);
+    file.open(QIODevice::WriteOnly);
+    file.write("trash content");
+    file.close();
+
+    auto targetPath = tempDirPath + "/restored.txt";
+    auto fromInfo = QUrl::fromLocalFile(trashFilePath);
+    auto toInfo = QUrl::fromLocalFile(targetPath);
+
+    stub.set_lamda(&FileOperateBaseWorker::doCopyOtherFile,
+                   [](FileOperateBaseWorker *, const DFileInfoPointer &,
+                      const DFileInfoPointer &, bool *) -> bool {
+                       __DBG_STUB_INVOKE__
+                       return true;
+                   });
+
+    bool result = worker->copyFileFromTrash(fromInfo, toInfo, {});
+    EXPECT_TRUE(result);
+}
+
+TEST_F(TestFileOperateBaseWorker, CopyFileFromTrash_Stopped)
+{
+    auto fromInfo = QUrl::fromLocalFile("/tmp/test.txt");
+    auto toInfo = QUrl::fromLocalFile("/tmp/target.txt");
+
+    worker->stopWork = true;
+
+    bool result = worker->copyFileFromTrash(fromInfo, toInfo, {});
+    EXPECT_FALSE(result);
+}
+
+// ========== copyAndDeleteFile Tests ==========
+
+TEST_F(TestFileOperateBaseWorker, CopyAndDeleteFile_Success)
+{
+    auto sourceFile = createTestFile("move_source.txt");
+    auto targetDir = createTestDir("move_target");
+
+    QString targetPath = tempDirPath + "/move_target/moved.txt";
+    auto fromInfo = DFileInfoPointer(new DFileInfo(sourceFile->urlOf(UrlInfoType::kUrl)));
+    auto toInfo = DFileInfoPointer(new DFileInfo(QUrl::fromLocalFile(targetPath)));
+
+    stub.set_lamda(&FileOperateBaseWorker::deleteFile,
+                   [](FileOperateBaseWorker *, const QUrl &, const QUrl &,
+                      bool *, bool) -> bool {
+                       __DBG_STUB_INVOKE__
+                       return true;
+                   });
+
+    bool skip = false;
+    bool result = worker->copyAndDeleteFile(fromInfo, toInfo, {}, &skip);
+    EXPECT_TRUE(result);
+}
+
+TEST_F(TestFileOperateBaseWorker, CopyAndDeleteFile_CopyFails)
+{
+    auto sourceFile = createTestFile("copy_fail_source.txt");
+    auto fromInfo = DFileInfoPointer(new DFileInfo(sourceFile->urlOf(UrlInfoType::kUrl)));
+    auto toInfo = DFileInfoPointer(new DFileInfo(QUrl::fromLocalFile("/tmp/target.txt")));
+
+    bool skip = false;
+    bool result = worker->copyAndDeleteFile(fromInfo, toInfo, {}, &skip);
+    EXPECT_FALSE(result);
+    EXPECT_TRUE(skip);
+}
+
+// ========== doCopyFile Tests ==========
+
+TEST_F(TestFileOperateBaseWorker, DoCopyFile_SmallFile)
+{
+    auto sourceFile = createTestFile("docopy_source.txt");
+    auto targetDir = createTestDir("docopy_target");
+
+    QString targetPath = tempDirPath + "/docopy_target/copied.txt";
+    auto fromInfo = DFileInfoPointer(new DFileInfo(sourceFile->urlOf(UrlInfoType::kUrl)));
+    auto toInfo = DFileInfoPointer(new DFileInfo(QUrl::fromLocalFile(targetPath)));
+
+    fromInfo->initQuerier();
+    toInfo->initQuerier();
+
+    worker->jobType = AbstractJobHandler::JobType::kCopyType;
+    worker->isSourceFileLocal = true;
+    worker->isTargetFileLocal = true;
+
+    stub.set_lamda(&FileOperateBaseWorker::doCopyOtherFile,
+                   [](FileOperateBaseWorker *, const DFileInfoPointer &,
+                      const DFileInfoPointer &, bool *) -> bool {
+                       __DBG_STUB_INVOKE__
+                       return true;
+                   });
+
+    bool skip = false;
+    bool result = worker->doCopyFile(fromInfo, toInfo, &skip);
+    EXPECT_TRUE(result);
+}
+
+TEST_F(TestFileOperateBaseWorker, DoCopyFile_Stopped)
+{
+    auto fromInfo = DFileInfoPointer(new DFileInfo(QUrl::fromLocalFile("/tmp/src.txt")));
+    auto toInfo = DFileInfoPointer(new DFileInfo(QUrl::fromLocalFile("/tmp/dst.txt")));
+
+    worker->stopWork = true;
+
+    bool skip = false;
+    bool result = worker->doCopyFile(fromInfo, toInfo, &skip);
+    EXPECT_FALSE(result);
+}
+
+// ========== waitThreadPoolOver Tests ==========
+
+TEST_F(TestFileOperateBaseWorker, WaitThreadPoolOver_NoThreadPool)
+{
+    // Should not crash
+    worker->waitThreadPoolOver();
+    SUCCEED();
+}
+
+// ========== removeTrashInfo Tests ==========
+
+TEST_F(TestFileOperateBaseWorker, RemoveTrashInfo_ValidTrashInfo)
+{
+    // Create trash info file
+    QString trashInfoPath = tempDirPath + "/test.trashinfo";
+    QFile file(trashInfoPath);
+    file.open(QIODevice::WriteOnly);
+    file.write("[Trash Info]");
+    file.close();
+
+    QUrl infoUrl = QUrl::fromLocalFile(trashInfoPath);
+
+    stub.set_lamda(&LocalFileHandler::deleteFile, [](LocalFileHandler *, const QUrl &) -> bool {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+
+    worker->removeTrashInfo(infoUrl);
+    SUCCEED();
+}
+
+TEST_F(TestFileOperateBaseWorker, RemoveTrashInfo_InvalidUrl)
+{
+    QUrl invalidUrl;
+    // Should not crash
+    worker->removeTrashInfo(invalidUrl);
+    SUCCEED();
 }

@@ -547,6 +547,9 @@ DFileInfoPointer FileOperateBaseWorker::doCheckNewFile(const DFileInfoPointer &f
                                                        bool isCountSize)
 {
     auto newTargetUrl = createNewTargetUrl(toInfo, fileNewName);
+    if (!newTargetUrl.isValid())
+        return {};
+
     DFileInfoPointer newTargetInfo { new DFileInfo(newTargetUrl) };
     newTargetInfo->initQuerier();
     if (!newTargetInfo->exists())
@@ -904,6 +907,9 @@ void FileOperateBaseWorker::initSignalCopyWorker()
 
 QUrl FileOperateBaseWorker::createNewTargetUrl(const DFileInfoPointer &toInfo, const QString &fileName)
 {
+    if (!toInfo)
+        return {};
+
     QString fileNewName = formatFileName(fileName);
     // 创建文件的名称
     QUrl newTargetUrl = toInfo->uri();
