@@ -58,7 +58,8 @@ void FileCopyMoveJob::onHandleAddTaskWithArgs(const JobInfoPointer info)
         return;
     }
 
-    dialogManager->addTask(jobHandler);
+    if (dialogManager)
+        dialogManager->addTask(jobHandler);
 }
 
 void FileCopyMoveJob::onHandleTaskFinished(const JobInfoPointer info)
@@ -75,7 +76,7 @@ void FileCopyMoveJob::initArguments(const JobHandlePointer handler, const Abstra
     if (flags.testFlag(AbstractJobHandler::JobFlag::kCopyRemote)) {
         handler->connect(handler.get(), &AbstractJobHandler::errorNotify, this, &FileCopyMoveJob::onHandleAddTaskWithArgs);
         handler->connect(handler.get(), &AbstractJobHandler::finishedNotify, this, &FileCopyMoveJob::onHandleTaskFinished);
-        connect(handler.get(), &AbstractJobHandler::requestTaskDailog, this, [this, handler](){
+        connect(handler.get(), &AbstractJobHandler::requestTaskDailog, this, [this, handler]() {
             startAddTaskTimer(handler, true);
         });
         handler->start();
@@ -84,7 +85,7 @@ void FileCopyMoveJob::initArguments(const JobHandlePointer handler, const Abstra
     startAddTaskTimer(handler, false);
 }
 
-void FileCopyMoveJob::startAddTaskTimer(const JobHandlePointer handler,const bool isRemote)
+void FileCopyMoveJob::startAddTaskTimer(const JobHandlePointer handler, const bool isRemote)
 {
     if (!isRemote) {
         handler->connect(handler.get(), &AbstractJobHandler::errorNotify, this, &FileCopyMoveJob::onHandleAddTaskWithArgs);

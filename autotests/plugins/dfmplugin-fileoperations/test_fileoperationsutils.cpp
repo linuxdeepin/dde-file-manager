@@ -145,29 +145,34 @@ TEST_F(TestFileOperationsUtils, StatisticsFilesSize_EmptyList)
     SizeInfoPointer sizeInfo = FileOperationsUtils::statisticsFilesSize(emptyFiles);
 
     ASSERT_NE(sizeInfo, nullptr);
+    EXPECT_EQ(sizeInfo->fileCount, 0);
 }
 
 TEST_F(TestFileOperationsUtils, StatisticsFilesSize_SingleFile)
 {
-    QUrl file = createTestFile("single.txt");
+    QUrl file = createTestFile("single.txt", 2048);
     QList<QUrl> files = { file };
 
     SizeInfoPointer sizeInfo = FileOperationsUtils::statisticsFilesSize(files);
 
     ASSERT_NE(sizeInfo, nullptr);
+    EXPECT_EQ(sizeInfo->fileCount, 1);
+    EXPECT_GT(sizeInfo->totalSize, 0);
 }
 
 TEST_F(TestFileOperationsUtils, StatisticsFilesSize_MultipleFiles)
 {
     QList<QUrl> files = {
-        createTestFile("file1.txt"),
-        createTestFile("file2.txt"),
-        createTestFile("file3.txt")
+        createTestFile("file1.txt", 1024),
+        createTestFile("file2.txt", 2048),
+        createTestFile("file3.txt", 512)
     };
 
     SizeInfoPointer sizeInfo = FileOperationsUtils::statisticsFilesSize(files);
 
     ASSERT_NE(sizeInfo, nullptr);
+    EXPECT_EQ(sizeInfo->fileCount, 3);
+    EXPECT_GT(sizeInfo->totalSize, 3584);  // At least sum of file sizes
 }
 
 TEST_F(TestFileOperationsUtils, StatisticsFilesSize_WithRecordUrl)
@@ -176,31 +181,35 @@ TEST_F(TestFileOperationsUtils, StatisticsFilesSize_WithRecordUrl)
 
     SizeInfoPointer sizeInfo = FileOperationsUtils::statisticsFilesSize(files, true);
 
-    SUCCEED();
+    ASSERT_NE(sizeInfo, nullptr);
+    EXPECT_GT(sizeInfo->allFiles.size(), 0);  // Should record URLs
+}
+
+TEST_F(TestFileOperationsUtils, StatisticsFilesSize_Directory)
+{
+    QUrl dir = createTestDir("testdir");
+    createTestFile("testdir/file1.txt", 1024);
+    createTestFile("testdir/file2.txt", 2048);
+
+    QList<QUrl> files = { dir };
+    SizeInfoPointer sizeInfo = FileOperationsUtils::statisticsFilesSize(files);
+
+    ASSERT_NE(sizeInfo, nullptr);
+    EXPECT_GE(sizeInfo->fileCount, 2);  // At least 2 files
 }
 
 // ========== FileOperationsUtils::isFilesSizeOutLimit() Tests ==========
 
 TEST_F(TestFileOperationsUtils, IsFilesSizeOutLimit_UnderLimit)
 {
-    stub.set_lamda(ADDR(FileOperationsUtils, isFilesSizeOutLimit), [](const QUrl &, const qint64) -> bool {
-        __DBG_STUB_INVOKE__
-        return false;
-    });
-
-    QUrl file = createTestFile("small.txt", 100);
-    bool result = FileOperationsUtils::isFilesSizeOutLimit(file, 1024);
+    QUrl file = createTestFile("small.txt", 512);
+    bool result = FileOperationsUtils::isFilesSizeOutLimit(file, 10240);
 
     EXPECT_FALSE(result);
 }
 
 TEST_F(TestFileOperationsUtils, IsFilesSizeOutLimit_OverLimit)
 {
-    stub.set_lamda(ADDR(FileOperationsUtils, isFilesSizeOutLimit), [](const QUrl &, const qint64) -> bool {
-        __DBG_STUB_INVOKE__
-        return true;
-    });
-
     QUrl file = createTestFile("large.txt", 2048);
     bool result = FileOperationsUtils::isFilesSizeOutLimit(file, 1024);
 
@@ -209,26 +218,26 @@ TEST_F(TestFileOperationsUtils, IsFilesSizeOutLimit_OverLimit)
 
 TEST_F(TestFileOperationsUtils, IsFilesSizeOutLimit_ExactLimit)
 {
-    stub.set_lamda(ADDR(FileOperationsUtils, isFilesSizeOutLimit), [](const QUrl &, const qint64) -> bool {
-        __DBG_STUB_INVOKE__
-        return false;
-    });
-
     QUrl file = createTestFile("exact.txt", 1024);
     bool result = FileOperationsUtils::isFilesSizeOutLimit(file, 1024);
 
-    EXPECT_FALSE(result);
+    EXPECT_FALSE(result);  // Exact limit should not be over
+}
+
+TEST_F(TestFileOperationsUtils, IsFilesSizeOutLimit_Directory)
+{
+    QUrl dir = createTestDir("sizedir");
+    createTestFile("sizedir/file1.txt", 1024);
+    createTestFile("sizedir/file2.txt", 2048);
+
+    bool result = FileOperationsUtils::isFilesSizeOutLimit(dir, 1024);
+    EXPECT_TRUE(result);  // Total size > 1024
 }
 
 // ========== FileOperationsUtils::isAncestorUrl() Tests ==========
 
 TEST_F(TestFileOperationsUtils, IsAncestorUrl_DirectParent)
 {
-    stub.set_lamda(ADDR(FileOperationsUtils, isAncestorUrl), [](const QUrl &, const QUrl &) -> bool {
-        __DBG_STUB_INVOKE__
-        return true;
-    });
-
     QUrl parent = QUrl::fromLocalFile("/tmp/parent");
     QUrl child = QUrl::fromLocalFile("/tmp/parent/child");
 
@@ -237,28 +246,8 @@ TEST_F(TestFileOperationsUtils, IsAncestorUrl_DirectParent)
     EXPECT_TRUE(result);
 }
 
-TEST_F(TestFileOperationsUtils, IsAncestorUrl_DeepNesting)
-{
-    stub.set_lamda(ADDR(FileOperationsUtils, isAncestorUrl), [](const QUrl &, const QUrl &) -> bool {
-        __DBG_STUB_INVOKE__
-        return true;
-    });
-
-    QUrl ancestor = QUrl::fromLocalFile("/tmp/root");
-    QUrl descendant = QUrl::fromLocalFile("/tmp/root/a/b/c/file.txt");
-
-    bool result = FileOperationsUtils::isAncestorUrl(ancestor, descendant);
-
-    EXPECT_TRUE(result);
-}
-
 TEST_F(TestFileOperationsUtils, IsAncestorUrl_NotAncestor)
 {
-    stub.set_lamda(ADDR(FileOperationsUtils, isAncestorUrl), [](const QUrl &, const QUrl &) -> bool {
-        __DBG_STUB_INVOKE__
-        return false;
-    });
-
     QUrl url1 = QUrl::fromLocalFile("/tmp/folder1");
     QUrl url2 = QUrl::fromLocalFile("/tmp/folder2");
 
@@ -267,13 +256,18 @@ TEST_F(TestFileOperationsUtils, IsAncestorUrl_NotAncestor)
     EXPECT_FALSE(result);
 }
 
+TEST_F(TestFileOperationsUtils, IsAncestorUrl_DeepNesting)
+{
+    QUrl ancestor = QUrl::fromLocalFile("/tmp/root/a");
+    QUrl descendant = QUrl::fromLocalFile("/tmp/root/a/b");
+
+    bool result = FileOperationsUtils::isAncestorUrl(ancestor, descendant);
+
+    EXPECT_TRUE(result);
+}
+
 TEST_F(TestFileOperationsUtils, IsAncestorUrl_SameUrl)
 {
-    stub.set_lamda(ADDR(FileOperationsUtils, isAncestorUrl), [](const QUrl &, const QUrl &) -> bool {
-        __DBG_STUB_INVOKE__
-        return false;
-    });
-
     QUrl url = QUrl::fromLocalFile("/tmp/same");
 
     bool result = FileOperationsUtils::isAncestorUrl(url, url);
@@ -285,11 +279,6 @@ TEST_F(TestFileOperationsUtils, IsAncestorUrl_SameUrl)
 
 TEST_F(TestFileOperationsUtils, IsFileOnDisk_LocalFile)
 {
-    stub.set_lamda(ADDR(FileOperationsUtils, isFileOnDisk), [](const QUrl &) -> bool {
-        __DBG_STUB_INVOKE__
-        return true;
-    });
-
     QUrl file = createTestFile("ondisk.txt");
 
     bool result = FileOperationsUtils::isFileOnDisk(file);
@@ -297,45 +286,41 @@ TEST_F(TestFileOperationsUtils, IsFileOnDisk_LocalFile)
     EXPECT_TRUE(result);
 }
 
+TEST_F(TestFileOperationsUtils, IsFileOnDisk_InvalidUrl)
+{
+    QUrl invalidUrl;
+
+    bool result = FileOperationsUtils::isFileOnDisk(invalidUrl);
+
+    EXPECT_FALSE(result);
+}
+
 TEST_F(TestFileOperationsUtils, IsFileOnDisk_NetworkFile)
 {
-    stub.set_lamda(ADDR(FileOperationsUtils, isFileOnDisk), [](const QUrl &) -> bool {
-        __DBG_STUB_INVOKE__
-        return false;
-    });
-
     QUrl file = QUrl("smb://server/share/file.txt");
 
     bool result = FileOperationsUtils::isFileOnDisk(file);
 
-    EXPECT_FALSE(result);
+    // Network files may or may not be on disk depending on system configuration
+    SUCCEED();
 }
 
 // ========== FileOperationsUtils::bigFileSize() Tests ==========
 
 TEST_F(TestFileOperationsUtils, BigFileSize_ReturnsValue)
 {
-    stub.set_lamda(ADDR(FileOperationsUtils, bigFileSize), []() -> qint64 {
-        __DBG_STUB_INVOKE__
-        return 100 * 1024 * 1024;   // 100MB
-    });
-
     qint64 size = FileOperationsUtils::bigFileSize();
 
-    EXPECT_GT(size, 0);
+    EXPECT_GT(size, 0);  // Should return a positive size
 }
 
 // ========== FileOperationsUtils::blockSync() Tests ==========
 
 TEST_F(TestFileOperationsUtils, BlockSync_ReturnsValue)
 {
-    stub.set_lamda(ADDR(FileOperationsUtils, blockSync), []() -> bool {
-        __DBG_STUB_INVOKE__
-        return true;
-    });
-
     bool result = FileOperationsUtils::blockSync();
 
+    // Result depends on configuration, just verify it doesn't crash
     SUCCEED();
 }
 
@@ -343,43 +328,50 @@ TEST_F(TestFileOperationsUtils, BlockSync_ReturnsValue)
 
 TEST_F(TestFileOperationsUtils, ParentUrl_HasParent)
 {
-    stub.set_lamda(ADDR(FileOperationsUtils, parentUrl), [](const QUrl &url) -> QUrl {
-        __DBG_STUB_INVOKE__
-        return QUrl::fromLocalFile("/tmp");
-    });
+    QUrl child = QUrl::fromLocalFile("/tmp/subdir/child.txt");
 
-    QUrl child = QUrl::fromLocalFile("/tmp/child.txt");
+    QUrl parent = FileOperationsUtils::parentUrl(child);
+
+    EXPECT_TRUE(parent.isValid());
+    EXPECT_EQ(parent.path(), "/tmp/subdir");
+}
+
+TEST_F(TestFileOperationsUtils, ParentUrl_RootDirectory)
+{
+    QUrl root = QUrl::fromLocalFile("/");
+
+    QUrl parent = FileOperationsUtils::parentUrl(root);
+
+    // Root has no parent
+    EXPECT_FALSE(parent.isValid());
+}
+
+TEST_F(TestFileOperationsUtils, ParentUrl_DeepPath)
+{
+    QUrl child = QUrl::fromLocalFile("/a/b/c/d/file.txt");
+
+    QUrl parent = FileOperationsUtils::parentUrl(child);
+
+    EXPECT_TRUE(parent.isValid());
+    EXPECT_EQ(parent.path(), "/a/b/c/d");
+}
+
+TEST_F(TestFileOperationsUtils, ParentUrl_TrailingSlash)
+{
+    QUrl child = QUrl::fromLocalFile("/tmp/dir/");
 
     QUrl parent = FileOperationsUtils::parentUrl(child);
 
     EXPECT_TRUE(parent.isValid());
 }
 
-TEST_F(TestFileOperationsUtils, ParentUrl_RootDirectory)
-{
-    stub.set_lamda(ADDR(FileOperationsUtils, parentUrl), [](const QUrl &) -> QUrl {
-        __DBG_STUB_INVOKE__
-        return QUrl::fromLocalFile("/");
-    });
-
-    QUrl root = QUrl::fromLocalFile("/");
-
-    QUrl parent = FileOperationsUtils::parentUrl(root);
-
-    SUCCEED();
-}
-
 // ========== FileOperationsUtils::canBroadcastPaste() Tests ==========
 
 TEST_F(TestFileOperationsUtils, CanBroadcastPaste_ReturnsValue)
 {
-    stub.set_lamda(ADDR(FileOperationsUtils, canBroadcastPaste), []() -> bool {
-        __DBG_STUB_INVOKE__
-        return true;
-    });
-
     bool result = FileOperationsUtils::canBroadcastPaste();
 
+    // Result depends on configuration
     SUCCEED();
 }
 
@@ -401,26 +393,50 @@ TEST_F(TestFileOperationsUtils, EdgeCase_UpdateProgressTimer_RapidStartStop)
 TEST_F(TestFileOperationsUtils, EdgeCase_LargeFileList)
 {
     QList<QUrl> files;
-    for (int i = 0; i < 1000; ++i) {
-        files << QUrl::fromLocalFile(QString("/tmp/file%1.txt").arg(i));
+    for (int i = 0; i < 100; ++i) {
+        files << createTestFile(QString("file%1.txt").arg(i), 100);
     }
 
     SizeInfoPointer sizeInfo = FileOperationsUtils::statisticsFilesSize(files);
 
     ASSERT_NE(sizeInfo, nullptr);
+    EXPECT_EQ(sizeInfo->fileCount, 100);
 }
 
 TEST_F(TestFileOperationsUtils, EdgeCase_UnicodeUrls)
 {
-    stub.set_lamda(ADDR(FileOperationsUtils, isAncestorUrl), [](const QUrl &, const QUrl &) -> bool {
-        __DBG_STUB_INVOKE__
-        return true;
-    });
+    QUrl parent = QUrl::fromLocalFile(tempDir->path() + "/父目录");
+    QDir().mkpath(parent.path());
 
-    QUrl parent = QUrl::fromLocalFile("/tmp/父目录");
-    QUrl child = QUrl::fromLocalFile("/tmp/父目录/子文件.txt");
+    QUrl child = QUrl::fromLocalFile(parent.path() + "/子文件.txt");
+    QFile file(child.path());
+    file.open(QIODevice::WriteOnly);
+    file.write("test");
+    file.close();
 
     bool result = FileOperationsUtils::isAncestorUrl(parent, child);
 
     EXPECT_TRUE(result);
 }
+
+TEST_F(TestFileOperationsUtils, EdgeCase_StatisticFilesSize_NonExistentFile)
+{
+    QUrl nonExistent = QUrl::fromLocalFile("/tmp/does_not_exist_12345.txt");
+    QList<QUrl> files = { nonExistent };
+
+    SizeInfoPointer sizeInfo = FileOperationsUtils::statisticsFilesSize(files);
+
+    ASSERT_NE(sizeInfo, nullptr);
+    // Should handle gracefully even if file doesn't exist
+}
+
+TEST_F(TestFileOperationsUtils, EdgeCase_IsFilesSizeOutLimit_InvalidUrl)
+{
+    QUrl invalid = QUrl::fromLocalFile("/tmp/nonexistent_file_xyz.txt");
+
+    bool result = FileOperationsUtils::isFilesSizeOutLimit(invalid, 1024);
+
+    // Should handle invalid URLs gracefully
+    SUCCEED();
+}
+

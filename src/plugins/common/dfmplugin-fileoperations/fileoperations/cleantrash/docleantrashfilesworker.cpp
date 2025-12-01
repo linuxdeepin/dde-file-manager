@@ -80,7 +80,7 @@ bool DoCleanTrashFilesWorker::cleanAllTrashFiles()
     QList<QUrl>::iterator itend = sourceUrls.end();
     if (!allFilesList.isEmpty()) {
         fmInfo() << "sourceUrls has children, use allFilesList replace sourceUrls"
-                << " sourceUrls: " << sourceUrls;
+                 << " sourceUrls: " << sourceUrls;
         if (allFilesList.size() > 20)
             fmInfo() << "allFilesList size > 20, ignore allFilesList print";
         else
@@ -136,6 +136,9 @@ bool DoCleanTrashFilesWorker::cleanAllTrashFiles()
  */
 bool DoCleanTrashFilesWorker::clearTrashFile(const FileInfoPointer &trashInfo)
 {
+    if (!trashInfo)
+        return false;
+
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
     do {
         action = AbstractJobHandler::SupportAction::kNoAction;

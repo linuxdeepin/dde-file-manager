@@ -78,7 +78,7 @@ void AbstractWorker::doOperateWork(AbstractJobHandler::SupportActions actions, A
         workData->errorOfAction.insert(error, currentAction);
 
     // dealing error thread
-    if (workData->singleThread) {
+    if (workData && workData->singleThread) {
         if (copyOtherFileWorker)
             copyOtherFileWorker->operateAction(currentAction);
         resume();
@@ -161,7 +161,7 @@ void AbstractWorker::getAction(AbstractJobHandler::SupportActions actions)
         currentAction = AbstractJobHandler::SupportAction::kReplaceAction;
     } else if (actions.testFlag(AbstractJobHandler::SupportAction::kRetryAction)) {
         currentAction = AbstractJobHandler::SupportAction::kRetryAction;
-        retry = workData->singleThread ? false : true;
+        retry = (workData && workData->singleThread) ? false : true;
     } else if (actions.testFlag(AbstractJobHandler::SupportAction::kEnforceAction)) {
         currentAction = AbstractJobHandler::SupportAction::kEnforceAction;
     } else if (actions.testFlag(AbstractJobHandler::SupportAction::kPermanentlyDelete)) {
@@ -516,7 +516,7 @@ void AbstractWorker::stopAllThread()
 
 void AbstractWorker::checkRetry()
 {
-    if (workData->singleThread || !retry)
+    if ((workData && workData->singleThread) || !retry)
         return;
     emit retryErrSuccess(quintptr(this));
 }
@@ -576,6 +576,8 @@ bool AbstractWorker::stateCheck()
  */
 void AbstractWorker::onStatisticsFilesSizeFinish()
 {
+    if (!statisticsFilesSizeJob)
+        return;
     statisticsFilesSizeJob->stop();
     const SizeInfoPointer &sizeInfo = statisticsFilesSizeJob->getFileSizeInfo();
     sourceFilesTotalSize = statisticsFilesSizeJob->totalProgressSize();
@@ -619,7 +621,7 @@ AbstractWorker::AbstractWorker(QObject *parent)
 QString AbstractWorker::formatFileName(const QString &fileName)
 {
     // 获取目标文件的文件系统，是vfat格式是否要特殊处理，以前的文管处理的
-    if (workData->jobFlags.testFlag(AbstractJobHandler::JobFlag::kDontFormatFileName)) {
+    if (workData && workData->jobFlags.testFlag(AbstractJobHandler::JobFlag::kDontFormatFileName)) {
         return fileName;
     }
 
