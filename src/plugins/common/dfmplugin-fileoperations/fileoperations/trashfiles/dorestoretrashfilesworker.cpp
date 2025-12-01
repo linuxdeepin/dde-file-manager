@@ -103,11 +103,13 @@ bool DoRestoreTrashFilesWorker::translateUrls()
 
         if (action != AbstractJobHandler::SupportAction::kNoAction)
             return false;
-        QSharedPointer<TrashHelper::DeleteTimeInfo> info(new TrashHelper::DeleteTimeInfo);
-        info->startTime = deleteInfo.first().toInt();
-        info->endTime = deleteInfo.at(1).toInt();
-        url.setUserInfo("");
-        targetUrls.insert(url, info);
+        if (deleteInfo.size() >= 2) {
+            QSharedPointer<TrashHelper::DeleteTimeInfo> info(new TrashHelper::DeleteTimeInfo);
+            info->startTime = deleteInfo.first().toInt();
+            info->endTime = deleteInfo.at(1).toInt();
+            url.setUserInfo("");
+            targetUrls.insert(url, info);
+        }
     }
 
     if (targetUrls.size() < 0)
@@ -139,7 +141,7 @@ bool DoRestoreTrashFilesWorker::translateUrls()
  */
 bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
 {
-    //获取当前的
+    // 获取当前的
     bool result = false;
     // 总大小使用源文件个数
     QList<QUrl> urlsSource = sourceUrls;
@@ -160,7 +162,6 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
             handleSourceFiles.append(fileUrl);
             continue;
         }
-
 
         DFileInfoPointer targetInfo = createParentDir(url, restoreInfo, &result);
         if (targetInfo.isNull()) {
@@ -255,7 +256,7 @@ DFileInfoPointer DoRestoreTrashFilesWorker::createParentDir(const QUrl &fromUrl,
 
 DFileInfoPointer DoRestoreTrashFilesWorker::checkRestoreInfo(const QUrl &url)
 {
-    DFileInfoPointer result{ nullptr };
+    DFileInfoPointer result { nullptr };
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
     do {
         action = AbstractJobHandler::SupportAction::kNoAction;
@@ -272,8 +273,7 @@ DFileInfoPointer DoRestoreTrashFilesWorker::checkRestoreInfo(const QUrl &url)
             }
         } else {
             restoreFileUrl = DFMIO::DFMUtils::buildFilePath(this->targetUrl.toString().toStdString().c_str(),
-                                                            fileInfo->attribute(DFileInfo::AttributeID::kStandardFileName).toString()
-                                                            .toStdString().c_str(), nullptr);
+                                                            fileInfo->attribute(DFileInfo::AttributeID::kStandardFileName).toString().toStdString().c_str(), nullptr);
         }
 
         result.reset(new DFileInfo(restoreFileUrl));
