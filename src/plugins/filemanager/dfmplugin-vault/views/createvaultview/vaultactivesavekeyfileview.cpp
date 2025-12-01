@@ -6,7 +6,11 @@
 #include "vaultactivesavekeyfileview.h"
 #include "utils/vaultdefine.h"
 #include "utils/encryption/operatorcenter.h"
+#include "utils/encryption/interfaceactivevault.h"
+#include "utils/vaulthelper.h"
+#include "utils/vaultautolock.h"
 #include "dfmplugin_vault_global.h"
+#include "utils/pathmanager.h"
 
 #include <dfm-base/utils/dialogmanager.h>
 
@@ -18,11 +22,16 @@
 #include <DLabel>
 #include <DFileChooserEdit>
 #include <DFrame>
+#include <DSpinner>
+#include <QFutureWatcher>
+#include <QtConcurrent>
+#include <DPushButton>
+#include <DDialog>
+#include <QLabel>
+#include <QIcon>
 #ifdef DTKWIDGET_CLASS_DSizeMode
 #    include <DSizeMode>
 #endif
-#include <DFontSizeManager>
-#include <DPushButton>
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -46,19 +55,31 @@ void VaultActiveSaveKeyFileView::setEncryptInfo(EncryptInfo &info)
     info.keyPath = selectfileSavePathEdit->text();
 }
 
+void VaultActiveSaveKeyFileView::setNextButtonText(const QString &text)
+{
+    if (nextBtn) {
+        nextBtn->setText(text);
+    }
+}
+
+void VaultActiveSaveKeyFileView::setOldPasswordSchemeMigrationMode(bool enabled)
+{
+    isOldPasswordSchemeMigrationMode = enabled;
+}
+
 void VaultActiveSaveKeyFileView::initUI()
 {
     titleLabel = new DLabel(this);
     titleLabel->setForegroundRole(DPalette::TextTitle);
     titleLabel->setAlignment(Qt::AlignCenter);
-    titleLabel->setText(tr("Save Recovery Key"));
+    titleLabel->setText(tr("Recovery key file"));
 
     hintMsg = new DLabel(this);
     DFontSizeManager::instance()->bind(hintMsg, DFontSizeManager::T7, QFont::Normal);
     hintMsg->setForegroundRole(DPalette::TextTips);
     hintMsg->setWordWrap(true);
     hintMsg->setAlignment(Qt::AlignCenter);
-    hintMsg->setText(tr("Key files can be used to unlock the safe, please keep it in a safe place"));
+    hintMsg->setText(tr("Save the recovery key file and keep it in a safe place"));
     otherPathLabel = new DLabel(this);
     DFontSizeManager::instance()->bind(otherPathLabel, DFontSizeManager::T8, QFont::Medium);
     otherPathLabel->setForegroundRole(DPalette::ButtonText);
@@ -132,6 +153,16 @@ void VaultActiveSaveKeyFileView::initUI()
     setLayout(vlayout1);
     initUiForSizeMode();
 
+    spinner = new DSpinner(this);
+    spinner->setFixedSize(48, 48);
+    spinner->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    spinner->setFocusPolicy(Qt::NoFocus);
+    spinner->hide();
+
+    oldPasswordSchemeMigrationWatcher = new QFutureWatcher<OldPasswordSchemeMigrationResult>(this);
+    connect(oldPasswordSchemeMigrationWatcher, &QFutureWatcher<OldPasswordSchemeMigrationResult>::finished,
+            this, &VaultActiveSaveKeyFileView::onOldPasswordSchemeMigrationFinished);
+
 #ifdef ENABLE_TESTING
     AddATTag(qobject_cast<QWidget *>(titleLabel), AcName::kAcLabelVaultSaveKeyTitle);
     AddATTag(qobject_cast<QWidget *>(hintMsg), AcName::kAcLabelVaultSaveKeyContent);
@@ -154,7 +185,7 @@ void VaultActiveSaveKeyFileView::initConnect()
     connect(selectfileSavePathEdit, &DFileChooserEdit::fileChoosed, this, &VaultActiveSaveKeyFileView::slotChangeEdit);
     connect(filedialog, &DFileDialog::fileSelected, this, &VaultActiveSaveKeyFileView::slotSelectCurrentFile);
     connect(nextBtn, &DPushButton::clicked,
-            this, &VaultActiveSaveKeyFileView::accepted);
+            this, &VaultActiveSaveKeyFileView::slotNextBtnClicked);
 
 #ifdef DTKWIDGET_CLASS_DSizeMode
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this]() {
@@ -166,24 +197,22 @@ void VaultActiveSaveKeyFileView::initConnect()
 void VaultActiveSaveKeyFileView::slotNextBtnClicked()
 {
     QString recoveryKey = OperatorCenter::getInstance()->getRecoveryKey();
+    
+    // 新版本保险箱不应该回退到旧的getUserKey()方法
+    // 如果恢复密钥为空，说明创建流程有问题，应该报错而不是回退
     if (recoveryKey.isEmpty()) {
-        recoveryKey = OperatorCenter::getInstance()->getUserKey();
-    }
-
-    if (recoveryKey.isEmpty()) {
-        fmWarning() << "Vault: Recovery key is empty, cannot save key file";
-        DialogManager::instance()->showMessageDialog(DialogManager::kMsgWarn, "", tr("Recovery key is not available. Please try again."));
+        fmCritical() << "Vault: Recovery key is empty for new vault, this should not happen";
+        DialogManager::instance()->showErrorDialog(tr("Vault"), tr("Recovery key is not available. Please try again."));
         return;
     }
 
     QString path = selectfileSavePathEdit->text();
     if (path.isEmpty()) {
         fmWarning() << "Vault: Save path is empty";
-        DialogManager::instance()->showMessageDialog(DialogManager::kMsgWarn, "", tr("Please select a path to save the recovery key."));
+        DialogManager::instance()->showMessageDialog(tr("Vault"), tr("Please select a path to save the recovery key."));
         return;
     }
 
-    // 确保路径是文件路径，如果是目录则添加默认文件名
     QFileInfo fileInfo(path);
     if (fileInfo.isDir() || fileInfo.isRelative()) {
         if (!path.endsWith(".key")) {
@@ -194,13 +223,104 @@ void VaultActiveSaveKeyFileView::slotNextBtnClicked()
         }
     }
 
-    if (OperatorCenter::getInstance()->saveKey(recoveryKey, path)) {
-        fmInfo() << "Vault: Recovery key saved successfully to:" << path;
-        emit sigAccepted();
-    } else {
+    if (!OperatorCenter::getInstance()->saveKey(recoveryKey, path).result) {
         fmWarning() << "Vault: Failed to save recovery key to file:" << path;
-        DialogManager::instance()->showMessageDialog(DialogManager::kMsgErr, "", tr("Failed to save recovery key. Please check the path and try again."));
+        DialogManager::instance()->showErrorDialog(tr("Vault"), tr("Failed to save recovery key. Please check the path and try again."));
+        return;
     }
+
+    fmInfo() << "Vault: Recovery key saved successfully to:" << path;
+
+    if (isOldPasswordSchemeMigrationMode) {
+        QString oldPassword = OperatorCenter::getInstance()->getPendingOldPasswordSchemeMigrationPassword();
+        if (oldPassword.isEmpty()) {
+            fmWarning() << "Vault: Pending old password scheme migration password is empty";
+            DialogManager::instance()->showErrorDialog(tr("Vault"), tr("Failed to start migration. Please try again."));
+            return;
+        }
+
+        spinner->move((width() - spinner->width()) / 2, (height() - spinner->height()) / 2);
+        spinner->show();
+        spinner->raise();
+        spinner->start();
+        nextBtn->setEnabled(false);
+        selectfileSavePathEdit->setEnabled(false);
+
+        QFuture<OldPasswordSchemeMigrationResult> future = QtConcurrent::run([oldPassword, recoveryKey]() -> OldPasswordSchemeMigrationResult {
+            OldPasswordSchemeMigrationResult result;
+            result.unlocked = false;
+            QString outRecoveryKey;
+            result.success = OperatorCenter::getInstance()->upgradeOldVaultByPassword(oldPassword, outRecoveryKey);
+            if (result.success && outRecoveryKey != recoveryKey) {
+                OperatorCenter::getInstance()->setRecoveryKey(outRecoveryKey);
+            }
+            if (result.success) {
+                QString masterKey;
+                if (InterfaceActiveVault::checkPassword(oldPassword, masterKey)) {
+                    result.unlocked = VaultHelper::instance()->unlockVault(masterKey);
+                }
+            }
+            return result;
+        });
+        oldPasswordSchemeMigrationWatcher->setFuture(future);
+    } else {
+        emit sigAccepted();
+    }
+}
+
+void VaultActiveSaveKeyFileView::onOldPasswordSchemeMigrationFinished()
+{
+    OldPasswordSchemeMigrationResult result = oldPasswordSchemeMigrationWatcher->result();
+
+    spinner->stop();
+    spinner->hide();
+    nextBtn->setEnabled(true);
+    selectfileSavePathEdit->setEnabled(true);
+
+    if (!result.success) {
+        DialogManager::instance()->showErrorDialog(tr("Vault"), tr("Failed to upgrade vault. Please try again."));
+        return;
+    }
+
+    if (result.unlocked) {
+        VaultAutoLock::instance()->slotUnlockVault(static_cast<int>(ErrorCode::kSuccess));
+    }
+
+    DDialog successDialog(this);
+    successDialog.setTitle(tr("Success"));
+
+    QFrame *contentFrame = new QFrame(&successDialog);
+    QVBoxLayout *layout = new QVBoxLayout(contentFrame);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(12);
+
+    QLabel *iconLabel = new QLabel(contentFrame);
+    iconLabel->setAlignment(Qt::AlignCenter);
+    iconLabel->setPixmap(QIcon::fromTheme("dialog-ok").pixmap(64, 64));
+
+    QLabel *textLabel = new QLabel(contentFrame);
+    textLabel->setAlignment(Qt::AlignCenter);
+    textLabel->setWordWrap(true);
+    textLabel->setText(tr("Vault upgraded successfully. Please keep your recovery key safe."));
+
+    layout->addWidget(iconLabel);
+    layout->addWidget(textLabel);
+
+    successDialog.setMessage("");
+    successDialog.addContent(contentFrame);
+    successDialog.addButton(tr("Enter Vault", "button"), true, DDialog::ButtonRecommend);
+
+    int ret = successDialog.exec();
+
+    if (ret == 0) {
+        if (result.unlocked && VaultHelper::instance()->state(PathManager::vaultLockPath()) == VaultState::kUnlocked) {
+            VaultHelper::instance()->defaultCdAction(VaultHelper::instance()->currentWindowId(),
+                                                     VaultHelper::instance()->rootUrl());
+            VaultHelper::recordTime(kjsonGroupName, kjsonKeyInterviewItme);
+        }
+    }
+
+    emit sigAccepted();
 }
 
 void VaultActiveSaveKeyFileView::slotChangeEdit(const QString &fileName)

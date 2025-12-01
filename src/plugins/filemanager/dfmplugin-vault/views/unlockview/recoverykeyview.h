@@ -8,6 +8,7 @@
 #include "dfmplugin_vault_global.h"
 
 #include <dtkwidget_global.h>
+#include <DSpinner>
 
 #include <QScopedPointer>
 #include <QFrame>
@@ -56,6 +57,7 @@ private:
 
     DTK_WIDGET_NAMESPACE::DToolTip *tooltip { nullptr };
     DTK_WIDGET_NAMESPACE::DFloatingWidget *floatWidget { nullptr };
+    DTK_WIDGET_NAMESPACE::DSpinner *spinner { nullptr };
 };
 }
 #endif   //VAULTRECOVERYKEYPAGES_H

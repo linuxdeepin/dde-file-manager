@@ -35,6 +35,10 @@ public:
 
     void buttonClicked(int index, const QString &text);
 
+    // 老密码方案迁移模式（从pbkdf2迁移到LUKS）
+    void setOldPasswordSchemeMigrationMode(bool enabled);
+    bool isOldPasswordSchemeMigrationMode() const;
+
 signals:
     /*!
      * /brief signalJump 页面跳转
@@ -90,6 +94,8 @@ private:
     QFutureWatcher<PasswordCheckResult> *passwordCheckWatcher { nullptr };   //! 密码验证异步操作
     QString pendingPassword;   //! 待验证的密码
     bool extraLockVault { true };
+
+    bool isOldPasswordSchemeMigrationModeFlag { false };
 };
 }
 #endif   // UNLOCKVIEW_H

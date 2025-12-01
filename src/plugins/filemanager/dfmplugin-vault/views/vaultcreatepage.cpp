@@ -52,7 +52,7 @@ VaultActiveView::VaultActiveView(QWidget *parent)
     connect(setUnclockMethodWidget, &VaultActiveSetUnlockMethodView::accepted,
             this, &VaultActiveView::slotNextWidget);
     saveKeyFileWidget = new VaultActiveSaveKeyFileView(this);
-    connect(saveKeyFileWidget, &VaultActiveSaveKeyFileView::accepted,
+    connect(saveKeyFileWidget, &VaultActiveSaveKeyFileView::sigAccepted,
             this, &VaultActiveView::slotNextWidget);
     activeVaultFinishedWidget = new VaultActiveFinishedView(this);
     connect(activeVaultFinishedWidget, &VaultActiveFinishedView::accepted,
@@ -90,6 +90,12 @@ void VaultActiveView::slotNextWidget()
             if (nIndex == 1) {   // set encryption method view
                 if (encryptInfo.mode == EncryptMode::kKeyMode) {
                     fmDebug() << "Vault: Switching to key mode configuration view";
+                    // 在切换到保存密钥文件页面之前，预生成恢复密钥
+                    QString recoveryKey = OperatorCenter::getInstance()->getRecoveryKey();
+                    if (recoveryKey.isEmpty()) {
+                        recoveryKey = OperatorCenter::getInstance()->generateRecoveryKeyForNewVault();
+                        fmDebug() << "Vault: Recovery key generated successfully";
+                    }
                     stackedWidget->setCurrentIndex(++nIndex);
                 } else if (encryptInfo.mode == EncryptMode::kTransparentMode) {
                     fmDebug() << "Vault: Switching to transparent mode configuration view";
@@ -219,14 +225,6 @@ bool VaultActiveView::handleKeyModeEncryption()
         return false;
     }
 
-    // 预生成恢复密钥，供保存密钥文件页面使用
-    QString recoveryKey = OperatorCenter::getInstance()->generateRecoveryKeyForNewVault();
-    if (recoveryKey.isEmpty()) {
-        fmWarning() << "Vault: Failed to generate recovery key for new vault";
-        activeVaultFinishedWidget->encryptFinished(false, tr("Failed to generate recovery key"));
-        return false;
-    }
-    fmDebug() << "Vault: Recovery key generated successfully for new vault";
     activeVaultFinishedWidget->setProgressValue(20);
 
     return true;

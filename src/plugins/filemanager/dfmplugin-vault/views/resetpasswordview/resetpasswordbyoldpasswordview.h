@@ -58,6 +58,7 @@ private:
     DTK_WIDGET_NAMESPACE::DPasswordEdit *oldPasswordEdit { nullptr };
     DTK_WIDGET_NAMESPACE::DPasswordEdit *newPasswordEdit { nullptr };
     DTK_WIDGET_NAMESPACE::DPasswordEdit *repeatPasswordEdit { nullptr };
+    DTK_WIDGET_NAMESPACE::DLineEdit *passwordHintEdit { nullptr };
     DTK_WIDGET_NAMESPACE::DLabel *switchMethodLabel { nullptr };
     DTK_WIDGET_NAMESPACE::DSpinner *spinner { nullptr };
 

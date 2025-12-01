@@ -16,11 +16,14 @@
 #include <DFloatingWidget>
 #include <DDialog>
 #include <DFontSizeManager>
+#include <DSpinner>
 
 #include <QPushButton>
 #include <QHBoxLayout>
 #include <QTimer>
 #include <QMouseEvent>
+#include <QtConcurrent>
+#include <QFutureWatcher>
 
 DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_vault;
@@ -69,6 +72,13 @@ VaultRemoveByPasswordView::VaultRemoveByPasswordView(QWidget *parent)
         }
     });
 
+    // 加载动画（放在窗口中间，覆盖在内容上方）
+    spinner = new DSpinner(this);
+    spinner->setFixedSize(48, 48);
+    spinner->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    spinner->setFocusPolicy(Qt::NoFocus);
+    spinner->hide();
+
 #ifdef ENABLE_TESTING
     AddATTag(qobject_cast<QWidget *>(pwdEdit), AcName::kAcEditVaultRemovePassword);
     AddATTag(qobject_cast<QWidget *>(tipsBtn), AcName::kAcBtnVaultRemovePasswordHint);
@@ -102,17 +112,41 @@ void VaultRemoveByPasswordView::buttonClicked(int index, const QString &text)
     case 1: {
         fmInfo() << "Vault: Delete button clicked, validating password";
         QString strPwd = pwdEdit->text();
-        QString strCipher("");
-        if (!OperatorCenter::getInstance()->checkPassword(strPwd, strCipher)) {
-            fmWarning() << "Vault: Password validation failed";
-            showToolTip(tr("Wrong password"), 3000, VaultRemoveByPasswordView::EN_ToolTip::kWarning);
-            return;
-        }
+        // 显示加载动画
+        spinner->move((width() - spinner->width()) / 2, (height() - spinner->height()) / 2);
+        spinner->show();
+        spinner->raise();
+        spinner->start();
+        pwdEdit->setEnabled(false);
 
-        fmInfo() << "Vault: Password validated successfully, requesting authorization";
-        VaultUtils::instance().showAuthorityDialog(kPolkitVaultRemove);
-        connect(&VaultUtils::instance(), &VaultUtils::resultOfAuthority,
-                this, &VaultRemoveByPasswordView::slotCheckAuthorizationFinished);
+        // 在子线程中执行密码验证
+        QFuture<bool> future = QtConcurrent::run([strPwd]() -> bool {
+            QString strCipher("");
+            return OperatorCenter::getInstance()->checkPassword(strPwd, strCipher);
+        });
+
+        // 使用 QFutureWatcher 等待结果
+        QFutureWatcher<bool> *watcher = new QFutureWatcher<bool>(this);
+        connect(watcher, &QFutureWatcher<bool>::finished, this, [this, watcher]() {
+            bool isValid = watcher->result();
+            watcher->deleteLater();
+
+            // 隐藏加载动画
+            spinner->stop();
+            spinner->hide();
+            pwdEdit->setEnabled(true);
+
+            if (!isValid) {
+                showToolTip(tr("Wrong password"), 3000, VaultRemoveByPasswordView::EN_ToolTip::kWarning);
+                return;
+            }
+
+            // 验证成功，请求权限
+            VaultUtils::instance().showAuthorityDialog(kPolkitVaultRemove);
+            connect(&VaultUtils::instance(), &VaultUtils::resultOfAuthority,
+                    this, &VaultRemoveByPasswordView::slotCheckAuthorizationFinished);
+        });
+        watcher->setFuture(future);
 
     } break;
     default:

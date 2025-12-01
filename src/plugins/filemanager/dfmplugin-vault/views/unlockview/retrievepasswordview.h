@@ -11,10 +11,13 @@
 #include <DFileChooserEdit>
 #include <DLabel>
 #include <DFileDialog>
+#include <DSpinner>
 
 #include <QComboBox>
+#include <QFutureWatcher>
 
 namespace dfmplugin_vault {
+
 class RetrievePasswordView : public QFrame
 {
     Q_OBJECT
@@ -45,6 +48,10 @@ public:
 
     QString ValidationResults();
 
+    // 老密码方案迁移模式（从pbkdf2迁移到LUKS）
+    void setOldPasswordSchemeMigrationMode(bool enabled);
+    bool isOldPasswordSchemeMigrationMode() const;
+
 signals:
     /*!
      * /brief signalJump 页面跳转
@@ -64,6 +71,9 @@ public slots:
     void onBtnSelectFilePath(const QString &path);
 
     void onTextChanged(const QString &path);
+private slots:
+    void onKeyVerificationFinished();
+    void onUnlockFinished();
 
 private:
     /*!
@@ -97,6 +107,18 @@ private:
     QString validationResults;
 
     QGridLayout *funLayout { nullptr };
+    DTK_WIDGET_NAMESPACE::DFileDialog *fileDialog { nullptr };
+    QWidget *m_parent { Q_NULLPTR };
+    DTK_WIDGET_NAMESPACE::DSpinner *spinner { nullptr };
+
+    struct KeyVerificationResult {
+        bool isValid;
+        QString password;
+    };
+    QFutureWatcher<KeyVerificationResult> *keyVerificationWatcher { nullptr };
+    QFutureWatcher<bool> *unlockWatcher { nullptr };
+
+    bool isOldPasswordSchemeMigrationModeFlag { false };
 };
 }
 #endif   // VAULTRETRIEVEPASSWORD_H

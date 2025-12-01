@@ -7,12 +7,14 @@
 #include "utils/pathmanager.h"
 #include "utils/servicemanager.h"
 #include "utils/encryption/interfaceactivevault.h"
+#include "utils/encryption/operatorcenter.h"
 #include "utils/fileencrypthandle.h"
 #include "utils/vaultautolock.h"
 
 #include <DToolTip>
 #include <DFloatingWidget>
 #include <DDialog>
+#include <DSpinner>
 
 #include <QPlainTextEdit>
 #include <QAbstractButton>
@@ -41,6 +43,12 @@ RecoveryKeyView::RecoveryKeyView(QWidget *parent)
     setLayout(mainLayout);
 
     connect(recoveryKeyEdit, &QPlainTextEdit::textChanged, this, &RecoveryKeyView::recoveryKeyChanged);
+
+    spinner = new DSpinner(this);
+    spinner->setFixedSize(48, 48);
+    spinner->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    spinner->setFocusPolicy(Qt::NoFocus);
+    spinner->hide();
 }
 
 RecoveryKeyView::~RecoveryKeyView()
@@ -107,7 +115,27 @@ void RecoveryKeyView::buttonClicked(int index, const QString &text)
         strKey.replace("-", "");
 
         QString strCipher("");
-        if (InterfaceActiveVault::checkUserKey(strKey, strCipher)) {
+        bool isValid = false;
+        
+        // 根据版本选择验证方法
+        OperatorCenter *operatorCenter = OperatorCenter::getInstance();
+        if (operatorCenter->isNewVaultVersion()) {
+            // 新版本：直接使用恢复密钥（32字符字符串）验证
+            if (strKey.length() != 32) {
+                fmWarning() << "Vault: Invalid recovery key format, expected 32 characters, got" << strKey.length();
+                showAlertMessage(tr("Invalid recovery key format"));
+                emit sigBtnEnabled(1, true);
+                return;
+            }
+            isValid = operatorCenter->checkPassword(strKey, strCipher);
+            fmDebug() << "Vault: New version recovery key validation result:" << isValid;
+        } else {
+            // 旧版本：使用RSA用户密钥验证
+            isValid = InterfaceActiveVault::checkUserKey(strKey, strCipher);
+            fmDebug() << "Vault: Old version user key validation result:" << isValid;
+        }
+        
+        if (isValid) {
             unlockByKey = true;
             QString encryptBaseDir = PathManager::vaultLockPath();
             QString decryptFileDir = PathManager::vaultUnlockPath();
@@ -227,6 +255,10 @@ void RecoveryKeyView::recoveryKeyChanged()
 void RecoveryKeyView::handleUnlockVault(bool result)
 {
     if (unlockByKey) {
+        spinner->stop();
+        spinner->hide();
+        recoveryKeyEdit->setEnabled(true);
+
         if (result) {
             fmDebug() << "Vault: Vault unlocked successfully by recovery key";
             //! success
@@ -244,6 +276,8 @@ void RecoveryKeyView::handleUnlockVault(bool result)
             dialog.setTitle(errMsg);
             dialog.addButton(tr("OK"), true, DDialog::ButtonRecommend);
             dialog.exec();
+            emit sigBtnEnabled(1, true);
+            emit sigBtnEnabled(0, true);
         }
         unlockByKey = false;
     }
