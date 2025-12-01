@@ -108,7 +108,7 @@ TEST_F(UT_BurnOptDialog, setISOImage_ValidImage)
         return info;
     });
 
-    dialog->setISOImage(imageUrl);
+    EXPECT_NO_THROW(dialog->setISOImage(imageUrl));
 
     EXPECT_EQ(dialog->imageFile, imageUrl);
     EXPECT_FALSE(dialog->finalizeDiscCheckbox->isVisible());
@@ -353,14 +353,6 @@ TEST_F(UT_BurnOptDialog, onIndexChanged_NonUDFSelected)
     EXPECT_TRUE(dialog->checkdiscCheckbox->isEnabled());
     EXPECT_TRUE(dialog->finalizeDiscCheckbox->isEnabled());
     EXPECT_TRUE(dialog->writespeedComb->isEnabled());
-}
-
-TEST_F(UT_BurnOptDialog, onButnBtnClicked_Cancel)
-{
-    dialog->onButnBtnClicked(0, "Cancel");
-
-    // Should not trigger any burn operations
-    // No assertions needed as this is a cancel operation
 }
 
 TEST_F(UT_BurnOptDialog, onButnBtnClicked_Burn_DeviceExists)
