@@ -104,12 +104,6 @@ TEST_F(UT_RecentIterateWorker, onRequestReload_WithValidFile_ProcessesBookmarks)
     bool reloadFinishedEmitted = false;
     qint64 receivedTimestamp = 0;
 
-    // Mock thread check
-    stub.set_lamda(&QThread::currentThread, []() {
-        __DBG_STUB_INVOKE__
-        return nullptr;   // Different from app thread
-    });
-
     stub.set_lamda(&QCoreApplication::instance, []() {
         __DBG_STUB_INVOKE__
         return nullptr;
@@ -493,10 +487,10 @@ TEST_F(UT_RecentIterateWorker, onRequestPurgeItems_WritesEmptyXbelAndEmitsSignal
 
     QSignalSpy spy(worker, &RecentIterateWorker::purgeFinished);
 
-    worker->onRequestPurgeItems(tempXbelPath);  // Use the actual temporary file
+    worker->onRequestPurgeItems(tempXbelPath);   // Use the actual temporary file
 
     EXPECT_EQ(spy.count(), 1);
-    
+
     // Verify the file was written by checking its contents
     QFile file(tempXbelPath);
     if (file.open(QIODevice::ReadOnly)) {
