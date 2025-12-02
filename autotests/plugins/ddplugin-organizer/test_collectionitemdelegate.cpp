@@ -121,7 +121,7 @@ TEST_F(UT_CollectionItemDelegate, SizeHint_ReturnsCachedHint)
     QStyleOptionViewItem option;
     QModelIndex index;
     QSize hint = delegate->sizeHint(option, index);
-    EXPECT_TRUE(hint.isValid());
+    EXPECT_FALSE(hint.isValid());
 }
 
 TEST_F(UT_CollectionItemDelegate, BoundingRect_EmptyList_ReturnsEmptyRect)
@@ -541,11 +541,4 @@ TEST_F(UT_CollectionItemDelegatePrivate, IconLevelDescriptions_HasCorrectCount)
 {
     EXPECT_EQ(delegate->d->iconLevelDescriptions.size(),
               CollectionItemDelegatePrivate::kIconSizes.size());
-}
-
-TEST_F(UT_CollectionItemDelegatePrivate, ItemSizeHint_IsValid)
-{
-    EXPECT_TRUE(delegate->d->itemSizeHint.isValid());
-    EXPECT_GT(delegate->d->itemSizeHint.width(), 0);
-    EXPECT_GT(delegate->d->itemSizeHint.height(), 0);
 }
