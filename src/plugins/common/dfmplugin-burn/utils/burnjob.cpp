@@ -162,15 +162,15 @@ void AbstractBurnJob::finishFunc(bool verify, bool verifyRet)
     if (lastStatus == JobStatus::kFailed) {
         jobSuccess = false;
         if (verify && verifyRet)
-            emit requestCompletionDialog(tr("Data verification successful."), "dialog-ok");
+            emit requestCompletionDialog(tr("Data verification successful."), "dde-file-manager");
         else
             emit requestFailureDialog(static_cast<int>(curJobType), lastError, lastSrcMessages);
     } else {
         jobSuccess = true;
         if (verify)
-            emit requestCompletionDialog(tr("Data verification successful."), "dialog-ok");
+            emit requestCompletionDialog(tr("Data verification successful."), "dde-file-manager");
         else
-            emit requestCompletionDialog(tr("Burn process completed"), "dialog-ok");
+            emit requestCompletionDialog(tr("Burn process completed"), "dde-file-manager");
     }
 
     emit burnFinished(firstJobType, jobSuccess);

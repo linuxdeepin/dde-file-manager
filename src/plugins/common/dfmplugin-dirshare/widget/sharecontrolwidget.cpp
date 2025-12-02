@@ -421,7 +421,7 @@ bool ShareControlWidget::validateShareName()
     for (const auto &shareFile : shareFileLst) {
         if (name.toLower() == shareFile.fileName()) {
             DDialog dlg(this);
-            dlg.setIcon(QIcon::fromTheme("dialog-warning"));
+            dlg.setIcon(QIcon::fromTheme("dde-file-manager"));
 
             if (!shareFile.isWritable()) {
                 dlg.setTitle(tr("The share name is used by another user."));

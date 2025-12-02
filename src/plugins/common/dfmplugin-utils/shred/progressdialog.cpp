@@ -131,7 +131,7 @@ void ProgressDialog::handleButtonClicked(int index, const QString &text)
 
 void ProgressDialog::initUi()
 {
-    setIcon(QIcon::fromTheme("dialog-warning"));
+    setIcon(QIcon::fromTheme("dde-file-manager"));
     setTitle(tr("Shredding file"));
 
     proWidget = new ProgressWidget(this);

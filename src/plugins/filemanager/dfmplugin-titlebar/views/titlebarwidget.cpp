@@ -482,7 +482,7 @@ bool TitleBarWidget::checkCustomFixedTab(int index)
     if (UrlRoute::isVirtual(url) && UrlRoute::isRootUrl(url))
         return true;
 
-    int ret = DialogManagerInstance->showMessageDialog(DialogManager::kMsgErr, tr("Directory not found"),
+    int ret = DialogManagerInstance->showMessageDialog(tr("Directory not found"),
                                                        tr("Directory not found. Remove it?"),
                                                        { tr("Cancel", "button"), tr("Remove", "button") });
     if (ret == 1) {

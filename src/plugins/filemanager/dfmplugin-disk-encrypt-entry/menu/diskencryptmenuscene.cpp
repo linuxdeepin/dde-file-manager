@@ -294,8 +294,7 @@ void DiskEncryptMenuScene::decryptDevice(const DeviceEncryptParam &param)
         if (passphrase.isEmpty()) {
             fmCritical() << "Failed to retrieve passphrase from TPM for device:" << inputs.devDesc;
             dialog_utils::showDialog(tr("Error"),
-                                     tr("Cannot resolve passphrase from TPM"),
-                                     dialog_utils::DialogType::kError);
+                                     tr("Cannot resolve passphrase from TPM"));
             UnlockPartitionDialog dlg(UnlockPartitionDialog::kRec);
             int ret = dlg.exec();
             if (ret != QDialog::Accepted)
@@ -326,7 +325,7 @@ void DiskEncryptMenuScene::decryptDevice(const DeviceEncryptParam &param)
         inputs.key = tpm_passphrase_utils::getPassphraseFromTPM_NonBlock(inputs.devDesc, inputs.key);
         if (inputs.key.isEmpty()) {
             fmCritical() << "PIN error: failed to retrieve TPM passphrase";
-            dialog_utils::showDialog(tr("Error"), tr("PIN error"), dialog_utils::DialogType::kError);
+            dialog_utils::showDialog(tr("Error"), tr("PIN error"));
             return;
         }
         doDecryptDevice(inputs);
@@ -351,7 +350,7 @@ void DiskEncryptMenuScene::changePassphrase(DeviceEncryptParam param)
             oldKey = tpm_passphrase_utils::getPassphraseFromTPM_NonBlock(dev, oldKey);
             if (oldKey.isEmpty()) {
                 fmCritical() << "PIN error during passphrase change";
-                dialog_utils::showDialog(tr("Error"), tr("PIN error"), dialog_utils::DialogType::kError);
+                dialog_utils::showDialog(tr("Error"), tr("PIN error"));
                 return;
             }
         }
@@ -686,8 +685,7 @@ void DiskEncryptMenuScene::onUnlocked(bool ok, dfmmount::OperationErrorInfo info
     if (!ok && info.code != dfmmount::DeviceError::kUDisksErrorNotAuthorizedDismissed) {
         fmWarning() << "Unlock device failed:" << info.message;
         dialog_utils::showDialog(tr("Unlock partition failed"),
-                                 tr("Wrong passphrase"),
-                                 dialog_utils::kError);
+                                 tr("Wrong passphrase"));
         return;
     }
 
@@ -706,7 +704,7 @@ void DiskEncryptMenuScene::onMounted(bool ok, dfmmount::OperationErrorInfo info,
     QApplication::restoreOverrideCursor();
     if (!ok && info.code != dfmmount::DeviceError::kUDisksErrorNotAuthorizedDismissed) {
         fmWarning() << "Mount device failed:" << info.message;
-        dialog_utils::showDialog(tr("Mount device failed"), "", dialog_utils::kError);
+        dialog_utils::showDialog(tr("Mount device failed"), "");
         return;
     }
 }
@@ -757,8 +755,7 @@ void DiskEncryptMenuScene::onUnmountError(OpType t, const QString &dev, const df
 
     QString operation = (t == kUnmount) ? tr("unmount") : tr("lock");
     dialog_utils::showDialog(tr("Encrypt failed"),
-                             tr("Cannot %1 device %2").arg(operation, dev),
-                             dialog_utils::kError);
+                             tr("Cannot %1 device %2").arg(operation, dev));
 }
 
 void DiskEncryptMenuScene::sortActions(QMenu *parent)

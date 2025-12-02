@@ -205,7 +205,7 @@ void VaultRemoveByPasswordView::slotCheckAuthorizationFinished(bool result)
         fmCritical() << "Vault: Failed to lock vault for removal";
         QString errMsg = tr("Failed to delete file vault");
         DDialog dialog(this);
-        dialog.setIcon(QIcon::fromTheme("dialog-warning"));
+        dialog.setIcon(QIcon::fromTheme("dde-file-manager"));
         dialog.setTitle(errMsg);
         dialog.addButton(tr("OK"), true, DDialog::ButtonRecommend);
         fmDebug() << "Vault: Showing error dialog for lock failure";

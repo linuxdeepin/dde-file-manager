@@ -26,7 +26,7 @@ DiskPasswordChangingDialog::DiskPasswordChangingDialog(QWidget *parent)
 void DiskPasswordChangingDialog::initUI()
 {
     setFixedSize(382, 286);
-    setIcon(QIcon::fromTheme("dialog-warning"));
+    setIcon(QIcon::fromTheme("dde-file-manager"));
 
     switchPageWidget = new QStackedWidget(this);
     confirmWidget = new DPCConfirmWidget(this);

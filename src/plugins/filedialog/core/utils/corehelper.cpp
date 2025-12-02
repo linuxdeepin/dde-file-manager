@@ -69,7 +69,7 @@ bool CoreHelper::askHiddenFile(QWidget *parent)
 {
     DDialog dialog(parent);
 
-    dialog.setIcon(QIcon::fromTheme("dialog-warning"));
+    dialog.setIcon(QIcon::fromTheme("dde-file-manager"));
     dialog.setTitle(QObject::tr("This file will be hidden if the file name starts with '.'. Do you want to hide it?"));
     dialog.addButton(QObject::tr("Hide", "button"), false, DDialog::ButtonWarning);
     dialog.addButton(QObject::tr("Cancel", "button"), true);
@@ -95,7 +95,7 @@ bool CoreHelper::askReplaceFile(QString fileName, QWidget *parent)
         dialog.setWindowModality(Qt::WindowModal);
     }
 
-    dialog.setIcon(QIcon::fromTheme("dialog-warning"));
+    dialog.setIcon(QIcon::fromTheme("dde-file-manager"));
 
     QLabel *titleLabel = dialog.findChild<QLabel *>("TitleLabel");
     if (titleLabel)

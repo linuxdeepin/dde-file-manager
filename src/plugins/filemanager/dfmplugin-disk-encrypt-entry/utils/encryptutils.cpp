@@ -571,26 +571,15 @@ BlockDev device_utils::createBlockDevice(const QString &devObjPath)
     return monitor->createDeviceById(devObjPath).objectCast<DBlockDevice>();
 }
 
-int dialog_utils::showDialog(const QString &title, const QString &msg, DialogType type)
+int dialog_utils::showDialog(const QString &title, const QString &msg)
 {
     QString icon;
-    switch (type) {
-    case kInfo:
-        icon = "dialog-information";
-        break;
-    case kWarning:
-        icon = "dialog-warning";
-        break;
-    case kError:
-        icon = "dialog-error";
-        break;
-    }
     Dtk::Widget::DDialog d;
     if (isWayland())
         d.setWindowFlag(Qt::WindowStaysOnTopHint);
     d.setTitle(title);
     d.setMessage(msg);
-    d.setIcon(QIcon::fromTheme(icon));
+    d.setIcon(QIcon::fromTheme("dde-file-manager"));
     d.addButton(qApp->translate("dfmplugin_diskenc::ChgPassphraseDialog", "Confirm"));
     return d.exec();
 }
@@ -667,7 +656,7 @@ void dialog_utils::showTPMError(const QString &title, tpm_passphrase_utils::TPME
         break;
     }
     if (!msg.isEmpty())
-        showDialog(title, msg, kError);
+        showDialog(title, msg);
 }
 
 bool dialog_utils::isWayland()

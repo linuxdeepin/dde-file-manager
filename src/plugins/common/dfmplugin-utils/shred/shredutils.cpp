@@ -197,7 +197,7 @@ QWidget *ShredUtils::createShredSettingItem(QObject *opt)
 bool ShredUtils::confirmAndDisplayFiles(const QList<QUrl> &fileList)
 {
     DDialog dialog(qApp->activeWindow());
-    dialog.setIcon(QIcon::fromTheme("dialog-warning"));
+    dialog.setIcon(QIcon::fromTheme("dde-file-manager"));
 
     QString title = tr("Are you sure to shred these %1 items?").arg(fileList.count());
     QString message = tr("The file will be completely deleted and cannot be recovered.");

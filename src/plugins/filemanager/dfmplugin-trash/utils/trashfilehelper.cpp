@@ -125,7 +125,7 @@ bool TrashFileHelper::openFileInPlugin(quint64 windowId, const QList<QUrl> urls)
     if (isOpenFile) {
         fmWarning() << "Trash: Attempting to open files in trash, showing warning dialog";
         const QString &strMsg = QObject::tr("Unable to open items in the trash, please restore it first");
-        DialogManagerInstance->showMessageDialog(DFMBASE_NAMESPACE::DialogManager::kMsgWarn, strMsg);
+        DialogManagerInstance->showMessageDialog(strMsg);
     }
     return isOpenFile;
 }

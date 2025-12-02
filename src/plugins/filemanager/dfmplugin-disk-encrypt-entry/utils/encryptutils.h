@@ -71,12 +71,7 @@ BlockDev createBlockDevice(const QString &devObjPath);
 }   // namespace device_utils
 
 namespace dialog_utils {
-enum DialogType {
-    kInfo,
-    kWarning,
-    kError,
-};
-int showDialog(const QString &title, const QString &msg, DialogType type);
+int showDialog(const QString &title, const QString &msg);
 int showConfirmEncryptionDialog(const QString &device, bool needReboot);
 int showConfirmDecryptionDialog(const QString &device, bool needReboot);
 void showTPMError(const QString &title, tpm_passphrase_utils::TPMError err);
