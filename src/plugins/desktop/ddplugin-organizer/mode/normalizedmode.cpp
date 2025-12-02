@@ -9,6 +9,7 @@
 #include "interface/canvasmanagershell.h"
 #include "interface/canvasgridshell.h"
 #include "interface/canvasmodelshell.h"
+#include "private/surface.h"
 #include "utils/fileoperator.h"
 #include "utils/renamedialog.h"
 #include "view/collectionview.h"
@@ -573,7 +574,6 @@ void NormalizedMode::layout()
     //      1. calc the bounding rect of all collections which in same screen.
     QList<QRect> orphanRects;   // those collections who's surface loses， should be re-layouted into surface_0.
     QList<QRect> rectsOnSurface0;
-    QList<QSize> collectionGridSizes;
     QMap<int, QRect> boundingRects;
     for (int i = 0; i < holders.count(); ++i) {
         const CollectionHolderPointer &holder = holders.at(i);
@@ -581,7 +581,6 @@ void NormalizedMode::layout()
         if (style.key.isEmpty()) continue;
         int sIdx = style.screenIndex - 1;
         boundingRects[sIdx] = boundingRects.value(sIdx).united(style.rect);
-        collectionGridSizes.append(Surface::mapToGridSize(style.rect.size()));
 
         if (surfaces.count() > 0) {
             if (sIdx > surfaces.count() - 1)
@@ -590,18 +589,79 @@ void NormalizedMode::layout()
                 rectsOnSurface0.append(surfaces[0]->mapToGridGeo(style.rect));
         }
     }
+
     //      1.1 see if the bounding rect in screen is widther or higher than screen rect
     QMap<int, bool> surfaceRelayout;
+    QMap<int, QPoint> offsetOnSurface;   // 屏幕上的集合需要平移的偏移量
     for (auto iter = boundingRects.cbegin(); iter != boundingRects.cend(); ++iter) {
         int idx = iter.key();
         if (idx >= surfaces.count())
             continue;
         auto surface = surfaces.at(idx);
         auto boundingRect = iter.value();
-        if (boundingRect.width() > surface->width()
-            || boundingRect.height() > surface->height())
+        // 可能存在 surface 能容纳但网格不能容纳的极端场景，因此转换为 gridSize 对应的实际像素大小
+        auto avaiSize = QSize { Surface::cellWidth() * surface->gridSize().width(),
+                                Surface::cellWidth() * surface->gridSize().height() };
+        if (boundingRect.width() > avaiSize.width() || boundingRect.height() > avaiSize.height()) {
             surfaceRelayout.insert(idx, true);
+            continue;
+        }
+
+        // 判断是否需要整体平移。两个 surface 相并，如果结果不等于大的，说明没有全包裹，则需要平移
+        if (boundingRect.united(surface->rect()) != surface->rect()
+            && !CfgPresenter->hasConfigId(configId)) {
+            fmInfo() << "Collection out of screen detected, surface index:" << idx
+                     << "current configId:" << configId << "not exist, try migrate from last config:" << lastConfigId;
+            // 获取之前配置的分辨率。configId = StyleConfig_1920x1080_1366x768
+            auto resolutions = lastConfigId.split("_").mid(1);
+            if (resolutions.count() > idx) {
+                auto resolution = resolutions.at(idx);
+                auto cood = resolution.split('x');
+                if (cood.count() != 2) {
+                    fmWarning() << "Incorrect coordinate!" << resolution;
+                    continue;
+                }
+
+                // 新旧分辨率宽度差值即为偏移量
+                // 如果叠加偏移量之后左侧或下侧边缘超出屏幕宽度，则也需要进行调整
+                // 则往左/往下放置到网格坐标中最远的位置（从右上算起）
+                int oldWidth = cood.at(0).toInt();
+                int oldHeight = cood.at(1).toInt();
+                fmInfo() << "Resolution changed from" << oldWidth << "x" << oldHeight
+                         << "to" << surface->width() << "x" << surface->height()
+                         << "boundingRect:" << boundingRect;
+
+                auto dx = surface->width() - oldWidth;
+                if (boundingRect.left() + dx < surface->gridMargins().left()) {
+                    fmInfo() << "Left edge overflow detected, adjust dx. original dx:" << dx;
+                    /* dx = 左边新位置 - 左边旧位置
+                     * 新位置：左边距 + 顶点在网格内的 5 像素偏移
+                     * 旧位置：原矩形的左边位置 
+                     *
+                     * 因为布局是以右上角为原点开始的，并且以网格进行对齐，网格边长为 20px，
+                     * 从右开始计算，则左边可能会剩余不够 20px 的距离，此为左边距。下边距同理。
+                     */
+                    dx = surface->gridMargins().left() + 5 - boundingRect.left();
+                }
+
+                auto dy = 0;
+                if (boundingRect.bottom() > surface->height() - surface->gridMargins().bottom()) {
+                    fmInfo() << "Bottom edge overflow detected, adjust dy.";
+                    /* dy = 底边新位置 - 底边旧位置
+                     * 新位置：surface 底边位置 - 网格底边距 - 网格内 5 像素偏移
+                     * 旧位置：原矩形的底边位置 
+                     */
+                    dy = surface->rect().bottom() - surface->gridMargins().bottom() - 5 - boundingRect.bottom();
+                }
+
+                fmInfo() << "Calculated offset for surface" << idx << ": dx=" << dx << ", dy=" << dy;
+                offsetOnSurface.insert(idx, { dx, dy });
+            } else {
+                fmInfo() << "Last screen config is not exist.";
+            }
+        }
     }
+
     //      1.2 make sure all orphan rects can be placed on surface 0
     if (orphanRects.count() > 0 && surfaces.count() > 0 && !surfaceRelayout.contains(0)) {
         for (auto &orphan : orphanRects) {
@@ -665,6 +725,16 @@ void NormalizedMode::layout()
                                                kCollectionGridMargin,
                                                kCollectionGridMargin,
                                                kCollectionGridMargin });
+        }
+
+        // 对坐标进行平移处理
+        QPoint offset = offsetOnSurface.value(style.screenIndex - 1, { 0, 0 });
+        if (offset.x() != 0 || offset.y() != 0) {
+            QRect oldRect = style.rect;
+            style.rect.moveLeft(style.rect.left() + offset.x());
+            style.rect.moveTop(style.rect.top() + offset.y());
+            fmInfo() << "Apply offset to collection, screen:" << style.screenIndex - 1
+                     << "offset:" << offset << "rect changed from" << oldRect << "to" << style.rect;
         }
 
         holder->setSurface(surfaces.at(style.screenIndex - 1).data());
