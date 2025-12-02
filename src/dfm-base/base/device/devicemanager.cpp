@@ -125,44 +125,6 @@ QVariantMap DeviceManager::getProtocolDevInfo(const QString &id, bool needReload
     return d->watcher->getDevInfo(id, DeviceType::kProtocolDevice, needReload);
 }
 
-#ifdef ENABLE_MOUNT_SYNC_FUNCTIONS
-QString DeviceManager::mountBlockDev(const QString &id, const QVariantMap &opts)
-{
-    Q_ASSERT_X(!id.isEmpty(), __FUNCTION__, "device id cannot be emtpy!!!");
-
-    auto dev = DeviceHelper::createBlockDevice(id);
-    if (!dev) {
-        qCWarning(logDFMBase) << "cannot create block device: " << id;
-        return "";
-    }
-
-    if (dev->optical())
-        d->watcher->queryOpticalDevUsage(id);
-
-    QString errMsg;
-    if (DeviceHelper::isMountableBlockDev(dev, errMsg)) {
-        const QString &originalMpt = dev->mount(opts);
-        bool removable = dev->removable();
-        const QString &cryptoBackingDev = dev->getProperty(Property::kBlockCryptoBackingDevice).toString();
-        if (cryptoBackingDev != "/") {
-            auto backingDev = DeviceHelper::createBlockDevice(cryptoBackingDev);
-            if (!backingDev) {
-                qCWarning(logDFMBase) << "cannot create block device: " << cryptoBackingDev;
-                return "";
-            }
-            removable = backingDev->removable();
-        }
-        if (!originalMpt.isEmpty() && removable && !dev->optical())   // do dlnfs mount if it is removable disk.
-            d->handleDlnfsMount(originalMpt, true);
-        return originalMpt;
-    } else {
-        // TODO, handle optical
-        qCWarning(logDFMBase) << "device is not mountable: " << errMsg << id;
-        return "";
-    }
-}
-#endif
-
 void DeviceManager::mountBlockDevAsync(const QString &id, const QVariantMap &opts, CallbackType1 cb, int timeout)
 {
     Q_ASSERT_X(!id.isEmpty(), __FUNCTION__, "device id cannot be emtpy!!!");
@@ -381,32 +343,6 @@ void DeviceManager::unmountBlockDevAsync(const QString &id, const QVariantMap &o
     }
 }
 
-#ifdef ENABLE_MOUNT_SYNC_FUNCTIONS
-
-bool DeviceManager::lockBlockDev(const QString &id, const QVariantMap &opts)
-{
-    Q_ASSERT_X(!id.isEmpty(), __FUNCTION__, "device id cannot be emtpy!!!");
-
-    auto dev = DeviceHelper::createBlockDevice(id);
-    if (!dev) {
-        qCWarning(logDFMBase) << "cannot create block device: " << id;
-        return false;
-    }
-
-    if (!dev->isEncrypted()) {
-        qCWarning(logDFMBase) << "this is not a lockable device: " << id;
-        return false;
-    }
-
-    if (dev->lock(opts)) {
-        return true;
-    } else {
-        qCWarning(logDFMBase) << "lock device failed: " << dev->lastError().message;
-        return false;
-    }
-}
-#endif
-
 void DeviceManager::lockBlockDevAsync(const QString &id, const QVariantMap &opts, CallbackType2 cb)
 {
     Q_ASSERT_X(!id.isEmpty(), __FUNCTION__, "device id cannot be emtpy!!!");
@@ -426,35 +362,6 @@ void DeviceManager::lockBlockDevAsync(const QString &id, const QVariantMap &opts
 
     dev->lockAsync(opts, cb);
 }
-
-#ifdef ENABLE_MOUNT_SYNC_FUNCTIONS
-
-QString DeviceManager::unlockBlockDev(const QString &id, const QString &passwd, const QVariantMap &opts)
-{
-    Q_ASSERT_X(!id.isEmpty(), __FUNCTION__, "device id cannot be emtpy!!!");
-
-    auto dev = DeviceHelper::createBlockDevice(id);
-    if (!dev) {
-        qCWarning(logDFMBase) << "cannot create block device: " << id;
-        return "";
-    }
-
-    if (!dev->isEncrypted()) {
-        qCWarning(logDFMBase) << "this is not a lockable device: " << id;
-        return "";
-    }
-
-    QString cleartextId = dev->getProperty(Property::kEncryptedCleartextDevice).toString();
-    if (cleartextId != "/")
-        return cleartextId;
-
-    cleartextId.clear();
-    bool ok = dev->unlock(passwd, cleartextId, opts);
-    if (!ok)
-        qCWarning(logDFMBase) << "unlock device failed: " << id << dev->lastError().message;
-    return cleartextId;
-}
-#endif
 
 void DeviceManager::unlockBlockDevAsync(const QString &id, const QString &passwd, const QVariantMap &opts, CallbackType1 cb)
 {
@@ -483,25 +390,6 @@ void DeviceManager::unlockBlockDevAsync(const QString &id, const QString &passwd
     }
     dev->unlockAsync(passwd, opts, cb);
 }
-
-#ifdef ENABLE_MOUNT_SYNC_FUNCTIONS
-bool DeviceManager::powerOffBlockDev(const QString &id, const QVariantMap &opts)
-{
-    Q_ASSERT_X(!id.isEmpty(), __FUNCTION__, "device id cannot be emtpy!!!");
-
-    auto dev = DeviceHelper::createBlockDevice(id);
-    if (!dev) {
-        qCWarning(logDFMBase) << "cannot create block device: " << id;
-        return false;
-    }
-
-    if (!dev->canPowerOff()) {
-        qCWarning(logDFMBase) << "device cannot be poweroff! " << id;
-        return false;
-    }
-    return dev->powerOff(opts);
-}
-#endif
 
 void DeviceManager::powerOffBlockDevAsync(const QString &id, const QVariantMap &opts, CallbackType2 cb)
 {
@@ -532,26 +420,6 @@ void DeviceManager::powerOffBlockDevAsync(const QString &id, const QVariantMap &
     });
 }
 
-#ifdef ENABLE_MOUNT_SYNC_FUNCTIONS
-bool DeviceManager::ejectBlockDev(const QString &id, const QVariantMap &opts)
-{
-    Q_ASSERT_X(!id.isEmpty(), __FUNCTION__, "device id cannot be emtpy!!!");
-
-    auto dev = DeviceHelper::createBlockDevice(id);
-    if (!dev) {
-        qCWarning(logDFMBase) << "cannot create block device: " << id;
-        return false;
-    }
-
-    QString errMsg;
-    if (!DeviceHelper::isEjectableBlockDev(dev, errMsg)) {
-        qCWarning(logDFMBase) << "device cannot be eject!" << errMsg;
-        return false;
-    }
-    return dev->eject(opts);
-}
-#endif
-
 void DeviceManager::ejectBlockDevAsync(const QString &id, const QVariantMap &opts, CallbackType2 cb)
 {
     Q_ASSERT_X(!id.isEmpty(), __FUNCTION__, "device id cannot be emtpy!!!");
@@ -581,31 +449,6 @@ void DeviceManager::ejectBlockDevAsync(const QString &id, const QVariantMap &opt
             emit blockDevEjectAsyncFailed(id, err.code);
     });
 }
-
-#ifdef ENABLE_MOUNT_SYNC_FUNCTIONS
-bool DeviceManager::renameBlockDev(const QString &id, const QString &newName, const QVariantMap &opts)
-{
-    Q_ASSERT_X(!id.isEmpty(), __FUNCTION__, "device id cannot be emtpy!!!");
-
-    auto dev = DeviceHelper::createBlockDevice(id);
-    if (!dev) {
-        qCWarning(logDFMBase) << "cannot create block device: " << id;
-        return false;
-    }
-
-    if (!dev->hasFileSystem()) {
-        qCWarning(logDFMBase) << "device cannot be renames cause it does not have filesystem interface" << id;
-        return false;
-    }
-
-    if (!dev->mountPoint().isEmpty()) {
-        qCWarning(logDFMBase) << "device cannot be renamed cause it's still mounted yet" << id;
-        return false;
-    }
-
-    return dev->rename(newName, opts);
-}
-#endif
 
 void DeviceManager::renameBlockDevAsync(const QString &id, const QString &newName, const QVariantMap &opts, CallbackType2 cb)
 {

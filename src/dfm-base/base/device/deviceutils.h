@@ -35,7 +35,6 @@ public:
     static QString getBlockDeviceId(const QString &deviceDesc);
     static QString getMountInfo(const QString &in, bool lookForMpt = true);
     static QUrl getSambaFileUriFromNative(const QUrl &url);
-    static QString errMessage(DFMMOUNT::DeviceError err);
     static QString convertSuitableDisplayName(const QVariantMap &devInfo);
     static QString convertSuitableDisplayName(const QVariantHash &devInfo);
     static QString formatOpticalMediaType(const QString &media);
@@ -71,7 +70,6 @@ public:
 
     static QString getLongestMountRootPath(const QString &filePath);
 
-    static QString fileSystemType(const QUrl &url);
     static qint64 deviceBytesFree(const QUrl &url);
     static bool isUnmountSamba(const QUrl &url);
     // If toDevice is true, convert the path to the device name
@@ -88,7 +86,6 @@ public:
     static bool isSiblingOfRoot(const QVariantMap &devInfo);
 
 private:
-    static bool hasMatch(const QString &txt, const QString &rex);
     using Compare = std::function<bool(const QString &, const QString &)>;
     static bool findDlnfsPath(const QString &target, Compare func);
     static QVariantHash toHash(const QVariantMap &map);

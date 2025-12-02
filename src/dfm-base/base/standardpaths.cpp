@@ -304,15 +304,28 @@ QUrl StandardPaths::toStandardUrl(const QString &localPath)
  */
 QString StandardPaths::getCachePath()
 {
-    QString projectName = qApp->applicationName();
+    const QStringList dirs = QStandardPaths::standardLocations(QStandardPaths::CacheLocation);
+    if (Q_UNLIKELY(dirs.isEmpty())) {
+        qWarning("StandardPaths::getCachePath: no cache location available");
+        return {};
+    }
 
-    const QString &cachePath = QStandardPaths::standardLocations(QStandardPaths::CacheLocation).first();
-    QDir::home().mkpath(cachePath);
+    QDir cache(dirs.first());   // ① 系统缓存根目录
 
-    const QString &projectPath = QString("%1/%2/%3/").arg(cachePath, qApp->organizationName(), projectName);
-    QDir::home().mkpath(projectPath);
+    const QString org = QCoreApplication::organizationName();
+    const QString proj = QCoreApplication::applicationName();
+    if (Q_UNLIKELY(org.isEmpty() || proj.isEmpty())) {
+        qWarning("StandardPaths::getCachePath: organizationName or applicationName empty");
+        return {};
+    }
 
-    return projectPath;
+    if (!cache.mkpath(QStringLiteral("%1/%2").arg(org, proj))) {   // ② 一次建两级
+        qWarning("StandardPaths::getCachePath: failed to create %s/%s",
+                 qPrintable(org), qPrintable(proj));
+        return {};
+    }
+
+    return cache.filePath(QStringLiteral("%1/%2").arg(org, proj));   // ③ 返回绝对路径
 }
 
 /*!

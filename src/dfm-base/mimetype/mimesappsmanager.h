@@ -56,7 +56,7 @@ public:
     static QStringList DesktopFiles;
     static QMap<QString, QStringList> MimeApps;
     static QMap<QString, QStringList> DDE_MimeTypes;
-    //specially cache for video, image, text and audio
+    // specially cache for video, image, text and audio
     static QMap<QString, DesktopFile> VideoMimeApps;
     static QMap<QString, DesktopFile> ImageMimeApps;
     static QMap<QString, DesktopFile> TextMimeApps;
@@ -80,11 +80,8 @@ public:
     static QStringList getrecommendedAppsFromMimeWhiteList(const QUrl &url);
 
     static QStringList getApplicationsFolders();
-    static QString getMimeAppsCacheFile();
     static QString getMimeInfoCacheFilePath();
     static QString getMimeInfoCacheFileRootPath();
-    static QString getDesktopFilesCacheFile();
-    static QString getDesktopIconsCacheFile();
     static QString getDDEMimeTypeFile();
     static QMap<QString, DesktopFile> getDesktopObjs();
     static void initMimeTypeApps();

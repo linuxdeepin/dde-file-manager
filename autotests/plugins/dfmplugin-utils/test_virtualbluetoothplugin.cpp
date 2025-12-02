@@ -156,7 +156,7 @@ TEST_F(UT_VirtualBluetoothPlugin, sendFiles_BluetoothBusy_ShowsMessage)
         return false;   // Bluetooth is busy
     });
 
-    stub.set_lamda(qOverload<DialogManager::MessageType, const QString &, const QString &, QString>(&DialogManager::showMessageDialog),
+    stub.set_lamda(qOverload<const QString &, const QString &, QString>(&DialogManager::showMessageDialog),
                    [&messageShown] {
                        __DBG_STUB_INVOKE__
                        messageShown = true;
@@ -168,4 +168,3 @@ TEST_F(UT_VirtualBluetoothPlugin, sendFiles_BluetoothBusy_ShowsMessage)
 
     EXPECT_TRUE(messageShown);
 }
-
