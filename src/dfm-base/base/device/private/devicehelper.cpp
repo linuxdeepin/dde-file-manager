@@ -51,7 +51,9 @@ DevAutoPtr DeviceHelper::createDevice(const QString &devId, dfmmount::DeviceType
 
     auto manager = DDeviceManager::instance();
     auto monitor = manager->getRegisteredMonitor(type);
-    Q_ASSERT_X(monitor, "DeviceServiceHelper", "dfm-mount return a NULL monitor!");
+    if (!monitor)
+        return nullptr;
+
     return monitor->createDeviceById(devId);
 }
 

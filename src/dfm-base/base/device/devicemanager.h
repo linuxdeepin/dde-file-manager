@@ -48,15 +48,6 @@ public:
     QVariantMap getProtocolDevInfo(const QString &id, bool needReload = false);
 
     // device operations
-#ifdef ENABLE_MOUNT_SYNC_FUNCTIONS
-    QString mountBlockDev(const QString &id, const QVariantMap &opts = {});
-    bool lockBlockDev(const QString &id, const QVariantMap &opts = {});
-    QString unlockBlockDev(const QString &id, const QString &passwd, const QVariantMap &opts = {});
-    bool powerOffBlockDev(const QString &id, const QVariantMap &opts = {});
-    bool renameBlockDev(const QString &id, const QString &newName, const QVariantMap &opts = {});
-    bool ejectBlockDev(const QString &id, const QVariantMap &opts = {});
-#endif
-
     void mountBlockDevAsync(const QString &id, const QVariantMap &opts = {}, CallbackType1 cb = nullptr, int timeout = 0);
     bool unmountBlockDev(const QString &id, const QVariantMap &opts = {});
     void unmountBlockDevAsync(const QString &id, const QVariantMap &opts = {}, CallbackType2 cb = nullptr);
@@ -91,9 +82,6 @@ public:
     void stopMonitor();
     bool isMonitoring();
     void startOpticalDiscScan();   // call once
-
-    void stopScanDrive(const QString &id);
-    void stopAllScanTask();
 
     void retryMount(const QString &id, DFMMOUNT::DeviceType type, int timeout);
 

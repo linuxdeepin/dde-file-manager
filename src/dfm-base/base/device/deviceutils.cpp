@@ -106,11 +106,6 @@ QUrl DeviceUtils::getSambaFileUriFromNative(const QUrl &url)
     return smbUrl;
 }
 
-QString DeviceUtils::errMessage(dfmmount::DeviceError err)
-{
-    return DFMMOUNT::Utils::errorMessage(err);
-}
-
 /*!
  * \brief DeviceUtils::convertSuitableDisplayName
  * \param devInfo which is obtained by DeviceManager/DeviceProxyManger
@@ -619,11 +614,6 @@ QString DeviceUtils::getLongestMountRootPath(const QString &filePath)
     return found != mpts.cend() ? *found : "/";
 }
 
-QString DeviceUtils::fileSystemType(const QUrl &url)
-{
-    return DFMIO::DFMUtils::fsTypeFromUrl(url);
-}
-
 qint64 DeviceUtils::deviceBytesFree(const QUrl &url)
 {
     if (url.scheme() != Global::Scheme::kFile)
@@ -807,13 +797,6 @@ bool DeviceUtils::findDlnfsPath(const QString &target, Compare func)
 
     qCDebug(logDFMBase) << "No DLNFS path match found for target:" << target;
     return false;
-}
-
-bool DeviceUtils::hasMatch(const QString &txt, const QString &rex)
-{
-    QRegularExpression re(rex);
-    QRegularExpressionMatch match = re.match(txt);
-    return match.hasMatch();
 }
 
 QVariantHash DeviceUtils::toHash(const QVariantMap &map)
