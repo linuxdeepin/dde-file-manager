@@ -679,3 +679,175 @@ TEST_F(UT_BluetoothManager, BluetoothManagerPrivate_onTransferFailed_EmitsSignal
     EXPECT_EQ(args.at(1).toString(), "/tmp/file.txt");
     EXPECT_EQ(args.at(2).toString(), "Connection lost");
 }
+
+/**
+ * @brief Test BluetoothManagerPrivate onDeviceRemoved
+ */
+TEST_F(UT_BluetoothManager, BluetoothManagerPrivate_onDeviceRemoved_RemovesDevice)
+{
+    __DBG_STUB_INVOKE__
+
+    auto manager = BluetoothManager::instance();
+    auto d = manager->d_ptr.data();
+
+    // First add an adapter with a device
+    BluetoothAdapter *adapter = new BluetoothAdapter();
+    adapter->setId("/org/bluez/hci0");
+    d->model->addAdapter(adapter);
+
+    BluetoothDevice *device = new BluetoothDevice(adapter);
+    device->setId("/org/bluez/hci0/dev_AA_BB_CC_DD_EE_FF");
+    adapter->addDevice(device);
+
+    QJsonObject deviceObj;
+    deviceObj["AdapterPath"] = "/org/bluez/hci0";
+    deviceObj["Path"] = "/org/bluez/hci0/dev_AA_BB_CC_DD_EE_FF";
+
+    QJsonDocument doc(deviceObj);
+    QString json = QString::fromUtf8(doc.toJson(QJsonDocument::Compact));
+
+    d->onDeviceRemoved(json);
+}
+
+/**
+ * @brief Test BluetoothManagerPrivate onDevicePropertiesChanged
+ */
+TEST_F(UT_BluetoothManager, BluetoothManagerPrivate_onDevicePropertiesChanged_UpdatesDevice)
+{
+    __DBG_STUB_INVOKE__
+
+    auto manager = BluetoothManager::instance();
+    auto d = manager->d_ptr.data();
+
+    // First add an adapter with a device
+    BluetoothAdapter *adapter = new BluetoothAdapter();
+    adapter->setId("/org/bluez/hci0");
+    d->model->addAdapter(adapter);
+
+    BluetoothDevice *device = new BluetoothDevice(adapter);
+    device->setId("/org/bluez/hci0/dev_AA_BB_CC_DD_EE_FF");
+    device->setName("Old Name");
+    adapter->addDevice(device);
+
+    QJsonObject deviceObj;
+    deviceObj["Path"] = "/org/bluez/hci0/dev_AA_BB_CC_DD_EE_FF";
+    deviceObj["Name"] = "New Name";
+    deviceObj["Alias"] = "New Alias";
+    deviceObj["Icon"] = "phone";
+    deviceObj["Paired"] = true;
+    deviceObj["Trusted"] = true;
+    deviceObj["State"] = 2;
+
+    QJsonDocument doc(deviceObj);
+    QString json = QString::fromUtf8(doc.toJson(QJsonDocument::Compact));
+
+    d->onDevicePropertiesChanged(json);
+
+    EXPECT_EQ(device->getName(), "New Name");
+}
+
+/**
+ * @brief Test BluetoothManagerPrivate onAdapterPropertiesChanged
+ */
+TEST_F(UT_BluetoothManager, BluetoothManagerPrivate_onAdapterPropertiesChanged_UpdatesAdapter)
+{
+    __DBG_STUB_INVOKE__
+
+    auto manager = BluetoothManager::instance();
+    auto d = manager->d_ptr.data();
+
+    // Stub getBluetoothDevices
+    stub.set_lamda(static_cast<QDBusPendingCall (QDBusInterface::*)(const QString &, const QList<QVariant> &)>(&QDBusInterface::asyncCallWithArgumentList),
+                   [] {
+                       __DBG_STUB_INVOKE__
+                       return QDBusPendingCall::fromError(QDBusError());
+                   });
+
+    // First add an adapter
+    BluetoothAdapter *adapter = new BluetoothAdapter();
+    adapter->setId("/org/bluez/hci0");
+    adapter->setName("Old Name");
+    adapter->setPowered(false);
+    d->model->addAdapter(adapter);
+
+    QJsonObject adapterObj;
+    adapterObj["Path"] = "/org/bluez/hci0";
+    adapterObj["Alias"] = "New Name";
+    adapterObj["Powered"] = true;
+
+    QJsonDocument doc(adapterObj);
+    QString json = QString::fromUtf8(doc.toJson(QJsonDocument::Compact));
+
+    d->onAdapterPropertiesChanged(json);
+
+    EXPECT_EQ(adapter->getName(), "New Name");
+    EXPECT_TRUE(adapter->isPowered());
+}
+
+/**
+ * @brief Test BluetoothManagerPrivate onTransferCreated
+ */
+TEST_F(UT_BluetoothManager, BluetoothManagerPrivate_onTransferCreated_Logs)
+{
+    __DBG_STUB_INVOKE__
+
+    auto manager = BluetoothManager::instance();
+    auto d = manager->d_ptr.data();
+
+    d->onTransferCreated("/tmp/file.txt",
+                         QDBusObjectPath("/transfer/path"),
+                         QDBusObjectPath("/session/path"));
+}
+
+/**
+ * @brief Test BluetoothManagerPrivate onObexSessionCreated
+ */
+TEST_F(UT_BluetoothManager, BluetoothManagerPrivate_onObexSessionCreated_Logs)
+{
+    __DBG_STUB_INVOKE__
+
+    auto manager = BluetoothManager::instance();
+    auto d = manager->d_ptr.data();
+
+    d->onObexSessionCreated(QDBusObjectPath("/session/path"));
+}
+
+/**
+ * @brief Test BluetoothManagerPrivate onObexSessionRemoved
+ */
+TEST_F(UT_BluetoothManager, BluetoothManagerPrivate_onObexSessionRemoved_Logs)
+{
+    __DBG_STUB_INVOKE__
+
+    auto manager = BluetoothManager::instance();
+    auto d = manager->d_ptr.data();
+
+    d->onObexSessionRemoved(QDBusObjectPath("/session/path"));
+}
+
+/**
+ * @brief Test BluetoothManagerPrivate resolve with empty string
+ */
+TEST_F(UT_BluetoothManager, BluetoothManagerPrivate_resolve_EmptyString_Retries)
+{
+    __DBG_STUB_INVOKE__
+
+    auto manager = BluetoothManager::instance();
+    auto d = manager->d_ptr.data();
+
+    QDBusReply<QString> reply;
+    d->resolve(reply);
+}
+
+/**
+ * @brief Test BluetoothManagerPrivate onServiceValidChanged with false
+ */
+TEST_F(UT_BluetoothManager, BluetoothManagerPrivate_onServiceValidChanged_False_DoesNothing)
+{
+    __DBG_STUB_INVOKE__
+
+    auto manager = BluetoothManager::instance();
+    auto d = manager->d_ptr.data();
+
+    d->onServiceValidChanged(false);
+}

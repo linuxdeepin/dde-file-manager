@@ -8,6 +8,8 @@
 
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/interfaces/fileinfo.h>
+#include <dfm-base/base/urlroute.h>
+#include <dfm-base/utils/universalutils.h>
 
 #include <QMenu>
 #include <QAction>
@@ -171,5 +173,133 @@ TEST_F(UT_ShredMenuScene, updateState_EmptyPredicateAction_Returns)
     QMenu menu;
 
     scene->updateState(&menu);
+}
+
+TEST_F(UT_ShredMenuScene, create_VirtualUrl_ReturnsFalse)
+{
+    stub.set_lamda(ADDR(ShredUtils, isShredEnabled),
+                   [](ShredUtils *) -> bool {
+                       __DBG_STUB_INVOKE__
+                       return true;
+                   });
+
+    stub.set_lamda(qOverload<const QUrl &>(&UrlRoute::isVirtual),
+                   [](const QUrl &) -> bool {
+                       __DBG_STUB_INVOKE__
+                       return true;
+                   });
+
+    stub.set_lamda(&UniversalUtils::urlTransformToLocal,
+                   [](const QUrl &, QUrl *target) -> bool {
+                       __DBG_STUB_INVOKE__
+                       if (target)
+                           *target = QUrl("trash:///");
+                       return true;
+                   });
+
+    QVariantHash params;
+    params.insert("kCurrentDir", QUrl("trash:///"));
+    params.insert("kSelectFiles", QVariant::fromValue(QList<QUrl>({ QUrl::fromLocalFile("/tmp/test.txt") })));
+    params.insert("kIsEmptyArea", false);
+    scene->initialize(params);
+
+    QMenu menu;
+    bool result = scene->create(&menu);
+
+    EXPECT_FALSE(result);
+}
+
+TEST_F(UT_ShredMenuScene, create_NullFileInfo_ReturnsFalse)
+{
+    stub.set_lamda(ADDR(ShredUtils, isShredEnabled),
+                   [](ShredUtils *) -> bool {
+                       __DBG_STUB_INVOKE__
+                       return true;
+                   });
+
+    stub.set_lamda(qOverload<const QUrl &>(&UrlRoute::isVirtual),
+                   [](const QUrl &) -> bool {
+                       __DBG_STUB_INVOKE__
+                       return false;
+                   });
+
+    stub.set_lamda(&InfoFactory::create<FileInfo>,
+                   [](const QUrl &, const Global::CreateFileInfoType, QString *) -> FileInfoPointer {
+                       __DBG_STUB_INVOKE__
+                       return nullptr;
+                   });
+
+    QVariantHash params;
+    params.insert("kCurrentDir", QUrl::fromLocalFile("/tmp"));
+    params.insert("kSelectFiles", QVariant::fromValue(QList<QUrl>({ QUrl::fromLocalFile("/tmp/test.txt") })));
+    params.insert("kIsEmptyArea", false);
+    scene->initialize(params);
+
+    QMenu menu;
+    bool result = scene->create(&menu);
+
+    EXPECT_FALSE(result);
+}
+
+TEST_F(UT_ShredMenuScene, create_InvalidFile_ReturnsFalse)
+{
+    stub.set_lamda(ADDR(ShredUtils, isShredEnabled),
+                   [](ShredUtils *) -> bool {
+                       __DBG_STUB_INVOKE__
+                       return true;
+                   });
+
+    stub.set_lamda(qOverload<const QUrl &>(&UrlRoute::isVirtual),
+                   [](const QUrl &) -> bool {
+                       __DBG_STUB_INVOKE__
+                       return false;
+                   });
+
+    auto mockFileInfo = QSharedPointer<FileInfo>(new FileInfo(QUrl::fromLocalFile("/tmp/test.txt")));
+    stub.set_lamda(&InfoFactory::create<FileInfo>,
+                   [&mockFileInfo](const QUrl &, const Global::CreateFileInfoType, QString *) -> FileInfoPointer {
+                       __DBG_STUB_INVOKE__
+                       return mockFileInfo;
+                   });
+
+    stub.set_lamda(ADDR(ShredUtils, isValidFile),
+                   [](ShredUtils *, const QUrl &) -> bool {
+                       __DBG_STUB_INVOKE__
+                       return false;
+                   });
+
+    QVariantHash params;
+    params.insert("kCurrentDir", QUrl::fromLocalFile("/tmp"));
+    params.insert("kSelectFiles", QVariant::fromValue(QList<QUrl>({ QUrl::fromLocalFile("/tmp/test.txt") })));
+    params.insert("kIsEmptyArea", false);
+    scene->initialize(params);
+
+    QMenu menu;
+    bool result = scene->create(&menu);
+
+    EXPECT_FALSE(result);
+}
+
+TEST_F(UT_ShredMenuScene, initialize_EmptySelectFiles_SetsFocusFileEmpty)
+{
+    QVariantHash params;
+    params.insert("kCurrentDir", QUrl::fromLocalFile("/tmp"));
+    params.insert("kSelectFiles", QVariant::fromValue(QList<QUrl>()));
+    params.insert("kIsEmptyArea", false);
+    params.insert("kWindowId", 1ULL);
+
+    bool result = scene->initialize(params);
+
+    EXPECT_TRUE(result);
+}
+
+TEST_F(UT_ShredMenuScene, triggered_UnknownAction_CallsParent)
+{
+    QAction unknownAction;
+    unknownAction.setProperty("kActionID", "unknown-action");
+
+    bool result = scene->triggered(&unknownAction);
+
+    EXPECT_FALSE(result);
 }
 

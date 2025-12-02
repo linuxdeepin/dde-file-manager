@@ -31,6 +31,21 @@ protected:
     stub_ext::StubExt stub;
 };
 
+TEST_F(UT_OpenWithHelper, Constructor_CreatesObject)
+{
+    OpenWithHelper *helper = new OpenWithHelper();
+    EXPECT_NE(helper, nullptr);
+    delete helper;
+}
+
+TEST_F(UT_OpenWithHelper, Constructor_WithParent_CreatesObject)
+{
+    QObject parent;
+    OpenWithHelper *helper = new OpenWithHelper(&parent);
+    EXPECT_NE(helper, nullptr);
+    EXPECT_EQ(helper->parent(), &parent);
+}
+
 TEST_F(UT_OpenWithHelper, createOpenWithWidget_InvalidUrl_ReturnsNull)
 {
     QUrl invalidUrl;
@@ -145,3 +160,4 @@ TEST_F(UT_OpenWithHelper, createOpenWithWidget_ValidFile_ReturnsWidget)
     if (result)
         delete result;
 }
+

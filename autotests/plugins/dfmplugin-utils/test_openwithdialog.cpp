@@ -12,6 +12,8 @@
 #include <dfm-framework/dpf.h>
 
 #include <QCheckBox>
+#include <QMouseEvent>
+#include <QKeyEvent>
 
 #include <gtest/gtest.h>
 
@@ -137,4 +139,105 @@ TEST_F(UT_OpenWithDialogListItem, text_ReturnsLabelText)
     EXPECT_EQ(item->text(), "My Application");
 
     delete item;
+}
+
+TEST_F(UT_OpenWithDialogListItem, Constructor_EmptyIconName_UsesDefaultIcon)
+{
+    OpenWithDialogListItem *item = new OpenWithDialogListItem("", "Test App");
+
+    EXPECT_NE(item, nullptr);
+    EXPECT_EQ(item->text(), "Test App");
+
+    delete item;
+}
+
+TEST_F(UT_OpenWithDialogListItem, initUiForSizeMode_SetsSize)
+{
+    OpenWithDialogListItem *item = new OpenWithDialogListItem("icon", "Test");
+
+    item->initUiForSizeMode();
+
+    EXPECT_EQ(item->width(), 220);
+
+    delete item;
+}
+
+// ========== OpenWithDialog Additional Tests ==========
+
+TEST_F(UT_OpenWithDialog, Constructor_EmptyUrlList_CreatesDialog)
+{
+    QList<QUrl> urls;
+
+    OpenWithDialog *dialog = new OpenWithDialog(urls);
+
+    EXPECT_NE(dialog, nullptr);
+    delete dialog;
+}
+
+TEST_F(UT_OpenWithDialog, checkItem_SetsCheckedItem)
+{
+    QList<QUrl> urls = { QUrl::fromLocalFile("/tmp/test.txt") };
+    OpenWithDialog *dialog = new OpenWithDialog(urls);
+
+    OpenWithDialogListItem *item = new OpenWithDialogListItem("icon", "Test App", dialog);
+
+    dialog->checkItem(item);
+
+    delete dialog;
+}
+
+TEST_F(UT_OpenWithDialog, checkItem_UnchecksOldItem)
+{
+    QList<QUrl> urls = { QUrl::fromLocalFile("/tmp/test.txt") };
+    OpenWithDialog *dialog = new OpenWithDialog(urls);
+
+    OpenWithDialogListItem *item1 = new OpenWithDialogListItem("icon", "App1", dialog);
+    OpenWithDialogListItem *item2 = new OpenWithDialogListItem("icon", "App2", dialog);
+
+    dialog->checkItem(item1);
+    dialog->checkItem(item2);
+
+    delete dialog;
+}
+
+TEST_F(UT_OpenWithDialog, createItem_ReturnsValidItem)
+{
+    QList<QUrl> urls = { QUrl::fromLocalFile("/tmp/test.txt") };
+    OpenWithDialog *dialog = new OpenWithDialog(urls);
+
+    OpenWithDialogListItem *item = dialog->createItem("icon", "Test App", "/usr/share/applications/test.desktop");
+
+    EXPECT_NE(item, nullptr);
+    EXPECT_EQ(item->text(), "Test App");
+    EXPECT_EQ(item->property("app").toString(), "/usr/share/applications/test.desktop");
+
+    delete dialog;
+}
+
+TEST_F(UT_OpenWithDialog, eventFilter_MouseButtonPress_ChecksItem)
+{
+    QList<QUrl> urls = { QUrl::fromLocalFile("/tmp/test.txt") };
+    OpenWithDialog *dialog = new OpenWithDialog(urls);
+
+    OpenWithDialogListItem *item = new OpenWithDialogListItem("icon", "Test App", dialog);
+
+    QMouseEvent event(QEvent::MouseButtonPress, QPointF(0, 0), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+    bool result = dialog->eventFilter(item, &event);
+
+    EXPECT_TRUE(result);
+
+    delete dialog;
+}
+
+TEST_F(UT_OpenWithDialog, eventFilter_OtherEvent_ReturnsFalse)
+{
+    QList<QUrl> urls = { QUrl::fromLocalFile("/tmp/test.txt") };
+    OpenWithDialog *dialog = new OpenWithDialog(urls);
+
+    QKeyEvent event(QEvent::KeyPress, Qt::Key_A, Qt::NoModifier);
+    bool result = dialog->eventFilter(dialog, &event);
+
+    EXPECT_FALSE(result);
+
+    delete dialog;
 }
