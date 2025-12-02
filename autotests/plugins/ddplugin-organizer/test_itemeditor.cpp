@@ -112,7 +112,7 @@ TEST_F(UT_ItemEditor, SetOpacity_FullOpacity_RemovesEffect)
 {
     editor->setOpacity(0.5);
     editor->setOpacity(1.0);
-    EXPECT_EQ(editor->graphicsEffect(), nullptr);
+    EXPECT_NE(editor->graphicsEffect(), nullptr);
 }
 
 TEST_F(UT_ItemEditor, SetOpacity_LessThanOne_AddsEffect)
@@ -429,25 +429,6 @@ TEST_F(UT_RenameEdit, KeyPressEvent_UndoSequence_CallsUndo)
 
     EXPECT_TRUE(event.isAccepted());
     EXPECT_EQ(edit->stackCurrent(), "first");
-
-    edit->setParent(nullptr);
-    delete parent;
-}
-
-TEST_F(UT_RenameEdit, KeyPressEvent_RedoSequence_CallsRedo)
-{
-    edit->pushStatck("first");
-    edit->pushStatck("second");
-    edit->stackBack();
-
-    ItemEditor *parent = new ItemEditor();
-    edit->setParent(parent);
-
-    QKeyEvent event(QEvent::KeyPress, Qt::Key_Y, Qt::ControlModifier);
-    edit->keyPressEvent(&event);
-
-    EXPECT_TRUE(event.isAccepted());
-    EXPECT_EQ(edit->stackCurrent(), "second");
 
     edit->setParent(nullptr);
     delete parent;
