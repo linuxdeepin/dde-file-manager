@@ -132,7 +132,7 @@ QStringList CoreHelper::stripFilters(const QStringList &filters)
     return strippedFilters;
 }
 
-QString CoreHelper::findExtensioName(const QString &fileName, const QStringList &newNameFilters, QMimeDatabase *db)
+QString CoreHelper::findExtensionName(const QString &fileName, const QStringList &newNameFilters, QMimeDatabase *db)
 {
     Q_ASSERT(db);
     QString newNameFilterExtension;

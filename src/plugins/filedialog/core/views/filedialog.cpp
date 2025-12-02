@@ -847,7 +847,7 @@ void FileDialog::selectNameFilterByIndex(int index)
         DFMBASE_NAMESPACE::DMimeDatabase db;
         int dotIndex = fileName.lastIndexOf(".");
         const QString &fileNameExtension = dotIndex > 0 ? fileName.mid(dotIndex + 1) : db.suffixForFileName(fileName);
-        QString newNameFilterExtension { CoreHelper::findExtensioName(fileName, newNameFilters, &db) };
+        QString newNameFilterExtension { CoreHelper::findExtensionName(fileName, newNameFilters, &db) };
 
         if (!newNameFilters.isEmpty())
             newNameFilterExtension = db.suffixForFileName(newNameFilters.at(0));
