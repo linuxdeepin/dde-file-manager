@@ -376,7 +376,7 @@ void TabBarPrivate::paintTabBackground(QPainter *painter, const QStyleOptionTab 
 
     // 绘制背景
     if (isHovered) {
-        QColor bgColor = isDarkTheme ? QColor(255, 255, 255, 15) : QColor(0, 0, 0, 26);
+        QColor bgColor = isDarkTheme ? QColor(255, 255, 255, qRound(255 * 0.05)) : QColor(0, 0, 0, qRound(255 * 0.05));
         painter->setBrush(bgColor);
     } else {
         painter->setBrush(pal.color(QPalette::Active, QPalette::Base));
