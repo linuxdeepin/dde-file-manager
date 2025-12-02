@@ -227,7 +227,7 @@ void UnlockView::onVaultUlocked(int state)
         } else if (state == static_cast<int>(ErrorCode::kWrongPassword)) {
             fmWarning() << "Vault: Wrong password error during unlock";
             DDialog dialog(tr("Wrong password"), "", this);
-            dialog.setIcon(QIcon::fromTheme("dialog-warning"));
+            dialog.setIcon(QIcon::fromTheme("dde-file-manager"));
             dialog.addButton(tr("OK", "button"), true, DDialog::ButtonRecommend);
             dialog.exec();
         } else {
@@ -235,7 +235,7 @@ void UnlockView::onVaultUlocked(int state)
             //! error tips
             QString errMsg = tr("Failed to unlock file vault, error code is %1").arg(state);
             DDialog dialog(this);
-            dialog.setIcon(QIcon::fromTheme("dialog-warning"));
+            dialog.setIcon(QIcon::fromTheme("dde-file-manager"));
             dialog.setTitle(errMsg);
             dialog.addButton(tr("OK", "button"), true, DDialog::ButtonRecommend);
             dialog.exec();

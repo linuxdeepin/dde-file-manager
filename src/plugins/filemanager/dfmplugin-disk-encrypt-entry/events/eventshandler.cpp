@@ -227,7 +227,7 @@ void EventsHandler::onEncryptFinished(const QVariantMap &result)
 
     auto dialog = encryptDialogs.take(dev);
     if (!dialog)
-        dialog_utils::showDialog(title, msg, code != 0 ? dialog_utils::kError : dialog_utils::kInfo);
+        dialog_utils::showDialog(title, msg);
     else {
         dialog->showResultPage(success, title, msg);
         if (code == -KErrorRequestExportRecKey) {
@@ -376,8 +376,7 @@ bool EventsHandler::onAcquireDevicePwd(const QString &dev, QString *pwd, bool *c
     bool testTPM = (type == kPin || type == kTpm);
     if (testTPM && tpm_utils::checkTPM() != 0) {
         fmWarning() << "TPM service is not available for device:" << dev;
-        int ret = dialog_utils::showDialog(tr("Error"), tr("TPM status is abnormal, please use the recovery key to unlock it"),
-                                           dialog_utils::DialogType::kError);
+        int ret = dialog_utils::showDialog(tr("Error"), tr("TPM status is abnormal, please use the recovery key to unlock it"));
         // unlock by recovery key.
         if (ret == 0)
             *pwd = acquirePassphraseByRec(dev, *cancelled);
@@ -413,8 +412,7 @@ bool EventsHandler::onAcquireDevicePwd(const QString &dev, QString *pwd, bool *c
         else
             title = tr("TPM error");
 
-        dialog_utils::showDialog(title, tr("Please use recovery key to unlock device."),
-                                 dialog_utils::kInfo);
+        dialog_utils::showDialog(title, tr("Please use recovery key to unlock device."));
 
         *pwd = acquirePassphraseByRec(dev, *cancelled);
     }
@@ -477,7 +475,6 @@ void EventsHandler::showPreEncryptError(const QString &dev, const QString &devNa
     QString msg;
     QString device = QString("%1(%2)").arg(devName).arg(dev.mid(5));
 
-    bool showError = false;
     switch (-code) {
     case (kSuccess):
         title = tr("Preencrypt done");
@@ -493,13 +490,11 @@ void EventsHandler::showPreEncryptError(const QString &dev, const QString &devNa
         msg = tr("Partition %1 preencrypt failed, please see log for more information.(%2)")
                       .arg(device)
                       .arg(code);
-        showError = true;
         fmWarning() << "Pre-encryption failed for device:" << device << "code:" << code;
         break;
     }
 
-    dialog_utils::showDialog(title, msg,
-                             showError ? dialog_utils::kError : dialog_utils::kInfo);
+    dialog_utils::showDialog(title, msg);
 }
 
 void EventsHandler::showDecryptError(const QString &dev, const QString &devName, int code)
@@ -508,12 +503,10 @@ void EventsHandler::showDecryptError(const QString &dev, const QString &devName,
     QString msg;
     QString device = QString("%1(%2)").arg(devName).arg(dev.mid(5));
 
-    bool showFailed = true;
     switch (-code) {
     case (kSuccess):
         title = tr("Decrypt done");
         msg = tr("Partition %1 has been decrypted").arg(device);
-        showFailed = false;
         fmInfo() << "Decryption successful for device:" << device;
         break;
     case kUserCancelled:
@@ -544,8 +537,7 @@ void EventsHandler::showDecryptError(const QString &dev, const QString &devName,
         dialog->showResultPage(code == 0, title, msg);
         dialog->raise();
     } else {
-        dialog_utils::showDialog(title, msg,
-                                 showFailed ? dialog_utils::kError : dialog_utils::kInfo);
+        dialog_utils::showDialog(title, msg);
     }
 }
 
@@ -566,7 +558,6 @@ void EventsHandler::showChgPwdError(const QString &dev, const QString &devName, 
         break;
     }
 
-    bool showError = false;
     switch (-code) {
     case (kSuccess):
         title = tr("Change %1 done").arg(codeType);
@@ -579,7 +570,6 @@ void EventsHandler::showChgPwdError(const QString &dev, const QString &devName, 
     case kErrorChangePassphraseFailed:
         title = tr("Change %1 failed").arg(codeType);
         msg = tr("Wrong %1").arg(codeType);
-        showError = true;
         fmWarning() << "Wrong" << codeType << "for device:" << device;
         break;
     default:
@@ -588,13 +578,11 @@ void EventsHandler::showChgPwdError(const QString &dev, const QString &devName, 
                       .arg(device)
                       .arg(codeType)
                       .arg(code);
-        showError = true;
         fmWarning() << "Password change failed for device:" << device << "type:" << codeType << "code:" << code;
         break;
     }
 
-    dialog_utils::showDialog(title, msg,
-                             showError ? dialog_utils::kError : dialog_utils::kInfo);
+    dialog_utils::showDialog(title, msg);
 }
 
 void EventsHandler::requestReboot()
@@ -616,8 +604,7 @@ bool EventsHandler::canUnlock(const QString &device)
     if (device == unfinishedDecryptJob()) {
         fmWarning() << "Device has unfinished decryption job:" << device;
         dialog_utils::showDialog(tr("Error"),
-                                 tr("Partition is not fully decrypted, please finish decryption before access."),
-                                 dialog_utils::DialogType::kInfo);
+                                 tr("Partition is not fully decrypted, please finish decryption before access."));
         return false;
     }
 
@@ -625,8 +612,7 @@ bool EventsHandler::canUnlock(const QString &device)
     if ((states & kStatusOnline) && (states & kStatusEncrypt)) {
         fmWarning() << "Device is online and encrypting, cannot unlock:" << device << "status:" << states;
         dialog_utils::showDialog(tr("Unlocking partition failed"),
-                                 tr("Please click \"Continue Partition Encryption\" in the right-click menu to complete the partition encryption."),
-                                 dialog_utils::DialogType::kError);
+                                 tr("Please click \"Continue Partition Encryption\" in the right-click menu to complete the partition encryption."));
         return false;
     }
 

@@ -84,7 +84,7 @@ void EncryptProgressDialog::onCicked(int idx, const QString &btnTxt)
     QString msg;
     if (!validateExportPath(url.toLocalFile(), &msg)) {
         fmWarning() << "Export path validation failed:" << msg;
-        dialog_utils::showDialog(tr("Error"), msg, dialog_utils::DialogType::kError);
+        dialog_utils::showDialog(tr("Error"), msg);
     } else {
         saveRecKey(url.toLocalFile());
     }
@@ -199,7 +199,7 @@ void EncryptProgressDialog::saveRecKey(const QString &path)
     QFile f(recFileName);
     if (!f.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
         fmCritical() << "Failed to create recovery key file:" << recFileName << "error:" << f.errorString();
-        dialog_utils::showDialog(tr("Error"), tr("Cannot create recovery key file!"), dialog_utils::DialogType::kError);
+        dialog_utils::showDialog(tr("Error"), tr("Cannot create recovery key file!"));
         return;
     }
     f.write(recKey.toLocal8Bit());

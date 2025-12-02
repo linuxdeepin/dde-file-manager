@@ -239,7 +239,7 @@ void BurnJobManager::showOpticalJobCompletionDialog(const QString &msg, const QS
 void BurnJobManager::showOpticalJobFailureDialog(int type, const QString &err, const QStringList &details)
 {
     DDialog d(qApp->activeWindow());
-    d.setIcon(QIcon::fromTheme("dialog-error"));
+    d.setIcon(QIcon::fromTheme("dde-file-manager"));
     QString failureType;
     switch (type) {
     case AbstractBurnJob::kOpticalBlank:

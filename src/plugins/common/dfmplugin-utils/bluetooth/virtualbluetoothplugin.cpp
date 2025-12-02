@@ -43,7 +43,7 @@ bool VirtualBluetoothPlugin::bluetoothAvailable()
 void VirtualBluetoothPlugin::sendFiles(const QStringList &paths, const QString &deviceId)
 {
     if (!BluetoothTransDialog::isBluetoothIdle()) {
-        DialogManagerInstance->showMessageDialog(DFMBASE_NAMESPACE::DialogManager::kMsgInfo, tr("Sending files now, please try later."));
+        DialogManagerInstance->showMessageDialog(tr("Sending files now, please try later."));
         return;
     }
 

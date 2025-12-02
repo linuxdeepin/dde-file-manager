@@ -266,7 +266,7 @@ void OpticalMediaWidget::onBurnButtonClicked()
     QFileInfoList listFilesInStage = dirStage.entryInfoList(filter);
     if (listFilesInStage.count() == 0) {
         fmInfo() << "No files found in staging folder, showing warning dialog";
-        DialogManagerInstance->showMessageDialog(DialogManager::kMsgWarn, errTitle);
+        DialogManagerInstance->showMessageDialog(errTitle);
         return;
     }
 
@@ -298,7 +298,7 @@ void OpticalMediaWidget::onStagingFileStatisticsFinished()
     qint64 total { statisticWorker->totalSize() };
     if (avil == 0 || total > avil) {
         fmWarning() << "Insufficient space for burn operation - Available:" << avil << "Required:" << total;
-        DialogManagerInstance->showMessageDialog(DialogManager::kMsgWarn, tr("Unable to burn. Not enough free space on the target disk."));
+        DialogManagerInstance->showMessageDialog(tr("Unable to burn. Not enough free space on the target disk."));
         return;
     }
 

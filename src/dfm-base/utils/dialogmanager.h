@@ -34,11 +34,6 @@ public:
     static DialogManager *instance();
 
 public:
-    enum MessageType {
-        kMsgInfo = 1,
-        kMsgWarn = 2,
-        kMsgErr = 3
-    };
     enum OperateType {
         kMount,
         kUnmount,
@@ -53,8 +48,8 @@ public:
     void showNoPermissionDialog(const QList<QUrl> &urls);
     void showCopyMoveToSelfDialog();
 
-    int showMessageDialog(MessageType messageLevel, const QString &title, const QString &message = "", QString btnTxt = tr("Confirm", "button"));
-    int showMessageDialog(MessageType messageLevel, const QString &title, const QString &message, const QStringList &btnTxtList);
+    int showMessageDialog(const QString &title, const QString &message = "", QString btnTxt = tr("Confirm", "button"));
+    int showMessageDialog(const QString &title, const QString &message, const QStringList &btnTxtList);
 
     void addTask(const JobHandlePointer task);
 
@@ -93,9 +88,6 @@ private:
     ~DialogManager();
 
     TaskDialog *taskdialog = nullptr;   // 文件任务进度和错误处理弹窗
-    QIcon infoIcon;
-    QIcon warningIcon;
-    QIcon errorIcon;
 
     // 存储自定义控件创建器的映射
     QMap<QString, std::function<DSettingsWidgetFactory::WidgetCreateHandler>> settingWidgetCreators;

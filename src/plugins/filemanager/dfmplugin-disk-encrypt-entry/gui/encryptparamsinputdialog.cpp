@@ -461,12 +461,12 @@ void EncryptParamsInputDialog::confirmEncrypt()
             fmWarning() << "TPM is locked, showing lockout error";
             QString msg = tr("TPM is locked and cannot be used for partition encryption. "
                              "Please cancel the TPM password or choose another unlocking method.");
-            dialog_utils::showDialog(tr("TPM error"), msg, dialog_utils::DialogType::kError);
+            dialog_utils::showDialog(tr("TPM error"), msg);
             return;
         }
 
         fmCritical() << "TPM status error occurred";
-        dialog_utils::showDialog(tr("TPM error"), tr("TPM status error!"), dialog_utils::DialogType::kError);
+        dialog_utils::showDialog(tr("TPM error"), tr("TPM status error!"));
         return;
     }
     accept();

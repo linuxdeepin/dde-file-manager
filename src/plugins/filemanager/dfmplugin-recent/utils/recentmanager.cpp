@@ -234,7 +234,7 @@ void RecentHelper::removeRecent(const QList<QUrl> &urls)
 {
     // In wayland , dialog needs to set a parent , otherwise it will enter the window modal incorrectly
     DDialog dlg(qApp->activeWindow());
-    dlg.setIcon(QIcon::fromTheme("dialog-warning"));
+    dlg.setIcon(QIcon::fromTheme("dde-file-manager"));
     dlg.addButton(QObject::tr("Cancel", "button"));
     dlg.addButton(QObject::tr("Remove", "button"), true, DDialog::ButtonRecommend);
 

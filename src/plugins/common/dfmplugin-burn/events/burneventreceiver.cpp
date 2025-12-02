@@ -94,8 +94,7 @@ void BurnEventReceiver::handlePasteTo(const QList<QUrl> &urls, const QUrl &dest,
                 qint64 srcSize { fi->size() };
                 qint64 avil { qvariant_cast<qint64>(map[DeviceProperty::kSizeFree]) };
                 if (avil == 0 || srcSize > avil) {
-                    DialogManagerInstance->showMessageDialog(DialogManager::kMsgWarn,
-                                                             tr("Unable to burn. Not enough free space on the target disk."));
+                    DialogManagerInstance->showMessageDialog(tr("Unable to burn. Not enough free space on the target disk."));
                 } else {
                     QScopedPointer<BurnOptDialog> dlg { new BurnOptDialog(dev, qApp->activeWindow()) };
                     dlg->setISOImage(urls.front());

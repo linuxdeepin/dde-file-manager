@@ -39,7 +39,7 @@ DDialog *DialogManager::showQueryScanningDialog(const QString &title)
     d->setAttribute(Qt::WA_DeleteOnClose);
     Qt::WindowFlags flags = d->windowFlags();
     d->setWindowFlags(flags | Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint);
-    d->setIcon(warningIcon);
+    d->setIcon(QIcon::fromTheme("dde-file-manager"));
     d->addButton(QObject::tr("Cancel", "button"));
     d->addButton(QObject::tr("Stop", "button"), true, DDialog::ButtonWarning);   // 终止
     d->setMaximumWidth(640);
@@ -53,13 +53,13 @@ void DialogManager::showErrorDialog(const QString &title, const QString &message
     Qt::WindowFlags flags = d.windowFlags();
     // dialog show top
     d.setWindowFlags(flags | Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint);
-    d.setIcon(errorIcon);
+    d.setIcon(QIcon::fromTheme("dde-file-manager"));
     d.addButton(tr("Confirm", "button"), true, DDialog::ButtonNormal);
     d.setMaximumWidth(640);
     d.exec();
 }
 
-int DialogManager::showMessageDialog(DialogManager::MessageType messageLevel, const QString &title, const QString &message, QString btnTxt)
+int DialogManager::showMessageDialog(const QString &title, const QString &message, QString btnTxt)
 {
     DDialog d(title, message, qApp->activeWindow());
     d.moveToCenter();
@@ -67,30 +67,18 @@ int DialogManager::showMessageDialog(DialogManager::MessageType messageLevel, co
     buttonTexts.append(btnTxt);
     d.addButtons(buttonTexts);
     d.setDefaultButton(0);
-    if (messageLevel == kMsgWarn) {
-        d.setIcon(warningIcon);
-    } else if (messageLevel == kMsgErr) {
-        d.setIcon(errorIcon);
-    } else {
-        d.setIcon(infoIcon);
-    }
+    d.setIcon(QIcon::fromTheme("dde-file-manager"));
     int code = d.exec();
     return code;
 }
 
-int DialogManager::showMessageDialog(MessageType messageLevel, const QString &title, const QString &message, const QStringList &btnTxtList)
+int DialogManager::showMessageDialog(const QString &title, const QString &message, const QStringList &btnTxtList)
 {
     DDialog d(title, message, qApp->activeWindow());
     d.moveToCenter();
     d.addButtons(btnTxtList);
     d.setDefaultButton(btnTxtList.size() - 1);
-    if (messageLevel == kMsgWarn) {
-        d.setIcon(warningIcon);
-    } else if (messageLevel == kMsgErr) {
-        d.setIcon(errorIcon);
-    } else {
-        d.setIcon(infoIcon);
-    }
+    d.setIcon(QIcon::fromTheme("dde-file-manager"));
     int code = d.exec();
     return code;
 }
@@ -211,13 +199,13 @@ void DialogManager::showNoPermissionDialog(const QList<QUrl> &urls)
         }
 
         d.setMessage(message);
-        d.setIcon(warningIcon);
+        d.setIcon(QIcon::fromTheme("dde-file-manager"));
     } else {
 
         QFrame *contentFrame = new QFrame;
 
         QLabel *iconLabel = new QLabel;
-        iconLabel->setPixmap(warningIcon.pixmap(64, 64));
+        iconLabel->setPixmap(QIcon::fromTheme("dde-file-manager").pixmap(64, 64));
 
         QLabel *titleLabel = new QLabel;
         titleLabel->setText(tr("Sorry, you don't have permission to operate the following %1 file/folder(s)!").arg(QString::number(urls.count())));
@@ -262,7 +250,7 @@ void DialogManager::showCopyMoveToSelfDialog()
     buttonTexts.append(tr("OK", "button"));
     d.addButton(buttonTexts[0], true, DDialog::ButtonNormal);
     d.setDefaultButton(0);
-    d.setIcon(warningIcon);
+    d.setIcon(QIcon::fromTheme("dde-file-manager"));
     d.exec();
 }
 
@@ -326,7 +314,7 @@ QString DialogManager::askPasswordForLockedDevice(const QString &devName)
 bool DialogManager::askForFormat()
 {
     DDialog dlg(qApp->activeWindow());
-    dlg.setIcon(warningIcon);
+    dlg.setIcon(QIcon::fromTheme("dde-file-manager"));
     dlg.addButton(tr("Cancel", "button"));
     dlg.addButton(tr("Format", "button"), true, DDialog::ButtonRecommend);
     dlg.setTitle(tr("To access the device, you must format the disk first. Are you sure you want to format it now?"));
@@ -527,7 +515,7 @@ void DialogManager::showRestoreFailedDialog(const int count)
     } else if (count > 1) {
         d.setMessage(tr("Failed to restore %1 files, the target folder is read-only").arg(QString::number(count)));
     }
-    d.setIcon(warningIcon);
+    d.setIcon(QIcon::fromTheme("dde-file-manager"));
     d.addButton(tr("OK", "button"), true, DDialog::ButtonNormal);
     d.exec();
 }
@@ -587,7 +575,7 @@ int DialogManager::showRenameNameSameErrorDialog(const QString &name)
     buttonTexts.append(tr("Confirm", "button"));
     d.addButton(buttonTexts[0], true, DDialog::ButtonNormal);
     d.setDefaultButton(0);
-    d.setIcon(warningIcon);
+    d.setIcon(QIcon::fromTheme("dde-file-manager"));
     int code = d.exec();
     return code;
 }
@@ -601,7 +589,7 @@ void DialogManager::showRenameBusyErrDialog()
     buttonTexts.append(tr("Confirm", "button"));
     d.addButton(buttonTexts[0], true, DDialog::ButtonNormal);
     d.setDefaultButton(0);
-    d.setIcon(warningIcon);
+    d.setIcon(QIcon::fromTheme("dde-file-manager"));
     d.exec();
 }
 
@@ -614,7 +602,7 @@ int DialogManager::showRenameNameDotBeginDialog()
     d.addButton(tr("Cancel"));
 
     d.setDefaultButton(0);
-    d.setIcon(warningIcon);
+    d.setIcon(QIcon::fromTheme("dde-file-manager"));
 
     int ret = -1;
     connect(&d, &DDialog::buttonClicked, this, [=, &ret](int index, const QString &text) {
@@ -662,7 +650,7 @@ DFMBASE_NAMESPACE::GlobalEventType DialogManager::showBreakSymlinkDialog(const Q
     d.addButton(buttonTexts[0], true);
     d.addButton(buttonTexts[1], false, DDialog::ButtonRecommend);
     d.setDefaultButton(1);
-    d.setIcon(warningIcon);
+    d.setIcon(QIcon::fromTheme("dde-file-manager"));
     int code = d.exec();
     if (code == 1) {
         QList<QUrl> urls;
@@ -684,7 +672,7 @@ int DialogManager::showAskIfAddExcutableFlagAndRunDialog()
     d.addButton(tr("Cancel", "button"));
     d.addButton(tr("Run", "button"), true, DDialog::ButtonRecommend);
     d.setTitle(message);
-    d.setIcon(warningIcon);
+    d.setIcon(QIcon::fromTheme("dde-file-manager"));
     int code = d.exec();
     return code;
 }
@@ -693,7 +681,7 @@ void DialogManager::showDeleteSystemPathWarnDialog(quint64 winId)
 {
     DDialog d(FMWindowsIns.findWindowById(winId));
     d.setTitle(tr("The selected files contain system file/directory, and it cannot be deleted"));
-    d.setIcon(warningIcon);
+    d.setIcon(QIcon::fromTheme("dde-file-manager"));
     d.addButton(tr("OK", "button"), true, DDialog::ButtonNormal);
     d.exec();
 }
@@ -701,9 +689,6 @@ void DialogManager::showDeleteSystemPathWarnDialog(quint64 winId)
 DialogManager::DialogManager(QObject *parent)
     : QObject(parent)
 {
-    infoIcon = QIcon::fromTheme("dialog-information");
-    warningIcon = QIcon::fromTheme("dialog-warning");
-    errorIcon = QIcon::fromTheme("dialog-error");
 }
 
 DialogManager::~DialogManager()

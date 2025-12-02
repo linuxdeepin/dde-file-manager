@@ -61,7 +61,7 @@ void MountSecretDiskAskPasswordDialog::initUI()
         unlockBtn->setEnabled(false);
     setSpacing(10);
     setDefaultButton(1);
-    setIcon(QIcon::fromTheme("dialog-warning"));
+    setIcon(QIcon::fromTheme("dde-file-manager"));
 }
 
 void MountSecretDiskAskPasswordDialog::initConnect()

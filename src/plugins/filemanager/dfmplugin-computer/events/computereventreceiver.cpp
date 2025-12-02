@@ -291,7 +291,7 @@ bool ComputerEventReceiver::askForConfirmChmod(const QString &devName)
     using namespace Dtk::Widget;
     DDialog dlg(tr("%1 is read-only. Do you want to enable read and write permissions for it?").arg(devName),
                 tr("Once enabled, read/write permission will be granted permanently"), qApp->activeWindow());
-    dlg.setIcon(QIcon::fromTheme("dialog-warning"));
+    dlg.setIcon(QIcon::fromTheme("dde-file-manager"));
     dlg.addButton(tr("Cancel"));
     int confirmIdx = dlg.addButton(tr("Enable Now"), true, DDialog::ButtonRecommend);
 
