@@ -6,6 +6,7 @@
 #include <QTest>
 #include <QDebug>
 
+#include "dfmplugin_trashcore_global.h"
 #include "stubext.h"
 #include "trashcore.h"
 #include "events/trashcoreeventreceiver.h"

@@ -5,6 +5,7 @@
 #include <gtest/gtest.h>
 #include <QTest>
 #include <QDebug>
+#include <QUrl>
 #include <QTimer>
 
 #include "stubext.h"
@@ -50,7 +51,7 @@ TEST_F(TrashCoreEventSenderTest, Constructor_Basic)
     EXPECT_NO_THROW(TrashCoreEventSender::instance());
 }
 
-TEST_F(TrashCoreEventSenderTest, CheckAndStartWatcher_CIFSNotBusy)
+TEST_F(TrashCoreEventSenderTest, CheckAndStartWatcher_Basic)
 {
     TrashCoreEventSender *sender = TrashCoreEventSender::instance();
     
@@ -107,6 +108,14 @@ TEST_F(TrashCoreEventSenderTest, SendTrashStateChangedDel_NonEmptyTrash)
 }
 
 TEST_F(TrashCoreEventSenderTest, SendTrashStateChangedAdd_FromEmptyToNonEmpty)
+{
+    TrashCoreEventSender *sender = TrashCoreEventSender::instance();
+    
+    // Since we're not stubbing the signal dispatcher, just ensure it doesn't crash
+    EXPECT_NO_THROW(sender->sendTrashStateChangedAdd());
+}
+
+TEST_F(TrashCoreEventSenderTest, SendTrashStateChangedAdd_FromNotEmpty)
 {
     TrashCoreEventSender *sender = TrashCoreEventSender::instance();
     
