@@ -33,7 +33,7 @@ QString VaultEntryFileEntity::displayName() const
 
 QIcon VaultEntryFileEntity::icon() const
 {
-    return QIcon::fromTheme("dfm_safebox");
+    return QIcon::fromTheme("safebox");
 }
 
 bool VaultEntryFileEntity::exists() const

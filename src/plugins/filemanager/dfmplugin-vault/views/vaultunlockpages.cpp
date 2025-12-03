@@ -47,7 +47,7 @@ VaultUnlockPages::VaultUnlockPages(QWidget *parent)
         this->windowHandle()->setProperty("_d_dwayland_maximizable", false);
         this->windowHandle()->setProperty("_d_dwayland_resizable", false);
     }
-    setIcon(QIcon::fromTheme("dfm_vault"));
+    setIcon(QIcon::fromTheme("safebox"));
     connect(this, &VaultUnlockPages::buttonClicked, this, &VaultUnlockPages::onButtonClicked);
     setOnButtonClickedClose(false);
 }

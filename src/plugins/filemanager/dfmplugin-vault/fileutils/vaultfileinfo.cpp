@@ -223,7 +223,7 @@ QUrl VaultFileInfo::getUrlByType(const UrlInfoType type, const QString &fileName
 QIcon VaultFileInfo::fileIcon()
 {
     if (d->isRoot) {
-        QString iconName = "dfm_safebox";   // 如果是根目录，用保险柜图标
+        QString iconName = "safebox";   // 如果是根目录，用保险柜图标
         return QIcon::fromTheme(iconName);
     }
 
@@ -286,7 +286,7 @@ QString VaultFileInfo::nameOf(const NameInfoType type) const
     case NameInfoType::kFileCopyName:
         return displayOf(DisPlayInfoType::kFileDisplayName);
     case NameInfoType::kIconName: {
-        QString iconName = "dfm_safebox";   // 如果是根目录，用保险柜图标
+        QString iconName = "safebox";   // 如果是根目录，用保险柜图标
         if (d->isRoot) {
             return iconName;
         } else {
