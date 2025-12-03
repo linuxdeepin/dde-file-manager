@@ -97,6 +97,7 @@ void RenameBarPrivate::setUIParameters()
     label = std::get<2>(addOperatorItems);
     label->setObjectName(QString { "RenameBarLabel" });
     comboBox = std::get<3>(addOperatorItems);
+    comboBox->setFixedWidth(180);
     label->setText(QObject::tr("Location"));
     comboBox->addItems(QList<QString> { QObject::tr("Before file name"), QObject::tr("After file name") });
     label->setBuddy(comboBox);
