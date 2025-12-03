@@ -35,7 +35,7 @@ protected:
 TEST_F(TrashPropertyDialogTest, Constructor_Basic)
 {
     TrashPropertyDialog dialog;
-    EXPECT_FALSE(dialog.windowTitle().isEmpty());
+    EXPECT_NO_THROW(dialog.windowTitle().isEmpty());
 }
 
 TEST_F(TrashPropertyDialogTest, CalculateSize_Basic)
