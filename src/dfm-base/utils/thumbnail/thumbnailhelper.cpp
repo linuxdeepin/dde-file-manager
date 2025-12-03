@@ -31,6 +31,37 @@ DFMGLOBAL_USE_NAMESPACE
 
 ThumbnailHelper::ThumbnailHelper()
 {
+    initMimeTypeSupport();
+}
+
+void ThumbnailHelper::initMimeTypeSupport()
+{
+    using Strategy = SupportCheckStrategy;
+
+    // === Image types ===
+    mimeTypeSupportStrategy.insert("image/*", Strategy::kCheckImage);
+
+    // === Audio types ===
+    mimeTypeSupportStrategy.insert("audio/*", Strategy::kCheckAudio);
+
+    // === Video types ===
+    mimeTypeSupportStrategy.insert("video/*", Strategy::kCheckVideo);
+
+    // === Text types ===
+    mimeTypeSupportStrategy.insert(Mime::kTypeTextPlain, Strategy::kCheckText);
+
+    // === Document types ===
+    mimeTypeSupportStrategy.insert(Mime::kTypeAppPdf, Strategy::kCheckDocument);
+    mimeTypeSupportStrategy.insert(Mime::kTypeAppCRRMedia, Strategy::kCheckDocument);
+    mimeTypeSupportStrategy.insert(Mime::kTypeAppMxf, Strategy::kCheckDocument);
+    mimeTypeSupportStrategy.insert(Mime::kTypeAppPptx, Strategy::kCheckDocument);
+
+    // === Executable package types (unconditional icon display) ===
+    mimeTypeSupportStrategy.insert(Mime::kTypeAppAppimage, Strategy::kUnconditional);
+    mimeTypeSupportStrategy.insert(Mime::kTypeAppUab, Strategy::kUnconditional);
+
+    qCInfo(logDFMBase) << "thumbnail: initialized MIME type support strategies for"
+                       << mimeTypeSupportStrategy.size() << "types";
 }
 
 void ThumbnailHelper::initSizeLimit()
@@ -41,7 +72,7 @@ void ThumbnailHelper::initSizeLimit()
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeAppVRRMedia), INT64_MAX);
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeAppVMAsf), INT64_MAX);
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeAppMxf), INT64_MAX);
-    sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeAppPptx), INT64_MAX);
+    sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeAppPptx), 1024 * 1024 * 80);
 
     // images
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeImageIef), 1024 * 1024 * 80);
@@ -54,8 +85,8 @@ void ThumbnailHelper::initSizeLimit()
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeImagePipeg), 1024 * 1024 * 30);
     // High file limit size only for FLAC files.
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeAudioFlac), INT64_MAX);
-
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeAppAppimage), INT64_MAX);
+    sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeAppUab), INT64_MAX);
 
     qCInfo(logDFMBase) << "thumbnail: initialized size limits for" << sizeLimitHash.size() << "mime types";
 }
@@ -98,49 +129,71 @@ bool ThumbnailHelper::canGenerateThumbnail(const QUrl &url)
 bool ThumbnailHelper::checkMimeTypeSupport(const QMimeType &mime)
 {
     const QString &mimeName = mime.name();
-    QStringList mimeList = { mimeName };
-    mimeList.append(mime.parentMimeTypes());
+    QStringList candidateTypes { mimeName };
+    candidateTypes.append(mime.parentMimeTypes());
 
-    auto checkStatus = [](Application::GenericAttribute attr) {
+    // === Special check: MimeTypeDisplayManager audio/video types ===
+    // These types may not start with "audio/" or "video/" prefix
+    if (MimeTypeDisplayManager::instance()->supportAudioMimeTypes().contains(mimeName)) {
+        return Application::instance()->genericAttribute(Application::kPreviewAudio).toBool();
+    }
+
+    if (MimeTypeDisplayManager::instance()->supportVideoMimeTypes().contains(mimeName)) {
+        return Application::instance()->genericAttribute(Application::kPreviewVideo).toBool();
+    }
+
+    // === Find matching strategy ===
+    SupportCheckStrategy strategy;
+    bool found = false;
+
+    for (const QString &type : candidateTypes) {
+        // 1. Exact match
+        if (mimeTypeSupportStrategy.contains(type)) {
+            strategy = mimeTypeSupportStrategy.value(type);
+            found = true;
+            break;
+        }
+
+        // 2. Wildcard match (e.g., image/*, audio/*, video/*)
+        QString prefix = type.section('/', 0, 0);
+        QString wildcardPattern = prefix + "/*";
+        if (mimeTypeSupportStrategy.contains(wildcardPattern)) {
+            strategy = mimeTypeSupportStrategy.value(wildcardPattern);
+            found = true;
+            break;
+        }
+    }
+
+    if (!found) {
+        return false;
+    }
+
+    // === Evaluate strategy ===
+    return evaluateStrategy(strategy);
+}
+
+bool ThumbnailHelper::evaluateStrategy(SupportCheckStrategy strategy)
+{
+    auto checkAttribute = [](Application::GenericAttribute attr) {
         return Application::instance()->genericAttribute(attr).toBool();
     };
 
-    if (mimeName.startsWith("image")) {
-        bool supported = checkStatus(Application::kPreviewImage);
-        return supported;
-    }
-
-    if (mimeName.startsWith("audio")
-        || MimeTypeDisplayManager::instance()->supportAudioMimeTypes().contains(mimeName)) {
-        bool supported = checkStatus(Application::kPreviewAudio);
-        return supported;
-    }
-
-    if (mimeName.startsWith("video")
-        || MimeTypeDisplayManager::instance()->supportVideoMimeTypes().contains(mimeName)) {
-        bool supported = checkStatus(Application::kPreviewVideo);
-        return supported;
-    }
-
-    if (mimeName == Mime::kTypeTextPlain) {
-        bool supported = checkStatus(Application::kPreviewTextFile);
-        return supported;
-    }
-
-    if (Q_LIKELY(mimeList.contains(Mime::kTypeAppPdf)
-                 || mimeName == Mime::kTypeAppCRRMedia
-                 || mimeName == Mime::kTypeAppMxf)
-        || mimeList.contains(Mime::kTypeAppPptx)) {
-        bool supported = checkStatus(Application::kPreviewDocumentFile);
-        return supported;
-    }
-
-    // appimage is executable package, should display icon
-    if (mimeName == Mime::kTypeAppAppimage) {
+    switch (strategy) {
+    case SupportCheckStrategy::kUnconditional:
         return true;
+    case SupportCheckStrategy::kCheckImage:
+        return checkAttribute(Application::kPreviewImage);
+    case SupportCheckStrategy::kCheckAudio:
+        return checkAttribute(Application::kPreviewAudio);
+    case SupportCheckStrategy::kCheckVideo:
+        return checkAttribute(Application::kPreviewVideo);
+    case SupportCheckStrategy::kCheckText:
+        return checkAttribute(Application::kPreviewTextFile);
+    case SupportCheckStrategy::kCheckDocument:
+        return checkAttribute(Application::kPreviewDocumentFile);
+    default:
+        return false;
     }
-
-    return false;
 }
 
 void ThumbnailHelper::makePath(const QString &path)

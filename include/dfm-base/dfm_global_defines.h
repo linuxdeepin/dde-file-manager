@@ -152,6 +152,7 @@ inline constexpr char kTypeAppVMAsf[] { "application/vnd.ms-asf" };
 inline constexpr char kTypeAppCRRMedia[] { "application/cnd.rn-realmedia" };
 inline constexpr char kTypeAppVRRMedia[] { "application/vnd.rn-realmedia" };
 inline constexpr char kTypeAppAppimage[] { "application/vnd.appimage" };
+inline constexpr char kTypeAppUab[] { "application/vnd.linyaps.uab" };
 inline constexpr char kTypeTextHtml[] { "text/html" };
 inline constexpr char kTypeAppXhtmlXml[] { "application/xhtml+xml" };
 inline constexpr char kTypeTextXPython[] { "text/x-python" };

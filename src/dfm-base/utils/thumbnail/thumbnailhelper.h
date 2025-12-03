@@ -35,12 +35,24 @@ public:
     static QByteArray dataToMd5Hex(const QByteArray &data);
 
 private:
+    enum class SupportCheckStrategy {
+        kUnconditional,   // Unconditional support (e.g., AppImage, UAB)
+        kCheckImage,   // Check kPreviewImage attribute
+        kCheckAudio,   // Check kPreviewAudio attribute
+        kCheckVideo,   // Check kPreviewVideo attribute
+        kCheckText,   // Check kPreviewTextFile attribute
+        kCheckDocument   // Check kPreviewDocumentFile attribute
+    };
+
+    void initMimeTypeSupport();
     bool checkMimeTypeSupport(const QMimeType &mime);
     void makePath(const QString &path);
+    bool evaluateStrategy(SupportCheckStrategy strategy);
 
 private:
     DMimeDatabase mimeDatabase;
     QHash<QMimeType, qint64> sizeLimitHash;
+    QHash<QString, SupportCheckStrategy> mimeTypeSupportStrategy;
 };
 }   // namespace dfmbase
 

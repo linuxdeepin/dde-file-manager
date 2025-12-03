@@ -23,6 +23,7 @@ QPixmap renderIconBackground(const QSize &size, const IconStyle &style = IconSty
 QPixmap renderIconBackground(const QSizeF &size, const IconStyle &style = IconStyle {});
 QPixmap addShadowToPixmap(const QPixmap &originalPixmap, int shadowOffsetY, qreal blurRadius, qreal shadowOpacity);
 IconStyle getIconStyle(int size);
+bool shouldSkipThumbnailFrame(const QString &mimeType);
 }   // end namespace IconUtils
 
 DFMBASE_END_NAMESPACE

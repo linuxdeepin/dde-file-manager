@@ -497,16 +497,14 @@ QImage ThumbnailCreators::appimageThumbnailCreator(const QString &filePath, Thum
     qCDebug(logDFMBase) << "thumbnail: creating AppImage thumbnail for:" << filePath << "size:" << size;
 
     // 1. Check if AppImage exists
-    if (!QFile::exists(filePath)) {
+    auto info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(filePath));
+    if (!info || !info->exists()) {
         qCWarning(logDFMBase) << "thumbnail: AppImage file not found:" << filePath;
         return QImage();
     }
 
     // 2. Check if file is AppImage type and has executable permission
-    auto info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(filePath),
-                                              Global::CreateFileInfoType::kCreateFileInfoSync);
-    if (!info
-        || info->nameOf(NameInfoType::kMimeTypeName) != Global::Mime::kTypeAppAppimage
+    if (info->nameOf(NameInfoType::kMimeTypeName) != Global::Mime::kTypeAppAppimage
         || !info->isAttributes(FileInfo::FileIsType::kIsExecutable)) {
         qCWarning(logDFMBase) << "thumbnail: file is not a valid AppImage or lacks executable permission:" << filePath
                               << "mimeType:" << (info ? info->nameOf(NameInfoType::kMimeTypeName) : "null")
@@ -520,11 +518,10 @@ QImage ThumbnailCreators::appimageThumbnailCreator(const QString &filePath, Thum
 
     // Read .DirIcon file from AppImage without extraction
     bool success = appimage_read_file_into_buffer_following_symlinks(
-        filePath.toUtf8().constData(),
-        ".DirIcon",
-        &iconBuffer,
-        &iconSize
-    );
+            filePath.toUtf8().constData(),
+            ".DirIcon",
+            &iconBuffer,
+            &iconSize);
 
     // Use RAII to ensure buffer cleanup
     QScopedPointer<char, QScopedPointerPodDeleter> bufferCleanup(iconBuffer);
@@ -557,18 +554,19 @@ QImage ThumbnailCreators::pptxThumbnailCreator(const QString &filePath, Thumbnai
 {
     qCInfo(logDFMBase) << "thumbnail: creating PPTX thumbnail for:" << filePath << "size:" << size;
 
-    // 1. Verify file exists
-    if (!QFile::exists(filePath)) {
+    auto info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(filePath));
+    if (!info || !info->exists()) {
         qCWarning(logDFMBase) << "thumbnail: PPTX file not found:" << filePath;
         return QImage();
     }
 
     // 2. Verify file type
-    auto info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(filePath),
-                                              Global::CreateFileInfoType::kCreateFileInfoSync);
-    if (!info || info->nameOf(NameInfoType::kMimeTypeName) != Global::Mime::kTypeAppPptx) {
+    const QMimeType &mime = info->fileMimeType();
+    QStringList candidateTypes { info->nameOf(NameInfoType::kMimeTypeName) };
+    candidateTypes.append(mime.parentMimeTypes());
+    if (!candidateTypes.contains(Global::Mime::kTypeAppPptx)) {
         qCWarning(logDFMBase) << "thumbnail: file is not a valid PPTX file:" << filePath
-                              << "mimeType:" << (info ? info->nameOf(NameInfoType::kMimeTypeName) : "null");
+                              << "mimeTypes:" << candidateTypes;
         return QImage();
     }
 
@@ -617,4 +615,122 @@ QImage ThumbnailCreators::pptxThumbnailCreator(const QString &filePath, Thumbnai
     // 6. If no built-in thumbnail found, return empty image
     qCDebug(logDFMBase) << "thumbnail: no thumbnail available for PPTX file:" << filePath;
     return QImage();
+}
+
+QImage ThumbnailCreators::uabThumbnailCreator(const QString &filePath, ThumbnailSize size)
+{
+    qCDebug(logDFMBase) << "thumbnail: creating UAB thumbnail for:" << filePath << "size:" << size;
+
+    // 1. Validate file existence
+    auto info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(filePath));
+    if (!info || !info->exists()) {
+        qCWarning(logDFMBase) << "thumbnail: UAB file not found:" << filePath;
+        return QImage();
+    }
+
+    // 2. Verify file type
+    if (!info || info->nameOf(NameInfoType::kMimeTypeName) != Global::Mime::kTypeAppUab) {
+        qCWarning(logDFMBase) << "thumbnail: file is not a valid UAB file:" << filePath
+                              << "mimeType:" << (info ? info->nameOf(NameInfoType::kMimeTypeName) : "null");
+        return QImage();
+    }
+
+    // 3. Query ELF section information using readelf (read-only, no file modification)
+    QProcess readelfProcess;
+    readelfProcess.start("readelf", { "-W", "-S", filePath });
+
+    if (!readelfProcess.waitForFinished(5000)) {
+        qCWarning(logDFMBase) << "thumbnail: readelf timeout for UAB file:" << filePath;
+        readelfProcess.kill();
+        return QImage();
+    }
+
+    if (readelfProcess.exitCode() != 0) {
+        qCWarning(logDFMBase) << "thumbnail: readelf failed for UAB file:" << filePath
+                              << "stderr:" << readelfProcess.readAllStandardError();
+        return QImage();
+    }
+
+    // 4. Parse readelf output to locate linglong.icon section
+    QString readelfOutput = readelfProcess.readAllStandardOutput();
+    QStringList lines = readelfOutput.split('\n');
+
+    qint64 sectionOffset = -1;
+    qint64 sectionSize = -1;
+    bool sectionFound = false;
+
+    for (const QString &line : lines) {
+        if (line.contains("linglong.icon")) {
+            // Parse section header line format:
+            // [Nr] Name          Type     Address          Off    Size   ES Flg Lk Inf Al
+            // [26] linglong.icon PROGBITS 0000000000000000 002e30 004e20 00   0   0  1
+            QString normalizedLine = line.simplified();
+            QStringList parts = normalizedLine.split(' ', Qt::SkipEmptyParts);
+
+            // Validate column count (need at least 7 columns)
+            if (parts.size() >= 7) {
+                bool offsetOk = false, sizeOk = false;
+                sectionOffset = parts[4].toLongLong(&offsetOk, 16);   // Column 5: Offset (hex)
+                sectionSize = parts[5].toLongLong(&sizeOk, 16);   // Column 6: Size (hex)
+
+                if (offsetOk && sizeOk && sectionOffset > 0 && sectionSize > 0) {
+                    sectionFound = true;
+                    qCDebug(logDFMBase) << "thumbnail: found linglong.icon section - offset:"
+                                        << QString("0x%1").arg(sectionOffset, 0, 16)
+                                        << "size:" << sectionSize << "bytes";
+                    break;
+                }
+            }
+        }
+    }
+
+    if (!sectionFound) {
+        qCWarning(logDFMBase) << "thumbnail: linglong.icon section not found in UAB file:" << filePath;
+        return QImage();
+    }
+
+    // 5. Extract section data using QFile (read-only mode, no file modification)
+    QFile uabFile(filePath);
+    if (!uabFile.open(QIODevice::ReadOnly)) {
+        qCWarning(logDFMBase) << "thumbnail: failed to open UAB file for reading:" << filePath
+                              << "error:" << uabFile.errorString();
+        return QImage();
+    }
+
+    if (!uabFile.seek(sectionOffset)) {
+        qCWarning(logDFMBase) << "thumbnail: failed to seek to section offset:" << sectionOffset
+                              << "in file:" << filePath
+                              << "error:" << uabFile.errorString();
+        uabFile.close();
+        return QImage();
+    }
+
+    QByteArray iconData = uabFile.read(sectionSize);
+    uabFile.close();   // Close immediately to release file handle
+
+    if (iconData.size() != sectionSize) {
+        qCWarning(logDFMBase) << "thumbnail: incomplete section data read - expected:" << sectionSize
+                              << "bytes, got:" << iconData.size() << "bytes for:" << filePath;
+        return QImage();
+    }
+
+    qCDebug(logDFMBase) << "thumbnail: successfully extracted" << iconData.size()
+                        << "bytes of icon data from UAB file:" << filePath;
+
+    // 6. Load image directly from extracted data (no temporary file needed)
+    QImage icon;
+    if (!icon.loadFromData(iconData)) {
+        qCWarning(logDFMBase) << "thumbnail: failed to decode image from extracted icon data for:" << filePath;
+        return QImage();
+    }
+
+    // 7. Scale image to requested thumbnail size
+    if (icon.width() > size || icon.height() > size) {
+        icon = icon.scaled(size, size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        qCDebug(logDFMBase) << "thumbnail: scaled UAB icon from"
+                            << icon.size() << "to fit size:" << size;
+    }
+
+    qCDebug(logDFMBase) << "thumbnail: UAB thumbnail created successfully for:" << filePath;
+    return icon;
 }

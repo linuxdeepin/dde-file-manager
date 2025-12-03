@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "iconutils.h"
 
+#include <dfm-base/dfm_global_defines.h>
+
 #include <QPainter>
 #include <QGraphicsDropShadowEffect>
 #include <QGraphicsScene>
@@ -107,4 +109,14 @@ QPixmap IconUtils::renderIconBackground(const QSizeF &size, const IconStyle &sty
     p.drawRoundedRect(rect, style.radius, style.radius);
     p.end();
     return pm;
+}
+
+bool IconUtils::shouldSkipThumbnailFrame(const QString &mimeType)
+{
+    // appimage, uab 不显示缩略图底板
+    static const QStringList kExcludedMimes = {
+        Global::Mime::kTypeAppAppimage,
+        Global::Mime::kTypeAppUab
+    };
+    return kExcludedMimes.contains(mimeType);
 }

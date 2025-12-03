@@ -108,7 +108,7 @@ void DetailSpaceHelper::showDetailView(quint64 windowId, bool checked)
 void DetailSpaceHelper::setDetailViewSelectFileUrl(quint64 windowId, const QUrl &url)
 {
     DetailSpaceWidget *w = findDetailSpaceByWindowId(windowId);
-    if (w)
+    if (w && url.isValid())
         setDetailViewByUrl(w, url);
 }
 
