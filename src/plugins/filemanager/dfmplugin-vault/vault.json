@@ -26,7 +26,7 @@
             "GroupName" : "Vault",
             "Shape" : 0,
             "ItemName" : "File Vault",
-            "ItemIcon" : "dfm_safebox",
+            "ItemIcon" : "safebox",
             "ReflectionObject" : "dfmplugin_vault::VaultEntryFileEntity*"
         }]
     }

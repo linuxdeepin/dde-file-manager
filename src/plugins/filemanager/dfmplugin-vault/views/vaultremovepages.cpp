@@ -180,7 +180,7 @@ void VaultRemovePages::initUI()
         this->windowHandle()->setProperty("_d_dwayland_resizable", false);
     }
 
-    setIcon(QIcon(":/icons/deepin/builtin/icons/dfm_vault_32px.svg"));
+    setIcon(QIcon::fromTheme("safebox"));
     this->setFixedWidth(396);
     setOnButtonClickedClose(false);
 }

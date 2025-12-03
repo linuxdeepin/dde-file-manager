@@ -39,7 +39,7 @@ VaultActiveView::VaultActiveView(QWidget *parent)
         this->windowHandle()->setProperty("_d_dwayland_resizable", false);
     }
 
-    this->setIcon(QIcon::fromTheme("dfm_vault"));
+    this->setIcon(QIcon::fromTheme("safebox"));
 
     //! 初始化试图容器
     stackedWidget = new QStackedWidget(this);
