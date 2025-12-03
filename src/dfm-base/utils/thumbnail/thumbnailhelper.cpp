@@ -129,8 +129,6 @@ bool ThumbnailHelper::canGenerateThumbnail(const QUrl &url)
 bool ThumbnailHelper::checkMimeTypeSupport(const QMimeType &mime)
 {
     const QString &mimeName = mime.name();
-    QStringList candidateTypes { mimeName };
-    candidateTypes.append(mime.parentMimeTypes());
 
     // === Special check: MimeTypeDisplayManager audio/video types ===
     // These types may not start with "audio/" or "video/" prefix
@@ -144,32 +142,28 @@ bool ThumbnailHelper::checkMimeTypeSupport(const QMimeType &mime)
 
     // === Find matching strategy ===
     SupportCheckStrategy strategy;
-    bool found = false;
 
-    for (const QString &type : candidateTypes) {
-        // 1. Exact match
-        if (mimeTypeSupportStrategy.contains(type)) {
-            strategy = mimeTypeSupportStrategy.value(type);
-            found = true;
-            break;
-        }
-
-        // 2. Wildcard match (e.g., image/*, audio/*, video/*)
-        QString prefix = type.section('/', 0, 0);
-        QString wildcardPattern = prefix + "/*";
-        if (mimeTypeSupportStrategy.contains(wildcardPattern)) {
-            strategy = mimeTypeSupportStrategy.value(wildcardPattern);
-            found = true;
-            break;
-        }
+    // 1. Exact match
+    if (mimeTypeSupportStrategy.contains(mimeName)) {
+        strategy = mimeTypeSupportStrategy.value(mimeName);
+        return evaluateStrategy(strategy);
     }
 
-    if (!found) {
-        return false;
+    // 2. Wildcard match (e.g., image/*, audio/*, video/*)
+    const QString prefix = mimeName.section('/', 0, 0);
+    const QString wildcardPattern = prefix + "/*";
+    if (mimeTypeSupportStrategy.contains(wildcardPattern)) {
+        strategy = mimeTypeSupportStrategy.value(wildcardPattern);
+        return evaluateStrategy(strategy);
     }
 
-    // === Evaluate strategy ===
-    return evaluateStrategy(strategy);
+    // 3. Check parent MIME types (only for document types)
+    const QStringList parentTypes = mime.parentMimeTypes();
+    if (parentTypes.contains(Mime::kTypeAppPdf) || parentTypes.contains(Mime::kTypeAppPptx)) {
+        return evaluateStrategy(SupportCheckStrategy::kCheckDocument);
+    }
+
+    return false;
 }
 
 bool ThumbnailHelper::evaluateStrategy(SupportCheckStrategy strategy)
