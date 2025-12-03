@@ -52,6 +52,8 @@ const int CollectionItemDelegate::kIconBackRadius = 18;
 const int CollectionItemDelegate::kIconRectRadius = 4;
 const int CollectionItemDelegate::kIconBackgroundMargin = 4;
 
+inline constexpr int kIconModeBackRadiusCoefficient = 16;
+
 CollectionItemDelegatePrivate::CollectionItemDelegatePrivate(CollectionItemDelegate *qq)
     : q(qq)
 {
@@ -883,7 +885,8 @@ void CollectionItemDelegate::paintBackground(QPainter *painter, const QStyleOpti
     painter->setRenderHint(QPainter::Antialiasing);
 
     QPainterPath path;
-    path.addRoundedRect(backgroundRect, kIconRectRadius, kIconRectRadius);
+    int radius = parent()->iconSize().width() / kIconModeBackRadiusCoefficient;
+    path.addRoundedRect(backgroundRect, radius, radius);
     painter->fillPath(path, backgroundColor);
 
     painter->setPen(borderColor);
