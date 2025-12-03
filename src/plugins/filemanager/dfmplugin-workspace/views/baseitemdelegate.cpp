@@ -12,6 +12,7 @@
 #include "models/fileviewmodel.h"
 
 #include <dfm-base/dfm_base_global.h>
+#include <dfm-base/utils/iconutils.h>
 
 #include <DPalette>
 #include <DPaletteHelper>
@@ -76,8 +77,7 @@ bool BaseItemDelegate::isThumnailIconIndex(const QModelIndex &index) const
 
     FileInfoPointer info { parent()->fileInfo(index) };
     if (info) {
-        // appimage 不显示缩略图底板
-        if (info->nameOf(NameInfoType::kMimeTypeName) == Global::Mime::kTypeAppAppimage)
+        if (IconUtils::shouldSkipThumbnailFrame(info->nameOf(NameInfoType::kMimeTypeName)))
             return false;
 
         const auto &attribute { info->extendAttributes(ExtInfoType::kFileThumbnail) };
@@ -409,7 +409,7 @@ void BaseItemDelegate::paintGroupText(QPainter *painter, const QRect &textRect, 
 
     // Get fonts from DFontSizeManager
     QFont groupTitleFont = DFontSizeManager::instance()->t6();   // T6 for group title
-    QFont fileCountFont = DFontSizeManager::instance()->t8();    // T8 for file count
+    QFont fileCountFont = DFontSizeManager::instance()->t8();   // T8 for file count
 
     // Determine base text color based on theme
     bool isLightTheme = DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::ColorType::LightType;

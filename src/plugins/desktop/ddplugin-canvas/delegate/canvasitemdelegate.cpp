@@ -435,8 +435,7 @@ bool CanvasItemDelegate::isThumnailIconIndex(const QModelIndex &index) const
 
     FileInfoPointer info { parent()->model()->fileInfo(index) };
     if (info) {
-        // appimage 不显示缩略图底板
-        if (info->nameOf(NameInfoType::kMimeTypeName) == Global::Mime::kTypeAppAppimage)
+        if (IconUtils::shouldSkipThumbnailFrame(info->nameOf(NameInfoType::kMimeTypeName)))
             return false;
 
         const auto &attribute { info->extendAttributes(ExtInfoType::kFileThumbnail) };
