@@ -48,6 +48,8 @@ const int CanvasItemDelegate::kIconBackRadius = 18;
 const int CanvasItemDelegate::kIconRectRadius = 4;
 const int CanvasItemDelegate::kIconBackgroundMargin = 4;
 
+inline constexpr int kIconModeBackRadiusCoefficient = 16;
+
 CanvasItemDelegatePrivate::CanvasItemDelegatePrivate(CanvasItemDelegate *qq)
     : q(qq)
 {
@@ -858,7 +860,8 @@ void CanvasItemDelegate::paintBackground(QPainter *painter, const QStyleOptionVi
     painter->setRenderHint(QPainter::Antialiasing);
 
     QPainterPath path;
-    path.addRoundedRect(backgroundRect, kIconRectRadius, kIconRectRadius);
+    int radius = parent()->iconSize().width() / kIconModeBackRadiusCoefficient;
+    path.addRoundedRect(backgroundRect, radius, radius);
     painter->fillPath(path, backgroundColor);
 
     painter->setPen(borderColor);
