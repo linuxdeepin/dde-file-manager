@@ -700,6 +700,15 @@ QMimeType AsyncFileInfoPrivate::mimeTypes(const QString &filePath, QMimeDatabase
     return db.mimeTypeForFile(q->sharedFromThis(), mode);
 }
 
+AsyncFileInfoPrivate::AsyncFileInfoPrivate(AsyncFileInfo *qq)
+    : q(qq)
+{
+}
+
+AsyncFileInfoPrivate::~AsyncFileInfoPrivate()
+{
+}
+
 QIcon AsyncFileInfoPrivate::defaultIcon()
 {
     QIcon icon;

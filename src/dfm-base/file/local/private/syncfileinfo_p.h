@@ -51,25 +51,6 @@ public:
 public:
     explicit SyncFileInfoPrivate(SyncFileInfo *qq);
     virtual ~SyncFileInfoPrivate();
-    QString sizeString(const QString &str) const
-    {
-        int begin_pos = str.indexOf('.');
-
-        if (begin_pos < 0)
-            return str;
-
-        QString size = str;
-
-        while (size.count() - 1 > begin_pos) {
-            if (!size.endsWith('0'))
-                return size;
-
-            size = size.left(size.count() - 1);
-        }
-
-        return size.left(size.count() - 1);
-    }
-    virtual QMimeType readMimeType(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault) const;
 
 public:
     QString fileName() const;
