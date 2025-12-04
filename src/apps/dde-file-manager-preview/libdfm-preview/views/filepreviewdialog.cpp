@@ -344,7 +344,22 @@ void FilePreviewDialog::switchToPage(int index)
     for (const QString &key : keyList) {
         const QString &gKey = generalKey(key);
 
-        if (preview && (FilePreviewFactory::isSuitedWithKey(preview, key) || FilePreviewFactory::isSuitedWithKey(preview, gKey)) && !FileUtils::isDesktopFile(fileList.at(index))) {
+        // Check if we can reuse existing preview, prioritize exact key match over general key
+        bool canReusePreview = false;
+        if (preview && !FileUtils::isDesktopFile(fileList.at(index))) {
+            // First check exact key match
+            if (FilePreviewFactory::isSuitedWithKey(preview, key)) {
+                canReusePreview = true;
+            } else if (gKey != key) {
+                // Only use general key if no exact key plugin exists
+                // This prevents text/* from intercepting text/markdown when markdown-preview exists
+                if (!FilePreviewFactory::hasPluginForKey(key)) {
+                    canReusePreview = FilePreviewFactory::isSuitedWithKey(preview, gKey);
+                }
+            }
+        }
+
+        if (canReusePreview) {
             qCDebug(logLibFilePreview) << "FilePreviewDialog: reusing existing preview for key:" << key;
             if (preview->setFileUrl(fileList.at(index))) {
                 preview->contentWidget()->updateGeometry();

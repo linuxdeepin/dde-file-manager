@@ -68,7 +68,7 @@ bool FilePreviewFactory::isSuitedWithKey(const AbstractBasePreview *view, const 
         qCWarning(logLibFilePreview) << "FilePreviewFactory: null preview instance provided for key compatibility check:" << key;
         return false;
     }
-    
+
     int index = FilePreviewFactory::previewToLoaderIndex.value(view, -1);
 
     if (index == -1) {
@@ -79,4 +79,16 @@ bool FilePreviewFactory::isSuitedWithKey(const AbstractBasePreview *view, const 
     bool suited = index == loader()->indexOf(key);
     qCDebug(logLibFilePreview) << "FilePreviewFactory: preview compatibility check for key:" << key << "result:" << suited;
     return suited;
+}
+
+bool FilePreviewFactory::hasPluginForKey(const QString &key)
+{
+#ifndef QT_NO_LIBRARY
+    int index = loader()->indexOf(key);
+    bool exists = (index != -1);
+    qCDebug(logLibFilePreview) << "FilePreviewFactory: plugin existence check for key:" << key << "result:" << exists;
+    return exists;
+#else
+    return false;
+#endif
 }

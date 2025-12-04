@@ -6,6 +6,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 add_subdirectory(image-preview)
 add_subdirectory(music-preview)
 add_subdirectory(text-preview)
+add_subdirectory(markdown-preview)
 add_subdirectory(dciicon-preview)
 add_subdirectory(pdf-preview)
 
