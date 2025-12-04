@@ -17,6 +17,7 @@ public:
     static QStringList keys();
     static DFMBASE_NAMESPACE::AbstractBasePreview *create(const QString &key);
     static bool isSuitedWithKey(const DFMBASE_NAMESPACE::AbstractBasePreview *view, const QString &key);
+    static bool hasPluginForKey(const QString &key);
 
     static QMap<const DFMBASE_NAMESPACE::AbstractBasePreview *, int> previewToLoaderIndex;
 };
