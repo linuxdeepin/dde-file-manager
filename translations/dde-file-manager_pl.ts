@@ -1144,7 +1144,8 @@ Wprowadź nazwę użytkownika i hasło dla %1</translation>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="198"/>
         <source>Finalize disc after burning 
 (no additional data can be appended)</source>
-        <translation type="unfinished"/>
+        <translation>Zakończ po wypaleniu
+(nie będzie można dodać więcej danych)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="208"/>
@@ -4201,7 +4202,7 @@ Wprowadź nazwę użytkownika i hasło dla %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="577"/>
         <source>The remaining space on the current disc is insufficient to hold the files to be burned. Please reduce the number of files and try again.</source>
-        <translation type="unfinished"/>
+        <translation>Pozostałe miejsce na wybranym dysku jest niewystarczające. Zmniejsz liczbę plików i spróbuj ponownie.</translation>
     </message>
 </context>
 <context>
