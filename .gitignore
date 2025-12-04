@@ -94,6 +94,11 @@ dde-file-manager-lib/test_shutil/property/oneProperty.pro
 .cursor
 .specstory
 .spec-workflow/
+.serena/
+.kiro/
+.promptx/
+.qoder/
+.qoderignore
 
 # autotests
 Testing

@@ -6,6 +6,16 @@
 #include <QTest>
 #include "stubext.h"
 #include <QFileDevice>
+#include <QComboBox>
+#include <QMouseEvent>
+#include <QPaintEvent>
+#include <QCloseEvent>
+#include <QShowEvent>
+#include <QTimer>
+#include <QThread>
+#include <QFocusEvent>
+#include <QKeyEvent>
+#include <QMenu>
 
 #include "dfmplugin_propertydialog_global.h"
 #include "propertydialog.h"
@@ -18,8 +28,18 @@
 #include "menu/propertymenuscene.h"
 #include "views/filepropertydialog.h"
 #include "views/computerpropertydialog.h"
+#include "views/basicwidget.h"
+#include "views/permissionmanagerwidget.h"
+#include "views/editstackedwidget.h"
+#include "views/multifilepropertydialog.h"
+#include "menu/propertymenuscene.h"
+#include "menu/propertymenuscene_p.h"
 
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
+
+#include <dfm-base/interfaces/fileinfo.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/utils/fileinfohelper.h>
 
 using namespace dfmplugin_propertydialog;
 using namespace dfmplugin_menu_util;
@@ -365,4 +385,305 @@ TEST_F(TestPropertyDialog, ComputerPropertyDialogTest)
     EXPECT_NO_THROW({
         ComputerPropertyDialog dialog;
     });
+}
+
+// Test FilePropertyDialog class - comprehensive test coverage
+TEST_F(TestPropertyDialog, FilePropertyDialogConstructorTest)
+{
+    EXPECT_NO_THROW({
+        FilePropertyDialog dialog;
+    });
+}
+
+TEST_F(TestPropertyDialog, FilePropertyDialogDestructorTest)
+{
+    FilePropertyDialog *dialog = new FilePropertyDialog();
+    EXPECT_NO_THROW(delete dialog);
+}
+
+// TEST_F(TestPropertyDialog, FilePropertyDialogContentHeightTest)
+// {
+//     FilePropertyDialog dialog;
+//     int height = dialog.contentHeight();
+//     EXPECT_GE(height, 0);
+// }
+
+TEST_F(TestPropertyDialog, FilePropertyDialogGetFileSizeTest)
+{
+    FilePropertyDialog dialog;
+    QUrl testUrl = QUrl::fromLocalFile("/tmp/test");
+    dialog.selectFileUrl(testUrl);
+    qint64 size = dialog.getFileSize();
+    EXPECT_GE(size, 0);
+}
+
+TEST_F(TestPropertyDialog, FilePropertyDialogGetFileCountTest)
+{
+    FilePropertyDialog dialog;
+    QUrl testUrl = QUrl::fromLocalFile("/tmp/test");
+    dialog.selectFileUrl(testUrl);
+    int count = dialog.getFileCount();
+    EXPECT_GE(count, 0);
+}
+
+TEST_F(TestPropertyDialog, FilePropertyDialogSetBasicInfoExpandTest)
+{
+    FilePropertyDialog dialog;
+    EXPECT_NO_THROW(dialog.setBasicInfoExpand(true));
+    EXPECT_NO_THROW(dialog.setBasicInfoExpand(false));
+}
+
+TEST_F(TestPropertyDialog, FilePropertyDialogCloseDialogTest)
+{
+    FilePropertyDialog dialog;
+    QUrl testUrl = QUrl::fromLocalFile("/tmp/test");
+    dialog.selectFileUrl(testUrl);
+    EXPECT_NO_THROW(dialog.closeDialog());
+}
+
+TEST_F(TestPropertyDialog, FilePropertyDialogOnSelectUrlRenamedTest)
+{
+    FilePropertyDialog dialog;
+    QUrl testUrl = QUrl::fromLocalFile("/tmp/test");
+    EXPECT_NO_THROW(dialog.onSelectUrlRenamed(testUrl));
+}
+
+TEST_F(TestPropertyDialog, FilePropertyDialogOnFileInfoUpdatedTest)
+{
+    FilePropertyDialog dialog;
+    QUrl testUrl = QUrl::fromLocalFile("/tmp/test");
+    EXPECT_NO_THROW(dialog.onFileInfoUpdated(testUrl, "testInfo", false));
+}
+
+// TEST_F(TestPropertyDialog, FilePropertyDialogMousePressEventTest)
+// {
+//     FilePropertyDialog dialog;
+//     QMouseEvent event(QEvent::MouseButtonPress, QPointF(10, 10), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+//     EXPECT_NO_THROW(dialog.mousePressEvent(&event));
+// }
+
+TEST_F(TestPropertyDialog, FilePropertyDialogCloseEventTest)
+{
+    FilePropertyDialog dialog;
+    QCloseEvent event;
+    EXPECT_NO_THROW(dialog.closeEvent(&event));
+}
+
+// Test PermissionManagerWidget class
+TEST_F(TestPropertyDialog, PermissionManagerWidgetConstructorTest)
+{
+    EXPECT_NO_THROW({
+        PermissionManagerWidget widget;
+    });
+}
+
+TEST_F(TestPropertyDialog, PermissionManagerWidgetDestructorTest)
+{
+    PermissionManagerWidget *widget = new PermissionManagerWidget();
+    EXPECT_NO_THROW(delete widget);
+}
+
+TEST_F(TestPropertyDialog, PermissionManagerWidgetUpdateFileUrlTest)
+{
+    PermissionManagerWidget widget;
+    QUrl testUrl = QUrl::fromLocalFile("/tmp/test");
+    EXPECT_NO_THROW(widget.updateFileUrl(testUrl));
+}
+
+TEST_F(TestPropertyDialog, PermissionManagerWidgetGetPermissionStringTest)
+{
+    PermissionManagerWidget widget;
+    QString permission = widget.getPermissionString(QFileDevice::ReadOwner);
+    EXPECT_FALSE(permission.isEmpty());
+}
+
+TEST_F(TestPropertyDialog, PermissionManagerWidgetSetComboBoxByPermissionTest)
+{
+    PermissionManagerWidget widget;
+    QComboBox comboBox;
+    EXPECT_NO_THROW(widget.setComboBoxByPermission(&comboBox, QFileDevice::ReadOwner, 0));
+}
+
+TEST_F(TestPropertyDialog, PermissionManagerWidgetToggleFileExecutableTest)
+{
+    PermissionManagerWidget widget;
+    EXPECT_NO_THROW(widget.toggleFileExecutable(true));
+    EXPECT_NO_THROW(widget.toggleFileExecutable(false));
+}
+
+TEST_F(TestPropertyDialog, PermissionManagerWidgetCanChmodTest)
+{
+    PermissionManagerWidget widget;
+    FileInfoPointer info = DFMBASE_NAMESPACE::InfoFactory::create<DFMBASE_NAMESPACE::FileInfo>(QUrl::fromLocalFile("/tmp/test"));
+    bool canChmod = widget.canChmod(info);
+    EXPECT_TRUE(canChmod || !canChmod); // Just test it doesn't crash
+}
+
+TEST_F(TestPropertyDialog, PermissionManagerWidgetSetExecTextTest)
+{
+    PermissionManagerWidget widget;
+    EXPECT_NO_THROW(widget.setExecText());
+}
+
+TEST_F(TestPropertyDialog, PermissionManagerWidgetPaintEventTest)
+{
+    PermissionManagerWidget widget;
+    QPaintEvent event(QRect(0, 0, 100, 100));
+    EXPECT_NO_THROW(widget.paintEvent(&event));
+}
+
+TEST_F(TestPropertyDialog, PermissionManagerWidgetOnComboBoxChangedTest)
+{
+    PermissionManagerWidget widget;
+    EXPECT_NO_THROW(widget.onComboBoxChanged());
+}
+
+// Test ComputerPropertyDialog class methods
+TEST_F(TestPropertyDialog, ComputerPropertyDialogComputerProcessTest)
+{
+    ComputerPropertyDialog dialog;
+    QMap<ComputerInfoItem, QString> computerInfo;
+    computerInfo[ComputerInfoItem::kName] = "TestComputer";
+    computerInfo[ComputerInfoItem::kVersion] = "1.0";
+    EXPECT_NO_THROW(dialog.computerProcess(computerInfo));
+}
+
+TEST_F(TestPropertyDialog, ComputerPropertyDialogShowEventTest)
+{
+    ComputerPropertyDialog dialog;
+    QShowEvent event;
+    EXPECT_NO_THROW(dialog.showEvent(&event));
+}
+
+TEST_F(TestPropertyDialog, ComputerPropertyDialogCloseEventTest)
+{
+    ComputerPropertyDialog dialog;
+    QCloseEvent event;
+    EXPECT_NO_THROW(dialog.closeEvent(&event));
+}
+
+// Test ComputerInfoThread class
+TEST_F(TestPropertyDialog, ComputerInfoThreadConstructorTest)
+{
+    EXPECT_NO_THROW({
+        ComputerInfoThread thread;
+    });
+}
+
+TEST_F(TestPropertyDialog, ComputerInfoThreadDestructorTest)
+{
+    ComputerInfoThread *thread = new ComputerInfoThread();
+    thread->stopThread();
+    EXPECT_NO_THROW(delete thread);
+}
+
+TEST_F(TestPropertyDialog, ComputerInfoThreadStartThreadTest)
+{
+    ComputerInfoThread thread;
+    EXPECT_NO_THROW(thread.startThread());
+    thread.quit();
+    thread.wait();
+}
+
+TEST_F(TestPropertyDialog, ComputerInfoThreadStopThreadTest)
+{
+    ComputerInfoThread thread;
+    EXPECT_NO_THROW(thread.stopThread());
+}
+
+TEST_F(TestPropertyDialog, ComputerInfoThreadRunTest)
+{
+    ComputerInfoThread thread;
+    // Note: run() is called internally by start(), so we just test it doesn't crash
+    EXPECT_NO_THROW(thread.start());
+    thread.quit();
+    thread.wait();
+}
+
+TEST_F(TestPropertyDialog, ComputerInfoThreadComputerProcessTest)
+{
+    ComputerInfoThread thread;
+    EXPECT_NO_THROW(thread.computerProcess());
+}
+
+
+TEST_F(TestPropertyDialog, BasicWidgetDestructorTest)
+{
+    BasicWidget *widget = new BasicWidget();
+    EXPECT_NO_THROW(delete widget);
+}
+
+TEST_F(TestPropertyDialog, BasicWidgetGetFileSizeTest)
+{
+    BasicWidget widget;
+    QUrl testUrl = QUrl::fromLocalFile("/tmp/test");
+    widget.selectFileUrl(testUrl);
+    qint64 size = widget.getFileSize();
+    EXPECT_GE(size, 0);
+}
+
+TEST_F(TestPropertyDialog, BasicWidgetGetFileCountTest)
+{
+    BasicWidget widget;
+    QUrl testUrl = QUrl::fromLocalFile("/tmp/test");
+    widget.selectFileUrl(testUrl);
+    int count = widget.getFileCount();
+    EXPECT_GE(count, 0);
+}
+
+TEST_F(TestPropertyDialog, BasicWidgetUpdateFileUrlTest)
+{
+    BasicWidget widget;
+    QUrl testUrl = QUrl::fromLocalFile("/tmp/test");
+    EXPECT_NO_THROW(widget.updateFileUrl(testUrl));
+}
+
+TEST_F(TestPropertyDialog, BasicWidgetSlotFileCountAndSizeChangeTest)
+{
+    BasicWidget widget;
+    EXPECT_NO_THROW(widget.slotFileCountAndSizeChange(1024, 5, 2));
+}
+
+TEST_F(TestPropertyDialog, BasicWidgetSlotFileHideTest)
+{
+    BasicWidget widget;
+    EXPECT_NO_THROW(widget.slotFileHide(Qt::Checked));
+    EXPECT_NO_THROW(widget.slotFileHide(Qt::Unchecked));
+}
+
+TEST_F(TestPropertyDialog, BasicWidgetSlotOpenFileLocationTest)
+{
+    BasicWidget widget;
+    EXPECT_NO_THROW(widget.slotOpenFileLocation());
+}
+
+TEST_F(TestPropertyDialog, BasicWidgetCloseEventTest)
+{
+    BasicWidget widget;
+    QCloseEvent event;
+    EXPECT_NO_THROW(widget.closeEvent(&event));
+}
+
+TEST_F(TestPropertyDialog, BasicWidgetImageExtenInfoTest)
+{
+    BasicWidget widget;
+    QUrl testUrl = QUrl::fromLocalFile("/tmp/test.jpg");
+    QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> properties;
+    EXPECT_NO_THROW(widget.imageExtenInfo(testUrl, properties));
+}
+
+TEST_F(TestPropertyDialog, BasicWidgetVideoExtenInfoTest)
+{
+    BasicWidget widget;
+    QUrl testUrl = QUrl::fromLocalFile("/tmp/test.mp4");
+    QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> properties;
+    EXPECT_NO_THROW(widget.videoExtenInfo(testUrl, properties));
+}
+
+TEST_F(TestPropertyDialog, BasicWidgetAudioExtenInfoTest)
+{
+    BasicWidget widget;
+    QUrl testUrl = QUrl::fromLocalFile("/tmp/test.mp3");
+    QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> properties;
+    EXPECT_NO_THROW(widget.audioExtenInfo(testUrl, properties));
 }

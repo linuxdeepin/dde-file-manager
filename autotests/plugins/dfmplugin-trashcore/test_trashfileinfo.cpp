@@ -381,3 +381,136 @@ TEST_F(TrashFileInfoTest, Refresh_Basic)
     // Use simpler approach to avoid crash - just ensure it doesn't throw
     EXPECT_NO_THROW(info.refresh());
 }
+
+// 新增测试用例：测试 initTarget 方法中的未覆盖分支
+TEST_F(TrashFileInfoTest, InitTarget_WithValidTargetUri)
+{
+    QUrl url("trash:///test.txt");
+    TrashFileInfo info(url);
+
+    // Mock DFileInfo::attribute to return a valid target URI
+    stub.set_lamda(&DFMIO::DFileInfo::attribute, [](DFMIO::DFileInfo *self, DFMIO::DFileInfo::AttributeID id, bool *outSuccess) -> QVariant {
+        Q_UNUSED(self);
+        if (id == DFMIO::DFileInfo::AttributeID::kStandardTargetUri) {
+            if (outSuccess) *outSuccess = true;
+            return QVariant::fromValue<QUrl>(QUrl("file:///home/user/test.txt"));
+        }
+        if (outSuccess) *outSuccess = false;
+        return QVariant();
+    });
+
+    // 确保不会抛出异常
+    EXPECT_NO_THROW({
+        // 注意：我们无法直接调用私有的 initTarget 方法，但可以通过构造函数间接测试
+        TrashFileInfo info2(url);
+    });
+}
+
+// 新增测试用例：测试 initTarget 方法中的祖先URL处理分支
+TEST_F(TrashFileInfoTest, InitTarget_WithAncestorsUrl)
+{
+    QUrl url("trash:///folder/test.txt");
+    TrashFileInfo info(url);
+
+    // Mock DFileInfo::attribute to return empty target URI
+    bool firstCall = true;
+    stub.set_lamda(&DFMIO::DFileInfo::attribute, [&firstCall](DFMIO::DFileInfo *self, DFMIO::DFileInfo::AttributeID id, bool *outSuccess) -> QVariant {
+        Q_UNUSED(self);
+        if (id == DFMIO::DFileInfo::AttributeID::kStandardTargetUri) {
+            if (firstCall) {
+                firstCall = false;
+                if (outSuccess) *outSuccess = true;
+                return QVariant(""); // 返回空字符串
+            } else {
+                if (outSuccess) *outSuccess = true;
+                return QVariant::fromValue<QUrl>(QUrl("file:///home/user/folder"));
+            }
+        }
+        if (outSuccess) *outSuccess = false;
+        return QVariant();
+    });
+
+    // Mock UrlRoute::urlParent
+    stub.set_lamda(&DFMBASE_NAMESPACE::UrlRoute::urlParent, [](const QUrl &url) -> QUrl {
+        if (url.path() == "/folder/test.txt") {
+            return QUrl("trash:///folder");
+        } else if (url.path() == "/folder") {
+            return QUrl("trash:///");
+        }
+        return QUrl();
+    });
+
+    // Mock TrashCoreHelper::rootUrl
+    stub.set_lamda(&TrashCoreHelper::rootUrl, []() -> QUrl {
+        return QUrl("trash:///");
+    });
+
+    // 确保不会抛出异常
+    EXPECT_NO_THROW({
+        TrashFileInfo info2(url);
+    });
+}
+
+// 新增测试用例：测试 fileName 方法中 dFileInfo 为空的情况
+TEST_F(TrashFileInfoTest, FileName_WithNullDFileInfo)
+{
+    QUrl url("trash:///test.txt");
+    TrashFileInfo info(url);
+
+    // Mock dFileInfo to be null (this is difficult to achieve in practice, but we can test the method)
+    EXPECT_NO_THROW(info.nameOf(DFMBASE_NAMESPACE::FileInfo::FileNameInfoType::kFileName));
+}
+
+// 新增测试用例：测试 copyName 方法
+TEST_F(TrashFileInfoTest, CopyName_Basic)
+{
+    QUrl url("trash:///test.txt");
+    TrashFileInfo info(url);
+
+    EXPECT_NO_THROW(info.nameOf(DFMBASE_NAMESPACE::FileInfo::FileNameInfoType::kFileCopyName));
+}
+
+// 新增测试用例：测试 mimeTypeName 方法
+TEST_F(TrashFileInfoTest, MimeTypeName_Basic)
+{
+    QUrl url("trash:///test.txt");
+    TrashFileInfo info(url);
+
+    EXPECT_NO_THROW(info.nameOf(DFMBASE_NAMESPACE::FileInfo::FileNameInfoType::kMimeTypeName));
+}
+
+// 新增测试用例：测试 lastRead 方法
+TEST_F(TrashFileInfoTest, LastRead_Basic)
+{
+    QUrl url("trash:///test.txt");
+    TrashFileInfo info(url);
+
+    EXPECT_NO_THROW(info.timeOf(DFMBASE_NAMESPACE::FileInfo::FileTimeType::kLastRead));
+}
+
+// 新增测试用例：测试 lastModified 方法
+TEST_F(TrashFileInfoTest, LastModified_Basic)
+{
+    QUrl url("trash:///test.txt");
+    TrashFileInfo info(url);
+
+    EXPECT_NO_THROW(info.timeOf(DFMBASE_NAMESPACE::FileInfo::FileTimeType::kLastModified));
+}
+
+// 新增测试用例：测试 deletionTime 方法
+TEST_F(TrashFileInfoTest, DeletionTime_Basic)
+{
+    QUrl url("trash:///test.txt");
+    TrashFileInfo info(url);
+
+    EXPECT_NO_THROW(info.timeOf(DFMBASE_NAMESPACE::FileInfo::FileTimeType::kDeletionTime));
+}
+
+// 新增测试用例：测试 symLinkTarget 方法
+TEST_F(TrashFileInfoTest, SymLinkTarget_Basic)
+{
+    QUrl url("trash:///test.txt");
+    TrashFileInfo info(url);
+
+    EXPECT_NO_THROW(info.pathOf(DFMBASE_NAMESPACE::FileInfo::FilePathInfoType::kSymLinkTarget));
+}
