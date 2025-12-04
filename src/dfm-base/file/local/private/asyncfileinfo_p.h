@@ -59,25 +59,7 @@ public:
 public:
     explicit AsyncFileInfoPrivate(AsyncFileInfo *qq);
     virtual ~AsyncFileInfoPrivate();
-    QString sizeString(const QString &str) const
-    {
-        int begin_pos = str.indexOf('.');
 
-        if (begin_pos < 0)
-            return str;
-
-        QString size = str;
-
-        while (size.count() - 1 > begin_pos) {
-            if (!size.endsWith('0'))
-                return size;
-
-            size = size.left(size.count() - 1);
-        }
-
-        return size.left(size.count() - 1);
-    }
-    virtual QMimeType readMimeType(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault) const;
     QIcon defaultIcon();
 
 public:
@@ -115,24 +97,6 @@ public:
     bool hasAsyncAttribute(FileInfo::FileInfoAttributeID key);
 };
 
-AsyncFileInfoPrivate::AsyncFileInfoPrivate(AsyncFileInfo *qq)
-    : q(qq)
-{
-}
-
-AsyncFileInfoPrivate::~AsyncFileInfoPrivate()
-{
-}
-
-QMimeType AsyncFileInfoPrivate::readMimeType(QMimeDatabase::MatchMode mode) const
-{
-    QUrl url = q->urlOf(UrlInfoType::kUrl);
-    if (url.isLocalFile())
-        return mimeDb.mimeTypeForUrl(url);
-    else
-        return mimeDb.mimeTypeForFile(UrlRoute::urlToPath(url),
-                                      mode);
-}
 }
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::AsyncFileInfoPrivate *)
 
