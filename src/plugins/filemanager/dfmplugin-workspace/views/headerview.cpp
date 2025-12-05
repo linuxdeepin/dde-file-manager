@@ -102,7 +102,7 @@ void HeaderView::updateColumnWidth()
 
 void HeaderView::doFileNameColumnResize(const int totalWidth)
 {
-    fmInfo() << "Resizing file name column, total width:" << totalWidth;
+    fmDebug() << "Resizing file name column, total width:" << totalWidth;
 
     int fileNameColumn = viewModel()->getColumnByRole(kItemFileDisplayNameRole);
     int columnCount = count();
