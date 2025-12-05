@@ -257,6 +257,8 @@ private:
     void focusOnView();
 
     bool isGroupHeader(const QModelIndex &index) const;
+    bool isClickInGroupHeaderSpacing(const QPoint &pos, const QModelIndex &index) const;
+    QModelIndex indexAtForSelection(const QPoint &pos) const;
 };
 
 }

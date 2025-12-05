@@ -301,10 +301,46 @@ void BaseItemDelegate::paintGroupHeader(QPainter *painter, const QStyleOptionVie
         return;
     }
 
-    // Paint background
-    paintGroupBackground(painter, option);
-
     painter->save();
+
+    // Calculate actual drawing rect (skip top spacing for non-first group headers)
+    QRectF drawRect = option.rect;
+    int displayIndex = index.data(Global::kItemGroupDisplayIndex).toInt();
+
+    if (displayIndex > 0) {
+        // For non-first group headers, skip the top 16px spacing area
+        // The spacing area remains transparent (view background shows through)
+        drawRect.setTop(drawRect.top() + kGroupHeaderInterval);
+    }
+
+    // Paint background using subclass-defined background rect
+    if (option.widget) {
+        // Get background rect from subclass (allows different implementations for list vs icon mode)
+        QRectF bgRect = getGroupHeaderBackgroundRect(option);
+
+        // Adjust bgRect top to match drawRect (skip 16px spacing for non-first groups)
+        if (displayIndex > 0) {
+            bgRect.setTop(drawRect.top());
+        }
+
+        DPalette pl(DPaletteHelper::instance()->palette(option.widget));
+        QColor baseColor = pl.color(DPalette::ColorGroup::Active, DPalette::ColorType::ItemBackground);
+        QColor adjustColor = baseColor;
+
+        if (option.state & QStyle::State_MouseOver) {
+            adjustColor = DGuiApplicationHelper::adjustColor(baseColor, 0, 0, 0, 0, 0, 0, +10);
+        } else {
+            painter->setOpacity(0);
+        }
+
+        QPainterPath path;
+        path.addRoundedRect(bgRect, kListModeRectRadius, kListModeRectRadius);
+        painter->setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing | QPainter::SmoothPixmapTransform);
+        painter->fillPath(path, adjustColor);
+    }
+
+    painter->restore();
+
     // Get group information
     QString groupText = index.data(Qt::DisplayRole).toString();
     int fileCount = index.data(Global::kItemGroupFileCount).toInt();
@@ -312,20 +348,17 @@ void BaseItemDelegate::paintGroupHeader(QPainter *painter, const QStyleOptionVie
         groupText = "Group";
     }
 
-    // Get expansion state - assume expanded by default for now
     bool isExpanded = index.data(Global::ItemRoles::kItemGroupExpandedRole).toBool();
 
-    // Calculate layout rectangles
-    QRect expandButtonRect = getExpandButtonRect(option);
-    QRect textRect = getGroupTextRect(option);
+    // Use centralized layout methods for consistent positioning
+    QRect expandButtonRect = getExpandButtonRect(drawRect);
+    QRect textRect = getGroupTextRect(drawRect);
 
     // Paint expand button
     paintExpandButton(painter, expandButtonRect, isExpanded);
 
     // Paint group text
     paintGroupText(painter, textRect, groupText, fileCount, option);
-
-    painter->restore();
 }
 
 QRectF BaseItemDelegate::getGroupHeaderBackgroundRect(const QStyleOptionViewItem &option) const
@@ -454,23 +487,33 @@ void BaseItemDelegate::paintGroupText(QPainter *painter, const QRect &textRect, 
 
 QRect BaseItemDelegate::getExpandButtonRect(const QStyleOptionViewItem &option) const
 {
+    return getExpandButtonRect(option.rect);
+}
+
+QRect BaseItemDelegate::getExpandButtonRect(const QRectF &rect) const
+{
     QRect buttonRect;
     buttonRect.setSize(m_expandButtonSize);
-    buttonRect.moveLeft(option.rect.left() + 12);   // 12px left margin for expand button
-    buttonRect.moveTop(option.rect.top() + (option.rect.height() - m_expandButtonSize.height()) / 2);
+    buttonRect.moveLeft(rect.left() + 12);   // 12px left margin for expand button
+    buttonRect.moveTop(rect.top() + (rect.height() - m_expandButtonSize.height()) / 2);
 
     return buttonRect;
 }
 
 QRect BaseItemDelegate::getGroupTextRect(const QStyleOptionViewItem &option) const
 {
-    QRect expandButtonRect = getExpandButtonRect(option);
+    return getGroupTextRect(option.rect);
+}
+
+QRect BaseItemDelegate::getGroupTextRect(const QRectF &rect) const
+{
+    QRect expandButtonRect = getExpandButtonRect(rect);
 
     QRect textRect;
     textRect.setLeft(expandButtonRect.right() + 8);   // 8px spacing after button
-    textRect.setTop(option.rect.top());
-    textRect.setRight(option.rect.right() - 12);   // 12px right margin
-    textRect.setBottom(option.rect.bottom());
+    textRect.setTop(rect.top());
+    textRect.setRight(rect.right() - 12);   // 12px right margin
+    textRect.setBottom(rect.bottom());
 
     return textRect;
 }

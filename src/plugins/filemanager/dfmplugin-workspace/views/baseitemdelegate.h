@@ -132,6 +132,7 @@ public:
     virtual void paintGroupHeader(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
     QRect getExpandButtonRect(const QStyleOptionViewItem &option) const;
+    QRect getExpandButtonRect(const QRectF &rect) const;
 
 protected:
     explicit BaseItemDelegate(BaseItemDelegatePrivate &dd, FileViewHelper *parent);
@@ -152,6 +153,7 @@ protected:
     // Group layout calculation methods
 
     QRect getGroupTextRect(const QStyleOptionViewItem &option) const;
+    QRect getGroupTextRect(const QRectF &rect) const;
 
     QList<QRectF> getCornerGeometryList(const QRectF &baseRect, const QSizeF &cornerSize) const;
     void paintEmblems(QPainter *painter, const QRectF &iconRect, const QModelIndex &index) const;

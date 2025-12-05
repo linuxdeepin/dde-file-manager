@@ -677,54 +677,40 @@ FileView::RandeIndexList FileView::rectContainsIndexes(const QRect &rect) const
         return list;
 
     if (isListViewMode() || isTreeViewMode()) {
-        // For variable-height items (grouping enabled), use indexAt with coordinate conversion
+        // For variable-height items (grouping enabled), use indexAtForSelection
         if (isGroupedView()) {
-            // rect parameter from caculateListViewSelection is in contents coordinates (with offsets added)
-            // indexAt expects viewport coordinates (without offsets)
-            // So we need to convert: contents coords -> viewport coords by subtracting offsets
+            // Convert rect to viewport coordinates for comparison
             QRect viewportRect = rect;
             viewportRect.translate(-horizontalOffset(), -verticalOffset());
 
-            // Use indexAt to efficiently find first and last items
-            QModelIndex firstIndex = indexAt(viewportRect.topLeft());
-            QModelIndex lastIndex = indexAt(viewportRect.bottomRight());
+            // Use indexAtForSelection to get items at corners (doesn't skip spacing areas)
+            QModelIndex firstIndex = indexAtForSelection(viewportRect.topLeft());
+            QModelIndex lastIndex = indexAtForSelection(viewportRect.bottomRight());
 
-            // Handle edge cases where points are in 16px spacing areas or outside viewport
+            // Handle invalid indices by clamping to valid range
             if (!firstIndex.isValid()) {
-                // Try moving down by spacing interval to skip potential spacing area
-                QPoint adjustedTop = viewportRect.topLeft() + QPoint(0, kGroupHeaderInterval);
-                firstIndex = indexAt(adjustedTop);
-
-                // If still invalid, check if it's outside viewport bounds
-                if (!firstIndex.isValid()) {
-                    // If Y coordinate is negative, mouse is above viewport - clamp to first item
-                    if (viewportRect.top() < 0) {
-                        firstIndex = model()->index(0, 0, rootIndex());
-                    } else {
-                        // Otherwise it's in an empty spacing area - return empty selection
-                        return list;
-                    }
+                // Check if above viewport
+                if (viewportRect.top() < 0) {
+                    firstIndex = model()->index(0, 0, rootIndex());
+                } else {
+                    return list;   // Empty selection
                 }
             }
-            if (!lastIndex.isValid()) {
-                // Try moving up by spacing interval to skip potential spacing area
-                QPoint adjustedBottom = viewportRect.bottomRight() - QPoint(0, kGroupHeaderInterval);
-                lastIndex = indexAt(adjustedBottom);
 
-                // If still invalid, check if it's outside viewport bounds
-                if (!lastIndex.isValid()) {
-                    // If Y coordinate exceeds viewport height, mouse is below viewport - clamp to last item
-                    if (viewportRect.bottom() > viewport()->height()) {
-                        lastIndex = model()->index(count - 1, 0, rootIndex());
-                    } else {
-                        // Otherwise it's in an empty spacing area - return empty selection
-                        return list;
-                    }
+            if (!lastIndex.isValid()) {
+                // Check if below viewport content
+                if (viewportRect.bottom() >= 0) {
+                    lastIndex = model()->index(count - 1, 0, rootIndex());
+                } else {
+                    return list;   // Empty selection
                 }
             }
 
             if (firstIndex.isValid() && lastIndex.isValid()) {
-                list << RandeIndex(firstIndex.row(), lastIndex.row());
+                // Normalize rows to handle reversed selection (dragging upwards)
+                int startRow = qMin(firstIndex.row(), lastIndex.row());
+                int endRow = qMax(firstIndex.row(), lastIndex.row());
+                list << RandeIndex(startRow, endRow);
             }
         } else {
             // Uniform height items (no grouping): use optimized calculation
@@ -1848,7 +1834,13 @@ QModelIndex FileView::indexAt(const QPoint &pos) const
     // For icon mode, use custom calculation
     if (isIconViewMode()) {
         QSize itemSize = itemSizeHint();
-        return iconIndexAt(pos, itemSize);
+        QModelIndex index = iconIndexAt(pos, itemSize);
+
+        // Return invalid index if click is in group header spacing area
+        if (isGroupedView() && isClickInGroupHeaderSpacing(pos, index))
+            return QModelIndex();
+
+        return index;
     }
 
     // For list/tree mode with variable-height items (grouping enabled),
@@ -1856,22 +1848,9 @@ QModelIndex FileView::indexAt(const QPoint &pos) const
     if (isGroupedView()) {
         QModelIndex index = DListView::indexAt(pos);
 
-        // Check if click is in the 16px spacing area above a non-first group header
-        if (index.isValid() && isGroupHeader(index)) {
-            int displayIndex = index.data(Global::kItemGroupDisplayIndex).toInt();
-            if (displayIndex > 0) {
-                // Get the visual rect of the group header item
-                QRect itemRect = DListView::visualRect(index);
-                itemRect.moveLeft(itemRect.left() - horizontalScrollBar()->value());
-
-                // Check if click is in the top 16px spacing area
-                int relativeY = pos.y() - itemRect.top();
-                if (relativeY >= 0 && relativeY < kGroupHeaderInterval) {
-                    // Click is in the spacing area, treat as empty area
-                    return QModelIndex();
-                }
-            }
-        }
+        // Return invalid index if click is in group header spacing area
+        if (isClickInGroupHeaderSpacing(pos, index))
+            return QModelIndex();
 
         return index;
     }
@@ -2881,6 +2860,50 @@ void FileView::focusOnView()
 bool FileView::isGroupHeader(const QModelIndex &index) const
 {
     return !index.data(kItemGroupHeaderKey).toString().isEmpty();
+}
+
+bool FileView::isClickInGroupHeaderSpacing(const QPoint &pos, const QModelIndex &index) const
+{
+    if (!index.isValid() || !isGroupHeader(index))
+        return false;
+
+    // First group header (displayIndex == 0) has no spacing above it
+    int displayIndex = index.data(Global::kItemGroupDisplayIndex).toInt();
+    if (displayIndex == 0)
+        return false;
+
+    // Get the visual rect in viewport coordinates
+    QRect itemRect = visualRect(index);
+
+    // Check if click is in the top 16px spacing area
+    int relativeY = pos.y() - itemRect.top();
+    return (relativeY >= 0 && relativeY < kGroupHeaderInterval);
+}
+
+QModelIndex FileView::indexAtForSelection(const QPoint &pos) const
+{
+    // Similar to indexAt(), but doesn't skip 16px spacing areas for box selection
+    if (isIconViewMode()) {
+        return iconIndexAt(pos, itemSizeHint());
+    }
+
+    if (isGroupedView()) {
+        // For list mode (single column), clamp X coordinate to viewport range
+        // Only Y coordinate matters for determining which row is selected
+        QPoint clampedPos = pos;
+        clampedPos.setX(qBound(0, pos.x(), viewport()->width() - 1));
+        return DListView::indexAt(clampedPos);
+    }
+
+    // For list/tree mode with uniform heights, use optimized calculation
+    QSize itemSize = itemSizeHint();
+    QPoint actualPos = QPoint(pos.x() + horizontalOffset(), pos.y() + verticalOffset());
+    int index = FileViewHelper::caculateListItemIndex(itemSize, actualPos);
+
+    if (index == -1 || index >= model()->rowCount(rootIndex()))
+        return QModelIndex();
+
+    return model()->index(index, 0, rootIndex());
 }
 
 // Grouping-related slot implementations
