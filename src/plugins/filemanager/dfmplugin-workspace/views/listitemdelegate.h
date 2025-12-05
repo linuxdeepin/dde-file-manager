@@ -65,7 +65,6 @@ private:
 
     // Group functionality implementation
     int getGroupHeaderHeight(const QStyleOptionViewItem &option) const override;
-    void paintGroupHeader(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
     QRectF getGroupHeaderBackgroundRect(const QStyleOptionViewItem &option) const override;
     bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index) override;
 
