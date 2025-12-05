@@ -10,23 +10,52 @@
 #include <gtest/gtest.h>
 
 #include <QFile>
+#include <QDir>
+#include <QStandardPaths>
+#include <signal.h>
+#include <QIODevice>
 
 using namespace dfm_upgrade;
 
-TEST(CrashHandle, upgradeCacheDir)
+class TestCrashHandle : public testing::Test {
+protected:
+    void SetUp() override {
+        // Create test directory
+        testDir = QDir::tempPath() + "/crash_handle_test";
+        QDir().mkpath(testDir);
+
+        // Set up crash flags
+        crashFlag0 = testDir + "/dfm-upgraded.crash.0";
+        crashFlag1 = testDir + "/dfm-upgraded.crash.1";
+    }
+
+    void TearDown() override {
+        // Clean up test files
+        QDir(testDir).removeRecursively();
+        // Clear all stubs
+        stub.clear();
+    }
+
+    QString testDir;
+    QString crashFlag0;
+    QString crashFlag1;
+    stub_ext::StubExt stub; // Move stub to be a class member
+};
+
+TEST_F(TestCrashHandle, upgradeCacheDir)
 {
     QString ret = QStandardPaths::standardLocations(QStandardPaths::GenericCacheLocation).first() + "/deepin/dde-file-manager";
     EXPECT_EQ(ret, CrashHandle::upgradeCacheDir());
 }
 
-TEST(CrashHandle, isCrashed)
+TEST_F(TestCrashHandle, isCrashed_WithStubs)
 {
     const QString dir = QStandardPaths::standardLocations(QStandardPaths::GenericCacheLocation).first() + "/deepin/dde-file-manager";
     const QString f1 = dir + "/dfm-upgraded.crash.0";
     const QString f2 = dir + "/dfm-upgraded.crash.1";
 
     QList<QString> ex;
-    stub_ext::StubExt stub;
+    // Use the class member 'stub'
     stub.set_lamda((bool (*)(const QString &fileName))&QFile::exists, [&ex](const QString &fileName) {
         return ex.contains(fileName);
     });
@@ -45,7 +74,7 @@ TEST(CrashHandle, isCrashed)
     EXPECT_TRUE(h.isCrashed());
 }
 
-TEST(CrashHandle, clearCrash)
+TEST_F(TestCrashHandle, clearCrash_WithStubs)
 {
     const QString dir = QStandardPaths::standardLocations(QStandardPaths::GenericCacheLocation).first() + "/deepin/dde-file-manager";
     const QString f1 = dir + "/dfm-upgraded.crash.0";
@@ -54,7 +83,7 @@ TEST(CrashHandle, clearCrash)
     CrashHandle h;
 
     QList<QString> ex;
-    stub_ext::StubExt stub;
+    // Use the class member 'stub'
     stub.set_lamda((bool (*)(const QString &fileName))&QFile::remove, [&ex](const QString &fileName) {
         ex.append(fileName);
         return true;
@@ -65,13 +94,13 @@ TEST(CrashHandle, clearCrash)
     EXPECT_TRUE(ex.contains(f2));
 }
 
-TEST(CrashHandle, handleSignal)
+TEST_F(TestCrashHandle, handleSignal_WithStubs)
 {
     const QString dir = QStandardPaths::standardLocations(QStandardPaths::GenericCacheLocation).first() + "/deepin/dde-file-manager";
     const QString f1 = dir + "/dfm-upgraded.crash.0";
     const QString f2 = dir + "/dfm-upgraded.crash.1";
 
-    stub_ext::StubExt stub;
+    // Use the class member 'stub'
     bool unreg = false;
     stub.set_lamda(&CrashHandle::unregSignal, [&unreg]() {
         unreg = true;
@@ -109,5 +138,127 @@ TEST(CrashHandle, handleSignal)
     EXPECT_TRUE(unreg);
     EXPECT_EQ(sig, SIGABRT);
     EXPECT_EQ(opend, f2);
+}
 
+TEST_F(TestCrashHandle, constructor) {
+    CrashHandle handle;
+    // Constructor should not throw
+    SUCCEED();
+}
+
+TEST_F(TestCrashHandle, isCrashed_NoFlags) {
+    CrashHandle handle;
+    bool result = handle.isCrashed();
+    EXPECT_FALSE(result);
+}
+
+TEST_F(TestCrashHandle, isCrashed_OneFlag) {
+    // Create only one crash flag
+    QFile flagFile(crashFlag0);
+    if (flagFile.open(QIODevice::WriteOnly)) {
+        flagFile.close();
+    }
+
+    CrashHandle handle;
+    bool result = handle.isCrashed();
+    EXPECT_FALSE(result);
+}
+
+TEST_F(TestCrashHandle, isCrashed_BothFlags) {
+    // Create both crash flags
+    QFile flagFile0(crashFlag0);
+    if (flagFile0.open(QIODevice::WriteOnly)) {
+        flagFile0.close();
+    }
+
+    QFile flagFile1(crashFlag1);
+    if (flagFile1.open(QIODevice::WriteOnly)) {
+        flagFile1.close();
+    }
+
+    CrashHandle handle;
+    bool result = handle.isCrashed();
+    EXPECT_TRUE(result);
+}
+
+TEST_F(TestCrashHandle, clearCrash) {
+    // Create both crash flags
+    QFile flagFile0(crashFlag0);
+    if (flagFile0.open(QIODevice::WriteOnly)) {
+        flagFile0.close();
+    }
+
+    QFile flagFile1(crashFlag1);
+    if (flagFile1.open(QIODevice::WriteOnly)) {
+        flagFile1.close();
+    }
+
+    CrashHandle handle;
+    handle.clearCrash();
+
+    // Verify flags are removed
+    EXPECT_FALSE(QFile::exists(crashFlag0));
+    EXPECT_FALSE(QFile::exists(crashFlag1));
+}
+
+TEST_F(TestCrashHandle, regSignal) {
+    CrashHandle handle;
+    // Should not throw
+    handle.regSignal();
+    SUCCEED();
+}
+
+TEST_F(TestCrashHandle, unregSignal) {
+    CrashHandle handle;
+    // Should not throw
+    handle.unregSignal();
+    SUCCEED();
+}
+
+TEST_F(TestCrashHandle, handleSignal_CreateFirstFlag) {
+    // Use the class member 'stub'
+    // Mock QFile::exists to return false initially
+    stub.set_lamda((bool (*)(const QString &))&QFile::exists, [](const QString &) {
+        return false;
+    });
+
+    // Stub QFile::open function using double type conversion
+    stub.set_lamda((bool (*)(QFile *, QIODevice::OpenMode))((bool (QFile::*)(QIODevice::OpenMode))&QFile::open), [](QFile *self, QIODevice::OpenMode mode) {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+
+    // Mock raise to not actually raise signal
+    stub.set_lamda((int (*)(int))&raise, [](int) {
+        return 0;
+    });
+
+    CrashHandle handle;
+    // Should not throw
+    handle.handleSignal(SIGSEGV);
+    SUCCEED();
+}
+
+TEST_F(TestCrashHandle, handleSignal_CreateSecondFlag) {
+    // Use the class member 'stub'
+    // Mock QFile::exists to return true for first flag
+    stub.set_lamda((bool (*)(const QString &))&QFile::exists, [this](const QString &path) {
+        return path == crashFlag0;
+    });
+
+    // Stub QFile::open function using double type conversion
+    stub.set_lamda((bool (*)(QFile *, QIODevice::OpenMode))((bool (QFile::*)(QIODevice::OpenMode))&QFile::open), [](QFile *self, QIODevice::OpenMode mode) {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+
+    // Mock raise to not actually raise signal
+    stub.set_lamda((int (*)(int))&raise, [](int) {
+        return 0;
+    });
+
+    CrashHandle handle;
+    // Should not throw
+    handle.handleSignal(SIGABRT);
+    SUCCEED();
 }

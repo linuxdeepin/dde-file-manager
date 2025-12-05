@@ -168,3 +168,97 @@ TEST_F(DoUpgradeTest, with_crash)
     EXPECT_FALSE(restarted);
     EXPECT_FALSE(reged);
 }
+
+// 测试 dfm_tools_upgrade_doRestart 函数
+
+TEST(RestartTest, empty_args)
+{
+    EXPECT_EQ(-1, dfm_tools_upgrade_doRestart({}));
+}
+
+TEST(RestartTest, desktop_restart_reject)
+{
+    stub_ext::StubExt stub;
+    
+    bool initialized = false;
+    stub.set_lamda(&ProcessDialog::initialize, [&initialized](ProcessDialog *, bool desktop){
+        initialized = true;
+        EXPECT_TRUE(desktop); // 应该是桌面模式
+    });
+    
+    bool execDialogCalled = false;
+    stub.set_lamda(&ProcessDialog::execDialog, [&execDialogCalled](){
+        execDialogCalled = true;
+        return false; // 用户拒绝
+    });
+    
+    bool restartCalled = false;
+    stub.set_lamda(&ProcessDialog::restart, [&restartCalled](){
+        restartCalled = true;
+    });
+
+    QMap<QString, QString> args;
+    args.insert(kArgDesktop, "6.0.0");
+    EXPECT_EQ(-1, dfm_tools_upgrade_doRestart(args));
+    EXPECT_TRUE(initialized);
+    EXPECT_TRUE(execDialogCalled);
+    EXPECT_FALSE(restartCalled);
+}
+
+TEST(RestartTest, desktop_restart_accept)
+{
+    stub_ext::StubExt stub;
+    
+    bool initialized = false;
+    stub.set_lamda(&ProcessDialog::initialize, [&initialized](ProcessDialog *, bool desktop){
+        initialized = true;
+        EXPECT_TRUE(desktop); // 应该是桌面模式
+    });
+    
+    bool execDialogCalled = false;
+    stub.set_lamda(&ProcessDialog::execDialog, [&execDialogCalled](){
+        execDialogCalled = true;
+        return true; // 用户接受
+    });
+    
+    bool restartCalled = false;
+    stub.set_lamda(&ProcessDialog::restart, [&restartCalled](){
+        restartCalled = true;
+    });
+
+    QMap<QString, QString> args;
+    args.insert(kArgDesktop, "6.0.0");
+    EXPECT_EQ(0, dfm_tools_upgrade_doRestart(args));
+    EXPECT_TRUE(initialized);
+    EXPECT_TRUE(execDialogCalled);
+    EXPECT_TRUE(restartCalled);
+}
+
+TEST(RestartTest, filemanager_restart_accept)
+{
+    stub_ext::StubExt stub;
+    
+    bool initialized = false;
+    stub.set_lamda(&ProcessDialog::initialize, [&initialized](ProcessDialog *, bool desktop){
+        initialized = true;
+        EXPECT_FALSE(desktop); // 应该是文件管理器模式
+    });
+    
+    bool execDialogCalled = false;
+    stub.set_lamda(&ProcessDialog::execDialog, [&execDialogCalled](){
+        execDialogCalled = true;
+        return true; // 用户接受
+    });
+    
+    bool restartCalled = false;
+    stub.set_lamda(&ProcessDialog::restart, [&restartCalled](){
+        restartCalled = true;
+    });
+
+    QMap<QString, QString> args;
+    args.insert(kArgFileManger, "6.0.0");
+    EXPECT_EQ(0, dfm_tools_upgrade_doRestart(args));
+    EXPECT_TRUE(initialized);
+    EXPECT_TRUE(execDialogCalled);
+    EXPECT_TRUE(restartCalled);
+}
