@@ -108,7 +108,7 @@ void ViewAnimationHelper::playViewAnimation()
         return;
     }
 
-    fmInfo() << "Starting view animation playback";
+    fmDebug() << "Starting view animation playback";
 
     if (!delayTimer) {
         delayTimer = new QTimer(this);

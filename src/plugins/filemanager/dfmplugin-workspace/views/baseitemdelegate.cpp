@@ -301,10 +301,46 @@ void BaseItemDelegate::paintGroupHeader(QPainter *painter, const QStyleOptionVie
         return;
     }
 
-    // Paint background
-    paintGroupBackground(painter, option);
-
     painter->save();
+
+    // Calculate actual drawing rect (skip top spacing for non-first group headers)
+    QRectF drawRect = option.rect;
+    int displayIndex = index.data(Global::kItemGroupDisplayIndex).toInt();
+
+    if (displayIndex > 0) {
+        // For non-first group headers, skip the top 16px spacing area
+        // The spacing area remains transparent (view background shows through)
+        drawRect.setTop(drawRect.top() + kGroupHeaderInterval);
+    }
+
+    // Paint background using subclass-defined background rect
+    if (option.widget) {
+        // Get background rect from subclass (allows different implementations for list vs icon mode)
+        QRectF bgRect = getGroupHeaderBackgroundRect(option);
+
+        // Adjust bgRect top to match drawRect (skip 16px spacing for non-first groups)
+        if (displayIndex > 0) {
+            bgRect.setTop(drawRect.top());
+        }
+
+        DPalette pl(DPaletteHelper::instance()->palette(option.widget));
+        QColor baseColor = pl.color(DPalette::ColorGroup::Active, DPalette::ColorType::ItemBackground);
+        QColor adjustColor = baseColor;
+
+        if (option.state & QStyle::State_MouseOver) {
+            adjustColor = DGuiApplicationHelper::adjustColor(baseColor, 0, 0, 0, 0, 0, 0, +10);
+        } else {
+            painter->setOpacity(0);
+        }
+
+        QPainterPath path;
+        path.addRoundedRect(bgRect, kListModeRectRadius, kListModeRectRadius);
+        painter->setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing | QPainter::SmoothPixmapTransform);
+        painter->fillPath(path, adjustColor);
+    }
+
+    painter->restore();
+
     // Get group information
     QString groupText = index.data(Qt::DisplayRole).toString();
     int fileCount = index.data(Global::kItemGroupFileCount).toInt();
@@ -312,20 +348,22 @@ void BaseItemDelegate::paintGroupHeader(QPainter *painter, const QStyleOptionVie
         groupText = "Group";
     }
 
-    // Get expansion state - assume expanded by default for now
     bool isExpanded = index.data(Global::ItemRoles::kItemGroupExpandedRole).toBool();
 
-    // Calculate layout rectangles
-    QRect expandButtonRect = getExpandButtonRect(option);
-    QRect textRect = getGroupTextRect(option);
+    // Calculate layout rectangles based on drawRect (not option.rect!)
+    QRect expandButtonRect(drawRect.left() + 12,
+                           drawRect.top() + (drawRect.height() - kGroupHeaderInterval) / 2,
+                           kGroupHeaderInterval, kGroupHeaderInterval);
+    QRect textRect(expandButtonRect.right() + 8,
+                   drawRect.top(),
+                   drawRect.width() - (expandButtonRect.right() - drawRect.left()) - kGroupHeaderInterval,
+                   drawRect.height());
 
     // Paint expand button
     paintExpandButton(painter, expandButtonRect, isExpanded);
 
     // Paint group text
     paintGroupText(painter, textRect, groupText, fileCount, option);
-
-    painter->restore();
 }
 
 QRectF BaseItemDelegate::getGroupHeaderBackgroundRect(const QStyleOptionViewItem &option) const

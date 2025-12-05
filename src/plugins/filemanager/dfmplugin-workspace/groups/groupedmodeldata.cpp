@@ -274,6 +274,12 @@ int GroupedModelData::getFileItemCount() const
     return count;
 }
 
+int GroupedModelData::getGroupItemCount() const
+{
+    QMutexLocker locker(&m_mutex);
+    return groups.size();
+}
+
 ModelItemWrapper GroupedModelData::getItemAt(int index) const
 {
     QMutexLocker locker(&m_mutex);

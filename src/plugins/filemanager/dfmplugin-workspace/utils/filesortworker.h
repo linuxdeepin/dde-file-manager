@@ -83,6 +83,7 @@ public:
 
     int childrenCount();
     int getFileItemCount();
+    int getGroupItemCount();
     QVariant groupHeaderData(const int index, const int role);
     FileItemDataPointer childData(const int index);
     FileItemDataPointer childData(const QUrl &url);

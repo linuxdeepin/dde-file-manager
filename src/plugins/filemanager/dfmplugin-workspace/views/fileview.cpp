@@ -672,22 +672,78 @@ FileView::RandeIndexList FileView::rectContainsIndexes(const QRect &rect) const
 {
     RandeIndexList list;
 
-    QSize itemSize = itemSizeHint();
-
     int count = this->count();
-    int spacing = this->spacing();
-    int itemWidth = itemSize.width() + spacing * 2;
-    int itemHeight = itemSize.height() + spacing * 2;
+    if (count == 0)
+        return list;
 
     if (isListViewMode() || isTreeViewMode()) {
-        int firstIndex = (rect.top() + spacing) / itemHeight;
-        int lastIndex = (rect.bottom() - spacing) / itemHeight;
+        // For variable-height items (grouping enabled), use indexAt with coordinate conversion
+        if (isGroupedView()) {
+            // rect parameter from caculateListViewSelection is in contents coordinates (with offsets added)
+            // indexAt expects viewport coordinates (without offsets)
+            // So we need to convert: contents coords -> viewport coords by subtracting offsets
+            QRect viewportRect = rect;
+            viewportRect.translate(-horizontalOffset(), -verticalOffset());
 
-        if (firstIndex >= count)
-            return list;
+            // Use indexAt to efficiently find first and last items
+            QModelIndex firstIndex = indexAt(viewportRect.topLeft());
+            QModelIndex lastIndex = indexAt(viewportRect.bottomRight());
 
-        list << RandeIndex(qMax(firstIndex, 0), qMin(lastIndex, count - 1));
+            // Handle edge cases where points are in 16px spacing areas or outside viewport
+            if (!firstIndex.isValid()) {
+                // Try moving down by spacing interval to skip potential spacing area
+                QPoint adjustedTop = viewportRect.topLeft() + QPoint(0, kGroupHeaderInterval);
+                firstIndex = indexAt(adjustedTop);
+
+                // If still invalid, check if it's outside viewport bounds
+                if (!firstIndex.isValid()) {
+                    // If Y coordinate is negative, mouse is above viewport - clamp to first item
+                    if (viewportRect.top() < 0) {
+                        firstIndex = model()->index(0, 0, rootIndex());
+                    } else {
+                        // Otherwise it's in an empty spacing area - return empty selection
+                        return list;
+                    }
+                }
+            }
+            if (!lastIndex.isValid()) {
+                // Try moving up by spacing interval to skip potential spacing area
+                QPoint adjustedBottom = viewportRect.bottomRight() - QPoint(0, kGroupHeaderInterval);
+                lastIndex = indexAt(adjustedBottom);
+
+                // If still invalid, check if it's outside viewport bounds
+                if (!lastIndex.isValid()) {
+                    // If Y coordinate exceeds viewport height, mouse is below viewport - clamp to last item
+                    if (viewportRect.bottom() > viewport()->height()) {
+                        lastIndex = model()->index(count - 1, 0, rootIndex());
+                    } else {
+                        // Otherwise it's in an empty spacing area - return empty selection
+                        return list;
+                    }
+                }
+            }
+
+            if (firstIndex.isValid() && lastIndex.isValid()) {
+                list << RandeIndex(firstIndex.row(), lastIndex.row());
+            }
+        } else {
+            // Uniform height items (no grouping): use optimized calculation
+            QSize itemSize = itemSizeHint();
+            int spacing = this->spacing();
+            int itemHeight = itemSize.height() + spacing * 2;
+
+            int firstIndex = (rect.top() + spacing) / itemHeight;
+            int lastIndex = (rect.bottom() - spacing) / itemHeight;
+
+            if (firstIndex >= count)
+                return list;
+
+            list << RandeIndex(qMax(firstIndex, 0), qMin(lastIndex, count - 1));
+        }
     } else if (isIconViewMode()) {
+        QSize itemSize = itemSizeHint();
+        int spacing = this->spacing();
+        int itemWidth = itemSize.width() + spacing * 2;
         int columnCount = d->iconModeColumnCount(itemWidth);
         list << calcRectContiansIndexes(columnCount, rect);
     }
@@ -1789,10 +1845,40 @@ void FileView::dropEvent(QDropEvent *event)
 
 QModelIndex FileView::indexAt(const QPoint &pos) const
 {
-    QSize itemSize = itemSizeHint();
-    if (isIconViewMode())
+    // For icon mode, use custom calculation
+    if (isIconViewMode()) {
+        QSize itemSize = itemSizeHint();
         return iconIndexAt(pos, itemSize);
+    }
 
+    // For list/tree mode with variable-height items (grouping enabled),
+    // use Qt's native indexAt which correctly handles variable heights
+    if (isGroupedView()) {
+        QModelIndex index = DListView::indexAt(pos);
+
+        // Check if click is in the 16px spacing area above a non-first group header
+        if (index.isValid() && isGroupHeader(index)) {
+            int displayIndex = index.data(Global::kItemGroupDisplayIndex).toInt();
+            if (displayIndex > 0) {
+                // Get the visual rect of the group header item
+                QRect itemRect = DListView::visualRect(index);
+                itemRect.moveLeft(itemRect.left() - horizontalScrollBar()->value());
+
+                // Check if click is in the top 16px spacing area
+                int relativeY = pos.y() - itemRect.top();
+                if (relativeY >= 0 && relativeY < kGroupHeaderInterval) {
+                    // Click is in the spacing area, treat as empty area
+                    return QModelIndex();
+                }
+            }
+        }
+
+        return index;
+    }
+
+    // For list/tree mode with uniform heights (no grouping),
+    // use optimized custom calculation
+    QSize itemSize = itemSizeHint();
     QPoint actualPos = QPoint(pos.x() + horizontalOffset(), pos.y() + verticalOffset());
     int index = FileViewHelper::caculateListItemIndex(itemSize, actualPos);
 
@@ -1861,17 +1947,26 @@ void FileView::updateGeometries()
         totalHeight = contentsSize().height();
         d->lastContentHeight = totalHeight;
     } else {
+        // For list/tree mode
         int rowCount = model()->rowCount(rootIndex());
         int listHeight = rowCount * itemSizeHint().height() + kListModeBottomMargin;
-        int contentHeight = contentsSize().height();
 
+        if (isGroupedView()) {
+            // In grouped view, non-first group headers have additional 16px spacing
+            int groupsCount = model()->getGroupOnlyCount();
+            if (groupsCount > 1) {
+                // Add spacing for non-first group headers: (groupsCount - 1) * kGroupHeaderInterval
+                listHeight += (groupsCount - 1) * kGroupHeaderInterval;
+            }
+        }
+
+        int contentHeight = contentsSize().height();
         totalHeight = listHeight > contentHeight ? listHeight : contentHeight;
     }
 
     if (!d->headerView || !d->allowedAdjustColumnSize) {
         return DListView::updateGeometries();
     }
-
     resizeContents(d->headerView->length(), totalHeight);
     DListView::updateGeometries();
 }
@@ -2610,7 +2705,7 @@ void FileView::setDefaultViewMode()
 
 void FileView::setListViewMode()
 {
-    setUniformItemSizes(true);
+    setUniformItemSizes(false);
     setResizeMode(QListView::Fixed);
     setOrientation(QListView::TopToBottom, false);
     setSpacing(kListViewSpacing);

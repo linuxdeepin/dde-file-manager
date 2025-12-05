@@ -911,6 +911,15 @@ int FileViewModel::getFileOnlyCount() const
     return filterSortWorker->getFileItemCount();
 }
 
+int FileViewModel::getGroupOnlyCount() const
+{
+    if (!filterSortWorker) {
+        return 0;
+    }
+
+    return filterSortWorker->getGroupItemCount();
+}
+
 void FileViewModel::setDirectoryLoadStrategy(DirectoryLoadStrategy strategy)
 {
     fmDebug() << "Setting directory load strategy:" << static_cast<int>(strategy) << "for URL:" << dirRootUrl.toString();

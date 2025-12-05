@@ -82,7 +82,7 @@ public:
 
     /**
      * @brief Update a specific group header in flattened items
-     * 
+     *
      * This method updates the group header information in flattened items
      * without rebuilding the entire list.
      * @param groupKey The group identifier
@@ -161,6 +161,12 @@ public:
      * @return Total file item count in the flattened list
      */
     int getFileItemCount() const;
+
+    /**
+     * @brief Thread-safe access to group item count
+     * @return Total group item count in the flattened list
+     */
+    int getGroupItemCount() const;
 
     /**
      * @brief Thread-safe access to item at index

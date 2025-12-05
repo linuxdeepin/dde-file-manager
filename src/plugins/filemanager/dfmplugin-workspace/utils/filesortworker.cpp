@@ -177,10 +177,19 @@ int FileSortWorker::getFileItemCount()
     if (!isCurrentGroupingEnabled) {
         // Traditional mode: use original logic (same as childrenCount)
         return childrenCountInternal();
-    } else {
-        // Grouping mode: return only file items count (excludes group headers)
-        return groupedModelData.getFileItemCount();
     }
+
+    // Grouping mode: return only file items count (excludes group headers)
+    return groupedModelData.getFileItemCount();
+}
+
+int FileSortWorker::getGroupItemCount()
+{
+    if (!isCurrentGroupingEnabled) {
+        return 0;
+    }
+
+    return groupedModelData.getGroupItemCount();
 }
 
 QVariant FileSortWorker::groupHeaderData(const int index, const int role)

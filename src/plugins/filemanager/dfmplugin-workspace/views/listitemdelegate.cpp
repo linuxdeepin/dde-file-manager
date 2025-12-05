@@ -102,7 +102,12 @@ QSize ListItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QMode
 {
     // Check if this is a group header item
     if (isGroupHeaderItem(index)) {
-        return getGroupHeaderSizeHint(option, index);
+        auto size = getGroupHeaderSizeHint(option, index);
+        // 为非第一个分组头添加 16px 顶部间隔
+        if (index.row() > 0) {
+            size.setHeight(size.height() + kGroupHeaderInterval);
+        }
+        return size;
     }
 
     Q_UNUSED(index)
