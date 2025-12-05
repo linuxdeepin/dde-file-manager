@@ -1,3 +1,10 @@
+dde-file-manager (6.5.108) unstable; urgency=medium
+
+  * Add some unit tests
+  * add markdown file preview plugin
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Fri, 05 Dec 2025 14:36:53 +0800
+
 dde-file-manager (6.5.107) unstable; urgency=medium
 
   *feat: Better burn feedback, Joliet long names, UDF finalize, image paste, TPM DBus.
