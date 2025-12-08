@@ -110,12 +110,10 @@ void SelectHelper::selection(const QRect &rect, QItemSelectionModel::SelectionFl
     QItemSelection newSelection;
     caculateSelection(rect, &newSelection);
 
-    if (view->isIconViewMode()) {
-        caculateAndSelectIndex(lastSelection, newSelection, flags);
-        lastSelection = newSelection;
-    } else {
-        view->selectionModel()->select(newSelection, flags);
-    }
+    // Use incremental update for both icon and list modes to avoid flickering
+    // during deselection (shrinking selection range)
+    caculateAndSelectIndex(lastSelection, newSelection, flags);
+    lastSelection = newSelection;
 }
 
 bool SelectHelper::select(const QList<QUrl> &urls)
