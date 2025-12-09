@@ -19,7 +19,7 @@
 #include <QFile>
 #include <QDir>
 #include <QCoreApplication>
-#include <QTemporaryFile>
+#include <QDateTime>
 
 DFMBASE_USE_NAMESPACE
 SERVERRECENTMANAGER_USE_NAMESPACE
@@ -35,23 +35,41 @@ protected:
             return QCoreApplication::instance()->thread();
         });
 
-        // Create temporary xbel file for testing
-        tempXbelFile = new QTemporaryFile();
-        tempXbelFile->open();
-        tempXbelPath = tempXbelFile->fileName();
+        // Create temporary directory for testing
+        // This mimics the real directory structure: ~/.local/share/recently-used.xbel
+        tempDir = QDir::tempPath() + "/dfm-test-recent-" + QString::number(QDateTime::currentMSecsSinceEpoch());
+        QDir().mkpath(tempDir + "/.local/share");
+
+        // Create temporary xbel file in the test directory structure
+        tempXbelPath = tempDir + "/.local/share/recently-used.xbel";
+        tempXbelFile = new QFile(tempXbelPath);
+
+        // CRITICAL FIX: stub QDir::homePath to use temporary directory
+        // This prevents tests from modifying the real user's recently-used.xbel file
+        stub.set_lamda(&QDir::homePath, [this]() {
+            __DBG_STUB_INVOKE__
+            return tempDir;
+        });
     }
 
     virtual void TearDown() override
     {
         delete tempXbelFile;
         tempXbelFile = nullptr;
+
+        // Clean up temporary directory structure
+        if (!tempDir.isEmpty()) {
+            QDir(tempDir).removeRecursively();
+        }
+
         stub.clear();
     }
 
 protected:
     stub_ext::StubExt stub;
-    QTemporaryFile *tempXbelFile { nullptr };
+    QFile *tempXbelFile { nullptr };
     QString tempXbelPath;
+    QString tempDir;
 };
 
 TEST_F(UT_RecentManager, instance_ReturnsSingleton)

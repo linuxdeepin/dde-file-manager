@@ -9,6 +9,9 @@
 
 #include <dfm-base/utils/windowutils.h>
 #include <dfm-base/utils/dialogmanager.h>
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/application/settings.h>
+
 #include <dfm-burn/dopticaldiscmanager.h>
 #include <dfm-burn/dopticaldiscinfo.h>
 
@@ -37,6 +40,10 @@ protected:
         stub.set_lamda(ADDR(WindowUtils, isWayLand), [] {
             __DBG_STUB_INVOKE__
             return false;
+        });
+        stub.set_lamda(ADDR(Settings, sync), [](Settings *) {
+            __DBG_STUB_INVOKE__
+            return true;
         });
 
         dialog = new BurnOptDialog("/dev/sr0");
@@ -304,6 +311,11 @@ TEST_F(UT_BurnOptDialog, startDataBurn_EmptyVolumeName)
         return QUrl::fromLocalFile("/tmp/staging");
     });
 
+    stub.set_lamda(ADDR(Settings, sync), [](Settings *) {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+
     dialog->volnameEdit->clear();
     dialog->lastVolName = "DefaultVolume";
 
@@ -424,6 +436,11 @@ TEST_F(UT_BurnOptDialog, onButnBtnClicked_Burn_DeviceNotExists)
 
 TEST_F(UT_BurnOptDialog, volnameEdit_TextChanged_ValidLength)
 {
+    stub.set_lamda(ADDR(Settings, sync), [](Settings *) {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+
     QString validText = "ValidVolumeName";
 
     dialog->volnameEdit->setText(validText);
