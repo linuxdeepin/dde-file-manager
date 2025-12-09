@@ -177,13 +177,19 @@ void EventsHandler::onInitEncryptFinished(const QVariantMap &result)
 
     if (code == -kRebootRequired) {
         fmInfo() << "Reboot required for device:" << dev << "requesting reboot";
-        requestReboot();
+        // Set autostart before reboot to ensure encryption continues after restart
+        setAutoStartDFM(true);
+
+        // 延迟一点再重启，让上面自启动的设置更稳妥点
+        QTimer::singleShot(1000, this, [this] { requestReboot(); });
+        return;
     } else if (code < 0) {
         fmWarning() << "Pre-encrypt error for device:" << dev << "code:" << code;
         showPreEncryptError(dev, name, code);
         return;
     }
 
+    // Success case: enable autostart for encryption process
     setAutoStartDFM(true);
 }
 
@@ -659,6 +665,53 @@ void EventsHandler::setAutoStartDFM(bool enable)
     }
 
     fmInfo() << "AutoStart set successfully for" << appId << "to" << enable;
+
+    // Redundant logic: Directly manipulate autostart directory as a backup
+    QString autostartDir = QDir::homePath() + "/.config/autostart";
+    QString autostartFile = autostartDir + "/dfm-reencrypt.desktop";
+    QString sourceDesktopFile = kReencryptDesktopFile;
+
+    if (enable) {
+        // If enabling autostart, ensure the desktop file exists in autostart directory
+        if (!QFile::exists(autostartFile)) {
+            fmInfo() << "Autostart file not found, copying from source:"
+                     << sourceDesktopFile << "to" << autostartFile;
+
+            // Ensure autostart directory exists
+            QDir dir;
+            if (!dir.exists(autostartDir)) {
+                if (!dir.mkpath(autostartDir)) {
+                    fmWarning() << "Failed to create autostart directory:" << autostartDir;
+                    return;
+                }
+                fmInfo() << "Created autostart directory:" << autostartDir;
+            }
+
+            // Copy desktop file to autostart directory
+            if (QFile::copy(sourceDesktopFile, autostartFile)) {
+                fmInfo() << "Successfully copied desktop file to autostart directory";
+                // Set proper permissions
+                QFile::setPermissions(autostartFile, QFile::ReadOwner | QFile::WriteOwner | QFile::ExeOwner |
+                                                     QFile::ReadGroup | QFile::ReadOther);
+            } else {
+                fmWarning() << "Failed to copy desktop file to autostart directory";
+            }
+        } else {
+            fmInfo() << "Autostart file already exists, no need to copy";
+        }
+    } else {
+        // If disabling autostart, remove the desktop file from autostart directory
+        if (QFile::exists(autostartFile)) {
+            fmInfo() << "Removing autostart file:" << autostartFile;
+            if (QFile::remove(autostartFile)) {
+                fmInfo() << "Successfully removed autostart file";
+            } else {
+                fmWarning() << "Failed to remove autostart file";
+            }
+        } else {
+            fmInfo() << "Autostart file does not exist, no need to remove";
+        }
+    }
 }
 
 void EventsHandler::onOverlayDMModeChanged(bool enabled, int result)
