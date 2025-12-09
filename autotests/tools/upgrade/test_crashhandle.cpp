@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022 - 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -24,9 +24,21 @@ protected:
         testDir = QDir::tempPath() + "/crash_handle_test";
         QDir().mkpath(testDir);
 
+        configPath = testDir + "/deepin/dde-file-manager";
+        QDir().mkpath(configPath);
+
         // Set up crash flags
-        crashFlag0 = testDir + "/dfm-upgraded.crash.0";
-        crashFlag1 = testDir + "/dfm-upgraded.crash.1";
+        crashFlag0 = configPath + "/dfm-upgraded.crash.0";
+        crashFlag1 = configPath + "/dfm-upgraded.crash.1";
+
+        auto standlocal = static_cast<QList<QString> (*)(QStandardPaths::StandardLocation)>(&QStandardPaths::standardLocations);
+        stub.set_lamda(standlocal, [&](QStandardPaths::StandardLocation type) -> QList<QString> {
+            if (type == QStandardPaths::GenericCacheLocation) {
+                qDebug() << "Mocking crash handle cache directory:" << testDir;
+                return {testDir};
+            }
+            return QStandardPaths::standardLocations(type);
+        });
     }
 
     void TearDown() override {
@@ -39,20 +51,19 @@ protected:
     QString testDir;
     QString crashFlag0;
     QString crashFlag1;
+    QString configPath;
     stub_ext::StubExt stub; // Move stub to be a class member
 };
 
 TEST_F(TestCrashHandle, upgradeCacheDir)
 {
-    QString ret = QStandardPaths::standardLocations(QStandardPaths::GenericCacheLocation).first() + "/deepin/dde-file-manager";
-    EXPECT_EQ(ret, CrashHandle::upgradeCacheDir());
+    EXPECT_EQ(configPath, CrashHandle::upgradeCacheDir());
 }
 
 TEST_F(TestCrashHandle, isCrashed_WithStubs)
 {
-    const QString dir = QStandardPaths::standardLocations(QStandardPaths::GenericCacheLocation).first() + "/deepin/dde-file-manager";
-    const QString f1 = dir + "/dfm-upgraded.crash.0";
-    const QString f2 = dir + "/dfm-upgraded.crash.1";
+    const QString f1 = configPath + "/dfm-upgraded.crash.0";
+    const QString f2 = configPath + "/dfm-upgraded.crash.1";
 
     QList<QString> ex;
     // Use the class member 'stub'
@@ -76,9 +87,8 @@ TEST_F(TestCrashHandle, isCrashed_WithStubs)
 
 TEST_F(TestCrashHandle, clearCrash_WithStubs)
 {
-    const QString dir = QStandardPaths::standardLocations(QStandardPaths::GenericCacheLocation).first() + "/deepin/dde-file-manager";
-    const QString f1 = dir + "/dfm-upgraded.crash.0";
-    const QString f2 = dir + "/dfm-upgraded.crash.1";
+    const QString f1 = configPath + "/dfm-upgraded.crash.0";
+    const QString f2 = configPath + "/dfm-upgraded.crash.1";
 
     CrashHandle h;
 
@@ -96,9 +106,8 @@ TEST_F(TestCrashHandle, clearCrash_WithStubs)
 
 TEST_F(TestCrashHandle, handleSignal_WithStubs)
 {
-    const QString dir = QStandardPaths::standardLocations(QStandardPaths::GenericCacheLocation).first() + "/deepin/dde-file-manager";
-    const QString f1 = dir + "/dfm-upgraded.crash.0";
-    const QString f2 = dir + "/dfm-upgraded.crash.1";
+    const QString f1 = configPath + "/dfm-upgraded.crash.0";
+    const QString f2 = configPath + "/dfm-upgraded.crash.1";
 
     // Use the class member 'stub'
     bool unreg = false;

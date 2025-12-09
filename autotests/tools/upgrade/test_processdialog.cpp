@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022 - 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -77,7 +77,7 @@ TEST_F(TestProcessDialog, execDialog_fm_nopreocess)
 
     EXPECT_TRUE(dialog->execDialog());
     EXPECT_FALSE(execed);
-    EXPECT_EQ(path, QString("/usr/bin/dde-desktop"));
+    EXPECT_EQ(path, QString("/usr/bin/dde-shell"));
 }
 
 TEST_F(TestProcessDialog, execDialog_desktop_noprocess)
@@ -100,7 +100,7 @@ TEST_F(TestProcessDialog, execDialog_desktop_noprocess)
 
     EXPECT_TRUE(dialog->execDialog());
     EXPECT_FALSE(execed);
-    EXPECT_EQ(path, QString("/usr/bin/dde-file-manager"));
+    EXPECT_EQ(path, QString("/usr/libexec/dde-file-manager"));
 }
 
 TEST_F(TestProcessDialog, execDialog_reject)
@@ -252,13 +252,11 @@ TEST_F(TestProcessDialog, targetExe)
     exeFile.write(QFile::encodeName("/usr/bin/dde-file-manager"));
     exeFile.close();
 
-    // Stub QFile::symLinkTarget to return the path we wrote
-    stub.set_lamda((QString(*)(const QString &))&QFile::symLinkTarget, [procDir](const QString &link) {
+    // Stub QFileInfo::symLinkTarget to return the path we wrote
+    stub.set_lamda((QString(*)())&QFileInfo::symLinkTarget, [procDir]() -> QString {
         __DBG_STUB_INVOKE__
-        if (link == procDir + "/123/exe") {
-            return "/usr/bin/dde-file-manager";
-        }
-        return "";
+        qDebug() << "Mock the symLinkTarget: " << procDir + "/123/exe";
+        return "/usr/bin/dde-file-manager";
     });
 
     QString result = dialog->targetExe(procDir + "/123");
