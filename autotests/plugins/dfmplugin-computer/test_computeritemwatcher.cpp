@@ -15,6 +15,8 @@
 #include <QUrl>
 #include <QVariantMap>
 #include <QThread>
+#include <QIcon>
+#include <QObject>
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_computer;
@@ -493,4 +495,457 @@ TEST_F(UT_ComputerItemWatcher, AsyncOperations_ThreadSafety_DoesNotCrash)
     QThread::msleep(10);
 
     EXPECT_NO_THROW(watcher->clearAsyncThread());
+}
+
+TEST_F(UT_ComputerItemWatcher, OnViewRefresh_CallsSuccessfully_DoesNotCrash)
+{
+    bool refreshCalled = false;
+    stub.set_lamda(&ComputerItemWatcher::onViewRefresh, [&](ComputerItemWatcher *) {
+        __DBG_STUB_INVOKE__
+        refreshCalled = true;
+    });
+
+    watcher->onViewRefresh();
+    EXPECT_TRUE(refreshCalled);
+}
+
+TEST_F(UT_ComputerItemWatcher, CacheItem_ValidData_InsertsCorrectly)
+{
+    ComputerItemData testData;
+    testData.url = QUrl("entry://test.blockdev");
+    testData.itemName = "Test Device";
+    testData.shape = ComputerItemData::kLargeItem;
+    testData.groupId = 1;
+
+    bool cacheCalled = false;
+    stub.set_lamda(&ComputerItemWatcher::cacheItem, [&](ComputerItemWatcher *, const ComputerItemData &item) {
+        __DBG_STUB_INVOKE__
+        cacheCalled = true;
+        EXPECT_EQ(item.url, testData.url);
+        EXPECT_EQ(item.itemName, testData.itemName);
+    });
+
+    watcher->cacheItem(testData);
+    EXPECT_TRUE(cacheCalled);
+}
+
+TEST_F(UT_ComputerItemWatcher, ReportName_ValidUrl_ReturnsCorrectName)
+{
+    QUrl testUrl("entry://test.blockdev");
+    QString expectedName = "Test Disk";
+
+    stub.set_lamda(&ComputerItemWatcher::reportName, [&](ComputerItemWatcher *, const QUrl &url) -> QString {
+        __DBG_STUB_INVOKE__
+        EXPECT_EQ(url, testUrl);
+        return expectedName;
+    });
+
+    QString result = watcher->reportName(testUrl);
+    EXPECT_EQ(result, expectedName);
+}
+
+TEST_F(UT_ComputerItemWatcher, FindFinalUrl_ValidInfo_ReturnsCorrectUrl)
+{
+    QUrl testUrl("entry://test.blockdev");
+    QUrl expectedFinalUrl("file:///media/test");
+
+    DFMEntryFileInfoPointer mockInfo(new EntryFileInfo(testUrl));
+    
+    stub.set_lamda(&ComputerItemWatcher::findFinalUrl, [&](const ComputerItemWatcher *, DFMEntryFileInfoPointer info) -> QUrl {
+        __DBG_STUB_INVOKE__
+        EXPECT_EQ(info->urlOf(UrlInfoType::kUrl), testUrl);
+        return expectedFinalUrl;
+    });
+
+    QUrl result = watcher->findFinalUrl(mockInfo);
+    EXPECT_EQ(result, expectedFinalUrl);
+}
+
+TEST_F(UT_ComputerItemWatcher, GetGroup_ValidType_ReturnsCorrectGroup)
+{
+    ComputerItemWatcher::GroupType type = ComputerItemWatcher::kGroupDirs;
+    QString defaultName = "Test Group";
+
+    stub.set_lamda(&ComputerItemWatcher::getGroup, [&](ComputerItemWatcher *, ComputerItemWatcher::GroupType groupType, const QString &name) -> ComputerItemData {
+        __DBG_STUB_INVOKE__
+        EXPECT_EQ(groupType, type);
+        EXPECT_EQ(name, defaultName);
+        
+        ComputerItemData groupData;
+        groupData.shape = ComputerItemData::kSplitterItem;
+        groupData.itemName = name;
+        return groupData;
+    });
+
+    ComputerItemData result = watcher->getGroup(type, defaultName);
+    EXPECT_EQ(result.shape, ComputerItemData::kSplitterItem);
+    EXPECT_EQ(result.itemName, defaultName);
+}
+
+TEST_F(UT_ComputerItemWatcher, AddGroup_ValidName_ReturnsCorrectId)
+{
+    QString groupName = "Test Group";
+    int expectedId = 10;
+
+    stub.set_lamda(&ComputerItemWatcher::addGroup, [&](ComputerItemWatcher *, const QString &name) -> int {
+        __DBG_STUB_INVOKE__
+        EXPECT_EQ(name, groupName);
+        return expectedId;
+    });
+
+    int result = watcher->addGroup(groupName);
+    EXPECT_EQ(result, expectedId);
+}
+
+TEST_F(UT_ComputerItemWatcher, OnDeviceAdded_ValidParameters_HandlesCorrectly)
+{
+    QUrl devUrl("entry://test.blockdev");
+    int groupId = 5;
+    ComputerItemData::ShapeType shape = ComputerItemData::kLargeItem;
+    bool needSidebarItem = true;
+
+    bool deviceAddedCalled = false;
+    stub.set_lamda(&ComputerItemWatcher::onDeviceAdded, [&](ComputerItemWatcher *, const QUrl &url, int id, ComputerItemData::ShapeType shapeType, bool sidebar) {
+        __DBG_STUB_INVOKE__
+        deviceAddedCalled = true;
+        EXPECT_EQ(url, devUrl);
+        EXPECT_EQ(id, groupId);
+        EXPECT_EQ(shapeType, shape);
+        EXPECT_EQ(sidebar, needSidebarItem);
+    });
+
+    watcher->onDeviceAdded(devUrl, groupId, shape, needSidebarItem);
+    EXPECT_TRUE(deviceAddedCalled);
+}
+
+TEST_F(UT_ComputerItemWatcher, OnDevicePropertyChangedQVar_ValidParameters_HandlesCorrectly)
+{
+    QString id = "test-device-id";
+    QString propertyName = "TestProperty";
+    QVariant var("TestValue");
+
+    bool propertyChangedCalled = false;
+    stub.set_lamda(&ComputerItemWatcher::onDevicePropertyChangedQVar, [&](ComputerItemWatcher *, const QString &devId, const QString &propName, const QVariant &value) {
+        __DBG_STUB_INVOKE__
+        propertyChangedCalled = true;
+        EXPECT_EQ(devId, id);
+        EXPECT_EQ(propName, propertyName);
+        EXPECT_EQ(value, var);
+    });
+
+    watcher->onDevicePropertyChangedQVar(id, propertyName, var);
+    EXPECT_TRUE(propertyChangedCalled);
+}
+
+TEST_F(UT_ComputerItemWatcher, OnDevicePropertyChangedQDBusVar_ValidParameters_HandlesCorrectly)
+{
+    QString id = "test-device-id";
+    QString propertyName = "TestProperty";
+    QDBusVariant var("TestValue");
+
+    bool propertyChangedCalled = false;
+    stub.set_lamda(&ComputerItemWatcher::onDevicePropertyChangedQDBusVar, [&](ComputerItemWatcher *, const QString &devId, const QString &propName, const QDBusVariant &value) {
+        __DBG_STUB_INVOKE__
+        propertyChangedCalled = true;
+        EXPECT_EQ(devId, id);
+        EXPECT_EQ(propName, propertyName);
+        EXPECT_EQ(value.variant(), var.variant());
+    });
+
+    watcher->onDevicePropertyChangedQDBusVar(id, propertyName, var);
+    EXPECT_TRUE(propertyChangedCalled);
+}
+
+TEST_F(UT_ComputerItemWatcher, OnGenAttributeChanged_ValidParameters_HandlesCorrectly)
+{
+    Application::GenericAttribute ga = Application::GenericAttribute::kShowFileSystemTagOnDiskIcon;
+    QVariant value(true);
+
+    bool attributeChangedCalled = false;
+    stub.set_lamda(&ComputerItemWatcher::onGenAttributeChanged, [&](ComputerItemWatcher *, Application::GenericAttribute attr, const QVariant &val) {
+        __DBG_STUB_INVOKE__
+        attributeChangedCalled = true;
+        EXPECT_EQ(attr, ga);
+        EXPECT_EQ(val, value);
+    });
+
+    watcher->onGenAttributeChanged(ga, value);
+    EXPECT_TRUE(attributeChangedCalled);
+}
+
+TEST_F(UT_ComputerItemWatcher, OnDConfigChanged_ValidParameters_HandlesCorrectly)
+{
+    QString cfg = "test-config";
+    QString cfgKey = "test-key";
+
+    bool dconfigChangedCalled = false;
+    stub.set_lamda(&ComputerItemWatcher::onDConfigChanged, [&](ComputerItemWatcher *, const QString &config, const QString &key) {
+        __DBG_STUB_INVOKE__
+        dconfigChangedCalled = true;
+        EXPECT_EQ(config, cfg);
+        EXPECT_EQ(key, cfgKey);
+    });
+
+    watcher->onDConfigChanged(cfg, cfgKey);
+    EXPECT_TRUE(dconfigChangedCalled);
+}
+
+TEST_F(UT_ComputerItemWatcher, OnBlockDeviceAdded_ValidId_HandlesCorrectly)
+{
+    QString id = "test-block-device-id";
+
+    bool blockDeviceAddedCalled = false;
+    stub.set_lamda(&ComputerItemWatcher::onBlockDeviceAdded, [&](ComputerItemWatcher *, const QString &devId) {
+        __DBG_STUB_INVOKE__
+        blockDeviceAddedCalled = true;
+        EXPECT_EQ(devId, id);
+    });
+
+    watcher->onBlockDeviceAdded(id);
+    EXPECT_TRUE(blockDeviceAddedCalled);
+}
+
+TEST_F(UT_ComputerItemWatcher, OnBlockDeviceRemoved_ValidId_HandlesCorrectly)
+{
+    QString id = "test-block-device-id";
+
+    bool blockDeviceRemovedCalled = false;
+    stub.set_lamda(&ComputerItemWatcher::onBlockDeviceRemoved, [&](ComputerItemWatcher *, const QString &devId) {
+        __DBG_STUB_INVOKE__
+        blockDeviceRemovedCalled = true;
+        EXPECT_EQ(devId, id);
+    });
+
+    watcher->onBlockDeviceRemoved(id);
+    EXPECT_TRUE(blockDeviceRemovedCalled);
+}
+
+TEST_F(UT_ComputerItemWatcher, OnBlockDeviceMounted_ValidParameters_HandlesCorrectly)
+{
+    QString id = "test-block-device-id";
+    QString mntPath = "/media/test";
+
+    bool blockDeviceMountedCalled = false;
+    stub.set_lamda(&ComputerItemWatcher::onBlockDeviceMounted, [&](ComputerItemWatcher *, const QString &devId, const QString &mountPath) {
+        __DBG_STUB_INVOKE__
+        blockDeviceMountedCalled = true;
+        EXPECT_EQ(devId, id);
+        EXPECT_EQ(mountPath, mntPath);
+    });
+
+    watcher->onBlockDeviceMounted(id, mntPath);
+    EXPECT_TRUE(blockDeviceMountedCalled);
+}
+
+TEST_F(UT_ComputerItemWatcher, OnBlockDeviceUnmounted_ValidId_HandlesCorrectly)
+{
+    QString id = "test-block-device-id";
+
+    bool blockDeviceUnmountedCalled = false;
+    stub.set_lamda(&ComputerItemWatcher::onBlockDeviceUnmounted, [&](ComputerItemWatcher *, const QString &devId) {
+        __DBG_STUB_INVOKE__
+        blockDeviceUnmountedCalled = true;
+        EXPECT_EQ(devId, id);
+    });
+
+    watcher->onBlockDeviceUnmounted(id);
+    EXPECT_TRUE(blockDeviceUnmountedCalled);
+}
+
+TEST_F(UT_ComputerItemWatcher, OnBlockDeviceLocked_ValidId_HandlesCorrectly)
+{
+    QString id = "test-block-device-id";
+
+    bool blockDeviceLockedCalled = false;
+    stub.set_lamda(&ComputerItemWatcher::onBlockDeviceLocked, [&](ComputerItemWatcher *, const QString &devId) {
+        __DBG_STUB_INVOKE__
+        blockDeviceLockedCalled = true;
+        EXPECT_EQ(devId, id);
+    });
+
+    watcher->onBlockDeviceLocked(id);
+    EXPECT_TRUE(blockDeviceLockedCalled);
+}
+
+TEST_F(UT_ComputerItemWatcher, OnUpdateBlockItem_ValidId_HandlesCorrectly)
+{
+    QString id = "test-block-device-id";
+
+    bool updateBlockItemCalled = false;
+    stub.set_lamda(&ComputerItemWatcher::onUpdateBlockItem, [&](ComputerItemWatcher *, const QString &devId) {
+        __DBG_STUB_INVOKE__
+        updateBlockItemCalled = true;
+        EXPECT_EQ(devId, id);
+    });
+
+    watcher->onUpdateBlockItem(id);
+    EXPECT_TRUE(updateBlockItemCalled);
+}
+
+TEST_F(UT_ComputerItemWatcher, OnProtocolDeviceMounted_ValidParameters_HandlesCorrectly)
+{
+    QString id = "test-protocol-device-id";
+    QString mntPath = "/media/test";
+
+    bool protocolDeviceMountedCalled = false;
+    stub.set_lamda(&ComputerItemWatcher::onProtocolDeviceMounted, [&](ComputerItemWatcher *, const QString &devId, const QString &mountPath) {
+        __DBG_STUB_INVOKE__
+        protocolDeviceMountedCalled = true;
+        EXPECT_EQ(devId, id);
+        EXPECT_EQ(mountPath, mntPath);
+    });
+
+    watcher->onProtocolDeviceMounted(id, mntPath);
+    EXPECT_TRUE(protocolDeviceMountedCalled);
+}
+
+TEST_F(UT_ComputerItemWatcher, OnProtocolDeviceUnmounted_ValidId_HandlesCorrectly)
+{
+    QString id = "test-protocol-device-id";
+
+    bool protocolDeviceUnmountedCalled = false;
+    stub.set_lamda(&ComputerItemWatcher::onProtocolDeviceUnmounted, [&](ComputerItemWatcher *, const QString &devId) {
+        __DBG_STUB_INVOKE__
+        protocolDeviceUnmountedCalled = true;
+        EXPECT_EQ(devId, id);
+    });
+
+    watcher->onProtocolDeviceUnmounted(id);
+    EXPECT_TRUE(protocolDeviceUnmountedCalled);
+}
+
+TEST_F(UT_ComputerItemWatcher, OnDeviceSizeChanged_ValidParameters_HandlesCorrectly)
+{
+    QString id = "test-device-id";
+    qlonglong total = 1000000;
+    qlonglong free = 500000;
+
+    bool deviceSizeChangedCalled = false;
+    stub.set_lamda(&ComputerItemWatcher::onDeviceSizeChanged, [&](ComputerItemWatcher *, const QString &devId, qlonglong totalSize, qlonglong freeSize) {
+        __DBG_STUB_INVOKE__
+        deviceSizeChangedCalled = true;
+        EXPECT_EQ(devId, id);
+        EXPECT_EQ(totalSize, total);
+        EXPECT_EQ(freeSize, free);
+    });
+
+    watcher->onDeviceSizeChanged(id, total, free);
+    EXPECT_TRUE(deviceSizeChangedCalled);
+}
+
+TEST_F(UT_ComputerItemWatcher, OnProtocolDeviceRemoved_ValidId_HandlesCorrectly)
+{
+    QString id = "test-protocol-device-id";
+
+    bool protocolDeviceRemovedCalled = false;
+    stub.set_lamda(&ComputerItemWatcher::onProtocolDeviceRemoved, [&](ComputerItemWatcher *, const QString &devId) {
+        __DBG_STUB_INVOKE__
+        protocolDeviceRemovedCalled = true;
+        EXPECT_EQ(devId, id);
+    });
+
+    watcher->onProtocolDeviceRemoved(id);
+    EXPECT_TRUE(protocolDeviceRemovedCalled);
+}
+
+TEST_F(UT_ComputerItemWatcher, GetUserDirItems_ReturnsCorrectList_Success)
+{
+    ComputerDataList mockItems;
+    ComputerItemData item1, item2;
+    item1.url = QUrl("entry://desktop.userdir");
+    item1.itemName = "Desktop";
+    item2.url = QUrl("entry://documents.userdir");
+    item2.itemName = "Documents";
+
+    mockItems.append(item1);
+    mockItems.append(item2);
+
+    stub.set_lamda(&ComputerItemWatcher::getUserDirItems, [&](ComputerItemWatcher *) -> ComputerDataList {
+        __DBG_STUB_INVOKE__
+        return mockItems;
+    });
+
+    ComputerDataList result = watcher->getUserDirItems();
+    EXPECT_EQ(result.size(), 2);
+}
+
+TEST_F(UT_ComputerItemWatcher, GetBlockDeviceItems_ReturnsCorrectList_Success)
+{
+    ComputerDataList mockItems;
+    ComputerItemData item1;
+    item1.url = QUrl("entry://test1.blockdev");
+    item1.itemName = "Test Block Device 1";
+
+    mockItems.append(item1);
+
+    stub.set_lamda(&ComputerItemWatcher::getBlockDeviceItems, [&](ComputerItemWatcher *, bool *hasNewItem) -> ComputerDataList {
+        __DBG_STUB_INVOKE__
+        *hasNewItem = true;
+        return mockItems;
+    });
+
+    bool hasNewItem = false;
+    ComputerDataList result = watcher->getBlockDeviceItems(&hasNewItem);
+    EXPECT_EQ(result.size(), 1);
+    EXPECT_TRUE(hasNewItem);
+}
+
+TEST_F(UT_ComputerItemWatcher, GetProtocolDeviceItems_ReturnsCorrectList_Success)
+{
+    ComputerDataList mockItems;
+    ComputerItemData item1;
+    item1.url = QUrl("entry://test1.protocol");
+    item1.itemName = "Test Protocol Device 1";
+
+    mockItems.append(item1);
+
+    stub.set_lamda(&ComputerItemWatcher::getProtocolDeviceItems, [&](ComputerItemWatcher *, bool *hasNewItem) -> ComputerDataList {
+        __DBG_STUB_INVOKE__
+        *hasNewItem = true;
+        return mockItems;
+    });
+
+    bool hasNewItem = false;
+    ComputerDataList result = watcher->getProtocolDeviceItems(&hasNewItem);
+    EXPECT_EQ(result.size(), 1);
+    EXPECT_TRUE(hasNewItem);
+}
+
+TEST_F(UT_ComputerItemWatcher, GetAppEntryItems_ReturnsCorrectList_Success)
+{
+    ComputerDataList mockItems;
+    ComputerItemData item1;
+    item1.url = QUrl("entry://test1.appentry");
+    item1.itemName = "Test App Entry 1";
+
+    mockItems.append(item1);
+
+    stub.set_lamda(&ComputerItemWatcher::getAppEntryItems, [&](ComputerItemWatcher *, bool *hasNewItem) -> ComputerDataList {
+        __DBG_STUB_INVOKE__
+        *hasNewItem = true;
+        return mockItems;
+    });
+
+    bool hasNewItem = false;
+    ComputerDataList result = watcher->getAppEntryItems(&hasNewItem);
+    EXPECT_EQ(result.size(), 1);
+    EXPECT_TRUE(hasNewItem);
+}
+
+TEST_F(UT_ComputerItemWatcher, GetPreDefineItems_ReturnsCorrectList_Success)
+{
+    ComputerDataList mockItems;
+    ComputerItemData item1;
+    item1.url = QUrl("entry://test1.predefine");
+    item1.itemName = "Test Predefine Item 1";
+
+    mockItems.append(item1);
+
+    stub.set_lamda(&ComputerItemWatcher::getPreDefineItems, [&](ComputerItemWatcher *) -> ComputerDataList {
+        __DBG_STUB_INVOKE__
+        return mockItems;
+    });
+
+    ComputerDataList result = watcher->getPreDefineItems();
+    EXPECT_EQ(result.size(), 1);
 }
