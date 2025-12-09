@@ -420,6 +420,73 @@ TEST_F(TestTextIndexController, StartIndexTask_CreateTask)
     // This mainly tests that the method doesn't crash
 }
 
+TEST_F(TestTextIndexController, UpdateState_SameState_NoTransition)
+{
+    // Set initial state to Disabled
+    controller->updateState(TextIndexController::State::Disabled);
+    
+    // Update to same state
+    controller->updateState(TextIndexController::State::Disabled);
+    
+    // Should not cause any issues - this test mainly ensures no crash
+}
+
+TEST_F(TestTextIndexController, UpdateState_DisabledToIdle_Transition)
+{
+    // Set initial state to Disabled
+    controller->updateState(TextIndexController::State::Disabled);
+    
+    // Transition to Idle
+    controller->updateState(TextIndexController::State::Idle);
+    
+    // Should not cause any issues - this test mainly ensures no crash
+}
+
+TEST_F(TestTextIndexController, UpdateState_IdleToRunning_Transition)
+{
+    // Set initial state to Idle
+    controller->updateState(TextIndexController::State::Idle);
+    
+    // Transition to Running
+    controller->updateState(TextIndexController::State::Running);
+    
+    // Should not cause any issues - this test mainly ensures no crash
+}
+
+TEST_F(TestTextIndexController, UpdateState_RunningToDisabled_Transition)
+{
+    // Set initial state to Running
+    controller->updateState(TextIndexController::State::Running);
+    
+    // Transition to Disabled
+    controller->updateState(TextIndexController::State::Disabled);
+    
+    // Should not cause any issues - this test mainly ensures no crash
+}
+
+TEST_F(TestTextIndexController, UpdateState_AllStateTransitions_NoCrash)
+{
+    // Test all possible state transitions to ensure no crashes
+    
+    // Disabled -> Idle
+    controller->updateState(TextIndexController::State::Disabled);
+    controller->updateState(TextIndexController::State::Idle);
+    
+    // Idle -> Running
+    controller->updateState(TextIndexController::State::Running);
+    
+    // Running -> Disabled
+    controller->updateState(TextIndexController::State::Disabled);
+    
+    // Disabled -> Running (direct transition)
+    controller->updateState(TextIndexController::State::Running);
+    
+    // Running -> Idle
+    controller->updateState(TextIndexController::State::Idle);
+    
+    // All transitions should complete without crashing
+}
+
 TEST_F(TestTextIndexController, StartIndexTask_UpdateTask)
 {
     bool createIndexTaskCalled = false;

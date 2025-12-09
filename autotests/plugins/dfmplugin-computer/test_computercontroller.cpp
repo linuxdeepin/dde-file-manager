@@ -7,6 +7,7 @@
 #include "stubext.h"
 #include "controller/computercontroller.h"
 #include "utils/computerdatastruct.h"
+#include "utils/computerutils.h"
 
 #include <dfm-base/file/entry/entryfileinfo.h>
 #include <dfm-base/base/device/devicemanager.h>
@@ -15,6 +16,7 @@
 #include <QSignalSpy>
 #include <QUrl>
 #include <QDialog>
+#include <QProcess>
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_computer;
@@ -361,4 +363,98 @@ TEST_F(UT_ComputerController, Signals_CanBeConnected_Success)
         SIGNAL(updateItemAlias(QUrl)),
         SLOT(onAliasUpdated(QUrl))
     ));
+}
+
+TEST_F(UT_ComputerController, WaitUDisks2DataReady_ValidId_HandlesCorrectly)
+{
+    QString id = "test-device-id";
+
+    bool waitCalled = false;
+    stub.set_lamda(&ComputerController::waitUDisks2DataReady, [&](ComputerController *, const QString &devId) {
+        __DBG_STUB_INVOKE__
+        waitCalled = true;
+        EXPECT_EQ(devId, id);
+    });
+
+    controller->waitUDisks2DataReady(id);
+    EXPECT_TRUE(waitCalled);
+}
+
+TEST_F(UT_ComputerController, HandleUnAccessableDevCdCall_ValidParameters_HandlesCorrectly)
+{
+    quint64 testWinId = 12345;
+    DFMEntryFileInfoPointer testInfo = nullptr;
+
+    bool handleCalled = false;
+    stub.set_lamda(&ComputerController::handleUnAccessableDevCdCall, [&](ComputerController *, quint64 winId, DFMEntryFileInfoPointer info) {
+        __DBG_STUB_INVOKE__
+        handleCalled = true;
+        EXPECT_EQ(winId, testWinId);
+    });
+
+    controller->handleUnAccessableDevCdCall(testWinId, testInfo);
+    EXPECT_TRUE(handleCalled);
+}
+
+TEST_F(UT_ComputerController, HandleNetworkCdCall_ValidParameters_HandlesCorrectly)
+{
+    quint64 testWinId = 12345;
+    DFMEntryFileInfoPointer testInfo = nullptr;
+
+    bool handleCalled = false;
+    stub.set_lamda(&ComputerController::handleNetworkCdCall, [&](ComputerController *, quint64 winId, DFMEntryFileInfoPointer info) {
+        __DBG_STUB_INVOKE__
+        handleCalled = true;
+        EXPECT_EQ(winId, testWinId);
+    });
+
+    controller->handleNetworkCdCall(testWinId, testInfo);
+    EXPECT_TRUE(handleCalled);
+}
+
+TEST_F(UT_ComputerController, DoSetProtocolDeviceAlias_ValidInfo_SetsAlias)
+{
+    DFMEntryFileInfoPointer testInfo = nullptr;
+    QString alias = "Test Protocol Alias";
+
+    bool aliasSet = false;
+    stub.set_lamda(&ComputerController::doSetProtocolDeviceAlias, [&](ComputerController *, DFMEntryFileInfoPointer info, const QString &aliasName) -> bool {
+        __DBG_STUB_INVOKE__
+        aliasSet = true;
+        EXPECT_EQ(aliasName, alias);
+        return true;
+    });
+
+    bool result = controller->doSetProtocolDeviceAlias(testInfo, alias);
+    EXPECT_TRUE(aliasSet);
+    EXPECT_TRUE(result);
+}
+
+TEST_F(UT_ComputerController, Constructor_CreatesInstance_Success)
+{
+    ComputerController *newController = new ComputerController();
+    EXPECT_NE(newController, nullptr);
+    delete newController;
+}
+
+TEST_F(UT_ComputerController, MountDevice_WithValidId_HandlesCorrectly)
+{
+    quint64 testWinId = 12345;
+    QString deviceId = "test-device-id";
+    QString shellId = "test-shell-id";
+    ComputerController::ActionAfterMount action = ComputerController::kEnterDirectory;
+
+    bool mountCalled = false;
+    stub.set_lamda(static_cast<void(ComputerController::*)(quint64, const QString &, const QString &, ComputerController::ActionAfterMount)>(&ComputerController::mountDevice),
+                   [&](ComputerController *, quint64 winId, const QString &id, const QString &shell, ComputerController::ActionAfterMount act) {
+        __DBG_STUB_INVOKE__
+        mountCalled = true;
+        EXPECT_EQ(winId, testWinId);
+        EXPECT_EQ(id, deviceId);
+        EXPECT_EQ(shell, shellId);
+        EXPECT_EQ(act, action);
+    });
+
+    controller->mountDevice(testWinId, deviceId, shellId, action);
+    EXPECT_TRUE(mountCalled);
 }
