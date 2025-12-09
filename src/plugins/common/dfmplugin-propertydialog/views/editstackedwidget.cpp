@@ -346,7 +346,7 @@ void EditStackedWidget::showTextShowFrame()
 void EditStackedWidget::selectFile(const QUrl &url)
 {
     fileUrl = url;
-    FileInfoPointer info = InfoFactory::create<FileInfo>(url);
+    FileInfoPointer info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
     if (!info.isNull()) {
         initTextShowFrame(info->displayOf(DisPlayInfoType::kFileDisplayName));
         if (!info->canAttributes(CanableInfoType::kCanRename)) {

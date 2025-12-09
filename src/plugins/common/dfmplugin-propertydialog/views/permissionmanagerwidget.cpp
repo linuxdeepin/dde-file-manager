@@ -53,7 +53,7 @@ PermissionManagerWidget::~PermissionManagerWidget()
 void PermissionManagerWidget::selectFileUrl(const QUrl &url)
 {
     selectUrl = url;
-    FileInfoPointer info = InfoFactory::create<FileInfo>(url);
+    FileInfoPointer info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
 
     if (info.isNull())
         return;
@@ -267,7 +267,7 @@ void PermissionManagerWidget::setComboBoxByPermission(QComboBox *cb, int permiss
 void PermissionManagerWidget::toggleFileExecutable(bool isChecked)
 {
 
-    FileInfoPointer info = InfoFactory::create<FileInfo>(selectUrl);
+    FileInfoPointer info = InfoFactory::create<FileInfo>(selectUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
     if (info.isNull())
         return;
 
@@ -333,7 +333,7 @@ void PermissionManagerWidget::paintEvent(QPaintEvent *evt)
 
 void PermissionManagerWidget::onComboBoxChanged()
 {
-    FileInfoPointer info = InfoFactory::create<FileInfo>(selectUrl);
+    FileInfoPointer info = InfoFactory::create<FileInfo>(selectUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
     if (info.isNull())
         return;
 
