@@ -32,9 +32,6 @@ static constexpr char kKeyCreated[] { "created" };
 static constexpr char kKeyLastModi[] { "lastModified" };
 static constexpr char kKeyMountPoint[] { "mountPoint" };
 
-static QString kConfigurationPath = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first() + "/deepin/dde-file-manager.json";
-static QString kBackupDirPath = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first() + "/deepin/dde-file-manager/old";
-
 QVariantMap BookmarkData::serialize()
 {
     QVariantMap v;
@@ -50,6 +47,9 @@ QVariantMap BookmarkData::serialize()
 BookMarkUpgradeUnit::BookMarkUpgradeUnit()
     : UpgradeUnit()
 {
+    // define bookmark config path for compatibility
+    configurationPath = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first() + "/deepin/dde-file-manager.json";
+    backupDirPath = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first() + "/deepin/dde-file-manager/old";
 }
 
 QString BookMarkUpgradeUnit::name()
@@ -61,14 +61,14 @@ bool BookMarkUpgradeUnit::initialize(const QMap<QString, QString> &args)
 {
     Q_UNUSED(args)
     qCInfo(logToolUpgrade) << "begin upgrade";
-    if (!UpgradeUtils::backupFile(kConfigurationPath, kBackupDirPath))
-        qCWarning(logToolUpgrade) << "backup file" << kConfigurationPath << "to dir: " << kBackupDirPath << "failed";
+    if (!UpgradeUtils::backupFile(configurationPath, backupDirPath))
+        qCWarning(logToolUpgrade) << "backup file" << configurationPath << "to dir: " << backupDirPath << "failed";
     else
-        qCInfo(logToolUpgrade) << "backup file" << kConfigurationPath << "to dir: " << kBackupDirPath << "success";
+        qCInfo(logToolUpgrade) << "backup file" << configurationPath << "to dir: " << backupDirPath << "success";
 
-    QFile file(kConfigurationPath);
+    QFile file(configurationPath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qCWarning(logToolUpgrade) << "Failed to open configuration file:" << kConfigurationPath;
+        qCWarning(logToolUpgrade) << "Failed to open configuration file:" << configurationPath;
         return false;
     }
 
@@ -189,9 +189,9 @@ QVariantList BookMarkUpgradeUnit::initData() const
 
 bool BookMarkUpgradeUnit::doUpgrade(const QVariantList &quickAccessDatas)
 {
-    QFile file(kConfigurationPath);
+    QFile file(configurationPath);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        qCCritical(logToolUpgrade) << "Failed to open configuration file for writing:" << kConfigurationPath;
+        qCCritical(logToolUpgrade) << "Failed to open configuration file for writing:" << configurationPath;
         return false;
     }
 
