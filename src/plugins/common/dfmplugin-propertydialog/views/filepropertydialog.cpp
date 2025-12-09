@@ -99,7 +99,7 @@ void FilePropertyDialog::createHeadUI(const QUrl &url)
 {
     fileIcon = new QLabel(this);
     fileIcon->setFixedHeight(128);
-    currentInfo = InfoFactory::create<FileInfo>(url);
+    currentInfo = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
     setFileIcon(fileIcon, currentInfo);
 
     editStackWidget = new EditStackedWidget(this);

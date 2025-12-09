@@ -252,7 +252,7 @@ void BasicWidget::basicFieldFilter(const QUrl &url)
 
 void BasicWidget::basicFill(const QUrl &url)
 {
-    FileInfoPointer info = InfoFactory::create<FileInfo>(url);
+    FileInfoPointer info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
     if (info.isNull())
         return;
     if (!info->canAttributes(CanableInfoType::kCanHidden))
@@ -409,7 +409,7 @@ void BasicWidget::slotFileHide(Qt::CheckState state)
 
 void BasicWidget::slotOpenFileLocation()
 {
-    FileInfoPointer info = InfoFactory::create<FileInfo>(currentUrl);
+    FileInfoPointer info = InfoFactory::create<FileInfo>(currentUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
     if (info.isNull())
         return;
 
@@ -419,7 +419,7 @@ void BasicWidget::slotOpenFileLocation()
             : info->pathOf(PathInfoType::kAbsoluteFilePath);
 
     const QUrl targetUrl = QUrl::fromLocalFile(targetPath);
-    const auto &targetInfo = InfoFactory::create<FileInfo>(targetUrl);
+    const auto &targetInfo = InfoFactory::create<FileInfo>(targetUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
     if (targetInfo.isNull())
         return;
 
