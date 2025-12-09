@@ -8,6 +8,7 @@
 #include <QDebug>
 #include <QFile>
 #include <QDir>
+#include <unistd.h>
 
 // C structures for libutpm2.so
 typedef enum {
@@ -243,16 +244,17 @@ int TPMWork::encrypt(const QVariantMap &params)
     int ret = func(&pa);
     if (ret != 0) {
         fmCritical() << "utpm2_encrypt_by_tools failed with error code:" << ret;
-    } else {
-        // 上述函数生成的文件，普通用户无访问权限，所以会导致往写入的 Token 相关信息为空，
-        // 从而导致密码解密失败。所以在此将文件设置为可读。
-        QDir d(arrDirPath);
-        auto entries = d.entryInfoList(QDir::NoDotAndDotDot);
-        for (const auto &entry : entries) {
-            auto ok = QFile::setPermissions(entry.absoluteFilePath(),
-                                            QFile::ReadOwner | QFile::ReadGroup | QFile::ReadOther);
-            fmInfo() << "Read permission has been set to tpm file:" << entry.fileName() << ok;
-        }
+    }
+
+    // 上述函数生成的文件，普通用户无访问权限，所以会导致往写入的 Token 相关信息为空，
+    // 从而导致密码解密失败。所以在此将文件设置为可读。
+    QDir d(arrDirPath);
+    auto entries = d.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot);
+    fmInfo() << entries.count() << "files will be set to read in" << arrDirPath << entries;
+    for (const auto &entry : entries) {
+        auto ok = QFile::setPermissions(entry.absoluteFilePath(),
+                                        QFile::ReadOwner | QFile::ReadGroup | QFile::ReadOther);
+        fmInfo() << "Read permission has been set to tpm file:" << entry.fileName() << ok;
     }
 
     return ret;
