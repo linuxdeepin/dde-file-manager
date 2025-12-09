@@ -8,6 +8,8 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/file/local/syncfileinfo.h>
 #include <dfm-base/file/local/asyncfileinfo.h>
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/application/settings.h>
 
 #include <QDBusInterface>
 #include <QThread>
@@ -232,6 +234,11 @@ TEST_F(UT_AuditLogJob, BurnFilesAuditLogJob_writeLog)
         __DBG_STUB_INVOKE__
         dbusCallCalled = true;
         return QDBusMessage();
+    });
+
+    stub.set_lamda(ADDR(Settings, sync), [](Settings *) {
+        __DBG_STUB_INVOKE__
+        return true;
     });
 
     QDBusInterface interface("test.service", "/test/path", "test.interface");
