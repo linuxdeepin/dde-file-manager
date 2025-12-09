@@ -20,8 +20,6 @@ static constexpr char kConfigKeyIconSizeLevel[] { "IconSizeLevel" };
 static constexpr char kAppAttributeVersion[] { "v1.0" };
 static constexpr int kOldMaxIconSizeLevel { 4 };
 
-static QString kConfigurationPath = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first() + "/deepin/dde-file-manager/dde-file-manager.json";
-static QString kBackupDirPath = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first() + "/deepin/dde-file-manager/old";
 
 AppAttributeUpgradeUnit::AppAttributeUpgradeUnit()
     : UpgradeUnit()
@@ -37,9 +35,9 @@ bool AppAttributeUpgradeUnit::initialize(const QMap<QString, QString> &args)
 {
     Q_UNUSED(args)
 
-    QFile file(kConfigurationPath);
+    QFile file(configurationPath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qCWarning(logToolUpgrade) << "Failed to open configuration file:" << kConfigurationPath;
+        qCWarning(logToolUpgrade) << "Failed to open configuration file:" << configurationPath;
         return false;
     }
 
@@ -124,22 +122,22 @@ int AppAttributeUpgradeUnit::transIconSizeLevel(int oldIconSizeLevel) const
 
 bool AppAttributeUpgradeUnit::backupAppAttribute() const
 {
-    QDir backupDir(kBackupDirPath);
+    QDir backupDir(backupDirPath);
     if (!backupDir.exists()) {
         if (!backupDir.mkpath(".")) {
-            qCWarning(logToolUpgrade) << "upgrade: create backup directory failed: " << kBackupDirPath;
+            qCWarning(logToolUpgrade) << "upgrade: create backup directory failed: " << backupDirPath;
             return false;
         }
     }
 
-    QString backupFilePath { kBackupDirPath + "/" + kConfigGroupAppAttribute + "_" + kAppAttributeVersion + ".backup" };
+    QString backupFilePath { backupDirPath + "/" + kConfigGroupAppAttribute + "_" + kAppAttributeVersion + ".backup" };
     if (QFile::exists(backupFilePath)) {
         qCWarning(logToolUpgrade) << "upgrade: backup file already exists: " << backupFilePath;
         return false;
     }
 
-    if (!QFile::copy(kConfigurationPath, backupFilePath)) {
-        qCWarning(logToolUpgrade) << "upgrade: copy file failed: " << kConfigurationPath << " to " << backupFilePath;
+    if (!QFile::copy(configurationPath, backupFilePath)) {
+        qCWarning(logToolUpgrade) << "upgrade: copy file failed: " << configurationPath << " to " << backupFilePath;
         return false;
     }
 
@@ -151,9 +149,9 @@ bool AppAttributeUpgradeUnit::writeConfigFile() const
     QJsonDocument newDoc(configObject);
     QByteArray data = newDoc.toJson();
 
-    QFile writeFile(kConfigurationPath);
+    QFile writeFile(configurationPath);
     if (!writeFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        qCWarning(logToolUpgrade) << "upgrade: open file failed: " << kConfigurationPath;
+        qCWarning(logToolUpgrade) << "upgrade: open file failed: " << configurationPath;
         return false;
     }
 

@@ -11,8 +11,6 @@
 
 namespace dfm_upgrade {
 
-inline const QString kVaultBasePath(QDir::homePath() + QString("/.config/Vault"));
-inline const QString kVaultBasePathOld(QDir::homePath() + QString("/.local/share/applications"));
 inline constexpr char kVaultDecryptDirName[] { "vault_unlocked" };
 inline constexpr char kVaultEncrypyDirName[] { "vault_encrypted" };
 inline constexpr char kPasswordFileName[] { "pbkdf2clipher" };
@@ -41,6 +39,9 @@ private:
     QString cryfsConfigFilePathNew;
     QString decryptDirPathOld;
     QString decryptDirPathNew;
+
+    QString vaultBasePath;
+    QString vaultBasePathOld;
 };
 }
 
