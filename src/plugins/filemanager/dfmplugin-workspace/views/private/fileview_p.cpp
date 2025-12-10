@@ -369,7 +369,7 @@ void FileViewPrivate::adjustHeaderLayoutMargin(const QString &strategyName)
 
     // Determine margin based on grouping state
     bool isGrouped = strategyName != GroupStrategy::kNoGroup;
-    int bottomMargin = isGrouped ? 0 : 10;
+    int bottomMargin = isGrouped ? 0 : kDefaultHeaderBottomMargin;
 
     headerLayout->setContentsMargins(0, 0, 0, bottomMargin);
     fmDebug() << "Header layout bottom margin adjusted to:" << bottomMargin
