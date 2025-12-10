@@ -82,6 +82,7 @@ inline constexpr int kTreeArrowAndIconDistance { 8 };
 inline constexpr int kViewAnimationDuration { 366 };
 inline constexpr int kViewAnimationFrameDuration { 16 };
 inline constexpr int kGroupHeaderInterval { 16 };
+inline constexpr int kDefaultHeaderBottomMargin { 10 };
 
 // tab defines
 inline constexpr int kMaxTabCount { 8 };

@@ -2495,7 +2495,9 @@ void FileView::initializeScrollBarWatcher()
                     d->headerView->syncOffset(hVal);
                 });
             } else if (value == 0 && margins.bottom() == 0) {
-                headerLayout->setContentsMargins(0, 0, 0, 10);
+                // Only restore bottom margin in non-grouped mode
+                int bottomMargin = isGroupedView() ? 0 : kDefaultHeaderBottomMargin;
+                headerLayout->setContentsMargins(0, 0, 0, bottomMargin);
                 QTimer::singleShot(0, this, [this]() {
                     if (!d->headerView)
                         return;
