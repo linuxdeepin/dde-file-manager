@@ -1,3 +1,22 @@
+dde-file-manager (6.5.109) unstable; urgency=medium
+
+  * feat: optimize search input delay for Chinese characters
+  * fix: adjust header margin logic for grouped view
+  * test: add unit tests for dfmdaemon-core and dfmplugin-computer
+  * test: [tools]add comprehensive unit tests for upgrade units and utils
+  * fix: use synchronous file info creation in property dialog
+  * fix: add permission tracking logs and fix empty file list issue
+  * fix: Fix user configuration deleted by upgrade unit case
+  * test: prevent unit tests from modifying user configuration files
+  * test: add unit tests for avfsbrowser plugin components
+  * fix: unify selection handling for icon and list views
+  * feat: adjust group header spacing in icon view
+  * feat: adjust group header spacing to 16px in list view
+  * fix: adapt desktop collection layout on resolution change
+  * test: Add unit tests for tools and canvas plugin.
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 11 Dec 2025 20:34:12 +0800
+
 dde-file-manager (6.5.108) unstable; urgency=medium
 
   * Add some unit tests
