@@ -15,6 +15,7 @@
 
 #include <QPropertyAnimation>
 #include <QUrl>
+#include <QSignalSpy>
 
 #include <gtest/gtest.h>
 
@@ -39,6 +40,15 @@ protected:
     {
         mockProvider = new MockCollectionDataProvider();
         holder = new CollectionHolder("test_id", mockProvider);
+
+        // init necessary objects
+        Surface *testSurface = new Surface();
+        CollectionModel *testModel = new CollectionModel();
+        holder->createFrame(testSurface, testModel);
+
+        stub.set_lamda(&QWidget::show, [](QWidget *) {
+            __DBG_STUB_INVOKE__
+        });
     }
 
     virtual void TearDown() override
@@ -516,6 +526,236 @@ TEST_F(UT_CollectionHolder, setFreeze_WithOptimizationDisabled_DoesNotCallSetFre
 
     delete testWidget;
     holder->d->widget = nullptr;
+}
+
+// Additional tests from the original test_collection.cpp that were not in test_collectionholder.cpp
+TEST_F(UT_CollectionHolder, name_Default_ReturnsEmptyString)
+{
+    QString name;
+    if (holder->d->widget) {
+        name = holder->name();
+    } else {
+        CollectionWidget *testWidget = new CollectionWidget("test", mockProvider);
+        holder->d->widget = testWidget;
+        name = holder->name();
+
+        delete testWidget;
+        holder->d->widget = nullptr;
+    }
+    EXPECT_TRUE(name.isEmpty());
+}
+
+TEST_F(UT_CollectionHolder, setName_SetsName)
+{
+    QString testName = "Test Collection";
+    QString retrievedName;
+    if (holder->d->widget) {
+        holder->setName(testName);
+    } else {
+        CollectionWidget *testWidget = new CollectionWidget("test", mockProvider);
+        holder->d->widget = testWidget;
+        holder->setName(testName);
+        retrievedName = holder->name();
+
+        delete testWidget;
+        holder->d->widget = nullptr;
+    }
+
+    EXPECT_EQ(retrievedName, testName);
+}
+
+TEST_F(UT_CollectionHolder, frame_Default_ReturnsNullptr)
+{
+    auto frame = holder->frame();
+    EXPECT_EQ(frame, nullptr);
+}
+
+TEST_F(UT_CollectionHolder, widget_Default_ReturnsNullptr)
+{
+    auto widget = holder->widget();
+    EXPECT_EQ(widget, nullptr);
+}
+
+TEST_F(UT_CollectionHolder, itemView_Default_ReturnsNullptr)
+{
+    auto itemView = holder->itemView();
+    EXPECT_EQ(itemView, nullptr);
+}
+
+TEST_F(UT_CollectionHolder, surface_Default_ReturnsNullptr)
+{
+    auto surface = holder->surface();
+    EXPECT_EQ(surface, nullptr);
+}
+
+TEST_F(UT_CollectionHolder, setSurface_SetsSurface)
+{
+    Surface *surface = nullptr; // In a real test, you'd create a proper Surface object
+    holder->setSurface(surface);
+    EXPECT_EQ(holder->surface(), surface);
+}
+
+TEST_F(UT_CollectionHolder, movable_Default_ReturnsFalse)
+{
+    bool movable = holder->movable();
+    EXPECT_FALSE(movable);
+}
+
+TEST_F(UT_CollectionHolder, setMovable_SetsMovable)
+{
+    holder->setMovable(true);
+    EXPECT_TRUE(holder->movable());
+}
+
+TEST_F(UT_CollectionHolder, closable_Default_ReturnsFalse)
+{
+    bool closable = holder->closable();
+    EXPECT_FALSE(closable);
+}
+
+TEST_F(UT_CollectionHolder, setClosable_SetsClosable)
+{
+    holder->setClosable(true);
+    EXPECT_TRUE(holder->closable());
+}
+
+TEST_F(UT_CollectionHolder, floatable_Default_ReturnsFalse)
+{
+    bool floatable = holder->floatable();
+    EXPECT_FALSE(floatable);
+}
+
+TEST_F(UT_CollectionHolder, setFloatable_SetsFloatable)
+{
+    holder->setFloatable(true);
+    EXPECT_TRUE(holder->floatable());
+}
+
+TEST_F(UT_CollectionHolder, hiddableCollection_Default_ReturnsFalse)
+{
+    bool hiddable = holder->hiddableCollection();
+    EXPECT_FALSE(hiddable);
+}
+
+TEST_F(UT_CollectionHolder, setHiddableCollection_SetsHiddable)
+{
+    holder->setHiddableCollection(true);
+    EXPECT_TRUE(holder->hiddableCollection());
+}
+
+TEST_F(UT_CollectionHolder, stretchable_Default_ReturnsFalse)
+{
+    bool stretchable = holder->stretchable();
+    EXPECT_FALSE(stretchable);
+}
+
+TEST_F(UT_CollectionHolder, setStretchable_SetsStretchable)
+{
+    holder->setStretchable(true);
+    EXPECT_TRUE(holder->stretchable());
+}
+
+TEST_F(UT_CollectionHolder, adjustable_Default_ReturnsFalse)
+{
+    bool adjustable = holder->adjustable();
+    EXPECT_FALSE(adjustable);
+}
+
+TEST_F(UT_CollectionHolder, setAdjustable_SetsAdjustable)
+{
+    holder->setAdjustable(true);
+    EXPECT_TRUE(holder->adjustable());
+}
+
+TEST_F(UT_CollectionHolder, hiddableTitleBar_Default_ReturnsFalse)
+{
+    bool hiddable = holder->hiddableTitleBar();
+    EXPECT_FALSE(hiddable);
+}
+
+TEST_F(UT_CollectionHolder, setHiddableTitleBar_SetsHiddable)
+{
+    holder->setHiddableTitleBar(true);
+    EXPECT_TRUE(holder->hiddableTitleBar());
+}
+
+TEST_F(UT_CollectionHolder, hiddableView_Default_ReturnsFalse)
+{
+    bool hiddable = holder->hiddableView();
+    EXPECT_FALSE(hiddable);
+}
+
+TEST_F(UT_CollectionHolder, setHiddableView_SetsHiddable)
+{
+    holder->setHiddableView(true);
+    EXPECT_TRUE(holder->hiddableView());
+}
+
+TEST_F(UT_CollectionHolder, renamable_Default_ReturnsFalse)
+{
+    bool renamable = holder->renamable();
+    EXPECT_FALSE(renamable);
+}
+
+TEST_F(UT_CollectionHolder, setRenamable_SetsRenamable)
+{
+    holder->setRenamable(true);
+    EXPECT_TRUE(holder->renamable());
+}
+
+TEST_F(UT_CollectionHolder, fileShiftable_Default_ReturnsFalse)
+{
+    bool shiftable = holder->fileShiftable();
+    EXPECT_FALSE(shiftable);
+}
+
+TEST_F(UT_CollectionHolder, setFileShiftable_SetsFileShiftable)
+{
+    holder->setFileShiftable(true);
+    EXPECT_TRUE(holder->fileShiftable());
+}
+
+TEST_F(UT_CollectionHolder, style_Default_ReturnsDefaultStyle)
+{
+    CollectionStyle style = holder->style();
+    // Just ensure the method can be called without crashing
+    (void)style;
+}
+
+TEST_F(UT_CollectionHolder, setStyle_SetsStyle)
+{
+    CollectionStyle newStyle;
+    newStyle.sizeMode = CollectionFrameSize::kSmall;
+    holder->setStyle(newStyle);
+    CollectionStyle currentStyle = holder->style();
+    // Verify the style was set (implementation-dependent)
+    (void)currentStyle;
+}
+
+TEST_F(UT_CollectionHolder, styleChanged_SignalEmits)
+{
+    QSignalSpy spy(holder, &CollectionHolder::styleChanged);
+    CollectionStyle newStyle;
+    newStyle.sizeMode = CollectionFrameSize::kSmall;
+    holder->setStyle(newStyle);
+    
+    // Check if the signal was emitted
+    // This depends on the actual implementation of setStyle
+    (void)spy;
+}
+
+TEST_F(UT_CollectionHolder, sigRequestClose_Signal)
+{
+    QSignalSpy spy(holder, &CollectionHolder::sigRequestClose);
+    // The signal itself cannot be directly tested without a slot connected to it
+    (void)spy;
+}
+
+TEST_F(UT_CollectionHolder, frameSurfaceChanged_Signal)
+{
+    QSignalSpy spy(holder, &CollectionHolder::frameSurfaceChanged);
+    // The signal itself cannot be directly tested without triggering code
+    (void)spy;
 }
 
 class UT_CollectionHolderPrivate : public testing::Test

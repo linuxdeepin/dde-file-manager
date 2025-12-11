@@ -234,6 +234,24 @@ TEST_F(UT_OrganizerConfig, collectionBase_WithInvalidKey_ReturnsNull)
     EXPECT_EQ(result, nullptr);
 }
 
+TEST_F(UT_OrganizerConfig, collectionBase_WithValidKey_ReturnsData)
+{
+    // First, write some data
+    QList<CollectionBaseDataPtr> bases;
+    CollectionBaseDataPtr data(new CollectionBaseData);
+    data->key = "valid_key";
+    data->name = "Valid Collection";
+    bases.append(data);
+
+    config->writeCollectionBase(true, bases);
+    config->sync(0);
+
+    CollectionBaseDataPtr result = config->collectionBase(true, "valid_key");
+    EXPECT_NE(result, nullptr);
+    EXPECT_EQ(result->key, "valid_key");
+    EXPECT_EQ(result->name, "Valid Collection");
+}
+
 TEST_F(UT_OrganizerConfig, collectionStyle_ReturnsEmptyStyleByDefault)
 {
     CollectionStyle style = config->collectionStyle("", "test_key");
