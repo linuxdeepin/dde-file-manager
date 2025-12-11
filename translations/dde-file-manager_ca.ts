@@ -1514,7 +1514,7 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="67"/>
         <source>Add Text</source>
-        <translation>Afegeix text</translation>
+        <translation>Afegeix-hi text</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="67"/>
@@ -2152,7 +2152,7 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="68"/>
         <source>Add Text</source>
-        <translation>Afegeix text</translation>
+        <translation>Afegeix-hi text</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="68"/>
@@ -2487,7 +2487,7 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="68"/>
         <source>Add Text</source>
-        <translation>Afegeix text</translation>
+        <translation>Afegeix-hi text</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="68"/>
@@ -6719,7 +6719,7 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="53"/>
         <source>Add Directory</source>
-        <translation>Afegeix un directori</translation>
+        <translation>Afegeix-hi un directori</translation>
     </message>
 </context>
 <context>
