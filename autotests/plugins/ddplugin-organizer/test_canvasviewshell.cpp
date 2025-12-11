@@ -22,6 +22,14 @@ protected:
     void SetUp() override
     {
         shell = new CanvasViewShell();
+
+        // mock the UI show
+        stub.set_lamda(&QWidget::show, [](QWidget *) {
+            __DBG_STUB_INVOKE__
+        });
+        stub.set_lamda(&QWidget::hide, [](QWidget *) {
+            __DBG_STUB_INVOKE__
+        });
     }
 
     void TearDown() override
