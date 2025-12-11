@@ -463,8 +463,8 @@ int SearchEditWidget::determineSearchDelay(const QString &inputText)
 
         if (inputText == ".")
             delay += 1000;
-    } else if (byteCount > 3) {
-        delay = 0;
+    } else if (byteCount >= 6) {   // 通常中文2字为6字节
+        delay = 100;
     }
 
     return delay;
