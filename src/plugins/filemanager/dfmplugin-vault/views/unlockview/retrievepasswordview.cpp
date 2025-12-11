@@ -50,7 +50,6 @@ RetrievePasswordView::RetrievePasswordView(QWidget *parent)
     filePathEdit->setDirectoryUrl(QDir::homePath());
     filePathEdit->setFileMode(DFileDialog::ExistingFiles);
     filePathEdit->setNameFilters({ QString("KEY file(*.key)") });
-    filePathEdit->lineEdit()->setReadOnly(true);
 
     verificationPrompt = new DLabel(this);
     verificationPrompt->setForegroundRole(DPalette::TextWarning);
@@ -71,7 +70,7 @@ RetrievePasswordView::RetrievePasswordView(QWidget *parent)
 
     this->setLayout(mainLayout);
     connect(filePathEdit, &DFileChooserEdit::fileChoosed, this, &RetrievePasswordView::onBtnSelectFilePath);
-
+    connect(filePathEdit->lineEdit(), &QLineEdit::textChanged, this, &RetrievePasswordView::onTextChanged);
 #ifdef ENABLE_TESTING
     AddATTag(qobject_cast<QWidget *>(filePathEdit), AcName::kAcEditVaultRetrieveOtherPath);
     fmDebug() << "Vault: Testing accessibility tags added";
@@ -157,6 +156,14 @@ void RetrievePasswordView::onBtnSelectFilePath(const QString &path)
     filePathEdit->setText(path);
     if (!path.isEmpty())
         emit sigBtnEnabled(1, true);
+}
+
+void RetrievePasswordView::onTextChanged(const QString &path)
+{
+    if(!path.isEmpty())
+        emit sigBtnEnabled(1, true);
+    else
+        emit sigBtnEnabled(1, false);
 }
 
 void RetrievePasswordView::showEvent(QShowEvent *event)

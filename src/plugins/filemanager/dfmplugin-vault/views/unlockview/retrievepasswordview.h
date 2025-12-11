@@ -63,6 +63,8 @@ public slots:
      */
     void onBtnSelectFilePath(const QString &path);
 
+    void onTextChanged(const QString &path);
+
 private:
     /*!
      * /brief setVerificationPage   设置密钥验证页面

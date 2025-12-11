@@ -112,6 +112,7 @@ void VaultUnlockPages::pageSelect(PageType page)
         QStringList btnList = retrievePasswordView->btnText();
         addButton(btnList[0], false);
         addButton(btnList[1], true, ButtonType::ButtonRecommend);
+        getButton(1)->setEnabled(false);
         connect(retrievePasswordView, &RetrievePasswordView::signalJump, this, &VaultUnlockPages::pageSelect);
         connect(retrievePasswordView, &RetrievePasswordView::sigBtnEnabled, this, &VaultUnlockPages::onSetBtnEnabled);
         connect(retrievePasswordView, &RetrievePasswordView::sigCloseDialog, this, &VaultUnlockPages::close);
