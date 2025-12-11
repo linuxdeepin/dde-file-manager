@@ -6,6 +6,7 @@
 #include "burnhelper.h"
 
 #include <QDebug>
+#include <linux/limits.h>
 
 namespace dfmplugin_burn {
 
@@ -194,7 +195,10 @@ JolietCheckStrategy::JolietCheckStrategy(const QString &path, QObject *parent)
 
 bool JolietCheckStrategy::validFileNameCharacters(const QString &fileName)
 {
-    return fileName.size() < kMaxJolietFileNameSize;
+    // joliet_long_names 扩展，将 joliet 对文件名的限制从 64 字符提升到 103 字符。
+    // 但在 libisofs 中，文件名长度又受 POSIX 标准中 NAME_MAX(255字节) 的限制。
+    // 因此，该扩展下需要同时满足两个条件的文件名，在刻录后才不会被截断。
+    return fileName.size() <= kMaxJolietFileNameSize && fileName.toUtf8().size() <= NAME_MAX;
 }
 
 bool JolietCheckStrategy::validFilePathCharacters(const QString &filePath)
