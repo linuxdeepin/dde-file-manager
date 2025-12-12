@@ -43,7 +43,8 @@ inline const QString kBatchCommitInterval = QLatin1String("batchCommitInterval")
 // that the index can be rebuilt!!!
 // History:
 // Version 1: add "filename" filed
-inline constexpr int kIndexVersion { 1 };
+// Version 2: add new filed "ancestor_paths"
+inline constexpr int kIndexVersion { 2 };
 
 // json
 inline const QString kVersionKey = QLatin1String("version");

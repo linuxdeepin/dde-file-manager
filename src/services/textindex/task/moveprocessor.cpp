@@ -73,6 +73,16 @@ bool FileMoveProcessor::processFileMove(const QString &fromPath, const QString &
         newDoc->add(newLucene<Field>(L"path", toPath.toStdWString(),
                                      Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
 
+        // Remove old ancestor paths (if any)
+        newDoc->removeField(L"ancestor_paths");
+
+        // Add new ancestor paths
+        QStringList ancestorPaths = PathCalculator::extractAncestorPaths(toPath);
+        for (const QString &ancestorPath : ancestorPaths) {
+            newDoc->add(newLucene<Field>(L"ancestor_paths", ancestorPath.toStdWString(),
+                                      Field::STORE_NO, Field::INDEX_NOT_ANALYZED));
+        }
+
         // Update document in index
         TermPtr oldTerm = newLucene<Term>(L"path", fromPath.toStdWString());
         m_writer->updateDocument(oldTerm, newDoc);
@@ -311,6 +321,16 @@ bool DirectoryMoveProcessor::updateSingleDocumentPath(const DocumentPtr &doc,
         // Add new path field
         newDoc->add(newLucene<Field>(L"path", newPath.toStdWString(),
                                      Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
+
+        // Remove old ancestor paths (if any)
+        newDoc->removeField(L"ancestor_paths");
+
+        // Add new ancestor paths
+        QStringList ancestorPaths = PathCalculator::extractAncestorPaths(newPath);
+        for (const QString &ancestorPath : ancestorPaths) {
+            newDoc->add(newLucene<Field>(L"ancestor_paths", ancestorPath.toStdWString(),
+                                      Field::STORE_NO, Field::INDEX_NOT_ANALYZED));
+        }
 
         // Update document in index
         TermPtr oldTerm = newLucene<Term>(L"path", oldPathValue);
