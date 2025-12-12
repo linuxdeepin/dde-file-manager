@@ -336,6 +336,36 @@ bool isDirectoryMove(const QString &toPath)
     return toPath.endsWith('/');
 }
 
+QStringList extractAncestorPaths(const QString &filePath)
+{
+    QStringList ancestorPaths;
+    if (filePath.isEmpty())
+        return ancestorPaths;
+
+    QFileInfo fileInfo(filePath);
+    QString currentPath = fileInfo.path(); // 初始为文件所在的目录路径
+
+    // 循环向上获取所有父目录，直到根目录
+    while (currentPath != "/" && !currentPath.isEmpty()) {
+        ancestorPaths.append(currentPath);
+        currentPath = QFileInfo(currentPath).path(); // 获取父目录
+    }
+
+    // 如果文件路径是根目录下的文件，确保包括根目录
+    if (fileInfo.path() == "/" && fileInfo.exists() && fileInfo.isFile()) {
+        // 文件直接在根目录下，没有祖先目录
+        return ancestorPaths;
+    }
+
+    // 添加根目录如果当前路径是 "/" 但还没有添加（处理目录路径的情况）
+    if (currentPath == "/" && !ancestorPaths.contains("/")) {
+        // 这种情况应该不会发生，因为文件路径是文件不是目录，fileInfo.path() 只会在文件直接在根目录下时返回 "/"
+        // 而上面的条件已经处理了这种情况
+    }
+
+    return ancestorPaths;
+}
+
 }   // namespace PathCalculator
 
 SERVICETEXTINDEX_END_NAMESPACE

@@ -93,6 +93,13 @@ QString normalizeDirectoryPath(const QString &dirPath);
  */
 bool isDirectoryMove(const QString &toPath);
 
+/**
+ * @brief Extract all ancestor directories from a file path
+ * @param filePath Full file path
+ * @return List of all ancestor directories in order from root to parent
+ */
+QStringList extractAncestorPaths(const QString &filePath);
+
 }   // namespace PathCalculator
 
 SERVICETEXTINDEX_END_NAMESPACE

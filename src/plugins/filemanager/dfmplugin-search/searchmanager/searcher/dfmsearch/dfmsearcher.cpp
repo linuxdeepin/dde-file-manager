@@ -85,7 +85,7 @@ bool DFMSearcher::search()
 void DFMSearcher::stop()
 {
     if (engine && engine->status() == SearchStatus::Searching) {
-        fmInfo() << "Stopping search for:" << keyword;
+        fmInfo() << "Stopping search for:" << keyword << engine->searchType();
         engine->cancel();
     }
 }
