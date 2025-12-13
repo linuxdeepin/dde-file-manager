@@ -2,12 +2,12 @@
 <context>
     <name>AccessControlDBus</name>
     <message>
-        <location filename="../src/services/accesscontrol/accesscontroldbus.cpp" line="51"/>
+        <location filename="../src/services/accesscontrol/accesscontroldbus.cpp" line="53"/>
         <source>Invalid args</source>
         <translation>Virheelliset argumentit</translation>
     </message>
     <message>
-        <location filename="../src/services/accesscontrol/accesscontroldbus.cpp" line="52"/>
+        <location filename="../src/services/accesscontrol/accesscontroldbus.cpp" line="54"/>
         <source>Invalid invoker</source>
         <translation>Virheellinen kutsu</translation>
     </message>
@@ -968,7 +968,7 @@ Kirjoita käyttäjä ja salasana kohteelle %1</translation>
         <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/utils/previewfileoperation.cpp" line="40"/>
         <location filename="../src/dfm-base/utils/universalutils.cpp" line="82"/>
         <location filename="../src/dfm-base/utils/universalutils.cpp" line="105"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="110"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="116"/>
         <source>dde-file-manager</source>
         <translation>dde-file-manager-tiedosto-hallinta</translation>
     </message>
@@ -1043,37 +1043,37 @@ Kirjoita käyttäjä ja salasana kohteelle %1</translation>
         <translation>Ominaisuudet</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="58"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="63"/>
         <source>New Folder</source>
         <translation>Uusi kansio</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="61"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="66"/>
         <source>New Text</source>
         <translation>Uusi teksti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="65"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="70"/>
         <source>Document</source>
         <translation>Asiakirja</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="69"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="74"/>
         <source>Spreadsheet</source>
         <translation>Taulukko</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="73"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="78"/>
         <source>Presentation</source>
         <translation>Esitys</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="77"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="82"/>
         <source>New File</source>
         <translation>Uusi tiedosto</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="819"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="933"/>
         <source>Create symlink</source>
         <translation>Luo symlinkki</translation>
     </message>
@@ -1142,8 +1142,10 @@ Kirjoita käyttäjä ja salasana kohteelle %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="198"/>
-        <source>Allow files to be added later</source>
-        <translation>Salli tiedostojen lisääminen myöhemmin</translation>
+        <source>Finalize disc after burning 
+(no additional data can be appended)</source>
+        <translation>Viimeistele levy polttamisen jälkeen 
+(ei voi lisätä levylle lisää tietoja)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="208"/>
@@ -1812,70 +1814,70 @@ Kirjoita käyttäjä ja salasana kohteelle %1</translation>
         <translation>Tuntematon</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="270"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="279"/>
         <source>search</source>
         <translation>haku</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="285"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="294"/>
         <source>advanced search</source>
         <translation>tarkennettu haku</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="405"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="654"/>
         <source>Cannot generate random number by TPM</source>
         <translation>Satunnaislukua ei voida luoda TPM:llä</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="408"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="657"/>
         <source>No available encrypt algorithm.</source>
         <translation>Salausalgoritmia ei ole saatavilla.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="411"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="660"/>
         <source>TPM encrypt failed.</source>
         <translation>TPM-salaus ei onnistunut.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="414"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="663"/>
         <source>TPM is locked.</source>
         <translation>TPM on lukittu.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="487"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="736"/>
         <source>Confirm encrypt %1?</source>
         <translation>Vahvistatko salauksen %1?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="490"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="739"/>
         <source>The current partition is about to be encrypted and cannot be canceled during the encryption process, please confirm the encryption.</source>
         <translation>Nykyinen osio salataan, eikä sitä voi peruuttaa prosessin aikana. Vahvista salaminen.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="498"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="513"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="747"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="762"/>
         <source>Cancel</source>
         <translation>Peruuta</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="499"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="514"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="748"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="763"/>
         <source>Confirm and Reboot</source>
         <translation>Vahvista ja käynnistä uudelleen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="500"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="514"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="749"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="763"/>
         <source>Confirm</source>
         <translation>Vahvista</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="510"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="759"/>
         <source>Decrypt %1?</source>
         <translation>Pura salaus %1?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="511"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="760"/>
         <source>Decryption can take a long time, so make sure power is connected until the decryption is complete.</source>
         <translation>Salauksen purkaminen voi kestää kauan. Varmista, että virta on kytketty, kunnes salauksen purku on valmis.</translation>
     </message>
@@ -4175,12 +4177,12 @@ Kirjoita käyttäjä ja salasana kohteelle %1</translation>
         <translation>%1 (yhteensopiva Windowsin CD-/DVD-tilan kanssa)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="315"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="314"/>
         <source>Device error</source>
         <translation>Laitteen virhe</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="315"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="314"/>
         <source>Optical device %1 doesn&apos;t exist</source>
         <translation>Optista laitetta %1 ei ole</translation>
     </message>
@@ -4192,16 +4194,26 @@ Kirjoita käyttäjä ja salasana kohteelle %1</translation>
         <source>The file name or the path is too long. Please shorten the file name or the path and try again.</source>
         <translation>Tiedostonimi tai polku on liian pitkä. Lyhennä nimeä tai polkua ja yritä uudelleen.</translation>
     </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="576"/>
+        <source>Not enough free space on the disc</source>
+        <translation>Levyllä ei ole tarpeeksi vapaata tilaa</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="577"/>
+        <source>The remaining space on the current disc is insufficient to hold the files to be burned. Please reduce the number of files and try again.</source>
+        <translation>Levyn jäljellä oleva tila ei riitä poltettavien tiedostojen säilyttämiseen. Vähennä määrää ja yritä uudelleen.</translation>
+    </message>
 </context>
 <context>
     <name>dfmplugin_burn::DumpISOImageJob</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="582"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="601"/>
         <source>Creating an ISO image</source>
         <translation>ISO-kuvan luominen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="583"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="602"/>
         <source>to %1</source>
         <translation>/ %1</translation>
     </message>
@@ -4692,7 +4704,7 @@ Kirjoita käyttäjä ja salasana kohteelle %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="80"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="345"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="594"/>
         <source>Confirm</source>
         <translation>Vahvista</translation>
     </message>
@@ -5103,32 +5115,32 @@ Kirjoita käyttäjä ja salasana kohteelle %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="87"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="197"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="202"/>
         <source>Error</source>
         <translation>Virhe</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="152"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="157"/>
         <source>Recovery key export path cannot be empty!</source>
         <translation>Palautusavaimen vientipolku ei voi olla tyhjä!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="158"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="163"/>
         <source>Recovery key export path is not exists!</source>
         <translation>Palautusavaimen vientipolkua ei ole olemassa!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="165"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="170"/>
         <source>This partition is read-only, please export to a writable partition</source>
         <translation>Tämä osio on muodossa &quot;vain luku&quot;, vie osioon johon voi kirjoittaa</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="180"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="185"/>
         <source>The partition is encrypted, please export to a non-encrypted partition or external device such as a USB flash drive.</source>
         <translation>Osio on salattu. Vie salaamattomaan osioon tai ulkoiseen laitteeseen, kuten USB-muistitikulle.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="197"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="202"/>
         <source>Cannot create recovery key file!</source>
         <translation>Palautusavaimen tiedostoa ei voi luoda!</translation>
     </message>
@@ -5136,220 +5148,220 @@ Kirjoita käyttäjä ja salasana kohteelle %1</translation>
 <context>
     <name>dfmplugin_diskenc::EventsHandler</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="213"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="214"/>
         <source>Encrypt done</source>
         <translation>Salaus tehty</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="219"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="220"/>
         <source>Encrypt failed</source>
         <translation>Salaus epäonnistui</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="214"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="215"/>
         <source>Partition %1 has been encrypted</source>
         <translation>Osio %1 on salattu</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="220"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="221"/>
         <source>Partition %1 encrypt failed, please see log for more information.(%2)</source>
         <translation>Osion %1 salaus epäonnistui, katso lisätietoja lokista (%2)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="330"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="327"/>
         <source>%1 is under encrypting...</source>
         <translation>%1 on salauksessa...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="331"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="328"/>
         <source>The encrypting process may have system lag, please minimize the system operation</source>
         <translation>Salausprosessissa voi olla järjestelmäviivettä. Minimoi järjestelmään aiheutuvaa kuormaa</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="351"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="348"/>
         <source>%1 is under decrypting...</source>
         <translation>%1 on purkuvaiheessa...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="352"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="349"/>
         <source>The decrypting process may have system lag, please minimize the system operation</source>
         <translation>Salauksen purkamisessa voi olla viivettä. Minimoi järjestelmään aiheutuvaa kuormaa sen aikana</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="382"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="621"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="379"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="618"/>
         <source>Error</source>
         <translation>Virhe</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="382"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="379"/>
         <source>TPM status is abnormal, please use the recovery key to unlock it</source>
         <translation>TPM-tila on epänormaali, avaa se palautusavaimella</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="413"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="410"/>
         <source>Wrong PIN</source>
         <translation>Väärä PIN</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="415"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="412"/>
         <source>Wrong passphrase</source>
         <translation>Väärä salalausavain</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="417"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="414"/>
         <source>TPM error</source>
         <translation>TPM virhe</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="419"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="416"/>
         <source>Please use recovery key to unlock device.</source>
         <translation>Käytä palautusavainta lukituksen avaamiseen.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="486"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="483"/>
         <source>Preencrypt done</source>
         <translation>Esisalaus valmis</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="487"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="484"/>
         <source>Partition %1 has been preencrypt, please reboot to finish encryption.</source>
         <translation>Osio %1 on esisalattu. Viimeistele salaus käynnistämällä uudelleen.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="496"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="493"/>
         <source>Partition %1 preencrypt failed, please see log for more information.(%2)</source>
         <translation>Osion %1 esisalaus epäonnistui, katso lisätietoja lokista (%2)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="518"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="515"/>
         <source>Partition %1 has been decrypted</source>
         <translation>Osio %1 salaus on purettu</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="526"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="523"/>
         <source>Decrypt partition</source>
         <translation>Pura osion salaus</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="532"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="529"/>
         <source>Partition %1 is under encrypting, please decrypt after encryption finished.</source>
         <translation>Osiota %1 salataan, voit purkaa kun salaaminen on valmis.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="538"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="535"/>
         <source>Partition %1 Decrypt failed, please see log for more information.(%2)</source>
         <translation>Osion %1 salauksen purku epäonnistui, katso lisätietoja lokista (%2)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="590"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="587"/>
         <source>Partition %1 change %2 failed, please see log for more information.(%3)</source>
         <translation>Osion %1 vaihto %2 epäonnistui, katso lisätietoja lokista (%3)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="622"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="619"/>
         <source>Partition is not fully decrypted, please finish decryption before access.</source>
         <translation>Salausta ei ole purettu kokonaan, pura loppuun ennen käyttöä.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="630"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="627"/>
         <source>Unlocking partition failed</source>
         <translation>Lukituksen avaaminen epäonnistui</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="631"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="628"/>
         <source>Please click &quot;Continue Partition Encryption&quot; in the right-click menu to complete the partition encryption.</source>
         <translation>Paina hiiren oikeaa avautuvassa valikossa &quot;Jatka osion salausta&quot; salauksen saattamiseksi loppuun.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="495"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="492"/>
         <source>Preencrypt failed</source>
         <translation>Esisalaus epäonnistui</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="517"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="514"/>
         <source>Decrypt done</source>
         <translation>Salauksen purku tehty</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="527"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="524"/>
         <source>Wrong passpharse or PIN</source>
         <translation>Väärä salalausavain tai pin</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="531"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="537"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="528"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="534"/>
         <source>Decrypt failed</source>
         <translation>Salauksen purku epäonnistui</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="565"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="562"/>
         <source>passphrase</source>
         <translation>salausavain</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="568"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="565"/>
         <source>PIN</source>
         <translation>PIN</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="575"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="572"/>
         <source>Change %1 done</source>
         <translation>Vaihto %1 tehty</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="576"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="573"/>
         <source>%1&apos;s %2 has been changed</source>
         <translation>%1:n %2 on vaihdettu</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="583"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="589"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="580"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="586"/>
         <source>Change %1 failed</source>
         <translation>Vaihto %1 epäonnistui</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="584"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="581"/>
         <source>Wrong %1</source>
         <translation>Väärä %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="659"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="689"/>
         <source>Partition Encryption Non-Reboot Mode Enabled</source>
         <translation>Osion salaus kun &quot;Ilman käynnistystä uudelleen&quot; on käytössä</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="660"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="690"/>
         <source>Partition Encryption Non-Reboot Mode has been enabled successfully. Please reboot your system for the changes to take effect. After reboot, partition encryption operations will not require system restart.</source>
         <translation>Osion saaminen kun &quot;Ilman käynnistystä uudelleen&quot; on asennettu käyttöön. Käynnistä tietokone uudelleen, jotta muutokset tulevat voimaan. Käynnistyksen jälkeen osion salaustoiminnot eivät vaadi tietokoneen käynnistämistä.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="664"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="694"/>
         <source>Partition Encryption Non-Reboot Mode Disabled</source>
         <translation>Osion salaus &quot;Ilman käynnistystä uudelleen&quot; on pois käytöstä</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="665"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="695"/>
         <source>Partition Encryption Non-Reboot Mode has been disabled successfully. Please reboot your system for the changes to take effect. After reboot, partition encryption operations will require system restart.</source>
         <translation>Osion saaminen kun &quot;Ilman käynnistystä uudelleen&quot; on poistettu käytöstä. Käynnistä tietokone uudelleen, jotta muutokset tulevat voimaan. Käynnistyksen jälkeen osion salaustoiminnot vaatii tietokoneen käynnistämisen.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="673"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="703"/>
         <source>Operation Failed</source>
         <translation>Toimenpide epäonnistui</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="675"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="705"/>
         <source>Failed to enable Partition Encryption Non-Reboot Mode. The system may not support this feature or encountered an error during initramfs update.</source>
         <translation>Osion saaminen &quot;Ilman käynnistystä uudelleen&quot;, käyttöönotto epäonnistui. Tietokone ei ehkä tue tätä ominaisuutta tai initramfs-päivityksen aikana on tapahtunut virhe.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="678"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="708"/>
         <source>Failed to disable Partition Encryption Non-Reboot Mode. An error occurred during initramfs update.</source>
         <translation>Osion saaminen &quot;Ilman käynnistystä uudelleen&quot;, poistaminen käytöstä epäonnistui. Initramfs-päivityksen aikana tapahtui virhe.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="690"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="720"/>
         <source>dde-file-manager</source>
         <translation>dde-file-manager</translation>
     </message>
@@ -5683,28 +5695,28 @@ Kirjoita käyttäjä ja salasana kohteelle %1</translation>
 <context>
     <name>dfmplugin_fileoperations::FileOperationsEventReceiver</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="356"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="361"/>
         <source>Rename file error</source>
         <translation>Tiedoston nimeämisen virhe</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="647"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="652"/>
         <source>Failed to create the directory</source>
         <translation>Kansion luominen epäonnistui</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1227"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1341"/>
         <source>Failed to create the file</source>
         <translation>Tiedoston luominen epäonnistui</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1328"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1442"/>
         <source>link file error</source>
         <translation>linkkitiedoston virhe</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1370"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1379"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1484"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1493"/>
         <source>Failed to modify file permissions</source>
         <translation>Tiedoston käyttöoikeuksien muutos epäonnistui</translation>
     </message>
@@ -5751,17 +5763,17 @@ Kirjoita käyttäjä ja salasana kohteelle %1</translation>
 <context>
     <name>dfmplugin_menu::ClipBoardMenuScenePrivate</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="34"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="37"/>
         <source>&amp;Paste</source>
         <translation>&amp;Liitä</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="35"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="38"/>
         <source>Cu&amp;t</source>
         <translation>Lei&amp;kkaa</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="36"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="39"/>
         <source>&amp;Copy</source>
         <translation>&amp;Kopioi</translation>
     </message>
@@ -5980,7 +5992,7 @@ Kirjoita käyttäjä ja salasana kohteelle %1</translation>
         <translation>Ei tallennettavia tiedostoja</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="289"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="301"/>
         <source>Unable to burn. Not enough free space on the target disk.</source>
         <translation>Polttaminen ei onnistu. Kohdelevyllä ei ole riittävästi vapaata tilaa.</translation>
     </message>
@@ -8073,7 +8085,7 @@ tyhjennä kansion tiedostot ja yritä avata lukitus uudelleen.</translation>
 <context>
     <name>dfmplugin_workspace::FileOperatorHelper</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="111"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="117"/>
         <source>Failed to open %1, which may be moved or renamed</source>
         <translation>Tiedostoa %1 ei voitu avata, voidaan siirtää tai nimetä</translation>
     </message>
