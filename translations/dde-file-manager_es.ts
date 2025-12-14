@@ -5164,7 +5164,7 @@ Ingrese el usuario y la contraseña para %1</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="221"/>
         <source>Partition %1 encrypt failed, please see log for more information.(%2)</source>
-        <translation type="unfinished"/>
+        <translation>El cifrado de la partición %1 ha fallado, consulte el registro para obtener más información.(%2)</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="327"/>
@@ -5327,7 +5327,7 @@ Ingrese el usuario y la contraseña para %1</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="689"/>
         <source>Partition Encryption Non-Reboot Mode Enabled</source>
-        <translation type="unfinished"/>
+        <translation>Modo de cifrado de partición sin reinicio habilitado</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="690"/>
