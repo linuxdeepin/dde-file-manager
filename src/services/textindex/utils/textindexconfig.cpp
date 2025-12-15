@@ -47,12 +47,31 @@ void TextIndexConfig::loadAllConfigs()
     QMutexLocker locker(&m_mutex);
     fmDebug() << "TextIndexConfig: Loading text index configurations";
 
-    // Auto Index Update Interval
+    // Auto Index Update Interval (FSEventCollector event collection interval)
     m_autoIndexUpdateInterval = m_dconfigManager->value(
                                                         Defines::DConf::kTextIndexSchema,
                                                         Defines::DConf::kAutoIndexUpdateInterval,
                                                         DEFAULT_AUTO_INDEX_UPDATE_INTERVAL)
                                         .toInt();
+    // Validate autoIndexUpdateInterval
+    if (m_autoIndexUpdateInterval < 1 || m_autoIndexUpdateInterval > 3600) {
+        fmWarning() << "TextIndexConfig: Invalid autoIndexUpdateInterval value:" << m_autoIndexUpdateInterval
+                    << ", using default:" << DEFAULT_AUTO_INDEX_UPDATE_INTERVAL;
+        m_autoIndexUpdateInterval = DEFAULT_AUTO_INDEX_UPDATE_INTERVAL;
+    }
+
+    // Silent Index Update Delay (FSEventController first start delay)
+    m_silentIndexUpdateDelay = m_dconfigManager->value(
+                                                       Defines::DConf::kTextIndexSchema,
+                                                       Defines::DConf::kSilentIndexUpdateDelay,
+                                                       DEFAULT_SILENT_INDEX_UPDATE_DELAY)
+                                       .toInt();
+    // Validate silentIndexUpdateDelay
+    if (m_silentIndexUpdateDelay < 1 || m_silentIndexUpdateDelay > 3600) {
+        fmWarning() << "TextIndexConfig: Invalid silentIndexUpdateDelay value:" << m_silentIndexUpdateDelay
+                    << ", using default:" << DEFAULT_SILENT_INDEX_UPDATE_DELAY;
+        m_silentIndexUpdateDelay = DEFAULT_SILENT_INDEX_UPDATE_DELAY;
+    }
 
     // Inotify Resource Cleanup Delay
     m_inotifyResourceCleanupDelayMs = m_dconfigManager->value(
@@ -162,6 +181,12 @@ int TextIndexConfig::autoIndexUpdateInterval() const
 {
     QMutexLocker locker(&m_mutex);
     return m_autoIndexUpdateInterval;
+}
+
+int TextIndexConfig::silentIndexUpdateDelay() const
+{
+    QMutexLocker locker(&m_mutex);
+    return m_silentIndexUpdateDelay;
 }
 
 qint64 TextIndexConfig::inotifyResourceCleanupDelayMs() const

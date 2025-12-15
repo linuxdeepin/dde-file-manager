@@ -25,6 +25,7 @@ public:
 
     // Getter methods for each configuration
     int autoIndexUpdateInterval() const;
+    int silentIndexUpdateDelay() const;
     qint64 inotifyResourceCleanupDelayMs() const;
     int maxIndexFileSizeMB() const;
     int maxIndexFileTruncationSizeMB() const;
@@ -52,6 +53,7 @@ private:
 
     // Member variables to store the loaded configuration values
     int m_autoIndexUpdateInterval;
+    int m_silentIndexUpdateDelay;
     qint64 m_inotifyResourceCleanupDelayMs;
     int m_maxIndexFileSizeMB;
     int m_maxIndexFileTruncationSizeMB;
@@ -65,8 +67,9 @@ private:
     mutable QMutex m_mutex;
 
     // Default values (matching your JSON for robustness)
-    static const int DEFAULT_AUTO_INDEX_UPDATE_INTERVAL = 180;
-    static const qint64 DEFAULT_INOTIFY_RESOURCE_CLEANUP_DELAY = 1800LL;   // 30 * 60 * 1000
+    static const int DEFAULT_AUTO_INDEX_UPDATE_INTERVAL = 3;
+    static const int DEFAULT_SILENT_INDEX_UPDATE_DELAY = 180;
+    static const qint64 DEFAULT_INOTIFY_RESOURCE_CLEANUP_DELAY = 1800000LL;   // 30 * 60 * 1000
     static const int DEFAULT_MAX_INDEX_FILE_SIZE_MB = 50;
     static const int DEFAULT_MAX_INDEX_FILE_TRUNCATION_SIZE_MB = 10;
     static const bool DEFAULT_INDEX_HIDDEN_FILES = false;
