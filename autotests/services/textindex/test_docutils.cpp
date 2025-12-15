@@ -380,7 +380,7 @@ TEST_F(UT_DocUtils, CopyFieldsExcept_ValidDocument_CopiesAllExceptExcluded)
     // This test would require mocking Lucene objects, which is complex
     // For now, we test the basic null pointer handling
 
-    Lucene::DocumentPtr result = DocUtils::copyFieldsExcept(nullptr, L"excludedField");
+    Lucene::DocumentPtr result = DocUtils::copyFieldsExcept(nullptr, { L"excludedField" });
 
     EXPECT_EQ(result, nullptr);
 }

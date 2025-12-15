@@ -152,7 +152,7 @@ std::optional<QString> extractFileContent(const QString &filePath, size_t maxByt
 }
 
 Lucene::DocumentPtr copyFieldsExcept(const Lucene::DocumentPtr &sourceDoc,
-                                     const Lucene::String &excludeFieldName)
+                                     std::initializer_list<Lucene::String> excludeFieldNames)
 {
     using namespace Lucene;
 
@@ -167,7 +167,16 @@ Lucene::DocumentPtr copyFieldsExcept(const Lucene::DocumentPtr &sourceDoc,
         FieldablePtr fieldable = *fieldIt;
         String fieldName = fieldable->name();
 
-        if (fieldName != excludeFieldName) {
+        // Check if field name is in the exclude list
+        bool shouldExclude = false;
+        for (const auto &excludeName : excludeFieldNames) {
+            if (fieldName == excludeName) {
+                shouldExclude = true;
+                break;
+            }
+        }
+
+        if (!shouldExclude) {
             // Copy field with original properties
             newDoc->add(newLucene<Field>(fieldName, fieldable->stringValue(),
                                          fieldable->isStored() ? Field::STORE_YES : Field::STORE_NO,
