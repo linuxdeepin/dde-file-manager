@@ -621,7 +621,7 @@ void FSMonitorPrivate::handleDirectoriesBatch(const QStringList &paths)
         return;
     }
 
-    fmInfo() << "FSMonitor: Received batch of" << paths.size() << "directories to watch";
+    fmDebug() << "FSMonitor: Received batch of" << paths.size() << "directories to watch";
 
     int addedCount = 0;
     int skipCount = 0;
@@ -655,10 +655,10 @@ void FSMonitorPrivate::handleDirectoriesBatch(const QStringList &paths)
         }
     }
 
-    fmInfo() << "FSMonitor: Batch processing complete - added:" << addedCount
-             << "skipped:" << skipCount
-             << "failed:" << failCount
-             << "total watching:" << watchedDirectories.size();
+    fmDebug() << "FSMonitor: Batch processing complete - added:" << addedCount
+              << "skipped:" << skipCount
+              << "failed:" << failCount
+              << "total watching:" << watchedDirectories.size();
 }
 
 // ========== FSMonitor implementation ==========

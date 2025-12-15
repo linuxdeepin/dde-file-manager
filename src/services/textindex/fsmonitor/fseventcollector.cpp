@@ -405,10 +405,10 @@ void FSEventCollectorPrivate::flushCollectedEvents()
     movedFilesList.clear();
 
     // Log statistics
-    fmInfo() << "FSEventCollector: Flushing events - Created:" << created.size()
-             << "Deleted:" << deleted.size()
-             << "Modified:" << modified.size()
-             << "Moved:" << moved.size();
+    fmDebug() << "FSEventCollector: Flushing events - Created:" << created.size()
+              << "Deleted:" << deleted.size()
+              << "Modified:" << modified.size()
+              << "Moved:" << moved.size();
 
     // Emit signals with collected events (only if not empty)
     if (!created.isEmpty()) {
