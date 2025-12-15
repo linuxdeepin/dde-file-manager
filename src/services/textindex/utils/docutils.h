@@ -76,13 +76,13 @@ std::optional<QString> extractHtmlContent(const QString &filePath, size_t maxByt
 QString getFileEncoding(const QString &filePath);
 
 /**
- * @brief Copy all fields from source document except the specified excluded field
+ * @brief Copy all fields from source document except the specified excluded fields
  * @param sourceDoc Source document to copy from
- * @param excludeFieldName Field name to exclude from copying
+ * @param excludeFieldNames Field names to exclude from copying
  * @return New document with copied fields
  */
-Lucene::DocumentPtr copyFieldsExcept(const Lucene::DocumentPtr &sourceDoc, 
-                                    const Lucene::String &excludeFieldName);
+Lucene::DocumentPtr copyFieldsExcept(const Lucene::DocumentPtr &sourceDoc,
+                                     std::initializer_list<Lucene::String> excludeFieldNames);
 
 }   // namespace DocUtils
 

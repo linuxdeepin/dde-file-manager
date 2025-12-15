@@ -37,8 +37,8 @@ bool FileMoveProcessor::processFileMove(const QString &fromPath, const QString &
             if (IndexUtility::isSupportedFile(toPath) && QFileInfo(toPath).exists()) {
                 if (isFileInIndex(toPath)) {
                     // Smart detection: Editor save pattern (temporary file renamed to indexed file)
-                    fmInfo() << "[FileMoveProcessor::processFileMove] Detected editor save pattern - temporary file" 
-                            << fromPath << "renamed to indexed file" << toPath << "- updating content";
+                    fmInfo() << "[FileMoveProcessor::processFileMove] Detected editor save pattern - temporary file"
+                             << fromPath << "renamed to indexed file" << toPath << "- updating content";
                     return processContentUpdateWithCache(toPath, "editor save pattern");
                 } else {
                     // Fallback: Create new index entry for supported file not in index
@@ -46,8 +46,8 @@ bool FileMoveProcessor::processFileMove(const QString &fromPath, const QString &
                     // 1. Files moved from unindexed directories
                     // 2. Index corruption or incomplete indexing
                     // 3. External file operations
-                    fmInfo() << "[FileMoveProcessor::processFileMove] Fallback indexing for supported file not in index:" 
-                            << toPath;
+                    fmInfo() << "[FileMoveProcessor::processFileMove] Fallback indexing for supported file not in index:"
+                             << toPath;
                     return processContentUpdateWithCache(toPath, "fallback indexing");
                 }
             }
@@ -62,8 +62,8 @@ bool FileMoveProcessor::processFileMove(const QString &fromPath, const QString &
             return false;
         }
 
-        // Create new document with updated path
-        DocumentPtr newDoc = DocUtils::copyFieldsExcept(doc, L"path");
+        // Create new document with updated path and ancestor paths
+        DocumentPtr newDoc = DocUtils::copyFieldsExcept(doc, { L"path", L"ancestor_paths" });
         if (!newDoc) {
             fmWarning() << "[FileMoveProcessor::processFileMove] Failed to copy document fields for:" << fromPath;
             return false;
@@ -73,14 +73,11 @@ bool FileMoveProcessor::processFileMove(const QString &fromPath, const QString &
         newDoc->add(newLucene<Field>(L"path", toPath.toStdWString(),
                                      Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
 
-        // Remove old ancestor paths (if any)
-        newDoc->removeField(L"ancestor_paths");
-
         // Add new ancestor paths
-        QStringList ancestorPaths = PathCalculator::extractAncestorPaths(toPath);
+        const QStringList ancestorPaths = PathCalculator::extractAncestorPaths(toPath);
         for (const QString &ancestorPath : ancestorPaths) {
             newDoc->add(newLucene<Field>(L"ancestor_paths", ancestorPath.toStdWString(),
-                                      Field::STORE_NO, Field::INDEX_NOT_ANALYZED));
+                                         Field::STORE_NO, Field::INDEX_NOT_ANALYZED));
         }
 
         // Update document in index
@@ -88,19 +85,19 @@ bool FileMoveProcessor::processFileMove(const QString &fromPath, const QString &
         m_writer->updateDocument(oldTerm, newDoc);
 
         // Update processed paths cache
-        m_processedPaths.remove(fromPath);  // Remove old path
-        m_processedPaths.insert(toPath);    // Add new path
+        m_processedPaths.remove(fromPath);   // Remove old path
+        m_processedPaths.insert(toPath);   // Add new path
 
-        fmInfo() << "[FileMoveProcessor::processFileMove] Successfully updated file document path:" 
-                << fromPath << "->" << toPath;
+        fmInfo() << "[FileMoveProcessor::processFileMove] Successfully updated file document path:"
+                 << fromPath << "->" << toPath;
         return true;
     } catch (const LuceneException &e) {
-        fmWarning() << "[FileMoveProcessor::processFileMove] File move processing failed with Lucene exception:" 
-                   << fromPath << "error:" << QString::fromStdWString(e.getError());
+        fmWarning() << "[FileMoveProcessor::processFileMove] File move processing failed with Lucene exception:"
+                    << fromPath << "error:" << QString::fromStdWString(e.getError());
         return false;
     } catch (const std::exception &e) {
-        fmWarning() << "[FileMoveProcessor::processFileMove] File move processing failed with exception:" 
-                   << fromPath << "error:" << e.what();
+        fmWarning() << "[FileMoveProcessor::processFileMove] File move processing failed with exception:"
+                    << fromPath << "error:" << e.what();
         return false;
     }
 }
@@ -120,16 +117,16 @@ bool FileMoveProcessor::isFileInIndex(const QString &path)
 
         TopDocsPtr searchResult = m_searcher->search(pathQuery, 1);
         bool exists = searchResult && searchResult->totalHits > 0;
-        
+
         fmDebug() << "[FileMoveProcessor::isFileInIndex] File existence check:" << path << "exists:" << exists;
         return exists;
     } catch (const LuceneException &e) {
-        fmWarning() << "[FileMoveProcessor::isFileInIndex] Failed to check file existence with Lucene exception:" 
-                   << path << "error:" << QString::fromStdWString(e.getError());
+        fmWarning() << "[FileMoveProcessor::isFileInIndex] Failed to check file existence with Lucene exception:"
+                    << path << "error:" << QString::fromStdWString(e.getError());
         return false;
     } catch (const std::exception &e) {
-        fmWarning() << "[FileMoveProcessor::isFileInIndex] Failed to check file existence with exception:" 
-                   << path << "error:" << e.what();
+        fmWarning() << "[FileMoveProcessor::isFileInIndex] Failed to check file existence with exception:"
+                    << path << "error:" << e.what();
         return false;
     }
 }
@@ -152,7 +149,7 @@ bool FileMoveProcessor::processContentUpdate(const QString &filePath)
             fmWarning() << "[FileMoveProcessor::processContentUpdate] File does not exist:" << filePath;
             return false;
         }
-        
+
         const QDateTime modifyTime = fileInfo.lastModified();
         const QString modifyEpoch = QString::number(modifyTime.toSecsSinceEpoch());
         newDoc->add(newLucene<Field>(L"modified", modifyEpoch.toStdWString(),
@@ -169,18 +166,25 @@ bool FileMoveProcessor::processContentUpdate(const QString &filePath)
         newDoc->add(newLucene<Field>(L"is_hidden", hiddenTag.toStdWString(),
                                      Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
 
+        // ancestor paths
+        const QStringList ancestorPaths = PathCalculator::extractAncestorPaths(filePath);
+        for (const QString &ancestorPath : ancestorPaths) {
+            newDoc->add(newLucene<Field>(L"ancestor_paths", ancestorPath.toStdWString(),
+                                         Field::STORE_NO, Field::INDEX_NOT_ANALYZED));
+        }
+
         // file contents
         const TextIndexConfig &config = TextIndexConfig::instance();
         const int truncationSizeMB = config.maxIndexFileTruncationSizeMB();
         const size_t maxBytes = static_cast<size_t>(truncationSizeMB) * 1024 * 1024;
-        
+
         const auto &contentOpt = DocUtils::extractFileContent(filePath, maxBytes);
         if (contentOpt) {
             const QString &contents = contentOpt.value().trimmed();
             newDoc->add(newLucene<Field>(L"contents", contents.toStdWString(),
                                          Field::STORE_YES, Field::INDEX_ANALYZED));
-            fmDebug() << "[FileMoveProcessor::processContentUpdate] Successfully extracted content from file:" 
-                     << filePath << "content length:" << contents.length();
+            fmDebug() << "[FileMoveProcessor::processContentUpdate] Successfully extracted content from file:"
+                      << filePath << "content length:" << contents.length();
         } else {
             fmWarning() << "[FileMoveProcessor::processContentUpdate] Failed to extract content from file:" << filePath;
         }
@@ -192,12 +196,12 @@ bool FileMoveProcessor::processContentUpdate(const QString &filePath)
         fmInfo() << "[FileMoveProcessor::processContentUpdate] Successfully updated file content in index:" << filePath;
         return true;
     } catch (const LuceneException &e) {
-        fmWarning() << "[FileMoveProcessor::processContentUpdate] Content update failed with Lucene exception:" 
-                   << filePath << "error:" << QString::fromStdWString(e.getError());
+        fmWarning() << "[FileMoveProcessor::processContentUpdate] Content update failed with Lucene exception:"
+                    << filePath << "error:" << QString::fromStdWString(e.getError());
         return false;
     } catch (const std::exception &e) {
-        fmWarning() << "[FileMoveProcessor::processContentUpdate] Content update failed with exception:" 
-                   << filePath << "error:" << e.what();
+        fmWarning() << "[FileMoveProcessor::processContentUpdate] Content update failed with exception:"
+                    << filePath << "error:" << e.what();
         return false;
     } catch (...) {
         fmWarning() << "[FileMoveProcessor::processContentUpdate] Content update failed with unknown exception:" << filePath;
@@ -230,8 +234,8 @@ DirectoryMoveProcessor::DirectoryMoveProcessor(const SearcherPtr &searcher,
 bool DirectoryMoveProcessor::processDirectoryMove(const QString &fromPath, const QString &toPath, TaskState &running)
 {
     try {
-        fmInfo() << "[DirectoryMoveProcessor::processDirectoryMove] Processing directory move:" 
-                << fromPath << "->" << toPath;
+        fmInfo() << "[DirectoryMoveProcessor::processDirectoryMove] Processing directory move:"
+                 << fromPath << "->" << toPath;
 
         QString normalizedFromPath = PathCalculator::normalizeDirectoryPath(fromPath);
         fmDebug() << "[DirectoryMoveProcessor::processDirectoryMove] Normalized from path:" << normalizedFromPath;
@@ -246,8 +250,8 @@ bool DirectoryMoveProcessor::processDirectoryMove(const QString &fromPath, const
             return true;   // Not an error, directory might be empty or not indexed
         }
 
-        fmInfo() << "[DirectoryMoveProcessor::processDirectoryMove] Found" << allDocs->totalHits 
-                << "documents to update for directory move:" << fromPath;
+        fmInfo() << "[DirectoryMoveProcessor::processDirectoryMove] Found" << allDocs->totalHits
+                 << "documents to update for directory move:" << fromPath;
 
         int successCount = 0;
         int failureCount = 0;
@@ -281,16 +285,16 @@ bool DirectoryMoveProcessor::processDirectoryMove(const QString &fromPath, const
             }
         }
 
-        fmInfo() << "[DirectoryMoveProcessor::processDirectoryMove] Directory move completed - successful updates:" 
-                << successCount << "failed updates:" << failureCount;
+        fmInfo() << "[DirectoryMoveProcessor::processDirectoryMove] Directory move completed - successful updates:"
+                 << successCount << "failed updates:" << failureCount;
         return true;
     } catch (const LuceneException &e) {
-        fmWarning() << "[DirectoryMoveProcessor::processDirectoryMove] Directory move processing failed with Lucene exception:" 
-                   << fromPath << "error:" << QString::fromStdWString(e.getError());
+        fmWarning() << "[DirectoryMoveProcessor::processDirectoryMove] Directory move processing failed with Lucene exception:"
+                    << fromPath << "error:" << QString::fromStdWString(e.getError());
         return false;
     } catch (const std::exception &e) {
-        fmWarning() << "[DirectoryMoveProcessor::processDirectoryMove] Directory move processing failed with exception:" 
-                   << fromPath << "error:" << e.what();
+        fmWarning() << "[DirectoryMoveProcessor::processDirectoryMove] Directory move processing failed with exception:"
+                    << fromPath << "error:" << e.what();
         return false;
     }
 }
@@ -311,8 +315,8 @@ bool DirectoryMoveProcessor::updateSingleDocumentPath(const DocumentPtr &doc,
             return true;   // No change needed
         }
 
-        // Create new document with updated path
-        DocumentPtr newDoc = DocUtils::copyFieldsExcept(doc, L"path");
+        // Create new document with updated path and ancestor paths
+        DocumentPtr newDoc = DocUtils::copyFieldsExcept(doc, { L"path", L"ancestor_paths" });
         if (!newDoc) {
             fmWarning() << "[DirectoryMoveProcessor::updateSingleDocumentPath] Failed to copy document fields for:" << oldPath;
             return false;
@@ -322,30 +326,27 @@ bool DirectoryMoveProcessor::updateSingleDocumentPath(const DocumentPtr &doc,
         newDoc->add(newLucene<Field>(L"path", newPath.toStdWString(),
                                      Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
 
-        // Remove old ancestor paths (if any)
-        newDoc->removeField(L"ancestor_paths");
-
         // Add new ancestor paths
-        QStringList ancestorPaths = PathCalculator::extractAncestorPaths(newPath);
+        const QStringList ancestorPaths = PathCalculator::extractAncestorPaths(newPath);
         for (const QString &ancestorPath : ancestorPaths) {
             newDoc->add(newLucene<Field>(L"ancestor_paths", ancestorPath.toStdWString(),
-                                      Field::STORE_NO, Field::INDEX_NOT_ANALYZED));
+                                         Field::STORE_NO, Field::INDEX_NOT_ANALYZED));
         }
 
         // Update document in index
         TermPtr oldTerm = newLucene<Term>(L"path", oldPathValue);
         m_writer->updateDocument(oldTerm, newDoc);
 
-        fmDebug() << "[DirectoryMoveProcessor::updateSingleDocumentPath] Successfully updated document path:" 
-                 << oldPath << "->" << newPath;
+        fmDebug() << "[DirectoryMoveProcessor::updateSingleDocumentPath] Successfully updated document path:"
+                  << oldPath << "->" << newPath;
         return true;
     } catch (const LuceneException &e) {
-        fmWarning() << "[DirectoryMoveProcessor::updateSingleDocumentPath] Failed to update document path with Lucene exception:" 
-                   << "error:" << QString::fromStdWString(e.getError());
+        fmWarning() << "[DirectoryMoveProcessor::updateSingleDocumentPath] Failed to update document path with Lucene exception:"
+                    << "error:" << QString::fromStdWString(e.getError());
         return false;
     } catch (const std::exception &e) {
-        fmWarning() << "[DirectoryMoveProcessor::updateSingleDocumentPath] Failed to update document path with exception:" 
-                   << "error:" << e.what();
+        fmWarning() << "[DirectoryMoveProcessor::updateSingleDocumentPath] Failed to update document path with exception:"
+                    << "error:" << e.what();
         return false;
     }
 }

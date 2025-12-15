@@ -37,7 +37,7 @@ protected:
         });
 
         // Mock DocUtils
-        stub.set_lamda(ADDR(DocUtils, copyFieldsExcept), [](const DocumentPtr &doc, const String &excludeField) -> DocumentPtr {
+        stub.set_lamda(ADDR(DocUtils, copyFieldsExcept), [](const DocumentPtr &doc, std::initializer_list<Lucene::String> excludeFieldNames) -> DocumentPtr {
             __DBG_STUB_INVOKE__
             // Return a mock document
             DocumentPtr newDoc = newLucene<Document>();
