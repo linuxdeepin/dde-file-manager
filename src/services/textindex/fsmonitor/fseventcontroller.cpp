@@ -208,7 +208,7 @@ void FSEventController::onFlushFinished()
         return;
     }
 
-    fmInfo() << "FSEventController: Flush finished, processing events";
+    fmDebug() << "FSEventController: Flush finished, processing events";
 
     // Check if we have any events to process
     if (m_collectedCreatedFiles.isEmpty() && m_collectedModifiedFiles.isEmpty()
@@ -217,10 +217,10 @@ void FSEventController::onFlushFinished()
         return;
     }
 
-    fmInfo() << "FSEventController: Processing file changes - Created:" << m_collectedCreatedFiles.size()
-             << "Modified:" << m_collectedModifiedFiles.size()
-             << "Deleted:" << m_collectedDeletedFiles.size()
-             << "Moved:" << m_collectedMovedFiles.size();
+    fmDebug() << "FSEventController: Processing file changes - Created:" << m_collectedCreatedFiles.size()
+              << "Modified:" << m_collectedModifiedFiles.size()
+              << "Deleted:" << m_collectedDeletedFiles.size()
+              << "Moved:" << m_collectedMovedFiles.size();
 
     // Process file moves separately for optimization
     if (!m_collectedMovedFiles.isEmpty()) {

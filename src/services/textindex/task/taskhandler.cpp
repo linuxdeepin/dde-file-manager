@@ -52,7 +52,7 @@ public:
         if (m_writer && processedCount > m_lastCommitCount) {
             try {
                 m_writer->commit();
-                fmInfo() << "[ProgressReporter] Final batch commit completed - processed:" << processedCount;
+                fmDebug() << "[ProgressReporter] Final batch commit completed - processed:" << processedCount;
             } catch (const std::exception &e) {
                 fmWarning() << "[ProgressReporter] Final batch commit failed:" << e.what();
             } catch (...) {
@@ -76,7 +76,7 @@ public:
             try {
                 m_writer->commit();
                 m_lastCommitCount = processedCount;
-                fmInfo() << "[ProgressReporter::increment] Batch commit completed at count:" << processedCount;
+                fmDebug() << "[ProgressReporter::increment] Batch commit completed at count:" << processedCount;
             } catch (const std::exception &e) {
                 fmWarning() << "[ProgressReporter::increment] Batch commit failed at count:" << processedCount
                             << "error:" << e.what();
@@ -633,15 +633,15 @@ TaskHandler TaskHandlers::CreateIndexHandler()
 
             // ProgressReporter的析构函数会处理最后的commit，但为了确保在optimize前所有更改都已提交
             // 我们显式调用一次commit
-            fmInfo() << "[CreateIndexHandler] Ensuring all changes are committed before optimization";
+            fmDebug() << "[CreateIndexHandler] Ensuring all changes are committed before optimization";
             writer->commit();
 
-            fmInfo() << "[CreateIndexHandler] Starting index optimization";
+            fmDebug() << "[CreateIndexHandler] Starting index optimization";
             writer->optimize();
-            fmInfo() << "[CreateIndexHandler] Index optimization completed";
+            fmDebug() << "[CreateIndexHandler] Index optimization completed";
 
             result.success = true;
-            fmInfo() << "[CreateIndexHandler] Index creation completed successfully for path:" << path;
+            fmDebug() << "[CreateIndexHandler] Index creation completed successfully for path:" << path;
 
             return result;
         } catch (const LuceneException &e) {
@@ -722,7 +722,7 @@ TaskHandler TaskHandlers::UpdateIndexHandler()
             ProgressReporter reporter(writer);
             qint64 totalCount = provider->totalCount();
             reporter.setTotal(totalCount);
-            fmInfo() << "[UpdateIndexHandler] Starting file update processing, estimated total files:" << totalCount;
+            fmDebug() << "[UpdateIndexHandler] Starting file update processing, estimated total files:" << totalCount;
 
             provider->traverse(running, [&](const QString &file) {
                 updateFile(file, reader, writer, &reporter);
@@ -735,15 +735,15 @@ TaskHandler TaskHandlers::UpdateIndexHandler()
 
             // ProgressReporter的析构函数会处理最后的commit，但为了确保在optimize前所有更改都已提交
             // 我们显式调用一次commit
-            fmInfo() << "[UpdateIndexHandler] Ensuring all changes are committed before optimization";
+            fmDebug() << "[UpdateIndexHandler] Ensuring all changes are committed before optimization";
             writer->commit();
 
-            fmInfo() << "[UpdateIndexHandler] Starting index optimization";
+            fmDebug() << "[UpdateIndexHandler] Starting index optimization";
             writer->optimize();
-            fmInfo() << "[UpdateIndexHandler] Index optimization completed";
+            fmDebug() << "[UpdateIndexHandler] Index optimization completed";
 
             result.success = true;
-            fmInfo() << "[UpdateIndexHandler] Index update completed successfully for path:" << path;
+            fmDebug() << "[UpdateIndexHandler] Index update completed successfully for path:" << path;
 
             return result;
         } catch (const LuceneException &e) {
