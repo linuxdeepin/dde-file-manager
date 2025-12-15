@@ -16,9 +16,13 @@ void FSEventController::setupFSEventCollector()
 {
     m_fsEventCollector = std::make_unique<FSEventCollector>(this);
 
+    // FSEventCollector uses event collection interval (3 seconds by default)
     m_collectorIntervalSecs = TextIndexConfig::instance().autoIndexUpdateInterval();
     m_fsEventCollector->setCollectionInterval(m_collectorIntervalSecs);
     m_fsEventCollector->setMaxEventCount(10000);   // Default 10k events
+
+    // FSEventController uses silent start delay (180 seconds by default)
+    m_silentStartDelaySecs = TextIndexConfig::instance().silentIndexUpdateDelay();
 
     connect(m_fsEventCollector.get(), &FSEventCollector::filesCreated,
             this, &FSEventController::onFilesCreated);
@@ -74,7 +78,8 @@ void FSEventController::setEnabled(bool enabled)
         m_stopTimer->stop();
         m_lastSilentlyFlag = silentlyRefreshStarted();
         if (silentlyRefreshStarted()) {
-            m_startTimer->start(m_collectorIntervalSecs * 1000);
+            // Use silent start delay for first start (180 seconds by default)
+            m_startTimer->start(m_silentStartDelaySecs * 1000);
             setSilentlyRefreshStarted(false);
         } else {
             m_startTimer->start(0);
@@ -246,7 +251,9 @@ void FSEventController::clearCollections()
 void FSEventController::onConfigChanged()
 {
     const int newIntervalSecs = TextIndexConfig::instance().autoIndexUpdateInterval();
+    const int newSilentDelaySecs = TextIndexConfig::instance().silentIndexUpdateDelay();
 
+    // Update event collection interval for FSEventCollector
     if (newIntervalSecs != m_collectorIntervalSecs) {
         fmInfo() << "FSEventController: Collection interval changed from"
                  << m_collectorIntervalSecs << "to" << newIntervalSecs << "seconds";
@@ -259,6 +266,13 @@ void FSEventController::onConfigChanged()
             fmInfo() << "FSEventController: Updated FSEventCollector collection interval to"
                      << m_collectorIntervalSecs << "seconds";
         }
+    }
+
+    // Update silent start delay for FSEventController
+    if (newSilentDelaySecs != m_silentStartDelaySecs) {
+        fmInfo() << "FSEventController: Silent start delay changed from"
+                 << m_silentStartDelaySecs << "to" << newSilentDelaySecs << "seconds";
+        m_silentStartDelaySecs = newSilentDelaySecs;
     }
 }
 

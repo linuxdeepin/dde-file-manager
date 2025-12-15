@@ -3,13 +3,24 @@
 	"version": "1.0",
 	"contents": {
 		"autoIndexUpdateInterval": {
-			"value": 180,
-			"serial": 0,
+			"value": 3,
+			"serial": 1,
 			"flags": [],
 			"name": "Auto index update interval",
 			"name[zh_CN]": "自动更新索引时间间隔",
-			"description[zh_CN]": "全文索引的自动更新索引时间间隔，单位为秒",
-			"description": "Automatic index update interval for full-text indexes in seconds",
+			"description[zh_CN]": "文件系统事件收集器的刷新间隔，单位为秒。此参数控制事件收集的频率。",
+			"description": "Refresh interval for file system event collector in seconds. This parameter controls the frequency of event collection.",
+			"permissions": "readwrite",
+			"visibility": "public"
+		},
+		"silentIndexUpdateDelay": {
+			"value": 180,
+			"serial": 0,
+			"flags": [],
+			"name": "Silent index update delay",
+			"name[zh_CN]": "静默索引更新延迟",
+			"description[zh_CN]": "首次启动时触发全局索引更新的延迟时间，单位为秒。此延迟避免系统启动时立即执行索引任务。",
+			"description": "Delay before triggering global index update on first start in seconds. This delay avoids immediate indexing tasks when system starts.",
 			"permissions": "readwrite",
 			"visibility": "public"
 		},
