@@ -10,6 +10,7 @@
 #include <DLabel>
 #include <DToolButton>
 #include <DSettingsOption>
+#include <DStyle>
 
 #include <QPushButton>
 #include <QGridLayout>
@@ -40,7 +41,7 @@ void CustomTabSettingWidget::setOption(QObject *opt)
     }
 
     using namespace std::placeholders;
-    connect(addItemBtn, &DCommandLinkButton::clicked, this, std::bind(&CustomTabSettingWidget::handleAddCustomItem, this, option));
+    connect(addItemBtn, &DToolButton::clicked, this, std::bind(&CustomTabSettingWidget::handleAddCustomItem, this, option));
     connect(option, &DSettingsOption::valueChanged, this, &CustomTabSettingWidget::handleOptionChanged);
 }
 
@@ -50,7 +51,10 @@ void CustomTabSettingWidget::initUI()
     mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setVerticalSpacing(10);
 
-    addItemBtn = new DCommandLinkButton(tr("Add Directory"), this);
+    addItemBtn = new DToolButton(this);
+    addItemBtn->setToolTip(tr("Add Directory"));
+    addItemBtn->setIconSize({ 16, 16 });
+    addItemBtn->setIcon(DStyle::standardIcon(style(), DStyle::SP_IncreaseElement));
     addItemBtn->setEnabled(true);
 
     mainLayout->addWidget(new QLabel(tr("Custom Directory"), this), 0, 0);
