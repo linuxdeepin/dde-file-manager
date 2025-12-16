@@ -102,7 +102,7 @@ void FileOperatorHelper::openFilesByMode(const FileView *view, const QList<QUrl>
                          .toBool();
     QList<QUrl> dirListOpenInNewWindow {};
     for (const QUrl &url : urls) {
-        const FileInfoPointer &fileInfoPtr = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
+        const FileInfoPointer &fileInfoPtr = InfoFactory::create<FileInfo>(url);
         if (fileInfoPtr) {
             if (!fileInfoPtr->exists()) {
                 // show alert
@@ -339,7 +339,7 @@ void FileOperatorHelper::pasteClipboardImage(const FileView *view)
     AbstractJobHandler::OperatorCallback callback = [](const AbstractJobHandler::CallbackArgus args) {
         if (args->value(AbstractJobHandler::CallbackKey::kSuccessed).toBool() != false) {
             auto targets = args->value(AbstractJobHandler::CallbackKey::kTargets)
-                              .value<QList<QUrl>>();
+                                   .value<QList<QUrl>>();
             if (!targets.isEmpty()) {
                 fmDebug() << "Requesting selection for created image file:" << targets;
                 WorkspaceHelper::instance()->laterRequestSelectFiles(targets);
@@ -351,13 +351,13 @@ void FileOperatorHelper::pasteClipboardImage(const FileView *view)
 
     // Publish kTouchFile event
     dpfSignalDispatcher->publish(
-        GlobalEventType::kTouchFile,
-        windowId,
-        view->rootUrl(),
-        CreateFileType::kCreateFileTypeDefault,
-        QString("png"),
-        QVariant::fromValue(clipboardData),
-        callback);
+            GlobalEventType::kTouchFile,
+            windowId,
+            view->rootUrl(),
+            CreateFileType::kCreateFileTypeDefault,
+            QString("png"),
+            QVariant::fromValue(clipboardData),
+            callback);
 }
 
 void FileOperatorHelper::undoFiles(const FileView *view)
