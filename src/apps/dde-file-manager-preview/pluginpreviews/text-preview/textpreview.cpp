@@ -107,7 +107,9 @@ bool TextPreview::setFileUrl(const QUrl &url)
             fmWarning() << "Text preview: encoding conversion failed, using original data";
         }
     }
-    
+
+    // Set syntax highlighting before setting file data
+    textBrowser->textBrowserEdit()->setSyntaxDefinition(filePath);
     textBrowser->textBrowserEdit()->setFileData(strBuf);
     delete[] buf;
     buf = nullptr;
