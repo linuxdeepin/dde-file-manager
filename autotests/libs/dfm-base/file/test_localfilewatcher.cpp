@@ -47,6 +47,8 @@ public:
 
         tempDirPath = tempDir->path();
         tempDirUrl = QUrl::fromLocalFile(tempDirPath);
+
+        watcher = new LocalFileWatcher(tempDirUrl);
     }
 
     void TearDown() override
@@ -54,6 +56,7 @@ public:
         stub.clear();
 
         tempDir.reset();
+        delete watcher;
     }
 
 protected:
@@ -84,23 +87,24 @@ protected:
 
 TEST_F(TestLocalFileWatcher, Constructor_ValidUrl)
 {
-    watcher = new LocalFileWatcher(tempDirUrl);
+    // watcher = new LocalFileWatcher(tempDirUrl);
     EXPECT_NE(watcher, nullptr);
 }
 
 TEST_F(TestLocalFileWatcher, Constructor_WithParent)
 {
     QObject parent;
-    watcher = new LocalFileWatcher(tempDirUrl, &parent);
-    EXPECT_NE(watcher, nullptr);
-    EXPECT_EQ(watcher->parent(), &parent);
+    LocalFileWatcher *pwatcher = new LocalFileWatcher(tempDirUrl, &parent);
+    EXPECT_NE(pwatcher, nullptr);
+    EXPECT_EQ(pwatcher->parent(), &parent);
+    delete pwatcher;
 }
 
 // ========== StartWatcher Tests ==========
 
 TEST_F(TestLocalFileWatcher, StartWatcher_ValidDirectory)
 {
-    watcher = new LocalFileWatcher(tempDirUrl);
+    // watcher = new LocalFileWatcher(tempDirUrl);
 
     stub.set_lamda(VADDR(AbstractFileWatcher, startWatcher), [](AbstractFileWatcher *) -> bool {
         __DBG_STUB_INVOKE__
@@ -114,20 +118,21 @@ TEST_F(TestLocalFileWatcher, StartWatcher_ValidDirectory)
 TEST_F(TestLocalFileWatcher, StartWatcher_NonExistentDirectory)
 {
     QUrl nonExistentUrl = QUrl::fromLocalFile("/nonexistent/directory");
-    watcher = new LocalFileWatcher(nonExistentUrl);
+    LocalFileWatcher *ewatcher = new LocalFileWatcher(nonExistentUrl);
 
     stub.set_lamda(VADDR(AbstractFileWatcher, startWatcher), [](AbstractFileWatcher *) -> bool {
         __DBG_STUB_INVOKE__
         return false;
     });
 
-    bool result = watcher->startWatcher();
+    bool result = ewatcher->startWatcher();
     EXPECT_FALSE(result);
+    delete ewatcher;
 }
 
 TEST_F(TestLocalFileWatcher, StartWatcher_AlreadyStarted)
 {
-    watcher = new LocalFileWatcher(tempDirUrl);
+    // watcher = new LocalFileWatcher(tempDirUrl);
 
     stub.set_lamda(VADDR(AbstractFileWatcher, startWatcher), [](AbstractFileWatcher *) -> bool {
         __DBG_STUB_INVOKE__
@@ -143,7 +148,7 @@ TEST_F(TestLocalFileWatcher, StartWatcher_AlreadyStarted)
 
 TEST_F(TestLocalFileWatcher, StopWatcher_AfterStart)
 {
-    watcher = new LocalFileWatcher(tempDirUrl);
+    // watcher = new LocalFileWatcher(tempDirUrl);
 
     stub.set_lamda(VADDR(AbstractFileWatcher, startWatcher), [](AbstractFileWatcher *) -> bool {
         __DBG_STUB_INVOKE__
@@ -162,7 +167,7 @@ TEST_F(TestLocalFileWatcher, StopWatcher_AfterStart)
 
 TEST_F(TestLocalFileWatcher, StopWatcher_WithoutStart)
 {
-    watcher = new LocalFileWatcher(tempDirUrl);
+    // watcher = new LocalFileWatcher(tempDirUrl);
 
     stub.set_lamda(VADDR(AbstractFileWatcher, stopWatcher), [](AbstractFileWatcher *) -> bool {
         __DBG_STUB_INVOKE__
@@ -177,7 +182,7 @@ TEST_F(TestLocalFileWatcher, StopWatcher_WithoutStart)
 
 TEST_F(TestLocalFileWatcher, NotifyFileAdded_EmitsSignal)
 {
-    watcher = new LocalFileWatcher(tempDirUrl);
+    // watcher = new LocalFileWatcher(tempDirUrl);
     QSignalSpy spy(watcher, &LocalFileWatcher::subfileCreated);
 
     QUrl fileUrl = QUrl::fromLocalFile(tempDirPath + "/newfile.txt");
@@ -190,7 +195,7 @@ TEST_F(TestLocalFileWatcher, NotifyFileAdded_EmitsSignal)
 
 TEST_F(TestLocalFileWatcher, NotifyFileAdded_MultipleFiles)
 {
-    watcher = new LocalFileWatcher(tempDirUrl);
+    // watcher = new LocalFileWatcher(tempDirUrl);
     QSignalSpy spy(watcher, &LocalFileWatcher::subfileCreated);
 
     QUrl file1 = QUrl::fromLocalFile(tempDirPath + "/file1.txt");
@@ -206,20 +211,21 @@ TEST_F(TestLocalFileWatcher, NotifyFileAdded_MultipleFiles)
 
 TEST_F(TestLocalFileWatcher, NotifyFileChanged_EmitsSignal)
 {
-    watcher = new LocalFileWatcher(tempDirUrl);
-    QSignalSpy spy(watcher, &LocalFileWatcher::fileAttributeChanged);
+    LocalFileWatcher *tmpwatcher = new LocalFileWatcher(tempDirUrl);
+    QSignalSpy spy(tmpwatcher, &LocalFileWatcher::fileAttributeChanged);
 
     QUrl fileUrl = QUrl::fromLocalFile(tempDirPath + "/changed.txt");
-    watcher->notifyFileChanged(fileUrl);
+    tmpwatcher->notifyFileChanged(fileUrl);
 
     EXPECT_EQ(spy.count(), 1);
     QList<QVariant> arguments = spy.takeFirst();
     EXPECT_EQ(arguments.at(0).value<QUrl>(), fileUrl);
+    delete tmpwatcher;
 }
 
 TEST_F(TestLocalFileWatcher, NotifyFileChanged_MultipleChanges)
 {
-    watcher = new LocalFileWatcher(tempDirUrl);
+    // watcher = new LocalFileWatcher(tempDirUrl);
     QSignalSpy spy(watcher, &LocalFileWatcher::fileAttributeChanged);
 
     QUrl fileUrl = QUrl::fromLocalFile(tempDirPath + "/modified.txt");
@@ -235,7 +241,7 @@ TEST_F(TestLocalFileWatcher, NotifyFileChanged_MultipleChanges)
 
 TEST_F(TestLocalFileWatcher, NotifyFileDeleted_EmitsSignal)
 {
-    watcher = new LocalFileWatcher(tempDirUrl);
+    // watcher = new LocalFileWatcher(tempDirUrl);
     QSignalSpy spy(watcher, &LocalFileWatcher::fileDeleted);
 
     QUrl fileUrl = QUrl::fromLocalFile(tempDirPath + "/deleted.txt");
@@ -248,7 +254,7 @@ TEST_F(TestLocalFileWatcher, NotifyFileDeleted_EmitsSignal)
 
 TEST_F(TestLocalFileWatcher, NotifyFileDeleted_MultipleDeletions)
 {
-    watcher = new LocalFileWatcher(tempDirUrl);
+    // watcher = new LocalFileWatcher(tempDirUrl);
     QSignalSpy spy(watcher, &LocalFileWatcher::fileDeleted);
 
     QUrl file1 = QUrl::fromLocalFile(tempDirPath + "/delete1.txt");
@@ -264,7 +270,7 @@ TEST_F(TestLocalFileWatcher, NotifyFileDeleted_MultipleDeletions)
 
 TEST_F(TestLocalFileWatcher, Signals_AllConnected)
 {
-    watcher = new LocalFileWatcher(tempDirUrl);
+    // watcher = new LocalFileWatcher(tempDirUrl);
 
     QSignalSpy addedSpy(watcher, &LocalFileWatcher::subfileCreated);
     QSignalSpy changedSpy(watcher, &LocalFileWatcher::fileAttributeChanged);
@@ -309,7 +315,7 @@ TEST_F(TestLocalFileWatcher, MultipleWatchers_DifferentDirectories)
 
 TEST_F(TestLocalFileWatcher, Lifecycle_StartStopMultipleTimes)
 {
-    watcher = new LocalFileWatcher(tempDirUrl);
+    // watcher = new LocalFileWatcher(tempDirUrl);
 
     stub.set_lamda(VADDR(AbstractFileWatcher, startWatcher), [](AbstractFileWatcher *) -> bool {
         __DBG_STUB_INVOKE__
@@ -334,7 +340,7 @@ TEST_F(TestLocalFileWatcher, Lifecycle_StartStopMultipleTimes)
 TEST_F(TestLocalFileWatcher, EdgeCase_EmptyUrl)
 {
     QUrl emptyUrl;
-    watcher = new LocalFileWatcher(emptyUrl);
+    // watcher = new LocalFileWatcher(emptyUrl);
     EXPECT_NE(watcher, nullptr);
 
     stub.set_lamda(VADDR(AbstractFileWatcher, startWatcher), [](AbstractFileWatcher *) -> bool {
@@ -355,15 +361,16 @@ TEST_F(TestLocalFileWatcher, EdgeCase_FileAsDirectory)
     file.close();
 
     QUrl fileUrl = QUrl::fromLocalFile(filePath);
-    watcher = new LocalFileWatcher(fileUrl);
+   LocalFileWatcher *filewatcher = new LocalFileWatcher(fileUrl);
 
     stub.set_lamda(VADDR(AbstractFileWatcher, startWatcher), [](AbstractFileWatcher *) -> bool {
         __DBG_STUB_INVOKE__
         return false;
     });
 
-    bool result = watcher->startWatcher();
+    bool result = filewatcher->startWatcher();
     EXPECT_TRUE(result == true || result == false);
+    delete filewatcher;
 }
 
 TEST_F(TestLocalFileWatcher, EdgeCase_SpecialCharactersInPath)
@@ -372,15 +379,16 @@ TEST_F(TestLocalFileWatcher, EdgeCase_SpecialCharactersInPath)
     QDir().mkpath(specialPath);
 
     QUrl specialUrl = QUrl::fromLocalFile(specialPath);
-    watcher = new LocalFileWatcher(specialUrl);
-    EXPECT_NE(watcher, nullptr);
+    LocalFileWatcher *specialwatcher = new LocalFileWatcher(specialUrl);
+    EXPECT_NE(specialwatcher, nullptr);
+    delete specialwatcher;
 }
 
 // ========== Notification Tests with Real File Operations ==========
 
 TEST_F(TestLocalFileWatcher, RealFileOperation_CreateFile)
 {
-    watcher = new LocalFileWatcher(tempDirUrl);
+    // watcher = new LocalFileWatcher(tempDirUrl);
 
     stub.set_lamda(VADDR(AbstractFileWatcher, startWatcher), [](AbstractFileWatcher *) -> bool {
         __DBG_STUB_INVOKE__
@@ -402,7 +410,7 @@ TEST_F(TestLocalFileWatcher, RealFileOperation_ModifyFile)
 {
     createTestFile("modify.txt");
 
-    watcher = new LocalFileWatcher(tempDirUrl);
+    // watcher = new LocalFileWatcher(tempDirUrl);
 
     stub.set_lamda(VADDR(AbstractFileWatcher, startWatcher), [](AbstractFileWatcher *) -> bool {
         __DBG_STUB_INVOKE__
@@ -424,7 +432,7 @@ TEST_F(TestLocalFileWatcher, RealFileOperation_DeleteFile)
 {
     createTestFile("delete.txt");
 
-    watcher = new LocalFileWatcher(tempDirUrl);
+    // watcher = new LocalFileWatcher(tempDirUrl);
 
     stub.set_lamda(VADDR(AbstractFileWatcher, startWatcher), [](AbstractFileWatcher *) -> bool {
         __DBG_STUB_INVOKE__
@@ -469,7 +477,7 @@ TEST_F(TestLocalFileWatcher, Destructor_WithoutStart)
 
 TEST_F(TestLocalFileWatcher, ThreadSafety_SimultaneousNotifications)
 {
-    watcher = new LocalFileWatcher(tempDirUrl);
+    // watcher = new LocalFileWatcher(tempDirUrl);
 
     QSignalSpy addedSpy(watcher, &LocalFileWatcher::subfileCreated);
     QSignalSpy changedSpy(watcher, &LocalFileWatcher::fileAttributeChanged);
