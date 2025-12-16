@@ -343,10 +343,7 @@ bool ThumbnailHelper::checkThumbEnable(const QUrl &url)
     }
 
     bool enable { true };
-    if (ProtocolUtils::isMTPFile(fileUrl)) {   // Check if it's MTP file
-        enable = DConfigManager::instance()->value("org.deepin.dde.file-manager.preview", "mtpThumbnailEnable", true).toBool();
-        qCDebug(logDFMBase) << "thumbnail: MTP file thumbnail enable status:" << enable << "for:" << fileUrl;
-    } else if (DevProxyMng->isFileOfProtocolMounts(fileUrl.path())) {   // Check if it's protocol device
+    if (DevProxyMng->isFileOfProtocolMounts(fileUrl.path())) {   // Check if it's protocol device
         enable = Application::instance()->genericAttribute(Application::kShowThunmbnailInRemote).toBool();
         qCDebug(logDFMBase) << "thumbnail: remote file thumbnail enable status:" << enable << "for:" << fileUrl;
     }
