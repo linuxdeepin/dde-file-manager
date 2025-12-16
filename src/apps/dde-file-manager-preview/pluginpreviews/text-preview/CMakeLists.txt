@@ -13,6 +13,7 @@ FILE(GLOB_RECURSE TEXTPREVIEW_FILES CONFIGURE_DEPENDS
 set(BIN_NAME ${PROJECT_NAME})
 
 find_package(Qt6 COMPONENTS Core REQUIRED)
+find_package(KF6SyntaxHighlighting REQUIRED)
 
 add_library(${BIN_NAME}
     SHARED
@@ -24,6 +25,7 @@ set_target_properties(${BIN_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${DFM_BUIL
 target_link_libraries(${BIN_NAME}
     DFM6::base
     DFM6::framework
+    KF6::SyntaxHighlighting
 )
 
 #install library file
