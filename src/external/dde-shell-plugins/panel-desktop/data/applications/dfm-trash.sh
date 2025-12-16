@@ -10,19 +10,9 @@ if [ $# -eq 0 ]; then
     exit 0
 fi
 
-# 将传入的文件路径转换为 JSON 数组格式
-SOURCES_JSON=""
-for file in "$@"; do
-    if [[ -n "$SOURCES_JSON" ]]; then
-        SOURCES_JSON="$SOURCES_JSON,"
-    fi
-    # 对路径进行 JSON 转义
-    ESCAPED_FILE=$(printf '%s' "$file" | jq -R .)
-    SOURCES_JSON="$SOURCES_JSON$ESCAPED_FILE"
-done
-
-# 构建完整的 JSON
-JSON_DATA="{\"action\":\"trash\",\"params\":{\"sources\":[$SOURCES_JSON]}}"
+# 使用 jq 一次性构建完整的 JSON，避免循环和多次进程调用
+# --args 将所有位置参数作为字符串数组传递给 jq
+JSON_DATA=$(jq -n --args '{action: "trash", params: {sources: $ARGS.positional}}' -- "$@")
 
 # 执行主脚本
 exec file-manager.sh --event "$JSON_DATA"
