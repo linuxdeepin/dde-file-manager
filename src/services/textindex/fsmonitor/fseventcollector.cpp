@@ -286,7 +286,7 @@ void FSEventCollectorPrivate::handleFileModified(const QString &path, const QStr
         // So we don't need to check for parent directories or redundant entries
         if (!isDirectory(fullPath) && !isChildOfAnyPath(fullPath, createdFilesList) && !isChildOfAnyPath(fullPath, deletedFilesList)) {
             // Only insert if file has supported extension
-            if (shouldIndexFile(fullPath)) {
+            if (shouldIndexFile(fullPath) && QFileInfo(fullPath).exists()) {
                 modifiedFilesList.insert(fullPath);
                 fmDebug() << "FSEventCollector: Added to modified list:" << fullPath;
             }

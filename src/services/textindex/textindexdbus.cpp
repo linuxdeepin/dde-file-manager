@@ -30,7 +30,7 @@ void TextIndexDBusPrivate::initConnect()
     QObject::connect(taskManager, &TaskManager::taskFinished,
                      q, [this](const QString &type, const QString &path, bool success) {
                          QString msg;
-                         fmInfo() << "TextIndexDBus: Resetting CPU limit after task completion";
+                         fmDebug() << "TextIndexDBus: Resetting CPU limit after task completion";
                          if (!SystemdCpuUtils::resetCpuQuota(Defines::kTextIndexServiceName, &msg)) {
                              fmWarning() << "TextIndexDBus: Failed to reset CPU quota:" << msg;
                          }
@@ -240,10 +240,10 @@ bool TextIndexDBus::ProcessFileMoves(const QHash<QString, QString> &movedFiles)
     }
 
     fmInfo() << "TextIndexDBus: Processing" << movedFiles.size() << "moved files";
-    
+
     // 启动文件移动任务
     bool taskQueued = d->taskManager->startFileMoveTask(movedFiles, true);
-    
+
     return taskQueued;
 }
 

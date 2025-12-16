@@ -40,8 +40,8 @@ void IndexTask::onProgressChanged(qint64 count, qint64 total)
         // 避免在高频进度更新中打印过多日志，只在特定条件下打印
         static qint64 lastLoggedCount = 0;
         if (count == 0 || total == 0 || count == total || (count - lastLoggedCount) >= 1000) {
-            fmDebug() << "[IndexTask::onProgressChanged] Task progress - type:" << static_cast<int>(m_type) 
-                     << "processed:" << count << "total:" << total;
+            fmDebug() << "[IndexTask::onProgressChanged] Task progress - type:" << static_cast<int>(m_type)
+                      << "processed:" << count << "total:" << total;
             lastLoggedCount = count;
         }
         emit progressChanged(m_type, count, total);
@@ -67,15 +67,15 @@ void IndexTask::throttleCpuUsage()
     }
 
     int limit = TextIndexConfig::instance().cpuUsageLimitPercent();
-    fmInfo() << "[IndexTask::throttleCpuUsage] Applying CPU usage limit:" << limit << "% for service:" 
-             << Defines::kTextIndexServiceName;
+    fmDebug() << "[IndexTask::throttleCpuUsage] Applying CPU usage limit:" << limit << "% for service:"
+              << Defines::kTextIndexServiceName;
 
     QString msg;
     if (!SystemdCpuUtils::setCpuQuota(Defines::kTextIndexServiceName, limit, &msg)) {
-        fmWarning() << "[IndexTask::throttleCpuUsage] Failed to set CPU quota:" << msg 
-                   << "service:" << Defines::kTextIndexServiceName << "limit:" << limit << "%";
+        fmWarning() << "[IndexTask::throttleCpuUsage] Failed to set CPU quota:" << msg
+                    << "service:" << Defines::kTextIndexServiceName << "limit:" << limit << "%";
     } else {
-        fmInfo() << "[IndexTask::throttleCpuUsage] CPU quota applied successfully - limit:" << limit << "%";
+        fmDebug() << "[IndexTask::throttleCpuUsage] CPU quota applied successfully - limit:" << limit << "%";
     }
 }
 
@@ -86,15 +86,15 @@ void IndexTask::start()
         return;
     }
 
-    fmInfo() << "[IndexTask::start] Starting task - type:" << static_cast<int>(m_type) 
+    fmInfo() << "[IndexTask::start] Starting task - type:" << static_cast<int>(m_type)
              << "path:" << m_path << "silent:" << m_silent;
 
     m_state.start();
     m_status = Status::Running;
 
     Q_ASSERT(QThread::currentThread() != QCoreApplication::instance()->thread());
-    fmDebug() << "[IndexTask::start] Task executing in worker thread:" << QThread::currentThread() 
-             << "main thread:" << QCoreApplication::instance()->thread();
+    fmDebug() << "[IndexTask::start] Task executing in worker thread:" << QThread::currentThread()
+              << "main thread:" << QCoreApplication::instance()->thread();
 
     doTask();
 }
@@ -133,15 +133,15 @@ bool IndexTask::isIndexCorrupted() const
 void IndexTask::setIndexCorrupted(bool corrupted)
 {
     if (m_indexCorrupted != corrupted) {
-        fmWarning() << "[IndexTask::setIndexCorrupted] Index corruption status changed to:" << corrupted 
-                   << "for path:" << m_path;
+        fmWarning() << "[IndexTask::setIndexCorrupted] Index corruption status changed to:" << corrupted
+                    << "for path:" << m_path;
         m_indexCorrupted = corrupted;
     }
 }
 
 void IndexTask::doTask()
 {
-    fmInfo() << "[IndexTask::doTask] Executing task handler - type:" << static_cast<int>(m_type) 
+    fmInfo() << "[IndexTask::doTask] Executing task handler - type:" << static_cast<int>(m_type)
              << "path:" << m_path;
 
     HandlerResult result { false, false };
@@ -149,27 +149,27 @@ void IndexTask::doTask()
         try {
             setIndexCorrupted(false);
             throttleCpuUsage();
-            
+
             fmDebug() << "[IndexTask::doTask] Invoking task handler for path:" << m_path;
             result = m_handler(m_path, m_state);
-            
+
             if (result.fatal) {
                 fmCritical() << "[IndexTask::doTask] Task handler reported fatal error - path:" << m_path;
                 setIndexCorrupted(true);
             } else if (!result.success) {
                 fmWarning() << "[IndexTask::doTask] Task handler failed - path:" << m_path;
             } else {
-                fmInfo() << "[IndexTask::doTask] Task handler completed successfully - path:" << m_path;
+                fmDebug() << "[IndexTask::doTask] Task handler completed successfully - path:" << m_path;
             }
         } catch (const LuceneException &e) {
             // 捕获到 Lucene 异常，说明索引损坏
-            fmCritical() << "[IndexTask::doTask] Lucene exception caught, index corrupted - path:" << m_path 
-                        << "error:" << QString::fromStdWString(e.getError());
+            fmCritical() << "[IndexTask::doTask] Lucene exception caught, index corrupted - path:" << m_path
+                         << "error:" << QString::fromStdWString(e.getError());
             setIndexCorrupted(true);
             result.success = false;
         } catch (const std::exception &e) {
-            fmCritical() << "[IndexTask::doTask] Standard exception caught - path:" << m_path 
-                        << "error:" << e.what();
+            fmCritical() << "[IndexTask::doTask] Standard exception caught - path:" << m_path
+                         << "error:" << e.what();
             result.success = false;
         } catch (...) {   // 捕获所有异常
             fmCritical() << "[IndexTask::doTask] Unknown exception caught - path:" << m_path;
@@ -183,11 +183,11 @@ void IndexTask::doTask()
     m_status = result.success ? Status::Finished : Status::Failed;
 
     if (result.success) {
-        fmInfo() << "[IndexTask::doTask] Task completed successfully - type:" << static_cast<int>(m_type) 
-                 << "path:" << m_path;
+        fmDebug() << "[IndexTask::doTask] Task completed successfully - type:" << static_cast<int>(m_type)
+                  << "path:" << m_path;
     } else {
-        fmWarning() << "[IndexTask::doTask] Task failed - type:" << static_cast<int>(m_type) 
-                   << "path:" << m_path << "corrupted:" << m_indexCorrupted;
+        fmWarning() << "[IndexTask::doTask] Task failed - type:" << static_cast<int>(m_type)
+                    << "path:" << m_path << "corrupted:" << m_indexCorrupted;
     }
 
     emit finished(m_type, result);

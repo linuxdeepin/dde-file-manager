@@ -29,7 +29,7 @@ FileSystemProvider::FileSystemProvider(const QString &rootPath)
 void FileSystemProvider::traverse(TaskState &state, const FileHandler &handler)
 {
     fmInfo() << "[FileSystemProvider::traverse] Starting file system traversal from:" << m_rootPath;
-    
+
     QMap<QString, QString> bindPathTable = IndexTraverseUtils::fstabBindInfo();
     QSet<QString> visitedDirs;
     QQueue<QString> dirQueue;
@@ -61,9 +61,9 @@ void FileSystemProvider::traverse(TaskState &state, const FileHandler &handler)
         }
 
         // 检查路径长度和深度限制
-        if (currentPath.size() > FILENAME_MAX - 1 || currentPath.count('/') > 20) {
-            fmWarning() << "[FileSystemProvider::traverse] Path too long or deep, skipping:" << currentPath 
-                       << "length:" << currentPath.size() << "depth:" << currentPath.count('/');
+        if (currentPath.size() > FILENAME_MAX - 1 || currentPath.count('/') > 30) {
+            fmWarning() << "[FileSystemProvider::traverse] Path too long or deep, skipping:" << currentPath
+                        << "length:" << currentPath.size() << "depth:" << currentPath.count('/');
             continue;
         }
 
@@ -75,8 +75,8 @@ void FileSystemProvider::traverse(TaskState &state, const FileHandler &handler)
 
         DIR *dir = opendir(currentPath.toStdString().c_str());
         if (!dir) {
-            fmWarning() << "[FileSystemProvider::traverse] Failed to open directory:" << currentPath 
-                       << "error:" << strerror(errno);
+            fmWarning() << "[FileSystemProvider::traverse] Failed to open directory:" << currentPath
+                        << "error:" << strerror(errno);
             continue;
         }
 
@@ -97,8 +97,8 @@ void FileSystemProvider::traverse(TaskState &state, const FileHandler &handler)
 
             struct stat st;
             if (lstat(fullPath.toStdString().c_str(), &st) == -1) {
-                fmDebug() << "[FileSystemProvider::traverse] Failed to stat file:" << fullPath 
-                         << "error:" << strerror(errno);
+                fmDebug() << "[FileSystemProvider::traverse] Failed to stat file:" << fullPath
+                          << "error:" << strerror(errno);
                 continue;
             }
 
@@ -109,7 +109,7 @@ void FileSystemProvider::traverse(TaskState &state, const FileHandler &handler)
                 if (!IndexTraverseUtils::isSupportedFileExtension(fileName)) {
                     continue;
                 }
-                
+
                 // 只有通过扩展名检查的文件才进行昂贵的路径验证
                 if (IndexTraverseUtils::isValidFile(fullPath)) {
                     handler(fullPath);
@@ -125,7 +125,7 @@ void FileSystemProvider::traverse(TaskState &state, const FileHandler &handler)
         }
     }
 
-    fmInfo() << "[FileSystemProvider::traverse] Traversal completed - processed directories:" << processedDirs 
+    fmInfo() << "[FileSystemProvider::traverse] Traversal completed - processed directories:" << processedDirs
              << "files:" << processedFiles;
 }
 
@@ -138,7 +138,7 @@ DirectFileListProvider::DirectFileListProvider(const dfmsearch::SearchResultList
 void DirectFileListProvider::traverse(TaskState &state, const FileHandler &handler)
 {
     fmInfo() << "[DirectFileListProvider::traverse] Processing" << m_fileList.size() << "files from direct list";
-    
+
     int processedCount = 0;
     for (const auto &file : std::as_const(m_fileList)) {
         if (!state.isRunning()) {
@@ -148,7 +148,7 @@ void DirectFileListProvider::traverse(TaskState &state, const FileHandler &handl
         handler(file.path());
         processedCount++;
     }
-    
+
     fmInfo() << "[DirectFileListProvider::traverse] Completed processing" << processedCount << "files";
 }
 
@@ -166,7 +166,7 @@ MixedPathListProvider::MixedPathListProvider(const QStringList &pathList)
 void MixedPathListProvider::traverse(TaskState &state, const FileHandler &handler)
 {
     fmInfo() << "[MixedPathListProvider::traverse] Starting traversal of" << m_pathList.size() << "mixed paths";
-    
+
     // Default blacklisted directories
     QStringList defaultBlacklistedDirs = TextIndexConfig::instance().folderExcludeFilters();
     fmDebug() << "[MixedPathListProvider::traverse] Using blacklisted directories:" << defaultBlacklistedDirs;
@@ -197,7 +197,7 @@ void MixedPathListProvider::traverse(TaskState &state, const FileHandler &handle
                 fmDebug() << "[MixedPathListProvider::traverse] Skipping file with unsupported extension:" << path;
                 continue;
             }
-            
+
             // 处理文件 - 只有通过扩展名检查的文件才进行昂贵的路径验证
             if (IndexTraverseUtils::isValidFile(path)
                 && IndexUtility::isPathInContentIndexDirectory(path)) {
@@ -229,14 +229,14 @@ void MixedPathListProvider::traverse(TaskState &state, const FileHandler &handle
         }
     }
 
-    fmInfo() << "[MixedPathListProvider::traverse] Initial processing completed - files:" << initialFiles 
+    fmInfo() << "[MixedPathListProvider::traverse] Initial processing completed - files:" << initialFiles
              << "directories queued:" << initialDirs;
 
     // 处理所有目录
     QMap<QString, QString> bindPathTable = IndexTraverseUtils::fstabBindInfo();
     int processedDirs = 0;
     int additionalFiles = 0;
-    int skippedFilesByExtension = 0; // 统计因扩展名过滤跳过的文件数
+    int skippedFilesByExtension = 0;   // 统计因扩展名过滤跳过的文件数
 
     while (!dirQueue.isEmpty()) {
         if (!state.isRunning()) {
@@ -253,9 +253,9 @@ void MixedPathListProvider::traverse(TaskState &state, const FileHandler &handle
         }
 
         // 检查路径长度和深度限制
-        if (currentDir.size() > FILENAME_MAX - 1 || currentDir.count('/') > 20) {
-            fmWarning() << "[MixedPathListProvider::traverse] Directory path too long or deep:" << currentDir 
-                       << "length:" << currentDir.size() << "depth:" << currentDir.count('/');
+        if (currentDir.size() > FILENAME_MAX - 1 || currentDir.count('/') > 30) {
+            fmWarning() << "[MixedPathListProvider::traverse] Directory path too long or deep:" << currentDir
+                        << "length:" << currentDir.size() << "depth:" << currentDir.count('/');
             continue;
         }
 
@@ -267,8 +267,8 @@ void MixedPathListProvider::traverse(TaskState &state, const FileHandler &handle
 
         DIR *dir = opendir(currentDir.toStdString().c_str());
         if (!dir) {
-            fmWarning() << "[MixedPathListProvider::traverse] Failed to open directory:" << currentDir 
-                       << "error:" << strerror(errno);
+            fmWarning() << "[MixedPathListProvider::traverse] Failed to open directory:" << currentDir
+                        << "error:" << strerror(errno);
             continue;
         }
 
@@ -296,8 +296,8 @@ void MixedPathListProvider::traverse(TaskState &state, const FileHandler &handle
 
             struct stat st;
             if (lstat(fullPath.toStdString().c_str(), &st) == -1) {
-                fmDebug() << "[MixedPathListProvider::traverse] Failed to stat entry:" << fullPath 
-                         << "error:" << strerror(errno);
+                fmDebug() << "[MixedPathListProvider::traverse] Failed to stat entry:" << fullPath
+                          << "error:" << strerror(errno);
                 continue;
             }
 
@@ -306,9 +306,9 @@ void MixedPathListProvider::traverse(TaskState &state, const FileHandler &handle
                 // 早期扩展名检查 - 如果扩展名不支持，直接跳过
                 if (!IndexTraverseUtils::isSupportedFileExtension(entryName)) {
                     skippedFilesByExtension++;
-                    continue; // 跳过不支持的文件扩展名，避免后续昂贵的路径验证操作
+                    continue;   // 跳过不支持的文件扩展名，避免后续昂贵的路径验证操作
                 }
-                
+
                 // 只有通过扩展名检查的文件才进行昂贵的路径验证
                 if (IndexTraverseUtils::isValidFile(fullPath)
                     && IndexUtility::isPathInContentIndexDirectory(fullPath)) {
@@ -325,7 +325,7 @@ void MixedPathListProvider::traverse(TaskState &state, const FileHandler &handle
         }
     }
 
-    fmInfo() << "[MixedPathListProvider::traverse] Traversal completed - processed directories:" << processedDirs 
+    fmInfo() << "[MixedPathListProvider::traverse] Traversal completed - processed directories:" << processedDirs
              << "additional files:" << additionalFiles << "total unique files:" << processedFiles.size()
              << "skipped files by extension:" << skippedFilesByExtension;
 }

@@ -502,8 +502,8 @@ void removeDirectoryIndex(const QString &dirPath, const IndexWriterPtr &writer,
                     reporter->increment();
                 }
             }
-            fmInfo() << "[removeDirectoryIndex] Successfully removed" << deleteCount
-                     << "documents from index for directory:" << dirPath;
+            fmDebug() << "[removeDirectoryIndex] Successfully removed" << deleteCount
+                      << "documents from index for directory:" << dirPath;
         }
     } catch (const LuceneException &e) {
         fmWarning() << "[removeDirectoryIndex] Remove directory index failed with Lucene exception:" << dirPath
@@ -522,7 +522,7 @@ void removeDirectoryIndex(const QString &dirPath, const IndexWriterPtr &writer,
 std::unique_ptr<FileProvider> TaskHandlers::createFileProvider(const QString &path)
 {
     if (IndexUtility::isIndexWithAnything(path)) {
-        fmInfo() << "[TaskHandlers::createFileProvider] Attempting to use ANYTHING for document discovery, path:" << path;
+        fmDebug() << "[TaskHandlers::createFileProvider] Attempting to use ANYTHING for document discovery, path:" << path;
         QObject holder;
         SearchEngine *engine = SearchFactory::createEngine(SearchType::FileName, &holder);
         SearchOptions options;
@@ -697,7 +697,7 @@ TaskHandler TaskHandlers::UpdateIndexHandler()
                 }
             });
 
-            fmInfo() << "[UpdateIndexHandler] Index reader and writer initialized for directory:" << indexDir;
+            fmDebug() << "[UpdateIndexHandler] Index reader and writer initialized for directory:" << indexDir;
 
             // 清理已删除文件的索引
             if (!cleanupIndexs(reader, writer, running)) {
@@ -804,7 +804,7 @@ TaskHandler TaskHandlers::CreateOrUpdateFileListHandler(const QStringList &fileL
                 }
             });
 
-            fmInfo() << "[CreateOrUpdateFileListHandler] Index reader and writer initialized for directory:" << indexDir;
+            fmDebug() << "[CreateOrUpdateFileListHandler] Index reader and writer initialized for directory:" << indexDir;
 
             // 使用文件列表提供者遍历文件
             auto provider = createFileListProvider(fileList);
@@ -829,7 +829,7 @@ TaskHandler TaskHandlers::CreateOrUpdateFileListHandler(const QStringList &fileL
 
             // ProgressReporter的析构函数会处理最后的commit
             result.success = true;
-            fmInfo() << "[CreateOrUpdateFileListHandler] File list index update completed successfully";
+            fmDebug() << "[CreateOrUpdateFileListHandler] File list index update completed successfully";
 
             return result;
         } catch (const LuceneException &e) {
@@ -892,7 +892,7 @@ TaskHandler TaskHandlers::RemoveFileListHandler(const QStringList &fileList)
                 }
             });
 
-            fmInfo() << "[RemoveFileListHandler] Index reader and writer initialized for directory:" << indexDir;
+            fmDebug() << "[RemoveFileListHandler] Index reader and writer initialized for directory:" << indexDir;
 
             ProgressReporter reporter(writer);
             fmInfo() << "[RemoveFileListHandler] Starting file removal processing, total items:" << fileList.size();
@@ -934,8 +934,8 @@ TaskHandler TaskHandlers::RemoveFileListHandler(const QStringList &fileList)
 
             // ProgressReporter的析构函数会处理最后的commit
             result.success = true;
-            fmInfo() << "[RemoveFileListHandler] File removal completed successfully - files:" << filesRemoved
-                     << "directories:" << directoriesRemoved;
+            fmDebug() << "[RemoveFileListHandler] File removal completed successfully - files:" << filesRemoved
+                      << "directories:" << directoriesRemoved;
             return result;
         } catch (const LuceneException &e) {
             fmCritical() << "[RemoveFileListHandler] File removal failed with Lucene exception:"
@@ -992,7 +992,7 @@ TaskHandler TaskHandlers::MoveFileListHandler(const QHash<QString, QString> &mov
                 }
             });
 
-            fmInfo() << "[MoveFileListHandler] Index reader and writer initialized for directory:" << indexDir;
+            fmDebug() << "[MoveFileListHandler] Index reader and writer initialized for directory:" << indexDir;
 
             ProgressReporter reporter(writer);
             reporter.setTotal(movedFiles.size());
@@ -1051,8 +1051,8 @@ TaskHandler TaskHandlers::MoveFileListHandler(const QHash<QString, QString> &mov
 
             // ProgressReporter的析构函数会处理最后的commit
             result.success = true;
-            fmInfo() << "[MoveFileListHandler] File move processing completed successfully - file moves:" << fileMoves
-                     << "directory moves:" << directoryMoves << "failed moves:" << failedMoves;
+            fmDebug() << "[MoveFileListHandler] File move processing completed successfully - file moves:" << fileMoves
+                      << "directory moves:" << directoryMoves << "failed moves:" << failedMoves;
             return result;
         } catch (const LuceneException &e) {
             fmCritical() << "[MoveFileListHandler] File move processing failed with Lucene exception:"
