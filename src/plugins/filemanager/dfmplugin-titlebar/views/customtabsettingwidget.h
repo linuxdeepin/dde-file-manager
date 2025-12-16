@@ -7,7 +7,7 @@
 
 #include "dfmplugin_titlebar_global.h"
 
-#include <DCommandLinkButton>
+#include <DToolButton>
 
 #include <QWidget>
 
@@ -40,7 +40,7 @@ private:
     bool removeRow(QWidget *w);
 
 private:
-    DTK_WIDGET_NAMESPACE::DCommandLinkButton *addItemBtn { nullptr };
+    DTK_WIDGET_NAMESPACE::DToolButton *addItemBtn { nullptr };
     QGridLayout *mainLayout { nullptr };
 };
 }
