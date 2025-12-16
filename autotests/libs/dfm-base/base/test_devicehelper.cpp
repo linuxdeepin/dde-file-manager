@@ -347,7 +347,7 @@ TEST_F(TestDeviceHelper, askForStopScanning_InvalidUrl)
 TEST_F(TestDeviceHelper, castFromDFMMountProperty_BlockProperty)
 {
     // Test casting block device property
-    QString result = DeviceHelper::castFromDFMMountProperty(Property::kBlockDevice);
+    QString result = DeviceHelper::castFromDFMMountProperty(DFMMOUNT::Property::kBlockDevice);
 
     EXPECT_FALSE(result.isEmpty());
 }
@@ -355,7 +355,7 @@ TEST_F(TestDeviceHelper, castFromDFMMountProperty_BlockProperty)
 TEST_F(TestDeviceHelper, castFromDFMMountProperty_FileSystemProperty)
 {
     // Test casting filesystem property
-    QString result = DeviceHelper::castFromDFMMountProperty(Property::kBlockHintSystem);
+    QString result = DeviceHelper::castFromDFMMountProperty(DFMMOUNT::Property::kBlockHintSystem);
 
     EXPECT_FALSE(result.isEmpty());
 }

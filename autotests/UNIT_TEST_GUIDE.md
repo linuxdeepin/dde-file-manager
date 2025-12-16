@@ -83,9 +83,6 @@ class ApplicationTest : public ::testing::Test
 protected:
     void SetUp() override
     {
-        // 初始化测试环境
-        stub.clear();
-        
         // 设置测试数据
     }
 
@@ -122,17 +119,17 @@ TEST_F(ApplicationTest, SingletonCreation_Basic)
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include <gtest/gtest.h>
-#include <QCoreApplication>
-#include "stubext.h"
+
 #include <dfm-base/base/application/application.h>
+
+#include "stubext.h"
+#include <gtest/gtest.h>
 
 using namespace dfmbase;
 
 class ApplicationTest : public ::testing::Test {
 protected:
     void SetUp() override {
-        stub.clear();
         // 测试前置设置
     }
     
@@ -186,6 +183,166 @@ TEST_F(MyTest, StubExample) {
 - Mock 静态函数调用
 - 控制函数返回值
 
+#### 3.3.1 UI 显示和对话框的插桩方式
+
+在 GUI 单元测试中，需要避免实际的 UI 显示和用户交互，使用以下标准模式：
+
+**1. 对话框执行插桩**:
+```cpp
+// Mock QDialog::exec to avoid actual dialog display
+stub.set_lamda(VADDR(QDialog, exec), [] {
+    __DBG_STUB_INVOKE__
+    return QDialog::Accepted;  // 或 QDialog::Rejected
+});
+```
+
+**2. UI 显示/隐藏插桩**:
+```cpp
+// Mock the UI show
+stub.set_lamda(&QWidget::show, [](QWidget *) {
+    __DBG_STUB_INVOKE__
+});
+
+stub.set_lamda(&QWidget::hide, [](QWidget *) {
+    __DBG_STUB_INVOKE__
+});
+```
+
+**3. 菜单执行插桩**:
+```cpp
+// Mock menu execution with specific overload
+bool isCall = false;
+stub.set_lamda((QAction * (QMenu::*)(const QPoint &, QAction *)) ADDR(QMenu, exec), [&]() {
+    isCall = true;
+    return nullptr;
+});
+```
+
+**4. 完整 UI 测试示例**:
+```cpp
+class UT_DialogTest : public testing::Test {
+protected:
+    void SetUp() override {
+        stub.clear();
+        dialog = new TestDialog();
+        
+        // Standard UI stub setup
+        stub.set_lamda(VADDR(QDialog, exec), [] {
+            __DBG_STUB_INVOKE__
+            return QDialog::Accepted;
+        });
+        stub.set_lamda(&QWidget::show, [](QWidget *) {
+            __DBG_STUB_INVOKE__
+        });
+        stub.set_lamda(&QWidget::hide, [](QWidget *) {
+            __DBG_STUB_INVOKE__
+        });
+    }
+    
+    void TearDown() override {
+        delete dialog;
+        stub.clear();
+    }
+    
+    stub_ext::StubExt stub;
+    TestDialog *dialog = nullptr;
+};
+```
+
+#### 3.3.2 事件发送的插桩方式
+
+对于事件发布和信号分发，使用以下标准模式：
+
+**1. EventDispatcherManager 事件发布插桩**:
+```cpp
+// Mock dpfSignalDispatcher->publish
+bool eventPublished = false;
+QUrl capturedUrl;
+
+// Use a specific overload of publish method
+using PublishFunc = bool (EventDispatcherManager::*)(const QString&, const QString&, const QUrl&);
+auto publish = static_cast<PublishFunc>(&EventDispatcherManager::publish);
+stub.set_lamda(publish, [&](EventDispatcherManager *, const QString &, const QString &, const QUrl &url) -> bool {
+    __DBG_STUB_INVOKE__
+    eventPublished = true;
+    capturedUrl = url;
+    EXPECT_EQ(url, testUrl);
+    return true;
+});
+```
+
+**2. EventChannelManager 插槽推送插桩**:
+```cpp
+// Mock dpfSlotChannel->push
+bool slotPushed = false;
+typedef QVariant (EventChannelManager::*Push)(const QString &, const QString &, QList<QUrl>, QVariantHash &&);
+auto push = static_cast<Push>(&EventChannelManager::push);
+stub.set_lamda(push, [&](EventChannelManager *, const QString &space, const QString &topic, 
+                         const QList<QUrl> &urls, const QVariantHash &properties) -> bool {
+    __DBG_STUB_INVOKE__
+    slotPushed = true;
+    EXPECT_EQ(space, QString("dfmplugin_propertydialog"));
+    EXPECT_EQ(topic, QString("slot_PropertyDialog_Show"));
+    EXPECT_EQ(urls.size(), 2);
+    return true;
+});
+```
+
+**3. 函数指针地址插桩**:
+```cpp
+// Mock using function pointer address
+stub.set_lamda(ADDR(FileManagerWindowsManager, findWindowId), 
+    [expectedId](FileManagerWindowsManager *self, const QWidget *sender) -> quint64 {
+        Q_UNUSED(self)
+        Q_UNUSED(sender)
+        return expectedId;
+    });
+```
+
+**4. 虚函数地址插桩**:
+```cpp
+// Mock virtual functions using VADDR
+stub.set_lamda(VADDR(DDialog, showEvent), [&parentShowEventCalled] {
+    __DBG_STUB_INVOKE__
+    parentShowEventCalled = true;
+});
+```
+
+#### 3.3.3 常用插桩模式总结
+
+**验证函数调用**:
+```cpp
+bool called = false;
+stub.set_lamda(&SomeClass::method, [&called](...) { 
+    called = true; 
+});
+EXPECT_TRUE(called);
+```
+
+**控制返回值**:
+```cpp
+stub.set_lamda(&SomeClass::getValue, []() { return 42; });
+EXPECT_EQ(obj.getValue(), 42);
+```
+
+**验证参数**:
+```cpp
+QString capturedParam;
+stub.set_lamda(&SomeClass::setValue, [&capturedParam](const QString &s) { 
+    capturedParam = s; 
+});
+EXPECT_EQ(capturedParam, "expected");
+```
+
+**处理重载函数**:
+```cpp
+// 使用 static_cast 指定具体的重载版本
+stub.set_lamda(static_cast<void (*)(quint64, const QUrl &)>(ComputerEventCaller::cdTo), 
+               [&](quint64 winId, const QUrl &url) {
+    // 具体重载的处理逻辑
+});
+```
+
 ### 3.4 Qt 信号测试
 
 ```cpp
@@ -211,7 +368,90 @@ TEST_F(ApplicationTest, SignalEmission_AppAttributes)
 }
 ```
 
-### 3.5 性能测试示例
+### 3.5 Widget 和 UI 组件测试
+
+**Widget 尺寸和布局测试**:
+```cpp
+TEST_F(DevicePropertyDialogTest, ContentHeight_WithExtendedControls_CalculatesCorrectHeight)
+{
+    // Mock widget height methods
+    const int mockIconHeight = 128;
+    const int mockBasicInfoHeight = 50;
+    
+    stub.set_lamda(&QWidget::height, [=](QWidget *widget) -> int {
+        __DBG_STUB_INVOKE__
+        if (widget == dialog->deviceIcon)
+            return mockIconHeight;
+        else if (widget == dialog->basicInfo)
+            return mockBasicInfoHeight;
+        return 10;   // Default height for other widgets
+    });
+    
+    stub.set_lamda(&QWidget::contentsMargins, [](QWidget *) -> QMargins {
+        __DBG_STUB_INVOKE__
+        return QMargins(10, 10, 10, 10);
+    });
+    
+    // Test contentHeight calculation
+    int actualHeight = dialog->contentHeight();
+    EXPECT_GT(actualHeight, 0);
+}
+```
+
+**事件处理测试**:
+```cpp
+TEST_F(WidgetTest, KeyPressEvent_EscapeKey_ClosesDialog)
+{
+    bool closeCalled = false;
+    
+    // Mock close method
+    stub.set_lamda(&QWidget::close, [&closeCalled](QWidget *) -> bool {
+        __DBG_STUB_INVOKE__
+        closeCalled = true;
+        return true;
+    });
+    
+    // Create escape key event
+    QKeyEvent escapeEvent(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
+    
+    // Test keyPressEvent with Escape key
+    dialog->keyPressEvent(&escapeEvent);
+    
+    // Verify close was called
+    EXPECT_TRUE(closeCalled);
+}
+```
+
+**事件过滤器测试**:
+```cpp
+TEST_F(WidgetTest, EventFilter_PaintEvent_DrawsRoundedBackground)
+{
+    bool paintingOccurred = false;
+    QColor capturedColor;
+    
+    stub.set_lamda(&QPainter::setRenderHint, [](QPainter *, QPainter::RenderHint, bool) {
+        __DBG_STUB_INVOKE__
+    });
+    
+    stub.set_lamda(&QPainter::fillPath, [&](QPainter *, const QPainterPath &, const QBrush &brush) {
+        __DBG_STUB_INVOKE__
+        paintingOccurred = true;
+        capturedColor = brush.color();
+    });
+    
+    // Create paint event
+    QPaintEvent paintEvent(QRect(0, 0, 200, 100));
+    
+    // Test eventFilter with paint event
+    bool result = background->eventFilter(parentWidget, &paintEvent);
+    
+    // Verify painting occurred
+    EXPECT_TRUE(result);
+    EXPECT_TRUE(paintingOccurred);
+}
+```
+
+### 3.6 性能测试示例
 
 ```cpp
 TEST_F(ApplicationTest, Performance_BasicOperations)
@@ -236,6 +476,81 @@ TEST_F(ApplicationTest, Performance_BasicOperations)
     EXPECT_LT(duration.count(), 1000);
     
     delete app;
+}
+```
+
+### 3.7 错误处理和边界条件测试
+
+**空指针和无效参数测试**:
+```cpp
+TEST_F(TestClass, ErrorHandling_InvalidParameters_HandlesGracefully)
+{
+    // Test with various invalid parameters
+    QUrl invalidUrl;
+    QString emptyPath = "";
+    quint64 zeroWinId = 0;
+    QList<QUrl> emptyUrls;
+    
+    EXPECT_NO_THROW(ComputerEventCaller::cdTo(nullptr, invalidUrl));
+    EXPECT_NO_THROW(ComputerEventCaller::cdTo(mockWidget, emptyPath));
+    EXPECT_NO_THROW(ComputerEventCaller::cdTo(zeroWinId, invalidUrl));
+    EXPECT_NO_THROW(ComputerEventCaller::sendShowPropertyDialog(emptyUrls));
+}
+```
+
+**特殊字符处理测试**:
+```cpp
+TEST_F(TestClass, EventParameters_SpecialCharacters_HandlesCorrectly)
+{
+    quint64 testWinId = 12345;
+    QUrl testUrl("entry://test-with-special-chars_&%$.blockdev");
+    QString newName = "New Name with 特殊字符 & % $";
+    
+    // Mock event publishing
+    bool eventPublished = false;
+    using PublishFunc = bool (EventDispatcherManager::*)(const QString&, const QString&, const QUrl&);
+    auto publish = static_cast<PublishFunc>(&EventDispatcherManager::publish);
+    stub.set_lamda(publish, [&](EventDispatcherManager *, const QString &, const QString &, const QUrl &) -> bool {
+        __DBG_STUB_INVOKE__
+        eventPublished = true;
+        return true;
+    });
+    
+    // Test with special characters
+    EXPECT_NO_THROW(ComputerEventCaller::sendOpenItem(testWinId, testUrl));
+    EXPECT_NO_THROW(ComputerEventCaller::sendItemRenamed(testUrl, newName));
+    
+    EXPECT_TRUE(eventPublished);
+}
+```
+
+### 3.8 复杂场景组合测试
+
+**多个事件调用测试**:
+```cpp
+TEST_F(TestClass, MultipleEventCalls_DifferentParameters_HandlesCorrectly)
+{
+    quint64 testWinId = 12345;
+    QUrl testUrl1("entry://test1.blockdev");
+    QUrl testUrl2("entry://test2.blockdev");
+    QString newName = "Renamed Device";
+    
+    // Mock all event publishing
+    int publishCallCount = 0;
+    using PublishFunc = bool (EventDispatcherManager::*)(const QString&, const QString&, const QUrl&);
+    auto publish = static_cast<PublishFunc>(&EventDispatcherManager::publish);
+    stub.set_lamda(publish, [&](EventDispatcherManager *, const QString &, const QString &, const QUrl &) -> bool {
+        __DBG_STUB_INVOKE__
+        publishCallCount++;
+        return true;
+    });
+    
+    // Call multiple events
+    ComputerEventCaller::sendOpenItem(testWinId, testUrl1);
+    ComputerEventCaller::sendCtrlNOnItem(testWinId, testUrl2);
+    ComputerEventCaller::sendItemRenamed(testUrl1, newName);
+    
+    EXPECT_EQ(publishCallCount, 4);  // Verify all events were published
 }
 ```
 
@@ -577,6 +892,7 @@ dfm_create_service_test_enhanced("my-service"
 
 ---
 
-**最后更新**: 2025-11-15
+**最后更新**: 2025-12-12
 **维护者**: zero
+**版本**: v2.0 - 添加了详细的UI和事件插桩方法指南
 

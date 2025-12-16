@@ -126,8 +126,8 @@ class HtmlReportGenerator:
                         <div class="text-success mb-2">
                             <i class="fas fa-percentage fa-2x"></i>
                         </div>
-                        <h3 class="mb-1">{coverage_info['line_coverage']:.1f}%</h3>
-                        <p class="text-muted mb-0">代码覆盖率</p>
+                        <h3 class="mb-1">{coverage_info['function_coverage']:.1f}%</h3>
+                        <p class="text-muted mb-0">覆盖率</p>
                     </div>
                 </div>
             </div>

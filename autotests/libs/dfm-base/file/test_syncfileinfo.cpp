@@ -9,6 +9,7 @@
 #include <QDir>
 #include <QTextStream>
 #include <QMimeDatabase>
+#include <QTest>
 
 #include "stubext.h"
 
@@ -152,14 +153,14 @@ TEST_F(TestSyncFileInfo, InitQuerier_Success)
 
 TEST_F(TestSyncFileInfo, InitQuerierAsync_Called)
 {
-    bool callbackInvoked = false;
     auto callback = [](bool, void *userData) {
-        bool *flag = static_cast<bool *>(userData);
-        *flag = true;
+        // Simply avoid using userData to prevent stack-use-after-return
+        Q_UNUSED(userData);
     };
 
-    fileInfo->initQuerierAsync(0, callback, &callbackInvoked);
+    fileInfo->initQuerierAsync(0, callback, nullptr);  // Pass nullptr instead of stack variable
     // Just verify no crash - callback may be invoked asynchronously
+    QTest::qWait(100);
 }
 
 // ========== exists and refresh ==========

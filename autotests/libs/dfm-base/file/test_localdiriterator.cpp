@@ -39,12 +39,15 @@ public:
         createTestFile("file2.cpp");
         createTestFile(".hidden");
         createTestDir("subdir");
+
+        iterator = new LocalDirIterator(tempDirUrl);
     }
 
     void TearDown() override
     {
         stub.clear();
         tempDir.reset();
+        delete iterator;
     }
 
 protected:
@@ -68,14 +71,14 @@ protected:
     std::unique_ptr<QTemporaryDir> tempDir;
     QString tempDirPath;
     QUrl tempDirUrl;
+    LocalDirIterator *iterator = nullptr;
 };
 
 // ========== Constructor Tests ==========
 
 TEST_F(TestLocalDirIterator, Constructor_DefaultFilters)
 {
-    LocalDirIterator iterator(tempDirUrl);
-    EXPECT_EQ(iterator.url(), tempDirUrl);
+    EXPECT_EQ(iterator->url(), tempDirUrl);
 }
 
 TEST_F(TestLocalDirIterator, Constructor_WithNameFilters)
@@ -83,24 +86,25 @@ TEST_F(TestLocalDirIterator, Constructor_WithNameFilters)
     QStringList nameFilters;
     nameFilters << "*.txt" << "*.cpp";
 
-    LocalDirIterator iterator(tempDirUrl, nameFilters);
-    EXPECT_EQ(iterator.url(), tempDirUrl);
+    LocalDirIterator *tmpIterator = new LocalDirIterator(tempDirUrl, nameFilters);
+    EXPECT_EQ(tmpIterator->url(), tempDirUrl);
+    delete tmpIterator;
 }
 
 TEST_F(TestLocalDirIterator, Constructor_WithFilters)
 {
-    LocalDirIterator iterator(tempDirUrl, QStringList(), QDir::Files | QDir::NoDotAndDotDot);
-    EXPECT_EQ(iterator.url(), tempDirUrl);
+    LocalDirIterator *tmpIterator = new LocalDirIterator(tempDirUrl, QStringList(), QDir::Files | QDir::NoDotAndDotDot);
+    EXPECT_EQ(tmpIterator->url(), tempDirUrl);
+    delete tmpIterator;
 }
 
 // ========== HasNext Tests ==========
 
 TEST_F(TestLocalDirIterator, HasNext_DirectoryWithFiles)
 {
-    LocalDirIterator iterator(tempDirUrl);
-    iterator.initIterator();
+    iterator->initIterator();
 
-    bool hasAny = iterator.hasNext();
+    bool hasAny = iterator->hasNext();
     EXPECT_TRUE(hasAny || !hasAny);  // Directory may or may not have files visible
 }
 
@@ -109,34 +113,33 @@ TEST_F(TestLocalDirIterator, HasNext_EmptyDirectory)
     QTemporaryDir emptyDir;
     ASSERT_TRUE(emptyDir.isValid());
 
-    LocalDirIterator iterator(QUrl::fromLocalFile(emptyDir.path()));
-    iterator.initIterator();
+    LocalDirIterator *tmpIterator = new LocalDirIterator(QUrl::fromLocalFile(emptyDir.path()));
+    tmpIterator->initIterator();
 
-    bool hasAny = iterator.hasNext();
+    bool hasAny = tmpIterator->hasNext();
     EXPECT_FALSE(hasAny);
+    delete tmpIterator;
 }
 
 // ========== Next Tests ==========
 
 TEST_F(TestLocalDirIterator, Next_ReturnsUrl)
 {
-    LocalDirIterator iterator(tempDirUrl);
-    iterator.initIterator();
+    iterator->initIterator();
 
-    if (iterator.hasNext()) {
-        QUrl url = iterator.next();
+    if (iterator->hasNext()) {
+        QUrl url = iterator->next();
         EXPECT_TRUE(url.isValid());
     }
 }
 
 TEST_F(TestLocalDirIterator, Next_IterateThroughFiles)
 {
-    LocalDirIterator iterator(tempDirUrl);
-    iterator.initIterator();
+    iterator->initIterator();
 
     int count = 0;
-    while (iterator.hasNext()) {
-        QUrl url = iterator.next();
+    while (iterator->hasNext()) {
+        QUrl url = iterator->next();
         EXPECT_TRUE(url.isValid());
         count++;
         if (count > 100) break;  // Safety limit
@@ -149,24 +152,22 @@ TEST_F(TestLocalDirIterator, Next_IterateThroughFiles)
 
 TEST_F(TestLocalDirIterator, FileName_ReturnsName)
 {
-    LocalDirIterator iterator(tempDirUrl);
-    iterator.initIterator();
+    iterator->initIterator();
 
-    if (iterator.hasNext()) {
-        iterator.next();
-        QString fileName = iterator.fileName();
+    if (iterator->hasNext()) {
+        iterator->next();
+        QString fileName = iterator->fileName();
         EXPECT_FALSE(fileName.isEmpty());
     }
 }
 
 TEST_F(TestLocalDirIterator, FileName_NoSlashes)
 {
-    LocalDirIterator iterator(tempDirUrl);
-    iterator.initIterator();
+    iterator->initIterator();
 
-    if (iterator.hasNext()) {
-        iterator.next();
-        QString fileName = iterator.fileName();
+    if (iterator->hasNext()) {
+        iterator->next();
+        QString fileName = iterator->fileName();
         EXPECT_FALSE(fileName.contains('/'));
     }
 }
@@ -175,24 +176,22 @@ TEST_F(TestLocalDirIterator, FileName_NoSlashes)
 
 TEST_F(TestLocalDirIterator, FileUrl_ReturnsValidUrl)
 {
-    LocalDirIterator iterator(tempDirUrl);
-    iterator.initIterator();
+    iterator->initIterator();
 
-    if (iterator.hasNext()) {
-        iterator.next();
-        QUrl fileUrl = iterator.fileUrl();
+    if (iterator->hasNext()) {
+        iterator->next();
+        QUrl fileUrl = iterator->fileUrl();
         EXPECT_TRUE(fileUrl.isValid());
     }
 }
 
 TEST_F(TestLocalDirIterator, FileUrl_PathStartsWithDir)
 {
-    LocalDirIterator iterator(tempDirUrl);
-    iterator.initIterator();
+    iterator->initIterator();
 
-    if (iterator.hasNext()) {
-        iterator.next();
-        QUrl fileUrl = iterator.fileUrl();
+    if (iterator->hasNext()) {
+        iterator->next();
+        QUrl fileUrl = iterator->fileUrl();
         QString filePath = fileUrl.path();
         EXPECT_TRUE(filePath.startsWith(tempDirPath) || !filePath.isEmpty());
     }
@@ -202,12 +201,11 @@ TEST_F(TestLocalDirIterator, FileUrl_PathStartsWithDir)
 
 TEST_F(TestLocalDirIterator, FileInfo_ReturnsPointer)
 {
-    LocalDirIterator iterator(tempDirUrl);
-    iterator.initIterator();
+    iterator->initIterator();
 
-    if (iterator.hasNext()) {
-        iterator.next();
-        FileInfoPointer info = iterator.fileInfo();
+    if (iterator->hasNext()) {
+        iterator->next();
+        FileInfoPointer info = iterator->fileInfo();
         EXPECT_TRUE(info || info.isNull());  // May or may not be null depending on implementation
     }
 }
@@ -216,8 +214,7 @@ TEST_F(TestLocalDirIterator, FileInfo_ReturnsPointer)
 
 TEST_F(TestLocalDirIterator, Url_ReturnsBaseUrl)
 {
-    LocalDirIterator iterator(tempDirUrl);
-    QUrl url = iterator.url();
+    QUrl url = iterator->url();
     EXPECT_EQ(url, tempDirUrl);
 }
 
@@ -225,23 +222,21 @@ TEST_F(TestLocalDirIterator, Url_ReturnsBaseUrl)
 
 TEST_F(TestLocalDirIterator, Close_CanBeCalled)
 {
-    LocalDirIterator iterator(tempDirUrl);
-    iterator.initIterator();
+    iterator->initIterator();
 
-    iterator.close();
+    iterator->close();
     // No assertion needed, just verify it doesn't crash
 }
 
 TEST_F(TestLocalDirIterator, Close_StopsIteration)
 {
-    LocalDirIterator iterator(tempDirUrl);
-    iterator.initIterator();
+    iterator->initIterator();
 
-    iterator.close();
+    iterator->close();
 
     // After closing, hasNext should ideally return false
     // But this depends on implementation
-    bool hasNext = iterator.hasNext();
+    bool hasNext = iterator->hasNext();
     EXPECT_TRUE(!hasNext || hasNext);  // Just verify no crash
 }
 
@@ -249,8 +244,7 @@ TEST_F(TestLocalDirIterator, Close_StopsIteration)
 
 TEST_F(TestLocalDirIterator, CacheBlockIOAttribute_CanBeCalled)
 {
-    LocalDirIterator iterator(tempDirUrl);
-    iterator.cacheBlockIOAttribute();
+    iterator->cacheBlockIOAttribute();
     // No assertion needed, just verify it doesn't crash
 }
 
@@ -258,8 +252,7 @@ TEST_F(TestLocalDirIterator, CacheBlockIOAttribute_CanBeCalled)
 
 TEST_F(TestLocalDirIterator, EnableIteratorByKeyword_ReturnsFalse)
 {
-    LocalDirIterator iterator(tempDirUrl);
-    bool result = iterator.enableIteratorByKeyword("test");
+    bool result = iterator->enableIteratorByKeyword("test");
     EXPECT_FALSE(result);
 }
 
@@ -267,21 +260,19 @@ TEST_F(TestLocalDirIterator, EnableIteratorByKeyword_ReturnsFalse)
 
 TEST_F(TestLocalDirIterator, SetArguments_EmptyMap)
 {
-    LocalDirIterator iterator(tempDirUrl);
     QVariantMap args;
-    iterator.setArguments(args);
+    iterator->setArguments(args);
     // No assertion needed, just verify it doesn't crash
 }
 
 TEST_F(TestLocalDirIterator, SetArguments_WithSortRole)
 {
-    LocalDirIterator iterator(tempDirUrl);
     QVariantMap args;
     args["sortRole"] = 1;
     args["mixFileAndDir"] = true;
     args["sortOrder"] = static_cast<int>(Qt::AscendingOrder);
 
-    iterator.setArguments(args);
+    iterator->setArguments(args);
     // No assertion needed, just verify it doesn't crash
 }
 
@@ -289,10 +280,9 @@ TEST_F(TestLocalDirIterator, SetArguments_WithSortRole)
 
 TEST_F(TestLocalDirIterator, SortFileInfoList_ReturnsLi)
 {
-    LocalDirIterator iterator(tempDirUrl);
-    iterator.initIterator();
+    iterator->initIterator();
 
-    QList<SortInfoPointer> sortList = iterator.sortFileInfoList();
+    QList<SortInfoPointer> sortList = iterator->sortFileInfoList();
     EXPECT_GE(sortList.size(), 0);
 }
 
@@ -300,8 +290,9 @@ TEST_F(TestLocalDirIterator, SortFileInfoList_ReturnsLi)
 
 TEST_F(TestLocalDirIterator, OneByOne_ReturnsBoolean)
 {
-    LocalDirIterator iterator(tempDirUrl);
-    bool result = iterator.oneByOne();
+    iterator->initIterator();
+
+    bool result = iterator->oneByOne();
     EXPECT_TRUE(result == true || result == false);
 }
 
@@ -309,17 +300,14 @@ TEST_F(TestLocalDirIterator, OneByOne_ReturnsBoolean)
 
 TEST_F(TestLocalDirIterator, InitIterator_ReturnsBoolean)
 {
-    LocalDirIterator iterator(tempDirUrl);
-    bool result = iterator.initIterator();
+    bool result = iterator->initIterator();
     EXPECT_TRUE(result == true || result == false);
 }
 
 TEST_F(TestLocalDirIterator, InitIterator_CanBeCalledMultipleTimes)
 {
-    LocalDirIterator iterator(tempDirUrl);
-
-    bool result1 = iterator.initIterator();
-    bool result2 = iterator.initIterator();
+    bool result1 = iterator->initIterator();
+    bool result2 = iterator->initIterator();
 
     EXPECT_TRUE((result1 == true || result1 == false) && (result2 == true || result2 == false));
 }
@@ -328,21 +316,22 @@ TEST_F(TestLocalDirIterator, InitIterator_CanBeCalledMultipleTimes)
 
 TEST_F(TestLocalDirIterator, AsyncIterator_ReturnsPointer)
 {
-    LocalDirIterator iterator(tempDirUrl);
-    iterator.initIterator();
+    iterator->initIterator();
 
-    DEnumeratorFuture *future = iterator.asyncIterator();
+    DEnumeratorFuture *future = iterator->asyncIterator();
     EXPECT_TRUE(future != nullptr || future == nullptr);  // May or may not be null
+    if (future) {
+        delete future;
+    }
 }
 
 // ========== FileInfos Tests ==========
 
 TEST_F(TestLocalDirIterator, FileInfos_ReturnsList)
 {
-    LocalDirIterator iterator(tempDirUrl);
-    iterator.initIterator();
+    iterator->initIterator();
 
-    QList<FileInfoPointer> infos = iterator.fileInfos();
+    QList<FileInfoPointer> infos = iterator->fileInfos();
     EXPECT_GE(infos.size(), 0);
 }
 
@@ -350,13 +339,12 @@ TEST_F(TestLocalDirIterator, FileInfos_ReturnsList)
 
 TEST_F(TestLocalDirIterator, CompleteIteration_WorkflowTest)
 {
-    LocalDirIterator iterator(tempDirUrl);
-    iterator.initIterator();
+    iterator->initIterator();
 
     QStringList fileNames;
-    while (iterator.hasNext()) {
-        QUrl url = iterator.next();
-        QString fileName = iterator.fileName();
+    while (iterator->hasNext()) {
+        QUrl url = iterator->next();
+        QString fileName = iterator->fileName();
         if (!fileName.isEmpty()) {
             fileNames.append(fileName);
         }
@@ -371,13 +359,13 @@ TEST_F(TestLocalDirIterator, CompleteIteration_WorkflowTest)
 
 TEST_F(TestLocalDirIterator, Filters_FilesOnly)
 {
-    LocalDirIterator iterator(tempDirUrl, QStringList(), QDir::Files);
-    iterator.initIterator();
+    LocalDirIterator *tmpIterator = new LocalDirIterator(tempDirUrl, QStringList(), QDir::Files);
+    tmpIterator->initIterator();
 
     int count = 0;
-    while (iterator.hasNext()) {
-        iterator.next();
-        FileInfoPointer info = iterator.fileInfo();
+    while (tmpIterator->hasNext()) {
+        tmpIterator->next();
+        FileInfoPointer info = tmpIterator->fileInfo();
         if (info && !info.isNull()) {
             // Should be a file, not a directory
             count++;
@@ -386,32 +374,34 @@ TEST_F(TestLocalDirIterator, Filters_FilesOnly)
     }
 
     EXPECT_GE(count, 0);
+    delete tmpIterator;
 }
 
 TEST_F(TestLocalDirIterator, Filters_DirsOnly)
 {
-    LocalDirIterator iterator(tempDirUrl, QStringList(), QDir::Dirs | QDir::NoDotAndDotDot);
-    iterator.initIterator();
+    LocalDirIterator *tmpIterator = new LocalDirIterator(tempDirUrl, QStringList(), QDir::Dirs | QDir::NoDotAndDotDot);
+    tmpIterator->initIterator();
 
     int count = 0;
-    while (iterator.hasNext()) {
-        iterator.next();
+    while (tmpIterator->hasNext()) {
+        tmpIterator->next();
         count++;
         if (count > 100) break;
     }
 
     EXPECT_GE(count, 0);
+    delete tmpIterator;
 }
 
 TEST_F(TestLocalDirIterator, Filters_HiddenFiles)
 {
-    LocalDirIterator iterator(tempDirUrl, QStringList(), QDir::Hidden | QDir::Files);
-    iterator.initIterator();
+    LocalDirIterator *tmpIterator = new LocalDirIterator(tempDirUrl, QStringList(), QDir::Hidden | QDir::Files);
+    tmpIterator->initIterator();
 
     int hiddenCount = 0;
-    while (iterator.hasNext()) {
-        iterator.next();
-        QString fileName = iterator.fileName();
+    while (tmpIterator->hasNext()) {
+        tmpIterator->next();
+        QString fileName = tmpIterator->fileName();
         if (fileName.startsWith('.')) {
             hiddenCount++;
         }
@@ -419,6 +409,7 @@ TEST_F(TestLocalDirIterator, Filters_HiddenFiles)
     }
 
     EXPECT_GE(hiddenCount, 0);
+    delete tmpIterator;
 }
 
 // ========== NameFilter Tests ==========
@@ -428,13 +419,13 @@ TEST_F(TestLocalDirIterator, NameFilters_TxtFiles)
     QStringList filters;
     filters << "*.txt";
 
-    LocalDirIterator iterator(tempDirUrl, filters);
-    iterator.initIterator();
+    LocalDirIterator *tmpIterator = new LocalDirIterator(tempDirUrl, filters);
+    tmpIterator->initIterator();
 
     QStringList txtFiles;
-    while (iterator.hasNext()) {
-        iterator.next();
-        QString fileName = iterator.fileName();
+    while (tmpIterator->hasNext()) {
+        tmpIterator->next();
+        QString fileName = tmpIterator->fileName();
         if (fileName.endsWith(".txt")) {
             txtFiles.append(fileName);
         }
@@ -442,17 +433,17 @@ TEST_F(TestLocalDirIterator, NameFilters_TxtFiles)
     }
 
     EXPECT_GE(txtFiles.size(), 0);
+    delete tmpIterator;
 }
 
 // ========== Property Tests ==========
 
 TEST_F(TestLocalDirIterator, Property_QueryAttributes)
 {
-    LocalDirIterator iterator(tempDirUrl);
-    iterator.setProperty("QueryAttributes", "*");
-    iterator.initIterator();
+    iterator->setProperty("QueryAttributes", "*");
+    iterator->initIterator();
 
-    bool hasNext = iterator.hasNext();
+    bool hasNext = iterator->hasNext();
     EXPECT_TRUE(hasNext == true || hasNext == false);
 }
 
@@ -461,11 +452,12 @@ TEST_F(TestLocalDirIterator, Property_QueryAttributes)
 TEST_F(TestLocalDirIterator, EdgeCase_NonExistentDirectory)
 {
     QUrl nonExistentUrl = QUrl::fromLocalFile("/nonexistent/path/that/does/not/exist");
-    LocalDirIterator iterator(nonExistentUrl);
+    LocalDirIterator *tmpIterator = new LocalDirIterator(nonExistentUrl);
 
     // Should handle gracefully
-    bool result = iterator.initIterator();
+    bool result = tmpIterator->initIterator();
     EXPECT_TRUE(result == true || result == false);
+    delete tmpIterator;
 }
 
 TEST_F(TestLocalDirIterator, EdgeCase_FileAsDirectory)
@@ -477,9 +469,10 @@ TEST_F(TestLocalDirIterator, EdgeCase_FileAsDirectory)
     file.close();
 
     QUrl fileUrl = QUrl::fromLocalFile(filePath);
-    LocalDirIterator iterator(fileUrl);
+    LocalDirIterator *tmpIterator = new LocalDirIterator(fileUrl);
 
     // Should handle file as directory gracefully
-    bool result = iterator.initIterator();
+    bool result = tmpIterator->initIterator();
     EXPECT_TRUE(result == true || result == false);
+    delete tmpIterator;
 }
