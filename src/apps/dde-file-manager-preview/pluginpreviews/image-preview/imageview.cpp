@@ -74,6 +74,7 @@ void ImageView::setFile(const QString &fileName, const QByteArray &format)
     QSize showSize = QSize(qMin(static_cast<int>(dsize.width() * 0.7), sourceImageSize.width()),
                            qMin(static_cast<int>(dsize.height() * 0.7), sourceImageSize.height()));
     QPixmap pixmap = QPixmap::fromImage(image).scaled(showSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    pixmap.setDevicePixelRatio(qApp->devicePixelRatio());
     setPixmap(pixmap);
 }
 
