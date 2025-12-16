@@ -1165,8 +1165,9 @@ void FileSortWorker::handleAddChildren(const QString &key,
 
     // In the home, it is necessary to sort by display name.
     // So, using `sortAllFiles` to reorder
-    auto parentUrl = makeParentUrl(children.first()->fileUrl());
-    bool isHome = parentUrl.path() == StandardPaths::location(StandardPaths::kHomePath);
+    const auto parentUrl = makeParentUrl(children.first()->fileUrl());
+    const auto path = FileUtils::bindPathTransform(parentUrl.path(), false);
+    bool isHome = (path == StandardPaths::location(StandardPaths::kHomePath));
     if (!isHome && sortRole != DEnumerator::SortRoleCompareFlag::kSortRoleCompareDefault && this->sortRole == sortRole
         && this->sortOrder == sortOrder && this->isMixDirAndFile == isMixDirAndFile) {
         if (handleSource)
@@ -2019,7 +2020,7 @@ QVariant FileSortWorker::data(const SortInfoPointer &info, Global::ItemRoles rol
         const QUrl &url = info->fileUrl();
         static const QString kHomePath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
         const auto &path = QDir::cleanPath(url.adjusted(QUrl::RemoveFilename | QUrl::StripTrailingSlash).toLocalFile());
-        return path == kHomePath;
+        return FileUtils::bindPathTransform(path, false) == kHomePath;
     };
 
     // 1. 非本地文件的搜索结果不会进行sortinfo的填充，因此直接返回
@@ -2413,13 +2414,11 @@ void FileSortWorker::doModelChanged(const ModelChangeType type, int index, int c
         case ModelChangeType::kRemoveRows:
             handleAboutToRemoveFilesFromGroup(index, count);
             break;
-
         // 插入/删除完成事件，在分组模式下触发通用的变更处理
         case ModelChangeType::kInsertFinished:
         case ModelChangeType::kRemoveFinished:
             handleGroupingChanged();
             break;
-
         // 直接转发专门用于分组视图的事件
         case ModelChangeType::kInsertGroupRows:
             Q_EMIT insertGroupRows(index, count);
