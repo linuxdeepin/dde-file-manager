@@ -67,7 +67,7 @@ bool BurnCheckStrategy::validFile(const QFileInfo &info)
 
     QString absoluteFilePathWithStagePath { info.absoluteFilePath() };
     const QString &fileName { info.fileName() };
-    const QString &absoluteFilePath { QDir::separator() + absoluteFilePathWithStagePath.remove(currentStagePath) };
+    const QString &absoluteFilePath { absoluteFilePathWithStagePath.remove(currentStagePath) };
     invalidName = fileName;
 
     if (!validFileNameCharacters(fileName)) {
@@ -203,7 +203,7 @@ bool JolietCheckStrategy::validFileNameCharacters(const QString &fileName)
 
 bool JolietCheckStrategy::validFilePathCharacters(const QString &filePath)
 {
-    return filePath.size() < kMaxJolietFilePathSize;
+    return filePath.size() <= kMaxJolietFilePathSize;
 }
 
 /*!
