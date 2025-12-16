@@ -608,7 +608,7 @@ bool FSMonitorPrivate::isDirectory(const QString &path, const QString &name) con
 void FSMonitorPrivate::handleFastScanCompleted(bool success)
 {
     if (success) {
-        fmInfo() << "FSMonitor: Fast directory scan completed successfully";
+        fmDebug() << "FSMonitor: Fast directory scan completed successfully";
     } else {
         fmWarning() << "FSMonitor: Fast directory scan failed, continuing with traditional scan";
         travelRootDirectories();

@@ -169,7 +169,7 @@ void FSEventController::onFilesCreated(const QStringList &paths)
         return;
     }
 
-    fmInfo() << "FSEventController: Files created event -" << paths.size() << "items";
+    fmDebug() << "FSEventController: Files created event -" << paths.size() << "items";
     m_collectedCreatedFiles.append(paths);
 }
 
@@ -179,7 +179,7 @@ void FSEventController::onFilesDeleted(const QStringList &paths)
         return;
     }
 
-    fmInfo() << "FSEventController: Files deleted event -" << paths.size() << "items";
+    fmDebug() << "FSEventController: Files deleted event -" << paths.size() << "items";
     m_collectedDeletedFiles.append(paths);
 }
 
@@ -189,7 +189,7 @@ void FSEventController::onFilesModified(const QStringList &paths)
         return;
     }
 
-    fmInfo() << "FSEventController: Files modified event -" << paths.size() << "items";
+    fmDebug() << "FSEventController: Files modified event -" << paths.size() << "items";
     m_collectedModifiedFiles.append(paths);
 }
 
@@ -199,7 +199,7 @@ void FSEventController::onFilesMoved(const QHash<QString, QString> &movedPaths)
         return;
     }
 
-    fmInfo() << "FSEventController: Files moved event -" << movedPaths.size() << "items";
+    fmDebug() << "FSEventController: Files moved event -" << movedPaths.size() << "items";
 
     // Merge the moved paths into our collection
     for (auto it = movedPaths.constBegin(); it != movedPaths.constEnd(); ++it) {

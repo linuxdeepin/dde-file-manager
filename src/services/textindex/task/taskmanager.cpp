@@ -50,7 +50,7 @@ TaskManager::~TaskManager()
     if (workerThread.isRunning()) {
         fmInfo() << "[TaskManager] Stopping worker thread";
         workerThread.quit();
-        if (!workerThread.wait(5000)) {  // 等待5秒
+        if (!workerThread.wait(5000)) {   // 等待5秒
             fmWarning() << "[TaskManager] Worker thread did not stop within timeout, forcing termination";
             workerThread.terminate();
             workerThread.wait(1000);
@@ -62,8 +62,8 @@ TaskManager::~TaskManager()
 // 单路径版本，调用多路径版本保持兼容性
 bool TaskManager::startTask(IndexTask::Type type, const QString &path, bool silent)
 {
-    fmDebug() << "[TaskManager::startTask] Single path task request - type:" << static_cast<int>(type) 
-             << "path:" << path << "silent:" << silent;
+    fmDebug() << "[TaskManager::startTask] Single path task request - type:" << static_cast<int>(type)
+              << "path:" << path << "silent:" << silent;
     return startTask(type, QStringList { path }, silent);
 }
 
@@ -73,7 +73,7 @@ bool TaskManager::startTask(IndexTask::Type type, const QStringList &pathList, b
     Q_ASSERT_X(type == IndexTask::Type::Create || type == IndexTask::Type::Update,
                "Type error", "Only create and update supported");
 
-    fmInfo() << "[TaskManager::startTask] Multi-path task request - type:" << static_cast<int>(type) 
+    fmInfo() << "[TaskManager::startTask] Multi-path task request - type:" << static_cast<int>(type)
              << "paths:" << pathList.size() << "silent:" << silent;
 
     // 检查路径列表是否为空
@@ -103,8 +103,8 @@ bool TaskManager::startTask(IndexTask::Type type, const QStringList &pathList, b
 
     // 如果当前有任务在运行，停止它并将新任务保存为待执行任务
     if (hasRunningTask()) {
-        fmInfo() << "[TaskManager::startTask] Current task running, queuing new task - paths:" << pathList.size() 
-                << "primary:" << primaryPath;
+        fmInfo() << "[TaskManager::startTask] Current task running, queuing new task - paths:" << pathList.size()
+                 << "primary:" << primaryPath;
 
         // 停止当前任务
         stopCurrentTask();
@@ -129,7 +129,7 @@ bool TaskManager::startTask(IndexTask::Type type, const QStringList &pathList, b
     }
 
     // 正常启动任务流程
-    fmInfo() << "[TaskManager::startTask] Starting new task immediately - paths:" << pathList.size() 
+    fmInfo() << "[TaskManager::startTask] Starting new task immediately - paths:" << pathList.size()
              << "primary:" << primaryPath << "type:" << static_cast<int>(type) << "silent:" << silent;
 
     // status文件存储了修改时间，清除后外部无法获取时间，外部利用该特性判断索引状态
@@ -189,8 +189,8 @@ bool TaskManager::startTask(IndexTask::Type type, const QStringList &pathList, b
             }
         }
 
-        fmInfo() << "[TaskManager::startTask] Task handler execution completed - success:" << finalResult.success 
-                << "interrupted:" << finalResult.interrupted << "fatal:" << finalResult.fatal;
+        fmInfo() << "[TaskManager::startTask] Task handler execution completed - success:" << finalResult.success
+                 << "interrupted:" << finalResult.interrupted << "fatal:" << finalResult.fatal;
         return finalResult;
     });
 
@@ -209,7 +209,7 @@ bool TaskManager::startTask(IndexTask::Type type, const QStringList &pathList, b
 
 bool TaskManager::startFileListTask(IndexTask::Type type, const QStringList &fileList, bool silent)
 {
-    fmInfo() << "[TaskManager::startFileListTask] File list task request - type:" << static_cast<int>(type) 
+    fmInfo() << "[TaskManager::startFileListTask] File list task request - type:" << static_cast<int>(type)
              << "files:" << fileList.size() << "silent:" << silent;
 
     if (fileList.isEmpty()) {
@@ -219,8 +219,8 @@ bool TaskManager::startFileListTask(IndexTask::Type type, const QStringList &fil
 
     // 如果当前有任务在运行，将新任务加入队列
     if (hasRunningTask() || currentTask) {
-        fmInfo() << "[TaskManager::startFileListTask] Current task running, queuing file list task with" 
-                << fileList.size() << "files";
+        fmInfo() << "[TaskManager::startFileListTask] Current task running, queuing file list task with"
+                 << fileList.size() << "files";
 
         // 将任务加入队列
         TaskQueueItem item;
@@ -230,12 +230,12 @@ bool TaskManager::startFileListTask(IndexTask::Type type, const QStringList &fil
         item.silent = silent;
         taskQueue.enqueue(item);
 
-        fmInfo() << "[TaskManager::startFileListTask] File list task queued successfully";
+        fmDebug() << "[TaskManager::startFileListTask] File list task queued successfully";
         return true;
     }
 
     // 正常启动任务流程
-    fmInfo() << "[TaskManager::startFileListTask] Starting file list task immediately - files:" << fileList.size() 
+    fmInfo() << "[TaskManager::startFileListTask] Starting file list task immediately - files:" << fileList.size()
              << "type:" << static_cast<int>(type) << "silent:" << silent;
 
     // 获取对应的任务处理器
@@ -268,13 +268,13 @@ bool TaskManager::startFileListTask(IndexTask::Type type, const QStringList &fil
     workerThread.start();
 
     emit startTaskInThread();
-    fmInfo() << "[TaskManager::startFileListTask] File list task started successfully in worker thread";
+    fmDebug() << "[TaskManager::startFileListTask] File list task started successfully in worker thread";
     return true;
 }
 
 bool TaskManager::startFileMoveTask(const QHash<QString, QString> &movedFiles, bool silent)
 {
-    fmInfo() << "[TaskManager::startFileMoveTask] File move task request - moves:" << movedFiles.size() 
+    fmInfo() << "[TaskManager::startFileMoveTask] File move task request - moves:" << movedFiles.size()
              << "silent:" << silent;
 
     if (movedFiles.isEmpty()) {
@@ -284,8 +284,8 @@ bool TaskManager::startFileMoveTask(const QHash<QString, QString> &movedFiles, b
 
     // 如果当前有任务在运行，将新任务加入队列
     if (hasRunningTask() || currentTask) {
-        fmInfo() << "[TaskManager::startFileMoveTask] Current task running, queuing file move task with" 
-                << movedFiles.size() << "moves";
+        fmInfo() << "[TaskManager::startFileMoveTask] Current task running, queuing file move task with"
+                 << movedFiles.size() << "moves";
 
         // 将任务加入队列
         TaskQueueItem item;
@@ -295,12 +295,12 @@ bool TaskManager::startFileMoveTask(const QHash<QString, QString> &movedFiles, b
         item.silent = silent;
         taskQueue.enqueue(item);
 
-        fmInfo() << "[TaskManager::startFileMoveTask] File move task queued successfully";
+        fmDebug() << "[TaskManager::startFileMoveTask] File move task queued successfully";
         return true;
     }
 
     // 正常启动任务流程
-    fmInfo() << "[TaskManager::startFileMoveTask] Starting file move task immediately - moves:" << movedFiles.size() 
+    fmInfo() << "[TaskManager::startFileMoveTask] Starting file move task immediately - moves:" << movedFiles.size()
              << "silent:" << silent;
 
     // 获取对应的任务处理器
@@ -323,7 +323,7 @@ bool TaskManager::startFileMoveTask(const QHash<QString, QString> &movedFiles, b
     workerThread.start();
 
     emit startTaskInThread();
-    fmInfo() << "[TaskManager::startFileMoveTask] File move task started successfully in worker thread";
+    fmDebug() << "[TaskManager::startFileMoveTask] File move task started successfully in worker thread";
     return true;
 }
 
@@ -379,7 +379,7 @@ void TaskManager::onTaskFinished(IndexTask::Type type, HandlerResult result)
     }
 
     QString taskPath = currentTask->taskPath();
-    fmInfo() << "[TaskManager::onTaskFinished] Task finished - type:" << static_cast<int>(type) 
+    fmInfo() << "[TaskManager::onTaskFinished] Task finished - type:" << static_cast<int>(type)
              << "path:" << taskPath << "success:" << result.success << "interrupted:" << result.interrupted;
 
     if (!result.success && type == IndexTask::Type::Update) {
@@ -412,8 +412,8 @@ void TaskManager::onTaskFinished(IndexTask::Type type, HandlerResult result)
         }
     }
 
-    fmInfo() << "[TaskManager::onTaskFinished] Task" << typeToString(type) << "for path" << taskPath
-             << (result.success ? "completed successfully" : "failed");
+    fmDebug() << "[TaskManager::onTaskFinished] Task" << typeToString(type) << "for path" << taskPath
+              << (result.success ? "completed successfully" : "failed");
 
     // 如果是根目录的任务，更新状态文件
     if (IndexUtility::isDefaultIndexedDirectory(taskPath) && !result.success) {
@@ -423,7 +423,7 @@ void TaskManager::onTaskFinished(IndexTask::Type type, HandlerResult result)
 
     if (result.success) {
         if (!result.interrupted || type == IndexTask::Type::Create) {
-            fmInfo() << "[TaskManager::onTaskFinished] Task completed successfully, updating index status";
+            fmDebug() << "[TaskManager::onTaskFinished] Task completed successfully, updating index status";
             IndexUtility::saveIndexStatus(QDateTime::currentDateTime(), Defines::kIndexVersion);
         }
     }
@@ -446,8 +446,8 @@ bool TaskManager::hasRunningTask() const
 void TaskManager::stopCurrentTask()
 {
     if (currentTask) {
-        fmInfo() << "[TaskManager::stopCurrentTask] Stopping current task - type:" << static_cast<int>(currentTask->taskType()) 
-                << "path:" << currentTask->taskPath();
+        fmInfo() << "[TaskManager::stopCurrentTask] Stopping current task - type:" << static_cast<int>(currentTask->taskType())
+                 << "path:" << currentTask->taskPath();
         currentTask->stop();
     } else {
         fmDebug() << "[TaskManager::stopCurrentTask] No current task to stop";
@@ -475,8 +475,8 @@ std::optional<QString> TaskManager::currentTaskPath() const
 void TaskManager::cleanupTask()
 {
     if (currentTask) {
-        fmDebug() << "[TaskManager::cleanupTask] Cleaning up task resources - type:" << static_cast<int>(currentTask->taskType()) 
-                 << "path:" << currentTask->taskPath();
+        fmDebug() << "[TaskManager::cleanupTask] Cleaning up task resources - type:" << static_cast<int>(currentTask->taskType())
+                  << "path:" << currentTask->taskPath();
         disconnect(this, &TaskManager::startTaskInThread, currentTask, &IndexTask::start);
         currentTask->deleteLater();
         currentTask = nullptr;
@@ -495,7 +495,7 @@ bool TaskManager::startNextTask()
     // 从队列中取出下一个任务
     TaskQueueItem nextTask = taskQueue.dequeue();
 
-    fmInfo() << "[TaskManager::startNextTask] Starting next queued task - type:" << static_cast<int>(nextTask.type) 
+    fmInfo() << "[TaskManager::startNextTask] Starting next queued task - type:" << static_cast<int>(nextTask.type)
              << "remaining in queue:" << taskQueue.count();
 
     // 根据任务类型启动相应的任务
@@ -503,8 +503,8 @@ bool TaskManager::startNextTask()
         || nextTask.type == IndexTask::Type::UpdateFileList
         || nextTask.type == IndexTask::Type::RemoveFileList) {
         // 启动文件列表任务
-        fmInfo() << "[TaskManager::startNextTask] Starting queued file list task - type:" << static_cast<int>(nextTask.type) 
-                << "files:" << nextTask.fileList.size();
+        fmInfo() << "[TaskManager::startNextTask] Starting queued file list task - type:" << static_cast<int>(nextTask.type)
+                 << "files:" << nextTask.fileList.size();
         return startFileListTask(nextTask.type, nextTask.fileList, nextTask.silent);
     } else if (nextTask.type == IndexTask::Type::MoveFileList) {
         // 启动文件移动任务
@@ -512,13 +512,13 @@ bool TaskManager::startNextTask()
         return startFileMoveTask(nextTask.movedFiles, nextTask.silent);
     } else if (!nextTask.pathList.isEmpty()) {
         // 启动多路径任务
-        fmInfo() << "[TaskManager::startNextTask] Starting queued multi-path task - type:" << static_cast<int>(nextTask.type) 
-                << "paths:" << nextTask.pathList.size();
+        fmInfo() << "[TaskManager::startNextTask] Starting queued multi-path task - type:" << static_cast<int>(nextTask.type)
+                 << "paths:" << nextTask.pathList.size();
         return startTask(nextTask.type, nextTask.pathList, nextTask.silent);
     } else {
         // 启动单路径任务
-        fmInfo() << "[TaskManager::startNextTask] Starting queued single-path task - type:" << static_cast<int>(nextTask.type) 
-                << "path:" << nextTask.path;
+        fmInfo() << "[TaskManager::startNextTask] Starting queued single-path task - type:" << static_cast<int>(nextTask.type)
+                 << "path:" << nextTask.path;
         return startTask(nextTask.type, nextTask.path, nextTask.silent);
     }
 }
