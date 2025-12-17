@@ -6,11 +6,13 @@
 #include <QCoreApplication>
 #include <QSignalSpy>
 #include <QVariant>
+#include <memory>
 
 #include "stubext.h"
 
 #include <dfm-base/base/configs/settingbackend.h>
 #include <dfm-base/base/application/application.h>
+#include <dfm-base/base/application/private/application_p.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/settingdialog/settingjsongenerator.h>
 
@@ -40,6 +42,8 @@ public:
             }
             return fakeApp;
         });
+        // Clear any existing Application instance
+        ApplicationPrivate::self = nullptr;
 
         backend = SettingBackend::instance();
     }
@@ -58,6 +62,11 @@ protected:
     stub_ext::StubExt stub;
     SettingBackend *backend { nullptr };
     QCoreApplication *app { nullptr };
+    
+    // Helper variables to avoid stack-use-after-return issues in tests
+    bool test_getterCalled { false };
+    bool test_setterCalled { false };
+    QVariant test_retrievedValue;
 };
 
 // ========== Basic Functionality Tests ==========
@@ -117,17 +126,19 @@ TEST_F(TestSettingBackend, addSettingAccessor_WithGetterAndSetter)
     QVariant testValue = QString("test_value");
     QVariant retrievedValue;
 
-    bool getterCalled = false;
-    bool setterCalled = false;
+    // Reset test member variables for this test
+    test_getterCalled = false;
+    test_setterCalled = false;
+    test_retrievedValue = QVariant();
 
-    auto getter = [&getterCalled, testValue]() -> QVariant {
-        getterCalled = true;
+    auto getter = [this, testValue]() -> QVariant {
+        test_getterCalled = true;
         return testValue;
     };
 
-    auto setter = [&setterCalled, &retrievedValue](const QVariant &val) {
-        setterCalled = true;
-        retrievedValue = val;
+    auto setter = [this](const QVariant &val) {
+        test_setterCalled = true;
+        test_retrievedValue = val;
     };
 
     backend->addSettingAccessor(testKey, getter, setter);
@@ -138,13 +149,13 @@ TEST_F(TestSettingBackend, addSettingAccessor_WithGetterAndSetter)
 
     // Test getter
     QVariant result = backend->getOption(testKey);
-    EXPECT_TRUE(getterCalled);
+    EXPECT_TRUE(test_getterCalled);
     EXPECT_EQ(result, testValue);
 
     // Test setter through onOptionSetted
     backend->onOptionSetted(testKey, QVariant("new_value"));
-    EXPECT_TRUE(setterCalled);
-    EXPECT_EQ(retrievedValue.toString(), QString("new_value"));
+    EXPECT_TRUE(test_setterCalled);
+    EXPECT_EQ(test_retrievedValue.toString(), QString("new_value"));
 }
 
 TEST_F(TestSettingBackend, addSettingAccessor_WithNullGetter)

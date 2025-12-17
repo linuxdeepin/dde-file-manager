@@ -13,6 +13,7 @@
 #include <QUrl>
 #include <QVariant>
 #include <QAbstractItemView>
+#include <memory>
 
 using namespace dfmplugin_workspace;
 
@@ -47,16 +48,17 @@ TEST_F(WorkspaceHelperTest, RegisterTopWidgetCreator_ValidScheme_CreatesCreator)
     WorkspaceHelper *helper = WorkspaceHelper::instance();
     QString scheme = "test_scheme";
     
-    // Mock creator function
-    bool creatorCalled = false;
-    auto creator = [&creatorCalled]() -> CustomTopWidgetInterface* {
-        creatorCalled = true;
-        return nullptr;
+    // Mock creator function - use shared pointer to avoid stack-use-after-return
+    auto creatorCalled = std::make_shared<bool>(false);
+    auto creator = [creatorCalled]() -> CustomTopWidgetInterface* {
+        *creatorCalled = true;
+        return nullptr;  // Return nullptr as we're not testing the actual creation
     };
     
     helper->registerTopWidgetCreator(scheme, creator);
     
     EXPECT_TRUE(helper->isRegistedTopWidget(scheme));
+    // Verify the creator was registered properly without calling it to avoid stack-use-after-return
 }
 
 TEST_F(WorkspaceHelperTest, IsRegistedTopWidget_RegisteredScheme_ReturnsTrue)
@@ -95,10 +97,10 @@ TEST_F(WorkspaceHelperTest, CreateTopWidgetByUrl_ValidUrl_CreatesWidget)
     QString scheme = "test_scheme";
     QUrl testUrl("test_scheme://path");
     
-    // Mock creator function
-    bool creatorCalled = false;
-    auto creator = [&creatorCalled]() -> CustomTopWidgetInterface* {
-        creatorCalled = true;
+    // Use a shared pointer to avoid stack-use-after-return issue
+    auto creatorCalled = std::make_shared<bool>(false);
+    auto creator = [creatorCalled]() -> CustomTopWidgetInterface* {
+        *creatorCalled = true;
         return nullptr;
     };
     
@@ -109,6 +111,9 @@ TEST_F(WorkspaceHelperTest, CreateTopWidgetByUrl_ValidUrl_CreatesWidget)
     // Just test that the function runs without crashing
     // The creator might not be called if the URL scheme is not properly handled
     (void)result;
+    
+    // Verify that the creator was called
+    EXPECT_TRUE(*creatorCalled);
 }
 
 TEST_F(WorkspaceHelperTest, CreateTopWidgetByScheme_ValidScheme_CreatesWidget)
@@ -117,10 +122,10 @@ TEST_F(WorkspaceHelperTest, CreateTopWidgetByScheme_ValidScheme_CreatesWidget)
     WorkspaceHelper *helper = WorkspaceHelper::instance();
     QString scheme = "test_scheme";
     
-    // Mock creator function
-    bool creatorCalled = false;
-    auto creator = [&creatorCalled]() -> CustomTopWidgetInterface* {
-        creatorCalled = true;
+    // Use a shared pointer to avoid stack-use-after-return issue
+    auto creatorCalled = std::make_shared<bool>(false);
+    auto creator = [creatorCalled]() -> CustomTopWidgetInterface* {
+        *creatorCalled = true;
         return nullptr;
     };
     
@@ -130,6 +135,9 @@ TEST_F(WorkspaceHelperTest, CreateTopWidgetByScheme_ValidScheme_CreatesWidget)
     
     // Just test that the function runs without crashing
     (void)result;
+    
+    // Verify that the creator was called
+    EXPECT_TRUE(*creatorCalled);
 }
 
 TEST_F(WorkspaceHelperTest, SetCustomTopWidgetVisible_ValidScheme_SetsVisibility)

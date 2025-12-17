@@ -738,12 +738,12 @@ EXPECT_EQ(capturedParam, "expected");
 
 **测试 Fixture 模式**:
 ```cpp
-class ApplicationTest : public ::testing::Test {
+class SampleClassTest : public ::testing::Test {
 protected:
     void SetUp() override {
         // 每个测试前执行
         stub.clear();
-        app = createTestApplication();
+        app = createTestSample();
     }
     
     void TearDown() override {
@@ -754,13 +754,13 @@ protected:
     }
     
     // 共享的测试辅助函数
-    Application* createTestApplication() {
-        return new Application();
+    Sample* createTestSample() {
+        return new Sample();
     }
     
     // 共享的测试数据
     stub_ext::StubExt stub;
-    Application *app = nullptr;
+    Sample *app = nullptr;
 };
 ```
 

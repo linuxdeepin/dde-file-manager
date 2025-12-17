@@ -1,8 +1,8 @@
 // SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "gtest/gtest.h"
-#include "gmock/gmock.h"
+#include <gtest/gtest.h>
+#include <gmock/gmock.h>
 #include <QTest>
 #include <QSignalSpy>
 #include <QTimer>
@@ -16,6 +16,10 @@
 #include <QStandardPaths>
 #include <QVariant>
 #include <QDateTime>
+#include <QMutex>
+#include <QMutexLocker>
+#include <iostream>
+#include <memory>
 
 #include "dfm-base/utils/systempathutil.h"
 #include "dfm-base/base/application/application.h"
@@ -487,9 +491,10 @@ TEST_F(SystemPathUtilTest, TestConcurrentSafety)
     const int threadCount = 10;
     QList<QThread*> threads;
     QList<bool> results;
+    QMutex resultsMutex;  // 添加互斥锁保护共享数据
     
     for (int i = 0; i < threadCount; ++i) {
-        QThread* thread = QThread::create([this, i, &results]() {
+        QThread* thread = QThread::create([this, i, &results, &resultsMutex]() {
             try {
                 // 并发执行各种系统路径操作
                 QString homePath = systemPathUtil->systemPath("Home");
@@ -503,11 +508,19 @@ TEST_F(SystemPathUtilTest, TestConcurrentSafety)
                               (displayName.isEmpty() || !displayName.isEmpty()) &&
                               (iconName.isEmpty() || !iconName.isEmpty());
                 
-                results.append(success);
+                // 使用互斥锁保护对共享结果列表的访问
+                {
+                    QMutexLocker locker(&resultsMutex);
+                    results.append(success);
+                }
                 
                 QThread::msleep(1);
             } catch (...) {
-                results.append(false);
+                // 使用互斥锁保护对共享结果列表的访问
+                {
+                    QMutexLocker locker(&resultsMutex);
+                    results.append(false);
+                }
             }
         });
         
@@ -521,14 +534,18 @@ TEST_F(SystemPathUtilTest, TestConcurrentSafety)
         delete thread;
     }
     
-    EXPECT_EQ(results.size(), threadCount) << "All threads should complete";
-    
-    int successCount = 0;
-    for (bool result : results) {
-        if (result) successCount++;
+    // 使用互斥锁保护对共享结果列表的访问
+    {
+        QMutexLocker locker(&resultsMutex);
+        EXPECT_EQ(results.size(), threadCount) << "All threads should complete";
+        
+        int successCount = 0;
+        for (bool result : results) {
+            if (result) successCount++;
+        }
+        
+        EXPECT_EQ(successCount, threadCount) << "All concurrent operations should succeed";
     }
-    
-    EXPECT_EQ(successCount, threadCount) << "All concurrent operations should succeed";
 }
 
 // 测试18: 内存管理测试

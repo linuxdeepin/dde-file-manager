@@ -6,6 +6,8 @@
 #include "framemanager.h"
 #include "private/framemanager_p.h"
 
+#include <QDBusInterface>
+
 #include <gtest/gtest.h>
 #include <dfm-framework/dpf.h>
 #include <QTimer>
@@ -18,6 +20,12 @@ class UT_FrameManager : public testing::Test
 protected:
     void SetUp() override
     {
+        // mock QDBusInterface::call
+        stub.set_lamda(ADDR(QDBusInterface, doCall), [] {
+            __DBG_STUB_INVOKE__
+            return QDBusMessage();
+        });
+
         manager = new FrameManager();
     }
 

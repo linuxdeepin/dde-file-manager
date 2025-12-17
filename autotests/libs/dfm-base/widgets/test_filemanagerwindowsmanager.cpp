@@ -8,6 +8,7 @@
 
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/widgets/filemanagerwindow.h>
+#include <QDialog>
 #include "stubext.h"
 
 using namespace dfmbase;
@@ -16,6 +17,18 @@ class FileManagerWindowsManagerTest : public testing::Test {
 protected:
     void SetUp() override {
         stub.clear();
+        
+        // Stub UI methods to avoid actual dialog display
+        stub.set_lamda(VADDR(QDialog, exec), [] {
+            __DBG_STUB_INVOKE__
+            return QDialog::Accepted;  // or QDialog::Rejected as needed
+        });
+        stub.set_lamda(&QWidget::show, [](QWidget *) {
+            __DBG_STUB_INVOKE__
+        });
+        stub.set_lamda(&QWidget::hide, [](QWidget *) {
+            __DBG_STUB_INVOKE__
+        });
     }
 
     void TearDown() override {

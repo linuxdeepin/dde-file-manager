@@ -8,6 +8,7 @@
 
 #include <dfm-base/widgets/filemanagerwindow.h>
 #include <dfm-base/interfaces/abstractframe.h>
+#include <QDialog>
 #include "stubext.h"
 
 using namespace dfmbase;
@@ -24,72 +25,83 @@ class FileManagerWindowTest : public testing::Test {
 protected:
     void SetUp() override {
         stub.clear();
+        url = QUrl("file:///tmp");
+        
+        // Stub UI methods to avoid actual dialog display
+        stub.set_lamda(VADDR(QDialog, exec), [] {
+            __DBG_STUB_INVOKE__
+            return QDialog::Accepted;  // or QDialog::Rejected as needed
+        });
+        stub.set_lamda(&QWidget::show, [](QWidget *) {
+            __DBG_STUB_INVOKE__
+        });
+        stub.set_lamda(&QWidget::hide, [](QWidget *) {
+            __DBG_STUB_INVOKE__
+        });
+
+        window = new FileManagerWindow(url);
     }
 
     void TearDown() override {
         stub.clear();
+        delete window;
     }
 
     stub_ext::StubExt stub;
+    QUrl url;
+    FileManagerWindow *window = nullptr;
 };
 
 TEST_F(FileManagerWindowTest, Constructor_WithUrlAndParent_ExpectedWindowCreated) {
     // Arrange
-    QUrl url("file:///tmp");
     QWidget parent;
 
     // Act
-    FileManagerWindow window(url, &parent);
+    FileManagerWindow *tmpWindow = new FileManagerWindow(url, &parent);
 
     // Assert
     // Just ensure no crash during construction
-    EXPECT_TRUE(true);
+    EXPECT_NE(tmpWindow, nullptr);
+    delete tmpWindow;
 }
 
 TEST_F(FileManagerWindowTest, Constructor_WithUrlAndNullParent_ExpectedWindowCreated) {
     // Arrange
-    QUrl url("file:///tmp");
-
     // Act
-    FileManagerWindow window(url, nullptr);
+    FileManagerWindow *tmpWindow = new FileManagerWindow(url, nullptr);
 
     // Assert
     // Just ensure no crash during construction
-    EXPECT_TRUE(true);
+    EXPECT_NE(tmpWindow, nullptr);
+    delete tmpWindow;
 }
 
 TEST_F(FileManagerWindowTest, CurrentUrl_WithInitialUrl_ExpectedSameUrl) {
     // Arrange
-    QUrl initialUrl("file:///tmp/test");
-    FileManagerWindow window(initialUrl);
 
     // Act
-    QUrl resultUrl = window.currentUrl();
+    QUrl resultUrl = window->currentUrl();
 
     // Assert
-    EXPECT_EQ(resultUrl, initialUrl);
+    EXPECT_EQ(resultUrl, url);
 }
 
 TEST_F(FileManagerWindowTest, Cd_CallWithNewUrl_ExpectedUrlChanged) {
     // Arrange
-    QUrl initialUrl("file:///tmp");
     QUrl newUrl("file:///home");
-    FileManagerWindow window(initialUrl);
 
     // Act
-    window.cd(newUrl);
+    window->cd(newUrl);
 
     // Assert
-    EXPECT_EQ(window.currentUrl(), newUrl);
+    EXPECT_EQ(window->currentUrl(), newUrl);
 }
 
 TEST_F(FileManagerWindowTest, SaveClosedSate_Call_ExpectedTrueReturned) {
     // Arrange
-    QUrl url("file:///tmp");
-    FileManagerWindow window(url);
 
     // Act
-    bool result = window.saveClosedSate();
+    bool result = window->saveClosedSate();
 
     // Assert
     EXPECT_TRUE(result);
@@ -97,11 +109,9 @@ TEST_F(FileManagerWindowTest, SaveClosedSate_Call_ExpectedTrueReturned) {
 
 TEST_F(FileManagerWindowTest, MoveCenter_Call_ExpectedNoCrash) {
     // Arrange
-    QUrl url("file:///tmp");
-    FileManagerWindow window(url);
 
     // Act
-    window.moveCenter();
+    window->moveCenter();
 
     // Assert
     // Just ensure no crash
@@ -110,13 +120,11 @@ TEST_F(FileManagerWindowTest, MoveCenter_Call_ExpectedNoCrash) {
 
 TEST_F(FileManagerWindowTest, InstallTitleBar_Call_ExpectedNoCrash) {
     // Arrange
-    QUrl url("file:///tmp");
-    FileManagerWindow window(url);
 
     MockAbstractFrame *frame = new MockAbstractFrame();
 
     // Act
-    window.installTitleBar(frame);
+    window->installTitleBar(frame);
 
     // Assert
     // Just ensure no crash
@@ -125,13 +133,11 @@ TEST_F(FileManagerWindowTest, InstallTitleBar_Call_ExpectedNoCrash) {
 
 TEST_F(FileManagerWindowTest, InstallSideBar_Call_ExpectedNoCrash) {
     // Arrange
-    QUrl url("file:///tmp");
-    FileManagerWindow window(url);
 
     MockAbstractFrame *frame = new MockAbstractFrame();
 
     // Act
-    window.installSideBar(frame);
+    window->installSideBar(frame);
 
     // Assert
     // Just ensure no crash
@@ -140,13 +146,11 @@ TEST_F(FileManagerWindowTest, InstallSideBar_Call_ExpectedNoCrash) {
 
 TEST_F(FileManagerWindowTest, InstallWorkSpace_Call_ExpectedNoCrash) {
     // Arrange
-    QUrl url("file:///tmp");
-    FileManagerWindow window(url);
 
     MockAbstractFrame *frame = new MockAbstractFrame();
 
     // Act
-    window.installWorkSpace(frame);
+    window->installWorkSpace(frame);
 
     // Assert
     // Just ensure no crash
@@ -155,12 +159,10 @@ TEST_F(FileManagerWindowTest, InstallWorkSpace_Call_ExpectedNoCrash) {
 
 TEST_F(FileManagerWindowTest, InstallDetailView_Call_ExpectedNoCrash) {
     // Arrange
-    QUrl url("file:///tmp");
-    FileManagerWindow window(url);
     AbstractFrame *frame = nullptr;  // Use null to avoid complex setup
 
     // Act
-    window.installDetailView(frame);
+    window->installDetailView(frame);
 
     // Assert
     // Just ensure no crash
@@ -169,11 +171,9 @@ TEST_F(FileManagerWindowTest, InstallDetailView_Call_ExpectedNoCrash) {
 
 TEST_F(FileManagerWindowTest, TitleBar_Call_ExpectedFrameReturned) {
     // Arrange
-    QUrl url("file:///tmp");
-    FileManagerWindow window(url);
 
     // Act
-    AbstractFrame *result = window.titleBar();
+    AbstractFrame *result = window->titleBar();
 
     // Assert
     EXPECT_EQ(result, nullptr);  // Initially should be null
@@ -181,11 +181,9 @@ TEST_F(FileManagerWindowTest, TitleBar_Call_ExpectedFrameReturned) {
 
 TEST_F(FileManagerWindowTest, SideBar_Call_ExpectedFrameReturned) {
     // Arrange
-    QUrl url("file:///tmp");
-    FileManagerWindow window(url);
 
     // Act
-    AbstractFrame *result = window.sideBar();
+    AbstractFrame *result = window->sideBar();
 
     // Assert
     EXPECT_EQ(result, nullptr);  // Initially should be null
@@ -193,11 +191,9 @@ TEST_F(FileManagerWindowTest, SideBar_Call_ExpectedFrameReturned) {
 
 TEST_F(FileManagerWindowTest, WorkSpace_Call_ExpectedFrameReturned) {
     // Arrange
-    QUrl url("file:///tmp");
-    FileManagerWindow window(url);
 
     // Act
-    AbstractFrame *result = window.workSpace();
+    AbstractFrame *result = window->workSpace();
 
     // Assert
     EXPECT_EQ(result, nullptr);  // Initially should be null
@@ -205,11 +201,9 @@ TEST_F(FileManagerWindowTest, WorkSpace_Call_ExpectedFrameReturned) {
 
 TEST_F(FileManagerWindowTest, DetailView_Call_ExpectedFrameReturned) {
     // Arrange
-    QUrl url("file:///tmp");
-    FileManagerWindow window(url);
 
     // Act
-    AbstractFrame *result = window.detailView();
+    AbstractFrame *result = window->detailView();
 
     // Assert
     EXPECT_EQ(result, nullptr);  // Initially should be null
@@ -217,11 +211,9 @@ TEST_F(FileManagerWindowTest, DetailView_Call_ExpectedFrameReturned) {
 
 TEST_F(FileManagerWindowTest, LoadState_Call_ExpectedNoCrash) {
     // Arrange
-    QUrl url("file:///tmp");
-    FileManagerWindow window(url);
 
     // Act
-    window.loadState();
+    window->loadState();
 
     // Assert
     // Just ensure no crash
@@ -230,11 +222,8 @@ TEST_F(FileManagerWindowTest, LoadState_Call_ExpectedNoCrash) {
 
 TEST_F(FileManagerWindowTest, SaveState_Call_ExpectedNoCrash) {
     // Arrange
-    QUrl url("file:///tmp");
-    FileManagerWindow window(url);
-
     // Act
-    window.saveState();
+    window->saveState();
 
     // Assert
     // Just ensure no crash
