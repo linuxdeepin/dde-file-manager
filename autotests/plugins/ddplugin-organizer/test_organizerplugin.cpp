@@ -6,6 +6,8 @@
 #include "organizerplugin.h"
 #include "framemanager.h"
 
+#include <QDBusInterface>
+
 #include <gtest/gtest.h>
 #include <dfm-framework/dpf.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
@@ -20,6 +22,12 @@ class UT_OrganizerPlugin : public testing::Test
 protected:
     void SetUp() override
     {
+        // mock QDBusInterface::call
+        stub.set_lamda(ADDR(QDBusInterface, doCall), [] {
+            __DBG_STUB_INVOKE__
+            return QDBusMessage();
+        });
+
         plugin = new OrganizerPlugin();
     }
 

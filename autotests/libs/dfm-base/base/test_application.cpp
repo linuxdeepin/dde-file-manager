@@ -50,7 +50,8 @@ protected:
         // Set up test application if not exists
         if (!qApp) {
             static int argc = 1;
-            static char *argv[] = { const_cast<char*>("test_application") };
+            static char name[] = "test";
+            static char *argv[] = {name};
             app = std::make_unique<QCoreApplication>(argc, argv);
         }
         qApp->setApplicationName("TestApp");
