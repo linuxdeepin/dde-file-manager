@@ -63,7 +63,6 @@ public:
     void handleTabReleased(int index);
     void handleDragActionChanged(Qt::DropAction action);
     void handleContextMenu(int index);
-    void handleTabClicked(int index);
     void handleIndexChanged(int index);
     void updateToolTip(int index, const QString &tip);
 
@@ -141,7 +140,6 @@ void TabBarPrivate::initConnections()
         q->closeTab(QUrl::fromLocalFile(mpt.toString()));
     });
     connect(q, &TabBar::currentChanged, this, &TabBarPrivate::handleIndexChanged);
-    connect(q, &TabBar::tabBarClicked, this, &TabBarPrivate::handleTabClicked);
     connect(q, &TabBar::tabReleaseRequested, this, &TabBarPrivate::handleTabReleased);
     connect(q, &TabBar::dragActionChanged, this, &TabBarPrivate::handleDragActionChanged);
 }
@@ -251,12 +249,6 @@ void TabBarPrivate::handleContextMenu(int index)
     // 防止标签处于hover状态
     QEvent event(QEvent::HoverLeave);
     QApplication::sendEvent(tabBar, &event);
-}
-
-void TabBarPrivate::handleTabClicked(int index)
-{
-    if (isCloseButtonHovered(index))
-        Q_EMIT q->tabCloseRequested(index);
 }
 
 void TabBarPrivate::handleIndexChanged(int index)
@@ -612,15 +604,12 @@ void TabBar::removeTab(int index, int selectIndex)
     int newIndex = selectIndex;
     if (newIndex == -1) {
         int curIndex = currentIndex();
-        if (curIndex < index) {
-            // Current tab is before the deleted tab, keep current index unchanged
-            newIndex = curIndex;
-        } else if (curIndex == index) {
+        if (curIndex == index) {
             // Delete current tab, select next tab (if last tab then select previous)
             newIndex = (index == count() - 1) ? qMax(index - 1, 0) : index + 1;
         } else {
-            // Current tab is after deleted tab, decrease index by 1
-            newIndex = curIndex - 1;
+            // Keep current index unchanged
+            newIndex = curIndex;
         }
     }
 
@@ -843,6 +832,12 @@ bool TabBar::eventFilter(QObject *obj, QEvent *e)
             int index = tabAt(mapFromGlobal(QCursor::pos()));
             if (index != -1 && count() > 1) {
                 d->handleContextMenu(index);
+                return true;
+            }
+        } else if (me->button() == Qt::LeftButton) {
+            int index = tabAt(mapFromGlobal(QCursor::pos()));
+            if (index != -1 && d->isCloseButtonHovered(index)) {
+                Q_EMIT tabCloseRequested(index);
                 return true;
             }
         }
