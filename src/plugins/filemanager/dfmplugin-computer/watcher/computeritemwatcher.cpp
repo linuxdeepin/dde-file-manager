@@ -939,6 +939,10 @@ void ComputerItemWatcher::onDevicePropertyChangedQDBusVar(const QString &id, con
             }
             onUpdateBlockItem(id);
         }
+
+        if (propertyName == DeviceProperty::kFileSystem && !var.variant().toString().isEmpty()) {   // idType changed
+            addDevice(diskGroup(), url);
+        }
     }
 }
 

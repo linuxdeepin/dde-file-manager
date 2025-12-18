@@ -381,15 +381,22 @@ void DeviceWatcher::onBlkDevFsAdded(const QString &id)
 {
     // when a filesystem interface is added, lots of property may changed, so just reload the data
     // this will not happen frequently
-    d->allBlockInfos.insert(id, DeviceHelper::loadBlockInfo(id));
+    auto data = DeviceHelper::loadBlockInfo(id);
+    d->allBlockInfos.insert(id, data);
 
     emit DevMngIns->blockDevFsAdded(id);
-    using namespace GlobalServerDefines;
     emit DevMngIns->blockDevPropertyChanged(id, DeviceProperty::kHasFileSystem, true);
+
+    auto mpt = data.value(DeviceProperty::kMountPoint).toString();
+    if (!mpt.isEmpty())
+        emit DevMngIns->blockDevMounted(id, mpt);
+    else
+        DevMngIns->doAutoMount(id, DeviceType::kBlockDevice);
 }
 
 void DeviceWatcher::onBlkDevFsRemoved(const QString &id)
 {
+    const auto oldData = d->allBlockInfos.value(id);
     auto data = DeviceHelper::loadBlockInfo(id);
     // when a filesystem interface is added, lots of property may changed, so just reload the data
     // this will not happen frequently
@@ -398,8 +405,10 @@ void DeviceWatcher::onBlkDevFsRemoved(const QString &id)
     else
         d->allBlockInfos.remove(id);
 
+    auto oldMpt = oldData.value(DeviceProperty::kMountPoint).toString();
+    if (!oldMpt.isEmpty())
+        emit DevMngIns->blockDevUnmounted(id, oldMpt);
     emit DevMngIns->blockDevFsRemoved(id);
-    using namespace GlobalServerDefines;
     emit DevMngIns->blockDevPropertyChanged(id, DeviceProperty::kHasFileSystem, false);
 }
 
