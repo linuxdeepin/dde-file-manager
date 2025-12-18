@@ -173,3 +173,13 @@ void TitleBarEventCaller::sendSetGroupStrategy(QWidget *sender, const QString &s
     Q_ASSERT(id > 0);
     dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetGroup", id, strategy);
 }
+
+bool TitleBarEventCaller::sendGetCurrentModelBusy(QWidget *sender)
+{
+    quint64 id = TitleBarHelper::windowId(sender);
+    if (id < 1) {
+        fmWarning() << "Cannot get model busy state: invalid window id" << id;
+        return false;
+    }
+    return dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_GetCurrentBusy", id).toBool();
+}

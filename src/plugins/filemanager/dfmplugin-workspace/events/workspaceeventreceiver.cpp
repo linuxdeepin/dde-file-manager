@@ -8,6 +8,7 @@
 #include "utils/filedatamanager.h"
 #include "views/workspacewidget.h"
 #include "views/fileview.h"
+#include "models/fileviewmodel.h"
 
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/dfm_event_defines.h>
@@ -142,6 +143,8 @@ void WorkspaceEventReceiver::initConnection()
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleAboutToChangeViewWidth);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_Model_RegisterLoadStrategy",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleRegisterLoadStrategy);
+    dpfSlotChannel->connect(kCurrentEventSpace, "slot_Model_GetCurrentBusy",
+                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleGetCurrentModelBusy);
 
     dpfSignalDispatcher->subscribe(GlobalEventType::kSwitchViewMode,
                                    WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleTileBarSwitchModeTriggered);
@@ -513,4 +516,23 @@ void WorkspaceEventReceiver::handleRegisterFocusFileViewDisabled(const QString &
 {
     fmDebug() << "WorkspaceEventReceiver: Handling register focus file view disabled request for scheme:" << scheme;
     WorkspaceHelper::instance()->registerFocusFileViewDisabled(scheme);
+}
+
+bool WorkspaceEventReceiver::handleGetCurrentModelBusy(quint64 windowId)
+{
+    WorkspaceWidget *workspaceWidget = WorkspaceHelper::instance()->findWorkspaceByWindowId(windowId);
+    if (!workspaceWidget) {
+        fmWarning() << "WorkspaceEventReceiver: Cannot find workspace widget for window ID:" << windowId;
+        return false;
+    }
+
+    auto view = dynamic_cast<FileView *>(workspaceWidget->currentView());
+    if (!view || !view->model()) {
+        fmWarning() << "WorkspaceEventReceiver: Cannot find current view or model for window ID:" << windowId;
+        return false;
+    }
+
+    bool isBusy = view->model()->currentState() == ModelState::kBusy;
+    fmDebug() << "WorkspaceEventReceiver: Current view busy state:" << isBusy << "for window ID:" << windowId;
+    return isBusy;
 }

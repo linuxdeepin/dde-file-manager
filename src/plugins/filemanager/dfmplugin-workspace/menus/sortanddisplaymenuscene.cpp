@@ -476,4 +476,11 @@ void SortAndDisplayMenuScenePrivate::updateEmptyAreaActionState()
         fmDebug() << "Unknown view mode:" << static_cast<int>(mode);
         break;
     }
+
+    // 在视图忙碌状态（迭代和排序时）不能进行排序、分组
+    const bool busy = view->model()->currentState() == ModelState::kBusy;
+    for (const char *id : { ActionID::kSortBy, ActionID::kGroupBy }) {
+        if (auto it = predicateAction.find(id); it != predicateAction.end())
+            it.value()->setEnabled(!busy);
+    }
 }

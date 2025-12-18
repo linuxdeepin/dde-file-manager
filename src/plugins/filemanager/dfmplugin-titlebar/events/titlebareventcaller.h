@@ -39,6 +39,7 @@ public:
     static void sendSetSort(QWidget *sender, DFMGLOBAL_NAMESPACE::ItemRoles role);
     static QString sendCurrentGroupRoleStrategy(QWidget *sender);
     static void sendSetGroupStrategy(QWidget *sender, const QString &strategy);
+    static bool sendGetCurrentModelBusy(QWidget *sender);
 };
 
 }
