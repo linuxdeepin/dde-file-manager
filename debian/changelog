@@ -1,3 +1,34 @@
+dde-file-manager (6.5.110) unstable; urgency=medium
+
+  * test(dfmplugin-workspace): add unit tests for utils and views
+  * test(dfm-extension): add comprehensive unit tests
+  * test(dfmplugin-workspace): add unit tests for groups module
+  * i18n: Translate dde-file-manager.ts in fi
+  * i18n: Translate dde-file-manager.ts in es
+  * test(dfmplugin-workspace): add comprehensive unit tests for workspace and private components
+  * fix: correct burn path length validation boundary conditions
+  * feat: add ancestor paths indexing for improved search
+  * chore: reduce log level for file system monitoring operations
+  * refactor: improve file move processor field handling
+  * fix: reduce max index file size from 512MB to 128MB
+  * feat: separate file index event collection and startup delay
+  * refactor: reduce log level for file system events
+  * fix: fix home path comparison in file sorting
+  * test: add comprehensive unit tests for dfm-base components
+  * feat: add syntax highlighting support for text preview
+  * fix: set device pixel ratio for image preview
+  * refactor: replace DCommandLinkButton with DToolButton for custom tab add directory
+  * fix: resolve MTP file opening blocking main thread
+  * test(dfmplugin-workspace): add comprehensive unit tests for workspace components
+  * feat: optimize JSON generation in trash script
+  * test: [dfm-base]add comprehensive unit tests for dfm-base components
+  * fix: refine signal emission logic for block device filesystem changes
+  * fix: fix text preview crash by adjusting initialization order
+  * feat: add model busy state detection for UI operations
+  * refactor: simplify tab selection logic and close button handling
+
+ -- Liu Zhangjian <liuzhangjian@uniontech.com>  Thu, 18 Dec 2025 20:14:04 +0800
+
 dde-file-manager (6.5.109) unstable; urgency=medium
 
   * feat: optimize search input delay for Chinese characters
