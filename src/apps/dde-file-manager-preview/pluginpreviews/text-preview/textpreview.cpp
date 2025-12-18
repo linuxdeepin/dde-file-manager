@@ -40,7 +40,7 @@ TextPreview::~TextPreview()
 bool TextPreview::setFileUrl(const QUrl &url)
 {
     fmInfo() << "Text preview: setting file URL:" << url;
-    
+
     if (selectUrl == url) {
         fmDebug() << "Text preview: URL unchanged, skipping:" << url;
         return true;
@@ -90,11 +90,11 @@ bool TextPreview::setFileUrl(const QUrl &url)
     char *buf = new char[static_cast<unsigned long>(len)];
     device.seekg(0, ios::beg).read(buf, static_cast<streamsize>(len));
     device.close();
-    
+
     bool ok { false };
     QString fileEncoding = DTK_NAMESPACE::DCORE_NAMESPACE::DTextEncoding::detectFileEncoding(filePath, &ok);
     fmDebug() << "Text preview: detected file encoding:" << fileEncoding << "detection success:" << ok;
-    
+
     std::string strBuf(buf, static_cast<unsigned long>(len));
     if (ok && fileEncoding.toLower() != "utf-8") {
         fmDebug() << "Text preview: converting from" << fileEncoding << "to UTF-8";
@@ -108,9 +108,10 @@ bool TextPreview::setFileUrl(const QUrl &url)
         }
     }
 
-    // Set syntax highlighting before setting file data
-    textBrowser->textBrowserEdit()->setSyntaxDefinition(filePath);
     textBrowser->textBrowserEdit()->setFileData(strBuf);
+    // Set syntax highlighting after setting file data
+    textBrowser->textBrowserEdit()->setSyntaxDefinition(filePath);
+
     delete[] buf;
     buf = nullptr;
 
