@@ -86,6 +86,8 @@ public slots:
     void handleRegisterLoadStrategy(const QString &scheme, DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy strategy);
     void handleRegisterFocusFileViewDisabled(const QString &scheme);
 
+    bool handleGetCurrentModelBusy(quint64 windowId);
+
 private:
     explicit WorkspaceEventReceiver(QObject *parent = nullptr);
 };

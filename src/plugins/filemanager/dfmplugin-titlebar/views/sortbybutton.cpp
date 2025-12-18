@@ -254,11 +254,29 @@ void SortByButton::mousePressEvent(QMouseEvent *event)
         d->iconClicked = event->position().x() <= leftWidth;   // Check if icon area is clicked
 
         if (event->position().x() > leftWidth && d->menu) {
+            // Query current tab's busy state before showing menu
+            bool isBusy = TitleBarEventCaller::sendGetCurrentModelBusy(this);
+
             d->setupMenu();
             d->setItemSortRoles();
             d->setItemGroupRoles();
+
+            // Disable all actions if model is busy
+            if (isBusy) {
+                for (QAction *action : d->menu->actions()) {
+                    action->setEnabled(false);
+                }
+                fmDebug() << "SortByButton: Menu actions disabled - current tab model is busy";
+            }
+
             d->menu->exec(mapToGlobal(rect().bottomLeft()));
         } else if (d->iconClicked) {
+            // Check busy state before sorting
+            bool isBusy = TitleBarEventCaller::sendGetCurrentModelBusy(this);
+            if (isBusy) {
+                fmDebug() << "SortByButton: Sort operation blocked - current tab model is busy";
+                return;
+            }
             d->sort();
         }
         update();   // Trigger repaint

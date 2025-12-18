@@ -74,6 +74,7 @@ class Workspace : public dpf::Plugin
     DPF_EVENT_REG_SLOT(slot_Model_SetGroup)
     DPF_EVENT_REG_SLOT(slot_Model_RegisterDataCache)
     DPF_EVENT_REG_SLOT(slot_Model_RegisterLoadStrategy)
+    DPF_EVENT_REG_SLOT(slot_Model_GetCurrentBusy)
 
     // hook events
     DPF_EVENT_REG_HOOK(hook_SendOpenWindow)
