@@ -10,10 +10,31 @@
 #include <QFile>
 #include <QDir>
 
+#include <unistd.h>
+#include <cerrno>
+
 inline constexpr char kUSecFstabConfig[] { "/etc/usec-crypt/encrypt.json" };
 inline constexpr char kUSecOtherConfig[] { "/etc/usec-crypt/encrypt_%1.json" };
 
 FILE_ENCRYPT_USE_NS
+
+namespace {
+// Ensure file data is synced to disk
+inline void syncToDisk(QFile &f)
+{
+    f.flush();
+    int fd = f.handle();
+    if (fd < 0) {
+        qWarning() << "[syncToDisk] Invalid file handle:" << fd;
+        return;
+    }
+    int ret = ::fsync(fd);
+    if (ret != 0)
+        qWarning() << "[syncToDisk] fsync failed, errno:" << errno;
+    else
+        qDebug() << "[syncToDisk] fsync succeeded for fd:" << fd;
+}
+}  // namespace
 
 int job_file_helper::createEncryptJobFile(JobDescArgs &args)
 {
@@ -53,9 +74,9 @@ int job_file_helper::createEncryptJobFile(JobDescArgs &args)
     args.jobFile = fileName;
 
     f.write(doc.toJson());
-    f.flush();
+    syncToDisk(f);
     f.close();
-    
+
     qInfo() << "[job_file_helper::createEncryptJobFile] Encryption job file created successfully:" << fileName;
     return 0;
 }
@@ -86,7 +107,7 @@ int job_file_helper::createDecryptJobFile(JobDescArgs &args)
     }
 
     f.write(doc.toJson());
-    f.flush();
+    syncToDisk(f);
     f.close();
 
     qInfo() << "[job_file_helper::createDecryptJobFile] Decryption job file created successfully:" << fileName;

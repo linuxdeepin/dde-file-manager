@@ -629,28 +629,40 @@ void EventsHandler::setAutoStartDFM(bool enable)
 {
     fmInfo() << "Setting file manager autostart to:" << enable;
 
+    static constexpr char kAM1Service[] = "org.desktopspec.ApplicationManager1";
+    static constexpr char kAM1Path[] = "/org/desktopspec/ApplicationManager1";
+    static constexpr char kAM1Interface[] = "org.desktopspec.ApplicationManager1";
+    static constexpr char kAM1AppInterface[] = "org.desktopspec.ApplicationManager1.Application";
+
     // Get app ID from desktop file path
     auto appId = DUtil::getAppIdFromAbsolutePath(QString(kReencryptDesktopFile));
     if (appId.isEmpty()) {
         fmWarning() << "Failed to get app ID from desktop file, using fallback";
-        appId = "dfm-reencrypt";  // fallback to basename
+        appId = "dfm-reencrypt";
     }
 
     // Escape app ID to DBus object path format
     const auto &dbusAppId = DUtil::escapeToObjectPath(appId);
-    const auto &objectPath = QString("/org/desktopspec/ApplicationManager1/%1").arg(dbusAppId);
+    const auto &objectPath = QString("%1/%2").arg(kAM1Path).arg(dbusAppId);
 
     fmInfo() << "Setting AutoStart via ApplicationManager1:"
              << "appId=" << appId
              << "objectPath=" << objectPath
              << "enable=" << enable;
 
-    // Create DBus interface for the application
-    QDBusInterface appMng("org.desktopspec.ApplicationManager1",
-                         objectPath,
-                         "org.desktopspec.ApplicationManager1.Application",
-                         QDBusConnection::sessionBus());
+    auto sessionBus = QDBusConnection::sessionBus();
 
+    // Reload applications list to ensure newly created desktop file is recognized
+    QDBusInterface amRoot(kAM1Service, kAM1Path, kAM1Interface, sessionBus);
+    if (amRoot.isValid()) {
+        amRoot.call("ReloadApplications");
+        fmInfo() << "ApplicationManager1 ReloadApplications called";
+    } else {
+        fmWarning() << "Failed to call ReloadApplications:" << amRoot.lastError().message();
+    }
+
+    // Create DBus interface for the application
+    QDBusInterface appMng(kAM1Service, objectPath, kAM1AppInterface, sessionBus);
     if (!appMng.isValid()) {
         fmWarning() << "Failed to create ApplicationManager interface:"
                     << appMng.lastError().message();
@@ -667,30 +679,22 @@ void EventsHandler::setAutoStartDFM(bool enable)
     fmInfo() << "AutoStart set successfully for" << appId << "to" << enable;
 
     // Redundant logic: Directly manipulate autostart directory as a backup
-    QString autostartDir = QDir::homePath() + "/.config/autostart";
-    QString autostartFile = autostartDir + "/dfm-reencrypt.desktop";
-    QString sourceDesktopFile = kReencryptDesktopFile;
+    static const QString autostartDir = QDir::homePath() + "/.config/autostart";
+    static const QString autostartFile = autostartDir + "/dfm-reencrypt.desktop";
 
     if (enable) {
-        // If enabling autostart, ensure the desktop file exists in autostart directory
         if (!QFile::exists(autostartFile)) {
             fmInfo() << "Autostart file not found, copying from source:"
-                     << sourceDesktopFile << "to" << autostartFile;
+                     << kReencryptDesktopFile << "to" << autostartFile;
 
-            // Ensure autostart directory exists
             QDir dir;
-            if (!dir.exists(autostartDir)) {
-                if (!dir.mkpath(autostartDir)) {
-                    fmWarning() << "Failed to create autostart directory:" << autostartDir;
-                    return;
-                }
-                fmInfo() << "Created autostart directory:" << autostartDir;
+            if (!dir.exists(autostartDir) && !dir.mkpath(autostartDir)) {
+                fmWarning() << "Failed to create autostart directory:" << autostartDir;
+                return;
             }
 
-            // Copy desktop file to autostart directory
-            if (QFile::copy(sourceDesktopFile, autostartFile)) {
+            if (QFile::copy(kReencryptDesktopFile, autostartFile)) {
                 fmInfo() << "Successfully copied desktop file to autostart directory";
-                // Set proper permissions
                 QFile::setPermissions(autostartFile, QFile::ReadOwner | QFile::WriteOwner | QFile::ExeOwner |
                                                      QFile::ReadGroup | QFile::ReadOther);
             } else {
@@ -700,14 +704,12 @@ void EventsHandler::setAutoStartDFM(bool enable)
             fmInfo() << "Autostart file already exists, no need to copy";
         }
     } else {
-        // If disabling autostart, remove the desktop file from autostart directory
         if (QFile::exists(autostartFile)) {
             fmInfo() << "Removing autostart file:" << autostartFile;
-            if (QFile::remove(autostartFile)) {
-                fmInfo() << "Successfully removed autostart file";
-            } else {
+            if (!QFile::remove(autostartFile))
                 fmWarning() << "Failed to remove autostart file";
-            }
+            else
+                fmInfo() << "Successfully removed autostart file";
         } else {
             fmInfo() << "Autostart file does not exist, no need to remove";
         }
