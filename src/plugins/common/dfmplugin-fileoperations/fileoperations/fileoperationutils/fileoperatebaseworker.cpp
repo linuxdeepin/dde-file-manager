@@ -174,6 +174,7 @@ bool FileOperateBaseWorker::checkFileSize(qint64 size, const QUrl &fromUrl,
     if (size < 4l * 1024 * 1024 * 1024)
         return true;
 
+    fmWarning() << "File size exceeds FAT32 limit - file:" << fromUrl << "size:" << size << "limit: 4GB";
     action = doHandleErrorAndWait(fromUrl, toUrl, AbstractJobHandler::JobErrorType::kFileSizeTooBigError);
 
     if (action == AbstractJobHandler::SupportAction::kEnforceAction)
@@ -275,14 +276,18 @@ bool FileOperateBaseWorker::copyFileFromTrash(const QUrl &urlSource, const QUrl 
     if (fileinfo->isAttributes(OptInfoType::kIsDir)) {
         if (!DFMIO::DFile(urlTarget).exists()) {
             DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-            if (!fileHandler.mkdir(urlTarget))
+            if (!fileHandler.mkdir(urlTarget)) {
+                fmWarning() << "Failed to create directory when restoring from trash - target:" << urlTarget << "error:" << fileHandler.errorString();
                 return false;
+            }
         }
 
         QString error;
         const AbstractDirIteratorPointer &iterator = DirIteratorFactory::create<AbstractDirIterator>(urlSource, &error);
-        if (!iterator)
+        if (!iterator) {
+            fmWarning() << "Failed to create directory iterator when restoring from trash - source:" << urlSource << "error:" << error;
             return false;
+        }
         while (iterator->hasNext()) {
             const QUrl &url = iterator->next();
             DFileInfoPointer fileinfoNext(new DFileInfo(url));
@@ -307,19 +312,26 @@ bool FileOperateBaseWorker::copyFileFromTrash(const QUrl &urlSource, const QUrl 
 
             if (fileinfoNext->attribute(DFileInfo::AttributeID::kStandardIsDir).toBool()) {
                 bool succ = copyFileFromTrash(url, newTargetInfo->uri(), flag);
-                if (!succ)
+                if (!succ) {
+                    fmDebug() << "Failed to restore directory from trash - from:" << url << "to:" << newTargetInfo->uri();
                     return false;
+                }
             } else {
                 DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
                 bool trashSucc = fileHandler.copyFile(url, newTargetInfo->uri(), flag);
-                if (!trashSucc)
+                if (!trashSucc) {
+                    fmWarning() << "Failed to restore file from trash - from:" << url << "to:" << newTargetInfo->uri() << "error:" << fileHandler.errorString();
                     return false;
+                }
             }
         }
         return true;
     } else {
         DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
         bool trashSucc = fileHandler.copyFile(urlSource, urlTarget, flag);
+        if (!trashSucc) {
+            fmWarning() << "Failed to restore file from trash - from:" << urlSource << "to:" << urlTarget << "error:" << fileHandler.errorString();
+        }
         return trashSucc;
     }
 }
@@ -333,8 +345,10 @@ bool FileOperateBaseWorker::copyFileFromTrash(const QUrl &urlSource, const QUrl 
 bool FileOperateBaseWorker::copyAndDeleteFile(const DFileInfoPointer &fromInfo, const DFileInfoPointer &targetPathInfo, const DFileInfoPointer &toInfo, bool *skip)
 {
     // 检查磁盘空间
-    if (!checkDiskSpaceAvailable(fromInfo->uri(), targetOrgUrl, skip))
+    if (!checkDiskSpaceAvailable(fromInfo->uri(), targetOrgUrl, skip)) {
+        fmDebug() << "Disk space check failed for cut operation - from:" << fromInfo->uri();
         return false;
+    }
 
     bool ok = false;
     if (!toInfo)
@@ -356,8 +370,10 @@ bool FileOperateBaseWorker::copyAndDeleteFile(const DFileInfoPointer &fromInfo, 
         auto fromSize = fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
 
         // check file file size bigger than 4 GB
-        if (!checkFileSize(fromSize, fromInfo->uri(), url, skip))
+        if (!checkFileSize(fromSize, fromInfo->uri(), url, skip)) {
+            fmDebug() << "File size check failed for cut operation - from:" << fromInfo->uri();
             return ok;
+        }
 
         FileUtils::cacheCopyingFileUrl(url);
         initSignalCopyWorker();
@@ -524,6 +540,7 @@ bool FileOperateBaseWorker::createSystemLink(const DFileInfoPointer &fromInfo, c
         if (localFileHandler->createSystemLink(target, toInfo->uri())) {
             return true;
         }
+        fmWarning() << "Create symlink failed - target:" << target << "link:" << toInfo->uri() << "error:" << localFileHandler->errorString();
         actionForlink = doHandleErrorAndWait(fromInfo->uri(), toInfo->uri(),
                                              AbstractJobHandler::JobErrorType::kSymlinkError, false,
                                              localFileHandler->errorString());
@@ -639,6 +656,7 @@ bool FileOperateBaseWorker::checkAndCopyFile(const DFileInfoPointer fromInfo, co
     // check file file size bigger than 4 GB
     if (!checkFileSize(fromSize, fromInfo->uri(),
                        toInfo->uri(), skip)) {
+        fmDebug() << "File size check failed, operation skipped - from:" << fromInfo->uri();
         return false;
     }
 
