@@ -309,6 +309,17 @@ bool FileUtils::isHomeDesktopFile(const QUrl &url)
     return false;
 }
 
+bool FileUtils::isSameMountPoint(const QUrl &url1, const QUrl &url2)
+{
+    if (!url1.isLocalFile())
+        return false;
+
+    if (url1.scheme() != url2.scheme())
+        return false;
+
+    return DFMIO::DFMUtils::mountPathFromUrl(url1) == DFMIO::DFMUtils::mountPathFromUrl(url2);
+}
+
 bool FileUtils::isSameDevice(const QUrl &url1, const QUrl &url2)
 {
     if (url1.scheme() != url2.scheme())

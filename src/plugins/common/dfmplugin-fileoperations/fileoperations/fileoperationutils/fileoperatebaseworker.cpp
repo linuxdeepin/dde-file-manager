@@ -667,7 +667,7 @@ bool FileOperateBaseWorker::checkAndCopyFile(const DFileInfoPointer fromInfo, co
         while (bigFileCopy && !isStopped()) {
             QThread::msleep(10);
         }
-        if (fromSize > bigFileSize && FileUtils::isSameDevice(fromInfo->uri(), targetUrl)) {
+        if (fromSize > bigFileSize && FileUtils::isSameMountPoint(fromInfo->uri(), targetUrl)) {
             bigFileCopy = true;
             auto result = doCopyLocalByRange(fromInfo, toInfo, skip);
             bigFileCopy = false;
@@ -1000,7 +1000,7 @@ bool FileOperateBaseWorker::doCopyOtherFile(const DFileInfoPointer fromInfo, con
 
     // Strategy 1: Try copy_file_range first, but only for same device copies
     // copy_file_range only works within the same filesystem (e.g., U盘 to U盘)
-    bool isSameDevice = FileUtils::isSameDevice(fromInfo->uri(), this->targetUrl);
+    bool isSameDevice = FileUtils::isSameMountPoint(fromInfo->uri(), this->targetUrl);
     if (isSameDevice) {
         DoCopyFileWorker::NextDo nextDo = copyOtherFileWorker->doCopyFileByRange(fromInfo, toInfo, skip);
         if (nextDo == DoCopyFileWorker::NextDo::kDoCopyNext) {
