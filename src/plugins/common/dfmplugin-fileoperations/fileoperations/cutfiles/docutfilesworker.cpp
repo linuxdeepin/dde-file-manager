@@ -142,8 +142,8 @@ bool DoCutFilesWorker::doCutFile(const DFileInfoPointer &fromInfo, const DFileIn
     DFileInfoPointer toInfo = nullptr;
     bool success = false;
 
-    // 检查是否再同一个挂载点下，不再就执行copyAndDeleteFile
-    const bool isSameDevice = DFMIO::DFMUtils::mountPathFromUrl(fromInfo->uri()) == DFMIO::DFMUtils::mountPathFromUrl(targetOrgUrl);
+    // 检查是否再同一个挂载点下，不在就执行copyAndDeleteFile
+    const bool isSameDevice = FileUtils::isSameMountPoint(fromInfo->uri(), targetOrgUrl);
     if (isSameDevice) {
         // Same device: try to rename directly. This is the fast path for moving files.
         bool renameOk = false;
