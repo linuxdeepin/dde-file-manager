@@ -14,7 +14,7 @@
             "visibility":"public"
         },
         "encryptAlgorithm" : {
-            "value": "sm4",
+            "value": "aes",
             "serial":0,
             "flags":["global"],
             "name":"Encrypt algorithm",

@@ -66,12 +66,12 @@ QString common_helper::encryptCipher()
     auto cfg = Dtk::Core::DConfig::create("org.deepin.dde.file-manager",
                                           "org.deepin.dde.file-manager.diskencrypt");
     cfg->deleteLater();
-    auto cipher = cfg->value("encryptAlgorithm", "sm4").toString();
-    
+    auto cipher = cfg->value("encryptAlgorithm", "aes").toString();
+
     QStringList supportedCipher { "sm4", "aes" };
     if (!supportedCipher.contains(cipher)) {
-        qWarning() << "[common_helper::encryptCipher] Unsupported cipher algorithm, using default:" << cipher << "-> sm4";
-        return "sm4";
+        qWarning() << "[common_helper::encryptCipher] Unsupported cipher algorithm, using default:" << cipher << "-> aes";
+        return "aes";
     }
     
     qInfo() << "[common_helper::encryptCipher] Using encryption cipher:" << cipher;
