@@ -73,17 +73,17 @@ public:
     void stop();
     void operateAction(const AbstractJobHandler::SupportAction action);
     // normal copy
-    NextDo doCopyFilePractically(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo,
-                                 bool *skip);
+    [[nodiscard]] NextDo doCopyFilePractically(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo,
+                                               bool *skip);
     // O_DIRECT copy for safe sync mode
-    NextDo doCopyFileWithDirectIO(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo,
-                                  bool *skip);
+    [[nodiscard]] NextDo doCopyFileWithDirectIO(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo,
+                                                bool *skip);
     // Traditional DFMIO copy
-    NextDo doCopyFileTraditional(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo,
-                                 bool *skip);
+    [[nodiscard]] NextDo doCopyFileTraditional(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo,
+                                               bool *skip);
     // normal copy
-    NextDo doCopyFileByRange(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo,
-                             bool *skip);
+    [[nodiscard]] NextDo doCopyFileByRange(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo,
+                                           bool *skip);
     // small file copy
     void doFileCopy(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo);
     // copy file by dfmio
