@@ -56,6 +56,8 @@ protected:
     QMimeData *createMimeDataFromTab(int index, const QStyleOptionTab &option) const override;
     QPixmap createDragPixmapFromTab(int index, const QStyleOptionTab &option, QPoint *hotspot) const override;
     bool canInsertFromMimeData(int index, const QMimeData *source) const override;
+    void insertFromMimeData(int index, const QMimeData *source) override;
+    void insertFromMimeDataOnDragEnter(int index, const QMimeData *source) override;
 
     bool eventFilter(QObject *obj, QEvent *e) override;
     void mousePressEvent(QMouseEvent *e) override;
@@ -63,7 +65,6 @@ protected:
 
 private:
     TabBarPrivate *const d;
-    static QPixmap *sm_pDragPixmap;
 };
 }
 

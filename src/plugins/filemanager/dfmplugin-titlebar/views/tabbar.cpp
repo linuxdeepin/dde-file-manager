@@ -12,6 +12,7 @@
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/utils/systempathutil.h>
 #include <dfm-base/utils/universalutils.h>
+#include <dfm-base/utils/windowutils.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <dfm-framework/event/event.h>
@@ -24,6 +25,9 @@
 
 #include <QMouseEvent>
 #include <QBoxLayout>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QCursor>
 
 #include <unistd.h>
 #include <functional>
@@ -36,8 +40,6 @@ inline constexpr int kCloseButtonMargin { 4 };
 using namespace dfmplugin_titlebar;
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-
-QPixmap *TabBar::sm_pDragPixmap = nullptr;
 
 struct Tab
 {
@@ -65,6 +67,7 @@ public:
     void handleContextMenu(int index);
     void handleIndexChanged(int index);
     void updateToolTip(int index, const QString &tip);
+    void handleTabDroped(int index, Qt::DropAction dropAction, QObject *target);
 
     QString tabDisplayName(const QUrl &url) const;
     QUrl determineRedirectUrl(const QUrl &currentUrl, const QUrl &targetUrl) const;
@@ -72,6 +75,7 @@ public:
     void paintTabBackground(QPainter *painter, const QStyleOptionTab &option);
     void paintTabLabel(QPainter *painter, int index, const QStyleOptionTab &option);
     void paintTabButton(DIconButton *btn);
+    void paintTabItemButton(QPainter *painter, int index, const QStyleOptionTab &option);
 
     Tab tabInfo(int index) const;
     bool updateTabInfo(int index, std::function<void(Tab &)> modifier);
@@ -84,6 +88,7 @@ public:
 
     int nextTabUniqueId { 0 };
     int currentTabIndex { -1 };
+    bool isDragging { false };
 };
 }
 
@@ -99,8 +104,6 @@ void TabBarPrivate::initUI()
     q->setVisibleAddButton(true);
     q->setDragable(true);
     q->setFocusPolicy(Qt::NoFocus);
-    q->setAutoHide(true);
-    q->setProperty("_d_dtk_tabbartab_type", true);
     q->installEventFilter(q);
 
     addBtn = q->findChild<DIconButton *>("AddButton");
@@ -142,6 +145,7 @@ void TabBarPrivate::initConnections()
     connect(q, &TabBar::currentChanged, this, &TabBarPrivate::handleIndexChanged);
     connect(q, &TabBar::tabReleaseRequested, this, &TabBarPrivate::handleTabReleased);
     connect(q, &TabBar::dragActionChanged, this, &TabBarPrivate::handleDragActionChanged);
+    connect(q, &DTabBar::tabDroped, this, &TabBarPrivate::handleTabDroped);
 }
 
 bool TabBarPrivate::tabCloseable(const Tab &tab, const QUrl &targetUrl) const
@@ -194,12 +198,25 @@ void TabBarPrivate::handleTabReleased(int index)
     if (index == -1)
         index = 0;
 
-    const auto &url = q->tabUrl(index);
-    if (!url.isValid())
-        return;
+    fmInfo() << "Tab released at index:" << index;
 
-    dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url);
-    q->removeTab(index);
+    const auto &url = q->tabUrl(index);
+    if (!url.isValid()) {
+        fmWarning() << "Cannot release tab: invalid URL";
+        return;
+    }
+
+    if (q->count() == 1) {
+        q->window()->show();
+    } else {
+        currentTabIndex = -1;
+        // Send open new window event
+        dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url);
+
+        // Remove tab from current window
+        q->tabCloseRequested(index);
+        fmInfo() << "Tab released and new window created for URL:" << url;
+    }
 }
 
 void TabBarPrivate::handleDragActionChanged(Qt::DropAction action)
@@ -264,7 +281,8 @@ void TabBarPrivate::handleIndexChanged(int index)
         });
     }
 
-    Q_EMIT q->currentTabChanged(currentTabIndex, index);
+    if (!isDragging)
+        Q_EMIT q->currentTabChanged(currentTabIndex, index);
     currentTabIndex = index;
 }
 
@@ -465,30 +483,6 @@ void TabBarPrivate::paintTabLabel(QPainter *painter, int index, const QStyleOpti
     QColor textColor = isSelected ? pal.color(QPalette::Active, QPalette::Text) : pal.color(QPalette::Inactive, QPalette::Text);
     painter->setPen(textColor);
     painter->drawText(textX, textY, elidedText);
-
-    // 绘制关闭按钮
-    if (isHovered) {
-        painter->save();
-        painter->setRenderHint(QPainter::Antialiasing);
-
-        const QRect closeButtonRect(rect.right() - rightSpace,
-                                    rect.y() + (rect.height() - closeButtonSize) / 2,
-                                    closeButtonSize, closeButtonSize);
-
-        // 检测鼠标是否在关闭按钮上
-        const bool closeButtonHovered = isCloseButtonHovered(index);
-        QColor buttonColor = closeButtonHovered ? pal.color(QPalette::Highlight) : pal.color(QPalette::Text);
-        painter->setPen(QPen(buttonColor, 1.5));
-
-        // 绘制X形关闭按钮
-        const int offset = 4;
-        painter->drawLine(closeButtonRect.topLeft() + QPoint(offset, offset),
-                          closeButtonRect.bottomRight() + QPoint(-offset, -offset));
-        painter->drawLine(closeButtonRect.topRight() + QPoint(-offset, offset),
-                          closeButtonRect.bottomLeft() + QPoint(offset, -offset));
-        painter->restore();
-    }
-
     painter->restore();
 }
 
@@ -518,6 +512,33 @@ void TabBarPrivate::paintTabButton(DIconButton *btn)
             painter.drawRoundedRect(btn->rect(), radius, radius);
         }
     }
+}
+
+void TabBarPrivate::paintTabItemButton(QPainter *painter, int index, const QStyleOptionTab &option)
+{
+    painter->save();
+    painter->setRenderHint(QPainter::Antialiasing);
+    const bool isHovered = option.state & QStyle::State_MouseOver;
+    const QRect rect = option.rect;
+    // 绘制关闭按钮
+    if (isHovered) {
+        const QRect closeButtonRect(rect.right() - kCloseButtonMargin - kCloseButtonSize,
+                                    rect.y() + (rect.height() - kCloseButtonSize) / 2,
+                                    kCloseButtonSize, kCloseButtonSize);
+
+        // 检测鼠标是否在关闭按钮上
+        const bool closeButtonHovered = isCloseButtonHovered(index);
+        QColor buttonColor = closeButtonHovered ? option.palette.color(QPalette::Highlight) : option.palette.color(QPalette::Text);
+        painter->setPen(QPen(buttonColor, 1.5));
+
+        // 绘制X形关闭按钮
+        const int offset = 4;
+        painter->drawLine(closeButtonRect.topLeft() + QPoint(offset, offset),
+                          closeButtonRect.bottomRight() + QPoint(-offset, -offset));
+        painter->drawLine(closeButtonRect.topRight() + QPoint(-offset, offset),
+                          closeButtonRect.bottomLeft() + QPoint(offset, -offset));
+    }
+    painter->restore();
 }
 
 Tab TabBarPrivate::tabInfo(int index) const
@@ -601,6 +622,11 @@ int TabBar::createInactiveTab(const QUrl &url, const QVariantMap &userData)
 
 void TabBar::removeTab(int index, int selectIndex)
 {
+    if (count() == 1) {
+        window()->close();
+        return;
+    }
+
     int newIndex = selectIndex;
     if (newIndex == -1) {
         int curIndex = currentIndex();
@@ -726,6 +752,7 @@ void TabBar::paintTab(QPainter *painter, int index, const QStyleOptionTab &optio
 {
     d->paintTabBackground(painter, option);
     d->paintTabLabel(painter, index, option);
+    d->paintTabItemButton(painter, index, option);
 }
 
 QSize TabBar::tabSizeHint(int index) const
@@ -756,9 +783,38 @@ QSize TabBar::maximumTabSizeHint(int index) const
 
 QMimeData *TabBar::createMimeDataFromTab(int index, const QStyleOptionTab &option) const
 {
+    Q_UNUSED(option)
+
+    if (!isTabValid(index)) {
+        fmWarning() << "Create MIME data failed: invalid tab index" << index;
+        return nullptr;
+    }
+
     QMimeData *data = new QMimeData;
-    data->setParent(window());
-    data->removeFormat("text/plain");
+
+    // Save tab metadata to QMimeData
+    const QString uniqueId = tabUniqueId(index);
+    const QUrl url = tabUrl(index);
+    const QString alias = tabAlias(index);
+
+    // Build JSON data structure
+    QJsonObject tabDataObj;
+    tabDataObj["uniqueId"] = uniqueId;
+    tabDataObj["tabUrl"] = url.toString();
+    tabDataObj["tabAlias"] = alias;
+
+    // Save userData if exists
+    QJsonObject userDataObj;
+    auto tab = d->tabInfo(index);
+    for (auto it = tab.userData.constBegin(); it != tab.userData.constEnd(); ++it) {
+        userDataObj[it.key()] = QJsonValue::fromVariant(it.value());
+    }
+    tabDataObj["userData"] = userDataObj;
+
+    QJsonDocument doc(tabDataObj);
+    data->setData("application/x-dde-filemanager-tab", doc.toJson());
+
+    fmInfo() << "Created MIME data for tab" << index << "uniqueId:" << uniqueId;
     return data;
 }
 
@@ -786,6 +842,12 @@ QPixmap TabBar::createDragPixmapFromTab(int index, const QStyleOptionTab &option
     painter.drawImage(5, 5, scaledImage);
     painter.setRenderHint(QPainter::Antialiasing, true);
 
+    // Hide window during drag: single tab in non-Wayland environment
+    if (!WindowUtils::isWayLand() && 1 == count()) {
+        this->window()->hide();
+        fmDebug() << "Hide window during drag: single tab in non-Wayland environment";
+    }
+
     // adjust offset.
     hotspot->setX(scaledWidth / 2);
     hotspot->setY(scaledHeight / 2);
@@ -803,25 +865,33 @@ QPixmap TabBar::createDragPixmapFromTab(int index, const QStyleOptionTab &option
     shadowColor.setAlpha(80);
 
     painter.end();
-    if (sm_pDragPixmap) delete sm_pDragPixmap;
-    sm_pDragPixmap = new QPixmap(QPixmap::fromImage(backgroundImage));
     return QPixmap::fromImage(backgroundImage);
 }
 
 bool TabBar::canInsertFromMimeData(int index, const QMimeData *source) const
 {
-    return false;
+    Q_UNUSED(index)
+    if (!source) {
+        return false;
+    }
+
+    bool canInsert = source->hasFormat("application/x-dde-filemanager-tab");
+    if (canInsert) {
+        fmDebug() << "Can insert tab from MIME data at index" << index;
+    }
+    return canInsert;
 }
 
 bool TabBar::eventFilter(QObject *obj, QEvent *e)
 {
-    if (obj == this && e->type() == QEvent::Paint) {
-        // 为了禁止DTabBar绘制延长线
-        return true;
-    } else if (e->type() == QEvent::Paint) {
+    if (e->type() == QEvent::Paint) {
         auto btn = qobject_cast<DIconButton *>(obj);
         if (btn)
             d->paintTabButton(btn);
+    } else if (e->type() == QEvent::DragEnter) {
+        d->isDragging = true;
+    } else if (e->type() == QEvent::DragLeave || e->type() == QEvent::Drop) {
+        d->isDragging = false;
     } else if (obj == d->tabBar && e->type() == QEvent::MouseMove) {
         int index = tabAt(mapFromGlobal(QCursor::pos()));
         if (index != -1)
@@ -830,7 +900,7 @@ bool TabBar::eventFilter(QObject *obj, QEvent *e)
         auto me = static_cast<QMouseEvent *>(e);
         if (me->button() == Qt::RightButton) {
             int index = tabAt(mapFromGlobal(QCursor::pos()));
-            if (index != -1 && count() > 1) {
+            if (index != -1) {
                 d->handleContextMenu(index);
                 return true;
             }
@@ -863,6 +933,101 @@ void TabBar::mousePressEvent(QMouseEvent *e)
     }
 
     DTabBar::mousePressEvent(e);
+}
+
+void TabBar::insertFromMimeData(int index, const QMimeData *source)
+{
+    if (!source || !source->hasFormat("application/x-dde-filemanager-tab")) {
+        fmWarning() << "Insert tab failed: invalid MIME data";
+        return;
+    }
+
+    // Parse JSON data from MIME
+    QByteArray jsonData = source->data("application/x-dde-filemanager-tab");
+    QJsonDocument doc = QJsonDocument::fromJson(jsonData);
+    if (!doc.isObject()) {
+        fmWarning() << "Insert tab failed: invalid JSON data";
+        return;
+    }
+
+    QJsonObject tabDataObj = doc.object();
+    QUrl url = QUrl(tabDataObj["tabUrl"].toString());
+    QString alias = tabDataObj["tabAlias"].toString();
+
+    fmInfo() << "Inserting tab from MIME data at index" << index << "url:" << url;
+
+    // Create inactive tab at specified index
+    // Insert at specific position
+    QSignalBlocker blk(this);
+    int insertedIndex = insertTab(index, "");
+    blk.unblock();
+
+    // Update currentTabIndex value
+    if (insertedIndex <= d->currentTabIndex)
+        d->currentTabIndex++;
+
+    Tab tab;
+    QString prefix = "tab_";
+    tab.uniqueId = prefix + QString::number(++d->nextTabUniqueId);
+    tab.tabUrl = url;
+    tab.tabAlias = alias;
+    tab.isInactive = true;
+
+    setTabData(insertedIndex, QVariant::fromValue(tab));
+    updateTabName(insertedIndex);
+    Q_EMIT newTabCreated();
+
+    setCurrentIndex(index);
+    fmInfo() << "Tab inserted and activated at index" << insertedIndex;
+}
+
+void TabBar::insertFromMimeDataOnDragEnter(int index, const QMimeData *source)
+{
+    if (!source || !source->hasFormat("application/x-dde-filemanager-tab")) {
+        fmWarning() << "Insert tab failed: invalid MIME data";
+        return;
+    }
+
+    // Parse JSON data from MIME
+    QByteArray jsonData = source->data("application/x-dde-filemanager-tab");
+    QJsonDocument doc = QJsonDocument::fromJson(jsonData);
+    if (!doc.isObject()) {
+        fmWarning() << "Insert tab failed: invalid JSON data";
+        return;
+    }
+
+    QJsonObject tabDataObj = doc.object();
+    QUrl url = QUrl(tabDataObj["tabUrl"].toString());
+    QString alias = tabDataObj["tabAlias"].toString();
+
+    fmInfo() << "Inserting tab from MIME data at index" << index << "url:" << url;
+
+    // Create inactive tab at specified index
+    // Insert at specific position
+    QSignalBlocker blk(this);
+    insertTab(index, alias.isEmpty() ? d->tabDisplayName(url) : alias);
+    blk.unblock();
+}
+
+void TabBarPrivate::handleTabDroped(int index, Qt::DropAction dropAction, QObject *target)
+{
+    Q_UNUSED(dropAction)
+
+    fmInfo() << "Tab dropped at index:" << index << "target:" << target;
+    TabBar *targetTabBar = qobject_cast<TabBar *>(target);
+
+    if (!targetTabBar) {
+        // Dropped to empty area - create new window
+        fmInfo() << "Tab dropped to empty area, creating new window";
+        handleTabReleased(index);
+    } else {
+        currentTabIndex = -1;
+        // Dropped to another window's TabBar
+        fmInfo() << "Tab dropped to another window's TabBar";
+        // Source window's tab has been created in target window via insertTabFromMimeData
+        // Just close the tab in source window
+        q->tabCloseRequested(index);
+    }
 }
 
 void TabBar::resizeEvent(QResizeEvent *e)
