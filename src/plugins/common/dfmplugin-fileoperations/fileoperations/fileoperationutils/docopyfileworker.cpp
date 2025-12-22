@@ -78,7 +78,7 @@ void DoCopyFileWorker::operateAction(const AbstractJobHandler::SupportAction act
 }
 void DoCopyFileWorker::doFileCopy(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo)
 {
-    doCopyFileByRange(fromInfo, toInfo, nullptr);
+    doDfmioFileCopy(fromInfo, toInfo, nullptr);
     workData->completeFileCount++;
 }
 
@@ -516,7 +516,7 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFileByRange(const DFileInfoPoin
                 // Check if this is a "should fallback" error vs a real error
                 if (shouldFallbackFromCopyFileRange(errno)) {
                     // Silent fallback for unsupported scenarios
-                    fmDebug() << "copy_file_range fallback needed - error:" << strerror(errno);
+                    fmWarning() << "copy_file_range fallback needed - error:" << strerror(errno);
                     return NextDo::kDoCopyFallback;   // Signal fallback needed
                 }
 
