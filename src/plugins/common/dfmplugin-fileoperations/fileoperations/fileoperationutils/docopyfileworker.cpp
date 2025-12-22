@@ -239,6 +239,7 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFileWithDirectIO(const DFileInf
     // Open source file
     int srcFd = open(sourcePath.toLocal8Bit().constData(), O_RDONLY);
     if (srcFd < 0) {
+        fmWarning() << "Failed to open source file with O_DIRECT mode - file:" << sourcePath << "error:" << strerror(errno);
         auto action = doHandleErrorAndWait(fromInfo->uri(), toInfo->uri(),
                                            AbstractJobHandler::JobErrorType::kOpenError, false,
                                            QString("Failed to open source file: %1").arg(strerror(errno)));
@@ -267,6 +268,7 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFileWithDirectIO(const DFileInf
     if (!buffer) {
         close(srcFd);
         close(writer.fd);
+        fmWarning() << "Failed to allocate aligned buffer for O_DIRECT copy - from:" << sourcePath << "to:" << destPath;
         auto action = doHandleErrorAndWait(fromInfo->uri(), toInfo->uri(),
                                            AbstractJobHandler::JobErrorType::kProrogramError, false,
                                            QString("Failed to allocate aligned buffer"));
@@ -286,6 +288,7 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFileWithDirectIO(const DFileInf
             }
             // Seek source file to correct position after resume
             if (lseek(srcFd, copied, SEEK_SET) < 0) {
+                fmWarning() << "Failed to seek source file after resume - file:" << sourcePath << "error:" << strerror(errno);
                 success = false;
                 break;
             }
@@ -310,6 +313,7 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFileWithDirectIO(const DFileInf
             if (errno == EINTR) {
                 continue;
             }
+            fmWarning() << "Read error during O_DIRECT copy - file:" << sourcePath << "error:" << strerror(errno);
             success = false;
             break;
         }
@@ -333,7 +337,7 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFileWithDirectIO(const DFileInf
 
                 // Fallback: If O_DIRECT write fails, remove O_DIRECT flag and continue
                 if (directModeActive && errno == EINVAL) {
-                    fmDebug() << "O_DIRECT write failed, removing O_DIRECT flag";
+                    fmDebug() << "O_DIRECT write failed, removing O_DIRECT flag - file:" << destPath;
                     int flags = fcntl(writer.fd, F_GETFL);
                     if (flags != -1) {
                         flags &= ~O_DIRECT;
@@ -345,6 +349,7 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFileWithDirectIO(const DFileInf
                     }
                 }
 
+                fmWarning() << "Write error during O_DIRECT copy - file:" << destPath << "error:" << strerror(errno);
                 success = false;
                 break;
             }
@@ -365,6 +370,7 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFileWithDirectIO(const DFileInf
     close(writer.fd);
 
     if (!success) {
+        fmWarning() << "O_DIRECT copy failed - from:" << fromInfo->uri() << "to:" << toInfo->uri();
         return NextDo::kDoCopyErrorAddCancel;
     }
 
@@ -657,7 +663,7 @@ bool DoCopyFileWorker::createFileDevice(const DFileInfoPointer &fromInfo, const 
         action = AbstractJobHandler::SupportAction::kNoAction;
         file.reset(new DFile(url));
         if (!file) {
-            fmCritical() << "create dfm io dfile failed! url = " << url;
+            fmCritical() << "Failed to create DFile object - url:" << url;
             action = doHandleErrorAndWait(fromInfo->uri(), toInfo->uri(),
                                           AbstractJobHandler::JobErrorType::kProrogramError,
                                           url == toInfo->uri());
@@ -759,6 +765,7 @@ bool DoCopyFileWorker::resizeTargetFile(const DFileInfoPointer &fromInfo, const 
     do {
         action = AbstractJobHandler::SupportAction::kNoAction;
         if (!file->write(QByteArray())) {
+            fmWarning() << "Resize target file failed - from:" << fromInfo->uri() << "to:" << toInfo->uri() << "error:" << file->lastError().errorMsg();
             action = doHandleErrorAndWait(fromInfo->uri(), toInfo->uri(),
                                           AbstractJobHandler::JobErrorType::kResizeError, true,
                                           file->lastError().errorMsg());
@@ -971,6 +978,7 @@ bool DoCopyFileWorker::verifyFileIntegrity(const qint64 &blockSize, const ulong 
                 break;
             }
 
+            fmWarning() << "Integrity check read failed - size:" << size << "pos:" << toDevice->pos() << "file:" << toInfo->uri() << "error:" << toDevice->lastError().errorMsg();
             AbstractJobHandler::SupportAction actionForCheckRead = doHandleErrorAndWait(fromInfo->uri(),
                                                                                         toInfo->uri(),
                                                                                         AbstractJobHandler::JobErrorType::kIntegrityCheckingError,
@@ -997,7 +1005,8 @@ bool DoCopyFileWorker::verifyFileIntegrity(const qint64 &blockSize, const ulong 
     fmDebug("Time spent of integrity check of the file: %d", t.elapsed());
 
     if (sourceCheckSum != targetCheckSum) {
-        fmWarning("Failed on file integrity checking, source file: 0x%lx, target file: 0x%lx", sourceCheckSum, targetCheckSum);
+        fmWarning("Integrity check failed - source checksum: 0x%lx, target checksum: 0x%lx, file: %s",
+                  sourceCheckSum, targetCheckSum, qPrintable(toInfo->uri().toString()));
         AbstractJobHandler::SupportAction actionForCheck = doHandleErrorAndWait(fromInfo->uri(),
                                                                                 toInfo->uri(),
                                                                                 AbstractJobHandler::JobErrorType::kIntegrityCheckingError,
@@ -1058,7 +1067,7 @@ DoCopyFileWorker::FileWriter DoCopyFileWorker::openDestinationFile(const QString
 
         if (destFd < 0 && (errno == EINVAL || errno == ENOTSUP)) {
             // O_DIRECT not supported, fallback to normal mode
-            fmDebug() << "O_DIRECT not supported, falling back to normal mode for:" << dest;
+            fmDebug() << "O_DIRECT not supported for destination, falling back to normal mode - file:" << dest << "error:" << strerror(errno);
             actualMode = WriteMode::Normal;
         }
     }
@@ -1066,6 +1075,9 @@ DoCopyFileWorker::FileWriter DoCopyFileWorker::openDestinationFile(const QString
     if (destFd < 0) {
         // Open in normal mode
         destFd = open(dest.toLocal8Bit().constData(), O_WRONLY | O_CREAT | O_TRUNC, 0666);
+        if (destFd < 0) {
+            fmWarning() << "Failed to open destination file - file:" << dest << "error:" << strerror(errno);
+        }
         actualMode = WriteMode::Normal;
     }
 
@@ -1092,7 +1104,7 @@ DoCopyFileWorker::FileWriter DoCopyFileWorker::reopenDestinationFileForResume(co
 
         if (destFd < 0 && (errno == EINVAL || errno == ENOTSUP)) {
             // O_DIRECT not supported, fallback to normal mode
-            fmDebug() << "O_DIRECT not supported for resume, falling back to normal mode for:" << dest;
+            fmDebug() << "O_DIRECT not supported for resume, falling back to normal mode - file:" << dest << "error:" << strerror(errno);
             actualMode = WriteMode::Normal;
         }
     }
@@ -1100,13 +1112,16 @@ DoCopyFileWorker::FileWriter DoCopyFileWorker::reopenDestinationFileForResume(co
     if (destFd < 0) {
         // Open in normal mode (no truncate)
         destFd = open(dest.toLocal8Bit().constData(), O_WRONLY, 0666);
+        if (destFd < 0) {
+            fmWarning() << "Failed to reopen destination file for resume - file:" << dest << "error:" << strerror(errno);
+        }
         actualMode = WriteMode::Normal;
     }
 
     if (destFd >= 0) {
         // Seek to end of file to continue writing where we left off
         if (lseek(destFd, 0, SEEK_END) < 0) {
-            fmDebug() << "Failed to seek to end of file for resume:" << strerror(errno);
+            fmWarning() << "Failed to seek to end of file for resume - file:" << dest << "error:" << strerror(errno);
             close(destFd);
             return FileWriter(-1, actualMode);
         }
@@ -1128,6 +1143,7 @@ char *DoCopyFileWorker::allocateAlignedBuffer(size_t size, size_t alignment)
 {
     char *buffer = nullptr;
     if (posix_memalign((void **)&buffer, alignment, size) != 0) {
+        fmWarning() << "Failed to allocate aligned buffer - size:" << size << "alignment:" << alignment << "error:" << strerror(errno);
         return nullptr;
     }
     return buffer;
