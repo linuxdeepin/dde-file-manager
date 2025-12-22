@@ -92,9 +92,11 @@ bool DoRestoreTrashFilesWorker::translateUrls()
             auto userInfo = url.userInfo();
             deleteInfo = userInfo.split("-");
             // 错误处理
-            if (deleteInfo.length() != 2)
+            if (deleteInfo.length() != 2) {
+                fmWarning() << "Failed to parse trash file URL - url:" << url << "userInfo:" << userInfo;
                 // pause and emit error msg
                 action = doHandleErrorAndWait(url, parentUrl(url), AbstractJobHandler::JobErrorType::kFailedParseUrlOfTrash);
+            }
 
         } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
@@ -122,11 +124,15 @@ bool DoRestoreTrashFilesWorker::translateUrls()
     trashHelper.setDeleteInfos(targetUrls);
     do {
         action = AbstractJobHandler::SupportAction::kNoAction;
-        if (!trashHelper.getTrashUrls(&sourceUrls, &errorMsg))
+        if (!trashHelper.getTrashUrls(&sourceUrls, &errorMsg)) {
+            fmWarning() << "Failed to get trash URLs - error:" << errorMsg;
             return false;
-        if (sourceUrls.length() <= 0)
+        }
+        if (sourceUrls.length() <= 0) {
+            fmWarning() << "No trash URLs found - error:" << errorMsg;
             action = doHandleErrorAndWait(targetUrls.keys().length() > 0 ? targetUrls.keys().first() : FileUtils::trashRootUrl(), QUrl(),
                                           AbstractJobHandler::JobErrorType::kFailedObtainTrashOriginalFile, false, errorMsg);
+        }
     } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
     if (action != AbstractJobHandler::SupportAction::kNoAction)
@@ -158,6 +164,7 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
 
         DFileInfoPointer restoreInfo = checkRestoreInfo(url);
         if (restoreInfo.isNull()) {
+            fmDebug() << "Check restore info failed - url:" << url;
             completeFilesCount++;
             handleSourceFiles.append(fileUrl);
             continue;
@@ -170,6 +177,7 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
                 handleSourceFiles.append(fileUrl);
                 continue;
             } else {
+                fmDebug() << "Create parent directory failed for restore - url:" << url;
                 return false;
             }
         }
@@ -186,6 +194,7 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
                                                      targetInfo,
                                                      fileInfo->attribute(DFileInfo::AttributeID::kStandardFileName).toString(), &ok);
         if (newTargetInfo.isNull()) {
+            fmDebug() << "File check failed for restore - from:" << url;
             handleSourceFiles.append(fileUrl);
             continue;
         }
@@ -205,10 +214,13 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
             auto errorCode = fileHandler.errorCode();
             switch (errorCode) {
             case DFMIOErrorCode::DFM_IO_ERROR_WOULD_MERGE: {
+                fmDebug() << "Directory merge needed for restore - from:" << url << "to:" << newTargetInfo->uri();
                 trashSucc = this->mergeDir(url, newTargetInfo->uri(), DFMIO::DFile::CopyFlag::kOverwrite);
                 break;
             };
             default:
+                fmWarning() << "Failed to restore file from trash - from:" << url << "to:" << newTargetInfo->uri()
+                            << "error:" << fileHandler.errorString() << "code:" << errorCode;
                 break;
             }
             if (!trashSucc)
@@ -218,6 +230,7 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
     }
 
     if (failUrls.count() > 0) {
+        fmWarning() << "Restore operation completed with failures - failed count:" << failUrls.count();
         emit requestShowTipsDialog(DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType::kRestoreFailed, failUrls);
         return false;
     }
@@ -231,8 +244,10 @@ DFileInfoPointer DoRestoreTrashFilesWorker::createParentDir(const QUrl &fromUrl,
 {
     const QUrl &toUrl = restoreInfo->uri();
     const QUrl &parentUrl = AbstractWorker::parentUrl(toUrl);
-    if (!parentUrl.isValid())
+    if (!parentUrl.isValid()) {
+        fmWarning() << "Invalid parent URL when restoring from trash - target:" << toUrl;
         return nullptr;
+    }
     DFileInfoPointer targetFileInfo { new DFileInfo(parentUrl) };
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
     targetFileInfo->initQuerier();
@@ -240,9 +255,11 @@ DFileInfoPointer DoRestoreTrashFilesWorker::createParentDir(const QUrl &fromUrl,
         do {
             action = AbstractJobHandler::SupportAction::kNoAction;
             DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-            if (!fileHandler.mkdir(parentUrl))
+            if (!fileHandler.mkdir(parentUrl)) {
+                fmWarning() << "Failed to create parent directory when restoring - dir:" << parentUrl << "error:" << fileHandler.errorString();
                 // pause and emit error msg
                 action = doHandleErrorAndWait(fromUrl, toUrl, AbstractJobHandler::JobErrorType::kCreateParentDirError, true, fileHandler.errorString());
+            }
         } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
         if (action != AbstractJobHandler::SupportAction::kNoAction) {
@@ -267,6 +284,7 @@ DFileInfoPointer DoRestoreTrashFilesWorker::checkRestoreInfo(const QUrl &url)
             // 获取回收站文件的原路径
             restoreFileUrl = QUrl::fromLocalFile(fileInfo->attribute(DFileInfo::AttributeID::kTrashOrigPath).toString());
             if (!restoreFileUrl.isValid()) {
+                fmWarning() << "Failed to get restore path from trash - url:" << url << "origPath:" << fileInfo->attribute(DFileInfo::AttributeID::kTrashOrigPath).toString();
                 action = doHandleErrorAndWait(url, restoreFileUrl, AbstractJobHandler::JobErrorType::kGetRestorePathError);
                 result.clear();
                 continue;

@@ -67,11 +67,13 @@ bool DoCutFilesWorker::initArgs()
     AbstractWorker::initArgs();
 
     if (sourceUrls.count() <= 0) {
+        fmCritical() << "Cut operation failed: source URLs list is empty";
         // pause and emit error msg
         doHandleErrorAndWait(QUrl(), QUrl(), AbstractJobHandler::JobErrorType::kProrogramError);
         return false;
     }
     if (!targetUrl.isValid()) {
+        fmCritical() << "Cut operation failed: target URL is invalid - target:" << targetUrl;
         // pause and emit error msg
         doHandleErrorAndWait(sourceUrls.first(), targetUrl, AbstractJobHandler::JobErrorType::kProrogramError);
         return false;
@@ -79,6 +81,7 @@ bool DoCutFilesWorker::initArgs()
     targetInfo.reset(new DFileInfo(targetUrl));
     targetInfo->initQuerier();
     if (!targetInfo->exists()) {
+        fmWarning() << "Cut operation failed: target directory does not exist - target:" << targetUrl;
         // pause and emit error msg
         doHandleErrorAndWait(sourceUrls.first(), targetUrl, AbstractJobHandler::JobErrorType::kNonexistenceError, true);
         return false;
@@ -174,12 +177,15 @@ bool DoCutFilesWorker::doCutFile(const DFileInfoPointer &fromInfo, const DFileIn
         fmInfo() << "Cross-device move detected, using copy-delete fallback - from:" << fromInfo->uri() << "to:" << targetPathInfo->uri();
         toInfo = doCheckFile(fromInfo, targetPathInfo, fileName, skip);
         if (toInfo.isNull()) {
+            fmDebug() << "File check failed for cross-device move - from:" << fromInfo->uri();
             return skip && *skip;
         }
         success = copyAndDeleteFile(fromInfo, targetPathInfo, toInfo, skip);
         if (success) {
             const auto fromSize = fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
             workData->currentWriteSize += fromSize;
+        } else {
+            fmDebug() << "Copy-delete failed for cross-device move - from:" << fromInfo->uri() << "to:" << toInfo->uri();
         }
     }
 
@@ -336,6 +342,9 @@ bool DoCutFilesWorker::renameFileByHandler(const DFileInfoPointer &sourceInfo, c
                 if (localFileHandler->errorCode() != DFMIOErrorCode::DFM_IO_ERROR_PERMISSION_DENIED) {
                     err = AbstractJobHandler::JobErrorType::kUnknowError;
                 }
+                fmWarning() << "Rename file failed - from:" << sourceUrl << "to:" << targetUrl
+                            << "error:" << localFileHandler->errorString()
+                            << "code:" << localFileHandler->errorCode();
                 action = doHandleErrorAndWait(sourceUrl, targetUrl, err, false, localFileHandler->errorString());
             }
         } while (action == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
@@ -359,8 +368,10 @@ DFileInfoPointer DoCutFilesWorker::trySameDeviceRename(const DFileInfoPointer &s
     const QUrl &sourceUrl = sourceInfo->uri();
     fmDebug() << "Attempting same-device rename - from:" << sourceUrl << "to:" << targetPathInfo->uri();
     auto newTargetInfo = doCheckFile(sourceInfo, targetPathInfo, fileName, skip);
-    if (newTargetInfo.isNull())
+    if (newTargetInfo.isNull()) {
+        fmDebug() << "File check failed during same-device rename - from:" << sourceUrl;
         return nullptr;
+    }
 
     emitCurrentTaskNotify(sourceUrl, newTargetInfo->uri());
     bool result = false;
@@ -374,6 +385,8 @@ DFileInfoPointer DoCutFilesWorker::trySameDeviceRename(const DFileInfoPointer &s
             if (result) {
                 *skip = false;   // deleteFile拷贝成功会设置skip为true，正确的删除后设置skip为false
                 result = renameFileByHandler(sourceInfo, newTargetInfo, skip);
+            } else {
+                fmDebug() << "Failed to delete existing target file during rename - file:" << newTargetInfo->uri();
             }
         } else {
             result = renameFileByHandler(sourceInfo, newTargetInfo, skip);
