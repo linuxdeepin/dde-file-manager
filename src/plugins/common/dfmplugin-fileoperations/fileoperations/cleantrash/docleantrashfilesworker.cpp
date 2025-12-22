@@ -96,6 +96,7 @@ bool DoCleanTrashFilesWorker::cleanAllTrashFiles()
         emitCurrentTaskNotify(url, QUrl());
 
         if (url.scheme() != Global::Scheme::kTrash) {
+            fmWarning() << "Invalid trash file scheme detected - file:" << url << "expected: trash";
             // pause and emit error msg
             AbstractJobHandler::SupportAction action = doHandleErrorAndWait(url, AbstractJobHandler::JobErrorType::kIsNotTrashFileError);
             if (AbstractJobHandler::SupportAction::kSkipAction != action) {
@@ -108,6 +109,7 @@ bool DoCleanTrashFilesWorker::cleanAllTrashFiles()
 
         const auto &fileInfo = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
         if (!fileInfo) {
+            fmCritical() << "Failed to create FileInfo object for trash file - url:" << url;
             // pause and emit error msg
             AbstractJobHandler::SupportAction action = doHandleErrorAndWait(url, AbstractJobHandler::JobErrorType::kProrogramError);
             if (AbstractJobHandler::SupportAction::kSkipAction != action) {
@@ -146,6 +148,7 @@ bool DoCleanTrashFilesWorker::clearTrashFile(const FileInfoPointer &trashInfo)
         bool resultFile = deleteFile(fileUrl);
 
         if (!resultFile) {
+            fmWarning() << "Failed to delete trash file - file:" << fileUrl << "error:" << localFileHandler->errorString();
             action = doHandleErrorAndWait(fileUrl, AbstractJobHandler::JobErrorType::kDeleteTrashFileError,
                                           false, localFileHandler->errorString());
         } else {

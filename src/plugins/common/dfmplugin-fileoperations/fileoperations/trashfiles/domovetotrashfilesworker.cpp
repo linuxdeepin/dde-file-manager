@@ -90,6 +90,7 @@ bool DoMoveToTrashFilesWorker::doMoveToTrash()
             return false;
 
         if (FileUtils::isTrashFile(urlSource)) {
+            fmDebug() << "File is already in trash, skipped - file:" << urlSource;
             completeFilesCount++;
             completeSourceFiles.append(urlSource);
             continue;
@@ -107,6 +108,7 @@ bool DoMoveToTrashFilesWorker::doMoveToTrash()
 
         const auto &fileInfo = InfoFactory::create<FileInfo>(urlSource, Global::CreateFileInfoType::kCreateFileInfoSync);
         if (!fileInfo) {
+            fmCritical() << "Failed to create FileInfo object for move to trash - url:" << urlSource;
             // pause and emit error msg
             if (AbstractJobHandler::SupportAction::kSkipAction != doHandleErrorAndWait(urlSource, targetUrl, AbstractJobHandler::JobErrorType::kProrogramError)) {
                 return false;
@@ -135,9 +137,11 @@ bool DoMoveToTrashFilesWorker::doMoveToTrash()
                 continue;
             } else {
                 if (fileHandler.errorCode() == DFMIOErrorCode::DFM_IO_ERROR_NO_SPACE) {
+                    fmWarning() << "Move to trash failed due to insufficient space - file:" << urlSource;
                     action = doHandleErrorNoSpace(url);
                     if (action == AbstractJobHandler::SupportAction::kPermanentlyDelete) {
                         if (!fileHandler.deleteFileRecursive(urlSource)) {
+                            fmWarning() << "Permanently delete failed - file:" << urlSource << "error:" << fileHandler.errorString();
                             action = doHandleErrorAndWait(url, QUrl(),
                                                           AbstractJobHandler::JobErrorType::kDeleteFileError, false,
                                                           fileHandler.errorCode() == DFMIOErrorCode::DFM_IO_ERROR_NONE ? "Unknown error"
@@ -149,8 +153,10 @@ bool DoMoveToTrashFilesWorker::doMoveToTrash()
                     auto errmsg = QString("Unknown error");
                     if (fileHandler.errorCode() == DFMIOErrorCode::DFM_IO_ERROR_NOT_SUPPORTED) {
                         errmsg = QString("The file can't be put into trash, you can use \"Shift+Del\" to delete the file completely.");
+                        fmWarning() << "Move to trash not supported - file:" << urlSource << "error:" << errmsg;
                     } else if (fileHandler.errorCode() != DFMIOErrorCode::DFM_IO_ERROR_NONE) {
                         errmsg = fileHandler.errorString();
+                        fmWarning() << "Move to trash failed - file:" << urlSource << "error:" << errmsg << "code:" << fileHandler.errorCode();
                     }
                     action = doHandleErrorAndWait(url, QUrl(),
                                                   AbstractJobHandler::JobErrorType::kFileMoveToTrashError, false,
@@ -190,9 +196,11 @@ bool DoMoveToTrashFilesWorker::isCanMoveToTrash(const QUrl &url, bool *result)
 
     do {
         action = AbstractJobHandler::SupportAction::kNoAction;
-        if (!canWriteFile(url))
+        if (!canWriteFile(url)) {
+            fmWarning() << "Cannot move to trash due to permission error - file:" << url;
             // pause and emit error msg
             action = doHandleErrorAndWait(url, targetUrl, AbstractJobHandler::JobErrorType::kPermissionError);
+        }
 
     } while (action == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
 

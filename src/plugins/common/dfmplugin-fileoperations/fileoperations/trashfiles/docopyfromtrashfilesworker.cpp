@@ -73,6 +73,7 @@ bool DoCopyFromTrashFilesWorker::doOperate()
 
         const DFileInfoPointer fileInfo(new DFileInfo(url));
         if (!fileInfo) {
+            fmCritical() << "Failed to create FileInfo object for trash file - url:" << url;
             // pause and emit error msg
             if (AbstractJobHandler::SupportAction::kSkipAction != doHandleErrorAndWait(url, QUrl(), AbstractJobHandler::JobErrorType::kProrogramError)) {
                 return false;
@@ -93,6 +94,7 @@ bool DoCopyFromTrashFilesWorker::doOperate()
                 completeFilesCount++;
                 continue;
             } else {
+                fmDebug() << "Create parent directory failed for trash file copy - from:" << url;
                 return false;
             }
         }
@@ -103,8 +105,10 @@ bool DoCopyFromTrashFilesWorker::doOperate()
         bool ok = false;
         DFileInfoPointer newTargetInfo = doCheckFile(fileInfo, targetInfo, fileInfo->attribute(DFileInfo::AttributeID::kStandardFileName).toString(), &ok);
 
-        if (newTargetInfo.isNull())
+        if (newTargetInfo.isNull()) {
+            fmDebug() << "File check failed for trash file copy - from:" << url;
             continue;
+        }
 
         bool copySucc = this->copyFileFromTrash(url, newTargetInfo->uri(), DFMIO::DFile::CopyFlag::kOverwrite);
         if (copySucc) {
@@ -116,6 +120,7 @@ bool DoCopyFromTrashFilesWorker::doOperate()
                 completeTargetFiles.append(targetFileInfo->uri());
             continue;
         }
+        fmWarning() << "Failed to copy file from trash - from:" << url << "to:" << newTargetInfo->uri();
         return false;
     }
 
@@ -129,8 +134,10 @@ DFileInfoPointer DoCopyFromTrashFilesWorker::createParentDir(const DFileInfoPoin
     const QUrl &fromUrl = trashInfo->uri();
     const QUrl &toUrl = restoreInfo->uri();
     const QUrl &parentUrl = AbstractWorker::parentUrl(toUrl);
-    if (!parentUrl.isValid())
+    if (!parentUrl.isValid()) {
+        fmWarning() << "Invalid parent URL when copying from trash - target:" << toUrl;
         return nullptr;
+    }
     DFileInfoPointer targetFileInfo(new DFileInfo(parentUrl));
 
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
@@ -139,10 +146,12 @@ DFileInfoPointer DoCopyFromTrashFilesWorker::createParentDir(const DFileInfoPoin
         do {
             action = AbstractJobHandler::SupportAction::kNoAction;
             DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-            if (!fileHandler.mkdir(parentUrl))
+            if (!fileHandler.mkdir(parentUrl)) {
+                fmWarning() << "Failed to create parent directory when copying from trash - dir:" << parentUrl << "error:" << fileHandler.errorString();
                 // pause and emit error msg
                 action = doHandleErrorAndWait(fromUrl, toUrl, AbstractJobHandler::JobErrorType::kCreateParentDirError,
                                               true, fileHandler.errorString());
+            }
         } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
         if (action != AbstractJobHandler::SupportAction::kNoAction) {
