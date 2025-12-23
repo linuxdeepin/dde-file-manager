@@ -25,6 +25,7 @@ usr/share/deepin-log-viewer/deepin-log.conf.d/*.json
 usr/share/deepin-debug-config/deepin-debug-config.d/*.json
 usr/share/mime/packages/dtk-dci.xml
 usr/lib/systemd/user/
+usr/lib/systemd/system/
 usr/share/polkit-1/rules.d/*.rules
 etc/X11/Xsession.d/99dfm-dlnfs-automount
 etc/deepin/dde-file-manager/dfm-dlnfs-automount
