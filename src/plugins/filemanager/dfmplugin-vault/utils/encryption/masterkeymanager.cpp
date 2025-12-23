@@ -13,7 +13,8 @@ using namespace dfmplugin_vault;
 QByteArray MasterKeyManager::generateMasterKey()
 {
     const int masterKeySize = 64;
-    char masterKeyBuf[masterKeySize];
+    // 需要额外的1字节用于 null 终止符
+    char masterKeyBuf[masterKeySize + 1];
 
     int ret = PasswordManager::generateRandomBytes(masterKeyBuf, masterKeySize);
     if (ret != 0) {
@@ -21,6 +22,7 @@ QByteArray MasterKeyManager::generateMasterKey()
         return QByteArray();
     }
 
+    // 返回64字节的密钥（不包括 null 终止符）
     return QByteArray(masterKeyBuf, masterKeySize);
 }
 
