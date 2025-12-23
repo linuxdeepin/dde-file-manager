@@ -335,7 +335,9 @@ int PasswordManager::verifyPassword(const char *path,
     return ret;
 }
 
-int PasswordManager::generateRandomBytes(char *output, size_t size)
+namespace {
+// 从 /dev/urandom 读取原始随机字节的内部辅助函数
+static int readRandomBytesFromDevice(char *output, size_t size)
 {
     if (!output) {
         fmCritical() << "Vault PasswordManager: Output buffer cannot be null";
@@ -364,6 +366,73 @@ int PasswordManager::generateRandomBytes(char *output, size_t size)
     return 0;
 }
 
+// 将随机字节映射到可显示字符集的内部辅助函数
+static int mapBytesToDisplayableCharset(const char *randomBytes, size_t randomBytesSize,
+                                        char *output, size_t outputSize)
+{
+    if (!randomBytes || !output) {
+        fmCritical() << "Vault PasswordManager: Input or output buffer cannot be null";
+        return -1;
+    }
+
+    if (randomBytesSize == 0) {
+        fmCritical() << "Vault PasswordManager: Random bytes size cannot be zero";
+        return -1;
+    }
+
+    // 使用更大的字符集增加熵值
+    const char charset[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const size_t charsetSize = strlen(charset);
+
+    // 确保输出缓冲区足够大（随机字节数 + null终止符）
+    if (outputSize < randomBytesSize + 1) {
+        fmCritical() << QString("Vault PasswordManager: Output buffer size is insufficient, need %1 bytes").arg(randomBytesSize + 1);
+        return -1;
+    }
+
+    // 将随机字节映射到字符集
+    for (size_t i = 0; i < randomBytesSize; i++) {
+        // 使用模运算确保索引在有效范围内
+        output[i] = charset[static_cast<unsigned char>(randomBytes[i]) % charsetSize];
+    }
+
+    output[randomBytesSize] = '\0';   // 添加字符串终止符
+
+    return 0;
+}
+}  // namespace
+
+int PasswordManager::generateRandomBytes(char *output, size_t size)
+{
+    if (!output) {
+        fmCritical() << "Vault PasswordManager: Output buffer cannot be null";
+        return -1;
+    }
+
+    if (size == 0) {
+        fmCritical() << "Vault PasswordManager: Size cannot be zero";
+        return -1;
+    }
+
+    // 从设备读取原始随机字节
+    char randomBytes[size];
+    int ret = readRandomBytesFromDevice(randomBytes, size);
+    if (ret != 0) {
+        fmCritical() << "Vault PasswordManager: Failed to read random bytes from device";
+        return -1;
+    }
+
+    // 映射到可显示字符集（输出为可显示的字符串，包含 null 终止符）
+    // 注意：调用者需要确保 output 缓冲区至少有 size + 1 字节的空间
+    ret = mapBytesToDisplayableCharset(randomBytes, size, output, size + 1);
+    if (ret != 0) {
+        fmCritical() << "Vault PasswordManager: Failed to map bytes to displayable charset";
+        return -1;
+    }
+
+    return 0;
+}
+
 int PasswordManager::generateSecureRecoveryKey(char *output, size_t outputSize)
 {
     if (!output) {
@@ -377,26 +446,22 @@ int PasswordManager::generateSecureRecoveryKey(char *output, size_t outputSize)
         return -1;
     }
 
-    // 使用更大的字符集增加熵值
-    const char charset[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    const size_t charsetSize = strlen(charset);
     const int keyLength = 32;   // 生成32位恢复密钥
 
-    // 使用密码学安全的随机数生成器
+    // 从设备读取原始随机字节
     char randomBytes[keyLength];
-    int ret = generateRandomBytes(randomBytes, keyLength);
+    int ret = readRandomBytesFromDevice(randomBytes, keyLength);
     if (ret != 0) {
-        fmCritical() << "Vault PasswordManager: Failed to generate random bytes";
+        fmCritical() << "Vault PasswordManager: Failed to read random bytes from device";
         return -1;
     }
 
-    // 将随机字节映射到字符集
-    for (int i = 0; i < keyLength; i++) {
-        // 使用模运算确保索引在有效范围内
-        output[i] = charset[randomBytes[i] % charsetSize];
+    // 映射到可显示字符集
+    ret = mapBytesToDisplayableCharset(randomBytes, keyLength, output, outputSize);
+    if (ret != 0) {
+        fmCritical() << "Vault PasswordManager: Failed to map bytes to displayable charset";
+        return -1;
     }
-
-    output[keyLength] = '\0';   // 添加字符串终止符
 
     return 0;
 }
