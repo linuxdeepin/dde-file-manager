@@ -35,6 +35,7 @@ public:
     QVariant tabUserData(int index, const QString &key) const;
     void setTabUserData(int index, const QString &key, const QVariant &userData);
     bool isInactiveTab(int index) const;
+    bool isPinned(int index) const;
 
 public Q_SLOTS:
     void activateNextTab();

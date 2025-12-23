@@ -13,6 +13,7 @@
 #include <dfm-base/utils/systempathutil.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/windowutils.h>
+#include <dfm-base/utils/protocolutils.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <dfm-framework/event/event.h>
@@ -28,14 +29,16 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QCursor>
+#include <QIcon>
 
 #include <unistd.h>
 #include <functional>
 
 inline constexpr int kTabMaxWidth { 240 };
 inline constexpr int kTabMinWidth { 70 };
-inline constexpr int kCloseButtonSize { 16 };
-inline constexpr int kCloseButtonMargin { 4 };
+inline constexpr int kItemButtonSize { 20 };
+inline constexpr int kItemButtonIconSize { 16 };
+inline constexpr int kItemButtonMargin { 4 };
 
 using namespace dfmplugin_titlebar;
 DWIDGET_USE_NAMESPACE
@@ -48,6 +51,7 @@ struct Tab
     QString uniqueId;
     QVariantMap userData;
     bool isInactive { false };
+    bool isPinned { false };
 };
 
 namespace dfmplugin_titlebar {
@@ -60,8 +64,7 @@ public:
     void initConnections();
 
     bool tabCloseable(const Tab &tab, const QUrl &targetUrl) const;
-    void handleLastTabClose(const QUrl &currentUrl, const QUrl &targetUrl);
-    bool isCloseButtonHovered(int index);
+    bool isItemButtonHovered(int index);
     void handleTabReleased(int index);
     void handleDragActionChanged(Qt::DropAction action);
     void handleContextMenu(int index);
@@ -70,8 +73,6 @@ public:
     void handleTabDroped(int index, Qt::DropAction dropAction, QObject *target);
 
     QString tabDisplayName(const QUrl &url) const;
-    QUrl determineRedirectUrl(const QUrl &currentUrl, const QUrl &targetUrl) const;
-    QUrl findValidParentPath(const QUrl &url) const;
     void paintTabBackground(QPainter *painter, const QStyleOptionTab &option);
     void paintTabLabel(QPainter *painter, int index, const QStyleOptionTab &option);
     void paintTabButton(DIconButton *btn);
@@ -79,6 +80,13 @@ public:
 
     Tab tabInfo(int index) const;
     bool updateTabInfo(int index, std::function<void(Tab &)> modifier);
+    bool canPinned(int index);
+    void setTabPinned(int index, bool pinned);
+    bool shouldCreateNewTabForPinnedTab(const QUrl &currentUrl, const QUrl &newUrl) const;
+    QPixmap createColoredIcon(const QIcon &icon, const QColor &color, const QSize &size);
+    void closeLeftTabs(int index);
+    void closeRightTabs(int index);
+    void closeOtherTabs(int index);
 
 public:
     TabBar *q;
@@ -176,21 +184,14 @@ bool TabBarPrivate::tabCloseable(const Tab &tab, const QUrl &targetUrl) const
     return false;
 }
 
-void TabBarPrivate::handleLastTabClose(const QUrl &currentUrl, const QUrl &targetUrl)
-{
-    QUrl redirectUrl = determineRedirectUrl(currentUrl, targetUrl);
-    auto winId = TitleBarHelper::windowId(q);
-    dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, redirectUrl);
-}
-
-bool TabBarPrivate::isCloseButtonHovered(int index)
+bool TabBarPrivate::isItemButtonHovered(int index)
 {
     auto rect = q->tabRect(index);
-    const QRect closeButtonRect(rect.right() - kCloseButtonSize - kCloseButtonMargin,
-                                rect.y() + (rect.height() - kCloseButtonSize) / 2,
-                                kCloseButtonSize, kCloseButtonSize);
+    const QRect btnRect(rect.right() - kItemButtonSize - kItemButtonMargin,
+                        rect.y() + (rect.height() - kItemButtonSize) / 2,
+                        kItemButtonSize, kItemButtonSize);
     auto pos = q->mapFromGlobal(QCursor::pos());
-    return closeButtonRect.contains(pos);
+    return btnRect.contains(pos);
 }
 
 void TabBarPrivate::handleTabReleased(int index)
@@ -237,30 +238,24 @@ void TabBarPrivate::handleDragActionChanged(Qt::DropAction action)
 void TabBarPrivate::handleContextMenu(int index)
 {
     QMenu menu;
-    menu.addAction(TabBar::tr("Close tab"), this, [this, index] { Q_EMIT q->tabCloseRequested(index); });
-    menu.addAction(TabBar::tr("Close other tabs"), this, [this, index] {
-        for (int i = q->count() - 1; i > index; --i) {
-            Q_EMIT q->tabCloseRequested(i);
-        }
-        for (int i = 0; i < index; ++i) {
-            Q_EMIT q->tabCloseRequested(0);
-        }
-    });
-    auto act = menu.addAction(TabBar::tr("Close tabs to the left"), this, [this, index] {
-        for (int i = 0; i < index; ++i) {
-            Q_EMIT q->tabCloseRequested(0);
-        }
-    });
-    if (index == 0)
-        act->setEnabled(false);
+    bool isPinned = q->isPinned(index);
+    if (isPinned) {
+        menu.addAction(TabBar::tr("Unpin tab"), this, std::bind(&TabBarPrivate::setTabPinned, this, index, false));
+    } else {
+        auto act = menu.addAction(TabBar::tr("Pin tab"), this, std::bind(&TabBarPrivate::setTabPinned, this, index, true));
+        act->setEnabled(canPinned(index));
+    }
+    menu.addSeparator();
 
-    act = menu.addAction(TabBar::tr("Close tabs to the right"), this, [this, index] {
-        for (int i = q->count() - 1; i > index; --i) {
-            Q_EMIT q->tabCloseRequested(i);
-        }
-    });
-    if (index == q->count() - 1)
-        act->setEnabled(false);
+    auto act = menu.addAction(TabBar::tr("Close tab"), this, [this, index] { Q_EMIT q->tabCloseRequested(index); });
+    act->setEnabled(!isPinned);
+
+    menu.addAction(TabBar::tr("Close other tabs"), this, std::bind(&TabBarPrivate::closeOtherTabs, this, index));
+    act = menu.addAction(TabBar::tr("Close tabs to the left"), this, std::bind(&TabBarPrivate::closeLeftTabs, this, index));
+    act->setEnabled(index > 0);
+
+    act = menu.addAction(TabBar::tr("Close tabs to the right"), this, std::bind(&TabBarPrivate::closeRightTabs, this, index));
+    act->setEnabled(index < q->count() - 1);
 
     menu.exec(QCursor::pos());
     // 防止标签处于hover状态
@@ -311,65 +306,6 @@ QString TabBarPrivate::tabDisplayName(const QUrl &url) const
     }
 
     return url.fileName();
-}
-
-QUrl TabBarPrivate::determineRedirectUrl(const QUrl &currentUrl, const QUrl &targetUrl) const
-{
-    const QUrl &defaultUrl = Application::instance()->appAttribute(Application::kUrlOfNewWindow).toUrl();
-
-    // BUG: 303643
-    QString targetPath = targetUrl.toLocalFile();
-    targetPath = SystemPathUtil::instance()->getRealpathSafely(targetPath);
-    if (DevProxyMng->isFileOfExternalMounts(targetPath))
-        return defaultUrl;
-
-    QUrl redirectUrl;
-    if (dpfHookSequence->run("dfmplugin_titlebar", "hook_Tab_FileDeleteNotCdComputer",
-                             currentUrl, &redirectUrl)) {
-        return redirectUrl.isValid() ? redirectUrl : defaultUrl;
-    }
-
-    if (targetUrl.isLocalFile()) {
-        redirectUrl = findValidParentPath(targetUrl);
-        /* NOTE(xust)
-         * BUG-236625
-         * this is a workaround.
-         * when android phone mounted with MTP protocol, cd into the internal storage.
-         * eject the phone by sidebar button or dock widget
-         * the 'fileRemoved' signal with the internal storage path is emitted first
-         * and then runs into current 'else' branch, and try to find it's parent path to cd to
-         * and the gvfs mount root path was found
-         * while cd to 'computer:///' is expected.
-         * so if final cd path is gvfs root, then change it to computer root to solve this bug.
-         * but this solution would introduce another lower level bug.
-         * */
-        static const QStringList &kGvfsMpts {
-            QString("/run/user/%1/gvfs").arg(getuid()),
-            "/root/.gvfs"
-        };
-        if (kGvfsMpts.contains(redirectUrl.toLocalFile()))
-            return defaultUrl;
-
-        return redirectUrl;
-    }
-
-    return defaultUrl;
-}
-
-QUrl TabBarPrivate::findValidParentPath(const QUrl &url) const
-{
-    QString localPath = url.path();
-
-    do {
-        QStringList pathFragment = localPath.split("/");
-        pathFragment.removeLast();
-        localPath = pathFragment.join("/");
-    } while (!QDir(localPath).exists());
-
-    QUrl parentUrl;
-    parentUrl.setScheme(Global::Scheme::kFile);
-    parentUrl.setPath(localPath);
-    return parentUrl;
 }
 
 void TabBarPrivate::paintTabBackground(QPainter *painter, const QStyleOptionTab &option)
@@ -432,8 +368,8 @@ void TabBarPrivate::paintTabLabel(QPainter *painter, int index, const QStyleOpti
     const int tabMargin = 10;
     const int blueMarkerWidth = isSelected ? 6 : 0;
     const int blueMarkerMargin = isSelected ? 4 : 0;
-    const int closeButtonSize = isHovered ? kCloseButtonSize : 0;
-    const int closeButtonMargin = isHovered ? kCloseButtonMargin : 0;
+    const int closeButtonSize = isHovered ? kItemButtonSize : 0;
+    const int closeButtonMargin = isHovered ? kItemButtonMargin : 0;
 
     // 计算文本可用宽度（考虑蓝色标记和关闭按钮）
     const int textMargin = blueMarkerWidth + blueMarkerMargin;
@@ -516,29 +452,45 @@ void TabBarPrivate::paintTabButton(DIconButton *btn)
 
 void TabBarPrivate::paintTabItemButton(QPainter *painter, int index, const QStyleOptionTab &option)
 {
-    painter->save();
-    painter->setRenderHint(QPainter::Antialiasing);
-    const bool isHovered = option.state & QStyle::State_MouseOver;
-    const QRect rect = option.rect;
-    // 绘制关闭按钮
-    if (isHovered) {
-        const QRect closeButtonRect(rect.right() - kCloseButtonMargin - kCloseButtonSize,
-                                    rect.y() + (rect.height() - kCloseButtonSize) / 2,
-                                    kCloseButtonSize, kCloseButtonSize);
-
-        // 检测鼠标是否在关闭按钮上
-        const bool closeButtonHovered = isCloseButtonHovered(index);
-        QColor buttonColor = closeButtonHovered ? option.palette.color(QPalette::Highlight) : option.palette.color(QPalette::Text);
-        painter->setPen(QPen(buttonColor, 1.5));
-
-        // 绘制X形关闭按钮
-        const int offset = 4;
-        painter->drawLine(closeButtonRect.topLeft() + QPoint(offset, offset),
-                          closeButtonRect.bottomRight() + QPoint(-offset, -offset));
-        painter->drawLine(closeButtonRect.topRight() + QPoint(-offset, offset),
-                          closeButtonRect.bottomLeft() + QPoint(offset, -offset));
+    QIcon btnIcon;
+    if (q->isPinned(index)) {
+        btnIcon = QIcon::fromTheme("dfm_pin");
+    } else if (option.state & QStyle::State_MouseOver) {
+        btnIcon = QIcon::fromTheme("dfm_close");
     }
-    painter->restore();
+
+    if (!btnIcon.isNull()) {
+        painter->save();
+        painter->setRenderHint(QPainter::Antialiasing);
+        const QRect rect = option.rect;
+        const QRect btnRect(rect.right() - kItemButtonMargin - kItemButtonSize,
+                            rect.y() + (rect.height() - kItemButtonSize) / 2,
+                            kItemButtonSize, kItemButtonSize);
+
+        // 检测鼠标是否在按钮上
+        const bool btnHovered = isItemButtonHovered(index);
+        // 在 hover 时绘制圆形背景
+        if (btnHovered) {
+            bool isDarkTheme = DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType;
+            QColor bgColor = isDarkTheme ? QColor(255, 255, 255, 26) : QColor(0, 0, 0, 26);
+            painter->setPen(Qt::NoPen);
+            painter->setBrush(bgColor);
+            painter->drawEllipse(btnRect);
+        }
+
+        // 绘制图标
+        DPalette pal = DPaletteHelper::instance()->palette(q);
+        QColor iconColor = pal.color(QPalette::Active, QPalette::Text);
+        QPixmap iconPixmap = createColoredIcon(btnIcon, iconColor, QSize(kItemButtonIconSize, kItemButtonIconSize));
+
+        // 将图标居中绘制在背景中
+        const int iconOffset = (kItemButtonSize - kItemButtonIconSize) / 2;
+        QRect iconRect(btnRect.x() + iconOffset, btnRect.y() + iconOffset,
+                       kItemButtonIconSize, kItemButtonIconSize);
+        painter->setOpacity(0.7);
+        painter->drawPixmap(iconRect, iconPixmap);
+        painter->restore();
+    }
 }
 
 Tab TabBarPrivate::tabInfo(int index) const
@@ -567,6 +519,90 @@ bool TabBarPrivate::updateTabInfo(int index, std::function<void(Tab &)> modifier
     modifier(tab);
     q->setTabData(index, QVariant::fromValue(tab));
     return true;
+}
+
+bool TabBarPrivate::canPinned(int index)
+{
+    if (qAppName() != "dde-file-manager")
+        return false;
+
+    const auto &url = q->tabUrl(index);
+    if (!url.isValid())
+        return false;
+
+    if (UrlRoute::isVirtual(url))
+        return (url.scheme() == Global::Scheme::kRecent
+                || url.scheme() == Global::Scheme::kTrash);
+
+    return ProtocolUtils::isLocalFile(url);
+}
+
+void TabBarPrivate::setTabPinned(int index, bool pinned)
+{
+    updateTabInfo(index, [pinned](Tab &tab) {
+        tab.isPinned = pinned;
+    });
+    q->update(q->tabRect(index));
+}
+
+bool TabBarPrivate::shouldCreateNewTabForPinnedTab(const QUrl &currentUrl, const QUrl &newUrl) const
+{
+    // URLs are the same, no need to create new tab
+    if (UniversalUtils::urlEquals(currentUrl, newUrl))
+        return false;
+
+    // Entering search from pinned tab - allow in same tab
+    if (newUrl.scheme() == "search")
+        return false;
+
+    // Exiting search - check if returning to search target directory
+    if (currentUrl.scheme() == "search") {
+        QUrlQuery query(currentUrl.query());
+        QUrl targetUrl(query.queryItemValue("url", QUrl::FullyDecoded));
+        if (UniversalUtils::urlEquals(targetUrl, newUrl))
+            return false;
+    }
+
+    // For all other cases, create new tab
+    return true;
+}
+
+QPixmap TabBarPrivate::createColoredIcon(const QIcon &icon, const QColor &color, const QSize &size)
+{
+    QPixmap pixmap = icon.pixmap(size);
+    pixmap.setDevicePixelRatio(qApp->devicePixelRatio());
+
+    // Apply color to icon using composition mode
+    QPainter painter(&pixmap);
+    painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
+    painter.fillRect(pixmap.rect(), color);
+    painter.end();
+
+    return pixmap;
+}
+
+void TabBarPrivate::closeLeftTabs(int index)
+{
+    // Close tabs to the left
+    for (int i = index - 1; i >= 0; --i) {
+        if (!q->isPinned(i))
+            Q_EMIT q->tabCloseRequested(i);
+    }
+}
+
+void TabBarPrivate::closeRightTabs(int index)
+{
+    // Close tabs to the right (reverse order to maintain indices)
+    for (int i = q->count() - 1; i > index; --i) {
+        if (!q->isPinned(i))
+            Q_EMIT q->tabCloseRequested(i);
+    }
+}
+
+void TabBarPrivate::closeOtherTabs(int index)
+{
+    closeRightTabs(index);
+    closeLeftTabs(index);
 }
 
 TabBar::TabBar(QWidget *parent)
@@ -622,6 +658,9 @@ int TabBar::createInactiveTab(const QUrl &url, const QVariantMap &userData)
 
 void TabBar::removeTab(int index, int selectIndex)
 {
+    if (isPinned(index))
+        return;
+
     if (count() == 1) {
         window()->close();
         return;
@@ -655,6 +694,16 @@ void TabBar::setCurrentUrl(const QUrl &url)
     }
 
     auto tab = data.value<Tab>();
+
+    // If current tab is pinned and URL is changing, check if need to create new tab
+    if (tab.isPinned && d->shouldCreateNewTabForPinnedTab(tab.tabUrl, url)) {
+        fmInfo() << "Pinned tab detected, creating new tab for URL:" << url;
+        int newIndex = createTab();
+        index = newIndex;
+        data = tabData(index);
+        tab = data.value<Tab>();
+    }
+
     tab.tabUrl = url;
     tab.tabAlias.clear();
     dpfHookSequence->run("dfmplugin_titlebar", "hook_Tab_SetTabName", url, &tab.tabAlias);
@@ -670,11 +719,7 @@ void TabBar::closeTab(const QUrl &url)
         if (!d->tabCloseable(tab, url))
             continue;
 
-        if (count() == 1) {
-            d->handleLastTabClose(tab.tabUrl, url);
-        } else {
-            removeTab(i);
-        }
+        removeTab(i);
     }
 }
 
@@ -724,6 +769,11 @@ void TabBar::setTabUserData(int index, const QString &key, const QVariant &userD
 bool TabBar::isInactiveTab(int index) const
 {
     return d->tabInfo(index).isInactive;
+}
+
+bool TabBar::isPinned(int index) const
+{
+    return d->tabInfo(index).isPinned;
 }
 
 void TabBar::activateNextTab()
@@ -802,6 +852,7 @@ QMimeData *TabBar::createMimeDataFromTab(int index, const QStyleOptionTab &optio
     tabDataObj["uniqueId"] = uniqueId;
     tabDataObj["tabUrl"] = url.toString();
     tabDataObj["tabAlias"] = alias;
+    tabDataObj["isPinned"] = isPinned(index);
 
     // Save userData if exists
     QJsonObject userDataObj;
@@ -906,8 +957,11 @@ bool TabBar::eventFilter(QObject *obj, QEvent *e)
             }
         } else if (me->button() == Qt::LeftButton) {
             int index = tabAt(mapFromGlobal(QCursor::pos()));
-            if (index != -1 && d->isCloseButtonHovered(index)) {
-                Q_EMIT tabCloseRequested(index);
+            if (index != -1 && d->isItemButtonHovered(index)) {
+                if (isPinned(index))
+                    d->setTabPinned(index, false);
+                else
+                    Q_EMIT tabCloseRequested(index);
                 return true;
             }
         }
@@ -928,7 +982,7 @@ void TabBar::mousePressEvent(QMouseEvent *e)
 {
     if (e->button() == Qt::MiddleButton) {
         int index = tabAt(e->pos());
-        if (-1 != index && count() > 1)
+        if (-1 != index)
             Q_EMIT tabCloseRequested(index);
     }
 
