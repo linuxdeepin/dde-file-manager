@@ -352,6 +352,156 @@ void FileManagerWindowPrivate::saveSidebarState()
     }
 }
 
+int FileManagerWindowPrivate::loadDetailSpaceState() const
+{
+    const QVariantMap &state = Application::appObtuselySetting()->value("WindowManager", "SplitterState").toMap();
+    int width = state.value("detailspace", kDefaultDetailWidth).toInt();
+    return qBound(kMinimumDetailWidth, width, kMaximumDetailWidth);
+}
+
+void FileManagerWindowPrivate::saveDetailSpaceState()
+{
+    if (!detailSpace)
+        return;
+
+    int width = lastDetailSpaceWidth;
+    if (width >= kMinimumDetailWidth && width <= kMaximumDetailWidth) {
+        QVariantMap state = Application::appObtuselySetting()->value("WindowManager", "SplitterState").toMap();
+        state["detailspace"] = width;
+        Application::appObtuselySetting()->setValue("WindowManager", "SplitterState", state);
+    }
+}
+
+int FileManagerWindowPrivate::detailSplitterPosition() const
+{
+    if (!detailSplitter || detailSplitter->sizes().size() < 2)
+        return kDefaultDetailWidth;
+    return detailSplitter->sizes().at(1);
+}
+
+void FileManagerWindowPrivate::setDetailSplitterPosition(int detailWidth)
+{
+    if (!detailSplitter)
+        return;
+
+    int clampedWidth = qBound(kMinimumDetailWidth, detailWidth, kMaximumDetailWidth);
+    int workspaceWidth = detailSplitter->width() - clampedWidth - detailSplitter->handleWidth();
+    detailSplitter->setSizes({ workspaceWidth, clampedWidth });
+}
+
+void FileManagerWindowPrivate::initDetailSplitter()
+{
+    if (detailSplitter)
+        return;
+
+    detailSplitter = new Splitter(Qt::Horizontal, rightArea);
+    detailSplitter->setChildrenCollapsible(false);
+    detailSplitter->setHandleWidth(0);   // Same as sidebar splitter
+
+    // Connect splitter moved signal
+    QObject::connect(detailSplitter, &QSplitter::splitterMoved,
+                     this, &FileManagerWindowPrivate::handleDetailSplitterMoved);
+}
+
+void FileManagerWindowPrivate::handleDetailSplitterMoved(int pos, int index)
+{
+    Q_UNUSED(index);
+
+    if (!detailSplitter || !detailSpace)
+        return;
+
+    int detailWidth = detailSplitter->width() - pos - detailSplitter->handleWidth();
+
+    // Check if dragged below minimum width - request hide
+    if (detailWidth < kMinimumDetailWidth) {
+        emit q->detailSpaceHideByDrag();
+        return;
+    }
+
+    // Clamp to maximum width
+    if (detailWidth > kMaximumDetailWidth) {
+        setDetailSplitterPosition(kMaximumDetailWidth);
+        detailWidth = kMaximumDetailWidth;
+    }
+
+    // Remember the width
+    lastDetailSpaceWidth = detailWidth;
+}
+
+void FileManagerWindowPrivate::animateDetailSplitter(bool show)
+{
+    if (!detailSplitter || !detailSpace)
+        return;
+
+    if (!isAnimationEnabled()) {
+        if (show) {
+            detailSpace->setVisible(true);
+            setDetailSplitterPosition(lastDetailSpaceWidth);
+        } else {
+            detailSpace->setVisible(false);
+        }
+        return;
+    }
+
+    // Setup: set visible and allow shrinking
+    detailSpace->setVisible(true);
+    detailSpace->setMinimumWidth(1);
+
+    // Stop any running animation
+    bool lastAnimationStopped = false;
+    if (curDetailSplitterAnimation && curDetailSplitterAnimation->state() == QAbstractAnimation::Running) {
+        lastAnimationStopped = true;
+        curDetailSplitterAnimation->stop();
+        delete curDetailSplitterAnimation;
+        curDetailSplitterAnimation = nullptr;
+    }
+
+    // Calculate workspace width for animation
+    // splitPosition controls the FIRST widget (workspace), not the second (detailSpace)
+    int totalWidth = detailSplitter->width() - detailSplitter->handleWidth();
+    int currentWorkspaceWidth = detailSplitter->sizes().at(0);
+
+    // Save current detailSpace width when hiding
+    if (!show && !lastAnimationStopped)
+        lastDetailSpaceWidth = detailSplitter->sizes().at(1);
+
+    // Calculate animation start and end for WORKSPACE width
+    int start = show ? (totalWidth - 1) : currentWorkspaceWidth;
+    int end = show ? (totalWidth - lastDetailSpaceWidth) : (totalWidth - 1);
+
+    // Configure animation using detailSplitter's splitPosition property
+    int duration = DConfigManager::instance()->value(kAnimationDConfName, kAnimationDetailviewDuration, 366).toInt();
+    auto curve = static_cast<QEasingCurve::Type>(DConfigManager::instance()->value(kAnimationDConfName, kAnimationDetailviewCurve, 22).toInt());
+
+    curDetailSplitterAnimation = new QPropertyAnimation(detailSplitter, "splitPosition");
+    curDetailSplitterAnimation->setEasingCurve(curve);
+    curDetailSplitterAnimation->setDuration(duration);
+    curDetailSplitterAnimation->setStartValue(start);
+    curDetailSplitterAnimation->setEndValue(end);
+
+    // Connect animation signals
+    connect(curDetailSplitterAnimation, &QPropertyAnimation::finished, this, [this, show]() {
+        if (show) {
+            detailSpace->setMinimumWidth(kMinimumDetailWidth);
+            detailSpace->setMaximumWidth(kMaximumDetailWidth);
+        } else {
+            detailSpace->setVisible(false);
+            detailSpace->setMinimumWidth(kMinimumDetailWidth);
+        }
+
+        delete curDetailSplitterAnimation;
+        curDetailSplitterAnimation = nullptr;
+    });
+
+    connect(curDetailSplitterAnimation, &QPropertyAnimation::valueChanged, this, [this, totalWidth](const QVariant &value) {
+        // Emit detailSpace width, not workspace width
+        int workspaceWidth = value.toInt();
+        int detailWidth = totalWidth - workspaceWidth;
+    });
+
+    curDetailSplitterAnimation->start();
+}
+
 void FileManagerWindowPrivate::updateSideBarSeparatorStyle()
 {
     if (!sidebarSep)
@@ -625,9 +775,14 @@ void FileManagerWindow::installWorkSpace(AbstractFrame *w)
 void FileManagerWindow::installDetailView(AbstractFrame *w)
 {
     d->detailSpace = w;
-    if (d->detailSpace) {
-        d->rightBottomLayout->addWidget(d->detailSpace, 1);
+    if (d->detailSpace && d->detailSplitter) {
+        // Add detailSpace as second widget in splitter
+        d->detailSplitter->addWidget(d->detailSpace);
         d->detailSpace->setVisible(false);
+
+        // Set initial splitter position with saved width
+        // At this point, detailSplitter already has valid geometry from initializeUi
+        d->setDetailSplitterPosition(d->lastDetailSpaceWidth);
     }
 
     emit this->detailViewInstallFinished();
@@ -653,6 +808,40 @@ AbstractFrame *FileManagerWindow::detailView() const
     return d->detailSpace;
 }
 
+void FileManagerWindow::setDetailViewWidth(int width)
+{
+    d->lastDetailSpaceWidth = qBound(d->kMinimumDetailWidth, width, d->kMaximumDetailWidth);
+    if (d->detailSplitter && d->detailSpace && d->detailSpace->isVisible()) {
+        d->setDetailSplitterPosition(d->lastDetailSpaceWidth);
+    }
+}
+
+int FileManagerWindow::detailViewWidth() const
+{
+    if (d->detailSplitter && d->detailSpace && d->detailSpace->isVisible()) {
+        return d->detailSplitterPosition();
+    }
+    return d->lastDetailSpaceWidth;
+}
+
+void FileManagerWindow::showDetailSpace(bool animated)
+{
+    if (animated)
+        d->animateDetailSplitter(true);
+    else {
+        d->detailSpace->setVisible(true);
+        d->setDetailSplitterPosition(d->lastDetailSpaceWidth);
+    }
+}
+
+void FileManagerWindow::hideDetailSpace(bool animated)
+{
+    if (animated)
+        d->animateDetailSplitter(false);
+    else
+        d->detailSpace->setVisible(false);
+}
+
 void FileManagerWindow::loadState()
 {
     d->loadWindowState();
@@ -661,6 +850,7 @@ void FileManagerWindow::loadState()
 void FileManagerWindow::saveState()
 {
     d->saveSidebarState();
+    d->saveDetailSpaceState();
     d->saveWindowState();
 }
 
@@ -769,7 +959,12 @@ void FileManagerWindow::initializeUi()
 
             d->rightLayout->addWidget(d->titleBar);
             d->rightLayout->addLayout(d->rightBottomLayout, 1);
-            d->rightBottomLayout->addWidget(d->workspace, 1);
+
+            // Initialize detailSplitter structure (even without detailSpace)
+            d->initDetailSplitter();
+            d->detailSplitter->addWidget(d->workspace);
+            d->rightBottomLayout->addWidget(d->detailSplitter, 1);
+
             d->rightArea->setLayout(d->rightLayout);
         }
 
@@ -809,6 +1004,9 @@ void FileManagerWindow::updateUi()
     int splitterPos = d->loadSidebarState();
     d->lastSidebarExpandedPostion = splitterPos;
     d->setSplitterPosition(splitterPos);
+
+    // Load and set detailSplitter initial size
+    d->lastDetailSpaceWidth = d->loadDetailSpaceState();
 }
 
 void FileManagerWindow::resizeEvent(QResizeEvent *event)

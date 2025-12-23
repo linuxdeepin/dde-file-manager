@@ -35,6 +35,7 @@ public:
 
 private slots:
     void onWindowClosed(quint64 windId);
+    void onWindowOpened(quint64 windId);
 };
 
 }

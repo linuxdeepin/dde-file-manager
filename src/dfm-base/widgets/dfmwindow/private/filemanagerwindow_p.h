@@ -59,6 +59,12 @@ public:
 
     void handleSplitterMoved(int pos, int index);
 
+    // DetailSpace splitter management
+    int detailSplitterPosition() const;
+    void setDetailSplitterPosition(int detailWidth);
+    int loadDetailSpaceState() const;
+    void saveDetailSpaceState();
+
 protected:
     QUrl currentUrl;
     static constexpr int kMinimumWindowWidth { 550 };
@@ -70,6 +76,12 @@ protected:
     static constexpr int kDefaultLeftWidth { 200 };
     static constexpr int kMinimumRightWidth { kMinimumWindowWidth };
 
+    // DetailSpace size constraints
+    static constexpr int kMinimumDetailWidth { 280 };
+    static constexpr int kMaximumDetailWidth { 500 };
+    static constexpr int kDefaultDetailWidth { 280 };
+    static constexpr int kMinimumWorkspaceWidth { 260 };
+
     QFrame *centralView { nullptr };   // Central area (all except sidebar)
     QFrame *rightArea { nullptr };
 
@@ -78,8 +90,11 @@ protected:
     QHBoxLayout *rightBottomLayout { nullptr };
 
     Splitter *splitter { nullptr };
+    Splitter *detailSplitter { nullptr };   // Splitter for workspace and detailSpace
     QPropertyAnimation *curSplitterAnimation { nullptr };
+    QPropertyAnimation *curDetailSplitterAnimation { nullptr };   // Separate animation for detail splitter
     int lastSidebarExpandedPostion { kDefaultLeftWidth };
+    int lastDetailSpaceWidth { kDefaultDetailWidth };   // Remember detailSpace width
     AbstractFrame *titleBar { nullptr };
     AbstractFrame *sideBar { nullptr };
     AbstractFrame *workspace { nullptr };
@@ -105,6 +120,11 @@ private:
     void configureAnimation(int start, int end);
     void connectAnimationSignals();
     bool isAnimationEnabled() const;
+
+    // DetailSpace splitter internal methods
+    void initDetailSplitter();
+    void handleDetailSplitterMoved(int pos, int index);
+    void animateDetailSplitter(bool show);
 };
 
 }

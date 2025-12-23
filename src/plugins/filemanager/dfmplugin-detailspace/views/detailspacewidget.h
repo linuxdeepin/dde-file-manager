@@ -19,6 +19,11 @@ class DetailSpaceWidget : public DFMBASE_NAMESPACE::AbstractFrame
     Q_DISABLE_COPY(DetailSpaceWidget)
 
 public:
+    // Size constraints (must match FileManagerWindowPrivate constants)
+    static constexpr int kMinimumWidth { 280 };
+    static constexpr int kMaximumWidth { 500 };
+    static constexpr int kDefaultWidth { 280 };
+
     explicit DetailSpaceWidget(QFrame *parent = nullptr);
     void setCurrentUrl(const QUrl &url) override;
     void setCurrentUrl(const QUrl &url, int widgetFilter);

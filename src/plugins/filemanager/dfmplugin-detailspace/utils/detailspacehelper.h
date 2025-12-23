@@ -8,6 +8,7 @@
 #include "dfmplugin_detailspace_global.h"
 
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
+#include <dfm-base/widgets/filemanagerwindow.h>
 
 #include <QMap>
 #include <QUrl>
@@ -31,10 +32,7 @@ public:
 private:
     static QMutex &mutex();
     static QMap<quint64, DetailSpaceWidget *> kDetailSpaceMap;
-    static void animateDetailView(DetailSpaceWidget *widget, bool show);
-    static void updateWorkspaceWidth(quint64 windowId, DetailSpaceWidget *widget, bool show);
-    static int getAnimationDuration();
-    static QEasingCurve::Type getAnimationCurve();
+    static void updateWorkspaceWidth(quint64 windowId, DetailSpaceWidget *widget, bool show, int targetWidth);
 };
 
 }   // namespace dfmplugin_detailspace

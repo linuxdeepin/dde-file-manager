@@ -30,7 +30,10 @@ DetailSpaceWidget::DetailSpaceWidget(QFrame *parent)
 
 void DetailSpaceWidget::initUiForSizeMode()
 {
-    setFixedWidth(detailWidth());
+    // Set size constraints for splitter-based resizing
+    // Width is now controlled by the window's detailSplitter
+    setMinimumWidth(kMinimumWidth);
+    setMaximumWidth(kMaximumWidth);
 }
 
 void DetailSpaceWidget::setCurrentUrl(const QUrl &url)
@@ -86,9 +89,6 @@ void DetailSpaceWidget::initializeUi()
 
 int DetailSpaceWidget::detailWidth()
 {
-#ifdef DTKWIDGET_CLASS_DSizeMode
-    return DSizeModeHelper::element(260, 290);
-#else
-    return 290;
-#endif
+    // Return the default width for backward compatibility
+    return kDefaultWidth;
 }

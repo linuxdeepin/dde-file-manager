@@ -41,6 +41,13 @@ public:
     AbstractFrame *workSpace() const;
     AbstractFrame *detailView() const;
 
+    // DetailSpace width management
+    void setDetailViewWidth(int width);
+    int detailViewWidth() const;
+    // DetailSpace visibility management with animation support
+    void showDetailSpace(bool animated = true);
+    void hideDetailSpace(bool animated = true);
+
     void loadState();
     void saveState();
 
@@ -83,6 +90,9 @@ Q_SIGNALS:
     void sideBarInstallFinished();
     void workspaceInstallFinished();
     void detailViewInstallFinished();
+
+    // DetailSpace signals
+    void detailSpaceHideByDrag();   // Emitted when dragged below minimum width
 
 private:
     void initializeUi();
