@@ -201,6 +201,17 @@ void ViewOptionsWidgetPrivate::initConnect()
         DConfigManager::instance()->setValue(kViewDConfName, kDisplayPreviewVisibleKey, isChecked);
     });
 
+    // Sync checkbox state when DConfig value changes externally (e.g., drag-to-hide)
+    connect(DConfigManager::instance(), &DConfigManager::valueChanged, this,
+            [this](const QString &config, const QString &key) {
+                if (config == kViewDConfName && key == kDisplayPreviewVisibleKey) {
+                    bool newValue = DConfigManager::instance()->value(kViewDConfName, kDisplayPreviewVisibleKey).toBool();
+                    if (displayPreviewCheckBox->isChecked() != newValue) {
+                        displayPreviewCheckBox->setChecked(newValue);
+                    }
+                }
+            });
+
     connect(iconSizeSlider, &DSlider::valueChanged, this, [this](int value) {
         fmDebug() << "iconSizeSlider value changed: " << value;
         TitleBarHelper::setFileViewStateValue(fileUrl, "iconSizeLevel", value);
@@ -385,10 +396,10 @@ template<typename Func>
 void ViewOptionsWidgetPrivate::connectSliderTip(Dtk::Widget::DSlider *slider, Func getValueList)
 {
     auto valList = (viewDefines.*getValueList)();
-    connect(slider, &DSlider::sliderMoved, this, [this, slider, valList](int pos){
+    connect(slider, &DSlider::sliderMoved, this, [this, slider, valList](int pos) {
         showSliderTips(slider, pos, valList);
     });
-    connect(slider, &DSlider::sliderPressed, this, [ this, slider, valList ]{
+    connect(slider, &DSlider::sliderPressed, this, [this, slider, valList] {
         int position = slider->slider()->sliderPosition();
         showSliderTips(slider, position, valList);
     });

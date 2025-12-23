@@ -7,6 +7,13 @@
 #include "events/detailspaceeventreceiver.h"
 
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
+#include <dfm-base/widgets/filemanagerwindow.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+
+#include <dfm-framework/dpf.h>
+
+using namespace GlobalDConfDefines::ConfigPath;
+using namespace GlobalDConfDefines::BaseConfig;
 
 namespace dfmplugin_detailspace {
 DFM_LOG_REGISTER_CATEGORY(DPDETAILSPACE_NAMESPACE)
@@ -15,6 +22,7 @@ DFMBASE_USE_NAMESPACE
 void DetailSpace::initialize()
 {
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowClosed, this, &DetailSpace::onWindowClosed, Qt::DirectConnection);
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &DetailSpace::onWindowOpened, Qt::DirectConnection);
     DetailSpaceEventReceiver::instance().connectService();
 }
 
@@ -26,6 +34,19 @@ bool DetailSpace::start()
 void DetailSpace::onWindowClosed(quint64 windId)
 {
     DetailSpaceHelper::removeDetailSpace(windId);
+}
+
+void DetailSpace::onWindowOpened(quint64 windId)
+{
+    auto window = FMWindowsIns.findWindowById(windId);
+    if (!window)
+        return;
+
+    // Connect to detailSpaceHideByDrag signal to handle drag-to-hide
+    connect(window, &FileManagerWindow::detailSpaceHideByDrag, this, []() {
+        // Sync titlebar button state via DConfig
+        DConfigManager::instance()->setValue(kViewDConfName, kDisplayPreviewVisibleKey, false);
+    });
 }
 
 }   // namespace dfmplugin_detailspace
