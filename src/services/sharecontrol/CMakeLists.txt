@@ -36,6 +36,14 @@ INSTALL_DBUS_SERVICE(org.deepin.Filemanager.UserShareManager root)
 set(PolicyDir "${CMAKE_INSTALL_PREFIX}/share/polkit-1/actions")
 install(FILES polkit/org.deepin.filemanager.usersharemanager.policy DESTINATION ${PolicyDir})
 
+# Install systemd drop-in configuration for security hardening
+# This adds security restrictions without modifying the shared service template
+install(FILES
+    systemd/security-hardening.conf
+    DESTINATION
+    lib/systemd/system/deepin-service-plugin@org.deepin.Filemanager.UserShareManager.service.d/
+)
+
 #execute_process(COMMAND qdbuscpp2xml sharecontroldbus.h -o ./sharecontroldbus.xml
 #    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 #execute_process(COMMAND qdbusxml2cpp -i ../sharecontroldbus.h -c ShareControlAdapter -l ShareControlDBus -a dbusadapter/sharecontrol_adapter sharecontroldbus.xml

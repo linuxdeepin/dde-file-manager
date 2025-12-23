@@ -1,0 +1,50 @@
+[Unit]
+Description=Deepin Disk Encrypt Service
+After=dbus.service
+
+[Service]
+Type=dbus
+BusName=org.deepin.Filemanager.DiskEncrypt
+ExecStart=/usr/bin/deepin-diskencrypt-service
+User=root
+ProtectSystem=full
+ProtectHome=true
+ProtectProc=invisible
+PrivateTmp=true
+PrivateDevices=false
+ProtectKernelTunables=true
+ProtectKernelModules=false
+ProtectControlGroups=true
+NoNewPrivileges=true
+MemoryDenyWriteExecute=true
+RestrictSUIDSGID=true
+RestrictRealtime=true
+RestrictAddressFamilies=AF_UNIX AF_NETLINK AF_INET AF_INET6
+DevicePolicy=auto
+# ReadWritePaths - Disk encryption needs access to encryption configuration and system files
+ReadWritePaths=/etc/crypttab
+ReadWritePaths=/etc/usec-crypt
+ReadWritePaths=/etc/default/grub.d
+ReadWritePaths=/boot/usec-crypt
+ReadWritePaths=/usr/local/share/applications
+ReadWritePaths=/tmp
+# Access Control - Block sensitive files
+# Note: /etc/crypttab is allowed as ReadWritePath
+# Note: /etc/fstab is NOT blocked as disk encryption needs to read it
+InaccessiblePaths=-/etc/shadow
+InaccessiblePaths=-/etc/NetworkManager/system-connections/
+InaccessiblePaths=-/etc/pam.d/
+InaccessiblePaths=-/etc/security/
+InaccessiblePaths=-/etc/selinux/
+InaccessiblePaths=-/etc/deepin-elf-verify/
+InaccessiblePaths=-/etc/filearmor.d/
+InaccessiblePaths=-/sysroot/ostree/repo/
+InaccessiblePaths=-/persistent/ostree/repo/
+InaccessiblePaths=-/usr/share/uadp
+InaccessiblePaths=-/etc/sudoers
+InaccessiblePaths=-/etc/sudoers.d
+InaccessiblePaths=-/root
+InaccessiblePaths=-/var/log
+InaccessiblePaths=-/var/cache
+OOMScoreAdjust=-500
+Nice=-5

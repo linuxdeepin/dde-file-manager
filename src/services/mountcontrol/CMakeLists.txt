@@ -36,3 +36,11 @@ set(PolicyDir "${CMAKE_INSTALL_PREFIX}/share/polkit-1/actions")
 install(FILES org.deepin.filemanager.mountcontrol.policy DESTINATION ${PolicyDir})
 
 INSTALL_DBUS_SERVICE(org.deepin.Filemanager.MountControl root)
+
+# Install systemd drop-in configuration for security hardening
+# This adds security restrictions without modifying the shared service template
+install(FILES
+    systemd/security-hardening.conf
+    DESTINATION
+    lib/systemd/system/deepin-service-plugin@org.deepin.Filemanager.MountControl.service.d/
+)
