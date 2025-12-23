@@ -78,6 +78,8 @@
         <file>icons/deepin/builtin/texts/trash_16px.svg</file>
         <file>icons/deepin/builtin/light/icons/dfm_search_128px.svg</file>
         <file>icons/deepin/builtin/dark/icons/dfm_search_128px.svg</file>
+        <file>icons/deepin/builtin/texts/dfm_close_16px.svg</file>
+        <file>icons/deepin/builtin/texts/dfm_pin_16px.svg</file>
     </qresource>
     <qresource prefix="/dsg">
         <file>built-in-icons/computer-symbolic.dci</file>
