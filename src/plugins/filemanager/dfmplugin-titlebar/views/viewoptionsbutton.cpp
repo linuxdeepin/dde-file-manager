@@ -133,6 +133,20 @@ bool ViewOptionsButton::event(QEvent *event)
             return DToolButton::event(event);
         }
 
+        // Check if the window is minimized/maximized - don't emit signal in these cases
+        QWidget *topWindow = window();
+        if (topWindow && topWindow->isMinimized()) {
+            // Window is minimized, ignore the event
+            return DToolButton::event(event);
+        }
+
+        // Also check if this is caused by spontaneous event (user action vs programmatic)
+        // Only react to programmatic visibility changes (detailspace show/hide)
+        if (event->spontaneous()) {
+            // Spontaneous event (from window system), likely minimize/maximize
+            return DToolButton::event(event);
+        }
+
         Q_EMIT displayPreviewVisibleChanged(type == QEvent::Show);
     }
 
