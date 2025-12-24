@@ -372,6 +372,31 @@ void FileManagerWindowPrivate::saveDetailSpaceState()
     }
 }
 
+void FileManagerWindowPrivate::updateRightAreaMinWidth()
+{
+    if (!rightArea || !detailSplitter)
+        return;
+
+    int requiredMinWidth = kMinimumWorkspaceWidth;   // 260px for workspace
+
+    // If sidebar is visible, calculate dynamic minimum width
+    if (sideBar && sideBar->isVisible()) {
+        // If detailspace is visible, add its current width
+        if (detailSpace && detailSpace->isVisible()) {
+            int detailWidth = detailSplitterPosition();
+            if (detailWidth > 0) {
+                requiredMinWidth += detailWidth + detailSplitter->handleWidth();
+            }
+        }
+    } else {
+        // Sidebar is hidden, rightArea takes full window width
+        // Use window minimum width to ensure titlebar displays correctly
+        requiredMinWidth = kMinimumRightWidth;
+    }
+
+    rightArea->setMinimumWidth(requiredMinWidth);
+}
+
 int FileManagerWindowPrivate::detailSplitterPosition() const
 {
     if (!detailSplitter || detailSplitter->sizes().size() < 2)
@@ -440,6 +465,7 @@ void FileManagerWindowPrivate::animateDetailSplitter(bool show)
         } else {
             detailSpace->setVisible(false);
         }
+        updateRightAreaMinWidth();   // Update after visibility change
         return;
     }
 
@@ -489,14 +515,10 @@ void FileManagerWindowPrivate::animateDetailSplitter(bool show)
             detailSpace->setMinimumWidth(kMinimumDetailWidth);
         }
 
+        updateRightAreaMinWidth();   // Update after animation completes
+
         delete curDetailSplitterAnimation;
         curDetailSplitterAnimation = nullptr;
-    });
-
-    connect(curDetailSplitterAnimation, &QPropertyAnimation::valueChanged, this, [this, totalWidth](const QVariant &value) {
-        // Emit detailSpace width, not workspace width
-        int workspaceWidth = value.toInt();
-        int detailWidth = totalWidth - workspaceWidth;
     });
 
     curDetailSplitterAnimation->start();
@@ -557,14 +579,27 @@ void FileManagerWindowPrivate::updateSideBarState()
 void FileManagerWindowPrivate::updateSideBarVisibility()
 {
     int totalWidth = q->width();
-    bool haveSpaceShowSidebar = totalWidth >= (kMinimumRightWidth + kMinimumLeftWidth + splitter->handleWidth());
+
+    // Calculate actual minimum right area width based on current state
+    int actualMinRightWidth = kMinimumRightWidth;
+
+    // If detailspace is visible, use dynamic calculation
+    if (detailSpace && detailSpace->isVisible()) {
+        actualMinRightWidth = kMinimumWorkspaceWidth;   // 260px for workspace
+        int detailWidth = detailSplitterPosition();
+        if (detailWidth > 0) {
+            actualMinRightWidth += detailWidth + detailSplitter->handleWidth();
+        }
+    }
+
+    bool haveSpaceShowSidebar = totalWidth >= (actualMinRightWidth + kMinimumLeftWidth + splitter->handleWidth());
 
     if (haveSpaceShowSidebar && !sideBarAutoVisible) {
         showSideBar();
     } else if (!haveSpaceShowSidebar && sideBarAutoVisible) {
         hideSideBar();
     } else if (sideBarShrinking && sideBarAutoVisible) {
-        int newSideBarWidth = totalWidth - kMinimumRightWidth - splitter->handleWidth();
+        int newSideBarWidth = totalWidth - actualMinRightWidth - splitter->handleWidth();
         if (newSideBarWidth <= kMinimumLeftWidth) {
             hideSideBar();
         }
@@ -780,6 +815,9 @@ void FileManagerWindow::installDetailView(AbstractFrame *w)
         d->detailSplitter->addWidget(d->detailSpace);
         d->detailSpace->setVisible(false);
 
+        // Set stretch factor for detailSpace: 0 to keep fixed size
+        d->detailSplitter->setStretchFactor(1, 0);   // detailSpace index=1
+
         // Set initial splitter position with saved width
         // At this point, detailSplitter already has valid geometry from initializeUi
         d->setDetailSplitterPosition(d->lastDetailSpaceWidth);
@@ -963,6 +1001,13 @@ void FileManagerWindow::initializeUi()
             // Initialize detailSplitter structure (even without detailSpace)
             d->initDetailSplitter();
             d->detailSplitter->addWidget(d->workspace);
+
+            // Set workspace minimum width to ensure proper resize priority
+            d->workspace->setMinimumWidth(d->kMinimumWorkspaceWidth);
+
+            // Set stretch factor: workspace=1 (absorbs size changes), detailSpace=0 (keeps fixed)
+            d->detailSplitter->setStretchFactor(0, 1);   // workspace index=0
+
             d->rightBottomLayout->addWidget(d->detailSplitter, 1);
 
             d->rightArea->setLayout(d->rightLayout);
@@ -1015,6 +1060,10 @@ void FileManagerWindow::resizeEvent(QResizeEvent *event)
 
     if (!d->sideBar || !d->titleBar || !d->workspace || !d->splitter)
         return;
+
+    // Update rightArea minimum width to enforce resize priority:
+    // workspace shrinks first, then sidebar, then detailspace
+    d->updateRightAreaMinWidth();
 
     d->updateSideBarState();
     d->updateSideBarVisibility();
