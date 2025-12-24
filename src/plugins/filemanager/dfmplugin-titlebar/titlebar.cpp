@@ -41,6 +41,8 @@ void TitleBar::initialize()
 bool TitleBar::start()
 {
     DFMBASE_USE_NAMESPACE
+    // register pinned tab scheme
+    UrlRoute::regScheme(TabDef::kTabScheme, "/", {}, true);
     // file scheme for crumbar
     dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", QString(Global::Scheme::kFile), QVariantMap {});
 
@@ -99,8 +101,8 @@ void TitleBar::onWindowOpened(quint64 windId)
     connect(window, &FileManagerWindow::windowSplitterWidthChanged, titleBarWidget, &TitleBarWidget::handleSplitterAnimation);
 
     if (qAppName() == "dde-file-manager") {
-        connect(window, &FileManagerWindow::workspaceInstallFinished, titleBarWidget,
-                &TitleBarWidget::openCustomFixedTabs);
+        connect(window, &FileManagerWindow::workspaceInstallFinished, titleBarWidget, &TitleBarWidget::openCustomFixedTabs);
+        connect(window, &FileManagerWindow::workspaceInstallFinished, titleBarWidget, &TitleBarWidget::openPinnedTabs);
     }
 }
 
@@ -165,12 +167,12 @@ void TitleBar::registerTabSettingConfig()
     SettingBackend::instance()->addSettingAccessor(
             "00_base.01_new_windows.02_custom_tab",
             []() {
-                return DConfigManager::instance()->value(kDefaultCfgPath,
+                return DConfigManager::instance()->value(kViewDConfName,
                                                          kCunstomFixedTabs,
                                                          {});
             },
             [](const QVariant &val) {
-                DConfigManager::instance()->setValue(kDefaultCfgPath,
+                DConfigManager::instance()->setValue(kViewDConfName,
                                                      kCunstomFixedTabs,
                                                      val);
             });

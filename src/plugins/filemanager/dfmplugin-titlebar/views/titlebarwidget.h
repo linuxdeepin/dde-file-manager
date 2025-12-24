@@ -37,6 +37,8 @@ public:
     CrumbBar *titleCrumbBar() const;
     void openNewTab(const QUrl &url);
     void openCustomFixedTabs();
+    void openPinnedTabs();
+    void activatePinnedTab(const QString &pinnedId);
 
     void showSearchFilterButton(bool visible);
     void setViewModeState(int mode);
@@ -86,6 +88,7 @@ private slots:
 
 private:
     QUrl titlebarUrl;
+    QString pendingPinnedTabId;  // Store pinnedId from pinned:// URL
     DTitlebar *topBar { nullptr };
     TabBar *bottomBar { nullptr };
     QHBoxLayout *topBarCustomLayout { nullptr };

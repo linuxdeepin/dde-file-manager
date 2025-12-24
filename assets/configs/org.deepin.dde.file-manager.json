@@ -199,17 +199,6 @@
             "description[zh_CN]": "日志规则",
             "permissions": "readwrite",
             "visibility": "public"
-        },
-        "dfm.custom.fixedtab": {
-            "value": [],
-            "serial": 0,
-            "flags": [],
-            "name": "Custom fixed tabs",
-            "name[zh_CN]": "自定义固定标签页",
-            "description": "It's used to configure custom fixed tabs in the file manager.",
-            "description[zh_CN]": "用于配置文件管理器中的自定义固定标签页。",
-            "permissions": "readwrite",
-            "visibility": "private"
         }
     }
 }

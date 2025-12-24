@@ -23,6 +23,7 @@ inline constexpr char kTreeViewEnable[] { "dfm.treeview.enable" };
 inline constexpr char kDisplayPreviewVisibleKey[] { "dfm.displaypreview.visible" };
 inline constexpr char kOpenFolderWindowsInASeparateProcess[] { "dfm.open.in.single.process" };
 inline constexpr char kCunstomFixedTabs[] { "dfm.custom.fixedtab" };
+inline constexpr char kPinnedTabs[] { "dfm.pinned.tabs" };
 }   // namespace BaseConfig
 
 /*!

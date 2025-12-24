@@ -147,7 +147,7 @@ TEST_F(TitleBarWidgetTest, OpenNewTab_EmptyUrl_CreatesTabWithHomeUrl)
     bool createTabCalled = false;
     bool sendCdCalled = false;
 
-    stub.set_lamda(&TabBar::createTab, [&createTabCalled](TabBar *) {
+    stub.set_lamda(&TabBar::appendTab, [&createTabCalled](TabBar *) {
         __DBG_STUB_INVOKE__
         createTabCalled = true;
         return 0;
@@ -177,7 +177,7 @@ TEST_F(TitleBarWidgetTest, OpenNewTab_ValidUrl_CreatesTabAndNavigates)
     bool createTabCalled = false;
     bool sendCdCalled = false;
 
-    stub.set_lamda(&TabBar::createTab, [&createTabCalled](TabBar *) {
+    stub.set_lamda(&TabBar::appendTab, [&createTabCalled](TabBar *) {
         __DBG_STUB_INVOKE__
         createTabCalled = true;
         return 0;
@@ -217,7 +217,7 @@ TEST_F(TitleBarWidgetTest, OpenCustomFixedTabs_ValidUrls_CreatesInactiveTabs)
         return QVariant();
     });
 
-    stub.set_lamda(&TabBar::createInactiveTab, [&createCount] {
+    stub.set_lamda(&TabBar::appendInactiveTab, [&createCount] {
         __DBG_STUB_INVOKE__
         return createCount++;
     });
@@ -241,7 +241,7 @@ TEST_F(TitleBarWidgetTest, OpenCustomFixedTabs_EmptyList_NoTabsCreated)
         return QVariant(QStringList());
     });
 
-    stub.set_lamda(&TabBar::createInactiveTab, [&createCalled] {
+    stub.set_lamda(&TabBar::appendInactiveTab, [&createCalled] {
         __DBG_STUB_INVOKE__
         createCalled = true;
         return 0;
@@ -495,7 +495,7 @@ TEST_F(TitleBarWidgetTest, HandleHotketCreateNewTab_NoSelection_CreatesTabWithCu
 
     bool createTabCalled = false;
 
-    stub.set_lamda(&TabBar::createTab, [&createTabCalled](TabBar *) {
+    stub.set_lamda(&TabBar::appendTab, [&createTabCalled](TabBar *) {
         __DBG_STUB_INVOKE__
         createTabCalled = true;
         return 0;
@@ -541,7 +541,7 @@ TEST_F(TitleBarWidgetTest, HandleCreateTabList_ValidUrls_CreatesTabsForDirectori
         return true;
     });
 
-    stub.set_lamda(&TabBar::createTab, [&createTabCount](TabBar *) {
+    stub.set_lamda(&TabBar::appendTab, [&createTabCount](TabBar *) {
         __DBG_STUB_INVOKE__
         createTabCount++;
         return createTabCount;
@@ -573,7 +573,7 @@ TEST_F(TitleBarWidgetTest, HandleCreateTabList_EmptyList_NoTabsCreated)
     QList<QUrl> emptyList;
     bool createTabCalled = false;
 
-    stub.set_lamda(&TabBar::createTab, [&createTabCalled](TabBar *) {
+    stub.set_lamda(&TabBar::appendTab, [&createTabCalled](TabBar *) {
         __DBG_STUB_INVOKE__
         createTabCalled = true;
         return 0;
