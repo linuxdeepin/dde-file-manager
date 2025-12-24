@@ -10,6 +10,8 @@
 #include <QWidget>
 #include <QPixmap>
 
+class QMovie;
+
 namespace dfmplugin_detailspace {
 
 inline constexpr int kPreviewMargin = 10;
@@ -20,17 +22,28 @@ class ImagePreviewWidget : public QWidget
     Q_OBJECT
 public:
     explicit ImagePreviewWidget(QWidget *parent = nullptr);
+    ~ImagePreviewWidget() override;
 
     void setPixmap(const QPixmap &pixmap);
     QPixmap pixmap() const;
 
+    void setAnimatedImage(const QString &filePath);
+    void stopAnimatedImage();
+
     QSize sizeHint() const override;
+
+    static bool isAnimatedMimeType(const QString &mimeType);
 
 protected:
     void paintEvent(QPaintEvent *event) override;
 
+private Q_SLOTS:
+    void onMovieFrameChanged();
+
 private:
     QPixmap m_pixmap;
+    QMovie *m_movie { nullptr };
+    bool m_hasAnimatedImage { false };
 };
 
 }

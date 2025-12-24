@@ -35,6 +35,7 @@ public slots:
 
 private slots:
     void onPreviewReady(const QUrl &url, const QPixmap &pixmap);
+    void onAnimatedImageReady(const QUrl &url, const QString &filePath);
 
 private:
     void initInfoUI();

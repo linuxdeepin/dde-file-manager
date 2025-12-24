@@ -4,6 +4,8 @@
 
 #include "imagepreviewwidget.h"
 
+#include <QImageReader>
+#include <QMovie>
 #include <QPainter>
 #include <QApplication>
 
@@ -15,15 +17,58 @@ ImagePreviewWidget::ImagePreviewWidget(QWidget *parent)
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 }
 
+ImagePreviewWidget::~ImagePreviewWidget()
+{
+    stopAnimatedImage();
+}
+
 void ImagePreviewWidget::setPixmap(const QPixmap &pixmap)
 {
+    // Avoid flicker with static pixmap if an animated image is running
+    if (m_hasAnimatedImage && m_movie && m_movie->state() == QMovie::Running) {
+        return;
+    }
+
     m_pixmap = pixmap;
     update();
+
+    // If there is an animated image and it's not running, start it now
+    if (m_hasAnimatedImage && m_movie && m_movie->state() != QMovie::Running) {
+        m_movie->start();
+    }
 }
 
 QPixmap ImagePreviewWidget::pixmap() const
 {
     return m_pixmap;
+}
+
+void ImagePreviewWidget::setAnimatedImage(const QString &filePath)
+{
+    if (!m_movie) {
+        m_movie = new QMovie(this);
+        connect(m_movie, &QMovie::frameChanged, this, &ImagePreviewWidget::onMovieFrameChanged);
+    }
+
+    if (m_movie->fileName() != filePath) {
+        m_movie->stop();
+        m_movie->setFileName(filePath);
+    }
+
+    m_hasAnimatedImage = m_movie->isValid() && (m_movie->frameCount() > 1);
+
+    // Start animation if valid
+    if (m_hasAnimatedImage && m_movie->state() != QMovie::Running) {
+        m_movie->start();
+    }
+}
+
+void ImagePreviewWidget::stopAnimatedImage()
+{
+    if (m_hasAnimatedImage && m_movie) {
+        m_movie->stop();
+        m_hasAnimatedImage = false;
+    }
 }
 
 QSize ImagePreviewWidget::sizeHint() const
@@ -32,6 +77,13 @@ QSize ImagePreviewWidget::sizeHint() const
     int previewWidth = availableWidth - 2 * kPreviewMargin;
     int previewHeight = static_cast<int>(previewWidth / kPreviewAspectRatio);
     return QSize(previewWidth, previewHeight);
+}
+
+bool ImagePreviewWidget::isAnimatedMimeType(const QString &mimeType)
+{
+    const QList<QByteArray> imageFormats = QImageReader::imageFormatsForMimeType(mimeType.toUtf8());
+    return std::any_of(imageFormats.begin(), imageFormats.end(),
+                       [](const QByteArray &format) { return QMovie::supportedFormats().contains(format); });
 }
 
 void ImagePreviewWidget::paintEvent(QPaintEvent *event)
@@ -61,4 +113,12 @@ void ImagePreviewWidget::paintEvent(QPaintEvent *event)
     targetRect.moveCenter(availableRect.center());
 
     painter.drawPixmap(targetRect, m_pixmap);
+}
+
+void ImagePreviewWidget::onMovieFrameChanged()
+{
+    if (m_movie) {
+        m_pixmap = m_movie->currentPixmap();
+        update();
+    }
 }

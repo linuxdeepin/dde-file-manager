@@ -91,7 +91,19 @@ void DetailView::onPreviewReady(const QUrl &url, const QPixmap &pixmap)
     }
 
     if (m_previewWidget) {
+        m_previewWidget->stopAnimatedImage();
         m_previewWidget->setPixmap(pixmap);
+    }
+}
+
+void DetailView::onAnimatedImageReady(const QUrl &url, const QString &filePath)
+{
+    if (url != m_currentUrl) {
+        return;
+    }
+
+    if (m_previewWidget) {
+        m_previewWidget->setAnimatedImage(filePath);
     }
 }
 
@@ -121,6 +133,8 @@ void DetailView::initInfoUI()
     m_previewController = new ImagePreviewController(this);
     connect(m_previewController, &ImagePreviewController::previewReady,
             this, &DetailView::onPreviewReady);
+    connect(m_previewController, &ImagePreviewController::animatedImageReady,
+            this, &DetailView::onAnimatedImageReady);
 }
 
 void DetailView::createHeadUI(const QUrl &url, int widgetFilter)
