@@ -64,10 +64,11 @@ public:
     void setDetailSplitterPosition(int detailWidth);
     int loadDetailSpaceState() const;
     void saveDetailSpaceState();
+    void updateRightAreaMinWidth();   // Update rightArea minimum width for resize priority
 
 protected:
     QUrl currentUrl;
-    static constexpr int kMinimumWindowWidth { 550 };
+    static constexpr int kMinimumWindowWidth { 540 };
     static constexpr int kMinimumWindowHeight { 300 };
     static constexpr int kDefaultWindowWidth { 1100 };
     static constexpr int kDefaultWindowHeight { 700 };
