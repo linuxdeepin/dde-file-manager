@@ -6,16 +6,20 @@
 #define DETAILVIEW_H
 
 #include "dfmplugin_detailspace_global.h"
-#include "filebaseinfoview.h"
 
 #include <DFrame>
 #include <QVBoxLayout>
+#include <QUrl>
 
 class QScrollArea;
 
 namespace dfmplugin_detailspace {
 
-class DetailView : public DFrame
+class ImagePreviewWidget;
+class ImagePreviewController;
+class FileBaseInfoView;
+
+class DetailView : public DTK_WIDGET_NAMESPACE::DFrame
 {
     Q_OBJECT
 public:
@@ -30,25 +34,28 @@ public slots:
     void setUrl(const QUrl &url, int widgetFilter);
 
 private slots:
-    void initUiForSizeMode();
+    void onPreviewReady(const QUrl &url, const QPixmap &pixmap);
 
 private:
     void initInfoUI();
     void createHeadUI(const QUrl &url, int widgetFilter);
     void createBasicWidget(const QUrl &url, int widgetFilter);
-    void setDetailIcon(const QUrl &url);
+    void updatePreviewSize();
 
 protected:
-    virtual void showEvent(QShowEvent *event);
+    void resizeEvent(QResizeEvent *event) override;
 
 private:
     QScrollArea *scrollArea { nullptr };
     QFrame *expandFrame { nullptr };
     QVBoxLayout *vLayout { nullptr };
     QVBoxLayout *mainLayout { nullptr };
-    FileBaseInfoView *fileBaseInfoView { nullptr };
     QList<QWidget *> expandList {};
-    DLabel *iconLabel { nullptr };
+
+    ImagePreviewWidget *m_previewWidget { nullptr };
+    ImagePreviewController *m_previewController { nullptr };
+    FileBaseInfoView *m_fileBaseInfoView { nullptr };
+    QUrl m_currentUrl;
 };
 
 }

@@ -22,7 +22,6 @@ public:
     // Size constraints (must match FileManagerWindowPrivate constants)
     static constexpr int kMinimumWidth { 280 };
     static constexpr int kMaximumWidth { 500 };
-    static constexpr int kDefaultWidth { 280 };
 
     explicit DetailSpaceWidget(QFrame *parent = nullptr);
     void setCurrentUrl(const QUrl &url) override;
@@ -33,14 +32,11 @@ public:
 
     void removeControls();
 
-    int detailWidth();
-
 private slots:
     void initUiForSizeMode();
 
 private:
     void initializeUi();
-    void initConnect();
 
 private:
     QUrl detailSpaceUrl;

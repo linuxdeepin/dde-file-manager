@@ -3,53 +3,32 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "detailview.h"
+#include "imagepreviewwidget.h"
+#include "imagepreviewworker.h"
+#include "filebaseinfoview.h"
 
 #include <dfm-base/base/schemefactory.h>
-#include <dfm-base/utils/thumbnail/thumbnailhelper.h>
 
-#include <dfm-framework/dpf.h>
-
-#include <QGridLayout>
 #include <QScrollArea>
-#include <QFileSystemModel>
-#include <QTreeView>
+#include <QResizeEvent>
 
 #include <DPushButton>
-#include <dtkwidget_global.h>
-#ifdef DTKWIDGET_CLASS_DSizeMode
-#    include <DSizeMode>
-#endif
-
-inline constexpr int kIconMaxWidth { 260 };
-inline constexpr int kIconMaxHeight { 200 };
-inline constexpr int kIconNormalSize { 128 };
-
-Q_DECLARE_METATYPE(QString *)
+#include <DGuiApplicationHelper>
 
 DFMBASE_USE_NAMESPACE
+DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_detailspace;
-
-static constexpr char kCurrentEventSpace[] { DPF_MACRO_TO_STR(DPDETAILSPACE_NAMESPACE) };
 
 DetailView::DetailView(QWidget *parent)
     : DFrame(parent)
 {
-#ifdef DTKWIDGET_CLASS_DSizeMode
-    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, &DetailView::initUiForSizeMode);
-#endif
     initInfoUI();
-    initUiForSizeMode();
 }
 
 DetailView::~DetailView()
 {
 }
 
-/*!
- * \brief               在最右文件信息窗口中追加新增控件
- * \param widget        新增控件对象
- * \return              是否成功
- */
 bool DetailView::addCustomControl(QWidget *widget)
 {
     if (widget) {
@@ -60,14 +39,8 @@ bool DetailView::addCustomControl(QWidget *widget)
     return false;
 }
 
-/*!
- * \brief               在最右文件信息窗口中指定位置新增控件
- * \param widget        新增控件对象
- * \return              是否成功
- */
 bool DetailView::insertCustomControl(int index, QWidget *widget)
 {
-    // final one is stretch
     index = index == -1 ? vLayout->count() - 1 : qMin(vLayout->count() - 1, index);
 
     if (widget) {
@@ -100,28 +73,26 @@ void DetailView::removeControl()
         layout->removeWidget(w);
         delete w;
     }
+    // Reset file base info view pointer since it was deleted
+    m_fileBaseInfoView = nullptr;
 }
 
 void DetailView::setUrl(const QUrl &url, int widgetFilter)
 {
+    m_currentUrl = url;
     createHeadUI(url, widgetFilter);
     createBasicWidget(url, widgetFilter);
 }
 
-void DetailView::initUiForSizeMode()
+void DetailView::onPreviewReady(const QUrl &url, const QPixmap &pixmap)
 {
-    if (!scrollArea) {
-        fmWarning() << "Scroll area not initialized, skipping size mode setup";
+    if (url != m_currentUrl) {
         return;
     }
 
-#ifdef DTKWIDGET_CLASS_DSizeMode
-    scrollArea->setFixedWidth(DSizeModeHelper::element(254, 282));
-    scrollArea->setContentsMargins(DSizeModeHelper::element(2, 0), 0, DSizeModeHelper::element(0, 6), 0);
-#else
-    scrollArea->setFixedWidth(282);
-    scrollArea->setContentsMargins(0, 0, 6, 0);
-#endif
+    if (m_previewWidget) {
+        m_previewWidget->setPixmap(pixmap);
+    }
 }
 
 void DetailView::initInfoUI()
@@ -136,94 +107,91 @@ void DetailView::initInfoUI()
     expandFrame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     scrollArea->setWidget(expandFrame);
 
-    vLayout = new QVBoxLayout(this);
+    vLayout = new QVBoxLayout;
     vLayout->addStretch();
     expandFrame->setLayout(vLayout);
     vLayout->setContentsMargins(0, 0, 8, 0);
 
-    mainLayout = new QVBoxLayout(this);
+    mainLayout = new QVBoxLayout;
     mainLayout->addWidget(scrollArea, Qt::AlignCenter);
-    this->setFrameShape(QFrame::NoFrame);
-    this->setLayout(mainLayout);
+    setFrameShape(QFrame::NoFrame);
+    setLayout(mainLayout);
+
+    // Create preview controller
+    m_previewController = new ImagePreviewController(this);
+    connect(m_previewController, &ImagePreviewController::previewReady,
+            this, &DetailView::onPreviewReady);
 }
 
 void DetailView::createHeadUI(const QUrl &url, int widgetFilter)
 {
     if (widgetFilter == DetailFilterType::kIconView) {
-        return;
-    } else {
-        if (iconLabel) {
-            disconnect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged, iconLabel, nullptr);
-            vLayout->removeWidget(iconLabel);
-            delete iconLabel;
-            iconLabel = nullptr;
+        if (m_previewWidget) {
+            m_previewWidget->hide();
         }
-
-        iconLabel = new DLabel(this);
-        iconLabel->setFixedSize(kIconMaxWidth, kIconMaxHeight);
-        // iconLabel->setStyleSheet("border: 1px solid red;");
-        setDetailIcon(url);
-        connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged,
-                iconLabel, std::bind(&DetailView::setDetailIcon, this, url));
-
-        vLayout->insertWidget(0, iconLabel, 0, Qt::AlignHCenter);
+        return;
     }
+
+    // Reuse preview widget instead of recreating
+    if (!m_previewWidget) {
+        m_previewWidget = new ImagePreviewWidget(this);
+        vLayout->insertWidget(0, m_previewWidget, 0, Qt::AlignHCenter);
+
+        connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged,
+                this, [this]() {
+                    if (!m_currentUrl.isEmpty() && m_previewWidget) {
+                        m_previewController->requestPreview(m_currentUrl, m_previewWidget->sizeHint());
+                    }
+                });
+    }
+
+    m_previewWidget->show();
+    updatePreviewSize();
+
+    // Request preview asynchronously
+    m_previewController->requestPreview(url, m_previewWidget->sizeHint());
 }
 
 void DetailView::createBasicWidget(const QUrl &url, int widgetFilter)
 {
     if (widgetFilter == DetailFilterType::kBasicView) {
-        return;
-    } else {
-        fileBaseInfoView = new FileBaseInfoView(this);
-        fileBaseInfoView->setFileUrl(url);
-        addCustomControl(fileBaseInfoView);
-    }
-}
-
-void DetailView::setDetailIcon(const QUrl &url)
-{
-    FileInfoPointer info = InfoFactory::create<FileInfo>(url);
-    if (info.isNull()) {
-        fmWarning() << "Failed to create file info for URL:" << url.toString();
-        return;
-    }
-
-    QSize targetSize(kIconNormalSize, kIconNormalSize);
-    auto findPluginIcon = [](const QUrl &url) -> QString {
-        QString iconName;
-        bool ok = dpfHookSequence->run(kCurrentEventSpace, "hook_Icon_Fetch", url, &iconName);
-        if (ok && !iconName.isEmpty())
-            return iconName;
-
-        return QString();
-    };
-
-    // get icon from plugin
-    QIcon icon;
-    ThumbnailHelper helper;
-    const QString &iconName = findPluginIcon(info->urlOf(UrlInfoType::kUrl));
-    if (!iconName.isEmpty()) {
-        icon = QIcon::fromTheme(iconName);
-    } else if (helper.checkThumbEnable(url)) {
-        icon = info->extendAttributes(ExtInfoType::kFileThumbnail).value<QIcon>();
-        if (icon.isNull()) {
-            const auto &img = helper.thumbnailImage(url, Global::kLarge);
-            icon = QPixmap::fromImage(img);
+        if (m_fileBaseInfoView) {
+            m_fileBaseInfoView->hide();
         }
-
-        if (!icon.isNull())
-            targetSize = QSize(kIconMaxWidth, kIconMaxHeight);
+        return;
     }
-    if (icon.isNull())
-        icon = info->fileIcon();
 
-    QPixmap px = icon.pixmap(targetSize, qApp->devicePixelRatio());
-    iconLabel->setPixmap(px);
-    iconLabel->setAlignment(Qt::AlignCenter);
+    // Reuse FileBaseInfoView instead of recreating
+    if (!m_fileBaseInfoView) {
+        m_fileBaseInfoView = new FileBaseInfoView(this);
+        addCustomControl(m_fileBaseInfoView);
+    }
+
+    m_fileBaseInfoView->show();
+    m_fileBaseInfoView->setFileUrl(url);
 }
 
-void DetailView::showEvent(QShowEvent *event)
+void DetailView::updatePreviewSize()
 {
-    QFrame::showEvent(event);
+    if (m_previewWidget) {
+        QSize hint = m_previewWidget->sizeHint();
+        m_previewWidget->setFixedHeight(hint.height());
+        m_previewWidget->update();
+    }
+}
+
+void DetailView::resizeEvent(QResizeEvent *event)
+{
+    QFrame::resizeEvent(event);
+    updatePreviewSize();
+
+    // Update info view width
+    if (m_fileBaseInfoView) {
+        m_fileBaseInfoView->setMaximumWidth(event->size().width() - 20);
+    }
+
+    // If URL is set, reload preview with new size
+    if (!m_currentUrl.isEmpty() && m_previewWidget && m_previewWidget->isVisible()) {
+        m_previewController->requestPreview(m_currentUrl, m_previewWidget->sizeHint());
+    }
 }
