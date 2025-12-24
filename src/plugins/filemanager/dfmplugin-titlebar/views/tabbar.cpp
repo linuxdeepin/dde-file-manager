@@ -9,6 +9,7 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/device/deviceproxymanager.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/utils/systempathutil.h>
 #include <dfm-base/utils/universalutils.h>
@@ -30,6 +31,9 @@
 #include <QJsonObject>
 #include <QCursor>
 #include <QIcon>
+#include <QUuid>
+#include <QUrlQuery>
+#include <QToolTip>
 
 #include <unistd.h>
 #include <functional>
@@ -43,6 +47,8 @@ inline constexpr int kItemButtonMargin { 4 };
 using namespace dfmplugin_titlebar;
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+using namespace GlobalDConfDefines::ConfigPath;
+using namespace GlobalDConfDefines::BaseConfig;
 
 struct Tab
 {
@@ -70,7 +76,11 @@ public:
     void handleContextMenu(int index);
     void handleIndexChanged(int index);
     void updateToolTip(int index, const QString &tip);
+    void updateButtonToolTip(int index, bool visible);
     void handleTabDroped(int index, Qt::DropAction dropAction, QObject *target);
+    void handlePinnedTabsChanged(const QString &config, const QString &key);
+    void handleTabMoved(int from, int to);
+    void updatePinnedTabsOrder();
 
     QString tabDisplayName(const QUrl &url) const;
     void paintTabBackground(QPainter *painter, const QStyleOptionTab &option);
@@ -81,9 +91,10 @@ public:
     Tab tabInfo(int index) const;
     bool updateTabInfo(int index, std::function<void(Tab &)> modifier);
     bool canPinned(int index);
-    void setTabPinned(int index, bool pinned);
+    void setTabPinned(int index, bool pinned, bool updateConfig = true);
     bool shouldCreateNewTabForPinnedTab(const QUrl &currentUrl, const QUrl &newUrl) const;
     QPixmap createColoredIcon(const QIcon &icon, const QColor &color, const QSize &size);
+    QUrl getActualUrl(const QUrl &url) const;
     void closeLeftTabs(int index);
     void closeRightTabs(int index);
     void closeOtherTabs(int index);
@@ -97,6 +108,8 @@ public:
     int nextTabUniqueId { 0 };
     int currentTabIndex { -1 };
     bool isDragging { false };
+    QTimer *updateConfigTimer { nullptr };
+    int lastTooltipTabIndex { -1 };
 };
 }
 
@@ -113,6 +126,14 @@ void TabBarPrivate::initUI()
     q->setDragable(true);
     q->setFocusPolicy(Qt::NoFocus);
     q->installEventFilter(q);
+
+    const auto &pa = DPaletteHelper::instance()->palette(q);
+    q->setMaskColor(pa.color(DPalette::ObviousBackground));
+
+    // Initialize config update timer
+    updateConfigTimer = new QTimer(q);
+    updateConfigTimer->setSingleShot(true);
+    updateConfigTimer->setInterval(500);
 
     addBtn = q->findChild<DIconButton *>("AddButton");
     Q_ASSERT(addBtn);
@@ -154,6 +175,14 @@ void TabBarPrivate::initConnections()
     connect(q, &TabBar::tabReleaseRequested, this, &TabBarPrivate::handleTabReleased);
     connect(q, &TabBar::dragActionChanged, this, &TabBarPrivate::handleDragActionChanged);
     connect(q, &DTabBar::tabDroped, this, &TabBarPrivate::handleTabDroped);
+    connect(q, &DTabBar::tabMoved, this, &TabBarPrivate::handleTabMoved);
+
+    connect(DConfigManager::instance(), &DConfigManager::valueChanged, this, &TabBarPrivate::handlePinnedTabsChanged);
+    connect(updateConfigTimer, &QTimer::timeout, this, &TabBarPrivate::updatePinnedTabsOrder);
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged, this, [this] {
+        const auto &pa = DPaletteHelper::instance()->palette(q);
+        q->setMaskColor(pa.color(DPalette::ObviousBackground));
+    });
 }
 
 bool TabBarPrivate::tabCloseable(const Tab &tab, const QUrl &targetUrl) const
@@ -211,12 +240,33 @@ void TabBarPrivate::handleTabReleased(int index)
         q->window()->show();
     } else {
         currentTabIndex = -1;
+
+        // Check if this is a pinned tab
+        bool isPinnedTab = q->isPinned(index);
+        QUrl publishUrl = url;
+
+        if (isPinnedTab) {
+            // Get pinnedId for pinned tab
+            QString pinnedId = q->tabUserData(index, TabDef::kPinnedId).toString();
+            if (!pinnedId.isEmpty()) {
+                // Create special URL with pinned scheme
+                publishUrl.setScheme(TabDef::kTabScheme);
+                publishUrl.setPath("/");
+                QUrlQuery query;
+                query.addQueryItem(TabDef::kPinnedId, pinnedId);
+                publishUrl.setQuery(query);
+                fmInfo() << "Releasing pinned tab with pinnedId:" << pinnedId;
+            } else {
+                fmWarning() << "Pinned tab missing pinnedId, using regular URL";
+            }
+        }
+
         // Send open new window event
-        dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url);
+        dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, publishUrl);
 
         // Remove tab from current window
         q->tabCloseRequested(index);
-        fmInfo() << "Tab released and new window created for URL:" << url;
+        fmInfo() << "Tab released and new window created for URL:" << publishUrl;
     }
 }
 
@@ -240,9 +290,9 @@ void TabBarPrivate::handleContextMenu(int index)
     QMenu menu;
     bool isPinned = q->isPinned(index);
     if (isPinned) {
-        menu.addAction(TabBar::tr("Unpin tab"), this, std::bind(&TabBarPrivate::setTabPinned, this, index, false));
+        menu.addAction(TabBar::tr("Unpin tab"), this, std::bind(&TabBarPrivate::setTabPinned, this, index, false, true));
     } else {
-        auto act = menu.addAction(TabBar::tr("Pin tab"), this, std::bind(&TabBarPrivate::setTabPinned, this, index, true));
+        auto act = menu.addAction(TabBar::tr("Pin tab"), this, std::bind(&TabBarPrivate::setTabPinned, this, index, true, true));
         act->setEnabled(canPinned(index));
     }
     menu.addSeparator();
@@ -284,6 +334,116 @@ void TabBarPrivate::handleIndexChanged(int index)
 void TabBarPrivate::updateToolTip(int index, const QString &tip)
 {
     q->setTabToolTip(index, tip);
+}
+
+void TabBarPrivate::updateButtonToolTip(int index, bool visible)
+{
+    // Hide tooltip if tab is not visible or mouse moved away from button area
+    if (!visible || !isItemButtonHovered(index)) {
+        if (lastTooltipTabIndex != -1) {
+            QToolTip::hideText();
+            lastTooltipTabIndex = -1;
+        }
+        return;
+    }
+
+    // Show tooltip for close/unpin button if hovering over a different tab
+    if (lastTooltipTabIndex != index) {
+        QString tooltipText = q->isPinned(index) ? tr("Unpin tab") : tr("Close tab");
+        QToolTip::showText(QCursor::pos(), tooltipText, q);
+        lastTooltipTabIndex = index;
+    }
+}
+
+void TabBarPrivate::handleTabDroped(int index, Qt::DropAction dropAction, QObject *target)
+{
+    Q_UNUSED(dropAction)
+
+    fmInfo() << "Tab dropped at index:" << index << "target:" << target;
+    TabBar *targetTabBar = qobject_cast<TabBar *>(target);
+
+    if (!targetTabBar) {
+        // Dropped to empty area - create new window
+        fmInfo() << "Tab dropped to empty area, creating new window";
+        handleTabReleased(index);
+    } else {
+        currentTabIndex = -1;
+        // Dropped to another window's TabBar
+        fmInfo() << "Tab dropped to another window's TabBar";
+        // Source window's tab has been created in target window via insertTabFromMimeData
+        // Just close the tab in source window
+        q->tabCloseRequested(index);
+    }
+}
+
+void TabBarPrivate::handlePinnedTabsChanged(const QString &config, const QString &key)
+{
+    // Only handle pinned tabs configuration changes
+    if (config != kViewDConfName || key != kPinnedTabs)
+        return;
+
+    // Get current pinned tabs from DConfig
+    const auto &pinnedTabs = DConfigManager::instance()->value(kViewDConfName, kPinnedTabs, QVariantList()).toList();
+
+    // Build a set of pinnedIds from DConfig
+    QSet<QString> configPinnedIds;
+    for (const auto &item : pinnedTabs) {
+        auto tabData = item.toMap();
+        QString pinnedId = tabData[TabDef::kPinnedId].toString();
+        if (!pinnedId.isEmpty())
+            configPinnedIds.insert(pinnedId);
+    }
+
+    // Check all tabs in this window and unpin those removed from config
+    for (int i = 0; i < q->count(); ++i) {
+        if (!q->isPinned(i))
+            continue;
+
+        QString pinnedId = q->tabUserData(i, TabDef::kPinnedId).toString();
+        if (pinnedId.isEmpty())
+            continue;
+
+        // If this tab's pinnedId is not in the config anymore, unpin it
+        if (!configPinnedIds.contains(pinnedId)) {
+            fmInfo() << "Unpinning tab at index" << i << "due to config sync, pinnedId:" << pinnedId;
+            setTabPinned(i, false, false);
+        }
+    }
+}
+
+void TabBarPrivate::handleTabMoved(int from, int to)
+{
+    // Only update config if the moved tab is a pinned tab
+    if (!q->isPinned(to))
+        return;
+
+    // Start/restart timer to delay config update (avoid frequent updates during drag)
+    updateConfigTimer->start();
+}
+
+void TabBarPrivate::updatePinnedTabsOrder()
+{
+    // Rebuild pinned tabs list in current tab order
+    QVariantList pinnedTabs;
+    for (int i = 0; i < q->count(); ++i) {
+        if (!q->isPinned(i))
+            continue;
+
+        auto tab = tabInfo(i);
+        QString pinnedId = tab.userData.value(TabDef::kPinnedId).toString();
+        if (pinnedId.isEmpty()) {
+            fmWarning() << "Pinned tab at index" << i << "missing pinnedId, skipping";
+            continue;
+        }
+
+        QVariantMap pinnedData;
+        pinnedData[TabDef::kPinnedId] = pinnedId;
+        pinnedData[TabDef::kTabUrl] = getActualUrl(tab.tabUrl).toString();
+        pinnedTabs.append(pinnedData);
+    }
+
+    // Update DConfig without triggering valueChanged signal
+    DConfigManager::instance()->setValue(kViewDConfName, kPinnedTabs, pinnedTabs);
 }
 
 QString TabBarPrivate::tabDisplayName(const QUrl &url) const
@@ -530,17 +690,59 @@ bool TabBarPrivate::canPinned(int index)
     if (!url.isValid())
         return false;
 
-    if (UrlRoute::isVirtual(url))
-        return (url.scheme() == Global::Scheme::kRecent
-                || url.scheme() == Global::Scheme::kTrash);
+    if (UrlRoute::isVirtual(url)) {
+        static QStringList supportedSchemes {
+            Global::Scheme::kRecent,
+            Global::Scheme::kTrash
+        };
+        return supportedSchemes.contains(url.scheme());
+    }
 
     return ProtocolUtils::isLocalFile(url);
 }
 
-void TabBarPrivate::setTabPinned(int index, bool pinned)
+void TabBarPrivate::setTabPinned(int index, bool pinned, bool updateConfig)
 {
-    updateTabInfo(index, [pinned](Tab &tab) {
+    QString pinnedId = QUuid::createUuid().toString(QUuid::WithoutBraces);
+    if (updateConfig) {
+        // Update DConfig
+        auto pinnedTabs = DConfigManager::instance()->value(kViewDConfName, kPinnedTabs, QVariantList()).toList();
+        const auto &tab = tabInfo(index);
+        bool pinnedTabChanged = false;
+        if (pinned) {
+            // Add to DConfig
+            QVariantMap pinnedData;
+            pinnedData[TabDef::kPinnedId] = pinnedId;
+            pinnedData[TabDef::kTabUrl] = getActualUrl(tab.tabUrl).toString();
+            pinnedTabs.append(pinnedData);
+            pinnedTabChanged = true;
+            fmInfo() << "Pin tab:" << pinnedData[TabDef::kTabUrl] << "with pinnedId:" << pinnedId;
+        } else {
+            pinnedId = tab.userData.value(TabDef::kPinnedId).toString();
+            if (!pinnedId.isEmpty()) {
+                // Remove from DConfig
+                for (int i = 0; i < pinnedTabs.size(); ++i) {
+                    auto item = pinnedTabs[i].toMap();
+                    if (item[TabDef::kPinnedId].toString() == pinnedId) {
+                        pinnedTabs.removeAt(i);
+                        pinnedTabChanged = true;
+                        fmInfo() << "Unpin tab:" << tab.tabUrl << "with pinnedId:" << pinnedId;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (pinnedTabChanged)
+            DConfigManager::instance()->setValue(kViewDConfName, kPinnedTabs, pinnedTabs);
+    }
+
+    updateTabInfo(index, [&](Tab &tab) {
         tab.isPinned = pinned;
+        if (pinned)
+            tab.userData[TabDef::kPinnedId] = pinnedId;
+        else
+            tab.userData.remove(TabDef::kPinnedId);
     });
     q->update(q->tabRect(index));
 }
@@ -581,6 +783,18 @@ QPixmap TabBarPrivate::createColoredIcon(const QIcon &icon, const QColor &color,
     return pixmap;
 }
 
+QUrl TabBarPrivate::getActualUrl(const QUrl &url) const
+{
+    if (url.scheme() == "search") {
+        QUrlQuery query(url.query());
+        QString targetUrlStr = query.queryItemValue("url", QUrl::FullyDecoded);
+        if (!targetUrlStr.isEmpty()) {
+            return QUrl(targetUrlStr);
+        }
+    }
+    return url;
+}
+
 void TabBarPrivate::closeLeftTabs(int index)
 {
     // Close tabs to the left
@@ -618,7 +832,7 @@ TabBar::~TabBar()
     delete d;
 }
 
-int TabBar::createTab()
+int TabBar::appendTab()
 {
     QSignalBlocker blk(this);
     int index = addTab("");
@@ -636,24 +850,32 @@ int TabBar::createTab()
     return index;
 }
 
-int TabBar::createInactiveTab(const QUrl &url, const QVariantMap &userData)
+int TabBar::appendInactiveTab(const QUrl &url, bool pinned)
+{
+    return insertInactiveTab(count(), url, pinned);
+}
+
+int TabBar::insertInactiveTab(int index, const QUrl &url, bool pinned)
 {
     QSignalBlocker blk(this);
-    int index = addTab("");
+    int newIndex = insertTab(index, "");
     blk.unblock();
 
     Tab tab;
     QString prefix = "tab_";
     tab.uniqueId = prefix + QString::number(++d->nextTabUniqueId);
     tab.tabUrl = url;
-    tab.userData = userData;
     tab.isInactive = true;
+    tab.isPinned = pinned;
     dpfHookSequence->run("dfmplugin_titlebar", "hook_Tab_SetTabName", url, &tab.tabAlias);
-    setTabData(index, QVariant::fromValue(tab));
+    setTabData(newIndex, QVariant::fromValue(tab));
 
-    updateTabName(index);
+    if (newIndex <= d->currentTabIndex)
+        d->currentTabIndex++;
+
+    updateTabName(newIndex);
     Q_EMIT newTabCreated();
-    return index;
+    return newIndex;
 }
 
 void TabBar::removeTab(int index, int selectIndex)
@@ -683,12 +905,19 @@ void TabBar::removeTab(int index, int selectIndex)
     DTabBar::removeTab(index);
 }
 
+void TabBar::forceRemoveTab(int index)
+{
+    if (isPinned(index))
+        d->setTabPinned(index, false);
+    removeTab(index);
+}
+
 void TabBar::setCurrentUrl(const QUrl &url)
 {
     int index = currentIndex();
     auto data = tabData(index);
     if (!data.isValid()) {
-        createTab();
+        appendTab();
         index = currentIndex();
         data = tabData(index);
     }
@@ -698,7 +927,7 @@ void TabBar::setCurrentUrl(const QUrl &url)
     // If current tab is pinned and URL is changing, check if need to create new tab
     if (tab.isPinned && d->shouldCreateNewTabForPinnedTab(tab.tabUrl, url)) {
         fmInfo() << "Pinned tab detected, creating new tab for URL:" << url;
-        int newIndex = createTab();
+        int newIndex = appendTab();
         index = newIndex;
         data = tabData(index);
         tab = data.value<Tab>();
@@ -719,7 +948,7 @@ void TabBar::closeTab(const QUrl &url)
         if (!d->tabCloseable(tab, url))
             continue;
 
-        removeTab(i);
+        forceRemoveTab(i);
     }
 }
 
@@ -843,29 +1072,17 @@ QMimeData *TabBar::createMimeDataFromTab(int index, const QStyleOptionTab &optio
     QMimeData *data = new QMimeData;
 
     // Save tab metadata to QMimeData
-    const QString uniqueId = tabUniqueId(index);
     const QUrl url = tabUrl(index);
     const QString alias = tabAlias(index);
 
     // Build JSON data structure
     QJsonObject tabDataObj;
-    tabDataObj["uniqueId"] = uniqueId;
-    tabDataObj["tabUrl"] = url.toString();
-    tabDataObj["tabAlias"] = alias;
-    tabDataObj["isPinned"] = isPinned(index);
-
-    // Save userData if exists
-    QJsonObject userDataObj;
-    auto tab = d->tabInfo(index);
-    for (auto it = tab.userData.constBegin(); it != tab.userData.constEnd(); ++it) {
-        userDataObj[it.key()] = QJsonValue::fromVariant(it.value());
-    }
-    tabDataObj["userData"] = userDataObj;
+    tabDataObj[TabDef::kTabUrl] = url.toString();
+    tabDataObj[TabDef::kTabAlias] = alias;
+    tabDataObj[TabDef::kProcessId] = QApplication::applicationPid();
 
     QJsonDocument doc(tabDataObj);
     data->setData("application/x-dde-filemanager-tab", doc.toJson());
-
-    fmInfo() << "Created MIME data for tab" << index << "uniqueId:" << uniqueId;
     return data;
 }
 
@@ -887,7 +1104,7 @@ QPixmap TabBar::createDragPixmapFromTab(int index, const QStyleOptionTab &option
     auto scaledImage = screenshotImage.scaled(scaledWidth, scaledHeight, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 
     QImage backgroundImage(scaledWidth + 10, scaledHeight + 10, QImage::Format_ARGB32_Premultiplied);
-    backgroundImage.fill(QColor(palette().color(QPalette::Base)));
+    backgroundImage.fill(palette().color(QPalette::Base));
     // clip screenshot image with window radius.
     QPainter painter(&backgroundImage);
     painter.drawImage(5, 5, scaledImage);
@@ -911,10 +1128,6 @@ QPixmap TabBar::createDragPixmapFromTab(int index, const QStyleOptionTab &option
 
     painter.setCompositionMode(QPainter::CompositionMode_Source);
     painter.fillPath(rectPath, Qt::transparent);
-
-    QColor shadowColor = QColor(palette().color(QPalette::BrightText));
-    shadowColor.setAlpha(80);
-
     painter.end();
     return QPixmap::fromImage(backgroundImage);
 }
@@ -922,15 +1135,20 @@ QPixmap TabBar::createDragPixmapFromTab(int index, const QStyleOptionTab &option
 bool TabBar::canInsertFromMimeData(int index, const QMimeData *source) const
 {
     Q_UNUSED(index)
-    if (!source) {
+    if (!source || !source->hasFormat("application/x-dde-filemanager-tab"))
+        return false;
+
+    // Parse JSON data to check process ID
+    QByteArray jsonData = source->data("application/x-dde-filemanager-tab");
+    QJsonDocument doc = QJsonDocument::fromJson(jsonData);
+    if (!doc.isObject()) {
+        fmWarning() << "Invalid MIME data: not a JSON object";
         return false;
     }
 
-    bool canInsert = source->hasFormat("application/x-dde-filemanager-tab");
-    if (canInsert) {
-        fmDebug() << "Can insert tab from MIME data at index" << index;
-    }
-    return canInsert;
+    QJsonObject tabDataObj = doc.object();
+    qint64 srcProcessId = tabDataObj[TabDef::kProcessId].toInt();
+    return srcProcessId == QApplication::applicationPid();
 }
 
 bool TabBar::eventFilter(QObject *obj, QEvent *e)
@@ -945,9 +1163,16 @@ bool TabBar::eventFilter(QObject *obj, QEvent *e)
         d->isDragging = false;
     } else if (obj == d->tabBar && e->type() == QEvent::MouseMove) {
         int index = tabAt(mapFromGlobal(QCursor::pos()));
-        if (index != -1)
+        if (index != -1) {
             update(tabRect(index));
+            d->updateButtonToolTip(index, true);
+        } else {
+            // Mouse moved out of all tabs
+            d->updateButtonToolTip(index, false);
+        }
     } else if (e->type() == QEvent::MouseButtonPress) {
+        // Hide tooltip when clicking
+        d->updateButtonToolTip(-1, false);
         auto me = static_cast<QMouseEvent *>(e);
         if (me->button() == Qt::RightButton) {
             int index = tabAt(mapFromGlobal(QCursor::pos()));
@@ -1005,8 +1230,8 @@ void TabBar::insertFromMimeData(int index, const QMimeData *source)
     }
 
     QJsonObject tabDataObj = doc.object();
-    QUrl url = QUrl(tabDataObj["tabUrl"].toString());
-    QString alias = tabDataObj["tabAlias"].toString();
+    QUrl url = QUrl(tabDataObj[TabDef::kTabUrl].toString());
+    QString alias = tabDataObj[TabDef::kTabAlias].toString();
 
     fmInfo() << "Inserting tab from MIME data at index" << index << "url:" << url;
 
@@ -1051,8 +1276,8 @@ void TabBar::insertFromMimeDataOnDragEnter(int index, const QMimeData *source)
     }
 
     QJsonObject tabDataObj = doc.object();
-    QUrl url = QUrl(tabDataObj["tabUrl"].toString());
-    QString alias = tabDataObj["tabAlias"].toString();
+    QUrl url = QUrl(tabDataObj[TabDef::kTabUrl].toString());
+    QString alias = tabDataObj[TabDef::kTabAlias].toString();
 
     fmInfo() << "Inserting tab from MIME data at index" << index << "url:" << url;
 
@@ -1060,28 +1285,6 @@ void TabBar::insertFromMimeDataOnDragEnter(int index, const QMimeData *source)
     // Insert at specific position
     QSignalBlocker blk(this);
     insertTab(index, alias.isEmpty() ? d->tabDisplayName(url) : alias);
-    blk.unblock();
-}
-
-void TabBarPrivate::handleTabDroped(int index, Qt::DropAction dropAction, QObject *target)
-{
-    Q_UNUSED(dropAction)
-
-    fmInfo() << "Tab dropped at index:" << index << "target:" << target;
-    TabBar *targetTabBar = qobject_cast<TabBar *>(target);
-
-    if (!targetTabBar) {
-        // Dropped to empty area - create new window
-        fmInfo() << "Tab dropped to empty area, creating new window";
-        handleTabReleased(index);
-    } else {
-        currentTabIndex = -1;
-        // Dropped to another window's TabBar
-        fmInfo() << "Tab dropped to another window's TabBar";
-        // Source window's tab has been created in target window via insertTabFromMimeData
-        // Just close the tab in source window
-        q->tabCloseRequested(index);
-    }
 }
 
 void TabBar::resizeEvent(QResizeEvent *e)

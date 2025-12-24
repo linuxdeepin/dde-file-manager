@@ -21,9 +21,11 @@ public:
     explicit TabBar(QWidget *parent = nullptr);
     ~TabBar() override;
 
-    int createTab();
-    int createInactiveTab(const QUrl &url, const QVariantMap &userData = {});
+    int appendTab();
+    int appendInactiveTab(const QUrl &url, bool pinned = false);
+    int insertInactiveTab(int index, const QUrl &url, bool pinned = false);
     void removeTab(int index, int selectIndex = -1);
+    void forceRemoveTab(int index);
     void setCurrentUrl(const QUrl &url);
     void closeTab(const QUrl &url);
 

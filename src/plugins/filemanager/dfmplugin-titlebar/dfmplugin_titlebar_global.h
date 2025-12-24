@@ -37,6 +37,14 @@ inline constexpr int kFolderItemHeight { 26 };
 inline constexpr int kFolderIconSize { 16 };
 inline constexpr int kFolderMinWidth { 200 };
 
+namespace TabDef {
+inline constexpr char kTabScheme[] { "pinned-tab" };   // Pinned tab scheme
+inline constexpr char kPinnedId[] { "pinnedId" };
+inline constexpr char kTabUrl[] { "tabUrl" };
+inline constexpr char kTabAlias[] { "tabAlias" };
+inline constexpr char kProcessId[] { "processId" };
+}   // namespace TabDef
+
 namespace CustomKey {
 inline constexpr char kUrl[] { "CrumbData_Key_Url" };
 inline constexpr char kDisplayText[] { "CrumbData_Key_DisplayText" };

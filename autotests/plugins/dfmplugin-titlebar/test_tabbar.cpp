@@ -81,7 +81,7 @@ TEST_F(TabBarTest, CreateTab_NoExistingTabs_CreatesFirstTab)
         signalEmitted = true;
     });
 
-    int index = tabBar->createTab();
+    int index = tabBar->appendTab();
     EXPECT_EQ(index, 0);
     EXPECT_EQ(tabBar->count(), 1);
     EXPECT_TRUE(signalEmitted);
@@ -89,23 +89,23 @@ TEST_F(TabBarTest, CreateTab_NoExistingTabs_CreatesFirstTab)
 
 TEST_F(TabBarTest, CreateTab_WithExistingTabs_CreatesNewTab)
 {
-    tabBar->createTab();
-    tabBar->createTab();
+    tabBar->appendTab();
+    tabBar->appendTab();
 
-    int index = tabBar->createTab();
+    int index = tabBar->appendTab();
     EXPECT_EQ(index, 2);
     EXPECT_EQ(tabBar->count(), 3);
 }
 
 TEST_F(TabBarTest, CreateTab_Called_TabIsNotInactive)
 {
-    int index = tabBar->createTab();
+    int index = tabBar->appendTab();
     EXPECT_FALSE(tabBar->isInactiveTab(index));
 }
 
 TEST_F(TabBarTest, CreateTab_Called_TabHasUniqueId)
 {
-    int index = tabBar->createTab();
+    int index = tabBar->appendTab();
     QString uniqueId = tabBar->tabUniqueId(index);
     EXPECT_FALSE(uniqueId.isEmpty());
 }
@@ -113,7 +113,7 @@ TEST_F(TabBarTest, CreateTab_Called_TabHasUniqueId)
 TEST_F(TabBarTest, CreateInactiveTab_ValidUrl_CreatesInactiveTab)
 {
     QUrl url("file:///home/test");
-    int index = tabBar->createInactiveTab(url);
+    int index = tabBar->appendInactiveTab(url);
 
     EXPECT_GE(index, 0);
     EXPECT_EQ(tabBar->count(), 1);
@@ -123,7 +123,7 @@ TEST_F(TabBarTest, CreateInactiveTab_ValidUrl_CreatesInactiveTab)
 TEST_F(TabBarTest, CreateInactiveTab_ValidUrl_StoresUrl)
 {
     QUrl url("file:///home/test");
-    int index = tabBar->createInactiveTab(url);
+    int index = tabBar->appendInactiveTab(url);
 
     EXPECT_EQ(tabBar->tabUrl(index), url);
 }
@@ -131,11 +131,10 @@ TEST_F(TabBarTest, CreateInactiveTab_ValidUrl_StoresUrl)
 TEST_F(TabBarTest, CreateInactiveTab_WithUserData_StoresUserData)
 {
     QUrl url("file:///home/test");
-    QVariantMap userData;
-    userData["key1"] = "value1";
-    userData["key2"] = 42;
 
-    int index = tabBar->createInactiveTab(url, userData);
+    int index = tabBar->appendInactiveTab(url);
+    tabBar->setTabUserData(index, "key1", "value1");
+    tabBar->setTabUserData(index, "key2", 42);
 
     EXPECT_EQ(tabBar->tabUserData(index, "key1").toString(), QString("value1"));
     EXPECT_EQ(tabBar->tabUserData(index, "key2").toInt(), 42);
@@ -144,7 +143,7 @@ TEST_F(TabBarTest, CreateInactiveTab_WithUserData_StoresUserData)
 TEST_F(TabBarTest, CreateInactiveTab_EmptyUserData_TabCreated)
 {
     QUrl url("file:///home/test");
-    int index = tabBar->createInactiveTab(url, QVariantMap());
+    int index = tabBar->appendInactiveTab(url);
 
     EXPECT_GE(index, 0);
     EXPECT_TRUE(tabBar->isInactiveTab(index));
@@ -152,7 +151,7 @@ TEST_F(TabBarTest, CreateInactiveTab_EmptyUserData_TabCreated)
 
 TEST_F(TabBarTest, RemoveTab_ValidIndex_RemovesTab)
 {
-    int index = tabBar->createTab();
+    int index = tabBar->appendTab();
     EXPECT_EQ(tabBar->count(), 1);
 
     tabBar->removeTab(index);
@@ -161,8 +160,8 @@ TEST_F(TabBarTest, RemoveTab_ValidIndex_RemovesTab)
 
 TEST_F(TabBarTest, RemoveTab_ValidIndex_EmitsSignal)
 {
-    tabBar->createTab();
-    tabBar->createTab();
+    tabBar->appendTab();
+    tabBar->appendTab();
 
     bool signalEmitted = false;
     int capturedOldIndex = -1;
@@ -181,9 +180,9 @@ TEST_F(TabBarTest, RemoveTab_ValidIndex_EmitsSignal)
 
 TEST_F(TabBarTest, RemoveTab_WithSelectIndex_SelectsSpecifiedTab)
 {
-    tabBar->createTab();
-    tabBar->createTab();
-    tabBar->createTab();
+    tabBar->appendTab();
+    tabBar->appendTab();
+    tabBar->appendTab();
 
     tabBar->setCurrentIndex(0);
     tabBar->removeTab(0, 2);
@@ -193,7 +192,7 @@ TEST_F(TabBarTest, RemoveTab_WithSelectIndex_SelectsSpecifiedTab)
 
 TEST_F(TabBarTest, RemoveTab_InvalidIndex_DoesNothing)
 {
-    tabBar->createTab();
+    tabBar->appendTab();
     int count = tabBar->count();
 
     tabBar->removeTab(99);
@@ -202,7 +201,7 @@ TEST_F(TabBarTest, RemoveTab_InvalidIndex_DoesNothing)
 
 TEST_F(TabBarTest, RemoveTab_LastTab_CountBecomesZero)
 {
-    int index = tabBar->createTab();
+    int index = tabBar->appendTab();
     tabBar->removeTab(index);
 
     EXPECT_EQ(tabBar->count(), 0);
@@ -210,7 +209,7 @@ TEST_F(TabBarTest, RemoveTab_LastTab_CountBecomesZero)
 
 TEST_F(TabBarTest, SetCurrentUrl_ValidUrl_SetsUrl)
 {
-    int index = tabBar->createTab();
+    int index = tabBar->appendTab();
     QUrl url("file:///home/test");
 
     stub.set_lamda(&TabBar::setTabText, [] {
@@ -223,7 +222,7 @@ TEST_F(TabBarTest, SetCurrentUrl_ValidUrl_SetsUrl)
 
 TEST_F(TabBarTest, SetCurrentUrl_EmptyUrl_SetsEmptyUrl)
 {
-    int index = tabBar->createTab();
+    int index = tabBar->appendTab();
     QUrl emptyUrl;
 
     stub.set_lamda(&TabBar::setTabText, [] {
@@ -236,7 +235,7 @@ TEST_F(TabBarTest, SetCurrentUrl_EmptyUrl_SetsEmptyUrl)
 
 TEST_F(TabBarTest, SetCurrentUrl_MultipleUrls_UpdatesCurrentTab)
 {
-    tabBar->createTab();
+    tabBar->appendTab();
     QUrl url1("file:///home/test1");
     QUrl url2("file:///home/test2");
 
@@ -256,8 +255,8 @@ TEST_F(TabBarTest, CloseTab_ValidUrl_ClosesMatchingTab)
     QUrl url1("file:///home/test1");
     QUrl url2("file:///home/test2");
 
-    tabBar->createInactiveTab(url1);
-    tabBar->createInactiveTab(url2);
+    tabBar->appendInactiveTab(url1);
+    tabBar->appendInactiveTab(url2);
 
     EXPECT_EQ(tabBar->count(), 2);
 
@@ -271,7 +270,7 @@ TEST_F(TabBarTest, CloseTab_NonExistingUrl_DoesNothing)
     QUrl url1("file:///home/test1");
     QUrl url2("file:///home/test2");
 
-    tabBar->createInactiveTab(url1);
+    tabBar->appendInactiveTab(url1);
     int count = tabBar->count();
 
     tabBar->closeTab(url2);
@@ -280,7 +279,7 @@ TEST_F(TabBarTest, CloseTab_NonExistingUrl_DoesNothing)
 
 TEST_F(TabBarTest, CloseTab_EmptyUrl_DoesNothing)
 {
-    tabBar->createTab();
+    tabBar->appendTab();
     int count = tabBar->count();
 
     tabBar->closeTab(QUrl());
@@ -289,7 +288,7 @@ TEST_F(TabBarTest, CloseTab_EmptyUrl_DoesNothing)
 
 TEST_F(TabBarTest, IsTabValid_ValidIndex_ReturnsTrue)
 {
-    int index = tabBar->createTab();
+    int index = tabBar->appendTab();
     EXPECT_TRUE(tabBar->isTabValid(index));
 }
 
@@ -305,7 +304,7 @@ TEST_F(TabBarTest, IsTabValid_InvalidLargeIndex_ReturnsFalse)
 
 TEST_F(TabBarTest, IsTabValid_BoundaryIndex_ReturnsCorrectResult)
 {
-    tabBar->createTab();
+    tabBar->appendTab();
     EXPECT_TRUE(tabBar->isTabValid(0));
     EXPECT_FALSE(tabBar->isTabValid(1));
 }
@@ -313,7 +312,7 @@ TEST_F(TabBarTest, IsTabValid_BoundaryIndex_ReturnsCorrectResult)
 TEST_F(TabBarTest, TabUrl_ValidIndex_ReturnsCorrectUrl)
 {
     QUrl url("file:///home/test");
-    int index = tabBar->createInactiveTab(url);
+    int index = tabBar->appendInactiveTab(url);
 
     QUrl retrievedUrl = tabBar->tabUrl(index);
     EXPECT_EQ(retrievedUrl, url);
@@ -327,14 +326,14 @@ TEST_F(TabBarTest, TabUrl_InvalidIndex_ReturnsEmptyUrl)
 
 TEST_F(TabBarTest, TabUrl_NewTab_ReturnsEmptyUrl)
 {
-    int index = tabBar->createTab();
+    int index = tabBar->appendTab();
     QUrl url = tabBar->tabUrl(index);
     EXPECT_TRUE(url.isEmpty());
 }
 
 TEST_F(TabBarTest, TabAlias_SetAndGet_ReturnsCorrectAlias)
 {
-    int index = tabBar->createTab();
+    int index = tabBar->appendTab();
     QString alias = "My Custom Tab";
 
     tabBar->setTabAlias(index, alias);
@@ -343,7 +342,7 @@ TEST_F(TabBarTest, TabAlias_SetAndGet_ReturnsCorrectAlias)
 
 TEST_F(TabBarTest, TabAlias_EmptyAlias_ReturnsEmpty)
 {
-    int index = tabBar->createTab();
+    int index = tabBar->appendTab();
     tabBar->setTabAlias(index, "");
 
     EXPECT_TRUE(tabBar->tabAlias(index).isEmpty());
@@ -357,7 +356,7 @@ TEST_F(TabBarTest, TabAlias_InvalidIndex_ReturnsEmpty)
 
 TEST_F(TabBarTest, TabAlias_UpdateAlias_UpdatesValue)
 {
-    int index = tabBar->createTab();
+    int index = tabBar->appendTab();
 
     tabBar->setTabAlias(index, "First Alias");
     EXPECT_EQ(tabBar->tabAlias(index), QString("First Alias"));
@@ -374,15 +373,15 @@ TEST_F(TabBarTest, SetTabAlias_InvalidIndex_DoesNotCrash)
 
 TEST_F(TabBarTest, TabUniqueId_ValidIndex_ReturnsNonEmptyId)
 {
-    int index = tabBar->createTab();
+    int index = tabBar->appendTab();
     QString uniqueId = tabBar->tabUniqueId(index);
     EXPECT_FALSE(uniqueId.isEmpty());
 }
 
 TEST_F(TabBarTest, TabUniqueId_MultipleTabs_ReturnsUniqueIds)
 {
-    int index1 = tabBar->createTab();
-    int index2 = tabBar->createTab();
+    int index1 = tabBar->appendTab();
+    int index2 = tabBar->appendTab();
 
     QString id1 = tabBar->tabUniqueId(index1);
     QString id2 = tabBar->tabUniqueId(index2);
@@ -398,7 +397,7 @@ TEST_F(TabBarTest, TabUniqueId_InvalidIndex_ReturnsEmpty)
 
 TEST_F(TabBarTest, TabUserData_SetAndGet_ReturnsCorrectData)
 {
-    int index = tabBar->createTab();
+    int index = tabBar->appendTab();
     QString key = "testKey";
     QVariant value = QString("testValue");
 
@@ -408,7 +407,7 @@ TEST_F(TabBarTest, TabUserData_SetAndGet_ReturnsCorrectData)
 
 TEST_F(TabBarTest, TabUserData_MultipleKeys_StoresAllData)
 {
-    int index = tabBar->createTab();
+    int index = tabBar->appendTab();
 
     tabBar->setTabUserData(index, "key1", QString("value1"));
     tabBar->setTabUserData(index, "key2", 42);
@@ -427,14 +426,14 @@ TEST_F(TabBarTest, TabUserData_InvalidIndex_ReturnsInvalid)
 
 TEST_F(TabBarTest, TabUserData_NonExistingKey_ReturnsInvalid)
 {
-    int index = tabBar->createTab();
+    int index = tabBar->appendTab();
     QVariant data = tabBar->tabUserData(index, "nonExistingKey");
     EXPECT_FALSE(data.isValid());
 }
 
 TEST_F(TabBarTest, SetTabUserData_UpdateValue_UpdatesData)
 {
-    int index = tabBar->createTab();
+    int index = tabBar->appendTab();
     QString key = "key";
 
     tabBar->setTabUserData(index, key, QString("value1"));
@@ -453,14 +452,14 @@ TEST_F(TabBarTest, SetTabUserData_InvalidIndex_DoesNotCrash)
 TEST_F(TabBarTest, IsInactiveTab_InactiveTab_ReturnsTrue)
 {
     QUrl url("file:///home/test");
-    int index = tabBar->createInactiveTab(url);
+    int index = tabBar->appendInactiveTab(url);
 
     EXPECT_TRUE(tabBar->isInactiveTab(index));
 }
 
 TEST_F(TabBarTest, IsInactiveTab_ActiveTab_ReturnsFalse)
 {
-    int index = tabBar->createTab();
+    int index = tabBar->appendTab();
     EXPECT_FALSE(tabBar->isInactiveTab(index));
 }
 
@@ -471,9 +470,9 @@ TEST_F(TabBarTest, IsInactiveTab_InvalidIndex_ReturnsFalse)
 
 TEST_F(TabBarTest, ActivateNextTab_WithMultipleTabs_ActivatesNextTab)
 {
-    tabBar->createTab();
-    tabBar->createTab();
-    tabBar->createTab();
+    tabBar->appendTab();
+    tabBar->appendTab();
+    tabBar->appendTab();
 
     tabBar->setCurrentIndex(0);
     EXPECT_EQ(tabBar->currentIndex(), 0);
@@ -484,8 +483,8 @@ TEST_F(TabBarTest, ActivateNextTab_WithMultipleTabs_ActivatesNextTab)
 
 TEST_F(TabBarTest, ActivateNextTab_AtLastTab_WrapsToFirst)
 {
-    tabBar->createTab();
-    tabBar->createTab();
+    tabBar->appendTab();
+    tabBar->appendTab();
 
     tabBar->setCurrentIndex(1);   // Last tab
     tabBar->activateNextTab();
@@ -494,7 +493,7 @@ TEST_F(TabBarTest, ActivateNextTab_AtLastTab_WrapsToFirst)
 
 TEST_F(TabBarTest, ActivateNextTab_SingleTab_StaysOnSameTab)
 {
-    tabBar->createTab();
+    tabBar->appendTab();
     tabBar->setCurrentIndex(0);
 
     tabBar->activateNextTab();
@@ -509,9 +508,9 @@ TEST_F(TabBarTest, ActivateNextTab_NoTabs_DoesNotCrash)
 
 TEST_F(TabBarTest, ActivatePreviousTab_WithMultipleTabs_ActivatesPreviousTab)
 {
-    tabBar->createTab();
-    tabBar->createTab();
-    tabBar->createTab();
+    tabBar->appendTab();
+    tabBar->appendTab();
+    tabBar->appendTab();
 
     tabBar->setCurrentIndex(2);
     EXPECT_EQ(tabBar->currentIndex(), 2);
@@ -522,8 +521,8 @@ TEST_F(TabBarTest, ActivatePreviousTab_WithMultipleTabs_ActivatesPreviousTab)
 
 TEST_F(TabBarTest, ActivatePreviousTab_AtFirstTab_WrapsToLast)
 {
-    tabBar->createTab();
-    tabBar->createTab();
+    tabBar->appendTab();
+    tabBar->appendTab();
 
     tabBar->setCurrentIndex(0);   // First tab
     tabBar->activatePreviousTab();
@@ -532,7 +531,7 @@ TEST_F(TabBarTest, ActivatePreviousTab_AtFirstTab_WrapsToLast)
 
 TEST_F(TabBarTest, ActivatePreviousTab_SingleTab_StaysOnSameTab)
 {
-    tabBar->createTab();
+    tabBar->appendTab();
     tabBar->setCurrentIndex(0);
 
     tabBar->activatePreviousTab();
@@ -547,7 +546,7 @@ TEST_F(TabBarTest, ActivatePreviousTab_NoTabs_DoesNotCrash)
 
 TEST_F(TabBarTest, UpdateTabName_ValidIndex_UpdatesName)
 {
-    int index = tabBar->createTab();
+    int index = tabBar->appendTab();
 
     stub.set_lamda(&TabBar::setTabText, [] {
         __DBG_STUB_INVOKE__
@@ -571,7 +570,7 @@ TEST_F(TabBarTest, NewTabCreated_CreateTab_SignalEmitted)
 {
     QSignalSpy spy(tabBar, &TabBar::newTabCreated);
 
-    tabBar->createTab();
+    tabBar->appendTab();
     EXPECT_EQ(spy.count(), 1);
 }
 
@@ -579,16 +578,16 @@ TEST_F(TabBarTest, NewTabCreated_MultipleTabs_SignalEmittedMultipleTimes)
 {
     QSignalSpy spy(tabBar, &TabBar::newTabCreated);
 
-    tabBar->createTab();
-    tabBar->createTab();
-    tabBar->createTab();
+    tabBar->appendTab();
+    tabBar->appendTab();
+    tabBar->appendTab();
 
     EXPECT_EQ(spy.count(), 3);
 }
 
 TEST_F(TabBarTest, TabSizeHint_ValidIndex_ReturnsValidSize)
 {
-    int index = tabBar->createTab();
+    int index = tabBar->appendTab();
     QSize size = tabBar->tabSizeHint(index);
 
     EXPECT_GT(size.width(), 0);
@@ -597,7 +596,7 @@ TEST_F(TabBarTest, TabSizeHint_ValidIndex_ReturnsValidSize)
 
 TEST_F(TabBarTest, MinimumTabSizeHint_ValidIndex_ReturnsValidSize)
 {
-    int index = tabBar->createTab();
+    int index = tabBar->appendTab();
     QSize size = tabBar->minimumTabSizeHint(index);
 
     EXPECT_GT(size.width(), 0);
@@ -606,7 +605,7 @@ TEST_F(TabBarTest, MinimumTabSizeHint_ValidIndex_ReturnsValidSize)
 
 TEST_F(TabBarTest, MaximumTabSizeHint_ValidIndex_ReturnsValidSize)
 {
-    int index = tabBar->createTab();
+    int index = tabBar->appendTab();
     QSize size = tabBar->maximumTabSizeHint(index);
 
     EXPECT_GT(size.width(), 0);
@@ -615,7 +614,7 @@ TEST_F(TabBarTest, MaximumTabSizeHint_ValidIndex_ReturnsValidSize)
 
 TEST_F(TabBarTest, MaximumTabSizeHint_GreaterThanMinimum_Consistent)
 {
-    int index = tabBar->createTab();
+    int index = tabBar->appendTab();
     QSize minSize = tabBar->minimumTabSizeHint(index);
     QSize maxSize = tabBar->maximumTabSizeHint(index);
 
@@ -624,7 +623,7 @@ TEST_F(TabBarTest, MaximumTabSizeHint_GreaterThanMinimum_Consistent)
 
 TEST_F(TabBarTest, CreateMimeDataFromTab_ValidIndex_ReturnsMimeData)
 {
-    int index = tabBar->createTab();
+    int index = tabBar->appendTab();
     QStyleOptionTab option;
 
     QMimeData *mimeData = tabBar->createMimeDataFromTab(index, option);
@@ -637,7 +636,7 @@ TEST_F(TabBarTest, CreateMimeDataFromTab_ValidIndex_ReturnsMimeData)
 
 TEST_F(TabBarTest, CreateDragPixmapFromTab_ValidIndex_ReturnsPixmap)
 {
-    int index = tabBar->createTab();
+    int index = tabBar->appendTab();
     QStyleOptionTab option;
     QPoint hotspot;
 
@@ -669,7 +668,7 @@ TEST_F(TabBarTest, CloseTab_WithParentUrl_RedirectsToParent)
         __DBG_STUB_INVOKE__
     });
 
-    int index = tabBar->createTab();
+    int index = tabBar->appendTab();
     tabBar->setCurrentUrl(childUrl);
     tabBar->closeTab(childUrl);
 
@@ -679,12 +678,12 @@ TEST_F(TabBarTest, CloseTab_WithParentUrl_RedirectsToParent)
 
 TEST_F(TabBarTest, CreateTab_AfterRemoval_IncrementsUniqueId)
 {
-    int index1 = tabBar->createTab();
+    int index1 = tabBar->appendTab();
     QString id1 = tabBar->tabUniqueId(index1);
 
     tabBar->removeTab(index1);
 
-    int index2 = tabBar->createTab();
+    int index2 = tabBar->appendTab();
     QString id2 = tabBar->tabUniqueId(index2);
 
     EXPECT_NE(id1, id2);
@@ -696,9 +695,9 @@ TEST_F(TabBarTest, RemoveTab_MiddleTab_AdjustsIndices)
     QUrl url2("file:///home/test2");
     QUrl url3("file:///home/test3");
 
-    tabBar->createInactiveTab(url1);
-    tabBar->createInactiveTab(url2);
-    tabBar->createInactiveTab(url3);
+    tabBar->appendInactiveTab(url1);
+    tabBar->appendInactiveTab(url2);
+    tabBar->appendInactiveTab(url3);
 
     EXPECT_EQ(tabBar->count(), 3);
 
@@ -726,7 +725,7 @@ TEST_F(TabBarTest, SetCurrentUrl_WithAlias_PreservesAlias)
 
 TEST_F(TabBarTest, TabUrl_AfterSetCurrentUrl_ReturnsNewUrl)
 {
-    int index = tabBar->createTab();
+    int index = tabBar->appendTab();
 
     stub.set_lamda(&TabBar::setTabText, [] {
         __DBG_STUB_INVOKE__
@@ -747,9 +746,9 @@ TEST_F(TabBarTest, CreateInactiveTab_MultipleUrls_CreatesMultipleTabs)
     QUrl url2("file:///home/test2");
     QUrl url3("file:///home/test3");
 
-    int index1 = tabBar->createInactiveTab(url1);
-    int index2 = tabBar->createInactiveTab(url2);
-    int index3 = tabBar->createInactiveTab(url3);
+    int index1 = tabBar->appendInactiveTab(url1);
+    int index2 = tabBar->appendInactiveTab(url2);
+    int index3 = tabBar->appendInactiveTab(url3);
 
     EXPECT_EQ(tabBar->count(), 3);
     EXPECT_EQ(tabBar->tabUrl(index1), url1);
@@ -760,12 +759,12 @@ TEST_F(TabBarTest, CreateInactiveTab_MultipleUrls_CreatesMultipleTabs)
 TEST_F(TabBarTest, IsInactiveTab_AfterActivation_ReturnsFalse)
 {
     QUrl url("file:///home/test");
-    int index = tabBar->createInactiveTab(url);
+    int index = tabBar->appendInactiveTab(url);
 
     EXPECT_TRUE(tabBar->isInactiveTab(index));
 
     // Simulate tab activation by creating a regular tab
-    tabBar->createTab();
+    tabBar->appendTab();
 
     // Original tab should still be inactive
     EXPECT_TRUE(tabBar->isInactiveTab(index));

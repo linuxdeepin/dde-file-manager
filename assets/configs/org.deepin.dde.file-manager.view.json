@@ -67,6 +67,28 @@
             "description":"Control list height level",
             "permissions":"readwrite",
             "visibility":"private"
+        },
+        "dfm.custom.fixedtab": {
+            "value": [],
+            "serial": 0,
+            "flags": [],
+            "name": "Custom tabs",
+            "name[zh_CN]": "自定义标签页",
+            "description": "It's used to configure custom tabs in the file manager.",
+            "description[zh_CN]": "用于配置文件管理器中的自定义标签页。",
+            "permissions": "readwrite",
+            "visibility": "private"
+        },
+        "dfm.pinned.tabs": {
+            "value": [],
+            "serial": 0,
+            "flags": [],
+            "name": "Pinned tabs",
+            "name[zh_CN]": "固定标签页",
+            "description": "It's used to configure pinned tabs in the file manager.",
+            "description[zh_CN]": "用于配置文件管理器中的固定标签页。",
+            "permissions": "readwrite",
+            "visibility": "private"
         }
     }
 }

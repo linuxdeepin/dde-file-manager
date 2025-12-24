@@ -55,6 +55,20 @@ TitleBarWidget::TitleBarWidget(QFrame *parent)
 
 void TitleBarWidget::setCurrentUrl(const QUrl &url)
 {
+    // Check if this is a special pinned tab URL
+    if (url.scheme() == TabDef::kTabScheme) {
+        // Extract pinnedId from query
+        QUrlQuery query(url.query());
+        QString pinnedId = query.queryItemValue(TabDef::kPinnedId);
+
+        if (!pinnedId.isEmpty()) {
+            fmInfo() << "Detected pinned tab URL, storing pinnedId:" << pinnedId;
+            pendingPinnedTabId = pinnedId;
+            // Don't set titlebarUrl or emit signal for pinned scheme
+            return;
+        }
+    }
+
     titlebarUrl = url;
     emit currentUrlChanged(url);
 }
@@ -86,7 +100,7 @@ CrumbBar *TitleBarWidget::titleCrumbBar() const
 
 void TitleBarWidget::openNewTab(const QUrl &url)
 {
-    tabBar()->createTab();
+    tabBar()->appendTab();
 
     if (url.isEmpty())
         TitleBarEventCaller::sendCd(this, StandardPaths::location(StandardPaths::kHomePath));
@@ -96,11 +110,59 @@ void TitleBarWidget::openNewTab(const QUrl &url)
 
 void TitleBarWidget::openCustomFixedTabs()
 {
-    const auto &itemList = DConfigManager::instance()->value(kDefaultCfgPath, kCunstomFixedTabs, {}).toStringList();
+    const auto &itemList = DConfigManager::instance()->value(kViewDConfName, kCunstomFixedTabs, {}).toStringList();
     for (const auto &item : itemList) {
-        int index = tabBar()->createInactiveTab(item);
+        int index = tabBar()->appendInactiveTab(item);
         tabBar()->setTabUserData(index, kIsCustomTab, true);
     }
+}
+
+void TitleBarWidget::openPinnedTabs()
+{
+    const auto &pinnedTabs = DConfigManager::instance()->value(kViewDConfName, kPinnedTabs, QVariantList()).toList();
+    fmInfo() << "Loading" << pinnedTabs.size() << "pinned tabs";
+
+    for (int i = pinnedTabs.size() - 1; i >= 0; --i) {
+        auto tabData = pinnedTabs[i].toMap();
+        QString pinnedId = tabData[TabDef::kPinnedId].toString();
+        QUrl url = QUrl(tabData[TabDef::kTabUrl].toString());
+        if (!url.isValid() || pinnedId.isEmpty()) {
+            fmWarning() << "Invalid pinned tab data, skipping:" << tabData;
+            continue;
+        }
+
+        int index = tabBar()->insertInactiveTab(0, url, true);
+        tabBar()->setTabUserData(index, TabDef::kPinnedId, pinnedId);
+        fmInfo() << "Restored pinned tab:" << url << "at index:" << index << "with pinnedId:" << pinnedId;
+    }
+
+    // Activate pending pinned tab if exists
+    if (!pendingPinnedTabId.isEmpty()) {
+        fmInfo() << "Activating pending pinned tab:" << pendingPinnedTabId;
+        activatePinnedTab(pendingPinnedTabId);
+        pendingPinnedTabId.clear();
+    }
+}
+
+void TitleBarWidget::activatePinnedTab(const QString &pinnedId)
+{
+    if (pinnedId.isEmpty())
+        return;
+
+    // Find tab with matching pinnedId
+    for (int i = 0; i < tabBar()->count(); ++i) {
+        if (!tabBar()->isPinned(i))
+            continue;
+
+        QString tabPinnedId = tabBar()->tabUserData(i, TabDef::kPinnedId).toString();
+        if (tabPinnedId == pinnedId) {
+            fmInfo() << "Found and activating pinned tab at index" << i << "with pinnedId:" << pinnedId;
+            tabBar()->setCurrentIndex(i);
+            return;
+        }
+    }
+
+    fmWarning() << "Could not find pinned tab with pinnedId:" << pinnedId;
 }
 
 void TitleBarWidget::handleSplitterAnimation(const QVariant &position)
@@ -486,9 +548,9 @@ bool TitleBarWidget::checkCustomFixedTab(int index)
                                                        tr("Directory not found. Remove it?"),
                                                        { tr("Cancel", "button"), tr("Remove", "button") });
     if (ret == 1) {
-        auto urlList = DConfigManager::instance()->value(kDefaultCfgPath, kCunstomFixedTabs, {}).toStringList();
+        auto urlList = DConfigManager::instance()->value(kViewDConfName, kCunstomFixedTabs, {}).toStringList();
         urlList.removeOne(url.toString());
-        DConfigManager::instance()->setValue(kDefaultCfgPath, kCunstomFixedTabs, urlList);
+        DConfigManager::instance()->setValue(kViewDConfName, kCunstomFixedTabs, urlList);
         return false;
     }
     return true;
