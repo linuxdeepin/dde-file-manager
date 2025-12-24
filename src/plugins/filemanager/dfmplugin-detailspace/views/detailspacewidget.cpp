@@ -86,9 +86,3 @@ void DetailSpaceWidget::initializeUi()
     rvLayout->addWidget(detailView, 1);
     setLayout(rvLayout);
 }
-
-int DetailSpaceWidget::detailWidth()
-{
-    // Return the default width for backward compatibility
-    return kDefaultWidth;
-}
