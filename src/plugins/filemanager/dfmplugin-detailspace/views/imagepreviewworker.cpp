@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "imagepreviewworker.h"
+#include "imagepreviewwidget.h"
 
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/thumbnail/thumbnailhelper.h>
@@ -50,7 +51,13 @@ void ImagePreviewWorker::loadPreview(const QUrl &url, const QSize &targetSize)
 
     QPixmap result;
 
-    // Strategy 1: For image types, load original image
+    // Strategy 1: For animated image types (GIF, etc.), emit signal for QMovie handling
+    if (!mimeType.isEmpty() && ImagePreviewWidget::isAnimatedMimeType(mimeType)) {
+        Q_EMIT animatedImageReady(url, filePath);
+        return;
+    }
+
+    // Strategy 2: For static image types, load original image
     if (isImageMimeType(mimeType)) {
         result = loadOriginalImage(filePath, targetSize);
         if (!result.isNull()) {
@@ -59,14 +66,14 @@ void ImagePreviewWorker::loadPreview(const QUrl &url, const QSize &targetSize)
         }
     }
 
-    // Strategy 2: Try thumbnail
+    // Strategy 3: Try thumbnail
     result = loadThumbnail(url, targetSize);
     if (!result.isNull()) {
         Q_EMIT previewReady(url, result);
         return;
     }
 
-    // Strategy 3: Request hook/icon from main thread (must be called on main thread)
+    // Strategy 4: Request hook/icon from main thread (must be called on main thread)
     Q_EMIT needIconFallback(url, targetSize);
 }
 
@@ -135,6 +142,8 @@ ImagePreviewController::ImagePreviewController(QObject *parent)
             m_worker, &ImagePreviewWorker::loadPreview);
     connect(m_worker, &ImagePreviewWorker::previewReady,
             this, &ImagePreviewController::previewReady);
+    connect(m_worker, &ImagePreviewWorker::animatedImageReady,
+            this, &ImagePreviewController::onAnimatedImageReady);
     connect(m_worker, &ImagePreviewWorker::loadFailed,
             this, &ImagePreviewController::loadFailed);
     connect(m_worker, &ImagePreviewWorker::needIconFallback,
@@ -183,4 +192,10 @@ void ImagePreviewController::onNeedIconFallback(const QUrl &url, const QSize &ta
     }
 
     Q_EMIT loadFailed(url);
+}
+
+void ImagePreviewController::onAnimatedImageReady(const QUrl &url, const QString &filePath)
+{
+    // Forward animated image signal
+    Q_EMIT animatedImageReady(url, filePath);
 }
