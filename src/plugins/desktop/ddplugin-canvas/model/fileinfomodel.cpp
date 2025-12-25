@@ -544,6 +544,8 @@ QVariant FileInfoModel::data(const QModelIndex &index, int itemRole) const
         return indexFileInfo->nameOf(NameInfoType::kBaseNameOfRename);
     case Global::ItemRoles::kItemFileSuffixOfRenameRole:
         return indexFileInfo->nameOf(NameInfoType::kSuffixOfRename);
+    case Global::ItemRoles::kItemFileIconRole:
+            return indexFileInfo->fileIcon();
     default:
         return QString();
     }

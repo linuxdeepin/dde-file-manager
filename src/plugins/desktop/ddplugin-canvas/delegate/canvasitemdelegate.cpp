@@ -138,13 +138,23 @@ void CanvasItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
         // draw icon and background
         const QRect rIcon = iconRect(option.rect);
         paintBackground(painter, indexOption, rIcon);
-        paintIcon(painter, indexOption.icon,
-                  { rIcon,
-                    Qt::AlignCenter,
-                    (option.state & QStyle::State_Enabled) ? QIcon::Normal : QIcon::Disabled,
-                    QIcon::Off,
-                    isThumnailIconIndex(index) });   // why Enabled?
+        const std::optional<QRectF> &pIcon = paintIcon( painter, indexOption.icon,
+                                                        { rIcon,
+                                                          Qt::AlignCenter,
+                                                          (option.state & QStyle::State_Enabled) ? QIcon::Normal : QIcon::Disabled,
+                                                          QIcon::Off,
+                                                          isThumnailIconIndex(index) });   // why Enabled?
 
+        // If the thumbnail drawing is empty, then redraw the file fileicon
+        if (!pIcon.has_value()) {
+            const QIcon &fileIcon = index.data(Global::ItemRoles::kItemFileIconRole).value<QIcon>();
+            paintIcon(painter, fileIcon,
+                      { rIcon,
+                        Qt::AlignCenter,
+                        (option.state & QStyle::State_Enabled) ? QIcon::Normal : QIcon::Disabled,
+                        QIcon::Off,
+                        false });   // why Enabled?
+        }
         // paint emblems to icon
         paintEmblems(painter, rIcon, parent()->model()->fileInfo(index));
 
@@ -308,11 +318,23 @@ QSize CanvasItemDelegate::paintDragIcon(QPainter *painter, const QStyleOptionVie
     initStyleOption(&indexOption, index);
 
     painter->setRenderHints(painter->renderHints() | QPainter::Antialiasing | QPainter::SmoothPixmapTransform, true);
-    return paintIcon(painter, indexOption.icon,
-                     { indexOption.rect, Qt::AlignCenter, QIcon::Normal,
-                       QIcon::Off, isThumnailIconIndex(index) })
-            .size()
-            .toSize();
+    const std::optional<QRectF> &pIcon = paintIcon( painter, indexOption.icon,
+                                                    { indexOption.rect, Qt::AlignCenter, QIcon::Normal,
+                                                      QIcon::Off, isThumnailIconIndex(index) });
+    // If the thumbnail drawing is empty, then redraw the file fileicon
+    if (!pIcon.has_value()) {
+        const QIcon &fileIcon = index.data(Global::ItemRoles::kItemFileIconRole).value<QIcon>();
+        const std::optional<QRectF> paintRect = paintIcon(painter, fileIcon,
+                                                          { indexOption.rect, Qt::AlignCenter, QIcon::Normal,
+                                                            QIcon::Off, false });
+        if (paintRect.has_value()) {
+            return paintRect->size().toSize();
+        } else {
+            return QSize();
+        }
+    }
+
+    return pIcon->size().toSize();
 }
 
 int CanvasItemDelegate::textLineHeight() const
@@ -746,13 +768,16 @@ void CanvasItemDelegate::initStyleOption(QStyleOptionViewItem *option, const QMo
  * \param mode: icon mode (Normal, Disabled, Active, Selected )
  * \param state: The state for which a pixmap is intended to be used. (On, Off)
  */
-QRectF CanvasItemDelegate::paintIcon(QPainter *painter, const QIcon &icon, const PaintIconOpts &opts)
+std::optional<QRectF> CanvasItemDelegate::paintIcon(QPainter *painter, const QIcon &icon, const PaintIconOpts &opts)
 {
     // Copy of QStyle::alignedRect
     Qt::Alignment alignment { visualAlignment(painter->layoutDirection(), opts.alignment) };
     const qreal pixelRatio = painter->device()->devicePixelRatioF();
     const QPixmap &px = getIconPixmap(icon, opts.rect.size().toSize(), pixelRatio, opts.mode, opts.state);
 
+    // 缩略图缩放到指定的size，绘制不出来就直接返回，绘制fileicon
+    if (px.isNull() && opts.isThumb)
+        return std::nullopt;
     // 保持图标原始比例
     qreal w = px.width() / px.devicePixelRatio();
     qreal h = px.height() / px.devicePixelRatio();
