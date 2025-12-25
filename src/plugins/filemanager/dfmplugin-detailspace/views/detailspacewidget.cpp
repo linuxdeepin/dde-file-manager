@@ -56,7 +56,9 @@ void DetailSpaceWidget::setCurrentUrl(const QUrl &url)
     if (!isVisible())
         return;
 
-    removeControls();
+    // Only remove extension widgets - core widgets (preview, file info) are reused!
+    // This prevents UI flicker and improves performance
+    removeWidgets();
     detailView->setUrl(targetUrl);
 }
 
@@ -65,14 +67,9 @@ QUrl DetailSpaceWidget::currentUrl() const
     return detailSpaceUrl;
 }
 
-bool DetailSpaceWidget::insertExpandControl(int index, QWidget *widget)
+void DetailSpaceWidget::removeWidgets()
 {
-    return detailView->insertCustomControl(index, widget);
-}
-
-void DetailSpaceWidget::removeControls()
-{
-    detailView->removeControl();
+    detailView->removeWidget();
 }
 
 void DetailSpaceWidget::initializeUi()

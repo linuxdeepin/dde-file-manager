@@ -5,7 +5,7 @@
 #include "detailview.h"
 #include "imagepreviewwidget.h"
 #include "imagepreviewworker.h"
-#include "filebaseinfoview.h"
+#include "fileinfowidget.h"
 #include "utils/detailmanager.h"
 
 #include <dfm-base/base/schemefactory.h>
@@ -13,7 +13,7 @@
 #include <QScrollArea>
 #include <QResizeEvent>
 
-#include <DPushButton>
+#include <DFrame>
 #include <DGuiApplicationHelper>
 
 DFMBASE_USE_NAMESPACE
@@ -30,19 +30,28 @@ DetailView::~DetailView()
 {
 }
 
-bool DetailView::addCustomControl(QWidget *widget)
+bool DetailView::addCustomWidget(QWidget *widget)
 {
     if (widget) {
-        QVBoxLayout *vlayout = qobject_cast<QVBoxLayout *>(scrollArea->widget()->layout());
-        insertCustomControl(vlayout->count() - 1, widget);
+        // -1 means append at the end (before stretch)
+        insertCustomWidget(-1, widget);
         return true;
     }
     return false;
 }
 
-bool DetailView::insertCustomControl(int index, QWidget *widget)
+bool DetailView::insertCustomWidget(int index, QWidget *widget)
 {
-    index = index == -1 ? vLayout->count() - 1 : qMin(vLayout->count() - 1, index);
+    // Core widgets occupy indices 0 (preview) and 1 (file info)
+    // Extension widgets start from index 2
+    // The stretch item is at the end of the layout
+    static constexpr int kCoreWidgetCount = 2;
+
+    // Calculate actual insert position
+    // -1 means append before stretch, otherwise offset by core widget count
+    int actualIndex = (index == -1)
+            ? vLayout->count() - 1   // Before stretch
+            : qMin(vLayout->count() - 1, index + kCoreWidgetCount);
 
     if (widget) {
         widget->setParent(this);
@@ -51,16 +60,15 @@ bool DetailView::insertCustomControl(int index, QWidget *widget)
         widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
         QFrame *frame = new QFrame(this);
-        DPushButton *btn = new DPushButton(frame);
-        btn->setEnabled(false);
-        btn->setFixedHeight(1);
+        auto *seperator = new DHorizontalLine(frame);
+        seperator->setFixedHeight(1);
         QVBoxLayout *vlayout = new QVBoxLayout(frame);
         vlayout->setContentsMargins(0, 0, 0, 0);
-        vlayout->addWidget(btn);
+        vlayout->addWidget(seperator);
         vlayout->addWidget(widget);
         frame->setLayout(vlayout);
         QVBoxLayout *layout = qobject_cast<QVBoxLayout *>(expandFrame->layout());
-        layout->insertWidget(index, frame, 0, Qt::AlignTop);
+        layout->insertWidget(actualIndex, frame, 0, Qt::AlignTop);
 
         expandList.append(frame);
         return true;
@@ -68,7 +76,7 @@ bool DetailView::insertCustomControl(int index, QWidget *widget)
     return false;
 }
 
-void DetailView::removeControl()
+void DetailView::removeWidget()
 {
     for (QWidget *w : expandList) {
         expandList.removeOne(w);
@@ -76,15 +84,15 @@ void DetailView::removeControl()
         layout->removeWidget(w);
         delete w;
     }
-    // Reset file base info view pointer since it was deleted
-    m_fileBaseInfoView = nullptr;
+    // Note: m_fileInfoWidget is NOT deleted here - it's reused across URL changes
+    // This prevents UI flicker and improves performance
 }
 
 void DetailView::setUrl(const QUrl &url)
 {
     m_currentUrl = url;
-    createHeadUI(url);
-    createBasicWidget(url);
+    updateHeadUI(url);
+    updateBasicWidget(url);
     createExtensionWidgets(url);
 }
 
@@ -127,6 +135,7 @@ void DetailView::initInfoUI()
     vLayout->addStretch();
     expandFrame->setLayout(vLayout);
     vLayout->setContentsMargins(0, 0, 0, 0);
+    vLayout->setSpacing(10);
 
     mainLayout = new QVBoxLayout;
     mainLayout->setContentsMargins(10, 10, 10, 10);
@@ -140,27 +149,41 @@ void DetailView::initInfoUI()
             this, &DetailView::onPreviewReady);
     connect(m_previewController, &ImagePreviewController::animatedImageReady,
             this, &DetailView::onAnimatedImageReady);
+
+    // Create core widgets once - they will be reused across URL changes
+    // This is the key optimization to prevent UI flicker!
+
+    // 1. Create preview widget (index 0)
+    m_previewWidget = new ImagePreviewWidget(this);
+    vLayout->insertWidget(0, m_previewWidget, 0, Qt::AlignHCenter);
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged,
+            this, [this]() {
+                if (!m_currentUrl.isEmpty() && m_previewWidget) {
+                    m_previewController->requestPreview(m_currentUrl,
+                                                        ImagePreviewWidget::maximumPreviewSize());
+                }
+            });
+
+    // 2. Create file info widget (index 1) - with separator frame
+    QFrame *infoFrame = new QFrame(this);
+    auto separator = new DHorizontalLine(infoFrame);
+    separator->setFixedHeight(1);
+    QVBoxLayout *infoLayout = new QVBoxLayout(infoFrame);
+    infoLayout->setContentsMargins(0, 0, 0, 0);
+    infoLayout->addWidget(separator);
+
+    m_fileInfoWidget = new FileInfoWidget(this);
+    m_fileInfoWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    infoLayout->addWidget(m_fileInfoWidget);
+    infoFrame->setLayout(infoLayout);
+    vLayout->insertWidget(1, infoFrame, 0, Qt::AlignTop);
+    // Note: infoFrame is NOT added to expandList - it's a core widget!
 }
 
-void DetailView::createHeadUI(const QUrl &url)
+void DetailView::updateHeadUI(const QUrl &url)
 {
-    // Reuse preview widget instead of recreating
-    if (!m_previewWidget) {
-        m_previewWidget = new ImagePreviewWidget(this);
-        vLayout->insertWidget(0, m_previewWidget, 0, Qt::AlignHCenter);
-        // Set spacing between preview and other widgets (10px bottom margin for preview)
-        vLayout->setSpacing(10);
-
-        connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged,
-                this, [this]() {
-                    if (!m_currentUrl.isEmpty() && m_previewWidget) {
-                        // Always request preview at maximum size for best quality
-                        m_previewController->requestPreview(m_currentUrl,
-                                                            ImagePreviewWidget::maximumPreviewSize());
-                    }
-                });
-    }
-
+    // Preview widget is already created in initInfoUI()
+    // Just update its content here
     m_previewWidget->show();
     updatePreviewSize();
 
@@ -169,16 +192,12 @@ void DetailView::createHeadUI(const QUrl &url)
     m_previewController->requestPreview(url, ImagePreviewWidget::maximumPreviewSize());
 }
 
-void DetailView::createBasicWidget(const QUrl &url)
+void DetailView::updateBasicWidget(const QUrl &url)
 {
-    // Reuse FileBaseInfoView instead of recreating
-    if (!m_fileBaseInfoView) {
-        m_fileBaseInfoView = new FileBaseInfoView(this);
-        addCustomControl(m_fileBaseInfoView);
-    }
-
-    m_fileBaseInfoView->show();
-    m_fileBaseInfoView->setFileUrl(url);
+    // FileInfoWidget is already created in initInfoUI()
+    // Just update its content here - no widget creation/deletion!
+    m_fileInfoWidget->show();
+    m_fileInfoWidget->setUrl(url);
 }
 
 void DetailView::updatePreviewSize()
@@ -214,7 +233,7 @@ void DetailView::createExtensionWidgets(const QUrl &url)
     if (!widgetMap.isEmpty()) {
         QList<int> indexes = widgetMap.keys();
         for (int index : indexes) {
-            insertCustomControl(index, widgetMap.value(index));
+            insertCustomWidget(index, widgetMap.value(index));
         }
     }
 }
