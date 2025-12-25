@@ -38,26 +38,26 @@ void DetailSpaceWidget::initUiForSizeMode()
 
 void DetailSpaceWidget::setCurrentUrl(const QUrl &url)
 {
-    quint64 winId = DetailSpaceHelper::findWindowIdByDetailSpace(this);
-    if (winId) {
-        QList<QUrl> urls = dpfSlotChannel->push("dfmplugin_workspace", "slot_View_GetSelectedUrls", winId).value<QList<QUrl>>();
-        if (!urls.isEmpty()) {
-            setCurrentUrl(urls.first(), 0);
-            return;
+    QUrl targetUrl = url;
+
+    // If no URL provided, try to get selected URL from workspace
+    if (!targetUrl.isValid()) {
+        quint64 winId = DetailSpaceHelper::findWindowIdByDetailSpace(this);
+        if (winId) {
+            const QList<QUrl> &urls = dpfSlotChannel->push("dfmplugin_workspace", "slot_View_GetSelectedUrls", winId).value<QList<QUrl>>();
+            if (!urls.isEmpty()) {
+                targetUrl = urls.first();
+            }
         }
     }
-    setCurrentUrl(url, 0);
-}
 
-void DetailSpaceWidget::setCurrentUrl(const QUrl &url, int widgetFilter)
-{
-    detailSpaceUrl = url;
+    detailSpaceUrl = targetUrl;
 
     if (!isVisible())
         return;
 
     removeControls();
-    detailView->setUrl(url, widgetFilter);
+    detailView->setUrl(targetUrl);
 }
 
 QUrl DetailSpaceWidget::currentUrl() const
@@ -65,7 +65,7 @@ QUrl DetailSpaceWidget::currentUrl() const
     return detailSpaceUrl;
 }
 
-bool DetailSpaceWidget::insterExpandControl(const int &index, QWidget *widget)
+bool DetailSpaceWidget::insertExpandControl(int index, QWidget *widget)
 {
     return detailView->insertCustomControl(index, widget);
 }
