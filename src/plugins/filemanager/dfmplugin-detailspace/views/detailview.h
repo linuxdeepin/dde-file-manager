@@ -31,10 +31,7 @@ public:
     void removeControl();
 
 public slots:
-    void setUrl(const QUrl &url, int widgetFilter);
-
-private:
-    void createExtensionWidgets(const QUrl &url);
+    void setUrl(const QUrl &url);
 
 private slots:
     void onPreviewReady(const QUrl &url, const QPixmap &pixmap);
@@ -42,8 +39,9 @@ private slots:
 
 private:
     void initInfoUI();
-    void createHeadUI(const QUrl &url, int widgetFilter);
-    void createBasicWidget(const QUrl &url, int widgetFilter);
+    void createExtensionWidgets(const QUrl &url);
+    void createHeadUI(const QUrl &url);
+    void createBasicWidget(const QUrl &url);
     void updatePreviewSize();
 
 protected:

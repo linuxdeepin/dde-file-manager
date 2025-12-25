@@ -80,11 +80,11 @@ void DetailView::removeControl()
     m_fileBaseInfoView = nullptr;
 }
 
-void DetailView::setUrl(const QUrl &url, int widgetFilter)
+void DetailView::setUrl(const QUrl &url)
 {
     m_currentUrl = url;
-    createHeadUI(url, widgetFilter);
-    createBasicWidget(url, widgetFilter);
+    createHeadUI(url);
+    createBasicWidget(url);
     createExtensionWidgets(url);
 }
 
@@ -142,15 +142,8 @@ void DetailView::initInfoUI()
             this, &DetailView::onAnimatedImageReady);
 }
 
-void DetailView::createHeadUI(const QUrl &url, int widgetFilter)
+void DetailView::createHeadUI(const QUrl &url)
 {
-    if (widgetFilter == DetailFilterType::kIconView) {
-        if (m_previewWidget) {
-            m_previewWidget->hide();
-        }
-        return;
-    }
-
     // Reuse preview widget instead of recreating
     if (!m_previewWidget) {
         m_previewWidget = new ImagePreviewWidget(this);
@@ -176,15 +169,8 @@ void DetailView::createHeadUI(const QUrl &url, int widgetFilter)
     m_previewController->requestPreview(url, ImagePreviewWidget::maximumPreviewSize());
 }
 
-void DetailView::createBasicWidget(const QUrl &url, int widgetFilter)
+void DetailView::createBasicWidget(const QUrl &url)
 {
-    if (widgetFilter == DetailFilterType::kBasicView) {
-        if (m_fileBaseInfoView) {
-            m_fileBaseInfoView->hide();
-        }
-        return;
-    }
-
     // Reuse FileBaseInfoView instead of recreating
     if (!m_fileBaseInfoView) {
         m_fileBaseInfoView = new FileBaseInfoView(this);

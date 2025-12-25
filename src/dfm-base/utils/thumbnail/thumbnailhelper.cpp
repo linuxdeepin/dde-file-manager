@@ -59,9 +59,6 @@ void ThumbnailHelper::initMimeTypeSupport()
     // === Executable package types (unconditional icon display) ===
     mimeTypeSupportStrategy.insert(Mime::kTypeAppAppimage, Strategy::kUnconditional);
     mimeTypeSupportStrategy.insert(Mime::kTypeAppUab, Strategy::kUnconditional);
-
-    qCInfo(logDFMBase) << "thumbnail: initialized MIME type support strategies for"
-                       << mimeTypeSupportStrategy.size() << "types";
 }
 
 void ThumbnailHelper::initSizeLimit()
