@@ -64,8 +64,8 @@
 <context>
     <name>DoCopyFileWorker</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="836"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="946"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="843"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="953"/>
         <source>Can&apos;t access file!</source>
         <translation>فەيلغا كىرىش مۇمكىن ئەمەس!</translation>
     </message>
@@ -115,7 +115,7 @@
 <context>
     <name>FileOperateBaseWorker</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="677"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="701"/>
         <source>The file name or the path is too long!</source>
         <translation>ھۆججەت نامى ياكى مۇندەرىجە بەك ئۇزۇن بولۇپ قالدى!</translation>
     </message>
@@ -173,39 +173,39 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1115"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="958"/>
         <source>need authorization to access</source>
         <translation>زىيارەت قىلىش ئۈچۈن ھوقۇق بېرىش كېرەك</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1122"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="965"/>
         <source>Authentication Required
 Enter user and password for %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1194"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1037"/>
         <source>Can&apos;t verify the identity of %1.</source>
         <translation>%1 نىڭ سالاھىيىتىنى دەلىللىگىلى بولمىدى</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1195"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1038"/>
         <source>This happens when you log in to a computer the first time.</source>
         <translation>تۇنجى كىرگەندە بۇ ئەسكەرتىش چىقىدۇ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1196"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1039"/>
         <source>The identity sent by the remote computer is</source>
         <translation>يىراق مۇساپىلىك كومپيۇتېر يوللىغان سالاھىيەت ئۇچۇرى</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1198"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1041"/>
         <source>If you want to be absolutely sure it is safe to continue, contact the system administrator.</source>
         <translation>مەشغۇلاتنى داۋاملاشتۇرۇشنىڭ بىخەتەر ياكى ئەمەسلىكىنى جەزملەشتۈرمەكچى بولسىڭىز سىستېما باشقۇرغۇچىسى بىلەن ئالاقىلىشىڭ.</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/filepreview.cpp" line="80"/>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="383"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="378"/>
         <location filename="../src/plugins/filemanager/dfmplugin-core/core.cpp" line="51"/>
         <location filename="../src/plugins/filemanager/dfmplugin-core/core.cpp" line="52"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/pathgroupstrategy.cpp" line="31"/>
@@ -213,59 +213,59 @@ Enter user and password for %1</source>
         <translation>سىستېما دىسكىسى</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="386"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="381"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/pathgroupstrategy.cpp" line="32"/>
         <source>Data Disk</source>
         <translation>سانلىق مەلۇمات دىسكىسى</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="437"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="432"/>
         <source>Blank %1 Disc</source>
         <translation>قۇرۇق %1 دىسكا</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="437"/>
-        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="419"/>
-        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="425"/>
-        <location filename="../src/dfm-base/base/standardpaths.cpp" line="333"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="432"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="421"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="427"/>
+        <location filename="../src/dfm-base/base/standardpaths.cpp" line="346"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/typegroupstrategy.cpp" line="42"/>
         <source>Unknown</source>
         <translation>نامەلۇم</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="447"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="442"/>
         <source>%1 Drive</source>
         <translation>%1 قوزغاتقۇچ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="396"/>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="466"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="391"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="461"/>
         <source>%1 Encrypted</source>
         <translation>% 1 شىفىرلانغان</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="474"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="469"/>
         <location filename="../src/external/dde-dock-plugins/disk-mount/utils/dockutils.cpp" line="109"/>
         <source>%1 Volume</source>
         <translation>%1 رايۇن</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="285"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="287"/>
         <source>Scanning the device, stop it?</source>
         <translation>ئۈسكۈنە سايىلىنىۋاتىدۇ، سايىلەشنى توختىتامسىز؟</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="292"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="294"/>
         <source>Unmount failed</source>
         <translation>ئۆچۆرۈەلمىدى</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="292"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="294"/>
         <source>Cannot stop scanning device</source>
         <translation>سايىلەش ئۈسكۈنىسىنى توختاتقىلى بولمىدى</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="417"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="419"/>
         <location filename="../src/external/dde-dock-plugins/disk-mount/utils/dockutils.cpp" line="118"/>
         <source>%1 on %2</source>
         <translation>%2 دىكى %1</translation>
@@ -280,7 +280,7 @@ Enter user and password for %1</source>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="205"/>
-        <location filename="../src/dfm-base/base/standardpaths.cpp" line="326"/>
+        <location filename="../src/dfm-base/base/standardpaths.cpp" line="339"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="15"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="15"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="15"/>
@@ -289,7 +289,7 @@ Enter user and password for %1</source>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="207"/>
-        <location filename="../src/dfm-base/base/standardpaths.cpp" line="327"/>
+        <location filename="../src/dfm-base/base/standardpaths.cpp" line="340"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="33"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="33"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="33"/>
@@ -298,7 +298,7 @@ Enter user and password for %1</source>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="209"/>
-        <location filename="../src/dfm-base/base/standardpaths.cpp" line="328"/>
+        <location filename="../src/dfm-base/base/standardpaths.cpp" line="341"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="21"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="21"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="21"/>
@@ -307,7 +307,7 @@ Enter user and password for %1</source>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="211"/>
-        <location filename="../src/dfm-base/base/standardpaths.cpp" line="329"/>
+        <location filename="../src/dfm-base/base/standardpaths.cpp" line="342"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="26"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="26"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="26"/>
@@ -316,7 +316,7 @@ Enter user and password for %1</source>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="213"/>
-        <location filename="../src/dfm-base/base/standardpaths.cpp" line="330"/>
+        <location filename="../src/dfm-base/base/standardpaths.cpp" line="343"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="16"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="16"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="16"/>
@@ -325,7 +325,7 @@ Enter user and password for %1</source>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="215"/>
-        <location filename="../src/dfm-base/base/standardpaths.cpp" line="331"/>
+        <location filename="../src/dfm-base/base/standardpaths.cpp" line="344"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="17"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="17"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="17"/>
@@ -395,13 +395,13 @@ Enter user and password for %1</source>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="872"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="407"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="440"/>
         <source>%1 item</source>
         <translation>%1تۈر</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="873"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="408"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="441"/>
         <source>%1 items</source>
         <translation>%1تۈر</translation>
     </message>
@@ -932,7 +932,7 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/filedialog/core/utils/corehelper.cpp" line="75"/>
         <location filename="../src/plugins/filedialog/core/utils/corehelper.cpp" line="106"/>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="238"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="132"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="133"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>بىكار قىلىش</translation>
@@ -949,7 +949,7 @@ Enter user and password for %1</source>
         <translation>تىز كونۇپكا</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1084"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1095"/>
         <source>This system wallpaper is locked. Please contact your admin.</source>
         <translation>بۇ سىستېما تەگلىكى قۇلۇپلانغان، باشقۇرغۇچى بىلەن ئالاقىلىشىڭ</translation>
     </message>
@@ -1313,7 +1313,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="330"/>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="331"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="135"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="136"/>
         <source>Rename</source>
         <comment>button</comment>
         <translation>ئىسم ئۆزگەرتىش</translation>
@@ -1503,7 +1503,7 @@ Enter user and password for %1</source>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="174"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="100"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="101"/>
         <source>Location</source>
         <translation>ئورۇن</translation>
     </message>
@@ -1530,8 +1530,8 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="77"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="94"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="110"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="117"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="111"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="118"/>
         <source>Required</source>
         <translation>زۆرۈر تۈر:</translation>
     </message>
@@ -1551,27 +1551,27 @@ Enter user and password for %1</source>
         <translation>قوشۇش</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="101"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="102"/>
         <source>Before file name</source>
         <translation>نامى ئالدىدا</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="101"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="102"/>
         <source>After file name</source>
         <translation>نامى كەينىدە</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="109"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="110"/>
         <source>File name</source>
         <translation>ھۆججەت نامى</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="116"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="117"/>
         <source>Start at</source>
         <translation>+ تەرتىپ نومۇر</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="127"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="128"/>
         <source>Tips: Sort by selected file order</source>
         <translation>ئەسكەرتىش: تاللانغان ھۆججەتلەرنىڭ تەرتىپى بويىچە تەرتىپلەش</translation>
     </message>
@@ -1824,60 +1824,60 @@ Enter user and password for %1</source>
         <translation>ئىزدەش ئىشلەپچى</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="654"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="643"/>
         <source>Cannot generate random number by TPM</source>
         <translation>TPM ئىختىيارىي سانىغا ئېرىشەلمىدى</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="657"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="646"/>
         <source>No available encrypt algorithm.</source>
         <translation>ئىشلەتكىلى بولىدىغان پاروللاش ھېسابلاش ئۇسۇلى يوق.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="660"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="649"/>
         <source>TPM encrypt failed.</source>
         <translation>TPM پاروللاش مەغلۇب بولدى.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="663"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="652"/>
         <source>TPM is locked.</source>
         <translation>TPM قۇلۇپلاندى.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="736"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="725"/>
         <source>Confirm encrypt %1?</source>
         <translation>%1 نى پاروللامسىز؟</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="739"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="728"/>
         <source>The current partition is about to be encrypted and cannot be canceled during the encryption process, please confirm the encryption.</source>
         <translation>بۇ رايون پاروللىنىش ئالدىدا تۇرماقتا، بۇ جەرياندا ئەمەلدىن قالدۇرغىلى بولمايدۇ، پاروللاشنى جەزملەشتۈرۈڭ.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="747"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="762"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="736"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="751"/>
         <source>Cancel</source>
         <translation>بىكار قىلىش</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="748"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="763"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="737"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="752"/>
         <source>Confirm and Reboot</source>
         <translation>جەزملەش ۋە قايتا قوزغىتىش</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="749"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="763"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="738"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="752"/>
         <source>Confirm</source>
         <translation>جەزملەشتۈرۈش</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="759"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="748"/>
         <source>Decrypt %1?</source>
         <translation>%1 نى پاروللاشنى بىكار قىلامسىز؟</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="760"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="749"/>
         <source>Decryption can take a long time, so make sure power is connected until the decryption is complete.</source>
         <translation>پاروللاشنى بىكار قىلىشقا بىر ئاز ئۇزۇن ۋاقىت كېتىدۇ، بىكار قىلىنىپ بولغۇچە توكقا چېتىلىشىغا كاپالەتلىك قىلىڭ.</translation>
     </message>
@@ -2260,27 +2260,27 @@ Enter user and password for %1</source>
 <context>
     <name>ddplugin_organizer::CollectionItemDelegate</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="108"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="110"/>
         <source>Tiny</source>
         <translation>كىچىك</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="109"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="111"/>
         <source>Small</source>
         <translation>كىچىك</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="110"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="112"/>
         <source>Medium</source>
         <translation>ئوتتۇرا</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="111"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="113"/>
         <source>Large</source>
         <translation>چوڭ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="112"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="114"/>
         <source>Super large</source>
         <translation>ئالاھىدە چوڭ</translation>
     </message>
@@ -2796,338 +2796,338 @@ Enter user and password for %1</source>
     <name>dfmbase::DialogManager</name>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="57"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="587"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="601"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="640"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="661"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.h" line="56"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="575"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="589"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="628"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="649"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.h" line="51"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>جەزملەشتۈرۈش</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="100"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="88"/>
         <source>Operating failed</source>
         <translation>مەشغۇلات مەغلۇب بولدى</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="101"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="89"/>
         <source>Mount failed</source>
         <translation>يۈكلەش مەغلۇب بولدى</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="102"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="90"/>
         <source>Unmount failed</source>
         <translation>ئۆچۆرۈەلمىدى</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="108"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="96"/>
         <source>Unmounting device now...</source>
         <translation>ئۈسكۈنىنى چىقىرىۋاتىدۇ...</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="111"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="99"/>
         <source>Mounting device now...</source>
         <translation>ئۈسكۈنە يۈكلىنىۋاتىدۇ...</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="114"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="102"/>
         <source>Erasing device now...</source>
         <translation>ئۈسكۈنە چىقىرىۋېتىلىۋاتىدۇ...</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="117"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="105"/>
         <source>Making filesystem for device now...</source>
         <translation>ئۈسكۈنە ئۈچۈن ھۆججەت سىستېمىسى يېزىلىۋاتىدۇ...</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="120"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="108"/>
         <source>Locking device now...</source>
         <translation>ئۈسكۈنە قۇلۇپلىنىۋاتىدۇ...</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="123"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="111"/>
         <source>Unlocking device now...</source>
         <translation>ئۈسكۈنە قۇلۇپى يېشىلىۋاتىدۇ...</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="147"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="135"/>
         <source>The device is busy now</source>
         <translation>ئۈسكۈنە ئالدىراش</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="159"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="147"/>
         <source>Anonymous mount is not allowed</source>
         <translation>نامسىز يۈكلەشكە بولمايدۇ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="161"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="149"/>
         <source>Wrong password</source>
         <translation>پارول خاتا</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="165"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="153"/>
         <source>Cannot create the mountpoint: the file name is too long</source>
         <translation>ھۆججەت نامى بەك ئۇزۇن، يۈكلىگىلى بولمىدى</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="171"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="159"/>
         <source>Authentication failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="169"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="157"/>
         <source>No such file or directory</source>
         <translation>ھۆججەت ياكى مۇندەرىجىنى تاپالمىدى</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="174"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="162"/>
         <source>The device has been blocked and you do not have permission to access it. Please configure its connection policy in Security Center or contact your administrator.</source>
         <translation>بۇ ئۈسكۈنىنىڭ ئۇلىنىشى چەكلەندى، زىيارەت قىلىش ھوقۇقىڭىز يوق، بىخەتەرلىك مەركىزىدىن تەڭشەڭ ياكى باشقۇرغۇچى بىلەن ئالاقىلىشىڭ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="183"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="171"/>
         <source>The device is busy, cannot remove now</source>
         <translation>دىسكا ئالدىراش ، ھازىر بىخەتەر چىقىرىۋېتەلمەيدۇ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="206"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="194"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>سىزنىڭ بۇ ھۆججەت/ ھۆججەت قىسقۇچقا مەشغۇلات قىلىدىغان ھوقۇقىڭىز يوق!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="223"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="211"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
         <translation>كەچۈرۈڭ، تۆۋەندىكى %1 ھۆججەت/ ھۆججەت قىسقۇچقا مەشغۇلات قىلىدىغان ھوقۇقىڭىز يوق</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="252"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="262"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="531"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="697"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="240"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="250"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="519"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="685"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>ماقۇل</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="259"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="524"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="247"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="512"/>
         <source>Operation failed!</source>
         <translation>مەشغۇلات مەغلۇب بولدى</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="260"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="248"/>
         <source>Target folder is inside the source folder!</source>
         <translation>نىشان ھۆججەت قىسقۇچ مەنبەلىك ھۆججەت قىسقۇچنىڭ ئىچىدە!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="322"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="310"/>
         <source>The passphrase is needed to access encrypted data on %1.</source>
         <translation>%1 ئۈسكۈنىدىكى پاروللانغان سانلىق مەلۇماتنى زىيارەت قىلىشقا پارول كېتىدۇ.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="330"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="350"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="379"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="400"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="449"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="510"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="548"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="660"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="684"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="318"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="338"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="367"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="388"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="437"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="498"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="536"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="648"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="672"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>بىكار قىلىش</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="331"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="319"/>
         <source>Format</source>
         <comment>button</comment>
         <translation>فورماتلاش</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="332"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="320"/>
         <source>To access the device, you must format the disk first. Are you sure you want to format it now?</source>
         <translation>بۇ ئۈسكۈنىنى زىيارەت قىلىش ئۈچۈن دىسكىنى فورماتلاش كېرەك، داۋاملاشتۇرامسىز؟</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="346"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="334"/>
         <source>Do you want to run %1 or display its content?</source>
         <translation> “%1” نى ئىجرا قىلماقچىمۇ ياكى ئۇنىڭ مەزمۇنىنى كۆرمەكچىمۇ؟</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="347"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="335"/>
         <source>It is an executable text file.</source>
         <translation>بۇ ئىجرا قىلغىلى بولىدىغان تېكىسىت ھۆججىتى.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="351"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="381"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="685"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="339"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="369"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="673"/>
         <source>Run</source>
         <comment>button</comment>
         <translation>يۈرگۈزۈش</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="352"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="380"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="340"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="368"/>
         <source>Run in terminal</source>
         <comment>button</comment>
         <translation>تېرمىنالدا يۈرگۈزۈش</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="353"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="341"/>
         <source>Display</source>
         <comment>button</comment>
         <translation>كۆرسىتىش</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="376"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="364"/>
         <source>Do you want to run %1?</source>
         <translation>“%1”نى ئىجرا قىلامسىز؟</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="377"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="365"/>
         <source>It is an executable file.</source>
         <translation>بۇ ئىجرا قىلغىلى بولىدىغان ھۆججەت.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="394"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="382"/>
         <source>Cannot move the selected %1 items to the trash. Do you want to permanently delete them?</source>
         <translation>تاللانغان %1 مەزمۇننى ئەخلەت ساندۇقىغا قويغىلى بولمىدى، تەلتۆكۈس ئۆچۈرەمسىز؟</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="395"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="383"/>
         <source>Permanently delete %1 items?</source>
         <translation>تاللانغان %1 تۈرلۈك مەزمۇننى تەلتۆكۈس ئۆچۈرمەكچىمۇ؟</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="425"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="413"/>
         <source>Cannot move &quot;%1&quot; to the trash. Do you want to permanently delete it?</source>
         <translation>«%1» نى ئەخلەت ساندۇقىغا قويغىلى بولمىدى، تەلتۆكۈس ئۆچۈرەمسىز؟</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="401"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="450"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="511"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="549"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="389"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="438"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="499"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="537"/>
         <source>Delete</source>
         <comment>button</comment>
         <translation>ئۆچۈرۈش</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="167"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="155"/>
         <source>Permission denied</source>
         <translation type="unfinished">ھوقۇقىڭىز يەتمىدى</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="426"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="414"/>
         <source>Permanently delete %1?</source>
         <translation>%1 نى راستلا تەلتۆكۈس ئۆچۈرەمسىز؟</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="432"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="469"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="420"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="457"/>
         <source>This action cannot be undone</source>
         <translation>بۇ مەشغۇلاتنى ئەسلىگە قايتۇرغىلى بولمايدۇ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="445"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="433"/>
         <source>Are you sure you want to empty %1 item?</source>
         <translation>ئەخلەت ساندۇقىدىكى %1 مەزمۇننى راستلا قۇرۇقدامسىز؟</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="446"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="434"/>
         <source>Are you sure you want to empty %1 items?</source>
         <translation>ئەخلەت ساندۇقىدىكى %1 مەزمۇننى راستلا قۇرۇقدامسىز؟</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="455"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="443"/>
         <source>Empty</source>
         <translation>قۇرۇقداش</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="494"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="482"/>
         <source>Do you want to delete %1?</source>
         <translation>%1نى ئۆچۈرەمسىز؟</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="495"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="483"/>
         <source>Do you want to delete the selected %1 items?</source>
         <translation>تاللىغان %1 تۈرلۈك مەزمۇننى ئۆچۈرەمسىز؟</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="526"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="514"/>
         <source>Failed to restore %1 file, the target folder is read-only</source>
         <translation>%1 ھۆججەتنى ئەسلىگە كەلتۈرگىلى بولمىدى، نىشان ھۆججەت قىسقۇچقا يېزىش ھوقۇقىڭىز يوق</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="528"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="516"/>
         <source>Failed to restore %1 files, the target folder is read-only</source>
         <translation>%1 ھۆججەتنى ئەسلىگە كەلتۈرگىلى بولمىدى، نىشان ھۆججەت قىسقۇچقا يېزىش ھوقۇقىڭىز يوق</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="541"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="529"/>
         <source>After revocation, it will be completely deleted %1, do you want to delete it completely?</source>
         <translation>ئەمەلدىن قالدۇرۇلغاندىن كېيىن %1 پۈتۈنلەي ئۆچۈرۈلىدۇ، پۈتۈنلەي ئۆچۈرۈشنى جەزملەشتۈرەمسىز؟ </translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="544"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="532"/>
         <source>These %1 contents will be completely deleted after revocation. Do you want to delete them completely?</source>
         <translation>ئەمەلدىن قالدۇرۇلغاندىن كېيىن %1 تۈرلۈك مەزمۇن پۈتۈنلەي ئۆچۈرۈلىدۇ، پۈتۈنلەي ئۆچۈرۈشنى جەزملەشتۈرەمسىز؟ </translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="569"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="557"/>
         <source>This operation cannot be reversed.</source>
         <translation>بۇ مەشغۇلاتنى ئەسلىگە قايتۇرغىلى بولمايدۇ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="585"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="573"/>
         <source>&quot;%1&quot; already exists, please use another name.</source>
         <translation>«%1» ھۆججەت نامى مەۋجۇت،باشقا نام قوللىنىڭ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="599"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="587"/>
         <source>Device or resource busy</source>
         <translation>ئۈسكۈنە ياكى مەنبە ئالدىراش</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="612"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="600"/>
         <source>This file will be hidden if the file name starts with &apos;.&apos;. Do you want to hide it?</source>
         <translation>ھۆججەت ئىسمى «.» دىن باشلانسا بۇ ھۆججەت يوشۇرۇلىدۇ، داۋاملاشتۇرامسىز؟</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="613"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="601"/>
         <source>Hide</source>
         <translation>يوشۇرۇش</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="614"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="602"/>
         <source>Cancel</source>
         <translation>بىكار قىلىش</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="637"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="625"/>
         <source>Unable to access %1</source>
         <translation>%1نى زىيارەت قىلغىلى بولمىدى</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="654"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="642"/>
         <source>%1 that this shortcut refers to has been changed or moved</source>
         <translation>بۇ تېزلەتمە كۆرسەتكەن “%1” ئۆزگەرتىۋېتىلگەن ياكى يۆتكىۋېتىلگەن</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="658"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="646"/>
         <source>Do you want to delete this shortcut？</source>
         <translation>بۇ تېزلەتمىنى ئۆچۈرەمسىز؟</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="683"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="671"/>
         <source>This file is not executable, do you want to add the execute permission and run?</source>
         <translation>بۇ ھۆججەتنىڭ ئىجرا قىلىشقا بولىدىغان ھوقۇق يوق. ھوقۇق قوشۇپ ئىجرا قىلماقچىمۇ؟</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="695"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="683"/>
         <source>The selected files contain system file/directory, and it cannot be deleted</source>
         <translation>تاللانغان ھۆججەتتە سىستېما مۇندەرىجىسى بار، ئۆچۈرگىلى بولمايدۇ</translation>
     </message>
@@ -4044,12 +4044,12 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_burn::BurnEventReceiver</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/events/burneventreceiver.cpp" line="98"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/events/burneventreceiver.cpp" line="97"/>
         <source>Unable to burn. Not enough free space on the target disk.</source>
         <translation>نىشان دىسكىنىڭ قالدۇق بوشلۇقى يېتىشمىدى، كۆچۈرگىلى بولمايدۇ!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/events/burneventreceiver.cpp" line="240"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/events/burneventreceiver.cpp" line="239"/>
         <source>Mount error: unsupported image format</source>
         <translation>قاچىلاش خاتا، رەسىم ھۆججەت فورماتىنى قوللىمايدۇ</translation>
     </message>
@@ -4704,7 +4704,7 @@ Enter user and password for %1</source>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="80"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="594"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="583"/>
         <source>Confirm</source>
         <translation>جەزملەش</translation>
     </message>
@@ -4863,8 +4863,8 @@ Enter user and password for %1</source>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="296"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="329"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="354"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="328"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="353"/>
         <source>Error</source>
         <translation>خاتالىق كۆرۈلدى</translation>
     </message>
@@ -4874,58 +4874,58 @@ Enter user and password for %1</source>
         <translation>TPM&#xa0; تىن پارولنى ئالغىلى بولمىدى</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="329"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="354"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="328"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="353"/>
         <source>PIN error</source>
         <translation>PIN خاتا</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="362"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="361"/>
         <source>Change passphrase failed</source>
         <translation>پارول ئۆزگەرمىدى</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="688"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="687"/>
         <source>Unlock partition failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="689"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="688"/>
         <source>Wrong passphrase</source>
         <translation>پارول خاتا</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="709"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="707"/>
         <source>Mount device failed</source>
         <translation>ئۈسكۈنىگە يۈكلەش مەغلۇب بولدى</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="758"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="756"/>
         <source>unmount</source>
         <translation>ئۆچۈرۈش</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="758"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="756"/>
         <source>lock</source>
         <translation>قۇلۇپلاش</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="759"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="757"/>
         <source>Encrypt failed</source>
         <translation>پاروللانمىدى</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="760"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="758"/>
         <source>Cannot %1 device %2</source>
         <translation>ئۈسكۈنە %1 نى %2 قىلغىلى بولمىدى</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="846"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="843"/>
         <source>Reboot to continue encrypt</source>
         <translation>قايتا قوزغىتىپ داۋاملىق پاروللاڭ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="847"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="844"/>
         <source>Reboot to finish decrypt</source>
         <translation>قايتا قوزغىتىپ پاروللاشنى تاماملاڭ</translation>
     </message>
@@ -5148,88 +5148,88 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_diskenc::EventsHandler</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="214"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="220"/>
         <source>Encrypt done</source>
         <translation>پاروللاندى</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="220"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="226"/>
         <source>Encrypt failed</source>
         <translation>پاروللانمىدى</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="215"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="221"/>
         <source>Partition %1 has been encrypted</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="221"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="227"/>
         <source>Partition %1 encrypt failed, please see log for more information.(%2)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="327"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="333"/>
         <source>%1 is under encrypting...</source>
         <translation>%1 پاروللىنىۋاتىدۇ...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="328"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="334"/>
         <source>The encrypting process may have system lag, please minimize the system operation</source>
         <translation>پاروللاش جەريانىدا سىستېما قېتىۋېلىشى مۇمكىن، سىستېما مەشغۇلاتىنى ئىمكانقەدەر ئازايتىڭ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="348"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="354"/>
         <source>%1 is under decrypting...</source>
         <translation>%1 نىڭ پارولى بىكار قىلىنىۋاتىدۇ...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="349"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="355"/>
         <source>The decrypting process may have system lag, please minimize the system operation</source>
         <translation>بىكار قىلىش جەريانىدا سىستېما قېتىۋېلىشى مۇمكىن، سىستېما مەشغۇلاتىنى ئىمكانقەدەر ئازايتىڭ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="379"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="618"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="385"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="612"/>
         <source>Error</source>
         <translation>خاتالىق كۆرۈلدى</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="379"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="385"/>
         <source>TPM status is abnormal, please use the recovery key to unlock it</source>
         <translation>TPM نىڭ ھالىتى نورمال ئەمەس، ئاچقۇچنى ئەسلىگە كەلتۈرۈش ئارقىلىق قۇلۇپنى يېشىڭ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="410"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="415"/>
         <source>Wrong PIN</source>
         <translation>PIN نومۇرى خاتا</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="412"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="417"/>
         <source>Wrong passphrase</source>
         <translation>پارول خاتا</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="414"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="419"/>
         <source>TPM error</source>
         <translation>TPM خاتا</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="416"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="421"/>
         <source>Please use recovery key to unlock device.</source>
         <translation>ئاچقۇچنى كىرگۈزۈپ ئۈسكۈنىنىڭ قۇلۇپىنى يېشىڭ.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="483"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="486"/>
         <source>Preencrypt done</source>
         <translation>ئالدىن پاروللاش مەغلۇب بولدى</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="484"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="487"/>
         <source>Partition %1 has been preencrypt, please reboot to finish encryption.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="493"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="496"/>
         <source>Partition %1 preencrypt failed, please see log for more information.(%2)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5239,42 +5239,42 @@ Enter user and password for %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="523"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="522"/>
         <source>Decrypt partition</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="529"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="528"/>
         <source>Partition %1 is under encrypting, please decrypt after encryption finished.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="535"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="534"/>
         <source>Partition %1 Decrypt failed, please see log for more information.(%2)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="587"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="583"/>
         <source>Partition %1 change %2 failed, please see log for more information.(%3)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="619"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="613"/>
         <source>Partition is not fully decrypted, please finish decryption before access.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="627"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="620"/>
         <source>Unlocking partition failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="628"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="621"/>
         <source>Please click &quot;Continue Partition Encryption&quot; in the right-click menu to complete the partition encryption.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="492"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="495"/>
         <source>Preencrypt failed</source>
         <translation>ئالدىن پاروللاش مەغلۇب بولدى</translation>
     </message>
@@ -5284,84 +5284,84 @@ Enter user and password for %1</source>
         <translation>پارول بىكار قىلىندى</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="524"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="523"/>
         <source>Wrong passpharse or PIN</source>
         <translation>پارول ياكى PIN نومۇرى خاتا</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="528"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="534"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="527"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="533"/>
         <source>Decrypt failed</source>
         <translation>پارولنى بىكار قىلىش مەغلۇب بولدى</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="562"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="560"/>
         <source>passphrase</source>
         <translation>پارول</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="565"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="563"/>
         <source>PIN</source>
         <translation>PIN نومۇرى</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="572"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="569"/>
         <source>Change %1 done</source>
         <translation>%1 ئۆزگەرتىلدى</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="573"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="570"/>
         <source>%1&apos;s %2 has been changed</source>
         <translation>%1 نىڭ %2 سى ئۆزگەرتىلدى</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="580"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="586"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="577"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="582"/>
         <source>Change %1 failed</source>
         <translation>%1 نى ئۆزگەرتىش مەغلۇب بولدى</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="581"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="578"/>
         <source>Wrong %1</source>
         <translation>%1 تە خاتالىق كۆرۈلدى</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="689"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="730"/>
         <source>Partition Encryption Non-Reboot Mode Enabled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="690"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="731"/>
         <source>Partition Encryption Non-Reboot Mode has been enabled successfully. Please reboot your system for the changes to take effect. After reboot, partition encryption operations will not require system restart.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="694"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="735"/>
         <source>Partition Encryption Non-Reboot Mode Disabled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="695"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="736"/>
         <source>Partition Encryption Non-Reboot Mode has been disabled successfully. Please reboot your system for the changes to take effect. After reboot, partition encryption operations will require system restart.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="703"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="744"/>
         <source>Operation Failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="705"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="746"/>
         <source>Failed to enable Partition Encryption Non-Reboot Mode. The system may not support this feature or encountered an error during initramfs update.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="708"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="749"/>
         <source>Failed to disable Partition Encryption Non-Reboot Mode. An error occurred during initramfs update.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="720"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="761"/>
         <source>dde-file-manager</source>
         <translation type="unfinished">ھۆججەت باشقۇرغۇچ</translation>
     </message>
@@ -5724,22 +5724,22 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_fileoperations::OperationSettings</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="41"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="43"/>
         <source>Real-time data synchronization (Recommended)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="48"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="50"/>
         <source>Once the files are copied, you can unplug the external drive without needing to &quot;Safely Remove&quot; it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="59"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="61"/>
         <source>Performance First (Requires Safe Removal)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="66"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="68"/>
         <source>File copy data is not synchronized in real-time. After the copy is complete, you must use &quot;Safe Removal&quot; to disconnect the external storage device. Otherwise, file corruption or data loss may occur.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6703,22 +6703,22 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_titlebar::CustomTabSettingWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="56"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="60"/>
         <source>Custom Directory</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="96"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="100"/>
         <source>Invalid Directory</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="97"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="101"/>
         <source>This directory does not support pinning</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="53"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="55"/>
         <source>Add Directory</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6884,22 +6884,34 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_titlebar::TabBar</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="225"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="293"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="352"/>
+        <source>Unpin tab</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="295"/>
+        <source>Pin tab</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="300"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="352"/>
         <source>Close tab</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="226"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="303"/>
         <source>Close other tabs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="234"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="304"/>
         <source>Close tabs to the left</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="242"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="307"/>
         <source>Close tabs to the right</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6907,23 +6919,23 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_titlebar::TitleBarWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="485"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="547"/>
         <source>Directory not found</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="486"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="548"/>
         <source>Directory not found. Remove it?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="487"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="549"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="487"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="549"/>
         <source>Remove</source>
         <comment>button</comment>
         <translation type="unfinished">چىقىرۋېتىش</translation>
@@ -7547,34 +7559,34 @@ Enter user and password for %1</source>
         <translation>ئاچقۇچ ھۆججىتىنى تاللاش</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="93"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="92"/>
         <source>Unable to get the key file</source>
         <translation>ئاچقۇچلۇق ھۆججەتكە ئېرىشەلمىدى </translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="110"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="109"/>
         <source>Unlock vault failed</source>
         <translation>قەڭلىك ساندۇقنى ئاچش مۇۋەپپەقىيەتسىز بولدى</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="114"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="113"/>
         <source>Verification failed</source>
         <translation>ئاچقۇچ دەلىللەش مەغلۇب بولدى</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="127"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="126"/>
         <source>Back</source>
         <comment>button</comment>
         <translation>قايتىش</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="127"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="126"/>
         <source>Key Unlock</source>
         <comment>button</comment>
         <translation>ئاچقۇچ بىلەن ئاچىش</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="132"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="131"/>
         <source>Key Unlocks Safe</source>
         <translation>ئاچقۇچ بىلەن قەڭلىك ساندۇقنى ئاچىش</translation>
     </message>
@@ -8092,12 +8104,12 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_workspace::FileView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2391"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2465"/>
         <source>Mount error</source>
         <translation>يۈكلەش خاتالىقى</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2392"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2466"/>
         <source>Server login credentials are invalid. Please uninstall and remount</source>
         <translation>سىرتقى سىرتقى كىرۇش مەلۇملىقى ھەققىدە ھەققىقسىز. ئىشلىتىشنى ئۆچۈرۈپ ئەمەل قىلىڭ</translation>
     </message>

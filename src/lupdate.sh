@@ -10,3 +10,4 @@
 /usr/lib/qt6/bin/lupdate ./ -ts -no-obsolete ../translations/dde-file-manager_zh_HK.ts
 /usr/lib/qt6/bin/lupdate ./ -ts -no-obsolete ../translations/dde-file-manager_ug.ts
 /usr/lib/qt6/bin/lupdate ./ -ts -no-obsolete ../translations/dde-file-manager_bo.ts
+/usr/lib/qt6/bin/lupdate ./ -ts -no-obsolete ../translations/dde-file-manager_lo.ts

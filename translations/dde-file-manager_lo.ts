@@ -4,12 +4,12 @@
 <context>
     <name>AccessControlDBus</name>
     <message>
-        <location filename="../src/services/accesscontrol/accesscontroldbus.cpp" line="49"/>
+        <location filename="../src/services/accesscontrol/accesscontroldbus.cpp" line="53"/>
         <source>Invalid args</source>
         <translation>លានសម្រាប់មិនត្រឹមត្រូវ</translation>
     </message>
     <message>
-        <location filename="../src/services/accesscontrol/accesscontroldbus.cpp" line="50"/>
+        <location filename="../src/services/accesscontrol/accesscontroldbus.cpp" line="54"/>
         <source>Invalid invoker</source>
         <translation>ຜູ້ກຳນຳໃຊ້ບໍ່ຖືກນຳໃຊ້ຢ່າງຖືກອະນັບຮັບ</translation>
     </message>
@@ -30,7 +30,7 @@
 <context>
     <name>DMInitEncryptWorker</name>
     <message>
-        <location filename="../src/services/diskencrypt/workers/dminitencryptworker.cpp" line="49"/>
+        <location filename="../src/services/diskencrypt/workers/dminitencryptworker.cpp" line="51"/>
         <source>Initialize encryption </source>
         <translation>ເລີ່ມຕົ້ນການລັບລາຍການ</translation>
     </message>
@@ -64,8 +64,8 @@
 <context>
     <name>DoCopyFileWorker</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="840"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="950"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="843"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="953"/>
         <source>Can&apos;t access file!</source>
         <translation>ບໍ່ສາມາດເຂົ້າເຖິງຟາຍໄດ້!</translation>
     </message>
@@ -115,7 +115,7 @@
 <context>
     <name>FileOperateBaseWorker</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="682"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="701"/>
         <source>The file name or the path is too long!</source>
         <translation>ຊື່ໄຸດຕໍ້ອຸບຸດ ຫື path ເຂັ້ມຂ຺້ນເກີ້ນ!</translation>
     </message>
@@ -123,7 +123,7 @@
 <context>
     <name>FstabDecryptWorker</name>
     <message>
-        <location filename="../src/services/diskencrypt/workers/fstabdecryptworker.cpp" line="27"/>
+        <location filename="../src/services/diskencrypt/workers/fstabdecryptworker.cpp" line="28"/>
         <source>Decrypting </source>
         <translation>ອະຄະນະການລັກສະນະລະບອດ</translation>
     </message>
@@ -131,7 +131,7 @@
 <context>
     <name>FstabInitEncryptWorker</name>
     <message>
-        <location filename="../src/services/diskencrypt/workers/fstabinitencryptworker.cpp" line="24"/>
+        <location filename="../src/services/diskencrypt/workers/fstabinitencryptworker.cpp" line="27"/>
         <source>Initialize encryption </source>
         <translation>ເລີ່ມຕົ້ນການລັບລາຍການ</translation>
     </message>
@@ -139,7 +139,7 @@
 <context>
     <name>MimeTypeDisplayManager</name>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="869"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="865"/>
         <source>Unknown</source>
         <translation>ບໍ່ແນ່ນອນ</translation>
     </message>
@@ -147,7 +147,7 @@
 <context>
     <name>NormalDecryptWorker</name>
     <message>
-        <location filename="../src/services/diskencrypt/workers/normaldecryptworker.cpp" line="22"/>
+        <location filename="../src/services/diskencrypt/workers/normaldecryptworker.cpp" line="24"/>
         <source>Decrypting </source>
         <translation>ການຖອດລັບ</translation>
     </message>
@@ -155,7 +155,7 @@
 <context>
     <name>NormalInitEncryptWorker</name>
     <message>
-        <location filename="../src/services/diskencrypt/workers/normalinitencryptworker.cpp" line="23"/>
+        <location filename="../src/services/diskencrypt/workers/normalinitencryptworker.cpp" line="25"/>
         <source>Initialize encryption </source>
         <translation>ເລີ່ມຕົ້ນການລັບລາຍການ</translation>
     </message>
@@ -173,40 +173,40 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1115"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="958"/>
         <source>need authorization to access</source>
         <translation>ຕ້ອງມີການອະນັບເອງເພື່ອເຂົ້າເຖິງ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1122"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="965"/>
         <source>Authentication Required
 Enter user and password for %1</source>
         <translation>ຕ້ອງມີການອະນັບເອງ
 ປ້ອງກັນຜູ້ пользователя ແລະ ཀໍລາດສະຫຼຎສື ຈື %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1194"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1037"/>
         <source>Can&apos;t verify the identity of %1.</source>
         <translation>ບໍ່ສາມາດຢຸດທີ້ຕີດຕໍ້ອຸບຸດ %1.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1195"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1038"/>
         <source>This happens when you log in to a computer the first time.</source>
         <translation>ນີ້ເກີດຂຶ້ນໃນເວລາທີ້ງເທີງຄຸມມືໃຫ້ອຸປະກອນເປັນຄັ້ງທີ້ງຫົນ.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1196"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1039"/>
         <source>The identity sent by the remote computer is</source>
         <translation>ຕີດຕໍ້ອຸບຸດທີ້ງແໜ້ອອອນໄດ້ສຈງມາແມ່ນ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1198"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1041"/>
         <source>If you want to be absolutely sure it is safe to continue, contact the system administrator.</source>
         <translation>ຖ້າທ່ານຢາກແນ່ໃຈວ່າມັນປອດໄພເພື່ອຈັດການຕໍ່, ອີງຕໍ່ລະບົບຜູ້ດູແລລະບົບ.</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/filepreview.cpp" line="80"/>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="383"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="378"/>
         <location filename="../src/plugins/filemanager/dfmplugin-core/core.cpp" line="51"/>
         <location filename="../src/plugins/filemanager/dfmplugin-core/core.cpp" line="52"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/pathgroupstrategy.cpp" line="31"/>
@@ -214,59 +214,59 @@ Enter user and password for %1</source>
         <translation>ລະບົບໄົບ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="386"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="381"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/pathgroupstrategy.cpp" line="32"/>
         <source>Data Disk</source>
         <translation>ຂໍ້ນຫຸ່ງສືບສວນຂໍ້ນຫຸ່ງຂໍ້ນຫຸ່ງຂໍ້ນຫຸ່ງ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="437"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="432"/>
         <source>Blank %1 Disc</source>
         <translation>Disc བໍ້ %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="437"/>
-        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="419"/>
-        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="425"/>
-        <location filename="../src/dfm-base/base/standardpaths.cpp" line="333"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="432"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="421"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="427"/>
+        <location filename="../src/dfm-base/base/standardpaths.cpp" line="346"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/typegroupstrategy.cpp" line="42"/>
         <source>Unknown</source>
         <translation>មិនស្គ្រាល់</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="447"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="442"/>
         <source>%1 Drive</source>
         <translation>ດຣາຍ %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="396"/>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="466"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="391"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="461"/>
         <source>%1 Encrypted</source>
         <translation>&apos;%1 បាញេស&apos;</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="474"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="469"/>
         <location filename="../src/external/dde-dock-plugins/disk-mount/utils/dockutils.cpp" line="109"/>
         <source>%1 Volume</source>
         <translation>ບໍລິເວນ %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="285"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="287"/>
         <source>Scanning the device, stop it?</source>
         <translation>កំពិតរាស់, ຢາបូរ៉ាត?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="292"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="294"/>
         <source>Unmount failed</source>
         <translation>យកចេញមិនបាន</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="292"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="294"/>
         <source>Cannot stop scanning device</source>
         <translation>ບໍ່ສາມາດຢຸດການສະແກນອຸປະກອນ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="417"/>
+        <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="419"/>
         <location filename="../src/external/dde-dock-plugins/disk-mount/utils/dockutils.cpp" line="118"/>
         <source>%1 on %2</source>
         <translation>&apos;%1 នៅលើ %2&apos;</translation>
@@ -281,7 +281,7 @@ Enter user and password for %1</source>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="205"/>
-        <location filename="../src/dfm-base/base/standardpaths.cpp" line="326"/>
+        <location filename="../src/dfm-base/base/standardpaths.cpp" line="339"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="15"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="15"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="15"/>
@@ -290,7 +290,7 @@ Enter user and password for %1</source>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="207"/>
-        <location filename="../src/dfm-base/base/standardpaths.cpp" line="327"/>
+        <location filename="../src/dfm-base/base/standardpaths.cpp" line="340"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="33"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="33"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="33"/>
@@ -299,7 +299,7 @@ Enter user and password for %1</source>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="209"/>
-        <location filename="../src/dfm-base/base/standardpaths.cpp" line="328"/>
+        <location filename="../src/dfm-base/base/standardpaths.cpp" line="341"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="21"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="21"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="21"/>
@@ -308,7 +308,7 @@ Enter user and password for %1</source>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="211"/>
-        <location filename="../src/dfm-base/base/standardpaths.cpp" line="329"/>
+        <location filename="../src/dfm-base/base/standardpaths.cpp" line="342"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="26"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="26"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="26"/>
@@ -317,7 +317,7 @@ Enter user and password for %1</source>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="213"/>
-        <location filename="../src/dfm-base/base/standardpaths.cpp" line="330"/>
+        <location filename="../src/dfm-base/base/standardpaths.cpp" line="343"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="16"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="16"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="16"/>
@@ -326,7 +326,7 @@ Enter user and password for %1</source>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="215"/>
-        <location filename="../src/dfm-base/base/standardpaths.cpp" line="331"/>
+        <location filename="../src/dfm-base/base/standardpaths.cpp" line="344"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="17"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="17"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="17"/>
@@ -395,19 +395,19 @@ Enter user and password for %1</source>
         <translation>%1 ការងារកំពុងដំណើរ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="876"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="407"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="872"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="440"/>
         <source>%1 item</source>
         <translation>%1 ធាតុ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="877"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="408"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="873"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="441"/>
         <source>%1 items</source>
         <translation>%1 ធាតុ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="1338"/>
+        <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="1365"/>
         <source>Unable to find the original file</source>
         <translation>មិនអាចស្វែងរកឯកសារបង្កើតបានទេ</translation>
     </message>
@@ -487,7 +487,7 @@ Enter user and password for %1</source>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="12"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="12"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="12"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="703"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="707"/>
         <source>Built-in disks</source>
         <translation>ດິສກິນເຕີນອິດ</translation>
     </message>
@@ -511,7 +511,7 @@ Enter user and password for %1</source>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="19"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="19"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="19"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="703"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="707"/>
         <source>Loop partitions</source>
         <translation>រូបរាងចង្អៀតបង្វាក់</translation>
     </message>
@@ -519,7 +519,7 @@ Enter user and password for %1</source>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="20"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="20"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="20"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="704"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="708"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/utilities/protocoldisplayutilities.cpp" line="84"/>
         <source>Mounted sharing folders</source>
         <translation>ផ្នែកចែកចាយដែលបានត្រូវតា</translation>
@@ -543,7 +543,7 @@ Enter user and password for %1</source>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="24"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="24"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="24"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="704"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="708"/>
         <source>Mounted partitions and discs</source>
         <translation>រូបរាងចង្អៀតនិងភ្នំមេដែលបានត្រូវតា</translation>
     </message>
@@ -590,7 +590,7 @@ Enter user and password for %1</source>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="34"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="34"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="34"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/utils/smbbrowserutils.cpp" line="181"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/utils/smbbrowserutils.cpp" line="151"/>
         <source>Keep showing the mounted Samba shares</source>
         <translation>ຕໍ່ສະຫຼຫກຳນົດ Samba ഭຳະນາໄື້ນ</translation>
     </message>
@@ -932,8 +932,8 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="330"/>
         <location filename="../src/plugins/filedialog/core/utils/corehelper.cpp" line="75"/>
         <location filename="../src/plugins/filedialog/core/utils/corehelper.cpp" line="106"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="235"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="132"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="238"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="133"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>ຍົກເລີກ</translation>
@@ -950,7 +950,7 @@ Enter user and password for %1</source>
         <translation>ລັດ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1085"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1095"/>
         <source>This system wallpaper is locked. Please contact your admin.</source>
         <translation>ຮູບພາບຂອງຣະບບນີ້ຖືກລັກສະນະ. ກະລຸນາຕິດຕໍ່ຜູ້ດູແລຂອງທ່ານ.</translation>
     </message>
@@ -970,7 +970,7 @@ Enter user and password for %1</source>
         <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/utils/previewfileoperation.cpp" line="40"/>
         <location filename="../src/dfm-base/utils/universalutils.cpp" line="82"/>
         <location filename="../src/dfm-base/utils/universalutils.cpp" line="105"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="110"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="116"/>
         <source>dde-file-manager</source>
         <translation>ຕົວຈັດການເອກະສານ</translation>
     </message>
@@ -1001,10 +1001,10 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="578"/>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="12"/>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="72"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="298"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="302"/>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="186"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="87"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="305"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="312"/>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="62"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="269"/>
         <source>Open in new window</source>
@@ -1015,10 +1015,10 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="582"/>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="16"/>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="75"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="302"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="306"/>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="190"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="90"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="309"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="316"/>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="66"/>
         <source>Open in new tab</source>
         <translation>ເປີດໃນຕາເວັນໃໝ່</translation>
@@ -1045,43 +1045,43 @@ Enter user and password for %1</source>
         <translation>ຄັນພື່ນ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="58"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="63"/>
         <source>New Folder</source>
         <translation>ບ່ອນເກັບໃໝ່</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="61"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="66"/>
         <source>New Text</source>
         <translation>ຂໍ້ຄວາມໃໝ່</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="65"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="70"/>
         <source>Document</source>
         <translation>ເອກະສານ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="69"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="74"/>
         <source>Spreadsheet</source>
         <translation>ຕາຕ຾້ນຄື້ນ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="73"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="78"/>
         <source>Presentation</source>
         <translation>ການສະແດງ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="77"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="82"/>
         <source>New File</source>
         <translation>ໄຟລໃໝ່</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="819"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="933"/>
         <source>Create symlink</source>
         <translation>ສ້າງລິ້ງສັນຍາລັກ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-menu/oemmenuscene/oemmenu.cpp" line="541"/>
-        <location filename="../src/plugins/common/dfmplugin-menu/oemmenuscene/oemmenu.cpp" line="635"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/oemmenuscene/oemmenu.cpp" line="556"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/oemmenuscene/oemmenu.cpp" line="650"/>
         <source>Compress</source>
         <translation>ກmprɛss</translation>
     </message>
@@ -1144,8 +1144,9 @@ Enter user and password for %1</source>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="198"/>
-        <source>Allow files to be added later</source>
-        <translation>אפשר להוסיף קבצים מאוחר יותר</translation>
+        <source>Finalize disc after burning 
+(no additional data can be appended)</source>
+        <translation></translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="208"/>
@@ -1245,23 +1246,23 @@ Enter user and password for %1</source>
         <translation>ເປີດ</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="138"/>
-        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="158"/>
+        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="153"/>
+        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="173"/>
         <source>Size: %1</source>
         <translation>ຂະແຫ້ອງ: %1</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="139"/>
+        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="154"/>
         <source>Type: %1</source>
         <translation>ປະເພດ: %1</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="145"/>
+        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="160"/>
         <source>Size: 0</source>
         <translation>ຂະແຫ້ອງ: 0</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="159"/>
+        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="174"/>
         <source>Items: %1</source>
         <translation>ອີtem: %1</translation>
     </message>
@@ -1313,7 +1314,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="330"/>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="331"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="135"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="136"/>
         <source>Rename</source>
         <comment>button</comment>
         <translation>ປ່ຽນຊື່</translation>
@@ -1377,74 +1378,74 @@ Enter user and password for %1</source>
         <translation>មិនអាចចឹងចំណោមទេ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="299"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="309"/>
         <source>User directory</source>
         <translation>ບ່ອນຈັດເກັບຜູ້ໃຊ້</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="303"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="313"/>
         <source>Local disk</source>
         <translation>ດີ້ວທ້ອງຖິ່ນ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="305"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="315"/>
         <source>Removable disk</source>
         <translation>តួប្រព័ន្ធដែលអាចដកេះដាច់បាន</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="307"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="317"/>
         <source>DVD</source>
         <translation>ឌ៏វ්‍යුහාතුරු</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="310"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="320"/>
         <source>Network shared directory</source>
         <translation>ບ່ອນຈັດເກັບແບ່ງຮ່ວມເຄືອຂ່າຍ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="312"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="316"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="322"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="326"/>
         <source>Android mobile device</source>
         <translation>ອຸປະກອນມືຖື Android</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="315"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="325"/>
         <source>Apple mobile device</source>
         <translation>ອຸປະກອນມືຖື Apple</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="320"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="330"/>
         <source>Unknown device</source>
         <translation>ອຸປະກອນທີ່ບໍ່ຮູ້ຈັກ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="236"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="239"/>
         <source>Remove</source>
         <comment>button</comment>
         <translation>ລຶບ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="239"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="242"/>
         <source>Do you want to remove this item?</source>
         <translation>ທ່ານຕ້ອງການລຶບລາຍການນີ້ບໍ?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="241"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="244"/>
         <source>Do yout want to remove %1 items?</source>
         <translation>ທ່ານຕ້ອງການລຶບ %1 ລາຍການບໍ?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="242"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="245"/>
         <source>It does not delete the original files</source>
         <translation>ມັນບໍ່ໄດ້ລົບໄຟລ໌ຕົ້ນສະບັບ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="309"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="313"/>
         <source>Clear recent history</source>
         <translation>ລ້າງປະຫວັດຫຼ້າສຸດ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="326"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="330"/>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="238"/>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="167"/>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="190"/>
@@ -1482,12 +1483,12 @@ Enter user and password for %1</source>
         <translation>ຕຳໍງໍ້າງຄຳຕິດຕັ້ງ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="296"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="303"/>
         <source>Copy path</source>
         <translation>ສ້າງລິ້ງ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="318"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="325"/>
         <source>Edit address</source>
         <translation>ແກ້ໄຂທີ່ຢົງຢົນ</translation>
     </message>
@@ -1503,7 +1504,7 @@ Enter user and password for %1</source>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="174"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="100"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="101"/>
         <source>Location</source>
         <translation>ທີ່ຕົວຢົງຢົນ</translation>
     </message>
@@ -1530,8 +1531,8 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="77"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="94"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="110"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="117"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="111"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="118"/>
         <source>Required</source>
         <translation>ຂຳນຳພາກ່ຽວຂໍ້າງຄຳ</translation>
     </message>
@@ -1551,27 +1552,27 @@ Enter user and password for %1</source>
         <translation>ເພີ່ມ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="101"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="102"/>
         <source>Before file name</source>
         <translation>ກ່ອນຊື່ໄຟລ໌</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="101"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="102"/>
         <source>After file name</source>
         <translation>ຫຼັງຊື່ໄຟລ໌</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="109"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="110"/>
         <source>File name</source>
         <translation>ຊື່ໄຟລ໌</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="116"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="117"/>
         <source>Start at</source>
         <translation>ເລີ່ມຕົ້ນທີ່</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="127"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="128"/>
         <source>Tips: Sort by selected file order</source>
         <translation>ແນະນຳ: ຈັດລຽງຕາມລຳດັບໄຟລ໌ທີ່ເລືອກ</translation>
     </message>
@@ -1814,75 +1815,70 @@ Enter user and password for %1</source>
         <translation>មិនស្គាល់</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="268"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="279"/>
         <source>search</source>
         <translation>ຄົ້ນຫາ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="283"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="294"/>
         <source>advanced search</source>
         <translation>ຄົ້ນຫາຂັ້ນສູງ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="405"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="643"/>
         <source>Cannot generate random number by TPM</source>
         <translation>ບໍ່ສາມາດສ້າງຕົວເລກສຸ່ມໂດຍ TPM ໄດ້</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="408"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="646"/>
         <source>No available encrypt algorithm.</source>
         <translation>ບໍ່ມີອັລກອລິທຶມການເຂົ້າລະຫັດທີ່ສາມາດໃຊ້ໄດ້</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="411"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="649"/>
         <source>TPM encrypt failed.</source>
         <translation>ການເຂົ້າລະຫັດ TPM ລົ້ມເຫຼວ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="414"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="652"/>
         <source>TPM is locked.</source>
         <translation>TPM ຖືກລັອກ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="479"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="725"/>
         <source>Confirm encrypt %1?</source>
         <translation>ຢືນຢັນການເຂົ້າລະຫັດ %1 ຫຼືບໍ?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="482"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="728"/>
         <source>The current partition is about to be encrypted and cannot be canceled during the encryption process, please confirm the encryption.</source>
         <translation>ພາທິຊັນປະຈຸບັນກຳລັງຈະຖືກເຂົ້າລະຫັດ ແລະບໍ່ສາມາດຍົກເລີກໄດ້ໃນຂະນະກຳລັງເຂົ້າລະຫັດ, ກະລຸນາຢືນຢັນການເຂົ້າລະຫັດ.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="489"/>
-        <source>* After encrypting the partition, the system cannot be rolled back to a lower version, please confirm the encryption</source>
-        <translation>* ຫຼັງຈາກການເຂົ້າລະຫັດສ່ວນ, ສະພາບການບໍ່ສາມາດຍ້າຍກັບໄປສູ່ຮູບແບບທີ່ຕ່ໍາກວ່າ, ສະແດງຄວາມຍືນຍັນການເຂົ້າລະຫັດ</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="500"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="515"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="736"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="751"/>
         <source>Cancel</source>
         <translation>ຍົກເລີກ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="501"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="516"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="737"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="752"/>
         <source>Confirm and Reboot</source>
         <translation>បញ្ជាក់និងចេញប្រព័ន្ធដំណើរការឡើងវិញ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="502"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="516"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="738"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="752"/>
         <source>Confirm</source>
         <translation>ຢືນຢັນ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="512"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="748"/>
         <source>Decrypt %1?</source>
         <translation>ស្មាន់សំបូរ %1?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="513"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="749"/>
         <source>Decryption can take a long time, so make sure power is connected until the decryption is complete.</source>
         <translation>ການຖອນລະຫັດສາມາດໃຊ້ເວລາດົນ, ສະນັ້ນໃຫ້ແນ່ໃຈວ່າໄຟຟ້າຖືກເຊື່ອມຕໍ່ເຖິງການຖອນລະຫັດສຳເລັດ</translation>
     </message>
@@ -2028,7 +2024,7 @@ Enter user and password for %1</source>
 <context>
     <name>ResumeEncryptWorker</name>
     <message>
-        <location filename="../src/services/diskencrypt/workers/resumeencryptworker.cpp" line="64"/>
+        <location filename="../src/services/diskencrypt/workers/resumeencryptworker.cpp" line="68"/>
         <source>Encrypting </source>
         <translation>ການເຂົ້າລະຫັດ</translation>
     </message>
@@ -2265,27 +2261,27 @@ Enter user and password for %1</source>
 <context>
     <name>ddplugin_organizer::CollectionItemDelegate</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="108"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="110"/>
         <source>Tiny</source>
         <translation>ນ້ອຍ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="109"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="111"/>
         <source>Small</source>
         <translation>່າຍ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="110"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="112"/>
         <source>Medium</source>
         <translation>ກາງ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="111"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="113"/>
         <source>Large</source>
         <translation>ໃຫຍ່</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="112"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="114"/>
         <source>Super large</source>
         <translation>ໃຫຍ່ຫຼວງຫຼາຍ</translation>
     </message>
@@ -2801,334 +2797,338 @@ Enter user and password for %1</source>
     <name>dfmbase::DialogManager</name>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="57"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="587"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="601"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="640"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="661"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.h" line="56"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="575"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="589"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="628"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="649"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.h" line="51"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>ຢືນຢັນ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="100"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="88"/>
         <source>Operating failed</source>
         <translation>ການດຳເນີນການລົ້ມເຫຼວ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="101"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="89"/>
         <source>Mount failed</source>
         <translation>ຕິດຕັ້ງລົ້ມເຫຼວ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="102"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="90"/>
         <source>Unmount failed</source>
         <translation>ຖອດອຸປະກອນລົ້ມເຫຼວ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="108"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="96"/>
         <source>Unmounting device now...</source>
         <translation>ກຳລັງຖອດອຸປະກອນ...</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="111"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="99"/>
         <source>Mounting device now...</source>
         <translation>ກຳລັງຕິດຕັ້ງອຸປະກອນ...</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="114"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="102"/>
         <source>Erasing device now...</source>
         <translation>ກຳລັງລຶບອຸປະກອນ...</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="117"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="105"/>
         <source>Making filesystem for device now...</source>
         <translation>กำลังสร้างระบบไฟล์สำหรับอุปกรณ์...</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="120"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="108"/>
         <source>Locking device now...</source>
         <translation>กำลังล็อคอุปกรณ์...</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="123"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="111"/>
         <source>Unlocking device now...</source>
         <translation>กำลังปลดล็อคอุปกรณ์...</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="147"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="135"/>
         <source>The device is busy now</source>
         <translation>ອຸປະກອນກຳລັງທຳງານອຢູ່</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="159"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="147"/>
         <source>Anonymous mount is not allowed</source>
         <translation>ไม่อนุญาตให้ติดตามแบบไม่ anonymous</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="161"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="149"/>
         <source>Wrong password</source>
         <translation>รหัสผ่านผิด</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="165"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="153"/>
         <source>Cannot create the mountpoint: the file name is too long</source>
         <translation>ไม่สามารถสร้าง mountpoint ได้: ชื่อไฟล์ยาวเกินไป</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="167"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="171"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="159"/>
         <source>Authentication failed</source>
         <translation>การตรวจสอบความถูกต้องล้มเหลว</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="169"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="157"/>
         <source>No such file or directory</source>
         <translation>ไม่มีไฟล์หรือไดเรกทอรี</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="174"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="162"/>
         <source>The device has been blocked and you do not have permission to access it. Please configure its connection policy in Security Center or contact your administrator.</source>
         <translation>ອຸປະກອນໄດ້ຖືກກັກຂັງແລ້ວ ແລະ ທ່ານບໍ່ມີສິດເຂົ້າເຖິງມັນ. ກະລຸນາຕັ້ງຄ່ານະໂຍບາຍການເຊື່ອມຕໍ່ຂອງມັນໃນການຈັດການຄວາມປອດໄພ ຫຼື ຕິດຕໍ່ຜູ້ດູແລ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="183"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="171"/>
         <source>The device is busy, cannot remove now</source>
         <translation>อุปกรณ์กำลังทำงานอยู่ ไม่สามารถถอดออกได้ในขณะนี้</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="206"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="194"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>ທ່ານບໍ່ມີສິດທີ່ຈະດຳເນີນການເຊີນຟາຍ/ບ່ອນເກັບຂໍ້ມູນ!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="223"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="211"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
         <translation>ຂໍອະໄພ, ທ່ານບໍ່ມີສິດທີ່ຈະດຳເນີນການເຊີນຟາຍ/ບ່ອນເກັບຂໍ້ມູນຕໍ່ໄປນີ້ %1!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="252"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="262"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="531"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="697"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="240"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="250"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="519"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="685"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>ตกลง</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="259"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="524"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="247"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="512"/>
         <source>Operation failed!</source>
         <translation>ຈະນຳເຄື່ອງມືນີ້ນຳໃຊ້ບໍ່ໄດ້!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="260"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="248"/>
         <source>Target folder is inside the source folder!</source>
         <translation>ບ່ອນເກັບຂໍ້ມູນທີ່ຕິດຕໍ່ກັບຢູ່ພາຍໃຕ້ບ່ອນເກັບຂໍ້ມູນຕົ້ນສະບັບ!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="322"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="310"/>
         <source>The passphrase is needed to access encrypted data on %1.</source>
         <translation>ລາຍລະອຽດໃນການເຄື່ອນໄຫວຂໍ້ມູນທີ່ຖືກເຂົ້າກັບ %1 ຕ້ອງການລາຍລະອຽດການເຂົ້າເຖິງ.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="330"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="350"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="379"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="400"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="449"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="510"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="548"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="660"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="684"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="318"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="338"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="367"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="388"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="437"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="498"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="536"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="648"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="672"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>ຍົກເລີກ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="331"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="319"/>
         <source>Format</source>
         <comment>button</comment>
         <translation>ຮູບແບບ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="332"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="320"/>
         <source>To access the device, you must format the disk first. Are you sure you want to format it now?</source>
         <translation>ເພື່ອເຂົ້າເຖິງອຸປະກອນ, ທ່ານຕ້ອງຮູບແບບດິສກກ່ອນ. ທ່ານແນ່ໃຈບໍວ່າຕ້ອງການຮູບແບບມັນໃນເວລານີ້?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="346"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="334"/>
         <source>Do you want to run %1 or display its content?</source>
         <translation>ທ່ານຕ້ອງການໃຫ້ %1 ແລ້ວເຮັດວຽກ ຫຼື ຕ້ອງການເບິ່ງເນື້ອໃນມັນ?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="347"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="335"/>
         <source>It is an executable text file.</source>
         <translation>ມັນແມ່ນຟາຍຂໍ້ຄວາມທີ່ສາມາດໃຊ້ງານໄດ້.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="351"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="381"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="685"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="339"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="369"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="673"/>
         <source>Run</source>
         <comment>button</comment>
         <translation>ເຮັດວຽກ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="352"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="380"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="340"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="368"/>
         <source>Run in terminal</source>
         <comment>button</comment>
         <translation>ເປັນຜົນໄດ້ຮັບໃຊ້ໃນປະຈຸມາດຕອບ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="353"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="341"/>
         <source>Display</source>
         <comment>button</comment>
         <translation>ສ້າງລິ້ງ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="376"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="364"/>
         <source>Do you want to run %1?</source>
         <translation>ທີ່ທີ່ທີ່ນີ້ແມ່ນບົດຮັບໃຊ້ໄດ້. ངີ້ຢາກເປັນຜົນໄດ້ຮັບໃຊ້ມືຖືນີ້ບໍ?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="377"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="365"/>
         <source>It is an executable file.</source>
         <translation>ມືຖືນີ້ແມ່ນບົດຮັບໃຊ້ໄດ້.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="394"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="382"/>
         <source>Cannot move the selected %1 items to the trash. Do you want to permanently delete them?</source>
         <translation>ບໍ່ສາມາດຍ້າຍຂໍ້ມູນທີ່ເລືອກ %1 ໄປຍັງຖົງຂີ້ເຫຼືອ. ທ່ານຕ້ອງການລົບຖາວອນເຂົ້າໃນມັນບໍ?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="395"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="383"/>
         <source>Permanently delete %1 items?</source>
         <translation>ທ່ານຕ້ອງການລົບຖາວອນ %1 ຂໍ້ມູນບໍ?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="425"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="413"/>
         <source>Cannot move &quot;%1&quot; to the trash. Do you want to permanently delete it?</source>
         <translation>ບໍ່ສາມາດຍ້າຍ &quot;%1&quot; ໄປຍັງຖົງຂີ້ເຫຼືອ. ທ່ານຕ້ອງການລົບຖາວອນມັນບໍ?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="401"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="450"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="511"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="549"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="389"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="438"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="499"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="537"/>
         <source>Delete</source>
         <comment>button</comment>
         <translation>ລົບ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="426"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="155"/>
+        <source>Permission denied</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="414"/>
         <source>Permanently delete %1?</source>
         <translation>ຂໍ້ມູນ %1 ຈະຖືກລົບຢ່າງຖາວອນ?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="432"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="469"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="420"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="457"/>
         <source>This action cannot be undone</source>
         <translation>ການດຳເນີນການນີ້ບໍ່ສາມາດຍົກເລີກໄດ້</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="445"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="433"/>
         <source>Are you sure you want to empty %1 item?</source>
         <translation>ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການລ້າງຂໍ້ມູນ %1 ອີງ?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="446"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="434"/>
         <source>Are you sure you want to empty %1 items?</source>
         <translation>ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການລ້າງຂໍ້ມູນ %1 ອີງ?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="455"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="443"/>
         <source>Empty</source>
         <translation>ລ້າງ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="494"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="482"/>
         <source>Do you want to delete %1?</source>
         <translation>ທ່ານຕ້ອງການລົບ %1 ບໍ?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="495"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="483"/>
         <source>Do you want to delete the selected %1 items?</source>
         <translation>ທ່ານຕ້ອງການລົບຂໍ້ມູນ %1 ອີງທີ່ເລືອກແມ່ນບໍ?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="526"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="514"/>
         <source>Failed to restore %1 file, the target folder is read-only</source>
         <translation>ບໍ່ສາມາດກັບຄືນຂໍ້ມູນ %1 ຕົວຢ່າງໄຟລ໌ໄດ້, ຕົວຢ່າງໄຟລ໌ເປົ້າໝາຍແມ່ນອ່ານພຽງແຕ່</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="528"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="516"/>
         <source>Failed to restore %1 files, the target folder is read-only</source>
         <translation>ບໍ່ສາມາດກັບຄືນຂໍ້ມູນ %1 ຕົວຢ່າງໄຟລ໌ໄດ້, ຕົວຢ່າງໄຟລ໌ເປົ້າໝາຍແມ່ນອ່ານພຽງແຕ່</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="541"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="529"/>
         <source>After revocation, it will be completely deleted %1, do you want to delete it completely?</source>
         <translation>ຫຼັງຈາກການຍົກເລີກ, ມັນຈະຖືກລົບຢ່າງສິ້ນເຖິງ %1, ທ່ານຕ້ອງການລົບມັນຢ່າງສິ້ນເຖິງບໍ?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="544"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="532"/>
         <source>These %1 contents will be completely deleted after revocation. Do you want to delete them completely?</source>
         <translation>ເນື້ອໃນ %1 ນີ້ຈະຖືກລົບຢ່າງສິ້ນເຖິງຫຼັງຈາກການຍົກເລີກ. ທ່ານຕ້ອງການລົບມັນຢ່າງສິ້ນເຖິງບໍ?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="569"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="557"/>
         <source>This operation cannot be reversed.</source>
         <translation>ການດຳເນີນການນີ້ບໍ່ສາມາດຍົກເລີກໄດ້.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="585"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="573"/>
         <source>&quot;%1&quot; already exists, please use another name.</source>
         <translation>&quot;%1&quot; ທຳມະດາມີຢູ່ແລ້ວ, ກະລຸນາໃຊ້ຊື່ອື່ນ.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="599"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="587"/>
         <source>Device or resource busy</source>
         <translation>ອຸປະກອນຫຼືຂໍ້ມູນກຳລັງຖືກໃຊ້</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="612"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="600"/>
         <source>This file will be hidden if the file name starts with &apos;.&apos;. Do you want to hide it?</source>
         <translation>ប្រសិនបើឈ្មោះឯកសារចាប់ដោយ &apos;.&apos; នោះឯកសារនេះនឹងត្រូវលាក់ចេញ។ តើអ្នកចង់លាក់ចេញឯកសារនេះទេ?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="613"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="601"/>
         <source>Hide</source>
         <translation>ເຊີນ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="614"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="602"/>
         <source>Cancel</source>
         <translation>ຍົກເລີກ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="637"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="625"/>
         <source>Unable to access %1</source>
         <translation>មិនអាចប្រទះបាននឹង %1 ទេ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="654"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="642"/>
         <source>%1 that this shortcut refers to has been changed or moved</source>
         <translation>ឯកសារដែលតែងតាំងនេះចង់ចំនុចភ្លេចរបស់វាបានផ្លាស់ប្តូរឬផ្លាស់ទីតាំង។</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="658"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="646"/>
         <source>Do you want to delete this shortcut？</source>
         <translation>ທ່ານຕ້ອງການລົບລິ້ງນີ້ບໍ?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="683"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="671"/>
         <source>This file is not executable, do you want to add the execute permission and run?</source>
         <translation>ໄຟລ໌ນີ້ບໍ່ແມ່ນໄຟລ໌ທີ່ເຮັດໄດ້, ທ່ານຕ້ອງການເພີ່ມສິດເຮັດໄດ້ແລະເຮັດ?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="695"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="683"/>
         <source>The selected files contain system file/directory, and it cannot be deleted</source>
         <translation>ឯកសារនិងថ្នាក់ថ្នាក់ដែលត្រូវបានជ្រើនជាងមិនអាចលាក់ចេញបានទេពីប្រព័ន្ធដោយសារតែជាកម្រិតស្តុចស្តាល់ប៉ុណ្ណោះ។</translation>
     </message>
@@ -3824,116 +3824,116 @@ Enter user and password for %1</source>
 <context>
     <name>dfmbase::TaskWidget</name>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="213"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="214"/>
         <source>create source file %1 Info failed in show conflict Info function!</source>
         <translation>ການສ້າງໄຟລ໌ປະຈຳ %1 ຂໍ້ມູນບໍ່ສາມາດສ້າງໄດ້ໃນການຝັງຂໍ້ມູນຂໍ້ຂັດແຍ່ງ!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="223"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="224"/>
         <source>create target file %1 Info failed in show conflict Info function!</source>
         <translation>ບໍ່ສາມາດສ້າງໄຟລ໌ປະຈຳ %1 ຂໍ້ມູນບໍ່ສາມາດສ້າງໄດ້ໃນການຝັງຂໍ້ມູນຂໍ້ຂັດແຍ່ງ!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="866"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="862"/>
         <source>Time modified: %1</source>
         <translation>ពេលបង្កើតប្រសើរ: %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="871"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="867"/>
         <source>Original folder</source>
         <translation>ថ្នាំងសារបើកដំបូង</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="878"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="874"/>
         <source>Contains: %1</source>
         <translation>មាន: %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="881"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="877"/>
         <source>Original file</source>
         <translation>ឯកសារបើកដំបូង</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="882"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="878"/>
         <source>Size: %1</source>
         <translation>ຂະໜາດ: %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="871"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="867"/>
         <source>Target folder</source>
         <translation>ថ្នាំងសារបែបទាំងនេះ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="644"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="870"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="641"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="866"/>
         <source>In data statistics ...</source>
         <translation>កំពុងស្គាល់ទូរទសកម្មទិន្នន័យ...</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="881"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="877"/>
         <source>Target file</source>
         <translation>ឯកសារបែបទាំងនេះ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="417"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="418"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="414"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="415"/>
         <source>Syncing data</source>
         <translation>ການສະແດງຂໍ້ມູນ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="266"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="267"/>
         <source>Cannot move &quot;%1&quot; to the Trash. Delete it immediately?</source>
         <translation>ບໍ່ສາມາດຍ້າຍ &quot;%1&quot; ໄປຖັງຂີ້ເຫຍື້ອ, ທ່ານຕ້ອງການລຶບມັນອອກຖາວັນບໍ?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="267"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="268"/>
         <source>This action cannot be undone. Please proceed with caution!</source>
         <translation>ການດຳເນີນການນີ້ບໍ່ສາມາດກັ້ນຄືນໄດ້, ກະລຸນາປະຕິບັດຢ່າງລະມັດລະວັງ!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="419"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="420"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="416"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="417"/>
         <source>Please wait</source>
         <translation>សូមព្រមិនភ្លេច</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="564"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="561"/>
         <source>Keep both</source>
         <comment>button</comment>
         <translation>រក្សាឆ្នាំងទាំងពីរ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="567"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="564"/>
         <source>Skip</source>
         <comment>button</comment>
         <translation>ហើយចេញ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="572"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="737"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="569"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="734"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>ប្រេស</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="578"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="575"/>
         <source>Permanently delete</source>
         <comment>button</comment>
         <translation>លិចលើសគ្រប់គ្រាន់</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="605"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="602"/>
         <source>Do not ask again</source>
         <translation>ຢ່າຖາມອີກຄັ້ງ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="734"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="731"/>
         <source>Retry</source>
         <comment>button</comment>
         <translation>ພະຍາຍາມອີກຄັ້ງ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="740"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="737"/>
         <source>Merge</source>
         <comment>button</comment>
         <translation>ປະສົມ</translation>
@@ -4045,12 +4045,12 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_burn::BurnEventReceiver</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/events/burneventreceiver.cpp" line="98"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/events/burneventreceiver.cpp" line="97"/>
         <source>Unable to burn. Not enough free space on the target disk.</source>
         <translation>មិនអាចសរសៃបាក់ប៉ុន្តេបានទេ។រាវ់ខ្សាច់ដែលជំនុះជំនុះមានតែចំនួនទូទំស់មិនគ្រប់គ្រាន់។</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/events/burneventreceiver.cpp" line="240"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/events/burneventreceiver.cpp" line="239"/>
         <source>Mount error: unsupported image format</source>
         <translation>មេរ៉ាក្លេក់: ទម្រង់រូបភាពមិនទាន់គាំទាវបាន។</translation>
     </message>
@@ -4178,12 +4178,12 @@ Enter user and password for %1</source>
         <translation>%1 (ສຳເລັດກັບຮູບແບບ CD/DVD Windows)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="315"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="314"/>
         <source>Device error</source>
         <translation>ຂໍ້ຜິດພາດຂອງອຸປະກອນ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="315"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="314"/>
         <source>Optical device %1 doesn&apos;t exist</source>
         <translation>ອຸປະກອນຮູບພາບ %1 ບໍ່ມີ</translation>
     </message>
@@ -4195,16 +4195,26 @@ Enter user and password for %1</source>
         <source>The file name or the path is too long. Please shorten the file name or the path and try again.</source>
         <translation>ຊື່ຟາຍລ໌ ຫຼື ເສັ້ນທາງແມ່ນຍາວເກີນໄປ. ກະລຸນາຍາວຂຶ້ນໃຫ້ສັ້ນຂຶ້ນ ຫຼື ຍາວຂຶ້ນໃຫ້ສັ້ນຂຶ້ນ ແລ້ວພະຍາຍາມອີກຄັ້ງ.</translation>
     </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="576"/>
+        <source>Not enough free space on the disc</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="577"/>
+        <source>The remaining space on the current disc is insufficient to hold the files to be burned. Please reduce the number of files and try again.</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>dfmplugin_burn::DumpISOImageJob</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="582"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="601"/>
         <source>Creating an ISO image</source>
         <translation>ການສ້າງຮູບຮ່າງ ISO</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="583"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="602"/>
         <source>to %1</source>
         <translation>ໄປ %1</translation>
     </message>
@@ -4609,45 +4619,45 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_dirshare::UserShareHelper</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="94"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="82"/>
         <source>Kindly Reminder</source>
         <translation>ນຳສະໜູ້ນໍາ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="94"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="82"/>
         <source>Please firstly install samba to continue</source>
         <translation>ຂໍຂ້ອຍຂ້າງເທິງຕິດຕັ້ງ samba ແລ້ວຈຶ່ງຈະດຳເນີນຕໍ່</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="106"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="564"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="94"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="549"/>
         <source>The share name must not contain %1, and cannot start with a dash (-) or whitespace, or end with whitespace.</source>
         <translation>ຊື່ແບ່ງປັນບໍ່ຄວາມຳນີ້ %1, ບໍ່ສາມາດຂຶ້ນດ້ວຍລູກສະແດງ (-) ຫຼືຊ່ອງວ່າງ, ຫຼືລົງດ້ວຍຊ່ອງວ່າງ.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="552"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="537"/>
         <source>Share folder can&apos;t be named after the current username</source>
         <translation>ບໍ່ສາມາດຕັ້ງຊື່ໄຟລ໌ແບ່ງປັນເປັນຊື່ຜູ້ໃຊ້ປັດຈຸບັນ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="558"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="543"/>
         <source>To protect the files, you cannot share this folder.</source>
         <translation>ການແບ່ງປັນຈະບໍ່ສາມາດເຮັດໄດ້, ກະລຸນາຕັ້ງຄ່າການປົກປ້ອງໄຟລ໌ກ່ອນ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="584"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="586"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="596"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="569"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="571"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="581"/>
         <source>Sharing failed</source>
         <translation>ການແບ່ງປັນບໍ່ສຳເລັດ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="587"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="572"/>
         <source>SMB port is banned, please check the firewall strategy.</source>
         <translation>ທາງເລືອກ SMB ໄດ້ຖືກຂ້າງເທິງ, ກະລຸນາກວດເບີບກົດລະບຽບກັນໄຟເວີ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="596"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="581"/>
         <source>The computer name is too long</source>
         <translation>ຊື່ຄອມພິວເຕີຍາວເກີນໄປ</translation>
     </message>
@@ -4695,7 +4705,7 @@ Enter user and password for %1</source>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="80"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="345"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="583"/>
         <source>Confirm</source>
         <translation>ຢືນຢັນ</translation>
     </message>
@@ -4752,11 +4762,6 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_diskenc::DecryptParamsInputDialog</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="54"/>
-        <source>Please input recovery key to decrypt device</source>
-        <translation>ກະລຸນາປ້ອນລະຫັດກູ້ຄືນເພື່ອຖອດລະຫັດອຸປະກອນ</translation>
-    </message>
-    <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="55"/>
         <source>Validate with %1</source>
         <translation>ຕົວຢ່າງດ້ວຍ %1</translation>
@@ -4775,9 +4780,14 @@ Enter user and password for %1</source>
         <translation>ລະຫັດຜ່ານ</translation>
     </message>
     <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="54"/>
+        <source>Please input recovery key to decrypt partition</source>
+        <translation></translation>
+    </message>
+    <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="60"/>
-        <source>Please input %1 to decrypt device</source>
-        <translation>ກະລຸນາໃສ່ %1 ເພື່ອຖອດລະຫັດອຸປະກອນ</translation>
+        <source>Please input %1 to decrypt partition</source>
+        <translation></translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="61"/>
@@ -4806,8 +4816,8 @@ Enter user and password for %1</source>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="111"/>
-        <source>Decrypt device</source>
-        <translation>ស្វែងយកឧបាសក្តានដោយឡើងវិញ</translation>
+        <source>Decrypt partition</source>
+        <translation></translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="119"/>
@@ -4818,105 +4828,105 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_diskenc::DiskEncryptMenuScene</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="167"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="183"/>
         <source>Unlock encrypted partition</source>
         <translation>ເປີດລະຫັດພາກສ່ວນທີ່ຖືກລະຫັດ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="171"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="187"/>
         <source>Cancel partition encryption</source>
         <translation>ຍົກເລີກການເຂົ້າລະຫັດພາກສ່ວນ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="175"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="191"/>
         <source>passphrase</source>
         <translation>ລະຫັດຜ່ານ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="176"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="192"/>
         <source>Changing the encryption %1</source>
         <translation>ການລັບລະບັບກັນຂໍ້ມູນພັກ %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="180"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="196"/>
         <source>Continue partition encryption</source>
         <translation>ຕໍ່ເນື່ອງການລະບົບກັນຂໍ້ມູນພັກ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="184"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="200"/>
         <source>Continue partition decryption</source>
         <translation>ຕໍ່ເນື່ອງການຖືກລະບົບກັນຂໍ້ມູນພັກ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="188"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="204"/>
         <source>Enable partition encryption</source>
         <translation>ເປີດການລະບົບກັນຂໍ້ມູນພັກ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="262"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="295"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="320"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="296"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="328"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="353"/>
         <source>Error</source>
         <translation>ຜິດພາດ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="263"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="297"/>
         <source>Cannot resolve passphrase from TPM</source>
         <translation>ບໍ່ສາມາດດຶງລະຫັດຜ່ານຈາກ TPM ໄດ້</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="295"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="320"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="328"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="353"/>
         <source>PIN error</source>
         <translation>ລະຫັດ PIN ຜິດພາດ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="328"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="361"/>
         <source>Change passphrase failed</source>
         <translation>ເປັນພroblems തອບສະໜອງລະຫັດຜ່ອນ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="571"/>
-        <source>Unlock device failed</source>
-        <translation>ຈັດການປົ່ງອອກຂອງອື້ໄມໃຫມ່ບໍ່ສັ່ງເທິງເປັນພroblems</translation>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="687"/>
+        <source>Unlock partition failed</source>
+        <translation></translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="572"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="688"/>
         <source>Wrong passphrase</source>
         <translation>ລະຫັດຜ່ອນຜິດພາດ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="592"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="707"/>
         <source>Mount device failed</source>
         <translation>ການຕິດຕັ້ງປົ່ງອອກຂອງອື້ໄມໃຫມ່ບໍ່ສັ່ງເທິງເປັນພroblems</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="641"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="756"/>
         <source>unmount</source>
         <translation>ປົ່ງອອກ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="641"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="756"/>
         <source>lock</source>
         <translation>ປົ່ງ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="642"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="757"/>
         <source>Encrypt failed</source>
         <translation>ການລັບລະບັບບໍ່ສຳເລັດ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="643"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="758"/>
         <source>Cannot %1 device %2</source>
         <translation>ບໍ່ສາມາດ %1 ອຸປະກອນ %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="728"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="843"/>
         <source>Reboot to continue encrypt</source>
         <translation>ຮັບປະກັນເພື່ອສຳເລັດການລັບລະບັບ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="729"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="844"/>
         <source>Reboot to finish decrypt</source>
         <translation>ຮັບປະກັນເພື່ອສຳເລັດການຖອນລະບຸລັອກ</translation>
     </message>
@@ -5070,18 +5080,18 @@ Enter user and password for %1</source>
         <translation>ການເຂົ້າເຖິງພາກສ່ວນຈະຖືກປັດສະວັດອັດໂມມັດດ້ວຍຊິບຄວາມປອດໄພ TPM, ບໍ່ຕ້ອງການການກວດສອບລະຫັດຜ່ານ.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="461"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="462"/>
         <source>TPM is locked and cannot be used for partition encryption. Please cancel the TPM password or choose another unlocking method.</source>
         <translation>TPM ຖືກລໍກັ້ນ ແລະ ບໍ່ສາມາດໃຊ້ໄດ້ສຳລັບການລັບລະບົບພາກສ່ວນ. ກະລຸນາຍົກເລີກລະຫັດຜ່ານ TPM ຫຼືເລືອກວິທີການປັດສະວັດອື່ນ.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="463"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="468"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="464"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="469"/>
         <source>TPM error</source>
         <translation>ຂໍ້ຜິດພາດ TPM</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="468"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="469"/>
         <source>TPM status error!</source>
         <translation>ສະຖານະ TPM ຜິດພາດ!</translation>
     </message>
@@ -5094,44 +5104,44 @@ Enter user and password for %1</source>
         <translation>ຢັນທີ້</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="65"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="79"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="64"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="78"/>
         <source>Re-export the recovery key</source>
         <translation>ສົ່ງອອກຄ່ານຳໃຊ້ຄືນ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="69"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="68"/>
         <source>*Recovery key saving failed, please re-save the recovery key to a non-encrypted partition and keep it in a safe place!</source>
         <translation>*ການບັນທຶກຄ່ານຳໃຊ້ຄືນບໍ່ສຳເລັດ, ກະລຸນາບັນທຶກຄ່ານຳໃຊ້ຄືນໃໝ່ໃນພາກສ່ວນທີ່ບໍ່ຖືກລັບລະບົບ ແລະ ລ້ອງເກັບມ້ຽນໃນບ່ອນທີ່ປອດໄພ!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="88"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="194"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="87"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="202"/>
         <source>Error</source>
         <translation>ຜົນບໍ່ສຳເລັດ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="149"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="157"/>
         <source>Recovery key export path cannot be empty!</source>
         <translation>ທາງເລືອກສົ່ງອອກຄ່ານຳໃຊ້ຄືນບໍ່ສາມາດເປັນຄ່າເປົ່າໄດ້!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="155"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="163"/>
         <source>Recovery key export path is not exists!</source>
         <translation>ທາງເລືອກສົ່ງອອກຄ່ານຳໃຊ້ຄືນບໍ່ມີຢູ່!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="162"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="170"/>
         <source>This partition is read-only, please export to a writable partition</source>
         <translation>ພາກສ່ວນນີ້ແມ່ນພຽງແຕ່ອ່ານໄດ້, ກະລຸນາສົ່ງອອກໄປຫາພາກສ່ວນທີ່ສາມາດຂຽນໄດ້</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="177"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="185"/>
         <source>The partition is encrypted, please export to a non-encrypted partition or external device such as a USB flash drive.</source>
         <translation>ບ້ານການເຊື່ອມຕໍ່ຖືກລັບລະບັບ, ກະລຸນາສົ່ງອອກໄປບ້ານທີ່ບໍ່ຖືກລັບລະບັບຫຼືອຸປະກອນພາຍນອກເຊັ່ນ: ແຄຟ໌ USB</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="194"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="202"/>
         <source>Cannot create recovery key file!</source>
         <translation>ບໍ່ສາມາດສ້າງໄຟລ໌ຄຳແນະນຳກັບຄືນໄດ້!</translation>
     </message>
@@ -5139,182 +5149,222 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_diskenc::EventsHandler</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="211"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="220"/>
         <source>Encrypt done</source>
         <translation>ການລັບລະບັບສຳເລັດ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="212"/>
-        <source>Device %1 has been encrypted</source>
-        <translation>ອຸປະກອນ %1 ໄດ້ຖືກລັບລະບັບແລ້ວ</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="217"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="226"/>
         <source>Encrypt failed</source>
         <translation>ການລັບລະບັບບໍ່ສຳເລັດ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="218"/>
-        <source>Device %1 encrypt failed, please see log for more information.(%2)</source>
-        <translation>ການລັບລະບັບອຸປະກອນ %1 ບໍ່ສຳເລັດ, ກະລຸນາເບິ່ງລ່າງຂໍ້ມູນສຳລັບຂໍ້ມູນເພີ່ມເຕີມ.(%2)</translation>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="221"/>
+        <source>Partition %1 has been encrypted</source>
+        <translation></translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="329"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="227"/>
+        <source>Partition %1 encrypt failed, please see log for more information.(%2)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="333"/>
         <source>%1 is under encrypting...</source>
         <translation>%1 ກຳລັງລັບລະບັບ...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="330"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="334"/>
         <source>The encrypting process may have system lag, please minimize the system operation</source>
         <translation>ການລັບລະບັບອາດຈະເຮັດໃຫ້ລະບົບຊ້າ, ກະລຸນາປະຢັດການດຳເນີນການລະບົບ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="350"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="354"/>
         <source>%1 is under decrypting...</source>
         <translation>&apos;%1 ກຳລັງຖືກຖອນລະບັບ...&apos;</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="351"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="355"/>
         <source>The decrypting process may have system lag, please minimize the system operation</source>
         <translation>ການຖອນລະບັບອາດຈະເຮັດໃຫ້ລະບົບຊ້າ, ກະລຸນາປະຢັດການດຳເນີນການລະບົບ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="381"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="621"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="385"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="612"/>
         <source>Error</source>
         <translation>ຂໍ້ຜິດພາດ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="381"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="385"/>
         <source>TPM status is abnormal, please use the recovery key to unlock it</source>
         <translation>ສະພາບຂອງ TPM ບໍ່ປົກກະຕິ, ກະລຸນາໃຊ້ຄຳແນະນຳກັບຄືນເພື່ອເປີດລະບົບ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="412"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="415"/>
         <source>Wrong PIN</source>
         <translation>PIN ผิด</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="414"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="417"/>
         <source>Wrong passphrase</source>
         <translation>รหัสผ่านผิด</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="416"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="419"/>
         <source>TPM error</source>
         <translation>ข้อผิดพลาด TPM</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="418"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="421"/>
         <source>Please use recovery key to unlock device.</source>
         <translation>ກະລຸນາໃຊ້ຄຳແນະນຳກັບຄືນເພື່ອເປີດອຸປະກອນ.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="485"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="486"/>
         <source>Preencrypt done</source>
         <translation>การเข้ารหัสล่วงหน้าเสร็จสิ้น</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="486"/>
-        <source>Device %1 has been preencrypt, please reboot to finish encryption.</source>
-        <translation>устройство %1 ได้รับการเข้ารหัสล่วงหน้าแล้ว โปรดเริ่มต้น зановоเพื่อสิ้นสุดการเข้ารหัส</translation>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="487"/>
+        <source>Partition %1 has been preencrypt, please reboot to finish encryption.</source>
+        <translation></translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="494"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="496"/>
+        <source>Partition %1 preencrypt failed, please see log for more information.(%2)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="515"/>
+        <source>Partition %1 has been decrypted</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="522"/>
+        <source>Decrypt partition</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="528"/>
+        <source>Partition %1 is under encrypting, please decrypt after encryption finished.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="534"/>
+        <source>Partition %1 Decrypt failed, please see log for more information.(%2)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="583"/>
+        <source>Partition %1 change %2 failed, please see log for more information.(%3)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="613"/>
+        <source>Partition is not fully decrypted, please finish decryption before access.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="620"/>
+        <source>Unlocking partition failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="621"/>
+        <source>Please click &quot;Continue Partition Encryption&quot; in the right-click menu to complete the partition encryption.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="730"/>
+        <source>Partition Encryption Non-Reboot Mode Enabled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="731"/>
+        <source>Partition Encryption Non-Reboot Mode has been enabled successfully. Please reboot your system for the changes to take effect. After reboot, partition encryption operations will not require system restart.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="735"/>
+        <source>Partition Encryption Non-Reboot Mode Disabled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="736"/>
+        <source>Partition Encryption Non-Reboot Mode has been disabled successfully. Please reboot your system for the changes to take effect. After reboot, partition encryption operations will require system restart.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="744"/>
+        <source>Operation Failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="746"/>
+        <source>Failed to enable Partition Encryption Non-Reboot Mode. The system may not support this feature or encountered an error during initramfs update.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="749"/>
+        <source>Failed to disable Partition Encryption Non-Reboot Mode. An error occurred during initramfs update.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="761"/>
+        <source>dde-file-manager</source>
+        <translation type="unfinished">ຕົວຈັດການເອກະສານ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="495"/>
         <source>Preencrypt failed</source>
         <translation>ການລັບລະບັບເບື້ອງຕົ້ນບໍ່ສຳເລັດ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="495"/>
-        <source>Device %1 preencrypt failed, please see log for more information.(%2)</source>
-        <translation>การเข้ารหัสล่วงหน้าสำหรับустройство %1 ล้มเหลว โปรดดูที่บันทึกเพื่อข้อมูลเพิ่มเติม(%2)</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="516"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="514"/>
         <source>Decrypt done</source>
         <translation>การถอดรหัสเสร็จสิ้น</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="517"/>
-        <source>Device %1 has been decrypted</source>
-        <translation>ອຸປະກອນ %1 ໄດ້ຖືກຖອນລະບັບແລ້ວ</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="525"/>
-        <source>Decrypt disk</source>
-        <translation>ຖອນລະບັບດິສກ໌</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="526"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="523"/>
         <source>Wrong passpharse or PIN</source>
         <translation>ລະຫັດຜ່ານຫຼື PIN ບໍ່ຖືກຕ້ອງ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="530"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="536"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="527"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="533"/>
         <source>Decrypt failed</source>
         <translation>การถอดรหัสล้มเหลว</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="531"/>
-        <source>Device %1 is under encrypting, please decrypt after encryption finished.</source>
-        <translation>ອຸປະກອນ %1 ແມ່ນຢູ່ໃນຂະບວນການລັບລະຫັດ, ກະລຸນາກຳຈັດການລັບລະຫັດຫຼັງຈາກການລັບລະຫັດສິ້ນສຸດ.</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="537"/>
-        <source>Device %1 Decrypt failed, please see log for more information.(%2)</source>
-        <translation>การถอดรหัสสำหรับустройство %1ล้มเหลว โปรดดูที่บันทึกเพื่อข้อมูลเพิ่มเติม(%2)</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="565"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="560"/>
         <source>passphrase</source>
         <translation>ລະຫັດຜ່ານ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="568"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="563"/>
         <source>PIN</source>
         <translation>PIN</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="575"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="569"/>
         <source>Change %1 done</source>
         <translation>ການປ່ຽນ %1 ແລ້ວ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="576"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="570"/>
         <source>%1&apos;s %2 has been changed</source>
         <translation>%1 ຂອງ %2 ໄດ້ຖືກປ່ຽນແລ້ວ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="583"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="589"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="577"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="582"/>
         <source>Change %1 failed</source>
         <translation>ການປ່ຽນ %1 ບໍ່ສຳເລັດ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="584"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="578"/>
         <source>Wrong %1</source>
         <translation>លំដាប់លេខ %1 មិនត្រឹមត្រូវ</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="590"/>
-        <source>Device %1 change %2 failed, please see log for more information.(%3)</source>
-        <translation>ການປ່ຽນ %2 ຂອງອຸປະກອນ %1 ບໍ່ສຳເລັດ, ກະລຸນາເບິ່ງລູກສຳລັບຂໍ້ມູນເພີ່ມເຕີມ. (%3)</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="622"/>
-        <source>Device is not fully decrypted, please finish decryption before access.</source>
-        <translation>ອຸປະກອນບໍ່ໄດ້ຖືກລັບລະຫັດຢ່າງສົມບູນ, ກະລຸນາສຳເລັດການລັບລະຫັດກ່ອນກ່ອນທີ່ຈະເຂົ້າເຖິງ.</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="630"/>
-        <source>Unlocking device failed</source>
-        <translation>រារំណ័យឧបកម្មបានបរាលៗ</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="631"/>
-        <source>Please click the right disk menu &quot;Continue partition encryption&quot; to complete partition encryption.</source>
-        <translation>ກະລຸນາຄລິກໃສ່ເມນູດິສກຂ້າງທີ່ຖືກຕ້ອງ &quot;ຕໍ່ໄປກັບການລັບລະຫັດພາກສ່ວນ&quot; ເພື່ອສຳເລັດການລັບລະຫັດພາກສ່ວນ.</translation>
     </message>
 </context>
 <context>
@@ -5357,13 +5407,13 @@ Enter user and password for %1</source>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="106"/>
-        <source>Please input passphrase to unlock device</source>
-        <translation>ກະລຸນາປ້ອນລະຫັດຜ່ານເພື່ອເປີດໃຊ້ງານອຸປະກອນ</translation>
+        <source>Please input passphrase to unlock partition</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="110"/>
-        <source>Please input PIN to unlock device</source>
-        <translation>ກະລຸນາປ້ອນລະຫັດ PIN ເພື່ອເປີດໃຊ້ງານອຸປະກອນ</translation>
+        <source>Please input PIN to unlock partition</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="124"/>
@@ -5646,28 +5696,28 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_fileoperations::FileOperationsEventReceiver</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="356"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="361"/>
         <source>Rename file error</source>
         <translation>ຂໍ້ຜິດພາດໃນການປ່ຽນຊື່ຟາຍລ໌</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="647"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="652"/>
         <source>Failed to create the directory</source>
         <translation>ບໍ່ສາມາດສ້າງເຄື່ອງມືໄດເລີ່ມຕົ້ນໄດ້</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1227"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1341"/>
         <source>Failed to create the file</source>
         <translation>ບໍ່ສາມາດສ້າງໄຟລ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1328"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1442"/>
         <source>link file error</source>
         <translation>ຂໍ້ຜິດພາດໄຟລລິ່ງ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1370"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1379"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1484"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1493"/>
         <source>Failed to modify file permissions</source>
         <translation>ບໍ່ສາມາດແກ້ໄຂການອະນຸຍາດໄຟລ</translation>
     </message>
@@ -5675,22 +5725,22 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_fileoperations::OperationSettings</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="41"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="43"/>
         <source>Real-time data synchronization (Recommended)</source>
         <translation>ການຊິງຄ໌ຂໍ້ມູນແບບເວລາຈິງ (ແນະນຳ)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="48"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="50"/>
         <source>Once the files are copied, you can unplug the external drive without needing to &quot;Safely Remove&quot; it.</source>
         <translation>ເມື່ອຄັດລອກໄຟລ໌ແລ້ວ, ທ່ານສາມາດຖອດອຸປະກອນພາຍນອກໄດ້ໂດຍບໍ່ຈໍາເປັນຕ້ອງ &quot;ຖອດຢ່າງປອດໄພ&quot;.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="59"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="61"/>
         <source>Performance First (Requires Safe Removal)</source>
         <translation>ປະສິດທິພາບສຳຄັນກ່ອນ (ຕ້ອງການຖອດຢ່າງປອດໄພ)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="66"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="68"/>
         <source>File copy data is not synchronized in real-time. After the copy is complete, you must use &quot;Safe Removal&quot; to disconnect the external storage device. Otherwise, file corruption or data loss may occur.</source>
         <translation>ຂໍ້ມູນການຄັດລອກໄຟລ໌ບໍ່ໄດ້ຊິງຄ໌ແບບເວລາຈິງ. ຫຼັງຈາກຄັດລອກແລ້ວ, ທ່ານຕ້ອງໃຊ້ &quot;ຖອດຢ່າງປອດໄພ&quot; ເພື່ອຕັດການເຊື່ອມຕໍ່ອຸປະກອນຈັດເກັບພາຍນອກ. ບໍ່ຢ່າງນັ້ນ, ອາດຈະເກີດການເສຍຫາຍໄຟລ໌ ຫຼື ຂໍ້ມູນ.</translation>
     </message>
@@ -5714,17 +5764,17 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_menu::ClipBoardMenuScenePrivate</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="34"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="37"/>
         <source>&amp;Paste</source>
         <translation>ຍ້າຍ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="35"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="38"/>
         <source>Cu&amp;t</source>
         <translation>ຕັດ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="36"/>
+        <location filename="../src/plugins/common/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="39"/>
         <source>&amp;Copy</source>
         <translation>&amp;ຍ້າຍ</translation>
     </message>
@@ -5943,7 +5993,7 @@ Enter user and password for %1</source>
         <translation>ບໍ່ມີໄຟລ໌ທີ່ຈະເຜົາ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="289"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="301"/>
         <source>Unable to burn. Not enough free space on the target disk.</source>
         <translation>ບໍ່ສາມາດເຜົາໄດ້. ເນື້ອທີ່ວ່າງໃນດິສກ໌ເປົ້າໝາຍບໍ່ພຽງພໍ.</translation>
     </message>
@@ -6109,37 +6159,37 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_propertydialog::MultiFilePropertyDialog</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="52"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="50"/>
         <source>Multiple Files</source>
         <translation>ໄຟລ໌ຫຼາຍ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="56"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="54"/>
         <source>Basic info</source>
         <translation>ຂໍ້ມູນພື້ນຖານ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="61"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="59"/>
         <source>Total size</source>
         <translation>ຂະໜາດລວມ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="68"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="66"/>
         <source>Number of files</source>
         <translation>ຈຳນວນໄຟລ໌</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="75"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="73"/>
         <source>Time accessed</source>
         <translation>ເວລາເຂົ້າເຖິງ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="81"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="79"/>
         <source>Time modified</source>
         <translation>ເວລາແກ້ໄຂ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="147"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="118"/>
         <source>%1 file(s), %2 folder(s)</source>
         <translation>%1 ໄຟລ໌, %2 ໂຟນເດີ</translation>
     </message>
@@ -6654,22 +6704,22 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_titlebar::CustomTabSettingWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="57"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="60"/>
         <source>Custom Directory</source>
         <translation>ເົ້າທີ່ມັນຕົວຈິງ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="97"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="100"/>
         <source>Invalid Directory</source>
         <translation>ໂຟນເດີບໍ່ຖືກຕ້ອງ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="98"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="101"/>
         <source>This directory does not support pinning</source>
         <translation>ໂຟນເດີນີ້ບໍ່ຮອງຮັບການຕິດຕັ້ງ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="141"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="55"/>
         <source>Add Directory</source>
         <translation>ເພີ່ມໂຟນເດີ</translation>
     </message>
@@ -6677,66 +6727,66 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_titlebar::DPCConfirmWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="69"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="73"/>
         <source>Change disk password</source>
         <translation>ປ່ຽນລະຫັດຜ່ານດິດ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="89"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="93"/>
         <source>Current password:</source>
         <translation>ລະຫັດຜ່ານປັດຈຸບັນ:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="90"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="94"/>
         <source>New password:</source>
         <translation>ລະຫັດຜ່ານໃໝ່:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="91"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="95"/>
         <source>Repeat password:</source>
         <translation>ປ້ອນລະຫັດຜ່ານອີກຄັ້ງ:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="104"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="108"/>
         <source>Save</source>
         <comment>button</comment>
         <translation>ບຶອົບ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="106"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="110"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>ຍົກເລີກ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="177"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="181"/>
         <source>Passwords do not match</source>
         <translation>ລະຫັດຜ່ອນບໍ່ຄີດກັນ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="194"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="198"/>
         <source>New password should differ from the current one</source>
         <translation>ລະຫັດຜ່ອນໃຫ້ມີການແຕ່ງແນ່ຈາກລະຫັດຜ່ອນປະຫຼົນ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="249"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="253"/>
         <source>Minimum of 8 characters. At least 3 types: 0-9, a-z, A-Z and symbols. Different from the username.</source>
         <translation>ຢ່າງນ້ອຍ 8 ຕົວອັກສອນ. ຕ້ອງມີຢ່າງນ້ອຍ 3 ປະເພດ: 0-9, a-z, A-Z ແລະ ສັນຍາລັກ. ຕ້ອງແຕກຕ່າງຈາກຊື່ຜູ້ໃຊ້.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="285"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="289"/>
         <source>Password must be no more than %1 characters</source>
         <translation>ລະຫັດຜ່ານຕ້ອງບໍ່ເກີນ %1 ຕົວອັກສອນ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="294"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="299"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="304"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="298"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="303"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="308"/>
         <source>Password cannot be empty</source>
         <translation>ລະຫັດຜ່ານບໍ່ສາມາດປ່ອຍໃຫ້ວ່າງໄດ້</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="340"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="384"/>
         <source>Wrong password</source>
         <translation>ລະຫັດຜ່ານຜິດ</translation>
     </message>
@@ -6835,22 +6885,34 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_titlebar::TabBar</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="225"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="293"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="352"/>
+        <source>Unpin tab</source>
+        <translation>ຍົກເລີກການປັນແທັບ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="295"/>
+        <source>Pin tab</source>
+        <translation>ປັນແທັບ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="300"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="352"/>
         <source>Close tab</source>
         <translation>ປິດແທັບ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="226"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="303"/>
         <source>Close other tabs</source>
         <translation>ປິດແທັບອື່ນໆ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="234"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="304"/>
         <source>Close tabs to the left</source>
         <translation>ປິດແທັບທາງຊ້າຍ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="242"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="307"/>
         <source>Close tabs to the right</source>
         <translation>ປິດແທັບທາງຂວາ</translation>
     </message>
@@ -6858,23 +6920,23 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_titlebar::TitleBarWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="485"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="547"/>
         <source>Directory not found</source>
         <translation>ບໍ່ພົບໂຟນເດີດັ່ງກ່າວ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="486"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="548"/>
         <source>Directory not found. Remove it?</source>
         <translation>ບໍ່ພົບໂຟນເດີດັ່ງກ່າວ, ຕ້ອງການລຶບອອກບໍ?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="487"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="549"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>ຍົກເລີກ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="487"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="549"/>
         <source>Remove</source>
         <comment>button</comment>
         <translation>ລູກອົບຮົມ</translation>
@@ -7386,32 +7448,32 @@ Enter user and password for %1</source>
         <translation>ບໍ່ສາມາດບັນທຶກໄຟລ໌ກະແຈສາທາລະນະໄດ້: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="294"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="295"/>
         <source>Failed to create config dir: %1</source>
         <translation>ບໍ່ສາມາດສ້າງໄດເຣການຕັ້ງຄ່າໄດ້: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="322"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="323"/>
         <source>Failed to create rsa private key file: %1</source>
         <translation>ບໍ່ສາມາດສ້າງໄຟລ໌ກະແຈສ່ວນຕົວ RSA ໄດ້: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="333"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="334"/>
         <source>Failed to create rsa ciphertext file: %1</source>
         <translation>ບໍ່ສາມາດສ້າງໄຟລ໌ຂໍ້ມູນລັບ RSA ໄດ້: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="344"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="345"/>
         <source>Failed to create hint file: %1</source>
         <translation>ບໍ່ສາມາດສ້າງໄຟລ໌ຄຳແນະນຳໄດ້: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="376"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="377"/>
         <source>Failed to save hint info: %1</source>
         <translation>ບໍ່ສາມາດບັນທຶກຂໍ້ມູນຄຳແນະນຳໄດ້: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="731"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="732"/>
         <source>Save password failed: %1</source>
         <translation>ບັນທຶກລະຫັດຜ່ານບໍ່ສຳເລັດ: %1</translation>
     </message>
@@ -7489,52 +7551,46 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_vault::RetrievePasswordView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="41"/>
-        <source>By key in the default path</source>
-        <translation>ໂດຍກະແຈໃນເສັ້ນທາງຄ່າເລີ່ມຕົ້ນ</translation>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="46"/>
+        <source>Unlock the Safe via Key File</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="42"/>
-        <source>By key in the specified path</source>
-        <translation>ໂດຍກະແຈໃນເສັ້ນທາງທີ່ກຳນົດ</translation>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="49"/>
+        <source>Select Key File</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="45"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="207"/>
-        <source>Select a path</source>
-        <translation>ເລືອກເສັ້ນທາງ</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="103"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="114"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="188"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="202"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="203"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="240"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="92"/>
         <source>Unable to get the key file</source>
         <translation>ບໍ່ສາມາດໄດ້ຮັບໄຟລ໌ກະແຈ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="131"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="109"/>
+        <source>Unlock vault failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="113"/>
         <source>Verification failed</source>
         <translation>ການຢືນຢັນບໍ່ສຳເລັດ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="144"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="126"/>
         <source>Back</source>
         <comment>button</comment>
         <translation>ກັບຄືນ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="144"/>
-        <source>Verify Key</source>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="126"/>
+        <source>Key Unlock</source>
         <comment>button</comment>
-        <translation>ກວດສອບກະແຈ</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="149"/>
-        <source>Retrieve Password</source>
-        <translation>ກູ້ຄືນລະຫັດຜ່ານ</translation>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="131"/>
+        <source>Key Unlocks Safe</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7679,44 +7735,34 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_vault::VaultActiveSaveKeyFileView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="51"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="50"/>
         <source>Save Recovery Key</source>
         <translation>ບັນທຶກກະແຈກູ້ຄືນ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="58"/>
-        <source>Keep the key safe to retrieve the vault password later</source>
-        <translation>ຮັກສາກະແຈໃຫ້ປອດໄພເພື່ອກູ້ລະຫັດຫ້ອງເກັບໄຟລ໌ໃນພາຍຫຼັງ</translation>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="57"/>
+        <source>Key files can be used to unlock the safe, please keep it in a safe place</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="64"/>
-        <source>Save to default path</source>
-        <translation>ບັນທຶກໄປທີ່ເສັ້ນທາງຄ່າເລີ່ມຕົ້ນ</translation>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="61"/>
+        <source>It is recommended to save it to external storage devices such as a USB drive</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="69"/>
-        <source>Save to other locations</source>
-        <translation>ບັນທຶກໄປທີ່ສະຖານທີ່ອື່ນ</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="71"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="63"/>
         <source>No permission, please reselect</source>
         <translation>ບໍ່ມີສິດ, ກະລຸນາເລືອກໃໝ່</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="78"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="69"/>
         <source>Select a path</source>
         <translation>ເລືອກເສັ້ນທາງ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="95"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="82"/>
         <source>Next</source>
         <translation>ຖັດໄປ</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="105"/>
-        <source>The default path is invisible to other users, and the path information will not be shown.</source>
-        <translation>ເສັ້ນທາງຄ່າເລີ່ມຕົ້ນຈະບໍ່ມີໃຫ້ຜູ້ໃຊ້ອື່ນເຫັນ ແລະ ຂໍ້ມູນເສັ້ນທາງຈະບໍ່ຖືກສະແດງ.</translation>
     </message>
 </context>
 <context>
@@ -8052,7 +8098,7 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_workspace::FileOperatorHelper</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="111"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="117"/>
         <source>Failed to open %1, which may be moved or renamed</source>
         <translation>ບໍ່ສາມາດເປີດ %1, ທີ່ອາດຈະຖືກຢືດຫຼັງຫຼາຍຫຼືຊື່ຖືກປ່ຽນ</translation>
     </message>
@@ -8060,12 +8106,12 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_workspace::FileView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2391"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2465"/>
         <source>Mount error</source>
         <translation>ຜິດພາດໃນການເມາທ໌</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2392"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2466"/>
         <source>Server login credentials are invalid. Please uninstall and remount</source>
         <translation>ຂໍ້ມູນການເຂົ້າລະບົບເຊີບເວີບໍ່ຖືກຕ້ອງ. ກະລຸນາຖອນການຕິດຕັ້ງແລະເມາທ໌ໃໝ່</translation>
     </message>

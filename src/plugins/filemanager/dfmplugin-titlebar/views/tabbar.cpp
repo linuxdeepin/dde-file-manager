@@ -349,7 +349,7 @@ void TabBarPrivate::updateButtonToolTip(int index, bool visible)
 
     // Show tooltip for close/unpin button if hovering over a different tab
     if (lastTooltipTabIndex != index) {
-        QString tooltipText = q->isPinned(index) ? tr("Unpin tab") : tr("Close tab");
+        QString tooltipText = q->isPinned(index) ? TabBar::tr("Unpin tab") : TabBar::tr("Close tab");
         QToolTip::showText(QCursor::pos(), tooltipText, q);
         lastTooltipTabIndex = index;
     }
