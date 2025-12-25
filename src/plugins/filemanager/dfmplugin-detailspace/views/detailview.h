@@ -17,7 +17,7 @@ namespace dfmplugin_detailspace {
 
 class ImagePreviewWidget;
 class ImagePreviewController;
-class FileBaseInfoView;
+class FileInfoWidget;
 
 class DetailView : public DTK_WIDGET_NAMESPACE::DFrame
 {
@@ -26,9 +26,9 @@ public:
     explicit DetailView(QWidget *parent = nullptr);
     virtual ~DetailView();
 
-    bool addCustomControl(QWidget *widget);
-    bool insertCustomControl(int index, QWidget *widget);
-    void removeControl();
+    bool addCustomWidget(QWidget *widget);
+    bool insertCustomWidget(int index, QWidget *widget);
+    void removeWidget();
 
 public slots:
     void setUrl(const QUrl &url);
@@ -40,8 +40,8 @@ private slots:
 private:
     void initInfoUI();
     void createExtensionWidgets(const QUrl &url);
-    void createHeadUI(const QUrl &url);
-    void createBasicWidget(const QUrl &url);
+    void updateHeadUI(const QUrl &url);
+    void updateBasicWidget(const QUrl &url);
     void updatePreviewSize();
 
 protected:
@@ -56,7 +56,7 @@ private:
 
     ImagePreviewWidget *m_previewWidget { nullptr };
     ImagePreviewController *m_previewController { nullptr };
-    FileBaseInfoView *m_fileBaseInfoView { nullptr };
+    FileInfoWidget *m_fileInfoWidget { nullptr };
     QUrl m_currentUrl;
 };
 

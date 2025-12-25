@@ -26,10 +26,7 @@ public:
     explicit DetailSpaceWidget(QFrame *parent = nullptr);
     void setCurrentUrl(const QUrl &url) override;
     QUrl currentUrl() const override;
-
-    bool insertExpandControl(int index, QWidget *widget);
-
-    void removeControls();
+    void removeWidgets();
 
 private slots:
     void initUiForSizeMode();
