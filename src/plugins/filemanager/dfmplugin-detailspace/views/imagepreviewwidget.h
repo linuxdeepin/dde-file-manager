@@ -33,6 +33,7 @@ public:
     QSize sizeHint() const override;
 
     static bool isAnimatedMimeType(const QString &mimeType);
+    static QSize maximumPreviewSize();
 
 protected:
     void paintEvent(QPaintEvent *event) override;
