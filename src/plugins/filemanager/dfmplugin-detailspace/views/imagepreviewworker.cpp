@@ -168,12 +168,20 @@ void ImagePreviewController::onNeedIconFallback(const QUrl &url, const QSize &ta
 {
     // This runs on main thread, safe to call hooks and fileIcon()
     QPixmap result;
+    qreal dpr = qApp->devicePixelRatio();
+
+    // For icons, request a square size based on the larger dimension of targetSize
+    // This prevents distortion - the icon will maintain its aspect ratio
+    // and ImagePreviewWidget::paintEvent() will scale it to fit the preview area
+    int iconSize = qMax(targetSize.width(), targetSize.height());
+    QSize iconSizeSquare(iconSize, iconSize);
 
     // Strategy 1: Get custom icon from hook (highest priority in fallback)
     QString iconName;
     if (dpfHookSequence->run(kCurrentEventSpace, "hook_Icon_Fetch", url, &iconName)
         && !iconName.isEmpty()) {
-        result = QIcon::fromTheme(iconName).pixmap(targetSize, qApp->devicePixelRatio());
+        // Request square icon with devicePixelRatio, QIcon will maintain its aspect ratio
+        result = QIcon::fromTheme(iconName).pixmap(iconSizeSquare, dpr);
         if (!result.isNull()) {
             Q_EMIT previewReady(url, result);
             return;
@@ -184,7 +192,8 @@ void ImagePreviewController::onNeedIconFallback(const QUrl &url, const QSize &ta
     FileInfoPointer info = InfoFactory::create<FileInfo>(url);
     if (info) {
         QIcon icon = info->fileIcon();
-        result = icon.pixmap(targetSize, qApp->devicePixelRatio());
+        // Request square icon with devicePixelRatio, QIcon will maintain its aspect ratio
+        result = icon.pixmap(iconSizeSquare, dpr);
         if (!result.isNull()) {
             Q_EMIT previewReady(url, result);
             return;
