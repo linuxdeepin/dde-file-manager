@@ -87,7 +87,7 @@ bool ImagePreviewWidget::isAnimatedMimeType(const QString &mimeType)
 {
     const QList<QByteArray> imageFormats = QImageReader::imageFormatsForMimeType(mimeType.toUtf8());
     return std::any_of(imageFormats.begin(), imageFormats.end(),
-                       [](const QByteArray &format) { return QMovie::supportedFormats().contains(format); });
+                       [](const QByteArray &format) { return format == QByteArrayLiteral("gif"); });
 }
 
 QSize ImagePreviewWidget::maximumPreviewSize()
