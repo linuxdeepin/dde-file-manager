@@ -118,6 +118,7 @@ enum ItemRoles {
     kItemGroupDisplayIndex = Qt::UserRole + 41,
     kItemGroupExpandedRole = Qt::UserRole + 42,
     kItemGroupFileCount = Qt::UserRole + 43,
+    kItemFileIconRole = Qt::UserRole + 44,    // item file really icon, not thumnal
     kItemUnknowRole = Qt::UserRole + 999
 };
 

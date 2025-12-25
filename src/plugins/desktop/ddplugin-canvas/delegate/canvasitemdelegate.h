@@ -63,7 +63,7 @@ public:
 protected:
     void initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const override;
     QRect textPaintRect(const QStyleOptionViewItem &option, const QModelIndex &index, const QRect &rText, bool elide) const;
-    static QRectF paintIcon(QPainter *painter, const QIcon &icon, const PaintIconOpts &opts);
+    static std::optional<QRectF> paintIcon(QPainter *painter, const QIcon &icon, const PaintIconOpts &opts);
     static QRectF paintEmblems(QPainter *painter, const QRectF &rect, const FileInfoPointer &info);
 
     void paintBackground(QPainter *painter, const QStyleOptionViewItem &option, const QRect &iconRect) const;

@@ -231,10 +231,18 @@ void BaseItemDelegate::paintDragIcon(QPainter *painter, const QStyleOptionViewIt
 
     painter->setRenderHint(QPainter::Antialiasing, true);
     painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
-    ItemDelegateHelper::paintIcon(painter, opt.icon,
-                                  { iconRect, Qt::AlignCenter,
-                                    QIcon::Normal, QIcon::Off,
-                                    ViewMode::kIconMode, isThumnailIconIndex(index) });
+    auto drawFileIcon = ItemDelegateHelper::paintIcon(painter, opt.icon,
+                                                      { iconRect, Qt::AlignCenter,
+                                                        QIcon::Normal, QIcon::Off,
+                                                        ViewMode::kIconMode, isThumnailIconIndex(index) });
+    // If the thumbnail drawing is empty, then redraw the file fileicon
+    if (!drawFileIcon) {
+        const QIcon &fileIcon = index.data(dfmbase::Global::ItemRoles::kItemFileIconRole).value<QIcon>();
+        ItemDelegateHelper::paintIcon(painter, fileIcon,
+                                      { iconRect, Qt::AlignCenter,
+                                        QIcon::Normal, QIcon::Off,
+                                        ViewMode::kIconMode, false });
+    }
 }
 
 QSize BaseItemDelegate::getIndexIconSize(const QStyleOptionViewItem &option, const QModelIndex &index, const QSize &size) const

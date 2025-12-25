@@ -5,6 +5,7 @@
 #include "listitempaintproxy.h"
 #include "fileview.h"
 #include "utils/itemdelegatehelper.h"
+#include <dfm-base/dfm_global_defines.h>
 
 using namespace dfmplugin_workspace;
 
@@ -20,7 +21,14 @@ void ListItemPaintProxy::drawIcon(QPainter *painter, QRectF *rect, const QStyleO
     *rect = iconRect(index, rect->toRect());
 
     bool isEnabled = option.state & QStyle::State_Enabled;
-    ItemDelegateHelper::paintIcon(painter, option.icon, { *rect, Qt::AlignCenter, isEnabled ? QIcon::Normal : QIcon::Disabled });
+    auto drawFileIcon = ItemDelegateHelper::paintIcon(painter, option.icon, { *rect, Qt::AlignCenter, isEnabled ? QIcon::Normal : QIcon::Disabled, QIcon::Off, dfmbase::Global::ViewMode::kListMode,
+                                                                              isThumnailIconIndex(index) });
+    // If the thumbnail drawing is empty, then redraw the file fileicon
+    if (!drawFileIcon) {
+        const QIcon &fileIcon = index.data(dfmbase::Global::ItemRoles::kItemFileIconRole).value<QIcon>();
+        ItemDelegateHelper::paintIcon(painter, fileIcon, { *rect, Qt::AlignCenter, isEnabled ? QIcon::Normal : QIcon::Disabled , QIcon::Off, dfmbase::Global::ViewMode::kListMode,
+                                                           isThumnailIconIndex(index) });
+    }
 }
 
 QRectF ListItemPaintProxy::rectByType(RectOfItemType type, const QModelIndex &index)
