@@ -221,6 +221,11 @@ bool FileManagerWindowPrivate::isAnimationEnabled() const
     return DConfigManager::instance()->value(kAnimationDConfName, kAnimationSidebarEnable, true).toBool();
 }
 
+bool FileManagerWindowPrivate::isDetailViewAnimationEnabled() const
+{
+    return DConfigManager::instance()->value(kAnimationDConfName, kAnimationDetailviewEnable, true).toBool();
+}
+
 bool FileManagerWindowPrivate::setupAnimation(bool expanded)
 {
     sideBar->setVisible(true);
@@ -459,7 +464,7 @@ void FileManagerWindowPrivate::animateDetailSplitter(bool show)
     if (!detailSplitter || !detailSpace)
         return;
 
-    if (!isAnimationEnabled()) {
+    if (!isDetailViewAnimationEnabled()) {
         if (show) {
             detailSpace->setVisible(true);
             setDetailSplitterPosition(lastDetailSpaceWidth);

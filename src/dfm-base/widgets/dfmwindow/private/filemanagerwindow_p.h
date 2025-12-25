@@ -121,6 +121,7 @@ private:
     void configureAnimation(int start, int end);
     void connectAnimationSignals();
     bool isAnimationEnabled() const;
+    bool isDetailViewAnimationEnabled() const;   // DetailSpace 专用动画检查
 
     // DetailSpace splitter internal methods
     void initDetailSplitter();
