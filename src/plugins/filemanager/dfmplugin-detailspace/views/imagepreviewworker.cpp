@@ -11,6 +11,7 @@
 #include <dfm-framework/dpf.h>
 
 #include <QImageReader>
+#include <QMovie>
 #include <QApplication>
 
 Q_DECLARE_METATYPE(QString *)
@@ -51,10 +52,16 @@ void ImagePreviewWorker::loadPreview(const QUrl &url, const QSize &targetSize)
 
     QPixmap result;
 
-    // Strategy 1: For animated image types (GIF, etc.), emit signal for QMovie handling
+    // Strategy 1: For animated image types (GIF, etc.), verify with QMovie before emitting signal
     if (!mimeType.isEmpty() && ImagePreviewWidget::isAnimatedMimeType(mimeType)) {
-        Q_EMIT animatedImageReady(url, filePath);
-        return;
+        // Verify the file is actually a valid animated image using QMovie
+        QMovie movie(filePath);
+        if (movie.isValid() && movie.frameCount() > 1) {
+            // Valid animated image - delegate to QMovie in main thread
+            Q_EMIT animatedImageReady(url, filePath);
+            return;
+        }
+        // Invalid or single-frame - fall through to static image loading
     }
 
     // Strategy 2: For static image types, load original image
