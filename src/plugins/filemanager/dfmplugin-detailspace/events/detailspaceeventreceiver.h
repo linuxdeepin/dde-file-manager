@@ -24,7 +24,6 @@ public:
 
 public slots:
     void handleTileBarShowDetailView(quint64 windowId, bool checked);
-    void handleSetSelect(quint64 windowId, const QUrl &url);
     bool handleViewExtensionRegister(CustomViewExtensionView view, int index);
     bool handleBasicViewExtensionRegister(BasicViewFieldFunc func, const QString &scheme);
     bool handleBasicViewExtensionRootRegister(BasicViewFieldFunc func, const QString &scheme);

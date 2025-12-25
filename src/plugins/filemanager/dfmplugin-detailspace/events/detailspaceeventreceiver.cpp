@@ -46,11 +46,6 @@ void DetailSpaceEventReceiver::handleTileBarShowDetailView(quint64 windowId, boo
     DetailSpaceHelper::showDetailView(windowId, checked);
 }
 
-void DetailSpaceEventReceiver::handleSetSelect(quint64 windowId, const QUrl &url)
-{
-    DetailSpaceHelper::setDetailViewSelectFileUrl(windowId, url);
-}
-
 bool DetailSpaceEventReceiver::handleViewExtensionRegister(CustomViewExtensionView view, int index)
 {
     return DetailManager::instance().registerExtensionView(view, index);

@@ -115,14 +115,9 @@ void DetailSpaceHelper::setDetailViewByUrl(DetailSpaceWidget *w, const QUrl &url
             return;
         }
 
+        // Simply set the URL - DetailView::setUrl() will handle all widget creation
+        // including extension widgets, following Single Responsibility Principle
         w->setCurrentUrl(url);
-        QMap<int, QWidget *> widgetMap = DetailManager::instance().createExtensionView(w->currentUrl());
-        if (!widgetMap.isEmpty()) {
-            QList<int> indexs = widgetMap.keys();
-            for (int &index : indexs) {
-                w->insterExpandControl(index, widgetMap.value(index));
-            }
-        }
     } else {
         fmWarning() << "Cannot set detail view content - widget is null";
     }
