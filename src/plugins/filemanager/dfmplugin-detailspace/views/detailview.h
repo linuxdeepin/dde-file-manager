@@ -33,6 +33,9 @@ public:
 public slots:
     void setUrl(const QUrl &url, int widgetFilter);
 
+private:
+    void createExtensionWidgets(const QUrl &url);
+
 private slots:
     void onPreviewReady(const QUrl &url, const QPixmap &pixmap);
     void onAnimatedImageReady(const QUrl &url, const QString &filePath);

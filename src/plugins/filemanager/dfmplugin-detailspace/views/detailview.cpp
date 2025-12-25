@@ -6,6 +6,7 @@
 #include "imagepreviewwidget.h"
 #include "imagepreviewworker.h"
 #include "filebaseinfoview.h"
+#include "utils/detailmanager.h"
 
 #include <dfm-base/base/schemefactory.h>
 
@@ -84,6 +85,7 @@ void DetailView::setUrl(const QUrl &url, int widgetFilter)
     m_currentUrl = url;
     createHeadUI(url, widgetFilter);
     createBasicWidget(url, widgetFilter);
+    createExtensionWidgets(url);
 }
 
 void DetailView::onPreviewReady(const QUrl &url, const QPixmap &pixmap)
@@ -215,4 +217,18 @@ void DetailView::resizeEvent(QResizeEvent *event)
     // We always load images at maximum size (500px), and paintEvent scales them.
     // This approach (inspired by Dolphin) provides smooth, immediate resizing
     // without the CPU overhead of reloading large images.
+}
+
+void DetailView::createExtensionWidgets(const QUrl &url)
+{
+    // Create extension widgets provided by other plugins
+    // This centralizes widget lifecycle management in DetailView::setUrl()
+    // following Single Responsibility Principle
+    QMap<int, QWidget *> widgetMap = DetailManager::instance().createExtensionView(url);
+    if (!widgetMap.isEmpty()) {
+        QList<int> indexes = widgetMap.keys();
+        for (int index : indexes) {
+            insertCustomControl(index, widgetMap.value(index));
+        }
+    }
 }
