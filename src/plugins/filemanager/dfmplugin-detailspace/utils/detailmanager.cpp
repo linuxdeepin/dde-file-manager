@@ -18,41 +18,36 @@ DetailManager &DetailManager::instance()
 }
 
 /*!
- * /brief Widget extension registration
- * /param view Function pointer to create widget
- * /param index position to insert
- * /return true registration success. false registration failed
+ * \brief Register extension view with reusable pattern
+ * \param create Function to create the widget (called once)
+ * \param update Function to update widget data (called on each URL change)
+ * \param shouldShow Function to determine visibility (called on each URL change)
+ * \param index Position to insert (-1 for append)
+ * \return true if registration succeeded
  */
-bool DetailManager::registerExtensionView(CustomViewExtensionView view, int index)
+bool DetailManager::registerExtensionView(ViewExtensionCreateFunc create,
+                                          ViewExtensionUpdateFunc update,
+                                          ViewExtensionShouldShowFunc shouldShow,
+                                          int index)
 {
-    if (constructList.keys().contains(index) && index != -1) {
-        fmWarning() << "The current index has registered the associated construction class, index:" << index;
+    if (!create || !update || !shouldShow) {
+        fmWarning() << "Invalid extension view functions provided";
         return false;
     }
 
-    constructList.insert(index, view);
+    ViewExtensionInfo info;
+    info.create = create;
+    info.update = update;
+    info.shouldShow = shouldShow;
+    info.index = index;
+
+    m_extensionInfos.append(info);
     return true;
 }
 
-/*!
- * /brief Create widgets based on registered schemes and function pointers
- * /param url file url
- * /return Returns a mapping table of widgets and display positions
- */
-QMap<int, QWidget *> DetailManager::createExtensionView(const QUrl &url)
+QList<ViewExtensionInfo> DetailManager::extensionInfos() const
 {
-    QMap<int, QWidget *> temp {};
-    auto keys { constructList.keys() };
-    for (int index : keys) {
-        auto &&values { constructList.values(index) };
-        for (CustomViewExtensionView func : values) {
-            QWidget *g = func(url);
-            if (g != nullptr)
-                temp.insert(index, g);
-        }
-    }
-
-    return temp;
+    return m_extensionInfos;
 }
 
 /*!

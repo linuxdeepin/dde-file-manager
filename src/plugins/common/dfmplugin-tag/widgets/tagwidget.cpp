@@ -16,6 +16,12 @@
 
 using namespace dfmplugin_tag;
 
+TagWidget::TagWidget(QWidget *parent)
+    : DFrame(parent),
+      d(new TagWidgetPrivate(this, QUrl()))
+{
+}
+
 TagWidget::TagWidget(QUrl url, QWidget *parent)
     : DFrame(parent),
       d(new TagWidgetPrivate(this, url))
@@ -47,6 +53,15 @@ void TagWidget::initialize()
 void TagWidget::setLayoutHorizontally(bool horizontal)
 {
     d->horizontalLayout = horizontal;
+}
+
+void TagWidget::setUrl(const QUrl &url)
+{
+    if (d->url == url)
+        return;
+
+    d->url = url;
+    loadTags(url);
 }
 
 void TagWidget::loadTags(const QUrl &url)

@@ -19,16 +19,20 @@ class ImagePreviewWidget;
 class ImagePreviewController;
 class FileInfoWidget;
 
+// Extension widget holder for reusable pattern
+struct ExtensionWidgetHolder {
+    QWidget *widget { nullptr };
+    QFrame *frame { nullptr };
+    ViewExtensionUpdateFunc update;
+    ViewExtensionShouldShowFunc shouldShow;
+};
+
 class DetailView : public DTK_WIDGET_NAMESPACE::DFrame
 {
     Q_OBJECT
 public:
     explicit DetailView(QWidget *parent = nullptr);
     virtual ~DetailView();
-
-    bool addCustomWidget(QWidget *widget);
-    bool insertCustomWidget(int index, QWidget *widget);
-    void removeWidget();
 
 public slots:
     void setUrl(const QUrl &url);
@@ -39,9 +43,10 @@ private slots:
 
 private:
     void initInfoUI();
-    void createExtensionWidgets(const QUrl &url);
+    void createExtensionWidgets();
     void updateHeadUI(const QUrl &url);
     void updateBasicWidget(const QUrl &url);
+    void updateExtensionWidgets(const QUrl &url);
     void updatePreviewSize();
 
 protected:
@@ -52,11 +57,14 @@ private:
     QFrame *expandFrame { nullptr };
     QVBoxLayout *vLayout { nullptr };
     QVBoxLayout *mainLayout { nullptr };
-    QList<QWidget *> expandList {};
 
     ImagePreviewWidget *m_previewWidget { nullptr };
     ImagePreviewController *m_previewController { nullptr };
     FileInfoWidget *m_fileInfoWidget { nullptr };
+
+    // Reusable extension widgets
+    QList<ExtensionWidgetHolder> m_extensionWidgets;
+
     QUrl m_currentUrl;
 };
 

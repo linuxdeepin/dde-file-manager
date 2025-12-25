@@ -26,7 +26,6 @@ public:
     explicit DetailSpaceWidget(QFrame *parent = nullptr);
     void setCurrentUrl(const QUrl &url) override;
     QUrl currentUrl() const override;
-    void removeWidgets();
 
 private slots:
     void initUiForSizeMode();

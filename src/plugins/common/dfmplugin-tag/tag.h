@@ -38,15 +38,19 @@ private slots:
     void onAllPluginsStarted();
 
 private:
+    // Extension view functions for detailspace
     static QWidget *createTagWidgetForPropertyDialog(const QUrl &url);
     static QWidget *createTagWidgetForDetailView(const QUrl &url);
+    static void updateTagWidgetForDetailView(QWidget *widget, const QUrl &url);
+    static bool shouldShowTagWidget(const QUrl &url);
+
     void followEvents();
     void bindScene(const QString &parentScene);
     void onMenuSceneAdded(const QString &scene);
     void bindEvents();
     void bindWindows();
     void regToPropertyDialog();
-    void regTodDtailspace();
+    void regToDetailspace();
     void registerPlugin(const QString &pluginName, std::function<void()> callback);
     bool waitForPlugin(const QString &pluginName, std::function<void()> callback);
 

@@ -24,7 +24,10 @@ public:
 
 public slots:
     void handleTileBarShowDetailView(quint64 windowId, bool checked);
-    bool handleViewExtensionRegister(CustomViewExtensionView view, int index);
+    bool handleViewExtensionRegister(ViewExtensionCreateFunc create,
+                                     ViewExtensionUpdateFunc update,
+                                     ViewExtensionShouldShowFunc shouldShow,
+                                     int index);
     bool handleBasicViewExtensionRegister(BasicViewFieldFunc func, const QString &scheme);
     bool handleBasicViewExtensionRootRegister(BasicViewFieldFunc func, const QString &scheme);
     bool handleBasicFiledFilterAdd(const QString &scheme, const QStringList &enums);
