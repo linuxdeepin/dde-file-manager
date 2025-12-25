@@ -45,7 +45,10 @@ bool DetailView::insertCustomControl(int index, QWidget *widget)
 
     if (widget) {
         widget->setParent(this);
-        widget->setMaximumWidth(scrollArea->width() - vLayout->contentsMargins().right());
+        // Don't set MaximumWidth - let widget follow parent container width naturally
+        // Widget will resize automatically with the layout system
+        widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+
         QFrame *frame = new QFrame(this);
         DPushButton *btn = new DPushButton(frame);
         btn->setEnabled(false);
@@ -156,7 +159,7 @@ void DetailView::createHeadUI(const QUrl &url, int widgetFilter)
                     if (!m_currentUrl.isEmpty() && m_previewWidget) {
                         // Always request preview at maximum size for best quality
                         m_previewController->requestPreview(m_currentUrl,
-                                                           ImagePreviewWidget::maximumPreviewSize());
+                                                            ImagePreviewWidget::maximumPreviewSize());
                     }
                 });
     }
@@ -202,10 +205,9 @@ void DetailView::resizeEvent(QResizeEvent *event)
     QFrame::resizeEvent(event);
     updatePreviewSize();
 
-    // Update info view width
-    if (m_fileBaseInfoView) {
-        m_fileBaseInfoView->setMaximumWidth(event->size().width() - 20);
-    }
+    // All custom control widgets (including m_fileBaseInfoView) automatically
+    // resize with the layout system thanks to QSizePolicy::Expanding.
+    // No manual width adjustment needed!
 
     // No need to reload preview on resize!
     // We always load images at maximum size (500px), and paintEvent scales them.
