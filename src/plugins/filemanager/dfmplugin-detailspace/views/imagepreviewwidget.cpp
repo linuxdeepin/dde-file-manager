@@ -74,8 +74,11 @@ void ImagePreviewWidget::stopAnimatedImage()
 
 QSize ImagePreviewWidget::sizeHint() const
 {
-    int availableWidth = parentWidget() ? parentWidget()->width() : 280;
-    int previewWidth = availableWidth - 2 * kPreviewMargin;
+    // Parent widget is expandFrame inside scrollArea
+    int availableWidth = parentWidget() ? parentWidget()->width() : 260;
+
+    // Apply internal preview margins
+    int previewWidth = availableWidth;
     int previewHeight = static_cast<int>(previewWidth / kPreviewAspectRatio);
     return QSize(previewWidth, previewHeight);
 }
@@ -103,8 +106,7 @@ void ImagePreviewWidget::paintEvent(QPaintEvent *event)
     QPainter painter(this);
     painter.setRenderHint(QPainter::SmoothPixmapTransform);
 
-    QRect availableRect = rect().adjusted(kPreviewMargin, kPreviewMargin,
-                                          -kPreviewMargin, -kPreviewMargin);
+    const QRect availableRect = rect();
 
     if (m_pixmap.isNull()) {
         return;

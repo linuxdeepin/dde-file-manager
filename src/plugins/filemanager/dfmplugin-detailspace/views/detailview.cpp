@@ -55,7 +55,6 @@ bool DetailView::insertCustomControl(int index, QWidget *widget)
         btn->setFixedHeight(1);
         QVBoxLayout *vlayout = new QVBoxLayout(frame);
         vlayout->setContentsMargins(0, 0, 0, 0);
-        vlayout->setSpacing(10);
         vlayout->addWidget(btn);
         vlayout->addWidget(widget);
         frame->setLayout(vlayout);
@@ -125,10 +124,11 @@ void DetailView::initInfoUI()
     vLayout = new QVBoxLayout;
     vLayout->addStretch();
     expandFrame->setLayout(vLayout);
-    vLayout->setContentsMargins(0, 0, 8, 0);
+    vLayout->setContentsMargins(0, 0, 0, 0);
 
     mainLayout = new QVBoxLayout;
-    mainLayout->addWidget(scrollArea, Qt::AlignCenter);
+    mainLayout->setContentsMargins(10, 10, 10, 10);
+    mainLayout->addWidget(scrollArea);
     setFrameShape(QFrame::NoFrame);
     setLayout(mainLayout);
 
@@ -153,6 +153,8 @@ void DetailView::createHeadUI(const QUrl &url, int widgetFilter)
     if (!m_previewWidget) {
         m_previewWidget = new ImagePreviewWidget(this);
         vLayout->insertWidget(0, m_previewWidget, 0, Qt::AlignHCenter);
+        // Set spacing between preview and other widgets (10px bottom margin for preview)
+        vLayout->setSpacing(10);
 
         connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged,
                 this, [this]() {
