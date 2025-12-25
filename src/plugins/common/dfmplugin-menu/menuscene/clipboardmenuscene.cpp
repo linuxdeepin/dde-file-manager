@@ -128,7 +128,7 @@ void ClipBoardMenuScene::updateState(QMenu *parent)
             // 检查是否有传统的剪贴板action或者是否有图像数据
             const QMimeData *mimeData = QApplication::clipboard()->mimeData();
             bool hasValidClipboardData = (ClipBoard::instance()->clipboardAction() != ClipBoard::kUnknownAction)
-                                        || (mimeData && mimeData->hasImage());
+                    || (mimeData && mimeData->hasImage());
 
             bool disabled = !hasValidClipboardData
                     || !curDirInfo->isAttributes(OptInfoType::kIsWritable);
@@ -138,6 +138,12 @@ void ClipBoardMenuScene::updateState(QMenu *parent)
         if (auto copy = d->predicateAction.value(ActionID::kCopy)) {
             if (!d->focusFileInfo->isAttributes(OptInfoType::kIsReadable) && !d->focusFileInfo->isAttributes(OptInfoType::kIsSymLink))
                 copy->setDisabled(true);
+        }
+
+        if (auto cut = d->predicateAction.value(ActionID::kCut)) {
+            const FileInfoPointer &fileInfo = InfoFactory::create<FileInfo>(d->currentDir);
+            if (!fileInfo || !fileInfo->isAttributes(OptInfoType::kIsWritable))
+                cut->setDisabled(true);
         }
     }
 
