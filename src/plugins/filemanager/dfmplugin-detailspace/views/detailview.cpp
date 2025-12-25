@@ -154,7 +154,9 @@ void DetailView::createHeadUI(const QUrl &url, int widgetFilter)
         connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged,
                 this, [this]() {
                     if (!m_currentUrl.isEmpty() && m_previewWidget) {
-                        m_previewController->requestPreview(m_currentUrl, m_previewWidget->sizeHint());
+                        // Always request preview at maximum size for best quality
+                        m_previewController->requestPreview(m_currentUrl,
+                                                           ImagePreviewWidget::maximumPreviewSize());
                     }
                 });
     }
@@ -162,8 +164,9 @@ void DetailView::createHeadUI(const QUrl &url, int widgetFilter)
     m_previewWidget->show();
     updatePreviewSize();
 
-    // Request preview asynchronously
-    m_previewController->requestPreview(url, m_previewWidget->sizeHint());
+    // Always request preview at maximum size (500px width)
+    // This ensures smooth resizing without reloading - paintEvent will scale it
+    m_previewController->requestPreview(url, ImagePreviewWidget::maximumPreviewSize());
 }
 
 void DetailView::createBasicWidget(const QUrl &url, int widgetFilter)
@@ -204,8 +207,8 @@ void DetailView::resizeEvent(QResizeEvent *event)
         m_fileBaseInfoView->setMaximumWidth(event->size().width() - 20);
     }
 
-    // If URL is set, reload preview with new size
-    if (!m_currentUrl.isEmpty() && m_previewWidget && m_previewWidget->isVisible()) {
-        m_previewController->requestPreview(m_currentUrl, m_previewWidget->sizeHint());
-    }
+    // No need to reload preview on resize!
+    // We always load images at maximum size (500px), and paintEvent scales them.
+    // This approach (inspired by Dolphin) provides smooth, immediate resizing
+    // without the CPU overhead of reloading large images.
 }

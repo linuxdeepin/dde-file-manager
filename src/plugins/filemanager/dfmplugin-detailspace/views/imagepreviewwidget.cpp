@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "imagepreviewwidget.h"
+#include "detailspacewidget.h"
 
 #include <QImageReader>
 #include <QMovie>
@@ -84,6 +85,15 @@ bool ImagePreviewWidget::isAnimatedMimeType(const QString &mimeType)
     const QList<QByteArray> imageFormats = QImageReader::imageFormatsForMimeType(mimeType.toUtf8());
     return std::any_of(imageFormats.begin(), imageFormats.end(),
                        [](const QByteArray &format) { return QMovie::supportedFormats().contains(format); });
+}
+
+QSize ImagePreviewWidget::maximumPreviewSize()
+{
+    // Calculate preview size for maximum DetailSpace width (500px)
+    // This is the single source of truth for preview size calculation
+    int maxPreviewWidth = DetailSpaceWidget::kMaximumWidth - 2 * kPreviewMargin;
+    int maxPreviewHeight = static_cast<int>(maxPreviewWidth / kPreviewAspectRatio);
+    return QSize(maxPreviewWidth, maxPreviewHeight);
 }
 
 void ImagePreviewWidget::paintEvent(QPaintEvent *event)
