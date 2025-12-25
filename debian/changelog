@@ -1,3 +1,38 @@
+dde-file-manager (6.5.111) unstable; urgency=medium
+
+  * fix: improve file copy error handling and method naming
+  * fix: enhance file operation error logging
+  * feat: add isSameMountPoint utility function
+  * fix: enhance error logging in file operations
+  * feat: implement detail space drag resizing
+  * feat: implement sequential window resize priority
+  * fix: prevent view options button signals during window state changes
+  * feat: implement proportional image scaling in detail space
+  * feat: support animated image preview in detail view
+  * feat: optimize image preview resizing performance
+  * fix: improve custom widget layout handling
+  * fix: adjust detail view layout margins and spacing
+  * fix: improve icon fallback scaling for image preview
+  * fix: fix animated image detection logic
+  * refactor: centralize detail view extension widget creation
+  * refactor: simplify detail space widget URL handling
+  * refactor: optimize detail space widget performance
+  * refactor: optimize detail view extension widget lifecycle
+  * fix: improve animated image detection logic
+  * feat: implement detail space elastic drag behavior
+  * fix: restore detail view animation control
+  * i18n: Translate dde-file-manager.ts in fr
+  * feat: implement tab drag and drop between windows
+  * feat: implement tab pinning feature
+  * feat: implement pinned tabs functionality
+  * fix: fix clipboard menu state update logic
+  * chore: Update translations
+  * feat: change default disk encryption algorithm to AES
+  * fix: resolve autostart setting failure and job file persistence issues
+  * feat: [services]add systemd service files and security hardening configs
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 25 Dec 2025 21:29:23 +0800
+
 dde-file-manager (6.5.110) unstable; urgency=medium
 
   * test(dfmplugin-workspace): add unit tests for utils and views
