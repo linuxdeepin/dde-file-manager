@@ -194,8 +194,12 @@ void ViewOptionsWidgetPrivate::initializeUi()
 
 void ViewOptionsWidgetPrivate::initConnect()
 {
-    connect(displayPreviewCheckBox, &QCheckBox::stateChanged, this, [this](int state) {
+    connect(displayPreviewCheckBox, &QCheckBox::checkStateChanged, this, [this](Qt::CheckState state) {
         bool isChecked = (state == Qt::Checked);
+        if (isChecked && DConfigManager::instance()->value(kViewDConfName, kDisplayPreviewVisibleKey).toBool())
+            return;
+        if (!isChecked && !DConfigManager::instance()->value(kViewDConfName, kDisplayPreviewVisibleKey).toBool())
+            return;
         fmDebug() << "Display preview state changed to:" << isChecked;
         Q_EMIT q->displayPreviewVisibleChanged(isChecked);
         DConfigManager::instance()->setValue(kViewDConfName, kDisplayPreviewVisibleKey, isChecked);
