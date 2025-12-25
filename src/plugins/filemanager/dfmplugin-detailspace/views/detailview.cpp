@@ -30,70 +30,12 @@ DetailView::~DetailView()
 {
 }
 
-bool DetailView::addCustomWidget(QWidget *widget)
-{
-    if (widget) {
-        // -1 means append at the end (before stretch)
-        insertCustomWidget(-1, widget);
-        return true;
-    }
-    return false;
-}
-
-bool DetailView::insertCustomWidget(int index, QWidget *widget)
-{
-    // Core widgets occupy indices 0 (preview) and 1 (file info)
-    // Extension widgets start from index 2
-    // The stretch item is at the end of the layout
-    static constexpr int kCoreWidgetCount = 2;
-
-    // Calculate actual insert position
-    // -1 means append before stretch, otherwise offset by core widget count
-    int actualIndex = (index == -1)
-            ? vLayout->count() - 1   // Before stretch
-            : qMin(vLayout->count() - 1, index + kCoreWidgetCount);
-
-    if (widget) {
-        widget->setParent(this);
-        // Don't set MaximumWidth - let widget follow parent container width naturally
-        // Widget will resize automatically with the layout system
-        widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-
-        QFrame *frame = new QFrame(this);
-        auto *seperator = new DHorizontalLine(frame);
-        seperator->setFixedHeight(1);
-        QVBoxLayout *vlayout = new QVBoxLayout(frame);
-        vlayout->setContentsMargins(0, 0, 0, 0);
-        vlayout->addWidget(seperator);
-        vlayout->addWidget(widget);
-        frame->setLayout(vlayout);
-        QVBoxLayout *layout = qobject_cast<QVBoxLayout *>(expandFrame->layout());
-        layout->insertWidget(actualIndex, frame, 0, Qt::AlignTop);
-
-        expandList.append(frame);
-        return true;
-    }
-    return false;
-}
-
-void DetailView::removeWidget()
-{
-    for (QWidget *w : expandList) {
-        expandList.removeOne(w);
-        QVBoxLayout *layout = qobject_cast<QVBoxLayout *>(expandFrame->layout());
-        layout->removeWidget(w);
-        delete w;
-    }
-    // Note: m_fileInfoWidget is NOT deleted here - it's reused across URL changes
-    // This prevents UI flicker and improves performance
-}
-
 void DetailView::setUrl(const QUrl &url)
 {
     m_currentUrl = url;
     updateHeadUI(url);
     updateBasicWidget(url);
-    createExtensionWidgets(url);
+    updateExtensionWidgets(url);
 }
 
 void DetailView::onPreviewReady(const QUrl &url, const QPixmap &pixmap)
@@ -177,7 +119,49 @@ void DetailView::initInfoUI()
     infoLayout->addWidget(m_fileInfoWidget);
     infoFrame->setLayout(infoLayout);
     vLayout->insertWidget(1, infoFrame, 0, Qt::AlignTop);
-    // Note: infoFrame is NOT added to expandList - it's a core widget!
+
+    // 3. Create extension widgets once
+    createExtensionWidgets();
+}
+
+void DetailView::createExtensionWidgets()
+{
+    // Get all registered extensions and create widgets once
+    const auto extensions = DetailManager::instance().extensionInfos();
+
+    for (const auto &extInfo : extensions) {
+        // Create widget using create function (pass empty URL, will be updated later)
+        QWidget *widget = extInfo.create(QUrl());
+        if (!widget)
+            continue;
+
+        widget->setParent(this);
+        widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+
+        // Wrap with separator frame
+        QFrame *frame = new QFrame(this);
+        auto *separator = new DHorizontalLine(frame);
+        separator->setFixedHeight(1);
+        QVBoxLayout *frameLayout = new QVBoxLayout(frame);
+        frameLayout->setContentsMargins(0, 0, 0, 0);
+        frameLayout->addWidget(separator);
+        frameLayout->addWidget(widget);
+        frame->setLayout(frameLayout);
+
+        // Add to layout (after core widgets, before stretch)
+        vLayout->insertWidget(vLayout->count() - 1, frame, 0, Qt::AlignTop);
+
+        // Store holder for later updates
+        ExtensionWidgetHolder holder;
+        holder.widget = widget;
+        holder.frame = frame;
+        holder.update = extInfo.update;
+        holder.shouldShow = extInfo.shouldShow;
+        m_extensionWidgets.append(holder);
+
+        // Initially hidden until setUrl is called
+        frame->setVisible(false);
+    }
 }
 
 void DetailView::updateHeadUI(const QUrl &url)
@@ -200,6 +184,21 @@ void DetailView::updateBasicWidget(const QUrl &url)
     m_fileInfoWidget->setUrl(url);
 }
 
+void DetailView::updateExtensionWidgets(const QUrl &url)
+{
+    // Update all extension widgets - no deletion/recreation!
+    for (auto &holder : m_extensionWidgets) {
+        // Check if widget should be visible for this URL
+        bool visible = holder.shouldShow(url);
+        holder.frame->setVisible(visible);
+
+        if (visible) {
+            // Update widget data
+            holder.update(holder.widget, url);
+        }
+    }
+}
+
 void DetailView::updatePreviewSize()
 {
     if (m_previewWidget) {
@@ -214,26 +213,11 @@ void DetailView::resizeEvent(QResizeEvent *event)
     QFrame::resizeEvent(event);
     updatePreviewSize();
 
-    // All custom control widgets (including m_fileBaseInfoView) automatically
-    // resize with the layout system thanks to QSizePolicy::Expanding.
-    // No manual width adjustment needed!
+    // All custom control widgets automatically resize with the layout system
+    // thanks to QSizePolicy::Expanding. No manual width adjustment needed!
 
     // No need to reload preview on resize!
     // We always load images at maximum size (500px), and paintEvent scales them.
     // This approach (inspired by Dolphin) provides smooth, immediate resizing
     // without the CPU overhead of reloading large images.
-}
-
-void DetailView::createExtensionWidgets(const QUrl &url)
-{
-    // Create extension widgets provided by other plugins
-    // This centralizes widget lifecycle management in DetailView::setUrl()
-    // following Single Responsibility Principle
-    QMap<int, QWidget *> widgetMap = DetailManager::instance().createExtensionView(url);
-    if (!widgetMap.isEmpty()) {
-        QList<int> indexes = widgetMap.keys();
-        for (int index : indexes) {
-            insertCustomWidget(index, widgetMap.value(index));
-        }
-    }
 }

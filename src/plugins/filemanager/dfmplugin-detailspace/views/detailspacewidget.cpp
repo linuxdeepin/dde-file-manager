@@ -56,20 +56,14 @@ void DetailSpaceWidget::setCurrentUrl(const QUrl &url)
     if (!isVisible())
         return;
 
-    // Only remove extension widgets - core widgets (preview, file info) are reused!
+    // All widgets are reused - just update data, no deletion/recreation needed!
     // This prevents UI flicker and improves performance
-    removeWidgets();
     detailView->setUrl(targetUrl);
 }
 
 QUrl DetailSpaceWidget::currentUrl() const
 {
     return detailSpaceUrl;
-}
-
-void DetailSpaceWidget::removeWidgets()
-{
-    detailView->removeWidget();
 }
 
 void DetailSpaceWidget::initializeUi()

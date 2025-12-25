@@ -26,11 +26,13 @@ class TagWidget : public DTK_WIDGET_NAMESPACE::DFrame
 {
     Q_OBJECT
 public:
+    explicit TagWidget(QWidget *parent = nullptr);
     TagWidget(QUrl url, QWidget *parent = nullptr);
     ~TagWidget();
 
     void initialize();
     void setLayoutHorizontally(bool horizontal);
+    void setUrl(const QUrl &url);
     void loadTags(const QUrl &url);
     QWidget *tagTitle();
     QWidget *tagLeftTitle();

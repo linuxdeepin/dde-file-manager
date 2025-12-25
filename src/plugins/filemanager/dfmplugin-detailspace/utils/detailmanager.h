@@ -11,6 +11,14 @@
 
 namespace dfmplugin_detailspace {
 
+// Extension info structure for reusable widgets
+struct ViewExtensionInfo {
+    ViewExtensionCreateFunc create;
+    ViewExtensionUpdateFunc update;
+    ViewExtensionShouldShowFunc shouldShow;
+    int index { -1 };
+};
+
 class DetailManager : public QObject
 {
     Q_OBJECT
@@ -19,8 +27,14 @@ class DetailManager : public QObject
 public:
     static DetailManager &instance();
 
-    bool registerExtensionView(CustomViewExtensionView view, int index = -1);
-    QMap<int, QWidget *> createExtensionView(const QUrl &url);
+    // Extension view registration with reusable pattern
+    bool registerExtensionView(ViewExtensionCreateFunc create,
+                               ViewExtensionUpdateFunc update,
+                               ViewExtensionShouldShowFunc shouldShow,
+                               int index = -1);
+
+    // Get all registered extensions
+    QList<ViewExtensionInfo> extensionInfos() const;
 
     bool registerBasicViewExtension(const QString &scheme, BasicViewFieldFunc func);
     bool registerBasicViewExtensionRoot(const QString &scheme, BasicViewFieldFunc func);
@@ -34,7 +48,7 @@ private:
     explicit DetailManager(QObject *parent = nullptr);
 
 private:
-    QMultiHash<int, CustomViewExtensionView> constructList {};
+    QList<ViewExtensionInfo> m_extensionInfos {};
     QHash<QString, DetailFilterType> detailFilterHashNormal {};
     QHash<QString, DetailFilterType> detailFilterHashRoot {};
     QHash<QString, BasicViewFieldFunc> basicViewFieldFuncHashNormal {};

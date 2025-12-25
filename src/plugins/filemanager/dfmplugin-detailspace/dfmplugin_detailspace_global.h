@@ -55,12 +55,21 @@ Q_ENUM_NS(BasicExpandType)
 inline constexpr int kViewAnimationDuration { 366 };
 
 using BasicExpandMap = QMultiMap<BasicFieldExpandEnum, QPair<QString, QString>>;
-using CustomViewExtensionView = std::function<QWidget *(const QUrl &url)>;
 using BasicViewFieldFunc = std::function<QMap<QString, QMultiMap<QString, QPair<QString, QString>>>(const QUrl &url)>;
+
+// Extension view function types for reusable widget pattern
+using ViewExtensionCreateFunc = std::function<QWidget *(const QUrl &url)>;
+using ViewExtensionUpdateFunc = std::function<void(QWidget *widget, const QUrl &url)>;
+using ViewExtensionShouldShowFunc = std::function<bool(const QUrl &url)>;
+
+// Legacy alias for compatibility
+using CustomViewExtensionView = ViewExtensionCreateFunc;
 
 DPDETAILSPACE_END_NAMESPACE
 
-Q_DECLARE_METATYPE(DPDETAILSPACE_NAMESPACE::CustomViewExtensionView);
+Q_DECLARE_METATYPE(DPDETAILSPACE_NAMESPACE::ViewExtensionCreateFunc);
+Q_DECLARE_METATYPE(DPDETAILSPACE_NAMESPACE::ViewExtensionUpdateFunc);
+Q_DECLARE_METATYPE(DPDETAILSPACE_NAMESPACE::ViewExtensionShouldShowFunc);
 Q_DECLARE_METATYPE(DPDETAILSPACE_NAMESPACE::BasicViewFieldFunc);
 
 #endif   // DFMPLUGIN_DETAILSPACE_GLOBAL_H

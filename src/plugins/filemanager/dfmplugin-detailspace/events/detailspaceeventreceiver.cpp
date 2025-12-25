@@ -46,9 +46,12 @@ void DetailSpaceEventReceiver::handleTileBarShowDetailView(quint64 windowId, boo
     DetailSpaceHelper::showDetailView(windowId, checked);
 }
 
-bool DetailSpaceEventReceiver::handleViewExtensionRegister(CustomViewExtensionView view, int index)
+bool DetailSpaceEventReceiver::handleViewExtensionRegister(ViewExtensionCreateFunc create,
+                                                           ViewExtensionUpdateFunc update,
+                                                           ViewExtensionShouldShowFunc shouldShow,
+                                                           int index)
 {
-    return DetailManager::instance().registerExtensionView(view, index);
+    return DetailManager::instance().registerExtensionView(create, update, shouldShow, index);
 }
 
 bool DetailSpaceEventReceiver::handleBasicViewExtensionRegister(BasicViewFieldFunc func, const QString &scheme)

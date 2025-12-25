@@ -31,11 +31,16 @@
 #include <QCoreApplication>
 
 using CustomViewExtensionView = std::function<QWidget *(const QUrl &url)>;
+using ViewExtensionCreateFunc = std::function<QWidget *(const QUrl &url)>;
+using ViewExtensionUpdateFunc = std::function<void(QWidget *widget, const QUrl &url)>;
+using ViewExtensionShouldShowFunc = std::function<bool(const QUrl &url)>;
 
 Q_DECLARE_METATYPE(QRectF *)
 Q_DECLARE_METATYPE(QList<QVariantMap> *)
 Q_DECLARE_METATYPE(QList<QUrl> *)
 Q_DECLARE_METATYPE(CustomViewExtensionView)
+Q_DECLARE_METATYPE(ViewExtensionUpdateFunc)
+Q_DECLARE_METATYPE(ViewExtensionShouldShowFunc)
 Q_DECLARE_METATYPE(QByteArray *)
 Q_DECLARE_METATYPE(Qt::DropAction *)
 Q_DECLARE_METATYPE(dfmbase::ElideTextLayout *)
@@ -81,7 +86,7 @@ bool Tag::start()
 
     // Register detail space plugin
     registerPlugin("dfmplugin-detailspace", [this]() {
-        regTodDtailspace();
+        regToDetailspace();
     });
 
     return true;
@@ -137,17 +142,32 @@ QWidget *Tag::createTagWidgetForPropertyDialog(const QUrl &url)
 
 QWidget *Tag::createTagWidgetForDetailView(const QUrl &url)
 {
-    QUrl realUrl;
-    UniversalUtils::urlTransformToLocal(url, &realUrl);
-
-    if (!TagManager::instance()->canTagFile(realUrl))
-        return nullptr;
-
-    TagWidget *tagWidget = new TagWidget(realUrl);
+    Q_UNUSED(url)
+    // Widget is created once and reused - don't initialize with URL here
+    // URL will be set via updateTagWidgetForDetailView
+    TagWidget *tagWidget = new TagWidget;
     tagWidget->setLayoutHorizontally(true);
     tagWidget->initialize();
     tagWidget->setFrameShape(QFrame::NoFrame);
     return tagWidget;
+}
+
+void Tag::updateTagWidgetForDetailView(QWidget *widget, const QUrl &url)
+{
+    auto *tagWidget = qobject_cast<TagWidget *>(widget);
+    if (!tagWidget)
+        return;
+
+    QUrl realUrl;
+    UniversalUtils::urlTransformToLocal(url, &realUrl);
+    tagWidget->setUrl(realUrl);
+}
+
+bool Tag::shouldShowTagWidget(const QUrl &url)
+{
+    QUrl realUrl;
+    UniversalUtils::urlTransformToLocal(url, &realUrl);
+    return TagManager::instance()->canTagFile(realUrl);
 }
 
 void Tag::installToSideBar()
@@ -258,14 +278,21 @@ void Tag::regToPropertyDialog()
                          0);
 }
 
-void Tag::regTodDtailspace()
+void Tag::regToDetailspace()
 {
-    CustomViewExtensionView func { Tag::createTagWidgetForDetailView };
-    dpfSlotChannel->push("dfmplugin_detailspace", "slot_ViewExtension_Register", func, -1);
+    ViewExtensionCreateFunc create { Tag::createTagWidgetForDetailView };
+    ViewExtensionUpdateFunc update { Tag::updateTagWidgetForDetailView };
+    ViewExtensionShouldShowFunc shouldShow { Tag::shouldShowTagWidget };
 
-    QStringList &&filtes { "kFileSizeField", "kFileChangeTimeField", "kFileInterviewTimeField" };
+    dpfSlotChannel->push("dfmplugin_detailspace", "slot_ViewExtension_Register",
+                         QVariant::fromValue(create),
+                         QVariant::fromValue(update),
+                         QVariant::fromValue(shouldShow),
+                         -1);
+
+    QStringList &&filters { "kFileSizeField", "kFileChangeTimeField", "kFileInterviewTimeField" };
     dpfSlotChannel->push("dfmplugin_detailspace", "slot_BasicFiledFilter_Add",
-                         TagManager::scheme(), filtes);
+                         TagManager::scheme(), filters);
 }
 
 void Tag::registerPlugin(const QString &pluginName, std::function<void()> callback)
