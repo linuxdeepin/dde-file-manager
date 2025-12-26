@@ -629,13 +629,24 @@ QRectF IconItemDelegate::paintItemIcon(QPainter *painter, const QStyleOptionView
     } else {
         bool isEnabled = opt.state & QStyle::State_Enabled;
         // draw icon
-        ItemDelegateHelper::paintIcon(painter, opt.icon,
-                                      { iconRect,
-                                        Qt::AlignCenter,
-                                        isEnabled ? QIcon::Normal : QIcon::Disabled,
-                                        QIcon::Off,
-                                        ViewMode::kIconMode,
-                                        isThumnailIconIndex(index) });
+        auto drawFileIcon = ItemDelegateHelper::paintIcon(painter, opt.icon,
+                                                          { iconRect,
+                                                            Qt::AlignCenter,
+                                                            isEnabled ? QIcon::Normal : QIcon::Disabled,
+                                                            QIcon::Off,
+                                                            ViewMode::kIconMode,
+                                                            isThumnailIconIndex(index) });
+        // If the thumbnail drawing is empty, then redraw the file fileicon
+        if (!drawFileIcon) {
+            const QIcon &fileIcon = index.data(Global::ItemRoles::kItemFileIconRole).value<QIcon>();
+            ItemDelegateHelper::paintIcon(painter, fileIcon,
+                                          { iconRect,
+                                            Qt::AlignCenter,
+                                            isEnabled ? QIcon::Normal : QIcon::Disabled,
+                                            QIcon::Off,
+                                            ViewMode::kIconMode,
+                                            false });
+        }
     }
 
     paintEmblems(painter, iconRect, index);

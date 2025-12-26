@@ -44,13 +44,17 @@ QPixmap ItemDelegateHelper::getIconPixmap(const QIcon &icon, const QSize &size, 
  *
  * \return void
  **/
-void ItemDelegateHelper::paintIcon(QPainter *painter, const QIcon &icon, const PaintIconOpts &opts)
+bool ItemDelegateHelper::paintIcon(QPainter *painter, const QIcon &icon, const PaintIconOpts &opts)
 {
     // Copy of QStyle::alignedRect
     Qt::Alignment alignment = visualAlignment(painter->layoutDirection(), opts.alignment);
     const qreal pixelRatio = painter->device()->devicePixelRatioF();
     const QPixmap &px = getIconPixmap(icon, opts.rect.size().toSize(), pixelRatio, opts.mode, opts.state);
     
+    // 缩略图缩放到指定的size，绘制不出来就直接返回，绘制fileicon
+    if (px.isNull() && opts.isThumb)
+        return false;
+
     // 保持图标原始比例
     qreal w = px.width() / px.devicePixelRatio();
     qreal h = px.height() / px.devicePixelRatio();
@@ -123,6 +127,8 @@ void ItemDelegateHelper::paintIcon(QPainter *painter, const QIcon &icon, const P
         QRectF targetRect(qRound(x), qRound(y), w, h);
         painter->drawPixmap(targetRect, px, px.rect());
     }
+
+    return true;
 }
 
 void ItemDelegateHelper::drawBackground(const qreal &backgroundRadius, const QRectF &rect, QRectF &lastLineRect, const QBrush &backgroundBrush, QPainter *painter)

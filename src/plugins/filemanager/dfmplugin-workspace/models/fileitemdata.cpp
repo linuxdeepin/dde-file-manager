@@ -271,6 +271,10 @@ QVariant FileItemData::data(int role) const
         return QString();
     case kItemGroupDisplayIndex:
         return QVariant(groupDisplayIndex);
+    case kItemFileIconRole:
+            if (!info)
+                return QIcon::fromTheme("empty");
+            return info->fileIcon();
     default:
         return QVariant();
     }
