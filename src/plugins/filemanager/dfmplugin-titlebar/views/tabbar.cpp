@@ -70,6 +70,7 @@ public:
     void initConnections();
 
     bool tabCloseable(const Tab &tab, const QUrl &targetUrl) const;
+    void handleLastTabClose(const QUrl &currentUrl, const QUrl &targetUrl);
     bool isItemButtonHovered(int index);
     void handleTabReleased(int index);
     void handleDragActionChanged(Qt::DropAction action);
@@ -83,6 +84,8 @@ public:
     void updatePinnedTabsOrder();
 
     QString tabDisplayName(const QUrl &url) const;
+    QUrl determineRedirectUrl(const QUrl &currentUrl, const QUrl &targetUrl) const;
+    QUrl findValidParentPath(const QUrl &url) const;
     void paintTabBackground(QPainter *painter, const QStyleOptionTab &option);
     void paintTabLabel(QPainter *painter, int index, const QStyleOptionTab &option);
     void paintTabButton(DIconButton *btn);
@@ -211,6 +214,13 @@ bool TabBarPrivate::tabCloseable(const Tab &tab, const QUrl &targetUrl) const
     }
 
     return false;
+}
+
+void TabBarPrivate::handleLastTabClose(const QUrl &currentUrl, const QUrl &targetUrl)
+{
+    QUrl redirectUrl = determineRedirectUrl(currentUrl, targetUrl);
+    auto winId = TitleBarHelper::windowId(q);
+    dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, redirectUrl);
 }
 
 bool TabBarPrivate::isItemButtonHovered(int index)
@@ -466,6 +476,65 @@ QString TabBarPrivate::tabDisplayName(const QUrl &url) const
     }
 
     return url.fileName();
+}
+
+QUrl TabBarPrivate::determineRedirectUrl(const QUrl &currentUrl, const QUrl &targetUrl) const
+{
+    const QUrl &defaultUrl = Application::instance()->appAttribute(Application::kUrlOfNewWindow).toUrl();
+
+    // BUG: 303643
+    QString targetPath = targetUrl.toLocalFile();
+    targetPath = SystemPathUtil::instance()->getRealpathSafely(targetPath);
+    if (DevProxyMng->isFileOfExternalMounts(targetPath))
+        return defaultUrl;
+
+    QUrl redirectUrl;
+    if (dpfHookSequence->run("dfmplugin_titlebar", "hook_Tab_FileDeleteNotCdComputer",
+                             currentUrl, &redirectUrl)) {
+        return redirectUrl.isValid() ? redirectUrl : defaultUrl;
+    }
+
+    if (targetUrl.isLocalFile()) {
+        redirectUrl = findValidParentPath(targetUrl);
+        /* NOTE(xust)
+         * BUG-236625
+         * this is a workaround.
+         * when android phone mounted with MTP protocol, cd into the internal storage.
+         * eject the phone by sidebar button or dock widget
+         * the 'fileRemoved' signal with the internal storage path is emitted first
+         * and then runs into current 'else' branch, and try to find it's parent path to cd to
+         * and the gvfs mount root path was found
+         * while cd to 'computer:///' is expected.
+         * so if final cd path is gvfs root, then change it to computer root to solve this bug.
+         * but this solution would introduce another lower level bug.
+         * */
+        static const QStringList &kGvfsMpts {
+            QString("/run/user/%1/gvfs").arg(getuid()),
+            "/root/.gvfs"
+        };
+        if (kGvfsMpts.contains(redirectUrl.toLocalFile()))
+            return defaultUrl;
+
+        return redirectUrl;
+    }
+
+    return defaultUrl;
+}
+
+QUrl TabBarPrivate::findValidParentPath(const QUrl &url) const
+{
+    QString localPath = url.path();
+
+    do {
+        QStringList pathFragment = localPath.split("/");
+        pathFragment.removeLast();
+        localPath = pathFragment.join("/");
+    } while (!QDir(localPath).exists());
+
+    QUrl parentUrl;
+    parentUrl.setScheme(Global::Scheme::kFile);
+    parentUrl.setPath(localPath);
+    return parentUrl;
 }
 
 void TabBarPrivate::paintTabBackground(QPainter *painter, const QStyleOptionTab &option)
@@ -947,6 +1016,14 @@ void TabBar::closeTab(const QUrl &url)
         auto tab = tabData(i).value<Tab>();
         if (!d->tabCloseable(tab, url))
             continue;
+
+        if (count() == 1) {
+            if (isPinned(i))
+                d->setTabPinned(i, false);
+
+            d->handleLastTabClose(tab.tabUrl, url);
+            return;
+        }
 
         forceRemoveTab(i);
     }
