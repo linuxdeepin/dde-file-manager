@@ -519,7 +519,7 @@ void TabBarPrivate::paintTabLabel(QPainter *painter, int index, const QStyleOpti
     painter->save();
     const QRect rect = option.rect;
     const bool isSelected = option.state & QStyle::State_Selected;
-    const bool isHovered = option.state & QStyle::State_MouseOver;
+    const bool isItemBtnShowed = (option.state & QStyle::State_MouseOver) || q->isPinned(index);
 
     // 获取主题颜色
     DPalette pal = DPaletteHelper::instance()->palette(q);
@@ -528,13 +528,13 @@ void TabBarPrivate::paintTabLabel(QPainter *painter, int index, const QStyleOpti
     const int tabMargin = 10;
     const int blueMarkerWidth = isSelected ? 6 : 0;
     const int blueMarkerMargin = isSelected ? 4 : 0;
-    const int closeButtonSize = isHovered ? kItemButtonSize : 0;
-    const int closeButtonMargin = isHovered ? kItemButtonMargin : 0;
+    const int closeButtonSize = isItemBtnShowed ? kItemButtonSize : 0;
+    const int closeButtonMargin = isItemBtnShowed ? kItemButtonMargin : 0;
 
     // 计算文本可用宽度（考虑蓝色标记和关闭按钮）
     const int textMargin = blueMarkerWidth + blueMarkerMargin;
     const int leftSpace = tabMargin / 2 + textMargin;
-    const int rightSpace = isHovered ? (closeButtonSize + closeButtonMargin) : 0;
+    const int rightSpace = isItemBtnShowed ? (closeButtonSize + closeButtonMargin) : 0;
     const int availableTextWidth = rect.width() - leftSpace;
 
     // 截断文本以适应可用宽度
@@ -545,7 +545,7 @@ void TabBarPrivate::paintTabLabel(QPainter *painter, int index, const QStyleOpti
     const int textX = rect.x() + (rect.width() - option.fontMetrics.horizontalAdvance(elidedText) - textMargin) / 2 + textMargin;
     const int textY = rect.y() + (rect.height() - option.fontMetrics.height()) / 2 + option.fontMetrics.ascent();
 
-    if (isHovered) {
+    if (isItemBtnShowed) {
         int textEndX = textX + textWidth;
         int buttonStartX = rect.right() - rightSpace;
         if (textEndX > buttonStartX) {

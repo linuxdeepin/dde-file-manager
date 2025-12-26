@@ -119,6 +119,7 @@ void TitleBarWidget::openCustomFixedTabs()
 
 void TitleBarWidget::openPinnedTabs()
 {
+    QVariantList validPinnedTabs;
     const auto &pinnedTabs = DConfigManager::instance()->value(kViewDConfName, kPinnedTabs, QVariantList()).toList();
     fmInfo() << "Loading" << pinnedTabs.size() << "pinned tabs";
 
@@ -131,10 +132,20 @@ void TitleBarWidget::openPinnedTabs()
             continue;
         }
 
+        auto info = InfoFactory::create<FileInfo>(url);
+        if (!info || !info->exists()) {
+            fmWarning() << "The file is not exists, skipping:" << tabData;
+            continue;
+        }
+
+        validPinnedTabs << pinnedTabs[i];
         int index = tabBar()->insertInactiveTab(0, url, true);
         tabBar()->setTabUserData(index, TabDef::kPinnedId, pinnedId);
         fmInfo() << "Restored pinned tab:" << url << "at index:" << index << "with pinnedId:" << pinnedId;
     }
+
+    if (validPinnedTabs.size() != pinnedTabs.size())
+        DConfigManager::instance()->setValue(kViewDConfName, kPinnedTabs, validPinnedTabs);
 
     // Activate pending pinned tab if exists
     if (!pendingPinnedTabId.isEmpty()) {
