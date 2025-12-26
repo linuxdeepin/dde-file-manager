@@ -20,11 +20,6 @@ VideoStatusBar::VideoStatusBar(VideoPreview *preview)
 
     control_button->setIcon(QIcon::fromTheme("dfm_pause"));
 
-    QPalette pa_label;
-
-    pa_label.setColor(QPalette::WindowText, QColor("#303030"));
-    timeLabel->setPalette(pa_label);
-
     slider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     slider->setMinimum(0);
     slider->setOrientation(Qt::Horizontal);
