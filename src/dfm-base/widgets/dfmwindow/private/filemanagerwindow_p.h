@@ -48,8 +48,10 @@ public:
 
     void showSideBar();
     void hideSideBar();
+    void setSideBarVisible(bool visible, bool persistState);
     void setupSidebarSepTracking();
     int loadSidebarState() const;
+    bool loadSidebarVisibleState() const;
     void saveSidebarState();
     void updateSideBarState();
     void updateSideBarVisibility();

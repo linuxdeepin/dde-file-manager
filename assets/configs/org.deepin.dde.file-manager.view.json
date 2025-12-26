@@ -35,6 +35,17 @@
             "permissions":"readwrite",
             "visibility":"private"
         },
+        "dfm.sidebar.visible": {
+            "value":true,
+            "serial":0,
+            "flags":[],
+            "name":"Sidebar visible",
+            "name[zh_CN]":"显示侧边栏",
+            "description[zh_CN]":"控制侧边栏显示",
+            "description":"Control sidebar visibility",
+            "permissions":"readwrite",
+            "visibility":"private"
+        },
         "dfm.icon.size.level": {
             "value":5,
             "serial":0,

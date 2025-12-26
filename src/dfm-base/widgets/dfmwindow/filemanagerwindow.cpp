@@ -147,6 +147,11 @@ int FileManagerWindowPrivate::loadSidebarState() const
     return kDefaultLeftWidth;
 }
 
+bool FileManagerWindowPrivate::loadSidebarVisibleState() const
+{
+    return DConfigManager::instance()->value(kViewDConfName, kSidebarVisibleKey, true).toBool();
+}
+
 int FileManagerWindowPrivate::splitterPosition() const
 {
     if (!splitter || splitter->sizes().isEmpty())
@@ -287,6 +292,9 @@ void FileManagerWindowPrivate::connectAnimationSignals()
 
         // 动画完成后更新位置
         updateSideBarSeparatorPosition();
+
+        // Persist sidebar visibility state when animation completes
+        DConfigManager::instance()->setValue(kViewDConfName, kSidebarVisibleKey, expanded);
 
         delete curSplitterAnimation;
         curSplitterAnimation = nullptr;
@@ -618,30 +626,44 @@ void FileManagerWindowPrivate::updateSidebarSeparator()
     updateSideBarSeparatorPosition();
 }
 
+void FileManagerWindowPrivate::setSideBarVisible(bool visible, bool persistState)
+{
+    if (visible) {
+        if (sideBar && sideBar->isVisible())
+            return;
+
+        sideBar->setVisible(true);
+        sidebarSep->setVisible(true);
+        expandButton->setProperty("expand", true);
+        sideBarAutoVisible = true;
+        emit q->windowSplitterWidthChanged(lastSidebarExpandedPostion);
+
+        updateSidebarSeparator();
+    } else {
+        if (sideBar && !sideBar->isVisible())
+            return;
+
+        sideBar->setVisible(false);
+        sidebarSep->setVisible(false);
+        expandButton->setProperty("expand", false);
+        sideBarAutoVisible = false;
+        emit q->windowSplitterWidthChanged(0);
+    }
+
+    // Persist sidebar visibility state if requested
+    if (persistState) {
+        DConfigManager::instance()->setValue(kViewDConfName, kSidebarVisibleKey, visible);
+    }
+}
+
 void FileManagerWindowPrivate::showSideBar()
 {
-    if (sideBar && sideBar->isVisible())
-        return;
-
-    sideBar->setVisible(true);
-    sidebarSep->setVisible(true);
-    expandButton->setProperty("expand", true);
-    sideBarAutoVisible = true;
-    emit q->windowSplitterWidthChanged(lastSidebarExpandedPostion);
-
-    updateSidebarSeparator();
+    setSideBarVisible(true, true);
 }
 
 void FileManagerWindowPrivate::hideSideBar()
 {
-    if (sideBar && !sideBar->isVisible())
-        return;
-
-    sideBar->setVisible(false);
-    sidebarSep->setVisible(false);
-    expandButton->setProperty("expand", false);
-    sideBarAutoVisible = false;
-    emit q->windowSplitterWidthChanged(0);
+    setSideBarVisible(false, true);
 }
 
 void FileManagerWindowPrivate::setupSidebarSepTracking()
@@ -1200,9 +1222,17 @@ void FileManagerWindow::initializeUi()
 
 void FileManagerWindow::updateUi()
 {
+    // Only apply UI state after all components are initialized
+    if (!d->sideBar || !d->titleBar || !d->workspace || !d->splitter)
+        return;
+
     int splitterPos = d->loadSidebarState();
     d->lastSidebarExpandedPostion = splitterPos;
     d->setSplitterPosition(splitterPos);
+
+    // Load and apply sidebar visibility state from DConfig (without persisting back)
+    bool sidebarVisible = d->loadSidebarVisibleState();
+    d->setSideBarVisible(sidebarVisible, false);
 
     // Load and set detailSplitter initial size
     d->lastDetailSpaceWidth = d->loadDetailSpaceState();
