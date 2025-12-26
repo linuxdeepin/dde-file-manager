@@ -1,3 +1,12 @@
+dde-file-manager (6.5.112) unstable; urgency=medium
+
+  * fix: improve detail view content update timing
+  * fix: simplify detail panel drag handling logic
+  * chore: update translation files for component rename
+  * feat: add sidebar visibility persistence
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Fri, 26 Dec 2025 10:54:42 +0800
+
 dde-file-manager (6.5.111) unstable; urgency=medium
 
   * fix: improve file copy error handling and method naming
