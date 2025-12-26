@@ -54,7 +54,6 @@ public:
 protected:
     void closeEvent(QCloseEvent *event) override;
     void mouseDoubleClickEvent(QMouseEvent *event) override;
-    void mouseReleaseEvent(QMouseEvent *event) override;
     void moveEvent(QMoveEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
     bool eventFilter(QObject *watched, QEvent *event) override;

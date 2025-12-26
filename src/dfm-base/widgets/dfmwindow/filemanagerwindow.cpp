@@ -1023,25 +1023,6 @@ void FileManagerWindow::mouseDoubleClickEvent(QMouseEvent *event)
     }
 }
 
-void FileManagerWindow::mouseReleaseEvent(QMouseEvent *event)
-{
-    // 鼠标释放时重置所有拖拽状态
-    if (event->button() == Qt::LeftButton) {
-        d->detailDragTracking = false;
-        d->detailDragAtMinimum = false;
-
-        // 如果还在隐藏状态，移除全局事件过滤器
-        if (d->detailDragHidden) {
-            d->detailDragHidden = false;
-            qApp->removeEventFilter(this);
-        }
-
-        d->detailDragMinimumPosX = 0;
-    }
-
-    DMainWindow::mouseReleaseEvent(event);
-}
-
 void FileManagerWindow::moveEvent(QMoveEvent *event)
 {
     DMainWindow::moveEvent(event);
@@ -1080,26 +1061,38 @@ bool FileManagerWindow::eventFilter(QObject *watched, QEvent *event)
     }
 
     // 处理全局鼠标事件（用于隐藏后的反向显示检测）
-    if (d->detailDragHidden && event->type() == QEvent::MouseMove) {
-        auto *mouseEvent = static_cast<QMouseEvent *>(event);
+    if (d->detailDragHidden) {
+        if (event->type() == QEvent::MouseMove) {
+            auto *mouseEvent = static_cast<QMouseEvent *>(event);
 
-        // 检查鼠标是否在当前窗口内
-        QPoint globalPos = mouseEvent->globalPosition().toPoint();
-        QRect windowRect(mapToGlobal(QPoint(0, 0)), size());
+            // 检查鼠标是否在当前窗口内
+            QPoint globalPos = mouseEvent->globalPosition().toPoint();
+            QRect windowRect(mapToGlobal(QPoint(0, 0)), size());
 
-        if (windowRect.contains(globalPos)) {
-            int currentMouseX = globalPos.x();
-            int windowRightEdgeX = mapToGlobal(QPoint(width(), 0)).x();
-            int distanceFromRight = windowRightEdgeX - currentMouseX;
+            if (windowRect.contains(globalPos)) {
+                int currentMouseX = globalPos.x();
+                int windowRightEdgeX = mapToGlobal(QPoint(width(), 0)).x();
+                int distanceFromRight = windowRightEdgeX - currentMouseX;
 
-            if (distanceFromRight > d->kDetailDragThreshold) {
-                // 光标距离右边界 > 140px → 直接显示并同步 DConfig
-                DConfigManager::instance()->setValue(kViewDConfName, kDisplayPreviewVisibleKey, true);
-                showDetailSpace(false);
+                if (distanceFromRight > d->kDetailDragThreshold) {
+                    // 光标距离右边界 > 140px → 直接显示并同步 DConfig
+                    DConfigManager::instance()->setValue(kViewDConfName, kDisplayPreviewVisibleKey, true);
+                    showDetailSpace(false);
 
-                // 重置状态并移除全局事件过滤器
+                    // 重置状态并移除全局事件过滤器
+                    d->detailDragHidden = false;
+                    d->detailDragAtMinimum = false;
+                    qApp->removeEventFilter(this);
+                }
+            }
+        } else if (event->type() == QEvent::MouseButtonRelease) {
+            auto *mouseEvent = static_cast<QMouseEvent *>(event);
+            if (mouseEvent->button() == Qt::LeftButton) {
+                // 鼠标释放，重置状态并移除全局事件过滤器
                 d->detailDragHidden = false;
                 d->detailDragAtMinimum = false;
+                d->detailDragTracking = false;
+                d->detailDragMinimumPosX = 0;
                 qApp->removeEventFilter(this);
             }
         }
