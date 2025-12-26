@@ -169,6 +169,7 @@ void TitleBarWidget::activatePinnedTab(const QString &pinnedId)
         if (tabPinnedId == pinnedId) {
             fmInfo() << "Found and activating pinned tab at index" << i << "with pinnedId:" << pinnedId;
             tabBar()->setCurrentIndex(i);
+            Q_EMIT tabBar()->currentChanged(i);
             return;
         }
     }
