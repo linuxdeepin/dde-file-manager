@@ -84,8 +84,14 @@ void DetailSpaceHelper::showDetailView(quint64 windowId, bool checked)
 
         // IMPORTANT: Update content AFTER detailspace becomes visible
         // Use QTimer to ensure the widget is fully visible before loading content
-        QTimer::singleShot(0, widget, [widget, window]() {
-            setDetailViewByUrl(widget, window->currentUrl());
+        QTimer::singleShot(0, widget, [widget, window, windowId]() {
+            // Refresh with current selection (same logic as handleViewSelectionChanged)
+            const QList<QUrl> &urls = dpfSlotChannel->push("dfmplugin_workspace", "slot_View_GetSelectedUrls", windowId).value<QList<QUrl>>();
+            if (urls.isEmpty()) {
+                setDetailViewByUrl(widget, window->currentUrl());
+            } else {
+                setDetailViewByUrl(widget, urls.first());
+            }
         });
 
     } else if (widget) {
