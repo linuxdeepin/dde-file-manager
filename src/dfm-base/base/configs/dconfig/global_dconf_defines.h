@@ -21,7 +21,6 @@ inline constexpr char kAnimationDConfName[] { "org.deepin.dde.file-manager.anima
 namespace BaseConfig {
 inline constexpr char kTreeViewEnable[] { "dfm.treeview.enable" };
 inline constexpr char kDisplayPreviewVisibleKey[] { "dfm.displaypreview.visible" };
-inline constexpr char kSidebarVisibleKey[] { "dfm.sidebar.visible" };
 inline constexpr char kOpenFolderWindowsInASeparateProcess[] { "dfm.open.in.single.process" };
 inline constexpr char kCunstomFixedTabs[] { "dfm.custom.fixedtab" };
 inline constexpr char kPinnedTabs[] { "dfm.pinned.tabs" };
