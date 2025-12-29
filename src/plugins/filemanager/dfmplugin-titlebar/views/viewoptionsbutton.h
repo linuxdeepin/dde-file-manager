@@ -24,7 +24,7 @@ public:
     void switchMode(DFMBASE_NAMESPACE::Global::ViewMode mode, const QUrl &url);
 
 Q_SIGNALS:
-    void displayPreviewVisibleChanged(bool visible);
+    void displayPreviewVisibleChanged(bool visible, bool userAction);
 
 protected:
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)

@@ -9,6 +9,7 @@
 
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/utils/viewdefines.h>
+#include <dfm-base/widgets/filemanagerwindow.h>
 
 #include <DFrame>
 #include <DSlider>
@@ -16,6 +17,7 @@
 
 #include <QCheckBox>
 #include <QVBoxLayout>
+#include <QPointer>
 
 namespace dfmplugin_titlebar {
 using DFMBASE_NAMESPACE::Global::ViewMode;
@@ -28,6 +30,7 @@ class ViewOptionsWidgetPrivate : public QObject
 
     QUrl fileUrl;
     DFMBASE_NAMESPACE::ViewDefines viewDefines;
+    QPointer<DFMBASE_NAMESPACE::FileManagerWindow> currentWindow;
 
     // title
     DTK_WIDGET_NAMESPACE::DLabel *title { nullptr };

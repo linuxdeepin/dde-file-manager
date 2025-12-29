@@ -8,6 +8,7 @@
 
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <DGuiApplicationHelper>
 
@@ -39,7 +40,8 @@ void ViewOptionsButtonPrivate::initConnect()
         const QPoint popupPos = q->parentWidget()->mapToGlobal(q->geometry().bottomLeft());
         if (!viewOptionsWidget) {
             viewOptionsWidget = new ViewOptionsWidget(q);
-            connect(viewOptionsWidget, &ViewOptionsWidget::displayPreviewVisibleChanged, q, &ViewOptionsButton::displayPreviewVisibleChanged);
+            connect(viewOptionsWidget, &ViewOptionsWidget::displayPreviewVisibleChanged,
+                    q, &ViewOptionsButton::displayPreviewVisibleChanged);
         }
         viewOptionsWidget->exec(popupPos, viewMode, fileUrl);
     });
@@ -128,8 +130,15 @@ bool ViewOptionsButton::event(QEvent *event)
 {
     const auto type = event->type();
     if (type == QEvent::Show || type == QEvent::Hide) {
-        if (!DConfigManager::instance()->value(kViewDConfName, kDisplayPreviewVisibleKey).toBool()) {
-            fmDebug() << "Display preview is disabled in config, skipping preview visibility change";
+        // Lazily initialize currentWindow if not already done
+        if (!d->currentWindow) {
+            auto winId = FMWindowsIns.findWindowId(this);
+            d->currentWindow = FMWindowsIns.findWindowById(winId);
+        }
+
+        // Check against window's detailSpace visibility flag instead of DConfig
+        if (d->currentWindow && !d->currentWindow->isDetailSpaceVisible()) {
+            fmDebug() << "Display preview is disabled in window, skipping preview visibility change";
             return DToolButton::event(event);
         }
 
@@ -147,7 +156,7 @@ bool ViewOptionsButton::event(QEvent *event)
             return DToolButton::event(event);
         }
 
-        Q_EMIT displayPreviewVisibleChanged(type == QEvent::Show);
+        Q_EMIT displayPreviewVisibleChanged(type == QEvent::Show, false);
     }
 
     return DToolButton::event(event);

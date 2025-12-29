@@ -25,7 +25,7 @@ public:
     static quint64 findWindowIdByDetailSpace(DetailSpaceWidget *widget);
     static void addDetailSpace(quint64 windowId);
     static void removeDetailSpace(quint64 windowId);
-    static void showDetailView(quint64 windowId, bool checked);
+    static void showDetailView(quint64 windowId, bool checked, bool userAction = true);
     static void setDetailViewSelectFileUrl(quint64 windowId, const QUrl &url);
     static void setDetailViewByUrl(DetailSpaceWidget *w, const QUrl &url);
 

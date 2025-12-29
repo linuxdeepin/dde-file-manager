@@ -8,9 +8,11 @@
 #include "dfmplugin_titlebar_global.h"
 
 #include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/widgets/filemanagerwindow.h>
 
 #include <DPushButton>
 #include <QScopedPointer>
+#include <QPointer>
 
 class QUrl;
 class QEvent;
@@ -30,6 +32,7 @@ class ViewOptionsButtonPrivate : public QObject
     QUrl fileUrl;
     bool hoverFlag { false };   // 鼠标是否悬停在按钮上
     ViewOptionsWidget *viewOptionsWidget { nullptr };
+    QPointer<DFMBASE_NAMESPACE::FileManagerWindow> currentWindow;
 
 public:
     explicit ViewOptionsButtonPrivate(ViewOptionsButton *qq);

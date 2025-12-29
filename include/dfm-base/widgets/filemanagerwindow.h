@@ -10,10 +10,17 @@
 #include <DMainWindow>
 #include <QList>
 #include <QUrl>
+#include <QVariantHash>
 
 DWIDGET_USE_NAMESPACE
 
 namespace dfmbase {
+
+// DetailSpace options keys
+namespace DetailSpaceOptions {
+inline constexpr char kAnimated[] = "animated";
+inline constexpr char kUserAction[] = "userAction";   // Whether this is a user-initiated action
+}
 
 class AbstractFrame;
 class FileManagerWindowPrivate;
@@ -45,8 +52,9 @@ public:
     void setDetailViewWidth(int width);
     int detailViewWidth() const;
     // DetailSpace visibility management with animation support
-    void showDetailSpace(bool animated = true);
-    void hideDetailSpace(bool animated = true);
+    void showDetailSpace(const QVariantHash &options = QVariantHash());
+    void hideDetailSpace(const QVariantHash &options = QVariantHash());
+    bool isDetailSpaceVisible() const;
 
     void loadState();
     void saveState();
@@ -90,6 +98,7 @@ Q_SIGNALS:
     void sideBarInstallFinished();
     void workspaceInstallFinished();
     void detailViewInstallFinished();
+    void detailSpaceVisibilityChanged(bool visible);
 
 private:
     void initializeUi();

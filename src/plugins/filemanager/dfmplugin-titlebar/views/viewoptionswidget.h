@@ -27,7 +27,7 @@ public:
 
 Q_SIGNALS:
     void hidden();
-    void displayPreviewVisibleChanged(bool visible);
+    void displayPreviewVisibleChanged(bool visible, bool userAction = true);
 
 protected:
     void hideEvent(QHideEvent *event) override;
