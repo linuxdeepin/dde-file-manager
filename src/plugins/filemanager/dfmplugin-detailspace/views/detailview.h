@@ -20,7 +20,8 @@ class ImagePreviewController;
 class FileInfoWidget;
 
 // Extension widget holder for reusable pattern
-struct ExtensionWidgetHolder {
+struct ExtensionWidgetHolder
+{
     QWidget *widget { nullptr };
     QFrame *frame { nullptr };
     ViewExtensionUpdateFunc update;
@@ -48,6 +49,7 @@ private:
     void updateBasicWidget(const QUrl &url);
     void updateExtensionWidgets(const QUrl &url);
     void updatePreviewSize();
+    void reloadPreviewFile();
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
