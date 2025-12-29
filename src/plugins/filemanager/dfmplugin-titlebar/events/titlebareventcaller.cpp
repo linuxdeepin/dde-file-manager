@@ -21,14 +21,14 @@ void TitleBarEventCaller::sendViewMode(QWidget *sender, DFMBASE_NAMESPACE::Globa
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kSwitchViewMode, id, int(mode));
 }
 
-void TitleBarEventCaller::sendDetailViewState(QWidget *sender, bool checked)
+void TitleBarEventCaller::sendDetailViewState(QWidget *sender, bool checked, bool userAction)
 {
     quint64 id = TitleBarHelper::windowId(sender);
     if (id < 1) {
         fmWarning() << "Cannot send detail view state: invalid window id" << id;
         return;
     }
-    dpfSlotChannel->push("dfmplugin_detailspace", "slot_DetailView_Show", id, checked);
+    dpfSlotChannel->push("dfmplugin_detailspace", "slot_DetailView_Show", id, checked, userAction);
 }
 
 void TitleBarEventCaller::sendCd(QWidget *sender, const QUrl &url)

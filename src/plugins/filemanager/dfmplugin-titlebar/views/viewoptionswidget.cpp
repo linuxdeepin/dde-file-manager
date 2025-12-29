@@ -11,6 +11,7 @@
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <DFontSizeManager>
 #include <DPalette>
@@ -51,6 +52,10 @@ ViewOptionsWidgetPrivate::~ViewOptionsWidgetPrivate()
 
 void ViewOptionsWidgetPrivate::initializeUi()
 {
+    // Find the window associated with this widget
+    auto winId = FMWindowsIns.findWindowId(q);
+    currentWindow = FMWindowsIns.findWindowById(winId);
+
     QSize buttonIconSize(kViewOptionsButtonIconSize, kViewOptionsButtonIconSize);
     // Title
     QVBoxLayout *mainLayout = new QVBoxLayout(q);
@@ -168,7 +173,9 @@ void ViewOptionsWidgetPrivate::initializeUi()
     displayPreviewWidget = new DFrame(q);
     displayPreviewWidget->setFixedHeight(kViewOptionsFrameHeight);
     displayPreviewCheckBox = new QCheckBox(tr("Display preview"), displayPreviewWidget);
-    displayPreviewCheckBox->setChecked(DConfigManager::instance()->value(kViewDConfName, kDisplayPreviewVisibleKey).toBool());
+    // Initialize checkbox state from window
+    if (currentWindow)
+        displayPreviewCheckBox->setChecked(currentWindow->isDetailSpaceVisible());
     QHBoxLayout *displayPreviewLayout = new QHBoxLayout(displayPreviewWidget);
     displayPreviewLayout->setContentsMargins(kViewOptionsFrameMargin, kViewOptionsFrameMargin,
                                              kViewOptionsFrameMargin, kViewOptionsFrameMargin);
@@ -196,25 +203,25 @@ void ViewOptionsWidgetPrivate::initConnect()
 {
     connect(displayPreviewCheckBox, &QCheckBox::checkStateChanged, this, [this](Qt::CheckState state) {
         bool isChecked = (state == Qt::Checked);
-        if (isChecked && DConfigManager::instance()->value(kViewDConfName, kDisplayPreviewVisibleKey).toBool())
-            return;
-        if (!isChecked && !DConfigManager::instance()->value(kViewDConfName, kDisplayPreviewVisibleKey).toBool())
-            return;
+        // Check against window state instead of DConfig
+        if (currentWindow) {
+            bool currentVisible = currentWindow->isDetailSpaceVisible();
+            if (isChecked == currentVisible)
+                return;
+        }
         fmDebug() << "Display preview state changed to:" << isChecked;
-        Q_EMIT q->displayPreviewVisibleChanged(isChecked);
-        DConfigManager::instance()->setValue(kViewDConfName, kDisplayPreviewVisibleKey, isChecked);
+        Q_EMIT q->displayPreviewVisibleChanged(isChecked, true);   // User action from checkbox
     });
 
-    // Sync checkbox state when DConfig value changes externally (e.g., drag-to-hide)
-    connect(DConfigManager::instance(), &DConfigManager::valueChanged, this,
-            [this](const QString &config, const QString &key) {
-                if (config == kViewDConfName && key == kDisplayPreviewVisibleKey) {
-                    bool newValue = DConfigManager::instance()->value(kViewDConfName, kDisplayPreviewVisibleKey).toBool();
-                    if (displayPreviewCheckBox->isChecked() != newValue) {
-                        displayPreviewCheckBox->setChecked(newValue);
+    // Sync checkbox state when window's detailSpace visibility changes (e.g., drag-to-hide)
+    if (currentWindow) {
+        connect(currentWindow, &FileManagerWindow::detailSpaceVisibilityChanged, this,
+                [this](bool visible) {
+                    if (displayPreviewCheckBox->isChecked() != visible) {
+                        displayPreviewCheckBox->setChecked(visible);
                     }
-                }
-            });
+                });
+    }
 
     connect(iconSizeSlider, &DSlider::valueChanged, this, [this](int value) {
         fmDebug() << "iconSizeSlider value changed: " << value;

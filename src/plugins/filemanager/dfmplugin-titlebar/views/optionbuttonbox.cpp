@@ -346,8 +346,8 @@ void OptionButtonBox::initConnect()
         d->setViewMode(ViewMode::kTreeMode);
     });
 
-    connect(d->viewOptionsButton, &ViewOptionsButton::displayPreviewVisibleChanged, this, [this](bool checked) {
-        TitleBarEventCaller::sendDetailViewState(this, checked);
+    connect(d->viewOptionsButton, &ViewOptionsButton::displayPreviewVisibleChanged, this, [this](bool checked, bool userAction) {
+        TitleBarEventCaller::sendDetailViewState(this, checked, userAction);
     });
 
     connect(Application::instance(), &Application::viewModeChanged, d, &OptionButtonBoxPrivate::onViewModeChanged);

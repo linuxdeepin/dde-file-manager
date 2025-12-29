@@ -41,9 +41,9 @@ void DetailSpaceEventReceiver::connectService()
                                    this, &DetailSpaceEventReceiver::handleViewSelectionChanged);
 }
 
-void DetailSpaceEventReceiver::handleTileBarShowDetailView(quint64 windowId, bool checked)
+void DetailSpaceEventReceiver::handleTileBarShowDetailView(quint64 windowId, bool checked, bool userAction)
 {
-    DetailSpaceHelper::showDetailView(windowId, checked);
+    DetailSpaceHelper::showDetailView(windowId, checked, userAction);
 }
 
 bool DetailSpaceEventReceiver::handleViewExtensionRegister(ViewExtensionCreateFunc create,

@@ -19,7 +19,7 @@ class TitleBarEventCaller
 
 public:
     static void sendViewMode(QWidget *sender, DFMBASE_NAMESPACE::Global::ViewMode mode);
-    static void sendDetailViewState(QWidget *sender, bool checked);
+    static void sendDetailViewState(QWidget *sender, bool checked, bool userAction = true);
     static void sendCd(QWidget *sender, const QUrl &url);
     static void sendChangeCurrentUrl(QWidget *sender, const QUrl &url);
     static void sendOpenFile(QWidget *sender, const QUrl &url);

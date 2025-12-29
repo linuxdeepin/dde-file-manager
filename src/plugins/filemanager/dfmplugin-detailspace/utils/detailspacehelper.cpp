@@ -54,7 +54,7 @@ void DetailSpaceHelper::removeDetailSpace(quint64 windowId)
     }
 }
 
-void DetailSpaceHelper::showDetailView(quint64 windowId, bool checked)
+void DetailSpaceHelper::showDetailView(quint64 windowId, bool checked, bool userAction)
 {
     // Find the detail space widget for the given window ID
     DetailSpaceWidget *widget = findDetailSpaceByWindowId(windowId);
@@ -80,7 +80,10 @@ void DetailSpaceHelper::showDetailView(quint64 windowId, bool checked)
         updateWorkspaceWidth(windowId, widget, true, targetWidth);
 
         // Show the detailspace with animation (window handles visibility and animation internally)
-        window->showDetailSpace(true);
+        QVariantHash options;
+        options[DFMBASE_NAMESPACE::DetailSpaceOptions::kAnimated] = true;
+        options[DFMBASE_NAMESPACE::DetailSpaceOptions::kUserAction] = userAction;
+        window->showDetailSpace(options);
 
         // IMPORTANT: Update content AFTER detailspace becomes visible
         // Use QTimer to ensure the widget is fully visible before loading content
@@ -102,7 +105,10 @@ void DetailSpaceHelper::showDetailView(quint64 windowId, bool checked)
         updateWorkspaceWidth(windowId, widget, false, currentWidth);
 
         // Hide the detailspace with animation
-        window->hideDetailSpace(true);
+        QVariantHash options;
+        options[DFMBASE_NAMESPACE::DetailSpaceOptions::kAnimated] = true;
+        options[DFMBASE_NAMESPACE::DetailSpaceOptions::kUserAction] = userAction;
+        window->hideDetailSpace(options);
     }
 }
 

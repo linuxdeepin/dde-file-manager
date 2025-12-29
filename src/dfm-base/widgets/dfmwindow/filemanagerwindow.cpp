@@ -365,6 +365,11 @@ int FileManagerWindowPrivate::loadDetailSpaceState() const
     return qBound(kMinimumDetailWidth, width, kMaximumDetailWidth);
 }
 
+void FileManagerWindowPrivate::loadDetailSpaceVisibility()
+{
+    detailSpaceVisible = DConfigManager::instance()->value(kViewDConfName, kDisplayPreviewVisibleKey, false).toBool();
+}
+
 void FileManagerWindowPrivate::saveDetailSpaceState()
 {
     if (!detailSpace)
@@ -376,6 +381,9 @@ void FileManagerWindowPrivate::saveDetailSpaceState()
         state["detailspace"] = width;
         Application::appObtuselySetting()->setValue("WindowManager", "SplitterState", state);
     }
+
+    // Save detailSpace visibility flag to DConfig when the window is closed
+    DConfigManager::instance()->setValue(kViewDConfName, kDisplayPreviewVisibleKey, detailSpaceVisible);
 }
 
 void FileManagerWindowPrivate::updateRightAreaMinWidth()
@@ -472,6 +480,7 @@ void FileManagerWindowPrivate::animateDetailSplitter(bool show)
             detailSpace->setVisible(false);
         }
         updateRightAreaMinWidth();   // Update after visibility change
+        // Signal emission moved to showDetailSpace/hideDetailSpace
         return;
     }
 
@@ -522,6 +531,7 @@ void FileManagerWindowPrivate::animateDetailSplitter(bool show)
         }
 
         updateRightAreaMinWidth();   // Update after animation completes
+        // Signal emission moved to showDetailSpace/hideDetailSpace
 
         delete curDetailSplitterAnimation;
         curDetailSplitterAnimation = nullptr;
@@ -725,9 +735,11 @@ bool FileManagerWindowPrivate::detailSplitterHandleEventFilter(QObject *watched,
             int offsetFromMinimum = currentMouseX - detailDragMinimumPosX;
 
             if (offsetFromMinimum >= kDetailDragThreshold) {
-                // 向右拖拽超过 140px → 直接隐藏并同步 DConfig
-                DConfigManager::instance()->setValue(kViewDConfName, kDisplayPreviewVisibleKey, false);
-                q->hideDetailSpace(false);   // 不使用动画，直接隐藏
+                // 向右拖拽超过 140px → 直接隐藏
+                QVariantHash options;
+                options[DetailSpaceOptions::kAnimated] = false;   // 不使用动画
+                options[DetailSpaceOptions::kUserAction] = true;  // 拖拽是用户操作
+                q->hideDetailSpace(options);
 
                 // 进入"已隐藏"状态，安装全局事件过滤器
                 detailDragHidden = true;
@@ -973,22 +985,59 @@ int FileManagerWindow::detailViewWidth() const
     return d->lastDetailSpaceWidth;
 }
 
-void FileManagerWindow::showDetailSpace(bool animated)
+void FileManagerWindow::showDetailSpace(const QVariantHash &options)
 {
-    if (animated)
+    bool animated = options.value(DetailSpaceOptions::kAnimated, true).toBool();
+    bool userAction = options.value(DetailSpaceOptions::kUserAction, true).toBool();
+
+    // Only update flag for user-initiated actions
+    if (userAction) {
+        d->detailSpaceVisible = true;
+    }
+
+    if (animated) {
         d->animateDetailSplitter(true);
-    else {
-        d->detailSpace->setVisible(true);
-        d->setDetailSplitterPosition(d->lastDetailSpaceWidth);
+    } else {
+        if (d->detailSpace) {
+            d->detailSpace->setVisible(true);
+            d->setDetailSplitterPosition(d->lastDetailSpaceWidth);
+        }
+        d->updateRightAreaMinWidth();
+    }
+
+    // Emit signal only for user-initiated actions (unified handling for both animated and non-animated)
+    if (userAction) {
+        emit detailSpaceVisibilityChanged(true);
     }
 }
 
-void FileManagerWindow::hideDetailSpace(bool animated)
+void FileManagerWindow::hideDetailSpace(const QVariantHash &options)
 {
-    if (animated)
+    bool animated = options.value(DetailSpaceOptions::kAnimated, true).toBool();
+    bool userAction = options.value(DetailSpaceOptions::kUserAction, true).toBool();
+
+    // Only update flag for user-initiated actions
+    if (userAction) {
+        d->detailSpaceVisible = false;
+    }
+
+    if (animated) {
         d->animateDetailSplitter(false);
-    else
-        d->detailSpace->setVisible(false);
+    } else {
+        if (d->detailSpace)
+            d->detailSpace->setVisible(false);
+        d->updateRightAreaMinWidth();
+    }
+
+    // Emit signal only for user-initiated actions (unified handling for both animated and non-animated)
+    if (userAction) {
+        emit detailSpaceVisibilityChanged(false);
+    }
+}
+
+bool FileManagerWindow::isDetailSpaceVisible() const
+{
+    return d->detailSpaceVisible;
 }
 
 void FileManagerWindow::loadState()
@@ -1075,9 +1124,11 @@ bool FileManagerWindow::eventFilter(QObject *watched, QEvent *event)
                 int distanceFromRight = windowRightEdgeX - currentMouseX;
 
                 if (distanceFromRight > d->kDetailDragThreshold) {
-                    // 光标距离右边界 > 140px → 直接显示并同步 DConfig
-                    DConfigManager::instance()->setValue(kViewDConfName, kDisplayPreviewVisibleKey, true);
-                    showDetailSpace(false);
+                    // 光标距离右边界 > 140px → 直接显示
+                    QVariantHash options;
+                    options[DetailSpaceOptions::kAnimated] = false;   // 不使用动画
+                    options[DetailSpaceOptions::kUserAction] = true;  // 拖拽反向是用户操作
+                    showDetailSpace(options);
 
                     // 重置状态并移除全局事件过滤器
                     d->detailDragHidden = false;
@@ -1200,12 +1251,16 @@ void FileManagerWindow::initializeUi()
 
 void FileManagerWindow::updateUi()
 {
+    if (!d->sideBar || !d->workspace)
+        return;
+
     int splitterPos = d->loadSidebarState();
     d->lastSidebarExpandedPostion = splitterPos;
     d->setSplitterPosition(splitterPos);
 
-    // Load and set detailSplitter initial size
+    // Load detailSplitter initial size and visibility flag
     d->lastDetailSpaceWidth = d->loadDetailSpaceState();
+    d->loadDetailSpaceVisibility();
 }
 
 void FileManagerWindow::resizeEvent(QResizeEvent *event)

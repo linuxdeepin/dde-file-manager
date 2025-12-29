@@ -23,7 +23,7 @@ public:
     void connectService();
 
 public slots:
-    void handleTileBarShowDetailView(quint64 windowId, bool checked);
+    void handleTileBarShowDetailView(quint64 windowId, bool checked, bool userAction = true);
     bool handleViewExtensionRegister(ViewExtensionCreateFunc create,
                                      ViewExtensionUpdateFunc update,
                                      ViewExtensionShouldShowFunc shouldShow,

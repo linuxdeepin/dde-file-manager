@@ -63,6 +63,7 @@ public:
     int detailSplitterPosition() const;
     void setDetailSplitterPosition(int detailWidth);
     int loadDetailSpaceState() const;
+    void loadDetailSpaceVisibility();
     void saveDetailSpaceState();
     void updateRightAreaMinWidth();   // Update rightArea minimum width for resize priority
 
@@ -114,6 +115,7 @@ protected:
 
     bool sideBarAutoVisible { true };
     bool sideBarShrinking { false };
+    bool detailSpaceVisible { false };   // Cached visibility state from DConfig
 
 private:
     bool setupAnimation(bool expanded);
