@@ -72,8 +72,8 @@ void FileStatisticsJobPrivate::setState(FileStatisticsJob::State s)
             Q_EMIT q->sizeChanged(totalSize);
         }
 
-        qCInfo(logDFMBase) << "File statistics job finished - total size:" << totalSize 
-                          << "files:" << filesCount << "directories:" << directoryCount;
+        qCInfo(logDFMBase) << "File statistics job finished - total size:" << totalSize
+                           << "files:" << filesCount << "directories:" << directoryCount;
     }
 
     Q_EMIT q->stateChanged(s);
@@ -520,6 +520,10 @@ void FileStatisticsJob::run()
     d->inodeAndPath.clear();
     d->fileStatistics.clear();
     d->allFiles.clear();
+    if (d->sizeInfo)
+        d->sizeInfo->allFiles.clear();
+    setSizeInfo();
+
     if (d->sourceUrlList.isEmpty())
         return;
 
