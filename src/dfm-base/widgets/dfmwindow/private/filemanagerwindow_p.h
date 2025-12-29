@@ -34,6 +34,15 @@ class FileManagerWindowPrivate : public QObject
     friend class FileManagerWindow;
     FileManagerWindow *const q;
 
+    // DetailSpace drag state machine
+    enum class DetailDragState {
+        Idle,   // 未拖拽
+        Tracking,   // 正在跟踪拖拽
+        AtMinimum,   // 已到达最小宽度（弹性模式）
+        Hidden,   // 已隐藏（通过拖拽）
+        Continued   // 继续拖拽模式（从隐藏恢复后）
+    };
+
 public:
     explicit FileManagerWindowPrivate(const QUrl &url, FileManagerWindow *qq);
     bool processKeyPressEvent(QKeyEvent *event);
@@ -83,6 +92,7 @@ protected:
     static constexpr int kMaximumDetailWidth { 500 };
     static constexpr int kDefaultDetailWidth { 280 };
     static constexpr int kMinimumWorkspaceWidth { 260 };
+    static constexpr int kDetailDragThreshold { kMinimumDetailWidth / 2 };   // 140px
 
     QFrame *centralView { nullptr };   // Central area (all except sidebar)
     QFrame *rightArea { nullptr };
@@ -117,6 +127,10 @@ protected:
     bool sideBarShrinking { false };
     bool detailSpaceVisible { false };   // Cached visibility state from DConfig
 
+    // DetailSpace elastic drag tracking
+    DetailDragState detailDragState { DetailDragState::Idle };   // 拖拽状态
+    int detailDragMinimumPosX { 0 };   // 到达最小宽度时的鼠标全局X坐标（起始点）
+
 private:
     bool setupAnimation(bool expanded);
     void handleWindowResize(bool expanded);
@@ -131,20 +145,15 @@ private:
     void animateDetailSplitter(bool show);
     void installDetailSplitterHandleEventFilter();
 
-    // DetailSpace elastic drag tracking
-    bool detailDragTracking { false };   // 是否正在跟踪拖拽
-    bool detailDragAtMinimum { false };   // 是否处于弹性拖拽模式（已达最小宽度）
-    int detailDragMinimumPosX { 0 };   // 到达最小宽度时的鼠标全局X坐标（起始点）
-    bool detailDragHidden { false };   // 是否已通过拖拽隐藏（未释放鼠标）
-    bool detailDragContinued { false };   // 是否处于"继续拖拽"模式（从隐藏恢复后）
-    static constexpr int kDetailDragThreshold { kMinimumDetailWidth / 2 };   // 140px
-
     // Event filter helper methods (Single Responsibility)
     bool handleWorkspaceKeyEvent(QObject *watched, QEvent *event);
     bool handleSideBarEvent(QObject *watched, QEvent *event);
     bool handleDetailSplitterHandleEvent(QObject *watched, QEvent *event);
     bool handleGlobalDragEvent(QObject *watched, QEvent *event);
     void resetDetailDragState();
+
+    // State transition methods
+    void transitionDetailDragState(DetailDragState newState);
 };
 
 }
