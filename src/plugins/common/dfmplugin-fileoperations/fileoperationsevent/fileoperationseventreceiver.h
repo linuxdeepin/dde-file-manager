@@ -284,6 +284,7 @@ private:
                            const dfmbase::GlobalEventType redo,
                            const bool isUndo = false, const QUrl &templateUrl = QUrl());
     QUrl determineLinkTarget(const QUrl &sourceUrl, const QUrl &linkUrl, const bool silence, const quint64 windowId);
+    bool doOpenInTerminal(const QUrl &url);
 
 private:
     std::unique_ptr<FileCopyMoveJob> copyMoveJob { std::make_unique<FileCopyMoveJob>() };

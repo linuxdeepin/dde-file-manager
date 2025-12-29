@@ -941,6 +941,30 @@ QUrl FileOperationsEventReceiver::determineLinkTarget(const QUrl &sourceUrl, con
     }
 }
 
+bool FileOperationsEventReceiver::doOpenInTerminal(const QUrl &url)
+{
+    const static QString dde_daemon_default_term = QStringLiteral("/usr/lib/deepin-daemon/default-terminal");
+    const static QString debian_x_term_emu = QStringLiteral("/usr/bin/x-terminal-emulator");
+
+    QString terminalPath;
+    if (QFileInfo::exists(dde_daemon_default_term)) {
+        terminalPath = dde_daemon_default_term;
+    } else if (QFileInfo::exists(debian_x_term_emu)) {
+        terminalPath = debian_x_term_emu;
+    }
+
+    // systemd支持的单个文件名最长为255字节，导致长文件名在终端打开失败，使用命令参数的方式打开路径
+    if (!terminalPath.isEmpty())
+        return QProcess::startDetached(terminalPath, { "-w", url.toLocalFile() });
+
+    terminalPath = QStandardPaths::findExecutable("xterm");
+    if (QFileInfo::exists(terminalPath)) {
+        // 为安全考虑，使用命令参数的方式打开路径
+        return QProcess::startDetached(terminalPath, {}, url.toLocalFile());
+    }
+    return false;
+}
+
 FileOperationsEventReceiver *FileOperationsEventReceiver::instance()
 {
     static FileOperationsEventReceiver receiver;
@@ -1550,7 +1574,6 @@ bool FileOperationsEventReceiver::handleOperationOpenInTerminal(const quint64 wi
     QString error;
     bool ok = false;
     bool result = false;
-    QSharedPointer<LocalFileHandler> fileHandler = nullptr;
     if (urls.count() > 0 && !urls.first().isLocalFile()) {
         if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_OpenInTerminal", windowId, urls)) {
             dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenInTerminalResult,
@@ -1563,14 +1586,9 @@ bool FileOperationsEventReceiver::handleOperationOpenInTerminal(const quint64 wi
         if (!url.isLocalFile())
             continue;
 
-        const QString &current_dir = QDir::currentPath();
-        QDir::setCurrent(url.toLocalFile());
-        if (fileHandler.isNull())
-            fileHandler.reset(new LocalFileHandler());
-        ok = QProcess::startDetached(fileHandler->defaultTerminalPath());
+        ok = doOpenInTerminal(url);
         if (!result)
             result = ok;
-        QDir::setCurrent(current_dir);
     }
 
     // TODO:: open file in terminal finished need to send open file in terminal finished event
