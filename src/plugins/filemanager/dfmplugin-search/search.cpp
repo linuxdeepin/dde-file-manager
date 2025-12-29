@@ -151,14 +151,14 @@ void Search::regSearchSettingConfig()
                                                 { { "key", textIndexKey.mid(textIndexKey.lastIndexOf(".") + 1) },
                                                   { "text", tr("Full-Text search") },
                                                   { "type", "checkBoxWidthTextIndex" },
-                                                  { "default", false } });
+                                                  { "default", true } });
 
     SettingBackend::instance()->addSettingAccessor(
             SearchSettings::kFulltextSearch,
             []() {
                 return DConfigManager::instance()->value(DConfig::kSearchCfgPath,
                                                          DConfig::kEnableFullTextSearch,
-                                                         false);
+                                                         true);
             },
             [](const QVariant &val) {
                 DConfigManager::instance()->setValue(DConfig::kSearchCfgPath,
