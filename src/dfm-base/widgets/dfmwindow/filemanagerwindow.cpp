@@ -367,7 +367,26 @@ int FileManagerWindowPrivate::loadDetailSpaceState() const
 
 void FileManagerWindowPrivate::loadDetailSpaceVisibility()
 {
-    detailSpaceVisible = DConfigManager::instance()->value(kViewDConfName, kDisplayPreviewVisibleKey, false).toBool();
+    // Check if there are other windows already open
+    auto windowList = FMWindowsIns.windowIdList();
+
+    if (windowList.count() <= 1) {
+        // First window: load from DConfig
+        detailSpaceVisible = DConfigManager::instance()->value(kViewDConfName, kDisplayPreviewVisibleKey, false).toBool();
+        qCDebug(logDFMBase) << "First window: loaded detailSpace visibility from DConfig:" << detailSpaceVisible;
+    } else {
+        // Subsequent windows: inherit from the last activated window
+        quint64 lastWinId = FMWindowsIns.lastActivedWindowId();
+        auto lastWindow = FMWindowsIns.findWindowById(lastWinId);
+        if (lastWindow) {
+            detailSpaceVisible = lastWindow->isDetailSpaceVisible();
+            qCDebug(logDFMBase) << "New window: inherited detailSpace visibility from window" << lastWinId << ":" << detailSpaceVisible;
+        } else {
+            // Fallback: load from DConfig if last window not found
+            detailSpaceVisible = DConfigManager::instance()->value(kViewDConfName, kDisplayPreviewVisibleKey, false).toBool();
+            qCWarning(logDFMBase) << "Cannot find last activated window" << lastWinId << ", falling back to DConfig:" << detailSpaceVisible;
+        }
+    }
 }
 
 void FileManagerWindowPrivate::saveDetailSpaceState()
@@ -738,7 +757,7 @@ bool FileManagerWindowPrivate::detailSplitterHandleEventFilter(QObject *watched,
                 // 向右拖拽超过 140px → 直接隐藏
                 QVariantHash options;
                 options[DetailSpaceOptions::kAnimated] = false;   // 不使用动画
-                options[DetailSpaceOptions::kUserAction] = true;  // 拖拽是用户操作
+                options[DetailSpaceOptions::kUserAction] = true;   // 拖拽是用户操作
                 q->hideDetailSpace(options);
 
                 // 进入"已隐藏"状态，安装全局事件过滤器
@@ -1127,7 +1146,7 @@ bool FileManagerWindow::eventFilter(QObject *watched, QEvent *event)
                     // 光标距离右边界 > 140px → 直接显示
                     QVariantHash options;
                     options[DetailSpaceOptions::kAnimated] = false;   // 不使用动画
-                    options[DetailSpaceOptions::kUserAction] = true;  // 拖拽反向是用户操作
+                    options[DetailSpaceOptions::kUserAction] = true;   // 拖拽反向是用户操作
                     showDetailSpace(options);
 
                     // 重置状态并移除全局事件过滤器
