@@ -26,7 +26,7 @@ public:
 
     void processFile(const QUrl &url, const bool followLink, QQueue<QUrl> &directoryQueue);
     void processFile(const FileInfoPointer &info, const bool followLink, QQueue<QUrl> &directoryQueue);
-    void processFile(const QUrl &url, struct stat64* statBuffer, const bool followLink, QQueue<QUrl> &directoryQueue);
+    void processFile(const QUrl &url, struct stat64 *statBuffer, const bool followLink, QQueue<QUrl> &directoryQueue);
     void emitSizeChanged();
     int countFileCount(const char *name);
     bool checkFileType(const FileInfo::FileType &fileType);
@@ -46,7 +46,7 @@ public:
     QWaitCondition waitCondition;
     QElapsedTimer elapsedTimer;
 
-    QAtomicInteger<qint64> totalSize = { 0 };
+    QAtomicInteger<qint64> totalSize { 0 };
     QAtomicInteger<qint64> totalProgressSize { 0 };
     QAtomicInt filesCount { 0 };
     QAtomicInt directoryCount { 0 };
@@ -60,4 +60,4 @@ public:
     std::atomic_bool iteratorCanStop { false };
 };
 }
-#endif // FILESTATISSTICSJOB_P_H
+#endif   // FILESTATISSTICSJOB_P_H
