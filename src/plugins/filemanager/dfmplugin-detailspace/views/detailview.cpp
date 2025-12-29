@@ -15,6 +15,7 @@
 
 #include <DFrame>
 #include <DGuiApplicationHelper>
+#include <DPlatformTheme>
 
 DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
@@ -100,11 +101,12 @@ void DetailView::initInfoUI()
     vLayout->insertWidget(0, m_previewWidget, 0, Qt::AlignHCenter);
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged,
             this, [this]() {
-                if (!m_currentUrl.isEmpty() && m_previewWidget) {
-                    m_previewController->requestPreview(m_currentUrl,
-                                                        ImagePreviewWidget::maximumPreviewSize());
-                }
+                reloadPreviewFile();
             });
+
+    connect(DGuiApplicationHelper::instance()->systemTheme(), &DPlatformTheme::iconThemeNameChanged, this, [this]() {
+        reloadPreviewFile();
+    });
 
     // 2. Create file info widget (index 1) - with separator frame
     QFrame *infoFrame = new QFrame(this);
@@ -205,6 +207,14 @@ void DetailView::updatePreviewSize()
         QSize hint = m_previewWidget->sizeHint();
         m_previewWidget->setFixedHeight(hint.height());
         m_previewWidget->update();
+    }
+}
+
+void DetailView::reloadPreviewFile()
+{
+    if (!m_currentUrl.isEmpty() && m_previewWidget) {
+        m_previewController->requestPreview(m_currentUrl,
+                                            ImagePreviewWidget::maximumPreviewSize());
     }
 }
 
