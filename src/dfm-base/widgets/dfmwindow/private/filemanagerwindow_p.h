@@ -130,14 +130,21 @@ private:
     void handleDetailSplitterMoved(int pos, int index);
     void animateDetailSplitter(bool show);
     void installDetailSplitterHandleEventFilter();
-    bool detailSplitterHandleEventFilter(QObject *watched, QEvent *event);
 
     // DetailSpace elastic drag tracking
     bool detailDragTracking { false };   // 是否正在跟踪拖拽
     bool detailDragAtMinimum { false };   // 是否处于弹性拖拽模式（已达最小宽度）
     int detailDragMinimumPosX { 0 };   // 到达最小宽度时的鼠标全局X坐标（起始点）
     bool detailDragHidden { false };   // 是否已通过拖拽隐藏（未释放鼠标）
+    bool detailDragContinued { false };   // 是否处于"继续拖拽"模式（从隐藏恢复后）
     static constexpr int kDetailDragThreshold { kMinimumDetailWidth / 2 };   // 140px
+
+    // Event filter helper methods (Single Responsibility)
+    bool handleWorkspaceKeyEvent(QObject *watched, QEvent *event);
+    bool handleSideBarEvent(QObject *watched, QEvent *event);
+    bool handleDetailSplitterHandleEvent(QObject *watched, QEvent *event);
+    bool handleGlobalDragEvent(QObject *watched, QEvent *event);
+    void resetDetailDragState();
 };
 
 }

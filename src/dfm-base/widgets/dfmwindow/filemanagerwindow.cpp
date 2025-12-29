@@ -702,13 +702,50 @@ void FileManagerWindowPrivate::installDetailSplitterHandleEventFilter()
     }
 }
 
-bool FileManagerWindowPrivate::detailSplitterHandleEventFilter(QObject *watched, QEvent *event)
+void FileManagerWindowPrivate::resetDetailDragState()
+{
+    detailDragTracking = false;
+    detailDragAtMinimum = false;
+    detailDragHidden = false;
+    detailDragContinued = false;
+    detailDragMinimumPosX = 0;
+}
+
+bool FileManagerWindowPrivate::handleWorkspaceKeyEvent(QObject *watched, QEvent *event)
+{
+    if (!workspace || watched != workspace)
+        return false;
+
+    if (event->type() != QEvent::KeyPress)
+        return false;
+
+    return processKeyPressEvent(static_cast<QKeyEvent *>(event));
+}
+
+bool FileManagerWindowPrivate::handleSideBarEvent(QObject *watched, QEvent *event)
+{
+    if (!sideBar || watched != sideBar)
+        return false;
+
+    switch (event->type()) {
+    case QEvent::Show:
+    case QEvent::Resize:
+        updateSideBarSeparatorPosition();
+        break;
+    default:
+        break;
+    }
+
+    return false;
+}
+
+bool FileManagerWindowPrivate::handleDetailSplitterHandleEvent(QObject *watched, QEvent *event)
 {
     if (!detailSplitter || !detailSpace)
         return false;
 
     QSplitterHandle *handle = detailSplitter->handle(1);
-    if (watched != handle)
+    if (!handle || watched != handle)
         return false;
 
     switch (event->type()) {
@@ -755,10 +792,20 @@ bool FileManagerWindowPrivate::detailSplitterHandleEventFilter(QObject *watched,
 
             if (offsetFromMinimum >= kDetailDragThreshold) {
                 // 向右拖拽超过 140px → 直接隐藏
+
+                // 在隐藏之前先设置光标，因为 hideDetailSpace 会触发 handle 的 leaveEvent
+                // 导致 restoreOverrideCursor 被调用，我们需要在其之后保持拖拽光标
+                // 使用 changeOverrideCursor 而不是 set/restore 来避免栈问题
+                QGuiApplication::changeOverrideCursor(Qt::SizeHorCursor);
+
                 QVariantHash options;
                 options[DetailSpaceOptions::kAnimated] = false;   // 不使用动画
                 options[DetailSpaceOptions::kUserAction] = true;   // 拖拽是用户操作
                 q->hideDetailSpace(options);
+
+                // hideDetailSpace 后 handle 的 leaveEvent 会 restoreOverrideCursor
+                // 此时光标栈可能为空，需要重新设置
+                QGuiApplication::setOverrideCursor(Qt::SizeHorCursor);
 
                 // 进入"已隐藏"状态，安装全局事件过滤器
                 detailDragHidden = true;
@@ -778,17 +825,94 @@ bool FileManagerWindowPrivate::detailSplitterHandleEventFilter(QObject *watched,
     case QEvent::MouseButtonRelease: {
         auto *mouseEvent = static_cast<QMouseEvent *>(event);
         if (mouseEvent->button() == Qt::LeftButton) {
-            // 重置所有状态
-            detailDragTracking = false;
-            detailDragAtMinimum = false;
-            detailDragHidden = false;
-            detailDragMinimumPosX = 0;
+            // 重置所有状态（仅当未进入全局拖拽模式时）
+            // 如果已安装全局事件过滤器，由 handleGlobalDragEvent 处理释放
+            if (!detailDragHidden && !detailDragContinued) {
+                resetDetailDragState();
+            }
         }
         break;
     }
 
     default:
         break;
+    }
+
+    return false;
+}
+
+bool FileManagerWindowPrivate::handleGlobalDragEvent(QObject *watched, QEvent *event)
+{
+    Q_UNUSED(watched)
+
+    // 只在全局拖拽模式下处理（detailspace已隐藏或继续拖拽模式）
+    if (!detailDragHidden && !detailDragContinued)
+        return false;
+
+    // 必须处于拖拽跟踪状态
+    if (!detailDragTracking)
+        return false;
+
+    if (event->type() == QEvent::MouseMove) {
+        auto *mouseEvent = static_cast<QMouseEvent *>(event);
+
+        // 检查鼠标是否在当前窗口内
+        QPoint globalPos = mouseEvent->globalPosition().toPoint();
+        QRect windowRect(q->mapToGlobal(QPoint(0, 0)), q->size());
+
+        if (!windowRect.contains(globalPos))
+            return false;
+
+        int currentMouseX = globalPos.x();
+        int windowRightEdgeX = q->mapToGlobal(QPoint(q->width(), 0)).x();
+        int distanceFromRight = windowRightEdgeX - currentMouseX;
+
+        if (detailDragHidden) {
+            // 状态A: detailspace 已隐藏，检测是否需要显示
+            if (distanceFromRight > kDetailDragThreshold) {
+                // 光标距离右边界 > 140px → 显示 detailspace
+                QVariantHash options;
+                options[DetailSpaceOptions::kAnimated] = false;
+                options[DetailSpaceOptions::kUserAction] = true;
+                q->showDetailSpace(options);
+
+                // 进入继续拖拽模式
+                detailDragHidden = false;
+                detailDragContinued = true;
+
+                // 根据当前鼠标位置设置 detailspace 宽度
+                int detailWidth = qBound(kMinimumDetailWidth, distanceFromRight, kMaximumDetailWidth);
+                setDetailSplitterPosition(detailWidth);
+                lastDetailSpaceWidth = detailWidth;
+            }
+        } else if (detailDragContinued) {
+            // 状态B: 继续拖拽模式，可调整宽度或再次隐藏
+            if (distanceFromRight <= kDetailDragThreshold) {
+                // 向右拖拽到阈值以内 → 再次隐藏
+                QVariantHash options;
+                options[DetailSpaceOptions::kAnimated] = false;
+                options[DetailSpaceOptions::kUserAction] = true;
+                q->hideDetailSpace(options);
+
+                detailDragHidden = true;
+                detailDragContinued = false;
+            } else {
+                // 正常拖拽调整宽度
+                int detailWidth = qBound(kMinimumDetailWidth, distanceFromRight, kMaximumDetailWidth);
+                setDetailSplitterPosition(detailWidth);
+                lastDetailSpaceWidth = detailWidth;
+            }
+        }
+    } else if (event->type() == QEvent::MouseButtonRelease) {
+        auto *mouseEvent = static_cast<QMouseEvent *>(event);
+        if (mouseEvent->button() == Qt::LeftButton) {
+            // 鼠标释放，恢复光标样式
+            QGuiApplication::restoreOverrideCursor();
+
+            // 重置所有状态并移除全局事件过滤器
+            resetDetailDragState();
+            qApp->removeEventFilter(q);
+        }
     }
 
     return false;
@@ -1106,67 +1230,21 @@ void FileManagerWindow::keyPressEvent(QKeyEvent *event)
 
 bool FileManagerWindow::eventFilter(QObject *watched, QEvent *event)
 {
-    // 处理工作区的键盘事件
-    if (d->workspace && watched == d->workspace && event->type() == QEvent::KeyPress) {
-        return d->processKeyPressEvent(static_cast<QKeyEvent *>(event));
-    }
+    // 工作区键盘事件
+    if (d->handleWorkspaceKeyEvent(watched, event))
+        return true;
 
-    // 处理侧边栏事件
-    if (d->sideBar && watched == d->sideBar) {
-        switch (event->type()) {
-        case QEvent::Show:
-        case QEvent::Resize:
-            d->updateSideBarSeparatorPosition();
-            break;
-        default:
-            break;
-        }
-    }
+    // 侧边栏事件
+    if (d->handleSideBarEvent(watched, event))
+        return true;
 
-    // 处理 detailSplitter handle 的鼠标事件
-    if (d->detailSplitter && d->detailSplitter->handle(1) && watched == d->detailSplitter->handle(1)) {
-        return d->detailSplitterHandleEventFilter(watched, event);
-    }
+    // DetailSplitter handle 拖拽事件
+    if (d->handleDetailSplitterHandleEvent(watched, event))
+        return true;
 
-    // 处理全局鼠标事件（用于隐藏后的反向显示检测）
-    if (d->detailDragHidden) {
-        if (event->type() == QEvent::MouseMove) {
-            auto *mouseEvent = static_cast<QMouseEvent *>(event);
-
-            // 检查鼠标是否在当前窗口内
-            QPoint globalPos = mouseEvent->globalPosition().toPoint();
-            QRect windowRect(mapToGlobal(QPoint(0, 0)), size());
-
-            if (windowRect.contains(globalPos)) {
-                int currentMouseX = globalPos.x();
-                int windowRightEdgeX = mapToGlobal(QPoint(width(), 0)).x();
-                int distanceFromRight = windowRightEdgeX - currentMouseX;
-
-                if (distanceFromRight > d->kDetailDragThreshold) {
-                    // 光标距离右边界 > 140px → 直接显示
-                    QVariantHash options;
-                    options[DetailSpaceOptions::kAnimated] = false;   // 不使用动画
-                    options[DetailSpaceOptions::kUserAction] = true;   // 拖拽反向是用户操作
-                    showDetailSpace(options);
-
-                    // 重置状态并移除全局事件过滤器
-                    d->detailDragHidden = false;
-                    d->detailDragAtMinimum = false;
-                    qApp->removeEventFilter(this);
-                }
-            }
-        } else if (event->type() == QEvent::MouseButtonRelease) {
-            auto *mouseEvent = static_cast<QMouseEvent *>(event);
-            if (mouseEvent->button() == Qt::LeftButton) {
-                // 鼠标释放，重置状态并移除全局事件过滤器
-                d->detailDragHidden = false;
-                d->detailDragAtMinimum = false;
-                d->detailDragTracking = false;
-                d->detailDragMinimumPosX = 0;
-                qApp->removeEventFilter(this);
-            }
-        }
-    }
+    // 全局拖拽事件（用于隐藏后的反向显示和继续拖拽）
+    if (d->handleGlobalDragEvent(watched, event))
+        return true;
 
     return false;
 }
