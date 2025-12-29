@@ -264,7 +264,6 @@ void ViewAnimationHelper::setAnimProcess(double value)
         return;
 
     animProcess = value;
-    fmDebug() << "Animation process updated to:" << value;
 }
 
 void ViewAnimationHelper::onDelayTimerFinish()
