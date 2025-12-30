@@ -91,33 +91,10 @@ void travers_prehandler::networkAccessPrehandler(quint64 winId, const QUrl &url,
     static QString kRecordFilePath = QString("/tmp/dfm_smb_mount_%1.ini").arg(getuid());
     static QString kRecordGroup = "defaultSmbPath";
     static QRegularExpression kRegx { "/|\\.|:" };
-    auto recordSubPath = [](const QString &smbRoot, const QString &subPath) {
-        QFile record(kRecordFilePath);
-        if (!record.exists() && record.open(QIODevice::NewOnly)) {
-            record.close();
-            fmDebug() << "Created new record file:" << kRecordFilePath;
-        }
-        auto key(smbRoot);
-        key = key.replace(kRegx, "_");
-        QSettings sets(kRecordFilePath, QSettings::IniFormat);
-        sets.setValue(QString("%1/%2").arg(kRecordGroup).arg(key), subPath);
-    };
-    auto readSubPath = [](const QString &smbRoot) {
-        auto key(smbRoot);
-        key = key.replace(kRegx, "_");
-        QSettings sets(kRecordFilePath, QSettings::IniFormat);
-        return sets.value(QString("%1/%2").arg(kRecordGroup).arg(key), "").toString();
-    };
-
     DevMngIns->mountNetworkDeviceAsync(mountSource, [=](bool ok, const DFMMOUNT::OperationErrorInfo &err, const QString &mpt) {
         fmInfo() << "mount done: " << netUrl << ok << err.code << err.message << mpt;
         if (!mpt.isEmpty()) {
-            if (err.code == DFMMOUNT::DeviceError::kNoError)
-                recordSubPath(mountSource, subPath);
-            QString jumpTo(subPath);
-            if (jumpTo.isEmpty())
-                jumpTo = readSubPath(mountSource);
-            doChangeCurrentUrl(winId, mpt, jumpTo, netUrl);
+            doChangeCurrentUrl(winId, mpt, subPath, netUrl);
         } else if (ok || err.code == DFMMOUNT::DeviceError::kGIOErrorAlreadyMounted) {
             if (isSmb) onSmbRootMounted(mountSource, after);
         } else {
@@ -175,9 +152,14 @@ void travers_prehandler::doChangeCurrentUrl(quint64 winId, const QString &mpt, c
     targetPath.append(subPath);
 
     QUrl url = QUrl::fromLocalFile(targetPath);
-    FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(url);
-    if (fileInfo && fileInfo->isAttributes(FileInfo::FileIsType::kIsFile))
-        url = fileInfo->urlOf(FileInfo::FileUrlInfoType::kParentUrl);
+    FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(url, Global::kCreateFileInfoSync);
+    if (fileInfo && fileInfo->isAttributes(FileInfo::FileIsType::kIsFile)) {
+        dpfSignalDispatcher->publish(GlobalEventType::kOpenFiles, winId, QList<QUrl> { url });
+
+        QUrl parentUrl = fileInfo->urlOf(UrlInfoType::kParentUrl);
+        parentUrl.setQuery("selectUrl=" + url.toString());
+        url = parentUrl;
+    }
     dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, url);
 
     // remove sourceUrl from history stack.
