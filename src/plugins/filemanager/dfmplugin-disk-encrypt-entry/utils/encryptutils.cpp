@@ -60,13 +60,9 @@ QString config_utils::cipherType()
 
 int tpm_utils::checkTPM()
 {
-    QDBusInterface iface("org.deepin.Filemanager.TPMControl",
-                         "/org/deepin/Filemanager/TPMControl",
-                         "org.deepin.Filemanager.TPMControl",
-                         QDBusConnection::systemBus());
-
+    CREATE_TPM_INTERFACE(iface);
     if (!iface.isValid()) {
-        fmWarning() << "TPMControl DBus interface is invalid";
+        fmWarning() << "TPMControl DBus interface is invalid, service may be unavailable";
         return -1;
     }
 
@@ -76,13 +72,9 @@ int tpm_utils::checkTPM()
 
 int tpm_utils::checkTPMLockoutStatus()
 {
-    QDBusInterface iface("org.deepin.Filemanager.TPMControl",
-                         "/org/deepin/Filemanager/TPMControl",
-                         "org.deepin.Filemanager.TPMControl",
-                         QDBusConnection::systemBus());
-
+    CREATE_TPM_INTERFACE(iface);
     if (!iface.isValid()) {
-        fmWarning() << "TPMControl DBus interface is invalid";
+        fmWarning() << "TPMControl DBus interface is invalid, service may be unavailable";
         return -1;
     }
 
@@ -92,13 +84,9 @@ int tpm_utils::checkTPMLockoutStatus()
 
 int tpm_utils::getRandomByTPM(int size, QString *output)
 {
-    QDBusInterface iface("org.deepin.Filemanager.TPMControl",
-                         "/org/deepin/Filemanager/TPMControl",
-                         "org.deepin.Filemanager.TPMControl",
-                         QDBusConnection::systemBus());
-
+    CREATE_TPM_INTERFACE(iface);
     if (!iface.isValid()) {
-        fmWarning() << "TPMControl DBus interface is invalid";
+        fmWarning() << "TPMControl DBus interface is invalid, service may be unavailable";
         return -1;
     }
 
@@ -154,13 +142,9 @@ int tpm_utils::getRandomByTPM(int size, QString *output)
 
 int tpm_utils::isSupportAlgoByTPM(const QString &algoName, bool *support)
 {
-    QDBusInterface iface("org.deepin.Filemanager.TPMControl",
-                         "/org/deepin/Filemanager/TPMControl",
-                         "org.deepin.Filemanager.TPMControl",
-                         QDBusConnection::systemBus());
-
+    CREATE_TPM_INTERFACE(iface);
     if (!iface.isValid()) {
-        fmWarning() << "TPMControl DBus interface is invalid";
+        fmWarning() << "TPMControl DBus interface is invalid, service may be unavailable";
         return -1;
     }
 
@@ -183,13 +167,9 @@ int tpm_utils::isSupportAlgoByTPM(const QString &algoName, bool *support)
 
 int tpm_utils::encryptByTPM(const QVariantMap &map)
 {
-    QDBusInterface iface("org.deepin.Filemanager.TPMControl",
-                         "/org/deepin/Filemanager/TPMControl",
-                         "org.deepin.Filemanager.TPMControl",
-                         QDBusConnection::systemBus());
-
+    CREATE_TPM_INTERFACE(iface);
     if (!iface.isValid()) {
-        fmWarning() << "TPMControl DBus interface is invalid";
+        fmWarning() << "TPMControl DBus interface is invalid, service may be unavailable";
         return -1;
     }
 
@@ -230,13 +210,9 @@ int tpm_utils::encryptByTPM(const QVariantMap &map)
 
 int tpm_utils::decryptByTPM(const QVariantMap &map, QString *psw)
 {
-    QDBusInterface iface("org.deepin.Filemanager.TPMControl",
-                         "/org/deepin/Filemanager/TPMControl",
-                         "org.deepin.Filemanager.TPMControl",
-                         QDBusConnection::systemBus());
-
+    CREATE_TPM_INTERFACE(iface);
     if (!iface.isValid()) {
-        fmWarning() << "TPMControl DBus interface is invalid";
+        fmWarning() << "TPMControl DBus interface is invalid, service may be unavailable";
         return -1;
     }
 
@@ -323,13 +299,9 @@ int tpm_utils::decryptByTPM(const QVariantMap &map, QString *psw)
 
 int tpm_utils::ownerAuthStatus()
 {
-    QDBusInterface iface("org.deepin.Filemanager.TPMControl",
-                         "/org/deepin/Filemanager/TPMControl",
-                         "org.deepin.Filemanager.TPMControl",
-                         QDBusConnection::systemBus());
-
+    CREATE_TPM_INTERFACE(iface);
     if (!iface.isValid()) {
-        fmWarning() << "TPMControl DBus interface is invalid";
+        fmWarning() << "TPMControl DBus interface is invalid, service may be unavailable";
         return -1;
     }
 
@@ -339,32 +311,31 @@ int tpm_utils::ownerAuthStatus()
 
 int device_utils::encKeyType(const QString &dev)
 {
-    QDBusInterface iface(kDaemonBusName,
-                         kDaemonBusPath,
-                         kDaemonBusIface,
-                         QDBusConnection::systemBus());
-    if (iface.isValid()) {
-        QDBusReply<QString> reply = iface.call("TpmToken", dev);
-        if (!reply.isValid()) {
-            fmWarning() << "Failed to get TPM token via D-Bus for device:" << dev;
-            return 0;
-        }
-        QString tokenJson = reply.value();
-        if (tokenJson.isEmpty()) {
-            fmDebug() << "Empty TPM token for device:" << dev;
-            return 0;
-        }
-
-        QJsonDocument doc = QJsonDocument::fromJson(tokenJson.toLocal8Bit());
-        QJsonObject obj = doc.object();
-        cacheToken(dev, obj.toVariantMap());
-        QString usePin = obj.value("pin").toString("");
-        if (usePin.isEmpty()) return 0;
-        if (usePin == "1") return 1;
-        if (usePin == "0") return 2;
+    CREATE_DAEMON_INTERFACE(iface);
+    if (!iface.isValid()) {
+        fmWarning() << "Failed to create DBus interface for TpmToken, service may be unavailable";
+        return 0;
     }
 
-    fmWarning() << "Invalid D-Bus interface for device:" << dev;
+    QDBusReply<QString> reply = iface.call("TpmToken", dev);
+    if (!reply.isValid()) {
+        fmWarning() << "Failed to get TPM token via D-Bus for device:" << dev;
+        return 0;
+    }
+    QString tokenJson = reply.value();
+    if (tokenJson.isEmpty()) {
+        fmDebug() << "Empty TPM token for device:" << dev;
+        return 0;
+    }
+
+    QJsonDocument doc = QJsonDocument::fromJson(tokenJson.toLocal8Bit());
+    QJsonObject obj = doc.object();
+    cacheToken(dev, obj.toVariantMap());
+    QString usePin = obj.value("pin").toString("");
+    if (usePin.isEmpty()) return 0;
+    if (usePin == "1") return 1;
+    if (usePin == "0") return 2;
+
     return 0;
 }
 

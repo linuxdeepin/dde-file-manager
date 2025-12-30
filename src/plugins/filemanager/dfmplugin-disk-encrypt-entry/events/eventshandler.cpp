@@ -88,10 +88,11 @@ void EventsHandler::hookEvents()
  */
 bool EventsHandler::isTaskWorking()
 {
-    QDBusInterface iface(kDaemonBusName,
-                         kDaemonBusPath,
-                         kDaemonBusIface,
-                         QDBusConnection::systemBus());
+    CREATE_DAEMON_INTERFACE(iface);
+    if (!iface.isValid()) {
+        fmWarning() << "Failed to create DBus interface for IsTaskRunning, service may be unavailable";
+        return false;
+    }
     QDBusReply<bool> reply = iface.call("IsTaskRunning");
     return reply.isValid() && reply.value();
 }
@@ -102,20 +103,22 @@ bool EventsHandler::isTaskWorking()
  */
 bool EventsHandler::hasPendingTask()
 {
-    QDBusInterface iface(kDaemonBusName,
-                         kDaemonBusPath,
-                         kDaemonBusIface,
-                         QDBusConnection::systemBus());
+    CREATE_DAEMON_INTERFACE(iface);
+    if (!iface.isValid()) {
+        fmWarning() << "Failed to create DBus interface for IsTaskEmpty, service may be unavailable";
+        return false;
+    }
     QDBusReply<bool> reply = iface.call("IsTaskEmpty");
     return reply.isValid() && !reply.value();
 }
 
 QString EventsHandler::unfinishedDecryptJob()
 {
-    QDBusInterface iface(kDaemonBusName,
-                         kDaemonBusPath,
-                         kDaemonBusIface,
-                         QDBusConnection::systemBus());
+    CREATE_DAEMON_INTERFACE(iface);
+    if (!iface.isValid()) {
+        fmWarning() << "Failed to create DBus interface for PendingDecryptionDevice, service may be unavailable";
+        return QString();
+    }
     QDBusReply<QString> reply = iface.call("PendingDecryptionDevice");
     return reply.value();
 }
@@ -134,10 +137,11 @@ bool EventsHandler::isUnderOperating(const QString &device)
 
 int EventsHandler::deviceEncryptStatus(const QString &device)
 {
-    QDBusInterface iface(kDaemonBusName,
-                         kDaemonBusPath,
-                         kDaemonBusIface,
-                         QDBusConnection::systemBus());
+    CREATE_DAEMON_INTERFACE(iface);
+    if (!iface.isValid()) {
+        fmWarning() << "Failed to create DBus interface for DeviceStatus, service may be unavailable";
+        return -1;
+    }
     QDBusReply<int> reply = iface.call("DeviceStatus", device);
     if (reply.isValid())
         return reply.value();
@@ -156,10 +160,11 @@ void EventsHandler::resumeEncrypt(const QString &device)
 
 QString EventsHandler::holderDevice(const QString &device)
 {
-    QDBusInterface iface(kDaemonBusName,
-                         kDaemonBusPath,
-                         kDaemonBusIface,
-                         QDBusConnection::systemBus());
+    CREATE_DAEMON_INTERFACE(iface);
+    if (!iface.isValid()) {
+        fmWarning() << "Failed to create DBus interface for HolderDevice, service may be unavailable, using original device";
+        return device;
+    }
     QDBusReply<QString> reply = iface.call("HolderDevice", device);
     if (reply.isValid())
         return reply.value();
@@ -315,10 +320,11 @@ void EventsHandler::onRequestAuthArgs(const QVariantMap &devInfo)
 void EventsHandler::ignoreParamRequest()
 {
     fmDebug() << "Ignoring parameter request";
-    QDBusInterface iface(kDaemonBusName,
-                         kDaemonBusPath,
-                         kDaemonBusIface,
-                         QDBusConnection::systemBus());
+    CREATE_DAEMON_INTERFACE(iface);
+    if (!iface.isValid()) {
+        fmWarning() << "Failed to create DBus interface for IgnoreAuthSetup, service may be unavailable";
+        return;
+    }
     iface.asyncCall("IgnoreAuthSetup");
     fmInfo() << "Parameter request ignored";
 }
