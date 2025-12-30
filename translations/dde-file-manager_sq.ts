@@ -1144,7 +1144,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="198"/>
         <source>Finalize disc after burning 
 (no additional data can be appended)</source>
-        <translation type="unfinished"/>
+        <translation>Finalizo diskun pas shkrimit (s’mund të shtohen të dhëna të tjera)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="208"/>
@@ -3395,12 +3395,12 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="411"/>
         <source>Load thumbnails for network, mobile, and optical disc directories</source>
-        <translation type="unfinished"/>
+        <translation>Ngarko miniatura për drejtori rrjeti, celulari dhe disqesh optikë</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="412"/>
         <source>Thumbnails will be loaded for high-latency devices like network shares, phones, and optical drives, which may affect loading speed</source>
-        <translation type="unfinished"/>
+        <translation>Miniatura do të ngarkohen për pajisje me vonesë të madhe, të tilla si pjesë rrjeti, telefona dhe pajisje optike, çka mund të prekë shpejtësinë e ngarkimit</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="376"/>
