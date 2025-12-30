@@ -214,19 +214,11 @@ void ResetPasswordByKeyFileView::buttonClicked(int index, const QString &text)
             return;
         }
 
-<<<<<<< HEAD
-        QRegularExpression keyFormat("^[A-Za-z0-9]{32}$");
-        QRegularExpressionMatch match = keyFormat.match(recoveryKey);
-        if (!match.hasMatch()) {
-            keyFileEdit->lineEdit()->setPlaceholderText(tr("Invalid recovery key format: must contain only letters and numbers"));
-            keyFileEdit->setText("");
-=======
         QRegularExpression keyFormat("^[A-Za-z0-9]{32}$");
         QRegularExpressionMatch match = keyFormat.match(recoveryKey);
         if (!match.hasMatch()) {
             keyFileEdit->setAlert(true);
             keyFileEdit->showAlertMessage(tr("Invalid recovery key format: must contain only letters and numbers"), kToolTipShowDuration);
->>>>>>> 003a69f29... fix: Use alert message instead of placeholder for key file reset password errors
             emit sigBtnEnabled(1, true);
             emit sigBtnEnabled(0, true);
             return;
