@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="bo">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="bo">
 <context>
     <name>AccessControlDBus</name>
     <message>
@@ -32,7 +30,7 @@
     <message>
         <location filename="../src/services/diskencrypt/workers/dminitencryptworker.cpp" line="51"/>
         <source>Initialize encryption </source>
-        <translation>སྤྱིད་བཞིན་གྱི་གྲངས་སྤྱིད་བྱེད་པ་བཞིན</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -67,7 +65,7 @@
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="843"/>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="953"/>
         <source>Can&apos;t access file!</source>
-        <translation>ཡིག་ཆ་འགྱུར་བྱེད་མི་འགྱུར་བྱེད་པ་མེད།</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -125,7 +123,7 @@
     <message>
         <location filename="../src/services/diskencrypt/workers/fstabdecryptworker.cpp" line="28"/>
         <source>Decrypting </source>
-        <translation>སྤྱིད་བཞིན་གྱི་གྲངས་སྤྱིད་བྱེད་པ་བཞིན</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -133,7 +131,7 @@
     <message>
         <location filename="../src/services/diskencrypt/workers/fstabinitencryptworker.cpp" line="27"/>
         <source>Initialize encryption </source>
-        <translation>སྤྱིད་བཞིན་གྱི་གྲངས་སྤྱིད་བྱེད་པ་བཞིན</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -149,7 +147,7 @@
     <message>
         <location filename="../src/services/diskencrypt/workers/normaldecryptworker.cpp" line="24"/>
         <source>Decrypting </source>
-        <translation>སྤྱིད་བཞིན་གྱི་གྲངས་སྤྱིད་བྱེད་པ་བཞིན</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -157,7 +155,7 @@
     <message>
         <location filename="../src/services/diskencrypt/workers/normalinitencryptworker.cpp" line="25"/>
         <source>Initialize encryption </source>
-        <translation>སྤྱིད་བཞིན་གྱི་གྲངས་སྤྱིད་བྱེད་པ་བཞིན</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -181,7 +179,7 @@
         <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="965"/>
         <source>Authentication Required
 Enter user and password for %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1037"/>
@@ -221,7 +219,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="432"/>
         <source>Blank %1 Disc</source>
-        <translation>འོད་སྡེར་སྟོང་པ་%1&#xa0;</translation>
+        <translation>འོད་སྡེར་སྟོང་པ་%1 </translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="432"/>
@@ -235,19 +233,19 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="442"/>
         <source>%1 Drive</source>
-        <translation>སྐུལ་ཆས་%1&#xa0;</translation>
+        <translation>སྐུལ་ཆས་%1 </translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="391"/>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="461"/>
         <source>%1 Encrypted</source>
-        <translation>གསང་སྡོམ་%1&#xa0;</translation>
+        <translation>གསང་སྡོམ་%1 </translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="469"/>
         <location filename="../src/external/dde-dock-plugins/disk-mount/utils/dockutils.cpp" line="109"/>
         <source>%1 Volume</source>
-        <translation>བམ་པོ་%1&#xa0;</translation>
+        <translation>བམ་པོ་%1 </translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="287"/>
@@ -369,24 +367,24 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="394"/>
         <source>Specify directory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="404"/>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="425"/>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="475"/>
         <source>Specify directory %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="470"/>
         <source>Invalid Directory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="471"/>
         <source>This directory does not support pinning</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskdialog.cpp" line="151"/>
@@ -688,7 +686,7 @@ Enter user and password for %1</source>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="51"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="52"/>
         <source>Default icon size:</source>
-        <translation>གྲངས་སྤྱིད་བྱེད་པ་བཞིན་གྱི་སྤྱིར་བཞིན་ཆེ་ཆུང་།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="44"/>
@@ -963,7 +961,7 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/filenameutils.cpp" line="137"/>
         <source> (copy %1)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
-        <translation>（འདྲ་དཔེ།&#xa0;%1）</translation>
+        <translation>（འདྲ་དཔེ། %1）</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/utils/previewfileoperation.cpp" line="40"/>
@@ -1145,7 +1143,7 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="198"/>
         <source>Finalize disc after burning 
 (no additional data can be appended)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="208"/>
@@ -1459,7 +1457,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="97"/>
         <source>New tab</source>
-        <translation type="unfinished">ཤོག་བྱང་གསར་བཟོ།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="103"/>
@@ -1806,22 +1804,22 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/addressbar.cpp" line="375"/>
         <source>Clear search history</source>
-        <translation>འཚོ་བ་གཞི་གཞུང་གི་གཞི་ཆེ་ཆུང་མེད།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="354"/>
         <source>Unknow</source>
-        <translation>མི་གཞི་ཆེ་ཆུང་མེད།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="279"/>
         <source>search</source>
-        <translation>འཚོ་བ་གཞི་གཞུང་</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="294"/>
         <source>advanced search</source>
-        <translation>བྱེད་བྱེད་པ་གཞི་གཞུང་</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="643"/>
@@ -1884,7 +1882,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/services/diskencrypt/helpers/abrecoveryhelper.cpp" line="65"/>
         <source>Updating grub...</source>
-        <translation>grub་གཞི་གཞུང་གི་གཞི་ཆེ་ཆུང་བཞིན</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/fileutils/vaultfileinfo.cpp" line="311"/>
@@ -1895,129 +1893,129 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="210"/>
         <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="228"/>
         <source>Path</source>
-        <translation type="unfinished">འགྲོ་ལམ།</translation>
+        <translation>འགྲོ་ལམ།</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="211"/>
         <source>Last access</source>
-        <translation type="unfinished">ཉེ་ཆར་གྱི་ལྟ་སྤྱོད་དུས་ཚོད།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="127"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="41"/>
         <source>Group by</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="111"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="52"/>
         <source>None</source>
-        <translation type="unfinished">མེད།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="53"/>
         <source>Name</source>
-        <translation type="unfinished">མིང་།</translation>
+        <translation>མིང་།</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="54"/>
         <source>Time modified</source>
-        <translation type="unfinished">བཟོ་བཅོས་དུས་ཚོད།</translation>
+        <translation>བཟོ་བཅོས་དུས་ཚོད།</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="55"/>
         <source>Time created</source>
-        <translation type="unfinished">བཟོ་བའི་དུས་ཚོད།</translation>
+        <translation>བཟོ་བའི་དུས་ཚོད།</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="56"/>
         <source>Size</source>
-        <translation type="unfinished">ཆེ་ཆུང་།</translation>
+        <translation>ཆེ་ཆུང་།</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="57"/>
         <source>Type</source>
-        <translation type="unfinished">རིགས་གྲས།</translation>
+        <translation>རིགས་གྲས།</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="239"/>
         <source>Time deleted</source>
-        <translation type="unfinished">བསུབས་པའི་དུས་ཚོད།</translation>
+        <translation>བསུབས་པའི་དུས་ཚོད།</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/namegroupstrategy.cpp" line="37"/>
         <source>Chinese A-H</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/namegroupstrategy.cpp" line="38"/>
         <source>Chinese I-P</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/namegroupstrategy.cpp" line="39"/>
         <source>Chinese Q-Z</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="31"/>
         <source>Today</source>
-        <translation type="unfinished">དེ་རིང་།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="32"/>
         <source>Yesterday</source>
-        <translation type="unfinished">ཁ་སང་།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="33"/>
         <source>Past 7 Days</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="34"/>
         <source>Past 30 Days</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="35"/>
         <source>Earlier</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/typegroupstrategy.cpp" line="34"/>
         <source>Directory</source>
-        <translation type="unfinished">དཀར་ཆག</translation>
+        <translation>དཀར་ཆག</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/typegroupstrategy.cpp" line="35"/>
         <source>Text</source>
-        <translation type="unfinished">ཡིག་ཆ་གསར་བཟོ།</translation>
+        <translation>ཡིག་ཆ་གསར་བཟོ།</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/typegroupstrategy.cpp" line="36"/>
         <source>Image</source>
-        <translation type="unfinished">པར་རིས།</translation>
+        <translation>པར་རིས།</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/typegroupstrategy.cpp" line="37"/>
         <source>Video</source>
-        <translation type="unfinished">བརྙན་འཕྲིན།</translation>
+        <translation>བརྙན་འཕྲིན།</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/typegroupstrategy.cpp" line="38"/>
         <source>Audio</source>
-        <translation type="unfinished">སྒྲ་ཟློས།</translation>
+        <translation>སྒྲ་ཟློས།</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/typegroupstrategy.cpp" line="39"/>
         <source>Archive</source>
-        <translation type="unfinished">སྡུད་སྒྲིལ་ཡིག་ཆ།</translation>
+        <translation>སྡུད་སྒྲིལ་ཡིག་ཆ།</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/typegroupstrategy.cpp" line="40"/>
         <source>Application</source>
-        <translation type="unfinished">ཉེར་སྤྱོད་བྱ་རིམ།</translation>
+        <translation>ཉེར་སྤྱོད་བྱ་རིམ།</translation>
     </message>
 </context>
 <context>
@@ -2025,7 +2023,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/services/diskencrypt/workers/resumeencryptworker.cpp" line="68"/>
         <source>Encrypting </source>
-        <translation>གྲངས་སྤྱིད་བྱེད་པ་བཞིན</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2063,7 +2061,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="138"/>
         <source>Personalization</source>
-        <translation>སྤྱིད་བཞིན་གྱི་གྲངས་སྤྱིད་བྱེད་པ་བཞིན</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="135"/>
@@ -2084,7 +2082,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="146"/>
         <source>Time created</source>
-        <translation>བཟོ་བའི་དུས་ཚོད།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="147"/>
@@ -2249,12 +2247,12 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/alerthidealldialog.cpp" line="37"/>
         <source>The hortcut key &quot;%1&quot; to show collection</source>
-        <translation>གཞི་གཞུང་གི་གཞི་ཆེ་ཆུང་ &quot;%1&quot; ཡིག་ཆ་གཞི་གཞུང་གི་གཞི་ཆེ་ཆུང་བཞིིན</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/alerthidealldialog.cpp" line="45"/>
         <source>No prompt</source>
-        <translation>གཞི་ཆེ་ཆུང་མེད</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2306,7 +2304,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="136"/>
         <source>Middle area</source>
-        <translation>བརྒྱུད་ནང་གི་ཁེ་ཕན</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="162"/>
@@ -2337,12 +2335,12 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="233"/>
         <source>Enable desktop organization</source>
-        <translation>དྲངས་སྤྱིད་བཞིནཟ་གཞི་གཞུང་གི་གཞི་ཆེ་ཆུང་བཞིན</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="235"/>
         <source>Desktop Settings</source>
-        <translation>དྲངས་སྤྱིད་བཞིནཟ་གཞི་གཞུང་གི་གཞི་ཆེ་ཆུང་བཞིན</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="236"/>
@@ -2385,27 +2383,27 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="163"/>
         <source>To disable the One-Click Hide feature, invoke the &quot;Desktop Settings&quot; window in the desktop context menu and turn off the &quot;One-Click Hide Collection&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="173"/>
         <source>Desktop organizer</source>
-        <translation>སྤྱི་ཚོགས་རིགས་གཞི་གཏན་</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="176"/>
         <source>Shortcut &quot;%1&quot; to show collections</source>
-        <translation>གཞི་གཏན་མིང་&quot;%1&quot; རང་གི་གཞི་གཏན་གྱི་སྤྱི་ཚོགས་བེབེག་</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="178"/>
         <source>Close</source>
-        <translation>སྒོ་བརྒྱབ།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="178"/>
         <source>No more prompts</source>
-        <translation>གཞི་གཏན་གྱི་སྤྱི་ཚོགས་མི་བེབེག་</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2429,7 +2427,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="91"/>
         <source>Desktop Settings</source>
-        <translation>སྤྱི་ཚོགས་གཞི་གཏན་གྱི་གཞི་གཏན་</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="110"/>
@@ -2439,7 +2437,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="130"/>
         <source>Enable desktop organizer</source>
-        <translation>སྤྱི་ཚོགས་རིགས་གཞི་གཏན་གྱི་སྤྱི་ཚོགས་རིགས་གཞི་གཏན་བཟོ་</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2457,12 +2455,12 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="158"/>
         <source>Hide all collections with one click</source>
-        <translation>གཞི་གཏན་གྱི་སྤྱིིས། ཡོད་པ་ཚོགས་གཞི་གཏན་གྱི་གཞི་གཏན་བེབེག་</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="218"/>
         <source>Hide/Show Collection Shortcuts</source>
-        <translation>གཞི་གཏན་གྱི་སྤྱི་ཚོགས་གཞི་གཏན་བེབེག/བཞིན་</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2873,7 +2871,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="159"/>
         <source>Authentication failed</source>
-        <translation>འོད་སྤྱི་ཚོགས་བཞིན་</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="157"/>
@@ -3018,7 +3016,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="155"/>
         <source>Permission denied</source>
-        <translation type="unfinished">དབང་ཚད་མི་འདང་བ།</translation>
+        <translation>དབང་ཚད་མི་འདང་བ།</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="414"/>
@@ -3084,7 +3082,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="573"/>
         <source>&quot;%1&quot; already exists, please use another name.</source>
-        <translation>ཡིག་ཆ་&quot;%1&quot;&#xa0;བཟུང་ཟིན་པས། མིང་གཞན་སྤྱོད་རོགས།</translation>
+        <translation>ཡིག་ཆ་&quot;%1&quot; བཟུང་ཟིན་པས། མིང་གཞན་སྤྱོད་རོགས།</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="587"/>
@@ -3376,12 +3374,12 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="359"/>
         <source>Default icon grid density:</source>
-        <translation>གཞི་གཏན་རིགས་གཞི་གཏན་གྱི་གཞི་གཏན་གྱི་གཞི་གཏན་གྱི་གཞི་གཏན་</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="369"/>
         <source>Default list height:</source>
-        <translation>གཞི་གཏན་གྱི་གཞི་གཏན་གྱི་གཞི་གཏན་</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="379"/>
@@ -3396,12 +3394,12 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="411"/>
         <source>Load thumbnails for network, mobile, and optical disc directories</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="412"/>
         <source>Thumbnails will be loaded for high-latency devices like network shares, phones, and optical drives, which may affect loading speed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="376"/>
@@ -3411,37 +3409,37 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="249"/>
         <source>Open new folder in a new tab</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="252"/>
         <source>Activate existing window when reopening folder</source>
-        <translation>གཞི་གཏན་གྱི་གཞི་གཏན་མིང་འོད་སྤྱི་ཚོགས་མི་བཞིན་</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="274"/>
         <source>New window</source>
-        <translation type="unfinished">སྒེའུ་ཁུང་གསར་འཛུགས།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="277"/>
         <source>Display when launching a new window:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="280"/>
         <source>Default Directory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="301"/>
         <source>New tab</source>
-        <translation type="unfinished">ཤོག་བྱང་གསར་བཟོ།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="349"/>
         <source>Default icon size:</source>
-        <translation>གཞི་གཏན་གྱི་གཞི་གཏན་ཆེ་ཆུང་</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="376"/>
@@ -3624,7 +3622,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="34"/>
         <source>Copy file path</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="35"/>
@@ -3634,12 +3632,12 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="36"/>
         <source>Undo</source>
-        <translation>བཞིན་</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="37"/>
         <source>Redo</source>
-        <translation>བཞིན་</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="39"/>
@@ -3882,12 +3880,12 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="267"/>
         <source>Cannot move &quot;%1&quot; to the Trash. Delete it immediately?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="268"/>
         <source>This action cannot be undone. Please proceed with caution!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="416"/>
@@ -3918,7 +3916,7 @@ Enter user and password for %1</source>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="575"/>
         <source>Permanently delete</source>
         <comment>button</comment>
-        <translation type="unfinished">ཡོངས་སུ་སུབ་པ།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="602"/>
@@ -4067,12 +4065,12 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="47"/>
         <source>Erase failed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="48"/>
         <source>Unable to complete disc erasure. This may be due to read/write limitations or the disc media status. Please check the relevant settings and try again.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="232"/>
@@ -4197,12 +4195,12 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="576"/>
         <source>Not enough free space on the disc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="577"/>
         <source>The remaining space on the current disc is insufficient to hold the files to be burned. Please reduce the number of files and try again.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -4438,37 +4436,37 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="45"/>
         <source>Name</source>
-        <translation type="unfinished">མིང་།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="46"/>
         <source>Size</source>
-        <translation type="unfinished">ཆེ་ཆུང་།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="47"/>
         <source>Resolution</source>
-        <translation type="unfinished">གཞི་གཏན་ཆེ་ཆུང་</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="49"/>
         <source>Duration</source>
-        <translation type="unfinished">དུས་ཚོད་རིང་ཐུང་།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="50"/>
         <source>Type</source>
-        <translation type="unfinished">རིགས་གྲས།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="51"/>
         <source>Accessed</source>
-        <translation type="unfinished">ལྟ་སྤྱོད་དུས་ཚོད།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="52"/>
         <source>Modified</source>
-        <translation type="unfinished">བཟོ་བའི་དུས་ཚོད།</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -4612,7 +4610,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="587"/>
         <source>The shared name is too long and will be truncated.</source>
-        <translation>གཞི་གཏན་མིང་སྤྱི་ཚོགས་ཆེ་ཆུང་ཆེ་ཆུང་དང་གཞི་གཏན་བཞིན་</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -4653,7 +4651,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="572"/>
         <source>SMB port is banned, please check the firewall strategy.</source>
-        <translation>SMB་གཞི་གཏན་བཞིན་དང་གཞི་གཏན་གྱི་གཞི་གཏན་དམངས་ཆེ་ཆུང་བཞིན་</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="581"/>
@@ -4781,12 +4779,12 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="54"/>
         <source>Please input recovery key to decrypt partition</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="60"/>
         <source>Please input %1 to decrypt partition</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="61"/>
@@ -4816,7 +4814,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="111"/>
         <source>Decrypt partition</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="119"/>
@@ -4854,7 +4852,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="200"/>
         <source>Continue partition decryption</source>
-        <translation>གཞི་གཏན་གྱི་གཞི་གཏན་ཆེ་ཆུང་གི་གཞི་གཏན་བཞིན་</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="204"/>
@@ -4887,7 +4885,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="687"/>
         <source>Unlock partition failed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="688"/>
@@ -4902,7 +4900,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="756"/>
         <source>unmount</source>
-        <translation>བཤིག་འདོན།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="756"/>
@@ -5160,12 +5158,12 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="221"/>
         <source>Partition %1 has been encrypted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="227"/>
         <source>Partition %1 encrypt failed, please see log for more information.(%2)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="333"/>
@@ -5226,52 +5224,52 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="487"/>
         <source>Partition %1 has been preencrypt, please reboot to finish encryption.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="496"/>
         <source>Partition %1 preencrypt failed, please see log for more information.(%2)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="515"/>
         <source>Partition %1 has been decrypted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="522"/>
         <source>Decrypt partition</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="528"/>
         <source>Partition %1 is under encrypting, please decrypt after encryption finished.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="534"/>
         <source>Partition %1 Decrypt failed, please see log for more information.(%2)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="583"/>
         <source>Partition %1 change %2 failed, please see log for more information.(%3)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="613"/>
         <source>Partition is not fully decrypted, please finish decryption before access.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="620"/>
         <source>Unlocking partition failed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="621"/>
         <source>Please click &quot;Continue Partition Encryption&quot; in the right-click menu to complete the partition encryption.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="495"/>
@@ -5328,42 +5326,42 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="730"/>
         <source>Partition Encryption Non-Reboot Mode Enabled</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="731"/>
         <source>Partition Encryption Non-Reboot Mode has been enabled successfully. Please reboot your system for the changes to take effect. After reboot, partition encryption operations will not require system restart.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="735"/>
         <source>Partition Encryption Non-Reboot Mode Disabled</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="736"/>
         <source>Partition Encryption Non-Reboot Mode has been disabled successfully. Please reboot your system for the changes to take effect. After reboot, partition encryption operations will require system restart.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="744"/>
         <source>Operation Failed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="746"/>
         <source>Failed to enable Partition Encryption Non-Reboot Mode. The system may not support this feature or encountered an error during initramfs update.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="749"/>
         <source>Failed to disable Partition Encryption Non-Reboot Mode. An error occurred during initramfs update.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="761"/>
         <source>dde-file-manager</source>
-        <translation type="unfinished">dde-file-manager</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5402,17 +5400,17 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="98"/>
         <source>Please enter the 24-digit recovery key</source>
-        <translation>24་གི་གཞི་གཏན་གྱི་གཞི་གཏན་མིང་གྱི་གཞི་གཏན་བཞིན་</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="106"/>
         <source>Please input passphrase to unlock partition</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="110"/>
         <source>Please input PIN to unlock partition</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="124"/>
@@ -5585,12 +5583,12 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="165"/>
         <source>Copy or Cut File failed! Retry copy this file again!</source>
-        <translation>གཞི་གཏན་གྱི་གཞི་གཏན་བཞིན་བཞིན་! ཕྱི་ཚོགས་གཞི་གཏན་བཞིན་གྱི་གཞི་གཏན་བཞིན་</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="167"/>
         <source>Can&apos;t access file!</source>
-        <translation>གཞི་གཏན་གྱི་གཞི་གཏན་མི་བཞིན་</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="188"/>
@@ -5645,12 +5643,12 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="225"/>
         <source>Copy or Cut File failed, cause: %1. Retry copy this file again!</source>
-        <translation>གཞི་གཏན་གྱི་གཞི་གཏན་བཞིན་བཞིནོ་ནི་%1. ཕྱི་ཚོགས་གཞི་གཏན་བཞིན་གྱི་གཞི་གཏན་བཞིན་</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="227"/>
         <source>Copy or Cut File failed, cause: %1.</source>
-        <translation>གཞི་གཏན་གྱི་གཞི་གཏན་བཞིན་བཞིནོ་ནི་%1.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="244"/>
@@ -5684,12 +5682,12 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations.cpp" line="339"/>
         <source>External storage device</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations.cpp" line="350"/>
         <source>External storage device usage patterns</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5726,22 +5724,22 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="43"/>
         <source>Real-time data synchronization (Recommended)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="50"/>
         <source>Once the files are copied, you can unplug the external drive without needing to &quot;Safely Remove&quot; it.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="61"/>
         <source>Performance First (Requires Safe Removal)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="68"/>
         <source>File copy data is not synchronized in real-time. After the copy is complete, you must use &quot;Safe Removal&quot; to disconnect the external storage device. Otherwise, file corruption or data loss may occur.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5757,7 +5755,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/utils/previewfileoperation.cpp" line="41"/>
         <source>Failed to open %1, which may be moved or renamed</source>
-        <translation type="unfinished">%1ཁ་ཕྱེ་ཐུབ་མ་སོང་། ཡིག་ཆ་འདི་སྤོས་ཟིན་པའམ་མིང་བསྒྱུར་བྱས་ཡོད་པ་རེད།</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6027,17 +6025,17 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="107"/>
         <source>Created</source>
-        <translation>གཞི་གཏན་བཞིན</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="108"/>
         <source>Accessed</source>
-        <translation>ལྟ་སྤྱོད་དུས་ཚོད།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="109"/>
         <source>Modified</source>
-        <translation>བཟོ་བའི་དུས་ཚོད།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="113"/>
@@ -6047,12 +6045,12 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="116"/>
         <source>Resolution</source>
-        <translation>གཞི་གཏན་ཆེ་ཆུང་</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="117"/>
         <source>Duration</source>
-        <translation>དུས་ཚོད་རིང་ཐུང་།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="303"/>
@@ -6237,17 +6235,17 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/events/recenteventreceiver.cpp" line="89"/>
         <source>Path</source>
-        <translation>འགྲོ་ལམ།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/events/recenteventreceiver.cpp" line="94"/>
         <source>Last access</source>
-        <translation>ཉེ་ཆར་གྱི་ལྟ་སྤྱོད་དུས་ཚོད།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/events/recenteventreceiver.cpp" line="117"/>
         <source>Recent</source>
-        <translation>ཉེར་ཆར་བེད་སྤྱོད་བྱས་པ།</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6406,12 +6404,12 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="296"/>
         <source>Index update completed, last update time: %1</source>
-        <translation>གཞི་གཏན་གྱི་གཞི་གཏན་བཞིན་གྱི་གཞི་གཏན་བཞིན་གྱི་གཞི་གཏན་བཞིན་གྱི་གཞི་གཏན་བཞིན་: %1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="297"/>
         <source>Update index now</source>
-        <translation>གཞི་གཏན་གྱི་གཞི་གཏན་བཞིན་གྱི་གཞི་གཏན་བཞིན་གྱི་གཞི་གཏན་བཞིན་</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6459,32 +6457,32 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="172"/>
         <source>Index update failed, please</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="173"/>
         <source>try updating again</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="184"/>
         <source>Enable to search file contents. Indexing may take a few minutes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="198"/>
         <source>Building index</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="204"/>
         <source>Building index, %1 files indexed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="209"/>
         <source>Building index, %1/%2 items indexed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6626,7 +6624,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/private/addressbar_p.h" line="46"/>
         <source>Enter address</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6650,7 +6648,7 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="140"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="289"/>
         <source>No history</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="308"/>
@@ -6705,22 +6703,22 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="60"/>
         <source>Custom Directory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="100"/>
         <source>Invalid Directory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="101"/>
         <source>This directory does not support pinning</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="55"/>
         <source>Add Directory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6856,29 +6854,29 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="273"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="356"/>
         <source>Icon view</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="281"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="360"/>
         <source>List view</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="293"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="364"/>
         <source>Tree view</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="316"/>
         <source>Sort by</source>
-        <translation>སྟར་སྒྲིག་སྟངས།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="322"/>
         <source>View options</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6887,33 +6885,33 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="303"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="362"/>
         <source>Unpin tab</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="305"/>
         <source>Pin tab</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="310"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="362"/>
         <source>Close tab</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="313"/>
         <source>Close other tabs</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="314"/>
         <source>Close tabs to the left</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="317"/>
         <source>Close tabs to the right</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6921,24 +6919,24 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="559"/>
         <source>Directory not found</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="560"/>
         <source>Directory not found. Remove it?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="561"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="561"/>
         <source>Remove</source>
         <comment>button</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6946,27 +6944,27 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="64"/>
         <source>View Options</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="79"/>
         <source>Icon size</source>
-        <translation>རྟགས་རིས་ཆེ་ཆུང་།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="113"/>
         <source>Grid density</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="147"/>
         <source>List height</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="175"/>
         <source>Display preview</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7187,7 +7185,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="39"/>
         <source>Analyzing files...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="43"/>
@@ -7197,32 +7195,32 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="163"/>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="217"/>
         <source>Operation cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="66"/>
         <source>Starting file shredding...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="91"/>
         <source>All files have been successfully shredded</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="207"/>
         <source>Failed to start shred command</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="237"/>
         <source>Permission denied</source>
-        <translation type="unfinished">དབང་ཚད་མི་འདང་བ།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="240"/>
         <source>The file has been moved or the process has exited</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7272,7 +7270,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="455"/>
         <source>Applications (*.desktop);;All files (*)</source>
-        <translation>ཉེར་སྤྱོད་བྱ་རིམ། (*.desktop) ཡིག་ཆ་ཚང་མ་&#xa0;(*)</translation>
+        <translation>ཉེར་སྤྱོད་བྱ་རིམ། (*.desktop) ཡིག་ཆ་ཚང་མ་ (*)</translation>
     </message>
 </context>
 <context>
@@ -7288,17 +7286,17 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="109"/>
         <source>File shredder failure</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="111"/>
         <source>Close</source>
-        <translation type="unfinished">སྒོ་བརྒྱབ།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="135"/>
         <source>Shredding file</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7306,7 +7304,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="40"/>
         <source>Shredding file &quot; %1 &quot;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7314,7 +7312,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredmenuscene.cpp" line="80"/>
         <source>File Shred</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7322,32 +7320,32 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="163"/>
         <source>Enable File Shred</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="169"/>
         <source>Once enable, the &apos;File Shred&apos; option becomes available in the context menu for secure file deletion</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="202"/>
         <source>Are you sure to shred these %1 items?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="203"/>
         <source>The file will be completely deleted and cannot be recovered.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="233"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="234"/>
         <source>Shred</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7363,7 +7361,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/vitrualshredplugin.cpp" line="51"/>
         <source>File shred</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7428,52 +7426,52 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="188"/>
         <source>Failed to create public key: The key length is too long!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="196"/>
         <source>Failed to save rsa ciphertext file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="212"/>
         <source>Failed to save public key file: The public key is empty.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="220"/>
         <source>Failed to save public key file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="295"/>
         <source>Failed to create config dir: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="323"/>
         <source>Failed to create rsa private key file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="334"/>
         <source>Failed to create rsa ciphertext file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="345"/>
         <source>Failed to create hint file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="377"/>
         <source>Failed to save hint info: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="732"/>
         <source>Save password failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7551,12 +7549,12 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="46"/>
         <source>Unlock the Safe via Key File</source>
-        <translation>གལ་ཆེན་ཨང་ཀི་ཡིག་ཆ་བཀོལ་ནས་གྲོང་ཁྱེར་གྱི་སྒོ་ཕྱེ་བ།&lt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="49"/>
         <source>Select Key File</source>
-        <translation>གལ་ཆེན་ཨང་ཀི་ཡིག་ཆ་འེད་པ།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="92"/>
@@ -7566,7 +7564,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="109"/>
         <source>Unlock vault failed</source>
-        <translation>གྲོང་ཁྱེར་གྱི་སྒོ་ཕྱེ་མ་ཐུབ་པ།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="113"/>
@@ -7583,12 +7581,12 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="126"/>
         <source>Key Unlock</source>
         <comment>button</comment>
-        <translation>གལ་ཆེན་ཨང་ཀི་བཀོལ་ནས་སྒོ་ཕྱེ་བ།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="131"/>
         <source>Key Unlocks Safe</source>
-        <translation>གལ་ཆེན་ཨང་ཀི་བཀོལ་ནས་གྲོང་ཁྱེར་གྱི་སྒོ་ཕྱེ་བ།</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7712,7 +7710,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="196"/>
         <source>Close</source>
-        <translation>སྒོ་བརྒྱབ།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="81"/>
@@ -7740,12 +7738,12 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="57"/>
         <source>Key files can be used to unlock the safe, please keep it in a safe place</source>
-        <translation>གལ་ཆེན་ཨང་ཀི་ཡིག་ཆ་འདི་གྲོང་ཁྱེར་གྱི་སྒོ་ཕྱེ་བར་བཀོལ་ཆོག་པ་ཡིན། དེ་སྤྱི་སྒོ་པོར་གསོལ་འཇོག་བྱེད་དགོས།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="61"/>
         <source>It is recommended to save it to external storage devices such as a USB drive</source>
-        <translation>U-དྲ་ཆའི་ནང་དུ་སེལ་འཇོག་བྱེད་པར་འོས་སྦྱོར་ཞུ་རྒྱུ།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="63"/>
@@ -7866,27 +7864,27 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="64"/>
         <source>Failed to create vault: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="170"/>
         <source>Failed to create vault: Get encryption method failed!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="186"/>
         <source>Failed to create vault: Unknown encryption method!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="199"/>
         <source>Failed to create vault: Retrieved password is empty!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="247"/>
         <source>Auto generate password failed!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7894,7 +7892,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultentryfileentity.cpp" line="31"/>
         <source>File Vault</source>
-        <translation>ཡིག་ཆའི་ཉེན་འགོག་ལྕགས་སྒམ།</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7934,7 +7932,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/vaultpropertydialog.cpp" line="73"/>
         <source>File Vault</source>
-        <translation>ཡིག་ཆའི་ཉེན་འགོག་ལྕགས་སྒམ།</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8106,12 +8104,12 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2465"/>
         <source>Mount error</source>
-        <translation>འགེལ་འཇུག་ནོར་བ།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2466"/>
         <source>Server login credentials are invalid. Please uninstall and remount</source>
-        <translation>ཡེ་རེ་སྐད་ཆ་འགྲེམ་པ་མེད། ཡིག་སྐད་ཕྱིង་གཞི་བཞིན་པ་དང་འགྲེམ་པ་བྱེད།</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8129,7 +8127,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="787"/>
         <source>Time created</source>
-        <translation>བཟོ་བའི་དུས་ཚོད།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="789"/>
@@ -8171,42 +8169,42 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="34"/>
         <source>Unknown</source>
-        <translation type="unfinished">མི་ཤེས་པ།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="35"/>
         <source>Empty</source>
-        <translation type="unfinished">གཙང་སེལ།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="36"/>
         <source>Tiny</source>
-        <translation type="unfinished">ཆུང་ཤོས།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="37"/>
         <source>Small</source>
-        <translation type="unfinished">ཆུང་།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="38"/>
         <source>Medium</source>
-        <translation type="unfinished">འབྲིང་།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="39"/>
         <source>Large</source>
-        <translation type="unfinished">ཆེ།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="40"/>
         <source>Huge</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="41"/>
         <source>Gigantic</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8234,7 +8232,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="47"/>
         <source>Time created</source>
-        <translation>བཟོ་བའི་དུས་ཚོད།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="48"/>
