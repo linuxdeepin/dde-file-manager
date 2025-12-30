@@ -6,6 +6,7 @@
 #include "utils/encryption/operatorcenter.h"
 #include "utils/encryption/interfaceactivevault.h"
 #include "utils/vaulthelper.h"
+#include "dbus/vaultdbusutils.h"
 
 #include <dfm-base/utils/dialogmanager.h>
 
@@ -162,6 +163,17 @@ void ResetPasswordByOldPasswordView::buttonClicked(int index, const QString &tex
         if (!checkRepeatPassword()) {
             repeatPasswordEdit->setAlert(true);
             repeatPasswordEdit->showAlertMessage(tr("Passwords do not match"), kToolTipShowDuration);
+            emit sigBtnEnabled(1, true);
+            emit sigBtnEnabled(0, true);
+            return;
+        }
+
+        // 检查错误输入次数限制
+        int nLeftoverErrorTimes = VaultDBusUtils::getLeftoverErrorInputTimes();
+        if (nLeftoverErrorTimes < 1) {
+            int nNeedWaitMinutes = VaultDBusUtils::getNeedWaitMinutes();
+            oldPasswordEdit->setAlert(true);
+            oldPasswordEdit->showAlertMessage(tr("Please try again %1 minutes later").arg(nNeedWaitMinutes), kToolTipShowDuration);
             emit sigBtnEnabled(1, true);
             emit sigBtnEnabled(0, true);
             return;
@@ -335,13 +347,33 @@ void ResetPasswordByOldPasswordView::onResetPasswordFinished()
         switchMethodLabel->setEnabled(true);
 
     if (result.success) {
-        // 密码重置成功
+        // 密码重置成功，恢复错误次数限制
+        VaultDBusUtils::restoreLeftoverErrorInputTimes();
+        VaultDBusUtils::restoreNeedWaitMinutes();
         DialogManager::instance()->showMessageDialog(tr("Success"), tr("Password reset successfully"));
         emit sigCloseDialog();
     } else {
         // 重置失败
         oldPasswordEdit->setAlert(true);
-        oldPasswordEdit->showAlertMessage(tr("Failed to reset password. Please check your old password."), kToolTipShowDuration);
+
+        // 保险箱剩余错误密码输入次数减1
+        VaultDBusUtils::leftoverErrorInputTimesMinusOne();
+
+        int nLeftoverErrorTimes = VaultDBusUtils::getLeftoverErrorInputTimes();
+
+        if (nLeftoverErrorTimes < 1) {
+            // 计时10分钟后，恢复密码编辑框
+            VaultDBusUtils::startTimerOfRestorePasswordInput();
+            // 错误输入次数超过了限制
+            int nNeedWaitMinutes = VaultDBusUtils::getNeedWaitMinutes();
+            oldPasswordEdit->showAlertMessage(tr("Failed to reset password. Please try again %1 minutes later").arg(nNeedWaitMinutes), kToolTipShowDuration);
+        } else {
+            if (nLeftoverErrorTimes == 1)
+                oldPasswordEdit->showAlertMessage(tr("Failed to reset password. One chance left"), kToolTipShowDuration);
+            else
+                oldPasswordEdit->showAlertMessage(tr("Failed to reset password. %1 chances left").arg(nLeftoverErrorTimes), kToolTipShowDuration);
+        }
+
         emit sigBtnEnabled(1, true);
     }
 }
