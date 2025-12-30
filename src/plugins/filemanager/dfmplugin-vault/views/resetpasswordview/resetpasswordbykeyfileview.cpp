@@ -157,8 +157,8 @@ void ResetPasswordByKeyFileView::buttonClicked(int index, const QString &text)
         // 验证密钥文件
         QString keyPath = keyFileEdit->text();
         if (keyPath.isEmpty() || !QFile::exists(keyPath)) {
-            keyFileEdit->lineEdit()->setPlaceholderText(tr("Unable to get the key file"));
-            keyFileEdit->setText("");
+            keyFileEdit->setAlert(true);
+            keyFileEdit->showAlertMessage(tr("Unable to get the key file"), kToolTipShowDuration);
             emit sigBtnEnabled(1, true);
             emit sigBtnEnabled(0, true);
             return;
@@ -185,8 +185,8 @@ void ResetPasswordByKeyFileView::buttonClicked(int index, const QString &text)
 
         // 重置密码只支持新版本保险箱
         if (!OperatorCenter::getInstance()->isNewVaultVersion()) {
-            keyFileEdit->lineEdit()->setPlaceholderText(tr("Cannot reset password for old version vault. Please upgrade the vault first."));
-            keyFileEdit->setText("");
+            keyFileEdit->setAlert(true);
+            keyFileEdit->showAlertMessage(tr("Cannot reset password for old version vault. Please upgrade the vault first."), kToolTipShowDuration);
             emit sigBtnEnabled(1, true);
             emit sigBtnEnabled(0, true);
             return;
@@ -194,8 +194,8 @@ void ResetPasswordByKeyFileView::buttonClicked(int index, const QString &text)
 
         QFile keyFile(keyPath);
         if (!keyFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            keyFileEdit->lineEdit()->setPlaceholderText(tr("Unable to read key file"));
-            keyFileEdit->setText("");
+            keyFileEdit->setAlert(true);
+            keyFileEdit->showAlertMessage(tr("Unable to read key file"), kToolTipShowDuration);
             emit sigBtnEnabled(1, true);
             emit sigBtnEnabled(0, true);
             return;
@@ -207,18 +207,26 @@ void ResetPasswordByKeyFileView::buttonClicked(int index, const QString &text)
         QString recoveryKey = QString::fromUtf8(keyData).trimmed();
 
         if (recoveryKey.length() != 32) {
-            keyFileEdit->lineEdit()->setPlaceholderText(tr("Invalid recovery key format: expected 32 characters, got %1").arg(recoveryKey.length()));
-            keyFileEdit->setText("");
+            keyFileEdit->setAlert(true);
+            keyFileEdit->showAlertMessage(tr("Invalid recovery key format: expected 32 characters, got %1").arg(recoveryKey.length()), kToolTipShowDuration);
             emit sigBtnEnabled(1, true);
             emit sigBtnEnabled(0, true);
             return;
         }
 
+<<<<<<< HEAD
         QRegularExpression keyFormat("^[A-Za-z0-9]{32}$");
         QRegularExpressionMatch match = keyFormat.match(recoveryKey);
         if (!match.hasMatch()) {
             keyFileEdit->lineEdit()->setPlaceholderText(tr("Invalid recovery key format: must contain only letters and numbers"));
             keyFileEdit->setText("");
+=======
+        QRegularExpression keyFormat("^[A-Za-z0-9]{32}$");
+        QRegularExpressionMatch match = keyFormat.match(recoveryKey);
+        if (!match.hasMatch()) {
+            keyFileEdit->setAlert(true);
+            keyFileEdit->showAlertMessage(tr("Invalid recovery key format: must contain only letters and numbers"), kToolTipShowDuration);
+>>>>>>> 003a69f29... fix: Use alert message instead of placeholder for key file reset password errors
             emit sigBtnEnabled(1, true);
             emit sigBtnEnabled(0, true);
             return;
@@ -328,6 +336,8 @@ void ResetPasswordByKeyFileView::showEvent(QShowEvent *event)
     // 重置所有控件状态
     keyFileEdit->setText("");
     keyFileEdit->lineEdit()->setPlaceholderText(tr("Select key file save path"));
+    keyFileEdit->setAlert(false);
+    keyFileEdit->hideAlertMessage();
     keyFileEdit->setEnabled(true);
     newPasswordEdit->clear();
     newPasswordEdit->setAlert(false);
@@ -385,8 +395,8 @@ void ResetPasswordByKeyFileView::onResetPasswordFinished()
         DialogManager::instance()->showMessageDialog(tr("Success"), tr("Password reset successfully"));
         emit sigCloseDialog();
     } else {
-        keyFileEdit->lineEdit()->setPlaceholderText(tr("Failed to reset password. Please check your key file."));
-        keyFileEdit->setText("");
+        keyFileEdit->setAlert(true);
+        keyFileEdit->showAlertMessage(tr("Failed to reset password. Please check your key file."), kToolTipShowDuration);
         emit sigBtnEnabled(1, true);
     }
 }
