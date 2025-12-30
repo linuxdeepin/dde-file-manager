@@ -12,6 +12,8 @@
 #include <QtCore/qglobal.h>
 #include <QDir>
 #include <QString>
+#include <QDBusInterface>
+#include <QDBusConnection>
 
 #if defined(DFMPLUGIN_DISK_ENCRYPT_LIBRARY)
 #    define DFMPLUGIN_DISK_ENCRYPT_EXPORT Q_DECL_EXPORT
@@ -55,6 +57,44 @@ inline constexpr char kTCMMinorKeyAlgo[] { "sm4" };
 inline constexpr char kPcr[] { "0,7" };
 inline constexpr char kTPMPcrBank[] { "sha256" };
 inline constexpr char kTCMPcrBank[] { "sm3_256" };
+
+// DBus timeout constant: 2 seconds to prevent UI blocking when service is unavailable
+inline constexpr int kDiskEncryptDBusTimeoutMs = 2000;
+
+// TPM Control service constants
+inline constexpr char kTPMControlService[] = "org.deepin.Filemanager.TPMControl";
+inline constexpr char kTPMControlPath[] = "/org/deepin/Filemanager/TPMControl";
+inline constexpr char kTPMControlInterface[] = "org.deepin.Filemanager.TPMControl";
+
+/**
+ * @brief Setup QDBusInterface with standardized timeout
+ * @param iface DBus interface to configure
+ *
+ * This helper ensures consistent timeout configuration across all DBus calls
+ * and centralizes the timeout value for easy maintenance.
+ */
+inline void setupDbusInterface(QDBusInterface &iface)
+{
+    if (iface.isValid()) {
+        iface.setTimeout(kDiskEncryptDBusTimeoutMs);
+    }
+}
+
+/**
+ * @brief Helper macros for creating DBus interfaces with timeout
+ * Usage:
+ *   CREATE_DBUS_INTERFACE(iface, service, path, interface)
+ *   CREATE_TPM_INTERFACE(iface)
+ */
+#define CREATE_DBUS_INTERFACE(name, service, path, interface)                    \
+    QDBusInterface name(service, path, interface, QDBusConnection::systemBus()); \
+    setupDbusInterface(name)
+
+#define CREATE_TPM_INTERFACE(name) \
+    CREATE_DBUS_INTERFACE(name, kTPMControlService, kTPMControlPath, kTPMControlInterface)
+
+#define CREATE_DAEMON_INTERFACE(name) \
+    CREATE_DBUS_INTERFACE(name, kDaemonBusName, kDaemonBusPath, kDaemonBusIface)
 
 DFM_LOG_USE_CATEGORY(DISKENC_NAMESPACE)
 

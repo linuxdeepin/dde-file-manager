@@ -27,7 +27,7 @@ inline constexpr std::initializer_list<const char *> kCommonVirtual {
 inline constexpr std::initializer_list<const char *> kFileManager {
     "dfmplugin-core", "dfmplugin-optical", "dfmplugin-computer",
     "dfmplugin-detailspace", "dfmplugin-sidebar", "dfmplugin-titlebar",
-    "dfmplugin-workspace", "dfmplugin-smbbrowser", "dfmplugin-disk-encrypt"
+    "dfmplugin-workspace", "dfmplugin-smbbrowser"
 };
 
 inline constexpr std::initializer_list<const char *> kDesktop {
@@ -42,7 +42,8 @@ inline constexpr std::initializer_list<const char *> kCommon {
 };
 inline constexpr std::initializer_list<const char *> kFileManager {
     "dfmplugin-trash", "dfmplugin-recent", "dfmplugin-avfsbrowser",
-    "dfmplugin-search", "dfmplugin-myshares", "dfmplugin-vault"
+    "dfmplugin-search", "dfmplugin-myshares", "dfmplugin-vault",
+    "dfmplugin-disk-encrypt"
 };
 
 inline constexpr std::initializer_list<const char *> kDesktop {
