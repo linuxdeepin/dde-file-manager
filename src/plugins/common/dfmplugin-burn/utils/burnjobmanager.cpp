@@ -193,6 +193,7 @@ void BurnJobManager::initDumpJobConnect(DumpISOImageJob *job)
 {
     Q_ASSERT(job);
     connect(job, &AbstractBurnJob::finished, job, &QObject::deleteLater);
+    connect(job, &AbstractBurnJob::requestErrorMessageDialog, DialogManagerInstance, &DialogManager::showErrorDialog);
     connect(job, &DumpISOImageJob::requestOpticalDumpISOSuccessDialog, this, &BurnJobManager::showOpticalDumpISOSuccessDialog);
     connect(job, &DumpISOImageJob::requestOpticalDumpISOFailedDialog, this, &BurnJobManager::showOpticalDumpISOFailedDialog);
 }
