@@ -754,7 +754,9 @@ void FileManagerWindowPrivate::transitionDetailDragState(DetailDragState newStat
     case DetailDragState::Idle:
         // 退出拖拽：恢复光标，移除全局过滤器
         if (oldState == DetailDragState::Hidden || oldState == DetailDragState::Continued) {
-            QGuiApplication::restoreOverrideCursor();
+            // 彻底清除所有 override cursor，避免光标栈不平衡
+            while (QGuiApplication::overrideCursor())
+                QGuiApplication::restoreOverrideCursor();
             qApp->removeEventFilter(q);
         }
         break;
