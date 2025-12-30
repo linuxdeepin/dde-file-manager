@@ -30,7 +30,7 @@
     <message>
         <location filename="../src/services/diskencrypt/workers/dminitencryptworker.cpp" line="51"/>
         <source>Initialize encryption </source>
-        <translation>Fillo fshehtëzimin</translation>
+        <translation>Gatit fshehtëzimin </translation>
     </message>
 </context>
 <context>
@@ -107,7 +107,7 @@
     <message>
         <location filename="../src/plugins/filedialog/core/dbus/filedialoghandle.cpp" line="588"/>
         <source>All Files </source>
-        <translation>Krejt Kartelat</translation>
+        <translation>Krejt Kartelat </translation>
     </message>
 </context>
 <context>
@@ -123,7 +123,7 @@
     <message>
         <location filename="../src/services/diskencrypt/workers/fstabdecryptworker.cpp" line="28"/>
         <source>Decrypting </source>
-        <translation>Çfshehtëzim</translation>
+        <translation>Çfshehtëzim </translation>
     </message>
 </context>
 <context>
@@ -131,7 +131,7 @@
     <message>
         <location filename="../src/services/diskencrypt/workers/fstabinitencryptworker.cpp" line="27"/>
         <source>Initialize encryption </source>
-        <translation>Fillo fshehtëzimin</translation>
+        <translation>Gatit fshehtëzimin </translation>
     </message>
 </context>
 <context>
@@ -147,7 +147,7 @@
     <message>
         <location filename="../src/services/diskencrypt/workers/normaldecryptworker.cpp" line="24"/>
         <source>Decrypting </source>
-        <translation>Çfshehtëzim</translation>
+        <translation>Çfshehtëzim </translation>
     </message>
 </context>
 <context>
@@ -155,7 +155,7 @@
     <message>
         <location filename="../src/services/diskencrypt/workers/normalinitencryptworker.cpp" line="25"/>
         <source>Initialize encryption </source>
-        <translation>Fillo fshehtëzimin</translation>
+        <translation>Gatit fshehtëzimin </translation>
     </message>
 </context>
 <context>
@@ -956,7 +956,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/filenameutils.cpp" line="136"/>
         <source> (copy)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
-        <translation>(kopje)</translation>
+        <translation> (kopje)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/filenameutils.cpp" line="137"/>
@@ -2024,7 +2024,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/services/diskencrypt/workers/resumeencryptworker.cpp" line="68"/>
         <source>Encrypting </source>
-        <translation>Fshehtëzim</translation>
+        <translation>Fshehtëzim </translation>
     </message>
 </context>
 <context>
@@ -2847,7 +2847,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="111"/>
         <source>Unlocking device now...</source>
-        <translation>Tani po shkyçet pajisja</translation>
+        <translation>Tani po shkyçet pajisja…</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="135"/>
@@ -4153,7 +4153,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="165"/>
         <source>File system: </source>
-        <translation>Sistem kartelash:</translation>
+        <translation>Sistem kartelash: </translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="168"/>
@@ -4583,7 +4583,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="427"/>
         <source>The share name is used by another user.</source>
-        <translation>Emri i ndarjes është i përdorur nga tjetër përdorues</translation>
+        <translation>Emri i ndarjes është i përdorur nga tjetër përdorues.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="428"/>
@@ -6965,7 +6965,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="175"/>
         <source>Display preview</source>
-        <translation>Shfaq paraparje </translation>
+        <translation>Shfaq paraparje</translation>
     </message>
 </context>
 <context>
@@ -8358,7 +8358,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="336"/>
         <source>Mode: </source>
-        <translation>Mënyrë:</translation>
+        <translation>Mënyrë: </translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="338"/>
@@ -8413,7 +8413,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="419"/>
         <source>Background Color: </source>
-        <translation>Ngjyrë Sfondi:</translation>
+        <translation>Ngjyrë Sfondi: </translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="421"/>
