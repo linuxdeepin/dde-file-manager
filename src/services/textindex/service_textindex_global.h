@@ -26,6 +26,7 @@ inline const QString kAnythingDirType = QLatin1String("dir");
 namespace DConf {
 inline const QString kTextIndexSchema = QLatin1String("org.deepin.dde.file-manager.textindex");
 inline const QString kAutoIndexUpdateInterval = QLatin1String("autoIndexUpdateInterval");
+inline const QString kMonitoringStartDelaySeconds = QLatin1String("monitoringStartDelaySeconds");
 inline const QString kSilentIndexUpdateDelay = QLatin1String("silentIndexUpdateDelay");
 inline const QString kInotifyResourceCleanupDelay = QLatin1String("inotifyResourceCleanupDelay");
 inline const QString kMaxIndexFileSizeMB = QLatin1String("maxIndexFileSizeMB");

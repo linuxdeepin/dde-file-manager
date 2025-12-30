@@ -60,6 +60,19 @@ void TextIndexConfig::loadAllConfigs()
         m_autoIndexUpdateInterval = DEFAULT_AUTO_INDEX_UPDATE_INTERVAL;
     }
 
+    // Monitoring Start Delay (FSEventController monitoring start delay)
+    m_monitoringStartDelaySeconds = m_dconfigManager->value(
+                                                            Defines::DConf::kTextIndexSchema,
+                                                            Defines::DConf::kMonitoringStartDelaySeconds,
+                                                            DEFAULT_MONITORING_START_DELAY_SECONDS)
+                                            .toInt();
+    // Validate monitoringStartDelaySeconds
+    if (m_monitoringStartDelaySeconds < 0 || m_monitoringStartDelaySeconds > 3600) {
+        fmWarning() << "TextIndexConfig: Invalid monitoringStartDelaySeconds value:" << m_monitoringStartDelaySeconds
+                    << ", using default:" << DEFAULT_MONITORING_START_DELAY_SECONDS;
+        m_monitoringStartDelaySeconds = DEFAULT_MONITORING_START_DELAY_SECONDS;
+    }
+
     // Silent Index Update Delay (FSEventController first start delay)
     m_silentIndexUpdateDelay = m_dconfigManager->value(
                                                        Defines::DConf::kTextIndexSchema,
@@ -181,6 +194,12 @@ int TextIndexConfig::autoIndexUpdateInterval() const
 {
     QMutexLocker locker(&m_mutex);
     return m_autoIndexUpdateInterval;
+}
+
+int TextIndexConfig::monitoringStartDelaySeconds() const
+{
+    QMutexLocker locker(&m_mutex);
+    return m_monitoringStartDelaySeconds;
 }
 
 int TextIndexConfig::silentIndexUpdateDelay() const
