@@ -14,7 +14,7 @@
 			"visibility": "public"
 		},
 		"monitoringStartDelaySeconds": {
-			"value": 3,
+			"value": 30,
 			"serial": 0,
 			"flags": [],
 			"name": "Monitoring Start Delay (seconds)",

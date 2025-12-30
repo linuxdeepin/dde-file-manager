@@ -70,7 +70,7 @@ private:
 
     // Default values (matching your JSON for robustness)
     static const int DEFAULT_AUTO_INDEX_UPDATE_INTERVAL = 3;
-    static const int DEFAULT_MONITORING_START_DELAY_SECONDS = 3;
+    static const int DEFAULT_MONITORING_START_DELAY_SECONDS = 30;
     static const int DEFAULT_SILENT_INDEX_UPDATE_DELAY = 180;
     static const qint64 DEFAULT_INOTIFY_RESOURCE_CLEANUP_DELAY = 1800000LL;   // 30 * 60 * 1000
     static const int DEFAULT_MAX_INDEX_FILE_SIZE_MB = 50;

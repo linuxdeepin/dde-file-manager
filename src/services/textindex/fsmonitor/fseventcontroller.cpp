@@ -16,15 +16,15 @@ void FSEventController::setupFSEventCollector()
 {
     m_fsEventCollector = std::make_unique<FSEventCollector>(this);
 
-    // FSEventCollector uses event collection interval (3 seconds by default)
+    // FSEventCollector uses event collection interval
     m_collectorIntervalSecs = TextIndexConfig::instance().autoIndexUpdateInterval();
     m_fsEventCollector->setCollectionInterval(m_collectorIntervalSecs);
     m_fsEventCollector->setMaxEventCount(10000);   // Default 10k events
 
-    // FSEventController uses monitoring start delay (3 seconds by default)
+    // FSEventController uses monitoring start delay
     m_monitoringStartDelaySecs = TextIndexConfig::instance().monitoringStartDelaySeconds();
 
-    // FSEventController uses silent start delay (180 seconds by default)
+    // FSEventController uses silent start delay
     m_silentStartDelaySecs = TextIndexConfig::instance().silentIndexUpdateDelay();
 
     connect(m_fsEventCollector.get(), &FSEventCollector::filesCreated,
@@ -93,9 +93,9 @@ void FSEventController::setEnabled(bool enabled)
 
         // Start monitoring timer based on silent flag
         if (silentlyRefreshStarted()) {
-            // Use monitoring start delay for first start (3 seconds by default)
+            // Use monitoring start delay for first start
             m_monitoringStartTimer->start(m_monitoringStartDelaySecs * 1000);
-            // Use silent start delay for silent start (180 seconds by default)
+            // Use silent start delay for silent start
             m_silentStartTimer->start(m_silentStartDelaySecs * 1000);
             setSilentlyRefreshStarted(false);
         } else {
