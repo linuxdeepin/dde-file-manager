@@ -340,7 +340,7 @@ bool ThumbnailHelper::checkThumbEnable(const QUrl &url)
     }
 
     bool enable { true };
-    if (DevProxyMng->isFileOfProtocolMounts(fileUrl.path())) {   // Check if it's protocol device
+    if (DevProxyMng->isFileOfProtocolMounts(fileUrl.path()) || DevProxyMng->isFileFromOptical(fileUrl.path())) {
         enable = Application::instance()->genericAttribute(Application::kShowThunmbnailInRemote).toBool();
         qCDebug(logDFMBase) << "thumbnail: remote file thumbnail enable status:" << enable << "for:" << fileUrl;
     }
