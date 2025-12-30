@@ -298,7 +298,7 @@ bool DoCutFilesWorker::checkSymLink(const DFileInfoPointer &fileInfo)
     if (newTargetInfo.isNull())
         return skip;
 
-    bool ok = createSystemLink(fileInfo, newTargetInfo, true, false, &skip);
+    bool ok = createSystemLink(fileInfo, newTargetInfo, false, false, &skip);
     if (!ok && !skip)
         return false;
 
