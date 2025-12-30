@@ -13,6 +13,17 @@
 			"permissions": "readwrite",
 			"visibility": "public"
 		},
+		"monitoringStartDelaySeconds": {
+			"value": 3,
+			"serial": 0,
+			"flags": [],
+			"name": "Monitoring Start Delay (seconds)",
+			"name[zh_CN]": "监控启动延迟（秒）",
+			"description[zh_CN]": "文件系统监控启动的延迟时间，单位为秒。此延迟避免在启用监控后立即启动文件系统监控。",
+			"description": "Delay before starting file system monitoring after enabling in seconds. This delay avoids immediate monitoring startup when monitoring is enabled.",
+			"permissions": "readwrite",
+			"visibility": "public"
+		},
 		"silentIndexUpdateDelay": {
 			"value": 180,
 			"serial": 0,

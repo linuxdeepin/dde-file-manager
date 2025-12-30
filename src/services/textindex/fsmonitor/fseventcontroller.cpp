@@ -21,6 +21,9 @@ void FSEventController::setupFSEventCollector()
     m_fsEventCollector->setCollectionInterval(m_collectorIntervalSecs);
     m_fsEventCollector->setMaxEventCount(10000);   // Default 10k events
 
+    // FSEventController uses monitoring start delay (3 seconds by default)
+    m_monitoringStartDelaySecs = TextIndexConfig::instance().monitoringStartDelaySeconds();
+
     // FSEventController uses silent start delay (180 seconds by default)
     m_silentStartDelaySecs = TextIndexConfig::instance().silentIndexUpdateDelay();
 
@@ -39,20 +42,30 @@ void FSEventController::setupFSEventCollector()
     connect(&TextIndexConfig::instance(), &TextIndexConfig::configChanged,
             this, &FSEventController::onConfigChanged);
 
-    m_startTimer = new QTimer(this);
+    // Create separate timers for monitoring start and silent start
+    m_monitoringStartTimer = new QTimer(this);
+    m_silentStartTimer = new QTimer(this);
     m_stopTimer = new QTimer(this);
-    m_startTimer->setSingleShot(true);
+    m_monitoringStartTimer->setSingleShot(true);
+    m_silentStartTimer->setSingleShot(true);
     m_stopTimer->setSingleShot(true);
 
-    connect(m_startTimer, &QTimer::timeout, this, [this]() {
+    // Monitoring start timer - only responsible for starting monitoring
+    connect(m_monitoringStartTimer, &QTimer::timeout, this, [this]() {
         if (!m_enabled) {
             fmWarning() << "Cannot start monitor, enabled state has been changed";
             return;
         }
         emit monitoring(true);
+    });
 
-        if (m_lastSilentlyFlag)
-            emit requestSlientStart();
+    // Silent start timer - only responsible for requesting silent start
+    connect(m_silentStartTimer, &QTimer::timeout, this, [this]() {
+        if (!m_enabled) {
+            fmWarning() << "Cannot trigger silent start, enabled state has been changed";
+            return;
+        }
+        emit requestSlientStart();
     });
 
     connect(m_stopTimer, &QTimer::timeout, this, [this]() {
@@ -77,15 +90,21 @@ void FSEventController::setEnabled(bool enabled)
     if (m_enabled) {
         m_stopTimer->stop();
         m_lastSilentlyFlag = silentlyRefreshStarted();
+
+        // Start monitoring timer based on silent flag
         if (silentlyRefreshStarted()) {
-            // Use silent start delay for first start (180 seconds by default)
-            m_startTimer->start(m_silentStartDelaySecs * 1000);
+            // Use monitoring start delay for first start (3 seconds by default)
+            m_monitoringStartTimer->start(m_monitoringStartDelaySecs * 1000);
+            // Use silent start delay for silent start (180 seconds by default)
+            m_silentStartTimer->start(m_silentStartDelaySecs * 1000);
             setSilentlyRefreshStarted(false);
         } else {
-            m_startTimer->start(0);
+            // Start monitoring immediately
+            m_monitoringStartTimer->start(0);
         }
     } else {
-        m_startTimer->stop();
+        m_monitoringStartTimer->stop();
+        m_silentStartTimer->stop();
         // 停止监控将清除所有的监控目录，重建需要极大的开销，因此延迟清理资源
         m_stopTimer->start(TextIndexConfig::instance().inotifyResourceCleanupDelayMs());
     }
@@ -251,6 +270,7 @@ void FSEventController::clearCollections()
 void FSEventController::onConfigChanged()
 {
     const int newIntervalSecs = TextIndexConfig::instance().autoIndexUpdateInterval();
+    const int newMonitoringDelaySecs = TextIndexConfig::instance().monitoringStartDelaySeconds();
     const int newSilentDelaySecs = TextIndexConfig::instance().silentIndexUpdateDelay();
 
     // Update event collection interval for FSEventCollector
@@ -266,6 +286,13 @@ void FSEventController::onConfigChanged()
             fmInfo() << "FSEventController: Updated FSEventCollector collection interval to"
                      << m_collectorIntervalSecs << "seconds";
         }
+    }
+
+    // Update monitoring start delay for FSEventController
+    if (newMonitoringDelaySecs != m_monitoringStartDelaySecs) {
+        fmInfo() << "FSEventController: Monitoring start delay changed from"
+                 << m_monitoringStartDelaySecs << "to" << newMonitoringDelaySecs << "seconds";
+        m_monitoringStartDelaySecs = newMonitoringDelaySecs;
     }
 
     // Update silent start delay for FSEventController

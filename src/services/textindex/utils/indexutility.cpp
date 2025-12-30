@@ -20,8 +20,17 @@ namespace IndexUtility {
 
 bool isIndexWithAnything(const QString &path)
 {
-    if (!DFMSEARCH::Global::isFileNameIndexReadyForSearch())
-        return false;
+    auto status = DFMSEARCH::Global::fileNameIndexStatus();
+    if (!status.has_value()) {
+        fmWarning() << "Anything indexing is disabled";
+        return {};
+    }
+
+    const QString currentStatus = status.value();
+    if (currentStatus == "closed") {
+        fmWarning() << "Anything indexing is closed";
+        return {};
+    }
 
     return isDefaultIndexedDirectory(path);
 }
@@ -343,12 +352,12 @@ QStringList extractAncestorPaths(const QString &filePath)
         return ancestorPaths;
 
     QFileInfo fileInfo(filePath);
-    QString currentPath = fileInfo.path(); // 初始为文件所在的目录路径
+    QString currentPath = fileInfo.path();   // 初始为文件所在的目录路径
 
     // 循环向上获取所有父目录，直到根目录
     while (currentPath != "/" && !currentPath.isEmpty()) {
         ancestorPaths.append(currentPath);
-        currentPath = QFileInfo(currentPath).path(); // 获取父目录
+        currentPath = QFileInfo(currentPath).path();   // 获取父目录
     }
 
     // 如果文件路径是根目录下的文件，确保包括根目录

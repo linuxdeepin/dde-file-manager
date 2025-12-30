@@ -96,6 +96,7 @@ void TextIndexDBusPrivate::handleSlientStart()
         fmInfo() << "TextIndexDBus: Starting silent index task for:" << pathsToProcess;
 
         if (q->IndexDatabaseExists()) {   // update
+            // TODO: update if ...
             taskManager->startTask(IndexTask::Type::Update, pathsToProcess, true);
         } else {   // create
             taskManager->startTask(IndexTask::Type::Create, pathsToProcess, true);

@@ -104,7 +104,7 @@ void FSMonitorWorker::tryFastDirectoryScan()
         }
 
         const QString currentStatus = status.value();
-        if (currentStatus != "monitoring") {
+        if (currentStatus == "closed") {
             fmWarning() << "FSMonitorWorker: Cannot use fast directory scan, index status is:" << currentStatus;
             return {};
         }
@@ -125,6 +125,7 @@ void FSMonitorWorker::tryFastDirectoryScan()
             directories = std::move(result.value());
         }
 
+        fmInfo() << "FSMonitorWorker: Fast directory scan found" << directories.size() << "directories";
         // Filter excluded directories
         QStringList filteredDirs;
         for (const auto &dir : std::as_const(directories)) {
