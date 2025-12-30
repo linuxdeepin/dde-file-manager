@@ -110,7 +110,7 @@ bool DoRestoreTrashFilesWorker::translateUrls()
             info->startTime = deleteInfo.first().toInt();
             info->endTime = deleteInfo.at(1).toInt();
             url.setUserInfo("");
-            targetUrls.insert(url, info);
+            targetUrls.insert(QUrl::fromPercentEncoding(url.toString().toUtf8()), info);
         }
     }
 
