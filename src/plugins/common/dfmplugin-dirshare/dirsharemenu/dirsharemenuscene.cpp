@@ -31,6 +31,7 @@ void DirShareMenuScenePrivate::addShare(const QUrl &url)
     option.insert("Option_Key_Name", "DirShare");
     option.insert("Option_Key_ExtendViewExpand", true);
     option.insert("Option_Key_BasicInfoExpand", false);
+    option.insert("Option_Key_DisableCustomDialog", true);
 
     ViewIntiCallback initFun = { ShareControlWidget::setOption };
     option.insert("Option_Key_ViewInitCalback", QVariant::fromValue(initFun));
