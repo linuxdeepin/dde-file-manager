@@ -44,6 +44,11 @@ PropertyDialogUtil::~PropertyDialogUtil()
 
 void PropertyDialogUtil::showPropertyDialog(const QList<QUrl> &urls, const QVariantHash &option)
 {
+    bool disableCustomDlg { false };
+    if (option.contains(kOption_Key_DisableCustomDialog)) {
+        disableCustomDlg = option.value(kOption_Key_DisableCustomDialog).toBool();
+    }
+
     int count = urls.count();
     if (count < kMaxPropertyDialogNumber) {
         QList<QUrl> fileUrls;
@@ -52,7 +57,7 @@ void PropertyDialogUtil::showPropertyDialog(const QList<QUrl> &urls, const QVari
             if (ret)
                 continue;
 
-            if (!showCustomDialog(url))
+            if (disableCustomDlg || !showCustomDialog(url))
                 fileUrls.append(url);
         }
         if (!fileUrls.empty())

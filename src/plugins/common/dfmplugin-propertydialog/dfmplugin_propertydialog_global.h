@@ -81,6 +81,7 @@ using ViewIntiCallback = std::function<void(QWidget *w, const QVariantHash &opt)
 static constexpr char kOption_Key_Name[] { "Option_Key_Name" };
 static constexpr char kOption_Key_BasicInfoExpand[] { "Option_Key_BasicInfoExpand" };
 static constexpr char kOption_Key_ExtendViewExpand[] { "Option_Key_ExtendViewExpand" };
+static constexpr char kOption_Key_DisableCustomDialog[] { "Option_Key_DisableCustomDialog" };
 static constexpr char kOption_Key_ViewIndex[] { "Option_Key_ViewIndex" };
 static constexpr char kOption_Key_ViewInitCalback[] { "Option_Key_ViewInitCalback" };
 static constexpr char kOption_Key_CreatorCalback[] { "Option_Key_CreatorCalback" };

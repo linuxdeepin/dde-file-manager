@@ -45,6 +45,7 @@ bool PropertyDialogManager::registerExtensionView(CustomViewExtensionView viewCr
         { kOption_Key_ViewIndex, index },
         { kOption_Key_BasicInfoExpand, true },
         { kOption_Key_ExtendViewExpand, false },
+        { kOption_Key_DisableCustomDialog, false },
         { kOption_Key_ViewInitCalback, QVariant::fromValue(viewInitiCb) }
     };
     // Store a initial option, it would be updated in `kOption_Key_ViewInitCalback` if needed.
