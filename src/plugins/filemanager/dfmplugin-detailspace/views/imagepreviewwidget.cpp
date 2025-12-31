@@ -25,18 +25,11 @@ ImagePreviewWidget::~ImagePreviewWidget()
 
 void ImagePreviewWidget::setPixmap(const QPixmap &pixmap)
 {
-    // Avoid flicker with static pixmap if an animated image is running
-    if (m_hasAnimatedImage && m_movie && m_movie->state() == QMovie::Running) {
-        return;
-    }
+    // Stop and release any animated image resources before switching to static pixmap
+    stopAnimatedImage();
 
     m_pixmap = pixmap;
     update();
-
-    // If there is an animated image and it's not running, start it now
-    if (m_hasAnimatedImage && m_movie && m_movie->state() != QMovie::Running) {
-        m_movie->start();
-    }
 }
 
 QPixmap ImagePreviewWidget::pixmap() const
@@ -68,6 +61,7 @@ void ImagePreviewWidget::stopAnimatedImage()
 {
     if (m_hasAnimatedImage && m_movie) {
         m_movie->stop();
+        m_movie->setFileName("");  // Release file descriptor to allow device unmounting
         m_hasAnimatedImage = false;
     }
 }
