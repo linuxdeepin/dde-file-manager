@@ -139,17 +139,12 @@ void FileEncryptHandle::createVault(const QString &lockBaseDir, const QString &u
             recoveryKey[32] = '\0';
             fmInfo() << "Vault: Using pre-generated recovery key";
         } else {
-            ret = PasswordManager::generateSecureRecoveryKey(recoveryKey, sizeof(recoveryKey));
-            if (ret != 0) {
-                d->activeState[1] = static_cast<int>(ErrorCode::kUnspecifiedError);
-                emit signalCreateVault(d->activeState.value(1));
-                fmWarning() << "Vault: Failed to generate recovery key";
-                d->activeState.clear();
-                d->mutex->unlock();
-                return;
-            }
-            QString recoveryKeyStr = QString::fromUtf8(recoveryKey, 32);
-            OperatorCenter::getInstance()->setRecoveryKey(recoveryKeyStr);
+            d->activeState[1] = static_cast<int>(ErrorCode::kUnspecifiedError);
+            emit signalCreateVault(d->activeState.value(1));
+            fmCritical() << "Vault: Failed to generate recovery key";
+            d->activeState.clear();
+            d->mutex->unlock();
+            return;
         }
 
         int recoveryKeySlotID = 0;
@@ -171,11 +166,6 @@ void FileEncryptHandle::createVault(const QString &lockBaseDir, const QString &u
             fmWarning() << "Vault: create vault failed!";
         } else {
             config.setVaultCreationType(kConfigValueVaultCreationTypeNew);
-            // 7. 确保恢复密钥已保存到OperatorCenter
-            QString recoveryKeyStr = QString::fromUtf8(recoveryKey, 32);
-            if (OperatorCenter::getInstance()->getRecoveryKey().isEmpty()) {
-                OperatorCenter::getInstance()->setRecoveryKey(recoveryKeyStr);
-            }
             d->curState = kUnlocked;
             emit signalCreateVault(flg);
         }
