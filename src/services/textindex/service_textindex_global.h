@@ -51,6 +51,9 @@ inline constexpr int kIndexVersion { 2 };
 // json
 inline const QString kVersionKey = QLatin1String("version");
 inline const QString kLastUpdateTimeKey = QLatin1String("lastUpdateTime");
+inline const QString kStateKey = QLatin1String("state");
+inline const QString kStateClean = QLatin1String("clean");
+inline const QString kStateDirty = QLatin1String("dirty");
 }   // namespace Defines
 
 DFM_LOG_USE_CATEGORY(SERVICETEXTINDEX_NAMESPACE)

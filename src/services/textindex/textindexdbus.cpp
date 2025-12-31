@@ -93,14 +93,25 @@ void TextIndexDBusPrivate::handleSlientStart()
             return;
         }
 
-        fmInfo() << "TextIndexDBus: Starting silent index task for:" << pathsToProcess;
-
-        if (q->IndexDatabaseExists()) {   // update
-            // TODO: update if ...
-            taskManager->startTask(IndexTask::Type::Update, pathsToProcess, true);
-        } else {   // create
+        // Check if index database exists
+        if (!q->IndexDatabaseExists()) {
+            fmInfo() << "TextIndexDBus: Index database does not exist, starting create task for:" << pathsToProcess;
             taskManager->startTask(IndexTask::Type::Create, pathsToProcess, true);
+            return;
         }
+
+        // Index exists, check state to decide whether to update
+        IndexUtility::IndexState state = IndexUtility::getIndexState();
+
+        if (state == IndexUtility::IndexState::Clean) {
+            // Clean shutdown with no pending tasks, skip global update
+            fmInfo() << "TextIndexDBus: Clean state detected, skipping global update";
+            return;
+        }
+
+        // Dirty or unknown state, trigger global update
+        fmInfo() << "TextIndexDBus: Dirty/unknown state detected, starting update task for:" << pathsToProcess;
+        taskManager->startTask(IndexTask::Type::Update, pathsToProcess, true);
     });
 }
 
@@ -134,6 +145,16 @@ TextIndexDBus::~TextIndexDBus() { }
 void TextIndexDBus::cleanup()
 {
     d->fsEventController->setEnabledNow(false);
+
+    // Check if there are unfinished tasks before stopping
+    bool hasUnfinishedWork = d->taskManager->hasRunningTask()
+                          || d->taskManager->hasQueuedTasks();
+
+    if (hasUnfinishedWork) {
+        fmWarning() << "TextIndexDBus: Service cleanup with unfinished indexing work, marking state as dirty";
+        IndexUtility::setIndexState(IndexUtility::IndexState::Dirty);
+    }
+
     StopCurrentTask();
 }
 

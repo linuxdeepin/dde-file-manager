@@ -15,6 +15,33 @@ SERVICETEXTINDEX_BEGIN_NAMESPACE
 
 namespace IndexUtility {
 
+/**
+ * @brief Index state for crash recovery
+ */
+enum class IndexState {
+    Clean,    ///< Index is complete, last shutdown was clean with no pending tasks
+    Dirty,    ///< Index may be incomplete, needs global update on next start
+    Unknown   ///< State field not found (legacy status file or corrupted)
+};
+
+/**
+ * @brief Get current index state from status file
+ * @return IndexState value, returns Unknown if state field doesn't exist
+ */
+IndexState getIndexState();
+
+/**
+ * @brief Set index state in status file
+ * @param state The state to set
+ */
+void setIndexState(IndexState state);
+
+/**
+ * @brief Check if index is in clean state
+ * @return true if state is Clean, false otherwise
+ */
+bool isCleanState();
+
 bool isIndexWithAnything(const QString &path);
 bool isDefaultIndexedDirectory(const QString &path);
 bool isPathInContentIndexDirectory(const QString &path);
