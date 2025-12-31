@@ -197,9 +197,7 @@ void VaultActiveSaveKeyFileView::initConnect()
 void VaultActiveSaveKeyFileView::slotNextBtnClicked()
 {
     QString recoveryKey = OperatorCenter::getInstance()->getRecoveryKey();
-    
-    // 新版本保险箱不应该回退到旧的getUserKey()方法
-    // 如果恢复密钥为空，说明创建流程有问题，应该报错而不是回退
+
     if (recoveryKey.isEmpty()) {
         fmCritical() << "Vault: Recovery key is empty for new vault, this should not happen";
         DialogManager::instance()->showErrorDialog(tr("Vault"), tr("Recovery key is not available. Please try again."));
@@ -228,8 +226,6 @@ void VaultActiveSaveKeyFileView::slotNextBtnClicked()
         DialogManager::instance()->showErrorDialog(tr("Vault"), tr("Failed to save recovery key. Please check the path and try again."));
         return;
     }
-
-    fmInfo() << "Vault: Recovery key saved successfully to:" << path;
 
     if (isOldPasswordSchemeMigrationMode) {
         QString oldPassword = OperatorCenter::getInstance()->getPendingOldPasswordSchemeMigrationPassword();
