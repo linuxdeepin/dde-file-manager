@@ -1006,7 +1006,7 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="87"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="312"/>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="62"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="269"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="274"/>
         <source>Open in new window</source>
         <translation>ເປີດໃນໜ້າຕ່າງໃໝ່</translation>
     </message>
@@ -1040,7 +1040,7 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="40"/>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="201"/>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="81"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="327"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="335"/>
         <source>Properties</source>
         <translation>ຄັນພື່ນ</translation>
     </message>
@@ -1233,8 +1233,8 @@ Enter user and password for %1</source>
         <translation>ស្តុចស្រាល់មិនស្គាល់</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="302"/>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="347"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="301"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="346"/>
         <source>Close</source>
         <comment>button</comment>
         <translation>ປິດ</translation>
@@ -1363,7 +1363,7 @@ Enter user and password for %1</source>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="52"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="268"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="273"/>
         <source>Open</source>
         <translation>បុក</translation>
     </message>
@@ -1604,49 +1604,77 @@ Enter user and password for %1</source>
         <translation>ກຳລັງຄົ້ນຫາ...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="259"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="260"/>
         <source>Create Vault</source>
         <translation>ສ້າງຕູ້ເກັບ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="263"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="264"/>
         <source>Unlock</source>
         <translation>ເປີດລັອກ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="279"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="267"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="332"/>
+        <source>Reset Password</source>
+        <translation>ປ່ຽນລະຫັດຜ່ານ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="284"/>
         <source>Lock</source>
         <translation>ລັອກ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="285"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="290"/>
         <source>Auto lock</source>
         <translation>ລັອກອັດຕະໂນມັດ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="289"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="294"/>
         <source>Never</source>
         <translation>ບໍ່ເຄີຍ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="298"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="303"/>
         <source>5 minutes</source>
         <translation>5 ເຈົ້ານຳພາ ലະງື້ນ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="305"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="310"/>
         <source>10 minutes</source>
         <translation>10 ເຈົ້ານຳພາ ലະງື້ນ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="312"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="317"/>
         <source>20 minutes</source>
         <translation>20 ཕື້ນນົນ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="326"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="334"/>
         <source>Delete File Vault</source>
         <translation>ລຶບຕູ້ນິລະໄພເອກະສານ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="458"/>
+        <source>Upgrade File Vault</source>
+        <translation>ຍົກລະດັບຄັງຟາຍ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="473"/>
+        <source>The file vault encryption scheme has been upgraded.
+You need to upgrade this vault to continue using it.</source>
+        <translation>ຮູບແບບການເຂົ້າລະຫັດຂອງຄັງຟາຍໄດ້ຖືກຍົກລະດັບແລ້ວ
+ທ່ານຈຳເປັນຕ້ອງຍົກລະດັບຄັງນີ້ເພື່ອສືບຕໍ່ໃຊ້ງານ.</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="482"/>
+        <source>Later</source>
+        <translation>ເປັນຕໍ່ໄປ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="483"/>
+        <source>Upgrade now</source>
+        <translation>ຍົກລະດັບຕອນນີ້</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="9"/>
@@ -3400,16 +3428,6 @@ Enter user and password for %1</source>
         <translation>รูปแบบการดูเริ่มต้น:</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="411"/>
-        <source>Load thumbnails for network, mobile, and optical disc directories</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="412"/>
-        <source>Thumbnails will be loaded for high-latency devices like network shares, phones, and optical drives, which may affect loading speed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="376"/>
         <source>Icon</source>
         <translation>ไอคอน</translation>
@@ -3493,6 +3511,16 @@ Enter user and password for %1</source>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="408"/>
         <source>Music preview</source>
         <translation>ການທົດສອບສຽງເພງ</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="411"/>
+        <source>The remote environment shows thumbnail previews</source>
+        <translation>បរិស្ថានចំណុចបំបាកបង្ហាញផ្ទាំងភាពយន្ត</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="412"/>
+        <source>Turning on the thumbnail preview may cause the remote directory to load slowly or the operation to freeze</source>
+        <translation>ການເປີດການທົດສອບຮູບນ້ອຍອາດຈະເຮັດໃຫ້ເຊື້ອຂໍ້ມູນໄລຍະໄປມາຊ້າຂຶ້ນຫຼືການດຳເນີນການຢຸດນັ້ນ</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="421"/>
@@ -4076,71 +4104,71 @@ Enter user and password for %1</source>
         <translation>ບໍ່ສາມາດດຳເນີນການລືບຂໍ້ມູນໃນແຜ່ນດິສໄດ້. ນີ້ອາດເກີດຈາກຂໍ້ຈຳກັດການອ່ານ/ຂຽນ ຫຼື ສະພາບຂອງແຜ່ນດິສ. ກະລຸນາກວດສອບການຕັ້ງຄ່າທີ່ກ່ຽວຂ້ອງ ແລ້ວລອງໃໝ່.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="232"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="231"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>ຕົກລົງ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="247"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="246"/>
         <source>Disc erase failed</source>
         <translation>ការលាយល់រាវ់ខ្សាច់បានបរាជ័យ។</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="251"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="250"/>
         <source>Burn process failed</source>
         <translation>ការសរសៃបាក់ប៉ុន្តេបានបរាជ័យ។</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="254"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="253"/>
         <source>Data verification failed</source>
         <translation>ການກວດສອບຂໍ້ມູນບໍ່ສຳເລັດ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="257"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="256"/>
         <source>%1: %2</source>
         <translation>%1: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="273"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="272"/>
         <source>Show details</source>
         <translation>បង្ហាញលេខລະង់</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="277"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="276"/>
         <source>Hide details</source>
         <translation>ດັດຊີ່ລາຍລະອຽດ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="278"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="277"/>
         <source>Error</source>
         <translation>ຂໍ້ຜິດພາດ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="287"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="286"/>
         <source>Show details</source>
         <comment>button</comment>
         <translation>ສະແດງລາຍລະອຽດ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="288"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="287"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>ຢືນຢັນ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="303"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="302"/>
         <source>View Image File</source>
         <comment>button</comment>
         <translation>ເບິ່ງໄຟລ໌ຮູບພາບ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="322"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="321"/>
         <source>Image successfully created</source>
         <translation>ຮູບພາບຖືກສ້າງສຳເລັດ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="357"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="356"/>
         <source>Image creation failed</source>
         <translation>ການສ້າງຮູບພາບບໍ່ສຳເລັດ</translation>
     </message>
@@ -6885,34 +6913,34 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_titlebar::TabBar</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="303"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="362"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="293"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="352"/>
         <source>Unpin tab</source>
         <translation>ຍົກເລີກການປັນແທັບ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="305"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="295"/>
         <source>Pin tab</source>
         <translation>ປັນແທັບ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="310"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="362"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="300"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="352"/>
         <source>Close tab</source>
         <translation>ປິດແທັບ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="313"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="303"/>
         <source>Close other tabs</source>
         <translation>ປິດແທັບອື່ນໆ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="314"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="304"/>
         <source>Close tabs to the left</source>
         <translation>ປິດແທັບທາງຊ້າຍ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="317"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="307"/>
         <source>Close tabs to the right</source>
         <translation>ປິດແທັບທາງຂວາ</translation>
     </message>
@@ -6920,23 +6948,23 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_titlebar::TitleBarWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="559"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="558"/>
         <source>Directory not found</source>
         <translation>ບໍ່ພົບໂຟນເດີດັ່ງກ່າວ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="560"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="559"/>
         <source>Directory not found. Remove it?</source>
         <translation>ບໍ່ພົບໂຟນເດີດັ່ງກ່າວ, ຕ້ອງການລຶບອອກບໍ?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="561"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="560"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>ຍົກເລີກ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="561"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="560"/>
         <source>Remove</source>
         <comment>button</comment>
         <translation>ລູກອົບຮົມ</translation>
@@ -7413,12 +7441,12 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_vault::FileEncryptHandle</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/fileencrypthandle.cpp" line="118"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/fileencrypthandle.cpp" line="207"/>
         <source>Unlock failed</source>
         <translation>ປົດລັອກບໍ່ສຳເລັດ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/fileencrypthandle.cpp" line="118"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/fileencrypthandle.cpp" line="207"/>
         <source>The %1 directory is occupied,
  please clear the files in this directory and try to unlock the safe again.</source>
         <translation>ໄດເຣກະທີ່ %1 ຖືກໃຊ້ງານ,
@@ -7428,52 +7456,52 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_vault::OperatorCenter</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="188"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="192"/>
         <source>Failed to create public key: The key length is too long!</source>
         <translation>ສ້າງກະແຈສາທາລະນະບໍ່ສຳເລັດ: ຄວາມຍາວຂອງກະແຈຍາວເກີນໄປ!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="196"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="200"/>
         <source>Failed to save rsa ciphertext file: %1</source>
         <translation>ບໍ່ສາມາດບັນທຶກໄຟລ໌ຂໍ້ມູນລັບ RSA ໄດ້: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="212"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="216"/>
         <source>Failed to save public key file: The public key is empty.</source>
         <translation>ບໍ່ສາມາດບັນທຶກໄຟລ໌ກະແຈສາທາລະນະໄດ້: ກະແຈສາທາລະນະຫວ່າງເປົ່າ.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="220"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="224"/>
         <source>Failed to save public key file: %1</source>
         <translation>ບໍ່ສາມາດບັນທຶກໄຟລ໌ກະແຈສາທາລະນະໄດ້: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="295"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="362"/>
         <source>Failed to create config dir: %1</source>
         <translation>ບໍ່ສາມາດສ້າງໄດເຣການຕັ້ງຄ່າໄດ້: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="323"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="394"/>
         <source>Failed to create rsa private key file: %1</source>
         <translation>ບໍ່ສາມາດສ້າງໄຟລ໌ກະແຈສ່ວນຕົວ RSA ໄດ້: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="334"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="409"/>
         <source>Failed to create rsa ciphertext file: %1</source>
         <translation>ບໍ່ສາມາດສ້າງໄຟລ໌ຂໍ້ມູນລັບ RSA ໄດ້: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="345"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="426"/>
         <source>Failed to create hint file: %1</source>
         <translation>ບໍ່ສາມາດສ້າງໄຟລ໌ຄຳແນະນຳໄດ້: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="377"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="458"/>
         <source>Failed to save hint info: %1</source>
         <translation>ບໍ່ສາມາດບັນທຶກຂໍ້ມູນຄຳແນະນຳໄດ້: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="732"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="850"/>
         <source>Save password failed: %1</source>
         <translation>ບັນທຶກລະຫັດຜ່ານບໍ່ສຳເລັດ: %1</translation>
     </message>
@@ -7511,84 +7539,327 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_vault::RecoveryKeyView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="60"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="68"/>
         <source>Unlock by Key</source>
         <translation>ປົດລັອກໂດຍກະແຈ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="33"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="35"/>
         <source>Input the 32-digit recovery key</source>
         <translation>ໃສ່ກະແຈກູ້ຄືນ 32 ຕົວເລກ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="55"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="63"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>ຍົກເລີກ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="55"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="63"/>
         <source>Unlock</source>
         <comment>button</comment>
         <translation>ປົດລັອກ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="121"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="126"/>
+        <source>Invalid recovery key format</source>
+        <translation>ຮູບແບບກະແຈກູ້ຄືນບໍ່ຖືກຕ້ອງ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="149"/>
         <source>Wrong recovery key</source>
         <translation>ກະແຈກູ້ຄືນຜິດ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="241"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="273"/>
         <source>Failed to unlock file vault</source>
         <translation>ບໍ່ສາມາດປົດລັອກຫ້ອງເກັບໄຟລ໌ໄດ້</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="245"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="277"/>
         <source>OK</source>
         <translation>ຕົກລົງ</translation>
     </message>
 </context>
 <context>
-    <name>dfmplugin_vault::RetrievePasswordView</name>
+    <name>dfmplugin_vault::ResetPasswordByKeyFileView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="46"/>
-        <source>Unlock the Safe via Key File</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="49"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="45"/>
         <source>Select Key File</source>
+        <translation>ເລືອກໄຟລ໌ລະຫັດ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="47"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="330"/>
+        <source>Select key file save path</source>
+        <translation>ເລືອກເສັ້ນທາງບັນດານໄຟລ໌ລະຫັດ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="55"/>
+        <source>Enter New Password</source>
+        <translation>ປ້ອມລະຫັດຜ່ານໃໝ່</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="60"/>
+        <source>At least 8 characters, including A-Z, a-z, 0-9, and symbols</source>
+        <translation>ຕ້ອງມີຢྈາຍກວ່າ 8 ຕົວອັກສອນ, ລວມມີ A-Z, a-z, 0-9 ແລະ ສັນຍາລັກ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="63"/>
+        <source>Repeat Password</source>
+        <translation>ປ້ອນລະຫັດຜ່ານອີກຄັ້ງ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="66"/>
+        <source>Enter new password again</source>
+        <translation>ປ້ອນລະຫັດຜ່ານອີກຄັ້ງ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="69"/>
+        <source>Password hint</source>
+        <translation>ຄຳແນະນຳລະຫັດຜ່ານ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="72"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="344"/>
+        <source>Optional</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="92"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="74"/>
+        <source>Use old password verification</source>
+        <translation>ໃຊ້ການຢັ້ງຢືນລະຫັດຜ່ານເກົ່າ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="144"/>
+        <source>Cancel</source>
+        <comment>button</comment>
+        <translation>ຍົກເລີກ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="144"/>
+        <source>Reset Password</source>
+        <comment>button</comment>
+        <translation>ປ່ຽນລະຫັດຜ່ານ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="149"/>
+        <source>Reset Password</source>
+        <translation>ປ່ຽນລະຫັດຜ່ານ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="161"/>
         <source>Unable to get the key file</source>
         <translation>ບໍ່ສາມາດໄດ້ຮັບໄຟລ໌ກະແຈ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="109"/>
-        <source>Unlock vault failed</source>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="171"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="258"/>
+        <source>≥ 8 chars, contains A-Z, a-z, 0-9, and symbols</source>
+        <translation>ຢ່າງນ້ອຍ 8 ຕົວອັກສອນ, ປະກອບມີ A-Z, a-z, 0-9 ແລະ ສັນຍາລັກ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="180"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="266"/>
+        <source>Passwords do not match</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="189"/>
+        <source>Cannot reset password for old version vault. Please upgrade the vault first.</source>
+        <translation>ບໍ່ສາມາດຮີເຊັດລະຫັດຜ່ານສຳລັບຄັງເວີຊັ່ນເກົ່າໄດ້. ກະລຸນາຍົກລະດັບຄັງເວີຊັ່ນກ່ອນ.</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="198"/>
+        <source>Unable to read key file</source>
+        <translation>ອ່ານໄຟລ໌ລະຫັດບໍ່ໄດ້</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="211"/>
+        <source>Invalid recovery key format: expected 32 characters, got %1</source>
+        <translation>ຮູບແບບກະແຈກູ້ຄືນບໍ່ຖືກຕ້ອງ: ຄາດຄັ້ງຕົວອັກສອນ 32 ໂຕ ແຕ່ໄດ້ຮັບ %1</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="221"/>
+        <source>Invalid recovery key format: must contain only letters and numbers</source>
+        <translation>ຮູບແບບກະແຈກູ້ຄືນບໍ່ຖືກຕ້ອງ: ຕ້ອງມີແຕ່ຕົວອັກສອນ ແລະ ຕົວເລກເທົ່ານັ້ນ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="387"/>
+        <source>Success</source>
+        <translation>ສຳເລັດ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="387"/>
+        <source>Password reset successfully</source>
+        <translation>ຮີເຊັດລະຫັດຜ່ານສຳເລັດແລ້ວ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="391"/>
+        <source>Failed to reset password. Please check your key file.</source>
+        <translation>ບໍ່ສາມາດຮີເຊັດລະຫັດຜ່ານໄດ້. ກະລຸນາກວດສອບໄຟລ໌ລະຫັດຂອງທ່ານ.</translation>
+    </message>
+</context>
+<context>
+    <name>dfmplugin_vault::ResetPasswordByOldPasswordView</name>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="46"/>
+        <source>Enter Old Password</source>
+        <translation>ປ້ອມລະຫັດຜ່ານເກົ່າ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="48"/>
+        <source>Please enter old password</source>
+        <translation>ກະລຸນາປ້ອມລະຫັດຜ່ານເກົ່າ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="51"/>
+        <source>Enter New Password</source>
+        <translation>ປ້ອມລະຫັດຜ່ານໃໝ່</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="56"/>
+        <source>At least 8 characters, including A-Z, a-z, 0-9, and symbols</source>
+        <translation>ຕ້ອງມີຢྈາຍກວ່າ 8 ຕົວອັກສອນ, ລວມມີ A-Z, a-z, 0-9 ແລະ ສັນຍາລັກ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="59"/>
+        <source>Repeat Password</source>
+        <translation>ປ້ອນລະຫັດຜ່ານອີກຄັ້ງ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="62"/>
+        <source>Enter new password again</source>
+        <translation>ປ້ອນລະຫັດຜ່ານອີກຄັ້ງ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="65"/>
+        <source>Password hint</source>
+        <translation>ຄຳແນະນຳລະຫັດຜ່ານ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="68"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="304"/>
+        <source>Optional</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="70"/>
+        <source>Use key verification</source>
+        <translation>ໃຊ້ການຢັ້ງຢືນລະຫັດຜ່ານ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="139"/>
+        <source>Cancel</source>
+        <comment>button</comment>
+        <translation>ຍົກເລີກ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="139"/>
+        <source>Reset Password</source>
+        <comment>button</comment>
+        <translation>ປ່ຽນລະຫັດຜ່ານ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="144"/>
+        <source>Reset Password</source>
+        <translation>ປ່ຽນລະຫັດຜ່ານ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="156"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="217"/>
+        <source>≥ 8 chars, contains A-Z, a-z, 0-9, and symbols</source>
+        <translation>ຢ່າງນ້ອຍ 8 ຕົວອັກສອນ, ປະກອບມີ A-Z, a-z, 0-9 ແລະ ສັນຍາລັກ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="165"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="225"/>
+        <source>Passwords do not match</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="176"/>
+        <source>Please try again %1 minutes later</source>
+        <translation>ກະລຸນາລອງອີກຄັ້ງຫຼັງຈາກ %1 ນາທີ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="353"/>
+        <source>Success</source>
+        <translation>ສຳເລັດ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="353"/>
+        <source>Password reset successfully</source>
+        <translation>ຮີເຊັດລະຫັດຜ່ານສຳເລັດແລ້ວ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="369"/>
+        <source>Failed to reset password. Please try again %1 minutes later</source>
+        <translation>ບໍ່ສາມາດຮີເຊັດລະຫັດຜ່ານໄດ້. ກະລຸນາລໍຖ້າ %1 ນາທີ ແລ້ວລອງໃໝ່</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="372"/>
+        <source>Failed to reset password. One chance left</source>
+        <translation>ບໍ່ສາມາດຮີເຊັດລະຫັດຜ່ານໄດ້. ຍັງເຫຼືອໂອກາດ 1 ເທົ່ານັ້ນ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="374"/>
+        <source>Failed to reset password. %1 chances left</source>
+        <translation>ບໍ່ສາມາດຮີເຊັດລະຫັດຜ່ານໄດ້. ຍັງເຫຼືອໂອກາດ %1 ເທົ່ານັ້ນ</translation>
+    </message>
+</context>
+<context>
+    <name>dfmplugin_vault::RetrievePasswordView</name>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="54"/>
+        <source>Unlock the Safe via Key File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="57"/>
+        <source>Select Key File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="113"/>
+        <source>Unable to get the key file</source>
+        <translation>ບໍ່ສາມາດໄດ້ຮັບໄຟລ໌ກະແຈ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="165"/>
+        <source>Failed to generate recovery key. Please try again.</source>
+        <translation>ບໍ່ສາມາດສ້າງລະຫັດກູ້ຄືນໄດ້. ກະລຸນາລອງໃໝ່.</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="177"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="179"/>
+        <source>Upgrade vault</source>
+        <translation>ຍູ່າປ່ອຍຍົກລະດັཚ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="220"/>
+        <source>Unlock vault failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="146"/>
         <source>Verification failed</source>
         <translation>ການຢືນຢັນບໍ່ສຳເລັດ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="126"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="235"/>
         <source>Back</source>
         <comment>button</comment>
         <translation>ກັບຄືນ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="126"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="235"/>
         <source>Key Unlock</source>
         <comment>button</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="131"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="240"/>
         <source>Key Unlocks Safe</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7609,82 +7880,105 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_vault::UnlockView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="45"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="58"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="60"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>ຍົກເລີກ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="45"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="58"/>
+        <source>Verify Key</source>
+        <comment>button</comment>
+        <translation>ກວດສອບລະຫັດ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="60"/>
         <source>Unlock</source>
         <comment>button</comment>
         <translation>ປົດລັອກ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="50"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="66"/>
+        <source>Enter vault password</source>
+        <translation>ປ້ອມລະຫັດຜ່ານກັນເອົາ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="68"/>
         <source>Unlock File Vault</source>
         <translation>ປົດລັອກຫ້ອງເກັບໄຟລ໌</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="56"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="74"/>
         <source>Forgot password?</source>
         <translation>ລືມລະຫັດຜ່ານບໍ?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="56"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="74"/>
         <source>Key unlock</source>
         <translation>ປົດລັອກດ້ວຍກະແຈ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="63"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="81"/>
         <source>Password</source>
         <translation>ລະຫັດຜ່ານ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="97"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="121"/>
         <source>Password hint: %1</source>
         <translation>ຄຳແນະນຳລະຫັດຜ່ານ: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="120"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="148"/>
         <source>Can&apos;t unlock the vault under the networking!</source>
         <translation>ບໍ່ສາມາດປົດລັອກຫ້ອງເກັບໄຟລ໌ໃນຂະນະທີ່ເຊື່ອມຕໍ່ອິນເຕີເນັດ!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="130"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="159"/>
         <source>Please try again %1 minutes later</source>
         <translation>ກະລຸນາລອງອີກຄັ້ງຫຼັງຈາກ %1 ນາທີ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="163"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="206"/>
+        <source>Failed to generate recovery key. Please try again.</source>
+        <translation>ບໍ່ສາມາດສ້າງລະຫັດກູ້ຄືນໄດ້. ກະລຸນາລອງໃໝ່.</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="218"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="220"/>
+        <source>Upgrade vault</source>
+        <translation>ຍູ່າປ່ອຍຍົກລະດັཚ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="265"/>
         <source>Wrong password, please try again %1 minutes later</source>
         <translation>ລະຫັດຜ່ານຜິດ, ກະລຸນາລອງອີກຄັ້ງຫຼັງຈາກ %1 ນາທີ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="167"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="268"/>
         <source>Wrong password, one chance left</source>
         <translation>ລະຫັດຜ່ານຜິດ, ເຫຼືອອີກ 1 ໂອກາດ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="170"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="270"/>
         <source>Wrong password, %1 chances left</source>
         <translation>ລະຫັດຜ່ານຜິດ, ເຫຼືອອີກ %1 ໂອກາດ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="222"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="229"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="324"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="331"/>
         <source>Wrong password</source>
         <translation>ລະຫັດຜ່ານຜິດ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="231"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="240"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="333"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="342"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>ຕົກລົງ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="236"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="338"/>
         <source>Failed to unlock file vault, error code is %1</source>
         <translation>ບໍ່ສາມາດປົດລັອກຫ້ອງເກັບໄຟລ໌ໄດ້, ລະຫັດຂໍ້ຜິດພາດແມ່ນ %1</translation>
     </message>
@@ -7735,34 +8029,84 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_vault::VaultActiveSaveKeyFileView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="50"/>
-        <source>Save Recovery Key</source>
-        <translation>ບັນທຶກກະແຈກູ້ຄືນ</translation>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="75"/>
+        <source>Recovery key file</source>
+        <translation>ໄຟລ໌ກະແຈກູ້ຄືນ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="57"/>
-        <source>Key files can be used to unlock the safe, please keep it in a safe place</source>
-        <translation type="unfinished"></translation>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="82"/>
+        <source>Save the recovery key file and keep it in a safe place</source>
+        <translation> ບັນດານສະບັບຂະຫນາດນ້ອຍຂອງກະແຈກູ້ຄືນໄດ້ບັນດານສະບັບໄວ້ ແລະ ເກັບໄວ້ໃນສະຖານທີ່ທີ່ປອດໄພ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="61"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="86"/>
         <source>It is recommended to save it to external storage devices such as a USB drive</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="63"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="88"/>
         <source>No permission, please reselect</source>
         <translation>ບໍ່ມີສິດ, ກະລຸນາເລືອກໃໝ່</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="69"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="94"/>
         <source>Select a path</source>
         <translation>ເລືອກເສັ້ນທາງ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="82"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="106"/>
         <source>Next</source>
         <translation>ຖັດໄປ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="205"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="212"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="228"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="238"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="281"/>
+        <source>Vault</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="205"/>
+        <source>Recovery key is not available. Please try again.</source>
+        <translation>ບໍ່ສາມາດໃຊ້ລະຫັດກູ້ຄືນໄດ້. ກະລຸນາລອງໃໝ່.</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="212"/>
+        <source>Please select a path to save the recovery key.</source>
+        <translation>ກະລຸນາເລືອກເສັ້ງທາງເພື່ອບັນດານສະບັບໄຟລ໌ກະແຈກູ້ຄືນ.</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="228"/>
+        <source>Failed to save recovery key. Please check the path and try again.</source>
+        <translation>ບໍ່ສາມາດບັນດານສະບັບໄຟລ໌ກະແຈກູ້ຄືນໄດ້. ກະລຸນາກວດສອບເສັ້ງທາງ ແລະ ລອງໃໝ່.</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="238"/>
+        <source>Failed to start migration. Please try again.</source>
+        <translation>ບໍ່ສາມາດເລີ່ມຕົ້ນການຍ້າຍໄດ້. ກະລຸນາລອງໃໝ່.</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="281"/>
+        <source>Failed to upgrade vault. Please try again.</source>
+        <translation>ບໍ່ສາມາດອັດເພີ້ມລະດັບ Vault ໄດ້. ກະລຸນາລອງໃໝ່.</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="290"/>
+        <source>Success</source>
+        <translation>ສຳເລັດ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="304"/>
+        <source>Vault upgraded successfully. Please keep your recovery key safe.</source>
+        <translation>ການອັບເດດ Vault ສຳເລັດແລ້ວ. ກະລຸນາເກັບລະຫັດກູ້ຄືນໄວ້ໃຫ້ປອດໄພ.</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="311"/>
+        <source>Enter Vault</source>
+        <comment>button</comment>
+        <translation>ເຂົ້າສູ່ກ່ອງນຶ່ງໃສ່</translation>
     </message>
 </context>
 <context>
@@ -7886,7 +8230,12 @@ Enter user and password for %1</source>
         <translation>ສ້າງຫ້ອງເກັບໄຟລ໌ບໍ່ສຳເລັດ: ລະຫັດຜ່ານທີ່ດຶງມາວ່າງເປົ່າ!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="247"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="226"/>
+        <source>Failed to generate recovery key</source>
+        <translation>ບໍ່ສາມາດສ້າງລະຫັດກູ້ຄືນໄດ້</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="240"/>
         <source>Auto generate password failed!</source>
         <translation>ສ້າງລະຫັດຜ່ານອັດຕະໂນມັດບໍ່ສຳເລັດ!</translation>
     </message>
@@ -7915,18 +8264,18 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_vault::VaultHelper</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="152"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="567"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="153"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="627"/>
         <source>Vault</source>
         <translation>ຫ້ອງເກັບ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="152"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="153"/>
         <source>Vault not available because cryfs not installed!</source>
         <translation>ບໍ່ສາມາດໃຊ້ງານຫ້ອງເກັບໄດ້ ເນື່ອງຈາກບໍ່ໄດ້ຕິດຕັ້ງ cryfs!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="567"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="627"/>
         <source>A task is in progress, so it cannot perform your operation</source>
         <translation>ມີວຽກງານກຳລັງດຳເນີນຢູ່ ດັ່ງນັ້ນບໍ່ສາມາດດຳເນີນການຂອງທ່ານໄດ້</translation>
     </message>
@@ -7975,52 +8324,52 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_vault::VaultRemoveByPasswordView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="31"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="34"/>
         <source>Once deleted, the files in it will be permanently deleted</source>
         <translation>ເມື່ອລຶບແລ້ວ ໄຟລ໌ທັງໝົດຂ້າງໃນຈະຖືກລຶບຖາວອນ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="36"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="39"/>
         <source>Password</source>
         <translation>ລະຫັດຜ່ານ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="48"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="51"/>
         <source>Key delete</source>
         <translation>ລຶບດ້ວຍຄີ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="67"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="70"/>
         <source>Password hint: %1</source>
         <translation>ຄຳແນະນຳລະຫັດຜ່ານ: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="84"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="94"/>
         <source>Cancel</source>
         <translation>ຍົກເລີກ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="84"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="94"/>
         <source>Delete</source>
         <translation>ລຶບ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="89"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="99"/>
         <source>Delete File Vault</source>
         <translation>ລຶບຫ້ອງເກັບໄຟລ໌</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="108"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="140"/>
         <source>Wrong password</source>
         <translation>ລະຫັດຜ່ານຜິດ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="206"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="240"/>
         <source>Failed to delete file vault</source>
         <translation>ລຶບຫ້ອງເກັບໄຟລ໌ບໍ່ສຳເລັດ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="210"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="244"/>
         <source>OK</source>
         <translation>ຕົກລົງ</translation>
     </message>
@@ -8028,37 +8377,37 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_vault::VaultRemoveByRecoverykeyView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="27"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="30"/>
         <source>Input the 32-digit recovery key</source>
         <translation>ໃສ່ຄີກູ້ຄືນ 32 ຕົວເລກ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="95"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="105"/>
         <source>Cancel</source>
         <translation>ຍົກເລີກ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="95"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="105"/>
         <source>Delete</source>
         <translation>ລຶບ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="100"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="110"/>
         <source>Delete File Vault</source>
         <translation>ລຶບຫ້ອງເກັບໄຟລ໌</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="118"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="169"/>
         <source>Wrong recovery key</source>
         <translation>ຄີກູ້ຄືນຜິດ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="191"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="244"/>
         <source>Failed to delete file vault</source>
         <translation>ລຶບຫ້ອງເກັບໄຟລ໌ບໍ່ສຳເລັດ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="195"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="248"/>
         <source>OK</source>
         <translation>ຕົກລົງ</translation>
     </message>
