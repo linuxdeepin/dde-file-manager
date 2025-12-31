@@ -202,6 +202,9 @@ bool TaskManager::startTask(IndexTask::Type type, const QStringList &pathList, b
     connect(this, &TaskManager::startTaskInThread, currentTask, &IndexTask::start, Qt::QueuedConnection);
     workerThread.start();
 
+    // Mark index state as dirty before starting task
+    IndexUtility::setIndexState(IndexUtility::IndexState::Dirty);
+
     emit startTaskInThread();
     fmInfo() << "[TaskManager::startTask] Task started successfully in worker thread";
     return true;
@@ -267,6 +270,9 @@ bool TaskManager::startFileListTask(IndexTask::Type type, const QStringList &fil
     connect(this, &TaskManager::startTaskInThread, currentTask, &IndexTask::start, Qt::QueuedConnection);
     workerThread.start();
 
+    // Mark index state as dirty before starting task
+    IndexUtility::setIndexState(IndexUtility::IndexState::Dirty);
+
     emit startTaskInThread();
     fmDebug() << "[TaskManager::startFileListTask] File list task started successfully in worker thread";
     return true;
@@ -321,6 +327,9 @@ bool TaskManager::startFileMoveTask(const QHash<QString, QString> &movedFiles, b
     connect(currentTask, &IndexTask::finished, this, &TaskManager::onTaskFinished, Qt::QueuedConnection);
     connect(this, &TaskManager::startTaskInThread, currentTask, &IndexTask::start, Qt::QueuedConnection);
     workerThread.start();
+
+    // Mark index state as dirty before starting task
+    IndexUtility::setIndexState(IndexUtility::IndexState::Dirty);
 
     emit startTaskInThread();
     fmDebug() << "[TaskManager::startFileMoveTask] File move task started successfully in worker thread";
@@ -435,12 +444,22 @@ void TaskManager::onTaskFinished(IndexTask::Type type, HandlerResult result)
         fmInfo() << "[TaskManager::onTaskFinished] Started next queued task";
     } else {
         fmDebug() << "[TaskManager::onTaskFinished] No more tasks in queue";
+        // Mark index state as clean only when all tasks are completed successfully
+        if (result.success && !result.interrupted) {
+            IndexUtility::setIndexState(IndexUtility::IndexState::Clean);
+            fmInfo() << "[TaskManager::onTaskFinished] All tasks completed, index state set to clean";
+        }
     }
 }
 
 bool TaskManager::hasRunningTask() const
 {
     return currentTask && currentTask->isRunning();
+}
+
+bool TaskManager::hasQueuedTasks() const
+{
+    return !taskQueue.isEmpty();
 }
 
 void TaskManager::stopCurrentTask()

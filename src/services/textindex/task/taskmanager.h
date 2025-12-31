@@ -40,6 +40,7 @@ public:
     bool startFileMoveTask(const QHash<QString, QString> &movedFiles, bool silent = false);
 
     bool hasRunningTask() const;
+    bool hasQueuedTasks() const;
     void stopCurrentTask();
 
     std::optional<IndexTask::Type> currentTaskType() const;

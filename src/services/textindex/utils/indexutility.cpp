@@ -9,6 +9,7 @@
 #include <QJsonDocument>
 #include <QDir>
 #include <QStandardPaths>
+#include <QSaveFile>
 
 inline constexpr char kDeepinAnythingDconfName[] { "org.deepin.anything" };
 inline constexpr char kDeepinAnythingDconfPathKey[] { "indexing_paths" };
@@ -17,6 +18,115 @@ DCORE_USE_NAMESPACE
 SERVICETEXTINDEX_BEGIN_NAMESPACE
 
 namespace IndexUtility {
+
+namespace {
+// Internal helper: Read status JSON object from file
+QJsonObject readStatusJson()
+{
+    QFile file(statusFilePath());
+    if (!file.open(QIODevice::ReadOnly)) {
+        return QJsonObject();
+    }
+
+    QJsonParseError parseError;
+    const QByteArray data = file.readAll();
+    QJsonDocument doc = QJsonDocument::fromJson(data, &parseError);
+    file.close();
+
+    if (parseError.error != QJsonParseError::NoError) {
+        fmWarning() << "Failed to parse index status JSON from:" << file.fileName()
+                    << "-" << parseError.errorString();
+        return QJsonObject();
+    }
+
+    if (!doc.isObject()) {
+        fmWarning() << "Index status JSON root is not an object in:" << file.fileName();
+        return QJsonObject();
+    }
+
+    return doc.object();
+}
+
+// Internal helper: Write status JSON object to file
+bool writeStatusJson(const QJsonObject &obj)
+{
+    const QString filePath = statusFilePath();
+    QDir().mkpath(QFileInfo(filePath).absolutePath());
+
+    QSaveFile file(filePath);
+    if (!file.open(QIODevice::WriteOnly)) {
+        fmWarning() << "Failed to open index status file for writing:" << file.fileName()
+                    << "- error:" << file.errorString();
+        return false;
+    }
+
+    const QByteArray data = QJsonDocument(obj).toJson();
+    const qint64 bytesWritten = file.write(data);
+
+    if (bytesWritten != data.size()) {
+        fmWarning() << "Failed to fully write index status to:" << file.fileName()
+                    << "- wrote" << bytesWritten << "of" << data.size() << "bytes";
+        file.cancelWriting();
+        return false;
+    }
+
+    if (!file.commit()) {
+        fmWarning() << "Failed to commit index status file:" << file.fileName()
+                    << "- error:" << file.errorString();
+        return false;
+    }
+
+    return true;
+}
+}   // anonymous namespace
+
+IndexState getIndexState()
+{
+    QJsonObject obj = readStatusJson();
+    if (obj.contains(Defines::kStateKey)) {
+        QString state = obj[Defines::kStateKey].toString();
+        if (state == Defines::kStateClean) {
+            return IndexState::Clean;
+        } else if (state == Defines::kStateDirty) {
+            return IndexState::Dirty;
+        } else {
+            fmWarning() << "Index status file contains invalid state value:" << state
+                        << "- treating as Unknown";
+        }
+    } else {
+        fmDebug() << "Index status file missing 'state' field (legacy or corrupted)"
+                  << "- treating as Unknown, will trigger global update";
+    }
+    return IndexState::Unknown;
+}
+
+void setIndexState(IndexState state)
+{
+    QString stateStr;
+    switch (state) {
+    case IndexState::Clean:
+        stateStr = Defines::kStateClean;
+        break;
+    case IndexState::Dirty:
+        stateStr = Defines::kStateDirty;
+        break;
+    default:
+        fmWarning() << "Cannot set unknown state";
+        return;
+    }
+
+    QJsonObject obj = readStatusJson();
+    obj[Defines::kStateKey] = stateStr;
+
+    if (writeStatusJson(obj)) {
+        fmDebug() << "Index state set to:" << stateStr;
+    }
+}
+
+bool isCleanState()
+{
+    return getIndexState() == IndexState::Clean;
+}
 
 bool isIndexWithAnything(const QString &path)
 {
@@ -118,64 +228,32 @@ void saveIndexStatus(const QDateTime &lastUpdateTime)
 
 void saveIndexStatus(const QDateTime &lastUpdateTime, int version)
 {
-    QJsonObject status;
-    status[Defines::kLastUpdateTimeKey] = lastUpdateTime.toString(Qt::ISODate);
-    status[Defines::kVersionKey] = version;
+    QJsonObject obj = readStatusJson();
+    obj[Defines::kLastUpdateTimeKey] = lastUpdateTime.toString(Qt::ISODate);
+    obj[Defines::kVersionKey] = version;
 
-    QJsonDocument doc(status);
-    QFile file(statusFilePath());
-
-    // 确保目录存在
-    QDir().mkpath(QFileInfo(file).absolutePath());
-
-    if (file.open(QIODevice::WriteOnly)) {
-        file.write(doc.toJson());
-        file.close();
-        fmInfo() << "Index status saved successfully:" << file.fileName()
+    if (writeStatusJson(obj)) {
+        fmInfo() << "Index status saved successfully:"
                  << "lastUpdateTime:" << lastUpdateTime.toString(Qt::ISODate)
-                 << "version:" << version
-                 << "[Updated index status configuration]";
-    } else {
-        fmWarning() << "Failed to save index status to:" << file.fileName()
-                    << "[Failed to write index status configuration]";
+                 << "version:" << version;
     }
 }
 
 QString getLastUpdateTime()
 {
-    QFile file(IndexUtility::statusFilePath());
-    if (!file.open(QIODevice::ReadOnly)) {
-        return QString();
-    }
-
-    QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
-    file.close();
-
-    if (doc.isObject()) {
-        QJsonObject obj = doc.object();
-        if (obj.contains(Defines::kLastUpdateTimeKey)) {
-            QDateTime time = QDateTime::fromString(obj[Defines::kLastUpdateTimeKey].toString(), Qt::ISODate);
-            return time.toString("yyyy-MM-dd hh:mm:ss");
-        }
+    QJsonObject obj = readStatusJson();
+    if (obj.contains(Defines::kLastUpdateTimeKey)) {
+        QDateTime time = QDateTime::fromString(obj[Defines::kLastUpdateTimeKey].toString(), Qt::ISODate);
+        return time.toString("yyyy-MM-dd hh:mm:ss");
     }
     return QString();
 }
 
 int getIndexVersion()
 {
-    QFile file(IndexUtility::statusFilePath());
-    if (!file.open(QIODevice::ReadOnly)) {
-        return -1;   // File doesn't exist or can't be opened
-    }
-
-    QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
-    file.close();
-
-    if (doc.isObject()) {
-        QJsonObject obj = doc.object();
-        if (obj.contains(Defines::kVersionKey)) {
-            return obj[Defines::kVersionKey].toInt(-1);
-        }
+    QJsonObject obj = readStatusJson();
+    if (obj.contains(Defines::kVersionKey)) {
+        return obj[Defines::kVersionKey].toInt(-1);
     }
     return -1;   // Version not found in status file
 }
