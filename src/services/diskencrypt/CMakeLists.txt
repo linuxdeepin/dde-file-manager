@@ -24,6 +24,7 @@ install(TARGETS ${BIN_NAME} DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(FILES ${PROJECT_NAME}.json DESTINATION share/deepin-service-manager/other/)
 install(FILES org.deepin.filemanager.diskencrypt.conf DESTINATION share/dbus-1/system.d/)
 install(FILES deepin-filemanager-diskencrypt.service DESTINATION lib/systemd/system/)
+install(FILES deepin-diskencrypt-tmpfiles.conf DESTINATION lib/tmpfiles.d/)
 install(FILES org.deepin.Filemanager.DiskEncrypt.service DESTINATION share/dbus-1/system-services)
 install(FILES ${CMAKE_SOURCE_DIR}/assets/rules/99-dfm-encrypt.rules DESTINATION /etc/udev/rules.d)
 
