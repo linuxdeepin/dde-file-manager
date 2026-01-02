@@ -3396,7 +3396,7 @@ Kirjoita käyttäjä ja salasana kohteelle %1</translation>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="411"/>
         <source>Load thumbnails for network, mobile, and optical disc directories</source>
-        <translation type="unfinished"/>
+        <translation>Lataa verkko-, mobiili- ja optisten levyjen esikatselukuvat</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="412"/>
