@@ -136,7 +136,7 @@ void CrumbBarPrivate::initUI()
     // Crumb Bar Layout
     crumbBarLayout = new QHBoxLayout(q);
     crumbBarLayout->addStretch(1);
-    crumbBarLayout->setContentsMargins(kItemMargin / 2, 3, kItemMargin / 2, 3);
+    crumbBarLayout->setContentsMargins(kItemMargin / 2, 3, kItemMargin * 2, 3);
     crumbBarLayout->setSpacing(0);
     q->setLayout(crumbBarLayout);
 
@@ -177,7 +177,8 @@ void CrumbBarPrivate::updateButtonVisibility()
         return;
     }
 
-    int availableWidth = q->width();
+    const auto &margins = crumbBarLayout->contentsMargins();
+    int availableWidth = q->width() - margins.left() - margins.right();
     QList<UrlPushButton *> buttonsToShow;
     availableWidth -= navButtons[0]->minimumWidth();
     buttonsToShow.append(navButtons[0]);
