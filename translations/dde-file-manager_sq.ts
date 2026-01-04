@@ -7664,37 +7664,37 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="189"/>
         <source>Cannot reset password for old version vault. Please upgrade the vault first.</source>
-        <translation type="unfinished"/>
+        <translation>S’mund të ricaktohet fjalëkalim për kasafortën në version të vjetër. Ju lutemi, së pari, përmirësoni kasafortën.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="198"/>
         <source>Unable to read key file</source>
-        <translation type="unfinished"/>
+        <translation>S’arrihet të lexohet kartelë kyçi</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="211"/>
         <source>Invalid recovery key format: expected 32 characters, got %1</source>
-        <translation type="unfinished"/>
+        <translation>Format i pavlefshëm kyçi rimarrjeje: priteshin 32 shenja, u morën %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="221"/>
         <source>Invalid recovery key format: must contain only letters and numbers</source>
-        <translation type="unfinished"/>
+        <translation>Format i pavlefshëm kyçi rimarrjesh: duhet të përmbajë vetëm shkronja dhe numra</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="387"/>
         <source>Success</source>
-        <translation type="unfinished"/>
+        <translation>Sukses</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="387"/>
         <source>Password reset successfully</source>
-        <translation type="unfinished"/>
+        <translation>Fjalëkalimi u ricaktua me sukses</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="391"/>
         <source>Failed to reset password. Please check your key file.</source>
-        <translation type="unfinished"/>
+        <translation>S’u arrit të ricaktohet fjalëkalimi. Ju lutemi, kontrolloni kartelën e kyçit tuaj.</translation>
     </message>
 </context>
 <context>
@@ -7702,107 +7702,107 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="46"/>
         <source>Enter Old Password</source>
-        <translation type="unfinished"/>
+        <translation>Jepni Fjalëkalimin e Vjetër</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="48"/>
         <source>Please enter old password</source>
-        <translation type="unfinished"/>
+        <translation>Ju lutemi, jepni fjalëkalimin e vjetër</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="51"/>
         <source>Enter New Password</source>
-        <translation type="unfinished"/>
+        <translation>Jepni Fjalëkalimin e Ri</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="56"/>
         <source>At least 8 characters, including A-Z, a-z, 0-9, and symbols</source>
-        <translation type="unfinished"/>
+        <translation>Të paktën 8 shenja, përfshi A-Z, a-z, 0-9 dhe simbole</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="59"/>
         <source>Repeat Password</source>
-        <translation type="unfinished"/>
+        <translation>Përsëriteni Fjalëkalimin</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="62"/>
         <source>Enter new password again</source>
-        <translation type="unfinished"/>
+        <translation>Jepeni fjalëkalimin e ri sërish</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="65"/>
         <source>Password hint</source>
-        <translation type="unfinished"/>
+        <translation>Ndihmëz fjalëkalimi</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="68"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="304"/>
         <source>Optional</source>
-        <translation type="unfinished"/>
+        <translation>Opsionale</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="70"/>
         <source>Use key verification</source>
-        <translation type="unfinished"/>
+        <translation>Përdor verifikim kyçi</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="139"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Anuloje</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="139"/>
         <source>Reset Password</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Ricaktoni Fjalëkalimin</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="144"/>
         <source>Reset Password</source>
-        <translation type="unfinished"/>
+        <translation>Ricaktoni Fjalëkalimin</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="156"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="217"/>
         <source>≥ 8 chars, contains A-Z, a-z, 0-9, and symbols</source>
-        <translation type="unfinished"/>
+        <translation>≥ 8 shenja, përmban A-Z, a-z, 0-9 dhe simbole</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="165"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="225"/>
         <source>Passwords do not match</source>
-        <translation type="unfinished"/>
+        <translation>Fjalëkalimet s’përputhen</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="176"/>
         <source>Please try again %1 minutes later</source>
-        <translation type="unfinished"/>
+        <translation>Ju lutemi, riprovoni pas %1 minutash</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="353"/>
         <source>Success</source>
-        <translation type="unfinished"/>
+        <translation>Sukses</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="353"/>
         <source>Password reset successfully</source>
-        <translation type="unfinished"/>
+        <translation>Fjalëkalimi u ricaktua me sukses</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="369"/>
         <source>Failed to reset password. Please try again %1 minutes later</source>
-        <translation type="unfinished"/>
+        <translation>S’u arrit të ricaktohej fjalëkalimi. Ju lutemi, riprovoni pas %1 minutash</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="372"/>
         <source>Failed to reset password. One chance left</source>
-        <translation type="unfinished"/>
+        <translation>S’u arrit të ricaktohet fjalëkalimi. Edhe një provë.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="374"/>
         <source>Failed to reset password. %1 chances left</source>
-        <translation type="unfinished"/>
+        <translation>S’u arrit të ricaktohet fjalëkalimi. Edhe %1 prova</translation>
     </message>
 </context>
 <context>
@@ -7825,13 +7825,13 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="165"/>
         <source>Failed to generate recovery key. Please try again.</source>
-        <translation type="unfinished"/>
+        <translation>S’u arrit të prodhohej kyç rimarrjeje. Ju lutemi, riprovoi.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="177"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="179"/>
         <source>Upgrade vault</source>
-        <translation type="unfinished"/>
+        <translation>Përmirësoni kasafortën</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="220"/>
@@ -7887,7 +7887,7 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="58"/>
         <source>Verify Key</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Verifikoni Kyçin</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="60"/>
@@ -7898,7 +7898,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="66"/>
         <source>Enter vault password</source>
-        <translation type="unfinished"/>
+        <translation>Jepni fjalëkalim kasaforte</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="68"/>
