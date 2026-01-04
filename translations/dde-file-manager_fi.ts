@@ -7826,13 +7826,13 @@ tyhjennä kansion tiedostot ja yritä avata lukitus uudelleen.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="165"/>
         <source>Failed to generate recovery key. Please try again.</source>
-        <translation type="unfinished"/>
+        <translation>Palautusavaimen luominen epäonnistui. Yritä uudelleen.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="177"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="179"/>
         <source>Upgrade vault</source>
-        <translation type="unfinished"/>
+        <translation>Päivitä holvi</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="220"/>
@@ -7888,7 +7888,7 @@ tyhjennä kansion tiedostot ja yritä avata lukitus uudelleen.</translation>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="58"/>
         <source>Verify Key</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Vahvistusavain</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="60"/>
@@ -7899,7 +7899,7 @@ tyhjennä kansion tiedostot ja yritä avata lukitus uudelleen.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="66"/>
         <source>Enter vault password</source>
-        <translation type="unfinished"/>
+        <translation>Anna holvin salasana</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="68"/>
@@ -7939,13 +7939,13 @@ tyhjennä kansion tiedostot ja yritä avata lukitus uudelleen.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="206"/>
         <source>Failed to generate recovery key. Please try again.</source>
-        <translation type="unfinished"/>
+        <translation>Palautusavaimen luominen epäonnistui. Yritä uudelleen.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="218"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="220"/>
         <source>Upgrade vault</source>
-        <translation type="unfinished"/>
+        <translation>Päivitä holvi</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="265"/>
@@ -8029,12 +8029,12 @@ tyhjennä kansion tiedostot ja yritä avata lukitus uudelleen.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="75"/>
         <source>Recovery key file</source>
-        <translation type="unfinished"/>
+        <translation>Palautusavain</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="82"/>
         <source>Save the recovery key file and keep it in a safe place</source>
-        <translation type="unfinished"/>
+        <translation>Tallenna palautusavain ja säilytä sitä turvallisessa paikassa</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="86"/>
@@ -8063,17 +8063,17 @@ tyhjennä kansion tiedostot ja yritä avata lukitus uudelleen.</translation>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="238"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="281"/>
         <source>Vault</source>
-        <translation type="unfinished"/>
+        <translation>Holvi</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="205"/>
         <source>Recovery key is not available. Please try again.</source>
-        <translation type="unfinished"/>
+        <translation>Palautusavain ei kelpaa! Yritä uudelleen.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="212"/>
         <source>Please select a path to save the recovery key.</source>
-        <translation type="unfinished"/>
+        <translation>Valitse tallennuspolku palautusavaimelle</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="228"/>
