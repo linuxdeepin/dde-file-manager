@@ -1,3 +1,47 @@
+dde-file-manager (6.5.113) unstable; urgency=medium
+
+  * fix(delegate): add file icon fallback when thumbnail rendering fails
+  * fix: remove hardcoded time label color
+  * fix: handle last tab close redirection properly
+  * fix: fix trash file restore URL encoding issue
+  * fix: fix terminal opening failure with long paths
+  * fix: handle file selection when traversing to file path
+  * Revert "feat: add sidebar visibility persistence"
+  * feat: enhance detail space visibility management
+  * feat: improve detail space visibility inheritance between windows
+  * fix: improve detail panel drag behavior and cursor management
+  * fix: add icon theme change handler for preview
+  * refactor: refactor detail space drag state management with state machine
+  * fix: reset file statistics job state properly
+  * fix(search): change default value of full-text search to enabled
+  * fix: fix memory leak in file statistics job
+  * refactor: separate monitoring and silent scan delays
+  * fix: fix cursor stack imbalance during detail drag state transition
+  * fix: connect error dialog signal in burn job manager
+  * fix: increase file monitoring start delay from 3 to 30 seconds
+  * fix: prevent symbolic link following during file cutting
+  * feat: disable optical drive thumbnail by default
+  * chore: update translation files with line number changes
+  * fix: disable custom dialog for directory sharing
+  * refactor: reorganize disk encrypt plugin and improve DBus reliability
+  * fix: add tmpfiles configuration for disk encryption service
+  * fix: prevent file descriptor leak in image preview widget
+  * feat: add index state tracking for crash recovery
+  * fix: disable animation for newly created detail space views
+  * feat: add vault reset password feature
+  * feat: [Vault] add password management scheme base components
+  * feat: [Vault] implement new password management scheme
+  * feat: implement password reset and migrate to LUKS recovery key system
+  * feat: [Vault] implement old vault upgrade to new password management scheme
+  * feat: [vault] Use the Masterkey as a readable string.
+  * fix: Use alert message instead of placeholder for key file reset password errors
+  * fix: Hide reset password menu for old version vaults
+  * fix: Add error attempt limit for reset password by old password
+  * translations: update translations
+  * chore: [vault] remove useless code
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Sun, 04 Jan 2026 16:20:10 +0800
+
 dde-file-manager (6.5.112) unstable; urgency=medium
 
   * fix: improve detail view content update timing
