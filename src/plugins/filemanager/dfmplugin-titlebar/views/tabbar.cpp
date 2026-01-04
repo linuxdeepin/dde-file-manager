@@ -39,7 +39,7 @@
 #include <functional>
 
 inline constexpr int kTabMaxWidth { 240 };
-inline constexpr int kTabMinWidth { 70 };
+inline constexpr int kTabMinWidth { 90 };
 inline constexpr int kItemButtonSize { 20 };
 inline constexpr int kItemButtonIconSize { 16 };
 inline constexpr int kItemButtonMargin { 4 };
@@ -55,6 +55,7 @@ struct Tab
     QUrl tabUrl;
     QString tabAlias;
     QString uniqueId;
+    QString tabTipText;
     QVariantMap userData;
     bool isInactive { false };
     bool isPinned { false };
@@ -76,8 +77,7 @@ public:
     void handleDragActionChanged(Qt::DropAction action);
     void handleContextMenu(int index);
     void handleIndexChanged(int index);
-    void updateToolTip(int index, const QString &tip);
-    void updateButtonToolTip(int index, bool visible);
+    void updateToolTip(int index, bool visible);
     void handleTabDroped(int index, Qt::DropAction dropAction, QObject *target);
     void handlePinnedTabsChanged(const QString &config, const QString &key);
     void handleTabMoved(int from, int to);
@@ -113,6 +113,7 @@ public:
     bool isDragging { false };
     QTimer *updateConfigTimer { nullptr };
     int lastTooltipTabIndex { -1 };
+    bool lastTooltipOnButton { false };
 };
 }
 
@@ -341,27 +342,40 @@ void TabBarPrivate::handleIndexChanged(int index)
     currentTabIndex = index;
 }
 
-void TabBarPrivate::updateToolTip(int index, const QString &tip)
+void TabBarPrivate::updateToolTip(int index, bool visible)
 {
-    q->setTabToolTip(index, tip);
-}
-
-void TabBarPrivate::updateButtonToolTip(int index, bool visible)
-{
-    // Hide tooltip if tab is not visible or mouse moved away from button area
-    if (!visible || !isItemButtonHovered(index)) {
+    // Hide tooltip if tab is not visible
+    if (!visible) {
         if (lastTooltipTabIndex != -1) {
             QToolTip::hideText();
             lastTooltipTabIndex = -1;
+            lastTooltipOnButton = false;
         }
         return;
     }
 
-    // Show tooltip for close/unpin button if hovering over a different tab
-    if (lastTooltipTabIndex != index) {
-        QString tooltipText = q->isPinned(index) ? TabBar::tr("Unpin tab") : TabBar::tr("Close tab");
-        QToolTip::showText(QCursor::pos(), tooltipText, q);
+    bool isBtnHovered = isItemButtonHovered(index);
+    const auto &tabTipText = tabInfo(index).tabTipText;
+
+    // Update tooltip if: 1) hovering over a different tab, or 2) button hover state changed
+    bool needUpdate = (lastTooltipTabIndex != index) || (lastTooltipOnButton != isBtnHovered) || !tabTipText.isEmpty();
+    if (needUpdate) {
+        QString tooltipText;
+        if (isBtnHovered) {
+            // Mouse on button - show button tooltip
+            tooltipText = q->isPinned(index) ? TabBar::tr("Unpin tab") : TabBar::tr("Close tab");
+        } else if (!tabTipText.isEmpty()) {
+            // Mouse on tab but not on button - show tab tooltip
+            tooltipText = tabTipText;
+        }
+
+        if (!tooltipText.isEmpty()) {
+            QToolTip::showText(QCursor::pos(), tooltipText, q);
+        } else {
+            QToolTip::hideText();
+        }
         lastTooltipTabIndex = index;
+        lastTooltipOnButton = isBtnHovered;
     }
 }
 
@@ -597,13 +611,13 @@ void TabBarPrivate::paintTabLabel(QPainter *painter, int index, const QStyleOpti
     const int tabMargin = 10;
     const int blueMarkerWidth = isSelected ? 6 : 0;
     const int blueMarkerMargin = isSelected ? 4 : 0;
-    const int closeButtonSize = isItemBtnShowed ? kItemButtonSize : 0;
-    const int closeButtonMargin = isItemBtnShowed ? kItemButtonMargin : 0;
+    const int btnSize = isItemBtnShowed ? kItemButtonSize : 0;
+    const int btnMargin = isItemBtnShowed ? kItemButtonMargin : 0;
 
     // 计算文本可用宽度（考虑蓝色标记和关闭按钮）
     const int textMargin = blueMarkerWidth + blueMarkerMargin;
     const int leftSpace = tabMargin / 2 + textMargin;
-    const int rightSpace = isItemBtnShowed ? (closeButtonSize + closeButtonMargin) : 0;
+    const int rightSpace = isItemBtnShowed ? (btnSize + btnMargin) : 0;
     const int availableTextWidth = rect.width() - leftSpace;
 
     // 截断文本以适应可用宽度
@@ -624,11 +638,16 @@ void TabBarPrivate::paintTabLabel(QPainter *painter, int index, const QStyleOpti
     }
 
     // 设置tooltip，只有省略时才显示
-    const auto &tooltip = q->tabToolTip(index);
-    if (option.text != elidedText && tooltip != option.text)
-        updateToolTip(index, option.text);
-    else if (option.text == elidedText && !tooltip.isEmpty())
-        updateToolTip(index, "");
+    const auto &tooltip = tabInfo(index).tabTipText;
+    if (option.text != elidedText && tooltip != option.text) {
+        updateTabInfo(index, [option](Tab &tab) {
+            tab.tabTipText = option.text;
+        });
+    } else if (option.text == elidedText && !tooltip.isEmpty()) {
+        updateTabInfo(index, [](Tab &tab) {
+            tab.tabTipText.clear();
+        });
+    }
 
     // 绘制蓝色标记
     if (isSelected) {
@@ -1242,14 +1261,16 @@ bool TabBar::eventFilter(QObject *obj, QEvent *e)
         int index = tabAt(mapFromGlobal(QCursor::pos()));
         if (index != -1) {
             update(tabRect(index));
-            d->updateButtonToolTip(index, true);
+            d->updateToolTip(index, true);
         } else {
             // Mouse moved out of all tabs
-            d->updateButtonToolTip(index, false);
+            d->updateToolTip(index, false);
         }
+    } else if (e->type() == QEvent::Leave) {
+        d->updateToolTip(-1, false);
     } else if (e->type() == QEvent::MouseButtonPress) {
         // Hide tooltip when clicking
-        d->updateButtonToolTip(-1, false);
+        d->updateToolTip(-1, false);
         auto me = static_cast<QMouseEvent *>(e);
         if (me->button() == Qt::RightButton) {
             int index = tabAt(mapFromGlobal(QCursor::pos()));
