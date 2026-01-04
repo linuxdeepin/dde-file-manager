@@ -7825,7 +7825,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="165"/>
         <source>Failed to generate recovery key. Please try again.</source>
-        <translation>S’u arrit të prodhohej kyç rimarrjeje. Ju lutemi, riprovoi.</translation>
+        <translation>S’u arrit të prodhohej kyç rimarrjeje. Ju lutemi, riprovoni.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="177"/>
@@ -7938,13 +7938,13 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="206"/>
         <source>Failed to generate recovery key. Please try again.</source>
-        <translation type="unfinished"/>
+        <translation>S’u arrit të prodhohej kyç rimarrjeje. Ju lutemi, riprovoni.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="218"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="220"/>
         <source>Upgrade vault</source>
-        <translation type="unfinished"/>
+        <translation>Përmirësoni kasafortën</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="265"/>
@@ -8028,12 +8028,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="75"/>
         <source>Recovery key file</source>
-        <translation type="unfinished"/>
+        <translation>Kartelë kyçi rimarrjesh</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="82"/>
         <source>Save the recovery key file and keep it in a safe place</source>
-        <translation type="unfinished"/>
+        <translation>Ruajeni kartelën e kyçit të rimarrjes dhe mbajeni në një vend të parrezik</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="86"/>
@@ -8062,48 +8062,48 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="238"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="281"/>
         <source>Vault</source>
-        <translation type="unfinished"/>
+        <translation>Kasafortë</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="205"/>
         <source>Recovery key is not available. Please try again.</source>
-        <translation type="unfinished"/>
+        <translation>Kyçi i rimarrjes s’është gati. Ju lutemi, riprovoni.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="212"/>
         <source>Please select a path to save the recovery key.</source>
-        <translation type="unfinished"/>
+        <translation>Ju lutemi, përzgjidhni një shteg ku të ruhet kyçi i rimarrjes.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="228"/>
         <source>Failed to save recovery key. Please check the path and try again.</source>
-        <translation type="unfinished"/>
+        <translation>S’u arrit të ruhej kyç rimarrjeje. Ju lutemi, kontrolloni shtegun dhe riprovoni.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="238"/>
         <source>Failed to start migration. Please try again.</source>
-        <translation type="unfinished"/>
+        <translation>S’u arrit të nisej migrimi. Ju lutemi, riprovoni.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="281"/>
         <source>Failed to upgrade vault. Please try again.</source>
-        <translation type="unfinished"/>
+        <translation>S’u arrit të përmirësohej kasaforta. Ju lutemi, riprovoni.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="290"/>
         <source>Success</source>
-        <translation type="unfinished"/>
+        <translation>Sukses</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="304"/>
         <source>Vault upgraded successfully. Please keep your recovery key safe.</source>
-        <translation type="unfinished"/>
+        <translation>Kasaforta u përmirësua me sukses. Ju lutemi, mbajeni të parrezik kyçin tuaj të rimarrjes.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="311"/>
         <source>Enter Vault</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Hyni Në Kasafortë</translation>
     </message>
 </context>
 <context>
@@ -8229,7 +8229,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="226"/>
         <source>Failed to generate recovery key</source>
-        <translation type="unfinished"/>
+        <translation>S’u arrit të prodhohej kyç rimarrjeje</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="240"/>
