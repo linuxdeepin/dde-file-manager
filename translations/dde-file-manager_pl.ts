@@ -1662,7 +1662,7 @@ Wprowadź nazwę użytkownika i hasło dla %1</translation>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="473"/>
         <source>The file vault encryption scheme has been upgraded.
 You need to upgrade this vault to continue using it.</source>
-        <translation type="unfinished"/>
+        <translation>Format szyfrowania skarbca został zaktualizowany. Ulepsz skarbiec, aby dalej z niego korzystać.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="482"/>
@@ -8083,7 +8083,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="238"/>
         <source>Failed to start migration. Please try again.</source>
-        <translation type="unfinished"/>
+        <translation>Nie udało się rozpocząć przenoszenia. Spróbuj ponownie.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="281"/>
@@ -8098,13 +8098,13 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="304"/>
         <source>Vault upgraded successfully. Please keep your recovery key safe.</source>
-        <translation type="unfinished"/>
+        <translation>Ulepszono skarbiec pomyślnie. Zapisz klucz przywracania w bezpiecznym miejscu.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="311"/>
         <source>Enter Vault</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Otwórz skarbiec</translation>
     </message>
 </context>
 <context>
@@ -8230,7 +8230,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="226"/>
         <source>Failed to generate recovery key</source>
-        <translation type="unfinished"/>
+        <translation>Nie udało się wygenerować klucza przywracania</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="240"/>
