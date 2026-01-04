@@ -7708,102 +7708,102 @@ tyhjennä kansion tiedostot ja yritä avata lukitus uudelleen.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="48"/>
         <source>Please enter old password</source>
-        <translation type="unfinished"/>
+        <translation>Anna vanha salasana</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="51"/>
         <source>Enter New Password</source>
-        <translation type="unfinished"/>
+        <translation>Anna uusi salasana</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="56"/>
         <source>At least 8 characters, including A-Z, a-z, 0-9, and symbols</source>
-        <translation type="unfinished"/>
+        <translation>Vähintään 8 merkkiä ja sisältää A-Z-, a-z-, 0-9 ja erikoismerkit</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="59"/>
         <source>Repeat Password</source>
-        <translation type="unfinished"/>
+        <translation>Toista salasana</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="62"/>
         <source>Enter new password again</source>
-        <translation type="unfinished"/>
+        <translation>Anna salasana uudelleen</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="65"/>
         <source>Password hint</source>
-        <translation type="unfinished"/>
+        <translation>Salasanavihje</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="68"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="304"/>
         <source>Optional</source>
-        <translation type="unfinished"/>
+        <translation>Valinnainen</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="70"/>
         <source>Use key verification</source>
-        <translation type="unfinished"/>
+        <translation>Käytä vahvistusta avaimella</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="139"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Peruuta</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="139"/>
         <source>Reset Password</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Nollaa salasana</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="144"/>
         <source>Reset Password</source>
-        <translation type="unfinished"/>
+        <translation>Nollaa salasana</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="156"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="217"/>
         <source>≥ 8 chars, contains A-Z, a-z, 0-9, and symbols</source>
-        <translation type="unfinished"/>
+        <translation>≥ 8 merkkiä, sisältäen A-Z-, a-z-, 0-9 ja erikoismerkit</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="165"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="225"/>
         <source>Passwords do not match</source>
-        <translation type="unfinished"/>
+        <translation>Salasanat eivät täsmää</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="176"/>
         <source>Please try again %1 minutes later</source>
-        <translation type="unfinished"/>
+        <translation>Yritä uudelleen %1 minuuttia myöhemmin</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="353"/>
         <source>Success</source>
-        <translation type="unfinished"/>
+        <translation>Onnistui</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="353"/>
         <source>Password reset successfully</source>
-        <translation type="unfinished"/>
+        <translation>Salasanan nollaaminen onnistui</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="369"/>
         <source>Failed to reset password. Please try again %1 minutes later</source>
-        <translation type="unfinished"/>
+        <translation>Salasanan nollaaminen epäonnistui. Yritä uudelleen %1 minuutin kuluttua</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="372"/>
         <source>Failed to reset password. One chance left</source>
-        <translation type="unfinished"/>
+        <translation>Salasanan nollaaminen epäonnistui. Yksi mahdollisuus jäljellä.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="374"/>
         <source>Failed to reset password. %1 chances left</source>
-        <translation type="unfinished"/>
+        <translation>Salasanan nollaaminen epäonnistui. %1 yritystä jäljellä</translation>
     </message>
 </context>
 <context>
