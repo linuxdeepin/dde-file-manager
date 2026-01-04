@@ -63,6 +63,7 @@ void DetailSpaceHelper::showDetailView(quint64 windowId, bool checked, bool user
         return;
 
     if (checked) {
+        bool useAnimation = true;
         // If widget doesn't exist, create a new one
         if (!widget) {
             addDetailSpace(windowId);
@@ -71,6 +72,7 @@ void DetailSpaceHelper::showDetailView(quint64 windowId, bool checked, bool user
                 fmCritical() << "Can't find the detail space!";
                 return;
             }
+            useAnimation = false;
         }
 
         // Get the saved width from window
@@ -81,7 +83,7 @@ void DetailSpaceHelper::showDetailView(quint64 windowId, bool checked, bool user
 
         // Show the detailspace with animation (window handles visibility and animation internally)
         QVariantHash options;
-        options[DFMBASE_NAMESPACE::DetailSpaceOptions::kAnimated] = true;
+        options[DFMBASE_NAMESPACE::DetailSpaceOptions::kAnimated] = useAnimation;
         options[DFMBASE_NAMESPACE::DetailSpaceOptions::kUserAction] = userAction;
         window->showDetailSpace(options);
 
