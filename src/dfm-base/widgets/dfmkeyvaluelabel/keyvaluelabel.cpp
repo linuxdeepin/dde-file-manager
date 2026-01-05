@@ -226,7 +226,7 @@ RightValueWidget::RightValueWidget(QWidget *parent)
 {
     setReadOnly(true);
     setFrameShape(QFrame::NoFrame);
-    setWordWrapMode(QTextOption::WrapAnywhere);
+    setWordWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
     setContextMenuPolicy(Qt::CustomContextMenu);
 
     connect(this, &RightValueWidget::customContextMenuRequested, this, &RightValueWidget::customContextMenuEvent);
