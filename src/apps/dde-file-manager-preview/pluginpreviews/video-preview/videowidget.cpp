@@ -41,7 +41,18 @@ QSize VideoWidget::sizeHint() const
 
 void VideoWidget::playFile(const QUrl &url)
 {
+    fmDebug() << "Video widget: playFile called with URL:" << url;
+
     videoUrl = url;
+
+    // If widget is already visible, play immediately to support file switching
+    // Otherwise, wait for showEvent to trigger playback (first-time display)
+    if (isVisible() && !url.isEmpty()) {
+        fmDebug() << "Video widget: widget is visible, playing video immediately";
+        play(videoUrl);
+    } else {
+        fmDebug() << "Video widget: widget not visible, deferring playback to showEvent";
+    }
 }
 
 void VideoWidget::mouseReleaseEvent(QMouseEvent *event)
