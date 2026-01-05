@@ -59,10 +59,14 @@ Q_SIGNALS:
 private Q_SLOTS:
     void onNeedIconFallback(const QUrl &url, const QSize &targetSize);
     void onAnimatedImageReady(const QUrl &url, const QString &filePath);
+    void onThumbnailProduced(const QUrl &url, const QString &thumbnailPath);
 
 private:
     QThread m_workerThread;
     ImagePreviewWorker *m_worker { nullptr };
+    QUrl m_currentUrl;
+    QSize m_currentTargetSize;
+    bool m_isWaitingForThumbnail { false };
 };
 
 }

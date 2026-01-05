@@ -7,6 +7,7 @@
 
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/thumbnail/thumbnailhelper.h>
+#include <dfm-base/utils/thumbnail/thumbnailfactory.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -156,6 +157,10 @@ ImagePreviewController::ImagePreviewController(QObject *parent)
     connect(m_worker, &ImagePreviewWorker::needIconFallback,
             this, &ImagePreviewController::onNeedIconFallback);
 
+    // Connect to ThumbnailFactory's produceFinished signal for dynamic thumbnail updates
+    connect(ThumbnailFactory::instance(), &ThumbnailFactory::produceFinished,
+            this, &ImagePreviewController::onThumbnailProduced);
+
     m_workerThread.start();
 }
 
@@ -168,6 +173,11 @@ ImagePreviewController::~ImagePreviewController()
 
 void ImagePreviewController::requestPreview(const QUrl &url, const QSize &targetSize)
 {
+    // Store current request parameters for potential thumbnail update
+    m_currentUrl = url;
+    m_currentTargetSize = targetSize;
+    m_isWaitingForThumbnail = false;
+
     Q_EMIT doLoadPreview(url, targetSize);
 }
 
@@ -203,6 +213,10 @@ void ImagePreviewController::onNeedIconFallback(const QUrl &url, const QSize &ta
         result = icon.pixmap(iconSizeSquare, dpr);
         if (!result.isNull()) {
             Q_EMIT previewReady(url, result);
+            // Mark that we're using icon fallback and waiting for potential thumbnail
+            if (url == m_currentUrl) {
+                m_isWaitingForThumbnail = true;
+            }
             return;
         }
     }
@@ -214,4 +228,23 @@ void ImagePreviewController::onAnimatedImageReady(const QUrl &url, const QString
 {
     // Forward animated image signal
     Q_EMIT animatedImageReady(url, filePath);
+}
+
+void ImagePreviewController::onThumbnailProduced(const QUrl &url, const QString &thumbnailPath)
+{
+    Q_UNUSED(thumbnailPath)
+
+    // Only reload if:
+    // 1. This thumbnail belongs to the currently displayed file
+    // 2. We are currently showing icon fallback (waiting for thumbnail)
+    if (url == m_currentUrl && m_isWaitingForThumbnail) {
+        qCDebug(logDFMBase) << "thumbnail: dynamically updating preview for:" << url;
+
+        // Reset waiting flag to prevent duplicate reloads
+        m_isWaitingForThumbnail = false;
+
+        // Reload preview with current parameters
+        // This will go through the full loading pipeline again, but now the thumbnail exists
+        Q_EMIT doLoadPreview(m_currentUrl, m_currentTargetSize);
+    }
 }
