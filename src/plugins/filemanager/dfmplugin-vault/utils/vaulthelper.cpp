@@ -264,7 +264,12 @@ DMenu *VaultHelper::createMenu()
         menu->addAction(QObject::tr("Unlock"), VaultHelper::instance(), &VaultHelper::unlockVaultDialog);
         menu->addSeparator();
         if (OperatorCenter::getInstance()->isNewVaultVersion()) {
-            menu->addAction(QObject::tr("Reset Password"), VaultHelper::instance(), &VaultHelper::showResetPasswordDialog);
+            VaultConfig config;
+            QString encryptionMethod = config.get(kConfigNodeName, kConfigKeyEncryptionMethod, QVariant(kConfigKeyNotExist)).toString();
+            // 重置密码功能仅在新版本且非透明加密时提供
+            if (encryptionMethod != QString(kConfigValueMethodTransparent)) {
+                menu->addAction(QObject::tr("Reset Password"), VaultHelper::instance(), &VaultHelper::showResetPasswordDialog);
+            }
         }
         break;
     case VaultState::kUnlocked: {
@@ -328,7 +333,9 @@ DMenu *VaultHelper::createMenu()
             fmDebug() << "Vault: Auto-lock menu items added";
         }
 
-        if (OperatorCenter::getInstance()->isNewVaultVersion()) {
+        // 重置密码功能仅在新版本且非透明加密时提供
+        if (OperatorCenter::getInstance()->isNewVaultVersion()
+            && encryptionMethod != QString(kConfigValueMethodTransparent)) {
             menu->addAction(QObject::tr("Reset Password"), VaultHelper::instance(), &VaultHelper::showResetPasswordDialog);
         }
         menu->addAction(QObject::tr("Delete File Vault"), VaultHelper::instance(), &VaultHelper::showRemoveVaultDialog);
