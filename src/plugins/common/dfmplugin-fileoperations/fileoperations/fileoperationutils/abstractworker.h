@@ -94,6 +94,7 @@ signals:
     void removeTaskWidget();
 
     void requestShowTipsDialog(DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType type, const QList<QUrl> &list);
+    void requestShowFailedDialog(const QMap<QUrl, QString> &failedInfo);
     void workerFinish();
     void requestSaveRedoOperation(const QString &token, const qint64 deleteFirstFileSize);
     void startWork();

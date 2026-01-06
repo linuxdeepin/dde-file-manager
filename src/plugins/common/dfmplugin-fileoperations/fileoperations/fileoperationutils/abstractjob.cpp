@@ -28,6 +28,7 @@ void AbstractJob::setJobArgs(const JobHandlePointer handle, const QList<QUrl> &s
     
     connect(handle.get(), &AbstractJobHandler::userAction, this, &AbstractJob::operateAation);
     connect(this, &AbstractJob::requestShowTipsDialog, handle.get(), &AbstractJobHandler::requestShowTipsDialog);
+    connect(this, &AbstractJob::requestShowFailedDialog, handle.get(), &AbstractJobHandler::requestShowFailedDialog);
 
     // 连接worker中的所有错误信号，转发给jobhandler
     connect(doWorker.data(), &AbstractWorker::errorNotify, this, &AbstractJob::handleError, Qt::QueuedConnection);
@@ -53,6 +54,7 @@ AbstractJob::AbstractJob(AbstractWorker *doWorker, QObject *parent)
         this->doWorker->moveToThread(&thread);
         connect(doWorker, &AbstractWorker::workerFinish, this, &AbstractJob::deleteLater);
         connect(doWorker, &AbstractWorker::requestShowTipsDialog, this, &AbstractJob::requestShowTipsDialog);
+        connect(doWorker, &AbstractWorker::requestShowFailedDialog, this, &AbstractJob::requestShowFailedDialog);
         connect(doWorker, &AbstractWorker::retryErrSuccess, this, &AbstractJob::handleRetryErrorSuccess, Qt::QueuedConnection);
         connect(doWorker, &AbstractWorker::fileAdded, this, &AbstractJob::handleFileAdded, Qt::QueuedConnection);
         connect(doWorker, &AbstractWorker::fileDeleted, this, &AbstractJob::handleFileDeleted, Qt::QueuedConnection);

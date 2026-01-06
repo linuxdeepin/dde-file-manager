@@ -23,6 +23,8 @@ AbstractJobHandler::AbstractJobHandler(QObject *parent)
             break;
         }
     });
+
+    connect(this, &AbstractJobHandler::requestShowFailedDialog, DialogManagerInstance, &DialogManager::showOperationFailedDialog);
 }
 
 AbstractJobHandler::~AbstractJobHandler() {}
