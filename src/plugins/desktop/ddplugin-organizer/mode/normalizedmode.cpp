@@ -1056,12 +1056,25 @@ bool NormalizedMode::filterDataRenamed(const QUrl &oldUrl, const QUrl &newUrl)
         return d->classifier->acceptRename(oldUrl, newUrl);
 
     QString oldType = d->classifier->key(oldUrl);
-    if (oldType.isEmpty())   // old item is not in collection.
+    if (oldType.isEmpty()) {
+        // oldUrl is not in any collection
+        // Check if newUrl is in collection (temporary file replacement scenario)
+        QString newType = d->classifier->key(newUrl);
+        if (!newType.isEmpty()) {
+            // newUrl is in collection, this is a temporary file replacement (save operation)
+            // File should remain in collection, canvas should not take over
+            return true;
+        }
+        // Neither oldUrl nor newUrl is in collection
         return false;
+    }
 
+    // oldUrl is in collection
     QString newType = d->classifier->classify(newUrl);
-    if (newType != oldType)   // the renamed result should be placed on desktop not in collection
+    if (newType != oldType) {
+        // Type changed, file should be moved to canvas
         return false;
+    }
 
     return true;
 }
