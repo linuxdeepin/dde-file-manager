@@ -66,6 +66,7 @@ public:
     int showNormalDeleteConfirmDialog(const QList<QUrl> &urls);
 
     void showRestoreFailedDialog(const int count);
+    void showOperationFailedDialog(const QMap<QUrl, QString> &failedInfo);
     int showRestoreDeleteFilesDialog(const QList<QUrl> &urlList);
 
     // rename

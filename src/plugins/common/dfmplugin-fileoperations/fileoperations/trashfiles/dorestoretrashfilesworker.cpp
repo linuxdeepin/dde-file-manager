@@ -154,7 +154,7 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
     if (!allFilesList.empty())
         urlsSource = allFilesList;
 
-    QList<QUrl> failUrls;
+    QMap<QUrl, QString> failUrls;
     for (const auto &url : urlsSource) {
         if (!stateCheck())
             return false;
@@ -224,14 +224,14 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
                 break;
             }
             if (!trashSucc)
-                failUrls.append(url);
+                failUrls.insert(url, fileHandler.errorString());
         }
         handleSourceFiles.append(fileUrl);
     }
 
     if (failUrls.count() > 0) {
         fmWarning() << "Restore operation completed with failures - failed count:" << failUrls.count();
-        emit requestShowTipsDialog(DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType::kRestoreFailed, failUrls);
+        emit requestShowFailedDialog(failUrls);
         return false;
     }
 

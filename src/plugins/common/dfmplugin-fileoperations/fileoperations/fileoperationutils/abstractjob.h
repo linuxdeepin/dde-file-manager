@@ -44,6 +44,7 @@ signals:   // 对线程协同的worker使用
     void errorNotify(const JobInfoPointer jobInfo);
 
     void requestShowTipsDialog(DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType type, const QList<QUrl> list);
+    void requestShowFailedDialog(const QMap<QUrl, QString> &failedInfo);
 
 protected slots:
     void operateAation(AbstractJobHandler::SupportActions actions);

@@ -250,6 +250,7 @@ Q_SIGNALS:   // 发送给任务调用者使用的信号
      */
     void speedUpdatedNotify(const JobInfoPointer jobInfo);
     void requestShowTipsDialog(DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType type, const QList<QUrl> list);
+    void requestShowFailedDialog(const QMap<QUrl, QString> &failedInfo);
     void workerFinish();
     void requestRemoveTaskWidget();
     void requestSaveRedoOperation(const QString &token, const qint64 deleteFirstFileSize);

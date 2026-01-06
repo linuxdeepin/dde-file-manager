@@ -18,8 +18,14 @@
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/utils/fileutils.h>
 
+#include <DBackgroundGroup>
+#include <DTreeView>
+#include <DToolTip>
+
 #include <QDir>
 #include <QApplication>
+#include <QHeaderView>
+#include <QStandardItemModel>
 
 using namespace dfmbase;
 
@@ -515,6 +521,91 @@ void DialogManager::showRestoreFailedDialog(const int count)
     } else if (count > 1) {
         d.setMessage(tr("Failed to restore %1 files, the target folder is read-only").arg(QString::number(count)));
     }
+    d.setIcon(QIcon::fromTheme("dde-file-manager"));
+    d.addButton(tr("OK", "button"), true, DDialog::ButtonNormal);
+    d.exec();
+}
+
+void DialogManager::showOperationFailedDialog(const QMap<QUrl, QString> &failedInfo)
+{
+    DDialog d(qApp->activeWindow());
+    d.setTitle(tr("Operation failed!"));
+
+    if (failedInfo.size() == 1) {
+        d.setMessage(tr("File operation failed: %1").arg(failedInfo.first()));
+    } else if (failedInfo.size() > 1) {
+        QWidget *contentWidget = new QWidget(&d);
+        QVBoxLayout *mainLayout = new QVBoxLayout(contentWidget);
+        mainLayout->setContentsMargins(0, 0, 0, 0);
+        mainLayout->setSpacing(10);
+
+        // Clickable message label with details link
+        QLabel *messageLabel = new QLabel(contentWidget);
+        auto updateDetailsLink = [messageLabel, count = failedInfo.size()](bool showViewLink) {
+            QString linkText = showViewLink ? QObject::tr("View details") : QObject::tr("Hide details");
+            QString link = QString("<a href=\"#\" style=\"text-decoration:none;\">%1</a>").arg(linkText);
+            messageLabel->setText(QObject::tr("Failed to operate on %1 files, %2").arg(count).arg(link));
+        };
+        updateDetailsLink(true);
+        messageLabel->setTextFormat(Qt::RichText);
+        messageLabel->setOpenExternalLinks(false);
+        messageLabel->setAlignment(Qt::AlignCenter);
+        mainLayout->addWidget(messageLabel);
+
+        // Details container
+        QVBoxLayout *detailsLayout = new QVBoxLayout;
+        detailsLayout->setContentsMargins(4, 0, 4, 0);
+        DBackgroundGroup *detailsContainer = new DBackgroundGroup(detailsLayout, &d);
+        detailsContainer->setVisible(false);
+
+        // Error details tree view
+        DTreeView *detailsView = new DTreeView(contentWidget);
+        QStandardItemModel *model = new QStandardItemModel(detailsView);
+        model->setHorizontalHeaderLabels(QStringList() << tr("File Name") << tr("Error Reason"));
+        detailsView->setModel(model);
+        detailsView->setRootIsDecorated(false);
+        detailsView->setIconSize({ 16, 16 });
+        detailsView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        detailsView->setSelectionMode(QAbstractItemView::NoSelection);
+        detailsView->setAlternatingRowColors(true);
+        detailsView->header()->setSectionResizeMode(QHeaderView::Stretch);
+        detailsView->setFrameShape(QFrame::NoFrame);
+        detailsView->setTextElideMode(Qt::ElideMiddle);
+
+        // Populate error details
+        for (auto it = failedInfo.constBegin(); it != failedInfo.constEnd(); ++it) {
+            FileInfoPointer info = InfoFactory::create<FileInfo>(it.key());
+            QString fileName = info ? info->displayOf(DisPlayInfoType::kFileDisplayName) : it.key().fileName();
+            QIcon fileIcon = info ? info->fileIcon() : QIcon::fromTheme("text-plain");
+
+            QStandardItem *fileItem = new QStandardItem(fileIcon, fileName);
+            fileItem->setToolTip(DToolTip::wrapToolTipText(fileName, { Qt::AlignLeft }));
+
+            QStandardItem *errorItem = new QStandardItem(it.value());
+            errorItem->setToolTip(DToolTip::wrapToolTipText(it.value(), { Qt::AlignLeft }));
+
+            model->appendRow({ fileItem, errorItem });
+        }
+
+        detailsLayout->addWidget(detailsView);
+        mainLayout->addWidget(detailsContainer);
+
+        // Toggle details visibility on link click
+        connect(messageLabel, &QLabel::linkActivated, [=, &d]() {
+            bool isVisible = detailsContainer->isVisible();
+            if (isVisible) {
+                d.setMaximumHeight(d.property("original_height").toInt());
+            } else {
+                d.setProperty("original_height", d.height());
+                d.setMaximumHeight(QWIDGETSIZE_MAX);
+            }
+            detailsContainer->setVisible(!isVisible);
+            updateDetailsLink(isVisible);
+        });
+
+        d.addContent(contentWidget);
+    }
+
     d.setIcon(QIcon::fromTheme("dde-file-manager"));
     d.addButton(tr("OK", "button"), true, DDialog::ButtonNormal);
     d.exec();
