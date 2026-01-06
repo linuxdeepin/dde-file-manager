@@ -781,7 +781,8 @@ bool TabBarPrivate::canPinned(int index)
     if (UrlRoute::isVirtual(url)) {
         static QStringList supportedSchemes {
             Global::Scheme::kRecent,
-            Global::Scheme::kTrash
+            Global::Scheme::kTrash,
+            Global::Scheme::kComputer
         };
         return supportedSchemes.contains(url.scheme());
     }
