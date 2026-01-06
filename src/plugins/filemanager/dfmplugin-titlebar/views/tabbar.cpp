@@ -1249,38 +1249,49 @@ bool TabBar::canInsertFromMimeData(int index, const QMimeData *source) const
 
 bool TabBar::eventFilter(QObject *obj, QEvent *e)
 {
-    if (e->type() == QEvent::Paint) {
-        auto btn = qobject_cast<DIconButton *>(obj);
-        if (btn)
+    const QEvent::Type eventType = e->type();
+
+    // Handle Paint event for DIconButton
+    if (eventType == QEvent::Paint) {
+        if (auto btn = qobject_cast<DIconButton *>(obj)) {
             d->paintTabButton(btn);
-    } else if (e->type() == QEvent::DragEnter) {
-        d->isDragging = true;
-    } else if (e->type() == QEvent::DragLeave || e->type() == QEvent::Drop) {
-        d->isDragging = false;
-    } else if (obj == d->tabBar && e->type() == QEvent::MouseMove) {
-        int index = tabAt(mapFromGlobal(QCursor::pos()));
-        if (index != -1) {
-            update(tabRect(index));
-            d->updateToolTip(index, true);
-        } else {
-            // Mouse moved out of all tabs
-            d->updateToolTip(index, false);
         }
-    } else if (e->type() == QEvent::Leave) {
-        d->updateToolTip(-1, false);
-    } else if (e->type() == QEvent::MouseButtonPress) {
-        // Hide tooltip when clicking
-        d->updateToolTip(-1, false);
-        auto me = static_cast<QMouseEvent *>(e);
-        if (me->button() == Qt::RightButton) {
-            int index = tabAt(mapFromGlobal(QCursor::pos()));
+        return DTabBar::eventFilter(obj, e);
+    }
+
+    // Handle drag events on TabBar itself
+    if (obj == this) {
+        if (eventType == QEvent::DragEnter) {
+            d->isDragging = true;
+        } else if (eventType == QEvent::DragLeave || eventType == QEvent::Drop) {
+            d->isDragging = false;
+        }
+        return DTabBar::eventFilter(obj, e);
+    }
+
+    // Handle events on internal tabBar widget
+    if (obj == d->tabBar) {
+        if (eventType == QEvent::MouseMove) {
+            const int index = tabAt(mapFromGlobal(QCursor::pos()));
             if (index != -1) {
+                update(tabRect(index));
+                d->updateToolTip(index, true);
+            } else {
+                d->updateToolTip(-1, false);
+            }
+        } else if (eventType == QEvent::Leave) {
+            d->updateToolTip(-1, false);
+        } else if (eventType == QEvent::MouseButtonPress) {
+            d->updateToolTip(-1, false);
+            const int index = tabAt(mapFromGlobal(QCursor::pos()));
+            if (index == -1)
+                return DTabBar::eventFilter(obj, e);
+
+            auto me = static_cast<QMouseEvent *>(e);
+            if (me->button() == Qt::RightButton) {
                 d->handleContextMenu(index);
                 return true;
-            }
-        } else if (me->button() == Qt::LeftButton) {
-            int index = tabAt(mapFromGlobal(QCursor::pos()));
-            if (index != -1 && d->isItemButtonHovered(index)) {
+            } else if (me->button() == Qt::LeftButton && d->isItemButtonHovered(index)) {
                 if (isPinned(index))
                     d->setTabPinned(index, false);
                 else
@@ -1288,13 +1299,13 @@ bool TabBar::eventFilter(QObject *obj, QEvent *e)
                 return true;
             }
         }
-    } else if (obj == d->leftBtn && e->type() == QEvent::Show) {
+        return DTabBar::eventFilter(obj, e);
+    }
+
+    // Handle Show/Hide events for left scroll button
+    if (obj == d->leftBtn && (eventType == QEvent::Show || eventType == QEvent::Hide)) {
         auto margin = layout()->contentsMargins();
-        margin.setLeft(4);
-        layout()->setContentsMargins(margin);
-    } else if (obj == d->leftBtn && e->type() == QEvent::Hide) {
-        auto margin = layout()->contentsMargins();
-        margin.setLeft(0);
+        margin.setLeft(eventType == QEvent::Show ? 4 : 0);
         layout()->setContentsMargins(margin);
     }
 
