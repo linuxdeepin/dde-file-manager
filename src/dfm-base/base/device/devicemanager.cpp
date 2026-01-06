@@ -623,7 +623,7 @@ void DeviceManager::mountNetworkDeviceAsync(const QString &address, CallbackType
             DProtocolDevice::mountNetworkDevice(address, func, DeviceManagerPrivate::askForUserChoice,
                                                 wrappedCb, timeout);
         } else {
-            wrappedCb(false, Utils::genOperateErrorInfo(DeviceError::kUserErrorTimedOut), "");
+            wrappedCb(false, Utils::genOperateErrorInfo(DeviceError::kUserErrorFailed, tr("Unable to connect to %1").arg(host)), "");
             qCWarning(logDFMBase) << "cannot access network " << host << ":" << port;
         }
     });
