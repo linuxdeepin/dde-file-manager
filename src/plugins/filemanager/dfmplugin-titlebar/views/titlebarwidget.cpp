@@ -132,10 +132,12 @@ void TitleBarWidget::openPinnedTabs()
             continue;
         }
 
-        auto info = InfoFactory::create<FileInfo>(url);
-        if (!info || !info->exists()) {
-            fmWarning() << "The file is not exists, skipping:" << tabData;
-            continue;
+        if (!(UrlRoute::isVirtual(url) && UrlRoute::isRootUrl(url))) {
+            auto info = InfoFactory::create<FileInfo>(url);
+            if (!info || !info->exists()) {
+                fmWarning() << "The file is not exists, skipping:" << tabData;
+                continue;
+            }
         }
 
         validPinnedTabs << pinnedTabs[i];
