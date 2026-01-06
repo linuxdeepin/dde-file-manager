@@ -8,6 +8,9 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/thumbnail/thumbnailhelper.h>
 #include <dfm-base/utils/thumbnail/thumbnailfactory.h>
+#include <dfm-base/base/device/deviceproxymanager.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/base/configs/dconfig/global_dconf_defines.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -50,6 +53,7 @@ void ImagePreviewWorker::loadPreview(const QUrl &url, const QSize &targetSize)
 
     const QString mimeType = info->nameOf(NameInfoType::kMimeTypeName);
     const QString filePath = info->pathOf(PathInfoType::kAbsoluteFilePath);
+    const qint64 fileSize = info->size();
 
     QPixmap result;
 
@@ -65,13 +69,17 @@ void ImagePreviewWorker::loadPreview(const QUrl &url, const QSize &targetSize)
         // Invalid or single-frame - fall through to static image loading
     }
 
-    // Strategy 2: For static image types, load original image
+    // Strategy 2: For static image types, load original image (with remote/optical size check)
     if (isImageMimeType(mimeType)) {
-        result = loadOriginalImage(filePath, targetSize);
-        if (!result.isNull()) {
-            Q_EMIT previewReady(url, result);
-            return;
+        // Check if we should skip original image loading for remote/optical files
+        if (!shouldSkipOriginalImageLoad(url, fileSize)) {
+            result = loadOriginalImage(filePath, targetSize);
+            if (!result.isNull()) {
+                Q_EMIT previewReady(url, result);
+                return;
+            }
         }
+        // If skipped or loading failed, fall through to thumbnail
     }
 
     // Strategy 3: Try thumbnail
@@ -88,6 +96,36 @@ void ImagePreviewWorker::loadPreview(const QUrl &url, const QSize &targetSize)
 bool ImagePreviewWorker::isImageMimeType(const QString &mimeType) const
 {
     return mimeType.startsWith("image/");
+}
+
+bool ImagePreviewWorker::shouldSkipOriginalImageLoad(const QUrl &url, qint64 fileSize) const
+{
+    // Check if file is on remote mount or optical device
+    const QString filePath = url.isLocalFile() ? url.toLocalFile() : url.path();
+    const bool isRemoteOrOptical = DevProxyMng->isFileOfProtocolMounts(filePath)
+            || DevProxyMng->isFileFromOptical(filePath);
+
+    if (!isRemoteOrOptical) {
+        return false;
+    }
+
+    // Get configured maximum file size from DConfig
+    using namespace GlobalDConfDefines;
+    const qint64 maxSize = DConfigManager::instance()->value(
+                                                             ConfigPath::kViewDConfName,
+                                                             BaseConfig::kDetailViewRemoteImageMaxSize,
+                                                             30 * 1024 * 1024   // Default: 30MB
+                                                             )
+                                   .toLongLong();
+
+    // Skip original image loading if file size exceeds the configured limit
+    const bool shouldSkip = fileSize > maxSize;
+    if (shouldSkip) {
+        fmInfo() << "detailview: skipping original image load for remote/optical file"
+                 << url << "size:" << fileSize << "limit:" << maxSize;
+    }
+
+    return shouldSkip;
 }
 
 QPixmap ImagePreviewWorker::loadOriginalImage(const QString &filePath, const QSize &targetSize)
@@ -168,7 +206,7 @@ ImagePreviewController::~ImagePreviewController()
 {
     m_worker->stop();
     m_workerThread.quit();
-    m_workerThread.wait();
+    m_workerThread.wait(5000);
 }
 
 void ImagePreviewController::requestPreview(const QUrl &url, const QSize &targetSize)
