@@ -209,6 +209,9 @@ bool TabBarPrivate::tabCloseable(const Tab &tab, const QUrl &targetUrl) const
         if (!realCurrentPath.isEmpty() && !realTargetPath.isEmpty()) {
             if (realCurrentPath == realTargetPath)
                 return true;
+
+            if (!realTargetPath.endsWith('/'))
+                realTargetPath.append('/');
             if (realCurrentPath.startsWith(realTargetPath))
                 return true;
         }
