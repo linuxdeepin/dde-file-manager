@@ -1,3 +1,21 @@
+dde-file-manager (6.5.114) unstable; urgency=medium
+
+  * fix: add dynamic thumbnail update for image preview
+  * chore: update translations
+  * fix: fix video content not switching when previewing multiple videos
+  * fix: improve text wrapping in key value label
+  * feat: add remote image size limit for detail view
+  * fix: handle temporary file replacement in organizer
+  * fix: improve network device mount error handling
+  * feat: add operation failure dialog with detailed error display
+  * fix: optimize tab bar event handling logic
+  * fix: support pinning computer virtual directory
+  * fix: prevent incorrect tab closure when path is subdirectory
+  * chore(diskencrypt): comment out security restrictions in service file
+  * fix: [vault] hide reset password option for transparent encryption
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Tue, 06 Jan 2026 17:12:40 +0800
+
 dde-file-manager (6.5.113) unstable; urgency=medium
 
   * fix(delegate): add file icon fallback when thumbnail rendering fails
