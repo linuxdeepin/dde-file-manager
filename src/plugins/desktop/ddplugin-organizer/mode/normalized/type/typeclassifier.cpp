@@ -236,8 +236,15 @@ bool TypeClassifier::acceptRename(const QUrl &oldUrl, const QUrl &newUrl)
     for (auto base : baseData())
         collected.append(base->items);
     if (collected.contains(newUrl)) {
-        // if the newUrl existed in collections, means new file replaced the old file.
-        // remove it from collection
+        if (!collected.contains(oldUrl)) {
+            // oldUrl not in collection (e.g., temporary file .EmvVrz), newUrl in collection
+            // This is a file content replacement (save operation), not file overwrite
+            // Keep the file in collection without removing it
+            return true;
+        }
+        // Both oldUrl and newUrl are in collection
+        // This is a real file overwrite scenario (e.g., mv a.txt b.txt, both exist)
+        // Remove newUrl before processing the rename
         remove(newUrl);
         return true;
     } else if (collected.contains(oldUrl)) {
