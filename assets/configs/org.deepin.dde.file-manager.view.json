@@ -89,6 +89,17 @@
             "description[zh_CN]": "用于配置文件管理器中的固定标签页。",
             "permissions": "readwrite",
             "visibility": "private"
+        },
+        "dfm.detailview.remote.image.maxsize": {
+            "value": 31457280,
+            "serial": 0,
+            "flags": [],
+            "name": "Maximum image size for detail view on remote/optical devices",
+            "name[zh_CN]": "网络和光盘设备详细视图中图片原图加载的最大文件大小",
+            "description": "Maximum file size in bytes for loading original images in detail view when files are on remote mounts or optical devices. Files larger than this will skip to thumbnail loading. Default is 30MB (31457280 bytes).",
+            "description[zh_CN]": "当文件位于网络挂载或光盘设备时，详细视图中加载图片原图的最大文件大小（字节）。超过此大小的文件将跳过原图加载直接使用缩略图。默认为30MB（31457280字节）。",
+            "permissions": "readwrite",
+            "visibility": "private"
         }
     }
 }
