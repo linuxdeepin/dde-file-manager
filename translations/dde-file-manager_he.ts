@@ -920,7 +920,7 @@ Enter user and password for %1</source>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="39"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="43"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="49"/>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="107"/>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="56"/>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="37"/>
@@ -936,10 +936,25 @@ Enter user and password for %1</source>
         <translation>ביטול</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="44"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="50"/>
         <source>Stop</source>
         <comment>button</comment>
         <translation>עצירה</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="549"/>
+        <source>View details</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="549"/>
+        <source>Hide details</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="551"/>
+        <source>Failed to operate on %1 files, %2</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/filenameutils.cpp" line="204"/>
@@ -1001,9 +1016,9 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="302"/>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="186"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="87"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="312"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="313"/>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="62"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="269"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="279"/>
         <source>Open in new window</source>
         <translation>פתח בחלון חדש</translation>
     </message>
@@ -1015,7 +1030,7 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="306"/>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="190"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="90"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="316"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="317"/>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="66"/>
         <source>Open in new tab</source>
         <translation>פתח בכרטיסייה חדשה</translation>
@@ -1037,7 +1052,7 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="40"/>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="201"/>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="81"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="327"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="342"/>
         <source>Properties</source>
         <translation>מאפיינים</translation>
     </message>
@@ -1360,7 +1375,7 @@ Enter user and password for %1</source>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="52"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="268"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="278"/>
         <source>Open</source>
         <translation>פתיחה</translation>
     </message>
@@ -1480,12 +1495,12 @@ Enter user and password for %1</source>
         <translation>הגדרות</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="303"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="304"/>
         <source>Copy path</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="325"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="326"/>
         <source>Edit address</source>
         <translation>ערוך כתובת</translation>
     </message>
@@ -1601,49 +1616,76 @@ Enter user and password for %1</source>
         <translation>מחפש...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="259"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="260"/>
         <source>Create Vault</source>
         <translation>יצירת כספת</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="263"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="264"/>
         <source>Unlock</source>
         <translation>ל_CBC</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="279"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="271"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="339"/>
+        <source>Reset Password</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="289"/>
         <source>Lock</source>
         <translation>לOCK</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="285"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="295"/>
         <source>Auto lock</source>
         <translation>ה_(</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="289"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="299"/>
         <source>Never</source>
         <translation>לעולם לא</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="298"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="308"/>
         <source>5 minutes</source>
         <translation>5 דקות</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="305"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="315"/>
         <source>10 minutes</source>
         <translation>10 דקות</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="312"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="322"/>
         <source>20 minutes</source>
         <translation>20 דקות</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="326"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="341"/>
         <source>Delete File Vault</source>
         <translation>מחיקת כספת הקבצים</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="465"/>
+        <source>Upgrade File Vault</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="480"/>
+        <source>The file vault encryption scheme has been upgraded.
+You need to upgrade this vault to continue using it.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="489"/>
+        <source>Later</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="490"/>
+        <source>Upgrade now</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="9"/>
@@ -1822,60 +1864,60 @@ Enter user and password for %1</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="643"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="614"/>
         <source>Cannot generate random number by TPM</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="646"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="617"/>
         <source>No available encrypt algorithm.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="649"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="620"/>
         <source>TPM encrypt failed.</source>
         <translation>הצפנת שבב ה־TPM נכשלה.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="652"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="623"/>
         <source>TPM is locked.</source>
         <translation>שבב ה־TPM נעול.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="725"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="696"/>
         <source>Confirm encrypt %1?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="728"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="699"/>
         <source>The current partition is about to be encrypted and cannot be canceled during the encryption process, please confirm the encryption.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="736"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="751"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="707"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="722"/>
         <source>Cancel</source>
         <translation>ביטו</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="737"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="752"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="708"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="723"/>
         <source>Confirm and Reboot</source>
         <translation>אישור והפעלה מחדש</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="738"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="752"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="709"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="723"/>
         <source>Confirm</source>
         <translation>אישור</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="748"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="719"/>
         <source>Decrypt %1?</source>
         <translation>להצפין את %1?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="749"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="720"/>
         <source>Decryption can take a long time, so make sure power is connected until the decryption is complete.</source>
         <translation type="unfinished"/>
     </message>
@@ -2793,341 +2835,366 @@ Enter user and password for %1</source>
     </message>
 </context>
 <context>
+    <name>dfmbase::DeviceManager</name>
+    <message>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="626"/>
+        <source>Unable to connect to %1</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>dfmbase::DialogManager</name>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="57"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="575"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="589"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="628"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="649"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="63"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="670"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="684"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="723"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="744"/>
         <location filename="../src/dfm-base/utils/dialogmanager.h" line="51"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>אישור</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="88"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="94"/>
         <source>Operating failed</source>
         <translation>הפעלה נכשלה</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="89"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="95"/>
         <source>Mount failed</source>
         <translation>ה笑意已挂起，等待挂载失败</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="90"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="96"/>
         <source>Unmount failed</source>
         <translation>ה笑意已挂起，等待卸载失败</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="96"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="102"/>
         <source>Unmounting device now...</source>
         <translation>ה笑意已挂起，等待卸载设备中...</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="99"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="105"/>
         <source>Mounting device now...</source>
         <translation>ה笑意已挂起，等待挂载设备中...</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="102"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="108"/>
         <source>Erasing device now...</source>
         <translation>מחיקת Gerät נמשכת...</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="105"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="111"/>
         <source>Making filesystem for device now...</source>
         <translation>יצירת מערכת קבצים עבור Gerät נמשכת...</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="108"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="114"/>
         <source>Locking device now...</source>
         <translation>הסגירה של Gerät נמשכת...</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="111"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="117"/>
         <source>Unlocking device now...</source>
         <translation>פתירת Gerät נמשכת...</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="135"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="141"/>
         <source>The device is busy now</source>
         <translation>הgerät עייף עכשיו</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="147"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="153"/>
         <source>Anonymous mount is not allowed</source>
         <translation>האתחול האNONYMOUS לא מותר</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="149"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="155"/>
         <source>Wrong password</source>
         <translation>סיסמה שגויה</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="153"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="159"/>
         <source>Cannot create the mountpoint: the file name is too long</source>
         <translation>לא ניתן ליצור נקודה אתחול: שם הקובץ הואtool ארוך</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="159"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="169"/>
         <source>Authentication failed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="157"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="163"/>
         <source>No such file or directory</source>
         <translation>אין קובץ אוzeichן דIRECTORY כזה</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="162"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="172"/>
         <source>The device has been blocked and you do not have permission to access it. Please configure its connection policy in Security Center or contact your administrator.</source>
         <translation>הgerät נחסם ואין לך הרשאה ל Lager darauf. אנא התאם מדיניות החיבור שלו בquisitions מרכז הביטחון או פנה למנהל שלך.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="171"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="181"/>
         <source>The device is busy, cannot remove now</source>
         <translation>הgerät עייף, לא ניתן להסיר עכשיו</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="194"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="204"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>אין לך הרשאהoperateacted��作文件/文件夹</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="211"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="221"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
         <translation>מצטער, אין לך הרשאה��作以下%1文件/文件夹！</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="240"/>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="250"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="519"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="685"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="260"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="529"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="614"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="780"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>אישור</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="247"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="512"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="257"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="522"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="536"/>
         <source>Operation failed!</source>
         <translation>הפעולה נכשלה！</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="248"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="258"/>
         <source>Target folder is inside the source folder!</source>
         <translation>תא宛目标文件夹在源文件夹内！</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="310"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="320"/>
         <source>The passphrase is needed to access encrypted data on %1.</source>
         <translation>הסיסמה הנדרשת כדיccess encrypted data on %1.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="318"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="338"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="367"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="388"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="437"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="498"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="536"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="648"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="672"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="328"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="348"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="377"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="398"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="447"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="508"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="631"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="743"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="767"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>ביטול</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="319"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="329"/>
         <source>Format</source>
         <comment>button</comment>
         <translation>פורמט</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="320"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="330"/>
         <source>To access the device, you must format the disk first. Are you sure you want to format it now?</source>
         <translation>כדי לגשת לgerät, עליך להפורמט את הディ스크 ראשית. אתה בטוח שאתה רוצה להפורמט אותו עכשיו？</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="334"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="344"/>
         <source>Do you want to run %1 or display its content?</source>
         <translation>האם אתה רוצה להריץ %1 או להציג את תוכןו？</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="335"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="345"/>
         <source>It is an executable text file.</source>
         <translation>זה קובץ טקסט נריץ.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="339"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="369"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="673"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="349"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="379"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="768"/>
         <source>Run</source>
         <comment>button</comment>
         <translation>הריץ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="340"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="368"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="350"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="378"/>
         <source>Run in terminal</source>
         <comment>button</comment>
         <translation>הצג ב терמינל</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="341"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="351"/>
         <source>Display</source>
         <comment>button</comment>
         <translation>הצג</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="364"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="374"/>
         <source>Do you want to run %1?</source>
         <translation>להריץ את %1?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="365"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="375"/>
         <source>It is an executable file.</source>
         <translation>זה קובץ רץ.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="382"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="392"/>
         <source>Cannot move the selected %1 items to the trash. Do you want to permanently delete them?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="383"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="393"/>
         <source>Permanently delete %1 items?</source>
         <translation>מחק באופן קבוע %1 קבצים？</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="413"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="423"/>
         <source>Cannot move &quot;%1&quot; to the trash. Do you want to permanently delete it?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="389"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="438"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="499"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="537"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="399"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="448"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="509"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="632"/>
         <source>Delete</source>
         <comment>button</comment>
         <translation>מחק</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="155"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="161"/>
         <source>Permission denied</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="414"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="424"/>
         <source>Permanently delete %1?</source>
         <translation>מחק באופן קבוע %1？</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="420"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="457"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="430"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="467"/>
         <source>This action cannot be undone</source>
         <translation>הפעולה הזו לא ניתן לבטל</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="433"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="443"/>
         <source>Are you sure you want to empty %1 item?</source>
         <translation>למחוק פריט %1?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="434"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="444"/>
         <source>Are you sure you want to empty %1 items?</source>
         <translation>למחוק %1 פריטים?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="443"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="453"/>
         <source>Empty</source>
         <translation>מחק</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="482"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="492"/>
         <source>Do you want to delete %1?</source>
         <translation>למחוק את %1?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="483"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="493"/>
         <source>Do you want to delete the selected %1 items?</source>
         <translation>למחוק את %1 הפריטים הנבחרים?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="514"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="524"/>
         <source>Failed to restore %1 file, the target folder is read-only</source>
         <translation>הレストור של קובץ %1 נכשל, המFTERיה מטרה היא רק קריאה</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="516"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="526"/>
         <source>Failed to restore %1 files, the target folder is read-only</source>
         <translation>הレストור של קבצים %1 נכשל, המFTERיה מטרה היא רק קריאה</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="529"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="539"/>
+        <source>File operation failed: %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="568"/>
+        <source>File Name</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="568"/>
+        <source>Error Reason</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="624"/>
         <source>After revocation, it will be completely deleted %1, do you want to delete it completely?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="532"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="627"/>
         <source>These %1 contents will be completely deleted after revocation. Do you want to delete them completely?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="557"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="652"/>
         <source>This operation cannot be reversed.</source>
         <translation>הפעולה הזו לא ניתן להפוך</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="573"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="668"/>
         <source>&quot;%1&quot; already exists, please use another name.</source>
         <translation>&quot;%1&quot; כבר קיים, אנא השתמש בשמ אחר.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="587"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="682"/>
         <source>Device or resource busy</source>
         <translation>הDEVICE או הресурс מופעל</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="600"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="695"/>
         <source>This file will be hidden if the file name starts with &apos;.&apos;. Do you want to hide it?</source>
         <translation>הקובץ י�藏起来 如果文件名以&apos;.&apos;开始。你想要隐藏它？</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="601"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="696"/>
         <source>Hide</source>
         <translation>הסתר</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="602"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="697"/>
         <source>Cancel</source>
         <translation>בטל</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="625"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="720"/>
         <source>Unable to access %1</source>
         <translation>לא ניתן לגשת ל-%1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="642"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="737"/>
         <source>%1 that this shortcut refers to has been changed or moved</source>
         <translation>&apos;%1 שהקצאתה מתארת נUARTר או נלהב</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="646"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="741"/>
         <source>Do you want to delete this shortcut？</source>
         <translation>אתה רוצה למחוק את הקצאתה？</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="671"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="766"/>
         <source>This file is not executable, do you want to add the execute permission and run?</source>
         <translation>הקובץ הזה לא ניתן להריץ, האם אתה רוצה להוסיף את הרשאת הריצה והריץ אותו？</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="683"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="778"/>
         <source>The selected files contain system file/directory, and it cannot be deleted</source>
         <translation>הקובצים המוצלחים מכילים קובץ/ Geliיה של מערכת, ולא ניתן למחוק אותם</translation>
     </message>
@@ -4474,12 +4541,12 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_dirshare::DirShareMenuScene</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/dirsharemenu/dirsharemenuscene.cpp" line="61"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/dirsharemenu/dirsharemenuscene.cpp" line="62"/>
         <source>Share folder</source>
         <translation>שיתוף תיקייה</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/dirsharemenu/dirsharemenuscene.cpp" line="62"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/dirsharemenu/dirsharemenuscene.cpp" line="63"/>
         <source>Cancel sharing</source>
         <translation>ביטול שיתוף</translation>
     </message>
@@ -4704,7 +4771,7 @@ Enter user and password for %1</source>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="80"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="583"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="554"/>
         <source>Confirm</source>
         <translation>אישור</translation>
     </message>
@@ -4885,47 +4952,47 @@ Enter user and password for %1</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="687"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="677"/>
         <source>Unlock partition failed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="688"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="678"/>
         <source>Wrong passphrase</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="707"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="697"/>
         <source>Mount device failed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="756"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="746"/>
         <source>unmount</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="756"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="746"/>
         <source>lock</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="757"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="747"/>
         <source>Encrypt failed</source>
         <translation>ההצפנה נכשלה</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="758"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="748"/>
         <source>Cannot %1 device %2</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="843"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="833"/>
         <source>Reboot to continue encrypt</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="844"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="834"/>
         <source>Reboot to finish decrypt</source>
         <translation type="unfinished"/>
     </message>
@@ -5148,220 +5215,220 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_diskenc::EventsHandler</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="220"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="225"/>
         <source>Encrypt done</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="226"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="231"/>
         <source>Encrypt failed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="221"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="226"/>
         <source>Partition %1 has been encrypted</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="227"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="232"/>
         <source>Partition %1 encrypt failed, please see log for more information.(%2)</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="333"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="339"/>
         <source>%1 is under encrypting...</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="334"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="340"/>
         <source>The encrypting process may have system lag, please minimize the system operation</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="354"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="360"/>
         <source>%1 is under decrypting...</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="355"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="361"/>
         <source>The decrypting process may have system lag, please minimize the system operation</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="385"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="612"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="391"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="618"/>
         <source>Error</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="385"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="391"/>
         <source>TPM status is abnormal, please use the recovery key to unlock it</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="415"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="421"/>
         <source>Wrong PIN</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="417"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="423"/>
         <source>Wrong passphrase</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="419"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="425"/>
         <source>TPM error</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="421"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="427"/>
         <source>Please use recovery key to unlock device.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="486"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="492"/>
         <source>Preencrypt done</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="487"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="493"/>
         <source>Partition %1 has been preencrypt, please reboot to finish encryption.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="496"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="502"/>
         <source>Partition %1 preencrypt failed, please see log for more information.(%2)</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="515"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="521"/>
         <source>Partition %1 has been decrypted</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="522"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="528"/>
         <source>Decrypt partition</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="528"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="534"/>
         <source>Partition %1 is under encrypting, please decrypt after encryption finished.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="534"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="540"/>
         <source>Partition %1 Decrypt failed, please see log for more information.(%2)</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="583"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="589"/>
         <source>Partition %1 change %2 failed, please see log for more information.(%3)</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="613"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="619"/>
         <source>Partition is not fully decrypted, please finish decryption before access.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="620"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="626"/>
         <source>Unlocking partition failed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="621"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="627"/>
         <source>Please click &quot;Continue Partition Encryption&quot; in the right-click menu to complete the partition encryption.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="495"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="501"/>
         <source>Preencrypt failed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="514"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="520"/>
         <source>Decrypt done</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="523"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="529"/>
         <source>Wrong passpharse or PIN</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="527"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="533"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="539"/>
         <source>Decrypt failed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="560"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="566"/>
         <source>passphrase</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="563"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="569"/>
         <source>PIN</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="569"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="575"/>
         <source>Change %1 done</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="570"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="576"/>
         <source>%1&apos;s %2 has been changed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="577"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="582"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="583"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="588"/>
         <source>Change %1 failed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="578"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="584"/>
         <source>Wrong %1</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="730"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="736"/>
         <source>Partition Encryption Non-Reboot Mode Enabled</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="731"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="737"/>
         <source>Partition Encryption Non-Reboot Mode has been enabled successfully. Please reboot your system for the changes to take effect. After reboot, partition encryption operations will not require system restart.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="735"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="741"/>
         <source>Partition Encryption Non-Reboot Mode Disabled</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="736"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="742"/>
         <source>Partition Encryption Non-Reboot Mode has been disabled successfully. Please reboot your system for the changes to take effect. After reboot, partition encryption operations will require system restart.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="744"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="750"/>
         <source>Operation Failed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="746"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="752"/>
         <source>Failed to enable Partition Encryption Non-Reboot Mode. The system may not support this feature or encountered an error during initramfs update.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="749"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="755"/>
         <source>Failed to disable Partition Encryption Non-Reboot Mode. An error occurred during initramfs update.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="761"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="767"/>
         <source>dde-file-manager</source>
         <translation type="unfinished"/>
     </message>
@@ -5705,18 +5772,18 @@ Enter user and password for %1</source>
         <translation>ה kreirah של директорיה נכשלה</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1341"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1365"/>
         <source>Failed to create the file</source>
         <translation>ה kreirah של הקובץ נכשלה</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1442"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1466"/>
         <source>link file error</source>
         <translation>שגיאה בנ kreirah של קובץ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1484"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1493"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1508"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1517"/>
         <source>Failed to modify file permissions</source>
         <translation>השינויים הרשאות הקובץ נכשלו</translation>
     </message>
@@ -6883,34 +6950,34 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_titlebar::TabBar</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="303"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="362"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="307"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="369"/>
         <source>Unpin tab</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="305"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="309"/>
         <source>Pin tab</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="310"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="362"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="314"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="369"/>
         <source>Close tab</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="313"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="317"/>
         <source>Close other tabs</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="314"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="318"/>
         <source>Close tabs to the left</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="317"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="321"/>
         <source>Close tabs to the right</source>
         <translation type="unfinished"/>
     </message>
@@ -6918,23 +6985,23 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_titlebar::TitleBarWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="559"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="561"/>
         <source>Directory not found</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="560"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="562"/>
         <source>Directory not found. Remove it?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="561"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="563"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="561"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="563"/>
         <source>Remove</source>
         <comment>button</comment>
         <translation type="unfinished"/>
@@ -7411,12 +7478,12 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_vault::FileEncryptHandle</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/fileencrypthandle.cpp" line="118"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/fileencrypthandle.cpp" line="197"/>
         <source>Unlock failed</source>
         <translation>שוחרר לא הצליח</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/fileencrypthandle.cpp" line="118"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/fileencrypthandle.cpp" line="197"/>
         <source>The %1 directory is occupied,
  please clear the files in this directory and try to unlock the safe again.</source>
         <translation>התיקייה %1 מלאה, אנא נקה את הקבצים בתיקייה זו ונסה שוב לשחרר את המAGIC</translation>
@@ -7425,52 +7492,52 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_vault::OperatorCenter</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="188"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="192"/>
         <source>Failed to create public key: The key length is too long!</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="196"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="200"/>
         <source>Failed to save rsa ciphertext file: %1</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="212"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="216"/>
         <source>Failed to save public key file: The public key is empty.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="220"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="224"/>
         <source>Failed to save public key file: %1</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="295"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="362"/>
         <source>Failed to create config dir: %1</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="323"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="394"/>
         <source>Failed to create rsa private key file: %1</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="334"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="409"/>
         <source>Failed to create rsa ciphertext file: %1</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="345"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="426"/>
         <source>Failed to create hint file: %1</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="377"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="458"/>
         <source>Failed to save hint info: %1</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="732"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="850"/>
         <source>Save password failed: %1</source>
         <translation type="unfinished"/>
     </message>
@@ -7508,84 +7575,327 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_vault::RecoveryKeyView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="60"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="68"/>
         <source>Unlock by Key</source>
         <translation>לפתוח באמצעות מפתח</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="33"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="35"/>
         <source>Input the 32-digit recovery key</source>
         <translation>הכנס את מפתח ההחלפת 32 ספרות</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="55"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="63"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>ביטול</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="55"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="63"/>
         <source>Unlock</source>
         <comment>button</comment>
         <translation>לפתוח</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="121"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="126"/>
+        <source>Invalid recovery key format</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="149"/>
         <source>Wrong recovery key</source>
         <translation>מפתח ההחלפת לא נכון</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="241"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="273"/>
         <source>Failed to unlock file vault</source>
         <translation>הפעולה לא הצליחה: לא ניתן לפתוח את חשבונת הקבצים</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="245"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="277"/>
         <source>OK</source>
         <translation>אישור</translation>
     </message>
 </context>
 <context>
-    <name>dfmplugin_vault::RetrievePasswordView</name>
+    <name>dfmplugin_vault::ResetPasswordByKeyFileView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="46"/>
-        <source>Unlock the Safe via Key File</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="49"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="45"/>
         <source>Select Key File</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="92"/>
-        <source>Unable to get the key file</source>
-        <translation>לא ניתן להשיג את קובץ המפתח</translation>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="47"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="330"/>
+        <source>Select key file save path</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="109"/>
-        <source>Unlock vault failed</source>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="55"/>
+        <source>Enter New Password</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="60"/>
+        <source>At least 8 characters, including A-Z, a-z, 0-9, and symbols</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="63"/>
+        <source>Repeat Password</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="66"/>
+        <source>Enter new password again</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="69"/>
+        <source>Password hint</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="72"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="344"/>
+        <source>Optional</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="74"/>
+        <source>Use old password verification</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="144"/>
+        <source>Cancel</source>
+        <comment>button</comment>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="144"/>
+        <source>Reset Password</source>
+        <comment>button</comment>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="149"/>
+        <source>Reset Password</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="161"/>
+        <source>Unable to get the key file</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="171"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="258"/>
+        <source>≥ 8 chars, contains A-Z, a-z, 0-9, and symbols</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="180"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="266"/>
+        <source>Passwords do not match</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="189"/>
+        <source>Cannot reset password for old version vault. Please upgrade the vault first.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="198"/>
+        <source>Unable to read key file</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="211"/>
+        <source>Invalid recovery key format: expected 32 characters, got %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="221"/>
+        <source>Invalid recovery key format: must contain only letters and numbers</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="387"/>
+        <source>Success</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="387"/>
+        <source>Password reset successfully</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="391"/>
+        <source>Failed to reset password. Please check your key file.</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>dfmplugin_vault::ResetPasswordByOldPasswordView</name>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="46"/>
+        <source>Enter Old Password</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="48"/>
+        <source>Please enter old password</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="51"/>
+        <source>Enter New Password</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="56"/>
+        <source>At least 8 characters, including A-Z, a-z, 0-9, and symbols</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="59"/>
+        <source>Repeat Password</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="62"/>
+        <source>Enter new password again</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="65"/>
+        <source>Password hint</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="68"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="304"/>
+        <source>Optional</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="70"/>
+        <source>Use key verification</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="139"/>
+        <source>Cancel</source>
+        <comment>button</comment>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="139"/>
+        <source>Reset Password</source>
+        <comment>button</comment>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="144"/>
+        <source>Reset Password</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="156"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="217"/>
+        <source>≥ 8 chars, contains A-Z, a-z, 0-9, and symbols</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="165"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="225"/>
+        <source>Passwords do not match</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="176"/>
+        <source>Please try again %1 minutes later</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="353"/>
+        <source>Success</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="353"/>
+        <source>Password reset successfully</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="369"/>
+        <source>Failed to reset password. Please try again %1 minutes later</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="372"/>
+        <source>Failed to reset password. One chance left</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="374"/>
+        <source>Failed to reset password. %1 chances left</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>dfmplugin_vault::RetrievePasswordView</name>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="54"/>
+        <source>Unlock the Safe via Key File</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="57"/>
+        <source>Select Key File</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="113"/>
+        <source>Unable to get the key file</source>
+        <translation>לא ניתן להשיג את קובץ המפתח</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="165"/>
+        <source>Failed to generate recovery key. Please try again.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="177"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="179"/>
+        <source>Upgrade vault</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="220"/>
+        <source>Unlock vault failed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="146"/>
         <source>Verification failed</source>
         <translation>ההוכחה נכשלה</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="126"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="235"/>
         <source>Back</source>
         <comment>button</comment>
         <translation>חזרה</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="126"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="235"/>
         <source>Key Unlock</source>
         <comment>button</comment>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="131"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="240"/>
         <source>Key Unlocks Safe</source>
         <translation type="unfinished"/>
     </message>
@@ -7606,83 +7916,106 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_vault::UnlockView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="45"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="58"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="60"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>ביטול</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="45"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="58"/>
+        <source>Verify Key</source>
+        <comment>button</comment>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="60"/>
         <source>Unlock</source>
         <comment>button</comment>
         <translation>לפתוח</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="50"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="66"/>
+        <source>Enter vault password</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="68"/>
         <source>Unlock File Vault</source>
         <translation>לפתוח את חשבונת הקבצים</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="56"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="74"/>
         <source>Forgot password?</source>
         <translation>איבדתי את הסיסמה؟</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="56"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="74"/>
         <source>Key unlock</source>
         <translation>פתיחת מפתח</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="63"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="81"/>
         <source>Password</source>
         <translation>סיסמה</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="97"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="121"/>
         <source>Password hint: %1</source>
         <translation>ה mocpema למשהו: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="120"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="148"/>
         <source>Can&apos;t unlock the vault under the networking!</source>
         <translation>לא ניתן לפתוח את המגמה דרך רשת!
 </translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="130"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="159"/>
         <source>Please try again %1 minutes later</source>
         <translation>נסה שוב מאוחר יותר ב-%1 דקות</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="163"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="206"/>
+        <source>Failed to generate recovery key. Please try again.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="218"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="220"/>
+        <source>Upgrade vault</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="265"/>
         <source>Wrong password, please try again %1 minutes later</source>
         <translation>סיסמה שגויה, נסה שוב מאוחר יותר ב-%1 דקות</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="167"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="268"/>
         <source>Wrong password, one chance left</source>
         <translation>סיסמה שגויה, יש לך עוד הימשך</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="170"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="270"/>
         <source>Wrong password, %1 chances left</source>
         <translation>סיסמה שגויה, יש לך עוד %1 הימשכיות</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="222"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="229"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="324"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="331"/>
         <source>Wrong password</source>
         <translation>סיסמה שגויה</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="231"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="240"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="333"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="342"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>אישור</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="236"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="338"/>
         <source>Failed to unlock file vault, error code is %1</source>
         <translation>נכשלת לפתוח את המגמה של קובץ, קוד שגיאה הוא %1</translation>
     </message>
@@ -7733,34 +8066,84 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_vault::VaultActiveSaveKeyFileView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="50"/>
-        <source>Save Recovery Key</source>
-        <translation>שמור מפתח רפואה</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="57"/>
-        <source>Key files can be used to unlock the safe, please keep it in a safe place</source>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="75"/>
+        <source>Recovery key file</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="61"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="82"/>
+        <source>Save the recovery key file and keep it in a safe place</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="86"/>
         <source>It is recommended to save it to external storage devices such as a USB drive</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="63"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="88"/>
         <source>No permission, please reselect</source>
         <translation>אין הרשאות, אנא בחר שוב</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="69"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="94"/>
         <source>Select a path</source>
         <translation>בחר נתיב</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="82"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="106"/>
         <source>Next</source>
         <translation>הבא</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="203"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="210"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="226"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="234"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="277"/>
+        <source>Vault</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="203"/>
+        <source>Recovery key is not available. Please try again.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="210"/>
+        <source>Please select a path to save the recovery key.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="226"/>
+        <source>Failed to save recovery key. Please check the path and try again.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="234"/>
+        <source>Failed to start migration. Please try again.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="277"/>
+        <source>Failed to upgrade vault. Please try again.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="286"/>
+        <source>Success</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="300"/>
+        <source>Vault upgraded successfully. Please keep your recovery key safe.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="307"/>
+        <source>Enter Vault</source>
+        <comment>button</comment>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7869,22 +8252,22 @@ Enter user and password for %1</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="170"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="176"/>
         <source>Failed to create vault: Get encryption method failed!</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="186"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="192"/>
         <source>Failed to create vault: Unknown encryption method!</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="199"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="205"/>
         <source>Failed to create vault: Retrieved password is empty!</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="247"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="238"/>
         <source>Auto generate password failed!</source>
         <translation type="unfinished"/>
     </message>
@@ -7913,18 +8296,18 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_vault::VaultHelper</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="152"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="567"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="153"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="634"/>
         <source>Vault</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="152"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="153"/>
         <source>Vault not available because cryfs not installed!</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="567"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="634"/>
         <source>A task is in progress, so it cannot perform your operation</source>
         <translation type="unfinished"/>
     </message>
@@ -7973,52 +8356,52 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_vault::VaultRemoveByPasswordView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="31"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="34"/>
         <source>Once deleted, the files in it will be permanently deleted</source>
         <translation>לאחר המחיקה, הקבצים ימחקו.PERMANENT</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="36"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="39"/>
         <source>Password</source>
         <translation>סיסמה</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="48"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="51"/>
         <source>Key delete</source>
         <translation>מחק מפתח</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="67"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="70"/>
         <source>Password hint: %1</source>
         <translation>הموضوع של הסיסמה: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="84"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="94"/>
         <source>Cancel</source>
         <translation>ביטול</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="84"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="94"/>
         <source>Delete</source>
         <translation>מחק</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="89"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="99"/>
         <source>Delete File Vault</source>
         <translation>מחק את מטמון הקובץ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="108"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="140"/>
         <source>Wrong password</source>
         <translation>סיסמה לא נכונה</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="206"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="240"/>
         <source>Failed to delete file vault</source>
         <translation>המחיקה של מטמון הקובץ נכשלה</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="210"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="244"/>
         <source>OK</source>
         <translation>אישור</translation>
     </message>
@@ -8026,37 +8409,37 @@ Enter user and password for %1</source>
 <context>
     <name>dfmplugin_vault::VaultRemoveByRecoverykeyView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="27"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="30"/>
         <source>Input the 32-digit recovery key</source>
         <translation>הכנס את מפתח ההחלפת 32 ספרות</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="95"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="105"/>
         <source>Cancel</source>
         <translation>ביטול</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="95"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="105"/>
         <source>Delete</source>
         <translation>מחק</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="100"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="110"/>
         <source>Delete File Vault</source>
         <translation>מחק את מטמון הקובץ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="118"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="169"/>
         <source>Wrong recovery key</source>
         <translation>מפתח ההחלפת לא נכון</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="191"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="244"/>
         <source>Failed to delete file vault</source>
         <translation>המחיקה של מטמון הקובץ נכשלה</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="195"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="248"/>
         <source>OK</source>
         <translation>אישור</translation>
     </message>
