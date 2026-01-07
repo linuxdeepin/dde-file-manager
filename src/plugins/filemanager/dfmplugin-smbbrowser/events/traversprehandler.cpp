@@ -92,12 +92,12 @@ void travers_prehandler::networkAccessPrehandler(quint64 winId, const QUrl &url,
     static QString kRecordGroup = "defaultSmbPath";
     static QRegularExpression kRegx { "/|\\.|:" };
     DevMngIns->mountNetworkDeviceAsync(mountSource, [=](bool ok, const DFMMOUNT::OperationErrorInfo &err, const QString &mpt) {
-        fmInfo() << "mount done: " << netUrl << ok << err.code << err.message << mpt;
         if (!mpt.isEmpty()) {
             doChangeCurrentUrl(winId, mpt, subPath, netUrl);
         } else if (ok || err.code == DFMMOUNT::DeviceError::kGIOErrorAlreadyMounted) {
             if (isSmb) onSmbRootMounted(mountSource, after);
         } else {
+            fmWarning() << "mount done: " << netUrl << ok << err.code << err.message << mpt;
             QApplication::restoreOverrideCursor();
             onMountFailed(err);
         }
