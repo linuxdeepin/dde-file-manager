@@ -47,6 +47,10 @@ public:
     static void setFileViewStateValue(const QUrl &url, const QString &key, const QVariant &value);
     static QUrl transformViewModeUrl(const QUrl &url);
 
+    // View mode switching helper methods
+    static bool isTreeViewGloballyEnabled();
+    static bool isViewModeVisibleForScheme(int mode, const QString &scheme);
+
 public:
     static bool newWindowAndTabEnabled;
     static bool searchEnabled;

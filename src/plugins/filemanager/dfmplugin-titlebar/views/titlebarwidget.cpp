@@ -9,6 +9,7 @@
 #include "utils/crumbinterface.h"
 #include "utils/crumbmanager.h"
 #include "utils/titlebarhelper.h"
+#include "utils/optionbuttonmanager.h"
 
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/widgets/filemanagerwindow.h>
@@ -200,15 +201,37 @@ void TitleBarWidget::handleHotkeyCtrlL()
 
 void TitleBarWidget::handleHotketSwitchViewMode(int mode)
 {
-    // Press ctrl+1
-    if (mode == 0)
-        TitleBarEventCaller::sendViewMode(this, ViewMode::kIconMode);
-    // Press ctrl+2
-    if (mode == 1)
-        TitleBarEventCaller::sendViewMode(this, ViewMode::kListMode);
-    // Press ctrl+3
-    if (mode == 2 && DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool())
-        TitleBarEventCaller::sendViewMode(this, ViewMode::kTreeMode);
+    const QString scheme = currentUrl().scheme();
+
+    // Check if view mode is visible for current scheme
+    if (!TitleBarHelper::isViewModeVisibleForScheme(mode, scheme)) {
+        fmDebug() << "View mode" << mode << "is not supported for scheme:" << scheme;
+        return;
+    }
+
+    // Tree view requires additional global enable check
+    if (mode == 2 && !TitleBarHelper::isTreeViewGloballyEnabled()) {
+        fmDebug() << "Tree view is globally disabled";
+        return;
+    }
+
+    // Send view mode change event
+    ViewMode viewMode;
+    switch (mode) {
+    case 0:
+        viewMode = ViewMode::kIconMode;
+        break;
+    case 1:
+        viewMode = ViewMode::kListMode;
+        break;
+    case 2:
+        viewMode = ViewMode::kTreeMode;
+        break;
+    default:
+        return;
+    }
+
+    TitleBarEventCaller::sendViewMode(this, viewMode);
 }
 
 void TitleBarWidget::handleHotketCloseCurrentTab()

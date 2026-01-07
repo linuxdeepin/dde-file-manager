@@ -197,11 +197,8 @@ void KeyValueLabel::setRightFontSizeWeight(DFontSizeManager::SizeType sizeType, 
 {
     DFontSizeManager::instance()->bind(rightValueEdit, sizeType, fontWeight);
 
-    // Set text color for QTextEdit (different from DLabel's setForegroundRole)
-    if (foregroundRole != DPalette::NoType) {
-        DPalette palette = DGuiApplicationHelper::instance()->applicationPalette();
-        rightValueEdit->setTextColor(palette.color(foregroundRole));
-    }
+    // Configure text color via palette so it applies to all text and stays consistent with theme changes
+    rightValueEdit->setForegroundRole(foregroundRole);
 }
 
 QString KeyValueLabel::LeftValue()
@@ -237,9 +234,8 @@ RightValueWidget::RightValueWidget(QWidget *parent)
     setWordWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
     setContextMenuPolicy(Qt::CustomContextMenu);
 
-    // Force normal text color to prevent grayed-out appearance in read-only state
-    DPalette palette = DGuiApplicationHelper::instance()->applicationPalette();
-    setTextColor(palette.color(DPalette::Text));
+    // Apply palette-based text color to prevent grayed-out appearance and support theme changes
+    updateTextPalette();
 
     connect(this, &RightValueWidget::customContextMenuRequested, this, &RightValueWidget::customContextMenuEvent);
 }
@@ -247,6 +243,41 @@ RightValueWidget::RightValueWidget(QWidget *parent)
 void RightValueWidget::setCompleteText(const QString &text)
 {
     completeText = text;
+}
+
+void RightValueWidget::setForegroundRole(DPalette::ColorType role)
+{
+    if (currentforegroundRole != role) {
+        currentforegroundRole = role;
+        updateTextPalette();
+    }
+}
+
+void RightValueWidget::updateTextPalette()
+{
+    DPalette basePalette = DGuiApplicationHelper::instance()->applicationPalette();
+    DPalette widgetPalette = palette();
+
+    // Apply the requested foreground role color to the widget's Text role
+    if (currentforegroundRole != DPalette::NoType) {
+        QColor textColor = basePalette.color(currentforegroundRole);
+        widgetPalette.setColor(DPalette::Text, textColor);
+    } else {
+        // Default to normal text color
+        widgetPalette.setColor(DPalette::Text, basePalette.color(DPalette::Text));
+    }
+
+    setPalette(widgetPalette);
+}
+
+void RightValueWidget::changeEvent(QEvent *event)
+{
+    QTextEdit::changeEvent(event);
+
+    // Reapply palette when theme or palette changes
+    if (event->type() == QEvent::PaletteChange || event->type() == QEvent::ApplicationPaletteChange) {
+        updateTextPalette();
+    }
 }
 
 void RightValueWidget::mouseReleaseEvent(QMouseEvent *event)
