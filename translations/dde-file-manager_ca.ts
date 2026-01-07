@@ -8143,7 +8143,7 @@ Si us plau, esborreu els fitxers d&apos;aquest directori i intenteu tornar a des
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="307"/>
         <source>Enter Vault</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Introduïu la cambra cuirassada</translation>
     </message>
 </context>
 <context>
