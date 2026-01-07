@@ -14,6 +14,8 @@
 #ifdef DTKWIDGET_CLASS_DSizeMode
 #    include <DSizeMode>
 #endif
+#include <DGuiApplicationHelper>
+#include <DPalette>
 
 static constexpr int kMaxShowRowNum { 4 };
 static constexpr char kSelectAllName[] { "select-all" };
@@ -194,6 +196,12 @@ void KeyValueLabel::setLeftFontSizeWeight(DFontSizeManager::SizeType sizeType, Q
 void KeyValueLabel::setRightFontSizeWeight(DFontSizeManager::SizeType sizeType, QFont::Weight fontWeight, DPalette::ColorType foregroundRole)
 {
     DFontSizeManager::instance()->bind(rightValueEdit, sizeType, fontWeight);
+
+    // Set text color for QTextEdit (different from DLabel's setForegroundRole)
+    if (foregroundRole != DPalette::NoType) {
+        DPalette palette = DGuiApplicationHelper::instance()->applicationPalette();
+        rightValueEdit->setTextColor(palette.color(foregroundRole));
+    }
 }
 
 QString KeyValueLabel::LeftValue()
@@ -228,6 +236,10 @@ RightValueWidget::RightValueWidget(QWidget *parent)
     setFrameShape(QFrame::NoFrame);
     setWordWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
     setContextMenuPolicy(Qt::CustomContextMenu);
+
+    // Force normal text color to prevent grayed-out appearance in read-only state
+    DPalette palette = DGuiApplicationHelper::instance()->applicationPalette();
+    setTextColor(palette.color(DPalette::Text));
 
     connect(this, &RightValueWidget::customContextMenuRequested, this, &RightValueWidget::customContextMenuEvent);
 }
