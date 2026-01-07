@@ -24,14 +24,19 @@ class RightValueWidget : public QTextEdit
 public:
     explicit RightValueWidget(QWidget *parent = nullptr);
     void setCompleteText(const QString &text);
+    void setForegroundRole(DPalette::ColorType role);
 
 protected:
     void mouseReleaseEvent(QMouseEvent *event) override;
     void showEvent(QShowEvent *event) override;
     void focusOutEvent(QFocusEvent *e) override;
+    void changeEvent(QEvent *event) override;
 
 private Q_SLOTS:
     void customContextMenuEvent(const QPoint &pos);
+
+private:
+    void updateTextPalette();
 
 Q_SIGNALS:
     void clicked();
@@ -39,6 +44,7 @@ Q_SIGNALS:
 private:
     QString completeText;
     bool isContextMenuShow { false };
+    DPalette::ColorType currentforegroundRole = DPalette::NoType;
 };
 
 class KeyValueLabel : public QFrame

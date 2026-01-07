@@ -7,6 +7,7 @@
 #include "dialogs/connecttoserverdialog.h"
 #include "dialogs/diskpasswordchangingdialog.h"
 #include "views/titlebarwidget.h"
+#include "utils/optionbuttonmanager.h"
 
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.h>
@@ -20,6 +21,7 @@
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -30,6 +32,8 @@
 
 using namespace dfmplugin_titlebar;
 DFMBASE_USE_NAMESPACE
+using namespace GlobalDConfDefines::ConfigPath;
+using namespace GlobalDConfDefines::BaseConfig;
 
 QMap<quint64, TitleBarWidget *> TitleBarHelper::kTitleBarMap {};
 QList<QString> TitleBarHelper::kKeepTitleStatusSchemeList {};
@@ -415,4 +419,29 @@ void TitleBarHelper::setFileViewStateValue(const QUrl &url, const QString &key, 
     QVariantMap map = Application::appObtuselySetting()->value("FileViewState", viewModeUrl).toMap();
     map[key] = value;
     Application::appObtuselySetting()->setValue("FileViewState", viewModeUrl, map);
+}
+
+bool TitleBarHelper::isTreeViewGloballyEnabled()
+{
+    return DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool();
+}
+
+bool TitleBarHelper::isViewModeVisibleForScheme(int mode, const QString &scheme)
+{
+    // If no scheme restriction, all modes are visible
+    if (!OptionButtonManager::instance()->hasVsibleState(scheme))
+        return true;
+
+    auto state = OptionButtonManager::instance()->optBtnVisibleState(scheme);
+
+    switch (mode) {
+    case 0:   // Icon mode
+        return !(state & OptionButtonManager::kHideIconViewBtn);
+    case 1:   // List mode
+        return !(state & OptionButtonManager::kHideListViewBtn);
+    case 2:   // Tree mode
+        return !(state & OptionButtonManager::kHideTreeViewBtn);
+    default:
+        return false;
+    }
 }
