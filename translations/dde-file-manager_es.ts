@@ -3130,7 +3130,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="568"/>
         <source>Error Reason</source>
-        <translation type="unfinished"/>
+        <translation>Causa del error</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="624"/>
@@ -3462,12 +3462,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="411"/>
         <source>Load thumbnails for network, mobile, and optical disc directories</source>
-        <translation type="unfinished"/>
+        <translation>Cargar miniaturas para directorios de red, móviles y discos ópticos</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="412"/>
         <source>Thumbnails will be loaded for high-latency devices like network shares, phones, and optical drives, which may affect loading speed</source>
-        <translation type="unfinished"/>
+        <translation>Se cargarán miniaturas para dispositivos de alta latencia, como recursos compartidos de red, teléfonos y unidades ópticas, lo que puede afectar la velocidad de carga.</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="376"/>
@@ -4504,37 +4504,37 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="45"/>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>Nombre</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="46"/>
         <source>Size</source>
-        <translation type="unfinished"/>
+        <translation>Tamaño</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="47"/>
         <source>Resolution</source>
-        <translation type="unfinished"/>
+        <translation>Resolución</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="49"/>
         <source>Duration</source>
-        <translation type="unfinished"/>
+        <translation>Duración</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="50"/>
         <source>Type</source>
-        <translation type="unfinished"/>
+        <translation>Tipo</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="51"/>
         <source>Accessed</source>
-        <translation type="unfinished"/>
+        <translation>Accedido</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="52"/>
         <source>Modified</source>
-        <translation type="unfinished"/>
+        <translation>Modificado</translation>
     </message>
 </context>
 <context>
@@ -6953,12 +6953,12 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="307"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="369"/>
         <source>Unpin tab</source>
-        <translation type="unfinished"/>
+        <translation>Desanclar pestaña</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="309"/>
         <source>Pin tab</source>
-        <translation type="unfinished"/>
+        <translation>Anclar pestaña</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="314"/>
@@ -7623,7 +7623,7 @@ borre los archivos de esa carpeta e intente desbloquear la caja fuerte de nuevo.
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="45"/>
         <source>Select Key File</source>
-        <translation type="unfinished"/>
+        <translation>Seleccionar archivo de claves</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="47"/>
