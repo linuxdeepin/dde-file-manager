@@ -54,6 +54,11 @@ bool DragDropOper::enter(QDragEnterEvent *event)
         return true;
     }
 
+    if (!checkSourceValid(event->mimeData()->urls())) {
+        event->ignore();
+        return true;
+    }
+
     updatePrepareDodgeValue(event);
 
     if (checkXdndDirectSave(event))
@@ -618,4 +623,28 @@ bool DragDropOper::checkTargetEnable(const QUrl &targetUrl)
     }
 
     return true;
+}
+
+bool DragDropOper::checkSourceValid(const QList<QUrl> &srcUrls)
+{
+    if (srcUrls.isEmpty()) {
+        fmDebug() << "Source URL list is empty";
+        return false;
+    }
+
+    return std::all_of(srcUrls.cbegin(), srcUrls.cend(),
+                       [](const QUrl &url) {
+                           auto info = InfoFactory::create<FileInfo>(url);
+                           if (!info) {
+                               fmDebug() << "Failed to create FileInfo for URL:" << url.toString();
+                               return false;
+                           }
+
+                           // Check for standard move/copy/rename capabilities.
+                           if (info->canAttributes(CanableInfoType::kCanMoveOrCopy) || info->canAttributes(CanableInfoType::kCanRename))
+                               return true;
+
+                           fmDebug() << "Drag operation not enabled for URL:" << url.toString();
+                           return false;
+                       });
 }

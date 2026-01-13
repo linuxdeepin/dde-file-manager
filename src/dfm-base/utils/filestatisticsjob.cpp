@@ -110,6 +110,10 @@ bool FileStatisticsJobPrivate::stateCheck()
 void FileStatisticsJobPrivate::processFile(const QUrl &url, const bool followLink, QQueue<QUrl> &directoryQueue)
 {
     FileInfoPointer info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
+    if (!info) {
+        qCWarning(logDFMBase) << "File statistics failed: unsupported URL scheme:" << url;
+        return;
+    }
 
     processFile(info, followLink, directoryQueue);
 }
