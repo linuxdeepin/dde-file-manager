@@ -269,7 +269,7 @@ QPair<QWidget *, QWidget *> SettingDialog::createAutoMountOpenCheckBox(QObject *
     return qMakePair(openCheckBox, nullptr);
 }
 
-QPair<QWidget *, QWidget *> SettingDialog::createCheckBoxWithMessage(QObject *opt)
+QWidget *SettingDialog::createCheckBoxWithMessage(QObject *opt)
 {
     auto option = qobject_cast<Dtk::Core::DSettingsOption *>(opt);
     const QString &text = option->data("text").toString();
@@ -290,7 +290,7 @@ QPair<QWidget *, QWidget *> SettingDialog::createCheckBoxWithMessage(QObject *op
 
     QObject::connect(option, &DSettingsOption::valueChanged, cb, [=](QVariant value) { cb->setChecked(value.toBool()); });
 
-    return qMakePair(cb, nullptr);
+    return cb;
 }
 
 QPair<QWidget *, QWidget *> SettingDialog::createPushButton(QObject *opt)
