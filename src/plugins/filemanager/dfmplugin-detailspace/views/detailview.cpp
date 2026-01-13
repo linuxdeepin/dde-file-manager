@@ -45,6 +45,8 @@ void DetailView::onPreviewReady(const QUrl &url, const QPixmap &pixmap)
         return;
     }
 
+    finishPreviewLoading();
+
     if (m_previewWidget) {
         m_previewWidget->stopAnimatedImage();
         m_previewWidget->setPixmap(pixmap);
@@ -56,6 +58,8 @@ void DetailView::onAnimatedImageReady(const QUrl &url, const QString &filePath)
     if (url != m_currentUrl) {
         return;
     }
+
+    finishPreviewLoading();
 
     if (m_previewWidget) {
         m_previewWidget->setAnimatedImage(filePath);
@@ -124,6 +128,37 @@ void DetailView::initInfoUI()
 
     // 3. Create extension widgets once
     createExtensionWidgets();
+
+    // 4. Create spinner overlay for loading state
+    initSpinnerOverlay();
+}
+
+void DetailView::initSpinnerOverlay()
+{
+    // Create overlay as child of preview widget (covers preview area)
+    m_spinnerOverlay = new QWidget(m_previewWidget);
+    m_spinnerOverlay->setAttribute(Qt::WA_TransparentForMouseEvents);
+
+    QVBoxLayout *overlayLayout = new QVBoxLayout(m_spinnerOverlay);
+    overlayLayout->setAlignment(Qt::AlignCenter);
+    overlayLayout->setContentsMargins(0, 0, 0, 0);
+
+    m_spinner = new DSpinner(m_spinnerOverlay);
+    m_spinner->setFixedSize(32, 32);
+    overlayLayout->addWidget(m_spinner, 0, Qt::AlignCenter);
+
+    m_spinnerOverlay->hide();
+
+    // Create loading timer (single-shot)
+    m_loadingTimer = new QTimer(this);
+    m_loadingTimer->setSingleShot(true);
+    m_loadingTimer->setInterval(kSpinnerDelayMs);
+    connect(m_loadingTimer, &QTimer::timeout, this, [this]() {
+        if (m_spinnerOverlay && m_spinner) {
+            m_spinnerOverlay->show();
+            m_spinner->start();
+        }
+    });
 }
 
 void DetailView::createExtensionWidgets()
@@ -173,6 +208,9 @@ void DetailView::updateHeadUI(const QUrl &url)
     m_previewWidget->show();
     updatePreviewSize();
 
+    // Start loading state (clears old preview, starts delayed spinner timer)
+    startPreviewLoading();
+
     // Always request preview at maximum size (500px width)
     // This ensures smooth resizing without reloading - paintEvent will scale it
     m_previewController->requestPreview(url, ImagePreviewWidget::maximumPreviewSize());
@@ -207,6 +245,11 @@ void DetailView::updatePreviewSize()
         QSize hint = m_previewWidget->sizeHint();
         m_previewWidget->setFixedHeight(hint.height());
         m_previewWidget->update();
+
+        // Sync spinner overlay size with preview widget
+        if (m_spinnerOverlay) {
+            m_spinnerOverlay->setFixedSize(m_previewWidget->size());
+        }
     }
 }
 
@@ -230,4 +273,34 @@ void DetailView::resizeEvent(QResizeEvent *event)
     // We always load images at maximum size (500px), and paintEvent scales them.
     // This approach (inspired by Dolphin) provides smooth, immediate resizing
     // without the CPU overhead of reloading large images.
+}
+
+void DetailView::startPreviewLoading()
+{
+    // Clear current preview to avoid showing stale content
+    if (m_previewWidget) {
+        m_previewWidget->stopAnimatedImage();
+        m_previewWidget->setPixmap(QPixmap());
+    }
+
+    // Start delayed timer - spinner only shows if loading takes longer than threshold
+    if (m_loadingTimer) {
+        m_loadingTimer->start();
+    }
+}
+
+void DetailView::finishPreviewLoading()
+{
+    // Stop the timer (prevents spinner from showing if load was fast)
+    if (m_loadingTimer) {
+        m_loadingTimer->stop();
+    }
+
+    // Hide spinner if it was shown
+    if (m_spinner) {
+        m_spinner->stop();
+    }
+    if (m_spinnerOverlay) {
+        m_spinnerOverlay->hide();
+    }
 }
