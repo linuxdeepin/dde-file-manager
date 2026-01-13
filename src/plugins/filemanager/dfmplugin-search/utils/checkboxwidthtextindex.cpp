@@ -100,6 +100,7 @@ QPixmap TextIndexStatusBar::iconPixmap(const QString &iconName, int size)
     } else {
         const auto &qicon = QIcon::fromTheme(iconName);
         px = qicon.pixmap(size);
+        px.setDevicePixelRatio(ratio);
     }
 
     return px;
@@ -157,8 +158,6 @@ void TextIndexStatusBar::setStatus(Status status, const QVariant &data)
         fmDebug() << "TextIndex completed successfully";
         setRunning(false);
         iconLabel->setPixmap(iconPixmap("dialog-ok", 16));
-        msgLabel->clear();
-        iconLabel->setPixmap(QIcon::fromTheme("dialog-ok").pixmap(16, 16));
 
         // 再次获取最后更新时间，以便回调更新具体时间
         auto client = TextIndexClient::instance();
@@ -297,6 +296,7 @@ CheckBoxWidthTextIndex::CheckBoxWidthTextIndex(QWidget *parent)
                     tr("Update index now"),
                     "update");
         } else {
+            statusBar->msgLabel->clear();
             fmWarning() << "Failed to get TextIndex last update time, success:" << success;
         }
     });
