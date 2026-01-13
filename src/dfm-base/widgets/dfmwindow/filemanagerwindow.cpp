@@ -367,6 +367,9 @@ int FileManagerWindowPrivate::loadDetailSpaceState() const
 
 void FileManagerWindowPrivate::loadDetailSpaceVisibility()
 {
+    if (!q->saveClosedSate())
+        return;
+
     // Check if there are other windows already open
     auto windowList = FMWindowsIns.windowIdList();
 
