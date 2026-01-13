@@ -10,6 +10,7 @@
 
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
+#include <dfm-base/base/application/application.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <QDBusError>
@@ -21,6 +22,9 @@ DFM_LOG_REGISTER_CATEGORY(DIALOGCORE_NAMESPACE)
 
 bool Core::start()
 {
+    // filedialog process should not modify shared configuration files
+    DFMBASE_NAMESPACE::Application::setSettingsReadOnly(true);
+
     enterHighPerformanceMode();
     FMWindowsIns.setCustomWindowCreator([](const QUrl &url) {
         return new FileDialog(url);

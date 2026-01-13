@@ -25,6 +25,9 @@ Q_GLOBAL_STATIC_WITH_ARGS(Settings, aosGlobal, ("deepin/dde-file-manager/dde-fil
 static constexpr char DP_GLOBAL_FILE[] { "/tmp/.config/deepin/dde-file-manager/dde-file-manager.dp" };
 Q_GLOBAL_STATIC_WITH_ARGS(Settings, dpGlobal, ("", "", DP_GLOBAL_FILE))
 
+// global read-only mode flag for all settings
+static bool sSettingsReadOnly = false;
+
 // blumia: since dde-desktop now also do show file selection dialog job, thus dde-desktop should share the same config file
 //         with dde-file-manager, so we use GenericConfig with specify path to simulate AppConfig.
 
@@ -233,6 +236,7 @@ Settings *Application::genericSetting()
         }
 
         gsGlobal->setAutoSync(true);
+        gsGlobal->setReadOnly(sSettingsReadOnly);
 #ifndef DFM_NO_FILE_WATCHER
         gsGlobal->setWatchChanges(true);
 #endif
@@ -256,6 +260,7 @@ Settings *Application::appSetting()
         }
 
         asGlobal->setAutoSync(true);
+        asGlobal->setReadOnly(sSettingsReadOnly);
 #ifndef DFM_NO_FILE_WATCHER
         asGlobal->setWatchChanges(true);
 #endif
@@ -271,6 +276,7 @@ Settings *Application::genericObtuselySetting()
 {
     if (!gosGlobal.exists()) {
         gosGlobal->setAutoSync(false);
+        gosGlobal->setReadOnly(sSettingsReadOnly);
 #ifndef DFM_NO_FILE_WATCHER
         gosGlobal->setWatchChanges(false);
 #endif
@@ -283,6 +289,7 @@ Settings *Application::appObtuselySetting()
 {
     if (!aosGlobal.exists()) {
         aosGlobal->setAutoSync(false);
+        aosGlobal->setReadOnly(sSettingsReadOnly);
 #ifndef DFM_NO_FILE_WATCHER
         aosGlobal->setWatchChanges(true);
 #endif
@@ -295,6 +302,7 @@ Settings *Application::dataPersistence()
 {
     if (!dpGlobal.exists()) {
         dpGlobal->setAutoSync(true);
+        dpGlobal->setReadOnly(sSettingsReadOnly);
 #ifndef DFM_NO_FILE_WATCHER
         dpGlobal->setWatchChanges(true);
 #endif
@@ -349,6 +357,28 @@ void Application::appAttributeTrigger(TriggerAttribute ta, quint64 winId)
         Q_EMIT instance()->clearSearchHistory(winId);
         break;
     }
+}
+
+void Application::setSettingsReadOnly(bool readOnly)
+{
+    sSettingsReadOnly = readOnly;
+
+    // update already created Settings instances
+    if (gsGlobal.exists())
+        gsGlobal->setReadOnly(readOnly);
+    if (asGlobal.exists())
+        asGlobal->setReadOnly(readOnly);
+    if (gosGlobal.exists())
+        gosGlobal->setReadOnly(readOnly);
+    if (aosGlobal.exists())
+        aosGlobal->setReadOnly(readOnly);
+    if (dpGlobal.exists())
+        dpGlobal->setReadOnly(readOnly);
+}
+
+bool Application::settingsReadOnly()
+{
+    return sSettingsReadOnly;
 }
 
 Application::Application(ApplicationPrivate *dd, QObject *parent)

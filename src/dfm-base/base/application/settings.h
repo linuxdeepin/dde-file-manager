@@ -20,6 +20,7 @@ class Settings : public QObject
     friend class SettingsPrivate;
     Q_PROPERTY(bool autoSync READ autoSync WRITE setAutoSync)
     Q_PROPERTY(bool watchChanges READ watchChanges WRITE setWatchChanges)
+    Q_PROPERTY(bool readOnly READ isReadOnly WRITE setReadOnly)
 public:
     enum ConfigType {
         kAppConfig,
@@ -56,10 +57,12 @@ public:
     bool sync();
     bool autoSync() const;
     bool watchChanges() const;
+    bool isReadOnly() const;
     void autoSyncExclude(const QString &group, bool sync = false);
 public Q_SLOTS:
     void setAutoSync(bool autoSync);
     void setWatchChanges(bool watchChanges);
+    void setReadOnly(bool readOnly);
 
 Q_SIGNALS:
     void valueChanged(const QString &group, const QString &key, const QVariant &value);

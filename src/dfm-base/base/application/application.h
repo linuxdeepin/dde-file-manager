@@ -98,6 +98,9 @@ public:
 
     static void appAttributeTrigger(TriggerAttribute ta, quint64 winId);
 
+    static void setSettingsReadOnly(bool readOnly);
+    static bool settingsReadOnly();
+
 Q_SIGNALS:
     void appAttributeChanged(ApplicationAttribute aa, const QVariant &value);
     void genericAttributeChanged(GenericAttribute ga, const QVariant &value);
