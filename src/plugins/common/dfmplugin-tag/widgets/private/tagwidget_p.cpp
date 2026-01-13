@@ -63,6 +63,7 @@ void TagWidgetPrivate::initializeUI()
         tagColorListLayout->addWidget(tagLable);
         tagColorListLayout->addWidget(tagLeftLable);
         tagColorListLayout->addWidget(colorListWidget);
+        tagColorListLayout->addStretch();
     } else {
         tagColorListLayout = new QVBoxLayout;
         tagColorListLayout->addWidget(tagLable, 0, Qt::AlignLeft);
