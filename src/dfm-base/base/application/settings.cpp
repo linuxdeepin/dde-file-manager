@@ -11,6 +11,7 @@
 #include <QStandardPaths>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QJsonValue>
 #include <QDebug>
 #include <QFile>
 #include <QSaveFile>
@@ -156,6 +157,21 @@ public:
         }
 
         return url.toString();
+    }
+    /*!
+     * \brief normalizeValue Normalize QVariant to JSON-compatible type for comparison
+     *
+     * When values are serialized to JSON and read back, their types may change
+     * (e.g., QUrl becomes QString). This function converts values to the same
+     * type that would result from JSON round-trip, enabling correct comparison.
+     *
+     * \param value The value to normalize
+     * \return QVariant with JSON-compatible type
+     */
+    static QVariant normalizeValue(const QVariant &value)
+    {
+        // QJsonValue::fromVariant handles type conversion consistently
+        return QJsonValue::fromVariant(value).toVariant();
     }
 
     void _q_onFileChanged(const QUrl &url);
@@ -686,17 +702,21 @@ bool Settings::setValueNoNotify(const QString &group, const QString &key, const 
 {
     bool changed = false;
 
+    // Normalize value for comparison to handle type differences after JSON round-trip
+    // (e.g., QUrl stored as QString in JSON)
+    const QVariant normalizedValue = SettingsPrivate::normalizeValue(value);
+
     if (isRemovable(group, key)) {
-        if (d->writableData.value(group, key) == value) {
+        if (d->writableData.value(group, key) == normalizedValue) {
             return false;
         }
 
         changed = true;
     } else {
-        changed = this->value(group, key, value) != value;
+        changed = SettingsPrivate::normalizeValue(this->value(group, key, value)) != normalizedValue;
     }
 
-    d->writableData.setValue(group, key, value);
+    d->writableData.setValue(group, key, normalizedValue);
     d->makeSettingFileToDirty(true);
 
     return changed;
