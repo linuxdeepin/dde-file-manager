@@ -48,6 +48,7 @@ private:
     void stopDelayDodge();
     void updateDFMMimeData(QDropEvent *event);
     bool checkTargetEnable(const QUrl &targetUrl);
+    bool checkSourceValid(const QList<QUrl> &srcUrls);
 
 protected:
     CanvasView *view = nullptr;
