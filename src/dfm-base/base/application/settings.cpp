@@ -31,6 +31,7 @@ public:
     bool autoSync = false;   // automatically synchronize
     bool watchChanges = false;   // monitor for configuration changes
     bool settingFileIsDirty = false;   // set whether the file has cached data (dirty data)
+    bool readOnly = false;   // read-only mode, sync() will not write to file
     QSet<QString> autoSyncGroupExclude;   // when auto sync, exclude some group
     QTimer *syncTimer = nullptr;   // synchronization Timer
     QString fallbackFile;   // backup settings file path
@@ -853,6 +854,12 @@ bool Settings::sync()
         return true;
     }
 
+    // read-only mode: clear dirty flag without writing
+    if (d->readOnly) {
+        d->makeSettingFileToDirty(false);
+        return true;
+    }
+
     const QByteArray &json = d->toJson(d->writableData);
 
     QFile file(d->settingFile);
@@ -895,6 +902,11 @@ void Settings::autoSyncExclude(const QString &group, bool sync /*= false*/)
         d->autoSyncGroupExclude.insert(group);
     else
         d->autoSyncGroupExclude.remove(group);
+}
+
+bool Settings::isReadOnly() const
+{
+    return d->readOnly;
 }
 /*!
  * \brief Settings::setAutoSync 设置是否自动写配置文件
@@ -969,6 +981,26 @@ void Settings::setWatchChanges(bool watchChanges)
         d->settingWatcher->startWatcher();
     } else if (d->settingWatcher) {
         d->settingWatcher.reset();
+    }
+}
+
+/*!
+ * \brief Settings::setReadOnly 设置是否为只读模式
+ *
+ * 只读模式下，sync() 方法不会将配置写入文件
+ *
+ * \param readOnly 是否为只读模式
+ */
+void Settings::setReadOnly(bool readOnly)
+{
+    if (d->readOnly == readOnly)
+        return;
+
+    d->readOnly = readOnly;
+
+    // clear dirty flag when entering read-only mode
+    if (readOnly && d->settingFileIsDirty) {
+        d->makeSettingFileToDirty(false);
     }
 }
 

@@ -11,6 +11,8 @@
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/application/settings.h>
 
 #include <QDBusError>
 #include <QDBusConnection>
@@ -21,6 +23,9 @@ DFM_LOG_REGISTER_CATEGORY(DIALOGCORE_NAMESPACE)
 
 bool Core::start()
 {
+    DFMBASE_NAMESPACE::Application::instance()->appSetting()->setReadOnly(true);
+    DFMBASE_NAMESPACE::Application::instance()->appObtuselySetting()->setReadOnly(true);
+
     enterHighPerformanceMode();
     FMWindowsIns.setCustomWindowCreator([](const QUrl &url) {
         return new FileDialog(url);
