@@ -12,20 +12,17 @@
 CheckBoxWithMessage::CheckBoxWithMessage(QWidget *parent)
     : QWidget(parent)
 {
-    auto widget = new QWidget(this);
-    widget->setContentsMargins(0, 0, 0, 0);
-    QVBoxLayout *layout = new QVBoxLayout(widget);
+    QVBoxLayout *layout = new QVBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
-    setLayout(layout);
 
-    checkBox = new QCheckBox(widget);
+    checkBox = new QCheckBox(this);
     layout->addWidget(checkBox);
 
     QHBoxLayout *hLayout = new QHBoxLayout();
     hLayout->setContentsMargins(30, 0, 0, 0);
     layout->addLayout(hLayout);
 
-    msgLabel = new Dtk::Widget::DTipLabel("", widget);
+    msgLabel = new Dtk::Widget::DTipLabel("", this);
     msgLabel->setAlignment(Qt::AlignLeft);
     msgLabel->setWordWrap(true);
     hLayout->addWidget(msgLabel);

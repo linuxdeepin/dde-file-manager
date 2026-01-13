@@ -30,7 +30,7 @@ public:
 private:
     [[nodiscard]] static QPair<QWidget *, QWidget *> createAutoMountCheckBox(QObject *opt);
     [[nodiscard]] static QPair<QWidget *, QWidget *> createAutoMountOpenCheckBox(QObject *opt);
-    [[nodiscard]] static QPair<QWidget *, QWidget *> createCheckBoxWithMessage(QObject *opt);
+    [[nodiscard]] static QWidget *createCheckBoxWithMessage(QObject *opt);
     [[nodiscard]] static QPair<QWidget *, QWidget *> createPushButton(QObject *opt);
     [[nodiscard]] static QPair<QWidget *, QWidget *> createSliderWithSideIcon(QObject *opt);
     [[nodiscard]] static QPair<QWidget *, QWidget *> createPathComboboxItem(QObject *opt);
