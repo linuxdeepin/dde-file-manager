@@ -8,8 +8,10 @@
 #include "dfmplugin_detailspace_global.h"
 
 #include <DFrame>
+#include <DSpinner>
 #include <QVBoxLayout>
 #include <QUrl>
+#include <QTimer>
 
 class QScrollArea;
 
@@ -44,12 +46,15 @@ private slots:
 
 private:
     void initInfoUI();
+    void initSpinnerOverlay();
     void createExtensionWidgets();
     void updateHeadUI(const QUrl &url);
     void updateBasicWidget(const QUrl &url);
     void updateExtensionWidgets(const QUrl &url);
     void updatePreviewSize();
     void reloadPreviewFile();
+    void startPreviewLoading();
+    void finishPreviewLoading();
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
@@ -66,6 +71,12 @@ private:
 
     // Reusable extension widgets
     QList<ExtensionWidgetHolder> m_extensionWidgets;
+
+    // Loading state management
+    QWidget *m_spinnerOverlay { nullptr };
+    DTK_WIDGET_NAMESPACE::DSpinner *m_spinner { nullptr };
+    QTimer *m_loadingTimer { nullptr };
+    static constexpr int kSpinnerDelayMs = 200;
 
     QUrl m_currentUrl;
 };
