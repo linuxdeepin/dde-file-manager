@@ -13,6 +13,7 @@
 #include <QJsonObject>
 #include <QDebug>
 #include <QFile>
+#include <QSaveFile>
 #include <QDir>
 #include <QTimer>
 #include <QThread>
@@ -862,20 +863,29 @@ bool Settings::sync()
 
     const QByteArray &json = d->toJson(d->writableData);
 
-    QFile file(d->settingFile);
+    // Use QSaveFile for atomic write to prevent data corruption
+    // on crash, power failure, or disk full conditions
+    QSaveFile file(d->settingFile);
 
-    if (!file.open(QFile::WriteOnly)) {
+    if (!file.open(QIODevice::WriteOnly)) {
+        qCWarning(logDFMBase) << "Failed to open settings file for writing:"
+                              << d->settingFile << file.errorString();
         return false;
     }
 
-    bool ok = file.write(json) == json.size();
-
-    if (ok) {
-        d->makeSettingFileToDirty(false);
+    if (file.write(json) != json.size()) {
+        qCWarning(logDFMBase) << "Failed to write settings data:" << file.errorString();
+        file.cancelWriting();
+        return false;
     }
-    file.close();
 
-    return ok;
+    if (!file.commit()) {
+        qCWarning(logDFMBase) << "Failed to commit settings file:" << file.errorString();
+        return false;
+    }
+
+    d->makeSettingFileToDirty(false);
+    return true;
 }
 /*!
  * \brief Settings::autoSync 自动将属性写入配置文件
