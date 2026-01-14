@@ -31,6 +31,8 @@
 
 SERVICEMOUNTCONTROL_USE_NAMESPACE
 
+static constexpr char kPolicyKitActionIdCIFS[] { "org.deepin.Filemanager.MountController.CIFS" };
+
 CifsMountHelper::CifsMountHelper(QDBusContext *context)
     : AbstractMountHelper(context), d(new CifsMountHelperPrivate()) { }
 
@@ -109,7 +111,10 @@ QVariantMap CifsMountHelper::mount(const QString &path, const QVariantMap &opts)
         args.replace(regxCheckPasswd, ",pass=******,dom");
         fmInfo() << "mount: trying mount" << aPath << "on" << mntPath << "with opts:" << args;
 
-        ret = ::mount(aPath.toStdString().c_str(), mntPath.toStdString().c_str(), "cifs", 0,
+        // Improve security
+        // MS_NOSUID: Disables the SUID and SGID bits on this file system.
+        // MS_NODEV: Disallows access to device files (character devices or block devices) on this file system.
+        ret = ::mount(aPath.toStdString().c_str(), mntPath.toStdString().c_str(), "cifs", MS_NOSUID | MS_NODEV,
                       arg.c_str());
 
         if (ret == 0) {
@@ -174,6 +179,11 @@ QVariantMap CifsMountHelper::unmount(const QString &path, const QVariantMap &opt
         rmdir(mpt);
 
     return { { kResult, ret == 0 }, { kErrorCode, err }, { kErrorMessage, errMsg } };
+}
+
+bool CifsMountHelper::checkAuthentication(const QString &appName)
+{
+    return ServiceCommon::PolicyKitHelper::instance()->checkAuthorization(kPolicyKitActionIdCIFS, appName);
 }
 
 CifsMountHelper::MountStatus CifsMountHelper::checkMount(const QString &path, QString &mpt)

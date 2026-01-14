@@ -6,7 +6,6 @@
 #include "private/mountcontroldbus_p.h"
 #include "mounthelpers/cifsmounthelper.h"
 #include "mounthelpers/commonmounthelper.h"
-#include "polkit/policykithelper.h"
 #include "service_mountcontrol_global.h"
 
 #include <QFile>
@@ -14,15 +13,12 @@
 #include <DConfig>
 
 static constexpr char kMountControlObjPath[] { "/org/deepin/Filemanager/MountControl" };
-static constexpr char kPolicyKitActionId[] { "org.deepin.Filemanager.MountController" };
 
 namespace service_mountcontrol {
 DFM_LOG_REGISTER_CATEGORY(SERVICEMOUNTCONTROL_NAMESPACE)
 }
 
 SERVICEMOUNTCONTROL_USE_NAMESPACE
-
-using ServiceCommon::PolicyKitHelper;
 
 MountControlDBus::MountControlDBus(const char *name, QObject *parent)
     : QObject(parent), QDBusContext(), d(new MountControlDBusPrivate(this))
@@ -47,22 +43,23 @@ QVariantMap MountControlDBus::Mount(const QString &path, const QVariantMap &opts
     using namespace MountOptionsField;
     using namespace MountReturnField;
 
-    if (!checkAuthentication()) {
-        fmWarning() << "Mount: Authentication failed for path:" << path;
-        return { { kResult, false },
-                 { kErrorCode, -kAuthenticationFailed },
-                 { kErrorMessage, "Authentication failed: insufficient privileges to mount" } };
-    }
-
     auto fs = opts.value(kFsType, "").toString();
     if (fs.isEmpty())
         return { { kResult, false },
                  { kErrorCode, -kNoFsTypeSpecified },
-                 { kErrorMessage, "fsType filed must be specified." } };
+                 { kErrorMessage, "fsType field must be specified." } };
 
     auto helper = d->mountHelpers.value(fs, nullptr);
-    if (helper)
+    if (helper) {
+        if (!helper->checkAuthentication(message().service())) {
+            fmWarning() << "Mount: Authentication failed for path:" << path;
+            return { { kResult, false },
+                    { kErrorCode, -kAuthenticationFailed },
+                    { kErrorMessage, "Authentication failed: insufficient privileges to mount" } };
+        }
+
         return helper->mount(path, opts);
+    }
     else
         return { { kResult, false },
                  { kErrorCode, -kUnsupportedFsTypeOrProtocol },
@@ -74,22 +71,23 @@ QVariantMap MountControlDBus::Unmount(const QString &path, const QVariantMap &op
     using namespace MountOptionsField;
     using namespace MountReturnField;
 
-    if (!checkAuthentication()) {
-        fmWarning() << "Unmount: Authentication failed for path:" << path;
-        return { { kResult, false },
-                 { kErrorCode, -kAuthenticationFailed },
-                 { kErrorMessage, "Authentication failed: insufficient privileges to unmount" } };
-    }
-
     auto fs = opts.value(kFsType, "").toString();
     if (fs.isEmpty())
         return { { kResult, false },
                  { kErrorCode, -kNoFsTypeSpecified },
-                 { kErrorMessage, "fsType filed must be specified." } };
+                 { kErrorMessage, "fsType field must be specified." } };
 
     auto helper = d->mountHelpers.value(fs, nullptr);
-    if (helper)
+    if (helper) {
+        if (!helper->checkAuthentication(message().service())) {
+            fmWarning() << "Unmount: Authentication failed for path:" << path;
+            return { { kResult, false },
+                    { kErrorCode, -kAuthenticationFailed },
+                    { kErrorMessage, "Authentication failed: insufficient privileges to unmount" } };
+        }
+
         return helper->unmount(path, opts);
+    }
     else
         return { { kResult, false },
                  { kErrorCode, -kUnsupportedFsTypeOrProtocol },
@@ -100,15 +98,6 @@ QStringList MountControlDBus::SupportedFileSystems()
 {
     // handle method call com.deepin.filemanager.daemon.MountControl.SupportedFileSystems
     return d->supportedFS;
-}
-
-bool MountControlDBus::checkAuthentication()
-{
-    if (!PolicyKitHelper::instance()->checkAuthorization(kPolicyKitActionId, message().service())) {
-        fmInfo() << "Authentication failed !!";
-        return false;
-    }
-    return true;
 }
 
 MountControlDBusPrivate::MountControlDBusPrivate(MountControlDBus *qq)

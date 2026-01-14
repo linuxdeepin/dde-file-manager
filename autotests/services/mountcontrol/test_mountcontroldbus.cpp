@@ -150,7 +150,7 @@ TEST_F(UT_MountControlDBus, Mount_NoFsTypeSpecified_ReturnsError)
     EXPECT_FALSE(result.value(MountReturnField::kResult).toBool());
     EXPECT_EQ(result.value(MountReturnField::kErrorCode).toInt(), -kNoFsTypeSpecified);
     EXPECT_EQ(result.value(MountReturnField::kErrorMessage).toString(),
-              QString("fsType filed must be specified."));
+              QString("fsType field must be specified."));
 }
 
 TEST_F(UT_MountControlDBus, Mount_UnsupportedFsType_ReturnsError)
@@ -219,7 +219,7 @@ TEST_F(UT_MountControlDBus, Unmount_NoFsTypeSpecified_ReturnsError)
     EXPECT_FALSE(result.value(MountReturnField::kResult).toBool());
     EXPECT_EQ(result.value(MountReturnField::kErrorCode).toInt(), -kNoFsTypeSpecified);
     EXPECT_EQ(result.value(MountReturnField::kErrorMessage).toString(),
-              QString("fsType filed must be specified."));
+              QString("fsType field must be specified."));
 }
 
 TEST_F(UT_MountControlDBus, Unmount_UnsupportedFsType_ReturnsError)

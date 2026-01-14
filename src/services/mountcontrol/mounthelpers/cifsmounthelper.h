@@ -25,6 +25,7 @@ public:
 
     virtual QVariantMap mount(const QString &path, const QVariantMap &opts) override;
     virtual QVariantMap unmount(const QString &path, const QVariantMap &opts) override;
+    virtual bool checkAuthentication(const QString &appName) override;
 
     void cleanMountPoint();
 
