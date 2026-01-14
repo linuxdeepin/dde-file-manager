@@ -8,6 +8,7 @@
 
 #include <libcryptsetup.h>
 
+#include <QFile>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -468,14 +469,22 @@ int PasswordManager::generateSecureRecoveryKey(char *output, size_t outputSize)
 
 int PasswordManager::createPasswordContainerFile(const char *path)
 {
-    QString command = QString("dd if=/dev/zero of=%1 bs=1M count=2 2>/dev/null").arg(path);
+    const qint64 fileSize = 16 * 1024 * 1024;   // 16MB
 
-    int result = system(command.toStdString().c_str());
-    if (result != 0) {
-        fmCritical() << "Vault PasswordManager: Failed to create password container file";
+    QFile file(QString::fromUtf8(path));
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+        fmCritical() << "Vault PasswordManager: Failed to open file:" << path << file.errorString();
         return -1;
     }
 
+    int fd = file.handle();
+    if (fd < 0 || posix_fallocate(fd, 0, fileSize) != 0) {
+        fmCritical() << "Vault PasswordManager: Failed to allocate file space";
+        file.close();
+        return -1;
+    }
+
+    file.close();
     return 0;
 }
 

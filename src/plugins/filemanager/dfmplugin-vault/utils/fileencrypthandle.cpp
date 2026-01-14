@@ -34,6 +34,7 @@ inline constexpr int kArgumentsNum { 3 };
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_vault;
 using namespace GlobalDConfDefines::ConfigPath;
+DCORE_USE_NAMESPACE
 
 FileEncryptHandle::FileEncryptHandle(QObject *parent)
     : QObject(parent), d(new FileEncryptHandlerPrivate(this))
@@ -96,74 +97,76 @@ void FileEncryptHandle::createVault(const QString &lockBaseDir, const QString &u
     config.set(kConfigNodeName, kConfigKeyAlgoName, QVariant(algoName));
 
     if (!QFile::exists(cryfsConfigPath)) {
-        fmInfo() << "Vault: Creating new vault with password management scheme";
+        DSecureString cryfsPwd = DSecureString(passWord);
+        QString encryptionMethod = config.get(kConfigNodeName, kConfigKeyEncryptionMethod, QVariant(kConfigKeyNotExist)).toString();
+        if (encryptionMethod == QString(kConfigValueMethodKey)) {
+            QByteArray masterKey = MasterKeyManager::generateMasterKey();
+            if (masterKey.isEmpty()) {
+                d->activeState[1] = static_cast<int>(ErrorCode::kUnspecifiedError);
+                emit signalCreateVault(d->activeState.value(1));
+                fmWarning() << "Vault: Failed to generate master key";
+                d->activeState.clear();
+                d->mutex->unlock();
+                return;
+            }
 
-        QByteArray masterKey = MasterKeyManager::generateMasterKey();
-        if (masterKey.isEmpty()) {
-            d->activeState[1] = static_cast<int>(ErrorCode::kUnspecifiedError);
-            emit signalCreateVault(d->activeState.value(1));
-            fmWarning() << "Vault: Failed to generate master key";
-            d->activeState.clear();
-            d->mutex->unlock();
-            return;
+            QString containerPath = MasterKeyManager::getContainerPath();
+            int ret = PasswordManager::createPasswordContainerFile(containerPath.toUtf8().constData());
+            if (ret != 0) {
+                d->activeState[1] = static_cast<int>(ErrorCode::kUnspecifiedError);
+                emit signalCreateVault(d->activeState.value(1));
+                fmCritical() << "Vault: Failed to create password container file";
+                d->activeState.clear();
+                d->mutex->unlock();
+                return;
+            }
+
+            int slotID = 0;
+            ret = PasswordManager::createLuksContainer(containerPath.toUtf8().constData(),
+                                                        masterKey.data(), masterKey.size(),
+                                                        passWord.toUtf8().constData(), slotID);
+            if (ret != 0) {
+                d->activeState[1] = static_cast<int>(ErrorCode::kUnspecifiedError);
+                emit signalCreateVault(d->activeState.value(1));
+                fmCritical() << "Vault: Failed to create LUKS container";
+                d->activeState.clear();
+                d->mutex->unlock();
+                return;
+            }
+
+            QString preGeneratedRecoveryKey = OperatorCenter::getInstance()->getRecoveryKey();
+            char recoveryKey[33];
+            if (!preGeneratedRecoveryKey.isEmpty() && preGeneratedRecoveryKey.length() == 32) {
+                QByteArray recoveryKeyBytes = preGeneratedRecoveryKey.toUtf8();
+                memcpy(recoveryKey, recoveryKeyBytes.data(), 32);
+                recoveryKey[32] = '\0';
+            } else {
+                d->activeState[1] = static_cast<int>(ErrorCode::kUnspecifiedError);
+                emit signalCreateVault(d->activeState.value(1));
+                fmCritical() << "Vault: Failed to gett recovery key";
+                d->activeState.clear();
+                d->mutex->unlock();
+                return;
+            }
+            int recoveryKeySlotID = 0;
+            ret = PasswordManager::addNewPassword(containerPath.toUtf8().constData(),
+                                                 passWord.toUtf8().constData(),
+                                                 recoveryKey, recoveryKeySlotID);
+            if (ret != 0) {
+                d->activeState[1] = static_cast<int>(ErrorCode::kUnspecifiedError);
+                emit signalCreateVault(d->activeState.value(1));
+                fmCritical() << "Vault: Failed to add recovery key";
+                d->activeState.clear();
+                d->mutex->unlock();
+                return;
+            }
+            cryfsPwd = DSecureString::fromUtf8(masterKey);
         }
 
-        QString containerPath = MasterKeyManager::getContainerPath();
-        int ret = PasswordManager::createPasswordContainerFile(containerPath.toUtf8().constData());
-        if (ret != 0) {
-            d->activeState[1] = static_cast<int>(ErrorCode::kUnspecifiedError);
-            emit signalCreateVault(d->activeState.value(1));
-            fmWarning() << "Vault: Failed to create password container file";
-            d->activeState.clear();
-            d->mutex->unlock();
-            return;
-        }
-
-        int slotID = 0;
-        ret = PasswordManager::createLuksContainer(containerPath.toUtf8().constData(),
-                                                    masterKey.data(), masterKey.size(),
-                                                    passWord.toUtf8().constData(), slotID);
-        if (ret != 0) {
-            d->activeState[1] = static_cast<int>(ErrorCode::kUnspecifiedError);
-            emit signalCreateVault(d->activeState.value(1));
-            fmWarning() << "Vault: Failed to create LUKS container";
-            d->activeState.clear();
-            d->mutex->unlock();
-            return;
-        }
-        QString preGeneratedRecoveryKey = OperatorCenter::getInstance()->getRecoveryKey();
-        char recoveryKey[33];
-        if (!preGeneratedRecoveryKey.isEmpty() && preGeneratedRecoveryKey.length() == 32) {
-            QByteArray recoveryKeyBytes = preGeneratedRecoveryKey.toUtf8();
-            memcpy(recoveryKey, recoveryKeyBytes.data(), 32);
-            recoveryKey[32] = '\0';
-            fmInfo() << "Vault: Using pre-generated recovery key";
-        } else {
-            d->activeState[1] = static_cast<int>(ErrorCode::kUnspecifiedError);
-            emit signalCreateVault(d->activeState.value(1));
-            fmCritical() << "Vault: Failed to generate recovery key";
-            d->activeState.clear();
-            d->mutex->unlock();
-            return;
-        }
-
-        int recoveryKeySlotID = 0;
-        ret = PasswordManager::addNewPassword(containerPath.toUtf8().constData(),
-                                             passWord.toUtf8().constData(),
-                                             recoveryKey, recoveryKeySlotID);
-        if (ret != 0) {
-            d->activeState[1] = static_cast<int>(ErrorCode::kUnspecifiedError);
-            emit signalCreateVault(d->activeState.value(1));
-            fmWarning() << "Vault: Failed to add recovery key";
-            d->activeState.clear();
-            d->mutex->unlock();
-            return;
-        }
-        Dtk::Core::DSecureString masterKeySecure = Dtk::Core::DSecureString::fromUtf8(masterKey);
-        int flg = d->runVaultProcess(lockBaseDir, unlockFileDir, masterKeySecure, type, blockSize);
+        int flg = d->runVaultProcess(lockBaseDir, unlockFileDir, cryfsPwd, type, blockSize);
         if (d->activeState.value(1) != static_cast<int>(ErrorCode::kSuccess)) {
             emit signalCreateVault(d->activeState.value(1));
-            fmWarning() << "Vault: create vault failed!";
+            fmCritical() << "Vault: create vault failed!";
         } else {
             config.setVaultCreationType(kConfigValueVaultCreationTypeNew);
             d->curState = kUnlocked;
