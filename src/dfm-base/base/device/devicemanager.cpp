@@ -992,8 +992,7 @@ MountPassInfo DeviceManagerPrivate::askForPasswdWhenMountNetworkDevice(const QSt
         info.userName = data.value(kUser).toString();
         info.domain = data.value(kDomain).toString();
         info.savePasswd = static_cast<DFMMOUNT::NetworkMountPasswdSaveMode>(data.value(kPasswdSaveMode).toInt());
-        QString pwd = data.value(kPasswd).toString();
-        info.passwd = DProtocolDevice::isMountByDaemon(uri) ? encryptPasswd(pwd) : pwd;
+        info.passwd = data.value(kPasswd).toString();
 
         // save password in session if samba is integrated.
         if (uri.startsWith(Global::Scheme::kSmb)) {
@@ -1006,14 +1005,6 @@ MountPassInfo DeviceManagerPrivate::askForPasswdWhenMountNetworkDevice(const QSt
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
     return info;
-}
-
-QString DeviceManagerPrivate::encryptPasswd(const QString &passwd)
-{
-    // todo use encrypt-plugin
-    QByteArray byteArray = passwd.toUtf8();
-    QByteArray encodedByteArray = byteArray.toBase64();
-    return QString::fromUtf8(encodedByteArray);
 }
 
 int DeviceManagerPrivate::askForUserChoice(const QString &message, const QStringList &choices)

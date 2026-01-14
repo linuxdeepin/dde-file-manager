@@ -32,7 +32,7 @@ private:
     MountStatus checkMount(const QString &path, QString &mpt);
     QString generateMountPath(const QString &address);
     QString mountRoot();
-    QString decryptPasswd(const QString &passwd);
+    QString preparePasswd(const QVariant &passwdVar);
     uint invokerUid();
     std::string convertArgs(const QVariantMap &opts);
     QVariantMap overrideOptions();

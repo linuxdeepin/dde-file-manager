@@ -38,8 +38,6 @@ private:
     static DFMMOUNT::MountPassInfo askForPasswdWhenMountNetworkDevice(const QString &message, const QString &userDefault, const QString &domainDefault, const QString &uri);
     static int askForUserChoice(const QString &message, const QStringList &choices);
 
-    static QString encryptPasswd(const QString &passwd);
-
 private:
     DeviceWatcher *watcher { nullptr };
     DiscDeviceScanner *discScanner { nullptr };

@@ -437,16 +437,6 @@ TEST_F(UT_CifsMountHelper, GenerateMountPath_ValidAddress_ReturnsPath)
     EXPECT_TRUE(result.contains("smb-share:server=192.168.1.100,share=share"));
 }
 
-TEST_F(UT_CifsMountHelper, DecryptPasswd_Base64Encoded_ReturnsDecrypted)
-{
-    // Test password decryption
-    QString encodedPasswd = "dGVzdHBhc3M=";   // base64 encoded "testpass"
-
-    QString result = getHelper()->decryptPasswd(encodedPasswd);
-
-    EXPECT_EQ(result, QString("testpass"));
-}
-
 TEST_F(UT_CifsMountHelper, InvokerUid_ValidDBusContext_ReturnsUid)
 {
     // Test getting invoker UID from DBus context
