@@ -86,9 +86,8 @@ inline void setupDbusInterface(QDBusInterface &iface)
  *   CREATE_DBUS_INTERFACE(iface, service, path, interface)
  *   CREATE_TPM_INTERFACE(iface)
  */
-#define CREATE_DBUS_INTERFACE(name, service, path, interface)                    \
-    QDBusInterface name(service, path, interface, QDBusConnection::systemBus()); \
-    setupDbusInterface(name)
+#define CREATE_DBUS_INTERFACE(name, service, path, interface) \
+    QDBusInterface name(service, path, interface, QDBusConnection::systemBus());
 
 #define CREATE_TPM_INTERFACE(name) \
     CREATE_DBUS_INTERFACE(name, kTPMControlService, kTPMControlPath, kTPMControlInterface)
