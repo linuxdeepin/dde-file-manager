@@ -6,12 +6,14 @@
 #define ABSTRACTMOUNTHELPER_H
 
 #include "service_mountcontrol_global.h"
+#include "polkit/policykithelper.h"
 
 #include <QVariantMap>
 
 class QDBusContext;
 
 SERVICEMOUNTCONTROL_BEGIN_NAMESPACE
+inline constexpr char kPolicyKitActionIdDefault[] { "org.deepin.Filemanager.MountController" };
 class AbstractMountHelper
 {
 public:
@@ -20,6 +22,11 @@ public:
     virtual ~AbstractMountHelper() { }
     virtual QVariantMap mount(const QString &path, const QVariantMap &opts) = 0;
     virtual QVariantMap unmount(const QString &path, const QVariantMap &opts) = 0;
+    virtual bool checkAuthentication(const QString &appName)
+    {
+        return ServiceCommon::PolicyKitHelper::instance()->checkAuthorization(kPolicyKitActionIdDefault, appName);
+    }
+
 
 protected:
     QDBusContext *context { nullptr };
