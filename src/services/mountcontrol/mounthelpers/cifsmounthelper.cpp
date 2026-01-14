@@ -10,6 +10,7 @@
 #include <QDBusConnection>
 #include <QDBusConnectionInterface>
 #include <QDBusContext>
+#include <QDBusUnixFileDescriptor>
 #include <QDir>
 #include <QProcess>
 #include <QRegularExpression>
@@ -267,13 +268,43 @@ QString CifsMountHelper::mountRoot()
     return mntRoot;
 }
 
-QString CifsMountHelper::decryptPasswd(const QString &passwd)
+QString CifsMountHelper::preparePasswd(const QVariant &passwdVar)
 {
-    QByteArray encodedByteArray = passwd.toUtf8();
-    QByteArray decodedByteArray = QByteArray::fromBase64(encodedByteArray);
-    auto pwd = QString::fromUtf8(decodedByteArray);
+    // 1. 从 QVariant 中提取 QDBusUnixFileDescriptor
+    if (!passwdVar.canConvert<QDBusUnixFileDescriptor>()) {
+        fmWarning() << "password is not a file descriptor.";
+        return "";
+    }
+
+    QDBusUnixFileDescriptor passwdFd = passwdVar.value<QDBusUnixFileDescriptor>();
+    if (!passwdFd.isValid()) {
+        fmWarning() << "received an invalid file descriptor.";
+        return "";
+    }
+
+    // 2. 从 QDBusUnixFileDescriptor 中获取原生的 int fd
+    int fd = passwdFd.fileDescriptor();
+
+    // 3. 从 FD 中读取密码数据
+    QByteArray passwdBytes;
+    char buffer[256];
+    ssize_t bytesRead;
+    while ((bytesRead = read(fd, buffer, sizeof(buffer))) > 0) {
+        passwdBytes.append(buffer, bytesRead);
+    }
+
+    if (bytesRead == -1) {
+        fmWarning() << "fail to read from fd:" << strerror(errno);
+    }
+
+    // 4. 关闭 FD
+    close(fd);
+
+    // 5. 逗号转义
+    QString pwd = QString::fromUtf8(passwdBytes);
     if (pwd.contains(","))
         pwd.replace(",", ",,");
+
     return pwd;
 }
 
@@ -296,13 +327,13 @@ std::string CifsMountHelper::convertArgs(const QVariantMap &opts)
     QStringList params;
     using namespace MountOptionsField;
 
+    QString passwd;
     if (opts.contains(kUser) && opts.contains(kPasswd)
         && !opts.value(kUser).toString().isEmpty()
-        && !opts.value(kPasswd).toString().isEmpty()) {
+        && !(passwd = preparePasswd(opts.value(kPasswd))).isEmpty()) {
         const QString &user = opts.value(kUser).toString();
-        const QString &passwd = opts.value(kPasswd).toString();
         params.append(QString("user=%1").arg(user));
-        params.append(QString("pass=%1").arg(decryptPasswd(passwd)));
+        params.append(QString("pass=%1").arg(passwd));
     } else {
         params.append("user=");
     }
