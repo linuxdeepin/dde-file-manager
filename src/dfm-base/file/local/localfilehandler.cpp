@@ -373,34 +373,7 @@ bool LocalFileHandler::openFilesByApp(const QList<QUrl> &fileUrls, const QString
 
     qCDebug(logDFMBase) << "LocalFileHandler::openFilesByApp: Opening" << fileUrls.size()
                         << "files with app:" << desktopFile;
-
-    GDesktopAppInfo *appInfo = g_desktop_app_info_new_from_filename(desktopFile.toLocal8Bit().constData());
-    if (!appInfo) {
-        qCWarning(logDFMBase) << "LocalFileHandler::openFilesByApp: Failed to create GDesktopAppInfo from:"
-                              << desktopFile << "Check if file exists and PATH is correct";
-        return false;
-    }
-
-    QStringList filePathsStr;
-    for (const auto &url : fileUrls) {
-        filePathsStr << url.toString();
-    }
-
-    QString terminalFlag = QString(g_desktop_app_info_get_string(appInfo, "Terminal"));
-    if (terminalFlag == "true") {
-        qCDebug(logDFMBase) << "LocalFileHandler::openFilesByApp: Running terminal application:" << desktopFile;
-        QString exec = QString(g_desktop_app_info_get_string(appInfo, "Exec"));
-        QStringList args;
-        args << "-e" << exec.split(" ").at(0) << filePathsStr;
-        QString termPath = defaultTerminalPath();
-        qCDebug(logDFMBase) << "LocalFileHandler::openFilesByApp: Terminal command:" << termPath << args;
-        ok = QProcess::startDetached(termPath, args);
-    } else {
-        qCDebug(logDFMBase) << "LocalFileHandler::openFilesByApp: Launching GUI application:" << desktopFile;
-        ok = d->launchApp(desktopFile, filePathsStr);
-    }
-    g_object_unref(appInfo);
-
+    ok = d->launchApp(desktopFile, QUrl::toStringList(fileUrls));
     if (ok) {
         qCInfo(logDFMBase) << "LocalFileHandler::openFilesByApp: Successfully opened files with app:"
                            << desktopFile << "Files count:" << fileUrls.size();
