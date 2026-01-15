@@ -136,6 +136,8 @@ bool TaskManager::startTask(IndexTask::Type type, const QStringList &pathList, b
     if (type == IndexTask::Type::Create) {
         fmInfo() << "[TaskManager::startTask] Create task detected, clearing existing index status";
         IndexUtility::removeIndexStatusFile();
+        // 创建索引的任务开销巨大，避免任务未完成时进程退出后，重复进入创建任务
+        IndexUtility::saveIndexStatus(QDateTime::currentDateTime());
     }
 
     // 获取对应的任务处理器
@@ -433,7 +435,7 @@ void TaskManager::onTaskFinished(IndexTask::Type type, HandlerResult result)
     if (result.success) {
         if (!result.interrupted || type == IndexTask::Type::Create) {
             fmDebug() << "[TaskManager::onTaskFinished] Task completed successfully, updating index status";
-            IndexUtility::saveIndexStatus(QDateTime::currentDateTime(), Defines::kIndexVersion);
+            IndexUtility::saveIndexStatus(QDateTime::currentDateTime());
         }
     }
     emit taskFinished(typeToString(type), taskPath, result.success);

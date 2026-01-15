@@ -565,7 +565,7 @@ void FSMonitorPrivate::handleFileMoved(const QString &fromPath, const QString &f
     }
 
     // Skip hidden files if needed
-    if (!showHidden() && (fromName.startsWith('.') || toName.startsWith('.'))) {
+    if (!showHidden() && toName.startsWith('.')) {
         return;
     }
 
