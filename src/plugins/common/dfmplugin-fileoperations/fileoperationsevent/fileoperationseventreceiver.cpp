@@ -953,9 +953,15 @@ bool FileOperationsEventReceiver::doOpenInTerminal(const QUrl &url)
         terminalPath = debian_x_term_emu;
     }
 
-    // systemd支持的单个文件名最长为255字节，导致长文件名在终端打开失败，使用命令参数的方式打开路径
-    if (!terminalPath.isEmpty())
-        return QProcess::startDetached(terminalPath, { "-w", url.toLocalFile() });
+    if (!terminalPath.isEmpty()) {
+        // systemd支持的单个文件名最长为255字节，导致长文件名在终端打开失败，使用命令参数的方式打开路径
+        if (url.fileName().toLocal8Bit().size() > NAME_MAX) {
+            return QProcess::startDetached(terminalPath, { "-w", url.toLocalFile() });
+        } else {
+            // 使用命令参数的方式会造成终端DSG_APP_ID与应用一致，导致终端修改主题时影响文管/桌面
+            return QProcess::startDetached(terminalPath, {}, url.toLocalFile());
+        }
+    }
 
     terminalPath = QStandardPaths::findExecutable("xterm");
     if (QFileInfo::exists(terminalPath)) {
