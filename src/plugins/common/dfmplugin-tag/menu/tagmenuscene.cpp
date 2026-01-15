@@ -26,6 +26,8 @@
 using namespace dfmplugin_tag;
 DFMBASE_USE_NAMESPACE
 
+static constexpr char kActionGroupId[] { "act_group_id" };
+
 TagMenuScene::TagMenuScene(QObject *parent)
     : AbstractMenuScene(parent), d(new TagMenuScenePrivate(this))
 {
@@ -101,6 +103,10 @@ bool TagMenuScene::create(QMenu *parent)
     tagAction->setProperty(ActionPropertyKey::kActionID, QString(TagActionId::kActTagAddKey));
     parent->addAction(tagAction);
     d->predicateAction.insert(TagActionId::kActTagAddKey, tagAction);
+
+    // Set same group ID to prevent other menu items from being inserted between them
+    colorListAction->setProperty(kActionGroupId, "dfm_tag_group");
+    tagAction->setProperty(kActionGroupId, "dfm_tag_group");
     return AbstractMenuScene::create(parent);
 }
 
