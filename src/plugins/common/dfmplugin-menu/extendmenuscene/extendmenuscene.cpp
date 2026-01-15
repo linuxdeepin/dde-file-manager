@@ -20,6 +20,7 @@ using namespace dfmplugin_menu;
 DFMBASE_USE_NAMESPACE
 
 static constexpr char kActionPosInMenu[] { "act_pos" };
+static constexpr char kActionGroupId[] { "act_group_id" };
 
 AbstractMenuScene *ExtendMenuCreator::create()
 {
@@ -364,6 +365,31 @@ void ExtendMenuScene::updateState(QMenu *parent)
             d->cacheLocateActions, systemActions,
             [parent](const QList<QAction *> &acs) { parent->addActions(acs); },
             [](QAction *ac) -> bool { return ac && !ac->isSeparator(); });
+
+    // 确保同组的菜单项相邻，不被其他菜单项分隔
+    QMap<QString, QList<QAction *>> groups;
+    for (auto act : parent->actions()) {
+        QString groupId = act->property(kActionGroupId).toString();
+        if (!groupId.isEmpty())
+            groups[groupId].append(act);
+    }
+    for (const auto &groupActions : groups) {
+        if (groupActions.size() < 2)
+            continue;
+        // 将组内第二个及之后的项移到第一个项之后
+        QAction *prevAct = groupActions.first();
+        for (int i = 1; i < groupActions.size(); ++i) {
+            QAction *act = groupActions[i];
+            parent->removeAction(act);
+            QList<QAction *> acts = parent->actions();
+            int idx = acts.indexOf(prevAct);
+            if (idx + 1 < acts.size())
+                parent->insertAction(acts[idx + 1], act);
+            else
+                parent->addAction(act);
+            prevAct = act;
+        }
+    }
 
     Q_ASSERT(systemActions.isEmpty());
 
