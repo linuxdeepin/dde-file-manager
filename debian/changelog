@@ -1,3 +1,31 @@
+dde-file-manager (6.5.115) unstable; urgency=medium
+
+  * chore: update translations
+  * fix: fix text color display issue in KeyValueLabel
+  * fix: control view mode switching with hotkeys
+  * fix: improve error handling for SMB mount operations
+  * fix: fix text index status bar icon display issues
+  * fix: add URL validation for file operations
+  * fix: adjust tag widget layout spacing
+  * feat: add read-only mode support to settings system
+  * refactor: improve settings file write safety
+  * fix: fix settings value comparison with JSON round-trip
+  * fix: prevent detail space loading when saveClosedState is false
+  * fix: add loading spinner for file preview
+  * fix: simplify checkbox with message widget layout
+  * Fix: [emblem] cache icons and ignore empty icon paths
+  * fix: [xps] the type of xps cannot display correctly in dde-file-manager
+  * refactor: simplify CREATE_DBUS_INTERFACE macro
+  * fix: prevent duplicate index creation tasks
+  * feat: change password handling from base64 to file descriptor
+  * feat: supports CIFS authentication-free mounting
+  * feat: add timeout handling for password file descriptor reading in CIFS mount
+  * fix: (menu)add action grouping functionality to maintain menu item order
+  * fix: [vault] intermittent vault encryption failure
+  * refactor: simplify application launch logic
+
+ -- Liu Zhangjian <liuzhangjian@uniontech.com>  Thu, 15 Jan 2026 21:29:12 +0800
+
 dde-file-manager (6.5.114) unstable; urgency=medium
 
   * fix: add dynamic thumbnail update for image preview
