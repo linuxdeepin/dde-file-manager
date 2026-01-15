@@ -116,7 +116,7 @@ std::optional<QString> extractHtmlContent(const QString &filePath, size_t maxByt
 
 std::optional<QString> extractFileContent(const QString &filePath, size_t maxBytes)
 {
-    fmInfo() << "About to extract file: " << filePath;
+    fmDebug() << "About to extract file: " << filePath;
     // First try HTML extraction for HTML-style documents
     if (isHtmlStyleDocument(filePath)) {
         auto htmlContent = extractHtmlContent(filePath, maxBytes);
