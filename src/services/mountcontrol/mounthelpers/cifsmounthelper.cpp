@@ -15,6 +15,7 @@
 #include <QProcess>
 #include <QRegularExpression>
 #include <QUrl>
+#include <QElapsedTimer>
 
 #include <DConfig>
 
@@ -28,6 +29,8 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <fcntl.h>
+#include <poll.h>
 
 SERVICEMOUNTCONTROL_USE_NAMESPACE
 
@@ -278,6 +281,92 @@ QString CifsMountHelper::mountRoot()
     return mntRoot;
 }
 
+static bool readFromFdWithTimeout(int fd, QByteArray &outData, int total_timeout_ms, qint64 max_size_bytes)
+{
+    // 在开始时清空输出缓冲区，以确保状态干净
+    outData.clear();
+
+    // 1. 将文件描述符设置为非阻塞模式
+    int flags = fcntl(fd, F_GETFL, 0);
+    if (flags == -1) {
+        fmCritical() << "readFromFdWithTimeout: fcntl(F_GETFL) failed:" << strerror(errno);
+        return false;
+    }
+    if (fcntl(fd, F_SETFL, flags | O_NONBLOCK) == -1) {
+        fmCritical() << "readFromFdWithTimeout: fcntl(F_SETFL, O_NONBLOCK) failed:" << strerror(errno);
+        return false;
+    }
+
+    // 2. 启动总操作计时器
+    QElapsedTimer timer;
+    timer.start();
+
+    // 3. 主循环，使用 poll 等待数据
+    while (true) {
+        // 计算剩余时间
+        qint64 remaining_ms = total_timeout_ms - timer.elapsed();
+
+        // 如果时间已用完，则立即判定为超时
+        if (remaining_ms <= 0) {
+            fmWarning() << "readFromFdWithTimeout: Total operation timeout of" << total_timeout_ms << "ms exceeded.";
+            return false;
+        }
+
+        struct pollfd pfd;
+        pfd.fd = fd;
+        pfd.events = POLLIN; // 监视可读事件
+        pfd.revents = 0;
+
+        int poll_ret = poll(&pfd, 1, static_cast<int>(remaining_ms));
+
+        if (poll_ret < 0) {
+            // poll 调用自身出错
+            fmCritical() << "readFromFdWithTimeout: poll() failed:" << strerror(errno);
+            return false;
+        }
+        if (poll_ret == 0) {
+            // 超时
+            fmWarning() << "readFromFdWithTimeout: Total operation timeout of" << total_timeout_ms << "ms exceeded (poll timed out).";
+            return false;
+        }
+
+        // poll_ret > 0, 说明有事件
+        if (pfd.revents & POLLIN) {
+            // 数据可读，进入内部循环，尽可能多地读取
+            while (true) {
+                char buffer[256];
+                ssize_t bytesRead = read(fd, buffer, sizeof(buffer));
+
+                if (bytesRead > 0) {
+                    outData.append(buffer, bytesRead);
+
+                    // 检查是否已达到大小限制
+                    if (outData.size() > max_size_bytes) {
+                        qWarning() << "readFromFdWithTimeout: Reached max size limit of" << max_size_bytes << "bytes.";
+                        return false;
+                    }
+                } else if (bytesRead == 0) {
+                    // 成功读取到文件末尾 (EOF)
+                    return true;
+                } else { // bytesRead < 0
+                    if (errno == EAGAIN || errno == EWOULDBLOCK) {
+                        // 当前缓冲区已读完，跳出内层循环，回到 poll 等待更多数据
+                        break;
+                    } else {
+                        // 发生真正的读取错误
+                        fmCritical() << "readFromFdWithTimeout: read() error:" << strerror(errno);
+                        return false;
+                    }
+                }
+            }
+        } else if (pfd.revents & (POLLERR | POLLHUP | POLLNVAL)) {
+            // poll 报告了错误或连接挂起
+            fmWarning() << "readFromFdWithTimeout: poll() reported an error/hangup on the fd.";
+            return false;
+        }
+    }
+}
+
 QString CifsMountHelper::preparePasswd(const QVariant &passwdVar)
 {
     // 1. 从 QVariant 中提取 QDBusUnixFileDescriptor
@@ -297,20 +386,12 @@ QString CifsMountHelper::preparePasswd(const QVariant &passwdVar)
 
     // 3. 从 FD 中读取密码数据
     QByteArray passwdBytes;
-    char buffer[256];
-    ssize_t bytesRead;
-    while ((bytesRead = read(fd, buffer, sizeof(buffer))) > 0) {
-        passwdBytes.append(buffer, bytesRead);
+    if (!readFromFdWithTimeout(fd, passwdBytes, 100, 256)) {
+        fmWarning() << "fail to read from fd.";
+        return "";
     }
 
-    if (bytesRead == -1) {
-        fmWarning() << "fail to read from fd:" << strerror(errno);
-    }
-
-    // 4. 关闭 FD
-    close(fd);
-
-    // 5. 逗号转义
+    // 4. 逗号转义
     QString pwd = QString::fromUtf8(passwdBytes);
     if (pwd.contains(","))
         pwd.replace(",", ",,");
