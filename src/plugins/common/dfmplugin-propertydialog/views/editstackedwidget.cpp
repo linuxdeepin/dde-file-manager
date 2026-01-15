@@ -77,21 +77,30 @@ void NameTextEdit::slotTextChanged()
     Q_UNUSED(blocker)
 
     QString text = this->toPlainText();
-    const QString old_text = text;
-
-    int text_length = text.length();
-
-    text.remove('/');
-    text.remove(QChar(0));
-
-    int cursor_pos = this->textCursor().position() - text_length + text.length();
-
-    while (textLength(text) > NAME_MAX) {
-        text.chop(1);
+    if (text.isEmpty()) {
+        return;
     }
 
-    if (text.size() != old_text.size()) {
-        this->setPlainText(text);
+    // 参考视图区域的逻辑：先预处理文件名，再处理长度
+    QString dstText = FileUtils::preprocessingFileName(text);
+    
+    bool hasInvalidChar = text != dstText;
+    if (hasInvalidChar) {
+        showAlertMessage(tr("%1 are not allowed").arg("|/\\*:\"'?<>"));
+    }
+
+    int cursor_pos = this->textCursor().position();
+    cursor_pos += dstText.length() - text.length();
+
+    int limit = (maxLengthVal > 0 ? maxLengthVal : NAME_MAX);
+    FileUtils::processLength(dstText, cursor_pos, limit, useCharCount, dstText, cursor_pos);
+    
+    if (text != dstText) {
+        this->setPlainText(dstText);
+        QTextCursor cursor = this->textCursor();
+        cursor.setPosition(cursor_pos);
+        this->setTextCursor(cursor);
+        this->setAlignment(Qt::AlignHCenter);
     }
 
     QTextCursor cursor = this->textCursor();
@@ -104,7 +113,7 @@ void NameTextEdit::slotTextChanged()
         format.setLineHeight(kTextLineHeight, QTextBlockFormat::FixedHeight);
         cursor.setBlockFormat(format);
     } while (cursor.movePosition(QTextCursor::NextBlock));
-
+    
     cursor.setPosition(cursor_pos);
 
     this->setTextCursor(cursor);
@@ -112,25 +121,11 @@ void NameTextEdit::slotTextChanged()
 
     if (this->isReadOnly())
         this->setFixedHeight(static_cast<int>(this->document()->size().height()));
+}
 
-    QString dstText = FileUtils::preprocessingFileName(text);
-
-    bool hasInvalidChar = text != dstText;
-
-    int endPos = this->textCursor().position() + (dstText.length() - text.length());
-
-    FileUtils::processLength(dstText, endPos, NAME_MAX, true, dstText, endPos);
-    if (text != dstText) {
-        this->setPlainText(dstText);
-        QTextCursor cursor = this->textCursor();
-        cursor.setPosition(endPos);
-        this->setTextCursor(cursor);
-        this->setAlignment(Qt::AlignHCenter);
-    }
-
-    if (hasInvalidChar) {
-        showAlertMessage(tr("%1 are not allowed").arg("|/\\*:\"'?<>"));
-    }
+void NameTextEdit::setMaxLength(int len)
+{
+    maxLengthVal = qMax(0, len);
 }
 
 void NameTextEdit::showAlertMessage(const QString &text, int duration)
@@ -170,11 +165,14 @@ void NameTextEdit::keyPressEvent(QKeyEvent *event)
     if (event->key() == Qt::Key_Escape) {
         setIsCanceled(true);
         emit editFinished();
+        event->accept();
         return;
     }
     if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
         setIsCanceled(false);
         emit editFinished();
+        event->accept();
+        return;
     }
     QTextEdit::keyPressEvent(event);
 }
@@ -295,20 +293,26 @@ void EditStackedWidget::renameFile()
 {
     QFileInfo info(fileUrl.path());
 
-    if (FileUtils::supportLongName(fileUrl))
+    // 设置最大长度：为后缀预留长度（与图标/列表一致）
+    const QString suffix = info.suffix();
+    const bool isLongNameFs = FileUtils::supportLongName(fileUrl);
+    int reserve = suffix.isEmpty() ? 0 : (isLongNameFs ? (suffix.length() + 1) : (suffix.toLocal8Bit().size() + 1));
+    int maxLen = NAME_MAX - reserve;
+    if (isLongNameFs)
         fileNameEdit->setCharCountLimit();
+    fileNameEdit->setMaxLength(maxLen);
 
     fileNameEdit->setPlainText(info.fileName());
     this->setCurrentIndex(0);
     fileNameEdit->setFixedHeight(textShowFrame->height());
     fileNameEdit->setFocus();
 
-    fileNameEdit->selectAll();
-    int endPos = fileNameEdit->toPlainText().length();
-
+    // 仅选择主文件名部分，保留后缀不被覆盖
+    const QString fullName = info.fileName();
+    const int baseLen = info.completeBaseName().length();
     QTextCursor cursor = fileNameEdit->textCursor();
     cursor.setPosition(0);
-    cursor.setPosition(endPos, QTextCursor::KeepAnchor);
+    cursor.setPosition(qMin(baseLen, fullName.length()), QTextCursor::KeepAnchor);
     fileNameEdit->setTextCursor(cursor);
 }
 
