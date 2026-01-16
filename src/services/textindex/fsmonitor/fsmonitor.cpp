@@ -337,12 +337,13 @@ bool FSMonitorPrivate::shouldExcludePath(const QString &path) const
         }
     }
 
-    // Check if path is on external mount
-    // Note: Block devices allowed to be mounted via udisks
-    if (!DevProxyMng->isFileOfExternalBlockMounts(path) && isExternalMount(path)) {
-        fmDebug() << "FSMonitor: Excluding external mount:" << path;
-        return true;
-    }
+    // 以下判断严重影响性能，如无问题反馈则屏蔽
+    // // Check if path is on external mount
+    // // Note: Block devices allowed to be mounted via udisks
+    // if (!DevProxyMng->isFileOfExternalBlockMounts(path) && isExternalMount(path)) {
+    //     fmDebug() << "FSMonitor: Excluding external mount:" << path;
+    //     return true;
+    // }
 
     return false;
 }
