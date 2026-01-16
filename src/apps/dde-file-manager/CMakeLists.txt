@@ -47,6 +47,9 @@ target_link_libraries(
     Dtk6::Widget
 )
 
+# Enable position-independent executables for improved security
+target_link_options(${PROJECT_NAME} PRIVATE -pie)
+
 install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_LIBEXECDIR})
 
 # sh
