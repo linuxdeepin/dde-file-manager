@@ -17,6 +17,8 @@
 #include <QtConcurrent>
 #include <QFuture>
 
+#include <algorithm>
+
 DFMBASE_USE_NAMESPACE
 DFM_SEARCH_USE_NS
 
@@ -109,10 +111,12 @@ void FSMonitorWorker::tryFastDirectoryScan()
             return {};
         }
 
+        constexpr int kQueryLimit = 500000;   // Query more to ensure completeness
+
         QObject holder;
         SearchEngine *engine = SearchFactory::createEngine(SearchType::FileName, &holder);
         SearchOptions options;
-        options.setMaxResults(capturedMaxResults);
+        options.setMaxResults(kQueryLimit);
         options.setSyncSearchTimeout(120);
         options.setSearchPath(QDir::rootPath());
         options.setSearchMethod(SearchMethod::Indexed);
@@ -128,11 +132,23 @@ void FSMonitorWorker::tryFastDirectoryScan()
         fmInfo() << "FSMonitorWorker: Fast directory scan found" << directories.size() << "directories";
         // Filter excluded directories
         QStringList filteredDirs;
+        filteredDirs.reserve(directories.size());
         for (const auto &dir : std::as_const(directories)) {
             const QString &path = dir.path();
             if (!capturedExclusionChecker(path)) {
                 filteredDirs << path;
             }
+        }
+
+        // Sort by path length (shortest first)
+        std::sort(filteredDirs.begin(), filteredDirs.end(),
+                  [](const QString &a, const QString &b) {
+                      return a.length() < b.length();
+                  });
+
+        // Truncate to max results after sorting
+        if (filteredDirs.size() > capturedMaxResults) {
+            filteredDirs = filteredDirs.mid(0, capturedMaxResults);
         }
 
         return filteredDirs;
@@ -145,7 +161,7 @@ void FSMonitorWorker::tryFastDirectoryScan()
 
 void FSMonitorWorker::handleFastScanResult()
 {
-    QStringList directories = futureWatcher->result();
+    const QStringList &directories = futureWatcher->result();
     bool success = !directories.isEmpty();
 
     if (success) {
