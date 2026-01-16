@@ -21,6 +21,9 @@ target_link_libraries(
     DFM6::framework
 )
 
+# Enable position-independent executables for improved security
+target_link_options(${PROJECT_NAME} PRIVATE -pie)
+
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 install(FILES data/com.deepin.filemanager.filedialog_x11.service DESTINATION share/dbus-1/services)
 

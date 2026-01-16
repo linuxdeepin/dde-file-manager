@@ -26,6 +26,8 @@ target_link_libraries(
     DFM6::framework
 )
 
+# Enable position-independent executables for improved security
+target_link_options(${PROJECT_NAME} PRIVATE -pie)
 
 if (COMPILE_ON_V2X)
     if (NOT DEFINED SYSTEMD_USER_UNIT_DIR)

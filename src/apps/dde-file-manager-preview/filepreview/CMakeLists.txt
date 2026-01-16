@@ -27,4 +27,7 @@ target_link_libraries(${BIN_NAME} PRIVATE
     DFM6::base
 )
 
+# Enable position-independent executables for improved security
+target_link_options(${BIN_NAME} PRIVATE -pie)
+
 install(TARGETS ${BIN_NAME} DESTINATION ${CMAKE_INSTALL_LIBEXECDIR})
