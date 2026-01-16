@@ -20,6 +20,9 @@ add_executable(${BIN_NAME}
 # Apply service configuration using shared dependencies
 dfm_setup_diskencrypt_dependencies(${PROJECT_NAME})
 
+# Enable position-independent executables for improved security
+target_link_options(${BIN_NAME} PRIVATE -pie)
+
 install(TARGETS ${BIN_NAME} DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(FILES ${PROJECT_NAME}.json DESTINATION share/deepin-service-manager/other/)
 install(FILES org.deepin.filemanager.diskencrypt.conf DESTINATION share/dbus-1/system.d/)
