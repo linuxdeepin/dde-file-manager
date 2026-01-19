@@ -636,7 +636,7 @@ void NormalizedMode::layout()
                     fmInfo() << "Left edge overflow detected, adjust dx. original dx:" << dx;
                     /* dx = 左边新位置 - 左边旧位置
                      * 新位置：左边距 + 顶点在网格内的 5 像素偏移
-                     * 旧位置：原矩形的左边位置 
+                     * 旧位置：原矩形的左边位置
                      *
                      * 因为布局是以右上角为原点开始的，并且以网格进行对齐，网格边长为 20px，
                      * 从右开始计算，则左边可能会剩余不够 20px 的距离，此为左边距。下边距同理。
@@ -649,7 +649,7 @@ void NormalizedMode::layout()
                     fmInfo() << "Bottom edge overflow detected, adjust dy.";
                     /* dy = 底边新位置 - 底边旧位置
                      * 新位置：surface 底边位置 - 网格底边距 - 网格内 5 像素偏移
-                     * 旧位置：原矩形的底边位置 
+                     * 旧位置：原矩形的底边位置
                      */
                     dy = surface->rect().bottom() - surface->gridMargins().bottom() - 5 - boundingRect.bottom();
                 }
@@ -768,10 +768,27 @@ void NormalizedMode::rebuild(bool reorganize)
     QElapsedTimer time;
     time.start();
     {
-        if (reorganize && d->classifier->updateClassifier())  // classifier's categories should be updated.
+        if (reorganize && d->classifier->updateClassifier())   // classifier's categories should be updated.
             model->refresh(model->rootIndex(), false, 0);
         auto files = model->files();
-        d->classifier->reset(files);
+
+        // In "organize on trigger" mode and not manually triggered (reorganize=false),
+        // only classify files that were previously organized (from profiles).
+        // This prevents newly enabled categories from auto-organizing files on desktop restart.
+        if (CfgPresenter->organizeOnTriggered()) {
+            QList<QUrl> organizedFiles;
+            for (const CollectionBaseDataPtr &profile : profiles) {
+                std::copy_if(profile->items.cbegin(), profile->items.cend(),
+                             std::back_inserter(organizedFiles),
+                             [&files](const QUrl &url) { return files.contains(url); });
+            }
+            fmInfo() << "Organize on trigger mode: only restoring" << organizedFiles.size()
+                     << "organized files from" << files.size() << "total files";
+            d->classifier->reset(organizedFiles);
+        } else {
+            // Manual reorganize or "always organize" mode: classify all files
+            d->classifier->reset(files);
+        }
 
         // 从配置文件中恢复集合中元素顺序
         d->restore(profiles, reorganize);
@@ -847,7 +864,7 @@ void NormalizedMode::onFileRenamed(const QUrl &oldUrl, const QUrl &newUrl)
 {
     if (CfgPresenter->organizeOnTriggered()) {
         QString oldType = d->classifier->key(oldUrl);
-        if (oldType.isEmpty()) {  // old item is not in collection
+        if (oldType.isEmpty()) {   // old item is not in collection
             fmDebug() << "Renamed file was not in any collection";
             return;
         }
