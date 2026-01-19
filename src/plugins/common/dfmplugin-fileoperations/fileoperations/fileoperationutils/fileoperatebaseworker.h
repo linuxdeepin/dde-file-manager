@@ -126,11 +126,10 @@ protected:
     long copyTid = { -1 };   // 使用 /pric/[pid]/task/[tid]/io 文件中的的 writeBytes 字段的值作为判断已写入数据的依据
     qint64 targetDeviceStartSectorsWritten { 0 };   // 记录任务开始时目标磁盘设备已写入扇区数
     QString targetSysDevPath;   // /sys/dev/block/x:x
-    qint16 targetLogSecionSize { 512 };   // 目标设备逻辑扇区大小
+    qint16 targetLogicSectorSize { 512 };   // 目标设备逻辑扇区大小
     qint8 targetIsRemovable { 1 };   // 目标磁盘设备是不是可移除或者热插拔设备
     DirPermissonList dirPermissonList;   // dir set Permisson list
     QFuture<void> syncResult;
-    QString blocakTargetRootPath;
 
     std::atomic_int threadCopyFileCount { 0 };
     QList<DFileInfoPointer> cutAndDeleteFiles;
