@@ -38,6 +38,7 @@ public:
     void initConnection();
     void initMounts();
     QString canonicalMountPoint(const QString &mpt) const;
+    bool isExternalBlock(const QVariantMap &info) const;
 
     void connectToDBus();
     void connectToAPI();

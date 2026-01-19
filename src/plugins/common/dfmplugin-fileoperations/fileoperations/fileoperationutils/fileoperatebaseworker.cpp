@@ -11,6 +11,7 @@
 #include <dfm-base/interfaces/abstractdiriterator.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/base/device/deviceproxymanager.h>
 #include <dfm-base/file/local/localfilehandler.h>
 #include <dfm-base/utils/protocolutils.h>
 
@@ -29,6 +30,8 @@
 #include <syscall.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
+#include <sys/sysmacros.h>
+#include <linux/fs.h>
 
 #include "sync_interface_qt6.h"
 
@@ -1229,7 +1232,7 @@ qint64 FileOperateBaseWorker::getWriteDataSize()
     } else if (CountWriteSizeType::kWriteBlockType == countWriteType) {
         qint64 currentSectorsWritten = getSectorsWritten() + workData->blockRenameWriteSize;
         if (currentSectorsWritten > targetDeviceStartSectorsWritten)
-            writeSize = (currentSectorsWritten - targetDeviceStartSectorsWritten) * targetLogSecionSize;
+            writeSize = (currentSectorsWritten - targetDeviceStartSectorsWritten) * targetLogicSectorSize;
     }
 
     writeSize += (workData->skipWriteSize + workData->zeroOrlinkOrDirWriteSize);
@@ -1291,63 +1294,81 @@ qint64 FileOperateBaseWorker::getSectorsWritten()
 
 void FileOperateBaseWorker::determineCountProcessType()
 {
-    // 检查目标文件的有效性
-    // 判读目标文件的位置（在可移除设备并且不是ext系列的设备上使用读取写入设备大小，
-    // 其他都是读取当前线程写入磁盘的数据，如果采用多线程拷贝就自行统计）
+    // Check target file validity and determine write progress counting method:
+    // - Use block device sector counting for removable devices
+    // - Use thread-based byte counting for local disks
     auto rootPath = DFMUtils::mountPathFromUrl(targetOrgUrl);
     auto device = DFMUtils::deviceNameFromUrl(targetOrgUrl);
-    if (device.startsWith("/dev/")) {
-        isTargetFileLocal = FileOperationsUtils::isFileOnDisk(targetOrgUrl);
-        workData->isTargetFileLocal = isTargetFileLocal;   // Set workData flag
-        fmDebug("Target block device: \"%s\", Root Path: \"%s\"", device.toStdString().data(), qPrintable(rootPath));
-        if (!isTargetFileLocal) {
-            blocakTargetRootPath = rootPath;
-            QProcess process;
-            process.start("lsblk", { "-niro", "MAJ:MIN,HOTPLUG,LOG-SEC", device }, QIODevice::ReadOnly);
 
-            if (process.waitForFinished(3000)) {
-                if (process.exitCode() == 0) {
-                    const QByteArray &data = process.readAllStandardOutput();
-                    const QByteArrayList &list = data.split(' ');
+    if (!device.startsWith("/dev/"))
+        return;
 
-                    fmDebug("lsblk result data: \"%s\"", data.constData());
+    isTargetFileLocal = FileOperationsUtils::isFileOnDisk(targetOrgUrl);
+    workData->isTargetFileLocal = isTargetFileLocal;
 
-                    if (list.size() == 3) {
-                        targetSysDevPath = "/sys/dev/block/" + list.first();
-                        targetIsRemovable = list.at(1) == "1";
+    fmDebug("Target block device: \"%s\", Root Path: \"%s\"", device.toStdString().data(), qPrintable(rootPath));
 
-                        bool ok = false;
-                        targetLogSecionSize = static_cast<qint16>(list.at(2).toInt(&ok));
+    if (isTargetFileLocal)
+        return;
 
-                        if (!ok) {
-                            targetLogSecionSize = 512;
+    // Use DeviceProxyManager to check if target is on external removable device
+    // This handles encrypted devices (LUKS/dm-crypt) correctly by checking backing device
+    targetIsRemovable = DevProxyMng->isFileOfExternalBlockMounts(rootPath);
 
-                            fmWarning() << "get target log secion size failed!";
-                        }
+    fmDebug("targetIsRemovable = %d (via isFileOfExternalBlockMounts)", bool(targetIsRemovable));
 
-                        if (targetIsRemovable) {
-                            workData->exBlockSyncEveryWrite = FileOperationsUtils::blockSync();
-                            // CRITICAL FIX: Always record current sector count as baseline
-                            // The block device stat shows CUMULATIVE sectors written since boot.
-                            // Setting to 0 would incorrectly count ALL device writes, not just our copy operation.
-                            // For accurate progress: (current_sectors - baseline_sectors) * sector_size = our_copy_progress
-                            targetDeviceStartSectorsWritten = getSectorsWritten();
+    if (!targetIsRemovable)
+        return;
 
-                            workData->isBlockDevice = true;
-                        }
+    // Get device info to determine physical device for sector size query
+    auto devInfo = DevProxyMng->queryDeviceInfoByPath(rootPath, false);
+    QString physicalDevice = devInfo.value(GlobalServerDefines::DeviceProperty::kDevice).toString();
 
-                        fmDebug("Block device path: \"%s\", Sys dev path: \"%s\", Is removable: %d, Log-Sec: %d",
-                                qPrintable(device), qPrintable(targetSysDevPath), bool(targetIsRemovable), targetLogSecionSize);
-                    } else {
-                        fmWarning("Failed on parse the lsblk result data, data: \"%s\"", data.constData());
-                    }
-                } else {
-                    fmWarning("Failed on exec lsblk command, exit code: %d, error message: \"%s\"", process.exitCode(), process.readAllStandardError().constData());
-                }
-            }
+    // For encrypted devices, get the underlying physical device path
+    QString cryptoBacking = devInfo.value(GlobalServerDefines::DeviceProperty::kCryptoBackingDevice).toString();
+    if (!cryptoBacking.isEmpty() && cryptoBacking != "/") {
+        auto backingInfo = DevProxyMng->queryBlockInfo(cryptoBacking);
+        if (!backingInfo.isEmpty()) {
+            physicalDevice = backingInfo.value(GlobalServerDefines::DeviceProperty::kDevice).toString();
+            fmDebug("Encrypted device detected, using backing device: \"%s\"", qPrintable(physicalDevice));
         }
-        fmDebug("targetIsRemovable = %d", bool(targetIsRemovable));
     }
+
+    // Get sector size and sys dev path from physical device using system calls
+    if (physicalDevice.isEmpty() || !physicalDevice.startsWith("/dev/"))
+        return;
+
+    // Get MAJ:MIN via stat() for targetSysDevPath
+    struct stat st;
+    if (stat(physicalDevice.toLocal8Bit().constData(), &st) != 0 || !S_ISBLK(st.st_mode)) {
+        fmWarning("Failed to stat device: \"%s\"", qPrintable(physicalDevice));
+        return;
+    }
+    targetSysDevPath = QString("/sys/dev/block/%1:%2").arg(major(st.st_rdev)).arg(minor(st.st_rdev));
+
+    // Get logical sector size from sysfs (no root permission required)
+    // For partitions, read from parent disk's queue directory
+    QFile sectorFile(targetSysDevPath + "/../queue/logical_block_size");
+    if (!sectorFile.exists()) {
+        // Maybe it's a whole disk device, try direct path
+        sectorFile.setFileName(targetSysDevPath + "/queue/logical_block_size");
+    }
+    if (sectorFile.open(QIODevice::ReadOnly)) {
+        bool ok = false;
+        int sectorSize = sectorFile.readAll().trimmed().toInt(&ok);
+        targetLogicSectorSize = ok ? static_cast<qint16>(sectorSize) : 512;
+        sectorFile.close();
+    } else {
+        targetLogicSectorSize = 512;
+        fmWarning("Failed to read sector size from sysfs, using default 512");
+    }
+
+    workData->exBlockSyncEveryWrite = FileOperationsUtils::blockSync();
+    targetDeviceStartSectorsWritten = getSectorsWritten();
+    workData->isBlockDevice = true;
+
+    fmDebug("Physical device: \"%s\", Sys dev path: \"%s\", Log-Sec: %d",
+            qPrintable(physicalDevice), qPrintable(targetSysDevPath), targetLogicSectorSize);
 }
 
 /*!
