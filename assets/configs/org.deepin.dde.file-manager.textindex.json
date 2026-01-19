@@ -143,7 +143,9 @@
 				"CMakeFiles",
 				"CMakeTmp",
 				"CMakeTmpQmake",
-				"lost+found"
+				"lost+found",
+				"UnixBench",
+				"tmp"
 			],
 			"serial": 0,
 			"flags": [],
