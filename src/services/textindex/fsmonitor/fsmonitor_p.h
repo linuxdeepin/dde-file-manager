@@ -7,6 +7,7 @@
 
 #include "fsmonitor.h"
 #include "fsmonitorworker.h"
+#include "utils/pathexcludematcher.h"
 
 #include <QFileInfo>
 #include <QSet>
@@ -108,7 +109,7 @@ public:
 
     QStringList rootPaths;
     QSet<QString> watchedDirectories;
-    QSet<QString> blacklistedPaths;
+    PathExcludeMatcher excludeMatcher;
     bool active { false };
 
     // Resource limits
