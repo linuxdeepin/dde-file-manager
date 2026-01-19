@@ -84,7 +84,6 @@ private:
 private:
     QMap<QString, GetOptFunc> getters;
     QMap<QString, SaveOptFunc> setters;
-    QSet<QString> serialDataKey;
 
     static BidirectionHash<QString, Application::ApplicationAttribute> keyToAA;
     static BidirectionHash<QString, Application::GenericAttribute> keyToGA;
