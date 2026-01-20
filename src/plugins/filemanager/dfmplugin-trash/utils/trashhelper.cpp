@@ -285,24 +285,8 @@ bool TrashHelper::customRoleDisplayName(const QUrl &url, const Global::ItemRoles
 
 void TrashHelper::onTrashStateChanged()
 {
-    // Ensure we know the current state before processing state change
-    ensureTrashStateInitialized();
-
     bool actuallyEmpty = FileUtils::trashIsEmpty();
-    TrashState newState = actuallyEmpty ? TrashState::Empty : TrashState::NotEmpty;
-
-    // Only process if state actually changed
-    if (newState == trashState)
-        return;
-
-    trashState = newState;
-
-    // Update UI for any state change, but only when trash becomes non-empty
-    // This matches the original logic: if (isTrashEmpty) return;
-    if (trashState == TrashState::Empty) {
-        fmDebug() << "Trash: State changed to empty, no UI update needed";
-        return;
-    }
+    trashState = actuallyEmpty ? TrashState::Empty : TrashState::NotEmpty;
 
     // When trash becomes non-empty, update UI
     const QList<quint64> &windowIds = FMWindowsIns.windowIdList();
@@ -384,15 +368,4 @@ void TrashHelper::initEvent()
     if (!resutl)
         fmWarning() << "subscribe signal_TrashCore_TrashStateChanged from dfmplugin_trashcore is failed.";
     connect(this, &TrashHelper::trashNotEmptyState, this, &TrashHelper::onTrashNotEmptyState, Qt::QueuedConnection);
-}
-
-void TrashHelper::ensureTrashStateInitialized()
-{
-    if (trashState == TrashState::Unknown) {
-        // Lazy initialization: determine actual trash state only when needed
-        bool actuallyEmpty = FileUtils::trashIsEmpty();
-        trashState = actuallyEmpty ? TrashState::Empty : TrashState::NotEmpty;
-        fmDebug() << "Trash: Lazy initialized trash state to"
-                  << (trashState == TrashState::Empty ? "Empty" : "NotEmpty");
-    }
 }

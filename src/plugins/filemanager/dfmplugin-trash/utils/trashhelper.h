@@ -90,7 +90,6 @@ private:
 
     explicit TrashHelper(QObject *parent = nullptr);
     void initEvent();
-    void ensureTrashStateInitialized();
 
 private:
     DFMBASE_NAMESPACE::LocalFileWatcher *trashFileWatcher { nullptr };
