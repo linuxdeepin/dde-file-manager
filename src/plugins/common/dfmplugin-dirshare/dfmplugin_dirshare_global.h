@@ -38,6 +38,15 @@ inline constexpr char kAnonymous[] { "anonymous" };
 
 inline constexpr char kEventSpace[] { "dfmplugin_dirshare" };
 
+namespace ShareConfig {
+static constexpr char kShareConfigPath[] { "/var/lib/samba/usershares" };
+static constexpr char kShareName[] { "sharename" };
+static constexpr char kShareAcl[] { "usershare_acl" };
+static constexpr char kSharePath[] { "path" };
+static constexpr char kShareComment[] { "comment" };
+static constexpr char kGuestOk[] { "guest_ok" };
+}   // namespace ShareConfig
+
 DPDIRSHARE_END_NAMESPACE
 
 #endif   // DFMPLUGIN_DIRSHARE_GLOBAL_H

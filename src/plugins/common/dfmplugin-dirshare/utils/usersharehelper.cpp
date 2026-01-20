@@ -49,15 +49,6 @@ static constexpr char kFuncSetPasswd[] { "SetUserSharePassword" };
 static constexpr char kFuncCloseShare[] { "CloseSmbShareByShareName" };
 }   // namespace DaemonServiceIFace
 
-namespace ShareConfig {
-static constexpr char kShareConfigPath[] { "/var/lib/samba/usershares" };
-static constexpr char kShareName[] { "sharename" };
-static constexpr char kShareAcl[] { "usershare_acl" };
-static constexpr char kSharePath[] { "path" };
-static constexpr char kShareComment[] { "comment" };
-static constexpr char kGuestOk[] { "guest_ok" };
-}   // namespace ShareConfig
-
 UserShareHelper *UserShareHelper::instance()
 {
     static UserShareHelper helper;

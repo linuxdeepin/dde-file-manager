@@ -26,8 +26,14 @@ public:
     explicit ShareWatcherManager(QObject *parent = nullptr);
     ~ShareWatcherManager();
 
-    DFMBASE_NAMESPACE::LocalFileWatcher *add(const QString &path);
+    QSharedPointer<DFMBASE_NAMESPACE::LocalFileWatcher> add(const QString &path);
     void remove(const QString &path);
+
+private:
+    void addParentPathsWatcher(const QString &path);
+    void removeParentPathsWatcher(const QString &path);
+    void addParentWatcher(const QString &path, const QString &parentPath);
+    bool shouldEmitSignal(const QUrl &url) const;
 
 Q_SIGNALS:
     void fileDeleted(const QString &filePath);
@@ -36,7 +42,8 @@ Q_SIGNALS:
     void subfileCreated(const QString &filePath);
 
 private:
-    QMap<QString, DFMBASE_NAMESPACE::LocalFileWatcher *> watchers;
+    QHash<QString, QSharedPointer<DFMBASE_NAMESPACE::LocalFileWatcher>> watchers;
+    QHash<QString, QList<QSharedPointer<DFMBASE_NAMESPACE::LocalFileWatcher>>> parentWatchers;
 };
 
 }
