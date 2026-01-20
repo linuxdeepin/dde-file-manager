@@ -634,7 +634,7 @@ bool DragDropOper::checkSourceValid(const QList<QUrl> &srcUrls)
 
     return std::all_of(srcUrls.cbegin(), srcUrls.cend(),
                        [](const QUrl &url) {
-                           auto info = InfoFactory::create<FileInfo>(url);
+                           auto info = InfoFactory::create<FileInfo>(url, Global::kCreateFileInfoSync);
                            if (!info) {
                                fmDebug() << "Failed to create FileInfo for URL:" << url.toString();
                                return false;
