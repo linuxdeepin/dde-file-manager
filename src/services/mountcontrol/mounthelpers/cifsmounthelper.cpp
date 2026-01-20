@@ -104,6 +104,11 @@ QVariantMap CifsMountHelper::mount(const QString &path, const QVariantMap &opts)
     const QString &version = d->probeVersion(host, port == -1 ? 0 : port);
     params.insert(MountOptionsField::kVersion, version);
 
+    // prepare password and cache
+    if (params.contains(MountOptionsField::kPasswd)) {
+        params[MountOptionsField::kPasswd] = preparePasswd(params[MountOptionsField::kPasswd]);
+    }
+
     int errNum = 0;
     QString errMsg;
     while (true) {
@@ -418,11 +423,11 @@ std::string CifsMountHelper::convertArgs(const QVariantMap &opts)
     QStringList params;
     using namespace MountOptionsField;
 
-    QString passwd;
     if (opts.contains(kUser) && opts.contains(kPasswd)
         && !opts.value(kUser).toString().isEmpty()
-        && !(passwd = preparePasswd(opts.value(kPasswd))).isEmpty()) {
+        && !opts.value(kPasswd).toString().isEmpty()) {
         const QString &user = opts.value(kUser).toString();
+        const QString &passwd = opts.value(kPasswd).toString();
         params.append(QString("user=%1").arg(user));
         params.append(QString("pass=%1").arg(passwd));
     } else {
