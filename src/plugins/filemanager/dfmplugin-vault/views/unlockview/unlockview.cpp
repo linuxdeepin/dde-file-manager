@@ -55,7 +55,7 @@ UnlockView::~UnlockView()
 QStringList UnlockView::btnText()
 {
     if (isOldPasswordSchemeMigrationModeFlag) {
-        return { tr("Cancel", "button"), tr("Verify Key", "button") };
+        return { tr("Cancel", "button"), tr("Verify Password", "button") };
     }
     return { tr("Cancel", "button"), tr("Unlock", "button") };
 }
