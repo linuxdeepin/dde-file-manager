@@ -174,6 +174,8 @@ void DetailView::createExtensionWidgets()
 
         widget->setParent(this);
         widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+        if (auto layout = widget->layout())
+            layout->setContentsMargins(0, 0, 0, 0);
 
         // Wrap with separator frame
         QFrame *frame = new QFrame(this);
