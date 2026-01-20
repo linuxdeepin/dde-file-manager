@@ -62,15 +62,21 @@ QIcon SmbShareFileInfo::fileIcon()
     bool isNetworkRoot = url.scheme() == Global::Scheme::kNetwork
             && url.path() == "/";
     bool isSmbRoot = url.scheme() == Global::Scheme::kSmb
-            && url.path().isEmpty();
+            && (url.path().isEmpty() || url.path() == "/");
 
     if (isNetworkRoot)
         return QIcon::fromTheme("network-workgroup");
     if (isSmbRoot)
         return QIcon::fromTheme("network-server");
 
+    QIcon icon;
     d->checkAndUpdateNode();
-    return QIcon::fromTheme(d->node.iconType);
+    icon = QIcon::fromTheme(d->node.iconType);
+
+    if (!icon.isNull())
+        return icon;
+
+    return QIcon::fromTheme("unknown");
 }
 
 bool SmbShareFileInfo::exists() const

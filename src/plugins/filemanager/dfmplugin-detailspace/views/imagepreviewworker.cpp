@@ -259,6 +259,15 @@ void ImagePreviewController::onNeedIconFallback(const QUrl &url, const QSize &ta
         }
     }
 
+    // Strategy 3: Final fallback - use "unknown" icon to ensure preview always shows something
+    result = QIcon::fromTheme("unknown").pixmap(iconSizeSquare, dpr);
+    if (!result.isNull()) {
+        Q_EMIT previewReady(url, result);
+        return;
+    }
+
+    // Should never reach here, but emit loadFailed as ultimate safety net
+    fmWarning() << "detailview: failed to load any icon for" << url;
     Q_EMIT loadFailed(url);
 }
 
