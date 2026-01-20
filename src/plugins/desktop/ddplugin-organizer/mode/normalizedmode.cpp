@@ -775,7 +775,7 @@ void NormalizedMode::rebuild(bool reorganize)
         // In "organize on trigger" mode and not manually triggered (reorganize=false),
         // only classify files that were previously organized (from profiles).
         // This prevents newly enabled categories from auto-organizing files on desktop restart.
-        if (CfgPresenter->organizeOnTriggered()) {
+        if (!reorganize && CfgPresenter->organizeOnTriggered()) {
             QList<QUrl> organizedFiles;
             for (const CollectionBaseDataPtr &profile : profiles) {
                 std::copy_if(profile->items.cbegin(), profile->items.cend(),
