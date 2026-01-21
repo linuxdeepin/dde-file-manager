@@ -992,7 +992,10 @@ void ComputerItemWatcher::onUpdateBlockItem(const QString &id)
         auto item = initedDatas.at(ret - initedDatas.cbegin());
         if (item.info) {
             item.info->refresh();
-            updateSidebarItem(devUrl, item.info->displayName(), item.info->renamable());
+            // 使用 QMetaObject::invokeMethod 确保在主线程调用 updateSidebarItem
+            QMetaObject::invokeMethod(this, [this, devUrl, item]() {
+                updateSidebarItem(devUrl, item.info->displayName(), item.info->renamable());
+            }, Qt::QueuedConnection);
         }
     }
 }
