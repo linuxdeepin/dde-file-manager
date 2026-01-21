@@ -30,7 +30,25 @@ DeviceList::DeviceList(QWidget *parent)
 void DeviceList::showEvent(QShowEvent *e)
 {
     updateHeight();
+
+    // 立即刷新设备容量（显示最新数据）
+    qCDebug(logAppDock) << "DeviceList shown, requesting immediate usage refresh";
+    manager->refreshUsage();
+
+    // 订阅容量监控（引用计数 +1，持续更新）
+    qCDebug(logAppDock) << "DeviceList shown, subscribing to usage monitoring";
+    manager->subscribeUsageMonitoring();
+
     QScrollArea::showEvent(e);
+}
+
+void DeviceList::hideEvent(QHideEvent *e)
+{
+    // 取消订阅容量监控（引用计数 -1）
+    qCDebug(logAppDock) << "DeviceList hidden, unsubscribing from usage monitoring";
+    manager->unsubscribeUsageMonitoring();
+
+    QScrollArea::hideEvent(e);
 }
 
 void DeviceList::addDevice(const DockItemData &item)

@@ -10,8 +10,11 @@
 #include <QDBusVariant>
 #include <QVariantMap>
 #include <QObject>
+#include <QElapsedTimer>
+#include <QSet>
+#include <QDBusContext>
 
-class DeviceManagerDBus : public QObject
+class DeviceManagerDBus : public QObject, public QDBusContext
 {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "org.deepin.Filemanager.Daemon.DeviceManager")
@@ -46,15 +49,29 @@ public slots:
     void DetachProtocolDevice(QString id);
     void DetachAllMountedDevices();
 
+    void StartMonitoringUsage();   // 开始监听容量变化
+    void StopMonitoringUsage();   // 停止监听容量变化
+    void RefreshDeviceUsage();   // 立即刷新设备容量
+
     QStringList GetBlockDevicesIdList(int opts);
     QVariantMap QueryBlockDeviceInfo(QString id, bool reload);
     QStringList GetProtocolDevicesIdList();
     QVariantMap QueryProtocolDeviceInfo(QString id, bool reload);
 
+private Q_SLOTS:
+    void onNameOwnerChanged(const QString &name, const QString &oldOwner, const QString &newOwner);
+
 private:
     void initialize();
     void initConnection();
     void requestRefreshDesktopAsNeeded(const QString &path, const QString &operation);
+
+    // 引用计数管理
+    QSet<QString> m_monitoringClients;   // 订阅客户端集合
+
+    // 防抖（用于 RefreshDeviceUsage）
+    QElapsedTimer m_lastRefreshTimer;
+    static const qint64 kRefreshDebounceMs = 500;   // 500ms 防抖
 };
 
 #endif   // DEVICEMANAGERDBUS_H

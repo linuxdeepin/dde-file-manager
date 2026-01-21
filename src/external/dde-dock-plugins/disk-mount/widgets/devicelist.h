@@ -22,6 +22,7 @@ public:
 
 protected:
     void showEvent(QShowEvent *e) override;
+    void hideEvent(QHideEvent *e) override;
 
 private Q_SLOTS:
     void addDevice(const DockItemData &item);

@@ -752,6 +752,16 @@ void DeviceManager::stopPollingDeviceUsage()
     d->watcher->stopPollingUsage();
 }
 
+void DeviceManager::initUsageCache()
+{
+    d->watcher->initUsageCache();
+}
+
+void DeviceManager::refreshUsage()
+{
+    d->watcher->refreshUsage();
+}
+
 void DeviceManager::startMonitor()
 {
     if (isMonitoring())

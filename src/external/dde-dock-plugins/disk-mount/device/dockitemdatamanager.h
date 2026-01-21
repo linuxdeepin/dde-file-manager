@@ -24,6 +24,10 @@ public:
     void ejectAll();
     void ejectDevice(const QString &id);
 
+    void subscribeUsageMonitoring();
+    void unsubscribeUsageMonitoring();
+    void refreshUsage();  // 立即刷新设备容量
+
 Q_SIGNALS:
     void requesetSetDockVisible(bool visible);
     void mountAdded(const DockItemData &item);

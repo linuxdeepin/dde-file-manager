@@ -37,6 +37,9 @@ public:
     void startPollingUsage();
     void stopPollingUsage();
 
+    void initUsageCache();
+    void refreshUsage();
+
     void startWatch();
     void stopWatch();
     void initDevDatas();
