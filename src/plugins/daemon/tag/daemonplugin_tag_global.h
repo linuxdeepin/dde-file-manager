@@ -24,18 +24,23 @@ enum class QueryOpts : int {
     kTagsOfFile,   // get tags of a file
     kFilesOfTag,   // get files of a tag
     kColorOfTags,   // get color-tag map
-    kTagIntersectionOfFiles   // get tag intersection of files
+    kTagIntersectionOfFiles,   // get tag intersection of files
+    kTrashFileTags,   // get trash file tags
+    kAllTrashFileTags   // get all trash file tags
 };
 
 enum class InsertOpts : int {
     kTags,
-    kTagOfFiles
+    kTagOfFiles,
+    kTrashFileTags   // save trash file tags
 };
 
 enum class DeleteOpts : int {
     kTags,
     kFiles,
-    kTagOfFiles
+    kTagOfFiles,
+    kTrashFileTags,   // remove trash file tags
+    kAllTrashTags   // clear all trash tags
 };
 
 enum class UpdateOpts : int {

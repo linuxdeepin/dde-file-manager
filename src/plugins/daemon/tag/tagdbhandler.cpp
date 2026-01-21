@@ -6,6 +6,7 @@
 
 #include "beans/filetaginfo.h"
 #include "beans/tagproperty.h"
+#include "beans/trashfiletaginfo.h"
 
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/base/standardpaths.h>
@@ -26,6 +27,7 @@ DAEMONPTAG_BEGIN_NAMESPACE
 
 static constexpr char kTagTableFileTags[] = "file_tags";
 static constexpr char kTagTableTagProperty[] = "tag_property";
+static constexpr char kTagTableTrashFileTags[] = "trash_file_tags";
 
 TagDbHandler *TagDbHandler::instance()
 {
@@ -512,6 +514,12 @@ void TagDbHandler::initialize()
         fmDebug() << "TagDbHandler::initialize: Table created or verified:" << kTagTableTagProperty;
     }
 
+    if (!createTable(kTagTableTrashFileTags)) {
+        fmCritical() << "TagDbHandler::initialize: Failed to create table:" << kTagTableTrashFileTags;
+    } else {
+        fmDebug() << "TagDbHandler::initialize: Table created or verified:" << kTagTableTrashFileTags;
+    }
+
     fmInfo() << "TagDbHandler::initialize: Tag database handler initialized successfully";
 }
 
@@ -532,6 +540,14 @@ bool TagDbHandler::createTable(const QString &tableName)
                 SqliteConstraint::primary("tagIndex"),
                 SqliteConstraint::autoIncreament("tagIndex"),
                 SqliteConstraint::unique("tagIndex"));
+    }
+
+    if (SqliteHelper::tableName<TrashFileTagInfo>() == tableName) {
+
+        ret = handle->createTable<TrashFileTagInfo>(
+                SqliteConstraint::primary("trashIndex"),
+                SqliteConstraint::autoIncreament("trashIndex"),
+                SqliteConstraint::unique("trashIndex"));
     }
 
     return ret;
@@ -709,6 +725,177 @@ bool TagDbHandler::changeFilePath(const QString &oldPath, const QString &newPath
 
     fmDebug() << "TagDbHandler::changeFilePath: Successfully changed file path - oldPath:" << oldPath << "newPath:" << newPath;
     return true;
+}
+
+bool TagDbHandler::saveTrashFileTags(const QString &originalPath, qint64 inode, const QStringList &tags)
+{
+    DFMBASE_NAMESPACE::FinallyUtil finally([&]() { lastErr.clear(); });
+
+    if (originalPath.isEmpty() || inode <= 0 || tags.isEmpty()) {
+        lastErr = "input parameter is empty or invalid!";
+        fmWarning() << "TagDbHandler::saveTrashFileTags: Invalid parameters - path:" << originalPath << "inode:" << inode << "tags:" << tags;
+        return false;
+    }
+
+    fmInfo() << "TagDbHandler::saveTrashFileTags: Saving trash file tags - path:" << originalPath << "inode:" << inode << "tags:" << tags;
+
+    // Remove existing record first
+    const auto &field = Expression::Field<TrashFileTagInfo>;
+    handle->remove<TrashFileTagInfo>(field("originalPath") == originalPath && field("fileInode") == inode);
+
+    // Insert new record
+    TrashFileTagInfo info;
+    info.setOriginalPath(originalPath);
+    info.setFileInode(inode);
+    info.setTagNames(tags.join(","));
+    info.setDeleteTime(QDateTime::currentSecsSinceEpoch());
+    info.setFuture("null");
+
+    if (-1 == handle->insert<TrashFileTagInfo>(info)) {
+        lastErr = QString("Insert trash file tags failed! path: %1, inode: %2").arg(originalPath).arg(inode);
+        fmCritical() << "TagDbHandler::saveTrashFileTags: Failed to insert - path:" << originalPath << "inode:" << inode;
+        return false;
+    }
+
+    emit trashFileTagsSaved(originalPath, inode, tags);
+    fmInfo() << "TagDbHandler::saveTrashFileTags: Successfully saved trash file tags";
+    return true;
+}
+
+QStringList TagDbHandler::getTrashFileTags(const QString &originalPath, qint64 inode)
+{
+    DFMBASE_NAMESPACE::FinallyUtil finally([&]() { lastErr.clear(); });
+    finally.dismiss();
+
+    if (originalPath.isEmpty() || inode <= 0) {
+        fmWarning() << "TagDbHandler::getTrashFileTags: Invalid parameters - path:" << originalPath << "inode:" << inode;
+        return {};
+    }
+
+    const auto &field = Expression::Field<TrashFileTagInfo>;
+    const auto &beans = handle->query<TrashFileTagInfo>()
+                                .where(field("originalPath") == originalPath && field("fileInode") == inode)
+                                .toBeans();
+
+    if (beans.isEmpty()) {
+        fmDebug() << "TagDbHandler::getTrashFileTags: No trash tags found - path:" << originalPath << "inode:" << inode;
+        return {};
+    }
+
+    QString tagNames = beans.first()->getTagNames();
+    QStringList tags = tagNames.split(",", Qt::SkipEmptyParts);
+    fmDebug() << "TagDbHandler::getTrashFileTags: Retrieved" << tags.size() << "tags - path:" << originalPath;
+    return tags;
+}
+QVariantMap TagDbHandler::getTrashFileTags(const QStringList &queryParams)
+{
+    QVariantMap result;
+
+    if (queryParams.size() < 2) {
+        fmWarning() << "TagDbHandler::getTrashFileTags: Invalid query parameters, expected at least 2";
+        return result;
+    }
+
+    QString path, inodeStr;
+    for (const QString &item : queryParams) {
+        if (item.startsWith("originalPath:"))
+            path = item.mid(13);
+        else if (item.startsWith("inode:"))
+            inodeStr = item.mid(6);
+    }
+
+    if (path.isEmpty() || inodeStr.isEmpty()) {
+        fmWarning() << "TagDbHandler::getTrashFileTags: Failed to parse parameters";
+        return result;
+    }
+
+    QStringList tags = getTrashFileTags(path, inodeStr.toLongLong());
+    result["tags"] = tags;
+    return result;
+}
+bool TagDbHandler::removeTrashFileTags(const QString &originalPath, qint64 inode)
+{
+    DFMBASE_NAMESPACE::FinallyUtil finally([&]() { lastErr.clear(); });
+
+    if (originalPath.isEmpty() || inode <= 0) {
+        lastErr = "input parameter is empty or invalid!";
+        fmWarning() << "TagDbHandler::removeTrashFileTags: Invalid parameters - path:" << originalPath << "inode:" << inode;
+        return false;
+    }
+
+    fmInfo() << "TagDbHandler::removeTrashFileTags: Removing trash file tags - path:" << originalPath << "inode:" << inode;
+
+    const auto &field = Expression::Field<TrashFileTagInfo>;
+    if (!handle->remove<TrashFileTagInfo>(field("originalPath") == originalPath && field("fileInode") == inode)) {
+        lastErr = QString("Remove trash file tags failed! path: %1, inode: %2").arg(originalPath).arg(inode);
+        fmCritical() << "TagDbHandler::removeTrashFileTags: Failed to remove - path:" << originalPath << "inode:" << inode;
+        return false;
+    }
+
+    emit trashFileTagsRestored(originalPath, inode);
+    fmInfo() << "TagDbHandler::removeTrashFileTags: Successfully removed trash file tags";
+    return true;
+}
+
+bool TagDbHandler::clearAllTrashTags()
+{
+    DFMBASE_NAMESPACE::FinallyUtil finally([&]() { lastErr.clear(); });
+
+    fmInfo() << "TagDbHandler::clearAllTrashTags: Clearing all trash file tags";
+
+    const auto &field = Expression::Field<TrashFileTagInfo>;
+    if (!handle->remove<TrashFileTagInfo>(field("trashIndex") > 0)) {
+        lastErr = "Clear all trash tags failed!";
+        fmCritical() << "TagDbHandler::clearAllTrashTags: Failed to clear trash tags";
+        return false;
+    }
+
+    emit trashTagsCleared();
+    fmInfo() << "TagDbHandler::clearAllTrashTags: Successfully cleared all trash file tags";
+    return true;
+}
+
+bool TagDbHandler::hasTrashFileTags(const QString &originalPath, qint64 inode)
+{
+    DFMBASE_NAMESPACE::FinallyUtil finally([&]() { lastErr.clear(); });
+    finally.dismiss();
+
+    if (originalPath.isEmpty() || inode <= 0) {
+        fmWarning() << "TagDbHandler::hasTrashFileTags: Invalid parameters - path:" << originalPath << "inode:" << inode;
+        return false;
+    }
+
+    const auto &field = Expression::Field<TrashFileTagInfo>;
+    const auto &beans = handle->query<TrashFileTagInfo>()
+                                .where(field("originalPath") == originalPath && field("fileInode") == inode)
+                                .toBeans();
+
+    bool exists = !beans.isEmpty();
+    fmDebug() << "TagDbHandler::hasTrashFileTags: Trash tags exist:" << exists << "- path:" << originalPath;
+    return exists;
+}
+
+QVariantHash TagDbHandler::getAllTrashFileTags()
+{
+    DFMBASE_NAMESPACE::FinallyUtil finally([&]() { lastErr.clear(); });
+    finally.dismiss();
+
+    QVariantHash result;
+    const auto &beans = handle->query<TrashFileTagInfo>().toBeans();
+
+    for (const auto &bean : beans) {
+        QString originalPath = bean->property("originalPath").toString();
+        qint64 inode = bean->property("fileInode").toLongLong();
+        QString tagNames = bean->property("tagNames").toString();
+
+        if (!originalPath.isEmpty() && inode > 0 && !tagNames.isEmpty()) {
+            QString key = QString("%1:%2").arg(originalPath).arg(inode);
+            result[key] = tagNames.split(",", Qt::SkipEmptyParts);
+        }
+    }
+
+    fmInfo() << "TagDbHandler::getAllTrashFileTags: Loaded" << result.size() << "trash tag records";
+    return result;
 }
 
 DAEMONPTAG_END_NAMESPACE

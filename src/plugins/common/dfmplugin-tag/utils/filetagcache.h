@@ -65,6 +65,11 @@ private:
     void taggeFiles(const QVariantMap &fileAndTags);
     void untaggeFiles(const QVariantMap &fileAndTags);
 
+    void saveTrashTags(const QString &path, qint64 inode, const QStringList &tags);
+    QStringList getTrashTags(const QString &path, qint64 inode) const;
+    void removeTrashTags(const QString &path, qint64 inode);
+    void clearAllTrashTags();
+
 private:
     QScopedPointer<FileTagCachePrivate> d;
 };
@@ -82,6 +87,11 @@ public:
     QStringList getTagsByFile(const QString &path);
     QMap<QString, QColor> getCacheTagsColor(const QStringList &tags);
     QHash<QString, QStringList> findChildren(const QString &parentPath) const;
+
+    void saveTrashFileTags(const QString &path, qint64 inode, const QStringList &tags);
+    QStringList getTrashFileTags(const QString &path, qint64 inode);
+    void removeTrashFileTags(const QString &path, qint64 inode);
+    void clearAllTrashTags();
 
 Q_SIGNALS:
     void initLoadTagInfos();

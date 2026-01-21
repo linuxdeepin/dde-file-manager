@@ -227,6 +227,79 @@ bool TagProxyHandle::deleteFileTags(const QVariantMap &value)
     return reply.value();
 }
 
+bool TagProxyHandle::saveTrashFileTags(const QString &originalPath, qint64 inode, const QStringList &tags)
+{
+    QVariantMap value;
+    value["originalPath"] = originalPath;
+    value["inode"] = inode;
+    value["tags"] = tags;
+
+    auto &&reply = d->tagDBusInterface->Insert(int(InsertOpts::kTrashFileTags), value);
+    reply.waitForFinished();
+    if (!reply.isValid()) {
+        fmWarning() << "TagProxyHandle::saveTrashFileTags: D-Bus call failed - path:" << originalPath;
+        return false;
+    }
+    return reply.value();
+}
+
+QStringList TagProxyHandle::getTrashFileTags(const QString &originalPath, qint64 inode)
+{
+    QStringList queryValue;
+    queryValue << QString("originalPath:%1").arg(originalPath);
+    queryValue << QString("inode:%1").arg(inode);
+
+    auto &&reply = d->tagDBusInterface->Query(int(QueryOpts::kTrashFileTags), queryValue);
+    reply.waitForFinished();
+    if (!reply.isValid()) {
+        fmWarning() << "TagProxyHandle::getTrashFileTags: D-Bus call failed - path:" << originalPath;
+        return {};
+    }
+
+    QVariantMap result = reply.value().variant().toMap();
+    return result.value("tags").toStringList();
+}
+
+bool TagProxyHandle::removeTrashFileTags(const QString &originalPath, qint64 inode)
+{
+    QVariantMap value;
+    value["originalPath"] = originalPath;
+    value["inode"] = inode;
+
+    auto &&reply = d->tagDBusInterface->Delete(int(DeleteOpts::kTrashFileTags), value);
+    reply.waitForFinished();
+    if (!reply.isValid()) {
+        fmWarning() << "TagProxyHandle::removeTrashFileTags: D-Bus call failed - path:" << originalPath;
+        return false;
+    }
+    return reply.value();
+}
+
+bool TagProxyHandle::clearAllTrashTags()
+{
+    QVariantMap value;  // Empty map
+
+    auto &&reply = d->tagDBusInterface->Delete(int(DeleteOpts::kAllTrashTags), value);
+    reply.waitForFinished();
+    if (!reply.isValid()) {
+        fmWarning() << "TagProxyHandle::clearAllTrashTags: D-Bus call failed";
+        return false;
+    }
+    return reply.value();
+}
+
+QVariantHash TagProxyHandle::getAllTrashFileTags()
+{
+    auto &&reply = d->tagDBusInterface->Query(int(QueryOpts::kAllTrashFileTags));
+    reply.waitForFinished();
+    if (!reply.isValid()) {
+        fmWarning() << "TagProxyHandle::getAllTrashFileTags: D-Bus call failed" << reply.error();
+        return {};
+    }
+    const auto &data = d->parseDBusVariant(reply.value());
+    return data.toHash();
+}
+
 bool TagProxyHandle::connectToService()
 {
     fmInfo() << "Start initilize dbus: `TagManagerDBusInterface`";

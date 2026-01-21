@@ -16,6 +16,7 @@
 #include <QDir>
 #include <QSettings>
 #include <QTemporaryFile>
+#include <QRegularExpression>
 
 Q_DECLARE_METATYPE(QDir::Filters);
 
@@ -97,6 +98,53 @@ void TagEventReceiver::handleFileRemoveResult(const QList<QUrl> &srcUrls, bool o
     }
 }
 
+void TagEventReceiver::handleFileTrashedResult(const QList<QUrl> &srcUrls, bool ok, const QString &errMsg)
+{
+    Q_UNUSED(errMsg)
+
+    if (!ok || srcUrls.isEmpty())
+        return;
+
+    for (const auto &url : srcUrls) {
+        // Get file tags
+        const auto &tags = TagManager::instance()->getTagsByUrls({ url });
+        if (tags.isEmpty())
+            continue;
+
+        // Get file info
+        auto info = InfoFactory::create<FileInfo>(url);
+        if (!info)
+            continue;
+
+        // Get original path and inode
+        QString originalPath = info->pathOf(FileInfo::FilePathInfoType::kAbsoluteFilePath);
+        qint64 inode = info->extendAttributes(FileInfo::FileExtendedInfoType::kInode).toLongLong();
+
+        if (originalPath.isEmpty() || inode <= 0) {
+            fmWarning() << "Failed to get file info for trash operation - path:" << originalPath << "inode:" << inode;
+            continue;
+        }
+
+        if (!tags.isEmpty())
+            TagManager::instance()->removeTagsOfFiles(tags, { url });
+
+        // Save to trash file tags table via TagManager
+        TagManager::instance()->saveTrashFileTags(originalPath, static_cast<quint64>(inode), tags);
+    }
+}
+
+void TagEventReceiver::handleTrashCleanedResult(const QList<QUrl> &destUrls, bool ok, const QString &errMsg)
+{
+    Q_UNUSED(errMsg)
+    Q_UNUSED(destUrls)
+
+    if (!ok)
+        return;
+
+    // Clear all trash file tags via TagManager
+    TagManager::instance()->clearAllTrashTags();
+}
+
 void TagEventReceiver::handleFileRenameResult(quint64 winId, const QMap<QUrl, QUrl> &renamedUrls, bool ok, const QString &errMsg)
 {
     Q_UNUSED(winId)
@@ -125,13 +173,60 @@ void TagEventReceiver::handleRestoreFromTrashResult(const QList<QUrl> &srcUrls, 
 {
     Q_UNUSED(errMsg)
     Q_UNUSED(srcUrls)
-    Q_UNUSED(destUrls)
-    Q_UNUSED(customInfos)
 
-    // TODO(zhangs): save or restore taginfo
-
-    if (!ok)
+    if (!ok || destUrls.isEmpty() || customInfos.isEmpty())
         return;
+
+    if (destUrls.size() != customInfos.size()) {
+        fmWarning() << "Restore from trash: destination URL and customInfos count mismatch";
+        return;
+    }
+
+    for (int i = 0; i < destUrls.size(); ++i) {
+        const QUrl &destUrl = destUrls.at(i);
+        QString customInfo = customInfos.at(i).toString();
+
+        // Parse original path from trash info using regex
+        static QRegularExpression pathRegex("^Path=(.+)$", QRegularExpression::MultilineOption);
+        QRegularExpressionMatch match = pathRegex.match(customInfo);
+        if (!match.hasMatch()) {
+            fmWarning() << "Failed to parse original path from trash info";
+            continue;
+        }
+
+        QString encodedPath = match.captured(1);
+        QString originalPath = QUrl::fromPercentEncoding(encodedPath.toUtf8());
+        if (originalPath.isEmpty()) {
+            fmWarning() << "Original path is empty after decoding";
+            continue;
+        }
+
+        // Get inode from destination file
+        auto info = InfoFactory::create<FileInfo>(destUrl);
+        if (!info)
+            continue;
+
+        qint64 inode = info->extendAttributes(FileInfo::FileExtendedInfoType::kInode).toLongLong();
+        if (inode <= 0) {
+            fmWarning() << "Failed to get inode for destination file:" << destUrl;
+            continue;
+        }
+
+        // Query trash file tags via TagManager using original path and inode
+        QStringList tags = TagManager::instance()->getTrashFileTags(originalPath, static_cast<quint64>(inode));
+        if (tags.isEmpty())
+            continue;
+
+        // Restore tags to destination file via TagManager
+        if (TagManager::instance()->addTagsForFiles(tags, { destUrl })) {
+            fmInfo() << "Restored tags from trash - original path:" << originalPath << "destination:" << destUrl << "tags count:" << tags.size();
+
+            // Remove trash record via TagManager
+            TagManager::instance()->removeTrashFileTags(originalPath, static_cast<quint64>(inode));
+        } else {
+            fmWarning() << "Failed to restore tags for file:" << destUrl;
+        }
+    }
 }
 
 QStringList TagEventReceiver::handleGetTags(const QUrl &url)

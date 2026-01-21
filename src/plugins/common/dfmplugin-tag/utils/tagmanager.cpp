@@ -483,6 +483,53 @@ bool TagManager::removeChildren(const QString &parentPath)
     return ret;
 }
 
+bool TagManager::saveTrashFileTags(const QString &originalPath, quint64 fileInode, const QStringList &tagNames)
+{
+    if (originalPath.isEmpty() || tagNames.isEmpty())
+        return false;
+
+    // Save to cache
+    FileTagCacheIns.saveTrashFileTags(originalPath, fileInode, tagNames);
+
+    // Save to database via D-Bus
+    return TagProxyHandleIns->saveTrashFileTags(originalPath, fileInode, tagNames);
+}
+
+QStringList TagManager::getTrashFileTags(const QString &originalPath, quint64 fileInode)
+{
+    if (originalPath.isEmpty())
+        return {};
+
+    // Try cache first
+    const auto &cachedTags = FileTagCacheIns.getTrashFileTags(originalPath, fileInode);
+    if (!cachedTags.isEmpty())
+        return cachedTags;
+
+    // Query from database via D-Bus
+    return TagProxyHandleIns->getTrashFileTags(originalPath, fileInode);
+}
+
+bool TagManager::removeTrashFileTags(const QString &originalPath, quint64 fileInode)
+{
+    if (originalPath.isEmpty())
+        return false;
+
+    // Remove from cache
+    FileTagCacheIns.removeTrashFileTags(originalPath, fileInode);
+
+    // Remove from database via D-Bus
+    return TagProxyHandleIns->removeTrashFileTags(originalPath, fileInode);
+}
+
+bool TagManager::clearAllTrashTags()
+{
+    // Clear cache
+    FileTagCacheIns.clearAllTrashTags();
+
+    // Clear database via D-Bus
+    return TagProxyHandleIns->clearAllTrashTags();
+}
+
 QMap<QString, QString> TagManager::getTagsColorName(const QStringList &tags) const
 {
     if (tags.isEmpty())

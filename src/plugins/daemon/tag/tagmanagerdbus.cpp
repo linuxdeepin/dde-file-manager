@@ -48,6 +48,13 @@ QDBusVariant TagManagerDBus::Query(int opt, const QStringList value)
     case QueryOpts::kTagIntersectionOfFiles:
         dbusVar.setVariant(TagDbHandler::instance()->getSameTagsOfDiffUrls(value));
         break;
+    case QueryOpts::kTrashFileTags:
+        dbusVar.setVariant(TagDbHandler::instance()->getTrashFileTags(value));
+        break;
+    case QueryOpts::kAllTrashFileTags: {
+        dbusVar.setVariant(TagDbHandler::instance()->getAllTrashFileTags());
+        break;
+    }
     }
 
     return dbusVar;
@@ -62,6 +69,12 @@ bool TagManagerDBus::Insert(int opt, const QVariantMap value)
         return TagDbHandler::instance()->addTagProperty(value);
     case InsertOpts::kTagOfFiles:
         return TagDbHandler::instance()->addTagsForFiles(value);
+    case InsertOpts::kTrashFileTags: {
+        QString path = value.value("originalPath").toString();
+        qint64 inode = value.value("inode").toLongLong();
+        QStringList tags = value.value("tags").toStringList();
+        return TagDbHandler::instance()->saveTrashFileTags(path, inode, tags);
+    }
     }
 
     return false;
@@ -72,6 +85,13 @@ bool TagManagerDBus::Delete(int opt, const QVariantMap value)
     DeleteOpts deleteOpt { opt };
 
     switch (deleteOpt) {
+    case DeleteOpts::kTrashFileTags: {
+        QString path = value.value("originalPath").toString();
+        qint64 inode = value.value("inode").toLongLong();
+        return TagDbHandler::instance()->removeTrashFileTags(path, inode);
+    }
+    case DeleteOpts::kAllTrashTags:
+        return TagDbHandler::instance()->clearAllTrashTags();
     case DeleteOpts::kTags:
         return TagDbHandler::instance()->deleteTags(value.first().toStringList());
     case DeleteOpts::kFiles:

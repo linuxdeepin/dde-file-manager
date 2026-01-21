@@ -248,7 +248,8 @@ void Tag::bindEvents()
     dpfSignalDispatcher->subscribe(GlobalEventType::kHideFilesResult, TagEventReceiver::instance(), &TagEventReceiver::handleHideFilesResult);
     dpfSignalDispatcher->subscribe(GlobalEventType::kCutFileResult, TagEventReceiver::instance(), &TagEventReceiver::handleFileCutResult);
     dpfSignalDispatcher->subscribe(GlobalEventType::kCopyResult, TagEventReceiver::instance(), &TagEventReceiver::handleFileCopyResult);
-    dpfSignalDispatcher->subscribe(GlobalEventType::kMoveToTrashResult, TagEventReceiver::instance(), &TagEventReceiver::handleFileRemoveResult);
+    dpfSignalDispatcher->subscribe(GlobalEventType::kMoveToTrashResult, TagEventReceiver::instance(), &TagEventReceiver::handleFileTrashedResult);
+    dpfSignalDispatcher->subscribe(GlobalEventType::kCleanTrashResult, TagEventReceiver::instance(), &TagEventReceiver::handleTrashCleanedResult);
     dpfSignalDispatcher->subscribe(GlobalEventType::kDeleteFilesResult, TagEventReceiver::instance(), &TagEventReceiver::handleFileRemoveResult);
     dpfSignalDispatcher->subscribe(GlobalEventType::kRenameFileResult, TagEventReceiver::instance(), &TagEventReceiver::handleFileRenameResult);
     dpfSignalDispatcher->subscribe(GlobalEventType::kRestoreFromTrashResult, TagEventReceiver::instance(), &TagEventReceiver::handleRestoreFromTrashResult);

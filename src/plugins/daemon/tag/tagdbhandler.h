@@ -55,6 +55,15 @@ public:
     bool changeTagNamesWithFiles(const QVariantMap &data);
     bool changeFilePaths(const QVariantMap &data);
 
+    // Trash file tags operations
+    bool saveTrashFileTags(const QString &originalPath, qint64 inode, const QStringList &tags);
+    QStringList getTrashFileTags(const QString &originalPath, qint64 inode);
+    QVariantMap getTrashFileTags(const QStringList &queryParams);
+    bool removeTrashFileTags(const QString &originalPath, qint64 inode);
+    bool clearAllTrashTags();
+    bool hasTrashFileTags(const QString &originalPath, qint64 inode);
+    QVariantHash getAllTrashFileTags();
+
     QString lastError() const;
 
 private:
@@ -76,6 +85,9 @@ Q_SIGNALS:
     void tagsNameChanged(const QVariantMap &oldAndNewName);
     void filesWereTagged(const QVariantMap &filesWereTagged);
     void filesUntagged(const QVariantMap &delTagsOfFile);
+    void trashFileTagsSaved(const QString &originalPath, qint64 inode, const QStringList &tags);
+    void trashFileTagsRestored(const QString &originalPath, qint64 inode);
+    void trashTagsCleared();
 
 private:
     QScopedPointer<DFMBASE_NAMESPACE::SqliteHandle> handle;
