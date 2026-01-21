@@ -14,6 +14,8 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/dbusservice/global_server_defines.h>
+#include <dfm-base/base/device/deviceproxymanager.h>
+
 #include <dfm-framework/dpf.h>
 
 #include <QEvent>
@@ -145,6 +147,13 @@ void ComputerView::showEvent(QShowEvent *event)
     fmInfo() << "start update item visible in computerview.";
     handleComputerItemVisible();
     fmInfo() << "end update item visible in computerview.";
+
+    // 订阅容量监控（引用计数 +1）
+    QTimer::singleShot(0, []() {
+        fmDebug() << "Computer view shown, subscribing to device usage monitoring";
+        DevProxyMng->subscribeUsageMonitoring();
+    });
+
     DListView::showEvent(event);
 }
 
@@ -152,6 +161,13 @@ void ComputerView::hideEvent(QHideEvent *event)
 {
     auto selectionModel = this->selectionModel();
     selectionModel->clearSelection();
+
+    // 取消订阅容量监控（引用计数 -1）
+    QTimer::singleShot(0, []() {
+        fmDebug() << "Computer view hidden, unsubscribing from device usage monitoring";
+        DevProxyMng->unsubscribeUsageMonitoring();
+    });
+
     DListView::hideEvent(event);
 }
 

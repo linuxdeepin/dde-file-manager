@@ -9,6 +9,7 @@
 #include <dtkgui_global.h>
 #include <dtkwidget_global.h>
 #include <DDesktopServices>
+#include <QTimer>
 
 Q_DECLARE_LOGGING_CATEGORY(logAppDock)
 
@@ -381,4 +382,28 @@ void DockItemDataManager::watchService()
                 qCInfo(logAppDock) << serv << "registered.";
                 onServiceRegistered();
             });
+}
+
+void DockItemDataManager::subscribeUsageMonitoring()
+{
+    QTimer::singleShot(0, this, [this]() {
+        qCDebug(logAppDock) << "Dock plugin subscribing to device usage monitoring";
+        devMng->StartMonitoringUsage();
+    });
+}
+
+void DockItemDataManager::unsubscribeUsageMonitoring()
+{
+    QTimer::singleShot(0, this, [this]() {
+        qCDebug(logAppDock) << "Dock plugin unsubscribing from device usage monitoring";
+        devMng->StopMonitoringUsage();
+    });
+}
+
+void DockItemDataManager::refreshUsage()
+{
+    QTimer::singleShot(0, this, [this]() {
+        qInfo(logAppDock) << "Dock plugin requesting immediate device usage refresh";
+        devMng->RefreshDeviceUsage();
+    });
 }

@@ -80,6 +80,33 @@ QVariantMap DeviceProxyManager::queryProtocolInfo(const QString &id, bool reload
     }
 }
 
+void DeviceProxyManager::subscribeUsageMonitoring()
+{
+    if (d->isDBusRuning() && d->devMngDBus) {
+        d->devMngDBus->StartMonitoringUsage();
+    } else {
+        DevMngIns->startPollingDeviceUsage();
+    }
+}
+
+void DeviceProxyManager::unsubscribeUsageMonitoring()
+{
+    if (d->isDBusRuning() && d->devMngDBus) {
+        d->devMngDBus->StopMonitoringUsage();
+    } else {
+        DevMngIns->stopPollingDeviceUsage();
+    }
+}
+
+void DeviceProxyManager::refreshUsage()
+{
+    if (d->isDBusRuning() && d->devMngDBus) {
+        d->devMngDBus->RefreshDeviceUsage();
+    } else {
+        DevMngIns->refreshUsage();
+    }
+}
+
 void DeviceProxyManager::reloadOpticalInfo(const QString &id)
 {
     if (d->isDBusRuning() && d->devMngDBus)

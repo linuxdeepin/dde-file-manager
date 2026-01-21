@@ -38,6 +38,9 @@ public:
     QStringList getAllProtocolIds();
     QVariantMap queryBlockInfo(const QString &id, bool reload = false);
     QVariantMap queryProtocolInfo(const QString &id, bool reload = false);
+    void subscribeUsageMonitoring();
+    void unsubscribeUsageMonitoring();
+    void refreshUsage();
 
     // device operation
     void reloadOpticalInfo(const QString &id);

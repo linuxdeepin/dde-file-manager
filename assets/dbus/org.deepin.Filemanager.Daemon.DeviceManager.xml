@@ -73,6 +73,12 @@
     </method>
     <method name="DetachAllMountedDevices">
     </method>
+    <method name="StartMonitoringUsage">
+    </method>
+    <method name="StopMonitoringUsage">
+    </method>
+    <method name="RefreshDeviceUsage">
+    </method>
     <method name="GetBlockDevicesIdList">
       <arg type="as" direction="out"/>
       <arg name="opts" type="i" direction="in"/>
