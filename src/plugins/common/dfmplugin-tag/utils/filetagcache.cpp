@@ -98,6 +98,9 @@ void FileTagCache::loadFileTagsFromDatabase()
     auto it = tagsColor.begin();
     for (; it != tagsColor.end(); ++it)
         d->tagProperty.insert(it.key(), QColor(it.value().toString()));
+
+    // 加载回收站标记数据
+    d->trashFileTagsCache = TagProxyHandle::instance()->getAllTrashFileTags();
 }
 
 void FileTagCache::addTags(const QVariantMap &tags)
@@ -185,7 +188,32 @@ void FileTagCache::taggeFiles(const QVariantMap &fileAndTags)
         }
     }
 }
+void FileTagCache::saveTrashTags(const QString &path, qint64 inode, const QStringList &tags)
+{
+    QWriteLocker locker(&d->lock);
+    QString key = QString("%1:%2").arg(path).arg(inode);
+    d->trashFileTagsCache[key] = tags;
+}
 
+QStringList FileTagCache::getTrashTags(const QString &path, qint64 inode) const
+{
+    QReadLocker locker(&d->lock);
+    QString key = QString("%1:%2").arg(path).arg(inode);
+    return d->trashFileTagsCache.value(key).toStringList();
+}
+
+void FileTagCache::removeTrashTags(const QString &path, qint64 inode)
+{
+    QWriteLocker locker(&d->lock);
+    QString key = QString("%1:%2").arg(path).arg(inode);
+    d->trashFileTagsCache.remove(key);
+}
+
+void FileTagCache::clearAllTrashTags()
+{
+    QWriteLocker locker(&d->lock);
+    d->trashFileTagsCache.clear();
+}
 void FileTagCache::untaggeFiles(const QVariantMap &fileAndTags)
 {
     auto it = fileAndTags.begin();
@@ -294,6 +322,26 @@ QMap<QString, QColor> FileTagCacheController::getCacheTagsColor(const QStringLis
 QHash<QString, QStringList> FileTagCacheController::findChildren(const QString &parentPath) const
 {
     return FileTagCache::instance().findChildren(parentPath);
+}
+
+void FileTagCacheController::saveTrashFileTags(const QString &path, qint64 inode, const QStringList &tags)
+{
+    FileTagCache::instance().saveTrashTags(path, inode, tags);
+}
+
+QStringList FileTagCacheController::getTrashFileTags(const QString &path, qint64 inode)
+{
+    return FileTagCache::instance().getTrashTags(path, inode);
+}
+
+void FileTagCacheController::removeTrashFileTags(const QString &path, qint64 inode)
+{
+    FileTagCache::instance().removeTrashTags(path, inode);
+}
+
+void FileTagCacheController::clearAllTrashTags()
+{
+    FileTagCache::instance().clearAllTrashTags();
 }
 
 FileTagCacheController::~FileTagCacheController()

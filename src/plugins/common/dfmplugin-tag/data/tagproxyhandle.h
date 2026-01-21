@@ -38,6 +38,12 @@ public:
     bool deleteFiles(const QVariantMap &value);
     bool deleteFileTags(const QVariantMap &value);
 
+    bool saveTrashFileTags(const QString &originalPath, qint64 inode, const QStringList &tags);
+    QStringList getTrashFileTags(const QString &originalPath, qint64 inode);
+    bool removeTrashFileTags(const QString &originalPath, qint64 inode);
+    bool clearAllTrashTags();
+    QVariantHash getAllTrashFileTags();
+
     bool connectToService();
 
     bool isValid();

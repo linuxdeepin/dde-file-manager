@@ -19,6 +19,7 @@ class FileTagCachePrivate
 
     QHash<QString, QVariant> fileTagsCache;   // file path ->  tag name list
     QHash<QString, QColor> tagProperty;   // tag name -> QColor
+    QHash<QString, QVariant> trashFileTagsCache;   // "path:inode" -> tag name list
     QReadWriteLock lock;
 
 public:

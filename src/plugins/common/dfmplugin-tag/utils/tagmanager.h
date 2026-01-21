@@ -63,6 +63,12 @@ public:
     bool changeTagName(const QString &tagName, const QString &newName);
     bool removeChildren(const QString &parentPath);
 
+    // tag trash
+    bool saveTrashFileTags(const QString &originalPath, quint64 fileInode, const QStringList &tagNames);
+    QStringList getTrashFileTags(const QString &originalPath, quint64 fileInode);
+    bool removeTrashFileTags(const QString &originalPath, quint64 fileInode);
+    bool clearAllTrashTags();
+
     static void contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos);
     static void renameHandle(quint64 windowId, const QUrl &url, const QString &name);
 
