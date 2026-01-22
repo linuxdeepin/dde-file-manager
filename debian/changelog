@@ -1,3 +1,32 @@
+dde-file-manager (6.5.116) unstable; urgency=medium
+
+  * feat: optimize directory scanning performance
+  * fix: correct external device detection for encrypted partitions
+  * feat: enhance file indexing exclusion with pattern matcher
+  * fix: prevent spinner display when icon loading fails
+  * fix: optimize file info update logic
+  * feat: add device usage monitoring with reference counting
+  * fix: ensure sidebar updates are thread-safe
+  * feat: add testdir to file manager textindex exclusion list
+  * fix: fallback to QImageReader when media dimensions unavailable
+  * fix: prevent redundant view updates on same URL
+  * fix: enhance file type classification with MIME type support
+  * fix: Fix sw64 gcc not support pie by default
+  * fix: centralize password preprocessing in CIFS mount
+  * fix: use IO‑free path canonicalization to avoid blocking main thread
+  * refactor: simplify setting backend serialization logic
+  * fix: prevent auto-organizing files on desktop restart in trigger mode
+  * refactor: simplify trash state change handling
+  * fix: fix drag drop validation for remote files
+  * fix: adjust extension widget margins
+  * fix: change button text from Verify Key to Verify Password
+  * feat: implement trash file tag persistence
+  * chore: update translation
+  * Fix: [dirshare] improve file watcher with parent directory monitoring
+  * i18n: Translate dde-file-manager.ts in pl
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 22 Jan 2026 21:02:32 +0800
+
 dde-file-manager (6.5.115) unstable; urgency=medium
 
   * chore: update translations
