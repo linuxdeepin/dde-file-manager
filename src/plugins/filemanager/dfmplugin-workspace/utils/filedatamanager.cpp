@@ -97,7 +97,12 @@ void FileDataManager::cleanRoot(const QUrl &rootUrl)
 
     auto rootInfoKeys = rootInfoMap.keys();
     for (const auto &rootInfo : rootInfoKeys) {
-        if (rootInfo.path().startsWith(rootPath) || rootInfo.path() == rootUrl.path()) {
+        QString infoPath = rootInfo.path();
+        if (!infoPath.endsWith("/"))
+            infoPath.append("/");
+
+        // Compare normalized paths (both with trailing slash) for accurate matching
+        if (infoPath.startsWith(rootPath) || infoPath == rootPath) {
             rootInfoMap.value(rootInfo)->disconnect();
             auto root = rootInfoMap.take(rootInfo);
             if (!root) {
