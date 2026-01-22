@@ -8,6 +8,7 @@
 
 #include <dfm-base/file/local/syncfileinfo.h>
 #include <dfm-base/base/schemefactory.h>
+#include <dfm-base/mimetype/mimetypedisplaymanager.h>
 
 using namespace ddplugin_organizer;
 DFMBASE_USE_NAMESPACE
@@ -21,7 +22,7 @@ inline const char kTypeSuffixPic[] = "jpg,jpeg,jpe,bmp,png,gif,svg,tif,tiff,webp
 inline const char kTypeSuffixMuz[] = "au,snd,mid,mp3,aif,aifc,aiff,m3u,ra,ram,wav,cda,wma,ape,flac,aac";
 inline const char kTypeSuffixVid[] = "avi,mov,mp4,mp2,mpa,mpg,mpeg,mpe,qt,rm,rmvb,mkv,asx,asf,flv,3gp,wmv,3g2";
 inline const char kTypeSuffixApp[] = "desktop";
-//inline const char kTypeMimeApp[] = "application/x-shellscript,application/x-desktop,application/x-executable";
+// inline const char kTypeMimeApp[] = "application/x-shellscript,application/x-desktop,application/x-executable";
 }
 
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
@@ -46,13 +47,13 @@ static void InitSuffixTable(const QSet<QString> &table, const QString &suffix)
 TypeClassifierPrivate::TypeClassifierPrivate(TypeClassifier *qq)
     : q(qq)
 {
-    //todo(zy) 类型后缀支持可配置
+    // todo(zy) 类型后缀支持可配置
     InitSuffixTable(docSuffix, kTypeSuffixDoc);
     InitSuffixTable(picSuffix, kTypeSuffixPic);
     InitSuffixTable(muzSuffix, kTypeSuffixMuz);
     InitSuffixTable(vidSuffix, kTypeSuffixVid);
     InitSuffixTable(appSuffix, kTypeSuffixApp);
-    //InitSuffixTable(appMimeType, kTypeMimeApp);
+    // InitSuffixTable(appMimeType, kTypeMimeApp);
 }
 
 TypeClassifierPrivate::~TypeClassifierPrivate()
@@ -143,7 +144,7 @@ QString TypeClassifier::classify(const QUrl &url) const
         return QString();   // must return null string to represent the file is not existed.
 
     QString key;
-    //Classify whether it is a symlink according to the symlink's target
+    // Classify whether it is a symlink according to the symlink's target
     int depth = 3;
     while (depth--) {
         if (itemInfo->isAttributes(OptInfoType::kIsSymLink)) {
@@ -173,10 +174,39 @@ QString TypeClassifier::classify(const QUrl &url) const
             key = kTypeKeyMuz;
     }
 
+    if (key.isEmpty()) {
+        const QString &mimeName = itemInfo->nameOf(NameInfoType::kMimeTypeName);
+        const FileInfo::FileType type = MimeTypeDisplayManager::instance()->displayNameToEnum(mimeName);
+
+        // classify by FileInfo::FileType
+        switch (type) {
+        case FileInfo::FileType::kDesktopApplication:
+            key = kTypeKeyApp;
+            break;
+        case FileInfo::FileType::kDocuments:
+            key = kTypeKeyDoc;
+            break;
+        case FileInfo::FileType::kImages:
+            key = kTypeKeyPic;
+            break;
+        case FileInfo::FileType::kVideos:
+            key = kTypeKeyVid;
+            break;
+        case FileInfo::FileType::kAudios:
+            key = kTypeKeyMuz;
+            break;
+        default:
+            // other types fall through to generic fallback below
+            break;
+        }
+    }
+
     // set it to other if it not belong to any category
     // if its category is disabled. use: `d->categories.testFlag(d->categoryKey.key(key)`
-    if (key.isEmpty())
+    if (key.isEmpty()) {
         key = kTypeKeyOth;
+    }
+
     return key;
 }
 
