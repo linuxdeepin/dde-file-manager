@@ -483,9 +483,9 @@ bool TagManager::removeChildren(const QString &parentPath)
     return ret;
 }
 
-bool TagManager::saveTrashFileTags(const QString &originalPath, quint64 fileInode, const QStringList &tagNames)
+bool TagManager::saveTrashFileTags(const QString &originalPath, qint64 fileInode, const QStringList &tagNames)
 {
-    if (originalPath.isEmpty() || tagNames.isEmpty())
+    if (originalPath.isEmpty() || fileInode <= 0 || tagNames.isEmpty())
         return false;
 
     // Save to cache
@@ -495,7 +495,7 @@ bool TagManager::saveTrashFileTags(const QString &originalPath, quint64 fileInod
     return TagProxyHandleIns->saveTrashFileTags(originalPath, fileInode, tagNames);
 }
 
-QStringList TagManager::getTrashFileTags(const QString &originalPath, quint64 fileInode)
+QStringList TagManager::getTrashFileTags(const QString &originalPath, qint64 fileInode)
 {
     if (originalPath.isEmpty())
         return {};
@@ -509,7 +509,7 @@ QStringList TagManager::getTrashFileTags(const QString &originalPath, quint64 fi
     return TagProxyHandleIns->getTrashFileTags(originalPath, fileInode);
 }
 
-bool TagManager::removeTrashFileTags(const QString &originalPath, quint64 fileInode)
+bool TagManager::removeTrashFileTags(const QString &originalPath, qint64 fileInode)
 {
     if (originalPath.isEmpty())
         return false;
