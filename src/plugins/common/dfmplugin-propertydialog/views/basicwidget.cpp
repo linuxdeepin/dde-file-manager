@@ -458,17 +458,6 @@ void BasicWidget::imageExtenInfo(const QUrl &url, QMap<DFMIO::DFileInfo::Attribu
     int width = properties[DFileInfo::AttributeExtendID::kExtendMediaWidth].toInt();
     int height = properties[DFileInfo::AttributeExtendID::kExtendMediaHeight].toInt();
 
-    // not all formats of image files have width and height in properties
-    // if properties failed, use QImageReader as fallback
-    if (width == 0 || height == 0) {
-        QImageReader reader(url.toLocalFile());
-        if (reader.canRead()) {
-            QSize size = reader.size();
-            width = size.width();
-            height = size.height();
-        }
-    }
-
     if (width == 0 || height == 0) {
         fileMediaResolution->setVisible(false);
         return;
