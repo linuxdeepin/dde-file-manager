@@ -7927,7 +7927,7 @@ Si us plau, esborreu els fitxers d&apos;aquest directori i intenteu tornar a des
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="58"/>
         <source>Verify Password</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Verificació de la contrasenya</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="60"/>
