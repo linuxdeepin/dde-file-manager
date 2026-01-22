@@ -145,7 +145,8 @@
 				"CMakeTmpQmake",
 				"lost+found",
 				"UnixBench",
-				"tmp"
+				"tmp",
+				"testdir"
 			],
 			"serial": 0,
 			"flags": [],
