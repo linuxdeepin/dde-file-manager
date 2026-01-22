@@ -283,15 +283,6 @@ void FileInfoWidget::fillFieldValues(const QUrl &url)
         localUrl = urls.first();
 
     FileInfoPointer localInfo = InfoFactory::create<FileInfo>(localUrl);
-    if (localInfo && localInfo->isAttributes(OptInfoType::kIsSymLink)) {
-        const QUrl &targetUrl = QUrl::fromLocalFile(localInfo->pathOf(PathInfoType::kSymLinkTarget));
-        localInfo = InfoFactory::create<FileInfo>(targetUrl);
-    }
-    if (localInfo && FileUtils::isTrashFile(localUrl)
-        && !UniversalUtils::urlEquals(localUrl, FileUtils::trashRootUrl())) {
-        const QUrl &targetUrl = localInfo->urlOf(UrlInfoType::kRedirectedFileUrl);
-        localInfo = InfoFactory::create<FileInfo>(targetUrl);
-    }
 
     // Fill file type and request media info
     if (m_fileType->isVisible() && m_fileType->RightValue().isEmpty() && localInfo) {
