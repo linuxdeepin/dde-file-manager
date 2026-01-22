@@ -33,6 +33,9 @@ DetailView::~DetailView()
 
 void DetailView::setUrl(const QUrl &url)
 {
+    if (url == m_currentUrl)
+        return;
+
     m_currentUrl = url;
     updateHeadUI(url);
     updateBasicWidget(url);
