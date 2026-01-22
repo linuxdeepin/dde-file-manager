@@ -9,6 +9,8 @@
 
 #include <QDBusServiceWatcher>
 
+#include <glib.h>
+
 using namespace dfmbase;
 static constexpr char kDeviceService[] { "org.deepin.Filemanager.Daemon" };
 static constexpr char kDevMngPath[] { "/org/deepin/Filemanager/Daemon/DeviceManager" };
@@ -299,9 +301,9 @@ QString DeviceProxyManagerPrivate::canonicalMountPoint(const QString &mpt) const
         return {};
 
     QString mountPoint = mpt;
-    QFileInfo fileInfo(mountPoint);
-    if (fileInfo.exists())
-        mountPoint = fileInfo.canonicalFilePath();
+    g_autofree gchar *canonical_mpt = g_canonicalize_filename(mountPoint.toStdString().c_str(), NULL);
+    if (canonical_mpt)
+        mountPoint = canonical_mpt;
 
     mountPoint = mountPoint.endsWith("/") ? mountPoint : mountPoint + "/";
     return mountPoint;
