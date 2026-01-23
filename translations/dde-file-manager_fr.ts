@@ -7275,22 +7275,22 @@ Vous devez améliorer ce coffre-fort pour continuer à l&apos;utiliser.</transla
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="91"/>
         <source>All files have been successfully shredded</source>
-        <translation type="unfinished"/>
+        <translation>Tous les fichiers ont été supprimés avec succès.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="207"/>
         <source>Failed to start shred command</source>
-        <translation type="unfinished"/>
+        <translation>Échec du démarrage de la commande de suppression</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="237"/>
         <source>Permission denied</source>
-        <translation type="unfinished"/>
+        <translation>Permission refusée</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="240"/>
         <source>The file has been moved or the process has exited</source>
-        <translation type="unfinished"/>
+        <translation>Le fichier a été déplacé ou le processus s&apos;est arrêté.</translation>
     </message>
 </context>
 <context>
@@ -7356,17 +7356,17 @@ Vous devez améliorer ce coffre-fort pour continuer à l&apos;utiliser.</transla
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="109"/>
         <source>File shredder failure</source>
-        <translation type="unfinished"/>
+        <translation>Défaillance du destructeur de fichiers</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="111"/>
         <source>Close</source>
-        <translation type="unfinished"/>
+        <translation>Fermer</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="135"/>
         <source>Shredding file</source>
-        <translation type="unfinished"/>
+        <translation>Déchiquetage de fichiers</translation>
     </message>
 </context>
 <context>
@@ -7374,7 +7374,7 @@ Vous devez améliorer ce coffre-fort pour continuer à l&apos;utiliser.</transla
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="40"/>
         <source>Shredding file &quot; %1 &quot;</source>
-        <translation type="unfinished"/>
+        <translation>Déchiquetage du fichier « %1 »</translation>
     </message>
 </context>
 <context>
@@ -7382,7 +7382,7 @@ Vous devez améliorer ce coffre-fort pour continuer à l&apos;utiliser.</transla
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredmenuscene.cpp" line="80"/>
         <source>File Shred</source>
-        <translation type="unfinished"/>
+        <translation>Fichier déchiqueté</translation>
     </message>
 </context>
 <context>
@@ -7390,7 +7390,7 @@ Vous devez améliorer ce coffre-fort pour continuer à l&apos;utiliser.</transla
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="163"/>
         <source>Enable File Shred</source>
-        <translation type="unfinished"/>
+        <translation>Activer le déchiquetage de fichiers</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="169"/>
