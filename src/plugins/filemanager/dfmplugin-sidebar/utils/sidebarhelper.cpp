@@ -226,11 +226,17 @@ void SideBarHelper::bindSetting(const QString &itemVisiableSettingKey, const QSt
                                                        std::bind(saver, itemVisiableControlKey, std::placeholders::_1));
     };
 
+    // FIXME(xust): i don't know what this function do, but seems works to solve this issue.
+    // commit: e634381afdb03f1f835e2e9f35d369ef782b0312
+    // Bug: 156469
+    // figure it out later.
+    SettingBackend::instance()->addToSerialDataKey(itemVisiableSettingKey);
     bindConf(itemVisiableSettingKey, itemVisiableControlKey);
 }
 
 void SideBarHelper::removebindingSetting(const QString &itemVisiableSettingKey)
 {
+    SettingBackend::instance()->removeSerialDataKey(itemVisiableSettingKey);
     SettingBackend::instance()->removeSettingAccessor(itemVisiableSettingKey);
 }
 
