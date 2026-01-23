@@ -175,6 +175,8 @@ public:
     }
 
     void _q_onFileChanged(const QUrl &url);
+    void _q_onFileRenamed(const QUrl &fromUrl, const QUrl &toUrl);
+    void restartWatcher();
 };
 
 SettingsPrivate::SettingsPrivate(Settings *qq)
@@ -329,6 +331,41 @@ void SettingsPrivate::_q_onFileChanged(const QUrl &url)
             }
         }
     }
+}
+/*!
+ * \brief SettingsPrivate::_q_onFileRenamed Handle file rename events (e.g., from QSaveFile)
+ *
+ * When QSaveFile commits, it renames a temp file to the target file,
+ * which changes the inode and invalidates file watchers. This handler
+ * reloads the configuration data and restarts the watcher.
+ *
+ * \param fromUrl The source URL (temp file)
+ * \param toUrl The target URL (settings file)
+ */
+void SettingsPrivate::_q_onFileRenamed(const QUrl &fromUrl, const QUrl &toUrl)
+{
+    Q_UNUSED(fromUrl)
+
+    if (toUrl.toLocalFile() != settingFile)
+        return;
+
+    // Reload configuration data from the new file (written by another process or this process)
+    _q_onFileChanged(toUrl);
+    restartWatcher();
+}
+/*!
+ * \brief SettingsPrivate::restartWatcher Restart file watcher to monitor the current file
+ *
+ * This is necessary when the file inode changes (e.g., after QSaveFile commit)
+ */
+void SettingsPrivate::restartWatcher()
+{
+    if (!watchChanges || !settingWatcher) {
+        return;
+    }
+
+    settingWatcher->stopWatcher();
+    settingWatcher->startWatcher();
 }
 
 /*!
@@ -1007,6 +1044,10 @@ void Settings::setWatchChanges(bool watchChanges)
 
         d->settingWatcher->moveToThread(thread());
         connect(d->settingWatcher.get(), &AbstractFileWatcher::fileAttributeChanged, this, &Settings::onFileChanged);
+        connect(d->settingWatcher.get(), &AbstractFileWatcher::fileRename, this,
+                [this](const QUrl &from, const QUrl &to) {
+                    d->_q_onFileRenamed(from, to);
+                });
 
         d->settingWatcher->startWatcher();
     } else if (d->settingWatcher) {
