@@ -23,9 +23,6 @@ DFM_LOG_REGISTER_CATEGORY(DIALOGCORE_NAMESPACE)
 
 bool Core::start()
 {
-    DFMBASE_NAMESPACE::Application::instance()->appSetting()->setReadOnly(true);
-    DFMBASE_NAMESPACE::Application::instance()->appObtuselySetting()->setReadOnly(true);
-
     enterHighPerformanceMode();
     FMWindowsIns.setCustomWindowCreator([](const QUrl &url) {
         return new FileDialog(url);
@@ -86,6 +83,9 @@ void Core::onAllPluginsStarted()
 {
     if (!registerDialogDBus())
         abort();
+
+    DFMBASE_NAMESPACE::Application::instance()->appSetting()->setReadOnly(true);
+    DFMBASE_NAMESPACE::Application::instance()->appObtuselySetting()->setReadOnly(true);
 
     dfmplugin_menu_util::menuSceneRegisterScene(FileDialogMenuCreator::name(), new FileDialogMenuCreator);
     bindScene("WorkspaceMenu");
