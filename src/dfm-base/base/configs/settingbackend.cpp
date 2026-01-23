@@ -80,6 +80,7 @@ SettingBackend::SettingBackend(QObject *parent)
 
     connect(Application::instance(), &Application::appAttributeEdited, this, &SettingBackend::onValueChanged);
     connect(Application::instance(), &Application::genericAttributeEdited, this, &SettingBackend::onValueChanged);
+    connect(this, &SettingBackend::optionSetted, this, &SettingBackend::onOptionSetted, Qt::QueuedConnection);
 
     initPresetSettingConfig();
 
@@ -183,11 +184,33 @@ void SettingBackend::addSettingAccessor(Application::GenericAttribute attr, Save
     qCDebug(logDFMBase) << "Setting accessor added for GenericAttribute:" << static_cast<int>(attr) << "key:" << uiKey;
 }
 
+void SettingBackend::addToSerialDataKey(const QString &key)
+{
+    d->serialDataKey.insert(key);
+}
+
+void SettingBackend::removeSerialDataKey(const QString &key)
+{
+    d->serialDataKey.remove(key);
+}
+
+void SettingBackend::onOptionSetted(const QString &key, const QVariant &value)
+{
+    if (d->serialDataKey.contains(key)) {
+        d->saveAsAppAttr(key, value);
+        d->saveAsGenAttr(key, value);
+        d->saveByFunc(key, value);
+    } else {
+        QSignalBlocker blocker(this);
+        d->saveAsAppAttr(key, value);
+        d->saveAsGenAttr(key, value);
+        d->saveByFunc(key, value);
+    }
+}
+
 void SettingBackend::doSetOption(const QString &key, const QVariant &value)
 {
-    d->saveAsAppAttr(key, value);
-    d->saveAsGenAttr(key, value);
-    d->saveByFunc(key, value);
+    Q_EMIT optionSetted(key, value);
 }
 
 void SettingBackend::onValueChanged(int attribute, const QVariant &value)
