@@ -5416,22 +5416,22 @@ Vous devez améliorer ce coffre-fort pour continuer à l&apos;utiliser.</transla
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="750"/>
         <source>Operation Failed</source>
-        <translation type="unfinished"/>
+        <translation>Échec de l&apos;opération</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="752"/>
         <source>Failed to enable Partition Encryption Non-Reboot Mode. The system may not support this feature or encountered an error during initramfs update.</source>
-        <translation type="unfinished"/>
+        <translation>Échec de l&apos;activation du mode de chiffrement de partition sans redémarrage. Le système ne prend peut-être pas en charge cette fonctionnalité ou a rencontré une erreur lors de la mise à jour d&apos;initramfs.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="755"/>
         <source>Failed to disable Partition Encryption Non-Reboot Mode. An error occurred during initramfs update.</source>
-        <translation type="unfinished"/>
+        <translation>Échec de la désactivation du mode de chiffrement de partition sans redémarrage. Une erreur s&apos;est produite lors de la mise à jour d&apos;initramfs.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="767"/>
         <source>dde-file-manager</source>
-        <translation type="unfinished"/>
+        <translation>dde-file-manager</translation>
     </message>
 </context>
 <context>
@@ -5475,12 +5475,12 @@ Vous devez améliorer ce coffre-fort pour continuer à l&apos;utiliser.</transla
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="106"/>
         <source>Please input passphrase to unlock partition</source>
-        <translation type="unfinished"/>
+        <translation>Veuillez saisir le mot de passe pour déverrouiller la partition.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="110"/>
         <source>Please input PIN to unlock partition</source>
-        <translation type="unfinished"/>
+        <translation>Veuillez saisir votre code PIN pour déverrouiller la partition.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="124"/>
@@ -5752,12 +5752,12 @@ Vous devez améliorer ce coffre-fort pour continuer à l&apos;utiliser.</transla
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations.cpp" line="339"/>
         <source>External storage device</source>
-        <translation type="unfinished"/>
+        <translation>Périphérique de stockage externe</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations.cpp" line="350"/>
         <source>External storage device usage patterns</source>
-        <translation type="unfinished"/>
+        <translation>Modèles d&apos;utilisation des périphériques de stockage externes</translation>
     </message>
 </context>
 <context>
@@ -5794,22 +5794,22 @@ Vous devez améliorer ce coffre-fort pour continuer à l&apos;utiliser.</transla
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="43"/>
         <source>Real-time data synchronization (Recommended)</source>
-        <translation type="unfinished"/>
+        <translation>Synchronisation des données en temps réel (recommandé)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="50"/>
         <source>Once the files are copied, you can unplug the external drive without needing to &quot;Safely Remove&quot; it.</source>
-        <translation type="unfinished"/>
+        <translation>Une fois les fichiers copiés, vous pouvez débrancher le disque externe sans avoir besoin de le « retirer en toute sécurité ».</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="61"/>
         <source>Performance First (Requires Safe Removal)</source>
-        <translation type="unfinished"/>
+        <translation>Performance prioritaire (nécessite un retrait sécurisé)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="68"/>
         <source>File copy data is not synchronized in real-time. After the copy is complete, you must use &quot;Safe Removal&quot; to disconnect the external storage device. Otherwise, file corruption or data loss may occur.</source>
-        <translation type="unfinished"/>
+        <translation>Les données de copie de fichiers ne sont pas synchronisées en temps réel. Une fois la copie terminée, vous devez utiliser la fonction « Retrait sécurisé » pour déconnecter le périphérique de stockage externe. Sinon, cela pourrait entraîner une corruption des fichiers ou une perte de données.</translation>
     </message>
 </context>
 <context>
@@ -5825,7 +5825,7 @@ Vous devez améliorer ce coffre-fort pour continuer à l&apos;utiliser.</transla
     <message>
         <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/utils/previewfileoperation.cpp" line="41"/>
         <source>Failed to open %1, which may be moved or renamed</source>
-        <translation type="unfinished"/>
+        <translation>Impossible d&apos;ouvrir %1, qui a peut-être été déplacé ou renommé.</translation>
     </message>
 </context>
 <context>
@@ -6718,7 +6718,7 @@ Vous devez améliorer ce coffre-fort pour continuer à l&apos;utiliser.</transla
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="140"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="289"/>
         <source>No history</source>
-        <translation type="unfinished"/>
+        <translation>Aucun historique</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="308"/>
@@ -6773,22 +6773,22 @@ Vous devez améliorer ce coffre-fort pour continuer à l&apos;utiliser.</transla
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="60"/>
         <source>Custom Directory</source>
-        <translation type="unfinished"/>
+        <translation>Répertoire personnalisé</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="100"/>
         <source>Invalid Directory</source>
-        <translation type="unfinished"/>
+        <translation>Répertoire invalide</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="101"/>
         <source>This directory does not support pinning</source>
-        <translation type="unfinished"/>
+        <translation>Ce répertoire ne prend pas en charge l&apos;épinglage.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="55"/>
         <source>Add Directory</source>
-        <translation type="unfinished"/>
+        <translation>Ajouter un répertoire</translation>
     </message>
 </context>
 <context>
@@ -6955,33 +6955,33 @@ Vous devez améliorer ce coffre-fort pour continuer à l&apos;utiliser.</transla
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="307"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="369"/>
         <source>Unpin tab</source>
-        <translation type="unfinished"/>
+        <translation>Détacher l&apos;onglet</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="309"/>
         <source>Pin tab</source>
-        <translation type="unfinished"/>
+        <translation>Épingler l&apos;onglet</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="314"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="369"/>
         <source>Close tab</source>
-        <translation type="unfinished"/>
+        <translation>Fermer l&apos;onglet</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="317"/>
         <source>Close other tabs</source>
-        <translation type="unfinished"/>
+        <translation>Fermer les autres onglets</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="318"/>
         <source>Close tabs to the left</source>
-        <translation type="unfinished"/>
+        <translation>Fermer les onglets à gauche</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="321"/>
         <source>Close tabs to the right</source>
-        <translation type="unfinished"/>
+        <translation>Fermer les onglets à droite</translation>
     </message>
 </context>
 <context>
@@ -6989,24 +6989,24 @@ Vous devez améliorer ce coffre-fort pour continuer à l&apos;utiliser.</transla
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="584"/>
         <source>Directory not found</source>
-        <translation type="unfinished"/>
+        <translation>Répertoire introuvable</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="585"/>
         <source>Directory not found. Remove it?</source>
-        <translation type="unfinished"/>
+        <translation>Répertoire introuvable. Le supprimer ?</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="586"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Annuler</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="586"/>
         <source>Remove</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Supprimer</translation>
     </message>
 </context>
 <context>
@@ -7255,7 +7255,7 @@ Vous devez améliorer ce coffre-fort pour continuer à l&apos;utiliser.</transla
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="39"/>
         <source>Analyzing files...</source>
-        <translation type="unfinished"/>
+        <translation>Analyse des fichiers...</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="43"/>
@@ -7265,12 +7265,12 @@ Vous devez améliorer ce coffre-fort pour continuer à l&apos;utiliser.</transla
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="163"/>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="217"/>
         <source>Operation cancelled</source>
-        <translation type="unfinished"/>
+        <translation>Opération annulée</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="66"/>
         <source>Starting file shredding...</source>
-        <translation type="unfinished"/>
+        <translation>Début de la suppression des fichiers...</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="91"/>
