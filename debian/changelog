@@ -1,3 +1,9 @@
+dde-file-manager (6.5.117) unstable; urgency=medium
+
+  * Revert "refactor: simplify setting backend serialization logic"
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Fri, 23 Jan 2026 11:29:37 +0800
+
 dde-file-manager (6.5.116) unstable; urgency=medium
 
   * feat: optimize directory scanning performance
