@@ -11,7 +11,6 @@
 #include <QMap>
 #include <QVariant>
 #include <QSet>
-#include <QTimer>
 
 DFMBASE_BEGIN_NAMESPACE
 
@@ -86,7 +85,6 @@ private:
     QMap<QString, GetOptFunc> getters;
     QMap<QString, SaveOptFunc> setters;
     QSet<QString> serialDataKey;
-    QTimer serialSyncTimer;
 
     static BidirectionHash<QString, Application::ApplicationAttribute> keyToAA;
     static BidirectionHash<QString, Application::GenericAttribute> keyToGA;
