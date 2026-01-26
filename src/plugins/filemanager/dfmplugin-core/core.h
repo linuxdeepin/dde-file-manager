@@ -24,6 +24,9 @@ public:
     virtual void stop() override;
     void connectToServer();
 
+protected:
+    bool eventFilter(QObject *watched, QEvent *event) override;
+
 private slots:
     void onAllPluginsInitialized();
     void onAllPluginsStarted();
