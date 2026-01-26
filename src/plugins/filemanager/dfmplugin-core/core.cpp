@@ -18,6 +18,7 @@
 #include <dfm-base/file/local/localdiriterator.h>
 #include <dfm-base/file/local/localfilewatcher.h>
 #include <dfm-base/utils/clipboard.h>
+#include <dfm-base/utils/eventfilterutils.h>
 #include <dfm-base/utils/windowutils.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/dfm_global_defines.h>
@@ -70,6 +71,9 @@ bool Core::start()
 {
     GlobalPrivate::kDFMApp = new Application;   // must create it
 
+    // Install global event filter for X11 right-click menu handling
+    qApp->installEventFilter(this);
+
     connectToServer();
 
     // the object must be initialized in main thread, otherwise the GVolumeMonitor do not have an event loop.
@@ -83,6 +87,8 @@ bool Core::start()
 
 void Core::stop()
 {
+    qApp->removeEventFilter(this);
+
     if (GlobalPrivate::kDFMApp)
         delete GlobalPrivate::kDFMApp;
 }
@@ -159,5 +165,15 @@ void Core::onWindowOpened(quint64 winid)
             ClipBoard::instance()->onClipboardDataChanged();
         });
     });
+}
+
+bool Core::eventFilter(QObject *watched, QEvent *event)
+{
+    // Handle right-click outside menu
+    if (EventFilter::handleRightClickOutsideMenu(event, this)) {
+        return true;
+    }
+
+    return QObject::eventFilter(watched, event);
 }
 }   // namespace dfmplugin_core

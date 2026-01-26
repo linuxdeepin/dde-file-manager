@@ -8,6 +8,7 @@
 
 #include <dfm-base/utils/windowutils.h>
 #include <dfm-base/utils/clipboard.h>
+#include <dfm-base/utils/eventfilterutils.h>
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/base/standardpaths.h>
 #include <dfm-base/base/schemefactory.h>
@@ -96,6 +97,8 @@ bool Core::start()
 
 void Core::stop()
 {
+    qApp->removeEventFilter(this);
+
     delete handle;
     handle = nullptr;
 
@@ -143,6 +146,11 @@ void Core::handleLoadPlugins(const QStringList &names)
 
 bool Core::eventFilter(QObject *watched, QEvent *event)
 {
+    // Handle right-click outside menu
+    if (EventFilter::handleRightClickOutsideMenu(event, this)) {
+        return true;
+    }
+
     static bool paintHandled = false;
     // windows paint
     if (!paintHandled && event->type() == QEvent::Paint) {
