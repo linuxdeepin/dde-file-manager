@@ -757,7 +757,7 @@ bool TagDbHandler::saveTrashFileTags(const QString &originalPath, qint64 inode, 
         return false;
     }
 
-    emit trashFileTagsSaved(originalPath, inode, tags);
+    emit trashFileTagsChanged();
     fmInfo() << "TagDbHandler::saveTrashFileTags: Successfully saved trash file tags";
     return true;
 }
@@ -832,7 +832,7 @@ bool TagDbHandler::removeTrashFileTags(const QString &originalPath, qint64 inode
         return false;
     }
 
-    emit trashFileTagsRestored(originalPath, inode);
+    emit trashFileTagsChanged();
     fmInfo() << "TagDbHandler::removeTrashFileTags: Successfully removed trash file tags";
     return true;
 }
@@ -850,7 +850,7 @@ bool TagDbHandler::clearAllTrashTags()
         return false;
     }
 
-    emit trashTagsCleared();
+    emit trashFileTagsChanged();
     fmInfo() << "TagDbHandler::clearAllTrashTags: Successfully cleared all trash file tags";
     return true;
 }

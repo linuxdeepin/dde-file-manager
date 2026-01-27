@@ -54,6 +54,7 @@ Q_SIGNALS:
     void tagsColorChanged(const QVariantMap &oldAndNew);
     void tagsDeleted(const QStringList &tags);
     void tagsNameChanged(const QVariantMap &oldAndNew);
+    void trashFileTagsChanged();
     void tagServiceRegistered();
 
 private:

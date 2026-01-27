@@ -30,6 +30,7 @@ public Q_SLOTS:
     void onTagsNameChanged(const QVariantMap &oldAndNew);
     void onFilesTagged(const QVariantMap &fileAndTags);
     void onFilesUntagged(const QVariantMap &fileAndTags);
+    void onTrashFileTagsChanged();
 
 private:
     explicit FileTagCacheWorker(QObject *parent = nullptr);
@@ -65,10 +66,8 @@ private:
     void taggeFiles(const QVariantMap &fileAndTags);
     void untaggeFiles(const QVariantMap &fileAndTags);
 
-    void saveTrashTags(const QString &path, qint64 inode, const QStringList &tags);
     QStringList getTrashTags(const QString &path, qint64 inode) const;
-    void removeTrashTags(const QString &path, qint64 inode);
-    void clearAllTrashTags();
+    void reloadTrashFileTagsCache();
 
 private:
     QScopedPointer<FileTagCachePrivate> d;
@@ -88,10 +87,7 @@ public:
     QMap<QString, QColor> getCacheTagsColor(const QStringList &tags);
     QHash<QString, QStringList> findChildren(const QString &parentPath) const;
 
-    void saveTrashFileTags(const QString &path, qint64 inode, const QStringList &tags);
     QStringList getTrashFileTags(const QString &path, qint64 inode);
-    void removeTrashFileTags(const QString &path, qint64 inode);
-    void clearAllTrashTags();
 
 Q_SIGNALS:
     void initLoadTagInfos();

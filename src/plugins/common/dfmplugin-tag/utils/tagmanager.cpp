@@ -488,9 +488,6 @@ bool TagManager::saveTrashFileTags(const QString &originalPath, qint64 fileInode
     if (originalPath.isEmpty() || fileInode <= 0 || tagNames.isEmpty())
         return false;
 
-    // Save to cache
-    FileTagCacheIns.saveTrashFileTags(originalPath, fileInode, tagNames);
-
     // Save to database via D-Bus
     return TagProxyHandleIns->saveTrashFileTags(originalPath, fileInode, tagNames);
 }
@@ -514,18 +511,12 @@ bool TagManager::removeTrashFileTags(const QString &originalPath, qint64 fileIno
     if (originalPath.isEmpty())
         return false;
 
-    // Remove from cache
-    FileTagCacheIns.removeTrashFileTags(originalPath, fileInode);
-
     // Remove from database via D-Bus
     return TagProxyHandleIns->removeTrashFileTags(originalPath, fileInode);
 }
 
 bool TagManager::clearAllTrashTags()
 {
-    // Clear cache
-    FileTagCacheIns.clearAllTrashTags();
-
     // Clear database via D-Bus
     return TagProxyHandleIns->clearAllTrashTags();
 }

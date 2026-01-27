@@ -85,9 +85,7 @@ Q_SIGNALS:
     void tagsNameChanged(const QVariantMap &oldAndNewName);
     void filesWereTagged(const QVariantMap &filesWereTagged);
     void filesUntagged(const QVariantMap &delTagsOfFile);
-    void trashFileTagsSaved(const QString &originalPath, qint64 inode, const QStringList &tags);
-    void trashFileTagsRestored(const QString &originalPath, qint64 inode);
-    void trashTagsCleared();
+    void trashFileTagsChanged();
 
 private:
     QScopedPointer<DFMBASE_NAMESPACE::SqliteHandle> handle;
