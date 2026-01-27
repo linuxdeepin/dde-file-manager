@@ -9,6 +9,8 @@
 #include <dfm-base/interfaces/fileinfo.h>
 
 #include <QDebug>
+#include <QMimeDatabase>
+#include <QMimeType>
 
 DPWORKSPACE_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -66,17 +68,15 @@ QString TypeGroupStrategy::getGroupKey(const FileInfoPointer &info) const
         return "directory";
     }
 
-    // Get MIME type and map to group
-    QString mimeType = info->nameOf(NameInfoType::kMimeTypeName);
-    if (mimeType.isEmpty()) {
-        // Fallback: try to get MIME type from file extension
-        mimeType = info->fileMimeType().name();
-    }
+    // asyncfile 无法准确获取 mimetype
+    static QMimeDatabase mimeDb;
+    QMimeType mimeType = mimeDb.mimeTypeForFile(info->pathOf(PathInfoType::kFilePath));
+    QString mimeTypeName = mimeType.name();
 
-    QString groupKey = mapMimeTypeToGroup(mimeType);
+    QString groupKey = mapMimeTypeToGroup(mimeTypeName);
 
     fmDebug() << "TypeGroupStrategy: File" << info->urlOf(UrlInfoType::kUrl).toString()
-              << "MIME type:" << mimeType << "-> group:" << groupKey;
+              << "MIME type:" << mimeTypeName << "-> group:" << groupKey;
 
     return groupKey;
 }

@@ -102,6 +102,7 @@ private:
     bool doCopyLocalFile(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo);
     bool doCopyOtherFile(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, bool *skip);
     bool doCopyLocalByRange(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, bool *skip);
+    void setExpectedSizeForTarget(const QUrl &targetUrl, qint64 size);
 
 protected Q_SLOTS:
     void emitErrorNotify(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType &error,

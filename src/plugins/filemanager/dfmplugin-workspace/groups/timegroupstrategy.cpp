@@ -6,6 +6,8 @@
 
 #include <dfm-base/dfm_log_defines.h>
 #include <dfm-base/interfaces/fileinfo.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/utils/protocolutils.h>
 
 #include <QDate>
 #include <QLocale>
@@ -54,18 +56,25 @@ QString TimeGroupStrategy::getGroupKey(const FileInfoPointer &info) const
         return "earlier";
     }
 
+    // AsyncFileinfo 的设计缺陷无法实时获取到时间相关属性
+    FileInfoPointer newFileInfo { info };
+    const auto url { info->urlOf(UrlInfoType::kUrl) };
+    if (ProtocolUtils::isRemoteFile(url)) {
+        newFileInfo = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
+    }
+
     // Get the appropriate timestamp based on the time type
     QDateTime fileTime;
     if (m_timeType == kModificationTime) {
-        fileTime = info->timeOf(TimeInfoType::kLastModified).value<QDateTime>();
+        fileTime = newFileInfo->timeOf(TimeInfoType::kLastModified).value<QDateTime>();
     } else if (m_timeType == kCreationTime) {
-        fileTime = info->timeOf(TimeInfoType::kCreateTime).value<QDateTime>();
+        fileTime = newFileInfo->timeOf(TimeInfoType::kCreateTime).value<QDateTime>();
     } else {
-        fileTime = info->timeOf(TimeInfoType::kCustomerSupport).value<QDateTime>();
+        fileTime = newFileInfo->timeOf(TimeInfoType::kCustomerSupport).value<QDateTime>();
     }
 
     if (!fileTime.isValid()) {
-        fmWarning() << "TimeGroupStrategy: Invalid file time for" << info->urlOf(UrlInfoType::kUrl).toString();
+        fmWarning() << "TimeGroupStrategy: Invalid file time for" << newFileInfo->urlOf(UrlInfoType::kUrl).toString();
         return "earlier";
     }
 

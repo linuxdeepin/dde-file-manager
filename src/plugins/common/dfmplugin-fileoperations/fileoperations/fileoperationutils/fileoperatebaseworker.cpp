@@ -372,6 +372,9 @@ bool FileOperateBaseWorker::copyAndDeleteFile(const DFileInfoPointer &fromInfo, 
         const QUrl &url = toInfo->uri();
         auto fromSize = fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
 
+        // Set expected size for target file to ensure correct grouping during cut operation
+        setExpectedSizeForTarget(toInfo->uri(), fromSize);
+
         // check file file size bigger than 4 GB
         if (!checkFileSize(fromSize, fromInfo->uri(), url, skip)) {
             fmDebug() << "File size check failed for cut operation - from:" << fromInfo->uri();
@@ -656,6 +659,10 @@ DFileInfoPointer FileOperateBaseWorker::doCheckNewFile(const DFileInfoPointer &f
 bool FileOperateBaseWorker::checkAndCopyFile(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, bool *skip)
 {
     auto fromSize = fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
+
+    // Set expected size for target file to ensure correct grouping during copy
+    setExpectedSizeForTarget(toInfo->uri(), fromSize);
+
     // check file file size bigger than 4 GB
     if (!checkFileSize(fromSize, fromInfo->uri(),
                        toInfo->uri(), skip)) {
@@ -900,6 +907,15 @@ void FileOperateBaseWorker::setSkipValue(bool *skip, AbstractJobHandler::Support
 {
     if (skip)
         *skip = action == AbstractJobHandler::SupportAction::kSkipAction;
+}
+
+void FileOperateBaseWorker::setExpectedSizeForTarget(const QUrl &targetUrl, qint64 size)
+{
+    FileInfoPointer targetFileInfo = InfoFactory::create<FileInfo>(targetUrl, Global::CreateFileInfoType::kCreateFileInfoSyncAndCache);
+    if (targetFileInfo) {
+        targetFileInfo->setExtendedAttributes(ExtInfoType::kExpectedSize, size);
+        fmDebug() << "Set expected size for target file:" << targetUrl << "size:" << size;
+    }
 }
 
 void FileOperateBaseWorker::initThreadCopy()
