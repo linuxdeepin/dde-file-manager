@@ -26,6 +26,8 @@
       <arg name="fileAndTags" type="a{sv}" direction="out"/>
       <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
     </signal>
+    <signal name="TrashFileTagsChanged">
+    </signal>
     <method name="Query">
       <arg type="v" direction="out"/>
       <arg name="opt" type="i" direction="in"/>

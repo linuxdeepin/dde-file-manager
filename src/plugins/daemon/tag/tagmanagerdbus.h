@@ -32,6 +32,7 @@ Q_SIGNALS:
     void TagsNameChanged(const QVariantMap &oldAndNew);
     void FilesTagged(const QVariantMap &fileAndTags);
     void FilesUntagged(const QVariantMap &fileAndTags);
+    void TrashFileTagsChanged();
 
 private:
     void initConnect();

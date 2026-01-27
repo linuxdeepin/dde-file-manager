@@ -22,6 +22,7 @@ void TagManagerDBus::initConnect()
     connect(TagDbHandler::instance(), &TagDbHandler::tagsNameChanged, this, &TagManagerDBus::TagsNameChanged);
     connect(TagDbHandler::instance(), &TagDbHandler::filesWereTagged, this, &TagManagerDBus::FilesTagged);
     connect(TagDbHandler::instance(), &TagDbHandler::filesUntagged, this, &TagManagerDBus::FilesUntagged);
+    connect(TagDbHandler::instance(), &TagDbHandler::trashFileTagsChanged, this, &TagManagerDBus::TrashFileTagsChanged);
 }
 
 QDBusVariant TagManagerDBus::Query(int opt, const QStringList value)

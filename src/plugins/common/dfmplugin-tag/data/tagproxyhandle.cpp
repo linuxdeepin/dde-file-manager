@@ -50,6 +50,7 @@ void TagProxyHandlePrivate::connectToDBus()
     connections << q->connect(ptr, &TagManagerDBusInterface::TagsNameChanged, q, &TagProxyHandle::tagsNameChanged);
     connections << q->connect(ptr, &TagManagerDBusInterface::FilesTagged, q, &TagProxyHandle::filesTagged);
     connections << q->connect(ptr, &TagManagerDBusInterface::FilesUntagged, q, &TagProxyHandle::filesUntagged);
+    connections << q->connect(ptr, &TagManagerDBusInterface::TrashFileTagsChanged, q, &TagProxyHandle::trashFileTagsChanged);
 }
 
 void TagProxyHandlePrivate::disconnCurrentConnections()

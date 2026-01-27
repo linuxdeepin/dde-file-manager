@@ -67,6 +67,11 @@ void FileTagCacheWorker::onFilesUntagged(const QVariantMap &fileAndTags)
     emit FileTagCacheIns.filesUntagged(fileAndTags);
 }
 
+void FileTagCacheWorker::onTrashFileTagsChanged()
+{
+    FileTagCache::instance().reloadTrashFileTagsCache();
+}
+
 FileTagCachePrivate::FileTagCachePrivate(FileTagCache *qq)
     : q(qq)
 {
@@ -188,12 +193,6 @@ void FileTagCache::taggeFiles(const QVariantMap &fileAndTags)
         }
     }
 }
-void FileTagCache::saveTrashTags(const QString &path, qint64 inode, const QStringList &tags)
-{
-    QWriteLocker locker(&d->lock);
-    QString key = QString("%1:%2").arg(path).arg(inode);
-    d->trashFileTagsCache[key] = tags;
-}
 
 QStringList FileTagCache::getTrashTags(const QString &path, qint64 inode) const
 {
@@ -202,18 +201,12 @@ QStringList FileTagCache::getTrashTags(const QString &path, qint64 inode) const
     return d->trashFileTagsCache.value(key).toStringList();
 }
 
-void FileTagCache::removeTrashTags(const QString &path, qint64 inode)
+void FileTagCache::reloadTrashFileTagsCache()
 {
     QWriteLocker locker(&d->lock);
-    QString key = QString("%1:%2").arg(path).arg(inode);
-    d->trashFileTagsCache.remove(key);
+    d->trashFileTagsCache = TagProxyHandle::instance()->getAllTrashFileTags();
 }
 
-void FileTagCache::clearAllTrashTags()
-{
-    QWriteLocker locker(&d->lock);
-    d->trashFileTagsCache.clear();
-}
 void FileTagCache::untaggeFiles(const QVariantMap &fileAndTags)
 {
     auto it = fileAndTags.begin();
@@ -324,24 +317,9 @@ QHash<QString, QStringList> FileTagCacheController::findChildren(const QString &
     return FileTagCache::instance().findChildren(parentPath);
 }
 
-void FileTagCacheController::saveTrashFileTags(const QString &path, qint64 inode, const QStringList &tags)
-{
-    FileTagCache::instance().saveTrashTags(path, inode, tags);
-}
-
 QStringList FileTagCacheController::getTrashFileTags(const QString &path, qint64 inode)
 {
     return FileTagCache::instance().getTrashTags(path, inode);
-}
-
-void FileTagCacheController::removeTrashFileTags(const QString &path, qint64 inode)
-{
-    FileTagCache::instance().removeTrashTags(path, inode);
-}
-
-void FileTagCacheController::clearAllTrashTags()
-{
-    FileTagCache::instance().clearAllTrashTags();
 }
 
 FileTagCacheController::~FileTagCacheController()
@@ -365,6 +343,7 @@ void FileTagCacheController::init()
     connect(TagProxyHandleIns, &TagProxyHandle::tagsNameChanged, cacheWorker.data(), &FileTagCacheWorker::onTagsNameChanged);
     connect(TagProxyHandleIns, &TagProxyHandle::filesTagged, cacheWorker.data(), &FileTagCacheWorker::onFilesTagged);
     connect(TagProxyHandleIns, &TagProxyHandle::filesUntagged, cacheWorker.data(), &FileTagCacheWorker::onFilesUntagged);
+    connect(TagProxyHandleIns, &TagProxyHandle::trashFileTagsChanged, cacheWorker.data(), &FileTagCacheWorker::onTrashFileTagsChanged);
 
     cacheWorker->moveToThread(updateThread.data());
     updateThread->start();
