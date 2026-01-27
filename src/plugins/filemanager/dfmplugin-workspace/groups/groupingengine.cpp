@@ -859,8 +859,7 @@ FileInfoPointer GroupingEngine::getFileInfoFromFileItem(const FileItemDataPointe
     auto fileInfo = file->fileInfo();
     const auto url = file->data(ItemRoles::kItemUrlRole).toUrl();
 
-    // 非本地fileinfo是异步的，文件属性可能无法得到
-    if (!fileInfo || !ProtocolUtils::isLocalFile(url)) {
+    if (!fileInfo) {
         fileInfo = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
         Q_ASSERT(fileInfo);
         if (!fileInfo) {

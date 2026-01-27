@@ -65,8 +65,21 @@ QString SizeGroupStrategy::getGroupKey(const FileInfoPointer &info) const
         return "unknown";
     }
 
-    // Get file size and classify
-    qint64 size = info->size();
+    // Get file size for classification
+    // Priority: Use expected size (for files being copied/moved), fallback to actual size
+    qint64 size = 0;
+    QVariant expectedSize = info->extendAttributes(ExtInfoType::kExpectedSize);
+
+    if (expectedSize.isValid() && expectedSize.toLongLong() > 0) {
+        // Use expected size for files being operated on (copying/moving)
+        size = expectedSize.toLongLong();
+        fmDebug() << "SizeGroupStrategy: Using expected size for file:" << info->urlOf(UrlInfoType::kUrl).toString()
+                  << "expected:" << size << "bytes";
+    } else {
+        // Use actual size
+        size = info->size();
+    }
+
     QString groupKey = classifyBySize(size);
 
     fmDebug() << "SizeGroupStrategy: File" << info->urlOf(UrlInfoType::kUrl).toString()

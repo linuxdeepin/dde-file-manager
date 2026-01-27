@@ -118,6 +118,7 @@ public:
         kFileNeedUpdate = 51,   // 文件信息需要在显示更新
         kFileNeedTransInfo = 52,   // 文件信息需要转换为desktopfileinfo
         kFileHighlightContent = 53,   // 文件需要高亮内容
+        kExpectedSize = 54,   // 文件预期大小（用于正在拷贝/移动的文件）
         kUnknowExtendedInfo = 255,
     };
     /*!
