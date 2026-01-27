@@ -13,6 +13,7 @@
 
 #include <QImageReader>
 #include <QtConcurrent>
+#include <QPixmapCache>
 
 DFMBASE_USE_NAMESPACE
 DDP_BACKGROUND_USE_NAMESPACE
@@ -22,6 +23,15 @@ DDP_BACKGROUND_USE_NAMESPACE
 
 #define CanvasCoreUnsubscribe(topic, func) \
     dpfSignalDispatcher->unsubscribe("ddplugin_core", QT_STRINGIFY2(topic), this, func);
+
+// Generate cache key for wallpaper: wallpaper:path@widthxheight
+static QString generateCacheKey(const QString &path, const QSize &size)
+{
+    return QString("wallpaper:%1@%2x%3")
+            .arg(path)
+            .arg(size.width())
+            .arg(size.height());
+}
 
 inline QString getScreenName(QWidget *win)
 {
@@ -59,8 +69,8 @@ BackgroundManagerPrivate::~BackgroundManagerPrivate()
 
 bool BackgroundManagerPrivate::isEnableBackground()
 {
-    //return windowManagerHelper->windowManagerName() == DWindowManagerHelper::KWinWM || !windowManagerHelper->hasComposite();
-    // fix bug152473
+    // return windowManagerHelper->windowManagerName() == DWindowManagerHelper::KWinWM || !windowManagerHelper->hasComposite();
+    //  fix bug152473
     return enableBackground;
 }
 
@@ -81,6 +91,11 @@ BackgroundManager::~BackgroundManager()
 
 void BackgroundManager::init()
 {
+    // Set wallpaper cache limit to 100MB (approx 3-5 4K wallpapers)
+    // QPixmapCache uses KB as unit: 100MB = 100 * 1024 KB
+    static std::once_flag flag;
+    std::call_once(flag, QPixmapCache::setCacheLimit, 100 * 1024);
+
     restBackgroundManager();
 
     CanvasCoreSubscribe(signal_DesktopFrame_WindowAboutToBeBuilded, &BackgroundManager::onDetachWindows);
@@ -309,11 +324,53 @@ BackgroundBridge::~BackgroundBridge()
     future.waitForFinished();
 }
 
+void BackgroundBridge::queryCacheAndClassify(Requestion &req, QList<Requestion> &cachedRequests, QList<Requestion> &uncachedRequests)
+{
+    if (req.path.isEmpty()) {
+        fmDebug() << "Empty background path for screen:" << req.screen;
+        return;
+    }
+
+    // Query cache with file path
+    QString wallpaperPath = req.path.startsWith("file:") ? QUrl(req.path).toLocalFile() : req.path;
+    QString cacheKey = generateCacheKey(wallpaperPath, req.size);
+    QPixmap cached;
+
+    if (QPixmapCache::find(cacheKey, &cached)) {
+        fmInfo() << "Cache hit in main thread - screen:" << req.screen << "path:" << wallpaperPath;
+        req.pixmap = cached;
+        cachedRequests.append(req);
+    } else {
+        fmDebug() << "Cache miss - queuing for async loading - screen:" << req.screen;
+        uncachedRequests.append(req);
+    }
+}
+
+void BackgroundBridge::processRequests(const QList<Requestion> &cachedRequests, const QList<Requestion> &uncachedRequests, bool forceMode)
+{
+    // Process cached requests immediately in main thread
+    if (!cachedRequests.isEmpty()) {
+        QList<Requestion> *pCached = new QList<Requestion>(cachedRequests);
+        onFinished(pCached);
+    }
+
+    // Process uncached requests asynchronously
+    if (!uncachedRequests.isEmpty()) {
+        getting = true;
+        if (forceMode)
+            force = true;
+        future = QtConcurrent::run(&BackgroundBridge::runUpdate, this, uncachedRequests);
+    }
+}
+
 void BackgroundBridge::request(bool refresh)
 {
     terminate(true);
 
-    QList<Requestion> requestion;
+    // Pre-query cache in main thread (QPixmapCache is only usable from the application's main thread)
+    QList<Requestion> cachedRequests;
+    QList<Requestion> uncachedRequests;
+
     for (QWidget *root : ddplugin_desktop_util::desktopFrameRootWindows()) {
         Requestion req;
         req.screen = getScreenName(root);
@@ -326,22 +383,26 @@ void BackgroundBridge::request(bool refresh)
         // use the resolution before screen zooming
         req.size = root->property(DesktopFrameProperty::kPropScreenHandleGeometry).toRect().size();
 
+        // Get wallpaper path
         if (!refresh)
             req.path = d->backgroundPaths.value(req.screen);
-        requestion.append(req);
+        if (req.path.isEmpty())
+            req.path = d->service->background(req.screen);
+
+        queryCacheAndClassify(req, cachedRequests, uncachedRequests);
     }
 
-    if (!requestion.isEmpty()) {
-        getting = true;
-        future = QtConcurrent::run(&BackgroundBridge::runUpdate, this, requestion);
-    }
+    processRequests(cachedRequests, uncachedRequests);
 }
 
 void BackgroundBridge::forceRequest()
 {
     terminate(true);
 
-    QList<Requestion> requestion;
+    // Pre-query cache in main thread (QPixmapCache is only usable from the application's main thread)
+    QList<Requestion> cachedRequests;
+    QList<Requestion> uncachedRequests;
+
     for (ScreenPointer sc : ddplugin_desktop_util::screenProxyScreens()) {
         Requestion req;
         req.screen = sc->name();
@@ -353,14 +414,14 @@ void BackgroundBridge::forceRequest()
 
         // use the resolution before screen zooming
         req.size = sc->handleGeometry().size();
-        requestion.append(req);
+
+        // Get wallpaper path
+        req.path = d->service->background(req.screen);
+
+        queryCacheAndClassify(req, cachedRequests, uncachedRequests);
     }
 
-    if (!requestion.isEmpty()) {
-        getting = true;
-        force = true;
-        future = QtConcurrent::run(&BackgroundBridge::runUpdate, this, requestion);
-    }
+    processRequests(cachedRequests, uncachedRequests, true);
 }
 
 void BackgroundBridge::terminate(bool wait)
@@ -380,24 +441,51 @@ void BackgroundBridge::terminate(bool wait)
     force = false;
 }
 
-QPixmap BackgroundBridge::getPixmap(const QString &path, const QPixmap &defalutPixmap)
+QPixmap BackgroundBridge::getPixmap(const QString &path, const QSize &targetSize, const QPixmap &defaultPixmap)
 {
     if (path.isEmpty()) {
         fmDebug() << "Empty background path provided, using default pixmap";
-        return defalutPixmap;
+        return defaultPixmap;
     }
 
     QString currentWallpaper = path.startsWith("file:") ? QUrl(path).toLocalFile() : path;
-    QPixmap backgroundPixmap(currentWallpaper);
-    // fix whiteboard shows when a jpeg file with filename xxx.png
-    // content format not equal to extension
-    if (backgroundPixmap.isNull()) {
-        QImageReader reader(currentWallpaper);
-        reader.setDecideFormatFromContent(true);
-        backgroundPixmap = QPixmap::fromImage(reader.read());
+
+    // Initialize image reader with format detection
+    QImageReader reader(currentWallpaper);
+    reader.setDecideFormatFromContent(true);
+    QSize imageSize = reader.size();
+    if (!imageSize.isValid()) {
+        fmWarning() << "Failed to get image size:" << currentWallpaper << "error:" << reader.errorString();
+        return defaultPixmap;
     }
 
-    return backgroundPixmap.isNull() ? defalutPixmap : backgroundPixmap;
+    // Calculate target size maintaining aspect ratio
+    QSize scaledSize = imageSize.scaled(targetSize, Qt::KeepAspectRatioByExpanding);
+    // For large images, let QImageReader scale during decoding to save memory
+    if (imageSize.width() > scaledSize.width() * 2 || imageSize.height() > scaledSize.height() * 2) {
+        fmInfo() << "Large image optimization - decoding at scaled size:" << scaledSize;
+        reader.setScaledSize(scaledSize);
+    }
+
+    // Read and decode image
+    QImage image = reader.read();
+    if (image.isNull()) {
+        fmCritical() << "Failed to decode image:" << currentWallpaper << "error:" << reader.errorString();
+        return defaultPixmap;
+    }
+
+    QPixmap backgroundPixmap = QPixmap::fromImage(std::move(image));
+
+    // Final scaling if needed
+    if (backgroundPixmap.size() != scaledSize) {
+        fmDebug() << "Scaling wallpaper from" << backgroundPixmap.size() << "to" << scaledSize;
+        backgroundPixmap = backgroundPixmap.scaled(scaledSize,
+                                                   Qt::KeepAspectRatioByExpanding,
+                                                   Qt::SmoothTransformation);
+    }
+
+    fmDebug() << "Wallpaper loaded in worker thread - path:" << currentWallpaper << "size:" << backgroundPixmap.size();
+    return backgroundPixmap;
 }
 
 void BackgroundBridge::onFinished(void *pData)
@@ -417,6 +505,16 @@ void BackgroundBridge::onFinished(void *pData)
                 req.pixmap.setDevicePixelRatio(bw->devicePixelRatioF());
                 bw->setPixmap(req.pixmap);
                 d->backgroundPaths.insert(req.screen, req.path);
+
+                // Insert into cache
+                QString wallpaperPath = req.path.startsWith("file:") ? QUrl(req.path).toLocalFile() : req.path;
+                QString cacheKey = generateCacheKey(wallpaperPath, req.size);
+                if (!QPixmapCache::find(cacheKey, nullptr)) {
+                    bool cached = QPixmapCache::insert(cacheKey, req.pixmap);
+                    fmDebug() << "Wallpaper cached in main thread - path:" << wallpaperPath
+                              << "screen:" << req.screen << "cached:" << (cached ? "yes" : "no (too large)");
+                }
+
                 break;
             }
         }
@@ -449,7 +547,8 @@ void BackgroundBridge::runUpdate(BackgroundBridge *self, QList<Requestion> reqs)
         if (req.path.isEmpty())
             req.path = self->d->service->background(req.screen);
 
-        QPixmap backgroundPixmap = BackgroundBridge::getPixmap(req.path);
+        QSize trueSize = req.size;
+        QPixmap backgroundPixmap = BackgroundBridge::getPixmap(req.path, trueSize);
         if (backgroundPixmap.isNull()) {
             fmCritical() << "Failed to read background for screen:" << req.screen << "path:" << req.path;
             continue;
@@ -461,17 +560,8 @@ void BackgroundBridge::runUpdate(BackgroundBridge *self, QList<Requestion> reqs)
             return;
         }
 
-        QSize trueSize = req.size;
-        auto pix = backgroundPixmap.scaled(trueSize,
-                                           Qt::KeepAspectRatioByExpanding,
-                                           Qt::SmoothTransformation);
-
-        // check stop
-        if (!self->getting) {
-            fmInfo() << "Background update cancelled after scaling";
-            return;
-        }
-
+        // Crop the center part if needed (image is already scaled)
+        QPixmap pix = backgroundPixmap;
         if (pix.width() > trueSize.width() || pix.height() > trueSize.height()) {
             pix = pix.copy(QRect(static_cast<int>((pix.width() - trueSize.width()) / 2.0),
                                  static_cast<int>((pix.height() - trueSize.height()) / 2.0),
