@@ -45,9 +45,11 @@ public:
     void forceRequest();
     void terminate(bool wait);
     Q_INVOKABLE void onFinished(void *pData);
-    static QPixmap getPixmap(const QString &path, const QPixmap &defalutPixmap = QPixmap());
+    static QPixmap getPixmap(const QString &path, const QSize &targetSize, const QPixmap &defaultPixmap = QPixmap());
 
 private:
+    void queryCacheAndClassify(Requestion &req, QList<Requestion> &cachedRequests, QList<Requestion> &uncachedRequests);
+    void processRequests(const QList<Requestion> &cachedRequests, const QList<Requestion> &uncachedRequests, bool forceMode = false);
     static void runUpdate(BackgroundBridge *self, QList<Requestion> reqs);
 
 private:
