@@ -263,3 +263,38 @@ AbstractJobHandler::SupportAction DoMoveToTrashFilesWorker::doHandleErrorNoSpace
 
     return currentAction;
 }
+
+bool DoMoveToTrashFilesWorker::canWriteFile(const QUrl &url) const
+{
+    // root user return true direct
+    if (getuid() == 0)
+        return true;
+
+    auto info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
+
+    if (info.isNull())
+        return false;
+
+    auto parentInfo = InfoFactory::create<FileInfo>(info->urlOf(UrlInfoType::kParentUrl), Global::CreateFileInfoType::kCreateFileInfoSync);
+    if (parentInfo.isNull())
+        return false;
+
+    bool isFolderWritable = parentInfo->isAttributes(OptInfoType::kIsWritable);
+    if (!isFolderWritable)
+        return false;
+
+#ifdef Q_OS_LINUX
+    struct stat statBuffer;
+    if (::lstat(parentInfo->urlOf(UrlInfoType::kParentUrl).path().toLocal8Bit().data(), &statBuffer) == 0) {
+        // 如果父目录拥有t权限，则判断当前用户是不是文件的owner，不是则无法操作文件
+        const auto &fileOwnerId = info->extendAttributes(ExtInfoType::kOwnerId);
+        const auto &uid = getuid();
+        const bool hasTRight = (statBuffer.st_mode & S_ISVTX) == S_ISVTX;
+        if (hasTRight && fileOwnerId != uid) {
+            return false;
+        }
+    }
+#endif
+
+    return true;
+}

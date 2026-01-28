@@ -21,9 +21,6 @@ class FileOperateBaseWorker : public AbstractWorker, public QEnableSharedFromThi
 {
 
 public:
-    explicit FileOperateBaseWorker(QObject *parent = nullptr);
-    virtual ~FileOperateBaseWorker() override;
-
     struct DirSetPermissonInfo
     {
         QFileDevice::Permissions permission;
@@ -33,13 +30,15 @@ public:
     using DirPermsissonPointer = QSharedPointer<DirSetPermissonInfo>;
     using DirPermissonList = DThreadList<DirPermsissonPointer>;
 
-    struct SmallFileThreadCopyInfo
-    {
-        FileInfoPointer fromInfo { nullptr };
-        FileInfoPointer toInfo { nullptr };
-    };
-
 public:
+    explicit FileOperateBaseWorker(QObject *parent = nullptr);
+    virtual ~FileOperateBaseWorker() override;
+
+    // Sync before stop overrides
+    bool needsSync() const override;
+    void performSync() override;
+    void performAsyncSync() override;
+
     DFileInfoPointer doCheckFile(const DFileInfoPointer &fromInfo,
                                  const DFileInfoPointer &toInfo,
                                  const QString &fileName,
@@ -57,7 +56,6 @@ public:
     qint64 getWriteDataSize();
     qint64 getTidWriteSize();
     qint64 getSectorsWritten();
-    void readAheadSourceFile(const DFileInfoPointer &fileInfo);
     AbstractJobHandler::SupportAction doHandleErrorAndWait(const QUrl &from, const QUrl &to,
                                                            const AbstractJobHandler::JobErrorType &error,
                                                            const bool isTo = false,
@@ -66,13 +64,6 @@ public:
     // notify
     void emitSpeedUpdatedNotify(const qint64 &writSize);
 
-    // Sync before stop overrides
-    bool needsSync() const override;
-    void performSync() override;
-    void performAsyncSync() override;
-
-    bool deleteFile(const QUrl &fromUrl, const QUrl &toUrl, bool *result, const bool force = false);
-    bool deleteDir(const QUrl &fromUrl, const QUrl &toUrl, bool *result, const bool force = false);
     bool copyFileFromTrash(const QUrl &urlSource, const QUrl &urlTarget, dfmio::DFile::CopyFlag flag);
 
     bool copyAndDeleteFile(const DFileInfoPointer &fromInfo, const DFileInfoPointer &targetPathInfo, const DFileInfoPointer &toInfo,
@@ -80,7 +71,6 @@ public:
     bool createSystemLink(const DFileInfoPointer &fromInfo, const DFileInfoPointer &toInfo,
                           const bool followLink, const bool doCopy,
                           bool *result);
-    bool canWriteFile(const QUrl &url) const;
 
     bool doCopyFile(const DFileInfoPointer &fromInfo, const DFileInfoPointer &toInfo, bool *skip);
     bool checkAndCopyFile(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, bool *skip);
@@ -95,16 +85,6 @@ protected:
     void removeTrashInfo(const QUrl &trashInfoUrl);
     void setSkipValue(bool *skip, AbstractJobHandler::SupportAction action);
 
-private:
-    void initThreadCopy();
-    void initSignalCopyWorker();
-    bool actionOperating(const AbstractJobHandler::SupportAction action, const qint64 size, bool *skip);
-    QUrl createNewTargetUrl(const DFileInfoPointer &toInfo, const QString &fileName);
-    bool doCopyLocalFile(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo);
-    bool doCopyOtherFile(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, bool *skip);
-    bool doCopyLocalByRange(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, bool *skip);
-    void setExpectedSizeForTarget(const QUrl &targetUrl, qint64 size);
-
 protected Q_SLOTS:
     void emitErrorNotify(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType &error,
                          const bool isTo = false, const quint64 id = 0, const QString &errorMsg = QString(),
@@ -112,6 +92,14 @@ protected Q_SLOTS:
     virtual void emitCurrentTaskNotify(const QUrl &from, const QUrl &to) override;
 
 private:
+    void initThreadCopy();
+    void initSignalCopyWorker();
+    QUrl createNewTargetUrl(const DFileInfoPointer &toInfo, const QString &fileName);
+    bool doCopyLocalFile(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo);
+    bool doCopyOtherFile(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, bool *skip);
+    bool doCopyLocalByRange(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, bool *skip);
+    void setExpectedSizeForTarget(const QUrl &targetUrl, qint64 size);
+
     QVariant
     checkLinkAndSameUrl(const DFileInfoPointer &fromInfo,
                         const DFileInfoPointer &newTargetInfo,
@@ -131,7 +119,6 @@ protected:
     qint16 targetLogicSectorSize { 512 };   // 目标设备逻辑扇区大小
     qint8 targetIsRemovable { 1 };   // 目标磁盘设备是不是可移除或者热插拔设备
     DirPermissonList dirPermissonList;   // dir set Permisson list
-    QFuture<void> syncResult;
     FileCleanupManager cleanupManager;   // 管理不完整文件的清理
 
     std::atomic_int threadCopyFileCount { 0 };

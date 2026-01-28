@@ -384,12 +384,12 @@ DFileInfoPointer DoCutFilesWorker::trySameDeviceRename(const DFileInfoPointer &s
         result = doMergDir(sourceInfo, newTargetInfo, skip);
     } else {
         if (newTargetInfo->exists()) {
-            result = deleteFile(newTargetInfo->uri(), newTargetInfo->uri(), skip);
+            result = localFileHandler->deleteFile(newTargetInfo->uri());
             if (result) {
                 *skip = false;   // deleteFile拷贝成功会设置skip为true，正确的删除后设置skip为false
                 result = renameFileByHandler(sourceInfo, newTargetInfo, skip);
             } else {
-                fmDebug() << "Failed to delete existing target file during rename - file:" << newTargetInfo->uri();
+                fmWarning() << "Failed to delete existing target file during rename - file:" << newTargetInfo->uri();
             }
         } else {
             result = renameFileByHandler(sourceInfo, newTargetInfo, skip);
