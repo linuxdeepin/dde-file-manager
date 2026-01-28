@@ -45,6 +45,8 @@ bool DoCutFilesWorker::doWork()
     // 执行剪切
     fmInfo() << "Start cutting files - count:" << sourceUrls.count();
     if (!cutFiles()) {
+        // 如果失败不应该删除源文件（保证数据安全）
+        cutAndDeleteFiles.clear();
         endWork();
         return false;
     }
@@ -56,14 +58,8 @@ bool DoCutFilesWorker::doWork()
     return true;
 }
 
-void DoCutFilesWorker::stop()
-{
-    AbstractWorker::stop();
-}
-
 bool DoCutFilesWorker::initArgs()
 {
-
     AbstractWorker::initArgs();
 
     if (sourceUrls.count() <= 0) {
@@ -230,16 +226,23 @@ void DoCutFilesWorker::onUpdateProgress()
 
 void DoCutFilesWorker::endWork()
 {
-    // delete all cut source files
-    if (localFileHandler) {
-        for (const auto &info : cutAndDeleteFiles) {
-            const auto &uri = info->uri();
-            bool ret = localFileHandler->deleteFile(uri);
-            if (!ret) {
-                fmWarning() << "Failed to delete source file after cut - file:" << uri << "error:" << localFileHandler->errorString();
-                continue;
+    // ⭐ 如果操作被取消，清理不完整的文件并保留源文件
+    if (isStopped()) {
+        cleanupManager.cleanupIncompleteFiles();
+        cutAndDeleteFiles.clear();
+        fmInfo() << "Operation cancelled: source files preserved";
+    } else {
+        // 操作正常完成，删除源文件
+        if (localFileHandler) {
+            for (const auto &info : cutAndDeleteFiles) {
+                const auto &uri = info->uri();
+                bool ret = localFileHandler->deleteFile(uri);
+                if (!ret) {
+                    fmWarning() << "Failed to delete source file after cut - file:" << uri << "error:" << localFileHandler->errorString();
+                    continue;
+                }
+                FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType::kFileDeleted, uri);
             }
-            FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType::kFileDeleted, uri);
         }
     }
 
