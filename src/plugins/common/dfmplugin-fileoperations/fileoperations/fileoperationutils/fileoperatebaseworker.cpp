@@ -357,6 +357,9 @@ bool FileOperateBaseWorker::copyAndDeleteFile(const DFileInfoPointer &fromInfo, 
     if (!toInfo)
         return false;
 
+    // 追踪目标文件（跨分区剪切时）
+    cleanupManager.trackIncompleteFile(toInfo->uri());
+
     if (fromInfo->attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool()) {
         ok = createSystemLink(fromInfo, toInfo, workData->jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyFollowSymlink), true, skip);
         if (ok) {
@@ -399,6 +402,8 @@ bool FileOperateBaseWorker::copyAndDeleteFile(const DFileInfoPointer &fromInfo, 
 
     toInfo->initQuerier();
     if (ok && toInfo->exists() && targetInfo == targetPathInfo) {
+        // 确认文件已完成（从清理列表移除）
+        cleanupManager.confirmCompleted(toInfo->uri());
         completeSourceFiles.append(fromInfo->uri());
         completeTargetFiles.append(toInfo->uri());
     }
@@ -659,6 +664,9 @@ DFileInfoPointer FileOperateBaseWorker::doCheckNewFile(const DFileInfoPointer &f
 bool FileOperateBaseWorker::checkAndCopyFile(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, bool *skip)
 {
     auto fromSize = fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
+
+    // 追踪目标文件（文件创建时立即追踪）
+    cleanupManager.trackIncompleteFile(toInfo->uri());
 
     // Set expected size for target file to ensure correct grouping during copy
     setExpectedSizeForTarget(toInfo->uri(), fromSize);
@@ -1175,8 +1183,11 @@ bool FileOperateBaseWorker::doCopyFile(const DFileInfoPointer &fromInfo, const D
         result = checkAndCopyFile(fromInfo, newTargetInfo, skip);
     }
 
-    if (result)
+    if (result) {
         emit fileAdded(newTargetInfo->uri());
+        // 确认文件已完成（从清理列表移除）
+        cleanupManager.confirmCompleted(newTargetInfo->uri());
+    }
 
     if (targetInfo == toInfo) {
         completeSourceFiles.append(fromInfo->uri());

@@ -126,6 +126,12 @@ void DoCopyFilesWorker::endWork()
 {
     waitThreadPoolOver();
 
+    // ⭐ 如果操作被取消，清理不完整的文件
+    // 利用 currentState 判断（已由 AbstractWorker::stop() 设置为 kStopState）
+    if (isStopped()) {
+        cleanupManager.cleanupIncompleteFiles();
+    }
+
     // deal target files
     for (DFileInfoPointer info : precompleteTargetFileInfo) {
         info->initQuerier();
@@ -181,15 +187,6 @@ bool DoCopyFilesWorker::copyFiles()
         }
     }
     return true;
-}
-
-/*!
- * \brief DoCopyFilesWorker::setStat Set current task status
- * \param stat task status
- */
-void DoCopyFilesWorker::setStat(const AbstractJobHandler::JobState &stat)
-{
-    AbstractWorker::setStat(stat);
 }
 
 /*!

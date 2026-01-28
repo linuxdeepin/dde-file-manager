@@ -40,7 +40,6 @@ public:
 protected:
     bool doWork() override;
     void stop() override;
-    void setStat(const AbstractJobHandler::JobState &stat) override;
     bool initArgs() override;
     void endWork() override;
 

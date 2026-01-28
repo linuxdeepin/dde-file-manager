@@ -6,6 +6,7 @@
 #define FILEOPERATEBASEWORKER_H
 
 #include "fileoperations/fileoperationutils/abstractworker.h"
+#include "fileoperations/fileoperationutils/filecleanupmanager.h"
 
 #include <dfm-base/interfaces/fileinfo.h>
 #include <dfm-base/utils/threadcontainer.h>
@@ -131,6 +132,7 @@ protected:
     qint8 targetIsRemovable { 1 };   // 目标磁盘设备是不是可移除或者热插拔设备
     DirPermissonList dirPermissonList;   // dir set Permisson list
     QFuture<void> syncResult;
+    FileCleanupManager cleanupManager;   // 管理不完整文件的清理
 
     std::atomic_int threadCopyFileCount { 0 };
     QList<DFileInfoPointer> cutAndDeleteFiles;

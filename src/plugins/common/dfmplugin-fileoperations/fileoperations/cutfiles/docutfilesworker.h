@@ -29,7 +29,6 @@ public:
 
 protected:
     bool doWork() override;
-    void stop() override;
     bool initArgs() override;
     void onUpdateProgress() override;
     void endWork() override;
