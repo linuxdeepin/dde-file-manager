@@ -110,23 +110,6 @@ void FileOperateBaseWorker::emitSpeedUpdatedNotify(const qint64 &writSize)
 }
 
 /*!
- * \brief FileOperateBaseWorker::readAheadSourceFile Pre read source file content
- * \param fileInfo File information of source file
- */
-void FileOperateBaseWorker::readAheadSourceFile(const DFileInfoPointer &fileInfo)
-{
-    auto fromSize = fileInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
-    if (fromSize <= 0)
-        return;
-    std::string stdStr = fileInfo->uri().path().toUtf8().toStdString();
-    int fromfd = open(stdStr.data(), O_RDONLY);
-    if (-1 != fromfd) {
-        readahead(fromfd, 0, static_cast<size_t>(fromSize));
-        close(fromfd);
-    }
-}
-
-/*!
  * \brief FileOperateBaseWorker::checkDiskSpaceAvailable Check
  * whether the disk where the recycle bin directory is located
  * has space of the size of the source file
@@ -197,7 +180,6 @@ bool FileOperateBaseWorker::checkTotalDiskSpaceAvailable(const QUrl &fromUrl, co
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
 
     do {
-        action = AbstractJobHandler::SupportAction::kNoAction;
         qint64 freeBytes = DeviceUtils::deviceBytesFree(toUrl);
         fmInfo() << "Disk space check - available:" << freeBytes << "required:" << sourceFilesTotalSize;
 
@@ -216,61 +198,6 @@ bool FileOperateBaseWorker::checkTotalDiskSpaceAvailable(const QUrl &fromUrl, co
     }
 
     return true;
-}
-
-/*!
- * \brief FileOperateBaseWorker::deleteFile Delete file
- * \param fromUrl URL of the source file
- * \param toUrl Destination URL
- * \param fileInfo delete file information
- * \return Delete file successfully
- */
-bool FileOperateBaseWorker::deleteFile(const QUrl &fromUrl, const QUrl &toUrl, bool *workContinue, const bool force)
-{
-    bool ret = false;
-
-    if (!stateCheck())
-        return false;
-
-    AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
-    do {
-        action = AbstractJobHandler::SupportAction::kNoAction;
-        if (force)
-            localFileHandler->setPermissions(fromUrl, QFileDevice::ReadUser | QFileDevice::WriteUser | QFileDevice::ExeUser);
-        ret = localFileHandler->deleteFile(fromUrl);
-        if (!ret) {
-            fmWarning() << "Delete file failed - file:" << fromUrl << "error:" << localFileHandler->errorString();
-            action = doHandleErrorAndWait(fromUrl, toUrl, AbstractJobHandler::JobErrorType::kDeleteFileError, false,
-                                          localFileHandler->errorString());
-        }
-    } while (action == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
-
-    if (workContinue)
-        *workContinue = action == AbstractJobHandler::SupportAction::kSkipAction || action == AbstractJobHandler::SupportAction::kNoAction;
-
-    return ret;
-}
-
-bool FileOperateBaseWorker::deleteDir(const QUrl &fromUrl, const QUrl &toUrl, bool *skip, const bool force)
-{
-    DFMIO::DEnumerator enumerator(fromUrl);
-
-    bool succ = false;
-    while (enumerator.hasNext()) {
-        const QUrl &url = enumerator.next();
-        bool isDir { DFMIO::DFileInfo(url).attribute(DFMIO::DFileInfo::AttributeID::kStandardIsDir).toBool() };
-        if (isDir) {
-            if (force)
-                localFileHandler->setPermissions(url, QFileDevice::ReadUser | QFileDevice::WriteUser | QFileDevice::ExeUser);
-            succ = deleteDir(url, toUrl, skip, force);
-        } else {
-            succ = deleteFile(url, toUrl, skip, force);
-        }
-        if (!succ)
-            return false;
-    }
-    succ = deleteFile(fromUrl, toUrl, skip, force);
-    return succ;
 }
 
 bool FileOperateBaseWorker::copyFileFromTrash(const QUrl &urlSource, const QUrl &urlTarget, DFile::CopyFlag flag)
@@ -1074,23 +1001,6 @@ bool FileOperateBaseWorker::doCopyOtherFile(const DFileInfoPointer fromInfo, con
     return ok;
 }
 
-bool FileOperateBaseWorker::actionOperating(const AbstractJobHandler::SupportAction action, const qint64 size, bool *skip)
-{
-    if (isStopped())
-        return false;
-
-    if (action != AbstractJobHandler::SupportAction::kNoAction) {
-        if (action == AbstractJobHandler::SupportAction::kSkipAction) {
-            if (skip)
-                *skip = true;
-            workData->skipWriteSize += size;
-        }
-        return false;
-    }
-
-    return true;
-}
-
 void FileOperateBaseWorker::emitErrorNotify(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType &error,
                                             const bool isTo, const quint64 id, const QString &errorMsg,
                                             const bool allUsErrorMsg)
@@ -1195,41 +1105,6 @@ bool FileOperateBaseWorker::doCopyFile(const DFileInfoPointer &fromInfo, const D
     }
 
     return result;
-}
-
-bool FileOperateBaseWorker::canWriteFile(const QUrl &url) const
-{
-    // root user return true direct
-    if (getuid() == 0)
-        return true;
-
-    auto info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
-
-    if (info.isNull())
-        return false;
-
-    auto parentInfo = InfoFactory::create<FileInfo>(info->urlOf(UrlInfoType::kParentUrl), Global::CreateFileInfoType::kCreateFileInfoSync);
-    if (parentInfo.isNull())
-        return false;
-
-    bool isFolderWritable = parentInfo->isAttributes(OptInfoType::kIsWritable);
-    if (!isFolderWritable)
-        return false;
-
-#ifdef Q_OS_LINUX
-    struct stat statBuffer;
-    if (::lstat(parentInfo->urlOf(UrlInfoType::kParentUrl).path().toLocal8Bit().data(), &statBuffer) == 0) {
-        // 如果父目录拥有t权限，则判断当前用户是不是文件的owner，不是则无法操作文件
-        const auto &fileOwnerId = info->extendAttributes(ExtInfoType::kOwnerId);
-        const auto &uid = getuid();
-        const bool hasTRight = (statBuffer.st_mode & S_ISVTX) == S_ISVTX;
-        if (hasTRight && fileOwnerId != uid) {
-            return false;
-        }
-    }
-#endif
-
-    return true;
 }
 
 void FileOperateBaseWorker::setAllDirPermisson()

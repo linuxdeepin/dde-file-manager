@@ -38,6 +38,7 @@ protected:
     bool isCanMoveToTrash(const QUrl &url, bool *result);
     QUrl trashTargetUrl(const QUrl &url);
     AbstractJobHandler::SupportAction doHandleErrorNoSpace(const QUrl &url);
+    bool canWriteFile(const QUrl &url) const;
 
 private:
     FileInfoPointer targetFileInfo { nullptr };   // target file information
