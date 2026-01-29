@@ -731,6 +731,24 @@ bool FileOperateBaseWorker::checkAndCopyFile(const DFileInfoPointer fromInfo, co
 bool FileOperateBaseWorker::checkAndCopyDir(const DFileInfoPointer &fromInfo, const DFileInfoPointer &toInfo, bool *skip)
 {
     emitCurrentTaskNotify(fromInfo->uri(), toInfo->uri());
+
+    // Ensure the caller passes a directory (development-time check)
+    Q_ASSERT(fromInfo->attribute(DFileInfo::AttributeID::kStandardIsDir).toBool());
+
+    if (!fromInfo->attribute(DFileInfo::AttributeID::kAccessCanRead).toBool()) {
+        fmWarning() << "Cannot copy source directory - permission denied:" << fromInfo->uri();
+
+        auto action = doHandleErrorAndWait(
+                fromInfo->uri(),
+                toInfo->uri(),
+                AbstractJobHandler::JobErrorType::kPermissionError,
+                false,
+                tr("Cannot copy source directory: permission denied"));
+
+        setSkipValue(skip, action);
+        return false;
+    }
+
     // 检查文件的一些合法性，源文件是否存在，创建新的目标目录名称，检查新创建目标目录名称是否存在
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
     QFileDevice::Permissions permissions = QFileDevice::Permissions(uint(fromInfo->permissions()));
