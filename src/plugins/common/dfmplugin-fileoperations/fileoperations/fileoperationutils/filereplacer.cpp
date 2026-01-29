@@ -59,13 +59,23 @@ QString generateTemporaryPath(const QString &targetPath)
 {
     QFileInfo fileInfo(targetPath);
     QString dirPath = fileInfo.absolutePath();
+    QString tempPath;
+    int attempts = 0;
+    const int kMaxAttempts = 10;
 
-    // 使用随机字符串作为临时文件名，避免与原始文件名长度相关的问题
-    // 格式: .ddefileop-xxxxxxxx
-    quint32 random = QRandomGenerator::global()->generate();
-    QString suffix = QString::number(random, 16).mid(0, 8).rightJustified(8, '0');
+    do {
+        quint32 random = QRandomGenerator::global()->generate();
+        QString suffix = QString::number(random, 16).mid(0, 8).rightJustified(8, '0');
+        tempPath = QString("%1/.ddefileop-%2").arg(dirPath, suffix);
+        attempts++;
+    } while (QFile::exists(tempPath) && attempts < kMaxAttempts);
 
-    return QString("%1/.ddefileop-%2").arg(dirPath, suffix);
+    if (attempts >= kMaxAttempts) {
+        fmWarning() << "Failed to generate unique temporary path after" << kMaxAttempts << "attempts";
+        return QString();
+    }
+
+    return tempPath;
 }
 
 bool applyReplacement(const FileReplacementContext &context)
@@ -77,7 +87,6 @@ bool applyReplacement(const FileReplacementContext &context)
     // Step 1: Remove original target file
     if (::unlink(context.originalTargetPath.toLocal8Bit().constData()) != 0 && errno != ENOENT) {
         fmWarning() << "Failed to unlink:" << context.originalTargetPath << "error:" << strerror(errno);
-        ::unlink(context.temporaryFilePath.toLocal8Bit().constData());
         return false;
     }
 
@@ -87,7 +96,6 @@ bool applyReplacement(const FileReplacementContext &context)
         != 0) {
         fmWarning() << "Failed to rename" << context.temporaryFilePath << "to"
                     << context.originalTargetPath << "error:" << strerror(errno);
-        ::unlink(context.temporaryFilePath.toLocal8Bit().constData());
         return false;
     }
 
