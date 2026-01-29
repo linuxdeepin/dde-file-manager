@@ -8,6 +8,7 @@
 #include "dfmplugin_menu_global.h"
 
 #include <dfm-base/interfaces/fileinfo.h>
+#include <dfm-base/mimetype/dmimedatabase.h>
 
 #include <DDesktopEntry>
 
@@ -61,6 +62,7 @@ public:
     QSharedPointer<QObject> menuActionHolder;
     QMap<QString, QList<QAction *>> actionListByType;
     QList<QMenu *> subMenus;
+    dfmbase::DMimeDatabase mimeDatabase;
 
     QStringList oemMenuPath;
     QStringList menuTypes;
