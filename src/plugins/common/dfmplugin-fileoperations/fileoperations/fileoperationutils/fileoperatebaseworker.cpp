@@ -6,6 +6,7 @@
 #include "dfm-base/dfm_log_defines.h"
 #include "filenameutils.h"
 #include "fileoperations/fileoperationutils/fileoperationsutils.h"
+#include "fileoperations/fileoperationutils/filereplacer.h"
 #include "workerdata.h"
 
 #include <dfm-base/interfaces/abstractdiriterator.h>
@@ -37,6 +38,96 @@
 
 DPFILEOPERATIONS_USE_NAMESPACE
 USING_IO_NAMESPACE
+
+namespace {
+
+// 替换目标信息：包含替换上下文和实际操作的目标路径
+struct ReplacementTarget
+{
+    FileReplacementContext ctx;   // 替换上下文，如果需要临时文件则有效
+    DFileInfoPointer actualInfo;   // 实际操作目标（可能是临时文件或原始目标）
+
+    bool isUsingTemporary() const
+    {
+        return ctx.isReplacement();
+    }
+};
+
+/*!
+ * \brief 为文件操作准备替换目标
+ *
+ * 仅普通文件需要使用临时文件策略进行安全替换。
+ * 符号链接和目录直接使用原始目标，无需临时文件。
+ *
+ * \param finalInfo 最终目标文件信息
+ * \param fromInfo 源文件信息（用于判断文件类型）
+ * \param cleanupManager 清理管理器（用于追踪临时文件）
+ * \return 替换目标结构
+ */
+ReplacementTarget prepareReplacementTarget(
+        const DFileInfoPointer &finalInfo,
+        const DFileInfoPointer &fromInfo,
+        FileCleanupManager &cleanupManager)
+{
+    ReplacementTarget rt;
+    rt.actualInfo = finalInfo;
+
+    // 仅普通文件需要替换处理
+    const bool isSymlink = fromInfo->attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool();
+    const bool isDir = fromInfo->attribute(DFileInfo::AttributeID::kStandardIsDir).toBool();
+
+    if (isSymlink || isDir) {
+        // 符号链接和目录直接使用原始目标，不创建替换上下文
+        return rt;
+    }
+
+    // 普通文件：尝试创建替换上下文
+    rt.ctx = FileReplacer::createReplacementContext(finalInfo->uri().path());
+
+    if (rt.ctx.isReplacement()) {
+        // 需要临时文件
+        rt.actualInfo.reset(new DFileInfo(QUrl::fromLocalFile(rt.ctx.temporaryFilePath)));
+        rt.actualInfo->initQuerier();
+        cleanupManager.trackIncompleteFile(rt.actualInfo->uri());
+        fmDebug() << "Will use temporary file for replacement:" << rt.ctx.temporaryFilePath;
+    }
+
+    return rt;
+}
+
+/*!
+ * \brief 应用文件替换（如果需要）
+ *
+ * 如果存在替换上下文，执行原子替换操作：
+ * 1. 删除原目标文件
+ * 2. 原子重命名临时文件到目标位置
+ * 3. 确认临时文件操作完成
+ *
+ * 如果没有替换操作，直接返回成功。
+ *
+ * \param rt 替换目标（包含上下文和临时文件信息）
+ * \param cleanupManager 清理管理器
+ * \return 替换是否成功（或无需替换）
+ */
+bool applyReplacementIfNeeded(
+        ReplacementTarget &rt,
+        FileCleanupManager &cleanupManager)
+{
+    if (!rt.isUsingTemporary()) {
+        return true;   // 没有替换操作，直接成功
+    }
+
+    fmDebug() << "Applying replacement:" << rt.ctx.originalTargetPath;
+    if (!FileReplacer::applyReplacement(rt.ctx)) {
+        fmWarning() << "Failed to apply replacement";
+        return false;
+    }
+
+    cleanupManager.confirmCompleted(rt.actualInfo->uri());
+    return true;
+}
+
+}   // anonymous namespace
 
 FileOperateBaseWorker::FileOperateBaseWorker(QObject *parent)
     : AbstractWorker(parent)
@@ -302,6 +393,10 @@ bool FileOperateBaseWorker::copyAndDeleteFile(const DFileInfoPointer &fromInfo, 
         const QUrl &url = toInfo->uri();
         auto fromSize = fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
 
+        // 准备替换目标
+        ReplacementTarget rt = prepareReplacementTarget(toInfo, fromInfo, cleanupManager);
+        DFileInfoPointer &actualToInfo = rt.actualInfo;
+
         // Set expected size for target file to ensure correct grouping during cut operation
         setExpectedSizeForTarget(toInfo->uri(), fromSize);
 
@@ -316,12 +411,20 @@ bool FileOperateBaseWorker::copyAndDeleteFile(const DFileInfoPointer &fromInfo, 
         DoCopyFileWorker::NextDo nextDo { DoCopyFileWorker::NextDo::kDoCopyNext };
         if (fromSize > bigFileSize || !supportDfmioCopy || workData->exBlockSyncEveryWrite) {
             do {
-                nextDo = copyOtherFileWorker->doCopyFilePractically(fromInfo, toInfo, skip);
+                nextDo = copyOtherFileWorker->doCopyFilePractically(fromInfo, actualToInfo, skip);
             } while (nextDo == DoCopyFileWorker::NextDo::kDoCopyReDoCurrentFile && !isStopped());
             ok = nextDo != DoCopyFileWorker::NextDo::kDoCopyErrorAddCancel;
         } else {
-            ok = copyOtherFileWorker->doDfmioFileCopy(fromInfo, toInfo, skip);
+            ok = copyOtherFileWorker->doDfmioFileCopy(fromInfo, actualToInfo, skip);
         }
+
+        // 应用替换（如果有）
+        if (ok) {
+            if (!applyReplacementIfNeeded(rt, cleanupManager)) {
+                ok = false;
+            }
+        }
+
         if (ok)
             cutAndDeleteFiles.append(fromInfo);
         FileUtils::removeCopyingFileUrl(url);
@@ -1079,18 +1182,35 @@ bool FileOperateBaseWorker::doCopyFile(const DFileInfoPointer &fromInfo, const D
     if (newTargetInfo.isNull())
         return result;
 
+    // 准备替换目标（仅普通文件使用临时文件）
+    ReplacementTarget rt = prepareReplacementTarget(newTargetInfo, fromInfo, cleanupManager);
+    DFileInfoPointer &actualTargetInfo = rt.actualInfo;
+
+    // 执行复制/链接/目录操作，使用actualTargetInfo
     if (fromInfo->attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool()) {
-        result = createSystemLink(fromInfo, newTargetInfo, workData->jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyFollowSymlink), true, skip);
-        if (result)
+        result = createSystemLink(fromInfo, newTargetInfo,
+                                  workData->jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyFollowSymlink),
+                                  true, skip);
+        if (result) {
             workData->zeroOrlinkOrDirWriteSize +=
-                    (newTargetInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong() > 0 ? newTargetInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong()
-                                                                                                      : FileUtils::getMemoryPageSize());
+                    (newTargetInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong() > 0
+                             ? newTargetInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong()
+                             : FileUtils::getMemoryPageSize());
+        }
     } else if (fromInfo->attribute(DFileInfo::AttributeID::kStandardIsDir).toBool()) {
         result = checkAndCopyDir(fromInfo, newTargetInfo, skip);
-        if (result || skip)
+        if (result || skip) {
             workData->zeroOrlinkOrDirWriteSize += workData->dirSize <= 0 ? FileUtils::getMemoryPageSize() : workData->dirSize;
+        }
     } else {
-        result = checkAndCopyFile(fromInfo, newTargetInfo, skip);
+        result = checkAndCopyFile(fromInfo, actualTargetInfo, skip);
+    }
+
+    // 应用替换（如果有）
+    if (result) {
+        if (!applyReplacementIfNeeded(rt, cleanupManager)) {
+            result = false;
+        }
     }
 
     if (result) {
