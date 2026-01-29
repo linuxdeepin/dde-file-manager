@@ -192,14 +192,6 @@ void FileOperatorHelper::copyFiles(const FileView *view)
         selectedUrls = urls;
     }
 
-    if (selectedUrls.size() == 1) {
-        const FileInfoPointer &fileInfo = InfoFactory::create<FileInfo>(selectedUrls.first());
-        if (!fileInfo || !fileInfo->isAttributes(OptInfoType::kIsReadable)) {
-            fmWarning() << "Cannot copy file - not readable:" << selectedUrls.first().toString();
-            return;
-        }
-    }
-
     if (selectedUrls.isEmpty()) {
         fmDebug() << "Copy operation aborted - no files selected";
         return;
