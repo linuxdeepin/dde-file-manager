@@ -193,8 +193,18 @@ bool OemMenuPrivate::isSuffixSupport(const QAction *action, FileInfoPointer file
     QStringList supportList = action->property(kSupportSuffixKey).toStringList();
     supportList << action->property(kSupportSuffixAliasKey).toStringList();
 
-    // 7z.001,7z.002, 7z.003 ... 7z.xxx
-    QString cs = fileInfo->nameOf(NameInfoType::kCompleteSuffix);
+    const QString fileName = fileInfo->nameOf(NameInfoType::kFileName);
+
+    // 优先使用 DMimeDatabase 识别真实后缀（基于 mime database，处理复式后缀和部分后缀区分）
+    QString primarySuffix = mimeDatabase.suffixForFileName(fileName);
+
+    // 处理分卷等特殊格式（如 7z.001），QMimeDatabase 对此类可能返回 7z.*
+    // 此时需要回退到完整的完整后缀字符串
+    if (primarySuffix.isEmpty() || primarySuffix.contains('*')) {
+        primarySuffix = fileInfo->nameOf(NameInfoType::kCompleteSuffix);
+    }
+
+    QString cs = primarySuffix;
     if (supportList.contains(cs, Qt::CaseInsensitive)) {
         return true;
     }

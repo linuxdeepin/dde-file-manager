@@ -48,7 +48,7 @@ void DCustomActionBuilder::setActiveDir(const QUrl &dir)
 
     dirName = info->nameOf(NameInfoType::kFileName);
 
-    //解决根目录没有名称问题
+    // 解决根目录没有名称问题
     if (dirName.isEmpty() && dir.toLocalFile() == "/") {
         dirName = "/";
     }
@@ -76,19 +76,19 @@ void DCustomActionBuilder::setFocusFile(const QUrl &file)
     }
     // fix bug 65159,这里只针对一些常见的后缀处理，暂不针对一些非标准的特殊情况做处理,待后续产品有特殊要求再处理特殊情况
     // suffixForFileName对复式后缀会返回xx.*,比如test.7z.001返回的是7z.*
-    //不过在一些非标准的复式后缀判定中，仍可能判定不准确：比如：test.part1.rar被识别成rar
-    //隐藏文件：".tar"、".tar.gz"后缀识别成""和".gz"
-    //可能无法识别到后缀：如test.run或者.tar
+    // 不过在一些非标准的复式后缀判定中，仍可能判定不准确：比如：test.part1.rar被识别成rar
+    // 隐藏文件：".tar"、".tar.gz"后缀识别成""和".gz"
+    // 可能无法识别到后缀：如test.run或者.tar
     QString suffix = mimeDatabase.suffixForFileName(fileFullName);
     if (suffix.isEmpty()) {
         fileBaseName = fileFullName;
         return;
     }
-    //二次过滤后缀，方式识别到分卷带*的情况
+    // 二次过滤后缀，方式识别到分卷带*的情况
     suffix = this->getCompleteSuffix(fileFullName, suffix);
     fileBaseName = fileFullName.left(fileFullName.length() - suffix.length() - 1);
 
-    //解决 .xx 一类的隐藏文件
+    // 解决 .xx 一类的隐藏文件
     if (fileBaseName.isEmpty())
         fileBaseName = fileFullName;
 }
@@ -133,19 +133,19 @@ DCustomActionDefines::ComboType DCustomActionBuilder::checkFileCombo(const QList
             continue;
         }
 
-        //目前只判断是否为文件夹
+        // 目前只判断是否为文件夹
         info->isAttributes(OptInfoType::kIsDir) ? ++dirCount : ++fileCount;
 
-        //文件夹和文件同时存在
+        // 文件夹和文件同时存在
         if (dirCount > 0 && fileCount > 0)
             return DCustomActionDefines::kFileAndDir;
     }
 
-    //文件
+    // 文件
     if (fileCount > 0)
         return fileCount > 1 ? DCustomActionDefines::kMultiFiles : DCustomActionDefines::kSingleFile;
 
-    //文件夹
+    // 文件夹
     if (dirCount > 0)
         return dirCount > 1 ? DCustomActionDefines::kMultiDirs : DCustomActionDefines::kSingleDir;
 
@@ -181,7 +181,7 @@ QList<DCustomActionEntry> DCustomActionBuilder::matchFileCombo(const QList<DCust
                                                                DCustomActionDefines::ComboTypes type)
 {
     QList<DCustomActionEntry> ret;
-    //无自定义菜单项
+    // 无自定义菜单项
     if (0 == rootActions.size())
         return ret;
 
@@ -212,9 +212,9 @@ QList<DCustomActionEntry> DCustomActionBuilder::matchActions(const QList<QUrl> &
      *action支持类型过滤(类型过滤要加上父类型一起过滤)
      */
 
-    //具体配置过滤
+    // 具体配置过滤
     for (auto &singleUrl : selects) {
-        //协议、后缀
+        // 协议、后缀
         QString errString;
         const FileInfoPointer &fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<FileInfo>(singleUrl, Global::CreateFileInfoType::kCreateFileInfoAuto, &errString);
         if (fileInfo.isNull()) {
@@ -243,13 +243,13 @@ QList<DCustomActionEntry> DCustomActionBuilder::matchActions(const QList<QUrl> &
         appendAllMimeTypes(fileInfo, fileMimeTypesNoParent, fileMimeTypes);
         for (auto it = oriActions.begin(); it != oriActions.end();) {
             DCustomActionEntry &tempAction = *it;
-            //协议，后缀
+            // 协议，后缀
             if (!isSchemeSupport(tempAction, singleUrl) || !isSuffixSupport(tempAction, fileInfo)) {
-                it = oriActions.erase(it);   //不支持的action移除
+                it = oriActions.erase(it);   // 不支持的action移除
                 continue;
             }
 
-            //不支持的mimetypes,使用不包含父类型的mimetype集合过滤
+            // 不支持的mimetypes,使用不包含父类型的mimetype集合过滤
             if (isMimeTypeMatch(fileMimeTypesNoParent, tempAction.excludeMimeTypes())) {
                 it = oriActions.erase(it);
                 continue;
@@ -261,12 +261,12 @@ QList<DCustomActionEntry> DCustomActionBuilder::matchActions(const QList<QUrl> &
                 continue;
             }
 
-            //支持的mimetype,使用包含父类型的mimetype集合过滤
+            // 支持的mimetype,使用包含父类型的mimetype集合过滤
             QStringList supportMimeTypes = tempAction.mimeTypes();
             supportMimeTypes.removeAll({});
             auto match = isMimeTypeMatch(fileMimeTypes, supportMimeTypes);
 
-//在自定义右键菜中有作用域限制，此类情况不显示自定义菜单，故可屏蔽，若后续有作用域的调整再考虑是否开放
+// 在自定义右键菜中有作用域限制，此类情况不显示自定义菜单，故可屏蔽，若后续有作用域的调整再考虑是否开放
 #if 0
             //部分mtp挂载设备目录下文件属性不符合规范(普通目录mimetype被认为是octet-stream)，暂时做特殊处理-
             if (singleUrl.path().contains("/mtp:host") && supportMimeTypes.contains("application/octet-stream") && fileMimeTypes.contains("application/octet-stream"))
@@ -296,9 +296,9 @@ QPair<QString, QStringList> DCustomActionBuilder::makeCommand(const QString &cmd
         return ret;
     }
 
-    //执行程序
+    // 执行程序
     ret.first = args.takeFirst();
-    //无参数
+    // 无参数
     if (args.isEmpty()) {
         return ret;
     }
@@ -358,7 +358,7 @@ QPair<QString, QStringList> DCustomActionBuilder::makeCommand(const QString &cmd
         return rets;
     };
 
-    //传参
+    // 传参
     switch (arg) {
     case DCustomActionDefines::kDirPath:
         ret.second = replace(args, DCustomActionDefines::kStrActionArg[arg], dir.toLocalFile());
@@ -396,20 +396,20 @@ QStringList DCustomActionBuilder::splitCommand(const QString &cmd)
         const bool isEnd = (cmd.size() == (i + 1));
 
         const QChar &ch = cmd.at(i);
-        //引号
+        // 引号
         const bool isQuote = (ch == QLatin1Char('\'') || ch == QLatin1Char('\"'));
 
-        //遇到引号或者最后一个字符
+        // 遇到引号或者最后一个字符
         if (!isEnd && isQuote) {
-            //进入引号内或退出引号
+            // 进入引号内或退出引号
             inQuote = !inQuote;
         } else {
-            //处于引号中或者非空格作为一个参数
+            // 处于引号中或者非空格作为一个参数
             if ((!ch.isSpace() || inQuote) && !isQuote) {
                 arg.append(ch);
             }
 
-            //遇到空格且不再引号中解出一个单独参数
+            // 遇到空格且不再引号中解出一个单独参数
             if ((ch.isSpace() && !inQuote) || isEnd) {
                 if (!arg.isEmpty()) {
                     args << arg;
@@ -454,7 +454,7 @@ bool DCustomActionBuilder::isSchemeSupport(const DCustomActionEntry &action, con
     // X-DFM-SupportSchemes not exist
     auto supportList = action.surpportSchemes();
     if (supportList.contains("*") || supportList.isEmpty())
-        return true;   //支持所有协议: 未特殊指明X-DFM-SupportSchemes或者"X-DFM-SupportSchemes=*"
+        return true;   // 支持所有协议: 未特殊指明X-DFM-SupportSchemes或者"X-DFM-SupportSchemes=*"
     return supportList.contains(url.scheme(), Qt::CaseInsensitive);
 }
 
@@ -463,11 +463,20 @@ bool DCustomActionBuilder::isSuffixSupport(const DCustomActionEntry &action, Fil
     QString errString;
     auto supportList = action.supportStuffix();
     if (!fileInfo || fileInfo->isAttributes(OptInfoType::kIsDir) || supportList.isEmpty() || supportList.contains("*")) {
-        return true;   //未特殊指明支持项或者包含*为支持所有
+        return true;   // 未特殊指明支持项或者包含*为支持所有
     }
 
-    //例如： 7z.001,7z.002, 7z.003 ... 7z.xxx
-    QString cs = fileInfo->nameOf(NameInfoType::kCompleteSuffix);
+    const QString fileName = fileInfo->nameOf(NameInfoType::kFileName);
+    static const dfmbase::DMimeDatabase mimeDb;
+    QString primarySuffix = mimeDb.suffixForFileName(fileName);
+
+    // 处理分卷等特殊格式（如 7z.001），QMimeDatabase 对此类可能返回 7z.*
+    // 此时需要回退到完整的完整后缀字符串
+    if (primarySuffix.isEmpty() || primarySuffix.contains('*')) {
+        primarySuffix = fileInfo->nameOf(NameInfoType::kCompleteSuffix);
+    }
+
+    QString cs = primarySuffix;
     if (supportList.contains(cs, Qt::CaseInsensitive)) {
         return true;
     }
@@ -528,7 +537,7 @@ QAction *DCustomActionBuilder::createMenu(const DCustomActionData &actionData, Q
     if (!actionData.actionParentPath.isEmpty())
         action->setProperty(DCustomActionDefines::kConfParentMenuPath, actionData.actionParentPath);
 
-    //子项,子项的顺序由解析器保证
+    // 子项,子项的顺序由解析器保证
     QList<DCustomActionData> subActions = actionData.acitons();
     for (auto it = subActions.begin(); it != subActions.end(); ++it) {
         QAction *ba = buildAciton(*it, parentForSubmenu);
@@ -536,13 +545,13 @@ QAction *DCustomActionBuilder::createMenu(const DCustomActionData &actionData, Q
             continue;
 
         auto separator = it->separator();
-        //上分割线
+        // 上分割线
         if (separator & DCustomActionDefines::kTop) {
             const QList<QAction *> &actionList = menu->actions();
             if (!actionList.isEmpty()) {
                 auto lastAction = menu->actions().last();
 
-                //不是分割线则插入
+                // 不是分割线则插入
                 if (!lastAction->isSeparator()) {
                     menu->addSeparator();
                 }
@@ -552,7 +561,7 @@ QAction *DCustomActionBuilder::createMenu(const DCustomActionData &actionData, Q
         ba->setParent(menu);
         menu->addAction(ba);
 
-        //下分割线
+        // 下分割线
         if ((separator & DCustomActionDefines::kBottom) && ((it + 1) != subActions.end())) {
             menu->addSeparator();
         }
@@ -574,11 +583,11 @@ QAction *DCustomActionBuilder::createAciton(const DCustomActionData &actionData)
     if (!actionData.actionParentPath.isEmpty())
         action->setProperty(DCustomActionDefines::kConfParentMenuPath, actionData.actionParentPath);
 
-    //执行动作
+    // 执行动作
     action->setProperty(DCustomActionDefines::kCustomActionCommand, actionData.command());
     action->setProperty(DCustomActionDefines::kCustomActionCommandArgFlag, actionData.commandArg());
 
-    //标题
+    // 标题
     {
         const QString &&name = makeName(actionData.name(), actionData.nameArg());
         // TODO width是临时值，最终效果需设计定义
@@ -608,7 +617,7 @@ QIcon DCustomActionBuilder::getIcon(const QString &iconName) const
 {
     QIcon ret;
 
-    //通过路径获取图标
+    // 通过路径获取图标
     QFileInfo info(iconName.startsWith("~") ? (QDir::homePath() + iconName.mid(1)) : iconName);
 
     if (!info.exists())
@@ -618,7 +627,7 @@ QIcon DCustomActionBuilder::getIcon(const QString &iconName) const
         ret = QIcon(info.absoluteFilePath());
     }
 
-    //从主题获取
+    // 从主题获取
     if (ret.isNull()) {
         ret = QIcon::fromTheme(iconName);
     }
