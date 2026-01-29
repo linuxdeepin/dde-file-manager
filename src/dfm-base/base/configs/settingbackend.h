@@ -35,14 +35,9 @@ public:
     void removeSettingAccessor(const QString &key);
     void addSettingAccessor(Application::ApplicationAttribute attr, SaveOptFunc set);
     void addSettingAccessor(Application::GenericAttribute attr, SaveOptFunc set);
-    void addToSerialDataKey(const QString &key);
-    void removeSerialDataKey(const QString &key);
 
-Q_SIGNALS:
-    void optionSetted(const QString &key, const QVariant &value);
-
-public Q_SLOTS:
-    void onOptionSetted(const QString &key, const QVariant &value);
+private Q_SLOTS:
+    void onDelayedSave();
 
 protected:
     void doSetOption(const QString &key, const QVariant &value);
