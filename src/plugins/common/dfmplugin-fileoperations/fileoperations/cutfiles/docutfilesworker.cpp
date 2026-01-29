@@ -4,6 +4,7 @@
 
 #include "docutfilesworker.h"
 #include "fileoperations/fileoperationutils/fileoperationsutils.h"
+#include "fileoperations/fileoperationutils/filereplacer.h"
 
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/fileutils.h>
@@ -339,17 +340,58 @@ bool DoCutFilesWorker::renameFileByHandler(const DFileInfoPointer &sourceInfo, c
         AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
 
         do {
-            action = AbstractJobHandler::SupportAction::kNoAction;
-            if (!localFileHandler->renameFile(sourceUrl, targetUrl, false)) {
-                auto err = AbstractJobHandler::JobErrorType::kPermissionError;
-                if (localFileHandler->errorCode() != DFMIOErrorCode::DFM_IO_ERROR_PERMISSION_DENIED) {
-                    err = AbstractJobHandler::JobErrorType::kUnknowError;
-                }
-                fmWarning() << "Rename file failed - from:" << sourceUrl << "to:" << targetUrl
-                            << "error:" << localFileHandler->errorString()
-                            << "code:" << localFileHandler->errorCode();
-                action = doHandleErrorAndWait(sourceUrl, targetUrl, err, false, localFileHandler->errorString());
+            // 首先尝试直接重命名
+            if (localFileHandler->renameFile(sourceUrl, targetUrl, false)) {
+                return true;   // 成功
             }
+
+            // 重命名失败，检查是否因为目标文件存在
+            DFMIO::DFileInfo targetFileInfo(targetUrl);
+            targetFileInfo.initQuerier();
+
+            if (targetFileInfo.exists()) {
+                // 目标文件存在，使用FileReplacer三步法确保安全替换
+                FileReplacementContext replaceCtx = FileReplacer::createReplacementContext(targetUrl.toLocalFile());
+
+                if (replaceCtx.isReplacement()) {
+                    QUrl tempPath = QUrl::fromLocalFile(replaceCtx.temporaryFilePath);
+
+                    // Step 1: 源文件重命名到临时位置
+                    if (localFileHandler->renameFile(sourceUrl, tempPath, false)) {
+                        // Step 2: 应用替换（unlink原目标 + atomic rename）
+                        if (FileReplacer::applyReplacement(replaceCtx)) {
+                            fmDebug() << "Successfully replaced target file during rename - from:" << sourceUrl << "to:" << targetUrl;
+                            return true;   // 成功
+                        } else {
+                            // 替换失败，尝试恢复源文件
+                            fmWarning() << "Failed to apply replacement during rename - trying to restore source from temp:" << tempPath;
+                            if (!localFileHandler->renameFile(tempPath, sourceUrl, false)) {
+                                fmWarning() << "Failed to restore source file - data may be lost - source:" << sourceUrl << "temp:" << tempPath;
+                            }
+                        }
+                    } else {
+                        fmWarning() << "Failed to rename source to temp during replacement - from:" << sourceUrl << "to:" << tempPath;
+                    }
+                } else {
+                    // 目标不需要替换（例如目标是符号链接），直接删除后重命名
+                    if (localFileHandler->deleteFile(targetUrl)) {
+                        if (localFileHandler->renameFile(sourceUrl, targetUrl, false)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            // 走到这里说明重命名或替换失败
+            auto err = AbstractJobHandler::JobErrorType::kPermissionError;
+            if (localFileHandler->errorCode() != DFMIOErrorCode::DFM_IO_ERROR_PERMISSION_DENIED) {
+                err = AbstractJobHandler::JobErrorType::kUnknowError;
+            }
+            fmWarning() << "Rename file failed - from:" << sourceUrl << "to:" << targetUrl
+                        << "error:" << localFileHandler->errorString()
+                        << "code:" << localFileHandler->errorCode();
+            action = doHandleErrorAndWait(sourceUrl, targetUrl, err, false, localFileHandler->errorString());
+
         } while (action == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
 
         checkRetry();
@@ -383,17 +425,9 @@ DFileInfoPointer DoCutFilesWorker::trySameDeviceRename(const DFileInfoPointer &s
         isCutMerge = false;
         result = doMergDir(sourceInfo, newTargetInfo, skip);
     } else {
-        if (newTargetInfo->exists()) {
-            result = localFileHandler->deleteFile(newTargetInfo->uri());
-            if (result) {
-                *skip = false;   // deleteFile拷贝成功会设置skip为true，正确的删除后设置skip为false
-                result = renameFileByHandler(sourceInfo, newTargetInfo, skip);
-            } else {
-                fmWarning() << "Failed to delete existing target file during rename - file:" << newTargetInfo->uri();
-            }
-        } else {
-            result = renameFileByHandler(sourceInfo, newTargetInfo, skip);
-        }
+        // 直接调用renameFileByHandler，它会安全地处理目标文件存在的情况
+        // 包括使用FileReplacer的三步法进行原子替换
+        result = renameFileByHandler(sourceInfo, newTargetInfo, skip);
     }
 
     if (result) {

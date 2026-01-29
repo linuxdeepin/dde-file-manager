@@ -135,11 +135,6 @@ void ClipBoardMenuScene::updateState(QMenu *parent)
             paste->setDisabled(disabled);
         }
     } else {   // update menu by focus fileinfo
-        if (auto copy = d->predicateAction.value(ActionID::kCopy)) {
-            if (!d->focusFileInfo->isAttributes(OptInfoType::kIsReadable) && !d->focusFileInfo->isAttributes(OptInfoType::kIsSymLink))
-                copy->setDisabled(true);
-        }
-
         if (auto cut = d->predicateAction.value(ActionID::kCut)) {
             const FileInfoPointer &fileInfo = InfoFactory::create<FileInfo>(d->currentDir);
             if (!fileInfo || !fileInfo->isAttributes(OptInfoType::kIsWritable))
