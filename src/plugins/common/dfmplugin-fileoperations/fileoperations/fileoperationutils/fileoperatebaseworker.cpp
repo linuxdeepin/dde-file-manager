@@ -69,6 +69,11 @@ ReplacementTarget prepareReplacementTarget(
         const DFileInfoPointer &fromInfo,
         FileCleanupManager &cleanupManager)
 {
+    if (!finalInfo || !fromInfo) {
+        fmWarning() << "Invalid file info pointers in prepareReplacementTarget";
+        return ReplacementTarget();
+    }
+
     ReplacementTarget rt;
     rt.actualInfo = finalInfo;
 
