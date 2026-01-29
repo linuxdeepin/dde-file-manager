@@ -509,16 +509,30 @@ void DCustomActionBuilder::appendParentMimeType(const QStringList &parentmimeTyp
     if (parentmimeTypes.size() == 0)
         return;
 
-    for (const QString &mtName : parentmimeTypes) {
-        DFMBASE_NAMESPACE::DMimeDatabase db;
+    DFMBASE_NAMESPACE::DMimeDatabase db;
+    QSet<QString> mtNames;
+    QStringList allparentmimeTypes = parentmimeTypes;
+    int count = 0;
+    while (!allparentmimeTypes.isEmpty()) {
+        if (count > 10000)
+            break;
+        const QString &mtName = allparentmimeTypes.takeFirst();
+        if (mtNames.contains(mtName))
+            continue;
+        mtNames.insert(mtName);
+        count++;
         QMimeType mt = db.mimeTypeForName(mtName);
         mimeTypes.append(mt.name());
         mimeTypes.append(mt.aliases());
         QStringList pmts = mt.parentMimeTypes();
-        appendParentMimeType(pmts, mimeTypes);
+
+        for (const auto &pmt : pmts) {
+            if (mtNames.contains(pmt))
+                continue;
+            allparentmimeTypes.push_back(pmt);
+        }
     }
 }
-
 /*!
     创建菜单项，\a parentForSubmenu 用于指定菜单的父对象，用于自动释放
     通过获取 \a actionData 中的标题，图标等信息创建菜单项，并遍历创建子项和分割符号。
