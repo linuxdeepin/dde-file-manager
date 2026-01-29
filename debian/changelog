@@ -1,3 +1,21 @@
+dde-file-manager (6.5.118) unstable; urgency=medium
+
+  * fix: check local file before creating file info in property dialog
+  * feat: add right-click outside menu handling for X11
+  * refactor: remove unused QTimer from SettingBackend
+  * fix: fix incorrect grouping of large files during copy operations
+  * feat: add file cleanup mechanism for cancelled operations
+  * refactor: optimize file operations worker class structure
+  * feat: implement atomic file replacement for cut operations
+  * fix: enhance directory copy permission handling
+  * fix: add null pointer checks and improve temporary file generation
+  * refactor: improve file suffix detection logic
+  * fix: improve file watcher handling for settings files
+  * feat: add trash file tags change notification
+  * feat: optimize wallpaper loading with caching and scaling
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 29 Jan 2026 19:59:54 +0800
+
 dde-file-manager (6.5.117) unstable; urgency=medium
 
   * Revert "refactor: simplify setting backend serialization logic"
