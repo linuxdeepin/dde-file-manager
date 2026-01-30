@@ -150,8 +150,14 @@ void FileView::setViewMode(Global::ViewMode mode)
         return;
     }
 
-    if (itemDelegate())
+    if (itemDelegate()) {
         itemDelegate()->hideAllIIndexWidget();
+    }
+
+    // 未正确重置编辑状态导致编辑失败（重命名失效）
+    if (state() == QAbstractItemView::EditingState) {
+        setState(QAbstractItemView::NoState);
+    }
 
     int delegateModeIndex = mode == Global::ViewMode::kTreeMode ? static_cast<int>(Global::ViewMode::kListMode) : static_cast<int>(mode);
     if (d->delegates.keys().contains(delegateModeIndex)) {
