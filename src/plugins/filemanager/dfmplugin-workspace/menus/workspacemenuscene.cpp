@@ -380,15 +380,21 @@ bool WorkspaceMenuScene::normalMenuTriggered(QAction *action)
         if (actionId == dfmplugin_menu::ActionID::kRename) {
             if (1 == d->selectFiles.count()) {
                 fmDebug() << "Starting rename operation for single file";
-                const QModelIndex &index = d->view->selectionModel()->currentIndex();
+
+                // 使用 d->focusFile 而不是 selectionModel()->currentIndex()
+                // 原因：selectionModel()->currentIndex() 在菜单显示期间可能会改变
+                // d->focusFile 是稳定的，表示右键选中的文件
+                const QModelIndex &index = d->view->model()->getIndexByUrl(d->focusFile);
+
                 if (Q_UNLIKELY(!index.isValid())) {
-                    fmWarning() << "Cannot rename: invalid selection index";
+                    fmWarning() << "Cannot rename: invalid selection index for focusFile:" << d->focusFile.toString();
                     return false;
                 }
+
                 QPointer<dfmplugin_workspace::FileView> view = d->view;
                 QTimer::singleShot(80, [view, index]() {
                     if (!view.isNull()) {
-                        fmDebug() << "Executing delayed rename operation";
+                        fmDebug() << "Executing delayed rename operation" << index;
                         view->edit(index, QAbstractItemView::EditKeyPressed, nullptr);
                     }
                 });
