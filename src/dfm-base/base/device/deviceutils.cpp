@@ -721,8 +721,13 @@ bool DeviceUtils::isSystemDisk(const QVariantMap &devInfo)
 
 bool DeviceUtils::isDataDisk(const QVariantHash &devInfo)
 {
-    // 如果是可移除设备，则不是数据盘
-    if (devInfo.value(kCanPowerOff).toBool() && !isSiblingOfRoot(devInfo))
+    // 判断是否为可移除设备（非数据盘）
+    // 注意：部分USB硬盘 kCanPowerOff 为 true 但 kEjectable 为 false，
+    // 此处需同时满足两者才视为可移除设备，避免将USB硬盘误判为非数据盘。
+    bool isRemovable = devInfo.value(kCanPowerOff).toBool()
+            && devInfo.value(kEjectable).toBool();
+
+    if (isRemovable && !isSiblingOfRoot(devInfo))
         return false;
 
     // 如果是根目录，则不是数据盘
