@@ -183,8 +183,6 @@ protected:
     void showEvent(QShowEvent *event) override;
 
 Q_SIGNALS:
-    void reqOpenNewWindow(const QList<QUrl> &urls);
-    void viewStateChanged();
     void selectUrlChanged(const QList<QUrl> &urls);
 
 private slots:
@@ -194,7 +192,6 @@ private slots:
     void setIconSizeBySizeIndex(const int sizeIndex);
     void onShowFileSuffixChanged(bool isShow);
     void updateHorizontalOffset();
-    void updateView();
     void updateOneView(const QModelIndex &index);
     void onSelectionChanged(const QItemSelection &indexInRect, const QItemSelection &deselected);
     void onDefaultViewModeChanged(int mode);

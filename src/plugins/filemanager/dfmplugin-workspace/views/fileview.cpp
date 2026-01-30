@@ -1280,11 +1280,6 @@ void FileView::updateHorizontalOffset()
     updateEditorGeometries();
 }
 
-void FileView::updateView()
-{
-    viewport()->update();
-}
-
 void FileView::updateOneView(const QModelIndex &index)
 {
     update(index);
@@ -2449,18 +2444,6 @@ void FileView::initializeConnect()
 
     dpfSignalDispatcher->subscribe("dfmplugin_workspace", "signal_View_HeaderViewSectionChanged", this, &FileView::onHeaderViewSectionChanged);
 
-    auto pluginName { DPF_NAMESPACE::LifeCycle::pluginMetaObj("dfmplugin_filepreview") };
-    if (pluginName && pluginName->pluginState() == DPF_NAMESPACE::PluginMetaObject::kStarted) {
-        dpfSignalDispatcher->subscribe("dfmplugin_filepreview", "signal_ThumbnailDisplay_Changed", this, &FileView::onWidgetUpdate);
-    } else {
-        connect(
-                DPF_NAMESPACE::Listener::instance(), &DPF_NAMESPACE::Listener::pluginStarted, this, [=](const QString &iid, const QString &name) {
-                    Q_UNUSED(iid)
-                    if (name == "dfmplugin_filepreview")
-                        dpfSignalDispatcher->subscribe("dfmplugin_filepreview", "signal_ThumbnailDisplay_Changed", this, &FileView::onWidgetUpdate);
-                },
-                Qt::DirectConnection);
-    }
     connect(&FileInfoHelper::instance(), &FileInfoHelper::smbSeverMayModifyPassword, this, [this](const QUrl &url) {
         if (ProtocolUtils::isSMBFile(rootUrl()) && url.path().startsWith(rootUrl().path())) {
             fmInfo() << rootUrl() << url << "smb server may modify password";
