@@ -577,7 +577,7 @@ void FileView::wheelEvent(QWheelEvent *event)
         } else {
             decreaseIcon();
         }
-        emit viewStateChanged();
+
         event->accept();
         return;
     }
@@ -2434,7 +2434,6 @@ void FileView::initializeConnect()
     connect(this, &DListView::clicked, this, &FileView::onClicked, Qt::UniqueConnection);
     connect(this, &DListView::doubleClicked, this, &FileView::onDoubleClicked);
     connect(this, &DListView::iconSizeChanged, this, &FileView::updateHorizontalOffset, Qt::QueuedConnection);
-    connect(this, &FileView::viewStateChanged, this, &FileView::saveViewModeState);
 
     connect(Application::instance(), &Application::iconSizeLevelChanged, this, &FileView::onIconSizeChanged);
     connect(Application::instance(), &Application::gridDensityLevelChanged, this, &FileView::onItemWidthLevelChanged);
@@ -2852,7 +2851,6 @@ void FileView::saveViewModeState()
 {
     const QUrl &url = rootUrl();
 
-    setFileViewStateValue(url, "iconSizeLevel", d->statusBar->scalingSlider()->value());
     setFileViewStateValue(url, "viewMode", static_cast<int>(d->currentViewMode));
 }
 
