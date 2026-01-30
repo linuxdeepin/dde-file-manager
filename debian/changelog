@@ -1,3 +1,11 @@
+dde-file-manager (6.5.119) unstable; urgency=medium
+
+  * fix: optimize parent mime type recursion handling
+  * fix: fix rename failure when switching view modes
+  * fix: use stable focusFile for rename operation
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Fri, 30 Jan 2026 11:34:23 +0800
+
 dde-file-manager (6.5.118) unstable; urgency=medium
 
   * fix: check local file before creating file info in property dialog
