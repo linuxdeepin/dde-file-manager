@@ -42,6 +42,18 @@ void setIndexState(IndexState state);
  */
 bool isCleanState();
 
+/**
+ * @brief Check if index needs to be rebuilt due to configuration changes
+ * @return true if rebuild is needed, false otherwise
+ */
+bool needsRebuild();
+
+/**
+ * @brief Set the needsRebuild flag in status file
+ * @param need true to mark rebuild is needed, false to clear the flag
+ */
+void setNeedsRebuild(bool need);
+
 bool isIndexWithAnything(const QString &path);
 bool isDefaultIndexedDirectory(const QString &path);
 bool isPathInContentIndexDirectory(const QString &path);

@@ -93,25 +93,33 @@ void TextIndexDBusPrivate::handleSlientStart()
             return;
         }
 
-        // Check if index database exists
+        // 1. 首先检查索引数据库是否存在
         if (!q->IndexDatabaseExists()) {
             fmInfo() << "TextIndexDBus: Index database does not exist, starting create task for:" << pathsToProcess;
             taskManager->startTask(IndexTask::Type::Create, pathsToProcess, true);
             return;
         }
 
-        // Index exists, check state to decide whether to update
+        // 2. 检查是否需要更新（needsRebuild 与 IndexState 是同级条件）
         IndexUtility::IndexState state = IndexUtility::getIndexState();
+        bool needsRebuild = IndexUtility::needsRebuild();
 
-        if (state == IndexUtility::IndexState::Clean) {
-            // Clean shutdown with no pending tasks, skip global update
-            fmInfo() << "TextIndexDBus: Clean state detected, skipping global update";
+        // 如果配置变化，立即清除标记（因为即将开始更新）
+        if (needsRebuild) {
+            fmInfo() << "TextIndexDBus: Config changed, clearing needsRebuild flag";
+            IndexUtility::setNeedsRebuild(false);
+        }
+
+        // 只要任一条件为真，就启动 Update
+        if (needsRebuild || state != IndexUtility::IndexState::Clean) {
+            fmInfo() << "TextIndexDBus: Starting update task - needsRebuild:" << needsRebuild
+                     << "state:" << static_cast<int>(state) << "for:" << pathsToProcess;
+            taskManager->startTask(IndexTask::Type::Update, pathsToProcess, true);
             return;
         }
 
-        // Dirty or unknown state, trigger global update
-        fmInfo() << "TextIndexDBus: Dirty/unknown state detected, starting update task for:" << pathsToProcess;
-        taskManager->startTask(IndexTask::Type::Update, pathsToProcess, true);
+        // 3. Clean 状态且无需重建，跳过更新
+        fmInfo() << "TextIndexDBus: Clean state and no config changes, skipping global update";
     });
 }
 
