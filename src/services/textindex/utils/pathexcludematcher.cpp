@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "pathexcludematcher.h"
+#include "textindexconfig.h"
+#include "indexutility.h"
 
 SERVICETEXTINDEX_BEGIN_NAMESPACE
 
@@ -188,6 +190,22 @@ QRegularExpression PathExcludeMatcher::globToRegex(const QString &glob)
     regexPattern += '$';
 
     return QRegularExpression(regexPattern);
+}
+
+PathExcludeMatcher PathExcludeMatcher::createForIndex()
+{
+    PathExcludeMatcher matcher;
+
+    // Load default blacklist directories from TextIndexConfig
+    const auto &textIndexBlacklist = TextIndexConfig::instance().folderExcludeFilters();
+    matcher.addPatterns(textIndexBlacklist);
+
+    // Load blacklist from AnythingConfigWatcher
+    const auto &anythingBlacklist =
+        IndexUtility::AnythingConfigWatcher::instance()->defaultBlacklistPaths();
+    matcher.addPatterns(anythingBlacklist);
+
+    return matcher;
 }
 
 SERVICETEXTINDEX_END_NAMESPACE

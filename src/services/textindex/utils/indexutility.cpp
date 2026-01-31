@@ -13,6 +13,7 @@
 
 inline constexpr char kDeepinAnythingDconfName[] { "org.deepin.anything" };
 inline constexpr char kDeepinAnythingDconfPathKey[] { "indexing_paths" };
+inline constexpr char kDeepinAnythingDconfBlacklistPathKey[] { "blacklist_paths" };
 
 DCORE_USE_NAMESPACE
 SERVICETEXTINDEX_BEGIN_NAMESPACE
@@ -356,11 +357,27 @@ QStringList AnythingConfigWatcher::defaultAnythingIndexPathsRealtime()
     return defaultIndexPath;
 }
 
+QStringList AnythingConfigWatcher::defaultBlacklistPaths()
+{
+    QMutexLocker lk(&mu);
+    return blacklistPaths;
+}
+
+QStringList AnythingConfigWatcher::defaultBlacklistPathsRealtime()
+{
+    QMutexLocker lk(&mu);
+    blacklistPaths.clear();
+    blacklistPaths = DFMSEARCH::Global::defaultBlacklistPaths();
+    return blacklistPaths;
+}
+
 void AnythingConfigWatcher::handleConfigChanged(const QString &key)
 {
-    if (key != kDeepinAnythingDconfPathKey)
-        return;
-    defaultAnythingIndexPathsRealtime();
+    if (key == kDeepinAnythingDconfPathKey) {
+        defaultAnythingIndexPathsRealtime();
+    } else if (key == kDeepinAnythingDconfBlacklistPathKey) {
+        defaultBlacklistPathsRealtime();
+    }
 }
 
 AnythingConfigWatcher::AnythingConfigWatcher(QObject *parent)
@@ -380,6 +397,7 @@ AnythingConfigWatcher::AnythingConfigWatcher(QObject *parent)
         connect(cfg, &DConfig::valueChanged, this, &AnythingConfigWatcher::handleConfigChanged);
 
     defaultAnythingIndexPathsRealtime();
+    defaultBlacklistPathsRealtime();
 }
 
 }   // namespace IndexUtility

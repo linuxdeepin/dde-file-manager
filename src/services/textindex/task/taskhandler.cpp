@@ -10,6 +10,7 @@
 #include "utils/docutils.h"
 #include "utils/indexutility.h"
 #include "utils/textindexconfig.h"
+#include "utils/pathexcludematcher.h"
 
 #include <dfm-search/searchfactory.h>
 #include <dfm-search/filenamesearchapi.h>
@@ -349,6 +350,11 @@ bool cleanupIndexs(IndexReaderPtr reader, IndexWriterPtr writer, TaskState &runn
 
         fmInfo() << "[cleanupIndexs] Found" << allDocs->totalHits << "documents to check";
 
+        // Use static factory method to create configured blacklist matcher
+        PathExcludeMatcher excludeMatcher = PathExcludeMatcher::createForIndex();
+        fmDebug() << "[cleanupIndexs] Initialized with" << excludeMatcher.patternCount()
+                  << "blacklist patterns";
+
         int removedCount = 0;
         const QStringList supportedExtensions = TextIndexConfig::instance().supportedFileExtensions();
 
@@ -390,6 +396,17 @@ bool cleanupIndexs(IndexReaderPtr reader, IndexWriterPtr writer, TaskState &runn
                 if (!supportedExtensions.contains(suffix, Qt::CaseInsensitive)) {   // QStringList::contains with case insensitivity
                     shouldDelete = true;
                 }
+
+                // Check blacklist (only for existing and supported files)
+                // Note: Blacklist rules target directories, so extract file's directory for matching
+                if (!shouldDelete) {
+                    const QString &fileDir = fileInfo.absolutePath();
+                    if (excludeMatcher.shouldExclude(fileDir)) {
+                        fmDebug() << "[cleanupIndexs] Removing blacklisted file from index:" << filePath
+                                 << "(directory:" << fileDir << "matches blacklist)";
+                        shouldDelete = true;
+                    }
+                }
             }
 
             //  Delete if necessary
@@ -412,7 +429,7 @@ bool cleanupIndexs(IndexReaderPtr reader, IndexWriterPtr writer, TaskState &runn
         }
 
         if (removedCount > 0) {
-            fmInfo() << "[cleanupIndexs] Index cleanup completed - removed" << removedCount << "deleted/unsupported files from index";
+            fmInfo() << "[cleanupIndexs] Index cleanup completed - removed" << removedCount << "deleted/unsupported/blacklisted files from index";
         } else {
             fmInfo() << "[cleanupIndexs] Index cleanup completed - no files needed removal";
         }
