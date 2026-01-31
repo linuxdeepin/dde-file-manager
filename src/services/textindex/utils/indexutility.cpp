@@ -129,6 +129,26 @@ bool isCleanState()
     return getIndexState() == IndexState::Clean;
 }
 
+bool needsRebuild()
+{
+    QJsonObject obj = readStatusJson();
+    if (obj.contains(Defines::kNeedsRebuildKey)) {
+        return obj[Defines::kNeedsRebuildKey].toBool();
+    }
+
+    return false;
+}
+
+void setNeedsRebuild(bool need)
+{
+    QJsonObject obj = readStatusJson();
+    obj[Defines::kNeedsRebuildKey] = need;
+
+    if (writeStatusJson(obj)) {
+        fmDebug() << "Index needsRebuild set to:" << need;
+    }
+}
+
 bool isIndexWithAnything(const QString &path)
 {
     auto status = DFMSEARCH::Global::fileNameIndexStatus();
@@ -375,8 +395,14 @@ void AnythingConfigWatcher::handleConfigChanged(const QString &key)
 {
     if (key == kDeepinAnythingDconfPathKey) {
         defaultAnythingIndexPathsRealtime();
+        // 标记需要重建索引
+        IndexUtility::setNeedsRebuild(true);
+        fmInfo() << "Anything indexing paths changed, index rebuild needed";
     } else if (key == kDeepinAnythingDconfBlacklistPathKey) {
         defaultBlacklistPathsRealtime();
+        // 标记需要重建索引
+        IndexUtility::setNeedsRebuild(true);
+        fmInfo() << "Anything blacklist paths changed, index rebuild needed";
     }
 }
 
