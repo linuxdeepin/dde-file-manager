@@ -130,6 +130,20 @@ public:
      */
     int patternCount() const;
 
+    /**
+     * @brief Create a PathExcludeMatcher instance configured with index blacklist
+     *
+     * This factory method encapsulates the blacklist configuration logic for the text index service,
+     * automatically loading blacklist patterns from the following sources:
+     * - TextIndexConfig::folderExcludeFilters() - Text index configuration exclude directories
+     * - IndexUtility::AnythingConfigWatcher::defaultBlacklistPaths() - Anything service blacklist
+     *
+     * @return Configured PathExcludeMatcher instance
+     *
+     * @note This method ensures blacklist configuration consistency, avoiding duplicate initialization logic
+     */
+    static PathExcludeMatcher createForIndex();
+
 private:
     /**
      * @brief Internal representation of a parsed exclude pattern

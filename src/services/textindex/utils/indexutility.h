@@ -78,6 +78,8 @@ public:
 
     QStringList defaultAnythingIndexPaths();
     QStringList defaultAnythingIndexPathsRealtime();
+    QStringList defaultBlacklistPaths();
+    QStringList defaultBlacklistPathsRealtime();
 
 private slots:
     void handleConfigChanged(const QString &key);
@@ -89,6 +91,7 @@ private:
     DTK_CORE_NAMESPACE::DConfig *cfg { nullptr };
     QMutex mu;
     QStringList defaultIndexPath;
+    QStringList blacklistPaths;
 };
 
 }   // namespace IndexUtility

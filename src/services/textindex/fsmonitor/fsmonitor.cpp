@@ -114,9 +114,10 @@ bool FSMonitorPrivate::init(const QStringList &rootPaths)
     // Setup watcher connections
     setupWatcherConnections();
 
-    // Add default blacklisted paths
-    const auto &defaultBlacklistedDirs = TextIndexConfig::instance().folderExcludeFilters();
-    excludeMatcher.addPatterns(defaultBlacklistedDirs);
+    // Use static factory method to create configured blacklist matcher
+    excludeMatcher = PathExcludeMatcher::createForIndex();
+    fmDebug() << "FSMonitor: Initialized with" << excludeMatcher.patternCount()
+              << "blacklist patterns";
 
     // Configure worker with exclusion logic
     worker->setExclusionChecker([this](const QString &path) {
