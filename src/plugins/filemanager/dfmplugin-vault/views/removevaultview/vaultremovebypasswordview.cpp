@@ -17,6 +17,7 @@
 #include <DDialog>
 #include <DFontSizeManager>
 #include <DSpinner>
+#include <DCommandLinkButton>
 
 #include <QPushButton>
 #include <QHBoxLayout>
@@ -47,19 +48,13 @@ VaultRemoveByPasswordView::VaultRemoveByPasswordView(QWidget *parent)
     layout->addWidget(tipsBtn);
     layout->setContentsMargins(0, 0, 0, 0);
 
-    if (!VaultHelper::instance()->getVaultVersion()) {
-        keyDeleteLabel = new DLabel(tr("Key delete"));
-        DFontSizeManager::instance()->bind(keyDeleteLabel, DFontSizeManager::T8, QFont::Medium);
-        keyDeleteLabel->installEventFilter(this);
-        keyDeleteLabel->setForegroundRole(DPalette::ColorType::LightLively);
-        fmDebug() << "Vault: Key delete label created for older vault version";
-    }
+    toggleModeBtn = new DCommandLinkButton(tr("Key delete"), this);
+    DFontSizeManager::instance()->bind(toggleModeBtn, DFontSizeManager::T8, QFont::Medium);
 
     QVBoxLayout *mainLay = new QVBoxLayout;
     mainLay->addWidget(hintInfo);
     mainLay->addItem(layout);
-    if (keyDeleteLabel)
-        mainLay->addWidget(keyDeleteLabel, 0, Qt::AlignRight);
+    mainLay->addWidget(toggleModeBtn, 0, Qt::AlignRight);
     setLayout(mainLay);
 
     connect(pwdEdit->lineEdit(), &QLineEdit::textChanged, this, &VaultRemoveByPasswordView::onPasswordChanged);
@@ -71,6 +66,8 @@ VaultRemoveByPasswordView::VaultRemoveByPasswordView(QWidget *parent)
             showToolTip(hint, 3000, EN_ToolTip::kInformation);
         }
     });
+    connect(toggleModeBtn, &DCommandLinkButton::clicked, this,
+            std::bind(&VaultRemoveByPasswordView::signalJump, this, RemoveWidgetType::kRecoveryKeyWidget));
 
     // 加载动画（放在窗口中间，覆盖在内容上方）
     spinner = new DSpinner(this);
@@ -248,21 +245,7 @@ void VaultRemoveByPasswordView::slotCheckAuthorizationFinished(bool result)
     }
 
     fmDebug() << "Vault: Vault locked successfully, proceeding to removal progress";
-    QTimer::singleShot(0, this, [this](){
+    QTimer::singleShot(0, this, [this]() {
         emit signalJump(RemoveWidgetType::kRemoveProgressWidget);
     });
-}
-
-bool VaultRemoveByPasswordView::eventFilter(QObject *obj, QEvent *evt)
-{
-    if (obj && obj == keyDeleteLabel) {
-        if (evt->type() == QEvent::MouseButtonPress) {
-            QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(evt);
-            if (mouseEvent->button() == Qt::LeftButton) {
-                emit signalJump(RemoveWidgetType::kRecoveryKeyWidget);
-                return true;
-            }
-        }
-    }
-    return QWidget::eventFilter(obj, evt);
 }

@@ -17,6 +17,7 @@ DWIDGET_BEGIN_NAMESPACE
 class DToolTip;
 class DFloatingWidget;
 class DSpinner;
+class DFileChooserEdit;
 DWIDGET_END_NAMESPACE
 
 namespace dfmplugin_vault {
@@ -28,8 +29,6 @@ public:
     ~VaultRemoveByRecoverykeyView() override;
 
     QString getRecoverykey();
-    void clear();
-
     void showAlertMessage(const QString &text, int duration = 3000);
 
     QStringList btnText() const;
@@ -45,14 +44,24 @@ Q_SIGNALS:
     void sigCloseDialog();
 
 private:
+    void initUI();
+
     //! 输入凭证后，对凭证添加“-”
     int afterRecoveryKeyChanged(QString &str);
+    void checkRecoveryKeyV1();
+    void checkRecoveryKeyV2();
 
     bool eventFilter(QObject *watched, QEvent *event) override;
 
+    // Helper functions for recovery key validation
+    bool validateRecoveryKeyV1(const QString &key);
+    void handleRecoveryKeyV1ValidationResult(bool isValid);
+    bool validateRecoveryKeyFile(const QString &file);
+    void handleRecoveryKeyFileValidationResult(bool isValid);
+
 private:
     QPlainTextEdit *keyEdit { nullptr };
-
+    DTK_WIDGET_NAMESPACE::DFileChooserEdit *filePathEdit { nullptr };
     DTK_WIDGET_NAMESPACE::DToolTip *tooltip { nullptr };
     DTK_WIDGET_NAMESPACE::DFloatingWidget *floatWidget { nullptr };
     DTK_WIDGET_NAMESPACE::DSpinner *spinner { nullptr };

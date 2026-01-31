@@ -20,6 +20,7 @@ class DToolTip;
 class DFloatingWidget;
 class DLabel;
 class DSpinner;
+class DCommandLinkButton;
 DWIDGET_END_NAMESPACE
 
 namespace dfmplugin_vault {
@@ -51,15 +52,12 @@ Q_SIGNALS:
     void signalJump(const RemoveWidgetType &type);
     void sigCloseDialog();
 
-protected:
-    bool eventFilter(QObject *obj, QEvent *evt) override;
-
 private:
     DTK_WIDGET_NAMESPACE::DPasswordEdit *pwdEdit { nullptr };
     QPushButton *tipsBtn { nullptr };
     DTK_WIDGET_NAMESPACE::DToolTip *tooltip { nullptr };
     DTK_WIDGET_NAMESPACE::DFloatingWidget *floatWidget { nullptr };
-    DTK_WIDGET_NAMESPACE::DLabel *keyDeleteLabel { Q_NULLPTR };
+    DTK_WIDGET_NAMESPACE::DCommandLinkButton *toggleModeBtn { Q_NULLPTR };
     DTK_WIDGET_NAMESPACE::DSpinner *spinner { nullptr };
 };
 }
