@@ -11,12 +11,15 @@
 #include <DFloatingWidget>
 #include <DDialog>
 #include <DSpinner>
+#include <DFrame>
+#include <DFileChooserEdit>
 
 #include <QVBoxLayout>
 #include <QTimer>
 #include <QPlainTextEdit>
 #include <QtConcurrent>
 #include <QFutureWatcher>
+#include <QLabel>
 
 #define MAX_KEY_LENGTH (32)   //!凭证最大值，4的倍数
 
@@ -26,23 +29,7 @@ using namespace dfmplugin_vault;
 VaultRemoveByRecoverykeyView::VaultRemoveByRecoverykeyView(QWidget *parent)
     : QWidget(parent)
 {
-    keyEdit = new QPlainTextEdit(this);
-    keyEdit->setPlaceholderText(tr("Input the 32-digit recovery key"));
-    keyEdit->installEventFilter(this);
-
-    QVBoxLayout *layout = new QVBoxLayout();
-    layout->addWidget(keyEdit);
-    layout->setContentsMargins(0, 0, 0, 0);
-    this->setLayout(layout);
-
-    connect(keyEdit, &QPlainTextEdit::textChanged, this, &VaultRemoveByRecoverykeyView::onRecoveryKeyChanged);
-
-    // 加载动画（放在窗口中间，覆盖在内容上方）
-    spinner = new DSpinner(this);
-    spinner->setFixedSize(48, 48);
-    spinner->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-    spinner->setFocusPolicy(Qt::NoFocus);
-    spinner->hide();
+    initUI();
 }
 
 VaultRemoveByRecoverykeyView::~VaultRemoveByRecoverykeyView()
@@ -52,16 +39,51 @@ VaultRemoveByRecoverykeyView::~VaultRemoveByRecoverykeyView()
     }
 }
 
-QString VaultRemoveByRecoverykeyView::getRecoverykey()
+void VaultRemoveByRecoverykeyView::initUI()
 {
-    QString strKey = keyEdit->toPlainText();
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    DFrame *bckFrame = new DFrame(this);
+    QVBoxLayout *contentLayout = new QVBoxLayout(bckFrame);
+    layout->addWidget(bckFrame);
 
-    return strKey.replace("-", "");
+    if (VaultHelper::instance()->getVaultVersion()) {
+        QLabel *label = new QLabel(tr("Delete file vault with recovery key"), this);
+
+        filePathEdit = new DFileChooserEdit(this);
+        filePathEdit->lineEdit()->setPlaceholderText(tr("Select Key File"));
+        filePathEdit->lineEdit()->setReadOnly(true);
+        filePathEdit->lineEdit()->setClearButtonEnabled(false);
+        filePathEdit->setDirectoryUrl(QDir::homePath());
+        filePathEdit->setFileMode(QFileDialog::ExistingFiles);
+        filePathEdit->setNameFilters({ QString("KEY file(*.key)") });
+
+        contentLayout->addWidget(label);
+        contentLayout->addWidget(filePathEdit);
+    } else {
+        keyEdit = new QPlainTextEdit(this);
+        keyEdit->setFrameShape(QFrame::NoFrame);
+        keyEdit->setPlaceholderText(tr("Input the 32-digit recovery key"));
+        keyEdit->installEventFilter(this);
+        contentLayout->addWidget(keyEdit);
+
+        connect(keyEdit, &QPlainTextEdit::textChanged, this, &VaultRemoveByRecoverykeyView::onRecoveryKeyChanged);
+    }
+
+    // 加载动画（放在窗口中间，覆盖在内容上方）
+    spinner = new DSpinner(this);
+    spinner->setFixedSize(48, 48);
+    spinner->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    spinner->setFocusPolicy(Qt::NoFocus);
+    spinner->hide();
 }
 
-void VaultRemoveByRecoverykeyView::clear()
+QString VaultRemoveByRecoverykeyView::getRecoverykey()
 {
-    keyEdit->clear();
+    if (!keyEdit)
+        return {};
+
+    QString strKey = keyEdit->toPlainText();
+    return strKey.replace("-", "");
 }
 
 void VaultRemoveByRecoverykeyView::showAlertMessage(const QString &text, int duration)
@@ -121,61 +143,16 @@ void VaultRemoveByRecoverykeyView::buttonClicked(int index, const QString &text)
     } break;
     case 1: {   // ok
         fmInfo() << "Vault: Delete button clicked, validating recovery key";
-        const QString key = getRecoverykey();
         // Show loading animation
         spinner->move((width() - spinner->width()) / 2, (height() - spinner->height()) / 2);
         spinner->show();
         spinner->raise();
         spinner->start();
-        keyEdit->setEnabled(false);
 
-        // Validate recovery key in a separate thread
-        // 根据版本选择验证方法
-        QFuture<bool> future = QtConcurrent::run([key]() -> bool {
-            OperatorCenter *operatorCenter = OperatorCenter::getInstance();
-            QString cipher;
-            bool isValid = false;
-            
-            if (operatorCenter->isNewVaultVersion()) {
-                // 新版本：直接使用恢复密钥（32字符字符串）验证
-                if (key.length() != 32) {
-                    fmWarning() << "Vault: Invalid recovery key format, expected 32 characters, got" << key.length();
-                    return false;
-                }
-                isValid = operatorCenter->checkPassword(key, cipher);
-                fmDebug() << "Vault: New version recovery key validation result:" << isValid;
-            } else {
-                // 旧版本：使用RSA用户密钥验证
-                isValid = operatorCenter->checkUserKey(key, cipher);
-                fmDebug() << "Vault: Old version user key validation result:" << isValid;
-            }
-            
-            return isValid;
-        });
-
-        // Use QFutureWatcher to wait for result
-        QFutureWatcher<bool> *watcher = new QFutureWatcher<bool>(this);
-        connect(watcher, &QFutureWatcher<bool>::finished, this, [this, watcher]() {
-            bool isValid = watcher->result();
-            watcher->deleteLater();
-
-            // Hide loading animation
-            spinner->stop();
-            spinner->hide();
-            keyEdit->setEnabled(true);
-
-            if (!isValid) {
-                fmWarning() << "Vault: Recovery key validation failed";
-                showAlertMessage(tr("Wrong recovery key"));
-                return;
-            }
-
-            fmInfo() << "Vault: Recovery key validated successfully, requesting authorization";
-            VaultUtils::instance().showAuthorityDialog(kPolkitVaultRemove);
-            connect(&VaultUtils::instance(), &VaultUtils::resultOfAuthority,
-                    this, &VaultRemoveByRecoverykeyView::slotCheckAuthorizationFinished);
-        });
-        watcher->setFuture(future);
+        if (VaultHelper::instance()->getVaultVersion())
+            checkRecoveryKeyV2();
+        else
+            checkRecoveryKeyV1();
     } break;
     default:
         break;
@@ -296,6 +273,47 @@ int VaultRemoveByRecoverykeyView::afterRecoveryKeyChanged(QString &str)
     return location;
 }
 
+void VaultRemoveByRecoverykeyView::checkRecoveryKeyV1()
+{
+    const QString key = getRecoverykey();
+    keyEdit->setEnabled(false);
+
+    QFuture<bool> future = QtConcurrent::run([this, key]() {
+        return validateRecoveryKeyV1(key);
+    });
+
+    QFutureWatcher<bool> *watcher = new QFutureWatcher<bool>(this);
+    connect(watcher, &QFutureWatcher<bool>::finished, this, [this, watcher]() {
+        bool isValid = watcher->result();
+        watcher->deleteLater();
+        handleRecoveryKeyV1ValidationResult(isValid);
+    });
+    watcher->setFuture(future);
+}
+
+void VaultRemoveByRecoverykeyView::checkRecoveryKeyV2()
+{
+    const auto &file = filePathEdit->text();
+    if (file.isEmpty()) {
+        spinner->stop();
+        spinner->hide();
+        filePathEdit->showAlertMessage(tr("Please select a recovery key file"));
+        return;
+    }
+
+    QFuture<bool> future = QtConcurrent::run([this, file]() {
+        return validateRecoveryKeyFile(file);
+    });
+
+    QFutureWatcher<bool> *watcher = new QFutureWatcher<bool>(this);
+    connect(watcher, &QFutureWatcher<bool>::finished, this, [this, watcher]() {
+        auto isValid = watcher->result();
+        watcher->deleteLater();
+        handleRecoveryKeyFileValidationResult(isValid);
+    });
+    watcher->setFuture(future);
+}
+
 bool VaultRemoveByRecoverykeyView::eventFilter(QObject *watched, QEvent *event)
 {
     if (event->type() == QEvent::KeyPress) {
@@ -313,4 +331,70 @@ bool VaultRemoveByRecoverykeyView::eventFilter(QObject *watched, QEvent *event)
     }
 
     return QWidget::eventFilter(watched, event);
+}
+
+bool VaultRemoveByRecoverykeyView::validateRecoveryKeyV1(const QString &key)
+{
+    OperatorCenter *operatorCenter = OperatorCenter::getInstance();
+    QString cipher;
+    bool isValid = false;
+
+    if (operatorCenter->isNewVaultVersion()) {
+        // 新版本：直接使用恢复密钥（32字符字符串）验证
+        if (key.length() != 32) {
+            fmWarning() << "Vault: Invalid recovery key format, expected 32 characters, got" << key.length();
+            return false;
+        }
+        isValid = operatorCenter->checkPassword(key, cipher);
+        fmDebug() << "Vault: New version recovery key validation result:" << isValid;
+    } else {
+        // 旧版本：使用RSA用户密钥验证
+        isValid = operatorCenter->checkUserKey(key, cipher);
+        fmDebug() << "Vault: Old version user key validation result:" << isValid;
+    }
+
+    return isValid;
+}
+
+void VaultRemoveByRecoverykeyView::handleRecoveryKeyV1ValidationResult(bool isValid)
+{
+    // Hide loading animation
+    spinner->stop();
+    spinner->hide();
+    keyEdit->setEnabled(true);
+
+    if (!isValid) {
+        fmWarning() << "Vault: Recovery key validation failed";
+        showAlertMessage(tr("Wrong recovery key"));
+        return;
+    }
+
+    fmInfo() << "Vault: Recovery key validated successfully, requesting authorization";
+    VaultUtils::instance().showAuthorityDialog(kPolkitVaultRemove);
+    connect(&VaultUtils::instance(), &VaultUtils::resultOfAuthority,
+            this, &VaultRemoveByRecoverykeyView::slotCheckAuthorizationFinished);
+}
+
+bool VaultRemoveByRecoverykeyView::validateRecoveryKeyFile(const QString &file)
+{
+    QString password;
+    return OperatorCenter::getInstance()->verificationRetrievePassword(file, password);
+}
+
+void VaultRemoveByRecoverykeyView::handleRecoveryKeyFileValidationResult(bool isValid)
+{
+    // Hide loading animation
+    spinner->stop();
+    spinner->hide();
+
+    if (!isValid) {
+        fmWarning() << "Vault: Recovery key file validation failed";
+        filePathEdit->showAlertMessage(tr("Invalid recovery key file"));
+        return;
+    }
+
+    fmInfo() << "Vault: Recovery key file validated successfully, requesting authorization";
+    VaultUtils::instance().showAuthorityDialog(kPolkitVaultRemove);
+    connect(&VaultUtils::instance(), &VaultUtils::resultOfAuthority,
+            this, &VaultRemoveByRecoverykeyView::slotCheckAuthorizationFinished);
 }
