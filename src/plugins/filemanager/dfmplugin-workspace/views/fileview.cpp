@@ -55,6 +55,7 @@
 #include <QUrlQuery>
 #include <QMimeData>
 #include <QLayout>
+#include <QAccessible>
 
 using namespace dfmplugin_workspace;
 DFMGLOBAL_USE_NAMESPACE
@@ -104,6 +105,18 @@ FileView::FileView(const QUrl &url, QWidget *parent)
 FileView::~FileView()
 {
     fmInfo() << "Destroying FileView for URL:" << rootUrl();
+#if QT_CONFIG(accessibility)
+    // 防止 QAccessibleCache 在退出时持有已释放 model 的引用
+    if (QAccessible::isActive()) {
+        QAccessibleInterface *iface = QAccessible::queryAccessibleInterface(this);
+        if (iface) {
+            QAccessible::Id id = QAccessible::uniqueId(iface);
+            if (id != QAccessible::Id(0)) {
+                QAccessible::deleteAccessibleInterface(id);
+            }
+        }
+    }
+#endif
 
     // 关键修复: 必须在基类(QAbstractItemView)析构前解绑 model
     // 原因: QAbstractItemView 持有 QPersistentModelIndex,如果 model 先于基类析构,
