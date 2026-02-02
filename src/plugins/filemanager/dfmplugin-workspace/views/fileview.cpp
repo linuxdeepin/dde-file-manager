@@ -115,6 +115,7 @@ FileView::~FileView()
     }
     if (selectionModel()) {
         disconnect(selectionModel(), nullptr, this, nullptr);
+        selectionModel()->clear();
     }
 
     // 2. 解绑 model (关键步骤!)
