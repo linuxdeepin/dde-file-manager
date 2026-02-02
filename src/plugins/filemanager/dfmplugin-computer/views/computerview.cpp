@@ -50,6 +50,17 @@ ComputerView::ComputerView(const QUrl &url, QWidget *parent)
 
 ComputerView::~ComputerView()
 {
+    disconnect();
+
+    if (model()) {
+        disconnect(model(), nullptr, this, nullptr);
+    }
+    if (selectionModel()) {
+        disconnect(selectionModel(), nullptr, this, nullptr);
+        selectionModel()->clear();
+    }
+
+    DListView::setModel(nullptr);
 }
 
 QWidget *ComputerView::widget() const
