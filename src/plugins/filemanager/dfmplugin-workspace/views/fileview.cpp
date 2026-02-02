@@ -2339,17 +2339,33 @@ void FileView::currentChanged(const QModelIndex &current, const QModelIndex &pre
 void FileView::rowsAboutToBeRemoved(const QModelIndex &parent, int start, int end)
 {
     QModelIndex currentIdx = currentIndex();
+    QItemSelection selectionToDeselect;
+    bool currentInRemovedRange = false;
+
+    // 遍历所有选中的索引，找出需要取消选择的项
     for (const QModelIndex &index : selectedIndexes()) {
         if (index.parent() != parent)
             continue;
 
         if (index.row() >= start && index.row() <= end) {
-            selectionModel()->select(index, QItemSelectionModel::Clear);
+            // 收集需要取消选择的 index（避免在迭代中修改选择模型）
+            selectionToDeselect.select(index, index);
+
+            // 检查 currentIndex 是否在被删除范围内
             if (index == currentIdx) {
-                clearSelection();
-                setCurrentIndex(QModelIndex());
+                currentInRemovedRange = true;
             }
         }
+    }
+
+    // 批量取消被删除项的选择（不影响其他选择）
+    if (!selectionToDeselect.isEmpty()) {
+        selectionModel()->select(selectionToDeselect, QItemSelectionModel::Deselect);
+    }
+
+    // 如果 currentIndex 被删除，提前清空，避免 Qt 自动跳转到下一个 item
+    if (currentInRemovedRange) {
+        setCurrentIndex(QModelIndex());
     }
 
     if (itemDelegate())
