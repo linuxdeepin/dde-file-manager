@@ -16,7 +16,7 @@
 class QWidget;
 
 typedef QSharedPointer<QMap<quint8, QVariant>> JobInfoPointer;
-Q_DECLARE_METATYPE(JobInfoPointer);
+// Q_DECLARE_METATYPE(JobInfoPointer);
 
 namespace dfmbase {
 class AbstractJobHandler : public QObject
@@ -290,8 +290,8 @@ Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::AbstractJobHandler::SupportActions)
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag)
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags)
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType)
-Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback);
-Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback);
+// Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback);
+// Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback);
 using JobHandlePointer = QSharedPointer<DFMBASE_NAMESPACE::AbstractJobHandler>;
 Q_DECLARE_METATYPE(JobHandlePointer)
 
