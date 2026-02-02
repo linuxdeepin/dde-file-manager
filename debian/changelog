@@ -1,3 +1,15 @@
+dde-file-manager (6.5.120) unstable; urgency=medium
+
+  * refactor: replace serial data key with delayed save timer
+  * fix: remove redundant view state saving
+  * refactor: remove unused file view update methods
+  * fix: fix data disk detection logic
+  * feat: enhance index blacklist handling with centralized configuration
+  * feat: add config change detection for text index rebuild
+  * fix: prevent crash during view destruction
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Mon, 02 Feb 2026 11:00:46 +0800
+
 dde-file-manager (6.5.119) unstable; urgency=medium
 
   * fix: optimize parent mime type recursion handling
