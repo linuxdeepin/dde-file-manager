@@ -40,8 +40,8 @@ QString FileDialogHandleDBus::directory() const
 void FileDialogHandleDBus::setDirectoryUrl(const QString &directory)
 {
     QString path = QDir::homePath();
-    if(!directory.isEmpty())
-       path = directory;
+    if (!directory.isEmpty())
+        path = directory;
     QUrl dir(path);
     if (dir.scheme().isEmpty()) {
         dir = QUrl::fromLocalFile(path);
@@ -56,7 +56,23 @@ QString FileDialogHandleDBus::directoryUrl() const
 
 void FileDialogHandleDBus::selectUrl(const QString &url)
 {
-    FileDialogHandle::selectUrl(QUrl(url));
+    QUrl fileUrl(url);
+    const auto &scheme = fileUrl.scheme();
+    if (scheme.isEmpty()) {
+        fileUrl = QUrl::fromLocalFile(url);
+    } else {
+        // Extract path portion after "scheme://"
+        int pathStart = url.indexOf("://");
+        if (pathStart != -1) {
+            // For URLs with scheme (e.g., file://), extract path to preserve special characters like '#'
+            fileUrl.clear();
+            fileUrl.setScheme(scheme);
+            QString path = url.mid(pathStart + 3);
+            fileUrl.setPath(path);
+        }
+    }
+
+    FileDialogHandle::selectUrl(fileUrl);
 }
 
 QStringList FileDialogHandleDBus::selectedUrls() const
