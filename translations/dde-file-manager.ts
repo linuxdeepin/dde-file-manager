@@ -7209,6 +7209,11 @@ You need to upgrade this vault to continue using it.</source>
         <translation></translation>
     </message>
     <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="56"/>
+        <source>Error: The filename is too long</source>
+        <translation></translation>
+    </message>
+    <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="57"/>
         <source>Next</source>
         <comment>button</comment>

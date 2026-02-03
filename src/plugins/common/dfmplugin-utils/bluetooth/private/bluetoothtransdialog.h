@@ -96,6 +96,7 @@ private:
     DLabel *subTitleOfFailedPage { nullptr };
     DLabel *subTitleOfSuccessPage { nullptr };
     DLabel *sendingStatusLabel { nullptr };
+    DLabel *failedErrorMsgLabel { nullptr };   // 失败页面的错误消息标签
     DProgressBar *progressBar { nullptr };
     DSpinner *spinner { nullptr };
 

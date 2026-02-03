@@ -32,6 +32,7 @@ public:
     QMap<QString, const BluetoothAdapter *> getAdapters() const;
     bool hasAdapter();
     bool bluetoothSendEnable();
+    bool isLongFilenameFailure(const QString &sessionPath) const;
 
 public Q_SLOTS:
     void refresh();

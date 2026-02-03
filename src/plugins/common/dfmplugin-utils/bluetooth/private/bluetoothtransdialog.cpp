@@ -53,6 +53,7 @@
 #define TXT_FILE_ZEROSIZ dfmplugin_utils::BluetoothTransDialog::tr("Unable to send 0 KB files")
 #define TXT_FILE_NOEXIST dfmplugin_utils::BluetoothTransDialog::tr("File doesn't exist")
 #define TXT_DIR_SELECTED dfmplugin_utils::BluetoothTransDialog::tr("Transferring folders is not supported")
+#define TXT_LONG_FILENAME dfmplugin_utils::BluetoothTransDialog::tr("Error: The filename is too long")
 
 #define TXT_NEXT dfmplugin_utils::BluetoothTransDialog::tr("Next", "button")
 #define TXT_CANC dfmplugin_utils::BluetoothTransDialog::tr("Cancel", "button")
@@ -320,6 +321,17 @@ void BluetoothTransDialog::initConn()
     connect(BluetoothManagerInstance, &BluetoothManager::transferCancledByRemote, this, [this](const QString &sessionPath) {
         if (sessionPath != currSessionPath)
             return;
+
+        if (BluetoothManagerInstance->isLongFilenameFailure(sessionPath)) {
+            if (failedErrorMsgLabel) {
+                failedErrorMsgLabel->setText(TXT_LONG_FILENAME);
+            }
+        } else {
+            if (failedErrorMsgLabel) {
+                failedErrorMsgLabel->setText(TXT_ERROR_REASON);
+            }
+        }
+
         stackedWidget->setCurrentIndex(kFailedPage);
         BluetoothManagerInstance->cancelTransfer(sessionPath);
     });
@@ -534,12 +546,12 @@ QWidget *BluetoothTransDialog::createFailedPage()
     changeLabelTheme(subTitleOfFailedPage);
     pLay->addWidget(subTitleOfFailedPage);
 
-    DLabel *txt2 = new DLabel(TXT_ERROR_REASON, this);
-    txt2->setMargin(0);
-    txt2->setAlignment(Qt::AlignCenter);
-    setObjTextStyle(txt2, 12, false);
-    changeLabelTheme(txt2);
-    pLay->addWidget(txt2);
+    failedErrorMsgLabel = new DLabel(TXT_ERROR_REASON, this);
+    failedErrorMsgLabel->setMargin(0);
+    failedErrorMsgLabel->setAlignment(Qt::AlignCenter);
+    setObjTextStyle(failedErrorMsgLabel, 12, false);
+    changeLabelTheme(failedErrorMsgLabel);
+    pLay->addWidget(failedErrorMsgLabel);
     pLay->addStretch(1);
 
     return w;

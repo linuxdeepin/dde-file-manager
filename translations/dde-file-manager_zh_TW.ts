@@ -7211,6 +7211,11 @@ You need to upgrade this vault to continue using it.</source>
         <translation>不支援傳輸資料夾</translation>
     </message>
     <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="56"/>
+        <source>Error: The filename is too long</source>
+        <translation>原因：檔名過長</translation>
+    </message>
+    <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="57"/>
         <source>Next</source>
         <comment>button</comment>
