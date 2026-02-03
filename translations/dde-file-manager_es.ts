@@ -7208,6 +7208,11 @@ You need to upgrade this vault to continue using it.</source>
         <translation>No se admite la transferencia de carpetas</translation>
     </message>
     <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="56"/>
+        <source>Error: The filename is too long</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="57"/>
         <source>Next</source>
         <comment>button</comment>
