@@ -120,7 +120,6 @@ void DeviceProxyManager::reloadOpticalInfo(const QString &id)
 bool DeviceProxyManager::initService()
 {
     d->initConnection();
-    QTimer::singleShot(1000, this, [this] { d->initMounts(); });
     return isDBusRuning();
 }
 

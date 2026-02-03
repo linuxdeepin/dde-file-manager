@@ -667,30 +667,30 @@ QString DeviceUtils::bindPathTransform(const QString &path, bool toDevice)
 
 bool DeviceUtils::isBuiltInDisk(const QVariantHash &devInfo)
 {
-    // 如果是可移除设备，则不是内置磁盘
-    if (devInfo.value(kCanPowerOff).toBool() && !isSiblingOfRoot(devInfo))
+    // If removable device, not built-in disk
+    if (isRemovableDevice(devInfo))
         return false;
 
-    // 如果是光驱设备，则不是内置磁盘
+    // Optical drive is not built-in disk
     if (devInfo.value(kOpticalDrive).toBool())
         return false;
 
     if (!devInfo.contains(kHintSystem))
         return false;
 
-    // 检查是否为系统相关磁盘
+    // Check if system-related disk
     QString mpt = devInfo.value(kMountPoint).toString();
     QString idLabel = devInfo.value(kIdLabel).toString();
     if (mpt == QDir::rootPath() || idLabel.startsWith("_dde_"))
         return true;
 
-    // 检查硬件特征
+    // Check hardware characteristics
     bool hintSystem = devInfo.value(kHintSystem).toBool();
     QString bus = devInfo.value(kConnectionBus).toString();
     if (hintSystem || bus != "usb")
         return true;
 
-    // 检查是否为根设备的兄弟设备
+    // Final check: sibling of root device
     return isSiblingOfRoot(devInfo);
 }
 
@@ -721,21 +721,16 @@ bool DeviceUtils::isSystemDisk(const QVariantMap &devInfo)
 
 bool DeviceUtils::isDataDisk(const QVariantHash &devInfo)
 {
-    // 判断是否为可移除设备（非数据盘）
-    // 注意：部分USB硬盘 kCanPowerOff 为 true 但 kEjectable 为 false，
-    // 此处需同时满足两者才视为可移除设备，避免将USB硬盘误判为非数据盘。
-    bool isRemovable = devInfo.value(kCanPowerOff).toBool()
-            && devInfo.value(kEjectable).toBool();
-
-    if (isRemovable && !isSiblingOfRoot(devInfo))
+    // If removable device, not data disk
+    if (isRemovableDevice(devInfo))
         return false;
 
-    // 如果是根目录，则不是数据盘
+    // Root directory is not data disk
     QString mountPoint = devInfo.value(kMountPoint).toString();
     if (mountPoint == QDir::rootPath())
         return false;
 
-    // 检查标签是否为数据盘标识
+    // Check if label indicates data disk
     QString label = devInfo.value(kIdLabel).toString();
     return label.startsWith("_dde_data") || label.startsWith("_dde_home");
 }
@@ -802,6 +797,56 @@ bool DeviceUtils::findDlnfsPath(const QString &target, Compare func)
 
     qCDebug(logDFMBase) << "No DLNFS path match found for target:" << target;
     return false;
+}
+
+QSet<QString> DeviceUtils::fstabMountPoints()
+{
+    static QMutex mutex;
+    static QSet<QString> mountPoints;
+    static quint32 lastModify = 0;
+
+    struct stat statInfo;
+    if (stat("/etc/fstab", &statInfo) != 0) {
+        qCWarning(logDFMBase) << "Failed to stat /etc/fstab";
+        return mountPoints;
+    }
+
+    QMutexLocker locker(&mutex);
+    if (lastModify != static_cast<quint32>(statInfo.st_mtime)) {
+        lastModify = static_cast<quint32>(statInfo.st_mtime);
+        mountPoints.clear();
+
+        struct fstab *fs;
+        setfsent();
+        while ((fs = getfsent()) != nullptr) {
+            mountPoints.insert(QString(fs->fs_file));
+        }
+        endfsent();
+
+        qCDebug(logDFMBase) << "Updated fstab mount points, count:" << mountPoints.size();
+    }
+
+    return mountPoints;
+}
+
+bool DeviceUtils::isRemovableDevice(const QVariantHash &devInfo)
+{
+    // kCanPowerOff being true typically indicates a removable device
+    if (!devInfo.value(kCanPowerOff).toBool())
+        return false;
+
+    // Exception: if mount point is in fstab, treat as built-in device
+    QString mountPoint = devInfo.value(kMountPoint).toString();
+    if (!mountPoint.isEmpty() && fstabMountPoints().contains(mountPoint)) {
+        qCDebug(logDFMBase) << "Device with fstab mount point treated as built-in:" << mountPoint;
+        return false;
+    }
+
+    // If sibling of root device, also treat as built-in device
+    if (isSiblingOfRoot(devInfo))
+        return false;
+
+    return true;
 }
 
 QVariantHash DeviceUtils::toHash(const QVariantMap &map)

@@ -8,6 +8,7 @@
 #include <dfm-base/dfm_base_global.h>
 
 #include <QString>
+#include <QSet>
 
 #include <dfm-mount/base/dmountutils.h>
 
@@ -89,6 +90,12 @@ private:
     using Compare = std::function<bool(const QString &, const QString &)>;
     static bool findDlnfsPath(const QString &target, Compare func);
     static QVariantHash toHash(const QVariantMap &map);
+
+    // fstab mount points cache with automatic invalidation
+    static QSet<QString> fstabMountPoints();
+
+    // extract common removable device detection logic (DRY principle)
+    static bool isRemovableDevice(const QVariantHash &devInfo);
 };
 
 }

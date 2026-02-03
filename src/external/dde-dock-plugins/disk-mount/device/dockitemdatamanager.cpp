@@ -10,6 +10,10 @@
 #include <dtkwidget_global.h>
 #include <DDesktopServices>
 #include <QTimer>
+#include <QMutex>
+#include <QSet>
+#include <fstab.h>
+#include <sys/stat.h>
 
 Q_DECLARE_LOGGING_CATEGORY(logAppDock)
 
@@ -104,6 +108,14 @@ bool DockItemDataManager::blockDeviceFilter(const QVariantMap &data)
         return kIgnore;
     if (data.value(GlobalServerDefines::DeviceProperty::kMountPoint).toString().isEmpty())
         return kIgnore;
+
+    // Ignore devices with mount points in fstab (system mounted devices)
+    QString mountPoint = data.value(GlobalServerDefines::DeviceProperty::kMountPoint).toString();
+    if (isMountPointInFstab(mountPoint)) {
+        qCDebug(logAppDock) << "Ignoring device with fstab mount point:" << mountPoint;
+        return kIgnore;
+    }
+
     if (data.value(GlobalServerDefines::DeviceProperty::kOpticalDrive).toBool())
         return kDisplay;
 
@@ -152,6 +164,39 @@ bool DockItemDataManager::isRootDrive(const QString &drivePath)
         rootDrive = rootDevData.value().value(GlobalServerDefines::DeviceProperty::kDrive).toString();
     });
     return rootDrive == drivePath;
+}
+
+bool DockItemDataManager::isMountPointInFstab(const QString &mountPoint)
+{
+    if (mountPoint.isEmpty())
+        return false;
+
+    static QMutex mutex;
+    static QSet<QString> fstabMountPoints;
+    static quint32 lastModify = 0;
+
+    struct stat statInfo;
+    if (stat("/etc/fstab", &statInfo) != 0) {
+        qCWarning(logAppDock) << "Failed to stat /etc/fstab";
+        return false;
+    }
+
+    QMutexLocker locker(&mutex);
+    if (lastModify != static_cast<quint32>(statInfo.st_mtime)) {
+        lastModify = static_cast<quint32>(statInfo.st_mtime);
+        fstabMountPoints.clear();
+
+        struct fstab *fs;
+        setfsent();
+        while ((fs = getfsent()) != nullptr) {
+            fstabMountPoints.insert(QString(fs->fs_file));
+        }
+        endfsent();
+
+        qCDebug(logAppDock) << "Updated fstab mount points, count:" << fstabMountPoints.size();
+    }
+
+    return fstabMountPoints.contains(mountPoint);
 }
 
 void DockItemDataManager::playSoundOnDevPlugInOut(bool in)
