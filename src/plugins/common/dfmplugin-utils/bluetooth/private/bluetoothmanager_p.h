@@ -10,6 +10,7 @@
 
 #include <QDBusConnection>
 #include <QDBusReply>
+#include <QMap>
 
 template<class T>
 class QFutureWatcher;
@@ -57,6 +58,7 @@ public:
     BluetoothModel *model { nullptr };
     QDBusInterface *bluetoothInter { nullptr };
     QFutureWatcher<QPair<QString, QString>> *watcher { nullptr };
+    QMap<QString, bool> longFilenameFailures;
 
     Q_DECLARE_PUBLIC(BluetoothManager)
 };

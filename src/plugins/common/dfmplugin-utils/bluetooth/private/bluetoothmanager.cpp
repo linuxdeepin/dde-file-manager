@@ -10,6 +10,9 @@
 #include <QtConcurrent/QtConcurrent>
 #include <QDBusInterface>
 #include <QDBusServiceWatcher>
+#include <QFileInfo>
+
+#include <limits.h>
 
 #ifdef COMPILE_ON_V20
 #    define BluetoothService "com.deepin.daemon.Bluetooth"
@@ -343,10 +346,23 @@ void BluetoothManagerPrivate::onTransferRemoved(const QString &file, const QDBus
 {
     Q_UNUSED(transferPath)
     Q_Q(BluetoothManager);
+    QString sessionPathStr = sessionPath.path();
+
     if (!done) {
-        Q_EMIT q->transferCancledByRemote(sessionPath.path());
+        // Extract filename from file path using string operations
+        int lastSlash = file.lastIndexOf('/');
+        QString filename = (lastSlash >= 0) ? file.mid(lastSlash + 1) : file;
+
+        QByteArray utf8Name = filename.toUtf8();
+        bool isTooLong = utf8Name.size() > NAME_MAX;
+
+        longFilenameFailures[sessionPathStr] = isTooLong;
+        fmWarning() << "bluetooth TransferRemoved: failed by long filename:" << isTooLong 
+                    << " namelen=" << utf8Name.size() << " session=" << sessionPathStr;
+        Q_EMIT q->transferCancledByRemote(sessionPathStr);
     } else {
-        Q_EMIT q->fileTransferFinished(sessionPath.path(), file);
+        longFilenameFailures.remove(sessionPathStr);
+        Q_EMIT q->fileTransferFinished(sessionPathStr, file);
     }
 }
 
@@ -357,7 +373,9 @@ void BluetoothManagerPrivate::onObexSessionCreated(const QDBusObjectPath &sessio
 
 void BluetoothManagerPrivate::onObexSessionRemoved(const QDBusObjectPath &sessionPath)
 {
-    fmDebug() << sessionPath.path();
+    QString sessionPathStr = sessionPath.path();
+    longFilenameFailures.remove(sessionPathStr);
+    fmDebug() << sessionPathStr;
 }
 
 void BluetoothManagerPrivate::onObexSessionProgress(const QDBusObjectPath &sessionPath, qulonglong totalSize, qulonglong transferred, int currentIndex)
@@ -508,4 +526,10 @@ bool BluetoothManager::canSendBluetoothRequest()
     Q_D(BluetoothManager);
     auto transportable = d->bluetoothInter->property("Transportable");
     return transportable.isValid() ? transportable.toBool() : true;
+}
+
+bool BluetoothManager::isLongFilenameFailure(const QString &sessionPath) const
+{
+    Q_D(const BluetoothManager);
+    return d->longFilenameFailures.value(sessionPath, false);
 }
