@@ -7210,6 +7210,11 @@ Vous devez améliorer ce coffre-fort pour continuer à l&apos;utiliser.</transla
         <translation>Le transfert des dossiers n&apos;est pas supporté</translation>
     </message>
     <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="56"/>
+        <source>Error: The filename is too long</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="57"/>
         <source>Next</source>
         <comment>button</comment>
