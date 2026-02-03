@@ -54,7 +54,7 @@ add_subdirectory(src/services)
 if(OPT_ENABLE_BUILD_DOCS)
     find_package(Doxygen)
     if (DOXYGEN_FOUND)
-        add_subdirectory(docs)
+        add_subdirectory(docs/api)
     endif()
 endif()
 
