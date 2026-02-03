@@ -211,7 +211,7 @@ void FileDialogStatusBar::onFileNameTextEdited(const QString &text)
     QString dstText = DFMBASE_NAMESPACE::FileUtils::preprocessingFileName(text);
     QString suffix { "" };
     mainWindow->checkFileSuffix(dstText, suffix);
-    int maxLength = NAME_MAX - suffix.length() - 1;
+    int maxLength = suffix.isEmpty() ? NAME_MAX : NAME_MAX - suffix.length() - 1;
     while (DFMBASE_NAMESPACE::FileUtils::getFileNameLength(mainWindow->getcurrenturl(), dstText) > maxLength) {
         dstText.chop(1);
     }
@@ -295,7 +295,7 @@ void FileDialogStatusBar::initializeUi()
 void FileDialogStatusBar::initializeConnect()
 {
     connect(fileNameEdit, &DLineEdit::textEdited, this, &FileDialogStatusBar::onFileNameTextEdited);
-    
+
 #ifdef DTKWIDGET_CLASS_DSizeMode
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this]() {
         updateLayout();
