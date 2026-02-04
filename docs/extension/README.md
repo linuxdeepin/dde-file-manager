@@ -49,7 +49,7 @@ DDE 文件管理器目前支持以下扩展类型：
 | 添加右键菜单项，执行脚本或程序 | Custom Menu Script | [custom-menu-script.md](01-custom-menu-script.md) |
 | 为特定文件类型提供预览功能 | 预览插件 | [dde-file-manager-preview-plugin.md](04-dde-file-manager-preview-plugin.md) |
 | 深度定制文件管理器行为 | 核心功能扩展 | [dfm-extension-plugin.md](05-dfm-extension-plugin.md) |
-| 添加新建文档模板 | 新建文档模板 | [new-document-template.txt](03-new-document-template.txt) |
+| 添加新建文档模板 | 新建文档模板 | [new-document-template.md](03-new-document-template.md) |
 
 ### 扩展复杂度对比
 
