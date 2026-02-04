@@ -68,15 +68,27 @@ void FileStatisticsJobPrivate::setState(FileStatisticsJob::State s)
         QMetaObject::invokeMethod(notifyDataTimer, "stop");
 
         if (s == FileStatisticsJob::kStoppedState) {
-            Q_EMIT q->dataNotify(totalSize, filesCount, directoryCount);
-            Q_EMIT q->sizeChanged(totalSize);
+            // Fix crash: Use QueuedConnection to emit signals safely
+            // This ensures signals are processed in the receiver's thread, not immediately
+            QMetaObject::invokeMethod(q, "dataNotify",
+                                     Qt::QueuedConnection,
+                                     Q_ARG(qint64, totalSize),
+                                     Q_ARG(int, static_cast<int>(filesCount)),
+                                     Q_ARG(int, static_cast<int>(directoryCount)));
+
+            QMetaObject::invokeMethod(q, "sizeChanged",
+                                     Qt::QueuedConnection,
+                                     Q_ARG(qint64, totalSize));
         }
 
         qCInfo(logDFMBase) << "File statistics job finished - total size:" << totalSize
                            << "files:" << filesCount << "directories:" << directoryCount;
     }
 
-    Q_EMIT q->stateChanged(s);
+    // Fix crash: Use QueuedConnection for stateChanged signal
+    QMetaObject::invokeMethod(q, "stateChanged",
+                             Qt::QueuedConnection,
+                             Q_ARG(FileStatisticsJob::State, s));
 }
 
 bool FileStatisticsJobPrivate::jobWait()
@@ -397,22 +409,46 @@ FileStatisticsJob::FileStatisticsJob(QObject *parent)
                 Q_EMIT dataNotify(d->totalSize, d->filesCount, d->directoryCount);
             },
             Qt::DirectConnection);
-    connect(qApp, &QApplication::aboutToQuit, this, [this] {
-        stop();   // Signal the thread to stop
 
-        if (!wait(3000)) {   // Wait for 3 seconds
-            qCWarning(logDFMBase) << "File statistics job thread did not exit within 3 seconds, terminating forcefully";
-            quit();   // Ensure the event loop is stopped
-            terminate();   // Forcefully terminate the thread (use with caution!)
-            wait();   // Wait for the thread to terminate (no timeout this time)
+    // Fix crash: Handle application quit without blocking
+    // Use QueuedConnection to ensure this runs in the main thread event loop
+    connect(qApp, &QApplication::aboutToQuit, this, [this] {
+        if (isRunning()) {
+            // Tell the thread to stop
+            stop();
+            // Tell the thread's event loop to exit
+            quit();
+            // Note: Don't wait() here to avoid blocking application quit
+            // The thread will finish in the background
+            qCInfo(logDFMBase) << "File statistics job stopping due to application quit";
         }
-    });
+    }, Qt::QueuedConnection);
 }
 
 FileStatisticsJob::~FileStatisticsJob()
 {
+    // Stop the thread first
     stop();
-    wait();
+
+    // Fix crash: Don't call wait() if we're in the worker thread itself
+    // This can happen when the object is deleted during signal processing
+    if (QThread::currentThread() == this) {
+        // We're in the worker thread, can't wait on ourselves
+        // Use deleteLater to defer deletion to the object's thread
+        qCWarning(logDFMBase) << "FileStatisticsJob: Attempting to wait from worker thread, skipping wait()";
+        return;
+    }
+
+    // Ensure thread event loop exits properly
+    quit();
+
+    // Wait with timeout to avoid indefinite blocking
+    if (!wait(5000)) {
+        qCWarning(logDFMBase) << "FileStatisticsJob: Thread did not finish within 5 seconds";
+        // As a last resort, terminate the thread
+        terminate();
+        wait(1000);
+    }
 }
 
 FileStatisticsJob::State FileStatisticsJob::state() const
@@ -489,6 +525,10 @@ void FileStatisticsJob::stop()
 
     d->setState(kStoppedState);
     d->waitCondition.wakeAll();
+
+    // Ensure the thread event loop will exit
+    // This is important for clean thread shutdown
+    quit();
 }
 
 void FileStatisticsJob::togglePause()
