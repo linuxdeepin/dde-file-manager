@@ -125,87 +125,12 @@ QString BackgroundManager::backgroundPath(const QString &screen)
 
 void BackgroundManager::onBackgroundBuild()
 {
+    updateBackgroundWidgets();
     // get wallpapers
     if (d->bridge->isForce() && d->bridge->isRunning())
         fmWarning() << "a force requestion is running. skip to get wallpaper.";
     else
         d->bridge->request(d->backgroundPaths.isEmpty());
-
-    QList<QWidget *> root = ddplugin_desktop_util::desktopFrameRootWindows();
-    if (root.size() == 1) {
-        fmInfo() << "Single screen mode detected";
-        QWidget *primary = root.first();
-        if (primary == nullptr) {
-            // get screen failed,clear all widget
-            d->backgroundWidgets.clear();
-            fmCritical() << "Failed to get primary screen, clearing all background widgets";
-            return;
-        }
-
-        const QString &screeName = getScreenName(primary);
-        if (screeName.isEmpty()) {
-            fmWarning() << "Cannot get screen name from root window in single screen mode";
-            return;
-        }
-
-        BackgroundWidgetPointer bwp = d->backgroundWidgets.value(screeName);
-        d->backgroundWidgets.clear();
-        if (!bwp.isNull()) {
-            QRect geometry = d->relativeGeometry(primary->geometry());   // scaled area
-            if (bwp->geometry() != geometry) {
-                fmInfo() << "Updating background widget geometry from" << bwp->geometry() << "to" << geometry;
-                bwp->setGeometry(geometry);
-            }
-            bwp->setParent(primary);
-            fmDebug() << "Reused existing background widget for screen:" << screeName;
-        } else {
-            fmInfo() << "Creating new background widget for primary screen:" << screeName;
-            bwp = createBackgroundWidget(primary);
-        }
-
-        d->backgroundWidgets.insert(screeName, bwp);
-        fmInfo() << "Single screen background setup completed for:" << screeName;
-    } else {
-        fmInfo() << "Multi-screen mode detected with" << root.size() << "screens";
-        // check whether to add
-        for (QWidget *win : root) {
-
-            const QString screenName = getScreenName(win);
-            if (screenName.isEmpty()) {
-                fmWarning() << "Cannot get screen name from root window in multi-screen mode";
-                continue;
-            }
-
-            BackgroundWidgetPointer bwp = d->backgroundWidgets.value(screenName);
-            if (!bwp.isNull()) {
-                // update widget
-                QRect geometry = d->relativeGeometry(win->geometry());   // scaled area
-                if (bwp->geometry() != geometry) {
-                    fmInfo() << "Updating background widget geometry for screen" << screenName << "from" << bwp->geometry() << "to" << geometry;
-                    bwp->setGeometry(geometry);
-                }
-                bwp->setParent(win);
-                fmDebug() << "Updated existing background widget for screen:" << screenName;
-            } else {
-                // add new widget
-                fmInfo() << "Screen" << screenName << "added, creating new background widget";
-                bwp = createBackgroundWidget(win);
-                d->backgroundWidgets.insert(screenName, bwp);
-            }
-        }
-
-        // clean up invalid widget
-        {
-            auto winMap = rootMap();
-            for (const QString &sp : d->backgroundWidgets.keys()) {
-                if (!winMap.contains(sp)) {
-                    d->backgroundWidgets.take(sp);
-                    fmInfo() << "Removed background widget for disconnected screen:" << sp;
-                }
-            }
-        }
-        fmInfo() << "Multi-screen background setup completed, active screens:" << d->backgroundWidgets.keys();
-    }
 }
 
 void BackgroundManager::onDetachWindows()
@@ -310,6 +235,85 @@ BackgroundWidgetPointer BackgroundManager::createBackgroundWidget(QWidget *root)
              << "root geometry:" << root->geometry() << "widget pointer:" << bwp.get();
 
     return bwp;
+}
+
+void BackgroundManager::updateBackgroundWidgets()
+{
+    QList<QWidget *> root = ddplugin_desktop_util::desktopFrameRootWindows();
+    if (root.size() == 1) {
+        fmInfo() << "Single screen mode detected";
+        QWidget *primary = root.first();
+        if (primary == nullptr) {
+            // get screen failed,clear all widget
+            d->backgroundWidgets.clear();
+            fmCritical() << "Failed to get primary screen, clearing all background widgets";
+            return;
+        }
+
+        const QString &screeName = getScreenName(primary);
+        if (screeName.isEmpty()) {
+            fmWarning() << "Cannot get screen name from root window in single screen mode";
+            return;
+        }
+
+        BackgroundWidgetPointer bwp = d->backgroundWidgets.value(screeName);
+        d->backgroundWidgets.clear();
+        if (!bwp.isNull()) {
+            QRect geometry = d->relativeGeometry(primary->geometry());   // scaled area
+            if (bwp->geometry() != geometry) {
+                fmInfo() << "Updating background widget geometry from" << bwp->geometry() << "to" << geometry;
+                bwp->setGeometry(geometry);
+            }
+            bwp->setParent(primary);
+            fmDebug() << "Reused existing background widget for screen:" << screeName;
+        } else {
+            fmInfo() << "Creating new background widget for primary screen:" << screeName;
+            bwp = createBackgroundWidget(primary);
+        }
+
+        d->backgroundWidgets.insert(screeName, bwp);
+        fmInfo() << "Single screen background setup completed for:" << screeName;
+    } else {
+        fmInfo() << "Multi-screen mode detected with" << root.size() << "screens";
+        // check whether to add
+        for (QWidget *win : root) {
+
+            const QString screenName = getScreenName(win);
+            if (screenName.isEmpty()) {
+                fmWarning() << "Cannot get screen name from root window in multi-screen mode";
+                continue;
+            }
+
+            BackgroundWidgetPointer bwp = d->backgroundWidgets.value(screenName);
+            if (!bwp.isNull()) {
+                // update widget
+                QRect geometry = d->relativeGeometry(win->geometry());   // scaled area
+                if (bwp->geometry() != geometry) {
+                    fmInfo() << "Updating background widget geometry for screen" << screenName << "from" << bwp->geometry() << "to" << geometry;
+                    bwp->setGeometry(geometry);
+                }
+                bwp->setParent(win);
+                fmDebug() << "Updated existing background widget for screen:" << screenName;
+            } else {
+                // add new widget
+                fmInfo() << "Screen" << screenName << "added, creating new background widget";
+                bwp = createBackgroundWidget(win);
+                d->backgroundWidgets.insert(screenName, bwp);
+            }
+        }
+
+        // clean up invalid widget
+        {
+            auto winMap = rootMap();
+            for (const QString &sp : d->backgroundWidgets.keys()) {
+                if (!winMap.contains(sp)) {
+                    d->backgroundWidgets.take(sp);
+                    fmInfo() << "Removed background widget for disconnected screen:" << sp;
+                }
+            }
+        }
+        fmInfo() << "Multi-screen background setup completed, active screens:" << d->backgroundWidgets.keys();
+    }
 }
 
 BackgroundBridge::BackgroundBridge(BackgroundManagerPrivate *ptr)

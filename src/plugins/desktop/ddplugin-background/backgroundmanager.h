@@ -40,6 +40,7 @@ private slots:
 
 private:
     BackgroundWidgetPointer createBackgroundWidget(QWidget *root);
+    void updateBackgroundWidgets();
 
 private:
     BackgroundManagerPrivate *const d = nullptr;
