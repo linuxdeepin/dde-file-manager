@@ -6,6 +6,7 @@
 #include "defendercontroller.h"
 
 #include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/dbusservice/global_server_defines.h>
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
 #include <dfm-base/base/device/deviceutils.h>
@@ -27,6 +28,7 @@
 #include <QTextStream>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QStorageInfo>
 
 #include <dfm-mount/dmount.h>
 #include <dfm-burn/dburn_global.h>
@@ -202,6 +204,101 @@ QVariantMap DeviceHelper::loadProtocolInfo(const ProtocolDevAutoPtr &dev)
     datas[kDeviceIcon] = dev->deviceIcons();
 
     return datas;
+}
+
+bool DeviceHelper::queryUsageOfBlockRealTime(const QVariantMap &itemData, quint64 *total, quint64 *avai, quint64 *used)
+{
+    Q_ASSERT(total);
+    Q_ASSERT(avai);
+    Q_ASSERT(used);
+    using namespace GlobalServerDefines;
+
+    if (itemData.value(DeviceProperty::kMountPoint).toString().isEmpty())
+        return false;
+
+    // 光驱设备特殊处理
+    if (itemData.value(DeviceProperty::kOpticalDrive).toBool()) {
+        QVariantMap opticalStorage = itemData;
+        DeviceHelper::readOpticalInfo(opticalStorage);
+        *total = opticalStorage.value(DeviceProperty::kSizeTotal).toULongLong();
+        *avai = opticalStorage.value(DeviceProperty::kSizeFree).toULongLong();
+        *used = opticalStorage.value(DeviceProperty::kSizeUsed).toULongLong();
+        return true;
+    }
+
+    // 根据配置选择查询方式
+    auto type = DConfigManager::instance()->value("org.deepin.dde.file-manager.mount",
+                                                  "deviceCapacityDisplay",
+                                                  DEVICE_SIZE_DISPLAY_BY_DISK)
+                        .toInt();
+
+    if (type == DEVICE_SIZE_DISPLAY_BY_FS) {
+        // 使用 statvfs 查询（文件系统方式）
+        struct statvfs fsInfo;
+        QString mpt = itemData.value(DeviceProperty::kMountPoint).toString();
+        int ok = statvfs(mpt.toStdString().c_str(), &fsInfo);
+        if (ok == 0) {
+            const quint64 blksize = quint64(fsInfo.f_frsize);
+            *total = fsInfo.f_blocks * blksize;
+            *avai = fsInfo.f_bavail * blksize;
+            *used = (fsInfo.f_blocks - fsInfo.f_bavail) * blksize;
+            return true;
+        }
+    } else {
+        // 使用 QStorageInfo 查询（磁盘方式）
+        QStorageInfo si(itemData.value(DeviceProperty::kMountPoint).toString());
+        *total = itemData.value(DeviceProperty::kUDisks2Size).toULongLong();
+        qint64 available = si.bytesAvailable();
+        if (available < 0)   // if negative value returned, error occurred.
+            return false;
+        *avai = static_cast<quint64>(available);
+        *used = *total - *avai;
+        return true;
+    }
+
+    return false;
+}
+
+bool DeviceHelper::queryUsageOfProtocolRealTime(const QVariantMap &itemData, quint64 *total, quint64 *avai, quint64 *used)
+{
+    Q_ASSERT(total);
+    Q_ASSERT(avai);
+    Q_ASSERT(used);
+    using namespace GlobalServerDefines;
+
+    if (itemData.value(DeviceProperty::kMountPoint).toString().isEmpty())
+        return false;
+
+    const QString &devId = itemData.value(DeviceProperty::kId).toString();
+    if (devId.isEmpty())
+        return false;
+
+    auto dev = DeviceHelper::createProtocolDevice(devId);
+    if (!dev)
+        return false;
+
+    *total = static_cast<quint64>(dev->sizeTotal());
+    *avai = static_cast<quint64>(dev->sizeFree());
+    *used = static_cast<quint64>(dev->sizeUsage());
+
+    return true;
+}
+
+bool DeviceHelper::queryDeviceUsageRealTime(const QVariantMap &itemData, quint64 *total, quint64 *avai, quint64 *used)
+{
+    Q_ASSERT(total);
+    Q_ASSERT(avai);
+    Q_ASSERT(used);
+    using namespace GlobalServerDefines;
+
+    const QString &devId = itemData.value(DeviceProperty::kId).toString();
+
+    // 根据设备ID前缀判断设备类型，调用对应的查询方法
+    if (devId.startsWith(kBlockDeviceIdPrefix)) {
+        return queryUsageOfBlockRealTime(itemData, total, avai, used);
+    } else {
+        return queryUsageOfProtocolRealTime(itemData, total, avai, used);
+    }
 }
 
 bool DeviceHelper::isMountableBlockDev(const QString &id, QString &why)

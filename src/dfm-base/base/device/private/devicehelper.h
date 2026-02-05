@@ -44,6 +44,13 @@ public:
     static QVariantMap loadProtocolInfo(const QString &id);
     static QVariantMap loadProtocolInfo(const ProtocolDevAutoPtr &dev);
 
+    static bool queryUsageOfBlockRealTime(const QVariantMap &itemData,
+                                          quint64 *total, quint64 *avai, quint64 *used);
+    static bool queryUsageOfProtocolRealTime(const QVariantMap &itemData,
+                                             quint64 *total, quint64 *avai, quint64 *used);
+    static bool queryDeviceUsageRealTime(const QVariantMap &itemData,
+                                         quint64 *total, quint64 *avai, quint64 *used);
+
     static bool isMountableBlockDev(const QString &id, QString &why);
     static bool isMountableBlockDev(const BlockDevAutoPtr &dev, QString &why);
     static bool isMountableBlockDev(const QVariantMap &infos, QString &why);
