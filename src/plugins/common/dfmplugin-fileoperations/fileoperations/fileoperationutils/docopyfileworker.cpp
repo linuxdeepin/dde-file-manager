@@ -241,8 +241,7 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFileWithDirectIO(const DFileInf
     if (srcFd < 0) {
         fmWarning() << "Failed to open source file with O_DIRECT mode - file:" << sourcePath << "error:" << strerror(errno);
         auto action = doHandleErrorAndWait(fromInfo->uri(), toInfo->uri(),
-                                           AbstractJobHandler::JobErrorType::kOpenError, false,
-                                           QString("Failed to open source file: %1").arg(strerror(errno)));
+                                           AbstractJobHandler::JobErrorType::kOpenError);
         return actionToNextDo(action, fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong(), skip);
     }
 
@@ -254,8 +253,7 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFileWithDirectIO(const DFileInf
     if (writer.fd < 0) {
         close(srcFd);
         auto action = doHandleErrorAndWait(fromInfo->uri(), toInfo->uri(),
-                                           AbstractJobHandler::JobErrorType::kOpenError, true,
-                                           QString("Failed to open destination file: %1").arg(strerror(errno)));
+                                           AbstractJobHandler::JobErrorType::kOpenError, true);
         return actionToNextDo(action, fromSize, skip);
     }
 
@@ -313,7 +311,25 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFileWithDirectIO(const DFileInf
             if (errno == EINTR) {
                 continue;
             }
-            fmWarning() << "Read error during O_DIRECT copy - file:" << sourcePath << "error:" << strerror(errno);
+            // Save errno immediately before any other function calls
+            int savedErrno = errno;
+            fmWarning() << "Read error during O_DIRECT copy - file:" << sourcePath << "error:" << strerror(savedErrno);
+
+            // Handle read error with UI dialog
+            auto jobError = mapSystemErrorToJobError(savedErrno, false);
+            AbstractJobHandler::SupportAction action = doHandleErrorAndWait(
+                fromInfo->uri(), toInfo->uri(), jobError, false);
+
+            if (action == AbstractJobHandler::SupportAction::kRetryAction) {
+                // Seek back to retry reading this chunk
+                if (lseek(srcFd, copied, SEEK_SET) < 0) {
+                    success = false;
+                    break;
+                }
+                continue;   // Retry the read
+            }
+
+            // For Skip or Cancel, set success to false and break
             success = false;
             break;
         }
@@ -335,8 +351,11 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFileWithDirectIO(const DFileInf
                     continue;
                 }
 
+                // Save errno immediately before any other function calls
+                int savedErrno = errno;
+
                 // Fallback: If O_DIRECT write fails, remove O_DIRECT flag and continue
-                if (directModeActive && errno == EINVAL) {
+                if (directModeActive && savedErrno == EINVAL) {
                     fmDebug() << "O_DIRECT write failed, removing O_DIRECT flag - file:" << destPath;
                     int flags = fcntl(writer.fd, F_GETFL);
                     if (flags != -1) {
@@ -349,7 +368,23 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFileWithDirectIO(const DFileInf
                     }
                 }
 
-                fmWarning() << "Write error during O_DIRECT copy - file:" << destPath << "error:" << strerror(errno);
+                fmWarning() << "Write error during O_DIRECT copy - file:" << destPath << "error:" << strerror(savedErrno);
+
+                // Handle write error with UI dialog
+                auto jobError = mapSystemErrorToJobError(savedErrno, true);
+                AbstractJobHandler::SupportAction action = doHandleErrorAndWait(
+                    fromInfo->uri(), toInfo->uri(), jobError, true);
+
+                if (action == AbstractJobHandler::SupportAction::kRetryAction) {
+                    // Seek to retry writing this chunk
+                    if (lseek(writer.fd, copied + bytesWritten, SEEK_SET) < 0) {
+                        success = false;
+                        break;
+                    }
+                    continue;   // Retry the write
+                }
+
+                // For Skip or Cancel, set success to false and break
                 success = false;
                 break;
             }
@@ -1216,5 +1251,34 @@ bool DoCopyFileWorker::shouldFallbackFromCopyFileRange(int errorCode) const
     default:
         // Other errors (ENOSPC, EACCES, EIO, etc.) are real errors that should be reported
         return false;
+    }
+}
+
+/*!
+ * \brief DoCopyFileWorker::mapSystemErrorToJobError Map system errno to JobErrorType
+ * \param systemErrno System error number
+ * \param isWriteError Whether this is a write error (vs read error)
+ * \return Corresponding JobErrorType
+ */
+AbstractJobHandler::JobErrorType DoCopyFileWorker::mapSystemErrorToJobError(int systemErrno, bool isWriteError)
+{
+    switch (systemErrno) {
+    case ENOSPC:   // No space left on device
+        return AbstractJobHandler::JobErrorType::kNotEnoughSpaceError;
+    case EACCES:   // Permission denied
+    case EPERM:   // Operation not permitted
+        return AbstractJobHandler::JobErrorType::kPermissionDeniedError;
+    case EIO:   // I/O error
+        return isWriteError ? AbstractJobHandler::JobErrorType::kWriteError
+                            : AbstractJobHandler::JobErrorType::kReadError;
+    case EBADF:   // Bad file descriptor
+    case EINVAL:   // Invalid argument
+        return AbstractJobHandler::JobErrorType::kProrogramError;
+    case ENOENT:   // No such file or directory
+        return AbstractJobHandler::JobErrorType::kNonexistenceError;
+    default:
+        // Default to read/write error based on operation type
+        return isWriteError ? AbstractJobHandler::JobErrorType::kWriteError
+                            : AbstractJobHandler::JobErrorType::kReadError;
     }
 }
