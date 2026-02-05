@@ -7,6 +7,7 @@
 
 #include "fileoperations/fileoperationutils/abstractworker.h"
 #include "fileoperations/fileoperationutils/filecleanupmanager.h"
+#include "fileoperations/fileoperationutils/filereplacer.h"
 
 #include <dfm-base/interfaces/fileinfo.h>
 #include <dfm-base/utils/threadcontainer.h>
@@ -21,6 +22,18 @@ class FileOperateBaseWorker : public AbstractWorker, public QEnableSharedFromThi
 {
 
 public:
+    // 替换目标信息：包含替换上下文和实际操作的目标路径
+    struct ReplacementTarget
+    {
+        FileReplacementContext ctx;   // 替换上下文，如果需要临时文件则有效
+        DFileInfoPointer actualInfo;   // 实际操作目标（可能是临时文件或原始目标）
+
+        bool isUsingTemporary() const
+        {
+            return ctx.isReplacement();
+        }
+    };
+
     struct DirSetPermissonInfo
     {
         QFileDevice::Permissions permission;
@@ -85,6 +98,9 @@ protected:
     void removeTrashInfo(const QUrl &trashInfoUrl);
     void setSkipValue(bool *skip, AbstractJobHandler::SupportAction action);
 
+    // 判断是否应该使用多线程本地复制（统一的判断接口）
+    bool shouldUseMultiThreadCopy(const DFileInfoPointer &fromInfo) const;
+
 protected Q_SLOTS:
     void emitErrorNotify(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType &error,
                          const bool isTo = false, const quint64 id = 0, const QString &errorMsg = QString(),
@@ -99,6 +115,9 @@ private:
     bool doCopyOtherFile(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, bool *skip);
     bool doCopyLocalByRange(const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, bool *skip);
     void setExpectedSizeForTarget(const QUrl &targetUrl, qint64 size);
+
+    // 延迟替换机制：批量应用所有待处理的替换
+    bool applyAllPendingReplacements();
 
     QVariant
     checkLinkAndSameUrl(const DFileInfoPointer &fromInfo,
@@ -123,6 +142,9 @@ protected:
 
     std::atomic_int threadCopyFileCount { 0 };
     QList<DFileInfoPointer> cutAndDeleteFiles;
+
+    // 延迟替换：待处理的替换上下文队列（主线程访问，无需锁）
+    QList<ReplacementTarget> pendingReplacements;
 };
 DPFILEOPERATIONS_END_NAMESPACE
 
