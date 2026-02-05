@@ -147,6 +147,7 @@ private:   // file copy
     bool handlePauseResume(FileWriter &writer, const QString &dest, bool *skip);
     NextDo actionToNextDo(AbstractJobHandler::SupportAction action, qint64 size, bool *skip);
     bool shouldFallbackFromCopyFileRange(int errorCode) const;
+    AbstractJobHandler::JobErrorType mapSystemErrorToJobError(int systemErrno, bool isWriteError);
 
 public:
     static void progressCallback(int64_t current, int64_t total, void *progressData);
