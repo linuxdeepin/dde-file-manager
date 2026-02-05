@@ -10,6 +10,7 @@
 
 #include <unistd.h>
 #include <errno.h>
+#include <sys/stat.h>
 
 DFMBASE_USE_NAMESPACE
 USING_IO_NAMESPACE
@@ -84,6 +85,21 @@ bool applyReplacement(const FileReplacementContext &context)
         return true;   // No replacement needed
     }
 
+    // Safety check: Ensure temporary file exists and is accessible
+    struct stat tempStat;
+    if (::stat(context.temporaryFilePath.toLocal8Bit().constData(), &tempStat) != 0) {
+        fmWarning() << "Temporary file does not exist or is inaccessible:"
+                    << context.temporaryFilePath << "error:" << strerror(errno);
+        return false;
+    }
+
+    // Verify temporary file is accessible and has reasonable content
+    // Zero-length files are valid, so we only check accessibility here
+    if (!S_ISREG(tempStat.st_mode)) {
+        fmWarning() << "Temporary file is not a regular file:" << context.temporaryFilePath;
+        return false;
+    }
+
     // Step 1: Remove original target file
     if (::unlink(context.originalTargetPath.toLocal8Bit().constData()) != 0 && errno != ENOENT) {
         fmWarning() << "Failed to unlink:" << context.originalTargetPath << "error:" << strerror(errno);
@@ -96,6 +112,8 @@ bool applyReplacement(const FileReplacementContext &context)
         != 0) {
         fmWarning() << "Failed to rename" << context.temporaryFilePath << "to"
                     << context.originalTargetPath << "error:" << strerror(errno);
+        // Original file has been deleted, but temporary file still exists
+        // Caller should clean up the temporary file if needed
         return false;
     }
 

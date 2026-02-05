@@ -6,7 +6,6 @@
 #include "dfm-base/dfm_log_defines.h"
 #include "filenameutils.h"
 #include "fileoperations/fileoperationutils/fileoperationsutils.h"
-#include "fileoperations/fileoperationutils/filereplacer.h"
 #include "workerdata.h"
 
 #include <dfm-base/interfaces/abstractdiriterator.h>
@@ -39,20 +38,6 @@
 DPFILEOPERATIONS_USE_NAMESPACE
 USING_IO_NAMESPACE
 
-namespace {
-
-// 替换目标信息：包含替换上下文和实际操作的目标路径
-struct ReplacementTarget
-{
-    FileReplacementContext ctx;   // 替换上下文，如果需要临时文件则有效
-    DFileInfoPointer actualInfo;   // 实际操作目标（可能是临时文件或原始目标）
-
-    bool isUsingTemporary() const
-    {
-        return ctx.isReplacement();
-    }
-};
-
 /*!
  * \brief 为文件操作准备替换目标
  *
@@ -64,17 +49,17 @@ struct ReplacementTarget
  * \param cleanupManager 清理管理器（用于追踪临时文件）
  * \return 替换目标结构
  */
-ReplacementTarget prepareReplacementTarget(
+static FileOperateBaseWorker::ReplacementTarget prepareReplacementTarget(
         const DFileInfoPointer &finalInfo,
         const DFileInfoPointer &fromInfo,
         FileCleanupManager &cleanupManager)
 {
     if (!finalInfo || !fromInfo) {
         fmWarning() << "Invalid file info pointers in prepareReplacementTarget";
-        return ReplacementTarget();
+        return FileOperateBaseWorker::ReplacementTarget();
     }
 
-    ReplacementTarget rt;
+    FileOperateBaseWorker::ReplacementTarget rt;
     rt.actualInfo = finalInfo;
 
     // 仅普通文件需要替换处理
@@ -114,8 +99,8 @@ ReplacementTarget prepareReplacementTarget(
  * \param cleanupManager 清理管理器
  * \return 替换是否成功（或无需替换）
  */
-bool applyReplacementIfNeeded(
-        ReplacementTarget &rt,
+static bool applyReplacementIfNeeded(
+        FileOperateBaseWorker::ReplacementTarget &rt,
         FileCleanupManager &cleanupManager)
 {
     if (!rt.isUsingTemporary()) {
@@ -131,8 +116,6 @@ bool applyReplacementIfNeeded(
     cleanupManager.confirmCompleted(rt.actualInfo->uri());
     return true;
 }
-
-}   // anonymous namespace
 
 FileOperateBaseWorker::FileOperateBaseWorker(QObject *parent)
     : AbstractWorker(parent)
@@ -716,7 +699,8 @@ bool FileOperateBaseWorker::checkAndCopyFile(const DFileInfoPointer fromInfo, co
     if (jobType == AbstractJobHandler::JobType::kCutType)
         return doCopyOtherFile(fromInfo, toInfo, skip);
 
-    if (isSourceFileLocal && isTargetFileLocal && !workData->singleThread) {
+    // 使用统一的判断接口（替换原来的内联判断）
+    if (shouldUseMultiThreadCopy(fromInfo)) {
         while (bigFileCopy && !isStopped()) {
             QThread::msleep(10);
         }
@@ -853,6 +837,75 @@ bool FileOperateBaseWorker::checkAndCopyDir(const DFileInfoPointer &fromInfo, co
     return true;
 }
 
+/*!
+ * \brief FileOperateBaseWorker::shouldUseMultiThreadCopy 判断是否应该使用多线程本地复制
+ *
+ * 统一的判断接口，确保多线程复制的条件在所有调用点保持一致。
+ *
+ * \param fromInfo 源文件信息
+ * \return true 表示使用多线程复制，false 表示使用同步复制
+ */
+bool FileOperateBaseWorker::shouldUseMultiThreadCopy(const DFileInfoPointer &fromInfo) const
+{
+    // 必须是复制操作（剪切操作在 checkAndCopyFile 中走同步分支）
+    if (jobType != AbstractJobHandler::JobType::kCopyType) {
+        return false;
+    }
+
+    // 必须是本地到本地的复制
+    if (!isSourceFileLocal || !isTargetFileLocal) {
+        return false;
+    }
+
+    // 不能是单线程模式
+    if (workData->singleThread) {
+        return false;
+    }
+
+    // 必须是普通文件（目录和符号链接不使用多线程复制）
+    const bool isRegularFile = fromInfo->attribute(DFileInfo::AttributeID::kStandardIsFile).toBool();
+    if (!isRegularFile) {
+        return false;
+    }
+
+    return true;
+}
+
+/*!
+ * \brief FileOperateBaseWorker::applyAllPendingReplacements 批量应用所有待处理的替换
+ *
+ * 在多线程复制完成后的等待点调用，将所有临时文件原子地替换到目标位置。
+ * 此函数在主线程执行，无需加锁。
+ *
+ * \return 所有替换都成功返回 true，至少一个失败返回 false
+ */
+bool FileOperateBaseWorker::applyAllPendingReplacements()
+{
+    if (pendingReplacements.isEmpty()) {
+        return true;
+    }
+
+    fmInfo() << "Applying" << pendingReplacements.size() << "pending replacements";
+
+    bool allSuccess = true;
+    for (auto &rt : pendingReplacements) {
+        if (!rt.isUsingTemporary()) {
+            continue;
+        }
+
+        if (!FileReplacer::applyReplacement(rt.ctx)) {
+            fmCritical() << "Failed to apply replacement for"
+                         << rt.ctx.originalTargetPath;
+            allSuccess = false;
+        } else {
+            cleanupManager.confirmCompleted(rt.actualInfo->uri());
+        }
+    }
+
+    pendingReplacements.clear();
+    return allSuccess;
+}
+
 void FileOperateBaseWorker::waitThreadPoolOver()
 {
     // wait all thread start
@@ -862,6 +915,11 @@ void FileOperateBaseWorker::waitThreadPoolOver()
     // wait thread pool copy local file or copy big file over
     while (threadPool && threadPool->activeThreadCount() > 0) {
         QThread::msleep(10);
+    }
+
+    // 等待完成后，批量执行所有延迟的替换操作
+    if (!applyAllPendingReplacements()) {
+        fmWarning() << "Some pending replacements failed";
     }
 }
 
@@ -1205,6 +1263,9 @@ bool FileOperateBaseWorker::doCopyFile(const DFileInfoPointer &fromInfo, const D
     if (newTargetInfo.isNull())
         return result;
 
+    // 使用统一的判断接口确定是否使用多线程复制
+    const bool useMultiThreadCopy = shouldUseMultiThreadCopy(fromInfo);
+
     // 准备替换目标（仅普通文件使用临时文件）
     ReplacementTarget rt = prepareReplacementTarget(newTargetInfo, fromInfo, cleanupManager);
     DFileInfoPointer &actualTargetInfo = rt.actualInfo;
@@ -1229,17 +1290,27 @@ bool FileOperateBaseWorker::doCopyFile(const DFileInfoPointer &fromInfo, const D
         result = checkAndCopyFile(fromInfo, actualTargetInfo, skip);
     }
 
-    // 应用替换（如果有）
+    // 根据场景选择立即替换或延迟替换
     if (result) {
-        if (!applyReplacementIfNeeded(rt, cleanupManager)) {
-            result = false;
+        if (useMultiThreadCopy && rt.isUsingTemporary()) {
+            // 多线程场景：延迟替换，收集上下文
+            pendingReplacements.append(rt);
+            fmDebug() << "Deferred replacement for multi-thread copy:"
+                      << rt.ctx.originalTargetPath;
+        } else {
+            // 单线程场景：立即替换
+            if (!applyReplacementIfNeeded(rt, cleanupManager)) {
+                result = false;
+            }
         }
     }
 
     if (result) {
         emit fileAdded(newTargetInfo->uri());
-        // 确认文件已完成（从清理列表移除）
-        cleanupManager.confirmCompleted(newTargetInfo->uri());
+        // 仅在非延迟替换场景确认完成（延迟替换在批量替换时确认）
+        if (!useMultiThreadCopy || !rt.isUsingTemporary()) {
+            cleanupManager.confirmCompleted(newTargetInfo->uri());
+        }
     }
 
     if (targetInfo == toInfo) {
