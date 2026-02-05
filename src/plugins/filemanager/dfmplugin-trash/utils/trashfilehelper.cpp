@@ -117,7 +117,7 @@ bool TrashFileHelper::openFileInPlugin(quint64 windowId, const QList<QUrl> urls)
     bool isOpenFile = false;
     for (const QUrl &url : urls) {
         auto fileinfo = DFMBASE_NAMESPACE::InfoFactory::create<DFMBASE_NAMESPACE::FileInfo>(url);
-        if (fileinfo && fileinfo->isAttributes(OptInfoType::kIsFile)) {
+        if (fileinfo && fileinfo->fileType() == FileInfo::FileType::kRegularFile) {
             isOpenFile = true;
             break;
         }
@@ -171,7 +171,7 @@ bool TrashFileHelper::handleIsSubFile(const QUrl &parent, const QUrl &sub)
         return false;
     if (!FileUtils::isTrashFile(sub))
         return false;
-    if (UniversalUtils::urlEquals( FileUtils::trashRootUrl(), parent))
+    if (UniversalUtils::urlEquals(FileUtils::trashRootUrl(), parent))
         return true;
 
     return sub.path().contains(parent.path());
