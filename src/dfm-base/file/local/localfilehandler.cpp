@@ -1355,10 +1355,17 @@ std::optional<QUrl> LocalFileHandlerPrivate::resolveSymlink(const QUrl &url)
         fileInfo.setFile(canonicalPath);
         if (!fileInfo.exists() && !ProtocolUtils::isSMBFile(QUrl::fromLocalFile(canonicalPath))) {
             // Link is broken
-            lastEvent = DialogManagerInstance->showBreakSymlinkDialog(
+            GlobalEventType dialogResult = DialogManagerInstance->showBreakSymlinkDialog(
                     QFileInfo(currentPath).fileName(),
                     url);
-            invalidPath << url;
+            lastEvent = dialogResult;
+
+            // 只有当用户选择删除或移动到回收站时，才将该路径添加到 invalidPath
+            // 用户点击取消(kUnknowType)时，不添加到 invalidPath，避免触发"打开方式"对话框
+            if (dialogResult != GlobalEventType::kUnknowType) {
+                invalidPath << url;
+            }
+
             return std::nullopt;
         }
 
