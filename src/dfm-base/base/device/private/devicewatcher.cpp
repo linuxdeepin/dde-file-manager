@@ -131,59 +131,20 @@ void DeviceWatcherPrivate::queryUsageOfItem(const QVariantMap &itemData, dfmmoun
 
 DevStorage DeviceWatcherPrivate::queryUsageOfBlock(const QVariantMap &itemData)
 {
-    if (itemData.value(DeviceProperty::kMountPoint).toString().isEmpty())
+    DevStorage storage;
+    if (!DeviceHelper::queryUsageOfBlockRealTime(itemData, &storage.total, &storage.avai, &storage.used))
         return {};
 
-    if (itemData.value(DeviceProperty::kOpticalDrive).toBool()) {
-        QVariantMap opticalStorage { { DeviceProperty::kDevice, itemData.value(DeviceProperty::kDevice) } };
-        DeviceHelper::readOpticalInfo(opticalStorage);
-        return { opticalStorage.value(DeviceProperty::kSizeTotal).toULongLong(),
-                 opticalStorage.value(DeviceProperty::kSizeFree).toULongLong(),
-                 opticalStorage.value(DeviceProperty::kSizeUsed).toULongLong() };
-    } else {
-        auto type = DConfigManager::instance()->value("org.deepin.dde.file-manager.mount",
-                                                      "deviceCapacityDisplay",
-                                                      DEVICE_SIZE_DISPLAY_BY_DISK)
-                            .toInt();
-        if (type == DEVICE_SIZE_DISPLAY_BY_FS) {
-            struct statvfs fsInfo;
-            QString mpt = itemData.value(DeviceProperty::kMountPoint).toString();
-            int ok = statvfs(mpt.toStdString().c_str(), &fsInfo);
-            if (ok == 0) {
-                const quint64 blksize = quint64(fsInfo.f_frsize);
-                auto total = fsInfo.f_blocks * blksize;
-                auto avai = fsInfo.f_bavail * blksize;
-                auto usage = (fsInfo.f_blocks - fsInfo.f_bavail) * blksize;
-                return { total, avai, usage };
-            }
-        } else {
-            QStorageInfo si(itemData.value(DeviceProperty::kMountPoint).toString());
-            quint64 total = itemData.value(DeviceProperty::kUDisks2Size).toULongLong();
-            qint64 avai = si.bytesAvailable();
-            if (avai < 0)   // if nagative value returned, error occured.
-                return {};
-            return { total, static_cast<quint64>(avai), total - avai };
-        }
-    }
-    return {};
+    return storage;
 }
 
 DevStorage DeviceWatcherPrivate::queryUsageOfProtocol(const QVariantMap &itemData)
 {
-    if (itemData.value(DeviceProperty::kMountPoint).toString().isEmpty())
+    DevStorage storage;
+    if (!DeviceHelper::queryUsageOfProtocolRealTime(itemData, &storage.total, &storage.avai, &storage.used))
         return {};
 
-    const QString &devId = itemData.value(DeviceProperty::kId).toString();
-    if (devId.isEmpty())
-        return {};
-
-    auto dev = DeviceHelper::createProtocolDevice(devId);
-    if (!dev)
-        return {};
-
-    return { static_cast<quint64>(dev->sizeTotal()),
-             static_cast<quint64>(dev->sizeFree()),
-             static_cast<quint64>(dev->sizeUsage()) };
+    return storage;
 }
 
 void DeviceWatcher::initDevDatas()

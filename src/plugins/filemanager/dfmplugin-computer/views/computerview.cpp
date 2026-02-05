@@ -162,6 +162,7 @@ void ComputerView::showEvent(QShowEvent *event)
     // 订阅容量监控（引用计数 +1）
     QTimer::singleShot(0, []() {
         fmDebug() << "Computer view shown, subscribing to device usage monitoring";
+        DevProxyMng->refreshUsage();
         DevProxyMng->subscribeUsageMonitoring();
     });
 

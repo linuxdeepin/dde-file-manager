@@ -12,6 +12,7 @@
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/networkutils.h>
 #include <dfm-base/base/device/deviceproxymanager.h>
+#include <dfm-base/base/device/private/devicehelper.h>
 #include <dfm-base/dbusservice/global_server_defines.h>
 #include <dfm-base/utils/protocolutils.h>
 
@@ -618,8 +619,17 @@ qint64 DeviceUtils::deviceBytesFree(const QUrl &url)
 {
     if (url.scheme() != Global::Scheme::kFile)
         return DFMIO::DFMUtils::deviceBytesFree(url);
+
     auto devicePath = bindPathTransform(url.path(), true);
     auto map = DevProxyMng->queryDeviceInfoByPath(devicePath, true);
+
+    // 使用实时查询接口获取最新的容量信息
+    quint64 total = 0, avai = 0, used = 0;
+    if (DeviceHelper::queryDeviceUsageRealTime(map, &total, &avai, &used) && avai > 0) {
+        return static_cast<qint64>(avai);
+    }
+
+    // 回退到旧的缓存逻辑
     if (map.contains(kSizeFree) && map.value(kSizeFree, 0).toLongLong() > 0)
         return map.value(kSizeFree, 0).toLongLong();
     if (map.contains(kSizeTotal) && map.contains(kSizeUsed) && map.value(kSizeTotal, 0).toLongLong() > 0)
