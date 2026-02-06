@@ -5,6 +5,7 @@
 #include "dirsharemenuscene.h"
 #include "private/dirsharemenuscene_p.h"
 #include "utils/usersharehelper.h"
+#include "utils/anonymouspermissionmanager.h"
 
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/base/schemefactory.h>
@@ -118,7 +119,21 @@ bool DirShareMenuScene::triggered(QAction *action)
         d->addShare(u);
         return true;
     } else if (key == ShareActionId::kActRemoveShareKey) {
-        UserShareHelperInstance->removeShareByPath(u.path());
+        QString filePath = u.path();
+
+        // Get share info before removing to check if it's anonymous share
+        auto shareInfo = UserShareHelperInstance->shareInfoByPath(filePath);
+        bool wasAnonymous = shareInfo.value(ShareInfoKeys::kAnonymous).toBool();
+
+        // Remove share
+        bool success = UserShareHelperInstance->removeShareByPath(filePath);
+
+        // Restore permissions if it was anonymous share
+        if (success && wasAnonymous) {
+            AnonymousPermissionManager::instance()->restoreDirectoryPermissions(filePath);
+            AnonymousPermissionManager::instance()->restoreHomeDirectoryIfNoAnonymousShares();
+        }
+
         return true;
     }
 
