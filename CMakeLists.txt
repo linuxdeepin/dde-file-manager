@@ -25,6 +25,7 @@ message(STATUS "==============================")
 option(OPT_DISABLE_QDEBUG "Disable Debug Macro" OFF)
 option(OPT_ENABLE_BUILD_DOCS "Build develop documents" OFF)
 option(OPT_ENABLE_BUILD_UT "Build unit tests" ON)
+option(OPT_ENABLE_BUILD_TESTS "Build test/demo programs" OFF)
 
 
 include(install_dconfig)
@@ -49,6 +50,11 @@ add_subdirectory(src/plugins)
 add_subdirectory(src/external)
 add_subdirectory(src/tools)
 add_subdirectory(src/services)
+
+# test/demo programs
+if(OPT_ENABLE_BUILD_TESTS)
+    add_subdirectory(tests)
+endif()
 
 # docs
 if(OPT_ENABLE_BUILD_DOCS)
