@@ -1,3 +1,26 @@
+dde-file-manager (6.5.121) unstable; urgency=medium
+
+  * fix: resolve compilation failure with C++15 in AbstractJobHandler
+  * fix: improve URL handling in file dialog DBus interface
+  * fix: adjust filename length calculation logic
+  * refactor: extract background widget update logic
+  * fix: optimize selection handling during file removal
+  * fix: prevent accessibility cache holding invalid model references
+  * refactor: improve device type detection logic
+  * chore: reorganize documentation structure
+  * docs: add DDE file manager extension mechanism documentation
+  * docs: add dfm-extension plugin specification
+  * fix: fix thread safety issues in file statistics job
+  * fix: fix file rename failure in multi-threaded scenarios
+  * fix: add UI error handling for direct IO copy operations
+  * fix: add real-time disk space query for copy operations
+  * fix: prevent open with dialog when canceling broken symlink access
+  * fix: restore directory permissions after removing anonymous share
+  * fix: add clean trash type to progress notification logic
+  * fix(bluetooth): display accurate error message for long filename transfer failure
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Fri, 06 Feb 2026 11:50:16 +0800
+
 dde-file-manager (6.5.120) unstable; urgency=medium
 
   * refactor: replace serial data key with delayed save timer
