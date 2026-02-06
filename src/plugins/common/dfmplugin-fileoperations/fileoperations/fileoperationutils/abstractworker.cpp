@@ -395,7 +395,8 @@ void AbstractWorker::emitProgressChangedNotify(const qint64 &writSize)
         || AbstractJobHandler::JobType::kCutType == jobType) {
         info->insert(AbstractJobHandler::NotifyInfoKey::kTotalSizeKey, QVariant::fromValue(qint64(sourceFilesTotalSize)));
     } else if (AbstractJobHandler::JobType::kMoveToTrashType == jobType
-               || AbstractJobHandler::JobType::kRestoreType == jobType) {
+               || AbstractJobHandler::JobType::kRestoreType == jobType
+               || AbstractJobHandler::JobType::kCleanTrashType == jobType) {
         info->insert(AbstractJobHandler::NotifyInfoKey::kTotalSizeKey, QVariant::fromValue(qint64(sourceUrls.count())));
     } else {
         info->insert(AbstractJobHandler::NotifyInfoKey::kTotalSizeKey, QVariant::fromValue(qint64(allFilesList.count())));
