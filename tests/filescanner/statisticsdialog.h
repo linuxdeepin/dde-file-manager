@@ -11,6 +11,7 @@
 #include <QProgressBar>
 #include <QStringList>
 #include <QUrl>
+#include <QElapsedTimer>
 
 #include <dfm-base/utils/filescanner.h>
 
@@ -44,9 +45,12 @@ private:
     QLabel *totalCountLabel;
     QLabel *progressSizeLabel;
     QLabel *totalSizeLabel;
+    QLabel *timeLabel;
     QProgressBar *progressBar;
     QPushButton *stopButton;
     QPushButton *closeButton;
+
+    QElapsedTimer scanTimer;
 };
 
 #endif   // STATISTICSDIALOG_H

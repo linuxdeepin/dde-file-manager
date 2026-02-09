@@ -241,124 +241,123 @@ void ScannerWorker::stop()
 
 void ScannerWorker::scanLocalPaths()
 {
-    qCDebug(logDFMBase) << "ScannerWorker: Scanning local paths using fts(3)";
+    qCDebug(logDFMBase) << "ScannerWorker: Scanning local paths using opendir/readdir";
 
-    // 准备路径数组（使用 QByteArray 自动管理内存）
-    QVector<QByteArray> pathBytes(urls.size());
-    QVector<char *> paths(urls.size() + 1);
-    QSet<QString> sourcePaths;   // 记录源路径用于排除
+    // ========== 初始化阶段 ==========
+    int processedSourceDirs = 0;   // 实际成功处理的源目录数
+    QStack<ScanContext> dirStack;
 
-    for (int i = 0; i < urls.size(); ++i) {
-        QString path = urls[i].path();
-        pathBytes[i] = path.toUtf8();
-        paths[i] = pathBytes[i].data();
-        sourcePaths.insert(path);
+    // 准备源路径
+    for (const QUrl &url : urls) {
+        QString path = url.path();
+
+        struct stat statBuf;
+        if (lstat(path.toUtf8().constData(), &statBuf) == 0) {
+            // 判断是否为目录（包括指向目录的符号链接）
+            if (isDirectoryPath(path, statBuf)) {
+                ScanContext ctx;
+                ctx.fullPath = path;
+                ctx.depth = 0;
+                ctx.isSourcePath = true;
+                dirStack.push(ctx);
+            } else if (S_ISREG(statBuf.st_mode)) {
+                // 普通文件
+                processRegularFile(path, statBuf);
+            } else if (S_ISLNK(statBuf.st_mode)) {
+                // 符号链接
+                processSymlink(path);
+            } else {
+                // 其他特殊文件类型（socket、FIFO、字符设备、块设备等）
+                // 只计数，不计大小
+                currentResult.fileCount++;
+            }
+        } else {
+            qCWarning(logDFMBase) << "ScannerWorker: lstat failed for source:" << path;
+        }
     }
-    paths[urls.size()] = nullptr;   // fts_open 要求 NULL 终止的数组
 
-    // 打开 fts
-    FTS *ftsp = fts_open(paths.data(), FTS_PHYSICAL | FTS_NOCHDIR, nullptr);
-    if (!ftsp) {
-        qCWarning(logDFMBase) << "ScannerWorker: fts_open failed:" << strerror(errno);
-        return;   // QByteArray 自动释放，无需手动 free
-    }
+    // ========== 遍历阶段 ==========
+    while (!dirStack.isEmpty() && !shouldStop()) {
+        ScanContext ctx = dirStack.pop();
+        const QString &dirPath = ctx.fullPath;
 
-    // 记录作为源路径的目录数量（只有目录才需要排除）
-    int sourceDirCount = 0;
+        // 先计数目录本身（无论是否能读取内容）
+        currentResult.directoryCount++;
+        currentResult.progressSize += memoryPageSize;
 
-    FTSENT *p;
-    while ((p = fts_read(ftsp)) != nullptr) {
-        if (shouldStop()) {
-            qCDebug(logDFMBase) << "ScannerWorker: Stopped by user";
-            break;
+        // 记录成功处理的源目录（用于最终扣除）
+        if (ctx.isSourcePath) {
+            processedSourceDirs++;
         }
 
-        switch (p->fts_info) {
-        case FTS_D:   // 目录（进入前）
-        {
-            QString currentPath = QString::fromUtf8(p->fts_path);
+        // 读取目录内容
+        QList<DirEntry> entries;
+        bool readSuccess = readDirectoryEntries(dirPath, entries);
 
-            // 检查是否是源路径
-            if (sourcePaths.contains(currentPath)) {
-                sourceDirCount++;   // 这是源目录，记录数量
-            }
-
-            currentResult.directoryCount++;
-            currentResult.progressSize += memoryPageSize;   // 估算目录大小
-
-            // 单深度模式：跳过子目录
-            if (options & FileScanner::ScanOption::SingleDepth) {
-                fts_set(ftsp, p, FTS_SKIP);
-            }
-            break;
+        if (!readSuccess) {
+            // 目录读取失败（权限不足），但目录已计数
+            qCWarning(logDFMBase) << "ScannerWorker: Failed to read directory contents:" << dirPath;
+            continue;   // 无法读取内容，跳过条目处理
         }
 
-        case FTS_DP:   // 目录（退出后）
-            // 已在 FTS_D 处理
-            break;
-
-        case FTS_F:   // 常规文件
-        {
-            // 跳过特殊系统文件（会导致问题的超大虚拟文件）
-            static const QSet<QString> kSpecialSystemFiles {
-                "/proc/kcore",
-                "/dev/core"
-            };
-
-            QString currentPath = QString::fromUtf8(p->fts_path);
-            if (kSpecialSystemFiles.contains(currentPath)) {
-                qCDebug(logDFMBase) << "ScannerWorker: Skipping special system file:" << currentPath;
+        // 处理每个条目
+        for (const DirEntry &entry : entries) {
+            if (shouldStop()) {
                 break;
             }
 
-            // 优化：只对 st_nlink > 1 的文件进行去重
-            if (p->fts_statp->st_nlink > 1) {
-                if (!isInodeProcessed(p->fts_statp->st_dev, p->fts_statp->st_ino)) {
-                    markInodeProcessed(p->fts_statp->st_dev, p->fts_statp->st_ino);
-                    currentResult.totalSize += p->fts_statp->st_size;
-                    currentResult.fileCount++;
-                } else {
-                    // 硬链接已统计，只计数
-                    currentResult.fileCount++;
+            QString entryPath = dirPath + "/" + QString::fromUtf8(entry.name);
+
+            // 跳过特殊系统文件
+            if (entry.statOk && S_ISREG(entry.statBuf.st_mode)) {
+                static const QSet<QString> kSpecialSystemFiles {
+                    "/proc/kcore",
+                    "/dev/core"
+                };
+                if (kSpecialSystemFiles.contains(entryPath)) {
+                    qCDebug(logDFMBase) << "ScannerWorker: Skipping special file:" << entryPath;
+                    continue;
                 }
+            }
+
+            // lstat 失败处理：部分条目可能无法访问，但继续处理其他条目
+            if (!entry.statOk) {
+                qCDebug(logDFMBase) << "ScannerWorker: lstat failed for:" << entryPath;
+                continue;
+            }
+
+            // 根据类型处理条目
+            if (S_ISDIR(entry.statBuf.st_mode)) {
+                // 子目录：压栈或跳过
+                bool isSingleDepth = options & FileScanner::ScanOption::SingleDepth;
+                if (!isSingleDepth) {
+                    ScanContext childCtx;
+                    childCtx.fullPath = entryPath;
+                    childCtx.depth = ctx.depth + 1;
+                    childCtx.isSourcePath = false;
+                    dirStack.push(childCtx);
+                }
+            } else if (S_ISREG(entry.statBuf.st_mode)) {
+                // 常规文件
+                processRegularFile(entryPath, entry.statBuf);
+            } else if (S_ISLNK(entry.statBuf.st_mode)) {
+                // 符号链接
+                processSymlink(entryPath);
             } else {
-                // st_nlink == 1，直接处理
-                currentResult.totalSize += p->fts_statp->st_size;
+                // 其他特殊文件类型（socket、FIFO、字符设备、块设备等）
+                // 只计数，不计大小
                 currentResult.fileCount++;
             }
-            currentResult.progressSize += p->fts_statp->st_size;
-            break;
+
+            // 定期发送进度
+            emitProgress();
         }
-
-        case FTS_SL:   // 符号链接
-        case FTS_SLNONE:   // 损坏的符号链接
-        {
-            // 符号链接只计数，不跟随（不计入大小）
-            currentResult.fileCount++;
-            break;
-        }
-
-        case FTS_DNR:   // 无法读取的目录
-        case FTS_ERR:   // 错误
-        case FTS_NS:   // stat 失败
-            qCWarning(logDFMBase) << "ScannerWorker: Error traversing:" << p->fts_path;
-            break;
-
-        default:
-            break;
-        }
-
-        // 定期发送进度
-        emitProgress();
     }
 
-    fts_close(ftsp);
-
-    // QByteArray 自动释放内存，无需手动 free
-
-    // 默认排除源目录本身（除非设置了 IncludeSource 选项）
+    // ========== 最终处理 ==========
+    // 默认排除源目录本身（只扣除成功处理的源目录）
     if (!(options & FileScanner::ScanOption::IncludeSource)) {
-        currentResult.directoryCount -= sourceDirCount;
+        currentResult.directoryCount -= processedSourceDirs;
     }
 
     qCDebug(logDFMBase) << "ScannerWorker: Local scan completed - files:" << currentResult.fileCount
@@ -491,11 +490,83 @@ void ScannerWorker::emitProgress(bool force)
     // 2. 或者大小变化超过10MB
     // 3. 或者强制发送（完成时）
     if (force || progressTimer.elapsed() > 500 || qAbs(currentSize - lastEmittedSize) > 10 * 1024 * 1024) {
-
         emit resultReady(currentResult, force);
         lastEmittedSize = currentSize;
         progressTimer.restart();
     }
+}
+
+bool ScannerWorker::readDirectoryEntries(const QString &path, QList<DirEntry> &entries)
+{
+    entries.clear();
+
+    QByteArray pathUtf8 = path.toUtf8();
+    DIR *dir = opendir(pathUtf8.constData());
+    if (!dir) {
+        qCWarning(logDFMBase) << "ScannerWorker: opendir failed for" << path << ":" << strerror(errno);
+        return false;
+    }
+
+    struct dirent *entry;
+    while ((entry = readdir(dir)) != nullptr) {
+        // 跳过 "." 和 ".."
+        if (entry->d_name[0] == '.' && (entry->d_name[1] == '\0' || (entry->d_name[1] == '.' && entry->d_name[2] == '\0'))) {
+            continue;
+        }
+
+        DirEntry dirEntry;
+        dirEntry.name = entry->d_name;
+        dirEntry.d_type = entry->d_type;
+
+        QString fullPath = path + "/" + QString::fromUtf8(entry->d_name);
+        dirEntry.statOk = (lstat(fullPath.toUtf8().constData(), &dirEntry.statBuf) == 0);
+
+        entries.append(dirEntry);
+    }
+
+    closedir(dir);
+    return true;
+}
+
+void ScannerWorker::processRegularFile(const QString &path, const struct stat &statBuf)
+{
+    // 硬链接去重
+    if (statBuf.st_nlink > 1) {
+        if (!isInodeProcessed(statBuf.st_dev, statBuf.st_ino)) {
+            markInodeProcessed(statBuf.st_dev, statBuf.st_ino);
+            currentResult.totalSize += statBuf.st_size;
+            currentResult.fileCount++;
+        } else {
+            // 硬链接已统计，只计数
+            currentResult.fileCount++;
+        }
+    } else {
+        // st_nlink == 1，直接处理
+        currentResult.totalSize += statBuf.st_size;
+        currentResult.fileCount++;
+    }
+    currentResult.progressSize += statBuf.st_size;
+}
+
+void ScannerWorker::processSymlink(const QString &path)
+{
+    // 符号链接只计数，不跟随（不计入大小）
+    currentResult.fileCount++;
+    currentResult.progressSize += memoryPageSize;   // 估算符号链接大小
+}
+
+bool ScannerWorker::isDirectoryPath(const QString &path, const struct stat &lstatBuf)
+{
+    if (S_ISDIR(lstatBuf.st_mode)) {
+        return true;   // 直接是目录
+    }
+    if (S_ISLNK(lstatBuf.st_mode)) {
+        struct stat statBuf;
+        if (stat(path.toUtf8().constData(), &statBuf) == 0) {
+            return S_ISDIR(statBuf.st_mode);   // 符号链接指向目录
+        }
+    }
+    return false;
 }
 
 }   // namespace dfmbase

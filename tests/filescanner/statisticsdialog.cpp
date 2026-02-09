@@ -67,6 +67,9 @@ void StatisticsDialog::setupUI(const QStringList &paths)
     totalSizeLabel = new QLabel("总大小: 计算中...", this);
     resultLayout->addWidget(totalSizeLabel);
 
+    timeLabel = new QLabel("耗时: 计算中...", this);
+    resultLayout->addWidget(timeLabel);
+
     mainLayout->addWidget(resultGroup);
 
     // 进度条
@@ -101,6 +104,9 @@ void StatisticsDialog::startScan()
             this, &StatisticsDialog::onProgressChanged);
     connect(scanner, &FileScanner::finished,
             this, &StatisticsDialog::onFinished);
+
+    // 开始计时
+    scanTimer.start();
 
     // 开始扫描
     scanner->start(scanUrls);
@@ -146,6 +152,21 @@ void StatisticsDialog::onFinished(const FileScanner::ScanResult &result)
 {
     // 更新最终结果
     onProgressChanged(result);
+
+    // 显示耗时
+    qint64 elapsedMs = scanTimer.elapsed();
+    QString timeText;
+    if (elapsedMs < 1000) {
+        timeText = QString("%1 毫秒").arg(elapsedMs);
+    } else if (elapsedMs < 60000) {
+        double seconds = elapsedMs / 1000.0;
+        timeText = QString("%1 秒").arg(seconds, 0, 'f', 2);
+    } else {
+        qint64 minutes = elapsedMs / 60000;
+        qint64 seconds = (elapsedMs % 60000) / 1000;
+        timeText = QString("%1 分 %2 秒").arg(minutes).arg(seconds);
+    }
+    timeLabel->setText("耗时: " + timeText);
 
     // 更新UI状态
     progressBar->setRange(0, 1);
