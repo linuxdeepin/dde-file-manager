@@ -34,7 +34,7 @@ void MainWindow::setupUI()
     // 创建文件系统模型（只显示目录，不显示隐藏目录）
     fileSystemModel = new QFileSystemModel(this);
     fileSystemModel->setRootPath(QDir::rootPath());
-    fileSystemModel->setFilter(QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System);
+    fileSystemModel->setFilter(QDir::AllEntries | QDir::Hidden | QDir::NoDotAndDotDot | QDir::System);
 
     // 创建树视图
     treeView = new QTreeView(this);

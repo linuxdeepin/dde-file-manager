@@ -14,9 +14,10 @@
 #include <QAtomicInt>
 #include <QHash>
 #include <QSet>
+#include <QStack>
 
-#include <fts.h>
 #include <sys/stat.h>
+#include <dirent.h>
 
 namespace dfmbase {
 
@@ -194,9 +195,57 @@ private:
     /**
      * @brief 扫描本地文件路径
      *
-     * 使用 fts(3) 进行高性能遍历
+     * 使用 opendir/readdir 进行遍历
      */
     void scanLocalPaths();
+
+    /**
+     * @brief 目录项结构（用于批量读取）
+     */
+    struct DirEntry {
+        QByteArray name;        // 文件名（UTF-8）
+        struct stat statBuf;    // lstat 结果
+        bool statOk;            // lstat 是否成功
+        unsigned char d_type;   // dirent.d_type (DT_DIR, DT_LNK 等)
+    };
+
+    /**
+     * @brief 遍历上下文
+     */
+    struct ScanContext {
+        QString fullPath;       // 当前完整路径
+        int depth;              // 当前深度（0 = 源目录）
+        bool isSourcePath;      // 是否为源路径
+    };
+
+    /**
+     * @brief 读取目录条目
+     * @param path 目录路径
+     * @param entries 输出参数，目录条目列表
+     * @return 是否成功
+     */
+    bool readDirectoryEntries(const QString &path, QList<DirEntry> &entries);
+
+    /**
+     * @brief 处理常规文件
+     * @param path 文件路径
+     * @param statBuf lstat 结果
+     */
+    void processRegularFile(const QString &path, const struct stat &statBuf);
+
+    /**
+     * @brief 处理符号链接
+     * @param path 链接路径
+     */
+    void processSymlink(const QString &path);
+
+    /**
+     * @brief 判断路径是否为目录（跟随符号链接）
+     * @param path 路径
+     * @param lstatBuf lstat 结果
+     * @return 是否为目录
+     */
+    bool isDirectoryPath(const QString &path, const struct stat &lstatBuf);
 
     /**
      * @brief 扫描其他协议（如 SMB, SFTP）
