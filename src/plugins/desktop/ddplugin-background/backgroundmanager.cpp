@@ -197,7 +197,8 @@ void BackgroundManager::onGeometryChanged()
         }
 
         if (bw.get() != nullptr) {
-            QRect geometry = d->relativeGeometry(win->geometry());   // scaled area
+            QRect screenGeometry = win->property(DesktopFrameProperty::kPropScreenGeometry).toRect();
+            QRect geometry = d->relativeGeometry(screenGeometry);   // scaled area
             if (bw->geometry() == geometry) {
                 fmWarning() << "Background geometry equals root widget geometry, discarding changes - geometry:" << bw->geometry()
                             << "window geometry:" << win->geometry() << "screen name:" << win->property(DesktopFrameProperty::kPropScreenName).toString()
@@ -206,8 +207,10 @@ void BackgroundManager::onGeometryChanged()
                             << "available geometry:" << win->property(DesktopFrameProperty::kPropScreenAvailableGeometry);
                 continue;
             }
+
             fmInfo() << "Background geometry changed from" << bw->geometry() << "to" << geometry
-                     << "for screen:" << getScreenName(win) << "window geometry:" << win->geometry();
+                     << "for screen:" << getScreenName(win) << "window geometry:" << win->geometry()
+                     << "screen geometry from property:" << screenGeometry;
             bw->setGeometry(geometry);
             changed = true;
         }
@@ -259,7 +262,8 @@ void BackgroundManager::updateBackgroundWidgets()
         BackgroundWidgetPointer bwp = d->backgroundWidgets.value(screeName);
         d->backgroundWidgets.clear();
         if (!bwp.isNull()) {
-            QRect geometry = d->relativeGeometry(primary->geometry());   // scaled area
+            QRect screenGeometry = primary->property(DesktopFrameProperty::kPropScreenGeometry).toRect();
+            QRect geometry = d->relativeGeometry(screenGeometry);   // scaled area
             if (bwp->geometry() != geometry) {
                 fmInfo() << "Updating background widget geometry from" << bwp->geometry() << "to" << geometry;
                 bwp->setGeometry(geometry);
@@ -287,7 +291,8 @@ void BackgroundManager::updateBackgroundWidgets()
             BackgroundWidgetPointer bwp = d->backgroundWidgets.value(screenName);
             if (!bwp.isNull()) {
                 // update widget
-                QRect geometry = d->relativeGeometry(win->geometry());   // scaled area
+                QRect screenGeometry = win->property(DesktopFrameProperty::kPropScreenGeometry).toRect();
+                QRect geometry = d->relativeGeometry(screenGeometry);   // scaled area
                 if (bwp->geometry() != geometry) {
                     fmInfo() << "Updating background widget geometry for screen" << screenName << "from" << bwp->geometry() << "to" << geometry;
                     bwp->setGeometry(geometry);
