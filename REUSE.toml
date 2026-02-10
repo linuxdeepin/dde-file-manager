@@ -1,0 +1,106 @@
+version = 1
+SPDX-PackageName = "dde-file-manager"
+SPDX-PackageSupplier = "UnionTech Software Technology Co., Ltd. <>"
+SPDX-PackageDownloadLocation = "https://github.com/linuxdeepin/dde-file-manager"
+
+[[annotations]]
+path = [".gitlab-ci.yml", ".obs/workflows.yml"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "None"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = ".github/**"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "None"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = [".gitignore", ".clang-format", ".clog.toml", ".project.json", ".qmake.conf"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "None"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = "debian/**"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "None"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = ["**.qrc", ".tx/**", "**CMakeLists.txt", "**.cmake", "**.cmake.in", "**.pc.in"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "None"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = ["src/**.json", "src/**.xml", "src/**.policy", "src/**/pinyin.dict", "src/**.js", "src/**.ini", "src/**.qss", "src/**.theme", "src/**/templates/**", "src/**.psd", "src/**/com.deepin.filemanager.daemon.conf", "src/dfm-base/qrc/configure/**.cpp", "examples/**", "src/services/**.conf", "src/services/**.pkla"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "None"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = ["README.md", "README.zh_CN.md", "docs/**", "**/README.md"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "UnionTech Software Technology Co., Ltd."
+SPDX-License-Identifier = "CC-BY-4.0"
+
+[[annotations]]
+path = "translations/**.ts"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "UnionTech Software Technology Co., Ltd."
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+[[annotations]]
+path = ["assets/**", "src/apps/**/assets/**"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "UnionTech Software Technology Co., Ltd."
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+[[annotations]]
+path = ["src/**.png", "src/**.svg", "src/**.jpg", "src/**.dci"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "UnionTech Software Technology Co., Ltd."
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+[[annotations]]
+path = "src/**.desktop"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "UnionTech Software Technology Co., Ltd."
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+[[annotations]]
+path = "src/**.service"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "UnionTech Software Technology Co., Ltd."
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+[[annotations]]
+path = "3rdparty/testutils/cpp-stub/**"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2019 coolxv"
+SPDX-License-Identifier = "MIT"
+
+[[annotations]]
+path = "3rdparty/testutils/stub-ext/**"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "UnionTech Software Technology Co., Ltd."
+SPDX-License-Identifier = "MIT"
+
+[[annotations]]
+path = "3rdparty/fulltext/**"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2009-2014 Alan Wright"
+SPDX-License-Identifier = "LGPL-3.0-or-later"
+
+[[annotations]]
+path = "3rdparty/fsearch/**"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2020 Christian Boxdörfer"
+SPDX-License-Identifier = "MIT"
+
+[[annotations]]
+path = ["src/**/**dbus_interface.**", "src/**/**dbus_adaptor.**", "src/**/dbus**/**", "src/plugins/daemon/daemonplugin-mountcontrol/private/mountcontrol_adapter.**", "src/plugins/desktop/ddplugin-background/appearance_interface.**"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2016 The Qt Company Ltd."
+SPDX-License-Identifier = "CC0-1.0"
