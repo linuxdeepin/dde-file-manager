@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2021 - 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2021 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -12,7 +12,7 @@
 namespace GlobalPrivate {
 static QRect dealRectRatio(QRect orgRect)
 {
-    //处理缩放，先不考虑高分屏的特殊处理
+    // 处理缩放，先不考虑高分屏的特殊处理
     qreal ratio = qApp->primaryScreen()->devicePixelRatio();
     if (ratio != 1.0)
         orgRect = QRect(orgRect.x() / ratio, orgRect.y() / ratio, static_cast<int>(orgRect.width() / ratio), static_cast<int>(orgRect.height() / ratio));
@@ -46,10 +46,10 @@ QRect ScreenQt::geometry() const
 QRect ScreenQt::availableGeometry() const
 {
     //!QScreen::availableGeometry在刚启动时返回的值是错的，需要拖到下dock区才能正确显示
-    //return m_screen->availableGeometry();
-    //end
+    // return m_screen->availableGeometry();
+    // end
 
-    QRect ret = geometry();   //已经缩放过
+    QRect ret = geometry();   // 已经缩放过
 
     if (!DBusHelper::isDockEnable()) {
         fmWarning() << "DDE dock is not registered, using full screen geometry";
@@ -57,16 +57,17 @@ QRect ScreenQt::availableGeometry() const
     }
 
     int dockHideMode = DockInfoIns->hideMode();
-    if (1 == dockHideMode) {   //隐藏
+    if (1 == dockHideMode) {   // 隐藏
         fmDebug() << "Dock is hidden, using full screen geometry";
         return ret;
     }
 
-    DockRect dockrectI = DockInfoIns->frontendWindowRect();   //原始dock大小
-    const QRect dockrect = GlobalPrivate::dealRectRatio(dockrectI.operator QRect());   //缩放处理
+    DockRect dockrectI = DockInfoIns->frontendWindowRect();   // 原始dock大小
+    const QRect dockrect = GlobalPrivate::dealRectRatio(dockrectI.operator QRect());   // 缩放处理
 
     const qreal ratio = qApp->primaryScreen()->devicePixelRatio();
     const QRect hRect = handleGeometry();
+    const QRect hRectScaled = GlobalPrivate::dealRectRatio(hRect);   // 将物理坐标转换为逻辑坐标
 
     if (!hRect.contains(dockrectI) && !ret.contains(dockrect)) {
         QRect orgDockRect(dockrectI);
@@ -80,37 +81,47 @@ QRect ScreenQt::availableGeometry() const
     fmDebug() << "Adjusting available geometry for dock position:" << dockPos << "on screen:" << name();
 
     switch (dockPos) {
-    case 0:   //上
-        ret.setY(dockrect.bottom());
+    case 0:   // 上
+    {
+        // 计算dock底部相对于屏幕顶部的偏移（逻辑坐标）
+        int yOffset = dockrect.bottom() - hRectScaled.top();
+        ret.setY(ret.y() + yOffset);
         fmDebug() << "Dock on top, adjusted available geometry:" << ret;
         break;
-    case 1:   //右
+    }
+    case 1:   // 右
     {
-        int w = dockrect.left() - ret.left();
+        // 计算dock左侧相对于屏幕左侧的距离（逻辑坐标）
+        int w = dockrect.left() - hRectScaled.left();
         if (w >= 0) {
             ret.setWidth(w);
         } else {
             fmCritical() << "Invalid width calculation for right dock:" << w
-                         << "dockLeft:" << dockrect.left() << "screenLeft:" << ret.left();
+                         << "dockLeft:" << dockrect.left() << "screenLeft:" << hRectScaled.left();
         }
         fmDebug() << "Dock on right, adjusted available geometry:" << ret;
     } break;
-    case 2:   //下
+    case 2:   // 下
     {
-        int h = dockrect.top() - ret.top();
+        // 计算dock顶部相对于屏幕顶部的距离（逻辑坐标）
+        int h = dockrect.top() - hRectScaled.top();
         if (h >= 0) {
             ret.setHeight(h);
         } else {
             fmCritical() << "Invalid height calculation for bottom dock:" << h
-                         << "dockTop:" << dockrect.top() << "screenTop:" << ret.top();
+                         << "dockTop:" << dockrect.top() << "screenTop:" << hRectScaled.top();
         }
         fmDebug() << "Dock on bottom, adjusted available geometry:" << ret;
         break;
     }
-    case 3:   //左
-        ret.setX(dockrect.right());
+    case 3:   // 左
+    {
+        // 计算dock右侧相对于屏幕左侧的偏移（逻辑坐标）
+        int xOffset = dockrect.right() - hRectScaled.left();
+        ret.setX(ret.x() + xOffset);
         fmDebug() << "Dock on left, adjusted available geometry:" << ret;
         break;
+    }
     default:
         fmCritical() << "Invalid dock position:" << dockPos
                      << "handleGeometry:" << hRect << "dockRect:" << dockrectI;

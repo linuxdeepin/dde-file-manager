@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022 - 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2022 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -305,27 +305,39 @@ QStringList OemMenuPrivate::splitCommand(const QString &cmd)
     return args;
 }
 
-OemMenuPrivate::ArgType OemMenuPrivate::execDynamicArg(const QString &cmd) const
+QPair<OemMenuPrivate::ArgType, int> OemMenuPrivate::execDynamicArg(const QStringList &args, int index) const
 {
-    int firstValidIndex = cmd.indexOf("%");
-    auto cnt = cmd.length() - 1;
-    if (0 == cnt || 0 > firstValidIndex)
-        return kNoneArg;
+    if (index < 0)
+        return { kNoneArg, -1 };
 
-    static const QHash<QString, ArgType> actionExecArg { { kCommandArg[kDirPath], kDirPath }, { kCommandArg[kFilePath], kFilePath }, { kCommandArg[kFilePaths], kFilePaths }, { kCommandArg[kUrlPath], kUrlPath }, { kCommandArg[kUrlPaths], kUrlPaths } };
+    static const QHash<QString, ArgType> actionExecArg { { kCommandArg[kDirPath], kDirPath },
+                                                         { kCommandArg[kFilePath], kFilePath },
+                                                         { kCommandArg[kFilePaths], kFilePaths },
+                                                         { kCommandArg[kUrlPath], kUrlPath },
+                                                         { kCommandArg[kUrlPaths], kUrlPaths } };
+    for (int i = index; i < args.size(); ++i) {
+        const QString &arg = args[i];
+        int firstValidIndex = arg.indexOf("%");
+        if (firstValidIndex < 0)
+            continue;
 
-    while (cnt > firstValidIndex) {
-        auto tgStr = cmd.mid(firstValidIndex, 2);
-        auto tempValue = actionExecArg.value(tgStr, kNoneArg);
-        if (kNoneArg != tempValue) {
-            return tempValue;
+        auto cnt = arg.length() - 1;
+        if (0 == cnt)
+            continue;
+
+        while (cnt > firstValidIndex) {
+            auto tgStr = arg.mid(firstValidIndex, 2);
+            auto tempValue = actionExecArg.value(tgStr, kNoneArg);
+            if (kNoneArg != tempValue) {
+                return { tempValue, i };
+            }
+            firstValidIndex = arg.indexOf("%", firstValidIndex + 1);
+            if (-1 == firstValidIndex)
+                break;
         }
-        firstValidIndex = cmd.indexOf("%", firstValidIndex + 1);
-        if (-1 == firstValidIndex)
-            break;
     }
 
-    return kNoneArg;
+    return { kNoneArg, -1 };
 }
 
 QStringList OemMenuPrivate::replace(QStringList &args, const QString &before, const QString &after) const
@@ -416,6 +428,25 @@ void OemMenuPrivate::appendParentMineType(const QStringList &parentmimeTypes, QS
                 continue;
             allparentmimeTypes.push_back(type);
         }
+    }
+}
+
+QStringList OemMenuPrivate::applyDynamicArg(const QStringList &args, ArgType type, const QUrl &dir, const QUrl &focus, const QList<QUrl> &files) const
+{
+    QStringList cmdArgs = args;
+    switch (type) {
+    case kDirPath:
+        return replace(cmdArgs, kCommandArg[type], dir.toLocalFile());
+    case kFilePath:
+        return replace(cmdArgs, kCommandArg[type], focus.toLocalFile());
+    case kFilePaths:
+        return replaceList(cmdArgs, kCommandArg[type], urlListToLocalFile(files));
+    case kUrlPath:
+        return replace(cmdArgs, kCommandArg[type], urlToString(focus));
+    case kUrlPaths:
+        return replaceList(cmdArgs, kCommandArg[type], urlListToString(files));
+    default:
+        return cmdArgs;
     }
 }
 
@@ -703,7 +734,7 @@ QList<QAction *> OemMenu::focusNormalActions(const QUrl &foucs, const QList<QUrl
     return actions;
 }
 
-QPair<QString, QStringList> OemMenu::makeCommand(const QAction *action, const QUrl &dir, const QUrl &foucs, const QList<QUrl> &files)
+QPair<QString, QStringList> OemMenu::makeCommand(const QAction *action, const QUrl &dir, const QUrl &focus, const QList<QUrl> &files)
 {
     QPair<QString, QStringList> ret;
     if (Q_UNLIKELY(!action))
@@ -723,28 +754,12 @@ QPair<QString, QStringList> OemMenu::makeCommand(const QAction *action, const QU
     if (args.isEmpty())
         return ret;
 
-    auto type = d->execDynamicArg(cmd);
-
-    // args
-    switch (type) {
-    case OemMenuPrivate::kDirPath:
-        ret.second = d->replace(args, kCommandArg[type], dir.toLocalFile());
-        break;
-    case OemMenuPrivate::kFilePath:
-        ret.second = d->replace(args, kCommandArg[type], foucs.toLocalFile());
-        break;
-    case OemMenuPrivate::kFilePaths:
-        ret.second = d->replaceList(args, kCommandArg[type], d->urlListToLocalFile(files));
-        break;
-    case OemMenuPrivate::kUrlPath:
-        ret.second = d->replace(args, kCommandArg[type], d->urlToString(foucs));
-        break;
-    case OemMenuPrivate::kUrlPaths:
-        ret.second = d->replaceList(args, kCommandArg[type], d->urlListToString(files));
-        break;
-    default:
-        ret.second = args;
-        break;
+    ret.second = args;
+    auto typeWithIndex = d->execDynamicArg(args, 0);
+    while (typeWithIndex.first != OemMenuPrivate::kNoneArg) {
+        ret.second = d->applyDynamicArg(ret.second, typeWithIndex.first, dir, focus, files);
+        typeWithIndex = d->execDynamicArg(ret.second, ++typeWithIndex.second);
     }
+
     return ret;
 }

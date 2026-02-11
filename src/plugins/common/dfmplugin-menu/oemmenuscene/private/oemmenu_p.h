@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022 - 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2022 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -49,13 +49,14 @@ public:
     void clearSubMenus();
     void setActionProperty(QAction *const action, const Dtk::Core::DDesktopEntry &entry, const QString &key, const QString &section = "Desktop Entry") const;
     QStringList splitCommand(const QString &cmd);
-    ArgType execDynamicArg(const QString &cmd) const;
+    QPair<ArgType, int> execDynamicArg(const QStringList &args, int index) const;
     QStringList replace(QStringList &args, const QString &before, const QString &after) const;
     QStringList replaceList(QStringList &args, const QString &before, const QStringList &after) const;
     QStringList urlListToLocalFile(const QList<QUrl> &files) const;
     QString urlToString(const QUrl &file) const;
     QStringList urlListToString(const QList<QUrl> &files) const;
     void appendParentMineType(const QStringList &parentmimeTypes, QStringList &mimeTypes) const;
+    QStringList applyDynamicArg(const QStringList &args, ArgType type, const QUrl &dir, const QUrl &focus, const QList<QUrl> &files) const;
 
 public:
     QSharedPointer<QTimer> delayedLoadFileTimer;

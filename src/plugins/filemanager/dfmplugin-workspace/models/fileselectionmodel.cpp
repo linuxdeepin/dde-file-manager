@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2021 - 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2021 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -21,6 +21,24 @@ FileSelectionModel::FileSelectionModel(QAbstractItemModel *model, QObject *paren
 
 FileSelectionModel::~FileSelectionModel()
 {
+    // 先停止定时器，防止在析构过程中定时器触发
+    if (d && d->timer.isActive()) {
+        d->timer.stop();
+    }
+
+    // 先解绑模型，清理基类QItemSelectionModel中的QPersistentModelIndex
+    setModel(nullptr);
+
+    // 清理其他成员变量
+    if (d) {
+        // 断开所有信号连接
+        d->timer.disconnect();
+
+        d->selection.clear();
+        d->firstSelectedIndex = QPersistentModelIndex();
+        d->lastSelectedIndex = QPersistentModelIndex();
+        d->selectedList.clear();
+    }
 }
 
 bool FileSelectionModel::isSelected(const QModelIndex &index) const

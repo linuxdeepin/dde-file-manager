@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022 - 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2022 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -80,7 +80,7 @@ QStringList FileDialogHandleDBus::selectedUrls() const
     QStringList list;
 
     for (const QUrl &url : FileDialogHandle::selectedUrls())
-        list << url.toString();
+        list << QUrl::fromPercentEncoding(url.toString().toUtf8());
 
     return list;
 }
