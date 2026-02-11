@@ -114,6 +114,7 @@ void PreviewSingleApplication::processArgs(const QStringList &list)
 void PreviewSingleApplication::initConnect()
 {
     connect(localServer, &QLocalServer::newConnection, this, &PreviewSingleApplication::handleConnection);
+    connect(this, &QCoreApplication::aboutToQuit, this, &PreviewSingleApplication::closeServer);
 }
 
 QLocalSocket *PreviewSingleApplication::getNewClientConnect(const QString &key, const QByteArray &message)
