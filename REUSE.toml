@@ -42,37 +42,37 @@ SPDX-License-Identifier = "CC0-1.0"
 [[annotations]]
 path = ["README.md", "README.zh_CN.md", "docs/**", "**/README.md"]
 precedence = "aggregate"
-SPDX-FileCopyrightText = "UnionTech Software Technology Co., Ltd."
+SPDX-FileCopyrightText = "2026 UnionTech Software Technology Co., Ltd."
 SPDX-License-Identifier = "CC-BY-4.0"
 
 [[annotations]]
 path = "translations/**.ts"
 precedence = "aggregate"
-SPDX-FileCopyrightText = "UnionTech Software Technology Co., Ltd."
+SPDX-FileCopyrightText = "2026 UnionTech Software Technology Co., Ltd."
 SPDX-License-Identifier = "GPL-3.0-or-later"
 
 [[annotations]]
-path = ["assets/**", "src/apps/**/assets/**"]
+path = ["**/assets/**"]
 precedence = "aggregate"
-SPDX-FileCopyrightText = "UnionTech Software Technology Co., Ltd."
+SPDX-FileCopyrightText = "2026 UnionTech Software Technology Co., Ltd."
 SPDX-License-Identifier = "GPL-3.0-or-later"
 
 [[annotations]]
 path = ["src/**.png", "src/**.svg", "src/**.jpg", "src/**.dci"]
 precedence = "aggregate"
-SPDX-FileCopyrightText = "UnionTech Software Technology Co., Ltd."
+SPDX-FileCopyrightText = "2026 UnionTech Software Technology Co., Ltd."
 SPDX-License-Identifier = "GPL-3.0-or-later"
 
 [[annotations]]
 path = "src/**.desktop"
 precedence = "aggregate"
-SPDX-FileCopyrightText = "UnionTech Software Technology Co., Ltd."
+SPDX-FileCopyrightText = "2026 UnionTech Software Technology Co., Ltd."
 SPDX-License-Identifier = "GPL-3.0-or-later"
 
 [[annotations]]
 path = "src/**.service"
 precedence = "aggregate"
-SPDX-FileCopyrightText = "UnionTech Software Technology Co., Ltd."
+SPDX-FileCopyrightText = "2026 UnionTech Software Technology Co., Ltd."
 SPDX-License-Identifier = "GPL-3.0-or-later"
 
 [[annotations]]
@@ -84,7 +84,7 @@ SPDX-License-Identifier = "MIT"
 [[annotations]]
 path = "3rdparty/testutils/stub-ext/**"
 precedence = "aggregate"
-SPDX-FileCopyrightText = "UnionTech Software Technology Co., Ltd."
+SPDX-FileCopyrightText = "2026 UnionTech Software Technology Co., Ltd."
 SPDX-License-Identifier = "MIT"
 
 [[annotations]]
