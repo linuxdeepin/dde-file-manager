@@ -322,10 +322,37 @@ void FSEventCollectorPrivate::handleFileMoved(const QString &fromPath, const QSt
         return;
     }
 
-    // Only track moves for files that should be indexed
-    if (!shouldIndexFile(fullFromPath) && !shouldIndexFile(fullToPath)) {
+    // Check if source and target files should be indexed based on file extensions
+    bool fromShouldIndex = shouldIndexFile(fullFromPath);
+    bool toShouldIndex = shouldIndexFile(fullToPath);
+
+    // Scenario 1: Source file is indexed, target file is not (e.g., a.txt → a.abc)
+    // This happens when renaming to unsupported extension or moving to excluded location
+    // Action: Delete the index entry for source file
+    if (fromShouldIndex && !toShouldIndex) {
+        fmDebug() << "FSEventCollector: File moved from indexed to non-indexed, treating as deletion:"
+                  << fullFromPath << "->" << fullToPath;
+        handleFileDeleted(fromPath, fromName);
         return;
     }
+
+    // Scenario 3: Neither source nor target should be indexed (e.g., a.abc → b.xyz)
+    // Action: Ignore this move operation
+    if (!fromShouldIndex && !toShouldIndex) {
+        fmDebug() << "FSEventCollector: File moved between non-indexed files, ignoring:"
+                  << fullFromPath << "->" << fullToPath;
+        return;
+    }
+
+    // Scenario 2: Source file is not indexed, target file should be (e.g., a.abc → a.txt)
+    // This is handled by adding to movedFilesList, and later processFileMove will:
+    // - Detect source not in index
+    // - Check if target should be indexed
+    // - Create new index entry with content extraction
+    // Common case: Text editors save by writing temp file then renaming to target
+
+    // Scenario 4: Both source and target should be indexed (e.g., a.txt → b.txt)
+    // This is the normal rename/move case, handled by updating index path
 
     // Check if this is a move that conflicts with existing operations
     bool hasConflict = false;
@@ -333,7 +360,7 @@ void FSEventCollectorPrivate::handleFileMoved(const QString &fromPath, const QSt
     // If the source was in created list, remove it and treat as a pure creation at new location
     if (createdFilesList.contains(fullFromPath)) {
         createdFilesList.remove(fullFromPath);
-        if (shouldIndexFile(fullToPath)) {
+        if (toShouldIndex) {
             createdFilesList.insert(fullToPath);
             fmDebug() << "FSEventCollector: Converted move to creation, source was newly created:" << fullFromPath << "->" << fullToPath;
         }
