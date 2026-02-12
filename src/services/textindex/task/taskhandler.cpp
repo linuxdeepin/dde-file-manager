@@ -403,7 +403,7 @@ bool cleanupIndexs(IndexReaderPtr reader, IndexWriterPtr writer, TaskState &runn
                     const QString &fileDir = fileInfo.absolutePath();
                     if (excludeMatcher.shouldExclude(fileDir)) {
                         fmDebug() << "[cleanupIndexs] Removing blacklisted file from index:" << filePath
-                                 << "(directory:" << fileDir << "matches blacklist)";
+                                  << "(directory:" << fileDir << "matches blacklist)";
                         shouldDelete = true;
                     }
                 }
@@ -451,25 +451,22 @@ bool cleanupIndexs(IndexReaderPtr reader, IndexWriterPtr writer, TaskState &runn
     }
 }
 
-// 移除目录下所有文件的索引，使用前缀匹配
+// 移除目录下所有文件的索引
 void removeDirectoryIndex(const QString &dirPath, const IndexWriterPtr &writer,
                           const IndexReaderPtr &reader, ProgressReporter *reporter)
 {
     try {
-        QString normalizedPath = dirPath;
-        if (!normalizedPath.endsWith('/')) {
-            normalizedPath += '/';   // 确保目录路径以/结尾，便于前缀匹配
-        }
+        fmInfo() << "[removeDirectoryIndex] Removing directory index for:" << dirPath;
 
-        fmInfo() << "[removeDirectoryIndex] Removing directory index for:" << normalizedPath;
-
-        // 创建前缀查询，查找所有以该目录路径开头的文档
-        PrefixQueryPtr prefixQuery = newLucene<PrefixQuery>(
-                newLucene<Term>(L"path", normalizedPath.toStdWString()));
-
-        // 使用索引读取器和搜索器来找到所有匹配的文档
         SearcherPtr searcher = newLucene<IndexSearcher>(reader);
-        TopDocsPtr allDocs = searcher->search(prefixQuery, reader->maxDoc());
+
+        // 使用 TermQuery 在 ancestor_paths 字段上进行精确匹配
+        // ancestor_paths 字段存储了文件的所有祖先路径（不带尾部斜杠）
+        // 利用此字段可以避免 PrefixQuery 的字典树扫描，显著提升性能
+        TermQueryPtr ancestorQuery = newLucene<TermQuery>(
+                newLucene<Term>(L"ancestor_paths", dirPath.toStdWString()));
+
+        TopDocsPtr allDocs = searcher->search(ancestorQuery, reader->maxDoc());
 
         // 检查allDocs是否有效
         if (!allDocs) {
@@ -485,43 +482,21 @@ void removeDirectoryIndex(const QString &dirPath, const IndexWriterPtr &writer,
             return;
         }
 
-        // 记录已删除的文档路径以避免重复删除
-        HashSet<String> pathsToDelete = HashSet<String>::newInstance();
+        // 直接批量删除所有匹配的文档
+        // writer->deleteDocuments(Query) 会删除所有匹配该查询的文档
+        // 相比逐个删除，这种方式性能更高且原子性更好
+        int32_t deleteCount = allDocs->totalHits;
+        writer->deleteDocuments(ancestorQuery);
 
-        // 收集所有匹配的文档路径
-        for (int32_t i = 0; i < allDocs->totalHits; ++i) {
-            // 检查scoreDocs是否有效
-            if (!allDocs->scoreDocs || !allDocs->scoreDocs[i]) {
-                fmWarning() << "[removeDirectoryIndex] Null scoreDoc at index" << i << "for directory:" << dirPath;
-                continue;
+        // 更新进度报告
+        if (reporter) {
+            for (int32_t i = 0; i < deleteCount; ++i) {
+                reporter->increment();
             }
-
-            DocumentPtr doc = searcher->doc(allDocs->scoreDocs[i]->doc);
-            if (!doc) {
-                fmWarning() << "[removeDirectoryIndex] Null document at index" << i << "for directory:" << dirPath;
-                continue;
-            }
-
-            String pathValue = doc->get(L"path");
-            pathsToDelete.add(pathValue);
         }
 
-        // 批量删除所有匹配的文档
-        if (!pathsToDelete.empty()) {
-            int deleteCount = 0;
-            for (HashSet<String>::iterator it = pathsToDelete.begin();
-                 it != pathsToDelete.end(); ++it) {
-                TermPtr term = newLucene<Term>(L"path", *it);
-                writer->deleteDocuments(term);
-                deleteCount++;
-
-                if (reporter) {
-                    reporter->increment();
-                }
-            }
-            fmDebug() << "[removeDirectoryIndex] Successfully removed" << deleteCount
-                      << "documents from index for directory:" << dirPath;
-        }
+        fmDebug() << "[removeDirectoryIndex] Successfully removed" << deleteCount
+                  << "documents from index for directory:" << dirPath;
     } catch (const LuceneException &e) {
         fmWarning() << "[removeDirectoryIndex] Remove directory index failed with Lucene exception:" << dirPath
                     << "error:" << QString::fromStdWString(e.getError());
@@ -914,33 +889,33 @@ TaskHandler TaskHandlers::RemoveFileListHandler(const QStringList &fileList)
             ProgressReporter reporter(writer);
             fmInfo() << "[RemoveFileListHandler] Starting file removal processing, total items:" << fileList.size();
 
+            SearcherPtr searcher = newLucene<IndexSearcher>(reader);
+
             int filesRemoved = 0;
             int directoriesRemoved = 0;
 
-            // 直接遍历文件列表，不使用MixedPathListProvider
+            // 遍历文件列表，通过索引查询判断是文件还是目录
             for (const QString &itemPath : fileList) {
                 if (!running.isRunning()) {
                     fmInfo() << "[RemoveFileListHandler] File removal was interrupted by user request";
                     break;
                 }
 
-                // 首先尝试从索引中查找该路径
-                SearcherPtr searcher = newLucene<IndexSearcher>(reader);
-                TermQueryPtr pathQuery = newLucene<TermQuery>(
-                        newLucene<Term>(L"path", itemPath.toStdWString()));
+                // 通过 ancestor_paths 查询判断是否为目录
+                TermQueryPtr ancestorQuery = newLucene<TermQuery>(
+                        newLucene<Term>(L"ancestor_paths", itemPath.toStdWString()));
+                TopDocsPtr result = searcher->search(ancestorQuery, 1);
 
-                TopDocsPtr searchResult = searcher->search(pathQuery, 1);
-
-                if (searchResult->totalHits > 0) {
-                    // 如果找到了匹配的文档，按文件处理
-                    removeFile(itemPath, writer, &reporter);
-                    filesRemoved++;
-                    fmDebug() << "[RemoveFileListHandler] Removed file from index:" << itemPath;
-                } else {
-                    // 如果没有找到精确匹配，尝试作为目录处理
+                if (result->totalHits > 0) {
+                    // 有子文件，是目录
                     removeDirectoryIndex(itemPath, writer, reader, &reporter);
                     directoriesRemoved++;
                     fmDebug() << "[RemoveFileListHandler] Processed directory removal:" << itemPath;
+                } else {
+                    // 无子文件，是文件
+                    removeFile(itemPath, writer, &reporter);
+                    filesRemoved++;
+                    fmDebug() << "[RemoveFileListHandler] Removed file from index:" << itemPath;
                 }
             }
 
