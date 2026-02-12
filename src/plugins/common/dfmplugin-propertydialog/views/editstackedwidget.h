@@ -28,6 +28,7 @@ public:
     bool isCanceled() const;
     void setIsCanceled(bool isCancele);
     inline void setCharCountLimit() { useCharCount = true; }
+    void setMaxLength(int len);
 
 signals:
     void editFinished();
@@ -50,6 +51,7 @@ private:
 
     bool isCancel = false;
     bool useCharCount = false;
+    int maxLengthVal = 0;
 
     DTK_WIDGET_NAMESPACE::DArrowRectangle *tooltip { nullptr };
 };
