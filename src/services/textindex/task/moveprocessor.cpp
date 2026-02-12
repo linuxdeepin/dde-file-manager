@@ -237,14 +237,12 @@ bool DirectoryMoveProcessor::processDirectoryMove(const QString &fromPath, const
         fmInfo() << "[DirectoryMoveProcessor::processDirectoryMove] Processing directory move:"
                  << fromPath << "->" << toPath;
 
-        QString normalizedFromPath = PathCalculator::normalizeDirectoryPath(fromPath);
-        fmDebug() << "[DirectoryMoveProcessor::processDirectoryMove] Normalized from path:" << normalizedFromPath;
+        // 使用 TermQuery 在 ancestor_paths 字段上进行精确匹配
+        // ancestor_paths 存储的目录路径不带尾部斜杠
+        TermQueryPtr ancestorQuery = newLucene<TermQuery>(
+                newLucene<Term>(L"ancestor_paths", fromPath.toStdWString()));
 
-        // Create prefix query to find all documents under this directory
-        PrefixQueryPtr prefixQuery = newLucene<PrefixQuery>(
-                newLucene<Term>(L"path", normalizedFromPath.toStdWString()));
-
-        TopDocsPtr allDocs = m_searcher->search(prefixQuery, m_reader->maxDoc());
+        TopDocsPtr allDocs = m_searcher->search(ancestorQuery, m_reader->maxDoc());
         if (!allDocs || allDocs->totalHits == 0) {
             fmDebug() << "[DirectoryMoveProcessor::processDirectoryMove] No documents found for directory move:" << fromPath;
             return true;   // Not an error, directory might be empty or not indexed
@@ -255,6 +253,9 @@ bool DirectoryMoveProcessor::processDirectoryMove(const QString &fromPath, const
 
         int successCount = 0;
         int failureCount = 0;
+
+        // 用于计算新路径时使用，需要带尾部斜杠
+        QString normalizedFromPath = PathCalculator::normalizeDirectoryPath(fromPath);
 
         // Batch update all matching documents
         for (int32_t i = 0; i < allDocs->totalHits; ++i) {

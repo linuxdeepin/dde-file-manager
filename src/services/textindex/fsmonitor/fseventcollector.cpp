@@ -173,10 +173,6 @@ bool FSEventCollectorPrivate::shouldIndexFile(const QString &path) const
     QFileInfo fileInfo(path);
     QString suffix = fileInfo.suffix();
 
-    // Maybe it's a deleted folder ?
-    if (suffix.isEmpty() && !fileInfo.exists())
-        return true;
-
     // Check if extension is supported for content search
     bool supported = TextIndexConfig::instance().supportedFileExtensions().contains(suffix);
     return supported;
@@ -326,10 +322,37 @@ void FSEventCollectorPrivate::handleFileMoved(const QString &fromPath, const QSt
         return;
     }
 
-    // Only track moves for files that should be indexed
-    if (!shouldIndexFile(fullFromPath) && !shouldIndexFile(fullToPath)) {
+    // Check if source and target files should be indexed based on file extensions
+    bool fromShouldIndex = shouldIndexFile(fullFromPath);
+    bool toShouldIndex = shouldIndexFile(fullToPath);
+
+    // Scenario 1: Source file is indexed, target file is not (e.g., a.txt → a.abc)
+    // This happens when renaming to unsupported extension or moving to excluded location
+    // Action: Delete the index entry for source file
+    if (fromShouldIndex && !toShouldIndex) {
+        fmDebug() << "FSEventCollector: File moved from indexed to non-indexed, treating as deletion:"
+                  << fullFromPath << "->" << fullToPath;
+        handleFileDeleted(fromPath, fromName);
         return;
     }
+
+    // Scenario 3: Neither source nor target should be indexed (e.g., a.abc → b.xyz)
+    // Action: Ignore this move operation
+    if (!fromShouldIndex && !toShouldIndex) {
+        fmDebug() << "FSEventCollector: File moved between non-indexed files, ignoring:"
+                  << fullFromPath << "->" << fullToPath;
+        return;
+    }
+
+    // Scenario 2: Source file is not indexed, target file should be (e.g., a.abc → a.txt)
+    // This is handled by adding to movedFilesList, and later processFileMove will:
+    // - Detect source not in index
+    // - Check if target should be indexed
+    // - Create new index entry with content extraction
+    // Common case: Text editors save by writing temp file then renaming to target
+
+    // Scenario 4: Both source and target should be indexed (e.g., a.txt → b.txt)
+    // This is the normal rename/move case, handled by updating index path
 
     // Check if this is a move that conflicts with existing operations
     bool hasConflict = false;
@@ -337,7 +360,7 @@ void FSEventCollectorPrivate::handleFileMoved(const QString &fromPath, const QSt
     // If the source was in created list, remove it and treat as a pure creation at new location
     if (createdFilesList.contains(fullFromPath)) {
         createdFilesList.remove(fullFromPath);
-        if (shouldIndexFile(fullToPath)) {
+        if (toShouldIndex) {
             createdFilesList.insert(fullToPath);
             fmDebug() << "FSEventCollector: Converted move to creation, source was newly created:" << fullFromPath << "->" << fullToPath;
         }
@@ -378,12 +401,31 @@ void FSEventCollectorPrivate::handleDirectoryCreated(const QString &path, const 
 
 void FSEventCollectorPrivate::handleDirectoryDeleted(const QString &path, const QString &name)
 {
-    handleFileDeleted(path, name);
+    QString fullPath = normalizePath(path, name);
+
+    // Mark as directory
+    deletedDirectoriesMarker.insert(fullPath);
+
+    // Add to deleted list
+    deletedFilesList.insert(fullPath);
 }
 
 void FSEventCollectorPrivate::handleDirectoryMoved(const QString &fromPath, const QString &fromName,
                                                    const QString &toPath, const QString &toName)
 {
+    // Special case: Move to outside monitored directory
+    if (toPath.isEmpty() && toName.isEmpty()) {
+        handleDirectoryDeleted(fromPath, fromName);
+        return;
+    }
+
+    // Special case: Move from outside monitored directory
+    if (fromPath.isEmpty() && fromName.isEmpty()) {
+        handleDirectoryCreated(toPath, toName);
+        return;
+    }
+
+    // Regular move within monitored directories
     handleFileMoved(fromPath, fromName, toPath, toName);
 }
 
@@ -403,6 +445,7 @@ void FSEventCollectorPrivate::flushCollectedEvents()
     deletedFilesList.clear();
     modifiedFilesList.clear();
     movedFilesList.clear();
+    deletedDirectoriesMarker.clear();
 
     // Log statistics
     fmDebug() << "FSEventCollector: Flushing events - Created:" << created.size()
@@ -500,6 +543,9 @@ bool FSEventCollectorPrivate::isDirectory(const QString &path) const
 
 void FSEventCollectorPrivate::cleanupRedundantEntries()
 {
+    // Remove entries covered by deleted directories
+    removeEntriesCoveredByDirectories();
+
     // Clean up each list separately
     removeRedundantEntries(createdFilesList);
     removeRedundantEntries(deletedFilesList);
@@ -533,6 +579,39 @@ void FSEventCollectorPrivate::cleanupRedundantEntries()
     // Remove the redundant entries
     for (const QString &path : redundantModified) {
         modifiedFilesList.remove(path);
+    }
+}
+
+void FSEventCollectorPrivate::removeEntriesCoveredByDirectories()
+{
+    // Remove entries covered by deleted directories from all lists
+    for (const QString &dir : deletedDirectoriesMarker) {
+        // From deletedFilesList
+        QMutableSetIterator<QString> deletedIt(deletedFilesList);
+        while (deletedIt.hasNext()) {
+            const QString &path = deletedIt.next();
+            if (path != dir && path.startsWith(dir + "/")) {
+                deletedIt.remove();
+            }
+        }
+
+        // From createdFilesList
+        QMutableSetIterator<QString> createdIt(createdFilesList);
+        while (createdIt.hasNext()) {
+            const QString &path = createdIt.next();
+            if (path == dir || path.startsWith(dir + "/")) {
+                createdIt.remove();
+            }
+        }
+
+        // From modifiedFilesList
+        QMutableSetIterator<QString> modifiedIt(modifiedFilesList);
+        while (modifiedIt.hasNext()) {
+            const QString &path = modifiedIt.next();
+            if (path == dir || path.startsWith(dir + "/")) {
+                modifiedIt.remove();
+            }
+        }
     }
 }
 
@@ -670,6 +749,7 @@ void FSEventCollector::clearEvents()
     d->deletedFilesList.clear();
     d->modifiedFilesList.clear();
     d->movedFilesList.clear();
+    d->deletedDirectoriesMarker.clear();
 
     fmInfo() << "FSEventCollector: Cleared all collected events";
 }
