@@ -146,7 +146,8 @@
 				"lost+found",
 				"UnixBench",
 				"tmp",
-				"testdir"
+				"testdir",
+				"xwechat_files"
 			],
 			"serial": 0,
 			"flags": [],
