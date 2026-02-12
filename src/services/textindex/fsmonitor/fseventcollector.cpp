@@ -173,10 +173,6 @@ bool FSEventCollectorPrivate::shouldIndexFile(const QString &path) const
     QFileInfo fileInfo(path);
     QString suffix = fileInfo.suffix();
 
-    // Maybe it's a deleted folder ?
-    if (suffix.isEmpty() && !fileInfo.exists())
-        return true;
-
     // Check if extension is supported for content search
     bool supported = TextIndexConfig::instance().supportedFileExtensions().contains(suffix);
     return supported;
@@ -378,12 +374,31 @@ void FSEventCollectorPrivate::handleDirectoryCreated(const QString &path, const 
 
 void FSEventCollectorPrivate::handleDirectoryDeleted(const QString &path, const QString &name)
 {
-    handleFileDeleted(path, name);
+    QString fullPath = normalizePath(path, name);
+
+    // Mark as directory
+    deletedDirectoriesMarker.insert(fullPath);
+
+    // Add to deleted list
+    deletedFilesList.insert(fullPath);
 }
 
 void FSEventCollectorPrivate::handleDirectoryMoved(const QString &fromPath, const QString &fromName,
                                                    const QString &toPath, const QString &toName)
 {
+    // Special case: Move to outside monitored directory
+    if (toPath.isEmpty() && toName.isEmpty()) {
+        handleDirectoryDeleted(fromPath, fromName);
+        return;
+    }
+
+    // Special case: Move from outside monitored directory
+    if (fromPath.isEmpty() && fromName.isEmpty()) {
+        handleDirectoryCreated(toPath, toName);
+        return;
+    }
+
+    // Regular move within monitored directories
     handleFileMoved(fromPath, fromName, toPath, toName);
 }
 
@@ -403,6 +418,7 @@ void FSEventCollectorPrivate::flushCollectedEvents()
     deletedFilesList.clear();
     modifiedFilesList.clear();
     movedFilesList.clear();
+    deletedDirectoriesMarker.clear();
 
     // Log statistics
     fmDebug() << "FSEventCollector: Flushing events - Created:" << created.size()
@@ -500,6 +516,9 @@ bool FSEventCollectorPrivate::isDirectory(const QString &path) const
 
 void FSEventCollectorPrivate::cleanupRedundantEntries()
 {
+    // Remove entries covered by deleted directories
+    removeEntriesCoveredByDirectories();
+
     // Clean up each list separately
     removeRedundantEntries(createdFilesList);
     removeRedundantEntries(deletedFilesList);
@@ -533,6 +552,39 @@ void FSEventCollectorPrivate::cleanupRedundantEntries()
     // Remove the redundant entries
     for (const QString &path : redundantModified) {
         modifiedFilesList.remove(path);
+    }
+}
+
+void FSEventCollectorPrivate::removeEntriesCoveredByDirectories()
+{
+    // Remove entries covered by deleted directories from all lists
+    for (const QString &dir : deletedDirectoriesMarker) {
+        // From deletedFilesList
+        QMutableSetIterator<QString> deletedIt(deletedFilesList);
+        while (deletedIt.hasNext()) {
+            const QString &path = deletedIt.next();
+            if (path != dir && path.startsWith(dir + "/")) {
+                deletedIt.remove();
+            }
+        }
+
+        // From createdFilesList
+        QMutableSetIterator<QString> createdIt(createdFilesList);
+        while (createdIt.hasNext()) {
+            const QString &path = createdIt.next();
+            if (path == dir || path.startsWith(dir + "/")) {
+                createdIt.remove();
+            }
+        }
+
+        // From modifiedFilesList
+        QMutableSetIterator<QString> modifiedIt(modifiedFilesList);
+        while (modifiedIt.hasNext()) {
+            const QString &path = modifiedIt.next();
+            if (path == dir || path.startsWith(dir + "/")) {
+                modifiedIt.remove();
+            }
+        }
     }
 }
 
@@ -670,6 +722,7 @@ void FSEventCollector::clearEvents()
     d->deletedFilesList.clear();
     d->modifiedFilesList.clear();
     d->movedFilesList.clear();
+    d->deletedDirectoriesMarker.clear();
 
     fmInfo() << "FSEventCollector: Cleared all collected events";
 }

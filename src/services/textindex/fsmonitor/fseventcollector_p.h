@@ -70,6 +70,9 @@ public:
     // Remove redundant entries from all event lists
     void cleanupRedundantEntries();
 
+    // Remove entries covered by deleted directories
+    void removeEntriesCoveredByDirectories();
+
     // Check if a file should be indexed based on its extension
     bool shouldIndexFile(const QString &path) const;
 
@@ -106,6 +109,9 @@ public:
 
     // New: Track moved/renamed files separately for efficient index updates
     QHash<QString, QString> movedFilesList;   // fromPath -> toPath mapping
+
+    // Marker for deleted directories
+    QSet<QString> deletedDirectoriesMarker;
 };
 
 SERVICETEXTINDEX_END_NAMESPACE
