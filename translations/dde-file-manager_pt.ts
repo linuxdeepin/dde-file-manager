@@ -698,7 +698,7 @@ Enter user and password for %1</source>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="44"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="44"/>
         <source>Music preview</source>
-        <translation type="unfinished"/>
+        <translation>Pré-visualizar musica</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="51"/>
@@ -981,7 +981,7 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/filenameutils.cpp" line="137"/>
         <source> (copy %1)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
-        <translation type="unfinished"/>
+        <translation>(copiar %1)</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/utils/previewfileoperation.cpp" line="40"/>
@@ -1050,7 +1050,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="55"/>
         <source>Remove from quick access</source>
-        <translation type="unfinished"/>
+        <translation>Remover do acesso rápido</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="60"/>
@@ -1069,7 +1069,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="66"/>
         <source>New Text</source>
-        <translation type="unfinished"/>
+        <translation>Novo texto</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="70"/>
