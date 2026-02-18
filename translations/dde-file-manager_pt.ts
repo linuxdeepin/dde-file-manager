@@ -2886,27 +2886,27 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="108"/>
         <source>Erasing device now...</source>
-        <translation type="unfinished"/>
+        <translation>A apagar o dispositivo...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="111"/>
         <source>Making filesystem for device now...</source>
-        <translation type="unfinished"/>
+        <translation>A criar sistema de ficheiros para o dispositivo...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="114"/>
         <source>Locking device now...</source>
-        <translation type="unfinished"/>
+        <translation>A bloquear o dispositivo...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="117"/>
         <source>Unlocking device now...</source>
-        <translation type="unfinished"/>
+        <translation>A desbloquear o dispositivo...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="141"/>
         <source>The device is busy now</source>
-        <translation type="unfinished"/>
+        <translation>O dispositivo está ocupado</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="153"/>
@@ -2916,7 +2916,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="155"/>
         <source>Wrong password</source>
-        <translation type="unfinished"/>
+        <translation>Palavra-passe incorreta</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="159"/>
@@ -3073,7 +3073,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="161"/>
         <source>Permission denied</source>
-        <translation type="unfinished"/>
+        <translation>Permissão negada</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="424"/>
