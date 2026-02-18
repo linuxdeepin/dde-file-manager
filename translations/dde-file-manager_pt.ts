@@ -1720,7 +1720,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="14"/>
         <source>File is not a regular file</source>
-        <translation type="unfinished"/>
+        <translation>O ficheiro não é um ficheiro normal</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="15"/>
@@ -1750,17 +1750,17 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="20"/>
         <source>No space left on drive</source>
-        <translation type="unfinished"/>
+        <translation>Sem espaço disponível na unidade</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="21"/>
         <source>Invalid argument</source>
-        <translation type="unfinished"/>
+        <translation>Argumento inválido</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="22"/>
         <source>Permission denied</source>
-        <translation type="unfinished"/>
+        <translation>Permissão negada</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="23"/>
@@ -1770,27 +1770,27 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="24"/>
         <source>File isn&apos;t mounted</source>
-        <translation type="unfinished"/>
+        <translation>O ficheiro não está montado</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="25"/>
         <source>File is already mounted</source>
-        <translation type="unfinished"/>
+        <translation>O ficheiro já está montado</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="26"/>
         <source>File was closed</source>
-        <translation type="unfinished"/>
+        <translation>O ficheiro foi fechado</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="27"/>
         <source>Operation was cancelled</source>
-        <translation type="unfinished"/>
+        <translation>A operação foi cancelada</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="28"/>
         <source>Operations are still pending</source>
-        <translation type="unfinished"/>
+        <translation>Ainda existem operações pendentes</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="29"/>
