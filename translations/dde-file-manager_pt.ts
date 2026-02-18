@@ -2336,7 +2336,7 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="64"/>
         <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="127"/>
         <source>Collection size</source>
-        <translation type="unfinished"/>
+        <translation>Tamanho da coleção</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="137"/>
@@ -2445,7 +2445,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="178"/>
         <source>Close</source>
-        <translation type="unfinished"/>
+        <translation>Fechar</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="178"/>
@@ -2479,7 +2479,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="110"/>
         <source>Auto arrange icons</source>
-        <translation type="unfinished"/>
+        <translation>Organizar ícones automaticamente</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="130"/>
@@ -2502,12 +2502,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="158"/>
         <source>Hide all collections with one click</source>
-        <translation type="unfinished"/>
+        <translation>Ocultar todas as coleções com um clique</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="218"/>
         <source>Hide/Show Collection Shortcuts</source>
-        <translation type="unfinished"/>
+        <translation>Ocultar/Mostar os atalhos da coleção</translation>
     </message>
 </context>
 <context>
@@ -2576,7 +2576,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="96"/>
         <source>Before file name</source>
-        <translation type="unfinished"/>
+        <translation>Antes do nome do ficheiro</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="96"/>
@@ -2779,13 +2779,13 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/tools/upgrade/dialog/processdialog.cpp" line="33"/>
         <source>Update</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Atualizar</translation>
     </message>
     <message>
         <location filename="../src/tools/upgrade/dialog/processdialog.cpp" line="34"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Cancelar</translation>
     </message>
 </context>
 <context>
@@ -2861,27 +2861,27 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="94"/>
         <source>Operating failed</source>
-        <translation type="unfinished"/>
+        <translation>A operação falhou</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="95"/>
         <source>Mount failed</source>
-        <translation type="unfinished"/>
+        <translation>Falha ao montar</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="96"/>
         <source>Unmount failed</source>
-        <translation type="unfinished"/>
+        <translation>Falha ao desmontar</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="102"/>
         <source>Unmounting device now...</source>
-        <translation type="unfinished"/>
+        <translation>A desmontar o dispositivo...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="105"/>
         <source>Mounting device now...</source>
-        <translation type="unfinished"/>
+        <translation>A montar o dispositivo...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="108"/>
