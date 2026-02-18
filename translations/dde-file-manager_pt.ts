@@ -3179,7 +3179,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="720"/>
         <source>Unable to access %1</source>
-        <translation type="unfinished"/>
+        <translation>Não foi possível aceder %1</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="737"/>
@@ -3343,75 +3343,75 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="263"/>
         <source>Open file:</source>
-        <translation type="unfinished"/>
+        <translation>Abrir ficheiro:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="264"/>
         <source>Click</source>
-        <translation type="unfinished"/>
+        <translation>Clique</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="265"/>
         <source>Double click</source>
-        <translation type="unfinished"/>
+        <translation>Duplo clique</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="277"/>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="301"/>
         <source>Computer</source>
-        <translation type="unfinished"/>
+        <translation>Computador</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="278"/>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="302"/>
         <source>Home</source>
-        <translation type="unfinished"/>
+        <translation>Pasta pessoal</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="279"/>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="303"/>
         <source>Desktop</source>
-        <translation type="unfinished"/>
+        <translation>Ambiente de trabalho</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="280"/>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="304"/>
         <source>Videos</source>
-        <translation type="unfinished"/>
+        <translation>Vídeos</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="281"/>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="305"/>
         <source>Music</source>
-        <translation type="unfinished"/>
+        <translation>Músicas</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="282"/>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="306"/>
         <source>Pictures</source>
-        <translation type="unfinished"/>
+        <translation>Imagens</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="283"/>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="307"/>
         <source>Documents</source>
-        <translation type="unfinished"/>
+        <translation>Documentos</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="284"/>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="308"/>
         <source>Downloads</source>
-        <translation type="unfinished"/>
+        <translation>Transferências</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="298"/>
         <source>Open in new tab:</source>
-        <translation type="unfinished"/>
+        <translation>Abrir num novo separador:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="300"/>
         <source>Current Directory</source>
-        <translation type="unfinished"/>
+        <translation>Diretório atual</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="321"/>
