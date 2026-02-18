@@ -3416,32 +3416,32 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="321"/>
         <source>Files and folders</source>
-        <translation type="unfinished"/>
+        <translation>Ficheiros e pastas</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="323"/>
         <source>Show hidden files</source>
-        <translation type="unfinished"/>
+        <translation>Mostrar ficheiros ocultos</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="326"/>
         <source>Show file extensions</source>
-        <translation type="unfinished"/>
+        <translation>Mostrar extensões de ficheiros</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="328"/>
         <source>Mix sorting of files and folders</source>
-        <translation type="unfinished"/>
+        <translation>Ordenar ficheiros e pastas aleatoriamente</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="336"/>
         <source>Workspace</source>
-        <translation type="unfinished"/>
+        <translation>Área de Trabalho</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="337"/>
         <source>View</source>
-        <translation type="unfinished"/>
+        <translation>Ver</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="354"/>
@@ -3456,7 +3456,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="374"/>
         <source>Tree</source>
-        <translation type="unfinished"/>
+        <translation>Árvore</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="378"/>
@@ -3476,7 +3476,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="371"/>
         <source>Icon</source>
-        <translation type="unfinished"/>
+        <translation>Ícone</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="244"/>
