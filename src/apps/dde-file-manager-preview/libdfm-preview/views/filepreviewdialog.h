@@ -31,6 +31,8 @@ public:
 
     void setCurrentWinID(quint64 winID);
 
+    bool hasValidPreview() const;
+
 signals:
     void signalCloseEvent();
 

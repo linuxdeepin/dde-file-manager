@@ -507,6 +507,11 @@ void FilePreviewDialog::updateTitle()
     qCDebug(logLibFilePreview) << "FilePreviewDialog: updated title to:" << elidedText;
 }
 
+bool FilePreviewDialog::hasValidPreview() const
+{
+    return preview != nullptr;
+}
+
 QString FilePreviewDialog::generalKey(const QString &key)
 {
     const QStringList &tmp = key.split('/');
