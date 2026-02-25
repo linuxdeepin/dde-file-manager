@@ -135,7 +135,7 @@ void CommonEntryFileEntity::refresh()
 quint64 CommonEntryFileEntity::sizeTotal() const
 {
     if (reflection() && hasMethod("sizeTotal")) {
-        quint64 size;
+        quint64 size { 0 };
         bool ret { QMetaObject::invokeMethod(reflectionObj, "sizeTotal",
                                              Qt::DirectConnection, Q_RETURN_ARG(quint64, size)) };
         if (ret)

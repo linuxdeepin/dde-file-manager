@@ -61,8 +61,8 @@ UnknowFilePreview::UnknowFilePreview(QObject *parent)
     hlayout->addLayout(vlayout);
     hlayout->addStretch();
 
-    fileCalculationUtils = new FileStatisticsJob;
-    connect(fileCalculationUtils, &FileStatisticsJob::dataNotify, this, &UnknowFilePreview::updateFolderSizeCount);
+    fileCalculationUtils = new FileScanner(this);
+    connect(fileCalculationUtils, &FileScanner::progressChanged, this, &UnknowFilePreview::updateFolderSizeCount);
 
     qCDebug(logLibFilePreview) << "UnknowFilePreview: initialization completed";
 }
@@ -161,14 +161,10 @@ void UnknowFilePreview::setFileInfo(const FileInfoPointer &info)
     }
 }
 
-void UnknowFilePreview::updateFolderSizeCount(qint64 size, int filesCount, int directoryCount)
+void UnknowFilePreview::updateFolderSizeCount(const FileScanner::ScanResult &result)
 {
-    QString sizeText = FileUtils::formatSize(size);
-    // 同“属性”对话框一致，不统计目录本身
-    int totalItems = filesCount + (directoryCount > 1 ? directoryCount - 1 : 0);
-
-    qCInfo(logLibFilePreview) << "UnknowFilePreview: folder size calculation completed - size:" << sizeText
-                              << "files:" << filesCount << "directories:" << directoryCount << "total:" << totalItems;
+    QString sizeText = FileUtils::formatSize(result.totalSize);
+    int totalItems = result.fileCount + result.directoryCount;
 
     sizeLabel->setText(QObject::tr("Size: %1").arg(sizeText));
     typeLabel->setText(QObject::tr("Items: %1").arg(totalItems));

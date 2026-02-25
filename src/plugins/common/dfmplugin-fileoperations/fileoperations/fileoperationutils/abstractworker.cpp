@@ -275,11 +275,10 @@ bool AbstractWorker::statisticsFilesSize()
         fmInfo() << "File statistics completed - total size:" << sourceFilesTotalSize << "file count:" << sourceFilesCount;
     } else {
         fmDebug() << "Using asynchronous file size calculation for remote files";
-        statisticsFilesSizeJob.reset(new DFMBASE_NAMESPACE::FileStatisticsJob());
-        connect(statisticsFilesSizeJob.data(), &DFMBASE_NAMESPACE::FileStatisticsJob::finished,
+        statisticsFilesSizeJob.reset(new DFMBASE_NAMESPACE::FileScanner());
+        connect(statisticsFilesSizeJob.data(), &DFMBASE_NAMESPACE::FileScanner::finished,
                 this, &AbstractWorker::onStatisticsFilesSizeFinish, Qt::DirectConnection);
-        connect(statisticsFilesSizeJob.data(), &DFMBASE_NAMESPACE::FileStatisticsJob::sizeChanged, this, &AbstractWorker::onStatisticsFilesSizeUpdate, Qt::DirectConnection);
-        statisticsFilesSizeJob->setFileHints(FileStatisticsJob::FileHint::kNoFollowSymlink);
+        connect(statisticsFilesSizeJob.data(), &DFMBASE_NAMESPACE::FileScanner::progressChanged, this, &AbstractWorker::onStatisticsFilesSizeUpdate, Qt::DirectConnection);
         statisticsFilesSizeJob->start(sourceUrls);
     }
     return true;
@@ -356,7 +355,6 @@ void AbstractWorker::endWork()
 
     if (statisticsFilesSizeJob) {
         statisticsFilesSizeJob->stop();
-        statisticsFilesSizeJob->wait();
     }
 
     emit workerFinish();
@@ -403,10 +401,10 @@ void AbstractWorker::emitProgressChangedNotify(const qint64 &writSize)
     }
     AbstractJobHandler::StatisticState state = AbstractJobHandler::StatisticState::kNoState;
     if (statisticsFilesSizeJob) {
-        if (statisticsFilesSizeJob->isFinished())
-            state = AbstractJobHandler::StatisticState::kStopState;
-        else
+        if (statisticsFilesSizeJob->isRunning())
             state = AbstractJobHandler::StatisticState::kRunningState;
+        else
+            state = AbstractJobHandler::StatisticState::kStopState;
     }
     info->insert(AbstractJobHandler::NotifyInfoKey::kStatisticStateKey, QVariant::fromValue(state));
 
@@ -575,23 +573,23 @@ bool AbstractWorker::stateCheck()
  * and the slot at the end of the thread
  * \param sizeInfo All file size information
  */
-void AbstractWorker::onStatisticsFilesSizeFinish()
+void AbstractWorker::onStatisticsFilesSizeFinish(const FileScanner::ScanResult &result)
 {
     if (!statisticsFilesSizeJob)
         return;
     statisticsFilesSizeJob->stop();
-    const SizeInfoPointer &sizeInfo = statisticsFilesSizeJob->getFileSizeInfo();
-    sourceFilesTotalSize = statisticsFilesSizeJob->totalProgressSize();
-    workData->dirSize = sizeInfo->dirSize;
-    sourceFilesCount = sizeInfo->fileCount;
-    allFilesList = sizeInfo->allFiles;
+    sourceFilesTotalSize = result.progressSize;
+    workData->dirSize = FileUtils::getMemoryPageSize();
+    sourceFilesCount = result.fileCount;
+    // 对于异步统计（非本地文件），allFilesList 不是必需的，因为这些操作主要用于本地文件的删除/回收站操作
+    allFilesList.clear();
 
     fmInfo() << "Asynchronous file statistics completed - total size:" << sourceFilesTotalSize << "file count:" << sourceFilesCount;
 }
 
-void AbstractWorker::onStatisticsFilesSizeUpdate(qint64 size)
+void AbstractWorker::onStatisticsFilesSizeUpdate(const FileScanner::ScanResult &result)
 {
-    sourceFilesTotalSize = size;
+    sourceFilesTotalSize = result.progressSize;
 }
 
 AbstractWorker::AbstractWorker(QObject *parent)
@@ -713,7 +711,6 @@ AbstractWorker::~AbstractWorker()
 
     if (statisticsFilesSizeJob) {
         statisticsFilesSizeJob->stop();
-        statisticsFilesSizeJob->wait();
     }
 
     // UpdateProgressTimer will be automatically cleaned up when destroyed

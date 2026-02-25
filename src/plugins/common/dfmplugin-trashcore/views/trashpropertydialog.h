@@ -7,7 +7,6 @@
 
 #include "dfmplugin_trashcore_global.h"
 #include <dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.h>
-#include <dfm-base/utils/filestatisticsjob.h>
 
 #include <DDialog>
 

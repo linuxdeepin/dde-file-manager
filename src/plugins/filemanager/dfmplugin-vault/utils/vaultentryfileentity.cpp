@@ -14,10 +14,9 @@ using namespace dfmplugin_vault;
 VaultEntryFileEntity::VaultEntryFileEntity(QObject *parent)
     : QObject(parent)
 {
-    fileCalculationUtils = new FileStatisticsJob;
-    connect(fileCalculationUtils, &FileStatisticsJob::dataNotify, this, &VaultEntryFileEntity::slotFileDirSizeChange);
-    connect(fileCalculationUtils, &FileStatisticsJob::finished, this, &VaultEntryFileEntity::slotFinishedThread);
-    fileCalculationUtils->setFileHints(FileStatisticsJob::FileHint::kNoFollowSymlink | FileStatisticsJob::FileHint::kDontSizeInfoPointer);
+    fileCalculationUtils = new FileScanner;
+    connect(fileCalculationUtils, &FileScanner::progressChanged, this, &VaultEntryFileEntity::slotFileDirSizeChange);
+    connect(fileCalculationUtils, &FileScanner::finished, this, &VaultEntryFileEntity::slotFinishedThread);
 }
 
 VaultEntryFileEntity::~VaultEntryFileEntity()
@@ -87,12 +86,10 @@ QUrl VaultEntryFileEntity::targetUrl() const
     return VaultHelper::instance()->rootUrl();
 }
 
-void VaultEntryFileEntity::slotFileDirSizeChange(qint64 size, int filesCount, int directoryCount)
+void VaultEntryFileEntity::slotFileDirSizeChange(const DFMBASE_NAMESPACE::FileScanner::ScanResult &result)
 {
-    Q_UNUSED(filesCount)
-    Q_UNUSED(directoryCount)
     if (showSizeState) {
-        totalchange = size;
+        totalchange = result.totalSize;
         if (vaultTotal > 0 && totalchange > vaultTotal)
             vaultTotal = totalchange;
     }

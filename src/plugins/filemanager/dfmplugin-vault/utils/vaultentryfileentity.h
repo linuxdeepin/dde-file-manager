@@ -7,7 +7,7 @@
 
 #include "dfmplugin_vault_global.h"
 
-#include <dfm-base/utils/filestatisticsjob.h>
+#include <dfm-base/utils/filescanner.h>
 #include <dfm-base/interfaces/abstractentryfileentity.h>
 
 // NOTE: the namespaceand classname cannot rename,
@@ -34,14 +34,14 @@ public:
     Q_INVOKABLE QUrl targetUrl() const;
 
 public slots:
-    void slotFileDirSizeChange(qint64 size, int filesCount, int directoryCount);
+    void slotFileDirSizeChange(const DFMBASE_NAMESPACE::FileScanner::ScanResult &result);
 
     void slotFinishedThread();
 
 private:
     qint64 vaultTotal { 0 };
     qint64 totalchange { 0 };
-    DFMBASE_NAMESPACE::FileStatisticsJob *fileCalculationUtils { nullptr };
+    DFMBASE_NAMESPACE::FileScanner *fileCalculationUtils { nullptr };
     mutable bool showSizeState { false };
 };
 }

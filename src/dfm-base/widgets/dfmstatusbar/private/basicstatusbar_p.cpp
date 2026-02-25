@@ -68,8 +68,8 @@ void BasicStatusBarPrivate::calcFolderContains(const QList<QUrl> &folderList)
 {
     discardCurrentJob();
 
-    fileStatisticsJog.reset(new FileStatisticsJob());
-    fileStatisticsJog->setFileHints(FileStatisticsJob::kExcludeSourceFile | FileStatisticsJob::kSingleDepth);
+    fileStatisticsJog = new FileScanner(this);
+    fileStatisticsJog->setOptions(FileScanner::ScanOption::SingleDepth);
 
     if (isJobDisconnect) {
         isJobDisconnect = false;
@@ -84,24 +84,18 @@ void BasicStatusBarPrivate::initJobConnection()
     if (!fileStatisticsJog)
         return;
 
-    auto onFoundFile = [this](qint64 size, int filesCount, int directoryCount) {
-        Q_UNUSED(size)
-
+    auto onFoundFile = [this](const FileScanner::ScanResult &result) {
         if (!sender())
             return;
 
-        if (filesCount + directoryCount != folderContains) {
-            folderContains = filesCount + directoryCount;
+        int newCount = result.fileCount + result.directoryCount;
+        if (newCount != folderContains) {
+            folderContains = newCount;
             q->updateStatusMessage();
         }
     };
 
-    auto currentJob = fileStatisticsJog;
-    connect(currentJob.data(), &FileStatisticsJob::finished, this, [currentJob, this]() {
-        folderContains = currentJob->filesCount() + currentJob->directorysCount();
-        q->updateStatusMessage();
-    });
-    connect(currentJob.data(), &FileStatisticsJob::dataNotify, this, onFoundFile);
+    connect(fileStatisticsJog, &FileScanner::progressChanged, this, onFoundFile);
 }
 
 void BasicStatusBarPrivate::discardCurrentJob()
@@ -113,13 +107,9 @@ void BasicStatusBarPrivate::discardCurrentJob()
     isJobDisconnect = true;
 
     if (fileStatisticsJog->isRunning()) {
-        auto waitDeletePointer = fileStatisticsJog;
-        connect(waitDeletePointer.data(), &FileStatisticsJob::finished, this, [this, waitDeletePointer] {
-            waitDeleteJobList.removeOne(waitDeletePointer);
-        });
         fileStatisticsJog->stop();
-        waitDeleteJobList.append(fileStatisticsJog);
     }
 
+    fileStatisticsJog->deleteLater();
     fileStatisticsJog = nullptr;
 }

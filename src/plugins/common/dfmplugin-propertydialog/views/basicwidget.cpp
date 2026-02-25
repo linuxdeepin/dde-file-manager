@@ -52,8 +52,7 @@ BasicWidget::BasicWidget(QWidget *parent)
 
 {
     initUI();
-    fileCalculationUtils = new FileStatisticsJob;
-    fileCalculationUtils->setFileHints(FileStatisticsJob::FileHint::kNoFollowSymlink);
+    fileCalculationUtils = new FileScanner(this);
 
     connect(&fetchThread, &QThread::finished, infoFetchWorker, &QObject::deleteLater);
     infoFetchWorker->moveToThread(&fetchThread);
@@ -301,7 +300,7 @@ void BasicWidget::basicFill(const QUrl &url)
         fileType->setRightValue(info->displayOf(DisPlayInfoType::kMimeTypeDisplayName), Qt::ElideMiddle, Qt::AlignVCenter, true);
         if (type == FileInfo::FileType::kDirectory && fileCount && fileCount->RightValue().isEmpty()) {
             fileCount->setRightValue(tr("%1 item").arg(0), Qt::ElideNone, Qt::AlignVCenter, true);
-            connect(fileCalculationUtils, &FileStatisticsJob::dataNotify, this, &BasicWidget::slotFileCountAndSizeChange);
+            connect(fileCalculationUtils, &FileScanner::progressChanged, this, &BasicWidget::slotFileCountAndSizeChange);
             if (info->canAttributes(CanableInfoType::kCanRedirectionFileUrl)) {
                 fileCalculationUtils->start(QList<QUrl>() << info->urlOf(UrlInfoType::kRedirectedFileUrl));
             } else {
@@ -390,12 +389,12 @@ void BasicWidget::updateFileUrl(const QUrl &url)
     currentUrl = url;
 }
 
-void BasicWidget::slotFileCountAndSizeChange(qint64 size, int filesCount, int directoryCount)
+void BasicWidget::slotFileCountAndSizeChange(const FileScanner::ScanResult &result)
 {
-    fSize = size;
-    fileSize->setRightValue(FileUtils::formatSize(size), Qt::ElideNone, Qt::AlignVCenter, true);
+    fSize = result.totalSize;
+    fileSize->setRightValue(FileUtils::formatSize(result.totalSize), Qt::ElideNone, Qt::AlignVCenter, true);
 
-    fCount = filesCount + (directoryCount > 1 ? directoryCount - 1 : 0);
+    fCount = result.fileCount + result.directoryCount;
     QString txt = fCount > 1 ? tr("%1 items") : tr("%1 item");
     fileCount->setRightValue(txt.arg(fCount), Qt::ElideNone, Qt::AlignVCenter, true);
 }
