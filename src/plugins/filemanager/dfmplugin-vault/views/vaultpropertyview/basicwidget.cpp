@@ -24,9 +24,8 @@ BasicWidget::BasicWidget(QWidget *parent)
 {
     fmDebug() << "Vault: Creating basic property widget";
     initUI();
-    fileCalculationUtils = new FileStatisticsJob;
-    connect(fileCalculationUtils, &FileStatisticsJob::dataNotify, this, &BasicWidget::slotFileCountAndSizeChange);
-    fileCalculationUtils->setFileHints(FileStatisticsJob::FileHint::kNoFollowSymlink | FileStatisticsJob::FileHint::kDontSizeInfoPointer);
+    fileCalculationUtils = new FileScanner;
+    connect(fileCalculationUtils, &FileScanner::progressChanged, this, &BasicWidget::slotFileCountAndSizeChange);
 }
 
 BasicWidget::~BasicWidget()
@@ -159,12 +158,12 @@ int BasicWidget::getFileCount()
     return fCount;
 }
 
-void BasicWidget::slotFileCountAndSizeChange(qint64 size, int filesCount, int directoryCount)
+void BasicWidget::slotFileCountAndSizeChange(const DFMBASE_NAMESPACE::FileScanner::ScanResult &result)
 {
-    fSize = size;
-    fileSize->setRightValue(FileUtils::formatSize(size));
+    fSize = result.totalSize;
+    fileSize->setRightValue(FileUtils::formatSize(result.totalSize));
 
-    fCount = filesCount + (directoryCount > 1 ? directoryCount - 1 : 0);
+    fCount = result.fileCount + result.directoryCount;
     fileCount->setRightValue(QString::number(fCount));
 }
 

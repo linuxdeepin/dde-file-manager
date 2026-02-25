@@ -202,20 +202,22 @@ private:
     /**
      * @brief 目录项结构（用于批量读取）
      */
-    struct DirEntry {
-        QByteArray name;        // 文件名（UTF-8）
-        struct stat statBuf;    // lstat 结果
-        bool statOk;            // lstat 是否成功
+    struct DirEntry
+    {
+        QByteArray name;   // 文件名（UTF-8）
+        struct stat statBuf;   // lstat 结果
+        bool statOk;   // lstat 是否成功
         unsigned char d_type;   // dirent.d_type (DT_DIR, DT_LNK 等)
     };
 
     /**
      * @brief 遍历上下文
      */
-    struct ScanContext {
-        QString fullPath;       // 当前完整路径
-        int depth;              // 当前深度（0 = 源目录）
-        bool isSourcePath;      // 是否为源路径
+    struct ScanContext
+    {
+        QString fullPath;   // 当前完整路径
+        int depth;   // 当前深度（0 = 源目录）
+        bool isSourcePath;   // 是否为源路径
     };
 
     /**
@@ -224,7 +226,7 @@ private:
      * @param entries 输出参数，目录条目列表
      * @return 是否成功
      */
-    bool readDirectoryEntries(const QString &path, QList<DirEntry> &entries);
+    bool readDirectoryEntries(const QString &path, QList<DirEntry> *entries);
 
     /**
      * @brief 处理常规文件

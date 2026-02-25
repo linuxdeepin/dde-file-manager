@@ -8,7 +8,9 @@
 #include "dfmplugin_propertydialog_global.h"
 
 #include <dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.h>
-#include <dfm-base/utils/filestatisticsjob.h>
+#include <dfm-base/utils/filescanner.h>
+
+#include <dfm-io/dfileinfo.h>
 
 #include <DArrowLineDrawer>
 #include <DCheckBox>
@@ -44,7 +46,7 @@ public:
 
 public slots:
 
-    void slotFileCountAndSizeChange(qint64 size, int filesCount, int directoryCount);
+    void slotFileCountAndSizeChange(const DFMBASE_NAMESPACE::FileScanner::ScanResult &result);
 
     void slotFileHide(Qt::CheckState state);
 
@@ -69,7 +71,7 @@ private:
     DFMBASE_NAMESPACE::KeyValueLabel *fileMediaResolution { nullptr };
     DFMBASE_NAMESPACE::KeyValueLabel *fileMediaDuration { nullptr };
     bool hideCheckBox { false };
-    DFMBASE_NAMESPACE::FileStatisticsJob *fileCalculationUtils { nullptr };
+    DFMBASE_NAMESPACE::FileScanner *fileCalculationUtils { nullptr };
     qint64 fSize { 0 };
     int fCount { 0 };
     QMultiMap<BasicFieldExpandEnum, DFMBASE_NAMESPACE::KeyValueLabel *> fieldMap;

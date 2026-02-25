@@ -8,7 +8,7 @@
 #include "dfmplugin_vault_global.h"
 
 #include <dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.h>
-#include <dfm-base/utils/filestatisticsjob.h>
+#include <dfm-base/utils/filescanner.h>
 
 #include <DArrowLineDrawer>
 
@@ -34,7 +34,7 @@ public:
 
 public slots:
 
-    void slotFileCountAndSizeChange(qint64 size, int filesCount, int directoryCount);
+    void slotFileCountAndSizeChange(const DFMBASE_NAMESPACE::FileScanner::ScanResult &result);
 
 protected:
     virtual void closeEvent(QCloseEvent *event) override;
@@ -47,7 +47,7 @@ private:
     DFMBASE_NAMESPACE::KeyValueLabel *fileCreated { nullptr };
     DFMBASE_NAMESPACE::KeyValueLabel *fileModified { nullptr };
     DFMBASE_NAMESPACE::KeyValueLabel *fileAccessed { nullptr };
-    DFMBASE_NAMESPACE::FileStatisticsJob *fileCalculationUtils { nullptr };
+    DFMBASE_NAMESPACE::FileScanner *fileCalculationUtils { nullptr };
     int fSize { 0 };
     int fCount { 0 };
 };

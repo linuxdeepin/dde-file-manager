@@ -7,7 +7,7 @@
 
 #include "dfmplugin_propertydialog_global.h"
 #include <dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.h>
-#include <dfm-base/utils/filestatisticsjob.h>
+#include <dfm-base/utils/filescanner.h>
 
 #include <DDialog>
 
@@ -25,8 +25,6 @@ class QGridLayout;
 
 namespace dfmplugin_propertydialog {
 
-class FileCountCalculator;
-
 class MultiFilePropertyDialog : public DTK_WIDGET_NAMESPACE::DDialog
 {
     Q_OBJECT
@@ -41,7 +39,7 @@ private:
     void initInfoUi();
 
 private slots:
-    void updateFolderSizeLabel(qint64 size, int filesCount, int directoryCount);
+    void updateFolderSizeLabel(const DFMBASE_NAMESPACE::FileScanner::ScanResult &result);
 
 private:
     QList<QUrl> urlList {};   // ###: this list contains all the urls which are selected!
@@ -56,8 +54,8 @@ private:
     QLabel *accessTimeValueLabel { nullptr };
     QLabel *modifyTimeLable { nullptr };
     QLabel *modifyTimeValueLable { nullptr };
-    DFMBASE_NAMESPACE::FileStatisticsJob *fileCalculationUtils { nullptr };
-    FileCountCalculator *fileCountCalculator { nullptr };
+    DFMBASE_NAMESPACE::FileScanner *fileCalculationUtils { nullptr };
 };
-}
+
+}   // namespace dfmplugin_propertydialog
 #endif   // MULTIFILEPROPERTYDIALOG_H

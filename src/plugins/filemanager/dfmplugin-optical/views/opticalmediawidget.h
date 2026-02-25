@@ -8,7 +8,7 @@
 #include "dfmplugin_optical_global.h"
 
 #include <dfm-base/widgets/filemanagerwindow.h>
-#include <dfm-base/utils/filestatisticsjob.h>
+#include <dfm-base/utils/filescanner.h>
 
 #include <QWidget>
 #include <QHBoxLayout>
@@ -61,7 +61,7 @@ private:
     int curMediaType;
     QString curMediaTypeStr;
 
-    DFMBASE_NAMESPACE::FileStatisticsJob *statisticWorker { nullptr };
+    DFMBASE_NAMESPACE::FileScanner *statisticWorker { nullptr };
 };
 
 }

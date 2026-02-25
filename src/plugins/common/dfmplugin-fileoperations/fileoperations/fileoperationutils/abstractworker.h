@@ -13,7 +13,7 @@
 #include <dfm-base/interfaces/abstractjobhandler.h>
 #include <dfm-base/file/local/localfilehandler.h>
 #include <dfm-base/interfaces/fileinfo.h>
-#include <dfm-base/utils/filestatisticsjob.h>
+#include <dfm-base/utils/filescanner.h>
 
 #include <dfm-framework/event/event.h>
 
@@ -133,8 +133,8 @@ protected:
 protected slots:
     virtual bool doWork();
     virtual void onUpdateProgress() { }
-    virtual void onStatisticsFilesSizeFinish();
-    virtual void onStatisticsFilesSizeUpdate(qint64 size);
+    virtual void onStatisticsFilesSizeFinish(const DFMBASE_NAMESPACE::FileScanner::ScanResult &result);
+    virtual void onStatisticsFilesSizeUpdate(const DFMBASE_NAMESPACE::FileScanner::ScanResult &result);
 
 protected:
     void initHandleConnects(const JobHandlePointer handle);
@@ -162,7 +162,7 @@ public:
     virtual ~AbstractWorker();
 
 public:
-    QSharedPointer<DFMBASE_NAMESPACE::FileStatisticsJob> statisticsFilesSizeJob { nullptr };   // statistics file info async
+    QSharedPointer<DFMBASE_NAMESPACE::FileScanner> statisticsFilesSizeJob { nullptr };   // statistics file info async
     QSharedPointer<UpdateProgressTimer> updateProgressTimer { nullptr };   // update progress timer
 
     JobHandlePointer handle { nullptr };   // handle

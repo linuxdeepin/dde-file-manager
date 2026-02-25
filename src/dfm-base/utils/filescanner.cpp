@@ -58,10 +58,6 @@ FileScannerPrivate::FileScannerPrivate(FileScanner *qq)
 
 FileScannerPrivate::~FileScannerPrivate()
 {
-    if (workerThread.isRunning()) {
-        workerThread.quit();
-        workerThread.wait(5000);
-    }
 }
 
 void FileScannerPrivate::startWorker(const QList<QUrl> &urls)
@@ -292,7 +288,7 @@ void ScannerWorker::scanLocalPaths()
 
         // 读取目录内容
         QList<DirEntry> entries;
-        bool readSuccess = readDirectoryEntries(dirPath, entries);
+        bool readSuccess = readDirectoryEntries(dirPath, &entries);
 
         if (!readSuccess) {
             // 目录读取失败（权限不足），但目录已计数
@@ -328,9 +324,14 @@ void ScannerWorker::scanLocalPaths()
 
             // 根据类型处理条目
             if (S_ISDIR(entry.statBuf.st_mode)) {
-                // 子目录：压栈或跳过
+                // 子目录
                 bool isSingleDepth = options & FileScanner::ScanOption::SingleDepth;
-                if (!isSingleDepth) {
+                if (isSingleDepth) {
+                    // SingleDepth 模式：计数但不递归
+                    currentResult.directoryCount++;
+                    currentResult.progressSize += memoryPageSize;
+                } else {
+                    // 递归模式：压栈
                     ScanContext childCtx;
                     childCtx.fullPath = entryPath;
                     childCtx.depth = ctx.depth + 1;
@@ -402,11 +403,6 @@ void ScannerWorker::scanOtherProtocols()
             currentResult.directoryCount++;
             currentResult.progressSize += memoryPageSize;
 
-            // 单深度模式：不递归
-            if (options & FileScanner::ScanOption::SingleDepth) {
-                continue;
-            }
-
             // 创建目录迭代器
             AbstractDirIteratorPointer iterator = DirIteratorFactory::create<AbstractDirIterator>(
                     url,
@@ -417,6 +413,8 @@ void ScannerWorker::scanOtherProtocols()
                 qCWarning(logDFMBase) << "ScannerWorker: Failed to create iterator for:" << url;
                 continue;
             }
+
+            bool isSingleDepth = options & FileScanner::ScanOption::SingleDepth;
 
             // 遍历目录
             while (iterator->hasNext() && !shouldStop()) {
@@ -432,7 +430,14 @@ void ScannerWorker::scanOtherProtocols()
 
                     if (childInfo) {
                         if (childInfo->isAttributes(OptInfoType::kIsDir)) {
-                            directoryQueue.enqueue(childUrl);
+                            if (isSingleDepth) {
+                                // SingleDepth 模式：计数但不递归
+                                currentResult.directoryCount++;
+                                currentResult.progressSize += memoryPageSize;
+                            } else {
+                                // 递归模式：入队
+                                directoryQueue.enqueue(childUrl);
+                            }
                         } else {
                             // 处理文件
                             currentResult.totalSize += childInfo->size();
@@ -496,9 +501,10 @@ void ScannerWorker::emitProgress(bool force)
     }
 }
 
-bool ScannerWorker::readDirectoryEntries(const QString &path, QList<DirEntry> &entries)
+bool ScannerWorker::readDirectoryEntries(const QString &path, QList<DirEntry> *entries)
 {
-    entries.clear();
+    Q_ASSERT(entries);
+    entries->clear();
 
     QByteArray pathUtf8 = path.toUtf8();
     DIR *dir = opendir(pathUtf8.constData());
@@ -521,7 +527,7 @@ bool ScannerWorker::readDirectoryEntries(const QString &path, QList<DirEntry> &e
         QString fullPath = path + "/" + QString::fromUtf8(entry->d_name);
         dirEntry.statOk = (lstat(fullPath.toUtf8().constData(), &dirEntry.statBuf) == 0);
 
-        entries.append(dirEntry);
+        entries->append(dirEntry);
     }
 
     closedir(dir);

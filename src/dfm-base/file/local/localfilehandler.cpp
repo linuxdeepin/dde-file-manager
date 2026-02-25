@@ -133,7 +133,7 @@ bool LocalFileHandler::mkdir(const QUrl &dir)
     FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(dir);
     fileInfo->refresh();
 
-    qCInfo(logDFMBase) << "LocalFileHandler::mkdir: Successfully created directory:" << dir;
+    qCDebug(logDFMBase) << "LocalFileHandler::mkdir: Successfully created directory:" << dir;
     FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType::kFileAdded, dir);
 
     return true;
