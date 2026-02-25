@@ -128,6 +128,13 @@ void PreviewDialogManager::showPreviewDialog(const quint64 winId, const QList<QU
         filePreviewDialog->setEntryUrlList(dirUrl);
     }
 
+    if (!filePreviewDialog->hasValidPreview()) {
+        qCWarning(logLibFilePreview) << "PreviewDialogManager: preview creation failed, not showing dialog";
+        filePreviewDialog->deleteLater();
+        filePreviewDialog = nullptr;
+        return;
+    }
+
     qCInfo(logLibFilePreview) << "PreviewDialogManager: displaying preview dialog";
     if (updatePos) {
         filePreviewDialog->show();
