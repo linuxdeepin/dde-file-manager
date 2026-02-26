@@ -59,7 +59,7 @@ bool Core::start()
     // DeviceManagerDBus class, so this code seems useless.
     // but now it doesn't bring me any issue, left now and remove it later.
     if (!DevProxyMng->initService()) {
-        fmCritical() << "device manager cannot connect to server!";
+        fmWarning() << "device manager cannot connect to server!";
         DevMngIns->startMonitor();
     }
 

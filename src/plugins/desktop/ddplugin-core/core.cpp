@@ -178,7 +178,7 @@ bool Core::eventFilter(QObject *watched, QEvent *event)
 void Core::connectToServer()
 {
     if (!DevProxyMng->initService()) {
-        fmCritical() << "Device manager cannot connect to server, starting local monitor";
+        fmWarning() << "Device manager cannot connect to server, starting local monitor";
         DevMngIns->startMonitor();
     } else {
         fmInfo() << "Device manager connected to server successfully";
