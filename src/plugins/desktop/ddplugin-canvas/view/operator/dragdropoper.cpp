@@ -641,7 +641,10 @@ bool DragDropOper::checkSourceValid(const QList<QUrl> &srcUrls)
                            }
 
                            // Check for standard move/copy/rename capabilities.
-                           if (info->canAttributes(CanableInfoType::kCanMoveOrCopy) || info->canAttributes(CanableInfoType::kCanRename))
+                           // BUG-346975, BUG-350297
+                           if (!info->exists()
+                               || info->canAttributes(CanableInfoType::kCanMoveOrCopy)
+                               || info->canAttributes(CanableInfoType::kCanRename))
                                return true;
 
                            fmDebug() << "Drag operation not enabled for URL:" << url.toString();

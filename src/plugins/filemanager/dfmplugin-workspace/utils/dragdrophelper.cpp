@@ -159,7 +159,7 @@ bool DragDropHelper::dragMove(QDragMoveEvent *event)
         // copy action must origin file can copy
         const QUrl &targetUrl = hoverFileInfo->urlOf(UrlInfoType::kUrl);
         FileInfoPointer info = InfoFactory::create<FileInfo>(url);
-        if (event->dropAction() == Qt::DropAction::CopyAction && !info->canAttributes(CanableInfoType::kCanMoveOrCopy)) {
+        if (event->dropAction() == Qt::DropAction::CopyAction && info->exists() && !info->canAttributes(CanableInfoType::kCanMoveOrCopy)) {
             fmDebug() << "Copy operation not allowed for URL:" << url.toString();
             view->setViewSelectState(false);
             event->ignore();
@@ -485,7 +485,10 @@ bool DragDropHelper::checkDragEnable(const QUrl &dragUrl, const QUrl &targetUrl)
         return false;
 
     // Check for standard move/copy/rename capabilities.
-    if (info->canAttributes(CanableInfoType::kCanMoveOrCopy) || info->canAttributes(CanableInfoType::kCanRename))
+    // BUG-350297
+    if (!info->exists()
+        || info->canAttributes(CanableInfoType::kCanMoveOrCopy)
+        || info->canAttributes(CanableInfoType::kCanRename))
         return true;
 
     // Some desktop files may allow trash even if not movable/renamable.
@@ -505,5 +508,5 @@ bool DragDropHelper::checkMoveEnable(const QUrl &dragUrl, const QUrl &toUrl) con
     if (FileUtils::isDesktopFile(info->urlOf(UrlInfoType::kUrl))) {
         return info->canAttributes(CanableInfoType::kCanMoveOrCopy) || (FileUtils::isTrashFile(toUrl) || FileUtils::isTrashDesktopFile(toUrl));
     }
-    return info->canAttributes(CanableInfoType::kCanRename);
+    return !info->exists() || info->canAttributes(CanableInfoType::kCanRename);
 }
