@@ -58,7 +58,7 @@ sudo apt install libdfm-extension-dev
 
 ### 编程要求
 
-- **C++ 标准**：C++17 或更高
+- **C++ 标准**：C++17
 - **编译语言**：C++
 - **链接方式**：动态共享库（.so）
 - **调用约定**：C 风格导出函数
@@ -163,7 +163,7 @@ public:
 - **调用时机**：用户在文件上右键触发菜单时调用
 - **参数说明**：
   - `main`：主菜单对象，插件通过此对象添加菜单项
-  - `currentPath`：当前目录路径（V6 版本为文件路径，V5 为 URL）
+  - `currentPath`：当前目录路径（V6 版本为文件路径，V5 为 URL 字符串）
   - `focusPath`：当前右键选中的文件路径
   - `pathList`：所有选中文件的路径列表
   - `onDesktop`：是否在桌面环境触发
@@ -335,6 +335,7 @@ public:
 #### 接口说明
 
 **locationEmblemIcons(const std::string &filePath, int systemIconCount)**
+
 - **调用时机**：文件管理器渲染文件图标时调用
 - **参数说明**：
   - `filePath`：文件路径（V6 版本为本地路径，非 URL）
@@ -344,6 +345,7 @@ public:
   - 单个文件最多显示 4 个角标（含系统角标）
   - 当 `systemIconCount >= 4` 时，扩展角标无法显示
   - 位置冲突时，系统角标优先于扩展角标
+- **注意**：不能在此接口编写任何复杂的业务逻辑，它被高频调用，复杂逻辑会造成整个文件管理器卡顿
 
 #### DFMExtEmblem 接口
 
@@ -392,12 +394,12 @@ public:
 **位置说明**：
 - `BottomRight`：右下角，通常被只读角标占用
 - `BottomLeft`：左下角，推荐用于扩展角标
-- `TopLeft`：左上角，通常被系统角标占用
-- `TopRight`：右上角，通常被共享角标占用
+- `TopLeft`：左上角
+- `TopRight`：右上角
 
 #### 角标资源管理
 
-角标图标需遵循 Freedesktop 图标主题规范：
+角标资源通过构建 `DFMExtEmblemIconLayout` 对象实现，构建时输入 path 参数代表角标图标资源路径，它可以是**本地文件系统上的一个绝对路径**，也可以是图标主题中的名称，若使用图标主题，角标图标需遵循 Freedesktop 图标主题规范：
 
 1. **安装位置**：`/usr/share/icons/<theme>/<size>/emblems/`
 2. **命名规范**：`emblem-<name>.png`
@@ -410,23 +412,7 @@ sudo cp my-emblem.png /usr/share/icons/hicolor/16x16/emblems/emblem-my.png
 sudo gtk-update-icon-cache /usr/share/icons/hicolor/
 ```
 
-#### 角标持久化
-
-插件可通过文件扩展属性（extended attributes）持久化角标状态：
-
-```cpp
-#include <sys/xattr.h>
-
-// 设置角标属性
-setxattr(filePath, "user.icon", iconName.c_str(), iconName.size(), 0);
-
-// 读取角标属性
-char buffer[256];
-getxattr(filePath, "user.icon", buffer, sizeof(buffer));
-
-// 删除角标属性
-removexattr(filePath, "user.icon");
-```
+- **注意**：图标资源不宜过大，否则影响性能
 
 ### Window Plugin 接口
 
@@ -854,15 +840,9 @@ sudo cp my-dfm-plugin.so \
     /usr/lib/<arch>/dde-file-manager/plugins/extensions/
 ```
 
-### 激活机制
+安装后需重启文件管理器才能生效。
 
-1. 文件管理器启动时自动扫描插件目录
-2. 加载所有 `.so` 文件
-3. 调用 `dfm_extension_initialize()` 验证插件
-4. 调用类型获取函数，注册有效的插件
-5. 无需额外配置或重启
-
-### 卸载方式
+###  卸载方式
 
 ```bash
 # 删除插件文件
@@ -884,7 +864,7 @@ sudo apt remove my-dfm-plugin
 
 该示例包含所有四种机制的完整实现。
 
-- **注：**示例以代码为准，文档仅供参考
+- **注意：**示例以代码为准，文档仅供参考，可能存在错误或过时信息
 
 ### Menu Plugin 示例
 
