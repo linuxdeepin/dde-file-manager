@@ -362,11 +362,6 @@ TEST_F(UT_SideBarHelper, BindSetting)
                        __DBG_STUB_INVOKE__
                    });
 
-    stub.set_lamda(&SettingBackend::addToSerialDataKey,
-                   [](SettingBackend *, const QString &) {
-                       __DBG_STUB_INVOKE__
-                   });
-
     stub.set_lamda(&SideBarHelper::hiddenRules, []() -> QVariantMap {
         __DBG_STUB_INVOKE__
         QVariantMap map;
@@ -388,11 +383,6 @@ TEST_F(UT_SideBarHelper, RemovebindingSetting)
         static SettingBackend backend;
         return &backend;
     });
-
-    stub.set_lamda(&SettingBackend::removeSerialDataKey,
-                   [](SettingBackend *, const QString &) {
-                       __DBG_STUB_INVOKE__
-                   });
 
     stub.set_lamda(&SettingBackend::removeSettingAccessor,
                    [](SettingBackend *, const QString &) {

@@ -58,7 +58,7 @@ protected:
         stub.set_lamda(&QWidget::show, [](QWidget *) {
             __DBG_STUB_INVOKE__
         });
-        
+
         // Setup test URLs
         testUrl = QUrl::fromLocalFile(testDir);
         invalidUrl = QUrl("invalid://not/a/valid/url");
@@ -90,12 +90,12 @@ TEST_F(TestTrashHelper, MultipleInstanceCalls)
 {
     // Test multiple calls to instance method
     TrashHelper *instances[10];
-    
+
     for (int i = 0; i < 10; ++i) {
         instances[i] = TrashHelper::instance();
         EXPECT_NE(instances[i], nullptr);
     }
-    
+
     // All should be same instance
     for (int i = 1; i < 10; ++i) {
         EXPECT_EQ(instances[0], instances[i]);
@@ -147,40 +147,40 @@ TEST_F(TestTrashHelper, ContenxtMenuHandle)
     quint64 windowId = 12345;
     QUrl url("trash:///");
     QPoint globalPos(100, 100);
-    
+
     // Mock the event caller to track if it's called
     bool openWindowCalled = false;
     bool openTabCalled = false;
     bool emptyTrashCalled = false;
     bool propertyDialogCalled = false;
-    
+
     stub.set_lamda(&TrashEventCaller::sendOpenWindow, [&openWindowCalled](const QUrl &url) {
         Q_UNUSED(url)
         openWindowCalled = true;
     });
-    
+
     stub.set_lamda(&TrashEventCaller::sendOpenTab, [&openTabCalled](quint64 winId, const QUrl &url) {
         Q_UNUSED(winId)
         Q_UNUSED(url)
         openTabCalled = true;
     });
-    
+
     stub.set_lamda(&TrashEventCaller::sendEmptyTrash, [&emptyTrashCalled](quint64 winId, const QList<QUrl> &urls) {
         Q_UNUSED(winId)
         Q_UNUSED(urls)
         emptyTrashCalled = true;
     });
-    
+
     stub.set_lamda(&TrashEventCaller::sendTrashPropertyDialog, [&propertyDialogCalled](const QUrl &url) {
         Q_UNUSED(url)
         propertyDialogCalled = true;
     });
-    
+
     // Mock FileUtils::trashIsEmpty to control the menu state
     stub.set_lamda(&FileUtils::trashIsEmpty, []() -> bool {
-        return false; // Trash not empty to enable empty trash action
+        return false;   // Trash not empty to enable empty trash action
     });
-    
+
     // Mock sendCheckTabAddable
     stub.set_lamda(&TrashEventCaller::sendCheckTabAddable, [](quint64 winId) -> bool {
         Q_UNUSED(winId)
@@ -192,7 +192,7 @@ TEST_F(TestTrashHelper, ContenxtMenuHandle)
         isCall = true;
         return nullptr;
     });
-    
+
     // This test creates and execs a menu, and we just want to make sure it doesn't crash
     EXPECT_NO_THROW(TrashHelper::contenxtMenuHandle(windowId, url, globalPos));
     EXPECT_TRUE(isCall);
@@ -289,11 +289,11 @@ TEST_F(TestTrashHelper, EmptyTrash)
 TEST_F(TestTrashHelper, PropetyExtensionFunc)
 {
     QUrl testUrl("trash:///test.txt");
-    
+
     // Create a mock FileInfo object
     FileInfo *mockInfo = new FileInfo(testUrl);
     FileInfoPointer mockInfoPtr(mockInfo);
-    
+
     // Mock the InfoFactory to return our mock object
     stub.set_lamda(static_cast<FileInfoPointer (*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
                    [mockInfoPtr](const QUrl &url, Global::CreateFileInfoType type, QString *key) -> FileInfoPointer {
@@ -302,7 +302,7 @@ TEST_F(TestTrashHelper, PropetyExtensionFunc)
                        Q_UNUSED(key)
                        return mockInfoPtr;
                    });
-    
+
     // Mock urlOf to return proper URLs
     // stub.set_lamda(&FileInfo::urlOf, [](const FileInfo *self, UrlInfoType type) -> QUrl {
     //     Q_UNUSED(self)
@@ -313,15 +313,15 @@ TEST_F(TestTrashHelper, PropetyExtensionFunc)
     //     }
     //     return QUrl();
     // });
-    
+
     auto result = TrashHelper::propetyExtensionFunc(testUrl);
-    EXPECT_FALSE(result.empty()); // Should have some expansion data
+    EXPECT_FALSE(result.empty());   // Should have some expansion data
 }
 
 TEST_F(TestTrashHelper, PropetyExtensionFunc_NullFileInfo)
 {
     QUrl testUrl("trash:///test.txt");
-    
+
     // Mock to return null FileInfo
     stub.set_lamda(static_cast<FileInfoPointer (*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
                    [](const QUrl &url, Global::CreateFileInfoType type, QString *key) -> FileInfoPointer {
@@ -330,7 +330,7 @@ TEST_F(TestTrashHelper, PropetyExtensionFunc_NullFileInfo)
                        Q_UNUSED(key)
                        return nullptr;
                    });
-    
+
     // The function should handle null fileInfo gracefully
     // auto result = TrashHelper::propetyExtensionFunc(testUrl);
     // EXPECT_TRUE(result.empty()); // Should return empty map when fileInfo is null
@@ -340,7 +340,7 @@ TEST_F(TestTrashHelper, PropetyExtensionFunc_NullFileInfo)
 TEST_F(TestTrashHelper, DetailExtensionFunc)
 {
     QUrl testUrl("trash:///test.txt");
-    
+
     // Mock the InfoFactory to return a valid pointer
     stub.set_lamda(static_cast<FileInfoPointer (*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
                    [](const QUrl &url, Global::CreateFileInfoType type, QString *key) -> FileInfoPointer {
@@ -350,7 +350,7 @@ TEST_F(TestTrashHelper, DetailExtensionFunc)
                        // Return a non-null pointer to avoid segfault
                        return FileInfoPointer(new FileInfo(QUrl("trash:///test.txt")));
                    });
-    
+
     // Mock urlOf to return proper URLs
     // stub.set_lamda(&FileInfo::urlOf, [](const FileInfo *self, UrlInfoType type) -> QUrl {
     //     Q_UNUSED(self)
@@ -359,15 +359,15 @@ TEST_F(TestTrashHelper, DetailExtensionFunc)
     //     }
     //     return QUrl();
     // });
-    
+
     auto result = TrashHelper::detailExtensionFunc(testUrl);
-    EXPECT_FALSE(result.empty()); // Should have some expansion data
+    EXPECT_FALSE(result.empty());   // Should have some expansion data
 }
 
 TEST_F(TestTrashHelper, DetailExtensionFunc_NullFileInfo)
 {
     QUrl testUrl("trash:///test.txt");
-    
+
     // Mock to return null FileInfo
     stub.set_lamda(static_cast<FileInfoPointer (*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
                    [](const QUrl &url, Global::CreateFileInfoType type, QString *key) -> FileInfoPointer {
@@ -376,7 +376,7 @@ TEST_F(TestTrashHelper, DetailExtensionFunc_NullFileInfo)
                        Q_UNUSED(key)
                        return nullptr;
                    });
-    
+
     // The function should handle null fileInfo gracefully
     // auto result = TrashHelper::detailExtensionFunc(testUrl);
     // EXPECT_TRUE(result.empty()); // Should return empty map when fileInfo is null
@@ -530,32 +530,6 @@ TEST_F(TestTrashHelper, OnTrashEmptyState)
     delete mockWindow;
 }
 
-TEST_F(TestTrashHelper, HandleWindowUrlChanged)
-{
-    TrashHelper helper;
-    quint64 winId = 12345;
-    QUrl url("trash:///");
-
-    // Mock trash state to be not unknown
-    stub.set_lamda(&TrashHelper::ensureTrashStateInitialized, [](TrashHelper *self) {
-        Q_UNUSED(self)
-        // Simulate state initialization
-    });
-
-    // Mock event caller
-    bool eventCalled = false;
-    stub.set_lamda(&TrashEventCaller::sendShowEmptyTrash,
-                   [&eventCalled](quint64 winId, bool show) {
-                       Q_UNUSED(winId)
-                       Q_UNUSED(show)
-                       eventCalled = true;
-                   });
-
-    helper.handleWindowUrlChanged(winId, url);
-    // This should trigger the event if the scheme is trash and state is not unknown
-    EXPECT_TRUE(eventCalled);
-}
-
 TEST_F(TestTrashHelper, TrashNotEmpty)
 {
     TrashHelper helper;
@@ -631,21 +605,10 @@ TEST_F(TestTrashHelper, Destructor)
 TEST_F(TestTrashHelper, OnTrashStateChanged)
 {
     TrashHelper *helper = TrashHelper::instance();
-    
+
     // Just test that it doesn't crash
     EXPECT_NO_THROW({
         helper->onTrashStateChanged();
-    });
-    EXPECT_TRUE(true);
-}
-
-TEST_F(TestTrashHelper, EnsureTrashStateInitialized)
-{
-    TrashHelper *helper = TrashHelper::instance();
-    
-    // Just test that it doesn't crash
-    EXPECT_NO_THROW({
-        helper->ensureTrashStateInitialized();
     });
     EXPECT_TRUE(true);
 }

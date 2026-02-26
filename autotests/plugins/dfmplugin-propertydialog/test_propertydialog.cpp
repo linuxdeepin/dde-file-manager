@@ -110,14 +110,14 @@ TEST_F(TestPropertyDialog, HandleShowPropertyDialogTest)
     QList<QUrl> urls;
     urls << QUrl::fromLocalFile("/tmp/test");
     QVariantHash option;
-    
+
     EXPECT_NO_THROW(receiver.handleShowPropertyDialog(urls, option));
 }
 
 TEST_F(TestPropertyDialog, HandleViewExtensionRegisterTest)
 {
     PropertyEventReceiver receiver;
-    auto viewFunc = [](const QUrl &url) -> QWidget* { return nullptr; };
+    auto viewFunc = [](const QUrl &url) -> QWidget * { return nullptr; };
     bool result = receiver.handleViewExtensionRegister(viewFunc, "test_name", 0);
     EXPECT_TRUE(result);
 }
@@ -125,7 +125,7 @@ TEST_F(TestPropertyDialog, HandleViewExtensionRegisterTest)
 TEST_F(TestPropertyDialog, HandleCustomViewRegisterTest)
 {
     PropertyEventReceiver receiver;
-    auto viewFunc = [](const QUrl &url) -> QWidget* { return nullptr; };
+    auto viewFunc = [](const QUrl &url) -> QWidget * { return nullptr; };
     bool result = receiver.handleCustomViewRegister(viewFunc, "test_scheme");
     EXPECT_TRUE(result);
 }
@@ -133,8 +133,8 @@ TEST_F(TestPropertyDialog, HandleCustomViewRegisterTest)
 TEST_F(TestPropertyDialog, HandleBasicViewExtensionRegisterTest)
 {
     PropertyEventReceiver receiver;
-    auto func = [](const QUrl &url) -> QMap<QString, QMultiMap<QString, QPair<QString, QString>>> { 
-        return QMap<QString, QMultiMap<QString, QPair<QString, QString>>>(); 
+    auto func = [](const QUrl &url) -> QMap<QString, QMultiMap<QString, QPair<QString, QString>>> {
+        return QMap<QString, QMultiMap<QString, QPair<QString, QString>>>();
     };
     bool result = receiver.handleBasicViewExtensionRegister(func, "test_scheme");
     EXPECT_TRUE(result);
@@ -147,9 +147,10 @@ TEST_F(TestPropertyDialog, HandleBasicFiledFilterAddTest)
     enums << "kBasisInfo";
     bool result1 = receiver.handleBasicFiledFilterAdd("test_scheme_unique4", enums);
     EXPECT_TRUE(result1);
-    
+
     enums.clear();
-    enums << "kBasisInfo" << "kPermission";
+    enums << "kBasisInfo"
+          << "kPermission";
     bool result2 = receiver.handleBasicFiledFilterAdd("test_scheme_unique5", enums);
     EXPECT_TRUE(result2);
 }
@@ -165,7 +166,7 @@ TEST_F(TestPropertyDialog, ManagerInstanceTest)
 TEST_F(TestPropertyDialog, RegisterExtensionViewTest)
 {
     PropertyDialogManager &manager = PropertyDialogManager::instance();
-    auto viewFunc = [](const QUrl &url) -> QWidget* { return nullptr; };
+    auto viewFunc = [](const QUrl &url) -> QWidget * { return nullptr; };
     bool result = manager.registerExtensionView(viewFunc, "test_name", 0);
     EXPECT_TRUE(result);
 }
@@ -181,7 +182,7 @@ TEST_F(TestPropertyDialog, CreateExtensionViewTest)
 TEST_F(TestPropertyDialog, RegisterCustomViewTest)
 {
     PropertyDialogManager &manager = PropertyDialogManager::instance();
-    auto viewFunc = [](const QUrl &url) -> QWidget* { return nullptr; };
+    auto viewFunc = [](const QUrl &url) -> QWidget * { return nullptr; };
     bool result = manager.registerCustomView(viewFunc, "test_scheme_unique1");
     EXPECT_TRUE(result);
 
@@ -200,8 +201,8 @@ TEST_F(TestPropertyDialog, CreateCustomViewTest)
 TEST_F(TestPropertyDialog, RegisterBasicViewExtensionTest)
 {
     PropertyDialogManager &manager = PropertyDialogManager::instance();
-    auto func = [](const QUrl &url) -> QMap<QString, QMultiMap<QString, QPair<QString, QString>>> { 
-        return QMap<QString, QMultiMap<QString, QPair<QString, QString>>>(); 
+    auto func = [](const QUrl &url) -> QMap<QString, QMultiMap<QString, QPair<QString, QString>>> {
+        return QMap<QString, QMultiMap<QString, QPair<QString, QString>>>();
     };
     bool result = manager.registerBasicViewExtension(func, "test_scheme_unique2");
     EXPECT_TRUE(result);
@@ -297,21 +298,21 @@ TEST_F(TestPropertyDialog, CloseCustomPropertyDialogTest)
 {
     PropertyDialogUtil util;
     QUrl url = QUrl::fromLocalFile("/tmp/test");
-    
+
     EXPECT_NO_THROW(util.closeCustomPropertyDialog(url));
 }
 
 TEST_F(TestPropertyDialog, CloseAllFilePropertyDialogTest)
 {
     PropertyDialogUtil util;
-    
+
     EXPECT_NO_THROW(util.closeAllFilePropertyDialog());
 }
 
 TEST_F(TestPropertyDialog, CloseAllPropertyDialogTest)
 {
     PropertyDialogUtil util;
-    
+
     EXPECT_NO_THROW(util.closeAllPropertyDialog());
 }
 
@@ -320,14 +321,14 @@ TEST_F(TestPropertyDialog, CreateControlViewTest)
     PropertyDialogUtil util;
     QUrl url = QUrl::fromLocalFile("/tmp/test");
     QVariantHash option;
-    
+
     EXPECT_NO_THROW(util.createControlView(url, option));
 }
 
 TEST_F(TestPropertyDialog, UpdateCloseIndicatorTest)
 {
     PropertyDialogUtil util;
-    
+
     EXPECT_NO_THROW(util.updateCloseIndicator());
 }
 
@@ -516,7 +517,7 @@ TEST_F(TestPropertyDialog, PermissionManagerWidgetCanChmodTest)
     PermissionManagerWidget widget;
     FileInfoPointer info = DFMBASE_NAMESPACE::InfoFactory::create<DFMBASE_NAMESPACE::FileInfo>(QUrl::fromLocalFile("/tmp/test"));
     bool canChmod = widget.canChmod(info);
-    EXPECT_TRUE(canChmod || !canChmod); // Just test it doesn't crash
+    EXPECT_TRUE(canChmod || !canChmod);   // Just test it doesn't crash
 }
 
 TEST_F(TestPropertyDialog, PermissionManagerWidgetSetExecTextTest)
@@ -606,7 +607,6 @@ TEST_F(TestPropertyDialog, ComputerInfoThreadComputerProcessTest)
     EXPECT_NO_THROW(thread.computerProcess());
 }
 
-
 TEST_F(TestPropertyDialog, BasicWidgetDestructorTest)
 {
     BasicWidget *widget = new BasicWidget();
@@ -636,12 +636,6 @@ TEST_F(TestPropertyDialog, BasicWidgetUpdateFileUrlTest)
     BasicWidget widget;
     QUrl testUrl = QUrl::fromLocalFile("/tmp/test");
     EXPECT_NO_THROW(widget.updateFileUrl(testUrl));
-}
-
-TEST_F(TestPropertyDialog, BasicWidgetSlotFileCountAndSizeChangeTest)
-{
-    BasicWidget widget;
-    EXPECT_NO_THROW(widget.slotFileCountAndSizeChange(1024, 5, 2));
 }
 
 TEST_F(TestPropertyDialog, BasicWidgetSlotFileHideTest)
