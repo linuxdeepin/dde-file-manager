@@ -22,7 +22,7 @@
 
 **想要扩展文件管理器？** → 从 [扩展开发指南](extension/README.md) 开始
 
-**想要开发插件？** → 查看 [DFM扩展插件开发](extension/dfm-extension-plugin.md)
+**想要开发插件？** → 查看 [DFM扩展插件开发](extension/05-dfm-extension-plugin.md)
 
 **需要API参考？** → 查看 [api/](api/) 目录（内容实现中）
 
