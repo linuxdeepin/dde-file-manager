@@ -161,36 +161,6 @@ TEST_F(TestFileOperateBaseWorker, EmitSpeedUpdatedNotify_ValidData)
     EXPECT_TRUE(signalEmitted);
 }
 
-// ========== readAheadSourceFile Tests ==========
-
-TEST_F(TestFileOperateBaseWorker, ReadAheadSourceFile_ValidFile)
-{
-    auto testFile = createTestFile("readahead.txt");
-    ASSERT_TRUE(testFile);
-
-    auto fileInfo = DFileInfoPointer(new DFileInfo(testFile->urlOf(UrlInfoType::kUrl)));
-    fileInfo->initQuerier();
-
-    // This should not crash
-    worker->readAheadSourceFile(fileInfo);
-}
-
-TEST_F(TestFileOperateBaseWorker, ReadAheadSourceFile_ZeroSizeFile)
-{
-    auto testFile = createTestFile("empty.txt");
-    ASSERT_TRUE(testFile);
-
-    stub.set_lamda(ADDR(DFMIO::DFileInfo, attribute),
-                   []() -> QVariant {
-                       __DBG_STUB_INVOKE__
-                       return QVariant::fromValue(qint64(0));
-                   });
-
-    auto fileInfo = DFileInfoPointer(new DFileInfo(testFile->urlOf(UrlInfoType::kUrl)));
-    worker->readAheadSourceFile(fileInfo);
-    // Should return early without opening file
-}
-
 // ========== checkDiskSpaceAvailable Tests ==========
 
 TEST_F(TestFileOperateBaseWorker, CheckDiskSpaceAvailable_SufficientSpace)
@@ -250,43 +220,6 @@ TEST_F(TestFileOperateBaseWorker, CheckFileSize_LargeFileOnVfat)
     bool result = worker->checkFileSize(largeSize, QUrl(), QUrl(), &skip);
     EXPECT_FALSE(result);
     EXPECT_TRUE(skip);
-}
-
-// ========== deleteFile Tests ==========
-
-TEST_F(TestFileOperateBaseWorker, DeleteFile_Success)
-{
-    auto testFile = createTestFile("delete_me.txt");
-    ASSERT_TRUE(testFile);
-
-    bool workContinue = false;
-    bool result = worker->deleteFile(testFile->urlOf(UrlInfoType::kUrl), QUrl(),
-                                     &workContinue, false);
-    EXPECT_TRUE(result);
-}
-
-TEST_F(TestFileOperateBaseWorker, DeleteFile_WithForce)
-{
-    auto testFile = createTestFile("force_delete.txt");
-    ASSERT_TRUE(testFile);
-
-    bool workContinue = false;
-    bool result = worker->deleteFile(testFile->urlOf(UrlInfoType::kUrl), QUrl(),
-                                     &workContinue, true);
-    EXPECT_TRUE(result);
-}
-
-// ========== deleteDir Tests ==========
-
-TEST_F(TestFileOperateBaseWorker, DeleteDir_EmptyDirectory)
-{
-    auto testDir = createTestDir("empty_dir");
-    ASSERT_TRUE(testDir);
-
-    bool skip = false;
-    bool result = worker->deleteDir(testDir->urlOf(UrlInfoType::kUrl), QUrl(),
-                                    &skip, false);
-    EXPECT_TRUE(result);
 }
 
 // ========== createSystemLink Tests ==========
@@ -365,28 +298,6 @@ TEST_F(TestFileOperateBaseWorker, CheckAndCopyDir_EmptyDir)
     bool skip = false;
     bool result = worker->checkAndCopyDir(fromInfo, toInfo, &skip);
     EXPECT_TRUE(result || skip);
-}
-
-// ========== canWriteFile Tests ==========
-
-TEST_F(TestFileOperateBaseWorker, CanWriteFile_ValidFile)
-{
-    auto testFile = createTestFile("writable.txt");
-    ASSERT_TRUE(testFile);
-
-    bool result = worker->canWriteFile(testFile->urlOf(UrlInfoType::kUrl));
-    EXPECT_TRUE(result);
-}
-
-TEST_F(TestFileOperateBaseWorker, CanWriteFile_RootUser)
-{
-    stub.set_lamda(getuid, []() -> uid_t {
-        __DBG_STUB_INVOKE__
-        return 0;   // root
-    });
-
-    bool result = worker->canWriteFile(QUrl());
-    EXPECT_TRUE(result);
 }
 
 // ========== setAllDirPermisson Tests ==========
@@ -854,13 +765,6 @@ TEST_F(TestFileOperateBaseWorker, CopyAndDeleteFile_Success)
     QString targetPath = tempDirPath + "/move_target/moved.txt";
     auto fromInfo = DFileInfoPointer(new DFileInfo(sourceFile->urlOf(UrlInfoType::kUrl)));
     auto toInfo = DFileInfoPointer(new DFileInfo(QUrl::fromLocalFile(targetPath)));
-
-    stub.set_lamda(&FileOperateBaseWorker::deleteFile,
-                   [](FileOperateBaseWorker *, const QUrl &, const QUrl &,
-                      bool *, bool) -> bool {
-                       __DBG_STUB_INVOKE__
-                       return true;
-                   });
 
     bool skip = false;
     bool result = worker->copyAndDeleteFile(fromInfo, toInfo, {}, &skip);

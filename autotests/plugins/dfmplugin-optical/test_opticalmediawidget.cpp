@@ -18,7 +18,6 @@
 #include <dfm-base/base/device/deviceproxymanager.h>
 #include <dfm-base/base/device/devicemanager.h>
 #include <dfm-base/base/urlroute.h>
-#include <dfm-base/utils/filestatisticsjob.h>
 #include <dfm-base/dbusservice/global_server_defines.h>
 
 #include <dfm-burn/dburn_global.h>
@@ -395,20 +394,4 @@ TEST_F(TestOpticalMediaWidget, UpdateUi_BurnDisabledGlobally_UpdatesCorrectly)
 
     EXPECT_TRUE(result);
     // Test passes if no crash occurs during UI update
-}
-
-TEST_F(TestOpticalMediaWidget, OnBurnButtonClicked_NoStatisticsWorkerRunning_ProcessesCorrectly)
-{
-    stub.set_lamda(&FileStatisticsJob::isRunning, []() {
-        __DBG_STUB_INVOKE__
-        return false;
-    });
-
-    QUrl testUrl("burn:///dev/sr0/disc_files/");
-    widget->updateDiscInfo(testUrl);
-
-    // Test should not crash
-    widget->onBurnButtonClicked();
-
-    EXPECT_TRUE(true);
 }

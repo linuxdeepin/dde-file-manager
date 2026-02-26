@@ -54,7 +54,7 @@ protected:
             return Global::ViewMode::kIconMode;
         });
 
-        stub.set_lamda(&TitleBarEventCaller::sendDetailViewState, [](QObject *, bool) {
+        stub.set_lamda(&TitleBarEventCaller::sendDetailViewState, [](QObject *, bool, bool) {
             __DBG_STUB_INVOKE__
         });
 

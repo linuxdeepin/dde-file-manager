@@ -34,7 +34,7 @@ TEST_F(TestMultiFilePropertyDialog, MultiFilePropertyDialogConstructor)
 {
     QList<QUrl> urls;
     urls << QUrl::fromLocalFile("/tmp/test1.txt") << QUrl::fromLocalFile("/tmp/test2.txt");
-    
+
     MultiFilePropertyDialog *dialog = new MultiFilePropertyDialog(urls);
     EXPECT_NE(dialog, nullptr);
     delete dialog;
@@ -44,16 +44,7 @@ TEST_F(TestMultiFilePropertyDialog, MultiFilePropertyDialogDestructor)
 {
     QList<QUrl> urls;
     urls << QUrl::fromLocalFile("/tmp/test1.txt") << QUrl::fromLocalFile("/tmp/test2.txt");
-    
+
     MultiFilePropertyDialog *dialog = new MultiFilePropertyDialog(urls);
     EXPECT_NO_THROW(delete dialog);
-}
-
-TEST_F(TestMultiFilePropertyDialog, MultiFilePropertyDialogUpdateFolderSizeLabel)
-{
-    QList<QUrl> urls;
-    urls << QUrl::fromLocalFile("/tmp/test1.txt") << QUrl::fromLocalFile("/tmp/test2.txt");
-    
-    MultiFilePropertyDialog dialog(urls);
-    EXPECT_NO_THROW(dialog.updateFolderSizeLabel(1024, 2, 1));
 }
