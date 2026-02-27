@@ -17,6 +17,8 @@
 #include <QBuffer>
 #include <QImageReader>
 
+#include <DFontSizeManager>
+
 #include <unicode/ucnv.h>
 #include <unicode/ucsdet.h>
 #include <taglib/tag.h>
@@ -34,6 +36,8 @@
 #endif
 
 using namespace plugin_filepreview;
+DWIDGET_USE_NAMESPACE
+
 MusicMessageView::MusicMessageView(const QString &uri, QWidget *parent)
     : QFrame(parent),
       currentUrl(uri)
@@ -49,12 +53,7 @@ void MusicMessageView::initUI()
 
     titleLabel = new QLabel(this);
     titleLabel->setObjectName("Title");
-    QFont titleFont = titleLabel->font();
-    titleFont.setPixelSize(18);
-    titleLabel->setFont(titleFont);
-    QPalette titlePe;
-    titlePe.setColor(QPalette::WindowText, QColor("#101010"));
-    titleLabel->setPalette(titlePe);
+    DFontSizeManager::instance()->bind(titleLabel, DFontSizeManager::SizeType::T4, QFont::Weight::DemiBold);
 
     artistLabel = new QLabel(this);
     artistLabel->setObjectName("Artist");
@@ -308,7 +307,7 @@ void MusicMessageView::characterEncodingTransform(MediaMeta &meta, void *obj)
             meta.album = TStringToQString(tag->album());
             meta.artist = TStringToQString(tag->artist());
             meta.title = TStringToQString(tag->title());
-            meta.codec = "UTF-8";   //info codec
+            meta.codec = "UTF-8";   // info codec
         } else {
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
             QTextCodec *codec = QTextCodec::codecForName(detectCodec);
@@ -336,7 +335,7 @@ void MusicMessageView::characterEncodingTransform(MediaMeta &meta, void *obj)
         meta.codec = "UTF-8";
     }
 
-    //empty str
+    // empty str
     meta.album = meta.album.simplified();
     meta.artist = meta.artist.simplified();
     meta.title = meta.title.simplified();
