@@ -59,6 +59,7 @@ public slots:
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
+    void showEvent(QShowEvent *event) override;
 
 private:
     void initializeUi();

@@ -631,6 +631,28 @@ void TitleBarWidget::resizeEvent(QResizeEvent *event)
     searchEditWidget->updateSearchEditWidget(totalWidth);
 }
 
+void TitleBarWidget::showEvent(QShowEvent *event)
+{
+    AbstractFrame::showEvent(event);
+
+    // Sync DTitlebar's max button state when first shown
+    // This handles the case where the window was maximized before the titlebar was installed
+    static bool firstShow = true;
+    if (firstShow && topBar) {
+        firstShow = false;
+        // DTitlebar installs its event filter in setVisible(true), which happens during this showEvent
+        // We need to wait for the event filter to be fully installed before syncing the window state
+        QTimer::singleShot(0, this, [this]() {
+            auto window = qobject_cast<FileManagerWindow *>(this->window());
+            if (window && window->isMaximized()) {
+                // Send a WindowStateChange event to trigger DTitlebar's handleParentWindowStateChange()
+                QEvent event(QEvent::WindowStateChange);
+                QCoreApplication::sendEvent(window, &event);
+            }
+        });
+    }
+}
+
 void TitleBarWidget::onTabCurrentChanged(int oldIndex, int newIndex)
 {
     if (tabBar()->isTabValid(newIndex)) {
