@@ -7,6 +7,8 @@
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
+#include <dfm-io/dfmio_utils.h>
+
 #include <QDirIterator>
 #include <QUrl>
 #include <QDebug>
@@ -89,27 +91,47 @@ void FileOperationsUtils::statisticFilesSize(const QUrl &url,
                                              SizeInfoPointer &sizeInfo,
                                              const bool &isRecordUrl)
 {
+    static const QString kOriginPathPrefix = QLatin1String("originPath::");
+
     QSet<QUrl> urlCounted;
 
     char *paths[2] = { nullptr, nullptr };
-    paths[0] = strdup(url.path().toUtf8().toStdString().data());
-    FTS *fts = fts_open(paths, 0, nullptr);
-    if (paths[0])
-        free(paths[0]);
 
-    if (nullptr == fts) {
-        perror("fts_open");
-        fmWarning() << "fts_open open error : " << QString::fromLocal8Bit(strerror(errno));
+    // 对无效的文件名称进行处理
+    QByteArray pathData;
+    if (url.userInfo().contains(kOriginPathPrefix)) {
+        pathData = url.userInfo().replace(kOriginPathPrefix, "").toLatin1();
+    } else {
+        pathData = url.path().toUtf8();
+    }
+
+    paths[0] = strdup(pathData.constData());
+    if (!paths[0]) {
+        fmWarning() << "Failed to allocate memory for path";
         return;
     }
+
+    FTS *fts = fts_open(paths, 0, nullptr);
+    if (!fts) {
+        perror("fts_open");
+        fmWarning() << "fts_open open error : " << QString::fromLocal8Bit(strerror(errno));
+        free(paths[0]);
+        return;
+    }
+
+    free(paths[0]);
+
     while (1) {
         FTSENT *ent = fts_read(fts);
         if (ent == nullptr) {
             break;
         }
-        const QUrl &curUrl = QUrl::fromLocalFile(ent->fts_path);
+        QUrl curUrl = QUrl::fromLocalFile(ent->fts_path);
+        if (DFMIO::DFMUtils::isInvalidCodecByPath(ent->fts_path))
+            curUrl.setUserInfo(kOriginPathPrefix + QString::fromLatin1(ent->fts_path));
         if (urlCounted.contains(curUrl))
             continue;
+
         urlCounted.insert(curUrl);
 
         unsigned short flag = ent->fts_info;
