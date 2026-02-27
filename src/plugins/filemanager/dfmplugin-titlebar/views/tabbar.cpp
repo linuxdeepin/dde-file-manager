@@ -86,7 +86,7 @@ public:
     QString tabDisplayName(const QUrl &url) const;
     QUrl determineRedirectUrl(const QUrl &currentUrl, const QUrl &targetUrl) const;
     QUrl findValidParentPath(const QUrl &url) const;
-    void paintTabBackground(QPainter *painter, const QStyleOptionTab &option);
+    void paintTabBackground(QPainter *painter, int index, const QStyleOptionTab &option);
     void paintTabLabel(QPainter *painter, int index, const QStyleOptionTab &option);
     void paintTabButton(DIconButton *btn);
     void paintTabItemButton(QPainter *painter, int index, const QStyleOptionTab &option);
@@ -554,7 +554,7 @@ QUrl TabBarPrivate::findValidParentPath(const QUrl &url) const
     return parentUrl;
 }
 
-void TabBarPrivate::paintTabBackground(QPainter *painter, const QStyleOptionTab &option)
+void TabBarPrivate::paintTabBackground(QPainter *painter, int index, const QStyleOptionTab &option)
 {
     painter->save();
 
@@ -584,13 +584,25 @@ void TabBarPrivate::paintTabBackground(QPainter *painter, const QStyleOptionTab 
     painter->setBrush(Qt::NoBrush);
     if (isSelected) {
         QPainterPath path;
-        path.moveTo(rect.bottomLeft());
-        path.lineTo(rect.topLeft());
+        if (index == 0) {
+            // Skip the left vertical line: start directly from top-left
+            path.moveTo(rect.topLeft());
+        } else {
+            path.moveTo(rect.bottomLeft());
+            path.lineTo(rect.topLeft());
+        }
         path.lineTo(rect.topRight());
         path.lineTo(rect.bottomRight());
         painter->drawPath(path);
     } else {
-        painter->drawRect(rect);
+        if (index == 0) {
+            // Draw top, right, and bottom lines; omit the left vertical line
+            painter->drawLine(rect.topLeft(), rect.topRight());
+            painter->drawLine(rect.topRight(), rect.bottomRight());
+            painter->drawLine(rect.bottomRight(), rect.bottomLeft());
+        } else {
+            painter->drawRect(rect);
+        }
     }
     // 对中间的tabbar尾后加一根明显的线
     if (QStyleOptionTab::End != option.position && QStyleOptionTab::OnlyOneTab != option.position) {
@@ -1129,7 +1141,7 @@ void TabBar::updateTabName(int index)
 
 void TabBar::paintTab(QPainter *painter, int index, const QStyleOptionTab &option) const
 {
-    d->paintTabBackground(painter, option);
+    d->paintTabBackground(painter, index, option);
     d->paintTabLabel(painter, index, option);
     d->paintTabItemButton(painter, index, option);
 }

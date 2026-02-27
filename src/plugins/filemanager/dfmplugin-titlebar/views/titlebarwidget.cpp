@@ -182,7 +182,7 @@ void TitleBarWidget::activatePinnedTab(const QString &pinnedId)
 
 void TitleBarWidget::handleSplitterAnimation(const QVariant &position)
 {
-    int newWidth = qMax(0, 95 - position.toInt());
+    int newWidth = qMax(0, 100 - position.toInt());
     if (newWidth == placeholder->width())
         return;
 
