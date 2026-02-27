@@ -1,3 +1,42 @@
+dde-file-manager (6.5.122) unstable; urgency=medium
+
+  * feat: add file scanner utility with demo program
+  * refactor: replace fts with opendir for file scanning
+  * fix: resolve geometry update issues in background manager
+  * fix: add proper cleanup in file selection model destructor
+  * fix: correct availableGeometry calculation with scaled coordinates
+  * chore: update License
+  * chore: add copyright year update automation script
+  * fix: prevent potential crash on application quit
+  * perf: optimize directory deletion performance
+  * fix: remove resource limit reached flag to restore monitoring
+  * fix: handle file move scenarios correctly in file index monitor
+  * feat: add xwechat_files to textindex ignore list
+  * feat: replace FileStatisticsJob with FileScanner
+  * fix: prevent showing preview dialog when preview creation fails
+  * fix: downgrade device manager connection errors to warnings
+  * fix: allow dragging non-existent files to show proper error dialog
+  * doc: add new document template specification and examples
+  * chore: remove failing unit tests to fix compilation
+  * fix: fix maximize button state not synced when reopening folder
+  * docs: update extension documentation structure
+  * fix: fix music title color issue in dark theme
+  * fix: handle invalid-encoded paths in size statistics
+  * fix: fix dynamic argument replacement in OEM menu commands
+  * fix: decode URL percent encoding in selectedUrls
+  * chore: migrate from dep5 to REUSE.toml for license management
+  * chore: update translations
+  * docs: add comprehensive OEM menu script specification
+  * docs: add custom menu script specification document
+  * docs: add DDE file manager preview plugin specification
+  * docs: improve custom menu script documentation structure
+  * fix: adjust tab border rendering and splitter animation
+  * fix: use deleteLater for safer header view cleanup
+  * feat: prevent screen saver during file operations
+  * fix: [vault] crash when restoring `leftErrorTimes`
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Fri, 27 Feb 2026 20:18:52 +0800
+
 dde-file-manager (6.5.121) unstable; urgency=medium
 
   * fix: resolve compilation failure with C++15 in AbstractJobHandler
