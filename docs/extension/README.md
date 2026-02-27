@@ -101,6 +101,3 @@ DDE 文件管理器目前支持以下扩展类型：
 - **DDE 桌面环境**：https://github.com/linuxdeepin
 - **XDG 规范**：https://specifications.freedesktop.org
 
----
-
-本文档遵循 CC BY-NC-SA 4.0 协议，允许在署名、非商业用途、相同方式共享的前提下使用和修改。

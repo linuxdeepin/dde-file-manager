@@ -504,7 +504,7 @@ dpkg-buildpackage -uc -us -nc -b # 构建二进制包
 
 ```bash
 # 通过 journalctl 实时过滤预览进程日志
-journalctl -f | grep dde-file-manager-preview
+journalctl _EXE=/usr/libexec/dde-file-manager-preview -f
 ```
 
 在插件代码中使用 dfm-base 提供的日志宏：
@@ -523,28 +523,6 @@ fmCritical() << "Failed to open file:" << url;
 - `fmInfo()`：关键操作成功（插件加载、文件加载完成）
 - `fmWarning()`：不影响功能的潜在问题（格式不支持、降级处理）
 - `fmCritical()`：功能性错误（文件无法打开、Widget 创建失败）
-
-#### 符号验证
-
-安装插件后，可验证导出符号是否正确：
-
-```bash
-# 检查插件是否有正确的 Qt 插件元数据符号
-nm -D /usr/lib/x86_64-linux-gnu/dde-file-manager/plugins/previews/my-preview-plugin.so \
-    | grep -i "qt_plugin"
-```
-
-#### 依赖检查
-
-```bash
-# 确认插件所有依赖库均已满足
-ldd my-preview-plugin.so
-
-# 预期应包含
-# libDFM6Base.so
-# libQt6Core.so.6
-# libQt6Widgets.so.6
-```
 
 #### 加载验证
 
@@ -691,6 +669,8 @@ sudo cp my-preview-plugin.json \
 3. 将文件的 MIME 类型与 `Keys` 中声明的类型进行匹配
 4. 若匹配成功，加载对应 `.so`，调用工厂的 `create()` 方法创建预览实例
 
+**注意：**若安装后未生效，使用 `killall dde-file-manager-preview ` 后再次验证
+
 ### 卸载方式
 
 ```bash
@@ -702,7 +682,9 @@ sudo rm /usr/lib/<arch>/dde-file-manager/plugins/previews/my-preview-plugin.json
 sudo apt remove my-preview-plugin
 ```
 
-卸载后无需重启，下次触发预览时自动不再加载该插件。
+卸载后无需重启文件管理器，下次触发预览时自动不再加载该插件。
+
+**注意：**若卸载后未生效，使用 `killall dde-file-manager-preview ` 后再次验证
 
 ## 参考示例
 
@@ -887,13 +869,13 @@ install(FILES dde-folder-preview-plugin.json DESTINATION ${DFM_PLUGIN_PREVIEW_DI
 
 框架内置的以下插件均可作为开发参考：
 
-| 参考插件 | 路径 | 适合学习 |
+| 参考插件 | 路径 | 简介 |
 |---------|------|---------|
-| image-preview | `pluginpreviews/image-preview/` | 基础静态内容预览，`canPreview()` 按格式判断 |
-| music-preview | `pluginpreviews/music-preview/` | 含播放控制的媒体预览，自定义 `statusBarWidget()` |
-| text-preview  | `pluginpreviews/text-preview/`  | 纯文本渲染，流式加载大文件 |
-| markdown-preview | `pluginpreviews/markdown-preview/` | 富文本渲染，WebView 嵌入 |
-| pdf-preview   | `pluginpreviews/pdf-preview/`   | 复杂多页渲染，异步加载 |
+| image-preview | `pluginpreviews/image-preview/` | 图片预览插件          |
+| music-preview | `pluginpreviews/music-preview/` | 音乐预览插件 |
+| text-preview  | `pluginpreviews/text-preview/`  | 文本文档预览插件 |
+| markdown-preview | `pluginpreviews/markdown-preview/` | markdown 文档预览插件 |
+| pdf-preview   | `pluginpreviews/pdf-preview/`   | pdf 预览插件 |
 
 ## 注意事项
 
@@ -941,7 +923,6 @@ install(FILES dde-folder-preview-plugin.json DESTINATION ${DFM_PLUGIN_PREVIEW_DI
 1. 插件必须使用 **Qt6** 编译，Qt5 编译产物与当前框架不兼容。
 2. `Q_PLUGIN_METADATA` 中的 IID `com.deepin.filemanager.FilePreviewFactoryInterface_iid` 必须与框架保持一致，否则插件无法被识别。
 3. 插件不应假设日志框架、D-Bus 等全局服务已初始化完成，应在实际使用时进行延迟初始化。
-4. 插件的 ABI 与 `libdde-file-manager.so` 版本绑定，主库升级后需重新构建。
 
 ### 最佳实践总结
 
@@ -952,30 +933,4 @@ install(FILES dde-folder-preview-plugin.json DESTINATION ${DFM_PLUGIN_PREVIEW_DI
 5. **英文日志覆盖关键路径**：插件加载、文件切换、错误捕获位置均应有 `fmInfo`/`fmWarning`/`fmCritical` 记录。
 6. **最小化对外依赖**：若使用额外三方库，需在 `debian/control` 中添加对应 `Depends`。
 
-## 附录
-
-### 相关文档
-
-| 文档 | 链接 |
-|-----|------|
-| Qt Plugin System | <https://doc.qt.io/qt-6/plugins-howto.html> |
-| QMimeDatabase | <https://doc.qt.io/qt-6/qmimedatabase.html> |
-| Freedesktop MIME 规范 | <https://specifications.freedesktop.org/shared-mime-info-spec/latest/> |
-| dde-file-manager 主仓库 | <https://github.com/linuxdeepin/dde-file-manager> |
-| dfm-extension 开发文档 | `docs/extension/05-dfm-extension-plugin.md` |
-
-### 参考资源
-
-| 资源 | 路径 |
-|-----|------|
-| 完整示例插件 | `examples/folder-preview-example` |
-| 内置预览插件 | `src/plugins/pluginpreviews/` |
-| 核心接口定义 | `src/dfm-base/interfaces/abstractbasepreview.h` |
-| 插件加载器 | `src/dfm-base/base/application/filepreviewfactory.h` |
-
-### 版本历史
-
-| 版本 | 日期 | 说明 |
-|-----|------|------|
-| 5.x | 2020-2023 | 初始版本，涵盖核心接口与开发指南 |
-| 6.0.0 | 2024 | 新增完整示例插件（folder-preview-example）及 Debian 打包说明 |
+### 

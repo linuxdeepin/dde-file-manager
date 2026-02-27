@@ -13,7 +13,7 @@ template-example/
 │   ├── simple/                  # 普通文件模板
 │   │   ├── README.md
 │   │   ├── TODO.md
-│   │   └── Shell脚本.sh
+│   │   └── shell-script.sh
 │   └── desktop-entry/           # Desktop Entry 模板
 │       ├── python-script.desktop
 │       ├── python-script.py
@@ -29,7 +29,7 @@ template-example/
 
 - **README.md** - Markdown 项目文档模板
 - **TODO.md** - 待办事项列表模板
-- **Shell脚本.sh** - Shell 脚本模板
+- **shell-script.sh** - Shell 脚本模板
 
 ### Desktop Entry 模板
 

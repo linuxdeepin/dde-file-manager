@@ -1196,18 +1196,6 @@ ldd my-plugin.so
 
 ## 附录
 
-### 相关文档
-
-- [XDG Desktop Entry 规范](https://specifications.freedesktop.org/desktop-entry-spec/)
-- [XDG Icon Theme 规范](https://specifications.freedesktop.org/icon-theme-spec/)
-- [Linux Extended Attributes](https://man7.org/linux/man-pages/man7/xattr.7.html)
-
-### 参考资源
-
-- **项目仓库**：https://github.com/linuxdeepin/dde-file-manager
-- **示例代码**：`examples/dfm-extension-example/`
-- **接口定义**：`include/dfm-extension/`
-
 ### 版本历史
 
 | 版本 | 日期 | 变更说明 |
