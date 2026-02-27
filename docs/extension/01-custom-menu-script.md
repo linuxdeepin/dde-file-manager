@@ -2,121 +2,105 @@
 
 ## 概述
 
-Custom Menu Script 是 DDE 文件管理器提供的一种轻量级右键菜单扩展机制。通过在指定目录下放置符合规范的 `.conf` 配置文件，开发者无需编写任何 C++ 代码，即可向文件管理器和桌面的右键菜单中注入自定义菜单项，并在用户触发时执行指定的命令或脚本。
+Custom Menu Script 是 DDE 文件管理器提供的一种**轻量级右键菜单扩展机制**。通过在指定目录下放置符合规范的 `.conf` 配置文件，开发者无需编写任何 C++ 代码，即可向文件管理器和桌面的右键菜单中注入自定义菜单项，并在用户触发时执行指定的命令或脚本。
 
 ### 适用场景
 
 - 为特定文件类型（如音频、文档、压缩包）添加快捷处理操作
-- 集成第三方工具到文件管理器右键菜单
+- 将第三方工具集成到文件管理器右键菜单
 - 为行业定制系统添加特殊操作入口
-- 通过 Shell 脚本扩展个人工作流
+- 通过 Shell 脚本或可执行程序扩展个人工作流
 
-### 特性
+### 主要特性
 
-- 支持最多三级嵌套菜单
-- 支持按文件类型（MimeType）、URL 协议（Scheme）、文件后缀过滤显示
-- 支持单文件、多文件、单目录、多目录、空白区域等多种触发场景
-- 支持按位置插入，控制菜单项在菜单中的顺序
-- 支持菜单项名称及命令的动态参数（文件名、路径等）
-- 支持区分桌面和文件管理器窗口两种场景
-- 配置文件热重载（修改后自动生效，无需重启）
-- 支持国际化菜单名称（本地化语言适配）
+| 特性 | 说明 |
+| :--- | :--- |
+| 零代码扩展 | 仅需配置文件和脚本，无需 C++ 开发 |
+| 三级嵌套菜单 | 最多支持三级子菜单结构 |
+| 精细过滤控制 | 按 MimeType、URL 协议、文件后缀过滤显示 |
+| 多场景触发 | 支持单文件、多文件、目录、空白区域等 |
+| 热重载 | 配置文件修改后约 300ms 内自动生效 |
+| 国际化支持 | 支持本地化菜单名称（`Name[zh_CN]` 等） |
+| 位置控制 | 通过 `PosNum` 精确控制菜单项插入位置 |
+| 场景隔离 | 可区分桌面和文件管理器窗口两种场景 |
 
 ---
 
 ## 前置条件
 
-### 操作系统
+### 操作系统要求
 
 - UOS 20 或更高版本
 - Deepin V23 或更高版本
 
+### 运行时依赖
+
+Custom Menu Script 机制由文件管理器内置的 `dfmplugin-menu` 插件提供，无需额外安装依赖。
+
+> 配置文件中 `Exec` 所调用的外部命令（如 Shell 脚本、第三方工具），需由开发者自行确保已安装在目标系统上。
+
 ### 开发要求
 
-- 熟悉 INI / Desktop Entry 文件格式
+- 熟悉 INI / Desktop Entry 格式（`[Section]` + `Key=Value` 的键值对格式）
 - 具备 Shell 脚本或任意编程语言的基础能力
+- 了解 MIME 类型（可通过 `file --mime-type <file>` 或 `xdg-mime query filetype <file>` 查询）
 
 ---
 
-## 配置文件规范
+## 实现规范
 
-### 放置目录
+### 配置文件格式
 
-配置文件须放置在以下目录之一方可生效（按优先级顺序）：
+配置文件必须满足以下要求：
 
-| 目录路径 | 说明 |
-| :--- | :--- |
-| `/usr/etc/deepin/context-menus/` | 系统级，OEM/预装应用场景 |
-| `/etc/deepin/context-menus/` | 系统级，管理员级别的全局配置 |
-| `$XDG_DATA_HOME/deepin/dde-file-manager/context-menus/` | 用户级，通常为 `~/.local/share/deepin/dde-file-manager/context-menus/` |
-| `$XDG_DATA_DIRS/applications/context-menus/` | 系统级，通常为 `/usr/share/applications/context-menus/` |
-
-> **说明：** 当同名文件在多个目录同时存在时，以先被扫描到的目录为准，后续同名文件被忽略。扫描顺序参考 `XDG_DATA_DIRS` 环境变量配置。
-
-### 文件格式
-
-配置文件必须：
-
-- 以 `.conf` 为扩展名
-- 使用 **UTF-8** 编码
-- 沿用 INI / Desktop Entry 的 `分组` + `Key=Value` 格式
-- `=` 两端**不允许**留有空格
-- 多值字段使用 `:` 分隔，`:` 两端**不允许**留有空格
-- 注释须**另起一行**，以 `#` 开头；字段行尾**不允许**跟随注释
+- **扩展名**：以 `.conf` 结尾
+- **编码**：UTF-8
+- **格式**：INI / Desktop Entry 的 `[分组]` + `Key=Value` 结构
+- **等号**：`=` 两端**不允许**留有空格
+- **多值分隔**：多个值以 `:` 分隔，`:` 两端**不允许**留有空格
+- **注释**：须**另起一行**，以 `#` 开头；字段行尾**不允许**追加注释
 
 ### 文件结构
 
-一个完整的配置文件由以下部分组成：
-
 ```
-[Menu Entry]            ← 固定入口组，记录全局信息与一级菜单列表
-[Menu Action XXXX]      ← 一级或子级菜单组，XXXX 对应 Actions 字段中的标识符
-[Menu Action YYYY]      ← 另一个菜单组（可以是子级）
+[Menu Entry]            ← 固定入口组（必须为文件的第一个有效分组）
+[Menu Action XXXX]      ← 一级或子级菜单组，XXXX 为 Actions 中的标识符
+[Menu Action YYYY]      ← 另一个菜单组（可为子级）
 ...
 ```
 
-> `[Menu Entry]` 必须为配置文件第一个有效分组，缺失则整个文件被视为无效文件。
+> `[Menu Entry]` 缺失，或不是文件中第一个有效分组时，整个文件被视为**无效文件**并跳过。
 
----
-
-## Key 字段参考
-
-### 全局字段（位于 `[Menu Entry]` 组）
+### 全局字段（`[Menu Entry]` 组）
 
 | Key | 类型 | 是否必需 | 说明 |
 | :--- | :--- | :--- | :--- |
-| `Version` | string | **必需** | 配置文件使用的规范版本，当前为 `1.0`。缺失则整个文件无效。 |
-| `Sign` | string | 非必需 | 配置文件签名信息（功能预留，当前不做验证）。 |
-| `Comment` | string | 非必需 | 配置文件描述，供开发者阅读，不影响有效性。 |
+| `Version` | string | **必需** | 规范版本，当前为 `1.0`。缺失则整个文件无效。 |
+| `Actions` | string | **必需** | 一级菜单入口标识符列表，多个以 `:` 分隔。至少需要一个有效项。 |
+| `Comment` | string | 非必需 | 配置文件描述，供开发者阅读。 |
 | `Comment[xx_XX]` | localestring | 非必需 | 本地化描述，如 `Comment[zh_CN]`。 |
-| `Actions` | string | **必需** | 一级菜单入口标识符列表，多个以 `:` 分隔。至少需要一个有效项，否则文件无效。 |
+| `Sign` | string | 非必需 | 签名预留字段，当前不做验证。 |
 
-### 菜单项字段（位于 `[Menu Action XXXX]` 组）
+### 菜单项字段（`[Menu Action XXXX]` 组）
 
-| Key | 类型 | 适用层级 | 是否必需 | 说明 |
-| :--- | :--- | :--- | :--- | :--- |
-| `Name` | string | 所有层级 | **必需（二者存一）** | 菜单项显示名称，支持动态参数（见动态参数章节）。当找不到对应语言的本地化名称时作为兜底显示。 |
-| `Name[xx_XX]` | localestring | 所有层级 | **必需（二者存一）** | 本地化菜单项名称，如 `Name[zh_CN]`。优先级：`language_region（如zh_CN）` > `language（如zh）` > `Name`。 |
-| `X-DFM-MenuTypes` | string | **仅一级菜单** | **必需** | 支持的文件选中类型，多个以 `:` 分隔（详见选中类型章节）。缺失则该菜单项及其所有子项均作无效处理。 |
-| `MimeType` | string | **仅一级菜单** | 非必需 | 支持的文件 MIME 类型白名单，多个以 `:` 分隔。未配置或配置为 `*` 时表示支持所有类型。 |
-| `X-DFM-ExcludeMimeTypes` | string | **仅一级菜单** | 非必需 | 排除的 MIME 类型黑名单，多个以 `:` 分隔。未配置时无黑名单。 |
-| `X-DFM-SupportSchemes` | string | **仅一级菜单** | 非必需 | 支持的 URL 协议白名单，多个以 `:` 分隔（如 `file:burn:ftp`）。未配置时支持所有协议。 |
-| `X-DFM-NotShowIn` | string | **仅一级菜单** | 非必需 | 不在指定场景显示，多个以 `:` 分隔。可选值：`Desktop`（桌面）、`Filemanager`（文件管理器窗口）。配置 `*` 则在所有场景均不显示。未配置时桌面和文件管理器均显示。 |
-| `X-DFM-SupportSuffix` | string | **仅一级菜单** | 非必需 | 支持的文件后缀白名单，多个以 `:` 分隔，支持通配符 `*`（如 `7z*`）。未配置或配置为 `*` 时支持所有后缀。 |
-| `X-DFM-ParentMenuPath` | string | **仅一级菜单** | 非必需 | 将该菜单项插入到文件管理器预设命名子菜单内（详见 ParentMenuPath 章节）。 |
-| `PosNum` | numeric | 所有层级 | 非必需 | 菜单项插入的位置序号（从 1 开始），未配置则以配置文件书写顺序追加到同级菜单末尾。 |
-| `PosNum-XXX` | numeric | **仅一级菜单** | 非必需 | 指定选中类型对应的插入位置，`XXX` 为选中类型值（如 `PosNum-SingleFile=1`）。未配置时以 `PosNum` 为默认值。 |
-| `Separator` | string | 所有层级 | 非必需 | 分割线位置。可选值：`None`（无）、`Top`（上方）、`Bottom`（下方）、`Both`（上下均有）。未配置默认无分割线。 |
-| `Actions` | string | 所有层级 | 与 `Exec` 二选一 | 子菜单入口标识符列表。有此字段则该项为父级菜单，即使同时配置了 `Exec` 也将被忽略。 |
-| `Exec` | string | 所有层级 | 与 `Actions` 二选一 | 菜单项执行的命令，仅对最底层（叶子）菜单有效，支持动态参数（见动态参数章节）。父级菜单中该字段被忽略。 |
+| Key | 别名 | 类型 | 适用层级 | 是否必需 | 说明 |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `Name` | — | string | 所有层级 | **二者选一** | 菜单项显示名称，支持动态参数。找不到本地化名称时作为兜底。 |
+| `Name[xx_XX]` | — | localestring | 所有层级 | **二者选一** | 本地化名称，如 `Name[zh_CN]`。优先级：`language_region` > `language` > `Name`。 |
+| `X-DFM-MenuTypes` | `X-DDE-FileManager-MenuTypes` | string | **仅一级菜单** | **必需** | 触发场景类型，多个以 `:` 分隔（见 [选中类型](#选中类型-x-dfm-menutypes)）。缺失则该项及所有子项均无效。 |
+| `MimeType` | — | string | **仅一级菜单** | 非必需 | MIME 类型白名单，多个以 `:` 分隔。未配置或为 `*` 时匹配所有类型。 |
+| `X-DFM-ExcludeMimeTypes` | `X-DDE-FileManager-ExcludeMimeTypes` | string | **仅一级菜单** | 非必需 | MIME 类型黑名单，多个以 `:` 分隔。 |
+| `X-DFM-SupportSchemes` | `X-DDE-FileManager-SupportSchemes` | string | **仅一级菜单** | 非必需 | URL 协议白名单，如 `file:burn:ftp`。未配置时支持所有协议。 |
+| `X-DFM-NotShowIn` | `X-DDE-FileManager-NotShowIn` | string | **仅一级菜单** | 非必需 | 不显示的场景：`Desktop`（桌面）、`Filemanager`（文件管理器窗口）、`*`（全部不显示）。值不区分大小写。 |
+| `X-DFM-SupportSuffix` | `X-DDE-FileManager-SupportSuffix` | string | **仅一级菜单** | 非必需 | 文件后缀白名单，支持通配符 `*`（如 `7z*`）。未配置或为 `*` 时支持所有后缀。 |
+| `X-DFM-ParentMenuPath` | — | string | **仅一级菜单** | 非必需 | 插入到文件管理器预设命名子菜单内（见 [X-DFM-ParentMenuPath](#x-dfm-parentmenupath)）。 |
+| `PosNum` | `X-DDE-FileManager-PosNum` | numeric | 所有层级 | 非必需 | 插入位置序号（从 1 开始）。未配置则追加到同级末尾。 |
+| `PosNum-XXX` | — | numeric | **仅一级菜单** | 非必需 | 指定选中类型对应的位置，`XXX` 为选中类型值（如 `PosNum-SingleFile=1`）。 |
+| `Separator` | `X-DDE-FileManager-Separator` | string | 所有层级 | 非必需 | 分割线：`None`（无）、`Top`（上方）、`Bottom`（下方）、`Both`（上下）。默认无。 |
+| `Actions` | — | string | 所有层级 | 与 `Exec` 二选一 | 子菜单标识符列表。存在此字段则为父级菜单，同时存在的 `Exec` 被忽略。 |
+| `Exec` | — | string | 所有层级 | 与 `Actions` 二选一 | 叶子菜单执行的命令，支持动态参数（见 [动态参数](#动态参数)）。父级菜单中此字段被忽略。 |
 
-> **兼容性说明：** 字段名同时支持 `X-DFM-*` 和 `X-DDE-FileManager-*` 两种前缀（如 `X-DFM-MenuTypes` 等同于 `X-DDE-FileManager-MenuTypes`），`PosNum` 等同于 `X-DDE-FileManager-PosNum`，`Separator` 等同于 `X-DDE-FileManager-Separator`。两种写法均可正常解析。
-
----
-
-## 选中类型（X-DFM-MenuTypes）
-
-`X-DFM-MenuTypes` 指定菜单项在何种文件选中情况下显示，多个值以 `:` 分隔：
+### 选中类型（X-DFM-MenuTypes）
 
 | 值 | 说明 |
 | :--- | :--- |
@@ -124,23 +108,20 @@ Custom Menu Script 是 DDE 文件管理器提供的一种轻量级右键菜单�
 | `SingleDir` | 右键单击选中**单个文件夹** |
 | `MultiFiles` | 右键选中**多个文件**（纯文件，无文件夹） |
 | `MultiDirs` | 右键选中**多个文件夹**（纯文件夹，无文件） |
-| `FileAndDir` | 右键选中**文件和文件夹混合**，等同于同时支持 `MultiFiles` 和 `MultiDirs` |
-| `BlankSpace` | 右键点击**空白区域**（非任何文件） |
+| `FileAndDir` | 右键选中**文件和文件夹混合**（等同于同时配置 `MultiFiles:MultiDirs`） |
+| `BlankSpace` | 右键点击**空白区域** |
 
-示例：
 ```ini
-# 单个文件和多个文件均可触发
+# 单文件和多文件均可触发
 X-DFM-MenuTypes=SingleFile:MultiFiles
 
-# 在空白区域右键时触发
+# 空白区域右键时触发
 X-DFM-MenuTypes=BlankSpace
 ```
 
----
+### 动态参数
 
-## 动态参数
-
-### 菜单名称动态参数（用于 `Name`）
+#### 菜单名称动态参数（用于 `Name`）
 
 | 参数 | 说明 |
 | :--- | :--- |
@@ -148,32 +129,28 @@ X-DFM-MenuTypes=BlankSpace
 | `%b` | 焦点文件的文件名（不含路径和扩展名） |
 | `%a` | 焦点文件的完整文件名（含扩展名，不含路径） |
 
-> **注意：** Name 中的动态参数从左到右仅第一个有效参数生效，多余的参数无效。
-
-### 命令动态参数（用于 `Exec`）
+#### 命令动态参数（用于 `Exec`）
 
 | 参数 | 说明 |
 | :--- | :--- |
 | `%p` | 当前目录路径 |
-| `%f` | 焦点文件的本地路径（单文件） |
-| `%F` | 所有选中文件的本地路径（多文件，空格分隔） |
-| `%u` | 焦点文件的 URL 路径（单文件） |
-| `%U` | 所有选中文件的 URL 路径（多文件，空格分隔） |
+| `%f` | 焦点文件的本地路径（单文件场景） |
+| `%F` | 所有选中文件的本地路径（空格分隔，多文件场景） |
+| `%u` | 焦点文件的 URL（单文件场景） |
+| `%U` | 所有选中文件的 URL（空格分隔，多文件场景） |
 
-> **注意：** `Exec` 中的动态参数从左到右仅第一个有效参数生效，多余的参数无效。
+> **注意：** `Name` 和 `Exec` 中的动态参数均为**从左到右仅第一个有效参数生效**，多余参数被忽略。
 
----
+### 菜单层级规则
 
-## 菜单层级规则
+#### 层级约束
 
-### 层级约束
+- 最多支持**三级**菜单（一、二、三级），超过三级的配置项被忽略。
+- 父级菜单通过 `Actions` 引用子菜单组；叶子菜单通过 `Exec` 定义执行命令。
+- 同一菜单组中 `Actions` 与 `Exec` 不可共存，`Actions` 优先，`Exec` 被忽略。
+- 既无 `Actions` 又无有效 `Exec` 的菜单项视为无效，其所有父级也随之无效。
 
-- 最多支持**三级**菜单（一级、二级、三级），超过三级的配置项将被忽略。
-- 父级菜单通过 `Actions` 字段引用子菜单；叶子菜单通过 `Exec` 字段定义执行命令。
-- 若同一菜单组同时包含 `Actions` 和 `Exec`，则 `Actions` 优先，`Exec` 被忽略。
-- 若一个菜单项既无 `Actions` 又无有效的 `Exec`，则该项及其所有父级视为无效。
-
-### 数量限制
+#### 数量限制
 
 | 层级 | 最大菜单项数 |
 | :--- | :--- |
@@ -181,19 +158,21 @@ X-DFM-MenuTypes=BlankSpace
 | 二级菜单 | 100 |
 | 三级菜单 | 100 |
 
-### 菜单项排序
+#### 菜单项排序
 
-- 通过 `PosNum` 指定位置（从 1 开始）。
-- 若多个菜单项未指定位置（无 `PosNum`），则按更高层级的配置指定顺序追加，若全层级无 `PosNum` 则按 `Actions` 字段书写顺序排列。
-- 同名且均包含子菜单的一级菜单项将被**合并**（子菜单项累加到同一父菜单下）。
+- 通过 `PosNum` 指定位置（从 1 开始）。未配置时，按 `Actions` 书写顺序追加到同级末尾。
+- 同名且均含子菜单的一级菜单项将自动**合并**（子菜单项累加到同一父菜单下）。
+- 同一目录内，文件按**修改时间倒序**加载；跨目录时以**先扫描到的目录**为准（后续重复文件名跳过）。
 
----
+### 命名约定
 
-## X-DFM-ParentMenuPath
+- `.conf` 文件名建议使用全小写加连字符，如 `compress-here.conf`，避免与其他工具配置冲突。
+- `[Menu Action XXXX]` 中的标识符（`XXXX`）建议使用 `PascalCase`，在同一配置文件内保持唯一。
+- 本地化语言后缀遵循标准 locale 格式：优先使用 `Name[zh_CN]`，其次 `Name[zh]`，最后兜底 `Name`。
 
-该字段仅对通过 `[Menu Entry]` 的 `Actions` 定义的**一级菜单**有效，用于将该菜单项插入到文件管理器预设的命名子菜单内。
+### X-DFM-ParentMenuPath
 
-### 受支持的预设子菜单路径
+将一级菜单项插入到文件管理器预设的命名子菜单中。仅对 `[Menu Entry]` 中 `Actions` 定义的**一级菜单**有效。
 
 | 路径名称 | 对应菜单名称 |
 | :--- | :--- |
@@ -205,29 +184,160 @@ X-DFM-MenuTypes=BlankSpace
 | `send-to` | 发送到 |
 | `share` | 共享 |
 
-> `PosNum`、`Separator` 在此场景下均有效，用于控制插入位置和分割线。
+> `PosNum`、`Separator` 在此场景下均有效。
 
 ---
 
-## 注意事项
+## 开发指南
 
-- `Version` 字段**必须**配置，否则整个配置文件被视为无效文件。
-- `X-DFM-MenuTypes` 对于一级菜单为**必需**字段，缺失时该菜单项及其所有子项均被忽略。
-- `Actions` 与 `Exec` 不能共存于同一菜单项，`Actions` 优先级更高。
-- 最底层（叶子）菜单必须配置 `Exec`，否则视为无效项。
-- 配置文件修改后，文件管理器会在**300ms 延迟**后自动热重载，无需手动重启。
-- `X-DFM-NotShowIn` 的值大小写不敏感（`Desktop` 与 `desktop` 等价）。
-- `Name` 与 `Name[xx_XX]` 至少需要配置一个；建议同时配置 `Name` 作为兜底。
-- 本地化名称优先顺序：`Name[language_region]`（如 `Name[zh_CN]`）> `Name[language]`（如 `Name[zh]`）> `Name`。
-- 目前 `Icon` 字段**暂未启用**，配置后不会生效。
+### 开发步骤
+
+**第一步：确认触发场景**
+
+根据需求确定菜单应在何种情况下出现：右键某类文件、目录，还是空白区域。参考 [选中类型](#选中类型-x-dfm-menutypes) 选择 `X-DFM-MenuTypes` 值。
+
+**第二步：设计菜单结构**
+
+- 单操作 → 一级叶子菜单（`Exec` 直接执行命令）
+- 多操作 → 二级子菜单（一级使用 `Actions`，二级各自 `Exec`）
+
+**第三步：编写配置文件**
+
+从以下最小骨架出发，逐步添加过滤条件和本地化名称：
+
+```ini
+[Menu Entry]
+Version=1.0
+
+Actions=MyAction
+
+[Menu Action MyAction]
+Name=My Action
+Name[zh_CN]=我的操作
+X-DFM-MenuTypes=SingleFile
+Exec=/path/to/my-script.sh %f
+```
+
+**第四步：编写执行脚本**
+
+- 将执行逻辑封装为独立脚本（`.sh`、Python、任意可执行文件均可）
+- 赋予可执行权限：`chmod +x my-script.sh`
+- 在 `Exec` 中使用**绝对路径**引用脚本，避免依赖 `PATH` 环境变量
+
+**第五步：安装并验证（用户级，无需 root）**
+
+```bash
+MENU_DIR="$HOME/.local/share/deepin/dde-file-manager/context-menus"
+mkdir -p "$MENU_DIR"
+cp my-menu.conf "$MENU_DIR/"
+# 约 300ms 后右键菜单自动更新
+```
+
+### 调试方法
+
+**从终端启动文件管理器，观察解析日志：**
+
+```bash
+dde-file-manager 2>&1 | grep -i "custom\|loading\|menu"
+# 或通过 systemd 用户日志
+journalctl --user -f | grep dde-file-manager
+```
+
+**常见加载失败原因排查：**
+
+| 现象 | 排查方向 |
+| :--- | :--- |
+| 菜单完全不出现 | 检查 `Version` 是否存在；`[Menu Entry]` 是否为首个分组；`X-DFM-MenuTypes` 是否配置 |
+| 菜单出现但点击无响应 | 检查 `Exec` 脚本是否有可执行权限（`chmod +x`），路径是否正确 |
+| 只在部分情况出现 | 检查 `MimeType`、`X-DFM-SupportSchemes`、`X-DFM-NotShowIn` 的过滤条件 |
+| 热重载不生效 | 确认目录在文件管理器**启动时**已存在（新建目录须重启文件管理器） |
+
+**在终端直接验证脚本：**
+
+```bash
+# 将 Exec 命令直接在终端执行，排除文件管理器因素
+/path/to/my-script.sh /home/user/test-file.txt
+```
+
+**查询文件的 MIME 类型：**
+
+```bash
+file --mime-type /path/to/file
+# 或
+xdg-mime query filetype /path/to/file
+```
+
+### 最佳实践
+
+- **脚本使用绝对路径**：`Exec` 字段中务必使用脚本的绝对路径，文件管理器执行时的 `PATH` 可能与终端不同。
+- **用户反馈**：脚本执行结果不可见，建议通过 `notify-send` 给用户反馈操作结果（成功或失败）。
+- **优雅的依赖检查**：脚本开头检测依赖工具是否存在，不存在时通过通知提示用户安装，而非静默失败。
+- **`%F` 与多文件**：`X-DFM-MenuTypes=MultiFiles` 时，`Exec` 使用 `%F` 接收所有选中文件路径（空格分隔）。若路径含空格，需在脚本内用引号包裹变量。
+- **`Name` 兜底**：始终同时配置不含语言后缀的 `Name` 作为兜底，避免非中文环境下显示为空。
+- **多值字段无空格**：`X-DFM-MenuTypes=SingleFile:MultiFiles` 中冒号两侧不能有空格，否则解析失败。
 
 ---
 
-## 完整示例
+## 部署说明
 
-### 示例一：单个叶子菜单
+### 配置文件放置目录
 
-点击单个文件时，在右键菜单第二位插入"以超级用户打开"：
+文件管理器按以下优先级顺序扫描目录，**同名文件以先扫描到的目录为准**：
+
+| 优先级 | 目录路径 | 说明 |
+| :---: | :--- | :--- |
+| 1（最高） | `/usr/etc/deepin/context-menus/` | 系统级（OEM/预装场景） |
+| 2 | `/etc/deepin/context-menus/` | 系统级（管理员全局配置，需 root） |
+| 3 | `~/.local/share/deepin/dde-file-manager/context-menus/` | 用户级（推荐开发调试使用，无需 root） |
+| 4（最低） | `$XDG_DATA_DIRS/applications/context-menus/` | 系统数据目录（通常为 `/usr/share/applications/context-menus/`） |
+
+> `$XDG_DATA_HOME` 默认为 `~/.local/share`；`$XDG_DATA_DIRS` 中配置的各路径均会扫描，但仅在目录**已存在**时生效。
+
+### 安装命令
+
+```bash
+# 用户级安装（推荐，无需 root）
+MENU_DIR="$HOME/.local/share/deepin/dde-file-manager/context-menus"
+mkdir -p "$MENU_DIR"
+cp my-menu.conf "$MENU_DIR/"
+
+# 系统级安装（需要 root）
+sudo mkdir -p /usr/share/applications/context-menus/
+sudo cp my-menu.conf /usr/share/applications/context-menus/
+```
+
+### 热重载机制
+
+文件管理器在**启动时**对所有已存在的配置目录注册文件监听器（基于 `AbstractFileWatcher`）。当目录内文件发生变化时，触发 300ms 延迟防抖后重新加载，无需手动重启。
+
+```
+文件变化事件
+    └─► fileAttributeChanged 信号
+            └─► QTimer::start(300ms) 防抖
+                    └─► 重新扫描所有配置目录
+                            └─► 右键菜单下次触发时生效
+```
+
+> **注意：** 热重载仅对文件管理器**启动时已存在**的目录有效。若新建了配置目录，需重启文件管理器才能开始监听。
+
+### 验证生效条件
+
+配置文件须同时满足以下条件才会显示菜单项：
+
+1. 文件放置在正确目录下，且该目录在文件管理器启动时已存在
+2. `[Menu Entry]` 为文件中**第一个**有效分组
+3. `Version` 字段存在且非空
+4. `Actions` 字段存在且至少一个引用的菜单组有效
+5. 一级菜单组配置了 `X-DFM-MenuTypes` 字段
+6. 叶子菜单组配置了有效的 `Exec` 字段
+
+---
+
+## 参考示例
+
+### 示例：单个叶子菜单
+
+右键单个文件时，在菜单第二位插入"以超级用户打开"：
 
 ```ini
 [Menu Entry]
@@ -245,9 +355,9 @@ PosNum=2
 Exec=pkexec xdg-open %f
 ```
 
-### 示例二：多层级嵌套菜单
+### 示例：二级嵌套菜单
 
-一级菜单包含两个子菜单项，子菜单分别以超级用户和普通用户打开：
+一级菜单包含两个子项，分别以超级用户和普通用户打开：
 
 ```ini
 [Menu Entry]
@@ -278,9 +388,9 @@ PosNum=2
 Exec=xdg-open %f
 ```
 
-### 示例三：仅在文件管理器中显示、限定文件类型
+### 示例：限定文件类型 + 仅文件管理器显示
 
-对 MP3 和 FLAC 音频文件支持"添加到播放队列"操作，并且不在桌面上显示：
+对 MP3 和 FLAC 音频文件支持"添加到播放队列"，不在桌面显示：
 
 ```ini
 [Menu Entry]
@@ -300,9 +410,9 @@ PosNum=1
 Exec=/usr/bin/my-player --add-queue %F
 ```
 
-### 示例四：空白区域菜单 + 动态参数名
+### 示例：空白区域菜单 + 动态名称参数
 
-在空白区域右键，菜单名称动态显示当前文件夹名称：
+空白区域右键，菜单名称显示当前文件夹名称：
 
 ```ini
 [Menu Entry]
@@ -319,9 +429,9 @@ PosNum=5
 Exec=/usr/bin/my-script --dir %p
 ```
 
-### 示例五：插入到预设子菜单（发送到）
+### 示例：插入到预设子菜单（发送到）
 
-将"发送到网盘"插入到文件管理器预设的"发送到"子菜单中：
+将"发送到网盘"插入到文件管理器预设的"发送到"子菜单：
 
 ```ini
 [Menu Entry]
@@ -339,27 +449,46 @@ PosNum=1
 Exec=/usr/bin/cloud-uploader %F
 ```
 
----
+### 可运行完整示例（custom-menu-example）
 
-## 部署说明
+项目提供了三个真实可运行的完整示例，含配置文件、辅助脚本及安装/卸载脚本：
 
-### 安装配置文件
+> 路径：[`examples/custom-menu-example/`](../../examples/custom-menu-example/)
+
+| 示例配置文件 | 触发条件 | 菜单结构 | 说明 |
+| :--- | :--- | :--- | :--- |
+| `compress-here.conf` | 右键文件/目录（单/多） | 二级子菜单 | 将所选文件压缩为 `.tar.gz` 或 `.zip`，输出到同目录 |
+| `copy-path.conf` | 右键单个文件/目录 | 单层菜单 | 将所选项的绝对路径写入系统剪贴板（需 `xclip` 或 `xsel`） |
+| `open-terminal-here.conf` | 右键空白区域或单个目录 | 单层菜单 | 在对应目录启动终端模拟器（优先使用 `deepin-terminal`） |
+
+**安装方式（用户级，无需 root）：**
 
 ```bash
-# 系统级安装（需要 root 权限）
-sudo cp my-menu.conf /usr/share/applications/context-menus/
-
-# 用户级安装（无需 root）
-cp my-menu.conf ~/.local/share/deepin/dde-file-manager/context-menus/
+cd examples/custom-menu-example
+chmod +x install.sh uninstall.sh
+./install.sh
 ```
 
-### 验证生效
+安装脚本会将辅助脚本部署到 `~/.local/share/dde-custom-menu-example/scripts/`，配置文件（已自动替换脚本路径）安装到 `~/.local/share/deepin/dde-file-manager/context-menus/`，约 300ms 后菜单自动生效。卸载执行 `./uninstall.sh`。
 
-配置文件满足以下条件后即可在下次右键操作时生效（无需重启文件管理器）：
+---
 
-1. 文件放置在正确目录下
-2. `Version` 字段存在
-3. `[Menu Entry]` 为首个分组
-4. `Actions` 字段存在且至少一个引用的菜单组有效
-5. 一级菜单具有 `X-DFM-MenuTypes` 字段
-6. 叶子菜单具有有效的 `Exec` 字段
+## 注意事项
+
+### 常见问题
+
+| 问题 | 原因 | 解决方案 |
+| :--- | :--- | :--- |
+| 菜单完全不显示 | `Version` 或 `[Menu Entry]` 缺失，或 `[Menu Entry]` 不是第一个分组 | 检查文件结构，确保 `[Menu Entry]` 在所有 `[Menu Action ...]` 之前 |
+| 菜单显示但点击无效 | `Exec` 脚本无可执行权限，或路径错误 | `chmod +x` 并使用绝对路径 |
+| 某类文件不显示菜单 | `MimeType` 或 `X-DFM-SupportSuffix` 过滤 | 用 `file --mime-type` 确认文件类型后更新配置 |
+| 修改后不生效 | 配置目录在启动后新建，未被监听 | 重启文件管理器使其重新扫描目录 |
+| 多文件时参数缺失 | `Exec` 中使用了 `%f`（单文件参数） | 多文件场景应使用 `%F` |
+| 桌面和文件管理器均不显示 | `X-DFM-NotShowIn=*` 或同时配置了 `Desktop:Filemanager` | 去掉该配置或按需指定 `Desktop` 或 `Filemanager` |
+
+### 安全建议
+
+- **避免滥用特权命令**：非必要不在 `Exec` 中使用 `sudo` 或 `pkexec`，评估提权操作在多用户系统中的安全影响。
+- **脚本输入校验**：`%f`、`%F` 参数来自文件系统，脚本应对路径进行基本校验，防止构造特殊名称的文件触发非预期行为。
+- **系统级配置权限**：`/etc/deepin/context-menus/` 和 `/usr/share/applications/context-menus/` 需 root 权限写入，部署前应评估影响范围。
+
