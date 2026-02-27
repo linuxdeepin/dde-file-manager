@@ -377,25 +377,64 @@ QImage ThumbnailCreators::djvuThumbnailCreator(const QString &filePath, Thumbnai
         return img;
     }
 
-    const QString &readerBinary = QStandardPaths::findExecutable("deepin-reader");
-    if (readerBinary.isEmpty()) {
-        qCWarning(logDFMBase) << "thumbnail: deepin-reader not found, cannot create djvu thumbnail for:" << filePath;
-        return img;
-    }
-
-    qCDebug(logDFMBase) << "thumbnail: using deepin-reader to create djvu thumbnail for:" << filePath;
-
-    // Use subprocess to call deepin-reader program to generate djvu format file thumbnail
-    QProcess process;
+    QString program;
     QStringList arguments;
-    // Generate thumbnail cache address
-    const QString &fileUrl = QUrl::fromLocalFile(filePath).toString(QUrl::FullyEncoded);
-    const QString &thumbnailName = ThumbnailHelper::dataToMd5Hex(fileUrl.toLocal8Bit()) + kFormat;
-    const QString &saveImage = DFMIO::DFMUtils::buildFilePath(ThumbnailHelper::sizeToFilePath(size).toStdString().c_str(),
-                                                              thumbnailName.toStdString().c_str(), nullptr);
+
+    // ------------------------------------------------------------------
+    // First try dpkg deepin-reader (old systems)
+    // ------------------------------------------------------------------
+    const QString readerBinary = QStandardPaths::findExecutable("deepin-reader");
+    if (!readerBinary.isEmpty()) {
+        program = readerBinary;
+        qCDebug(logDFMBase) << "thumbnail: using dpkg deepin-reader";
+
+    } else {
+        // ------------------------------------------------------------------
+        // Fall back to Linyaps version
+        // ------------------------------------------------------------------
+        const QString llCli = QStandardPaths::findExecutable("ll-cli");
+        if (llCli.isEmpty()) {
+            qCWarning(logDFMBase) << "thumbnail: neither deepin-reader nor ll-cli found";
+            return img;
+        }
+
+        program = llCli;
+
+        QString appId = "org.deepin.reader";
+
+        QProcess detect;
+        detect.start(llCli, {"list"});
+        detect.waitForFinished();
+
+        const QString output = detect.readAllStandardOutput();
+
+        if (!output.contains(appId)) {
+            qCWarning(logDFMBase) << "thumbnail: deepin-reader linyaps app not found";
+            return img;
+        }
+
+        qCDebug(logDFMBase) << "thumbnail: using linyaps deepin-reader, appId:" << appId;
+
+        arguments << "run"
+                  << appId
+                  << "--"
+                  << "deepin-reader";
+    }
+    
+    const QString fileUrl = QUrl::fromLocalFile(filePath).toString(QUrl::FullyEncoded);
+    const QString thumbnailName = ThumbnailHelper::dataToMd5Hex(fileUrl.toLocal8Bit()) + kFormat;
+    const QString saveImage = DFMIO::DFMUtils::buildFilePath(
+        ThumbnailHelper::sizeToFilePath(size).toStdString().c_str(),
+        thumbnailName.toStdString().c_str(),
+        nullptr
+    );
+
     arguments << "--thumbnail"
-              << "-f" << filePath << "-t" << saveImage;
-    process.start(readerBinary, arguments);
+              << "-f" << filePath
+              << "-t" << saveImage;
+
+    QProcess process;
+    process.start(program, arguments);
 
     if (!process.waitForFinished() || process.exitCode() != 0) {
         qCWarning(logDFMBase) << "thumbnail: deepin-reader execution failed for:" << filePath
@@ -404,29 +443,29 @@ QImage ThumbnailCreators::djvuThumbnailCreator(const QString &filePath, Thumbnai
         return img;
     }
 
-    qCDebug(logDFMBase) << "thumbnail: deepin-reader completed successfully, reading thumbnail from:" << saveImage;
+    qCDebug(logDFMBase) << "thumbnail: deepin-reader completed successfully";
 
     DFMIO::DFile dfile(saveImage);
-    if (dfile.open(DFMIO::DFile::OpenFlag::kReadOnly)) {
-        const QByteArray &output = dfile.readAll();
-        if (output.isEmpty()) {
-            qCWarning(logDFMBase) << "thumbnail: generated thumbnail file is empty:" << saveImage;
-            dfile.close();
-            return img;
-        }
+    if (!dfile.open(DFMIO::DFile::OpenFlag::kReadOnly)) {
+        qCWarning(logDFMBase) << "thumbnail: failed to open generated thumbnail:" << saveImage;
+        return img;
+    }
 
-        if (img.loadFromData(output, "png")) {
-            qCDebug(logDFMBase) << "thumbnail: djvu thumbnail created successfully for:" << filePath;
-        } else {
-            qCWarning(logDFMBase) << "thumbnail: failed to load thumbnail data from:" << saveImage;
-        }
-        dfile.close();
-    } else {
-        qCWarning(logDFMBase) << "thumbnail: failed to open generated thumbnail file:" << saveImage;
+    const QByteArray outputData = dfile.readAll();
+    dfile.close();
+
+    if (outputData.isEmpty()) {
+        qCWarning(logDFMBase) << "thumbnail: generated thumbnail file is empty";
+        return img;
+    }
+
+    if (!img.loadFromData(outputData, "png")) {
+        qCWarning(logDFMBase) << "thumbnail: failed to load thumbnail data";
     }
 
     return img;
 }
+
 
 QImage ThumbnailCreators::pdfThumbnailCreator(const QString &filePath, ThumbnailSize size)
 {
