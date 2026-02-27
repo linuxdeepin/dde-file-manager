@@ -1,0 +1,19 @@
+Source: dde-folder-preview-plugin
+Section: devel
+Priority: optional
+Maintainer: Deepin Packages Builder <packages@linuxdeepin.com>
+Build-Depends: debhelper (>= 11),
+               cmake,
+               dde-file-manager-dev
+Standards-Version: 4.5.1
+
+Package: dde-folder-preview-plugin
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Folder preview plugin for DDE File Manager
+ A DDE File Manager preview plugin that displays a rich visual summary
+ of directory contents when the user presses Space on a folder.
+ .
+ Features include a header panel with folder icon and path, stat badges
+ showing file count, sub-folder count and total recursive size (via du),
+ and a sortable file list with name, type, size and last-modified columns.
