@@ -363,11 +363,3 @@ cp my-menu.conf ~/.local/share/deepin/dde-file-manager/context-menus/
 4. `Actions` 字段存在且至少一个引用的菜单组有效
 5. 一级菜单具有 `X-DFM-MenuTypes` 字段
 6. 叶子菜单具有有效的 `Exec` 字段
-
----
-
-## 相关资源
-
-- **核心功能扩展（C++ 插件）**：[05-dfm-extension-plugin.md](05-dfm-extension-plugin.md)
-- **项目仓库**：https://github.com/linuxdeepin/dde-file-manager
-- **源码实现**：`src/plugins/common/dfmplugin-menu/extendmenuscene/`

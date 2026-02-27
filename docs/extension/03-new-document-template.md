@@ -338,7 +338,7 @@ sudo rm /usr/share/templates/my-template.desktop
 
 ### 完整示例项目
 
-完整的模板示例项目位于：[examples/template-example](../../examples/template-example)
+完整的模板示例项目位于：[examples/template-example](https://github.com/linuxdeepin/dde-file-manager/tree/master/examples/template-example)
 
 该示例包含：
 - 普通文件模板（README.md、TODO.md、Shell脚本.sh）

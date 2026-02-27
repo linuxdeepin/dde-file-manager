@@ -16,7 +16,7 @@ echo
 echo "卸载普通文件模板..."
 rm -fv "$XDG_TEMPLATES_DIR/README.md"
 rm -fv "$XDG_TEMPLATES_DIR/TODO.md"
-rm -fv "$XDG_TEMPLATES_DIR/Shell脚本.sh"
+rm -fv "$XDG_TEMPLATES_DIR/shell-script.sh"
 
 # 卸载 Desktop Entry 模板
 echo "卸载 Desktop Entry 模板..."

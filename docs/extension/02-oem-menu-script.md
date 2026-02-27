@@ -1,10 +1,10 @@
-# DDE 文件管理器 OEM 菜单扩展规范（已弃用）
+# DDE 文件管理器 OEM 菜单扩展规范
 
 ## 概述
 
 OEM Menu Script 是 DDE 文件管理器早期提供的一种菜单扩展机制，通过 Desktop Entry 配置文件向文件管理器的右键菜单添加自定义菜单项和执行脚本。
 
-**状态：已弃用** - 此机制保留用于向后兼容，新项目请使用 [Custom Menu Script](01-custom-menu-script.md) 或 [dfm-extension Plugin](05-dfm-extension-plugin.md)。
+**状态：已弃用** - 此机制仍然兼容，但是新项目建议使用 [Custom Menu Script](01-custom-menu-script.md) 或 [dfm-extension Plugin](05-dfm-extension-plugin.md)。
 
 ### 扩展能力
 
@@ -902,17 +902,6 @@ MimeType=application/x-compress;application/x-gzip;
 - [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/)
 - [Icon Theme Specification](https://specifications.freedesktop.org/icon-theme-spec/)
 
-### 参考资源
-
-- **项目仓库**：https://github.com/linuxdeepin/dde-file-manager
-- **源码路径**：`src/plugins/common/dfmplugin-menu/oemmenuscene/`
-
-### 相关文档
-
-- [Custom Menu Script](01-custom-menu-script.md) - 推荐的新菜单扩展机制
-- [dfm-extension Plugin](05-dfm-extension-plugin.md) - C++ 插件接口
-- [扩展机制概览](README.md)
-
 ### 术语表
 
 | 术语 | 说明 |
@@ -924,7 +913,3 @@ MimeType=application/x-compress;application/x-gzip;
 | Fork | Unix 系统中创建子进程的系统调用 |
 | Exec | Desktop Entry 中指定执行命令的字段 |
 
-
----
-
-**注意**：本文档描述的是已弃用的扩展机制，仅用于维护现有配置。新项目请使用 [Custom Menu Script](01-custom-menu-script.md) 或 [dfm-extension Plugin](05-dfm-extension-plugin.md)。
