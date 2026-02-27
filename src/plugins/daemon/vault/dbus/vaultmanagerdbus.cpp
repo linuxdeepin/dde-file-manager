@@ -140,8 +140,13 @@ void VaultManagerDBus::RestoreLeftoverErrorInputTimes(int userID)
         fmWarning() << "[VaultManagerDBus::RestoreLeftoverErrorInputTimes] Invalid invoker for user ID:" << userID;
         return;
     }
+    restoreLeftoverErrorInputTimes(userID);
+}
+
+void VaultManagerDBus::restoreLeftoverErrorInputTimes(int userID)
+{
     mapLeftoverInputTimes[userID] = kErrorInputTime;
-    fmInfo() << "[VaultManagerDBus::RestoreLeftoverErrorInputTimes] Restored error input times for user:" << userID;
+    fmInfo() << "[VaultManagerDBus::restoreLeftoverErrorInputTimes] Restored error input times for user:" << userID;
 }
 
 void VaultManagerDBus::StartTimerOfRestorePasswordInput(int userID)
@@ -174,8 +179,13 @@ void VaultManagerDBus::RestoreNeedWaitMinutes(int userID)
         fmWarning() << "[VaultManagerDBus::RestoreNeedWaitMinutes] Invalid invoker for user ID:" << userID;
         return;
     }
+    restoreNeedWaitMinutes(userID);
+}
+
+void VaultManagerDBus::restoreNeedWaitMinutes(int userID)
+{
     mapNeedMinutes[userID] = kTotalWaitTime;
-    fmInfo() << "[VaultManagerDBus::RestoreNeedWaitMinutes] Restored wait time for user:" << userID;
+    fmInfo() << "[VaultManagerDBus::restoreNeedWaitMinutes] Restored wait time for user:" << userID;
 }
 
 void VaultManagerDBus::timerEvent(QTimerEvent *event)
@@ -192,9 +202,9 @@ void VaultManagerDBus::timerEvent(QTimerEvent *event)
         if (mapNeedMinutes[userID] < 1) {
             killTimer(timerID);
             mapTimer.remove(timerID);
-            // 密码剩余输入次数还原，需要等待的分钟数还原
-            RestoreLeftoverErrorInputTimes(userID);
-            RestoreNeedWaitMinutes(userID);
+            // 密码剩余输入次数还原,需要等待的分钟数还原,在计时器启动时已经检查权限，这里不再检查
+            restoreLeftoverErrorInputTimes(userID);
+            restoreNeedWaitMinutes(userID);
             fmInfo() << "[VaultManagerDBus::timerEvent] Timer expired for user" << userID << ", restored input attempts";
         }
     }

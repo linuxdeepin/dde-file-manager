@@ -123,6 +123,18 @@ private:
      */
     QString GetCurrentUser() const;
 
+    /*!
+     * \brief  内部还原保险箱剩余错误密码输入次数（不检查权限）
+     * \param userID
+     */
+    void restoreLeftoverErrorInputTimes(int userID);
+
+    /*!
+     * \brief  内部还原保险箱需要等待的分钟数（不检查权限）
+     * \param userID
+     */
+    void restoreNeedWaitMinutes(int userID);
+
     QMap<QString, VaultClock *> mapUserClock {};   // map user and timer.
     VaultClock *curVaultClock { nullptr };   // current user clock.
     QString currentUser {};   // current system user.
