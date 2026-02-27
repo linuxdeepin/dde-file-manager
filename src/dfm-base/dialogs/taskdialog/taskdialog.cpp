@@ -98,17 +98,21 @@ void TaskDialog::initUI()
 void TaskDialog::blockShutdown()
 {
     UniversalUtils::blockShutdown(replyBlokShutDown);
-    int fd = -1;
-    if (replyBlokShutDown.isValid()) {
-        fd = replyBlokShutDown.value().fileDescriptor();
+    // 添加进入节能模式的锁定处理
+    // 防止重复调用导致 cookie 被覆盖
+    if (screenSaverCookie == kInvalidScreenSaverCookie) {
+        screenSaverCookie = UniversalUtils::lockScreenSaver();
     }
 
-    if (fd > 0) {
-        QObject::connect(this, &TaskDialog::closed, this, [this]() {
-            QDBusReply<QDBusUnixFileDescriptor> tmp = replyBlokShutDown;   //::close(fd);
-            replyBlokShutDown = QDBusReply<QDBusUnixFileDescriptor>();
-        });
-    }
+    QObject::connect(this, &TaskDialog::closed, this, [this]() {
+        QDBusReply<QDBusUnixFileDescriptor> tmp = replyBlokShutDown;   //::close(fd);
+        replyBlokShutDown = QDBusReply<QDBusUnixFileDescriptor>();
+        // 添加进入节能模式的解除锁定处理
+        if (screenSaverCookie != kInvalidScreenSaverCookie) {
+            UniversalUtils::unlockScreenSaver(screenSaverCookie);
+            screenSaverCookie = kInvalidScreenSaverCookie;
+        }
+    });
 }
 /*!
  * \brief TaskDialog::addTaskWidget 在任务进度对话框中添加一个item，并调整高度
@@ -260,4 +264,9 @@ void TaskDialog::keyPressEvent(QKeyEvent *event)
 
 TaskDialog::~TaskDialog()
 {
+    // 确保在析构时解锁屏幕保护程序
+    if (screenSaverCookie != kInvalidScreenSaverCookie) {
+        UniversalUtils::unlockScreenSaver(screenSaverCookie);
+        screenSaverCookie = kInvalidScreenSaverCookie;
+    }
 }
