@@ -1,0 +1,23 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# OEM Menu Script: Set the selected image as the desktop wallpaper.
+#
+# Demonstrates:
+#   - MimeType filtering to display only for image files
+#   - X-DFM-ExcludeMimeTypes to exclude SVG and raw formats
+#   - SingleFile MenuType
+
+[Desktop Entry]
+Type=Application
+Name=Set as Wallpaper
+Name[zh_CN]=设为桌面壁纸
+Icon=preferences-desktop-wallpaper
+Comment=Set the selected image as the desktop background
+Comment[zh_CN]=将选中的图片设置为桌面背景
+X-DFM-MenuTypes=SingleFile;
+X-DFM-SupportSchemes=file;
+MimeType=image/*;
+X-DFM-ExcludeMimeTypes=image/svg+xml;image/svg;image/x-xcf;
+Exec=__SCRIPTS_DIR__/set-wallpaper.sh %f

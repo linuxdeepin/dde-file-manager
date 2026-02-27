@@ -453,7 +453,7 @@ Exec=/usr/bin/cloud-uploader %F
 
 项目提供了三个真实可运行的完整示例，含配置文件、辅助脚本及安装/卸载脚本：
 
-> 路径：[`examples/custom-menu-example/`](../../examples/custom-menu-example/)
+> 路径：[`custom-menu-example/`](https://github.com/linuxdeepin/dde-file-manager/tree/master/examples/custom-menu-example/)
 
 | 示例配置文件 | 触发条件 | 菜单结构 | 说明 |
 | :--- | :--- | :--- | :--- |

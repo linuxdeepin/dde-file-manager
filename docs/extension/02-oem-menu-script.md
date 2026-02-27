@@ -560,6 +560,269 @@ rm -rf ~/.local/share/deepin/dde-file-manager/oem-menuextensions/
 - ExcludeMimeTypes 和 MimeType 的父类型处理逻辑**不同**，建议优先使用 ExcludeMimeTypes 排除不需要的类型
 - 多选文件时，每个文件都会单独检查，只要有一个文件不匹配，该菜单项就会被移除
 
+---
+
+## 可运行完整示例（oem-menu-example）
+
+项目提供了三个真实可运行的完整示例，含 `.desktop` 配置文件、辅助 Shell 脚本及安装/卸载脚本：
+
+> 路径：[`oem-menu-example/`](https://github.com/linuxdeepin/dde-file-manager/tree/master/examples/oem-menu-example/)
+
+| 配置文件 | 触发条件 | 展示特性 | 说明 |
+| :--- | :--- | :--- | :--- |
+| `oem-send-to-desktop.desktop` | 右键单个文件或目录（文件管理器） | `X-DFM-NotShowIn` 场景过滤 | 在桌面创建所选文件/目录的符号链接，桌面右键不显示（避免循环操作） |
+| `oem-file-hash.desktop` | 右键任意单个本地文件 | `Actions` 子菜单 | 展开子菜单选择算法（MD5 / SHA-256），结果弹出通知并自动复制到剪贴板 |
+| `oem-set-wallpaper.desktop` | 右键本地图片文件 | `MimeType` + `X-DFM-ExcludeMimeTypes` | 仅对位图图片显示，排除 SVG/XCF 等矢量/工程格式，调用 D-Bus 设置壁纸 |
+
+**安装方式（用户级，无需 root）：**
+
+```bash
+cd examples/oem-menu-example
+chmod +x install.sh uninstall.sh
+./install.sh
+```
+
+安装脚本将辅助脚本部署到 `~/.local/share/dde-oem-menu-example/scripts/`，配置文件安装到 `~/.local/share/deepin/dde-file-manager/oem-menuextensions/`，文件管理器自动热加载，约 300 ms 后菜单生效。卸载执行 `./uninstall.sh`。
+
+---
+
+### 示例一：发送到桌面（oem-send-to-desktop）
+
+在文件管理器中右键单个文件或目录，选择"发送到桌面"可在桌面目录创建符号链接。使用 `X-DFM-NotShowIn=Desktop;` 防止在桌面上出现相同菜单（避免循环创建链接）。
+
+**配置文件**（`menus/oem-send-to-desktop.desktop`）：
+
+```ini
+[Desktop Entry]
+Type=Application
+Name=Send to Desktop
+Name[zh_CN]=发送到桌面
+Icon=user-desktop
+Comment=Create a shortcut link on the desktop
+Comment[zh_CN]=在桌面创建快捷方式
+X-DFM-MenuTypes=SingleFile;SingleDir;
+X-DFM-SupportSchemes=file;
+X-DFM-NotShowIn=Desktop;
+Exec=__SCRIPTS_DIR__/send-to-desktop.sh %f
+```
+
+**辅助脚本**（`scripts/send-to-desktop.sh`）：
+
+```bash
+#!/bin/bash
+# send-to-desktop.sh — Create a symbolic link to a file or directory on the
+#                       user's desktop.
+# Usage: send-to-desktop.sh <path>
+
+set -euo pipefail
+
+TARGET="${1:-}"
+if [ -z "$TARGET" ]; then
+    echo "Error: no path specified" >&2
+    exit 1
+fi
+
+ABS_TARGET="$(realpath -- "$TARGET")"
+if [ ! -e "$ABS_TARGET" ]; then
+    echo "Error: target does not exist: $ABS_TARGET" >&2
+    exit 1
+fi
+
+# Locate desktop directory (honours XDG_DESKTOP_DIR if set)
+DESKTOP_DIR="${XDG_DESKTOP_DIR:-$HOME/Desktop}"
+if [ ! -d "$DESKTOP_DIR" ]; then
+    DESKTOP_DIR="$HOME/桌面"         # Fallback: common Chinese desktop path
+fi
+if [ ! -d "$DESKTOP_DIR" ]; then
+    notify-send --app-name="OEM菜单" "发送到桌面失败" "未找到桌面目录" 2>/dev/null || true
+    exit 1
+fi
+
+LINK_NAME="$(basename "$ABS_TARGET")"
+LINK_PATH="${DESKTOP_DIR}/${LINK_NAME}"
+
+# Append numeric suffix if a file with the same name already exists
+COUNTER=1
+while [ -e "$LINK_PATH" ]; do
+    LINK_PATH="${DESKTOP_DIR}/${LINK_NAME}_${COUNTER}"
+    COUNTER=$((COUNTER + 1))
+done
+
+ln -s "$ABS_TARGET" "$LINK_PATH"
+notify-send --app-name="OEM菜单" "已发送到桌面" "$(basename "$LINK_PATH")" 2>/dev/null || true
+```
+
+---
+
+### 示例二：计算文件哈希值（oem-file-hash）
+
+右键任意单个本地文件，展开子菜单后可选择计算 MD5 或 SHA-256 校验和。结果通过桌面通知展示，并在有 `xclip`/`xsel` 时自动复制到剪贴板。展示了 `Actions` 子菜单的使用方式。
+
+**配置文件**（`menus/oem-file-hash.desktop`）：
+
+```ini
+[Desktop Entry]
+Type=Application
+Name=Calculate Hash
+Name[zh_CN]=计算哈希值
+Icon=document-properties
+Comment=Calculate MD5 or SHA-256 checksum of the file
+Comment[zh_CN]=计算文件的 MD5 或 SHA-256 校验和
+X-DFM-MenuTypes=SingleFile;
+X-DFM-SupportSchemes=file;
+Actions=CalcMD5;CalcSHA256;
+
+[Desktop Action CalcMD5]
+Name=Calculate MD5
+Name[zh_CN]=计算 MD5
+Icon=document-properties
+Exec=__SCRIPTS_DIR__/file-hash.sh md5 %f
+
+[Desktop Action CalcSHA256]
+Name=Calculate SHA-256
+Name[zh_CN]=计算 SHA-256
+Icon=document-properties
+Exec=__SCRIPTS_DIR__/file-hash.sh sha256 %f
+```
+
+**辅助脚本**（`scripts/file-hash.sh`）：
+
+```bash
+#!/bin/bash
+# file-hash.sh — Compute and display the checksum of a file.
+# Usage: file-hash.sh <md5|sha256> <file-path>
+
+set -euo pipefail
+
+ALGO="${1:-}"
+FILE_PATH="${2:-}"
+
+if [ -z "$ALGO" ] || [ -z "$FILE_PATH" ]; then
+    echo "Usage: file-hash.sh <md5|sha256> <file-path>" >&2
+    exit 1
+fi
+if [ ! -f "$FILE_PATH" ]; then
+    echo "Error: not a regular file: $FILE_PATH" >&2
+    exit 1
+fi
+
+notify() { notify-send --app-name="OEM菜单" "$1" "$2" 2>/dev/null || true; }
+
+copy_to_clipboard() {
+    if command -v xclip &>/dev/null; then
+        printf '%s' "$1" | xclip -selection clipboard && return 0
+    elif command -v xsel &>/dev/null; then
+        printf '%s' "$1" | xsel --clipboard --input && return 0
+    fi
+    return 1
+}
+
+case "$ALGO" in
+    md5)    HASH="$(md5sum    -- "$FILE_PATH" | awk '{print $1}')"; LABEL="MD5"    ;;
+    sha256) HASH="$(sha256sum -- "$FILE_PATH" | awk '{print $1}')"; LABEL="SHA-256" ;;
+    *) echo "Error: unsupported algorithm '$ALGO'" >&2; exit 1 ;;
+esac
+
+FILE_NAME="$(basename "$FILE_PATH")"
+if copy_to_clipboard "$HASH"; then
+    notify "${LABEL}: ${FILE_NAME}" "${HASH}
+(已复制到剪贴板)"
+else
+    notify "${LABEL}: ${FILE_NAME}" "$HASH"
+fi
+```
+
+---
+
+### 示例三：设为桌面壁纸（oem-set-wallpaper）
+
+右键本地图片文件（`image/*`），选择"设为桌面壁纸"，通过 D-Bus 调用 Deepin/UOS 外观服务设置壁纸；若不在 Deepin/UOS 环境，自动降级到 GNOME 或 XFCE。使用 `MimeType=image/*;` 配合 `X-DFM-ExcludeMimeTypes` 精确过滤图片类型。
+
+**配置文件**（`menus/oem-set-wallpaper.desktop`）：
+
+```ini
+[Desktop Entry]
+Type=Application
+Name=Set as Wallpaper
+Name[zh_CN]=设为桌面壁纸
+Icon=preferences-desktop-wallpaper
+Comment=Set the selected image as the desktop background
+Comment[zh_CN]=将选中的图片设置为桌面背景
+X-DFM-MenuTypes=SingleFile;
+X-DFM-SupportSchemes=file;
+MimeType=image/*;
+X-DFM-ExcludeMimeTypes=image/svg+xml;image/svg;image/x-xcf;
+Exec=__SCRIPTS_DIR__/set-wallpaper.sh %f
+```
+
+**辅助脚本**（`scripts/set-wallpaper.sh`，按优先级依次尝试）：
+
+```bash
+#!/bin/bash
+# set-wallpaper.sh — Set an image file as the desktop background.
+# Usage: set-wallpaper.sh <image-path>
+# Priority: Deepin/UOS (D-Bus) → GNOME (gsettings) → XFCE (xfconf-query)
+
+set -euo pipefail
+
+IMAGE_PATH="${1:-}"
+if [ -z "$IMAGE_PATH" ]; then echo "Error: no image path specified" >&2; exit 1; fi
+
+ABS_IMAGE="$(realpath -- "$IMAGE_PATH")"
+if [ ! -f "$ABS_IMAGE" ]; then echo "Error: file not found: $ABS_IMAGE" >&2; exit 1; fi
+
+notify() { notify-send --app-name="OEM菜单" "$1" "$2" 2>/dev/null || true; }
+IMAGE_URI="file://${ABS_IMAGE}"
+
+set_wallpaper_deepin() {
+    # Deepin/UOS: D-Bus call to org.deepin.dde.Appearance1.SetMonitorBackground.
+    # Monitor name is obtained from xrandr (first connected output).
+    command -v dbus-send &>/dev/null || return 1
+    local monitor
+    monitor="$(xrandr 2>/dev/null | grep ' connected' | head -n1 | awk '{print $1}')"
+    [ -n "$monitor" ] || return 1
+    dbus-send --session --print-reply=literal \
+        --dest=org.deepin.dde.Appearance1 \
+        /org/deepin/dde/Appearance1 \
+        org.deepin.dde.Appearance1.SetMonitorBackground \
+        string:"$monitor" string:"$ABS_IMAGE" &>/dev/null
+}
+
+set_wallpaper_gnome() {
+    local schema="org.gnome.desktop.background"
+    gsettings get "$schema" picture-uri &>/dev/null 2>&1 || return 1
+    gsettings set "$schema" picture-uri "$IMAGE_URI"
+    gsettings set "$schema" picture-uri-dark "$IMAGE_URI" 2>/dev/null || true
+}
+
+set_wallpaper_xfconf() {
+    command -v xfconf-query &>/dev/null || return 1
+    local monitors
+    monitors="$(xfconf-query -c xfce4-desktop -l 2>/dev/null | grep '/backdrop/screen0' | grep '/last-image' || true)"
+    [ -n "$monitors" ] || return 1
+    while IFS= read -r prop; do
+        xfconf-query -c xfce4-desktop -p "$prop" -s "$ABS_IMAGE" 2>/dev/null || true
+    done <<< "$monitors"
+}
+
+if   set_wallpaper_deepin;  then notify "壁纸已设置" "$(basename "$ABS_IMAGE")"
+elif set_wallpaper_gnome;   then notify "壁纸已设置" "$(basename "$ABS_IMAGE")"
+elif set_wallpaper_xfconf;  then notify "壁纸已设置" "$(basename "$ABS_IMAGE")"
+else notify "设置壁纸失败" "当前桌面环境不支持自动设置壁纸"; exit 1
+fi
+```
+
+> **Deepin/UOS 壁纸设置说明**：脚本通过 `xrandr | grep ' connected' | head -n1` 获取第一个已连接显示器名称，然后调用：
+>
+> ```bash
+> dbus-send --session --print-reply=literal \
+>     --dest=org.deepin.dde.Appearance1 \
+>     /org/deepin/dde/Appearance1 \
+>     org.deepin.dde.Appearance1.SetMonitorBackground \
+>     string:'<监视器名称>' string:'<图片绝对路径>'
+> ```
+
+---
 
 ## 注意事项
 
@@ -811,7 +1074,7 @@ MimeType=application/x-compress;application/x-gzip;
    ```ini
    # 推荐：明确指定支持的图片格式
    MimeType=image/jpeg;image/png;image/gif;
-   
+
    # 不推荐：过于宽泛，可能匹配不需要的类型
    MimeType=image/*;
    ```
@@ -828,10 +1091,10 @@ MimeType=application/x-compress;application/x-gzip;
    ```ini
    # 正确：单个文件路径嵌入
    Exec=/usr/bin/tool --file=%f
-   
+
    # 正确：多个文件路径独立参数
    Exec=/usr/bin/tool %F
-   
+
    # 错误：多个文件路径嵌入（不会正确替换）
    Exec=/usr/bin/tool --files=%F
    ```
@@ -844,7 +1107,7 @@ MimeType=application/x-compress;application/x-gzip;
        notify-send "错误" "没有提供文件参数"
        exit 1
    fi
-   
+
    # 检查文件存在性
    for file in "$@"; do
        if [ ! -e "$file" ]; then
@@ -852,7 +1115,7 @@ MimeType=application/x-compress;application/x-gzip;
            exit 1
        fi
    done
-   
+
    # 执行操作...
    ```
 

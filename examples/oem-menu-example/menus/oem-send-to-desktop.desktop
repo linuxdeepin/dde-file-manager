@@ -1,0 +1,23 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# OEM Menu Script: Create a symbolic link to the selected file or directory
+# on the user's desktop.
+#
+# Demonstrates:
+#   - SingleFile and SingleDir MenuTypes
+#   - X-DFM-NotShowIn to hide from desktop right-click (avoid circular action)
+#   - X-DFM-SupportSchemes to restrict to local filesystem only
+
+[Desktop Entry]
+Type=Application
+Name=Send to Desktop
+Name[zh_CN]=发送到桌面
+Icon=user-desktop
+Comment=Create a shortcut link on the desktop
+Comment[zh_CN]=在桌面创建快捷方式
+X-DFM-MenuTypes=SingleFile;SingleDir;
+X-DFM-SupportSchemes=file;
+X-DFM-NotShowIn=Desktop;
+Exec=__SCRIPTS_DIR__/send-to-desktop.sh %f

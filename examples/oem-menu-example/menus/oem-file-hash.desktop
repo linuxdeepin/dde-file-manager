@@ -1,0 +1,33 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# OEM Menu Script: Calculate cryptographic hash of a file (MD5 / SHA-256).
+#
+# Demonstrates:
+#   - Sub-menu (Actions) within [Desktop Entry]
+#   - SingleFile MenuType with no MIME restriction (works on any file)
+#   - X-DFM-SupportSchemes to restrict to local filesystem
+
+[Desktop Entry]
+Type=Application
+Name=Calculate Hash
+Name[zh_CN]=计算哈希值
+Icon=document-properties
+Comment=Calculate MD5 or SHA-256 checksum of the file
+Comment[zh_CN]=计算文件的 MD5 或 SHA-256 校验和
+X-DFM-MenuTypes=SingleFile;
+X-DFM-SupportSchemes=file;
+Actions=CalcMD5;CalcSHA256;
+
+[Desktop Action CalcMD5]
+Name=Calculate MD5
+Name[zh_CN]=计算 MD5
+Icon=document-properties
+Exec=__SCRIPTS_DIR__/file-hash.sh md5 %f
+
+[Desktop Action CalcSHA256]
+Name=Calculate SHA-256
+Name[zh_CN]=计算 SHA-256
+Icon=document-properties
+Exec=__SCRIPTS_DIR__/file-hash.sh sha256 %f
