@@ -58,6 +58,27 @@ public:
 
     static int getTextLineHeight(const QModelIndex &index, const QFontMetrics &fontMetrics);
     static int getTextLineHeight(const QString &text, const QFontMetrics &fontMetrics);
+
+    /*!
+     * \brief 锁定屏幕保护程序，防止系统进入休眠或屏保模式。
+     * \return 成功时返回有效的 cookie，失败时返回 0。
+     */
+    static uint32_t lockScreenSaver();
+
+    /*!
+     * \brief 解除屏幕保护程序的锁定。
+     * \param cookie 由 lockScreenSaver 返回的 cookie。
+     * \return 成功时返回 true，失败时返回 false。
+     */
+    static bool unlockScreenSaver(const uint32_t cookie);
+
+    /*!
+     * \brief 检查指定的 DBus 服务是否存在。
+     * \param service DBus 服务名称。
+     * \param isSystemDbus 是否为系统总线。
+     * \return 服务存在时返回 true，否则返回 false。
+     */
+    static bool checkDbusService(const QString &service, bool isSystemDbus);
 };
 
 }
