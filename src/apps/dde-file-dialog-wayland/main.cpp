@@ -8,6 +8,7 @@
 #include <QDir>
 #include <QIcon>
 #include <QTimer>
+#include <QSocketNotifier>
 
 #include <dfm-base/dfm_plugin_defines.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
@@ -16,6 +17,7 @@
 #include <dfm-framework/dpf.h>
 
 #include <signal.h>
+#include <unistd.h>
 
 Q_LOGGING_CATEGORY(logAppDialogWayland, "org.deepin.dde.filemanager.filedialog-wayland")
 
@@ -39,6 +41,9 @@ static constexpr char kDialogCorePluginName[] { "filedialog-core-plugin" };
 static constexpr char kDialogCoreLibName[] { "libfiledialog-core-plugin.so" };
 static constexpr char kDFMCorePluginName[] { "dfmplugin-core" };
 static constexpr char kDFMCoreLibName[] { "libdfm-core-plugin.so" };
+
+// Self-pipe trick: fd[0]=read end (QSocketNotifier), fd[1]=write end (signal handler)
+static int g_sigTermPipe[2] { -1, -1 };
 
 static void initLogFilter()
 {
@@ -172,12 +177,13 @@ static bool pluginsLoad()
     return true;
 }
 
-static void handleSIGTERM(int sig)
+static void handleSIGTERM(int /*sig*/)
 {
-    // 这里处理时不能有任何的内存分配，可能会出现卡死，或者崩溃
-    if (qApp) {
-        qApp->quit();
-    }
+    // Only async-signal-safe operations are allowed here.
+    // write() is async-signal-safe; qApp->quit() is NOT, so we use self-pipe trick
+    // to delegate the actual quit() call to the main event loop via QSocketNotifier.
+    const char byte = 1;
+    (void)::write(g_sigTermPipe[1], &byte, sizeof(byte));
 }
 
 int main(int argc, char *argv[])
@@ -206,6 +212,18 @@ int main(int argc, char *argv[])
 
     qCInfo(logAppDialogWayland) << "main: Wayland file dialog application started, version:" << a.applicationVersion();
 
+    // Set up self-pipe so the signal handler can safely wake the main event loop
+    if (::pipe(g_sigTermPipe) != 0) {
+        qCWarning(logAppDialogWayland) << "main: Failed to create SIGTERM self-pipe";
+    } else {
+        auto *sigTermNotifier = new QSocketNotifier(g_sigTermPipe[0], QSocketNotifier::Read, &a);
+        QObject::connect(sigTermNotifier, &QSocketNotifier::activated, &a, [&a]() {
+            char tmp;
+            (void)::read(g_sigTermPipe[0], &tmp, sizeof(tmp));
+            qCInfo(logAppDialogWayland) << "main: SIGTERM received via self-pipe, quitting main event loop";
+            a.quit();
+        });
+    }
     signal(SIGTERM, handleSIGTERM);
 
     DPF_NAMESPACE::backtrace::installStackTraceHandler();
@@ -217,6 +235,13 @@ int main(int argc, char *argv[])
 
     qCInfo(logAppDialogWayland) << "main: Application initialization completed successfully";
     int ret { a.exec() };
+
+    // Close self-pipe fds to release kernel resources
+    if (g_sigTermPipe[0] != -1) {
+        ::close(g_sigTermPipe[0]);
+        ::close(g_sigTermPipe[1]);
+        g_sigTermPipe[0] = g_sigTermPipe[1] = -1;
+    }
 
     qCInfo(logAppDialogWayland) << "main: Shutting down plugins";
     DPF_NAMESPACE::LifeCycle::shutdownPlugins();
