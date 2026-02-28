@@ -1,3 +1,11 @@
+dde-file-manager (6.5.123) unstable; urgency=medium
+
+  * docs: add comprehensive OEM menu example documentation
+  * fix: implement safe SIGTERM handling using self-pipe trick
+  * fix: use linyaps's deepin-reader if deepin-reader is not available
+
+ -- Liu Zhangjian <liuzhangjian@uniontech.com>  Sat, 28 Feb 2026 10:20:54 +0800
+
 dde-file-manager (6.5.122) unstable; urgency=medium
 
   * feat: add file scanner utility with demo program
