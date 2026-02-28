@@ -41,7 +41,7 @@
 inline constexpr int kTabMaxWidth { 240 };
 inline constexpr int kTabMinWidth { 90 };
 inline constexpr int kItemButtonSize { 20 };
-inline constexpr int kItemButtonIconSize { 16 };
+inline constexpr int kItemButtonIconSize { 14 };
 inline constexpr int kItemButtonMargin { 4 };
 
 using namespace dfmplugin_titlebar;
@@ -715,45 +715,46 @@ void TabBarPrivate::paintTabButton(DIconButton *btn)
 
 void TabBarPrivate::paintTabItemButton(QPainter *painter, int index, const QStyleOptionTab &option)
 {
+    const bool isPinned = q->isPinned(index);
+    const bool isHovered = option.state & QStyle::State_MouseOver;
+
     QIcon btnIcon;
-    if (q->isPinned(index)) {
+    if (isPinned) {
         btnIcon = QIcon::fromTheme("dfm_pin");
-    } else if (option.state & QStyle::State_MouseOver) {
+    } else if (isHovered) {
         btnIcon = QIcon::fromTheme("dfm_close");
     }
 
-    if (!btnIcon.isNull()) {
-        painter->save();
-        painter->setRenderHint(QPainter::Antialiasing);
-        const QRect rect = option.rect;
-        const QRect btnRect(rect.right() - kItemButtonMargin - kItemButtonSize,
-                            rect.y() + (rect.height() - kItemButtonSize) / 2,
-                            kItemButtonSize, kItemButtonSize);
+    if (btnIcon.isNull())
+        return;
 
-        // 检测鼠标是否在按钮上
-        const bool btnHovered = isItemButtonHovered(index);
-        // 在 hover 时绘制圆形背景
-        if (btnHovered) {
-            bool isDarkTheme = DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType;
-            QColor bgColor = isDarkTheme ? QColor(255, 255, 255, 26) : QColor(0, 0, 0, 26);
-            painter->setPen(Qt::NoPen);
-            painter->setBrush(bgColor);
-            painter->drawEllipse(btnRect);
-        }
+    painter->save();
+    painter->setRenderHint(QPainter::Antialiasing);
 
-        // 绘制图标
-        DPalette pal = DPaletteHelper::instance()->palette(q);
-        QColor iconColor = pal.color(QPalette::Active, QPalette::Text);
-        QPixmap iconPixmap = createColoredIcon(btnIcon, iconColor, QSize(kItemButtonIconSize, kItemButtonIconSize));
+    const QRect rect = option.rect;
+    const QRect btnRect(rect.right() - kItemButtonMargin - kItemButtonSize,
+                        rect.y() + (rect.height() - kItemButtonSize) / 2,
+                        kItemButtonSize, kItemButtonSize);
 
-        // 将图标居中绘制在背景中
-        const int iconOffset = (kItemButtonSize - kItemButtonIconSize) / 2;
-        QRect iconRect(btnRect.x() + iconOffset, btnRect.y() + iconOffset,
-                       kItemButtonIconSize, kItemButtonIconSize);
-        painter->setOpacity(0.7);
-        painter->drawPixmap(iconRect, iconPixmap);
-        painter->restore();
+    // Draw hover background circle
+    if (isItemButtonHovered(index)) {
+        const bool isDark = DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType;
+        painter->setPen(Qt::NoPen);
+        painter->setBrush(isDark ? QColor(255, 255, 255, 26) : QColor(0, 0, 0, 26));
+        painter->drawEllipse(btnRect);
     }
+
+    const bool isSelected = option.state & QStyle::State_Selected;
+    const DPalette pal = DPaletteHelper::instance()->palette(q);
+    const QPalette::ColorGroup colorGroup = (isPinned && !isSelected) ? QPalette::Inactive : QPalette::Active;
+    const QColor iconColor = pal.color(colorGroup, QPalette::Text);
+
+    const QPixmap iconPixmap = createColoredIcon(btnIcon, iconColor, QSize(kItemButtonIconSize, kItemButtonIconSize));
+    const int iconOffset = (kItemButtonSize - kItemButtonIconSize) / 2;
+    painter->drawPixmap(QRect(btnRect.x() + iconOffset, btnRect.y() + iconOffset,
+                              kItemButtonIconSize, kItemButtonIconSize),
+                        iconPixmap);
+    painter->restore();
 }
 
 Tab TabBarPrivate::tabInfo(int index) const
