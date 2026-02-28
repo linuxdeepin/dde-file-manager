@@ -23,10 +23,12 @@
 #    include <QTextCodec>
 #endif
 #include <QProcess>
+#include <QSocketNotifier>
 #include <QTimer>
 
 #include <signal.h>
 #include <malloc.h>
+#include <unistd.h>
 
 Q_LOGGING_CATEGORY(logAppFileManager, "org.deepin.dde.filemanager.filemanager")
 
@@ -53,7 +55,10 @@ static constexpr char kLibCore[] { "libdfm-core-plugin.so" };
 
 static constexpr int kMemoryThreshold { 80 * 1024 };   // 80MB
 static constexpr int kTimerInterval { 60 * 1000 };   // 1 min
-static bool sigtermFlag { false };
+// Use volatile sig_atomic_t as required by POSIX for variables modified in signal handlers
+static volatile sig_atomic_t sigtermFlag { 0 };
+// Self-pipe trick: fd[0]=read end (QSocketNotifier), fd[1]=write end (signal handler)
+static int g_sigTermPipe[2] { -1, -1 };
 
 /* Within an SSH session, I can use gvfs-mount provided that
  * dbus-daemon is launched first and the environment variable DBUS_SESSION_BUS_ADDRESS is set.
@@ -233,19 +238,21 @@ static bool pluginsLoad()
     return true;
 }
 
-static void handleSIGTERM(int sig)
+static void handleSIGTERM(int /*sig*/)
 {
-    // 这里处理时不能有任何的内存分配，可能会出现卡死，或者崩溃
-    if (qApp) {
-        // Don't use headless if SIGTERM, cause system shutdown blocked
-        ::sigtermFlag = true;
-        qApp->quit();
-    }
+    // Only async-signal-safe operations are allowed here.
+    // write() is async-signal-safe; qApp->quit() is NOT, so we use self-pipe trick
+    // to delegate the actual quit() call to the main event loop via QSocketNotifier.
+    ::sigtermFlag = 1;
+    const char byte = 1;
+    // Ignore return value: if write fails we cannot do anything safe in a signal handler
+    (void)::write(g_sigTermPipe[1], &byte, sizeof(byte));
 }
 
-static void handleSIGPIPE(int sig)
+static void handleSIGPIPE(int /*sig*/)
 {
-    qCInfo(logAppFileManager) << "handleSIGPIPE: Ignoring SIGPIPE signal:" << sig;
+    // Intentionally empty: qCInfo is NOT async-signal-safe.
+    // SIGPIPE is silently ignored; broken pipe errors are handled at the call site.
 }
 
 static void initEnv()
@@ -400,6 +407,20 @@ int main(int argc, char *argv[])
             qCCritical(logAppFileManager) << "main: Failed to load plugins, terminating application";
             Q_ASSERT_X(false, "pluginsLoad", "Failed to load plugins");
         }
+        // Set up self-pipe so the signal handler can safely wake the main event loop
+        if (::pipe(g_sigTermPipe) != 0) {
+            qCWarning(logAppFileManager) << "main: Failed to create SIGTERM self-pipe, falling back to direct quit()";
+        } else {
+            // QSocketNotifier runs in the main event loop — safe to call qApp->quit() here
+            auto *sigTermNotifier = new QSocketNotifier(g_sigTermPipe[0], QSocketNotifier::Read, &a);
+            QObject::connect(sigTermNotifier, &QSocketNotifier::activated, &a, [&a]() {
+                char tmp;
+                (void)::read(g_sigTermPipe[0], &tmp, sizeof(tmp));
+                qCInfo(logAppFileManager) << "main: SIGTERM received via self-pipe, quitting main event loop";
+                // Don't use headless if SIGTERM, cause system shutdown blocked
+                a.quit();
+            });
+        }
         signal(SIGTERM, handleSIGTERM);
         signal(SIGPIPE, handleSIGPIPE);
     } else {
@@ -421,6 +442,13 @@ int main(int argc, char *argv[])
     mo->unRegisterDBus();
     a.closeServer();
     DPF_NAMESPACE::LifeCycle::shutdownPlugins();
+
+    // Close self-pipe fds to release kernel resources
+    if (g_sigTermPipe[0] != -1) {
+        ::close(g_sigTermPipe[0]);
+        ::close(g_sigTermPipe[1]);
+        g_sigTermPipe[0] = g_sigTermPipe[1] = -1;
+    }
 
     bool enableHeadless { DConfigManager::instance()->value(kDefaultCfgPath, "dfm.headless", false).toBool() };
     if (!::sigtermFlag && enableHeadless && !SysInfoUtils::isOpenAsAdmin()) {
