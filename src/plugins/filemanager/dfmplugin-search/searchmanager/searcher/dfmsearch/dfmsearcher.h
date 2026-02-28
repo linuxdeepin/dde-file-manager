@@ -28,6 +28,7 @@ public:
 
     static bool supportUrl(const QUrl &url);
     static QString realSearchPath(const QUrl &url);
+    static QString matchPath(const QString &path);
 
     bool search() override;
     void stop() override;
@@ -60,7 +61,7 @@ private:
     DFMSEARCH::SearchEngine *engine = nullptr;
     mutable QMutex mutex;
     DFMSearchResultMap allResults;
-    
+
     // 查询类型选择器，负责根据关键词和搜索类型选择合适的策略
     QueryTypeSelector querySelector;
 

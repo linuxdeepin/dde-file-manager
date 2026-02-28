@@ -79,7 +79,9 @@ void SimplifiedSearchWorker::createSearchers()
         QStringList relevantIndexedPaths;
 
         for (const QString &indexedPath : indexedPaths) {
-            if (isParentPath(searchPath, indexedPath)) {
+            const QString searchPathForMatch = DFMSearcher::matchPath(searchPath);
+            const QString indexedPathForMatch = DFMSearcher::matchPath(indexedPath);
+            if (isParentPath(searchPathForMatch, indexedPathForMatch)) {
                 isParentOfAnyIndexedPath = true;
                 relevantIndexedPaths.append(indexedPath);
             }

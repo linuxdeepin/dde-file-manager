@@ -51,6 +51,11 @@ QString DFMSearcher::realSearchPath(const QUrl &url)
     return FileUtils::bindPathTransform(path, false);
 }
 
+QString DFMSearcher::matchPath(const QString &path)
+{
+    return FileUtils::bindPathTransform(path, true);
+}
+
 SearchQuery DFMSearcher::createSearchQuery() const
 {
     return querySelector.createQuery(keyword, getSearchType());
@@ -251,7 +256,22 @@ void DFMSearcher::setExcludedPathsForRealtime(SearchOptions &options) const
         excludedPaths.append(transPaths);
     }
 
-    options.setSearchExcludedPaths(excludedPaths);
+    const QString searchPath = options.searchPath();
+    const QString searchPathWithSlash = searchPath.endsWith('/') ? searchPath : searchPath + '/';
+
+    QStringList validExcludedPaths;
+    std::copy_if(excludedPaths.cbegin(), excludedPaths.cend(),
+                 std::back_inserter(validExcludedPaths),
+                 [&searchPathWithSlash](const QString &path) {
+                     return path.startsWith(searchPathWithSlash);
+                 });
+
+    if (!validExcludedPaths.isEmpty()) {
+        fmDebug() << "Setting excluded paths for realtime search:" << validExcludedPaths;
+        options.setSearchExcludedPaths(validExcludedPaths);
+    } else {
+        fmDebug() << "No valid excluded paths found for search path:" << searchPath;
+    }
 }
 
 void DFMSearcher::handleRemainingResults(const QList<SearchResult> &results)
