@@ -835,7 +835,10 @@ std::optional<QRectF> CanvasItemDelegate::paintIcon(QPainter *painter, const QIc
         const auto &originPixmap { IconUtils::renderIconBackground(backgroundRect.size(), iconStyle) };
         const auto &shadowPixmap { IconUtils::addShadowToPixmap(originPixmap, iconStyle.shadowOffset, iconStyle.shadowRange, 0.2) };
         painter->drawPixmap(backgroundRect, shadowPixmap, QRectF());
-        imageRect.adjust(iconStyle.shadowRange, iconStyle.shadowRange, -iconStyle.shadowRange, -iconStyle.shadowRange);
+        // Avoid collapsing very narrow/tall thumbnails to 0px after inset.
+        const qreal insetX = qMin<qreal>(iconStyle.shadowRange, qMax<qreal>(0.0, (imageRect.width() - 1.0) / 2.0));
+        const qreal insetY = qMin<qreal>(iconStyle.shadowRange, qMax<qreal>(0.0, (imageRect.height() - 1.0) / 2.0));
+        imageRect.adjust(insetX, insetY, -insetX, -insetY);
 
         QPainterPath clipPath;
         auto radius { iconStyle.radius - iconStyle.stroke };

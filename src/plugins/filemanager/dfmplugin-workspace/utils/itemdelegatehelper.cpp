@@ -50,7 +50,7 @@ bool ItemDelegateHelper::paintIcon(QPainter *painter, const QIcon &icon, const P
     Qt::Alignment alignment = visualAlignment(painter->layoutDirection(), opts.alignment);
     const qreal pixelRatio = painter->device()->devicePixelRatioF();
     const QPixmap &px = getIconPixmap(icon, opts.rect.size().toSize(), pixelRatio, opts.mode, opts.state);
-    
+
     // 缩略图缩放到指定的size，绘制不出来就直接返回，绘制fileicon
     if (px.isNull() && opts.isThumb)
         return false;
@@ -58,14 +58,14 @@ bool ItemDelegateHelper::paintIcon(QPainter *painter, const QIcon &icon, const P
     // 保持图标原始比例
     qreal w = px.width() / px.devicePixelRatio();
     qreal h = px.height() / px.devicePixelRatio();
-    
+
     // 如果图标大于目标区域，等比例缩放
     if (w > opts.rect.width() || h > opts.rect.height()) {
         qreal scale = qMin(opts.rect.width() / w, opts.rect.height() / h);
         w *= scale;
         h *= scale;
     }
-    
+
     qreal x = opts.rect.x();
     qreal y = opts.rect.y();
 
@@ -84,17 +84,17 @@ bool ItemDelegateHelper::paintIcon(QPainter *painter, const QIcon &icon, const P
         painter->setRenderHints(painter->renderHints() | QPainter::Antialiasing | QPainter::SmoothPixmapTransform, true);
 
         auto iconStyle { IconUtils::getIconStyle(opts.rect.size().toSize().width()) };
-        
+
         // 计算可用的图像绘制区域（减去阴影和边框）
         QRectF availableRect = opts.rect;
         availableRect.adjust(iconStyle.shadowRange, iconStyle.shadowRange, -iconStyle.shadowRange, -iconStyle.shadowRange);
         availableRect.adjust(iconStyle.stroke, iconStyle.stroke, -iconStyle.stroke, -iconStyle.stroke);
-        
+
         // 计算缩略图的最佳显示尺寸 - 如果小于可用区域则放大铺满
         qreal scaleX = availableRect.width() / (w > 0 ? w : 1);
         qreal scaleY = availableRect.height() / (h > 0 ? h : 1);
         qreal scale = qMin(scaleX, scaleY);
-        
+
         // 如果原图小于可用区域，则等比放大；否则保持原逻辑
         if (scale > 1.0) {
             w *= scale;
@@ -103,7 +103,7 @@ bool ItemDelegateHelper::paintIcon(QPainter *painter, const QIcon &icon, const P
             x = opts.rect.x() + (opts.rect.width() - w) / 2.0;
             y = opts.rect.y() + (opts.rect.height() - h) / 2.0;
         }
-        
+
         QRect backgroundRect { qRound(x), qRound(y), qRound(w), qRound(h) };
         QRect imageRect { backgroundRect };
 
@@ -113,7 +113,10 @@ bool ItemDelegateHelper::paintIcon(QPainter *painter, const QIcon &icon, const P
         const auto &originPixmap { IconUtils::renderIconBackground(backgroundRect.size(), iconStyle) };
         const auto &shadowPixmap { IconUtils::addShadowToPixmap(originPixmap, iconStyle.shadowOffset, iconStyle.shadowRange, 0.2) };
         painter->drawPixmap(backgroundRect, shadowPixmap);
-        imageRect.adjust(iconStyle.shadowRange, iconStyle.shadowRange, -iconStyle.shadowRange, -iconStyle.shadowRange);
+        // Avoid collapsing very narrow/tall thumbnails (e.g. 99x1026) to 0px after inset.
+        const int insetX = qMin(iconStyle.shadowRange, qMax(0, (imageRect.width() - 1) / 2));
+        const int insetY = qMin(iconStyle.shadowRange, qMax(0, (imageRect.height() - 1) / 2));
+        imageRect.adjust(insetX, insetY, -insetX, -insetY);
 
         QPainterPath clipPath;
         auto radius { iconStyle.radius - iconStyle.stroke };
