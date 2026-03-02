@@ -93,6 +93,7 @@ const QStringList &ThumbnailHelper::defaultThumbnailDirs()
     const static QStringList dirs {
         StandardPaths::location(StandardPaths::StandardLocation::kThumbnailSmallPath),
         StandardPaths::location(StandardPaths::StandardLocation::kThumbnailNormalPath),
+        StandardPaths::location(StandardPaths::StandardLocation::kThumbnailXLargePath),
         StandardPaths::location(StandardPaths::StandardLocation::kThumbnailLargePath),
         StandardPaths::location(StandardPaths::kThumbnailFailPath)
     };
@@ -312,6 +313,8 @@ QString ThumbnailHelper::sizeToFilePath(ThumbnailSize size)
         return StandardPaths::location(StandardPaths::StandardLocation::kThumbnailNormalPath);
     case ThumbnailSize::kLarge:
         return StandardPaths::location(StandardPaths::StandardLocation::kThumbnailLargePath);
+    case ThumbnailSize::kXLarge:
+        return StandardPaths::location(StandardPaths::StandardLocation::kThumbnailXLargePath);
     }
 
     return "";

@@ -38,6 +38,24 @@ static constexpr char kFormat[] { ".png" };
 using namespace dfmbase;
 DFMGLOBAL_USE_NAMESPACE
 
+namespace {
+DTK_GUI_NAMESPACE::DThumbnailProvider::Size providerSizeFor(ThumbnailSize size)
+{
+    switch (size) {
+    case ThumbnailSize::kSmall:
+        return DTK_GUI_NAMESPACE::DThumbnailProvider::Small;
+    case ThumbnailSize::kNormal:
+        return DTK_GUI_NAMESPACE::DThumbnailProvider::Normal;
+    case ThumbnailSize::kLarge:
+        return DTK_GUI_NAMESPACE::DThumbnailProvider::Large;
+    case ThumbnailSize::kXLarge:
+        return DTK_GUI_NAMESPACE::DThumbnailProvider::Large;
+    default:
+        return DTK_GUI_NAMESPACE::DThumbnailProvider::Large;
+    }
+}
+}   // namespace
+
 QImage decodeHeifThumbnail(const QString &filePath, int maxSize)
 {
     heif_context *ctx = heif_context_alloc();
@@ -119,7 +137,12 @@ QImage ThumbnailCreators::defaultThumbnailCreator(const QString &filePath, Thumb
     qCDebug(logDFMBase) << "thumbnail: using default creator for:" << filePath << "size:" << size;
 
     QFileInfo qInf(filePath);
-    auto sz = static_cast<DTK_GUI_NAMESPACE::DThumbnailProvider::Size>(size);
+    if (size > ThumbnailSize::kLarge) {
+        qCInfo(logDFMBase) << "thumbnail: requested size" << size
+                           << "is not supported by DThumbnailProvider, downgrade to Large";
+    }
+
+    auto sz = providerSizeFor(size);
     QString thumbPath = DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->createThumbnail(qInf, sz);
     if (thumbPath.isEmpty()) {
         qCWarning(logDFMBase) << "thumbnail: default creator failed for:" << filePath;
@@ -403,7 +426,7 @@ QImage ThumbnailCreators::djvuThumbnailCreator(const QString &filePath, Thumbnai
         QString appId = "org.deepin.reader";
 
         QProcess detect;
-        detect.start(llCli, {"list"});
+        detect.start(llCli, { "list" });
         detect.waitForFinished();
 
         const QString output = detect.readAllStandardOutput();
@@ -420,14 +443,13 @@ QImage ThumbnailCreators::djvuThumbnailCreator(const QString &filePath, Thumbnai
                   << "--"
                   << "deepin-reader";
     }
-    
+
     const QString fileUrl = QUrl::fromLocalFile(filePath).toString(QUrl::FullyEncoded);
     const QString thumbnailName = ThumbnailHelper::dataToMd5Hex(fileUrl.toLocal8Bit()) + kFormat;
     const QString saveImage = DFMIO::DFMUtils::buildFilePath(
-        ThumbnailHelper::sizeToFilePath(size).toStdString().c_str(),
-        thumbnailName.toStdString().c_str(),
-        nullptr
-    );
+            ThumbnailHelper::sizeToFilePath(size).toStdString().c_str(),
+            thumbnailName.toStdString().c_str(),
+            nullptr);
 
     arguments << "--thumbnail"
               << "-f" << filePath
@@ -465,7 +487,6 @@ QImage ThumbnailCreators::djvuThumbnailCreator(const QString &filePath, Thumbnai
 
     return img;
 }
-
 
 QImage ThumbnailCreators::pdfThumbnailCreator(const QString &filePath, ThumbnailSize size)
 {

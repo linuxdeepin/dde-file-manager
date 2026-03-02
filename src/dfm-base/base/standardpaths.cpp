@@ -92,6 +92,8 @@ QString StandardPaths::location(StandardPaths::StandardLocation type)
         return QDir::homePath() + "/.cache/thumbnails";
     case kThumbnailFailPath:
         return location(kThumbnailPath) + "/fail";
+    case kThumbnailXLargePath:
+        return location(kThumbnailPath) + "/x-large";
     case kThumbnailLargePath:
         return location(kThumbnailPath) + "/large";
     case kThumbnailNormalPath:

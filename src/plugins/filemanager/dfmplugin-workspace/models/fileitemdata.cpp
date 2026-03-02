@@ -83,7 +83,7 @@ QIcon FileItemData::fileIcon() const
 
     const auto &value = info->extendAttributes(ExtInfoType::kFileThumbnail);
     if (!value.isValid()) {
-        ThumbnailFactory::instance()->joinThumbnailJob(url, Global::kLarge);
+        ThumbnailFactory::instance()->joinThumbnailJob(url, Global::kXLarge);
         // make sure the thumbnail is generated only once
         info->setExtendedAttributes(ExtInfoType::kFileThumbnail, QIcon());
     } else {

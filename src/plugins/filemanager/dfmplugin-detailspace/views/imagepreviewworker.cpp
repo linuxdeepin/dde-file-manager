@@ -164,7 +164,7 @@ QPixmap ImagePreviewWorker::loadThumbnail(const QUrl &url, const QSize &targetSi
         return QPixmap();
     }
 
-    QImage img = helper.thumbnailImage(url, Global::kLarge);
+    QImage img = helper.thumbnailImage(url, Global::kXLarge);
     if (img.isNull()) {
         return QPixmap();
     }
