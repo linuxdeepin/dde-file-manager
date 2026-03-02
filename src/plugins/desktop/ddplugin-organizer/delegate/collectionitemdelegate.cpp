@@ -862,7 +862,10 @@ std::optional<QRect> CollectionItemDelegate::paintIcon(QPainter *painter, const 
         const auto &originPixmap { IconUtils::renderIconBackground(backgroundRect.size(), iconStyle) };
         const auto &shadowPixmap { IconUtils::addShadowToPixmap(originPixmap, iconStyle.shadowOffset, iconStyle.shadowRange, 0.2) };
         painter->drawPixmap(backgroundRect, shadowPixmap);
-        imageRect.adjust(iconStyle.shadowRange, iconStyle.shadowRange, -iconStyle.shadowRange, -iconStyle.shadowRange);
+        // Avoid collapsing very narrow/tall thumbnails to 0px after inset.
+        const int insetX = qMin(iconStyle.shadowRange, qMax(0, (imageRect.width() - 1) / 2));
+        const int insetY = qMin(iconStyle.shadowRange, qMax(0, (imageRect.height() - 1) / 2));
+        imageRect.adjust(insetX, insetY, -insetX, -insetY);
 
         QPainterPath clipPath;
         auto radius { iconStyle.radius - iconStyle.stroke };
