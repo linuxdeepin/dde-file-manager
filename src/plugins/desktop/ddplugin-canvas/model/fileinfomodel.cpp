@@ -40,7 +40,7 @@ QIcon FileInfoModelPrivate::fileIcon(FileInfoPointer info)
     using namespace dfmbase::Global;
     const auto &value = info->extendAttributes(ExtInfoType::kFileThumbnail);
     if (!value.isValid()) {
-        ThumbnailFactory::instance()->joinThumbnailJob(info->urlOf(UrlInfoType::kUrl), Global::kLarge);
+        ThumbnailFactory::instance()->joinThumbnailJob(info->urlOf(UrlInfoType::kUrl), Global::kXLarge);
         // make sure the thumbnail is generated only once
         info->setExtendedAttributes(ExtInfoType::kFileThumbnail, QIcon());
     } else {

@@ -117,7 +117,6 @@ bool ItemDelegateHelper::paintIcon(QPainter *painter, const QIcon &icon, const P
         const int insetX = qMin(iconStyle.shadowRange, qMax(0, (imageRect.width() - 1) / 2));
         const int insetY = qMin(iconStyle.shadowRange, qMax(0, (imageRect.height() - 1) / 2));
         imageRect.adjust(insetX, insetY, -insetX, -insetY);
-
         QPainterPath clipPath;
         auto radius { iconStyle.radius - iconStyle.stroke };
         clipPath.addRoundedRect(imageRect, radius, radius);

@@ -1234,7 +1234,7 @@ void AsyncFileInfoPrivate::fileMimeTypeAsync(QMimeDatabase::MatchMode mode)
 
 void AsyncFileInfoPrivate::updateThumbnail(const QUrl &url)
 {
-    ThumbnailFactory::instance()->joinThumbnailJob(url, Global::kLarge);
+    ThumbnailFactory::instance()->joinThumbnailJob(url, Global::kXLarge);
 }
 
 QIcon AsyncFileInfoPrivate::updateIcon()
