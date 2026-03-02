@@ -59,38 +59,13 @@ QPixmap IconUtils::addShadowToPixmap(const QPixmap &originalPixmap, int shadowOf
 IconUtils::IconStyle IconUtils::getIconStyle(int size)
 {
     IconStyle style;
-
-    if (size <= 48) {
-        style.stroke = 1;
-        style.radius = 2;
-        style.shadowOffset = 1;
-        style.shadowRange = 2;
-    } else if (size <= 64) {
-        style.stroke = 2;
-        style.radius = 4;
-        style.shadowOffset = 1;
-        style.shadowRange = 3;
-    } else if (size <= 96) {
-        style.stroke = 3;
-        style.radius = 6;
-        style.shadowOffset = 2;
-        style.shadowRange = 4;
-    } else if (size <= 128) {
-        style.stroke = 4;
-        style.radius = 8;
-        style.shadowOffset = 3;
-        style.shadowRange = 5;
-    } else if (size <= 160) {
-        style.stroke = 5;
-        style.radius = 10;
-        style.shadowOffset = 3;
-        style.shadowRange = 7;
-    } else {
-        style.stroke = 6;
-        style.radius = 12;
-        style.shadowOffset = 4;
-        style.shadowRange = 8;
-    }
+    const int normalizedSize = qMax(0, size);
+    // Base ratio from 96px thumbnails:
+    // stroke=3 (1/32), radius=6 (1/16), shadowOffset=2 (1/48), shadowRange=4 (1/24).
+    style.stroke = qMax(1, normalizedSize / 32);
+    style.radius = qMax(1, normalizedSize / 16);
+    style.shadowOffset = qMax(1, normalizedSize / 48);
+    style.shadowRange = qMax(1, normalizedSize / 24);
 
     return style;
 }
