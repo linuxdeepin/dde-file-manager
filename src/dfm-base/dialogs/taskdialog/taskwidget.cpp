@@ -853,7 +853,7 @@ bool TaskWidget::showFileInfo(const FileInfoPointer info, const bool isOrg)
 
     needRetry = !info->timeOf(TimeInfoType::kLastModifiedSecond).toULongLong();
     auto thumImage = ThumbnailHelper::thumbnailImage(info->urlOf(UrlInfoType::kUrl),
-                                                     DFMGLOBAL_NAMESPACE::ThumbnailSize::kLarge);
+                                                     DFMGLOBAL_NAMESPACE::ThumbnailSize::kXLarge);
 
     if (!needRetry)
         info->customData(Global::ItemRoles::kItemFileRefreshIcon);

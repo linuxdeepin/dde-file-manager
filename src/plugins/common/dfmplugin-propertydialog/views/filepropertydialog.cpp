@@ -178,7 +178,7 @@ void FilePropertyDialog::setFileIcon(QLabel *fileIcon, FileInfoPointer fileInfo)
         if (helper.checkThumbEnable(localUrl)) {
             QIcon icon = fileInfo->extendAttributes(ExtInfoType::kFileThumbnail).value<QIcon>();
             if (icon.isNull()) {
-                const auto &img = helper.thumbnailImage(localUrl, Global::kLarge);
+                const auto &img = helper.thumbnailImage(localUrl, Global::kXLarge);
                 icon = QPixmap::fromImage(img);
             }
             if (!icon.isNull()) {

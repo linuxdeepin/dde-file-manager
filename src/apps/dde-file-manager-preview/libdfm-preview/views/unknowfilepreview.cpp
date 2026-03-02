@@ -125,7 +125,7 @@ void UnknowFilePreview::setFileInfo(const FileInfoPointer &info)
     if (helper.checkThumbEnable(url)) {
         icon = info->extendAttributes(ExtInfoType::kFileThumbnail).value<QIcon>();
         if (icon.isNull()) {
-            const auto &img = helper.thumbnailImage(url, Global::kLarge);
+            const auto &img = helper.thumbnailImage(url, Global::kXLarge);
             icon = QPixmap::fromImage(img);
             if (!icon.isNull())
                 info->setExtendedAttributes(ExtInfoType::kFileThumbnail, icon);

@@ -28,6 +28,7 @@ public:
         kExtensionsAppEntryPath,
         kThumbnailPath,   // 缩略图路径
         kThumbnailFailPath,   // 缩略图s失败路径
+        kThumbnailXLargePath,   // 缩略图超大图片路径
         kThumbnailLargePath,   // 缩略图大图片路径
         kThumbnailNormalPath,   // 缩略图普通大小路径
         kThumbnailSmallPath,   // 缩略图小图片路径

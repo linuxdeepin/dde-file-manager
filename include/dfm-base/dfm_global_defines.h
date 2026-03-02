@@ -60,6 +60,7 @@ enum ThumbnailSize {
     kSmall = 64,
     kNormal = 128,
     kLarge = 256,
+    kXLarge = 512,
 };
 
 enum ItemRoles {

@@ -560,7 +560,7 @@ void SyncFileInfo::updateAttributes(const QList<FileInfo::FileInfoAttributeID> &
     // 更新缩略图
     if (typeAll.contains(FileInfoAttributeID::kThumbnailIcon)) {
         typeAll.removeOne(FileInfoAttributeID::kThumbnailIcon);
-        ThumbnailFactory::instance()->joinThumbnailJob(url, Global::kLarge);
+        ThumbnailFactory::instance()->joinThumbnailJob(url, Global::kXLarge);
     }
 
     // 更新fileicon
