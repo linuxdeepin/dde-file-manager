@@ -123,6 +123,8 @@ QWidget *ListItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
     D_DC(ListItemDelegate);
     Q_UNUSED(option);
 
+    ++d->editingSessionId;
+    const quint64 sessionId = d->editingSessionId;
     d->editingIndex = index;
     d->editor = new ListItemEditor(parent);
     auto size = sizeHint(option, index);
@@ -130,9 +132,12 @@ QWidget *ListItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
 
     connect(static_cast<ListItemEditor *>(d->editor), &ListItemEditor::inputFocusOut, this, &ListItemDelegate::editorFinished);
 
-    connect(d->editor, &QLineEdit::destroyed, this, [=] {
-        d->editingIndex = QModelIndex();
-        d->editor = nullptr;
+    connect(d->editor, &QLineEdit::destroyed, this, [d, sessionId] {
+        // Only clear state if this is still the current editing session
+        if (d->editingSessionId == sessionId) {
+            d->editingIndex = QModelIndex();
+            d->editor = nullptr;
+        }
     });
 
     auto windowId = WorkspaceHelper::instance()->windowId(parent);

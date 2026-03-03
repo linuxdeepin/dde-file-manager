@@ -36,6 +36,7 @@ public:
     QSize itemSizeHint;
     mutable QModelIndex editingIndex;
     mutable QLineEdit *editor = nullptr;
+    mutable quint64 editingSessionId { 0 };
 
     AbstractItemPaintProxy *paintProxy { nullptr };
     QWidget *commitDataCurentWidget { nullptr };
