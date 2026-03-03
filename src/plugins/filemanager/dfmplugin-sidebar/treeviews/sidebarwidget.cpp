@@ -297,9 +297,14 @@ void SideBarWidget::onItemActived(const QModelIndex &index)
         fmDebug() << "Reverted to previous item after separate process launch";
         return;
     }
+
     SideBarManager::instance()->runCd(item, SideBarHelper::windowId(this));
-    sidebarView->update(sidebarView->previousIndex());
-    sidebarView->update(sidebarView->currentIndex());
+    auto preIndex = sidebarView->previousIndex();
+    auto curIndex = sidebarView->currentIndex();
+    if (preIndex.isValid())
+        sidebarView->update(preIndex);
+    if (curIndex.isValid())
+        sidebarView->update(curIndex);
 
     fmInfo() << "Item activation completed, URL:" << url;
 }
