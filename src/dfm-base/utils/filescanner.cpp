@@ -82,8 +82,22 @@ void FileScannerPrivate::startWorker(const QList<QUrl> &urls)
     worker->setOptions(options);
 
     // 连接信号
-    connect(worker, &ScannerWorker::resultReady, this, &FileScannerPrivate::onWorkerResultReady);
-    connect(worker, &ScannerWorker::finished, this, &FileScannerPrivate::onWorkerFinished);
+    // 关键：判断接收者(this)归属线程是否具备事件循环能力
+    QThread *receiverThread = this->thread();
+    bool hasEventLoop = (receiverThread == qApp->thread());
+
+    // 根据是否有事件循环选择连接类型
+    Qt::ConnectionType connectionType = hasEventLoop
+            ? Qt::AutoConnection   // 有事件循环：使用默认行为（队列连接）
+            : Qt::DirectConnection;   // 无事件循环：使用直接连接
+
+    qCDebug(logDFMBase) << "FileScanner: Receiver thread" << receiverThread
+                        << "has event loop:" << hasEventLoop
+                        << "using connection type:"
+                        << (connectionType == Qt::DirectConnection ? "Direct" : "Auto");
+
+    connect(worker, &ScannerWorker::resultReady, this, &FileScannerPrivate::onWorkerResultReady, connectionType);
+    connect(worker, &ScannerWorker::finished, this, &FileScannerPrivate::onWorkerFinished, connectionType);
 
     // 启动工作线程
     if (!workerThread.isRunning()) {
