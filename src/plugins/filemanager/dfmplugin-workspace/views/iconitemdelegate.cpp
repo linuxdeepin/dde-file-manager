@@ -808,6 +808,8 @@ QWidget *IconItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
 
     Q_D(const IconItemDelegate);
 
+    ++d->editingSessionId;
+    const quint64 sessionId = d->editingSessionId;
     d->editingIndex = index;
 
     IconItemEditor *editor = new IconItemEditor(parent);
@@ -818,9 +820,10 @@ QWidget *IconItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
 
     connect(editor, &IconItemEditor::inputFocusOut, this, &IconItemDelegate::editorFinished);
 
-    connect(editor, &IconItemEditor::destroyed, this, [this, d] {
-        QWidget *editor = this->parent()->indexWidget(d->editingIndex);
-        if (!editor || editor == sender()) {
+    connect(editor, &IconItemEditor::destroyed, this, [d, sessionId] {
+        // Only clear state if this is still the current editing session
+        // This handles abnormal cases (view destruction, model reset, etc.) that bypass destroyEditor
+        if (d->editingSessionId == sessionId) {
             d->editingIndex = QModelIndex();
         }
     });
