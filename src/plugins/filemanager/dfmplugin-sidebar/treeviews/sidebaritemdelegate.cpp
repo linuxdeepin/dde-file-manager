@@ -214,8 +214,18 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     qreal min = baseValue - 2 * ejectIconSize.width() - 10;
     qreal max = baseValue - ejectIconSize.width() - 10;
 
-    if (metricsLabel.horizontalAdvance(text) > (isEjectable ? min : max))
-        text = QFontMetrics(option.widget->font()).elidedText(text, Qt::ElideRight, (isEjectable ? int(min) : int(max)));
+    // For separator (group label) items, the expand/collapse button is only visible on hover.
+    // When not hovering, do not reserve button area so the text can use the full available width.
+    qreal textWidthMax;
+    bool isHovering = opt.state.testFlag(QStyle::State_MouseOver) || isDropTarget;
+    if (separatorItem) {
+        textWidthMax = isHovering ? (baseValue - kExpandIconSize - 10) : baseValue;
+    } else {
+        textWidthMax = isEjectable ? min : max;
+    }
+
+    if (metricsLabel.horizontalAdvance(text) > textWidthMax)
+        text = QFontMetrics(option.widget->font()).elidedText(text, Qt::ElideRight, static_cast<int>(textWidthMax));
     int rowHeight = itemRect.height();
     qreal txtDx = (separatorItem ? 21 : 46);
     qreal txtDy = (itemRect.height() - metricsLabel.lineSpacing()) / 2 - 1;
@@ -458,7 +468,7 @@ void SideBarItemDelegate::drawIcon(const QStyleOptionViewItem &option,
     } else {
         drawDciIcon(optForIcon, painter, dciIcon, iconRect, cg, keepHighlighted);
     }
-    
+
     painter->restore();
 
     // draw ejectable device icon
