@@ -282,15 +282,36 @@ void ui_ventry_calls::addAggregatedItems()
     QStringList smbs = getMountedSmb();
     // 1.1 convert to std smb
     smbs = getStandardSmbPaths(smbs);
-    // 2. get all offlined smb
-    smbs.append(VirtualEntryDbHandler::instance()->allSmbIDs());
+
+    // 2. get all offlined smb from DB, but only when show-offline is enabled.
+    //    When showOffline is false, only mounted (online) shares should be aggregated;
+    //    stale DB entries must NOT be surfaced – this mirrors the aggregated-mode branch
+    //    of onShowOfflineChanged() which removes pure-virtual (no mounted share) host
+    //    entries and calls clearData() when the feature is turned off at runtime.
+    if (ProtocolDeviceDisplayManager::instance()->isShowOfflineItem()) {
+        const QStringList &allMountedStdSmb = smbs;
+        QStringList allAggregated;
+        VirtualEntryDbHandler::instance()->allSmbIDs(&allAggregated, nullptr);
+
+        // only append offline host entries that have NO currently-mounted share,
+        // i.e. pure offline hosts – same criterion as the "find orphan host" block
+        // in onShowOfflineChanged().
+        auto hasMountedShareOf = [&allMountedStdSmb](const QString &host) {
+            return std::any_of(allMountedStdSmb.cbegin(), allMountedStdSmb.cend(),
+                               [&](const QString &mounted) { return mounted.startsWith(host); });
+        };
+        std::for_each(allAggregated.cbegin(), allAggregated.cend(), [&](const QString &host) {
+            if (!hasMountedShareOf(host))
+                smbs.append(host);
+        });
+    }
 
     // 3. deduplicated, only keep smb root.
     QSet<QString> hostPaths;
     for (const auto &id : smbs)
         hostPaths.insert(getSmbHostPath(id));
 
-    // 3. add aggregated item
+    // 4. add aggregated item
     std::for_each(hostPaths.cbegin(), hostPaths.cend(), [=](const QString &host) {
         const QUrl &vEntryUrl = makeVEntryUrl(host);
         callItemAdd(vEntryUrl);
