@@ -32,7 +32,6 @@ static constexpr int kBorderWidth = 4;
 static constexpr int kFolderborderRectRadius { 6 };
 static constexpr int kFolderButtonRectRadius { 4 };
 static constexpr int kFolderButtonMinWidth { 40 };
-static constexpr int kFolderButtonMaxWidth { 200 };
 
 static QString getIconName(const CrumbData &c)
 {
@@ -589,11 +588,6 @@ void UrlPushButton::updateWidth()
         if (minWidth < kFolderButtonMinWidth)
             minWidth = kFolderButtonMinWidth;
         maxWidth = buttonSize;
-        if (maxWidth > kFolderButtonMaxWidth)
-            maxWidth = kFolderButtonMaxWidth;
-        // Ensure minWidth does not exceed maxWidth
-        if (minWidth > maxWidth)
-            minWidth = maxWidth;
     }
     if (oldMinWidth != minWidth) {
         setMinimumWidth(minWidth);
