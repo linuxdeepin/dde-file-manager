@@ -49,6 +49,8 @@ FileDialogHandle::FileDialogHandle(QWidget *parent)
         abort();
     }
     auto defaultUrl = d_func()->dialog->lastVisitedUrl();
+    if (defaultUrl.isValid() && defaultUrl.scheme().isEmpty())
+        defaultUrl = QUrl::fromLocalFile(defaultUrl.path());
     if (!defaultUrl.isValid())
         defaultUrl = QUrl::fromLocalFile(DFMBASE_NAMESPACE::StandardPaths::location(StandardPaths::kHomePath));
     d_func()->dialog->cd(defaultUrl);
@@ -353,10 +355,10 @@ void FileDialogHandle::setFileMode(QFileDialog::FileMode mode)
 void FileDialogHandle::setAcceptMode(QFileDialog::AcceptMode mode)
 {
     D_D(FileDialogHandle);
-    
+
     if (!d->dialog)
         return;
-    
+
     isSetAcceptMode = true;
     CoreHelper::delayInvokeProxy(
             [dialog = d->dialog, mode]() {
