@@ -136,7 +136,7 @@ void CrumbBarPrivate::initUI()
     // Crumb Bar Layout
     crumbBarLayout = new QHBoxLayout(q);
     crumbBarLayout->addStretch(1);
-    crumbBarLayout->setContentsMargins(kItemMargin / 2, 3, kItemMargin * 2, 3);
+    crumbBarLayout->setContentsMargins(kItemMargin / 2, 3, kItemMargin * 10, 3);
     crumbBarLayout->setSpacing(0);
     q->setLayout(crumbBarLayout);
 
@@ -215,6 +215,9 @@ void CrumbBarPrivate::updateButtonVisibility()
             if (titleBar)
                 availableWidth = titleBar->calculateRemainingWidth();
         }
+        // Reserve the right-side clickable area (layout right margin) so users
+        // can always click the blank space on the right to enter address editing mode.
+        availableWidth -= margins.right();
         availableWidth -= kItemMargin * 3;
         if (!stackedDatas.isEmpty()) {
             availableWidth -= navButtons[1]->minimumWidth();
@@ -229,8 +232,11 @@ void CrumbBarPrivate::updateButtonVisibility()
                 stackedDatas.append(data);
             }
         } else if (availableWidth < navButtons.last()->minimumWidth()) {
-            // Compress current directory name
+            // Compress current directory name; set both min and max width so the
+            // layout strictly bounds the button, allowing the paint code to
+            // apply middle-ellipsis when the text no longer fits.
             navButtons.last()->setMinimumWidth(availableWidth);
+            navButtons.last()->setMaximumWidth(availableWidth);
         }
     }
 
@@ -373,6 +379,12 @@ void CrumbBar::resizeEvent(QResizeEvent *event)
 
 void CrumbBar::showEvent(QShowEvent *event)
 {
+    // When transitioning back from address-bar edit mode, the layout has not yet
+    // redistributed the freed space at this point.  Defer the recalculation to
+    // the next event-loop iteration so buttons are sized with up-to-date widths.
+    QTimer::singleShot(0, this, [this]() {
+        d->updateButtonVisibility();
+    });
     return QFrame::showEvent(event);
 }
 
@@ -469,7 +481,12 @@ void CrumbBar::onHideAddrAndUpdateCrumbs(const QUrl &url)
             d->navButtons.append(button);
         }
     }
-    d->updateButtonVisibility();
+    // Defer updateButtonVisibility until Qt has performed a layout pass and all
+    // newly-inserted buttons have correct geometry/minimumWidth values.
+    // (Same pattern as resizeEvent — direct call here would read stale sizes.)
+    QTimer::singleShot(0, this, [this]() {
+        d->updateButtonVisibility();
+    });
 }
 
 void CrumbBar::paintEvent(QPaintEvent *event)
