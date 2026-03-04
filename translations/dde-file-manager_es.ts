@@ -1831,7 +1831,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/auditlogjob.cpp" line="155"/>
         <source>Success</source>
-        <translation>Exitoso</translation>
+        <translation>Exito</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/auditlogjob.cpp" line="155"/>
@@ -5828,7 +5828,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/utils/previewfileoperation.cpp" line="41"/>
         <source>Failed to open %1, which may be moved or renamed</source>
-        <translation>No se pudo abrir %1, se puede mover o cambiar de nombre</translation>
+        <translation>No se pudo abrir %1, talvez pueda moverla o cambiar su nombre</translation>
     </message>
 </context>
 <context>
@@ -7719,7 +7719,7 @@ borre los archivos de esa carpeta e intente desbloquear la caja fuerte de nuevo.
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="198"/>
         <source>Unable to read key file</source>
-        <translation type="unfinished"/>
+        <translation>No se puede obtener el archivo de claves</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="211"/>
@@ -7734,12 +7734,12 @@ borre los archivos de esa carpeta e intente desbloquear la caja fuerte de nuevo.
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="387"/>
         <source>Success</source>
-        <translation type="unfinished"/>
+        <translation>Exito</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="387"/>
         <source>Password reset successfully</source>
-        <translation type="unfinished"/>
+        <translation>Contraseña restablecida exitosamente</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="391"/>
@@ -8511,7 +8511,7 @@ borre los archivos de esa carpeta e intente desbloquear la caja fuerte de nuevo.
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="117"/>
         <source>Failed to open %1, which may be moved or renamed</source>
-        <translation>No se pudo abrir %1, se puede mover o cambiar de nombre</translation>
+        <translation>No se pudo abrir %1, talvez pueda moverla o cambiar su nombre</translation>
     </message>
 </context>
 <context>
