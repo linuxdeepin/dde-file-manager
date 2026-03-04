@@ -133,8 +133,6 @@ protected:
 protected slots:
     virtual bool doWork();
     virtual void onUpdateProgress() { }
-    virtual void onStatisticsFilesSizeFinish(const DFMBASE_NAMESPACE::FileScanner::ScanResult &result);
-    virtual void onStatisticsFilesSizeUpdate(const DFMBASE_NAMESPACE::FileScanner::ScanResult &result);
 
 protected:
     void initHandleConnects(const JobHandlePointer handle);
@@ -158,11 +156,15 @@ protected:
 
     static dfmbase::FileInfo::FileType fileType(const DFileInfoPointer &info);
 
+    // 启动异步统计
+    void startAsyncStatistics(const QList<QUrl> &urls);
+
 public:
     virtual ~AbstractWorker();
 
 public:
-    QSharedPointer<DFMBASE_NAMESPACE::FileScanner> statisticsFilesSizeJob { nullptr };   // statistics file info async
+    QThread *statisticsThread { nullptr };   // file statistics thread (for async scanSync call)
+    QAtomicInt statisticsStopFlag { 0 };     // stop flag for statistics thread (0=running, 1=should stop)
     QSharedPointer<UpdateProgressTimer> updateProgressTimer { nullptr };   // update progress timer
 
     JobHandlePointer handle { nullptr };   // handle
@@ -176,6 +178,7 @@ public:
 
     QAtomicInteger<qint64> sourceFilesTotalSize { 0 };   // total size of all source files
     QAtomicInteger<qint64> sourceFilesCount { 0 };   // source files count
+    QAtomicInteger<qint64> sourceDirsCount { 0 };
 
     QList<QUrl> sourceUrls;   // source urls
     QUrl targetUrl;   // target dir url
