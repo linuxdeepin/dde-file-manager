@@ -276,6 +276,8 @@ bool AbstractWorker::statisticsFilesSize()
     } else {
         fmDebug() << "Using asynchronous file size calculation for remote files";
         statisticsFilesSizeJob.reset(new DFMBASE_NAMESPACE::FileScanner());
+        // 启用文件列表收集，以便获取 allFilesList
+        statisticsFilesSizeJob->setOptions(FileScanner::ScanOption::CollectFiles | FileScanner::ScanOption::IncludeSource);
         connect(statisticsFilesSizeJob.data(), &DFMBASE_NAMESPACE::FileScanner::finished,
                 this, &AbstractWorker::onStatisticsFilesSizeFinish, Qt::DirectConnection);
         connect(statisticsFilesSizeJob.data(), &DFMBASE_NAMESPACE::FileScanner::progressChanged, this, &AbstractWorker::onStatisticsFilesSizeUpdate, Qt::DirectConnection);
@@ -581,10 +583,10 @@ void AbstractWorker::onStatisticsFilesSizeFinish(const FileScanner::ScanResult &
     sourceFilesTotalSize = result.progressSize;
     workData->dirSize = FileUtils::getMemoryPageSize();
     sourceFilesCount = result.fileCount;
-    // 对于异步统计（非本地文件），allFilesList 不是必需的，因为这些操作主要用于本地文件的删除/回收站操作
-    allFilesList.clear();
+    // 获取文件列表（通过 CollectFiles 选项启用）
+    allFilesList = result.allFiles;
 
-    fmInfo() << "Asynchronous file statistics completed - total size:" << sourceFilesTotalSize << "file count:" << sourceFilesCount;
+    fmInfo() << "Asynchronous file statistics completed - total size:" << sourceFilesTotalSize << "file count:" << sourceFilesCount << "allFiles count:" << allFilesList.count();
 }
 
 void AbstractWorker::onStatisticsFilesSizeUpdate(const FileScanner::ScanResult &result)
