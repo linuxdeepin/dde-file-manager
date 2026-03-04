@@ -16,6 +16,7 @@
 #include <QSet>
 #include <QStack>
 
+#include <functional>
 #include <sys/stat.h>
 #include <dirent.h>
 
@@ -115,6 +116,52 @@ public:
      */
     bool isRunning() const;
 
+    /**
+     * @brief 同步扫描文件和目录
+     *
+     * 在当前线程中同步执行扫描，直到完成。
+     * 注意：此方法会阻塞调用线程，不适合在主线程中扫描大量文件。
+     *
+     * @param urls 要扫描的 URL 列表
+     * @param options 扫描选项
+     * @return 扫描结果
+     *
+     * @code
+     * // 示例：同步扫描目录
+     * auto result = FileScanner::scanSync({QUrl::fromLocalFile("/home/user")});
+     * qDebug() << "Total size:" << result.totalSize;
+     * qDebug() << "File count:" << result.fileCount;
+     * @endcode
+     */
+    static ScanResult scanSync(const QList<QUrl> &urls,
+                               ScanOptions options = ScanOption::NoOption);
+
+    /**
+     * @brief 同步扫描文件和目录（支持进度回调）
+     *
+     * 在当前线程中同步执行扫描，支持通过回调函数中断扫描。
+     *
+     * @param urls 要扫描的 URL 列表
+     * @param options 扫描选项
+     * @param progressCallback 进度回调函数，返回 false 可中断扫描
+     * @return 扫描结果
+     *
+     * @code
+     * // 示例：可中断的同步扫描
+     * QAtomicInt stopFlag(0);
+     * auto result = FileScanner::scanSyncWithCallback(
+     *     {QUrl::fromLocalFile("/home/user")},
+     *     FileScanner::ScanOption::NoOption,
+     *     [&stopFlag](const ScanResult &result) -> bool {
+     *         return stopFlag.loadRelaxed() == 0;  // 返回 false 停止扫描
+     *     });
+     * @endcode
+     */
+    using ProgressCallback = std::function<bool(const ScanResult &)>;
+    static ScanResult scanSyncWithCallback(const QList<QUrl> &urls,
+                                           ScanOptions options,
+                                           ProgressCallback progressCallback);
+
 public Q_SLOTS:
     /**
      * @brief 开始扫描
@@ -195,123 +242,16 @@ Q_SIGNALS:
 
 private:
     /**
-     * @brief 扫描本地文件路径
-     *
-     * 使用 opendir/readdir 进行遍历
-     */
-    void scanLocalPaths();
-
-    /**
-     * @brief 目录项结构（用于批量读取）
-     */
-    struct DirEntry
-    {
-        QByteArray name;   // 文件名（UTF-8）
-        struct stat statBuf;   // lstat 结果
-        bool statOk;   // lstat 是否成功
-        unsigned char d_type;   // dirent.d_type (DT_DIR, DT_LNK 等)
-    };
-
-    /**
-     * @brief 遍历上下文
-     */
-    struct ScanContext
-    {
-        QString fullPath;   // 当前完整路径
-        int depth;   // 当前深度（0 = 源目录）
-        bool isSourcePath;   // 是否为源路径
-    };
-
-    /**
-     * @brief 读取目录条目
-     * @param path 目录路径
-     * @param entries 输出参数，目录条目列表
-     * @return 是否成功
-     */
-    bool readDirectoryEntries(const QString &path, QList<DirEntry> *entries);
-
-    /**
-     * @brief 处理常规文件
-     * @param path 文件路径
-     * @param statBuf lstat 结果
-     */
-    void processRegularFile(const QString &path, const struct stat &statBuf);
-
-    /**
-     * @brief 处理符号链接
-     * @param path 链接路径
-     */
-    void processSymlink(const QString &path);
-
-    /**
-     * @brief 判断路径是否为目录（跟随符号链接）
-     * @param path 路径
-     * @param lstatBuf lstat 结果
-     * @return 是否为目录
-     */
-    bool isDirectoryPath(const QString &path, const struct stat &lstatBuf);
-
-    /**
-     * @brief 扫描其他协议（如 SMB, SFTP）
-     *
-     * 使用 InfoFactory 创建文件信息
-     */
-    void scanOtherProtocols();
-
-    /**
-     * @brief 收集文件URL（如果启用 CollectFiles 选项）
-     * @param url 要收集的URL
-     * @param isSourcePath 是否为源路径
-     *
-     * 根据 CollectFiles 选项决定是否收集文件URL到结果列表。
-     * 如果是源路径且未设置 IncludeSource 选项，则不收集该URL（仅针对目录）。
-     */
-    void collectFileIfEnabled(const QUrl &url, bool isSourcePath = false);
-
-    /**
      * @brief 检查是否应该停止
      */
     bool shouldStop() const;
-
-    /**
-     * @brief 检查 inode 是否已处理
-     *
-     * 使用 device + inode 组合避免硬链接重复统计
-     * 只对 st_nlink > 1 的文件调用此方法
-     */
-    bool isInodeProcessed(quint64 device, quint64 inode);
-
-    /**
-     * @brief 标记 inode 为已处理
-     */
-    void markInodeProcessed(quint64 device, quint64 inode);
-
-    /**
-     * @brief 发送进度通知
-     * @param force 是否强制发送
-     */
-    void emitProgress(bool force = false);
 
 private:
     QList<QUrl> urls;
     FileScanner::ScanOptions options { FileScanner::ScanOption::NoOption };
 
-    // 当前结果（工作线程独占，无需锁）
-    FileScanner::ScanResult currentResult;
-
     // 控制标志
     std::atomic<bool> stopped { false };
-
-    // 进度节流
-    QElapsedTimer progressTimer;
-    qint64 lastEmittedSize { 0 };
-
-    // 内存页大小
-    qint64 memoryPageSize { 4096 };
-
-    // inode 去重 - 只对 st_nlink > 1 的文件存储
-    // QHash<device, QSet<inode>>
-    QHash<quint64, QSet<quint64>> processedInodes;
 };
 
 }   // namespace dfmbase

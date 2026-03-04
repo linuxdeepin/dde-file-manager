@@ -103,8 +103,12 @@ void AbstractWorker::doOperateWork(AbstractJobHandler::SupportActions actions, A
 void AbstractWorker::stop()
 {
     setStat(AbstractJobHandler::JobState::kStopState);
-    if (statisticsFilesSizeJob)
-        statisticsFilesSizeJob->stop();
+
+    // Signal statistics thread to stop
+    if (statisticsThread) {
+        statisticsStopFlag.storeRelaxed(1);   // Set stop flag
+        statisticsThread->wait();   // Now this will return quickly
+    }
 
     if (updateProgressTimer) {
         // Stop timer in main thread using cross-thread method invocation
@@ -275,13 +279,8 @@ bool AbstractWorker::statisticsFilesSize()
         fmInfo() << "File statistics completed - total size:" << sourceFilesTotalSize << "file count:" << sourceFilesCount;
     } else {
         fmDebug() << "Using asynchronous file size calculation for remote files";
-        statisticsFilesSizeJob.reset(new DFMBASE_NAMESPACE::FileScanner());
-        // 启用文件列表收集，以便获取 allFilesList
-        statisticsFilesSizeJob->setOptions(FileScanner::ScanOption::CollectFiles | FileScanner::ScanOption::IncludeSource);
-        connect(statisticsFilesSizeJob.data(), &DFMBASE_NAMESPACE::FileScanner::finished,
-                this, &AbstractWorker::onStatisticsFilesSizeFinish, Qt::DirectConnection);
-        connect(statisticsFilesSizeJob.data(), &DFMBASE_NAMESPACE::FileScanner::progressChanged, this, &AbstractWorker::onStatisticsFilesSizeUpdate, Qt::DirectConnection);
-        statisticsFilesSizeJob->start(sourceUrls);
+        workData->dirSize = FileUtils::getMemoryPageSize();
+        startAsyncStatistics(sourceUrls);
     }
     return true;
 }
@@ -355,8 +354,9 @@ void AbstractWorker::endWork()
              << "completed files:" << completeSourceFiles.count()
              << "time elapsed:" << timeElapsed.elapsed() << "ms";
 
-    if (statisticsFilesSizeJob) {
-        statisticsFilesSizeJob->stop();
+    if (statisticsThread) {
+        statisticsThread->quit();
+        statisticsThread->wait();
     }
 
     emit workerFinish();
@@ -399,11 +399,12 @@ void AbstractWorker::emitProgressChangedNotify(const qint64 &writSize)
                || AbstractJobHandler::JobType::kCleanTrashType == jobType) {
         info->insert(AbstractJobHandler::NotifyInfoKey::kTotalSizeKey, QVariant::fromValue(qint64(sourceUrls.count())));
     } else {
-        info->insert(AbstractJobHandler::NotifyInfoKey::kTotalSizeKey, QVariant::fromValue(qint64(allFilesList.count())));
+        qint64 count = allFilesList.isEmpty() ? (sourceFilesCount + sourceDirsCount) : allFilesList.count();
+        info->insert(AbstractJobHandler::NotifyInfoKey::kTotalSizeKey, QVariant::fromValue(count));
     }
     AbstractJobHandler::StatisticState state = AbstractJobHandler::StatisticState::kNoState;
-    if (statisticsFilesSizeJob) {
-        if (statisticsFilesSizeJob->isRunning())
+    if (statisticsThread) {
+        if (statisticsThread->isRunning())
             state = AbstractJobHandler::StatisticState::kRunningState;
         else
             state = AbstractJobHandler::StatisticState::kStopState;
@@ -571,27 +572,47 @@ bool AbstractWorker::stateCheck()
     return true;
 }
 /*!
- * \brief AbstractWorker::onStatisticsFilesSizeFinish  Count the size of all files
- * and the slot at the end of the thread
- * \param sizeInfo All file size information
+ * \brief AbstractWorker::startAsyncStatistics Start asynchronous file statistics
+ * \param urls Source URLs to scan
  */
-void AbstractWorker::onStatisticsFilesSizeFinish(const FileScanner::ScanResult &result)
+void AbstractWorker::startAsyncStatistics(const QList<QUrl> &urls)
 {
-    if (!statisticsFilesSizeJob)
-        return;
-    statisticsFilesSizeJob->stop();
-    sourceFilesTotalSize = result.progressSize;
-    workData->dirSize = FileUtils::getMemoryPageSize();
-    sourceFilesCount = result.fileCount;
-    // 获取文件列表（通过 CollectFiles 选项启用）
-    allFilesList = result.allFiles;
+    // Reset stop flag
+    statisticsStopFlag.storeRelaxed(0);
 
-    fmInfo() << "Asynchronous file statistics completed - total size:" << sourceFilesTotalSize << "file count:" << sourceFilesCount << "allFiles count:" << allFilesList.count();
-}
+    // Create thread that executes interruptible scan
+    statisticsThread = QThread::create([this, urls]() {
+        // Create progress callback that checks stop flag
+        auto progressCallback = [this](const DFMBASE_NAMESPACE::FileScanner::ScanResult &result) -> bool {
+            // Check if should stop
+            if (statisticsStopFlag.loadRelaxed() != 0) {
+                fmInfo() << "Statistics scan interrupted by user";
+                return false;   // Stop scanning
+            }
+            return true;   // Continue scanning
+        };
 
-void AbstractWorker::onStatisticsFilesSizeUpdate(const FileScanner::ScanResult &result)
-{
-    sourceFilesTotalSize = result.progressSize;
+        // Call scanSyncWithCallback with progress callback
+        auto result = DFMBASE_NAMESPACE::FileScanner::scanSyncWithCallback(
+                urls,
+                DFMBASE_NAMESPACE::FileScanner::ScanOption::IncludeSource,
+                progressCallback);
+
+        // Only update data if not stopped
+        if (statisticsStopFlag.loadRelaxed() == 0) {
+            // Update atomic variables (thread-safe)
+            sourceFilesTotalSize = result.progressSize;
+            sourceFilesCount = result.fileCount;
+            sourceDirsCount = result.directoryCount;
+
+            fmInfo() << "Asynchronous file statistics completed - total size:" << sourceFilesTotalSize
+                     << "all files count:" << (sourceFilesCount + sourceDirsCount);
+        } else {
+            fmInfo() << "Statistics scan was stopped before completion";
+        }
+    });
+
+    statisticsThread->start();
 }
 
 AbstractWorker::AbstractWorker(QObject *parent)
@@ -711,8 +732,12 @@ AbstractWorker::~AbstractWorker()
     // Ensure all waiting threads are woken up before destruction
     waitCondition.wakeAll();
 
-    if (statisticsFilesSizeJob) {
-        statisticsFilesSizeJob->stop();
+    // Clean up statistics thread
+    if (statisticsThread) {
+        statisticsStopFlag.storeRelaxed(1);   // Signal to stop
+        statisticsThread->quit();
+        statisticsThread->wait();
+        statisticsThread->deleteLater();
     }
 
     // UpdateProgressTimer will be automatically cleaned up when destroyed

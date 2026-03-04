@@ -23,6 +23,73 @@ DFMBASE_USE_NAMESPACE
 namespace dfmbase {
 
 //===================================================================
+// FileScannerCore - 核心扫描逻辑（纯算法，无 QObject 依赖）
+//===================================================================
+class FileScannerCore
+{
+public:
+    // 进度回调函数类型：返回 true 继续扫描，返回 false 停止扫描
+    using ProgressCallback = std::function<bool(const FileScanner::ScanResult &)>;
+
+    // 目录条目结构
+    struct DirEntry
+    {
+        QByteArray name;
+        unsigned char d_type;
+        struct stat statBuf;
+        bool statOk { false };
+    };
+
+    // 扫描上下文结构
+    struct ScanContext
+    {
+        QString fullPath;
+        int depth { 0 };
+        bool isSourcePath { false };
+    };
+
+    // 核心扫描方法
+    static FileScanner::ScanResult scanImpl(
+            const QList<QUrl> &urls,
+            FileScanner::ScanOptions options,
+            ProgressCallback progressCallback = nullptr);
+
+private:
+    // 扫描状态（在扫描过程中维护）
+    struct ScanState
+    {
+        FileScanner::ScanResult result;
+        FileScanner::ScanOptions options;
+        ProgressCallback progressCallback;
+
+        // 进度节流
+        QElapsedTimer progressTimer;
+        qint64 lastEmittedSize { 0 };
+        qint64 memoryPageSize { 4096 };
+
+        // inode 去重
+        QHash<quint64, QSet<quint64>> processedInodes;
+
+        // 停止标志（用于回调返回 false 时停止）
+        bool shouldStop { false };
+    };
+
+    // 核心扫描逻辑
+    static void scanLocalPathsImpl(ScanState &state, const QList<QUrl> &urls);
+    static void scanOtherProtocolsImpl(ScanState &state, const QList<QUrl> &urls);
+
+    // 辅助方法
+    static bool readDirectoryEntries(const QString &path, QList<DirEntry> *entries);
+    static void processRegularFile(ScanState &state, const QString &path, const struct stat &statBuf);
+    static void processSymlink(ScanState &state, const QString &path);
+    static bool isDirectoryPath(const QString &path, const struct stat &lstatBuf);
+    static void collectFileIfEnabled(ScanState &state, const QUrl &url, bool isSourcePath);
+    static void emitProgress(ScanState &state, bool force = false);
+    static bool isInodeProcessed(const ScanState &state, quint64 device, quint64 inode);
+    static void markInodeProcessed(ScanState &state, quint64 device, quint64 inode);
+};
+
+//===================================================================
 // FileScannerPrivate - 私有实现
 //===================================================================
 class FileScannerPrivate : public QObject
@@ -82,22 +149,8 @@ void FileScannerPrivate::startWorker(const QList<QUrl> &urls)
     worker->setOptions(options);
 
     // 连接信号
-    // 关键：判断接收者(this)归属线程是否具备事件循环能力
-    QThread *receiverThread = this->thread();
-    bool hasEventLoop = (receiverThread == qApp->thread());
-
-    // 根据是否有事件循环选择连接类型
-    Qt::ConnectionType connectionType = hasEventLoop
-            ? Qt::AutoConnection   // 有事件循环：使用默认行为（队列连接）
-            : Qt::DirectConnection;   // 无事件循环：使用直接连接
-
-    qCDebug(logDFMBase) << "FileScanner: Receiver thread" << receiverThread
-                        << "has event loop:" << hasEventLoop
-                        << "using connection type:"
-                        << (connectionType == Qt::DirectConnection ? "Direct" : "Auto");
-
-    connect(worker, &ScannerWorker::resultReady, this, &FileScannerPrivate::onWorkerResultReady, connectionType);
-    connect(worker, &ScannerWorker::finished, this, &FileScannerPrivate::onWorkerFinished, connectionType);
+    connect(worker, &ScannerWorker::resultReady, this, &FileScannerPrivate::onWorkerResultReady);
+    connect(worker, &ScannerWorker::finished, this, &FileScannerPrivate::onWorkerFinished);
 
     // 启动工作线程
     if (!workerThread.isRunning()) {
@@ -115,7 +168,9 @@ void FileScannerPrivate::stopWorker()
 
 void FileScannerPrivate::onWorkerResultReady(const FileScanner::ScanResult &result, bool isFinal)
 {
+    Q_UNUSED(isFinal)
     lastResult = result;
+
     emit q->progressChanged(result);
 }
 
@@ -197,64 +252,74 @@ void FileScanner::stop()
     d->stopWorker();
 }
 
+FileScanner::ScanResult FileScanner::scanSync(const QList<QUrl> &urls, ScanOptions options)
+{
+    if (urls.isEmpty()) {
+        qCWarning(logDFMBase) << "FileScanner::scanSync: Empty URL list";
+        return ScanResult();
+    }
+
+    qCDebug(logDFMBase) << "FileScanner::scanSync: Starting sync scan for" << urls.count() << "URLs";
+
+    // 直接调用核心逻辑（无进度回调）
+    ScanResult result = FileScannerCore::scanImpl(urls, options, nullptr);
+
+    qCDebug(logDFMBase) << "FileScanner::scanSync: Completed - files:" << result.fileCount
+                        << "dirs:" << result.directoryCount << "size:" << result.totalSize;
+
+    return result;
+}
+
+FileScanner::ScanResult FileScanner::scanSyncWithCallback(const QList<QUrl> &urls,
+                                                          ScanOptions options,
+                                                          ProgressCallback progressCallback)
+{
+    if (urls.isEmpty()) {
+        qCWarning(logDFMBase) << "FileScanner::scanSyncWithCallback: Empty URL list";
+        return ScanResult();
+    }
+
+    qCDebug(logDFMBase) << "FileScanner::scanSyncWithCallback: Starting interruptible sync scan for" << urls.count() << "URLs";
+
+    // 调用核心逻辑（带进度回调，支持中断）
+    ScanResult result = FileScannerCore::scanImpl(urls, options, progressCallback);
+
+    qCDebug(logDFMBase) << "FileScanner::scanSyncWithCallback: Completed - files:" << result.fileCount
+                        << "dirs:" << result.directoryCount << "size:" << result.totalSize;
+
+    return result;
+}
+
 //===================================================================
-// ScannerWorker - 工作对象
+// FileScannerCore - 核心扫描逻辑实现
 //===================================================================
-ScannerWorker::ScannerWorker(QObject *parent)
-    : QObject(parent)
+FileScanner::ScanResult FileScannerCore::scanImpl(
+        const QList<QUrl> &urls,
+        FileScanner::ScanOptions options,
+        ProgressCallback progressCallback)
 {
-    memoryPageSize = FileUtils::getMemoryPageSize();
-}
-
-ScannerWorker::~ScannerWorker()
-{
-}
-
-void ScannerWorker::setUrls(const QList<QUrl> &urls)
-{
-    this->urls = urls;
-}
-
-void ScannerWorker::setOptions(FileScanner::ScanOptions options)
-{
-    this->options = options;
-}
-
-void ScannerWorker::start()
-{
-    qCDebug(logDFMBase) << "ScannerWorker: Starting work";
-
-    // 重置状态
-    stopped = false;
-    currentResult.clear();
-    processedInodes.clear();
-    progressTimer.start();
-    lastEmittedSize = 0;
+    ScanState state;
+    state.options = options;
+    state.progressCallback = progressCallback;
+    state.memoryPageSize = FileUtils::getMemoryPageSize();
+    state.progressTimer.start();
 
     // 判断是否为本地文件路径
     if (!urls.isEmpty() && urls.first().scheme() == Global::Scheme::kFile) {
-        scanLocalPaths();
+        scanLocalPathsImpl(state, urls);
     } else {
-        scanOtherProtocols();
+        scanOtherProtocolsImpl(state, urls);
     }
 
-    // 发送最终结果
-    emitProgress(true);
-    emit finished();
+    return state.result;
 }
 
-void ScannerWorker::stop()
+void FileScannerCore::scanLocalPathsImpl(ScanState &state, const QList<QUrl> &urls)
 {
-    qCDebug(logDFMBase) << "ScannerWorker: Stop requested";
-    stopped = true;
-}
-
-void ScannerWorker::scanLocalPaths()
-{
-    qCDebug(logDFMBase) << "ScannerWorker: Scanning local paths using opendir/readdir";
+    qCDebug(logDFMBase) << "FileScannerCore: Scanning local paths using opendir/readdir";
 
     // ========== 初始化阶段 ==========
-    int processedSourceDirs = 0;   // 实际成功处理的源目录数
+    int processedSourceDirs = 0;
     QStack<ScanContext> dirStack;
 
     // 准备源路径
@@ -271,32 +336,32 @@ void ScannerWorker::scanLocalPaths()
                 ctx.isSourcePath = true;
                 dirStack.push(ctx);
                 // 收集源目录URL（如果启用 CollectFiles 选项）
-                collectFileIfEnabled(url, true);
+                collectFileIfEnabled(state, url, true);
             } else {
                 // 非目录：直接收集（普通文件、符号链接等）
                 if (S_ISREG(statBuf.st_mode)) {
-                    processRegularFile(path, statBuf);
+                    processRegularFile(state, path, statBuf);
                 } else if (S_ISLNK(statBuf.st_mode)) {
-                    processSymlink(path);
+                    processSymlink(state, path);
                 } else {
-                    currentResult.fileCount++;
+                    state.result.fileCount++;
                 }
                 // 收集源文件URL
-                collectFileIfEnabled(url, true);
+                collectFileIfEnabled(state, url, true);
             }
         } else {
-            qCWarning(logDFMBase) << "ScannerWorker: lstat failed for source:" << path;
+            qCWarning(logDFMBase) << "FileScannerCore: lstat failed for source:" << path;
         }
     }
 
     // ========== 遍历阶段 ==========
-    while (!dirStack.isEmpty() && !shouldStop()) {
+    while (!dirStack.isEmpty() && !state.shouldStop) {
         ScanContext ctx = dirStack.pop();
         const QString &dirPath = ctx.fullPath;
 
         // 先计数目录本身（无论是否能读取内容）
-        currentResult.directoryCount++;
-        currentResult.progressSize += memoryPageSize;
+        state.result.directoryCount++;
+        state.result.progressSize += state.memoryPageSize;
 
         // 记录成功处理的源目录（用于最终扣除）
         if (ctx.isSourcePath) {
@@ -309,13 +374,13 @@ void ScannerWorker::scanLocalPaths()
 
         if (!readSuccess) {
             // 目录读取失败（权限不足），但目录已计数
-            qCWarning(logDFMBase) << "ScannerWorker: Failed to read directory contents:" << dirPath;
-            continue;   // 无法读取内容，跳过条目处理
+            qCWarning(logDFMBase) << "FileScannerCore: Failed to read directory contents:" << dirPath;
+            continue;
         }
 
         // 处理每个条目
         for (const DirEntry &entry : entries) {
-            if (shouldStop()) {
+            if (state.shouldStop) {
                 break;
             }
 
@@ -329,25 +394,25 @@ void ScannerWorker::scanLocalPaths()
                     "/dev/core"
                 };
                 if (kSpecialSystemFiles.contains(entryPath)) {
-                    qCDebug(logDFMBase) << "ScannerWorker: Skipping special file:" << entryPath;
+                    qCDebug(logDFMBase) << "FileScannerCore: Skipping special file:" << entryPath;
                     continue;
                 }
             }
 
-            // lstat 失败处理：部分条目可能无法访问，但继续处理其他条目
+            // lstat 失败处理
             if (!entry.statOk) {
-                qCDebug(logDFMBase) << "ScannerWorker: lstat failed for:" << entryPath;
+                qCDebug(logDFMBase) << "FileScannerCore: lstat failed for:" << entryPath;
                 continue;
             }
 
             // 根据类型处理条目
             if (S_ISDIR(entry.statBuf.st_mode)) {
                 // 子目录
-                bool isSingleDepth = options & FileScanner::ScanOption::SingleDepth;
+                bool isSingleDepth = state.options & FileScanner::ScanOption::SingleDepth;
                 if (isSingleDepth) {
                     // SingleDepth 模式：计数但不递归
-                    currentResult.directoryCount++;
-                    currentResult.progressSize += memoryPageSize;
+                    state.result.directoryCount++;
+                    state.result.progressSize += state.memoryPageSize;
                 } else {
                     // 递归模式：压栈
                     ScanContext childCtx;
@@ -358,42 +423,40 @@ void ScannerWorker::scanLocalPaths()
                 }
             } else if (S_ISREG(entry.statBuf.st_mode)) {
                 // 常规文件
-                processRegularFile(entryPath, entry.statBuf);
+                processRegularFile(state, entryPath, entry.statBuf);
             } else if (S_ISLNK(entry.statBuf.st_mode)) {
                 // 符号链接
-                processSymlink(entryPath);
+                processSymlink(state, entryPath);
             } else {
-                // 其他特殊文件类型（socket、FIFO、字符设备、块设备等）
-                // 只计数，不计大小
-                currentResult.fileCount++;
+                // 其他特殊文件类型
+                state.result.fileCount++;
             }
 
-            // 收集文件URL（统一处理，支持所有文件类型）
-            collectFileIfEnabled(entryUrl, false);
+            // 收集文件URL
+            collectFileIfEnabled(state, entryUrl, false);
 
             // 定期发送进度
-            emitProgress();
+            emitProgress(state);
         }
     }
 
     // ========== 最终处理 ==========
-    // 默认排除源目录本身（只扣除成功处理的源目录）
-    if (!(options & FileScanner::ScanOption::IncludeSource)) {
-        currentResult.directoryCount -= processedSourceDirs;
+    // 默认排除源目录本身
+    if (!(state.options & FileScanner::ScanOption::IncludeSource)) {
+        state.result.directoryCount -= processedSourceDirs;
     }
 
-    qCDebug(logDFMBase) << "ScannerWorker: Local scan completed - files:" << currentResult.fileCount
-                        << "dirs:" << currentResult.directoryCount
-                        << "size:" << currentResult.totalSize;
+    qCDebug(logDFMBase) << "FileScannerCore: Local scan completed - files:" << state.result.fileCount
+                        << "dirs:" << state.result.directoryCount << "size:" << state.result.totalSize;
 }
 
-void ScannerWorker::scanOtherProtocols()
+void FileScannerCore::scanOtherProtocolsImpl(ScanState &state, const QList<QUrl> &urls)
 {
-    qCDebug(logDFMBase) << "ScannerWorker: Scanning other protocols using InfoFactory";
+    qCDebug(logDFMBase) << "FileScannerCore: Scanning other protocols using InfoFactory";
 
     QQueue<QUrl> directoryQueue;
     QSet<QUrl> processedUrls;
-    int sourceDirCount = 0;   // 记录源目录数量
+    int sourceDirCount = 0;
 
     // 初始化队列
     for (const QUrl &url : urls) {
@@ -401,7 +464,7 @@ void ScannerWorker::scanOtherProtocols()
         processedUrls.insert(url);
     }
 
-    while (!directoryQueue.isEmpty() && !shouldStop()) {
+    while (!directoryQueue.isEmpty() && !state.shouldStop) {
         QUrl url = directoryQueue.dequeue();
 
         // 判断是否为源路径
@@ -413,7 +476,7 @@ void ScannerWorker::scanOtherProtocols()
                 Global::CreateFileInfoType::kCreateFileInfoSync);
 
         if (!info) {
-            qCWarning(logDFMBase) << "ScannerWorker: Failed to create info for:" << url;
+            qCWarning(logDFMBase) << "FileScannerCore: Failed to create info for:" << url;
             continue;
         }
 
@@ -424,11 +487,11 @@ void ScannerWorker::scanOtherProtocols()
                 sourceDirCount++;
             }
 
-            currentResult.directoryCount++;
-            currentResult.progressSize += memoryPageSize;
+            state.result.directoryCount++;
+            state.result.progressSize += state.memoryPageSize;
 
-            // 收集目录URL（如果启用 CollectFiles 选项）
-            collectFileIfEnabled(url, isSourcePath);
+            // 收集目录URL
+            collectFileIfEnabled(state, url, isSourcePath);
 
             // 创建目录迭代器
             AbstractDirIteratorPointer iterator = DirIteratorFactory::create<AbstractDirIterator>(
@@ -437,14 +500,14 @@ void ScannerWorker::scanOtherProtocols()
                     QDir::AllEntries | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot);
 
             if (!iterator) {
-                qCWarning(logDFMBase) << "ScannerWorker: Failed to create iterator for:" << url;
+                qCWarning(logDFMBase) << "FileScannerCore: Failed to create iterator for:" << url;
                 continue;
             }
 
-            bool isSingleDepth = options & FileScanner::ScanOption::SingleDepth;
+            bool isSingleDepth = state.options & FileScanner::ScanOption::SingleDepth;
 
             // 遍历目录
-            while (iterator->hasNext() && !shouldStop()) {
+            while (iterator->hasNext() && !state.shouldStop) {
                 QUrl childUrl = iterator->next();
 
                 if (!processedUrls.contains(childUrl)) {
@@ -459,84 +522,50 @@ void ScannerWorker::scanOtherProtocols()
                         if (childInfo->isAttributes(OptInfoType::kIsDir)) {
                             if (isSingleDepth) {
                                 // SingleDepth 模式：计数但不递归
-                                currentResult.directoryCount++;
-                                currentResult.progressSize += memoryPageSize;
+                                state.result.directoryCount++;
+                                state.result.progressSize += state.memoryPageSize;
                             } else {
                                 // 递归模式：入队
                                 directoryQueue.enqueue(childUrl);
                             }
-                            // 收集子目录URL（始终是 false，因为不是源路径）
-                            collectFileIfEnabled(childUrl, false);
+                            // 收集子目录URL
+                            collectFileIfEnabled(state, childUrl, false);
                         } else {
                             // 处理文件
-                            currentResult.totalSize += childInfo->size();
-                            currentResult.fileCount++;
-                            currentResult.progressSize += childInfo->size();
+                            state.result.totalSize += childInfo->size();
+                            state.result.fileCount++;
+                            state.result.progressSize += childInfo->size();
 
-                            // 收集子文件URL（始终是 false）
-                            collectFileIfEnabled(childUrl, false);
+                            // 收集子文件URL
+                            collectFileIfEnabled(state, childUrl, false);
                         }
                     }
                 }
             }
         } else {
             // 处理文件
-            currentResult.totalSize += info->size();
-            currentResult.fileCount++;
-            currentResult.progressSize += info->size();
+            state.result.totalSize += info->size();
+            state.result.fileCount++;
+            state.result.progressSize += info->size();
 
-            // 收集文件URL（始终是 false）
-            collectFileIfEnabled(url, false);
+            // 收集文件URL
+            collectFileIfEnabled(state, url, false);
         }
 
         // 定期发送进度
-        emitProgress();
+        emitProgress(state);
     }
 
-    // 默认排除源目录本身（除非设置了 IncludeSource 选项）
-    if (!(options & FileScanner::ScanOption::IncludeSource)) {
-        currentResult.directoryCount -= sourceDirCount;
+    // 默认排除源目录本身
+    if (!(state.options & FileScanner::ScanOption::IncludeSource)) {
+        state.result.directoryCount -= sourceDirCount;
     }
 
-    qCDebug(logDFMBase) << "ScannerWorker: Other protocol scan completed - files:" << currentResult.fileCount
-                        << "dirs:" << currentResult.directoryCount
-                        << "size:" << currentResult.totalSize;
+    qCDebug(logDFMBase) << "FileScannerCore: Other protocol scan completed - files:" << state.result.fileCount
+                        << "dirs:" << state.result.directoryCount << "size:" << state.result.totalSize;
 }
 
-bool ScannerWorker::shouldStop() const
-{
-    return stopped.load();
-}
-
-bool ScannerWorker::isInodeProcessed(quint64 device, quint64 inode)
-{
-    return processedInodes.value(device).contains(inode);
-}
-
-void ScannerWorker::markInodeProcessed(quint64 device, quint64 inode)
-{
-    if (!processedInodes.contains(device)) {
-        processedInodes.insert(device, QSet<quint64>());
-    }
-    processedInodes[device].insert(inode);
-}
-
-void ScannerWorker::emitProgress(bool force)
-{
-    qint64 currentSize = currentResult.totalSize;
-
-    // 节流条件：
-    // 1. 距离上次发送超过500ms
-    // 2. 或者大小变化超过10MB
-    // 3. 或者强制发送（完成时）
-    if (force || progressTimer.elapsed() > 500 || qAbs(currentSize - lastEmittedSize) > 10 * 1024 * 1024) {
-        emit resultReady(currentResult, force);
-        lastEmittedSize = currentSize;
-        progressTimer.restart();
-    }
-}
-
-bool ScannerWorker::readDirectoryEntries(const QString &path, QList<DirEntry> *entries)
+bool FileScannerCore::readDirectoryEntries(const QString &path, QList<DirEntry> *entries)
 {
     Q_ASSERT(entries);
     entries->clear();
@@ -544,7 +573,7 @@ bool ScannerWorker::readDirectoryEntries(const QString &path, QList<DirEntry> *e
     QByteArray pathUtf8 = path.toUtf8();
     DIR *dir = opendir(pathUtf8.constData());
     if (!dir) {
-        qCWarning(logDFMBase) << "ScannerWorker: opendir failed for" << path << ":" << strerror(errno);
+        qCWarning(logDFMBase) << "FileScannerCore: opendir failed for" << path << ":" << strerror(errno);
         return false;
     }
 
@@ -569,61 +598,147 @@ bool ScannerWorker::readDirectoryEntries(const QString &path, QList<DirEntry> *e
     return true;
 }
 
-void ScannerWorker::processRegularFile(const QString &path, const struct stat &statBuf)
+void FileScannerCore::processRegularFile(ScanState &state, const QString &path, const struct stat &statBuf)
 {
     // 硬链接去重
     if (statBuf.st_nlink > 1) {
-        if (!isInodeProcessed(statBuf.st_dev, statBuf.st_ino)) {
-            markInodeProcessed(statBuf.st_dev, statBuf.st_ino);
-            currentResult.totalSize += statBuf.st_size;
-            currentResult.fileCount++;
+        if (!isInodeProcessed(state, statBuf.st_dev, statBuf.st_ino)) {
+            markInodeProcessed(state, statBuf.st_dev, statBuf.st_ino);
+            state.result.totalSize += statBuf.st_size;
+            state.result.fileCount++;
         } else {
             // 硬链接已统计，只计数
-            currentResult.fileCount++;
+            state.result.fileCount++;
         }
     } else {
         // st_nlink == 1，直接处理
-        currentResult.totalSize += statBuf.st_size;
-        currentResult.fileCount++;
+        state.result.totalSize += statBuf.st_size;
+        state.result.fileCount++;
     }
-    currentResult.progressSize += statBuf.st_size;
+    state.result.progressSize += statBuf.st_size;
 }
 
-void ScannerWorker::processSymlink(const QString &path)
+void FileScannerCore::processSymlink(ScanState &state, const QString &path)
 {
     // 符号链接只计数，不跟随（不计入大小）
-    currentResult.fileCount++;
-    currentResult.progressSize += memoryPageSize;   // 估算符号链接大小
+    state.result.fileCount++;
+    state.result.progressSize += state.memoryPageSize;
 }
 
-bool ScannerWorker::isDirectoryPath(const QString &path, const struct stat &lstatBuf)
+bool FileScannerCore::isDirectoryPath(const QString &path, const struct stat &lstatBuf)
 {
     if (S_ISDIR(lstatBuf.st_mode)) {
-        return true;   // 直接是目录
+        return true;
     }
     if (S_ISLNK(lstatBuf.st_mode)) {
         struct stat statBuf;
         if (stat(path.toUtf8().constData(), &statBuf) == 0) {
-            return S_ISDIR(statBuf.st_mode);   // 符号链接指向目录
+            return S_ISDIR(statBuf.st_mode);
         }
     }
     return false;
 }
 
-void ScannerWorker::collectFileIfEnabled(const QUrl &url, bool isSourcePath)
+void FileScannerCore::collectFileIfEnabled(ScanState &state, const QUrl &url, bool isSourcePath)
 {
     // 只有启用 CollectFiles 选项才收集
-    if (!(options & FileScanner::ScanOption::CollectFiles)) {
+    if (!(state.options & FileScanner::ScanOption::CollectFiles)) {
         return;
     }
 
     // 如果是源路径且未设置 IncludeSource 选项，则不收集
-    // IncludeSource 语义：true=包含源路径，false=排除源路径
-    if (isSourcePath && !(options & FileScanner::ScanOption::IncludeSource)) {
+    if (isSourcePath && !(state.options & FileScanner::ScanOption::IncludeSource)) {
         return;
     }
 
-    currentResult.allFiles.append(url);
+    state.result.allFiles.append(url);
+}
+
+void FileScannerCore::emitProgress(ScanState &state, bool force)
+{
+    qint64 currentSize = state.result.totalSize;
+
+    // 节流条件
+    if (force || state.progressTimer.elapsed() > 500 || qAbs(currentSize - state.lastEmittedSize) > 10 * 1024 * 1024) {
+        if (state.progressCallback) {
+            bool shouldContinue = state.progressCallback(state.result);
+            if (!shouldContinue) {
+                state.shouldStop = true;
+            }
+        }
+        state.lastEmittedSize = currentSize;
+        state.progressTimer.restart();
+    }
+}
+
+bool FileScannerCore::isInodeProcessed(const ScanState &state, quint64 device, quint64 inode)
+{
+    return state.processedInodes.value(device).contains(inode);
+}
+
+void FileScannerCore::markInodeProcessed(ScanState &state, quint64 device, quint64 inode)
+{
+    if (!state.processedInodes.contains(device)) {
+        state.processedInodes.insert(device, QSet<quint64>());
+    }
+    state.processedInodes[device].insert(inode);
+}
+
+//===================================================================
+// ScannerWorker - 工作对象
+//===================================================================
+ScannerWorker::ScannerWorker(QObject *parent)
+    : QObject(parent)
+{
+}
+
+ScannerWorker::~ScannerWorker()
+{
+}
+
+void ScannerWorker::setUrls(const QList<QUrl> &urls)
+{
+    this->urls = urls;
+}
+
+void ScannerWorker::setOptions(FileScanner::ScanOptions options)
+{
+    this->options = options;
+}
+
+void ScannerWorker::start()
+{
+    qCDebug(logDFMBase) << "ScannerWorker: Starting work";
+
+    // 重置状态
+    stopped = false;
+
+    // 使用核心逻辑，通过回调发送进度
+    auto progressCallback = [this](const FileScanner::ScanResult &result) -> bool {
+        if (shouldStop()) {
+            return false;   // 返回 false 表示停止扫描
+        }
+        emit resultReady(result, false);
+        return true;   // 继续扫描
+    };
+
+    // 调用核心扫描逻辑
+    FileScanner::ScanResult finalResult = FileScannerCore::scanImpl(urls, options, progressCallback);
+
+    // 发送最终结果
+    emit resultReady(finalResult, true);
+    emit finished();
+}
+
+void ScannerWorker::stop()
+{
+    qCDebug(logDFMBase) << "ScannerWorker: Stop requested";
+    stopped = true;
+}
+
+bool ScannerWorker::shouldStop() const
+{
+    return stopped.load();
 }
 
 }   // namespace dfmbase
