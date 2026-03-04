@@ -57,7 +57,8 @@ public:
     enum class ScanOption {
         NoOption = 0x00,   ///< 无特殊选项
         SingleDepth = 0x01,   ///< 只统计顶层，不递归
-        IncludeSource = 0x02   ///< 包含源目录本身（默认不包含）
+        IncludeSource = 0x02,   ///< 包含源目录本身（默认不包含）
+        CollectFiles = 0x04   ///< 收集所有文件URL列表（默认不收集）
     };
     Q_ENUM(ScanOption)
     Q_DECLARE_FLAGS(ScanOptions, ScanOption)
@@ -71,9 +72,10 @@ public:
         qint64 progressSize { 0 };   ///< 进度大小（用于显示）
         int fileCount { 0 };   ///< 文件数量
         int directoryCount { 0 };   ///< 目录数量
+        QList<QUrl> allFiles;   ///< 所有文件的URL列表（仅当 CollectFiles 选项启用时填充）
 
         bool isValid() const { return fileCount >= 0 && directoryCount >= 0; }
-        void clear() { totalSize = progressSize = fileCount = directoryCount = 0; }
+        void clear() { totalSize = progressSize = fileCount = directoryCount = 0; allFiles.clear(); }
     };
 
     /**
@@ -255,6 +257,16 @@ private:
      * 使用 InfoFactory 创建文件信息
      */
     void scanOtherProtocols();
+
+    /**
+     * @brief 收集文件URL（如果启用 CollectFiles 选项）
+     * @param url 要收集的URL
+     * @param isSourcePath 是否为源路径
+     *
+     * 根据 CollectFiles 选项决定是否收集文件URL到结果列表。
+     * 如果是源路径且未设置 IncludeSource 选项，则不收集该URL（仅针对目录）。
+     */
+    void collectFileIfEnabled(const QUrl &url, bool isSourcePath = false);
 
     /**
      * @brief 检查是否应该停止

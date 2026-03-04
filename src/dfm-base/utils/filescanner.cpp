@@ -270,16 +270,19 @@ void ScannerWorker::scanLocalPaths()
                 ctx.depth = 0;
                 ctx.isSourcePath = true;
                 dirStack.push(ctx);
-            } else if (S_ISREG(statBuf.st_mode)) {
-                // 普通文件
-                processRegularFile(path, statBuf);
-            } else if (S_ISLNK(statBuf.st_mode)) {
-                // 符号链接
-                processSymlink(path);
+                // 收集源目录URL（如果启用 CollectFiles 选项）
+                collectFileIfEnabled(url, true);
             } else {
-                // 其他特殊文件类型（socket、FIFO、字符设备、块设备等）
-                // 只计数，不计大小
-                currentResult.fileCount++;
+                // 非目录：直接收集（普通文件、符号链接等）
+                if (S_ISREG(statBuf.st_mode)) {
+                    processRegularFile(path, statBuf);
+                } else if (S_ISLNK(statBuf.st_mode)) {
+                    processSymlink(path);
+                } else {
+                    currentResult.fileCount++;
+                }
+                // 收集源文件URL
+                collectFileIfEnabled(url, true);
             }
         } else {
             qCWarning(logDFMBase) << "ScannerWorker: lstat failed for source:" << path;
@@ -317,6 +320,7 @@ void ScannerWorker::scanLocalPaths()
             }
 
             QString entryPath = dirPath + "/" + QString::fromUtf8(entry.name);
+            QUrl entryUrl = QUrl::fromLocalFile(entryPath);
 
             // 跳过特殊系统文件
             if (entry.statOk && S_ISREG(entry.statBuf.st_mode)) {
@@ -364,6 +368,9 @@ void ScannerWorker::scanLocalPaths()
                 currentResult.fileCount++;
             }
 
+            // 收集文件URL（统一处理，支持所有文件类型）
+            collectFileIfEnabled(entryUrl, false);
+
             // 定期发送进度
             emitProgress();
         }
@@ -397,6 +404,9 @@ void ScannerWorker::scanOtherProtocols()
     while (!directoryQueue.isEmpty() && !shouldStop()) {
         QUrl url = directoryQueue.dequeue();
 
+        // 判断是否为源路径
+        bool isSourcePath = urls.contains(url);
+
         // 使用 InfoFactory 创建文件信息
         FileInfoPointer info = InfoFactory::create<FileInfo>(
                 url,
@@ -409,13 +419,16 @@ void ScannerWorker::scanOtherProtocols()
 
         // 检查是否为目录
         if (info->isAttributes(OptInfoType::kIsDir)) {
-            // 检查是否是源 URL
-            if (urls.contains(url)) {
+            // 记录源目录数量
+            if (isSourcePath) {
                 sourceDirCount++;
             }
 
             currentResult.directoryCount++;
             currentResult.progressSize += memoryPageSize;
+
+            // 收集目录URL（如果启用 CollectFiles 选项）
+            collectFileIfEnabled(url, isSourcePath);
 
             // 创建目录迭代器
             AbstractDirIteratorPointer iterator = DirIteratorFactory::create<AbstractDirIterator>(
@@ -452,11 +465,16 @@ void ScannerWorker::scanOtherProtocols()
                                 // 递归模式：入队
                                 directoryQueue.enqueue(childUrl);
                             }
+                            // 收集子目录URL（始终是 false，因为不是源路径）
+                            collectFileIfEnabled(childUrl, false);
                         } else {
                             // 处理文件
                             currentResult.totalSize += childInfo->size();
                             currentResult.fileCount++;
                             currentResult.progressSize += childInfo->size();
+
+                            // 收集子文件URL（始终是 false）
+                            collectFileIfEnabled(childUrl, false);
                         }
                     }
                 }
@@ -466,6 +484,9 @@ void ScannerWorker::scanOtherProtocols()
             currentResult.totalSize += info->size();
             currentResult.fileCount++;
             currentResult.progressSize += info->size();
+
+            // 收集文件URL（始终是 false）
+            collectFileIfEnabled(url, false);
         }
 
         // 定期发送进度
@@ -587,6 +608,22 @@ bool ScannerWorker::isDirectoryPath(const QString &path, const struct stat &lsta
         }
     }
     return false;
+}
+
+void ScannerWorker::collectFileIfEnabled(const QUrl &url, bool isSourcePath)
+{
+    // 只有启用 CollectFiles 选项才收集
+    if (!(options & FileScanner::ScanOption::CollectFiles)) {
+        return;
+    }
+
+    // 如果是源路径且未设置 IncludeSource 选项，则不收集
+    // IncludeSource 语义：true=包含源路径，false=排除源路径
+    if (isSourcePath && !(options & FileScanner::ScanOption::IncludeSource)) {
+        return;
+    }
+
+    currentResult.allFiles.append(url);
 }
 
 }   // namespace dfmbase
