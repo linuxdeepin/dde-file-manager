@@ -10,10 +10,23 @@
 
 using namespace ddplugin_canvas;
 
-CanvasSelectionModel::CanvasSelectionModel(CanvasProxyModel *model, QObject *parent) : QItemSelectionModel(model, parent)
+CanvasSelectionModel::CanvasSelectionModel(CanvasProxyModel *model, QObject *parent)
+    : QItemSelectionModel(model, parent)
 {
     // clear immediately the cache if selection changed.
     connect(this, &CanvasSelectionModel::selectionChanged, this, &CanvasSelectionModel::clearSelectedCache, Qt::DirectConnection);
+
+    // The cache holds plain QModelIndex (non-persistent), whose row number is a snapshot
+    // and does NOT auto-update when the model structure changes. If rows are inserted or
+    // removed at positions before the cached index, the cached row number becomes stale
+    // and may point to a completely different file — even though selectionChanged is never
+    // emitted (because the selected item itself was not touched). We must therefore
+    // invalidate the cache on any structural model change.
+    connect(model, &QAbstractItemModel::rowsInserted, this, &CanvasSelectionModel::clearSelectedCache, Qt::DirectConnection);
+    connect(model, &QAbstractItemModel::rowsRemoved, this, &CanvasSelectionModel::clearSelectedCache, Qt::DirectConnection);
+    connect(model, &QAbstractItemModel::rowsMoved, this, &CanvasSelectionModel::clearSelectedCache, Qt::DirectConnection);
+    connect(model, &QAbstractItemModel::layoutChanged, this, &CanvasSelectionModel::clearSelectedCache, Qt::DirectConnection);
+    connect(model, &QAbstractItemModel::modelReset, this, &CanvasSelectionModel::clearSelectedCache, Qt::DirectConnection);
 }
 
 CanvasProxyModel *CanvasSelectionModel::model() const
@@ -58,7 +71,7 @@ QList<QUrl> CanvasSelectionModel::selectedUrls() const
     auto indexs = selectedIndexesCache();
     QList<QUrl> urls;
     for (auto index : indexs)
-        urls <<  model()->fileUrl(index);
+        urls << model()->fileUrl(index);
 
     return urls;
 }
@@ -79,5 +92,3 @@ void CanvasSelectionModel::hookClear()
     if (hook)
         hook->clear();
 }
-
-
