@@ -5297,7 +5297,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="493"/>
         <source>Partition %1 has been preencrypt, please reboot to finish encryption.</source>
-        <translation type="unfinished"/>
+        <translation>La partición %1 ha sido precrifrada, reinicie para finalizar el cifrado.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="502"/>
@@ -5802,17 +5802,17 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="50"/>
         <source>Once the files are copied, you can unplug the external drive without needing to &quot;Safely Remove&quot; it.</source>
-        <translation type="unfinished"/>
+        <translation>Una vez copiados los archivos, puedes desconectar la unidad externa sin necesidad de &quot;Quitarla de forma segura&quot;.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="61"/>
         <source>Performance First (Requires Safe Removal)</source>
-        <translation type="unfinished"/>
+        <translation>El rendimiento es primero (requiere una extracción segura)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="68"/>
         <source>File copy data is not synchronized in real-time. After the copy is complete, you must use &quot;Safe Removal&quot; to disconnect the external storage device. Otherwise, file corruption or data loss may occur.</source>
-        <translation type="unfinished"/>
+        <translation>Los datos de la copia de archivos no se sincronizan en tiempo real. Una vez completada la copia, debe usar la función &quot;Extracción segura&quot; para desconectar el dispositivo de almacenamiento externo. De lo contrario, podrían producirse daños en los archivos o pérdida de datos.</translation>
     </message>
 </context>
 <context>
@@ -5828,7 +5828,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/utils/previewfileoperation.cpp" line="41"/>
         <source>Failed to open %1, which may be moved or renamed</source>
-        <translation type="unfinished"/>
+        <translation>No se pudo abrir %1, se puede mover o cambiar de nombre</translation>
     </message>
 </context>
 <context>
@@ -7703,7 +7703,7 @@ borre los archivos de esa carpeta e intente desbloquear la caja fuerte de nuevo.
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="171"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="258"/>
         <source>≥ 8 chars, contains A-Z, a-z, 0-9, and symbols</source>
-        <translation type="unfinished"/>
+        <translation>Al menos 8 caracteres, incluidos A-Z, a-z, 0-9 y símbolos</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="180"/>
