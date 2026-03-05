@@ -40,14 +40,12 @@ void DetailSpaceWidget::setCurrentUrl(const QUrl &url)
 {
     QUrl targetUrl = url;
 
-    // If no URL provided, try to get selected URL from workspace
-    if (!targetUrl.isValid()) {
-        quint64 winId = DetailSpaceHelper::findWindowIdByDetailSpace(this);
-        if (winId) {
-            const QList<QUrl> &urls = dpfSlotChannel->push("dfmplugin_workspace", "slot_View_GetSelectedUrls", winId).value<QList<QUrl>>();
-            if (!urls.isEmpty()) {
-                targetUrl = urls.first();
-            }
+    // Priority: Use selected URL from workspace first
+    quint64 winId = DetailSpaceHelper::findWindowIdByDetailSpace(this);
+    if (winId) {
+        const QList<QUrl> &urls = dpfSlotChannel->push("dfmplugin_workspace", "slot_View_GetSelectedUrls", winId).value<QList<QUrl>>();
+        if (!urls.isEmpty()) {
+            targetUrl = urls.first();
         }
     }
 
