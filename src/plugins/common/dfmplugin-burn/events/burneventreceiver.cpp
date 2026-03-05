@@ -42,7 +42,7 @@ BurnEventReceiver *BurnEventReceiver::instance()
 void BurnEventReceiver::handleShowBurnDlg(const QString &dev, bool isSupportedUDF, QWidget *parent)
 {
     QString devId { DeviceUtils::getBlockDeviceId(dev) };
-    auto &&map = DevProxyMng->queryBlockInfo(devId);
+    const auto &map = DevProxyMng->queryBlockInfo(devId, true);
 
     QString defaultDiscName { qvariant_cast<QString>(map[DeviceProperty::kIdLabel]) };
     QStringList speed { qvariant_cast<QStringList>(map[DeviceProperty::kOpticalWriteSpeed]) };

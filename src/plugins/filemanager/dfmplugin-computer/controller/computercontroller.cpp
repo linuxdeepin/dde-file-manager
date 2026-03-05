@@ -365,13 +365,13 @@ void ComputerController::mountDevice(quint64 winId, const QString &id, const QSt
         return;
     }
 
-    const auto &&data = DevProxyMng->queryBlockInfo(id);
+    const auto &data = DevProxyMng->queryBlockInfo(id, true);
     if (data.value(DeviceProperty::kOpticalDrive).toBool() && data.value(DeviceProperty::kOpticalBlank).toBool()) {
-        if (!data.value(DeviceProperty::kOpticalWriteSpeed).toStringList().isEmpty()) {   // already load data from xorriso.
-            fmDebug() << "Optical drive with blank disc and write speed data available";
-            cdTo(id, ComputerUtils::makeBurnUrl(id), winId, act);
-            return;
+        if (data.value(DeviceProperty::kOpticalWriteSpeed).toStringList().isEmpty()) {   // already load data from xorriso.
+            fmWarning() << "Optical drive write speed data is empty!";
         }
+        cdTo(id, ComputerUtils::makeBurnUrl(id), winId, act);
+        return;
     }
 
     ComputerUtils::setCursorState(true);
