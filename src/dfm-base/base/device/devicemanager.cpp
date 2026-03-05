@@ -851,6 +851,12 @@ void DeviceManager::doAutoMount(const QString &id, DeviceType type, int timeout)
             qCDebug(logDFMBase) << "Auto mount skipped for device without filesystem:" << id;
             return;
         }
+        // auto mount is only available for non optical devices and removable device.
+        // the internal devices are mounted when server launced, see @doAutoMountAtStart
+        if (id.startsWith("/org/freedesktop/UDisks2/block_devices/sr"))
+            return;
+        if (!info.value(DeviceProperty::kRemovable).toBool())
+            return;
 
         qCInfo(logDFMBase) << "Starting auto mount for block device:" << id;
         mountBlockDevAsync(id, {}, cb, timeout);
