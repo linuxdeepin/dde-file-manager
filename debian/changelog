@@ -1,3 +1,27 @@
+dde-file-manager (6.5.124) unstable; urgency=medium
+
+  * fix: adjust tab item button icon size and painting logic
+  * fix: improve crumb bar layout and button visibility
+  * fix: optimize sidebar group label text display
+  * fix: clear selection cache on model structural changes
+  * fix: fix offline SMB host display logic in aggregated mode
+  * fix: fix parent path judgment and excluded path filtering
+  * fix: prevent thumbnail collapse when adjusting shadow range
+  * feat: add extra large thumbnail size for grid view
+  * refactor: simplify icon style calculation logic
+  * fix: prevent crash when editor is destroyed during abnormal conditions
+  * fix: add index validation before updating sidebar view
+  * fix: handle local file URLs properly in file dialog
+  * fix: fix file scanner signal loss in non-main threads
+  * feat: add file collection feature in file scanner
+  * refactor: extract file scanner core logic and add sync APIs
+  * fix: skip auto mount for non-removable and optical devices
+  * fix: prevent optical drive from being incorrectly removed
+  * fix: ensure reliable blank disc data loading
+  * feat: optimize URL selection logic in detail space
+
+   -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 05 Mar 2026 20:22:14 +0800
+
 dde-file-manager (6.5.123) unstable; urgency=medium
 
   * docs: add comprehensive OEM menu example documentation
