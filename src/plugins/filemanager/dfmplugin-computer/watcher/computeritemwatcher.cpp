@@ -926,15 +926,14 @@ void ComputerItemWatcher::onDevicePropertyChangedQDBusVar(const QString &id, con
             Q_EMIT itemPropertyChanged(devUrl, propertyName, var.variant());
         }
 
-        // by default if loop device do not have filesystem interface in udisks, it will not be shown in computer,
-        // and for loop devices, no blockAdded signal will be emited cause it's already existed there, so
-        // watch the filesystemAdded/Removed signal to decide whether to show or hide it.
+        // if any block device's filesystem is added then it should be added into computer view.
+        // and if filesystem is removed, remove from computer view except the optical drive.
         if (propertyName == DeviceProperty::kHasFileSystem) {
-            auto blkInfo = DevProxyMng->queryBlockInfo(id);
-            if (blkInfo.value(DeviceProperty::kIsLoopDevice).toBool()) {
-                if (var.variant().toBool())
-                    addDevice(diskGroup(), url);
-                else
+            auto blkInfo = DevProxyMng->queryBlockInfo(id, true);
+            if (var.variant().toBool()) {
+                addDevice(diskGroup(), url);
+            } else {
+                if (!blkInfo.value(DeviceProperty::kOpticalDrive).toBool())   // 避免光驱被误删
                     removeDevice(url);
             }
             onUpdateBlockItem(id);
@@ -993,9 +992,11 @@ void ComputerItemWatcher::onUpdateBlockItem(const QString &id)
         if (item.info) {
             item.info->refresh();
             // 使用 QMetaObject::invokeMethod 确保在主线程调用 updateSidebarItem
-            QMetaObject::invokeMethod(this, [this, devUrl, item]() {
-                updateSidebarItem(devUrl, item.info->displayName(), item.info->renamable());
-            }, Qt::QueuedConnection);
+            QMetaObject::invokeMethod(
+                    this, [this, devUrl, item]() {
+                        updateSidebarItem(devUrl, item.info->displayName(), item.info->renamable());
+                    },
+                    Qt::QueuedConnection);
         }
     }
 }
