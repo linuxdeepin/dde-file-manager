@@ -11,12 +11,15 @@
 #include <dfm-base/base/device/deviceproxymanager.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/base/configs/dconfig/global_dconf_defines.h>
+#include <dfm-base/utils/protocolutils.h>
 
 #include <dfm-framework/dpf.h>
 
 #include <QImageReader>
 #include <QMovie>
 #include <QApplication>
+#include <QFile>
+#include <QBuffer>
 
 Q_DECLARE_METATYPE(QString *)
 
@@ -73,7 +76,17 @@ void ImagePreviewWorker::loadPreview(const QUrl &url, const QSize &targetSize)
     if (isImageMimeType(mimeType)) {
         // Check if we should skip original image loading for remote/optical files
         if (!shouldSkipOriginalImageLoad(url, fileSize)) {
-            result = loadOriginalImage(filePath, targetSize);
+            // Special handling for TIFF files on DAV/DAVS remote filesystem
+            // DAV/DAVS (WebDAV with or without SSL) may have incomplete data reads due to
+            // network instability, causing libtiff to crash when accessing incomplete strip
+            // data via memcpy. Load entire file into memory first to ensure data integrity.
+            if (mimeType == "image/tiff"
+                && (ProtocolUtils::isDavFile(url) || ProtocolUtils::isDavsFile(url))) {
+                result = loadImageFromMemory(filePath, targetSize);
+            } else {
+                result = loadOriginalImage(filePath, targetSize);
+            }
+
             if (!result.isNull()) {
                 Q_EMIT previewReady(url, result);
                 return;
@@ -149,6 +162,70 @@ QPixmap ImagePreviewWorker::loadOriginalImage(const QString &filePath, const QSi
 
     QImage image = reader.read();
     if (image.isNull()) {
+        return QPixmap();
+    }
+
+    QPixmap pixmap = QPixmap::fromImage(image);
+    pixmap.setDevicePixelRatio(dpr);
+    return pixmap;
+}
+
+QPixmap ImagePreviewWorker::loadImageFromMemory(const QString &filePath, const QSize &targetSize)
+{
+    // This method loads an image file entirely into memory before decoding.
+    // It's designed to work around issues with remote filesystem (especially DAVS)
+    // where streaming reads may return incomplete data due to:
+    // - Network instability or latency
+    // - Filesystem cache not fully synchronized
+    // - Concurrent access causing race conditions
+    //
+    // For TIFF files, libtiff's TIFFReadEncodedStrip may receive incomplete strip data
+    // from TIFFReadFile (which calls QFile::read on remote files), leading to:
+    // 1. tif->tif_rawcc set to expected byte count from TIFF header (e.g., 5760 bytes)
+    // 2. Actual buffer contains only partial data (e.g., 2880 bytes)
+    // 3. DumpModeDecode's memcpy attempts to copy full expected size, causing buffer overflow
+    //
+    // By reading the entire file into memory first, we ensure data integrity before
+    // passing it to QImageReader, eliminating the streaming read issue.
+
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly)) {
+        fmWarning() << "detailview: failed to open file for memory loading:" << filePath;
+        return QPixmap();
+    }
+
+    QByteArray fileData = file.readAll();
+    file.close();
+
+    if (fileData.isEmpty()) {
+        fmWarning() << "detailview: empty data from file:" << filePath;
+        return QPixmap();
+    }
+
+    // Load image from memory buffer instead of file path
+    QBuffer buffer(&fileData);
+    buffer.open(QIODevice::ReadOnly);
+
+    QImageReader reader(&buffer);
+    reader.setAutoTransform(true);
+
+    QSize originalSize = reader.size();
+    if (!originalSize.isValid()) {
+        return QPixmap();
+    }
+
+    qreal dpr = qApp->devicePixelRatio();
+    QSize maxSize = targetSize * dpr;
+
+    if (originalSize.width() > maxSize.width()
+        || originalSize.height() > maxSize.height()) {
+        QSize scaledSize = originalSize.scaled(maxSize, Qt::KeepAspectRatio);
+        reader.setScaledSize(scaledSize);
+    }
+
+    QImage image = reader.read();
+    if (image.isNull()) {
+        fmWarning() << "detailview: failed to decode image from memory:" << filePath;
         return QPixmap();
     }
 
