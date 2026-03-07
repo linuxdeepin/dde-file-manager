@@ -481,6 +481,9 @@ void ListItemDelegate::paintItemBackground(QPainter *painter, const QStyleOption
         painter->setRenderHints(QPainter::Antialiasing
                                 | QPainter::TextAntialiasing
                                 | QPainter::SmoothPixmapTransform);
+        // Clip to the item rect to prevent anti-aliased rounded corner pixels from
+        // bleeding into adjacent rows and leaving selection color artifacts after deselection.
+        painter->setClipRect(option.rect);
 
         painter->fillPath(path, adjustColor);
     }
