@@ -716,7 +716,7 @@ int dialog_utils::showConfirmDecryptionDialog(const QString &device, bool needRe
     if (isWayland())
         dlg.setWindowFlag(Qt::WindowStaysOnTopHint);
     dlg.setIcon(QIcon::fromTheme("drive-harddisk-root"));
-    dlg.setTitle(QObject::tr("Decrypt %1?").arg(device));
+    dlg.setTitle(QObject::tr("Decrypt \"%1\" partition?").arg(device));
     dlg.setMessage(QObject::tr("Decryption can take a long time, "
                                "so make sure power is connected until the decryption is complete."));
     dlg.addButton(QObject::tr("Cancel"));

@@ -23,9 +23,9 @@
   <action id="org.deepin.Filemanager.TPMControl.Encrypt">
     <description>Encrypt data with TPM</description>
     <message>Authentication is required to encrypt data with TPM</message>
-    <message xml:lang="zh_CN">使用 TPM 加密数据需要管理员认证</message>
-    <message xml:lang="zh_HK">使用 TPM 加密數據需要管理員認證</message>
-    <message xml:lang="zh_TW">使用 TPM 加密資料需要管理員認證</message>
+    <message xml:lang="zh_CN">TPM 加密需要管理员认证</message>
+    <message xml:lang="zh_HK">TPM 加密需要管理員認證</message>
+    <message xml:lang="zh_TW">TPM 加密需要管理員認證</message>
     <icon_name>folder</icon_name>
     <defaults>
       <allow_any>no</allow_any>
@@ -37,9 +37,9 @@
   <action id="org.deepin.Filemanager.TPMControl.Decrypt">
     <description>Decrypt data with TPM</description>
     <message>Authentication is required to decrypt data with TPM</message>
-    <message xml:lang="zh_CN">使用 TPM 解密数据需要管理员认证</message>
-    <message xml:lang="zh_HK">使用 TPM 解密數據需要管理員認證</message>
-    <message xml:lang="zh_TW">使用 TPM 解密資料需要管理員認證</message>
+    <message xml:lang="zh_CN">TPM 解密需要管理员认证</message>
+    <message xml:lang="zh_HK">TPM 解密需要管理員認證</message>
+    <message xml:lang="zh_TW">TPM 解密需要管理員認證</message>
     <icon_name>folder</icon_name>
     <defaults>
       <allow_any>no</allow_any>
