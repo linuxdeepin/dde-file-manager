@@ -62,6 +62,10 @@ public:
     void saveSidebarState();
     void updateSideBarState();
     void updateSideBarVisibility();
+    void updateWindowMinimumWidth();
+    int calculateRequiredWindowWidth(bool includeSidebar, bool includeDetailSpace) const;
+    int calculateActualMinRightWidth(bool useCurrentDetailWidth = true) const;
+    bool willSidebarAutoShowAfterResize(int newWindowWidth) const;
     void updateSidebarSeparator();
     void updateSideBarSeparatorStyle();
     void updateSideBarSeparatorPosition();
@@ -78,20 +82,20 @@ public:
 
 protected:
     QUrl currentUrl;
-    static constexpr int kMinimumWindowWidth { 540 };
+    static constexpr int kMinimumWindowWidth { 550 };
     static constexpr int kMinimumWindowHeight { 300 };
     static constexpr int kDefaultWindowWidth { 1100 };
     static constexpr int kDefaultWindowHeight { 700 };
-    static constexpr int kMinimumLeftWidth { 95 };
+    static constexpr int kMinimumLeftWidth { 90 };
     static constexpr int kMaximumLeftWidth { 600 };
-    static constexpr int kDefaultLeftWidth { 200 };
+    static constexpr int kDefaultLeftWidth { 180 };
     static constexpr int kMinimumRightWidth { kMinimumWindowWidth };
 
     // DetailSpace size constraints
     static constexpr int kMinimumDetailWidth { 280 };
     static constexpr int kMaximumDetailWidth { 500 };
     static constexpr int kDefaultDetailWidth { 280 };
-    static constexpr int kMinimumWorkspaceWidth { 260 };
+    static constexpr int kMinimumWorkspaceWidth { 550 };
     static constexpr int kDetailDragThreshold { kMinimumDetailWidth / 2 };   // 140px
 
     QFrame *centralView { nullptr };   // Central area (all except sidebar)
