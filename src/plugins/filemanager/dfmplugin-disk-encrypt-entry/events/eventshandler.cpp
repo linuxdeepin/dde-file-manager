@@ -25,13 +25,13 @@
 #include <DUtil>
 
 #ifdef COMPILE_ON_V2X
-#    define APP_MANAGER_SERVICE "org.deepin.dde.SessionManager1"
-#    define APP_MANAGER_PATH "/org/deepin/dde/SessionManager1"
-#    define APP_MANAGER_INTERFACE "org.deepin.dde.SessionManager1"
+#    define DDE_SHUTDOWN_SERVICE "org.deepin.dde.ShutdownFront1"
+#    define DDE_SHUTDOWN_PATH "/org/deepin/dde/ShutdownFront1"
+#    define DDE_SHUTDOWN_INTERFACE "org.deepin.dde.ShutdownFront1"
 #else
-#    define APP_MANAGER_SERVICE "com.deepin.SessionManager"
-#    define APP_MANAGER_PATH "/com/deepin/SessionManager"
-#    define APP_MANAGER_INTERFACE "com.deepin.SessionManager"
+#    define DDE_SHUTDOWN_SERVICE "com.deepin.ShutdownFront"
+#    define DDE_SHUTDOWN_PATH "/com/deepin/ShutdownFront"
+#    define DDE_SHUTDOWN_INTERFACE "com.deepin.ShutdownFront"
 #endif
 
 Q_DECLARE_METATYPE(QString *)
@@ -600,10 +600,10 @@ void EventsHandler::showChgPwdError(const QString &dev, const QString &devName, 
 void EventsHandler::requestReboot()
 {
     fmInfo() << "Requesting system reboot";
-    QDBusInterface sessMng(APP_MANAGER_SERVICE,
-                           APP_MANAGER_PATH,
-                           APP_MANAGER_INTERFACE);
-    sessMng.asyncCall("RequestReboot");
+    QDBusInterface sessMng(DDE_SHUTDOWN_SERVICE,
+                           DDE_SHUTDOWN_PATH,
+                           DDE_SHUTDOWN_INTERFACE);
+    sessMng.asyncCall("Restart");
 }
 
 bool EventsHandler::canUnlock(const QString &device)
