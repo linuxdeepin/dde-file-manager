@@ -336,7 +336,7 @@ void EventsHandler::onEncryptProgress(const QString &dev, const QString &devName
 
         QApplication::restoreOverrideCursor();
         auto dlg = new EncryptProgressDialog();
-        dlg->setText(tr("%1 is under encrypting...").arg(device),
+        dlg->setText(tr("The \"%1\" partition is under encrypting...").arg(device),
                      tr("The encrypting process may have system lag, please minimize the system operation"));
         encryptDialogs.insert(dev, dlg);
     }
