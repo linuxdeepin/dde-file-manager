@@ -5086,8 +5086,8 @@ You need to upgrade this vault to continue using it.</source>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="361"/>
-        <source>Please continue to encrypt partition %1</source>
-        <translation>ກະລຸນາຕໍ່ເນື່ອງການລັບລະບົບພາກສ່ວນ %1</translation>
+        <source>Please continue to encrypt &quot;%1&quot; partition</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="362"/>
@@ -5243,19 +5243,9 @@ You need to upgrade this vault to continue using it.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="339"/>
-        <source>%1 is under encrypting...</source>
-        <translation>%1 ກຳລັງລັບລະບັບ...</translation>
-    </message>
-    <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="340"/>
         <source>The encrypting process may have system lag, please minimize the system operation</source>
         <translation>ການລັບລະບັບອາດຈະເຮັດໃຫ້ລະບົບຊ້າ, ກະລຸນາປະຢັດການດຳເນີນການລະບົບ</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="360"/>
-        <source>%1 is under decrypting...</source>
-        <translation>&apos;%1 ກຳລັງຖືກຖອນລະບັບ...&apos;</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="361"/>
@@ -5392,6 +5382,16 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="501"/>
         <source>Preencrypt failed</source>
         <translation>ການລັບລະບັບເບື້ອງຕົ້ນບໍ່ສຳເລັດ</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="339"/>
+        <source>The &quot;%1&quot; partition is under encrypting...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="360"/>
+        <source>The &quot;%1&quot; partition is under decrypting...</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="520"/>
