@@ -358,7 +358,7 @@ void EncryptParamsInputDialog::onPageChanged(int page)
         devName = QString("%1(%2)").arg(displayName).arg(devName.mid(5));
 
         fmDebug() << "Setting up password input page for device:" << devName;
-        setTitle(tr("Please continue to encrypt partition %1").arg(devName));
+        setTitle(tr("Please continue to encrypt \"%1\" partition").arg(devName));
         exportRecKeyEnabled ? addButton(tr("Next")) : addButton(tr("Confirm encrypt"));
         encKeyEdit1->setFocus();
     } else if (page == kExportKeyPage) {
