@@ -29,7 +29,8 @@ class CrumbBarPrivate
     QHBoxLayout *crumbBarLayout;
     QPoint clickedPos;
     bool clickableAreaEnabled { false };
-    QUrl lastUrl;
+    QUrl lastUrl;        // 用于面包屑显示的 URL
+    QUrl editableUrl;    // 用于地址栏编辑的原始完整 URL
     bool hoverFlag { false };   // 鼠标是否悬停在按钮上
     bool popupVisible { false };
 
