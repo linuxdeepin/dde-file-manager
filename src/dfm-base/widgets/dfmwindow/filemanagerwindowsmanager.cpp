@@ -179,12 +179,11 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::createWindow(con
     }
 
     if (!url.isEmpty()) {
-        const FileInfoPointer &info = InfoFactory::create<FileInfo>(url);
-        if (info && info->isAttributes(OptInfoType::kIsFile)) {
-            showedUrl = UrlRoute::urlParent(url);
+        if (const FileInfoPointer &info = InfoFactory::create<FileInfo>(url)) {
+            showedUrl = info->isAttributes(OptInfoType::kIsFile)
+                    ? url.adjusted(QUrl::RemoveFilename | QUrl::StripTrailingSlash)
+                    : url;
             qCDebug(logDFMBase) << "FileManagerWindowsManager::createWindow: URL is file, using parent directory:" << showedUrl;
-        } else {
-            showedUrl = url;
         }
     }
     if (!d->isValidUrl(showedUrl, &error)) {
