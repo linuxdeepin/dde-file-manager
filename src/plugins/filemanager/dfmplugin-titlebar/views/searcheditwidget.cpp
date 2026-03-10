@@ -186,8 +186,8 @@ void SearchEditWidget::onTextEdited(const QString &text)
     pendingSearchText = text;
 
     if (text.isEmpty()) {
-        fmDebug() << "Search text is empty, stopping timer and stopping search";
-        stopSearch();
+        fmDebug() << "Search text is empty, stopping timer and quitting search";
+        quitSearch();
         return;
     }
 
@@ -254,6 +254,17 @@ bool SearchEditWidget::eventFilter(QObject *watched, QEvent *event)
         } else if (event->type() == QEvent::KeyPress) {
             QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
             if (keyEvent->key() == Qt::Key_Escape) {
+                // If SearchEdit is empty, deactivate and exit edit mode
+                if (searchEdit->text().isEmpty()) {
+                    fmDebug() << "ESC key pressed with empty search edit, deactivating and quitting search";
+                    isUserDeactivating = true;
+                    deactivateEdit();
+                    isUserDeactivating = false;
+                    // Emit searchQuit to exit search view
+                    Q_EMIT searchQuit();
+                    return true;
+                }
+                // If SearchEdit has text, clear it and quit search
                 fmDebug() << "ESC key pressed in search edit, quitting search";
                 quitSearch();
                 return true;
@@ -346,23 +357,6 @@ void SearchEditWidget::handleFocusOutEvent(QFocusEvent *e)
         updateSpacing(false);   // Advanced button is now hidden
     }
 
-    // Helper lambda to restore focus if needed
-    auto restoreFocusIfNeeded = [this]() {
-        QTimer::singleShot(0, this, [this]() {
-            QWidget *newFocus = QApplication::focusWidget();
-            // Allow focus transfer to other edit controls (e.g., AddressBar)
-            if (newFocus && newFocus != searchEdit->lineEdit()
-                && newFocus->inherits("QLineEdit")) {
-                return;
-            }
-            // If no widget has focus or focus went to non-edit widget, restore focus
-            // This handles the case where layout changes (AddressBar hiding) steal focus
-            if (!newFocus || (!newFocus->inherits("QLineEdit") && !newFocus->inherits("QPushButton"))) {
-                searchEdit->lineEdit()->setFocus(Qt::OtherFocusReason);
-            }
-        });
-    };
-
     // Handle special focus reasons that should not trigger collapse
     if (e->reason() == Qt::PopupFocusReason || e->reason() == Qt::ActiveWindowFocusReason) {
         e->accept();
@@ -386,6 +380,28 @@ void SearchEditWidget::handleFocusOutEvent(QFocusEvent *e)
     if (parentWidget()) {
         updateSearchEditWidget(parentWidget()->width());
     }
+}
+
+void SearchEditWidget::restoreFocusIfNeeded()
+{
+    // Don't restore focus if user is intentionally deactivating
+    if (isUserDeactivating) {
+        return;
+    }
+
+    QTimer::singleShot(0, this, [this]() {
+        QWidget *newFocus = QApplication::focusWidget();
+        // Allow focus transfer to other edit controls (e.g., AddressBar)
+        if (newFocus && newFocus != searchEdit->lineEdit()
+            && newFocus->inherits("QLineEdit")) {
+            return;
+        }
+        // If no widget has focus or focus went to non-edit widget, restore focus
+        // This handles the case where layout changes (AddressBar hiding) steal focus
+        if (!newFocus || (!newFocus->inherits("QLineEdit") && !newFocus->inherits("QPushButton"))) {
+            searchEdit->lineEdit()->setFocus(Qt::OtherFocusReason);
+        }
+    });
 }
 
 void SearchEditWidget::handleInputMethodEvent(QInputMethodEvent *e)
@@ -425,7 +441,6 @@ void SearchEditWidget::quitSearch()
 {
     lastSearchTime = 0;
     delayTimer->stop();
-    // deactivateEdit();
     Q_EMIT searchQuit();
 }
 
