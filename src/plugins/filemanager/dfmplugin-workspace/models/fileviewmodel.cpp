@@ -161,9 +161,17 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
             if (prehandler) {
                 fmDebug() << "Executing prehandler for scheme:" << url.scheme();
                 quint64 winId = FileManagerWindowsManager::instance().findWindowId(qobject_cast<FileView *>(QObject::parent()));
-                prehandler(winId, url, [this]() {
+
+                // Use QPointer to safely capture this pointer for async callback
+                QPointer<FileViewModel> self(this);
+                prehandler(winId, url, [self]() {
+                    // Check if object is still valid before accessing members
+                    if (!self) {
+                        fmWarning() << "FileViewModel destroyed before prehandler callback, ignoring";
+                        return;
+                    }
                     // 预处理完成后执行加载
-                    this->executeLoad();
+                    self->executeLoad();
                 });
                 return rootIndex();   // 返回当前索引，保持UI状态
             }
@@ -195,10 +203,18 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
         if (prehandler) {
             fmDebug() << "Executing prehandler for scheme:" << url.scheme();
             quint64 winId = FileManagerWindowsManager::instance().findWindowId(qobject_cast<FileView *>(QObject::parent()));
-            prehandler(winId, url, [this, index, url]() {
-                this->canFetchFiles = true;
-                this->fetchingUrl = url;
-                this->fetchMore(index);
+
+            // Use QPointer to safely capture this pointer for async callback
+            QPointer<FileViewModel> self(this);
+            prehandler(winId, url, [self, index, url]() {
+                // Check if object is still valid before accessing members
+                if (!self) {
+                    fmWarning() << "FileViewModel destroyed before prehandler callback, ignoring";
+                    return;
+                }
+                self->canFetchFiles = true;
+                self->fetchingUrl = url;
+                self->fetchMore(index);
             });
         }
     } else {
