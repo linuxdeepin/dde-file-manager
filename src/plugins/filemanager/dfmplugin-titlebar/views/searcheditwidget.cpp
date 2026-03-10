@@ -348,12 +348,19 @@ void SearchEditWidget::handleFocusOutEvent(QFocusEvent *e)
 
     // Helper lambda to restore focus if needed
     auto restoreFocusIfNeeded = [this]() {
-        if (!searchEdit->text().isEmpty()) {
-            // Use QTimer to defer the focus restoration to ensure proper cursor blink
-            QTimer::singleShot(0, this, [this]() {
+        QTimer::singleShot(0, this, [this]() {
+            QWidget *newFocus = QApplication::focusWidget();
+            // Allow focus transfer to other edit controls (e.g., AddressBar)
+            if (newFocus && newFocus != searchEdit->lineEdit()
+                && newFocus->inherits("QLineEdit")) {
+                return;
+            }
+            // If no widget has focus or focus went to non-edit widget, restore focus
+            // This handles the case where layout changes (AddressBar hiding) steal focus
+            if (!newFocus || (!newFocus->inherits("QLineEdit") && !newFocus->inherits("QPushButton"))) {
                 searchEdit->lineEdit()->setFocus(Qt::OtherFocusReason);
-            });
-        }
+            }
+        });
     };
 
     // Handle special focus reasons that should not trigger collapse
