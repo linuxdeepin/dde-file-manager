@@ -271,7 +271,9 @@ void TitleBarWidget::handleHotketCreateNewTab()
         }
     }
 
-    openNewTab(currentUrl());
+    // Use crumbBar's lastUrl() to avoid reopening search:// URLs
+    // which would trigger unnecessary search operations
+    openNewTab(crumbBar ? crumbBar->lastUrl() : currentUrl());
 }
 
 void TitleBarWidget::handleCreateTabList(const QList<QUrl> &urlList)
@@ -680,6 +682,9 @@ void TitleBarWidget::onTabCloseRequested(int index)
 void TitleBarWidget::onTabAddButtonClicked()
 {
     QUrl url = Application::instance()->appUrlAttribute(Application::kUrlOfNewTab);
+    if (!url.isValid() && crumbBar)
+        url = crumbBar->lastUrl();
+
     auto tabUrl = tabBar()->tabUrl(tabBar()->currentIndex());
     if (!url.isValid() && tabUrl.isValid())
         url = tabUrl;
