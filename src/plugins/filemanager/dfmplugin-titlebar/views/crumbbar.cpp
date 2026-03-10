@@ -328,7 +328,8 @@ void CrumbBar::customMenu(const QUrl &url, QMenu *menu)
 
     menu->addSeparator();
 
-    QUrl fullUrl = d->lastUrl;
+    // 使用原始完整 URL 进行编辑，提供回退逻辑
+    QUrl fullUrl = d->editableUrl.isEmpty() ? d->lastUrl : d->editableUrl;
     menu->addAction(editIcon, QObject::tr("Edit address"), this, [this, fullUrl]() {
         emit this->editUrl(fullUrl);
     });
@@ -363,7 +364,9 @@ void CrumbBar::mouseReleaseEvent(QMouseEvent *event)
 
     if (event->button() == Qt::LeftButton) {
         QTimer::singleShot(0, this, [this]() {
-            editUrl(d->lastUrl);
+            // 使用原始完整 URL 进行编辑，提供回退逻辑
+            QUrl urlToEdit = d->editableUrl.isEmpty() ? d->lastUrl : d->editableUrl;
+            emit editUrl(urlToEdit);
         });
     }
 }
@@ -417,6 +420,9 @@ void CrumbBar::leaveEvent(QEvent *event)
 
 void CrumbBar::onUrlChanged(const QUrl &url)
 {
+    // 保存原始完整 URL 用于编辑
+    d->editableUrl = url;
+
     auto sourceUrl = url;
     if (TitleBarHelper::checkKeepTitleStatus(url)) {
         QUrlQuery query { url.query() };
