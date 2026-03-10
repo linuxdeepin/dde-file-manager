@@ -31,6 +31,7 @@
 #include <QClipboard>
 #include <QPushButton>
 #include <QMouseEvent>
+#include <QContextMenuEvent>
 #include <QUrlQuery>
 
 using namespace dfmplugin_titlebar;
@@ -347,11 +348,6 @@ void CrumbBar::mousePressEvent(QMouseEvent *event)
 {
     d->clickedPos = event->globalPosition().toPoint();
 
-    if (event->button() == Qt::RightButton && d->clickableAreaEnabled) {
-        event->accept();
-        return;
-    }
-
     auto button = d->buttonAt(event->pos());
     if (event->button() != Qt::RightButton || !button) {
         QFrame::mousePressEvent(event);
@@ -369,6 +365,38 @@ void CrumbBar::mouseReleaseEvent(QMouseEvent *event)
             emit editUrl(urlToEdit);
         });
     }
+}
+
+void CrumbBar::contextMenuEvent(QContextMenuEvent *event)
+{
+    // 检查点击位置是否在按钮上
+    auto button = d->buttonAt(event->pos());
+    if (button) {
+        // 如果点击在按钮上，让按钮自己处理右键菜单
+        QFrame::contextMenuEvent(event);
+        return;
+    }
+
+    // 点击在空白区域，显示完整路径的右键菜单
+    event->accept();
+
+    // 使用原始完整 URL，提供回退逻辑
+    QUrl urlToShow = d->editableUrl.isEmpty() ? d->lastUrl : d->editableUrl;
+
+    if (!urlToShow.isValid()) {
+        return;
+    }
+
+    // 设置弹出菜单可见状态
+    setPopupVisible(true);
+
+    // 创建并显示菜单
+    QMenu menu(this);
+    customMenu(urlToShow, &menu);
+    menu.exec(event->globalPos());
+
+    // 恢复状态
+    setPopupVisible(false);
 }
 
 void CrumbBar::resizeEvent(QResizeEvent *event)
