@@ -24,18 +24,22 @@ FileDataManager *FileDataManager::instance()
     return &ins;
 }
 
-RootInfo *FileDataManager::fetchRoot(const QUrl &url)
+RootInfo *FileDataManager::fetchRoot(const QUrl &url, const QString &key)
 {
-    if (rootInfoMap.contains(url))
-        return rootInfoMap.value(url);
+    const QUrl normalizedUrl = normalizeRootUrl(url);
+    addRootUser(normalizedUrl, key);
 
-    fmDebug() << "Creating new RootInfo for URL:" << url.toString();
-    return createRoot(url);
+    if (rootInfoMap.contains(normalizedUrl))
+        return rootInfoMap.value(normalizedUrl);
+
+    fmDebug() << "Creating new RootInfo for URL:" << normalizedUrl.toString();
+    return createRoot(normalizedUrl);
 }
 
 bool FileDataManager::fetchFiles(const QUrl &rootUrl, const QString &key, DFMGLOBAL_NAMESPACE::ItemRoles role, Qt::SortOrder order)
 {
-    fmDebug() << "Starting file fetch for URL:" << rootUrl.toString() << "key:" << key;
+    const QUrl normalizedRootUrl = normalizeRootUrl(rootUrl);
+    fmDebug() << "Starting file fetch for URL:" << normalizedRootUrl.toString() << "key:" << key;
 
     for (auto it = deleteLaterList.begin(); it != deleteLaterList.end();) {
         if ((*it)->canDelete()) {
@@ -46,36 +50,42 @@ bool FileDataManager::fetchFiles(const QUrl &rootUrl, const QString &key, DFMGLO
         }
     }
 
-    RootInfo *root = rootInfoMap.value(rootUrl);
+    RootInfo *root = rootInfoMap.value(normalizedRootUrl);
     if (!root) {
-        fmWarning() << "Failed to fetch files - no RootInfo found for URL:" << rootUrl.toString();
-        return false;
+        fmWarning() << "No RootInfo found, attempting to recreate for URL:" << normalizedRootUrl.toString();
+        root = fetchRoot(normalizedRootUrl, key);
+        if (!root) {
+            fmWarning() << "Failed to recreate RootInfo for URL:" << normalizedRootUrl.toString();
+            return false;
+        }
     }
 
     auto getCache = root->initThreadOfFileData(key, role, order, isMixFileAndFolder);
     root->startWork(key, getCache);
-    fmInfo() << "File fetch started successfully for URL:" << rootUrl.toString() << "with cache:" << getCache;
+    fmInfo() << "File fetch started successfully for URL:" << normalizedRootUrl.toString() << "with cache:" << getCache;
     return true;
 }
 
 void FileDataManager::cleanRoot(const QUrl &rootUrl, const QString &key, const bool refresh, const bool self)
 {
-    fmDebug() << "Cleaning root for URL:" << rootUrl.toString() << "key:" << key << "refresh:" << refresh << "self:" << self;
+    const QUrl normalizedRootUrl = normalizeRootUrl(rootUrl);
+    fmDebug() << "Cleaning root for URL:" << normalizedRootUrl.toString() << "key:" << key << "refresh:" << refresh << "self:" << self;
 
-    QString rootPath = rootUrl.path();
+    QString rootPath = normalizedRootUrl.path();
     if (!rootPath.endsWith("/"))
         rootPath.append("/");
 
     auto rootInfoKeys = rootInfoMap.keys();
     for (const auto &rootInfo : rootInfoKeys) {
-        if (!self && rootUrl == rootInfo)
+        if (!self && normalizedRootUrl == rootInfo)
             continue;
 
-        if (rootInfo.path().startsWith(rootPath) || rootInfo.path() == rootUrl.path()) {
+        if (rootInfo.path().startsWith(rootPath) || rootInfo.path() == normalizedRootUrl.path()) {
+            removeRootUser(rootInfo, key);
             auto count = rootInfoMap.value(rootInfo)->clearTraversalThread(key, refresh);
             if (count > 0)
                 continue;
-            if (!checkNeedCache(rootInfo) || refresh) {
+            if ((!checkNeedCache(rootInfo) || refresh) && !hasRootUsers(rootInfo)) {
                 auto root = rootInfoMap.take(rootInfo);
                 if (!root) {
                     fmWarning() << "Failed to retrieve root for cleanup:" << rootInfo.toString();
@@ -89,9 +99,10 @@ void FileDataManager::cleanRoot(const QUrl &rootUrl, const QString &key, const b
 
 void FileDataManager::cleanRoot(const QUrl &rootUrl)
 {
-    fmDebug() << "Performing complete root cleanup for URL:" << rootUrl.toString();
+    const QUrl normalizedRootUrl = normalizeRootUrl(rootUrl);
+    fmDebug() << "Performing complete root cleanup for URL:" << normalizedRootUrl.toString();
 
-    QString rootPath = rootUrl.path();
+    QString rootPath = normalizedRootUrl.path();
     if (!rootPath.endsWith("/"))
         rootPath.append("/");
 
@@ -104,6 +115,7 @@ void FileDataManager::cleanRoot(const QUrl &rootUrl)
         // Compare normalized paths (both with trailing slash) for accurate matching
         if (infoPath.startsWith(rootPath) || infoPath == rootPath) {
             rootInfoMap.value(rootInfo)->disconnect();
+            rootUsers.remove(rootInfo);
             auto root = rootInfoMap.take(rootInfo);
             if (!root) {
                 fmWarning() << "Failed to retrieve root for complete cleanup:" << rootInfo.toString();
@@ -116,15 +128,16 @@ void FileDataManager::cleanRoot(const QUrl &rootUrl)
 
 void FileDataManager::stopRootWork(const QUrl &rootUrl, const QString &key)
 {
-    fmDebug() << "Stopping root work for URL:" << rootUrl.toString() << "key:" << key;
+    const QUrl normalizedRootUrl = normalizeRootUrl(rootUrl);
+    fmDebug() << "Stopping root work for URL:" << normalizedRootUrl.toString() << "key:" << key;
 
-    QString rootPath = rootUrl.path();
+    QString rootPath = normalizedRootUrl.path();
     if (!rootPath.endsWith("/"))
         rootPath.append("/");
 
     auto rootInfoKeys = rootInfoMap.keys();
     for (const auto &rootInfo : rootInfoKeys) {
-        if (UniversalUtils::urlEqualsWithQuery(rootInfo, rootUrl) || (rootInfo.path() != rootPath && rootInfo.path().startsWith(rootPath))) {
+        if (UniversalUtils::urlEqualsWithQuery(rootInfo, normalizedRootUrl) || (rootInfo.path() != rootPath && rootInfo.path().startsWith(rootPath))) {
             if (rootInfoMap.value(rootInfo)->checkKeyOnly(key))
                 rootInfoMap.value(rootInfo)->disconnect();
             rootInfoMap.value(rootInfo)->clearTraversalThread(key, false);
@@ -134,14 +147,15 @@ void FileDataManager::stopRootWork(const QUrl &rootUrl, const QString &key)
 
 void FileDataManager::setFileActive(const QUrl &rootUrl, const QUrl &childUrl, bool active)
 {
-    fmDebug() << "Setting file active state - root:" << rootUrl.toString() << "child:" << childUrl.toString() << "active:" << active;
+    const QUrl normalizedRootUrl = normalizeRootUrl(rootUrl);
+    fmDebug() << "Setting file active state - root:" << normalizedRootUrl.toString() << "child:" << childUrl.toString() << "active:" << active;
 
-    RootInfo *root = rootInfoMap.value(rootUrl);
+    RootInfo *root = rootInfoMap.value(normalizedRootUrl);
     if (root && root->watcher) {
         root->watcher->setEnabledSubfileWatcher(childUrl, active);
         fmDebug() << "File active state updated successfully";
     } else {
-        fmWarning() << "Cannot set file active - root or watcher not found for:" << rootUrl.toString();
+        fmWarning() << "Cannot set file active - root or watcher not found for:" << normalizedRootUrl.toString();
     }
 }
 
@@ -198,14 +212,15 @@ FileDataManager::~FileDataManager()
 
 RootInfo *FileDataManager::createRoot(const QUrl &url)
 {
-    bool needCache = checkNeedCache(url);
-    fmInfo() << "Creating RootInfo for URL:" << url.toString() << "cache needed:" << needCache;
+    const QUrl normalizedUrl = normalizeRootUrl(url);
+    bool needCache = checkNeedCache(normalizedUrl);
+    fmInfo() << "Creating RootInfo for URL:" << normalizedUrl.toString() << "cache needed:" << needCache;
 
     // create a new RootInfo
-    RootInfo *root = new RootInfo(url, needCache);
+    RootInfo *root = new RootInfo(normalizedUrl, needCache);
 
     // insert it to rootInfoMap
-    rootInfoMap.insert(url, root);
+    rootInfoMap.insert(normalizedUrl, root);
     connect(root, &RootInfo::requestClearRoot, this, &FileDataManager::onHandleFileDeleted,
             Qt::QueuedConnection);
 
@@ -231,6 +246,50 @@ bool FileDataManager::checkNeedCache(const QUrl &url)
     return false;
 }
 
+QUrl FileDataManager::normalizeRootUrl(const QUrl &url) const
+{
+    if (!url.isValid())
+        return url;
+
+    QUrl normalizedUrl(url);
+    QString path = normalizedUrl.path();
+    if (path.isEmpty()) {
+        path = "/";
+    } else if (path.length() > 1 && path.endsWith("/")) {
+        path.chop(1);
+    }
+    normalizedUrl.setPath(path);
+    return normalizedUrl;
+}
+
+void FileDataManager::addRootUser(const QUrl &url, const QString &key)
+{
+    if (key.isEmpty())
+        return;
+
+    rootUsers[url].insert(key);
+}
+
+void FileDataManager::removeRootUser(const QUrl &url, const QString &key)
+{
+    if (key.isEmpty())
+        return;
+
+    auto it = rootUsers.find(url);
+    if (it == rootUsers.end())
+        return;
+
+    it->remove(key);
+    if (it->isEmpty())
+        rootUsers.erase(it);
+}
+
+bool FileDataManager::hasRootUsers(const QUrl &url) const
+{
+    auto it = rootUsers.constFind(url);
+    return it != rootUsers.constEnd() && !it->isEmpty();
+}
+
 void FileDataManager::handleDeletion(RootInfo *root)
 {
     Q_ASSERT(root);
@@ -247,15 +306,16 @@ void FileDataManager::handleDeletion(RootInfo *root)
 // NOTE: in tree mode, this func will clean all child node data.
 void FileDataManager::cleanUnusedRoots(const QUrl &currentUrl, const QString &key)
 {
-    if (!currentUrl.isValid()) {
+    const QUrl normalizedCurrentUrl = normalizeRootUrl(currentUrl);
+    if (!normalizedCurrentUrl.isValid()) {
         fmWarning() << "Cannot clean unused roots - invalid current URL";
         return;
     }
 
-    fmInfo() << "Cleaning unused roots, keeping current URL:" << currentUrl.toString() << "key:" << key;
+    fmInfo() << "Cleaning unused roots, keeping current URL:" << normalizedCurrentUrl.toString() << "key:" << key;
 
     // 确保路径以/结尾，用于目录比较
-    QString currentPath = currentUrl.path();
+    QString currentPath = normalizedCurrentUrl.path();
     if (!currentPath.endsWith("/"))
         currentPath.append("/");
 
@@ -264,7 +324,7 @@ void FileDataManager::cleanUnusedRoots(const QUrl &currentUrl, const QString &ke
     // 找出所有需要清理的RootInfo
     for (const auto &rootUrl : rootInfoMap.keys()) {
         // 跳过当前URL
-        if (UniversalUtils::urlEqualsWithQuery(rootUrl, currentUrl))
+        if (UniversalUtils::urlEqualsWithQuery(rootUrl, normalizedCurrentUrl))
             continue;
 
         rootsToClean.append(rootUrl);
@@ -272,11 +332,13 @@ void FileDataManager::cleanUnusedRoots(const QUrl &currentUrl, const QString &ke
 
     // 清理标记的RootInfo
     for (const auto &rootUrl : rootsToClean) {
+        removeRootUser(rootUrl, key);
+
         // 先停止线程工作
         int rootThreadCount = rootInfoMap.value(rootUrl)->clearTraversalThread(key, false);
 
-        // 剩余迭代线程大于0,说明该rootinfo还在被其他view-model使用，不能直接移除
-        if (rootThreadCount > 0)
+        // 剩余迭代线程大于0或仍有视图使用该rootinfo，不能直接移除
+        if (rootThreadCount > 0 || hasRootUsers(rootUrl))
             continue;
 
         // 从Map中移除并处理删除

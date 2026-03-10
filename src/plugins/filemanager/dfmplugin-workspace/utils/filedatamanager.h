@@ -12,7 +12,9 @@
 #include <dfm-base/base/application/application.h>
 
 #include <QObject>
+#include <QHash>
 #include <QMultiHash>
+#include <QSet>
 
 namespace dfmplugin_workspace {
 
@@ -25,7 +27,7 @@ public:
     static FileDataManager *instance();
 
     void initMntedDevsCache();
-    RootInfo *fetchRoot(const QUrl &url);
+    RootInfo *fetchRoot(const QUrl &url, const QString &key = QString());
 
     bool fetchFiles(const QUrl &rootUrl,
                     const QString &key,
@@ -48,6 +50,10 @@ private:
     ~FileDataManager();
 
     RootInfo *createRoot(const QUrl &url);
+    QUrl normalizeRootUrl(const QUrl &url) const;
+    void addRootUser(const QUrl &url, const QString &key);
+    void removeRootUser(const QUrl &url, const QString &key);
+    bool hasRootUsers(const QUrl &url) const;
     bool checkNeedCache(const QUrl &url);
     void handleDeletion(RootInfo *root);
 
@@ -58,6 +64,7 @@ private:
 
     // scheme in cacheDataSchemes will have cache
     QList<QString> cacheDataSchemes {};
+    QHash<QUrl, QSet<QString>> rootUsers {};
     QMap<QUrl, int> dataRefMap {};
     QList<RootInfo *> deleteLaterList {};
 };

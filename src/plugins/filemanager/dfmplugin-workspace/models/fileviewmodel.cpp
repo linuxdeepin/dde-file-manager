@@ -190,7 +190,7 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
 
     // create root by url
     dirRootUrl = url;
-    FileDataManager::instance()->fetchRoot(dirRootUrl);
+    FileDataManager::instance()->fetchRoot(dirRootUrl, currentKey);
     endResetModel();
 
     initFilterSortWork();
@@ -242,7 +242,7 @@ void FileViewModel::toggleTreeItemExpansion(const QModelIndex &index)
     const QUrl &url = index.data(kItemUrlRole).toUrl();
     fmInfo() << "Expanding item:" << url.toString();
 
-    RootInfo *expandRoot = FileDataManager::instance()->fetchRoot(url);
+    RootInfo *expandRoot = FileDataManager::instance()->fetchRoot(url, currentKey);
 
     connect(
             expandRoot, &RootInfo::requestCloseTab, this, [](const QUrl &url) { WorkspaceHelper::instance()->closeTab(url); }, Qt::QueuedConnection);
@@ -911,7 +911,7 @@ void FileViewModel::setTreeView(const bool isTree)
 
 QStringList FileViewModel::getKeyWords()
 {
-    auto rootInfo = FileDataManager::instance()->fetchRoot(dirRootUrl);
+    auto rootInfo = FileDataManager::instance()->fetchRoot(dirRootUrl, currentKey);
     if (rootInfo)
         return rootInfo->getKeyWords();
 
@@ -997,7 +997,7 @@ void FileViewModel::executeLoad()
         dirRootUrl = urlToLoad;
 
         // 获取目标URL的RootInfo，准备数据获取
-        RootInfo *newRoot = FileDataManager::instance()->fetchRoot(dirRootUrl);
+        RootInfo *newRoot = FileDataManager::instance()->fetchRoot(dirRootUrl, currentKey);
         newRoot->setFirstBatch(true);
 
         // 连接信号，使当前filterSortWorker监听新RootInfo的数据
@@ -1303,7 +1303,7 @@ void FileViewModel::initFilterSortWork()
     // 连接信号
     connectFilterSortWorkSignals();
 
-    RootInfo *root = FileDataManager::instance()->fetchRoot(dirRootUrl);
+    RootInfo *root = FileDataManager::instance()->fetchRoot(dirRootUrl, currentKey);
     connectRootAndFilterSortWork(root);
 
     filterSortThread->start();
@@ -1420,7 +1420,7 @@ void FileViewModel::connectFilterSortWorkSignals()
             filterSortWorker.data(), &FileSortWorker::requestFetchMore, this, [this]() {
         canFetchFiles = true;
         fetchingUrl = rootUrl();
-        RootInfo *root = FileDataManager::instance()->fetchRoot(dirRootUrl);
+        RootInfo *root = FileDataManager::instance()->fetchRoot(dirRootUrl, currentKey);
         connectRootAndFilterSortWork(root, true);
         fetchMore(rootIndex()); }, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::updateRow, this, &FileViewModel::onFileUpdated, Qt::QueuedConnection);
