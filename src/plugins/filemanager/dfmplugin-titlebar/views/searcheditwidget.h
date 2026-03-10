@@ -70,6 +70,8 @@ private:
     void handleFocusOutEvent(QFocusEvent *e);
     void handleInputMethodEvent(QInputMethodEvent *e);
 
+    void restoreFocusIfNeeded();
+
     void updateSearchWidgetLayout();
     void quitSearch();
     void stopSearch();
@@ -102,6 +104,7 @@ private:
     SearchMode currentMode { SearchMode::kUnknown };
     QTimer *delayTimer { nullptr };
     qint64 lastSearchTime { 0 };
+    bool isUserDeactivating { false };   // Flag to indicate user intentionally deactivating edit mode
 };
 
 }   // namespace dfmplugin_titlebar
