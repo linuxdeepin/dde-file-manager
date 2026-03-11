@@ -213,11 +213,12 @@ bool DoDeleteFilesWorker::deleteDirOnOtherDevice(const FileInfoPointer &dir)
     if (!stateCheck())
         return false;
 
-    fmDebug() << "Deleting directory recursively:" << dir->urlOf(UrlInfoType::kUrl);
+    const QUrl dirUrl = dir->urlOf(UrlInfoType::kUrl);
+    fmDebug() << "Deleting directory recursively:" << dirUrl;
 
     if (dir->countChildFile() < 0) {
-        fmDebug() << "Directory has no children, treating as file:" << dir->urlOf(UrlInfoType::kUrl);
-        return deleteFileOnOtherDevice(dir->urlOf(UrlInfoType::kUrl));
+        fmDebug() << "Directory has no children, treating as file:" << dirUrl;
+        return deleteFileOnOtherDevice(dirUrl);
     }
 
     AbstractJobHandler::SupportAction action { AbstractJobHandler::SupportAction::kNoAction };
@@ -225,26 +226,54 @@ bool DoDeleteFilesWorker::deleteDirOnOtherDevice(const FileInfoPointer &dir)
     do {
         action = AbstractJobHandler::SupportAction::kNoAction;
         QString errorMsg;
-        iterator = DirIteratorFactory::create<AbstractDirIterator>(dir->urlOf(UrlInfoType::kUrl), &errorMsg);
+        iterator = DirIteratorFactory::create<AbstractDirIterator>(dirUrl, &errorMsg);
         if (!iterator) {
-            fmWarning() << "Create directory iterator failed - dir:" << dir->urlOf(UrlInfoType::kUrl) << "error:" << errorMsg;
-            action = doHandleErrorAndWait(dir->urlOf(UrlInfoType::kUrl), AbstractJobHandler::JobErrorType::kDeleteFileError, errorMsg);
+            fmWarning() << "Create directory iterator failed - dir:" << dirUrl << "error:" << errorMsg;
+            action = doHandleErrorAndWait(dirUrl, AbstractJobHandler::JobErrorType::kDeleteFileError, errorMsg);
         }
     } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
     if (action == AbstractJobHandler::SupportAction::kSkipAction) {
-        fmInfo() << "Skipped deleting directory:" << dir->urlOf(UrlInfoType::kUrl);
+        fmInfo() << "Skipped deleting directory:" << dirUrl;
         return true;
     }
     if (action != AbstractJobHandler::SupportAction::kNoAction)
         return false;
 
+    QList<QUrl> childUrls;
+    const qint64 expectedChildren = dir->countChildFile();
+    if (expectedChildren > 0)
+        childUrls.reserve(static_cast<int>(expectedChildren));
+
+    fmDebug() << "Taking child snapshot before delete:" << dirUrl << "expected child count:" << expectedChildren;
+    while (iterator->hasNext()) {
+        if (!stateCheck())
+            return false;
+
+        const QUrl url = iterator->next();
+        if (!url.isValid()) {
+            const QString errorMsg = QStringLiteral("Directory iterator returned an invalid child while deleting directory");
+            fmWarning() << "Invalid child returned by directory iterator - dir:" << dirUrl << "collected children:" << childUrls.count();
+            action = doHandleErrorAndWait(dirUrl, AbstractJobHandler::JobErrorType::kDeleteFileError, errorMsg);
+            if (action == AbstractJobHandler::SupportAction::kRetryAction)
+                return deleteDirOnOtherDevice(dir);
+            if (action == AbstractJobHandler::SupportAction::kSkipAction)
+                return true;
+            return false;
+        }
+
+        childUrls.append(url);
+    }
+
+    fmDebug() << "Directory child snapshot completed:" << dirUrl << "snapshot count:" << childUrls.count();
+
     bool ok { true };
     int childCount = 0;
-    while (iterator->hasNext()) {
-        const QUrl &url = iterator->next();
-        childCount++;
+    for (const QUrl &url : childUrls) {
+        if (!stateCheck())
+            return false;
 
+        childCount++;
         const auto &info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
         if (!info) {
             fmCritical() << "Failed to create file info for directory child - URL:" << url;
@@ -270,10 +299,10 @@ bool DoDeleteFilesWorker::deleteDirOnOtherDevice(const FileInfoPointer &dir)
         }
     }
 
-    fmDebug() << "Deleted" << childCount << "children from directory:" << dir->urlOf(UrlInfoType::kUrl);
+    fmDebug() << "Deleted" << childCount << "children from directory:" << dirUrl;
 
     // delete self dir
-    return deleteFileOnOtherDevice(dir->urlOf(UrlInfoType::kUrl));
+    return deleteFileOnOtherDevice(dirUrl);
 }
 /*!
  * \brief DoCopyFilesWorker::doHandleErrorAndWait Blocking handles errors and returns
