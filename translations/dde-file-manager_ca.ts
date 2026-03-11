@@ -4393,7 +4393,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="332"/>
         <source>Authorization dismissed</source>
-        <translation type="unfinished"/>
+        <translation>Autorització rebutjada</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="576"/>
