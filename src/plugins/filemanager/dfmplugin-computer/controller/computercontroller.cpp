@@ -326,7 +326,16 @@ void ComputerController::mountDevice(quint64 winId, const DFMEntryFileInfoPointe
 
                     this->mountDevice(winId, newId, shellId, act);
                 } else {
-                    DialogManagerInstance->showErrorDialog(tr("Unlock device failed"), tr("Wrong password"));
+                    QString errMsg;
+                    switch (err.code) {
+                    case DFMMOUNT::DeviceError::kUDisksErrorNotAuthorizedDismissed:
+                        errMsg = tr("Authorization dismissed");
+                        break;
+                    default:
+                        errMsg = tr("Wrong password");
+                        break;
+                    }
+                    DialogManagerInstance->showErrorDialog(tr("Unlock device failed"), errMsg);
                     fmInfo() << "unlock device failed: " << shellId << err.message << err.code;
                 }
             });
