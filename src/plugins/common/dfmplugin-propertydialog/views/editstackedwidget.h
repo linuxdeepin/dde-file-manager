@@ -28,6 +28,12 @@ public:
     bool isCanceled() const;
     void setIsCanceled(bool isCancele);
     inline void setCharCountLimit() { useCharCount = true; }
+    /**
+     * @brief setSuffix Sets the known file suffix so that length enforcement
+     *        will never truncate into the extension.
+     * @param suffix The suffix string WITHOUT the leading dot (e.g. "txt").
+     */
+    inline void setSuffix(const QString &suffix) { fileSuffix = suffix; }
 
 signals:
     void editFinished();
@@ -50,6 +56,9 @@ private:
 
     bool isCancel = false;
     bool useCharCount = false;
+
+    // Stores the original file suffix to prevent truncation from eating the extension
+    QString fileSuffix {};
 
     DTK_WIDGET_NAMESPACE::DArrowRectangle *tooltip { nullptr };
 };
