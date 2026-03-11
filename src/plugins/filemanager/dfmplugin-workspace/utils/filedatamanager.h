@@ -27,6 +27,7 @@ public:
     static FileDataManager *instance();
 
     void initMntedDevsCache();
+    // NOTE: do not call this from delegate paint/sizeHint paths.
     RootInfo *fetchRoot(const QUrl &url, const QString &key = QString());
 
     bool fetchFiles(const QUrl &rootUrl,

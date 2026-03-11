@@ -250,6 +250,8 @@ void FileView::setDelegate(Global::ViewMode mode, BaseItemDelegate *view)
     }
 
     d->delegates[static_cast<int>(mode)] = view;
+    if (model())
+        view->setHighlightKeywords(model()->getKeyWords());
 }
 
 bool FileView::setRootUrl(const QUrl &url)
@@ -2421,6 +2423,7 @@ void FileView::initializeDelegate()
 
     d->itemsExpandable = DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool()
             && WorkspaceHelper::instance()->isViewModeSupported(rootUrl().scheme(), DFMGLOBAL_NAMESPACE::ViewMode::kTreeMode);
+    updateDelegateHighlightKeywords(model()->getKeyWords());
 
     fmDebug() << "Delegates initialized with grouping signal connections, items expandable:" << d->itemsExpandable;
 }
@@ -2449,6 +2452,10 @@ void FileView::initializeConnect()
     connect(d->statusBar->scalingSlider(), &DSlider::valueChanged, this, &FileView::onScalingValueChanged);
 
     connect(model(), &FileViewModel::stateChanged, this, &FileView::onModelStateChanged);
+    connect(model(), &FileViewModel::highlightKeywordsChanged, this, [this](const QStringList &keywords) {
+        updateDelegateHighlightKeywords(keywords);
+        update();
+    });
     connect(model(), &FileViewModel::selectAndEditFile, this, &FileView::onSelectAndEdit);
     connect(model(), &FileViewModel::dataChanged, this, &FileView::updateOneView);
     connect(model(), &FileViewModel::renameFileProcessStarted, this, &FileView::onRenameProcessStarted);
@@ -2485,6 +2492,14 @@ void FileView::initializeConnect()
             d->isShowSmbMountError = false;
         }
     });
+}
+
+void FileView::updateDelegateHighlightKeywords(const QStringList &keywords)
+{
+    for (auto delegate : d->delegates) {
+        if (delegate)
+            delegate->setHighlightKeywords(keywords);
+    }
 }
 
 void FileView::initializeScrollBarWatcher()

@@ -96,6 +96,7 @@ public:
     void updateThumbnailIcon(const QModelIndex &index, const QString &thumb);
     void setTreeView(const bool isTree);
 
+    // Paint path safe: returns cached keywords, no RootInfo/DataManager access.
     QStringList getKeyWords();
 
     // Get file-only count for status bar (excludes group headers)
@@ -141,6 +142,7 @@ Q_SIGNALS:
     void requestToggleGroupExpansion(const QString &key, const QString &groupKey);
     void requestCollapseItem(const QString &key, const QUrl &parent);
     void requestTreeView(const bool isTree);
+    void highlightKeywordsChanged(const QStringList &keywords);
 
     void aboutToSwitchToListView(const QList<QUrl> &allShowList);
 
@@ -174,6 +176,7 @@ private:
 
     void changeState(ModelState newState);
     void changeGroupingState(GroupingState newState);
+    void refreshHighlightKeywords(const QUrl &url);
     void closeCursorTimer();
     void startCursorTimer();
 
@@ -196,6 +199,7 @@ private:
     QList<QSharedPointer<QObject>> discardedObjects {};
     QDir::Filters currentFilters { QDir::NoFilter };
     QStringList nameFilters {};
+    QStringList highlightKeywordsCache {};
     bool isTree { false };
     bool updating { false };
 

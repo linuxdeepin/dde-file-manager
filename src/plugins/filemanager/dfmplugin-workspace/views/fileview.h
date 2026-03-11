@@ -12,6 +12,7 @@
 
 #include <DListView>
 #include <QDir>
+#include <QStringList>
 
 DWIDGET_USE_NAMESPACE
 namespace dfmplugin_workspace {
@@ -211,6 +212,7 @@ private:
     void initializeScrollBarWatcher();
     void initializePreSelectTimer();
     void initializeGroupHeaderTimer();
+    void updateDelegateHighlightKeywords(const QStringList &keywords);
 
     void delayUpdateStatusBar();
     void updateStatusBar();

@@ -8,6 +8,7 @@
 #include "utils/fileoperatorhelper.h"
 #include "utils/filedatamanager.h"
 #include "utils/filesortworker.h"
+#include "utils/keywordextractor.h"
 #include "models/rootinfo.h"
 #include "models/fileitemdata.h"
 #include "events/workspaceeventsequence.h"
@@ -190,6 +191,7 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
 
     // create root by url
     dirRootUrl = url;
+    refreshHighlightKeywords(dirRootUrl);
     FileDataManager::instance()->fetchRoot(dirRootUrl, currentKey);
     endResetModel();
 
@@ -911,11 +913,7 @@ void FileViewModel::setTreeView(const bool isTree)
 
 QStringList FileViewModel::getKeyWords()
 {
-    auto rootInfo = FileDataManager::instance()->fetchRoot(dirRootUrl, currentKey);
-    if (rootInfo)
-        return rootInfo->getKeyWords();
-
-    return {};
+    return highlightKeywordsCache;
 }
 
 int FileViewModel::getFileOnlyCount() const
@@ -995,6 +993,7 @@ void FileViewModel::executeLoad()
 
         // 更新当前URL（但不影响视图显示）
         dirRootUrl = urlToLoad;
+        refreshHighlightKeywords(dirRootUrl);
 
         // 获取目标URL的RootInfo，准备数据获取
         RootInfo *newRoot = FileDataManager::instance()->fetchRoot(dirRootUrl, currentKey);
@@ -1019,6 +1018,16 @@ void FileViewModel::executeLoad()
     // 清除准备的URL
     preparedUrl = QUrl();
     fmDebug() << "Load execution completed for URL:" << urlToLoad.toString();
+}
+
+void FileViewModel::refreshHighlightKeywords(const QUrl &url)
+{
+    const QStringList keywords = KeywordExtractorManager::instance().extractor().extractFromUrl(url);
+    if (keywords == highlightKeywordsCache)
+        return;
+
+    highlightKeywordsCache = keywords;
+    Q_EMIT highlightKeywordsChanged(highlightKeywordsCache);
 }
 
 void FileViewModel::updateHorizontalOffset(const bool update)

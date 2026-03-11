@@ -4,7 +4,6 @@
 
 #include "rootinfo.h"
 #include "fileitemdata.h"
-#include "utils/keywordextractor.h"
 
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/universalutils.h>
@@ -26,13 +25,6 @@ RootInfo::RootInfo(const QUrl &u, const bool canCache, QObject *parent)
     : QObject(parent), url(u), canCache(canCache)
 {
     fmInfo() << "RootInfo created for URL:" << url.toString() << "canCache:" << canCache;
-
-    // 使用关键字提取器来处理关键字解析
-    keyWords = KeywordExtractorManager::instance().extractor().extractFromUrl(url);
-
-    if (!keyWords.isEmpty()) {
-        fmDebug() << "Extracted keywords for search:" << keyWords;
-    }
 
     hiddenFileUrl.setScheme(url.scheme());
     hiddenFileUrl.setPath(DFMIO::DFMUtils::buildFilePath(url.path().toStdString().c_str(), ".hidden", nullptr));
@@ -289,11 +281,6 @@ bool RootInfo::canDelete() const
     }
     fmDebug() << "RootInfo can be safely deleted for URL:" << url.toString();
     return true;
-}
-
-QStringList RootInfo::getKeyWords() const
-{
-    return keyWords;
 }
 
 bool RootInfo::checkKeyOnly(const QString &key) const
