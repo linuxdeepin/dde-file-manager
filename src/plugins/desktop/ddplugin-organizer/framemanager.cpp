@@ -17,6 +17,8 @@
 
 #include <QAbstractItemView>
 #include <QDBusInterface>
+#include <QDBusPendingReply>
+#include <QDBusPendingCallWatcher>
 
 DFMBASE_USE_NAMESPACE
 using namespace ddplugin_organizer;
@@ -158,20 +160,20 @@ void FrameManagerPrivate::onHideAllKeyPressed()
     });
 
     if (!CfgPresenter->isRepeatNoMore() && aboutToHide) {
-        uint notifyId = QDate::currentDate().daysInYear();
+        const quint32 replacesId = hideAllNotifyId;
         QString keySequence = CfgPresenter->hideAllKeySequence().toString();
         QString tips = tr("To disable the One-Click Hide feature, invoke the \"Desktop Settings\" window "
                           "in the desktop context menu and turn off the \"One-Click Hide Collection\".");
         QString cmdNoRepeation = "dde-dconfig,--set,-a,org.deepin.dde.file-manager,-r,org.deepin.dde.file-manager.desktop.organizer,-k,hideAllDialogRepeatNoMore,-v,true";
         QString cmdCloseNotify = QString("dbus-send,--type=method_call,--dest=org.freedesktop.Notifications,/org/freedesktop/Notifications,com.deepin.dde.Notification.CloseNotification,uint32:%1")
-                                         .arg(notifyId);
-        DDBusSender()
+                                         .arg(replacesId);
+        QDBusPendingCall pendingReply = DDBusSender()
                 .service("org.freedesktop.Notifications")
                 .path("/org/freedesktop/Notifications")
                 .interface("org.freedesktop.Notifications")
                 .method(QString("Notify"))
                 .arg(tr("Desktop organizer"))
-                .arg(notifyId)
+                .arg(replacesId)
                 .arg(QString("deepin-toggle-desktop"))
                 .arg(tr("Shortcut \"%1\" to show collections").arg(keySequence))
                 .arg(tips)
@@ -180,6 +182,17 @@ void FrameManagerPrivate::onHideAllKeyPressed()
                                    { "x-deepin-action-close-notify", cmdCloseNotify } })
                 .arg(3000)
                 .call();
+        auto *watcher = new QDBusPendingCallWatcher(pendingReply, this);
+        connect(watcher, &QDBusPendingCallWatcher::finished, this, [this](QDBusPendingCallWatcher *watcher) {
+            QDBusPendingReply<uint> reply = *watcher;
+            if (reply.isError()) {
+                fmWarning() << "send organizer notification failed:" << reply.error().name() << reply.error().message();
+                hideAllNotifyId = 0;
+            } else {
+                hideAllNotifyId = reply.value();
+            }
+            watcher->deleteLater();
+        });
     }
 }
 

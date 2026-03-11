@@ -51,6 +51,7 @@ public:
     CollectionModel *model { nullptr };
     CanvasInterface *canvas { nullptr };
     OptionsWindow *options { nullptr };
+    quint32 hideAllNotifyId { 0 };
 
     QTimer *layoutTimer { nullptr };
 
