@@ -76,61 +76,58 @@ void NameTextEdit::slotTextChanged()
     QSignalBlocker blocker(this);
     Q_UNUSED(blocker)
 
-    QString text = this->toPlainText();
-    const QString old_text = text;
-
-    int text_length = text.length();
-
-    text.remove('/');
+    // Step 1: Strip characters that are always illegal in filenames
+    QString text = toPlainText();
+    const int origLen = text.length();
     text.remove(QChar(0));
 
-    int cursor_pos = this->textCursor().position() - text_length + text.length();
+    // Adjust cursor for the characters just removed
+    int endPos = textCursor().position() - (origLen - text.length());
 
-    while (textLength(text) > NAME_MAX) {
-        text.chop(1);
+    // Step 2: Strip config-defined illegal characters (e.g. \:*"?<>|)
+    const QString dstText = FileUtils::preprocessingFileName(text);
+    const bool hasInvalidChar = (text != dstText);
+    endPos += dstText.length() - text.length();
+    text = dstText;
+
+    // Step 3: Enforce NAME_MAX, protecting the suffix from being truncated.
+    //   Split text into base + dotSuffix, apply processLength only to base,
+    //   then reattach dotSuffix.
+    const QString dotSuffix = (!fileSuffix.isEmpty() && text.endsWith("." + fileSuffix))
+            ? ("." + fileSuffix)
+            : QString();
+    if (!dotSuffix.isEmpty()) {
+        QString base = text.left(text.length() - dotSuffix.length());
+        int basePos = qMin(endPos, static_cast<int>(base.length()));
+        FileUtils::processLength(base, basePos, NAME_MAX - textLength(dotSuffix),
+                                 useCharCount, base, basePos);
+        text = base + dotSuffix;
+        endPos = basePos;
+    } else {
+        FileUtils::processLength(text, endPos, NAME_MAX, useCharCount, text, endPos);
     }
 
-    if (text.size() != old_text.size()) {
-        this->setPlainText(text);
+    // Step 4: Apply changes to the editor
+    if (text != toPlainText()) {
+        setPlainText(text);
     }
 
-    QTextCursor cursor = this->textCursor();
-
+    QTextCursor cursor = textCursor();
     cursor.movePosition(QTextCursor::Start);
-
     do {
-        QTextBlockFormat format = cursor.blockFormat();
-
-        format.setLineHeight(kTextLineHeight, QTextBlockFormat::FixedHeight);
-        cursor.setBlockFormat(format);
+        QTextBlockFormat fmt = cursor.blockFormat();
+        fmt.setLineHeight(kTextLineHeight, QTextBlockFormat::FixedHeight);
+        cursor.setBlockFormat(fmt);
     } while (cursor.movePosition(QTextCursor::NextBlock));
+    cursor.setPosition(endPos);
+    setTextCursor(cursor);
+    setAlignment(Qt::AlignHCenter);
 
-    cursor.setPosition(cursor_pos);
+    if (isReadOnly())
+        setFixedHeight(static_cast<int>(document()->size().height()));
 
-    this->setTextCursor(cursor);
-    this->setAlignment(Qt::AlignHCenter);
-
-    if (this->isReadOnly())
-        this->setFixedHeight(static_cast<int>(this->document()->size().height()));
-
-    QString dstText = FileUtils::preprocessingFileName(text);
-
-    bool hasInvalidChar = text != dstText;
-
-    int endPos = this->textCursor().position() + (dstText.length() - text.length());
-
-    FileUtils::processLength(dstText, endPos, NAME_MAX, true, dstText, endPos);
-    if (text != dstText) {
-        this->setPlainText(dstText);
-        QTextCursor cursor = this->textCursor();
-        cursor.setPosition(endPos);
-        this->setTextCursor(cursor);
-        this->setAlignment(Qt::AlignHCenter);
-    }
-
-    if (hasInvalidChar) {
+    if (hasInvalidChar)
         showAlertMessage(tr("%1 are not allowed").arg("|/\\*:\"'?<>"));
-    }
 }
 
 void NameTextEdit::showAlertMessage(const QString &text, int duration)
@@ -152,7 +149,11 @@ void NameTextEdit::showAlertMessage(const QString &text, int duration)
         label->adjustSize();
     }
 
-    QPoint pos = this->mapToGlobal(QPoint(this->width() / 2, this->height()));
+    if (!this->window())
+        return;
+
+    tooltip->setParent(this->window());
+    QPoint pos = this->mapTo(this->window(), QPoint(this->width() / 2, this->height()));
     tooltip->show(pos.x(), pos.y());
 }
 
@@ -298,17 +299,19 @@ void EditStackedWidget::renameFile()
     if (FileUtils::supportLongName(fileUrl))
         fileNameEdit->setCharCountLimit();
 
+    // Store the suffix so that slotTextChanged() can protect it from truncation
+    fileNameEdit->setSuffix(info.suffix());
     fileNameEdit->setPlainText(info.fileName());
     this->setCurrentIndex(0);
     fileNameEdit->setFixedHeight(textShowFrame->height());
     fileNameEdit->setFocus();
 
-    fileNameEdit->selectAll();
-    int endPos = fileNameEdit->toPlainText().length();
-
+    // Select only the base name (everything before the last extension),
+    // leaving the suffix unselected so the user doesn't accidentally overwrite it.
+    const QString baseName = info.completeBaseName();
     QTextCursor cursor = fileNameEdit->textCursor();
     cursor.setPosition(0);
-    cursor.setPosition(endPos, QTextCursor::KeepAnchor);
+    cursor.setPosition(baseName.length(), QTextCursor::KeepAnchor);
     fileNameEdit->setTextCursor(cursor);
 }
 
