@@ -270,6 +270,16 @@ void BaseItemDelegate::setPaintProxy(AbstractItemPaintProxy *proxy)
     d->paintProxy = proxy;
 }
 
+void BaseItemDelegate::setHighlightKeywords(const QStringList &keywords)
+{
+    d->highlightKeywords = keywords;
+}
+
+const QStringList &BaseItemDelegate::highlightKeywords() const
+{
+    return d->highlightKeywords;
+}
+
 QModelIndex BaseItemDelegate::editingIndex() const
 {
     Q_D(const BaseItemDelegate);

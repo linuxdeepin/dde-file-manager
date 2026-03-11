@@ -10,6 +10,7 @@
 #include <dfm-base/dfm_global_defines.h>
 
 #include <QStyledItemDelegate>
+#include <QStringList>
 #include <QTextOption>
 
 QT_BEGIN_NAMESPACE
@@ -125,6 +126,8 @@ public:
     QSize getIndexIconSize(const QStyleOptionViewItem &option, const QModelIndex &index, const QSize &size) const;
 
     void setPaintProxy(AbstractItemPaintProxy *proxy);
+    void setHighlightKeywords(const QStringList &keywords);
+    const QStringList &highlightKeywords() const;
 
     // Group rendering virtual interfaces
     virtual bool isGroupHeaderItem(const QModelIndex &index) const;

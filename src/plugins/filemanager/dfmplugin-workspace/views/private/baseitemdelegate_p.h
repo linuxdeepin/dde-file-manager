@@ -12,6 +12,7 @@
 
 #include <QModelIndex>
 #include <QSize>
+#include <QStringList>
 #include <QtGlobal>
 #include <QMutex>
 
@@ -40,6 +41,7 @@ public:
 
     AbstractItemPaintProxy *paintProxy { nullptr };
     QWidget *commitDataCurentWidget { nullptr };
+    QStringList highlightKeywords {};
     DFMBASE_NAMESPACE::ViewDefines viewDefines;
 
     BaseItemDelegate *q_ptr;

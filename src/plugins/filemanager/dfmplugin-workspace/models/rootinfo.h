@@ -60,7 +60,6 @@ public:
     QStringList connectTokens() const { return connectedTokens; }
 
     bool canDelete() const;
-    QStringList getKeyWords() const;
 
     bool checkKeyOnly(const QString &key) const;
 
@@ -165,7 +164,6 @@ private:
     std::atomic_bool isRefresh { false };
     QStringList connectedTokens;
 
-    QStringList keyWords {};
     std::atomic_bool isDying { false };
 };
 }

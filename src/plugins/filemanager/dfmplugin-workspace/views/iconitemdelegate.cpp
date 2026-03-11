@@ -735,7 +735,7 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
     QScopedPointer<ElideTextLayout> layout(ItemDelegateHelper::createTextLayout(displayName, QTextOption::WrapAtWordBoundaryOrAnywhere,
                                                                                 lineHeight, Qt::AlignCenter, painter));
     layout->setHighlightEnabled(!isSelected);
-    layout->setHighlightKeywords(parent()->parent()->model()->getKeyWords());
+    layout->setHighlightKeywords(highlightKeywords());
     layout->setHighlightColor(QColor("#0081FF"));
 
     labelRect.setLeft(labelRect.left() + kIconModeRectRadius);
