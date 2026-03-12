@@ -119,9 +119,9 @@ Click ![](../common/view_options.svg) to adjust view styles:
 
 
 > ![tips](../common/tips.svg) Tips:
-> 
+>
 > - In list view, place the cursor on the dividing line between any two columns and drag it to change the width of the current column. Double-click the dividing line to adjust to the biggest width of the current column automatically. 
-> - Press  **Ctrl**+**1**  or  **Ctrl**+ **2**  to switch icon view and list view. 
+> - Press  **Ctrl**+**1** or  **Ctrl**+ **2** to switch icon view and list view. 
 
 ### Sorting
 
@@ -131,6 +131,16 @@ Click ![](../common/view_options.svg) to adjust view styles:
 Enable **Mix files and folders** in **Main Menu > Settings > Basic Settings > Files and Directories** to sort them together.
 
 > ![tips](../common/tips.svg) Tips: you can click the head of the columns in the list view to change the sort order.
+
+### Group Files
+
+When there is a large number of files in a directory, you can use the grouping feature to categorize and organize files or folders to quickly locate specific types of files.
+
+1. Right-click on a blank area in the workspace and select **Group by** from the menu. You can also click to select **Group by** at the bottom of the sort options drop-down menu in the title bar.
+2. In the options, choose to group and display by **Modified**, **Created**, **Name**, **Size**, or **Type**. Select **None** to cancel the grouping mode.
+3. Collapse and expand groups: After enabling grouping, click the expand/collapse button in the top tag of each group to expand or collapse that group.
+
+![1|tab](fig/group_files.png)
 
 ### Open Files
 
@@ -171,6 +181,17 @@ Enable **Mix files and folders** in **Main Menu > Settings > Basic Settings > Fi
    - The shortcut of the deleted files will become invalid.
 
 > ![notes](../common/notes.svg) Notes: You can check **Ask for my confirmation when deleting files** in **Main Menu > Settings > Advanced**, and a prompt box to confirm deletion will pop up each time you delete a file.
+
+#### File Shredding
+
+If you need to permanently delete files to prevent data recovery, you can use the file shredding feature to ensure security.
+
+1. Click **Main Menu** > **Settings**, enter **Advanced Settings**, and turn on the **Enable file shredding** switch in the file shredding module.
+2. In the file manager, right-click the file or folder you want to permanently delete.
+3. Select **File shred**.
+4. In the pop-up confirmation window, click the **Confirm** button to execute the shredding process.
+
+> ![attention](../common/attention.svg) Attention: After using this feature, the files will be completely deleted and cannot be recovered by any tool, please operate with caution.
 
 ### Undo Operation
 
@@ -275,6 +296,16 @@ By default, there is a **Recent** entry on left panel. Click it to view the rece
 2. Select **Open in new tab**.  
 
 ![1|tab](fig/p_tab.png)
+
+#### Pin Tabs
+
+For fixed directories that require long-term and high-frequency access (such as code repositories, report folders, etc.), you can use the tab pinning feature to keep them constantly displayed.
+
+- **Pin tab**: Right-click the normal tab you want to pin and select **Pin tab**. The pinned tab will shrink its display area and be locked in the tab bar.
+- **Unpin**: Right-click the pinned tab and select **Unpin tab**, or directly click the "pin" icon on the pinned tab to unpin it.
+- **Manage pinned tabs**: Supports dragging left and right to adjust the arrangement order of pinned tabs. You can also drag a pinned tab directly out to form a brand new file manager window, or drag it into other existing windows to merge it as a normal tab.
+
+![1|tab](fig/pin_tabs.png)
 
 ### Manage Bookmarks
 
@@ -403,6 +434,12 @@ Users on the LAN can access the shared files through the network path provided b
 
 ![1|viewshare](fig/visitshare.png)
 
+You can also set a remark name for the computer IP directory shared over the network:
+
+1. Find the connected network shared directory in the disk list of the computer, or under the "Partition" and "Network" groups in the sidebar.
+2. Right-click the directory and select **Rename** (or click to select and then slowly double-click the icon) to make the name enter the select-all input state.
+3. After entering the new remark name, press **Enter** or click on other blank areas to save.
+
 #### Cancel Sharing
 
 When all shared files are cancelled, "My Shares" is removed from the left panel, and you can cancel local shared files in one of the following ways. 
@@ -450,7 +487,6 @@ You can copy music, video, pictures, or mirror files to a CD or DVD through the 
 <td>Adding files afterwards is supported.</td>
 <td>Only formats burned by primitive tools of Windows are supported.</td></tr>
 <tr>
-<!--<td>4.1</td>-->
 <td>Non DVD-R, DVD+R, CD-R, CD-RW</td>
 <td>Adding files afterwards is supported.</td>
 <td>Adding files afterwards is not supported</td></tr>   
@@ -519,7 +555,7 @@ Prerequisite: The Bluetooth devices of sender and receiver have been paired and 
 You can assign an icon file to a file or folder icon through the command line and display it as a corner marker.
 
 > ![notes](../common/notes.svg) Notes: 
-> 
+>
 > - The corner marker files support formats such as svg, jpg, png, bmp, and gif, but not bigger than 100KB.
 > - The corner marker could not be added to files in USB disks and CD-ROM disks.
 
@@ -719,11 +755,10 @@ Click ![icon_menu](../common/icon_menu.svg)> **Settings** on the interface of Fi
 
 #### Basic
 
-- **Open Behavior**: Choose to open folders in new windows/double-click/single-click files.
-- **New Windows/Tabs**: Set default actions for opening directories.
-- **Files & Directories**: Toggle *Show hidden files*, *Show extensions*, or *Mix files/folders in sorting*.  
-
-![setting](fig/basic_setting.png)
+- **Open Behavior**: Set whether to **Always open folders in a new window**, **Open new folders in a new tab**, and set **Double-click** or **Single-click** to open files. You can also set whether to **Activate the existing window when repeatedly opening a folder**.
+- **New Windows**: Set the directory range for **Display when starting a new window**. In addition to the system's default directories such as "Computer", "Home", and "Documents", you can also click **Add directory** to customize and supplement up to 4 startup directories.
+- **New Tabs**: Set the specified directory for **Open from a new tab** in the file manager.
+- **Files & Directories**: Toggle *Show hidden files*, *Show extensions*, or *Mix files/folders in sorting*.
 
 #### Sidebar
 
@@ -739,10 +774,10 @@ Click ![icon_menu](../common/icon_menu.svg)> **Settings** on the interface of Fi
 
 - **Search**: Enable full-text search and manually update indexes.
 - **Mount**: Auto-mount external disks, open after mounting, or display Samba entries.
+- **External storage device usage mode**: Select the access strategy for connected external devices. You can choose **Real-time synchronization and safe unplugging (Recommended)** or **Performance first (Requires safe removal)** to match your personal performance needs and unplugging habits.
 - **Dialogs**: Use file manager for file selection dialogs or enable delete confirmations.
 - **File Sharing**: Configure sharing permissions and save locations.
-
-
+- **File Shredding**: Check **Enable file shredding** to allow "File shred" from the right-click menu of files or folders, completely removing privacy-sensitive files that do not need to be kept.
 
 ### Theme
 
