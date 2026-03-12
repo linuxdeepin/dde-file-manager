@@ -96,6 +96,7 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     const bool isActive = opt.widget && opt.widget->isActiveWindow();
 
     painter->setRenderHint(QPainter::Antialiasing);
+    painter->setClipRect(opt.rect);
 
     if (!option.widget)
         return;
@@ -110,8 +111,7 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     if (!item)
         return DStyledItemDelegate::paint(painter, option, index);
     SideBarItemSeparator *separatorItem = dynamic_cast<SideBarItemSeparator *>(item);
-    // bug-205621
-    QRect itemRect = qApp->devicePixelRatio() > 1.0 ? opt.rect.adjusted(0, 1, 0, -1) : opt.rect;
+    QRect itemRect = opt.rect;
     QPoint dx = QPoint(kItemMargin, 0);
     QPoint dw = QPoint(-12, 0);
     bool selected = opt.state.testFlag(QStyle::State_Selected);
