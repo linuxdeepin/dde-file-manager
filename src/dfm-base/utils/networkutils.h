@@ -32,6 +32,20 @@ public:
     // if network mount，get network mount
     static QMap<QString, QString> cifsMountHostInfo();
 
+    /**
+     * @brief resolveLocalSftpMountUrl
+     *   If @p url is a GVFS SFTP path whose server is the local machine,
+     *   strips the GVFS prefix and returns the real local @c file:// URL.
+     *   In all other cases @p url is returned unchanged.
+     *
+     *   This prevents a deadlock that occurs when a symlink created inside a
+     *   self-mounted SFTP share points back into the same GVFS mount hierarchy,
+     *   causing the SFTP FUSE daemon to issue a re-entrant request to itself.
+     * @param url  Source URL (potentially a GVFS SFTP path).
+     * @return     Resolved local URL, or @p url unchanged when not applicable.
+     */
+    static QUrl resolveLocalSftpMountUrl(const QUrl &url);
+
 protected:
     explicit NetworkUtils(QObject *parent = nullptr);
 };

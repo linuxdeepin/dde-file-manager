@@ -8,6 +8,9 @@
 #include <QFutureWatcher>
 #include <QTcpSocket>
 #include <QNetworkProxy>
+#include <QHostAddress>
+#include <QNetworkInterface>
+#include <QRegularExpression>
 
 #include <netdb.h>
 #include <arpa/inet.h>
@@ -240,6 +243,66 @@ QMap<QString, QString> NetworkUtils::cifsMountHostInfo()
         mnt_free_iter(iter);
     }
     return table;
+}
+
+/*!
+ * \brief NetworkUtils::resolveLocalSftpMountUrl
+ *
+ * When \a url is a GVFS SFTP path (e.g.
+ * \c /run/user/1000/gvfs/sftp:host=localhost/home/user/file) and the SFTP
+ * server is the local machine, strips the GVFS prefix and returns the
+ * corresponding real local \c file:// URL.  In all other cases \a url is
+ * returned unchanged.
+ *
+ * The host-is-local check follows three steps:
+ *  1. Loopback literals (\c localhost, \c 127.0.0.1, \c ::1).
+ *  2. Numeric IP — compared against every address on all local interfaces via
+ *     \c QNetworkInterface::allAddresses().
+ */
+QUrl NetworkUtils::resolveLocalSftpMountUrl(const QUrl &url)
+{
+    // Extract host from the SFTP GVFS path segment.
+    QString host, port;
+    if (!instance()->parseIp(url.path(), host, port))
+        return url;
+
+    // Determine whether the SFTP server is the local machine.
+    const auto isLocalMachine = [](const QString &h) -> bool {
+        // Step 1: loopback literals
+        if (h.compare(QLatin1String("localhost"), Qt::CaseInsensitive) == 0
+            || h == QLatin1String("127.0.0.1")
+            || h == QLatin1String("::1"))
+            return true;
+
+        // Step 2: numeric IP — match against all local interface addresses
+        const QHostAddress candidate(h);
+        if (candidate.isNull())
+            return false;
+
+        const auto &localAddrs = QNetworkInterface::allAddresses();
+        return std::any_of(localAddrs.cbegin(), localAddrs.cend(),
+                           [&candidate](const QHostAddress &la) {
+                               return la.isEqual(candidate, QHostAddress::TolerantConversion);
+                           });
+    };
+
+    if (!isLocalMachine(host))
+        return url;
+
+    // Strip the GVFS SFTP mount prefix to obtain the real local path.
+    // Supported formats:
+    //   /run/user/<uid>/gvfs/sftp:host=<h>[,params]/<local-path>
+    //   /root/.gvfs/sftp:host=<h>[,params]/<local-path>
+    static const QRegularExpression sftpPrefix(R"(^/run/user/\d+/gvfs/sftp:[^/]*|^/root/\.gvfs/sftp:[^/]*)");
+    QString localPath = url.toLocalFile();
+    localPath.remove(sftpPrefix);
+    if (localPath.isEmpty())
+        localPath = QStringLiteral("/");
+
+    qCInfo(logDFMBase) << "resolveLocalSftpMountUrl: self-mounted SFTP detected,"
+                          " resolved symlink target to local path:"
+                       << localPath << "(original:" << url.toLocalFile() << ")";
+    return QFile::exists(localPath) ? QUrl::fromLocalFile(localPath) : url;
 }
 
 NetworkUtils::NetworkUtils(QObject *parent)
