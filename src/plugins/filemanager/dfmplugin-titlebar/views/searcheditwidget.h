@@ -65,6 +65,10 @@ protected:
 private:
     void initUI();
     void initConnect();
+    bool isCollapsedEntry() const;
+    void beginCollapsedSession();
+    void endCollapsedSession();
+    void handleCollapsedSessionFocusOut();
 
     void handleFocusInEvent(QFocusEvent *e);
     void handleFocusOutEvent(QFocusEvent *e);
@@ -105,6 +109,7 @@ private:
     QTimer *delayTimer { nullptr };
     qint64 lastSearchTime { 0 };
     bool isUserDeactivating { false };   // Flag to indicate user intentionally deactivating edit mode
+    bool activatedFromCollapsed { false };   // Track sessions entered from collapsed mode
 };
 
 }   // namespace dfmplugin_titlebar
