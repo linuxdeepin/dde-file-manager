@@ -59,6 +59,7 @@ struct Tab
     QVariantMap userData;
     bool isInactive { false };
     bool isPinned { false };
+    bool isDragPreview { false };
 };
 
 namespace dfmplugin_titlebar {
@@ -101,6 +102,7 @@ public:
     void closeLeftTabs(int index);
     void closeRightTabs(int index);
     void closeOtherTabs(int index);
+    bool hasDragPreviewTab() const;
 
 public:
     TabBar *q;
@@ -110,7 +112,6 @@ public:
 
     int nextTabUniqueId { 0 };
     int currentTabIndex { -1 };
-    bool isDragging { false };
     QTimer *updateConfigTimer { nullptr };
     int lastTooltipTabIndex { -1 };
     bool lastTooltipOnButton { false };
@@ -340,7 +341,8 @@ void TabBarPrivate::handleIndexChanged(int index)
         });
     }
 
-    if (!isDragging)
+    // Suppress notification while any drag-preview tab exists in this TabBar.
+    if (!hasDragPreviewTab())
         Q_EMIT q->currentTabChanged(currentTabIndex, index);
     currentTabIndex = index;
 }
@@ -783,6 +785,15 @@ bool TabBarPrivate::updateTabInfo(int index, std::function<void(Tab &)> modifier
     modifier(tab);
     q->setTabData(index, QVariant::fromValue(tab));
     return true;
+}
+
+bool TabBarPrivate::hasDragPreviewTab() const
+{
+    for (int i = 0; i < q->count(); ++i) {
+        if (tabInfo(i).isDragPreview)
+            return true;
+    }
+    return false;
 }
 
 bool TabBarPrivate::canPinned(int index)
@@ -1276,16 +1287,6 @@ bool TabBar::eventFilter(QObject *obj, QEvent *e)
         return DTabBar::eventFilter(obj, e);
     }
 
-    // Handle drag events on TabBar itself
-    if (obj == this) {
-        if (eventType == QEvent::DragEnter) {
-            d->isDragging = true;
-        } else if (eventType == QEvent::DragLeave || eventType == QEvent::Drop) {
-            d->isDragging = false;
-        }
-        return DTabBar::eventFilter(obj, e);
-    }
-
     // Handle events on internal tabBar widget
     if (obj == d->tabBar) {
         if (eventType == QEvent::MouseMove) {
@@ -1405,12 +1406,19 @@ void TabBar::insertFromMimeDataOnDragEnter(int index, const QMimeData *source)
     QUrl url = QUrl(tabDataObj[TabDef::kTabUrl].toString());
     QString alias = tabDataObj[TabDef::kTabAlias].toString();
 
-    fmInfo() << "Inserting tab from MIME data at index" << index << "url:" << url;
+    fmInfo() << "Inserting drag-preview tab at index" << index << "url:" << url;
 
     // Create inactive tab at specified index
     // Insert at specific position
     QSignalBlocker blk(this);
-    insertTab(index, alias.isEmpty() ? d->tabDisplayName(url) : alias);
+    int previewIndex = insertTab(index, alias.isEmpty() ? d->tabDisplayName(url) : alias);
+    blk.unblock();
+
+    Tab previewTab;
+    previewTab.tabUrl = url;
+    previewTab.tabAlias = alias;
+    previewTab.isDragPreview = true;
+    setTabData(previewIndex, QVariant::fromValue(previewTab));
 }
 
 void TabBar::resizeEvent(QResizeEvent *e)
