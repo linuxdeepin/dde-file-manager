@@ -25,6 +25,7 @@
 #include <dfm-base/utils/systempathutil.h>
 #include <dfm-base/utils/protocolutils.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
+#include <dfm-base/utils/networkutils.h>
 
 #include <dfm-io/dfmio_utils.h>
 
@@ -1442,7 +1443,12 @@ bool FileOperationsEventReceiver::handleOperationLinkFile(const quint64 windowId
 
     // Apply bind path transformation for source
     const QString &bindPath = FileUtils::bindPathTransform(localUrl.path(), false);
-    const QUrl sourceUrl = QUrl::fromLocalFile(bindPath);
+    QUrl sourceUrl = QUrl::fromLocalFile(bindPath);
+    // If the source is a GVFS SFTP path whose server is the local machine,
+    // resolve it to the real local path to prevent the SFTP daemon from
+    // following the symlink back into its own mount hierarchy (deadlock).
+    if (ProtocolUtils::isSFTPFile(sourceUrl))
+        sourceUrl = NetworkUtils::resolveLocalSftpMountUrl(sourceUrl);
 
     // Determine target URL based on different scenarios
     QUrl targetUrl = determineLinkTarget(localUrl, link, silence, windowId);
