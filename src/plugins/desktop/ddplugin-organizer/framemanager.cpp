@@ -16,12 +16,20 @@
 #include <DDBusSender>
 
 #include <QAbstractItemView>
+#include <QDBusConnection>
 #include <QDBusInterface>
 #include <QDBusPendingReply>
 #include <QDBusPendingCallWatcher>
+#include <functional>
+#include <memory>
 
 DFMBASE_USE_NAMESPACE
 using namespace ddplugin_organizer;
+
+namespace {
+constexpr int kHideAllNotificationTimeoutMs = 3000;
+constexpr int kHideAllNotificationExpireGraceMs = 100;
+}
 
 #define CanvasCoreSubscribe(topic, func) \
     dpfSignalDispatcher->subscribe("ddplugin_core", QT_STRINGIFY2(topic), this, func);
@@ -40,6 +48,19 @@ FrameManagerPrivate::FrameManagerPrivate(FrameManager *qq)
             organizer->layout();
         }
     });
+
+    hideAllNotifyExpireTimer = new QTimer(this);
+    hideAllNotifyExpireTimer->setSingleShot(true);
+    connect(hideAllNotifyExpireTimer, &QTimer::timeout, this, [this] {
+        hideAllNotifyId = 0;
+    });
+
+    QDBusConnection::sessionBus().connect(QString("org.freedesktop.Notifications"),
+                                          QString("/org/freedesktop/Notifications"),
+                                          QString("org.freedesktop.Notifications"),
+                                          QString("NotificationClosed"),
+                                          this,
+                                          SLOT(onNotificationClosed(uint, uint)));
 }
 
 FrameManagerPrivate::~FrameManagerPrivate()
@@ -160,40 +181,62 @@ void FrameManagerPrivate::onHideAllKeyPressed()
     });
 
     if (!CfgPresenter->isRepeatNoMore() && aboutToHide) {
-        const quint32 replacesId = hideAllNotifyId;
         QString keySequence = CfgPresenter->hideAllKeySequence().toString();
         QString tips = tr("To disable the One-Click Hide feature, invoke the \"Desktop Settings\" window "
                           "in the desktop context menu and turn off the \"One-Click Hide Collection\".");
         QString cmdNoRepeation = "dde-dconfig,--set,-a,org.deepin.dde.file-manager,-r,org.deepin.dde.file-manager.desktop.organizer,-k,hideAllDialogRepeatNoMore,-v,true";
-        QString cmdCloseNotify = QString("dbus-send,--type=method_call,--dest=org.freedesktop.Notifications,/org/freedesktop/Notifications,com.deepin.dde.Notification.CloseNotification,uint32:%1")
-                                         .arg(replacesId);
-        QDBusPendingCall pendingReply = DDBusSender()
-                .service("org.freedesktop.Notifications")
-                .path("/org/freedesktop/Notifications")
-                .interface("org.freedesktop.Notifications")
-                .method(QString("Notify"))
-                .arg(tr("Desktop organizer"))
-                .arg(replacesId)
-                .arg(QString("deepin-toggle-desktop"))
-                .arg(tr("Shortcut \"%1\" to show collections").arg(keySequence))
-                .arg(tips)
-                .arg(QStringList { "close-notify", tr("Close"), "no-repeat", tr("No more prompts") })
-                .arg(QVariantMap { { "x-deepin-action-no-repeat", cmdNoRepeation },
-                                   { "x-deepin-action-close-notify", cmdCloseNotify } })
-                .arg(3000)
-                .call();
-        auto *watcher = new QDBusPendingCallWatcher(pendingReply, this);
-        connect(watcher, &QDBusPendingCallWatcher::finished, this, [this](QDBusPendingCallWatcher *watcher) {
-            QDBusPendingReply<uint> reply = *watcher;
-            if (reply.isError()) {
-                fmWarning() << "send organizer notification failed:" << reply.error().name() << reply.error().message();
-                hideAllNotifyId = 0;
-            } else {
+        auto sendHideAllNotification = std::make_shared<std::function<void(quint32, bool)>>();
+        *sendHideAllNotification = [this, keySequence, tips, cmdNoRepeation, sendHideAllNotification](quint32 replacesId, bool allowRetry) {
+            QString cmdCloseNotify = QString("dbus-send,--type=method_call,--dest=org.freedesktop.Notifications,/org/freedesktop/Notifications,com.deepin.dde.Notification.CloseNotification,uint32:%1")
+                                             .arg(replacesId);
+            QDBusPendingCall pendingReply = DDBusSender()
+                    .service("org.freedesktop.Notifications")
+                    .path("/org/freedesktop/Notifications")
+                    .interface("org.freedesktop.Notifications")
+                    .method(QString("Notify"))
+                    .arg(tr("Desktop organizer"))
+                    .arg(replacesId)
+                    .arg(QString("deepin-toggle-desktop"))
+                    .arg(tr("Shortcut \"%1\" to show collections").arg(keySequence))
+                    .arg(tips)
+                    .arg(QStringList { "close-notify", tr("Close"), "no-repeat", tr("No more prompts") })
+                    .arg(QVariantMap { { "x-deepin-action-no-repeat", cmdNoRepeation },
+                                       { "x-deepin-action-close-notify", cmdCloseNotify } })
+                    .arg(kHideAllNotificationTimeoutMs)
+                    .call();
+            auto *watcher = new QDBusPendingCallWatcher(pendingReply, this);
+            connect(watcher, &QDBusPendingCallWatcher::finished, this, [this, replacesId, allowRetry, sendHideAllNotification](QDBusPendingCallWatcher *watcher) {
+                QDBusPendingReply<uint> reply = *watcher;
+                if (reply.isError()) {
+                    fmWarning() << "send organizer notification failed:" << reply.error().name() << reply.error().message();
+                    hideAllNotifyId = 0;
+                    hideAllNotifyExpireTimer->stop();
+                    watcher->deleteLater();
+                    if (allowRetry && replacesId != 0) {
+                        (*sendHideAllNotification)(0, false);
+                    }
+                    return;
+                }
+
                 hideAllNotifyId = reply.value();
-            }
-            watcher->deleteLater();
-        });
+                hideAllNotifyExpireTimer->start(kHideAllNotificationTimeoutMs + kHideAllNotificationExpireGraceMs);
+                watcher->deleteLater();
+            });
+        };
+
+        (*sendHideAllNotification)(hideAllNotifyId, true);
     }
+}
+
+void FrameManagerPrivate::onNotificationClosed(uint id, uint reason)
+{
+    Q_UNUSED(reason)
+
+    if (id != hideAllNotifyId)
+        return;
+
+    hideAllNotifyId = 0;
+    hideAllNotifyExpireTimer->stop();
 }
 
 void FrameManagerPrivate::enableChanged(bool e)
