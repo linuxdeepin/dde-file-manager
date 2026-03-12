@@ -31,9 +31,12 @@ public:
     void layoutSurface(QWidget *root, SurfacePointer surface, bool hidden = false);
     void buildOrganizer();
     QList<SurfacePointer> surfaces() const;
+
 public slots:
     void refeshCanvas();
     void onHideAllKeyPressed();
+    void onNotificationClosed(uint id, uint reason);
+
 public slots:
     void enableChanged(bool e);
     void enableVisibility(bool e);
@@ -54,6 +57,7 @@ public:
     quint32 hideAllNotifyId { 0 };
 
     QTimer *layoutTimer { nullptr };
+    QTimer *hideAllNotifyExpireTimer { nullptr };
 
 private:
     FrameManager *q = nullptr;
