@@ -1,3 +1,36 @@
+dde-file-manager (6.5.125) unstable; urgency=medium
+
+  * fix: fix TIFF image preview crash on DAVS remote filesystem
+  * fix: prevent sidebar disappearing when resizing window with expanded sidebar
+  * fix: improve URL editing logic in crumb bar
+  * fix: prevent unnecessary search operations on new tab
+  * feat: add context menu support to crumb bar blank area
+  * fix: prevent use-after-free in file view model prehandlers
+  * fix: improve root info management with user tracking
+  * refactor: optimize keyword highlighting performance
+  * fix: fix notification issues according to XDG specification
+  * fix: optimize directory deletion with child snapshot
+  * fix: improve hide all notification management
+  * docs: update file manager manual for new features
+  * fix: correct desktop window title for alt+tab switcher
+  * chore: add file manager manual images for multiple locales
+  * refactor: implement lazy loading for search plugin
+  * refactor: simplify search edit widget state management
+  * docs: improve disk encryption UI text clarity
+  * fix: update DBus service names for shutdown interface
+  * fix: fix selection artifact issue in file list view
+  * fix: improve disk encryption UI text clarity
+  * fix: simplify URL handling in createWindow method
+  * fix: improve error handling for device unlock failure
+  * fix: improve filename validation and editing behavior
+  * fix: prevent sidebar item painting overflow
+  * feat: resolve local SFTP mount URLs to prevent deadlock
+  * fix: suppress tab change notification during drag preview
+  * feat: add dock drag-and-drop metadata for desktop files
+  * feat: add dock drag-and-drop metadata for desktop files
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Fri, 13 Mar 2026 16:40:02 +0800
+
 dde-file-manager (6.5.124) unstable; urgency=medium
 
   * fix: adjust tab item button icon size and painting logic
@@ -20,7 +53,7 @@ dde-file-manager (6.5.124) unstable; urgency=medium
   * fix: ensure reliable blank disc data loading
   * feat: optimize URL selection logic in detail space
 
-   -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 05 Mar 2026 20:22:14 +0800
+  -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 05 Mar 2026 20:22:14 +0800
 
 dde-file-manager (6.5.123) unstable; urgency=medium
 
