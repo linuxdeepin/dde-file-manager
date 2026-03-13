@@ -39,11 +39,8 @@ public:
 
     bool isAdvancedButtonVisible() const;
     bool isAdvancedButtonChecked() const;
-    SearchMode currentSearchMode() const;
-    bool isActivatedFromCollapsed() const;
     void setAdvancedButtonChecked(bool checked);
     void setAdvancedButtonVisible(bool visible);
-    void restoreSessionState(SearchMode mode, bool fromCollapsed, const QString &text, bool advancedChecked);
 
     void updateSearchEditWidget(int parentWidth);
     void setSearchMode(SearchMode mode);
@@ -68,16 +65,10 @@ protected:
 private:
     void initUI();
     void initConnect();
-    bool isCollapsedEntry() const;
-    void beginCollapsedSession();
-    void endCollapsedSession();
-    void handleCollapsedSessionFocusOut();
 
     void handleFocusInEvent(QFocusEvent *e);
     void handleFocusOutEvent(QFocusEvent *e);
     void handleInputMethodEvent(QInputMethodEvent *e);
-
-    void restoreFocusIfNeeded();
 
     void updateSearchWidgetLayout();
     void quitSearch();
@@ -86,8 +77,7 @@ private:
     /**
      * @brief Update spacing between searchEdit and advancedButton
      * @param showAdvancedButton Whether the advanced button should be visible
-     *
-     * This method ensures consistent 10px right margin by adjusting the internal
+     *          * This method ensures consistent 10px right margin by adjusting the internal
      * spacing based on advanced button visibility. When the button is visible,
      * 10px spacing is applied; when hidden, spacing is removed.
      */
@@ -95,6 +85,7 @@ private:
 
     int determineSearchDelay(const QString &inputText);
     bool shouldDelaySearch(const QString &inputText);
+    void restoreFocusIfNeeded();
 
     DTK_WIDGET_NAMESPACE::DIconButton *searchButton { nullptr };   // 搜索栏按钮
     DTK_WIDGET_NAMESPACE::DToolButton *advancedButton { nullptr };   // 高级搜索按钮
@@ -111,9 +102,6 @@ private:
     SearchMode currentMode { SearchMode::kUnknown };
     QTimer *delayTimer { nullptr };
     qint64 lastSearchTime { 0 };
-    bool isUserDeactivating { false };   // Flag to indicate user intentionally deactivating edit mode
-    bool activatedFromCollapsed { false };   // Track sessions entered from collapsed mode
-    bool reactivateAfterQuitSearch { false };   // Re-enter edit mode after quitSearch returns to the original directory
 };
 
 }   // namespace dfmplugin_titlebar

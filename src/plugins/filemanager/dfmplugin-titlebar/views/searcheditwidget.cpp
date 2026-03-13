@@ -53,45 +53,12 @@ SearchEditWidget::~SearchEditWidget()
     }
 }
 
-bool SearchEditWidget::isCollapsedEntry() const
-{
-    return currentMode == SearchMode::kCollapsed || (searchButton->isVisible() && !searchEdit->isVisible());
-}
-
-void SearchEditWidget::beginCollapsedSession()
-{
-    activatedFromCollapsed = true;
-}
-
-void SearchEditWidget::endCollapsedSession()
-{
-    activatedFromCollapsed = false;
-}
-
-void SearchEditWidget::handleCollapsedSessionFocusOut()
-{
-    QTimer::singleShot(0, this, [this]() {
-        QWidget *newFocus = QApplication::focusWidget();
-        if (newFocus && newFocus != searchEdit->lineEdit() && newFocus->inherits("QLineEdit")) {
-            endCollapsedSession();
-            if (parentWidget())
-                updateSearchEditWidget(parentWidget()->width());
-            return;
-        }
-
-        restoreFocusIfNeeded();
-    });
-}
-
 void SearchEditWidget::activateEdit(bool setAdvanceBtn)
 {
     if (!searchEdit || !advancedButton || !searchButton) {
         fmWarning() << "Cannot activate edit - one or more widgets are null";
         return;
     }
-
-    if (isCollapsedEntry())
-        beginCollapsedSession();
 
     if (parentWidget() && parentWidget()->width() >= kWidthThresholdExpand)
         setSearchMode(SearchMode::kExtraLarge);
@@ -113,11 +80,6 @@ void SearchEditWidget::deactivateEdit()
         return;
     }
 
-    reactivateAfterQuitSearch = false;
-    endCollapsedSession();
-    if (advancedButton->isChecked())
-        TitleBarEventCaller::sendShowFilterView(this, false);
-
     advancedButton->setChecked(false);
     advancedButton->setVisible(false);
 
@@ -137,16 +99,6 @@ bool SearchEditWidget::isAdvancedButtonChecked() const
     return advancedButton->isChecked();
 }
 
-SearchMode SearchEditWidget::currentSearchMode() const
-{
-    return currentMode;
-}
-
-bool SearchEditWidget::isActivatedFromCollapsed() const
-{
-    return activatedFromCollapsed;
-}
-
 void SearchEditWidget::setAdvancedButtonChecked(bool checked)
 {
     advancedButton->setChecked(checked);
@@ -155,32 +107,6 @@ void SearchEditWidget::setAdvancedButtonChecked(bool checked)
 void SearchEditWidget::setAdvancedButtonVisible(bool visible)
 {
     advancedButton->setVisible(visible);
-}
-
-void SearchEditWidget::restoreSessionState(SearchMode mode, bool fromCollapsed, const QString &text, bool advancedChecked)
-{
-    activatedFromCollapsed = fromCollapsed;
-
-    SearchMode effectiveMode = mode;
-    if (fromCollapsed && text.isEmpty() && !advancedChecked) {
-        effectiveMode = SearchMode::kCollapsed;
-        endCollapsedSession();
-    } else if (mode == SearchMode::kCollapsed && (!text.isEmpty() || advancedChecked)) {
-        effectiveMode = parentWidget() && parentWidget()->width() >= kWidthThresholdExpand ? SearchMode::kExtraLarge
-                                                                                           : SearchMode::kExpanded;
-    }
-
-    currentMode = effectiveMode;
-    pendingSearchText = text;
-    searchEdit->setText(text);
-    updateSearchWidgetLayout();
-
-    advancedButton->setChecked(advancedChecked);
-    const bool shouldShowAdvanced = searchEdit->isVisible() && (advancedChecked || !text.isEmpty());
-    advancedButton->setVisible(shouldShowAdvanced);
-    updateSpacing(shouldShowAdvanced);
-
-    TitleBarEventCaller::sendShowFilterView(this, advancedChecked);
 }
 
 void SearchEditWidget::updateSearchEditWidget(int parentWidth)
@@ -202,9 +128,6 @@ void SearchEditWidget::setSearchMode(SearchMode mode)
     }
 
     currentMode = mode;
-    if (mode == SearchMode::kCollapsed)
-        endCollapsedSession();
-
     updateSearchWidgetLayout();
 }
 
@@ -235,19 +158,13 @@ void SearchEditWidget::onUrlChanged(const QUrl &url)
     }
 
     fmDebug() << "URL changed to non-search view, cleaning up search edit state";
-    const bool shouldReactivate = reactivateAfterQuitSearch;
-    reactivateAfterQuitSearch = false;
     lastSearchTime = 0;
     lastExecutedSearchText.clear();
     searchEdit->clearEdit();
     if (delayTimer && delayTimer->isActive())
         delayTimer->stop();
-    if (advancedButton->isChecked())
-        TitleBarEventCaller::sendShowFilterView(this, false);
-
     advancedButton->setVisible(false);
     advancedButton->setChecked(false);
-    endCollapsedSession();
 
     // Clear focus to allow mode change
     searchEdit->clearFocus();
@@ -255,8 +172,6 @@ void SearchEditWidget::onUrlChanged(const QUrl &url)
     // Force update layout to collapse search edit
     if (parentWidget()) {
         updateSearchEditWidget(parentWidget()->width());
-        if (shouldReactivate)
-            activateEdit(false);
     }
 }
 
@@ -271,10 +186,8 @@ void SearchEditWidget::onTextEdited(const QString &text)
     pendingSearchText = text;
 
     if (text.isEmpty()) {
-        fmDebug() << "Search text is empty, stopping timer and quitting search";
-        if (activatedFromCollapsed)
-            reactivateAfterQuitSearch = true;
-        quitSearch();
+        fmDebug() << "Search text is empty, stopping timer and stopping search";
+        stopSearch();
         return;
     }
 
@@ -292,7 +205,8 @@ void SearchEditWidget::onTextEdited(const QString &text)
 
 void SearchEditWidget::expandSearchEdit()
 {
-    activateEdit(false);
+    setSearchMode(SearchMode::kExpanded);
+    searchEdit->lineEdit()->setFocus();
 }
 
 void SearchEditWidget::performSearch()
@@ -335,20 +249,7 @@ bool SearchEditWidget::eventFilter(QObject *watched, QEvent *event)
         } else if (event->type() == QEvent::KeyPress) {
             QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
             if (keyEvent->key() == Qt::Key_Escape) {
-                // If SearchEdit is empty, deactivate and exit edit mode
-                if (searchEdit->text().isEmpty()) {
-                    fmDebug() << "ESC key pressed with empty search edit, deactivating and quitting search";
-                    isUserDeactivating = true;
-                    deactivateEdit();
-                    isUserDeactivating = false;
-                    // Emit searchQuit to exit search view
-                    Q_EMIT searchQuit();
-                    return true;
-                }
-                // If SearchEdit has text, clear it and quit search
                 fmDebug() << "ESC key pressed in search edit, quitting search";
-                if (activatedFromCollapsed)
-                    reactivateAfterQuitSearch = true;
                 quitSearch();
                 return true;
             }
@@ -449,12 +350,6 @@ void SearchEditWidget::handleFocusOutEvent(QFocusEvent *e)
 
     // For Qt::OtherFocusReason, delay check to see if focus really moved away
     if (e->reason() == Qt::OtherFocusReason) {
-        if (activatedFromCollapsed) {
-            e->accept();
-            handleCollapsedSessionFocusOut();
-            return;
-        }
-
         QTimer::singleShot(0, this, [this]() {
             if (!searchEdit->hasFocus() && !advancedButton->hasFocus() && parentWidget()) {
                 updateSearchEditWidget(parentWidget()->width());
@@ -469,28 +364,6 @@ void SearchEditWidget::handleFocusOutEvent(QFocusEvent *e)
     if (parentWidget()) {
         updateSearchEditWidget(parentWidget()->width());
     }
-}
-
-void SearchEditWidget::restoreFocusIfNeeded()
-{
-    // Don't restore focus if user is intentionally deactivating
-    if (isUserDeactivating || currentMode == SearchMode::kCollapsed || !searchEdit->isVisible()) {
-        return;
-    }
-
-    QTimer::singleShot(0, this, [this]() {
-        QWidget *newFocus = QApplication::focusWidget();
-        // Allow focus transfer to other edit controls (e.g., AddressBar)
-        if (newFocus && newFocus != searchEdit->lineEdit()
-            && newFocus->inherits("QLineEdit")) {
-            return;
-        }
-        // If no widget has focus or focus went to non-edit widget, restore focus
-        // This handles the case where layout changes (AddressBar hiding) steal focus
-        if (!newFocus || (!newFocus->inherits("QLineEdit") && !newFocus->inherits("QPushButton"))) {
-            searchEdit->lineEdit()->setFocus(Qt::OtherFocusReason);
-        }
-    });
 }
 
 void SearchEditWidget::handleInputMethodEvent(QInputMethodEvent *e)
@@ -520,9 +393,7 @@ void SearchEditWidget::updateSearchWidgetLayout()
         searchEdit->setVisible(true);
         searchButton->setVisible(false);
 
-        bool shouldShowAdvancedButton = searchEdit->hasFocus()
-                || !searchEdit->text().isEmpty()
-                || advancedButton->isChecked();
+        bool shouldShowAdvancedButton = searchEdit->hasFocus() || !searchEdit->text().isEmpty();
         advancedButton->setVisible(shouldShowAdvancedButton);
         updateSpacing(shouldShowAdvancedButton);
     }
@@ -532,6 +403,7 @@ void SearchEditWidget::quitSearch()
 {
     lastSearchTime = 0;
     delayTimer->stop();
+    // deactivateEdit();
     Q_EMIT searchQuit();
 }
 
@@ -587,4 +459,16 @@ bool SearchEditWidget::shouldDelaySearch(const QString &inputText)
 {
     // 对于过短或者通配符搜索，应该延迟
     return inputText.length() < 2 || inputText == "." || inputText == "*";
+}
+
+void SearchEditWidget::restoreFocusIfNeeded()
+{
+    QTimer::singleShot(0, this, [this]() {
+        if (!searchEdit->text().isEmpty()) {
+            // Use QTimer to defer the focus restoration to ensure proper cursor blink
+            QTimer::singleShot(0, this, [this]() {
+                searchEdit->lineEdit()->setFocus(Qt::OtherFocusReason);
+            });
+        }
+    });
 }
