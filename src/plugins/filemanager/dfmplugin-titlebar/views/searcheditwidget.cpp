@@ -113,6 +113,7 @@ void SearchEditWidget::deactivateEdit()
         return;
     }
 
+    reactivateAfterQuitSearch = false;
     endCollapsedSession();
     if (advancedButton->isChecked())
         TitleBarEventCaller::sendShowFilterView(this, false);
@@ -234,6 +235,8 @@ void SearchEditWidget::onUrlChanged(const QUrl &url)
     }
 
     fmDebug() << "URL changed to non-search view, cleaning up search edit state";
+    const bool shouldReactivate = reactivateAfterQuitSearch;
+    reactivateAfterQuitSearch = false;
     lastSearchTime = 0;
     lastExecutedSearchText.clear();
     searchEdit->clearEdit();
@@ -252,6 +255,8 @@ void SearchEditWidget::onUrlChanged(const QUrl &url)
     // Force update layout to collapse search edit
     if (parentWidget()) {
         updateSearchEditWidget(parentWidget()->width());
+        if (shouldReactivate)
+            activateEdit(false);
     }
 }
 
@@ -267,6 +272,8 @@ void SearchEditWidget::onTextEdited(const QString &text)
 
     if (text.isEmpty()) {
         fmDebug() << "Search text is empty, stopping timer and quitting search";
+        if (activatedFromCollapsed)
+            reactivateAfterQuitSearch = true;
         quitSearch();
         return;
     }
@@ -345,6 +352,8 @@ bool SearchEditWidget::eventFilter(QObject *watched, QEvent *event)
                 }
                 // If SearchEdit has text, clear it and quit search
                 fmDebug() << "ESC key pressed in search edit, quitting search";
+                if (activatedFromCollapsed)
+                    reactivateAfterQuitSearch = true;
                 quitSearch();
                 return true;
             }
