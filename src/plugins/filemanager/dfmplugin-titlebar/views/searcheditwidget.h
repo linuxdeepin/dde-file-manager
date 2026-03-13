@@ -39,8 +39,11 @@ public:
 
     bool isAdvancedButtonVisible() const;
     bool isAdvancedButtonChecked() const;
+    SearchMode currentSearchMode() const;
+    bool isActivatedFromCollapsed() const;
     void setAdvancedButtonChecked(bool checked);
     void setAdvancedButtonVisible(bool visible);
+    void restoreSessionState(SearchMode mode, bool fromCollapsed, const QString &text, bool advancedChecked);
 
     void updateSearchEditWidget(int parentWidth);
     void setSearchMode(SearchMode mode);

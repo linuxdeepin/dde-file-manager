@@ -136,6 +136,16 @@ bool SearchEditWidget::isAdvancedButtonChecked() const
     return advancedButton->isChecked();
 }
 
+SearchMode SearchEditWidget::currentSearchMode() const
+{
+    return currentMode;
+}
+
+bool SearchEditWidget::isActivatedFromCollapsed() const
+{
+    return activatedFromCollapsed;
+}
+
 void SearchEditWidget::setAdvancedButtonChecked(bool checked)
 {
     advancedButton->setChecked(checked);
@@ -144,6 +154,32 @@ void SearchEditWidget::setAdvancedButtonChecked(bool checked)
 void SearchEditWidget::setAdvancedButtonVisible(bool visible)
 {
     advancedButton->setVisible(visible);
+}
+
+void SearchEditWidget::restoreSessionState(SearchMode mode, bool fromCollapsed, const QString &text, bool advancedChecked)
+{
+    activatedFromCollapsed = fromCollapsed;
+
+    SearchMode effectiveMode = mode;
+    if (fromCollapsed && text.isEmpty() && !advancedChecked) {
+        effectiveMode = SearchMode::kCollapsed;
+        endCollapsedSession();
+    } else if (mode == SearchMode::kCollapsed && (!text.isEmpty() || advancedChecked)) {
+        effectiveMode = parentWidget() && parentWidget()->width() >= kWidthThresholdExpand ? SearchMode::kExtraLarge
+                                                                                           : SearchMode::kExpanded;
+    }
+
+    currentMode = effectiveMode;
+    pendingSearchText = text;
+    searchEdit->setText(text);
+    updateSearchWidgetLayout();
+
+    advancedButton->setChecked(advancedChecked);
+    const bool shouldShowAdvanced = searchEdit->isVisible() && (advancedChecked || !text.isEmpty());
+    advancedButton->setVisible(shouldShowAdvanced);
+    updateSpacing(shouldShowAdvanced);
+
+    TitleBarEventCaller::sendShowFilterView(this, advancedChecked);
 }
 
 void SearchEditWidget::updateSearchEditWidget(int parentWidth)
@@ -480,7 +516,9 @@ void SearchEditWidget::updateSearchWidgetLayout()
         searchEdit->setVisible(true);
         searchButton->setVisible(false);
 
-        bool shouldShowAdvancedButton = searchEdit->hasFocus() || !searchEdit->text().isEmpty();
+        bool shouldShowAdvancedButton = searchEdit->hasFocus()
+                || !searchEdit->text().isEmpty()
+                || advancedButton->isChecked();
         advancedButton->setVisible(shouldShowAdvancedButton);
         updateSpacing(shouldShowAdvancedButton);
     }
