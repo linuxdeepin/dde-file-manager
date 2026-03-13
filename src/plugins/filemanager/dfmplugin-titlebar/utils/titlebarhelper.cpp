@@ -40,7 +40,6 @@ QList<QString> TitleBarHelper::kKeepTitleStatusSchemeList {};
 QMap<QString, ViewModeUrlCallback> TitleBarHelper::kViewModeUrlCallbackMap {};
 
 bool TitleBarHelper::newWindowAndTabEnabled { true };
-bool TitleBarHelper::searchEnabled { false };
 
 QList<TitleBarWidget *> TitleBarHelper::titlebars()
 {
@@ -266,6 +265,11 @@ void TitleBarHelper::handleSearch(QWidget *sender, const QString &text)
         }
     }
 
+    if (!tryLoadSearchPlugin()) {
+        fmWarning() << "Failed to load search plugin";
+        return;
+    }
+
     fmInfo() << "Starting search with keyword:" << text;
     TitleBarEventCaller::sendSearch(sender, text);
 }
@@ -283,6 +287,7 @@ void TitleBarHelper::openCurrentUrlInNewTab(quint64 windowId)
 
 void TitleBarHelper::showSettingsDialog(quint64 windowId)
 {
+    tryLoadSearchPlugin();
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kShowSettingDialog, windowId);
 }
 
@@ -444,4 +449,22 @@ bool TitleBarHelper::isViewModeVisibleForScheme(int mode, const QString &scheme)
     default:
         return false;
     }
+}
+
+bool TitleBarHelper::tryLoadSearchPlugin()
+{
+    // 搜索插件被懒加载，部分业务依赖它时可能尚未加载
+    static std::once_flag flag;
+    static bool loaded = false;
+    std::call_once(flag, []() {
+        auto searchPlugin { DPF_NAMESPACE::LifeCycle::pluginMetaObj("dfmplugin-search") };
+        if (searchPlugin && searchPlugin->pluginState() < DPF_NAMESPACE::PluginMetaObject::kLoaded) {
+            loaded = DPF_NAMESPACE::LifeCycle::loadPlugin(searchPlugin);
+            fmInfo() << "Load result: " << loaded
+                     << "State: " << searchPlugin->pluginState() << "for search plugin";
+        } else if (searchPlugin && searchPlugin->pluginState() >= DPF_NAMESPACE::PluginMetaObject::kLoaded) {
+            loaded = true;
+        }
+    });
+    return loaded;
 }
