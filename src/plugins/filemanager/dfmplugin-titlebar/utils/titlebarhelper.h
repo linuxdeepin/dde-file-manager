@@ -50,10 +50,10 @@ public:
     // View mode switching helper methods
     static bool isTreeViewGloballyEnabled();
     static bool isViewModeVisibleForScheme(int mode, const QString &scheme);
+    static bool tryLoadSearchPlugin();
 
 public:
     static bool newWindowAndTabEnabled;
-    static bool searchEnabled;
 
 private:
     static QMutex &mutex();

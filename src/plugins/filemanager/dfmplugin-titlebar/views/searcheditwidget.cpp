@@ -303,11 +303,6 @@ void SearchEditWidget::performSearch()
         return;
     }
 
-    if (!TitleBarHelper::searchEnabled) {
-        fmWarning() << "Search is disabled, cannot perform search";
-        return;
-    }
-
     // Trim whitespace from the search string
     QString trimmedSearchText = pendingSearchText.trimmed();
     if (trimmedSearchText.isEmpty()) {
