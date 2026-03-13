@@ -40,6 +40,7 @@
 #include <QFileInfo>
 #include <QTimer>
 #include <QDir>
+#include <QMimeData>
 #include <QProcess>
 #include <QDebug>
 #include <QApplication>
@@ -307,6 +308,36 @@ bool FileUtils::isHomeDesktopFile(const QUrl &url)
         return df.desktopDeepinId() == kDDEHomeId;
     }
     return false;
+}
+
+/**
+ * @brief FileUtils::setDockDnDMimeData
+ * Writes dock drag-and-drop metadata into \a mimeData for a single .desktop file.
+ *
+ * Sets "text/x-dde-dock-dnd-appid" to the application ID derived from \a url,
+ * and "text/x-dde-dock-dnd-source" to \a source.
+ * Does nothing if \a url does not refer to a .desktop file or the app ID cannot
+ * be determined.
+ *
+ * @param mimeData  The QMimeData object to populate. Must not be null.
+ * @param url       A local file URL pointing to a .desktop file.
+ * @param source    The drag source identifier (e.g. "dde-desktop").
+ */
+void FileUtils::setDockDnDMimeData(QMimeData *mimeData, const QUrl &url, const QString &source)
+{
+    Q_ASSERT(mimeData);
+
+    if (!isDesktopFile(url))
+        return;
+
+    if (auto info = InfoFactory::create<FileInfo>(url)) {
+        const auto &appId = info->nameOf(NameInfoType::kCompleteBaseName);
+        if (appId.isEmpty())
+            return;
+
+        mimeData->setData(QStringLiteral("text/x-dde-dock-dnd-appid"), appId.toUtf8());
+        mimeData->setData(QStringLiteral("text/x-dde-dock-dnd-source"), source.toUtf8());
+    }
 }
 
 bool FileUtils::isSameMountPoint(const QUrl &url1, const QUrl &url2)

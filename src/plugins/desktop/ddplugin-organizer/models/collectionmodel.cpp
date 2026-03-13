@@ -498,6 +498,10 @@ QMimeData *CollectionModel::mimeData(const QModelIndexList &indexes) const
     // set user id
     SysInfoUtils::setMimeDataUserId(mm);
 
+    // For single .desktop file drag, add dock DnD metadata
+    if (urls.size() == 1)
+        FileUtils::setDockDnDMimeData(mm, urls.first(), "dde-desktop");
+
     return mm;
 }
 

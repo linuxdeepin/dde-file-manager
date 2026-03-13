@@ -589,6 +589,10 @@ QMimeData *FileViewModel::mimeData(const QModelIndexList &indexes) const
     SysInfoUtils::setMimeDataUserId(data);
     data->setData(DFMGLOBAL_NAMESPACE::Mime::kDFMAppTypeKey, QByteArray(kDdeFileManager));
 
+    // For single .desktop file drag, add dock DnD metadata
+    if (urls.size() == 1)
+        FileUtils::setDockDnDMimeData(data, urls.first(), kDdeFileManager);
+
     return data;
 }
 

@@ -11,6 +11,8 @@
 #include <dfm-base/interfaces/abstractjobhandler.h>
 #include <dfm-base/utils/desktopfile.h>
 
+class QMimeData;
+
 namespace dfmbase {
 
 class FileUtils
@@ -41,6 +43,7 @@ public:
     static bool isTrashDesktopFile(const QUrl &url);
     static bool isComputerDesktopFile(const QUrl &url);
     static bool isHomeDesktopFile(const QUrl &url);
+    static void setDockDnDMimeData(QMimeData *mimeData, const QUrl &url, const QString &source);
     static bool isSameMountPoint(const QUrl &url1, const QUrl &url2);
     static bool isSameDevice(const QUrl &url1, const QUrl &url2);
     static bool isSameFile(const QUrl &url1, const QUrl &url2,

@@ -736,6 +736,10 @@ QMimeData *CanvasProxyModel::mimeData(const QModelIndexList &indexes) const
     // set user id
     SysInfoUtils::setMimeDataUserId(mimedt);
 
+    // For single .desktop file drag, add dock DnD metadata
+    if (urls.size() == 1)
+        FileUtils::setDockDnDMimeData(mimedt, urls.first(), kDdeDestop);
+
     return mimedt;
 }
 
