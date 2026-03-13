@@ -10,7 +10,6 @@
 #include "views/addressbar.h"
 #include "views/crumbbar.h"
 #include "views/optionbuttonbox.h"
-#include "views/searcheditwidget.h"
 
 #include <dfm-base/interfaces/abstractframe.h>
 
@@ -24,6 +23,7 @@ DWIDGET_END_NAMESPACE
 namespace dfmplugin_titlebar {
 
 class TabBar;
+class SearchEditWidget;
 class TitleBarWidget : public DFMBASE_NAMESPACE::AbstractFrame
 {
     Q_OBJECT
@@ -89,7 +89,7 @@ private slots:
 
 private:
     QUrl titlebarUrl;
-    QString pendingPinnedTabId;  // Store pinnedId from pinned:// URL
+    QString pendingPinnedTabId;   // Store pinnedId from pinned:// URL
     DTitlebar *topBar { nullptr };
     TabBar *bottomBar { nullptr };
     QHBoxLayout *topBarCustomLayout { nullptr };
@@ -107,8 +107,7 @@ private:
     struct TitleBarState
     {
         DFMBASE_NAMESPACE::Global::ViewMode viewMode { DFMBASE_NAMESPACE::Global::ViewMode::kIconMode };
-        SearchMode searchMode { SearchMode::kUnknown };
-        bool searchFromCollapsed { false };
+        bool advancedSearchVisible { false };
         bool advancedSearchChecked { false };
         QString searchText { "" };
     };
