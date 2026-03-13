@@ -549,7 +549,8 @@ bool TitleBarWidget::eventFilter(QObject *watched, QEvent *event)
 void TitleBarWidget::saveTitleBarState(const QString &uniqueId)
 {
     TitleBarState state;
-    state.advancedSearchVisible = searchEditWidget->isAdvancedButtonVisible();
+    state.searchMode = searchEditWidget->currentSearchMode();
+    state.searchFromCollapsed = searchEditWidget->isActivatedFromCollapsed();
     state.advancedSearchChecked = searchEditWidget->isAdvancedButtonChecked();
     state.searchText = searchEditWidget->text();
     state.viewMode = optionButtonBox->viewMode();
@@ -561,10 +562,10 @@ void TitleBarWidget::restoreTitleBarState(const QString &uniqueId)
 {
     if (titleBarStateMap.contains(uniqueId)) {
         const TitleBarState &state = titleBarStateMap[uniqueId];
-        searchEditWidget->setAdvancedButtonVisible(state.advancedSearchVisible);
-        searchEditWidget->setAdvancedButtonChecked(state.advancedSearchChecked);
-        if (!state.searchText.isEmpty())
-            searchEditWidget->setText(state.searchText);
+        searchEditWidget->restoreSessionState(state.searchMode,
+                                              state.searchFromCollapsed,
+                                              state.searchText,
+                                              state.advancedSearchChecked);
         optionButtonBox->setViewMode(static_cast<int>(state.viewMode));
     }
 }
