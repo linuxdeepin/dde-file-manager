@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "universalutils.h"
+#include "fileutils.h"
 
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/base/schemefactory.h>
@@ -561,9 +562,9 @@ uint32_t UniversalUtils::lockScreenSaver()
         return 0;
 
     QDBusInterface screenSaverManager(IDLE_SCREEN_SAVER_SERVICE,
-                                IDLE_SCREEN_SAVER_PATH,
-                                IDLE_SCREEN_SAVER_INTERFACE,
-                                QDBusConnection::sessionBus());
+                                      IDLE_SCREEN_SAVER_PATH,
+                                      IDLE_SCREEN_SAVER_INTERFACE,
+                                      QDBusConnection::sessionBus());
 
     QList<QVariant> arg;
     arg << qApp->applicationDisplayName()   // who
@@ -572,7 +573,7 @@ uint32_t UniversalUtils::lockScreenSaver()
     QDBusReply<uint32_t> reply = screenSaverManager.callWithArgumentList(QDBus::AutoDetect, "Inhibit", arg);
     if (reply.isValid()) {
         qCInfo(logDFMBase) << "Inhibition cookie:" << reply.value();
-        return  reply.value();
+        return reply.value();
     }
 
     qCWarning(logDFMBase) << "UniversalUtils::lockScreenSaver Failed to inhibit screensaver:" << reply.error().message();
@@ -588,9 +589,9 @@ bool UniversalUtils::unlockScreenSaver(const uint32_t cookie)
         return false;
 
     QDBusInterface screenSaverManager(IDLE_SCREEN_SAVER_SERVICE,
-                                IDLE_SCREEN_SAVER_PATH,
-                                IDLE_SCREEN_SAVER_INTERFACE,
-                                QDBusConnection::sessionBus());
+                                      IDLE_SCREEN_SAVER_PATH,
+                                      IDLE_SCREEN_SAVER_INTERFACE,
+                                      QDBusConnection::sessionBus());
 
     QList<QVariant> arg;
     arg << cookie;   // cookie
@@ -598,7 +599,7 @@ bool UniversalUtils::unlockScreenSaver(const uint32_t cookie)
     QDBusReply<void> reply = screenSaverManager.callWithArgumentList(QDBus::Block, "UnInhibit", arg);
     if (reply.isValid()) {
         qCInfo(logDFMBase) << "UniversalUtils::unlockScreenSaver call UnInhibit finished! ";
-        return  true;
+        return true;
     }
 
     qCWarning(logDFMBase) << "UniversalUtils::unlockScreenSaver Failed to uninhibit screensaver:" << reply.error().message();
@@ -608,7 +609,7 @@ bool UniversalUtils::unlockScreenSaver(const uint32_t cookie)
 
 bool UniversalUtils::checkDbusService(const QString &service, bool isSystemDbus)
 {
-    QDBusConnectionInterface *interface{ nullptr };
+    QDBusConnectionInterface *interface { nullptr };
     if (isSystemDbus) {
         interface = QDBusConnection::systemBus().interface();
     } else {
@@ -632,6 +633,36 @@ bool UniversalUtils::checkDbusService(const QString &service, bool isSystemDbus)
     }
 
     return true;
+}
+
+/**
+ * @brief FileUtils::setDockDnDMimeData
+ * Writes dock drag-and-drop metadata into \a mimeData for a single .desktop file.
+ *
+ * Sets "text/x-dde-dock-dnd-appid" to the application ID derived from \a url,
+ * and "text/x-dde-dock-dnd-source" to \a source.
+ * Does nothing if \a url does not refer to a .desktop file or the app ID cannot
+ * be determined.
+ *
+ * @param mimeData  The QMimeData object to populate. Must not be null.
+ * @param url       A local file URL pointing to a .desktop file.
+ * @param source    The drag source identifier (e.g. "dde-desktop").
+ */
+void UniversalUtils::setDockDnDMimeData(QMimeData *mimeData, const QUrl &url, const QString &source)
+{
+    Q_ASSERT(mimeData);
+
+    if (!FileUtils::isDesktopFile(url))
+        return;
+
+    if (auto info = InfoFactory::create<FileInfo>(url)) {
+        const auto &appId = info->nameOf(NameInfoType::kCompleteBaseName);
+        if (appId.isEmpty())
+            return;
+
+        mimeData->setData(QStringLiteral("text/x-dde-dock-dnd-appid"), appId.toUtf8());
+        mimeData->setData(QStringLiteral("text/x-dde-dock-dnd-source"), source.toUtf8());
+    }
 }
 
 }

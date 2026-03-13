@@ -12,6 +12,7 @@
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/utils/sysinfoutils.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/universalutils.h>
 #include <dfm-base/base/schemefactory.h>
 
 #include <dfm-framework/dpf.h>
@@ -500,7 +501,7 @@ QMimeData *CollectionModel::mimeData(const QModelIndexList &indexes) const
 
     // For single .desktop file drag, add dock DnD metadata
     if (urls.size() == 1)
-        FileUtils::setDockDnDMimeData(mm, urls.first(), "dde-desktop");
+        UniversalUtils::setDockDnDMimeData(mm, urls.first(), "dde-desktop");
 
     return mm;
 }

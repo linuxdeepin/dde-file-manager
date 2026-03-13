@@ -591,7 +591,7 @@ QMimeData *FileViewModel::mimeData(const QModelIndexList &indexes) const
 
     // For single .desktop file drag, add dock DnD metadata
     if (urls.size() == 1)
-        FileUtils::setDockDnDMimeData(data, urls.first(), kDdeFileManager);
+        UniversalUtils::setDockDnDMimeData(data, urls.first(), kDdeFileManager);
 
     return data;
 }

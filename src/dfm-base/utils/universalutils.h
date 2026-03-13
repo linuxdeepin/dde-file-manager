@@ -79,6 +79,7 @@ public:
      * \return 服务存在时返回 true，否则返回 false。
      */
     static bool checkDbusService(const QString &service, bool isSystemDbus);
+    static void setDockDnDMimeData(QMimeData *mimeData, const QUrl &url, const QString &source);
 };
 
 }
