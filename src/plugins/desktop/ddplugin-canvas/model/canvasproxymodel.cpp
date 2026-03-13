@@ -9,6 +9,7 @@
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/utils/sysinfoutils.h>
 #include <dfm-base/utils/sortutils.h>
+#include <dfm-base/utils/universalutils.h>
 #include <dfm-base/base/application/application.h>
 
 #include <dfm-framework/event/event.h>
@@ -738,7 +739,7 @@ QMimeData *CanvasProxyModel::mimeData(const QModelIndexList &indexes) const
 
     // For single .desktop file drag, add dock DnD metadata
     if (urls.size() == 1)
-        FileUtils::setDockDnDMimeData(mimedt, urls.first(), kDdeDestop);
+        UniversalUtils::setDockDnDMimeData(mimedt, urls.first(), kDdeDestop);
 
     return mimedt;
 }
