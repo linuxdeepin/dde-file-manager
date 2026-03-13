@@ -113,6 +113,7 @@ private:
     qint64 lastSearchTime { 0 };
     bool isUserDeactivating { false };   // Flag to indicate user intentionally deactivating edit mode
     bool activatedFromCollapsed { false };   // Track sessions entered from collapsed mode
+    bool reactivateAfterQuitSearch { false };   // Re-enter edit mode after quitSearch returns to the original directory
 };
 
 }   // namespace dfmplugin_titlebar
