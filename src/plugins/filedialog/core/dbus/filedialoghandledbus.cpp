@@ -80,7 +80,7 @@ QStringList FileDialogHandleDBus::selectedUrls() const
     QStringList list;
 
     for (const QUrl &url : FileDialogHandle::selectedUrls())
-        list << QUrl::fromPercentEncoding(url.toString().toUtf8());
+        list << url.toString();
 
     return list;
 }
