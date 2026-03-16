@@ -421,10 +421,12 @@ bool FileOperationsEventReceiver::doRenameDesktopFiles(QList<QUrl> &urls, const 
 {
     for (auto it = urls.begin(); it != urls.end();) {
         auto oldUrl = *it;
-        if (!FileUtils::isDesktopFile(oldUrl)) {
+        if (!FileUtils::isDesktopFile(oldUrl)
+            || DFMIO::DFileInfo(oldUrl).attribute(DFMIO::DFileInfo::AttributeID::kStandardIsSymlink).toBool()) {
             it++;
             continue;
         }
+
         const QString &desktopPath = oldUrl.toLocalFile();
         Properties desktop(desktopPath, "Desktop Entry");
         static const QString kLocale = QLocale::system().name();
