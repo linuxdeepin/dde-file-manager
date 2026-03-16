@@ -25,12 +25,16 @@ DFMGLOBAL_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 DGUI_USE_NAMESPACE
 
-static constexpr int kSortToolButtonWidth { 46 };
-static constexpr int kSortToolLeftButtonSize { 16 };
-static constexpr int kSortToolArrowButtonSize { 12 };
-static constexpr int kSortToolHMargin { 6 };
-static constexpr int kSortToolVMargin { 9 };
+static constexpr int kSortToolPadding { 6 };   // 按钮整体边距
+static constexpr int kSortToolSpacing { 6 };   // 内部元素间距
+static constexpr int kSortToolLeftButtonSize { 16 };   // 左侧排序图标尺寸
+static constexpr int kSortToolArrowCircleSize { 18 };   // 右侧箭头圆形背景尺寸
+static constexpr int kSortToolArrowButtonSize { 12 };   // 右侧箭头图标尺寸
 static constexpr char kItemRole[] = "item-role";
+// 按钮总宽 = padding + iconSize + spacing + circleSize + padding
+static constexpr int kSortToolButtonWidth { kSortToolPadding + kSortToolLeftButtonSize
+                                            + kSortToolSpacing + kSortToolArrowCircleSize
+                                            + kSortToolPadding };
 
 namespace GroupStrategy {
 inline constexpr char kNoGroup[] { "NoGroupStrategy" };
@@ -130,7 +134,7 @@ void SortByButtonPrivate::setupMenu()
 
 void SortByButtonPrivate::initializeUi()
 {
-    q->setFixedSize(kSortToolButtonWidth, kToolButtonSize);   // 设置固定大小
+    q->setFixedSize(kSortToolButtonWidth, kToolButtonSize);   // 按钮宽度由常量自动计算
     menu = new QMenu(q);
     groupMenu = new QMenu(q);
 }
@@ -190,40 +194,59 @@ void SortByButton::paintEvent(QPaintEvent *event)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
 
-    QStyleOptionButton opt;
-    opt.initFrom(this);
+    bool isDarkTheme = DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType;
+    bool menuVisible = d->menu->isVisible();
 
-    if (d->hoverFlag || d->menu->isVisible()) {
-        QStylePainter painter(this);
-        painter.setRenderHint(QPainter::Antialiasing);
-        QStyleOptionToolButton option;
-        QToolButton::initStyleOption(&option);
-        option.state |= QStyle::State_MouseOver;
-
-        bool isDarkTheme = DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType;
-
-        QColor hoverColor;
+    // 绘制整体按钮背景（hover/press 状态）
+    if (d->hoverFlag || menuVisible) {
+        QColor bgColor;
         if (isDown()) {
-            // 按下状态 - 20%不透明度
-            hoverColor = isDarkTheme ? QColor(255, 255, 255, 51)
-                                     : QColor(0, 0, 0, 51);
+            // 按下状态 - 20% 不透明度
+            bgColor = isDarkTheme ? QColor(255, 255, 255, 51)
+                                  : QColor(0, 0, 0, 51);
         } else {
-            // 悬浮状态 - 10%不透明度
-            hoverColor = isDarkTheme ? QColor(255, 255, 255, 26)
-                                     : QColor(0, 0, 0, 26);
+            // 悬浮状态 - 10% 不透明度
+            bgColor = isDarkTheme ? QColor(255, 255, 255, 26)
+                                  : QColor(0, 0, 0, 26);
         }
-
-        option.palette.setBrush(QPalette::Button, hoverColor);
-
-        option.rect.adjust(1, -1, -1, 1);
-        painter.drawComplexControl(QStyle::CC_ToolButton, option);
+        painter.save();
+        painter.setPen(Qt::NoPen);
+        painter.setBrush(bgColor);
+        painter.drawRoundedRect(rect().adjusted(1, 1, -1, -1), 6, 6);
+        painter.restore();
     }
 
-    // Draw left icon
-    int leftIconY = kSortToolVMargin + (height() - 2 * kSortToolVMargin - kSortToolLeftButtonSize) / 2;
-    QRect leftRect(kSortToolHMargin, leftIconY, kSortToolLeftButtonSize, kSortToolLeftButtonSize);
-    auto leftIcon = QIcon::fromTheme("dfm_sortby_arrange");
+    // 计算内容区垂直居中位置
+    int iconY = (height() - kSortToolLeftButtonSize) / 2;
+    int circleY = (height() - kSortToolArrowCircleSize) / 2;
 
+    // 左侧排序图标矩形
+    QRect leftRect(kSortToolPadding, iconY, kSortToolLeftButtonSize, kSortToolLeftButtonSize);
+
+    // 右侧圆形背景矩形
+    int circleX = kSortToolPadding + kSortToolLeftButtonSize + kSortToolSpacing;
+    QRect circleRect(circleX, circleY, kSortToolArrowCircleSize, kSortToolArrowCircleSize);
+
+    // 绘制右侧圆形背景
+    if (d->hoverFlag || menuVisible) {
+        QColor circleColor;
+        if (menuVisible) {
+            // active 状态：高亮色半透明圆形背景
+            circleColor = isDarkTheme ? QColor(255, 255, 255, 40)
+                                      : QColor(0, 0, 0, 30);
+        } else {
+            circleColor = isDarkTheme ? QColor(255, 255, 255, 30)
+                                      : QColor(0, 0, 0, 20);
+        }
+        painter.save();
+        painter.setPen(Qt::NoPen);
+        painter.setBrush(circleColor);
+        painter.drawEllipse(circleRect);
+        painter.restore();
+    }
+
+    // 绘制左侧排序图标
+    auto leftIcon = QIcon::fromTheme("dfm_sortby_arrange");
     painter.save();
     if (d->iconClicked) {
         painter.setPen(palette().highlight().color());   // Use highlight color for icon when clicked
@@ -231,15 +254,23 @@ void SortByButton::paintEvent(QPaintEvent *event)
     leftIcon.paint(&painter, leftRect);
     painter.restore();
 
-    // Draw right arrow
-    int arrowY = kSortToolVMargin + (height() - 2 * kSortToolVMargin - kSortToolArrowButtonSize) / 2;
-    QRect rightRect(width() - kSortToolHMargin - kSortToolArrowButtonSize, arrowY, kSortToolArrowButtonSize, kSortToolArrowButtonSize);
-    opt.rect = rightRect;
+    // 绘制右侧下拉箭头
+    int arrowSize = kSortToolArrowButtonSize;
+    int arrowX = circleX + (kSortToolArrowCircleSize - arrowSize) / 2;
+    int arrowY = (height() - arrowSize) / 2;
+    QRect arrowRect(arrowX, arrowY, arrowSize, arrowSize);
 
-    if (d->menu->isVisible()) {
-        painter.setPen(palette().highlight().color());   // Use highlight color for arrow when menu visible
+    QStyleOptionButton arrowOpt;
+    arrowOpt.initFrom(this);
+    arrowOpt.rect = arrowRect;
+
+    painter.save();
+    if (menuVisible) {
+        // active 状态：箭头显示高亮色
+        painter.setPen(palette().highlight().color());
     }
-    style()->drawPrimitive(QStyle::PE_IndicatorArrowDown, &opt, &painter, this);
+    style()->drawPrimitive(QStyle::PE_IndicatorArrowDown, &arrowOpt, &painter, this);
+    painter.restore();
 }
 
 void SortByButton::mousePressEvent(QMouseEvent *event)
@@ -250,7 +281,7 @@ void SortByButton::mousePressEvent(QMouseEvent *event)
         update();
     }
     if (event->button() == Qt::LeftButton) {
-        int leftWidth = 2 * kSortToolHMargin + kSortToolLeftButtonSize;
+        int leftWidth = 2 * kSortToolPadding + kSortToolLeftButtonSize;
         d->iconClicked = event->position().x() <= leftWidth;   // Check if icon area is clicked
 
         if (event->position().x() > leftWidth && d->menu) {
@@ -270,6 +301,11 @@ void SortByButton::mousePressEvent(QMouseEvent *event)
             }
 
             d->menu->exec(mapToGlobal(rect().bottomLeft()));
+            // 菜单关闭后（exec 返回），重置按下状态
+            if (isDown()) {
+                setDown(false);
+                update();
+            }
         } else if (d->iconClicked) {
             // Check busy state before sorting
             bool isBusy = TitleBarEventCaller::sendGetCurrentModelBusy(this);
