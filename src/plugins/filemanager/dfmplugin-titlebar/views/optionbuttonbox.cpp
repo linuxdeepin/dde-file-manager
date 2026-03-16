@@ -8,6 +8,7 @@
 #include "utils/optionbuttonmanager.h"
 #include "utils/titlebarhelper.h"
 #include "views/sortbybutton.h"
+#include "views/viewswitchbutton.h"
 #include "views/viewoptionsbutton.h"
 
 #include <dfm-base/base/application/application.h>
@@ -17,7 +18,6 @@
 
 #include <dfm-framework/event/event.h>
 
-#include <DMenu>
 #include <DGuiApplicationHelper>
 #include <dtkwidget_global.h>
 #ifdef DTKWIDGET_CLASS_DSizeMode
@@ -47,20 +47,7 @@ void OptionButtonBoxPrivate::updateCompactButton()
     }
 
     // Update icon based on current view mode
-    switch (currentMode) {
-    case ViewMode::kIconMode:
-        compactButton->setIcon(QIcon::fromTheme("dfm_viewlist_icons"));
-        break;
-    case ViewMode::kListMode:
-        compactButton->setIcon(QIcon::fromTheme("dfm_viewlist_details"));
-        break;
-    case ViewMode::kTreeMode:
-        compactButton->setIcon(QIcon::fromTheme("dfm_viewlist_tree"));
-        break;
-    default:
-        fmWarning() << "Unknown view mode for compact button:" << int(currentMode);
-        break;
-    }
+    compactButton->setViewModeIcon(currentMode);
 }
 
 void OptionButtonBoxPrivate::setViewMode(ViewMode mode)
@@ -211,6 +198,10 @@ void OptionButtonBox::onUrlChanged(const QUrl &url)
         }
         d->sortByButton->setHidden(!d->sortByEnabled);
         d->viewOptionsButton->setVisible(d->viewOptionsEnabled);
+        // 同步紧凑模式菜单项的启用状态，与非紧凑模式下的视图按钮保持一致
+        d->compactButton->setViewModeActionEnabled(ViewMode::kIconMode, d->iconViewEnabled);
+        d->compactButton->setViewModeActionEnabled(ViewMode::kListMode, d->listViewEnabled);
+        d->compactButton->setViewModeActionEnabled(ViewMode::kTreeMode, !needDisableTreeBtn);
 
         if (state == OptionButtonManager::kHideAllBtn) {
             setContentsMargins(0, 0, 0, 0);
@@ -237,6 +228,10 @@ void OptionButtonBox::onUrlChanged(const QUrl &url)
         d->sortByButton->setHidden(false);
         d->viewOptionsButton->setHidden(false);
         setContentsMargins(5, 0, 0, 0);
+        // 正常状态下，确保紧凑模式菜单中所有视图选项均可用
+        d->compactButton->setViewModeActionEnabled(ViewMode::kIconMode, true);
+        d->compactButton->setViewModeActionEnabled(ViewMode::kListMode, true);
+        d->compactButton->setViewModeActionEnabled(ViewMode::kTreeMode, true);
     }
 
     // Update button box size according to the parent widget width
@@ -321,10 +316,7 @@ void OptionButtonBox::initializeUi()
     d->viewOptionsButton->setIconSize(buttonIconSize);
     d->viewOptionsButton->setCheckable(false);
 
-    d->compactButton = new CustomDToolButton(this);
-    d->compactButton->setPopupMode(DToolButton::InstantPopup);
-    d->compactButton->setFixedSize(48, kToolButtonSize);
-    d->compactButton->setIconSize(QSize(kToolButtonIconSize, kToolButtonIconSize));
+    d->compactButton = new ViewSwitchButton(this);
     d->compactButton->setVisible(false);
 
     initUiForSizeMode();
@@ -350,37 +342,10 @@ void OptionButtonBox::initConnect()
 
     connect(Application::instance(), &Application::viewModeChanged, d, &OptionButtonBoxPrivate::onViewModeChanged);
 
-    auto menu = new DMenu(d->compactButton);
-    auto iconAction = menu->addAction(tr("Icon view"));
-    iconAction->setIcon(QIcon::fromTheme("dfm_viewlist_icons"));
-    iconAction->setCheckable(true);
-
-    auto listAction = menu->addAction(tr("List view"));
-    listAction->setIcon(QIcon::fromTheme("dfm_viewlist_details"));
-    listAction->setCheckable(true);
-
-    auto treeAction = menu->addAction(tr("Tree view"));
-    treeAction->setIcon(QIcon::fromTheme("dfm_viewlist_tree"));
-    treeAction->setCheckable(true);
-
-    auto updateCheckedState = [=]() {
-        iconAction->setChecked(d->currentMode == ViewMode::kIconMode);
-        listAction->setChecked(d->currentMode == ViewMode::kListMode);
-        treeAction->setChecked(d->currentMode == ViewMode::kTreeMode);
-    };
-
-    connect(iconAction, &QAction::triggered, this, [this]() {
-        d->setViewMode(ViewMode::kIconMode);
+    // CompactButton 内部自行管理菜单，这里只需连接其信号即可
+    connect(d->compactButton, &ViewSwitchButton::viewModeChangeRequested, this, [this](ViewMode mode) {
+        d->setViewMode(mode);
     });
-    connect(listAction, &QAction::triggered, this, [this]() {
-        d->setViewMode(ViewMode::kListMode);
-    });
-    connect(treeAction, &QAction::triggered, this, [this]() {
-        d->setViewMode(ViewMode::kTreeMode);
-    });
-
-    connect(menu, &DMenu::aboutToShow, this, updateCheckedState);
-    d->compactButton->setMenu(menu);
 
 #ifdef DTKWIDGET_CLASS_DSizeMode
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this]() {
@@ -399,9 +364,9 @@ void OptionButtonBox::initUiForSizeMode()
     d->hBoxLayout->setSpacing(0);
     d->hBoxLayout->setContentsMargins(0, 0, 0, 0);
 
+    d->hBoxLayout->addSpacing(10);
     // Add compact button (for compact mode)
     d->hBoxLayout->addWidget(d->compactButton);
-    d->hBoxLayout->addSpacing(10);
 
     // Add view mode buttons (left side)
     d->hBoxLayout->addWidget(d->iconViewButton);

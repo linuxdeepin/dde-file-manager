@@ -23,6 +23,7 @@ using DFMBASE_NAMESPACE::Global::ViewMode;
 class SortByButton;
 class ViewOptionsButton;
 class OptionButtonBox;
+class ViewSwitchButton;
 class OptionButtonBoxPrivate : public QObject
 {
     Q_OBJECT
@@ -50,7 +51,7 @@ private:
     SortByButton *sortByButton { nullptr };
     ViewOptionsButton *viewOptionsButton { nullptr };
     QHBoxLayout *hBoxLayout { nullptr };
-    DTK_WIDGET_NAMESPACE::DToolButton *compactButton { nullptr };
+    ViewSwitchButton *compactButton { nullptr };
     bool isCompactMode { false };
 
     ViewMode currentMode { ViewMode::kIconMode };
