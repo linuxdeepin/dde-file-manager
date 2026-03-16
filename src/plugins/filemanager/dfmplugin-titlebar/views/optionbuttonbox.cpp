@@ -174,12 +174,10 @@ void OptionButtonBox::updateOptionButtonBox(int parentWidth)
     if (parentWidth <= kCompactModeThreshold) {
         if (!d->isCompactMode) {
             switchToCompactMode();
-            updateFixedWidth();
         }
     } else {
         if (d->isCompactMode) {
             switchToNormalMode();
-            updateFixedWidth();
         }
     }
 }
@@ -245,7 +243,7 @@ void OptionButtonBox::onUrlChanged(const QUrl &url)
     if (parent() && qobject_cast<QWidget *>(parent())) {
         if (OptionButtonManager::instance()->hasVsibleState(d->currentUrl.scheme())
             && OptionButtonManager::instance()->optBtnVisibleState(d->currentUrl.scheme()) == OptionButtonManager::kHideAllBtn) {
-            setFixedWidth(0);
+            setVisible(false);
             return;
         }
         if (qobject_cast<QWidget *>(parent())->width() <= kCompactModeThreshold) {
@@ -253,7 +251,7 @@ void OptionButtonBox::onUrlChanged(const QUrl &url)
         } else {
             switchToNormalMode();
         }
-        updateFixedWidth();
+        setVisible(true);
     }
 }
 
@@ -420,41 +418,6 @@ void OptionButtonBox::initUiForSizeMode()
     d->hBoxLayout->addWidget(d->sortByButton);
 
     setLayout(d->hBoxLayout);
-}
-
-void OptionButtonBox::updateFixedWidth()
-{
-    int fixedWidth = 10;   // Initial spacing
-
-    // View mode buttons section (left side)
-    if (d->isCompactMode) {
-        fixedWidth += 48;   // Compact button width
-        fixedWidth += 10;   // Spacing after compact button
-        fixedWidth -= 20;
-    } else {
-        fixedWidth += 10;   // Spacing after compact button, using their actual width
-        // Only count visible view mode buttons (each is kToolButtonSize = 30)
-        if (d->iconViewEnabled && d->iconViewButton && !d->iconViewButton->isHidden())
-            fixedWidth += d->iconViewButton->width();
-        if (d->listViewEnabled && d->listViewButton && !d->listViewButton->isHidden())
-            fixedWidth += d->listViewButton->width();
-        if (d->treeViewEnabled && d->treeViewButton && !d->treeViewButton->isHidden())
-            fixedWidth += d->treeViewButton->width();
-    }
-
-    // ViewOptions button (part of left side, also kToolButtonSize = 30)
-    if (d->viewOptionsEnabled && d->viewOptionsButton && !d->viewOptionsButton->isHidden())
-        fixedWidth += kToolButtonSize;
-
-    // Small fixed spacing + controlled stretch space to achieve ~15px total
-    fixedWidth += 5;   // Fixed spacing before stretch
-    // fixedWidth += 10;   // Controlled stretch space (5px + 10px = 15px total)
-
-    // SortByButton (right side - width is 46 when visible)
-    if (d->sortByEnabled && d->sortByButton && !d->sortByButton->isHidden())
-        fixedWidth += 46;   // kSortToolButtonWidth
-
-    setFixedWidth(fixedWidth);
 }
 
 DToolButton *OptionButtonBox::listViewButton() const
