@@ -41,7 +41,6 @@ private:
     void initializeUi();
     void initConnect();
     void initUiForSizeMode();
-    void updateFixedWidth();
 
     void switchToCompactMode();
     void switchToNormalMode();
