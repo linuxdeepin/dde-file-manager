@@ -58,6 +58,7 @@ install(FILES dde-property-dialog DESTINATION bin)
 # desktop
 install(FILES dde-file-manager.desktop DESTINATION share/applications)
 install(FILES dde-open.desktop DESTINATION share/applications)
+INSTALL_TREELAND_OVERRIDES("dde-file-manager")
 
 # pkexec
 install(FILES pkexec/com.deepin.pkexec.dde-file-manager.policy DESTINATION share/polkit-1/actions/)

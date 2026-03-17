@@ -6,3 +6,6 @@ usr/share/applications/dde-home.desktop
 usr/share/dde-shell/*/*.json
 usr/lib/*/dde-shell/*.so
 usr/bin/dfm-trash.sh
+usr/share/dsg/configs/overrides/org.deepin.dde.treeland/org.deepin.dde.treeland.app/dde-computer/*.json
+usr/share/dsg/configs/overrides/org.deepin.dde.treeland/org.deepin.dde.treeland.app/dde-home/*.json
+usr/share/dsg/configs/overrides/org.deepin.dde.treeland/org.deepin.dde.treeland.app/dde-trash/*.json
