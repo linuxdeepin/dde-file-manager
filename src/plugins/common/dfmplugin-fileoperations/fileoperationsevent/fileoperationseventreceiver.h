@@ -246,6 +246,10 @@ private:
                               const QPair<QString, QString> pair,
                               QMap<QUrl, QUrl> &needDealUrls,
                               QMap<QUrl, QUrl> &successUrls);
+bool doRenameDesktopFilesWithAppend(QList<QUrl> &urls,
+                                        const QPair<QString, DFMBASE_NAMESPACE::AbstractJobHandler::FileNameAddFlag> &pair,
+                                        QMap<QUrl, QUrl> &needDealUrls,
+                                        QMap<QUrl, QUrl> &successUrls);
 
     JobHandlePointer doCopyFile(const quint64 windowId, const QList<QUrl> &sources, const QUrl &target,
                                 const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
