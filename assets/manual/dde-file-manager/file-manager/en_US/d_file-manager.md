@@ -34,8 +34,6 @@ You can run, close and create a shortcut for File Manager by the following ways.
 
 On Document Viewer interface, press **Ctrl + Shift + /** to view all shortcut keys quickly, which helps you to use them skillfully and improves your working efficiency. 
 
-![1|hotkey](fig/hotkey.png)
-
 ## Main Interface
 
 The main interface of the file manager is simple, user-friendly, and feature-rich. Mastering its functions will make file management simpler and more efficient.
@@ -321,8 +319,6 @@ To quickly visit a folder from the left panel, you can add bookmarks for frequen
 
 By adding tags on file/folder, you can classify and manage your files better.
 
-> ![notes](../common/notes.svg) Notes: currently only x86 platform supports **Tag information**. 
-
 #### Add Tags
 
 You can add tag to multiple files/folders at a time, or add multiple tags to a single file/folder. The tag appears in the left panel.
@@ -425,7 +421,7 @@ Users on the LAN can access the shared files through the network path provided b
    - Input the server address, e.g. smb://10.0.2.15 directly in the address bar and press **Enter**.
    - Click ![icon_menu](../common/icon_menu.svg) > **Connect to Server** and input the server address, and click **Connect**.
 
-2. Select the shared folder you need to visit, and the "Password required for share XX on 10.0.2.15" window will pop up.
+2. Select the shared folder you need to visit, and an authentication window will pop up.
    
    - If the folder is set to not allow anonymous access, enter the system user name and share password of the sharer in the "Registered Users" tab.
    - If the folder is set to allow anonymous access, you can select the "Anonymous" tab and visit the shared folder without entering a username and password.
