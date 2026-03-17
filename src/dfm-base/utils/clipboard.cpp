@@ -86,6 +86,23 @@ void onClipboardDataChanged()
         if (url.isValid() && !url.scheme().isEmpty())
             clipboardFileUrls << url;
     }
+
+    // user set x-special/gnome-copied-files's value,but do not set mimedata's urls
+    // so use x-special/gnome-copied-files's value to set clipboard urls;
+    if (!clipboardFileUrls.isEmpty())
+        return;
+
+    qCInfo(logDFMBase()) << "onClipboardDataChanged mimedata's urls is empty, use x-special/gnome-copied-files's value : " << data;
+    auto dataList = data.split("\n");
+    for (const auto &file : dataList) {
+      QUrl url(file);
+      if (url.isValid() && !url.scheme().isEmpty())
+        clipboardFileUrls << url;
+    }
+
+    if (clipboardFileUrls.isEmpty()) {
+        qCWarning(logDFMBase) << "onClipboardDataChanged clipboardFileUrls read url is empty!!!! clipboardAction = " << clipboardAction;
+    }
 }
 }   // namespace GlobalData
 
