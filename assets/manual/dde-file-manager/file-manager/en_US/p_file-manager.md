@@ -34,8 +34,6 @@ You can run, close and create a shortcut for File Manager by the following ways.
 
 On Document Viewer interface, press **Ctrl + Shift + /** to view all shortcut keys quickly, which helps you to use them skillfully and improves your working efficiency. 
 
-![1|hotkey](fig/hotkey.png)
-
 ## Main Interface
 
 The main interface of the file manager is simple, user-friendly, and feature-rich. Mastering its functions will make file management simpler and more efficient.
@@ -321,8 +319,6 @@ To quickly visit a folder from the left panel, you can add bookmarks for frequen
 
 By adding tags on file/folder, you can classify and manage your files better.
 
-> ![notes](../common/notes.svg) Notes: currently only x86 platform supports **Tag information**. 
-
 #### Add Tags
 
 You can add tag to multiple files/folders at a time, or add multiple tags to a single file/folder. The tag appears in the left panel.
@@ -425,7 +421,7 @@ Users on the LAN can access the shared files through the network path provided b
    - Input the server address, e.g. smb://10.0.2.15 directly in the address bar and press **Enter**.
    - Click ![icon_menu](../common/icon_menu.svg) > **Connect to Server** and input the server address, and click **Connect**.
 
-2. Select the shared folder you need to visit, and the "Password required for share XX on 10.0.2.15" window will pop up.
+2. Select the shared folder you need to visit, and an authentication window will pop up.
    
    - If the folder is set to not allow anonymous access, enter the system user name and share password of the sharer in the "Registered Users" tab.
    - If the folder is set to allow anonymous access, you can select the "Anonymous" tab and visit the shared folder without entering a username and password.
@@ -592,14 +588,14 @@ You have to encrypt File Vault when you use it for the first time. File Vault pr
 
 #### Transparent Encryption
 
-1. Click ![file_vault](../common/file_vault.svg) in the left panel or double-click **My Vault** on the **Computer** interface, and then click **Create** in the pop-up dialogue box.  
+1. Double-click **Vault** on the **Computer** interface, and then click **Create** in the pop-up dialogue box.  
 2. Set the "Encryption method" to **Transparent encryption**, click **Next** to encrypt the File Vault directly.
 
 ![0|encrypt](fig/transparent_encryption.png)
 
 #### Key Encryption
 
-1. Click ![file_vault](../common/file_vault.svg) in the left panel or double-click **My Vault** on the **Computer** interface, and then click **Create** in the pop-up dialogue box.  
+1. Double-click **Vault** on the **Computer** interface, and then click **Create** in the pop-up dialogue box.  
 2. The "Encryption method" is set to **key encryption** by default. After setting a password and a password hint, Click **Next**. 
 
 ![0|encrypt](fig/key_encryption.png)
@@ -618,7 +614,7 @@ You have to encrypt File Vault when you use it for the first time. File Vault pr
 
 ### Lock File Vault
 
-After you put files into File Vault, right-click![file_vault](../common/file_vault.svg) in the left panel or right-click **My Vault** in the **Computer** interface. 
+After you put files into File Vault,right-click **Vault** in the **Computer** interface. 
 
 - Select **Lock** to lock File Vault. 
 - Select **Auto lock** and select in the sub-menu:
@@ -631,19 +627,19 @@ After you put files into File Vault, right-click![file_vault](../common/file_vau
 
 ### Unlock File Vault
 
-1. Click![file_vault](../common/file_vault.svg) or double-click **My Vault** in the **Computer** interface. 
+1. Double-click **Vault** in the **Computer** interface. 
 2. Input password in the pop-up window and click **Unlock**. 
 3. If you forget the vault password, click **Forgot Password?**, select the location where the key file is stored, and then click **Verify Key** to retrieve the password.
 
 ![encrypt](fig/unlock.png)
 
-> ![tips](../common/tips.svg) Tips: You can also right-click ![file_vault](../common/file_vault.svg) in the left panel or **My Vault** in the **Computer** interface and select **Unlock**. 
+> ![tips](../common/tips.svg) Tips: You can also right-click **Vault** in the **Computer** interface and select **Unlock**. 
 
 ### Delete File Vault
 
 You can delete a vault only after unlocking it.
 
-1. Right-click ![file_vault](../common/file_vault.svg) in the left panel  or right-click **My Vault** in the **Computer** interface and select **Remove File Vault**. 
+1. Right-click **Vault** in the **Computer** interface and select **Remove File Vault**. 
 2. Input file vault password in the pop-up window and click **Remove**. 
 3. Input your login password in the pop-up window and click **Confirm** to finish this operation.
 
