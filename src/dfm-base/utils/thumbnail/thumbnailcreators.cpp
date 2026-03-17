@@ -158,12 +158,12 @@ QImage ThumbnailCreators::videoThumbnailCreator(const QString &filePath, Thumbna
 {
     qCDebug(logDFMBase) << "thumbnail: creating video thumbnail for:" << filePath;
 
-    QImage img = videoThumbnailCreatorLib(filePath, size);
+    QImage img = videoThumbnailCreatorFfmpeg(filePath, size);
     if (img.isNull()) {
-        qCDebug(logDFMBase) << "thumbnail: video library creator failed, trying ffmpeg for:" << filePath;
-        img = videoThumbnailCreatorFfmpeg(filePath, size);
+        qCDebug(logDFMBase) << "thumbnail: video ffmpeg creator failed, trying library for:" << filePath;
+        img = videoThumbnailCreatorLib(filePath, size);
     } else {
-        qCDebug(logDFMBase) << "thumbnail: video library creator succeeded for:" << filePath;
+        qCDebug(logDFMBase) << "thumbnail: video ffmpeg creator succeeded for:" << filePath;
     }
 
     return img;
