@@ -23,7 +23,6 @@ mocs_*
 # Executables
 *.exe
 *.out
-*.app
 Makefile
 Makefile.*
 *.Debug
