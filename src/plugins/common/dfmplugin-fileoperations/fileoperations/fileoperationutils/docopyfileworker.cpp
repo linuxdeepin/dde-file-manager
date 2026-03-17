@@ -246,6 +246,9 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFileWithDirectIO(const DFileInf
     }
 
     auto fromSize = fromInfo->attribute(DFileInfo::AttributeID::kStandardSize).toLongLong();
+    if (fromSize <= 0) {
+        workData->zeroOrlinkOrDirWriteSize += FileUtils::getMemoryPageSize();
+    }
 
     // Open destination file with O_DIRECT
     WriteMode preferredMode = WriteMode::Direct;
@@ -318,7 +321,7 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFileWithDirectIO(const DFileInf
             // Handle read error with UI dialog
             auto jobError = mapSystemErrorToJobError(savedErrno, false);
             AbstractJobHandler::SupportAction action = doHandleErrorAndWait(
-                fromInfo->uri(), toInfo->uri(), jobError, false);
+                    fromInfo->uri(), toInfo->uri(), jobError, false);
 
             if (action == AbstractJobHandler::SupportAction::kRetryAction) {
                 // Seek back to retry reading this chunk
@@ -373,7 +376,7 @@ DoCopyFileWorker::NextDo DoCopyFileWorker::doCopyFileWithDirectIO(const DFileInf
                 // Handle write error with UI dialog
                 auto jobError = mapSystemErrorToJobError(savedErrno, true);
                 AbstractJobHandler::SupportAction action = doHandleErrorAndWait(
-                    fromInfo->uri(), toInfo->uri(), jobError, true);
+                        fromInfo->uri(), toInfo->uri(), jobError, true);
 
                 if (action == AbstractJobHandler::SupportAction::kRetryAction) {
                     // Seek to retry writing this chunk
