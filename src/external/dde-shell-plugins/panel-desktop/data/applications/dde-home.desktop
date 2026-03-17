@@ -12,6 +12,7 @@ Type=Application
 X-AppStream-Ignore=true
 X-Deepin-AppID=dde-file-manager
 X-Deepin-Vendor=deepin
+X-Deepin-Singleton=true
 
 # Translations:
 # Do not manually modify!

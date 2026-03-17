@@ -11,6 +11,7 @@ Terminal=false
 Type=Application
 X-AppStream-Ignore=true
 X-Deepin-AppID=dde-trash
+X-Deepin-Singleton=true
 
 # Translations:
 # Do not manually modify!
