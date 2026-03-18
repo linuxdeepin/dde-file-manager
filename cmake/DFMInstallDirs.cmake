@@ -1,8 +1,10 @@
-include(GNUInstallDirs)
-
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     set(CMAKE_INSTALL_PREFIX /usr)
 endif()
+
+# include(GNUInstallDirs) must come after set(CMAKE_INSTALL_PREFIX /usr),
+# because the GNUInstallDirs script calculates CMAKE_IN_<dir> based on PREFIX.
+include(GNUInstallDirs)
 
 # Base directories
 if(NOT DEFINED LIB_INSTALL_DIR)
