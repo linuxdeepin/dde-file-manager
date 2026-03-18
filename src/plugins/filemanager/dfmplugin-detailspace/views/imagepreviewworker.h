@@ -36,7 +36,7 @@ private:
     bool isImageMimeType(const QString &mimeType) const;
     bool shouldSkipOriginalImageLoad(const QUrl &url, qint64 fileSize) const;
     QPixmap loadOriginalImage(const QString &filePath, const QSize &targetSize);
-    QPixmap loadImageFromMemory(const QString &filePath, const QSize &targetSize);
+    QPixmap loadImageFromMemory(const QUrl &url, const QString &filePath, qint64 expectedSize, const QSize &targetSize);
     QPixmap loadThumbnail(const QUrl &url, const QSize &targetSize);
 
 private:

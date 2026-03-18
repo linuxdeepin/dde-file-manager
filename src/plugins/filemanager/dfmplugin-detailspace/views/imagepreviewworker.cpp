@@ -14,6 +14,8 @@
 #include <dfm-base/utils/protocolutils.h>
 
 #include <dfm-framework/dpf.h>
+#include <dfm-base/file/local/syncfileinfo.h>
+#include <dfm-io/dfile.h>
 
 #include <QImageReader>
 #include <QMovie>
@@ -76,13 +78,10 @@ void ImagePreviewWorker::loadPreview(const QUrl &url, const QSize &targetSize)
     if (isImageMimeType(mimeType)) {
         // Check if we should skip original image loading for remote/optical files
         if (!shouldSkipOriginalImageLoad(url, fileSize)) {
-            // Special handling for TIFF files on DAV/DAVS remote filesystem
-            // DAV/DAVS (WebDAV with or without SSL) may have incomplete data reads due to
-            // network instability, causing libtiff to crash when accessing incomplete strip
-            // data via memcpy. Load entire file into memory first to ensure data integrity.
-            if (mimeType == "image/tiff"
-                && (ProtocolUtils::isDavFile(url) || ProtocolUtils::isDavsFile(url))) {
-                result = loadImageFromMemory(filePath, targetSize);
+            // For DAV/DAVS mounted files, prefer full-memory loading to avoid
+            // partial/streaming read issues on remote filesystem.
+            if (ProtocolUtils::isDavFile(url) || ProtocolUtils::isDavsFile(url)) {
+                result = loadImageFromMemory(url, filePath, fileSize, targetSize);
             } else {
                 result = loadOriginalImage(filePath, targetSize);
             }
@@ -170,7 +169,7 @@ QPixmap ImagePreviewWorker::loadOriginalImage(const QString &filePath, const QSi
     return pixmap;
 }
 
-QPixmap ImagePreviewWorker::loadImageFromMemory(const QString &filePath, const QSize &targetSize)
+QPixmap ImagePreviewWorker::loadImageFromMemory(const QUrl &url, const QString &filePath, qint64 expectedSize, const QSize &targetSize)
 {
     // This method loads an image file entirely into memory before decoding.
     // It's designed to work around issues with remote filesystem (especially DAVS)
@@ -188,21 +187,38 @@ QPixmap ImagePreviewWorker::loadImageFromMemory(const QString &filePath, const Q
     // By reading the entire file into memory first, we ensure data integrity before
     // passing it to QImageReader, eliminating the streaming read issue.
 
-    QFile file(filePath);
-    if (!file.open(QIODevice::ReadOnly)) {
-        fmWarning() << "detailview: failed to open file for memory loading:" << filePath;
-        return QPixmap();
+    // Prefer reading from original remote URI (via GIO backend) instead of
+    // gvfs-fuse mount path, to avoid truncated reads on /run/user/.../gvfs.
+    QUrl readUrl = url;
+    if (!readUrl.isValid()) {
+        readUrl = QUrl::fromLocalFile(filePath);
+    }
+    if (readUrl.isLocalFile()) {
+        const SyncFileInfo info(readUrl);
+        const QUrl originalUrl = info.urlOf(UrlInfoType::kOriginalUrl);
+        if (originalUrl.isValid()) {
+            readUrl = originalUrl;
+        }
     }
 
-    QByteArray fileData = file.readAll();
-    file.close();
+    qreal dpr = qApp->devicePixelRatio();
+    QSize maxSize = targetSize * dpr;
 
+    QByteArray fileData = DFMIO::DFile(readUrl).readAll();
     if (fileData.isEmpty()) {
-        fmWarning() << "detailview: empty data from file:" << filePath;
+        fmWarning() << "detailview: empty data from file:" << filePath << "readUrl:" << readUrl;
         return QPixmap();
     }
 
-    // Load image from memory buffer instead of file path
+    // Reject truncated data to avoid rendering incomplete image.
+    if (expectedSize > 0 && fileData.size() < expectedSize) {
+        fmWarning() << "detailview: incomplete data:" << filePath
+                    << "actual:" << fileData.size() << "expected:" << expectedSize
+                    << "readUrl:" << readUrl;
+        return QPixmap();
+    }
+
+    // Load image from memory buffer instead of file path.
     QBuffer buffer(&fileData);
     buffer.open(QIODevice::ReadOnly);
 
@@ -214,9 +230,6 @@ QPixmap ImagePreviewWorker::loadImageFromMemory(const QString &filePath, const Q
         return QPixmap();
     }
 
-    qreal dpr = qApp->devicePixelRatio();
-    QSize maxSize = targetSize * dpr;
-
     if (originalSize.width() > maxSize.width()
         || originalSize.height() > maxSize.height()) {
         QSize scaledSize = originalSize.scaled(maxSize, Qt::KeepAspectRatio);
@@ -225,7 +238,8 @@ QPixmap ImagePreviewWorker::loadImageFromMemory(const QString &filePath, const Q
 
     QImage image = reader.read();
     if (image.isNull()) {
-        fmWarning() << "detailview: failed to decode image from memory:" << filePath;
+        fmWarning() << "detailview: failed to decode image from memory:"
+                    << filePath << "readUrl:" << readUrl << reader.errorString();
         return QPixmap();
     }
 
