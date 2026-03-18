@@ -31,8 +31,8 @@ option(OPT_ENABLE_BUILD_TESTS "Build test/demo programs" OFF)
 include(install_dconfig)
 include(install_treeland_overrides)
 include(install_dbus_service)
-include(GNUInstallDirs)
 include(DFMInstallDirs)
+include(GNUInstallDirs)
 
 # Skip build rpath for reproducible release build
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
