@@ -418,6 +418,17 @@ void FileManagerWindowPrivate::updateRightAreaMinWidth()
 
     int requiredMinWidth = kMinimumWorkspaceWidth;   // 550
 
+    // During manual sidebar-handle dragging, temporarily allow detailspace
+    // to shrink to minimum so dragging sidebar can squeeze the opposite side.
+    if (sideBarHandleDragging) {
+        if (detailSpace && detailSpace->isVisible()) {
+            requiredMinWidth += kMinimumDetailWidth;   // 280
+            requiredMinWidth += detailSplitter->handleWidth();
+        }
+        rightArea->setMinimumWidth(requiredMinWidth);
+        return;
+    }
+
     // If sidebar is visible, use detailspace's current width to protect it
     // This ensures: workspace shrinks first, then sidebar, then detailspace
     if (sideBar && sideBar->isVisible()) {
@@ -802,6 +813,10 @@ void FileManagerWindowPrivate::setupSidebarSepTracking()
                              lastSidebarExpandedPostion = pos;
                          }
                      });
+
+    // Install event filter for main splitter handle to track drag lifecycle.
+    if (QSplitterHandle *handle = splitter->handle(1))
+        handle->installEventFilter(q);
 }
 
 void FileManagerWindowPrivate::installDetailSplitterHandleEventFilter()
@@ -820,6 +835,7 @@ void FileManagerWindowPrivate::resetDetailDragState()
 {
     transitionDetailDragState(DetailDragState::Idle);
     detailDragMinimumPosX = 0;
+    detailDragLastGlobalPosX = 0;
 }
 
 void FileManagerWindowPrivate::transitionDetailDragState(DetailDragState newState)
@@ -908,6 +924,39 @@ bool FileManagerWindowPrivate::handleSideBarEvent(QObject *watched, QEvent *even
     return false;
 }
 
+bool FileManagerWindowPrivate::handleSidebarSplitterHandleEvent(QObject *watched, QEvent *event)
+{
+    if (!splitter)
+        return false;
+
+    QSplitterHandle *handle = splitter->handle(1);
+    if (!handle || watched != handle)
+        return false;
+
+    switch (event->type()) {
+    case QEvent::MouseButtonPress: {
+        auto *mouseEvent = static_cast<QMouseEvent *>(event);
+        if (mouseEvent->button() == Qt::LeftButton) {
+            sideBarHandleDragging = true;
+            updateRightAreaMinWidth();
+        }
+        break;
+    }
+    case QEvent::MouseButtonRelease: {
+        auto *mouseEvent = static_cast<QMouseEvent *>(event);
+        if (mouseEvent->button() == Qt::LeftButton) {
+            sideBarHandleDragging = false;
+            updateRightAreaMinWidth();
+        }
+        break;
+    }
+    default:
+        break;
+    }
+
+    return false;
+}
+
 bool FileManagerWindowPrivate::handleDetailSplitterHandleEvent(QObject *watched, QEvent *event)
 {
     if (!detailSplitter || !detailSpace)
@@ -921,6 +970,7 @@ bool FileManagerWindowPrivate::handleDetailSplitterHandleEvent(QObject *watched,
     case QEvent::MouseButtonPress: {
         auto *mouseEvent = static_cast<QMouseEvent *>(event);
         if (mouseEvent->button() == Qt::LeftButton) {
+            detailDragLastGlobalPosX = qRound(mouseEvent->globalPosition().x());
             // 检查当前是否已经在最小宽度
             int currentWidth = detailSplitterPosition();
             if (currentWidth <= kMinimumDetailWidth && detailSpace->isVisible()) {
@@ -939,6 +989,29 @@ bool FileManagerWindowPrivate::handleDetailSplitterHandleEvent(QObject *watched,
 
         auto *mouseEvent = static_cast<QMouseEvent *>(event);
         int currentMouseX = qRound(mouseEvent->globalPosition().x());
+        int deltaX = currentMouseX - detailDragLastGlobalPosX;
+        detailDragLastGlobalPosX = currentMouseX;
+
+        // Continue dragging after workspace reaches minimum:
+        // when dragging detailspace wider (handle moves left), squeeze sidebar.
+        if (detailDragState == DetailDragState::Tracking
+            && deltaX < 0
+            && sideBar
+            && sideBar->isVisible()
+            && splitter
+            && detailSplitter->sizes().size() >= 2
+            && detailSplitter->sizes().at(0) <= kMinimumWorkspaceWidth) {
+            int currentSidebarWidth = splitterPosition();
+            int minSidebarWidth = kMinimumLeftWidth;
+            if (currentSidebarWidth > minSidebarWidth) {
+                int shrinkSidebar = qMin(-deltaX, currentSidebarWidth - minSidebarWidth);
+                setSplitterPosition(currentSidebarWidth - shrinkSidebar);
+                updateSideBarSeparatorPosition();
+
+                // Keep drag intent: convert newly obtained width into detailspace width.
+                setDetailSplitterPosition(detailSplitterPosition() + shrinkSidebar);
+            }
+        }
 
         // 状态：正在跟踪拖拽，检查是否刚达到最小宽度
         if (detailDragState == DetailDragState::Tracking) {
@@ -1026,9 +1099,31 @@ bool FileManagerWindowPrivate::handleGlobalDragEvent(QObject *watched, QEvent *e
                 transitionDetailDragState(DetailDragState::Hidden);
             } else {
                 // 正常拖拽调整宽度
-                int detailWidth = qBound(kMinimumDetailWidth, distanceFromRight, kMaximumDetailWidth);
-                setDetailSplitterPosition(detailWidth);
-                lastDetailSpaceWidth = detailWidth;
+                int targetDetailWidth = qBound(kMinimumDetailWidth, distanceFromRight, kMaximumDetailWidth);
+
+                // If there is not enough room in rightArea, keep dragging to squeeze sidebar.
+                // This makes "hide -> recover -> continue enlarge" smooth in one drag.
+                if (detailSplitter
+                    && detailSplitter->sizes().size() >= 2
+                    && sideBar
+                    && sideBar->isVisible()
+                    && splitter
+                    && detailSplitter->sizes().at(0) <= kMinimumWorkspaceWidth) {
+                    int currentDetailWidth = detailSplitterPosition();
+                    if (targetDetailWidth > currentDetailWidth) {
+                        int currentSidebarWidth = splitterPosition();
+                        int minSidebarWidth = kMinimumLeftWidth;
+                        if (currentSidebarWidth > minSidebarWidth) {
+                            int needExtraWidth = targetDetailWidth - currentDetailWidth;
+                            int shrinkSidebar = qMin(needExtraWidth, currentSidebarWidth - minSidebarWidth);
+                            setSplitterPosition(currentSidebarWidth - shrinkSidebar);
+                            updateSideBarSeparatorPosition();
+                        }
+                    }
+                }
+
+                setDetailSplitterPosition(targetDetailWidth);
+                lastDetailSpaceWidth = detailSplitterPosition();
             }
         }
     } else if (event->type() == QEvent::MouseButtonRelease) {
@@ -1381,6 +1476,10 @@ bool FileManagerWindow::eventFilter(QObject *watched, QEvent *event)
 
     // 侧边栏事件
     if (d->handleSideBarEvent(watched, event))
+        return true;
+
+    // Sidebar splitter handle 拖拽事件
+    if (d->handleSidebarSplitterHandleEvent(watched, event))
         return true;
 
     // DetailSplitter handle 拖拽事件
