@@ -129,11 +129,13 @@ protected:
 
     bool sideBarAutoVisible { true };
     bool sideBarShrinking { false };
+    bool sideBarHandleDragging { false };   // Main splitter handle drag state
     bool detailSpaceVisible { false };   // Cached visibility state from DConfig
 
     // DetailSpace elastic drag tracking
     DetailDragState detailDragState { DetailDragState::Idle };   // 拖拽状态
     int detailDragMinimumPosX { 0 };   // 到达最小宽度时的鼠标全局X坐标（起始点）
+    int detailDragLastGlobalPosX { 0 };   // 最近一次拖拽事件的鼠标全局X坐标
 
 private:
     bool setupAnimation(bool expanded);
@@ -152,6 +154,7 @@ private:
     // Event filter helper methods (Single Responsibility)
     bool handleWorkspaceKeyEvent(QObject *watched, QEvent *event);
     bool handleSideBarEvent(QObject *watched, QEvent *event);
+    bool handleSidebarSplitterHandleEvent(QObject *watched, QEvent *event);
     bool handleDetailSplitterHandleEvent(QObject *watched, QEvent *event);
     bool handleGlobalDragEvent(QObject *watched, QEvent *event);
     void resetDetailDragState();
