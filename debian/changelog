@@ -1,3 +1,18 @@
+dde-file-manager (6.5.126) unstable; urgency=medium
+
+  * fix: handle symlink desktop files in rename operations
+  * fix: correct URL encoding in file dialog selectedUrls method
+  * fix: simplify option button box width management
+  * refactor: extract view switch button and refine sort button UI
+  * fix: handle empty mimeData urls by parsing x-special/gnome-copied-files
+  * fix: fix direct io copy progress issue with empty files
+  * fix: swap video thumbnail creation priority
+  * docs: update file manager manual content
+  * feat: disable prelaunch splash for file manager apps
+  * feat: improve sidebar and detail space drag interaction
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Wed, 18 Mar 2026 14:35:45 +0800
+
 dde-file-manager (6.5.125) unstable; urgency=medium
 
   * fix: fix TIFF image preview crash on DAVS remote filesystem
