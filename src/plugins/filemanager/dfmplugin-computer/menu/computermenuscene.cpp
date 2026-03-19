@@ -194,8 +194,10 @@ void ComputerMenuScene::updateState(QMenu *parent)
         disabled.append(kOpenInNewTab);
 
     // do not show 'rename' entry for loop devices.
-    if (d->info->extraProperties().value(DeviceProperty::kIsLoopDevice, false).toBool())
+    if (d->info->extraProperties().value(DeviceProperty::kIsLoopDevice, false).toBool()) {
         keeped.removeAll(kRename);
+        keeped << (d->info->targetUrl().isValid() ? kUnmount : kMount);
+    }
 
     if (!keeped.isEmpty())
         d->updateMenu(parent, disabled, keeped);

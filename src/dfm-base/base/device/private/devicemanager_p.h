@@ -29,6 +29,7 @@ public:
 private:
     // private operations
     void mountAllBlockDev();
+    bool shouldAutoMountBlockDevice(const QString &id, const QVariantMap &info);
 
     static bool isDaemonMountRunning();
 

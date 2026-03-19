@@ -837,25 +837,9 @@ void DeviceManager::doAutoMount(const QString &id, DeviceType type, int timeout)
     }
 
     if (type == DeviceType::kBlockDevice) {
-        auto &&info = getBlockDevInfo(id);
-        if (info.value(DeviceProperty::kIsEncrypted).toBool()
-            || info.value(DeviceProperty::kCryptoBackingDevice).toString() != "/") {
-            qCDebug(logDFMBase) << "Auto mount skipped for encrypted device:" << id;
-            return;
-        }
-        if (info.value(DeviceProperty::kHintIgnore).toBool()) {
-            qCDebug(logDFMBase) << "Auto mount skipped for ignored device:" << id;
-            return;
-        }
-        if (!info.value(DeviceProperty::kHasFileSystem).toBool()) {
-            qCDebug(logDFMBase) << "Auto mount skipped for device without filesystem:" << id;
-            return;
-        }
-        // auto mount is only available for non optical devices and removable device.
-        // the internal devices are mounted when server launched, see @doAutoMountAtStart
-        if (id.startsWith("/org/freedesktop/UDisks2/block_devices/sr"))
-            return;
-        if (!info.value(DeviceProperty::kRemovable).toBool())
+        const auto &info = getBlockDevInfo(id);
+        // auto mount is only available for removable, non optical block device.
+        if (!d->shouldAutoMountBlockDevice(id, info))
             return;
 
         qCInfo(logDFMBase) << "Starting auto mount for block device:" << id;
@@ -885,12 +869,47 @@ void DeviceManagerPrivate::mountAllBlockDev()
                                                   | DeviceQueryOption::kNotMounted) };
     qCInfo(logDFMBase) << "Starting auto mount for" << devs.size() << "mountable block devices:" << devs;
     for (const auto &dev : devs) {
-        if (dev.startsWith("/org/freedesktop/UDisks2/block_devices/sr")) {
-            qCDebug(logDFMBase) << "Skipping auto mount for optical device:" << dev;
+        const auto &info = q->getBlockDevInfo(dev);
+        if (!shouldAutoMountBlockDevice(dev, info))
             continue;
-        }
         q->mountBlockDevAsync(dev, { { "auth.no_user_interaction", true } });   // avoid the auth dialog raising
     }
+}
+
+bool DeviceManagerPrivate::shouldAutoMountBlockDevice(const QString &id, const QVariantMap &info)
+{
+    if (info.value(DeviceProperty::kIsEncrypted).toBool()
+        || info.value(DeviceProperty::kCryptoBackingDevice).toString() != "/") {
+        qCDebug(logDFMBase) << "Auto mount skipped for encrypted device:" << id;
+        return false;
+    }
+
+    if (info.value(DeviceProperty::kHintIgnore).toBool()) {
+        qCDebug(logDFMBase) << "Auto mount skipped for ignored device:" << id;
+        return false;
+    }
+
+    if (info.value(DeviceProperty::kIsLoopDevice).toBool()) {
+        qCDebug(logDFMBase) << "Auto mount skipped for loop device:" << id;
+        return false;
+    }
+
+    if (!info.value(DeviceProperty::kHasFileSystem).toBool()) {
+        qCDebug(logDFMBase) << "Auto mount skipped for device without filesystem:" << id;
+        return false;
+    }
+
+    if (id.startsWith("/org/freedesktop/UDisks2/block_devices/sr")) {
+        qCDebug(logDFMBase) << "Auto mount skipped for optical device:" << id;
+        return false;
+    }
+
+    if (!info.value(DeviceProperty::kRemovable).toBool()) {
+        qCDebug(logDFMBase) << "Auto mount skipped for non-removable block device:" << id;
+        return false;
+    }
+
+    return true;
 }
 
 bool DeviceManagerPrivate::isDaemonMountRunning()
