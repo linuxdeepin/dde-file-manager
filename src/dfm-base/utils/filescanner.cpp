@@ -81,7 +81,7 @@ private:
     static void scanOtherProtocolsImpl(ScanState &state, const QList<QUrl> &urls);
 
     // 辅助方法
-    static bool readDirectoryEntries(const QString &path, QList<DirEntry> *entries);
+    static bool readDirectoryEntries(const QString &path, QList<DirEntry> *entries, bool countOnly = false);
     static void processRegularFile(ScanState &state, const QString &path, const struct stat &statBuf);
     static void processSymlink(ScanState &state, const QString &path);
     static bool isDirectoryPath(const QString &path, const struct stat &lstatBuf);
@@ -341,7 +341,9 @@ void FileScannerCore::scanLocalPathsImpl(ScanState &state, const QList<QUrl> &ur
                 collectFileIfEnabled(state, url, true);
             } else {
                 // 非目录：直接收集（普通文件、符号链接等）
-                if (S_ISREG(statBuf.st_mode)) {
+                if (state.options & FileScanner::ScanOption::CountOnly) {
+                    state.result.fileCount++;
+                } else if (S_ISREG(statBuf.st_mode)) {
                     processRegularFile(state, path, statBuf);
                 } else if (S_ISLNK(statBuf.st_mode)) {
                     processSymlink(state, path);
@@ -372,7 +374,8 @@ void FileScannerCore::scanLocalPathsImpl(ScanState &state, const QList<QUrl> &ur
 
         // 读取目录内容
         QList<DirEntry> entries;
-        bool readSuccess = readDirectoryEntries(dirPath, &entries);
+        bool countOnly = state.options & FileScanner::ScanOption::CountOnly;
+        bool readSuccess = readDirectoryEntries(dirPath, &entries, countOnly);
 
         if (!readSuccess) {
             // 目录读取失败（权限不足），但目录已计数
@@ -388,6 +391,28 @@ void FileScannerCore::scanLocalPathsImpl(ScanState &state, const QList<QUrl> &ur
 
             const QString entryPath = dirPath + "/" + entry.name;
             const QUrl entryUrl = QUrl::fromLocalFile(entryPath);
+
+            if (countOnly) {
+                // CountOnly 模式：直接用 d_type 计数，无需 stat
+                if (entry.d_type == DT_DIR) {
+                    bool isSingleDepth = state.options & FileScanner::ScanOption::SingleDepth;
+                    if (isSingleDepth) {
+                        state.result.directoryCount++;
+                    } else {
+                        ScanContext childCtx;
+                        childCtx.fullPath = entryPath;
+                        childCtx.depth = ctx.depth + 1;
+                        childCtx.isSourcePath = false;
+                        dirStack.push(childCtx);
+                    }
+                } else {
+                    // 普通文件、符号链接、其他类型统一计数
+                    state.result.fileCount++;
+                }
+                collectFileIfEnabled(state, entryUrl, false);
+                emitProgress(state);
+                continue;
+            }
 
             // 跳过特殊系统文件
             if (entry.statOk && S_ISREG(entry.statBuf.st_mode)) {
@@ -534,10 +559,12 @@ void FileScannerCore::scanOtherProtocolsImpl(ScanState &state, const QList<QUrl>
                             collectFileIfEnabled(state, childUrl, false);
                         } else {
                             // 处理文件
-                            state.result.totalSize += childInfo->size();
                             state.result.fileCount++;
-                            state.result.progressSize += childInfo->size();
-
+                            if (!(state.options & FileScanner::ScanOption::CountOnly)) {
+                                qint64 sz = childInfo->size();
+                                state.result.totalSize += sz;
+                                state.result.progressSize += sz;
+                            }
                             // 收集子文件URL
                             collectFileIfEnabled(state, childUrl, false);
                         }
@@ -546,9 +573,12 @@ void FileScannerCore::scanOtherProtocolsImpl(ScanState &state, const QList<QUrl>
             }
         } else {
             // 处理文件
-            state.result.totalSize += info->size();
             state.result.fileCount++;
-            state.result.progressSize += info->size();
+            if (!(state.options & FileScanner::ScanOption::CountOnly)) {
+                qint64 sz = info->size();
+                state.result.totalSize += sz;
+                state.result.progressSize += sz;
+            }
 
             // 收集文件URL
             collectFileIfEnabled(state, url, false);
@@ -567,7 +597,7 @@ void FileScannerCore::scanOtherProtocolsImpl(ScanState &state, const QList<QUrl>
                         << "dirs:" << state.result.directoryCount << "size:" << state.result.totalSize;
 }
 
-bool FileScannerCore::readDirectoryEntries(const QString &path, QList<DirEntry> *entries)
+bool FileScannerCore::readDirectoryEntries(const QString &path, QList<DirEntry> *entries, bool countOnly)
 {
     Q_ASSERT(entries);
     entries->clear();
@@ -595,12 +625,28 @@ bool FileScannerCore::readDirectoryEntries(const QString &path, QList<DirEntry> 
 
         const QByteArray nameBytes(entry->d_name);
         DirEntry dirEntry;
-        dirEntry.name = QString::fromUtf8(nameBytes);   // 统一存储为 QString
+        dirEntry.name = QString::fromUtf8(nameBytes);
         dirEntry.d_type = entry->d_type;
 
-        dirEntry.statOk = (fstatat(dirFd, entry->d_name, &dirEntry.statBuf, AT_SYMLINK_NOFOLLOW) == 0);
-        if (!dirEntry.statOk) {
-            qCWarning(logDFMBase) << "FileScannerCore: fstatat failed for" << dirEntry.name << "in" << path;
+        if (countOnly) {
+            // CountOnly 模式：优先用 d_type，仅在 DT_UNKNOWN 时 fstatat 取类型
+            if (entry->d_type == DT_UNKNOWN) {
+                struct stat sb;
+                if (fstatat(dirFd, entry->d_name, &sb, AT_SYMLINK_NOFOLLOW) == 0) {
+                    if (S_ISDIR(sb.st_mode))
+                        dirEntry.d_type = DT_DIR;
+                    else if (S_ISLNK(sb.st_mode))
+                        dirEntry.d_type = DT_LNK;
+                    else if (S_ISREG(sb.st_mode))
+                        dirEntry.d_type = DT_REG;
+                }
+            }
+            dirEntry.statOk = false;   // CountOnly 不需要 statBuf
+        } else {
+            dirEntry.statOk = (fstatat(dirFd, entry->d_name, &dirEntry.statBuf, AT_SYMLINK_NOFOLLOW) == 0);
+            if (!dirEntry.statOk) {
+                qCWarning(logDFMBase) << "FileScannerCore: fstatat failed for" << dirEntry.name << "in" << path;
+            }
         }
 
         entries->append(dirEntry);

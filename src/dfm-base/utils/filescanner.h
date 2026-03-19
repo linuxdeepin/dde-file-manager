@@ -59,7 +59,8 @@ public:
         NoOption = 0x00,   ///< 无特殊选项
         SingleDepth = 0x01,   ///< 只统计顶层，不递归
         IncludeSource = 0x02,   ///< 包含源目录本身（默认不包含）
-        CollectFiles = 0x04   ///< 收集所有文件URL列表（默认不收集）
+        CollectFiles = 0x04,   ///< 收集所有文件URL列表（默认不收集）
+        CountOnly = 0x08   ///< 只统计数量，跳过大小统计，避免 stat 系统调用以提升性能
     };
     Q_ENUM(ScanOption)
     Q_DECLARE_FLAGS(ScanOptions, ScanOption)
