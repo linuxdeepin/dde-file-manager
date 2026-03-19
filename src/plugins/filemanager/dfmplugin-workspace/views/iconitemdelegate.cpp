@@ -682,6 +682,8 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
                                                        kIconViewSpacing, kIconViewSpacing));
     }
 
+    painter->save();
+    painter->setClipRect(opt.rect);
     // init file name geometry
     QRectF labelRect = drawingRect;
     labelRect.setTop(static_cast<int>(iconRect.bottom()) + kIconModeTextPadding + kIconModeIconSpacing);
@@ -718,7 +720,7 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
         d->expandedItem->setDifferenceOfLastRow(parent()->parent()->rowCount() - parent()->parent()->indexOfRow(index) - 1);
 
         updateEditorGeometry(d->expandedItem, opt, index);
-
+        painter->restore();
         return;
     } else {
         if (!singleSelected) {
@@ -757,6 +759,7 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
 
     QStringList textList {};
     layout->layout(labelRect, opt.textElideMode, painter, background, &textList);
+    painter->restore();
 }
 
 QSize IconItemDelegate::iconSizeByIconSizeLevel() const
