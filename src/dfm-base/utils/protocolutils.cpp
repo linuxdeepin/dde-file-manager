@@ -20,6 +20,17 @@ bool isRemoteFile(const QUrl &url)
     if (!url.isValid())
         return false;
 
+    // Fast path: known remote schemes
+    const auto &scheme = url.scheme();
+    static const QSet<QString> kRemoteSchemes {
+        Global::Scheme::kSmb, Global::Scheme::kFtp, Global::Scheme::kSFtp,
+        Global::Scheme::kGPhoto, Global::Scheme::kGPhoto2, Global::Scheme::kMtp,
+        Global::Scheme::kAfc, Global::Scheme::kDav, Global::Scheme::kDavs,
+        Global::Scheme::kNfs
+    };
+    if (kRemoteSchemes.contains(scheme))
+        return true;
+
     // TODO(xust) smbmounts path might be changed in the future.
     static const QRegularExpression gvfsMatch { R"((^/run/user/\d+/gvfs/|^/root/.gvfs/|^/(?:run/)?media/[\s\S]*/smbmounts))" };
     return hasMatch(url.toLocalFile(), gvfsMatch);
@@ -30,6 +41,9 @@ bool isMTPFile(const QUrl &url)
     if (!url.isValid())
         return false;
 
+    if (url.scheme() == Global::Scheme::kMtp)
+        return true;
+
     static const QRegularExpression gvfsMatch { R"(^/run/user/\d+/gvfs/mtp:host|^/root/.gvfs/mtp:host)" };
     return hasMatch(url.toLocalFile(), gvfsMatch);
 }
@@ -39,6 +53,10 @@ bool isGphotoFile(const QUrl &url)
     if (!url.isValid())
         return false;
 
+    const auto &scheme = url.scheme();
+    if (scheme == Global::Scheme::kGPhoto || scheme == Global::Scheme::kGPhoto2)
+        return true;
+
     static const QRegularExpression gvfsMatch { R"(^/run/user/\d+/gvfs/gphoto2:host|^/root/.gvfs/gphoto2:host)" };
     return hasMatch(url.toLocalFile(), gvfsMatch);
 }
@@ -47,6 +65,8 @@ bool isFTPFile(const QUrl &url)
 {
     if (!url.isValid())
         return false;
+    if (url.scheme() == Global::Scheme::kFtp)
+        return true;
 
     static const QRegularExpression smbMatch { R"((^/run/user/\d+/gvfs/s?ftp|^/root/.gvfs/s?ftp))" };
     return hasMatch(url.path(), smbMatch);
@@ -56,6 +76,8 @@ bool isSFTPFile(const QUrl &url)
 {
     if (!url.isValid())
         return false;
+    if (url.scheme() == Global::Scheme::kSFtp)
+        return true;
 
     static const QRegularExpression smbMatch { R"((^/run/user/\d+/gvfs/sftp|^/root/.gvfs/sftp))" };
     return hasMatch(url.path(), smbMatch);
@@ -93,6 +115,9 @@ bool isNFSFile(const QUrl &url)
     if (!url.isValid())
         return false;
 
+    if (url.scheme() == Global::Scheme::kNfs)
+        return true;
+
     static const QRegularExpression nfsMatch { R"((^/run/user/\d+/gvfs/nfs|^/root/.gvfs/nfs))" };
     return hasMatch(url.path(), nfsMatch);
 }
@@ -102,6 +127,9 @@ bool isDavFile(const QUrl &url)
     if (!url.isValid())
         return false;
 
+    if (url.scheme() == Global::Scheme::kDav)
+        return true;
+
     static const QRegularExpression davMatch { R"((^/run/user/\d+/gvfs/dav.*ssl=false|^/root/.gvfs/dav.*ssl=false))" };
     return hasMatch(url.path(), davMatch);
 }
@@ -110,6 +138,9 @@ bool isDavsFile(const QUrl &url)
 {
     if (!url.isValid())
         return false;
+
+    if (url.scheme() == Global::Scheme::kDavs)
+        return true;
 
     static const QRegularExpression davsMatch { R"((^/run/user/\d+/gvfs/dav.*ssl=true|^/root/.gvfs/dav.*ssl=true))" };
     return hasMatch(url.path(), davsMatch);
