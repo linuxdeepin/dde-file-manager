@@ -41,6 +41,28 @@ static constexpr char kBurnMediaType[] { "BurnMediaType" };
 static constexpr char kBurnWriteSpeed[] { "BurnWriteSpeed" };
 
 using namespace dfmbase;
+
+namespace {
+
+const QHash<QString, QString> &defaultPortMap()
+{
+    static const QHash<QString, QString> map = {
+        { Global::Scheme::kFtp, "21" },
+        { Global::Scheme::kSFtp, "22" },
+        { Global::Scheme::kDav, "80" },
+        { Global::Scheme::kDavs, "443" },
+        { Global::Scheme::kNfs, "2049" }
+    };
+    return map;
+}
+
+QString defaultPortForScheme(const QString &scheme)
+{
+    return defaultPortMap().value(scheme, QString());
+}
+
+}   // namespace
+
 DFM_MOUNT_USE_NS
 // see: https://github.com/linuxdeepin/dtk/issues/134
 DWIDGET_USE_NAMESPACE
@@ -471,22 +493,38 @@ void DeviceHelper::readOpticalInfo(QVariantMap &datas)
 bool DeviceHelper::checkNetworkConnection(const QString &id)
 {
     QUrl url(id);
-    if (!(ProtocolUtils::isSMBFile(url) || ProtocolUtils::isSFTPFile(url) || ProtocolUtils::isFTPFile(url)))
+    if (!ProtocolUtils::isRemoteFile(url)
+        || ProtocolUtils::isMTPFile(url)
+        || ProtocolUtils::isGphotoFile(url))
         return true;
 
     QString host, port;
-    if (NetworkUtils::instance()->parseIp(url.path(), host, port)) {
-        if (url.scheme() == "smb" && url.port() == -1) {
-            QStringList defaultSmbPorts = { "445", "139" };
-            return std::any_of(defaultSmbPorts.cbegin(), defaultSmbPorts.cend(),
-                               [host](const QString &port) {
-                                   bool connected = NetworkUtils::instance()->checkNetConnection(host, port);
-                                   qCDebug(logDFMBase) << "Network connection check for host:" << host
-                                                       << "port:" << port
-                                                       << "result:" << connected;
-                                   return connected;
-                               });
-        }
+    // Prefer standard URI parsing first (e.g. sftp://host/, davs://host/path).
+    host = url.host();
+    if (!host.isEmpty()) {
+        if (url.port() > 0)
+            port = QString::number(url.port());
+        else
+            port = defaultPortForScheme(url.scheme());
+    }
+
+    // Fallback to existing mount-path parser for gvfs/cifs style local mount paths.
+    if (host.isEmpty() || port.isEmpty())
+        NetworkUtils::instance()->parseIp(url.path(), host, port);
+
+    if (url.scheme() == "smb" && url.port() == -1) {
+        QStringList defaultSmbPorts = { "445", "139" };
+        return std::any_of(defaultSmbPorts.cbegin(), defaultSmbPorts.cend(),
+                           [host](const QString &port) {
+                               bool connected = NetworkUtils::instance()->checkNetConnection(host, port);
+                               qCDebug(logDFMBase) << "Network connection check for host:" << host
+                                                   << "port:" << port
+                                                   << "result:" << connected;
+                               return connected;
+                           });
+    }
+
+    if (!host.isEmpty() && !port.isEmpty()) {
         return NetworkUtils::instance()->checkNetConnection(host, port);
     }
 
@@ -518,7 +556,12 @@ QVariantMap DeviceHelper::makeFakeProtocolInfo(const QString &id)
             fakeInfo[DeviceProperty::kDisplayName] = QObject::tr("Unknown");
     } else {
         QString host, port;
-        if (NetworkUtils::instance()->parseIp(QUrl(id).path(), host, port))
+        QUrl url(id);
+        host = url.host();
+        if (host.isEmpty())
+            NetworkUtils::instance()->parseIp(url.path(), host, port);
+
+        if (!host.isEmpty())
             fakeInfo[DeviceProperty::kDisplayName] = host;
         else
             fakeInfo[DeviceProperty::kDisplayName] = QObject::tr("Unknown");
