@@ -157,12 +157,12 @@ void CollectionItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem
         // draw icon and background
         const QRect rIcon = iconRect(option.rect);
         paintBackground(painter, indexOption, rIcon);
-        const std::optional<QRect> &pIcon = paintIcon( painter, indexOption.icon,
-                                                       { rIcon,
-                                                         Qt::AlignCenter,
-                                                         (option.state & QStyle::State_Enabled) ? QIcon::Normal : QIcon::Disabled,
-                                                         QIcon::Off,
-                                                         isThumnailIconIndex(index) });   // why Enabled?
+        const std::optional<QRect> &pIcon = paintIcon(painter, indexOption.icon,
+                                                      { rIcon,
+                                                        Qt::AlignCenter,
+                                                        (option.state & QStyle::State_Enabled) ? QIcon::Normal : QIcon::Disabled,
+                                                        QIcon::Off,
+                                                        isThumnailIconIndex(index) });   // why Enabled?
         // If the thumbnail drawing is empty, then redraw the file fileicon
         if (!pIcon.has_value()) {
             const QIcon &fileIcon = index.data(Global::ItemRoles::kItemFileIconRole).value<QIcon>();
@@ -341,9 +341,9 @@ QSize CollectionItemDelegate::paintDragIcon(QPainter *painter, const QStyleOptio
     initStyleOption(&indexOption, index);
 
     painter->setRenderHints(painter->renderHints() | QPainter::Antialiasing | QPainter::SmoothPixmapTransform, true);
-    const std::optional<QRect> &pIcon = paintIcon( painter, indexOption.icon,
-                                                   { indexOption.rect, Qt::AlignCenter, QIcon::Normal,
-                                                     QIcon::Off, isThumnailIconIndex(index) });
+    const std::optional<QRect> &pIcon = paintIcon(painter, indexOption.icon,
+                                                  { indexOption.rect, Qt::AlignCenter, QIcon::Normal,
+                                                    QIcon::Off, isThumnailIconIndex(index) });
     // If the thumbnail drawing is empty, then redraw the file fileicon
     if (!pIcon.has_value()) {
         const QIcon &fileIcon = index.data(Global::ItemRoles::kItemFileIconRole).value<QIcon>();
@@ -853,19 +853,43 @@ std::optional<QRect> CollectionItemDelegate::paintIcon(QPainter *painter, const 
             y = opts.rect.y() + (opts.rect.height() - h) / 2.0;
         }
 
-        QRect backgroundRect { qRound(x), qRound(y), qRound(w), qRound(h) };
-        QRect imageRect { backgroundRect };
+        QRect imageRect { qRound(x), qRound(y), qRound(w), qRound(h) };
 
-        // 绘制带有阴影的背景
+        // Calculate aspect ratio for proportional adjustments
+        qreal radio = w / h;
+        // Avoid collapsing very narrow/tall thumbnails (e.g. 99x1026) to 0px after inset.
+        // Calculate inset proportionally to maintain aspect ratio
+        int insetX, insetY;
+        if (radio > 1.0) {
+            // Wide image: insetY should be proportionally smaller
+            insetX = qMin(iconStyle.shadowRange, qMax(0, (imageRect.width() - 1) / 2));
+            insetY = qRound(insetX / radio);
+        } else if (radio < 1.0 && radio > 0) {
+            // Tall image: insetX should be proportionally smaller
+            insetY = qMin(iconStyle.shadowRange, qMax(0, (imageRect.height() - 1) / 2));
+            insetX = qRound(insetY * radio);
+        } else {
+            // Square or invalid ratio
+            insetX = qMin(iconStyle.shadowRange, qMax(0, (imageRect.width() - 1) / 2));
+            insetY = insetX;
+        }
+
+        imageRect.adjust(insetX, insetY, -insetX, -insetY);
+
+        // 绘制带有阴影的背景：
+        // backgroundRect = imageRect 外扩 stroke，作为白色底板区域
+        // shadowRect     = backgroundRect 再外扩 shadowRange，用于容纳阴影扩散
         auto stroke { iconStyle.stroke };
+        auto shadowRange { iconStyle.shadowRange };
+        QRect backgroundRect { imageRect };
         backgroundRect.adjust(-stroke, -stroke, stroke, stroke);
         const auto &originPixmap { IconUtils::renderIconBackground(backgroundRect.size(), iconStyle) };
-        const auto &shadowPixmap { IconUtils::addShadowToPixmap(originPixmap, iconStyle.shadowOffset, iconStyle.shadowRange, 0.2) };
-        painter->drawPixmap(backgroundRect, shadowPixmap);
-        // Avoid collapsing very narrow/tall thumbnails to 0px after inset.
-        const int insetX = qMin(iconStyle.shadowRange, qMax(0, (imageRect.width() - 1) / 2));
-        const int insetY = qMin(iconStyle.shadowRange, qMax(0, (imageRect.height() - 1) / 2));
-        imageRect.adjust(insetX, insetY, -insetX, -insetY);
+        // addShadowToPixmap 会在四周各扩展 shadowRange 像素来容纳阴影
+        const auto &shadowPixmap { IconUtils::addShadowToPixmap(originPixmap, iconStyle.shadowOffset, shadowRange, 0.2) };
+        // 绘制目标区域需外扩 shadowRange，使阴影像素完整显示
+        QRect shadowRect { backgroundRect };
+        shadowRect.adjust(-shadowRange, -shadowRange, shadowRange, shadowRange);
+        painter->drawPixmap(shadowRect, shadowPixmap);
 
         QPainterPath clipPath;
         auto radius { iconStyle.radius - iconStyle.stroke };
