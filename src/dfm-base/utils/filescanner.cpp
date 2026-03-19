@@ -17,6 +17,8 @@
 
 #include <dirent.h>
 #include <unistd.h>
+#include <fcntl.h>
+#include <sys/stat.h>
 
 DFMBASE_USE_NAMESPACE
 
@@ -34,7 +36,7 @@ public:
     // 目录条目结构
     struct DirEntry
     {
-        QByteArray name;
+        QString name;
         unsigned char d_type;
         struct stat statBuf;
         bool statOk { false };
@@ -384,8 +386,8 @@ void FileScannerCore::scanLocalPathsImpl(ScanState &state, const QList<QUrl> &ur
                 break;
             }
 
-            QString entryPath = dirPath + "/" + QString::fromUtf8(entry.name);
-            QUrl entryUrl = QUrl::fromLocalFile(entryPath);
+            const QString entryPath = dirPath + "/" + entry.name;
+            const QUrl entryUrl = QUrl::fromLocalFile(entryPath);
 
             // 跳过特殊系统文件
             if (entry.statOk && S_ISREG(entry.statBuf.st_mode)) {
@@ -399,9 +401,9 @@ void FileScannerCore::scanLocalPathsImpl(ScanState &state, const QList<QUrl> &ur
                 }
             }
 
-            // lstat 失败处理
+            // 失败处理
             if (!entry.statOk) {
-                qCDebug(logDFMBase) << "FileScannerCore: lstat failed for:" << entryPath;
+                qCWarning(logDFMBase) << "FileScannerCore: stat failed for:" << entryPath;
                 continue;
             }
 
@@ -577,19 +579,29 @@ bool FileScannerCore::readDirectoryEntries(const QString &path, QList<DirEntry> 
         return false;
     }
 
+    int dirFd = dirfd(dir);
+    if (dirFd == -1) {
+        qCWarning(logDFMBase) << "FileScannerCore: invalid dirfd for" << path;
+        closedir(dir);
+        return false;
+    }
+
     struct dirent *entry;
     while ((entry = readdir(dir)) != nullptr) {
         // 跳过 "." 和 ".."
-        if (entry->d_name[0] == '.' && (entry->d_name[1] == '\0' || (entry->d_name[1] == '.' && entry->d_name[2] == '\0'))) {
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
             continue;
         }
 
+        const QByteArray nameBytes(entry->d_name);
         DirEntry dirEntry;
-        dirEntry.name = entry->d_name;
+        dirEntry.name = QString::fromUtf8(nameBytes);   // 统一存储为 QString
         dirEntry.d_type = entry->d_type;
 
-        QString fullPath = path + "/" + QString::fromUtf8(entry->d_name);
-        dirEntry.statOk = (lstat(fullPath.toUtf8().constData(), &dirEntry.statBuf) == 0);
+        dirEntry.statOk = (fstatat(dirFd, entry->d_name, &dirEntry.statBuf, AT_SYMLINK_NOFOLLOW) == 0);
+        if (!dirEntry.statOk) {
+            qCWarning(logDFMBase) << "FileScannerCore: fstatat failed for" << dirEntry.name << "in" << path;
+        }
 
         entries->append(dirEntry);
     }
