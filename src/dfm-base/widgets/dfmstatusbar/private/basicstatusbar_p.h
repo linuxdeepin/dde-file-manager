@@ -14,6 +14,7 @@
 #include <QObject>
 #include <QString>
 #include <QPointer>
+#include <QSet>
 
 class QLabel;
 class QHBoxLayout;
@@ -29,6 +30,7 @@ class BasicStatusBarPrivate : public QObject
 
 public:
     explicit BasicStatusBarPrivate(BasicStatusBar *qq);
+    ~BasicStatusBarPrivate() override;
 
     void initFormatStrings();
 
@@ -36,8 +38,9 @@ public:
     void initLayout();
 
     void calcFolderContains(const QList<QUrl> &folderList);
-    void initJobConnection();
     void discardCurrentJob();
+    void initJobConnection(FileScanner *job, quint64 generation);
+    void retireJob(FileScanner *job);
 
     QString onlyOneItemCounted;
     QString counted;
@@ -62,7 +65,10 @@ public:
 
 
     QPointer<FileScanner> fileStatisticsJog;
-    bool isJobDisconnect = true;
+    QSet<FileScanner *> retiredJobs;
+    QSet<FileScanner *> finishedJobs;
+    quint64 scanGeneration = 0;
+    static constexpr int kMaxRetiredJobs = 2;
 };
 
 }
