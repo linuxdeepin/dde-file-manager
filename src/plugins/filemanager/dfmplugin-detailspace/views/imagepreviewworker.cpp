@@ -297,7 +297,7 @@ ImagePreviewController::~ImagePreviewController()
 {
     m_worker->stop();
     m_workerThread.quit();
-    m_workerThread.wait(5000);
+    m_workerThread.wait(25000);
 }
 
 void ImagePreviewController::requestPreview(const QUrl &url, const QSize &targetSize)
@@ -335,7 +335,7 @@ void ImagePreviewController::onNeedIconFallback(const QUrl &url, const QSize &ta
     }
 
     // Strategy 2: Fall back to file icon
-    FileInfoPointer info = InfoFactory::create<FileInfo>(url);
+    FileInfoPointer info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
     if (info) {
         QIcon icon = info->fileIcon();
         // Request square icon with devicePixelRatio, QIcon will maintain its aspect ratio
