@@ -83,8 +83,12 @@ private:
     // 确定省略位置 - 通过比较省略文本和原始文本
     int determineElidePosition(
         const QString &elideText,
-        const QString &originalText, 
+        const QString &originalText,
         Qt::TextElideMode elideMode) const;
+
+    // 检测第一行是否只包含对象（如标记、图标等）
+    // 用于智能省略判断：当第一行是对象且文本需要换行时，使用中间省略
+    bool shouldUseSmartElideForText() const;
 
 protected:
     QTextDocument *document { nullptr };
