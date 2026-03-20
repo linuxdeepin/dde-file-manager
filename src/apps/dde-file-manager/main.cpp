@@ -25,6 +25,7 @@
 #include <QProcess>
 #include <QSocketNotifier>
 #include <QTimer>
+#include <QAccessible>
 
 #include <signal.h>
 #include <malloc.h>
@@ -441,6 +442,10 @@ int main(int argc, char *argv[])
 
     mo->unRegisterDBus();
     a.closeServer();
+#if QT_CONFIG(accessibility)
+    // Ensure accessibility cache is cleaned before unloading plugin shared libraries.
+    QAccessible::cleanup();
+#endif
     DPF_NAMESPACE::LifeCycle::shutdownPlugins();
 
     // Close self-pipe fds to release kernel resources

@@ -106,23 +106,32 @@ FileView::~FileView()
 {
     fmInfo() << "Destroying FileView for URL:" << rootUrl();
 #if QT_CONFIG(accessibility)
-    // 防止 QAccessibleCache 在退出时持有已释放 model 的引用
+    // 通知无障碍系统该对象即将销毁，避免退出阶段继续访问此 view
     if (QAccessible::isActive()) {
-        QAccessibleInterface *iface = QAccessible::queryAccessibleInterface(this);
-        if (iface) {
-            QAccessible::Id id = QAccessible::uniqueId(iface);
-            if (id != QAccessible::Id(0)) {
-                QAccessible::deleteAccessibleInterface(id);
-            }
-        }
+        QAccessibleEvent hideEvent(this, QAccessible::ObjectHide);
+        QAccessible::updateAccessibility(&hideEvent);
     }
 #endif
 
-    // 关键修复: 必须在基类(QAbstractItemView)析构前解绑 model
-    // 原因: QAbstractItemView 持有 QPersistentModelIndex,如果 model 先于基类析构,
-    //      这些 QPersistentModelIndex 析构时会访问已释放的 model 导致崩溃
+    // 必须在基类(QAbstractItemView)析构前解绑 model:
+    // QAbstractItemView / delegate / selection / header 可能持有 QPersistentModelIndex,
+    // 若 model 先释放会在索引析构时访问已销毁模型。
 
-    // 1. 断开信号连接
+    // 1. 先结束编辑器，避免编辑器无障碍对象继续持有 model index
+    if (itemDelegate()) {
+        itemDelegate()->commitDataAndCloseActiveEditor();
+        itemDelegate()->hideAllIIndexWidget();
+    }
+
+    // 2. 避免在析构阶段主动操作 headerView 的 selectionModel。
+    // 某些退出时序下，headerView 内部旧 selectionModel 可能已悬空，
+    // 调用 setSelectionModel(nullptr) 会在 Qt 内部触发崩溃。
+    // 此处仅解除 model 关联，selectionModel 交由 QObject 析构流程处理。
+    if (d && d->headerView) {
+        d->headerView->setModel(nullptr);
+    }
+
+    // 3. 断开信号连接
     if (model()) {
         disconnect(model(), nullptr, this, nullptr);
     }
@@ -130,12 +139,12 @@ FileView::~FileView()
         disconnect(selectionModel(), nullptr, this, nullptr);
         selectionModel()->clear();
     }
+    setCurrentIndex(QModelIndex());
 
-    // 2. 解绑 model (关键步骤!)
-    // 这会触发 QAbstractItemView 清理所有 QPersistentModelIndex
+    // 4. 解绑 model(关键步骤): 会触发 QAbstractItemView 清理持有的 QPersistentModelIndex
     DListView::setModel(nullptr);
 
-    // 3. 清理其他订阅
+    // 5. 清理其他订阅
     dpfSignalDispatcher->unsubscribe("dfmplugin_workspace", "signal_View_HeaderViewSectionChanged", this, &FileView::onHeaderViewSectionChanged);
     dpfSignalDispatcher->unsubscribe("dfmplugin_filepreview", "signal_ThumbnailDisplay_Changed", this, &FileView::onWidgetUpdate);
 
