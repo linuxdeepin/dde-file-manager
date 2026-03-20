@@ -1,3 +1,22 @@
+dde-file-manager (6.5.127) unstable; urgency=medium
+
+  * fix: improve image preview reliability for remote files
+  * chore: reorder cmake includes for correct path calculation
+  * fix: handle long filenames and UTF-8 validation in file scanner
+  * feat: optimize file scanning performance with CountOnly mode
+  * fix: enhance network detection for various URI schemes
+  * fix: prevent auto-mount for loop devices
+  * fix: implement non-blocking directory statistics with job management
+  * fix: fix icon display issue in image preview
+  * feat: optimize file scanner performance for count-only mode
+  * fix: improve accessibility cleanup and destruction sequence
+  * fix: improve empty file progress calculation
+  * fix: handle desktop file renaming with batch append
+  * fix: fix icon view text clipping issue
+  * fix: improve icon shadow rendering with aspect ratio
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Fri, 20 Mar 2026 12:29:30 +0800
+
 dde-file-manager (6.5.126) unstable; urgency=medium
 
   * fix: handle symlink desktop files in rename operations
