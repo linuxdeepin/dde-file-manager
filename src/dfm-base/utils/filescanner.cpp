@@ -82,6 +82,7 @@ private:
     static void scanOtherProtocolsImpl(ScanState &state, const QList<QUrl> &urls);
 
     // 辅助方法
+    static qint64 progressDeltaForFileSize(const ScanState &state, qint64 fileSize);
     static bool tryScanOtherProtocolCountOnlyByLocalPath(
             ScanState &state,
             const FileInfoPointer &info,
@@ -323,6 +324,11 @@ FileScanner::ScanResult FileScannerCore::scanImpl(
     return state.result;
 }
 
+qint64 FileScannerCore::progressDeltaForFileSize(const ScanState &state, qint64 fileSize)
+{
+    return fileSize <= 0 ? state.memoryPageSize : fileSize;
+}
+
 void FileScannerCore::scanLocalPathsImpl(ScanState &state, const QList<QUrl> &urls)
 {
     qCDebug(logDFMBase) << "FileScannerCore: Scanning local paths using opendir/readdir";
@@ -529,8 +535,7 @@ void FileScannerCore::scanOtherProtocolsImpl(ScanState &state, const QList<QUrl>
 
             bool isSingleDepth = state.options & FileScanner::ScanOption::SingleDepth;
             bool countOnly = state.options & FileScanner::ScanOption::CountOnly;
-            if (countOnly && tryScanOtherProtocolCountOnlyByLocalPath(
-                                     state, info, isSingleDepth, &directoryQueue, &processedUrls)) {
+            if (countOnly && tryScanOtherProtocolCountOnlyByLocalPath(state, info, isSingleDepth, &directoryQueue, &processedUrls)) {
                 continue;
             }
 
@@ -575,7 +580,7 @@ void FileScannerCore::scanOtherProtocolsImpl(ScanState &state, const QList<QUrl>
                             if (!(state.options & FileScanner::ScanOption::CountOnly)) {
                                 qint64 sz = childInfo->size();
                                 state.result.totalSize += sz;
-                                state.result.progressSize += sz;
+                                state.result.progressSize += progressDeltaForFileSize(state, sz);
                             }
                             // 收集子文件URL
                             collectFileIfEnabled(state, childUrl, false);
@@ -589,7 +594,7 @@ void FileScannerCore::scanOtherProtocolsImpl(ScanState &state, const QList<QUrl>
             if (!(state.options & FileScanner::ScanOption::CountOnly)) {
                 qint64 sz = info->size();
                 state.result.totalSize += sz;
-                state.result.progressSize += sz;
+                state.result.progressSize += progressDeltaForFileSize(state, sz);
             }
 
             // 收集文件URL
@@ -744,7 +749,7 @@ void FileScannerCore::processRegularFile(ScanState &state, const QString &path, 
         state.result.totalSize += statBuf.st_size;
         state.result.fileCount++;
     }
-    state.result.progressSize += statBuf.st_size;
+    state.result.progressSize += progressDeltaForFileSize(state, statBuf.st_size);
 }
 
 void FileScannerCore::processSymlink(ScanState &state, const QString &path)
