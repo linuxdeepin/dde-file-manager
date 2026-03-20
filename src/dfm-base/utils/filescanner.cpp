@@ -13,6 +13,7 @@
 #include <QTimer>
 #include <QCoreApplication>
 #include <QDebug>
+#include <QDir>
 #include <QQueue>
 
 #include <dirent.h>
@@ -81,6 +82,12 @@ private:
     static void scanOtherProtocolsImpl(ScanState &state, const QList<QUrl> &urls);
 
     // 辅助方法
+    static bool tryScanOtherProtocolCountOnlyByLocalPath(
+            ScanState &state,
+            const FileInfoPointer &info,
+            bool isSingleDepth,
+            QQueue<QUrl> *directoryQueue,
+            QSet<QUrl> *processedUrls);
     static bool readDirectoryEntries(const QString &path, QList<DirEntry> *entries, bool countOnly = false);
     static void processRegularFile(ScanState &state, const QString &path, const struct stat &statBuf);
     static void processSymlink(ScanState &state, const QString &path);
@@ -520,7 +527,14 @@ void FileScannerCore::scanOtherProtocolsImpl(ScanState &state, const QList<QUrl>
             // 收集目录URL
             collectFileIfEnabled(state, url, isSourcePath);
 
-            // 创建目录迭代器
+            bool isSingleDepth = state.options & FileScanner::ScanOption::SingleDepth;
+            bool countOnly = state.options & FileScanner::ScanOption::CountOnly;
+            if (countOnly && tryScanOtherProtocolCountOnlyByLocalPath(
+                                     state, info, isSingleDepth, &directoryQueue, &processedUrls)) {
+                continue;
+            }
+
+            // 创建目录迭代器（快速路径不可用时回退）
             AbstractDirIteratorPointer iterator = DirIteratorFactory::create<AbstractDirIterator>(
                     url,
                     QStringList(),
@@ -530,8 +544,6 @@ void FileScannerCore::scanOtherProtocolsImpl(ScanState &state, const QList<QUrl>
                 qCWarning(logDFMBase) << "FileScannerCore: Failed to create iterator for:" << url;
                 continue;
             }
-
-            bool isSingleDepth = state.options & FileScanner::ScanOption::SingleDepth;
 
             // 遍历目录
             while (iterator->hasNext() && !state.shouldStop) {
@@ -595,6 +607,65 @@ void FileScannerCore::scanOtherProtocolsImpl(ScanState &state, const QList<QUrl>
 
     qCDebug(logDFMBase) << "FileScannerCore: Other protocol scan completed - files:" << state.result.fileCount
                         << "dirs:" << state.result.directoryCount << "size:" << state.result.totalSize;
+}
+
+bool FileScannerCore::tryScanOtherProtocolCountOnlyByLocalPath(
+        ScanState &state,
+        const FileInfoPointer &info,
+        bool isSingleDepth,
+        QQueue<QUrl> *directoryQueue,
+        QSet<QUrl> *processedUrls)
+{
+    Q_ASSERT(directoryQueue);
+    Q_ASSERT(processedUrls);
+
+    // CountOnly 模式下，优先复用 readDirectoryEntries，避免 DirIteratorFactory 的高开销
+    const QString dirPath = info->pathOf(PathInfoType::kAbsoluteFilePath);
+    const bool canUseLocalPath = QDir::isAbsolutePath(dirPath) && QDir(dirPath).exists();
+    if (!canUseLocalPath) {
+        return false;
+    }
+
+    QList<DirEntry> entries;
+    if (!readDirectoryEntries(dirPath, &entries, true)) {
+        return false;
+    }
+
+    for (const DirEntry &entry : entries) {
+        if (state.shouldStop) {
+            break;
+        }
+
+        QUrl childUrl = info->getUrlByType(UrlInfoType::kGetUrlByChildFileName, entry.name);
+        if (!childUrl.isValid()) {
+            continue;
+        }
+
+        if (processedUrls->contains(childUrl)) {
+            continue;
+        }
+        processedUrls->insert(childUrl);
+
+        if (entry.d_type == DT_DIR) {
+            if (isSingleDepth) {
+                // SingleDepth 模式：计数但不递归
+                state.result.directoryCount++;
+                state.result.progressSize += state.memoryPageSize;
+            } else {
+                // 递归模式：入队
+                directoryQueue->enqueue(childUrl);
+            }
+        } else {
+            // CountOnly 模式：普通文件、符号链接、其他类型统一计数
+            state.result.fileCount++;
+        }
+
+        // 收集子文件/目录URL
+        collectFileIfEnabled(state, childUrl, false);
+        emitProgress(state);
+    }
+
+    return true;
 }
 
 bool FileScannerCore::readDirectoryEntries(const QString &path, QList<DirEntry> *entries, bool countOnly)
