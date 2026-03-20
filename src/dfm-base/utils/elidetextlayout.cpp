@@ -61,7 +61,7 @@ QList<QPair<int, int>> ElideTextLayout::findKeywordMatches(const QString &text) 
                 break;
 
             matches.append(qMakePair(keywordPos, keyword.length()));
-            startPos = keywordPos + 1; // 允许重叠匹配
+            startPos = keywordPos + 1;   // 允许重叠匹配
         }
     }
 
@@ -69,12 +69,12 @@ QList<QPair<int, int>> ElideTextLayout::findKeywordMatches(const QString &text) 
     std::sort(matches.begin(), matches.end());
 
     // 合并重叠的匹配区域
-    for (int i = 0; i < matches.size() - 1; ) {
-        if (matches[i].first + matches[i].second > matches[i+1].first) {
+    for (int i = 0; i < matches.size() - 1;) {
+        if (matches[i].first + matches[i].second > matches[i + 1].first) {
             int newEnd = std::max(matches[i].first + matches[i].second,
-                                matches[i+1].first + matches[i+1].second);
+                                  matches[i + 1].first + matches[i + 1].second);
             matches[i].second = newEnd - matches[i].first;
-            matches.removeAt(i+1);
+            matches.removeAt(i + 1);
         } else {
             i++;
         }
@@ -99,8 +99,7 @@ int ElideTextLayout::determineElidePosition(const QString &elideText, const QStr
     if (elideMode == Qt::ElideRight) {
         // 右侧省略：从前向后找到最后一个匹配的字符
         int i = 0;
-        while (i < elideText.length() && i < originalText.length() &&
-               elideText.at(i) == originalText.at(i)) {
+        while (i < elideText.length() && i < originalText.length() && elideText.at(i) == originalText.at(i)) {
             i++;
         }
 
@@ -117,15 +116,13 @@ int ElideTextLayout::determineElidePosition(const QString &elideText, const QStr
 
         // 没有找到明确的省略符号，返回不匹配的起始位置
         return i;
-    }
-    else if (elideMode == Qt::ElideLeft) {
+    } else if (elideMode == Qt::ElideLeft) {
         // 左侧省略：从后向前找到最后一个匹配的字符
         int elideLen = elideText.length();
         int originalLen = originalText.length();
         int i = 0;
 
-        while (i < elideLen && i < originalLen &&
-               elideText.at(elideLen - 1 - i) == originalText.at(originalLen - 1 - i)) {
+        while (i < elideLen && i < originalLen && elideText.at(elideLen - 1 - i) == originalText.at(originalLen - 1 - i)) {
             i++;
         }
 
@@ -142,23 +139,20 @@ int ElideTextLayout::determineElidePosition(const QString &elideText, const QStr
 
         // 没有找到明确的省略符号，返回不匹配的起始位置
         return elideLen - i;
-    }
-    else if (elideMode == Qt::ElideMiddle) {
+    } else if (elideMode == Qt::ElideMiddle) {
         // 中间省略：需要从两端开始匹配
-        int leftMatchLen = 0;  // 左侧匹配长度
-        int rightMatchLen = 0; // 右侧匹配长度
+        int leftMatchLen = 0;   // 左侧匹配长度
+        int rightMatchLen = 0;   // 右侧匹配长度
 
         // 计算左侧匹配长度
-        while (leftMatchLen < elideText.length() && leftMatchLen < originalText.length() &&
-               elideText.at(leftMatchLen) == originalText.at(leftMatchLen)) {
+        while (leftMatchLen < elideText.length() && leftMatchLen < originalText.length() && elideText.at(leftMatchLen) == originalText.at(leftMatchLen)) {
             leftMatchLen++;
         }
 
         // 计算右侧匹配长度
         int elideLen = elideText.length();
         int originalLen = originalText.length();
-        while (rightMatchLen < elideLen - leftMatchLen && rightMatchLen < originalLen - leftMatchLen &&
-               elideText.at(elideLen - 1 - rightMatchLen) == originalText.at(originalLen - 1 - rightMatchLen)) {
+        while (rightMatchLen < elideLen - leftMatchLen && rightMatchLen < originalLen - leftMatchLen && elideText.at(elideLen - 1 - rightMatchLen) == originalText.at(originalLen - 1 - rightMatchLen)) {
             rightMatchLen++;
         }
 
@@ -181,12 +175,44 @@ int ElideTextLayout::determineElidePosition(const QString &elideText, const QStr
     return 0;
 }
 
+bool ElideTextLayout::shouldUseSmartElideForText() const
+{
+    if (!document || document->isEmpty()) {
+        return false;
+    }
+
+    QTextBlock block = document->firstBlock();
+    QTextBlock::iterator it = block.begin();
+
+    while (it != block.end()) {
+        QTextFragment fragment = it.fragment();
+        if (fragment.isValid()) {
+            QString text = fragment.text();
+
+            // Check if fragment is an custom object (using ObjectReplacementCharacter)
+            if (fragment.charFormat().objectType() >= QTextFormat::UserObject) {
+                // This is an object (tag, icon, etc.)
+                if (text == QString(QChar::ObjectReplacementCharacter))
+                    return true;   // Found an object as the first line
+                break;   // Not an object replacement character
+            }
+
+            // If there's any other text besides the object, first line is not object-only
+            if (!text.isEmpty() && text != QString(QChar::ObjectReplacementCharacter))
+                break;
+        }
+        ++it;
+    }
+
+    return false;
+}
+
 QList<QPair<int, int>> ElideTextLayout::calculateElideHighlightMatches(
-    const QString &elideText,
-    int elidePos,
-    Qt::TextElideMode elideMode,
-    const QList<QPair<int, int>> &originalMatches,
-    int lineStartPos) const
+        const QString &elideText,
+        int elidePos,
+        Qt::TextElideMode elideMode,
+        const QList<QPair<int, int>> &originalMatches,
+        int lineStartPos) const
 {
     QList<QPair<int, int>> matches;
 
@@ -225,7 +251,10 @@ QList<QPair<int, int>> ElideTextLayout::calculateElideHighlightMatches(
                 ellipsisStart = elideText.indexOf(threeDots, qMax(0, elidePos - 1));
                 if (ellipsisStart >= 0) ellipsisLen = threeDots.length();
             }
-            if (ellipsisStart < 0) { ellipsisStart = elidePos; ellipsisLen = 0; }
+            if (ellipsisStart < 0) {
+                ellipsisStart = elidePos;
+                ellipsisLen = 0;
+            }
 
             int leftVisibleLen = ellipsisStart;
             mapOverlaps(lineStartPos, lineStartPos + leftVisibleLen, 0);
@@ -237,7 +266,9 @@ QList<QPair<int, int>> ElideTextLayout::calculateElideHighlightMatches(
                 int p = elideText.indexOf(threeDots);
                 if (p == 0) ellipsisLen = threeDots.length();
             }
-            if (ellipsisLen == 0) { ellipsisLen = 1; }
+            if (ellipsisLen == 0) {
+                ellipsisLen = 1;
+            }
 
             int rightVisibleLen = elideText.length() - ellipsisLen;
             int visibleStartInOriginal = lineStartPos + originalLineLength - rightVisibleLen;
@@ -251,7 +282,10 @@ QList<QPair<int, int>> ElideTextLayout::calculateElideHighlightMatches(
                 ellipsisStart = elideText.indexOf(threeDots, elidePos);
                 if (ellipsisStart >= 0) ellipsisLen = threeDots.length();
             }
-            if (ellipsisStart < 0) { ellipsisStart = elidePos; ellipsisLen = 1; }
+            if (ellipsisStart < 0) {
+                ellipsisStart = elidePos;
+                ellipsisLen = 1;
+            }
 
             int leftVisibleLen = ellipsisStart;
             int rightVisibleLen = elideText.length() - (ellipsisStart + ellipsisLen);
@@ -267,12 +301,12 @@ QList<QPair<int, int>> ElideTextLayout::calculateElideHighlightMatches(
     // 对匹配进行排序和合并
     std::sort(matches.begin(), matches.end());
 
-    for (int i = 0; i < matches.size() - 1; ) {
-        if (matches[i].first + matches[i].second > matches[i+1].first) {
+    for (int i = 0; i < matches.size() - 1;) {
+        if (matches[i].first + matches[i].second > matches[i + 1].first) {
             int newEnd = std::max(matches[i].first + matches[i].second,
-                              matches[i+1].first + matches[i+1].second);
+                                  matches[i + 1].first + matches[i + 1].second);
             matches[i].second = newEnd - matches[i].first;
-            matches.removeAt(i+1);
+            matches.removeAt(i + 1);
         } else {
             i++;
         }
@@ -302,8 +336,14 @@ QList<QRectF> ElideTextLayout::layout(const QRectF &rect, Qt::TextElideMode elid
     QString curText = text();
     bool paintLineWithHighlight = enableHighlight && highlightColor.isValid() && !highlightKeywords.isEmpty();
 
+    // Smart elide: only apply middle elide for 2-line scenarios
+    // - totalLines == 2: text will be displayed in exactly 2 lines
+    // - shouldUseSmartElideForText(): first line is an object (tag, icon, etc.)
+    int totalLines = static_cast<int>(size.height() / textLineHeight);
+    bool shouldUseSmartElide = (totalLines == 2) && shouldUseSmartElideForText();
+
     // 预处理整个文本中的所有关键词匹配位置
-    QList<QPair<int, int>> allMatches; // 保存所有匹配位置: <开始位置, 长度>
+    QList<QPair<int, int>> allMatches;   // 保存所有匹配位置: <开始位置, 长度>
     if (paintLineWithHighlight) {
         allMatches = findKeywordMatches(curText);
     }
@@ -375,7 +415,17 @@ QList<QRectF> ElideTextLayout::layout(const QRectF &rect, Qt::TextElideMode elid
                     // elide current line.
                     QFontMetrics fm(lay->font());
                     QString originalText = text().mid(line.textStart());
-                    elideText = fm.elidedText(originalText, elideMode, qRound(size.width()));
+
+                    // Smart elide mode: use middle elide for text when first line contains only object
+                    // The condition check includes: line.textStart() > 0 ensures this is the second or later line
+                    Qt::TextElideMode actualElideMode = elideMode;
+                    if (shouldUseSmartElide && line.textStart() > 0) {
+                        // If first line has only object (tag, icon, etc.) and this is not the first line (i.e., main text)
+                        // use middle elide for better readability (e.g., to preserve file extensions)
+                        actualElideMode = Qt::ElideMiddle;
+                    }
+
+                    elideText = fm.elidedText(originalText, actualElideMode, qRound(size.width()));
 
                     // 判断文本是否被省略以及省略位置
                     bool isElided = elideText != originalText;
@@ -383,8 +433,9 @@ QList<QRectF> ElideTextLayout::layout(const QRectF &rect, Qt::TextElideMode elid
 
                     if (isElided) {
                         // 使用改进的方法确定省略位置
-                        elidePos = determineElidePosition(elideText, originalText, elideMode);
-                        if (elidePos < 0) // 如果没有省略（虽然不太可能发生）
+                        // Important: use actualElideMode (the actual mode used for eliding)
+                        elidePos = determineElidePosition(elideText, originalText, actualElideMode);
+                        if (elidePos < 0)   // 如果没有省略（虽然不太可能发生）
                             elidePos = 0;
                     }
 
@@ -393,13 +444,13 @@ QList<QRectF> ElideTextLayout::layout(const QRectF &rect, Qt::TextElideMode elid
                     // 如果有省略，需要处理高亮匹配位置
                     if (isElided && paintLineWithHighlight) {
                         // 重新计算省略文本中的高亮匹配位置
+                        // Important: use actualElideMode to match the actual eliding behavior
                         currentMatches = calculateElideHighlightMatches(
-                            elideText,
-                            elidePos,
-                            elideMode,
-                            allMatches,
-                            line.textStart()
-                        );
+                                elideText,
+                                elidePos,
+                                actualElideMode,
+                                allMatches,
+                                line.textStart());
                     }
                     break;
                 }
@@ -501,7 +552,7 @@ QRectF ElideTextLayout::drawLineBackground(QPainter *painter, const QRectF &curL
 }
 
 void ElideTextLayout::drawTextWithHighlight(QPainter *painter, const QTextLine &line, const QString &lineText,
-                                           const QRectF &rect, int lineStartPos, const QList<QPair<int, int>> &allMatches)
+                                            const QRectF &rect, int lineStartPos, const QList<QPair<int, int>> &allMatches)
 {
     if (allMatches.isEmpty()) {
         // 如果没有匹配项，直接绘制普通文本
