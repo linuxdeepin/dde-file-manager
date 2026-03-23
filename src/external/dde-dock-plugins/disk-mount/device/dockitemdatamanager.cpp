@@ -206,7 +206,7 @@ void DockItemDataManager::playSoundOnDevPlugInOut(bool in)
     DDesktopServices::playSystemSoundEffect(in ? DDesktopServices::SSE_DeviceAdded
                                                : DDesktopServices::SSE_DeviceRemoved);
     if (!in)
-        notify(tr("The device has been safely removed"), "");
+        notify("", tr("The device has been safely removed"));
 }
 
 void DockItemDataManager::sendNotification(const QString &id, const QString &operation)
