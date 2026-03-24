@@ -1,3 +1,13 @@
+dde-file-manager (6.5.128) unstable; urgency=medium
+
+  * style: refactor elide text layout code formatting
+  * fix: correct notification parameter order
+  * fix: prevent duplicate filename display during fast scrolling
+  * fix: refine auto mount logic for non removable devices
+  * fix: optimize file rename selection and menu handling
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Tue, 24 Mar 2026 21:11:38 +0800
+
 dde-file-manager (6.5.127) unstable; urgency=medium
 
   * fix: improve image preview reliability for remote files
