@@ -90,6 +90,7 @@ public:
     int getViewFilter(const quint64 windowID);
     QStringList getNameFilter(const quint64 windowId);
 
+    int requestSelectFilesDelayMs(int urlCount);
     void laterRequestSelectFiles(const QList<QUrl> &urls);
 
     void fileUpdate(const QUrl &url);
