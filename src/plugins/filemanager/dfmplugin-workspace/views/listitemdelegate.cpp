@@ -689,12 +689,18 @@ QString ListItemDelegate::getCorrectDisplayName(QPainter *painter, const QModelI
                     break;
             }
 
-            const QString &suffix = "." + index.data(kItemFileSuffixRole).toString();
+            const QString roleDisplayName = index.data(role).toString().remove('\n');
+            const QString rawSuffix = index.data(kItemFileSuffixRole).toString();
+            const QString suffix = "." + rawSuffix;
             if (suffix == ".")
                 break;
 
             // 获取基础名称（不含后缀）
             displayName = index.data(kItemFileBaseNameRole).toString().remove('\n');
+            // During fast scrolling FileInfo may be unavailable and both base/suffix
+            // fallback to the full file name, which would produce "name.name".
+            if (!roleDisplayName.isEmpty() && displayName == roleDisplayName && rawSuffix == roleDisplayName)
+                break;
 
             // 根据设置决定是否显示后缀
             bool showSuffix { Application::instance()->genericAttribute(Application::kShowedFileSuffix).toBool() };
