@@ -838,8 +838,8 @@ void DeviceManager::doAutoMount(const QString &id, DeviceType type, int timeout)
 
     if (type == DeviceType::kBlockDevice) {
         const auto &info = getBlockDevInfo(id);
-        // auto mount is only available for removable, non optical block device.
-        if (!d->shouldAutoMountBlockDevice(id, info))
+        // Runtime auto-mount only applies to removable, non-optical block devices.
+        if (!d->shouldAutoMountBlockDeviceAtRuntime(id, info))
             return;
 
         qCInfo(logDFMBase) << "Starting auto mount for block device:" << id;
@@ -903,6 +903,14 @@ bool DeviceManagerPrivate::shouldAutoMountBlockDevice(const QString &id, const Q
         qCDebug(logDFMBase) << "Auto mount skipped for optical device:" << id;
         return false;
     }
+
+    return true;
+}
+
+bool DeviceManagerPrivate::shouldAutoMountBlockDeviceAtRuntime(const QString &id, const QVariantMap &info)
+{
+    if (!shouldAutoMountBlockDevice(id, info))
+        return false;
 
     if (!info.value(DeviceProperty::kRemovable).toBool()) {
         qCDebug(logDFMBase) << "Auto mount skipped for non-removable block device:" << id;
