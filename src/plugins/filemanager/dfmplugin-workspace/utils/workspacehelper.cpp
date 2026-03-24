@@ -450,9 +450,14 @@ QStringList WorkspaceHelper::getNameFilter(const quint64 windowId)
     return {};
 }
 
+int WorkspaceHelper::requestSelectFilesDelayMs(int urlCount)
+{
+    return qMin(800 + (urlCount / 100) * 50, qMax(urlCount * (10 + urlCount / 150), 500));
+}
+
 void WorkspaceHelper::laterRequestSelectFiles(const QList<QUrl> &urls)
 {
-    QTimer::singleShot(qMin(800 + (urls.count() / 100) * 50, qMax(urls.count() * (10 + urls.count() / 150), 500)), this, [=] {
+    QTimer::singleShot(requestSelectFilesDelayMs(urls.count()), this, [=] {
         emit requestSelectFiles(urls);
     });
 }

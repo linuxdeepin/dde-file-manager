@@ -15,7 +15,6 @@
 #include <dfm-base/base/schemefactory.h>
 
 #include <dfm-framework/dpf.h>
-#include <functional>
 
 Q_DECLARE_METATYPE(QRectF *)
 
@@ -24,6 +23,7 @@ DFMGLOBAL_USE_NAMESPACE
 using namespace dfmplugin_workspace;
 
 static constexpr char kCurrentEventSpace[] { DPF_MACRO_TO_STR(DPWORKSPACE_NAMESPACE) };
+static constexpr int kMaxRenameRequestSelectFilesCount = 100;
 
 WorkspaceEventReceiver::WorkspaceEventReceiver(QObject *parent)
     : QObject(parent)
@@ -292,15 +292,28 @@ void WorkspaceEventReceiver::handleMoveToTrashFileResult(const QList<QUrl> &srcU
 
 void WorkspaceEventReceiver::handleRenameFileResult(const quint64 windowId, const QMap<QUrl, QUrl> &renamedUrls, bool ok, const QString &errMsg)
 {
-    Q_UNUSED(windowId)
     Q_UNUSED(errMsg)
 
     if (!ok || renamedUrls.isEmpty()) {
         fmDebug() << "WorkspaceEventReceiver: No files to select after rename";
         return;
     }
+    const auto urls = renamedUrls.values();
+    if (urls.count() > kMaxRenameRequestSelectFilesCount) {
+        fmDebug() << "WorkspaceEventReceiver: Skip selecting renamed files because count exceeds limit:"
+                  << urls.count() << ">" << kMaxRenameRequestSelectFilesCount;
+        return;
+    }
 
-    WorkspaceHelper::instance()->laterRequestSelectFiles(renamedUrls.values());
+    int delay = WorkspaceHelper::instance()->requestSelectFilesDelayMs(urls.count());
+    QTimer::singleShot(delay, this, [=] {
+        const auto selectedUrls = handleGetSelectedUrls(windowId);
+        if (!selectedUrls.isEmpty()) {
+            fmDebug() << "WorkspaceEventReceiver: SelectedUrls is not empty";
+            return;
+        }
+        Q_EMIT WorkspaceHelper::instance()->requestSelectFiles(urls);
+    });
 }
 
 void WorkspaceEventReceiver::handleFileUpdate(const QUrl &url)

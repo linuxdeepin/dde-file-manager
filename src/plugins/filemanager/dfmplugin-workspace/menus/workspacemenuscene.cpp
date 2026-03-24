@@ -384,7 +384,14 @@ bool WorkspaceMenuScene::normalMenuTriggered(QAction *action)
                 // 使用 d->focusFile 而不是 selectionModel()->currentIndex()
                 // 原因：selectionModel()->currentIndex() 在菜单显示期间可能会改变
                 // d->focusFile 是稳定的，表示右键选中的文件
-                const QModelIndex &index = d->view->model()->getIndexByUrl(d->focusFile);
+                QModelIndex index = d->view->model()->getIndexByUrl(d->focusFile);
+
+                // url 可能被插件篡改
+                if (!index.isValid()) {
+                    if (auto *sel = d->view->selectionModel()) {
+                        index = sel->currentIndex();
+                    }
+                }
 
                 if (Q_UNLIKELY(!index.isValid())) {
                     fmWarning() << "Cannot rename: invalid selection index for focusFile:" << d->focusFile.toString();
