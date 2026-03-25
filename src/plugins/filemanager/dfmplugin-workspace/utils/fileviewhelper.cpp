@@ -29,6 +29,8 @@
 #include <QAbstractItemView>
 #include <QTimer>
 
+#include <climits>
+
 Q_DECLARE_METATYPE(QList<QUrl> *)
 
 namespace dfmplugin_workspace {
@@ -248,9 +250,7 @@ bool FileViewHelper::isEmptyArea(const QPoint &pos)
     if (!index.isValid())
         return true;
 
-    if (isSelected(index)) {
-        return false;
-    } else {
+    if (!isSelected(index)) {
         const QRect &rect = parent()->visualRect(index);
 
         if (!rect.contains(pos)) {
@@ -264,21 +264,43 @@ bool FileViewHelper::isEmptyArea(const QPoint &pos)
             return true;
         }
 
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-        QStyleOptionViewItem option = parent()->viewOptions();
-#else
         QStyleOptionViewItem option;
         parent()->initViewItemOption(&option);
-#endif
         option.rect = rect;
 
         const QList<QRect> &geometryList = itemDelegate()->paintGeomertys(option, index);
-        auto ret = std::any_of(geometryList.begin(), geometryList.end(), [pos](const QRect &geometry) {
+        bool hitPaintGeometry = std::any_of(geometryList.begin(), geometryList.end(), [pos](const QRect &geometry) {
             return geometry.contains(pos);
         });
 
-        return !ret;
+        // In list/tree mode, treat the gap between icon and first text column as item area as well.
+        bool hitIconNameGap = false;
+        if ((parent()->isListViewMode() || parent()->isTreeViewMode()) && !geometryList.isEmpty()) {
+            const QRect iconRect = itemDelegate()->getRectOfItem(RectOfItemType::kItemIconRect, index);
+            QRect firstTextRect;
+            int nearestLeft = INT_MAX;
+
+            // Find the nearest paint rect on the right of icon. This avoids hardcoded indexes
+            // and works for both list ([icon, name, ...]) and tree ([icon, arrow, name, ...]).
+            for (const QRect &geometry : geometryList) {
+                if (geometry.left() > iconRect.right() && geometry.left() < nearestLeft) {
+                    nearestLeft = geometry.left();
+                    firstTextRect = geometry;
+                }
+            }
+
+            if (firstTextRect.isValid() && iconRect.right() < firstTextRect.left()) {
+                QRect gapRect(rect.left(), rect.top(), 0, rect.height());
+                gapRect.setLeft(iconRect.right() + 1);
+                gapRect.setRight(firstTextRect.left() - 1);
+                hitIconNameGap = gapRect.isValid() && gapRect.contains(pos);
+            }
+        }
+
+        return !(hitPaintGeometry || hitIconNameGap);
     }
+
+    return false;
 }
 
 QSize FileViewHelper::viewContentSize() const
