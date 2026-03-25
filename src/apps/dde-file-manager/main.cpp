@@ -26,6 +26,7 @@
 #include <QSocketNotifier>
 #include <QTimer>
 #include <QAccessible>
+#include <QEventLoop>
 
 #include <signal.h>
 #include <malloc.h>
@@ -442,6 +443,13 @@ int main(int argc, char *argv[])
 
     mo->unRegisterDBus();
     a.closeServer();
+    // Process deferred deletions twice: first for pending deletions, then for
+    // deletions chained by QObject destructors. Restrict event processing to avoid
+    // triggering new interactive/input/socket work during shutdown.
+    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
+    QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents
+                                    | QEventLoop::ExcludeSocketNotifiers);
+    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
 #if QT_CONFIG(accessibility)
     // Ensure accessibility cache is cleaned before unloading plugin shared libraries.
     QAccessible::cleanup();
