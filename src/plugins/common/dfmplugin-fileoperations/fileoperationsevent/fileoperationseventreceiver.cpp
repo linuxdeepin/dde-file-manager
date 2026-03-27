@@ -347,7 +347,7 @@ bool FileOperationsEventReceiver::doRenameFiles(const quint64 windowId, const QL
         auto tmpurls = urls;
         QMap<QUrl, QUrl> needDealUrls;
         bool renameDesktop = doRenameDesktopFilesWithAppend(tmpurls, pair2, needDealUrls, successUrls);
-        QMap<QUrl, QUrl> needDealUrls1 = FileUtils::fileBatchAddText(tmpurls, pair2);
+        QMap<QUrl, QUrl> needDealUrls1 = FileNamingUtils::generateFileRenameUrlsByBatchAddText(tmpurls, pair2);
         for (auto it = needDealUrls1.begin(); it != needDealUrls1.end(); ++it) {
             needDealUrls.insert(it.key(), it.value());
         }

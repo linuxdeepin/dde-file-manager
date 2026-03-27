@@ -8,6 +8,7 @@
 #include "dfmplugin_fileoperations_global.h"
 
 #include <dfm-base/interfaces/fileinfo.h>
+#include <dfm-base/interfaces/abstractjobhandler.h>
 
 #include <QString>
 #include <QUrl>
@@ -157,6 +158,24 @@ QString generateNonConflictingName(FileInfoPointer fromInfo,
  */
 QString generateNonConflictingSymlinkName(FileInfoPointer fromInfo,
                                           FileInfoPointer targetDir);
+
+/*!
+ * \brief Generate file urls for file rename by batch add text
+ *
+ * This function generates renamed URLs by adding text to file names either as prefix or suffix.
+ * It handles edge cases including desktop app files, directory limits, and file name length constraints.
+ *
+ * Usage examples:
+ * - Prefix mode: "file.txt" + addText("new_") -> "new_file.txt"
+ * - Suffix mode: "file.txt" + addText("_backup") -> "file_backup.txt"
+ * - Desktop app: Special handling to preserve app name integrity
+ *
+ * \param originUrls List of URLs to be renamed
+ * \param pair QPair containing [text to add, add position (prefix/suffix)]
+ * \return QMap mapping original URLs to new URLs (only includes entries that actually changed)
+ */
+QMap<QUrl, QUrl> generateFileRenameUrlsByBatchAddText(const QList<QUrl> &originUrls,
+                                                      const QPair<QString, dfmbase::AbstractJobHandler::FileNameAddFlag> &pair);
 }
 
 DPFILEOPERATIONS_END_NAMESPACE
