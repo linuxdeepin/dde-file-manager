@@ -10,13 +10,18 @@
 #include <dfm-base/interfaces/abstractdiriterator.h>
 
 #include <QThread>
+#include <QMutex>
 #include <QUrl>
+#include <functional>
 
 namespace dfmbase {
 
 class TraversalDirThread : public QThread
 {
     Q_OBJECT
+public:
+    using ChildrenSorter = std::function<bool(const QUrl &, const QUrl &)>;
+
 protected:
     QUrl dirUrl;   // 遍历的目录的url
     QSharedPointer<DFMBASE_NAMESPACE::AbstractDirIterator> dirIterator;   // 当前遍历目录的diriterator
@@ -26,6 +31,8 @@ protected:
     QList<QUrl> childrenList;   // 当前遍历出来的所有文件
     bool stopFlag = false;
     QString fileInfoQueryAttributes;
+    ChildrenSorter childrenSorter;
+    mutable QMutex childrenSorterMutex;
 
 public:
     explicit TraversalDirThread(const QUrl &url, const QStringList &nameFilters = QStringList(),
@@ -37,6 +44,8 @@ public:
     void quit();
     void stopAndDeleteLater();
     void setQueryAttributes(const QString &fileAttributes);
+    void setChildrenSorter(ChildrenSorter sorter);
+    void clearChildrenSorter();
 
 Q_SIGNALS:
     void updateChildren(QList<QUrl> children);

@@ -8,6 +8,7 @@
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/utils/sortutils.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/fileutils.h>
 
@@ -104,6 +105,9 @@ void CrumbInterface::requestCompletionList(const QUrl &url)
     folderCompleterJobPointer = new TraversalDirThread(url, QStringList(),
                                                        QDir::AllDirs | QDir::Hidden | QDir::NoDotAndDotDot, QDirIterator::NoIteratorFlags);
     folderCompleterJobPointer->setQueryAttributes("standard::standard::name");
+    folderCompleterJobPointer->setChildrenSorter([](const QUrl &left, const QUrl &right) {
+        return SortUtils::compareStringForFileName(left.fileName(), right.fileName());
+    });
     folderCompleterJobPointer->setParent(this);
     if (folderCompleterJobPointer.isNull())
         return;

@@ -8,6 +8,8 @@
 #include <QElapsedTimer>
 #include <QDebug>
 
+#include <algorithm>
+
 using namespace dfmbase;
 USING_IO_NAMESPACE
 
@@ -74,6 +76,18 @@ void TraversalDirThread::setQueryAttributes(const QString &fileAttributes)
         dirIterator->setProperty("QueryAttributes", fileInfoQueryAttributes);
 }
 
+void TraversalDirThread::setChildrenSorter(ChildrenSorter sorter)
+{
+    QMutexLocker locker(&childrenSorterMutex);
+    childrenSorter = std::move(sorter);
+}
+
+void TraversalDirThread::clearChildrenSorter()
+{
+    QMutexLocker locker(&childrenSorterMutex);
+    childrenSorter = {};
+}
+
 void TraversalDirThread::run()
 {
     if (dirIterator.isNull())
@@ -102,6 +116,16 @@ void TraversalDirThread::run()
         childrenList.append(fileUrl);
     }
     stopFlag = true;
+
+    ChildrenSorter sorter;
+    {
+        QMutexLocker locker(&childrenSorterMutex);
+        sorter = childrenSorter;
+    }
+
+    if (sorter && childrenList.size() > 1)
+        std::stable_sort(childrenList.begin(), childrenList.end(), sorter);
+
     emit updateChildren(childrenList);
 
     qCInfo(logDFMBase) << "Directory traversal completed - file count:" << childrenList.size() 
