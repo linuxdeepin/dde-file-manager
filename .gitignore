@@ -91,6 +91,7 @@ dde-file-manager-lib/test_shutil/property/oneProperty.pro
 # cursor & AI config
 .cursorindexingignore
 .cursor
+.worktrees/
 .specstory
 .spec-workflow/
 .serena/
