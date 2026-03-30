@@ -34,17 +34,14 @@ ReportLogManager::~ReportLogManager()
 
 void ReportLogManager::init()
 {
-    reportWorker = new ReportLogWorker();
-    if (!reportWorker->init()) {
-        reportWorker->deleteLater();
+    if (reportWorkThread || reportWorker)
         return;
-    }
 
-    reportWorkThread = new QThread();
-    connect(reportWorkThread, &QThread::finished, [&]() {
-        reportWorker->deleteLater();
-    });
+    reportWorker = new ReportLogWorker();
+    reportWorkThread = new QThread(this);
     reportWorker->moveToThread(reportWorkThread);
+    connect(reportWorkThread, &QThread::finished, reportWorker, &QObject::deleteLater);
+    connect(reportWorkThread, &QThread::started, reportWorker, &ReportLogWorker::init, Qt::QueuedConnection);
 
     initConnection();
 
