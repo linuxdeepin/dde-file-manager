@@ -25,9 +25,8 @@ public:
     explicit ReportLogWorker(QObject *parent = nullptr);
     ~ReportLogWorker();
 
-    bool init();
-
 public Q_SLOTS:
+    void init();
     void commitLog(const QString &type, const QVariantMap &args);
     void handleMenuData(const QString &name, const QList<QUrl> &urlList);
     void handleBlockMountData(const QString &id, bool result);
