@@ -1,3 +1,13 @@
+dde-file-manager (6.5.129) unstable; urgency=medium
+
+  * fix: improve empty area detection in file manager view
+  * fix: ensure proper cleanup before unloading plugins
+  * feat: add sorting capability to directory traversal
+  * refactor: improve report log initialization and thread safety
+  * fix: implement batch file rename with text add functionality
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Mon, 30 Mar 2026 19:35:06 +0800
+
 dde-file-manager (6.5.128) unstable; urgency=medium
 
   * style: refactor elide text layout code formatting
