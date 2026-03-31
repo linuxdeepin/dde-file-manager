@@ -38,6 +38,8 @@ void Burn::initialize()
 
 bool Burn::start()
 {
+    fmDebug() << "[Burn::start] Begin";
+
     dfmplugin_menu_util::menuSceneRegisterScene(SendToDiscMenuCreator::name(), new SendToDiscMenuCreator);
     bindScene("ShareMenu");
 
@@ -45,7 +47,10 @@ bool Burn::start()
 
     connect(Application::dataPersistence(), &Settings::valueChanged, this, &Burn::onPersistenceDataChanged, Qt::DirectConnection);
     Application::dataPersistence()->removeGroup(Persistence::kBurnStateGroup);
+
+    fmDebug() << "[Burn::start] Calling startOpticalDiscScan...";
     DevMngIns->startOpticalDiscScan();
+    fmInfo() << "[Burn::start] startOpticalDiscScan returned";
 
     QString err;
     auto ret = DConfigManager::instance()->addConfig("org.deepin.dde.file-manager.burn", &err);
