@@ -1,0 +1,7 @@
+{"file": ".trellis/workflow.md", "reason": "Project workflow and conventions"}
+{"file": ".trellis/spec/backend/index.md", "reason": "Backend development guide"}
+{"file": "/home/zhangs/Workspace/github/dde-file-manager/.trellis/spec/shared/cpp-conventions.md", "reason": "C++ 编码规范"}
+{"file": "/home/zhangs/Workspace/github/dde-file-manager/.trellis/spec/shared/dbus-conventions.md", "reason": "DBus 约定"}
+{"file": "/home/zhangs/Workspace/github/dde-file-manager/.trellis/spec/shared/internationalization.md", "reason": "国际化规范"}
+{"file": "/home/zhangs/Workspace/github/dde-file-manager/.trellis/spec/backend/cmake-conventions.md", "reason": "CMake 约定"}
+{"file": "/home/zhangs/Workspace/github/dde-file-manager/.trellis/spec/backend/test-standards.md", "reason": "测试标准"}
