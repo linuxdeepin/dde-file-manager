@@ -22,6 +22,7 @@
 | [error-handling.md](error-handling.md) | 错误处理模式、FinallyUtil、事务 | 所有后端开发 |
 | [logging-guidelines.md](logging-guidelines.md) | 分类日志、日志级别、日志注册 | 所有后端开发 |
 | [quality-guidelines.md](quality-guidelines.md) | 测试标准、代码风格、静态分析 | 所有后端开发 |
+| [textindex-service.md](textindex-service.md) | TextIndex 文本索引服务技术规范 | TextIndex 服务开发 |
 | [qt-dtk-guide.md](qt-dtk-guide.md) | Qt/DTK 编码模式、信号槽、DTK 组件 | 所有后端开发 |
 | [architecture-decisions.md](architecture-decisions.md) | DDE 架构决策、核心规则 | 架构设计 |
 | [architecture-design.md](architecture-design.md) | 架构设计规范、模块结构 | 功能开发 |
@@ -92,3 +93,9 @@
 | 内存管理 | [qt-dtk-guide.md](qt-dtk-guide.md#内存管理模式) |
 | 测试 | [test-standards.md](test-standards.md) |
 | Bug 修复 | [bug-fix-standards.md](bug-fix-standards.md) |
+
+### 按后台服务
+
+| 服务 | 文档 |
+|------|------|
+| TextIndex 索引服务 | [textindex-service.md](textindex-service.md) |
