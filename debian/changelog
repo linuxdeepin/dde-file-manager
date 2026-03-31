@@ -1,3 +1,9 @@
+dde-file-manager (6.5.130) unstable; urgency=medium
+
+  * fix: add delayed loading for burn plugin to improve startup performance
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Tue, 31 Mar 2026 20:50:42 +0800
+
 dde-file-manager (6.5.129) unstable; urgency=medium
 
   * fix: improve empty area detection in file manager view
