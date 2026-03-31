@@ -27,6 +27,7 @@
 #include <QDBusInterface>
 #include <QDBusPendingCall>
 #include <QKeyEvent>
+#include <QTimer>
 
 Q_DECLARE_METATYPE(QStringList *)
 
@@ -127,8 +128,7 @@ void Core::onFrameReady()
 
 void Core::handleLoadPlugins(const QStringList &names)
 {
-    std::for_each(names.begin(), names.end(), [](const QString &name) {
-        Q_ASSERT(qApp->thread() == QThread::currentThread());
+    auto loadPlugin = [](const QString &name) {
         fmDebug() << "Loading plugin:" << name;
         auto plugin { DPF_NAMESPACE::LifeCycle::pluginMetaObj(name) };
         if (plugin) {
@@ -141,6 +141,21 @@ void Core::handleLoadPlugins(const QStringList &names)
         } else {
             fmWarning() << "Plugin meta object not found for:" << name;
         }
+    };
+
+    std::for_each(names.begin(), names.end(), [&loadPlugin](const QString &name) {
+        Q_ASSERT(qApp->thread() == QThread::currentThread());
+
+        // WORKAROUND(zhangs): delay loading dfmplugin-burn by 10s because it may slow down desktop startup
+        // TODO(zhangs): refactor the plugin logic to avoid performance impact on desktop initialization
+        if (name == "dfmplugin-burn") {
+            QTimer::singleShot(10000, [loadPlugin, name]() {
+                loadPlugin(name);
+            });
+            return;
+        }
+
+        loadPlugin(name);
     });
 }
 
