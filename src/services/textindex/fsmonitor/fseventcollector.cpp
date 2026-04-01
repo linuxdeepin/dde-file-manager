@@ -5,9 +5,6 @@
 #include "fseventcollector_p.h"
 #include "utils/textindexconfig.h"
 
-#include <dfm-base/base/application/application.h>
-#include <dfm-base/utils/protocolutils.h>
-
 #include <QDir>
 #include <QFileInfo>
 

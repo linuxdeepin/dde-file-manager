@@ -3,7 +3,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "textindexdbus.h"
-#include "utils/processprioritymanager.h"
+
+#include <dfm-base/utils/processprioritymanager.h>
 
 static TextIndexDBus *textIndexDBus = nullptr;
 
@@ -16,7 +17,7 @@ extern "C" int DSMRegister(const char *name, void *data)
 {
     (void)data;
     textIndexDBus = new TextIndexDBus(name);
-    service_textindex::ProcessPriorityManager::lowerAllAvailablePriorities(true);
+    dfmbase::ProcessPriorityManager::lowerAllAvailablePriorities(true);
 
     return 0;
 }

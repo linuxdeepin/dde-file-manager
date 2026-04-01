@@ -18,7 +18,7 @@
 #    endif
 #endif   // Q_OS_LINUX
 
-SERVICETEXTINDEX_BEGIN_NAMESPACE
+DFMBASE_BEGIN_NAMESPACE
 
 namespace {   // Anonymous namespace for helpers local to this translation unit
 const char *getPolicySpelling(ProcessPriorityManager::CpuSchedulingPolicy policy)
@@ -45,18 +45,18 @@ bool ProcessPriorityManager::lowerIoPriority()
     int ioprio_idle_val = (IoPrio::IOPRIO_CLASS_IDLE << IoPrio::IOPRIO_CLASS_SHIFT);
 
     if (syscall(SYS_ioprio_set, IoPrio::IOPRIO_WHO_PROCESS, 0, ioprio_idle_val) < 0) {
-        fmWarning() << "ProcessPriorityManager: Cannot set I/O scheduling to IDLE ("
-                    << strerror(errno) << "). Trying Best Effort (lowest).";
+        qCWarning(logDFMBase) << "ProcessPriorityManager: Cannot set I/O scheduling to IDLE ("
+                              << strerror(errno) << "). Trying Best Effort (lowest).";
         // Fallback: Try to set I/O scheduling to Best Effort class, lowest priority (7)
         int ioprio_be_lowest_val = (IoPrio::IOPRIO_CLASS_BE << IoPrio::IOPRIO_CLASS_SHIFT) | 7;
         if (syscall(SYS_ioprio_set, IoPrio::IOPRIO_WHO_PROCESS, 0, ioprio_be_lowest_val) < 0) {
-            fmWarning() << "ProcessPriorityManager: Cannot set I/O scheduling to Best Effort ("
-                        << strerror(errno) << ").";
+            qCWarning(logDFMBase) << "ProcessPriorityManager: Cannot set I/O scheduling to Best Effort ("
+                                  << strerror(errno) << ").";
             return false;
         }
-        fmInfo() << "ProcessPriorityManager: I/O priority set to Best Effort (lowest).";
+        qCInfo(logDFMBase) << "ProcessPriorityManager: I/O priority set to Best Effort (lowest).";
     } else {
-        fmInfo() << "ProcessPriorityManager: I/O priority set to IDLE.";
+        qCInfo(logDFMBase) << "ProcessPriorityManager: I/O priority set to IDLE.";
     }
     return true;
 #else
@@ -76,12 +76,12 @@ bool ProcessPriorityManager::lowerCpuNicePriority(int niceValue)
         // Check errno because setpriority can legitimately return -1 on success
         // if the process's old priority was -1.
         if (errno != 0) {
-            fmWarning() << "ProcessPriorityManager: Cannot lower CPU nice priority to" << niceValue
-                        << "(" << strerror(errno) << ").";
+            qCWarning(logDFMBase) << "ProcessPriorityManager: Cannot lower CPU nice priority to" << niceValue
+                                  << "(" << strerror(errno) << ").";
             return false;
         }
     }
-    fmInfo() << "ProcessPriorityManager: CPU nice priority set to" << niceValue;
+    qCInfo(logDFMBase) << "ProcessPriorityManager: CPU nice priority set to" << niceValue;
     return true;
 #else
     // fmDebug() << "ProcessPriorityManager: CPU nice priority setting (setpriority) not supported on this platform.";
@@ -112,11 +112,11 @@ bool ProcessPriorityManager::setCpuSchedulingPolicy(CpuSchedulingPolicy policy)
         break;
 #    endif
     case CpuSchedulingPolicy::Normal:
-        qInfo() << "ProcessPriorityManager: CPU scheduling policy Normal (SCHED_OTHER) requested. No change applied by this function.";
+        qCInfo(logDFMBase) << "ProcessPriorityManager: CPU scheduling policy Normal (SCHED_OTHER) requested. No change applied by this function.";
         return true;
     default:
-        qWarning() << "ProcessPriorityManager: Unknown or unsupported CPU scheduling policy requested ("
-                   << static_cast<int>(policy) << ").";   // Log the int value of the policy
+        qCWarning(logDFMBase) << "ProcessPriorityManager: Unknown or unsupported CPU scheduling policy requested ("
+                              << static_cast<int>(policy) << ").";   // Log the int value of the policy
         return false;
     }
 
@@ -126,18 +126,18 @@ bool ProcessPriorityManager::setCpuSchedulingPolicy(CpuSchedulingPolicy policy)
     if (schedPolicyValue != -1) {
         // A schedPolicyValue was assigned (i.e., SCHED_BATCH or SCHED_IDLE was defined and matched)
         if (sched_setscheduler(0, schedPolicyValue, &param) == -1) {
-            qWarning() << "ProcessPriorityManager: Cannot set CPU scheduling policy to" << requestedPolicyName
-                       << "(" << strerror(errno) << ").";
+            qCWarning(logDFMBase) << "ProcessPriorityManager: Cannot set CPU scheduling policy to" << requestedPolicyName
+                                  << "(" << strerror(errno) << ").";
             return false;
         }
-        qInfo() << "ProcessPriorityManager: CPU scheduling policy set to" << requestedPolicyName << ".";
+        qCInfo(logDFMBase) << "ProcessPriorityManager: CPU scheduling policy set to" << requestedPolicyName << ".";
         return true;
     } else {
         // schedPolicyValue is still -1.
         // This means the requested policy (Batch or Idle) was not available
         // because its SCHED_XXX macro was not defined at compile time.
-        qDebug() << "ProcessPriorityManager: CPU scheduling policy" << requestedPolicyName
-                 << "is not defined/supported on this system build (its SCHED_XXX macro is not defined).";
+        qCDebug(logDFMBase) << "ProcessPriorityManager: CPU scheduling policy" << requestedPolicyName
+                            << "is not defined/supported on this system build (its SCHED_XXX macro is not defined).";
         return false;
     }
 }
@@ -146,28 +146,32 @@ bool ProcessPriorityManager::setCpuSchedulingPolicy(CpuSchedulingPolicy policy)
 void ProcessPriorityManager::lowerAllAvailablePriorities(bool verboseLog)
 {
     if (verboseLog) {
-        fmInfo() << "ProcessPriorityManager: Attempting to lower all available priorities...";
+        qCInfo(logDFMBase) << "ProcessPriorityManager: Attempting to lower all available priorities...";
     }
 
     bool ioLowered = lowerIoPriority();
     if (verboseLog) {
         if (ioLowered)
-            fmInfo() << "  - I/O priority lowering attempted/succeeded or N/A.";
+            qCInfo(logDFMBase) << "  - I/O priority lowering attempted/succeeded or N/A.";
         else
-            fmWarning() << "  - I/O priority lowering FAILED.";
+            qCWarning(logDFMBase) << "  - I/O priority lowering FAILED.";
     }
 
 #ifdef Q_OS_LINUX
     bool schedIdleSet = setCpuSchedulingPolicy(CpuSchedulingPolicy::Idle);
     if (schedIdleSet) {
-        if (verboseLog) fmInfo() << "  - CPU scheduling policy set to IDLE.";
+        if (verboseLog)
+            qCInfo(logDFMBase) << "  - CPU scheduling policy set to IDLE.";
     } else {
-        if (verboseLog) fmWarning() << "  - Failed to set CPU scheduling policy to IDLE. Trying BATCH...";
+        if (verboseLog)
+            qCWarning(logDFMBase) << "  - Failed to set CPU scheduling policy to IDLE. Trying BATCH...";
         bool schedBatchSet = setCpuSchedulingPolicy(CpuSchedulingPolicy::Batch);
         if (schedBatchSet) {
-            if (verboseLog) fmInfo() << "  - CPU scheduling policy set to BATCH.";
+            if (verboseLog)
+                qCInfo(logDFMBase) << "  - CPU scheduling policy set to BATCH.";
         } else {
-            if (verboseLog) fmWarning() << "  - Failed to set CPU scheduling policy to BATCH.";
+            if (verboseLog)
+                qCWarning(logDFMBase) << "  - Failed to set CPU scheduling policy to BATCH.";
         }
     }
 #else
@@ -177,12 +181,13 @@ void ProcessPriorityManager::lowerAllAvailablePriorities(bool verboseLog)
     bool niceLowered = lowerCpuNicePriority();   // Default to 19
     if (verboseLog) {
         if (niceLowered)
-            fmInfo() << "  - CPU nice priority lowering attempted/succeeded or N/A.";
+            qCInfo(logDFMBase) << "  - CPU nice priority lowering attempted/succeeded or N/A.";
         else
-            fmWarning() << "  - CPU nice priority lowering FAILED.";
+            qCWarning(logDFMBase) << "  - CPU nice priority lowering FAILED.";
     }
 
-    if (verboseLog) fmInfo() << "ProcessPriorityManager: Priority lowering attempts complete.";
+    if (verboseLog)
+        qCInfo(logDFMBase) << "ProcessPriorityManager: Priority lowering attempts complete.";
 }
 
-SERVICETEXTINDEX_END_NAMESPACE
+DFMBASE_END_NAMESPACE

@@ -4,28 +4,25 @@
 #ifndef PROCESSPRIORITYMANAGER_H
 #define PROCESSPRIORITYMANAGER_H
 
-#include "service_textindex_global.h"
+#include <dfm-base/dfm_base_global.h>
 
 #include <QtGlobal>   // For Q_OS_LINUX etc.
+#include <QLoggingCategory>
 
 // _GNU_SOURCE for syscall and sched_setscheduler extensions
 #ifndef _GNU_SOURCE
 #    define _GNU_SOURCE
 #endif
 
-#include <QDebug>   // For logging
-
 #ifdef Q_OS_LINUX
 #    include <sys/time.h>
 #    include <sys/resource.h>
 #    include <unistd.h>
 #    include <sys/syscall.h>
-#    include <cerrno>
-#    include <cstring>   // For strerror, memset
 #    include <sched.h>
 #endif   // Q_OS_LINUX
 
-SERVICETEXTINDEX_BEGIN_NAMESPACE
+DFMBASE_BEGIN_NAMESPACE
 
 class ProcessPriorityManager
 {
@@ -99,6 +96,6 @@ private:
 #endif   // Q_OS_LINUX
 };
 
-SERVICETEXTINDEX_END_NAMESPACE
+DFMBASE_END_NAMESPACE
 
 #endif   // PROCESSPRIORITYMANAGER_H
