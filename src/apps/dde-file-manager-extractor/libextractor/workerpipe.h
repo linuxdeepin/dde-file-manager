@@ -68,6 +68,14 @@ public:
 
 signals:
     /**
+     * @brief Emitted when a complete batch request is received from stdin.
+     *
+     * This is used by the extractor app to track idle time based on actual
+     * tasks rather than low-level notifier wakeups or partial pipe reads.
+     */
+    void activityDetected();
+
+    /**
      * @brief Emitted when a batch request is received
      * @param filePaths List of files to extract
      */

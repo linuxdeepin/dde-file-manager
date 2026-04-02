@@ -9,8 +9,8 @@
 #include "workerpipe.h"
 
 #include <QObject>
-#include <QScopedPointer>
 #include <QSharedPointer>
+#include <QTimer>
 
 EXTRACTOR_PLUGIN_BEGIN_NAMESPACE
 
@@ -50,8 +50,13 @@ public:
     void processBatch(const QVector<QString> &filePaths);
 
 private:
+    static constexpr int kIdleTimeoutMs = 10 * 60 * 1000;
+
+    void resetIdleTimer();
+
     QSharedPointer<PluginLoader> m_pluginLoader;
     QScopedPointer<EXTRACTOR_NAMESPACE::WorkerPipe> m_workerPipe;
+    QTimer *m_idleTimer = nullptr;
 };
 
 EXTRACTOR_PLUGIN_END_NAMESPACE

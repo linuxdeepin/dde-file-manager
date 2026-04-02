@@ -16,7 +16,14 @@ ExtractorApp::ExtractorApp(QObject *parent)
     : QObject(parent)
     , m_pluginLoader(new PluginLoader(this))
     , m_workerPipe(new EXTRACTOR_NAMESPACE::WorkerPipe(this))
+    , m_idleTimer(new QTimer(this))
 {
+    m_idleTimer->setSingleShot(true);
+    connect(m_idleTimer, &QTimer::timeout, this, []() {
+        fmInfo() << "ExtractorApp: No batch received for" << kIdleTimeoutMs
+                 << "ms, exiting idle extractor process";
+        QCoreApplication::quit();
+    });
 }
 
 ExtractorApp::~ExtractorApp()
@@ -56,12 +63,16 @@ void ExtractorApp::run()
                 processBatch(filePaths);
             });
 
+    connect(m_workerPipe.get(), &EXTRACTOR_NAMESPACE::WorkerPipe::activityDetected,
+            this, &ExtractorApp::resetIdleTimer);
+
     connect(m_workerPipe.get(), &EXTRACTOR_NAMESPACE::WorkerPipe::stdinClosed,
             this, []() {
                 fmInfo() << "ExtractorApp: Stdin closed, exiting";
                 QCoreApplication::quit();
             });
 
+    resetIdleTimer();
     fmInfo() << "ExtractorApp: Ready to process requests";
 
     // Enter event loop
@@ -113,6 +124,11 @@ void ExtractorApp::processBatch(const QVector<QString> &filePaths)
     m_workerPipe->sendBatchDone();
 
     fmInfo() << "ExtractorApp: Batch processing complete";
+}
+
+void ExtractorApp::resetIdleTimer()
+{
+    m_idleTimer->start(kIdleTimeoutMs);
 }
 
 EXTRACTOR_PLUGIN_END_NAMESPACE
