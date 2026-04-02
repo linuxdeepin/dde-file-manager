@@ -1,0 +1,5 @@
+{"file": ".trellis/workflow.md", "reason": "Project workflow and conventions"}
+{"file": ".trellis/spec/backend/index.md", "reason": "Backend development guide"}
+{"file": ".trellis/spec/backend/qt-dtk-guide.md", "reason": "Qt/DTK 编码模式参考"}
+{"file": ".trellis/spec/shared/cpp-conventions.md", "reason": "C++ 编码约定"}
+{"file": ".trellis/spec/backend/logging-guidelines.md", "reason": "日志使用指南"}
