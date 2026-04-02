@@ -133,6 +133,7 @@ void WorkerPipe::processInputBuffer()
         messageStream >> filePaths;
 
         fmDebug() << "WorkerPipe: Received batch with" << filePaths.size() << "files";
+        emit activityDetected();
         emit batchReceived(filePaths);
     }
 }
