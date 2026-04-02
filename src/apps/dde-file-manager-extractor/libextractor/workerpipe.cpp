@@ -9,9 +9,14 @@
 #include <QFile>
 #include <QSocketNotifier>
 #include <cstdio>
+#include <cerrno>
 #include <unistd.h>
 
 EXTRACTOR_BEGIN_NAMESPACE
+
+namespace {
+constexpr qsizetype kPipeReadChunkSize = 8192;
+}
 
 class WorkerPipePrivate
 {
@@ -21,11 +26,11 @@ public:
     bool waitingForComplete = false;
     qint32 expectedSize = 0;
     bool initialized = false;
+    int outputFd = -1;
 };
 
 WorkerPipe::WorkerPipe(QObject *parent)
-    : QObject(parent)
-    , d(new WorkerPipePrivate())
+    : QObject(parent), d(new WorkerPipePrivate())
 {
 }
 
@@ -33,6 +38,10 @@ WorkerPipe::~WorkerPipe()
 {
     if (d->stdinNotifier) {
         delete d->stdinNotifier;
+    }
+
+    if (d->outputFd >= 0) {
+        ::close(d->outputFd);
     }
 }
 
@@ -49,70 +58,83 @@ bool WorkerPipe::initialize()
         return false;
     }
 
-    // Set stdout to binary mode
-    FILE *stdoutFile = freopen(nullptr, "wb", stdout);
-    if (!stdoutFile) {
-        fmCritical() << "WorkerPipe::initialize: Failed to reopen stdout in binary mode";
+    if (!setupOutputChannel()) {
+        fmCritical() << "WorkerPipe::initialize: Failed to set up output channel";
         return false;
     }
 
     // Create socket notifier to watch stdin
     d->stdinNotifier = new QSocketNotifier(STDIN_FILENO, QSocketNotifier::Read, this);
     connect(d->stdinNotifier, &QSocketNotifier::activated, this, [this]() {
-        // Read available data from stdin
-        char buffer[4096];
-        ssize_t bytesRead = ::read(STDIN_FILENO, buffer, sizeof(buffer));
-
-        if (bytesRead <= 0) {
-            // EOF or error - stdin closed
-            fmInfo() << "WorkerPipe: Stdin closed";
-            emit stdinClosed();
-            d->stdinNotifier->setEnabled(false);
-            return;
-        }
-
-        // Append to input buffer
-        d->inputBuffer.append(buffer, bytesRead);
-
-        // Process complete messages
-        while (true) {
-            if (!d->waitingForComplete) {
-                // Need to read size header first
-                if (d->inputBuffer.size() < static_cast<int>(sizeof(qint32))) {
-                    break;   // Not enough data for size header
-                }
-
-                QDataStream sizeStream(d->inputBuffer);
-                sizeStream >> d->expectedSize;
-                d->waitingForComplete = true;
-            }
-
-            // Check if we have the complete message
-            qint32 totalSize = sizeof(qint32) + d->expectedSize;
-            if (d->inputBuffer.size() < totalSize) {
-                break;   // Not enough data yet
-            }
-
-            // Extract the message data (skip size header)
-            QByteArray messageData = d->inputBuffer.mid(sizeof(qint32), d->expectedSize);
-            d->inputBuffer.remove(0, totalSize);
-            d->waitingForComplete = false;
-            d->expectedSize = 0;
-
-            // Parse the message
-            QDataStream messageStream(messageData);
-            QVector<QString> filePaths;
-            messageStream >> filePaths;
-
-            fmDebug() << "WorkerPipe: Received batch with" << filePaths.size() << "files";
-            emit batchReceived(filePaths);
-        }
+        readFromStdin();
     });
 
     d->initialized = true;
     fmDebug() << "WorkerPipe: Initialized successfully";
 
     return true;
+}
+
+bool WorkerPipe::readFromStdin()
+{
+    QByteArray buffer(kPipeReadChunkSize, Qt::Uninitialized);
+    const ssize_t bytesRead = ::read(STDIN_FILENO, buffer.data(), static_cast<size_t>(buffer.size()));
+
+    if (bytesRead <= 0) {
+        if (hasPendingPartialMessage()) {
+            fmWarning() << "WorkerPipe: Stdin closed with incomplete message."
+                        << "buffer size:" << d->inputBuffer.size()
+                        << "expected payload size:" << d->expectedSize;
+        }
+        fmInfo() << "WorkerPipe: Stdin closed";
+        emit stdinClosed();
+        d->stdinNotifier->setEnabled(false);
+        return false;
+    }
+
+    d->inputBuffer.append(buffer.constData(), static_cast<int>(bytesRead));
+    processInputBuffer();
+    return true;
+}
+
+void WorkerPipe::processInputBuffer()
+{
+    while (true) {
+        if (!d->waitingForComplete) {
+            if (d->inputBuffer.size() < static_cast<int>(sizeof(qint32))) {
+                return;
+            }
+
+            QDataStream sizeStream(d->inputBuffer);
+            sizeStream >> d->expectedSize;
+            if (d->expectedSize < 0) {
+                fmCritical() << "WorkerPipe: Invalid message size:" << d->expectedSize;
+                d->stdinNotifier->setEnabled(false);
+                emit stdinClosed();
+                return;
+            }
+
+            d->waitingForComplete = true;
+        }
+
+        const qint32 totalSize = static_cast<qint32>(sizeof(qint32)) + d->expectedSize;
+        const auto bufferSize = d->inputBuffer.size();
+        if (bufferSize < totalSize) {
+            return;
+        }
+
+        const QByteArray messageData = d->inputBuffer.mid(sizeof(qint32), d->expectedSize);
+        d->inputBuffer.remove(0, totalSize);
+        d->waitingForComplete = false;
+        d->expectedSize = 0;
+
+        QDataStream messageStream(messageData);
+        QVector<QString> filePaths;
+        messageStream >> filePaths;
+
+        fmDebug() << "WorkerPipe: Received batch with" << filePaths.size() << "files";
+        emit batchReceived(filePaths);
+    }
 }
 
 bool WorkerPipe::sendStatus(ExtractorStatus status, const QString &filePath, const QByteArray &data)
@@ -135,24 +157,21 @@ bool WorkerPipe::sendStatus(ExtractorStatus status, const QString &filePath, con
         messageStream << data;
     }
 
-    // Serialize the size header with QDataStream so framing matches the controller side.
-    qint32 messageSize = static_cast<qint32>(messageData.size());
-    QByteArray headerData;
-    QDataStream headerStream(&headerData, QIODevice::WriteOnly);
-    headerStream << messageSize;
-
-    if (::write(STDOUT_FILENO, headerData.constData(), headerData.size()) != headerData.size()) {
-        fmCritical() << "WorkerPipe::sendStatus: Failed to write size header";
-        return false;
+    if (status == ExtractorStatus::Failed) {
+        // Fix: failed messages must carry the error payload so the controller
+        // does not have to guess or reuse the file path as the error text.
+        messageStream << QString::fromUtf8(data);
     }
 
-    if (::write(STDOUT_FILENO, messageData.constData(), messageSize) != messageSize) {
-        fmCritical() << "WorkerPipe::sendStatus: Failed to write message data";
+    QByteArray packetData;
+    QDataStream packetStream(&packetData, QIODevice::WriteOnly);
+    packetStream << static_cast<qint32>(messageData.size());
+    packetData.append(messageData);
+
+    if (!writePacket(packetData)) {
+        fmCritical() << "WorkerPipe::sendStatus: Failed to write packet";
         return false;
     }
-
-    // Flush to ensure the controller receives the data
-    ::fflush(stdout);
 
     fmDebug() << "WorkerPipe::sendStatus: Sent status" << statusToString(status)
               << "for" << filePath << "data size:" << data.size();
@@ -172,13 +191,56 @@ bool WorkerPipe::sendData(const QString &filePath, const QByteArray &data)
 
 bool WorkerPipe::sendFailed(const QString &filePath, const QString &error)
 {
-    Q_UNUSED(error)
-    return sendStatus(ExtractorStatus::Failed, filePath);
+    return sendStatus(ExtractorStatus::Failed, filePath, error.toUtf8());
 }
 
 bool WorkerPipe::sendBatchDone()
 {
     return sendStatus(ExtractorStatus::BatchDone);
+}
+
+bool WorkerPipe::writePacket(const QByteArray &packetData)
+{
+    qint64 totalWritten = 0;
+    while (totalWritten < packetData.size()) {
+        const ssize_t bytesWritten = ::write(d->outputFd,
+                                             packetData.constData() + totalWritten,
+                                             static_cast<size_t>(packetData.size() - totalWritten));
+        if (bytesWritten <= 0) {
+            return false;
+        }
+
+        totalWritten += bytesWritten;
+    }
+
+    return true;
+}
+
+bool WorkerPipe::hasPendingPartialMessage() const
+{
+    return d->waitingForComplete || !d->inputBuffer.isEmpty();
+}
+
+bool WorkerPipe::setupOutputChannel()
+{
+    d->outputFd = ::dup(STDOUT_FILENO);
+    if (d->outputFd < 0) {
+        return false;
+    }
+
+    // Fix: keep a dedicated fd for binary IPC and redirect process stdout to
+    // stderr so Qt/DTK logs cannot corrupt the framed protocol stream.
+    if (::dup2(STDERR_FILENO, STDOUT_FILENO) < 0) {
+        ::close(d->outputFd);
+        d->outputFd = -1;
+        return false;
+    }
+
+    if (::fflush(stdout) != 0 && errno != EBADF) {
+        fmWarning() << "WorkerPipe::setupOutputChannel: Failed to flush stdout after redirect";
+    }
+
+    return true;
 }
 
 EXTRACTOR_END_NAMESPACE
