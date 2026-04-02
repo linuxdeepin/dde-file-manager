@@ -79,6 +79,12 @@ signals:
     void stdinClosed();
 
 private:
+    bool readFromStdin();
+    void processInputBuffer();
+    bool writePacket(const QByteArray &packetData);
+    bool hasPendingPartialMessage() const;
+    bool setupOutputChannel();
+
     QScopedPointer<WorkerPipePrivate> d;
 };
 

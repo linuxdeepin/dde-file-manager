@@ -14,17 +14,9 @@ class ControllerPipePrivate
 {
 public:
     QProcess *process = nullptr;
-    QDataStream inputStream;
-    QDataStream outputStream;
     QByteArray inputBuffer;
     bool waitingForComplete = false;
     qint32 expectedSize = 0;
-
-    explicit ControllerPipePrivate()
-        : inputStream(&inputBuffer, QIODevice::ReadWrite)
-        , outputStream(&inputBuffer, QIODevice::WriteOnly)
-    {
-    }
 
     void clearState()
     {
@@ -35,8 +27,7 @@ public:
 };
 
 ControllerPipe::ControllerPipe(QObject *parent)
-    : QObject(parent)
-    , d(new ControllerPipePrivate())
+    : QObject(parent), d(new ControllerPipePrivate())
 {
 }
 
@@ -62,86 +53,17 @@ bool ControllerPipe::start(const QString &extractorPath, const QString &pluginPa
 
     // Connect process signals
     connect(d->process, &QProcess::readyReadStandardOutput,
-            this, [this]() {
-                // Read all available data
-                QByteArray newData = d->process->readAllStandardOutput();
-                d->inputBuffer.append(newData);
-
-                // Process complete messages using transaction pattern
-                while (true) {
-                    if (!d->waitingForComplete) {
-                        // Need to read size header first
-                        if (d->inputBuffer.size() < static_cast<int>(sizeof(qint32))) {
-                            break;   // Not enough data for size header
-                        }
-
-                        QDataStream sizeStream(d->inputBuffer);
-                        sizeStream >> d->expectedSize;
-                        d->waitingForComplete = true;
-                    }
-
-                    // Check if we have the complete message
-                    qint32 totalSize = sizeof(qint32) + d->expectedSize;
-                    if (d->inputBuffer.size() < totalSize) {
-                        break;   // Not enough data yet
-                    }
-
-                    // Extract the message data (skip size header)
-                    QByteArray messageData = d->inputBuffer.mid(sizeof(qint32), d->expectedSize);
-                    d->inputBuffer.remove(0, totalSize);
-                    d->waitingForComplete = false;
-                    d->expectedSize = 0;
-
-                    // Parse the message
-                    QDataStream messageStream(messageData);
-                    quint8 statusByte;
-                    messageStream >> statusByte;
-                    ExtractorStatus status = static_cast<ExtractorStatus>(statusByte);
-
-                    QString filePath;
-                    QByteArray data;
-
-                    if (status != ExtractorStatus::BatchDone) {
-                        messageStream >> filePath;
-                    }
-
-                    if (status == ExtractorStatus::Data) {
-                        messageStream >> data;
-                    }
-
-                    // Emit appropriate signal
-                    switch (status) {
-                    case ExtractorStatus::Started:
-                        fmDebug() << "ControllerPipe: Extraction started for:" << filePath;
-                        emit extractionStarted(filePath);
-                        break;
-
-                    case ExtractorStatus::Finished:
-                        fmDebug() << "ControllerPipe: Extraction finished for:" << filePath;
-                        emit extractionFinished(filePath, data);
-                        break;
-
-                    case ExtractorStatus::Failed:
-                        fmWarning() << "ControllerPipe: Extraction failed for:" << filePath;
-                        emit extractionFailed(filePath, filePath);
-                        break;
-
-                    case ExtractorStatus::Data:
-                        fmDebug() << "ControllerPipe: Received data for:" << filePath
-                                  << "size:" << data.size();
-                        emit extractionFinished(filePath, data);
-                        break;
-
-                    case ExtractorStatus::BatchDone:
-                        fmDebug() << "ControllerPipe: Batch completed";
-                        emit batchFinished();
-                        break;
-                    }
-                }
-            });
+            this, &ControllerPipe::handleProcessOutput);
+    connect(d->process, &QProcess::readyReadStandardError,
+            this, &ControllerPipe::handleProcessErrorOutput);
 
     connect(d->process, &QProcess::errorOccurred,
             this, [this](QProcess::ProcessError error) {
+                if (hasPendingPartialMessage()) {
+                    fmWarning() << "ControllerPipe: Process error occurred with incomplete message."
+                                << "buffer size:" << d->inputBuffer.size()
+                                << "expected payload size:" << d->expectedSize;
+                }
                 fmCritical() << "ControllerPipe: Process error:" << error;
                 emit errorOccurred(QString("Process error: %1").arg(static_cast<int>(error)));
             });
@@ -149,6 +71,11 @@ bool ControllerPipe::start(const QString &extractorPath, const QString &pluginPa
     connect(d->process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
             this, [this](int exitCode, QProcess::ExitStatus exitStatus) {
                 QProcess *finishedProcess = qobject_cast<QProcess *>(sender());
+                if (hasPendingPartialMessage()) {
+                    fmWarning() << "ControllerPipe: Process finished with incomplete message."
+                                << "buffer size:" << d->inputBuffer.size()
+                                << "expected payload size:" << d->expectedSize;
+                }
                 fmInfo() << "ControllerPipe: Process finished with exit code:" << exitCode
                          << "status:" << exitStatus;
 
@@ -192,6 +119,122 @@ bool ControllerPipe::start(const QString &extractorPath, const QString &pluginPa
     return true;
 }
 
+void ControllerPipe::handleProcessOutput()
+{
+    QProcess *process = qobject_cast<QProcess *>(sender());
+    if (!process) {
+        process = d->process;
+    }
+    if (!process) {
+        return;
+    }
+
+    d->inputBuffer.append(process->readAllStandardOutput());
+    processInputBuffer();
+}
+
+void ControllerPipe::handleProcessErrorOutput()
+{
+    QProcess *process = qobject_cast<QProcess *>(sender());
+    if (!process) {
+        process = d->process;
+    }
+    if (!process) {
+        return;
+    }
+
+    const QByteArray errorOutput = process->readAllStandardError();
+    if (!errorOutput.isEmpty()) {
+        fmWarning() << "ControllerPipe: Extractor stderr:" << errorOutput;
+    }
+}
+
+void ControllerPipe::processInputBuffer()
+{
+    while (true) {
+        if (!d->waitingForComplete) {
+            if (d->inputBuffer.size() < static_cast<int>(sizeof(qint32))) {
+                return;
+            }
+
+            QDataStream sizeStream(d->inputBuffer);
+            sizeStream >> d->expectedSize;
+            if (d->expectedSize < 0) {
+                fmCritical() << "ControllerPipe: Invalid message size:" << d->expectedSize;
+                d->clearState();
+                emit errorOccurred(QStringLiteral("Invalid extractor message size"));
+                return;
+            }
+
+            d->waitingForComplete = true;
+        }
+
+        const qint32 totalSize = static_cast<qint32>(sizeof(qint32)) + d->expectedSize;
+        const auto bufferSize = d->inputBuffer.size();
+        if (bufferSize < totalSize) {
+            return;
+        }
+
+        const QByteArray messageData = d->inputBuffer.mid(sizeof(qint32), d->expectedSize);
+        d->inputBuffer.remove(0, totalSize);
+        d->waitingForComplete = false;
+        d->expectedSize = 0;
+
+        handleStatusMessage(messageData);
+    }
+}
+
+void ControllerPipe::handleStatusMessage(const QByteArray &messageData)
+{
+    QDataStream messageStream(messageData);
+    quint8 statusByte = 0;
+    messageStream >> statusByte;
+    const ExtractorStatus status = static_cast<ExtractorStatus>(statusByte);
+
+    QString filePath;
+    QByteArray data;
+    QString error;
+
+    if (status != ExtractorStatus::BatchDone) {
+        messageStream >> filePath;
+    }
+
+    if (status == ExtractorStatus::Data) {
+        messageStream >> data;
+    } else if (status == ExtractorStatus::Failed) {
+        // Fix: failed packets now carry an explicit error string after filePath.
+        messageStream >> error;
+    }
+
+    switch (status) {
+    case ExtractorStatus::Started:
+        fmDebug() << "ControllerPipe: Extraction started for:" << filePath;
+        emit extractionStarted(filePath);
+        break;
+
+    case ExtractorStatus::Finished:
+        fmDebug() << "ControllerPipe: Extraction finished for:" << filePath;
+        emit extractionFinished(filePath, data);
+        break;
+
+    case ExtractorStatus::Failed:
+        fmWarning() << "ControllerPipe: Extraction failed for:" << filePath << "error:" << error;
+        emit extractionFailed(filePath, error);
+        break;
+
+    case ExtractorStatus::Data:
+        fmDebug() << "ControllerPipe: Received data for:" << filePath
+                  << "size:" << data.size();
+        emit extractionFinished(filePath, data);
+        break;
+
+    case ExtractorStatus::BatchDone:
+        fmDebug() << "ControllerPipe: Batch completed";
+        emit batchFinished();
+        break;
+    }
+}
+
 void ControllerPipe::stop()
 {
     if (d->process) {
@@ -219,6 +262,11 @@ void ControllerPipe::stop()
     }
 
     d->clearState();
+}
+
+bool ControllerPipe::hasPendingPartialMessage() const
+{
+    return d->waitingForComplete || !d->inputBuffer.isEmpty();
 }
 
 bool ControllerPipe::isRunning() const

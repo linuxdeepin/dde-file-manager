@@ -231,11 +231,11 @@ void MainWindow::onExtractionStarted(const QString &filePath)
 
 void MainWindow::onExtractionFinished(const QString &filePath, const QByteArray &data)
 {
-    log(tr("Extraction finished: %1 (size: %2 bytes)").arg(filePath).arg(data.size()));
-
     // Show first 500 characters of content
     const QString preview = QString::fromUtf8(data);
     log(tr("Content preview:\n%1").arg(preview));
+
+    log(tr("Extraction finished: %1 (size: %2 bytes)").arg(filePath).arg(data.size()));
 }
 
 void MainWindow::onExtractionFailed(const QString &filePath, const QString &error)
