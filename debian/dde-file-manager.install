@@ -1,6 +1,7 @@
 usr/bin/dde-file-manager
 usr/bin/file-manager.sh
 usr/libexec/dde-file-manager
+usr/libexec/dde-file-manager-extractor
 usr/libexec/dde-file-manager-preview
 usr/bin/dde-file-manager-pkexec
 usr/bin/dde-file-manager-daemon
@@ -10,6 +11,8 @@ usr/bin/dde-select-dialog-x11
 usr/bin/dde-select-dialog-wayland
 usr/bin/deepin-diskencrypt-service
 usr/lib/*/dde-file-manager/plugins/filemanager-core/*.so
+usr/lib/*/dde-file-manager/plugins/extractors/*.so*
+usr/lib/*/dde-file-manager/plugins/extractors/*.json
 usr/lib/*/dde-file-manager/plugins/previews/*.so
 usr/lib/*/dde-file-manager/plugins/previews/*.json
 usr/share/applications/dde-file-manager.desktop
