@@ -23,9 +23,17 @@ class TextExtractor
 {
 public:
     /**
-     * @brief Maximum bytes to extract (0 = no limit)
+     * @brief Fallback maximum bytes to extract when dconfig is unavailable.
      */
     static constexpr size_t kDefaultMaxBytes = 10 * 1024 * 1024;   // 10 MB
+
+    /**
+     * @brief Extract text content from a file.
+     *
+     * @param filePath Path to the file
+     * @return Extracted text as UTF-8 QByteArray, or nullopt on failure
+     */
+    static std::optional<QByteArray> extract(const QString &filePath);
 
     /**
      * @brief Extract text content from a file.
@@ -34,7 +42,7 @@ public:
      * @param maxBytes Maximum bytes to extract (0 = no limit)
      * @return Extracted text as UTF-8 QByteArray, or nullopt on failure
      */
-    static std::optional<QByteArray> extract(const QString &filePath, size_t maxBytes = kDefaultMaxBytes);
+    static std::optional<QByteArray> extract(const QString &filePath, size_t maxBytes);
 
     /**
      * @brief Check if a file is likely a text-based document.
