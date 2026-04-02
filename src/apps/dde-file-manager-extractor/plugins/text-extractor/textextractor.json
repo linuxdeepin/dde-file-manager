@@ -1,0 +1,5 @@
+{
+    "name": "TextExtractor",
+    "version": "1.0.0",
+    "description": "Text content extraction plugin for various document formats"
+}

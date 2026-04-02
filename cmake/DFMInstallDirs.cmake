@@ -89,6 +89,11 @@ if(NOT DEFINED DFM_PLUGIN_PREVIEW_DIR)
     set(DFM_PLUGIN_PREVIEW_DIR ${DFM_PLUGIN_DIR}/previews)
 endif()
 
+# extractor runtime dir
+if(NOT DEFINED DFM_PLUGIN_EXTRACTOR_DIR)
+    set(DFM_PLUGIN_EXTRACTOR_DIR ${DFM_PLUGIN_DIR}/extractors)
+endif()
+
 # tools
 if(NOT DEFINED DFM_TOOLS_DIR)
     set(DFM_TOOLS_DIR ${DFM_LIB_DIR}/tools)

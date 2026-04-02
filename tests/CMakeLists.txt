@@ -5,6 +5,11 @@ if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/filescanner/CMakeLists.txt)
     add_subdirectory(filescanner)
 endif()
 
+# 添加 extractor-test 测试/演示程序
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/extractor-test/CMakeLists.txt)
+    add_subdirectory(extractor-test)
+endif()
+
 # 可以在此添加更多测试/演示程序
 # 例如:
 # if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/another-test/CMakeLists.txt)
