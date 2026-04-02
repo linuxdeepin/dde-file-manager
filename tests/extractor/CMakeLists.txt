@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(extractor-test)
+project(test-extractor-demo)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
