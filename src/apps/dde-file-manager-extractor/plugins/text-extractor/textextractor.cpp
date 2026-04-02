@@ -4,6 +4,8 @@
 
 #include "textextractor.h"
 
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+
 #include <DTextEncoding>
 
 #include <docparser.h>
@@ -11,12 +13,73 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QMimeDatabase>
-#include <QSet>
 #include <QTextDocument>
 
 EXTRACTOR_PLUGIN_BEGIN_NAMESPACE
 
 namespace {
+
+using DFMBASE_NAMESPACE::DConfigManager;
+
+constexpr char kTextIndexSchema[] = "org.deepin.dde.file-manager.textindex";
+constexpr char kSupportedFileExtensions[] = "supportedFileExtensions";
+constexpr char kMaxIndexFileTruncationSizeMB[] = "maxIndexFileTruncationSizeMB";
+constexpr int kDefaultMaxIndexFileTruncationSizeMB = 10;
+constexpr int kMaxAllowedIndexFileTruncationSizeMB = 1024;
+
+QStringList defaultSupportedExtensions()
+{
+    return {
+        "rtf", "odt", "ods", "odp", "odg", "docx",
+        "xlsx", "pptx", "ppsx", "md", "xls", "xlsb",
+        "doc", "dot", "wps", "ppt", "pps", "txt",
+        "pdf", "dps", "sh", "html", "htm", "xml",
+        "xhtml", "dhtml", "shtm", "shtml", "json",
+        "css", "yaml", "ini", "bat", "js", "sql",
+        "uof", "ofd"
+    };
+}
+
+void ensureTextIndexConfigLoaded()
+{
+    static const bool kConfigLoaded = [] {
+        QString err;
+        if (!DConfigManager::instance()->addConfig(QString::fromLatin1(kTextIndexSchema), &err))
+            fmWarning() << "TextExtractor: Failed to load DConfig schema:" << err;
+        return true;
+    }();
+
+    Q_UNUSED(kConfigLoaded)
+}
+
+QStringList supportedFileExtensions()
+{
+    ensureTextIndexConfigLoaded();
+
+    return DConfigManager::instance()->value(QString::fromLatin1(kTextIndexSchema),
+                                             QString::fromLatin1(kSupportedFileExtensions),
+                                             QVariant::fromValue(defaultSupportedExtensions()))
+            .toStringList();
+}
+
+size_t configuredMaxExtractBytes()
+{
+    ensureTextIndexConfigLoaded();
+
+    const int truncationSizeMB = DConfigManager::instance()->value(QString::fromLatin1(kTextIndexSchema),
+                                                                   QString::fromLatin1(kMaxIndexFileTruncationSizeMB),
+                                                                   kDefaultMaxIndexFileTruncationSizeMB)
+                                         .toInt();
+
+    // Fix: keep extractor aligned with textindex defaults and guard invalid dconfig values.
+    if (truncationSizeMB <= 0 || truncationSizeMB > kMaxAllowedIndexFileTruncationSizeMB) {
+        fmWarning() << "TextExtractor: Invalid maxIndexFileTruncationSizeMB value:" << truncationSizeMB
+                    << ", using default:" << kDefaultMaxIndexFileTruncationSizeMB;
+        return TextExtractor::kDefaultMaxBytes;
+    }
+
+    return static_cast<size_t>(truncationSizeMB) * 1024 * 1024;
+}
 
 QByteArray detectFileEncoding(const QString &filePath)
 {
@@ -106,6 +169,11 @@ std::optional<QString> extractHtmlContent(const QString &filePath, size_t maxByt
 
 }   // namespace
 
+std::optional<QByteArray> TextExtractor::extract(const QString &filePath)
+{
+    return extract(filePath, configuredMaxExtractBytes());
+}
+
 std::optional<QByteArray> TextExtractor::extract(const QString &filePath, size_t maxBytes)
 {
     fmDebug() << "TextExtractor: Extracting file:" << filePath;
@@ -147,32 +215,13 @@ bool TextExtractor::isTextDocument(const QString &filePath)
 {
     QMimeDatabase mimeDb;
     QString mimeTypeName = mimeDb.mimeTypeForFile(filePath).name();
+    QFileInfo fileInfo(filePath);
 
     // Check for text/* mimetypes
-    if (mimeTypeName.startsWith("text/")) {
+    if (mimeTypeName.startsWith("text/"))
         return true;
-    }
 
-    // Check for common document types
-    static const QSet<QString> kDocumentMimeTypes = {
-        "application/pdf",
-        "application/vnd.oasis.opendocument.text",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        "application/msword",
-        "application/rtf",
-        "application/epub+zip"
-    };
-
-    if (kDocumentMimeTypes.contains(mimeTypeName)) {
-        return true;
-    }
-
-    // Check file extension for HTML-style documents
-    if (isHtmlStyleDocument(filePath)) {
-        return true;
-    }
-
-    return false;
+    return supportedFileExtensions().contains(fileInfo.suffix().toLower());
 }
 
 EXTRACTOR_PLUGIN_END_NAMESPACE
