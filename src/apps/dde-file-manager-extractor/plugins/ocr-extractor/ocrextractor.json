@@ -1,0 +1,5 @@
+{
+    "name": "OcrExtractor",
+    "version": "1.0.0",
+    "description": "OCR-based text extraction plugin for supported image formats"
+}

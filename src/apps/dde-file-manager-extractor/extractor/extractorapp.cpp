@@ -13,10 +13,7 @@
 EXTRACTOR_PLUGIN_BEGIN_NAMESPACE
 
 ExtractorApp::ExtractorApp(QObject *parent)
-    : QObject(parent)
-    , m_pluginLoader(new PluginLoader(this))
-    , m_workerPipe(new EXTRACTOR_NAMESPACE::WorkerPipe(this))
-    , m_idleTimer(new QTimer(this))
+    : QObject(parent), m_pluginLoader(new PluginLoader(this)), m_workerPipe(new EXTRACTOR_NAMESPACE::WorkerPipe(this)), m_idleTimer(new QTimer(this))
 {
     m_idleTimer->setSingleShot(true);
     connect(m_idleTimer, &QTimer::timeout, this, []() {
@@ -107,7 +104,7 @@ void ExtractorApp::processBatch(const QVector<QString> &filePaths)
         }
 
         // Extract content
-        auto result = plugin->extract(filePath);
+        const auto &result = plugin->extract(filePath);
         if (!result.has_value()) {
             fmWarning() << "ExtractorApp: Extraction failed for file:" << filePath;
             m_workerPipe->sendFailed(filePath, "Extraction failed");
