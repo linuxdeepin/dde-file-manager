@@ -65,6 +65,7 @@ public:
     static QString castFromDFMMountProperty(DFMMOUNT::Property property);
 
     static void persistentOpticalInfo(const QVariantMap &datas);
+    static void clearOpticalInfo(const QString &tag);
     static void readOpticalInfo(QVariantMap &datas);
 
 private:

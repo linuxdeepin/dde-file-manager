@@ -8,6 +8,7 @@
 #include "dfmplugin_burn_global.h"
 
 #include <dfm-framework/dpf.h>
+#include <QVariantMap>
 
 namespace dfmplugin_burn {
 
@@ -27,12 +28,12 @@ public:
     virtual void initialize() override;
     virtual bool start() override;
 
-private slots:
+private Q_SLOTS:
     void bindScene(const QString &parentScene);
     void bindSceneOnAdded(const QString &newScene);
     void bindEvents();
     bool changeUrlEventFilter(quint64 windowId, const QUrl &url);
-    void onPersistenceDataChanged(const QString &group, const QString &key, const QVariant &value);
+    void onPersistenceDataChanged(const QString &key, const QVariantMap &value);
 
 private:
     QSet<QString> waitToBind;

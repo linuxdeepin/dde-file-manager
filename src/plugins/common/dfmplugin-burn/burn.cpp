@@ -15,12 +15,14 @@
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/base/device/devicemanager.h>
 #include <dfm-base/base/device/deviceutils.h>
-#include <dfm-base/base/application/application.h>
-#include <dfm-base/base/application/settings.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/dbusservice/global_server_defines.h>
+#include <dfm-base/dbusservice/opticalshareproxy.h>
 
 #include <QWidget>
 #include <QTimer>
+
+#include <unistd.h>
 
 DFMBASE_USE_NAMESPACE
 namespace dfmplugin_burn {
@@ -28,6 +30,26 @@ namespace dfmplugin_burn {
 DFM_LOG_REGISTER_CATEGORY(DPBURN_NAMESPACE)
 
 static constexpr char kCurrentEventSpace[] { DPF_MACRO_TO_STR(DPBURN_NAMESPACE) };
+
+namespace {
+
+void clearStaleBurnStates()
+{
+    using namespace GlobalServerDefines;
+
+    const auto states = OpticalShareProxy::instance().burnStates();
+    const auto uid = static_cast<qulonglong>(::getuid());
+
+    for (auto iter = states.cbegin(); iter != states.cend(); ++iter) {
+        const auto state = iter.value().toMap();
+        if (state.value(OpticalShareField::kOwnerUid).toULongLong() != uid)
+            continue;
+
+        OpticalShareProxy::instance().clearBurnState(iter.key());
+    }
+}
+
+}   // namespace
 
 void Burn::initialize()
 {
@@ -45,8 +67,9 @@ bool Burn::start()
 
     DiscStateManager::instance()->initilaize();
 
-    connect(Application::dataPersistence(), &Settings::valueChanged, this, &Burn::onPersistenceDataChanged, Qt::DirectConnection);
-    Application::dataPersistence()->removeGroup(Persistence::kBurnStateGroup);
+    clearStaleBurnStates();
+    connect(&OpticalShareProxy::instance(), &OpticalShareProxy::burnStateChanged,
+            this, &Burn::onPersistenceDataChanged, Qt::DirectConnection);
 
     fmDebug() << "[Burn::start] Calling startOpticalDiscScan...";
     DevMngIns->startOpticalDiscScan();
@@ -108,15 +131,13 @@ bool Burn::changeUrlEventFilter(quint64 windowId, const QUrl &url)
     return false;
 }
 
-void Burn::onPersistenceDataChanged(const QString &group, const QString &key, const QVariant &value)
+void Burn::onPersistenceDataChanged(const QString &key, const QVariantMap &value)
 {
-    if (group != Persistence::kBurnStateGroup)
-        return;
-
     fmInfo() << "Burn working state changed: " << key << value;
-    auto &&map { value.toMap() };
-    auto &&id { map[Persistence::kIdKey].toString() };
-    auto &&working { map[Persistence::kWoringKey].toBool() };
+    auto id { value[GlobalServerDefines::OpticalShareField::kId].toString() };
+    if (id.isEmpty())
+        id = DeviceUtils::getBlockDeviceId(key);
+    auto &&working { value[GlobalServerDefines::OpticalShareField::kWorking].toBool() };
     emit DevMngIns->opticalDiscWorkStateChanged(id, key, working);
 }
 
