@@ -1,0 +1,13 @@
+{
+    "name": "org.deepin.Filemanager.OpticalShare",
+    "libPath": "libdde-filemanager-opticalshare.so",
+    "group": "app",
+    "policyStartType": "Resident",
+    "pluginType": "qt",
+    "idleTime": 1,
+    "policy": [
+        {
+            "path": "/org/deepin/Filemanager/OpticalShare"
+        }
+    ]
+}

@@ -7,6 +7,7 @@
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/dbusservice/global_server_defines.h>
+#include <dfm-base/dbusservice/opticalshareproxy.h>
 #include <dfm-base/base/device/deviceproxymanager.h>
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
@@ -184,13 +185,15 @@ QList<QVariantMap> BurnHelper::discDataGroup()
 void BurnHelper::updateBurningStateToPersistence(const QString &id, const QString &dev, bool working)
 {
     QVariantMap info;
-    info[Persistence::kIdKey] = id;
-    info[Persistence::kWoringKey] = working;
+    info[GlobalServerDefines::OpticalShareField::kId] = id;
+    info[GlobalServerDefines::OpticalShareField::kWorking] = working;
 
-    if (Application::dataPersistence()) {
-        Application::dataPersistence()->setValue(Persistence::kBurnStateGroup, dev, info);
-        Application::dataPersistence()->sync();
+    if (working) {
+        OpticalShareProxy::instance().setBurnState(dev, info);
+        return;
     }
+
+    OpticalShareProxy::instance().clearBurnState(dev);
 }
 
 void BurnHelper::mapStagingFilesPath(const QList<QUrl> &srcList, const QList<QUrl> &targetList)

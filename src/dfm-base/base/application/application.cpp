@@ -21,9 +21,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(Settings, asGlobal, ("deepin/dde-file-manager/dde-file
 
 Q_GLOBAL_STATIC_WITH_ARGS(Settings, gosGlobal, ("deepin/dde-file-manager.obtusely", Settings::kGenericConfig))
 Q_GLOBAL_STATIC_WITH_ARGS(Settings, aosGlobal, ("deepin/dde-file-manager/dde-file-manager.obtusely", Settings::kGenericConfig))
-
-static constexpr char DP_GLOBAL_FILE[] { "/tmp/.config/deepin/dde-file-manager/dde-file-manager.dp" };
-Q_GLOBAL_STATIC_WITH_ARGS(Settings, dpGlobal, ("", "", DP_GLOBAL_FILE))
+Q_GLOBAL_STATIC_WITH_ARGS(Settings, dpGlobal, ("deepin/dde-file-manager/dde-file-manager.dp", Settings::kGenericConfig))
 
 // blumia: since dde-desktop now also do show file selection dialog job, thus dde-desktop should share the same config file
 //         with dde-file-manager, so we use GenericConfig with specify path to simulate AppConfig.
@@ -298,11 +296,6 @@ Settings *Application::dataPersistence()
 #ifndef DFM_NO_FILE_WATCHER
         dpGlobal->setWatchChanges(true);
 #endif
-        // By default, files created under /tmp have a permission mode of 644,
-        // which prevents new users from accessing the file after creation.
-        // This restricts usage updates under new user accounts.
-        QFile f(DP_GLOBAL_FILE);
-        f.setPermissions(QFile::ReadOwner | QFile::WriteOwner | QFile::ReadGroup | QFile::WriteGroup | QFile::ReadOther | QFile::WriteOther);
     }
 
     return dpGlobal;

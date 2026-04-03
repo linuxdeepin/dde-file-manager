@@ -8,6 +8,7 @@
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
 #include <dfm-base/dbusservice/global_server_defines.h>
+#include <dfm-base/dbusservice/opticalshareproxy.h>
 #include <dfm-base/utils/finallyutil.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/networkutils.h>
@@ -188,34 +189,23 @@ bool DeviceUtils::isAutoMountAndOpenEnable()
 
 bool DeviceUtils::isWorkingOpticalDiscDev(const QString &dev)
 {
-    static constexpr char kBurnStateGroup[] { "BurnState" };
-    static constexpr char kWoringKey[] { "Working" };
-
     if (dev.isEmpty())
         return false;
 
-    if (Application::dataPersistence()->keys(kBurnStateGroup).contains(dev)) {
-        const QMap<QString, QVariant> &info = Application::dataPersistence()->value(kBurnStateGroup, dev).toMap();
-        return info.value(kWoringKey).toBool();
-    }
-    return false;
+    const QVariantMap info = OpticalShareProxy::instance().burnState(dev);
+    return info.value(GlobalServerDefines::OpticalShareField::kWorking).toBool();
 }
 
 bool DeviceUtils::isWorkingOpticalDiscId(const QString &id)
 {
-    static constexpr char kBurnStateGroup[] { "BurnState" };
-    static constexpr char kWoringKey[] { "Working" };
-    static constexpr char kID[] { "id" };
-
     if (id.isEmpty())
         return false;
 
-    auto &&keys { Application::dataPersistence()->keys(kBurnStateGroup) };
-    for (const QString &dev : keys) {
-        const QMap<QString, QVariant> &info = Application::dataPersistence()->value(kBurnStateGroup, dev).toMap();
-        QString &&devID { info.value(kID).toString() };
-        if (devID == id)
-            return info.value(kWoringKey).toBool();
+    const QVariantMap states = OpticalShareProxy::instance().burnStates();
+    for (auto iter = states.cbegin(); iter != states.cend(); ++iter) {
+        const QVariantMap info = iter.value().toMap();
+        if (info.value(GlobalServerDefines::OpticalShareField::kId).toString() == id)
+            return info.value(GlobalServerDefines::OpticalShareField::kWorking).toBool();
     }
 
     return false;

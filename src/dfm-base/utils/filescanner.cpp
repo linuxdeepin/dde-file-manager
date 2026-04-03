@@ -190,6 +190,9 @@ void FileScannerPrivate::onWorkerFinished()
     // worker 将通过 QThread::finished 信号触发 deleteLater 自动删除
     worker = nullptr;
 
+    // 退出工作线程，使 isRunning() 能正确返回 false
+    workerThread.quit();
+
     emit q->finished(lastResult);
 }
 

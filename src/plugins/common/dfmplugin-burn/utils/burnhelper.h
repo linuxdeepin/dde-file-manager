@@ -14,12 +14,6 @@
 
 namespace dfmplugin_burn {
 
-namespace Persistence {
-inline constexpr char kBurnStateGroup[] { "BurnState" };
-inline constexpr char kWoringKey[] { "Working" };
-inline constexpr char kIdKey[] { "id" };
-}   // namespace Persistence
-
 class BurnHelper
 {
 public:

@@ -323,6 +323,9 @@ void DeviceWatcher::onBlkDevAdded(const QString &id)
 void DeviceWatcher::onBlkDevRemoved(const QString &id)
 {
     qCInfo(logDFMBase) << "Block device removed:" << id;
+    const QString device = d->allBlockInfos.value(id).value(DeviceProperty::kDevice).toString();
+    if (device.startsWith("/dev/"))
+        DeviceHelper::clearOpticalInfo(device.mid(5));
     QString oldMpt = d->allBlockInfos.value(id).value(DeviceProperty::kMountPoint).toString();
     d->allBlockInfos.remove(id);
     emit DevMngIns->blockDevRemoved(id, oldMpt);
@@ -413,6 +416,7 @@ void DeviceWatcher::onBlkDevPropertiesChanged(const QString &id, const QMap<Prop
             if (name == DeviceProperty::kMountPoints)
                 item[DeviceProperty::kMountPoint] = var.toStringList().isEmpty() ? item[DeviceProperty::kMountPoint] : var.toStringList().first();
             if (name == DeviceProperty::kOptical && !var.toBool()) {
+                DeviceHelper::clearOpticalInfo(item.value(DeviceProperty::kDevice).toString().mid(5));
                 item[DeviceProperty::kOpticalMediaType] = "";
                 item[DeviceProperty::kOpticalWriteSpeed] = QStringList();
                 item[DeviceProperty::kSizeTotal] = 0;

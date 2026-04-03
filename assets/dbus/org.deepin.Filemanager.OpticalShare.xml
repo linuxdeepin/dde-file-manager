@@ -1,0 +1,49 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.deepin.Filemanager.OpticalShare">
+    <signal name="BurnStateChanged">
+      <arg name="dev" type="s" direction="out"/>
+      <arg name="state" type="a{sv}" direction="out"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out1" value="QVariantMap"/>
+    </signal>
+    <signal name="BurnAttributeChanged">
+      <arg name="tag" type="s" direction="out"/>
+      <arg name="attribute" type="a{sv}" direction="out"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out1" value="QVariantMap"/>
+    </signal>
+    <method name="GetBurnState">
+      <arg type="a{sv}" direction="out"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+      <arg name="dev" type="s" direction="in"/>
+    </method>
+    <method name="GetBurnStates">
+      <arg type="a{sv}" direction="out"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+    </method>
+    <method name="SetBurnState">
+      <arg type="b" direction="out"/>
+      <arg name="dev" type="s" direction="in"/>
+      <arg name="state" type="a{sv}" direction="in"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="QVariantMap"/>
+    </method>
+    <method name="ClearBurnState">
+      <arg type="b" direction="out"/>
+      <arg name="dev" type="s" direction="in"/>
+    </method>
+    <method name="GetBurnAttribute">
+      <arg type="a{sv}" direction="out"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+      <arg name="tag" type="s" direction="in"/>
+    </method>
+    <method name="SetBurnAttribute">
+      <arg type="b" direction="out"/>
+      <arg name="tag" type="s" direction="in"/>
+      <arg name="attribute" type="a{sv}" direction="in"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="QVariantMap"/>
+    </method>
+    <method name="ClearBurnAttribute">
+      <arg type="b" direction="out"/>
+      <arg name="tag" type="s" direction="in"/>
+    </method>
+  </interface>
+</node>

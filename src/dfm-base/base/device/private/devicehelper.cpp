@@ -6,12 +6,10 @@
 #include "defendercontroller.h"
 
 #include <dfm-base/dfm_global_defines.h>
-#include <dfm-base/dbusservice/global_server_defines.h>
-#include <dfm-base/base/application/application.h>
-#include <dfm-base/base/application/settings.h>
 #include <dfm-base/base/device/deviceutils.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/dbusservice/global_server_defines.h>
+#include <dfm-base/dbusservice/opticalshareproxy.h>
 #include <dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/dialogmanager.h>
@@ -33,12 +31,6 @@
 #include <dfm-mount/dmount.h>
 #include <dfm-burn/dburn_global.h>
 #include <sys/statvfs.h>
-
-static constexpr char kBurnAttribute[] { "BurnAttribute" };
-static constexpr char kBurnTotalSize[] { "BurnTotalSize" };
-static constexpr char kBurnUsedSize[] { "BurnUsedSize" };
-static constexpr char kBurnMediaType[] { "BurnMediaType" };
-static constexpr char kBurnWriteSpeed[] { "BurnWriteSpeed" };
 
 using namespace dfmbase;
 
@@ -462,32 +454,39 @@ void DeviceHelper::persistentOpticalInfo(const QVariantMap &datas)
     QVariantMap info;
     QString tag { datas.value(DeviceProperty::kDevice).toString().mid(5) };
 
-    info[kBurnTotalSize] = datas.value(DeviceProperty::kSizeTotal);
-    info[kBurnUsedSize] = datas.value(DeviceProperty::kSizeUsed);
-    info[kBurnMediaType] = datas.value(DeviceProperty::kOpticalMediaType);
-    info[kBurnWriteSpeed] = datas.value(DeviceProperty::kOpticalWriteSpeed);
+    info[OpticalShareField::kTotalSize] = datas.value(DeviceProperty::kSizeTotal);
+    info[OpticalShareField::kUsedSize] = datas.value(DeviceProperty::kSizeUsed);
+    info[OpticalShareField::kMediaType] = datas.value(DeviceProperty::kOpticalMediaType);
+    info[OpticalShareField::kWriteSpeed] = datas.value(DeviceProperty::kOpticalWriteSpeed);
 
-    Application::dataPersistence()->setValue(kBurnAttribute, tag, info);
-    Application::dataPersistence()->sync();
+    OpticalShareProxy::instance().setBurnAttribute(tag, info);
 
     qCDebug(logDFMBase) << "Optical device usage info persisted for device:" << tag
-                        << "total size:" << info[kBurnTotalSize].toULongLong()
-                        << "used size:" << info[kBurnUsedSize].toULongLong();
+                        << "total size:" << info[OpticalShareField::kTotalSize].toULongLong()
+                        << "used size:" << info[OpticalShareField::kUsedSize].toULongLong();
+}
+
+void DeviceHelper::clearOpticalInfo(const QString &tag)
+{
+    if (tag.isEmpty())
+        return;
+
+    OpticalShareProxy::instance().clearBurnAttribute(tag);
 }
 
 void DeviceHelper::readOpticalInfo(QVariantMap &datas)
 {
     using namespace GlobalServerDefines;
     QString tag { datas.value(DeviceProperty::kDevice).toString().mid(5) };
+    const QVariantMap info = OpticalShareProxy::instance().burnAttribute(tag);
+    if (info.isEmpty())
+        return;
 
-    if (Application::dataPersistence()->keys(kBurnAttribute).contains(tag)) {
-        const QMap<QString, QVariant> &info = Application::dataPersistence()->value(kBurnAttribute, tag).toMap();
-        datas[DeviceProperty::kSizeTotal] = static_cast<qint64>(info.value(kBurnTotalSize).toULongLong());
-        datas[DeviceProperty::kSizeUsed] = static_cast<qint64>(info.value(kBurnUsedSize).toULongLong());
-        datas[DeviceProperty::kSizeFree] = datas[DeviceProperty::kSizeTotal].toULongLong() - datas[DeviceProperty::kSizeUsed].toULongLong();
-        datas[DeviceProperty::kOpticalMediaType] = info.value(kBurnMediaType).toInt();
-        datas[DeviceProperty::kOpticalWriteSpeed] = info.value(kBurnWriteSpeed).toStringList();
-    }
+    datas[DeviceProperty::kSizeTotal] = static_cast<qint64>(info.value(OpticalShareField::kTotalSize).toULongLong());
+    datas[DeviceProperty::kSizeUsed] = static_cast<qint64>(info.value(OpticalShareField::kUsedSize).toULongLong());
+    datas[DeviceProperty::kSizeFree] = datas[DeviceProperty::kSizeTotal].toULongLong() - datas[DeviceProperty::kSizeUsed].toULongLong();
+    datas[DeviceProperty::kOpticalMediaType] = info.value(OpticalShareField::kMediaType).toInt();
+    datas[DeviceProperty::kOpticalWriteSpeed] = info.value(OpticalShareField::kWriteSpeed).toStringList();
 }
 
 bool DeviceHelper::checkNetworkConnection(const QString &id)

@@ -130,6 +130,28 @@ inline constexpr char kAnonymous[] { "anonymous" };
 inline constexpr char kMessage[] { "message" };
 }   // namespace NetworkMountParamKey
 
+namespace OpticalShareDBusInfo {
+inline constexpr char kService[] { "org.deepin.Filemanager.OpticalShare" };
+inline constexpr char kPath[] { "/org/deepin/Filemanager/OpticalShare" };
+inline constexpr char kInterface[] { "org.deepin.Filemanager.OpticalShare" };
+}   // namespace OpticalShareDBusInfo
+
+namespace OpticalShareGroup {
+inline constexpr char kBurnState[] { "BurnState" };
+inline constexpr char kBurnAttribute[] { "BurnAttribute" };
+}   // namespace OpticalShareGroup
+
+namespace OpticalShareField {
+inline constexpr char kId[] { "id" };
+inline constexpr char kWorking[] { "Working" };
+inline constexpr char kOwnerUid[] { "ownerUid" };
+inline constexpr char kTimestamp[] { "timestamp" };
+inline constexpr char kTotalSize[] { "totalSize" };
+inline constexpr char kUsedSize[] { "usedSize" };
+inline constexpr char kMediaType[] { "mediaType" };
+inline constexpr char kWriteSpeed[] { "writeSpeed" };
+}   // namespace OpticalShareField
+
 }   // namespace GlobalServerDefines
 
 #endif   // GLOBAL_SERVER_DEFINES_H
