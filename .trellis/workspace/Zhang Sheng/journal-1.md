@@ -55,3 +55,47 @@ Implemented a process-isolated file content extractor framework with IPC pipes +
 ### Next Steps
 
 - None - task complete
+
+
+## Session 2: Add OCR extractor plugin
+
+**Date**: 2026-04-03
+**Task**: Add OCR extractor plugin
+
+### Summary
+
+(Add summary)
+
+### Main Changes
+
+| Area | Description |
+|------|-------------|
+| Extractor plugin | Added a new `ocr-extractor` plugin under `src/apps/dde-file-manager-extractor/plugins/ocr-extractor/` for image OCR text extraction. |
+| OCR behavior | Reused a process-level `DOcr` instance, preferred `PPOCR_V5` with default fallback, and scaled large images before recognition. |
+| Text cleanup | Filtered blank lines and short symbol-only noise lines such as `□`. |
+| Configuration | Added `maxOcrImageSizeMB` and `supportedOcrImageExtensions` to the textindex dconfig schema. |
+| Build & packaging | Registered the new plugin in CMake and added `libdtk6ocr-dev` to Debian build dependencies. |
+
+**Verification**:
+- Ran `cmake -S . -B build-ocr-check`
+- Ran `cmake --build build-ocr-check --target ocr-extractor -j2`
+- Validated the updated dconfig JSON structure with `python3 -m json.tool`
+
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `a88bfa9a2` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete

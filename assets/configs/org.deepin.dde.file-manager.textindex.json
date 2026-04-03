@@ -118,6 +118,45 @@
 			"permissions": "readwrite",
 			"visibility": "public"
 		},
+		"maxOcrImageSizeMB": {
+			"value": 30,
+			"serial": 0,
+			"flags": [],
+			"name": "Maximum OCR image size (MB)",
+			"name[zh_CN]": "OCR 图片最大大小（MB）",
+			"description[zh_CN]": "OCR 插件允许处理的单张图片最大大小，单位为兆字节（MB）。",
+			"description": "The maximum size of an individual image that can be processed by the OCR plugin. Unit: megabytes (MB).",
+			"permissions": "readwrite",
+			"visibility": "public"
+		},
+		"supportedOcrImageExtensions": {
+			"value": [
+				"ani",
+				"bmp",
+				"jpe",
+				"jpeg",
+				"jpg",
+				"pcx",
+				"png",
+				"psd",
+				"tga",
+				"tif",
+				"tiff",
+				"webp",
+				"wmf",
+				"heic",
+				"heif",
+				"raw"
+			],
+			"serial": 0,
+			"flags": [],
+			"name": "Supported OCR image extensions",
+			"name[zh_CN]": "OCR 支持的图片后缀列表",
+			"description[zh_CN]": "OCR 插件会尝试提取文本的图片文件后缀名列表。",
+			"description": "List of image file extensions that the OCR plugin will consider for text extraction.",
+			"permissions": "readwrite",
+			"visibility": "public"
+		},
 		"indexHiddenFiles": {
 			"value": false,
 			"serial": 0,

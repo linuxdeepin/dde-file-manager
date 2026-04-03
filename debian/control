@@ -37,6 +37,7 @@ Build-Depends:
  libdtk6widget-dev,
  libdtk6gui-dev,
  libdtk6core-dev,
+ libdtk6ocr-dev,
  libdtk6core-bin,
  libdtk6declarative-dev,
  libdfm6-io-dev,
@@ -109,4 +110,3 @@ Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: DDE File Manager Devel library
  This package contains the header files and static libraries
  of dde-file-manager
-
