@@ -13,6 +13,9 @@
 #include <controllerpipe.h>
 
 #include <QProcess>
+#include <QFile>
+#include <QTextStream>
+#include <QQueue>
 
 DWIDGET_USE_NAMESPACE
 
@@ -31,8 +34,8 @@ private slots:
     void onBrowseExtractor();
     void onStartExtractor();
     void onStopExtractor();
-    void onBrowseFile();
-    void onExtractFile();
+    void onBrowseDirectory();
+    void onExtractDirectory();
     void onExtractionStarted(const QString &filePath);
     void onExtractionFinished(const QString &filePath, const QByteArray &data);
     void onExtractionFailed(const QString &filePath, const QString &error);
@@ -44,19 +47,35 @@ private:
     void setupUI();
     void updateButtonStates();
     void log(const QString &message);
+    void collectFiles(const QString &directory);
+    void processNextFile();
+    void setupOutputDirectory(const QString &sourceDir);
+    void saveExtractionResult(const QString &filePath, const QByteArray &data);
+    void saveExtractionError(const QString &filePath, const QString &error);
 
     DLineEdit *m_extractorPathEdit = nullptr;
     DLineEdit *m_pluginPathEdit = nullptr;
-    DLineEdit *m_filePathEdit = nullptr;
+    DLineEdit *m_directoryPathEdit = nullptr;
     DPushButton *m_startBtn = nullptr;
     DPushButton *m_stopBtn = nullptr;
     DPushButton *m_extractBtn = nullptr;
-    DPushButton *m_browseFileBtn = nullptr;
+    DPushButton *m_browseDirBtn = nullptr;
     DPushButton *m_browseExtractorBtn = nullptr;
     DTextEdit *m_logView = nullptr;
 
     dfm_extractor::ControllerPipe *m_controllerPipe = nullptr;
     bool m_extractorRunning = false;
+
+    // Batch processing state
+    QQueue<QString> m_pendingFiles;
+    QString m_currentFile;
+    int m_totalFiles = 0;
+    int m_processedFiles = 0;
+    int m_successCount = 0;
+    int m_failedCount = 0;
+
+    // Output directory
+    QString m_outputDir;
 };
 
 #endif   // MAINWINDOW_H
