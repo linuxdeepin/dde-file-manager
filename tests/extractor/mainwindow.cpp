@@ -12,6 +12,11 @@
 #include <QGroupBox>
 #include <QDateTime>
 #include <QStandardPaths>
+#include <QDir>
+#include <QDirIterator>
+#include <QFileInfo>
+#include <QFile>
+#include <QCryptographicHash>
 
 DWIDGET_USE_NAMESPACE
 
@@ -95,24 +100,24 @@ void MainWindow::setupUI()
 
     mainLayout->addWidget(extractorGroup);
 
-    // File selection group
-    QGroupBox *fileGroup = new QGroupBox(tr("File Extraction"), this);
-    QVBoxLayout *fileLayout = new QVBoxLayout(fileGroup);
+    // Directory selection group
+    QGroupBox *dirGroup = new QGroupBox(tr("Directory Extraction"), this);
+    QVBoxLayout *dirLayout = new QVBoxLayout(dirGroup);
 
-    QHBoxLayout *filePathLayout = new QHBoxLayout();
-    filePathLayout->addWidget(new QLabel(tr("File Path:"), this));
-    m_filePathEdit = new DLineEdit(this);
-    m_filePathEdit->setPlaceholderText(tr("Path to file for extraction"));
-    filePathLayout->addWidget(m_filePathEdit);
-    m_browseFileBtn = new DPushButton(tr("Browse..."), this);
-    filePathLayout->addWidget(m_browseFileBtn);
-    fileLayout->addLayout(filePathLayout);
+    QHBoxLayout *directoryPathLayout = new QHBoxLayout();
+    directoryPathLayout->addWidget(new QLabel(tr("Directory Path:"), this));
+    m_directoryPathEdit = new DLineEdit(this);
+    m_directoryPathEdit->setPlaceholderText(tr("Directory containing files to extract"));
+    directoryPathLayout->addWidget(m_directoryPathEdit);
+    m_browseDirBtn = new DPushButton(tr("Browse..."), this);
+    directoryPathLayout->addWidget(m_browseDirBtn);
+    dirLayout->addLayout(directoryPathLayout);
 
-    m_extractBtn = new DPushButton(tr("Extract Content"), this);
+    m_extractBtn = new DPushButton(tr("Extract All Files"), this);
     m_extractBtn->setEnabled(false);
-    fileLayout->addWidget(m_extractBtn);
+    dirLayout->addWidget(m_extractBtn);
 
-    mainLayout->addWidget(fileGroup);
+    mainLayout->addWidget(dirGroup);
 
     // Log view
     QGroupBox *logGroup = new QGroupBox(tr("Log"), this);
@@ -128,8 +133,8 @@ void MainWindow::setupUI()
     connect(m_browseExtractorBtn, &DPushButton::clicked, this, &MainWindow::onBrowseExtractor);
     connect(m_startBtn, &DPushButton::clicked, this, &MainWindow::onStartExtractor);
     connect(m_stopBtn, &DPushButton::clicked, this, &MainWindow::onStopExtractor);
-    connect(m_browseFileBtn, &DPushButton::clicked, this, &MainWindow::onBrowseFile);
-    connect(m_extractBtn, &DPushButton::clicked, this, &MainWindow::onExtractFile);
+    connect(m_browseDirBtn, &DPushButton::clicked, this, &MainWindow::onBrowseDirectory);
+    connect(m_extractBtn, &DPushButton::clicked, this, &MainWindow::onExtractDirectory);
 
     // Set default paths
     QString defaultExtractorPath = QStandardPaths::findExecutable("dde-file-manager-extractor");
@@ -143,7 +148,7 @@ void MainWindow::updateButtonStates()
     bool hasPath = !m_extractorPathEdit->text().isEmpty();
     m_startBtn->setEnabled(hasPath && !m_extractorRunning);
     m_stopBtn->setEnabled(m_extractorRunning);
-    m_extractBtn->setEnabled(m_extractorRunning);
+    m_extractBtn->setEnabled(m_extractorRunning && !m_directoryPathEdit->text().isEmpty() && m_pendingFiles.isEmpty());
 }
 
 void MainWindow::log(const QString &message)
@@ -175,7 +180,7 @@ void MainWindow::onStartExtractor()
         args << "--plugin-path" << pluginPath;
     }
 
-    log(tr("Starting extractor: %1 %2").arg(extractorPath).arg(args.join(" ")));
+    log(tr("Starting extractor..."));
     if (m_controllerPipe->start(extractorPath, pluginPath)) {
         log(tr("Extractor started successfully (PID: %1)").arg(m_controllerPipe->processId()));
         m_extractorRunning = true;
@@ -196,62 +201,221 @@ void MainWindow::onStopExtractor()
     }
 }
 
-void MainWindow::onBrowseFile()
+void MainWindow::onBrowseDirectory()
 {
-    QString path = DFileDialog::getOpenFileName(this, tr("Select File for Extraction"));
+    QString path = DFileDialog::getExistingDirectory(this, tr("Select Directory for Extraction"));
     if (!path.isEmpty()) {
-        m_filePathEdit->setText(path);
+        m_directoryPathEdit->setText(path);
+        updateButtonStates();
     }
 }
 
-void MainWindow::onExtractFile()
+void MainWindow::onExtractDirectory()
 {
     if (!m_controllerPipe || !m_extractorRunning) {
         log(tr("Error: Extractor not running"));
         return;
     }
 
-    const QString filePath = m_filePathEdit->text();
-    if (filePath.isEmpty()) {
-        log(tr("Error: File path is empty"));
+    const QString directoryPath = m_directoryPathEdit->text();
+    if (directoryPath.isEmpty()) {
+        log(tr("Error: Directory path is empty"));
         return;
     }
 
-    if (m_controllerPipe->extractBatch({ filePath })) {
-        log(tr("Sent extraction request for: %1").arg(filePath));
+    QDir dir(directoryPath);
+    if (!dir.exists()) {
+        log(tr("Error: Directory does not exist"));
+        return;
+    }
+
+    // Collect all files
+    m_pendingFiles.clear();
+    collectFiles(directoryPath);
+
+    if (m_pendingFiles.isEmpty()) {
+        log(tr("No files found in directory"));
+        return;
+    }
+
+    // Initialize counters
+    m_totalFiles = m_pendingFiles.size();
+    m_processedFiles = 0;
+    m_successCount = 0;
+    m_failedCount = 0;
+
+    // Setup output directory
+    setupOutputDirectory(directoryPath);
+
+    log(tr("Found %1 files to process").arg(m_totalFiles));
+    log(tr("Output directory: %1").arg(m_outputDir));
+
+    // Start processing
+    processNextFile();
+    updateButtonStates();
+}
+
+void MainWindow::collectFiles(const QString &directory)
+{
+    QDirIterator it(directory, QDir::Files | QDir::NoSymLinks, QDirIterator::Subdirectories);
+    while (it.hasNext()) {
+        m_pendingFiles.enqueue(it.next());
+    }
+}
+
+void MainWindow::processNextFile()
+{
+    if (m_pendingFiles.isEmpty()) {
+        log(tr("Extraction completed: %1/%2 success, %3 failed")
+                    .arg(m_successCount)
+                    .arg(m_totalFiles)
+                    .arg(m_failedCount));
+        log(tr("Results saved to: %1").arg(m_outputDir));
+        updateButtonStates();
+        return;
+    }
+
+    m_currentFile = m_pendingFiles.dequeue();
+
+    // Extract one file at a time
+    if (m_controllerPipe->extractBatch({ m_currentFile })) {
+        // Progress logged in onExtractionStarted
     } else {
-        log(tr("Failed to send extraction request"));
+        log(tr("Failed to send extraction request for: %1").arg(m_currentFile));
+        saveExtractionError(m_currentFile, tr("Failed to send request"));
+        m_failedCount++;
+        m_processedFiles++;
+        processNextFile();
+    }
+}
+
+void MainWindow::setupOutputDirectory(const QString &sourceDir)
+{
+    QString timestamp = QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss");
+    QString baseName = QFileInfo(sourceDir).baseName();
+
+    // Create output directory under Documents
+    QString documentsPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+    m_outputDir = QString("%1/%2_extracted_%3").arg(documentsPath).arg(baseName).arg(timestamp);
+
+    QDir dir(m_outputDir);
+    if (!dir.exists()) {
+        dir.mkpath(".");
+    }
+
+    // Create index file
+    QString indexPath = m_outputDir + "/_index.txt_content";
+    QFile indexFile(indexPath);
+    if (indexFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream stream(&indexFile);
+        stream.setEncoding(QStringConverter::Utf8);
+        stream << "Source Directory: " << sourceDir << "\n";
+        stream << "Extraction Time: " << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss") << "\n";
+        stream << "Total Files: " << m_totalFiles << "\n";
+        stream << "\n--- Results ---\n";
+        indexFile.close();
+    }
+}
+
+void MainWindow::saveExtractionResult(const QString &filePath, const QByteArray &data)
+{
+    if (m_outputDir.isEmpty()) return;
+
+    QFileInfo fi(filePath);
+    QString relativePath = fi.absolutePath();
+    QString baseName = fi.completeBaseName();
+    QString suffix = fi.suffix();
+
+    // Generate unique filename: basename.suffix.txt_content
+    // For files with same name in different directories, add hash
+    QString outputFileName = QString("%1.%2.txt_content").arg(baseName).arg(suffix);
+
+    // Check for conflicts and add hash if needed
+    QString outputPath = m_outputDir + "/" + outputFileName;
+    if (QFile::exists(outputPath)) {
+        // Add path hash to differentiate
+        QByteArray pathHash = QCryptographicHash::hash(filePath.toUtf8(), QCryptographicHash::Md5).toHex().left(8);
+        outputFileName = QString("%1_%2.%3.txt_content").arg(baseName).arg(QString(pathHash)).arg(suffix);
+        outputPath = m_outputDir + "/" + outputFileName;
+    }
+
+    // Write content
+    QFile outFile(outputPath);
+    if (outFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream stream(&outFile);
+        stream.setEncoding(QStringConverter::Utf8);
+        stream << QString::fromUtf8(data);
+        outFile.close();
+    }
+
+    // Append to index
+    QString indexPath = m_outputDir + "/_index.txt_content";
+    QFile indexFile(indexPath);
+    if (indexFile.open(QIODevice::Append | QIODevice::Text)) {
+        QTextStream stream(&indexFile);
+        stream << "[OK] " << filePath << " -> " << outputFileName << "\n";
+        indexFile.close();
+    }
+}
+
+void MainWindow::saveExtractionError(const QString &filePath, const QString &error)
+{
+    // Append error to index
+    if (m_outputDir.isEmpty()) return;
+
+    QString indexPath = m_outputDir + "/_index.txt_content";
+    QFile indexFile(indexPath);
+    if (indexFile.open(QIODevice::Append | QIODevice::Text)) {
+        QTextStream stream(&indexFile);
+        stream << "[FAIL] " << filePath << " - " << error << "\n";
+        indexFile.close();
     }
 }
 
 void MainWindow::onExtractionStarted(const QString &filePath)
 {
-    log(tr("Extraction started: %1").arg(filePath));
+    log(tr("[%1/%2] Processing: %3")
+                .arg(m_processedFiles + 1)
+                .arg(m_totalFiles)
+                .arg(QFileInfo(filePath).fileName()));
 }
 
 void MainWindow::onExtractionFinished(const QString &filePath, const QByteArray &data)
 {
-    // Show first 500 characters of content
-    const QString preview = QString::fromUtf8(data);
-    log(tr("Content preview:\n%1").arg(preview));
+    saveExtractionResult(filePath, data);
 
-    log(tr("Extraction finished: %1 (size: %2 bytes)").arg(filePath).arg(data.size()));
+    m_successCount++;
+    m_processedFiles++;
+    processNextFile();
 }
 
 void MainWindow::onExtractionFailed(const QString &filePath, const QString &error)
 {
-    log(tr("Extraction failed: %1 - %2").arg(filePath).arg(error));
+    saveExtractionError(filePath, error);
+
+    m_failedCount++;
+    m_processedFiles++;
+    processNextFile();
 }
 
 void MainWindow::onBatchFinished()
 {
-    log(tr("Batch extraction completed"));
+    // Called when batch is done, we process files sequentially
 }
 
 void MainWindow::onProcessCrashed()
 {
     log(tr("Extractor process crashed!"));
     m_extractorRunning = false;
+
+    // Record remaining files as failed
+    while (!m_pendingFiles.isEmpty()) {
+        QString file = m_pendingFiles.dequeue();
+        saveExtractionError(file, tr("Extractor crashed"));
+        m_failedCount++;
+        m_processedFiles++;
+    }
+
     updateButtonStates();
 }
 
