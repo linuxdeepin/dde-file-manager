@@ -107,7 +107,8 @@
 				"js",
 				"sql",
 				"uof",
-				"ofd"
+				"ofd",
+				"pot"
 			],
 			"serial": 0,
 			"flags": [],
