@@ -132,22 +132,17 @@
 		},
 		"supportedOcrImageExtensions": {
 			"value": [
-				"ani",
 				"bmp",
 				"jpe",
 				"jpeg",
 				"jpg",
-				"pcx",
 				"png",
 				"psd",
-				"tga",
 				"tif",
 				"tiff",
 				"webp",
-				"wmf",
 				"heic",
-				"heif",
-				"raw"
+				"heif"
 			],
 			"serial": 0,
 			"flags": [],
