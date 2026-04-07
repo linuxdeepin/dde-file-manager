@@ -128,6 +128,28 @@ bool isHtmlStyleDocument(const QString &filePath)
     return kHtmlStyleExtensions.contains(fileInfo.suffix().toLower());
 }
 
+QString cleanExtractedText(const QString &text)
+{
+    if (text.isEmpty())
+        return QString();
+
+    QStringList cleanedLines;
+    const QStringList lines = text.split('\n');
+
+    for (const QString &line : lines) {
+        const QString trimmed = line.trimmed();
+        // Remove all blank lines - they have no value for full-text indexing
+        if (trimmed.isEmpty())
+            continue;
+        cleanedLines.append(trimmed);
+    }
+
+    if (cleanedLines.isEmpty())
+        return QString();
+
+    return cleanedLines.join('\n');
+}
+
 std::optional<QString> extractHtmlContent(const QString &filePath, size_t maxBytes)
 {
     QFile file(filePath);
@@ -152,19 +174,20 @@ std::optional<QString> extractHtmlContent(const QString &filePath, size_t maxByt
 
     QString fromEncoding = getFileEncoding(filePath);
 
-    auto convertedContent = convertToUtf8(htmlBytes, fromEncoding);
+    const auto &convertedContent = convertToUtf8(htmlBytes, fromEncoding);
     if (!convertedContent) {
         return std::nullopt;
     }
 
     QTextDocument doc;
     doc.setHtml(convertedContent.value());
-    QString plainText = doc.toPlainText();
+    const QString plainText = doc.toPlainText();
 
-    if (plainText.trimmed().isEmpty())
+    const QString cleanedText = cleanExtractedText(plainText);
+    if (cleanedText.isEmpty())
         return std::nullopt;
 
-    return plainText;
+    return cleanedText;
 }
 
 }   // namespace
@@ -198,10 +221,13 @@ std::optional<QByteArray> TextExtractor::extract(const QString &filePath, size_t
         }
 
         QByteArray contentBytes(stdContents.c_str(), stdContents.length());
-        auto result = convertToUtf8(contentBytes, fromEncoding);
+        const auto &result = convertToUtf8(contentBytes, fromEncoding);
 
         if (result) {
-            return result->toUtf8();
+            const QString cleanedText = cleanExtractedText(result.value());
+            if (cleanedText.isEmpty())
+                return std::nullopt;
+            return cleanedText.toUtf8();
         }
 
         return std::nullopt;
