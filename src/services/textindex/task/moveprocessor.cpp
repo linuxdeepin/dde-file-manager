@@ -7,12 +7,16 @@
 #include "utils/indexutility.h"
 #include "utils/textindexconfig.h"
 
+#include <dfm-search/field_names.h>
+
 #include <QFileInfo>
 #include <QDateTime>
 #include <QLoggingCategory>
 
 SERVICETEXTINDEX_USE_NAMESPACE
 using namespace Lucene;
+DFM_SEARCH_USE_NS
+using namespace DFMSEARCH::LuceneFieldNames;
 
 // FileMoveProcessor implementation
 FileMoveProcessor::FileMoveProcessor(const SearcherPtr &searcher, const IndexWriterPtr &writer)
@@ -27,7 +31,7 @@ bool FileMoveProcessor::processFileMove(const QString &fromPath, const QString &
         fmInfo() << "[FileMoveProcessor::processFileMove] Processing file move:" << fromPath << "->" << toPath;
 
         TermQueryPtr pathQuery = newLucene<TermQuery>(
-                newLucene<Term>(L"path", fromPath.toStdWString()));
+                newLucene<Term>(Content::kPath, fromPath.toStdWString()));
 
         TopDocsPtr searchResult = m_searcher->search(pathQuery, 1);
         if (!searchResult || searchResult->totalHits == 0) {
@@ -63,25 +67,25 @@ bool FileMoveProcessor::processFileMove(const QString &fromPath, const QString &
         }
 
         // Create new document with updated path and ancestor paths
-        DocumentPtr newDoc = DocUtils::copyFieldsExcept(doc, { L"path", L"ancestor_paths" });
+        DocumentPtr newDoc = DocUtils::copyFieldsExcept(doc, { Content::kPath, Content::kAncestorPaths });
         if (!newDoc) {
             fmWarning() << "[FileMoveProcessor::processFileMove] Failed to copy document fields for:" << fromPath;
             return false;
         }
 
         // Add new path field
-        newDoc->add(newLucene<Field>(L"path", toPath.toStdWString(),
+        newDoc->add(newLucene<Field>(Content::kPath, toPath.toStdWString(),
                                      Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
 
         // Add new ancestor paths
         const QStringList ancestorPaths = PathCalculator::extractAncestorPaths(toPath);
         for (const QString &ancestorPath : ancestorPaths) {
-            newDoc->add(newLucene<Field>(L"ancestor_paths", ancestorPath.toStdWString(),
+            newDoc->add(newLucene<Field>(Content::kAncestorPaths, ancestorPath.toStdWString(),
                                          Field::STORE_NO, Field::INDEX_NOT_ANALYZED));
         }
 
         // Update document in index
-        TermPtr oldTerm = newLucene<Term>(L"path", fromPath.toStdWString());
+        TermPtr oldTerm = newLucene<Term>(Content::kPath, fromPath.toStdWString());
         m_writer->updateDocument(oldTerm, newDoc);
 
         // Update processed paths cache
@@ -113,7 +117,7 @@ bool FileMoveProcessor::isFileInIndex(const QString &path)
 
         // Then check in the actual index
         TermQueryPtr pathQuery = newLucene<TermQuery>(
-                newLucene<Term>(L"path", path.toStdWString()));
+                newLucene<Term>(Content::kPath, path.toStdWString()));
 
         TopDocsPtr searchResult = m_searcher->search(pathQuery, 1);
         bool exists = searchResult && searchResult->totalHits > 0;
@@ -140,7 +144,7 @@ bool FileMoveProcessor::processContentUpdate(const QString &filePath)
         DocumentPtr newDoc = newLucene<Document>();
 
         // file path
-        newDoc->add(newLucene<Field>(L"path", filePath.toStdWString(),
+        newDoc->add(newLucene<Field>(Content::kPath, filePath.toStdWString(),
                                      Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
 
         // file last modified time
@@ -156,20 +160,20 @@ bool FileMoveProcessor::processContentUpdate(const QString &filePath)
                                      Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
 
         // file name
-        newDoc->add(newLucene<Field>(L"filename", fileInfo.fileName().toStdWString(),
+        newDoc->add(newLucene<Field>(Content::kFilename, fileInfo.fileName().toStdWString(),
                                      Field::STORE_YES, Field::INDEX_ANALYZED));
 
         // hidden tag
         QString hiddenTag = "N";
         if (DFMSEARCH::Global::isHiddenPathOrInHiddenDir(fileInfo.absoluteFilePath()))
             hiddenTag = "Y";
-        newDoc->add(newLucene<Field>(L"is_hidden", hiddenTag.toStdWString(),
+        newDoc->add(newLucene<Field>(Content::kIsHidden, hiddenTag.toStdWString(),
                                      Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
 
         // ancestor paths
         const QStringList ancestorPaths = PathCalculator::extractAncestorPaths(filePath);
         for (const QString &ancestorPath : ancestorPaths) {
-            newDoc->add(newLucene<Field>(L"ancestor_paths", ancestorPath.toStdWString(),
+            newDoc->add(newLucene<Field>(Content::kAncestorPaths, ancestorPath.toStdWString(),
                                          Field::STORE_NO, Field::INDEX_NOT_ANALYZED));
         }
 
@@ -181,7 +185,7 @@ bool FileMoveProcessor::processContentUpdate(const QString &filePath)
         const auto &contentOpt = DocUtils::extractFileContent(filePath, maxBytes);
         if (contentOpt) {
             const QString &contents = contentOpt.value().trimmed();
-            newDoc->add(newLucene<Field>(L"contents", contents.toStdWString(),
+            newDoc->add(newLucene<Field>(Content::kContents, contents.toStdWString(),
                                          Field::STORE_YES, Field::INDEX_ANALYZED));
             fmDebug() << "[FileMoveProcessor::processContentUpdate] Successfully extracted content from file:"
                       << filePath << "content length:" << contents.length();
@@ -190,7 +194,7 @@ bool FileMoveProcessor::processContentUpdate(const QString &filePath)
         }
 
         // Update the document in index
-        TermPtr pathTerm = newLucene<Term>(L"path", filePath.toStdWString());
+        TermPtr pathTerm = newLucene<Term>(Content::kPath, filePath.toStdWString());
         m_writer->updateDocument(pathTerm, newDoc);
 
         fmInfo() << "[FileMoveProcessor::processContentUpdate] Successfully updated file content in index:" << filePath;
@@ -240,7 +244,7 @@ bool DirectoryMoveProcessor::processDirectoryMove(const QString &fromPath, const
         // 使用 TermQuery 在 ancestor_paths 字段上进行精确匹配
         // ancestor_paths 存储的目录路径不带尾部斜杠
         TermQueryPtr ancestorQuery = newLucene<TermQuery>(
-                newLucene<Term>(L"ancestor_paths", fromPath.toStdWString()));
+                newLucene<Term>(Content::kAncestorPaths, fromPath.toStdWString()));
 
         TopDocsPtr allDocs = m_searcher->search(ancestorQuery, m_reader->maxDoc());
         if (!allDocs || allDocs->totalHits == 0) {
@@ -305,7 +309,7 @@ bool DirectoryMoveProcessor::updateSingleDocumentPath(const DocumentPtr &doc,
                                                       const QString &toPath)
 {
     try {
-        String oldPathValue = doc->get(L"path");
+        String oldPathValue = doc->get(Content::kPath);
         QString oldPath = QString::fromStdWString(oldPathValue);
 
         // Calculate new path
@@ -317,25 +321,25 @@ bool DirectoryMoveProcessor::updateSingleDocumentPath(const DocumentPtr &doc,
         }
 
         // Create new document with updated path and ancestor paths
-        DocumentPtr newDoc = DocUtils::copyFieldsExcept(doc, { L"path", L"ancestor_paths" });
+        DocumentPtr newDoc = DocUtils::copyFieldsExcept(doc, { Content::kPath, Content::kAncestorPaths });
         if (!newDoc) {
             fmWarning() << "[DirectoryMoveProcessor::updateSingleDocumentPath] Failed to copy document fields for:" << oldPath;
             return false;
         }
 
         // Add new path field
-        newDoc->add(newLucene<Field>(L"path", newPath.toStdWString(),
+        newDoc->add(newLucene<Field>(Content::kPath, newPath.toStdWString(),
                                      Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
 
         // Add new ancestor paths
         const QStringList ancestorPaths = PathCalculator::extractAncestorPaths(newPath);
         for (const QString &ancestorPath : ancestorPaths) {
-            newDoc->add(newLucene<Field>(L"ancestor_paths", ancestorPath.toStdWString(),
+            newDoc->add(newLucene<Field>(Content::kAncestorPaths, ancestorPath.toStdWString(),
                                          Field::STORE_NO, Field::INDEX_NOT_ANALYZED));
         }
 
         // Update document in index
-        TermPtr oldTerm = newLucene<Term>(L"path", oldPathValue);
+        TermPtr oldTerm = newLucene<Term>(Content::kPath, oldPathValue);
         m_writer->updateDocument(oldTerm, newDoc);
 
         fmDebug() << "[DirectoryMoveProcessor::updateSingleDocumentPath] Successfully updated document path:"
