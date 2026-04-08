@@ -14,6 +14,7 @@
 
 #include <dfm-search/searchfactory.h>
 #include <dfm-search/filenamesearchapi.h>
+#include <dfm-search/field_names.h>
 
 #include <fulltext/chineseanalyzer.h>
 
@@ -30,6 +31,7 @@ SERVICETEXTINDEX_USE_NAMESPACE
 
 using namespace Lucene;
 DFM_SEARCH_USE_NS
+using namespace DFMSEARCH::LuceneFieldNames;
 
 namespace {
 
@@ -118,13 +120,13 @@ DocumentPtr createFileDocument(const QString &file)
         DocumentPtr doc = newLucene<Document>();
 
         // file path
-        doc->add(newLucene<Field>(L"path", file.toStdWString(),
+        doc->add(newLucene<Field>(Content::kPath, file.toStdWString(),
                                   Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
 
         // ancestor paths
         const QStringList ancestorPaths = PathCalculator::extractAncestorPaths(file);
         for (const QString &ancestorPath : ancestorPaths) {
-            doc->add(newLucene<Field>(L"ancestor_paths", ancestorPath.toStdWString(),
+            doc->add(newLucene<Field>(Content::kAncestorPaths, ancestorPath.toStdWString(),
                                       Field::STORE_NO, Field::INDEX_NOT_ANALYZED));
         }
 
@@ -136,14 +138,14 @@ DocumentPtr createFileDocument(const QString &file)
                                   Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
 
         // file name
-        doc->add(newLucene<Field>(L"filename", fileInfo.fileName().toStdWString(),
+        doc->add(newLucene<Field>(Content::kFilename, fileInfo.fileName().toStdWString(),
                                   Field::STORE_YES, Field::INDEX_ANALYZED));
 
         // hidden tag
         QString hiddenTag = "N";
         if (DFMSEARCH::Global::isHiddenPathOrInHiddenDir(fileInfo.absoluteFilePath()))
             hiddenTag = "Y";
-        doc->add(newLucene<Field>(L"is_hidden", hiddenTag.toStdWString(),
+        doc->add(newLucene<Field>(Content::kIsHidden, hiddenTag.toStdWString(),
                                   Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
 
         // file contents
@@ -160,7 +162,7 @@ DocumentPtr createFileDocument(const QString &file)
 
         const QString &contents = contentOpt.value().trimmed();
 
-        doc->add(newLucene<Field>(L"contents", contents.toStdWString(),
+        doc->add(newLucene<Field>(Content::kContents, contents.toStdWString(),
                                   Field::STORE_YES, Field::INDEX_ANALYZED));
 
         return doc;
@@ -177,7 +179,7 @@ DocumentPtr createFileDocument(const QString &file)
     // 发生异常时返回一个空的基本文档，防止调用方受到影响
     try {
         DocumentPtr basicDoc = newLucene<Document>();
-        basicDoc->add(newLucene<Field>(L"path", file.toStdWString(),
+        basicDoc->add(newLucene<Field>(Content::kPath, file.toStdWString(),
                                        Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
         fmDebug() << "[createFileDocument] Created basic document without content for:" << file;
         return basicDoc;
@@ -191,7 +193,7 @@ bool checkNeedUpdate(const QString &file, const IndexReaderPtr &reader, bool *ne
 {
     try {
         SearcherPtr searcher = newLucene<IndexSearcher>(reader);
-        TermQueryPtr query = newLucene<TermQuery>(newLucene<Term>(L"path", file.toStdWString()));
+        TermQueryPtr query = newLucene<TermQuery>(newLucene<Term>(Content::kPath, file.toStdWString()));
 
         TopDocsPtr topDocs = searcher->search(query, 1);
         int32_t numTotalHits = topDocs->totalHits;
@@ -283,7 +285,7 @@ void updateFile(const QString &path, const IndexReaderPtr &reader,
                 writer->addDocument(doc);
             } else {
                 fmDebug() << "[updateFile] Updating existing file:" << path;
-                TermPtr term = newLucene<Term>(L"path", path.toStdWString());
+                TermPtr term = newLucene<Term>(Content::kPath, path.toStdWString());
                 writer->updateDocument(term, doc);
             }
         }
@@ -308,7 +310,7 @@ void removeFile(const QString &path, const IndexWriterPtr &writer, ProgressRepor
 #ifdef QT_DEBUG
         fmDebug() << "Remove [" << path << "]";
 #endif
-        TermPtr term = newLucene<Term>(L"path", path.toStdWString());
+        TermPtr term = newLucene<Term>(Content::kPath, path.toStdWString());
         writer->deleteDocuments(term);
         if (reporter) {
             reporter->increment();
@@ -340,7 +342,7 @@ bool cleanupIndexs(IndexReaderPtr reader, IndexWriterPtr writer, TaskState &runn
         }
 
         // 获取所有文档
-        TermPtr allDocsTerm = newLucene<Term>(L"path", L"*");
+        TermPtr allDocsTerm = newLucene<Term>(Content::kPath, L"*");
         WildcardQueryPtr allDocsQuery = newLucene<WildcardQuery>(allDocsTerm);
         TopDocsPtr allDocs = searcher->search(allDocsQuery, reader->maxDoc());
         if (!allDocs) {
@@ -372,7 +374,7 @@ bool cleanupIndexs(IndexReaderPtr reader, IndexWriterPtr writer, TaskState &runn
                 return false;
             }
 
-            String pathValue = doc->get(L"path");
+            String pathValue = doc->get(Content::kPath);
             if (pathValue.empty()) {
                 fmWarning() << "[cleanupIndexs] Document at index" << i << "has empty path during index cleanup";
                 return false;
@@ -412,7 +414,7 @@ bool cleanupIndexs(IndexReaderPtr reader, IndexWriterPtr writer, TaskState &runn
             //  Delete if necessary
             if (shouldDelete) {
                 try {
-                    TermPtr term = newLucene<Term>(L"path", pathValue);   // Create Term only when needed
+                    TermPtr term = newLucene<Term>(Content::kPath, pathValue);   // Create Term only when needed
                     if (term) {
                         writer->deleteDocuments(term);
                         removedCount++;
@@ -464,7 +466,7 @@ void removeDirectoryIndex(const QString &dirPath, const IndexWriterPtr &writer,
         // ancestor_paths 字段存储了文件的所有祖先路径（不带尾部斜杠）
         // 利用此字段可以避免 PrefixQuery 的字典树扫描，显著提升性能
         TermQueryPtr ancestorQuery = newLucene<TermQuery>(
-                newLucene<Term>(L"ancestor_paths", dirPath.toStdWString()));
+                newLucene<Term>(Content::kAncestorPaths, dirPath.toStdWString()));
 
         TopDocsPtr allDocs = searcher->search(ancestorQuery, reader->maxDoc());
 
@@ -903,7 +905,7 @@ TaskHandler TaskHandlers::RemoveFileListHandler(const QStringList &fileList)
 
                 // 通过 ancestor_paths 查询判断是否为目录
                 TermQueryPtr ancestorQuery = newLucene<TermQuery>(
-                        newLucene<Term>(L"ancestor_paths", itemPath.toStdWString()));
+                        newLucene<Term>(Content::kAncestorPaths, itemPath.toStdWString()));
                 TopDocsPtr result = searcher->search(ancestorQuery, 1);
 
                 if (result->totalHits > 0) {
