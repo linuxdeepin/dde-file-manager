@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "mainwindow.h"
+#include "config.h"
 
 #include <DFileDialog>
 #include <DLog>
@@ -137,7 +138,7 @@ void MainWindow::setupUI()
     connect(m_extractBtn, &DPushButton::clicked, this, &MainWindow::onExtractDirectory);
 
     // Set default paths
-    QString defaultExtractorPath = QStandardPaths::findExecutable("dde-file-manager-extractor");
+    QString defaultExtractorPath(DFM_EXTRACTOR_TOOL);
     if (!defaultExtractorPath.isEmpty()) {
         m_extractorPathEdit->setText(defaultExtractorPath);
     }

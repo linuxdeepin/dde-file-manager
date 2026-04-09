@@ -6,9 +6,8 @@
 #define TEXTINDEXDBUS_P_H
 
 #include "service_textindex_global.h"
-#include "task/taskmanager.h"
+#include "core/indexruntime.h"
 #include "textindexadaptor.h"
-#include "fsmonitor/fseventcontroller.h"
 #include "utils/textindexconfig.h"
 
 #include <FileUtils.h>
@@ -33,8 +32,7 @@ public:
     explicit TextIndexDBusPrivate(TextIndexDBus *qq)
         : q(qq),
           adapter(new TextIndexAdaptor(qq)),
-          taskManager(new TaskManager(qq)),
-          fsEventController(new FSEventController(qq))
+          runtime(new IndexRuntime(IndexProfile::content(), qq))
     {
         initialize();
         initConnect();
@@ -54,8 +52,7 @@ private:
 private:
     TextIndexDBus *q { nullptr };
     TextIndexAdaptor *adapter { nullptr };
-    TaskManager *taskManager { nullptr };
-    FSEventController *fsEventController { nullptr };
+    IndexRuntime *runtime { nullptr };
     
     // Store current supported file extensions for comparison
     QStringList m_currentSupportedExtensions;

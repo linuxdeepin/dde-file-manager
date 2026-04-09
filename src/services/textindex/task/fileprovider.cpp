@@ -20,8 +20,9 @@
 
 SERVICETEXTINDEX_USE_NAMESPACE
 
-FileSystemProvider::FileSystemProvider(const QString &rootPath)
-    : m_rootPath(rootPath)
+FileSystemProvider::FileSystemProvider(IndexProfile profile, const QString &rootPath)
+    : m_profile(std::move(profile)),
+      m_rootPath(rootPath)
 {
     fmInfo() << "[FileSystemProvider] Initialized with root path:" << rootPath;
 }
@@ -53,7 +54,7 @@ void FileSystemProvider::traverse(TaskState &state, const FileHandler &handler)
         }
 
         // 检查是否是系统目录或绑定目录
-        if (!IndexUtility::isDefaultIndexedDirectory(currentPath)) {
+        if (!m_profile.isPathInScope(currentPath)) {
             if (bindPathTable.contains(currentPath)) {
                 fmDebug() << "[FileSystemProvider::traverse] Skipping system/bind directory:" << currentPath;
                 continue;
@@ -106,12 +107,7 @@ void FileSystemProvider::traverse(TaskState &state, const FileHandler &handler)
             if (S_ISREG(st.st_mode)) {
                 QString fileName = QString::fromUtf8(entry->d_name);
                 // 早期扩展名过滤 - 避免昂贵的路径验证
-                if (!IndexTraverseUtils::isSupportedFileExtension(fileName)) {
-                    continue;
-                }
-
-                // 只有通过扩展名检查的文件才进行昂贵的路径验证
-                if (IndexTraverseUtils::isValidFile(fullPath)) {
+                if (IndexTraverseUtils::isValidFile(fullPath) && m_profile.isCandidateFile(fullPath)) {
                     handler(fullPath);
                     processedFiles++;
                 }
@@ -157,8 +153,9 @@ qint64 DirectFileListProvider::totalCount()
     return m_fileList.count();
 }
 
-MixedPathListProvider::MixedPathListProvider(const QStringList &pathList)
-    : m_pathList(pathList)
+MixedPathListProvider::MixedPathListProvider(IndexProfile profile, const QStringList &pathList)
+    : m_profile(std::move(profile)),
+      m_pathList(pathList)
 {
     fmInfo() << "[MixedPathListProvider] Initialized with" << pathList.size() << "paths";
 }
@@ -192,15 +189,9 @@ void MixedPathListProvider::traverse(TaskState &state, const FileHandler &handle
         }
 
         if (fileInfo.isFile()) {
-            // 早期扩展名过滤 - 避免昂贵的路径验证
-            if (!IndexTraverseUtils::isSupportedFileExtension(fileInfo.fileName())) {
-                fmDebug() << "[MixedPathListProvider::traverse] Skipping file with unsupported extension:" << path;
-                continue;
-            }
-
-            // 处理文件 - 只有通过扩展名检查的文件才进行昂贵的路径验证
             if (IndexTraverseUtils::isValidFile(path)
-                && IndexUtility::isPathInContentIndexDirectory(path)) {
+                && m_profile.isPathInScope(path)
+                && m_profile.isCandidateFile(path)) {
                 // 检查是否已经处理过这个文件
                 if (!processedFiles.contains(path)) {
                     handler(path);
@@ -303,18 +294,14 @@ void MixedPathListProvider::traverse(TaskState &state, const FileHandler &handle
 
             // 对于普通文件，早期扩展名过滤
             if (S_ISREG(st.st_mode)) {
-                // 早期扩展名检查 - 如果扩展名不支持，直接跳过
-                if (!IndexTraverseUtils::isSupportedFileExtension(entryName)) {
-                    skippedFilesByExtension++;
-                    continue;   // 跳过不支持的文件扩展名，避免后续昂贵的路径验证操作
-                }
-
-                // 只有通过扩展名检查的文件才进行昂贵的路径验证
                 if (IndexTraverseUtils::isValidFile(fullPath)
-                    && IndexUtility::isPathInContentIndexDirectory(fullPath)) {
+                    && m_profile.isPathInScope(fullPath)
+                    && m_profile.isCandidateFile(fullPath)) {
                     handler(fullPath);
                     processedFiles.insert(fullPath);
                     additionalFiles++;
+                } else {
+                    skippedFilesByExtension++;
                 }
             }
             // 对于目录，加入队列

@@ -21,11 +21,19 @@ function(dfm_setup_textindex_dependencies target_name)
     # Apply default service configuration first (this provides DFM6::base, Qt6::Core, Qt6::DBus)
     dfm_apply_default_service_config(${target_name})
     
+    if(EXISTS "${DFM_APP_SOURCE_DIR}/config.h.in")
+        configure_file(
+            "${DFM_APP_SOURCE_DIR}/config.h.in"
+            "${CMAKE_CURRENT_BINARY_DIR}/config.h"
+        )
+    endif()
+
     # Add textindex-specific dependencies
     target_link_libraries(${target_name} PRIVATE
         Qt6::Gui
         Dtk6::Core
         dfm6-search
+        dde-file-manager-extractor-lib
         ${GLIB_LIBRARIES}
         PkgConfig::Lucene
         PkgConfig::Docparser
@@ -62,6 +70,7 @@ function(dfm_setup_textindex_dbus_interfaces target_name)
     
     # Define the DBus interface file path using DFM_ASSETS_DIR
     set(DBUS_INTERFACE_FILE "${DFM_ASSETS_DIR}/dbus/org.deepin.Filemanager.TextIndex.xml")
+    set(OCR_DBUS_INTERFACE_FILE "${DFM_ASSETS_DIR}/dbus/org.deepin.Filemanager.OcrIndex.xml")
     
     # Check if the DBus interface file exists
     if(EXISTS "${DBUS_INTERFACE_FILE}")
@@ -84,6 +93,20 @@ function(dfm_setup_textindex_dbus_interfaces target_name)
         endif()
     else()
         message(WARNING "DFM: TextIndex DBus interface file not found: ${DBUS_INTERFACE_FILE}")
+    endif()
+
+    if(EXISTS "${OCR_DBUS_INTERFACE_FILE}")
+        message(STATUS "DFM: Found OcrIndex DBus interface file: ${OCR_DBUS_INTERFACE_FILE}")
+
+        qt6_add_dbus_adaptor(OCR_ADAPTOR_SOURCES ${OCR_DBUS_INTERFACE_FILE}
+            ocrindexdbus.h OcrIndexDBus)
+
+        if(OCR_ADAPTOR_SOURCES)
+            target_sources(${target_name} PRIVATE ${OCR_ADAPTOR_SOURCES})
+            message(STATUS "DFM: Added OcrIndex DBus adaptor sources to target")
+        endif()
+    else()
+        message(WARNING "DFM: OcrIndex DBus interface file not found: ${OCR_DBUS_INTERFACE_FILE}")
     endif()
 endfunction()
 

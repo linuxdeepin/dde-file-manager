@@ -6,6 +6,7 @@
 #define FILEPROVIDER_H
 
 #include "service_textindex_global.h"
+#include "profile/indexprofile.h"
 #include "utils/taskstate.h"
 
 #include <dfm-search/searchresult.h>
@@ -35,11 +36,12 @@ public:
 class FileSystemProvider : public FileProvider
 {
 public:
-    explicit FileSystemProvider(const QString &rootPath);
+    FileSystemProvider(IndexProfile profile, const QString &rootPath);
     void traverse(TaskState &state, const FileHandler &handler) override;
     QString name() override { return "FileSystemProvider"; }
 
 private:
+    IndexProfile m_profile;
     QString m_rootPath;
 };
 
@@ -60,11 +62,12 @@ private:
 class MixedPathListProvider : public FileProvider
 {
 public:
-    explicit MixedPathListProvider(const QStringList &pathList);
+    MixedPathListProvider(IndexProfile profile, const QStringList &pathList);
     void traverse(TaskState &state, const FileHandler &handler) override;
     QString name() override { return "MixedPathListProvider"; }
 
 private:
+    IndexProfile m_profile;
     QStringList m_pathList;
 };
 

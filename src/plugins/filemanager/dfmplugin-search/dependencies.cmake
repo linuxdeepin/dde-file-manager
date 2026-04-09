@@ -52,23 +52,27 @@ endfunction()
 function(dfm_setup_search_dbus_interfaces target_name)
     message(STATUS "DFM: Setting up search DBus interfaces for: ${target_name}")
     
-    # Define the DBus interface file path using DFM_ASSETS_DIR for proper standalone/integrated mode support
-    set(DBUS_INTERFACE_FILE "${DFM_ASSETS_DIR}/dbus/org.deepin.Filemanager.TextIndex.xml")
-    
-    # Check if the DBus interface file exists
-    if(EXISTS "${DBUS_INTERFACE_FILE}")
-        message(STATUS "DFM: Found TextIndex DBus interface file: ${DBUS_INTERFACE_FILE}")
-        
-        # Generate DBus interface
-        qt_add_dbus_interface(INTERFACE_SOURCES ${DBUS_INTERFACE_FILE} textindex_interface)
-        
-        # Add generated sources to target
-        if(INTERFACE_SOURCES)
-            target_sources(${target_name} PRIVATE ${INTERFACE_SOURCES})
-            message(STATUS "DFM: Added TextIndex DBus interface sources to target")
-        endif()
+    set(TEXTINDEX_DBUS_INTERFACE_FILE "${DFM_ASSETS_DIR}/dbus/org.deepin.Filemanager.TextIndex.xml")
+    set(OCRINDEX_DBUS_INTERFACE_FILE "${DFM_ASSETS_DIR}/dbus/org.deepin.Filemanager.OcrIndex.xml")
+    set(INTERFACE_SOURCES)
+
+    if(EXISTS "${TEXTINDEX_DBUS_INTERFACE_FILE}")
+        message(STATUS "DFM: Found TextIndex DBus interface file: ${TEXTINDEX_DBUS_INTERFACE_FILE}")
+        qt_add_dbus_interface(INTERFACE_SOURCES ${TEXTINDEX_DBUS_INTERFACE_FILE} textindex_interface)
     else()
-        message(WARNING "DFM: TextIndex DBus interface file not found: ${DBUS_INTERFACE_FILE}")
+        message(WARNING "DFM: TextIndex DBus interface file not found: ${TEXTINDEX_DBUS_INTERFACE_FILE}")
+    endif()
+
+    if(EXISTS "${OCRINDEX_DBUS_INTERFACE_FILE}")
+        message(STATUS "DFM: Found OcrIndex DBus interface file: ${OCRINDEX_DBUS_INTERFACE_FILE}")
+        qt_add_dbus_interface(INTERFACE_SOURCES ${OCRINDEX_DBUS_INTERFACE_FILE} ocrindex_interface)
+    else()
+        message(WARNING "DFM: OcrIndex DBus interface file not found: ${OCRINDEX_DBUS_INTERFACE_FILE}")
+    endif()
+
+    if(INTERFACE_SOURCES)
+        target_sources(${target_name} PRIVATE ${INTERFACE_SOURCES})
+        message(STATUS "DFM: Added search DBus interface sources to target")
     endif()
 endfunction()
 

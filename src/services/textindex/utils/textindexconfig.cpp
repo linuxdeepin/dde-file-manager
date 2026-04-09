@@ -94,9 +94,9 @@ void TextIndexConfig::loadAllConfigs()
                                               .toLongLong();
 
     // Max Index File Size MB
-    m_maxIndexFileSizeMB = m_dconfigManager->value(
+    m_maxIndexTextFileSizeMB = m_dconfigManager->value(
                                                    Defines::DConf::kTextIndexSchema,
-                                                   Defines::DConf::kMaxIndexFileSizeMB,
+                                                   Defines::DConf::kMaxIndexTextFileSizeMB,
                                                    DEFAULT_MAX_INDEX_FILE_SIZE_MB)
                                    .toInt();
 
@@ -122,11 +122,32 @@ void TextIndexConfig::loadAllConfigs()
         "css", "yaml", "ini", "bat", "js", "sql",
         "uof", "ofd"
     };
-    m_supportedFileExtensions = m_dconfigManager->value(
+    m_supportedTextFileExtensions = m_dconfigManager->value(
                                                         Defines::DConf::kTextIndexSchema,
-                                                        Defines::DConf::kSupportedFileExtensions,
+                                                        Defines::DConf::kSupportedTextFileExtensions,
                                                         QVariant::fromValue(defaultSupportedExtensions))   // Pass QVariant holding QStringList
                                         .toStringList();
+
+    const QStringList defaultSupportedOcrImageExtensions = {
+        "ani", "bmp", "jpe", "jpeg", "jpg", "pcx", "png", "psd",
+        "tga", "tif", "tiff", "webp", "wmf", "heic", "heif", "raw"
+    };
+    m_supportedOcrImageExtensions = m_dconfigManager->value(
+                                                                Defines::DConf::kTextIndexSchema,
+                                                                QStringLiteral("supportedOcrImageExtensions"),
+                                                                QVariant::fromValue(defaultSupportedOcrImageExtensions))
+                                            .toStringList();
+
+    m_maxOcrImageSizeMB = m_dconfigManager->value(
+                                                  Defines::DConf::kTextIndexSchema,
+                                                  QStringLiteral("maxOcrImageSizeMB"),
+                                                  DEFAULT_MAX_OCR_IMAGE_SIZE_MB)
+                                  .toInt();
+    if (m_maxOcrImageSizeMB <= 0 || m_maxOcrImageSizeMB > 1024) {
+        fmWarning() << "TextIndexConfig: Invalid maxOcrImageSizeMB value:" << m_maxOcrImageSizeMB
+                    << ", using default:" << DEFAULT_MAX_OCR_IMAGE_SIZE_MB;
+        m_maxOcrImageSizeMB = DEFAULT_MAX_OCR_IMAGE_SIZE_MB;
+    }
 
     // Index Hidden Files
     m_indexHiddenFiles = m_dconfigManager->value(
@@ -214,10 +235,10 @@ qint64 TextIndexConfig::inotifyResourceCleanupDelayMs() const
     return m_inotifyResourceCleanupDelayMs;
 }
 
-int TextIndexConfig::maxIndexFileSizeMB() const
+int TextIndexConfig::maxIndexTextFileSizeMB() const
 {
     QMutexLocker locker(&m_mutex);
-    return m_maxIndexFileSizeMB;
+    return m_maxIndexTextFileSizeMB;
 }
 
 int TextIndexConfig::maxIndexFileTruncationSizeMB() const
@@ -226,10 +247,22 @@ int TextIndexConfig::maxIndexFileTruncationSizeMB() const
     return m_maxIndexFileTruncationSizeMB;
 }
 
-QStringList TextIndexConfig::supportedFileExtensions() const
+QStringList TextIndexConfig::supportedTextFileExtensions() const
 {
     QMutexLocker locker(&m_mutex);
-    return m_supportedFileExtensions;
+    return m_supportedTextFileExtensions;
+}
+
+QStringList TextIndexConfig::supportedOcrImageExtensions() const
+{
+    QMutexLocker locker(&m_mutex);
+    return m_supportedOcrImageExtensions;
+}
+
+int TextIndexConfig::maxOcrImageSizeMB() const
+{
+    QMutexLocker locker(&m_mutex);
+    return m_maxOcrImageSizeMB;
 }
 
 bool TextIndexConfig::indexHiddenFiles() const

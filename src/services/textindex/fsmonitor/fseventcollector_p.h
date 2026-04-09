@@ -17,7 +17,7 @@ SERVICETEXTINDEX_BEGIN_NAMESPACE
 class FSEventCollectorPrivate
 {
 public:
-    FSEventCollectorPrivate(FSEventCollector *qq, FSMonitor &monitor);
+    FSEventCollectorPrivate(FSEventCollector *qq, FSEventCollector::PathPredicate pathPredicate, FSMonitor &monitor);
     ~FSEventCollectorPrivate();
 
     // Initialize the collector with monitor root path
@@ -73,8 +73,8 @@ public:
     // Remove entries covered by deleted directories
     void removeEntriesCoveredByDirectories();
 
-    // Check if a file should be indexed based on its extension
-    bool shouldIndexFile(const QString &path) const;
+    // Check if a path should be tracked by the current runtime predicate.
+    bool shouldTrackPath(const QString &path) const;
 
     // Normalize path for consistent handling
     QString normalizePath(const QString &dirPath, const QString &fileName) const;
@@ -87,6 +87,7 @@ public:
 
     // The FSMonitor reference (no longer a singleton)
     FSMonitor &fsMonitor;
+    FSEventCollector::PathPredicate pathPredicate;
 
     // Collection timer
     QTimer collectionTimer;
@@ -102,6 +103,7 @@ public:
 
     // Active state
     bool active { false };
+    bool monitoringLeaseAcquired { false };
 
     QSet<QString> createdFilesList;
     QSet<QString> deletedFilesList;

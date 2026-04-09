@@ -5,15 +5,55 @@
 #include "fseventcollector_p.h"
 #include "utils/textindexconfig.h"
 
+#include <algorithm>
+
 #include <QDir>
 #include <QFileInfo>
 
-DFMBASE_USE_NAMESPACE
-
 SERVICETEXTINDEX_BEGIN_NAMESPACE
 
-FSEventCollectorPrivate::FSEventCollectorPrivate(FSEventCollector *qq, FSMonitor &monitor)
-    : q_ptr(qq), fsMonitor(monitor)
+namespace {
+
+struct SharedMonitorState
+{
+    QStringList rootPaths;
+    bool initialized { false };
+    int activeCollectors { 0 };
+};
+
+SharedMonitorState &sharedMonitorState()
+{
+    static SharedMonitorState state;
+    return state;
+}
+
+QStringList normalizedRootPaths(const QStringList &paths)
+{
+    QStringList normalized;
+    normalized.reserve(paths.size());
+
+    for (const QString &path : paths) {
+        QString absPath = QDir(path).absolutePath();
+        if (QDir(absPath).exists()) {
+            normalized.append(absPath);
+        } else {
+            fmWarning() << "FSEventCollector: Root path does not exist:" << absPath;
+        }
+    }
+
+    normalized.removeDuplicates();
+    std::sort(normalized.begin(), normalized.end());
+    return normalized;
+}
+
+}   // namespace
+
+FSEventCollectorPrivate::FSEventCollectorPrivate(FSEventCollector *qq,
+                                                 FSEventCollector::PathPredicate pathPredicate,
+                                                 FSMonitor &monitor)
+    : q_ptr(qq),
+      fsMonitor(monitor),
+      pathPredicate(std::move(pathPredicate))
 {
     // Set up collection timer
     collectionTimer.setSingleShot(true);
@@ -34,29 +74,40 @@ FSEventCollectorPrivate::~FSEventCollectorPrivate()
 
 bool FSEventCollectorPrivate::init(const QStringList &rootPaths)
 {
-    // Convert all paths to absolute paths
-    this->rootPaths.clear();
-    for (const QString &path : rootPaths) {
-        QString absPath = QDir(path).absolutePath();
-        if (QDir(absPath).exists()) {
-            this->rootPaths.append(absPath);
-        } else {
-            fmWarning() << "FSEventCollector: Root path does not exist:" << absPath;
-        }
-    }
+    this->rootPaths = normalizedRootPaths(rootPaths);
 
     if (this->rootPaths.isEmpty()) {
         fmWarning() << "FSEventCollector: No valid root paths provided for initialization";
         return false;
     }
 
-    // Initialize the underlying FSMonitor with the first root path
-    // FSMonitor will handle multiple paths internally
+    auto &sharedState = sharedMonitorState();
+
+    const bool rootPathsChanged = sharedState.rootPaths != this->rootPaths;
+    const bool canReinitialize = !sharedState.initialized || (rootPathsChanged && sharedState.activeCollectors == 0);
+
+    if (!canReinitialize) {
+        // Fix: OCR/TEXT runtimes now own separate collectors, but they must reuse
+        // the same process-wide directory watcher to avoid conflicting monitor setup.
+        if (rootPathsChanged) {
+            fmWarning() << "FSEventCollector: Reusing shared FSMonitor root paths while another collector is active:"
+                        << sharedState.rootPaths;
+        } else {
+            fmInfo() << "FSEventCollector: Reusing shared FSMonitor initialization for root paths:" << this->rootPaths;
+        }
+
+        this->rootPaths = sharedState.rootPaths;
+        fsMonitor.setMaxResourceUsage(TextIndexConfig::instance().inotifyWatchesCoefficient());
+        return true;
+    }
+
     if (!fsMonitor.initialize(this->rootPaths)) {
         fmWarning() << "FSEventCollector: Failed to initialize FSMonitor with root paths";
         return false;
     }
 
+    sharedState.rootPaths = this->rootPaths;
+    sharedState.initialized = true;
     fsMonitor.setMaxResourceUsage(TextIndexConfig::instance().inotifyWatchesCoefficient());
 
     fmInfo() << "FSEventCollector: Initialized successfully with" << this->rootPaths.size() << "root paths";
@@ -112,10 +163,23 @@ bool FSEventCollectorPrivate::startCollecting()
     modifiedFilesList.clear();
     movedFilesList.clear();
 
-    // Start the FSMonitor
-    if (!fsMonitor.start()) {
-        fmWarning() << "FSEventCollector: Failed to start FSMonitor";
-        return false;
+    auto &sharedState = sharedMonitorState();
+    {
+        if (sharedState.activeCollectors == 0) {
+            if (!fsMonitor.start()) {
+                QObject::disconnect(&fsMonitor, nullptr, q_ptr, nullptr);
+                fmWarning() << "FSEventCollector: Failed to start FSMonitor";
+                return false;
+            }
+
+            fmInfo() << "FSEventCollector: Started shared FSMonitor";
+        } else {
+            fmInfo() << "FSEventCollector: Reusing active shared FSMonitor, active collectors:"
+                     << sharedState.activeCollectors;
+        }
+
+        ++sharedState.activeCollectors;
+        monitoringLeaseAcquired = true;
     }
 
     // Start collection timer
@@ -141,8 +205,26 @@ void FSEventCollectorPrivate::stopCollecting()
     // Disconnect from FSMonitor signals
     QObject::disconnect(&fsMonitor, nullptr, q_ptr, nullptr);
 
-    // Stop the FSMonitor
-    fsMonitor.stop();
+    bool shouldStopMonitor = false;
+    int remainingCollectors = 0;
+    {
+        auto &sharedState = sharedMonitorState();
+
+        if (monitoringLeaseAcquired && sharedState.activeCollectors > 0) {
+            --sharedState.activeCollectors;
+        }
+
+        remainingCollectors = sharedState.activeCollectors;
+        shouldStopMonitor = (sharedState.activeCollectors == 0);
+        monitoringLeaseAcquired = false;
+    }
+
+    if (shouldStopMonitor) {
+        fsMonitor.stop();
+        fmInfo() << "FSEventCollector: Stopped shared FSMonitor";
+    } else {
+        fmInfo() << "FSEventCollector: Released shared FSMonitor lease, remaining collectors:" << remainingCollectors;
+    }
 
     // Clear collected events
     createdFilesList.clear();
@@ -153,7 +235,7 @@ void FSEventCollectorPrivate::stopCollecting()
     fmInfo() << "FSEventCollector: Stopped event collection";
 }
 
-bool FSEventCollectorPrivate::shouldIndexFile(const QString &path) const
+bool FSEventCollectorPrivate::shouldTrackPath(const QString &path) const
 {
     if (path.isEmpty())
         return false;
@@ -166,13 +248,12 @@ bool FSEventCollectorPrivate::shouldIndexFile(const QString &path) const
     if (isDirectory(path))
         return true;
 
-    // Get file suffix for extension check
-    QFileInfo fileInfo(path);
-    QString suffix = fileInfo.suffix();
+    if (!pathPredicate) {
+        fmWarning() << "FSEventCollector: missing path predicate";
+        return false;
+    }
 
-    // Check if extension is supported for content search
-    bool supported = TextIndexConfig::instance().supportedFileExtensions().contains(suffix);
-    return supported;
+    return pathPredicate(path);
 }
 
 void FSEventCollectorPrivate::handleFileCreated(const QString &path, const QString &name)
@@ -192,7 +273,7 @@ void FSEventCollectorPrivate::handleFileCreated(const QString &path, const QStri
         deletedFilesList.remove(fullPath);
 
         // Add to created list to ensure reindexing
-        if (shouldIndexFile(fullPath)) {
+        if (shouldTrackPath(fullPath)) {
             createdFilesList.insert(fullPath);
             fmDebug() << "FSEventCollector: File recreated after deletion, adding to created list:" << fullPath;
         }
@@ -200,7 +281,7 @@ void FSEventCollectorPrivate::handleFileCreated(const QString &path, const QStri
         // Check if this file is under a directory that's already in the created list
         if (!isChildOfAnyPath(fullPath, createdFilesList)) {
             // Only insert if file has supported extension or is a directory
-            if (shouldIndexFile(fullPath)) {
+            if (shouldTrackPath(fullPath)) {
                 createdFilesList.insert(fullPath);
                 fmDebug() << "FSEventCollector: Added to created list:" << fullPath;
 
@@ -235,7 +316,7 @@ void FSEventCollectorPrivate::handleFileDeleted(const QString &path, const QStri
     if (createdFilesList.contains(fullPath)) {
         createdFilesList.remove(fullPath);
         fmDebug() << "FSEventCollector: Removed from created list due to deletion:" << fullPath;
-        if (shouldIndexFile(fullPath)) {
+        if (shouldTrackPath(fullPath)) {
             deletedFilesList.insert(fullPath);
             fmDebug() << "FSEventCollector: Added to deleted list:" << fullPath;
         }
@@ -245,7 +326,7 @@ void FSEventCollectorPrivate::handleFileDeleted(const QString &path, const QStri
             fmDebug() << "FSEventCollector: Removed from modified list due to deletion:" << fullPath;
         }
 
-        if (shouldIndexFile(fullPath)) {
+        if (shouldTrackPath(fullPath)) {
             deletedFilesList.insert(fullPath);
             fmDebug() << "FSEventCollector: Added to deleted list:" << fullPath;
         }
@@ -279,7 +360,7 @@ void FSEventCollectorPrivate::handleFileModified(const QString &path, const QStr
         // So we don't need to check for parent directories or redundant entries
         if (!isDirectory(fullPath) && !isChildOfAnyPath(fullPath, createdFilesList) && !isChildOfAnyPath(fullPath, deletedFilesList)) {
             // Only insert if file has supported extension
-            if (shouldIndexFile(fullPath) && QFileInfo(fullPath).exists()) {
+            if (shouldTrackPath(fullPath) && QFileInfo(fullPath).exists()) {
                 modifiedFilesList.insert(fullPath);
                 fmDebug() << "FSEventCollector: Added to modified list:" << fullPath;
             }
@@ -320,8 +401,8 @@ void FSEventCollectorPrivate::handleFileMoved(const QString &fromPath, const QSt
     }
 
     // Check if source and target files should be indexed based on file extensions
-    bool fromShouldIndex = shouldIndexFile(fullFromPath);
-    bool toShouldIndex = shouldIndexFile(fullToPath);
+    bool fromShouldIndex = shouldTrackPath(fullFromPath);
+    bool toShouldIndex = shouldTrackPath(fullToPath);
 
     // Scenario 1: Source file is indexed, target file is not (e.g., a.txt → a.abc)
     // This happens when renaming to unsupported extension or moving to excluded location
@@ -637,14 +718,14 @@ QString FSEventCollectorPrivate::buildPath(const QString &dirPath, const QString
 // FSEventCollector implementation
 
 // Constructor with explicitly provided FSMonitor
-FSEventCollector::FSEventCollector(FSMonitor &monitor, QObject *parent)
-    : QObject(parent), d_ptr(new FSEventCollectorPrivate(this, monitor))
+FSEventCollector::FSEventCollector(PathPredicate pathPredicate, FSMonitor &monitor, QObject *parent)
+    : QObject(parent), d_ptr(new FSEventCollectorPrivate(this, std::move(pathPredicate), monitor))
 {
 }
 
 // Constructor with default FSMonitor (uses singleton instance)
-FSEventCollector::FSEventCollector(QObject *parent)
-    : QObject(parent), d_ptr(new FSEventCollectorPrivate(this, FSMonitor::instance()))
+FSEventCollector::FSEventCollector(PathPredicate pathPredicate, QObject *parent)
+    : QObject(parent), d_ptr(new FSEventCollectorPrivate(this, std::move(pathPredicate), FSMonitor::instance()))
 {
 }
 

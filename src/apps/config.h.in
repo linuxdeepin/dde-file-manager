@@ -90,6 +90,12 @@
 #    warning "cmake unseting definition DFM_PREVIEW_TOOL"
 #endif
 
+#ifndef DFM_EXTRACTOR_TOOL
+#    define DFM_EXTRACTOR_TOOL "${CMAKE_INSTALL_FULL_LIBEXECDIR}/dde-file-manager-extractor"
+#elif
+#    warning "cmake unseting definition DFM_EXTRACTOR_TOOL"
+#endif
+
 #ifndef DFM_FILE_MANAGER_BINARY
 #    define DFM_FILE_MANAGER_BINARY "${CMAKE_INSTALL_FULL_LIBEXECDIR}/dde-file-manager"
 #elif

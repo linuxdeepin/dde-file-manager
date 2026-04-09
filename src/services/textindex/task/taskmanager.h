@@ -6,6 +6,7 @@
 #define TASKMANAGER_H
 
 #include "service_textindex_global.h"
+#include "core/indexcontext.h"
 #include "indextask.h"
 
 #include <QObject>
@@ -29,7 +30,7 @@ class TaskManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit TaskManager(QObject *parent = nullptr);
+    explicit TaskManager(const IndexContext *context, QObject *parent = nullptr);
     ~TaskManager();
 
     bool startTask(IndexTask::Type type, const QStringList &pathList, bool silent = false);
@@ -60,6 +61,7 @@ private:
     bool startNextTask();
     TaskHandler getTaskHandler(IndexTask::Type type);
 
+    const IndexContext *m_context { nullptr };
     QThread workerThread;
     IndexTask *currentTask { nullptr };
 

@@ -28,9 +28,11 @@ public:
     int monitoringStartDelaySeconds() const;
     int silentIndexUpdateDelay() const;
     qint64 inotifyResourceCleanupDelayMs() const;
-    int maxIndexFileSizeMB() const;
+    int maxIndexTextFileSizeMB() const;
     int maxIndexFileTruncationSizeMB() const;
-    QStringList supportedFileExtensions() const;
+    QStringList supportedTextFileExtensions() const;
+    QStringList supportedOcrImageExtensions() const;
+    int maxOcrImageSizeMB() const;
     bool indexHiddenFiles() const;
     QStringList folderExcludeFilters() const;
     int cpuUsageLimitPercent() const;
@@ -57,9 +59,11 @@ private:
     int m_monitoringStartDelaySeconds;
     int m_silentIndexUpdateDelay;
     qint64 m_inotifyResourceCleanupDelayMs;
-    int m_maxIndexFileSizeMB;
+    int m_maxIndexTextFileSizeMB;
     int m_maxIndexFileTruncationSizeMB;
-    QStringList m_supportedFileExtensions;
+    QStringList m_supportedTextFileExtensions;
+    QStringList m_supportedOcrImageExtensions;
+    int m_maxOcrImageSizeMB;
     bool m_indexHiddenFiles;
     QStringList m_folderExcludeFilters;
     int m_cpuUsageLimitPercent;
@@ -75,6 +79,7 @@ private:
     static const qint64 DEFAULT_INOTIFY_RESOURCE_CLEANUP_DELAY = 1800000LL;   // 30 * 60 * 1000
     static const int DEFAULT_MAX_INDEX_FILE_SIZE_MB = 50;
     static const int DEFAULT_MAX_INDEX_FILE_TRUNCATION_SIZE_MB = 10;
+    static const int DEFAULT_MAX_OCR_IMAGE_SIZE_MB = 30;
     static const bool DEFAULT_INDEX_HIDDEN_FILES = false;
     static const int DEFAULT_CPU_USAGE_LIMIT_PERCENT = 50;
     static constexpr double DEFAULT_INOTIFY_WATCHES_COEFFICIENT = 0.5;

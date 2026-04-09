@@ -19,8 +19,15 @@ namespace Defines {
 
 inline const QString kTextIndexServiceName =
         QLatin1String("deepin-service-plugin@org.deepin.Filemanager.TextIndex.service");
-inline const QString kAnythingDocType = QLatin1String("doc");
+inline const QString kOcrIndexServiceName =
+        QLatin1String("deepin-service-plugin@org.deepin.Filemanager.OcrIndex.service");
 inline const QString kAnythingDirType = QLatin1String("dir");
+inline const QString kAnythingDocType = QLatin1String("doc");
+inline const QString kAnythingPicType = QLatin1String("pic");
+inline const QString kTextIndexDBusService = QLatin1String("org.deepin.Filemanager.TextIndex");
+inline const QString kTextIndexDBusObjectPath = QLatin1String("/org/deepin/Filemanager/TextIndex");
+inline const QString kOcrIndexDBusService = QLatin1String("org.deepin.Filemanager.OcrIndex");
+inline const QString kOcrIndexDBusObjectPath = QLatin1String("/org/deepin/Filemanager/OcrIndex");
 
 // Dconfig
 namespace DConf {
@@ -29,9 +36,9 @@ inline const QString kAutoIndexUpdateInterval = QLatin1String("autoIndexUpdateIn
 inline const QString kMonitoringStartDelaySeconds = QLatin1String("monitoringStartDelaySeconds");
 inline const QString kSilentIndexUpdateDelay = QLatin1String("silentIndexUpdateDelay");
 inline const QString kInotifyResourceCleanupDelay = QLatin1String("inotifyResourceCleanupDelay");
-inline const QString kMaxIndexFileSizeMB = QLatin1String("maxIndexFileSizeMB");
+inline const QString kMaxIndexTextFileSizeMB = QLatin1String("maxIndexFileSizeMB");
 inline const QString kMaxIndexFileTruncationSizeMB = QLatin1String("maxIndexFileTruncationSizeMB");
-inline const QString kSupportedFileExtensions = QLatin1String("supportedFileExtensions");
+inline const QString kSupportedTextFileExtensions = QLatin1String("supportedFileExtensions");
 inline const QString kIndexHiddenFiles = QLatin1String("indexHiddenFiles");
 inline const QString kFolderExcludeFilters = QLatin1String("folderExcludeFilters");
 inline const QString kCpuUsageLimitPercent = QLatin1String("cpuUsageLimitPercent");
@@ -46,10 +53,15 @@ inline const QString kBatchCommitInterval = QLatin1String("batchCommitInterval")
 // History:
 // Version 1: add "filename" filed
 // Version 2: add new filed "ancestor_paths"
-inline constexpr int kIndexVersion { 2 };
+inline constexpr int kTextIndexVersion { 2 };
+
+// OCR index version history:
+// Version 0: initial OCR text index schema
+inline constexpr int kOcrIndexVersion { 0 };
 
 // json
-inline const QString kVersionKey = QLatin1String("version");
+inline const QString kTextVersionKey = QLatin1String("version");
+inline const QString kOcrVersionKey = QLatin1String("version");
 inline const QString kLastUpdateTimeKey = QLatin1String("lastUpdateTime");
 inline const QString kStateKey = QLatin1String("state");
 inline const QString kStateClean = QLatin1String("clean");

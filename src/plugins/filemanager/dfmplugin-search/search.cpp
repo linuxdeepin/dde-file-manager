@@ -6,6 +6,7 @@
 #include "events/searcheventreceiver.h"
 #include "utils/searchhelper.h"
 #include "utils/custommanager.h"
+#include "utils/ocrindexclient.h"
 #include "utils/textindexclient.h"
 #include "fileinfo/searchfileinfo.h"
 #include "iterator/searchdiriterator.h"
@@ -55,6 +56,7 @@ void Search::initialize()
 
     // must inited in main thread
     TextIndexClient::instance();
+    OcrIndexClient::instance();
 
     bindEvents();
     bindWindows();

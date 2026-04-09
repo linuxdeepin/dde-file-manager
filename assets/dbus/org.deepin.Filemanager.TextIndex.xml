@@ -46,5 +46,10 @@
       <arg name="modifiedFiles" type="as" direction="in"/>
       <arg name="deletedFiles" type="as" direction="in"/>
     </method>
+    <method name="ProcessFileMoves">
+      <arg type="b" direction="out"/>
+      <arg name="movedFiles" type="a{ss}" direction="in"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QHash&lt;QString,QString&gt;"/>
+    </method>
   </interface>
 </node>
