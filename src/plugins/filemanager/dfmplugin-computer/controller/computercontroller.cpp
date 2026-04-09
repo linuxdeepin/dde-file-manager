@@ -79,7 +79,13 @@ void ComputerController::onOpenItem(quint64 winId, const QUrl &url)
         } else if (suffix == SuffixInfo::kAppEntry) {
             QString cmd = info->extraProperty(ExtraPropertyName::kExecuteCommand).toString();
             fmDebug() << "App entry, executing command:" << cmd;
-            QProcess::startDetached(cmd);
+
+            // Split command string into program and arguments
+            QStringList parts = QProcess::splitCommand(cmd);
+            if (!parts.isEmpty()) {
+                QString program = parts.takeFirst();
+                QProcess::startDetached(program, parts);
+            }
         } else {
             fmDebug() << "Other type, sending open item event";
             ComputerEventCaller::sendOpenItem(winId, info->urlOf(UrlInfoType::kUrl));
