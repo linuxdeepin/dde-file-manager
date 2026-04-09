@@ -31,29 +31,6 @@ static constexpr int kFileSizeWidth { 100 };
 static constexpr char kBtnPropertyActionName[] { "btnType" };
 static constexpr AbstractJobHandler::JobState kPausedState = AbstractJobHandler::JobState::kPauseState;
 
-ElidedLable::ElidedLable(QWidget *parent)
-    : QLabel(parent)
-{
-}
-
-ElidedLable::~ElidedLable() { }
-/*!
- * \brief ElidedLable::setText 设置当前文字的内容
- * \param text
- */
-void ElidedLable::setText(const QString &text)
-{
-    QFontMetrics metrics(font());
-    Qt::TextElideMode em = Qt::TextElideMode::ElideMiddle;
-
-    if (!property("TextElideMode").isNull()) {
-        int iem = property("TextElideMode").toInt();
-        em = static_cast<Qt::TextElideMode>(iem);
-    }
-
-    QLabel::setText(metrics.elidedText(text, em, width()));
-}
-
 TaskWidget::TaskWidget(QWidget *parent)
     : QWidget(parent)
 {
@@ -498,11 +475,14 @@ QWidget *TaskWidget::createConflictWidget()
     lbSrcIcon->setFixedSize(48, 48);
     lbSrcIcon->setScaledContents(true);
 
-    lbSrcTitle = new ElidedLable();
-    lbSrcModTime = new ElidedLable();
+    lbSrcTitle = new DLabel();
+    lbSrcTitle->setElideMode(Qt::ElideMiddle);
+    lbSrcModTime = new DLabel();
+    lbSrcModTime->setElideMode(Qt::ElideMiddle);
     lbSrcModTime->setPalette(labelPalette);
 
-    lbSrcFileSize = new ElidedLable();
+    lbSrcFileSize = new DLabel();
+    lbSrcFileSize->setElideMode(Qt::ElideMiddle);
     lbSrcFileSize->setFixedWidth(kFileSizeWidth);
     lbSrcFileSize->setPalette(labelPalette);
 
@@ -510,11 +490,14 @@ QWidget *TaskWidget::createConflictWidget()
     lbDstIcon->setFixedSize(48, 48);
     lbDstIcon->setScaledContents(true);
 
-    lbDstTitle = new ElidedLable();
-    lbDstModTime = new ElidedLable();
+    lbDstTitle = new DLabel();
+    lbDstTitle->setElideMode(Qt::ElideMiddle);
+    lbDstModTime = new DLabel();
+    lbDstModTime->setElideMode(Qt::ElideMiddle);
     lbDstModTime->setPalette(labelPalette);
 
-    lbDstFileSize = new ElidedLable();
+    lbDstFileSize = new DLabel();
+    lbDstFileSize->setElideMode(Qt::ElideMiddle);
     lbDstFileSize->setFixedWidth(kFileSizeWidth);
     lbDstFileSize->setPalette(labelPalette);
 
@@ -633,9 +616,11 @@ QWidget *TaskWidget::createBaseWidget()
     normalLayout->addWidget(progress, Qt::AlignLeft);
     normalLayout->addSpacing(2);
 
-    lbSrcPath = new ElidedLable;
+    lbSrcPath = new DLabel;
+    lbSrcPath->setElideMode(Qt::ElideMiddle);
     lbSpeed = new QLabel;
-    lbDstPath = new ElidedLable;
+    lbDstPath = new DLabel;
+    lbDstPath->setElideMode(Qt::ElideMiddle);
     lbRmTime = new QLabel;
     lbSrcPath->setFixedWidth(kMsgLabelWidth);
     lbSrcPath->setText(tr("In data statistics ..."));
@@ -661,9 +646,9 @@ QWidget *TaskWidget::createBaseWidget()
     vLayout1->addLayout(hLayout1, Qt::AlignTop);
     vLayout1->addLayout(hLayout2, Qt::AlignBottom);
 
-    lbErrorMsg = new ElidedLable;
+    lbErrorMsg = new DLabel;
+    lbErrorMsg->setElideMode(Qt::ElideMiddle);
     lbErrorMsg->setStyleSheet("color:red;");
-    lbErrorMsg->setFixedWidth(kMsgLabelWidth + kSpeedLabelWidth + 20);
     QHBoxLayout *hLayout3 = new QHBoxLayout;
     hLayout3->addSpacing(12);
     hLayout3->addWidget(lbErrorMsg, Qt::AlignLeft);

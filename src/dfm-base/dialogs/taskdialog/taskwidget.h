@@ -13,6 +13,7 @@
 #include <DIconButton>
 #include <DPushButton>
 #include <DWarningButton>
+#include <DLabel>
 
 #include <QWidget>
 #include <QLabel>
@@ -23,15 +24,6 @@ class QCheckBox;
 class QVBoxLayout;
 
 namespace dfmbase {
-
-class ElidedLable : public QLabel
-{
-    friend class TaskWidget;
-    Q_OBJECT
-    explicit ElidedLable(QWidget *parent = nullptr);
-    virtual ~ElidedLable();
-    void setText(const QString &text);
-};
 
 class TaskWidget : public QWidget
 {
@@ -82,11 +74,11 @@ protected:
 
 private:
     DTK_WIDGET_NAMESPACE::DWaterProgress *progress { nullptr };   // 左侧水球动画
-    ElidedLable *lbSrcPath { nullptr };   // 左第一个label
-    ElidedLable *lbDstPath { nullptr };   // 左第二个label
+    DTK_WIDGET_NAMESPACE::DLabel *lbSrcPath { nullptr };   // 左第一个label
+    DTK_WIDGET_NAMESPACE::DLabel *lbDstPath { nullptr };   // 左第二个label
     QLabel *lbSpeed { nullptr };   // 右第一个label
     QLabel *lbRmTime { nullptr };   // 右第二个label
-    ElidedLable *lbErrorMsg { nullptr };   // 错误信息label
+    DTK_WIDGET_NAMESPACE::DLabel *lbErrorMsg { nullptr };   // 错误信息label
     DTK_WIDGET_NAMESPACE::DIconButton *btnStop { nullptr };   // 停止按钮
     DTK_WIDGET_NAMESPACE::DIconButton *btnPause { nullptr };   // 暂停按钮
     QHBoxLayout *hLayout4 { nullptr };
@@ -97,12 +89,12 @@ private:
     QLabel *lbSrcIcon { nullptr };   // 冲突widget上的源文件图标
     QLabel *lbDstIcon { nullptr };   // 冲突widget上的目标文件图标
     bool createDestLabels { true };   // 冲突widget上创建目标文件的labels
-    ElidedLable *lbSrcTitle { nullptr };   // 冲突widget上的源文件文件显示名称
-    ElidedLable *lbDstTitle { nullptr };   // 冲突widget上的目标文件显示名称
-    ElidedLable *lbSrcModTime { nullptr };   // 冲突widget上的源文件文件修改时间
-    ElidedLable *lbDstModTime { nullptr };   // 冲突widget上的目标文件修改时间
-    ElidedLable *lbSrcFileSize { nullptr };   // 冲突widget上的源文件文件文件大小
-    ElidedLable *lbDstFileSize { nullptr };   // 冲突widget上的目标文件文件文件大小
+    DTK_WIDGET_NAMESPACE::DLabel *lbSrcTitle { nullptr };   // 冲突widget上的源文件文件显示名称
+    DTK_WIDGET_NAMESPACE::DLabel *lbDstTitle { nullptr };   // 冲突widget上的目标文件显示名称
+    DTK_WIDGET_NAMESPACE::DLabel *lbSrcModTime { nullptr };   // 冲突widget上的源文件文件修改时间
+    DTK_WIDGET_NAMESPACE::DLabel *lbDstModTime { nullptr };   // 冲突widget上的目标文件修改时间
+    DTK_WIDGET_NAMESPACE::DLabel *lbSrcFileSize { nullptr };   // 冲突widget上的源文件文件文件大小
+    DTK_WIDGET_NAMESPACE::DLabel *lbDstFileSize { nullptr };   // 冲突widget上的目标文件文件文件大小
     QWidget *widConfict { nullptr };   // 冲突widget
 
     QCheckBox *chkboxNotAskAgain { nullptr };   // 不在询问按钮
