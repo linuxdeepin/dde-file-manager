@@ -189,14 +189,26 @@ bool FileOperationsEventReceiver::revocation(const quint64 windowId, const QVari
                                   targets.first(),
                                   AbstractJobHandler::JobFlag::kRevocation);
         break;
-    case kRenameFiles:
+    case kRenameFiles: {
         if (targets.isEmpty())
             return true;
 
+        QMap<QUrl, QUrl> renamedFiles;
+        QList<QUrl> successSources, successTargets;
         for (int i = 0; i < sources.size(); ++i) {
-            handleOperationRenameFile(windowId, sources[i], targets[i], AbstractJobHandler::JobFlag::kRevocation);
+            if (handleOperationRenameFile(windowId, sources[i], targets[i], AbstractJobHandler::JobFlag::kRevocationFiles)) {
+                successSources.append(sources[i]);
+                successTargets.append(targets[i]);
+                renamedFiles.insert(sources[i], targets[i]);
+            }
         }
-        break;
+        if (!successSources.isEmpty()) {
+            dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
+                                         windowId, renamedFiles, true, QString());
+            saveFileOperation(successTargets, successSources, GlobalEventType::kRenameFiles,
+                              successSources, successTargets, GlobalEventType::kRenameFiles, true);
+        }
+    } break;
     default:
         return false;
     }
@@ -267,17 +279,22 @@ bool FileOperationsEventReceiver::redo(const quint64 windowId, const QVariantMap
     case kRenameFiles: {
         if (targets.isEmpty())
             return true;
+
+        QMap<QUrl, QUrl> renamedFiles;
         QList<QUrl> successSources, successTargets;
         for (int i = 0; i < sources.size(); ++i) {
             if (handleOperationRenameFile(windowId, sources[i], targets[i],
                                           AbstractJobHandler::JobFlag::kRedo)) {
                 successSources.append(sources[i]);
                 successTargets.append(targets[i]);
+                renamedFiles.insert(sources[i], targets[i]);
             }
         }
         if (!successSources.isEmpty()) {
-            saveFileOperation(successTargets, successSources, GlobalEventType::kRenameFile,
-                              successSources, successTargets, GlobalEventType::kRenameFile);
+            dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
+                                         windowId, renamedFiles, true, QString());
+            saveFileOperation(successTargets, successSources, GlobalEventType::kRenameFiles,
+                              successSources, successTargets, GlobalEventType::kRenameFiles);
         }
 
         break;
@@ -1294,16 +1311,20 @@ bool FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
     }
     // TODO:: file renameFile finished need to send file renameFile finished event
     QMap<QUrl, QUrl> renamedFiles { { oldUrl, newUrl } };
-    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
-                                 windowId, renamedFiles, ok, error);
+    AbstractJobHandler::JobFlags tmFlags = flags;
+    // Don't publish result for batch operations (revocation/redo), will be published together later
+    if (!tmFlags.testFlag(AbstractJobHandler::JobFlag::kRevocationFiles) && !tmFlags.testFlag(AbstractJobHandler::JobFlag::kRedo)) {
+        dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
+                                     windowId, renamedFiles, ok, error);
+    }
+
     if (ok) {
         ClipBoard::instance()->replaceClipboardUrl(oldUrl, newUrl);
         dpfSignalDispatcher->publish("dfmplugin_fileoperations", "signal_File_Rename",
                                      oldUrl, newUrl);
     }
 
-    AbstractJobHandler::JobFlags tmFlags = flags;
-    if (!tmFlags.testFlag(AbstractJobHandler::JobFlag::kRedo))
+    if (!tmFlags.testFlag(AbstractJobHandler::JobFlag::kRedo) && !tmFlags.testFlag(AbstractJobHandler::JobFlag::kRevocationFiles))
         saveFileOperation({ newUrl }, { oldUrl }, GlobalEventType::kRenameFile,
                           { oldUrl }, { newUrl }, GlobalEventType::kRenameFile,
                           tmFlags.testFlag(AbstractJobHandler::JobFlag::kRevocation));

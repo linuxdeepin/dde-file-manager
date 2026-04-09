@@ -34,10 +34,11 @@ public:
         kCopyIntegrityChecking = 0x40,   // 复制文件时进行完整性校验
         kDeleteForceDeleteFile = 0x80,   // 强制删除文件夹(去除文件夹的只读权限)
         kDontFormatFileName = 0x100,   // 拷贝时不处理文件名称
-        kRevocation = 0x200,   // 拷贝时不处理文件名称
+        kRevocation = 0x200,   // 撤销操作
         kCopyRemote = 0x400,   // 深信服远程拷贝
         kRedo = 0x800,   // 重新执行（ctrl + Y）
         kCountProgressCustomize = 0x1000,   // 强制使用自己统计进度
+        kRevocationFiles = 0x2000   // 撤销多文件操作
     };
     Q_ENUM(JobFlag)
     Q_DECLARE_FLAGS(JobFlags, JobFlag)
