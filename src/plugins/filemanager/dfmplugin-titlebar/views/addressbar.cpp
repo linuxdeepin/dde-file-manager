@@ -25,6 +25,7 @@
 
 #include <QCompleter>
 #include <QFontMetrics>
+#include "addressbar.h"
 
 using namespace dfmplugin_titlebar;
 
@@ -641,4 +642,10 @@ void AddressBar::inputMethodEvent(QInputMethodEvent *e)
         setCursorPosition(pos);
     }
     QLineEdit::inputMethodEvent(e);
+}
+
+void dfmplugin_titlebar::AddressBar::contextMenuEvent(QContextMenuEvent *e)
+{
+    showOnFocusLostOnce();
+    QLineEdit::contextMenuEvent(e);
 }
