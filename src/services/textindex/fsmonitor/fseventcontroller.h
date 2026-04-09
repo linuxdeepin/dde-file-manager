@@ -5,6 +5,7 @@
 #define FSEVENTCONTROLLER_H
 
 #include "fseventcollector.h"
+#include "profile/indexprofile.h"
 
 #include <QObject>
 
@@ -14,7 +15,7 @@ class FSEventController : public QObject
 {
     Q_OBJECT
 public:
-    explicit FSEventController(QObject *parent = nullptr);
+    explicit FSEventController(IndexProfile profile, QObject *parent = nullptr);
 
     void setupFSEventCollector();
 
@@ -50,9 +51,9 @@ Q_SIGNALS:
     void requestSlientStart();
 
 private:
+    IndexProfile m_profile;
     bool m_enabled { false };
     bool m_silentlyFlag { false };
-    bool m_lastSilentlyFlag { m_silentlyFlag };
     int m_collectorIntervalSecs { 3 };   // FSEventCollector event collection interval (seconds)
     int m_monitoringStartDelaySecs { 30 };   // FSEventController monitoring start delay (seconds)
     int m_silentStartDelaySecs { 180 };   // FSEventController silent start delay (seconds)

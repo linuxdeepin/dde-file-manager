@@ -22,7 +22,7 @@ class TextIndexDBus : public QObject, public QDBusContext
     Q_CLASSINFO("D-Bus Interface", "org.deepin.Filemanager.TextIndex")
 
 public:
-    explicit TextIndexDBus(const char *name, QObject *parent = nullptr);
+    explicit TextIndexDBus(QObject *parent = nullptr);
     ~TextIndexDBus();
 
     void cleanup();

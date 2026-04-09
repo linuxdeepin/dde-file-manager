@@ -13,73 +13,42 @@
 
 SERVICETEXTINDEX_BEGIN_NAMESPACE
 
+class IndexStateStore;
+
 namespace IndexUtility {
 
 /**
  * @brief Index state for crash recovery
  */
 enum class IndexState {
-    Clean,    ///< Index is complete, last shutdown was clean with no pending tasks
-    Dirty,    ///< Index may be incomplete, needs global update on next start
+    Clean,   ///< Index is complete, last shutdown was clean with no pending tasks
+    Dirty,   ///< Index may be incomplete, needs global update on next start
     Unknown   ///< State field not found (legacy status file or corrupted)
 };
 
-/**
- * @brief Get current index state from status file
- * @return IndexState value, returns Unknown if state field doesn't exist
- */
-IndexState getIndexState();
-
-/**
- * @brief Set index state in status file
- * @param state The state to set
- */
-void setIndexState(IndexState state);
-
-/**
- * @brief Check if index is in clean state
- * @return true if state is Clean, false otherwise
- */
-bool isCleanState();
-
-/**
- * @brief Check if index needs to be rebuilt due to configuration changes
- * @return true if rebuild is needed, false otherwise
- */
-bool needsRebuild();
-
-/**
- * @brief Set the needsRebuild flag in status file
- * @param need true to mark rebuild is needed, false to clear the flag
- */
-void setNeedsRebuild(bool need);
-
 bool isIndexWithAnything(const QString &path);
 bool isDefaultIndexedDirectory(const QString &path);
-bool isPathInContentIndexDirectory(const QString &path);
-QString statusFilePath();
-QString getLastUpdateTime();
-int getIndexVersion();
-bool isCompatibleVersion();
-
-void removeIndexStatusFile();
-void clearIndexDirectory();
-void saveIndexStatus(const QDateTime &lastUpdateTime);
-void saveIndexStatus(const QDateTime &lastUpdateTime, int version);
 
 /**
  * @brief Check if a file size is within the allowed limit for indexing
  * @param fileInfo QFileInfo object of the file to check
  * @return true if file size is acceptable, false otherwise
  */
-bool checkFileSize(const QFileInfo &fileInfo);
+bool checkFileSize(const QFileInfo &fileInfo, qint64 sizeMBFromConfig);
 
 /**
- * @brief Check if a file is supported for indexing
+ * @brief Check if a content file is supported for indexing
  * @param path File path to check
  * @return true if file type is supported and meets size requirements, false otherwise
  */
-bool isSupportedFile(const QString &path);
+bool isSupportedTextFile(const QString &path);
+
+/**
+ * @brief Check if a OCR file is supported for indexing
+ * @param path File path to check
+ * @return true if file type is supported and meets size requirements, false otherwise
+ */
+bool isSupportedOCRFile(const QString &path);
 
 class AnythingConfigWatcher : public QObject
 {
@@ -92,6 +61,9 @@ public:
     QStringList defaultAnythingIndexPathsRealtime();
     QStringList defaultBlacklistPaths();
     QStringList defaultBlacklistPathsRealtime();
+
+Q_SIGNALS:
+    void rebuildRequired(const QString &reason);
 
 private slots:
     void handleConfigChanged(const QString &key);

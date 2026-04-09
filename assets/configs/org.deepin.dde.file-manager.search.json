@@ -13,6 +13,17 @@
             "permissions":"readwrite",
             "visibility":"private"
         },
+        "enableOcrTextSearch": {
+            "value":true,
+            "serial":0,
+            "flags":[],
+            "name":"Enable OCR Text Search",
+            "name[zh_CN]":"开启 OCR 文本搜索",
+            "description[zh_CN]":"用于判断是否开启 OCR 文本搜索",
+            "description":"Used to determine whether to enable OCR text search",
+            "permissions":"readwrite",
+            "visibility":"private"
+        },
         "displaySearchHistory": {
             "value":true,
             "serial":0,
@@ -26,4 +37,3 @@
         }
     }
 }
-

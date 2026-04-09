@@ -45,6 +45,10 @@ function(dfm_setup_daemon_core_dependencies target_name)
         "${DFM_DBUS_XML_DIR}/org.deepin.Filemanager.TextIndex.xml"
         textindex_interface
     )
+    qt6_add_dbus_interface(DBUS_SOURCES
+        "${DFM_DBUS_XML_DIR}/org.deepin.Filemanager.OcrIndex.xml"
+        ocrindex_interface
+    )
     
     # Add DBus sources to target
     target_sources(${target_name} PRIVATE ${DBUS_SOURCES})

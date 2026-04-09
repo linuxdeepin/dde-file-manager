@@ -7,7 +7,6 @@
 #include "progressnotifier.h"
 #include "moveprocessor.h"
 #include "utils/scopeguard.h"
-#include "utils/docutils.h"
 #include "utils/indexutility.h"
 #include "utils/textindexconfig.h"
 #include "utils/pathexcludematcher.h"
@@ -32,8 +31,48 @@ SERVICETEXTINDEX_USE_NAMESPACE
 using namespace Lucene;
 DFM_SEARCH_USE_NS
 using namespace DFMSEARCH::LuceneFieldNames;
-
 namespace {
+
+std::unique_ptr<FileProvider> createAnythingFileProvider(const IndexContext &context, const QString &path)
+{
+    if (!IndexUtility::isIndexWithAnything(path) || !context.profile().supportsAnything()) {
+        return nullptr;
+    }
+
+    fmDebug() << "[TaskHandlers::createAnythingFileProvider] Attempting to use ANYTHING for profile:"
+              << context.profile().id() << "path:" << path
+              << "file types:" << context.profile().anythingFileTypes();
+
+    QObject holder;
+    SearchEngine *engine = SearchFactory::createEngine(SearchType::FileName, &holder);
+    if (!engine) {
+        fmWarning() << "[TaskHandlers::createAnythingFileProvider] Failed to create ANYTHING search engine for profile:"
+                    << context.profile().id();
+        return nullptr;
+    }
+
+    SearchOptions options;
+    options.setSyncSearchTimeout(120);
+    options.setSearchPath(QDir::rootPath());
+    options.setSearchMethod(SearchMethod::Indexed);
+    options.setIncludeHidden(TextIndexConfig::instance().indexHiddenFiles());
+
+    FileNameOptionsAPI fileNameOptions(options);
+    fileNameOptions.setFileTypes(context.profile().anythingFileTypes());
+    engine->setSearchOptions(options);
+
+    SearchQuery query = SearchFactory::createQuery("", SearchQuery::Type::Simple);
+    const SearchResultExpected &result = engine->searchSync(query);
+    if (!result.hasValue() || result->isEmpty()) {
+        fmWarning() << "[TaskHandlers::createAnythingFileProvider] ANYTHING returned no results for profile:"
+                    << context.profile().id();
+        return nullptr;
+    }
+
+    fmInfo() << "[TaskHandlers::createAnythingFileProvider] Successfully obtained file listings from ANYTHING for profile:"
+             << context.profile().id() << "count:" << result.value().count();
+    return std::make_unique<DirectFileListProvider>(result.value());
+}   // namespace
 
 class ProgressReporter
 {
@@ -113,59 +152,55 @@ private:
 // 目录遍历相关函数
 using FileHandler = std::function<void(const QString &path)>;
 
-// 文档处理相关函数
-DocumentPtr createFileDocument(const QString &file)
+const wchar_t *pathField(const IndexProfile &profile)
+{
+    switch (profile.type()) {
+    case IndexProfile::Type::Ocr:
+        return OcrText::kPath;
+    case IndexProfile::Type::Content:
+    default:
+        return Content::kPath;
+    }
+}
+
+const wchar_t *ancestorPathsField(const IndexProfile &profile)
+{
+    switch (profile.type()) {
+    case IndexProfile::Type::Ocr:
+        return OcrText::kAncestorPaths;
+    case IndexProfile::Type::Content:
+    default:
+        return Content::kAncestorPaths;
+    }
+}
+
+bool supportsModifiedTimestampCheck(const IndexProfile &profile)
+{
+    return profile.type() == IndexProfile::Type::Content;
+}
+
+DocumentPtr createFileDocument(const IndexContext &context, const QString &file)
 {
     try {
-        DocumentPtr doc = newLucene<Document>();
-
-        // file path
-        doc->add(newLucene<Field>(Content::kPath, file.toStdWString(),
-                                  Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
-
-        // ancestor paths
-        const QStringList ancestorPaths = PathCalculator::extractAncestorPaths(file);
-        for (const QString &ancestorPath : ancestorPaths) {
-            doc->add(newLucene<Field>(Content::kAncestorPaths, ancestorPath.toStdWString(),
-                                      Field::STORE_NO, Field::INDEX_NOT_ANALYZED));
+        if (!context.extractor() || !context.documentBuilder()) {
+            fmCritical() << "[createFileDocument] Missing extractor or document builder for profile:" << context.profile().id();
+            return nullptr;
         }
 
-        // file last modified time
-        QFileInfo fileInfo(file);
-        const QDateTime modifyTime = fileInfo.lastModified();
-        const QString modifyEpoch = QString::number(modifyTime.toSecsSinceEpoch());
-        doc->add(newLucene<Field>(L"modified", modifyEpoch.toStdWString(),
-                                  Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
-
-        // file name
-        doc->add(newLucene<Field>(Content::kFilename, fileInfo.fileName().toStdWString(),
-                                  Field::STORE_YES, Field::INDEX_ANALYZED));
-
-        // hidden tag
-        QString hiddenTag = "N";
-        if (DFMSEARCH::Global::isHiddenPathOrInHiddenDir(fileInfo.absoluteFilePath()))
-            hiddenTag = "Y";
-        doc->add(newLucene<Field>(Content::kIsHidden, hiddenTag.toStdWString(),
-                                  Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
-
-        // file contents
         const TextIndexConfig &config = TextIndexConfig::instance();
-        const int truncationSizeMB = config.maxIndexFileTruncationSizeMB();
+        const int truncationSizeMB = context.profile().type() == IndexProfile::Type::Ocr
+                ? config.maxOcrImageSizeMB()
+                : config.maxIndexFileTruncationSizeMB();
         const size_t maxBytes = static_cast<size_t>(truncationSizeMB) * 1024 * 1024;
 
-        const auto &contentOpt = DocUtils::extractFileContent(file, maxBytes);
-
-        if (!contentOpt) {
-            fmWarning() << "[createFileDocument] Failed to extract content from file:" << file;
-            return doc;   // Return document without content
+        const IndexExtractionResult extraction = context.extractor()->extract(file, maxBytes);
+        if (!extraction.success) {
+            fmWarning() << "[createFileDocument] Failed to extract content from file:" << file
+                        << "profile:" << context.profile().id()
+                        << "error:" << extraction.error;
         }
 
-        const QString &contents = contentOpt.value().trimmed();
-
-        doc->add(newLucene<Field>(Content::kContents, contents.toStdWString(),
-                                  Field::STORE_YES, Field::INDEX_ANALYZED));
-
-        return doc;
+        return context.documentBuilder()->build(file, extraction.text);
     } catch (const LuceneException &e) {
         fmWarning() << "[createFileDocument] Create document failed with Lucene exception:" << file
                     << "error:" << QString::fromStdWString(e.getError());
@@ -178,9 +213,7 @@ DocumentPtr createFileDocument(const QString &file)
 
     // 发生异常时返回一个空的基本文档，防止调用方受到影响
     try {
-        DocumentPtr basicDoc = newLucene<Document>();
-        basicDoc->add(newLucene<Field>(Content::kPath, file.toStdWString(),
-                                       Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
+        DocumentPtr basicDoc = context.documentBuilder()->build(file, QString());
         fmDebug() << "[createFileDocument] Created basic document without content for:" << file;
         return basicDoc;
     } catch (...) {
@@ -189,11 +222,11 @@ DocumentPtr createFileDocument(const QString &file)
     }
 }
 
-bool checkNeedUpdate(const QString &file, const IndexReaderPtr &reader, bool *needAdd)
+bool checkNeedUpdate(const IndexContext &context, const QString &file, const IndexReaderPtr &reader, bool *needAdd)
 {
     try {
         SearcherPtr searcher = newLucene<IndexSearcher>(reader);
-        TermQueryPtr query = newLucene<TermQuery>(newLucene<Term>(Content::kPath, file.toStdWString()));
+        TermQueryPtr query = newLucene<TermQuery>(newLucene<Term>(pathField(context.profile()), file.toStdWString()));
 
         TopDocsPtr topDocs = searcher->search(query, 1);
         int32_t numTotalHits = topDocs->totalHits;
@@ -208,6 +241,10 @@ bool checkNeedUpdate(const QString &file, const IndexReaderPtr &reader, bool *ne
         if (!fileInfo.exists()) {
             fmDebug() << "[checkNeedUpdate] File no longer exists:" << file;
             return false;
+        }
+
+        if (!supportsModifiedTimestampCheck(context.profile())) {
+            return true;
         }
 
         const QDateTime modifyTime = fileInfo.lastModified();
@@ -235,15 +272,15 @@ bool checkNeedUpdate(const QString &file, const IndexReaderPtr &reader, bool *ne
     }
 }
 
-void processFile(const QString &path, const IndexWriterPtr &writer, ProgressReporter *reporter)
+void processFile(const IndexContext &context, const QString &path, const IndexWriterPtr &writer, ProgressReporter *reporter)
 {
     try {
-        if (!IndexUtility::isSupportedFile(path))
+        if (!context.profile().isCandidateFile(path))
             return;
 #ifdef QT_DEBUG
         fmDebug() << "Adding [" << path << "]";
 #endif
-        DocumentPtr doc = createFileDocument(path);
+        DocumentPtr doc = createFileDocument(context, path);
         if (!doc) {
             fmWarning() << "[processFile] Failed to create document for:" << path;
             return;
@@ -263,16 +300,16 @@ void processFile(const QString &path, const IndexWriterPtr &writer, ProgressRepo
     }
 }
 
-void updateFile(const QString &path, const IndexReaderPtr &reader,
+void updateFile(const IndexContext &context, const QString &path, const IndexReaderPtr &reader,
                 const IndexWriterPtr &writer, ProgressReporter *reporter)
 {
     try {
-        if (!IndexUtility::isSupportedFile(path))
+        if (!context.profile().isCandidateFile(path))
             return;
 
         bool needAdd = false;
-        if (checkNeedUpdate(path, reader, &needAdd)) {
-            DocumentPtr doc = createFileDocument(path);
+        if (checkNeedUpdate(context, path, reader, &needAdd)) {
+            DocumentPtr doc = createFileDocument(context, path);
             if (!doc) {
                 fmWarning() << "[updateFile] Failed to create document for:" << path;
                 return;
@@ -285,7 +322,7 @@ void updateFile(const QString &path, const IndexReaderPtr &reader,
                 writer->addDocument(doc);
             } else {
                 fmDebug() << "[updateFile] Updating existing file:" << path;
-                TermPtr term = newLucene<Term>(Content::kPath, path.toStdWString());
+                TermPtr term = newLucene<Term>(pathField(context.profile()), path.toStdWString());
                 writer->updateDocument(term, doc);
             }
         }
@@ -304,13 +341,13 @@ void updateFile(const QString &path, const IndexReaderPtr &reader,
     }
 }
 
-void removeFile(const QString &path, const IndexWriterPtr &writer, ProgressReporter *reporter)
+void removeFile(const IndexContext &context, const QString &path, const IndexWriterPtr &writer, ProgressReporter *reporter)
 {
     try {
 #ifdef QT_DEBUG
         fmDebug() << "Remove [" << path << "]";
 #endif
-        TermPtr term = newLucene<Term>(Content::kPath, path.toStdWString());
+        TermPtr term = newLucene<Term>(pathField(context.profile()), path.toStdWString());
         writer->deleteDocuments(term);
         if (reporter) {
             reporter->increment();
@@ -326,7 +363,7 @@ void removeFile(const QString &path, const IndexWriterPtr &writer, ProgressRepor
     }
 }
 
-bool cleanupIndexs(IndexReaderPtr reader, IndexWriterPtr writer, TaskState &running)
+bool cleanupIndexs(const IndexContext &context, IndexReaderPtr reader, IndexWriterPtr writer, TaskState &running)
 {
     try {
         if (!reader || !writer) {
@@ -342,7 +379,7 @@ bool cleanupIndexs(IndexReaderPtr reader, IndexWriterPtr writer, TaskState &runn
         }
 
         // 获取所有文档
-        TermPtr allDocsTerm = newLucene<Term>(Content::kPath, L"*");
+        TermPtr allDocsTerm = newLucene<Term>(pathField(context.profile()), L"*");
         WildcardQueryPtr allDocsQuery = newLucene<WildcardQuery>(allDocsTerm);
         TopDocsPtr allDocs = searcher->search(allDocsQuery, reader->maxDoc());
         if (!allDocs) {
@@ -358,7 +395,6 @@ bool cleanupIndexs(IndexReaderPtr reader, IndexWriterPtr writer, TaskState &runn
                   << "blacklist patterns";
 
         int removedCount = 0;
-        const QStringList supportedExtensions = TextIndexConfig::instance().supportedFileExtensions();
 
         // 检查每个文档对应的文件是否存在
         for (int32_t i = 0; i < allDocs->totalHits && running.isRunning(); ++i) {
@@ -374,7 +410,7 @@ bool cleanupIndexs(IndexReaderPtr reader, IndexWriterPtr writer, TaskState &runn
                 return false;
             }
 
-            String pathValue = doc->get(Content::kPath);
+            String pathValue = doc->get(pathField(context.profile()));
             if (pathValue.empty()) {
                 fmWarning() << "[cleanupIndexs] Document at index" << i << "has empty path during index cleanup";
                 return false;
@@ -390,12 +426,7 @@ bool cleanupIndexs(IndexReaderPtr reader, IndexWriterPtr writer, TaskState &runn
             if (!fileInfo.exists()) {
                 shouldDelete = true;
             } else {
-                // If exists, check suffix (only if not already marked for deletion)
-                QString suffix = fileInfo.suffix().toLower();   // Normalize to lowercase for case-insensitive comparison
-
-                // Use the pre-fetched list/set
-                // if (!supportedExtensionsSet.contains(suffix)) { // If using QSet
-                if (!supportedExtensions.contains(suffix, Qt::CaseInsensitive)) {   // QStringList::contains with case insensitivity
+                if (!context.profile().isPathInScope(filePath) || !context.profile().isCandidateFile(filePath)) {
                     shouldDelete = true;
                 }
 
@@ -414,7 +445,7 @@ bool cleanupIndexs(IndexReaderPtr reader, IndexWriterPtr writer, TaskState &runn
             //  Delete if necessary
             if (shouldDelete) {
                 try {
-                    TermPtr term = newLucene<Term>(Content::kPath, pathValue);   // Create Term only when needed
+                    TermPtr term = newLucene<Term>(pathField(context.profile()), pathValue);   // Create Term only when needed
                     if (term) {
                         writer->deleteDocuments(term);
                         removedCount++;
@@ -454,7 +485,7 @@ bool cleanupIndexs(IndexReaderPtr reader, IndexWriterPtr writer, TaskState &runn
 }
 
 // 移除目录下所有文件的索引
-void removeDirectoryIndex(const QString &dirPath, const IndexWriterPtr &writer,
+void removeDirectoryIndex(const IndexContext &context, const QString &dirPath, const IndexWriterPtr &writer,
                           const IndexReaderPtr &reader, ProgressReporter *reporter)
 {
     try {
@@ -466,7 +497,7 @@ void removeDirectoryIndex(const QString &dirPath, const IndexWriterPtr &writer,
         // ancestor_paths 字段存储了文件的所有祖先路径（不带尾部斜杠）
         // 利用此字段可以避免 PrefixQuery 的字典树扫描，显著提升性能
         TermQueryPtr ancestorQuery = newLucene<TermQuery>(
-                newLucene<Term>(Content::kAncestorPaths, dirPath.toStdWString()));
+                newLucene<Term>(ancestorPathsField(context.profile()), dirPath.toStdWString()));
 
         TopDocsPtr allDocs = searcher->search(ancestorQuery, reader->maxDoc());
 
@@ -513,46 +544,27 @@ void removeDirectoryIndex(const QString &dirPath, const IndexWriterPtr &writer,
 }   // namespace
 
 // 创建文件提供者
-std::unique_ptr<FileProvider> TaskHandlers::createFileProvider(const QString &path)
+std::unique_ptr<FileProvider> TaskHandlers::createFileProvider(const IndexContext &context, const QString &path)
 {
-    if (IndexUtility::isIndexWithAnything(path)) {
-        fmDebug() << "[TaskHandlers::createFileProvider] Attempting to use ANYTHING for document discovery, path:" << path;
-        QObject holder;
-        SearchEngine *engine = SearchFactory::createEngine(SearchType::FileName, &holder);
-        SearchOptions options;
-        options.setSyncSearchTimeout(120);
-        // rootPath: Rely on anything's own path whitelisting mechanism to get all document paths,
-        // reducing redundant operations.
-        options.setSearchPath(QDir::rootPath());
-        options.setSearchMethod(SearchMethod::Indexed);
-        options.setIncludeHidden(TextIndexConfig::instance().indexHiddenFiles());   // Note: too many hidden files!
-        FileNameOptionsAPI fileNameOptions(options);
-        fileNameOptions.setFileTypes({ Defines::kAnythingDocType });
-        engine->setSearchOptions(options);
-        SearchQuery query = SearchFactory::createQuery("", SearchQuery::Type::Simple);
-        const SearchResultExpected &result = engine->searchSync(query);
-        if (result.hasValue() && !result->isEmpty()) {
-            fmInfo() << "[TaskHandlers::createFileProvider] Successfully obtained file listings from ANYTHING -"
-                     << "count:" << result.value().count();
-            return std::make_unique<DirectFileListProvider>(result.value());
-        }
-        fmWarning() << "[TaskHandlers::createFileProvider] Failed to get file list via ANYTHING, falling back to filesystem provider";
+    if (auto provider = createAnythingFileProvider(context, path)) {
+        return provider;
     }
+
     fmInfo() << "[TaskHandlers::createFileProvider] Using FileSystemProvider for path:" << path;
-    return std::make_unique<FileSystemProvider>(path);
+    return std::make_unique<FileSystemProvider>(context.profile(), path);
 }
 
 // 创建文件列表提供者
-std::unique_ptr<FileProvider> TaskHandlers::createFileListProvider(const QStringList &fileList)
+std::unique_ptr<FileProvider> TaskHandlers::createFileListProvider(const IndexContext &context, const QStringList &fileList)
 {
     fmInfo() << "[TaskHandlers::createFileListProvider] Creating file list provider with" << fileList.size() << "files";
-    return std::make_unique<MixedPathListProvider>(fileList);
+    return std::make_unique<MixedPathListProvider>(context.profile(), fileList);
 }
 
 // 公开的任务处理函数实现
-TaskHandler TaskHandlers::CreateIndexHandler()
+TaskHandler TaskHandlers::CreateIndexHandler(const IndexContext &context)
 {
-    return [](const QString &path, TaskState &running) -> HandlerResult {
+    return [context](const QString &path, TaskState &running) -> HandlerResult {
         fmInfo() << "[CreateIndexHandler] Starting index creation for path:" << path;
 
         HandlerResult result { false, false, false };
@@ -562,7 +574,7 @@ TaskHandler TaskHandlers::CreateIndexHandler()
             return result;
         }
 
-        QString indexDir = DFMSEARCH::Global::contentIndexDirectory();
+        QString indexDir = context.profile().indexDirectory();
         if (!dir.exists(indexDir)) {
             if (!dir.mkpath(indexDir)) {
                 fmCritical() << "[CreateIndexHandler] Unable to create index directory:" << indexDir;
@@ -596,7 +608,7 @@ TaskHandler TaskHandlers::CreateIndexHandler()
             fmInfo() << "[CreateIndexHandler] Cleared existing index data";
 
             // 使用文件提供者遍历文件
-            auto provider = createFileProvider(path);
+            auto provider = createFileProvider(context, path);
             if (!provider) {
                 fmCritical() << "[CreateIndexHandler] Failed to create file provider for path:" << path;
                 return result;
@@ -613,7 +625,7 @@ TaskHandler TaskHandlers::CreateIndexHandler()
             fmInfo() << "[CreateIndexHandler] Starting file processing, estimated total files:" << totalCount;
 
             provider->traverse(running, [&](const QString &file) {
-                processFile(file, writer, &reporter);
+                processFile(context, file, writer, &reporter);
             });
 
             // Only the creation of an index that is interrupted is also considered a failure
@@ -649,13 +661,13 @@ TaskHandler TaskHandlers::CreateIndexHandler()
     };
 }
 
-TaskHandler TaskHandlers::UpdateIndexHandler()
+TaskHandler TaskHandlers::UpdateIndexHandler(const IndexContext &context)
 {
-    return [](const QString &path, TaskState &running) -> HandlerResult {
+    return [context](const QString &path, TaskState &running) -> HandlerResult {
         fmInfo() << "[UpdateIndexHandler] Starting index update for path:" << path;
         HandlerResult result { false, false, false };
 
-        QString indexDir = DFMSEARCH::Global::contentIndexDirectory();
+        QString indexDir = context.profile().indexDirectory();
 
         try {
             IndexReaderPtr reader = IndexReader::open(
@@ -694,7 +706,7 @@ TaskHandler TaskHandlers::UpdateIndexHandler()
             fmDebug() << "[UpdateIndexHandler] Index reader and writer initialized for directory:" << indexDir;
 
             // 清理已删除文件的索引
-            if (!cleanupIndexs(reader, writer, running)) {
+            if (!cleanupIndexs(context, reader, writer, running)) {
                 fmCritical() << "[UpdateIndexHandler] Index cleanup failed, aborting update";
                 result.success = false;
                 result.fatal = true;
@@ -702,7 +714,7 @@ TaskHandler TaskHandlers::UpdateIndexHandler()
             }
 
             // 使用文件提供者遍历文件
-            auto provider = createFileProvider(path);
+            auto provider = createFileProvider(context, path);
             if (!provider) {
                 fmCritical() << "[UpdateIndexHandler] Failed to create file provider for path:" << path;
                 return result;
@@ -719,7 +731,7 @@ TaskHandler TaskHandlers::UpdateIndexHandler()
             fmDebug() << "[UpdateIndexHandler] Starting file update processing, estimated total files:" << totalCount;
 
             provider->traverse(running, [&](const QString &file) {
-                updateFile(file, reader, writer, &reporter);
+                updateFile(context, file, reader, writer, &reporter);
             });
 
             if (!running.isRunning()) {
@@ -755,14 +767,14 @@ TaskHandler TaskHandlers::UpdateIndexHandler()
 }
 
 // 基于文件列表更新索引
-TaskHandler TaskHandlers::CreateOrUpdateFileListHandler(const QStringList &fileList)
+TaskHandler TaskHandlers::CreateOrUpdateFileListHandler(const IndexContext &context, const QStringList &fileList)
 {
-    return [fileList](const QString &path, TaskState &running) -> HandlerResult {
+    return [context, fileList](const QString &path, TaskState &running) -> HandlerResult {
         Q_UNUSED(path)
         fmInfo() << "[CreateOrUpdateFileListHandler] Creating/Updating index for file list with" << fileList.size() << "entries";
         HandlerResult result { false, false, false };
 
-        QString indexDir = DFMSEARCH::Global::contentIndexDirectory();
+        QString indexDir = context.profile().indexDirectory();
 
         try {
             IndexReaderPtr reader = IndexReader::open(
@@ -801,7 +813,7 @@ TaskHandler TaskHandlers::CreateOrUpdateFileListHandler(const QStringList &fileL
             fmDebug() << "[CreateOrUpdateFileListHandler] Index reader and writer initialized for directory:" << indexDir;
 
             // 使用文件列表提供者遍历文件
-            auto provider = createFileListProvider(fileList);
+            auto provider = createFileListProvider(context, fileList);
             if (!provider) {
                 fmCritical() << "[CreateOrUpdateFileListHandler] Failed to create file list provider";
                 return result;
@@ -813,7 +825,7 @@ TaskHandler TaskHandlers::CreateOrUpdateFileListHandler(const QStringList &fileL
             fmInfo() << "[CreateOrUpdateFileListHandler] Starting file list processing, total files:" << totalCount;
 
             provider->traverse(running, [&](const QString &file) {
-                updateFile(file, reader, writer, &reporter);
+                updateFile(context, file, reader, writer, &reporter);
             });
 
             if (!running.isRunning()) {
@@ -841,14 +853,14 @@ TaskHandler TaskHandlers::CreateOrUpdateFileListHandler(const QStringList &fileL
 }
 
 // 基于文件列表删除索引
-TaskHandler TaskHandlers::RemoveFileListHandler(const QStringList &fileList)
+TaskHandler TaskHandlers::RemoveFileListHandler(const IndexContext &context, const QStringList &fileList)
 {
-    return [fileList](const QString &path, TaskState &running) -> HandlerResult {
+    return [context, fileList](const QString &path, TaskState &running) -> HandlerResult {
         Q_UNUSED(path)
         fmInfo() << "[RemoveFileListHandler] Removing index for" << fileList.size() << "files/directories";
         HandlerResult result { false, false, false };
 
-        QString indexDir = DFMSEARCH::Global::contentIndexDirectory();
+        QString indexDir = context.profile().indexDirectory();
 
         try {
             // 打开索引读取器，用于目录前缀查询
@@ -905,17 +917,17 @@ TaskHandler TaskHandlers::RemoveFileListHandler(const QStringList &fileList)
 
                 // 通过 ancestor_paths 查询判断是否为目录
                 TermQueryPtr ancestorQuery = newLucene<TermQuery>(
-                        newLucene<Term>(Content::kAncestorPaths, itemPath.toStdWString()));
+                        newLucene<Term>(ancestorPathsField(context.profile()), itemPath.toStdWString()));
                 TopDocsPtr result = searcher->search(ancestorQuery, 1);
 
                 if (result->totalHits > 0) {
                     // 有子文件，是目录
-                    removeDirectoryIndex(itemPath, writer, reader, &reporter);
+                    removeDirectoryIndex(context, itemPath, writer, reader, &reporter);
                     directoriesRemoved++;
                     fmDebug() << "[RemoveFileListHandler] Processed directory removal:" << itemPath;
                 } else {
                     // 无子文件，是文件
-                    removeFile(itemPath, writer, &reporter);
+                    removeFile(context, itemPath, writer, &reporter);
                     filesRemoved++;
                     fmDebug() << "[RemoveFileListHandler] Removed file from index:" << itemPath;
                 }
@@ -943,14 +955,14 @@ TaskHandler TaskHandlers::RemoveFileListHandler(const QStringList &fileList)
 }
 
 // 基于文件移动列表高效更新索引路径
-TaskHandler TaskHandlers::MoveFileListHandler(const QHash<QString, QString> &movedFiles)
+TaskHandler TaskHandlers::MoveFileListHandler(const IndexContext &context, const QHash<QString, QString> &movedFiles)
 {
-    return [movedFiles](const QString &path, TaskState &running) -> HandlerResult {
+    return [context, movedFiles](const QString &path, TaskState &running) -> HandlerResult {
         Q_UNUSED(path)
         fmInfo() << "[MoveFileListHandler] Processing file moves for" << movedFiles.size() << "entries";
         HandlerResult result { false, false, false };
 
-        QString indexDir = DFMSEARCH::Global::contentIndexDirectory();
+        QString indexDir = context.profile().indexDirectory();
 
         try {
             IndexReaderPtr reader = IndexReader::open(
@@ -995,8 +1007,8 @@ TaskHandler TaskHandlers::MoveFileListHandler(const QHash<QString, QString> &mov
             SearcherPtr searcher = newLucene<IndexSearcher>(reader);
 
             // Create processors for different move types using the new separate classes
-            FileMoveProcessor fileMoveProcessor(searcher, writer);
-            DirectoryMoveProcessor directoryMoveProcessor(searcher, writer, reader);
+            FileMoveProcessor fileMoveProcessor(context, searcher, writer);
+            DirectoryMoveProcessor directoryMoveProcessor(context, searcher, writer, reader);
 
             int fileMoves = 0;
             int directoryMoves = 0;

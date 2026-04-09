@@ -14,6 +14,7 @@
 #include <QSet>
 #include <QTimer>
 #include <QMutex>
+#include <functional>
 
 SERVICETEXTINDEX_BEGIN_NAMESPACE
 
@@ -35,11 +36,13 @@ class FSEventCollector : public QObject
     Q_DISABLE_COPY_MOVE(FSEventCollector)
 
 public:
+    using PathPredicate = std::function<bool(const QString &)>;
+
     // Constructor with explicit FSMonitor reference
-    explicit FSEventCollector(FSMonitor &monitor, QObject *parent = nullptr);
+    explicit FSEventCollector(PathPredicate pathPredicate, FSMonitor &monitor, QObject *parent = nullptr);
 
     // Constructor with default FSMonitor (uses FSMonitor::instance())
-    explicit FSEventCollector(QObject *parent = nullptr);
+    explicit FSEventCollector(PathPredicate pathPredicate, QObject *parent = nullptr);
 
     ~FSEventCollector() override;
 

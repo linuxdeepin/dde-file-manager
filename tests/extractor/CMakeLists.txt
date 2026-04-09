@@ -24,6 +24,13 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     dde-file-manager-extractor-lib
 )
 
+if(EXISTS "${DFM_APP_SOURCE_DIR}/config.h.in")
+    configure_file(
+        "${DFM_APP_SOURCE_DIR}/config.h.in"
+        "${CMAKE_CURRENT_BINARY_DIR}/config.h"
+    )
+endif()
+
 target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
 )

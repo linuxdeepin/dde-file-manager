@@ -20,135 +20,6 @@ SERVICETEXTINDEX_BEGIN_NAMESPACE
 
 namespace IndexUtility {
 
-namespace {
-// Internal helper: Read status JSON object from file
-QJsonObject readStatusJson()
-{
-    QFile file(statusFilePath());
-    if (!file.open(QIODevice::ReadOnly)) {
-        return QJsonObject();
-    }
-
-    QJsonParseError parseError;
-    const QByteArray data = file.readAll();
-    QJsonDocument doc = QJsonDocument::fromJson(data, &parseError);
-    file.close();
-
-    if (parseError.error != QJsonParseError::NoError) {
-        fmWarning() << "Failed to parse index status JSON from:" << file.fileName()
-                    << "-" << parseError.errorString();
-        return QJsonObject();
-    }
-
-    if (!doc.isObject()) {
-        fmWarning() << "Index status JSON root is not an object in:" << file.fileName();
-        return QJsonObject();
-    }
-
-    return doc.object();
-}
-
-// Internal helper: Write status JSON object to file
-bool writeStatusJson(const QJsonObject &obj)
-{
-    const QString filePath = statusFilePath();
-    QDir().mkpath(QFileInfo(filePath).absolutePath());
-
-    QSaveFile file(filePath);
-    if (!file.open(QIODevice::WriteOnly)) {
-        fmWarning() << "Failed to open index status file for writing:" << file.fileName()
-                    << "- error:" << file.errorString();
-        return false;
-    }
-
-    const QByteArray data = QJsonDocument(obj).toJson();
-    const qint64 bytesWritten = file.write(data);
-
-    if (bytesWritten != data.size()) {
-        fmWarning() << "Failed to fully write index status to:" << file.fileName()
-                    << "- wrote" << bytesWritten << "of" << data.size() << "bytes";
-        file.cancelWriting();
-        return false;
-    }
-
-    if (!file.commit()) {
-        fmWarning() << "Failed to commit index status file:" << file.fileName()
-                    << "- error:" << file.errorString();
-        return false;
-    }
-
-    return true;
-}
-}   // anonymous namespace
-
-IndexState getIndexState()
-{
-    QJsonObject obj = readStatusJson();
-    if (obj.contains(Defines::kStateKey)) {
-        QString state = obj[Defines::kStateKey].toString();
-        if (state == Defines::kStateClean) {
-            return IndexState::Clean;
-        } else if (state == Defines::kStateDirty) {
-            return IndexState::Dirty;
-        } else {
-            fmWarning() << "Index status file contains invalid state value:" << state
-                        << "- treating as Unknown";
-        }
-    } else {
-        fmDebug() << "Index status file missing 'state' field (legacy or corrupted)"
-                  << "- treating as Unknown, will trigger global update";
-    }
-    return IndexState::Unknown;
-}
-
-void setIndexState(IndexState state)
-{
-    QString stateStr;
-    switch (state) {
-    case IndexState::Clean:
-        stateStr = Defines::kStateClean;
-        break;
-    case IndexState::Dirty:
-        stateStr = Defines::kStateDirty;
-        break;
-    default:
-        fmWarning() << "Cannot set unknown state";
-        return;
-    }
-
-    QJsonObject obj = readStatusJson();
-    obj[Defines::kStateKey] = stateStr;
-
-    if (writeStatusJson(obj)) {
-        fmDebug() << "Index state set to:" << stateStr;
-    }
-}
-
-bool isCleanState()
-{
-    return getIndexState() == IndexState::Clean;
-}
-
-bool needsRebuild()
-{
-    QJsonObject obj = readStatusJson();
-    if (obj.contains(Defines::kNeedsRebuildKey)) {
-        return obj[Defines::kNeedsRebuildKey].toBool();
-    }
-
-    return false;
-}
-
-void setNeedsRebuild(bool need)
-{
-    QJsonObject obj = readStatusJson();
-    obj[Defines::kNeedsRebuildKey] = need;
-
-    if (writeStatusJson(obj)) {
-        fmDebug() << "Index needsRebuild set to:" << need;
-    }
-}
-
 bool isIndexWithAnything(const QString &path)
 {
     auto status = DFMSEARCH::Global::fileNameIndexStatus();
@@ -172,144 +43,9 @@ bool isDefaultIndexedDirectory(const QString &path)
     return kDirs.contains(path);
 }
 
-bool isPathInContentIndexDirectory(const QString &path)
-{
-    if (!DFMSEARCH::Global::isContentIndexAvailable())
-        return false;
-
-    static const QStringList &kDirs = DFMSEARCH::Global::defaultIndexedDirectory();
-    return std::any_of(kDirs.cbegin(), kDirs.cend(),
-                       [&path](const QString &dir) {
-                           // Normalize both paths by ensuring they don't end with '/'
-                           QString normalizedDir = dir;
-                           QString normalizedPath = path;
-
-                           if (normalizedDir.endsWith('/') && normalizedDir.length() > 1) {
-                               normalizedDir.chop(1);
-                           }
-                           if (normalizedPath.endsWith('/') && normalizedPath.length() > 1) {
-                               normalizedPath.chop(1);
-                           }
-
-                           // Exact match - the path is the indexed directory itself
-                           if (normalizedPath == normalizedDir) {
-                               return true;
-                           }
-
-                           // Check if path is within the directory by ensuring proper path separation
-                           // The path must start with the directory + '/' to avoid false positives
-                           // like '/foobar' matching '/foo'
-                           const QString dirWithSeparator = normalizedDir + '/';
-                           return normalizedPath.startsWith(dirWithSeparator);
-                       });
-}
-
-QString statusFilePath()
-{
-    return DFMSEARCH::Global::contentIndexDirectory() + "/index_status.json";
-}
-
-void removeIndexStatusFile()
-{
-    QFile file(statusFilePath());
-    if (file.exists()) {
-        fmInfo() << "Clearing index status file:" << file.fileName()
-                 << "[Clearing index status configuration]";
-        file.remove();
-    }
-}
-
-void clearIndexDirectory()
-{
-    QString indexDir = DFMSEARCH::Global::contentIndexDirectory();
-    QDir dir(indexDir);
-
-    if (dir.exists()) {
-        // 删除所有索引文件
-        const QStringList &files = dir.entryList(QDir::Files);
-        for (const QString &file : files) {
-            if (dir.remove(file)) {
-                fmWarning() << "Removed corrupted index file:" << file;
-            } else {
-                fmWarning() << "Failed to remove index file:" << file;
-            }
-        }
-    }
-
-    // 确保目录存在
-    if (!dir.exists()) {
-        dir.mkpath(".");
-    }
-}
-
-void saveIndexStatus(const QDateTime &lastUpdateTime)
-{
-    saveIndexStatus(lastUpdateTime, Defines::kIndexVersion);
-}
-
-void saveIndexStatus(const QDateTime &lastUpdateTime, int version)
-{
-    QJsonObject obj = readStatusJson();
-    obj[Defines::kLastUpdateTimeKey] = lastUpdateTime.toString(Qt::ISODate);
-    obj[Defines::kVersionKey] = version;
-
-    if (writeStatusJson(obj)) {
-        fmInfo() << "Index status saved successfully:"
-                 << "lastUpdateTime:" << lastUpdateTime.toString(Qt::ISODate)
-                 << "version:" << version;
-    }
-}
-
-QString getLastUpdateTime()
-{
-    QJsonObject obj = readStatusJson();
-    if (obj.contains(Defines::kLastUpdateTimeKey)) {
-        QDateTime time = QDateTime::fromString(obj[Defines::kLastUpdateTimeKey].toString(), Qt::ISODate);
-        return time.toString("yyyy-MM-dd hh:mm:ss");
-    }
-    return QString();
-}
-
-int getIndexVersion()
-{
-    QJsonObject obj = readStatusJson();
-    if (obj.contains(Defines::kVersionKey)) {
-        return obj[Defines::kVersionKey].toInt(-1);
-    }
-    return -1;   // Version not found in status file
-}
-
-bool isCompatibleVersion()
-{
-    int currentVersion = getIndexVersion();
-
-    // If version is -1, it means either:
-    // 1. Status file doesn't exist
-    // 2. Status file is corrupted
-    // 3. Version field is not present in the status file
-    // In all these cases, we need to rebuild the index
-    if (currentVersion == -1) {
-        fmWarning() << "Index version not found or invalid in status file"
-                    << "[Index compatibility check failed]";
-        return false;
-    }
-
-    // Check if the version in status file matches the current code version
-    bool isCompatible = (currentVersion == Defines::kIndexVersion);
-    if (!isCompatible) {
-        fmWarning() << "Index version mismatch. Status file version:" << currentVersion
-                    << "Current code version:" << Defines::kIndexVersion
-                    << "[Index version incompatible]";
-    }
-
-    return isCompatible;
-}
-
-bool checkFileSize(const QFileInfo &fileInfo)
+bool checkFileSize(const QFileInfo &fileInfo, qint64 sizeMBFromConfig)
 {
     try {
-        // Get the max file size from config each time to support testing
-        qint64 sizeMBFromConfig = TextIndexConfig::instance().maxIndexFileSizeMB();
         // 在这里进行上述的健全性检查
         if (sizeMBFromConfig <= 0 || sizeMBFromConfig > Q_INT64_C(0x7FFFFFFFFFFFFFFF) / (1024LL * 1024LL)) {
             sizeMBFromConfig = 50LL;   // Default fallback
@@ -331,7 +67,7 @@ bool checkFileSize(const QFileInfo &fileInfo)
     }
 }
 
-bool isSupportedFile(const QString &path)
+bool isSupportedTextFile(const QString &path)
 {
     try {
         QFileInfo fileInfo(path);
@@ -339,11 +75,33 @@ bool isSupportedFile(const QString &path)
             return false;
 
         // 检查文件大小是否超过 X MB（X * 1024 * 1024 字节）
-        if (!checkFileSize(fileInfo))
+        if (!checkFileSize(fileInfo, TextIndexConfig::instance().maxIndexTextFileSizeMB()))
             return false;
 
         const QString &suffix = fileInfo.suffix().toLower();
-        return TextIndexConfig::instance().supportedFileExtensions().contains(suffix);
+        return TextIndexConfig::instance().supportedTextFileExtensions().contains(suffix);
+    } catch (const std::exception &e) {
+        fmWarning() << "Failed to check if file is supported:" << path << e.what();
+        return false;
+    } catch (...) {
+        fmWarning() << "Failed to check if file is supported with unknown exception:" << path;
+        return false;
+    }
+}
+
+bool isSupportedOCRFile(const QString &path)
+{
+    try {
+        QFileInfo fileInfo(path);
+        if (!fileInfo.exists() || !fileInfo.isFile())
+            return false;
+
+        // 检查文件大小是否超过 X MB（X * 1024 * 1024 字节）
+        if (!checkFileSize(fileInfo, TextIndexConfig::instance().maxOcrImageSizeMB()))
+            return false;
+
+        const QString &suffix = fileInfo.suffix().toLower();
+        return TextIndexConfig::instance().supportedOcrImageExtensions().contains(suffix);
     } catch (const std::exception &e) {
         fmWarning() << "Failed to check if file is supported:" << path << e.what();
         return false;
@@ -395,14 +153,12 @@ void AnythingConfigWatcher::handleConfigChanged(const QString &key)
 {
     if (key == kDeepinAnythingDconfPathKey) {
         defaultAnythingIndexPathsRealtime();
-        // 标记需要重建索引
-        IndexUtility::setNeedsRebuild(true);
         fmInfo() << "Anything indexing paths changed, index rebuild needed";
+        emit rebuildRequired(QStringLiteral("anythingIndexPathsChanged"));
     } else if (key == kDeepinAnythingDconfBlacklistPathKey) {
         defaultBlacklistPathsRealtime();
-        // 标记需要重建索引
-        IndexUtility::setNeedsRebuild(true);
         fmInfo() << "Anything blacklist paths changed, index rebuild needed";
+        emit rebuildRequired(QStringLiteral("anythingBlacklistPathsChanged"));
     }
 }
 

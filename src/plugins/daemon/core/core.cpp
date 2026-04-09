@@ -41,6 +41,8 @@ void Core::initialize()
 
     textIndexController.reset(new TextIndexController);
     textIndexController->initialize();
+    ocrIndexController.reset(new OcrIndexController);
+    ocrIndexController->initialize();
 }
 
 bool Core::start()

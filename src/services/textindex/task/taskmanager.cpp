@@ -31,8 +31,9 @@ void registerMetaTypes()
 
 }   // namespace
 
-TaskManager::TaskManager(QObject *parent)
-    : QObject(parent)
+TaskManager::TaskManager(const IndexContext *context, QObject *parent)
+    : QObject(parent),
+      m_context(context)
 {
     fmInfo() << "[TaskManager] Initializing TaskManager instance";
     registerMetaTypes();
@@ -135,9 +136,13 @@ bool TaskManager::startTask(IndexTask::Type type, const QStringList &pathList, b
     // status文件存储了修改时间，清除后外部无法获取时间，外部利用该特性判断索引状态
     if (type == IndexTask::Type::Create) {
         fmInfo() << "[TaskManager::startTask] Create task detected, clearing existing index status";
-        IndexUtility::removeIndexStatusFile();
+        if (m_context && m_context->stateStore()) {
+            m_context->stateStore()->removeIndexStatusFile();
+        }
         // 创建索引的任务开销巨大，避免任务未完成时进程退出后，重复进入创建任务
-        IndexUtility::saveIndexStatus(QDateTime::currentDateTime());
+        if (m_context && m_context->stateStore()) {
+            m_context->stateStore()->saveIndexStatus(QDateTime::currentDateTime());
+        }
     }
 
     // 获取对应的任务处理器
@@ -205,7 +210,9 @@ bool TaskManager::startTask(IndexTask::Type type, const QStringList &pathList, b
     workerThread.start();
 
     // Mark index state as dirty before starting task
-    IndexUtility::setIndexState(IndexUtility::IndexState::Dirty);
+    if (m_context && m_context->stateStore()) {
+        m_context->stateStore()->setIndexState(IndexUtility::IndexState::Dirty);
+    }
 
     emit startTaskInThread();
     fmInfo() << "[TaskManager::startTask] Task started successfully in worker thread";
@@ -247,13 +254,13 @@ bool TaskManager::startFileListTask(IndexTask::Type type, const QStringList &fil
     TaskHandler handler;
     switch (type) {
     case IndexTask::Type::CreateFileList:
-        handler = TaskHandlers::CreateOrUpdateFileListHandler(fileList);
+        handler = TaskHandlers::CreateOrUpdateFileListHandler(*m_context, fileList);
         break;
     case IndexTask::Type::UpdateFileList:
-        handler = TaskHandlers::CreateOrUpdateFileListHandler(fileList);
+        handler = TaskHandlers::CreateOrUpdateFileListHandler(*m_context, fileList);
         break;
     case IndexTask::Type::RemoveFileList:
-        handler = TaskHandlers::RemoveFileListHandler(fileList);
+        handler = TaskHandlers::RemoveFileListHandler(*m_context, fileList);
         break;
     default:
         fmCritical() << "[TaskManager::startFileListTask] Unknown file list task type:" << static_cast<int>(type);
@@ -273,7 +280,9 @@ bool TaskManager::startFileListTask(IndexTask::Type type, const QStringList &fil
     workerThread.start();
 
     // Mark index state as dirty before starting task
-    IndexUtility::setIndexState(IndexUtility::IndexState::Dirty);
+    if (m_context && m_context->stateStore()) {
+        m_context->stateStore()->setIndexState(IndexUtility::IndexState::Dirty);
+    }
 
     emit startTaskInThread();
     fmDebug() << "[TaskManager::startFileListTask] File list task started successfully in worker thread";
@@ -312,7 +321,7 @@ bool TaskManager::startFileMoveTask(const QHash<QString, QString> &movedFiles, b
              << "silent:" << silent;
 
     // 获取对应的任务处理器
-    TaskHandler handler = TaskHandlers::MoveFileListHandler(movedFiles);
+    TaskHandler handler = TaskHandlers::MoveFileListHandler(*m_context, movedFiles);
     if (!handler) {
         fmCritical() << "[TaskManager::startFileMoveTask] Failed to create move file list handler";
         return false;
@@ -331,7 +340,9 @@ bool TaskManager::startFileMoveTask(const QHash<QString, QString> &movedFiles, b
     workerThread.start();
 
     // Mark index state as dirty before starting task
-    IndexUtility::setIndexState(IndexUtility::IndexState::Dirty);
+    if (m_context && m_context->stateStore()) {
+        m_context->stateStore()->setIndexState(IndexUtility::IndexState::Dirty);
+    }
 
     emit startTaskInThread();
     fmDebug() << "[TaskManager::startFileMoveTask] File move task started successfully in worker thread";
@@ -342,9 +353,9 @@ TaskHandler TaskManager::getTaskHandler(IndexTask::Type type)
 {
     switch (type) {
     case IndexTask::Type::Create:
-        return TaskHandlers::CreateIndexHandler();
+        return TaskHandlers::CreateIndexHandler(*m_context);
     case IndexTask::Type::Update:
-        return TaskHandlers::UpdateIndexHandler();
+        return TaskHandlers::UpdateIndexHandler(*m_context);
     default:
         fmWarning() << "[TaskManager::getTaskHandler] Unknown task type:" << static_cast<int>(type);
         return nullptr;
@@ -399,7 +410,9 @@ void TaskManager::onTaskFinished(IndexTask::Type type, HandlerResult result)
             fmWarning() << "[TaskManager::onTaskFinished] Update task failed due to index corruption, attempting rebuild - path:" << taskPath;
 
             // 清理损坏的索引
-            IndexUtility::clearIndexDirectory();
+            if (m_context && m_context->stateStore()) {
+                m_context->stateStore()->clearIndexDirectory();
+            }
 
             // 启动新的创建任务
             cleanupTask();   // 清理当前失败的任务
@@ -427,15 +440,19 @@ void TaskManager::onTaskFinished(IndexTask::Type type, HandlerResult result)
               << (result.success ? "completed successfully" : "failed");
 
     // 如果是根目录的任务，更新状态文件
-    if (IndexUtility::isDefaultIndexedDirectory(taskPath) && !result.success) {
+    if (m_context && m_context->profile().isPathInScope(taskPath) && !result.success) {
         fmWarning() << "[TaskManager::onTaskFinished] Root indexing failed, clearing status - path:" << taskPath;
-        IndexUtility::removeIndexStatusFile();
+        if (m_context->stateStore()) {
+            m_context->stateStore()->removeIndexStatusFile();
+        }
     }
 
     if (result.success) {
         if (!result.interrupted || type == IndexTask::Type::Create) {
             fmDebug() << "[TaskManager::onTaskFinished] Task completed successfully, updating index status";
-            IndexUtility::saveIndexStatus(QDateTime::currentDateTime());
+            if (m_context && m_context->stateStore()) {
+                m_context->stateStore()->saveIndexStatus(QDateTime::currentDateTime());
+            }
         }
     }
     emit taskFinished(typeToString(type), taskPath, result.success);
@@ -448,7 +465,9 @@ void TaskManager::onTaskFinished(IndexTask::Type type, HandlerResult result)
         fmDebug() << "[TaskManager::onTaskFinished] No more tasks in queue";
         // Mark index state as clean only when all tasks are completed successfully
         if (result.success && !result.interrupted) {
-            IndexUtility::setIndexState(IndexUtility::IndexState::Clean);
+            if (m_context && m_context->stateStore()) {
+                m_context->stateStore()->setIndexState(IndexUtility::IndexState::Clean);
+            }
             fmInfo() << "[TaskManager::onTaskFinished] All tasks completed, index state set to clean";
         }
     }
