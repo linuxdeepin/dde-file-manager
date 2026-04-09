@@ -33,6 +33,7 @@ protected:
     void paintEvent(QPaintEvent *e) override;
     void showEvent(QShowEvent *event) override;
     void inputMethodEvent(QInputMethodEvent *e) override;
+    void contextMenuEvent(QContextMenuEvent *e) override;
 
 Q_SIGNALS:
     void lostFocus();
