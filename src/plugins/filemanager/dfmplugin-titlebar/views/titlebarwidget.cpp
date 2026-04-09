@@ -236,15 +236,6 @@ void TitleBarWidget::handleHotketSwitchViewMode(int mode)
 
 void TitleBarWidget::handleHotketCloseCurrentTab()
 {
-    if (tabBar()->count() == 1) {
-        auto winId = TitleBarHelper::windowId(this);
-        auto window = FMWindowsIns.findWindowById(winId);
-        if (window)
-            window->close();
-
-        return;
-    }
-
     tabBar()->removeTab(tabBar()->currentIndex());
 }
 
