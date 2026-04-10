@@ -30,16 +30,11 @@ class FileDialogPrivate : public QObject
 
 public:
     explicit FileDialogPrivate(FileDialog *qq);
-    ~FileDialogPrivate();
 
     void handleSaveAcceptBtnClicked();
     void handleOpenAcceptBtnClicked();
     void handleOpenNewWindow(const QUrl &url);
     bool checkFileSuffix(const QString &filename, QString &suffix);
-    void setLastVisited(const QUrl &dir);
-
-public Q_SLOTS:
-    void saveLastVisited();
 
 private:
     static constexpr int kDefaultWindowWidth { 960 };
@@ -60,8 +55,6 @@ private:
     bool allowMixedSelection { false };
     QFileDialog::Options options;
     QUrl currentUrl;
-    QUrl lastVisitedDir;
-    QTimer *delaySaveTimer { nullptr };
 
     static QStringList cleanFilterList(const QString &filter)
     {
