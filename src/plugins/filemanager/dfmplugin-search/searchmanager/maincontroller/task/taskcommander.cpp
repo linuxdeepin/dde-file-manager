@@ -141,6 +141,14 @@ void SimplifiedSearchWorker::createSearchersForUrl(const QUrl &url)
         searchTypes.append(SearchType::Content);
     }
 
+    bool enableOcrTextSearch = DConfigManager::instance()->value(
+                                                                 DConfig::kSearchCfgPath, DConfig::kEnableOcrTextSearch, false)
+                                       .toBool();
+
+    if (enableOcrTextSearch) {
+        searchTypes.append(SearchType::Ocr);
+    }
+
     // 为每种搜索类型创建搜索器
     for (auto type : searchTypes) {
         // 使用DFMSearcher作为默认搜索器

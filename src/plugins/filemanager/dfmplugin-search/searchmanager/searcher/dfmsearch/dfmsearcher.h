@@ -11,6 +11,7 @@
 #include <dfm-search/searchquery.h>
 #include <dfm-search/searchoptions.h>
 #include <dfm-search/contentsearchapi.h>
+#include <dfm-search/ocrtextsearchapi.h>
 
 #include <QMutex>
 #include <QUrl>
@@ -39,6 +40,8 @@ private:
     DFMSEARCH::SearchQuery createSearchQuery() const;
     void processSearchResult(const DFMSEARCH::SearchResult &result);
     DFMSEARCH::SearchType getSearchType() const;
+    bool isIndexOnlyContentSearch() const;
+    QString searchTypeDisplayName() const;
     DFMSEARCH::SearchMethod getSearchMethod(const QString &path) const;
     void handleRemainingResults(const QList<DFMSEARCH::SearchResult> &results);
     bool isEngineReady() const;
