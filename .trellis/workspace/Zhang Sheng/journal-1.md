@@ -99,3 +99,71 @@ Implemented a process-isolated file content extractor framework with IPC pipes +
 ### Next Steps
 
 - None - task complete
+
+
+## Session 3: TextIndex 架构重构与规范更新
+
+**Date**: 2026-04-10
+**Task**: TextIndex 架构重构与规范更新
+
+### Summary
+
+(Add summary)
+
+### Main Changes
+
+## 完成工作
+
+### 1. 代码重构 (已提交)
+
+| 变更 | 描述 |
+|------|------|
+| 统一提取器 | 移除 LegacyDocUtilsExtractor，所有提取通过 ProcessExtractor |
+| 进程隔离 | ProcessExtractorProxy 管理子进程，60s 空闲超时，120s 请求超时 |
+| 依赖简化 | 移除 docparser 依赖，提取逻辑移至 dde-file-manager-extractor |
+
+### 2. 规范文档更新
+
+**文件**: `.trellis/spec/backend/textindex-service.md` (664 行)
+
+**新增章节**:
+- 完整架构图 (DBus → Runtime → Extractor → Subprocess)
+- ProcessExtractor 进程提取器设计
+- ControllerPipe IPC 协议 (状态码: S/F/f/D/B)
+- dde-file-manager-extractor 工具架构
+- 双索引模式 (文本 + OCR)
+- 完整配置项列表 (15项)
+
+### 3. 变更文件
+
+| 文件 | 操作 |
+|------|------|
+| `src/services/textindex/extractor/processextractor.cpp` | 重构 (+296/-323) |
+| `src/services/textindex/core/indexruntime.cpp` | 简化选择器 |
+| `src/services/textindex/utils/docutils.cpp` | 删除提取函数 |
+| `src/services/textindex/dependencies.cmake` | 移除 docparser |
+| `.trellis/spec/backend/textindex-service.md` | 完整重写 |
+
+### 4. 归档任务
+
+- `04-09-textindex-process-extractor` → `archive/2026-04/`
+
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `e136b97d3` | (see git log) |
+| `81c24eac5` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
