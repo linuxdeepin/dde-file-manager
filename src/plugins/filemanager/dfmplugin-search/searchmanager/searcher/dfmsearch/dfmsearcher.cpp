@@ -114,6 +114,26 @@ SearchType DFMSearcher::getSearchType() const
     return engine ? engine->searchType() : SearchType::FileName;
 }
 
+bool DFMSearcher::isIndexOnlyContentSearch() const
+{
+    const auto type = getSearchType();
+    return type == SearchType::Content || type == SearchType::Ocr;
+}
+
+QString DFMSearcher::searchTypeDisplayName() const
+{
+    switch (getSearchType()) {
+    case SearchType::FileName:
+        return QStringLiteral("File name");
+    case SearchType::Content:
+        return QStringLiteral("Content");
+    case SearchType::Ocr:
+        return QStringLiteral("OCR");
+    default:
+        return QStringLiteral("Unknown");
+    }
+}
+
 void DFMSearcher::processSearchResult(const SearchResult &result)
 {
     QUrl url = QUrl::fromLocalFile(result.path());
@@ -122,9 +142,18 @@ void DFMSearcher::processSearchResult(const SearchResult &result)
     DFMSearchResult searchResult(url);
 
     // 根据搜索类型设置不同的字段
-    if (engine->searchType() == SearchType::Content) {
-        ContentResultAPI contentResult(const_cast<SearchResult &>(result));
-        searchResult.setHighlightedContent(contentResult.highlightedContent());
+    if (isIndexOnlyContentSearch()) {
+        QString preview;
+
+        if (getSearchType() == SearchType::Content) {
+            ContentResultAPI contentResult(const_cast<SearchResult &>(result));
+            preview = contentResult.highlightedContent();
+        } else {
+            OcrTextResultAPI ocrResult(const_cast<SearchResult &>(result));
+            preview = ocrResult.ocrContent();
+        }
+
+        searchResult.setHighlightedContent(preview);
         searchResult.setIsContentMatch(true);
         searchResult.setMatchScore(1.0);   // 内容匹配优先级更高
     } else {
@@ -151,7 +180,7 @@ bool DFMSearcher::isValidSearchParameters() const
 
 bool DFMSearcher::validateSearchType(const QString &transformedPath, SearchOptions &options)
 {
-    if (engine->searchType() == SearchType::Content) {
+    if (getSearchType() == SearchType::Content) {
         if (DFMSEARCH::Global::isFileNameIndexReadyForSearch()
             && !DFMSEARCH::Global::isPathInFileNameIndexDirectory(transformedPath)) {
             fmInfo() << "Full-text search is currently only supported for Indexed, current path not indexed: " << transformedPath;
@@ -161,6 +190,20 @@ bool DFMSearcher::validateSearchType(const QString &transformedPath, SearchOptio
             contentAPI.setMaxPreviewLength(200);
             contentAPI.setFilenameContentMixedAndSearchEnabled(true);
             fmDebug() << "Content search options configured - max preview length: 200, mixed search enabled";
+        }
+    } else if (getSearchType() == SearchType::Ocr) {
+        if (!DFMSEARCH::Global::isOcrTextIndexAvailable()) {
+            fmInfo() << "OCR text index is not available for search, current path:" << transformedPath;
+            return false;
+        }
+
+        if (!DFMSEARCH::Global::isPathInOcrTextIndexDirectory(transformedPath)) {
+            fmInfo() << "OCR text search is currently only supported for Indexed, current path not indexed: " << transformedPath;
+            return false;
+        } else {
+            OcrTextOptionsAPI ocrAPI(options);
+            ocrAPI.setFilenameOcrContentMixedAndSearchEnabled(true);
+            fmDebug() << "OCR text search options configured - mixed search enabled";
         }
     }
     return true;
@@ -336,8 +379,7 @@ void DFMSearcher::onSearchFinished(const QList<SearchResult> &results)
 
 void DFMSearcher::onSearchCancelled()
 {
-    auto type = getSearchType();
-    fmInfo() << "Search cancelled for:" << keyword << "type:" << (type == SearchType::FileName ? "File name" : "Content");
+    fmInfo() << "Search cancelled for:" << keyword << "type:" << searchTypeDisplayName();
     emit finished();
 }
 
