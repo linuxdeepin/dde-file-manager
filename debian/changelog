@@ -1,3 +1,15 @@
+dde-file-manager (6.5.131) unstable; urgency=medium
+
+  * feat: implement optical disc sharing service
+  * fix: fix app entry command execution on computer page
+  * fix: ensure address bar shows on context menu
+  * fix: remove window close logic from tab close hotkey
+  * refactor: replace custom ElidedLable with DLabel
+  * feat: add batch rename support for undo/redo
+  * Fix(filedialog): change last visited URL saving logic for V25
+
+ -- Liu Zhangjian <liuzhangjian@uniontech.com>  Fri, 10 Apr 2026 16:31:44 +0800
+
 dde-file-manager (6.5.130) unstable; urgency=medium
 
   * fix: add delayed loading for burn plugin to improve startup performance
