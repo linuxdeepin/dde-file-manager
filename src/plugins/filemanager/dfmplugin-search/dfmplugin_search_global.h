@@ -42,6 +42,7 @@ inline constexpr char kCurmbDisplayText[] {"CrumbData_Key_DisplayText"};
 namespace SearchSettings {
 inline constexpr char kGroupSearch[] { SEARCH_SETTING_GROUP };
 inline constexpr char kFulltextSearch[] { SEARCH_SETTING_GROUP ".00_fulltext_search" };
+inline constexpr char kOcrTextSearch[] { SEARCH_SETTING_GROUP ".01_ocr_text_search" };
 }
 
 namespace DConfig {

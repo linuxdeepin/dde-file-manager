@@ -167,6 +167,28 @@ void Search::regSearchSettingConfig()
                                                      DConfig::kEnableFullTextSearch,
                                                      val);
             });
+
+    // OCR text search configuration
+    QString ocrIndexKey { SearchSettings::kOcrTextSearch };
+    DialogManager::instance()->registerSettingWidget("checkBoxWidthOcrIndex", &SearchHelper::createCheckBoxWidthOcrIndex);
+    SettingJsonGenerator::instance()->addConfig(SearchSettings::kOcrTextSearch,
+                                                { { "key", ocrIndexKey.mid(ocrIndexKey.lastIndexOf(".") + 1) },
+                                                  { "text", tr("Image-Content search") },
+                                                  { "type", "checkBoxWidthOcrIndex" },
+                                                  { "default", true } });
+
+    SettingBackend::instance()->addSettingAccessor(
+            SearchSettings::kOcrTextSearch,
+            []() {
+                return DConfigManager::instance()->value(DConfig::kSearchCfgPath,
+                                                         DConfig::kEnableOcrTextSearch,
+                                                         true);
+            },
+            [](const QVariant &val) {
+                DConfigManager::instance()->setValue(DConfig::kSearchCfgPath,
+                                                     DConfig::kEnableOcrTextSearch,
+                                                     val);
+            });
 }
 
 void Search::bindEvents()
