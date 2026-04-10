@@ -16,8 +16,6 @@
 #include <QueryWrapperFilter.h>
 #include <FSDirectory.h>
 
-#include <docparser.h>
-
 #include <dirent.h>
 
 class TextIndexDBus;

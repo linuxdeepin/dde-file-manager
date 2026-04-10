@@ -14,7 +14,6 @@ function(dfm_setup_search_dependencies target_name)
     
     # Find system dependencies using pkg-config
     pkg_check_modules(Lucene REQUIRED IMPORTED_TARGET liblucene++ liblucene++-contrib)
-    pkg_check_modules(Docparser REQUIRED IMPORTED_TARGET docparser)
     pkg_check_modules(GLIB REQUIRED glib-2.0)
     
     # Apply default plugin configuration first
@@ -25,7 +24,6 @@ function(dfm_setup_search_dependencies target_name)
         Qt6::DBus
         ${GLIB_LIBRARIES}
         PkgConfig::Lucene
-        PkgConfig::Docparser
         dfm6-search
     )
     
