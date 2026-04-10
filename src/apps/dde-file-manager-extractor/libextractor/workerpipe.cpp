@@ -10,6 +10,7 @@
 #include <QSocketNotifier>
 #include <cstdio>
 #include <cerrno>
+#include <fcntl.h>
 #include <unistd.h>
 
 EXTRACTOR_BEGIN_NAMESPACE
@@ -229,13 +230,24 @@ bool WorkerPipe::setupOutputChannel()
         return false;
     }
 
-    // Fix: keep a dedicated fd for binary IPC and redirect process stdout to
-    // stderr so Qt/DTK logs cannot corrupt the framed protocol stream.
-    if (::dup2(STDERR_FILENO, STDOUT_FILENO) < 0) {
+    const int nullFd = ::open("/dev/null", O_WRONLY | O_CLOEXEC);
+    if (nullFd < 0) {
         ::close(d->outputFd);
         d->outputFd = -1;
         return false;
     }
+
+    // Keep a dedicated fd for binary IPC and sink accidental stdout writes so
+    // they cannot be misread as protocol frames or flood the controller's
+    // stderr log stream after redirection.
+    if (::dup2(nullFd, STDOUT_FILENO) < 0) {
+        ::close(nullFd);
+        ::close(d->outputFd);
+        d->outputFd = -1;
+        return false;
+    }
+
+    ::close(nullFd);
 
     if (::fflush(stdout) != 0 && errno != EBADF) {
         fmWarning() << "WorkerPipe::setupOutputChannel: Failed to flush stdout after redirect";
