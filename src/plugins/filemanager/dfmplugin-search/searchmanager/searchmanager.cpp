@@ -87,20 +87,26 @@ void SearchManager::stop(quint64 winId)
 
 void SearchManager::onDConfigValueChanged(const QString &config, const QString &key)
 {
-    if (config != DConfig::kSearchCfgPath || key != DConfig::kEnableFullTextSearch)
+    if (config != DConfig::kSearchCfgPath)
         return;
 
     using namespace dfmplugin_utils;
 
-    QVariantMap data;
-    bool enabled = DConfigManager::instance()->value(config, key, false).toBool();
-    data.insert("mode", enabled ? SearchReportData::kTurnOn : SearchReportData::kTurnOff);
+    if (key == DConfig::kEnableFullTextSearch) {
+        QVariantMap data;
+        bool enabled = DConfigManager::instance()->value(config, key, false).toBool();
+        data.insert("mode", enabled ? SearchReportData::kTurnOn : SearchReportData::kTurnOff);
 
-    fmInfo() << "Full-text search configuration changed - enabled:" << enabled;
+        fmInfo() << "Full-text search configuration changed - enabled:" << enabled;
 
-    dpfSignalDispatcher->publish("dfmplugin_search", "signal_ReportLog_Commit", QString("Search"), data);
+        dpfSignalDispatcher->publish("dfmplugin_search", "signal_ReportLog_Commit", QString("Search"), data);
 
-    emit enableFullTextSearchChanged(enabled);
+        emit enableFullTextSearchChanged(enabled);
+    } else if (key == DConfig::kEnableOcrTextSearch) {
+        bool enabled = DConfigManager::instance()->value(config, key, false).toBool();
+        fmInfo() << "OCR text search configuration changed - enabled:" << enabled;
+        emit enableOcrTextSearchChanged(enabled);
+    }
 }
 
 SearchManager::SearchManager(QObject *parent)

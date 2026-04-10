@@ -5,6 +5,7 @@
 #include "searchhelper.h"
 
 #include "checkboxwidthtextindex.h"
+#include "checkboxwidthocrindex.h"
 #include "topwidget/advancesearchbar.h"
 
 #include <dfm-base/interfaces/fileinfo.h>
@@ -373,6 +374,27 @@ QWidget *SearchHelper::createCheckBoxWidthTextIndex(QObject *opt)
     cb->initStatusBar();
 
     QObject::connect(cb, &CheckBoxWidthTextIndex::checkStateChanged, option, [=](Qt::CheckState state) {
+        if (state == Qt::CheckState::Unchecked)
+            option->setValue(false);
+        else if (state == Qt::CheckState::Checked)
+            option->setValue(true);
+    });
+
+    return cb;
+}
+
+QWidget *SearchHelper::createCheckBoxWidthOcrIndex(QObject *opt)
+{
+    auto option = qobject_cast<Dtk::Core::DSettingsOption *>(opt);
+    const QString &text = option->data("text").toString();
+
+    CheckBoxWidthOcrIndex *cb = new CheckBoxWidthOcrIndex;
+    cb->connectToBackend();
+    cb->setDisplayText(qApp->translate("QObject", text.toStdString().c_str()));
+    cb->setChecked(option->value().toBool());
+    cb->initStatusBar();
+
+    QObject::connect(cb, &CheckBoxWidthOcrIndex::checkStateChanged, option, [=](Qt::CheckState state) {
         if (state == Qt::CheckState::Unchecked)
             option->setValue(false);
         else if (state == Qt::CheckState::Checked)

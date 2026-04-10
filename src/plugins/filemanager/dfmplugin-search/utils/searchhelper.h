@@ -65,6 +65,7 @@ public:
     bool crumbRedirectUrl(QUrl *redirectUrl);
 
     [[nodiscard]] static QWidget *createCheckBoxWidthTextIndex(QObject *opt);
+    [[nodiscard]] static QWidget *createCheckBoxWidthOcrIndex(QObject *opt);
 
 private:
     explicit SearchHelper(QObject *parent = nullptr);
