@@ -145,7 +145,7 @@ void ControllerPipe::handleProcessErrorOutput()
 
     const QByteArray errorOutput = process->readAllStandardError();
     if (!errorOutput.isEmpty()) {
-        fmWarning() << "ControllerPipe: Extractor stderr:" << errorOutput;
+        fmWarning() << "ControllerPipe: Extractor stderr:" << QString::fromUtf8(errorOutput);
     }
 }
 

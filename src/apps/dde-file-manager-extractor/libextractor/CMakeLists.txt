@@ -24,8 +24,6 @@ add_library(${LIB_NAME}
 set_target_properties(${LIB_NAME} PROPERTIES
     OUTPUT_NAME dde-file-manager-extractor
     LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/..
-    VERSION 1.0.0
-    SOVERSION 1
 )
 
 # Find dependencies
