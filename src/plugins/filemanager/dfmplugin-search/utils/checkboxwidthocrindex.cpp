@@ -4,6 +4,8 @@
 
 #include "searchmanager/searchmanager.h"
 
+#include <dfm-search/dsearch_global.h>
+
 #include <DDciIcon>
 
 #include <QVBoxLayout>
@@ -268,10 +270,10 @@ CheckBoxWidthOcrIndex::CheckBoxWidthOcrIndex(QWidget *parent)
                     client->setEnable(true);
                     if (exists) {
                         fmDebug() << "Starting OcrIndex update task";
-                        client->startTask(OcrIndexClient::TaskType::Update, {});
+                        client->startTask(OcrIndexClient::TaskType::Update, DFMSEARCH::Global::defaultIndexedDirectory());
                     } else {
                         fmDebug() << "Starting OcrIndex create task";
-                        client->startTask(OcrIndexClient::TaskType::Create, {});
+                        client->startTask(OcrIndexClient::TaskType::Create, DFMSEARCH::Global::defaultIndexedDirectory());
                     }
                     statusBar->setStatus(OcrIndexStatusBar::Status::Indexing);
                 } else if (currentOcrIndexCheckContext == OcrIndexCheckContext::InitStatus) {

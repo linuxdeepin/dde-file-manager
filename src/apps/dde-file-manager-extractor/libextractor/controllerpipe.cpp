@@ -54,8 +54,6 @@ bool ControllerPipe::start(const QString &extractorPath, const QString &pluginPa
     // Connect process signals
     connect(d->process, &QProcess::readyReadStandardOutput,
             this, &ControllerPipe::handleProcessOutput);
-    connect(d->process, &QProcess::readyReadStandardError,
-            this, &ControllerPipe::handleProcessErrorOutput);
 
     connect(d->process, &QProcess::errorOccurred,
             this, [this](QProcess::ProcessError error) {
@@ -131,22 +129,6 @@ void ControllerPipe::handleProcessOutput()
 
     d->inputBuffer.append(process->readAllStandardOutput());
     processInputBuffer();
-}
-
-void ControllerPipe::handleProcessErrorOutput()
-{
-    QProcess *process = qobject_cast<QProcess *>(sender());
-    if (!process) {
-        process = d->process;
-    }
-    if (!process) {
-        return;
-    }
-
-    const QByteArray errorOutput = process->readAllStandardError();
-    if (!errorOutput.isEmpty()) {
-        fmWarning() << "ControllerPipe: Extractor stderr:" << QString::fromUtf8(errorOutput);
-    }
 }
 
 void ControllerPipe::processInputBuffer()

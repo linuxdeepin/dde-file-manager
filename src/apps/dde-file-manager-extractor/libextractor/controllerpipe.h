@@ -108,7 +108,6 @@ signals:
 
 private:
     void handleProcessOutput();
-    void handleProcessErrorOutput();
     void processInputBuffer();
     void handleStatusMessage(const QByteArray &messageData);
     bool hasPendingPartialMessage() const;
