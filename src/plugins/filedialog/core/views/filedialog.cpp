@@ -54,18 +54,6 @@ FileDialogPrivate::FileDialogPrivate(FileDialog *qq)
     //! fix: FileDialog no needs to restore window state on creating.
     //! see FileManagerWindowsManager::createWindow
     q->setProperty("_dfm_Disable_RestoreWindowState_", true);
-
-    QSettings qtSets(QSettings::UserScope, QLatin1String("QtProject"));
-    lastVisitedDir = qtSets.value("FileDialog/lastVisited").toUrl();
-
-    delaySaveTimer = new QTimer(this);
-    delaySaveTimer->setInterval(3000);
-    connect(delaySaveTimer, &QTimer::timeout, this, &FileDialogPrivate::saveLastVisited);
-}
-
-FileDialogPrivate::~FileDialogPrivate()
-{
-    saveLastVisited();
 }
 
 void FileDialogPrivate::handleSaveAcceptBtnClicked()
@@ -216,18 +204,6 @@ bool FileDialogPrivate::checkFileSuffix(const QString &filename, QString &suffix
     return false;
 }
 
-void FileDialogPrivate::setLastVisited(const QUrl &dir)
-{
-    lastVisitedDir = dir;
-    delaySaveTimer->start();
-}
-
-void FileDialogPrivate::saveLastVisited()
-{
-    QSettings qtSets(QSettings::UserScope, QLatin1String("QtProject"));
-    qtSets.setValue("FileDialog/lastVisited", lastVisitedDir.toString());
-}
-
 /*!
  * \class FileDialog
  */
@@ -257,8 +233,6 @@ FileDialog::~FileDialog()
 void FileDialog::cd(const QUrl &url)
 {
     FileManagerWindow::cd(url);
-
-    d->lastVisitedDir = url;
 
     auto window = FMWindowsIns.findWindowById(this->internalWinId());
     if (!window)
@@ -293,7 +267,14 @@ QFileDialog::ViewMode FileDialog::currentViewMode() const
 
 QUrl FileDialog::lastVisitedUrl() const
 {
-    return d->lastVisitedDir;
+    QSettings qtSets(QSettings::UserScope, QLatin1String("QtProject"));
+    return qtSets.value("FileDialog/lastVisited").toUrl();
+}
+
+void FileDialog::saveLastVisitedUrl(const QUrl &currentUrl)
+{
+    QSettings qtSets(QSettings::UserScope, QLatin1String("QtProject"));
+    qtSets.setValue("FileDialog/lastVisited", currentUrl.toString());
 }
 
 void FileDialog::setDirectory(const QString &directory)
@@ -708,6 +689,9 @@ bool FileDialog::checkFileSuffix(const QString &filename, QString &suffix)
 
 void FileDialog::accept()
 {
+    // 记录当前的访问目录
+    saveLastVisitedUrl(currentUrl());
+
     done(QDialog::Accepted);
 }
 
@@ -1184,9 +1168,6 @@ void FileDialog::initConnect()
             this, &FileDialog::selectedNameFilterChanged);
 #endif
     connect(this, &FileDialog::selectionFilesChanged, &FileDialog::updateAcceptButtonState);
-    connect(this, &FileDialog::currentUrlChanged, this, [this](auto url) {
-        d->lastVisitedDir = url;
-    });
 }
 
 void FileDialog::initEventsConnect()
