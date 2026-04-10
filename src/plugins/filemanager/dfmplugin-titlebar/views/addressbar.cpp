@@ -346,7 +346,7 @@ void AddressBarPrivate::onTextEdited(const QString &text)
 
 void AddressBarPrivate::onReturnPressed()
 {
-    QString text { q->text() };
+    QString text { q->text().trimmed() };
     if (text.isEmpty())
         return;
 
