@@ -9,7 +9,6 @@
 #include "document/contentdocumentbuilder.h"
 #include "document/ocrdocumentbuilder.h"
 #include "fsmonitor/fseventcontroller.h"
-#include "extractor/legacydocutilsextractor.h"
 #include "extractor/processextractor.h"
 #include "profile/indexprofile.h"
 #include "state/indexstatestore.h"
@@ -39,7 +38,6 @@ private:
 
     IndexProfile m_profile;
     IndexStateStore m_stateStore;
-    LegacyDocUtilsExtractor m_legacyExtractor;
     ProcessExtractor m_processExtractor;
     ContentDocumentBuilder m_contentDocumentBuilder;
     OcrDocumentBuilder m_ocrDocumentBuilder;

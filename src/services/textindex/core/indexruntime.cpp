@@ -43,13 +43,7 @@ FSEventController *IndexRuntime::fsEventController() const
 
 const IndexExtractor *IndexRuntime::selectExtractor() const
 {
-    switch (m_profile.type()) {
-    case IndexProfile::Type::Ocr:
-        return &m_processExtractor;
-    case IndexProfile::Type::Content:
-    default:
-        return &m_legacyExtractor;
-    }
+    return &m_processExtractor;
 }
 
 const IndexDocumentBuilder *IndexRuntime::selectDocumentBuilder() const
