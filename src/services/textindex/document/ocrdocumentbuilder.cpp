@@ -8,6 +8,8 @@
 
 #include <dfm-search/field_names.h>
 
+#include <lucene++/NumericField.h>
+
 #include <QFileInfo>
 
 SERVICETEXTINDEX_BEGIN_NAMESPACE
@@ -29,6 +31,13 @@ DocumentPtr OcrDocumentBuilder::build(const QString &filePath, const QString &te
     }
 
     const QFileInfo fileInfo(filePath);
+
+    // Add birth time as NumericField for efficient range queries
+    const qint64 birthTimeSecs = fileInfo.birthTime().toSecsSinceEpoch();
+    NumericFieldPtr birthTimeField = newLucene<NumericField>(OcrText::kBirthTime, Field::STORE_YES, true);
+    birthTimeField->setLongValue(birthTimeSecs);
+    doc->add(birthTimeField);
+
     doc->add(newLucene<Field>(OcrText::kFilename, fileInfo.fileName().toStdWString(),
                               Field::STORE_YES, Field::INDEX_ANALYZED));
 
