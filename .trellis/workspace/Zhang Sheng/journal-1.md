@@ -167,3 +167,46 @@ Implemented a process-isolated file content extractor framework with IPC pipes +
 ### Next Steps
 
 - None - task complete
+
+
+## Session 4: TextIndex modify time field alignment
+
+**Date**: 2026-04-11
+**Task**: TextIndex modify time field alignment
+
+### Summary
+
+(Add summary)
+
+### Main Changes
+
+| Area | Description |
+|------|-------------|
+| Content index | Replaced legacy `modified` stored field with `Content::kModifyTime` numeric field |
+| OCR index | Added `OcrText::kModifyTime` numeric field |
+| Update check | Updated `checkNeedUpdate()` to read the new per-profile modify-time field |
+| Verification | Rebuilt `dde-filemanager-textindex` successfully in `obj-x86_64-linux-gnu` |
+
+**Updated Files**:
+- `src/services/textindex/document/contentdocumentbuilder.cpp`
+- `src/services/textindex/document/ocrdocumentbuilder.cpp`
+- `src/services/textindex/task/taskhandler.cpp`
+
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `918a8670c` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
