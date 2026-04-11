@@ -4,7 +4,7 @@ set(BIN_NAME "dde-file-manager-extractor")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-find_package(Qt6 COMPONENTS Core REQUIRED)
+find_package(Qt6 COMPONENTS Core Gui REQUIRED)
 
 FILE(GLOB_RECURSE EXTRACTOR_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
@@ -17,6 +17,7 @@ add_executable(${BIN_NAME}
 
 target_link_libraries(${BIN_NAME} PRIVATE
     Qt6::Core
+    Qt6::Gui
     DFM6::base
     dde-file-manager-extractor-lib
 )
