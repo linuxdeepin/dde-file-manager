@@ -32,6 +32,12 @@ DocumentPtr OcrDocumentBuilder::build(const QString &filePath, const QString &te
 
     const QFileInfo fileInfo(filePath);
 
+    // Add modify time as NumericField for efficient range queries
+    const qint64 modifyTimeSecs = fileInfo.lastModified().toSecsSinceEpoch();
+    NumericFieldPtr modifyTimeField = newLucene<NumericField>(OcrText::kModifyTime, Field::STORE_YES, true);
+    modifyTimeField->setLongValue(modifyTimeSecs);
+    doc->add(modifyTimeField);
+
     // Add birth time as NumericField for efficient range queries
     const qint64 birthTimeSecs = fileInfo.birthTime().toSecsSinceEpoch();
     NumericFieldPtr birthTimeField = newLucene<NumericField>(OcrText::kBirthTime, Field::STORE_YES, true);

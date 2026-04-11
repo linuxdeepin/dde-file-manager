@@ -32,9 +32,10 @@ DocumentPtr ContentDocumentBuilder::build(const QString &filePath, const QString
     }
 
     const QFileInfo fileInfo(filePath);
-    const QString modifyEpoch = QString::number(fileInfo.lastModified().toSecsSinceEpoch());
-    doc->add(newLucene<Field>(L"modified", modifyEpoch.toStdWString(),
-                              Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
+    const qint64 modifyTimeSecs = fileInfo.lastModified().toSecsSinceEpoch();
+    NumericFieldPtr modifyTimeField = newLucene<NumericField>(Content::kModifyTime, Field::STORE_YES, true);
+    modifyTimeField->setLongValue(modifyTimeSecs);
+    doc->add(modifyTimeField);
 
     // Add birth time as NumericField for efficient range queries
     const qint64 birthTimeSecs = fileInfo.birthTime().toSecsSinceEpoch();
