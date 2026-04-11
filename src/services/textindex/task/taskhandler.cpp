@@ -176,7 +176,24 @@ const wchar_t *ancestorPathsField(const IndexProfile &profile)
 
 bool supportsModifiedTimestampCheck(const IndexProfile &profile)
 {
-    return profile.type() == IndexProfile::Type::Content;
+    switch (profile.type()) {
+    case IndexProfile::Type::Ocr:
+    case IndexProfile::Type::Content:
+        return true;
+    default:
+        return false;
+    }
+}
+
+const wchar_t *modifyTimeField(const IndexProfile &profile)
+{
+    switch (profile.type()) {
+    case IndexProfile::Type::Ocr:
+        return OcrText::kModifyTime;
+    case IndexProfile::Type::Content:
+    default:
+        return Content::kModifyTime;
+    }
 }
 
 DocumentPtr createFileDocument(const IndexContext &context, const QString &file)
@@ -249,7 +266,7 @@ bool checkNeedUpdate(const IndexContext &context, const QString &file, const Ind
 
         const QDateTime modifyTime = fileInfo.lastModified();
         const QString modifyEpoch = QString::number(modifyTime.toSecsSinceEpoch());
-        const String &storeTime = doc->get(L"modified");
+        const String &storeTime = doc->get(modifyTimeField(context.profile()));
 
         bool needsUpdate = modifyEpoch.toStdWString() != storeTime;
         if (needsUpdate) {
