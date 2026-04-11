@@ -132,14 +132,10 @@
 		},
 		"supportedOcrImageExtensions": {
 			"value": [
-				"bmp",
 				"jpe",
 				"jpeg",
 				"jpg",
 				"png",
-				"psd",
-				"tif",
-				"tiff",
 				"webp",
 				"heic",
 				"heif"
