@@ -4,10 +4,11 @@
 
 #include "extractorapp.h"
 
-#include <QCoreApplication>
 #include <QCommandLineParser>
 #include <QDir>
 #include <QDebug>
+#include <QGuiApplication>
+#include <QProcessEnvironment>
 #include <type_traits>
 
 #include <dfm-base/dfm_log_defines.h>
@@ -29,9 +30,18 @@ static void initLogFilter()
 int main(int argc, char *argv[])
 {
     initLogFilter();
-    QCoreApplication app(argc, argv);
-    QCoreApplication::setApplicationName("dde-file-manager-extractor");
-    QCoreApplication::setApplicationVersion("1.0.0");
+
+    // Fix: HTML extraction uses QTextDocument, which requires a GUI-capable Qt
+    // application even in this headless worker process.
+    if (qEnvironmentVariableIsEmpty("QT_QPA_PLATFORM")
+        && qEnvironmentVariableIsEmpty("DISPLAY")
+        && qEnvironmentVariableIsEmpty("WAYLAND_DISPLAY")) {
+        qputenv("QT_QPA_PLATFORM", QByteArrayLiteral("offscreen"));
+    }
+
+    QGuiApplication app(argc, argv);
+    QGuiApplication::setApplicationName("dde-file-manager-extractor");
+    QGuiApplication::setApplicationVersion("1.0.0");
 
     // Parse command line arguments
     QCommandLineParser parser;
@@ -41,8 +51,8 @@ int main(int argc, char *argv[])
 
     QCommandLineOption pluginPathOption(
             "plugin-path",
-            QCoreApplication::translate("main", "Path to the plugin directory"),
-            QCoreApplication::translate("main", "path"));
+            QGuiApplication::translate("main", "Path to the plugin directory"),
+            QGuiApplication::translate("main", "path"));
 
     parser.addOption(pluginPathOption);
     parser.process(app);
@@ -55,7 +65,7 @@ int main(int argc, char *argv[])
                       "DFM_PLUGIN_EXTRACTOR_DIR is not a string.");
 
 #ifdef QT_DEBUG
-        const QString debugPluginPath = QDir(QCoreApplication::applicationDirPath()).absoluteFilePath("../plugins");
+        const QString debugPluginPath = QDir(QGuiApplication::applicationDirPath()).absoluteFilePath("../plugins");
         if (QDir(debugPluginPath).exists()) {
             pluginPath = debugPluginPath;
         } else {

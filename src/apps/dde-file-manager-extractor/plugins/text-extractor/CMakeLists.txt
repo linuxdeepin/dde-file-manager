@@ -17,7 +17,7 @@ set(TEXTEXTRACTOR_COMMON_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/../extractor_plugin_global.h
 )
 
-find_package(Qt6 COMPONENTS Core REQUIRED)
+find_package(Qt6 COMPONENTS Core Gui REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(Docparser REQUIRED IMPORTED_TARGET docparser)
 find_package(Dtk6 COMPONENTS Core REQUIRED)
@@ -35,6 +35,7 @@ set_target_properties(${BIN_NAME} PROPERTIES
 target_link_libraries(${BIN_NAME}
     PRIVATE
         Qt6::Core
+        Qt6::Gui
         Dtk6::Core
         DFM6::base
         PkgConfig::Docparser
