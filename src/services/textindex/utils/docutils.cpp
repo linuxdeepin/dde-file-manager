@@ -4,6 +4,9 @@
 
 #include "docutils.h"
 
+#include <lucene++/NumericField.h>
+#include <boost/shared_ptr.hpp>
+
 SERVICETEXTINDEX_BEGIN_NAMESPACE
 
 namespace DocUtils {
@@ -34,10 +37,22 @@ Lucene::DocumentPtr copyFieldsExcept(const Lucene::DocumentPtr &sourceDoc,
         }
 
         if (!shouldExclude) {
-            // Copy field with original properties
-            newDoc->add(newLucene<Field>(fieldName, fieldable->stringValue(),
-                                         fieldable->isStored() ? Field::STORE_YES : Field::STORE_NO,
-                                         fieldable->isIndexed() ? (fieldable->isTokenized() ? Field::INDEX_ANALYZED : Field::INDEX_NOT_ANALYZED) : Field::INDEX_NO));
+            // Check if this is a NumericField
+            NumericFieldPtr numericField = boost::dynamic_pointer_cast<NumericField>(fieldable);
+            if (numericField) {
+                // Copy NumericField with its numeric value
+                NumericFieldPtr newNumericField = newLucene<NumericField>(
+                        fieldName,
+                        fieldable->isStored() ? Field::STORE_YES : Field::STORE_NO,
+                        fieldable->isIndexed());
+                newNumericField->setLongValue(numericField->getNumericValue());
+                newDoc->add(newNumericField);
+            } else {
+                // Copy regular field with original properties
+                newDoc->add(newLucene<Field>(fieldName, fieldable->stringValue(),
+                                             fieldable->isStored() ? Field::STORE_YES : Field::STORE_NO,
+                                             fieldable->isIndexed() ? (fieldable->isTokenized() ? Field::INDEX_ANALYZED : Field::INDEX_NOT_ANALYZED) : Field::INDEX_NO));
+            }
         }
     }
 

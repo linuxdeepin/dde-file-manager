@@ -8,6 +8,8 @@
 
 #include <dfm-search/field_names.h>
 
+#include <lucene++/NumericField.h>
+
 #include <QDateTime>
 #include <QFileInfo>
 
@@ -33,6 +35,12 @@ DocumentPtr ContentDocumentBuilder::build(const QString &filePath, const QString
     const QString modifyEpoch = QString::number(fileInfo.lastModified().toSecsSinceEpoch());
     doc->add(newLucene<Field>(L"modified", modifyEpoch.toStdWString(),
                               Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
+
+    // Add birth time as NumericField for efficient range queries
+    const qint64 birthTimeSecs = fileInfo.birthTime().toSecsSinceEpoch();
+    NumericFieldPtr birthTimeField = newLucene<NumericField>(Content::kBirthTime, Field::STORE_YES, true);
+    birthTimeField->setLongValue(birthTimeSecs);
+    doc->add(birthTimeField);
 
     doc->add(newLucene<Field>(Content::kFilename, fileInfo.fileName().toStdWString(),
                               Field::STORE_YES, Field::INDEX_ANALYZED));
