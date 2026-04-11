@@ -26,6 +26,13 @@ add_library(${PROJECT_NAME}
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 
+# Set runtime library search path to find extractor library
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    INSTALL_RPATH ${DFM_PLUGIN_EXTRACTOR_DIR}
+    BUILD_WITH_INSTALL_RPATH TRUE
+    INSTALL_RPATH_USE_LINK_PATH FALSE
+)
+
 # Apply service configuration using shared dependencies
 dfm_setup_textindex_dependencies(${PROJECT_NAME} "textindex")
 
