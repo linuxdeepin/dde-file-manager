@@ -51,7 +51,7 @@ bool DConfigManager::addConfig(const QString &config, QString *err)
         if (err)
             *err = "config is already added";
         qCInfo(logDFMBase) << config << "already added.";
-        return false;
+        return true;
     }
 
     auto cfg = DConfig::create(kCfgAppId, config, "", this);
