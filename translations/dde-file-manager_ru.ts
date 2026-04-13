@@ -713,7 +713,7 @@ Enter user and password for %1</source>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="52"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="53"/>
         <source>Extra small</source>
-        <translation>Очень маленький</translation>
+        <translation>Крохотный</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="54"/>
@@ -741,7 +741,7 @@ Enter user and password for %1</source>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="56"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="57"/>
         <source>Extra large</source>
-        <translation>Очень большой</translation>
+        <translation>Огромный</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="58"/>
@@ -1342,7 +1342,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filedialog/core/utils/corehelper.cpp" line="73"/>
         <source>This file will be hidden if the file name starts with &apos;.&apos;. Do you want to hide it?</source>
-        <translation>Этот файл будет скрыт, если его имя начинается с &apos;.&apos;. Вы хотите скрыть его?</translation>
+        <translation>Этот файл будет скрыт, если его имя начинается с &apos;.&apos;. Хотите скрыть его?</translation>
     </message>
     <message>
         <location filename="../src/plugins/filedialog/core/utils/corehelper.cpp" line="74"/>
@@ -1447,12 +1447,12 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="242"/>
         <source>Do you want to remove this item?</source>
-        <translation>Вы хотите удалить этот элемент?</translation>
+        <translation>Хотите удалить этот элемент?</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="244"/>
         <source>Do yout want to remove %1 items?</source>
-        <translation>Вы хотите удалить %1 элементов?</translation>
+        <translation>Хотите удалить %1 элементов?</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="245"/>
@@ -7390,7 +7390,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="40"/>
         <source>Shredding file &quot; %1 &quot;</source>
-        <translation>Уничтожение файла &quot;%1&quot;</translation>
+        <translation>Уничтожение файла «%1»</translation>
     </message>
 </context>
 <context>
@@ -7411,12 +7411,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="169"/>
         <source>Once enable, the &apos;File Shred&apos; option becomes available in the context menu for secure file deletion</source>
-        <translation>После включения опция &quot;Уничтожить файл&quot; становится доступной в контекстном меню для безопасного удаления файлов</translation>
+        <translation>После включения опция «Уничтожить файл» становится доступной в контекстном меню для безопасного удаления файлов</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="202"/>
         <source>Are you sure to shred these %1 items?</source>
-        <translation>Вы уверены, что хотите уничтожить эти %1 элементов?</translation>
+        <translation>Уверены, что хотите уничтожить эти %1 элементов?</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="203"/>
