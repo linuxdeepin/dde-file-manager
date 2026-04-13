@@ -71,11 +71,9 @@ bool isSupportedTextFile(const QString &path)
 {
     try {
         QFileInfo fileInfo(path);
-        if (!fileInfo.exists() || !fileInfo.isFile())
-            return false;
 
         // 检查文件大小是否超过 X MB（X * 1024 * 1024 字节）
-        if (!checkFileSize(fileInfo, TextIndexConfig::instance().maxIndexTextFileSizeMB()))
+        if (fileInfo.exists() && !checkFileSize(fileInfo, TextIndexConfig::instance().maxIndexTextFileSizeMB()))
             return false;
 
         const QString &suffix = fileInfo.suffix().toLower();
@@ -93,11 +91,9 @@ bool isSupportedOCRFile(const QString &path)
 {
     try {
         QFileInfo fileInfo(path);
-        if (!fileInfo.exists() || !fileInfo.isFile())
-            return false;
 
         // 检查文件大小是否超过 X MB（X * 1024 * 1024 字节）
-        if (!checkFileSize(fileInfo, TextIndexConfig::instance().maxOcrImageSizeMB()))
+        if (fileInfo.exists() && !checkFileSize(fileInfo, TextIndexConfig::instance().maxOcrImageSizeMB()))
             return false;
 
         const QString &suffix = fileInfo.suffix().toLower();
