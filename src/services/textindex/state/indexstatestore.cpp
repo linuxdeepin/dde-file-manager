@@ -201,4 +201,12 @@ void IndexStateStore::saveIndexStatus(const QDateTime &lastUpdateTime, int versi
     writeStatusJson(statusFilePath(), obj);
 }
 
+void IndexStateStore::saveLastUpdateTime(const QDateTime &lastUpdateTime) const
+{
+    QJsonObject obj = readStatusJson(statusFilePath());
+    obj[Defines::kLastUpdateTimeKey] = lastUpdateTime.toString(Qt::ISODate);
+    // Do NOT update version here - incremental tasks should not change version number
+    writeStatusJson(statusFilePath(), obj);
+}
+
 SERVICETEXTINDEX_END_NAMESPACE

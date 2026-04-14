@@ -451,7 +451,14 @@ void TaskManager::onTaskFinished(IndexTask::Type type, HandlerResult result)
         if (!result.interrupted || type == IndexTask::Type::Create) {
             fmDebug() << "[TaskManager::onTaskFinished] Task completed successfully, updating index status";
             if (m_context && m_context->stateStore()) {
-                m_context->stateStore()->saveIndexStatus(QDateTime::currentDateTime());
+                // Only full-scan tasks (Create/Update) should update version number
+                // Incremental tasks only update last update time to avoid version mismatch
+                // when recovery from a previous interrupted full-scan task is pending
+                if (isFullScanTask(type)) {
+                    m_context->stateStore()->saveIndexStatus(QDateTime::currentDateTime());
+                } else {
+                    m_context->stateStore()->saveLastUpdateTime(QDateTime::currentDateTime());
+                }
             }
         }
     }

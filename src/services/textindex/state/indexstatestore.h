@@ -35,6 +35,10 @@ public:
     void saveIndexStatus(const QDateTime &lastUpdateTime) const;
     void saveIndexStatus(const QDateTime &lastUpdateTime, int version) const;
 
+    // Save last update time only, without updating version
+    // Used by incremental tasks which should not change the version number
+    void saveLastUpdateTime(const QDateTime &lastUpdateTime) const;
+
 private:
     IndexProfile m_profile;
 };
