@@ -463,12 +463,27 @@ void TaskManager::onTaskFinished(IndexTask::Type type, HandlerResult result)
         fmInfo() << "[TaskManager::onTaskFinished] Started next queued task";
     } else {
         fmDebug() << "[TaskManager::onTaskFinished] No more tasks in queue";
-        // Mark index state as clean only when all tasks are completed successfully
+        // Only set Clean state when:
+        // 1. Task completed successfully without interruption
+        // 2. No recovery is pending (or this is the recovery task completing)
+        // 3. This is a full-scan task (Create/Update), not incremental task
         if (result.success && !result.interrupted) {
-            if (m_context && m_context->stateStore()) {
-                m_context->stateStore()->setIndexState(IndexUtility::IndexState::Clean);
+            if (isFullScanTask(type)) {
+                // Full-scan task can clear recovery pending and set Clean
+                m_recoveryPending = false;
+                if (m_context && m_context->stateStore()) {
+                    m_context->stateStore()->setIndexState(IndexUtility::IndexState::Clean);
+                }
+                fmInfo() << "[TaskManager::onTaskFinished] Full-scan task completed, index state set to clean";
+            } else if (!m_recoveryPending) {
+                // Incremental task can only set Clean if no recovery is pending
+                if (m_context && m_context->stateStore()) {
+                    m_context->stateStore()->setIndexState(IndexUtility::IndexState::Clean);
+                }
+                fmInfo() << "[TaskManager::onTaskFinished] Incremental task completed, index state set to clean";
+            } else {
+                fmInfo() << "[TaskManager::onTaskFinished] Incremental task completed but recovery is pending, keeping Dirty state";
             }
-            fmInfo() << "[TaskManager::onTaskFinished] All tasks completed, index state set to clean";
         }
     }
 }
@@ -481,6 +496,17 @@ bool TaskManager::hasRunningTask() const
 bool TaskManager::hasQueuedTasks() const
 {
     return !taskQueue.isEmpty();
+}
+
+void TaskManager::setRecoveryPending(bool pending)
+{
+    m_recoveryPending = pending;
+    fmInfo() << "[TaskManager] Recovery pending state set to:" << pending;
+}
+
+bool TaskManager::isRecoveryPending() const
+{
+    return m_recoveryPending;
 }
 
 void TaskManager::stopCurrentTask()
@@ -561,4 +587,9 @@ bool TaskManager::startNextTask()
                  << "path:" << nextTask.path;
         return startTask(nextTask.type, nextTask.path, nextTask.silent);
     }
+}
+
+bool TaskManager::isFullScanTask(IndexTask::Type type) const
+{
+    return type == IndexTask::Type::Create || type == IndexTask::Type::Update;
 }

@@ -31,6 +31,14 @@ void OcrIndexDBusPrivate::initialize()
 {
     runtime->fsEventController()->setupFSEventCollector();
     initializeSupportedExtensions();
+
+    // Check for dirty state at startup and set recovery pending flag
+    // This must be done before any incremental task can complete and clear the Dirty state
+    const IndexUtility::IndexState state = runtime->stateStore().getIndexState();
+    if (state != IndexUtility::IndexState::Clean) {
+        fmInfo() << "OcrIndexDBus: Dirty state detected at startup, setting recovery pending flag";
+        runtime->taskManager()->setRecoveryPending(true);
+    }
 }
 
 void OcrIndexDBusPrivate::initConnect()
@@ -106,7 +114,8 @@ void OcrIndexDBusPrivate::handleSlientStart()
             return;
         }
 
-        const IndexUtility::IndexState state = runtime->stateStore().getIndexState();
+        // Use recoveryPending flag which was set at startup if Dirty state was detected
+        const bool needsRecovery = runtime->taskManager()->isRecoveryPending();
         const bool needsRebuild = runtime->stateStore().needsRebuild();
 
         if (needsRebuild) {
@@ -114,9 +123,9 @@ void OcrIndexDBusPrivate::handleSlientStart()
             runtime->stateStore().setNeedsRebuild(false);
         }
 
-        if (needsRebuild || state != IndexUtility::IndexState::Clean) {
+        if (needsRebuild || needsRecovery) {
             fmInfo() << "OcrIndexDBus: Starting update task - needsRebuild:" << needsRebuild
-                     << "state:" << static_cast<int>(state) << "for:" << pathsToProcess;
+                     << "needsRecovery:" << needsRecovery << "for:" << pathsToProcess;
             runtime->taskManager()->startTask(IndexTask::Type::Update, pathsToProcess, true);
             return;
         }
