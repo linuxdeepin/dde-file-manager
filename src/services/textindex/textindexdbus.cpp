@@ -22,6 +22,14 @@ void TextIndexDBusPrivate::initialize()
 {
     runtime->fsEventController()->setupFSEventCollector();
     initializeSupportedExtensions();
+
+    // Check for dirty state at startup and set recovery pending flag
+    // This must be done before any incremental task can complete and clear the Dirty state
+    const IndexUtility::IndexState state = runtime->stateStore().getIndexState();
+    if (state != IndexUtility::IndexState::Clean) {
+        fmInfo() << "TextIndexDBus: Dirty state detected at startup, setting recovery pending flag";
+        runtime->taskManager()->setRecoveryPending(true);
+    }
 }
 
 void TextIndexDBusPrivate::initConnect()
@@ -104,9 +112,10 @@ void TextIndexDBusPrivate::handleSlientStart()
             return;
         }
 
-        // 2. 检查是否需要更新（needsRebuild 与 IndexState 是同级条件）
-        IndexUtility::IndexState state = runtime->stateStore().getIndexState();
-        bool needsRebuild = runtime->stateStore().needsRebuild();
+        // 2. 检查是否需要更新
+        // Use recoveryPending flag which was set at startup if Dirty state was detected
+        const bool needsRecovery = runtime->taskManager()->isRecoveryPending();
+        const bool needsRebuild = runtime->stateStore().needsRebuild();
 
         // 如果配置变化，立即清除标记（因为即将开始更新）
         if (needsRebuild) {
@@ -115,9 +124,9 @@ void TextIndexDBusPrivate::handleSlientStart()
         }
 
         // 只要任一条件为真，就启动 Update
-        if (needsRebuild || state != IndexUtility::IndexState::Clean) {
+        if (needsRebuild || needsRecovery) {
             fmInfo() << "TextIndexDBus: Starting update task - needsRebuild:" << needsRebuild
-                     << "state:" << static_cast<int>(state) << "for:" << pathsToProcess;
+                     << "needsRecovery:" << needsRecovery << "for:" << pathsToProcess;
             runtime->taskManager()->startTask(IndexTask::Type::Update, pathsToProcess, true);
             return;
         }

@@ -47,6 +47,11 @@ public:
     std::optional<IndexTask::Type> currentTaskType() const;
     std::optional<QString> currentTaskPath() const;
 
+    // Recovery state management - used to prevent incremental tasks from
+    // clearing Dirty state before recovery task completes
+    void setRecoveryPending(bool pending);
+    bool isRecoveryPending() const;
+
 Q_SIGNALS:
     void taskFinished(const QString &type, const QString &path, bool success);
     void taskProgressChanged(const QString &type, const QString &path, qint64 count, qint64 total);
@@ -60,6 +65,7 @@ private:
     void cleanupTask();
     bool startNextTask();
     TaskHandler getTaskHandler(IndexTask::Type type);
+    bool isFullScanTask(IndexTask::Type type) const;
 
     const IndexContext *m_context { nullptr };
     QThread workerThread;
@@ -67,6 +73,10 @@ private:
 
     // 保存待执行的任务信息
     QQueue<TaskQueueItem> taskQueue;
+
+    // Recovery pending flag - set at service startup if Dirty state detected
+    // Prevents incremental tasks from clearing Dirty state before recovery completes
+    bool m_recoveryPending { false };
 
     static QString typeToString(IndexTask::Type type);
 };
