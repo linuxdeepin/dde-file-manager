@@ -39,9 +39,12 @@ std::unique_ptr<FileProvider> createAnythingFileProvider(const IndexContext &con
         return nullptr;
     }
 
+    const auto anythingOptions = context.profile().anythingSearchOptions();
+
     fmDebug() << "[TaskHandlers::createAnythingFileProvider] Attempting to use ANYTHING for profile:"
               << context.profile().id() << "path:" << path
-              << "file types:" << context.profile().anythingFileTypes();
+              << "file types:" << anythingOptions.fileTypes
+              << "file extensions:" << anythingOptions.fileExtensions;
 
     QObject holder;
     SearchEngine *engine = SearchFactory::createEngine(SearchType::FileName, &holder);
@@ -58,7 +61,12 @@ std::unique_ptr<FileProvider> createAnythingFileProvider(const IndexContext &con
     options.setIncludeHidden(TextIndexConfig::instance().indexHiddenFiles());
 
     FileNameOptionsAPI fileNameOptions(options);
-    fileNameOptions.setFileTypes(context.profile().anythingFileTypes());
+    if (!anythingOptions.fileTypes.isEmpty()) {
+        fileNameOptions.setFileTypes(anythingOptions.fileTypes);
+    }
+    if (!anythingOptions.fileExtensions.isEmpty()) {
+        fileNameOptions.setFileExtensions(anythingOptions.fileExtensions);
+    }
     engine->setSearchOptions(options);
 
     SearchQuery query = SearchFactory::createQuery("", SearchQuery::Type::Simple);
@@ -212,9 +220,9 @@ DocumentPtr createFileDocument(const IndexContext &context, const QString &file)
 
         const IndexExtractionResult extraction = context.extractor()->extract(file, maxBytes);
         if (!extraction.success) {
-            fmWarning() << "[createFileDocument] Failed to extract content from file:" << file
-                        << "profile:" << context.profile().id()
-                        << "error:" << extraction.error;
+            fmInfo() << "[createFileDocument] Failed to extract content from file:" << file
+                     << "profile:" << context.profile().id()
+                     << "error:" << extraction.error;
         }
 
         return context.documentBuilder()->build(file, extraction.text);

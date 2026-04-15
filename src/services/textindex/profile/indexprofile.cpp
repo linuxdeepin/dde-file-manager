@@ -4,6 +4,7 @@
 
 #include "indexprofile.h"
 #include "utils/indexutility.h"
+#include "utils/textindexconfig.h"
 
 #include <QFileInfo>
 
@@ -18,7 +19,7 @@ IndexProfile::IndexProfile(Type type,
                            AvailabilityChecker availabilityChecker,
                            ScopeChecker scopeChecker,
                            CandidateChecker candidateChecker,
-                           AnythingTypeProvider anythingTypeProvider)
+                           AnythingSearchOptionsProvider anythingSearchOptionsProvider)
     : m_type(type),
       m_id(std::move(id)),
       m_statusFileName(std::move(statusFileName)),
@@ -28,7 +29,7 @@ IndexProfile::IndexProfile(Type type,
       m_availabilityChecker(std::move(availabilityChecker)),
       m_scopeChecker(std::move(scopeChecker)),
       m_candidateChecker(std::move(candidateChecker)),
-      m_anythingTypeProvider(std::move(anythingTypeProvider))
+      m_anythingSearchOptionsProvider(std::move(anythingSearchOptionsProvider))
 {
 }
 
@@ -82,14 +83,14 @@ bool IndexProfile::isCandidateFile(const QString &path) const
     return m_candidateChecker ? m_candidateChecker(path) : false;
 }
 
-QStringList IndexProfile::anythingFileTypes() const
+IndexProfile::AnythingSearchOptions IndexProfile::anythingSearchOptions() const
 {
-    return m_anythingTypeProvider ? m_anythingTypeProvider() : QStringList();
+    return m_anythingSearchOptionsProvider ? m_anythingSearchOptionsProvider() : AnythingSearchOptions {};
 }
 
 bool IndexProfile::supportsAnything() const
 {
-    return !anythingFileTypes().isEmpty();
+    return !anythingSearchOptions().isEmpty();
 }
 
 IndexProfile IndexProfile::content()
@@ -104,7 +105,12 @@ IndexProfile IndexProfile::content()
         []() { return DFMSEARCH::Global::isContentIndexAvailable(); },
         [](const QString &path) { return DFMSEARCH::Global::isPathInContentIndexDirectory(path); },
         [](const QString &path) { return IndexUtility::isSupportedTextFile(path); },
-        []() { return QStringList { Defines::kAnythingDocType }; }
+        []() {
+            return AnythingSearchOptions {
+                { Defines::kAnythingDocType },
+                {}
+            };
+        }
     };
 }
 
@@ -120,7 +126,12 @@ IndexProfile IndexProfile::ocr()
         []() { return DFMSEARCH::Global::isOcrTextIndexAvailable(); },
         [](const QString &path) { return DFMSEARCH::Global::isPathInOcrTextIndexDirectory(path); },
         [](const QString &path) { return IndexUtility::isSupportedOCRFile(path); },
-        []() { return QStringList { Defines::kAnythingPicType }; }
+        []() {
+            return AnythingSearchOptions {
+                { Defines::kAnythingPicType },
+                TextIndexConfig::instance().supportedOcrImageExtensions()
+            };
+        }
     };
 }
 
