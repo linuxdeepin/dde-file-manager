@@ -177,8 +177,8 @@ bool FileMoveProcessor::processContentUpdate(const QString &filePath)
         const size_t maxBytes = static_cast<size_t>(truncationSizeMB) * 1024 * 1024;
         const IndexExtractionResult extraction = m_context->extractor()->extract(filePath, maxBytes);
         if (!extraction.success) {
-            fmWarning() << "[FileMoveProcessor::processContentUpdate] Failed to extract content from file:"
-                        << filePath << "error:" << extraction.error;
+            fmInfo() << "[FileMoveProcessor::processContentUpdate] Failed to extract content from file:"
+                     << filePath << "error:" << extraction.error;
         }
 
         DocumentPtr newDoc = m_context->documentBuilder()->build(filePath, extraction.text);

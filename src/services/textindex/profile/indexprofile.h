@@ -14,6 +14,16 @@ SERVICETEXTINDEX_BEGIN_NAMESPACE
 class IndexProfile
 {
 public:
+    struct AnythingSearchOptions {
+        QStringList fileTypes;
+        QStringList fileExtensions;
+
+        bool isEmpty() const
+        {
+            return fileTypes.isEmpty() && fileExtensions.isEmpty();
+        }
+    };
+
     enum class Type {
         Content,
         Ocr
@@ -23,7 +33,7 @@ public:
     using AvailabilityChecker = std::function<bool()>;
     using ScopeChecker = std::function<bool(const QString &)>;
     using CandidateChecker = std::function<bool(const QString &)>;
-    using AnythingTypeProvider = std::function<QStringList()>;
+    using AnythingSearchOptionsProvider = std::function<AnythingSearchOptions()>;
 
     IndexProfile() = default;
     IndexProfile(Type type,
@@ -35,7 +45,7 @@ public:
                  AvailabilityChecker availabilityChecker,
                  ScopeChecker scopeChecker,
                  CandidateChecker candidateChecker,
-                 AnythingTypeProvider anythingTypeProvider = {});
+                 AnythingSearchOptionsProvider anythingSearchOptionsProvider = {});
 
     Type type() const;
     const QString &id() const;
@@ -46,7 +56,7 @@ public:
     int runtimeIndexVersion() const;
     bool isPathInScope(const QString &path) const;
     bool isCandidateFile(const QString &path) const;
-    QStringList anythingFileTypes() const;
+    AnythingSearchOptions anythingSearchOptions() const;
     bool supportsAnything() const;
 
     static IndexProfile content();
@@ -62,7 +72,7 @@ private:
     AvailabilityChecker m_availabilityChecker;
     ScopeChecker m_scopeChecker;
     CandidateChecker m_candidateChecker;
-    AnythingTypeProvider m_anythingTypeProvider;
+    AnythingSearchOptionsProvider m_anythingSearchOptionsProvider;
 };
 
 SERVICETEXTINDEX_END_NAMESPACE
