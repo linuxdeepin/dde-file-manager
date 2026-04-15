@@ -14,6 +14,7 @@
 #include <QImageReader>
 #include <QtConcurrent>
 #include <QPixmapCache>
+#include <QCryptographicHash>
 
 DFMBASE_USE_NAMESPACE
 DDP_BACKGROUND_USE_NAMESPACE
@@ -31,6 +32,50 @@ static QString generateCacheKey(const QString &path, const QSize &size)
             .arg(path)
             .arg(size.width())
             .arg(size.height());
+}
+
+// Try to get pre-scaled wallpaper path from WallpaperCache service via fd.
+// Returns empty string if service is unavailable or cache not ready.
+static QString getScaledPathFromCache(const QString &wallpaperPath, const QSize &screenSize)
+{
+    QDBusInterface iface("org.deepin.dde.WallpaperCache",
+                         "/org/deepin/dde/WallpaperCache",
+                         "org.deepin.dde.WallpaperCache",
+                         QDBusConnection::systemBus());
+    if (!iface.isValid())
+        return QString();
+
+    QFile file(wallpaperPath);
+    if (!file.open(QIODevice::ReadOnly))
+        return QString();
+
+    int fd = file.handle();
+    if (fd <= 0) {
+        file.close();
+        return QString();
+    }
+
+    QDBusUnixFileDescriptor dbusFd(fd);
+    QString pathMd5 = QCryptographicHash::hash(wallpaperPath.toUtf8(), QCryptographicHash::Md5).toHex();
+
+    QVariantList sizeArray;
+    sizeArray << QVariant::fromValue(screenSize);
+
+    QDBusReply<QStringList> reply = iface.call("GetProcessedImagePathByFd",
+                                                QVariant::fromValue(dbusFd),
+                                                pathMd5, sizeArray);
+    file.close();
+
+    if (!reply.isValid() || reply.value().isEmpty())
+        return QString();
+
+    const QString &path = reply.value().first();
+    // Path with "_" suffix means the scaled cache is ready (e.g., md5_1920x1080.jpg)
+    // Otherwise the service is still processing and returned the original path
+    if (path.contains("_") && QFile::exists(path))
+        return path;
+
+    return QString();
 }
 
 inline QString getScreenName(QWidget *win)
@@ -557,25 +602,43 @@ void BackgroundBridge::runUpdate(BackgroundBridge *self, QList<Requestion> reqs)
             req.path = self->d->service->background(req.screen);
 
         QSize trueSize = req.size;
-        QPixmap backgroundPixmap = BackgroundBridge::getPixmap(req.path, trueSize);
-        if (backgroundPixmap.isNull()) {
-            fmCritical() << "Failed to read background for screen:" << req.screen << "path:" << req.path;
-            continue;
+        QString wallpaperPath = req.path.startsWith("file:") ? QUrl(req.path).toLocalFile() : req.path;
+
+        // Try WallpaperCache service first for pre-scaled image
+        QString cachedPath = getScaledPathFromCache(wallpaperPath, trueSize);
+        QPixmap pix;
+        if (!cachedPath.isEmpty()) {
+            QImageReader cachedReader(cachedPath);
+            cachedReader.setDecideFormatFromContent(true);
+            QImage cachedImage = cachedReader.read();
+            if (!cachedImage.isNull()) {
+                pix = QPixmap::fromImage(std::move(cachedImage));
+                fmInfo() << "Using WallpaperCache scaled image:" << cachedPath
+                         << "for screen:" << req.screen;
+            }
+        }
+
+        // Fallback: load and scale original image
+        if (pix.isNull()) {
+            QPixmap backgroundPixmap = BackgroundBridge::getPixmap(req.path, trueSize);
+            if (backgroundPixmap.isNull()) {
+                fmCritical() << "Failed to read background for screen:" << req.screen << "path:" << req.path;
+                continue;
+            }
+
+            pix = backgroundPixmap;
+            if (pix.width() > trueSize.width() || pix.height() > trueSize.height()) {
+                pix = pix.copy(QRect(static_cast<int>((pix.width() - trueSize.width()) / 2.0),
+                                     static_cast<int>((pix.height() - trueSize.height()) / 2.0),
+                                     trueSize.width(),
+                                     trueSize.height()));
+            }
         }
 
         // check stop
         if (!self->getting) {
             fmInfo() << "Background update cancelled after pixmap loading";
             return;
-        }
-
-        // Crop the center part if needed (image is already scaled)
-        QPixmap pix = backgroundPixmap;
-        if (pix.width() > trueSize.width() || pix.height() > trueSize.height()) {
-            pix = pix.copy(QRect(static_cast<int>((pix.width() - trueSize.width()) / 2.0),
-                                 static_cast<int>((pix.height() - trueSize.height()) / 2.0),
-                                 trueSize.width(),
-                                 trueSize.height()));
         }
 
         fmInfo() << "Successfully processed background for screen:" << req.screen << "path:" << req.path << "size:" << trueSize;
