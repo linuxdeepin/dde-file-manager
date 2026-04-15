@@ -297,10 +297,26 @@ bool checkNeedUpdate(const IndexContext &context, const QString &file, const Ind
     }
 }
 
-void processFile(const IndexContext &context, const QString &path, const IndexWriterPtr &writer, ProgressReporter *reporter)
+bool shouldSkipExcludedFile(const QString &path, const PathExcludeMatcher &excludeMatcher)
+{
+    const QFileInfo fileInfo(path);
+    const QString fileDir = fileInfo.absolutePath();
+    if (excludeMatcher.shouldExclude(fileDir)) {
+        fmDebug() << "[shouldSkipExcludedFile] Skipping blacklisted file:" << path
+                  << "(directory:" << fileDir << "matches blacklist)";
+        return true;
+    }
+
+    return false;
+}
+
+void processFile(const IndexContext &context, const QString &path, const PathExcludeMatcher &excludeMatcher,
+                 const IndexWriterPtr &writer, ProgressReporter *reporter)
 {
     try {
         if (!context.profile().isCandidateFile(path))
+            return;
+        if (shouldSkipExcludedFile(path, excludeMatcher))
             return;
 #ifdef QT_DEBUG
         fmDebug() << "Adding [" << path << "]";
@@ -325,11 +341,14 @@ void processFile(const IndexContext &context, const QString &path, const IndexWr
     }
 }
 
-void updateFile(const IndexContext &context, const QString &path, const IndexReaderPtr &reader,
+void updateFile(const IndexContext &context, const QString &path, const PathExcludeMatcher &excludeMatcher,
+                const IndexReaderPtr &reader,
                 const IndexWriterPtr &writer, ProgressReporter *reporter)
 {
     try {
         if (!context.profile().isCandidateFile(path))
+            return;
+        if (shouldSkipExcludedFile(path, excludeMatcher))
             return;
 
         bool needAdd = false;
@@ -645,12 +664,13 @@ TaskHandler TaskHandlers::CreateIndexHandler(const IndexContext &context)
             }
 
             ProgressReporter reporter(writer);
+            const PathExcludeMatcher excludeMatcher = PathExcludeMatcher::createForIndex();
             qint64 totalCount = provider->totalCount();
             reporter.setTotal(totalCount);
             fmInfo() << "[CreateIndexHandler] Starting file processing, estimated total files:" << totalCount;
 
             provider->traverse(running, [&](const QString &file) {
-                processFile(context, file, writer, &reporter);
+                processFile(context, file, excludeMatcher, writer, &reporter);
             });
 
             // Only the creation of an index that is interrupted is also considered a failure
@@ -751,12 +771,13 @@ TaskHandler TaskHandlers::UpdateIndexHandler(const IndexContext &context)
             }
 
             ProgressReporter reporter(writer);
+            const PathExcludeMatcher excludeMatcher = PathExcludeMatcher::createForIndex();
             qint64 totalCount = provider->totalCount();
             reporter.setTotal(totalCount);
             fmDebug() << "[UpdateIndexHandler] Starting file update processing, estimated total files:" << totalCount;
 
             provider->traverse(running, [&](const QString &file) {
-                updateFile(context, file, reader, writer, &reporter);
+                updateFile(context, file, excludeMatcher, reader, writer, &reporter);
             });
 
             if (!running.isRunning()) {
@@ -845,12 +866,13 @@ TaskHandler TaskHandlers::CreateOrUpdateFileListHandler(const IndexContext &cont
             }
 
             ProgressReporter reporter(writer);
+            const PathExcludeMatcher excludeMatcher = PathExcludeMatcher::createForIndex();
             qint64 totalCount = provider->totalCount();
             reporter.setTotal(totalCount);
             fmInfo() << "[CreateOrUpdateFileListHandler] Starting file list processing, total files:" << totalCount;
 
             provider->traverse(running, [&](const QString &file) {
-                updateFile(context, file, reader, writer, &reporter);
+                updateFile(context, file, excludeMatcher, reader, writer, &reporter);
             });
 
             if (!running.isRunning()) {
