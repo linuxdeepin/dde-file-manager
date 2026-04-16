@@ -1,0 +1,44 @@
+{
+  "id": "fix-textindex-path-invalidation-on-directory-change",
+  "name": "fix-textindex-path-invalidation-on-directory-change",
+  "title": "brainstorm: fix textindex path invalidation on directory change",
+  "description": "",
+  "status": "completed",
+  "dev_type": null,
+  "scope": null,
+  "priority": "P2",
+  "creator": "Zhang Sheng",
+  "assignee": "Zhang Sheng",
+  "createdAt": "2026-04-16",
+  "completedAt": "2026-04-16",
+  "branch": null,
+  "base_branch": "feat_ocr",
+  "worktree_path": null,
+  "current_phase": 0,
+  "next_action": [
+    {
+      "phase": 1,
+      "action": "implement"
+    },
+    {
+      "phase": 2,
+      "action": "check"
+    },
+    {
+      "phase": 3,
+      "action": "finish"
+    },
+    {
+      "phase": 4,
+      "action": "create-pr"
+    }
+  ],
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {}
+}

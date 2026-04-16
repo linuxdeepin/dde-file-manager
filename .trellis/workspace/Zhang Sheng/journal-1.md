@@ -210,3 +210,48 @@ Implemented a process-isolated file content extractor framework with IPC pipes +
 ### Next Steps
 
 - None - task complete
+
+
+## Session 5: Fix textindex directory move path invalidation
+
+**Date**: 2026-04-16
+**Task**: Fix textindex directory move path invalidation
+
+### Summary
+
+(Add summary)
+
+### Main Changes
+
+| Area | Description |
+|------|-------------|
+| Root cause | Queued and in-flight incremental indexing tasks kept stale old paths after a directory rename/move, while `DirectoryMoveProcessor` only migrated documents that already existed in the index. |
+| Implementation | Added queue path rewrite handling for directory move events and queued a compensation `UpdateFileList` task for moved target directories to recover files missed during in-flight indexing. |
+| Design | Kept `TaskManager` as a thin coordinator and moved pure directory-move path rewrite logic into `src/services/textindex/task/taskqueueutils.*`. |
+| Verification | Rebuilt the `dde-filemanager-textindex` target successfully with CMake. |
+
+**Updated Files**:
+- `src/services/textindex/task/taskmanager.cpp`
+- `src/services/textindex/task/taskmanager.h`
+- `src/services/textindex/task/taskqueueutils.cpp`
+- `src/services/textindex/task/taskqueueutils.h`
+- `.trellis/tasks/04-16-fix-textindex-path-invalidation-on-directory-change/prd.md`
+
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `2e0908993` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete

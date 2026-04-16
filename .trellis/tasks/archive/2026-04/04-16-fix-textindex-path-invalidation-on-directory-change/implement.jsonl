@@ -1,0 +1,4 @@
+{"file": ".trellis/workflow.md", "reason": "Project workflow and conventions"}
+{"file": ".trellis/spec/backend/index.md", "reason": "Backend development guide"}
+{"file": ".trellis/spec/backend/textindex-service.md", "reason": "TextIndex task flow and module boundaries for move/index coordination"}
+{"file": ".trellis/spec/backend/bug-fix-standards.md", "reason": "Minimal-change bug fix constraints and comment expectations"}
