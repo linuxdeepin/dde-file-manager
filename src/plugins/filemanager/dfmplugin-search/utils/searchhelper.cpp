@@ -4,6 +4,7 @@
 
 #include "searchhelper.h"
 
+#include "checkboxwidthfileindex.h"
 #include "checkboxwidthtextindex.h"
 #include "checkboxwidthocrindex.h"
 #include "topwidget/advancesearchbar.h"
@@ -379,6 +380,18 @@ QWidget *SearchHelper::createCheckBoxWidthTextIndex(QObject *opt)
         else if (state == Qt::CheckState::Checked)
             option->setValue(true);
     });
+
+    return cb;
+}
+
+QWidget *SearchHelper::createCheckBoxWidthFileIndex(QObject *opt)
+{
+    auto option = qobject_cast<Dtk::Core::DSettingsOption *>(opt);
+    const QString &text = option->data("text").toString();
+
+    CheckBoxWidthFileIndex *cb = new CheckBoxWidthFileIndex;
+    cb->setDisplayText(qApp->translate("QObject", text.toStdString().c_str()));
+    cb->initStatusBar();
 
     return cb;
 }

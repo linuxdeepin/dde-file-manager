@@ -147,6 +147,14 @@ void Search::regSearchSettingConfig()
 
     SettingJsonGenerator::instance()->addGroup(SearchSettings::kGroupSearch, tr("Search"));
 
+    QString fileIndexKey { SearchSettings::kFileIndexSearch };
+    DialogManager::instance()->registerSettingWidget("checkBoxWidthFileIndex", &SearchHelper::createCheckBoxWidthFileIndex);
+    SettingJsonGenerator::instance()->addConfig(SearchSettings::kFileIndexSearch,
+                                                { { "key", fileIndexKey.mid(fileIndexKey.lastIndexOf(".") + 1) },
+                                                  { "text", tr("File index") },
+                                                  { "type", "checkBoxWidthFileIndex" },
+                                                  { "default", true } });
+
     QString textIndexKey { SearchSettings::kFulltextSearch };
     DialogManager::instance()->registerSettingWidget("checkBoxWidthTextIndex", &SearchHelper::createCheckBoxWidthTextIndex);
     SettingJsonGenerator::instance()->addConfig(SearchSettings::kFulltextSearch,
