@@ -52,7 +52,11 @@ Q_SIGNALS:
     void checkStateChanged(Qt::CheckState state);
     void resetRequested();
 
+protected:
+    virtual bool acceptCheckStateChange(Qt::CheckState oldState, Qt::CheckState newState);
+
 private:
+    void emitCheckStateChangedIfNeeded(Qt::CheckState state);
     void setRunning(bool running);
     void updateUI(Status status);
     QPixmap iconPixmap(const QString &iconName, int size);
