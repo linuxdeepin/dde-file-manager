@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "taskmanager.h"
+#include "taskqueueutils.h"
 #include "utils/indexutility.h"
 
 #include <QMetaType>
@@ -27,6 +28,16 @@ void registerMetaTypes()
         registered = true;
         fmDebug() << "[TaskManager] Meta types registered successfully";
     }
+}
+
+TaskQueueItem createCompensationTaskItem(const QStringList &paths, bool silent)
+{
+    TaskQueueItem item;
+    item.type = IndexTask::Type::UpdateFileList;
+    item.path = paths.isEmpty() ? QString() : paths.first();
+    item.fileList = paths;
+    item.silent = silent;
+    return item;
 }
 
 }   // namespace
@@ -299,6 +310,8 @@ bool TaskManager::startFileMoveTask(const QHash<QString, QString> &movedFiles, b
         return false;
     }
 
+    const QStringList compensationPaths = applyDirectoryMovePlans(movedFiles);
+
     // 如果当前有任务在运行，将新任务加入队列
     if (hasRunningTask() || currentTask) {
         fmInfo() << "[TaskManager::startFileMoveTask] Current task running, queuing file move task with"
@@ -311,6 +324,7 @@ bool TaskManager::startFileMoveTask(const QHash<QString, QString> &movedFiles, b
         item.movedFiles = movedFiles;
         item.silent = silent;
         taskQueue.enqueue(item);
+        enqueueCompensationTask(compensationPaths, silent);
 
         fmDebug() << "[TaskManager::startFileMoveTask] File move task queued successfully";
         return true;
@@ -346,11 +360,16 @@ bool TaskManager::startFileMoveTask(const QHash<QString, QString> &movedFiles, b
 
     emit startTaskInThread();
     fmDebug() << "[TaskManager::startFileMoveTask] File move task started successfully in worker thread";
+
+    enqueueCompensationTask(compensationPaths, silent);
     return true;
 }
 
 TaskHandler TaskManager::getTaskHandler(IndexTask::Type type)
 {
+    if (!m_context)
+        return nullptr;
+
     switch (type) {
     case IndexTask::Type::Create:
         return TaskHandlers::CreateIndexHandler(*m_context);
@@ -599,4 +618,42 @@ bool TaskManager::startNextTask()
 bool TaskManager::isFullScanTask(IndexTask::Type type) const
 {
     return type == IndexTask::Type::Create || type == IndexTask::Type::Update;
+}
+
+bool TaskManager::enqueueCompensationTask(const QStringList &paths, bool silent)
+{
+    if (paths.isEmpty()) {
+        return false;
+    }
+
+    taskQueue.enqueue(createCompensationTaskItem(paths, silent));
+    fmInfo() << "[TaskManager::enqueueCompensationTask] Queued directory compensation update for"
+             << paths.size() << "path(s), primary:" << paths.first();
+    return true;
+}
+
+QStringList TaskManager::applyDirectoryMovePlans(const QHash<QString, QString> &movedFiles)
+{
+    const QList<TaskQueueUtils::DirectoryMovePlan> plans = TaskQueueUtils::buildDirectoryMovePlans(movedFiles);
+    if (plans.isEmpty()) {
+        return {};
+    }
+
+    QStringList compensationPaths;
+
+    for (const TaskQueueUtils::DirectoryMovePlan &plan : plans) {
+        const bool rewroteQueuedTasks = TaskQueueUtils::rewriteQueuedTasksForDirectoryMove(taskQueue,
+                                                                                           plan.fromPath,
+                                                                                           plan.toPath);
+        if (rewroteQueuedTasks) {
+            fmInfo() << "[TaskManager::applyDirectoryMovePlans] Rewrote queued task paths for directory move:"
+                     << plan.fromPath << "->" << plan.toPath;
+        }
+
+        if (!compensationPaths.contains(plan.toPath)) {
+            compensationPaths.append(plan.toPath);
+        }
+    }
+
+    return compensationPaths;
 }
