@@ -8,8 +8,8 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 4
-- **Last Active**: 2026-04-11
+- **Total Sessions**: 5
+- **Last Active**: 2026-04-16
 <!-- @@@/auto:current-status -->
 
 ---
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~212 | Active |
+| `journal-1.md` | ~257 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits |
 |---|------|-------|---------|
+| 5 | 2026-04-16 | Fix textindex directory move path invalidation | `2e0908993` |
 | 4 | 2026-04-11 | TextIndex modify time field alignment | `918a8670c` |
 | 3 | 2026-04-10 | TextIndex 架构重构与规范更新 | `e136b97d3`, `81c24eac5` |
 | 2 | 2026-04-03 | Add OCR extractor plugin | `a88bfa9a2` |
