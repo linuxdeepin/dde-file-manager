@@ -50,6 +50,17 @@ void CheckBoxWidthFileIndex::initStatusBar()
     m_pollTimer->start();
 }
 
+bool CheckBoxWidthFileIndex::acceptCheckStateChange(Qt::CheckState oldState, Qt::CheckState newState)
+{
+    if (m_syncingState || m_operationInProgress)
+        return true;
+
+    if (oldState == Qt::CheckState::Checked && newState == Qt::CheckState::Unchecked)
+        return confirmDisableFileIndex();
+
+    return true;
+}
+
 void CheckBoxWidthFileIndex::handleCheckStateChanged(Qt::CheckState state)
 {
     if (m_syncingState || m_operationInProgress)
@@ -218,6 +229,17 @@ bool CheckBoxWidthFileIndex::restartFileIndex()
     }
 
     return true;
+}
+
+bool CheckBoxWidthFileIndex::confirmDisableFileIndex()
+{
+    Dtk::Widget::DDialog dialog(qApp->activeWindow());
+    dialog.setTitle(tr("Turn off file index?"));
+    dialog.setMessage(tr("If turned off, file searches will traverse the file system and severely reduce search speed."));
+    dialog.addButton(tr("Cancel"), false, Dtk::Widget::DDialog::ButtonNormal);
+    dialog.addButton(tr("Confirm"), true, Dtk::Widget::DDialog::ButtonRecommend);
+
+    return dialog.exec() == Dtk::Widget::DDialog::Accepted;
 }
 
 bool CheckBoxWidthFileIndex::createRefreshIndexFile() const

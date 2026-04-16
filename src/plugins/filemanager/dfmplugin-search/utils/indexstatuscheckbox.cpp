@@ -62,7 +62,17 @@ IndexStatusCheckBox::IndexStatusCheckBox(QWidget *parent)
         emit resetRequested();
     });
 
-    connect(m_checkBox, &QCheckBox::checkStateChanged, this, &IndexStatusCheckBox::checkStateChanged);
+    connect(m_checkBox, &QCheckBox::clicked, this, [this](bool checked) {
+        const auto newState = checked ? Qt::CheckState::Checked : Qt::CheckState::Unchecked;
+        const auto oldState = checked ? Qt::CheckState::Unchecked : Qt::CheckState::Checked;
+        if (!acceptCheckStateChange(oldState, newState)) {
+            const QSignalBlocker blocker(m_checkBox);
+            m_checkBox->setCheckState(oldState);
+            return;
+        }
+
+        emitCheckStateChangedIfNeeded(newState);
+    });
 
     m_statusLayout->addWidget(m_spinner);
     m_statusLayout->addWidget(m_iconLabel);
@@ -79,7 +89,13 @@ void IndexStatusCheckBox::setDisplayText(const QString &text)
 
 void IndexStatusCheckBox::setChecked(bool checked)
 {
-    m_checkBox->setChecked(checked);
+    const auto newState = checked ? Qt::CheckState::Checked : Qt::CheckState::Unchecked;
+    if (m_checkBox->checkState() == newState)
+        return;
+
+    const QSignalBlocker blocker(m_checkBox);
+    m_checkBox->setCheckState(newState);
+    emitCheckStateChangedIfNeeded(newState);
 }
 
 bool IndexStatusCheckBox::isChecked() const
@@ -172,6 +188,19 @@ void IndexStatusCheckBox::updateIndexingProgress(qlonglong count, qlonglong tota
     }
 
     m_msgLabel->setText(m_indexingItemsText.arg(count).arg(total));
+}
+
+bool IndexStatusCheckBox::acceptCheckStateChange(Qt::CheckState oldState, Qt::CheckState newState)
+{
+    Q_UNUSED(oldState)
+    Q_UNUSED(newState)
+
+    return true;
+}
+
+void IndexStatusCheckBox::emitCheckStateChangedIfNeeded(Qt::CheckState state)
+{
+    emit checkStateChanged(state);
 }
 
 void IndexStatusCheckBox::setRunning(bool running)

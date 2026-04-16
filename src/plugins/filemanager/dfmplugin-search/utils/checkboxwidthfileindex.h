@@ -6,6 +6,8 @@
 
 #include "indexstatuscheckbox.h"
 
+#include <DDialog>
+
 #include <QDateTime>
 #include <QTimer>
 
@@ -19,6 +21,9 @@ public:
     explicit CheckBoxWidthFileIndex(QWidget *parent = nullptr);
 
     void initStatusBar();
+
+protected:
+    bool acceptCheckStateChange(Qt::CheckState oldState, Qt::CheckState newState) override;
 
 private:
     struct FileIndexState
@@ -47,6 +52,7 @@ private:
     bool enableFileIndex();
     bool disableFileIndex();
     bool restartFileIndex();
+    bool confirmDisableFileIndex();
     bool createRefreshIndexFile() const;
     CommandResult runSystemctlCommand(const QStringList &arguments) const;
     QString statusFilePath() const;
