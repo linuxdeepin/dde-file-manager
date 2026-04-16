@@ -12,6 +12,7 @@
 #include <QObject>
 #include <QThread>
 #include <QQueue>
+#include <QHash>
 
 SERVICETEXTINDEX_BEGIN_NAMESPACE
 
@@ -66,6 +67,8 @@ private:
     bool startNextTask();
     TaskHandler getTaskHandler(IndexTask::Type type);
     bool isFullScanTask(IndexTask::Type type) const;
+    bool enqueueCompensationTask(const QStringList &paths, bool silent);
+    QStringList applyDirectoryMovePlans(const QHash<QString, QString> &movedFiles);
 
     const IndexContext *m_context { nullptr };
     QThread workerThread;
