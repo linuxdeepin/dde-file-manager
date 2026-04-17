@@ -24,6 +24,11 @@ class FileViewHelper : public QObject
 {
     Q_OBJECT
 public:
+    enum class EmptyAreaMode {
+        kDefault,          // Default mode: only icon, text and gap between them are considered non-empty
+        kFullItemRow       // Full item row mode: entire item rect in list/tree view is considered non-empty
+    };
+
     explicit FileViewHelper(FileView *parent = nullptr);
     ~FileViewHelper();
 
@@ -38,7 +43,7 @@ public:
     void initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const;
     void updateGeometries();
     void keyboardSearch(const QString &search);
-    bool isEmptyArea(const QPoint &pos);
+    bool isEmptyArea(const QPoint &pos, EmptyAreaMode mode = EmptyAreaMode::kDefault);
     QSize viewContentSize() const;
     int verticalOffset() const;
     bool isLastIndex(const QModelIndex &index);

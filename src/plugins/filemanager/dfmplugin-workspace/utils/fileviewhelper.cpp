@@ -243,7 +243,7 @@ QModelIndex FileViewHelper::findIndex(const QByteArray &keys, bool matchStart, i
     return QModelIndex();
 }
 
-bool FileViewHelper::isEmptyArea(const QPoint &pos)
+bool FileViewHelper::isEmptyArea(const QPoint &pos, EmptyAreaMode mode)
 {
     const QModelIndex &index = parent()->indexAt(pos);
 
@@ -262,6 +262,12 @@ bool FileViewHelper::isEmptyArea(const QPoint &pos)
         if (!(index.flags() & Qt::ItemIsSelectable)) {
             fmDebug() << "Item at index" << index.row() << "is not selectable - treating as empty area";
             return true;
+        }
+
+        // In kFullItemRow mode for list/tree view, entire item rect is considered non-empty
+        if (mode == EmptyAreaMode::kFullItemRow
+            && (parent()->isListViewMode() || parent()->isTreeViewMode())) {
+            return false;
         }
 
         QStyleOptionViewItem option;

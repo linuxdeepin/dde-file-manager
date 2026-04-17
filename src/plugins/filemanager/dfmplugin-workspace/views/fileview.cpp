@@ -1706,7 +1706,7 @@ void FileView::mousePressEvent(QMouseEvent *event)
             setDragDropMode(DragDrop);
         }
 
-        bool isEmptyArea = d->fileViewHelper->isEmptyArea(event->pos());
+        bool isEmptyArea = d->fileViewHelper->isEmptyArea(event->pos(), FileViewHelper::EmptyAreaMode::kFullItemRow);
         if (isEmptyArea && (qApp->keyboardModifiers() == Qt::NoModifier))
             setCurrentIndex(QModelIndex());
 
