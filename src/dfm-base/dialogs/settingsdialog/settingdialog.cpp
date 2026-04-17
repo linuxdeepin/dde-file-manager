@@ -147,6 +147,9 @@ quint64 SettingDialog::parentWid { 0 };
 SettingDialog::SettingDialog(QWidget *parent)
     : DSettingsDialog(parent)
 {
+    // Fix: Settings dialog is recreated on each open, so delete it on close
+    // to release custom setting widgets such as CheckBoxWidthFileIndex.
+    setAttribute(Qt::WA_DeleteOnClose, true);
     parentWid = FMWindowsIns.findWindowId(parent);
 }
 
