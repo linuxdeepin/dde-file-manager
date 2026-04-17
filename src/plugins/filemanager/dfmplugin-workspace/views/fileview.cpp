@@ -266,7 +266,11 @@ void FileView::setDelegate(Global::ViewMode mode, BaseItemDelegate *view)
 bool FileView::setRootUrl(const QUrl &url)
 {
     d->url = url;
-    setFocus();
+
+    // Respect focus policy set by plugins (e.g., search scheme should keep focus on SearchEditWidget)
+    if (!WorkspaceHelper::instance()->isFocusFileViewDisabled(url.scheme())) {
+        setFocus();
+    }
 
     clearSelection();
     selectionModel()->clear();
