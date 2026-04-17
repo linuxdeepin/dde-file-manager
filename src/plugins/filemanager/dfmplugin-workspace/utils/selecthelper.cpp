@@ -297,6 +297,19 @@ void SelectHelper::caculateListViewSelection(const QRect &rect, QItemSelection *
     using RandeIndex = FileView::RandeIndex;
 
     const RandeIndexList &list = view->rectContainsIndexes(tmpRect);
+
+    // Non-grouped view: use efficient range selection (O(1))
+    if (!view->isGroupedView()) {
+        for (const RandeIndex &indexRange : list) {
+            const QModelIndex &firstIdx = view->model()->index(indexRange.first, 0, view->rootIndex());
+            const QModelIndex &lastIdx = view->model()->index(indexRange.second, 0, view->rootIndex());
+            if (firstIdx.isValid() && lastIdx.isValid()) {
+                selection->append(QItemSelectionRange(firstIdx, lastIdx));
+            }
+        }
+        return;
+    }
+
     for (const RandeIndex &indexRange : list) {
         // Handle each index in the range individually to skip group headers
         for (int row = indexRange.first; row <= indexRange.second; ++row) {
