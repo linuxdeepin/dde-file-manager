@@ -55,8 +55,10 @@ bool CheckBoxWidthFileIndex::acceptCheckStateChange(Qt::CheckState oldState, Qt:
     if (m_syncingState || m_operationInProgress)
         return true;
 
-    if (oldState == Qt::CheckState::Checked && newState == Qt::CheckState::Unchecked)
+    if (oldState == Qt::CheckState::Checked && newState == Qt::CheckState::Unchecked) {
+        refreshState();
         return confirmDisableFileIndex();
+    }
 
     return true;
 }
