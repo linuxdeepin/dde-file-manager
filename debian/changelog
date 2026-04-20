@@ -1,3 +1,15 @@
+dde-file-manager (6.5.132) unstable; urgency=medium
+
+  * fix: trim whitespace from address bar input
+  * feat: use WallpaperCache service for pre-scaled wallpaper loading
+  * fix: optimize selection performance in file view
+  * fix: improve empty area detection in file view
+  * fix: adjust focus handling for file view
+  * fix: reduce idle time from 600 to 10 minutes
+  * refactor: remove COMPILE_ON_V2X macro system
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Mon, 20 Apr 2026 11:39:29 +0800
+
 dde-file-manager (6.5.131) unstable; urgency=medium
 
   * feat: implement optical disc sharing service
