@@ -23,7 +23,6 @@ public slots:
     bool wallpaperSetting(const QString &name);
     bool screenSaverSetting(const QString &name);
     bool hookCanvasRequest(const QString &screen);
-#ifndef COMPILE_ON_V20
     void onQuit();
 
 protected:
@@ -32,7 +31,6 @@ protected:
 
 private:
     WallpaperSettings *wallpaperSettings = nullptr;
-#endif
 };
 
 class WlSetPlugin : public dpf::Plugin

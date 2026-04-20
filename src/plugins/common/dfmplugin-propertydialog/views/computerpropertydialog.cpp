@@ -16,13 +16,8 @@
 
 #include <cmath>
 
-#ifdef COMPILE_ON_V20
-#    define SYSTEM_INFO_SERVICE "com.deepin.daemon.SystemInfo"
-#    define SYSTEM_INFO_PATH "/com/deepin/daemon/SystemInfo"
-#else
-#    define SYSTEM_INFO_SERVICE "org.deepin.dde.SystemInfo1"
-#    define SYSTEM_INFO_PATH "/org/deepin/dde/SystemInfo1"
-#endif
+#define SYSTEM_INFO_SERVICE "org.deepin.dde.SystemInfo1"
+#define SYSTEM_INFO_PATH "/org/deepin/dde/SystemInfo1"
 
 static constexpr int kMaximumHeightOfTwoRow { 52 };
 static constexpr int kMaximumHeightOfOneRow { 31 };

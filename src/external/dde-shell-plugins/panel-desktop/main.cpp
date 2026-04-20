@@ -100,14 +100,13 @@ static bool pluginsLoad()
     qCInfo(logAppDesktop) << "Using plugins dir:" << pluginsDirs;
 
     QStringList blackNames { DConfigManager::instance()->value(kPluginsDConfName, "desktop.blackList").toStringList() };
-#ifdef COMPILE_ON_V2X
     if (DFMBASE_NAMESPACE::WindowUtils::isWayLand()) {
         qCInfo(logAppDesktop) << "disable background by TreeLand";
         if (!blackNames.contains("ddplugin-background")) {
             blackNames.append("ddplugin-background");
         }
     }
-#endif
+
     DPF_NAMESPACE::LifeCycle::initialize({ kDesktopPluginInterface, kCommonPluginInterface }, pluginsDirs, blackNames);
     DPF_NAMESPACE::LifeCycle::setLazyloadFilter(lazyLoadFilter);
     DPF_NAMESPACE::LifeCycle::registerQtVersionInsensitivePlugins(Plugins::Utils::desktopAllPlugins());

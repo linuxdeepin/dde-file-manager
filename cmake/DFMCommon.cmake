@@ -20,10 +20,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,-z,relro -Wl,-z,now")
 
 # Common definitions
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(COMPILE_ON_V2X TRUE)
 add_definitions(-DQT_MESSAGELOGCONTEXT)
 add_definitions(-DENABLE_TESTING)
-add_definitions(-DCOMPILE_ON_V2X)
 
 # Architecture-specific settings
 if (${CMAKE_SYSTEM_PROCESSOR} MATCHES "mips")

@@ -199,13 +199,9 @@ inline constexpr char kAcBtnVaultRemovePasswordHint[] { "btn_vault_remove_passwo
 }
 
 inline constexpr char kDeamonServiceName[] { "org.deepin.Filemanager.AccessControlManager" };
-#ifdef COMPILE_ON_V2X
 inline constexpr char kAppSessionService[] { "org.deepin.dde.SessionManager1" };
 inline constexpr char kAppSessionPath[] { "/org/deepin/dde/SessionManager1" };
-#else
-inline constexpr char kAppSessionService[] { "com.deepin.SessionManager" };
-inline constexpr char kAppSessionPath[] { "/com/deepin/SessionManager" };
-#endif
+
 inline constexpr char kNetWorkDBusServiceName[] { "org.deepin.service.SystemNetwork" };
 inline constexpr char kNetWorkDBusPath[] { "/org/deepin/service/SystemNetwork" };
 inline constexpr char kNetWorkDBusInterfaces[] { "org.deepin.service.SystemNetwork" };
