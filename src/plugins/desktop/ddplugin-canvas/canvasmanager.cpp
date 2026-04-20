@@ -53,6 +53,7 @@ CanvasManager::~CanvasManager()
 
     CanvasCoreUnsubscribe(signal_DesktopFrame_WindowAboutToBeBuilded, &CanvasManager::onDetachWindows);
     CanvasCoreUnsubscribe(signal_DesktopFrame_WindowBuilded, &CanvasManager::onCanvasBuild);
+    CanvasCoreUnsubscribe(signal_DesktopFrame_WindowShowed, &CanvasManager::onWindowShowed);
     CanvasCoreUnsubscribe(signal_DesktopFrame_GeometryChanged, &CanvasManager::onGeometryChanged);
     CanvasCoreUnsubscribe(signal_DesktopFrame_AvailableGeometryChanged, &CanvasManager::onGeometryChanged);
     dpfSignalDispatcher->unsubscribe("dfmplugin_trashcore", "signal_TrashCore_TrashStateChanged", this, &CanvasManager::onTrashStateChanged);
@@ -95,6 +96,7 @@ void CanvasManager::init()
 
     CanvasCoreSubscribe(signal_DesktopFrame_WindowAboutToBeBuilded, &CanvasManager::onDetachWindows);
     CanvasCoreSubscribe(signal_DesktopFrame_WindowBuilded, &CanvasManager::onCanvasBuild);
+    CanvasCoreSubscribe(signal_DesktopFrame_WindowShowed, &CanvasManager::onWindowShowed);
     CanvasCoreSubscribe(signal_DesktopFrame_GeometryChanged, &CanvasManager::onGeometryChanged);
     CanvasCoreSubscribe(signal_DesktopFrame_AvailableGeometryChanged, &CanvasManager::onGeometryChanged);
 
@@ -319,6 +321,17 @@ void CanvasManager::onDetachWindows()
 {
     for (const CanvasViewPointer &view : d->viewMap.values())
         view->setParent(nullptr);
+}
+
+void CanvasManager::onWindowShowed()
+{
+    for (auto it = d->viewMap.begin(); it != d->viewMap.end(); ++it) {
+        const CanvasViewPointer &view = it.value();
+        view->show();
+        view->viewport()->show();
+        view->update();
+        view->viewport()->update();
+    }
 }
 
 void CanvasManager::onGeometryChanged()

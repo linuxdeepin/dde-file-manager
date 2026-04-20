@@ -17,6 +17,7 @@ class BaseWindow : public QWidget
 public:
     explicit BaseWindow(QWidget *parent = nullptr);
     void init();
+    void recreateNativeWindow(const QRect &geometry);
 signals:
 
 public slots:

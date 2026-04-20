@@ -55,6 +55,20 @@ BaseWindowPointer WindowFramePrivate::createWindow(ScreenPointer sp)
     return win;
 }
 
+void WindowFramePrivate::recreateNativeWindow(BaseWindowPointer win, ScreenPointer screen)
+{
+    if (!win || !screen)
+        return;
+
+    win->recreateNativeWindow(screen->geometry());
+    ddplugin_desktop_util::setDesktopWindow(win.get());
+
+    if (QWindow *handle = win->windowHandle()) {
+        handle->setOpacity(0.99);
+        traceWindow(handle);
+    }
+}
+
 void WindowFramePrivate::traceWindow(QWindow *win) const
 {
     if (!win) {
@@ -177,6 +191,54 @@ QStringList WindowFrame::bindedScreens()
     return d->windows.keys();
 }
 
+bool WindowFrame::needRecreateNativeWindows(const QList<ScreenPointer> &screens) const
+{
+    QStringList currentOrder;
+    QMap<QString, QRect> currentGeometries;
+
+    for (const ScreenPointer &screen : screens) {
+        if (screen.isNull())
+            continue;
+
+        const QString name = screen->name();
+        currentOrder.append(name);
+        currentGeometries.insert(name, screen->geometry());
+    }
+
+    if (currentOrder != d->screenOrder) {
+        return true;
+    }
+
+    if (currentGeometries.keys() != d->screenGeometries.keys()) {
+        return true;
+    }
+
+    for (auto it = currentGeometries.cbegin(); it != currentGeometries.cend(); ++it) {
+        const QRect previous = d->screenGeometries.value(it.key());
+        const QRect current = it.value();
+        if (previous.topLeft() != current.topLeft()) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+void WindowFrame::cacheScreenTopology(const QList<ScreenPointer> &screens)
+{
+    d->screenOrder.clear();
+    d->screenGeometries.clear();
+
+    for (const ScreenPointer &screen : screens) {
+        if (screen.isNull())
+            continue;
+
+        d->screenOrder.append(screen->name());
+        d->screenGeometries.insert(screen->name(), screen->geometry());
+    }
+
+}
+
 void WindowFrame::buildBaseWindow()
 {
     // tell other module that the base windows will be rebuild.
@@ -187,6 +249,9 @@ void WindowFrame::buildBaseWindow()
     fmInfo() << "Display mode:" << mode << "screen count:" << screens.size();
 
     QWriteLocker lk(&d->locker);
+    const bool recreateNativeWindows = d->recreateNativeWindows;
+    d->recreateNativeWindows = false;
+
     // 实际是单屏
     if ((DisplayMode::kShowonly == mode) || (DisplayMode::kDuplicate == mode)   // 仅显示和复制
         || (screens.count() == 1)) {   // 单屏模式
@@ -201,13 +266,14 @@ void WindowFrame::buildBaseWindow()
             return;
         }
 
-        BaseWindowPointer winPtr = d->windows.value(primary->name());
+        BaseWindowPointer winPtr;
+        winPtr = d->windows.value(primary->name());
         d->windows.clear();
         if (!winPtr.isNull()) {
-            if (winPtr->geometry() != primary->geometry()) {
+            if (recreateNativeWindows)
+                d->recreateNativeWindow(winPtr, primary);
+            else if (winPtr->geometry() != primary->geometry())
                 winPtr->setGeometry(primary->geometry());
-                fmDebug() << "Updated existing primary window geometry to:" << primary->geometry();
-            }
         } else {
             winPtr = d->createWindow(primary);
             fmDebug() << "Created new primary window";
@@ -233,7 +299,9 @@ void WindowFrame::buildBaseWindow()
         for (ScreenPointer s : screens) {
             BaseWindowPointer winPtr = d->windows.value(s->name());
             if (!winPtr.isNull()) {
-                if (winPtr->geometry() != s->geometry())
+                if (recreateNativeWindows)
+                    d->recreateNativeWindow(winPtr, s);
+                else if (winPtr->geometry() != s->geometry())
                     winPtr->setGeometry(s->geometry());
                 fmInfo() << "Updated window for screen:" << s->name() << "window geometry:" << winPtr->geometry() << "screen geometry:" << s->geometry();
             } else {
@@ -248,6 +316,8 @@ void WindowFrame::buildBaseWindow()
             winPtr->hide();
         }
     }
+
+    cacheScreenTopology(screens);
 
     lk.unlock();
 
@@ -267,8 +337,15 @@ void WindowFrame::buildBaseWindow()
 void WindowFrame::onGeometryChanged()
 {
     bool changed = false;
+    const auto screens = ddplugin_desktop_util::screenProxyLogicScreens();
+    if (needRecreateNativeWindows(screens)) {
+        d->recreateNativeWindows = true;
+        buildBaseWindow();
+        return;
+    }
+
     auto primary = ddplugin_desktop_util::screenProxyPrimaryScreen();
-    for (ScreenPointer sp : ddplugin_desktop_util::screenProxyLogicScreens()) {
+    for (const ScreenPointer &sp : screens) {
         auto win = d->windows.value(sp->name());
         fmDebug() << "Checking geometry change for screen:" << sp->name() << "screen pointer:" << sp.get() << "window pointer:" << win.get();
         if (win.get() != nullptr) {
@@ -286,6 +363,8 @@ void WindowFrame::onGeometryChanged()
             fmWarning() << "No window found for screen:" << sp->name();
         }
     }
+
+    cacheScreenTopology(screens);
 
     if (changed)
         emit geometryChanged();

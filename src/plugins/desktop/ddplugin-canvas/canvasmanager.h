@@ -37,6 +37,7 @@ public:
     QList<QSharedPointer<CanvasView> > views() const;
 public slots:
     void onCanvasBuild();
+    void onWindowShowed();
     void onDetachWindows();
     void onGeometryChanged();
     void onWallperSetting(CanvasView *);

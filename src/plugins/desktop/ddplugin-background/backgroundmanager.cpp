@@ -80,7 +80,8 @@ static QString getScaledPathFromCache(const QString &wallpaperPath, const QSize 
 
 inline QString getScreenName(QWidget *win)
 {
-    Q_ASSERT(win);
+    if (!win)
+        return QString();
     return win->property(DesktopFrameProperty::kPropScreenName).toString();
 }
 
@@ -131,6 +132,7 @@ BackgroundManager::~BackgroundManager()
 {
     CanvasCoreUnsubscribe(signal_DesktopFrame_WindowAboutToBeBuilded, &BackgroundManager::onDetachWindows);
     CanvasCoreUnsubscribe(signal_DesktopFrame_WindowBuilded, &BackgroundManager::onBackgroundBuild);
+    CanvasCoreUnsubscribe(signal_DesktopFrame_WindowShowed, &BackgroundManager::onWindowShowed);
     CanvasCoreUnsubscribe(signal_DesktopFrame_GeometryChanged, &BackgroundManager::onGeometryChanged);
 }
 
@@ -145,6 +147,7 @@ void BackgroundManager::init()
 
     CanvasCoreSubscribe(signal_DesktopFrame_WindowAboutToBeBuilded, &BackgroundManager::onDetachWindows);
     CanvasCoreSubscribe(signal_DesktopFrame_WindowBuilded, &BackgroundManager::onBackgroundBuild);
+    CanvasCoreSubscribe(signal_DesktopFrame_WindowShowed, &BackgroundManager::onWindowShowed);
     CanvasCoreSubscribe(signal_DesktopFrame_GeometryChanged, &BackgroundManager::onGeometryChanged);
 }
 
@@ -182,6 +185,15 @@ void BackgroundManager::onDetachWindows()
 {
     for (const BackgroundWidgetPointer &bwp : d->backgroundWidgets.values())
         bwp->setParent(nullptr);
+}
+
+void BackgroundManager::onWindowShowed()
+{
+    for (auto it = d->backgroundWidgets.begin(); it != d->backgroundWidgets.end(); ++it) {
+        const BackgroundWidgetPointer &bwp = it.value();
+        bwp->show();
+        bwp->update();
+    }
 }
 
 void BackgroundManager::restBackgroundManager()

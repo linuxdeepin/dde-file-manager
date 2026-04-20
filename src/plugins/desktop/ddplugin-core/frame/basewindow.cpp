@@ -20,3 +20,12 @@ void BaseWindow::init()
     setAttribute(Qt::WA_TranslucentBackground);
     setWindowIcon(QIcon::fromTheme("deepin-toggle-desktop"));
 }
+
+void BaseWindow::recreateNativeWindow(const QRect &geometry)
+{
+    hide();
+    setGeometry(geometry);
+    destroy(true, false);
+    create();
+    setGeometry(geometry);
+}

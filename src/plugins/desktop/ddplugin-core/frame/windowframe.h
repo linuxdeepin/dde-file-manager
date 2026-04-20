@@ -8,6 +8,7 @@
 #include "ddplugin_core_global.h"
 
 #include <dfm-base/interfaces/abstractdesktopframe.h>
+#include <dfm-base/interfaces/screen/abstractscreen.h>
 
 DDPCORE_BEGIN_NAMESPACE
 class WindowFramePrivate;
@@ -27,6 +28,10 @@ public slots:
     void buildBaseWindow();
     void onGeometryChanged();
     void onAvailableGeometryChanged();
+
+private:
+    bool needRecreateNativeWindows(const QList<DFMBASE_NAMESPACE::ScreenPointer> &screens) const;
+    void cacheScreenTopology(const QList<DFMBASE_NAMESPACE::ScreenPointer> &screens);
 
 private:
     WindowFramePrivate *d;
