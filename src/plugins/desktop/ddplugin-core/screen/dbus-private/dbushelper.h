@@ -6,16 +6,8 @@
 #define DOCKHELPER_H
 
 #include "ddplugin_core_global.h"
-
-#ifdef COMPILE_ON_V2X
 #include "dbusdock1.h"
 #include "dbusdisplay1.h"
-//#include "dbusmonitor1.h"
-#else
-#include "dbusdock.h"
-//#include "dbusmonitor.h"
-#include "dbusdisplay.h"
-#endif
 
 #include <QObject>
 
@@ -44,4 +36,4 @@ DDPCORE_END_NAMESPACE
 #define DockInfoIns ddplugin_core::DBusHelper::ins()->dock()
 #define DisplayInfoIns ddplugin_core::DBusHelper::ins()->display()
 
-#endif // DOCKHELPER_H
+#endif   // DOCKHELPER_H

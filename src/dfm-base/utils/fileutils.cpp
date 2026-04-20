@@ -62,13 +62,9 @@
 #include <sys/stat.h>
 #include <linux/limits.h>
 
-#ifdef COMPILE_ON_V2X
-#    define APPEARANCE_SERVICE "org.deepin.dde.Appearance1"
-#    define APPEARANCE_PATH "/org/deepin/dde/Appearance1"
-#else
-#    define APPEARANCE_SERVICE "com.deepin.daemon.Appearance"
-#    define APPEARANCE_PATH "/com/deepin/daemon/Appearance"
-#endif
+#define APPEARANCE_SERVICE "org.deepin.dde.Appearance1"
+#define APPEARANCE_PATH "/org/deepin/dde/Appearance1"
+
 using namespace GlobalDConfDefines::ConfigPath;
 
 namespace dfmbase {

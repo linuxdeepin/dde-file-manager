@@ -128,15 +128,11 @@ CanvasMenuScene::CanvasMenuScene(QObject *parent)
     d->predicateName[ActionID::kAutoArrange] = tr("Auto arrange");
 
     if (ddplugin_desktop_util::enableScreensaver()) {
-#ifdef COMPILE_ON_V2X
         if (SysInfoUtils::isDeepin23()) {
             d->predicateName[ActionID::kWallpaperSettings] = tr("Wallpaper and Screensaver");
         } else {
             d->predicateName[ActionID::kWallpaperSettings] = tr("Set Wallpaper");
         }
-#else
-        d->predicateName[ActionID::kWallpaperSettings] = tr("Personalization");
-#endif
     } else {
         d->predicateName[ActionID::kWallpaperSettings] = tr("Set Wallpaper");
     }
@@ -354,14 +350,9 @@ bool CanvasMenuScene::triggered(QAction *action)
         // Display Settings
         if (actionId == ActionID::kDisplaySettings) {
             fmDebug() << "Opening display settings via ControlCenter";
-#ifdef COMPILE_ON_V2X
             QDBusMessage msg = QDBusMessage::createMethodCall("org.deepin.dde.ControlCenter1", "/org/deepin/dde/ControlCenter1",
                                                               "org.deepin.dde.ControlCenter1", "ShowPage");
-#else
-            QDBusMessage msg = QDBusMessage::createMethodCall("com.deepin.dde.ControlCenter", "/com/deepin/dde/ControlCenter",
-                                                              "com.deepin.dde.ControlCenter", "ShowModule");
 
-#endif
             msg.setArguments({ QVariant::fromValue(QString("display")) });
             QDBusConnection::sessionBus().asyncCall(msg, 5);
             fmInfo() << "ControlCenter service called - service:" << msg.service() << "arguments:" << msg.arguments();

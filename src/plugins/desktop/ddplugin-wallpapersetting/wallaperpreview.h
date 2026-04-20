@@ -7,16 +7,11 @@
 
 #include "ddplugin_wallpapersetting_global.h"
 #include "backgroundpreview.h"
+#include "dbus/appearance_interface.h"
 
 #include <dfm-base/interfaces/screen/abstractscreen.h>
 
-#ifdef COMPILE_ON_V2X
-#    include "dbus/appearance_interface.h"
 using BackgroudInter = org::deepin::dde::Appearance1;
-#else
-#    include <com_deepin_wm.h>
-using BackgroudInter = com::deepin::wm;
-#endif
 
 #include <QObject>
 #include <QMap>

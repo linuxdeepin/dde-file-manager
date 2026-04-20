@@ -142,12 +142,10 @@ qreal ScreenProxyQt::devicePixelRatio() const
 
 DisplayMode ScreenProxyQt::displayMode() const
 {
-#ifdef COMPILE_ON_V2X
     if (DFMBASE_NAMESPACE::WindowUtils::isWayLand()) {
         fmDebug() << "Wayland environment detected, using show-only mode";
         return DisplayMode::kShowonly;
     }
-#endif
 
     QList<ScreenPointer> allScreen = screens();
     if (allScreen.isEmpty()) {

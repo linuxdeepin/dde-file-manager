@@ -24,15 +24,9 @@
 #include <DDBusSender>
 #include <DUtil>
 
-#ifdef COMPILE_ON_V2X
-#    define DDE_SHUTDOWN_SERVICE "org.deepin.dde.ShutdownFront1"
-#    define DDE_SHUTDOWN_PATH "/org/deepin/dde/ShutdownFront1"
-#    define DDE_SHUTDOWN_INTERFACE "org.deepin.dde.ShutdownFront1"
-#else
-#    define DDE_SHUTDOWN_SERVICE "com.deepin.ShutdownFront"
-#    define DDE_SHUTDOWN_PATH "/com/deepin/ShutdownFront"
-#    define DDE_SHUTDOWN_INTERFACE "com.deepin.ShutdownFront"
-#endif
+#define DDE_SHUTDOWN_SERVICE "org.deepin.dde.ShutdownFront1"
+#define DDE_SHUTDOWN_PATH "/org/deepin/dde/ShutdownFront1"
+#define DDE_SHUTDOWN_INTERFACE "org.deepin.dde.ShutdownFront1"
 
 Q_DECLARE_METATYPE(QString *)
 Q_DECLARE_METATYPE(bool *)
@@ -155,7 +149,7 @@ void EventsHandler::resumeEncrypt(const QString &device)
                          kDaemonBusPath,
                          kDaemonBusIface,
                          QDBusConnection::systemBus());
-    iface.asyncCall("ResumeEncryption", QVariantMap{{encrypt_param_keys::kKeyDevice, device}});
+    iface.asyncCall("ResumeEncryption", QVariantMap { { encrypt_param_keys::kKeyDevice, device } });
 }
 
 QString EventsHandler::holderDevice(const QString &device)
@@ -701,8 +695,7 @@ void EventsHandler::setAutoStartDFM(bool enable)
 
             if (QFile::copy(kReencryptDesktopFile, autostartFile)) {
                 fmInfo() << "Successfully copied desktop file to autostart directory";
-                QFile::setPermissions(autostartFile, QFile::ReadOwner | QFile::WriteOwner | QFile::ExeOwner |
-                                                     QFile::ReadGroup | QFile::ReadOther);
+                QFile::setPermissions(autostartFile, QFile::ReadOwner | QFile::WriteOwner | QFile::ExeOwner | QFile::ReadGroup | QFile::ReadOther);
             } else {
                 fmWarning() << "Failed to copy desktop file to autostart directory";
             }
@@ -771,11 +764,9 @@ void EventsHandler::onOverlayDMModeChanged(bool enabled, int result)
             .arg(message)
             .arg(QStringList())
             .arg(QVariantMap())
-            .arg(10000)  // 10 seconds timeout
+            .arg(10000)   // 10 seconds timeout
             .call();
 }
-
-
 
 EventsHandler::EventsHandler(QObject *parent)
     : QObject { parent }

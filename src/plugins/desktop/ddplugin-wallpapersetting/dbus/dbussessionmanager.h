@@ -23,24 +23,22 @@
 /*
  * Proxy class for interface org.deepin.dde.SessionManager1
  */
-class DBusSessionManager: public QDBusAbstractInterface
+class DBusSessionManager : public QDBusAbstractInterface
 {
 public:
-#ifdef COMPILE_ON_V2X
     static inline const char *staticInterfaceName()
-    { return "org.deepin.dde.SessionManager1"; }
+    {
+        return "org.deepin.dde.SessionManager1";
+    }
     static inline const char *staticServiceName()
-    { return "org.deepin.dde.SessionManager1"; }
+    {
+        return "org.deepin.dde.SessionManager1";
+    }
     static inline const char *staticObjectPath()
-    { return "/org/deepin/dde/SessionManager1"; }
-#else
-    static inline const char *staticInterfaceName()
-    { return "com.deepin.SessionManager"; }
-    static inline const char *staticServiceName()
-    { return "com.deepin.SessionManager"; }
-    static inline const char *staticObjectPath()
-    { return "/com/deepin/SessionManager"; }
-#endif
+    {
+        return "/org/deepin/dde/SessionManager1";
+    }
+
 private:
     Q_OBJECT
     Q_SLOT void __propertyChanged__(const QDBusMessage &msg)
@@ -63,6 +61,7 @@ private:
             }
         }
     }
+
 public:
     explicit DBusSessionManager(QObject *parent = nullptr);
 
@@ -70,17 +69,23 @@ public:
 
     Q_PROPERTY(QString CurrentUid READ currentUid)
     inline QString currentUid() const
-    { return qvariant_cast< QString >(property("CurrentUid")); }
+    {
+        return qvariant_cast<QString>(property("CurrentUid"));
+    }
 
     Q_PROPERTY(bool Locked READ locked NOTIFY LockedChanged)
     inline bool locked() const
-    { return qvariant_cast< bool >(property("Locked")); }
+    {
+        return qvariant_cast<bool>(property("Locked"));
+    }
 
     Q_PROPERTY(int Stage READ stage)
     inline int stage() const
-    { return qvariant_cast< int >(property("Stage")); }
+    {
+        return qvariant_cast<int>(property("Stage"));
+    }
 
-Q_SIGNALS: // SIGNALS
+Q_SIGNALS:   // SIGNALS
     void LockedChanged() const;
 };
 

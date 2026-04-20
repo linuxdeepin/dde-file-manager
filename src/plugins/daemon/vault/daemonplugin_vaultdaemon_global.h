@@ -19,14 +19,8 @@
 DAEMONPVAULT_BEGIN_NAMESPACE
 DFM_LOG_USE_CATEGORY(DAEMONPVAULT_NAMESPCE)
 
-#ifdef COMPILE_ON_V2X
 inline constexpr char kAppSessionService[] { "org.deepin.dde.SessionManager1" };
 inline constexpr char kAppSessionPath[] { "/org/deepin/dde/SessionManager1" };
-#else
-inline constexpr char kAppSessionService[] { "com.deepin.SessionManager" };
-inline constexpr char kAppSessionPath[] { "/com/deepin/SessionManager" };
-#endif
-
 inline const QString kVaultConfigPath(QDir::homePath() + QString("/.config/Vault"));
 inline constexpr char kVaultMountDirName[] { "vault_unlocked" };
 inline constexpr char kVaultBaseDirName[] { "vault_encrypted" };
@@ -45,7 +39,7 @@ enum class Connectivity {
     Noconnectivity,
     Portal,
     Limited,
-    Full        // 主机已连接到网络，并且似乎能够访问完整的Internet
+    Full   // 主机已连接到网络，并且似乎能够访问完整的Internet
 };
 
 enum VaultState {
