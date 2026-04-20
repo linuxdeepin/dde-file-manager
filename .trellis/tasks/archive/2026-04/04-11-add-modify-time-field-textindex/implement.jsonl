@@ -1,7 +1,0 @@
-{"file": ".trellis/workflow.md", "reason": "Project workflow and conventions"}
-{"file": ".trellis/spec/backend/index.md", "reason": "Backend development guide"}
-{"file": ".trellis/spec/backend/qt-dtk-guide.md", "reason": "Qt/C++ backend coding conventions for touched service code"}
-{"file": ".trellis/spec/backend/textindex-service.md", "reason": "TextIndex document builder and indexing field conventions"}
-{"file": "src/services/textindex/document/contentdocumentbuilder.cpp", "reason": "Existing content document field-writing pattern"}
-{"file": "src/services/textindex/document/ocrdocumentbuilder.cpp", "reason": "Existing OCR document field-writing pattern"}
-{"file": "src/services/textindex/task/taskhandler.cpp", "reason": "Current modify-time based update check"}

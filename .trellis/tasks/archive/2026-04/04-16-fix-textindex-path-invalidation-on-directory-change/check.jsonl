@@ -1,4 +1,0 @@
-{"file": ".claude/commands/trellis/finish-work.md", "reason": "Finish work checklist"}
-{"file": ".claude/commands/trellis/check-backend.md", "reason": "Backend check spec"}
-{"file": ".trellis/spec/backend/textindex-service.md", "reason": "Validate task queue and move processing remain aligned with service architecture"}
-{"file": ".trellis/spec/backend/bug-fix-standards.md", "reason": "Review for minimal bug fix scope and required explanatory comments"}

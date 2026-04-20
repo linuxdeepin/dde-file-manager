@@ -1,5 +1,0 @@
-{"file": ".trellis/workflow.md", "reason": "Project workflow and conventions"}
-{"file": ".trellis/spec/backend/index.md", "reason": "Backend development guide"}
-{"file": ".trellis/spec/backend/logging-guidelines.md", "reason": "Logging conventions for extractor lifecycle and IPC errors"}
-{"file": ".trellis/spec/backend/error-handling.md", "reason": "Lifecycle, timeout, and failure handling patterns for subprocess-based extraction"}
-{"file": ".trellis/spec/backend/textindex-service.md", "reason": "Textindex runtime and task flow guidance for extractor refactor"}

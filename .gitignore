@@ -39,34 +39,6 @@ build*
 *.qm
 *.autosave
 
-vendor/include/*
-vendor/lib/*
-
-dde-sharefiles/lib/*
-dde-sharefiles/tmp/*
-dde-sharefiles/log/*
-
-NUL
-
-# Documents
-doc/html/*
-
-dde-file-manager-lib/test_shutil/fileutils/fileutil_t1.txt
-
-dde-file-manager-lib/test_shutil/fileutils/fileutil_t2.txt
-
-dde-file-manager-lib/test_shutil/fileutils/jsonArry.json
-
-dde-file-manager-lib/test_shutil/fileutils/jsonObj.json
-
-dde-file-manager-lib/test_shutil/fileutils/sub/fileutil_file_new1.txt
-
-dde-file-manager-lib/test_shutil/new1.txt
-
-dde-file-manager-lib/test_shutil/new2.txt
-
-dde-file-manager-lib/test_shutil/property/oneProperty.pro
-
 # vscode
 .vscode
 
@@ -74,7 +46,6 @@ dde-file-manager-lib/test_shutil/property/oneProperty.pro
 .unioncode
 
 # debhelper-build-stamp
-
 .debhelper
 *.deb
 *.dsc
@@ -88,7 +59,7 @@ dde-file-manager-lib/test_shutil/property/oneProperty.pro
 # clangd cache files
 .cache
 
-# cursor & AI config
+# AI config
 .cursorindexingignore
 .cursor
 .specstory
@@ -98,6 +69,13 @@ dde-file-manager-lib/test_shutil/property/oneProperty.pro
 .promptx/
 .qoder/
 .qoderignore
+CLAUDE.md
+AGENTS.md
+.trellis
+.claude
+.agents
+.worktrees
+
 
 # autotests
 Testing
