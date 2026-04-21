@@ -302,6 +302,15 @@ QVariant FileViewPrivate::fileViewStateValue(const QUrl &url, const QString &key
     return WorkspaceHelper::instance()->getFileViewStateValue(url, key, defalutValue);
 }
 
+bool FileViewPrivate::shouldPersistState(const QUrl &url) const
+{
+    if (!url.isValid())
+        return false;
+
+    auto dirIterator = DirIteratorFactory::create<AbstractDirIterator>(url, {});
+    return !(dirIterator && dirIterator->property(IteratorProperty::kKeepOrder).toBool());
+}
+
 void FileViewPrivate::updateHorizontalOffset()
 {
     horizontalOffset = 0;

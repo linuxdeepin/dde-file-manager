@@ -20,6 +20,7 @@
 #include <dfm-io/dfmio_utils.h>
 
 #include <QStandardPaths>
+#include <QElapsedTimer>
 
 #include <algorithm>
 #include <sys/stat.h>
@@ -1635,6 +1636,9 @@ QList<QUrl> FileSortWorker::sortTreeFiles(const QList<QUrl> &children, const boo
     if (isCanceled || children.isEmpty())
         return {};
 
+    QElapsedTimer timer;
+    timer.start();
+
     auto parentUrl = makeParentUrl(children.first());
     if (orgSortRole == Global::ItemRoles::kItemDisplayRole) {
         visibleTreeChildren.insert(parentUrl, children);
@@ -1672,6 +1676,9 @@ QList<QUrl> FileSortWorker::sortTreeFiles(const QList<QUrl> &children, const boo
         return {};
 
     visibleTreeChildren.insert(parentUrl, sortList);
+
+    fmDebug() << "sortTreeFiles completed in" << timer.elapsed() << "ms, sorted"
+              << sortList.count() << "items for" << parentUrl.toString();
 
     return sortList;
 }

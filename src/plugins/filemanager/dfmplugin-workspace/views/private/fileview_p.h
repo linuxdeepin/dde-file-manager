@@ -109,6 +109,10 @@ class FileViewPrivate
     void loadViewMode(const QUrl &url);
     QVariant fileViewStateValue(const QUrl &url, const QString &key, const QVariant &defalutValue);
 
+    // Check if state should be persisted for the given URL
+    // Returns false for special iterators (e.g., search) that use kKeepOrder
+    bool shouldPersistState(const QUrl &url) const;
+
     void updateHorizontalOffset();
     // 使用 strategyName 是因为当 setGroup 时，model并不是分组状态
     void adjustHeaderLayoutMargin(const QString &strategyName);

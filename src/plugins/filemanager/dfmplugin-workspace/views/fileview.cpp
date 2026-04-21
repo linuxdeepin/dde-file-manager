@@ -560,9 +560,11 @@ void FileView::onSortIndicatorChanged(int logicalIndex, Qt::SortOrder order)
     model()->sort(logicalIndex, order);
 
     const QUrl &url = rootUrl();
-    const ItemRoles &role = model()->getRoleByColumn(logicalIndex);
-    setFileViewStateValue(url, "sortRole", role);
-    setFileViewStateValue(url, "sortOrder", static_cast<int>(order));
+    if (d->shouldPersistState(url)) {
+        const ItemRoles &role = model()->getRoleByColumn(logicalIndex);
+        setFileViewStateValue(url, "sortRole", role);
+        setFileViewStateValue(url, "sortOrder", static_cast<int>(order));
+    }
 }
 
 void FileView::onClicked(const QModelIndex &index)
@@ -927,11 +929,7 @@ void FileView::setGroup(const QString &strategyName, const Qt::SortOrder order)
 
     const QUrl &url = rootUrl();
 
-    // 搜索使用了 kKeepOrder 作为属性避免搜索过程中排序
-    // 此处使用 kKeepOrder 不持久化存储分组状态，那么搜索过程将不会被分组
-    auto dirIterator = DirIteratorFactory::create<AbstractDirIterator>(url, {});
-    bool keepOrder = dirIterator && dirIterator->property(IteratorProperty::kKeepOrder).toBool();
-    if (url.isValid() && !keepOrder) {
+    if (d->shouldPersistState(url)) {
         setFileViewStateValue(url, "groupStrategy", strategyName);
         setFileViewStateValue(url, "groupingOrder", static_cast<int>(order));
     }
