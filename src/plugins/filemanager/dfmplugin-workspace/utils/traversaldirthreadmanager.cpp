@@ -218,10 +218,7 @@ int TraversalDirThreadManager::iteratorOneByOne(const QElapsedTimer &timere)
     if (childrenList.length() > 0)
         emit updateChildrenManager(childrenList, traversalToken);
 
-    if (!dirIterator->property(IteratorProperty::kKeepOrder).toBool()) {
-        fmDebug() << "Requesting sort for unordered results";
-        emit traversalRequestSort(traversalToken);
-    }
+    emit traversalRequestSort(traversalToken);
 
     emit traversalFinished(traversalToken);
 
