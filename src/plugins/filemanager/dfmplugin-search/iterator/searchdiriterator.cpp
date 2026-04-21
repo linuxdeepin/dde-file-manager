@@ -194,33 +194,17 @@ QList<QSharedPointer<SortFileInfo>> SearchDirIterator::sortFileInfoList()
     if (results.isEmpty() && d->searchFinished.load(std::memory_order_acquire))
         return {};
 
-    // TODO (perf) : 存在性能问题，重复获取全量数据
-    // 在子线程中处理数据，不影响主线程
-    // 使用两个QList分别装载文件夹和文件，然后合并
-    // 时间复杂度：O(n)，空间复杂度：O(n)，性能优于stable_partition
-    QList<QSharedPointer<SortFileInfo>> dirs;
     QList<QSharedPointer<SortFileInfo>> files;
-
-    // 预分配空间以提高性能（可选优化）
-    const int totalCount = results.size();
-    dirs.reserve(totalCount / 4);   // 估算文件夹占比约25%
-    files.reserve(totalCount);   // 文件可能占大部分
-
+    // 预分配空间以提高性能
+    files.reserve(results.size());
     for (auto it = results.begin(); it != results.end(); ++it) {
         auto sortInfo = QSharedPointer<SortFileInfo>(new SortFileInfo());
         sortInfo->setUrl(it.key());
         sortInfo->setHighlightContent(it->highlightedContent());
         doCompleteSortInfo(sortInfo);
-
-        if (sortInfo->isDir()) {
-            dirs.append(sortInfo);
-        } else {
-            files.append(sortInfo);
-        }
+        files.append(sortInfo);
     }
 
-    // 合并结果：文件夹在前，文件在后
-    result = std::move(dirs);
     result.append(files);
 
     // 标记结果已被消费，避免重复处理
