@@ -241,8 +241,12 @@ void FileDialog::cd(const QUrl &url)
     if (window->workSpace())
         handleUrlChanged(url);
     else
-        connect(
-                window, &FileManagerWindow::workspaceInstallFinished, this, [this, url] { handleUrlChanged(url); }, Qt::DirectConnection);
+        connect(window, &FileManagerWindow::workspaceInstallFinished,
+                this, [this, url] {
+                    handleUrlChanged(url);
+                    d->workspaceInstallFinished = true;
+                },
+                Qt::DirectConnection);
 }
 
 bool FileDialog::saveClosedSate() const
@@ -345,7 +349,8 @@ void FileDialog::selectUrl(const QUrl &url)
         return;
 
     CoreEventsCaller::sendSelectFiles(this->internalWinId(), { url });
-    setCurrentInputName(QFileInfo(url.path()).fileName());
+    if (!d->workspaceInstallFinished)
+        setCurrentInputName(QFileInfo(url.path()).fileName());
 }
 
 QList<QUrl> FileDialog::selectedUrls() const
@@ -1110,6 +1115,8 @@ void FileDialog::closeEvent(QCloseEvent *event)
         event->accept();
     }
     FileManagerWindow::closeEvent(event);
+
+    d->workspaceInstallFinished = false;
 }
 
 bool FileDialog::eventFilter(QObject *watched, QEvent *event)

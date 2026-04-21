@@ -55,6 +55,7 @@ private:
     bool allowMixedSelection { false };
     QFileDialog::Options options;
     QUrl currentUrl;
+    bool workspaceInstallFinished { false };
 
     static QStringList cleanFilterList(const QString &filter)
     {
