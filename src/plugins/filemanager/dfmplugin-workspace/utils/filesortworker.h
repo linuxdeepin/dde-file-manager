@@ -243,9 +243,8 @@ private:
     void removeVisibleChildren(const int startPos, const int size);
     void createAndInsertItemData(const int8_t depth, const SortInfoPointer child, const FileInfoPointer info);
 
-    int insertSortList(const QUrl &needNode, const QList<QUrl> &list,
-                       SortScenarios sort);
-    bool lessThan(const QUrl &left, const QUrl &right, SortScenarios sort);
+    int insertSortList(const QUrl &needNode, const QList<QUrl> &list);
+    bool lessThan(const QUrl &left, const QUrl &right);
     QVariant data(const FileInfoPointer &info, Global::ItemRoles role);
     QVariant data(const SortInfoPointer &info, Global::ItemRoles role);
 

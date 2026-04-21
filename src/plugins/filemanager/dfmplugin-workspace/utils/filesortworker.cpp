@@ -21,6 +21,7 @@
 
 #include <QStandardPaths>
 
+#include <algorithm>
 #include <sys/stat.h>
 
 using namespace dfmplugin_workspace;
@@ -898,7 +899,7 @@ bool FileSortWorker::handleUpdateFile(const QUrl &url)
         auto subVisibleList = visibleTreeChildren.take(parentUrl);
         auto offset = subVisibleList.count();
         if (orgSortRole != Global::ItemRoles::kItemDisplayRole)
-            offset = insertSortList(sortInfo->fileUrl(), subVisibleList, SortScenarios::kSortScenariosWatcherAddFile);
+            offset = insertSortList(sortInfo->fileUrl(), subVisibleList);
         auto subIndex = offset;
         // 根目录下的offset计算不一样
         if (UniversalUtils::urlEquals(parentUrl, current)) {
@@ -1464,7 +1465,7 @@ bool FileSortWorker::addChild(const SortInfoPointer &sortInfo,
     auto subVisibleList = visibleTreeChildren.take(parentUrl);
     auto offset = subVisibleList.length();
     if (orgSortRole != Global::ItemRoles::kItemDisplayRole)
-        offset = insertSortList(sortInfo->fileUrl(), subVisibleList, sort);
+        offset = insertSortList(sortInfo->fileUrl(), subVisibleList);
     auto subIndex = offset;
     // 根目录下的offset计算不一样
     if (UniversalUtils::urlEquals(parentUrl, current)) {
@@ -1654,7 +1655,7 @@ QList<QUrl> FileSortWorker::sortTreeFiles(const QList<QUrl> &children, const boo
         if (isCanceled)
             return {};
         if (!reverse) {
-            sortIndex = insertSortList(url, sortList, SortScenarios::kSortScenariosNormal);
+            sortIndex = insertSortList(url, sortList);
         } else if (!firstFile && !isMixDirAndFile) {
             auto sortInfo = sortInfos.value(url);
             if (sortInfo && sortInfo->needsCompletion())
@@ -1839,8 +1840,7 @@ void FileSortWorker::createAndInsertItemData(const int8_t depth, const SortInfoP
     childrenDataMap.insert(child->fileUrl(), item);
 }
 
-int FileSortWorker::insertSortList(const QUrl &needNode, const QList<QUrl> &list,
-                                   SortScenarios sort)
+int FileSortWorker::insertSortList(const QUrl &needNode, const QList<QUrl> &list)
 {
     int begin = 0;
     int end = list.count();
@@ -1851,10 +1851,10 @@ int FileSortWorker::insertSortList(const QUrl &needNode, const QList<QUrl> &list
     if (isCanceled)
         return 0;
 
-    if ((sortOrder == Qt::AscendingOrder) ^ !lessThan(needNode, list.first(), sort))
+    if ((sortOrder == Qt::AscendingOrder) ^ !lessThan(needNode, list.first()))
         return 0;
 
-    if ((sortOrder == Qt::AscendingOrder) ^ lessThan(needNode, list.last(), sort))
+    if ((sortOrder == Qt::AscendingOrder) ^ lessThan(needNode, list.last()))
         return list.count();
 
     int row = (begin + end) / 2;
@@ -1868,7 +1868,7 @@ int FileSortWorker::insertSortList(const QUrl &needNode, const QList<QUrl> &list
             break;
 
         const QUrl &node = list.at(row);
-        if ((sortOrder == Qt::AscendingOrder) ^ lessThan(needNode, node, sort)) {
+        if ((sortOrder == Qt::AscendingOrder) ^ lessThan(needNode, node)) {
             begin = row;
             row = (end + begin + 1) / 2;
             if (row >= end)
@@ -1883,7 +1883,7 @@ int FileSortWorker::insertSortList(const QUrl &needNode, const QList<QUrl> &list
 }
 
 // 左边比右边小返回true，
-bool FileSortWorker::lessThan(const QUrl &left, const QUrl &right, SortScenarios sort)
+bool FileSortWorker::lessThan(const QUrl &left, const QUrl &right)
 {
     if (isCanceled)
         return false;
