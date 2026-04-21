@@ -260,6 +260,9 @@ QList<SortInfoPointer> TraversalDirThreadManager::iteratorAll()
             emit updateChildrenInfo(fileList, traversalToken);
     }
 
+    if (dirIterator->property(IteratorProperty::kKeepOrder).toBool())
+        emit traversalRequestSort(traversalToken);
+
     // Iterator is not waiting for updates, so signal that we're done
     emit traversalFinished(traversalToken);
 
