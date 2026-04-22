@@ -1165,12 +1165,7 @@ void FileSortWorker::handleAddChildren(const QString &key,
         return;
     }
 
-    // In the home, it is necessary to sort by display name.
-    // So, using `sortAllFiles` to reorder
-    const auto parentUrl = makeParentUrl(children.first()->fileUrl());
-    const auto path = FileUtils::bindPathTransform(parentUrl.path(), false);
-    bool isHome = (path == StandardPaths::location(StandardPaths::kHomePath));
-    if (!isHome && sortRole != DEnumerator::SortRoleCompareFlag::kSortRoleCompareDefault && this->sortRole == sortRole
+    if (sortRole != DEnumerator::SortRoleCompareFlag::kSortRoleCompareDefault && this->sortRole == sortRole
         && this->sortOrder == sortOrder && this->isMixDirAndFile == isMixDirAndFile) {
         if (handleSource)
             setSourceHandleState(isFinished);
@@ -1181,6 +1176,7 @@ void FileSortWorker::handleAddChildren(const QString &key,
         return;
     // 对当前的目录排序， 若果处理的是获取源数据，在没有获取完，不进行排序
     if ((!handleSource || isFinished) && isSort) {
+        const auto parentUrl = makeParentUrl(children.first()->fileUrl());
         auto startPos = findStartPos(parentUrl);
         auto sortList = sortTreeFiles(visibleTreeChildren.take(parentUrl));
         // 找到endpos
