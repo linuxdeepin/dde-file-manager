@@ -326,25 +326,18 @@ void FileSortWorker::handleIteratorLocalChildren(const QString &key,
                                                  bool isFirstBatch)
 {
     fmDebug() << "Handling iterator local children - key:" << key << "children count:" << children.size() << "first batch:" << isFirstBatch;
+    Q_UNUSED(sortRole)
+    Q_UNUSED(sortOrder)
+    Q_UNUSED(isMixDirAndFile)
     // This is where we handle the first batch flag for kPreserve mode
-    handleAddChildren(key, children, {}, sortRole, sortOrder, isMixDirAndFile, false, false, true, isFirstBatch);
-}
-
-void FileSortWorker::handleSourceChildren(const QString &key,
-                                          const QList<SortInfoPointer> children,
-                                          const DEnumerator::SortRoleCompareFlag sortRole,
-                                          const Qt::SortOrder sortOrder, const bool isMixDirAndFile,
-                                          const bool isFinished)
-{
-    // Source changes are not the first batch
-    handleAddChildren(key, children, {}, sortRole, sortOrder, isMixDirAndFile, true, isFinished, true, false);
+    handleAddChildren(key, children, {}, isFirstBatch);
 }
 
 void FileSortWorker::handleIteratorChildren(const QString &key, const QList<SortInfoPointer> children, const QList<FileInfoPointer> infos, bool isFirstBatch)
 {
     // The isFirstBatch parameter is only passed through but not used for clearing
     // since this is not part of the logic path that should use it
-    handleAddChildren(key, children, infos, sortRole, sortOrder, isMixDirAndFile, false, false, false, isFirstBatch);
+    handleAddChildren(key, children, infos, isFirstBatch);
 }
 
 void FileSortWorker::handleIteratorChildrenUpdate(const QString &key, const QList<SortInfoPointer> children, bool isFirstBatch)
@@ -1144,49 +1137,6 @@ void FileSortWorker::handleSwitchTreeView(const bool isTree)
     }
 }
 
-void FileSortWorker::handleAddChildren(const QString &key,
-                                       QList<SortInfoPointer> children,
-                                       const QList<FileInfoPointer> &childInfos,
-                                       const DFMIO::DEnumerator::SortRoleCompareFlag sortRole,
-                                       const Qt::SortOrder sortOrder,
-                                       const bool isMixDirAndFile,
-                                       const bool handleSource,
-                                       const bool isFinished,
-                                       const bool isSort,
-                                       const bool isFirstBatch)
-{
-    if (!handleAddChildren(key, children, childInfos, isFirstBatch))
-        return;
-
-    if (children.isEmpty()) {
-        if (handleSource)
-            setSourceHandleState(isFinished);
-
-        return;
-    }
-
-    if (sortRole != DEnumerator::SortRoleCompareFlag::kSortRoleCompareDefault && this->sortRole == sortRole
-        && this->sortOrder == sortOrder && this->isMixDirAndFile == isMixDirAndFile) {
-        if (handleSource)
-            setSourceHandleState(isFinished);
-        return;
-    }
-
-    if (isCanceled)
-        return;
-    // 对当前的目录排序， 若果处理的是获取源数据，在没有获取完，不进行排序
-    if ((!handleSource || isFinished) && isSort) {
-        const auto parentUrl = makeParentUrl(children.first()->fileUrl());
-        auto startPos = findStartPos(parentUrl);
-        auto sortList = sortTreeFiles(visibleTreeChildren.take(parentUrl));
-        // 找到endpos
-        insertVisibleChildren(startPos, sortList, InsertOpt::kInsertOptReplace, startPos + sortList.length());
-    }
-
-    if (handleSource)
-        setSourceHandleState(isFinished);
-}
-
 bool FileSortWorker::handleAddChildren(const QString &key,
                                        const QList<SortInfoPointer> &children,
                                        const QList<FileInfoPointer> &childInfos,
@@ -1250,15 +1200,6 @@ bool FileSortWorker::handleAddChildren(const QString &key,
     insertVisibleChildren(startPos + posOffset, newChildren);
 
     return true;
-}
-
-void FileSortWorker::setSourceHandleState(const bool isFinished)
-{
-    if (isFinished) {
-        Q_EMIT requestSetIdel(visibleChildren.count(), childrenDataMap.count());
-    } else {
-        Q_EMIT getSourceData(currentKey);
-    }
 }
 
 void FileSortWorker::resetFilters(const QDir::Filters filters)

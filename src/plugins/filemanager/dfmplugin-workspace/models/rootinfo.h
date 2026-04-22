@@ -40,12 +40,12 @@ public:
     };
 
 public:
-    explicit RootInfo(const QUrl &u, const bool canCache, QObject *parent = nullptr);
+    explicit RootInfo(const QUrl &u, QObject *parent = nullptr);
     ~RootInfo();
 
-    bool initThreadOfFileData(const QString &key,
+    void initThreadOfFileData(const QString &key,
                               DFMGLOBAL_NAMESPACE::ItemRoles role, Qt::SortOrder order, bool isMixFileAndFolder);
-    void startWork(const QString &key, const bool getCache = false);
+    void startWork(const QString &key);
     int clearTraversalThread(const QString &key, const bool isRefresh);
     void setFirstBatch(bool first);
 
@@ -75,12 +75,6 @@ Q_SIGNALS:
     void watcherAddFiles(const QList<SortInfoPointer> &children);
     void watcherRemoveFiles(const QList<SortInfoPointer> &children);
     void traversalFinished(const QString &key, bool noDataProduced = false);
-    void sourceDatas(const QString &key,
-                     const QList<SortInfoPointer> children,
-                     const dfmio::DEnumerator::SortRoleCompareFlag sortRole,
-                     const Qt::SortOrder sortOrder,
-                     const bool isMixDirAndFile,
-                     const bool isFinished);
     void watcherUpdateFile(const SortInfoPointer sortInfo);
     void watcherUpdateFiles(const QList<SortInfoPointer> &sortInfos);
     void watcherUpdateHideFile(const QUrl &hidUrl);
@@ -108,7 +102,6 @@ public Q_SLOTS:
     void handleTraversalFinish(const QString &travseToken);
 
     void handleTraversalSort(const QString &travseToken);
-    void handleGetSourceData(const QString &currentToken);
 
     void startWatcher();
 
@@ -138,8 +131,6 @@ private:
     QUrl hiddenFileUrl;
 
     QMap<QString, QSharedPointer<DirIteratorThread>> traversalThreads;
-    std::atomic_bool traversalFinish { false };
-    std::atomic_bool traversaling { false };
     std::atomic_bool isFirstBatch { false };
 
     QReadWriteLock childrenLock;
@@ -149,7 +140,6 @@ private:
     dfmio::DEnumerator::SortRoleCompareFlag originSortRole { dfmio::DEnumerator::SortRoleCompareFlag::kSortRoleCompareDefault };
     Qt::SortOrder originSortOrder { Qt::AscendingOrder };
     bool originMixSort { false };
-    bool canCache { false };
 
     std::atomic_bool cancelWatcherEvent { false };
     QList<QFuture<void>> watcherEventFutures;

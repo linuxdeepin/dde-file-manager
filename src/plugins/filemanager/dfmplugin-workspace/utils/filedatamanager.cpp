@@ -60,9 +60,9 @@ bool FileDataManager::fetchFiles(const QUrl &rootUrl, const QString &key, DFMGLO
         }
     }
 
-    auto getCache = root->initThreadOfFileData(key, role, order, isMixFileAndFolder);
-    root->startWork(key, getCache);
-    fmInfo() << "File fetch started successfully for URL:" << normalizedRootUrl.toString() << "with cache:" << getCache;
+    root->initThreadOfFileData(key, role, order, isMixFileAndFolder);
+    root->startWork(key);
+    fmInfo() << "File fetch started successfully for URL:" << normalizedRootUrl.toString();
     return true;
 }
 
@@ -85,7 +85,7 @@ void FileDataManager::cleanRoot(const QUrl &rootUrl, const QString &key, const b
             auto count = rootInfoMap.value(rootInfo)->clearTraversalThread(key, refresh);
             if (count > 0)
                 continue;
-            if ((!checkNeedCache(rootInfo) || refresh) && !hasRootUsers(rootInfo)) {
+            if (!hasRootUsers(rootInfo)) {
                 auto root = rootInfoMap.take(rootInfo);
                 if (!root) {
                     fmWarning() << "Failed to retrieve root for cleanup:" << rootInfo.toString();
@@ -213,11 +213,10 @@ FileDataManager::~FileDataManager()
 RootInfo *FileDataManager::createRoot(const QUrl &url)
 {
     const QUrl normalizedUrl = normalizeRootUrl(url);
-    bool needCache = checkNeedCache(normalizedUrl);
-    fmInfo() << "Creating RootInfo for URL:" << normalizedUrl.toString() << "cache needed:" << needCache;
+    fmInfo() << "Creating RootInfo for URL:" << normalizedUrl.toString();
 
     // create a new RootInfo
-    RootInfo *root = new RootInfo(normalizedUrl, needCache);
+    RootInfo *root = new RootInfo(normalizedUrl);
 
     // insert it to rootInfoMap
     rootInfoMap.insert(normalizedUrl, root);
@@ -226,24 +225,6 @@ RootInfo *FileDataManager::createRoot(const QUrl &url)
 
     fmDebug() << "RootInfo created and connected, total roots:" << rootInfoMap.size();
     return root;
-}
-
-bool FileDataManager::checkNeedCache(const QUrl &url)
-{
-    if (cacheDataSchemes.contains(url.scheme())) {
-        fmDebug() << "Cache needed - scheme in cache list:" << url.scheme();
-        return true;
-    }
-
-    // mounted dir should cache files in FileDataManager
-    // The purpose is only to judge nonlocal disk files, some schme should not use it to judge, so it is limited to file.
-    if (url.scheme() == Global::Scheme::kFile && (!ProtocolUtils::isLocalFile(url))) {
-        fmDebug() << "Cache needed - non-local file:" << url.toString();
-        return true;
-    }
-
-    fmDebug() << "Cache not needed for URL:" << url.toString();
-    return false;
 }
 
 QUrl FileDataManager::normalizeRootUrl(const QUrl &url) const

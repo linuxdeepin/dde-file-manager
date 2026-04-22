@@ -120,9 +120,6 @@ signals:
     void requestSetIdel(int visiableCount, int totalCount);
     void updateRow(int row);
 
-    // notify data
-    void getSourceData(const QString &key);
-
     void requestUpdateView();
     void requestCursorWait();
     void reqUestCloseCursor();
@@ -147,12 +144,6 @@ public slots:
                                      const Qt::SortOrder sortOrder,
                                      const bool isMixDirAndFile,
                                      bool isFirstBatch = false);
-    void handleSourceChildren(const QString &key,
-                              const QList<SortInfoPointer> children,
-                              const DFMIO::DEnumerator::SortRoleCompareFlag sortRole,
-                              const Qt::SortOrder sortOrder,
-                              const bool isMixDirAndFile,
-                              const bool isFinished);
     void handleIteratorChildren(const QString &key, const QList<SortInfoPointer> children, const QList<FileInfoPointer> infos, bool isFirstBatch = false);
     void handleIteratorChildrenUpdate(const QString &key, const QList<SortInfoPointer> children, bool isFirstBatch = false);
     void handleTraversalFinish(const QString &key, bool noDataProduced = false);
@@ -197,20 +188,10 @@ public slots:
     void handleSwitchTreeView(const bool isTree);
 
 private:
-    void handleAddChildren(const QString &key,
-                           QList<SortInfoPointer> children,
-                           const QList<FileInfoPointer> &childInfos,
-                           const DFMIO::DEnumerator::SortRoleCompareFlag sortRole,
-                           const Qt::SortOrder sortOrder,
-                           const bool isMixDirAndFile,
-                           const bool handleSource,
-                           const bool isFinished, const bool isSort = true,
-                           const bool isFirstBatch = false);
     bool handleAddChildren(const QString &key,
                            const QList<SortInfoPointer> &children,
                            const QList<FileInfoPointer> &childInfos,
                            const bool isFirstBatch = false);
-    void setSourceHandleState(const bool isFinished);
     void resetFilters(const QDir::Filters filters = QDir::NoFilter);
     void checkNameFilters(const FileItemDataPointer itemData);
     void filterAllFilesOrdered();

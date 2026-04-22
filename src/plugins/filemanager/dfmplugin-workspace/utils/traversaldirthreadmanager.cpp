@@ -234,9 +234,8 @@ QList<SortInfoPointer> TraversalDirThreadManager::iteratorAll()
 
     if (!dirIterator->initIterator()) {
         fmWarning() << "dir iterator init failed !! url : " << dirUrl;
-        emit traversalFinished(traversalToken);
-        return {};
     }
+
     Q_EMIT iteratorInitFinished();
 
     // Get the initial list of files
