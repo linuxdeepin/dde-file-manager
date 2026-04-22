@@ -115,7 +115,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="735"/>
         <source>Cannot copy source directory: permission denied</source>
-        <translation type="unfinished"/>
+        <translation>Não é possível copiar o diretório de origem: permissão negada</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="756"/>
@@ -950,17 +950,17 @@ Insira o usuário e a senha para %1</translation>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="549"/>
         <source>View details</source>
-        <translation type="unfinished"/>
+        <translation>Exibir detalhes</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="549"/>
         <source>Hide details</source>
-        <translation type="unfinished"/>
+        <translation>Ocultar detalhes</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="551"/>
         <source>Failed to operate on %1 files, %2</source>
-        <translation type="unfinished"/>
+        <translation>Falha ao operar em %1 arquivos, %2</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/filenameutils.cpp" line="204"/>
@@ -1165,7 +1165,8 @@ Insira o usuário e a senha para %1</translation>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="198"/>
         <source>Finalize disc after burning 
 (no additional data can be appended)</source>
-        <translation type="unfinished"/>
+        <translation>Finalizar disco após a gravação
+(não será possível adicionar mais dados)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="208"/>
