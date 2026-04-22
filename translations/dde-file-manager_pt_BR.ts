@@ -2846,7 +2846,7 @@ Você precisa atualizar este cofre para continuar usando-o.</translation>
     <message>
         <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="626"/>
         <source>Unable to connect to %1</source>
-        <translation type="unfinished"/>
+        <translation>Não foi possível conectar a %1</translation>
     </message>
 </context>
 <context>
@@ -3128,17 +3128,17 @@ Você precisa atualizar este cofre para continuar usando-o.</translation>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="539"/>
         <source>File operation failed: %1</source>
-        <translation type="unfinished"/>
+        <translation>Falha na operação de arquivo: %1</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="568"/>
         <source>File Name</source>
-        <translation type="unfinished"/>
+        <translation>Nome do arquivo</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="568"/>
         <source>Error Reason</source>
-        <translation type="unfinished"/>
+        <translation>Motivo do erro</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="624"/>
