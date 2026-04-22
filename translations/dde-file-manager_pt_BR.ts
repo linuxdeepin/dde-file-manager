@@ -1637,7 +1637,7 @@ Insira o usuário e a senha para %1</translation>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="271"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="339"/>
         <source>Reset Password</source>
-        <translation type="unfinished"/>
+        <translation>Redefinir senha</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="289"/>
@@ -1677,23 +1677,24 @@ Insira o usuário e a senha para %1</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="465"/>
         <source>Upgrade File Vault</source>
-        <translation type="unfinished"/>
+        <translation>Atualizar Cofre de Arquivos</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="480"/>
         <source>The file vault encryption scheme has been upgraded.
 You need to upgrade this vault to continue using it.</source>
-        <translation type="unfinished"/>
+        <translation>O esquema de criptografia do cofre de arquivos foi atualizado.
+Você precisa atualizar este cofre para continuar usando-o.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="489"/>
         <source>Later</source>
-        <translation type="unfinished"/>
+        <translation>Mais tarde</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="490"/>
         <source>Upgrade now</source>
-        <translation type="unfinished"/>
+        <translation>Atualizar</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="9"/>
@@ -1922,7 +1923,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="719"/>
         <source>Decrypt &quot;%1&quot; partition?</source>
-        <translation type="unfinished"/>
+        <translation>Descriptografar a partição &quot;%1&quot;?</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="720"/>
@@ -1960,7 +1961,7 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="111"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="52"/>
         <source>None</source>
-        <translation type="unfinished"/>
+        <translation>Nenhum</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="53"/>
@@ -1995,42 +1996,42 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/namegroupstrategy.cpp" line="37"/>
         <source>Chinese A-H</source>
-        <translation type="unfinished"/>
+        <translation>Chinês A-H</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/namegroupstrategy.cpp" line="38"/>
         <source>Chinese I-P</source>
-        <translation type="unfinished"/>
+        <translation>Chinês I-P</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/namegroupstrategy.cpp" line="39"/>
         <source>Chinese Q-Z</source>
-        <translation type="unfinished"/>
+        <translation>Chinês Q-Z</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="33"/>
         <source>Today</source>
-        <translation type="unfinished"/>
+        <translation>Hoje</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="34"/>
         <source>Yesterday</source>
-        <translation type="unfinished"/>
+        <translation>Ontem</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="35"/>
         <source>Past 7 Days</source>
-        <translation type="unfinished"/>
+        <translation>Últimos 7 dias</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="36"/>
         <source>Past 30 Days</source>
-        <translation type="unfinished"/>
+        <translation>Últimos 30 dias</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="37"/>
         <source>Earlier</source>
-        <translation type="unfinished"/>
+        <translation>Mais cedo</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/typegroupstrategy.cpp" line="36"/>
