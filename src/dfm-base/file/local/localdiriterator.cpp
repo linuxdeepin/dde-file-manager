@@ -16,7 +16,16 @@
 #include <dfm-io/denumerator.h>
 #include <dfm-io/dfmio_utils.h>
 
+#include <QDir>
+#include <QFile>
+#include <QRegularExpression>
+
 #include <functional>
+#include <cerrno>
+#include <dirent.h>
+#include <limits.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 USING_IO_NAMESPACE
 using namespace dfmbase;
@@ -26,10 +35,82 @@ namespace DConfigKeys {
 static constexpr char kAllAsync[] { "dfm.iterator.allasync" };
 }
 
+namespace {
+
+QSet<QString> loadHideFileList(const QString &dirPath)
+{
+    QFile hiddenFile(QDir(dirPath).filePath(".hidden"));
+    if (!hiddenFile.open(QIODevice::ReadOnly | QIODevice::Text))
+        return {};
+
+    const QString data = QString::fromUtf8(hiddenFile.readAll());
+    const QStringList entries = data.split('\n', Qt::SkipEmptyParts);
+    return QSet<QString>(entries.begin(), entries.end());
+}
+
+QString resolveSymlinkTargetPath(const QString &entryPath, const QString &parentPath)
+{
+    QByteArray buffer;
+    buffer.resize(PATH_MAX);
+    const QByteArray nativePath = QFile::encodeName(entryPath);
+    const ssize_t size = ::readlink(nativePath.constData(), buffer.data(), buffer.size() - 1);
+    if (size <= 0)
+        return QString();
+
+    buffer[static_cast<int>(size)] = '\0';
+    QString targetPath = QFile::decodeName(buffer.constData());
+    if (QDir::isRelativePath(targetPath))
+        targetPath = QDir(parentPath).absoluteFilePath(targetPath);
+
+    return QDir::cleanPath(targetPath);
+}
+
+SortInfoPointer createSortInfo(const QString &parentPath, const QString &fileName, const QSet<QString> &hideList)
+{
+    const QString entryPath = QDir(parentPath).filePath(fileName);
+    const QByteArray nativePath = QFile::encodeName(entryPath);
+
+    struct stat entryStat;
+    if (::lstat(nativePath.constData(), &entryStat) != 0)
+        return nullptr;
+
+    struct stat effectiveStat = entryStat;
+    const bool isSymLink = S_ISLNK(entryStat.st_mode);
+    if (isSymLink) {
+        const QString targetPath = resolveSymlinkTargetPath(entryPath, parentPath);
+        if (!targetPath.isEmpty() && !ProtocolUtils::isRemoteFile(QUrl::fromLocalFile(targetPath))) {
+            const QByteArray targetNativePath = QFile::encodeName(targetPath);
+            struct stat targetStat;
+            if (::stat(targetNativePath.constData(), &targetStat) == 0)
+                effectiveStat = targetStat;
+        }
+    }
+
+    SortInfoPointer info(new SortFileInfo);
+    info->setUrl(QUrl::fromLocalFile(entryPath));
+    info->setSize(effectiveStat.st_size);
+    info->setSymlink(isSymLink);
+    info->setDir(S_ISDIR(effectiveStat.st_mode));
+    info->setFile(!S_ISDIR(effectiveStat.st_mode));
+    info->setHide(fileName.startsWith(".") || hideList.contains(fileName));
+    info->setReadable((effectiveStat.st_mode & S_IRUSR) != 0);
+    info->setWriteable((effectiveStat.st_mode & S_IWUSR) != 0);
+    info->setExecutable((effectiveStat.st_mode & S_IXUSR) != 0);
+    info->setLastReadTime(effectiveStat.st_atim.tv_sec);
+    info->setLastModifiedTime(effectiveStat.st_mtim.tv_sec);
+    // st_ctim is inode change time on Linux, kept for compatibility with existing behavior.
+    info->setCreateTime(effectiveStat.st_ctim.tv_sec);
+    info->setInfoCompleted(true);
+    return info;
+}
+
+}   // namespace
+
 LocalDirIteratorPrivate::LocalDirIteratorPrivate(const QUrl &url, const QStringList &nameFilters,
                                                  QDir::Filters filters, QDirIterator::IteratorFlags flags,
                                                  LocalDirIterator *q)
-    : q(q)
+    : q(q),
+      rootPath(UrlRoute::urlToPath(url))
 {
     const QUrl &urlReally = QUrl::fromLocalFile(UrlRoute::urlToPath(url));
     dfmioDirIterator.reset(new DFMIO::DEnumerator(urlReally, nameFilters,
@@ -153,6 +234,7 @@ bool LocalDirIterator::hasNext() const
 
 void LocalDirIterator::close()
 {
+    d->canceled.storeRelease(true);
     if (d->dfmioDirIterator)
         d->dfmioDirIterator->cancel();
 }
@@ -233,31 +315,35 @@ void LocalDirIterator::setArguments(const QVariantMap &args)
 
 QList<SortInfoPointer> LocalDirIterator::sortFileInfoList()
 {
-    if (!d->dfmioDirIterator)
+    if (d->rootPath.isEmpty())
         return {};
 
-    auto sortlist = d->dfmioDirIterator->sortFileInfoList();
-    QList<SortInfoPointer> wsortlist;
-    for (const auto &sortInfo : sortlist) {
-        SortInfoPointer tmp(new SortFileInfo);
-        tmp->setUrl(sortInfo->url);
-        tmp->setSize(sortInfo->filesize);
-        tmp->setFile(sortInfo->isFile);
-        tmp->setDir(sortInfo->isDir);
-        tmp->setHide(sortInfo->isHide);
-        tmp->setSymlink(sortInfo->isSymLink);
-        tmp->setReadable(sortInfo->isReadable);
-        tmp->setWriteable(sortInfo->isWriteable);
-        tmp->setExecutable(sortInfo->isExecutable);
-        tmp->setLastReadTime(sortInfo->lastRead);
-        tmp->setLastModifiedTime(sortInfo->lastModifed);
-        // create来自于stat结构中的st_ctim
-        // 获取的时间并不是文件的创建时间，而是文件状态最后更改时间
-        tmp->setCreateTime(sortInfo->create);
-        tmp->setInfoCompleted(true);
-        wsortlist.append(tmp);
+    d->canceled.storeRelease(false);
+    const QSet<QString> hideList = loadHideFileList(d->rootPath);
+
+    DIR *dir = ::opendir(QFile::encodeName(d->rootPath).constData());
+    if (!dir)
+        return {};
+
+    QList<SortInfoPointer> sortList;
+    while (!d->canceled.loadAcquire()) {
+        errno = 0;
+        dirent *entry = ::readdir(dir);
+        if (!entry)
+            break;
+
+        const QString fileName = QFile::decodeName(entry->d_name);
+        if (fileName == "." || fileName == "..")
+            continue;
+
+        auto info = createSortInfo(d->rootPath, fileName, hideList);
+        if (info.isNull())
+            continue;
+        sortList.append(info);
     }
-    return wsortlist;
+
+    ::closedir(dir);
+    return sortList;
 }
 
 bool LocalDirIterator::oneByOne()

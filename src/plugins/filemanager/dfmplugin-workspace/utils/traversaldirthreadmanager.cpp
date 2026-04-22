@@ -229,13 +229,6 @@ QList<SortInfoPointer> TraversalDirThreadManager::iteratorAll()
 {
     fmDebug() << "Starting batch mode iteration for URL:" << dirUrl.toString();
 
-    QVariantMap args;
-    args.insert("sortRole",
-                QVariant::fromValue(sortRole));
-    args.insert("mixFileAndDir", isMixDirAndFile);
-    args.insert("sortOrder", sortOrder);
-    dirIterator->setArguments(args);
-
     fmDebug() << "Iterator arguments set - sortRole:" << static_cast<int>(sortRole)
               << "mixFileAndDir:" << isMixDirAndFile << "sortOrder:" << sortOrder;
 
@@ -260,8 +253,7 @@ QList<SortInfoPointer> TraversalDirThreadManager::iteratorAll()
             emit updateChildrenInfo(fileList, traversalToken);
     }
 
-    if (dirIterator->property(IteratorProperty::kKeepOrder).toBool())
-        emit traversalRequestSort(traversalToken);
+    emit traversalRequestSort(traversalToken);
 
     // Iterator is not waiting for updates, so signal that we're done
     emit traversalFinished(traversalToken);
