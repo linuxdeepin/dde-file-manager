@@ -21,10 +21,10 @@
 
 using namespace dfmbase;
 using namespace dfmplugin_workspace;
-RootInfo::RootInfo(const QUrl &u, const bool canCache, QObject *parent)
-    : QObject(parent), url(u), canCache(canCache)
+RootInfo::RootInfo(const QUrl &u, QObject *parent)
+    : QObject(parent), url(u)
 {
-    fmInfo() << "RootInfo created for URL:" << url.toString() << "canCache:" << canCache;
+    fmInfo() << "RootInfo created for URL:" << url.toString();
 
     hiddenFileUrl.setScheme(url.scheme());
     hiddenFileUrl.setPath(DFMIO::DFMUtils::buildFilePath(url.path().toStdString().c_str(), ".hidden", nullptr));
@@ -63,7 +63,7 @@ RootInfo::~RootInfo()
     fmInfo() << "RootInfo destructor completed for URL:" << url.toString();
 }
 
-bool RootInfo::initThreadOfFileData(const QString &key, DFMGLOBAL_NAMESPACE::ItemRoles role, Qt::SortOrder order, bool isMixFileAndFolder)
+void RootInfo::initThreadOfFileData(const QString &key, DFMGLOBAL_NAMESPACE::ItemRoles role, Qt::SortOrder order, bool isMixFileAndFolder)
 {
     fmDebug() << "Initializing file data thread for key:" << key << "role:" << role
               << "order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending")
@@ -80,19 +80,11 @@ bool RootInfo::initThreadOfFileData(const QString &key, DFMGLOBAL_NAMESPACE::Ite
 
     // create traversal thread
     QSharedPointer<DirIteratorThread> traversalThread = traversalThreads.value(key);
-    bool isGetCache = canCache;
     if (!traversalThread.isNull()) {
         fmDebug() << "Disconnecting existing traversal thread for key:" << key;
         traversalThread->traversalThread->disconnect();
-    } else {
-        isGetCache = (canCache && traversalFinish) || traversaling;
-        if (canCache && traversalFinish && isRefresh) {
-            isGetCache = false;
-            fmDebug() << "Cache disabled due to refresh flag";
-        }
     }
-
-    fmDebug() << "Creating new traversal thread for URL:" << url.toString() << "isGetCache:" << isGetCache;
+    fmDebug() << "Creating new traversal thread for URL:" << url.toString();
 
     traversalThread.reset(new DirIteratorThread);
     traversalThread->traversalThread.reset(
@@ -122,25 +114,18 @@ bool RootInfo::initThreadOfFileData(const QString &key, DFMGLOBAL_NAMESPACE::Ite
     }
     traversalThread->originMixSort = isMixFileAndFolder;
     traversalThread->originSortOrder = order;
-    return isGetCache;
 }
 
-void RootInfo::startWork(const QString &key, const bool getCache)
+void RootInfo::startWork(const QString &key)
 {
     if (!traversalThreads.contains(key)) {
         fmWarning() << "Cannot start work: traversal thread not found for key:" << key;
         return;
     }
 
-    fmDebug() << "Starting work for key:" << key << "getCache:" << getCache;
-
-    if (getCache) {
-        fmDebug() << "Using cached data for key:" << key;
-        return handleGetSourceData(key);
-    }
+    fmDebug() << "Starting work for key:" << key;
 
     fmInfo() << "Starting directory traversal for URL:" << url.toString();
-    traversaling = true;
     {
         QWriteLocker lk(&childrenLock);
         childrenUrlList.clear();
@@ -205,7 +190,6 @@ int RootInfo::clearTraversalThread(const QString &key, const bool isRefresh)
     if (traversalThread->isRunning()) {
         fmDebug() << "Moving running thread to discarded list";
         discardedThread.append(traversalThread);
-        traversaling = false;
     }
     thread->traversalThread->stop();
     if (traversalThreads.isEmpty()) {
@@ -240,9 +224,6 @@ void RootInfo::reset()
         watcher->disconnect(this);
         watcher->stopWatcher();
     }
-
-    traversaling = false;
-    traversalFinish = false;
 
     cancelWatcherEvent = true;
     for (const auto &thread : traversalThreads) {
@@ -528,7 +509,6 @@ void RootInfo::handleTraversalFinish(const QString &travseToken)
 {
     fmInfo() << "Traversal finished for token:" << travseToken << "URL:" << url.toString();
 
-    traversaling = false;
     // Check if isFirstBatch is still true, which means no directory data was produced
     bool noDataProduced = isFirstBatch.load();
     // Reset isFirstBatch
@@ -537,7 +517,6 @@ void RootInfo::handleTraversalFinish(const QString &travseToken)
     fmDebug() << "Emitting traversal finished signal - noDataProduced:" << noDataProduced;
     // Emit signal with additional parameter indicating if no data was produced
     emit traversalFinished(travseToken, noDataProduced);
-    traversalFinish = true;
     if (isRefresh) {
         fmDebug() << "Refresh completed, resetting refresh flag";
         isRefresh = false;
@@ -548,25 +527,6 @@ void RootInfo::handleTraversalSort(const QString &travseToken)
 {
     fmDebug() << "Emitting traversal sort request for token:" << travseToken << "URL:" << url.toString();
     emit requestSort(travseToken, url);
-}
-
-void RootInfo::handleGetSourceData(const QString &currentToken)
-{
-    if (needStartWatcher)
-        startWatcher();
-
-    QList<SortInfoPointer> newDatas;
-    bool isEmpty = false;
-    {
-        QReadLocker wlk(&childrenLock);
-        newDatas = sourceDataList;
-        isEmpty = sourceDataList.isEmpty();
-    }
-
-    fmDebug() << "Emitting source data signal - data count:" << newDatas.size() << "isEmpty:" << isEmpty << "token:" << currentToken;
-    emit sourceDatas(currentToken, newDatas, originSortRole, originSortOrder, originMixSort, !traversaling);
-    if (!traversaling)
-        emit traversalFinished(currentToken, isEmpty);
 }
 
 void RootInfo::initConnection(const TraversalThreadManagerPointer &traversalThread)

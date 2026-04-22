@@ -26,7 +26,6 @@ class FileDataManager : public QObject
 public:
     static FileDataManager *instance();
 
-    void initMntedDevsCache();
     // NOTE: do not call this from delegate paint/sizeHint paths.
     RootInfo *fetchRoot(const QUrl &url, const QString &key = QString());
 
@@ -55,7 +54,6 @@ private:
     void addRootUser(const QUrl &url, const QString &key);
     void removeRootUser(const QUrl &url, const QString &key);
     bool hasRootUsers(const QUrl &url) const;
-    bool checkNeedCache(const QUrl &url);
     void handleDeletion(RootInfo *root);
 
     QMap<QUrl, RootInfo *> rootInfoMap {};
@@ -63,10 +61,7 @@ private:
 
     bool isMixFileAndFolder { false };
 
-    // scheme in cacheDataSchemes will have cache
-    QList<QString> cacheDataSchemes {};
     QHash<QUrl, QSet<QString>> rootUsers {};
-    QMap<QUrl, int> dataRefMap {};
     QList<RootInfo *> deleteLaterList {};
 };
 
