@@ -105,9 +105,7 @@ void CrumbInterface::requestCompletionList(const QUrl &url)
     folderCompleterJobPointer = new TraversalDirThread(url, QStringList(),
                                                        QDir::AllDirs | QDir::Hidden | QDir::NoDotAndDotDot, QDirIterator::NoIteratorFlags);
     folderCompleterJobPointer->setQueryAttributes("standard::standard::name");
-    folderCompleterJobPointer->setChildrenSorter([](const QUrl &left, const QUrl &right) {
-        return SortUtils::compareStringForFileName(left.fileName(), right.fileName());
-    });
+    folderCompleterJobPointer->setEnableSort(true);
     folderCompleterJobPointer->setParent(this);
     if (folderCompleterJobPointer.isNull())
         return;

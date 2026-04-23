@@ -3,12 +3,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "traversaldirthread.h"
+#include "filenamesorter.h"
 #include <dfm-base/base/schemefactory.h>
 
 #include <QElapsedTimer>
 #include <QDebug>
-
-#include <algorithm>
 
 using namespace dfmbase;
 USING_IO_NAMESPACE
@@ -76,16 +75,14 @@ void TraversalDirThread::setQueryAttributes(const QString &fileAttributes)
         dirIterator->setProperty("QueryAttributes", fileInfoQueryAttributes);
 }
 
-void TraversalDirThread::setChildrenSorter(ChildrenSorter sorter)
+void TraversalDirThread::setEnableSort(bool enable)
 {
-    QMutexLocker locker(&childrenSorterMutex);
-    childrenSorter = std::move(sorter);
+    enableSort = enable;
 }
 
-void TraversalDirThread::clearChildrenSorter()
+bool TraversalDirThread::isSortEnabled() const
 {
-    QMutexLocker locker(&childrenSorterMutex);
-    childrenSorter = {};
+    return enableSort;
 }
 
 void TraversalDirThread::run()
@@ -117,17 +114,13 @@ void TraversalDirThread::run()
     }
     stopFlag = true;
 
-    ChildrenSorter sorter;
-    {
-        QMutexLocker locker(&childrenSorterMutex);
-        sorter = childrenSorter;
+    // 使用 FileNameSorter 进行排序
+    if (enableSort && childrenList.size() > 1) {
+        FileNameSorter::sortUrls(childrenList);
     }
-
-    if (sorter && childrenList.size() > 1)
-        std::stable_sort(childrenList.begin(), childrenList.end(), sorter);
 
     emit updateChildren(childrenList);
 
-    qCInfo(logDFMBase) << "Directory traversal completed - file count:" << childrenList.size() 
+    qCInfo(logDFMBase) << "Directory traversal completed - file count:" << childrenList.size()
                       << "URL:" << dirUrl << "total elapsed:" << timer.elapsed() << "ms";
 }

@@ -8,7 +8,7 @@
 
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/utils/sysinfoutils.h>
-#include <dfm-base/utils/sortutils.h>
+#include <dfm-base/utils/filenamesorter.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/base/application/application.h>
 
@@ -303,7 +303,7 @@ bool CanvasProxyModelPrivate::lessThan(const QUrl &left, const QUrl &right) cons
     auto compareByName = [this, leftIdx, rightIdx]() {
         QString leftName = q->data(leftIdx, kItemFileDisplayNameRole).toString();
         QString rightName = q->data(rightIdx, kItemFileDisplayNameRole).toString();
-        return SortUtils::compareString(leftName, rightName, fileSortOrder);
+        return FileNameSorter::compare(leftName, rightName, fileSortOrder);
     };
 
     switch (fileSortRole) {
@@ -313,7 +313,7 @@ bool CanvasProxyModelPrivate::lessThan(const QUrl &left, const QUrl &right) cons
     case kItemFileDisplayNameRole: {
         QString leftString = leftData.toString();
         QString rightString = rightData.toString();
-        return leftString == rightString ? compareByName() : SortUtils::compareString(leftString, rightString, fileSortOrder);
+        return leftString == rightString ? compareByName() : FileNameSorter::compare(leftString, rightString, fileSortOrder);
     }
     case kItemFileSizeRole: {
         qint64 leftSize = leftData.toLongLong();

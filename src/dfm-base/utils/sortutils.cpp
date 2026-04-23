@@ -3,40 +3,18 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "sortutils.h"
+#include "filenamesorter.h"
 
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/mimetype/mimetypedisplaymanager.h>
-
-#include <dfm-io/dfmio_utils.h>
-
-#include <QCollator>
-#include <QChar>
 
 DFMBASE_BEGIN_NAMESPACE
 
 namespace SortUtils {
 
-// fix 多线程排序时，该处的全局变量在compareByString函数中可能导致软件崩溃
-// QCollator sortCollator;
-class DCollator : public QCollator
-{
-public:
-    DCollator()
-        : QCollator()
-    {
-        setNumericMode(true);
-        setCaseSensitivity(Qt::CaseInsensitive);
-    }
-};
-
-bool compareString(const QString &str1, const QString &str2, Qt::SortOrder order)
-{
-    return !((order == Qt::AscendingOrder) ^ compareStringForFileName(str1, str2));
-}
-
 bool compareStringForFileName(const QString &str1, const QString &str2)
 {
-    return DFMIO::DFMUtils::compareFileName(str1, str2);
+    return FileNameSorter::compare(str1, str2, Qt::AscendingOrder);
 }
 
 bool compareStringForTime(const QString &str1, const QString &str2)

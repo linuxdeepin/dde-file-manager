@@ -31,8 +31,7 @@ protected:
     QList<QUrl> childrenList;   // 当前遍历出来的所有文件
     bool stopFlag = false;
     QString fileInfoQueryAttributes;
-    ChildrenSorter childrenSorter;
-    mutable QMutex childrenSorterMutex;
+    bool enableSort = false;   // 是否启用排序
 
 public:
     explicit TraversalDirThread(const QUrl &url, const QStringList &nameFilters = QStringList(),
@@ -44,8 +43,8 @@ public:
     void quit();
     void stopAndDeleteLater();
     void setQueryAttributes(const QString &fileAttributes);
-    void setChildrenSorter(ChildrenSorter sorter);
-    void clearChildrenSorter();
+    void setEnableSort(bool enable);
+    bool isSortEnabled() const;
 
 Q_SIGNALS:
     void updateChildren(QList<QUrl> children);
