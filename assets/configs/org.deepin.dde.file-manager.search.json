@@ -14,7 +14,7 @@
             "visibility":"private"
         },
         "enableOcrTextSearch": {
-            "value":true,
+            "value":false,
             "serial":0,
             "flags":[],
             "name":"Enable OCR Text Search",
