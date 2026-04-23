@@ -6604,12 +6604,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="20"/>
         <source>Index update failed, please</source>
-        <translation type="unfinished"/>
+        <translation>L&apos;actualització de l&apos;índex ha fallat, si us plau</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="21"/>
         <source>try updating again</source>
-        <translation type="unfinished"/>
+        <translation>proveu de tornar a fer-ne l&apos;actualització.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="22"/>
@@ -6633,7 +6633,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="154"/>
         <source>File index</source>
-        <translation type="unfinished"/>
+        <translation>Índex de fitxers</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="162"/>
@@ -6643,7 +6643,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="184"/>
         <source>Image-Content search</source>
-        <translation type="unfinished"/>
+        <translation>Cerca de contingut d&apos;imatges</translation>
     </message>
 </context>
 <context>
