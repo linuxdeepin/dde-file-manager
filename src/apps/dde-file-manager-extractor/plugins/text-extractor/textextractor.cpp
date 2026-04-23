@@ -184,7 +184,7 @@ std::optional<QString> extractHtmlContent(const QString &filePath, size_t maxByt
     const QString plainText = doc.toPlainText();
 
     const QString cleanedText = cleanExtractedText(plainText);
-    if (cleanedText.isEmpty())
+    if (cleanedText.size() < 2)
         return std::nullopt;
 
     return cleanedText;
@@ -225,7 +225,7 @@ std::optional<QByteArray> TextExtractor::extract(const QString &filePath, size_t
 
         if (result) {
             const QString cleanedText = cleanExtractedText(result.value());
-            if (cleanedText.isEmpty())
+            if (cleanedText.size() < 2)
                 return std::nullopt;
             return cleanedText.toUtf8();
         }
