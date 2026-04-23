@@ -5368,7 +5368,7 @@ Você precisa atualizar este cofre para continuar usando-o.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="354"/>
         <source>The &quot;%1&quot; partition is under decrypting...</source>
-        <translation type="unfinished"/>
+        <translation>A descriptografia da partição &quot;%1&quot; está em andamento…</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="514"/>
@@ -5420,17 +5420,17 @@ Você precisa atualizar este cofre para continuar usando-o.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="729"/>
         <source>Partition Encryption Non-Reboot Mode Enabled</source>
-        <translation type="unfinished"/>
+        <translation>Modo de criptografia de partição sem reinicialização ativado</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="730"/>
         <source>Partition Encryption Non-Reboot Mode has been enabled successfully. Please reboot your system for the changes to take effect. After reboot, partition encryption operations will not require system restart.</source>
-        <translation type="unfinished"/>
+        <translation>O modo de criptografia de partição sem reinicialização foi ativado com sucesso. Reinicie o sistema para que as alterações tenham efeito. Após a reinicialização, as operações de criptografia de partição não exigirão reinicialização do sistema.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="734"/>
         <source>Partition Encryption Non-Reboot Mode Disabled</source>
-        <translation type="unfinished"/>
+        <translation>Modo de criptografia de partição sem reinicialização desativado</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="735"/>
