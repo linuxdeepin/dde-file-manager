@@ -28,51 +28,6 @@
     </message>
 </context>
 <context>
-    <name>CheckBoxWidthFileIndex</name>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="27"/>
-        <source>Enable to build the file index immediately for faster file name searches</source>
-        <translation>开启后立即创建文件索引，支持快速搜索文件名</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="28"/>
-        <source>Building index</source>
-        <translation>正在更新索引</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="153"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="171"/>
-        <source>Index update failed</source>
-        <translation>索引更新失败</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="153"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="171"/>
-        <source>try updating again</source>
-        <translation>尝试重新更新索引</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="177"/>
-        <source>Index update completed, last update time: %1</source>
-        <translation>索引更新完成，上次更新时间：%1</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="178"/>
-        <source>Update index now</source>
-        <translation>立即更新索引</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="239"/>
-        <source>Turn off file index?</source>
-        <translation>确认关闭文件索引？</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="240"/>
-        <source>If turned off, file searches will traverse the file system and severely reduce search speed.</source>
-        <translation>若关闭，文件搜索时将遍历文件系统，严重影响搜索速度。</translation>
-    </message>
-</context>
-<context>
     <name>DMInitEncryptWorker</name>
     <message>
         <location filename="../src/services/diskencrypt/workers/dminitencryptworker.cpp" line="51"/>
@@ -6537,6 +6492,51 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="119"/>
         <source>Last year</source>
         <translation>去年</translation>
+    </message>
+</context>
+<context>
+    <name>dfmplugin_search::CheckBoxWidthFileIndex</name>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="27"/>
+        <source>Enable to build the file index immediately for faster file name searches</source>
+        <translation type="unfinished">开启后立即创建文件索引，支持快速搜索文件名</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="28"/>
+        <source>Building index</source>
+        <translation type="unfinished">正在更新索引</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="153"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="171"/>
+        <source>Index update failed</source>
+        <translation type="unfinished">索引更新失败</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="153"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="171"/>
+        <source>try updating again</source>
+        <translation type="unfinished">尝试重新更新索引</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="177"/>
+        <source>Index update completed, last update time: %1</source>
+        <translation type="unfinished">索引更新完成，上次更新时间：%1</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="178"/>
+        <source>Update index now</source>
+        <translation type="unfinished">立即更新索引</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="239"/>
+        <source>Turn off file index?</source>
+        <translation type="unfinished">确认关闭文件索引？</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="240"/>
+        <source>If turned off, file searches will traverse the file system and severely reduce search speed.</source>
+        <translation type="unfinished">若关闭，文件搜索时将遍历文件系统，严重影响搜索速度。</translation>
     </message>
 </context>
 <context>
