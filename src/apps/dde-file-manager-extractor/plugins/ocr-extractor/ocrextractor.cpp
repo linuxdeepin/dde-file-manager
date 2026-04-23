@@ -265,8 +265,8 @@ std::optional<QByteArray> OcrExtractor::extract(const QString &filePath)
     }
 
     const QString cleanedText = cleanRecognizedText(ocr->simpleResult());
-    if (cleanedText.isEmpty()) {
-        fmDebug() << "OcrExtractor::extract: cleaned OCR result is empty for:" << filePath;
+    if (cleanedText.size() < 2) {
+        fmDebug() << "OcrExtractor::extract: cleaned OCR result has less than 2 characters for:" << filePath;
         return std::nullopt;
     }
 
