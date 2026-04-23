@@ -1,3 +1,67 @@
+dde-file-manager (6.5.133) unstable; urgency=medium
+
+  * feat: add content index upgrade unit
+  * refactor: move ProcessPriorityManager to dfm-base
+  * feat: add file content extractor framework
+  * chore: refactor tests directory structure and CMake configuration
+  * fix: refactor extractor IPC protocol handling
+  * feat: add configurable text extraction via DConfig
+  * feat: add idle timeout to extractor process
+  * feat: add OCR extractor plugin for image text extraction
+  * feat: enhance extractor test tool with batch directory processing
+  * feat: add pot file support to text index
+  * fix: improve text extraction by removing empty lines
+  * fix: remove unsupported image formats from OCR config
+  * refactor: use centralized field name constants
+  * feat: add OCR text search capability
+  * refactor: replace legacy docutils with enhanced process extractor
+  * feat: add OCR text search configuration and UI components
+  * fix: improve extractor process output handling
+  * feat: add OCR text search support
+  * chore: update extractor library version and remove error handling
+  * fix: update library paths for debian package
+  * fix: configure rpath for textindex service
+  * feat: add birth time indexing as numeric field
+  * fix: update supported OCR image extensions list
+  * refactor: improve timestamp handling in document indexing
+  * fix: add QtGui support for extractor process
+  * fix: optimize file support validation logic
+  * fix: return true for already added configs
+  * fix: improve index state recovery handling
+  * feat: update text index version to v3
+  * fix: prevent version number changes during incremental tasks
+  * feat: enhance anything search with file extensions support
+  * feat: add excluded path handling in text indexing
+  * fix: handle directory move before index completion
+  * refactor: simplify index status UI implementation
+  * feat: add file index search setting in search plugin
+  * feat: add confirmation dialog for disabling file index
+  * fix: prevent memory leak in settings dialog
+  * fix: prevent checkbox state refresh issue
+  * chore: update gitignore for AI tool configurations
+  * chore: updaet SPDX header
+  * refactor: optimize file listing and sorting performance
+  * fix: add traversal request sort signal
+  * feat: add sorting performance logging and state persistence checks
+  * fix: add bmp format to textindex image types
+  * fix: improve local directory iteration performance
+  * refactor: remove file data caching system
+  * fix: update OCR search result handling
+  * fix: disable OCR text search by default
+  * fix: optimize file selection behavior when holding shift key
+  * fix: improve minimum text length validation
+  * refactor: optimize image preview loading process
+  * fix: improve directory iteration error handling
+  * refactor: implement high-performance filename sorter
+  * chore: standardize code formatting and text updates
+  * chore: update translations
+  * refactor: update namespace usage in search plugin
+  * fix: [filedialog] The file name changed when cd dir.
+  * Fix: Fix computer icon rendering by creating pixmap with device pixel ratio
+  * fix: [vault] remove insecure IsValidInvoker process whitelist validation
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 23 Apr 2026 21:05:42 +0800
+
 dde-file-manager (6.5.132) unstable; urgency=medium
 
   * fix: trim whitespace from address bar input
