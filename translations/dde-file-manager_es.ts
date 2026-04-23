@@ -6556,7 +6556,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthocrindex.cpp" line="19"/>
         <source>Building index, %1/%2 items indexed</source>
-        <translation type="unfinished"/>
+        <translation>Construyendo indice, %1/%2 elementos indexados</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthocrindex.cpp" line="20"/>
@@ -6566,17 +6566,17 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthocrindex.cpp" line="22"/>
         <source>Index update completed, last update time: %1</source>
-        <translation type="unfinished"/>
+        <translation>Actualización del índice completada, última hora de actualización: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthocrindex.cpp" line="21"/>
         <source>try updating again</source>
-        <translation type="unfinished"/>
+        <translation>Intente actualizar de nuevo</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthocrindex.cpp" line="23"/>
         <source>Update index now</source>
-        <translation type="unfinished"/>
+        <translation>Actualizar índice</translation>
     </message>
 </context>
 <context>
@@ -6589,7 +6589,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="17"/>
         <source>Building index</source>
-        <translation type="unfinished"/>
+        <translation>Construir indice</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="18"/>
@@ -6609,7 +6609,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="21"/>
         <source>try updating again</source>
-        <translation type="unfinished"/>
+        <translation>Intente actualizar de nuevo</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="22"/>
@@ -6633,7 +6633,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="154"/>
         <source>File index</source>
-        <translation type="unfinished"/>
+        <translation>Índice de archivos</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="162"/>
@@ -6643,7 +6643,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="184"/>
         <source>Image-Content search</source>
-        <translation type="unfinished"/>
+        <translation>Búsqueda de contenido de imágenes</translation>
     </message>
 </context>
 <context>
