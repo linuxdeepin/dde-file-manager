@@ -110,10 +110,6 @@ void VaultManagerDBus::ComputerSleep(bool bSleep)
 
 int VaultManagerDBus::GetLeftoverErrorInputTimes(int userID)
 {
-    if (!IsValidInvoker()) {
-        fmWarning() << "[VaultManagerDBus::GetLeftoverErrorInputTimes] Invalid invoker for user ID:" << userID;
-        return -1;
-    }
     if (!mapLeftoverInputTimes.contains(userID))
         mapLeftoverInputTimes[userID] = kErrorInputTime;
     
@@ -123,10 +119,6 @@ int VaultManagerDBus::GetLeftoverErrorInputTimes(int userID)
 
 void VaultManagerDBus::LeftoverErrorInputTimesMinusOne(int userID)
 {
-    if (!IsValidInvoker()) {
-        fmWarning() << "[VaultManagerDBus::LeftoverErrorInputTimesMinusOne] Invalid invoker for user ID:" << userID;
-        return;
-    }
     if (!mapLeftoverInputTimes.contains(userID))
         mapLeftoverInputTimes[userID] = kErrorInputTime;
     --mapLeftoverInputTimes[userID];
@@ -136,10 +128,6 @@ void VaultManagerDBus::LeftoverErrorInputTimesMinusOne(int userID)
 
 void VaultManagerDBus::RestoreLeftoverErrorInputTimes(int userID)
 {
-    if (!IsValidInvoker()) {
-        fmWarning() << "[VaultManagerDBus::RestoreLeftoverErrorInputTimes] Invalid invoker for user ID:" << userID;
-        return;
-    }
     restoreLeftoverErrorInputTimes(userID);
 }
 
@@ -151,10 +139,6 @@ void VaultManagerDBus::restoreLeftoverErrorInputTimes(int userID)
 
 void VaultManagerDBus::StartTimerOfRestorePasswordInput(int userID)
 {
-    if (!IsValidInvoker()) {
-        fmWarning() << "[VaultManagerDBus::StartTimerOfRestorePasswordInput] Invalid invoker for user ID:" << userID;
-        return;
-    }
     int timerID = startTimer(kTimerOutTime);
     mapTimer.insert(timerID, userID);
     fmInfo() << "[VaultManagerDBus::StartTimerOfRestorePasswordInput] Started password restore timer for user:" << userID << "timer ID:" << timerID;
@@ -162,10 +146,6 @@ void VaultManagerDBus::StartTimerOfRestorePasswordInput(int userID)
 
 int VaultManagerDBus::GetNeedWaitMinutes(int userID)
 {
-    if (!IsValidInvoker()) {
-        fmWarning() << "[VaultManagerDBus::GetNeedWaitMinutes] Invalid invoker for user ID:" << userID;
-        return 100;
-    }
     if (!mapNeedMinutes.contains(userID))
         mapNeedMinutes[userID] = kTotalWaitTime;
     
@@ -175,10 +155,6 @@ int VaultManagerDBus::GetNeedWaitMinutes(int userID)
 
 void VaultManagerDBus::RestoreNeedWaitMinutes(int userID)
 {
-    if (!IsValidInvoker()) {
-        fmWarning() << "[VaultManagerDBus::RestoreNeedWaitMinutes] Invalid invoker for user ID:" << userID;
-        return;
-    }
     restoreNeedWaitMinutes(userID);
 }
 
@@ -208,27 +184,6 @@ void VaultManagerDBus::timerEvent(QTimerEvent *event)
             fmInfo() << "[VaultManagerDBus::timerEvent] Timer expired for user" << userID << ", restored input attempts";
         }
     }
-}
-
-bool VaultManagerDBus::IsValidInvoker()
-{
-#ifdef QT_DEBUG
-    return true;
-#else
-    static QStringList kVaultWhiteProcess = { "/usr/bin/dde-file-manager", "/usr/libexec/dde-file-manager" };
-    if (connection().isConnected()) {
-        uint pid = connection().interface()->servicePid(message().service()).value();
-        QFileInfo f(QString("/proc/%1/exe").arg(pid));
-        if (!f.exists()) {
-            fmWarning() << "[VaultManagerDBus::IsValidInvoker] Process info not found for PID:" << pid;
-            return false;
-        }
-        QString Path = f.canonicalFilePath();
-        return kVaultWhiteProcess.contains(Path);
-    }
-    fmWarning() << "Failed to get pid. The caller is not a member of the whitelist";
-    return false;
-#endif
 }
 
 QString VaultManagerDBus::GetCurrentUser() const

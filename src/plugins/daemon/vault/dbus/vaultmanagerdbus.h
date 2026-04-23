@@ -112,12 +112,6 @@ protected:
 
 private:
     /*!
-     * \brief  判断调用者是否是白名单进程
-     * \return
-     */
-    bool IsValidInvoker();
-
-    /*!
      * \brief  获取当前用户
      * \return
      */
