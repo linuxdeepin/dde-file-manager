@@ -150,7 +150,7 @@ void DFMSearcher::processSearchResult(const SearchResult &result)
             preview = contentResult.highlightedContent();
         } else {
             OcrTextResultAPI ocrResult(const_cast<SearchResult &>(result));
-            preview = ocrResult.ocrContent();
+            preview = ocrResult.highlightedContent();
         }
 
         searchResult.setHighlightedContent(preview);
@@ -202,6 +202,7 @@ bool DFMSearcher::validateSearchType(const QString &transformedPath, SearchOptio
             return false;
         } else {
             OcrTextOptionsAPI ocrAPI(options);
+            ocrAPI.setMaxPreviewLength(200);
             ocrAPI.setFilenameOcrContentMixedAndSearchEnabled(true);
             fmDebug() << "OCR text search options configured - mixed search enabled";
         }
