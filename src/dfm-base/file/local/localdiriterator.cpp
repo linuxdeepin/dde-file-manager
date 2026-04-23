@@ -322,15 +322,24 @@ QList<SortInfoPointer> LocalDirIterator::sortFileInfoList()
     const QSet<QString> hideList = loadHideFileList(d->rootPath);
 
     DIR *dir = ::opendir(QFile::encodeName(d->rootPath).constData());
-    if (!dir)
+    if (!dir) {
+        qCWarning(logDFMBase) << "Failed to open directory:" << d->rootPath
+                              << "error:" << strerror(errno);
         return {};
+    }
 
     QList<SortInfoPointer> sortList;
     while (!d->canceled.loadAcquire()) {
         errno = 0;
         dirent *entry = ::readdir(dir);
-        if (!entry)
+        if (!entry) {
+            // Distinguish between normal end-of-directory and I/O errors
+            if (errno != 0 && !d->canceled.loadAcquire()) {
+                qCWarning(logDFMBase) << "Failed to read directory" << d->rootPath
+                                      << "error:" << qt_error_string(errno);
+            }
             break;
+        }
 
         const QString fileName = QFile::decodeName(entry->d_name);
         if (fileName == "." || fileName == "..")
