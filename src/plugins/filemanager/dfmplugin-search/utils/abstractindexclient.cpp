@@ -62,10 +62,10 @@ bool AbstractIndexClient::ensureInterface()
         return false;
     }
 
-    connect(interface.get(), SIGNAL(TaskFinished(QString,QString,bool)),
-            this, SLOT(onDBusTaskFinished(QString,QString,bool)));
-    connect(interface.get(), SIGNAL(TaskProgressChanged(QString,QString,qlonglong,qlonglong)),
-            this, SLOT(onDBusTaskProgressChanged(QString,QString,qlonglong,qlonglong)));
+    connect(interface.get(), SIGNAL(TaskFinished(QString, QString, bool)),
+            this, SLOT(onDBusTaskFinished(QString, QString, bool)));
+    connect(interface.get(), SIGNAL(TaskProgressChanged(QString, QString, qlonglong, qlonglong)),
+            this, SLOT(onDBusTaskProgressChanged(QString, QString, qlonglong, qlonglong)));
 
     fmInfo() << "[" << m_descriptor.clientName << "] interface successfully initialized";
     return true;
@@ -141,7 +141,7 @@ void AbstractIndexClient::startTask(TaskType type, const QStringList &paths)
 {
     if (!ensureInterface()) {
         fmCritical() << "[" << m_descriptor.clientName << "] cannot start task: interface unavailable";
-        emit taskFailed(type, paths.join("|"), tr("Failed to connect to service"));
+        emit taskFailed(type, paths.join("|"), "Failed to connect to service");
         return;
     }
 
@@ -168,7 +168,7 @@ void AbstractIndexClient::startTask(TaskType type, const QStringList &paths)
                 QDBusPendingReply<bool> reply = *watcher;
 
                 if (reply.isError() || !reply.value()) {
-                    const QString errorMsg = reply.isError() ? reply.error().message() : tr("Failed to start task");
+                    const QString errorMsg = reply.isError() ? reply.error().message() : "Failed to start task";
                     fmWarning() << "[" << m_descriptor.clientName << "] task start failed:" << errorMsg;
                     emit taskFailed(type, paths.join("|"), errorMsg);
                     return;
@@ -225,7 +225,7 @@ void AbstractIndexClient::onDBusTaskFinished(const QString &type, const QString 
         emit taskFinished(taskType, path, true);
     } else {
         fmWarning() << "[" << m_descriptor.clientName << "] task failed:" << type << "path:" << path;
-        emit taskFailed(taskType, path, tr("Task failed"));
+        emit taskFailed(taskType, path, "Task failed");
     }
 }
 

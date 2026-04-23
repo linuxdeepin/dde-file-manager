@@ -13,13 +13,13 @@ CheckBoxWidthOcrIndex::CheckBoxWidthOcrIndex(QWidget *parent)
 {
     IndexStatusControllerOptions options;
     options.logTag = QStringLiteral("OcrIndex");
-    options.inactiveText = tr("Enable to search text in images. Indexing may take a few minutes");
-    options.indexingInitialText = tr("Building OCR index");
-    options.indexingFilesText = tr("Building OCR index, %1 files indexed");
-    options.indexingItemsText = tr("Building OCR index, %1/%2 items indexed");
-    options.failedMainText = tr("OCR index update failed, please");
+    options.inactiveText = tr("Enable to search text in images");
+    options.indexingInitialText = tr("Building index");
+    options.indexingFilesText = tr("Building index, %1 files indexed");
+    options.indexingItemsText = tr("Building index, %1/%2 items indexed");
+    options.failedMainText = tr("Index update failed, please");
     options.failedLinkText = tr("try updating again");
-    options.completedMainText = tr("OCR index update completed, last update time: %1");
+    options.completedMainText = tr("Index update completed, last update time: %1");
     options.completedLinkText = tr("Update index now");
 
     m_controller = new IndexStatusController(this, OcrIndexClient::instance(), options, this);
