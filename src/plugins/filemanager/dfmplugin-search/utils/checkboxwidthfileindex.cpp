@@ -13,7 +13,7 @@
 #include <QProcess>
 #include <unistd.h>
 
-DPSEARCH_BEGIN_NAMESPACE
+namespace dfmplugin_search {
 
 namespace {
 constexpr int kPollIntervalMs = 3000;
@@ -311,4 +311,4 @@ QString CheckBoxWidthFileIndex::formatDisplayTime(const QString &isoTime) const
     return QString(isoTime).replace(QLatin1Char('T'), QLatin1Char(' '));
 }
 
-DPSEARCH_END_NAMESPACE   // namespace dfmplugin_search
+}   // namespace dfmplugin_search
