@@ -61,9 +61,27 @@ void ImageView::setFile(const QString &fileName, const QByteArray &format)
         tmpMovie->deleteLater();
     }
 
-    QImage image(fileName, format);
-    sourceImageSize = image.size();
+    // 使用 QImageReader 进行高效加载，避免大图片内存溢出
+    QImageReader reader(fileName, format);
+    reader.setAutoTransform(true);
+    sourceImageSize = reader.size();
+
     if (!sourceImageSize.isValid()) {
+        setPixmap(QPixmap());
+        return;
+    }
+
+    // 计算保持宽高比的显示尺寸
+    QSize maxShowSize(qMin(static_cast<int>(dsize.width() * 0.7), sourceImageSize.width()),
+                      qMin(static_cast<int>(dsize.height() * 0.7), sourceImageSize.height()));
+    QSize showSize = sourceImageSize.scaled(maxShowSize, Qt::KeepAspectRatio);
+
+    // 设置缩放尺寸，让 QImageReader 只加载需要的大小，避免加载完整大图
+    reader.setScaledSize(showSize);
+
+    QImage image = reader.read();
+    if (image.isNull()) {
+        fmWarning() << "Image preview: failed to load image:" << reader.errorString();
         setPixmap(QPixmap());
         return;
     }
@@ -71,9 +89,7 @@ void ImageView::setFile(const QString &fileName, const QByteArray &format)
         // 应用颜色空间转换，解决CMYK等格式的颜色显示问题 (仅Qt6)
     image = DFMBASE_NAMESPACE::FileUtils::convertToSRgbColorSpace(image);
 #endif
-    QSize showSize = QSize(qMin(static_cast<int>(dsize.width() * 0.7), sourceImageSize.width()),
-                           qMin(static_cast<int>(dsize.height() * 0.7), sourceImageSize.height()));
-    QPixmap pixmap = QPixmap::fromImage(image).scaled(showSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    QPixmap pixmap = QPixmap::fromImage(image);
     pixmap.setDevicePixelRatio(qApp->devicePixelRatio());
     setPixmap(pixmap);
 }
