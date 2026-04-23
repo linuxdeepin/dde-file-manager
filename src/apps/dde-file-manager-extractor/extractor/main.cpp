@@ -51,8 +51,8 @@ int main(int argc, char *argv[])
 
     QCommandLineOption pluginPathOption(
             "plugin-path",
-            QGuiApplication::translate("main", "Path to the plugin directory"),
-            QGuiApplication::translate("main", "path"));
+            "Path to the plugin directory",
+            "path");
 
     parser.addOption(pluginPathOption);
     parser.process(app);
