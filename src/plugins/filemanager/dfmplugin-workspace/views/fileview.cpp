@@ -1708,7 +1708,13 @@ void FileView::mousePressEvent(QMouseEvent *event)
             setDragDropMode(DragDrop);
         }
 
-        bool isEmptyArea = d->fileViewHelper->isEmptyArea(event->pos(), FileViewHelper::EmptyAreaMode::kFullItemRow);
+        // 按下shift多选文件时，如果isEmptyArea为true,由于 SelectHelper::click
+        // 后续会调用到SelectHelper::caculateListViewSelection性能下滑
+        // 而输出kFullItemRow后isEmptyArea一直为true，影响文件框选
+        auto mode = qApp->keyboardModifiers() == Qt::NoModifier
+                ? FileViewHelper::EmptyAreaMode::kDefault
+                : FileViewHelper::EmptyAreaMode::kFullItemRow;
+        bool isEmptyArea = d->fileViewHelper->isEmptyArea(event->pos(), mode);
         if (isEmptyArea && (qApp->keyboardModifiers() == Qt::NoModifier))
             setCurrentIndex(QModelIndex());
 
