@@ -5435,27 +5435,27 @@ Você precisa atualizar este cofre para continuar usando-o.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="735"/>
         <source>Partition Encryption Non-Reboot Mode has been disabled successfully. Please reboot your system for the changes to take effect. After reboot, partition encryption operations will require system restart.</source>
-        <translation type="unfinished"/>
+        <translation>O modo de criptografia de partição sem reinicialização foi desativado com sucesso. Reinicie o sistema para que as alterações tenham efeito. Após a reinicialização, as operações de criptografia de partição exigirão reinicialização do sistema.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="743"/>
         <source>Operation Failed</source>
-        <translation type="unfinished"/>
+        <translation>A operação falhou</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="745"/>
         <source>Failed to enable Partition Encryption Non-Reboot Mode. The system may not support this feature or encountered an error during initramfs update.</source>
-        <translation type="unfinished"/>
+        <translation>A ativação do modo de criptografia de partição sem reinicialização falhou. O sistema pode não oferecer suporte a esse recurso ou pode ter ocorrido um erro durante a atualização do initramfs.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="748"/>
         <source>Failed to disable Partition Encryption Non-Reboot Mode. An error occurred during initramfs update.</source>
-        <translation type="unfinished"/>
+        <translation>A desativação do modo de criptografia de partição sem reinicialização falhou. Ocorreu um erro durante a atualização do initramfs.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="760"/>
         <source>dde-file-manager</source>
-        <translation type="unfinished"/>
+        <translation>dde-file-manager</translation>
     </message>
 </context>
 <context>
