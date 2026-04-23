@@ -21,6 +21,8 @@
 
 static constexpr int kMaximumHeightOfTwoRow { 52 };
 static constexpr int kMaximumHeightOfOneRow { 31 };
+inline constexpr int kIconWidth { 152 };
+inline constexpr int kIconHeight { 39 };
 
 DCORE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
@@ -59,7 +61,11 @@ void ComputerPropertyDialog::iniUI()
     } else {
         logoIcon = QIcon::fromTheme("dfm_deepin_logo");
     }
-    computerIcon->setPixmap(logoIcon.pixmap(152, 39));
+    QSize iconSize(kIconWidth, kIconHeight);
+    qreal dpr = devicePixelRatioF(); // 或 qApp->devicePixelRatio()
+    QPixmap pixmap = logoIcon.pixmap(iconSize * dpr);
+    pixmap.setDevicePixelRatio(dpr);
+    computerIcon->setPixmap(pixmap);
 
     basicInfo = new DLabel(tr("Basic Info"), this);
     DFontSizeManager::instance()->bind(basicInfo, DFontSizeManager::T5, QFont::DemiBold);
