@@ -8250,23 +8250,23 @@ limpe os arquivos desse diretório e tente desbloquear o cofre novamente.</trans
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="277"/>
         <source>Failed to upgrade vault. Please try again.</source>
-        <translation type="unfinished"/>
+        <translation>Falha ao atualizar o cofre. Tente novamente.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="286"/>
         <source>Success</source>
-        <translation type="unfinished"/>
+        <translation>Sucesso</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="300"/>
         <source>Vault upgraded successfully. Please keep your recovery key safe.</source>
-        <translation type="unfinished"/>
+        <translation>Cofre atualizado com sucesso. Mantenha sua chave de recuperação em local seguro.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="307"/>
         <source>Enter Vault</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Entrar no cofre</translation>
     </message>
 </context>
 <context>
@@ -8554,7 +8554,7 @@ limpe os arquivos desse diretório e tente desbloquear o cofre novamente.</trans
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="300"/>
         <source>Please select a recovery key file</source>
-        <translation type="unfinished"/>
+        <translation>Selecionar um arquivo de chave de recuperação</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="368"/>
@@ -8564,7 +8564,7 @@ limpe os arquivos desse diretório e tente desbloquear o cofre novamente.</trans
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="392"/>
         <source>Invalid recovery key file</source>
-        <translation type="unfinished"/>
+        <translation>Arquivo de chave de recuperação inválido</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="221"/>
@@ -8574,7 +8574,7 @@ limpe os arquivos desse diretório e tente desbloquear o cofre novamente.</trans
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="50"/>
         <source>Delete file vault with recovery key</source>
-        <translation type="unfinished"/>
+        <translation>Excluir cofre de arquivos com chave de recuperação</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="53"/>
