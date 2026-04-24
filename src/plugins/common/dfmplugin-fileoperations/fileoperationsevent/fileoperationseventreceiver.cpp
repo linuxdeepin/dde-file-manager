@@ -1692,7 +1692,14 @@ bool FileOperationsEventReceiver::handleOperationOpenInTerminal(const quint64 wi
         if (!url.isLocalFile())
             continue;
 
-        ok = doOpenInTerminal(url);
+        QUrl targetUrl = url;
+        QFileInfo fileInfo(url.toLocalFile());
+        if (!fileInfo.isDir()) {
+            // If the URL points to a file or non-existent path, use its parent directory
+            targetUrl = QUrl::fromLocalFile(fileInfo.absolutePath());
+        }
+
+        ok = doOpenInTerminal(targetUrl);
         if (!result)
             result = ok;
     }
