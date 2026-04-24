@@ -9,6 +9,7 @@
 #include "models/fileitemdata.h"
 #include "groups/groupingengine.h"
 #include "groups/groupedmodeldata.h"
+#include "utils/fileviewsorter.h"
 
 #include <dfm-base/interfaces/abstractgroupstrategy.h>
 #include <dfm-base/dfm_global_defines.h>
@@ -225,10 +226,6 @@ private:
     void createAndInsertItemData(const int8_t depth, const SortInfoPointer child, const FileInfoPointer info);
 
     int insertSortList(const QUrl &needNode, const QList<QUrl> &list);
-    bool lessThan(const QUrl &left, const QUrl &right);
-    QVariant data(const FileInfoPointer &info, Global::ItemRoles role);
-    QVariant data(const SortInfoPointer &info, Global::ItemRoles role);
-
     bool checkFilters(const SortInfoPointer &sortInfo, const bool byInfo = false);
     bool isDefaultHiddenFile(const QUrl &fileUrl);
     QUrl makeParentUrl(const QUrl &url);
@@ -240,6 +237,9 @@ private:
     bool checkAndUpdateFileInfoUpdate();
     void checkAndSortBytMimeType(const QUrl &url);
     void doCompleteFileInfo(SortInfoPointer sortInfo);
+
+    // 更新排序器上下文
+    void updateSorterContext();
 
     // Grouping-related private methods
     QList<FileItemDataPointer> getAllFiles() const;
@@ -291,6 +291,9 @@ private:
     QTimer *updateRefresh { nullptr };
     std::atomic_bool mimeSorting { false };
     QSet<QUrl> waitUpdatedFiles;
+
+    // 高性能排序器
+    FileViewSorter m_sorter;
 };
 
 }

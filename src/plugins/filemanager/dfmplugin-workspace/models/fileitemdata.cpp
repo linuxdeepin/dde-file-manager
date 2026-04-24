@@ -128,7 +128,7 @@ QVariant FileItemData::data(int role) const
         return url.path();
     case kItemFileLastModifiedRole: {
         QDateTime lastModified;
-        if (sortInfo && !sortInfo->isSymLink() && sortInfo->isInfoCompleted()) {
+        if (sortInfo && sortInfo->isInfoCompleted()) {
             lastModified = QDateTime::fromSecsSinceEpoch(sortInfo->lastModifiedTime());
         }
         if (info) {
@@ -138,7 +138,7 @@ QVariant FileItemData::data(int role) const
     }
     case kItemFileCreatedRole: {
         QDateTime created;
-        if (sortInfo && !sortInfo->isSymLink() && sortInfo->isInfoCompleted()) {
+        if (sortInfo && sortInfo->isInfoCompleted()) {
             created = QDateTime::fromSecsSinceEpoch(sortInfo->createTime());
         }
         if (info) {
