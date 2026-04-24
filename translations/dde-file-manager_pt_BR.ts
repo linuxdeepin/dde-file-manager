@@ -8707,7 +8707,7 @@ limpe os arquivos desse diretório e tente desbloquear o cofre novamente.</trans
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="36"/>
         <source>Tiny</source>
-        <translation type="unfinished"/>
+        <translation>Muito pequeno</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="37"/>
@@ -8727,12 +8727,12 @@ limpe os arquivos desse diretório e tente desbloquear o cofre novamente.</trans
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="40"/>
         <source>Huge</source>
-        <translation type="unfinished"/>
+        <translation>Muito grande</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="41"/>
         <source>Gigantic</source>
-        <translation type="unfinished"/>
+        <translation>Extra grande</translation>
     </message>
 </context>
 <context>
