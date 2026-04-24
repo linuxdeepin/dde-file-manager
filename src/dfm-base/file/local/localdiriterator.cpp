@@ -20,11 +20,11 @@
 #include <QFile>
 #include <QRegularExpression>
 
-#include <functional>
 #include <cerrno>
 #include <dirent.h>
-#include <limits.h>
+#include <fcntl.h>
 #include <sys/stat.h>
+#include <linux/stat.h>
 #include <unistd.h>
 
 USING_IO_NAMESPACE
@@ -70,36 +70,52 @@ SortInfoPointer createSortInfo(const QString &parentPath, const QString &fileNam
     const QString entryPath = QDir(parentPath).filePath(fileName);
     const QByteArray nativePath = QFile::encodeName(entryPath);
 
-    struct stat entryStat;
-    if (::lstat(nativePath.constData(), &entryStat) != 0)
+    // 使用 statx 获取所有文件属性（包括创建时间 birth time）
+    struct statx stx;
+    unsigned int mask = STATX_BASIC_STATS | STATX_BTIME;
+    if (statx(AT_FDCWD, nativePath.constData(), AT_SYMLINK_NOFOLLOW | AT_NO_AUTOMOUNT, mask, &stx) != 0)
         return nullptr;
 
-    struct stat effectiveStat = entryStat;
-    const bool isSymLink = S_ISLNK(entryStat.st_mode);
+    const bool isSymLink = S_ISLNK(stx.stx_mode);
+    mode_t effectiveMode = stx.stx_mode;
+    uint64_t effectiveSize = stx.stx_size;
+    time_t effectiveAtime = stx.stx_atime.tv_sec;
+    time_t effectiveMtime = stx.stx_mtime.tv_sec;
+    time_t effectiveCtime = stx.stx_ctime.tv_sec;
+    time_t effectiveBtime = (stx.stx_mask & STATX_BTIME) ? stx.stx_btime.tv_sec : 0;
+
+    // 符号链接：获取目标文件属性
     if (isSymLink) {
         const QString targetPath = resolveSymlinkTargetPath(entryPath, parentPath);
         if (!targetPath.isEmpty() && !ProtocolUtils::isRemoteFile(QUrl::fromLocalFile(targetPath))) {
             const QByteArray targetNativePath = QFile::encodeName(targetPath);
-            struct stat targetStat;
-            if (::stat(targetNativePath.constData(), &targetStat) == 0)
-                effectiveStat = targetStat;
+            struct statx targetStx;
+            if (statx(AT_FDCWD, targetNativePath.constData(), AT_SYMLINK_NOFOLLOW | AT_NO_AUTOMOUNT, mask, &targetStx) == 0) {
+                effectiveMode = targetStx.stx_mode;
+                effectiveSize = targetStx.stx_size;
+                effectiveAtime = targetStx.stx_atime.tv_sec;
+                effectiveMtime = targetStx.stx_mtime.tv_sec;
+                effectiveCtime = targetStx.stx_ctime.tv_sec;
+                if (targetStx.stx_mask & STATX_BTIME)
+                    effectiveBtime = targetStx.stx_btime.tv_sec;
+            }
         }
     }
 
     SortInfoPointer info(new SortFileInfo);
     info->setUrl(QUrl::fromLocalFile(entryPath));
-    info->setSize(effectiveStat.st_size);
+    info->setSize(effectiveSize);
     info->setSymlink(isSymLink);
-    info->setDir(S_ISDIR(effectiveStat.st_mode));
-    info->setFile(!S_ISDIR(effectiveStat.st_mode));
+    info->setDir(S_ISDIR(effectiveMode));
+    info->setFile(!S_ISDIR(effectiveMode));
     info->setHide(fileName.startsWith(".") || hideList.contains(fileName));
-    info->setReadable((effectiveStat.st_mode & S_IRUSR) != 0);
-    info->setWriteable((effectiveStat.st_mode & S_IWUSR) != 0);
-    info->setExecutable((effectiveStat.st_mode & S_IXUSR) != 0);
-    info->setLastReadTime(effectiveStat.st_atim.tv_sec);
-    info->setLastModifiedTime(effectiveStat.st_mtim.tv_sec);
-    // st_ctim is inode change time on Linux, kept for compatibility with existing behavior.
-    info->setCreateTime(effectiveStat.st_ctim.tv_sec);
+    info->setReadable((effectiveMode & S_IRUSR) != 0);
+    info->setWriteable((effectiveMode & S_IWUSR) != 0);
+    info->setExecutable((effectiveMode & S_IXUSR) != 0);
+    info->setLastReadTime(effectiveAtime);
+    info->setLastModifiedTime(effectiveMtime);
+    // 创建时间：优先使用 birth time，否则回退到 ctime
+    info->setCreateTime(effectiveBtime > 0 ? effectiveBtime : effectiveCtime);
     info->setInfoCompleted(true);
     return info;
 }
