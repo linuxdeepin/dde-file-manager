@@ -7087,17 +7087,17 @@ Você precisa atualizar este cofre para continuar usando-o.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="318"/>
         <source>Close other tabs</source>
-        <translation type="unfinished"/>
+        <translation>Fechar outras abas</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="319"/>
         <source>Close tabs to the left</source>
-        <translation type="unfinished"/>
+        <translation>Fechar abas à esquerda</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="322"/>
         <source>Close tabs to the right</source>
-        <translation type="unfinished"/>
+        <translation>Fechar abas à direita</translation>
     </message>
 </context>
 <context>
@@ -7105,24 +7105,24 @@ Você precisa atualizar este cofre para continuar usando-o.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="577"/>
         <source>Directory not found</source>
-        <translation type="unfinished"/>
+        <translation>Diretório não encontrado</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="578"/>
         <source>Directory not found. Remove it?</source>
-        <translation type="unfinished"/>
+        <translation>Diretório não encontrado. Remover?</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="579"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="579"/>
         <source>Remove</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Remover</translation>
     </message>
 </context>
 <context>
@@ -7328,7 +7328,7 @@ Você precisa atualizar este cofre para continuar usando-o.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="56"/>
         <source>Error: The filename is too long</source>
-        <translation type="unfinished"/>
+        <translation>Erro: o nome do arquivo é muito longo</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="58"/>
@@ -7511,12 +7511,12 @@ Você precisa atualizar este cofre para continuar usando-o.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="163"/>
         <source>Enable File Shred</source>
-        <translation type="unfinished"/>
+        <translation>Ativar destruição de arquivos</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="169"/>
         <source>Once enable, the &apos;File Shred&apos; option becomes available in the context menu for secure file deletion</source>
-        <translation type="unfinished"/>
+        <translation>Após ativar, a opção “Destruir arquivo” ficará disponível no menu de contexto para exclusão segura de arquivos</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="202"/>
@@ -7723,7 +7723,7 @@ limpe os arquivos desse diretório e tente desbloquear o cofre novamente.</trans
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="126"/>
         <source>Invalid recovery key format</source>
-        <translation type="unfinished"/>
+        <translation>Formato da chave de recuperação inválido</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="149"/>
