@@ -1002,7 +1002,7 @@ Insira o usuário e a senha para %1</translation>
     <message>
         <location filename="../src/dfm-base/utils/universalutils.cpp" line="192"/>
         <source>Bit</source>
-        <translation>Bit</translation>
+        <translation> bits</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="144"/>
@@ -6191,7 +6191,7 @@ Você precisa atualizar este cofre para continuar usando-o.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="344"/>
         <source>Bit</source>
-        <translation>Bit</translation>
+        <translation> bits</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="401"/>
