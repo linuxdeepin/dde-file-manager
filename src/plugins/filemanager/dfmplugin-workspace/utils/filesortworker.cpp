@@ -14,7 +14,6 @@
 #include <dfm-base/base/standardpaths.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/mimetype/mimetypedisplaymanager.h>
-#include <dfm-base/utils/sortutils.h>
 #include <dfm-base/utils/protocolutils.h>
 
 #include <dfm-io/dfmio_utils.h>

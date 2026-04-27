@@ -10,7 +10,8 @@
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/interfaces/fileinfo.h>
 #include <dfm-base/utils/universalutils.h>
-#include <dfm-base/utils/sortutils.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/mimetype/mimetypedisplaymanager.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -358,7 +359,18 @@ bool AdvanceSearchBarPrivate::shouldVisiableByFilterRule(SortFileInfo *info, QVa
 
     // 检查文件类型过滤
     if (filter.comboValid[kFileType]) {
-        QString fileTypeStr = SortUtils::accurateDisplayType(info->fileUrl());
+        // 内联 getLocalPath + accurateDisplayType 逻辑
+        const QUrl &fileUrl = info->fileUrl();
+        QString path;
+        if (fileUrl.isLocalFile()) {
+            path = fileUrl.toLocalFile();
+        } else {
+            auto fileInfo = dfmbase::InfoFactory::create<dfmbase::FileInfo>(fileUrl);
+            if (fileInfo && fileInfo->canAttributes(dfmbase::FileInfo::FileCanType::kCanRedirectionFileUrl)) {
+                path = fileInfo->urlOf(dfmbase::UrlInfoType::kRedirectedFileUrl).toLocalFile();
+            }
+        }
+        QString fileTypeStr = dfmbase::MimeTypeDisplayManager::instance()->accurateDisplayTypeFromPath(path);
         if (!fileTypeStr.startsWith(filter.typeString))
             return false;
     }

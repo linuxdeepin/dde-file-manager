@@ -6,9 +6,9 @@
 #include "models/fileitemdata.h"
 
 #include <dfm-base/utils/filenamesorter.h>
-#include <dfm-base/utils/sortutils.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/base/schemefactory.h>
+#include <dfm-base/mimetype/mimetypedisplaymanager.h>
 
 #include <QStandardPaths>
 #include <QVector>
@@ -421,13 +421,25 @@ QVariant FileViewSorter::getSortData(const QUrl &url)
         time = getDateTimeFromFileInfo(createdInfo, dfmbase::TimeInfoType::kLastRead);
         return time.isEmpty() ? defaultTimeStr() : time;
     }
-    case SortRole::MimeType:
+    case SortRole::MimeType: {
         // SortInfoPointer 和 FileInfoPointer 使用不同的获取方式
-        if (sortInfo)
-            return dfmbase::SortUtils::accurateLocalMimeType(url);
+        if (sortInfo) {
+            // 内联 getLocalPath + accurateLocalMimeType 逻辑
+            QString path;
+            if (url.isLocalFile()) {
+                path = url.toLocalFile();
+            } else {
+                auto info = dfmbase::InfoFactory::create<dfmbase::FileInfo>(url);
+                if (info && info->canAttributes(dfmbase::FileInfo::FileCanType::kCanRedirectionFileUrl)) {
+                    path = info->urlOf(dfmbase::UrlInfoType::kRedirectedFileUrl).toLocalFile();
+                }
+            }
+            return dfmbase::MimeTypeDisplayManager::instance()->accurateLocalMimeTypeName(path);
+        }
         if (fileInfo)
             return fileInfo->displayOf(dfmbase::DisPlayInfoType::kFileTypeDisplayName);
         return "Unknown";
+    }
 
     case SortRole::FilePath:
     case SortRole::OriginalPath:
