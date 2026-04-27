@@ -342,7 +342,7 @@ void SearchEditWidget::handleFocusOutEvent(QFocusEvent *e)
     }
 
     // Handle special focus reasons that should not trigger collapse
-    if (e->reason() == Qt::PopupFocusReason || e->reason() == Qt::ActiveWindowFocusReason) {
+    if (e->reason() == Qt::PopupFocusReason) {
         e->accept();
         restoreFocusIfNeeded();
         return;
