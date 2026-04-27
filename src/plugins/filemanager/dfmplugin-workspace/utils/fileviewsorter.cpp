@@ -14,6 +14,7 @@
 #include <QVector>
 #include <QPair>
 #include <QDateTime>
+#include <QFileInfo>
 
 #include <algorithm>
 
@@ -26,6 +27,19 @@ inline QString defaultTimeStr()
 {
     static const QString kDefaultTime = "0000/00/00 00:00:00";
     return kDefaultTime;
+}
+
+// 不使用扩展名缓存的后缀黑名单（可能对应多种 MIME 类型）
+// 例如：.ts 既可能是 TypeScript 文档，也可能是 MPEG 视频文件
+inline const QSet<QString> &mimeTypeAmbiguousSuffixes()
+{
+    static const QSet<QString> blacklist = {
+        "ts",   // TypeScript 文档 或 MPEG 视频传输流
+        "mts",   // AVCHD 视频 或 其他
+        "m2ts",   // Blu-ray 视频 或 其他
+                  // 可根据实际情况扩展
+    };
+    return blacklist;
 }
 
 // 从 SortInfo 获取时间字符串
@@ -119,14 +133,33 @@ QList<QUrl> FileViewSorter::sortMixed(const QList<QUrl> &urls)
     if (urls.size() <= 1)
         return urls;
 
+    // MimeType 排序时：预先批量获取（带缓存优化）
+    QHash<QUrl, QString> mimeTypeMap;
+    if (m_context.role == SortRole::MimeType) {
+        mimeTypeMap = batchGetMimeTypes(urls);
+    }
+
     // 预生成所有 sortKey（不包含目录/文件前缀）
     QVector<QPair<QUrl, QCollatorSortKey>> items;
     items.reserve(urls.size());
 
     QCollator &c = collator();
     for (const QUrl &url : urls) {
-        // 使用不带目录/文件前缀的 sortKey
-        QString keyStr = generateSortKeyStringInternal(url);
+        QString keyStr;
+        // MimeType 排序使用预计算结果
+        if (m_context.role == SortRole::MimeType) {
+            QString mimeType = mimeTypeMap.value(url, "Unknown");
+            QString fileName;
+            if (m_context.getDataCallback) {
+                auto itemData = m_context.getDataCallback(url);
+                fileName = getFileDisplayName(url, itemData);
+            } else {
+                fileName = url.fileName();
+            }
+            keyStr = encodeMimeTypeSortKey(mimeType, fileName);
+        } else {
+            keyStr = generateSortKeyStringInternal(url);
+        }
         items.append(qMakePair(url, c.sortKey(keyStr)));
     }
 
@@ -141,6 +174,65 @@ QList<QUrl> FileViewSorter::sortMixed(const QList<QUrl> &urls)
     result.reserve(items.size());
     for (const auto &item : items) {
         result.append(item.first);
+    }
+
+    return result;
+}
+
+QHash<QUrl, QString> FileViewSorter::batchGetMimeTypes(const QList<QUrl> &urls)
+{
+    QHash<QUrl, QString> result;
+    QHash<QString, QString> suffixCache;   // 扩展名 -> MimeType 缓存
+
+    for (const QUrl &url : urls) {
+        if (!m_context.getDataCallback)
+            continue;
+
+        auto itemData = m_context.getDataCallback(url);
+        if (!itemData)
+            continue;
+
+        FileInfoPointer fileInfo = itemData->fileInfo();
+        SortInfoPointer sortInfo = itemData->fileSortInfo();
+
+        // 优先使用 fileInfo（已包含 MimeType 信息）
+        if (fileInfo) {
+            result.insert(url, fileInfo->displayOf(dfmbase::DisPlayInfoType::kFileTypeDisplayName));
+            continue;
+        }
+
+        // 回退到 sortInfo（需要额外计算）
+        if (sortInfo) {
+            QString path;
+            if (url.isLocalFile()) {
+                path = url.toLocalFile();
+            } else {
+                auto info = dfmbase::InfoFactory::create<dfmbase::FileInfo>(url);
+                if (info && info->canAttributes(dfmbase::FileInfo::FileCanType::kCanRedirectionFileUrl)) {
+                    path = info->urlOf(dfmbase::UrlInfoType::kRedirectedFileUrl).toLocalFile();
+                }
+            }
+
+            // 使用扩展名缓存加速（跳过歧义后缀）
+            QString suffix = QFileInfo(path).suffix().toLower();
+            bool useCache = !suffix.isEmpty() && !mimeTypeAmbiguousSuffixes().contains(suffix);
+            if (useCache) {
+                auto it = suffixCache.find(suffix);
+                if (it != suffixCache.end()) {
+                    result.insert(url, it.value());
+                    continue;
+                }
+                // 缓存未命中
+                QString mimeTypeName = dfmbase::MimeTypeDisplayManager::instance()->accurateLocalMimeTypeName(path);
+                suffixCache.insert(suffix, mimeTypeName);
+                result.insert(url, mimeTypeName);
+            } else {
+                // 歧义后缀或无后缀：直接获取，不缓存
+                result.insert(url, dfmbase::MimeTypeDisplayManager::instance()->accurateLocalMimeTypeName(path));
+            }
+        } else {
+            result.insert(url, "Unknown");
+        }
     }
 
     return result;
@@ -339,7 +431,8 @@ QString FileViewSorter::generateSortKeyStringInternal(const QUrl &url)
         break;
     }
     case SortRole::MimeType: {
-        // MimeType 排序：分组编码 + 文件名
+        // 注意：MimeType 排序在 sortMixed 中已预处理，此分支不应到达
+        // 保留作为回退
         QString mimeType = getSortData(url).toString();
         QString fileName;
         if (m_context.getDataCallback) {
@@ -422,9 +515,10 @@ QVariant FileViewSorter::getSortData(const QUrl &url)
         return time.isEmpty() ? defaultTimeStr() : time;
     }
     case SortRole::MimeType: {
-        // SortInfoPointer 和 FileInfoPointer 使用不同的获取方式
+        // MimeType 排序在 sortMixed 中已预处理，此分支仅作为回退
+        if (fileInfo)
+            return fileInfo->displayOf(dfmbase::DisPlayInfoType::kFileTypeDisplayName);
         if (sortInfo) {
-            // 内联 getLocalPath + accurateLocalMimeType 逻辑
             QString path;
             if (url.isLocalFile()) {
                 path = url.toLocalFile();
@@ -436,8 +530,6 @@ QVariant FileViewSorter::getSortData(const QUrl &url)
             }
             return dfmbase::MimeTypeDisplayManager::instance()->accurateLocalMimeTypeName(path);
         }
-        if (fileInfo)
-            return fileInfo->displayOf(dfmbase::DisPlayInfoType::kFileTypeDisplayName);
         return "Unknown";
     }
 

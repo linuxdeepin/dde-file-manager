@@ -14,6 +14,7 @@
 #include <QCollator>
 #include <QUrl>
 #include <QVariant>
+#include <QHash>
 #include <functional>
 
 DPWORKSPACE_BEGIN_NAMESPACE
@@ -107,37 +108,26 @@ public:
 private:
     /**
      * @brief 生成排序键字符串
-     * @param url 文件 URL
-     * @return 用于排序的键字符串
      */
     QString generateSortKeyString(const QUrl &url);
 
     /**
      * @brief 生成排序键字符串（不含目录/文件前缀）
-     * @param url 文件 URL
-     * @return 用于排序的键字符串
      */
     QString generateSortKeyStringInternal(const QUrl &url);
 
     /**
      * @brief 获取排序数据
-     * @param url 文件 URL
-     * @return 排序用的数据
      */
     QVariant getSortData(const QUrl &url);
 
     /**
      * @brief 获取 MimeType 分组权重
-     * @param mimeType MIME 类型字符串
-     * @return 分组权重（0-9）
      */
     int getMimeTypeGroupRank(const QString &mimeType);
 
     /**
      * @brief 编码 MimeType 排序键
-     * @param mimeType MIME 类型
-     * @param fileName 文件名（用于组内排序）
-     * @return 编码后的排序键
      */
     QString encodeMimeTypeSortKey(const QString &mimeType, const QString &fileName);
 
@@ -160,6 +150,13 @@ private:
      * @brief 混合排序（混排状态或单组内部排序）
      */
     QList<QUrl> sortMixed(const QList<QUrl> &urls);
+
+    /**
+     * @brief 批量获取 MimeType（使用扩展名缓存优化）
+     * @param urls URL 列表
+     * @return URL -> MimeType 映射
+     */
+    QHash<QUrl, QString> batchGetMimeTypes(const QList<QUrl> &urls);
 
 private:
     SortContext m_context;
