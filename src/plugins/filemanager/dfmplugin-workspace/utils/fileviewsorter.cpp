@@ -534,16 +534,23 @@ QVariant FileViewSorter::getSortData(const QUrl &url)
     }
 
     case SortRole::FilePath:
-    case SortRole::OriginalPath:
-        // FilePath 和 OriginalPath 只能从 FileInfo 获取
+        // FilePath：本地文件直接返回路径，避免创建 FileInfo
+        if (url.isLocalFile()) {
+            return url.toLocalFile();
+        }
+        // 非本地文件需要从 FileInfo 获取显示路径
         if (!fileInfo)
             fileInfo = dfmbase::InfoFactory::create<dfmbase::FileInfo>(url);
-        if (fileInfo) {
-            if (m_context.role == SortRole::FilePath)
-                return fileInfo->displayOf(dfmbase::DisPlayInfoType::kFileDisplayPath);
-            else   // OriginalPath
-                return fileInfo->urlOf(dfmbase::UrlInfoType::kOriginalUrl).path();
-        }
+        if (fileInfo)
+            return fileInfo->displayOf(dfmbase::DisPlayInfoType::kFileDisplayPath);
+        return url.path();
+
+    case SortRole::OriginalPath:
+        // OriginalPath 只能从 FileInfo 获取（垃圾桶场景）
+        if (!fileInfo)
+            fileInfo = dfmbase::InfoFactory::create<dfmbase::FileInfo>(url);
+        if (fileInfo)
+            return fileInfo->urlOf(dfmbase::UrlInfoType::kOriginalUrl).path();
         return url.path();
 
     case SortRole::DeletionDate:
