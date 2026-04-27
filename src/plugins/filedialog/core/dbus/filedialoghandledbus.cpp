@@ -56,20 +56,31 @@ QString FileDialogHandleDBus::directoryUrl() const
 
 void FileDialogHandleDBus::selectUrl(const QString &url)
 {
+    if (url.isEmpty()) {
+        FileDialogHandle::selectUrl(QUrl());
+        return;
+    }
+
     QUrl fileUrl(url);
-    const auto &scheme = fileUrl.scheme();
+    QString scheme = fileUrl.scheme();
+
+    // Case 2: No scheme, treat as local file path
     if (scheme.isEmpty()) {
         fileUrl = QUrl::fromLocalFile(url);
     } else {
-        // Extract path portion after "scheme://"
-        int pathStart = url.indexOf("://");
-        if (pathStart != -1) {
-            // For URLs with scheme (e.g., file://), extract path to preserve special characters like '#'
-            fileUrl.clear();
-            fileUrl.setScheme(scheme);
-            QString path = url.mid(pathStart + 3);
-            fileUrl.setPath(path);
+        // Case 1 & 3: Has scheme, check if path was truncated by '#' or '?'
+        // When URL contains '#' or '?', QUrl parses them as fragment/query
+        // e.g., "file:///home/test#file.txt" -> path="/home/test", fragment="file.txt"
+        if (fileUrl.hasFragment() || fileUrl.hasQuery()) {
+            int schemeEnd = url.indexOf("://");
+            if (schemeEnd != -1) {
+                QString originalPath = url.mid(schemeEnd + 3);
+                fileUrl.clear();
+                fileUrl.setScheme(scheme);
+                fileUrl.setPath(originalPath);
+            }
         }
+        // Case 1: For encoded URLs, QUrl's automatic decoding is the expected behavior
     }
 
     FileDialogHandle::selectUrl(fileUrl);
