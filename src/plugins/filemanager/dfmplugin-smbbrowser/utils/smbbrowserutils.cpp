@@ -21,6 +21,7 @@
 #include <QUrl>
 #include <QDBusInterface>
 #include <QDBusPendingCall>
+#include <QMutexLocker>
 #include <QtConcurrent>
 
 Q_DECLARE_METATYPE(const char *)
@@ -28,6 +29,25 @@ using namespace GlobalDConfDefines::ConfigPath;
 
 namespace dfmplugin_smbbrowser {
 namespace smb_browser_utils {
+
+namespace {
+static constexpr char kAvahiDaemonService[] { "avahi-daemon.service" };
+
+QString serviceUnitName(const QString &service)
+{
+    if (service == "smb")
+        return "smbd.service";
+    if (service == "nmb")
+        return "nmbd.service";
+    if (service == "smbd" || service == "nmbd")
+        return service + ".service";
+    if (service == "smbd.service" || service == "nmbd.service")
+        return service;
+    if (service == kAvahiDaemonService)
+        return kAvahiDaemonService;
+    return {};
+}
+}
 
 QString networkScheme()
 {
@@ -83,44 +103,84 @@ QString getDeviceIdByStdSmb(const QString &stdSmb)
  */
 bool isServiceRuning(const QString &service)
 {
-    if (service.isEmpty() || (service != "smb" && service != "nmb")) {
+    const QString &serviceName = serviceUnitName(service);
+    if (serviceName.isEmpty()) {
         fmWarning() << "Invalid service name for status check:" << service;
         return false;
     }
 
-    // 使用 SystemServiceManager 检查服务状态
-    QString serviceName = QString("%1d.service").arg(service);
     return dfmbase::SystemServiceManager::instance().isServiceRunning(serviceName);
 }
 
 bool enableServiceNow(const QString &service)
 {
-    if (service.isEmpty() || (service != "smb" && service != "nmb")) {
+    const QString &serviceName = serviceUnitName(service);
+    if (serviceName.isEmpty()) {
         fmWarning() << "Invalid service name for enable operation:" << service;
         return false;
     }
-    fmDebug() << "Enable service:" << service;
-    QString serviceName = QString("%1d.service").arg(service);
+
+    fmDebug() << "Enable service:" << serviceName;
     bool result = dfmbase::SystemServiceManager::instance().enableServiceNow(serviceName);
-    fmDebug() << "Service enable result for" << service << ":" << result;
+    fmDebug() << "Service enable result for" << serviceName << ":" << result;
     return result;
 }
 
 bool checkAndEnableService(const QString &service)
 {
+    const QString &serviceName = serviceUnitName(service);
+    if (serviceName.isEmpty()) {
+        fmWarning() << "Invalid service name for check operation:" << service;
+        return false;
+    }
+
+    if (!dfmbase::SystemServiceManager::instance().serviceExists(serviceName)) {
+        fmWarning() << "Service unit does not exist:" << serviceName;
+        return false;
+    }
+
     if (isServiceRuning(service)) {
-        fmDebug() << "Service already running:" << service;
+        fmDebug() << "Service already running:" << serviceName;
         return true;
     }
 
-    fmDebug() << "Service not running, attempting to start:" << service;
+    fmDebug() << "Service not running, attempting to start:" << serviceName;
     if (enableServiceNow(service)) {
-        fmDebug() << "Successfully started and enabled service:" << service;
+        fmDebug() << "Successfully started and enabled service:" << serviceName;
         return true;
     }
 
-    fmCritical() << "Failed to start service:" << service;
+    fmCritical() << "Failed to start service:" << serviceName;
     return false;
+}
+
+bool ensureNetworkDiscoveryService(bool *serviceStarted)
+{
+    if (serviceStarted)
+        *serviceStarted = false;
+
+    static QMutex mutex;
+    QMutexLocker locker(&mutex);
+
+    const QString serviceName { kAvahiDaemonService };
+    if (!dfmbase::SystemServiceManager::instance().serviceExists(serviceName)) {
+        fmWarning() << "Network discovery service unit does not exist:" << serviceName;
+        return false;
+    }
+
+    if (isServiceRuning(serviceName)) {
+        fmDebug() << "Network discovery service already running:" << serviceName;
+        return true;
+    }
+
+    if (!enableServiceNow(serviceName)) {
+        fmCritical() << "Failed to start network discovery service:" << serviceName;
+        return false;
+    }
+
+    if (serviceStarted)
+        *serviceStarted = true;
+    return true;
 }
 
 void bindSetting()

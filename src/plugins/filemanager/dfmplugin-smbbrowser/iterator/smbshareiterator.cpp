@@ -6,9 +6,17 @@
 #include "private/smbshareiterator_p.h"
 #include "utils/smbbrowserutils.h"
 
+#include <QElapsedTimer>
+#include <QThread>
+
 using namespace dfmplugin_smbbrowser;
 DFMBASE_USE_NAMESPACE
 USING_IO_NAMESPACE
+
+namespace {
+static constexpr int kNetworkDiscoveryWarmupTimeoutMs { 12000 };
+static constexpr int kNetworkDiscoveryWarmupIntervalMs { 800 };
+}
 
 // TODO(xust) TODO(lanxs): using local enumerator temperarily, using SmbBrowserEnumerator or something later.
 
@@ -19,11 +27,16 @@ SmbShareIteratorPrivate::SmbShareIteratorPrivate(const QUrl &url, dfmplugin_smbb
         QMutexLocker locker(&smb_browser_utils::nodesMutex());
         smb_browser_utils::shareNodes().clear();
     }
-    enumerator.reset(new DEnumerator(url));
+    resetEnumerator();
 }
 
 SmbShareIteratorPrivate::~SmbShareIteratorPrivate()
 {
+}
+
+void SmbShareIteratorPrivate::resetEnumerator()
+{
+    enumerator.reset(new DEnumerator(rootUrl));
 }
 
 SmbShareIterator::SmbShareIterator(const QUrl &url, const QStringList &nameFilters, QDir::Filters filters, QDirIterator::IteratorFlags flags)
@@ -91,7 +104,37 @@ QUrl SmbShareIterator::url() const
 
 bool SmbShareIterator::initIterator()
 {
-    if (d->enumerator)
+    bool waitForDiscoveryWarmup = false;
+    if (d->rootUrl == smb_browser_utils::netNeighborRootUrl()) {
+        if (!smb_browser_utils::ensureNetworkDiscoveryService(&waitForDiscoveryWarmup)) {
+            fmWarning() << "Network discovery service is unavailable, network neighborhood enumeration may be incomplete";
+        }
+    }
+
+    if (!d->enumerator)
+        return false;
+
+    if (!waitForDiscoveryWarmup)
         return d->enumerator->initEnumerator(oneByOne());
-    return false;
+
+    QElapsedTimer timer;
+    timer.start();
+    while (true) {
+        if (!d->enumerator->initEnumerator(oneByOne()))
+            return false;
+
+        if (d->enumerator->hasNext()) {
+            fmInfo() << "Network neighborhood data is ready after service warm-up, elapsed:" << timer.elapsed();
+            return true;
+        }
+
+        if (timer.elapsed() >= kNetworkDiscoveryWarmupTimeoutMs)
+            break;
+
+        QThread::msleep(kNetworkDiscoveryWarmupIntervalMs);
+        d->resetEnumerator();
+    }
+
+    fmWarning() << "Network neighborhood data is still empty after service warm-up, elapsed:" << timer.elapsed();
+    return true;
 }

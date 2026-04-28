@@ -27,6 +27,7 @@ QString getDeviceIdByStdSmb(const QString &stdSmb);
 bool isServiceRuning(const QString &service);
 bool enableServiceNow(const QString &service);
 bool checkAndEnableService(const QString &service);
+bool ensureNetworkDiscoveryService(bool *serviceStarted = nullptr);
 
 void initSettingPane();
 // bind dconfig

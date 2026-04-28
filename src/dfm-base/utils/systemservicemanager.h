@@ -59,6 +59,13 @@ public:
     bool isServiceRunning(const QString &serviceName);
 
     /**
+     * @brief 检查服务 unit 是否存在
+     * @param serviceName 服务名（如 "smbd.service"）
+     * @return true 表示 systemd 可以加载该 unit
+     */
+    bool serviceExists(const QString &serviceName);
+
+    /**
      * @brief 启动服务（临时，重启后失效）
      * @param serviceName 服务名
      * @return true 表示操作成功

@@ -4,6 +4,8 @@
 
 #include "systemservicemanager.h"
 
+#include <dfm-base/utils/sysinfoutils.h>
+
 #include <QDBusInterface>
 #include <QDBusReply>
 #include <QDBusConnection>
@@ -65,6 +67,11 @@ bool SystemServiceManager::isServiceRunning(const QString &serviceName)
     return state.toString() == "running";
 }
 
+bool SystemServiceManager::serviceExists(const QString &serviceName)
+{
+    return !unitPathFromName(serviceName).isEmpty();
+}
+
 bool SystemServiceManager::startService(const QString &serviceName)
 {
     if (serviceName.isEmpty()) {
@@ -111,14 +118,18 @@ bool SystemServiceManager::enableServiceNow(const QString &serviceName)
         return false;
     }
 
-    // pkexec 会查找 systemctl 的完整路径，但显式指定更安全
-    // 通常 systemctl 位于 /usr/bin/ 或 /bin/
-    // QStandardPaths::findExecutable 可以帮助找到它
-    QString program = "pkexec";
+    QString program;
     QStringList arguments;
-    arguments << "systemctl"
-              << "enable"
-              << "--now" << serviceName;
+    if (SysInfoUtils::isRootUser()) {
+        program = "systemctl";
+        arguments << "enable"
+                  << "--now" << serviceName;
+    } else {
+        program = "pkexec";
+        arguments << "systemctl"
+                  << "enable"
+                  << "--now" << serviceName;
+    }
 
     qCInfo(logDFMBase) << "SystemServiceManager: Executing:" << program << arguments.join(" ");
 
@@ -164,8 +175,9 @@ QString SystemServiceManager::unitPathFromName(const QString &serviceName)
         return QString();
     }
 
-    // 使用 GetUnit 方法获取 unit 路径
-    QDBusReply<QDBusObjectPath> reply = managerIface.call("GetUnit", serviceName);
+    // LoadUnit can resolve installed but currently inactive units; it fails when
+    // the unit file is unavailable.
+    QDBusReply<QDBusObjectPath> reply = managerIface.call("LoadUnit", serviceName);
     if (!reply.isValid()) {
         qCWarning(logDFMBase) << "SystemServiceManager: Failed to get unit path for" << serviceName
                               << "Error:" << reply.error().message();

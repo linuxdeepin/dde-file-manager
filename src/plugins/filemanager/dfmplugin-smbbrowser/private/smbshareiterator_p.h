@@ -26,6 +26,7 @@ class SmbShareIteratorPrivate
 public:
     explicit SmbShareIteratorPrivate(const QUrl &url, SmbShareIterator *qq);
     ~SmbShareIteratorPrivate();
+    void resetEnumerator();
 
 private:
     SmbShareIterator *q { nullptr };
