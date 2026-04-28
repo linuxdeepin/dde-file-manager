@@ -80,10 +80,23 @@ void FileInfoModelPrivate::insertData(const QUrl &url)
     int row = -1;
     {
         QReadLocker lk(&lock);
-        if (auto cur = fileMap.value(url)) {
+        if (fileMap.contains(url)) {
             lk.unlock();
             fmInfo() << "File already exists in model, refreshing:" << url;
-            cur->refresh();   // refresh fileinfo.
+            // Re-fetch to ensure consistency with InfoCacheController
+            auto newInfo = FileCreator->createFileInfo(url);
+            if (newInfo) {
+                newInfo->refresh();
+                QWriteLocker wlk(&lock);
+                fileMap.insert(url, newInfo);
+            } else {
+                QReadLocker lk(&lock);
+                // Fall back to refreshing the existing pointer
+                if (auto cur = fileMap.value(url)) {
+                    lk.unlock();
+                    cur->refresh();
+                }
+            }
             const QModelIndex &index = q->index(url);
             emit q->dataChanged(index, index);
             return;
@@ -178,11 +191,14 @@ void FileInfoModelPrivate::replaceData(const QUrl &oldUrl, const QUrl &newUrl)
                 removeData(oldUrl);
                 lk.relock();
                 position = fileList.indexOf(newUrl);
-                auto cur = fileMap.value(newUrl);
                 lk.unlock();
 
-                // refresh file
-                cur->refresh();
+                // Re-fetch to ensure consistency with InfoCacheController
+                if (auto refreshedInfo = FileCreator->createFileInfo(newUrl)) {
+                    refreshedInfo->refresh();
+                    QWriteLocker wlk(&lock);
+                    fileMap.insert(newUrl, refreshedInfo);
+                }
                 fmInfo() << "File moved to overwrite existing file:" << oldUrl << "->" << newUrl;
             } else {
                 fileList.replace(position, newUrl);
@@ -211,12 +227,23 @@ void FileInfoModelPrivate::updateData(const QUrl &url)
             fmDebug() << "File not in model for update:" << url;
             return;
         }
+    }
 
-        // Although the files cached in InfoCache will be refreshed automatically,
-        // a redundant refresh is still required here, because the current variant of FileInfo
-        // (like DesktopFileInfo created from DesktopFileCreator) is not in InfoCache and will not be refreshed automatically.
-        if (auto info = fileMap.value(url))
-            info->updateAttributes();
+    // Re-fetch from FileCreator to ensure the model holds the same
+    // FileInfoPointer as InfoCacheController, preventing inconsistency
+    // caused by InfoCache eviction and recreation.
+    auto newInfo = FileCreator->createFileInfo(url);
+    if (newInfo) {
+        newInfo->updateAttributes();
+        QWriteLocker lk(&lock);
+        fileMap.insert(url, newInfo);
+    } else {
+        // Fall back to updating the existing pointer
+        QReadLocker lk(&lock);
+        if (auto cur = fileMap.value(url)) {
+            lk.unlock();
+            cur->updateAttributes();
+        }
     }
 
     const QModelIndex &index = q->index(url);
@@ -459,8 +486,15 @@ int FileInfoModel::modelState() const
 
 void FileInfoModel::update()
 {
-    for (auto itor = d->fileMap.begin(); itor != d->fileMap.end(); ++itor)
-        itor.value()->updateAttributes();
+    for (auto itor = d->fileMap.begin(); itor != d->fileMap.end(); ++itor) {
+        // Re-fetch to ensure consistency with InfoCacheController
+        if (auto newInfo = FileCreator->createFileInfo(itor.key())) {
+            newInfo->updateAttributes();
+            itor.value() = newInfo;
+        } else {
+            itor.value()->updateAttributes();
+        }
+    }
 
     emit dataChanged(createIndex(0, 0), createIndex(rowCount(rootIndex()) - 1, 0));
 }
@@ -472,8 +506,13 @@ void FileInfoModel::updateFile(const QUrl &url)
 
 void FileInfoModel::refreshAllFile()
 {
-    for (auto itor = d->fileMap.begin(); itor != d->fileMap.end(); ++itor)
-        itor.value()->refresh();
+    for (auto itor = d->fileMap.begin(); itor != d->fileMap.end(); ++itor) {
+        // Re-fetch to ensure consistency with InfoCacheController
+        if (auto newInfo = FileCreator->createFileInfo(itor.key())) {
+            newInfo->refresh();
+            itor.value() = newInfo;
+        }
+    }
 
     emit dataChanged(createIndex(0, 0), createIndex(rowCount(rootIndex()) - 1, 0));
 }
