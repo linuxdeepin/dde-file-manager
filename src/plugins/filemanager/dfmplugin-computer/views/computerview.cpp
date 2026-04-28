@@ -358,6 +358,7 @@ void ComputerView::onUpdateItemAlias(const QUrl &url, const QString &alias, bool
         QString sidebarName = alias.isEmpty() ? item.info->displayName() : alias;
         QVariantMap map {
             { "Property_Key_DisplayName", sidebarName },
+            { "Property_Key_EditDisplayText", sidebarName },
             { "Property_Key_Editable", true }
         };
         dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", item.info->urlOf(UrlInfoType::kUrl), map);
