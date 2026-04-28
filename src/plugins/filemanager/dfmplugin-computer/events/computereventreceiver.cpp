@@ -27,6 +27,46 @@
 using namespace dfmplugin_computer;
 DFMBASE_USE_NAMESPACE
 
+namespace {
+
+// Helper: select appropriate symbolic icon name for device
+static QString devIconName(const DFMEntryFileInfoPointer &info)
+{
+    const QString iconName = info->fileIcon().name();
+    if (iconName.startsWith("media"))
+        return "media-optical-symbolic";
+    if (info->order() == AbstractEntryFileEntity::kOrderRemovableDisks)
+        return "drive-removable-media-symbolic";
+    if (iconName == "android-device")
+        return "phone-symbolic";
+    if (iconName == "ios-device")
+        return "phone-apple-iphone-symbolic";
+    return {};
+}
+
+// Helper: build breadcrumb trail (root + sub-directories)
+static void appendCrumbs(QList<QVariantMap> *group,
+                         const QString &devPath,
+                         const QString &fullPath,
+                         const QString &iconName)
+{
+    // root node with icon
+    group->push_back({ { "CrumbData_Key_Url", QUrl::fromLocalFile(devPath) },
+                       { "CrumbData_Key_IconName", iconName },
+                       { "CrumbData_Key_DisplayText", "" } });
+
+    // child directory nodes
+    QString currPrefix = devPath;
+    const auto subPathList = fullPath.mid(devPath.size()).split('/', Qt::SkipEmptyParts);
+    for (const auto &dirName : subPathList) {
+        currPrefix += '/' + dirName;
+        group->push_back({ { "CrumbData_Key_Url", QUrl::fromLocalFile(currPrefix) },
+                           { "CrumbData_Key_DisplayText", dirName } });
+    }
+}
+
+}   // namespace
+
 ComputerEventReceiver *ComputerEventReceiver::instance()
 {
     static ComputerEventReceiver ins;
@@ -235,53 +275,33 @@ bool ComputerEventReceiver::parseCifsMountCrumb(const QUrl &url, QList<QVariantM
 
 bool ComputerEventReceiver::parseDevMountCrumb(const QUrl &url, QList<QVariantMap> *mapGroup)
 {
-    // fix bug-326657
-    QString filePath = url.path();
+    const QString filePath = url.path();
     if (!DevProxyMng->isFileOfExternalMounts(filePath))
         return false;
 
     const auto &deviceInfo = DevProxyMng->queryDeviceInfoByPath(filePath);
-    auto id = deviceInfo.value(GlobalServerDefines::DeviceProperty::kId).toString();
+    const QString id = deviceInfo.value(GlobalServerDefines::DeviceProperty::kId).toString();
     if (id.isEmpty())
         return false;
 
-    QUrl devUrl = id.startsWith(kBlockDeviceIdPrefix)
+    // find device entry info
+    const QUrl devUrl = id.startsWith(kBlockDeviceIdPrefix)
             ? ComputerUtils::makeBlockDevUrl(id)
             : ComputerUtils::makeProtocolDevUrl(id);
-    DFMEntryFileInfoPointer info(new EntryFileInfo(devUrl));
-    if (!info)
+    const DFMEntryFileInfoPointer info(new EntryFileInfo(devUrl));
+    if (!info || !info->targetUrl().isLocalFile())
         return false;
-    const auto &devPath = info->targetUrl().path();
 
+    const QString devPath = info->targetUrl().toLocalFile();
     if (devPath.isEmpty() || devPath == "/")
         return false;
 
-    QString iconName { info->fileIcon().name() };
-    if (info->fileIcon().name().startsWith("media"))
-        iconName = "media-optical-symbolic";
-    else if (info->order() == AbstractEntryFileEntity::kOrderRemovableDisks)   // always display as USB icon for removable disks.
-        iconName = "drive-removable-media-symbolic";
-    else if (iconName == "android-device")
-        iconName = "phone-symbolic";
-    else if (iconName == "ios-device")
-        iconName = "phone-apple-iphone-symbolic";
-    else
-        iconName += "-symbolic";
+    const auto iconName = devIconName(info);
+    if (iconName.isEmpty())
+        return false;
 
-    QVariantMap rootNode { { "CrumbData_Key_Url", QUrl::fromLocalFile(devPath) },
-                           { "CrumbData_Key_IconName", iconName },
-                           { "CrumbData_Key_DisplayText", "" } };
-    mapGroup->push_back(rootNode);
-
-    QString currPrefix = devPath;
-    auto subPathList = filePath.remove(devPath).split("/", Qt::SkipEmptyParts);
-    while (subPathList.count() > 0) {
-        QString dirName = subPathList.takeFirst();
-        currPrefix = currPrefix + "/" + dirName;
-        QVariantMap dirNode { { "CrumbData_Key_Url", QUrl::fromLocalFile(currPrefix) },
-                              { "CrumbData_Key_DisplayText", dirName } };
-        mapGroup->push_back(dirNode);
-    }
+    // build breadcrumb trail with appropriate icon
+    appendCrumbs(mapGroup, devPath, filePath, iconName);
     return true;
 }
 
