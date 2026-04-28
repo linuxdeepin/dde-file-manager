@@ -6534,7 +6534,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="240"/>
         <source>If turned off, file searches will traverse the file system and severely reduce search speed.</source>
-        <translation type="unfinished"/>
+        <translation>Jos tämä on pois päältä, tiedostojen haku hakusanalla on huomattavasti hitaampaa.</translation>
     </message>
 </context>
 <context>
@@ -6542,7 +6542,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthocrindex.cpp" line="16"/>
         <source>Enable to search text in images</source>
-        <translation type="unfinished"/>
+        <translation>Käytä tekstin hakemista kuvista</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthocrindex.cpp" line="17"/>
@@ -6634,7 +6634,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="154"/>
         <source>File index</source>
-        <translation type="unfinished"/>
+        <translation>Tiedostoindeksi</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="162"/>
@@ -6644,7 +6644,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="184"/>
         <source>Image-Content search</source>
-        <translation type="unfinished"/>
+        <translation>Kuvien sisällön haku </translation>
     </message>
 </context>
 <context>
