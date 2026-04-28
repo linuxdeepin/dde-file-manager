@@ -172,6 +172,8 @@ bool BookMarkManager::addBookMark(const QList<QUrl> &urls)
             }
 
             Application::genericSetting()->setValue(kConfigGroupQuickAccess, kConfigKeyName, list);
+            Application::genericSetting()->sync();
+
             quickAccessDataMap[url] = bookmarkData;
             sortedUrls.removeOne(url);
             sortedUrls.append(url);
@@ -315,7 +317,9 @@ bool BookMarkManager::bookMarkRename(const QUrl &url, const QString &newName)
             map[kKeyLastModi] = QDateTime::currentDateTime().toString(Qt::ISODate);
             quickAccessDataMap[url].name = newName;
             list.replace(i, map);
+
             Application::genericSetting()->setValue(kConfigGroupQuickAccess, kConfigKeyName, list);
+            Application::genericSetting()->sync();
 
             renameBookmarkToDConfig(oldName, newName);
 
@@ -383,8 +387,10 @@ void BookMarkManager::saveSortedItemsToConfigFile(const QList<QUrl> &order)
         index++;
     }
 
-    if (!sorted.isEmpty())
+    if (!sorted.isEmpty()) {
         Application::genericSetting()->setValue(kConfigGroupQuickAccess, kConfigKeyName, sorted);
+        Application::genericSetting()->sync();
+    }
 }
 
 void BookMarkManager::saveQuickAccessToSortedItems(const QVariantList &list)
@@ -563,6 +569,7 @@ void BookMarkManager::fileRenamed(const QUrl &oldUrl, const QUrl &newUrl)
             dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", oldUrl, map);
 
             Application::genericSetting()->setValue(kConfigGroupQuickAccess, kConfigKeyName, list);
+            Application::genericSetting()->sync();
             updateBookmarkUrlToDconfig(oldUrl, newUrl);
             break;
         }

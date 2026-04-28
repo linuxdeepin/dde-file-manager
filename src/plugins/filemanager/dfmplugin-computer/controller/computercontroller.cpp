@@ -249,6 +249,7 @@ void ComputerController::doSetAlias(DFMEntryFileInfoPointer info, const QString 
     }
 
     Application::genericSetting()->setValue(kAliasGroupName, kAliasItemName, list);
+    Application::genericSetting()->sync();
     Q_EMIT updateItemAlias(info->urlOf(UrlInfoType::kUrl), alias, false);
 }
 

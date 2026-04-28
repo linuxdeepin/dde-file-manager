@@ -185,6 +185,7 @@ bool NPDeviceAliasManager::setAlias(const QUrl &protocolUrl, const QString &alia
     if (modified) {
         QWriteLocker lk(&rwLock);
         Application::genericSetting()->setValue(kNPAliasGroupName, kAliasItemName, itemList);
+        Application::genericSetting()->sync();
     }
 
     return true;
