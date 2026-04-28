@@ -6497,7 +6497,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="27"/>
         <source>Enable to build the file index immediately for faster file name searches</source>
-        <translation type="unfinished"/>
+        <translation>Käytä tiedostojen indeksointia nopeuttamaan tiedostojen hakua hakusanalla</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="28"/>
@@ -6529,7 +6529,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="239"/>
         <source>Turn off file index?</source>
-        <translation type="unfinished"/>
+        <translation>Poistatko indeksin käytöstä?</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="240"/>
