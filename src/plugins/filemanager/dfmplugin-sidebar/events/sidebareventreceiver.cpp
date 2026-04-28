@@ -11,12 +11,51 @@
 #include "utils/sidebarinfocachemananger.h"
 
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
+#include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/file/entry/entryfileinfo.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/settingdialog/settingjsongenerator.h>
 
 #include <dfm-framework/dpf.h>
 
 DPSIDEBAR_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
+
+namespace {
+inline constexpr char kNPAliasGroupName[] { "NetworkProtocolDeviceAlias" };
+inline constexpr char kAliasItemName[] { "Items" };
+inline constexpr char kBlockEntrySuffix[] { "blockdev" };
+inline constexpr char kProtocolEntrySuffix[] { "protodev" };
+inline constexpr char kSmbVirtualScheme[] { "vsmb" };
+inline constexpr char kSmbVirtualEntrySuffix[] { "ventry" };
+
+bool isAliasSetting(const QString &group, const QString &key)
+{
+    return key == kAliasItemName
+            && (group == BlockAdditionalProperty::kAliasGroupName
+                || group == kNPAliasGroupName);
+}
+
+QUrl aliasAwareEntryUrl(const QUrl &url)
+{
+    if (url.scheme() == Global::Scheme::kEntry
+        && (url.path().endsWith(kBlockEntrySuffix) || url.path().endsWith(kProtocolEntrySuffix)))
+        return url;
+
+    if (url.scheme() == kSmbVirtualScheme) {
+        QUrl smbUrl = url;
+        smbUrl.setScheme(Global::Scheme::kSmb);
+
+        QUrl entryUrl;
+        entryUrl.setScheme(Global::Scheme::kEntry);
+        entryUrl.setPath(smbUrl.toString() + "." + QString(kSmbVirtualEntrySuffix));
+        return entryUrl;
+    }
+
+    return {};
+}
+}
 
 SideBarEventReceiver *SideBarEventReceiver::instance()
 {
@@ -99,7 +138,6 @@ bool SideBarEventReceiver::handleItemAdd(const QUrl &url, const QVariantMap &pro
         // for select to computer
         QUrl &&itemUrl = item->url();
         QUrl &&sidebarUrl = sidebar->currentUrl();
-        DFMBASE_USE_NAMESPACE
         if (UniversalUtils::urlEquals(itemUrl, sidebarUrl)
             || (info.finalUrl.isValid() && UniversalUtils::urlEquals(sidebarUrl, info.finalUrl)))
             sidebar->setCurrentUrl(item->url());
@@ -186,20 +224,52 @@ bool SideBarEventReceiver::handleItemUpdate(const QUrl &url, const QVariantMap &
     if (properties.contains(PropertyKey::kCallbackFindMe))
         info.findMeCb = DPF_NAMESPACE::paramGenerator<FindMeCallback>(properties[PropertyKey::kCallbackFindMe]);
 
+    bool ret { false };
+    if (urlUpdated)
+        ret = SideBarInfoCacheMananger::instance()->addItemInfoCache(info);
+    else
+        ret = SideBarInfoCacheMananger::instance()->updateItemInfoCache(url, info);
+
     QList<SideBarWidget *> allSideBar = SideBarHelper::allSideBar();
     if (!allSideBar.isEmpty()) {
-        bool ret { false };
-        if (urlUpdated)
-            ret = SideBarInfoCacheMananger::instance()->addItemInfoCache(info);
-        else
-            ret = SideBarInfoCacheMananger::instance()->updateItemInfoCache(url, info);
         allSideBar.first()->updateItem(url, info);
         return ret;
-    } else {
-        fmWarning() << "No sidebar widgets available for item update, url:" << url;
     }
 
-    return false;
+    if (SideBarWidget::kSidebarModelIns)
+        SideBarWidget::kSidebarModelIns->updateRow(url, info);
+
+    fmDebug() << "Updated sidebar cache without visible widget, url:" << url;
+    return ret;
+}
+
+void SideBarEventReceiver::handleAliasSettingChanged(const QString &group, const QString &key, const QVariant &value)
+{
+    Q_UNUSED(value)
+
+    if (!isAliasSetting(group, key))
+        return;
+
+    auto cacheMgr = SideBarInfoCacheMananger::instance();
+    const auto groups = cacheMgr->groups();
+    for (const auto &cacheGroup : groups) {
+        const auto items = cacheMgr->indexCacheList(cacheGroup);
+        for (const auto &cachedInfo : items) {
+            const QUrl entryUrl = aliasAwareEntryUrl(cachedInfo.url);
+            if (!entryUrl.isValid())
+                continue;
+
+            EntryFileInfo entryInfo(entryUrl);
+            ItemInfo refreshedInfo = cachedInfo;
+            refreshedInfo.displayName = entryInfo.displayName();
+            refreshedInfo.editDisplayText = entryInfo.editDisplayText();
+            refreshedInfo.isEditable = entryInfo.renamable();
+
+            cacheMgr->updateItemInfoCache(cachedInfo.url, refreshedInfo);
+            if (SideBarWidget::kSidebarModelIns)
+                SideBarWidget::kSidebarModelIns->updateRow(cachedInfo.url, refreshedInfo);
+        }
+    }
 }
 
 bool SideBarEventReceiver::handleItemInsert(int index, const QUrl &url, const QVariantMap &properties)

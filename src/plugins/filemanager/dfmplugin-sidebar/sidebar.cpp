@@ -13,6 +13,8 @@
 #include <dfm-base/widgets/filemanagerwindow.h>
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/base/standardpaths.h>
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/application/settings.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <dfm-framework/dpf.h>
@@ -24,9 +26,11 @@ DFMBASE_USE_NAMESPACE
 
 void SideBar::initialize()
 {
-    connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &SideBar::onWindowOpened, Qt::DirectConnection);
-    connect(&FMWindowsIns, &FileManagerWindowsManager::windowClosed, this, &SideBar::onWindowClosed, Qt::DirectConnection);
-    connect(DConfigManager::instance(), &DConfigManager::valueChanged, this, &SideBar::onConfigChanged, Qt::DirectConnection);
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &SideBar::onWindowOpened);
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowClosed, this, &SideBar::onWindowClosed);
+    connect(DConfigManager::instance(), &DConfigManager::valueChanged, this, &SideBar::onConfigChanged);
+    connect(Application::genericSetting(), &Settings::valueEdited,
+            SideBarEventReceiver::instance(), &SideBarEventReceiver::handleAliasSettingChanged);
 
     SideBarEventReceiver::instance()->bindEvents();
 }
