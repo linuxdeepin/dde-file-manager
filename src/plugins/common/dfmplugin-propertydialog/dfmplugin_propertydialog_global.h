@@ -75,6 +75,7 @@ enum class ComputerInfoItem : uint8_t {
 
 using BasicExpandMap = QMultiMap<BasicFieldExpandEnum, QPair<QString, QString>>;
 using CustomViewExtensionView = std::function<QWidget *(const QUrl &url)>;
+using ViewExtensionUpdateFunc = std::function<void(QWidget *widget, const QUrl &url)>;
 using BasicViewFieldFunc = std::function<QMap<QString, QMultiMap<QString, QPair<QString, QString>>>(const QUrl &url)>;
 using ViewIntiCallback = std::function<void(QWidget *w, const QVariantHash &opt)>;
 
@@ -85,10 +86,12 @@ static constexpr char kOption_Key_DisableCustomDialog[] { "Option_Key_DisableCus
 static constexpr char kOption_Key_ViewIndex[] { "Option_Key_ViewIndex" };
 static constexpr char kOption_Key_ViewInitCalback[] { "Option_Key_ViewInitCalback" };
 static constexpr char kOption_Key_CreatorCalback[] { "Option_Key_CreatorCalback" };
+static constexpr char kOption_Key_UpdaterCallback[] { "Option_Key_UpdaterCallback" };
 
 DPPROPERTYDIALOG_END_NAMESPACE
 
 Q_DECLARE_METATYPE(DPPROPERTYDIALOG_NAMESPACE::CustomViewExtensionView);
+Q_DECLARE_METATYPE(DPPROPERTYDIALOG_NAMESPACE::ViewExtensionUpdateFunc);
 Q_DECLARE_METATYPE(DPPROPERTYDIALOG_NAMESPACE::BasicViewFieldFunc);
 Q_DECLARE_METATYPE(DPPROPERTYDIALOG_NAMESPACE::ViewIntiCallback);
 

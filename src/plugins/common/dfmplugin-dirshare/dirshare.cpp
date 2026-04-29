@@ -16,7 +16,9 @@
 #include <QDebug>
 
 using CustomViewExtensionView = std::function<QWidget *(const QUrl &url)>;
+using ViewExtensionUpdateFunc = std::function<void(QWidget *widget, const QUrl &url)>;
 Q_DECLARE_METATYPE(CustomViewExtensionView)
+Q_DECLARE_METATYPE(ViewExtensionUpdateFunc)
 
 namespace dfmplugin_dirshare {
 DFM_LOG_REGISTER_CATEGORY(DPDIRSHARE_NAMESPACE)
@@ -125,8 +127,18 @@ void DirShare::bindEvents()
 
 void DirShare::regToPropertyDialog()
 {
-    CustomViewExtensionView func { DirShare::createShareControlWidget };
-    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_ViewExtension_Register", func, "DirShare", 2);
+    CustomViewExtensionView create { DirShare::createShareControlWidget };
+    ViewExtensionUpdateFunc update { [](QWidget *widget, const QUrl &url) {
+        auto *shareWidget = qobject_cast<ShareControlWidget *>(widget);
+        if (!shareWidget)
+            return;
+        // updateFile(oldUrl, newUrl) checks if oldUrl matches internal url before updating.
+        // Pass url as both old and new to unconditionally update to the new URL.
+        QMetaObject::invokeMethod(shareWidget, "updateFile",
+                                  Qt::DirectConnection,
+                                  Q_ARG(QUrl, url), Q_ARG(QUrl, url));
+    } };
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_ViewExtensionWithUpdate_Register", create, update, QString("DirShare"), 2);
 }
 
 void DirShare::onShareStateChanged(const QString &path)

@@ -176,6 +176,7 @@ void NameTextEdit::keyPressEvent(QKeyEvent *event)
     if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
         setIsCanceled(false);
         emit editFinished();
+        return;
     }
     QTextEdit::keyPressEvent(event);
 }

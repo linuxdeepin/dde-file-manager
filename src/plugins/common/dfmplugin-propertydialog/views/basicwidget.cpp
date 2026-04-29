@@ -387,6 +387,16 @@ int BasicWidget::getFileCount()
 void BasicWidget::updateFileUrl(const QUrl &url)
 {
     currentUrl = url;
+
+    FileInfoPointer info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
+    if (info.isNull())
+        return;
+
+    if (fileLocation) {
+        fileLocation->setRightValue(info->isAttributes(OptInfoType::kIsSymLink) ? info->pathOf(PathInfoType::kSymLinkTarget)
+                                                                                 : info->pathOf(PathInfoType::kAbsoluteFilePath),
+                                    Qt::ElideMiddle, Qt::AlignVCenter, true);
+    }
 }
 
 void BasicWidget::slotFileCountAndSizeChange(const FileScanner::ScanResult &result)

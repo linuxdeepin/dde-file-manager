@@ -27,8 +27,11 @@ public slots:
     void showFilePropertyDialog(const QList<QUrl> &urls, const QVariantHash &option = QVariantHash());
     bool showCustomDialog(const QUrl &url);
     void insertExtendedControlFileProperty(const QUrl &url, int index, QWidget *widget);
+    void insertExtendedControlFileProperty(const QUrl &url, int index, QWidget *widget, ViewExtensionUpdateFunc updater);
     void addExtendedControlFileProperty(const QUrl &url, QWidget *widget);
+    void addExtendedControlFileProperty(const QUrl &url, QWidget *widget, ViewExtensionUpdateFunc updater);
     void closeFilePropertyDialog(const QUrl &url);
+    void renameFilePropertyDialog(const QUrl &oldUrl, const QUrl &newUrl);
     void closeCustomPropertyDialog(const QUrl &url);
     void closeAllFilePropertyDialog();
     void closeAllPropertyDialog();

@@ -271,11 +271,20 @@ void Tag::bindWindows()
 void Tag::regToPropertyDialog()
 {
     fmDebug() << "Registering tag widget to property dialog";
-    CustomViewExtensionView func { Tag::createTagWidgetForPropertyDialog };
+    CustomViewExtensionView create { Tag::createTagWidgetForPropertyDialog };
+    ViewExtensionUpdateFunc update { [](QWidget *widget, const QUrl &url) {
+        auto *tagWidget = qobject_cast<TagWidget *>(widget);
+        if (!tagWidget)
+            return;
+        QUrl realUrl;
+        UniversalUtils::urlTransformToLocal(url, &realUrl);
+        tagWidget->setUrl(realUrl);
+    } };
     dpfSlotChannel->push("dfmplugin_propertydialog",
-                         "slot_ViewExtension_Register",
-                         func,
-                         "Tag",
+                         "slot_ViewExtensionWithUpdate_Register",
+                         create,
+                         update,
+                         QString("Tag"),
                          0);
 }
 
