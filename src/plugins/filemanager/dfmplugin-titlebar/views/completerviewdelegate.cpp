@@ -34,9 +34,12 @@ void CompleterViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
         cg = QPalette::Inactive;
     }
 
+    // Fix: Adjust rect for high DPI scaling to avoid edge artifacts (similar to bug-205621 in sidebar)
+    QRect paintRect = qApp->devicePixelRatio() > 1.0 ? opt.rect.adjusted(0, 1, 0, -1) : opt.rect;
+
     // draw background
     if (option.showDecorationSelected && (option.state & (QStyle::State_Selected | QStyle::State_MouseOver))) {
-        painter->fillRect(option.rect, option.palette.brush(cg, QPalette::Highlight));
+        painter->fillRect(paintRect, option.palette.brush(cg, QPalette::Highlight));
     }
 
     // draw icon
