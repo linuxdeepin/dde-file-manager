@@ -1798,7 +1798,7 @@ bool FileSortWorker::checkFilters(const SortInfoPointer &sortInfo, const bool by
         return true;
 
     auto item = childData(sortInfo->fileUrl());
-    if (item && !nameFilters.isEmpty() && !item->data(Global::ItemRoles::kItemFileIsDirRole).toBool()) {
+    if (item && !nameFilters.isEmpty() && !sortInfo->isDir()) {
         QRegularExpression re("", QRegularExpression::CaseInsensitiveOption);
         bool hasMatched { false };
         for (int i = 0; i < nameFilters.size(); ++i) {
