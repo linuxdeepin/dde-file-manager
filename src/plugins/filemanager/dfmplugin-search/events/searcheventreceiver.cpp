@@ -8,6 +8,8 @@
 #include "searchmanager/searchmanager.h"
 
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
+#include <dfm-base/utils/networkutils.h>
+#include <dfm-base/utils/protocolutils.h>
 
 DFMBASE_USE_NAMESPACE
 namespace dfmplugin_search {
@@ -24,6 +26,12 @@ void SearchEventReceiver::handleSearch(quint64 winId, const QString &keyword)
     Q_ASSERT(window);
 
     const auto &curUrl = window->currentUrl();
+    if (ProtocolUtils::isRemoteFile(curUrl)
+        && NetworkUtils::instance()->checkFtpOrSmbBusy(curUrl)) {
+        fmWarning() << "Network disconnected during search";
+        return;
+    }
+
     QUrl searchUrl;
     if (SearchHelper::isSearchFile(curUrl)) {
         const QUrl &targetUrl = SearchHelper::searchTargetUrl(curUrl);
