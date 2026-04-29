@@ -44,7 +44,9 @@ public:
 public slots:
     void processHeight(int height);
     void insertExtendedControl(int index, QWidget *widget);
+    void insertExtendedControl(int index, QWidget *widget, ViewExtensionUpdateFunc updater);
     void addExtendedControl(QWidget *widget);
+    void addExtendedControl(QWidget *widget, ViewExtensionUpdateFunc updater);
     void closeDialog();
     void onSelectUrlRenamed(const QUrl &url);
     void onFileInfoUpdated(const QUrl &url, const QString &infoPtr, const bool isLinkOrg);
@@ -78,6 +80,7 @@ private:
     QFrame *textShowFrame { nullptr };
     DTK_WIDGET_NAMESPACE::DIconButton *editButton { nullptr };
     QList<QWidget *> extendedControl {};
+    QMap<QWidget *, ViewExtensionUpdateFunc> extensionUpdaters {};
     QUrl currentFileUrl {};
     int extendedHeight { 0 };
     DTK_WIDGET_NAMESPACE::DPlatformWindowHandle *platformWindowHandle { nullptr };

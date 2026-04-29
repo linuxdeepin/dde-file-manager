@@ -29,6 +29,9 @@ void PropertyEventReceiver::bindEvents()
     dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPPROPERTYDIALOG_NAMESPACE), "slot_ViewExtension_Register",
                             this, &PropertyEventReceiver::handleViewExtensionRegister);
 
+    dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPPROPERTYDIALOG_NAMESPACE), "slot_ViewExtensionWithUpdate_Register",
+                            this, &PropertyEventReceiver::handleViewExtensionRegisterWithUpdate);
+
     dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPPROPERTYDIALOG_NAMESPACE), "slot_CustomView_Register",
                             this, &PropertyEventReceiver::handleCustomViewRegister);
 
@@ -61,6 +64,13 @@ void PropertyEventReceiver::handleShowPropertyDialog(const QList<QUrl> &urls, co
 bool PropertyEventReceiver::handleViewExtensionRegister(CustomViewExtensionView view, const QString &name, int index)
 {
     return PropertyDialogManager::instance().registerExtensionView(view, name, index);
+}
+
+bool PropertyEventReceiver::handleViewExtensionRegisterWithUpdate(CustomViewExtensionView creator,
+                                                                  ViewExtensionUpdateFunc updater,
+                                                                  const QString &name, int index)
+{
+    return PropertyDialogManager::instance().registerExtensionViewWithUpdate(creator, updater, name, index);
 }
 
 bool PropertyEventReceiver::handleCustomViewRegister(CustomViewExtensionView view, const QString &scheme)

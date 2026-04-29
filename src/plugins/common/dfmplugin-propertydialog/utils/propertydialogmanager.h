@@ -20,7 +20,11 @@ public:
     static PropertyDialogManager &instance();
 
     bool registerExtensionView(CustomViewExtensionView viewCreator, const QString &name, int index = -1);
+    bool registerExtensionViewWithUpdate(CustomViewExtensionView creator,
+                                         ViewExtensionUpdateFunc updater,
+                                         const QString &name, int index = -1);
     QMap<int, QWidget *> createExtensionView(const QUrl &url, const QVariantHash &option = QVariantHash());
+    ViewExtensionUpdateFunc getUpdaterByName(const QString &name) const;
     bool registerCustomView(CustomViewExtensionView view, const QString &scheme);
     QWidget *createCustomView(const QUrl &url);
 

@@ -158,10 +158,19 @@ void PropertyDialogUtil::insertExtendedControlFileProperty(const QUrl &url, int 
     }
 }
 
-/*!
- * \brief           Normal view control extension
- * \param widget    The view to be inserted
- */
+void PropertyDialogUtil::insertExtendedControlFileProperty(const QUrl &url, int index, QWidget *widget, ViewExtensionUpdateFunc updater)
+{
+    if (widget) {
+        FilePropertyDialog *dialog = nullptr;
+        if (filePropertyDialogs.contains(url)) {
+            dialog = filePropertyDialogs.value(url);
+        } else {
+            dialog = new FilePropertyDialog();
+        }
+        dialog->insertExtendedControl(index, widget, updater);
+    }
+}
+
 void PropertyDialogUtil::addExtendedControlFileProperty(const QUrl &url, QWidget *widget)
 {
     if (widget) {
@@ -175,6 +184,19 @@ void PropertyDialogUtil::addExtendedControlFileProperty(const QUrl &url, QWidget
     }
 }
 
+void PropertyDialogUtil::addExtendedControlFileProperty(const QUrl &url, QWidget *widget, ViewExtensionUpdateFunc updater)
+{
+    if (widget) {
+        FilePropertyDialog *dialog = nullptr;
+        if (filePropertyDialogs.contains(url)) {
+            dialog = filePropertyDialogs.value(url);
+        } else {
+            dialog = new FilePropertyDialog();
+        }
+        dialog->addExtendedControl(widget, updater);
+    }
+}
+
 void PropertyDialogUtil::closeFilePropertyDialog(const QUrl &url)
 {
     if (filePropertyDialogs.contains(url)) {
@@ -183,6 +205,14 @@ void PropertyDialogUtil::closeFilePropertyDialog(const QUrl &url)
 
     if (filePropertyDialogs.isEmpty())
         closeAllDialog->close();
+}
+
+void PropertyDialogUtil::renameFilePropertyDialog(const QUrl &oldUrl, const QUrl &newUrl)
+{
+    if (filePropertyDialogs.contains(oldUrl)) {
+        FilePropertyDialog *dialog = filePropertyDialogs.take(oldUrl);
+        filePropertyDialogs.insert(newUrl, dialog);
+    }
 }
 
 void PropertyDialogUtil::closeCustomPropertyDialog(const QUrl &url)
@@ -211,14 +241,26 @@ void PropertyDialogUtil::closeAllPropertyDialog()
 
 void PropertyDialogUtil::createControlView(const QUrl &url, const QVariantHash &option)
 {
-    QMap<int, QWidget *> controlView = createView(url, option);
+    Q_UNUSED(option)
+    QMap<int, QWidget *> controlView = createView(url, {});
     int count = controlView.keys().count();
     for (int i = 0; i < count; ++i) {
-        QWidget *view = controlView.value(controlView.keys()[i]);
-        if (controlView.keys()[i] == -1) {
-            addExtendedControlFileProperty(url, view);
+        int index = controlView.keys()[i];
+        QWidget *view = controlView.value(index);
+        if (!view)
+            continue;
+
+        auto updater = view->property(kOption_Key_UpdaterCallback).value<ViewExtensionUpdateFunc>();
+        if (updater) {
+            if (index == -1)
+                addExtendedControlFileProperty(url, view, updater);
+            else
+                insertExtendedControlFileProperty(url, index, view, updater);
         } else {
-            insertExtendedControlFileProperty(url, controlView.keys()[i], view);
+            if (index == -1)
+                addExtendedControlFileProperty(url, view);
+            else
+                insertExtendedControlFileProperty(url, index, view);
         }
     }
 }

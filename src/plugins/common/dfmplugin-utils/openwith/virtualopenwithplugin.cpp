@@ -4,11 +4,14 @@
 
 #include "virtualopenwithplugin.h"
 #include "openwith/openwithhelper.h"
+#include "openwith/openwithwidget.h"
 
 using namespace dfmplugin_utils;
 
 using CustomViewExtensionView = std::function<QWidget *(const QUrl &url)>;
+using ViewExtensionUpdateFunc = std::function<void(QWidget *widget, const QUrl &url)>;
 Q_DECLARE_METATYPE(CustomViewExtensionView)
+Q_DECLARE_METATYPE(ViewExtensionUpdateFunc)
 
 void VirtualOpenWithPlugin::initialize()
 {
@@ -37,6 +40,12 @@ bool VirtualOpenWithPlugin::start()
 
 void VirtualOpenWithPlugin::regViewToPropertyDialog()
 {
-    CustomViewExtensionView func { OpenWithHelper::createOpenWithWidget };
-    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_ViewExtension_Register", func, "Virtual", 2);
+    CustomViewExtensionView create { OpenWithHelper::createOpenWithWidget };
+    ViewExtensionUpdateFunc update { [](QWidget *widget, const QUrl &url) {
+        auto *openWidget = qobject_cast<OpenWithWidget *>(widget);
+        if (!openWidget)
+            return;
+        openWidget->selectFileUrl(url);
+    } };
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_ViewExtensionWithUpdate_Register", create, update, QString("Virtual"), 2);
 }

@@ -21,6 +21,7 @@ class PropertyDialog : public dpf::Plugin
     // slot events
     DPF_EVENT_REG_SLOT(slot_PropertyDialog_Show)
     DPF_EVENT_REG_SLOT(slot_ViewExtension_Register)
+    DPF_EVENT_REG_SLOT(slot_ViewExtensionWithUpdate_Register)
     DPF_EVENT_REG_SLOT(slot_CustomView_Register)
     DPF_EVENT_REG_SLOT(slot_BasicViewExtension_Register)
     DPF_EVENT_REG_SLOT(slot_BasicFiledFilter_Add)

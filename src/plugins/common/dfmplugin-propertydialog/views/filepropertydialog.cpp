@@ -289,10 +289,23 @@ void FilePropertyDialog::insertExtendedControl(int index, QWidget *widget)
     connect(hanceedWidget, &DEnhancedWidget::heightChanged, this, &FilePropertyDialog::processHeight);
 }
 
+void FilePropertyDialog::insertExtendedControl(int index, QWidget *widget, ViewExtensionUpdateFunc updater)
+{
+    insertExtendedControl(index, widget);
+    if (updater)
+        extensionUpdaters.insert(widget, updater);
+}
+
 void FilePropertyDialog::addExtendedControl(QWidget *widget)
 {
     QVBoxLayout *vlayout = qobject_cast<QVBoxLayout *>(scrollArea->widget()->layout());
     insertExtendedControl(vlayout->count() - 1, widget);
+}
+
+void FilePropertyDialog::addExtendedControl(QWidget *widget, ViewExtensionUpdateFunc updater)
+{
+    QVBoxLayout *vlayout = qobject_cast<QVBoxLayout *>(scrollArea->widget()->layout());
+    insertExtendedControl(vlayout->count() - 1, widget, updater);
 }
 
 void FilePropertyDialog::closeDialog()
@@ -300,10 +313,29 @@ void FilePropertyDialog::closeDialog()
     emit closed(currentFileUrl);
 }
 
-void FilePropertyDialog::onSelectUrlRenamed(const QUrl &url)
+void FilePropertyDialog::onSelectUrlRenamed(const QUrl &newUrl)
 {
-    close();
-    PropertyDialogUtil::instance()->showPropertyDialog({ url }, QVariantHash());
+    QUrl oldUrl = currentFileUrl;
+    currentFileUrl = newUrl;
+    currentInfo = InfoFactory::create<FileInfo>(newUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
+
+    if (fileIcon && !currentInfo.isNull())
+        setFileIcon(fileIcon, currentInfo);
+
+    if (basicWidget)
+        basicWidget->updateFileUrl(newUrl);
+
+    if (permissionManagerWidget)
+        permissionManagerWidget->updateFileUrl(newUrl);
+
+    for (auto it = extensionUpdaters.begin(); it != extensionUpdaters.end(); ++it) {
+        if (it.value())
+            it.value()(it.key(), newUrl);
+    }
+
+    PropertyDialogUtil::instance()->renameFilePropertyDialog(oldUrl, newUrl);
+
+    processHeight(contentHeight());
 }
 
 void FilePropertyDialog::onFileInfoUpdated(const QUrl &url, const QString &infoPtr, const bool isLinkOrg)

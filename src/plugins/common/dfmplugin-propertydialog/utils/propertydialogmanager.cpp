@@ -33,11 +33,6 @@ bool PropertyDialogManager::registerExtensionView(CustomViewExtensionView viewCr
         //        return false;
     }
 
-    // 1. Different models have different `viewCreator`, `name` and `index`;
-    // 2. Here give basic widget a initial expand state : true;
-    // 3. The initial expand state of added view is false;
-    // 4. When the external model(plugin) call the `slot_PropertyDialog_Show`, it can transfers a option value to
-    // adjust the field value of initOption, for example, to set a function pointer ViewIntiCallback to update the UI.
     ViewIntiCallback viewInitiCb { nullptr };
     QVariantHash initOption = {
         { kOption_Key_Name, name },
@@ -48,9 +43,28 @@ bool PropertyDialogManager::registerExtensionView(CustomViewExtensionView viewCr
         { kOption_Key_DisableCustomDialog, false },
         { kOption_Key_ViewInitCalback, QVariant::fromValue(viewInitiCb) }
     };
-    // Store a initial option, it would be updated in `kOption_Key_ViewInitCalback` if needed.
     creatorOptions.insert(index, initOption);
     return true;
+}
+
+bool PropertyDialogManager::registerExtensionViewWithUpdate(CustomViewExtensionView creator,
+                                                             ViewExtensionUpdateFunc updater,
+                                                             const QString &name, int index)
+{
+    if (!registerExtensionView(creator, name, index))
+        return false;
+
+    // Store the updater callback in the registered option hash
+    auto keys = creatorOptions.keys();
+    for (int idx : keys) {
+        for (auto it = creatorOptions.find(idx); it != creatorOptions.end() && it.key() == idx; ++it) {
+            if (it.value().value(kOption_Key_Name).toString() == name) {
+                it.value().insert(kOption_Key_UpdaterCallback, QVariant::fromValue(updater));
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 QMap<int, QWidget *> PropertyDialogManager::createExtensionView(const QUrl &url, const QVariantHash &option)
@@ -82,6 +96,11 @@ QMap<int, QWidget *> PropertyDialogManager::createExtensionView(const QUrl &url,
             if (g != nullptr) {
                 if (viewInitCallback)
                     viewInitCallback(g, showViewOption);
+
+                // Propagate updater callback as a dynamic property on the widget
+                auto updater = DPF_NAMESPACE::paramGenerator<ViewExtensionUpdateFunc>(showViewOption.value(kOption_Key_UpdaterCallback));
+                if (updater)
+                    g->setProperty(kOption_Key_UpdaterCallback, QVariant::fromValue(updater));
 
                 temp.insert(index, g);
             }
@@ -199,4 +218,13 @@ QVariantHash PropertyDialogManager::getCreatorOptionByName(const QString &name) 
     }
 
     return QVariantHash();
+}
+
+ViewExtensionUpdateFunc PropertyDialogManager::getUpdaterByName(const QString &name) const
+{
+    auto opt = getCreatorOptionByName(name);
+    if (opt.isEmpty())
+        return {};
+
+    return DPF_NAMESPACE::paramGenerator<ViewExtensionUpdateFunc>(opt.value(kOption_Key_UpdaterCallback));
 }

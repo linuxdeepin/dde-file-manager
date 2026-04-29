@@ -23,6 +23,9 @@ public:
 
     void handleShowPropertyDialog(const QList<QUrl> &urls, const QVariantHash &option);
     bool handleViewExtensionRegister(CustomViewExtensionView view, const QString &name, int index);
+    bool handleViewExtensionRegisterWithUpdate(CustomViewExtensionView creator,
+                                               ViewExtensionUpdateFunc updater,
+                                               const QString &name, int index);
     bool handleCustomViewRegister(CustomViewExtensionView view, const QString &scheme);
     bool handleBasicViewExtensionRegister(BasicViewFieldFunc func, const QString &scheme);
     bool handleBasicFiledFilterAdd(const QString &scheme, const QStringList &enums);
