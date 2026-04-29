@@ -23,9 +23,9 @@ public:
     virtual QRect availableGeometry() const override;
     virtual QRect handleGeometry() const override;
     QScreen *screen() const;
+    bool checkAvailableGeometry(const QRect &ava, const QRect &scr) const override;
 
 private:
-    bool checkAvailableGeometry(const QRect &ava, const QRect &scr) const;
     QScreen *qscreen = nullptr;
 };
 
