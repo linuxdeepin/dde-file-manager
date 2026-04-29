@@ -286,6 +286,14 @@ void ScreenProxyQt::processEvent()
         }
     }
 
+    // 移除未通过校验的事件
+    for (auto it = events.begin(); it != events.end();) {
+        if (!validateEvent(it.key()))
+            it = events.erase(it);
+        else
+            ++it;
+    }
+
     // 事件优先级。由上往下，背景和画布模块在处理上层的事件已经处理过下层事件的涉及的改变，因此直接忽略
     if (events.contains(AbstractScreenProxy::kMode)) {
         emit displayModeChanged();
@@ -296,6 +304,22 @@ void ScreenProxyQt::processEvent()
     } else if (events.contains(AbstractScreenProxy::kAvailableGeometry)) {
         emit screenAvailableGeometryChanged();
     }
+}
+
+bool ScreenProxyQt::validateEvent(Event event) const
+{
+    if (event != AbstractScreenProxy::kAvailableGeometry)
+        return true;
+
+    for (ScreenPointer sp : logicScreens()) {
+        if (!sp->checkAvailableGeometry(sp->availableGeometry(), sp->geometry())) {
+            fmWarning() << "Invalid available geometry on screen:" << sp->name()
+                        << "available:" << sp->availableGeometry()
+                        << "screen:" << sp->geometry() << ", discarding event";
+            return false;
+        }
+    }
+    return true;
 }
 
 bool ScreenProxyQt::checkUsedScreens()

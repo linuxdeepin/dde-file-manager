@@ -39,6 +39,7 @@ public:
 
 protected:
     virtual void processEvent() = 0;
+    virtual bool validateEvent(Event event) const;
 
 protected:
     void appendEvent(Event);

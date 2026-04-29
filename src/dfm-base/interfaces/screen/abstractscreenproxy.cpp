@@ -44,4 +44,9 @@ void AbstractScreenProxy::appendEvent(AbstractScreenProxy::Event e)
     eventShot->start(100);
 }
 
+bool AbstractScreenProxy::validateEvent(AbstractScreenProxy::Event) const
+{
+    return true;
+}
+
 }

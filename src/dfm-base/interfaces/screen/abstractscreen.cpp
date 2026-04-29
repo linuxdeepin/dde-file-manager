@@ -8,11 +8,6 @@ namespace dfmbase {
 
 AbstractScreen::AbstractScreen(QObject *parent) : QObject(parent)
 {
-
 }
 
 }
-
-
-
-

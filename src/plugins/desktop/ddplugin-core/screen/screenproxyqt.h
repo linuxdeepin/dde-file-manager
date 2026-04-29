@@ -36,6 +36,7 @@ private slots:
 
 protected:
     void processEvent() override;
+    bool validateEvent(Event event) const override;
     bool checkUsedScreens();
 
 private:
