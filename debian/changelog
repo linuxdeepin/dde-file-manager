@@ -1,3 +1,24 @@
+dde-file-manager (6.5.134) unstable; urgency=medium
+
+  * fix: handle file paths correctly in terminal open operation
+  * refactor: optimize file sorting performance with FileViewSorter
+  * refactor: remove deprecated SortUtils module
+  * refactor: optimize MIME type sorting performance
+  * refactor: optimize file path sorting in file view
+  * chore: update gitignore to exclude .codex
+  * fix: adjust focus handling in search edit widget
+  * fix: improve breadcrumbs for mounted devices
+  * fix: correct alias display in computer view rename
+  * fix: cross-process sidebar update issue
+  * feat: enhance SMB network discovery reliability
+  * fix: validate screen available geometry
+  * fix: handle special characters in file dialog URL selection
+  * fix: ensure FileInfo consistency with InfoCacheController
+  * Fix(titlebar): resolve highlight artifact in completer under high DPI scaling
+  * Fix: [filedialog] The dir graying in smb.
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Wed, 29 Apr 2026 18:09:42 +0800
+
 dde-file-manager (6.5.133) unstable; urgency=medium
 
   * feat: add content index upgrade unit
