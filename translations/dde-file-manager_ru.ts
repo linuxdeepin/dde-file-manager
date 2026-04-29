@@ -402,13 +402,13 @@ Enter user and password for %1</source>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="857"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="458"/>
         <source>%1 item</source>
-        <translation>%1 элемент</translation>
+        <translation>%1 объект</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="858"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="459"/>
         <source>%1 items</source>
-        <translation>%1 элементов</translation>
+        <translation>%1 объектов</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="1338"/>
@@ -1188,7 +1188,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="36"/>
         <source>Are you sure you want to erase all data on the disc?</source>
-        <translation>Вы уверены, что хотите стереть все данные на диске?</translation>
+        <translation>Уверены, что хотите стереть все данные на диске?</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="39"/>
@@ -1926,7 +1926,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="719"/>
         <source>Decrypt &quot;%1&quot; partition?</source>
-        <translation>Расшифровать раздел &quot;%1&quot;?</translation>
+        <translation>Расшифровать раздел «%1»?</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="720"/>
@@ -3020,7 +3020,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="330"/>
         <source>To access the device, you must format the disk first. Are you sure you want to format it now?</source>
-        <translation>Для доступа к устройству необходимо сначала отформатировать диск. Вы уверены, что хотите отформатировать его сейчас?</translation>
+        <translation>Для доступа к устройству необходимо сначала отформатировать диск. Уверены, что хотите отформатировать его сейчас?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="344"/>
@@ -3106,12 +3106,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="443"/>
         <source>Are you sure you want to empty %1 item?</source>
-        <translation>Вы уверены, что хотите очистить %1 элемент?</translation>
+        <translation>Уверены, что хотите очистить %1 объект?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="444"/>
         <source>Are you sure you want to empty %1 items?</source>
-        <translation>Вы уверены, что хотите очистить %1 элементов?</translation>
+        <translation>Уверены, что хотите очистить %1 объектов?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="453"/>
@@ -3969,7 +3969,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="244"/>
         <source>Cannot move &quot;%1&quot; to the Trash. Delete it immediately?</source>
-        <translation>Невозможно переместить &quot;%1&quot; в корзину. Удалить немедленно?</translation>
+        <translation>Невозможно переместить «%1» в корзину. Удалить немедленно?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="245"/>
@@ -4360,12 +4360,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/computer.cpp" line="186"/>
         <source>Hide built-in disks on the Computer page</source>
-        <translation>Скрыть встроенные диски на странице &quot;Компьютер&quot;</translation>
+        <translation>Скрыть встроенные диски на странице «Компьютер»</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/computer.cpp" line="189"/>
         <source>Hide loop partitions on the Computer page</source>
-        <translation>Скрыть loop-разделы на странице &quot;Компьютер&quot;</translation>
+        <translation>Скрыть loop-разделы на странице «Компьютер»</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/computer.cpp" line="191"/>
@@ -5823,7 +5823,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="50"/>
         <source>Once the files are copied, you can unplug the external drive without needing to &quot;Safely Remove&quot; it.</source>
-        <translation>После копирования файлов вы можете отключить внешний диск без необходимости &quot;безопасного извлечения&quot;.</translation>
+        <translation>После копирования файлов вы можете отключить внешний диск без необходимости «безопасного извлечения».</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="61"/>
@@ -5833,7 +5833,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="68"/>
         <source>File copy data is not synchronized in real-time. After the copy is complete, you must use &quot;Safe Removal&quot; to disconnect the external storage device. Otherwise, file corruption or data loss may occur.</source>
-        <translation>Данные при копировании файлов не синхронизируются в реальном времени. После завершения копирования необходимо использовать &quot;Безопасное извлечение&quot; для отключения внешнего устройства хранения. В противном случае возможно повреждение файлов или потеря данных.</translation>
+        <translation>Данные при копировании файлов не синхронизируются в реальном времени. После завершения копирования необходимо использовать «Безопасное извлечение» для отключения внешнего устройства хранения. В противном случае возможно повреждение файлов или потеря данных.</translation>
     </message>
 </context>
 <context>
@@ -6797,7 +6797,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/menu/tagmenuscene.cpp" line="206"/>
         <source>Add tag &quot;%1&quot;</source>
-        <translation>Добавить метку &quot;%1&quot;</translation>
+        <translation>Добавить метку «%1»</translation>
     </message>
 </context>
 <context>
