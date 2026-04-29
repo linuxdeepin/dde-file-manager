@@ -573,7 +573,7 @@ Enter user and password for %1</source>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="29"/>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="267"/>
         <source>Tag</source>
-        <translation>Тег</translation>
+        <translation>Метка</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="30"/>
@@ -581,7 +581,7 @@ Enter user and password for %1</source>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="30"/>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/taghelper.cpp" line="240"/>
         <source>Added tags</source>
-        <translation>Добавленные теги</translation>
+        <translation>Добавленные метки</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="32"/>
@@ -5353,7 +5353,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="621"/>
         <source>Please click &quot;Continue Partition Encryption&quot; in the right-click menu to complete the partition encryption.</source>
-        <translation>Пожалуйста, нажмите &quot;Продолжить шифрование раздела&quot; в контекстном меню, чтобы завершить шифрование раздела.</translation>
+        <translation>Пожалуйста, нажмите «Продолжить шифрование раздела» в контекстном меню, чтобы завершить шифрование раздела.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="495"/>
@@ -5363,12 +5363,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="333"/>
         <source>The &quot;%1&quot; partition is under encrypting...</source>
-        <translation>Раздел &quot;%1&quot; шифруется...</translation>
+        <translation>Раздел «%1» шифруется…</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="354"/>
         <source>The &quot;%1&quot; partition is under decrypting...</source>
-        <translation>Раздел &quot;%1&quot; расшифровывается...</translation>
+        <translation>Раздел «%1» расшифровывается…</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="514"/>
@@ -6694,7 +6694,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="417"/>
         <source>Tag</source>
-        <translation>Тег</translation>
+        <translation>Метка</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="418"/>
@@ -6763,7 +6763,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/tag.cpp" line="54"/>
         <source>Tag</source>
-        <translation>Тег</translation>
+        <translation>Метка</translation>
     </message>
 </context>
 <context>
@@ -6779,7 +6779,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/widgets/tageditor.cpp" line="97"/>
         <source>Input tag info, such as work, family. A comma is used between two tags.</source>
-        <translation>Введите информацию о теге, например, работа, семья. Для разделения тегов используется запятая.</translation>
+        <translation>Введите информацию о метке, например, работа, семья. Для разделения меток используется запятая.</translation>
     </message>
 </context>
 <context>
@@ -6787,17 +6787,17 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/menu/tagmenuscene.cpp" line="63"/>
         <source>Tag information</source>
-        <translation>Информация о теге</translation>
+        <translation>Информация о метке</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/menu/tagmenuscene.cpp" line="204"/>
         <source>Remove tag &quot;%1&quot;</source>
-        <translation>Удалить тег &quot;%1&quot;</translation>
+        <translation>Удалить метку «%1»</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/menu/tagmenuscene.cpp" line="206"/>
         <source>Add tag &quot;%1&quot;</source>
-        <translation>Добавить тег &quot;%1&quot;</translation>
+        <translation>Добавить метку &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
@@ -6805,7 +6805,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/widgets/private/tagwidget_p.cpp" line="40"/>
         <source>Tag</source>
-        <translation>Тег</translation>
+        <translation>Метка</translation>
     </message>
 </context>
 <context>
@@ -7263,17 +7263,17 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="43"/>
         <source>Sending files to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot;</source>
-        <translation>Отправка файлов на &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot;</translation>
+        <translation>Отправка файлов на «&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;»</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="44"/>
         <source>Failed to send files to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot;</source>
-        <translation>Не удалось отправить файлы на &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot;</translation>
+        <translation>Не удалось отправить файлы на «&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;»</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="45"/>
         <source>Sent to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot; successfully</source>
-        <translation>Успешно отправлено на &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot;</translation>
+        <translation>Успешно отправлено на «&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;»</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="46"/>
@@ -8153,7 +8153,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="56"/>
         <source>Click &apos;Encrypt&apos; and input the user password.</source>
-        <translation>Нажмите &quot;Зашифровать&quot; и введите пароль пользователя.</translation>
+        <translation>Нажмите «Зашифровать» и введите пароль пользователя.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="69"/>
