@@ -18,6 +18,8 @@
 #include <dfm-base/utils/systempathutil.h>
 #include <dfm-base/utils/finallyutil.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/networkutils.h>
+#include <dfm-base/utils/protocolutils.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
@@ -187,10 +189,12 @@ QList<CrumbData> TitleBarHelper::crumbSeprateUrl(const QUrl &url)
         const QUrl &oneUrl = *iter;
         if (!prefixPath.startsWith(oneUrl.toLocalFile())) {
             QString displayText = oneUrl.fileName();
+            const bool networkBusy = ProtocolUtils::isRemoteFile(oneUrl)
+                && NetworkUtils::instance()->checkFtpOrSmbBusy(oneUrl);
             // Check for possible display text.
             auto infoPointer = InfoFactory::create<DFMBASE_NAMESPACE::FileInfo>(oneUrl,
                                                                                 Global::CreateFileInfoType::kCreateFileInfoSync);
-            if (infoPointer) {
+            if (!networkBusy && infoPointer) {
                 const QString &displayName = infoPointer->displayOf(DisPlayInfoType::kFileDisplayName);
                 if (!displayName.isEmpty())
                     displayText = displayName;
