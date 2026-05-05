@@ -83,7 +83,7 @@
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="227"/>
         <source>unmount</source>
-        <translation>Desmontar</translation>
+        <translation>desmontado</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="228"/>
@@ -99,7 +99,7 @@
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="231"/>
         <source>Device (%1) is busy, cannot %2 now.</source>
-        <translation>O dispositivo (%1) está em uso e não pode ser %2 no momento.</translation>
+        <translation>O dispositivo (%1) está em uso; não é possível %2 neste momento.</translation>
     </message>
 </context>
 <context>
