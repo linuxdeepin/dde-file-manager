@@ -34,6 +34,7 @@ public:
 
 private slots:
     void onBackgroundBuild();
+    void onWindowShowed();
     void onDetachWindows();
     void onGeometryChanged();
     void onBackgroundChanged();

@@ -22,6 +22,7 @@ public:
     explicit WindowFramePrivate(WindowFrame *parent);
     void updateProperty(BaseWindowPointer win, DFMBASE_NAMESPACE::ScreenPointer screen, bool primary);
     BaseWindowPointer createWindow(DFMBASE_NAMESPACE::ScreenPointer sp);
+    void recreateNativeWindow(BaseWindowPointer win, DFMBASE_NAMESPACE::ScreenPointer screen);
 
     void traceWindow(QWindow *win) const;
 
@@ -32,6 +33,9 @@ protected slots:
     void heightChanged(int arg) const;
 public:
     QMap<QString, BaseWindowPointer> windows;
+    QStringList screenOrder;
+    QMap<QString, QRect> screenGeometries;
+    bool recreateNativeWindows { false };
     QReadWriteLock locker;
 
 private:

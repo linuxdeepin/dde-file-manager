@@ -500,7 +500,10 @@ void FrameManager::onBuild()
 
 void FrameManager::onWindowShowed()
 {
-    // todo hide the canvas if needed.
+    for (const SurfacePointer &sur : d->surfaceWidgets.values()) {
+        sur->show();
+        sur->update();
+    }
 }
 
 void FrameManager::onDetachWindows()
