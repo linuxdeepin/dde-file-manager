@@ -843,7 +843,7 @@ void DeviceManager::doAutoMount(const QString &id, DeviceType type, int timeout)
             return;
 
         qCInfo(logDFMBase) << "Starting auto mount for block device:" << id;
-        mountBlockDevAsync(id, {}, cb, timeout);
+        mountBlockDevAsync(id, { { "auth.no_user_interaction", true } }, cb, timeout);
     }
 }
 
