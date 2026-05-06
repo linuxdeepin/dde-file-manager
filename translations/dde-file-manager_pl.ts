@@ -5879,7 +5879,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="45"/>
         <source>Rena&amp;me</source>
-        <translation>&amp;Zmień nazwę</translation>
+        <translation>Zmi&amp;eń nazwę</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="46"/>
