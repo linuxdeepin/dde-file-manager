@@ -596,7 +596,7 @@ Wprowadź nazwę użytkownika i hasło dla %1</translation>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="34"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/utils/smbbrowserutils.cpp" line="151"/>
         <source>Keep showing the mounted Samba shares</source>
-        <translation>Pokaż zamontowane katalogi współdzielone Samba</translation>
+        <translation>Wyświetlaj zamontowane katalogi współdzielone Samba</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="37"/>
@@ -5780,7 +5780,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations.cpp" line="350"/>
         <source>External storage device usage patterns</source>
-        <translation>Wzorce użytkowania zewnętrznego urządzenia pamięci masowej</translation>
+        <translation>Tryb użytkowania zewnętrznej pamięci masowej</translation>
     </message>
 </context>
 <context>
@@ -5822,7 +5822,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="50"/>
         <source>Once the files are copied, you can unplug the external drive without needing to &quot;Safely Remove&quot; it.</source>
-        <translation>Po skopiowaniu plików, można odłączyć dysk zewnętrzny bez konieczności &quot;Bezpiecznego usunięcia&quot;.</translation>
+        <translation>Po skopiowaniu plików, możesz odłączyć dysk zewnętrzny bez konieczności &quot;Bezpiecznego usunięcia&quot;.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="61"/>
@@ -5832,7 +5832,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="68"/>
         <source>File copy data is not synchronized in real-time. After the copy is complete, you must use &quot;Safe Removal&quot; to disconnect the external storage device. Otherwise, file corruption or data loss may occur.</source>
-        <translation>Dane kopiowania nie są synchronizowane w czasie rzeczywistym. Użyj opcji &quot;Bezpieczne usunięcie&quot;, aby uniknąć utraty danych i bezpiecznie odłączyć zewnętrzny magazyn danych.</translation>
+        <translation>Kopiowane dane nie są synchronizowane w czasie rzeczywistym. Użyj opcji &quot;Bezpieczne usunięcie&quot;, aby uniknąć utraty danych i bezpiecznie odłączyć zewnętrzny magazyn danych.</translation>
     </message>
 </context>
 <context>
