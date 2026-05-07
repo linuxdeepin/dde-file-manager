@@ -433,7 +433,14 @@ int main(int argc, char *argv[])
     bool enableHeadless { DConfigManager::instance()->value(kDefaultCfgPath, "dfm.headless", false).toBool() };
     if (!sigtermReceived && enableHeadless && !SysInfoUtils::isOpenAsAdmin()) {
         qCInfo(logAppFileManager) << "main: Starting headless process for background operation";
-        QProcess::startDetached(QString(argv[0]), { "-d" });
+        QProcess process;
+        process.setProgram("dde-file-manager");
+        process.setArguments({"-d"});
+        process.setUnixProcessParameters(QProcess::UnixProcessFlag::CloseFileDescriptors);
+        process.setStandardOutputFile(QProcess::nullDevice());
+        process.setStandardErrorFile(QProcess::nullDevice());
+        qint64 pid;
+        process.startDetached(&pid);
     }
 
     qCInfo(logAppFileManager) << "main: Application exiting with code:" << ret;
