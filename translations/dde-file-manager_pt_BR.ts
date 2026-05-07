@@ -1177,7 +1177,7 @@ Insira o usuário e a senha para %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="215"/>
         <source>Verify files (checksum)</source>
-        <translation>Verificar arquivos (checksum)</translation>
+        <translation>Verificar integridade dos arquivos</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="219"/>
@@ -4119,17 +4119,17 @@ Você precisa atualizar este cofre para continuar usando-o.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="171"/>
         <source>File verification successful.</source>
-        <translation>A verificação do arquivo foi concluída com sucesso.</translation>
+        <translation>A verificação de integridade do arquivo foi concluída com sucesso.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="178"/>
         <source>File checksum mismatch detected</source>
-        <translation>Foi detectada uma incompatibilidade no checksum do arquivo</translation>
+        <translation>Uma falha de integridade no arquivo foi detectada</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="182"/>
         <source>Data verification failed</source>
-        <translation>A verificação dos dados falhou</translation>
+        <translation>A verificação de integridade dos dados falhou</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="185"/>
@@ -4209,7 +4209,7 @@ Você precisa atualizar este cofre para continuar usando-o.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="257"/>
         <source>File verification failed</source>
-        <translation>A verificação do arquivo falhou</translation>
+        <translation>A verificação de integridade do arquivo falhou</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="260"/>
