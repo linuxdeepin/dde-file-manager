@@ -62,6 +62,9 @@ void BurnOptDialog::setISOImage(const QUrl &image)
 
     volnameEdit->setEnabled(false);
 
+    // checksum verification is not supported for ISO image burn
+    checksumCheckbox->setVisible(false);
+
     // we are seemingly abusing dfm-burn here. However that's actually not the case.
     QScopedPointer<DFMBURN::DOpticalDiscInfo> info { DFMBURN::DOpticalDiscManager::createOpticalInfo(QString("stdio:") + image.toLocalFile()) };
     if (info)
@@ -125,7 +128,7 @@ void BurnOptDialog::initializeUi()
     volnameLabel->setFont(f13);
 
     volnameEdit = new QLineEdit();
-    QRegularExpression regx("[^\\\\/\':\\*\\?\"<>|%&.]+");   //屏蔽特殊字符
+    QRegularExpression regx("[^\\\\/\':\\*\\?\"<>|%&.]+");   // 屏蔽特殊字符
     QValidator *validator = new QRegularExpressionValidator(regx, volnameEdit);
     volnameEdit->setValidator(validator);
     volnameEdit->setMaxLength(kMaxLabelLen);
@@ -208,6 +211,10 @@ void BurnOptDialog::initializeUi()
     checkdiscCheckbox = new QCheckBox(QObject::tr("Verify data"));
     checkdiscCheckbox->setFont(f12);
     wpostburn->layout()->addWidget(checkdiscCheckbox);
+    // 刻录选项-校验文件
+    checksumCheckbox = new QCheckBox(QObject::tr("Verify files (checksum)"));
+    checksumCheckbox->setFont(f12);
+    vLay->addWidget(checksumCheckbox, 0, Qt::AlignTop);
     // 刻录选项-弹出光盘（目前禁用）
     ejectCheckbox = new QCheckBox(QObject::tr("Eject"));
     ejectCheckbox->setFont(f12);
@@ -241,6 +248,8 @@ DFMBURN::BurnOptions BurnOptDialog::currentBurnOptions()
 
     if (checkdiscCheckbox->isChecked())
         opts |= DFMBURN::BurnOption::kVerifyDatas;
+    if (checksumCheckbox->isChecked())
+        opts |= DFMBURN::BurnOption::kChecksum;
     if (ejectCheckbox->isChecked())
         opts |= DFMBURN::BurnOption::kEjectDisc;
     if (!finalizeDiscCheckbox->isChecked())
@@ -296,11 +305,16 @@ void BurnOptDialog::onIndexChanged(int index)
     if (index == 3) {   // 3 is UDF
         checkdiscCheckbox->setChecked(false);
         checkdiscCheckbox->setEnabled(false);
+        checksumCheckbox->setChecked(false);
+        checksumCheckbox->setEnabled(false);
         finalizeDiscCheckbox->setChecked(true);
         writespeedComb->setCurrentIndex(0);
         writespeedComb->setEnabled(false);
     } else {
+        checkdiscCheckbox->setVisible(true);
+        checksumCheckbox->setVisible(true);
         checkdiscCheckbox->setEnabled(true);
+        checksumCheckbox->setEnabled(true);
         finalizeDiscCheckbox->setEnabled(true);
         writespeedComb->setEnabled(true);
     }

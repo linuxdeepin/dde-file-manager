@@ -60,6 +60,7 @@ private:
     QCheckBox *finalizeDiscCheckbox { nullptr };
     QLabel *postburnLabel { nullptr };
     QCheckBox *checkdiscCheckbox { nullptr };
+    QCheckBox *checksumCheckbox { nullptr };
     QCheckBox *ejectCheckbox { nullptr };
 };
 

@@ -6,7 +6,6 @@
 #include "utils/burnhelper.h"
 #include "utils/burnsignalmanager.h"
 #include "utils/burncheckstrategy.h"
-#include "events/burneventcaller.h"
 
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
@@ -21,6 +20,8 @@
 #include <dfm-mount/dblockdevice.h>
 
 #include <QDebug>
+#include <QDir>
+#include <QFile>
 #include <QThread>
 #include <QJsonParseError>
 #include <QJsonObject>
@@ -29,7 +30,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
-#include <errno.h> // Required for errno
+#include <errno.h>   // Required for errno
 
 using namespace dfmplugin_burn;
 DFMBASE_USE_NAMESPACE
@@ -89,6 +90,8 @@ void AbstractBurnJob::updateMessage(JobInfoPointer ptr)
         ptr->insert(AbstractJobHandler::NotifyInfoKey::kSourceMsgKey, msgSource);
         if (curJobType == JobType::kOpticalCheck)
             msgTarget = tr("Verifying data...");
+        else if (curJobType == JobType::kOpticalChecksum)
+            msgTarget = tr("Verifying files...");
         ptr->insert(AbstractJobHandler::NotifyInfoKey::kTargetMsgKey, msgTarget);
         emit jobHandlePtr->currentTaskNotify(ptr);
     }
@@ -126,6 +129,8 @@ void AbstractBurnJob::readFunc(int progressFd, int checkFd)
                     lastProgress = 0;
                     if (curPhase == JobPhase::kCheckData)
                         curJobType = JobType::kOpticalCheck;
+                    else if (curPhase == JobPhase::kChecksumData)
+                        curJobType = JobType::kOpticalChecksum;
                 }
                 QStringList msgList;
                 for (int i = 0; i < jsonArray.size(); i++)
@@ -139,16 +144,14 @@ void AbstractBurnJob::readFunc(int progressFd, int checkFd)
     if (lastStatus != JobStatus::kIdle)
         comfort();
 
-    // check
+    // read verification result from child process
     auto opts { qvariant_cast<DFMBURN::BurnOptions>(curProperty[PropertyType::kBurnOpts]) };
-    auto check { opts.testFlag(BurnOption::kVerifyDatas) };
-    double bad {};
-    if (check && lastStatus != JobStatus::kFailed)
-        read(checkFd, &bad, sizeof(bad));
-    bool checkRet { !(check && (bad > (2 + 1e-6))) };
+    bool hasVerify { opts.testFlag(BurnOption::kVerifyDatas) || opts.testFlag(BurnOption::kChecksum) };
+    VerifyResult result {};
+    if (hasVerify && lastStatus != JobStatus::kFailed)
+        read(checkFd, &result, sizeof(result));
 
-    // show result dialog
-    finishFunc(check, checkRet);
+    finishFunc(result);
 }
 
 void AbstractBurnJob::writeFunc(int progressFd, int checkFd)
@@ -157,20 +160,32 @@ void AbstractBurnJob::writeFunc(int progressFd, int checkFd)
     Q_UNUSED(checkFd)
 }
 
-void AbstractBurnJob::finishFunc(bool verify, bool verifyRet)
+void AbstractBurnJob::finishFunc(const VerifyResult &result)
 {
+    jobSuccess = true;
     if (lastStatus == JobStatus::kFailed) {
         jobSuccess = false;
-        if (verify && verifyRet)
-            emit requestCompletionDialog(tr("Data verification successful."), "dde-file-manager");
-        else
-            emit requestFailureDialog(static_cast<int>(curJobType), lastError, lastSrcMessages);
+        emit requestFailureDialog(static_cast<int>(curJobType), lastError, lastSrcMessages);
+    } else if (result.checksumEnabled && !result.checksumSkipped && result.checksumOk) {
+        // checksum verification passed (takes priority when both enabled)
+        emit requestCompletionDialog(tr("File verification successful."), "dde-file-manager");
+    } else if (result.checksumEnabled && !result.checksumSkipped && !result.checksumOk) {
+        // checksum verification failed
+        QStringList details = lastSrcMessages;
+        if (result.checksumError[0] != '\0')
+            details.prepend(QString::fromUtf8(result.checksumError));
+        emit requestFailureDialog(static_cast<int>(JobType::kOpticalChecksum),
+                                  tr("File checksum mismatch detected"), details);
+    } else if (result.dataVerifyEnabled && !result.dataVerifyOk) {
+        // data verification failed, checksum was skipped
+        emit requestFailureDialog(static_cast<int>(JobType::kOpticalCheck),
+                                  tr("Data verification failed"), lastSrcMessages);
+    } else if (result.dataVerifyEnabled) {
+        // only data verify enabled and passed
+        emit requestCompletionDialog(tr("Data verification successful."), "dde-file-manager");
     } else {
-        jobSuccess = true;
-        if (verify)
-            emit requestCompletionDialog(tr("Data verification successful."), "dde-file-manager");
-        else
-            emit requestCompletionDialog(tr("Burn process completed"), "dde-file-manager");
+        // no verify
+        emit requestCompletionDialog(tr("Burn process completed"), "dde-file-manager");
     }
 
     emit burnFinished(firstJobType, jobSuccess);
@@ -260,7 +275,7 @@ void AbstractBurnJob::workingInSubProcess()
 
         // Properly wait for the specific child process to prevent zombie process
         int status;
-        pid_t result = waitpid(pid, &status, 0);  // Block until child exits
+        pid_t result = waitpid(pid, &status, 0);   // Block until child exits
         if (result == pid) {
             if (WIFEXITED(status)) {
                 fmDebug() << "Child process exited normally with code:" << WEXITSTATUS(status);
@@ -451,16 +466,65 @@ void BurnISOFilesJob::writeFunc(int progressFd, int checkFd)
     auto manager = createManager(progressFd);
     manager->setStageFile(localPath);
     curPhase = kWriteData;
+
+    // generate checksum manifest before burning (hash staging files)
+    bool doChecksum { opts.testFlag(BurnOption::kChecksum) };
+    QString manifestPath;
+    if (doChecksum) {
+        manifestPath = QDir::tempPath() + QString("/discburn_checksum_%1.json").arg(curDev.split('/').last());
+        fmInfo() << "Generating checksum manifest:" << manifestPath;
+        if (!manager->generateChecksumManifest(manifestPath)) {
+            fmWarning() << "Generate checksum manifest failed:" << manager->lastError();
+            doChecksum = false;
+        }
+    }
+
     bool isSuccess { manager->commit(opts, speeds, volName) };
-    fmInfo() << "Burn ret: " << isSuccess << manager->lastError() << localPath;
-    auto check { opts.testFlag(BurnOption::kVerifyDatas) };
-    if (check && isSuccess) {
+    fmInfo() << "Burn ret:" << isSuccess << manager->lastError() << localPath;
+
+    VerifyResult result {};
+
+    // data verification (checkmedia)
+    bool doDataVerify { opts.testFlag(BurnOption::kVerifyDatas) };
+    result.dataVerifyEnabled = doDataVerify;
+    if (doDataVerify && isSuccess) {
         fmInfo() << "Enable check media";
         double gud, slo, bad;
         curPhase = kCheckData;
         manager->checkmedia(&gud, &slo, &bad);
-        write(checkFd, &bad, sizeof(bad));
+        result.dataVerifyOk = !(bad > (2 + 1e-6));
+        fmInfo() << "Check media result, bad:" << bad << "ok:" << result.dataVerifyOk;
     }
+
+    // file checksum verification
+    result.checksumEnabled = doChecksum;
+    if (doChecksum && isSuccess) {
+        // skip checksum if data verify failed
+        if (doDataVerify && !result.dataVerifyOk) {
+            result.checksumSkipped = true;
+            fmInfo() << "Checksum skipped due to data verification failure";
+        } else {
+            fmInfo() << "Verifying checksum:" << manifestPath;
+            curPhase = kChecksumData;
+            result.checksumOk = manager->verifyChecksum(manifestPath);
+            if (!result.checksumOk) {
+                QByteArray errBytes = manager->lastError().toUtf8();
+                qstrncpy(result.checksumError, errBytes.constData(), sizeof(result.checksumError) - 1);
+            }
+            fmInfo() << "Checksum verify result:" << result.checksumOk
+                     << manager->lastError();
+            // clean up temp manifest
+            QFile::remove(manifestPath);
+        }
+    }
+
+    // clean up manifest if we generated it but won't use it
+    if (doChecksum && isSuccess && result.checksumSkipped)
+        QFile::remove(manifestPath);
+
+    if (result.dataVerifyEnabled || result.checksumEnabled)
+        write(checkFd, &result, sizeof(result));
+
     delete manager;
 }
 
@@ -494,14 +558,20 @@ void BurnISOImageJob::writeFunc(int progressFd, int checkFd)
     bool isSuccess { manager->writeISO(imgPath, speeds) };
     fmInfo() << "Burn ISO ret: " << isSuccess << manager->lastError() << imgPath;
 
-    auto check { opts.testFlag(BurnOption::kVerifyDatas) };
-    if (check && isSuccess) {
+    VerifyResult result {};
+    bool doDataVerify { opts.testFlag(BurnOption::kVerifyDatas) };
+    result.dataVerifyEnabled = doDataVerify;
+    if (doDataVerify && isSuccess) {
         fmInfo() << "Enable check media";
         double gud, slo, bad;
         curPhase = kCheckData;
         manager->checkmedia(&gud, &slo, &bad);
-        write(checkFd, &bad, sizeof(bad));
+        result.dataVerifyOk = !(bad > (2 + 1e-6));
     }
+
+    if (result.dataVerifyEnabled || result.checksumEnabled)
+        write(checkFd, &result, sizeof(result));
+
     delete manager;
 }
 
@@ -567,7 +637,7 @@ void BurnUDFFilesJob::work()
     fmInfo() << "End burn UDF files: " << curDev;
 }
 
-void BurnUDFFilesJob::finishFunc(bool verify, bool verifyRet)
+void BurnUDFFilesJob::finishFunc(const VerifyResult &result)
 {
     // 检查错误消息，处理特定的 UDF 刻录错误
     if (lastStatus == JobStatus::kFailed) {
@@ -583,7 +653,7 @@ void BurnUDFFilesJob::finishFunc(bool verify, bool verifyRet)
     }
 
     // 调用父类的 finishFunc 处理通用逻辑
-    AbstractBurnJob::finishFunc(verify, verifyRet);
+    AbstractBurnJob::finishFunc(result);
 }
 
 DumpISOImageJob::DumpISOImageJob(const QString &dev, const JobHandlePointer handler)
@@ -626,10 +696,9 @@ void DumpISOImageJob::writeFunc(int progressFd, int checkFd)
     delete manager;
 }
 
-void DumpISOImageJob::finishFunc(bool verify, bool verifyRet)
+void DumpISOImageJob::finishFunc(const VerifyResult &result)
 {
-    Q_UNUSED(verify)
-    Q_UNUSED(verifyRet)
+    Q_UNUSED(result)
 
     if (lastStatus == JobStatus::kFailed || lastStatus == JobStatus::kIdle) {
         jobSuccess = false;

@@ -253,6 +253,9 @@ void BurnJobManager::showOpticalJobFailureDialog(int type, const QString &err, c
     case AbstractBurnJob::kOpticalCheck:
         failureType = tr("Data verification failed");
         break;
+    case AbstractBurnJob::kOpticalChecksum:
+        failureType = tr("File verification failed");
+        break;
     }
     QString failureStr = QString(tr("%1: %2")).arg(failureType).arg(err);
     d.setTitle(failureStr);

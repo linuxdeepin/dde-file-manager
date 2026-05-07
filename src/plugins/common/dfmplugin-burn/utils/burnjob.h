@@ -14,6 +14,15 @@
 
 namespace dfmplugin_burn {
 
+struct VerifyResult {
+    bool dataVerifyEnabled { false };   // kVerifyDatas was enabled
+    bool dataVerifyOk { true };         // checkmedia passed (bad <= 2%)
+    bool checksumEnabled { false };     // kChecksum was enabled
+    bool checksumOk { true };           // verifyChecksum passed
+    bool checksumSkipped { false };     // true if skipped (e.g. data verify failed)
+    char checksumError[256] { 0 };      // error detail from verifyChecksum
+};
+
 class AbstractBurnJob : public QThread
 {
     Q_OBJECT
@@ -24,6 +33,7 @@ public:
         kOpticalBlank,
         kOpticalImageBurn,
         kOpticalCheck,
+        kOpticalChecksum,
         kOpticalImageDump
     };
 
@@ -38,7 +48,8 @@ public:
     enum JobPhase {
         kReady,
         kWriteData,
-        kCheckData
+        kCheckData,
+        kChecksumData
     };
 
     using ProperyMap = QMap<PropertyType, QVariant>;
@@ -58,7 +69,7 @@ protected:
     virtual void updateSpeed(JobInfoPointer ptr, DFMBURN::JobStatus status, const QString &speed);
     virtual void readFunc(int progressFd, int checkFd);
     virtual void writeFunc(int progressFd, int checkFd);
-    virtual void finishFunc(bool verify, bool verifyRet);
+    virtual void finishFunc(const VerifyResult &result);
     virtual void work() = 0;
 
     void run() override;
@@ -151,7 +162,7 @@ protected:
     virtual bool fileSystemLimitsValid() override;
     virtual void writeFunc(int progressFd, int checkFd) override;
     virtual void work() override;
-    virtual void finishFunc(bool verify, bool verifyRet) override;
+    virtual void finishFunc(const VerifyResult &result) override;
 };
 
 class DumpISOImageJob : public AbstractBurnJob
@@ -170,7 +181,7 @@ protected:
     virtual void updateMessage(JobInfoPointer ptr) override;
     virtual void updateSpeed(JobInfoPointer ptr, DFMBURN::JobStatus status, const QString &speed) override;
     virtual void writeFunc(int progressFd, int checkFd) override;
-    virtual void finishFunc(bool verify, bool verifyRet) override;
+    virtual void finishFunc(const VerifyResult &result) override;
     virtual void work() override;
 };
 }   // namespace dfmplugin_burn
