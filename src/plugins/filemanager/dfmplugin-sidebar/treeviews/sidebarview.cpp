@@ -32,6 +32,7 @@
 #include <QDrag>
 #include <QTextLayout>
 #include <QScrollBar>
+#include <QScroller>
 
 #include <unistd.h>
 
@@ -253,6 +254,11 @@ SideBarView::SideBarView(QWidget *parent)
 
     viewport()->setAttribute(Qt::WA_TranslucentBackground);
     viewport()->setAutoFillBackground(false);
+
+    // Enable touch-based kinetic scrolling for touchscreen devices.
+    // QScroller intercepts touch events before they are synthesized into mouse events,
+    // preventing the InternalMove drag state machine from consuming swipe gestures.
+    QScroller::grabGesture(viewport(), QScroller::TouchGesture);
 
     connect(this, &DTreeView::clicked, d, &SideBarViewPrivate::currentChanged);
     connect(this, &DTreeView::doubleClicked, d, &SideBarViewPrivate::onItemDoubleClicked);
@@ -493,6 +499,18 @@ void SideBarView::startDrag(Qt::DropActions supportedActions)
 {
     if (!d->draggedUrl.isValid())
         return;
+
+    // Prevent spurious drag during touch scrolling: QScroller and InternalMove
+    // both react to the same touch sequence, causing duplicate items on drop.
+    // Only allow dragging if the scroller is completely inactive.
+    if (QScroller::hasScroller(viewport())) {
+        QScroller *scroller = QScroller::scroller(viewport());
+        if (scroller && scroller->state() != QScroller::Inactive) {
+            d->isItemDragged = false;
+            return;
+        }
+    }
+
     d->isItemDragged = true;
     DTreeView::startDrag(supportedActions);
 }
