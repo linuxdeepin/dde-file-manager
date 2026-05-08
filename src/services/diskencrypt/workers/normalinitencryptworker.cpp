@@ -8,6 +8,8 @@
 #include "helpers/blockdevhelper.h"
 #include "helpers/jobfilehelper.h"
 
+#include <QProcess>
+
 FILE_ENCRYPT_USE_NS
 
 NormalInitEncryptWorker::NormalInitEncryptWorker(const QVariantMap &args, QObject *parent)
@@ -49,7 +51,7 @@ void NormalInitEncryptWorker::run()
     qInfo() << "[NormalInitEncryptWorker::run] Normal device encryption initialized successfully, device:" << devPath;
 
     sleep(1);
-    system("udevadm trigger");
+    QProcess::startDetached("udevadm", { "trigger" });
 }
 
 job_file_helper::JobDescArgs NormalInitEncryptWorker::initJobArgs(DevPtr ptr)

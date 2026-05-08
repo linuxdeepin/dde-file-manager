@@ -8,6 +8,7 @@
 #include <QDebug>
 #include <QFile>
 #include <QDir>
+#include <QProcess>
 #include <unistd.h>
 
 // C structures for libutpm2.so
@@ -94,36 +95,35 @@ int TPMWork::isTPMAvailable()
 
 int TPMWork::checkTPMLockout()
 {
-    const char* tempFile = "dde_tpmcontrol_lockout_output.txt";
-    std::string command = "tpm2_getcap properties-variable > ";
-    command += tempFile;
-    int ret = system(command.c_str());
-    if (ret != 0) {
-        remove(tempFile);
-        fmCritical() << "Exec" << command << "failed with return code:" << ret;
+    QProcess proc;
+    proc.start("tpm2_getcap", { "properties-variable" });
+    if (!proc.waitForStarted()) {
+        fmCritical() << "Failed to start tpm2_getcap";
+        return -1;
+    }
+    if (!proc.waitForFinished(30000)) {
+        fmCritical() << "tpm2_getcap timed out after 30s";
+        proc.kill();
+        proc.waitForFinished();
+        return -1;
+    }
+    if (proc.exitCode() != 0) {
+        fmCritical() << "Exec tpm2_getcap properties-variable failed with return code:" << proc.exitCode();
         return -1;
     }
 
-    FILE* fp = fopen(tempFile, "r");
-    if (!fp) {
-        remove(tempFile);
-        fmCritical() << "Open" << tempFile << "failed!";
-        return -1;
-    }
-
-    char line[256];
+    QByteArray output = proc.readAllStandardOutput();
+    QList<QByteArray> lines = output.split('\n');
     int lockoutStatus = -2; // not find "inLockout:"
-    fmDebug() << "Parsing TPM properties from file:" << tempFile;
-    while (fgets(line, sizeof(line), fp)) {
-        if (strstr(line, "inLockout:")) {
-            char* colon = strchr(line, ':');
-            if (colon) {
-                char* value = colon + 1;
-                while (*value && (*value == ' ' || *value == '\t')) {
-                    value++;
-                }
-                int num;
-                if (sscanf(value, "%d", &num) == 1) {
+    fmDebug() << "Parsing TPM properties from tpm2_getcap output";
+    for (const QByteArray &line : lines) {
+        if (line.contains("inLockout:")) {
+            int colonPos = line.indexOf(':');
+            if (colonPos >= 0) {
+                QByteArray value = line.mid(colonPos + 1).trimmed();
+                bool ok = false;
+                int num = value.toInt(&ok);
+                if (ok) {
                     lockoutStatus = num;
                 }
             }
@@ -134,8 +134,6 @@ int TPMWork::checkTPMLockout()
     if (lockoutStatus == -2)
         fmCritical() << "Not find inLockout in TPM properties";
 
-    fclose(fp);
-    remove(tempFile);
     return lockoutStatus;
 }
 

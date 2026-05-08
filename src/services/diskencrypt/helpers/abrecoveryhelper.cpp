@@ -7,6 +7,7 @@
 
 #include <QFile>
 #include <QElapsedTimer>
+#include <QProcess>
 
 FILE_ENCRYPT_USE_NS
 
@@ -65,9 +66,9 @@ void abrecovery_helper::disableRecovery()
     auto fd = inhibit_helper::inhibit(QObject::tr("Updating grub..."));
     qInfo() << "[abrecovery_helper::disableRecovery] System shutdown/sleep inhibited for GRUB update, fd:" << fd.value().fileDescriptor();
     
-    int ret = system("update-grub");
+    int ret = QProcess::execute("update-grub");
     auto elapsed = t.elapsed();
-    
+
     if (ret == 0) {
         qInfo() << "[abrecovery_helper::disableRecovery] GRUB update completed successfully in" << elapsed << "ms";
     } else {
