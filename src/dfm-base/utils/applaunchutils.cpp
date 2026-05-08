@@ -94,7 +94,7 @@ bool AppLaunchUtilsPrivate::launchByDBus(const QString &desktopFile, const QStri
         return false;
     }
 
-    QVariantMap options{{QStringLiteral("_launch_type"), QVariant::fromValue(3)}};
+    QVariantMap options{{QStringLiteral("_launch_type"), QStringLiteral("dde-file-manager")}};
 
     QDBusMessage reply = interface->callWithArgumentList(QDBus::Block,
                                                          "Launch",
