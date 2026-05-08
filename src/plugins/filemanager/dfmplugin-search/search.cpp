@@ -183,7 +183,7 @@ void Search::regSearchSettingConfig()
                                                 { { "key", ocrIndexKey.mid(ocrIndexKey.lastIndexOf(".") + 1) },
                                                   { "text", tr("Image-Content search") },
                                                   { "type", "checkBoxWidthOcrIndex" },
-                                                  { "default", true } });
+                                                  { "default", false } });
 
     SettingBackend::instance()->addSettingAccessor(
             SearchSettings::kOcrTextSearch,
