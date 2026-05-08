@@ -15,12 +15,12 @@
 <context>
     <name>Application</name>
     <message>
-        <location filename="../src/apps/dde-file-manager/main.cpp" line="363"/>
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="342"/>
         <source>File Manager</source>
         <translation>Përgjegjës Kartelash</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager/main.cpp" line="368"/>
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="347"/>
         <source>File Manager is a powerful and easy-to-use file management tool, featured with searching, copying, trash, compression/decompression, file property and other useful functions.</source>
         <translation>Përgjegjësi i Kartelave është një mjet i fuqishëm dhe i kollajtë për t’u përdorur për administrim kartelash, që përmban kërkim, kopjim, shpënie te hedhurinat, ngjeshje/çngjeshje, veti kartelash dhe funksione të tjera të dobishme.</translation>
     </message>
@@ -168,7 +168,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-trashcore/trashfileinfo.cpp" line="238"/>
         <location filename="../src/plugins/filemanager/dfmplugin-core/utils/corehelper.cpp" line="43"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/crumbinterface.cpp" line="70"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/crumbinterface.cpp" line="69"/>
         <source>Trash</source>
         <translation>Hedhurina</translation>
     </message>
@@ -594,7 +594,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="34"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="34"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="34"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/utils/smbbrowserutils.cpp" line="151"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/utils/smbbrowserutils.cpp" line="211"/>
         <source>Keep showing the mounted Samba shares</source>
         <translation>Vazhdo të shfaqësh ndarje Samba të montuara</translation>
     </message>
@@ -928,7 +928,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="39"/>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="49"/>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="107"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="110"/>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="56"/>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="38"/>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="64"/>
@@ -1141,40 +1141,45 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
         <translation>Të tjera</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="108"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="111"/>
         <source>Burn</source>
         <comment>button</comment>
         <translation>Shkruaje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="119"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="122"/>
         <source>Disc name:</source>
         <translation>Emër disku:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="188"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="191"/>
         <source>Write speed:</source>
         <translation>Shpejtësi shkrimi:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="191"/>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="193"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="194"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="196"/>
         <source>Maximum</source>
         <translation>Maksimum</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="198"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="201"/>
         <source>Finalize disc after burning 
 (no additional data can be appended)</source>
         <translation>Finalizo diskun pas shkrimit (s’mund të shtohen të dhëna të tjera)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="208"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="211"/>
         <source>Verify data</source>
         <translation>Verifikoni të dhëna</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="212"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="215"/>
+        <source>Verify files (checksum)</source>
+        <translation>Verifikoni kartela (checksum)</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="219"/>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="32"/>
         <source>Eject</source>
         <translation>Nxirre</translation>
@@ -1253,8 +1258,8 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
         <translation>Gabim i panjohur</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="302"/>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="347"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="305"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="350"/>
         <source>Close</source>
         <comment>button</comment>
         <translation>Mbylle</translation>
@@ -1473,32 +1478,32 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
         <translation>Shteg burimi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="96"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="98"/>
         <source>New window</source>
         <translation>Dritare e re</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="100"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="102"/>
         <source>New tab</source>
         <translation>Skedë e re</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="106"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="108"/>
         <source>Connect to Server</source>
         <translation>Lidhu me Shërbyesin</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="110"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="112"/>
         <source>Set share password</source>
         <translation>Caktoni fjalëkalim ndarjeje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="115"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="117"/>
         <source>Change disk password</source>
         <translation>Ndryshoni fjalëkalim disku</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="120"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="122"/>
         <source>Settings</source>
         <translation>Rregullime</translation>
     </message>
@@ -1821,7 +1826,7 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Kartela është e zënë</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="403"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="418"/>
         <source>Device disconnected</source>
         <translation>Pajisja u shkëput</translation>
     </message>
@@ -4057,18 +4062,18 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_bookmark::BookMarkManager</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="342"/>
+        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="346"/>
         <source>Sorry, unable to locate your quick access directory, remove it?</source>
         <translation>Na ndjeni, s’arrihet të lokalizohet drejtoria juaj për përdorim të shpejtë, mos e keni hequr?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="344"/>
+        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="348"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Anuloje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="345"/>
+        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="349"/>
         <source>Remove</source>
         <comment>button</comment>
         <translation>Hiqe</translation>
@@ -4090,38 +4095,57 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_burn::AbstractBurnJob</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="87"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="88"/>
         <source>Burning disc %1, please wait...</source>
         <translation>Po shkruhet disku %1, ju lutemi, pritni…</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="88"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="89"/>
         <source>Writing data...</source>
         <translation>Po shkruhen të dhëna…</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="91"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="92"/>
         <source>Verifying data...</source>
         <translation>Po verifikohen të dhëna…</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="165"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="94"/>
+        <source>Verifying files...</source>
+        <translation>Po verifikohen kartela…</translation>
+    </message>
+    <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="171"/>
+        <source>File verification successful.</source>
+        <translation>Verifikim i suksesshëm kartele.</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="178"/>
+        <source>File checksum mismatch detected</source>
+        <translation>U pikas mospërputhje checksum-ësh kartele</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="182"/>
+        <source>Data verification failed</source>
+        <translation>Dështoi verifikimi i të dhënave</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="185"/>
         <source>Data verification successful.</source>
         <translation>Verifikim i suksesshëm të dhënash.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="173"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="188"/>
         <source>Burn process completed</source>
         <translation>Procesi i shkrimit u plotësua</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="216"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="231"/>
         <source>The device was not safely unmounted</source>
         <translation>Pajisja s’u çmontua në mënyrë të parrezik</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="216"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="231"/>
         <source>Disk is busy, cannot unmount now</source>
         <translation>Disku është i zënë, s’mund të çmontohet tani</translation>
     </message>
@@ -4142,7 +4166,7 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_burn::BurnISOFilesJob</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="435"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="450"/>
         <source>The file name or the path is too long. Please shorten the file name or the path and try again.</source>
         <translation>Emri i kartelës, ose shtegu për te ajo është shumë i gjatë. Ju lutemi, shkurtojeni emrin ose shtegun dhe riprovoni.</translation>
     </message>
@@ -4182,49 +4206,54 @@ You need to upgrade this vault to continue using it.</source>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="257"/>
+        <source>File verification failed</source>
+        <translation>Dështoi verifikimi i kartelës</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="260"/>
         <source>%1: %2</source>
         <translation>%1: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="273"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="276"/>
         <source>Show details</source>
         <translation>Shfaq hollësi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="277"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="280"/>
         <source>Hide details</source>
         <translation>Fshihi hollësitë</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="278"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="281"/>
         <source>Error</source>
         <translation>Gabim</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="287"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="290"/>
         <source>Show details</source>
         <comment>button</comment>
         <translation>Shfaq hollësi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="288"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="291"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Ripohojeni</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="303"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="306"/>
         <source>View Image File</source>
         <comment>button</comment>
         <translation>Shihni Kartelën Pamje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="322"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="325"/>
         <source>Image successfully created</source>
         <translation>Pamja u krijua me sukses</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="357"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="360"/>
         <source>Image creation failed</source>
         <translation>Krijimi i pamjes dështoi</translation>
     </message>
@@ -4232,42 +4261,42 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_burn::BurnOptDialog</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="141"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="144"/>
         <source>Advanced settings</source>
         <translation>Rregullime të mëtejshme</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="165"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="168"/>
         <source>File system: </source>
         <translation>Sistem kartelash: </translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="168"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="171"/>
         <source>ISO9660 Only</source>
         <translation>Vetëm ISO9660</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="169"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="172"/>
         <source>ISO9660/Joliet (For Windows)</source>
         <translation>ISO9660/Joliet (Për Windows)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="170"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="173"/>
         <source>ISO9660/Rock Ridge (For Unix)</source>
         <translation>ISO9660/Rock Ridge (Për Unix)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="180"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="183"/>
         <source>%1 (Compatible with Windows CD/DVD mode)</source>
         <translation>%1 (E përputhshme me mënyrën CD/DVD Windows)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="314"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="328"/>
         <source>Device error</source>
         <translation>Gabim pajisjeje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="314"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="328"/>
         <source>Optical device %1 doesn&apos;t exist</source>
         <translation>Pajisja optike %1 s’ekziston</translation>
     </message>
@@ -4275,17 +4304,17 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_burn::BurnUDFFilesJob</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="532"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="602"/>
         <source>The file name or the path is too long. Please shorten the file name or the path and try again.</source>
         <translation>Emri i kartelës, ose shtegu për te ajo është shumë i gjatë. Ju lutemi, shkurtojeni emrin ose shtegun dhe riprovoni.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="576"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="646"/>
         <source>Not enough free space on the disc</source>
         <translation>Hapësirë e lirë e pamjaftueshme te disku</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="577"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="647"/>
         <source>The remaining space on the current disc is insufficient to hold the files to be burned. Please reduce the number of files and try again.</source>
         <translation>Hapësira e mbetur në diskun e tanishëm është e pamjaftueshme për të mbajtur kartelat që duhen shkruar. Ju lutemi, reduktoni numrin e kartelave dhe riprovoni.</translation>
     </message>
@@ -4293,12 +4322,12 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_burn::DumpISOImageJob</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="601"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="671"/>
         <source>Creating an ISO image</source>
         <translation>Krijim i një pamjeje ISO</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="602"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="672"/>
         <source>to %1</source>
         <translation>te %1</translation>
     </message>
@@ -4330,7 +4359,7 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_burn::EraseJob</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="374"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="389"/>
         <source>Erasing disc %1, please wait...</source>
         <translation>Po fshihet disku %1, ju lutemi, pritni…</translation>
     </message>
@@ -4384,12 +4413,12 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_computer::ComputerController</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="344"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="345"/>
         <source>Unlock device failed</source>
         <translation>Shkyçja e pajisjes dështoi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="341"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="342"/>
         <source>Wrong password</source>
         <translation>Fjalëkalim i gabuar</translation>
     </message>
@@ -4404,27 +4433,27 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Pajisja është e zënë dhe s’mund të riemërtohet tani</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="338"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="339"/>
         <source>Authorization dismissed</source>
         <translation>Autorizimi u hodh tej</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="582"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="583"/>
         <source>Format failed</source>
         <translation>Formatimi dështoi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="582"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="583"/>
         <source>The device is busy and cannot be formatted now</source>
         <translation>Pajisja është e zënë dhe s’mund të formatohet tani</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="741"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="742"/>
         <source>Mount error</source>
         <translation>Gabim montimi disku</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="741"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="742"/>
         <source>Cannot access %1</source>
         <translation>S’hyhet dot në %1</translation>
     </message>
@@ -4432,27 +4461,27 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_computer::ComputerEventReceiver</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="47"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="87"/>
         <source>Computer</source>
         <translation>Kompjuter</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="292"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="312"/>
         <source>%1 is read-only. Do you want to enable read and write permissions for it?</source>
         <translation>%1 është vetëm për lexim. Doni të aktivizohen leje shkrimi dhe leximi për të?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="293"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="313"/>
         <source>Once enabled, read/write permission will be granted permanently</source>
         <translation>Pasi të aktivizohen, lejet për lexim/shkrim do të akordohen për gjithnjë</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="295"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="315"/>
         <source>Cancel</source>
         <translation>Anuloje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="296"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="316"/>
         <source>Enable Now</source>
         <translation>Aktivizoji Tani</translation>
     </message>
@@ -4516,7 +4545,7 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_computer::ProtocolEntryFileEntity</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="208"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="248"/>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/fileentity/protocolentryfileentity.cpp" line="50"/>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/fileentity/protocolentryfileentity.cpp" line="52"/>
         <source>%1 on %2</source>
@@ -6146,12 +6175,12 @@ You need to upgrade this vault to continue using it.</source>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="302"/>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="398"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="408"/>
         <source>%1 item</source>
         <translation>%1 objekt</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="398"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="408"/>
         <source>%1 items</source>
         <translation>%1 objekte</translation>
     </message>
@@ -6366,127 +6395,127 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_search::AdvanceSearchBarPrivate</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="58"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="59"/>
         <source>Search:</source>
         <translation>Kërko:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="59"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="60"/>
         <source>File Type:</source>
         <translation>Lloj Kartele:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="60"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="61"/>
         <source>File Size:</source>
         <translation>Madhësi Kartele:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="61"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="62"/>
         <source>Time Modified:</source>
         <translation>Kohë Kur u Ndryshua:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="62"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="63"/>
         <source>Time Accessed:</source>
         <translation>Kohë Kur u Hap:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="63"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="64"/>
         <source>Time Created:</source>
         <translation>Kohë Kur u Krijua:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="65"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="66"/>
         <source>Reset</source>
         <translation>Ktheje te parazgjedhjet</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="86"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="87"/>
         <source>All subdirectories</source>
         <translation>Krejt nëndrejtoritë</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="87"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="88"/>
         <source>Current directory</source>
         <translation>Drejtoria e tanishme</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="93"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="94"/>
         <source>Application</source>
         <translation>Aplikacion</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="94"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="95"/>
         <source>Video</source>
         <translation>Video</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="95"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="96"/>
         <source>Audio</source>
         <translation>Audio</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="96"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="97"/>
         <source>Image</source>
         <translation>Figurë</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="97"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="98"/>
         <source>Archive</source>
         <translation>Arkiv</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="98"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="99"/>
         <source>Text</source>
         <translation>Tekst</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="99"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="100"/>
         <source>Executable</source>
         <translation>E ekzekutueshme</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="100"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="101"/>
         <source>Backup file</source>
         <translation>Kartelë kopjeruajtje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="112"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="113"/>
         <source>Today</source>
         <translation>Sot</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="113"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="114"/>
         <source>Yesterday</source>
         <translation>Dje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="114"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="115"/>
         <source>This week</source>
         <translation>Këtë javë</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="115"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="116"/>
         <source>Last week</source>
         <translation>Javën e fundit</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="116"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="117"/>
         <source>This month</source>
         <translation>Këtë muaj</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="117"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="118"/>
         <source>Last month</source>
         <translation>Muajin e fundit</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="118"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="119"/>
         <source>This year</source>
         <translation>Këtë vit</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="119"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="120"/>
         <source>Last year</source>
         <translation>Vitin e shkuar</translation>
     </message>
