@@ -62,76 +62,59 @@ QRect ScreenQt::availableGeometry() const
         return ret;
     }
 
-    DockRect dockrectI = DockInfoIns->frontendWindowRect();   // 原始dock大小
-    const QRect dockrect = GlobalPrivate::dealRectRatio(dockrectI.operator QRect());   // 缩放处理
+    DockRect dockrectI = DockInfoIns->frontendWindowRect();
 
     const qreal ratio = qApp->primaryScreen()->devicePixelRatio();
     const QRect hRect = handleGeometry();
-    const QRect hRectScaled = GlobalPrivate::dealRectRatio(hRect);   // 将物理坐标转换为逻辑坐标
 
-    if (!hRect.contains(dockrectI) && !ret.contains(dockrect)) {
-        QRect orgDockRect(dockrectI);
+    if (!hRect.contains(dockrectI)) {
         fmDebug() << "Dock not contained in screen geometry, using full screen - screen:" << name()
-                  << "handleGeometry:" << hRect << "originalDockRect:" << orgDockRect
-                  << "scaledDockRect:" << dockrect << "ratio:" << ratio;
+                  << "handleGeometry:" << hRect << "dockRect:" << QRect(dockrectI)
+                  << "ratio:" << ratio;
         return ret;
     }
 
     const int dockPos = DockInfoIns->position();
     fmDebug() << "Adjusting available geometry for dock position:" << dockPos << "on screen:" << name();
 
+    // 使用dock物理尺寸直接计算，避免dock坐标(屏幕本地坐标系)与屏幕geometry(虚拟桌面坐标系)
+    // 在不同坐标系下的位置错位问题。ret=geometry()已经是正确的屏幕区域，只需减去dock尺寸。
     switch (dockPos) {
-    case 0:   // 上
-    {
-        // 计算dock底部相对于屏幕顶部的偏移（逻辑坐标）
-        int yOffset = dockrect.bottom() - hRectScaled.top();
-        ret.setY(ret.y() + yOffset);
+    case 0: {   // 上
+        int dockH = static_cast<int>(dockrectI.height / ratio);
+        ret.adjust(0, dockH, 0, 0);
         fmDebug() << "Dock on top, adjusted available geometry:" << ret;
         break;
     }
-    case 1:   // 右
-    {
-        // 计算dock左侧相对于屏幕左侧的距离（逻辑坐标）
-        int w = dockrect.left() - hRectScaled.left();
-        if (w >= 0) {
-            ret.setWidth(w);
-        } else {
-            fmCritical() << "Invalid width calculation for right dock:" << w
-                         << "dockLeft:" << dockrect.left() << "screenLeft:" << hRectScaled.left();
-        }
+    case 1: {   // 右
+        int dockW = static_cast<int>(dockrectI.width / ratio);
+        ret.adjust(0, 0, -dockW, 0);
         fmDebug() << "Dock on right, adjusted available geometry:" << ret;
-    } break;
-    case 2:   // 下
-    {
-        // 计算dock顶部相对于屏幕顶部的距离（逻辑坐标）
-        int h = dockrect.top() - hRectScaled.top();
-        if (h >= 0) {
-            ret.setHeight(h);
-        } else {
-            fmCritical() << "Invalid height calculation for bottom dock:" << h
-                         << "dockTop:" << dockrect.top() << "screenTop:" << hRectScaled.top();
-        }
+        break;
+    }
+    case 2: {   // 下
+        int dockH = static_cast<int>(dockrectI.height / ratio);
+        ret.adjust(0, 0, 0, -dockH);
         fmDebug() << "Dock on bottom, adjusted available geometry:" << ret;
         break;
     }
-    case 3:   // 左
-    {
-        // 计算dock右侧相对于屏幕左侧的偏移（逻辑坐标）
-        int xOffset = dockrect.right() - hRectScaled.left();
-        ret.setX(ret.x() + xOffset);
+    case 3: {   // 左
+        int dockW = static_cast<int>(dockrectI.width / ratio);
+        ret.adjust(dockW, 0, 0, 0);
         fmDebug() << "Dock on left, adjusted available geometry:" << ret;
         break;
     }
     default:
         fmCritical() << "Invalid dock position:" << dockPos
-                     << "handleGeometry:" << hRect << "dockRect:" << dockrectI;
+                     << "handleGeometry:" << hRect << "dockRect:" << QRect(dockrectI);
         break;
     }
 
     if (!checkAvailableGeometry(ret, geometry())) {
         fmCritical() << "Available geometry validation failed - calculated:" << ret
-                     << "dockPosition:" << dockPos << "dockRect:" << dockrect
+                     << "dockPosition:" << dockPos << "dockRect:" << QRect(dockrectI)
                      << "screenGeometry:" << geometry() << "handleGeometry:" << hRect;
+        ret = geometry();   // 校验失败时回退到全屏几何，不减dock
     } else {
         fmDebug() << "Available geometry calculated successfully:" << ret << "for screen:" << name();
     }
