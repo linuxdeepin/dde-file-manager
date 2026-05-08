@@ -1,3 +1,19 @@
+dde-file-manager (6.5.135) unstable; urgency=medium
+
+  * fix: handle network disconnection during search and remote file operations
+  * refactor: consolidate signal handling logic
+  * feat: add checksum verification for disc burning
+  * chore: update translations
+  * feat: add touch gesture support for sidebar scrolling
+  * fix: improve dock area calculation accuracy
+  * refactor: replace system calls with QProcess for security
+  * feat: add property dialog update mechanism for file rename
+  * fix: prevent auth dialog when auto-mounting hot-plugged devices
+  * refactor: improve headless process startup implementation
+  * feat: pass launch_type when launching apps via DBus
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Fri, 08 May 2026 13:46:49 +0800
+
 dde-file-manager (6.5.134) unstable; urgency=medium
 
   * fix: handle file paths correctly in terminal open operation

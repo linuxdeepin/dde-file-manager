@@ -101,7 +101,7 @@ int TPMWork::checkTPMLockout()
         fmCritical() << "Failed to start tpm2_getcap";
         return -1;
     }
-    if (!proc.waitForFinished(30000)) {
+    if (!proc.waitForFinished()) {
         fmCritical() << "tpm2_getcap timed out after 30s";
         proc.kill();
         proc.waitForFinished();
@@ -114,7 +114,7 @@ int TPMWork::checkTPMLockout()
 
     QByteArray output = proc.readAllStandardOutput();
     QList<QByteArray> lines = output.split('\n');
-    int lockoutStatus = -2; // not find "inLockout:"
+    int lockoutStatus = -2;   // not find "inLockout:"
     fmDebug() << "Parsing TPM properties from tpm2_getcap output";
     for (const QByteArray &line : lines) {
         if (line.contains("inLockout:")) {
@@ -158,7 +158,7 @@ int TPMWork::getRandom(int size, QString *output)
     }
 
     // Dynamically allocate buffer matching the requested size
-    QByteArray buffer(size + 1, 0);  // +1 for null terminator
+    QByteArray buffer(size + 1, 0);   // +1 for null terminator
     int ret = func(size, buffer.data());
     if (ret == 0) {
         *output = QString::fromLatin1(buffer.constData());
