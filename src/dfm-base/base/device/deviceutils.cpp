@@ -610,6 +610,9 @@ qint64 DeviceUtils::deviceBytesFree(const QUrl &url)
     if (url.scheme() != Global::Scheme::kFile)
         return DFMIO::DFMUtils::deviceBytesFree(url);
 
+    if (ProtocolUtils::isRemoteFile(url))
+        return DFMIO::DFMUtils::deviceBytesFree(url);
+
     auto devicePath = bindPathTransform(url.path(), true);
     auto map = DevProxyMng->queryDeviceInfoByPath(devicePath, true);
 
