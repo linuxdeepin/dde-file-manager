@@ -4,14 +4,11 @@
 
 #include "systemservicemanager.h"
 
-#include <dfm-base/utils/sysinfoutils.h>
-
 #include <QDBusInterface>
 #include <QDBusReply>
 #include <QDBusConnection>
 #include <QDBusMessage>
 #include <QDBusObjectPath>
-#include <QProcess>
 #include <QDebug>
 
 using namespace dfmbase;
@@ -118,43 +115,32 @@ bool SystemServiceManager::enableServiceNow(const QString &serviceName)
         return false;
     }
 
-    QString program;
-    QStringList arguments;
-    if (SysInfoUtils::isRootUser()) {
-        program = "systemctl";
-        arguments << "enable"
-                  << "--now" << serviceName;
-    } else {
-        program = "pkexec";
-        arguments << "systemctl"
-                  << "enable"
-                  << "--now" << serviceName;
+    // 通过 systemd D-Bus 接口 EnableUnitFiles 启用服务开机自启
+    // 使用 setInteractiveAuthorizationAllowed(true) 让 polkit 弹出认证对话框，
+    // 走 D-Bus + polkit 鉴权路径，避免 pkexec 白名单限制
+    QDBusMessage msg = QDBusMessage::createMethodCall(
+            kSystemdService,
+            kSystemdManagerPath,
+            kSystemdManagerInterface,
+            "EnableUnitFiles");
+    msg.setInteractiveAuthorizationAllowed(true);
+
+    // EnableUnitFiles(in as unitNames, in b runtime, in b reload)
+    // runtime=false: 持久化到磁盘; reload=true: 自动 ReloadDaemon
+    msg << QStringList{ serviceName } << false << true;
+
+    QDBusMessage reply = QDBusConnection::systemBus().call(msg, QDBus::Block);
+
+    if (reply.type() == QDBusMessage::ErrorMessage) {
+        qCWarning(logDFMBase) << "SystemServiceManager: EnableUnitFiles failed for" << serviceName
+                              << "Error:" << reply.errorMessage();
+        return false;
     }
 
-    qCInfo(logDFMBase) << "SystemServiceManager: Executing:" << program << arguments.join(" ");
+    qCInfo(logDFMBase) << "SystemServiceManager: Successfully enabled service" << serviceName;
 
-    // 使用 QProcess::execute() 进行同步阻塞调用
-    // 这会等待命令执行完成，并返回退出码
-    int exitCode = QProcess::execute(program, arguments);
-
-    // 分析执行结果
-    bool success = (exitCode == 0);
-
-    if (success) {
-        qCInfo(logDFMBase) << "SystemServiceManager: Successfully enabled service" << serviceName;
-    } else {
-        // pkexec 的退出码有特殊含义：
-        // 127: 命令未找到
-        // 126: 用户取消了认证对话框
-        // 其他非零值: 执行错误
-        qCWarning(logDFMBase) << "SystemServiceManager: Failed to enable service" << serviceName
-                              << "pkexec exited with code" << exitCode;
-        if (exitCode == 126) {
-            qCWarning(logDFMBase) << "SystemServiceManager: User cancelled the authentication dialog.";
-        }
-    }
-
-    return success;
+    // 启动服务（复用已有的 D-Bus StartUnit 实现）
+    return startService(serviceName);
 }
 
 QString SystemServiceManager::unitPathFromName(const QString &serviceName)
