@@ -1,3 +1,14 @@
+dde-file-manager (6.5.136) unstable; urgency=medium
+
+  * fix: eliminate TOCTOU race condition in RootInfo::updateChild
+  * fix: disable OCR search by default
+  * fix: handle stuck job widget during cancellation
+  * fix: switch from pkexec to D-Bus for service enabling
+  * fix: change _launch_type value to dde-file-manager
+  * fix: resolve device info query for nested mounts and remote files
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Sat, 09 May 2026 16:59:06 +0800
+
 dde-file-manager (6.5.135) unstable; urgency=medium
 
   * fix: handle network disconnection during search and remote file operations
