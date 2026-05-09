@@ -93,6 +93,10 @@ void AbstractJob::operateAation(AbstractJobHandler::SupportActions actions)
         if (actions.testFlag(AbstractJobHandler::SupportAction::kStopAction) || actions.testFlag(AbstractJobHandler::SupportAction::kCancelAction)) {
             fmInfo() << "Stopping/cancelling operation, clearing error queue";
             errorQueue.clear();
+            // Immediately remove the task widget so the dialog can close,
+            // even if the worker thread is blocked in I/O and cannot check stop state.
+            // The thread stays alive and will exit on its own when I/O eventually returns.
+            Q_EMIT doWorker->removeTaskWidget();
             return doWorker->stopAllThread();
         }
 
