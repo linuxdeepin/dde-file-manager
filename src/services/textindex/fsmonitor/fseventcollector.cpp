@@ -474,6 +474,8 @@ void FSEventCollectorPrivate::handleFileMoved(const QString &fromPath, const QSt
 
 void FSEventCollectorPrivate::handleDirectoryCreated(const QString &path, const QString &name)
 {
+    QString fullPath = normalizePath(path, name);
+    deletedDirectoriesMarker.remove(fullPath);
     handleFileCreated(path, name);
 }
 
