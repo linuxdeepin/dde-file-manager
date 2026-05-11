@@ -203,7 +203,7 @@ Dtk::Ocr::DOcr *sharedOcrEngine()
 bool isNoiseLine(const QString &line)
 {
     bool hasVisibleChar = false;
-    bool hasLetterOrNumber = false;
+    bool hasMeaningfulChar = false;
     bool allVisibleCharsAreSymbols = true;
     int visibleCharCount = 0;
 
@@ -215,7 +215,14 @@ bool isNoiseLine(const QString &line)
         ++visibleCharCount;
 
         if (ch.isLetterOrNumber()) {
-            hasLetterOrNumber = true;
+            hasMeaningfulChar = true;
+            allVisibleCharsAreSymbols = false;
+            break;
+        }
+
+        // CJK characters are meaningful even without isLetterOrNumber() check
+        if (ch.script() == QChar::Script_Han) {
+            hasMeaningfulChar = true;
             allVisibleCharsAreSymbols = false;
             break;
         }
@@ -224,7 +231,12 @@ bool isNoiseLine(const QString &line)
             allVisibleCharsAreSymbols = false;
     }
 
-    if (!hasVisibleChar || hasLetterOrNumber)
+    // No visible content at all → noise
+    if (!hasVisibleChar)
+        return true;
+
+    // Has at least one letter, digit, or CJK character → not noise
+    if (hasMeaningfulChar)
         return false;
 
     // Filter common OCR noise like "□", "_" or a short run of punctuation.
@@ -233,8 +245,11 @@ bool isNoiseLine(const QString &line)
 
 QString cleanRecognizedText(const QString &text)
 {
+    // Normalize Unicode first to ensure consistent comparison
+    const QString normalized = text.normalized(QString::NormalizationForm_C);
+
     QStringList cleanedLines;
-    const QStringList lines = text.split('\n');
+    const QStringList lines = normalized.split('\n');
 
     for (const QString &line : lines) {
         const QString trimmed = line.trimmed();
@@ -242,6 +257,10 @@ QString cleanRecognizedText(const QString &text)
             continue;
 
         if (isNoiseLine(trimmed))
+            continue;
+
+        // Skip consecutive duplicate lines (common OCR artifact from watermarks/repeated patterns)
+        if (!cleanedLines.isEmpty() && cleanedLines.last() == trimmed)
             continue;
 
         cleanedLines.append(trimmed);
