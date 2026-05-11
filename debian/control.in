@@ -113,6 +113,7 @@ Architecture: any
 Depends:
  ${shlibs:Depends},
  ${misc:Depends},
+ kimageformat6-plugins,
  libpoppler-cpp0v5 (>= 0.48.0),
  gvfs-backends (>=1.27.3),
  cryptsetup,
