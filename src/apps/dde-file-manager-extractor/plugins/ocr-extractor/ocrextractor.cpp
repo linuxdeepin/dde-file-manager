@@ -103,6 +103,29 @@ bool isWithinSizeLimit(const QString &filePath)
     return true;
 }
 
+struct OcrImageScaleConfig
+{
+    int maxWidth;
+    int maxHeight;
+};
+
+OcrImageScaleConfig cachedScaleConfig()
+{
+    static const OcrImageScaleConfig config = [] {
+        ensureTextIndexConfigLoaded();
+        const int w = DConfigManager::instance()->value(QString::fromLatin1(kTextIndexSchema),
+                                                        QString::fromLatin1(kOcrImageScaleWidth),
+                                                        kDefaultImageMaxWidth)
+                              .toInt();
+        const int h = DConfigManager::instance()->value(QString::fromLatin1(kTextIndexSchema),
+                                                        QString::fromLatin1(kOcrImageScaleHeight),
+                                                        kDefaultImageMaxHeight)
+                              .toInt();
+        return OcrImageScaleConfig { w, h };
+    }();
+    return config;
+}
+
 QImage scaledImageForOcr(const QString &filePath)
 {
     QImage image(filePath);
@@ -111,26 +134,15 @@ QImage scaledImageForOcr(const QString &filePath)
         return {};
     }
 
-    ensureTextIndexConfigLoaded();
+    const auto [maxWidth, maxHeight] = cachedScaleConfig();
 
-    const int maxWidth = DConfigManager::instance()->value(QString::fromLatin1(kTextIndexSchema),
-                                                           QString::fromLatin1(kOcrImageScaleWidth),
-                                                           kDefaultImageMaxWidth)
-                                 .toInt();
-    const int maxHeight = DConfigManager::instance()->value(QString::fromLatin1(kTextIndexSchema),
-                                                            QString::fromLatin1(kOcrImageScaleHeight),
-                                                            kDefaultImageMaxHeight)
-                                  .toInt();
-
+    // Fix: use Qt::KeepAspectRatio to ensure result fits within maxWidth x maxHeight bounding box.
+    // The old scaledToWidth/scaledToHeight branch could overflow the non-primary dimension
+    // (e.g. a 2000x1500 image scaled to 1280 width produced 960 height, exceeding maxHeight=720).
     if (maxWidth > 0 && maxHeight > 0) {
-        const int width = image.width();
-        const int height = image.height();
-
-        if (width >= height) {
-            if (width > maxWidth)
-                image = image.scaledToWidth(maxWidth, Qt::SmoothTransformation);
-        } else if (height > maxHeight) {
-            image = image.scaledToHeight(maxHeight, Qt::SmoothTransformation);
+        if (image.width() > maxWidth || image.height() > maxHeight) {
+            image = image.scaled(maxWidth, maxHeight,
+                                 Qt::KeepAspectRatio, Qt::SmoothTransformation);
         }
     }
 
@@ -220,8 +232,12 @@ bool isNoiseLine(const QString &line)
             break;
         }
 
-        // CJK characters are meaningful even without isLetterOrNumber() check
-        if (ch.script() == QChar::Script_Han) {
+        // CJK scripts: Han (Chinese), Hiragana/Katakana (Japanese), Hangul (Korean)
+        const auto script = ch.script();
+        if (script == QChar::Script_Han
+            || script == QChar::Script_Hiragana
+            || script == QChar::Script_Katakana
+            || script == QChar::Script_Hangul) {
             hasMeaningfulChar = true;
             allVisibleCharsAreSymbols = false;
             break;
