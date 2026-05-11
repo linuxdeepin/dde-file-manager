@@ -1381,10 +1381,9 @@ bool FileSortWorker::addChild(const SortInfoPointer &sortInfo,
     childList.insert(sortInfo->fileUrl(), sortInfo);
     children.insert(parentUrl, childList);
     {
-        auto info = InfoFactory::create<FileInfo>(sortInfo->fileUrl());
-        if (info)
-            info->updateAttributes();
-        createAndInsertItemData(depth, sortInfo, info);
+        // 不在此处创建 FileInfo 和触发 updateAttributes()
+        // FileInfo 的创建和缩略图生成延迟到视图 paint 时按需触发（FileItemData 懒加载路径）
+        createAndInsertItemData(depth, sortInfo, nullptr);
     }
 
     depthMap.remove(depth - 1, parentUrl);
