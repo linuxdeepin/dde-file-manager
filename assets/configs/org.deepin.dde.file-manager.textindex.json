@@ -130,6 +130,28 @@
 			"permissions": "readwrite",
 			"visibility": "public"
 		},
+		"ocrImageScaleWidth": {
+				"value": 1280,
+				"serial": 0,
+				"flags": [],
+				"name": "OCR image scale width",
+				"name[zh_CN]": "OCR 图片缩放宽度",
+				"description[zh_CN]": "OCR 处理前图片等比缩放的最大宽度（像素）。超过此宽度的图片将按比例缩小。设置为 0 表示不限制宽度。",
+				"description": "Maximum width in pixels for OCR image scaling. Images wider than this will be scaled down proportionally. Set to 0 to disable width scaling.",
+				"permissions": "readwrite",
+				"visibility": "public"
+			},
+		"ocrImageScaleHeight": {
+			"value": 720,
+			"serial": 0,
+			"flags": [],
+			"name": "OCR image scale height",
+			"name[zh_CN]": "OCR 图片缩放高度",
+			"description[zh_CN]": "OCR 处理前图片等比缩放的最大高度（像素）。超过此高度的图片将按比例缩小。设置为 0 表示不限制高度。",
+			"description": "Maximum height in pixels for OCR image scaling. Images taller than this will be scaled down proportionally. Set to 0 to disable height scaling.",
+			"permissions": "readwrite",
+			"visibility": "public"
+		},
 		"supportedOcrImageExtensions": {
 			"value": [
 				"jpe",

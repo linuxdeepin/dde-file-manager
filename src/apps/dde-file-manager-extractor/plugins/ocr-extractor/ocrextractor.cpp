@@ -23,8 +23,10 @@ constexpr char kSupportedOcrImageExtensions[] = "supportedOcrImageExtensions";
 constexpr char kMaxOcrImageSizeMB[] = "maxOcrImageSizeMB";
 constexpr int kDefaultMaxOcrImageSizeMB = 30;
 constexpr int kMaxAllowedOcrImageSizeMB = 1024;
-constexpr int kImageMaxWidth = 640;
-constexpr int kImageMaxHeight = 480;
+constexpr char kOcrImageScaleWidth[] = "ocrImageScaleWidth";
+constexpr char kOcrImageScaleHeight[] = "ocrImageScaleHeight";
+constexpr int kDefaultImageMaxWidth = 1280;
+constexpr int kDefaultImageMaxHeight = 720;
 constexpr char kPreferredOcrPlugin[] = "PPOCR_V5";
 
 QStringList defaultSupportedImageExtensions()
@@ -109,14 +111,27 @@ QImage scaledImageForOcr(const QString &filePath)
         return {};
     }
 
-    const int width = image.width();
-    const int height = image.height();
+    ensureTextIndexConfigLoaded();
 
-    if (width >= height) {
-        if (width > kImageMaxWidth)
-            image = image.scaledToWidth(kImageMaxWidth, Qt::SmoothTransformation);
-    } else if (height > kImageMaxHeight) {
-        image = image.scaledToHeight(kImageMaxHeight, Qt::SmoothTransformation);
+    const int maxWidth = DConfigManager::instance()->value(QString::fromLatin1(kTextIndexSchema),
+                                                           QString::fromLatin1(kOcrImageScaleWidth),
+                                                           kDefaultImageMaxWidth)
+                                 .toInt();
+    const int maxHeight = DConfigManager::instance()->value(QString::fromLatin1(kTextIndexSchema),
+                                                            QString::fromLatin1(kOcrImageScaleHeight),
+                                                            kDefaultImageMaxHeight)
+                                  .toInt();
+
+    if (maxWidth > 0 && maxHeight > 0) {
+        const int width = image.width();
+        const int height = image.height();
+
+        if (width >= height) {
+            if (width > maxWidth)
+                image = image.scaledToWidth(maxWidth, Qt::SmoothTransformation);
+        } else if (height > maxHeight) {
+            image = image.scaledToHeight(maxHeight, Qt::SmoothTransformation);
+        }
     }
 
     return image;
