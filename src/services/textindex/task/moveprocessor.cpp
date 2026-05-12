@@ -112,6 +112,7 @@ bool FileMoveProcessor::processFileMove(const QString &fromPath, const QString &
         // Update document in index
         TermPtr oldTerm = newLucene<Term>(pathField(m_context->profile()), fromPath.toStdWString());
         m_writer->updateDocument(oldTerm, newDoc);
+        m_hasChanges = true;
 
         // Update processed paths cache
         m_processedPaths.remove(fromPath);   // Remove old path
@@ -186,6 +187,7 @@ bool FileMoveProcessor::processContentUpdate(const QString &filePath)
         // Update the document in index
         TermPtr pathTerm = newLucene<Term>(pathField(m_context->profile()), filePath.toStdWString());
         m_writer->updateDocument(pathTerm, newDoc);
+        m_hasChanges = true;
 
         fmInfo() << "[FileMoveProcessor::processContentUpdate] Successfully updated file content in index:" << filePath;
         return true;
@@ -332,6 +334,7 @@ bool DirectoryMoveProcessor::updateSingleDocumentPath(const DocumentPtr &doc,
         // Update document in index
         TermPtr oldTerm = newLucene<Term>(pathField(m_context->profile()), oldPathValue);
         m_writer->updateDocument(oldTerm, newDoc);
+        m_hasChanges = true;
 
         fmDebug() << "[DirectoryMoveProcessor::updateSingleDocumentPath] Successfully updated document path:"
                   << oldPath << "->" << newPath;

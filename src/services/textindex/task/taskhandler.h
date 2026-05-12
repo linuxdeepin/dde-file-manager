@@ -24,6 +24,7 @@ struct HandlerResult
     bool interrupted { false };
     bool useAnything { false };
     bool fatal { false };
+    bool indexChanged { false };
 };
 
 using TaskHandler = std::function<HandlerResult(const QString &path, TaskState &state)>;

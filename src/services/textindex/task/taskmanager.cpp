@@ -205,6 +205,10 @@ bool TaskManager::startTask(IndexTask::Type type, const QStringList &pathList, b
                 fmInfo() << "[TaskManager::startTask] Using ANYTHING for file discovery, skipping remaining paths";
                 break;
             }
+
+            if (pathResult.indexChanged) {
+                finalResult.indexChanged = true;
+            }
         }
 
         fmInfo() << "[TaskManager::startTask] Task handler execution completed - success:" << finalResult.success
@@ -468,16 +472,20 @@ void TaskManager::onTaskFinished(IndexTask::Type type, HandlerResult result)
 
     if (result.success) {
         if (!result.interrupted || type == IndexTask::Type::Create) {
-            fmDebug() << "[TaskManager::onTaskFinished] Task completed successfully, updating index status";
-            if (m_context && m_context->stateStore()) {
-                // Only full-scan tasks (Create/Update) should update version number
-                // Incremental tasks only update last update time to avoid version mismatch
-                // when recovery from a previous interrupted full-scan task is pending
-                if (isFullScanTask(type)) {
-                    m_context->stateStore()->saveIndexStatus(QDateTime::currentDateTime());
-                } else {
-                    m_context->stateStore()->saveLastUpdateTime(QDateTime::currentDateTime());
+            if (result.indexChanged) {
+                fmDebug() << "[TaskManager::onTaskFinished] Task completed with actual index changes, updating index status";
+                if (m_context && m_context->stateStore()) {
+                    // Only full-scan tasks (Create/Update) should update version number
+                    // Incremental tasks only update last update time to avoid version mismatch
+                    // when recovery from a previous interrupted full-scan task is pending
+                    if (isFullScanTask(type)) {
+                        m_context->stateStore()->saveIndexStatus(QDateTime::currentDateTime());
+                    } else {
+                        m_context->stateStore()->saveLastUpdateTime(QDateTime::currentDateTime());
+                    }
                 }
+            } else {
+                fmDebug() << "[TaskManager::onTaskFinished] Task completed with no index changes, skipping status update";
             }
         }
     }
@@ -492,7 +500,6 @@ void TaskManager::onTaskFinished(IndexTask::Type type, HandlerResult result)
         // Only set Clean state when:
         // 1. Task completed successfully without interruption
         // 2. No recovery is pending (or this is the recovery task completing)
-        // 3. This is a full-scan task (Create/Update), not incremental task
         if (result.success && !result.interrupted) {
             if (isFullScanTask(type)) {
                 // Full-scan task can clear recovery pending and set Clean

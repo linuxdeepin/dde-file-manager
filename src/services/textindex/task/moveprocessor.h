@@ -33,6 +33,12 @@ public:
      */
     bool processFileMove(const QString &fromPath, const QString &toPath);
 
+    /**
+     * @brief Check if any index modifications were made during processing
+     * @return true if at least one document was added, updated, or deleted
+     */
+    bool hasChanges() const { return m_hasChanges; }
+
 private:
     /**
      * @brief Check if a file exists in the index or has been processed in current batch
@@ -62,6 +68,7 @@ private:
     Lucene::IndexWriterPtr m_writer;
     const IndexContext *m_context { nullptr };
     QSet<QString> m_processedPaths; ///< Cache of paths processed in current batch (not yet committed)
+    bool m_hasChanges { false };
 };
 
 /**
@@ -84,6 +91,12 @@ public:
      */
     bool processDirectoryMove(const QString &fromPath, const QString &toPath, TaskState &running);
 
+    /**
+     * @brief Check if any index modifications were made during processing
+     * @return true if at least one document was updated
+     */
+    bool hasChanges() const { return m_hasChanges; }
+
 private:
     /**
      * @brief Update single document path within directory move
@@ -100,6 +113,7 @@ private:
     Lucene::IndexWriterPtr m_writer;
     Lucene::IndexReaderPtr m_reader;
     const IndexContext *m_context { nullptr };
+    bool m_hasChanges { false };
 };
 
 SERVICETEXTINDEX_END_NAMESPACE

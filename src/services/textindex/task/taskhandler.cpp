@@ -86,7 +86,7 @@ class ProgressReporter
 {
 public:
     explicit ProgressReporter(IndexWriterPtr writer = nullptr)
-        : processedCount(0), toltalCount(0), lastReportTime(QDateTime::currentDateTime()), m_writer(writer), m_batchCommitInterval(TextIndexConfig::instance().batchCommitInterval()), m_lastCommitCount(0)
+        : processedCount(0), totalCount(0), lastReportTime(QDateTime::currentDateTime()), m_writer(writer), m_batchCommitInterval(TextIndexConfig::instance().batchCommitInterval()), m_lastCommitCount(0)
     {
         fmDebug() << "[ProgressReporter] Initialized progress reporter with batch commit interval:" << m_batchCommitInterval;
     }
@@ -94,9 +94,9 @@ public:
     ~ProgressReporter()
     {
         // 确保最后一次进度能够显示
-        emit ProgressNotifier::instance()->progressChanged(processedCount, toltalCount);
+        emit ProgressNotifier::instance()->progressChanged(processedCount, totalCount);
         fmDebug() << "[ProgressReporter] Final progress report - processed:" << processedCount
-                  << "total:" << toltalCount;
+                  << "total:" << totalCount << "indexChanged:" << m_indexChanged;
 
         // 如果有未提交的更改，进行最后一次提交
         if (m_writer && processedCount > m_lastCommitCount) {
@@ -113,7 +113,7 @@ public:
 
     void setTotal(qint64 count)
     {
-        toltalCount = count;
+        totalCount = count;
         fmInfo() << "[ProgressReporter::setTotal] Total count set to:" << count;
     }
 
@@ -138,23 +138,34 @@ public:
         // 检查是否经过了足够的时间间隔(1秒)
         QDateTime now = QDateTime::currentDateTime();
         if (lastReportTime.msecsTo(now) >= 1000) {   // 1000ms = 1s
-            emit ProgressNotifier::instance()->progressChanged(processedCount, toltalCount);
+            emit ProgressNotifier::instance()->progressChanged(processedCount, totalCount);
             lastReportTime = now;
             // 避免高频日志，只在特定间隔打印
-            if (processedCount % 1000 == 0 || processedCount == toltalCount) {
+            if (processedCount % 1000 == 0 || processedCount == totalCount) {
                 fmDebug() << "[ProgressReporter::increment] Progress update - processed:" << processedCount
-                          << "total:" << toltalCount;
+                          << "total:" << totalCount;
             }
         }
     }
 
+    void markIndexChanged()
+    {
+        m_indexChanged = true;
+    }
+
+    bool indexChanged() const
+    {
+        return m_indexChanged;
+    }
+
 private:
     qint64 processedCount;
-    qint64 toltalCount;
+    qint64 totalCount;
     QDateTime lastReportTime;
     IndexWriterPtr m_writer;
     int m_batchCommitInterval;
     qint64 m_lastCommitCount;
+    bool m_indexChanged { false };
 };
 
 // 目录遍历相关函数
@@ -328,6 +339,7 @@ void processFile(const IndexContext &context, const QString &path, const PathExc
         }
         writer->addDocument(doc);
         if (reporter) {
+            reporter->markIndexChanged();
             reporter->increment();
         }
     } catch (const LuceneException &e) {
@@ -369,10 +381,15 @@ void updateFile(const IndexContext &context, const QString &path, const PathExcl
                 TermPtr term = newLucene<Term>(pathField(context.profile()), path.toStdWString());
                 writer->updateDocument(term, doc);
             }
-        }
 
-        if (reporter) {
-            reporter->increment();
+            if (reporter) {
+                reporter->markIndexChanged();
+                reporter->increment();
+            }
+        } else {
+            if (reporter) {
+                reporter->increment();
+            }
         }
     } catch (const LuceneException &e) {
         fmWarning() << "[updateFile] Update file failed with Lucene exception:" << path
@@ -407,7 +424,7 @@ void removeFile(const IndexContext &context, const QString &path, const IndexWri
     }
 }
 
-bool cleanupIndexs(const IndexContext &context, IndexReaderPtr reader, IndexWriterPtr writer, TaskState &running)
+bool cleanupIndexs(const IndexContext &context, IndexReaderPtr reader, IndexWriterPtr writer, TaskState &running, ProgressReporter *reporter)
 {
     try {
         if (!reader || !writer) {
@@ -507,6 +524,9 @@ bool cleanupIndexs(const IndexContext &context, IndexReaderPtr reader, IndexWrit
 
         if (removedCount > 0) {
             fmInfo() << "[cleanupIndexs] Index cleanup completed - removed" << removedCount << "deleted/unsupported/blacklisted files from index";
+            if (reporter) {
+                reporter->markIndexChanged();
+            }
         } else {
             fmInfo() << "[cleanupIndexs] Index cleanup completed - no files needed removal";
         }
@@ -564,6 +584,10 @@ void removeDirectoryIndex(const IndexContext &context, const QString &dirPath, c
         // 相比逐个删除，这种方式性能更高且原子性更好
         int32_t deleteCount = allDocs->totalHits;
         writer->deleteDocuments(ancestorQuery);
+
+        if (reporter) {
+            reporter->markIndexChanged();
+        }
 
         // 更新进度报告
         if (reporter) {
@@ -692,6 +716,7 @@ TaskHandler TaskHandlers::CreateIndexHandler(const IndexContext &context)
             fmDebug() << "[CreateIndexHandler] Index optimization completed";
 
             result.success = true;
+            result.indexChanged = reporter.indexChanged();
             fmDebug() << "[CreateIndexHandler] Index creation completed successfully for path:" << path;
 
             return result;
@@ -750,8 +775,10 @@ TaskHandler TaskHandlers::UpdateIndexHandler(const IndexContext &context)
 
             fmDebug() << "[UpdateIndexHandler] Index reader and writer initialized for directory:" << indexDir;
 
+            ProgressReporter reporter(writer);
+
             // 清理已删除文件的索引
-            if (!cleanupIndexs(context, reader, writer, running)) {
+            if (!cleanupIndexs(context, reader, writer, running, &reporter)) {
                 fmCritical() << "[UpdateIndexHandler] Index cleanup failed, aborting update";
                 result.success = false;
                 result.fatal = true;
@@ -770,7 +797,6 @@ TaskHandler TaskHandlers::UpdateIndexHandler(const IndexContext &context)
                 fmInfo() << "[UpdateIndexHandler] Using ANYTHING for file discovery";
             }
 
-            ProgressReporter reporter(writer);
             const PathExcludeMatcher excludeMatcher = PathExcludeMatcher::createForIndex();
             qint64 totalCount = provider->totalCount();
             reporter.setTotal(totalCount);
@@ -795,6 +821,7 @@ TaskHandler TaskHandlers::UpdateIndexHandler(const IndexContext &context)
             fmDebug() << "[UpdateIndexHandler] Index optimization completed";
 
             result.success = true;
+            result.indexChanged = reporter.indexChanged();
             fmDebug() << "[UpdateIndexHandler] Index update completed successfully for path:" << path;
 
             return result;
@@ -882,6 +909,7 @@ TaskHandler TaskHandlers::CreateOrUpdateFileListHandler(const IndexContext &cont
 
             // ProgressReporter的析构函数会处理最后的commit
             result.success = true;
+            result.indexChanged = reporter.indexChanged();
             fmDebug() << "[CreateOrUpdateFileListHandler] File list index update completed successfully";
 
             return result;
@@ -973,7 +1001,7 @@ TaskHandler TaskHandlers::RemoveFileListHandler(const IndexContext &context, con
                     directoriesRemoved++;
                     fmDebug() << "[RemoveFileListHandler] Processed directory removal:" << itemPath;
                 } else {
-                    // 无子文件，是文件
+                    // 无子文件，直接删除；deleteDocuments 是幂等的，不存在的路径是安全 no-op
                     removeFile(context, itemPath, writer, &reporter);
                     filesRemoved++;
                     fmDebug() << "[RemoveFileListHandler] Removed file from index:" << itemPath;
@@ -987,6 +1015,7 @@ TaskHandler TaskHandlers::RemoveFileListHandler(const IndexContext &context, con
 
             // ProgressReporter的析构函数会处理最后的commit
             result.success = true;
+            result.indexChanged = reporter.indexChanged();
             fmDebug() << "[RemoveFileListHandler] File removal completed successfully - files:" << filesRemoved
                       << "directories:" << directoriesRemoved;
             return result;
@@ -1077,6 +1106,8 @@ TaskHandler TaskHandlers::MoveFileListHandler(const IndexContext &context, const
                     success = directoryMoveProcessor.processDirectoryMove(fromPath, toPath, running);
                     if (success) {
                         directoryMoves++;
+                        if (directoryMoveProcessor.hasChanges())
+                            reporter.markIndexChanged();
                     } else {
                         failedMoves++;
                     }
@@ -1084,6 +1115,8 @@ TaskHandler TaskHandlers::MoveFileListHandler(const IndexContext &context, const
                     success = fileMoveProcessor.processFileMove(fromPath, toPath);
                     if (success) {
                         fileMoves++;
+                        if (fileMoveProcessor.hasChanges())
+                            reporter.markIndexChanged();
                     } else {
                         failedMoves++;
                     }
@@ -1104,6 +1137,7 @@ TaskHandler TaskHandlers::MoveFileListHandler(const IndexContext &context, const
 
             // ProgressReporter的析构函数会处理最后的commit
             result.success = true;
+            result.indexChanged = reporter.indexChanged();
             fmDebug() << "[MoveFileListHandler] File move processing completed successfully - file moves:" << fileMoves
                       << "directory moves:" << directoryMoves << "failed moves:" << failedMoves;
             return result;
