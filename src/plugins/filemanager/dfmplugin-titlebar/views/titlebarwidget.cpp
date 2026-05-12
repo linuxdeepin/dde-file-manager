@@ -547,14 +547,33 @@ void TitleBarWidget::saveTitleBarState(const QString &uniqueId)
 
 void TitleBarWidget::restoreTitleBarState(const QString &uniqueId)
 {
+    bool showFilterView = false;
+
     if (titleBarStateMap.contains(uniqueId)) {
         const TitleBarState &state = titleBarStateMap[uniqueId];
-        searchEditWidget->setAdvancedButtonVisible(state.advancedSearchVisible);
-        searchEditWidget->setAdvancedButtonChecked(state.advancedSearchChecked);
+        showFilterView = state.advancedSearchChecked;
+
+        if (state.advancedSearchChecked) {
+            // Advance widget was active: restore expanded state with button visible
+            searchEditWidget->activateEdit(false);
+            searchEditWidget->setAdvancedButtonChecked(true);
+        } else {
+            // Only restore advanced button when there is search text;
+            // keyboard tab switch may save advancedSearchVisible=true with empty text
+            // (focus was still on search edit when saveTitleBarState ran)
+            searchEditWidget->setAdvancedButtonVisible(state.advancedSearchVisible && !state.searchText.isEmpty());
+            searchEditWidget->setAdvancedButtonChecked(false);
+        }
+
         if (!state.searchText.isEmpty())
             searchEditWidget->setText(state.searchText);
         optionButtonBox->setViewMode(static_cast<int>(state.viewMode));
     }
+
+    // Sync filter view visibility to prevent stale state from previous tab;
+    // programmatic setChecked() does not emit clicked(), so sendShowFilterView
+    // is never called during tab switch — explicitly synchronize here
+    TitleBarEventCaller::sendShowFilterView(searchEditWidget, showFilterView);
 }
 
 bool TitleBarWidget::checkCustomFixedTab(int index)

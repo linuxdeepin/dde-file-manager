@@ -81,8 +81,14 @@ void SearchEditWidget::deactivateEdit()
     }
 
     quitSearchActive = false;
+    bool wasChecked = advancedButton->isChecked();
     advancedButton->setChecked(false);
     advancedButton->setVisible(false);
+
+    // programmatic setChecked() does not emit clicked(), so explicitly notify
+    // workspace to hide the advance filter widget
+    if (wasChecked)
+        TitleBarEventCaller::sendShowFilterView(this, false);
 
     searchEdit->clearEdit();
     searchEdit->clearFocus();
@@ -406,7 +412,7 @@ void SearchEditWidget::updateSearchWidgetLayout()
         searchEdit->setVisible(true);
         searchButton->setVisible(false);
 
-        bool shouldShowAdvancedButton = searchEdit->hasFocus() || !searchEdit->text().isEmpty();
+        bool shouldShowAdvancedButton = searchEdit->hasFocus() || !searchEdit->text().isEmpty() || advancedButton->isChecked();
         advancedButton->setVisible(shouldShowAdvancedButton);
         updateSpacing(shouldShowAdvancedButton);
     }
