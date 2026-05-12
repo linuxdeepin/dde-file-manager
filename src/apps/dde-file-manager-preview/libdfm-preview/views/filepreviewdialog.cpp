@@ -363,12 +363,11 @@ void FilePreviewDialog::switchToPage(int index)
             qCDebug(logLibFilePreview) << "FilePreviewDialog: reusing existing preview for key:" << key;
             if (preview->setFileUrl(fileList.at(index))) {
                 preview->contentWidget()->updateGeometry();
-                updateTitle();
-                // statusBar->openButton()->setFocus();
                 preview->contentWidget()->adjustSize();
-                int newPerviewWidth = preview->contentWidget()->size().width();
-                int newPerviewHeight = preview->contentWidget()->size().height();
-                setFixedSize(newPerviewWidth, newPerviewHeight + statusBar->height());
+                int newPreviewWidth = preview->contentWidget()->size().width();
+                int newPreviewHeight = preview->contentWidget()->size().height();
+                setFixedSize(newPreviewWidth, newPreviewHeight + statusBar->height());
+                updateTitle();
                 playCurrentPreviewFile();
                 restoreCenterPos();
                 qCInfo(logLibFilePreview) << "FilePreviewDialog: successfully reused preview for file:" << fileList.at(index).toString();
@@ -438,9 +437,9 @@ void FilePreviewDialog::switchToPage(int index)
     // statusBar->openButton()->setFocus();
     this->adjustSize();
     preview->contentWidget()->adjustSize();
-    int newPerviewWidth = preview->contentWidget()->size().width();
-    int newPerviewHeight = preview->contentWidget()->size().height();
-    setFixedSize(newPerviewWidth, newPerviewHeight + statusBar->height());
+    int newPreviewWidth = preview->contentWidget()->size().width();
+    int newPreviewHeight = preview->contentWidget()->size().height();
+    setFixedSize(newPreviewWidth, newPreviewHeight + statusBar->height());
     updateTitle();
 
     // 切换并调整大小后，尝试将窗口移动回之前的中心位置

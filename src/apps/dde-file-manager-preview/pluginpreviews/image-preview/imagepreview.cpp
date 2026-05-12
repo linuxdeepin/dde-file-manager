@@ -83,6 +83,8 @@ void ImagePreview::initialize(QWidget *window, QWidget *statusBar)
                                    font-size: 12px;\
                                    font-weight: 300;}");
 
+    messageStatusBar->show();
+
     DAnchorsBase(messageStatusBar).setCenterIn(statusBar);
     
     fmDebug() << "Image preview: status bar initialized";
