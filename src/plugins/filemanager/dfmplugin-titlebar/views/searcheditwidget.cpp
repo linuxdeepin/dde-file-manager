@@ -80,6 +80,7 @@ void SearchEditWidget::deactivateEdit()
         return;
     }
 
+    quitSearchActive = false;
     advancedButton->setChecked(false);
     advancedButton->setVisible(false);
 
@@ -122,8 +123,8 @@ void SearchEditWidget::updateSearchEditWidget(int parentWidth)
 
 void SearchEditWidget::setSearchMode(SearchMode mode)
 {
-    if (advancedButton->isChecked() || searchEdit->hasFocus()) {
-        fmDebug() << "Cannot change search mode - advanced button checked or search edit has focus";
+    if (advancedButton->isChecked() || searchEdit->hasFocus() || quitSearchActive) {
+        fmDebug() << "Cannot change search mode - advanced button checked or search edit has focus or quit search in progress";
         return;
     }
 
@@ -158,13 +159,32 @@ void SearchEditWidget::onUrlChanged(const QUrl &url)
     }
 
     fmDebug() << "URL changed to non-search view, cleaning up search edit state";
+    bool wasQuitSearch = quitSearchActive;
+
     lastSearchTime = 0;
     lastExecutedSearchText.clear();
     searchEdit->clearEdit();
     if (delayTimer && delayTimer->isActive())
         delayTimer->stop();
-    advancedButton->setVisible(false);
     advancedButton->setChecked(false);
+
+    if (wasQuitSearch) {
+        // quitSearch-triggered CD: keep focus and search box for continued searching
+        // Delay flag reset to protect setSearchMode during the entire transition
+        QTimer::singleShot(0, this, [this]() {
+            if (!quitSearchActive) return;
+            if (searchEdit && searchEdit->lineEdit()) {
+                searchEdit->lineEdit()->setFocus(Qt::OtherFocusReason);
+            }
+            quitSearchActive = false;
+        });
+        return;
+    }
+
+    quitSearchActive = false;
+
+    // Passive navigation (user clicked breadcrumb/file): full cleanup
+    advancedButton->setVisible(false);
 
     // Clear focus to allow mode change
     searchEdit->clearFocus();
@@ -186,8 +206,9 @@ void SearchEditWidget::onTextEdited(const QString &text)
     pendingSearchText = text;
 
     if (text.isEmpty()) {
-        fmDebug() << "Search text is empty, stopping timer and stopping search";
+        fmDebug() << "Search text is empty, stopping search and navigating back";
         stopSearch();
+        quitSearch();
         return;
     }
 
@@ -249,8 +270,14 @@ bool SearchEditWidget::eventFilter(QObject *watched, QEvent *event)
         } else if (event->type() == QEvent::KeyPress) {
             QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
             if (keyEvent->key() == Qt::Key_Escape) {
-                fmDebug() << "ESC key pressed in search edit, quitting search";
-                quitSearch();
+                fmDebug() << "ESC key pressed in search edit";
+                if (searchEdit->text().isEmpty()) {
+                    // Already cleared: lose focus and collapse search box
+                    deactivateEdit();
+                } else {
+                    // Has text: quit search, CD back, but keep focus
+                    quitSearch();
+                }
                 return true;
             }
         }
@@ -332,6 +359,11 @@ void SearchEditWidget::handleFocusInEvent(QFocusEvent *e)
 
 void SearchEditWidget::handleFocusOutEvent(QFocusEvent *e)
 {
+    if (quitSearchActive) {
+        // Focus lost during quitSearch transition — focus will be restored shortly
+        return;
+    }
+
     fmDebug() << "Focus out event, reason:" << e->reason()
               << "hasText:" << !searchEdit->text().isEmpty()
               << "focusWidget:" << (QApplication::focusWidget() ? QApplication::focusWidget()->metaObject()->className() : "nullptr");
@@ -384,7 +416,7 @@ void SearchEditWidget::quitSearch()
 {
     lastSearchTime = 0;
     delayTimer->stop();
-    // deactivateEdit();
+    quitSearchActive = true;
     Q_EMIT searchQuit();
 }
 

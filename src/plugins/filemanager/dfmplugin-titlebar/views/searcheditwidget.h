@@ -101,6 +101,7 @@ private:
     SearchMode currentMode { SearchMode::kUnknown };
     QTimer *delayTimer { nullptr };
     qint64 lastSearchTime { 0 };
+    bool quitSearchActive { false };   // Flag: onUrlChanged should preserve focus
 };
 
 }   // namespace dfmplugin_titlebar
