@@ -432,9 +432,6 @@ void TitleBarWidget::initConnect()
     });
 
     connect(addressBar, &AddressBar::urlChanged, this, &TitleBarWidget::onAddressBarJump);
-    connect(addressBar, &AddressBar::pauseButtonClicked, this, [this]() {
-        TitleBarEventCaller::sendStopSearch(this);
-    });
 
     connect(searchEditWidget, &SearchEditWidget::searchQuit, this, &TitleBarWidget::quitSearch);
     connect(searchEditWidget, &SearchEditWidget::searchStop, this, [this]() {

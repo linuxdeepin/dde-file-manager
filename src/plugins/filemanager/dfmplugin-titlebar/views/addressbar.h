@@ -39,7 +39,6 @@ Q_SIGNALS:
     void lostFocus();
     void escKeyPressed();
     void clearButtonPressed();
-    void pauseButtonClicked();
     void urlChanged();
 };
 

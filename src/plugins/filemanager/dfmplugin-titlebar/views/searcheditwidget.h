@@ -85,7 +85,6 @@ private:
 
     int determineSearchDelay(const QString &inputText);
     bool shouldDelaySearch(const QString &inputText);
-    void restoreFocusIfNeeded();
 
     DTK_WIDGET_NAMESPACE::DIconButton *searchButton { nullptr };   // 搜索栏按钮
     DTK_WIDGET_NAMESPACE::DToolButton *advancedButton { nullptr };   // 高级搜索按钮

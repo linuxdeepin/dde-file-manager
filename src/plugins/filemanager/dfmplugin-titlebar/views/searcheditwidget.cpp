@@ -341,25 +341,6 @@ void SearchEditWidget::handleFocusOutEvent(QFocusEvent *e)
         updateSpacing(false);   // Advanced button is now hidden
     }
 
-    // Handle special focus reasons that should not trigger collapse
-    if (e->reason() == Qt::PopupFocusReason) {
-        e->accept();
-        restoreFocusIfNeeded();
-        return;
-    }
-
-    // For Qt::OtherFocusReason, delay check to see if focus really moved away
-    if (e->reason() == Qt::OtherFocusReason) {
-        QTimer::singleShot(0, this, [this]() {
-            if (!searchEdit->hasFocus() && !advancedButton->hasFocus() && parentWidget()) {
-                updateSearchEditWidget(parentWidget()->width());
-            }
-        });
-        e->accept();
-        restoreFocusIfNeeded();
-        return;
-    }
-
     // Normal focus out - allow collapse
     if (parentWidget()) {
         updateSearchEditWidget(parentWidget()->width());
@@ -459,16 +440,4 @@ bool SearchEditWidget::shouldDelaySearch(const QString &inputText)
 {
     // 对于过短或者通配符搜索，应该延迟
     return inputText.length() < 2 || inputText == "." || inputText == "*";
-}
-
-void SearchEditWidget::restoreFocusIfNeeded()
-{
-    QTimer::singleShot(0, this, [this]() {
-        if (!searchEdit->text().isEmpty()) {
-            // Use QTimer to defer the focus restoration to ensure proper cursor blink
-            QTimer::singleShot(0, this, [this]() {
-                searchEdit->lineEdit()->setFocus(Qt::OtherFocusReason);
-            });
-        }
-    });
 }
