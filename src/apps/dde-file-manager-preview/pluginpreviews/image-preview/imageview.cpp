@@ -51,6 +51,8 @@ void ImageView::setFile(const QString &fileName, const QByteArray &format)
         return;
     } else {
         setMovie(nullptr);
+        setMinimumSize(MIN_SIZE);
+        setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
     }
 
     if (movie) {
