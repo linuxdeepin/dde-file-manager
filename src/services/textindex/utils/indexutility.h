@@ -78,6 +78,62 @@ private:
     QStringList blacklistPaths;
 };
 
+/**
+ * @brief Generic DConfig watcher that emits rebuildRequired when watched keys change
+ *
+ * Provides a reusable mechanism to monitor multiple DConfig sources
+ * and trigger index rebuilds when configuration changes are detected.
+ */
+class ConfigRebuildWatcher : public QObject
+{
+    Q_OBJECT
+public:
+    struct WatchEntry {
+        QString appId;
+        QString configId;
+        QString key;
+    };
+
+    explicit ConfigRebuildWatcher(const QList<WatchEntry> &entries, QObject *parent = nullptr);
+    ~ConfigRebuildWatcher() override;
+
+Q_SIGNALS:
+    void rebuildRequired(const QString &reason);
+
+private:
+    struct ConfigHolder {
+        DTK_CORE_NAMESPACE::DConfig *config { nullptr };
+        QString appId;
+        QString configId;
+        QString watchedKey;
+    };
+    QList<ConfigHolder> m_configs;
+};
+
+/**
+ * @brief Watches dlnfs/ulnfs configuration changes that affect file indexing
+ *
+ * Monitors two DConfig sources:
+ * - org.deepin.dde.file-manager: dfm.mount.dlnfs
+ * - org.deepin.dlnfs: ulnfs
+ *
+ * When any watched key changes, emits rebuildRequired to trigger index rebuild.
+ */
+class DlnfsConfigWatcher : public QObject
+{
+    Q_OBJECT
+public:
+    static DlnfsConfigWatcher *instance();
+    ~DlnfsConfigWatcher() override;
+
+Q_SIGNALS:
+    void rebuildRequired(const QString &reason);
+
+private:
+    explicit DlnfsConfigWatcher(QObject *parent = nullptr);
+    ConfigRebuildWatcher *m_watcher { nullptr };
+};
+
 }   // namespace IndexUtility
 
 namespace PathCalculator {

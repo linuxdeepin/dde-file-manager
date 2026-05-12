@@ -80,6 +80,11 @@ void OcrIndexDBusPrivate::initConnect()
                          fmInfo() << "OcrIndexDBus: ANYTHING config changed, marking rebuild required. reason:" << reason;
                          runtime->stateStore().setNeedsRebuild(true);
                      });
+    QObject::connect(IndexUtility::DlnfsConfigWatcher::instance(), &IndexUtility::DlnfsConfigWatcher::rebuildRequired,
+                     q, [this](const QString &reason) {
+                         fmInfo() << "OcrIndexDBus: DLNFS config changed, marking rebuild required. reason:" << reason;
+                         runtime->stateStore().setNeedsRebuild(true);
+                     });
 }
 
 void OcrIndexDBusPrivate::handleMonitoring(bool start)

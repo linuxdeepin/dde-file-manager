@@ -178,6 +178,76 @@ AnythingConfigWatcher::AnythingConfigWatcher(QObject *parent)
     defaultBlacklistPathsRealtime();
 }
 
+// ─────────────────────────────────────────────
+// ConfigRebuildWatcher
+// ─────────────────────────────────────────────
+
+ConfigRebuildWatcher::ConfigRebuildWatcher(const QList<WatchEntry> &entries, QObject *parent)
+    : QObject(parent)
+{
+    for (const auto &entry : entries) {
+        ConfigHolder holder;
+        holder.appId = entry.appId;
+        holder.configId = entry.configId;
+        holder.watchedKey = entry.key;
+        holder.config = DConfig::create(entry.appId, entry.configId, "", this);
+
+        if (!holder.config) {
+            qWarning() << "ConfigRebuildWatcher: Failed to create DConfig for" << entry.appId << entry.configId;
+            continue;
+        }
+        if (!holder.config->isValid()) {
+            qWarning() << "ConfigRebuildWatcher: DConfig is not valid for" << entry.appId << entry.configId;
+            holder.config->deleteLater();
+            holder.config = nullptr;
+            continue;
+        }
+
+        // Capture by value for the lambda closure,
+        // since DConfig::valueChanged only provides the key, not the config source.
+        const auto configId = entry.configId;
+        const auto watchedKey = entry.key;
+        connect(holder.config, &DConfig::valueChanged, this,
+                [this, configId, watchedKey](const QString &key) {
+                    if (key == watchedKey) {
+                        const QString reason = QStringLiteral("%1:%2Changed").arg(configId, key);
+                        fmInfo() << "ConfigRebuildWatcher:" << reason;
+                        emit rebuildRequired(reason);
+                    }
+                });
+
+        m_configs.append(holder);
+    }
+}
+
+ConfigRebuildWatcher::~ConfigRebuildWatcher() = default;
+
+// ─────────────────────────────────────────────
+// DlnfsConfigWatcher
+// ─────────────────────────────────────────────
+
+DlnfsConfigWatcher *DlnfsConfigWatcher::instance()
+{
+    static DlnfsConfigWatcher *inst = new DlnfsConfigWatcher;
+    return inst;
+}
+
+DlnfsConfigWatcher::~DlnfsConfigWatcher() = default;
+
+DlnfsConfigWatcher::DlnfsConfigWatcher(QObject *parent)
+    : QObject(parent),
+      m_watcher(new ConfigRebuildWatcher({ { QStringLiteral("org.deepin.dde.file-manager"),
+                                             QStringLiteral("org.deepin.dde.file-manager"),
+                                             QStringLiteral("dfm.mount.dlnfs") },
+                                           { QStringLiteral("org.deepin.dlnfs"),
+                                             QStringLiteral("org.deepin.dlnfs"),
+                                             QStringLiteral("ulnfs") } },
+                                         this))
+{
+    connect(m_watcher, &ConfigRebuildWatcher::rebuildRequired,
+            this, &DlnfsConfigWatcher::rebuildRequired);
+}
+
 }   // namespace IndexUtility
 
 namespace PathCalculator {

@@ -72,6 +72,11 @@ void TextIndexDBusPrivate::initConnect()
                          fmInfo() << "TextIndexDBus: ANYTHING config changed, marking rebuild required. reason:" << reason;
                          runtime->stateStore().setNeedsRebuild(true);
                      });
+    QObject::connect(IndexUtility::DlnfsConfigWatcher::instance(), &IndexUtility::DlnfsConfigWatcher::rebuildRequired,
+                     q, [this](const QString &reason) {
+                         fmInfo() << "TextIndexDBus: DLNFS config changed, marking rebuild required. reason:" << reason;
+                         runtime->stateStore().setNeedsRebuild(true);
+                     });
 }
 
 void TextIndexDBusPrivate::handleMonitoring(bool start)
