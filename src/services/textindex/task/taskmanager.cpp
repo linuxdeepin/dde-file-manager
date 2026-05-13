@@ -423,101 +423,115 @@ void TaskManager::onTaskFinished(IndexTask::Type type, HandlerResult result)
         return;
     }
 
-    QString taskPath = currentTask->taskPath();
+    const QString taskPath = currentTask->taskPath();
     fmInfo() << "[TaskManager::onTaskFinished] Task finished - type:" << static_cast<int>(type)
              << "path:" << taskPath << "success:" << result.success << "interrupted:" << result.interrupted;
 
-    if (!result.success && type == IndexTask::Type::Update) {
-        // 检查是否是由于索引损坏导致的失败
-        if (currentTask->isIndexCorrupted()) {
-            fmWarning() << "[TaskManager::onTaskFinished] Update task failed due to index corruption, attempting rebuild - path:" << taskPath;
-
-            // 清理损坏的索引
-            if (m_context && m_context->stateStore()) {
-                m_context->stateStore()->clearIndexDirectory();
-            }
-
-            // 启动新的创建任务
-            cleanupTask();   // 清理当前失败的任务
-
-            // 原始代码可能是以单一路径处理的，这里修改为支持多路径
-            // 如果原始任务是多路径任务，我们需要获取对应的所有路径
-            if (!taskQueue.isEmpty() && taskQueue.head().pathList.contains(taskPath)) {
-                // 队列中有包含这个路径的任务，直接让队列处理
-                fmInfo() << "[TaskManager::onTaskFinished] Found queued task containing corrupted path, letting queue handle rebuild";
-            } else {
-                // 单路径情况，直接创建新任务
-                fmInfo() << "[TaskManager::onTaskFinished] Starting rebuild task for corrupted index - path:" << taskPath;
-                if (startTask(IndexTask::Type::Create, taskPath)) {
-                    return;   // 新任务已启动，等待其完成
-                } else {
-                    fmCritical() << "[TaskManager::onTaskFinished] Failed to start rebuild task for path:" << taskPath;
-                }
-            }
-        } else {
-            fmInfo() << "[TaskManager::onTaskFinished] Update task failed but index is not corrupted, skipping rebuild - path:" << taskPath;
-        }
-    }
+    // 处理索引损坏：若已启动重建任务则提前返回
+    if (handleCorruptedIndex(type, result, taskPath))
+        return;
 
     fmDebug() << "[TaskManager::onTaskFinished] Task" << typeToString(type) << "for path" << taskPath
               << (result.success ? "completed successfully" : "failed");
 
-    // 如果是根目录的任务，更新状态文件
-    if (m_context && m_context->profile().isPathInScope(taskPath) && !result.success) {
-        fmWarning() << "[TaskManager::onTaskFinished] Root indexing failed, clearing status - path:" << taskPath;
-        if (m_context->stateStore()) {
-            m_context->stateStore()->removeIndexStatusFile();
-        }
-    }
+    handleRootPathFailure(result.success, result.interrupted, taskPath);
+    updateIndexStatusOnSuccess(type, result);
 
-    if (result.success) {
-        if (!result.interrupted || type == IndexTask::Type::Create) {
-            if (result.indexChanged) {
-                fmDebug() << "[TaskManager::onTaskFinished] Task completed with actual index changes, updating index status";
-                if (m_context && m_context->stateStore()) {
-                    // Only full-scan tasks (Create/Update) should update version number
-                    // Incremental tasks only update last update time to avoid version mismatch
-                    // when recovery from a previous interrupted full-scan task is pending
-                    if (isFullScanTask(type)) {
-                        m_context->stateStore()->saveIndexStatus(QDateTime::currentDateTime());
-                    } else {
-                        m_context->stateStore()->saveLastUpdateTime(QDateTime::currentDateTime());
-                    }
-                }
-            } else {
-                fmDebug() << "[TaskManager::onTaskFinished] Task completed with no index changes, skipping status update";
-            }
-        }
-    }
     emit taskFinished(typeToString(type), taskPath, result.success);
     cleanupTask();
 
-    // 检查是否有待执行的任务
     if (startNextTask()) {
         fmInfo() << "[TaskManager::onTaskFinished] Started next queued task";
     } else {
         fmDebug() << "[TaskManager::onTaskFinished] No more tasks in queue";
-        // Only set Clean state when:
-        // 1. Task completed successfully without interruption
-        // 2. No recovery is pending (or this is the recovery task completing)
-        if (result.success && !result.interrupted) {
-            if (isFullScanTask(type)) {
-                // Full-scan task can clear recovery pending and set Clean
-                m_recoveryPending = false;
-                if (m_context && m_context->stateStore()) {
-                    m_context->stateStore()->setIndexState(IndexUtility::IndexState::Clean);
-                }
-                fmInfo() << "[TaskManager::onTaskFinished] Full-scan task completed, index state set to clean";
-            } else if (!m_recoveryPending) {
-                // Incremental task can only set Clean if no recovery is pending
-                if (m_context && m_context->stateStore()) {
-                    m_context->stateStore()->setIndexState(IndexUtility::IndexState::Clean);
-                }
-                fmInfo() << "[TaskManager::onTaskFinished] Incremental task completed, index state set to clean";
-            } else {
-                fmInfo() << "[TaskManager::onTaskFinished] Incremental task completed but recovery is pending, keeping Dirty state";
-            }
-        }
+        finalizeIndexState(type, result);
+    }
+}
+
+bool TaskManager::handleCorruptedIndex(IndexTask::Type type, const HandlerResult &result, const QString &taskPath)
+{
+    if (result.success || type != IndexTask::Type::Update)
+        return false;
+    if (!currentTask->isIndexCorrupted()) {
+        fmInfo() << "[TaskManager::onTaskFinished] Update task failed but index is not corrupted, skipping rebuild - path:" << taskPath;
+        return false;
+    }
+
+    fmWarning() << "[TaskManager::onTaskFinished] Update task failed due to index corruption, attempting rebuild - path:" << taskPath;
+
+    if (m_context && m_context->stateStore())
+        m_context->stateStore()->clearIndexDirectory();
+
+    cleanupTask();
+
+    if (!taskQueue.isEmpty() && taskQueue.head().pathList.contains(taskPath)) {
+        fmInfo() << "[TaskManager::onTaskFinished] Found queued task containing corrupted path, letting queue handle rebuild";
+    } else {
+        fmInfo() << "[TaskManager::onTaskFinished] Starting rebuild task for corrupted index - path:" << taskPath;
+        if (startTask(IndexTask::Type::Create, taskPath))
+            return true;   // 重建任务已启动
+        fmCritical() << "[TaskManager::onTaskFinished] Failed to start rebuild task for path:" << taskPath;
+    }
+
+    return false;
+}
+
+void TaskManager::handleRootPathFailure(bool success, bool interrupted, const QString &taskPath)
+{
+    if (success || interrupted)
+        return;
+    if (!m_context || !m_context->profile().isPathInScope(taskPath))
+        return;
+
+    fmWarning() << "[TaskManager::onTaskFinished] Root indexing failed, clearing status - path:" << taskPath;
+    if (m_context->stateStore())
+        m_context->stateStore()->removeIndexStatusFile();
+}
+
+void TaskManager::updateIndexStatusOnSuccess(IndexTask::Type type, const HandlerResult &result)
+{
+    if (!result.success)
+        return;
+    if (result.interrupted && type != IndexTask::Type::Create)
+        return;
+    if (!result.indexChanged && !isFullScanTask(type)) {
+        fmDebug() << "[TaskManager::onTaskFinished] Task completed with no index changes, skipping status update";
+        return;
+    }
+
+    fmDebug() << "[TaskManager::onTaskFinished] Task completed with actual index changes, updating index status";
+    if (!m_context || !m_context->stateStore())
+        return;
+
+    // Full-scan tasks (Create/Update) update version number;
+    // Incremental tasks only update last update time to avoid version mismatch
+    // when recovery from a previous interrupted full-scan task is pending.
+    if (isFullScanTask(type)) {
+        m_context->stateStore()->saveIndexStatus(QDateTime::currentDateTime());
+    } else {
+        m_context->stateStore()->saveLastUpdateTime(QDateTime::currentDateTime());
+    }
+}
+
+void TaskManager::finalizeIndexState(IndexTask::Type type, const HandlerResult &result)
+{
+    // Only set Clean state when:
+    // 1. Task completed successfully without interruption
+    // 2. No recovery is pending (or this is the recovery task completing)
+    if (!result.success || result.interrupted)
+        return;
+
+    if (isFullScanTask(type)) {
+        m_recoveryPending = false;
+        if (m_context && m_context->stateStore())
+            m_context->stateStore()->setIndexState(IndexUtility::IndexState::Clean);
+        fmInfo() << "[TaskManager::onTaskFinished] Full-scan task completed, index state set to clean";
+    } else if (!m_recoveryPending) {
+        if (m_context && m_context->stateStore())
+            m_context->stateStore()->setIndexState(IndexUtility::IndexState::Clean);
+        fmInfo() << "[TaskManager::onTaskFinished] Incremental task completed, index state set to clean";
+    } else {
+        fmInfo() << "[TaskManager::onTaskFinished] Incremental task completed but recovery is pending, keeping Dirty state";
     }
 }
 

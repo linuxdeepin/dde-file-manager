@@ -70,6 +70,12 @@ private:
     bool enqueueCompensationTask(const QStringList &paths, bool silent);
     QStringList applyDirectoryMovePlans(const QHash<QString, QString> &movedFiles);
 
+    // onTaskFinished sub-routines
+    bool handleCorruptedIndex(IndexTask::Type type, const HandlerResult &result, const QString &taskPath);
+    void handleRootPathFailure(bool success, bool interrupted, const QString &taskPath);
+    void updateIndexStatusOnSuccess(IndexTask::Type type, const HandlerResult &result);
+    void finalizeIndexState(IndexTask::Type type, const HandlerResult &result);
+
     const IndexContext *m_context { nullptr };
     QThread workerThread;
     IndexTask *currentTask { nullptr };
