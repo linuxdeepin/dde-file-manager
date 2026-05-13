@@ -67,6 +67,7 @@ void SearchEditWidget::activateEdit(bool setAdvanceBtn)
 
     if (searchEdit->hasFocus() && setAdvanceBtn) {
         advancedButton->setChecked(!advancedButton->isChecked());
+        TitleBarHelper::tryLoadSearchPlugin();
         TitleBarEventCaller::sendShowFilterView(this, advancedButton->isChecked());
     } else {
         searchEdit->lineEdit()->setFocus();
