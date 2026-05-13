@@ -3099,7 +3099,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="424"/>
         <source>Permanently delete %1?</source>
-        <translation>Czy usunąć permanentnie %1?</translation>
+        <translation>Usunąć permanentnie %1?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="430"/>
