@@ -25,8 +25,8 @@ constexpr int kDefaultMaxOcrImageSizeMB = 30;
 constexpr int kMaxAllowedOcrImageSizeMB = 1024;
 constexpr char kOcrImageScaleWidth[] = "ocrImageScaleWidth";
 constexpr char kOcrImageScaleHeight[] = "ocrImageScaleHeight";
-constexpr int kDefaultImageMaxWidth = 1280;
-constexpr int kDefaultImageMaxHeight = 720;
+constexpr int kDefaultImageMaxWidth = 960;
+constexpr int kDefaultImageMaxHeight = 540;
 constexpr char kPreferredOcrPlugin[] = "PPOCR_V5";
 
 QStringList defaultSupportedImageExtensions()

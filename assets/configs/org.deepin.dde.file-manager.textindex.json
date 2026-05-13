@@ -131,7 +131,7 @@
 			"visibility": "public"
 		},
 		"ocrImageScaleWidth": {
-				"value": 1280,
+				"value": 960,
 				"serial": 0,
 				"flags": [],
 				"name": "OCR image scale width",
@@ -142,7 +142,7 @@
 				"visibility": "public"
 			},
 		"ocrImageScaleHeight": {
-			"value": 720,
+			"value": 540,
 			"serial": 0,
 			"flags": [],
 			"name": "OCR image scale height",
