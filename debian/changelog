@@ -1,3 +1,26 @@
+dde-file-manager (6.5.137) unstable; urgency=medium
+
+  * fix: remove directory marker in handleDirectoryCreated
+  * feat: add configurable OCR image scaling parameters
+  * fix: improve OCR text cleaning algorithm
+  * fix: improve image scaling logic for OCR extraction
+  * fix: optimize performance for large file operations
+  * fix: track and handle index changes in text indexing tasks
+  * refactor: remove unused search functionality signals and methods
+  * refactor: improve search edit transition behavior
+  * refactor: improve advanced search state handling
+  * fix: ensure status bar visibility in image preview
+  * feat: add DLNFS config monitoring for text indexing
+  * fix: set proper image view size constraints
+  * fix: optimize OCR image processing dimensions
+  * refactor: reorganize task manager error handling logic
+  * fix: call search plugin load before showing filter view
+  * fix: handle search box cleanup properly in collapse mode
+  * chore: update translations
+  * fix: prevent UAF crash in SyncDBus task handling
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 14 May 2026 19:38:46 +0800
+
 dde-file-manager (6.5.136) unstable; urgency=medium
 
   * fix: eliminate TOCTOU race condition in RootInfo::updateChild
