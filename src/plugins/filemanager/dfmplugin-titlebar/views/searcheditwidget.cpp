@@ -339,7 +339,13 @@ void SearchEditWidget::initConnect()
 {
     connect(searchButton, &DIconButton::clicked, this, &SearchEditWidget::expandSearchEdit);
     connect(searchEdit, &DSearchEdit::textEdited, this, &SearchEditWidget::onTextEdited, Qt::QueuedConnection);
-    connect(searchEdit, &DSearchEdit::searchAborted, this, &SearchEditWidget::quitSearch);
+    connect(searchEdit, &DSearchEdit::searchAborted, this, [this]() {
+        quitSearch();
+        // 窗口较窄（kCollapsed 模式）：不保留搜索框，让 onUrlChanged 走 full cleanup
+        // 直接折叠回搜索按钮，等同于按两次 ESC
+        if (parentWidget() && parentWidget()->width() <= kWidthThresholdCollapse)
+            quitSearchActive = false;
+    });
     connect(advancedButton, &DToolButton::clicked, this, &SearchEditWidget::onAdvancedButtonClicked);
     connect(delayTimer, &QTimer::timeout, this, &SearchEditWidget::performSearch);   // 连接计时器超时信号
 
