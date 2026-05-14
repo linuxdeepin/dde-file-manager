@@ -87,9 +87,17 @@ bool SyncFileInfo::initQuerier()
 
 void SyncFileInfo::initQuerierAsync(int ioPriority, FileInfo::initQuerierAsyncCallback func, void *userData)
 {
-    QMutexLocker locker(&d->lock);
-    if (d->dfmFileInfo)
-        d->dfmFileInfo->initQuerierAsync(ioPriority, func, userData);
+    if (!func)
+        return;
+
+    auto lockGuard = std::make_shared<std::unique_lock<QMutex>>(d->lock);
+    if (d->dfmFileInfo) {
+        auto wrapper = [lockGuard, func](bool success, void *data) {
+            lockGuard->unlock();
+            func(success, data);
+        };
+        d->dfmFileInfo->initQuerierAsync(ioPriority, wrapper, userData);
+    }
 }
 /*!
  * \brief exists 文件是否存在

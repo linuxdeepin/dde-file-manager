@@ -620,7 +620,7 @@ int AsyncFileInfo::cacheAsyncAttributes(const QString &attributes)
 
 bool AsyncFileInfo::asyncQueryDfmFileInfo(int ioPriority, FileInfo::initQuerierAsyncCallback func, void *userData)
 {
-    if (d->queringAttribute)
+    if (d->queringAttribute || !func)
         return false;
     bool dfmNull = false;
     d->queringAttribute = true;
