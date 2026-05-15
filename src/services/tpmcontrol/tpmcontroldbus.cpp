@@ -30,8 +30,14 @@ TPMControlDBus::TPMControlDBus(const char *name, QObject *parent)
             QDBusConnection::ExportAllSignals |
             QDBusConnection::ExportAllProperties;
 
-    QDBusConnection::connectToBus(QDBusConnection::SystemBus, QString(name))
-            .registerObject("/org/deepin/Filemanager/TPMControl", this, opts);
+    QDBusConnection conn = QDBusConnection::connectToBus(QDBusConnection::SystemBus, QString(name));
+    if (!conn.isConnected()) {
+        fmWarning() << "[TPMControlDBus] failed to connect to system bus";
+        return;
+    }
+    if (!conn.registerObject("/org/deepin/Filemanager/TPMControl", this, opts)) {
+        fmWarning() << "[TPMControlDBus] failed to register object on path: /org/deepin/Filemanager/TPMControl";
+    }
 
     fmInfo() << "TPMControlDBus registered on SystemBus";
 }

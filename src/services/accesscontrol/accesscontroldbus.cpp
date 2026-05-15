@@ -59,7 +59,14 @@ AccessControlDBus::AccessControlDBus(const char *name, QObject *parent)
     QDBusConnection::RegisterOptions opts =
             QDBusConnection::ExportAllSlots | QDBusConnection::ExportAllSignals | QDBusConnection::ExportAllProperties;
 
-    QDBusConnection::connectToBus(QDBusConnection::SystemBus, QString(name)).registerObject(kAccessControlManagerObjPath, this, opts);
+    QDBusConnection conn = QDBusConnection::connectToBus(QDBusConnection::SystemBus, QString(name));
+    if (!conn.isConnected()) {
+        fmWarning() << "[AccessControlDBus] failed to connect to system bus";
+        return;
+    }
+    if (!conn.registerObject(kAccessControlManagerObjPath, this, opts)) {
+        fmWarning() << "[AccessControlDBus] failed to register object on path:" << kAccessControlManagerObjPath;
+    }
 }
 
 AccessControlDBus::~AccessControlDBus()
