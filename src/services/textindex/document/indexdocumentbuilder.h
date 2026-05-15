@@ -5,6 +5,7 @@
 #ifndef INDEXDOCUMENTBUILDER_H
 #define INDEXDOCUMENTBUILDER_H
 
+#include "document/builderoptions.h"
 #include "service_textindex_global.h"
 
 #include <QString>
@@ -18,7 +19,9 @@ class IndexDocumentBuilder
 public:
     virtual ~IndexDocumentBuilder() = default;
 
-    virtual Lucene::DocumentPtr build(const QString &filePath, const QString &text) const = 0;
+    virtual Lucene::DocumentPtr build(const QString &filePath,
+                                      const QString &text,
+                                      const BuilderOptions &options = {}) const = 0;
 };
 
 SERVICETEXTINDEX_END_NAMESPACE

@@ -32,7 +32,7 @@ Makefile.*
 
 debug
 release
-build*
+build
 
 *.pro.user
 *.pro.user*

@@ -34,6 +34,8 @@ public:
     using ScopeChecker = std::function<bool(const QString &)>;
     using CandidateChecker = std::function<bool(const QString &)>;
     using AnythingSearchOptionsProvider = std::function<AnythingSearchOptions()>;
+    using ChecksumProvider = std::function<QString(const QString &filePath)>;
+    using TextCacheLookup = std::function<QString(const QString &checksum)>;
 
     IndexProfile() = default;
     IndexProfile(Type type,
@@ -45,7 +47,9 @@ public:
                  AvailabilityChecker availabilityChecker,
                  ScopeChecker scopeChecker,
                  CandidateChecker candidateChecker,
-                 AnythingSearchOptionsProvider anythingSearchOptionsProvider = {});
+                 AnythingSearchOptionsProvider anythingSearchOptionsProvider = {},
+                 ChecksumProvider checksumProvider = {},
+                 TextCacheLookup textCacheLookup = {});
 
     Type type() const;
     const QString &id() const;
@@ -58,6 +62,20 @@ public:
     bool isCandidateFile(const QString &path) const;
     AnythingSearchOptions anythingSearchOptions() const;
     bool supportsAnything() const;
+
+    /**
+     * @brief Compute a checksum for the given file, if the profile supports it
+     * @return Checksum string, or empty if the profile does not support checksumming
+     */
+    QString computeChecksum(const QString &filePath) const;
+
+    /**
+     * @brief Look up cached extraction text by checksum, if the profile supports it
+     * @return Cached text, or empty if no cache hit or not supported
+     */
+    QString lookupCachedText(const QString &checksum) const;
+
+    bool supportsChecksum() const;
 
     static IndexProfile content();
     static IndexProfile ocr();
@@ -73,6 +91,8 @@ private:
     ScopeChecker m_scopeChecker;
     CandidateChecker m_candidateChecker;
     AnythingSearchOptionsProvider m_anythingSearchOptionsProvider;
+    ChecksumProvider m_checksumProvider;
+    TextCacheLookup m_textCacheLookup;
 };
 
 SERVICETEXTINDEX_END_NAMESPACE

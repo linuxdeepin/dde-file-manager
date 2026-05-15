@@ -18,8 +18,11 @@ using namespace Lucene;
 DFM_SEARCH_USE_NS
 using namespace DFMSEARCH::LuceneFieldNames;
 
-DocumentPtr ContentDocumentBuilder::build(const QString &filePath, const QString &text) const
+DocumentPtr ContentDocumentBuilder::build(const QString &filePath, const QString &text,
+                                          const BuilderOptions &options) const
 {
+    Q_UNUSED(options)
+
     DocumentPtr doc = newLucene<Document>();
 
     doc->add(newLucene<Field>(Content::kPath, filePath.toStdWString(),
@@ -42,6 +45,12 @@ DocumentPtr ContentDocumentBuilder::build(const QString &filePath, const QString
     NumericFieldPtr birthTimeField = newLucene<NumericField>(Content::kBirthTime, Field::STORE_YES, true);
     birthTimeField->setLongValue(birthTimeSecs);
     doc->add(birthTimeField);
+
+    // Add file size as NumericField for efficient range queries
+    const qint64 fileSize = fileInfo.size();
+    NumericFieldPtr fileSizeField = newLucene<NumericField>(Content::kFileSize, Field::STORE_YES, true);
+    fileSizeField->setLongValue(fileSize);
+    doc->add(fileSizeField);
 
     doc->add(newLucene<Field>(Content::kFilename, fileInfo.fileName().toStdWString(),
                               Field::STORE_YES, Field::INDEX_ANALYZED));
