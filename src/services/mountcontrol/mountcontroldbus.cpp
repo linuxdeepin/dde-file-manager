@@ -33,7 +33,14 @@ MountControlDBus::MountControlDBus(const char *name, QObject *parent)
     QDBusConnection::RegisterOptions opts =
             QDBusConnection::ExportAllSlots | QDBusConnection::ExportAllSignals | QDBusConnection::ExportAllProperties;
 
-    QDBusConnection::connectToBus(QDBusConnection::SystemBus, QString(name)).registerObject(kMountControlObjPath, this, opts);
+    QDBusConnection conn = QDBusConnection::connectToBus(QDBusConnection::SystemBus, QString(name));
+    if (!conn.isConnected()) {
+        fmWarning() << "[MountControlDBus] failed to connect to system bus";
+        return;
+    }
+    if (!conn.registerObject(kMountControlObjPath, this, opts)) {
+        fmWarning() << "[MountControlDBus] failed to register object on path:" << kMountControlObjPath;
+    }
 }
 
 MountControlDBus::~MountControlDBus() { }

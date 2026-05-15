@@ -24,8 +24,14 @@ OpticalShareDBus::OpticalShareDBus(const char *name, QObject *parent)
 {
     fmInfo() << "OpticalShareDBus: initializing service with name:" << name;
     adapter = new OpticalShareAdaptor(this);
-    QDBusConnection::connectToBus(QDBusConnection::SystemBus, QString(name))
-            .registerObject(GlobalServerDefines::OpticalShareDBusInfo::kPath, this, QDBusConnection::ExportAdaptors);
+    QDBusConnection conn = QDBusConnection::connectToBus(QDBusConnection::SystemBus, QString(name));
+    if (!conn.isConnected()) {
+        fmWarning() << "OpticalShareDBus: failed to connect to system bus";
+        return;
+    }
+    if (!conn.registerObject(GlobalServerDefines::OpticalShareDBusInfo::kPath, this, QDBusConnection::ExportAdaptors)) {
+        fmWarning() << "OpticalShareDBus: failed to register object on path:" << GlobalServerDefines::OpticalShareDBusInfo::kPath;
+    }
 }
 
 OpticalShareDBus::~OpticalShareDBus()

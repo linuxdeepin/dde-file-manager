@@ -36,7 +36,14 @@ ShareControlDBus::ShareControlDBus(const char *name, QObject *parent)
 {
     fmInfo() << "[ShareControlDBus] Initializing share control service with name:" << name;
     adapter = new UserShareManagerAdaptor(this);
-    QDBusConnection::connectToBus(QDBusConnection::SystemBus, QString(name)).registerObject(kUserShareObjPath, this, QDBusConnection::ExportAdaptors);
+    QDBusConnection conn = QDBusConnection::connectToBus(QDBusConnection::SystemBus, QString(name));
+    if (!conn.isConnected()) {
+        fmWarning() << "[ShareControlDBus] failed to connect to system bus";
+        return;
+    }
+    if (!conn.registerObject(kUserShareObjPath, this, QDBusConnection::ExportAdaptors)) {
+        fmWarning() << "[ShareControlDBus] failed to register object on path:" << kUserShareObjPath;
+    }
     fmInfo() << "[ShareControlDBus] Share control service registered successfully";
 }
 
