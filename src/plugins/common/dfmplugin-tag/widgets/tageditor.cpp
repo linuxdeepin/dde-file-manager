@@ -50,8 +50,9 @@ void TagEditor::setDefaultCrumbs(const QStringList &list)
 void TagEditor::onFocusOut()
 {
     if (flagForShown.load(std::memory_order_acquire)) {
-        if (!crumbEdit->toPlainText().remove(QChar::ObjectReplacementCharacter).isEmpty())
-            crumbEdit->appendCrumb(crumbEdit->toPlainText().remove(QChar::ObjectReplacementCharacter));
+        QString text = crumbEdit->toPlainText().remove(QChar::ObjectReplacementCharacter).trimmed();
+        if (!text.isEmpty())
+            crumbEdit->appendCrumb(text);
         processTags();
         close();
     }
@@ -167,7 +168,13 @@ void TagEditor::setupEditHeight()
 
 void TagEditor::processTags()
 {
-    QList<QString> tags = crumbEdit->crumbList();
+    QList<QString> tags;
+    for (const QString &tag : crumbEdit->crumbList()) {
+        QString trimmed = tag.trimmed();
+        if (!trimmed.isEmpty())
+            tags << trimmed;
+    }
+
     QList<QUrl> tempFiles = files;
 
     updateCrumbsColor(TagManager::instance()->assignColorToTags(tags));
