@@ -12,7 +12,9 @@ SERVICETEXTINDEX_BEGIN_NAMESPACE
 class OcrDocumentBuilder : public IndexDocumentBuilder
 {
 public:
-    Lucene::DocumentPtr build(const QString &filePath, const QString &text) const override;
+    Lucene::DocumentPtr build(const QString &filePath,
+                              const QString &text,
+                              const BuilderOptions &options = {}) const override;
 };
 
 SERVICETEXTINDEX_END_NAMESPACE

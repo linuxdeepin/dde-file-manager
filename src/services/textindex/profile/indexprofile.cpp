@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "indexprofile.h"
+#include "extractor/ocrdeduplication.h"
+#include "utils/filehash.h"
 #include "utils/indexutility.h"
 #include "utils/textindexconfig.h"
 
@@ -19,7 +21,9 @@ IndexProfile::IndexProfile(Type type,
                            AvailabilityChecker availabilityChecker,
                            ScopeChecker scopeChecker,
                            CandidateChecker candidateChecker,
-                           AnythingSearchOptionsProvider anythingSearchOptionsProvider)
+                           AnythingSearchOptionsProvider anythingSearchOptionsProvider,
+                           ChecksumProvider checksumProvider,
+                           TextCacheLookup textCacheLookup)
     : m_type(type),
       m_id(std::move(id)),
       m_statusFileName(std::move(statusFileName)),
@@ -29,7 +33,9 @@ IndexProfile::IndexProfile(Type type,
       m_availabilityChecker(std::move(availabilityChecker)),
       m_scopeChecker(std::move(scopeChecker)),
       m_candidateChecker(std::move(candidateChecker)),
-      m_anythingSearchOptionsProvider(std::move(anythingSearchOptionsProvider))
+      m_anythingSearchOptionsProvider(std::move(anythingSearchOptionsProvider)),
+      m_checksumProvider(std::move(checksumProvider)),
+      m_textCacheLookup(std::move(textCacheLookup))
 {
 }
 
@@ -93,6 +99,21 @@ bool IndexProfile::supportsAnything() const
     return !anythingSearchOptions().isEmpty();
 }
 
+QString IndexProfile::computeChecksum(const QString &filePath) const
+{
+    return m_checksumProvider ? m_checksumProvider(filePath) : QString();
+}
+
+QString IndexProfile::lookupCachedText(const QString &checksum) const
+{
+    return m_textCacheLookup ? m_textCacheLookup(checksum) : QString();
+}
+
+bool IndexProfile::supportsChecksum() const
+{
+    return static_cast<bool>(m_checksumProvider);
+}
+
 IndexProfile IndexProfile::content()
 {
     return IndexProfile {
@@ -116,6 +137,10 @@ IndexProfile IndexProfile::content()
 
 IndexProfile IndexProfile::ocr()
 {
+    // Capture OCR index directory for use in the text cache lookup lambda.
+    // This avoids repeatedly querying the global function on every lookup call.
+    const QString ocrIndexDir = DFMSEARCH::Global::ocrTextIndexDirectory();
+
     return IndexProfile {
         Type::Ocr,
         QStringLiteral("ocr"),
@@ -131,6 +156,12 @@ IndexProfile IndexProfile::ocr()
                 { Defines::kAnythingPicType },
                 TextIndexConfig::instance().supportedOcrImageExtensions()
             };
+        },
+        // ChecksumProvider: compute file MD5
+        [](const QString &filePath) { return FileHash::computeMd5(filePath); },
+        // TextCacheLookup: find existing OCR text by checksum
+        [ocrIndexDir](const QString &checksum) {
+            return OcrDeduplication::lookupByTextChecksum(checksum, ocrIndexDir);
         }
     };
 }

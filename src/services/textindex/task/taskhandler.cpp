@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "taskhandler.h"
+#include "document/builderoptions.h"
 #include "fileprovider.h"
 #include "progressnotifier.h"
 #include "moveprocessor.h"
@@ -229,14 +230,37 @@ DocumentPtr createFileDocument(const IndexContext &context, const QString &file)
                 : config.maxIndexFileTruncationSizeMB();
         const size_t maxBytes = static_cast<size_t>(truncationSizeMB) * 1024 * 1024;
 
-        const IndexExtractionResult extraction = context.extractor()->extract(file, maxBytes);
-        if (!extraction.success) {
-            fmInfo() << "[createFileDocument] Failed to extract content from file:" << file
-                     << "profile:" << context.profile().id()
-                     << "error:" << extraction.error;
+        BuilderOptions options;
+        IndexExtractionResult extraction;
+
+        // Checksum-based deduplication (profile decides whether to support it)
+        options.checksum = context.profile().computeChecksum(file);
+        if (!options.checksum.isEmpty()) {
+            const QString cachedText = context.profile().lookupCachedText(options.checksum);
+            if (!cachedText.isEmpty()) {
+                fmInfo() << "[createFileDocument] Text cache hit for:" << file
+                         << "profile:" << context.profile().id()
+                         << "checksum:" << options.checksum;
+                extraction = { .success = true,
+                                .text = cachedText,
+                                .error = {},
+                                .checksum = options.checksum,
+                                .deduplicated = true };
+            }
         }
 
-        return context.documentBuilder()->build(file, extraction.text);
+        // If cache did not provide text, perform normal extraction
+        if (!extraction.deduplicated) {
+            extraction = context.extractor()->extract(file, maxBytes);
+            if (!extraction.success) {
+                fmInfo() << "[createFileDocument] Failed to extract content from file:" << file
+                         << "profile:" << context.profile().id()
+                         << "error:" << extraction.error;
+            }
+            extraction.checksum = options.checksum;
+        }
+
+        return context.documentBuilder()->build(file, extraction.text, options);
     } catch (const LuceneException &e) {
         fmWarning() << "[createFileDocument] Create document failed with Lucene exception:" << file
                     << "error:" << QString::fromStdWString(e.getError());
