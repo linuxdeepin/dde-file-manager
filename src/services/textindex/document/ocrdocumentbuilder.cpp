@@ -17,7 +17,8 @@ using namespace Lucene;
 DFM_SEARCH_USE_NS
 using namespace DFMSEARCH::LuceneFieldNames;
 
-DocumentPtr OcrDocumentBuilder::build(const QString &filePath, const QString &text) const
+DocumentPtr OcrDocumentBuilder::build(const QString &filePath, const QString &text,
+                                       const BuilderOptions &options) const
 {
     DocumentPtr doc = newLucene<Document>();
 
@@ -44,6 +45,12 @@ DocumentPtr OcrDocumentBuilder::build(const QString &filePath, const QString &te
     birthTimeField->setLongValue(birthTimeSecs);
     doc->add(birthTimeField);
 
+    // Add file size as NumericField for efficient range queries
+    const qint64 fileSize = fileInfo.size();
+    NumericFieldPtr fileSizeField = newLucene<NumericField>(OcrText::kFileSize, Field::STORE_YES, true);
+    fileSizeField->setLongValue(fileSize);
+    doc->add(fileSizeField);
+
     doc->add(newLucene<Field>(OcrText::kFilename, fileInfo.fileName().toStdWString(),
                               Field::STORE_YES, Field::INDEX_ANALYZED));
 
@@ -52,6 +59,12 @@ DocumentPtr OcrDocumentBuilder::build(const QString &filePath, const QString &te
             : QStringLiteral("N");
     doc->add(newLucene<Field>(OcrText::kIsHidden, hiddenTag.toStdWString(),
                               Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
+
+    // Add MD5 checksum for deduplication (exact match, not tokenized)
+    if (!options.checksum.isEmpty()) {
+        doc->add(newLucene<Field>(OcrText::kCheckSum, options.checksum.toStdWString(),
+                                  Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
+    }
 
     if (!text.trimmed().isEmpty()) {
         doc->add(newLucene<Field>(OcrText::kOcrContents, text.trimmed().toStdWString(),

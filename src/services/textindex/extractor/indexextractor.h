@@ -16,6 +16,8 @@ struct IndexExtractionResult
     bool success { false };
     QString text;
     QString error;
+    QString checksum;       ///< MD5 hex digest of the source file (if computed)
+    bool deduplicated { false };  ///< true if text was obtained via checksum deduplication
 };
 
 class IndexExtractor
