@@ -54,7 +54,8 @@ inline const QString kBatchCommitInterval = QLatin1String("batchCommitInterval")
 // Version 1: add "filename" filed
 // Version 2: add new filed "ancestor_paths"
 // Version 3: add new time-related fields
-inline constexpr int kTextIndexVersion { 3 };
+// Version 4: switch content index analyzer to NGramAnalyzer(2,2)
+inline constexpr int kTextIndexVersion { 4 };
 
 // OCR index version history:
 // Version 0: initial OCR text index schema

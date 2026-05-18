@@ -15,6 +15,7 @@
 #include <dfm-search/searchfactory.h>
 #include <dfm-search/filenamesearchapi.h>
 #include <dfm-search/field_names.h>
+#include <dfm-search/lucene++/ngramanalyzer.h>
 
 #include <fulltext/chineseanalyzer.h>
 
@@ -216,6 +217,17 @@ const wchar_t *modifyTimeField(const IndexProfile &profile)
     }
 }
 
+AnalyzerPtr createAnalyzer(const IndexProfile &profile)
+{
+    switch (profile.type()) {
+    case IndexProfile::Type::Content:
+        return newLucene<NGramAnalyzer>(2, 2);
+    case IndexProfile::Type::Ocr:
+    default:
+        return newLucene<ChineseAnalyzer>();
+    }
+}
+
 DocumentPtr createFileDocument(const IndexContext &context, const QString &file)
 {
     try {
@@ -242,10 +254,10 @@ DocumentPtr createFileDocument(const IndexContext &context, const QString &file)
                          << "profile:" << context.profile().id()
                          << "checksum:" << options.checksum;
                 extraction = { .success = true,
-                                .text = cachedText,
-                                .error = {},
-                                .checksum = options.checksum,
-                                .deduplicated = true };
+                               .text = cachedText,
+                               .error = {},
+                               .checksum = options.checksum,
+                               .deduplicated = true };
             }
         }
 
@@ -678,7 +690,7 @@ TaskHandler TaskHandlers::CreateIndexHandler(const IndexContext &context)
         try {
             IndexWriterPtr writer = newLucene<IndexWriter>(
                     FSDirectory::open(indexDir.toStdWString()),
-                    newLucene<ChineseAnalyzer>(),
+                    createAnalyzer(context.profile()),
                     true,
                     IndexWriter::MaxFieldLengthUNLIMITED);
 
@@ -781,7 +793,7 @@ TaskHandler TaskHandlers::UpdateIndexHandler(const IndexContext &context)
 
             IndexWriterPtr writer = newLucene<IndexWriter>(
                     FSDirectory::open(indexDir.toStdWString()),
-                    newLucene<ChineseAnalyzer>(),
+                    createAnalyzer(context.profile()),
                     false,
                     IndexWriter::MaxFieldLengthUNLIMITED);
 
@@ -891,7 +903,7 @@ TaskHandler TaskHandlers::CreateOrUpdateFileListHandler(const IndexContext &cont
 
             IndexWriterPtr writer = newLucene<IndexWriter>(
                     FSDirectory::open(indexDir.toStdWString()),
-                    newLucene<ChineseAnalyzer>(),
+                    createAnalyzer(context.profile()),
                     false,
                     IndexWriter::MaxFieldLengthUNLIMITED);
 
@@ -981,7 +993,7 @@ TaskHandler TaskHandlers::RemoveFileListHandler(const IndexContext &context, con
             // 打开索引写入器
             IndexWriterPtr writer = newLucene<IndexWriter>(
                     FSDirectory::open(indexDir.toStdWString()),
-                    newLucene<ChineseAnalyzer>(),
+                    createAnalyzer(context.profile()),
                     false,
                     IndexWriter::MaxFieldLengthUNLIMITED);
 
@@ -1082,7 +1094,7 @@ TaskHandler TaskHandlers::MoveFileListHandler(const IndexContext &context, const
 
             IndexWriterPtr writer = newLucene<IndexWriter>(
                     FSDirectory::open(indexDir.toStdWString()),
-                    newLucene<ChineseAnalyzer>(),
+                    createAnalyzer(context.profile()),
                     false,
                     IndexWriter::MaxFieldLengthUNLIMITED);
 
