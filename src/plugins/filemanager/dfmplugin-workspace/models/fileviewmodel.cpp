@@ -1441,7 +1441,7 @@ void FileViewModel::connectFilterSortWorkSignals()
             },
             Qt::QueuedConnection);
     connect(
-            filterSortWorker.data(), &FileSortWorker::reqUestCloseCursor, this, [this] {
+            filterSortWorker.data(), &FileSortWorker::requestCloseCursor, this, [this] {
                 closeCursorTimer();
             },
             Qt::QueuedConnection);

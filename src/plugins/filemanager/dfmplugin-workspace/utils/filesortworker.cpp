@@ -1232,6 +1232,11 @@ void FileSortWorker::checkNameFilters(const FileItemDataPointer itemData)
 
 void FileSortWorker::filterAllFilesOrdered()
 {
+    emit requestCursorWait();
+    FinallyUtil release([this] {
+        emit requestCloseCursor();
+    });
+
     visibleTreeChildren.clear();
     filterAndSortFiles(current, true, false);
 }
@@ -1293,7 +1298,7 @@ void FileSortWorker::resortCurrent(const bool reverse)
     if (isCurrentGroupingEnabled) {
         applyGrouping(getAllFiles());
     }
-    emit reqUestCloseCursor();
+    emit requestCloseCursor();
 }
 
 QList<QUrl> FileSortWorker::filterFilesByParent(const QUrl &dir, const bool byInfo)
@@ -1986,7 +1991,7 @@ bool FileSortWorker::checkAndUpdateFileInfoUpdate()
         if (!mimeSorting) {
             waitUpdatedFiles.clear();
             if (isCanceled)
-                emit reqUestCloseCursor();
+                emit requestCloseCursor();
             return !isCanceled;
         }
         auto info = item->fileInfo();
@@ -2095,7 +2100,7 @@ void FileSortWorker::applyGrouping(const QList<FileItemDataPointer> &files)
 
     emit requestCursorWait();
     FinallyUtil release([this] {
-        emit reqUestCloseCursor();
+        emit requestCloseCursor();
     });
 
     // Perform grouping using GroupingEngine

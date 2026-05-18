@@ -123,7 +123,7 @@ signals:
 
     void requestUpdateView();
     void requestCursorWait();
-    void reqUestCloseCursor();
+    void requestCloseCursor();
 
     // Grouping-related signals
     void groupDataChanged();
