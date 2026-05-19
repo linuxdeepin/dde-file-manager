@@ -1,3 +1,14 @@
+dde-file-manager (6.5.138) unstable; urgency=medium
+
+  * fix: trim whitespace in tag editor input
+  * fix: add error handling for D-Bus connection and registration
+  * feat: enhance index with file size and OCR deduplication
+  * fix: correct cursor wait handling in file sorting
+  * fix: reset file index when restoring defaults
+  * fix: resolve mutex deadlock in async file info query
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Tue, 19 May 2026 20:57:44 +0800
+
 dde-file-manager (6.5.137) unstable; urgency=medium
 
   * fix: remove directory marker in handleDirectoryCreated
