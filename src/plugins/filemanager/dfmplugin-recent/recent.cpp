@@ -5,7 +5,6 @@
 #include "recent.h"
 #include "files/recentfileinfo.h"
 #include "files/recentdiriterator.h"
-#include "files/recentfilewatcher.h"
 #include "utils/recentmanager.h"
 #include "utils/recentfilehelper.h"
 #include "menus/recentmenuscene.h"
@@ -45,7 +44,6 @@ void Recent::initialize()
     UrlRoute::regScheme(RecentHelper::scheme(), "/", RecentHelper::icon(), true, tr("Recent"));
     // 注册Scheme为"recent"的扩展的文件信息 本地默认文件的
     InfoFactory::regClass<RecentFileInfo>(RecentHelper::scheme());
-    WatcherFactory::regClass<RecentFileWatcher>(RecentHelper::scheme());
     DirIteratorFactory::regClass<RecentDirIterator>(RecentHelper::scheme());
 
     followEvents();
