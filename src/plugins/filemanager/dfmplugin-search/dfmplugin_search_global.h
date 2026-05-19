@@ -48,6 +48,7 @@ inline constexpr char kOcrTextSearch[] { SEARCH_SETTING_GROUP ".02_ocr_text_sear
 
 namespace DConfig {
 inline constexpr char kSearchCfgPath[] { "org.deepin.dde.file-manager.search" };
+inline constexpr char kEnableFileIndexSearch[] { "enableFileIndexSearch" };
 inline constexpr char kEnableFullTextSearch[] { "enableFullTextSearch" };
 inline constexpr char kEnableOcrTextSearch[] { "enableOcrTextSearch" };
 }

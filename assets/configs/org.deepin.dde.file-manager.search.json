@@ -2,6 +2,17 @@
     "magic":"dsg.config.meta",
     "version":"1.0",
     "contents":{
+        "enableFileIndexSearch": {
+            "value":true,
+            "serial":0,
+            "flags":[],
+            "name":"Enable File Index Search",
+            "name[zh_CN]":"开启文件索引搜索",
+            "description[zh_CN]":"用于恢复默认设置时判断是否启用文件索引",
+            "description":"Used for restore defaults to determine whether to enable file index",
+            "permissions":"readwrite",
+            "visibility":"private"
+        },
         "enableFullTextSearch": {
             "value":true,
             "serial":0,
