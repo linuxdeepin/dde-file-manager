@@ -3,9 +3,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "recentmanager.h"
-#include "files/recentfileinfo.h"
-#include "files/recentfilewatcher.h"
-#include "utils/recentfilehelper.h"
 #include "events/recenteventcaller.h"
 
 #include <dfm-base/base/schemefactory.h>
