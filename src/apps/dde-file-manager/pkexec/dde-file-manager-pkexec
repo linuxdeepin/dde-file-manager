@@ -28,9 +28,13 @@ function run_pkexec() {
     echo "export XAUTHORITY='$XAUTHORITY'" >> "$TEMP_ENV_FILE"
     echo "export XDG_SESSION_TYPE='$XDG_SESSION_TYPE'" >> "$TEMP_ENV_FILE"
     echo "export XDG_DATA_DIRS='$XDG_DATA_DIRS'" >> "$TEMP_ENV_FILE"
+    echo "export WAYLAND_DISPLAY='$WAYLAND_DISPLAY'" >> "$TEMP_ENV_FILE"
 
-    # [NOTE] xhost 仍然保留，作为一种备用授权机制
-    xhost +SI:localuser:root &>/dev/null
+    # [NOTE] xhost 仅在存在 X11 DISPLAY 且命令可用时调用，避免在纯 Wayland 会话下
+    # 由于 set -e 让脚本提前终止
+    if [ -n "$DISPLAY" ] && command -v xhost >/dev/null 2>&1; then
+        xhost +SI:localuser:root &>/dev/null || true
+    fi
 
     echo "run in pkexec: $@"
     # 将 uid 和临时环境文件路径作为最后两个参数传递，确保解析的稳定性
@@ -38,7 +42,9 @@ function run_pkexec() {
 
     # 安全清理：强制删除并忽略错误
     rm -f "$TEMP_ENV_FILE" 2>/dev/null
-    xhost -SI:localuser:root &>/dev/null
+    if [ -n "$DISPLAY" ] && command -v xhost >/dev/null 2>&1; then
+        xhost -SI:localuser:root &>/dev/null || true
+    fi
 }
 
 function run_app() {
@@ -77,9 +83,8 @@ function run_app() {
         export GDK_BACKEND=x11
     else
         # Wayland 逻辑
-        export WAYLAND_DISPLAY=wayland-0
+        export WAYLAND_DISPLAY="${WAYLAND_DISPLAY:-wayland-0}"
         # DISPLAY 和 XAUTHORITY 已加载，用于 XWayland 兼容
-        export QT_WAYLAND_SHELL_INTEGRATION=kwayland-shell
         export XDG_SESSION_TYPE=wayland
         export QT_QPA_PLATFORM=wayland
         export GDK_BACKEND=wayland,x11
