@@ -393,6 +393,14 @@ QWidget *SearchHelper::createCheckBoxWidthFileIndex(QObject *opt)
     cb->setDisplayText(qApp->translate("QObject", text.toStdString().c_str()));
     cb->initStatusBar();
 
+    QObject::connect(cb, &IndexStatusCheckBox::checkStateChanged, option, [=](Qt::CheckState state) {
+        option->setValue(state == Qt::CheckState::Checked);
+    });
+    QObject::connect(option, &Dtk::Core::DSettingsOption::valueChanged, cb, [cb](const QVariant &value) {
+        if (value.toBool() && !cb->isChecked())
+            cb->setChecked(true);
+    });
+
     return cb;
 }
 

@@ -155,6 +155,19 @@ void Search::regSearchSettingConfig()
                                                   { "type", "checkBoxWidthFileIndex" },
                                                   { "default", true } });
 
+    SettingBackend::instance()->addSettingAccessor(
+            SearchSettings::kFileIndexSearch,
+            []() {
+                return DConfigManager::instance()->value(DConfig::kSearchCfgPath,
+                                                         DConfig::kEnableFileIndexSearch,
+                                                         true);
+            },
+            [](const QVariant &val) {
+                DConfigManager::instance()->setValue(DConfig::kSearchCfgPath,
+                                                     DConfig::kEnableFileIndexSearch,
+                                                     val);
+            });
+
     QString textIndexKey { SearchSettings::kFulltextSearch };
     DialogManager::instance()->registerSettingWidget("checkBoxWidthTextIndex", &SearchHelper::createCheckBoxWidthTextIndex);
     SettingJsonGenerator::instance()->addConfig(SearchSettings::kFulltextSearch,
