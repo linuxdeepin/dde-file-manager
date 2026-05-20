@@ -10,8 +10,6 @@
 
 #include <dfm-search/dsearch_global.h>
 
-#include <DFileSystemWatcher>
-
 #include <QDir>
 #include <QFileInfo>
 #include <QProcess>
@@ -23,7 +21,6 @@
 #include <QCoreApplication>
 
 DFMBASE_USE_NAMESPACE
-DCORE_USE_NAMESPACE
 
 SERVICETEXTINDEX_BEGIN_NAMESPACE
 
@@ -38,8 +35,8 @@ SERVICETEXTINDEX_BEGIN_NAMESPACE
 //     connect(&FSMonitor::instance(), &FSMonitor::fileDeleted, this, [](const QString &path, const QString &name) {
 //         fmDebug() << "File deleted:" << path << "/" << name;
 //     });
-//     connect(&FSMonitor::instance(), &FSMonitor::fileModified, this, [](const QString &path, const QString &name) {
-//         fmDebug() << "File modified:" << path << "/" << name;
+//     connect(&FSMonitor::instance(), &FSMonitor::fileClosed, this, [](const QString &path, const QString &name) {
+//         fmDebug() << "File closed:" << path << "/" << name;
 //     });
 //     connect(&FSMonitor::instance(), &FSMonitor::fileMoved, this, [](const QString &fromPath, const QString &fromName, const QString &toPath, const QString &toName) {
 //         fmDebug() << "File moved:"
@@ -109,7 +106,7 @@ bool FSMonitorPrivate::init(const QStringList &rootPaths)
         return false;
     }
 
-    watcher.reset(new DFileSystemWatcher());
+    watcher.reset(new InotifyFileSystemWatcher());
 
     // Setup watcher connections
     setupWatcherConnections();
@@ -345,48 +342,6 @@ bool FSMonitorPrivate::showHidden() const
     return TextIndexConfig::instance().indexHiddenFiles();
 }
 
-bool FSMonitorPrivate::isExternalMount(const QString &path) const
-{
-    // Skip empty paths
-    if (path.isEmpty()) {
-        return false;
-    }
-
-    QStorageInfo storage(path);
-
-    // Skip if not mounted or if it's a network filesystem
-    if (!storage.isValid() || !storage.isReady()) {
-        return false;
-    }
-
-    // Check for network filesystems
-    const QString fsType = storage.fileSystemType().toLower();
-
-    // Reject all FUSE-based filesystems
-    if (fsType.startsWith("fuse")) {
-        return true;
-    }
-
-    // Check for other known network filesystems
-    // TODO: add to DConfig
-    static const QStringList kNetworkFsTypes = {
-        "nfs", "nfs4", "cifs", "smb", "smb2", "smbfs", "webdav",
-        "ceph", "glusterfs", "moosefs", "lustre", "overlay", "aufs", "9p",
-        "sftp", "curlftpfs", "davfs"
-    };
-
-    if (kNetworkFsTypes.contains(fsType.toLower())) {
-        return true;
-    }
-
-    // Check for removable media
-    if (!ProtocolUtils::isLocalFile(QUrl::fromLocalFile(path))) {
-        return true;
-    }
-
-    return false;
-}
-
 bool FSMonitorPrivate::addWatchForDirectory(const QString &path)
 {
     // Skip if path is empty or should exclude
@@ -442,23 +397,25 @@ bool FSMonitorPrivate::isWithinWatchLimit() const
 
 void FSMonitorPrivate::setupWatcherConnections()
 {
-    // Connect file events from DFileSystemWatcher
-    QObject::connect(watcher.data(), &DFileSystemWatcher::fileCreated,
+    // Connect file events from InotifyFileSystemWatcher
+    QObject::connect(watcher.data(), &InotifyFileSystemWatcher::fileCreated,
                      q_ptr, [this](const QString &path, const QString &name) {
                          handleFileCreated(path, name);
                      });
 
-    QObject::connect(watcher.data(), &DFileSystemWatcher::fileDeleted,
+    QObject::connect(watcher.data(), &InotifyFileSystemWatcher::fileDeleted,
                      q_ptr, [this](const QString &path, const QString &name) {
                          handleFileDeleted(path, name);
                      });
 
-    QObject::connect(watcher.data(), &DFileSystemWatcher::fileModified,
+    // Use fileClosed (IN_CLOSE_WRITE) instead of fileModified (IN_MODIFY)
+    // to avoid high-frequency signals during large file copies
+    QObject::connect(watcher.data(), &InotifyFileSystemWatcher::fileClosed,
                      q_ptr, [this](const QString &path, const QString &name) {
-                         handleFileModified(path, name);
+                         handleFileClosed(path, name);
                      });
 
-    QObject::connect(watcher.data(), &DFileSystemWatcher::fileMoved,
+    QObject::connect(watcher.data(), &InotifyFileSystemWatcher::fileMoved,
                      q_ptr, [this](const QString &fromPath, const QString &fromName, const QString &toPath, const QString &toName) {
                          handleFileMoved(fromPath, fromName, toPath, toName);
                      });
@@ -518,7 +475,7 @@ void FSMonitorPrivate::handleFileDeleted(const QString &path, const QString &nam
     }
 }
 
-void FSMonitorPrivate::handleFileModified(const QString &path, const QString &name)
+void FSMonitorPrivate::handleFileClosed(const QString &path, const QString &name)
 {
     if (!active || path.isEmpty()) {
         return;
@@ -529,7 +486,7 @@ void FSMonitorPrivate::handleFileModified(const QString &path, const QString &na
         return;
     }
 
-    Q_EMIT q_ptr->fileModified(path, name);
+    Q_EMIT q_ptr->fileClosed(path, name);
 }
 
 void FSMonitorPrivate::handleFileMoved(const QString &fromPath, const QString &fromName,

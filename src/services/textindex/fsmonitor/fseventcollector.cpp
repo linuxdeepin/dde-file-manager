@@ -132,9 +132,9 @@ bool FSEventCollectorPrivate::startCollecting()
                          handleFileDeleted(path, name);
                      });
 
-    QObject::connect(&fsMonitor, &FSMonitor::fileModified,
+    QObject::connect(&fsMonitor, &FSMonitor::fileClosed,
                      q_ptr, [this](const QString &path, const QString &name) {
-                         handleFileModified(path, name);
+                         handleFileClosed(path, name);
                      });
 
     QObject::connect(&fsMonitor, &FSMonitor::fileMoved,
@@ -339,7 +339,7 @@ void FSEventCollectorPrivate::handleFileDeleted(const QString &path, const QStri
     }
 }
 
-void FSEventCollectorPrivate::handleFileModified(const QString &path, const QString &name)
+void FSEventCollectorPrivate::handleFileClosed(const QString &path, const QString &name)
 {
     QString fullPath = normalizePath(path, name);
 
