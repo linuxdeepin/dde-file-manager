@@ -7,6 +7,8 @@
 
 #include "service_textindex_global.h"
 
+#include <boost/shared_ptr.hpp>
+
 #include <functional>
 
 SERVICETEXTINDEX_BEGIN_NAMESPACE
@@ -36,6 +38,7 @@ public:
     using AnythingSearchOptionsProvider = std::function<AnythingSearchOptions()>;
     using ChecksumProvider = std::function<QString(const QString &filePath)>;
     using TextCacheLookup = std::function<QString(const QString &checksum)>;
+    using AnalyzerProvider = std::function<boost::shared_ptr<void>()>;
 
     IndexProfile() = default;
     IndexProfile(Type type,
@@ -49,7 +52,8 @@ public:
                  CandidateChecker candidateChecker,
                  AnythingSearchOptionsProvider anythingSearchOptionsProvider = {},
                  ChecksumProvider checksumProvider = {},
-                 TextCacheLookup textCacheLookup = {});
+                 TextCacheLookup textCacheLookup = {},
+                 AnalyzerProvider analyzerProvider = {});
 
     Type type() const;
     const QString &id() const;
@@ -77,6 +81,13 @@ public:
 
     bool supportsChecksum() const;
 
+    const wchar_t *pathField() const;
+    const wchar_t *ancestorPathsField() const;
+    const wchar_t *modifyTimeField() const;
+    bool supportsModifiedTimestampCheck() const;
+    boost::shared_ptr<void> createAnalyzer() const;
+    int maxFileTruncationSizeMB() const;
+
     static IndexProfile content();
     static IndexProfile ocr();
 
@@ -93,6 +104,7 @@ private:
     AnythingSearchOptionsProvider m_anythingSearchOptionsProvider;
     ChecksumProvider m_checksumProvider;
     TextCacheLookup m_textCacheLookup;
+    AnalyzerProvider m_analyzerProvider;
 };
 
 SERVICETEXTINDEX_END_NAMESPACE
