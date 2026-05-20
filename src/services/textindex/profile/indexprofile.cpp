@@ -8,6 +8,12 @@
 #include "utils/indexutility.h"
 #include "utils/textindexconfig.h"
 
+#include <dfm-search/field_names.h>
+#include <dfm-search/lucene++/ngramanalyzer.h>
+
+#include <fulltext/chineseanalyzer.h>
+#include <lucene++/LuceneHeaders.h>
+
 #include <QFileInfo>
 
 SERVICETEXTINDEX_BEGIN_NAMESPACE
@@ -23,7 +29,8 @@ IndexProfile::IndexProfile(Type type,
                            CandidateChecker candidateChecker,
                            AnythingSearchOptionsProvider anythingSearchOptionsProvider,
                            ChecksumProvider checksumProvider,
-                           TextCacheLookup textCacheLookup)
+                           TextCacheLookup textCacheLookup,
+                           AnalyzerProvider analyzerProvider)
     : m_type(type),
       m_id(std::move(id)),
       m_statusFileName(std::move(statusFileName)),
@@ -35,7 +42,8 @@ IndexProfile::IndexProfile(Type type,
       m_candidateChecker(std::move(candidateChecker)),
       m_anythingSearchOptionsProvider(std::move(anythingSearchOptionsProvider)),
       m_checksumProvider(std::move(checksumProvider)),
-      m_textCacheLookup(std::move(textCacheLookup))
+      m_textCacheLookup(std::move(textCacheLookup)),
+      m_analyzerProvider(std::move(analyzerProvider))
 {
 }
 
@@ -114,6 +122,67 @@ bool IndexProfile::supportsChecksum() const
     return static_cast<bool>(m_checksumProvider);
 }
 
+const wchar_t *IndexProfile::pathField() const
+{
+    switch (m_type) {
+    case Type::Ocr:
+        return DFMSEARCH::LuceneFieldNames::OcrText::kPath;
+    case Type::Content:
+    default:
+        return DFMSEARCH::LuceneFieldNames::Content::kPath;
+    }
+}
+
+const wchar_t *IndexProfile::ancestorPathsField() const
+{
+    switch (m_type) {
+    case Type::Ocr:
+        return DFMSEARCH::LuceneFieldNames::OcrText::kAncestorPaths;
+    case Type::Content:
+    default:
+        return DFMSEARCH::LuceneFieldNames::Content::kAncestorPaths;
+    }
+}
+
+const wchar_t *IndexProfile::modifyTimeField() const
+{
+    switch (m_type) {
+    case Type::Ocr:
+        return DFMSEARCH::LuceneFieldNames::OcrText::kModifyTime;
+    case Type::Content:
+    default:
+        return DFMSEARCH::LuceneFieldNames::Content::kModifyTime;
+    }
+}
+
+bool IndexProfile::supportsModifiedTimestampCheck() const
+{
+    switch (m_type) {
+    case Type::Ocr:
+    case Type::Content:
+        return true;
+    default:
+        return false;
+    }
+}
+
+boost::shared_ptr<void> IndexProfile::createAnalyzer() const
+{
+    return m_analyzerProvider ? m_analyzerProvider() : nullptr;
+}
+
+int IndexProfile::maxFileTruncationSizeMB() const
+{
+    const TextIndexConfig &config = TextIndexConfig::instance();
+    switch (m_type) {
+    case Type::Ocr:
+        return config.maxOcrImageSizeMB();
+    case Type::Content:
+    default:
+        return config.maxIndexFileTruncationSizeMB();
+    }
+}
+
 IndexProfile IndexProfile::content()
 {
     return IndexProfile {
@@ -131,6 +200,11 @@ IndexProfile IndexProfile::content()
                 { Defines::kAnythingDocType },
                 {}
             };
+        },
+        {},
+        {},
+        []() -> boost::shared_ptr<void> {
+            return Lucene::newLucene<Lucene::NGramAnalyzer>(2, 2);
         }
     };
 }
@@ -162,6 +236,10 @@ IndexProfile IndexProfile::ocr()
         // TextCacheLookup: find existing OCR text by checksum
         [ocrIndexDir](const QString &checksum) {
             return OcrDeduplication::lookupByTextChecksum(checksum, ocrIndexDir);
+        },
+        // AnalyzerProvider: create ChineseAnalyzer for OCR text
+        []() -> boost::shared_ptr<void> {
+            return Lucene::newLucene<Lucene::ChineseAnalyzer>();
         }
     };
 }

@@ -14,10 +14,6 @@
 
 #include <dfm-search/searchfactory.h>
 #include <dfm-search/filenamesearchapi.h>
-#include <dfm-search/field_names.h>
-#include <dfm-search/lucene++/ngramanalyzer.h>
-
-#include <fulltext/chineseanalyzer.h>
 
 #include <lucene++/LuceneHeaders.h>
 #include <FileUtils.h>
@@ -32,7 +28,6 @@ SERVICETEXTINDEX_USE_NAMESPACE
 
 using namespace Lucene;
 DFM_SEARCH_USE_NS
-using namespace DFMSEARCH::LuceneFieldNames;
 namespace {
 
 std::unique_ptr<FileProvider> createAnythingFileProvider(const IndexContext &context, const QString &path)
@@ -173,61 +168,6 @@ private:
 // 目录遍历相关函数
 using FileHandler = std::function<void(const QString &path)>;
 
-const wchar_t *pathField(const IndexProfile &profile)
-{
-    switch (profile.type()) {
-    case IndexProfile::Type::Ocr:
-        return OcrText::kPath;
-    case IndexProfile::Type::Content:
-    default:
-        return Content::kPath;
-    }
-}
-
-const wchar_t *ancestorPathsField(const IndexProfile &profile)
-{
-    switch (profile.type()) {
-    case IndexProfile::Type::Ocr:
-        return OcrText::kAncestorPaths;
-    case IndexProfile::Type::Content:
-    default:
-        return Content::kAncestorPaths;
-    }
-}
-
-bool supportsModifiedTimestampCheck(const IndexProfile &profile)
-{
-    switch (profile.type()) {
-    case IndexProfile::Type::Ocr:
-    case IndexProfile::Type::Content:
-        return true;
-    default:
-        return false;
-    }
-}
-
-const wchar_t *modifyTimeField(const IndexProfile &profile)
-{
-    switch (profile.type()) {
-    case IndexProfile::Type::Ocr:
-        return OcrText::kModifyTime;
-    case IndexProfile::Type::Content:
-    default:
-        return Content::kModifyTime;
-    }
-}
-
-AnalyzerPtr createAnalyzer(const IndexProfile &profile)
-{
-    switch (profile.type()) {
-    case IndexProfile::Type::Content:
-        return newLucene<NGramAnalyzer>(2, 2);
-    case IndexProfile::Type::Ocr:
-    default:
-        return newLucene<ChineseAnalyzer>();
-    }
-}
-
 DocumentPtr createFileDocument(const IndexContext &context, const QString &file)
 {
     try {
@@ -236,10 +176,7 @@ DocumentPtr createFileDocument(const IndexContext &context, const QString &file)
             return nullptr;
         }
 
-        const TextIndexConfig &config = TextIndexConfig::instance();
-        const int truncationSizeMB = context.profile().type() == IndexProfile::Type::Ocr
-                ? config.maxOcrImageSizeMB()
-                : config.maxIndexFileTruncationSizeMB();
+        const int truncationSizeMB = context.profile().maxFileTruncationSizeMB();
         const size_t maxBytes = static_cast<size_t>(truncationSizeMB) * 1024 * 1024;
 
         BuilderOptions options;
@@ -298,7 +235,7 @@ bool checkNeedUpdate(const IndexContext &context, const QString &file, const Ind
 {
     try {
         SearcherPtr searcher = newLucene<IndexSearcher>(reader);
-        TermQueryPtr query = newLucene<TermQuery>(newLucene<Term>(pathField(context.profile()), file.toStdWString()));
+        TermQueryPtr query = newLucene<TermQuery>(newLucene<Term>(context.profile().pathField(), file.toStdWString()));
 
         TopDocsPtr topDocs = searcher->search(query, 1);
         int32_t numTotalHits = topDocs->totalHits;
@@ -315,13 +252,13 @@ bool checkNeedUpdate(const IndexContext &context, const QString &file, const Ind
             return false;
         }
 
-        if (!supportsModifiedTimestampCheck(context.profile())) {
+        if (!context.profile().supportsModifiedTimestampCheck()) {
             return true;
         }
 
         const QDateTime modifyTime = fileInfo.lastModified();
         const QString modifyEpoch = QString::number(modifyTime.toSecsSinceEpoch());
-        const String &storeTime = doc->get(modifyTimeField(context.profile()));
+        const String &storeTime = doc->get(context.profile().modifyTimeField());
 
         bool needsUpdate = modifyEpoch.toStdWString() != storeTime;
         if (needsUpdate) {
@@ -414,7 +351,7 @@ void updateFile(const IndexContext &context, const QString &path, const PathExcl
                 writer->addDocument(doc);
             } else {
                 fmDebug() << "[updateFile] Updating existing file:" << path;
-                TermPtr term = newLucene<Term>(pathField(context.profile()), path.toStdWString());
+                TermPtr term = newLucene<Term>(context.profile().pathField(), path.toStdWString());
                 writer->updateDocument(term, doc);
             }
 
@@ -444,7 +381,7 @@ void removeFile(const IndexContext &context, const QString &path, const IndexWri
 #ifdef QT_DEBUG
         fmDebug() << "Remove [" << path << "]";
 #endif
-        TermPtr term = newLucene<Term>(pathField(context.profile()), path.toStdWString());
+        TermPtr term = newLucene<Term>(context.profile().pathField(), path.toStdWString());
         writer->deleteDocuments(term);
         if (reporter) {
             reporter->increment();
@@ -476,7 +413,7 @@ bool cleanupIndexs(const IndexContext &context, IndexReaderPtr reader, IndexWrit
         }
 
         // 获取所有文档
-        TermPtr allDocsTerm = newLucene<Term>(pathField(context.profile()), L"*");
+        TermPtr allDocsTerm = newLucene<Term>(context.profile().pathField(), L"*");
         WildcardQueryPtr allDocsQuery = newLucene<WildcardQuery>(allDocsTerm);
         TopDocsPtr allDocs = searcher->search(allDocsQuery, reader->maxDoc());
         if (!allDocs) {
@@ -507,7 +444,7 @@ bool cleanupIndexs(const IndexContext &context, IndexReaderPtr reader, IndexWrit
                 return false;
             }
 
-            String pathValue = doc->get(pathField(context.profile()));
+            String pathValue = doc->get(context.profile().pathField());
             if (pathValue.empty()) {
                 fmWarning() << "[cleanupIndexs] Document at index" << i << "has empty path during index cleanup";
                 return false;
@@ -542,7 +479,7 @@ bool cleanupIndexs(const IndexContext &context, IndexReaderPtr reader, IndexWrit
             //  Delete if necessary
             if (shouldDelete) {
                 try {
-                    TermPtr term = newLucene<Term>(pathField(context.profile()), pathValue);   // Create Term only when needed
+                    TermPtr term = newLucene<Term>(context.profile().pathField(), pathValue);   // Create Term only when needed
                     if (term) {
                         writer->deleteDocuments(term);
                         removedCount++;
@@ -597,7 +534,7 @@ void removeDirectoryIndex(const IndexContext &context, const QString &dirPath, c
         // ancestor_paths 字段存储了文件的所有祖先路径（不带尾部斜杠）
         // 利用此字段可以避免 PrefixQuery 的字典树扫描，显著提升性能
         TermQueryPtr ancestorQuery = newLucene<TermQuery>(
-                newLucene<Term>(ancestorPathsField(context.profile()), dirPath.toStdWString()));
+                newLucene<Term>(context.profile().ancestorPathsField(), dirPath.toStdWString()));
 
         TopDocsPtr allDocs = searcher->search(ancestorQuery, reader->maxDoc());
 
@@ -690,7 +627,7 @@ TaskHandler TaskHandlers::CreateIndexHandler(const IndexContext &context)
         try {
             IndexWriterPtr writer = newLucene<IndexWriter>(
                     FSDirectory::open(indexDir.toStdWString()),
-                    createAnalyzer(context.profile()),
+                    boost::static_pointer_cast<Lucene::Analyzer>(context.profile().createAnalyzer()),
                     true,
                     IndexWriter::MaxFieldLengthUNLIMITED);
 
@@ -793,7 +730,7 @@ TaskHandler TaskHandlers::UpdateIndexHandler(const IndexContext &context)
 
             IndexWriterPtr writer = newLucene<IndexWriter>(
                     FSDirectory::open(indexDir.toStdWString()),
-                    createAnalyzer(context.profile()),
+                    boost::static_pointer_cast<Lucene::Analyzer>(context.profile().createAnalyzer()),
                     false,
                     IndexWriter::MaxFieldLengthUNLIMITED);
 
@@ -903,7 +840,7 @@ TaskHandler TaskHandlers::CreateOrUpdateFileListHandler(const IndexContext &cont
 
             IndexWriterPtr writer = newLucene<IndexWriter>(
                     FSDirectory::open(indexDir.toStdWString()),
-                    createAnalyzer(context.profile()),
+                    boost::static_pointer_cast<Lucene::Analyzer>(context.profile().createAnalyzer()),
                     false,
                     IndexWriter::MaxFieldLengthUNLIMITED);
 
@@ -993,7 +930,7 @@ TaskHandler TaskHandlers::RemoveFileListHandler(const IndexContext &context, con
             // 打开索引写入器
             IndexWriterPtr writer = newLucene<IndexWriter>(
                     FSDirectory::open(indexDir.toStdWString()),
-                    createAnalyzer(context.profile()),
+                    boost::static_pointer_cast<Lucene::Analyzer>(context.profile().createAnalyzer()),
                     false,
                     IndexWriter::MaxFieldLengthUNLIMITED);
 
@@ -1028,7 +965,7 @@ TaskHandler TaskHandlers::RemoveFileListHandler(const IndexContext &context, con
 
                 // 通过 ancestor_paths 查询判断是否为目录
                 TermQueryPtr ancestorQuery = newLucene<TermQuery>(
-                        newLucene<Term>(ancestorPathsField(context.profile()), itemPath.toStdWString()));
+                        newLucene<Term>(context.profile().ancestorPathsField(), itemPath.toStdWString()));
                 TopDocsPtr result = searcher->search(ancestorQuery, 1);
 
                 if (result->totalHits > 0) {
@@ -1094,7 +1031,7 @@ TaskHandler TaskHandlers::MoveFileListHandler(const IndexContext &context, const
 
             IndexWriterPtr writer = newLucene<IndexWriter>(
                     FSDirectory::open(indexDir.toStdWString()),
-                    createAnalyzer(context.profile()),
+                    boost::static_pointer_cast<Lucene::Analyzer>(context.profile().createAnalyzer()),
                     false,
                     IndexWriter::MaxFieldLengthUNLIMITED);
 
