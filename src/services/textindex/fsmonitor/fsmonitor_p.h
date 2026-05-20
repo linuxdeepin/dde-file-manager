@@ -7,18 +7,13 @@
 
 #include "fsmonitor.h"
 #include "fsmonitorworker.h"
+#include "inotifyfilesystemwatcher.h"
 #include "utils/pathexcludematcher.h"
 
 #include <QFileInfo>
 #include <QSet>
 #include <QThread>
 #include <QTimer>
-
-namespace Dtk {
-namespace Core {
-class DFileSystemWatcher;
-}
-}
 
 SERVICETEXTINDEX_BEGIN_NAMESPACE
 
@@ -32,7 +27,7 @@ public:
     bool init(const QStringList &rootPaths);
     bool init(const QString &rootPath);   // For backward compatibility
 
-    // Start monitoring using DFileSystemWatcher
+    // Start monitoring using InotifyFileSystemWatcher
     bool startMonitoring();
 
     // Stop all monitoring
@@ -46,9 +41,6 @@ public:
 
     // Check if a path should be excluded (blacklisted or external mount)
     bool shouldExcludePath(const QString &path) const;
-
-    // Check if a path is on an external mount
-    bool isExternalMount(const QString &path) const;
 
     // Check if a path is a symbolic link
     bool isSymbolicLink(const QString &path) const;
@@ -80,8 +72,8 @@ public:
     // Handle file deletion event
     void handleFileDeleted(const QString &path, const QString &name);
 
-    // Handle file modification event
-    void handleFileModified(const QString &path, const QString &name);
+    // Handle file closed (write completed) event
+    void handleFileClosed(const QString &path, const QString &name);
 
     // Handle file moved event
     void handleFileMoved(const QString &fromPath, const QString &fromName,
@@ -101,7 +93,7 @@ public:
 
     // Data members
     FSMonitor *q_ptr;
-    QScopedPointer<Dtk::Core::DFileSystemWatcher> watcher;
+    QScopedPointer<InotifyFileSystemWatcher> watcher;
 
     // Worker thread members
     QThread workerThread;

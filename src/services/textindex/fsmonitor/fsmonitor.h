@@ -14,17 +14,11 @@
 #include <QMutex>
 #include <QDir>
 
-namespace Dtk {
-namespace Core {
-class DFileSystemWatcher;
-}
-}
-
 SERVICETEXTINDEX_BEGIN_NAMESPACE
 
 class FSMonitorPrivate;
 
-// FSMonitor: A recursive file system monitor based on DFileSystemWatcher
+// FSMonitor: A recursive file system monitor based on InotifyFileSystemWatcher
 // Monitors user's home directory and handles file/directory events for indexing
 //
 // Features:
@@ -92,8 +86,8 @@ Q_SIGNALS:
     // Emitted when a file is deleted
     void fileDeleted(const QString &path, const QString &name);
 
-    // Emitted when a file is modified
-    void fileModified(const QString &path, const QString &name);
+    // Emitted when a file opened for writing is closed (IN_CLOSE_WRITE)
+    void fileClosed(const QString &path, const QString &name);
 
     // Emitted when a file is moved
     void fileMoved(const QString &fromPath, const QString &fromName,

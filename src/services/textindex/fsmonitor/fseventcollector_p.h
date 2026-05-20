@@ -35,8 +35,8 @@ public:
     // Process file deleted event
     void handleFileDeleted(const QString &path, const QString &name);
 
-    // Process file modified event
-    void handleFileModified(const QString &path, const QString &name);
+    // Process file closed (write completed) event
+    void handleFileClosed(const QString &path, const QString &name);
 
     // Process file moved event
     void handleFileMoved(const QString &fromPath, const QString &fromName,
