@@ -1,3 +1,10 @@
+dde-file-manager (6.5.139) unstable; urgency=medium
+
+  * fix: launch dde-file-manager-pkexec correctly under Treeland
+  * fix: improve file renaming filename/suffix handling
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 21 May 2026 22:39:06 +0800
+
 dde-file-manager (6.5.138) unstable; urgency=medium
 
   * fix: trim whitespace in tag editor input
