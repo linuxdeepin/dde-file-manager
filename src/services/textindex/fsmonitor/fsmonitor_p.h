@@ -8,6 +8,7 @@
 #include "fsmonitor.h"
 #include "fsmonitorworker.h"
 #include "inotifyfilesystemwatcher.h"
+#include "vfsmonitorwatcher.h"
 #include "utils/pathexcludematcher.h"
 
 #include <QFileInfo>
@@ -60,8 +61,11 @@ public:
     // Check if we're below the system watch limit
     bool isWithinWatchLimit() const;
 
-    // Parse and connect watcher signals
+    // Parse and connect watcher signals (inotify-only fallback mode)
     void setupWatcherConnections();
+
+    // Connect vfs_monitor watcher signals (create/delete/move from vfs, fileClosed from inotify)
+    void setupVfsMonitorConnections();
 
     // Set up the worker thread and connections
     void setupWorkerThread();
@@ -94,6 +98,8 @@ public:
     // Data members
     FSMonitor *q_ptr;
     QScopedPointer<InotifyFileSystemWatcher> watcher;
+    QScopedPointer<VfsMonitorFileSystemWatcher> vfsWatcher;
+    bool vfsMonitorAvailable { false };
 
     // Worker thread members
     QThread workerThread;

@@ -51,7 +51,9 @@ Build-Depends:
  libdeepin-service-framework-dev,
  libheif-dev,
  libappimage-dev,
- libkf6syntaxhighlighting-dev
+ libkf6syntaxhighlighting-dev,
+ libnl-3-dev,
+ libnl-genl-3-dev
 Standards-Version: 4.5.0
 Homepage: http://www.deepin.org
 
