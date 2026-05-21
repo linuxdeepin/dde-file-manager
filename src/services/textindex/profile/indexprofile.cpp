@@ -237,9 +237,9 @@ IndexProfile IndexProfile::ocr()
         [ocrIndexDir](const QString &checksum) {
             return OcrDeduplication::lookupByTextChecksum(checksum, ocrIndexDir);
         },
-        // AnalyzerProvider: create ChineseAnalyzer for OCR text
+        // AnalyzerProvider: create NGramAnalyzer for OCR text
         []() -> boost::shared_ptr<void> {
-            return Lucene::newLucene<Lucene::ChineseAnalyzer>();
+            return Lucene::newLucene<Lucene::NGramAnalyzer>(2, 2);
         }
     };
 }

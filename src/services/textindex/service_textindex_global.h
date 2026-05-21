@@ -59,7 +59,8 @@ inline constexpr int kTextIndexVersion { 4 };
 
 // OCR index version history:
 // Version 0: initial OCR text index schema
-inline constexpr int kOcrIndexVersion { 0 };
+// Version 1: switch OCR index analyzer to NGramAnalyzer(2,2)
+inline constexpr int kOcrIndexVersion { 1 };
 
 // json
 inline const QString kTextVersionKey = QLatin1String("version");
