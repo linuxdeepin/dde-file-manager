@@ -10,6 +10,7 @@
 #include <dfm-base/utils/thumbnail/thumbnailfactory.h>
 
 #include <QStandardPaths>
+#include <QFileInfo>
 
 using namespace dfmbase;
 using namespace dfmbase::Global;
@@ -191,11 +192,11 @@ QVariant FileItemData::data(int role) const
     case kItemFileBaseNameOfRenameRole:
         if (info)
             return info->nameOf(NameInfoType::kBaseNameOfRename);
-        return url.fileName();
+        return QFileInfo(url.path()).completeBaseName();
     case kItemFileSuffixOfRenameRole:
         if (info)
             return info->nameOf(NameInfoType::kSuffixOfRename);
-        return url.fileName();
+        return QFileInfo(url.path()).completeSuffix();
     case kItemUrlRole:
         if (info)
             return info->urlOf(UrlInfoType::kUrl);
