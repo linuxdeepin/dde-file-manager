@@ -16,6 +16,7 @@ function(dfm_setup_textindex_dependencies target_name)
     # Find system dependencies using pkg-config
     pkg_check_modules(Lucene REQUIRED IMPORTED_TARGET liblucene++ liblucene++-contrib)
     pkg_check_modules(GLIB REQUIRED glib-2.0)
+    pkg_check_modules(NL REQUIRED IMPORTED_TARGET libnl-3.0 libnl-genl-3.0)
     
     # Apply default service configuration first (this provides DFM6::base, Qt6::Core, Qt6::DBus)
     dfm_apply_default_service_config(${target_name})
@@ -35,6 +36,7 @@ function(dfm_setup_textindex_dependencies target_name)
         dde-file-manager-extractor-lib
         ${GLIB_LIBRARIES}
         PkgConfig::Lucene
+        PkgConfig::NL
     )
     
     # Add textindex-specific include directories
