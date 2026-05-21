@@ -10,8 +10,6 @@
 
 #include <dfm-search/field_names.h>
 #include <dfm-search/lucene++/ngramanalyzer.h>
-
-#include <fulltext/chineseanalyzer.h>
 #include <lucene++/LuceneHeaders.h>
 
 #include <QFileInfo>

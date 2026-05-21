@@ -44,18 +44,7 @@ function(dfm_setup_textindex_dependencies target_name)
         ${DFM_PROJECT_ROOT}/include
         ${DFM_PROJECT_ROOT}/3rdparty
     )
-    # Add fulltext sources - this ensures textindex can find fulltext/chineseanalyzer.h
-    set(FULL_TEXT_PATH "${DFM_PROJECT_ROOT}/3rdparty/fulltext")
-    file(GLOB FULLTEXT_SOURCES 
-        "${FULL_TEXT_PATH}/*.cpp"
-        "${FULL_TEXT_PATH}/*.h"
-    )
-    
-    if(FULLTEXT_SOURCES)
-        target_sources(${target_name} PRIVATE ${FULLTEXT_SOURCES})
-        message(STATUS "DFM: Added fulltext sources to textindex target")
-    endif()
-    
+
     # Setup DBus interface generation
     dfm_setup_textindex_dbus_interfaces(${target_name})
     
