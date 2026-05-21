@@ -26,6 +26,10 @@ public:
 
     void readFromInotify();
 
+    static uint32_t toInotifyMask(InotifyFileSystemWatcher::WatchFlags flags, bool isDir);
+
+    InotifyFileSystemWatcher::WatchFlags watchFlags { InotifyFileSystemWatcher::AllEvents };
+
 private:
     void onFileChanged(const QString &path, bool removed);
     void onDirectoryChanged(const QString &path, bool removed);

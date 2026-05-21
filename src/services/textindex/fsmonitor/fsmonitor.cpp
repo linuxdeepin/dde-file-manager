@@ -123,6 +123,8 @@ bool FSMonitorPrivate::init(const QStringList &rootPaths)
 
     if (vfsMonitorAvailable) {
         // vfs_monitor mode: create/delete/move from vfs, fileClosed from inotify.
+        // Restrict inotify to IN_CLOSE_WRITE only, reducing kernel event delivery.
+        watcher->setWatchFlags(InotifyFileSystemWatcher::WatchFlag::FileClose);
         setupVfsMonitorConnections();
         fmInfo() << "FSMonitor: Using dual watcher mode (vfs_monitor + inotify fallback)";
     } else {
