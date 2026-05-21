@@ -38,6 +38,33 @@ InotifyFileSystemWatcherPrivate::~InotifyFileSystemWatcherPrivate()
     ::close(inotifyFd);
 }
 
+uint32_t InotifyFileSystemWatcherPrivate::toInotifyMask(InotifyFileSystemWatcher::WatchFlags flags, bool isDir)
+{
+    using WF = InotifyFileSystemWatcher::WatchFlag;
+    uint32_t mask = 0;
+
+    // Self-referencing events (IN_DELETE_SELF, IN_MOVE_SELF) are always
+    // included so the watcher can react when the watched path itself is
+    // removed or renamed, regardless of which event types the consumer
+    // has enabled.
+    mask |= IN_DELETE_SELF | IN_MOVE_SELF;
+
+    if (flags & WF::FileClose)
+        mask |= IN_CLOSE_WRITE;
+    if (flags & WF::FileModify)
+        mask |= IN_MODIFY;
+    if (flags & WF::FileCreate)
+        mask |= IN_CREATE;
+    if (flags & WF::FileDelete)
+        mask |= isDir ? IN_DELETE : 0;
+    if (flags & WF::FileMove)
+        mask |= isDir ? IN_MOVE : 0;
+    if (flags & WF::FileAttribute)
+        mask |= IN_ATTRIB;
+
+    return mask;
+}
+
 QStringList InotifyFileSystemWatcherPrivate::addPaths(const QStringList &paths, QStringList *files, QStringList *directories)
 {
     QStringList p = paths;
@@ -54,27 +81,7 @@ QStringList InotifyFileSystemWatcherPrivate::addPaths(const QStringList &paths, 
                 continue;
         }
 
-        uint32_t mask = 0;
-        if (isDir) {
-            // NOTE: IN_CLOSE_WRITE is added for directories so that fileClosed
-            // signal is emitted when a file within a watched directory finishes writing.
-            // This avoids high-frequency IN_MODIFY signals during large file copies.
-            mask = IN_ATTRIB
-                    | IN_MOVE
-                    | IN_MOVE_SELF
-                    | IN_CREATE
-                    | IN_DELETE
-                    | IN_DELETE_SELF
-                    | IN_MODIFY
-                    | IN_CLOSE_WRITE;
-        } else {
-            mask = IN_ATTRIB
-                    | IN_CLOSE_WRITE
-                    | IN_MODIFY
-                    | IN_MOVE
-                    | IN_MOVE_SELF
-                    | IN_DELETE_SELF;
-        }
+        uint32_t mask = toInotifyMask(watchFlags, isDir);
 
         int wd = inotify_add_watch(inotifyFd,
                                    QFile::encodeName(path),
@@ -349,6 +356,26 @@ InotifyFileSystemWatcher::InotifyFileSystemWatcher(QObject *parent)
 
 InotifyFileSystemWatcher::~InotifyFileSystemWatcher()
 {
+}
+
+void InotifyFileSystemWatcher::setWatchFlags(WatchFlags flags)
+{
+    Q_D(InotifyFileSystemWatcher);
+
+    if (!d)
+        return;
+
+    d->watchFlags = flags;
+}
+
+InotifyFileSystemWatcher::WatchFlags InotifyFileSystemWatcher::watchFlags() const
+{
+    Q_D(const InotifyFileSystemWatcher);
+
+    if (!d)
+        return WatchFlags(NoFlags);
+
+    return d->watchFlags;
 }
 
 bool InotifyFileSystemWatcher::addPath(const QString &path)

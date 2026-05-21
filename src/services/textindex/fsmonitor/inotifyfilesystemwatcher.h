@@ -22,6 +22,11 @@ class InotifyFileSystemWatcherPrivate;
 //     is emitted when a file within a watched directory finishes writing.
 //   - This avoids the high-frequency fileModified (IN_MODIFY) signals during
 //     large file copies, improving performance for indexing use cases.
+//
+// Supports configurable event filtering via WatchFlags. By default, all
+// event types are monitored. Consumers can restrict the inotify mask at the
+// kernel level to reduce unnecessary event delivery and processing overhead.
+// Flags must be set before adding paths.
 class InotifyFileSystemWatcher : public QObject
 {
     Q_OBJECT
@@ -29,8 +34,23 @@ class InotifyFileSystemWatcher : public QObject
     Q_DECLARE_PRIVATE(InotifyFileSystemWatcher)
 
 public:
+    enum WatchFlag {
+        NoFlags = 0,
+        FileClose = 1 << 0,
+        FileModify = 1 << 1,
+        FileCreate = 1 << 2,
+        FileDelete = 1 << 3,
+        FileMove = 1 << 4,
+        FileAttribute = 1 << 5,
+        AllEvents = FileClose | FileModify | FileCreate | FileDelete | FileMove | FileAttribute
+    };
+    Q_DECLARE_FLAGS(WatchFlags, WatchFlag)
+
     explicit InotifyFileSystemWatcher(QObject *parent = nullptr);
     ~InotifyFileSystemWatcher() override;
+
+    void setWatchFlags(WatchFlags flags);
+    WatchFlags watchFlags() const;
 
     bool addPath(const QString &path);
     QStringList addPaths(const QStringList &paths);
@@ -53,6 +73,8 @@ Q_SIGNALS:
 private:
     QScopedPointer<InotifyFileSystemWatcherPrivate> d_ptr;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(InotifyFileSystemWatcher::WatchFlags)
 
 SERVICETEXTINDEX_END_NAMESPACE
 
