@@ -179,6 +179,9 @@ void ListItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionV
 
 void ListItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
+    // Fix: prewarm fileinfo before reading rename suffix/base name, otherwise
+    // list/tree rename can fall back to the raw file name and duplicate suffixes.
+    index.data(kItemCreateFileInfoRole);
     // 这里设置了光标选中位置后最终还是会被全选，移到eventFilter中处理
     return QAbstractItemDelegate::setEditorData(editor, index);
 }
