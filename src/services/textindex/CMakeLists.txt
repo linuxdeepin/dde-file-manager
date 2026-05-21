@@ -7,15 +7,11 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Include service configuration
 include(${CMAKE_CURRENT_SOURCE_DIR}/dependencies.cmake)
 
-set(FULL_TEXT_PATH "${CMAKE_SOURCE_DIR}/3rdparty/fulltext")
-
 FILE(GLOB_RECURSE SRC_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.xml"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.policy"
-    "${FULL_TEXT_PATH}/*.cpp"
-    "${FULL_TEXT_PATH}/*.h"
     "${CMAKE_SOURCE_DIR}/include/dfm-base/dfm_log_defines.h"
     )
 
