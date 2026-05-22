@@ -143,21 +143,16 @@ void DFMSearcher::processSearchResult(const SearchResult &result)
 
     // 根据搜索类型设置不同的字段
     if (isIndexOnlyContentSearch()) {
-        QString preview;
-
-        if (getSearchType() == SearchType::Content) {
-            ContentResultAPI contentResult(const_cast<SearchResult &>(result));
-            preview = contentResult.highlightedContent();
-        } else {
-            OcrTextResultAPI ocrResult(const_cast<SearchResult &>(result));
-            preview = ocrResult.highlightedContent();
-        }
-
-        searchResult.setHighlightedContent(preview);
+        // 不再在搜索阶段提取 highlightedContent（FullTextRetrieval 已关闭），
+        // 改为存储 keyword 和 searchType 供后续 HighlightProvider 延迟加载
+        searchResult.setKeyword(keyword);
+        searchResult.setSearchType(getSearchType());
         searchResult.setIsContentMatch(true);
         searchResult.setMatchScore(1.0);   // 内容匹配优先级更高
     } else {
         // 文件名搜索不包含高亮内容
+        searchResult.setKeyword(keyword);
+        searchResult.setSearchType(getSearchType());
         searchResult.setIsContentMatch(false);
         searchResult.setMatchScore(0.5);   // 文件名匹配优先级较低
     }
@@ -188,8 +183,9 @@ bool DFMSearcher::validateSearchType(const QString &transformedPath, SearchOptio
         } else {
             ContentOptionsAPI contentAPI(options);
             contentAPI.setMaxPreviewLength(200);
+            contentAPI.setFullTextRetrievalEnabled(false);   // 关闭全文获取以提升搜索性能，highlight 改为延迟加载
             contentAPI.setFilenameContentMixedAndSearchEnabled(true);
-            fmDebug() << "Content search options configured - max preview length: 200, mixed search enabled";
+            fmDebug() << "Content search options configured - max preview length: 200, full-text retrieval disabled, mixed search enabled";
         }
     } else if (getSearchType() == SearchType::Ocr) {
         if (!DFMSEARCH::Global::isOcrTextIndexAvailable()) {
@@ -203,8 +199,9 @@ bool DFMSearcher::validateSearchType(const QString &transformedPath, SearchOptio
         } else {
             OcrTextOptionsAPI ocrAPI(options);
             ocrAPI.setMaxPreviewLength(200);
+            ocrAPI.setFullTextRetrievalEnabled(false);   // 关闭全文获取以提升搜索性能，highlight 改为延迟加载
             ocrAPI.setFilenameOcrContentMixedAndSearchEnabled(true);
-            fmDebug() << "OCR text search options configured - mixed search enabled";
+            fmDebug() << "OCR text search options configured - max preview length: 200, full-text retrieval disabled, mixed search enabled";
         }
     }
     return true;

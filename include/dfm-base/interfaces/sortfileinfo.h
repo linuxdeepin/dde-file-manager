@@ -38,6 +38,8 @@ public:
     void setLastModifiedTime(const qint64 time);
     void setCreateTime(const qint64 time);
     void setHighlightContent(const QString &content);
+    void setSearchKeyword(const QString &keyword);
+    void setSearchType(int type);
     void setCustomData(const QString &key, const QVariant &value);
 
     // 信息完整性相关方法
@@ -57,6 +59,8 @@ public:
     qint64 lastModifiedTime() const;
     qint64 createTime() const;
     QString highlightContent() const;
+    QString searchKeyword() const;
+    int searchType() const;
     QVariant customData(const QString &key) const;
 
     // 信息完整性查询方法

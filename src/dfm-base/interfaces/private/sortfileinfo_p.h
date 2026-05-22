@@ -36,6 +36,8 @@ public:
     qint64 create { 0 };
 
     QString highlightContent { "" };   // 存储文件的高亮内容
+    QString searchKeyword { "" };     // 搜索关键词（供延迟加载 highlight 使用）
+    int searchType { 0 };             // 搜索类型（DFMSEARCH::SearchType 的 int 值，供延迟加载 highlight 使用）
 
     // 信息完整性标记
     bool infoCompleted { false };   // 标记详细信息是否已获取

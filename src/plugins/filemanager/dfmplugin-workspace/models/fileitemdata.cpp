@@ -8,6 +8,7 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/utils/thumbnail/thumbnailfactory.h>
+#include <dfm-base/utils/highlightprovider.h>
 
 #include <QStandardPaths>
 #include <QFileInfo>
@@ -262,8 +263,20 @@ QVariant FileItemData::data(int role) const
         }
         return QVariant();
     case kItemFileContentPreviewRole:
-        if (sortInfo)
+        if (sortInfo) {
+            const QString &keyword = sortInfo->searchKeyword();
+            if (!keyword.isEmpty() && sortInfo->highlightContent().isEmpty()) {
+                // 延迟加载 highlightContent：首次访问时向 HighlightProvider 发起异步请求
+                HighlightProvider::instance()->requestHighlight(
+                    keyword,   // 使用 keyword 作为 taskId（同一关键词的搜索结果共享缓存）
+                    sortInfo->fileUrl().path(),
+                    keyword,
+                    sortInfo->searchType(),
+                    true   // 高优先级：可见区域的请求
+                );
+            }
             return sortInfo->highlightContent();
+        }
         return QString();
     case kItemGroupDisplayIndex:
         return QVariant(groupDisplayIndex);

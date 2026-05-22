@@ -15,6 +15,10 @@
 #include "menus/searchmenuscene.h"
 #include "searchmanager/searchmanager.h"
 
+#include <dfm-base/utils/highlightprovider.h>
+
+#include <dfm-search/contentretriever.h>
+
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include <dfm-base/dfm_global_defines.h>
@@ -57,6 +61,14 @@ void Search::initialize()
     // must inited in main thread
     TextIndexClient::instance();
     OcrIndexClient::instance();
+
+    // 注册 HighlightProvider 的 fetchHighlight 回调（延迟加载模式）
+    HighlightProvider::instance()->setFetchCallback(
+        [](const QString &path, const QString &keyword, int searchType) -> QString {
+            DFMSEARCH::ContentRetriever retriever;
+            return retriever.fetchHighlight(path, keyword,
+                                            static_cast<DFMSEARCH::SearchType>(searchType));
+        });
 
     bindEvents();
     bindWindows();
