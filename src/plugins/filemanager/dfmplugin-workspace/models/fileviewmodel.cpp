@@ -22,6 +22,7 @@
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/utils/thumbnail/thumbnailfactory.h>
+#include <dfm-base/utils/highlightprovider.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/utils/protocolutils.h>
@@ -53,6 +54,7 @@ FileViewModel::FileViewModel(QAbstractItemView *parent)
     // GroupingManager will be initialized when dirRootUrl is set in initFilterSortWork
 
     connect(ThumbnailFactory::instance(), &ThumbnailFactory::produceFinished, this, &FileViewModel::onFileThumbUpdated);
+    connect(HighlightProvider::instance(), &HighlightProvider::highlightReady, this, &FileViewModel::onHighlightReady);
     connect(Application::instance(), &Application::genericAttributeChanged, this, &FileViewModel::onGenericAttributeChanged);
     connect(Application::instance(), &Application::showedHiddenFilesChanged, this, &FileViewModel::onHiddenSettingChanged);
     connect(DConfigManager::instance(), &DConfigManager::valueChanged, this, &FileViewModel::onDConfigChanged);
@@ -1044,6 +1046,33 @@ void FileViewModel::onFileThumbUpdated(const QUrl &url, const QString &thumb)
         return;
 
     updateThumbnailIcon(updateIndex, thumb);
+    auto view = qobject_cast<FileView *>(QObject::parent());
+    if (view) {
+        view->update(updateIndex);
+    } else {
+        Q_EMIT dataChanged(updateIndex, updateIndex);
+    }
+}
+
+void FileViewModel::onHighlightReady(const QString &taskId, const QString &path, const QString &content)
+{
+    Q_UNUSED(taskId)
+
+    QUrl url = QUrl::fromLocalFile(path);
+    auto updateIndex = getIndexByUrl(url);
+    if (!updateIndex.isValid())
+        return;
+
+    if (!filterSortWorker)
+        return;
+
+    // 更新 SortFileInfo 中的 highlightContent
+    auto itemData = filterSortWorker->childData(updateIndex.row());
+    if (itemData && itemData->fileSortInfo()) {
+        itemData->fileSortInfo()->setHighlightContent(content);
+    }
+
+    // 通知视图刷新
     auto view = qobject_cast<FileView *>(QObject::parent());
     if (view) {
         view->update(updateIndex);

@@ -148,6 +148,7 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     void onFileThumbUpdated(const QUrl &url, const QString &thumb);
+    void onHighlightReady(const QString &taskId, const QString &path, const QString &content);
     void onFileUpdated(int show);
     void onInsert(int firstIndex, int count);
     void onInsertFinish();

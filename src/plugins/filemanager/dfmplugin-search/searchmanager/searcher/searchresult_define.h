@@ -7,6 +7,8 @@
 
 #include "dfmplugin_search_global.h"
 
+#include <dfm-search/searchquery.h>
+
 #include <QUrl>
 #include <QMap>
 #include <QSharedData>
@@ -23,6 +25,8 @@ public:
 
     QUrl url {};                    // 搜索结果URL
     QString highlightedContent {};  // 高亮的内容片段（全文搜索时使用）
+    QString keyword {};             // 搜索关键词（供延迟加载 highlight 使用）
+    DFMSEARCH::SearchType searchType { DFMSEARCH::SearchType::FileName };   // 搜索类型（供延迟加载 highlight 使用）
     bool isContentMatch { false };  // 是否是内容匹配（区分文件名匹配和内容匹配）
     double matchScore { 0.0 };      // 匹配分数，用于排序
 };
@@ -34,13 +38,19 @@ public:
     DFMSearchResult() : d(new DFMSearchResultData()) {}
     DFMSearchResult(const QUrl &url, const QString &content = QString())
         : d(new DFMSearchResultData(url, content)) {}
-    
+
     inline QUrl url() const { return d->url; }
     inline void setUrl(const QUrl &url) { d->url = url; }
-    
+
     inline QString highlightedContent() const { return d->highlightedContent; }
     inline void setHighlightedContent(const QString &content) { d->highlightedContent = content; }
-    
+
+    inline QString keyword() const { return d->keyword; }
+    inline void setKeyword(const QString &kw) { d->keyword = kw; }
+
+    inline DFMSEARCH::SearchType searchType() const { return d->searchType; }
+    inline void setSearchType(DFMSEARCH::SearchType type) { d->searchType = type; }
+
     inline bool isContentMatch() const { return d->isContentMatch; }
     inline void setIsContentMatch(bool value) { d->isContentMatch = value; }
 

@@ -8,6 +8,7 @@
 
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/utils/highlightprovider.h>
 #include "plugins/common/dfmplugin-utils/reportlog/datas/searchreportdata.h"
 
 #include <dfm-framework/dpf.h>
@@ -67,6 +68,13 @@ void SearchManager::stop(const QString &taskId)
 {
     if (mainController)
         mainController->stop(taskId);
+
+    // 取消与该搜索任务关联的 highlight 延迟加载请求
+    auto it = taskInfoMap.find(taskId);
+    if (it != taskInfoMap.end()) {
+        const auto &keyword = it.value().second;
+        HighlightProvider::instance()->cancelTask(keyword);
+    }
 
     emit searchStoped(taskId);
 }

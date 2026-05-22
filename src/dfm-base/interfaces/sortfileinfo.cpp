@@ -85,6 +85,16 @@ void SortFileInfo::setHighlightContent(const QString &content)
     d->highlightContent = content;
 }
 
+void SortFileInfo::setSearchKeyword(const QString &keyword)
+{
+    d->searchKeyword = keyword;
+}
+
+void SortFileInfo::setSearchType(int type)
+{
+    d->searchType = type;
+}
+
 void SortFileInfo::setCustomData(const QString &key, const QVariant &value)
 {
     d->customData.insert(key, value);
@@ -93,6 +103,16 @@ void SortFileInfo::setCustomData(const QString &key, const QVariant &value)
 QString SortFileInfo::highlightContent() const
 {
     return d->highlightContent;
+}
+
+QString SortFileInfo::searchKeyword() const
+{
+    return d->searchKeyword;
+}
+
+int SortFileInfo::searchType() const
+{
+    return d->searchType;
 }
 
 QVariant SortFileInfo::customData(const QString &key) const
