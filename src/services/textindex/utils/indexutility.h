@@ -8,6 +8,7 @@
 
 #include <QFileInfo>
 #include <QMutex>
+#include <QStringList>
 
 #include <dconfig.h>
 
@@ -135,6 +136,19 @@ private:
 };
 
 }   // namespace IndexUtility
+
+namespace SearchUtility {
+
+/**
+ * @brief Run dfm-searcher CLI and parse JSON output
+ * @param args Arguments to pass to dfm-searcher (excluding executable name)
+ * @param timeoutMs Timeout in milliseconds (default 120s)
+ * @return List of file/directory paths from the "results" JSON array,
+ *         or empty list on any failure (not found, timeout, bad exit, parse error)
+ */
+QStringList runCli(const QStringList &args, int timeoutMs = 120000);
+
+}   // namespace SearchUtility
 
 namespace PathCalculator {
 

@@ -43,6 +43,33 @@ std::unique_ptr<FileProvider> createAnythingFileProvider(const IndexContext &con
               << "file types:" << anythingOptions.fileTypes
               << "file extensions:" << anythingOptions.fileExtensions;
 
+    // Prefer CLI process for file listing; fallback to SearchEngine API on failure
+    QStringList cliArgs = { "--type=filename", "--method=indexed", "--json", "", "/" };
+    if (!anythingOptions.fileTypes.isEmpty()) {
+        cliArgs << QString("--file-types=%1").arg(anythingOptions.fileTypes.join(","));
+    }
+    if (!anythingOptions.fileExtensions.isEmpty()) {
+        cliArgs << QString("--file-extensions=%1").arg(anythingOptions.fileExtensions.join(","));
+    }
+    if (TextIndexConfig::instance().indexHiddenFiles()) {
+        cliArgs << "--include-hidden";
+    }
+
+    const QStringList cliPaths = SearchUtility::runCli(cliArgs);
+    if (!cliPaths.isEmpty()) {
+        SearchResultList cliResults;
+        cliResults.reserve(cliPaths.size());
+        for (const QString &p : cliPaths) {
+            cliResults.append(SearchResult(p));
+        }
+        fmInfo() << "[TaskHandlers::createAnythingFileProvider] CLI succeeded, obtained"
+                 << cliResults.size() << "file listings for profile:" << context.profile().id();
+        return std::make_unique<DirectFileListProvider>(cliResults);
+    }
+
+    fmInfo() << "[TaskHandlers::createAnythingFileProvider] CLI scan empty/failed,"
+             << "falling back to SearchEngine API for profile:" << context.profile().id();
+
     QObject holder;
     SearchEngine *engine = SearchFactory::createEngine(SearchType::FileName, &holder);
     if (!engine) {

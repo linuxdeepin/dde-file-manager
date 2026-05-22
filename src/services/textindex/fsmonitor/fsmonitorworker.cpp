@@ -16,6 +16,7 @@
 #include <QMetaObject>
 #include <QtConcurrent>
 #include <QFuture>
+#include "utils/indexutility.h"
 
 #include <algorithm>
 
@@ -89,16 +90,14 @@ void FSMonitorWorker::tryFastDirectoryScan()
         return;
     }
 
-    fmInfo() << "FSMonitorWorker: Starting fast directory scan using SearchEngine";
+    fmInfo() << "FSMonitorWorker: Starting fast directory scan (CLI-preferred)";
     fastScanInProgress = true;
 
-    // Create a lambda for the async operation
     // Capture by value to avoid accessing destroyed object
     auto capturedMaxResults = maxResultsCount;
     auto capturedExclusionChecker = exclusionChecker;
 
     auto scanOperation = [capturedMaxResults, capturedExclusionChecker]() -> QStringList {
-        SearchResultList directories;
         auto status = DFMSEARCH::Global::fileNameIndexStatus();
 
         if (!status.has_value()) {
@@ -111,52 +110,83 @@ void FSMonitorWorker::tryFastDirectoryScan()
             return {};
         }
 
-        constexpr int kQueryLimit = 500000;   // Query more to ensure completeness
-
-        QObject holder;
-        SearchEngine *engine = SearchFactory::createEngine(SearchType::FileName, &holder);
-        SearchOptions options;
-        options.setMaxResults(kQueryLimit);
-        options.setSyncSearchTimeout(120);
-        options.setSearchPath(QDir::rootPath());
-        options.setSearchMethod(SearchMethod::Indexed);
-        FileNameOptionsAPI fileNameOptions(options);
-        fileNameOptions.setFileTypes({ Defines::kAnythingDirType });
-        engine->setSearchOptions(options);
-        SearchQuery query = SearchFactory::createQuery("", SearchQuery::Type::Simple);
-        const SearchResultExpected &result = engine->searchSync(query);
-        if (result.hasValue() && !result->isEmpty()) {
-            directories = std::move(result.value());
+        // Prefer CLI process; fallback to SearchEngine API on failure
+        QStringList directories = fetchDirectoriesViaCli();
+        if (directories.isEmpty()) {
+            fmInfo() << "FSMonitorWorker: CLI scan empty/failed, falling back to SearchEngine API";
+            directories = fetchDirectoriesViaApi();
         }
 
-        fmInfo() << "FSMonitorWorker: Fast directory scan found" << directories.size() << "directories";
-        // Filter excluded directories
-        QStringList filteredDirs;
-        filteredDirs.reserve(directories.size());
-        for (const auto &dir : std::as_const(directories)) {
-            const QString &path = dir.path();
+        if (directories.isEmpty()) {
+            return {};
+        }
+
+        // Shared post-processing: filter, sort by path length, truncate
+        QStringList filtered;
+        filtered.reserve(directories.size());
+        for (const QString &path : std::as_const(directories)) {
             if (!capturedExclusionChecker(path)) {
-                filteredDirs << path;
+                filtered << path;
             }
         }
 
-        // Sort by path length (shortest first)
-        std::sort(filteredDirs.begin(), filteredDirs.end(),
+        std::sort(filtered.begin(), filtered.end(),
                   [](const QString &a, const QString &b) {
                       return a.length() < b.length();
                   });
 
-        // Truncate to max results after sorting
-        if (filteredDirs.size() > capturedMaxResults) {
-            filteredDirs = filteredDirs.mid(0, capturedMaxResults);
+        if (filtered.size() > capturedMaxResults) {
+            filtered = filtered.mid(0, capturedMaxResults);
         }
 
-        return filteredDirs;
+        return filtered;
     };
 
     // Start async operation
     QFuture<QStringList> future = QtConcurrent::run(scanOperation);
     futureWatcher->setFuture(future);
+}
+
+QStringList FSMonitorWorker::fetchDirectoriesViaCli()
+{
+    return SearchUtility::runCli({ "--type=filename",
+                                   "--file-types=dir",
+                                   "--max-results=500000",
+                                   "--json",
+                                   "",
+                                   "/" });
+}
+
+QStringList FSMonitorWorker::fetchDirectoriesViaApi()
+{
+    constexpr int kQueryLimit = 500000;
+
+    QObject holder;
+    SearchEngine *engine = SearchFactory::createEngine(SearchType::FileName, &holder);
+    SearchOptions options;
+    options.setMaxResults(kQueryLimit);
+    options.setSyncSearchTimeout(120);
+    options.setSearchPath(QDir::rootPath());
+    options.setSearchMethod(SearchMethod::Indexed);
+    FileNameOptionsAPI fileNameOptions(options);
+    fileNameOptions.setFileTypes({ Defines::kAnythingDirType });
+    engine->setSearchOptions(options);
+    SearchQuery query = SearchFactory::createQuery("", SearchQuery::Type::Simple);
+    const SearchResultExpected &result = engine->searchSync(query);
+
+    if (!result.hasValue() || result->isEmpty()) {
+        return {};
+    }
+
+    QStringList directories;
+    const auto &searchResults = result.value();
+    directories.reserve(searchResults.size());
+    for (const auto &dir : searchResults) {
+        directories << dir.path();
+    }
+
+    fmInfo() << "FSMonitorWorker: API scan found" << directories.size() << "directories";
+    return directories;
 }
 
 void FSMonitorWorker::handleFastScanResult()

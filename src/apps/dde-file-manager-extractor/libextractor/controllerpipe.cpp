@@ -200,7 +200,7 @@ void ControllerPipe::handleStatusMessage(const QByteArray &messageData)
         break;
 
     case ExtractorStatus::Failed:
-        fmWarning() << "ControllerPipe: Extraction failed for:" << filePath << "error:" << error;
+        fmDebug() << "ControllerPipe: Extraction failed for:" << filePath << "error:" << error;
         emit extractionFailed(filePath, error);
         break;
 
