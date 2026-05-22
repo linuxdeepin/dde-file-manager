@@ -58,6 +58,12 @@ private slots:
     void handleFastScanResult();
 
 private:
+    // Fetch directories via dfm-searcher CLI (preferred path)
+    static QStringList fetchDirectoriesViaCli();
+
+    // Fallback: fetch directories via SearchEngine API
+    static QStringList fetchDirectoriesViaApi();
+
     // Function to check if a path should be excluded
     std::function<bool(const QString &)> exclusionChecker;
 

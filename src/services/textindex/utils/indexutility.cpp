@@ -7,9 +7,12 @@
 #include <QFile>
 #include <QJsonObject>
 #include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonParseError>
 #include <QDir>
 #include <QStandardPaths>
 #include <QSaveFile>
+#include <QProcess>
 
 inline constexpr char kDeepinAnythingDconfName[] { "org.deepin.anything" };
 inline constexpr char kDeepinAnythingDconfPathKey[] { "indexing_paths" };
@@ -249,6 +252,57 @@ DlnfsConfigWatcher::DlnfsConfigWatcher(QObject *parent)
 }
 
 }   // namespace IndexUtility
+
+namespace SearchUtility {
+
+QStringList runCli(const QStringList &args, int timeoutMs)
+{
+    const QString executable = QStandardPaths::findExecutable("dfm-searcher");
+    if (executable.isEmpty()) {
+        fmWarning() << "SearchUtility: dfm-searcher not found in PATH";
+        return {};
+    }
+
+    QProcess process;
+    process.start(executable, args);
+
+    if (!process.waitForFinished(timeoutMs)) {
+        fmWarning() << "SearchUtility: dfm-searcher CLI timed out after" << timeoutMs << "ms";
+        process.kill();
+        process.waitForFinished(1000);
+        return {};
+    }
+
+    if (process.exitCode() != 0) {
+        fmWarning() << "SearchUtility: dfm-searcher CLI failed, exit code:" << process.exitCode();
+        return {};
+    }
+
+    const QByteArray output = process.readAllStandardOutput();
+    QJsonParseError parseError;
+    const QJsonDocument doc = QJsonDocument::fromJson(output, &parseError);
+    if (parseError.error != QJsonParseError::NoError) {
+        fmWarning() << "SearchUtility: Failed to parse CLI JSON:" << parseError.errorString();
+        return {};
+    }
+
+    const QJsonObject root = doc.object();
+    const QJsonArray results = root["results"].toArray();
+
+    QStringList paths;
+    paths.reserve(results.size());
+    for (const QJsonValue &val : results) {
+        const QString path = val.toString();
+        if (!path.isEmpty()) {
+            paths << path;
+        }
+    }
+
+    fmInfo() << "SearchUtility: CLI search returned" << paths.size() << "results";
+    return paths;
+}
+
+}   // namespace SearchUtility
 
 namespace PathCalculator {
 
