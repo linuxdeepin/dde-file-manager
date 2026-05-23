@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "fileitemdata.h"
+#include "utils/keywordextractor.h"
 
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/base/schemefactory.h>
@@ -16,6 +17,55 @@
 using namespace dfmbase;
 using namespace dfmbase::Global;
 using namespace dfmplugin_workspace;
+
+namespace {
+
+const QString &highlightRequestedKey()
+{
+    static const QString key = QStringLiteral("highlightRequested");
+    return key;
+}
+
+QString extractHighlightKeyword(const QString &keyword)
+{
+    return KeywordExtractorManager::instance()
+        .extractor()
+        .extractFromKeyword(keyword)
+        .value(0);
+}
+
+bool shouldRequestHighlight(const SortInfoPointer &sortInfo)
+{
+    if (!sortInfo)
+        return false;
+
+    return !sortInfo->searchKeyword().isEmpty()
+        && sortInfo->highlightContent().isEmpty()
+        && !sortInfo->customData(highlightRequestedKey()).toBool();
+}
+
+void requestHighlightContent(const SortInfoPointer &sortInfo)
+{
+    if (!shouldRequestHighlight(sortInfo))
+        return;
+
+    sortInfo->setCustomData(highlightRequestedKey(), true);
+
+    const QString keyword = sortInfo->searchKeyword();
+    const QString highlightKeyword = extractHighlightKeyword(keyword);
+    if (highlightKeyword.isEmpty())
+        return;
+
+    HighlightProvider::instance()->requestHighlight(
+        keyword,   // 使用 keyword 作为 taskId（同一关键词的搜索结果共享缓存）
+        sortInfo->fileUrl().path(),
+        highlightKeyword,
+        sortInfo->searchType(),
+        true   // 高优先级：可见区域的请求
+    );
+}
+
+}
 
 FileItemData::FileItemData(const QUrl &url, const FileInfoPointer &info, FileItemData *parent)
     : parent(parent),
@@ -264,21 +314,7 @@ QVariant FileItemData::data(int role) const
         return QVariant();
     case kItemFileContentPreviewRole:
         if (sortInfo) {
-            const QString &keyword = sortInfo->searchKeyword();
-            static const QString kHighlightRequestedKey = QStringLiteral("highlightRequested");
-            if (!keyword.isEmpty()
-                && sortInfo->highlightContent().isEmpty()
-                && !sortInfo->customData(kHighlightRequestedKey).toBool()) {
-                sortInfo->setCustomData(kHighlightRequestedKey, true);
-                // 延迟加载 highlightContent：首次访问时向 HighlightProvider 发起异步请求
-                HighlightProvider::instance()->requestHighlight(
-                    keyword,   // 使用 keyword 作为 taskId（同一关键词的搜索结果共享缓存）
-                    sortInfo->fileUrl().path(),
-                    keyword,
-                    sortInfo->searchType(),
-                    true   // 高优先级：可见区域的请求
-                );
-            }
+            requestHighlightContent(sortInfo);
             return sortInfo->highlightContent();
         }
         return QString();
