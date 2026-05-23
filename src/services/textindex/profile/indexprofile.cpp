@@ -202,7 +202,7 @@ IndexProfile IndexProfile::content()
         {},
         {},
         []() -> boost::shared_ptr<void> {
-            return Lucene::newLucene<Lucene::NGramAnalyzer>(2, 2);
+            return Lucene::newLucene<Lucene::NGramAnalyzer>(1, 2);
         }
     };
 }
@@ -237,7 +237,7 @@ IndexProfile IndexProfile::ocr()
         },
         // AnalyzerProvider: create NGramAnalyzer for OCR text
         []() -> boost::shared_ptr<void> {
-            return Lucene::newLucene<Lucene::NGramAnalyzer>(2, 2);
+            return Lucene::newLucene<Lucene::NGramAnalyzer>(1, 2);
         }
     };
 }
