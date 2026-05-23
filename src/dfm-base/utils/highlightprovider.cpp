@@ -57,7 +57,12 @@ void HighlightProvider::requestHighlight(const QString &taskId, const QString &p
         if (it != taskCache.end()) {
             const QString &cached = it.value();
             if (cached != kPendingToken) {
-                // 已获取（包括空结果），直接返回
+                // Empty highlight has no display value. Keep it cached for de-duplication,
+                // but avoid waking views with a no-op update.
+                if (cached.isEmpty())
+                    return;
+
+                // 已获取非空结果，直接返回
                 lk.unlock();
                 Q_EMIT highlightReady(taskId, path, cached);
                 return;
@@ -156,6 +161,9 @@ void HighlightProvider::processNextRequest()
             }
             cache[req.taskId][req.path] = content;
         }
+
+        if (content.isEmpty())
+            continue;
 
         // 通知主线程（跨线程信号自动 QueuedConnection）
         Q_EMIT highlightReady(req.taskId, req.path, content);
