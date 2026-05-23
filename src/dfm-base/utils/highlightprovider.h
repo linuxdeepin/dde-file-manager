@@ -69,9 +69,10 @@ private:
     std::atomic<int> processing { 0 };         // 工作线程处理状态标记
 
     // 缓存：QHash<taskId, QHash<path, content>>
-    // 空 QString = 未请求（不存在于 map 中）
+    // 未请求 = 不存在于 map 中
     // 特殊 "__pending__" = 请求中
-    // 非空内容 = 已获取
+    // 空 QString = 已获取但无高亮内容
+    // 非空内容 = 已获取且有高亮内容
     QHash<QString, QHash<QString, QString>> cache;
     QMutex cacheMutex;
 };
