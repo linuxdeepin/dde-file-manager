@@ -4,12 +4,12 @@
 
 #include "indexprofile.h"
 #include "extractor/ocrdeduplication.h"
+#include "lowercasengramanalyzer.h"
 #include "utils/filehash.h"
 #include "utils/indexutility.h"
 #include "utils/textindexconfig.h"
 
 #include <dfm-search/field_names.h>
-#include <dfm-search/lucene++/ngramanalyzer.h>
 #include <lucene++/LuceneHeaders.h>
 
 #include <QFileInfo>
@@ -202,7 +202,7 @@ IndexProfile IndexProfile::content()
         {},
         {},
         []() -> boost::shared_ptr<void> {
-            return Lucene::newLucene<Lucene::NGramAnalyzer>(1, 2);
+            return Lucene::newLucene<LowerCaseNGramAnalyzer>(1, 2);
         }
     };
 }
@@ -235,9 +235,9 @@ IndexProfile IndexProfile::ocr()
         [ocrIndexDir](const QString &checksum) {
             return OcrDeduplication::lookupByTextChecksum(checksum, ocrIndexDir);
         },
-        // AnalyzerProvider: create NGramAnalyzer for OCR text
+        // AnalyzerProvider: create lowercase NGram analyzer for OCR text
         []() -> boost::shared_ptr<void> {
-            return Lucene::newLucene<Lucene::NGramAnalyzer>(1, 2);
+            return Lucene::newLucene<LowerCaseNGramAnalyzer>(1, 2);
         }
     };
 }
