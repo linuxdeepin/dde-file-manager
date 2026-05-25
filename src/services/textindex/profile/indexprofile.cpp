@@ -196,7 +196,7 @@ IndexProfile IndexProfile::content()
         []() {
             return AnythingSearchOptions {
                 { Defines::kAnythingDocType },
-                {}
+                TextIndexConfig::instance().supportedTextFileExtensions()
             };
         },
         {},
