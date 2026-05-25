@@ -132,6 +132,17 @@ const wchar_t *IndexProfile::pathField() const
     }
 }
 
+const wchar_t *IndexProfile::contentField() const
+{
+    switch (m_type) {
+    case Type::Ocr:
+        return DFMSEARCH::LuceneFieldNames::OcrText::kOcrContents;
+    case Type::Content:
+    default:
+        return DFMSEARCH::LuceneFieldNames::Content::kContents;
+    }
+}
+
 const wchar_t *IndexProfile::ancestorPathsField() const
 {
     switch (m_type) {
