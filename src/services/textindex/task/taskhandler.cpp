@@ -5,6 +5,7 @@
 #include "taskhandler.h"
 #include "document/builderoptions.h"
 #include "fileprovider.h"
+#include "indexcontentmigrator.h"
 #include "progressnotifier.h"
 #include "moveprocessor.h"
 #include "utils/scopeguard.h"
@@ -195,7 +196,8 @@ private:
 // 目录遍历相关函数
 using FileHandler = std::function<void(const QString &path)>;
 
-DocumentPtr createFileDocument(const IndexContext &context, const QString &file)
+DocumentPtr createFileDocument(const IndexContext &context, const QString &file,
+                                  const IndexContentMigrator *migrator = nullptr)
 {
     try {
         if (!context.extractor() || !context.documentBuilder()) {
@@ -225,7 +227,19 @@ DocumentPtr createFileDocument(const IndexContext &context, const QString &file)
             }
         }
 
-        // If cache did not provide text, perform normal extraction
+        // If cache did not provide text, try content migration from old index
+        if (!extraction.deduplicated && migrator && migrator->isActive()) {
+            const auto migratedContent = migrator->lookupContent(file);
+            if (migratedContent.has_value()) {
+                extraction = { .success = true,
+                               .text = *migratedContent,
+                               .error = {},
+                               .checksum = options.checksum,
+                               .deduplicated = true };
+            }
+        }
+
+        // If neither cache nor migration provided text, perform normal extraction
         if (!extraction.deduplicated) {
             extraction = context.extractor()->extract(file, maxBytes);
             if (!extraction.success) {
@@ -322,7 +336,8 @@ bool shouldSkipExcludedFile(const QString &path, const PathExcludeMatcher &exclu
 }
 
 void processFile(const IndexContext &context, const QString &path, const PathExcludeMatcher &excludeMatcher,
-                 const IndexWriterPtr &writer, ProgressReporter *reporter)
+                 const IndexWriterPtr &writer, ProgressReporter *reporter,
+                 const IndexContentMigrator *migrator = nullptr)
 {
     try {
         if (!context.profile().isCandidateFile(path))
@@ -332,7 +347,7 @@ void processFile(const IndexContext &context, const QString &path, const PathExc
 #ifdef QT_DEBUG
         fmDebug() << "Adding [" << path << "]";
 #endif
-        DocumentPtr doc = createFileDocument(context, path);
+        DocumentPtr doc = createFileDocument(context, path, migrator);
         if (!doc) {
             fmWarning() << "[processFile] Failed to create document for:" << path;
             return;
@@ -355,7 +370,8 @@ void processFile(const IndexContext &context, const QString &path, const PathExc
 
 void updateFile(const IndexContext &context, const QString &path, const PathExcludeMatcher &excludeMatcher,
                 const IndexReaderPtr &reader,
-                const IndexWriterPtr &writer, ProgressReporter *reporter)
+                const IndexWriterPtr &writer, ProgressReporter *reporter,
+                const IndexContentMigrator *migrator = nullptr)
 {
     try {
         if (!context.profile().isCandidateFile(path))
@@ -365,7 +381,7 @@ void updateFile(const IndexContext &context, const QString &path, const PathExcl
 
         bool needAdd = false;
         if (checkNeedUpdate(context, path, reader, &needAdd)) {
-            DocumentPtr doc = createFileDocument(context, path);
+            DocumentPtr doc = createFileDocument(context, path, migrator);
             if (!doc) {
                 fmWarning() << "[updateFile] Failed to create document for:" << path;
                 return;
@@ -643,15 +659,21 @@ TaskHandler TaskHandlers::CreateIndexHandler(const IndexContext &context)
         }
 
         QString indexDir = context.profile().indexDirectory();
-        if (!dir.exists(indexDir)) {
-            if (!dir.mkpath(indexDir)) {
-                fmCritical() << "[CreateIndexHandler] Unable to create index directory:" << indexDir;
-                return result;
-            }
-            fmInfo() << "[CreateIndexHandler] Created index directory:" << indexDir;
-        }
 
         try {
+            // 尝试从旧索引迁移内容（版本升级时避免重新提取）
+            IndexContentMigrator migrator;
+            migrator.prepare(indexDir, context.profile());
+
+            // ensure index directory exists (prepare() may have renamed it away)
+            if (!dir.exists(indexDir)) {
+                if (!dir.mkpath(indexDir)) {
+                    fmCritical() << "[CreateIndexHandler] Unable to create index directory:" << indexDir;
+                    return result;
+                }
+                fmInfo() << "[CreateIndexHandler] Created index directory:" << indexDir;
+            }
+
             IndexWriterPtr writer = newLucene<IndexWriter>(
                     FSDirectory::open(indexDir.toStdWString()),
                     boost::static_pointer_cast<Lucene::Analyzer>(context.profile().createAnalyzer()),
@@ -694,7 +716,8 @@ TaskHandler TaskHandlers::CreateIndexHandler(const IndexContext &context)
             fmInfo() << "[CreateIndexHandler] Starting file processing, estimated total files:" << totalCount;
 
             provider->traverse(running, [&](const QString &file) {
-                processFile(context, file, excludeMatcher, writer, &reporter);
+                processFile(context, file, excludeMatcher, writer, &reporter,
+                      migrator.isActive() ? &migrator : nullptr);
             });
 
             // Only the creation of an index that is interrupted is also considered a failure
@@ -714,6 +737,9 @@ TaskHandler TaskHandlers::CreateIndexHandler(const IndexContext &context)
             fmDebug() << "[CreateIndexHandler] Starting index optimization";
             writer->optimize();
             fmDebug() << "[CreateIndexHandler] Index optimization completed";
+
+            // 索引完整创建成功，清理旧索引数据
+            migrator.cleanup();
 
             result.success = true;
             result.indexChanged = reporter.indexChanged();
@@ -738,6 +764,12 @@ TaskHandler TaskHandlers::UpdateIndexHandler(const IndexContext &context)
         HandlerResult result { false, false, false };
 
         QString indexDir = context.profile().indexDirectory();
+
+        // 若存在 .old 残留（上次 Create 崩溃），从中复用内容，避免重新提取
+        IndexContentMigrator migrator;
+        if (IndexContentMigrator::hasResidue(indexDir)) {
+            migrator.prepare(indexDir, context.profile());
+        }
 
         try {
             IndexReaderPtr reader = IndexReader::open(
@@ -803,7 +835,8 @@ TaskHandler TaskHandlers::UpdateIndexHandler(const IndexContext &context)
             fmDebug() << "[UpdateIndexHandler] Starting file update processing, estimated total files:" << totalCount;
 
             provider->traverse(running, [&](const QString &file) {
-                updateFile(context, file, excludeMatcher, reader, writer, &reporter);
+                updateFile(context, file, excludeMatcher, reader, writer, &reporter,
+                       migrator.isActive() ? &migrator : nullptr);
             });
 
             if (!running.isRunning()) {
@@ -819,6 +852,11 @@ TaskHandler TaskHandlers::UpdateIndexHandler(const IndexContext &context)
             fmDebug() << "[UpdateIndexHandler] Starting index optimization";
             writer->optimize();
             fmDebug() << "[UpdateIndexHandler] Index optimization completed";
+
+            // 仅在完整完成时清理旧索引；中断时保留 .old 供下次恢复使用
+            if (!result.interrupted) {
+                migrator.cleanup();
+            }
 
             result.success = true;
             result.indexChanged = reporter.indexChanged();

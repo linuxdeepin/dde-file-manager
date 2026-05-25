@@ -82,6 +82,7 @@ public:
     bool supportsChecksum() const;
 
     const wchar_t *pathField() const;
+    const wchar_t *contentField() const;
     const wchar_t *ancestorPathsField() const;
     const wchar_t *modifyTimeField() const;
     bool supportsModifiedTimestampCheck() const;
