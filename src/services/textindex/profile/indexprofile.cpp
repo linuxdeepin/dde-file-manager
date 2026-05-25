@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "indexprofile.h"
+#include "extractor/contentdeduplication.h"
 #include "extractor/ocrdeduplication.h"
 #include "lowercasengramanalyzer.h"
 #include "utils/filehash.h"
@@ -183,6 +184,9 @@ int IndexProfile::maxFileTruncationSizeMB() const
 
 IndexProfile IndexProfile::content()
 {
+    // Capture content index directory for use in the text cache lookup lambda.
+    const QString contentIndexDir = DFMSEARCH::Global::contentIndexDirectory();
+
     return IndexProfile {
         Type::Content,
         QStringLiteral("content"),
@@ -199,8 +203,19 @@ IndexProfile IndexProfile::content()
                 TextIndexConfig::instance().supportedTextFileExtensions()
             };
         },
-        {},
-        {},
+        // ChecksumProvider: compute MD5 only for files larger than 1MB
+        [](const QString &filePath) {
+            constexpr qint64 kMinFileSizeForChecksum = 1LL * 1024 * 1024;   // 1MB
+            QFileInfo fi(filePath);
+            if (fi.size() <= kMinFileSizeForChecksum) {
+                return QString();
+            }
+            return FileHash::computeMd5(filePath);
+        },
+        // TextCacheLookup: find existing content text by checksum
+        [contentIndexDir](const QString &checksum) {
+            return ContentDeduplication::lookupByTextChecksum(checksum, contentIndexDir);
+        },
         []() -> boost::shared_ptr<void> {
             return Lucene::newLucene<LowerCaseNGramAnalyzer>(1, 2);
         }

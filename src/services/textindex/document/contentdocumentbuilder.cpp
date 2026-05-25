@@ -21,8 +21,6 @@ using namespace DFMSEARCH::LuceneFieldNames;
 DocumentPtr ContentDocumentBuilder::build(const QString &filePath, const QString &text,
                                           const BuilderOptions &options) const
 {
-    Q_UNUSED(options)
-
     DocumentPtr doc = newLucene<Document>();
 
     doc->add(newLucene<Field>(Content::kPath, filePath.toStdWString(),
@@ -60,6 +58,12 @@ DocumentPtr ContentDocumentBuilder::build(const QString &filePath, const QString
             : QStringLiteral("N");
     doc->add(newLucene<Field>(Content::kIsHidden, hiddenTag.toStdWString(),
                               Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
+
+    // Add MD5 checksum for deduplication (exact match, not tokenized)
+    if (!options.checksum.isEmpty()) {
+        doc->add(newLucene<Field>(Content::kCheckSum, options.checksum.toStdWString(),
+                                  Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
+    }
 
     if (!text.trimmed().isEmpty()) {
         doc->add(newLucene<Field>(Content::kContents, text.trimmed().toStdWString(),
