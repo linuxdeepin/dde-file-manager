@@ -150,6 +150,8 @@ void IndexTask::doTask()
             setIndexCorrupted(false);
             throttleCpuUsage();
 
+            m_state.setSilent(m_silent);
+
             fmDebug() << "[IndexTask::doTask] Invoking task handler for path:" << m_path;
             result = m_handler(m_path, m_state);
 

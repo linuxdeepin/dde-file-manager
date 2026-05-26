@@ -860,9 +860,13 @@ TaskHandler TaskHandlers::UpdateIndexHandler(const IndexContext &context)
             fmDebug() << "[UpdateIndexHandler] Ensuring all changes are committed before optimization";
             writer->commit();
 
-            fmDebug() << "[UpdateIndexHandler] Starting index optimization";
-            writer->optimize();
-            fmDebug() << "[UpdateIndexHandler] Index optimization completed";
+            if (!running.isSilent()) {
+                fmDebug() << "[UpdateIndexHandler] Starting index optimization";
+                writer->optimize();
+                fmDebug() << "[UpdateIndexHandler] Index optimization completed";
+            } else {
+                fmInfo() << "[UpdateIndexHandler] Skipping index optimization in silent mode";
+            }
 
             // 仅在完整完成时清理旧索引；中断时保留 .old 供下次恢复使用
             if (!result.interrupted) {
