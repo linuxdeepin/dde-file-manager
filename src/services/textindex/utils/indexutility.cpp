@@ -25,18 +25,8 @@ namespace IndexUtility {
 
 bool isIndexWithAnything(const QString &path)
 {
-    auto status = DFMSEARCH::Global::fileNameIndexStatus();
-    if (!status.has_value()) {
-        fmWarning() << "Anything indexing is disabled";
-        return {};
-    }
-
-    const QString currentStatus = status.value();
-    if (currentStatus == "closed") {
-        fmWarning() << "Anything indexing is closed";
-        return {};
-    }
-
+    if (!DFMSEARCH::Global::isFileNameIndexReadyForSearch())
+        return false;
     return isDefaultIndexedDirectory(path);
 }
 
