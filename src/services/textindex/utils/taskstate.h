@@ -33,8 +33,12 @@ public:
         m_running.storeRelease(false);
     }
 
+    bool isSilent() const { return m_silent; }
+    void setSilent(bool silent) { m_silent = silent; }
+
 private:
     QAtomicInteger<bool> m_running;
+    bool m_silent { false };
 };
 
 SERVICETEXTINDEX_END_NAMESPACE
