@@ -20,6 +20,7 @@
 #include <FileUtils.h>
 #include <FilterIndexReader.h>
 #include <FuzzyQuery.h>
+#include <MapFieldSelector.h>
 #include <QueryWrapperFilter.h>
 
 #include <QDir>
@@ -278,6 +279,11 @@ bool checkNeedUpdate(const IndexContext &context, const QString &file, const Ind
         SearcherPtr searcher = newLucene<IndexSearcher>(reader);
         TermQueryPtr query = newLucene<TermQuery>(newLucene<Term>(context.profile().pathField(), file.toStdWString()));
 
+        Collection<String> fieldsToLoad = Collection<String>::newInstance();
+        fieldsToLoad.add(context.profile().pathField());
+        fieldsToLoad.add(context.profile().modifyTimeField());
+        FieldSelectorPtr fieldSelector = newLucene<MapFieldSelector>(fieldsToLoad);
+
         TopDocsPtr topDocs = searcher->search(query, 1);
         int32_t numTotalHits = topDocs->totalHits;
         if (numTotalHits == 0) {
@@ -286,7 +292,7 @@ bool checkNeedUpdate(const IndexContext &context, const QString &file, const Ind
             return true;
         }
 
-        DocumentPtr doc = searcher->doc(topDocs->scoreDocs[0]->doc);
+        DocumentPtr doc = searcher->doc(topDocs->scoreDocs[0]->doc, fieldSelector);
         QFileInfo fileInfo(file);
         if (!fileInfo.exists()) {
             fmDebug() << "[checkNeedUpdate] File no longer exists:" << file;
@@ -455,6 +461,11 @@ bool cleanupIndexs(const IndexContext &context, IndexReaderPtr reader, IndexWrit
             return false;
         }
 
+        // Only load pathField to avoid reading large stored fields (e.g. contents)
+        Collection<String> fieldsToLoad = Collection<String>::newInstance();
+        fieldsToLoad.add(context.profile().pathField());
+        FieldSelectorPtr fieldSelector = newLucene<MapFieldSelector>(fieldsToLoad);
+
         // 获取所有文档
         TermPtr allDocsTerm = newLucene<Term>(context.profile().pathField(), L"*");
         WildcardQueryPtr allDocsQuery = newLucene<WildcardQuery>(allDocsTerm);
@@ -481,7 +492,7 @@ bool cleanupIndexs(const IndexContext &context, IndexReaderPtr reader, IndexWrit
                 return false;
             }
 
-            DocumentPtr doc = searcher->doc(allDocs->scoreDocs[i]->doc);
+            DocumentPtr doc = searcher->doc(allDocs->scoreDocs[i]->doc, fieldSelector);
             if (!doc) {   // Ensure document is valid
                 fmWarning() << "[cleanupIndexs] Null document at index" << i << "during index cleanup";
                 return false;
