@@ -1681,7 +1681,7 @@ void FileView::resizeEvent(QResizeEvent *event)
     if (isIconViewMode()) {
         updateViewportContentsMargins(itemSizeHint());
         if (model()->currentState() == ModelState::kIdle && event->size().width() != event->oldSize().width()) {
-            d->animationHelper->playViewAnimation();
+            d->animationHelper->playViewAnimation(event->oldSize(), event->size());
         }
     }
 
@@ -2288,6 +2288,7 @@ bool FileView::eventFilter(QObject *obj, QEvent *event)
         d->updateHorizontalScrollBarPosition();
         break;
     case QEvent::WindowStateChange:
+        d->animationHelper->suppressNextResizeAnimation();
         if (d->headerView) {
             d->adjustFileNameColumn = true;
             d->headerView->doFileNameColumnResize(width());
@@ -2410,6 +2411,8 @@ void FileView::showEvent(QShowEvent *event)
 {
     DListView::showEvent(event);
     focusOnView();
+
+    d->animationHelper->suppressNextResizeAnimation();
 }
 
 void FileView::initializeModel()
