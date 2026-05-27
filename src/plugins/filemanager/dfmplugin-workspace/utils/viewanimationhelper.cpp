@@ -43,6 +43,11 @@ void ViewAnimationHelper::initAnimationHelper()
     fmDebug() << "Initializing view animation helper";
     currentIndexRectMap = calcIndexRects(view->contentsRect());
     initialized = true;
+    resizeAnimationBaselineReady = view->isVisible() && view->viewport()->isVisible() && view->viewport()->rect().isValid();
+    if (resizeAnimationBaselineReady) {
+        syncVisiableRect();
+        oldVisiableRect = currentVisiableRect;
+    }
     fmDebug() << "View animation helper initialized with" << currentIndexRectMap.size() << "visible items";
 }
 
@@ -50,6 +55,7 @@ void ViewAnimationHelper::reset()
 {
     fmDebug() << "Resetting view animation helper";
     currentIndexRectMap.clear();
+    resizeAnimationBaselineReady = false;
     initialized = false;
 }
 
@@ -91,7 +97,7 @@ QRect ViewAnimationHelper::getCurrentRectByIndex(const QModelIndex &index) const
     return QRect();
 }
 
-void ViewAnimationHelper::playViewAnimation()
+void ViewAnimationHelper::playViewAnimation(const QSize &oldSize, const QSize &newSize)
 {
     if (!initialized) {
         fmDebug() << "Animation not initialized, skipping play";
@@ -122,6 +128,9 @@ void ViewAnimationHelper::playViewAnimation()
         newIndexRectMap.clear();
 
     syncVisiableRect();
+    if (!updateResizeAnimationBaseline(oldSize, newSize))
+        return;
+
     QRect validRect = currentVisiableRect;
     validRect.setWidth(oldVisiableRect.width());
     currentIndexRectMap = calcIndexRects(validRect);
@@ -140,6 +149,39 @@ bool ViewAnimationHelper::isAnimationPlaying() const
     return false;
 }
 
+bool ViewAnimationHelper::updateResizeAnimationBaseline(const QSize &oldSize, const QSize &newSize)
+{
+    if (!currentVisiableRect.isValid()) {
+        fmDebug() << "Skipping view animation - current visible rect is invalid";
+        return false;
+    }
+
+    if (suppressResizeAnimation
+        || !oldSize.isValid()
+        || oldSize.isEmpty()
+        || !resizeAnimationBaselineReady
+        || !oldVisiableRect.isValid()) {
+        // Startup/headless show can emit resize events before a user-visible
+        // previous layout exists. Use the first valid rect as the baseline.
+        currentIndexRectMap = calcIndexRects(currentVisiableRect);
+        oldVisiableRect = currentVisiableRect;
+        resizeAnimationBaselineReady = true;
+        suppressResizeAnimation = false;
+        fmDebug() << "Skipping view animation - initialized resize animation baseline with size:"
+                  << currentVisiableRect.size();
+        return false;
+    }
+
+    if (oldSize.width() == newSize.width() || oldVisiableRect.width() == currentVisiableRect.width()) {
+        oldVisiableRect = currentVisiableRect;
+        currentIndexRectMap = calcIndexRects(currentVisiableRect);
+        fmDebug() << "Skipping view animation - visible width unchanged:" << currentVisiableRect.width();
+        return false;
+    }
+
+    return true;
+}
+
 bool ViewAnimationHelper::isWaitingToPlaying() const
 {
     if (delayTimer && delayTimer->isActive())
@@ -151,6 +193,12 @@ bool ViewAnimationHelper::isWaitingToPlaying() const
 bool ViewAnimationHelper::hasInitialized() const
 {
     return initialized;
+}
+
+void ViewAnimationHelper::suppressNextResizeAnimation()
+{
+    suppressResizeAnimation = true;
+    resizeAnimationBaselineReady = false;
 }
 
 void ViewAnimationHelper::playAnimationWithWidthChange(int deltaWidth)

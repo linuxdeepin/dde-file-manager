@@ -8,6 +8,7 @@
 #include <QObject>
 #include <QMap>
 #include <QRect>
+#include <QSize>
 #include <QPixmap>
 #include <QModelIndex>
 
@@ -32,10 +33,11 @@ public:
     void aboutToPlay();
 
     QRect getCurrentRectByIndex(const QModelIndex &index) const;
-    void playViewAnimation();
+    void playViewAnimation(const QSize &oldSize, const QSize &newSize);
     bool isAnimationPlaying() const;
     bool isWaitingToPlaying() const;
     bool hasInitialized() const;
+    void suppressNextResizeAnimation();
 
     void playAnimationWithWidthChange(int deltaWidth);
 
@@ -51,6 +53,7 @@ public Q_SLOTS:
 
 private:
     QMap<QModelIndex, QRect> calcIndexRects(const QRect &rect) const;
+    bool updateResizeAnimationBaseline(const QSize &oldSize, const QSize &newSize);
     void paintPixmaps(const QMap<QModelIndex, QRect> &indexRects);
     void createPixmapsForVisiableRect();
     void resetAnimation();
@@ -59,6 +62,8 @@ private:
 private:
     bool initialized { false };
     bool playingAnim { false };
+    bool resizeAnimationBaselineReady { false };
+    bool suppressResizeAnimation { false };
     QRect currentVisiableRect;
     QRect oldVisiableRect;
 
