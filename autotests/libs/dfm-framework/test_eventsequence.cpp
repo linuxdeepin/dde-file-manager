@@ -141,17 +141,15 @@ TEST_F(EventSequenceTest, RemoveHandler)
     sequence->append(handler1, &TestEventHandler::handleEvent);
     sequence->append(handler2, &TestEventHandler::handleEvent);
 
-    // 执行遍历验证都添加成功
+    // traversal 在第一个返回 true 的 handler 后立即返回，
+    // 所以 handler1 被调用后就不会调用 handler2。
     sequence->traversal(QString("initial_test"));
     EXPECT_TRUE(handler1->handlerCalled);
-    EXPECT_TRUE(handler2->handlerCalled);
+    EXPECT_FALSE(handler2->handlerCalled);  // not called: traversal returned early
 
     // 重置状态
     handler1->reset();
     handler2->reset();
-
-    // 移除一个处理器（注意：当前API可能不支持直接移除）
-    // sequence->remove(handler1, &TestEventHandler::handleEvent);
 
     // 由于当前API限制，我们只能验证基本功能
     bool result = sequence->traversal(QString("remove_test"));
