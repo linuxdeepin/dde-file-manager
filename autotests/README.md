@@ -1,156 +1,104 @@
-# DDE File Manager 单元测试
+# DDE File Manager Unit Tests
 
-本目录包含 DDE 文件管理器的完整单元测试套件，支持测试运行、覆盖率分析和自动化报告生成。
+## Architecture
 
-## 依赖安装
-
-### 必需依赖
-
-```bash
-sudo apt install lcov cmake python3
-```
-
-### Python 依赖
-
-测试报告生成器需要 Python 3.6+ 环境，无需额外的 Python 包。
-
-## 项目结构
+Tests link against pre-built shared library targets (e.g. `DFM6::framework`) rather than
+recompiling source files. This means `src/` is compiled only once — test compilation is fast.
 
 ```
 autotests/
-├── CMakeLists.txt           # 主构建配置文件
-├── run-ut.sh               # 一键测试执行脚本
-├── generate-report.py      # 测试报告生成脚本
-├── report_generator/       # 报告生成器模块
-├── libs/                   # 库单元测试
-│   ├── dfm-base/          # dfm-base 库测试
-│   ├── dfm-extension/     # dfm-extension 库测试
-│   └── dfm-framework/     # dfm-framework 库测试
-├── plugins/               # 插件单元测试
-│   ├── dfmplugin-*/       # 各插件测试目录
-│   └── ddplugin-*/        # 桌面插件测试目录
-├── services/              # 服务单元测试
-│   ├── accesscontrol/     # 访问控制服务测试
-│   ├── diskencrypt/       # 磁盘加密服务测试
-│   └── mountcontrol/      # 挂载控制服务测试
-└── tools/                 # 工具单元测试
-    └── upgrade/           # 升级工具测试
+├── CMakeLists.txt       # Test entry point (dfm_setup_test_env + add_subdirectory)
+├── run-ut.sh            # One-click build + test + coverage
+├── dfm_test_main.h      # DFM_TEST_MAIN() macro (GTest + QApplication)
+├── dfm_asan_helper.h    # ASAN report helper
+├── libs/                # Library unit tests
+│   └── dfm-framework/   # dfm-framework tests
+└── old/                 # Archived old tests (not in use)
 ```
 
-## 使用方法
+## Build & Run
 
-### 快速开始
+### Option A: Integrated with the project
 
 ```bash
-# 执行完整测试流程（推荐）
-./run-ut.sh
-
-# 查看帮助信息
-./run-ut.sh --help
+# From project root
+cmake -B build -DCMAKE_BUILD_TYPE=Debug -DOPT_ENABLE_BUILD_UT=ON
+cmake --build build -j$(nproc)
+cd build && ctest --output-on-failure
 ```
 
-### 分步执行
-
-脚本支持从指定步骤开始执行，适用于调试或重新生成报告：
+### Option B: Using the script
 
 ```bash
-# 从步骤 4 开始（跳过编译，直接运行测试）
-./run-ut.sh --from-step 4
+# Build and run all tests
+./autotests/run-ut.sh
 
-# 从步骤 5 开始（只生成覆盖率报告）
-./run-ut.sh --from-step 5
+# Run tests without rebuilding
+./autotests/run-ut.sh --run-only
 
-# 从步骤 6 开始（只生成测试报告）
-./run-ut.sh --from-step 6
+# Build with coverage and generate HTML report
+./autotests/run-ut.sh --coverage
 ```
 
-### 执行步骤说明
+The coverage report (if generated) is at `build-autotests/coverage/html/index.html`.
 
-1. **准备构建环境** - 清理并创建构建目录
-2. **配置 CMake** - 生成构建文件
-3. **编译测试** - 编译所有单元测试
-4. **运行单元测试** - 执行测试并收集结果
-5. **生成覆盖率报告** - 使用 lcov 生成代码覆盖率
-6. **生成测试报告** - 生成综合 HTML 报告
+## Writing New Tests
 
-## 输出文件
-
-执行完成后，将在以下位置生成文件：
+### 1. Create a test directory
 
 ```
-../build-autotests/
-├── test-reports/
-│   ├── test_report.html      # 综合测试报告
-│   ├── test_output.log       # 测试输出日志
-│   ├── test_results.xml      # JUnit 格式测试结果
-│   └── coverage_output.log   # 覆盖率生成日志
-└── coverage/
-    └── html/
-        └── index.html        # 代码覆盖率报告
+autotests/libs/<library-name>/
+    CMakeLists.txt
+    main.cpp
+    test_*.cpp
 ```
 
-## 手动执行测试
+### 2. CMakeLists.txt
 
-如需手动控制测试过程：
+```cmake
+file(GLOB_RECURSE TEST_SOURCES
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
+)
 
-```bash
-# 创建构建目录
-mkdir -p ../build-autotests
-cd ../build-autotests
-
-# 配置 CMake
-cmake ../autotests -DCMAKE_BUILD_TYPE=Debug -DDFM_STANDALONE_TEST=ON
-
-# 编译
-cmake --build . -j $(nproc)
-
-# 运行测试
-ctest --output-on-failure --verbose
-
-# 生成覆盖率
-lcov --directory . --capture --output-file coverage.info
-genhtml coverage.info --output-directory coverage-html
+dfm_add_test(test-<library-name>
+    SOURCES ${TEST_SOURCES}
+    LINK_LIBRARIES <DFM::AliasTarget> Qt6::Test
+)
 ```
 
-## 故障排除
+Available library targets:
+- `DFM6::base` — dfm6-base library
+- `DFM6::framework` — dfm6-framework library
+- `DFM::extension` — dfm-extension library
 
-### 常见问题
+### 3. main.cpp
 
-1. **lcov 未安装**
-   ```bash
-   sudo apt install lcov
-   ```
-
-2. **编译错误**
-   - 检查是否安装了所有必需的开发依赖
-   - 确保文管开发环境正确配置
-
-3. **权限问题**
-   ```bash
-   chmod +x run-ut.sh
-   ```
-
-4. **Python 脚本问题**
-   - 确保系统已安装 Python 3.6+
-   - 检查 python3 命令是否可用
-
-### 调试选项
-
-```bash
-# 查看详细的 CMake 配置信息
-cmake ../autotests -DCMAKE_BUILD_TYPE=Debug -DCMAKE_VERBOSE_MAKEFILE=ON
-
-# 查看可用的测试目标
-cd ../build-autotests && make help
-
-# 运行特定测试
-cd ../build-autotests && ctest -R "测试名称"
+```cpp
+#include "dfm_test_main.h"
+DFM_TEST_MAIN(<unit_id>)
 ```
 
-## 开发者注意事项
+### 4. Test files
 
-- 测试使用 CMake + CTest 框架
-- 支持独立构建模式（`DFM_STANDALONE_TEST=ON`）
-- 自动生成 JUnit 格式的测试结果，便于 CI/CD 集成
-- 覆盖率报告会自动过滤测试文件，只显示源代码覆盖率
-- 报告生成器采用模块化设计，易于扩展和维护
+Use standard GTest macros (`TEST`, `TEST_F`, `EXPECT_*`, `ASSERT_*`).
+
+For function stubbing, include `"stubext.h"` and use `StubExt::set_lamda()`:
+
+```cpp
+#include "stubext.h"
+
+TEST(SomeTest, Example) {
+    stub_ext::StubExt stub;
+    stub.set_lamda(&SomeClass::method, [](SomeClass *self) -> ReturnType {
+        __DBG_STUB_INVOKE__
+        return mockValue;
+    });
+    // ... test code ...
+}
+```
+
+## Dependencies
+
+- GTest (`libgtest-dev`, `gtest`)
+- lcov + genhtml (`lcov`) — only needed for coverage

@@ -1,4 +1,12 @@
-cmake_minimum_required(VERSION 3.10)
+# dfm-framework unit tests
+# Links against DFM6::framework shared library — no source recompilation.
 
-# Use DFM test utilities to create library test
-dfm_create_library_test("dfm-framework")
+file(GLOB_RECURSE TEST_SOURCES
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
+)
+
+dfm_add_test(test-dfm-framework
+    SOURCES ${TEST_SOURCES}
+    LINK_LIBRARIES DFM6::framework Qt6::Test
+)

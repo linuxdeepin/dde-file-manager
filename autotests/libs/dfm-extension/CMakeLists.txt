@@ -1,4 +1,13 @@
-cmake_minimum_required(VERSION 3.10)
+# dfm-extension unit tests
+# Links against DFM::extension shared library — no source recompilation.
+# dfm_extension_stub.cpp provides stub implementations for the plugin C API.
 
-# Use DFM test utilities to create library test
-dfm_create_library_test("dfm-extension")
+file(GLOB_RECURSE TEST_SOURCES
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
+)
+
+dfm_add_test(test-dfm-extension
+    SOURCES ${TEST_SOURCES}
+    LINK_LIBRARIES DFM::extension Qt6::Test
+)

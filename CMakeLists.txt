@@ -14,7 +14,6 @@ dfm_init_common()
 # Print build information
 message(STATUS "=== DDE File Manager Build ===")
 message(STATUS "Build mode: ${CMAKE_BUILD_TYPE}")
-message(STATUS "Standalone test: ${DFM_STANDALONE_TEST}")
 message(STATUS "Project root: ${DFM_PROJECT_ROOT}")
 message(STATUS "Source directory: ${DFM_SOURCE_DIR}")
 message(STATUS "Include directory: ${DFM_INCLUDE_DIR}")
@@ -24,9 +23,8 @@ message(STATUS "==============================")
 # options
 option(OPT_DISABLE_QDEBUG "Disable Debug Macro" OFF)
 option(OPT_ENABLE_BUILD_DOCS "Build develop documents" OFF)
-option(OPT_ENABLE_BUILD_UT "Build unit tests" OFF)
+option(OPT_ENABLE_BUILD_UT "Build unit tests" ON)
 option(OPT_ENABLE_BUILD_TESTS "Build test/demo programs" OFF)
-
 
 include(install_dconfig)
 include(install_treeland_overrides)
