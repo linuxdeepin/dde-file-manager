@@ -855,18 +855,13 @@ TaskHandler TaskHandlers::UpdateIndexHandler(const IndexContext &context)
                 result.interrupted = true;
             }
 
-            // ProgressReporter的析构函数会处理最后的commit，但为了确保在optimize前所有更改都已提交
-            // 我们显式调用一次commit
-            fmDebug() << "[UpdateIndexHandler] Ensuring all changes are committed before optimization";
+            // ProgressReporter的析构函数会处理最后的commit，确保所有更改都已提交
+            fmDebug() << "[UpdateIndexHandler] Ensuring all changes are committed";
             writer->commit();
 
-            if (!running.isSilent()) {
-                fmDebug() << "[UpdateIndexHandler] Starting index optimization";
-                writer->optimize();
-                fmDebug() << "[UpdateIndexHandler] Index optimization completed";
-            } else {
-                fmInfo() << "[UpdateIndexHandler] Skipping index optimization in silent mode";
-            }
+            // 不再调用 optimize()：增量更新场景下 lucene++ 的自动合并策略已足够保证查询性能
+            // optimize() 会强制合并所有 segment 为单个 segment，产生巨大的 IO 开销
+            fmDebug() << "[UpdateIndexHandler] Relying on lucene++ automatic merge policy instead of optimize";
 
             // 仅在完整完成时清理旧索引；中断时保留 .old 供下次恢复使用
             if (!result.interrupted) {
