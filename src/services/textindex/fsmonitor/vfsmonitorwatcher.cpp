@@ -174,8 +174,11 @@ int vfsMonitorMsgCallback(struct nl_msg *msg, void *arg)
         return NL_OK;
     }
 
-    // Skip mount/unmount events.
+    // Mount/unmount events don't carry meaningful path data for indexing,
+    // but they invalidate our mount point cache. Flag the dirty bit so
+    // handleNetlinkMessage() can refresh the cache after this batch.
     if (act == ACT_MOUNT || act == ACT_UNMOUNT) {
+        d->mountPointsDirty = true;
         return NL_OK;
     }
 
@@ -539,6 +542,18 @@ void VfsMonitorFileSystemWatcherPrivate::handleNetlinkMessage()
     int ret = nl_recvmsgs_default(nlSock);
     if (ret < 0 && ret != -NLE_AGAIN) {
         fmWarning() << "VfsMonitor: nl_recvmsgs_default failed, error:" << ret;
+    }
+
+    // Refresh mount point cache if mount/unmount events were received.
+    // Done after nl_recvmsgs_default() so the cache is up-to-date for the
+    // next batch of file events.
+    if (mountPointsDirty) {
+        mountPointsDirty = false;
+        if (initMountPoints()) {
+            fmInfo() << "VfsMonitor: mount point cache refreshed";
+        } else {
+            fmWarning() << "VfsMonitor: failed to refresh mount point cache";
+        }
     }
 
     // Clean up orphaned RENAME_FROM entries.
