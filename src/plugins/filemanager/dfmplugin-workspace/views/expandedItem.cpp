@@ -78,12 +78,12 @@ void ExpandedItem::paintEvent(QPaintEvent *)
     WorkspaceEventSequence::instance()->doIconItemLayoutText(info, layout.data());
     const QList<QRectF> lines = layout->layout(labelRect, option.textElideMode, &pa, option.palette.brush(QPalette::Normal, QPalette::Highlight), &textList);
 
-    textBounding = GlobalPrivate::boundingRect(lines).toRect();
+    textBounding = GlobalPrivate::boundingRect(lines);
 }
 
 QSize ExpandedItem::sizeHint() const
 {
-    return QSize(width(), static_cast<int>(std::floor(textGeometry().bottom() + contentsMargins().bottom())));
+    return QSize(width(), static_cast<int>(std::ceil(textGeometry().bottom() + contentsMargins().bottom())));
 }
 
 int ExpandedItem::heightForWidth(int width) const
@@ -91,7 +91,7 @@ int ExpandedItem::heightForWidth(int width) const
     if (width != this->width())
         textBounding = QRect();
 
-    return static_cast<int>(std::floor(textGeometry(width).bottom() + contentsMargins().bottom()));
+    return static_cast<int>(std::ceil(textGeometry(width).bottom() + contentsMargins().bottom()));
 }
 
 qreal ExpandedItem::getOpacity() const
