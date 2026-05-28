@@ -69,6 +69,20 @@ bool mountPointStartsWith(const QString &path, const QString &mountPoint)
             || path.at(mountPoint.length()) == '/';
 }
 
+bool isDescendantOfRoot(const QString &path, const QString &root)
+{
+    if (root == "/")
+        return path.startsWith('/');
+
+    if (!path.startsWith(root))
+        return false;
+
+    if (path.length() == root.length())
+        return false;
+
+    return root.endsWith('/') || path.at(root.length()) == '/';
+}
+
 bool cStringEquals(const char *left, const char *right)
 {
     return left && right && qstrcmp(left, right) == 0;
@@ -433,12 +447,9 @@ QString VfsMonitorFileSystemWatcherPrivate::resolveAndFilterFullPath(dev_t devic
         // Check if under a monitored root path.
         bool inRoot = false;
         for (const QString &root : rootPaths) {
-            if (fullPath.startsWith(root)) {
-                if (root.endsWith('/') || fullPath.length() == root.length()
-                    || fullPath.at(root.length()) == '/') {
-                    inRoot = true;
-                    break;
-                }
+            if (isDescendantOfRoot(fullPath, root)) {
+                inRoot = true;
+                break;
             }
         }
         if (!inRoot)
