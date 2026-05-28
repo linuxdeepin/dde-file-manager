@@ -1,3 +1,44 @@
+dde-file-manager (6.5.140) unstable; urgency=medium
+
+  * feat: SMB feature optimization
+  * refactor: switch content index analyzer to NGramAnalyzer
+  * refactor: remove recent file watcher implementation
+  * refactor: consolidate Lucene field handling in IndexProfile
+  * refactor: replace DFileSystemWatcher with InotifyFileSystemWatcher
+  * refactor: switch OCR text index analyzer to NGramAnalyzer
+  * chore: remove deprecated Chinese analyzer components
+  * feat: integrate vfsmonitor for improved filesystem monitoring
+  * refactor: optimize file monitoring with selective inotify events
+  * refactor: optimize directory scanning with CLI fallback strategy
+  * perf: optimize search results with lazy highlight loading
+  * fix: improve highlight content caching and request handling
+  * refactor: optimize highlight content request logic
+  * refactor: adjust NGramAnalyzer parameters in text index profiles
+  * refactor: replace NGramAnalyzer with LowerCaseNGramAnalyzer
+  * refactor: optimize highlight provider initialization
+  * perf: update search options with supported file extensions
+  * feat: implement content deduplication with MD5 checksums
+  * feat: implement index content migration utility
+  * docs: update REUSE.toml copyright information
+  * fix: optimize anything indexing status check
+  * perf: optimize document field loading in text indexing
+  * perf: add silent mode control for index optimization
+  * refactor: streamline unit test framework and documentation
+  * feat: improve view animations handling for resize and window state changes
+  * test: add textindex service unit tests
+  * fix: simplify search abort behavior
+  * fix: improve VFS monitor mount point handling
+  * fix: adjust empty view layout spacing in file manager
+  * fix: improve path comparison logic in filesystem watcher
+  * chore: add SPDX license headers to run-ut.sh
+  * chore: update liblucene++ dependency version
+  * refactor: simplify vfsmonitor callback handling
+  * fix: improve mount point tracking in vfsmonitor
+  * refactor: optimize highlight task scheduling mechanism
+  * fix: improve text layout handling for fractional scaling
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 28 May 2026 16:47:58 +0800
+
 dde-file-manager (6.5.139) unstable; urgency=medium
 
   * fix: launch dde-file-manager-pkexec correctly under Treeland
