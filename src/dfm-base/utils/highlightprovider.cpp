@@ -85,10 +85,9 @@ void HighlightProvider::requestHighlight(const QString &taskId, const QString &p
             pendingRequests.append({taskId, path, keyword, searchType});
         }
 
-        // 如果工作线程空闲，触发处理
+        // 仅在处理状态从 idle 切换到 busy 时投递一次任务，避免重复唤醒 worker。
         int expected = 0;
-        if (processing.load(std::memory_order_relaxed) == 0
-            && processing.compare_exchange_strong(expected, 1, std::memory_order_acquire)) {
+        if (processing.compare_exchange_strong(expected, 1, std::memory_order_acquire)) {
             QMetaObject::invokeMethod(worker, [this]() {
                 processNextRequest();
             }, Qt::QueuedConnection);
