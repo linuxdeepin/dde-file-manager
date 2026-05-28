@@ -9,7 +9,6 @@
 
 #include <QSocketNotifier>
 #include <QHash>
-#include <QSet>
 #include <QStringList>
 
 #include <sys/types.h>
@@ -89,10 +88,11 @@ public:
 
     // dev_t -> sorted mount point list (longest first).
     QHash<dev_t, QStringList> mountPoints;
-    QSet<dev_t> devicesWithChildren;
+    QHash<dev_t, QStringList> childMountPoints;
+    bool lowerFsExists { false };
 
     bool initMountPoints();
-    bool hasChildMountPoints(dev_t deviceId) const;
+    bool isLowerFsEvent(dev_t deviceId, const QString &fullPath) const;
 };
 
 SERVICETEXTINDEX_END_NAMESPACE

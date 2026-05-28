@@ -37,6 +37,15 @@ struct CallbackContext
     VfsMonitorFileSystemWatcherPrivate *d { nullptr };
 };
 
+struct MountEntry
+{
+    dev_t deviceId { 0 };
+    int parentMountId { 0 };
+    QString mountPoint;
+    bool isBindMount { false };
+    bool isLowerFs { false };
+};
+
 // Netlink attribute policy for parsing vfs_monitor messages.
 struct nla_policy vfsPolicy[VFSMONITOR_A_MAX + 1];
 
@@ -49,6 +58,76 @@ void initVfsPolicy()
     vfsPolicy[VFSMONITOR_A_MINOR].type = NLA_U8;
     vfsPolicy[VFSMONITOR_A_PATH].type = NLA_NUL_STRING;
     vfsPolicy[VFSMONITOR_A_PATH].maxlen = 4096;
+}
+
+bool mountPointStartsWith(const QString &path, const QString &mountPoint)
+{
+    if (!path.startsWith(mountPoint))
+        return false;
+
+    return mountPoint.endsWith('/') || path.length() == mountPoint.length()
+            || path.at(mountPoint.length()) == '/';
+}
+
+bool cStringEquals(const char *left, const char *right)
+{
+    return left && right && qstrcmp(left, right) == 0;
+}
+
+bool isLowerFsType(const char *fsType)
+{
+    return cStringEquals(fsType, "overlay") || cStringEquals(fsType, "fuse.dlnfs")
+            || cStringEquals(fsType, "ulnfs");
+}
+
+bool isParentChainUnderRoot(const QHash<int, MountEntry> &byMountId, const MountEntry &entry)
+{
+    if (!entry.isBindMount && entry.mountPoint == "/")
+        return true;
+
+    int parentMountId = entry.parentMountId;
+    while (parentMountId > 0) {
+        auto parentIt = byMountId.find(parentMountId);
+        if (parentIt == byMountId.end())
+            return false;
+
+        if (parentIt->mountPoint == "/")
+            return true;
+
+        parentMountId = parentIt->parentMountId;
+    }
+
+    return false;
+}
+
+QHash<int, MountEntry> collectMountEntries(libmnt_table *mtab)
+{
+    QHash<int, MountEntry> byMountId;
+    struct libmnt_iter *iter = mnt_new_iter(MNT_ITER_FORWARD);
+    if (!iter)
+        return byMountId;
+
+    struct libmnt_fs *fs;
+    while (mnt_table_next_fs(mtab, iter, &fs) == 0) {
+        const char *target = mnt_fs_get_target(fs);
+        if (!target)
+            continue;
+
+        const char *root = mnt_fs_get_root(fs);
+        const char *fsType = mnt_fs_get_fstype(fs);
+
+        MountEntry entry;
+        entry.deviceId = mnt_fs_get_devno(fs);
+        entry.parentMountId = mnt_fs_get_parent_id(fs);
+        entry.mountPoint = QString::fromUtf8(target);
+        entry.isBindMount = !cStringEquals(root, "/");
+        entry.isLowerFs = isLowerFsType(fsType);
+
+        byMountId.insert(mnt_fs_get_id(fs), entry);
+    }
+
+    mnt_free_iter(iter);
+    return byMountId;
 }
 
 int vfsMonitorMsgCallback(struct nl_msg *msg, void *arg)
@@ -90,11 +169,7 @@ int vfsMonitorMsgCallback(struct nl_msg *msg, void *arg)
         return NL_OK;
     }
 
-    // Filter events from devices that have child mounts (overlay lower layers).
     dev_t deviceId = makedev(major, minor);
-    if (d->hasChildMountPoints(deviceId)) {
-        return NL_OK;
-    }
 
     // RENAME_FROM events must be stored before filtering, because the paired
     // RENAME_TO may land in an excluded path (e.g., trash). We need the
@@ -102,7 +177,7 @@ int vfsMonitorMsgCallback(struct nl_msg *msg, void *arg)
     if (act == ACT_RENAME_FROM_FILE || act == ACT_RENAME_FROM_FOLDER) {
         QString fullPath = d->resolveAndFilterFullPath(deviceId, pathCStr);
         if (fullPath.isNull())
-            return NL_OK;  // Source itself is excluded, no point tracking.
+            return NL_OK;   // Source itself is excluded, no point tracking.
 
         auto [parentPath, name] = VfsMonitorFileSystemWatcherPrivate::splitPath(fullPath);
 
@@ -181,7 +256,7 @@ int vfsMonitorMsgCallback(struct nl_msg *msg, void *arg)
         Q_EMIT q->directoryDeleted(parentPath, name);
         break;
 
-    // Synthetic events (kernel-paired rename).
+        // Synthetic events (kernel-paired rename).
     case ACT_RENAME_FILE:
         Q_EMIT q->fileCreated(parentPath, name);
         break;
@@ -246,7 +321,8 @@ VfsMonitorFileSystemWatcherPrivate::~VfsMonitorFileSystemWatcherPrivate()
 bool VfsMonitorFileSystemWatcherPrivate::initMountPoints()
 {
     mountPoints.clear();
-    devicesWithChildren.clear();
+    childMountPoints.clear();
+    lowerFsExists = false;
 
     struct libmnt_table *mtab = mnt_new_table();
     if (!mtab) {
@@ -258,97 +334,21 @@ bool VfsMonitorFileSystemWatcherPrivate::initMountPoints()
         return false;
     }
 
-    // Collect ALL mount entries with their parent mount IDs.
-    // We keep both real mounts (root="/") and bind mounts (root="/some/path").
-    // For bind mounts, the kernel event's dentry_path_raw is relative to the
-    // original mount point (root="/"), so we still use the real mount point
-    // for path reconstruction. But we also store bind mount targets so that
-    // resolveFullPath() can try them for rootPath matching.
-    //
-    // Structure: mountId -> {deviceId, parentMountId, mountPoint, isBindMount}
-    struct MountEntry {
-        dev_t deviceId;
-        int parentMountId;
-        QString mountPoint;
-        bool isBindMount;
-    };
-    QHash<int, MountEntry> byMountId;
-
-    struct libmnt_iter *iter = mnt_new_iter(MNT_ITER_FORWARD);
-    struct libmnt_fs *fs;
-    while (mnt_table_next_fs(mtab, iter, &fs) == 0) {
-        const char *target = mnt_fs_get_target(fs);
-        if (!target)
-            continue;
-
-        int mountId = mnt_fs_get_id(fs);
-        dev_t devId = mnt_fs_get_devno(fs);
-        int parentId = mnt_fs_get_parent_id(fs);
-
-        // Determine if this is a bind mount (root != "/").
-        bool isBind = (qstrcmp(mnt_fs_get_root(fs), "/") != 0);
-
-        MountEntry entry;
-        entry.deviceId = devId;
-        entry.parentMountId = parentId;
-        entry.mountPoint = QString::fromUtf8(target);
-        entry.isBindMount = isBind;
-
-        byMountId.insert(mountId, entry);
-    }
-
-    mnt_free_iter(iter);
+    const QHash<int, MountEntry> byMountId = collectMountEntries(mtab);
     mnt_free_table(mtab);
 
-    // Group mount points by device ID.
-    // Only include entries whose parent chain leads to "/" (same as deepin-anything).
+    QHash<int, MountEntry> rootMountTree;
     for (auto it = byMountId.cbegin(); it != byMountId.cend(); ++it) {
         const auto &entry = it.value();
 
-        if (!entry.isBindMount) {
-            // Real mount: root == "/". Check parent chain if not root fs.
-            if (entry.mountPoint != "/") {
-                int pid = entry.parentMountId;
-                bool allRoot = true;
-                while (pid > 0) {
-                    auto parentIt = byMountId.find(pid);
-                    if (parentIt == byMountId.end()) {
-                        allRoot = false;
-                        break;
-                    }
-                    if (parentIt->mountPoint == "/") {
-                        break;
-                    }
-                    pid = parentIt->parentMountId;
-                }
-                if (!allRoot)
-                    continue;
-            }
-        } else {
-            // Bind mount: verify its parent (the original mount) has a valid chain.
-            int pid = entry.parentMountId;
-            bool allRoot = true;
-            while (pid > 0) {
-                auto parentIt = byMountId.find(pid);
-                if (parentIt == byMountId.end()) {
-                    allRoot = false;
-                    break;
-                }
-                if (parentIt->mountPoint == "/") {
-                    break;
-                }
-                pid = parentIt->parentMountId;
-            }
-            if (!allRoot)
-                continue;
-        }
+        if (!isParentChainUnderRoot(byMountId, entry))
+            continue;
 
         mountPoints[entry.deviceId].append(entry.mountPoint);
+        rootMountTree.insert(it.key(), entry);
+        lowerFsExists = lowerFsExists || entry.isLowerFs;
     }
 
-    // Sort each device's mount points by length (longest first).
-    // This ensures more specific paths (e.g., "/home") are tried before
-    // less specific ones (e.g., "/persistent/home").
     for (auto &points : mountPoints) {
         std::sort(points.begin(), points.end(),
                   [](const QString &a, const QString &b) {
@@ -356,14 +356,25 @@ bool VfsMonitorFileSystemWatcherPrivate::initMountPoints()
                   });
     }
 
-    // Build child mount device set for lowerfs/overlay filtering.
-    for (const auto &entry : std::as_const(byMountId)) {
-        if (entry.parentMountId > 0 && !entry.isBindMount) {
-            auto parentIt = byMountId.find(entry.parentMountId);
-            if (parentIt != byMountId.end()) {
-                devicesWithChildren.insert(parentIt->deviceId);
+    for (auto it = rootMountTree.cbegin(); it != rootMountTree.cend(); ++it) {
+        const auto &parent = it.value();
+        QStringList children;
+        for (const auto &entry : std::as_const(rootMountTree)) {
+            if (entry.parentMountId == it.key()) {
+                children.append(entry.mountPoint);
             }
         }
+
+        if (!children.isEmpty())
+            childMountPoints[parent.deviceId].append(children);
+    }
+
+    for (auto &points : childMountPoints) {
+        points.removeDuplicates();
+        std::sort(points.begin(), points.end(),
+                  [](const QString &a, const QString &b) {
+                      return a.length() > b.length();
+                  });
     }
 
     int totalPoints = 0;
@@ -372,17 +383,31 @@ bool VfsMonitorFileSystemWatcherPrivate::initMountPoints()
     }
     fmInfo() << "VfsMonitor: loaded" << mountPoints.size()
              << "devices," << totalPoints << "mount points,"
-             << devicesWithChildren.size() << "devices with children";
+             << childMountPoints.size() << "devices with child mount points,"
+             << "lowerfs exists:" << lowerFsExists;
     return !mountPoints.isEmpty();
 }
 
-bool VfsMonitorFileSystemWatcherPrivate::hasChildMountPoints(dev_t deviceId) const
+bool VfsMonitorFileSystemWatcherPrivate::isLowerFsEvent(dev_t deviceId, const QString &fullPath) const
 {
-    return devicesWithChildren.contains(deviceId);
+    if (!lowerFsExists)
+        return false;
+
+    auto it = childMountPoints.find(deviceId);
+    if (it == childMountPoints.end())
+        return false;
+
+    for (const QString &childMountPoint : it.value()) {
+        if (mountPointStartsWith(fullPath, childMountPoint)) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 QString VfsMonitorFileSystemWatcherPrivate::resolveAndFilterFullPath(dev_t deviceId,
-                                                                  const char *relativePath) const
+                                                                     const char *relativePath) const
 {
     auto it = mountPoints.find(deviceId);
     if (it == mountPoints.end())
@@ -401,6 +426,9 @@ QString VfsMonitorFileSystemWatcherPrivate::resolveAndFilterFullPath(dev_t devic
         } else {
             fullPath = mp + relPath;
         }
+
+        if (isLowerFsEvent(deviceId, fullPath))
+            continue;
 
         // Check if under a monitored root path.
         bool inRoot = false;
@@ -525,8 +553,7 @@ void VfsMonitorFileSystemWatcherPrivate::handleNetlinkMessage()
 VfsMonitorFileSystemWatcher::VfsMonitorFileSystemWatcher(const QStringList &rootPaths,
                                                          PathExcludePredicate excludePredicate,
                                                          QObject *parent)
-    : QObject(parent)
-    , d_ptr(new VfsMonitorFileSystemWatcherPrivate(rootPaths, std::move(excludePredicate), this))
+    : QObject(parent), d_ptr(new VfsMonitorFileSystemWatcherPrivate(rootPaths, std::move(excludePredicate), this))
 {
 }
 
@@ -535,8 +562,8 @@ VfsMonitorFileSystemWatcher::~VfsMonitorFileSystemWatcher()
 }
 
 VfsMonitorFileSystemWatcher *VfsMonitorFileSystemWatcher::create(const QStringList &rootPaths,
-                                                                  PathExcludePredicate excludePredicate,
-                                                                  QObject *parent)
+                                                                 PathExcludePredicate excludePredicate,
+                                                                 QObject *parent)
 {
     auto *watcher = new VfsMonitorFileSystemWatcher(rootPaths, std::move(excludePredicate), parent);
 
