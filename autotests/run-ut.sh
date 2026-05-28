@@ -1,4 +1,8 @@
 #!/bin/bash
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 # run-ut.sh - Build, run, and optionally generate coverage for DDE File Manager unit tests.
 #
 # Usage:
