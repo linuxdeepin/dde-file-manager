@@ -28,14 +28,9 @@ SERVICETEXTINDEX_BEGIN_NAMESPACE
 static constexpr char kVfsMonitorFamilyName[] = "vfsmonitor";
 static constexpr char kVfsMonitorMcgDentry[] = "vfsmonitor_de";
 
-// --- Static C callback for libnl ---
+// --- Per-instance C callback for libnl ---
 
 namespace {
-
-struct CallbackContext
-{
-    VfsMonitorFileSystemWatcherPrivate *d { nullptr };
-};
 
 struct MountEntry
 {
@@ -144,10 +139,11 @@ QHash<int, MountEntry> collectMountEntries(libmnt_table *mtab)
     return byMountId;
 }
 
+// Per-instance callback: arg is the VfsMonitorFileSystemWatcherPrivate pointer,
+// registered per-socket via nl_socket_modify_cb. No global state needed.
 int vfsMonitorMsgCallback(struct nl_msg *msg, void *arg)
 {
-    auto *ctx = static_cast<CallbackContext *>(arg);
-    auto *d = ctx->d;
+    auto *d = static_cast<VfsMonitorFileSystemWatcherPrivate *>(arg);
 
     if (!d) {
         return NL_SKIP;
@@ -286,24 +282,17 @@ int vfsMonitorMsgCallback(struct nl_msg *msg, void *arg)
     return NL_OK;
 }
 
-static CallbackContext s_callbackCtx { nullptr };
-
 static bool registerMessageCallback(nl_sock *sock, VfsMonitorFileSystemWatcherPrivate *d)
 {
-    s_callbackCtx.d = d;
-
+    // Pass d directly as per-socket callback data. Each nl_sock gets its own
+    // callback arg, so multiple instances are naturally supported.
     int ret = nl_socket_modify_cb(sock, NL_CB_VALID, NL_CB_CUSTOM,
-                                  vfsMonitorMsgCallback, &s_callbackCtx);
+                                  vfsMonitorMsgCallback, d);
     if (ret != 0) {
         return false;
     }
 
     return true;
-}
-
-static void clearMessageCallback()
-{
-    s_callbackCtx.d = nullptr;
 }
 
 }   // anonymous namespace
@@ -324,7 +313,9 @@ VfsMonitorFileSystemWatcherPrivate::~VfsMonitorFileSystemWatcherPrivate()
         notifier->setEnabled(false);
     }
 
-    clearMessageCallback();
+    // No global callback state to clear — the per-socket callback data (this
+    // pointer) becomes invalid when nlSock is freed below, and the callback
+    // checks for null before dereferencing.
 
     if (nlSock) {
         nl_socket_free(nlSock);
