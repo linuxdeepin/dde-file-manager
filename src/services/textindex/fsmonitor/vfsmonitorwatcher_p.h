@@ -91,6 +91,10 @@ public:
     QHash<dev_t, QStringList> childMountPoints;
     bool lowerFsExists { false };
 
+    // Set to true when an ACT_MOUNT/ACT_UNMOUNT event is received, cleared
+    // after initMountPoints() rebuilds the cache in handleNetlinkMessage().
+    bool mountPointsDirty { false };
+
     bool initMountPoints();
     bool isLowerFsEvent(dev_t deviceId, const QString &fullPath) const;
 };
