@@ -2650,17 +2650,26 @@ void FileView::updateContentLabel()
         return;
     }
 
-    if (count() <= 0) {
+    bool isEmpty = (count() <= 0);
+
+    if (isEmpty) {
         // set custom empty tips
         const FileInfoPointer &fileInfo = model()->fileInfo(rootIndex());
         if (fileInfo) {
             d->contentLabel->setText(fileInfo->viewOfTip(ViewInfoType::kEmptyDir));
             d->contentLabel->adjustSize();
-            return;
+        } else {
+            d->contentLabel->setText(QString());
         }
+    } else {
+        d->contentLabel->setText(QString());
     }
 
-    d->contentLabel->setText(QString());
+    // Remove header bottom margin when empty to avoid unnecessary spacing
+    if (d->headerWidget && (isListViewMode() || isTreeViewMode())) {
+        int bottomMargin = isEmpty ? 0 : (isGroupedView() ? 0 : kDefaultHeaderBottomMargin);
+        d->headerWidget->layout()->setContentsMargins(0, 0, 0, bottomMargin);
+    }
 }
 
 void FileView::updateSelectedUrl()
