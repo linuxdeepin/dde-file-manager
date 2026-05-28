@@ -6,7 +6,6 @@
 #include "iconitemdelegate.h"
 #include "private/iconitemdelegate_p.h"
 
-#include <QMouseEvent>
 #include "utils/itemdelegatehelper.h"
 #include "utils/fileviewhelper.h"
 #include "fileview.h"
@@ -44,6 +43,7 @@
 #include <QPainterPath>
 #include <QToolTip>
 #include <QtMath>
+#include <QMouseEvent>
 
 #include <linux/limits.h>
 

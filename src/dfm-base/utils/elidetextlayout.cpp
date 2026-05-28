@@ -12,6 +12,8 @@
 #include <QTextBlock>
 #include <QDebug>
 
+#include <cmath>
+
 #include <dfm-base/dfm_base_global.h>
 
 using namespace dfmbase;
@@ -354,7 +356,9 @@ QList<QRectF> ElideTextLayout::layout(const QRectF &rect, Qt::TextElideMode elid
     auto processLine = [this, &ret, painter, &lastLineRect, background, textLineHeight, &curText, textLines,
                         paintLineWithHighlight, &currentMatches](QTextLine &line) {
         QRectF lRect = line.naturalTextRect();
-        lRect.setHeight(textLineHeight);
+        // Fix clipping on fractional scaling: keep the line rect large enough for
+        // Qt's actual text layout metrics instead of truncating to the logical line height.
+        lRect.setHeight(qMax<qreal>(textLineHeight, std::ceil(line.height())));
 
         ret.append(lRect);
         if (textLines) {
