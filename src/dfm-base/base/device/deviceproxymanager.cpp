@@ -8,6 +8,7 @@
 #include "private/deviceproxymanager_p.h"
 
 #include <QDBusServiceWatcher>
+#include <QCoreApplication>
 
 #include <glib.h>
 
@@ -230,6 +231,14 @@ DeviceProxyManager::~DeviceProxyManager()
 DeviceProxyManagerPrivate::DeviceProxyManagerPrivate(DeviceProxyManager *qq, QObject *parent)
     : QObject(parent), q(qq)
 {
+    if (qApp) {
+        connect(qApp, &QCoreApplication::aboutToQuit, this, [this] {
+            isShuttingDown.storeRelease(true);
+            dbusWatcher.reset();
+            devMngDBus.reset();
+            disconnCurrentConnections();
+        });
+    }
 }
 
 DeviceProxyManagerPrivate::~DeviceProxyManagerPrivate()
@@ -243,13 +252,22 @@ bool DeviceProxyManagerPrivate::isDBusRuning()
 
 void DeviceProxyManagerPrivate::initConnection()
 {
+    if (isShuttingDown.loadAcquire())
+        return;
+
     dbusWatcher.reset(new QDBusServiceWatcher(kDeviceService, QDBusConnection::sessionBus()));
     q->connect(dbusWatcher.data(), &QDBusServiceWatcher::serviceRegistered, q, [this] {
+        if (isShuttingDown.loadAcquire())
+            return;
         connectToDBus();
         emit q->devMngDBusRegistered();
         qCInfo(logDFMBase) << "Device manager DBus service registered, switching to DBus connection";
     });
     q->connect(dbusWatcher.data(), &QDBusServiceWatcher::serviceUnregistered, q, [this] {
+        if (isShuttingDown.loadAcquire()) {
+            devMngDBus.reset();
+            return;
+        }
         devMngDBus.reset();
         connectToAPI();
         emit q->devMngDBusUnregistered();
@@ -346,6 +364,9 @@ bool DeviceProxyManagerPrivate::isExternalBlock(const QVariantMap &info) const
 
 void DeviceProxyManagerPrivate::connectToDBus()
 {
+    if (isShuttingDown.loadAcquire())
+        return;
+
     if (currentConnectionType == kDBusConnecting)
         return;
 
@@ -390,6 +411,9 @@ void DeviceProxyManagerPrivate::connectToDBus()
 
 void DeviceProxyManagerPrivate::connectToAPI()
 {
+    if (isShuttingDown.loadAcquire())
+        return;
+
     if (currentConnectionType == kAPIConnecting)
         return;
     disconnCurrentConnections();
