@@ -74,11 +74,31 @@ bool EmblemManager::paintEmblems(int role, const FileInfoPointer &info, QPainter
             continue;
 
         const qreal dpr = painter->device() ? painter->device()->devicePixelRatioF() : 1.0;
-        const QSize deviceSize(qMax(1, qRound(emblemRect.width()  * dpr)),
+        const QSize deviceSize(qMax(1, qRound(emblemRect.width() * dpr)),
                                qMax(1, qRound(emblemRect.height() * dpr)));
 
         QPixmap emblemPix = emblems.at(i).pixmap(deviceSize);
+        if (emblemPix.isNull())
+            continue;
+
         emblemPix.setDevicePixelRatio(dpr);
+
+        const QSizeF logicalSize = emblemPix.deviceIndependentSize();
+        const QSizeF targetLogicalSize = emblemRect.size();
+        const bool logicalSizeMismatched
+                = qAbs(logicalSize.width() - targetLogicalSize.width()) > 0.5
+                || qAbs(logicalSize.height() - targetLogicalSize.height()) > 0.5;
+
+        // Keep the original crisp HiDPI path for icons that already honor the
+        // requested device-pixel size. Some fixed-size theme PNG emblems used
+        // by extensions may instead return a larger bucketed pixmap (for
+        // example 64x64), which becomes oversized after assigning fractional
+        // DPR. Normalize only those mismatched pixmaps back to the requested
+        // device size.
+        if (logicalSizeMismatched) {
+            emblemPix = emblemPix.scaled(deviceSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+            emblemPix.setDevicePixelRatio(dpr);
+        }
 
         const qreal ax = qRound(emblemRect.x() * dpr) / dpr;
         const qreal ay = qRound(emblemRect.y() * dpr) / dpr;
