@@ -18,6 +18,7 @@
 #include <QScopedPointer>
 #include <QList>
 #include <QtCore/qobjectdefs.h>
+#include <QAtomicInteger>
 #include <QReadWriteLock>
 
 using DeviceManagerInterface = OrgDeepinFilemanagerDaemonDeviceManagerInterface;
@@ -54,6 +55,7 @@ private:
     QScopedPointer<QDBusServiceWatcher> dbusWatcher;
     QList<QMetaObject::Connection> connections;
     int currentConnectionType = kNoneConnection;   // 0 for API connection and 1 for DBus connection
+    QAtomicInteger<bool> isShuttingDown { false };
     QReadWriteLock lock;
     QMap<QString, QString> externalMounts;
     QMap<QString, QString> allMounts;   // contain system disk
