@@ -102,6 +102,34 @@ QString MimeTypeDisplayManager::fullMimeName(const QString &mimeType) const
 
 FileInfo::FileType MimeTypeDisplayManager::displayNameToEnum(const QString &mimeType) const
 {
+    const FileInfo::FileType directType = displayNameToEnumDirect(mimeType);
+    if (directType != FileInfo::FileType::kUnknown) {
+        return directType;
+    }
+
+    const QMimeType resolvedMime = mimeTypeDatabase.mimeTypeForName(mimeType);
+    if (!resolvedMime.isValid()) {
+        return FileInfo::FileType::kUnknown;
+    }
+
+    // Fallback to ancestor MIME types so vendor-specific overrides can still
+    // inherit the same top-level category as their standard parent MIME.
+    for (const QString &ancestorMimeType : resolvedMime.allAncestors()) {
+        if (shouldSkipAncestorMimeType(ancestorMimeType)) {
+            continue;
+        }
+
+        const FileInfo::FileType ancestorType = displayNameToEnumDirect(ancestorMimeType);
+        if (ancestorType != FileInfo::FileType::kUnknown) {
+            return ancestorType;
+        }
+    }
+
+    return FileInfo::FileType::kUnknown;
+}
+
+FileInfo::FileType MimeTypeDisplayManager::displayNameToEnumDirect(const QString &mimeType) const
+{
     if (mimeType == "application/x-desktop") {
         return FileInfo::FileType::kDesktopApplication;
     } else if (mimeType == "inode/directory") {
@@ -123,6 +151,12 @@ FileInfo::FileType MimeTypeDisplayManager::displayNameToEnum(const QString &mime
     } else {
         return FileInfo::FileType::kUnknown;
     }
+}
+
+bool MimeTypeDisplayManager::shouldSkipAncestorMimeType(const QString &mimeType) const
+{
+    return mimeType == "application/octet-stream"
+            || mimeType == "application/x-zerosize";
 }
 
 QString MimeTypeDisplayManager::defaultIcon(const QString &mimeType) const

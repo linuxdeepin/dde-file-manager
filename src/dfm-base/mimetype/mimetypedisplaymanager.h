@@ -36,6 +36,8 @@ private:
     void initData();
     void loadSupportMimeTypes();
     QStringList readlines(const QString &path);
+    FileInfo::FileType displayNameToEnumDirect(const QString &mimeType) const;
+    bool shouldSkipAncestorMimeType(const QString &mimeType) const;
     QMimeType accurateLocalMimeType(const QString &filePath) const;
 
 private:
