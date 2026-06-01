@@ -36,6 +36,7 @@ application/vnd.oasis.opendocument.text
 application/vnd.oasis.opendocument.presentation
 application/vnd.oasis.opendocument.spreadsheet
 application/uot
+application/uof
 application/uop
 application/uos
 application/xml
@@ -45,3 +46,12 @@ application/sql
 application/x-yaml
 application/x-php
 application/vnd.ms-xpsdocument
+application/x-ect
+application/x-ees
+application/x-eid
+application/x-eig
+application/x-eio
+application/x-eip
+application/x-eis
+application/x-eit
+application/x-eiw
