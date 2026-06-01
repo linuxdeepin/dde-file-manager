@@ -25,6 +25,8 @@
 #include <QRegularExpression>
 #include <DUtil>
 
+#include <cmath>
+
 #define SYSTEM_SYSTEMINFO_SERVICE "org.deepin.dde.SystemInfo1"
 #define SYSTEM_SYSTEMINFO_PATH "/org/deepin/dde/SystemInfo1"
 #define SYSTEM_SYSTEMINFO_INTERFACE "org.deepin.dde.SystemInfo1"
@@ -483,12 +485,17 @@ int UniversalUtils::getTextLineHeight(const QModelIndex &index, const QFontMetri
 
 int UniversalUtils::getTextLineHeight(const QString &text, const QFontMetrics &fontMetrics)
 {
-    const int fontHeight = fontMetrics.height();
+    // Use QFontMetricsF to avoid int truncation under fractional scaling (e.g. 125%).
+    // QFontMetrics returns int which discards sub-pixel metrics, causing line spacing
+    // to be too small and descenders (g, p, y, q) of the upper line to be clipped
+    // by the next line's background/text.
+    QFontMetricsF fmF(fontMetrics);
+    const int fontHeight = static_cast<int>(std::ceil(fmF.height()));
     if (text.isEmpty())
         return fontHeight;
 
-    const QRect textRect = fontMetrics.boundingRect(text);
-    const int tightHeight = textRect.height();
+    const QRectF textRectF = fmF.boundingRect(text);
+    const int tightHeight = static_cast<int>(std::ceil(textRectF.height()));
     if (tightHeight <= 0)
         return fontHeight;
 
