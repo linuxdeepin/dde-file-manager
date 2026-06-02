@@ -10,7 +10,10 @@
 
 #include <QVBoxLayout>
 
+#include <dfm-base/utils/iconutils.h>
+
 DWIDGET_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_titlebar;
 
 DPCResultWidget::DPCResultWidget(QWidget *parent)
@@ -27,10 +30,10 @@ void DPCResultWidget::setResult(bool success, const QString &msg)
 
     if (success) {
         titleLabel->setText(tr("Disk password changed"));
-        resultIcon->setPixmap(QIcon::fromTheme("dfm_success").pixmap(128, 128));
+        resultIcon->setPixmap(IconUtils::hiDpiPixmap(QIcon::fromTheme("dfm_success"), QSize(128, 128), this));
     } else {
         titleLabel->setText(tr("Failed to change the disk password"));
-        resultIcon->setPixmap(QIcon::fromTheme("dfm_fail").pixmap(128, 128));
+        resultIcon->setPixmap(IconUtils::hiDpiPixmap(QIcon::fromTheme("dfm_fail"), QSize(128, 128), this));
     }
 }
 

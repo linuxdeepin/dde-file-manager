@@ -5,6 +5,7 @@
 #include "vaultactivestartview.h"
 
 #include <dfm-framework/event/event.h>
+#include <dfm-base/utils/iconutils.h>
 
 #ifdef DTKWIDGET_CLASS_DSizeMode
 #    include <DSizeMode>
@@ -17,6 +18,7 @@
 #include <QSpacerItem>
 
 DWIDGET_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_vault;
 
 VaultActiveStartView::VaultActiveStartView(QWidget *parent)
@@ -35,7 +37,7 @@ void VaultActiveStartView::initUi()
     pLabel2->setAlignment(Qt::AlignHCenter);
 
     DLabel *pLabel3 = new DLabel();
-    pLabel3->setPixmap(QIcon::fromTheme("dfm_vault_active_start").pixmap(88, 100));
+    pLabel3->setPixmap(IconUtils::hiDpiPixmap(QIcon::fromTheme("dfm_vault_active_start"), QSize(88, 100), this));
     pLabel3->setAlignment(Qt::AlignHCenter);
 
     startBtn = new DSuggestButton(tr("Create"), this);

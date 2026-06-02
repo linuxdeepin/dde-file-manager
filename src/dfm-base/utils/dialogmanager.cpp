@@ -17,6 +17,7 @@
 #include <dfm-base/utils/windowutils.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/iconutils.h>
 
 #include <DBackgroundGroup>
 #include <DTreeView>
@@ -215,7 +216,7 @@ void DialogManager::showNoPermissionDialog(const QList<QUrl> &urls)
         QFrame *contentFrame = new QFrame;
 
         QLabel *iconLabel = new QLabel;
-        iconLabel->setPixmap(QIcon::fromTheme("dde-file-manager").pixmap(64, 64));
+        iconLabel->setPixmap(IconUtils::hiDpiPixmap(QIcon::fromTheme("dde-file-manager"), QSize(64, 64), qApp->activeWindow()));
 
         QLabel *titleLabel = new QLabel;
         titleLabel->setText(tr("Sorry, you don't have permission to operate the following %1 file/folder(s)!").arg(QString::number(urls.count())));

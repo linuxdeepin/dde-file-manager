@@ -9,6 +9,8 @@
 #include <QGraphicsDropShadowEffect>
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
+#include <QWidget>
+#include <QApplication>
 
 DFMBASE_USE_NAMESPACE
 
@@ -94,4 +96,12 @@ bool IconUtils::shouldSkipThumbnailFrame(const QString &mimeType)
         Global::Mime::kTypeAppUab
     };
     return kExcludedMimes.contains(mimeType);
+}
+
+QPixmap IconUtils::hiDpiPixmap(const QIcon &icon, const QSize &size, const QWidget *widget)
+{
+    qreal dpr = widget ? widget->devicePixelRatioF() : qApp->devicePixelRatio();
+    QPixmap pix = icon.pixmap(size * dpr);
+    pix.setDevicePixelRatio(dpr);
+    return pix;
 }

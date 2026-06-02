@@ -12,6 +12,7 @@
 #include <dfm-base/utils/fileinfohelper.h>
 #include <dfm-base/utils/windowutils.h>
 #include <dfm-base/utils/thumbnail/thumbnailhelper.h>
+#include <dfm-base/utils/iconutils.h>
 
 #include <DFontSizeManager>
 #include <denhancedwidget.h>
@@ -182,11 +183,15 @@ void FilePropertyDialog::setFileIcon(QLabel *fileIcon, FileInfoPointer fileInfo)
                 icon = QPixmap::fromImage(img);
             }
             if (!icon.isNull()) {
-                fileIcon->setPixmap(icon.pixmap(128, 128).scaled(128, 128, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+                qreal dpr = this->devicePixelRatioF();
+                QPixmap pix = icon.pixmap(QSize(128, 128) * dpr);
+                pix = pix.scaled(QSize(128, 128) * dpr, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+                pix.setDevicePixelRatio(dpr);
+                fileIcon->setPixmap(pix);
                 return;
             }
         }
-        fileIcon->setPixmap(fileInfo->fileIcon().pixmap(128, 128));
+        fileIcon->setPixmap(IconUtils::hiDpiPixmap(fileInfo->fileIcon(), QSize(128, 128), this));
     }
 }
 
