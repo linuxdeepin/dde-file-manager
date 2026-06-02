@@ -22,6 +22,7 @@
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/dialogmanager.h>
+#include <dfm-base/utils/iconutils.h>
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/base/application/settings.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
@@ -472,7 +473,7 @@ void VaultHelper::unlockVaultDialog()
 
             QLabel *iconLabel = new QLabel(contentFrame);
             iconLabel->setAlignment(Qt::AlignCenter);
-            iconLabel->setPixmap(QIcon::fromTheme("dfm_vault_upgrade").pixmap(64, 64));
+            iconLabel->setPixmap(IconUtils::hiDpiPixmap(QIcon::fromTheme("dfm_vault_upgrade"), QSize(64, 64), contentFrame));
 
             QLabel *textLabel = new QLabel(contentFrame);
             textLabel->setAlignment(Qt::AlignCenter);

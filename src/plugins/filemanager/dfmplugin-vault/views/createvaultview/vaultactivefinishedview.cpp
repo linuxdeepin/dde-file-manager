@@ -14,6 +14,7 @@
 
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/base/application/settings.h>
+#include <dfm-base/utils/iconutils.h>
 #include <dfm-base/utils/dialogmanager.h>
 
 #include <dfm-framework/dpf.h>
@@ -58,7 +59,7 @@ void VaultActiveFinishedView::initUi()
 
     // 加密保险箱图片
     encryVaultImageLabel = new DLabel(this);
-    encryVaultImageLabel->setPixmap(QIcon::fromTheme("dfm_vault_active_encrypt").pixmap(98, 88));
+    encryVaultImageLabel->setPixmap(IconUtils::hiDpiPixmap(QIcon::fromTheme("dfm_vault_active_encrypt"), QSize(98, 88), this));
     encryVaultImageLabel->setAlignment(Qt::AlignHCenter);
 
     // 进度条
@@ -179,7 +180,7 @@ void VaultActiveFinishedView::encryptFinished(bool success, const QString &msg)
     if (success) {   // 创建保险箱成功
         fmDebug() << "Vault: Vault creation completed successfully";
         waterProgress->setValue(100);
-        encryptFinishedImageLabel->setPixmap(QIcon::fromTheme("dialog-ok").pixmap(100, 100));
+        encryptFinishedImageLabel->setPixmap(IconUtils::hiDpiPixmap(QIcon::fromTheme("dialog-ok"), QSize(100, 100), this));
         tipsThree->setText(tr("The setup is complete"));
         finishedBtn->setText(tr("OK"));
         VaultHelper::recordTime(kjsonGroupName, kjsonKeyCreateTime);
@@ -191,7 +192,7 @@ void VaultActiveFinishedView::encryptFinished(bool success, const QString &msg)
         dpfSignalDispatcher->publish("dfmplugin_vault", "signal_ReportLog_Commit", QString("Vault"), data);
     } else {
         fmWarning() << "Vault: Vault creation failed:" << msg;
-        encryptFinishedImageLabel->setPixmap(QIcon::fromTheme("dialog-error").pixmap(100, 100));
+        encryptFinishedImageLabel->setPixmap(IconUtils::hiDpiPixmap(QIcon::fromTheme("dialog-error"), QSize(100, 100), this));
         tipsThree->setText(msg);
         finishedBtn->setText(tr("Close"));
     }

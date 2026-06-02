@@ -5,6 +5,7 @@
 #include "vaultpropertydialog.h"
 
 #include <dfm-base/base/schemefactory.h>
+#include <dfm-base/utils/iconutils.h>
 
 #include <QPalette>
 #include <denhancedwidget.h>
@@ -68,7 +69,7 @@ void VaultPropertyDialog::createHeadUI(const QUrl &url)
     fileIconLabel->setFixedHeight(128);
     FileInfoPointer info = InfoFactory::create<FileInfo>(url);
     if (!info.isNull())
-        fileIconLabel->setPixmap(info->fileIcon().pixmap(128, 128));
+        fileIconLabel->setPixmap(IconUtils::hiDpiPixmap(info->fileIcon(), QSize(128, 128), this));
 
     fileNameLabel = new QLabel(tr("File Vault"), this);
 

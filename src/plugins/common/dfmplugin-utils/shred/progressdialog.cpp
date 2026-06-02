@@ -10,6 +10,9 @@
 #include <QVBoxLayout>
 #include <QKeyEvent>
 
+#include <dfm-base/utils/iconutils.h>
+
+DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_utils;
 DWIDGET_USE_NAMESPACE
 
@@ -51,7 +54,7 @@ ShredFailedWidget::ShredFailedWidget(QWidget *parent)
     : QWidget(parent)
 {
     DLabel *failedImage = new DLabel(this);
-    failedImage->setPixmap(QIcon::fromTheme("dialog-error").pixmap(100, 100));
+    failedImage->setPixmap(IconUtils::hiDpiPixmap(QIcon::fromTheme("dialog-error"), QSize(100, 100), this));
 
     infoLabel = new DLabel(this);
     infoLabel->setMaximumWidth(340);

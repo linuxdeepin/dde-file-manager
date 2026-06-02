@@ -13,6 +13,7 @@
 #include "utils/pathmanager.h"
 
 #include <dfm-base/utils/dialogmanager.h>
+#include <dfm-base/utils/iconutils.h>
 
 #include <dfm-framework/event/event.h>
 
@@ -292,7 +293,7 @@ void VaultActiveSaveKeyFileView::onOldPasswordSchemeMigrationFinished()
 
     QLabel *iconLabel = new QLabel(contentFrame);
     iconLabel->setAlignment(Qt::AlignCenter);
-    iconLabel->setPixmap(QIcon::fromTheme("dialog-ok").pixmap(64, 64));
+    iconLabel->setPixmap(IconUtils::hiDpiPixmap(QIcon::fromTheme("dialog-ok"), QSize(64, 64), this));
 
     QLabel *textLabel = new QLabel(contentFrame);
     textLabel->setAlignment(Qt::AlignCenter);

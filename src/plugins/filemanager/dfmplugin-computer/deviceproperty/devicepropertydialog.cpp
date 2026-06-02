@@ -5,6 +5,7 @@
 #include "devicepropertydialog.h"
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/elidetextlayout.h>
+#include <dfm-base/utils/iconutils.h>
 
 #include <DDrawer>
 #include <denhancedwidget.h>
@@ -124,7 +125,7 @@ int DevicePropertyDialog::contentHeight() const
 void DevicePropertyDialog::setSelectDeviceInfo(const DeviceInfo &info)
 {
     currentFileUrl = info.deviceUrl;
-    deviceIcon->setPixmap(info.icon.pixmap(128, 128));
+    deviceIcon->setPixmap(IconUtils::hiDpiPixmap(info.icon, QSize(128, 128), this));
     setFileName(info.deviceName);
     deviceBasicWidget->selectFileInfo(info);
     QString deviceShowName = info.deviceDesc.isEmpty() ? info.deviceName : QString("%1(%2)").arg(info.deviceName).arg(info.deviceDesc);

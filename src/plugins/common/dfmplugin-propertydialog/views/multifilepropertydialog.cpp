@@ -6,6 +6,7 @@
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/universalutils.h>
+#include <dfm-base/utils/iconutils.h>
 
 #include <DFontSizeManager>
 
@@ -43,7 +44,7 @@ void MultiFilePropertyDialog::initHeadUi()
     QIcon icon;
     icon.addFile(QString { ":/images/images/multiple_files.png" });
     icon.addFile(QString { ":/images/images/multiple_files@2x.png" });
-    iconLabel->setPixmap(icon.pixmap(128, 128));
+    iconLabel->setPixmap(IconUtils::hiDpiPixmap(icon, QSize(128, 128), this));
 
     multiFileLable = new QLabel(this);
     DFontSizeManager::instance()->bind(multiFileLable, DFontSizeManager::T9, QFont::Medium);

@@ -10,6 +10,7 @@
 #include <dfm-base/file/local/localfilehandler.h>
 #include <dfm-base/utils/dialogmanager.h>
 #include <dfm-base/utils/windowutils.h>
+#include <dfm-base/utils/iconutils.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/device/devicemanager.h>
 #include <dfm-base/base/device/deviceproxymanager.h>
@@ -333,7 +334,7 @@ void BurnJobManager::showOpticalDumpISOSuccessDialog(const QUrl &imageUrl)
 
     // add icon label
     QLabel *iconLabel { new QLabel };
-    iconLabel->setPixmap(QIcon::fromTheme("dialog-ok").pixmap(96, 96));
+    iconLabel->setPixmap(IconUtils::hiDpiPixmap(QIcon::fromTheme("dialog-ok"), QSize(96, 96), qApp->activeWindow()));
     mainLayout->addWidget(iconLabel, 0, Qt::AlignTop | Qt::AlignCenter);
 
     d.move(WindowUtils::cursorScreen()->geometry().center()
@@ -368,7 +369,7 @@ void BurnJobManager::showOpticalDumpISOFailedDialog()
 
     // add icon label
     QLabel *iconLabel { new QLabel };
-    iconLabel->setPixmap(QIcon::fromTheme("dialog-error").pixmap(96, 96));
+    iconLabel->setPixmap(IconUtils::hiDpiPixmap(QIcon::fromTheme("dialog-error"), QSize(96, 96), qApp->activeWindow()));
     mainLayout->addWidget(iconLabel, 0, Qt::AlignTop | Qt::AlignCenter);
 
     d.move(WindowUtils::cursorScreen()->geometry().center()

@@ -11,6 +11,7 @@
 #include "plugins/common/dfmplugin-utils/reportlog/datas/vaultreportdata.h"
 
 #include <dfm-base/base/application/settings.h>
+#include <dfm-base/utils/iconutils.h>
 
 #include <dfm-framework/event/event.h>
 
@@ -44,7 +45,7 @@ VaultRemoveProgressView::VaultRemoveProgressView(QWidget *parent)
     deletedWidget = new QWidget(this);
     QVBoxLayout *deletedLay = new QVBoxLayout;
     deleteFinishedImageLabel = new DLabel(deletedWidget);
-    deleteFinishedImageLabel->setPixmap(QIcon::fromTheme("dialog-ok").pixmap(100, 100));
+    deleteFinishedImageLabel->setPixmap(IconUtils::hiDpiPixmap(QIcon::fromTheme("dialog-ok"), QSize(100, 100), this));
     deleteFinishedImageLabel->setAlignment(Qt::AlignHCenter);
     finishedLabel = new DLabel(tr("Deleted successfully"), deletedWidget);
     deletedLay->addWidget(deleteFinishedImageLabel, 0, Qt::AlignHCenter);

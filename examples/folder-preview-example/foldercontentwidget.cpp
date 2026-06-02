@@ -151,7 +151,7 @@ void FolderContentWidget::loadFolder(const QUrl &url)
     // Set big folder icon
     QFileIconProvider iconProvider;
     QIcon dirIcon = iconProvider.icon(QFileIconProvider::Folder);
-    m_folderIconLabel->setPixmap(dirIcon.pixmap(64, 64));
+    m_folderIconLabel->setPixmap(dirIcon.pixmap(QSize(64, 64) * m_folderIconLabel->devicePixelRatioF()));
 
     // Reset stat badges
     m_fileBadge->setValue("…");

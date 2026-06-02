@@ -18,6 +18,9 @@
 
 #include <dfm-mount/dmount.h>
 
+#include <dfm-base/utils/iconutils.h>
+
+DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_diskenc;
 
 EncryptProgressDialog::EncryptProgressDialog(QWidget *parent)
@@ -51,7 +54,7 @@ void EncryptProgressDialog::showResultPage(bool success, const QString &title, c
     setTitle(title);
     resultMsg->setText(message);
     QIcon icon = success ? QIcon::fromTheme("dialog-ok") : QIcon::fromTheme("dialog-error");
-    iconLabel->setPixmap(icon.pixmap(64, 64));
+    iconLabel->setPixmap(IconUtils::hiDpiPixmap(icon, QSize(64, 64), this));
 
     addButton(tr("Confirm"));
     setAttribute(Qt::WA_DeleteOnClose);
