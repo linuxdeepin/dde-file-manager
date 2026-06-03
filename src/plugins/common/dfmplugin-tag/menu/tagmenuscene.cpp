@@ -199,7 +199,11 @@ void TagMenuScene::onHoverChanged(const QColor &color)
             return;
 
         if (Q_LIKELY(color.isValid())) {
-            const QString &tagName = TagHelper::instance()->qureyDisplayNameByColor(color);
+            // DB-first lookup: use cached mapping from createColorListAction
+            QString tagName = d->colorToTag.value(color.name(), QString());
+            // Fallback to hardcoded table for brand-new tags not yet in DB
+            if (tagName.isEmpty())
+                tagName = TagHelper::instance()->qureyDisplayNameByColor(color);
             if (sameColors.contains(color))
                 tagWidget->setToolTipText(tr("Remove tag \"%1\"").arg(tagName));
             else
@@ -215,13 +219,22 @@ void TagMenuScene::onColorClicked(const QColor &color)
 {
     TagColorListWidget *tagWidget = getMenuListWidget();
     if (tagWidget) {
+        // DB-first lookup: use cached mapping from createColorListAction
+        QString tagName = d->colorToTag.value(color.name(), QString());
+        // Fallback to hardcoded table for brand-new tags not yet in DB
+        if (tagName.isEmpty())
+            tagName = TagHelper::instance()->qureyDisplayNameByColor(color);
+
+        if (tagName.isEmpty())
+            return;
+
         QList<QColor> colors = tagWidget->checkedColorList();
         if (colors.contains(color)) {
             //add checked tag
-            TagManager::instance()->addTagsForFiles({ TagHelper::instance()->qureyDisplayNameByColor(color) }, d->selectFiles);
+            TagManager::instance()->addTagsForFiles({ tagName }, d->selectFiles);
         } else {
             // delete checked tag
-            TagManager::instance()->removeTagsOfFiles({ TagHelper::instance()->qureyDisplayNameByColor(color) }, d->selectFiles);
+            TagManager::instance()->removeTagsOfFiles({ tagName }, d->selectFiles);
         }
     }
 }
@@ -257,14 +270,22 @@ QAction *TagMenuScene::createColorListAction(QMenu *parent) const
     action->setDefaultWidget(colorListWidget);
     // get tags by focus fileinfo
     QStringList tags = TagManager::instance()->getTagsByUrls({ FileUtils::bindUrlTransform(d->focusFile) });
+    // Query actual colors from DB to handle renamed tags correctly
+    QMap<QString, QColor> tagColors = TagManager::instance()->getTagsColor(tags);
     QList<QColor> colors;
+
+    // Build color->tagName mapping from DB once for onHoverChanged/onColorClicked reuse
+    const auto allTags = TagManager::instance()->getAllTags();
+    d->colorToTag.clear();
+    for (auto it = allTags.cbegin(); it != allTags.cend(); ++it)
+        d->colorToTag[it.value().name()] = it.key();
 
     for (const QString &tag : tags) {
         // The tag name of the database is the display name of the tag
         if (!TagHelper::instance()->isDefualtTag(tag))
             continue;
 
-        const QColor &color = TagHelper::instance()->qureyColorByDisplayName(tag);
+        const QColor &color = tagColors.value(tag, QColor());
 
         if (Q_LIKELY(color.isValid()))
             colors << color;
