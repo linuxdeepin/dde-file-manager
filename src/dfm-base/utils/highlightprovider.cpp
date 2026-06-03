@@ -7,6 +7,16 @@
 #include <QMutexLocker>
 #include <QDebug>
 
+namespace {
+
+// 将 path 和 searchType 组合为唯一缓存 key，避免不同搜索类型互相污染
+static QString compositeKey(const QString &path, int searchType)
+{
+    return path + QStringLiteral("|") + QString::number(searchType);
+}
+
+}   // namespace
+
 namespace dfmbase {
 
 static const QString kPendingToken = QStringLiteral("__pending__");
@@ -49,10 +59,11 @@ void HighlightProvider::requestHighlight(const QString &taskId, const QString &p
     }
 
     // Step 1: 检查缓存
+    const QString key = compositeKey(path, searchType);
     {
         QMutexLocker lk(&cacheMutex);
         auto &taskCache = cache[taskId];
-        auto it = taskCache.find(path);
+        auto it = taskCache.find(key);
 
         if (it != taskCache.end()) {
             const QString &cached = it.value();
@@ -72,7 +83,7 @@ void HighlightProvider::requestHighlight(const QString &taskId, const QString &p
         }
 
         // 标记为 pending
-        taskCache[path] = kPendingToken;
+        taskCache[key] = kPendingToken;
     }
 
     // Step 2: 加入请求队列
@@ -158,7 +169,7 @@ void HighlightProvider::processNextRequest()
                 // 会话在 fetch 期间被 cancelTask 取消，跳过存储和通知
                 continue;
             }
-            cache[req.taskId][req.path] = content;
+            cache[req.taskId][compositeKey(req.path, req.searchType)] = content;
         }
 
         if (content.isEmpty())
