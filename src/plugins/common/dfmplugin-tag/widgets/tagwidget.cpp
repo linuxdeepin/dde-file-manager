@@ -124,13 +124,23 @@ void TagWidget::onCheckedColorChanged(const QColor &color)
     QList<QUrl> urlList { d->url };
     QList<QColor> checkedColors = d->colorListWidget->checkedColorList();
 
+    // Build color->tagName mapping from DB, so renamed tags resolve correctly
+    const auto allTags = TagManager::instance()->getAllTags();
+    QMap<QString, QString> colorToTag;
+    for (auto it = allTags.cbegin(); it != allTags.cend(); ++it)
+        colorToTag[it.value().name()] = it.key();
+
     QStringList newTagNames;
     for (const QColor &color : checkedColors) {
-        QString colorName = TagHelper::instance()->qureyDisplayNameByColor(color);
-        if (colorName.isEmpty())
+        // DB-first lookup: use actual tagName from DB
+        QString tagName = colorToTag.value(color.name(), QString());
+        // Fallback to hardcoded table for brand-new tags not yet in DB
+        if (tagName.isEmpty())
+            tagName = TagHelper::instance()->qureyDisplayNameByColor(color);
+        if (tagName.isEmpty())
             continue;
 
-        newTagNames << colorName;
+        newTagNames << tagName;
     }
 
     for (const QString &tagName : tagNameList) {
@@ -145,6 +155,13 @@ void TagWidget::onCheckedColorChanged(const QColor &color)
 void TagWidget::onTagChanged(const QVariantMap &fileAndTags)
 {
     if (fileAndTags.contains(d->url.path()))
+        loadTags(d->url);
+}
+
+void TagWidget::onTagColorChanged(const QVariantMap &tagAndColorName)
+{
+    Q_UNUSED(tagAndColorName)
+    if (!d->url.isEmpty())
         loadTags(d->url);
 }
 
@@ -164,6 +181,11 @@ void TagWidget::initConnection()
 
     connect(TagManager::instance(), &TagManager::filesTagged, this, &TagWidget::onTagChanged);
     connect(TagManager::instance(), &TagManager::filesUntagged, this, &TagWidget::onTagChanged);
+    connect(TagManager::instance(), &TagManager::tagColorChanged, this, &TagWidget::onTagColorChanged);
+    connect(TagManager::instance(), &TagManager::tagDeleted, this, [this](const QString &) {
+        if (!d->url.isEmpty())
+            loadTags(d->url);
+    });
 }
 
 void TagWidget::updateCrumbsColor(const QMap<QString, QColor> &tagsColor)

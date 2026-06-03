@@ -467,6 +467,14 @@ bool TagManager::changeTagName(const QString &tagName, const QString &newName)
         return false;
     }
 
+    // If new name matches a default color, sync the tag color to match.
+    // This prevents inconsistency where tagName="Gray" but tagColor remains #9023fc.
+    QColor defaultColor = TagHelper::instance()->qureyColorByDisplayName(newName);
+    if (defaultColor.isValid()) {
+        QVariantMap colorChangeMap { { tagName, QVariant { defaultColor.name() } } };
+        TagProxyHandleIns->changeTagsColor(colorChangeMap);
+    }
+
     QVariantMap oldAndNewName = { { tagName, QVariant { newName } } };
     emit tagDeleted(tagName);
     return TagProxyHandleIns->changeTagNamesWithFiles(oldAndNewName);
@@ -731,6 +739,7 @@ void TagManager::onTagColorChanged(const QVariantMap &tagAndColorName)
         dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", url, map);
         ++it;
     }
+    emit tagColorChanged(tagAndColorName);
 }
 
 void TagManager::onTagNameChanged(const QVariantMap &oldAndNew)

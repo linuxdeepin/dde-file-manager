@@ -76,6 +76,7 @@ public:
 
 Q_SIGNALS:
     void tagDeleted(const QString &tagName);
+    void tagColorChanged(const QVariantMap &tagAndColorName);
     void filesTagged(const QVariantMap &fileAndTags);
     void filesUntagged(const QVariantMap &fileAndTags);
     void filesHidden(const QVariantMap &fileAndTags);

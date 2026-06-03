@@ -22,6 +22,7 @@ public:
     QRect getSurfaceRect(QWidget *);
     QStringList tagNames {};
     bool onCollection { false };
+    QMap<QString, QString> colorToTag {};
 };
 
 }
