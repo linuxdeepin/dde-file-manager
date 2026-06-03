@@ -68,7 +68,7 @@ private:
     QList<HighlightRequest> pendingRequests;   // 优先级队列：高优先级插入头部
     std::atomic<int> processing { 0 };         // 工作线程处理状态标记
 
-    // 缓存：QHash<taskId, QHash<path, content>>
+    // 缓存：QHash<taskId, QHash<compositeKey(path|searchType), content>>
     // 未请求 = 不存在于 map 中
     // 特殊 "__pending__" = 请求中
     // 空 QString = 已获取但无高亮内容
