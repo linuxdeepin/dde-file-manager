@@ -203,7 +203,7 @@ void TagMenuScene::onHoverChanged(const QColor &color)
             QString tagName = d->colorToTag.value(color.name(), QString());
             // Fallback to hardcoded table for brand-new tags not yet in DB
             if (tagName.isEmpty())
-                tagName = TagHelper::instance()->qureyDisplayNameByColor(color);
+                tagName = TagHelper::instance()->queryDisplayNameByColor(color);
             if (sameColors.contains(color))
                 tagWidget->setToolTipText(tr("Remove tag \"%1\"").arg(tagName));
             else
@@ -223,7 +223,7 @@ void TagMenuScene::onColorClicked(const QColor &color)
         QString tagName = d->colorToTag.value(color.name(), QString());
         // Fallback to hardcoded table for brand-new tags not yet in DB
         if (tagName.isEmpty())
-            tagName = TagHelper::instance()->qureyDisplayNameByColor(color);
+            tagName = TagHelper::instance()->queryDisplayNameByColor(color);
 
         if (tagName.isEmpty())
             return;
