@@ -77,7 +77,7 @@ TagHelper::TagHelper(QObject *parent)
     initTagColorDefines();
 }
 
-QColor TagHelper::qureyColorByColorName(const QString &name) const
+QColor TagHelper::queryColorByColorName(const QString &name) const
 {
     auto ret = std::find_if(colorDefines.cbegin(), colorDefines.cend(), [name](const TagColorDefine &define) {
         return define.colorName == name;
@@ -89,7 +89,7 @@ QColor TagHelper::qureyColorByColorName(const QString &name) const
     return QColor();
 }
 
-QColor TagHelper::qureyColorByDisplayName(const QString &name) const
+QColor TagHelper::queryColorByDisplayName(const QString &name) const
 {
     auto ret = std::find_if(colorDefines.cbegin(), colorDefines.cend(), [name](const TagColorDefine &define) {
         return define.displayName == name;
@@ -101,7 +101,7 @@ QColor TagHelper::qureyColorByDisplayName(const QString &name) const
     return QColor();
 }
 
-QString TagHelper::qureyColorNameByColor(const QColor &color) const
+QString TagHelper::queryColorNameByColor(const QColor &color) const
 {
     auto ret = std::find_if(colorDefines.cbegin(), colorDefines.cend(), [color](const TagColorDefine &define) {
         return define.color.name() == color.name();
@@ -113,7 +113,7 @@ QString TagHelper::qureyColorNameByColor(const QColor &color) const
     return QString();
 }
 
-QString TagHelper::qureyIconNameByColorName(const QString &colorName) const
+QString TagHelper::queryIconNameByColorName(const QString &colorName) const
 {
     auto ret = std::find_if(colorDefines.cbegin(), colorDefines.cend(), [colorName](const TagColorDefine &define) {
         return define.colorName == colorName;
@@ -125,7 +125,7 @@ QString TagHelper::qureyIconNameByColorName(const QString &colorName) const
     return QString();
 }
 
-QString TagHelper::qureyIconNameByColor(const QColor &color) const
+QString TagHelper::queryIconNameByColor(const QColor &color) const
 {
     auto ret = std::find_if(colorDefines.cbegin(), colorDefines.cend(), [color](const TagColorDefine &define) {
         return define.color.name() == color.name();
@@ -137,7 +137,7 @@ QString TagHelper::qureyIconNameByColor(const QColor &color) const
     return QString();
 }
 
-QString TagHelper::qureyDisplayNameByColor(const QColor &color) const
+QString TagHelper::queryDisplayNameByColor(const QColor &color) const
 {
     auto ret = std::find_if(colorDefines.cbegin(), colorDefines.cend(), [color](const TagColorDefine &define) {
         return define.color.name() == color.name();
@@ -149,7 +149,7 @@ QString TagHelper::qureyDisplayNameByColor(const QColor &color) const
     return QString();
 }
 
-QString TagHelper::qureyColorNameByDisplayName(const QString &name) const
+QString TagHelper::queryColorNameByDisplayName(const QString &name) const
 {
     auto ret = std::find_if(colorDefines.cbegin(), colorDefines.cend(), [name](const TagColorDefine &define) {
         return define.displayName == name;

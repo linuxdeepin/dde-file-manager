@@ -239,7 +239,7 @@ QString TagManager::getTagIconName(const QString &tag) const
 
     const auto &dataMap = getTagsColorName({ tag });
     if (dataMap.contains(tag))
-        return TagHelper::instance()->qureyIconNameByColor(QColor(dataMap.value(tag)));
+        return TagHelper::instance()->queryIconNameByColor(QColor(dataMap.value(tag)));
 
     return QString();
 }
@@ -357,7 +357,7 @@ bool TagManager::addTagsForFiles(const QList<QString> &tags, const QList<QUrl> &
     // tag --- color
     QMap<QString, QVariant> tagWithColor {};
     for (const QString &tagName : tags) {
-        QString colorName = tagColorMap.contains(tagName) ? tagColorMap[tagName] : TagHelper::instance()->qureyColorByDisplayName(tagName).name();
+        QString colorName = tagColorMap.contains(tagName) ? tagColorMap[tagName] : TagHelper::instance()->queryColorByDisplayName(tagName).name();
         tagWithColor[tagName] = QVariant { QList<QString> { colorName } };
     }
 
@@ -453,7 +453,7 @@ bool TagManager::changeTagColor(const QString &tagName, const QString &newTagCol
     if (tagName.isEmpty() || newTagColor.isEmpty())
         return false;
     emit tagDeleted(tagName);
-    QVariantMap changeMap { { tagName, QVariant { TagHelper::instance()->qureyColorByColorName(newTagColor).name() } } };
+    QVariantMap changeMap { { tagName, QVariant { TagHelper::instance()->queryColorByColorName(newTagColor).name() } } };
     return TagProxyHandleIns->changeTagsColor(changeMap);
 }
 
@@ -469,7 +469,7 @@ bool TagManager::changeTagName(const QString &tagName, const QString &newName)
 
     // If new name matches a default color, sync the tag color to match.
     // This prevents inconsistency where tagName="Gray" but tagColor remains #9023fc.
-    QColor defaultColor = TagHelper::instance()->qureyColorByDisplayName(newName);
+    QColor defaultColor = TagHelper::instance()->queryColorByDisplayName(newName);
     if (defaultColor.isValid()) {
         QVariantMap colorChangeMap { { tagName, QVariant { defaultColor.name() } } };
         TagProxyHandleIns->changeTagsColor(colorChangeMap);
@@ -656,7 +656,7 @@ void TagManager::contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPo
     connect(tagAction, &QWidgetAction::triggered, TagManager::instance(), [url, tagWidget]() {
         if (tagWidget->checkedColorList().size() > 0) {
             QString tagName = TagHelper::instance()->getTagNameFromUrl(url);
-            QString colorName = TagHelper::instance()->qureyColorNameByColor(tagWidget->checkedColorList().first());
+            QString colorName = TagHelper::instance()->queryColorNameByColor(tagWidget->checkedColorList().first());
 
             TagManager::instance()->changeTagColor(tagName, colorName);
         }
@@ -689,7 +689,7 @@ QMap<QString, QColor> TagManager::assignColorToTags(const QStringList &tagList) 
                 tagColor = allTags[tag];
             } else {
                 const auto &colorName = TagHelper::instance()->getColorNameByTag(tag);
-                tagColor = TagHelper::instance()->qureyColorByColorName(colorName);
+                tagColor = TagHelper::instance()->queryColorByColorName(colorName);
                 TagManager::instance()->registerTagColor(tag, tagColor.name());
             }
 
@@ -730,7 +730,7 @@ void TagManager::onTagColorChanged(const QVariantMap &tagAndColorName)
     auto it = tagAndColorName.begin();
     while (it != tagAndColorName.end()) {
         QUrl url = TagHelper::instance()->makeTagUrlByTagName(it.key());
-        QString iconName = TagHelper::instance()->qureyIconNameByColor(QColor(it.value().toString()));
+        QString iconName = TagHelper::instance()->queryIconNameByColor(QColor(it.value().toString()));
         QIcon icon = QIcon::fromTheme(iconName);
         QVariantMap map {
             { "Property_Key_Icon", icon },

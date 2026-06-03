@@ -136,7 +136,7 @@ void TagWidget::onCheckedColorChanged(const QColor &color)
         QString tagName = colorToTag.value(color.name(), QString());
         // Fallback to hardcoded table for brand-new tags not yet in DB
         if (tagName.isEmpty())
-            tagName = TagHelper::instance()->qureyDisplayNameByColor(color);
+            tagName = TagHelper::instance()->queryDisplayNameByColor(color);
         if (tagName.isEmpty())
             continue;
 

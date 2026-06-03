@@ -47,7 +47,7 @@ public:
     QString getTagIconName(const QString &tag) const;
     void hideFiles(const QList<QString> &tags, const QList<QUrl> &files);
 
-    // qurey
+    // query
     TagColorMap getAllTags();
     TagColorMap getTagsColor(const QStringList &tags) const;
     QStringList getTagsByUrls(const QList<QUrl> &urls) const;
