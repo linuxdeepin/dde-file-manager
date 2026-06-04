@@ -1,3 +1,26 @@
+dde-file-manager (6.5.141) unstable; urgency=medium
+
+  * perf: remove redundant index optimization in UpdateIndexHandler
+  * fix: ensure index status persistence after migration
+  * fix: improve emblem scaling logic in HiDPI environments
+  * fix: handle graceful shutdown in device proxy manager
+  * fix: improve MIME type categorization handling
+  * feat: add new mimetypes for office documents
+  * fix: improve text line height calculation accuracy
+  * fix: add HiDPI support for icons across UI
+  * fix: correct file count handling during restoration
+  * fix: prevent highlight cache pollution between search types
+  * fix: optimize tag color and name handling
+  * fix: correct typos in query method names
+  * fix: remove deprecated dde-filemanager-daemon service file
+  * fix: handle default tag color changes properly
+  * chore: correct spelling of 'default' across codebase
+  * refactor: refactor optical share service to session bus
+  * fix: add copy path support for trash items
+  * fix(sidebar): use monotonic timer for click interval guard
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 04 Jun 2026 21:51:38 +0800
+
 dde-file-manager (6.5.140) unstable; urgency=medium
 
   * feat: SMB feature optimization
