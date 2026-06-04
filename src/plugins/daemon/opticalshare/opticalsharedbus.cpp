@@ -4,34 +4,23 @@
 
 #include "opticalsharedbus.h"
 
+#include "daemonplugin_opticalshare_global.h"
 #include "opticalshareadaptor.h"
-#include "service_opticalshare_global.h"
+
+#include <dfm-base/dbusservice/global_server_defines.h>
 
 #include <QDBusConnection>
-#include <QDBusConnectionInterface>
 #include <QDateTime>
+
+DAEMONPOPTICALSHARE_USE_NAMESPACE
 
 using namespace GlobalServerDefines;
 
-namespace service_opticalshare {
-DFM_LOG_REGISTER_CATEGORY(SERVICEOPTICALSHARE_NAMESPACE)
-}
-
-SERVICEOPTICALSHARE_USE_NAMESPACE
-
-OpticalShareDBus::OpticalShareDBus(const char *name, QObject *parent)
+OpticalShareDBus::OpticalShareDBus(QObject *parent)
     : QObject(parent), QDBusContext()
 {
-    fmInfo() << "OpticalShareDBus: initializing service with name:" << name;
+    fmInfo() << "OpticalShareDBus: instance created";
     adapter = new OpticalShareAdaptor(this);
-    QDBusConnection conn = QDBusConnection::connectToBus(QDBusConnection::SystemBus, QString(name));
-    if (!conn.isConnected()) {
-        fmWarning() << "OpticalShareDBus: failed to connect to system bus";
-        return;
-    }
-    if (!conn.registerObject(GlobalServerDefines::OpticalShareDBusInfo::kPath, this, QDBusConnection::ExportAdaptors)) {
-        fmWarning() << "OpticalShareDBus: failed to register object on path:" << GlobalServerDefines::OpticalShareDBusInfo::kPath;
-    }
 }
 
 OpticalShareDBus::~OpticalShareDBus()
@@ -110,7 +99,6 @@ bool OpticalShareDBus::ClearBurnAttribute(const QString &tag)
 QVariantMap OpticalShareDBus::normalizeBurnState(const QVariantMap &state) const
 {
     QVariantMap normalized = state;
-    normalized[OpticalShareField::kOwnerUid] = callerUid();
     normalized[OpticalShareField::kTimestamp] = QDateTime::currentSecsSinceEpoch();
     return normalized;
 }
@@ -120,20 +108,4 @@ QVariantMap OpticalShareDBus::normalizeBurnAttribute(const QVariantMap &attribut
     QVariantMap normalized = attribute;
     normalized[OpticalShareField::kTimestamp] = QDateTime::currentSecsSinceEpoch();
     return normalized;
-}
-
-qulonglong OpticalShareDBus::callerUid() const
-{
-    auto *interface = QDBusConnection::systemBus().interface();
-    if (!interface || message().service().isEmpty())
-        return 0;
-
-    auto reply = interface->serviceUid(message().service());
-    if (!reply.isValid()) {
-        fmWarning() << "OpticalShareDBus::callerUid: failed to resolve service uid for" << message().service()
-                    << ", error:" << reply.error().message();
-        return 0;
-    }
-
-    return reply.value();
 }
