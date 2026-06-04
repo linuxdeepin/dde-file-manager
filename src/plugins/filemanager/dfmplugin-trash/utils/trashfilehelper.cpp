@@ -177,6 +177,28 @@ bool TrashFileHelper::handleIsSubFile(const QUrl &parent, const QUrl &sub)
     return sub.path().contains(parent.path());
 }
 
+bool TrashFileHelper::hookCopyFilePath(quint64 windowId, const QList<QUrl> &urlList, const QUrl &rootUrl)
+{
+    Q_UNUSED(windowId)
+
+    if (rootUrl.scheme() != scheme())
+        return false;
+
+    if (urlList.isEmpty())
+        return false;
+
+    QStringList pathList;
+    for (const auto &url : std::as_const(urlList)) {
+        pathList << QString::asprintf("%s://%s", qPrintable(scheme()), qPrintable(url.path()));
+    }
+
+    QMimeData *data = new QMimeData;
+    data->setText(pathList.join('\n'));
+    ClipBoard::instance()->setDataToClipboard(data);
+
+    return true;
+}
+
 bool TrashFileHelper::handleNotCdComputer(const QUrl &url, QUrl *cdUrl)
 {
     if (url.scheme() != scheme())
