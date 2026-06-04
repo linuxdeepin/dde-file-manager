@@ -745,14 +745,14 @@ QList<ItemRoles> FileViewModel::getColumnRoles() const
             roles.append(static_cast<ItemRoles>(var.toInt()));
         }
     } else if (!customOnly) {
-        static QList<ItemRoles> defualtColumnRoleList = QList<ItemRoles>() << kItemFileDisplayNameRole
+        static QList<ItemRoles> defaultColumnRoleList = QList<ItemRoles>() << kItemFileDisplayNameRole
                                                                            << kItemFileLastModifiedRole
                                                                            << kItemFileCreatedRole
                                                                            << kItemFileSizeRole
                                                                            << kItemFileMimeTypeRole;
 
         int customCount = roles.count();
-        for (auto role : defualtColumnRoleList) {
+        for (auto role : defaultColumnRoleList) {
             if (!roles.contains(role)) {
                 int index = roles.length() - customCount;
 
@@ -779,14 +779,14 @@ ItemRoles FileViewModel::columnToRole(int column) const
             return ItemRoles(headerList.at(column).toInt());
 
     } else if (!customOnly) {
-        static QList<ItemRoles> defualtColumnRoleList = QList<ItemRoles>() << kItemFileDisplayNameRole
+        static QList<ItemRoles> defaultColumnRoleList = QList<ItemRoles>() << kItemFileDisplayNameRole
                                                                            << kItemFileLastModifiedRole
                                                                            << kItemFileCreatedRole
                                                                            << kItemFileSizeRole
                                                                            << kItemFileMimeTypeRole;
 
-        if (defualtColumnRoleList.length() > column) {
-            return defualtColumnRoleList.at(column);
+        if (defaultColumnRoleList.length() > column) {
+            return defaultColumnRoleList.at(column);
         }
     }
 

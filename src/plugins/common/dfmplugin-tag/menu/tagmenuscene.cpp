@@ -282,7 +282,7 @@ QAction *TagMenuScene::createColorListAction(QMenu *parent) const
 
     for (const QString &tag : tags) {
         // The tag name of the database is the display name of the tag
-        if (!TagHelper::instance()->isDefualtTag(tag))
+        if (!TagHelper::instance()->isDefaultTag(tag))
             continue;
 
         const QColor &color = tagColors.value(tag, QColor());

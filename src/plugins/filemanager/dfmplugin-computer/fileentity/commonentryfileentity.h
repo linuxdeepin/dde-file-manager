@@ -46,7 +46,7 @@ public:
     QString reflectionObjName;
     mutable QObject *reflectionObj { nullptr };
     QString defaultName;
-    QIcon defualtIcon;
+    QIcon defaultIcon;
 };
 
 }   // end namespace dfmplugin_computer

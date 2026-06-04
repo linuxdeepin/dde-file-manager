@@ -2690,13 +2690,13 @@ void FileView::updateListHeaderView()
     d->headerView->setModel(model());
     d->headerView->setRootIndex(rootIndex());
 
-    d->headerView->setDefaultSectionSize(kDefualtHeaderSectionWidth);
+    d->headerView->setDefaultSectionSize(kDefaultHeaderSectionWidth);
     if (d->allowedAdjustColumnSize) {
         d->headerView->setSectionResizeMode(QHeaderView::Interactive);
         d->headerView->setMinimumSectionSize(kMinimumHeaderSectionWidth);
     } else {
         d->headerView->setSectionResizeMode(QHeaderView::Fixed);
-        d->headerView->setMinimumSectionSize(kDefualtHeaderSectionWidth);
+        d->headerView->setMinimumSectionSize(kDefaultHeaderSectionWidth);
     }
 
     d->headerView->setSortIndicator(model()->getColumnByRole(model()->sortRole()), model()->sortOrder());

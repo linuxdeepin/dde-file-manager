@@ -60,7 +60,7 @@ QList<QUrl> TagHelper::commonUrls(const QList<QUrl> &urls)
     return commonUrls;
 }
 
-QList<QColor> TagHelper::defualtColors() const
+QList<QColor> TagHelper::defaultColors() const
 {
     QList<QColor> colors;
 
@@ -190,7 +190,7 @@ QString TagHelper::getColorNameByTag(const QString &tagName) const
     return randomTagDefine().colorName;
 }
 
-bool TagHelper::isDefualtTag(const QString &tagName) const
+bool TagHelper::isDefaultTag(const QString &tagName) const
 {
     auto ret = std::find_if(colorDefines.cbegin(), colorDefines.cend(), [tagName](const TagColorDefine &define) {
         return define.displayName == tagName;

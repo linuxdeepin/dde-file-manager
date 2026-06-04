@@ -458,7 +458,7 @@ bool TagManager::changeTagColor(const QString &tagName, const QString &newTagCol
 
     // If changing a default tag to another default color, sync tagName to match
     if (!newDisplayName.isEmpty() && newDisplayName != tagName
-        && TagHelper::instance()->isDefualtTag(tagName)) {
+        && TagHelper::instance()->isDefaultTag(tagName)) {
         if (getAllTags().contains(newDisplayName)) {
             DialogManagerInstance->showRenameNameSameErrorDialog(newDisplayName);
             return false;

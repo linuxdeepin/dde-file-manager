@@ -44,7 +44,7 @@ public:
 
     static QList<QUrl> commonUrls(const QList<QUrl> &urls);
 
-    QList<QColor> defualtColors() const;
+    QList<QColor> defaultColors() const;
 
     QColor queryColorByColorName(const QString &name) const;
     QColor queryColorByDisplayName(const QString &name) const;
@@ -58,7 +58,7 @@ public:
     QUrl makeTagUrlByTagName(const QString &tag) const;
 
     QString getColorNameByTag(const QString &tagName) const;
-    bool isDefualtTag(const QString &tagName) const;
+    bool isDefaultTag(const QString &tagName) const;
 
     void paintTags(QPainter *painter, QRectF &rect, const QList<QColor> &colors) const;
 

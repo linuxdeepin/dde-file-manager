@@ -65,7 +65,7 @@ void OptionButtonBoxPrivate::setViewMode(ViewMode mode)
 
 void OptionButtonBoxPrivate::loadViewMode(const QUrl &url)
 {
-    auto defaultViewMode = static_cast<int>(TitleBarEventCaller::sendGetDefualtViewMode(url.scheme()));
+    auto defaultViewMode = static_cast<int>(TitleBarEventCaller::sendGetDefaultViewMode(url.scheme()));
     auto viewMode = static_cast<ViewMode>(TitleBarHelper::getFileViewStateValue(url, "viewMode", defaultViewMode).toInt());
     if (viewMode == ViewMode::kTreeMode && !DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool()) {
         fmInfo() << "Tree view is disabled in config, switching to list mode";

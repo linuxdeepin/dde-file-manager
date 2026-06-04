@@ -76,8 +76,8 @@ void TagWidget::loadTags(const QUrl &url)
     d->crumbEdit->clear();
 
     for (auto it = tagsMap.begin(); it != tagsMap.end(); ++it) {
-        // defualt tag need show checked
-        if (TagHelper::instance()->isDefualtTag(it.key()))
+        // default tag need show checked
+        if (TagHelper::instance()->isDefaultTag(it.key()))
             selectColors << it.value();
 
         DCrumbTextFormat format = d->crumbEdit->makeTextFormat();
@@ -144,7 +144,7 @@ void TagWidget::onCheckedColorChanged(const QColor &color)
     }
 
     for (const QString &tagName : tagNameList) {
-        if (!TagHelper::instance()->isDefualtTag(tagName))
+        if (!TagHelper::instance()->isDefaultTag(tagName))
             newTagNames << tagName;
     }
 

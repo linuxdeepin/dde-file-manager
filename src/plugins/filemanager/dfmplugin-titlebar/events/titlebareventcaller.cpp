@@ -139,7 +139,7 @@ QList<ItemRoles> TitleBarEventCaller::sendColumnRoles(QWidget *sender)
     return roleList;
 }
 
-ViewMode TitleBarEventCaller::sendGetDefualtViewMode(const QString &scheme)
+ViewMode TitleBarEventCaller::sendGetDefaultViewMode(const QString &scheme)
 {
     int defaultViewMode = dpfSlotChannel->push("dfmplugin_workspace", "slot_View_GetDefaultViewMode", scheme).toInt();
     return static_cast<ViewMode>(defaultViewMode);
