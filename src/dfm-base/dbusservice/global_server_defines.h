@@ -132,7 +132,7 @@ inline constexpr char kMessage[] { "message" };
 
 namespace OpticalShareDBusInfo {
 inline constexpr char kService[] { "org.deepin.Filemanager.OpticalShare" };
-inline constexpr char kPath[] { "/org/deepin/Filemanager/OpticalShare" };
+inline constexpr char kPath[] { "/org/deepin/Filemanager/Daemon/OpticalShare" };
 inline constexpr char kInterface[] { "org.deepin.Filemanager.OpticalShare" };
 }   // namespace OpticalShareDBusInfo
 

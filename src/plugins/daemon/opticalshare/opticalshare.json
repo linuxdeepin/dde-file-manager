@@ -1,0 +1,6 @@
+{
+    "Name" : "dfmdaemon-opticalshare-plugin",
+    "Version" : "1.0.0",
+    "Description" : "Optical disc sharing plugin for dde-file-manager-daemon.",
+    "Depends" : []
+}

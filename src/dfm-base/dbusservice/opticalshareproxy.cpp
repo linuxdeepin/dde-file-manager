@@ -135,7 +135,7 @@ void OpticalShareProxy::onBurnAttributeChanged(const QString &tag, const QVarian
 OpticalShareProxy::OpticalShareProxy(QObject *parent)
     : QObject(parent)
 {
-    auto bus = QDBusConnection::systemBus();
+    auto bus = QDBusConnection::sessionBus();
     bus.connect(OpticalShareDBusInfo::kService,
                 OpticalShareDBusInfo::kPath,
                 OpticalShareDBusInfo::kInterface,
@@ -156,7 +156,7 @@ QDBusInterface *OpticalShareProxy::dbusInterface()
         interface.reset(new QDBusInterface(OpticalShareDBusInfo::kService,
                                            OpticalShareDBusInfo::kPath,
                                            OpticalShareDBusInfo::kInterface,
-                                           QDBusConnection::systemBus(),
+                                           QDBusConnection::sessionBus(),
                                            this));
         interface->setTimeout(3000);
     }

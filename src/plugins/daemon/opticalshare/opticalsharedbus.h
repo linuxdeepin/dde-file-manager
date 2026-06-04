@@ -10,13 +10,14 @@
 #include <QVariantMap>
 
 class OpticalShareAdaptor;
+
 class OpticalShareDBus : public QObject, public QDBusContext
 {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "org.deepin.Filemanager.OpticalShare")
 
 public:
-    explicit OpticalShareDBus(const char *name, QObject *parent = nullptr);
+    explicit OpticalShareDBus(QObject *parent = nullptr);
     ~OpticalShareDBus();
 
 public Q_SLOTS:
@@ -36,7 +37,6 @@ Q_SIGNALS:
 private:
     QVariantMap normalizeBurnState(const QVariantMap &state) const;
     QVariantMap normalizeBurnAttribute(const QVariantMap &attribute) const;
-    qulonglong callerUid() const;
 
 private:
     OpticalShareAdaptor *adapter { nullptr };

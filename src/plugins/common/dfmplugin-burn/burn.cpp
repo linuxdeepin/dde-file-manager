@@ -22,7 +22,6 @@
 #include <QWidget>
 #include <QTimer>
 
-#include <unistd.h>
 
 DFMBASE_USE_NAMESPACE
 namespace dfmplugin_burn {
@@ -35,16 +34,11 @@ namespace {
 
 void clearStaleBurnStates()
 {
-    using namespace GlobalServerDefines;
-
+    // On session bus, the daemon runs as the current user, so all stored
+    // burn states belong to this user. Clear all stale states from the
+    // previous session on startup.
     const auto states = OpticalShareProxy::instance().burnStates();
-    const auto uid = static_cast<qulonglong>(::getuid());
-
     for (auto iter = states.cbegin(); iter != states.cend(); ++iter) {
-        const auto state = iter.value().toMap();
-        if (state.value(OpticalShareField::kOwnerUid).toULongLong() != uid)
-            continue;
-
         OpticalShareProxy::instance().clearBurnState(iter.key());
     }
 }
