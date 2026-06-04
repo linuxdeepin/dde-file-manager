@@ -74,7 +74,7 @@ void TagColorListWidget::clearToolTipText()
 
 void TagColorListWidget::initUiElement()
 {
-    QList<QColor> colors = TagHelper::instance()->defualtColors();
+    QList<QColor> colors = TagHelper::instance()->defaultColors();
 
     for (const QColor &color : colors) {
         tagButtons << new TagButton(color, this);

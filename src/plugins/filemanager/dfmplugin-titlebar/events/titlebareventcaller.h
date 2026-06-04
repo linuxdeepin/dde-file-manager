@@ -32,7 +32,7 @@ public:
     static void sendTabChanged(QWidget *sender, const QString &uniqueId);
     static void sendTabCreated(QWidget *sender, const QString &uniqueId);
     static void sendTabRemoved(QWidget *sender, const QString &removedId, const QString &nextId);
-    static DFMGLOBAL_NAMESPACE::ViewMode sendGetDefualtViewMode(const QString &scheme);
+    static DFMGLOBAL_NAMESPACE::ViewMode sendGetDefaultViewMode(const QString &scheme);
     static DFMGLOBAL_NAMESPACE::ItemRoles sendCurrentSortRole(QWidget *sender);
     static QList<DFMGLOBAL_NAMESPACE::ItemRoles> sendColumnRoles(QWidget *sender);
     static QString sendColumnDisplyName(QWidget *sender, DFMBASE_NAMESPACE::Global::ItemRoles role);

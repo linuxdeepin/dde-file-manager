@@ -48,7 +48,7 @@ using namespace GlobalDConfDefines::BaseConfig;
 
 #define BUILD_VERSION ((QString(VERSION) == "") ? "6.0.0.0" : QString(VERSION))
 
-// defualt plugin IID
+// default plugin IID
 static constexpr char kFmPluginInterface[] { "org.deepin.plugin.filemanager" };
 static constexpr char kCommonPluginInterface[] { "org.deepin.plugin.common" };
 static constexpr char kPluginCore[] { "dfmplugin-core" };

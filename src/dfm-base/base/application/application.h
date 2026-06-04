@@ -68,7 +68,7 @@ public:
     Q_ENUM(GenericAttribute)
 
     enum TriggerAttribute {
-        kRestoreViewMode,   // restore defualt view mode to all dir
+        kRestoreViewMode,   // restore default view mode to all dir
         kClearSearchHistory   // clear search history
     };
 

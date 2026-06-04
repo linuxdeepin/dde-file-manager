@@ -22,7 +22,7 @@ CommonEntryFileEntity::CommonEntryFileEntity(const QUrl &url)
         const auto &map { infos.value(url) };
         reflectionObjName = map.value("ReflectionObject").toString();
         defaultName = QObject::tr(qPrintable(map.value("ItemName").toString()));
-        defualtIcon = QIcon::fromTheme(map.value("ItemIcon").toString());
+        defaultIcon = QIcon::fromTheme(map.value("ItemIcon").toString());
     }
 }
 
@@ -50,8 +50,8 @@ QString CommonEntryFileEntity::displayName() const
 
 QIcon CommonEntryFileEntity::icon() const
 {
-    if (!defualtIcon.isNull())
-        return defualtIcon;
+    if (!defaultIcon.isNull())
+        return defaultIcon;
     if (reflection() && hasMethod("icon")) {
         QIcon theIcon;
         bool ret { QMetaObject::invokeMethod(reflectionObj, "icon",

@@ -418,7 +418,7 @@ void SideBarWidget::initDefaultModel()
     groupDisplayName.insert(DefaultGroup::kOther, tr("Other"));
     groupDisplayName.insert(DefaultGroup::kNotExistedGroup, tr("Unknown Group"));
 
-    // create defualt separator item.
+    // create default separator item.
     for (const QString &group : currentGroups) {
         auto item = SideBarHelper::createSeparatorItem(group);
         item->setData(groupDisplayName.value(group), Qt::DisplayRole);
