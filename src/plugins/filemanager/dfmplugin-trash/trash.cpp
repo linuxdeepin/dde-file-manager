@@ -162,6 +162,7 @@ void Trash::followEvents()
     dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomColumnRoles", TrashHelper::instance(), &TrashHelper::customColumnRole);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomRoleDisplayName", TrashHelper::instance(), &TrashHelper::customRoleDisplayName);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_PasteFiles", TrashFileHelper::instance(), &TrashFileHelper::blockPaste);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_CopyFilePath", TrashFileHelper::instance(), &TrashFileHelper::hookCopyFilePath);
     dpfHookSequence->follow("dfmplugin_titlebar", "hook_Tab_FileDeleteNotCdComputer", TrashFileHelper::instance(), &TrashFileHelper::handleNotCdComputer);
 
     // hook events, file operation
