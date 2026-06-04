@@ -452,8 +452,27 @@ bool TagManager::changeTagColor(const QString &tagName, const QString &newTagCol
 {
     if (tagName.isEmpty() || newTagColor.isEmpty())
         return false;
+
+    QColor newColor = TagHelper::instance()->queryColorByColorName(newTagColor);
+    QString newDisplayName = TagHelper::instance()->queryDisplayNameByColor(newColor);
+
+    // If changing a default tag to another default color, sync tagName to match
+    if (!newDisplayName.isEmpty() && newDisplayName != tagName
+        && TagHelper::instance()->isDefualtTag(tagName)) {
+        if (getAllTags().contains(newDisplayName)) {
+            DialogManagerInstance->showRenameNameSameErrorDialog(newDisplayName);
+            return false;
+        }
+        // Change color first, then rename to keep consistency
+        QVariantMap colorChangeMap { { tagName, QVariant { newColor.name() } } };
+        TagProxyHandleIns->changeTagsColor(colorChangeMap);
+        QVariantMap oldAndNewName = { { tagName, QVariant { newDisplayName } } };
+        emit tagDeleted(tagName);
+        return TagProxyHandleIns->changeTagNamesWithFiles(oldAndNewName);
+    }
+
     emit tagDeleted(tagName);
-    QVariantMap changeMap { { tagName, QVariant { TagHelper::instance()->queryColorByColorName(newTagColor).name() } } };
+    QVariantMap changeMap { { tagName, QVariant { newColor.name() } } };
     return TagProxyHandleIns->changeTagsColor(changeMap);
 }
 
