@@ -205,14 +205,11 @@ bool AccessControlDBus::Chmod(const QString &path, uint mode)
         return false;
     }
 
-    QFile f(path);
-    if (!f.exists()) {
-        fmWarning() << "[AccessControlDBus::Chmod] File does not exist:" << path;
-        return false;
-    }
+    // setFileMode 内部使用 open(O_NOFOLLOW) + fchmod，原子性处理路径校验，
+    // 无需在此处进行 QFile::exists() 检查（那会引入 TOCTOU 竞态）
 
     fmInfo() << "[AccessControlDBus::Chmod] Changing access permission for path:" << path << "to mode:" << QString::number(mode, 8);
-    int ret = ::Utils::setFileMode(path.toStdString().c_str(), mode);
+    int ret = ::Utils::setFileMode(path, mode);
     if (ret != 0) {
         fmCritical() << "[AccessControlDBus::Chmod] Failed to change permission for path:" << path << "error:" << strerror(errno);
         return false;
@@ -278,9 +275,9 @@ void AccessControlDBus::onBlockDevMounted(const QString &deviceId, const QString
         QString source = globalDevPolicies.value(kTypeBlock).first;
         int policy = globalDevPolicies.value(kTypeBlock).second;
         QString fs { dev->fileSystem() };
-        
+
         fmInfo() << "[AccessControlDBus::onBlockDevMounted] Current access mode:" << mode << "policy:" << policy << "for device:" << devDesc;
-        
+
         if (mode != policy) {
             if (policy == kPolicyDisable) {
                 fmInfo() << "[AccessControlDBus::onBlockDevMounted] Device should be disabled, unmounting:" << devDesc;

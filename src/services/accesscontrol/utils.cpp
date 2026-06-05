@@ -14,6 +14,7 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/fcntl.h>
 #include <unistd.h>
 #include <libcryptsetup.h>
 
@@ -48,12 +49,23 @@ int Utils::setFileMode(const QString &mountPoint, uint mode)
 {
     QByteArray bytes { mountPoint.toLocal8Bit() };
     fmInfo() << "[Utils::setFileMode] Changing file mode for path:" << bytes << "to mode:" << QString::number(mode, 8);
-    int result = chmod(bytes.data(), mode);
+
+    // O_NOFOLLOW: 拒绝符号链接，若末级路径是 symlink 则 open 返回 ELOOP
+    // fchmod: 基于 FD 操作，绑定到 inode，消除 TOCTOU 竞态
+    int fd = open(bytes.data(), O_PATH | O_NOFOLLOW);
+    if (fd < 0) {
+        fmCritical() << "[Utils::setFileMode] Failed to open path:" << bytes << "error:" << strerror(errno);
+        return -1;
+    }
+
+    int result = fchmod(fd, mode);
     if (result != 0) {
-        fmCritical() << "[Utils::setFileMode] Failed to change file mode for path:" << bytes << "error:" << strerror(errno);
+        fmCritical() << "[Utils::setFileMode] Failed to change file mode for fd:" << fd << "error:" << strerror(errno);
     } else {
         fmInfo() << "[Utils::setFileMode] Successfully changed file mode for path:" << bytes;
     }
+
+    close(fd);
     return result;
 }
 
@@ -153,9 +165,9 @@ void Utils::loadDevPolicy(DevPolicyType *devPolicies)
         fmWarning() << "[Utils::loadDevPolicy] Cannot open device policy config file:" << devConfigPath();
         return;
     }
-    
+
     fmInfo() << "[Utils::loadDevPolicy] Loading device policies from:" << devConfigPath();
-    
+
     QJsonParseError err;
     QJsonDocument doc = QJsonDocument::fromJson(config.readAll(), &err);
     config.close();
@@ -202,8 +214,8 @@ void Utils::saveVaultPolicy(const QVariantMap &policy)
     }
     config.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner);
 
-    fmInfo() << "[Utils::saveVaultPolicy] Saving vault policy - type:" << policy.value(kPolicyType).toInt() 
-             << "hide state:" << policy.value(kVaultHideState).toInt() 
+    fmInfo() << "[Utils::saveVaultPolicy] Saving vault policy - type:" << policy.value(kPolicyType).toInt()
+             << "hide state:" << policy.value(kVaultHideState).toInt()
              << "policy state:" << policy.value(kPolicyState).toInt();
 
     QJsonParseError err;
@@ -234,9 +246,9 @@ void Utils::loadVaultPolicy(VaultPolicyType *vaultPolicies)
         fmWarning() << "[Utils::loadVaultPolicy] Cannot open vault policy config file:" << valultConfigPath();
         return;
     }
-    
+
     fmInfo() << "[Utils::loadVaultPolicy] Loading vault policies from:" << valultConfigPath();
-    
+
     QJsonParseError err;
     QJsonDocument doc = QJsonDocument::fromJson(config.readAll(), &err);
     config.close();
@@ -271,7 +283,7 @@ void Utils::loadVaultPolicy(VaultPolicyType *vaultPolicies)
 DPCErrorCode Utils::checkDiskPassword(crypt_device **cd, const char *pwd, const char *device)
 {
     fmInfo() << "[Utils::checkDiskPassword] Checking disk password for device:" << device;
-    
+
     int r = crypt_init(cd, device);
     if (r < 0) {
         fmCritical() << "[Utils::checkDiskPassword] crypt_init failed for device:" << device << "error code:" << r;
