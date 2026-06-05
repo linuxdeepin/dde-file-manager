@@ -9,6 +9,7 @@
 
 #include <QFile>
 #include <QDir>
+#include <QProcess>
 
 #include <sys/stat.h>
 #include <fstab.h>
@@ -21,11 +22,8 @@ bool filesystem_helper::shrinkFileSystem_ext(const QString &device)
 {
     qInfo() << "[filesystem_helper::shrinkFileSystem_ext] Starting filesystem shrink operation for device:" << device;
     
-    // TODO(xust): not find the API of resize2fs, use BIN program temp
-    QString cmd = QString("e2fsck -f -y %1").arg(device);
-    qInfo() << "[filesystem_helper::shrinkFileSystem_ext] Running filesystem check command:" << cmd;
-    
-    int ret = ::system(cmd.toStdString().c_str());
+    int ret = QProcess::execute("e2fsck", { "-f", "-y", device });
+    qInfo() << "[filesystem_helper::shrinkFileSystem_ext] e2fsck exit code:" << ret << "device:" << device;
     if (ret != 0) {
         qCritical() << "[filesystem_helper::shrinkFileSystem_ext] Filesystem check failed for device:" << device << "error code:" << ret;
         return false;
@@ -35,11 +33,9 @@ bool filesystem_helper::shrinkFileSystem_ext(const QString &device)
     auto size = blockdev_helper::devDeviceSize(device) / 1024 / 1024;
     auto targetSize = size - 32;
     qInfo() << "[filesystem_helper::shrinkFileSystem_ext] Device will be resized from" << size << "MB to" << targetSize << "MB for device:" << device;
-    
-    cmd = QString("resize2fs %1 %2M").arg(device).arg(targetSize);
-    qInfo() << "[filesystem_helper::shrinkFileSystem_ext] Running resize command:" << cmd;
-    
-    ret = ::system(cmd.toStdString().c_str());
+
+    ret = QProcess::execute("resize2fs", { device, QString("%1M").arg(targetSize) });
+    qInfo() << "[filesystem_helper::shrinkFileSystem_ext] resize2fs exit code:" << ret << "device:" << device;
     if (ret != 0) {
         qCritical() << "[filesystem_helper::shrinkFileSystem_ext] Filesystem resize failed for device:" << device << "error code:" << ret;
         return false;
@@ -53,21 +49,16 @@ bool filesystem_helper::expandFileSystem_ext(const QString &device)
 {
     qInfo() << "[filesystem_helper::expandFileSystem_ext] Starting filesystem expand operation for device:" << device;
     
-    // TODO(xust): not find the API of resize2fs, use BIN program temp
-    QString cmd = QString("e2fsck -f -y %1").arg(device);
-    qInfo() << "[filesystem_helper::expandFileSystem_ext] Running filesystem check command:" << cmd;
-    
-    int ret = ::system(cmd.toStdString().c_str());
+    int ret = QProcess::execute("e2fsck", { "-f", "-y", device });
+    qInfo() << "[filesystem_helper::expandFileSystem_ext] e2fsck exit code:" << ret << "device:" << device;
     if (ret != 0) {
         qCritical() << "[filesystem_helper::expandFileSystem_ext] Filesystem check failed for device:" << device << "error code:" << ret;
         return false;
     }
     qInfo() << "[filesystem_helper::expandFileSystem_ext] Filesystem check completed successfully for device:" << device;
 
-    cmd = QString("resize2fs %1").arg(device);
-    qInfo() << "[filesystem_helper::expandFileSystem_ext] Running resize command:" << cmd;
-    
-    ret = ::system(cmd.toStdString().c_str());
+    ret = QProcess::execute("resize2fs", { device });
+    qInfo() << "[filesystem_helper::expandFileSystem_ext] resize2fs exit code:" << ret << "device:" << device;
     if (ret != 0) {
         qCritical() << "[filesystem_helper::expandFileSystem_ext] Filesystem resize failed for device:" << device << "error code:" << ret;
         return false;
