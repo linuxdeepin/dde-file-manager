@@ -78,8 +78,6 @@ public:
     //! 清除盐值及密码密文的缓存
     void clearSaltAndPasswordCipher();
 
-    //! 获得加密文件夹路径
-    QString getEncryptDirPath();
     //! 获得解密文件夹路径
     QString getdecryptDirPath();
 
@@ -88,9 +86,6 @@ public:
 
     //! 随即生成密码
     QString autoGeneratePassword(int minLength);
-
-    //! 管理员权限认证
-    bool getRootPassword();
 
     Result savePasswordToKeyring(const QString &password);
     QString passwordFromKeyring();

@@ -40,36 +40,6 @@ public:
      * @return 是否成功
      */
     static bool checkUserKey(const QString &userKey, QString &cipher);
-
-    /**
-     * @brief getEncryptedDir 获得加密文件夹路径
-     * @return
-     */
-    static QString getEncryptDir();
-
-    /**
-     * @brief getDecryptDir 获得解密文件夹路径
-     * @return
-     */
-    static QString getDecryptDir();
-
-    /**
-     * @brief getConfigFilePath
-     * @return
-     */
-    static QStringList getConfigFilePath();
-
-    /**
-     * @brief vaultState // 获得保险箱状态
-     * @return
-     */
-    static VaultState vaultState();
-
-    /**
-     * @brief getRootPassword 管理员权限认证
-     * @return
-     */
-    static bool getRootPassword();
 };
 }
 #endif   // INTERFACEACTIVEVAULT_H

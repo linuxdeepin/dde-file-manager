@@ -716,11 +716,6 @@ void OperatorCenter::clearSaltAndPasswordCipher()
     strCryfsPassword.clear();
 }
 
-QString OperatorCenter::getEncryptDirPath()
-{
-    return makeVaultLocalPath(kVaultEncrypyDirName);
-}
-
 QString OperatorCenter::getdecryptDirPath()
 {
     return makeVaultLocalPath(kVaultDecryptDirName);
@@ -766,23 +761,6 @@ QString OperatorCenter::autoGeneratePassword(int length)
 
     fmDebug() << "Vault: Generated password success";
     return strPassword;
-}
-
-bool OperatorCenter::getRootPassword()
-{
-    // 判断当前是否是管理员登陆
-    bool res = runCmd("id -un");   // file path is fixed. So write cmd direct
-    if (res && standOutput.trimmed() == "root") {
-        fmDebug() << "Vault: Already running as root";
-        return true;
-    }
-
-    if (false == executeProcess("sudo whoami")) {
-        fmWarning() << "Vault: Failed to get root privileges";
-        return false;
-    }
-
-    return true;
 }
 
 Result OperatorCenter::savePasswordToKeyring(const QString &password)
