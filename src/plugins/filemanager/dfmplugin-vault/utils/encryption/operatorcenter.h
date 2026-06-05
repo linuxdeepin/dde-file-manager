@@ -92,9 +92,6 @@ public:
     //! 管理员权限认证
     bool getRootPassword();
 
-    //! 执行shell命令并获得shell命令的返回值
-    int executionShellCommand(const QString &strCmd, QStringList &lstShellOutput);
-
     Result savePasswordToKeyring(const QString &password);
     QString passwordFromKeyring();
 
