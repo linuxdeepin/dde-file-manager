@@ -99,6 +99,11 @@ bool DiskEncryptSetup::ResumeEncryption(const QVariantMap &args)
         return false;
     }
 
+    if (!m_dptr->checkAuth(kActionEncrypt)) {
+        qWarning() << "[DiskEncryptSetup::ResumeEncryption] Authentication failed for resume encryption action";
+        return false;
+    }
+
     if (!m_dptr->validateResumeArgs(args)) {
         qCritical() << "[DiskEncryptSetup::ResumeEncryption] Invalid resume arguments provided:" << args;
         return false;
@@ -185,6 +190,11 @@ bool DiskEncryptSetup::ChangePassphrase(const QDBusUnixFileDescriptor &credentia
 void DiskEncryptSetup::SetupAuthArgs(const QDBusUnixFileDescriptor &credentialsFd)
 {
     qInfo() << "[DiskEncryptSetup::SetupAuthArgs] Setting up authentication arguments via fd";
+
+    if (!m_dptr->checkAuth(kActionEncrypt)) {
+        qWarning() << "[DiskEncryptSetup::SetupAuthArgs] Authentication failed for auth args setup";
+        return;
+    }
 
     // Parse credentials from fd using common method
     QVariantMap args;
