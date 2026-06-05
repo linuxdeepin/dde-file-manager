@@ -57,8 +57,3 @@ bool InterfaceActiveVault::getRootPassword()
 {
     return OperatorCenter::getInstance()->getRootPassword();
 }
-
-int InterfaceActiveVault::executionShellCommand(const QString &strCmd, QStringList &lstShellOutput)
-{
-    return OperatorCenter::getInstance()->executionShellCommand(strCmd, lstShellOutput);
-}

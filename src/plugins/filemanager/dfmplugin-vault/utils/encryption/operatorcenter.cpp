@@ -785,45 +785,6 @@ bool OperatorCenter::getRootPassword()
     return true;
 }
 
-int OperatorCenter::executionShellCommand(const QString &strCmd, QStringList &lstShellOutput)
-{
-    FILE *fp;
-
-    std::string sCmd = strCmd.toStdString();
-    const char *cmd = sCmd.c_str();
-
-    // 命令为空
-    if (strCmd.isEmpty()) {
-        fmCritical() << "Vault: the shell cmd is empty!";
-        return -1;
-    }
-
-    if ((fp = popen(cmd, "r")) == nullptr) {
-        perror("popen");
-        fmCritical() << QString("Vault Error: popen error: %s").arg(strerror(errno));
-        return -1;
-    } else {
-        char buf[kBuffterMaxLine] = { '\0' };
-        while (fgets(buf, sizeof(buf), fp)) {   // 获得每行输出
-            QString strLineOutput(buf);
-            if (strLineOutput.endsWith('\n'))
-                strLineOutput.chop(1);
-            lstShellOutput.push_back(strLineOutput);
-        }
-
-        int res;
-        if ((res = pclose(fp)) == -1) {
-            fmCritical() << "Vault: close popen file pointer fp failed!";
-            return res;
-        } else if (res == 0) {
-            return res;
-        } else {
-            fmCritical() << QString("Vault: popen res is : %1").arg(res);
-            return res;
-        }
-    }
-}
-
 Result OperatorCenter::savePasswordToKeyring(const QString &password)
 {
     GError *error = Q_NULLPTR;
@@ -1116,7 +1077,7 @@ bool OperatorCenter::upgradeOldVaultByPassword(const QString &oldPassword, QStri
     int ret = PasswordManager::createLuksContainer(containerPath.toUtf8().constData(),
                                                    masterKey.constData(),
                                                    static_cast<size_t>(masterKey.size()),
-                                                   oldPassword.toUtf8().constData(),  // 使用 oldPassword
+                                                   oldPassword.toUtf8().constData(),   // 使用 oldPassword
                                                    slotID);
     if (ret != 0) {
         fmWarning() << "Vault: upgradeOldVaultByPassword failed to create LUKS container, ret =" << ret;
@@ -1136,7 +1097,7 @@ bool OperatorCenter::upgradeOldVaultByPassword(const QString &oldPassword, QStri
     // 将恢复密钥添加到 LUKS KeySlot 1
     int recoveryKeySlotId = 0;
     ret = PasswordManager::addNewPassword(containerPath.toUtf8().constData(),
-                                          oldPassword.toUtf8().constData(),  // 使用 oldPassword 作为 existingPassword
+                                          oldPassword.toUtf8().constData(),   // 使用 oldPassword 作为 existingPassword
                                           recoveryKey.toUtf8().constData(),
                                           recoveryKeySlotId);
     if (ret != 0) {
@@ -1151,7 +1112,6 @@ bool OperatorCenter::upgradeOldVaultByPassword(const QString &oldPassword, QStri
     outRecoveryKey = recoveryKey;
     return true;
 }
-
 
 bool OperatorCenter::resetPasswordByOldPassword(const QString &oldPassword, const QString &newPassword, const QString &passwordHint)
 {
@@ -1210,7 +1170,7 @@ bool OperatorCenter::resetPasswordByRecoveryKey(const QString &recoveryKey, cons
     size_t masterKeySize = 64;
     int ret = PasswordManager::exportMasterKeyByKeyslot(containerPath.toUtf8().constData(),
                                                         recoveryKeyBytes.constData(),
-                                                        1,  // 恢复密钥在槽1
+                                                        1,   // 恢复密钥在槽1
                                                         masterKeyBuf, &masterKeySize);
     if (ret != 0) {
         fmWarning() << "Vault: Recovery key verification failed";
@@ -1223,11 +1183,11 @@ bool OperatorCenter::resetPasswordByRecoveryKey(const QString &recoveryKey, cons
     // 4. 使用恢复密钥添加新密码到新的KeySlot
     int newKeySlotId = 0;
     ret = PasswordManager::addNewPasswordByKeyslot(
-        containerPath.toUtf8().constData(),
-        recoveryKeyBytes.constData(),
-        1,  // 恢复密钥在槽1
-        newPassword.toUtf8().constData(),
-        newKeySlotId);
+            containerPath.toUtf8().constData(),
+            recoveryKeyBytes.constData(),
+            1,   // 恢复密钥在槽1
+            newPassword.toUtf8().constData(),
+            newKeySlotId);
 
     if (ret != 0) {
         fmWarning() << "Vault: Failed to add new password";
