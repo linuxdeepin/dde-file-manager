@@ -59,6 +59,7 @@ void ThumbnailHelper::initMimeTypeSupport()
     // === Executable package types (unconditional icon display) ===
     mimeTypeSupportStrategy.insert(Mime::kTypeAppAppimage, Strategy::kUnconditional);
     mimeTypeSupportStrategy.insert(Mime::kTypeAppUab, Strategy::kUnconditional);
+    mimeTypeSupportStrategy.insert(Mime::kTypeAppKrita, Strategy::kUnconditional);
 }
 
 void ThumbnailHelper::initSizeLimit()
@@ -84,6 +85,7 @@ void ThumbnailHelper::initSizeLimit()
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeAudioFlac), INT64_MAX);
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeAppAppimage), INT64_MAX);
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeAppUab), INT64_MAX);
+    sizeLimitHash.insert(mimeDatabase.mimeTypeForName(Mime::kTypeAppKrita), INT64_MAX);
 
     qCInfo(logDFMBase) << "thumbnail: initialized size limits for" << sizeLimitHash.size() << "mime types";
 }

@@ -37,6 +37,7 @@ ThumbnailFactory::ThumbnailFactory(QObject *parent)
     registerThumbnailCreator(Mime::kTypeAppAppimage, ThumbnailCreators::appimageThumbnailCreator);
     registerThumbnailCreator(Mime::kTypeAppUab, ThumbnailCreators::uabThumbnailCreator);
     registerThumbnailCreator(Mime::kTypeAppPptx, ThumbnailCreators::pptxThumbnailCreator);
+    registerThumbnailCreator(Mime::kTypeAppKrita, ThumbnailCreators::krataThumbnailCreator);
 
     init();
 }

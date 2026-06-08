@@ -20,6 +20,8 @@
 #include <QImageReader>
 #include <QDebug>
 #include <QTemporaryDir>
+#include <minizip/unzip.h>
+#include <string>
 
 #include <libheif/heif.h>
 #include <QImage>
@@ -793,4 +795,53 @@ QImage ThumbnailCreators::uabThumbnailCreator(const QString &filePath, Thumbnail
 
     qCDebug(logDFMBase) << "thumbnail: UAB thumbnail created successfully for:" << filePath;
     return icon;
+}
+
+QImage ThumbnailCreators::krataThumbnailCreator(const QString &filePath, DFMGLOBAL_NAMESPACE::ThumbnailSize size)
+{
+    Q_UNUSED(size)
+
+    const std::string path = filePath.toStdString();
+
+    auto extractEntry = [&](const char *entryName) -> QByteArray {
+        unzFile zf = unzOpen(path.c_str());
+        if (!zf)
+            return {};
+        if (unzLocateFile(zf, entryName, 0) != UNZ_OK) {
+            unzClose(zf);
+            return {};
+        }
+        unz_file_info fi;
+        if (unzGetCurrentFileInfo(zf, &fi, nullptr, 0, nullptr, 0, nullptr, 0) != UNZ_OK) {
+            unzClose(zf);
+            return {};
+        }
+        if (unzOpenCurrentFile(zf) != UNZ_OK) {
+            unzClose(zf);
+            return {};
+        }
+        QByteArray data(static_cast<int>(fi.uncompressed_size), Qt::Uninitialized);
+        int n = unzReadCurrentFile(zf, data.data(), static_cast<unsigned>(data.size()));
+        unzCloseCurrentFile(zf);
+        unzClose(zf);
+        if (n < 0)
+            return {};
+        data.resize(n);
+        return data;
+    };
+
+    QByteArray data = extractEntry("mergedimage.png");
+    if (data.isEmpty())
+        data = extractEntry("preview.png");
+    if (data.isEmpty()) {
+        qCWarning(logDFMBase) << "[krita-thumb]: no preview found in" << filePath;
+        return {};
+    }
+
+    QImage img;
+    if (!img.loadFromData(data, "PNG")) {
+        qCWarning(logDFMBase) << "[krita-thumb]: failed to decode preview PNG from" << filePath;
+        return {};
+    }
+    return img;
 }
