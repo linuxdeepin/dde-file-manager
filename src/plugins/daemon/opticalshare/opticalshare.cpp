@@ -16,8 +16,8 @@ void OpticalShareDBusWorker::launchService()
     Q_ASSERT(QThread::currentThread() != qApp->thread());
 
     auto conn = QDBusConnection::sessionBus();
-    if (!conn.registerService("org.deepin.Filemanager.OpticalShare")) {
-        fmCritical() << "[OpticalShareDBusWorker] Failed to register D-Bus service 'org.deepin.Filemanager.OpticalShare'";
+    if (!conn.registerService("org.deepin.Filemanager.Daemon")) {
+        fmCritical() << "[OpticalShareDBusWorker] Failed to register D-Bus service 'org.deepin.Filemanager.Daemon'";
         return;
     }
 

@@ -32,6 +32,3 @@ install(TARGETS
     ${DFM_PLUGIN_FILEMANAGER_CORE_DIR}
 )
 
-# install dbus service file
-install(FILES org.deepin.Filemanager.Daemon.OpticalShare.service
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/share/dbus-1/services)
