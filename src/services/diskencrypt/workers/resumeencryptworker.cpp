@@ -253,7 +253,7 @@ void ResumeEncryptWorker::saveRecoveryKey()
     QByteArray baseName = (m_authArgs.device.mid(5) + "_recovery_key.txt").toLocal8Bit();
     int fd = ::openat(dirFd, baseName.constData(),
                        O_NOFOLLOW | O_CREAT | O_TRUNC | O_WRONLY,
-                       S_IRUSR | S_IWUSR);
+                       S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 
     if (fd < 0) {
         qCritical() << "[ResumeEncryptWorker::saveRecoveryKey] Cannot create/open recovery key file:" << fileName

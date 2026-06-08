@@ -51,8 +51,11 @@ int Utils::setFileMode(const QString &mountPoint, uint mode)
     fmInfo() << "[Utils::setFileMode] Changing file mode for path:" << bytes << "to mode:" << QString::number(mode, 8);
 
     // O_NOFOLLOW: 拒绝符号链接，若末级路径是 symlink 则 open 返回 ELOOP
+    // O_RDONLY: 最小权限标志，足以通过 open 绑定到 inode 供 fchmod 使用
     // fchmod: 基于 FD 操作，绑定到 inode，消除 TOCTOU 竞态
-    int fd = open(bytes.data(), O_PATH | O_NOFOLLOW);
+    // 注意: 此处不能使用 O_PATH，因 deepin 桌面内核 6.x 上 fchmod 对 O_PATH fd
+    // 返回 EBADF (实测内核 6.18.30)，而 O_RDONLY 则稳定工作
+    int fd = open(bytes.data(), O_RDONLY | O_NOFOLLOW);
     if (fd < 0) {
         fmCritical() << "[Utils::setFileMode] Failed to open path:" << bytes << "error:" << strerror(errno);
         return -1;
