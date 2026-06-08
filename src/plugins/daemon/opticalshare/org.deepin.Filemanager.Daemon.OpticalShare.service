@@ -1,3 +1,0 @@
-[D-BUS Service]
-Name=org.deepin.Filemanager.OpticalShare
-Exec=/usr/bin/dde-file-manager-daemon
