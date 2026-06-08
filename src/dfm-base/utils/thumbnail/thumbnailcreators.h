@@ -23,6 +23,7 @@ QImage pdfThumbnailCreator(const QString &filePath, DFMGLOBAL_NAMESPACE::Thumbna
 QImage appimageThumbnailCreator(const QString &filePath, DFMGLOBAL_NAMESPACE::ThumbnailSize size);
 QImage uabThumbnailCreator(const QString &filePath, DFMGLOBAL_NAMESPACE::ThumbnailSize size);
 QImage pptxThumbnailCreator(const QString &filePath, DFMGLOBAL_NAMESPACE::ThumbnailSize size);
+QImage krataThumbnailCreator(const QString &filePath, DFMGLOBAL_NAMESPACE::ThumbnailSize size);
 }   // namespace ThumbnailCreators
 }   // namespace dfmbase
 

@@ -21,6 +21,7 @@ function(dfm_configure_base_library target_name)
     pkg_check_modules(mount REQUIRED mount IMPORTED_TARGET)
     pkg_check_modules(LIBHEIF REQUIRED libheif)
     pkg_search_module(X11 REQUIRED x11 IMPORTED_TARGET)
+    pkg_check_modules(MINIZIP REQUIRED minizip IMPORTED_TARGET)
     
     # Qt version specific dependencies
     if(${QT_VERSION_MAJOR} EQUAL "6")
@@ -81,6 +82,7 @@ function(dfm_configure_base_library target_name)
             poppler-cpp
             ${LIBHEIF_LIBRARIES}
             libappimage
+            PkgConfig::MINIZIP
     )
     
     # Include directories
