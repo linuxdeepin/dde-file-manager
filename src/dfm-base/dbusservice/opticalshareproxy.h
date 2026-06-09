@@ -10,8 +10,7 @@
 #include <QObject>
 #include <QScopedPointer>
 #include <QVariantMap>
-
-class QDBusInterface;
+#include <QDBusInterface>
 
 namespace dfmbase {
 
