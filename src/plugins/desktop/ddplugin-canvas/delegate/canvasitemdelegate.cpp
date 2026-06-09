@@ -659,7 +659,13 @@ void CanvasItemDelegate::updateItemSizeHint() const
 {
     d->textLineHeight = parent()->fontMetrics().height();
     int width = parent()->iconSize().width() * 17 / 10;
-    int height = parent()->iconSize().height() + kIconSpacing + kTextPadding + 2 * d->textLineHeight + kTextPadding;
+    // Use UniversalUtils::getTextLineHeight for text area height to stay consistent
+    // with the layout engine (ElideTextLayout), which also uses it for per-line height.
+    // Without this, fractional scaling (e.g. 125%) causes ceil() in getTextLineHeight
+    // to produce a larger line height than fontMetrics().height(), making the available
+    // text space too small for 2 lines and collapsing multi-line names into 1 line.
+    int textLineHeight = UniversalUtils::getTextLineHeight(QString(), parent()->fontMetrics());
+    int height = parent()->iconSize().height() + kIconSpacing + kTextPadding + 2 * textLineHeight + kTextPadding;
     d->itemSizeHint = QSize(width, height);
 }
 
