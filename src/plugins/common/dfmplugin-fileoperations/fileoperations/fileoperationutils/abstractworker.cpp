@@ -379,6 +379,14 @@ void AbstractWorker::emitStateChangedNotify()
  */
 void AbstractWorker::emitCurrentTaskNotify(const QUrl &from, const QUrl &to)
 {
+    // Throttle: limit signal emission to ~10fps to prevent main-thread event storm
+    // when processing massive file operations (e.g. deleting 1M+ files).
+    if (!d_taskThrottleTimer.isValid())
+        d_taskThrottleTimer.start();
+    if (d_taskThrottleTimer.elapsed() - d_lastTaskEmitElapsed < kMinTaskEmitIntervalMs)
+        return;
+    d_lastTaskEmitElapsed = d_taskThrottleTimer.elapsed();
+
     JobInfoPointer info = createCopyJobInfo(from, to);
 
     emit currentTaskNotify(info);
