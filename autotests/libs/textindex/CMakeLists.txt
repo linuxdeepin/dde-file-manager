@@ -18,4 +18,7 @@ dfm_add_test(test-textindex
 
 # textindex source files use relative includes (e.g. "service_textindex_global.h")
 # so the textindex source root must be in the include path.
-target_include_directories(test-textindex PRIVATE ${DFM_SOURCE_DIR}/services/textindex)
+target_include_directories(test-textindex PRIVATE
+    ${DFM_SOURCE_DIR}/services/textindex
+    ${DFM_PROJECT_ROOT}/include
+)

@@ -282,7 +282,13 @@ QMap<QString, QVariant> DesktopFileInfo::desktopFileInfo(const QUrl &fileUrl)
 
 QSharedPointer<FileInfo> DesktopFileInfo::convert(QSharedPointer<FileInfo> fileInfo)
 {
+    if (fileInfo.isNull())
+        return fileInfo;
+
     const QUrl &url = fileInfo->urlOf(UrlInfoType::kUrl);
+    if (!url.isValid() || url.scheme().isEmpty())
+        return fileInfo;
+
     // invoking suffix/mimeTypeName might cost huge time
     if (ProtocolUtils::isRemoteFile(url))
         return fileInfo;
