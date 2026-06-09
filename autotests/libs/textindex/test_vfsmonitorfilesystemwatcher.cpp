@@ -98,12 +98,6 @@ TEST_F(TestVfsMonitorFileSystemWatcher, DirectoryCreatedSignal)
     QDir().mkpath(subDirPath);
 
     int count = waitForSignal(spy);
-    // 已知 bug: 当前内核 vfs_monitor 模块无法检测目录创建
-    // 如果信号未到达，给出明确提示而非崩溃
-    if (count == 0) {
-        GTEST_SKIP() << "Known kernel bug: vfs_monitor does not detect directory creation";
-        return;
-    }
 
     EXPECT_EQ(count, 1);
     QList<QVariant> args = spy.takeFirst();
@@ -159,11 +153,7 @@ TEST_F(TestVfsMonitorFileSystemWatcher, DirectoryDeletedSignal)
 
     QDir().rmdir(subDirPath);
 
-    int count = waitForSignal(deleteSpy);
-    if (count == 0) {
-        GTEST_SKIP() << "Known kernel bug: vfs_monitor may not detect directory deletion";
-        return;
-    }
+    waitForSignal(deleteSpy);
 
     QList<QVariant> args = deleteSpy.takeFirst();
     EXPECT_EQ(args.at(0).toString(), testDir->path());
@@ -224,11 +214,7 @@ TEST_F(TestVfsMonitorFileSystemWatcher, DirectoryRenameMovedSignal)
     QString newDirPath = testDir->path() + "/newdir";
     QDir().rename(oldDirPath, newDirPath);
 
-    int count = waitForSignal(moveSpy);
-    if (count == 0) {
-        GTEST_SKIP() << "Known kernel bug: vfs_monitor may not detect directory rename";
-        return;
-    }
+    waitForSignal(moveSpy);
 
     QList<QVariant> args = moveSpy.takeFirst();
     EXPECT_EQ(args.at(0).toString(), testDir->path());
@@ -356,8 +342,7 @@ TEST_F(TestVfsMonitorFileSystemWatcher, EventsOutsideRootPathsNotEmitted)
     ASSERT_TRUE(spy.isValid());
 
     // 在测试目录之外创建文件（使用 /tmp）
-    QString outsidePath = QDir::tempPath() + "/vfsmonitor_outside_" +
-                          QString::number(QCoreApplication::applicationPid()) + ".txt";
+    QString outsidePath = QDir::tempPath() + "/vfsmonitor_outside_" + QString::number(QCoreApplication::applicationPid()) + ".txt";
     QFile file(outsidePath);
     file.open(QIODevice::WriteOnly);
     file.write("outside");
