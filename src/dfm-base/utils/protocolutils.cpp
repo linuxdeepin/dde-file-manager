@@ -9,10 +9,51 @@ DFMBASE_BEGIN_NAMESPACE
 
 namespace ProtocolUtils {
 
-// Helper function: match with cached compiled regex
-static bool hasMatch(const QString &txt, const QRegularExpression &re)
+static QString matchPath(const QUrl &url)
 {
-    return re.match(txt).hasMatch();
+    return url.isLocalFile() ? url.toLocalFile() : url.path();
+}
+
+static int gvfsPathStart(const QString &path)
+{
+    static const QString kUserPrefix = QStringLiteral("/run/user/");
+    static const QString kUserGvfsPrefix = QStringLiteral("/gvfs/");
+    static const QString kRootGvfsPrefix = QStringLiteral("/root/.gvfs/");
+
+    if (path.startsWith(kRootGvfsPrefix))
+        return kRootGvfsPrefix.size();
+
+    if (!path.startsWith(kUserPrefix))
+        return -1;
+
+    int pos = kUserPrefix.size();
+    const int size = path.size();
+    while (pos < size && path.at(pos).isDigit())
+        ++pos;
+
+    if (pos == kUserPrefix.size() || !path.mid(pos).startsWith(kUserGvfsPrefix))
+        return -1;
+
+    return pos + kUserGvfsPrefix.size();
+}
+
+static bool isGvfsPath(const QString &path)
+{
+    return gvfsPathStart(path) >= 0;
+}
+
+static bool isGvfsProtocolPath(const QString &path, const QString &protocolPrefix)
+{
+    const int start = gvfsPathStart(path);
+    return start >= 0 && path.mid(start).startsWith(protocolPrefix);
+}
+
+static bool isMediaSmbMountPath(const QString &path)
+{
+    if (!path.startsWith(QStringLiteral("/media/")) && !path.startsWith(QStringLiteral("/run/media/")))
+        return false;
+
+    return path.contains(QStringLiteral("/smbmounts"));
 }
 
 bool isRemoteFile(const QUrl &url)
@@ -31,9 +72,8 @@ bool isRemoteFile(const QUrl &url)
     if (kRemoteSchemes.contains(scheme))
         return true;
 
-    // TODO(xust) smbmounts path might be changed in the future.
-    static const QRegularExpression gvfsMatch { R"((^/run/user/\d+/gvfs/|^/root/.gvfs/|^/(?:run/)?media/[\s\S]*/smbmounts))" };
-    return hasMatch(url.toLocalFile(), gvfsMatch);
+    const QString path = matchPath(url);
+    return isGvfsPath(path) || isMediaSmbMountPath(path);
 }
 
 bool isMTPFile(const QUrl &url)
@@ -44,8 +84,7 @@ bool isMTPFile(const QUrl &url)
     if (url.scheme() == Global::Scheme::kMtp)
         return true;
 
-    static const QRegularExpression gvfsMatch { R"(^/run/user/\d+/gvfs/mtp:host|^/root/.gvfs/mtp:host)" };
-    return hasMatch(url.toLocalFile(), gvfsMatch);
+    return isGvfsProtocolPath(matchPath(url), QStringLiteral("mtp:host"));
 }
 
 bool isGphotoFile(const QUrl &url)
@@ -57,8 +96,7 @@ bool isGphotoFile(const QUrl &url)
     if (scheme == Global::Scheme::kGPhoto || scheme == Global::Scheme::kGPhoto2)
         return true;
 
-    static const QRegularExpression gvfsMatch { R"(^/run/user/\d+/gvfs/gphoto2:host|^/root/.gvfs/gphoto2:host)" };
-    return hasMatch(url.toLocalFile(), gvfsMatch);
+    return isGvfsProtocolPath(matchPath(url), QStringLiteral("gphoto2:host"));
 }
 
 bool isFTPFile(const QUrl &url)
@@ -68,8 +106,9 @@ bool isFTPFile(const QUrl &url)
     if (url.scheme() == Global::Scheme::kFtp)
         return true;
 
-    static const QRegularExpression smbMatch { R"((^/run/user/\d+/gvfs/s?ftp|^/root/.gvfs/s?ftp))" };
-    return hasMatch(url.path(), smbMatch);
+    const QString path = matchPath(url);
+    return isGvfsProtocolPath(path, QStringLiteral("ftp"))
+            || isGvfsProtocolPath(path, QStringLiteral("sftp"));
 }
 
 bool isSFTPFile(const QUrl &url)
@@ -79,8 +118,7 @@ bool isSFTPFile(const QUrl &url)
     if (url.scheme() == Global::Scheme::kSFtp)
         return true;
 
-    static const QRegularExpression smbMatch { R"((^/run/user/\d+/gvfs/sftp|^/root/.gvfs/sftp))" };
-    return hasMatch(url.path(), smbMatch);
+    return isGvfsProtocolPath(matchPath(url), QStringLiteral("sftp"));
 }
 
 bool isSMBFile(const QUrl &url)
@@ -90,8 +128,8 @@ bool isSMBFile(const QUrl &url)
     if (url.scheme() == Global::Scheme::kSmb)
         return true;
     // TODO(xust) smbmounts path might be changed in the future.
-    static const QRegularExpression smbMatch { R"((^/run/user/\d+/gvfs/smb|^/root/.gvfs/smb|^/(?:run/)?media/[\s\S]*/smbmounts))" };
-    return hasMatch(url.path(), smbMatch);
+    const QString path = matchPath(url);
+    return isGvfsProtocolPath(path, QStringLiteral("smb")) || isMediaSmbMountPath(path);
 }
 
 bool isLocalFile(const QUrl &url)
@@ -118,8 +156,7 @@ bool isNFSFile(const QUrl &url)
     if (url.scheme() == Global::Scheme::kNfs)
         return true;
 
-    static const QRegularExpression nfsMatch { R"((^/run/user/\d+/gvfs/nfs|^/root/.gvfs/nfs))" };
-    return hasMatch(url.path(), nfsMatch);
+    return isGvfsProtocolPath(matchPath(url), QStringLiteral("nfs"));
 }
 
 bool isDavFile(const QUrl &url)
@@ -130,8 +167,8 @@ bool isDavFile(const QUrl &url)
     if (url.scheme() == Global::Scheme::kDav)
         return true;
 
-    static const QRegularExpression davMatch { R"((^/run/user/\d+/gvfs/dav.*ssl=false|^/root/.gvfs/dav.*ssl=false))" };
-    return hasMatch(url.path(), davMatch);
+    const QString path = matchPath(url);
+    return isGvfsProtocolPath(path, QStringLiteral("dav:")) && path.contains(QStringLiteral("ssl=false"));
 }
 
 bool isDavsFile(const QUrl &url)
@@ -142,8 +179,8 @@ bool isDavsFile(const QUrl &url)
     if (url.scheme() == Global::Scheme::kDavs)
         return true;
 
-    static const QRegularExpression davsMatch { R"((^/run/user/\d+/gvfs/dav.*ssl=true|^/root/.gvfs/dav.*ssl=true))" };
-    return hasMatch(url.path(), davsMatch);
+    const QString path = matchPath(url);
+    return isGvfsProtocolPath(path, QStringLiteral("dav:")) && path.contains(QStringLiteral("ssl=true"));
 }
 
 }   // namespace ProtocolUtils
