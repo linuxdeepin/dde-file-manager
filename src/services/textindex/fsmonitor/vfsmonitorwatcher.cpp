@@ -428,32 +428,32 @@ QString VfsMonitorFileSystemWatcherPrivate::resolveAndFilterFullPath(dev_t devic
     // Return the first one that falls under a monitored root path
     // and passes the exclude predicate.
     for (const QString &mp : points) {
-        QString fullPath;
-        if (mp == "/") {
-            fullPath = relPath;
-        } else {
-            fullPath = mp + relPath;
-        }
+        QString fullPath = (mp == "/") ? relPath : (mp + relPath);
 
         if (isLowerFsEvent(deviceId, fullPath))
             continue;
 
-        // Check if under a monitored root path.
-        bool inRoot = false;
-        for (const QString &root : rootPaths) {
-            if (isDescendantOfRoot(fullPath, root)) {
-                inRoot = true;
-                break;
-            }
-        }
-        if (!inRoot)
+        if (std::none_of(rootPaths.cbegin(), rootPaths.cend(),
+                         [&fullPath](const QString &root) { return isDescendantOfRoot(fullPath, root); }))
             continue;
 
-        // Check exclude predicate (symlinks, hidden files, blacklists).
         if (excludePredicate && excludePredicate(fullPath))
             continue;
 
         return fullPath;
+    }
+
+    // In overlay root environments, the root "/" filesystem has no separate mount
+    // entry in mountPoints. When all mount points fail and relPath is already
+    // an absolute path, treat it as the true absolute path and re-check.
+    if (relPath.startsWith('/')) {
+        auto found = std::find_if(rootPaths.cbegin(), rootPaths.cend(),
+                                  [&relPath, this](const QString &root) {
+                                      return isDescendantOfRoot(relPath, root)
+                                              && (!excludePredicate || !excludePredicate(relPath));
+                                  });
+        if (found != rootPaths.cend())
+            return relPath;
     }
 
     return {};
