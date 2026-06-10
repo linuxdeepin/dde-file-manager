@@ -241,8 +241,7 @@ void PropertyDialogUtil::closeAllPropertyDialog()
 
 void PropertyDialogUtil::createControlView(const QUrl &url, const QVariantHash &option)
 {
-    Q_UNUSED(option)
-    QMap<int, QWidget *> controlView = createView(url, {});
+    QMap<int, QWidget *> controlView = createView(url, option);
     int count = controlView.keys().count();
     for (int i = 0; i < count; ++i) {
         int index = controlView.keys()[i];
