@@ -1,3 +1,26 @@
+dde-file-manager (6.5.142) unstable; urgency=medium
+
+  * fix: replace system calls with QProcess for filesystem operations
+  * fix: remove unused shell command execution code
+  * refactor: simplify vault encryption interface
+  * fix: eliminate TOCTOU race condition in file mode change
+  * fix: enhance security in disk encryption recovery key handling
+  * refactor: unify optical share service naming
+  * fix: update file mode setting implementation
+  * refactor: improve protocol file detection and testing
+  * fix: align text line height calculation in canvas/organizer
+  * fix: improve vfs_monitor filesystem event handling
+  * fix: throttle signal emissions in file operations
+  * feat: add krita mime type support
+  * refactor: improve task notification throttling
+  * fix: correct file creation time handling in local dir iterator
+  * feat: add thumbnail support for Krita .kra/.krz files
+  * Add libminizip-dev to dependencies in control file
+  * fix: pass option parameter to createView in property dialog
+  * fix: emit dataChanged instead of view->update() for item geometry recalc
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 11 Jun 2026 18:38:18 +0800
+
 dde-file-manager (6.5.141) unstable; urgency=medium
 
   * perf: remove redundant index optimization in UpdateIndexHandler
