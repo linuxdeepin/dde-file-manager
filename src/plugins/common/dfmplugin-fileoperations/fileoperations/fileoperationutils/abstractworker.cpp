@@ -334,6 +334,11 @@ bool AbstractWorker::initArgs()
 void AbstractWorker::endWork()
 {
     syncFilesToDevice();
+    // A task switch may still be coalesced when the worker finishes quickly;
+    // flush it before the task widget is removed.
+    if (const auto task = currentTaskNotifyThrottler.flush()) {
+        emit currentTaskNotify(createCopyJobInfo(task->sourceUrl, task->targetUrl));
+    }
 
     setStat(AbstractJobHandler::JobState::kStopState);
     Q_EMIT removeTaskWidget();
@@ -379,17 +384,9 @@ void AbstractWorker::emitStateChangedNotify()
  */
 void AbstractWorker::emitCurrentTaskNotify(const QUrl &from, const QUrl &to)
 {
-    // Throttle: limit signal emission to ~10fps to prevent main-thread event storm
-    // when processing massive file operations (e.g. deleting 1M+ files).
-    if (!d_taskThrottleTimer.isValid())
-        d_taskThrottleTimer.start();
-    if (d_taskThrottleTimer.elapsed() - d_lastTaskEmitElapsed < kMinTaskEmitIntervalMs)
-        return;
-    d_lastTaskEmitElapsed = d_taskThrottleTimer.elapsed();
-
-    JobInfoPointer info = createCopyJobInfo(from, to);
-
-    emit currentTaskNotify(info);
+    if (const auto task = currentTaskNotifyThrottler.submit(from, to)) {
+        emit currentTaskNotify(createCopyJobInfo(task->sourceUrl, task->targetUrl));
+    }
 }
 /*!
  * \brief AbstractWorker::emitProgressChangedNotify send process changed signal
@@ -397,6 +394,12 @@ void AbstractWorker::emitCurrentTaskNotify(const QUrl &from, const QUrl &to)
  */
 void AbstractWorker::emitProgressChangedNotify(const qint64 &writSize)
 {
+    // Reuse the existing progress heartbeat to deliver a trailing task update
+    // once the throttle window expires, instead of adding a dedicated timer.
+    if (const auto task = currentTaskNotifyThrottler.takeReadyTask()) {
+        emit currentTaskNotify(createCopyJobInfo(task->sourceUrl, task->targetUrl));
+    }
+
     JobInfoPointer info(new QMap<quint8, QVariant>);
     info->insert(AbstractJobHandler::NotifyInfoKey::kJobtypeKey, QVariant::fromValue(jobType));
     if (AbstractJobHandler::JobType::kCopyType == jobType

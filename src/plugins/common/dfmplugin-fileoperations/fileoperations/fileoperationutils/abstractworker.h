@@ -6,6 +6,7 @@
 #define ABSTRACTWORKER_H
 
 #include "dfmplugin_fileoperations_global.h"
+#include "currenttasknotifythrottler.h"
 #include "fileoperationsutils.h"
 #include "workerdata.h"
 #include "docopyfileworker.h"
@@ -211,10 +212,7 @@ public:
     std::atomic_int64_t deleteFirstFileSize { false };
     bool isCutMerge { false };
 
-    // Throttle: limit emitCurrentTaskNotify to ~10fps to prevent signal storm
-    QElapsedTimer d_taskThrottleTimer;
-    qint64 d_lastTaskEmitElapsed { 0 };
-    static constexpr qint64 kMinTaskEmitIntervalMs = 100;
+    CurrentTaskNotifyThrottler currentTaskNotifyThrottler;
 };
 
 DPFILEOPERATIONS_END_NAMESPACE
