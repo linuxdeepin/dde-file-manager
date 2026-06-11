@@ -81,7 +81,6 @@ SortInfoPointer createSortInfo(const QString &parentPath, const QString &fileNam
     uint64_t effectiveSize = stx.stx_size;
     time_t effectiveAtime = stx.stx_atime.tv_sec;
     time_t effectiveMtime = stx.stx_mtime.tv_sec;
-    time_t effectiveCtime = stx.stx_ctime.tv_sec;
     time_t effectiveBtime = (stx.stx_mask & STATX_BTIME) ? stx.stx_btime.tv_sec : 0;
 
     // 符号链接：获取目标文件属性
@@ -95,7 +94,6 @@ SortInfoPointer createSortInfo(const QString &parentPath, const QString &fileNam
                 effectiveSize = targetStx.stx_size;
                 effectiveAtime = targetStx.stx_atime.tv_sec;
                 effectiveMtime = targetStx.stx_mtime.tv_sec;
-                effectiveCtime = targetStx.stx_ctime.tv_sec;
                 if (targetStx.stx_mask & STATX_BTIME)
                     effectiveBtime = targetStx.stx_btime.tv_sec;
             }
@@ -114,8 +112,7 @@ SortInfoPointer createSortInfo(const QString &parentPath, const QString &fileNam
     info->setExecutable((effectiveMode & S_IXUSR) != 0);
     info->setLastReadTime(effectiveAtime);
     info->setLastModifiedTime(effectiveMtime);
-    // 创建时间：优先使用 birth time，否则回退到 ctime
-    info->setCreateTime(effectiveBtime > 0 ? effectiveBtime : effectiveCtime);
+    info->setCreateTime(effectiveBtime);
     info->setInfoCompleted(true);
     return info;
 }
