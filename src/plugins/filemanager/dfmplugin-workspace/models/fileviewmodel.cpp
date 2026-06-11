@@ -1083,12 +1083,13 @@ void FileViewModel::onHighlightReady(const QString &taskId, const QString &path,
 
 void FileViewModel::onFileUpdated(int show)
 {
-    auto view = qobject_cast<FileView *>(QObject::parent());
-    if (view) {
-        view->update(index(show, 0, rootIndex()));
-    } else {
-        Q_EMIT dataChanged(index(show, 0, rootIndex()), index(show, 0, rootIndex()));
-    }
+    // NOTE: Use dataChanged instead of view->update() here.
+    // - view->update() only schedules a repaint; it does NOT re-query sizeHint(),
+    //   so opt.rect passed to the delegate's paint() stays unchanged.
+    // - dataChanged() causes the view to both repaint AND recalculate item geometry,
+    //   so that sizeHint() is re-evaluated (e.g. when a file tag is added/removed
+    //   and the item height needs to change to accommodate the extra label).
+    Q_EMIT dataChanged(index(show, 0, rootIndex()), index(show, 0, rootIndex()));
 }
 
 void FileViewModel::onInsert(int firstIndex, int count)
