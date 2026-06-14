@@ -5305,7 +5305,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="385"/>
         <source>TPM status is abnormal, please use the recovery key to unlock it</source>
-        <translation>El estado del TPM es anormal, por favor, usa la clave de recuperación para desbloquearlo.</translation>
+        <translation>El estado del TPM es anormal, por favor, use la clave de recuperación para desbloquearlo.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="415"/>
@@ -6934,7 +6934,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="55"/>
         <source>Add Directory</source>
-        <translation>Agregar directorio</translation>
+        <translation>Añador directorio</translation>
     </message>
 </context>
 <context>
