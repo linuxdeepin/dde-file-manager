@@ -5850,7 +5850,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="50"/>
         <source>Once the files are copied, you can unplug the external drive without needing to &quot;Safely Remove&quot; it.</source>
-        <translation>Una vez copiados los archivos, puedes desconectar la unidad externa sin necesidad de &quot;Quitarla de forma segura&quot;.</translation>
+        <translation>Una vez copiados los archivos, puede desconectar la unidad externa sin necesidad de &quot;Quitarla de forma segura&quot;.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="61"/>
@@ -7982,7 +7982,7 @@ borre los archivos de esa carpeta e intente desbloquear la caja fuerte de nuevo.
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="369"/>
         <source>Failed to reset password. Please try again %1 minutes later</source>
-        <translation>No se pudo restablecer la contraseña. Inténtalo de nuevo %1 minutos después.</translation>
+        <translation>No se pudo restablecer la contraseña. Inténtelo de nuevo en %1 minutos.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="372"/>
