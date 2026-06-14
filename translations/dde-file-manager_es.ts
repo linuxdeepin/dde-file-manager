@@ -6934,7 +6934,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="55"/>
         <source>Add Directory</source>
-        <translation>Añador directorio</translation>
+        <translation>Añadir directorio</translation>
     </message>
 </context>
 <context>
