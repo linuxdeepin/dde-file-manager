@@ -8180,7 +8180,7 @@ borre los archivos de esa carpeta e intente desbloquear la caja fuerte de nuevo.
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="56"/>
         <source>Click &apos;Encrypt&apos; and input the user password.</source>
-        <translation>Haz clic en &quot;Cifrar&quot; e introduce la contraseña de usuario.</translation>
+        <translation>Haga clic en &quot;Cifrar&quot; e introduzca la contraseña de usuario.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="69"/>
