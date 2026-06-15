@@ -20,13 +20,14 @@ DPFILEOPERATIONS_BEGIN_NAMESPACE
  */
 struct FileNameComponents
 {
+    QUrl srcUrl;   // Source file url
     QString baseName;   // Base name without extension
     QString completeSuffix;   // File extension
     QString fileName;   // Complete file name
 
     FileNameComponents() = default;
-    FileNameComponents(const QString &base, const QString &ext, const QString &full)
-        : baseName(base), completeSuffix(ext), fileName(full) { }
+    FileNameComponents(const QUrl &url, const QString &base, const QString &ext, const QString &full)
+        : srcUrl(url), baseName(base), completeSuffix(ext), fileName(full) { }
 };
 
 /*!
