@@ -8,6 +8,7 @@
 #include <dfm-base/dfm_base_global.h>
 #include <dfm-base/interfaces/abstractjobhandler.h>
 #include <dfm-base/interfaces/fileinfo.h>
+#include <dfm-base/utils/iconutils.h>
 
 #include <DWaterProgress>
 #include <DIconButton>
@@ -86,8 +87,8 @@ private:
 
     QWidget *baseWid { nullptr };   // 基本信息widget
 
-    QLabel *lbSrcIcon { nullptr };   // 冲突widget上的源文件图标
-    QLabel *lbDstIcon { nullptr };   // 冲突widget上的目标文件图标
+    IconUtils::IconLabel *lbSrcIcon { nullptr };   // 冲突widget上的源文件图标
+    IconUtils::IconLabel *lbDstIcon { nullptr };   // 冲突widget上的目标文件图标
     bool createDestLabels { true };   // 冲突widget上创建目标文件的labels
     DTK_WIDGET_NAMESPACE::DLabel *lbSrcTitle { nullptr };   // 冲突widget上的源文件文件显示名称
     DTK_WIDGET_NAMESPACE::DLabel *lbDstTitle { nullptr };   // 冲突widget上的目标文件显示名称

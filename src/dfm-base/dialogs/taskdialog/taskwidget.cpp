@@ -471,9 +471,9 @@ QWidget *TaskWidget::createConflictWidget()
     QColor text_color = labelPalette.text().color();
     labelPalette.setColor(QPalette::Text, text_color);
 
-    lbSrcIcon = new QLabel();
+    lbSrcIcon = new IconUtils::IconLabel();
     lbSrcIcon->setFixedSize(48, 48);
-    lbSrcIcon->setScaledContents(true);
+    lbSrcIcon->setIconSize({ 48, 48 });
 
     lbSrcTitle = new DLabel();
     lbSrcTitle->setElideMode(Qt::ElideMiddle);
@@ -486,9 +486,9 @@ QWidget *TaskWidget::createConflictWidget()
     lbSrcFileSize->setFixedWidth(kFileSizeWidth);
     lbSrcFileSize->setPalette(labelPalette);
 
-    lbDstIcon = new QLabel();
+    lbDstIcon = new IconUtils::IconLabel();
     lbDstIcon->setFixedSize(48, 48);
-    lbDstIcon->setScaledContents(true);
+    lbDstIcon->setIconSize({ 48, 48 });
 
     lbDstTitle = new DLabel();
     lbDstTitle->setElideMode(Qt::ElideMiddle);
@@ -842,7 +842,7 @@ bool TaskWidget::showFileInfo(const FileInfoPointer info, const bool isOrg)
 
     if (!needRetry)
         info->customData(Global::ItemRoles::kItemFileRefreshIcon);
-    auto icon = thumImage.isNull() ? info->fileIcon().pixmap(48, 48) : QPixmap::fromImage(thumImage);
+    QIcon icon = thumImage.isNull() ? info->fileIcon() : QPixmap::fromImage(thumImage);
 
     auto modifyTimeStr = QString(tr("Time modified: %1"))
                                  .arg(info->timeOf(TimeInfoType::kLastModified).value<QDateTime>().isValid()
@@ -863,13 +863,13 @@ bool TaskWidget::showFileInfo(const FileInfoPointer info, const bool isOrg)
         sizeStr = QString(tr("Size: %1")).arg(info->extendAttributes(ExtInfoType::kSizeFormat).toString());
     }
     if (isOrg) {
-        lbSrcIcon->setPixmap(icon);
+        lbSrcIcon->setIcon(icon);
         lbSrcModTime->setText(modifyTimeStr);
         lbSrcTitle->setText(titleStr);
         lbSrcFileSize->setText(sizeStr);
         originInfo = needRetry ? info : nullptr;
     } else {
-        lbDstIcon->setPixmap(icon);
+        lbDstIcon->setIcon(icon);
         lbDstModTime->setText(modifyTimeStr);
         lbDstTitle->setText(titleStr);
         lbDstFileSize->setText(sizeStr);
