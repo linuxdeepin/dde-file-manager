@@ -80,7 +80,7 @@ FileNameComponents parseFileName(FileInfoPointer fileInfo)
         }
     }
 
-    FileNameComponents components(baseName, completeSuffix, fileName);
+    FileNameComponents components(fileInfo->urlOf(UrlInfoType::kUrl), baseName, completeSuffix, fileName);
 
     return components;
 }
@@ -244,12 +244,43 @@ QString generateUniqueSymlinkName(const FileNameComponents &components,
         return QString();
     }
 
+    // Calculate complete suffix length (including the dot separator)
+    // Total length = baseName + symlinkSuffix + completeSuffix <= NAME_MAX
+    const QString &completeSuffix = components.completeSuffix;
+    const int suffixLength = completeSuffix.isEmpty() ? 0 : completeSuffix.toLocal8Bit().size() + 1;   // +1 for '.'
+
+    // Get original baseName length for comparison (to avoid unnecessary truncation)
+    const int originalBaseNameLen = dfmbase::FileUtils::getFileNameLength(components.srcUrl, components.baseName);
+    const bool useCharCount = dfmbase::FileUtils::supportLongName(components.srcUrl);
+
     int number = 0;
     QString candidateName;
 
     do {
         const QString symlinkSuffix = generateSymlinkSuffix(number);
-        candidateName = constructSymlinkFileName(components, symlinkSuffix);
+        const int symlinkSuffixLen = dfmbase::FileUtils::getFileNameLength(components.srcUrl, symlinkSuffix);
+
+        // Calculate remaining space for baseName: NAME_MAX - symlinkSuffix - completeSuffix
+        const int remainingSpace = NAME_MAX - symlinkSuffixLen - suffixLength;
+
+        // Only truncate if necessary and if it would actually reduce the length
+        QString trimmedBaseName = components.baseName;
+        if (remainingSpace < originalBaseNameLen) {
+            if (remainingSpace > 0) {
+                trimmedBaseName = dfmbase::FileUtils::cutFileName(trimmedBaseName, remainingSpace, useCharCount);
+            } else {
+                // No space left for baseName after suffix — cannot generate a valid name
+                fmWarning() << "SymlinkNameGenerator: NAME_MAX too small for symlink naming"
+                            << ", symlinkSuffixLen:" << symlinkSuffixLen
+                            << ", suffixLength:" << suffixLength;
+                return QString();
+            }
+        }
+
+        FileNameComponents trimmedComponents = components;
+        trimmedComponents.baseName = trimmedBaseName;
+
+        candidateName = constructSymlinkFileName(trimmedComponents, symlinkSuffix);
         ++number;
 
         // Safety check to prevent infinite loops
@@ -316,6 +347,7 @@ QString generateNonConflictingSymlinkName(FileInfoPointer fromInfo, FileInfoPoin
         // Special case: displayName != fileName (e.g., desktop files)
         // Use displayName as baseName directly without extension parsing
         FileNameComponents components;
+        components.srcUrl = fromInfo->urlOf(UrlInfoType::kUrl);
         components.baseName = displayName;
         components.completeSuffix = QString();   // No extension for display names
         components.fileName = displayName;
@@ -350,8 +382,7 @@ QMap<QUrl, QUrl> generateFileRenameUrlsByBatchAddText(const QList<QUrl> &originU
         return QMap<QUrl, QUrl> {};
     }
 
-    if (addFlag != AbstractJobHandler::FileNameAddFlag::kPrefix &&
-        addFlag != AbstractJobHandler::FileNameAddFlag::kSuffix) {
+    if (addFlag != AbstractJobHandler::FileNameAddFlag::kPrefix && addFlag != AbstractJobHandler::FileNameAddFlag::kSuffix) {
         fmWarning() << "[BATCH_RENAME] Invalid FileNameAddFlag:" << static_cast<int>(addFlag);
         return QMap<QUrl, QUrl> {};
     }
