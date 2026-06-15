@@ -8,8 +8,11 @@
 
 #include <dfm-base/utils/windowutils.h>
 
+#include <DGuiApplicationHelper>
+
 #include <QAbstractTextDocumentLayout>
 
+DGUI_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_tag;
 
@@ -117,10 +120,9 @@ void TagEditor::initializeParameters()
     setMargin(0);
     setFixedWidth(140);
     setFocusPolicy(Qt::StrongFocus);
-    setBorderColor(palette().color(QPalette::Base));
-    setBackgroundColor(palette().color(QPalette::Base));
     setWindowFlags(Qt::FramelessWindowHint);
     setAttribute(Qt::WA_DeleteOnClose);
+    updateBackgroundColor();
 }
 
 void TagEditor::initializeLayout()
@@ -139,6 +141,7 @@ void TagEditor::initializeConnect()
 {
     QObject::connect(this, &TagEditor::windowDeactivate, this, &TagEditor::onFocusOut);
     QObject::connect(crumbEdit, &QTextEdit::textChanged, this, &TagEditor::filterInput);
+    QObject::connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged, this, &TagEditor::updateBackgroundColor);
 
     if (!isShowInTagDir) {
         QObject::connect(crumbEdit, &DCrumbEdit::crumbListChanged, this, [=] {
@@ -200,4 +203,10 @@ void TagEditor::updateCrumbsColor(const QMap<QString, QColor> &tagsColor)
     }
 
     crumbEdit->setProperty("updateCrumbsColor", false);
+}
+
+void TagEditor::updateBackgroundColor()
+{
+    setBorderColor(palette().color(QPalette::Base));
+    setBackgroundColor(palette().color(QPalette::Base));
 }

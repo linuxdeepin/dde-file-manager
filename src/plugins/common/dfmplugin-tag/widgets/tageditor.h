@@ -50,6 +50,7 @@ private:
 
     void processTags();
     void updateCrumbsColor(const QMap<QString, QColor> &tagsColor);
+    void updateBackgroundColor();
 
     void onPressESC() noexcept;
 
