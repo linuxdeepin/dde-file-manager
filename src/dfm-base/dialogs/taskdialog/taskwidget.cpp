@@ -344,7 +344,7 @@ void TaskWidget::onShowTaskProccess(const JobInfoPointer JobInfo)
     qint64 current = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kCurrentProgressKey).value<qint64>();
     qint64 total = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kTotalSizeKey).value<qint64>();
 
-    qint64 value = 1;
+    qint64 value = 0;
 
     if (total > 0 && current > 0) {
         value = static_cast<qint64>((static_cast<qreal>(current) / total) * 100);
