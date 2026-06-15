@@ -41,6 +41,7 @@ MultiFilePropertyDialog::~MultiFilePropertyDialog()
 void MultiFilePropertyDialog::initHeadUi()
 {
     iconLabel = new QLabel(this);
+    iconLabel->setFixedSize(128, 128);
     QIcon icon;
     icon.addFile(QString { ":/images/images/multiple_files.png" });
     icon.addFile(QString { ":/images/images/multiple_files@2x.png" });

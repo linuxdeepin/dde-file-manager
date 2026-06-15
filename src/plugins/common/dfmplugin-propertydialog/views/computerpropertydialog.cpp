@@ -61,11 +61,11 @@ void ComputerPropertyDialog::iniUI()
     } else {
         logoIcon = QIcon::fromTheme("dfm_deepin_logo");
     }
-    QSize iconSize(kIconWidth, kIconHeight);
-    qreal dpr = devicePixelRatioF(); // 或 qApp->devicePixelRatio()
-    QPixmap pixmap = logoIcon.pixmap(iconSize * dpr);
-    pixmap.setDevicePixelRatio(dpr);
-    computerIcon->setPixmap(pixmap);
+    const QSize iconSize(kIconWidth, kIconHeight);
+    const qreal dpr = devicePixelRatioF();
+    computerIcon->setFixedSize(iconSize);
+    computerIcon->setAlignment(Qt::AlignCenter);
+    computerIcon->setPixmap(logoIcon.pixmap(iconSize, dpr));
 
     basicInfo = new DLabel(tr("Basic Info"), this);
     DFontSizeManager::instance()->bind(basicInfo, DFontSizeManager::T5, QFont::DemiBold);
