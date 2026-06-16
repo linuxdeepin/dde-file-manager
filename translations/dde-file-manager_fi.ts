@@ -1914,12 +1914,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="100"/>
         <source>Transport endpoint is not connected</source>
-        <translation type="unfinished"/>
+        <translation>Siirron kohdetta ei ole yhdistetty</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="102"/>
         <source>Message too large</source>
-        <translation type="unfinished"/>
+        <translation>Viesti liian pitkä</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="104"/>
@@ -1929,17 +1929,17 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="106"/>
         <source>File open flag error</source>
-        <translation type="unfinished"/>
+        <translation>Tiedoston avaamisen lipussa virhe</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="108"/>
         <source>File info has no attribute</source>
-        <translation type="unfinished"/>
+        <translation>Tiedoston infolla ei ole attribuuttia</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="110"/>
         <source>Host is down</source>
-        <translation type="unfinished"/>
+        <translation>Kohde on alhaalla</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="112"/>
@@ -1954,7 +1954,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="10"/>
         <source>Generic error condition for when an operation fails and no more specific DFMIOErrorEnum value is defined</source>
-        <translation type="unfinished"/>
+        <translation>Virheehto, kun toiminto epäonnistuu eikä tarkempaa DFMIOErrorEnum-arvoa ole määritelty</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="62"/>
