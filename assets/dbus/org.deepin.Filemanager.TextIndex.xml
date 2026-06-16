@@ -23,10 +23,14 @@
     <method name="CreateIndexTask">
       <arg type="b" direction="out"/>
       <arg name="paths" type="as" direction="in"/>
+      <arg name="options" type="a{sv}" direction="in"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="QVariantMap"/>
     </method>
     <method name="UpdateIndexTask">
       <arg type="b" direction="out"/>
       <arg name="paths" type="as" direction="in"/>
+      <arg name="options" type="a{sv}" direction="in"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="QVariantMap"/>
     </method>
     <method name="StopCurrentTask">
       <arg type="b" direction="out"/>

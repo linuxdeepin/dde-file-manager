@@ -9,6 +9,7 @@
 
 #include <QObject>
 #include <QDBusPendingCallWatcher>
+#include <QVariantMap>
 #include <memory>
 
 class QDBusAbstractInterface;
@@ -40,7 +41,7 @@ public:
     explicit AbstractIndexClient(IndexClientDescriptor descriptor, QObject *parent = nullptr);
     ~AbstractIndexClient() override;
 
-    void startTask(TaskType type, const QStringList &paths);
+    void startTask(TaskType type, const QStringList &paths, const QVariantMap &options = QVariantMap());
     void checkIndexExists();
     void checkServiceStatus();
     void checkHasRunningRootTask();

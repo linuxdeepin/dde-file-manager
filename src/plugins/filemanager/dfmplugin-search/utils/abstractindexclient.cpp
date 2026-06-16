@@ -137,7 +137,7 @@ void AbstractIndexClient::handleIndexExistsReply(QDBusPendingCallWatcher *watche
     }
 }
 
-void AbstractIndexClient::startTask(TaskType type, const QStringList &paths)
+void AbstractIndexClient::startTask(TaskType type, const QStringList &paths, const QVariantMap &options)
 {
     if (!ensureInterface()) {
         fmCritical() << "[" << m_descriptor.clientName << "] cannot start task: interface unavailable";
@@ -158,8 +158,8 @@ void AbstractIndexClient::startTask(TaskType type, const QStringList &paths)
         return;
     }
 
-    fmDebug() << "[" << m_descriptor.clientName << "] sending" << method << "request for paths:" << paths;
-    auto watcher = new QDBusPendingCallWatcher(interface->asyncCall(method, QVariant::fromValue(paths)), this);
+    fmDebug() << "[" << m_descriptor.clientName << "] sending" << method << "request for paths:" << paths << "options:" << options;
+    auto watcher = new QDBusPendingCallWatcher(interface->asyncCall(method, QVariant::fromValue(paths), options), this);
     connect(watcher, &QDBusPendingCallWatcher::finished,
             this, [this, type, paths](QDBusPendingCallWatcher *watcher) {
                 FinallyUtil finaly([watcher]() {

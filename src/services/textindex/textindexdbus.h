@@ -11,6 +11,7 @@
 #include <QDBusContext>
 #include <QStringList>
 #include <QHash>
+#include <QVariantMap>
 
 SERVICETEXTINDEX_BEGIN_NAMESPACE
 class TextIndexDBusPrivate;
@@ -31,8 +32,8 @@ public Q_SLOTS:
     void Init();
     bool IsEnabled();
     void SetEnabled(bool enabled);
-    bool CreateIndexTask(const QStringList &paths);
-    bool UpdateIndexTask(const QStringList &paths);
+    bool CreateIndexTask(const QStringList &paths, const QVariantMap &options = QVariantMap());
+    bool UpdateIndexTask(const QStringList &paths, const QVariantMap &options = QVariantMap());
     bool StopCurrentTask();
     bool HasRunningTask();
     bool IndexDatabaseExists();

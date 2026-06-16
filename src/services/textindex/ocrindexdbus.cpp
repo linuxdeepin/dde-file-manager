@@ -194,14 +194,16 @@ void OcrIndexDBus::SetEnabled(bool enabled)
     d->runtime->fsEventController()->setEnabled(enabled);
 }
 
-bool OcrIndexDBus::CreateIndexTask(const QStringList &paths)
+bool OcrIndexDBus::CreateIndexTask(const QStringList &paths, const QVariantMap &options)
 {
-    return d->runtime->taskManager()->startTask(IndexTask::Type::Create, paths);
+    bool silent = options.value("silent", false).toBool();
+    return d->runtime->taskManager()->startTask(IndexTask::Type::Create, paths, silent);
 }
 
-bool OcrIndexDBus::UpdateIndexTask(const QStringList &paths)
+bool OcrIndexDBus::UpdateIndexTask(const QStringList &paths, const QVariantMap &options)
 {
-    return d->runtime->taskManager()->startTask(IndexTask::Type::Update, paths);
+    bool silent = options.value("silent", false).toBool();
+    return d->runtime->taskManager()->startTask(IndexTask::Type::Update, paths, silent);
 }
 
 bool OcrIndexDBus::StopCurrentTask()

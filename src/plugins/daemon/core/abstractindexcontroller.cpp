@@ -142,7 +142,7 @@ void AbstractIndexController::setupStateHandlers()
                 fmWarning() << "[" << m_descriptor.controllerName << "] Failed to check index database existence:"
                             << reply.error().message();
             } else {
-                startIndexTask(!reply.value());
+                startIndexTask(!reply.value(), true);
             }
             watcher->deleteLater();
         });
@@ -200,7 +200,7 @@ void AbstractIndexController::setupDBusConnections()
     fmInfo() << "[" << m_descriptor.controllerName << "] DBus connections established successfully";
 }
 
-void AbstractIndexController::startIndexTask(bool isCreate)
+void AbstractIndexController::startIndexTask(bool isCreate, bool silent)
 {
     if (!interface) {
         fmWarning() << "[" << m_descriptor.controllerName << "] Cannot start index task, DBus interface not available";
@@ -211,9 +211,11 @@ void AbstractIndexController::startIndexTask(bool isCreate)
     const QString method = isCreate ? QStringLiteral("CreateIndexTask") : QStringLiteral("UpdateIndexTask");
 
     fmInfo() << "[" << m_descriptor.controllerName << "] Starting" << (isCreate ? "CREATE" : "UPDATE")
-             << "index task for directory:" << paths;
+             << "index task for directory:" << paths << "silent:" << silent;
 
-    QDBusPendingCall pendingCall = interface->asyncCall(method, QVariant::fromValue(paths));
+    QVariantMap options;
+    options["silent"] = silent;
+    QDBusPendingCall pendingCall = interface->asyncCall(method, QVariant::fromValue(paths), options);
     auto *watcher = new QDBusPendingCallWatcher(pendingCall, this);
     connect(watcher, &QDBusPendingCallWatcher::finished, this, [this, watcher](QDBusPendingCallWatcher *) {
         QDBusPendingReply<bool> reply = *watcher;

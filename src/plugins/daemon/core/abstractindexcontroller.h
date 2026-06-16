@@ -10,6 +10,7 @@
 #include <QObject>
 #include <QTimer>
 #include <QScopedPointer>
+#include <QVariantMap>
 
 class QDBusAbstractInterface;
 
@@ -45,7 +46,7 @@ private:
 
     void setupStateHandlers();
     void setupDBusConnections();
-    void startIndexTask(bool isCreate);
+    void startIndexTask(bool isCreate, bool silent = false);
     void updateState(State newState);
     void handleConfigChanged(const QString &config, const QString &key);
     void activeBackend(bool isInit = false);
