@@ -499,7 +499,7 @@ QString TabBarPrivate::tabDisplayName(const QUrl &url) const
 
 QUrl TabBarPrivate::determineRedirectUrl(const QUrl &currentUrl, const QUrl &targetUrl) const
 {
-    const QUrl &defaultUrl = Application::instance()->appAttribute(Application::kUrlOfNewWindow).toUrl();
+    const QUrl &defaultUrl = Application::instance()->appUrlAttribute(Application::kUrlOfNewWindow);
 
     // BUG: 303643
     QString targetPath = targetUrl.toLocalFile();

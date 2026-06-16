@@ -344,7 +344,7 @@ void VirtualEntryMenuScenePrivate::actCptForget()
 
 void VirtualEntryMenuScenePrivate::gotoDefaultPageOnUnmount()
 {
-    const QUrl &defaultUrl = Application::instance()->appAttribute(Application::kUrlOfNewWindow).toUrl();
+    const QUrl &defaultUrl = Application::instance()->appUrlAttribute(Application::kUrlOfNewWindow);
     const auto &&winIds = FileManagerWindowsManager::instance().windowIdList();
     for (const auto &winId : winIds) {
         const auto &window = FileManagerWindowsManager::instance().findWindowById(winId);
