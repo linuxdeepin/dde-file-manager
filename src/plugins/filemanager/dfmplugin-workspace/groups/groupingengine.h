@@ -59,8 +59,8 @@ public:
     struct UpdateResult
     {
         GroupedModelData newData;   ///< The new model data
-        int pos;   ///< The position of the updated items
-        int count;   ///< The number of items in the update
+        int pos = 0;   ///< The position of the updated items
+        int count = 0;   ///< The number of items in the update
         bool success = false;   ///< Whether the operation succeeded
         bool alwaysUpdate = false;
     };
