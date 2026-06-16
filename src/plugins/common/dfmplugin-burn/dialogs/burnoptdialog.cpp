@@ -181,7 +181,7 @@ void BurnOptDialog::initializeUi()
     fsComb->setFont(f14);
 
     static const QString &udItem = BurnOptDialog::tr("%1 (Compatible with Windows CD/DVD mode)").arg(QString("U/D/F").remove("/"));
-    if (fsComb->count() == fsTypes.count() && DSysInfo::deepinType() == DSysInfo::DeepinProfessional)
+    if (fsComb->count() == fsTypes.count() && !DSysInfo::isCommunityEdition())
         fsComb->addItem(udItem);
 
     // 控制间距
@@ -307,7 +307,7 @@ void BurnOptDialog::onIndexChanged(int index)
         checkdiscCheckbox->setEnabled(false);
         checksumCheckbox->setChecked(false);
         checksumCheckbox->setEnabled(false);
-        finalizeDiscCheckbox->setChecked(true);
+        finalizeDiscCheckbox->setChecked(false);
         writespeedComb->setCurrentIndex(0);
         writespeedComb->setEnabled(false);
     } else {
