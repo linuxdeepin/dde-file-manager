@@ -65,7 +65,7 @@ QIcon CommonEntryFileEntity::icon() const
 bool CommonEntryFileEntity::exists() const
 {
     if (reflection() && hasMethod("exists")) {
-        bool isExists;
+        bool isExists = false;
         bool ret { QMetaObject::invokeMethod(reflectionObj, "exists",
                                              Qt::DirectConnection, Q_RETURN_ARG(bool, isExists)) };
         if (ret)
@@ -77,7 +77,7 @@ bool CommonEntryFileEntity::exists() const
 bool CommonEntryFileEntity::showProgress() const
 {
     if (reflection() && hasMethod("showProgress")) {
-        bool show;
+        bool show = false;
         bool ret { QMetaObject::invokeMethod(reflectionObj, "showProgress",
                                              Qt::DirectConnection, Q_RETURN_ARG(bool, show)) };
         if (ret)
@@ -89,7 +89,7 @@ bool CommonEntryFileEntity::showProgress() const
 bool CommonEntryFileEntity::showTotalSize() const
 {
     if (reflection() && hasMethod("showTotalSize")) {
-        bool show;
+        bool show = false;
         bool ret { QMetaObject::invokeMethod(reflectionObj, "showTotalSize",
                                              Qt::DirectConnection, Q_RETURN_ARG(bool, show)) };
         if (ret)
@@ -101,7 +101,7 @@ bool CommonEntryFileEntity::showTotalSize() const
 bool CommonEntryFileEntity::showUsageSize() const
 {
     if (reflection() && hasMethod("showUsageSize")) {
-        bool show;
+        bool show = false;
         bool ret { QMetaObject::invokeMethod(reflectionObj, "showUsageSize",
                                              Qt::DirectConnection, Q_RETURN_ARG(bool, show)) };
         if (ret)
