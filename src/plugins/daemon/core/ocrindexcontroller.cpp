@@ -18,7 +18,9 @@ IndexControllerDescriptor buildDescriptor()
 {
     return IndexControllerDescriptor {
         QStringLiteral("OcrIndexController"),
-        QStringLiteral("org.deepin.Filemanager.OcrIndex"),
+        // 使用 TextIndex 的 DBus 服务名，因为 TextIndex 和 OcrIndex 共用同一个插件进程
+        // plugin.cpp 中会同时注册 org.deepin.Filemanager.TextIndex 和 OcrIndex 两个服务
+        QStringLiteral("org.deepin.Filemanager.TextIndex"),
         QStringLiteral("/org/deepin/Filemanager/OcrIndex"),
         QString::fromLatin1(kSearchCfgPath),
         QString::fromLatin1(kEnableOcrTextSearch),

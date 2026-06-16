@@ -13,9 +13,15 @@
 #include <QDBusPendingReply>
 #include <QDBusReply>
 #include <QDir>
+#include <QTimer>
+
+#include <mutex>
 
 DFMBASE_USE_NAMESPACE
 DAEMONPCORE_BEGIN_NAMESPACE
+
+// 保护插件服务只被启动一次，两个控制器共享同一个进程
+static std::once_flag s_pluginStartupOnceFlag;
 
 AbstractIndexController::AbstractIndexController(IndexControllerDescriptor descriptor, QObject *parent)
     : QObject(parent),
@@ -167,10 +173,13 @@ void AbstractIndexController::setupDBusConnections()
 {
     fmDebug() << "[" << m_descriptor.controllerName << "] Setting up DBus connections to index service";
 
-    QDBusConnectionInterface *sessionBusIface = QDBusConnection::sessionBus().interface();
-    if (sessionBusIface) {
-        sessionBusIface->startService(m_descriptor.dbusServiceName);
-    }
+    // TextIndex 和 OcrIndex 共用同一个插件进程，只需其中一个控制器启动服务即可
+    std::call_once(s_pluginStartupOnceFlag, [this]() {
+        QDBusConnectionInterface *sessionBusIface = QDBusConnection::sessionBus().interface();
+        if (sessionBusIface) {
+            sessionBusIface->startService(m_descriptor.dbusServiceName);
+        }
+    });
 
     if (!m_descriptor.interfaceFactory) {
         fmWarning() << "[" << m_descriptor.controllerName << "] Missing DBus interface factory";
@@ -183,10 +192,10 @@ void AbstractIndexController::setupDBusConnections()
         return;
     }
 
-    connect(interface.data(), SIGNAL(TaskFinished(QString,QString,bool)),
-            this, SLOT(onTaskFinished(QString,QString,bool)));
-    connect(interface.data(), SIGNAL(TaskProgressChanged(QString,QString,qlonglong,qlonglong)),
-            this, SLOT(onTaskProgressChanged(QString,QString,qlonglong,qlonglong)));
+    connect(interface.data(), SIGNAL(TaskFinished(QString, QString, bool)),
+            this, SLOT(onTaskFinished(QString, QString, bool)));
+    connect(interface.data(), SIGNAL(TaskProgressChanged(QString, QString, qlonglong, qlonglong)),
+            this, SLOT(onTaskProgressChanged(QString, QString, qlonglong, qlonglong)));
 
     fmInfo() << "[" << m_descriptor.controllerName << "] DBus connections established successfully";
 }
@@ -252,10 +261,16 @@ void AbstractIndexController::activeBackend(bool isInit)
     }
 
     if (isInit) {
-        interface->asyncCall(QStringLiteral("Init"));
+        // 延迟 2s 后发送 Init/SetEnabled，等待插件服务真正启动注册完成
+        QTimer::singleShot(2000, this, [this]() {
+            if (interface) {
+                interface->asyncCall(QStringLiteral("Init"));
+                interface->asyncCall(QStringLiteral("SetEnabled"), isConfigEnabled);
+            }
+        });
+    } else {
+        interface->asyncCall(QStringLiteral("SetEnabled"), isConfigEnabled);
     }
-
-    interface->asyncCall(QStringLiteral("SetEnabled"), isConfigEnabled);
 }
 
 void AbstractIndexController::keepBackendAlive()
