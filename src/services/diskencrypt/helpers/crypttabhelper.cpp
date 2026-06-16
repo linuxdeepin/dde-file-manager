@@ -8,6 +8,7 @@
 #include "inhibithelper.h"
 
 #include <QFile>
+#include <QProcess>
 #include <QRegularExpression>
 #include <QtConcurrent>
 
@@ -238,19 +239,52 @@ void crypttab_helper::saveCryptItems(const QList<CryptItem> &items, bool doUpdat
 
 void crypttab_helper::updateInitramfs()
 {
-    qInfo() << "[crypttab_helper::updateInitramfs] Starting initramfs update process";
-    
-    // QtConcurrent::run([]{
-    auto fd = inhibit_helper::inhibit("Updating initramfs...");
-    qInfo() << "[crypttab_helper::updateInitramfs] System shutdown/sleep inhibited for initramfs update";
-    
-    int ret = std::system("sudo -E /sbin/update-initramfs -u");
-    if (ret != 0) {
-        qCritical() << "[crypttab_helper::updateInitramfs] Failed to update initramfs, error code:" << ret;
+    static constexpr char kSudoCmd[] { "/usr/bin/sudo" };
+    static constexpr char kUpdateInitramfsCmd[] { "/sbin/update-initramfs" };
+
+    qInfo() << "[crypttab_helper::updateInitramfs] Executing update-initramfs via QProcess";
+
+    auto inhibitReply = inhibit_helper::inhibit("Updating initramfs...");
+
+    QDBusUnixFileDescriptor inhibitFd;
+
+    if (inhibitReply.isValid()) {
+        inhibitFd = inhibitReply.value();
+        qInfo() << "[crypttab_helper::updateInitramfs] Inhibit lock acquired, fd:" << inhibitFd.fileDescriptor();
+    } else {
+        qWarning() << "[crypttab_helper::updateInitramfs] Failed to acquire inhibit lock:" << inhibitReply.error().message();
+    }
+
+    QProcess process;
+    process.start(kSudoCmd, QStringList() << "-E" << kUpdateInitramfsCmd << "-u");
+
+    if (!process.waitForStarted()) {
+        qCritical() << "[crypttab_helper::updateInitramfs] Failed to start process:"
+                    << process.errorString() << "Error code:" << process.error();
+        return;
+    }
+
+    if (!process.waitForFinished(300000)) {
+        qCritical() << "[crypttab_helper::updateInitramfs] Process timed out or failed to finish";
+        process.kill();
+        return;
+    }
+
+    int exitCode = process.exitCode();
+    QString stdOut = QString::fromLocal8Bit(process.readAllStandardOutput());
+    QString stdErr = QString::fromLocal8Bit(process.readAllStandardError());
+
+    qInfo() << "[crypttab_helper::updateInitramfs] exit code:" << exitCode;
+    if (!stdOut.isEmpty())
+        qInfo() << "[crypttab_helper::updateInitramfs] stdout:" << stdOut;
+    if (!stdErr.isEmpty())
+        qWarning() << "[crypttab_helper::updateInitramfs] stderr:" << stdErr;
+
+    if (exitCode != 0) {
+        qCritical() << "[crypttab_helper::updateInitramfs] Failed with exit code:" << exitCode;
     } else {
         qInfo() << "[crypttab_helper::updateInitramfs] Initramfs updated successfully";
     }
-    // });
 }
 
 bool crypttab_helper::removeCryptItem(const QString &activeName)
