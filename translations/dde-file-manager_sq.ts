@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="sq">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="sq">
 <context>
     <name>AccessControlDBus</name>
     <message>
@@ -619,7 +617,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="39"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="39"/>
         <source>Extend filename characters</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="40"/>
@@ -1810,117 +1808,117 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="54"/>
         <source>Backup couldn&apos;t be created</source>
-        <translation type="unfinished"></translation>
+        <translation>S’u arrit të krijohej kopjeruajtje</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="56"/>
         <source>File&apos;s Entity Tag was incorrect</source>
-        <translation type="unfinished"></translation>
+        <translation>Etiketa Entity për kartelën qe e pasaktë</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="60"/>
         <source>Operation would be recursive</source>
-        <translation type="unfinished"></translation>
+        <translation>Veprimi do të ishte rekursiv</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="64"/>
         <source>Operation would block</source>
-        <translation type="unfinished"></translation>
+        <translation>Veprimi do të bllokonte</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="66"/>
         <source>Host couldn&apos;t be found (remote operations)</source>
-        <translation type="unfinished"></translation>
+        <translation>S’u gjet dot strehë (veprime së largëti)</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="68"/>
         <source>Operation would merge files</source>
-        <translation type="unfinished"></translation>
+        <translation>Veprimi do të përziente kartela</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="70"/>
         <source>The current process has too many files open and can&apos;t open any more. Duplicate descriptors do count toward this limit</source>
-        <translation type="unfinished"></translation>
+        <translation>Procesi i tanishëm ka shumë kartela hapur dhe s’mund të hapë më tepër. Drejt këtij kufiri merren parasysh përshkrues të përsëdytur</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="72"/>
         <source>The object has not been initialized</source>
-        <translation type="unfinished"></translation>
+        <translation>Objekti s’është bërë gati</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="74"/>
         <source>The requested address is already in use</source>
-        <translation type="unfinished"></translation>
+        <translation>Adresa e kërkuar është tashmë në përdorim</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="76"/>
         <source>Need more input to finish operation</source>
-        <translation type="unfinished"></translation>
+        <translation>Që të përfundojë veprimi, lypset të jepen më tepër gjëra</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="78"/>
         <source>The input data was invalid</source>
-        <translation type="unfinished"></translation>
+        <translation>Të dhënat për ç’u dha qenë të pavlefshme</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="80"/>
         <source>A remote object generated an error(dbus)</source>
-        <translation type="unfinished"></translation>
+        <translation>Një objekt i largët prodhoi një gabim (dbus)</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="82"/>
         <source>Host unreachable</source>
-        <translation type="unfinished"></translation>
+        <translation>Strehë e pakapshme</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="84"/>
         <source>Network unreachable</source>
-        <translation type="unfinished"></translation>
+        <translation>S’kapet dot rrjet</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="86"/>
         <source>Connection refused</source>
-        <translation type="unfinished"></translation>
+        <translation>Lidhje e mohuar</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="88"/>
         <source>Connection to proxy server failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Lidhja te shërbyesi ndërmjetës dështoi</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="90"/>
         <source>Proxy authentication failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Mirëfilltësimi i ndërmjetësit dështoi</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="92"/>
         <source>Proxy server needs authentication</source>
-        <translation type="unfinished"></translation>
+        <translation>Shërbyesi ndërmjetës lyp mirëfilltësim</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="94"/>
         <source>Proxy connection is not allowed by ruleset</source>
-        <translation type="unfinished"></translation>
+        <translation>Lidhja te ndërmjetës nuk lejohet nga një grup rregullash</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="96"/>
         <source>Broken pipe</source>
-        <translation type="unfinished"></translation>
+        <translation>Kanal i dëmtuar</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="98"/>
         <source>Connection closed by peer</source>
-        <translation type="unfinished"></translation>
+        <translation>Lidhje e mbyllur nga ana tjetër</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="100"/>
         <source>Transport endpoint is not connected</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="102"/>
         <source>Message too large</source>
-        <translation type="unfinished"></translation>
+        <translation>Mesazh shumë i madh</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="104"/>
@@ -1930,17 +1928,17 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="106"/>
         <source>File open flag error</source>
-        <translation type="unfinished"></translation>
+        <translation>Gabim parametri kartelë hapur</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="108"/>
         <source>File info has no attribute</source>
-        <translation type="unfinished"></translation>
+        <translation>Hollësitë e kartelës s’kanë atribut</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="110"/>
         <source>Host is down</source>
-        <translation type="unfinished"></translation>
+        <translation>Streha është jashtë funksionimi</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="112"/>
@@ -1955,7 +1953,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="10"/>
         <source>Generic error condition for when an operation fails and no more specific DFMIOErrorEnum value is defined</source>
-        <translation type="unfinished"></translation>
+        <translation>Kusht gabimi të rëndomtë, për rast kur veprimi dështon dhe s’ka të përcaktuar vlerë më specifike DFMIOErrorEnum</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="62"/>
@@ -4052,12 +4050,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="191"/>
         <source>create source file %1 Info failed in show conflict Info function!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="201"/>
         <source>create target file %1 Info failed in show conflict Info function!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="847"/>
@@ -4519,7 +4517,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/computer.cpp" line="184"/>
         <source>Computer display items</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/computer.cpp" line="186"/>
@@ -5584,22 +5582,22 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="729"/>
         <source>Partition Encryption Non-Reboot Mode Enabled</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="730"/>
         <source>Partition Encryption Non-Reboot Mode has been enabled successfully. Please reboot your system for the changes to take effect. After reboot, partition encryption operations will not require system restart.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="734"/>
         <source>Partition Encryption Non-Reboot Mode Disabled</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="735"/>
         <source>Partition Encryption Non-Reboot Mode has been disabled successfully. Please reboot your system for the changes to take effect. After reboot, partition encryption operations will require system restart.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="743"/>
@@ -5609,12 +5607,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="745"/>
         <source>Failed to enable Partition Encryption Non-Reboot Mode. The system may not support this feature or encountered an error during initramfs update.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="748"/>
         <source>Failed to disable Partition Encryption Non-Reboot Mode. An error occurred during initramfs update.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="760"/>
@@ -6662,7 +6660,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="27"/>
         <source>Enable to build the file index immediately for faster file name searches</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktivizojeni, për ta krijuar treguesin e kartelave menjëherë, për kërkime më të shpejta emrash kartelash</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="28"/>
@@ -6699,7 +6697,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="240"/>
         <source>If turned off, file searches will traverse the file system and severely reduce search speed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Në qoftë i çaktivizuar, kërkime kartelash do të përshkojnë sistemin e kartelave dhe do të reduktojnë rëndë shpejtësinë e kërkimeve.</translation>
     </message>
 </context>
 <context>
@@ -6707,7 +6705,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthocrindex.cpp" line="16"/>
         <source>Enable to search text in images</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktivizojeni, që të kërkohet tekst te figura</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthocrindex.cpp" line="17"/>
@@ -6809,7 +6807,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="211"/>
         <source>Image-Content search</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7011,7 +7009,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="309"/>
         <source>Unable to favorite illegitimate url!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="366"/>
@@ -9083,7 +9081,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="363"/>
         <source>Foreground:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="378"/>
@@ -9098,7 +9096,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="403"/>
         <source>HighlightForeground:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="419"/>
