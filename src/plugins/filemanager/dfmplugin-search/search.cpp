@@ -68,8 +68,15 @@ void Search::initialize()
             // Reuse the retriever in the worker thread to avoid rebuilding it
             // for every highlight request.
             thread_local DFMSEARCH::ContentRetriever retriever;
+
+            DFMSEARCH::HighlightOptions opts;
+            int posLen = HighlightProvider::instance()->positioningMaxLength();
+            if (posLen > 0)
+                opts.positioningMaxLength = posLen;
+
             return retriever.fetchHighlight(path, keyword,
-                                            static_cast<DFMSEARCH::SearchType>(searchType));
+                                            static_cast<DFMSEARCH::SearchType>(searchType),
+                                            opts);
         });
 
     bindEvents();
@@ -256,6 +263,10 @@ void Search::bindEvents()
                                    SearchEventReceiverIns, &SearchEventReceiver::handleFileDelete);
     dpfSignalDispatcher->subscribe("dfmplugin_fileoperations", "signal_File_Rename",
                                    SearchEventReceiverIns, &SearchEventReceiver::handleFileRename);
+
+    // URL 切换时根据列宽更新 highlight 定位窗口大小
+    dpfSignalDispatcher->subscribe(GlobalEventType::kChangeCurrentUrl,
+                                   SearchEventReceiverIns, &SearchEventReceiver::handleUrlChanged);
 
     // connect self slot events
     static constexpr auto selfSpace { DPF_MACRO_TO_STR(DPSEARCH_NAMESPACE) };

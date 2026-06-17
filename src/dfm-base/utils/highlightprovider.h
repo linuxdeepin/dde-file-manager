@@ -32,6 +32,12 @@ public:
     // 注入实际的 fetchHighlight 实现（由 search 插件调用）
     void setFetchCallback(FetchHighlightCallback cb);
 
+    // 设置 highlight 的定位窗口大小（字符数），由视图层根据列宽动态设置
+    // 0 表示使用 ContentRetriever 内置默认值
+    // 线程安全：使用 atomic 保证 worker thread 无锁读取
+    void setPositioningMaxLength(int chars);
+    int positioningMaxLength() const;
+
     // 请求单个文件的 highlightContent
     // highPriority: true 表示可见区域请求，插入队列头部优先处理
     void requestHighlight(const QString &taskId, const QString &path,
@@ -61,6 +67,7 @@ private:
     ~HighlightProvider() override;
 
     FetchHighlightCallback fetchCallback;
+    std::atomic<int> m_positioningMaxLength{0};
     QThread *workerThread = nullptr;
     QObject *worker = nullptr;   // 工作线程上的占位 QObject（用于槽函数调度）
 
