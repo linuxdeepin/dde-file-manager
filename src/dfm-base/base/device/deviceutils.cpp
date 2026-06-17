@@ -328,33 +328,29 @@ bool DeviceUtils::parseSmbInfo(const QString &smbPath, QString &host, QString &s
 
 QMap<QString, QString> DeviceUtils::fstabBindInfo()
 {
-    // TODO(perf) this costs times when first painting. most of the time is spent on function 'stat'
-    static QMutex mutex;
-    static QMap<QString, QString> table;
-    struct stat statInfo;
-    int result = stat("/etc/fstab", &statInfo);
+    static QMap<QString, QString> *table = new QMap<QString, QString>;
+    static std::once_flag flag;
 
-    QMutexLocker locker(&mutex);
-    if (0 == result) {
-        static quint32 lastModify = 0;
-        if (lastModify != statInfo.st_mtime) {
-            lastModify = static_cast<quint32>(statInfo.st_mtime);
-            table.clear();
-            struct fstab *fs;
+    std::call_once(flag, []() {
+        qCDebug(logDFMBase) << "fstabBindInfo: initializing...";
 
-            setfsent();
-            while ((fs = getfsent()) != nullptr) {
-                QString mntops(fs->fs_mntops);
-                if (mntops.contains("bind"))
-                    table.insert(fs->fs_spec, fs->fs_file);
+        struct fstab *fs;
+        setfsent();
+        while ((fs = getfsent()) != nullptr) {
+            QString mntops(fs->fs_mntops);
+            // 检查 options 是否包含 "bind"
+            if (mntops.contains("bind")) {
+                QString spec(fs->fs_spec);   // 源路径（如 /home）
+                QString file(fs->fs_file);   // 挂载点（如 /mnt/bind_home）
+                table->insert(spec, file);   // 正向映射：源 → 挂载点
             }
-            endfsent();
         }
-    }
+        endfsent();
+        qCDebug(logDFMBase) << "fstabBindInfo: initialized with" << table->size() << "bind mount entries";
+    });
 
-    return table;
+    return *table;
 }
-
 QString DeviceUtils::nameOfBuiltInDisk(const QVariantMap &datas)
 {
     QVariantMap clearInfo = datas.value(BlockAdditionalProperty::kClearBlockProperty).toMap();
