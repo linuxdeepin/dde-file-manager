@@ -1,3 +1,21 @@
+dde-file-manager (6.5.143) unstable; urgency=medium
+
+  * fix: optimize icon display handling in property dialogs
+  * refactor: optimize plugin service initialization and DBus handling
+  * feat: add silent mode for index tasks
+  * fix: adjust filesystem option logic for professional edition
+  * refactor: improve initramfs update process reliability
+  * refactor: replace appAttribute with appUrlAttribute
+  * feat: add dynamic highlight positioning adjustment
+  * fix: initialize uninitialized bool variables in CommonEntryFileEntity and UpdateResult
+  * fix: set initial progress value to 0
+  * fix: update tag editor background on theme change
+  * feat: add theme-aware icon labels in task conflict widget
+  * chore: update translations
+  * feat: truncate base name for symlinks to respect NAME_MAX limit on dlnfs
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Wed, 17 Jun 2026 17:26:47 +0800
+
 dde-file-manager (6.5.142) unstable; urgency=medium
 
   * fix: replace system calls with QProcess for filesystem operations

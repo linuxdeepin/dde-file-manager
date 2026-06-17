@@ -563,5 +563,7 @@ int WorkspaceEventReceiver::handleGetColumnWidth(quint64 windowId, DFMBASE_NAMES
         return 0;
 
     int column = view->model()->getColumnByRole(role);
+    if (column < 0)
+        return 0;
     return view->getColumnWidth(column);
 }

@@ -100,7 +100,8 @@ void SearchEventReceiver::handleUrlChanged(quint64 winId, const QUrl &url)
         if (nameColWidth <= 0)
             return;
 
-        int avgCharWidth = qMax(11, QApplication::font().pointSize());
+        int width = QFontMetrics(QApplication::font()).averageCharWidth();
+        int avgCharWidth = qMax(11, width);
         int posLen = qMax(30, nameColWidth / avgCharWidth);
         HighlightProvider::instance()->setPositioningMaxLength(posLen);
     });
