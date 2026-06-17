@@ -141,6 +141,8 @@ void WorkspaceEventReceiver::initConnection()
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleRegisterDataCache);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_View_AboutToChangeViewWidth",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleAboutToChangeViewWidth);
+    dpfSlotChannel->connect(kCurrentEventSpace, "slot_View_GetColumnWidth",
+                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleGetColumnWidth);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_Model_RegisterLoadStrategy",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleRegisterLoadStrategy);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_Model_GetCurrentBusy",
@@ -548,4 +550,18 @@ bool WorkspaceEventReceiver::handleGetCurrentModelBusy(quint64 windowId)
     bool isBusy = view->model()->currentState() == ModelState::kBusy;
     fmDebug() << "WorkspaceEventReceiver: Current view busy state:" << isBusy << "for window ID:" << windowId;
     return isBusy;
+}
+
+int WorkspaceEventReceiver::handleGetColumnWidth(quint64 windowId, DFMBASE_NAMESPACE::Global::ItemRoles role)
+{
+    WorkspaceWidget *workspaceWidget = WorkspaceHelper::instance()->findWorkspaceByWindowId(windowId);
+    if (!workspaceWidget)
+        return 0;
+
+    auto *view = dynamic_cast<FileView *>(workspaceWidget->currentView());
+    if (!view || !view->model())
+        return 0;
+
+    int column = view->model()->getColumnByRole(role);
+    return view->getColumnWidth(column);
 }

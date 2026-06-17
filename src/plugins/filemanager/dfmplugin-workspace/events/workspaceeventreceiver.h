@@ -78,6 +78,7 @@ public slots:
     void handleRegisterDataCache(const QString &scheme);
     void handleSetAlwaysOpenInCurrentWindow(const quint64 windowID);
     void handleAboutToChangeViewWidth(const quint64 windowID, int deltaWidth);
+    int handleGetColumnWidth(quint64 windowId, DFMBASE_NAMESPACE::Global::ItemRoles role);
 
     void handleTabCreated(const quint64 windowId, const QString &uniqueId);
     void handleTabRemoved(const quint64 windowId, const QString &removedId, const QString &nextId);

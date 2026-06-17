@@ -28,6 +28,7 @@ public slots:
     void handleFileAdd(const QUrl &url);
     void handleFileDelete(const QUrl &url);
     void handleFileRename(const QUrl &oldUrl, const QUrl &newUrl);
+    void handleUrlChanged(quint64 winId, const QUrl &url);
 
 private:
     explicit SearchEventReceiver(QObject *parent = nullptr);

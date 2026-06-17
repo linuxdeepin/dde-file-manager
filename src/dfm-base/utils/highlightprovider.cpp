@@ -49,6 +49,16 @@ void HighlightProvider::setFetchCallback(FetchHighlightCallback cb)
     fetchCallback = std::move(cb);
 }
 
+void HighlightProvider::setPositioningMaxLength(int chars)
+{
+    m_positioningMaxLength.store(chars, std::memory_order_release);
+}
+
+int HighlightProvider::positioningMaxLength() const
+{
+    return m_positioningMaxLength.load(std::memory_order_acquire);
+}
+
 void HighlightProvider::requestHighlight(const QString &taskId, const QString &path,
                                           const QString &keyword, int searchType,
                                           bool highPriority)

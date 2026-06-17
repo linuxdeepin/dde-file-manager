@@ -10,8 +10,17 @@
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/utils/networkutils.h>
 #include <dfm-base/utils/protocolutils.h>
+#include <dfm-base/utils/highlightprovider.h>
+#include <dfm-base/dfm_global_defines.h>
+
+#include <dfm-framework/dpf.h>
+
+#include <QFont>
+#include <QFontMetrics>
+#include <QTimer>
 
 DFMBASE_USE_NAMESPACE
+
 namespace dfmplugin_search {
 
 dfmplugin_search::SearchEventReceiver *dfmplugin_search::SearchEventReceiver::instance()
@@ -74,6 +83,27 @@ void SearchEventReceiver::handleFileDelete(const QUrl &url)
 void SearchEventReceiver::handleFileRename(const QUrl &oldUrl, const QUrl &newUrl)
 {
     emit SearchManager::instance()->fileRename(oldUrl, newUrl);
+}
+
+void SearchEventReceiver::handleUrlChanged(quint64 winId, const QUrl &url)
+{
+    if (url.scheme() != SearchHelper::scheme())
+        return;
+
+    // 延迟到下一事件循环：此时视图已创建完成，列宽已调整
+    QTimer::singleShot(0, this, [winId] {
+        int nameColWidth = dpfSlotChannel->push("dfmplugin_workspace",
+                                                "slot_View_GetColumnWidth",
+                                                winId,
+                                                DFMGLOBAL_NAMESPACE::kItemFileDisplayNameRole)
+                                   .value<int>();
+        if (nameColWidth <= 0)
+            return;
+
+        int avgCharWidth = qMax(11, QApplication::font().pointSize());
+        int posLen = qMax(30, nameColWidth / avgCharWidth);
+        HighlightProvider::instance()->setPositioningMaxLength(posLen);
+    });
 }
 
 SearchEventReceiver::SearchEventReceiver(QObject *parent)
