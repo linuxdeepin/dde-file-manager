@@ -47,6 +47,7 @@ inline constexpr char kKeyOperationResult[] { "operation-result" };
 inline constexpr char kKeyRecoveryKey[] { "recovery-key" };
 inline constexpr char kKeyJobType[] { "job-type" };
 inline constexpr char kKeyValidateWithRecKey[] { "validate-with-reckey" };
+inline constexpr char kKeySecType[] { "sec-type" };
 }   // namespace encrypt_param_keys
 
 inline const QStringList kDisabledEncryptPath {

@@ -33,6 +33,7 @@
 static constexpr char kActionEncrypt[] { "org.deepin.Filemanager.DiskEncrypt.Encrypt" };
 static constexpr char kActionDecrypt[] { "org.deepin.Filemanager.DiskEncrypt.Decrypt" };
 static constexpr char kActionChgPwd[] { "org.deepin.Filemanager.DiskEncrypt.ChangePassphrase" };
+static constexpr char kActionChgPIN[] { "org.deepin.Filemanager.DiskEncrypt.ChangePIN" };
 
 FILE_ENCRYPT_USE_NS
 
@@ -161,15 +162,16 @@ bool DiskEncryptSetup::ChangePassphrase(const QDBusUnixFileDescriptor &credentia
 {
     qInfo() << "[DiskEncryptSetup::ChangePassphrase] Passphrase change request received via fd";
 
-    if (!m_dptr->checkAuth(kActionChgPwd)) {
-        qWarning() << "[DiskEncryptSetup::ChangePassphrase] Authentication failed for passphrase change action";
-        return false;
-    }
-
     // Parse credentials from fd using common method
     QVariantMap args;
     if (!m_dptr->parseCredentialsFromFd(credentialsFd, &args)) {
         qCritical() << "[DiskEncryptSetup::ChangePassphrase] Failed to parse credentials from fd";
+        return false;
+    }
+
+    auto secType = static_cast<disk_encrypt::SecKeyType>(args.value(disk_encrypt::encrypt_param_keys::kKeySecType).toInt());
+    if (!m_dptr->checkAuth(secType == disk_encrypt::kPin ? kActionChgPIN : kActionChgPwd)) {
+        qWarning() << "[DiskEncryptSetup::ChangePassphrase] Authentication failed for passphrase change action";
         return false;
     }
 

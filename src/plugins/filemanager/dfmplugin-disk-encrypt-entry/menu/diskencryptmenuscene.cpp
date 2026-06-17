@@ -519,7 +519,8 @@ void DiskEncryptMenuScene::doChangePassphrase(const DeviceEncryptParam &param)
         { encrypt_param_keys::kKeyOldPassphrase, toBase64(param.key) },
         { encrypt_param_keys::kKeyValidateWithRecKey, param.validateByRecKey },
         { encrypt_param_keys::kKeyTPMToken, token },
-        { encrypt_param_keys::kKeyDeviceName, param.deviceDisplayName }
+        { encrypt_param_keys::kKeyDeviceName, param.deviceDisplayName },
+        { encrypt_param_keys::kKeySecType, param.secType }
     };
     stream << params;
 
