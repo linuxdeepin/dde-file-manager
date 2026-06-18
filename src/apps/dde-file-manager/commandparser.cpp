@@ -93,6 +93,17 @@ QString CommandParser::value(const QString &name) const
 
 void CommandParser::processCommand()
 {
+    // Apply XDG activation token for Wayland/Treeland before any window operation.
+    // The compositor provides this token via D-Bus StartupId to allow the window
+    // to be properly activated on Wayland where applications cannot raise themselves.
+    if (isSet("activation-token")) {
+        const QString &token = value("activation-token");
+        if (!token.isEmpty()) {
+            qputenv("XDG_ACTIVATION_TOKEN", token.toUtf8());
+            qCInfo(logAppFileManager) << "Set XDG_ACTIVATION_TOKEN for Wayland activation:" << token;
+        }
+    }
+
     if (isSet("d")) {
         qCInfo(logAppFileManager) << "Starting file manager in headless mode";
         dpfSignalDispatcher->publish(GlobalEventType::kHeadlessStarted);
@@ -190,6 +201,9 @@ void CommandParser::initOptions()
     QCommandLineOption sessionOption(QStringList() << "s"
                                                    << "sessionfile",
                                      "support session loader");
+    QCommandLineOption activationTokenOption(QStringList() << "activation-token",
+                                             "XDG activation token for Wayland/Treeland window activation",
+                                             "token");
 
     addOption(newWindowOption);
     addOption(backendOption);
@@ -203,6 +217,7 @@ void CommandParser::initOptions()
     addOption(openWithDialog);
     addOption(openHomeOption);
     addOption(sessionOption);
+    addOption(activationTokenOption);
 }
 
 void CommandParser::addOption(const QCommandLineOption &option)

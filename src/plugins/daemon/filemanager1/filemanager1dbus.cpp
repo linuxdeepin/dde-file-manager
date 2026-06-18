@@ -33,15 +33,19 @@ FileManager1DBus::FileManager1DBus(QObject *parent)
  */
 void FileManager1DBus::ShowFolders(const QStringList &URIs, const QString &StartupId)
 {
-    Q_UNUSED(StartupId)
-    fmInfo() << "[FileManager1DBus] ShowFolders request - URIs:" << URIs;
+    fmInfo() << "[FileManager1DBus] ShowFolders request - URIs:" << URIs << "StartupId:" << StartupId;
 
-    if (QProcess::startDetached("file-manager.sh", QStringList() << "--raw" << URIs)) {
+    QStringList args { "--raw" };
+    args << URIs;
+    if (!StartupId.isEmpty())
+        args << "--activation-token" << StartupId;
+
+    if (QProcess::startDetached("file-manager.sh", args)) {
         fmDebug() << "[FileManager1DBus] ShowFolders launched via file-manager.sh";
         return;
     }
 
-    if (QProcess::startDetached(DFM_FILE_MANAGER_BINARY, QStringList() << "--raw" << URIs)) {
+    if (QProcess::startDetached(DFM_FILE_MANAGER_BINARY, args)) {
         fmDebug() << "[FileManager1DBus] ShowFolders launched via dde-file-manager binary";
     } else {
         fmWarning() << "[FileManager1DBus] Failed to launch file manager for ShowFolders request";
@@ -54,17 +58,19 @@ void FileManager1DBus::ShowFolders(const QStringList &URIs, const QString &Start
  */
 void FileManager1DBus::ShowItemProperties(const QStringList &URIs, const QString &StartupId)
 {
-    Q_UNUSED(StartupId)
-    fmInfo() << "[FileManager1DBus] ShowItemProperties request - URIs:" << URIs;
+    fmInfo() << "[FileManager1DBus] ShowItemProperties request - URIs:" << URIs << "StartupId:" << StartupId;
 
-    if (QProcess::startDetached("file-manager.sh", QStringList() << "--raw"
-                                                                 << "-p" << URIs)) {
+    QStringList args { "--raw", "-p" };
+    args << URIs;
+    if (!StartupId.isEmpty())
+        args << "--activation-token" << StartupId;
+
+    if (QProcess::startDetached("file-manager.sh", args)) {
         fmDebug() << "[FileManager1DBus] ShowItemProperties launched via file-manager.sh";
         return;
     }
 
-    if (QProcess::startDetached(DFM_FILE_MANAGER_BINARY, QStringList() << "--raw"
-                                                                       << "-p" << URIs)) {
+    if (QProcess::startDetached(DFM_FILE_MANAGER_BINARY, args)) {
         fmDebug() << "[FileManager1DBus] ShowItemProperties launched via dde-file-manager binary";
     } else {
         fmWarning() << "[FileManager1DBus] Failed to launch file manager for ShowItemProperties request";
@@ -80,15 +86,19 @@ void FileManager1DBus::ShowItemProperties(const QStringList &URIs, const QString
  */
 void FileManager1DBus::ShowItems(const QStringList &URIs, const QString &StartupId)
 {
-    Q_UNUSED(StartupId)
-    fmInfo() << "[FileManager1DBus] ShowItems request - URIs:" << URIs;
+    fmInfo() << "[FileManager1DBus] ShowItems request - URIs:" << URIs << "StartupId:" << StartupId;
 
-    if (QProcess::startDetached("file-manager.sh", QStringList() << "--show-item" << URIs << "--raw")) {
+    QStringList args { "--show-item" };
+    args << URIs << "--raw";
+    if (!StartupId.isEmpty())
+        args << "--activation-token" << StartupId;
+
+    if (QProcess::startDetached("file-manager.sh", args)) {
         fmDebug() << "[FileManager1DBus] ShowItems launched via file-manager.sh";
         return;
     }
 
-    if (QProcess::startDetached(DFM_FILE_MANAGER_BINARY, QStringList() << "--show-item" << URIs << "--raw")) {
+    if (QProcess::startDetached(DFM_FILE_MANAGER_BINARY, args)) {
         fmDebug() << "[FileManager1DBus] ShowItems launched via dde-file-manager binary";
     } else {
         fmWarning() << "[FileManager1DBus] Failed to launch file manager for ShowItems request";
