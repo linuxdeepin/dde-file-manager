@@ -31,6 +31,8 @@ DPF_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_vault;
 
+bool VaultEventReceiver::s_urlChangeInUnlock = false;
+
 VaultEventReceiver::VaultEventReceiver(QObject *parent)
     : QObject(parent)
 {
@@ -205,8 +207,19 @@ bool VaultEventReceiver::changeUrlEventFilter(quint64 windowId, const QUrl &url)
             VaultHelper::instance()->createVaultDialog();
             return true;
         } else if (VaultState::kEncrypted == state) {
+            // Re-entry guard: unlockVaultDialog → unlockVault → waitForFinished spins a
+            // nested Qt event loop. If a kChangeCurrentUrl event is dispatched inside that
+            // loop, we arrive here again. The filesystem check still sees the vault as
+            // encrypted (cryfs hasn't finished mounting), which would trigger another
+            // unlockVaultDialog → infinite recursion. Consume the event and return.
+            if (s_urlChangeInUnlock) {
+                fmDebug() << "Vault: Unlock already in progress, ignoring redundant URL change";
+                return true;
+            }
             fmDebug() << "Vault: Showing vault unlock dialog";
+            s_urlChangeInUnlock = true;
             VaultHelper::instance()->unlockVaultDialog();
+            s_urlChangeInUnlock = false;
             return true;
         } else if (VaultState::kUnlocked == state) {
             fmDebug() << "Vault: Vault is unlocked, allowing URL change";

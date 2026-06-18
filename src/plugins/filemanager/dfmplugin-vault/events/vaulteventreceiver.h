@@ -16,6 +16,14 @@ class VaultEventReceiver : public QObject
     Q_OBJECT
 private:
     VaultEventReceiver(QObject *parent = nullptr);
+    //! Re-entry guard: prevents recursive calls to changeUrlEventFilter during vault unlock.
+    //! When the vault is encrypted and unlockVaultDialog is called, the synchronous unlock flow
+    //! (waitForFinished on cryfs process) spins a nested Qt event loop. If a kChangeCurrentUrl
+    //! event is dispatched inside that loop, changeUrlEventFilter is called again before the
+    //! first invocation finishes. The filesystem check (state(useCache=false)) still sees the
+    //! vault as encrypted because cryfs hasn't completed mounting, causing another unlockVaultDialog
+    //! call and infinite recursion until the stack is exhausted.
+    static bool s_urlChangeInUnlock;
 
 public:
     static VaultEventReceiver *instance();
