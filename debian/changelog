@@ -1,3 +1,10 @@
+dde-file-manager (6.5.144) unstable; urgency=medium
+
+  * perf: optimize fstab bind info loading
+  * fix: prevent recursive vault unlock during URL changes
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 18 Jun 2026 14:42:16 +0800
+
 dde-file-manager (6.5.143) unstable; urgency=medium
 
   * fix: optimize icon display handling in property dialogs
