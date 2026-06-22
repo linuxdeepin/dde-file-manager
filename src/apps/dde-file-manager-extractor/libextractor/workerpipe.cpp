@@ -37,10 +37,6 @@ WorkerPipe::WorkerPipe(QObject *parent)
 
 WorkerPipe::~WorkerPipe()
 {
-    if (d->stdinNotifier) {
-        delete d->stdinNotifier;
-    }
-
     if (d->outputFd >= 0) {
         ::close(d->outputFd);
     }
