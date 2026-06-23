@@ -56,13 +56,15 @@ inline const QString kBatchCommitInterval = QLatin1String("batchCommitInterval")
 // Version 3: add new time-related fields
 // Version 4: switch content index analyzer to NGramAnalyzer(2,2)
 // Version 5: switch content index analyzer to LowerCaseNGramAnalyzer(1,2)
-inline constexpr int kTextIndexVersion { 5 };
+// Version 6: add new field "file_ext"
+inline constexpr int kTextIndexVersion { 6 };
 
 // OCR index version history:
 // Version 0: initial OCR text index schema
 // Version 1: switch OCR index analyzer to NGramAnalyzer(2,2)
 // Version 2: switch OCR index analyzer to LowerCaseNGramAnalyzer(1,2)
-inline constexpr int kOcrIndexVersion { 2 };
+// Version 3: add new field "file_ext"
+inline constexpr int kOcrIndexVersion { 3 };
 
 // json
 inline const QString kTextVersionKey = QLatin1String("version");
