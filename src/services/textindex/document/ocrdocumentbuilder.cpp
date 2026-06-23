@@ -66,6 +66,13 @@ DocumentPtr OcrDocumentBuilder::build(const QString &filePath, const QString &te
                                   Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
     }
 
+    // Add file extension for filtering (exact match, not tokenized)
+    const QString fileExt = fileInfo.suffix().toLower();
+    if (!fileExt.isEmpty()) {
+        doc->add(newLucene<Field>(OcrText::kFileExt, fileExt.toStdWString(),
+                                  Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
+    }
+
     if (!text.trimmed().isEmpty()) {
         doc->add(newLucene<Field>(OcrText::kOcrContents, text.trimmed().toStdWString(),
                                   Field::STORE_YES, Field::INDEX_ANALYZED));
