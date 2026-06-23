@@ -65,10 +65,15 @@ DocumentPtr ContentDocumentBuilder::build(const QString &filePath, const QString
                                   Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
     }
 
-    if (!text.trimmed().isEmpty()) {
-        doc->add(newLucene<Field>(Content::kContents, text.trimmed().toStdWString(),
-                                  Field::STORE_YES, Field::INDEX_ANALYZED));
+    // Add file extension for filtering (exact match, not tokenized)
+    const QString fileExt = fileInfo.suffix().toLower();
+    if (!fileExt.isEmpty()) {
+        doc->add(newLucene<Field>(Content::kFileExt, fileExt.toStdWString(),
+                                  Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
     }
+
+    doc->add(newLucene<Field>(Content::kContents, text.trimmed().toStdWString(),
+                              Field::STORE_YES, Field::INDEX_ANALYZED));
 
     return doc;
 }
