@@ -62,10 +62,17 @@ TaskManager::~TaskManager()
     if (workerThread.isRunning()) {
         fmInfo() << "[TaskManager] Stopping worker thread";
         workerThread.quit();
-        if (!workerThread.wait(5000)) {   // 等待5秒
-            fmWarning() << "[TaskManager] Worker thread did not stop within timeout, forcing termination";
-            workerThread.terminate();
-            workerThread.wait(1000);
+        // worker 为事件循环模型(QThread::exec)，quit() 属协作式退出：当前正在处理的槽
+        // (IndexWriter::commit/optimize 或文件内容提取)执行完后事件循环才会返回。Lucene++ 的长
+        // 操作没有中途取消接口，进入后只能等待其执行完成。
+        // 严禁使用 terminate() —— 其底层是 pthread_cancel，会向 worker 线程注入 forced-unwind
+        // 异常；若 worker 此刻正处在带 catch(...) 的调用链中(如 taskhandler 的索引处理、docparser
+        // 的内容提取)，异常会被 catch(...) 截留且未 rethrow，从而触发 "FATAL: exception not
+        // rethrown"，导致整个进程被 SIGABRT 中止(参见历史 dde-file-manager coredump)。
+        // 此处给足等待时间，超时则交由进程退出兜底(进程 _exit 时线程由内核直接终止，不走 unwind)。
+        if (!workerThread.wait(5000)) {
+            fmWarning() << "[TaskManager] Worker thread still running after 5s, "
+                           "will be cleaned up on process exit (terminate() removed to avoid SIGABRT)";
         }
     }
     fmInfo() << "[TaskManager] TaskManager destroyed successfully";
