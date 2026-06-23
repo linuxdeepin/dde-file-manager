@@ -240,38 +240,46 @@ The address bar combines history navigation, breadcrumbs, and a path input field
 
 ### Search Files
 
-Press **Ctrl + F** or click the search icon in the address bar to search.  
+Use the shortcut **Ctrl + F** or click the search button in the address bar to enter the search state. After entering a keyword, the file search will start immediately to find related files.
 
 ![](fig/search_button.png)
 
-Search supports basic (name/content) and advanced filters (type/size/time).
+File Manager supports multiple retrieval methods. It supports not only basic search by file name and file content, but also advanced search by file type, creation time, etc., improving work efficiency and facilitating file management.
 
-- Search within a directory by navigating there first.
-- Use spaces to separate multiple keywords.
+- When searching in a specific directory, please enter the directory first before searching.
+- If you want to search for multiple keywords, you can enter multiple words in the search box separated by spaces.
+- File search uses the file index by default. If you manually turn off the index, the file search will traverse the file system, which will severely affect the search speed and functionality.
 
-> ![notes](../common/notes.svg) Note: Enable **Auto-index internal disks** in settings. Check **Index external devices after connection** to speed up external searches.
+#### Full-text Search
 
-#### Full-Text Search
-
-Search by file content keywords.  
+You can search for files using file content keywords.
 
 ![](fig/search1.png)
 
-To enable:
+When the feature is disabled, you can enable it in the settings.
 
-1. Go to ![icon_menu](../common/icon_menu.svg) > **Settings**.
-2. Check **Full-text search** under *Advanced Settings > Search*.  
+1. In the File Manager, click ![icon_menu](../common/icon_menu.svg) > **Settings**.
+2. Check **Full-text Search** in **Advanced Settings -> Search** to enable this feature.
 
-![](fig/search2.png)
+
+
+#### Image Text Content Search
+
+You can search for files using image text keywords.
+
+To use this feature for the first time, you need to enable it in the settings.
+
+1. In the File Manager, click ![icon_menu](../common/icon_menu.svg) > **Settings**.
+2. Check **Image Text Content Search** in **Advanced Settings -> Search** to enable this feature.
+
+
 
 #### Advanced Search
 
-Click ![filter](../common/filter.svg) after entering keywords to narrow results by:  
+When there are many files and the search is slow, enable advanced search to narrow down the search scope and improve search efficiency.
 
-- Scope
-- File Size
-- File Type
-- Modification/Access/Creation Time  
+1. In the search state, press the **Enter** key after entering the keyword. When results are found, the icon ![filter](../common/filter.svg) is displayed on the right side of the search box. Click this icon to perform advanced search operations.
+2. Select the search scope, file size, file type, modification time, access time, and creation time for a more precise search.
 
 ![0|filter](fig/p_filter.png)
 
@@ -701,7 +709,7 @@ Click ![icon_menu](../common/icon_menu.svg)> **Settings** on the interface of Fi
 
 #### Advanced Settings
 
-- **Search**: Enable full-text search and manually update indexes.
+- **Search**:Set the switches for **File Indexing**, **Full Text Search**, and **Search for Text in Images**. The file index updates automatically, and you can click **Update Index Now** to refresh it manually.
 - **Mount**: Auto-mount external disks, open after mounting, or display Samba entries.
 - **External storage device usage mode**: Select the access strategy for connected external devices. You can choose **Real-time synchronization and safe unplugging (Recommended)** or **Performance first (Requires safe removal)** to match your personal performance needs and unplugging habits.
 - **Dialogs**: Use file manager for file selection dialogs or enable delete confirmations.
