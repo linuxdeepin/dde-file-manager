@@ -64,20 +64,20 @@ void Search::initialize()
 
     // 注册 HighlightProvider 的 fetchHighlight 回调（延迟加载模式）
     HighlightProvider::instance()->setFetchCallback(
-        [](const QString &path, const QString &keyword, int searchType) -> QString {
-            // Reuse the retriever in the worker thread to avoid rebuilding it
-            // for every highlight request.
-            thread_local DFMSEARCH::ContentRetriever retriever;
+            [](const QString &path, const QString &keyword, int searchType) -> QString {
+                // Reuse the retriever in the worker thread to avoid rebuilding it
+                // for every highlight request.
+                thread_local DFMSEARCH::ContentRetriever retriever;
 
-            DFMSEARCH::HighlightOptions opts;
-            int posLen = HighlightProvider::instance()->positioningMaxLength();
-            if (posLen > 0)
-                opts.positioningMaxLength = posLen;
+                DFMSEARCH::HighlightOptions opts;
+                int posLen = HighlightProvider::instance()->positioningMaxLength();
+                if (posLen > 0)
+                    opts.setPositioningMaxLength(posLen);
 
-            return retriever.fetchHighlight(path, keyword,
-                                            static_cast<DFMSEARCH::SearchType>(searchType),
-                                            opts);
-        });
+                return retriever.fetchHighlight(path, keyword,
+                                                static_cast<DFMSEARCH::SearchType>(searchType),
+                                                opts);
+            });
 
     bindEvents();
     bindWindows();
