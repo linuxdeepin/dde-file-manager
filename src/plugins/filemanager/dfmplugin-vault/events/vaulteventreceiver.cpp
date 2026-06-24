@@ -74,7 +74,18 @@ void VaultEventReceiver::connectEvent()
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_RenameFilesAddText", VaultFileHelper::instance(), &VaultFileHelper::renameFilesAddText);
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_SetPermission", VaultFileHelper::instance(), &VaultFileHelper::setPermision);
     dpfHookSequence->follow("dfmplugin_propertydialog", "hook_PermissionView_Ash", this, &VaultEventReceiver::handlePermissionViewAsh);
-    dpfHookSequence->follow("dfmplugin_tag", "hook_CanTaged", this, &VaultEventReceiver::handleFileCanTaged);
+
+    auto tagPlugin { DPF_NAMESPACE::LifeCycle::pluginMetaObj("dfmplugin-tag") };
+    if (tagPlugin && tagPlugin->pluginState() == DPF_NAMESPACE::PluginMetaObject::kStarted) {
+        dpfHookSequence->follow("dfmplugin_tag", "hook_CanTaged", this, &VaultEventReceiver::handleFileCanTaged);
+    } else {
+        connect(
+                DPF_NAMESPACE::Listener::instance(), &DPF_NAMESPACE::Listener::pluginStarted, this, [](const QString &iid, const QString &name) {
+                    Q_UNUSED(iid)
+                    if (name == "dfmplugin-tag")
+                        dpfHookSequence->follow("dfmplugin_tag", "hook_CanTaged", VaultEventReceiver::instance(), &VaultEventReceiver::handleFileCanTaged);
+                });
+    }
 
     fmDebug() << "Vault: All vault event receiver connections established";
 }
@@ -300,7 +311,6 @@ bool VaultEventReceiver::handleFileCanTaged(const QUrl &url, bool *canTag)
 {
     if (url.scheme() == VaultHelper::instance()->scheme()) {
         *canTag = false;
-        fmDebug() << "Vault: Vault files cannot be tagged";
         return true;
     }
 

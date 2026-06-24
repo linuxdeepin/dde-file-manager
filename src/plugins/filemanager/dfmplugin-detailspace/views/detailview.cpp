@@ -166,21 +166,40 @@ void DetailView::initSpinnerOverlay()
 
 void DetailView::createExtensionWidgets()
 {
-    // Get all registered extensions and create widgets once
-    const auto extensions = DetailManager::instance().extensionInfos();
+    // Initial creation delegates to sync; on first call m_extensionWidgets is
+    // empty so all currently-registered extensions get created.
+    syncExtensionWidgets();
+}
 
-    for (const auto &extInfo : extensions) {
-        // Create widget using create function (pass empty URL, will be updated later)
-        QWidget *widget = extInfo.create(QUrl());
-        if (!widget)
+void DetailView::syncExtensionWidgets()
+{
+    // Extensions are appended in registration order and never removed, so any
+    // with index >= m_extensionWidgets.size() are new (registered after this
+    // view was constructed — e.g. tag plugin when detailspace was default-opened
+    // at startup before plugins finished starting).
+    const auto extensions = DetailManager::instance().extensionInfos();
+    while (m_extensionWidgets.size() < extensions.size()) {
+        int idx = m_extensionWidgets.size();
+        const auto &extInfo = extensions.at(idx);
+
+        QWidget *widget = extInfo.create(m_currentUrl);
+        if (!widget) {
+            // Track the slot so size accounting progresses and we don't loop
+            // forever, even though no widget could be created.
+            ExtensionWidgetHolder holder;
+            holder.widget = nullptr;
+            holder.frame = nullptr;
+            holder.update = extInfo.update;
+            holder.shouldShow = extInfo.shouldShow;
+            m_extensionWidgets.append(holder);
             continue;
+        }
 
         widget->setParent(this);
         widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
         if (auto layout = widget->layout())
             layout->setContentsMargins(0, 0, 0, 0);
 
-        // Wrap with separator frame
         QFrame *frame = new QFrame(this);
         auto *separator = new DHorizontalLine(frame);
         separator->setFixedHeight(1);
@@ -190,10 +209,8 @@ void DetailView::createExtensionWidgets()
         frameLayout->addWidget(widget);
         frame->setLayout(frameLayout);
 
-        // Add to layout (after core widgets, before stretch)
         vLayout->insertWidget(vLayout->count() - 1, frame, 0, Qt::AlignTop);
 
-        // Store holder for later updates
         ExtensionWidgetHolder holder;
         holder.widget = widget;
         holder.frame = frame;
@@ -201,7 +218,7 @@ void DetailView::createExtensionWidgets()
         holder.shouldShow = extInfo.shouldShow;
         m_extensionWidgets.append(holder);
 
-        // Initially hidden until setUrl is called
+        // Initially hidden until setUrl / updateExtensionWidgets decides visibility
         frame->setVisible(false);
     }
 }
@@ -231,8 +248,13 @@ void DetailView::updateBasicWidget(const QUrl &url)
 
 void DetailView::updateExtensionWidgets(const QUrl &url)
 {
-    // Update all extension widgets - no deletion/recreation!
+    // Pick up any extensions registered after this view was constructed
+    // (e.g. tag plugin registering after detailspace was default-opened at startup)
+    syncExtensionWidgets();
+
     for (auto &holder : m_extensionWidgets) {
+        if (!holder.widget || !holder.frame)
+            continue;
         // Check if widget should be visible for this URL
         bool visible = holder.shouldShow(url);
         holder.frame->setVisible(visible);
