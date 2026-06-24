@@ -127,14 +127,17 @@ void Tag::onAllPluginsStarted()
 QWidget *Tag::createTagWidgetForPropertyDialog(const QUrl &url)
 {
     fmDebug() << "Creating tag widget for property dialog, URL:" << url.toString();
-    QUrl realUrl;
-    UniversalUtils::urlTransformToLocal(url, &realUrl);
 
-    if (!TagManager::instance()->canTagFile(realUrl)) {
+    // Pass the ORIGINAL url so scheme-based hooks (e.g. vault's hook_CanTaged
+    // on "dfmvault://") can take effect. Pre-transforming to a local file://
+    // url would strip the scheme and bypass those business-rule hooks.
+    if (!TagManager::instance()->canTagFile(url)) {
         fmDebug() << "Cannot tag file:" << url.toString();
         return nullptr;
     }
 
+    QUrl realUrl;
+    UniversalUtils::urlTransformToLocal(url, &realUrl);
     auto tagWidget = new TagWidget(realUrl);
     tagWidget->initialize();
     return tagWidget;
@@ -165,9 +168,10 @@ void Tag::updateTagWidgetForDetailView(QWidget *widget, const QUrl &url)
 
 bool Tag::shouldShowTagWidget(const QUrl &url)
 {
-    QUrl realUrl;
-    UniversalUtils::urlTransformToLocal(url, &realUrl);
-    return TagManager::instance()->canTagFile(realUrl);
+    // Pass the ORIGINAL url so scheme-based hooks (e.g. vault's hook_CanTaged
+    // on "dfmvault://") can take effect. canTagFile() handles the local
+    // transformation internally; pre-transforming here bypasses those hooks.
+    return TagManager::instance()->canTagFile(url);
 }
 
 void Tag::installToSideBar()

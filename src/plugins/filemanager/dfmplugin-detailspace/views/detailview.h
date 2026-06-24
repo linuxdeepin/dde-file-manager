@@ -48,6 +48,7 @@ private:
     void initInfoUI();
     void initSpinnerOverlay();
     void createExtensionWidgets();
+    void syncExtensionWidgets();
     void updateHeadUI(const QUrl &url);
     void updateBasicWidget(const QUrl &url);
     void updateExtensionWidgets(const QUrl &url);
