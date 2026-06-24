@@ -41,7 +41,12 @@ MultiFilePropertyDialog::~MultiFilePropertyDialog()
 void MultiFilePropertyDialog::initHeadUi()
 {
     iconLabel = new QLabel(this);
-    iconLabel->setFixedSize(128, 128);
+    // 用 maximumSize + scaledContents 替代 fixedSize：当布局空间充足时 iconLabel
+    // 按 pixmap sizeHint(128x128) 显示，空间不足(scale>1 字体放大撑高布局)时
+    // iconLabel 可被压缩，pixmap 随之平滑缩放，避免与 multiFileLable 因 0 间距重叠。
+    iconLabel->setMaximumSize(128, 128);
+    iconLabel->setScaledContents(true);
+    iconLabel->setAlignment(Qt::AlignCenter);
     QIcon icon;
     icon.addFile(QString { ":/images/images/multiple_files.png" });
     icon.addFile(QString { ":/images/images/multiple_files@2x.png" });
