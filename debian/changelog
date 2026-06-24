@@ -1,3 +1,14 @@
+dde-file-manager (6.5.145) unstable; urgency=medium
+
+  * feat: add Wayland window activation support
+  * fix: remove redundant stdinNotifier cleanup in WorkerPipe
+  * docs: update file manager search documentation
+  * fix: remove thread termination to prevent SIGABRT crashes
+  * fix: handle vault tag hooks and extension widget sync
+  * fix: improve icon scaling in multi-file property dialog
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Wed, 24 Jun 2026 15:00:53 +0800
+
 dde-file-manager (6.5.144) unstable; urgency=medium
 
   * perf: optimize fstab bind info loading
