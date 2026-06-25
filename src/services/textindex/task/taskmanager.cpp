@@ -57,6 +57,7 @@ TaskManager::~TaskManager()
     if (currentTask) {
         fmInfo() << "[TaskManager] Stopping current task before destruction";
         stopCurrentTask();
+        currentTask->disconnect();
     }
 
     if (workerThread.isRunning()) {
@@ -73,6 +74,7 @@ TaskManager::~TaskManager()
         if (!workerThread.wait(5000)) {
             fmWarning() << "[TaskManager] Worker thread still running after 5s, "
                            "will be cleaned up on process exit (terminate() removed to avoid SIGABRT)";
+            _exit(1);
         }
     }
     fmInfo() << "[TaskManager] TaskManager destroyed successfully";
