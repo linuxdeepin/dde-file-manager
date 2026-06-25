@@ -420,7 +420,12 @@ void DiskEncryptMenuScene::doReencryptDevice(const DeviceEncryptParam &param)
     QString tpmToken;
     if (param.secType != kPwd) {
         fmDebug() << "Generating TPM token for re-encryption";
-        tpmToken = generateTPMToken(param.devDesc, param.secType == kPin);
+        QString configPath = tpm_passphrase_utils::getGlobalTPMConfigPath();
+        if (configPath.isEmpty()) {
+            qCritical() << "Failed to create tpm config path";
+            return;
+        }
+        tpmToken = generateTPMToken(param.devDesc, param.secType == kPin, configPath);
     }
 
     CREATE_DAEMON_INTERFACE(iface);
@@ -475,8 +480,13 @@ void DiskEncryptMenuScene::doChangePassphrase(const DeviceEncryptParam &param)
 {
     QString token;
     if (param.secType != SecKeyType::kPwd) {
+        QString configPath = tpm_passphrase_utils::getGlobalTPMConfigPath();
+        if (configPath.isEmpty()) {
+            qCritical() << "Failed to create tpm config path";
+            return;
+        }
         // new tpm token should be setted.
-        QFile f(kGlobalTPMConfigPath + param.devDesc + "/token.json");
+        QFile f(configPath + param.devDesc + "/token.json");
         if (!f.open(QIODevice::ReadOnly)) {
             fmCritical() << "Cannot read old TPM token for device:" << param.devDesc;
             return;
@@ -485,7 +495,7 @@ void DiskEncryptMenuScene::doChangePassphrase(const DeviceEncryptParam &param)
         f.close();
         QJsonObject oldTokenObj = oldTokenDoc.object();
 
-        QString newToken = generateTPMToken(param.devDesc, param.secType == SecKeyType::kPin);
+        QString newToken = generateTPMToken(param.devDesc, param.secType == SecKeyType::kPin, configPath);
         QJsonDocument newTokenDoc = QJsonDocument::fromJson(newToken.toLocal8Bit());
         QJsonObject newTokenObj = newTokenDoc.object();
 
@@ -577,7 +587,7 @@ QString DiskEncryptMenuScene::generateTPMConfig()
     return QJsonDocument(tpmParams).toJson();
 }
 
-QString DiskEncryptMenuScene::generateTPMToken(const QString &device, bool pin)
+QString DiskEncryptMenuScene::generateTPMToken(const QString &device, bool pin, const QString &baseConfigPath)
 {
     QString tpmConfig = generateTPMConfig();
     QJsonDocument doc = QJsonDocument::fromJson(tpmConfig.toLocal8Bit());
@@ -599,10 +609,10 @@ QString DiskEncryptMenuScene::generateTPMToken(const QString &device, bool pin)
     token.remove("keyslot");
     token.insert("type", "usec-tpm2");
     token.insert("keyslots", QJsonArray::fromStringList({ "0" }));
-    token.insert("kek-priv", getBase64Of(kGlobalTPMConfigPath + device + "/key.priv"));
-    token.insert("kek-pub", getBase64Of(kGlobalTPMConfigPath + device + "/key.pub"));
-    token.insert("iv", getBase64Of(kGlobalTPMConfigPath + device + "/iv.bin"));
-    token.insert("enc", getBase64Of(kGlobalTPMConfigPath + device + "/cipher.out"));
+    token.insert("kek-priv", getBase64Of(baseConfigPath + device + "/key.priv"));
+    token.insert("kek-pub", getBase64Of(baseConfigPath + device + "/key.pub"));
+    token.insert("iv", getBase64Of(baseConfigPath + device + "/iv.bin"));
+    token.insert("enc", getBase64Of(baseConfigPath + device + "/cipher.out"));
     token.insert("pin", pin ? "1" : "0");
 
     doc.setObject(token);

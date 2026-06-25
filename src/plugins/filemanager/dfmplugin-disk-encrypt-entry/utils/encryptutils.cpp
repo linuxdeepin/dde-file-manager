@@ -28,6 +28,7 @@
 #include <DDialog>
 
 #include <fstab.h>
+#include <fcntl.h>
 #include <unistd.h>
 #include <cerrno>
 
@@ -349,7 +350,13 @@ int tpm_passphrase_utils::genPassphraseFromTPM(const QString &dev, const QString
         return kTPMNoRandomNumber;
     }
 
-    const QString dirPath = kGlobalTPMConfigPath + dev;
+    QString configPath = tpm_passphrase_utils::getGlobalTPMConfigPath();
+    if (configPath.isEmpty()) {
+        qCritical() << "Failed to create tpm config path";
+        return kTPMNoRandomNumber;
+    }
+
+    const QString dirPath = configPath + dev;
     QDir dir(dirPath);
     if (!dir.exists()) {
         fmDebug() << "Creating TPM config directory:" << dirPath;
@@ -397,7 +404,13 @@ int tpm_passphrase_utils::genPassphraseFromTPM(const QString &dev, const QString
 
 QString tpm_passphrase_utils::getPassphraseFromTPM(const QString &dev, const QString &pin)
 {
-    const QString dirPath = kGlobalTPMConfigPath + dev;
+    QString configPath = tpm_passphrase_utils::getGlobalTPMConfigPath();
+    if (configPath.isEmpty()) {
+        qCritical() << "Failed to create tpm config path";
+        return "";
+    }
+
+    const QString dirPath = configPath + dev;
     QString tokenDocPath = dirPath + QDir::separator() + "token.json";
     QFile file(tokenDocPath);
     if (!file.open(QIODevice::ReadOnly)) {
@@ -557,27 +570,45 @@ int dialog_utils::showDialog(const QString &title, const QString &msg)
 
 void device_utils::cacheToken(const QString &device, const QVariantMap &token)
 {
+    QString configPath = tpm_passphrase_utils::getGlobalTPMConfigPath();
+    if (configPath.isEmpty()) {
+        qCritical() << "Failed to create tpm config path";
+        return;
+    }
+
     if (token.isEmpty()) {
         fmDebug() << "Empty token, removing cached files for device:" << device;
-        QDir tmp("/tmp");
-        tmp.rmpath(kGlobalTPMConfigPath + device);
+        QDir().rmpath(configPath + device);
         return;
     }
 
     auto makeFile = [](const QString &fileName, const QByteArray &content) {
-        QFile f(fileName);
-        if (!f.open(QIODevice::Truncate | QIODevice::WriteOnly)) {
-            fmWarning() << "cannot cache token!" << fileName;
+        int fd = ::open(fileName.toLocal8Bit().constData(), O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
+        if (fd == -1) {
+            fmWarning() << "cannot cache token!" << fileName << "open failed:" << strerror(errno);
             return false;
         }
 
-        f.write(content);
+        QFile f;
+        if (!f.open(fd, QIODevice::WriteOnly)) {
+            fmWarning() << "cannot cache token!" << fileName << "QFile open failed:" << f.errorString();
+            ::close(fd);
+            return false;
+        }
+
+        qint64 written = f.write(content);
         f.flush();
+        if (written != content.size()) {
+            fmWarning() << "cannot cache token!" << fileName << "write failed:" << f.errorString();
+            f.close();
+            return false;
+        }
+
         f.close();
         return true;
     };
 
-    QString devTpmConfigPath = kGlobalTPMConfigPath + device;
+    QString devTpmConfigPath = configPath + device;
     QDir tpmPath(devTpmConfigPath);
     if (!tpmPath.exists()) {
         fmDebug() << "Creating TPM config path:" << devTpmConfigPath;
@@ -754,4 +785,34 @@ int tpm_passphrase_utils::genPassphraseFromTPM_NonBlock(const QString &dev, cons
     loop.exec();
     qApp->restoreOverrideCursor();
     return watcher.result();
+}
+
+tpm_passphrase_utils::TempDirHolder::TempDirHolder()
+{
+    QByteArray templatePath = QDir::tempPath().toLocal8Bit() + "/dfm-encrypt-XXXXXX";
+    if (mkdtemp(templatePath.data())) {
+        m_path = QString::fromLocal8Bit(templatePath);
+    } else {
+        qCritical() << "Failed to create random TPM config path, operation aborted.";
+    }
+}
+
+tpm_passphrase_utils::TempDirHolder::~TempDirHolder()
+{
+    if (!m_path.isEmpty()) {
+        // 递归清理临时目录及其内部文件，防止敏感信息残留
+        QDir dir(m_path);
+        dir.removeRecursively();
+    }
+}
+
+QString tpm_passphrase_utils::TempDirHolder::path() const
+{
+    return m_path;
+}
+
+QString tpm_passphrase_utils::getGlobalTPMConfigPath()
+{
+    static TempDirHolder holder;
+    return holder.path();
 }
