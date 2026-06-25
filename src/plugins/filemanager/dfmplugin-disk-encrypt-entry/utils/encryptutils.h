@@ -7,6 +7,7 @@
 
 #include <QString>
 #include <QVariantMap>
+#include <QDir>
 
 namespace dfmmount {
 class DBlockDevice;
@@ -35,6 +36,19 @@ enum TPMError {
     kTPMNoRandomNumber,
     kTPMMissingAlog,
 };
+
+// 使用 RAII 机制封装临时目录的生命周期，确保程序退出时自动清理
+class TempDirHolder {
+public:
+    TempDirHolder();
+    ~TempDirHolder();
+    QString path() const;
+
+private:
+    QString m_path;
+};
+// 延迟初始化的单例，避免头文件中的全局构造副作用
+QString getGlobalTPMConfigPath();
 
 bool tpmSupportInterAlgo();
 bool tpmSupportSMAlgo();

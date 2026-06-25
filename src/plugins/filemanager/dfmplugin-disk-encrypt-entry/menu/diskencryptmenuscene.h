@@ -58,7 +58,7 @@ protected:
     static void doChangePassphrase(const disk_encrypt::DeviceEncryptParam &param);
 
     static QString generateTPMConfig();
-    static QString generateTPMToken(const QString &device, bool pin);
+    static QString generateTPMToken(const QString &device, bool pin, const QString &baseConfigPath);
     static QString getBase64Of(const QString &fileName);
 
     // Send credentials via file descriptor for secure D-Bus transmission
