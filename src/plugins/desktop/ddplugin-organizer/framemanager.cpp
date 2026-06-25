@@ -11,7 +11,9 @@
 #include "menus/extendcanvasscene.h"
 
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
+
 #include <dfm-base/dfm_desktop_defines.h>
+#include <dfm-framework/lifecycle/lifecycle.h>
 
 #include <DDBusSender>
 
@@ -43,7 +45,7 @@ FrameManagerPrivate::FrameManagerPrivate(FrameManager *qq)
     layoutTimer = new QTimer(this);
     layoutTimer->setInterval(1000);
     layoutTimer->setSingleShot(true);
-    connect(layoutTimer, &QTimer::timeout, this, [this]{
+    connect(layoutTimer, &QTimer::timeout, this, [this] {
         if (organizer) {
             organizer->layout();
         }
@@ -190,20 +192,20 @@ void FrameManagerPrivate::onHideAllKeyPressed()
             QString cmdCloseNotify = QString("dbus-send,--type=method_call,--dest=org.freedesktop.Notifications,/org/freedesktop/Notifications,com.deepin.dde.Notification.CloseNotification,uint32:%1")
                                              .arg(replacesId);
             QDBusPendingCall pendingReply = DDBusSender()
-                    .service("org.freedesktop.Notifications")
-                    .path("/org/freedesktop/Notifications")
-                    .interface("org.freedesktop.Notifications")
-                    .method(QString("Notify"))
-                    .arg(tr("Desktop organizer"))
-                    .arg(replacesId)
-                    .arg(QString("deepin-toggle-desktop"))
-                    .arg(tr("Shortcut \"%1\" to show collections").arg(keySequence))
-                    .arg(tips)
-                    .arg(QStringList { "close-notify", tr("Close"), "no-repeat", tr("No more prompts") })
-                    .arg(QVariantMap { { "x-deepin-action-no-repeat", cmdNoRepeation },
-                                       { "x-deepin-action-close-notify", cmdCloseNotify } })
-                    .arg(kHideAllNotificationTimeoutMs)
-                    .call();
+                                                    .service("org.freedesktop.Notifications")
+                                                    .path("/org/freedesktop/Notifications")
+                                                    .interface("org.freedesktop.Notifications")
+                                                    .method(QString("Notify"))
+                                                    .arg(tr("Desktop organizer"))
+                                                    .arg(replacesId)
+                                                    .arg(QString("deepin-toggle-desktop"))
+                                                    .arg(tr("Shortcut \"%1\" to show collections").arg(keySequence))
+                                                    .arg(tips)
+                                                    .arg(QStringList { "close-notify", tr("Close"), "no-repeat", tr("No more prompts") })
+                                                    .arg(QVariantMap { { "x-deepin-action-no-repeat", cmdNoRepeation },
+                                                                       { "x-deepin-action-close-notify", cmdCloseNotify } })
+                                                    .arg(kHideAllNotificationTimeoutMs)
+                                                    .call();
             auto *watcher = new QDBusPendingCallWatcher(pendingReply, this);
             connect(watcher, &QDBusPendingCallWatcher::finished, this, [this, replacesId, allowRetry, sendHideAllNotification](QDBusPendingCallWatcher *watcher) {
                 QDBusPendingReply<uint> reply = *watcher;
@@ -341,13 +343,24 @@ FrameManager::FrameManager(QObject *parent)
 
 FrameManager::~FrameManager()
 {
-    turnOff();
+    // During process shutdown (atexit / exit() path), plugin stop order is
+    // unspecified and cross-plugin singletons (Settings, menu scene registry)
+    // may already be destroyed. Skip turnOff() and menu unregister — both
+    // touch cross-plugin state via EventChannel / dfmplugin-menu. Only
+    // perform direct resource cleanup (smart pointers / Qt children).
+    // Active teardown (user disabling organizer) still runs turnOff() via
+    // the explicit stop() path in OrganizerPlugin, not via dtor.
+    if (Q_LIKELY(!DPF_NAMESPACE::LifeCycle::isShuttingDown())) {
+        turnOff();
 
-    // unregister menu
-    dfmplugin_menu_util::menuSceneUnbind(ExtendCanvasCreator::name());
-    auto creator = dfmplugin_menu_util::menuSceneUnregisterScene(ExtendCanvasCreator::name());
-    if (creator)
-        delete creator;
+        // unregister menu
+        dfmplugin_menu_util::menuSceneUnbind(ExtendCanvasCreator::name());
+        auto creator = dfmplugin_menu_util::menuSceneUnregisterScene(ExtendCanvasCreator::name());
+        if (creator)
+            delete creator;
+    } else {
+        fmInfo() << "FrameManager: shutdown detected, skipping turnOff/menu unregister";
+    }
 }
 
 bool FrameManager::initialize()
