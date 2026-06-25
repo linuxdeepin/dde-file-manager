@@ -387,8 +387,15 @@ bool LocalDirIterator::oneByOne()
 
 bool LocalDirIterator::initIterator()
 {
-    if (d->dfmioDirIterator)
-        return d->dfmioDirIterator->initEnumerator(oneByOne());
+    if (d->dfmioDirIterator) {
+        // When oneByOne() is false, sortFileInfoList() uses opendir/readdir
+        // directly and does not need the FTS tree.  Skipping initEnumerator(false)
+        // avoids an unnecessary fts_open() allocation that would otherwise leak
+        // because LocalDirIterator::sortFileInfoList() never calls fts_close().
+        if (!oneByOne())
+            return true;
+        return d->dfmioDirIterator->initEnumerator(true);
+    }
     return false;
 }
 
