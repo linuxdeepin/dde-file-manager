@@ -14,6 +14,7 @@
 #include <QString>
 #include <QDBusInterface>
 #include <QDBusConnection>
+#include <unistd.h>
 
 #if defined(DFMPLUGIN_DISK_ENCRYPT_LIBRARY)
 #    define DFMPLUGIN_DISK_ENCRYPT_EXPORT Q_DECL_EXPORT
@@ -38,7 +39,6 @@ inline constexpr char kMenuPluginName[] { "dfmplugin_menu" };
 inline constexpr char kComputerMenuSceneName[] { "ComputerMenu" };
 
 inline constexpr int kPasswordSize { 14 };
-inline const QString kGlobalTPMConfigPath("/tmp/dfm-encrypt");
 
 inline constexpr char kTPMSessionHashAlgo[] { "sha256" };
 inline constexpr char kTPMSessionKeyAlgo[] { "aes" };
