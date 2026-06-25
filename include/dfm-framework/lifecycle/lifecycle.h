@@ -13,11 +13,26 @@
 #include <QString>
 #include <QObject>
 
+#include <atomic>
 #include <functional>
 
 DPF_BEGIN_NAMESPACE
 
 namespace LifeCycle {
+// Cross-TU shutdown flag set by shutdownPlugins() before any plugin stop().
+// Used by framework hot paths (e.g. EventChannel) and plugin destructors to
+// short-circuit cross-plugin calls during atexit, where Q_GLOBAL_STATIC
+// destruction order is undefined and may produce use-after-free.
+//
+// NOTE: do NOT rely on QCoreApplication::closingDown() — when the host exits
+// via exit() (e.g. X11 IO error path), the stack-allocated QApplication does
+// not unwind and closingDown() remains false.
+extern std::atomic<bool> g_shuttingDown;
+inline bool isShuttingDown() noexcept
+{
+    return g_shuttingDown.load(std::memory_order_acquire);
+}
+
 void initialize(const QStringList &IIDs, const QStringList &paths);
 void initialize(const QStringList &IIDs, const QStringList &paths, const QStringList &blackNames);
 void initialize(const QStringList &IIDs, const QStringList &paths, const QStringList &blackNames,

@@ -10,6 +10,12 @@
 DPF_BEGIN_NAMESPACE
 namespace LifeCycle {
 
+// Definition of the cross-TU shutdown flag declared in the header.
+// Initialised to false; set to true inside shutdownPlugins() before any
+// plugin stop() runs. Reads are acquire-ordered for visibility of prior
+// writes performed by other threads before shutdown began.
+std::atomic<bool> g_shuttingDown { false };
+
 /*!
  * \brief getPluginManager Get the global plugin manager instance
  * \details Uses Leaky Singleton pattern to avoid static destruction order issues.
@@ -199,8 +205,15 @@ bool loadPlugins()
 void shutdownPlugins()
 {
     static std::once_flag shutdownOnce;
-    
+
     std::call_once(shutdownOnce, []() {
+        // Mark shutdown BEFORE stopPlugins() so any cross-plugin call invoked
+        // from a plugin's stop()/dtor path (e.g. EventChannel::push) is
+        // short-circuited. This is the only reliable signal during atexit,
+        // because QCoreApplication::closingDown() stays false when the host
+        // exits via exit() with a stack-allocated QApplication.
+        g_shuttingDown.store(true, std::memory_order_release);
+
         qCInfo(logDPF) << "LifeCycle: starting plugin shutdown";
         // Now this call is always safe because the instance is never destroyed
         getPluginManager()->stopPlugins();

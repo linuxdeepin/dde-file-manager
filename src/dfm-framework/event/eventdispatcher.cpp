@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include <dfm-framework/event/eventdispatcher.h>
+#include <dfm-framework/lifecycle/lifecycle.h>
 
 #include <QtConcurrent>
 
@@ -17,6 +18,15 @@ bool EventDispatcher::dispatch()
 
 bool EventDispatcher::dispatch(const QVariantList &params)
 {
+    // Short-circuit during process shutdown: signal handlers/filters may touch
+    // Q_GLOBAL_STATIC singletons (Settings, Application) that are already
+    // destroyed in unspecified atexit order. Also covers asyncDispatch(),
+    // which forwards here via QtConcurrent::run.
+    if (Q_UNLIKELY(LifeCycle::isShuttingDown())) {
+        qCDebug(logDPF) << "EventDispatcher: dropping dispatch during shutdown";
+        return true;
+    }
+
     auto filtersCopy = filterList;
     auto handlersCopy = handlerList;
 
