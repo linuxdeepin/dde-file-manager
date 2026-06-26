@@ -1,3 +1,10 @@
+dde-file-manager (6.5.147) unstable; urgency=medium
+
+  * refactor: optimize file scanner path handling
+  * fix: update package dependencies and file structure
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Fri, 26 Jun 2026 15:03:01 +0800
+
 dde-file-manager (6.5.146) unstable; urgency=medium
 
   * fix(dfm-base): skip unnecessary initEnumerator(false) to prevent FTS leak
