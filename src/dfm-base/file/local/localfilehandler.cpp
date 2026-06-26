@@ -849,9 +849,12 @@ bool LocalFileHandlerPrivate::openExcutableScriptFile(const QString &path, int f
     case 0:
 
         break;
-    case 1:
-        result = UniversalUtils::runCommand(path, QStringList(), QUrl(path).adjusted(QUrl::RemoveFilename).toString());
+    case 1: {
+        const QString workdir = QUrl(path).adjusted(QUrl::RemoveFilename).toString();
+        if (!AppLaunchUtils::instance().executeCommand(path, QStringList(), QStringLiteral("script"), workdir))
+            result = QProcess::startDetached(path, QStringList(), workdir);
         break;
+    }
     case 2: {
         QStringList args;
         args << "-e" << path;
@@ -880,9 +883,12 @@ bool LocalFileHandlerPrivate::openExcutableFile(const QString &path, int flag)
         result = UniversalUtils::runCommand(q->defaultTerminalPath(), args, QUrl(path).adjusted(QUrl::RemoveFilename).toString());
         break;
     }
-    case 2:
-        result = UniversalUtils::runCommand(path, QStringList(), QUrl(path).adjusted(QUrl::RemoveFilename).toString());
+    case 2: {
+        const QString workdir = QUrl(path).adjusted(QUrl::RemoveFilename).toString();
+        if (!AppLaunchUtils::instance().executeCommand(path, QStringList(), QStringLiteral("portablebinary"), workdir))
+            result = QProcess::startDetached(path, QStringList(), workdir);
         break;
+    }
     default:
         break;
     }
@@ -964,10 +970,13 @@ bool LocalFileHandlerPrivate::addExecutableFlagAndExecuse(const QString &path, i
     switch (flag) {
     case 0:
         break;
-    case 1:
+    case 1: {
         file.setPermissions(file.permissions() | DFMIO::DFile::Permission::kExeOwner | DFMIO::DFile::Permission::kExeUser | DFMIO::DFile::Permission::kExeGroup | DFMIO::DFile::Permission::kExeOther);
-        result = UniversalUtils::runCommand(path, QStringList());
+        const QString workdir = QUrl(path).adjusted(QUrl::RemoveFilename).toString();
+        result = AppLaunchUtils::instance().executeCommand(path, QStringList(), QStringLiteral("portablebinary"), workdir)
+                 || QProcess::startDetached(path, QStringList(), workdir);
         break;
+    }
     default:
         break;
     }

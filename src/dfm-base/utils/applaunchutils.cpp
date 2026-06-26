@@ -11,6 +11,9 @@
 #include <QDBusReply>
 #include <QDebug>
 #include <QUrl>
+#include <QDBusMetaType>   // qDBusRegisterMetaType
+#include <QMetaType>   // Q_DECLARE_METATYPE
+#include <QRegularExpression>
 
 extern "C" {
 #include <gio/gio.h>
@@ -18,7 +21,25 @@ extern "C" {
 #include <gio-unix-2.0/gio/gdesktopappinfo.h>
 }
 
+// a{ss} 字典的 D-Bus marshalling。必须在全局作用域注册：
+// QMetaTypeId 模板由 Qt 在全局命名空间声明，跨命名空间特化会被编译器拒绝。
+// dfmbase::QStringMap 是 QMap<QString,QString> 的 using 别名（见 applaunchutils.h），
+// 无逗号单 token，既绕过宏参数分隔，又与 AM1 introspection 的 QtTypeName.In4 一致。
+Q_DECLARE_METATYPE(dfmbase::QStringMap)
+
 DFMBASE_BEGIN_NAMESPACE
+
+// Qt6 内置了 QMap<QString,QString> → a{ss} 的 D-Bus marshalling，
+// 只需注册类型即可，无需手写 operator<< / operator>>。
+namespace {
+void ensureAM1MetaTypeRegistered()
+{
+    static const auto kRegistered = []() {
+        return qDBusRegisterMetaType<QStringMap>();
+    }();
+    Q_UNUSED(kRegistered)
+}
+}   // namespace
 
 AppLaunchUtilsPrivate::AppLaunchUtilsPrivate()
 {
@@ -94,7 +115,7 @@ bool AppLaunchUtilsPrivate::launchByDBus(const QString &desktopFile, const QStri
         return false;
     }
 
-    QVariantMap options{{QStringLiteral("_launch_type"), QStringLiteral("dde-file-manager")}};
+    QVariantMap options { { QStringLiteral("_launch_type"), QStringLiteral("dde-file-manager") } };
 
     QDBusMessage reply = interface->callWithArgumentList(QDBus::Block,
                                                          "Launch",
@@ -148,6 +169,49 @@ bool AppLaunchUtilsPrivate::launchByGio(const QString &desktopFile, const QStrin
         g_list_free(gfiles);
 
     return ok;
+}
+
+bool AppLaunchUtilsPrivate::executeCommand(const QString &program, const QStringList &args,
+                                           const QString &type, const QString &workdir,
+                                           const QString &runId, const QStringMap &envVars)
+{
+    ensureAM1MetaTypeRegistered();
+
+    qCDebug(logDFMBase) << "AM1 executeCommand:"
+                        << "\n  program:" << program
+                        << "\n  args:" << args
+                        << "\n  type:" << type
+                        << "\n  workdir:" << workdir;
+
+    if (!checkLaunchAppInterface()) {
+        qCWarning(logDFMBase) << "AM1 service not registered";
+        return false;
+    }
+
+    QDBusInterface iface(DBusServiceNames::kService,
+                         DBusServiceNames::kPathPrefix,   // /org/desktopspec/ApplicationManager1
+                         DBusServiceNames::kManagerInterface,
+                         QDBusConnection::sessionBus());
+    if (!iface.isValid()) {
+        qCWarning(logDFMBase) << "AM1 manager interface invalid:" << iface.lastError().message();
+        return false;
+    }
+
+    // 同步 D-Bus 调用默认超时 25s，若 AM1 挂起会阻塞 UI 线程。
+    // executeCommand 只需创建 systemd transient unit，正常 <1s 返回。
+    // 设 5s 超时：足够容错，又远小于默认值，超时即返回 false 降级到 QProcess。
+    iface.setTimeout(5000);
+
+    QDBusReply<QDBusObjectPath> reply = iface.call(QStringLiteral("executeCommand"),
+                                                   program, args, type, runId,
+                                                   QVariant::fromValue(envVars), workdir);
+    if (!reply.isValid()) {
+        qCWarning(logDFMBase) << "executeCommand failed:" << reply.error().message();
+        return false;
+    }
+
+    qCDebug(logDFMBase) << "executeCommand succeeded, instance:" << reply.value().path();
+    return true;
 }
 
 // Public interface implementation
@@ -211,6 +275,13 @@ bool AppLaunchUtils::defaultLaunchApp(const QString &desktopFile, const QStringL
         return true;
 
     return false;
+}
+
+bool AppLaunchUtils::executeCommand(const QString &program, const QStringList &args,
+                                    const QString &type, const QString &workdir,
+                                    const QString &runId, const QStringMap &envVars)
+{
+    return d->executeCommand(program, args, type, workdir, runId, envVars);
 }
 
 DFMBASE_END_NAMESPACE

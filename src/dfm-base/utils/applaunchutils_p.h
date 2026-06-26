@@ -17,6 +17,8 @@ struct DBusServiceNames
     static constexpr const char *kService = "org.desktopspec.ApplicationManager1";
     static constexpr const char *kPathPrefix = "/org/desktopspec/ApplicationManager1";
     static constexpr const char *kInterface = "org.desktopspec.ApplicationManager1.Application";
+    // 管理器接口（executeCommand 在此接口上，与 per-app Application 接口不同）
+    static constexpr const char *kManagerInterface = "org.desktopspec.ApplicationManager1";
 };
 
 struct LaunchStrategy
@@ -39,6 +41,11 @@ public:
 
     // GIO related
     bool launchByGio(const QString &desktopFile, const QStringList &filePaths);
+
+    // AM1 管理器接口：executeCommand（用于无 desktop 文件的可执行程序/脚本）
+    bool executeCommand(const QString &program, const QStringList &args,
+                        const QString &type, const QString &workdir,
+                        const QString &runId, const QStringMap &envVars);
 
     std::vector<LaunchStrategy> strategies;
 
