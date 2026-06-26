@@ -272,6 +272,7 @@ SideBarView::SideBarView(QWidget *parent)
 SideBarView::~SideBarView()
 {
     QScroller::ungrabGesture(viewport());
+    setStyle(nullptr);
 }
 
 SideBarModel *SideBarView::model() const
