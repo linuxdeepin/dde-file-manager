@@ -11,8 +11,6 @@ usr/bin/dde-select-dialog-x11
 usr/bin/dde-select-dialog-wayland
 usr/bin/deepin-diskencrypt-service
 usr/lib/*/dde-file-manager/plugins/filemanager-core/*.so
-usr/lib/*/dde-file-manager/plugins/extractors/*.so*
-usr/lib/*/dde-file-manager/plugins/extractors/*.json
 usr/lib/*/dde-file-manager/plugins/previews/*.so
 usr/lib/*/dde-file-manager/plugins/previews/*.json
 usr/share/applications/dde-file-manager.desktop
