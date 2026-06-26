@@ -34,10 +34,19 @@ public:
     // 进度回调函数类型：返回 true 继续扫描，返回 false 停止扫描
     using ProgressCallback = std::function<bool(const FileScanner::ScanResult &)>;
 
+    // 字节级路径拼接：保证根目录 "/" 与子目录 "/foo" 拼接时不会产生 "//"。
+    // 仅适用于 readdir 返回的单分量 name（不含 '/'）。
+    static inline QByteArray joinPath(const QByteArray &dir, const QByteArray &name)
+    {
+        if (dir.endsWith('/'))
+            return dir + name;
+        return dir + '/' + name;
+    }
+
     // 目录条目结构
     struct DirEntry
     {
-        QString name;
+        QByteArray name;
         unsigned char d_type;
         struct stat statBuf;
         bool statOk { false };
@@ -46,7 +55,7 @@ public:
     // 扫描上下文结构
     struct ScanContext
     {
-        QString fullPath;
+        QByteArray fullPath;
         int depth { 0 };
         bool isSourcePath { false };
     };
@@ -89,10 +98,10 @@ private:
             bool isSingleDepth,
             QQueue<QUrl> *directoryQueue,
             QSet<QUrl> *processedUrls);
-    static bool readDirectoryEntries(const QString &path, QList<DirEntry> *entries, bool countOnly = false);
-    static void processRegularFile(ScanState &state, const QString &path, const struct stat &statBuf);
-    static void processSymlink(ScanState &state, const QString &path);
-    static bool isDirectoryPath(const QString &path, const struct stat &lstatBuf);
+    static bool readDirectoryEntries(const QByteArray &path, QList<DirEntry> *entries, bool countOnly = false);
+    static void processRegularFile(ScanState &state, const QByteArray &path, const struct stat &statBuf);
+    static void processSymlink(ScanState &state, const QByteArray &path);
+    static bool isDirectoryPath(const QByteArray &path, const struct stat &lstatBuf);
     static void collectFileIfEnabled(ScanState &state, const QUrl &url, bool isSourcePath);
     static void emitProgress(ScanState &state, bool force = false);
     static bool isInodeProcessed(const ScanState &state, quint64 device, quint64 inode);
@@ -342,10 +351,10 @@ void FileScannerCore::scanLocalPathsImpl(ScanState &state, const QList<QUrl> &ur
 
     // 准备源路径
     for (const QUrl &url : urls) {
-        QString path = url.path();
+        const QByteArray path = url.path().toUtf8();
 
         struct stat statBuf;
-        if (lstat(path.toUtf8().constData(), &statBuf) == 0) {
+        if (lstat(path.constData(), &statBuf) == 0) {
             // 判断是否为目录（包括指向目录的符号链接）
             if (isDirectoryPath(path, statBuf)) {
                 ScanContext ctx;
@@ -377,7 +386,7 @@ void FileScannerCore::scanLocalPathsImpl(ScanState &state, const QList<QUrl> &ur
     // ========== 遍历阶段 ==========
     while (!dirStack.isEmpty() && !state.shouldStop) {
         ScanContext ctx = dirStack.pop();
-        const QString &dirPath = ctx.fullPath;
+        const QByteArray &dirPath = ctx.fullPath;
 
         // 先计数目录本身（无论是否能读取内容）
         state.result.directoryCount++;
@@ -405,8 +414,8 @@ void FileScannerCore::scanLocalPathsImpl(ScanState &state, const QList<QUrl> &ur
                 break;
             }
 
-            const QString entryPath = dirPath + "/" + entry.name;
-            const QUrl entryUrl = QUrl::fromLocalFile(entryPath);
+            const QByteArray entryPath = joinPath(dirPath, entry.name);
+            const QUrl entryUrl = QUrl::fromLocalFile(QString::fromUtf8(entryPath));
 
             if (countOnly) {
                 // CountOnly 模式：直接用 d_type 计数，无需 stat
@@ -432,7 +441,7 @@ void FileScannerCore::scanLocalPathsImpl(ScanState &state, const QList<QUrl> &ur
 
             // 跳过特殊系统文件
             if (entry.statOk && S_ISREG(entry.statBuf.st_mode)) {
-                static const QSet<QString> kSpecialSystemFiles {
+                static const QSet<QByteArray> kSpecialSystemFiles {
                     "/proc/kcore",
                     "/dev/core"
                 };
@@ -628,12 +637,13 @@ bool FileScannerCore::tryScanOtherProtocolCountOnlyByLocalPath(
     Q_ASSERT(processedUrls);
 
     // CountOnly 模式下，优先复用 readDirectoryEntries，避免 DirIteratorFactory 的高开销
-    const QString dirPath = info->pathOf(PathInfoType::kAbsoluteFilePath);
-    const bool canUseLocalPath = QDir::isAbsolutePath(dirPath) && QDir(dirPath).exists();
+    const QString dirPathStr = info->pathOf(PathInfoType::kAbsoluteFilePath);
+    const bool canUseLocalPath = QDir::isAbsolutePath(dirPathStr) && QDir(dirPathStr).exists();
     if (!canUseLocalPath) {
         return false;
     }
 
+    const QByteArray dirPath = dirPathStr.toUtf8();
     QList<DirEntry> entries;
     if (!readDirectoryEntries(dirPath, &entries, true)) {
         return false;
@@ -644,7 +654,7 @@ bool FileScannerCore::tryScanOtherProtocolCountOnlyByLocalPath(
             break;
         }
 
-        QUrl childUrl = info->getUrlByType(UrlInfoType::kGetUrlByChildFileName, entry.name);
+        QUrl childUrl = info->getUrlByType(UrlInfoType::kGetUrlByChildFileName, QString::fromUtf8(entry.name));
         if (!childUrl.isValid()) {
             continue;
         }
@@ -676,13 +686,12 @@ bool FileScannerCore::tryScanOtherProtocolCountOnlyByLocalPath(
     return true;
 }
 
-bool FileScannerCore::readDirectoryEntries(const QString &path, QList<DirEntry> *entries, bool countOnly)
+bool FileScannerCore::readDirectoryEntries(const QByteArray &path, QList<DirEntry> *entries, bool countOnly)
 {
     Q_ASSERT(entries);
     entries->clear();
 
-    QByteArray pathUtf8 = path.toUtf8();
-    DIR *dir = opendir(pathUtf8.constData());
+    DIR *dir = opendir(path.constData());
     if (!dir) {
         qCWarning(logDFMBase) << "FileScannerCore: opendir failed for" << path << ":" << strerror(errno);
         return false;
@@ -702,9 +711,8 @@ bool FileScannerCore::readDirectoryEntries(const QString &path, QList<DirEntry> 
             continue;
         }
 
-        const QByteArray nameBytes(entry->d_name);
         DirEntry dirEntry;
-        dirEntry.name = QString::fromUtf8(nameBytes);
+        dirEntry.name = QByteArray(entry->d_name);
         dirEntry.d_type = entry->d_type;
 
         if (countOnly) {
@@ -735,7 +743,7 @@ bool FileScannerCore::readDirectoryEntries(const QString &path, QList<DirEntry> 
     return true;
 }
 
-void FileScannerCore::processRegularFile(ScanState &state, const QString &path, const struct stat &statBuf)
+void FileScannerCore::processRegularFile(ScanState &state, const QByteArray &path, const struct stat &statBuf)
 {
     // 硬链接去重
     if (statBuf.st_nlink > 1) {
@@ -755,21 +763,21 @@ void FileScannerCore::processRegularFile(ScanState &state, const QString &path, 
     state.result.progressSize += progressDeltaForFileSize(state, statBuf.st_size);
 }
 
-void FileScannerCore::processSymlink(ScanState &state, const QString &path)
+void FileScannerCore::processSymlink(ScanState &state, const QByteArray &path)
 {
     // 符号链接只计数，不跟随（不计入大小）
     state.result.fileCount++;
     state.result.progressSize += state.memoryPageSize;
 }
 
-bool FileScannerCore::isDirectoryPath(const QString &path, const struct stat &lstatBuf)
+bool FileScannerCore::isDirectoryPath(const QByteArray &path, const struct stat &lstatBuf)
 {
     if (S_ISDIR(lstatBuf.st_mode)) {
         return true;
     }
     if (S_ISLNK(lstatBuf.st_mode)) {
         struct stat statBuf;
-        if (stat(path.toUtf8().constData(), &statBuf) == 0) {
+        if (stat(path.constData(), &statBuf) == 0) {
             return S_ISDIR(statBuf.st_mode);
         }
     }
