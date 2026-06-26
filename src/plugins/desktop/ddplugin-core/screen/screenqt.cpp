@@ -8,6 +8,7 @@
 #include <qpa/qplatformscreen.h>
 #include <QDebug>
 #include <QApplication>
+#include <QWindow>
 
 namespace GlobalPrivate {
 static QRect dealRectRatio(QRect orgRect)
@@ -64,13 +65,29 @@ QRect ScreenQt::availableGeometry() const
 
     DockRect dockrectI = DockInfoIns->frontendWindowRect();
 
-    const qreal ratio = qApp->primaryScreen()->devicePixelRatio();
+    // wayland 分数缩放下不能用 QScreen::devicePixelRatio()：它是 wl_output 的整数 scale(真实 1.25
+    // 会被报成 2)，与逻辑几何不自洽，用它换算物理 dock 会少减、导致最底行被遮。真实分数缩放由合成器
+    // 经 wp_fractional_scale 按 surface 下发，只体现在“窗口”的 devicePixelRatio 上，故取本屏对应顶层
+    // 窗口的 devicePixelRatio；无窗口(早期/异常)时回退到本屏 devicePixelRatio 并钳到 >=1。
+    qreal ratio = qscreen->devicePixelRatio();
+    for (QWindow *w : qApp->topLevelWindows()) {
+        if (w->screen() == qscreen && w->devicePixelRatio() > 0) {
+            ratio = w->devicePixelRatio();
+            break;
+        }
+    }
+    if (ratio < 1.0)
+        ratio = 1.0;
     const QRect hRect = handleGeometry();
 
-    if (!hRect.contains(dockrectI)) {
+    // treeland 下 handleGeometry() 返回逻辑坐标，与物理 dock 错位会误判“不在本屏”，故补一次逻辑判断：
+    // 仅当物理判断与逻辑判断都认为 dock 不在本屏时，才退回全屏几何。
+    const QRect dockrectLogical(static_cast<int>(dockrectI.x / ratio), static_cast<int>(dockrectI.y / ratio),
+                                static_cast<int>(dockrectI.width / ratio), static_cast<int>(dockrectI.height / ratio));
+    if (!hRect.contains(dockrectI) && !ret.contains(dockrectLogical)) {
         fmDebug() << "Dock not contained in screen geometry, using full screen - screen:" << name()
                   << "handleGeometry:" << hRect << "dockRect:" << QRect(dockrectI)
-                  << "ratio:" << ratio;
+                  << "dockRectLogical:" << dockrectLogical << "ratio:" << ratio;
         return ret;
     }
 
