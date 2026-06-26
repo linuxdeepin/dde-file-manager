@@ -1,3 +1,15 @@
+dde-file-manager (6.5.146) unstable; urgency=medium
+
+  * fix(dfm-base): skip unnecessary initEnumerator(false) to prevent FTS leak
+  * fix(sidebar): ungrab QScroller gesture in SideBarView destructor
+  * fix(sidebar): explicitly delete SidebarViewStyle in destructor
+  * fix: add process shutdown detection for safe plugin teardown
+  * fix: improve task manager cleanup safety
+  * feat: enhance executable file handling with AM1 integration
+  * fix(disk-encrypt): use mkdtemp for temporary TPM config path
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Fri, 26 Jun 2026 11:19:20 +0800
+
 dde-file-manager (6.5.145) unstable; urgency=medium
 
   * feat: add Wayland window activation support
