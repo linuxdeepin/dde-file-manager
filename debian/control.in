@@ -124,7 +124,9 @@ Depends:
 Multi-Arch: same
 Description: DDE File Manager core librarys
  This package contains the shared libraries.
-Replaces: dfmplugin-disk-encrypt
+Replaces: dfmplugin-disk-encrypt,
+ dde-file-manager (<< 6.5.147)
+Breaks: dde-file-manager (<< 6.5.147)
 Conflicts: dfmplugin-disk-encrypt
 
 Package: dde-disk-mount-plugin
