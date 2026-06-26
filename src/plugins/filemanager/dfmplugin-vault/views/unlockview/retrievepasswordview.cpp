@@ -55,9 +55,12 @@ RetrievePasswordView::RetrievePasswordView(QWidget *parent)
 
     filePathEdit = new DFileChooserEdit(this);
     filePathEdit->lineEdit()->setPlaceholderText(tr("Select Key File"));
+    fileDialog = new DFileDialog(this, QDir::homePath());
+    fileDialog->setNameFilters({ QString("KEY file(*.key)") });
+    filePathEdit->setFileDialog(fileDialog);
     filePathEdit->setDirectoryUrl(QDir::homePath());
     filePathEdit->setFileMode(DFileDialog::ExistingFiles);
-    filePathEdit->setNameFilters({ QString("KEY file(*.key)") });
+    filePathEdit->lineEdit()->setReadOnly(true);
 
     verificationPrompt = new DLabel(this);
     verificationPrompt->setForegroundRole(DPalette::TextWarning);
@@ -77,6 +80,10 @@ RetrievePasswordView::RetrievePasswordView(QWidget *parent)
     mainLayout->addWidget(verificationPrompt);
 
     this->setLayout(mainLayout);
+
+    connect(filePathEdit, &DFileChooserEdit::dialogOpened, this, [this](){
+        fileDialog->setWindowFlag(Qt::WindowStaysOnTopHint);
+    });
     connect(filePathEdit, &DFileChooserEdit::fileChoosed, this, &RetrievePasswordView::onBtnSelectFilePath);
     connect(filePathEdit->lineEdit(), &QLineEdit::textChanged, this, &RetrievePasswordView::onTextChanged);
 
