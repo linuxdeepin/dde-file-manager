@@ -1858,67 +1858,67 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="78"/>
         <source>The input data was invalid</source>
-        <translation type="unfinished"/>
+        <translation>Los datos de entrada no eran válidos.</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="80"/>
         <source>A remote object generated an error(dbus)</source>
-        <translation type="unfinished"/>
+        <translation>Un objeto remoto generó un error (dbus).</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="82"/>
         <source>Host unreachable</source>
-        <translation type="unfinished"/>
+        <translation>Host inaccesible</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="84"/>
         <source>Network unreachable</source>
-        <translation type="unfinished"/>
+        <translation>Red inaccesible</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="86"/>
         <source>Connection refused</source>
-        <translation type="unfinished"/>
+        <translation>Conexión rechazada</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="88"/>
         <source>Connection to proxy server failed</source>
-        <translation type="unfinished"/>
+        <translation>Falló la conexión con el servidor proxy.</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="90"/>
         <source>Proxy authentication failed</source>
-        <translation type="unfinished"/>
+        <translation>Falló la autenticación del proxy.</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="92"/>
         <source>Proxy server needs authentication</source>
-        <translation type="unfinished"/>
+        <translation>El servidor proxy necesita autenticación.</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="94"/>
         <source>Proxy connection is not allowed by ruleset</source>
-        <translation type="unfinished"/>
+        <translation>El conjunto de reglas no permite la conexión proxy.</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="96"/>
         <source>Broken pipe</source>
-        <translation type="unfinished"/>
+        <translation>Tubería rota</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="98"/>
         <source>Connection closed by peer</source>
-        <translation type="unfinished"/>
+        <translation>Conexión cerrada por el otro extremo</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="100"/>
         <source>Transport endpoint is not connected</source>
-        <translation type="unfinished"/>
+        <translation>El punto final de transporte no está conectado.</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="102"/>
         <source>Message too large</source>
-        <translation type="unfinished"/>
+        <translation>Mensaje demasiado grande</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="104"/>
@@ -1928,17 +1928,17 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="106"/>
         <source>File open flag error</source>
-        <translation type="unfinished"/>
+        <translation>Error de apertura de archivo</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="108"/>
         <source>File info has no attribute</source>
-        <translation type="unfinished"/>
+        <translation>La información del archivo no tiene atributo</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="110"/>
         <source>Host is down</source>
-        <translation type="unfinished"/>
+        <translation>El anfitrión está caído</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="112"/>
