@@ -236,8 +236,8 @@ bool CheckBoxWidthFileIndex::restartFileIndex()
 bool CheckBoxWidthFileIndex::confirmDisableFileIndex()
 {
     Dtk::Widget::DDialog dialog(qApp->activeWindow());
-    dialog.setTitle(tr("Turn off file index?"));
-    dialog.setMessage(tr("If turned off, file searches will traverse the file system and severely reduce search speed."));
+    dialog.setTitle(tr("Confirm turning off file index?"));
+    dialog.setMessage(tr("If turned off, file searches will traverse the file system and severely reduce search speed, and the smart search feature will be unavailable."));
     dialog.addButton(QObject::tr("Cancel"), false, Dtk::Widget::DDialog::ButtonNormal);
     dialog.addButton(QObject::tr("Confirm"), true, Dtk::Widget::DDialog::ButtonRecommend);
 
