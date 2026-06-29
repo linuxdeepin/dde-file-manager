@@ -231,6 +231,28 @@ void Search::regSearchSettingConfig()
                                                      DConfig::kEnableOcrTextSearch,
                                                      val);
             });
+
+    // Semantic search configuration
+    QString semanticIndexKey { SearchSettings::kSemanticSearch };
+    DialogManager::instance()->registerSettingWidget("checkBoxWidthSemanticIndex", &SearchHelper::createCheckBoxWidthSemanticIndex);
+    SettingJsonGenerator::instance()->addConfig(SearchSettings::kSemanticSearch,
+                                                { { "key", semanticIndexKey.mid(semanticIndexKey.lastIndexOf(".") + 1) },
+                                                  { "text", tr("Smart search") },
+                                                  { "type", "checkBoxWidthSemanticIndex" },
+                                                  { "default", false } });
+
+    SettingBackend::instance()->addSettingAccessor(
+            SearchSettings::kSemanticSearch,
+            []() {
+                return DConfigManager::instance()->value(DConfig::kSearchCfgPath,
+                                                         DConfig::kEnableSemanticSearch,
+                                                         false);
+            },
+            [](const QVariant &val) {
+                DConfigManager::instance()->setValue(DConfig::kSearchCfgPath,
+                                                     DConfig::kEnableSemanticSearch,
+                                                     val);
+            });
 }
 
 void Search::bindEvents()

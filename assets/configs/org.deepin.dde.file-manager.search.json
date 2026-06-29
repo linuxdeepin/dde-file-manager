@@ -35,6 +35,17 @@
             "permissions":"readwrite",
             "visibility":"private"
         },
+        "enableSemanticSearch": {
+            "value":false,
+            "serial":0,
+            "flags":[],
+            "name":"Enable Semantic Search",
+            "name[zh_CN]":"开启智能搜索",
+            "description[zh_CN]":"开启智能搜索后支持在文件管理器中使用自然语言搜索文件，例如\"昨天编辑过的PPT文档\"",
+            "description":"Enable smart search to search files using natural language in the file manager, e.g. \"PPT documents edited yesterday\"",
+            "permissions":"readwrite",
+            "visibility":"private"
+        },
         "displaySearchHistory": {
             "value":true,
             "serial":0,

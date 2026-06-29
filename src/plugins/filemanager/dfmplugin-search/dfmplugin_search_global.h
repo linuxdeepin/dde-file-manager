@@ -44,6 +44,7 @@ inline constexpr char kGroupSearch[] { SEARCH_SETTING_GROUP };
 inline constexpr char kFileIndexSearch[] { SEARCH_SETTING_GROUP ".00_file_index_search" };
 inline constexpr char kFulltextSearch[] { SEARCH_SETTING_GROUP ".01_fulltext_search" };
 inline constexpr char kOcrTextSearch[] { SEARCH_SETTING_GROUP ".02_ocr_text_search" };
+inline constexpr char kSemanticSearch[] { SEARCH_SETTING_GROUP ".03_semantic_search" };
 }
 
 namespace DConfig {
@@ -51,6 +52,7 @@ inline constexpr char kSearchCfgPath[] { "org.deepin.dde.file-manager.search" };
 inline constexpr char kEnableFileIndexSearch[] { "enableFileIndexSearch" };
 inline constexpr char kEnableFullTextSearch[] { "enableFullTextSearch" };
 inline constexpr char kEnableOcrTextSearch[] { "enableOcrTextSearch" };
+inline constexpr char kEnableSemanticSearch[] { "enableSemanticSearch" };
 }
 
 DPSEARCH_END_NAMESPACE

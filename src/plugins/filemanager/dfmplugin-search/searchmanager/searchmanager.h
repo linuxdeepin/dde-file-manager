@@ -44,6 +44,8 @@ signals:
     void searchStoped(const QString &taskId);
     void enableFullTextSearchChanged(bool enable);
     void enableOcrTextSearchChanged(bool enable);
+    void enableFileIndexSearchChanged(bool enable);
+    void enableSemanticSearchChanged(bool enable);
 
     void fileAdd(const QUrl &url);
     void fileDelete(const QUrl &url);
