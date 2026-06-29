@@ -929,11 +929,11 @@ void ComputerItemWatcher::onDevicePropertyChangedQDBusVar(const QString &id, con
         // if any block device's filesystem is added then it should be added into computer view.
         // and if filesystem is removed, remove from computer view except the optical drive.
         if (propertyName == DeviceProperty::kHasFileSystem) {
-            auto blkInfo = DevProxyMng->queryBlockInfo(id, true);
-            if (var.variant().toBool()) {
-                addDevice(diskGroup(), url);
-            } else {
-                if (!blkInfo.value(DeviceProperty::kOpticalDrive).toBool())   // 避免光驱被误删
+            auto blkInfo = DevProxyMng->queryBlockInfo(id);
+            if (blkInfo.value(DeviceProperty::kIsLoopDevice).toBool()) {
+                if (var.variant().toBool())
+                    addDevice(diskGroup(), url);
+                else
                     removeDevice(url);
             }
             onUpdateBlockItem(id);
