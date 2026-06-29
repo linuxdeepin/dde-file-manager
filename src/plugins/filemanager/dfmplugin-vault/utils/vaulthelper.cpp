@@ -446,6 +446,9 @@ void VaultHelper::unlockVaultDialog()
         if (!password.isEmpty()) {
             fmDebug() << "Vault: Password retrieved from keyring, attempting unlock";
 
+            if (!PathManager::createVaultMountDir(kVaultBasePath))
+                return;
+
             if (unlockVault(password)) {
                 fmInfo() << "Vault: Automatic unlock successful";
                 VaultHelper::instance()->defaultCdAction(VaultHelper::instance()->currentWindowId(),

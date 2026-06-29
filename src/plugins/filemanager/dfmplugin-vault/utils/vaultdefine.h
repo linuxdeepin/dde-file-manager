@@ -22,6 +22,7 @@ inline constexpr char kRSAPUBKeyFileName[] { "rsapubkey" };
 inline constexpr char kRSACiphertextFileName[] { "rsaclipher" };
 inline constexpr char kPasswordHintFileName[] { "passwordHint" };
 inline constexpr char kVaultConfigFileName[] { "vaultConfig.ini" };
+inline constexpr char kVaultPswContainerFileName[] { "password_container.bin" };
 
 //propertydailog and detaillview property change
 inline constexpr char kFieldReplace[] { "kFieldReplace" };
