@@ -10,6 +10,7 @@
 
 #include <dfm-base/utils/dialogmanager.h>
 
+#include <DDialog>
 #include <DFontSizeManager>
 #include <DSpinner>
 
@@ -280,8 +281,8 @@ bool ResetPasswordByOldPasswordView::checkRepeatPassword()
 bool ResetPasswordByOldPasswordView::checkInputInfo()
 {
     return !oldPasswordEdit->text().isEmpty()
-           && checkPassword(newPasswordEdit->text())
-           && checkRepeatPassword();
+            && checkPassword(newPasswordEdit->text())
+            && checkRepeatPassword();
 }
 
 void ResetPasswordByOldPasswordView::showEvent(QShowEvent *event)
@@ -350,8 +351,18 @@ void ResetPasswordByOldPasswordView::onResetPasswordFinished()
         // 密码重置成功，恢复错误次数限制
         VaultDBusUtils::restoreLeftoverErrorInputTimes();
         VaultDBusUtils::restoreNeedWaitMinutes();
-        DialogManager::instance()->showMessageDialog(tr("Success"), tr("Password reset successfully"));
+        // 先关闭重置密码对话框（退出外层模态事件循环），避免嵌套 exec 导致合成器不映射提示窗口
         emit sigCloseDialog();
+        // 再用非阻塞方式弹出成功提示，不依赖 qApp->activeWindow()，避免异步回调中 activeWindow 为空
+        DDialog *msgDlg = new DDialog(tr("Success"), tr("Password reset successfully"));
+        msgDlg->setAttribute(Qt::WA_DeleteOnClose);
+        msgDlg->addButtons(QStringList { QObject::tr("Confirm", "button") });
+        msgDlg->setDefaultButton(0);
+        msgDlg->setIcon(QIcon::fromTheme("dde-file-manager"));
+        msgDlg->moveToCenter();
+        msgDlg->show();
+        msgDlg->raise();
+        msgDlg->activateWindow();
     } else {
         // 重置失败
         oldPasswordEdit->setAlert(true);

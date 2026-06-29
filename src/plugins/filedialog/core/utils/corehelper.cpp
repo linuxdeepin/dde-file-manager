@@ -86,15 +86,6 @@ bool CoreHelper::askReplaceFile(QString fileName, QWidget *parent)
 {
     DDialog dialog(parent);
 
-    // NOTE(zccrs): dxcb bug
-    if ((!WindowUtils::isWayLand() && !DPlatformWindowHandle::isEnabledDXcb(parent))
-#if DTK_VERSION > DTK_VERSION_CHECK(2, 0, 5, 0)
-        || pwPluginVersionGreaterThen("1.1.8.3")
-#endif
-    ) {
-        dialog.setWindowModality(Qt::WindowModal);
-    }
-
     dialog.setIcon(QIcon::fromTheme("dde-file-manager"));
 
     QLabel *titleLabel = dialog.findChild<QLabel *>("TitleLabel");
@@ -139,9 +130,9 @@ QString CoreHelper::findExtensionName(const QString &fileName, const QStringList
 
     const QString fileNameExtension = db->suffixForFileName(fileName);
 
-    for (const QString &filter : newNameFilters) {   //从扩展名列表中轮询，目前发现的应用程序传入扩展名列表均只有一个
-        newNameFilterExtension = db->suffixForFileName(filter);   //在QMimeDataBase里面查询扩展名是否存在（不能查询正则表达式）
-        if (newNameFilterExtension.isEmpty()) {   //未查询到扩展名用正则表达式再查一次，新加部分，解决WPS保存文件去掉扩展名后没有补上扩展名的问题
+    for (const QString &filter : newNameFilters) {   // 从扩展名列表中轮询，目前发现的应用程序传入扩展名列表均只有一个
+        newNameFilterExtension = db->suffixForFileName(filter);   // 在QMimeDataBase里面查询扩展名是否存在（不能查询正则表达式）
+        if (newNameFilterExtension.isEmpty()) {   // 未查询到扩展名用正则表达式再查一次，新加部分，解决WPS保存文件去掉扩展名后没有补上扩展名的问题
             QRegularExpression regExp(QRegularExpression::wildcardToRegularExpression(filter.mid(2)),
                                       QRegularExpression::CaseInsensitiveOption);
             fmInfo() << "File Dialog: Cannot find extesion name by QMimeDataBase::suffixForFileName，try regexp: " << filter;
@@ -150,18 +141,18 @@ QString CoreHelper::findExtensionName(const QString &fileName, const QStringList
                     if (regExp.match("^" + suffixe + "$").hasMatch()) {
                         newNameFilterExtension = suffixe;
                         fmInfo() << "Find extesion name by regexp: " << suffixe;
-                        break;   //查询到后跳出循环
+                        break;   // 查询到后跳出循环
                     }
                 }
                 if (!newNameFilterExtension.isEmpty()) {
-                    break;   //查询到后跳出循环
+                    break;   // 查询到后跳出循环
                 }
             }
         }
 
         QRegularExpression re(QRegularExpression::wildcardToRegularExpression(newNameFilterExtension),
                               QRegularExpression::CaseInsensitiveOption);
-        if (re.match("^" + fileNameExtension + "$").hasMatch()) {   //原扩展名与新扩展名不匹配？
+        if (re.match("^" + fileNameExtension + "$").hasMatch()) {   // 原扩展名与新扩展名不匹配？
             fmInfo() << "Set new filter rules:" << newNameFilters;
             // TODO(liuyangming):
             // getFileView()->setNameFilters(newNameFilters); //这里传递回去的有可能是一个正则表达式，它决定哪些文件不被置灰
