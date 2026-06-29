@@ -1,3 +1,9 @@
+dde-file-manager (6.5.149) unstable; urgency=medium
+
+  * Fix(computer): Rollback code
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Mon, 29 Jun 2026 23:11:18 +0800
+
 dde-file-manager (6.5.148) unstable; urgency=medium
 
   * refactor: enhance device mount point management
