@@ -67,6 +67,7 @@ public:
     [[nodiscard]] static QWidget *createCheckBoxWidthFileIndex(QObject *opt);
     [[nodiscard]] static QWidget *createCheckBoxWidthTextIndex(QObject *opt);
     [[nodiscard]] static QWidget *createCheckBoxWidthOcrIndex(QObject *opt);
+    [[nodiscard]] static QWidget *createCheckBoxWidthSemanticIndex(QObject *opt);
 
 private:
     explicit SearchHelper(QObject *parent = nullptr);

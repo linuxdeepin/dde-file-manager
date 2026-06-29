@@ -114,6 +114,14 @@ void SearchManager::onDConfigValueChanged(const QString &config, const QString &
         bool enabled = DConfigManager::instance()->value(config, key, false).toBool();
         fmInfo() << "OCR text search configuration changed - enabled:" << enabled;
         emit enableOcrTextSearchChanged(enabled);
+    } else if (key == DConfig::kEnableFileIndexSearch) {
+        bool enabled = DConfigManager::instance()->value(config, key, true).toBool();
+        fmInfo() << "File index search configuration changed - enabled:" << enabled;
+        emit enableFileIndexSearchChanged(enabled);
+    } else if (key == DConfig::kEnableSemanticSearch) {
+        bool enabled = DConfigManager::instance()->value(config, key, false).toBool();
+        fmInfo() << "Semantic search configuration changed - enabled:" << enabled;
+        emit enableSemanticSearchChanged(enabled);
     }
 }
 
