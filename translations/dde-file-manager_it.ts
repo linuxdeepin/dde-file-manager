@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="it">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="it">
 <context>
     <name>AccessControlDBus</name>
     <message>
@@ -33,7 +31,7 @@ Localizzazione italiana a cura di Massimo A. Carofano. </translation>
     <message>
         <location filename="../src/services/diskencrypt/workers/dminitencryptworker.cpp" line="51"/>
         <source>Initialize encryption </source>
-        <translation type="unfinished"></translation>
+        <translation>Inizializzazione crittografia </translation>
     </message>
 </context>
 <context>
@@ -68,7 +66,7 @@ Localizzazione italiana a cura di Massimo A. Carofano. </translation>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="881"/>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="991"/>
         <source>Can&apos;t access file!</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile accedere al file!</translation>
     </message>
 </context>
 <context>
@@ -118,7 +116,7 @@ Localizzazione italiana a cura di Massimo A. Carofano. </translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="735"/>
         <source>Cannot copy source directory: permission denied</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile copiare la cartella di origine: permesso negato</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="756"/>
@@ -131,7 +129,7 @@ Localizzazione italiana a cura di Massimo A. Carofano. </translation>
     <message>
         <location filename="../src/services/diskencrypt/workers/fstabdecryptworker.cpp" line="28"/>
         <source>Decrypting </source>
-        <translation type="unfinished"></translation>
+        <translation>Decrittografia </translation>
     </message>
 </context>
 <context>
@@ -139,7 +137,7 @@ Localizzazione italiana a cura di Massimo A. Carofano. </translation>
     <message>
         <location filename="../src/services/diskencrypt/workers/fstabinitencryptworker.cpp" line="27"/>
         <source>Initialize encryption </source>
-        <translation type="unfinished"></translation>
+        <translation>Inizializzazione crittografia </translation>
     </message>
 </context>
 <context>
@@ -155,7 +153,7 @@ Localizzazione italiana a cura di Massimo A. Carofano. </translation>
     <message>
         <location filename="../src/services/diskencrypt/workers/normaldecryptworker.cpp" line="24"/>
         <source>Decrypting </source>
-        <translation type="unfinished"></translation>
+        <translation>Decrittografia </translation>
     </message>
 </context>
 <context>
@@ -163,7 +161,7 @@ Localizzazione italiana a cura di Massimo A. Carofano. </translation>
     <message>
         <location filename="../src/services/diskencrypt/workers/normalinitencryptworker.cpp" line="27"/>
         <source>Initialize encryption </source>
-        <translation type="unfinished"></translation>
+        <translation>Inizializzazione crittografia </translation>
     </message>
 </context>
 <context>
@@ -187,7 +185,8 @@ Localizzazione italiana a cura di Massimo A. Carofano. </translation>
         <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1008"/>
         <source>Authentication Required
 Enter user and password for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Autenticazione richiesta
+Inserisci utente e password per %1</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1071"/>
@@ -211,7 +210,7 @@ Enter user and password for %1</source>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/filepreview.cpp" line="80"/>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="369"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="365"/>
         <location filename="../src/plugins/filemanager/dfmplugin-core/core.cpp" line="52"/>
         <location filename="../src/plugins/filemanager/dfmplugin-core/core.cpp" line="53"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/pathgroupstrategy.cpp" line="31"/>
@@ -219,18 +218,18 @@ Enter user and password for %1</source>
         <translation>Disco di sistema</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="372"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="368"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/pathgroupstrategy.cpp" line="32"/>
         <source>Data Disk</source>
         <translation>Disco dati</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="423"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="419"/>
         <source>Blank %1 Disc</source>
         <translation>Cancella disco %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="423"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="419"/>
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="555"/>
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="566"/>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="348"/>
@@ -239,18 +238,18 @@ Enter user and password for %1</source>
         <translation>Sconosciuto</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="433"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="429"/>
         <source>%1 Drive</source>
         <translation>Dispositivo %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="382"/>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="452"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="378"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="448"/>
         <source>%1 Encrypted</source>
         <translation>%1 Crittografato</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="460"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="456"/>
         <location filename="../src/external/dde-dock-plugins/disk-mount/utils/dockutils.cpp" line="109"/>
         <source>%1 Volume</source>
         <translation>Volume %1</translation>
@@ -376,24 +375,24 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="397"/>
         <source>Specify directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Specifica cartella</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="407"/>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="428"/>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="478"/>
         <source>Specify directory %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Specifica cartella %1</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="473"/>
         <source>Invalid Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Cartella non valida</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="474"/>
         <source>This directory does not support pinning</source>
-        <translation type="unfinished"></translation>
+        <translation>Questa cartella non supporta l&apos;ancoraggio</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskdialog.cpp" line="155"/>
@@ -413,7 +412,7 @@ Enter user and password for %1</source>
         <translation>%1 oggetti</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="1338"/>
+        <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="1347"/>
         <source>Unable to find the original file</source>
         <translation>Impossibile trovare il file di origine</translation>
     </message>
@@ -695,7 +694,7 @@ Enter user and password for %1</source>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="51"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="52"/>
         <source>Default icon size:</source>
-        <translation type="unfinished"></translation>
+        <translation>Dimensione icona predefinita:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="44"/>
@@ -953,17 +952,17 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="550"/>
         <source>View details</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra dettagli</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="550"/>
         <source>Hide details</source>
-        <translation type="unfinished">Nascondi dettagli</translation>
+        <translation>Nascondi dettagli</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="552"/>
         <source>Failed to operate on %1 files, %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Operazione fallita su %1 file, %2</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/filenameutils.cpp" line="207"/>
@@ -1168,7 +1167,8 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="201"/>
         <source>Finalize disc after burning 
 (no additional data can be appended)</source>
-        <translation type="unfinished"></translation>
+        <translation>Finalizza il disco dopo la scrittura
+(nessun ulteriore dato potrà essere aggiunto)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="211"/>
@@ -1178,7 +1178,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="215"/>
         <source>Verify files (checksum)</source>
-        <translation type="unfinished"></translation>
+        <translation>Verifica file (checksum)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="219"/>
@@ -1487,7 +1487,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="102"/>
         <source>New tab</source>
-        <translation type="unfinished">Nuova scheda</translation>
+        <translation>Nuova scheda</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="108"/>
@@ -1644,7 +1644,7 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="272"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="340"/>
         <source>Reset Password</source>
-        <translation type="unfinished"></translation>
+        <translation>Reimposta password</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="290"/>
@@ -1682,25 +1682,26 @@ Enter user and password for %1</source>
         <translation>Elimina File Vault</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="466"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="469"/>
         <source>Upgrade File Vault</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiorna File Vault</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="481"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="484"/>
         <source>The file vault encryption scheme has been upgraded.
 You need to upgrade this vault to continue using it.</source>
-        <translation type="unfinished"></translation>
+        <translation>Lo schema di crittografia del File Vault è stato aggiornato.
+È necessario aggiornare questo vault per continuare a utilizzarlo.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="490"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="493"/>
         <source>Later</source>
-        <translation type="unfinished"></translation>
+        <translation>Più tardi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="491"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="494"/>
         <source>Upgrade now</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiorna ora</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="12"/>
@@ -1810,117 +1811,117 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="54"/>
         <source>Backup couldn&apos;t be created</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile creare il backup</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="56"/>
         <source>File&apos;s Entity Tag was incorrect</source>
-        <translation type="unfinished"></translation>
+        <translation>Il tag Entity del file non era corretto</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="60"/>
         <source>Operation would be recursive</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;operazione sarebbe ricorsiva</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="64"/>
         <source>Operation would block</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;operazione si blocherebbe</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="66"/>
         <source>Host couldn&apos;t be found (remote operations)</source>
-        <translation type="unfinished"></translation>
+        <translation>Host non trovato (operazioni remote)</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="68"/>
         <source>Operation would merge files</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;operazione unirebbe i file</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="70"/>
         <source>The current process has too many files open and can&apos;t open any more. Duplicate descriptors do count toward this limit</source>
-        <translation type="unfinished"></translation>
+        <translation>Il processo corrente ha troppi file aperti e non può aprirne altri. I descrittori duplicati contano verso questo limite</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="72"/>
         <source>The object has not been initialized</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;oggetto non è stato inizializzato</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="74"/>
         <source>The requested address is already in use</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;indirizzo richiesto è già in uso</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="76"/>
         <source>Need more input to finish operation</source>
-        <translation type="unfinished"></translation>
+        <translation>Sono necessari altri input per completare l&apos;operazione</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="78"/>
         <source>The input data was invalid</source>
-        <translation type="unfinished"></translation>
+        <translation>I dati di input non erano validi</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="80"/>
         <source>A remote object generated an error(dbus)</source>
-        <translation type="unfinished"></translation>
+        <translation>Un oggetto remoto ha generato un errore (dbus)</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="82"/>
         <source>Host unreachable</source>
-        <translation type="unfinished"></translation>
+        <translation>Host irraggiungibile</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="84"/>
         <source>Network unreachable</source>
-        <translation type="unfinished"></translation>
+        <translation>Rete irraggiungibile</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="86"/>
         <source>Connection refused</source>
-        <translation type="unfinished"></translation>
+        <translation>Connessione rifiutata</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="88"/>
         <source>Connection to proxy server failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Connessione al server proxy fallita</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="90"/>
         <source>Proxy authentication failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Autenticazione proxy fallita</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="92"/>
         <source>Proxy server needs authentication</source>
-        <translation type="unfinished"></translation>
+        <translation>Il server proxy richiede autenticazione</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="94"/>
         <source>Proxy connection is not allowed by ruleset</source>
-        <translation type="unfinished"></translation>
+        <translation>La connessione proxy non è consentita dal set di regole</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="96"/>
         <source>Broken pipe</source>
-        <translation type="unfinished"></translation>
+        <translation>Pipe interrotta</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="98"/>
         <source>Connection closed by peer</source>
-        <translation type="unfinished"></translation>
+        <translation>Connessione chiusa dal peer</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="100"/>
         <source>Transport endpoint is not connected</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;estremità di trasporto non è connessa</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="102"/>
         <source>Message too large</source>
-        <translation type="unfinished"></translation>
+        <translation>Messaggio troppo grande</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="104"/>
@@ -1930,17 +1931,17 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="106"/>
         <source>File open flag error</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore nei flag di apertura del file</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="108"/>
         <source>File info has no attribute</source>
-        <translation type="unfinished"></translation>
+        <translation>Le informazioni del file non hanno attributi</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="110"/>
         <source>Host is down</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;host è offline</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="112"/>
@@ -1955,7 +1956,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="10"/>
         <source>Generic error condition for when an operation fails and no more specific DFMIOErrorEnum value is defined</source>
-        <translation type="unfinished"></translation>
+        <translation>Condizione di errore generica quando un&apos;operazione fallisce e non è definito un valore DFMIOErrorEnum più specifico</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="62"/>
@@ -1991,240 +1992,240 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="25"/>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="28"/>
         <source>or</source>
-        <translation type="unfinished"></translation>
+        <translation>oppure</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/addressbar.cpp" line="376"/>
         <source>Clear search history</source>
-        <translation type="unfinished"></translation>
+        <translation>Cancella cronologia di ricerca</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="355"/>
         <source>Unknow</source>
-        <translation type="unfinished"></translation>
+        <translation>Sconosciuto</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="308"/>
         <source>search</source>
-        <translation type="unfinished"></translation>
+        <translation>cerca</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="323"/>
         <source>advanced search</source>
-        <translation type="unfinished"></translation>
+        <translation>ricerca avanzata</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="614"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="645"/>
         <source>Cannot generate random number by TPM</source>
         <translation>Impossibile generare un numero casuale tramite TPM</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="617"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="648"/>
         <source>No available encrypt algorithm.</source>
         <translation>Nessun algoritmo di crittografia disponibile.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="620"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="651"/>
         <source>TPM encrypt failed.</source>
         <translation>TPM crittografia fallita.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="623"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="654"/>
         <source>TPM is locked.</source>
         <translation>TPM è</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="696"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="727"/>
         <source>Confirm encrypt %1?</source>
-        <translation type="unfinished"></translation>
+        <translation>Confermare la crittografia di %1?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="699"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="730"/>
         <source>The current partition is about to be encrypted and cannot be canceled during the encryption process, please confirm the encryption.</source>
-        <translation type="unfinished"></translation>
+        <translation>La partizione corrente sta per essere crittografata e non può essere annullata durante il processo di crittografia, confermare la crittografia.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="719"/>
-        <source>Decrypt &quot;%1&quot; partition?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="707"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="722"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="738"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="753"/>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="241"/>
         <source>Cancel</source>
         <translation>Annulla</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="708"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="723"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="739"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="754"/>
         <source>Confirm and Reboot</source>
-        <translation type="unfinished"></translation>
+        <translation>Conferma e riavvia</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="709"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="723"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="740"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="754"/>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="242"/>
         <source>Confirm</source>
         <translation>Conferma</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="720"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="750"/>
+        <source>Decrypt &quot;%1&quot; partition?</source>
+        <translation>Decrittografare la partizione &quot;%1&quot;?</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="751"/>
         <source>Decryption can take a long time, so make sure power is connected until the decryption is complete.</source>
-        <translation type="unfinished"></translation>
+        <translation>La decrittografia può richiedere molto tempo, assicurarsi che l&apos;alimentazione sia connessa fino al completamento della decrittografia.</translation>
     </message>
     <message>
         <location filename="../src/services/diskencrypt/helpers/abrecoveryhelper.cpp" line="66"/>
         <source>Updating grub...</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiornamento grub...</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/fileutils/vaultfileinfo.cpp" line="311"/>
+        <source>File Vault</source>
+        <translation>File di recupero Vault</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="210"/>
         <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="228"/>
         <source>Path</source>
-        <translation type="unfinished">Percorso</translation>
+        <translation>Percorso</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="211"/>
         <source>Last access</source>
-        <translation type="unfinished">Ultimo accesso</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="115"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="52"/>
-        <source>None</source>
-        <translation type="unfinished">Nessuna</translation>
+        <translation>Ultimo accesso</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="131"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="41"/>
         <source>Group by</source>
-        <translation type="unfinished"></translation>
+        <translation>Raggruppa per</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewswitchbutton.cpp" line="51"/>
-        <source>Icon view</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewswitchbutton.cpp" line="55"/>
-        <source>List view</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewswitchbutton.cpp" line="59"/>
-        <source>Tree view</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="239"/>
-        <source>Time deleted</source>
-        <translation type="unfinished">Data eliminazione</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/fileutils/vaultfileinfo.cpp" line="311"/>
-        <source>File Vault</source>
-        <translation type="unfinished">File di recupero Vault</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/namegroupstrategy.cpp" line="37"/>
-        <source>Chinese A-H</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/namegroupstrategy.cpp" line="38"/>
-        <source>Chinese I-P</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/namegroupstrategy.cpp" line="39"/>
-        <source>Chinese Q-Z</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="33"/>
-        <source>Today</source>
-        <translation type="unfinished">Oggi</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="34"/>
-        <source>Yesterday</source>
-        <translation type="unfinished">Ieri</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="35"/>
-        <source>Past 7 Days</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="36"/>
-        <source>Past 30 Days</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="37"/>
-        <source>Earlier</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/typegroupstrategy.cpp" line="36"/>
-        <source>Directory</source>
-        <translation type="unfinished">Cartella</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/typegroupstrategy.cpp" line="37"/>
-        <source>Text</source>
-        <translation type="unfinished">Testo</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/typegroupstrategy.cpp" line="38"/>
-        <source>Image</source>
-        <translation type="unfinished">Immagini</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/typegroupstrategy.cpp" line="39"/>
-        <source>Video</source>
-        <translation type="unfinished">Video</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/typegroupstrategy.cpp" line="40"/>
-        <source>Audio</source>
-        <translation type="unfinished">Audio</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/typegroupstrategy.cpp" line="41"/>
-        <source>Archive</source>
-        <translation type="unfinished">Archivio</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/typegroupstrategy.cpp" line="42"/>
-        <source>Application</source>
-        <translation type="unfinished">Applicazioni</translation>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="115"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="52"/>
+        <source>None</source>
+        <translation>Nessuno</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="53"/>
         <source>Name</source>
-        <translation type="unfinished">Nome</translation>
+        <translation>Nome</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="54"/>
         <source>Time modified</source>
-        <translation type="unfinished">Ultima modifica</translation>
+        <translation>Ultima modifica</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="55"/>
         <source>Time created</source>
-        <translation type="unfinished">Data creazione</translation>
+        <translation>Data creazione</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="56"/>
         <source>Size</source>
-        <translation type="unfinished">Dimensione</translation>
+        <translation>Dimensione</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="57"/>
         <source>Type</source>
-        <translation type="unfinished">Tipo</translation>
+        <translation>Tipo</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="239"/>
+        <source>Time deleted</source>
+        <translation>Data eliminazione</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/namegroupstrategy.cpp" line="37"/>
+        <source>Chinese A-H</source>
+        <translation>Cinese A-H</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/namegroupstrategy.cpp" line="38"/>
+        <source>Chinese I-P</source>
+        <translation>Cinese I-P</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/namegroupstrategy.cpp" line="39"/>
+        <source>Chinese Q-Z</source>
+        <translation>Cinese Q-Z</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="33"/>
+        <source>Today</source>
+        <translation>Oggi</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="34"/>
+        <source>Yesterday</source>
+        <translation>Ieri</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="35"/>
+        <source>Past 7 Days</source>
+        <translation>Ultimi 7 giorni</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="36"/>
+        <source>Past 30 Days</source>
+        <translation>Ultimi 30 giorni</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="37"/>
+        <source>Earlier</source>
+        <translation>Precedenti</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/typegroupstrategy.cpp" line="36"/>
+        <source>Directory</source>
+        <translation>Cartella</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/typegroupstrategy.cpp" line="37"/>
+        <source>Text</source>
+        <translation>Testo</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/typegroupstrategy.cpp" line="38"/>
+        <source>Image</source>
+        <translation>Immagini</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/typegroupstrategy.cpp" line="39"/>
+        <source>Video</source>
+        <translation>Video</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/typegroupstrategy.cpp" line="40"/>
+        <source>Audio</source>
+        <translation>Audio</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/typegroupstrategy.cpp" line="41"/>
+        <source>Archive</source>
+        <translation>Archivio</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/typegroupstrategy.cpp" line="42"/>
+        <source>Application</source>
+        <translation>Applicazioni</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewswitchbutton.cpp" line="51"/>
+        <source>Icon view</source>
+        <translation>Vista icone</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewswitchbutton.cpp" line="55"/>
+        <source>List view</source>
+        <translation>Vista lista</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewswitchbutton.cpp" line="59"/>
+        <source>Tree view</source>
+        <translation>Vista ad albero</translation>
     </message>
 </context>
 <context>
@@ -2232,7 +2233,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/services/diskencrypt/workers/resumeencryptworker.cpp" line="75"/>
         <source>Encrypting </source>
-        <translation type="unfinished"></translation>
+        <translation>Crittografia </translation>
     </message>
 </context>
 <context>
@@ -2286,7 +2287,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="142"/>
         <source>Time created</source>
-        <translation type="unfinished">Data creazione</translation>
+        <translation>Data creazione</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="143"/>
@@ -2451,12 +2452,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/alerthidealldialog.cpp" line="37"/>
         <source>The hortcut key &quot;%1&quot; to show collection</source>
-        <translation type="unfinished"></translation>
+        <translation>La scorciatoia &quot;%1&quot; per mostrare la collezione</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/alerthidealldialog.cpp" line="45"/>
         <source>No prompt</source>
-        <translation type="unfinished"></translation>
+        <translation>Nessun avviso</translation>
     </message>
 </context>
 <context>
@@ -2508,7 +2509,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="136"/>
         <source>Middle area</source>
-        <translation type="unfinished"></translation>
+        <translation>Area media</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="162"/>
@@ -2539,12 +2540,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="233"/>
         <source>Enable desktop organization</source>
-        <translation type="unfinished"></translation>
+        <translation>Abilita organizzazione desktop</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="235"/>
         <source>Desktop Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Impostazioni desktop</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="236"/>
@@ -2585,29 +2586,29 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>ddplugin_organizer::FrameManagerPrivate</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="185"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="187"/>
         <source>To disable the One-Click Hide feature, invoke the &quot;Desktop Settings&quot; window in the desktop context menu and turn off the &quot;One-Click Hide Collection&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Per disabilitare la funzione Nascondi con un clic, apri la finestra &quot;Impostazioni desktop&quot; dal menu contestuale del desktop e disattiva &quot;Nascondi collezione con un clic&quot;.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="197"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="199"/>
         <source>Desktop organizer</source>
-        <translation type="unfinished"></translation>
+        <translation>Organizzatore desktop</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="200"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="202"/>
         <source>Shortcut &quot;%1&quot; to show collections</source>
-        <translation type="unfinished"></translation>
+        <translation>Scorciatoia &quot;%1&quot; per mostrare le collezioni</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="202"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="204"/>
         <source>Close</source>
-        <translation type="unfinished">Chiudi</translation>
+        <translation>Chiudi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="202"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="204"/>
         <source>No more prompts</source>
-        <translation type="unfinished"></translation>
+        <translation>Nessun altro avviso</translation>
     </message>
 </context>
 <context>
@@ -2631,7 +2632,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="91"/>
         <source>Desktop Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Impostazioni desktop</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="110"/>
@@ -2641,7 +2642,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="130"/>
         <source>Enable desktop organizer</source>
-        <translation type="unfinished"></translation>
+        <translation>Abilita organizzatore desktop</translation>
     </message>
 </context>
 <context>
@@ -2659,12 +2660,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="158"/>
         <source>Hide all collections with one click</source>
-        <translation type="unfinished"></translation>
+        <translation>Nascondi tutte le collezioni con un clic</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="218"/>
         <source>Hide/Show Collection Shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra/Nascondi scorciatoie collezioni</translation>
     </message>
 </context>
 <context>
@@ -2999,7 +3000,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="626"/>
         <source>Unable to connect to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile connettersi a %1</translation>
     </message>
 </context>
 <context>
@@ -3083,7 +3084,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="170"/>
         <source>Authentication failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Autenticazione fallita</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="164"/>
@@ -3230,7 +3231,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="162"/>
         <source>Permission denied</source>
-        <translation type="unfinished">Permesso negato</translation>
+        <translation>Permesso negato</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="425"/>
@@ -3281,32 +3282,32 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="540"/>
         <source>File operation failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Operazione file fallita: %1</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="569"/>
         <source>File Name</source>
-        <translation type="unfinished">Nome file</translation>
+        <translation>Nome file</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="569"/>
         <source>Error Reason</source>
-        <translation type="unfinished"></translation>
+        <translation>Motivo errore</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="625"/>
         <source>After revocation, it will be completely deleted %1, do you want to delete it completely?</source>
-        <translation type="unfinished"></translation>
+        <translation>Dopo la revoca, %1 verrà eliminato completamente, si desidera eliminare completamente?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="628"/>
         <source>These %1 contents will be completely deleted after revocation. Do you want to delete them completely?</source>
-        <translation type="unfinished"></translation>
+        <translation>Questi %1 contenuti verranno eliminati completamente dopo la revoca. Si desidera eliminarli completamente?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="653"/>
         <source>This operation cannot be reversed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Questa operazione non può essere invertita.</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="669"/>
@@ -3561,11 +3562,6 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Download</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="296"/>
-        <source>New tab</source>
-        <translation type="unfinished">Nuova scheda</translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="298"/>
         <source>Open in new tab:</source>
         <translation>Apri in una nuova scheda</translation>
@@ -3608,12 +3604,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="354"/>
         <source>Default icon grid density:</source>
-        <translation type="unfinished"></translation>
+        <translation>Densità griglia icone predefinita:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="364"/>
         <source>Default list height:</source>
-        <translation type="unfinished"></translation>
+        <translation>Altezza elenco predefinita:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="374"/>
@@ -3628,12 +3624,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="406"/>
         <source>Load thumbnails for network, mobile, and optical disc directories</source>
-        <translation type="unfinished"></translation>
+        <translation>Carica le anteprime per le cartelle di rete, mobili e dischi ottici</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="407"/>
         <source>Thumbnails will be loaded for high-latency devices like network shares, phones, and optical drives, which may affect loading speed</source>
-        <translation type="unfinished"></translation>
+        <translation>Le anteprime verranno caricate per dispositivi ad alta latenza come condivisioni di rete, telefoni e unità ottiche, il che potrebbe influire sulla velocità di caricamento</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="371"/>
@@ -3643,32 +3639,37 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="244"/>
         <source>Open new folder in a new tab</source>
-        <translation type="unfinished"></translation>
+        <translation>Apri una nuova cartella in una nuova scheda</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="247"/>
         <source>Activate existing window when reopening folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Attiva la finestra esistente quando riapri la cartella</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="269"/>
         <source>New window</source>
-        <translation type="unfinished">Nuova finestra</translation>
+        <translation>Nuova finestra</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="272"/>
         <source>Display when launching a new window:</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra all&apos;avvio di una nuova finestra:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="275"/>
         <source>Default Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Cartella predefinita</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="296"/>
+        <source>New tab</source>
+        <translation>Nuova scheda</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="344"/>
         <source>Default icon size:</source>
-        <translation type="unfinished"></translation>
+        <translation>Dimensione icona predefinita:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="371"/>
@@ -3851,22 +3852,22 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="34"/>
         <source>Copy file path</source>
-        <translation type="unfinished"></translation>
+        <translation>Copia percorso file</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="35"/>
         <source>Open in terminal</source>
-        <translation type="unfinished">Apri nel Terminale</translation>
+        <translation>Apri nel terminale</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="36"/>
         <source>Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>Annulla</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="37"/>
         <source>Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>Ripristina</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="39"/>
@@ -4109,12 +4110,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="244"/>
         <source>Cannot move &quot;%1&quot; to the Trash. Delete it immediately?</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile spostare &quot;%1&quot; nel Cestino. Eliminarlo immediatamente?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="245"/>
         <source>This action cannot be undone. Please proceed with caution!</source>
-        <translation type="unfinished"></translation>
+        <translation>Questa azione non può essere annullata. Procedere con cautela!</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="393"/>
@@ -4145,7 +4146,7 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="558"/>
         <source>Permanently delete</source>
         <comment>button</comment>
-        <translation type="unfinished">Elimina definitivamente</translation>
+        <translation>Elimina definitivamente</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="585"/>
@@ -4249,22 +4250,22 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="94"/>
         <source>Verifying files...</source>
-        <translation type="unfinished"></translation>
+        <translation>Verifica file...</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="171"/>
         <source>File verification successful.</source>
-        <translation type="unfinished"></translation>
+        <translation>Verifica file completata con successo.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="178"/>
         <source>File checksum mismatch detected</source>
-        <translation type="unfinished"></translation>
+        <translation>Rilevata discrepanza nel checksum del file</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="182"/>
         <source>Data verification failed</source>
-        <translation type="unfinished">Verifica data fallita</translation>
+        <translation>Verifica dati fallita</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="185"/>
@@ -4313,12 +4314,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="48"/>
         <source>Erase failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Cancellazione fallita</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="49"/>
         <source>Unable to complete disc erasure. This may be due to read/write limitations or the disc media status. Please check the relevant settings and try again.</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile completare la cancellazione del disco. Questo potrebbe essere dovuto a limitazioni di lettura/scrittura o allo stato del supporto disco. Controllare le impostazioni pertinenti e riprovare.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="233"/>
@@ -4344,7 +4345,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="258"/>
         <source>File verification failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Verifica file fallita</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="261"/>
@@ -4448,12 +4449,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="646"/>
         <source>Not enough free space on the disc</source>
-        <translation type="unfinished"></translation>
+        <translation>Spazio libero insufficiente sul disco</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="647"/>
         <source>The remaining space on the current disc is insufficient to hold the files to be burned. Please reduce the number of files and try again.</source>
-        <translation type="unfinished"></translation>
+        <translation>Lo spazio rimanente sul disco corrente non è sufficiente per contenere i file da scrivere. Ridurre il numero di file e riprovare.</translation>
     </message>
 </context>
 <context>
@@ -4572,7 +4573,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="339"/>
         <source>Authorization dismissed</source>
-        <translation type="unfinished"></translation>
+        <translation>Autorizzazione annullata</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="583"/>
@@ -4694,37 +4695,37 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="45"/>
         <source>Name</source>
-        <translation type="unfinished">Nome</translation>
+        <translation>Nome</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="46"/>
         <source>Size</source>
-        <translation type="unfinished">Dimensione</translation>
+        <translation>Dimensione</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="47"/>
         <source>Resolution</source>
-        <translation type="unfinished"></translation>
+        <translation>Risoluzione</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="49"/>
         <source>Duration</source>
-        <translation type="unfinished">Durata</translation>
+        <translation>Durata</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="50"/>
         <source>Type</source>
-        <translation type="unfinished">Tipo</translation>
+        <translation>Tipo</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="51"/>
         <source>Accessed</source>
-        <translation type="unfinished">Accesso effettuato</translation>
+        <translation>Ultimo accesso</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="52"/>
         <source>Modified</source>
-        <translation type="unfinished">Modificato</translation>
+        <translation>Modificato</translation>
     </message>
 </context>
 <context>
@@ -4868,7 +4869,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="613"/>
         <source>The shared name is too long and will be truncated.</source>
-        <translation type="unfinished"></translation>
+        <translation>Il nome condiviso è troppo lungo e verrà troncato.</translation>
     </message>
 </context>
 <context>
@@ -4909,7 +4910,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="563"/>
         <source>SMB port is banned, please check the firewall strategy.</source>
-        <translation type="unfinished"></translation>
+        <translation>La porta SMB è bloccata, controllare la strategia del firewall.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="572"/>
@@ -4960,7 +4961,7 @@ You need to upgrade this vault to continue using it.</source>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="80"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="554"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="567"/>
         <source>Confirm</source>
         <translation>Conferma</translation>
     </message>
@@ -5037,47 +5038,47 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="54"/>
         <source>Please input recovery key to decrypt partition</source>
-        <translation type="unfinished"></translation>
+        <translation>Inserire la chiave di recupero per decrittografare la partizione</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="60"/>
         <source>Please input %1 to decrypt partition</source>
-        <translation type="unfinished"></translation>
+        <translation>Inserire %1 per decrittografare la partizione</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="61"/>
         <source>Validate with recovery key</source>
-        <translation type="unfinished">Per favore inserisci la chiave di recupero</translation>
+        <translation>Convalida con chiave di recupero</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="85"/>
         <source>Passphrase</source>
-        <translation type="unfinished"></translation>
+        <translation>Passphrase</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="87"/>
         <source>Recovery key</source>
-        <translation type="unfinished">Chiave di recupero</translation>
+        <translation>Chiave di recupero</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="88"/>
         <source>%1 cannot be empty!</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 non può essere vuoto!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="94"/>
         <source>Recovery key is not valid!</source>
-        <translation type="unfinished">La chiave di ripristino non è valida!</translation>
+        <translation>La chiave di ripristino non è valida!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="111"/>
         <source>Decrypt partition</source>
-        <translation type="unfinished"></translation>
+        <translation>Decrittografia partizione</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="119"/>
         <source>Confirm</source>
-        <translation type="unfinished">Conferma</translation>
+        <translation>Conferma</translation>
     </message>
 </context>
 <context>
@@ -5085,105 +5086,105 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="183"/>
         <source>Unlock encrypted partition</source>
-        <translation type="unfinished"></translation>
+        <translation>Sblocca partizione crittografata</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="187"/>
         <source>Cancel partition encryption</source>
-        <translation type="unfinished"></translation>
+        <translation>Annulla crittografia partizione</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="191"/>
         <source>passphrase</source>
-        <translation type="unfinished">passphrase</translation>
+        <translation>passphrase</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="192"/>
         <source>Changing the encryption %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Modifica della crittografia %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="196"/>
         <source>Continue partition encryption</source>
-        <translation type="unfinished"></translation>
+        <translation>Continua crittografia partizione</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="200"/>
         <source>Continue partition decryption</source>
-        <translation type="unfinished"></translation>
+        <translation>Continua decrittografia partizione</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="204"/>
         <source>Enable partition encryption</source>
-        <translation type="unfinished"></translation>
+        <translation>Abilita crittografia partizione</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="296"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="328"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="353"/>
         <source>Error</source>
-        <translation type="unfinished">Errore</translation>
+        <translation>Errore</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="297"/>
         <source>Cannot resolve passphrase from TPM</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile risolvere la passphrase dal TPM</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="328"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="353"/>
         <source>PIN error</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore PIN</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="361"/>
         <source>Change passphrase failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Modifica passphrase fallita</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="677"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="687"/>
         <source>Unlock partition failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Sblocco partizione fallito</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="678"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="688"/>
         <source>Wrong passphrase</source>
-        <translation type="unfinished"></translation>
+        <translation>Passphrase errata</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="697"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="707"/>
         <source>Mount device failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Montaggio dispositivo fallito</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="746"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="756"/>
         <source>unmount</source>
-        <translation type="unfinished">Smonta</translation>
+        <translation>smonta</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="746"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="756"/>
         <source>lock</source>
-        <translation type="unfinished"></translation>
+        <translation>blocca</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="747"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="757"/>
         <source>Encrypt failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Crittografia fallita</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="748"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="758"/>
         <source>Cannot %1 device %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile %1 il dispositivo %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="833"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="843"/>
         <source>Reboot to continue encrypt</source>
-        <translation type="unfinished"></translation>
+        <translation>Riavvia per continuare la crittografia</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="834"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="844"/>
         <source>Reboot to finish decrypt</source>
-        <translation type="unfinished"></translation>
+        <translation>Riavvia per completare la decrittografia</translation>
     </message>
 </context>
 <context>
@@ -5191,164 +5192,164 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="118"/>
         <source>Unlock type</source>
-        <translation type="unfinished"></translation>
+        <translation>Tipo di sblocco</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="138"/>
         <source>Unlocked by passphrase</source>
-        <translation type="unfinished"></translation>
+        <translation>Sbloccato tramite passphrase</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="139"/>
         <source>Use TPM+PIN to unlock on this computer (recommended)</source>
-        <translation type="unfinished"></translation>
+        <translation>Usa TPM+PIN per sbloccare su questo computer (consigliato)</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="140"/>
         <source>Automatic unlocking on this computer by TPM</source>
-        <translation type="unfinished"></translation>
+        <translation>Sblocco automatico su questo computer tramite TPM</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="167"/>
         <source>In special cases such as forgetting the password or the encryption hardware is damaged, you can decrypt the encrypted partition with the recovery key, please export it to a non-encrypted partition and keep it in a safe place!</source>
-        <translation type="unfinished"></translation>
+        <translation>In casi speciali come dimenticare la password o quando l&apos;hardware di crittografia è danneggiato, è possibile decrittografare la partizione crittografata con la chiave di recupero. Esportarla in una partizione non crittografata e conservarla in un posto sicuro!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="182"/>
         <source>Please select a non-encrypted partition as the key file export path.</source>
-        <translation type="unfinished"></translation>
+        <translation>Selezionare una partizione non crittografata come percorso di esportazione del file chiave.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="206"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="386"/>
         <source>Passphrase</source>
-        <translation type="unfinished"></translation>
+        <translation>Passphrase</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="208"/>
         <source>%1 cannot be empty</source>
-        <translation type="unfinished">%1 non può essere vuoto</translation>
+        <translation>%1 non può essere vuoto</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="238"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="377"/>
         <source>At least 8 bits, contains 3 types of A-Z, a-z, 0-9 and symbols</source>
-        <translation type="unfinished">Almeno 8 bit, che contengano 3 formati come A-Z, a-z, 0-9 e simboli</translation>
+        <translation>Almeno 8 caratteri, contenenti 3 tipi tra A-Z, a-z, 0-9 e simboli</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="244"/>
         <source>%1 inconsistency</source>
-        <translation type="unfinished">%1 inconsistenza</translation>
+        <translation>%1 incoerenza</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="255"/>
         <source>Recovery key export path cannot be empty!</source>
-        <translation type="unfinished"></translation>
+        <translation>Il percorso di esportazione della chiave di recupero non può essere vuoto!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="261"/>
         <source>Recovery key export path is not exists!</source>
-        <translation type="unfinished"></translation>
+        <translation>Il percorso di esportazione della chiave di recupero non esiste!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="281"/>
         <source>Please export to an external device such as a non-encrypted partition or USB flash drive.</source>
-        <translation type="unfinished"></translation>
+        <translation>Esportare su un dispositivo esterno come una partizione non crittografata o una chiavetta USB.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="287"/>
         <source>This partition is read-only, please export to a writable partition</source>
-        <translation type="unfinished"></translation>
+        <translation>Questa partizione è in sola lettura, esportare su una partizione scrivibile</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="301"/>
         <source>The partition is encrypted, please export to a non-encrypted partition or external device such as a USB flash drive.</source>
-        <translation type="unfinished"></translation>
+        <translation>La partizione è crittografata, esportare su una partizione non crittografata o su un dispositivo esterno come una chiavetta USB.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="361"/>
         <source>Please continue to encrypt &quot;%1&quot; partition</source>
-        <translation type="unfinished"></translation>
+        <translation>Continuare a crittografare la partizione &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="362"/>
         <source>Next</source>
-        <translation type="unfinished">Prosegui</translation>
+        <translation>Avanti</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="362"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="368"/>
         <source>Confirm encrypt</source>
-        <translation type="unfinished"></translation>
+        <translation>Conferma crittografia</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="366"/>
         <source>Export Recovery Key</source>
-        <translation type="unfinished"></translation>
+        <translation>Esporta chiave di recupero</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="367"/>
         <source>Previous</source>
-        <translation type="unfinished"></translation>
+        <translation>Indietro</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="375"/>
         <source>Set %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Imposta %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="376"/>
         <source>Repeat %1</source>
-        <translation type="unfinished">Ripeti %1</translation>
+        <translation>Ripeti %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="378"/>
         <source>Please enter the %1 again</source>
-        <translation type="unfinished"></translation>
+        <translation>Inserire di nuovo %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="383"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="384"/>
         <source>passphrase</source>
-        <translation type="unfinished">passphrase</translation>
+        <translation>passphrase</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="387"/>
         <source>Access to the partition will be unlocked using a passphrase.</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;accesso alla partizione verrà sbloccato utilizzando una passphrase.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="391"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="392"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="394"/>
         <source>PIN</source>
-        <translation type="unfinished">PIN</translation>
+        <translation>PIN</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="395"/>
         <source>Access to the partition will be unlocked using the TPM security chip and PIN.</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;accesso alla partizione verrà sbloccato utilizzando il chip di sicurezza TPM e il PIN.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="399"/>
         <source>Access to the partition will be automatically unlocked using the TPM security chip, no passphrase checking is required.</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;accesso alla partizione verrà sbloccato automaticamente utilizzando il chip di sicurezza TPM, non è richiesta la verifica della passphrase.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="462"/>
         <source>TPM is locked and cannot be used for partition encryption. Please cancel the TPM password or choose another unlocking method.</source>
-        <translation type="unfinished"></translation>
+        <translation>Il TPM è bloccato e non può essere utilizzato per la crittografia della partizione. Annullare la password TPM o scegliere un altro metodo di sblocco.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="464"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="469"/>
         <source>TPM error</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore TPM</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="469"/>
         <source>TPM status error!</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore stato TPM!</translation>
     </message>
 </context>
 <context>
@@ -5356,49 +5357,49 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="59"/>
         <source>Confirm</source>
-        <translation type="unfinished">Conferma</translation>
+        <translation>Conferma</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="67"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="81"/>
         <source>Re-export the recovery key</source>
-        <translation type="unfinished"></translation>
+        <translation>Riesporta la chiave di recupero</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="71"/>
         <source>*Recovery key saving failed, please re-save the recovery key to a non-encrypted partition and keep it in a safe place!</source>
-        <translation type="unfinished"></translation>
+        <translation>*Salvataggio chiave di recupero fallito, salvare nuovamente la chiave di recupero su una partizione non crittografata e conservarla in un posto sicuro!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="90"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="205"/>
         <source>Error</source>
-        <translation type="unfinished">Errore</translation>
+        <translation>Errore</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="160"/>
         <source>Recovery key export path cannot be empty!</source>
-        <translation type="unfinished"></translation>
+        <translation>Il percorso di esportazione della chiave di recupero non può essere vuoto!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="166"/>
         <source>Recovery key export path is not exists!</source>
-        <translation type="unfinished"></translation>
+        <translation>Il percorso di esportazione della chiave di recupero non esiste!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="173"/>
         <source>This partition is read-only, please export to a writable partition</source>
-        <translation type="unfinished"></translation>
+        <translation>Questa partizione è in sola lettura, esportare su una partizione scrivibile</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="188"/>
         <source>The partition is encrypted, please export to a non-encrypted partition or external device such as a USB flash drive.</source>
-        <translation type="unfinished"></translation>
+        <translation>La partizione è crittografata, esportare su una partizione non crittografata o su un dispositivo esterno come una chiavetta USB.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="205"/>
         <source>Cannot create recovery key file!</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile creare il file della chiave di recupero!</translation>
     </message>
 </context>
 <context>
@@ -5406,220 +5407,220 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="219"/>
         <source>Encrypt done</source>
-        <translation type="unfinished"></translation>
+        <translation>Crittografia completata</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="225"/>
         <source>Encrypt failed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="334"/>
-        <source>The encrypting process may have system lag, please minimize the system operation</source>
-        <translation type="unfinished"></translation>
+        <translation>Crittografia fallita</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="220"/>
         <source>Partition %1 has been encrypted</source>
-        <translation type="unfinished"></translation>
+        <translation>La partizione %1 è stata crittografata</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="226"/>
         <source>Partition %1 encrypt failed, please see log for more information.(%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Crittografia partizione %1 fallita, consultare il log per maggiori informazioni.(%2)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="333"/>
-        <source>The &quot;%1&quot; partition is under encrypting...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="354"/>
-        <source>The &quot;%1&quot; partition is under decrypting...</source>
-        <translation type="unfinished"></translation>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="334"/>
+        <source>The encrypting process may have system lag, please minimize the system operation</source>
+        <translation>Il processo di crittografia potrebbe causare rallentamenti del sistema, ridurre al minimo le operazioni di sistema</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="355"/>
         <source>The decrypting process may have system lag, please minimize the system operation</source>
-        <translation type="unfinished"></translation>
+        <translation>Il processo di decrittografia potrebbe causare rallentamenti del sistema, ridurre al minimo le operazioni di sistema</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="385"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="612"/>
         <source>Error</source>
-        <translation type="unfinished">Errore</translation>
+        <translation>Errore</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="385"/>
         <source>TPM status is abnormal, please use the recovery key to unlock it</source>
-        <translation type="unfinished"></translation>
+        <translation>Lo stato del TPM è anormale, utilizzare la chiave di recupero per sbloccarlo</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="415"/>
         <source>Wrong PIN</source>
-        <translation type="unfinished"></translation>
+        <translation>PIN errato</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="417"/>
         <source>Wrong passphrase</source>
-        <translation type="unfinished"></translation>
+        <translation>Passphrase errata</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="419"/>
         <source>TPM error</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore TPM</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="421"/>
         <source>Please use recovery key to unlock device.</source>
-        <translation type="unfinished"></translation>
+        <translation>Utilizzare la chiave di recupero per sbloccare il dispositivo.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="486"/>
         <source>Preencrypt done</source>
-        <translation type="unfinished"></translation>
+        <translation>Pre-crittografia completata</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="487"/>
         <source>Partition %1 has been preencrypt, please reboot to finish encryption.</source>
-        <translation type="unfinished"></translation>
+        <translation>La partizione %1 è stata pre-crittografata, riavviare per completare la crittografia.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="496"/>
         <source>Partition %1 preencrypt failed, please see log for more information.(%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Pre-crittografia partizione %1 fallita, consultare il log per maggiori informazioni.(%2)</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="515"/>
         <source>Partition %1 has been decrypted</source>
-        <translation type="unfinished"></translation>
+        <translation>La partizione %1 è stata decrittografata</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="522"/>
         <source>Decrypt partition</source>
-        <translation type="unfinished"></translation>
+        <translation>Decrittografia partizione</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="528"/>
         <source>Partition %1 is under encrypting, please decrypt after encryption finished.</source>
-        <translation type="unfinished"></translation>
+        <translation>La partizione %1 è in fase di crittografia, decrittografare dopo il completamento della crittografia.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="534"/>
         <source>Partition %1 Decrypt failed, please see log for more information.(%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Decrittografia partizione %1 fallita, consultare il log per maggiori informazioni.(%2)</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="583"/>
         <source>Partition %1 change %2 failed, please see log for more information.(%3)</source>
-        <translation type="unfinished"></translation>
+        <translation>Modifica %2 partizione %1 fallita, consultare il log per maggiori informazioni.(%3)</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="613"/>
         <source>Partition is not fully decrypted, please finish decryption before access.</source>
-        <translation type="unfinished"></translation>
+        <translation>La partizione non è completamente decrittografata, completare la decrittografia prima di accedervi.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="620"/>
         <source>Unlocking partition failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Sblocco partizione fallito</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="621"/>
         <source>Please click &quot;Continue Partition Encryption&quot; in the right-click menu to complete the partition encryption.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="729"/>
-        <source>Partition Encryption Non-Reboot Mode Enabled</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="730"/>
-        <source>Partition Encryption Non-Reboot Mode has been enabled successfully. Please reboot your system for the changes to take effect. After reboot, partition encryption operations will not require system restart.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="734"/>
-        <source>Partition Encryption Non-Reboot Mode Disabled</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="735"/>
-        <source>Partition Encryption Non-Reboot Mode has been disabled successfully. Please reboot your system for the changes to take effect. After reboot, partition encryption operations will require system restart.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="743"/>
-        <source>Operation Failed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="745"/>
-        <source>Failed to enable Partition Encryption Non-Reboot Mode. The system may not support this feature or encountered an error during initramfs update.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="748"/>
-        <source>Failed to disable Partition Encryption Non-Reboot Mode. An error occurred during initramfs update.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="760"/>
-        <source>dde-file-manager</source>
-        <translation type="unfinished">dde-file-manager</translation>
+        <translation>Fare clic su &quot;Continua crittografia partizione&quot; nel menu contestuale per completare la crittografia della partizione.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="495"/>
         <source>Preencrypt failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Pre-crittografia fallita</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="333"/>
+        <source>The &quot;%1&quot; partition is under encrypting...</source>
+        <translation>La partizione &quot;%1&quot; è in fase di crittografia...</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="354"/>
+        <source>The &quot;%1&quot; partition is under decrypting...</source>
+        <translation>La partizione &quot;%1&quot; è in fase di decrittografia...</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="514"/>
         <source>Decrypt done</source>
-        <translation type="unfinished"></translation>
+        <translation>Decrittografia completata</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="523"/>
         <source>Wrong passpharse or PIN</source>
-        <translation type="unfinished"></translation>
+        <translation>Passphrase o PIN errato</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="527"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="533"/>
         <source>Decrypt failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Decrittografia fallita</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="560"/>
         <source>passphrase</source>
-        <translation type="unfinished">passphrase</translation>
+        <translation>passphrase</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="563"/>
         <source>PIN</source>
-        <translation type="unfinished">PIN</translation>
+        <translation>PIN</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="569"/>
         <source>Change %1 done</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambio %1 completato</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="570"/>
         <source>%1&apos;s %2 has been changed</source>
-        <translation type="unfinished"></translation>
+        <translation>Il %2 di %1 è stato modificato</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="577"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="582"/>
         <source>Change %1 failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambio %1 fallito</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="578"/>
         <source>Wrong %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 errato</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="729"/>
+        <source>Partition Encryption Non-Reboot Mode Enabled</source>
+        <translation>Modalità crittografia partizione senza riavvio abilitata</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="730"/>
+        <source>Partition Encryption Non-Reboot Mode has been enabled successfully. Please reboot your system for the changes to take effect. After reboot, partition encryption operations will not require system restart.</source>
+        <translation>La modalità crittografia partizione senza riavvio è stata abilitata con successo. Riavviare il sistema per rendere effettive le modifiche. Dopo il riavvio, le operazioni di crittografia partizione non richiederanno il riavvio del sistema.</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="734"/>
+        <source>Partition Encryption Non-Reboot Mode Disabled</source>
+        <translation>Modalità crittografia partizione senza riavvio disabilitata</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="735"/>
+        <source>Partition Encryption Non-Reboot Mode has been disabled successfully. Please reboot your system for the changes to take effect. After reboot, partition encryption operations will require system restart.</source>
+        <translation>La modalità crittografia partizione senza riavvio è stata disabilitata con successo. Riavviare il sistema per rendere effettive le modifiche. Dopo il riavvio, le operazioni di crittografia partizione richiederanno il riavvio del sistema.</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="743"/>
+        <source>Operation Failed</source>
+        <translation>Operazione fallita</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="745"/>
+        <source>Failed to enable Partition Encryption Non-Reboot Mode. The system may not support this feature or encountered an error during initramfs update.</source>
+        <translation>Abilitazione della modalità crittografia partizione senza riavvio fallita. Il sistema potrebbe non supportare questa funzione o si è verificato un errore durante l&apos;aggiornamento di initramfs.</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="748"/>
+        <source>Failed to disable Partition Encryption Non-Reboot Mode. An error occurred during initramfs update.</source>
+        <translation>Disabilitazione della modalità crittografia partizione senza riavvio fallita. Si è verificato un errore durante l&apos;aggiornamento di initramfs.</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="760"/>
+        <source>dde-file-manager</source>
+        <translation>dde-file-manager</translation>
     </message>
 </context>
 <context>
@@ -5627,53 +5628,53 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="55"/>
         <source>Cancel</source>
-        <translation type="unfinished">Annulla</translation>
+        <translation>Annulla</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="56"/>
         <source>Unlock</source>
-        <translation type="unfinished">Sblocca</translation>
+        <translation>Sblocca</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="85"/>
         <source>Unlock encryption partition</source>
-        <translation type="unfinished"></translation>
+        <translation>Sblocca partizione crittografata</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="89"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="93"/>
         <source>Unlock by recovery key</source>
-        <translation type="unfinished"></translation>
+        <translation>Sblocca con chiave di recupero</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="95"/>
         <source>Unlock by passphrase</source>
-        <translation type="unfinished"></translation>
+        <translation>Sblocca con passphrase</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="96"/>
         <source>Unlock by PIN</source>
-        <translation type="unfinished"></translation>
+        <translation>Sblocca con PIN</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="98"/>
         <source>Please enter the 24-digit recovery key</source>
-        <translation type="unfinished"></translation>
+        <translation>Inserire la chiave di recupero di 24 cifre</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="106"/>
         <source>Please input passphrase to unlock partition</source>
-        <translation type="unfinished"></translation>
+        <translation>Inserire la passphrase per sbloccare la partizione</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="110"/>
         <source>Please input PIN to unlock partition</source>
-        <translation type="unfinished"></translation>
+        <translation>Inserire il PIN per sbloccare la partizione</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="124"/>
         <source>Recovery key is not valid!</source>
-        <translation type="unfinished">La chiave di ripristino non è valida!</translation>
+        <translation>La chiave di recupero non è valida!</translation>
     </message>
 </context>
 <context>
@@ -5841,12 +5842,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="165"/>
         <source>Copy or Cut File failed! Retry copy this file again!</source>
-        <translation type="unfinished"></translation>
+        <translation>Copia o taglio del file fallito! Riprovare a copiare questo file!</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="167"/>
         <source>Can&apos;t access file!</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile accedere al file!</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="188"/>
@@ -5901,12 +5902,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="225"/>
         <source>Copy or Cut File failed, cause: %1. Retry copy this file again!</source>
-        <translation type="unfinished"></translation>
+        <translation>Copia o taglio del file fallito, causa: %1. Riprovare a copiare questo file!</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="227"/>
         <source>Copy or Cut File failed, cause: %1.</source>
-        <translation type="unfinished">Copia o taglio del file fallito, causa: %1.</translation>
+        <translation>Copia o taglio del file fallito, causa: %1.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="244"/>
@@ -5940,12 +5941,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations.cpp" line="339"/>
         <source>External storage device</source>
-        <translation type="unfinished"></translation>
+        <translation>Dispositivo di archiviazione esterno</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations.cpp" line="350"/>
         <source>External storage device usage patterns</source>
-        <translation type="unfinished"></translation>
+        <translation>Pattern di utilizzo dei dispositivi di archiviazione esterni</translation>
     </message>
 </context>
 <context>
@@ -5982,22 +5983,22 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="43"/>
         <source>Real-time data synchronization (Recommended)</source>
-        <translation type="unfinished"></translation>
+        <translation>Sincronizzazione dati in tempo reale (Consigliato)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="50"/>
         <source>Once the files are copied, you can unplug the external drive without needing to &quot;Safely Remove&quot; it.</source>
-        <translation type="unfinished"></translation>
+        <translation>Una volta copiati i file, puoi scollegare l&apos;unità esterna senza dover utilizzare &quot;Rimuovi in sicurezza&quot;.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="61"/>
         <source>Performance First (Requires Safe Removal)</source>
-        <translation type="unfinished"></translation>
+        <translation>Prestazioni prima (Richiede rimozione sicura)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="68"/>
         <source>File copy data is not synchronized in real-time. After the copy is complete, you must use &quot;Safe Removal&quot; to disconnect the external storage device. Otherwise, file corruption or data loss may occur.</source>
-        <translation type="unfinished"></translation>
+        <translation>I dati di copia del file non vengono sincronizzati in tempo reale. Dopo il completamento della copia, è necessario utilizzare &quot;Rimuovi in sicurezza&quot; per disconnettere il dispositivo di archiviazione esterno. In caso contrario, si potrebbero verificare danni ai file o perdita di dati.</translation>
     </message>
 </context>
 <context>
@@ -6013,7 +6014,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/utils/previewfileoperation.cpp" line="41"/>
         <source>Failed to open %1, which may be moved or renamed</source>
-        <translation type="unfinished">Impossibile aprire %1, che potrebbe essere spostato o rinominato</translation>
+        <translation>Impossibile aprire %1, potrebbe essere stato spostato o rinominato</translation>
     </message>
 </context>
 <context>
@@ -6283,17 +6284,17 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="106"/>
         <source>Created</source>
-        <translation type="unfinished"></translation>
+        <translation>Creato</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="107"/>
         <source>Accessed</source>
-        <translation type="unfinished">Accesso effettuato</translation>
+        <translation>Ultimo accesso</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="108"/>
         <source>Modified</source>
-        <translation type="unfinished">Modificato</translation>
+        <translation>Modificato</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="112"/>
@@ -6303,12 +6304,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="115"/>
         <source>Resolution</source>
-        <translation type="unfinished"></translation>
+        <translation>Risoluzione</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="116"/>
         <source>Duration</source>
-        <translation type="unfinished">Durata</translation>
+        <translation>Durata</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="302"/>
@@ -6414,37 +6415,37 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_propertydialog::MultiFilePropertyDialog</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="52"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="57"/>
         <source>Multiple Files</source>
         <translation>File multipli</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="56"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="61"/>
         <source>Basic info</source>
         <translation>Info di base</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="61"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="66"/>
         <source>Total size</source>
         <translation>Spazio totale</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="68"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="73"/>
         <source>Number of files</source>
         <translation>Oggetti totali</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="75"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="80"/>
         <source>Time accessed</source>
         <translation>Ultimo accesso</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="81"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="86"/>
         <source>Time modified</source>
         <translation>Ultima modifica</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="120"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="125"/>
         <source>%1 file(s), %2 folder(s)</source>
         <translation>%1 file(s), %2 cartella(e)</translation>
     </message>
@@ -6493,17 +6494,17 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/events/recenteventreceiver.cpp" line="89"/>
         <source>Path</source>
-        <translation type="unfinished">Percorso</translation>
+        <translation>Percorso</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/events/recenteventreceiver.cpp" line="94"/>
         <source>Last access</source>
-        <translation type="unfinished">Ultimo accesso</translation>
+        <translation>Ultimo accesso</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/events/recenteventreceiver.cpp" line="117"/>
         <source>Recent</source>
-        <translation type="unfinished"></translation>
+        <translation>Recenti</translation>
     </message>
 </context>
 <context>
@@ -6662,44 +6663,44 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="27"/>
         <source>Enable to build the file index immediately for faster file name searches</source>
-        <translation type="unfinished"></translation>
+        <translation>Abilita la creazione immediata dell&apos;indice file per ricerche per nome file più veloci</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="28"/>
         <source>Building index</source>
-        <translation type="unfinished"></translation>
+        <translation>Creazione indice</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="153"/>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="171"/>
         <source>Index update failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiornamento indice fallito</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="153"/>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="171"/>
         <source>try updating again</source>
-        <translation type="unfinished"></translation>
+        <translation>riprovare l&apos;aggiornamento</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="177"/>
         <source>Index update completed, last update time: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiornamento indice completato, ultimo aggiornamento: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="178"/>
         <source>Update index now</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiorna indice ora</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="239"/>
         <source>Turn off file index?</source>
-        <translation type="unfinished"></translation>
+        <translation>Disattivare l&apos;indice file?</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="240"/>
         <source>If turned off, file searches will traverse the file system and severely reduce search speed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Se disattivato, le ricerche dei file percorreranno il file system e ridurranno drasticamente la velocità di ricerca.</translation>
     </message>
 </context>
 <context>
@@ -6707,42 +6708,42 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthocrindex.cpp" line="16"/>
         <source>Enable to search text in images</source>
-        <translation type="unfinished"></translation>
+        <translation>Abilita la ricerca del testo nelle immagini</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthocrindex.cpp" line="17"/>
         <source>Building index</source>
-        <translation type="unfinished"></translation>
+        <translation>Creazione indice</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthocrindex.cpp" line="18"/>
         <source>Building index, %1 files indexed</source>
-        <translation type="unfinished"></translation>
+        <translation>Creazione indice, %1 file indicizzati</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthocrindex.cpp" line="19"/>
         <source>Building index, %1/%2 items indexed</source>
-        <translation type="unfinished"></translation>
+        <translation>Creazione indice, %1/%2 elementi indicizzati</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthocrindex.cpp" line="20"/>
         <source>Index update failed, please</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthocrindex.cpp" line="21"/>
-        <source>try updating again</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiornamento indice fallito,</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthocrindex.cpp" line="22"/>
         <source>Index update completed, last update time: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiornamento indice completato, ultimo aggiornamento: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthocrindex.cpp" line="21"/>
+        <source>try updating again</source>
+        <translation>riprovare l&apos;aggiornamento</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthocrindex.cpp" line="23"/>
         <source>Update index now</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiorna indice ora</translation>
     </message>
 </context>
 <context>
@@ -6750,66 +6751,66 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="16"/>
         <source>Enable to search file contents. Indexing may take a few minutes</source>
-        <translation type="unfinished"></translation>
+        <translation>Abilita la ricerca del contenuto dei file. L&apos;indicizzazione potrebbe richiedere alcuni minuti</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="17"/>
         <source>Building index</source>
-        <translation type="unfinished"></translation>
+        <translation>Creazione indice</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="18"/>
         <source>Building index, %1 files indexed</source>
-        <translation type="unfinished"></translation>
+        <translation>Creazione indice, %1 file indicizzati</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="19"/>
         <source>Building index, %1/%2 items indexed</source>
-        <translation type="unfinished"></translation>
+        <translation>Creazione indice, %1/%2 elementi indicizzati</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="20"/>
         <source>Index update failed, please</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiornamento indice fallito,</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="21"/>
         <source>try updating again</source>
-        <translation type="unfinished"></translation>
+        <translation>riprovare l&apos;aggiornamento</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="22"/>
         <source>Index update completed, last update time: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiornamento indice completato, ultimo aggiornamento: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="23"/>
         <source>Update index now</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiorna indice ora</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_search::Search</name>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="54"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="162"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="169"/>
         <source>Search</source>
         <translation>Cerca</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="168"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="175"/>
         <source>File index</source>
-        <translation type="unfinished"></translation>
+        <translation>Indice file</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="189"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="196"/>
         <source>Full-Text search</source>
         <translation>Ricerca in tutto il testo</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="211"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="218"/>
         <source>Image-Content search</source>
-        <translation type="unfinished"></translation>
+        <translation>Ricerca contenuto immagine</translation>
     </message>
 </context>
 <context>
@@ -6977,7 +6978,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/private/addressbar_p.h" line="46"/>
         <source>Enter address</source>
-        <translation type="unfinished"></translation>
+        <translation>Inserisci indirizzo</translation>
     </message>
 </context>
 <context>
@@ -7001,7 +7002,7 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="140"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="289"/>
         <source>No history</source>
-        <translation type="unfinished"></translation>
+        <translation>Nessuna cronologia</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="308"/>
@@ -7054,24 +7055,24 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_titlebar::CustomTabSettingWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="55"/>
-        <source>Add Directory</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="60"/>
         <source>Custom Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Cartella personalizzata</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="100"/>
         <source>Invalid Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Cartella non valida</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="101"/>
         <source>This directory does not support pinning</source>
-        <translation type="unfinished"></translation>
+        <translation>Questa cartella non supporta l&apos;ancoraggio</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="55"/>
+        <source>Add Directory</source>
+        <translation>Aggiungi cartella</translation>
     </message>
 </context>
 <context>
@@ -7193,12 +7194,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/navwidget.cpp" line="169"/>
         <source>back</source>
-        <translation type="unfinished"></translation>
+        <translation>indietro</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/navwidget.cpp" line="174"/>
         <source>forward</source>
-        <translation type="unfinished"></translation>
+        <translation>avanti</translation>
     </message>
 </context>
 <context>
@@ -7206,27 +7207,27 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="266"/>
         <source>Icon view</source>
-        <translation type="unfinished"></translation>
+        <translation>Vista icone</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="274"/>
         <source>List view</source>
-        <translation type="unfinished"></translation>
+        <translation>Vista lista</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="286"/>
         <source>Tree view</source>
-        <translation type="unfinished"></translation>
+        <translation>Vista ad albero</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="309"/>
         <source>Sort by</source>
-        <translation type="unfinished">Ordina per</translation>
+        <translation>Ordina per</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="315"/>
         <source>View options</source>
-        <translation type="unfinished"></translation>
+        <translation>Opzioni di visualizzazione</translation>
     </message>
 </context>
 <context>
@@ -7235,33 +7236,33 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="308"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="371"/>
         <source>Unpin tab</source>
-        <translation type="unfinished"></translation>
+        <translation>Sblocca scheda</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="310"/>
         <source>Pin tab</source>
-        <translation type="unfinished"></translation>
+        <translation>Blocca scheda</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="315"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="371"/>
         <source>Close tab</source>
-        <translation type="unfinished"></translation>
+        <translation>Chiudi scheda</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="318"/>
         <source>Close other tabs</source>
-        <translation type="unfinished"></translation>
+        <translation>Chiudi altre schede</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="319"/>
         <source>Close tabs to the left</source>
-        <translation type="unfinished"></translation>
+        <translation>Chiudi schede a sinistra</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="322"/>
         <source>Close tabs to the right</source>
-        <translation type="unfinished"></translation>
+        <translation>Chiudi schede a destra</translation>
     </message>
 </context>
 <context>
@@ -7269,24 +7270,24 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="593"/>
         <source>Directory not found</source>
-        <translation type="unfinished"></translation>
+        <translation>Cartella non trovata</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="594"/>
         <source>Directory not found. Remove it?</source>
-        <translation type="unfinished"></translation>
+        <translation>Cartella non trovata. Rimuoverla?</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="595"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished">Annulla</translation>
+        <translation>Annulla</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="595"/>
         <source>Remove</source>
         <comment>button</comment>
-        <translation type="unfinished">Rimuovi</translation>
+        <translation>Rimuovi</translation>
     </message>
 </context>
 <context>
@@ -7294,27 +7295,27 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="64"/>
         <source>View Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Opzioni di visualizzazione</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="79"/>
         <source>Icon size</source>
-        <translation type="unfinished">Dimensione icone</translation>
+        <translation>Dimensione icone</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="113"/>
         <source>Grid density</source>
-        <translation type="unfinished"></translation>
+        <translation>Densità griglia</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="147"/>
         <source>List height</source>
-        <translation type="unfinished"></translation>
+        <translation>Altezza elenco</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="175"/>
         <source>Display preview</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra anteprima</translation>
     </message>
 </context>
 <context>
@@ -7492,7 +7493,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="56"/>
         <source>Error: The filename is too long</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore: il nome del file è troppo lungo</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="58"/>
@@ -7540,7 +7541,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="39"/>
         <source>Analyzing files...</source>
-        <translation type="unfinished"></translation>
+        <translation>Analisi file in corso...</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="43"/>
@@ -7550,32 +7551,32 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="163"/>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="217"/>
         <source>Operation cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>Operazione annullata</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="66"/>
         <source>Starting file shredding...</source>
-        <translation type="unfinished"></translation>
+        <translation>Avvio distruzione file...</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="91"/>
         <source>All files have been successfully shredded</source>
-        <translation type="unfinished"></translation>
+        <translation>Tutti i file sono stati eliminati con successo</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="207"/>
         <source>Failed to start shred command</source>
-        <translation type="unfinished"></translation>
+        <translation>Avvio comando di distruzione fallito</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="237"/>
         <source>Permission denied</source>
-        <translation type="unfinished">Permesso negato</translation>
+        <translation>Permesso negato</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="240"/>
         <source>The file has been moved or the process has exited</source>
-        <translation type="unfinished"></translation>
+        <translation>Il file è stato spostato o il processo è terminato</translation>
     </message>
 </context>
 <context>
@@ -7620,12 +7621,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="453"/>
         <source>Open File</source>
-        <translation type="unfinished">Apri file</translation>
+        <translation>Apri file</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="455"/>
         <source>Applications (*.desktop);;All files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Applicazioni (*.desktop);;Tutti i file (*)</translation>
     </message>
 </context>
 <context>
@@ -7641,17 +7642,17 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="112"/>
         <source>File shredder failure</source>
-        <translation type="unfinished"></translation>
+        <translation>Eliminazione file non riuscita</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="114"/>
         <source>Close</source>
-        <translation type="unfinished">Chiudi</translation>
+        <translation>Chiudi</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="138"/>
         <source>Shredding file</source>
-        <translation type="unfinished"></translation>
+        <translation>Eliminazione file</translation>
     </message>
 </context>
 <context>
@@ -7659,7 +7660,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="43"/>
         <source>Shredding file &quot; %1 &quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>Eliminazione file &quot; %1 &quot;</translation>
     </message>
 </context>
 <context>
@@ -7667,7 +7668,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredmenuscene.cpp" line="80"/>
         <source>File Shred</source>
-        <translation type="unfinished"></translation>
+        <translation>Distruzione file</translation>
     </message>
 </context>
 <context>
@@ -7675,32 +7676,32 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="163"/>
         <source>Enable File Shred</source>
-        <translation type="unfinished"></translation>
+        <translation>Abilita distruzione file</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="169"/>
         <source>Once enable, the &apos;File Shred&apos; option becomes available in the context menu for secure file deletion</source>
-        <translation type="unfinished"></translation>
+        <translation>Una volta abilitata, l&apos;opzione &apos;Distruzione file&apos; diventa disponibile nel menu contestuale per l&apos;eliminazione sicura dei file</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="202"/>
         <source>Are you sure to shred these %1 items?</source>
-        <translation type="unfinished"></translation>
+        <translation>Sicuro di eliminare definitivamente questi %1 elementi?</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="203"/>
         <source>The file will be completely deleted and cannot be recovered.</source>
-        <translation type="unfinished"></translation>
+        <translation>Il file verrà eliminato completamente e non potrà essere recuperato.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="233"/>
         <source>Cancel</source>
-        <translation type="unfinished">Annulla</translation>
+        <translation>Annulla</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="234"/>
         <source>Shred</source>
-        <translation type="unfinished"></translation>
+        <translation>Elimina</translation>
     </message>
 </context>
 <context>
@@ -7716,7 +7717,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/vitrualshredplugin.cpp" line="51"/>
         <source>File shred</source>
-        <translation type="unfinished"></translation>
+        <translation>Distruzione file</translation>
     </message>
 </context>
 <context>
@@ -7763,71 +7764,56 @@ You need to upgrade this vault to continue using it.</source>
     </message>
 </context>
 <context>
-    <name>dfmplugin_vault::FileEncryptHandle</name>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/fileencrypthandle.cpp" line="200"/>
-        <source>Unlock failed</source>
-        <translation>Sblocco fallito</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/fileencrypthandle.cpp" line="200"/>
-        <source>The %1 directory is occupied,
- please clear the files in this directory and try to unlock the safe again.</source>
-        <translation>La directory %1 è occupata,
-pulisci i files in questa directory e prova a sbloccarla nuovamente.</translation>
-    </message>
-</context>
-<context>
     <name>dfmplugin_vault::OperatorCenter</name>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="192"/>
         <source>Failed to create public key: The key length is too long!</source>
-        <translation type="unfinished"></translation>
+        <translation>Creazione chiave pubblica fallita: la lunghezza della chiave è troppo elevata!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="200"/>
         <source>Failed to save rsa ciphertext file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Salvataggio file testo crittografato RSA fallito: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="216"/>
         <source>Failed to save public key file: The public key is empty.</source>
-        <translation type="unfinished"></translation>
+        <translation>Salvataggio file chiave pubblica fallito: la chiave pubblica è vuota.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="224"/>
         <source>Failed to save public key file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Salvataggio file chiave pubblica fallito: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="362"/>
         <source>Failed to create config dir: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Creazione cartella configurazione fallita: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="394"/>
         <source>Failed to create rsa private key file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Creazione file chiave privata RSA fallita: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="409"/>
         <source>Failed to create rsa ciphertext file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Creazione file testo crittografato RSA fallita: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="426"/>
         <source>Failed to create hint file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Creazione file suggerimento fallita: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="458"/>
         <source>Failed to save hint info: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Salvataggio informazioni suggerimento fallito: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="789"/>
         <source>Save password failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Salvataggio password fallito: %1</translation>
     </message>
 </context>
 <context>
@@ -7861,6 +7847,21 @@ pulisci i files in questa directory e prova a sbloccarla nuovamente.</translatio
     </message>
 </context>
 <context>
+    <name>dfmplugin_vault::PathManager</name>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/pathmanager.cpp" line="79"/>
+        <source>Unlock failed</source>
+        <translation>Sblocco fallito</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/pathmanager.cpp" line="80"/>
+        <source>The %1 directory is occupied,
+ please clear the files in this directory and try to unlock the safe again.</source>
+        <translation>La cartella %1 è occupata,
+ cancellare i file in questa cartella e provare a sbloccare di nuovo la cassaforte.</translation>
+    </message>
+</context>
+<context>
     <name>dfmplugin_vault::RecoveryKeyView</name>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="68"/>
@@ -7887,20 +7888,20 @@ pulisci i files in questa directory e prova a sbloccarla nuovamente.</translatio
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="126"/>
         <source>Invalid recovery key format</source>
-        <translation type="unfinished"></translation>
+        <translation>Formato chiave di recupero non valido</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="149"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="147"/>
         <source>Wrong recovery key</source>
         <translation>Password di recupero errata</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="273"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="271"/>
         <source>Failed to unlock file vault</source>
         <translation>Sblocco file vault vallito</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="277"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="275"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
@@ -7910,118 +7911,118 @@ pulisci i files in questa directory e prova a sbloccarla nuovamente.</translatio
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="45"/>
         <source>Select Key File</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleziona file chiave</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="47"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="330"/>
         <source>Select key file save path</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleziona percorso di salvataggio del file chiave</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="55"/>
         <source>Enter New Password</source>
-        <translation type="unfinished"></translation>
+        <translation>Inserisci nuova password</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="60"/>
         <source>At least 8 characters, including A-Z, a-z, 0-9, and symbols</source>
-        <translation type="unfinished"></translation>
+        <translation>Almeno 8 caratteri, tra cui A-Z, a-z, 0-9 e simboli</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="63"/>
         <source>Repeat Password</source>
-        <translation type="unfinished"></translation>
+        <translation>Ripeti password</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="66"/>
         <source>Enter new password again</source>
-        <translation type="unfinished"></translation>
+        <translation>Inserisci di nuovo la nuova password</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="69"/>
         <source>Password hint</source>
-        <translation type="unfinished">Suggerimento password</translation>
+        <translation>Suggerimento password</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="72"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="344"/>
         <source>Optional</source>
-        <translation type="unfinished">Facoltativo</translation>
+        <translation>Facoltativo</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="74"/>
         <source>Use old password verification</source>
-        <translation type="unfinished"></translation>
+        <translation>Usa verifica con vecchia password</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="144"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished">Annulla</translation>
+        <translation>Annulla</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="144"/>
         <source>Reset Password</source>
         <comment>button</comment>
-        <translation type="unfinished"></translation>
+        <translation>Reimposta password</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="149"/>
         <source>Reset Password</source>
-        <translation type="unfinished"></translation>
+        <translation>Reimposta password</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="161"/>
         <source>Unable to get the key file</source>
-        <translation type="unfinished">Impossibile ottenere il file chiave</translation>
+        <translation>Impossibile ottenere il file chiave</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="171"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="258"/>
         <source>≥ 8 chars, contains A-Z, a-z, 0-9, and symbols</source>
-        <translation type="unfinished">≥ 8 caratteri, che contenga A-Z, a-z, 0-9 e simboli</translation>
+        <translation>≥ 8 caratteri, contiene A-Z, a-z, 0-9 e simboli</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="180"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="266"/>
         <source>Passwords do not match</source>
-        <translation type="unfinished">La password non corrisponde</translation>
+        <translation>Le password non corrispondono</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="189"/>
         <source>Cannot reset password for old version vault. Please upgrade the vault first.</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile reimpostare la password per il vault di vecchia versione. Aggiornare prima il vault.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="198"/>
         <source>Unable to read key file</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile leggere il file chiave</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="211"/>
         <source>Invalid recovery key format: expected 32 characters, got %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Formato chiave di recupero non valido: previsti 32 caratteri, ottenuti %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="221"/>
         <source>Invalid recovery key format: must contain only letters and numbers</source>
-        <translation type="unfinished"></translation>
+        <translation>Formato chiave di recupero non valido: deve contenere solo lettere e numeri</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="387"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="390"/>
         <source>Success</source>
-        <translation type="unfinished">Successo</translation>
+        <translation>Successo</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="387"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="390"/>
         <source>Password reset successfully</source>
-        <translation type="unfinished"></translation>
+        <translation>Password reimpostata con successo</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="391"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="394"/>
         <source>Failed to reset password. Please check your key file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Reimpostazione password fallita. Controllare il file chiave.</translation>
     </message>
 </context>
 <context>
@@ -8029,163 +8030,163 @@ pulisci i files in questa directory e prova a sbloccarla nuovamente.</translatio
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="46"/>
         <source>Enter Old Password</source>
-        <translation type="unfinished"></translation>
+        <translation>Inserisci vecchia password</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="48"/>
         <source>Please enter old password</source>
-        <translation type="unfinished"></translation>
+        <translation>Inserire la vecchia password</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="51"/>
         <source>Enter New Password</source>
-        <translation type="unfinished"></translation>
+        <translation>Inserisci nuova password</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="56"/>
         <source>At least 8 characters, including A-Z, a-z, 0-9, and symbols</source>
-        <translation type="unfinished"></translation>
+        <translation>Almeno 8 caratteri, tra cui A-Z, a-z, 0-9 e simboli</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="59"/>
         <source>Repeat Password</source>
-        <translation type="unfinished"></translation>
+        <translation>Ripeti password</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="62"/>
         <source>Enter new password again</source>
-        <translation type="unfinished"></translation>
+        <translation>Inserisci di nuovo la nuova password</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="65"/>
         <source>Password hint</source>
-        <translation type="unfinished">Suggerimento password</translation>
+        <translation>Suggerimento password</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="68"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="304"/>
         <source>Optional</source>
-        <translation type="unfinished">Facoltativo</translation>
+        <translation>Facoltativo</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="70"/>
         <source>Use key verification</source>
-        <translation type="unfinished"></translation>
+        <translation>Usa verifica con chiave</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="139"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished">Annulla</translation>
+        <translation>Annulla</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="139"/>
         <source>Reset Password</source>
         <comment>button</comment>
-        <translation type="unfinished"></translation>
+        <translation>Reimposta password</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="144"/>
         <source>Reset Password</source>
-        <translation type="unfinished"></translation>
+        <translation>Reimposta password</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="156"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="217"/>
         <source>≥ 8 chars, contains A-Z, a-z, 0-9, and symbols</source>
-        <translation type="unfinished">≥ 8 caratteri, che contenga A-Z, a-z, 0-9 e simboli</translation>
+        <translation>≥ 8 caratteri, contiene A-Z, a-z, 0-9 e simboli</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="165"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="225"/>
         <source>Passwords do not match</source>
-        <translation type="unfinished">La password non corrisponde</translation>
+        <translation>Le password non corrispondono</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="176"/>
         <source>Please try again %1 minutes later</source>
-        <translation type="unfinished">Riprova tra %1 minuti</translation>
+        <translation>Riprovare tra %1 minuti</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="353"/>
         <source>Success</source>
-        <translation type="unfinished">Successo</translation>
+        <translation>Successo</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="353"/>
         <source>Password reset successfully</source>
-        <translation type="unfinished"></translation>
+        <translation>Password reimpostata con successo</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="369"/>
         <source>Failed to reset password. Please try again %1 minutes later</source>
-        <translation type="unfinished"></translation>
+        <translation>Reimpostazione password fallita. Riprovare tra %1 minuti</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="372"/>
         <source>Failed to reset password. One chance left</source>
-        <translation type="unfinished"></translation>
+        <translation>Reimpostazione password fallita. Resta un tentativo</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="374"/>
         <source>Failed to reset password. %1 chances left</source>
-        <translation type="unfinished"></translation>
+        <translation>Reimpostazione password fallita. Restano %1 tentativi</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_vault::RetrievePasswordView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="54"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="55"/>
         <source>Unlock the Safe via Key File</source>
-        <translation type="unfinished"></translation>
+        <translation>Sblocca la cassaforte tramite file chiave</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="57"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="58"/>
         <source>Select Key File</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleziona file chiave</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="113"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="121"/>
         <source>Unable to get the key file</source>
         <translation>Impossibile ottenere il file chiave</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="146"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="176"/>
+        <source>Failed to generate recovery key. Please try again.</source>
+        <translation>Generazione chiave di recupero fallita. Riprovare.</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="188"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="190"/>
+        <source>Upgrade vault</source>
+        <translation>Aggiorna vault</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="231"/>
+        <source>Unlock vault failed</source>
+        <translation>Sblocco vault fallito</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="157"/>
         <source>Verification failed</source>
         <translation>Verifica fallita</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="165"/>
-        <source>Failed to generate recovery key. Please try again.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="177"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="179"/>
-        <source>Upgrade vault</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="220"/>
-        <source>Unlock vault failed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="235"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="246"/>
         <source>Back</source>
         <comment>button</comment>
         <translation>Indietro</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="235"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="246"/>
         <source>Key Unlock</source>
         <comment>button</comment>
-        <translation type="unfinished"></translation>
+        <translation>Sblocco con chiave</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="240"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="251"/>
         <source>Key Unlocks Safe</source>
-        <translation type="unfinished"></translation>
+        <translation>La chiave sblocca la cassaforte</translation>
     </message>
 </context>
 <context>
@@ -8204,105 +8205,105 @@ pulisci i files in questa directory e prova a sbloccarla nuovamente.</translatio
 <context>
     <name>dfmplugin_vault::UnlockView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="58"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="60"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="59"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="61"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Annulla</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="58"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="59"/>
         <source>Verify Password</source>
         <comment>button</comment>
-        <translation type="unfinished"></translation>
+        <translation>Verifica password</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="60"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="61"/>
         <source>Unlock</source>
         <comment>button</comment>
         <translation>Sblocca</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="66"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="67"/>
         <source>Enter vault password</source>
-        <translation type="unfinished"></translation>
+        <translation>Inserisci password del vault</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="68"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="69"/>
         <source>Unlock File Vault</source>
         <translation>Sblocca File Vault</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="74"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="75"/>
         <source>Forgot password?</source>
         <translation>Password dimenticata?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="74"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="75"/>
         <source>Key unlock</source>
         <translation>Sblocco chiave</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="81"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="82"/>
         <source>Password</source>
         <translation>Password</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="121"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="122"/>
         <source>Password hint: %1</source>
         <translation>Suggerimento password: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="148"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="151"/>
         <source>Can&apos;t unlock the vault under the networking!</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile sbloccare la cassaforte in rete!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="159"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="162"/>
         <source>Please try again %1 minutes later</source>
         <translation>Riprova tra %1 minuti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="206"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="209"/>
         <source>Failed to generate recovery key. Please try again.</source>
-        <translation type="unfinished"></translation>
+        <translation>Generazione chiave di recupero fallita. Riprovare.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="218"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="220"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="221"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="223"/>
         <source>Upgrade vault</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiorna vault</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="265"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="268"/>
         <source>Wrong password, please try again %1 minutes later</source>
         <translation>Password errata, riprova tra %1 minuti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="268"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="271"/>
         <source>Wrong password, one chance left</source>
         <translation>Password errata, ultimo tentativo disponibile</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="270"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="273"/>
         <source>Wrong password, %1 chances left</source>
         <translation>Password errata, %1 tentativi disponibili</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="324"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="331"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="327"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="334"/>
         <source>Wrong password</source>
         <translation>Password errata</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="333"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="342"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="336"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="345"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="338"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="341"/>
         <source>Failed to unlock file vault, error code is %1</source>
         <translation>Sblocco file vault fallito, il codice di errore è %1</translation>
     </message>
@@ -8332,7 +8333,7 @@ pulisci i files in questa directory e prova a sbloccarla nuovamente.</translatio
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="197"/>
         <source>Close</source>
-        <translation type="unfinished">Chiudi</translation>
+        <translation>Chiudi</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="82"/>
@@ -8355,17 +8356,17 @@ pulisci i files in questa directory e prova a sbloccarla nuovamente.</translatio
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="76"/>
         <source>Recovery key file</source>
-        <translation type="unfinished"></translation>
+        <translation>File chiave di recupero</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="83"/>
         <source>Save the recovery key file and keep it in a safe place</source>
-        <translation type="unfinished"></translation>
+        <translation>Salvare il file della chiave di recupero e conservarlo in un posto sicuro</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="87"/>
         <source>It is recommended to save it to external storage devices such as a USB drive</source>
-        <translation type="unfinished"></translation>
+        <translation>Si consiglia di salvare su dispositivi di archiviazione esterni come una chiavetta USB</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="89"/>
@@ -8383,54 +8384,54 @@ pulisci i files in questa directory e prova a sbloccarla nuovamente.</translatio
         <translation>Prosegui</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="204"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="211"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="227"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="235"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="278"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="207"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="214"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="230"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="238"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="284"/>
         <source>Vault</source>
-        <translation type="unfinished">Vault</translation>
+        <translation>Vault</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="204"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="207"/>
         <source>Recovery key is not available. Please try again.</source>
-        <translation type="unfinished"></translation>
+        <translation>Chiave di recupero non disponibile. Riprovare.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="211"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="214"/>
         <source>Please select a path to save the recovery key.</source>
-        <translation type="unfinished"></translation>
+        <translation>Selezionare un percorso per salvare la chiave di recupero.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="227"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="230"/>
         <source>Failed to save recovery key. Please check the path and try again.</source>
-        <translation type="unfinished"></translation>
+        <translation>Salvataggio chiave di recupero fallito. Controllare il percorso e riprovare.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="235"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="238"/>
         <source>Failed to start migration. Please try again.</source>
-        <translation type="unfinished"></translation>
+        <translation>Avvio migrazione fallito. Riprovare.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="278"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="284"/>
         <source>Failed to upgrade vault. Please try again.</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiornamento vault fallito. Riprovare.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="287"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="293"/>
         <source>Success</source>
-        <translation type="unfinished">Successo</translation>
+        <translation>Successo</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="301"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="307"/>
         <source>Vault upgraded successfully. Please keep your recovery key safe.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vault aggiornato con successo. Conservare la chiave di recupero in un posto sicuro.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="308"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="314"/>
         <source>Enter Vault</source>
         <comment>button</comment>
-        <translation type="unfinished"></translation>
+        <translation>Entra nel Vault</translation>
     </message>
 </context>
 <context>
@@ -8537,27 +8538,27 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="64"/>
         <source>Failed to create vault: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Creazione vault fallita: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="176"/>
         <source>Failed to create vault: Get encryption method failed!</source>
-        <translation type="unfinished"></translation>
+        <translation>Creazione vault fallita: recupero metodo di crittografia fallito!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="192"/>
         <source>Failed to create vault: Unknown encryption method!</source>
-        <translation type="unfinished"></translation>
+        <translation>Creazione vault fallita: metodo di crittografia sconosciuto!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="205"/>
         <source>Failed to create vault: Retrieved password is empty!</source>
-        <translation type="unfinished"></translation>
+        <translation>Creazione vault fallita: la password recuperata è vuota!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="238"/>
         <source>Auto generate password failed!</source>
-        <translation type="unfinished"></translation>
+        <translation>Generazione automatica password fallita!</translation>
     </message>
 </context>
 <context>
@@ -8565,18 +8566,18 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultentryfileentity.cpp" line="30"/>
         <source>File Vault</source>
-        <translation type="unfinished">File di recupero Vault</translation>
+        <translation>File Vault</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_vault::VaultEventReceiver</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/events/vaulteventreceiver.cpp" line="216"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/events/vaulteventreceiver.cpp" line="240"/>
         <source>Vault</source>
         <translation>Vault</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/events/vaulteventreceiver.cpp" line="216"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/events/vaulteventreceiver.cpp" line="240"/>
         <source>Vault not available because cryfs not installed!</source>
         <translation>Vault non disponibile perché cryfs non installato!</translation>
     </message>
@@ -8585,7 +8586,7 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
     <name>dfmplugin_vault::VaultHelper</name>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="154"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="635"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="638"/>
         <source>Vault</source>
         <translation>Vault</translation>
     </message>
@@ -8595,7 +8596,7 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
         <translation>Vault not available because cryfs not installed!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="635"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="638"/>
         <source>A task is in progress, so it cannot perform your operation</source>
         <translation>Un&apos;attività è in corso, quindi non può eseguire l&apos;operazione</translation>
     </message>
@@ -8605,7 +8606,7 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/vaultpropertydialog.cpp" line="74"/>
         <source>File Vault</source>
-        <translation type="unfinished">File di recupero Vault</translation>
+        <translation>File Vault</translation>
     </message>
 </context>
 <context>
@@ -8719,7 +8720,7 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="300"/>
         <source>Please select a recovery key file</source>
-        <translation type="unfinished"></translation>
+        <translation>Selezionare un file chiave di recupero</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="368"/>
@@ -8729,7 +8730,7 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="392"/>
         <source>Invalid recovery key file</source>
-        <translation type="unfinished"></translation>
+        <translation>File chiave di recupero non valido</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="221"/>
@@ -8739,12 +8740,12 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="50"/>
         <source>Delete file vault with recovery key</source>
-        <translation type="unfinished"></translation>
+        <translation>Elimina file vault con chiave di recupero</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="53"/>
         <source>Select Key File</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleziona file chiave</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="225"/>
@@ -8797,12 +8798,12 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2510"/>
         <source>Mount error</source>
-        <translation type="unfinished">Errore di montaggio</translation>
+        <translation>Errore di montaggio</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2511"/>
         <source>Server login credentials are invalid. Please uninstall and remount</source>
-        <translation type="unfinished"></translation>
+        <translation>Le credenziali di accesso al server non sono valide. Disinstallare e rimontare</translation>
     </message>
 </context>
 <context>
@@ -8820,7 +8821,7 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="809"/>
         <source>Time created</source>
-        <translation type="unfinished">Data creazione</translation>
+        <translation>Data creazione</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="811"/>
@@ -8862,42 +8863,42 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="34"/>
         <source>Unknown</source>
-        <translation type="unfinished">Sconosciuto</translation>
+        <translation>Sconosciuto</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="35"/>
         <source>Empty</source>
-        <translation type="unfinished">Vuoto</translation>
+        <translation>Vuoto</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="36"/>
         <source>Tiny</source>
-        <translation type="unfinished">Molto piccole</translation>
+        <translation>Molto piccole</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="37"/>
         <source>Small</source>
-        <translation type="unfinished">Piccola</translation>
+        <translation>Piccola</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="38"/>
         <source>Medium</source>
-        <translation type="unfinished">Media</translation>
+        <translation>Media</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="39"/>
         <source>Large</source>
-        <translation type="unfinished">Grande</translation>
+        <translation>Grande</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="40"/>
         <source>Huge</source>
-        <translation type="unfinished"></translation>
+        <translation>Enorme</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="41"/>
         <source>Gigantic</source>
-        <translation type="unfinished"></translation>
+        <translation>Gigantesca</translation>
     </message>
 </context>
 <context>
@@ -8925,7 +8926,7 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="47"/>
         <source>Time created</source>
-        <translation type="unfinished">Data creazione</translation>
+        <translation>Data creazione</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="48"/>
