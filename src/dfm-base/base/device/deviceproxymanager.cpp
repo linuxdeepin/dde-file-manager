@@ -131,56 +131,31 @@ bool DeviceProxyManager::isDBusRuning()
 
 bool DeviceProxyManager::isFileOfExternalMounts(const QString &filePath)
 {
-    if (filePath.isEmpty())
-        return false;
-
     d->initMounts();
-    const QStringList &&mpts = d->externalMounts.values();
-    QString path = filePath.endsWith("/") ? filePath : filePath + "/";
-    auto ret = std::find_if(mpts.cbegin(), mpts.cend(), [path](const QString &mpt) { return path.startsWith(mpt); });
-    return ret != mpts.cend();
+    return d->matchMounts(filePath, d->externalMounts,
+                          [](const QString &) { return true; });
 }
 
 bool DeviceProxyManager::isFileOfProtocolMounts(const QString &filePath)
 {
-    if (filePath.isEmpty())
-        return false;
-
     d->initMounts();
-    const QString &path = filePath.endsWith("/") ? filePath : filePath + "/";
-    QReadLocker lk(&d->lock);
-    for (auto iter = d->allMounts.constKeyValueBegin(); iter != d->allMounts.constKeyValueEnd(); ++iter) {
-        if (!iter.base().key().startsWith(kBlockDeviceIdPrefix) && path.startsWith(iter.base().value()))
-            return true;
-    }
-    return false;
+    return d->matchMounts(filePath, d->allMounts,
+                          [](const QString &id) { return !id.startsWith(kBlockDeviceIdPrefix); });
 }
 
 bool DeviceProxyManager::isFileOfExternalBlockMounts(const QString &filePath)
 {
-    if (filePath.isEmpty())
-        return false;
-
     d->initMounts();
-    const QString &path = filePath.endsWith("/") ? filePath : filePath + "/";
-    QReadLocker lk(&d->lock);
-    for (auto iter = d->externalMounts.constKeyValueBegin(); iter != d->externalMounts.constKeyValueEnd(); ++iter) {
-        if (iter.base().key().startsWith(kBlockDeviceIdPrefix) && path.startsWith(iter.base().value()))
-            return true;
-    }
-    return false;
+    return d->matchMounts(filePath, d->externalMounts,
+                          [](const QString &id) { return id.startsWith(kBlockDeviceIdPrefix); });
 }
 
 bool DeviceProxyManager::isFileFromOptical(const QString &filePath)
 {
     d->initMounts();
-    const QString &path = filePath.endsWith("/") ? filePath : filePath + "/";
-    QReadLocker lk(&d->lock);
-    for (auto iter = d->allMounts.constKeyValueBegin(); iter != d->allMounts.constKeyValueEnd(); ++iter) {
-        if (iter.base().key().startsWith(QString(kBlockDeviceIdPrefix) + "sr") && path.startsWith(iter.base().value()))
-            return true;
-    }
-    return false;
+    static const QString kOpticalPrefix = QString(kBlockDeviceIdPrefix) + "sr";
+    return d->matchMounts(filePath, d->allMounts,
+                          [](const QString &id) { return id.startsWith(kOpticalPrefix); });
 }
 
 bool DeviceProxyManager::isMptOfDevice(const QString &filePath, QString &id)
@@ -188,8 +163,14 @@ bool DeviceProxyManager::isMptOfDevice(const QString &filePath, QString &id)
     d->initMounts();
     const QString &path = filePath.endsWith("/") ? filePath : filePath + "/";
     QReadLocker lk(&d->lock);
-    id = d->allMounts.key(path, "");
-    return !id.isEmpty();
+    for (auto it = d->allMounts.constBegin(); it != d->allMounts.constEnd(); ++it) {
+        if (it.value().contains(path)) {
+            id = it.key();
+            return true;
+        }
+    }
+    id.clear();
+    return false;
 }
 
 QVariantMap DeviceProxyManager::queryDeviceInfoByPath(const QString &path, bool reload)
@@ -197,19 +178,20 @@ QVariantMap DeviceProxyManager::queryDeviceInfoByPath(const QString &path, bool 
     d->initMounts();
     QString devId, rootDevId, blkMtp;
     QReadLocker lk(&d->lock);
-    for (auto it = d->allMounts.begin(); it != d->allMounts.end(); it++) {
-        if (it.value() == "/") {
-            rootDevId = it.key();
-            continue;
-        }
-        if (path.startsWith(it.value())
-            || (path + "/").startsWith(it.value())) {
-            if (devId.isEmpty() || (!blkMtp.isEmpty() && it.value().startsWith(blkMtp))) {
-                devId = it.key();
-                blkMtp = it.value();
+    for (auto it = d->allMounts.constBegin(); it != d->allMounts.constEnd(); ++it) {
+        for (const QString &mpt : it.value()) {
+            if (mpt == "/") {
+                rootDevId = it.key();   // record system disk as fallback
+                continue;
             }
-            qCDebug(logDFMBase()) << "DeviceProxyManager::queryDeviceInfoByPath path = " << path
-                                  << ", devId = " << devId << ", it.key() = " << it.key() << blkMtp;
+            if (path.startsWith(mpt) || (path + "/").startsWith(mpt)) {
+                if (blkMtp.isEmpty() || mpt.length() > blkMtp.length()) {
+                    devId = it.key();
+                    blkMtp = mpt;
+                }
+                qCDebug(logDFMBase()) << "DeviceProxyManager::queryDeviceInfoByPath path = " << path
+                                      << ", devId = " << devId << ", mpt = " << mpt << blkMtp;
+            }
         }
     }
     if (devId.isEmpty())
@@ -294,16 +276,34 @@ void DeviceProxyManagerPrivate::initMounts()
                            bool pass = false) {
             for (const auto &dev : devs) {
                 auto &&info = query(q, dev, false);
-                auto mpt = info.value(DeviceProperty::kMountPoint).toString();
-                if (!mpt.isEmpty()) {
-                    if (DeviceUtils::isMountPointOfDlnfs(mpt) && !info.value(DeviceProperty::kId).toString().startsWith(kBlockDeviceIdPrefix))
+                // Prefer the plural `kMountPoints` which carries the full list of mount
+                // points of a device (e.g. multi-mount LVM devices). Fall back to the
+                // singular `kMountPoint` for daemons that only return a single value.
+                auto mpts = info.value(DeviceProperty::kMountPoints).toStringList();
+                if (mpts.isEmpty()) {
+                    auto single = info.value(DeviceProperty::kMountPoint).toString();
+                    if (!single.isEmpty())
+                        mpts << single;
+                }
+
+                qCDebug(logDFMBase()) << "DeviceProxyManager initMounts dev =" << dev
+                                      << "mountPoints =" << mpts;
+
+                const bool isBlock = info.value(DeviceProperty::kId).toString().startsWith(kBlockDeviceIdPrefix);
+                const bool isExternal = pass || isExternalBlock(info);
+                for (const auto &raw : mpts) {
+                    if (raw.isEmpty())
                         continue;
-                    mpt = canonicalMountPoint(mpt);
+                    // Skip dlnfs mount points for non-block devices (protocol devices).
+                    if (DeviceUtils::isMountPointOfDlnfs(raw) && !isBlock)
+                        continue;
+                    const QString &mpt = canonicalMountPoint(raw);
 
                     QWriteLocker lk(&lock);
-                    if (pass || isExternalBlock(info))
-                        externalMounts.insert(dev, mpt);
-                    allMounts.insert(dev, mpt);
+                    if (!allMounts[dev].contains(mpt))
+                        allMounts[dev].append(mpt);
+                    if (isExternal && !externalMounts[dev].contains(mpt))
+                        externalMounts[dev].append(mpt);
                 }
             }
         };
@@ -395,10 +395,12 @@ void DeviceProxyManagerPrivate::connectToDBus()
     connections << q->connect(ptr, &DeviceManagerInterface::ProtocolDeviceMounted, q, &DeviceProxyManager::protocolDevMounted);
     connections << q->connect(ptr, &DeviceManagerInterface::ProtocolDeviceUnmounted, q, &DeviceProxyManager::protocolDevUnmounted);
 
-    connections << q->connect(ptr, &DeviceManagerInterface::BlockDeviceRemoved, this, &DeviceProxyManagerPrivate::removeMounts);
+    // *Removed: whole device gone — discard oldMpt so removeMounts clears all mount points.
+    connections << q->connect(ptr, &DeviceManagerInterface::BlockDeviceRemoved, this, [this](const QString &id, const QString &) { removeMounts(id); });
     connections << q->connect(ptr, &DeviceManagerInterface::BlockDeviceMounted, this, &DeviceProxyManagerPrivate::addMounts);
+    // *Unmounted: one mount point gone — pass oldMpt so removeMounts targets that specific entry.
     connections << q->connect(ptr, &DeviceManagerInterface::BlockDeviceUnmounted, this, &DeviceProxyManagerPrivate::removeMounts);
-    connections << q->connect(ptr, &DeviceManagerInterface::ProtocolDeviceRemoved, this, &DeviceProxyManagerPrivate::removeMounts);
+    connections << q->connect(ptr, &DeviceManagerInterface::ProtocolDeviceRemoved, this, [this](const QString &id, const QString &) { removeMounts(id); });
     connections << q->connect(ptr, &DeviceManagerInterface::ProtocolDeviceMounted, this, &DeviceProxyManagerPrivate::addMounts);
     connections << q->connect(ptr, &DeviceManagerInterface::ProtocolDeviceUnmounted, this, &DeviceProxyManagerPrivate::removeMounts);
 
@@ -439,10 +441,12 @@ void DeviceProxyManagerPrivate::connectToAPI()
     connections << q->connect(ptr, &DeviceManager::protocolDevMounted, q, &DeviceProxyManager::protocolDevMounted);
     connections << q->connect(ptr, &DeviceManager::protocolDevUnmounted, q, &DeviceProxyManager::protocolDevUnmounted);
 
-    connections << q->connect(ptr, &DeviceManager::blockDevRemoved, this, &DeviceProxyManagerPrivate::removeMounts);
+    // *Removed: whole device gone — discard oldMpt so removeMounts clears all mount points.
+    connections << q->connect(ptr, &DeviceManager::blockDevRemoved, this, [this](const QString &id, const QString &) { removeMounts(id); });
     connections << q->connect(ptr, &DeviceManager::blockDevMounted, this, &DeviceProxyManagerPrivate::addMounts);
+    // *Unmounted: one mount point gone — pass oldMpt so removeMounts targets that specific entry.
     connections << q->connect(ptr, &DeviceManager::blockDevUnmounted, this, &DeviceProxyManagerPrivate::removeMounts);
-    connections << q->connect(ptr, &DeviceManager::protocolDevRemoved, this, &DeviceProxyManagerPrivate::removeMounts);
+    connections << q->connect(ptr, &DeviceManager::protocolDevRemoved, this, [this](const QString &id, const QString &) { removeMounts(id); });
     connections << q->connect(ptr, &DeviceManager::protocolDevMounted, this, &DeviceProxyManagerPrivate::addMounts);
     connections << q->connect(ptr, &DeviceManager::protocolDevUnmounted, this, &DeviceProxyManagerPrivate::removeMounts);
 
@@ -463,6 +467,25 @@ void DeviceProxyManagerPrivate::disconnCurrentConnections()
     currentConnectionType = kNoneConnection;
 }
 
+bool DeviceProxyManagerPrivate::matchMounts(const QString &filePath,
+                                            const QMap<QString, QStringList> &mounts,
+                                            const std::function<bool(const QString &)> &devFilter)
+{
+    if (filePath.isEmpty())
+        return false;
+    const QString &path = filePath.endsWith("/") ? filePath : filePath + "/";
+    QReadLocker lk(&lock);
+    for (auto it = mounts.constBegin(); it != mounts.constEnd(); ++it) {
+        if (!devFilter(it.key()))
+            continue;
+        for (const QString &mpt : it.value()) {
+            if (path.startsWith(mpt))
+                return true;
+        }
+    }
+    return false;
+}
+
 void DeviceProxyManagerPrivate::addMounts(const QString &id, const QString &mpt)
 {
     QString p = canonicalMountPoint(mpt);
@@ -474,33 +497,66 @@ void DeviceProxyManagerPrivate::addMounts(const QString &id, const QString &mpt)
 
     {
         QWriteLocker lk(&lock);
+        if (!allMounts[id].contains(p))
+            allMounts[id].append(p);
+        bool isExternal = false;
         if (id.startsWith(kBlockDeviceIdPrefix)) {
             auto &&info = q->queryBlockInfo(id);
-            if (isExternalBlock(info))
-                externalMounts.insert(id, p);
+            isExternal = isExternalBlock(info);
         } else {
-            externalMounts.insert(id, p);
+            isExternal = true;
         }
-        allMounts.insert(id, p);
+        if (isExternal && !externalMounts[id].contains(p))
+            externalMounts[id].append(p);
     }
 
     Q_EMIT q->mountPointAdded(mpt);
 }
 
-void DeviceProxyManagerPrivate::removeMounts(const QString &id)
+void DeviceProxyManagerPrivate::removeMounts(const QString &id, const QString &mpt)
 {
-    // NOTE: Moving positions may cause deadlock
-    QString mpt;
-    {
-        QReadLocker locker(&lock);
-        mpt = externalMounts.value(id);
-    }
-    Q_EMIT q->mountPointAboutToRemoved(mpt);
+    // NOTE: signals are emitted outside the write lock to avoid deadlock.
+    if (!mpt.isEmpty()) {
+        // A specific mount point was unmounted: remove only that one.
+        const QString p = canonicalMountPoint(mpt);
+        // Emit using the raw mpt as callers expect the original value.
+        Q_EMIT q->mountPointAboutToRemoved(mpt);
 
-    {
-        QWriteLocker lk(&lock);
-        externalMounts.remove(id);
-        allMounts.remove(id);
+        bool devGone = false;
+        {
+            QWriteLocker lk(&lock);
+            auto allIt = allMounts.find(id);
+            if (allIt != allMounts.end()) {
+                allIt.value().removeAll(p);
+                if (allIt.value().isEmpty()) {
+                    allMounts.erase(allIt);
+                    devGone = true;
+                }
+            }
+            auto extIt = externalMounts.find(id);
+            if (extIt != externalMounts.end()) {
+                extIt.value().removeAll(p);
+                if (extIt.value().isEmpty() || devGone)
+                    externalMounts.erase(extIt);
+            }
+        }
+        Q_EMIT q->mountPointRemoved(mpt);
+    } else {
+        // The whole device was removed: emit AboutToRemoved per mount point, drop the
+        // key, then emit Removed per mount point (cache is gone by then).
+        QStringList mpts;
+        {
+            QReadLocker lk(&lock);
+            mpts = allMounts.value(id);
+        }
+        for (const QString &one : mpts)
+            Q_EMIT q->mountPointAboutToRemoved(one);
+        {
+            QWriteLocker lk(&lock);
+            allMounts.remove(id);
+            externalMounts.remove(id);
+        }
+        for (const QString &one : mpts)
+            Q_EMIT q->mountPointRemoved(one);
     }
-    Q_EMIT q->mountPointRemoved(mpt);
 }

@@ -20,6 +20,7 @@
 #include <QtCore/qobjectdefs.h>
 #include <QAtomicInteger>
 #include <QReadWriteLock>
+#include <functional>
 
 using DeviceManagerInterface = OrgDeepinFilemanagerDaemonDeviceManagerInterface;
 class QDBusServiceWatcher;
@@ -44,10 +45,13 @@ public:
     void connectToDBus();
     void connectToAPI();
     void disconnCurrentConnections();
+    bool matchMounts(const QString &filePath,
+                     const QMap<QString, QStringList> &mounts,
+                     const std::function<bool(const QString &)> &devFilter);
 
 private Q_SLOTS:
     void addMounts(const QString &id, const QString &mpt);
-    void removeMounts(const QString &id);
+    void removeMounts(const QString &id, const QString &mpt = {});
 
 private:
     DeviceProxyManager *q { nullptr };
@@ -57,8 +61,8 @@ private:
     int currentConnectionType = kNoneConnection;   // 0 for API connection and 1 for DBus connection
     QAtomicInteger<bool> isShuttingDown { false };
     QReadWriteLock lock;
-    QMap<QString, QString> externalMounts;
-    QMap<QString, QString> allMounts;   // contain system disk
+    QMap<QString, QStringList> externalMounts;
+    QMap<QString, QStringList> allMounts;   // contain system disk
 
     enum {
         kNoneConnection = -1,
