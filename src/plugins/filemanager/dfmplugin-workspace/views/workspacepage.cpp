@@ -37,7 +37,7 @@ WorkspacePage::~WorkspacePage()
 
     // 显式清理 views,确保析构顺序可控
     // 注意: 必须先从 layout 移除,再 delete,避免 Qt 父子关系的二次删除
-    for (auto it = views.begin(); it != views.end(); ) {
+    for (auto it = views.begin(); it != views.end();) {
         QString scheme = it.key();
         ViewPtr view = it.value();
 
@@ -270,7 +270,7 @@ void WorkspacePage::initUI()
     widgetLayout->setContentsMargins(0, 0, 0, 0);
 
     // 添加顶部和底部容器到主布局
-    widgetLayout->addWidget(topContainer, 0);    // 顶部容器不拉伸
+    widgetLayout->addWidget(topContainer, 0);   // 顶部容器不拉伸
     widgetLayout->addWidget(viewContainer, 1);   // 底部容器占用剩余空间
 
     setLayout(widgetLayout);
@@ -322,6 +322,7 @@ void WorkspacePage::initCustomTopWidgets(const QUrl &url)
 void WorkspacePage::setCurrentView(const QUrl &url)
 {
     fmDebug() << "setCurrentView called for url:" << url;
+    const QString prevScheme = currentViewScheme;
     currentViewScheme = url.scheme();
     auto view = views[currentViewScheme];
     if (!view) {
@@ -343,6 +344,39 @@ void WorkspacePage::setCurrentView(const QUrl &url)
 
     if (view->viewState() != AbstractBaseView::ViewState::kViewBusy)
         viewStateChanged();
+
+    if (prevScheme != url.scheme()) {
+        tryShowViewHint(url);
+        fmDebug() << "setCurrentView: tryShowViewHint called for url:" << url;
+    }
+}
+
+void WorkspacePage::tryShowViewHint(const QUrl &url)
+{
+    if (currentHint) {
+        currentHint->close();   // -> msg WA_DeleteOnClose-deleted -> controller self-deletes
+        currentHint = nullptr;   // detach our handle now; object cleans up asynchronously
+    }
+
+    const ViewHintSpec spec = WorkspaceHelper::instance()->findViewHint(url.scheme());
+    if (!spec.shouldShow)
+        return;
+    QString text;
+    if (!spec.shouldShow(url, &text))
+        return;
+
+    auto *hint = new ViewHintMessage(this);
+    hint->setIcon(spec.icon);
+    hint->setText(text);
+    hint->setActions(spec.actions);
+    hint->setAutoDismissOnAction(true);
+    connect(hint, &ViewHintMessage::actionTriggered, this, [this, spec](const QString &id) {
+        if (spec.onAction)
+            spec.onAction(id);
+        currentHint = nullptr;   // controller self-deletes via the message's destroyed signal
+    });
+    hint->show(this);
+    currentHint = hint;
 }
 
 void WorkspacePage::playDisappearAnimation(ViewPtr view)

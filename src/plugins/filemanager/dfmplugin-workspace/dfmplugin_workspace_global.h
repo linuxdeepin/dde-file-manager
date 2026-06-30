@@ -13,6 +13,9 @@
 
 #include <QList>
 #include <QDir>
+#include <QIcon>
+#include <QPair>
+#include <QUrl>
 #include <QVariantMap>
 
 #define DPWORKSPACE_NAMESPACE dfmplugin_workspace
@@ -106,6 +109,10 @@ inline constexpr char kKeepShow[] { "Property_Key_KeepShow" };
 inline constexpr char kKeepTop[] { "Property_Key_KeepTop" };
 inline constexpr char kCreateTopWidgetCallback[] { "Property_Key_CreateTopWidgetCallback" };
 inline constexpr char kShowTopWidgetCallback[] { "Property_Key_ShowTopWidgetCallback" };
+inline constexpr char kViewHintIcon[] { "Property_Key_ViewHintIcon" };
+inline constexpr char kViewHintActions[] { "Property_Key_ViewHintActions" };
+inline constexpr char kViewHintShouldShow[] { "Property_Key_ViewHintShouldShow" };
+inline constexpr char kViewHintOnAction[] { "Property_Key_ViewHintOnAction" };
 }
 
 using CreateTopWidgetCallback = std::function<QWidget *()>;
@@ -113,6 +120,40 @@ using ShowTopWidgetCallback = std::function<bool(QWidget *, const QUrl &)>;
 using FileViewFilterCallback = std::function<bool(dfmbase::SortFileInfo *, QVariant)>;
 using FileViewRoutePrehaldler = std::function<void(quint64 winId, const QUrl &, std::function<void()>)>;
 using ViewModeUrlCallback = std::function<QUrl(const QUrl)>;
+
+// View-hint callbacks: the registrant (e.g. search) supplies these so the workspace
+// can decide whether to show the hint, supply its message text, and react to the
+// user's chosen action -- without the workspace knowing any business logic.
+// shouldShow is queried on scheme entry: when it returns true it also fills *text
+// with the message to display. onAction is invoked for every user action, including
+// the built-in close button which arrives with id "close".
+using ViewHintShouldShowCallback = std::function<bool(const QUrl &, QString *text)>;
+using ViewHintActionCallback = std::function<void(const QString &id)>;
+
+// Specification for a per-scheme floating view hint. Registered via
+// slot_RegisterViewHint; consumed by WorkspacePage on url/scheme switch.
+struct ViewHintSpec
+{
+    QString scheme;
+    QString icon;
+    QList<QPair<QString, QString>> actions;   // {id, label}
+    ViewHintShouldShowCallback shouldShow { nullptr };
+    ViewHintActionCallback onAction { nullptr };
+
+    ViewHintSpec() = default;
+    inline explicit ViewHintSpec(const QVariantMap &map)
+        : scheme { map[PropertyKey::kScheme].toString() },
+          icon { map.value(PropertyKey::kViewHintIcon).toString() }
+    {
+        const QVariantList actionList = map.value(PropertyKey::kViewHintActions).toList();
+        for (const QVariant &v : actionList) {
+            const QVariantMap m = v.toMap();
+            actions.append({ m.value("id").toString(), m.value("label").toString() });
+        }
+        shouldShow = DPF_NAMESPACE::paramGenerator<ViewHintShouldShowCallback>(map.value(PropertyKey::kViewHintShouldShow));
+        onAction = DPF_NAMESPACE::paramGenerator<ViewHintActionCallback>(map.value(PropertyKey::kViewHintOnAction));
+    }
+};
 
 struct CustomTopWidgetInfo
 {
@@ -178,6 +219,8 @@ Q_DECLARE_METATYPE(DPWORKSPACE_NAMESPACE::ShowTopWidgetCallback);
 Q_DECLARE_METATYPE(DPWORKSPACE_NAMESPACE::FileViewFilterCallback);
 Q_DECLARE_METATYPE(DPWORKSPACE_NAMESPACE::FileViewRoutePrehaldler);
 Q_DECLARE_METATYPE(DPWORKSPACE_NAMESPACE::ViewModeUrlCallback);
+Q_DECLARE_METATYPE(DPWORKSPACE_NAMESPACE::ViewHintShouldShowCallback);
+Q_DECLARE_METATYPE(DPWORKSPACE_NAMESPACE::ViewHintActionCallback);
 Q_DECLARE_METATYPE(QString *)
 Q_DECLARE_METATYPE(QVariant *)
 Q_DECLARE_METATYPE(QDir::Filters)

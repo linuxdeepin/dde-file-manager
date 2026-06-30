@@ -56,6 +56,17 @@
             "description":"Used to determine whether to enable display search history",
             "permissions":"readwrite",
             "visibility":"private"
+        },
+        "searchAuthHintDone": {
+            "value":false,
+            "serial":0,
+            "flags":[],
+            "name":"Search Authorization Hint Done",
+            "name[zh_CN]":"搜索授权提示已处理",
+            "description[zh_CN]":"用于判断是否已展示或处理过搜索授权体验提示",
+            "description":"Used to determine whether the search authorization experience hint has already been handled",
+            "permissions":"readwrite",
+            "visibility":"private"
         }
     }
 }

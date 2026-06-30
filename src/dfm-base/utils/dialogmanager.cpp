@@ -25,6 +25,7 @@
 
 #include <QDir>
 #include <QApplication>
+#include <QTimer>
 #include <QHeaderView>
 #include <QStandardItemModel>
 
@@ -286,7 +287,15 @@ void DialogManager::registerSettingWidget(const QString &viewType,
 
 void DialogManager::showSetingsDialog(FileManagerWindow *window)
 {
-    Q_ASSERT(window);
+    showSetingsDialog(window, QString());
+}
+
+void DialogManager::showSetingsDialog(FileManagerWindow *window, const QString &groupKey)
+{
+    if (!window) {
+        qCWarning(logDFMBase) << "showSetingsDialog: window is null";
+        return;
+    }
 
     if (window->property("isSettingDialogShown").toBool()) {
         qCWarning(logDFMBase) << "isSettingDialogShown true";
@@ -306,6 +315,13 @@ void DialogManager::showSetingsDialog(FileManagerWindow *window)
 
     dsd->initialze();
     dsd->show();
+
+    // 仅在指定有效分组时滚动到对应设置分组。
+    if (!groupKey.isEmpty()) {
+        QTimer::singleShot(0, dsd, [dsd, groupKey]() {
+            dsd->scrollToGroup(groupKey);
+        });
+    }
 
     connect(dsd, &DSettingsDialog::finished, [window] {
         window->setProperty("isSettingDialogShown", false);

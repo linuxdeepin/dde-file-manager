@@ -112,5 +112,7 @@
         <file>built-in-icons/media-eject-symbolic.dci</file>
         <file>built-in-icons/sidebar-switch-symbolic.dci</file>
         <file>built-in-icons/no_favorites_yet.dci</file>
+        <file>built-in-icons/dfm-search-tips.dci</file>
+        <file>built-in-icons/dfm-clear.dci</file>
     </qresource>
 </RCC>

@@ -33,15 +33,21 @@
 #include <dfm-base/utils/viewdefines.h>
 #include <dfm-base/utils/sysinfoutils.h>
 
+#include <QIcon>
+
 using CreateTopWidgetCallback = std::function<QWidget *()>;
 using ShowTopWidgetCallback = std::function<bool(QWidget *, const QUrl &)>;
 using ViewModeUrlCallback = std::function<QUrl(const QUrl)>;
+using ViewHintShouldShowCallback = std::function<bool(const QUrl &, QString *)>;
+using ViewHintActionCallback = std::function<void(const QString &)>;
 Q_DECLARE_METATYPE(CreateTopWidgetCallback);
 Q_DECLARE_METATYPE(ShowTopWidgetCallback);
 Q_DECLARE_METATYPE(QList<QVariantMap> *);
 Q_DECLARE_METATYPE(QString *);
 Q_DECLARE_METATYPE(QVariant *)
 Q_DECLARE_METATYPE(ViewModeUrlCallback)
+Q_DECLARE_METATYPE(ViewHintShouldShowCallback);
+Q_DECLARE_METATYPE(ViewHintActionCallback);
 
 DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
@@ -154,6 +160,28 @@ void Search::regSearchToWorkspace()
     };
 
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterCustomTopWidget", map);
+
+    // Register the per-scheme "authorization experience" view hint. The workspace
+    // owns the floating message and shows/hides it on url/scheme switch; the search
+    // plugin only supplies the spec -- icon/actions, a shouldShow predicate (reads
+    // DConfig and dynamically fills the message text), and an onAction handler. Both
+    // live as statics on SearchHelper. The built-in close button arrives as action
+    // "close"; "Smart search" has no backing key yet and is intentionally not
+    // enabled by the action handler (per current scope).
+    ViewHintShouldShowCallback shouldShow { SearchHelper::shouldShowAuthHint };
+    ViewHintActionCallback onAction { SearchHelper::onAuthHintAction };
+
+    QVariantList hintActions;
+    hintActions.append(QVariantMap { { "id", "authorize" }, { "label", tr("Enable") } });
+
+    QVariantMap hintMap {
+        { "Property_Key_Scheme", SearchHelper::scheme() },
+        { "Property_Key_ViewHintIcon", "dfm-search-tips" },
+        { "Property_Key_ViewHintActions", hintActions },
+        { "Property_Key_ViewHintShouldShow", QVariant::fromValue(shouldShow) },
+        { "Property_Key_ViewHintOnAction", QVariant::fromValue(onAction) }
+    };
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterViewHint", hintMap);
 }
 
 void Search::regSearchSettingConfig()
