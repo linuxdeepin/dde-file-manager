@@ -7,12 +7,14 @@
 #include "searchmanager/searcher/abstractsearcher.h"
 #include "searchmanager/searcher/dfmsearch/dfmsearcher.h"
 #include "searchmanager/searcher/iterator/iteratorsearcher.h"
+#include "searchmanager/searcher/semantic/semanticadapter.h"
 #include "utils/searchhelper.h"
 
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <dfm-search/dsearch_global.h>
+#include <dfm-search/semanticsearcher.h>
 
 #include <QDebug>
 
@@ -129,40 +131,56 @@ bool SimplifiedSearchWorker::isParentPath(const QString &parentPath, const QStri
 
 void SimplifiedSearchWorker::createSearchersForUrl(const QUrl &url)
 {
-    // 支持的搜索类型
-    QList<SearchType> searchTypes = { SearchType::FileName };
+    // 为每种启用的搜索类型创建 DFMSearcher
+    const QList<SearchType> searchTypes = resolveEnabledSearchTypes();
+    for (auto type : searchTypes)
+        appendSearcher(new DFMSearcher(url, searchKeyword, this, type));
 
-    // 检查是否开启了全文搜索
-    bool enableContentSearch = DConfigManager::instance()->value(
-                                                                 DConfig::kSearchCfgPath, DConfig::kEnableFullTextSearch, false)
-                                       .toBool();
+    // 语义搜索：在索引就绪、dconfig 开启且 keyword 含语义意图时才创建
+    if (shouldEnableSemanticSearch())
+        appendSearcher(new SemanticAdapter(url, searchKeyword, this));
+}
 
-    if (enableContentSearch) {
-        searchTypes.append(SearchType::Content);
+QList<SearchType> SimplifiedSearchWorker::resolveEnabledSearchTypes() const
+{
+    QList<SearchType> types { SearchType::FileName };
+
+    if (DConfigManager::instance()->value(
+                DConfig::kSearchCfgPath, DConfig::kEnableFullTextSearch, false).toBool()) {
+        types.append(SearchType::Content);
     }
 
-    bool enableOcrTextSearch = DConfigManager::instance()->value(
-                                                                 DConfig::kSearchCfgPath, DConfig::kEnableOcrTextSearch, false)
-                                       .toBool();
-
-    if (enableOcrTextSearch) {
-        searchTypes.append(SearchType::Ocr);
+    if (DConfigManager::instance()->value(
+                DConfig::kSearchCfgPath, DConfig::kEnableOcrTextSearch, false).toBool()) {
+        types.append(SearchType::Ocr);
     }
 
-    // 为每种搜索类型创建搜索器
-    for (auto type : searchTypes) {
-        // 使用DFMSearcher作为默认搜索器
-        AbstractSearcher *searcher = new DFMSearcher(url, searchKeyword, this, type);
+    return types;
+}
 
-        // 连接信号
-        connect(searcher, &AbstractSearcher::unearthed, this, &SimplifiedSearchWorker::onSearcherUnearthed);
-        connect(searcher, &AbstractSearcher::finished, this, &SimplifiedSearchWorker::onSearcherFinished);
+bool SimplifiedSearchWorker::shouldEnableSemanticSearch() const
+{
+    // 语义搜索依赖文件名索引（内部会编排 FileName/Content/OCR 子引擎）
+    if (!DFMSEARCH::Global::isFileNameIndexReadyForSearch())
+        return false;
 
-        searchers.append(searcher);
-
-        // 启动搜索
-        searcher->search();
+    if (!DConfigManager::instance()->value(
+                DConfig::kSearchCfgPath, DConfig::kEnableSemanticSearch, false).toBool()) {
+        return false;
     }
+
+    // 仅当 keyword 真正包含语义意图时才创建 adapter，避免纯关键词触发无谓的语义搜索开销
+    DFMSEARCH::SemanticSearcher checker;
+    return checker.isSemanticQuery(searchKeyword);
+}
+
+void SimplifiedSearchWorker::appendSearcher(AbstractSearcher *searcher)
+{
+    connect(searcher, &AbstractSearcher::unearthed, this, &SimplifiedSearchWorker::onSearcherUnearthed);
+    connect(searcher, &AbstractSearcher::finished, this, &SimplifiedSearchWorker::onSearcherFinished);
+
+    searchers.append(searcher);
+    searcher->search();
 }
 
 void SimplifiedSearchWorker::cleanupSearchers()
