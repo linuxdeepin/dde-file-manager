@@ -14,6 +14,8 @@
 #include <QIcon>
 #include <QDir>
 
+#include <unistd.h>
+
 DPUTILS_BEGIN_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
@@ -71,11 +73,11 @@ QIcon ExtensionEmblemManagerPrivate::makeIcon(const QString &path)
         if (QFile::exists(cleanPath)) {
             icon = QIcon(cleanPath);
             if (!icon.isNull()) {
-                iconCaches.insert(cleanPath, icon); // 使用原始 path 作为键，或者 cleanPath
+                iconCaches.insert(cleanPath, icon);   // 使用原始 path 作为键，或者 cleanPath
                 return icon;
             }
         } else {
-             fmWarning() << "Icon file does not exist:" << cleanPath;
+            fmWarning() << "Icon file does not exist:" << cleanPath;
         }
     } else {
         // 如果不是绝对路径，且 fromTheme 失败，可能是相对路径或无效路径
@@ -412,14 +414,13 @@ ExtensionEmblemManager::~ExtensionEmblemManager()
 
     // 停止定时器
     d->readyTimer.stop();
-    
+
     // 确保工作线程正确退出
     if (d->workerThread.isRunning()) {
         d->workerThread.quit();
         if (!d->workerThread.wait(3000)) {
             fmWarning() << "ExtensionEmblemManager: Worker thread did not exit within 3 seconds, forcing termination";
-            d->workerThread.terminate();
-            d->workerThread.wait(1000);
+            _exit(1);
         }
     }
 }

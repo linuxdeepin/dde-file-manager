@@ -4,7 +4,6 @@
 
 #include "thumbnailfactory.h"
 #include "thumbnailcreators.h"
-#include "thumbnailhelper.h"
 
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/universalutils.h>
@@ -12,6 +11,8 @@
 #include <dfm-base/base/device/deviceproxymanager.h>
 
 #include <QGuiApplication>
+
+#include <unistd.h>
 
 using namespace dfmbase;
 DFMGLOBAL_USE_NAMESPACE
@@ -99,8 +100,7 @@ void ThumbnailFactory::onAboutToQuit()
     bool finished = thread->wait(3000);
     if (!finished) {
         qCWarning(logDFMBase) << "thumbnail: worker thread did not finish within 3 seconds, forcing termination";
-        thread->terminate();
-        thread->wait(1000);
+        _exit(1);
     } else {
         qCInfo(logDFMBase) << "thumbnail: worker thread stopped gracefully";
     }
