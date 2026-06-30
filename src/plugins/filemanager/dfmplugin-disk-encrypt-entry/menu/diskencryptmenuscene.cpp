@@ -414,7 +414,7 @@ void DiskEncryptMenuScene::doEncryptDevice(const DeviceEncryptParam &param)
     }
 }
 
-void DiskEncryptMenuScene::doReencryptDevice(const DeviceEncryptParam &param)
+bool DiskEncryptMenuScene::doReencryptDevice(const DeviceEncryptParam &param)
 {
     // if tpm selected, use tpm to generate the key
     QString tpmToken;
@@ -423,15 +423,22 @@ void DiskEncryptMenuScene::doReencryptDevice(const DeviceEncryptParam &param)
         QString configPath = tpm_passphrase_utils::getGlobalTPMConfigPath();
         if (configPath.isEmpty()) {
             qCritical() << "Failed to create tpm config path";
-            return;
+            EventsHandler::instance()->ignoreParamRequest();
+            return false;
         }
         tpmToken = generateTPMToken(param.devDesc, param.secType == kPin, configPath);
+        if (tpmToken.isEmpty()) {
+            fmCritical() << "Failed to generate TPM token for re-encryption, device:" << param.devDesc;
+            EventsHandler::instance()->ignoreParamRequest();
+            return false;
+        }
     }
 
     CREATE_DAEMON_INTERFACE(iface);
     if (!iface.isValid()) {
         fmCritical() << "Failed to create DBus interface for SetupAuthArgs, service may be unavailable";
-        return;
+        EventsHandler::instance()->ignoreParamRequest();
+        return false;
     }
 
     // Prepare credentials data
@@ -447,7 +454,11 @@ void DiskEncryptMenuScene::doReencryptDevice(const DeviceEncryptParam &param)
     fmDebug() << "Starting device re-encryption via fd";
     if (sendCredentialsViaFd(iface, "SetupAuthArgs", params, true)) {
         QApplication::setOverrideCursor(Qt::WaitCursor);
+        return true;
     }
+
+    EventsHandler::instance()->ignoreParamRequest();
+    return false;
 }
 
 void DiskEncryptMenuScene::doDecryptDevice(const DeviceEncryptParam &param)

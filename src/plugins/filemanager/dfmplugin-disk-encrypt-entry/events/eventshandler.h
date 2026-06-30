@@ -27,6 +27,7 @@ public:
     QString holderDevice(const QString &device);
     bool onAcquireDevicePwd(const QString &dev, QString *pwd, bool *giveup);
     void setAutoStartDFM(bool enable);
+    void ignoreParamRequest();
 
 private Q_SLOTS:
     void onEncryptProgress(const QString &, const QString &, double);
@@ -37,8 +38,6 @@ private Q_SLOTS:
     void onChgPwdFinished(const QVariantMap &);
     void onRequestAuthArgs(const QVariantMap &);
     void onOverlayDMModeChanged(bool enabled, int result);
-
-    void ignoreParamRequest();
 
     QString acquirePassphrase(const QString &dev, bool &cancelled);
     QString acquirePassphraseByPIN(const QString &dev, bool &cancelled);

@@ -305,7 +305,8 @@ void EventsHandler::onRequestAuthArgs(const QVariantMap &devInfo)
             encryptInputs.take(devPath)->deleteLater();   // also will be deleted when encryption started.
         } else {
             fmInfo() << "User provided auth input for device:" << devPath << "proceeding with re-encryption";
-            DiskEncryptMenuScene::doReencryptDevice(dlg->getInputs());
+            if (!DiskEncryptMenuScene::doReencryptDevice(dlg->getInputs()) && encryptInputs.contains(devPath))
+                encryptInputs.take(devPath)->deleteLater();
         }
     });
     dlg->show();
