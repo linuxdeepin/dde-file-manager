@@ -7,6 +7,7 @@
 
 #include "searchmanager/searcher/abstractsearcher.h"
 #include "querystrategies.h"
+
 #include <dfm-search/searchengine.h>
 #include <dfm-search/searchquery.h>
 #include <dfm-search/searchoptions.h>
