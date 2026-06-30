@@ -200,7 +200,6 @@ QList<QSharedPointer<SortFileInfo>> SearchDirIterator::sortFileInfoList()
     for (auto it = results.begin(); it != results.end(); ++it) {
         auto sortInfo = QSharedPointer<SortFileInfo>(new SortFileInfo());
         sortInfo->setUrl(it.key());
-        sortInfo->setHighlightContent(it->highlightedContent());
         sortInfo->setSearchKeyword(it->keyword());
         sortInfo->setSearchType(static_cast<int>(it->searchType()));
         doCompleteSortInfo(sortInfo);
