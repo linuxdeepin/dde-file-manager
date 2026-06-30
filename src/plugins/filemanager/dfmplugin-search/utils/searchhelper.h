@@ -64,10 +64,10 @@ public:
 
     bool crumbRedirectUrl(QUrl *redirectUrl);
 
-    [[nodiscard]] static QWidget *createCheckBoxWidthFileIndex(QObject *opt);
-    [[nodiscard]] static QWidget *createCheckBoxWidthTextIndex(QObject *opt);
-    [[nodiscard]] static QWidget *createCheckBoxWidthOcrIndex(QObject *opt);
-    [[nodiscard]] static QWidget *createCheckBoxWidthSemanticIndex(QObject *opt);
+    [[nodiscard]] static QWidget *createCheckBoxWithFileIndex(QObject *opt);
+    [[nodiscard]] static QWidget *createCheckBoxWithTextIndex(QObject *opt);
+    [[nodiscard]] static QWidget *createCheckBoxWithOcrIndex(QObject *opt);
+    [[nodiscard]] static QWidget *createCheckBoxWithSemanticIndex(QObject *opt);
 
 private:
     explicit SearchHelper(QObject *parent = nullptr);
