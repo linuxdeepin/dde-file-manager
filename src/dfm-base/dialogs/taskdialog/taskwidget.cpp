@@ -482,8 +482,8 @@ QWidget *TaskWidget::createConflictWidget()
     lbSrcModTime->setPalette(labelPalette);
 
     lbSrcFileSize = new DLabel();
-    lbSrcFileSize->setElideMode(Qt::ElideMiddle);
-    lbSrcFileSize->setFixedWidth(kFileSizeWidth);
+    lbSrcFileSize->setElideMode(Qt::ElideNone);
+    lbSrcFileSize->setMinimumWidth(kFileSizeWidth);
     lbSrcFileSize->setPalette(labelPalette);
 
     lbDstIcon = new IconUtils::IconLabel();
@@ -497,8 +497,8 @@ QWidget *TaskWidget::createConflictWidget()
     lbDstModTime->setPalette(labelPalette);
 
     lbDstFileSize = new DLabel();
-    lbDstFileSize->setElideMode(Qt::ElideMiddle);
-    lbDstFileSize->setFixedWidth(kFileSizeWidth);
+    lbDstFileSize->setElideMode(Qt::ElideNone);
+    lbDstFileSize->setMinimumWidth(kFileSizeWidth);
     lbDstFileSize->setPalette(labelPalette);
 
     QGridLayout *conflictMainLayout = new QGridLayout();
