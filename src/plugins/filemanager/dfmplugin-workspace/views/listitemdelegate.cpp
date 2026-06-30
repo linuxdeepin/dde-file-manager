@@ -9,7 +9,6 @@
 #include "listitemeditor.h"
 #include "abstractitempaintproxy.h"
 #include "models/fileviewmodel.h"
-#include <dfm-base/dfm_base_global.h>
 #include "utils/itemdelegatehelper.h"
 #include "utils/fileviewhelper.h"
 #include "events/workspaceeventcaller.h"
@@ -20,6 +19,7 @@
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/device/deviceutils.h>
 #include <dfm-base/utils/elidetextlayout.h>
+#include <dfm-base/dfm_base_global.h>
 
 #include <DListView>
 #include <DArrowRectangle>
