@@ -26,6 +26,9 @@
 #include <DUtil>
 
 #include <cmath>
+#include <QDBusConnection>
+#include <QDBusPendingCallWatcher>
+#include <QDBusMessage>
 
 #define SYSTEM_SYSTEMINFO_SERVICE "org.deepin.dde.SystemInfo1"
 #define SYSTEM_SYSTEMINFO_PATH "/org/deepin/dde/SystemInfo1"
@@ -92,6 +95,37 @@ void UniversalUtils::notifyMessage(const QString &title, const QString &msg)
             .arg(QVariantMap())
             .arg(5000)
             .call();
+}
+
+/*!
+ * \brief send a notification with action buttons to Notification Center
+ * \param title the notification title (summary)
+ * \param msg the notification body
+ * \param actions alternating action id and label pairs, e.g. {"ok", "OK", "cancel", "Cancel"}
+ * \param callback invoked when an action button is clicked; receives the action id
+ */
+void UniversalUtils::notifyMessage(const QString &title, const QString &msg,
+                                   const QStringList &actions, const QVariantMap &hints)
+{
+    if (actions.isEmpty()) {
+        notifyMessage(title, msg);
+        return;
+    }
+
+    QDBusPendingCall pending = DDBusSender()
+                                       .service("org.freedesktop.Notifications")
+                                       .path("/org/freedesktop/Notifications")
+                                       .interface("org.freedesktop.Notifications")
+                                       .method(QString("Notify"))
+                                       .arg(QObject::tr("dde-file-manager"))
+                                       .arg(static_cast<uint>(0))
+                                       .arg(QString("dde-file-manager"))
+                                       .arg(title)
+                                       .arg(msg)
+                                       .arg(actions)
+                                       .arg(hints)
+                                       .arg(5000)
+                                       .call();
 }
 
 /*!
@@ -615,3 +649,5 @@ void UniversalUtils::setDockDnDMimeData(QMimeData *mimeData, const QUrl &url, co
 }
 
 }
+
+#include "universalutils.moc"

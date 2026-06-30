@@ -53,18 +53,7 @@ CommandParserPrivate::EventArgsInfo CommandParserPrivate::parseEventArgs(const Q
 
     if (obj.contains("params")) {
         const auto &paramsObj = obj["params"].toObject();
-        for (auto iter = paramsObj.constBegin(); iter != paramsObj.end(); ++iter) {
-            const auto &key = iter.key();
-            const auto &value = iter.value();
-
-            if (key == "sources") {
-                const auto &srcList = value.toArray().toVariantList();
-                argsInfo.params.insert("sources", srcList);
-            }
-
-            if (key == "target")
-                argsInfo.params.insert("target", value.toString());
-        }
+        argsInfo.params = paramsObj.toVariantMap();
     }
 
     return argsInfo;
@@ -437,6 +426,22 @@ void CommandParser::processEvent()
     if (argsInfo.action == "refresh") {
         qCInfo(logAppFileManager) << "Refreshing directories for" << srcUrls.size() << "URLs";
         dpfSlotChannel->push("dfmplugin_workspace", "slot_RefreshDir", srcUrls);
+        return;
+    }
+
+    if (argsInfo.action == "settings") {
+        const QString &group = argsInfo.params.value("group").toString();
+        auto window = FMWindowsIns.findWindowById(FMWindowsIns.lastActivedWindowId());
+        if (!window) {
+            // 没有活跃窗口，创建一个新窗口
+            window = FMWindowsIns.createWindow(QUrl(), true);
+        }
+        if (!window) {
+            qCWarning(logAppFileManager) << "Failed to obtain or create a window for settings dialog";
+            return;
+        }
+        dpfSignalDispatcher->publish(GlobalEventType::kShowSettingDialog, window->winId(), group);
+        qCInfo(logAppFileManager) << "Opening settings dialog, group:" << (group.isEmpty() ? "(default)" : group);
         return;
     }
 

@@ -53,6 +53,7 @@ inline constexpr char kEnableFileIndexSearch[] { "enableFileIndexSearch" };
 inline constexpr char kEnableFullTextSearch[] { "enableFullTextSearch" };
 inline constexpr char kEnableOcrTextSearch[] { "enableOcrTextSearch" };
 inline constexpr char kEnableSemanticSearch[] { "enableSemanticSearch" };
+inline constexpr char kSearchAuthHintDone[] { "searchAuthHintDone" };
 }
 
 DPSEARCH_END_NAMESPACE

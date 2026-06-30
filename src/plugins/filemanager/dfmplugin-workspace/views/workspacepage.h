@@ -8,8 +8,10 @@
 #include "dfmplugin_workspace_global.h"
 
 #include <dfm-base/interfaces/abstractframe.h>
+#include <dfm-base/widgets/viewhintmessage/viewhintmessage.h>
 #include <dfm-base/dfm_global_defines.h>
 
+#include <QPointer>
 #include <QWidget>
 
 namespace DFMBASE_NAMESPACE {
@@ -53,6 +55,7 @@ private:
     void initCustomTopWidgets(const QUrl &url);
     void setCurrentView(const QUrl &url);
     void playDisappearAnimation(ViewPtr view);
+    void tryShowViewHint(const QUrl &url);
 
     QWidget *topContainer { nullptr };   // 顶部容器
     QVBoxLayout *topLayout { nullptr };   // 顶部布局
@@ -71,6 +74,8 @@ private:
     QHash<QString, ViewPtr> views {};
     QHash<QString, TopWidgetPtr> topWidgets {};
     int highPriorityTopWidgetsCount { 0 };
+
+    QPointer<DFMBASE_NAMESPACE::ViewHintMessage> currentHint {};
 };
 
 }   // namespace dfmplugin_workspace

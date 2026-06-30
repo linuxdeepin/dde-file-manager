@@ -152,6 +152,26 @@ CustomViewProperty WorkspaceHelper::findCustomViewProperty(const QString &scheme
     return CustomViewProperty();
 }
 
+void WorkspaceHelper::registerViewHint(const QString &scheme, const ViewHintSpec &spec)
+{
+    if (scheme.isEmpty()) {
+        fmWarning() << "Cannot register view hint with empty scheme";
+        return;
+    }
+    viewHintMap.insert(scheme, spec);
+    fmInfo() << "Registered view hint for scheme:" << scheme;
+}
+
+bool WorkspaceHelper::hasViewHint(const QString &scheme) const
+{
+    return viewHintMap.contains(scheme);
+}
+
+ViewHintSpec WorkspaceHelper::findViewHint(const QString &scheme) const
+{
+    return viewHintMap.value(scheme);
+}
+
 bool WorkspaceHelper::isViewModeSupported(const QString &scheme, const dfmbase::Global::ViewMode mode) const
 {
     auto customProperty = findCustomViewProperty(scheme);
