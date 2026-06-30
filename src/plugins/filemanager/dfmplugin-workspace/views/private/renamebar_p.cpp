@@ -55,7 +55,7 @@ void RenameBarPrivate::initUI()
     customOPeratorItems = std::make_tuple(new QLabel, new QLineEdit, new QLabel, new QLineEdit, new QLabel);
     frameForLayoutCustomArea = QPair<QHBoxLayout *, QFrame *> { new QHBoxLayout, new QFrame };
 
-    buttonsArea = std::make_tuple(new QPushButton, new QPushButton, new QHBoxLayout, new QFrame);
+    buttonsArea = std::make_tuple(new QPushButton, new QHBoxLayout, new QFrame);
 
     fmDebug() << "UI components created - replace, add, custom areas and buttons";
 }
@@ -198,10 +198,10 @@ void RenameBarPrivate::layoutItems() noexcept
 
     fmDebug() << "Custom area layout configured";
 
-    hBoxLayout = std::get<2>(buttonsArea);
+    hBoxLayout = std::get<1>(buttonsArea);
     hBoxLayout->setSpacing(0);
     hBoxLayout->setContentsMargins(0, 0, 0, 0);
-    frame = std::get<3>(buttonsArea);
+    frame = std::get<2>(buttonsArea);
     hBoxLayout->addSpacing(50);
     hBoxLayout->addWidget(std::get<0>(buttonsArea));
     hBoxLayout->addSpacing(10);
