@@ -189,6 +189,10 @@ void WorkspacePage::setCustomTopWidgetVisible(const QString &scheme, bool visibl
             TopWidgetPtr topWidgetPtr = QSharedPointer<QWidget>(interface->create(this));
             if (topWidgetPtr) {
                 bool keepTop = interface->isKeepTop();
+                // Transfer ownership: interface was created without a parent
+                // (workspaceeventreceiver.cpp:411), parent it to the top widget
+                // so it is destroyed automatically when the top widget is removed.
+                interface->setParent(topWidgetPtr.get());
                 int insertIndex = 0;
                 if (keepTop) {
                     ++highPriorityTopWidgetsCount;
@@ -199,6 +203,9 @@ void WorkspacePage::setCustomTopWidgetVisible(const QString &scheme, bool visibl
                 topWidgets.insert(scheme, topWidgetPtr);
                 topWidgetPtr->setVisible(visible);
                 fmDebug() << "setCustomTopWidgetVisible: new topWidget created and set visible";
+            } else {
+                // interface is owned by nobody if create() fails
+                delete interface;
             }
         }
     }

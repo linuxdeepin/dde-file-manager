@@ -96,7 +96,7 @@ void FileViewPrivate::initIconModeView()
         if (headerView) {
             headerView->disconnect();
             auto headerLayout = qobject_cast<QVBoxLayout *>(headerWidget->layout());
-            headerLayout->takeAt(0);
+            headerLayout->removeWidget(headerView);
             headerView->deleteLater();
             headerView = nullptr;
             fmDebug() << "Header view removed for icon mode";

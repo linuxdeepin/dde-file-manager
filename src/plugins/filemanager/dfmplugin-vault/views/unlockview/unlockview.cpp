@@ -10,6 +10,7 @@
 #include "utils/vaultautolock.h"
 #include "utils/servicemanager.h"
 #include "utils/fileencrypthandle.h"
+#include "utils/pathmanager.h"
 #include "dbus/vaultdbusutils.h"
 #include "views/createvaultview/vaultactivesavekeyfileview.h"
 #include "views/vaultpagebase.h"
@@ -140,6 +141,8 @@ void UnlockView::buttonClicked(int index, const QString &text)
 {
     fmDebug() << "Vault: Unlock view button clicked - index:" << index << "text:" << text;
     if (index == 1) {
+        if (!PathManager::createVaultMountDir(kVaultBasePath))
+            return;
         emit sigBtnEnabled(1, false);
         emit sigBtnEnabled(0, false);
 

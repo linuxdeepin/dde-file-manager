@@ -1,3 +1,19 @@
+dde-file-manager (6.5.149) unstable; urgency=medium
+
+  * Fix(computer): Rollback code
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Mon, 29 Jun 2026 23:11:18 +0800
+
+dde-file-manager (6.5.148) unstable; urgency=medium
+
+  * refactor: enhance device mount point management
+  * fix: improve vault password reset reliability
+  * Fix: [vault] Unlock vault crash.
+  * Fix: [Vault] Add translate
+  * fix(workspace): use removeWidget instead of takeAt to prevent QWidgetItem leak
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Mon, 29 Jun 2026 17:29:32 +0800
+
 dde-file-manager (6.5.147) unstable; urgency=medium
 
   * refactor: optimize file scanner path handling

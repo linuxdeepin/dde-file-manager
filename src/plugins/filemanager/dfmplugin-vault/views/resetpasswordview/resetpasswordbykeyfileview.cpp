@@ -4,7 +4,7 @@
 
 #include "resetpasswordbykeyfileview.h"
 #include "utils/encryption/operatorcenter.h"
-#include "utils/vaulthelper.h"
+#include "dbus/vaultdbusutils.h"
 
 #include <dfm-base/utils/dialogmanager.h>
 
@@ -319,8 +319,8 @@ bool ResetPasswordByKeyFileView::checkRepeatPassword()
 bool ResetPasswordByKeyFileView::checkInputInfo()
 {
     return !keyFileEdit->text().isEmpty()
-           && checkPassword(newPasswordEdit->text())
-           && checkRepeatPassword();
+            && checkPassword(newPasswordEdit->text())
+            && checkRepeatPassword();
 }
 
 void ResetPasswordByKeyFileView::showEvent(QShowEvent *event)
@@ -384,6 +384,9 @@ void ResetPasswordByKeyFileView::onResetPasswordFinished()
         switchMethodLabel->setEnabled(true);
 
     if (result.success) {
+        // 密码重置成功，恢复错误次数限制和等待时间
+        VaultDBusUtils::restoreLeftoverErrorInputTimes();
+        VaultDBusUtils::restoreNeedWaitMinutes();
         DialogManager::instance()->showMessageDialog(tr("Success"), tr("Password reset successfully"));
         emit sigCloseDialog();
     } else {

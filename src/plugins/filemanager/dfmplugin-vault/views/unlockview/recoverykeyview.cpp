@@ -137,11 +137,9 @@ void RecoveryKeyView::buttonClicked(int index, const QString &text)
         
         if (isValid) {
             unlockByKey = true;
-            QString encryptBaseDir = PathManager::vaultLockPath();
-            QString decryptFileDir = PathManager::vaultUnlockPath();
-            fmDebug() << "Vault: Vault paths - encrypted:" << encryptBaseDir << "decrypted:" << decryptFileDir;
-
-            bool result = FileEncryptHandle::instance()->unlockVault(encryptBaseDir, decryptFileDir, strCipher);
+            if (!PathManager::createVaultMountDir(kVaultBasePath))
+                return;
+            bool result = VaultHelper::instance()->unlockVault(strCipher);
             fmDebug() << "Vault: Unlock operation result:" << result;
             handleUnlockVault(result);
         } else {

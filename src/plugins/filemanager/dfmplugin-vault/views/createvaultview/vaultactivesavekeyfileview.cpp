@@ -239,6 +239,9 @@ void VaultActiveSaveKeyFileView::slotNextBtnClicked()
             return;
         }
 
+        if (!PathManager::createVaultMountDir(kVaultBasePath))
+            return;
+
         spinner->move((width() - spinner->width()) / 2, (height() - spinner->height()) / 2);
         spinner->show();
         spinner->raise();
