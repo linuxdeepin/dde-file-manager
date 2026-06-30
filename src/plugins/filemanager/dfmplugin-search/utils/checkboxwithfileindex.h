@@ -1,8 +1,8 @@
 // SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CHECKBOXWIDTHFILEINDEX_H
-#define CHECKBOXWIDTHFILEINDEX_H
+#ifndef CHECKBOXWITHFILEINDEX_H
+#define CHECKBOXWITHFILEINDEX_H
 
 #include "indexstatuscheckbox.h"
 
@@ -13,12 +13,12 @@
 
 namespace dfmplugin_search {
 
-class CheckBoxWidthFileIndex : public IndexStatusCheckBox
+class CheckBoxWithFileIndex : public IndexStatusCheckBox
 {
     Q_OBJECT
 
 public:
-    explicit CheckBoxWidthFileIndex(QWidget *parent = nullptr);
+    explicit CheckBoxWithFileIndex(QWidget *parent = nullptr);
 
     void initStatusBar();
 
@@ -67,4 +67,4 @@ private:
 
 }   // namespace dfmplugin_search
 
-#endif   // CHECKBOXWIDTHFILEINDEX_H
+#endif   // CHECKBOXWITHFILEINDEX_H

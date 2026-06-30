@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "checkboxwidthsemanticindex.h"
+#include "checkboxwithsemanticindex.h"
 
 #include "searchmanager/searchmanager.h"
 
@@ -10,7 +10,7 @@
 DFMBASE_USE_NAMESPACE
 namespace dfmplugin_search {
 
-CheckBoxWidthSemanticIndex::CheckBoxWidthSemanticIndex(QWidget *parent)
+CheckBoxWithSemanticIndex::CheckBoxWithSemanticIndex(QWidget *parent)
     : IndexStatusCheckBox(parent)
 {
     // 提示文案：开启智能搜索后支持在文件管理器中使用自然语言搜索文件
@@ -22,17 +22,17 @@ CheckBoxWidthSemanticIndex::CheckBoxWidthSemanticIndex(QWidget *parent)
                                  .toBool();
 
     connect(SearchManager::instance(), &SearchManager::enableFileIndexSearchChanged,
-            this, &CheckBoxWidthSemanticIndex::setDisabledByFileIndex);
+            this, &CheckBoxWithSemanticIndex::setDisabledByFileIndex);
 }
 
-void CheckBoxWidthSemanticIndex::initStatusBar()
+void CheckBoxWithSemanticIndex::initStatusBar()
 {
     // 智能搜索没有索引后端，始终以 Inactive 状态展示提示文案
     setStatus(Status::Inactive);
     setDisabledByFileIndex(m_fileIndexEnabled);
 }
 
-void CheckBoxWidthSemanticIndex::setDisabledByFileIndex(bool fileIndexEnabled)
+void CheckBoxWithSemanticIndex::setDisabledByFileIndex(bool fileIndexEnabled)
 {
     m_fileIndexEnabled = fileIndexEnabled;
 

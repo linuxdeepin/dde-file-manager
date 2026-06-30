@@ -1,19 +1,19 @@
 // SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CHECKBOXWIDTHSEMANTICINDEX_H
-#define CHECKBOXWIDTHSEMANTICINDEX_H
+#ifndef CHECKBOXWITHSEMANTICINDEX_H
+#define CHECKBOXWITHSEMANTICINDEX_H
 
 #include "indexstatuscheckbox.h"
 
 namespace dfmplugin_search {
 
-class CheckBoxWidthSemanticIndex : public IndexStatusCheckBox
+class CheckBoxWithSemanticIndex : public IndexStatusCheckBox
 {
     Q_OBJECT
 
 public:
-    explicit CheckBoxWidthSemanticIndex(QWidget *parent = nullptr);
+    explicit CheckBoxWithSemanticIndex(QWidget *parent = nullptr);
 
     void initStatusBar();
 
@@ -26,4 +26,4 @@ private:
 
 }   // namespace dfmplugin_search
 
-#endif   // CHECKBOXWIDTHSEMANTICINDEX_H
+#endif   // CHECKBOXWITHSEMANTICINDEX_H
