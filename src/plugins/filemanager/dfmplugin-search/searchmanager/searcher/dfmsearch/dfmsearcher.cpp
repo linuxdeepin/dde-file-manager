@@ -147,13 +147,11 @@ void DFMSearcher::processSearchResult(const SearchResult &result)
         // 改为存储 keyword 和 searchType 供后续 HighlightProvider 延迟加载
         searchResult.setKeyword(keyword);
         searchResult.setSearchType(getSearchType());
-        searchResult.setIsContentMatch(true);
         searchResult.setMatchScore(1.0);   // 内容匹配优先级更高
     } else {
         // 文件名搜索不包含高亮内容
         searchResult.setKeyword(keyword);
         searchResult.setSearchType(getSearchType());
-        searchResult.setIsContentMatch(false);
         searchResult.setMatchScore(0.5);   // 文件名匹配优先级较低
     }
 
