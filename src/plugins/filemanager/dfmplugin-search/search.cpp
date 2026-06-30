@@ -169,11 +169,11 @@ void Search::regSearchSettingConfig()
     SettingJsonGenerator::instance()->addGroup(SearchSettings::kGroupSearch, tr("Search"));
 
     QString fileIndexKey { SearchSettings::kFileIndexSearch };
-    DialogManager::instance()->registerSettingWidget("checkBoxWidthFileIndex", &SearchHelper::createCheckBoxWidthFileIndex);
+    DialogManager::instance()->registerSettingWidget("checkBoxWithFileIndex", &SearchHelper::createCheckBoxWithFileIndex);
     SettingJsonGenerator::instance()->addConfig(SearchSettings::kFileIndexSearch,
                                                 { { "key", fileIndexKey.mid(fileIndexKey.lastIndexOf(".") + 1) },
                                                   { "text", tr("File index") },
-                                                  { "type", "checkBoxWidthFileIndex" },
+                                                  { "type", "checkBoxWithFileIndex" },
                                                   { "default", true } });
 
     SettingBackend::instance()->addSettingAccessor(
@@ -190,11 +190,11 @@ void Search::regSearchSettingConfig()
             });
 
     QString textIndexKey { SearchSettings::kFulltextSearch };
-    DialogManager::instance()->registerSettingWidget("checkBoxWidthTextIndex", &SearchHelper::createCheckBoxWidthTextIndex);
+    DialogManager::instance()->registerSettingWidget("checkBoxWithTextIndex", &SearchHelper::createCheckBoxWithTextIndex);
     SettingJsonGenerator::instance()->addConfig(SearchSettings::kFulltextSearch,
                                                 { { "key", textIndexKey.mid(textIndexKey.lastIndexOf(".") + 1) },
                                                   { "text", tr("Full-Text search") },
-                                                  { "type", "checkBoxWidthTextIndex" },
+                                                  { "type", "checkBoxWithTextIndex" },
                                                   { "default", true } });
 
     SettingBackend::instance()->addSettingAccessor(
@@ -212,11 +212,11 @@ void Search::regSearchSettingConfig()
 
     // OCR text search configuration
     QString ocrIndexKey { SearchSettings::kOcrTextSearch };
-    DialogManager::instance()->registerSettingWidget("checkBoxWidthOcrIndex", &SearchHelper::createCheckBoxWidthOcrIndex);
+    DialogManager::instance()->registerSettingWidget("checkBoxWithOcrIndex", &SearchHelper::createCheckBoxWithOcrIndex);
     SettingJsonGenerator::instance()->addConfig(SearchSettings::kOcrTextSearch,
                                                 { { "key", ocrIndexKey.mid(ocrIndexKey.lastIndexOf(".") + 1) },
                                                   { "text", tr("Image-Content search") },
-                                                  { "type", "checkBoxWidthOcrIndex" },
+                                                  { "type", "checkBoxWithOcrIndex" },
                                                   { "default", false } });
 
     SettingBackend::instance()->addSettingAccessor(
@@ -234,11 +234,11 @@ void Search::regSearchSettingConfig()
 
     // Semantic search configuration
     QString semanticIndexKey { SearchSettings::kSemanticSearch };
-    DialogManager::instance()->registerSettingWidget("checkBoxWidthSemanticIndex", &SearchHelper::createCheckBoxWidthSemanticIndex);
+    DialogManager::instance()->registerSettingWidget("checkBoxWithSemanticIndex", &SearchHelper::createCheckBoxWithSemanticIndex);
     SettingJsonGenerator::instance()->addConfig(SearchSettings::kSemanticSearch,
                                                 { { "key", semanticIndexKey.mid(semanticIndexKey.lastIndexOf(".") + 1) },
                                                   { "text", tr("Smart search") },
-                                                  { "type", "checkBoxWidthSemanticIndex" },
+                                                  { "type", "checkBoxWithSemanticIndex" },
                                                   { "default", false } });
 
     SettingBackend::instance()->addSettingAccessor(

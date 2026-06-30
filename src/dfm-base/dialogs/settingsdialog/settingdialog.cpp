@@ -148,7 +148,7 @@ SettingDialog::SettingDialog(QWidget *parent)
     : DSettingsDialog(parent)
 {
     // Fix: Settings dialog is recreated on each open, so delete it on close
-    // to release custom setting widgets such as CheckBoxWidthFileIndex.
+    // to release custom setting widgets such as CheckBoxWithFileIndex.
     setAttribute(Qt::WA_DeleteOnClose, true);
     parentWid = FMWindowsIns.findWindowId(parent);
 }
