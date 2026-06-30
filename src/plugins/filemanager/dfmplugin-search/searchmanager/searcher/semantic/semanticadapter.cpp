@@ -17,6 +17,8 @@ SemanticAdapter::SemanticAdapter(const QUrl &url, const QString &keyword, QObjec
     : AbstractSearcher(url, keyword, parent)
 {
     semantic = new DFMSEARCH::SemanticSearcher(this);
+    connect(semantic, &DFMSEARCH::SemanticSearcher::intentParsed,
+            this, &SemanticAdapter::onIntentParsed);
     connect(semantic, &DFMSEARCH::SemanticSearcher::resultsFound,
             this, &SemanticAdapter::onResultsFound);
     connect(semantic, &DFMSEARCH::SemanticSearcher::searchFinished,
@@ -71,6 +73,12 @@ DFMSearchResultMap SemanticAdapter::takeAll()
     return result;
 }
 
+void SemanticAdapter::onIntentParsed(const DFMSEARCH::ParsedIntent &intent)
+{
+    QMutexLocker lk(&keywordMutex);
+    cachedKeywords = intent.keywords();
+}
+
 void SemanticAdapter::processResult(const DFMSEARCH::SearchResult &result)
 {
     const QUrl url = QUrl::fromLocalFile(result.path());
@@ -78,7 +86,15 @@ void SemanticAdapter::processResult(const DFMSEARCH::SearchResult &result)
         return;
 
     DFMSearchResult sr(url);
-    sr.setKeyword(keyword);
+    // cachedKeywords 由 intentParsed 信号填充；用空格 join 后写入 keyword 字段，
+    // 下游两路消费自动各取所需：
+    //   - requestHighlightContent: extractHighlightKeyword 取首个作锚点定位摘要
+    //   - delegate 高亮: extractFromKeyword 返回全部作高亮匹配
+    // 原始输入（如「包含同学和学校的文档」）不适合做高亮锚点，故不回退使用。
+    {
+        QMutexLocker lk(&keywordMutex);
+        sr.setKeyword(cachedKeywords.join(" "));
+    }
     sr.setSearchType(DFMSEARCH::SearchType::Semantic);
     sr.setMatchScore(kSemanticMatchScore);
 

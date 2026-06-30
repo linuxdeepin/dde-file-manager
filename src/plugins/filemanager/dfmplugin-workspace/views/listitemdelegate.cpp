@@ -623,7 +623,7 @@ void ListItemDelegate::paintFileName(QPainter *painter, const QStyleOptionViewIt
                 painter));
 
         nameLayout->setHighlightEnabled(!isSelected);
-        nameLayout->setHighlightKeywords(highlightKeywords());
+        nameLayout->setHighlightKeywords(effectiveHighlightKeywords(index));
         nameLayout->setHighlightColor(QColor("#0081FF"));
         nameLayout->layout(textRect, Qt::ElideRight, painter);
 
@@ -649,7 +649,7 @@ void ListItemDelegate::paintFileName(QPainter *painter, const QStyleOptionViewIt
                 painter));
 
         contentLayout->setHighlightEnabled(!isSelected);
-        contentLayout->setHighlightKeywords(highlightKeywords());
+        contentLayout->setHighlightKeywords(effectiveHighlightKeywords(index));
         contentLayout->setHighlightColor(QColor("#0081FF"));
         contentLayout->layout(contentRect, Qt::ElideRight, painter);
         painter->restore();
@@ -666,7 +666,7 @@ void ListItemDelegate::paintFileName(QPainter *painter, const QStyleOptionViewIt
                 painter));
 
         layout->setHighlightEnabled(!isSelected);
-        layout->setHighlightKeywords(highlightKeywords());
+        layout->setHighlightKeywords(effectiveHighlightKeywords(index));
         layout->setHighlightColor(QColor("#0081FF"));
         layout->layout(textRect, Qt::ElideRight, painter);
     }
