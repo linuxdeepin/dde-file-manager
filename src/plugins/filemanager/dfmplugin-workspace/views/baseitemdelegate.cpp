@@ -280,6 +280,16 @@ const QStringList &BaseItemDelegate::highlightKeywords() const
     return d->highlightKeywords;
 }
 
+QStringList BaseItemDelegate::effectiveHighlightKeywords(const QModelIndex &index) const
+{
+    // 优先使用 per-item 高亮关键词（语义搜索/布尔搜索各取所需），
+    // 为空时回退到视图级共享高亮列表。
+    const QStringList perItem = index.data(dfmbase::Global::kItemHighlightKeywordsRole).toStringList();
+    if (!perItem.isEmpty())
+        return perItem;
+    return d->highlightKeywords;
+}
+
 QModelIndex BaseItemDelegate::editingIndex() const
 {
     Q_D(const BaseItemDelegate);
