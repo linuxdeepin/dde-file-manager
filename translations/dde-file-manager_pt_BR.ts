@@ -7856,7 +7856,8 @@ Você precisa atualizar este cofre para continuar usando-o.</translation>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/pathmanager.cpp" line="80"/>
         <source>The %1 directory is occupied,
  please clear the files in this directory and try to unlock the safe again.</source>
-        <translation type="unfinished"/>
+        <translation>O diretório %1 não está vazio,
+remova os arquivos desse diretório e tente desbloquear novamente.</translation>
     </message>
 </context>
 <context>
