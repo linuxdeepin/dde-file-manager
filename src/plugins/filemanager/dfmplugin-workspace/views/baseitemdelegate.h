@@ -128,6 +128,9 @@ public:
     void setPaintProxy(AbstractItemPaintProxy *proxy);
     void setHighlightKeywords(const QStringList &keywords);
     const QStringList &highlightKeywords() const;
+    // per-item 高亮关键词优先（来自 kItemHighlightKeywordsRole，语义/布尔搜索各取所需），
+    // 为空时回退到视图级共享高亮列表（由 URL 解析）。
+    QStringList effectiveHighlightKeywords(const QModelIndex &index) const;
 
     // Group rendering virtual interfaces
     virtual bool isGroupHeaderItem(const QModelIndex &index) const;

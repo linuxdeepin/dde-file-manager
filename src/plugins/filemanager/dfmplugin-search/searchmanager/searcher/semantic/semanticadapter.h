@@ -10,6 +10,7 @@
 #include <dfm-search/semanticsearcher.h>
 #include <dfm-search/searchresult.h>
 #include <dfm-search/searcherror.h>
+#include <dfm-search/semantic_types.h>
 
 #include <QMutex>
 
@@ -41,6 +42,7 @@ public:
     DFMSearchResultMap takeAll() override;
 
 private slots:
+    void onIntentParsed(const DFMSEARCH::ParsedIntent &intent);
     void onResultsFound(const DFMSEARCH::SearchResultList &results);
     void onSearchFinished(const DFMSEARCH::SearchResultList &results);
     void onSearchCancelled();
@@ -52,6 +54,12 @@ private:
     DFMSEARCH::SemanticSearcher *semantic { nullptr };
     mutable QMutex mutex;
     DFMSearchResultMap allResults;
+
+    // 由 intentParsed 信号缓存的关键词列表（已去语义噪声）。
+    // join(' ') 后写入 DFMSearchResult.keyword，下游 requestHighlightContent
+    // 取首个作锚点定位摘要，delegate 用全部作高亮匹配——复用单一数据源。
+    QStringList cachedKeywords;
+    mutable QMutex keywordMutex;
 
     // 语义匹配优先级低于精确匹配：FileName=0.5, Content/Ocr=1.0
     static constexpr double kSemanticMatchScore = 0.25;
