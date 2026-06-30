@@ -68,6 +68,7 @@ public slots:
     void handleRegisterMenuScene(const QString &scheme, const QString &scene);
     QString handleFindMenuScene(const QString &scheme);
     void handleRegisterCustomTopWidget(const QVariantMap &dataMap);
+    void handleRegisterViewHint(const QVariantMap &dataMap);
     bool handleGetCustomTopWidgetVisible(const quint64 windowID, const QString &scheme);
     bool handleCheckSchemeViewIsFileView(const QString &scheme);
     QList<QUrl> handleGetSelectedUrls(const quint64 windowID);
