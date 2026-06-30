@@ -204,6 +204,8 @@ EmblemHelper::~EmblemHelper()
 {
     workerThread.quit();
     workerThread.wait();
+    delete worker;
+    worker = nullptr;
 }
 
 QList<QIcon> EmblemHelper::systemEmblems(const FileInfoPointer &info) const
@@ -322,7 +324,6 @@ void EmblemHelper::initialize()
     dpfSignalDispatcher->installEventFilter(GlobalEventType::kChangeCurrentUrl, this, &EmblemHelper::onUrlChanged);
 
     worker->moveToThread(&workerThread);
-    connect(&workerThread, &QThread::finished, worker, &QObject::deleteLater);
     connect(this, &EmblemHelper::requestProduce, worker, &GioEmblemWorker::onProduce, Qt::QueuedConnection);
     connect(this, &EmblemHelper::requestClear, worker, &GioEmblemWorker::onClear, Qt::QueuedConnection);
     connect(worker, &GioEmblemWorker::emblemChanged, this, &EmblemHelper::onEmblemChanged, Qt::QueuedConnection);
