@@ -318,6 +318,24 @@ QVariant FileItemData::data(int role) const
             return sortInfo->highlightContent();
         }
         return QString();
+    case kItemHighlightKeywordsRole:
+        // per-item 高亮关键词：优先从 searchKeyword 派生（语义/布尔搜索各取所需），
+        // 为空时返回无效 QVariant，让 delegate fallback 到视图级共享高亮列表。
+        // 首次提取后写入 SortFileInfo::customData 缓存，避免 delegate paint
+        // 热路径（滚动/hover/选中）对同一 item 重复做正则提取。
+        if (sortInfo && !sortInfo->searchKeyword().isEmpty()) {
+            static const QString kHighlightKeywordsCacheKey =
+                QStringLiteral("highlightKeywords");
+            const QVariant &cached = sortInfo->customData(kHighlightKeywordsCacheKey);
+            if (cached.isValid())
+                return cached.toStringList();
+            const QStringList kws = KeywordExtractorManager::instance()
+                .extractor()
+                .extractFromKeyword(sortInfo->searchKeyword());
+            sortInfo->setCustomData(kHighlightKeywordsCacheKey, kws);
+            return kws;
+        }
+        return QVariant();
     case kItemGroupDisplayIndex:
         return QVariant(groupDisplayIndex);
     case kItemFileIconRole:
