@@ -135,9 +135,7 @@ void RenameBar::onRenamePatternChanged(const int &index) noexcept
     d->currentPattern = static_cast<RenameBarPrivate::RenamePattern>(index);
     fmDebug() << "RenameBar pattern changed to index:" << index;
 
-    bool state { d->renameButtonStates[static_cast<std::size_t>(index)] };   //###: we get the value of state of button in current mode.
     d->stackWidget->setCurrentIndex(index);
-    std::get<1>(d->buttonsArea)->setEnabled(state);
 
     ///###: here, call a slot, this function will set focus of QLineEdit in current mode.
     this->onVisibleChanged(true);
