@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "checkboxwidthfileindex.h"
+#include "checkboxwithfileindex.h"
 
 #include "dfmplugin_search_global.h"
 
@@ -21,7 +21,7 @@ constexpr int kCommandTimeoutMs = 3000;
 const char kAnythingServiceName[] = "deepin-anything-daemon.service";
 }
 
-CheckBoxWidthFileIndex::CheckBoxWidthFileIndex(QWidget *parent)
+CheckBoxWithFileIndex::CheckBoxWithFileIndex(QWidget *parent)
     : IndexStatusCheckBox(parent)
 {
     setInactiveText(tr("Enable to build the file index immediately for faster file name searches"));
@@ -31,7 +31,7 @@ CheckBoxWidthFileIndex::CheckBoxWidthFileIndex(QWidget *parent)
     m_pollTimer->setInterval(kPollIntervalMs);
 
     connect(this, &IndexStatusCheckBox::checkStateChanged,
-            this, &CheckBoxWidthFileIndex::handleCheckStateChanged);
+            this, &CheckBoxWithFileIndex::handleCheckStateChanged);
     connect(this, &IndexStatusCheckBox::resetRequested, this, [this]() {
         if (!isChecked())
             return;
@@ -41,16 +41,16 @@ CheckBoxWidthFileIndex::CheckBoxWidthFileIndex(QWidget *parent)
             fmWarning() << "[FileIndex] Failed to restart file index daemon";
         refreshState();
     });
-    connect(m_pollTimer, &QTimer::timeout, this, &CheckBoxWidthFileIndex::refreshState);
+    connect(m_pollTimer, &QTimer::timeout, this, &CheckBoxWithFileIndex::refreshState);
 }
 
-void CheckBoxWidthFileIndex::initStatusBar()
+void CheckBoxWithFileIndex::initStatusBar()
 {
     refreshState();
     m_pollTimer->start();
 }
 
-bool CheckBoxWidthFileIndex::acceptCheckStateChange(Qt::CheckState oldState, Qt::CheckState newState)
+bool CheckBoxWithFileIndex::acceptCheckStateChange(Qt::CheckState oldState, Qt::CheckState newState)
 {
     if (m_syncingState || m_operationInProgress)
         return true;
@@ -63,7 +63,7 @@ bool CheckBoxWidthFileIndex::acceptCheckStateChange(Qt::CheckState oldState, Qt:
     return true;
 }
 
-void CheckBoxWidthFileIndex::handleCheckStateChanged(Qt::CheckState state)
+void CheckBoxWithFileIndex::handleCheckStateChanged(Qt::CheckState state)
 {
     if (m_syncingState || m_operationInProgress)
         return;
@@ -86,7 +86,7 @@ void CheckBoxWidthFileIndex::handleCheckStateChanged(Qt::CheckState state)
     refreshState();
 }
 
-void CheckBoxWidthFileIndex::refreshState()
+void CheckBoxWithFileIndex::refreshState()
 {
     if (m_operationInProgress)
         return;
@@ -94,7 +94,7 @@ void CheckBoxWidthFileIndex::refreshState()
     applyState(queryState());
 }
 
-CheckBoxWidthFileIndex::FileIndexState CheckBoxWidthFileIndex::queryState() const
+CheckBoxWithFileIndex::FileIndexState CheckBoxWithFileIndex::queryState() const
 {
     FileIndexState state;
 
@@ -145,7 +145,7 @@ CheckBoxWidthFileIndex::FileIndexState CheckBoxWidthFileIndex::queryState() cons
     return state;
 }
 
-void CheckBoxWidthFileIndex::applyState(const FileIndexState &state)
+void CheckBoxWithFileIndex::applyState(const FileIndexState &state)
 {
     if (!state.querySuccess) {
         if (isChecked()) {
@@ -182,7 +182,7 @@ void CheckBoxWidthFileIndex::applyState(const FileIndexState &state)
     setStatus(Status::Indexing);
 }
 
-bool CheckBoxWidthFileIndex::enableFileIndex()
+bool CheckBoxWithFileIndex::enableFileIndex()
 {
     const auto unmaskResult = runSystemctlCommand({ "--user", "unmask", "deepin-anything-daemon" });
     if (!unmaskResult.started || !unmaskResult.finished || !unmaskResult.normalExit || unmaskResult.exitCode != 0) {
@@ -202,7 +202,7 @@ bool CheckBoxWidthFileIndex::enableFileIndex()
     return true;
 }
 
-bool CheckBoxWidthFileIndex::disableFileIndex()
+bool CheckBoxWithFileIndex::disableFileIndex()
 {
     const auto stopResult = runSystemctlCommand({ "--user", "stop", "deepin-anything-daemon" });
     if (!stopResult.started || !stopResult.finished || !stopResult.normalExit || stopResult.exitCode != 0) {
@@ -219,7 +219,7 @@ bool CheckBoxWidthFileIndex::disableFileIndex()
     return true;
 }
 
-bool CheckBoxWidthFileIndex::restartFileIndex()
+bool CheckBoxWithFileIndex::restartFileIndex()
 {
     if (!createRefreshIndexFile())
         return false;
@@ -233,7 +233,7 @@ bool CheckBoxWidthFileIndex::restartFileIndex()
     return true;
 }
 
-bool CheckBoxWidthFileIndex::confirmDisableFileIndex()
+bool CheckBoxWithFileIndex::confirmDisableFileIndex()
 {
     Dtk::Widget::DDialog dialog(qApp->activeWindow());
     dialog.setTitle(tr("Confirm turning off file index?"));
@@ -244,7 +244,7 @@ bool CheckBoxWidthFileIndex::confirmDisableFileIndex()
     return dialog.exec() == Dtk::Widget::DDialog::Accepted;
 }
 
-bool CheckBoxWidthFileIndex::createRefreshIndexFile() const
+bool CheckBoxWithFileIndex::createRefreshIndexFile() const
 {
     const QFileInfo fileInfo(refreshFilePath());
     QDir dir = fileInfo.dir();
@@ -263,7 +263,7 @@ bool CheckBoxWidthFileIndex::createRefreshIndexFile() const
     return true;
 }
 
-CheckBoxWidthFileIndex::CommandResult CheckBoxWidthFileIndex::runSystemctlCommand(const QStringList &arguments) const
+CheckBoxWithFileIndex::CommandResult CheckBoxWithFileIndex::runSystemctlCommand(const QStringList &arguments) const
 {
     CommandResult result;
 
@@ -292,17 +292,17 @@ CheckBoxWidthFileIndex::CommandResult CheckBoxWidthFileIndex::runSystemctlComman
     return result;
 }
 
-QString CheckBoxWidthFileIndex::statusFilePath() const
+QString CheckBoxWithFileIndex::statusFilePath() const
 {
     return QStringLiteral("/run/user/%1/deepin-anything-server/status.json").arg(::getuid());
 }
 
-QString CheckBoxWidthFileIndex::refreshFilePath() const
+QString CheckBoxWithFileIndex::refreshFilePath() const
 {
     return QStringLiteral("/run/user/%1/deepin-anything-server/refresh_index").arg(::getuid());
 }
 
-QString CheckBoxWidthFileIndex::formatDisplayTime(const QString &isoTime) const
+QString CheckBoxWithFileIndex::formatDisplayTime(const QString &isoTime) const
 {
     const QDateTime parsedTime = QDateTime::fromString(isoTime, Qt::ISODate);
     if (parsedTime.isValid())

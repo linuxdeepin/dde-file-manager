@@ -4,10 +4,10 @@
 
 #include "searchhelper.h"
 
-#include "checkboxwidthfileindex.h"
-#include "checkboxwidthtextindex.h"
-#include "checkboxwidthocrindex.h"
-#include "checkboxwidthsemanticindex.h"
+#include "checkboxwithfileindex.h"
+#include "checkboxwithtextindex.h"
+#include "checkboxwithocrindex.h"
+#include "checkboxwithsemanticindex.h"
 #include "topwidget/advancesearchbar.h"
 
 #include <dfm-base/interfaces/fileinfo.h>
@@ -364,18 +364,18 @@ bool SearchHelper::crumbRedirectUrl(QUrl *redirectUrl)
     return false;
 }
 
-QWidget *SearchHelper::createCheckBoxWidthTextIndex(QObject *opt)
+QWidget *SearchHelper::createCheckBoxWithTextIndex(QObject *opt)
 {
     auto option = qobject_cast<Dtk::Core::DSettingsOption *>(opt);
     const QString &text = option->data("text").toString();
 
-    CheckBoxWidthTextIndex *cb = new CheckBoxWidthTextIndex;
+    CheckBoxWithTextIndex *cb = new CheckBoxWithTextIndex;
     cb->connectToBackend();
     cb->setDisplayText(qApp->translate("QObject", text.toStdString().c_str()));
     cb->setChecked(option->value().toBool());
     cb->initStatusBar();
 
-    QObject::connect(cb, &CheckBoxWidthTextIndex::checkStateChanged, option, [=](Qt::CheckState state) {
+    QObject::connect(cb, &CheckBoxWithTextIndex::checkStateChanged, option, [=](Qt::CheckState state) {
         if (state == Qt::CheckState::Unchecked)
             option->setValue(false);
         else if (state == Qt::CheckState::Checked)
@@ -385,12 +385,12 @@ QWidget *SearchHelper::createCheckBoxWidthTextIndex(QObject *opt)
     return cb;
 }
 
-QWidget *SearchHelper::createCheckBoxWidthFileIndex(QObject *opt)
+QWidget *SearchHelper::createCheckBoxWithFileIndex(QObject *opt)
 {
     auto option = qobject_cast<Dtk::Core::DSettingsOption *>(opt);
     const QString &text = option->data("text").toString();
 
-    CheckBoxWidthFileIndex *cb = new CheckBoxWidthFileIndex;
+    CheckBoxWithFileIndex *cb = new CheckBoxWithFileIndex;
     cb->setDisplayText(qApp->translate("QObject", text.toStdString().c_str()));
     cb->initStatusBar();
 
@@ -405,18 +405,18 @@ QWidget *SearchHelper::createCheckBoxWidthFileIndex(QObject *opt)
     return cb;
 }
 
-QWidget *SearchHelper::createCheckBoxWidthOcrIndex(QObject *opt)
+QWidget *SearchHelper::createCheckBoxWithOcrIndex(QObject *opt)
 {
     auto option = qobject_cast<Dtk::Core::DSettingsOption *>(opt);
     const QString &text = option->data("text").toString();
 
-    CheckBoxWidthOcrIndex *cb = new CheckBoxWidthOcrIndex;
+    CheckBoxWithOcrIndex *cb = new CheckBoxWithOcrIndex;
     cb->connectToBackend();
     cb->setDisplayText(qApp->translate("QObject", text.toStdString().c_str()));
     cb->setChecked(option->value().toBool());
     cb->initStatusBar();
 
-    QObject::connect(cb, &CheckBoxWidthOcrIndex::checkStateChanged, option, [=](Qt::CheckState state) {
+    QObject::connect(cb, &CheckBoxWithOcrIndex::checkStateChanged, option, [=](Qt::CheckState state) {
         if (state == Qt::CheckState::Unchecked)
             option->setValue(false);
         else if (state == Qt::CheckState::Checked)
@@ -426,17 +426,17 @@ QWidget *SearchHelper::createCheckBoxWidthOcrIndex(QObject *opt)
     return cb;
 }
 
-QWidget *SearchHelper::createCheckBoxWidthSemanticIndex(QObject *opt)
+QWidget *SearchHelper::createCheckBoxWithSemanticIndex(QObject *opt)
 {
     auto option = qobject_cast<Dtk::Core::DSettingsOption *>(opt);
     const QString &text = option->data("text").toString();
 
-    CheckBoxWidthSemanticIndex *cb = new CheckBoxWidthSemanticIndex;
+    CheckBoxWithSemanticIndex *cb = new CheckBoxWithSemanticIndex;
     cb->setDisplayText(qApp->translate("QObject", text.toStdString().c_str()));
     cb->setChecked(option->value().toBool());
     cb->initStatusBar();
 
-    QObject::connect(cb, &CheckBoxWidthSemanticIndex::checkStateChanged, option, [=](Qt::CheckState state) {
+    QObject::connect(cb, &CheckBoxWithSemanticIndex::checkStateChanged, option, [=](Qt::CheckState state) {
         if (state == Qt::CheckState::Unchecked)
             option->setValue(false);
         else if (state == Qt::CheckState::Checked)
