@@ -26,6 +26,9 @@
 #include <DUtil>
 
 #include <cmath>
+#include <QDBusConnection>
+#include <QDBusPendingCallWatcher>
+#include <QDBusMessage>
 
 #define SYSTEM_SYSTEMINFO_SERVICE "org.deepin.dde.SystemInfo1"
 #define SYSTEM_SYSTEMINFO_PATH "/org/deepin/dde/SystemInfo1"
@@ -48,6 +51,51 @@
 #define IDLE_SCREEN_SAVER_INTERFACE "org.freedesktop.ScreenSaver"
 
 namespace dfmbase {
+
+// Internal helper: QObject required to receive DBus ActionInvoked signal
+class NotifyActionHelper : public QObject
+{
+    Q_OBJECT
+public:
+    static NotifyActionHelper *instance()
+    {
+        static NotifyActionHelper ins;
+        return &ins;
+    }
+
+    void bindAction(uint notifyId, const std::function<void(const QString &)> &callback)
+    {
+        m_callbacks.insert(notifyId, callback);
+    }
+
+private:
+    NotifyActionHelper(QObject *parent = nullptr)
+        : QObject(parent)
+    {
+        QDBusConnection::sessionBus().connect(
+                QString("org.freedesktop.Notifications"),
+                QString("/org/freedesktop/Notifications"),
+                QString("org.freedesktop.Notifications"),
+                QString("ActionInvoked"),
+                this,
+                SLOT(onActionInvoked(uint, QString)));
+    }
+
+    Q_DISABLE_COPY(NotifyActionHelper)
+
+private Q_SLOTS:
+    void onActionInvoked(uint id, QString actionKey)
+    {
+        auto it = m_callbacks.find(id);
+        if (it != m_callbacks.end()) {
+            it.value()(actionKey);
+            m_callbacks.erase(it);
+        }
+    }
+
+private:
+    QMap<uint, std::function<void(const QString &)>> m_callbacks;
+};
 
 /*!
  * \brief send a messsage to Notification Center
@@ -92,6 +140,53 @@ void UniversalUtils::notifyMessage(const QString &title, const QString &msg)
             .arg(QVariantMap())
             .arg(5000)
             .call();
+}
+
+/*!
+ * \brief send a notification with action buttons to Notification Center
+ * \param title the notification title (summary)
+ * \param msg the notification body
+ * \param actions alternating action id and label pairs, e.g. {"ok", "OK", "cancel", "Cancel"}
+ * \param callback invoked when an action button is clicked; receives the action id
+ */
+void UniversalUtils::notifyMessage(const QString &title, const QString &msg,
+                                   const QStringList &actions,
+                                   const std::function<void(const QString &)> &callback)
+{
+    if (actions.isEmpty()) {
+        notifyMessage(title, msg);
+        return;
+    }
+
+    QDBusPendingCall pending = DDBusSender()
+                                       .service("org.freedesktop.Notifications")
+                                       .path("/org/freedesktop/Notifications")
+                                       .interface("org.freedesktop.Notifications")
+                                       .method(QString("Notify"))
+                                       .arg(QObject::tr("dde-file-manager"))
+                                       .arg(static_cast<uint>(0))
+                                       .arg(QString("dde-file-manager"))
+                                       .arg(title)
+                                       .arg(msg)
+                                       .arg(actions)
+                                       .arg(QVariantMap())
+                                       .arg(5000)
+                                       .call();
+
+    auto *watcher = new QDBusPendingCallWatcher(pending, NotifyActionHelper::instance());
+    QObject::connect(watcher, &QDBusPendingCallWatcher::finished, watcher,
+                     [callback](QDBusPendingCallWatcher *w) {
+                         QDBusPendingReply<uint> reply = *w;
+                         w->deleteLater();
+                         if (reply.isError()) {
+                             qCWarning(logDFMBase) << "UniversalUtils::notifyMessage with actions failed:"
+                                                   << reply.error().message();
+                             return;
+                         }
+                         uint notifyId = reply.value();
+                         if (callback && notifyId > 0)
+                             NotifyActionHelper::instance()->bindAction(notifyId, callback);
+                     });
 }
 
 /*!
@@ -615,3 +710,5 @@ void UniversalUtils::setDockDnDMimeData(QMimeData *mimeData, const QUrl &url, co
 }
 
 }
+
+#include "universalutils.moc"

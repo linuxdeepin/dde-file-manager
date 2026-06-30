@@ -66,6 +66,8 @@ void WorkspaceEventReceiver::initConnection()
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleFindMenuScene);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_RegisterCustomTopWidget",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleRegisterCustomTopWidget);
+    dpfSlotChannel->connect(kCurrentEventSpace, "slot_RegisterViewHint",
+                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleRegisterViewHint);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_GetCustomTopWidgetVisible",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleGetCustomTopWidgetVisible);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_ShowCustomTopWidget",
@@ -417,6 +419,17 @@ void WorkspaceEventReceiver::handleRegisterCustomTopWidget(const QVariantMap &da
         fmDebug() << "WorkspaceEventReceiver: Created custom top widget interface for scheme:" << info.scheme;
         return interface;
     });
+}
+
+void WorkspaceEventReceiver::handleRegisterViewHint(const QVariantMap &dataMap)
+{
+    ViewHintSpec spec(dataMap);
+    if (spec.scheme.isEmpty()) {
+        fmWarning() << "WorkspaceEventReceiver: view hint spec has empty scheme, ignored";
+        return;
+    }
+    fmDebug() << "WorkspaceEventReceiver: Registering view hint for scheme:" << spec.scheme;
+    WorkspaceHelper::instance()->registerViewHint(spec.scheme, spec);
 }
 
 bool WorkspaceEventReceiver::handleGetCustomTopWidgetVisible(const quint64 windowID, const QString &scheme)

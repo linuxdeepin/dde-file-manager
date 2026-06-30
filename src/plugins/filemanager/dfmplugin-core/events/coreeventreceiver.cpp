@@ -93,3 +93,15 @@ void CoreEventReceiver::handleShowSettingDialog(quint64 windowId)
 
     DialogManagerInstance->showSetingsDialog(window);
 }
+
+void CoreEventReceiver::handleShowSettingDialogWithGroup(quint64 windowId, const QString &groupKey)
+{
+    auto window = FMWindowsIns.findWindowById(windowId);
+
+    if (!window) {
+        fmWarning() << "Invalid window id: " << windowId;
+        return;
+    }
+
+    DialogManagerInstance->showSetingsDialog(window, groupKey);
+}

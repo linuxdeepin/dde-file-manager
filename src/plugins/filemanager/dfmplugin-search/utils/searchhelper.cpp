@@ -15,11 +15,15 @@
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/dfm_event_defines.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <dfm-framework/dpf.h>
 
 #include <DSettingsOption>
 
+#include <QLocale>
 #include <QUrlQuery>
 
 Q_DECLARE_METATYPE(QString *);
@@ -453,6 +457,94 @@ SearchHelper::SearchHelper(QObject *parent)
 
 SearchHelper::~SearchHelper()
 {
+}
+
+bool SearchHelper::shouldShowAuthHint(const QUrl &url, QString *text)
+{
+    Q_UNUSED(url)
+    const QString &cfg = DConfig::kSearchCfgPath;
+    if (DConfigManager::instance()->value(cfg, DConfig::kSearchAuthHintDone, false).toBool())
+        return false;
+
+    // 收集尚未开启的搜索模式，仅在提示中展示用户实际需要开启的功能项。
+    QStringList modes = disabledSearchModes();
+    if (modes.isEmpty())
+        return false;
+
+    if (text) {
+        // 使用 createSeparatedList 生成符合语言习惯的分隔列表（中文使用顿号 + "和"）。
+        *text = SearchHelper::tr("Authorize to enable %1")
+                        .arg(QLocale().createSeparatedList(modes));
+    }
+    return true;
+}
+
+void SearchHelper::onAuthHintAction(const QString &id)
+{
+    if (id == "authorize")
+        authorizeSearchExperience();
+    else if (id == "close")
+        dismissAuthHint();
+}
+
+void SearchHelper::authorizeSearchExperience()
+{
+    const QString &cfg = DConfig::kSearchCfgPath;
+    DConfigManager::instance()->setValue(cfg, DConfig::kEnableFileIndexSearch, true);
+    DConfigManager::instance()->setValue(cfg, DConfig::kEnableFullTextSearch, true);
+    DConfigManager::instance()->setValue(cfg, DConfig::kEnableOcrTextSearch, true);
+    DConfigManager::instance()->setValue(cfg, DConfig::kEnableSemanticSearch, true);
+
+    // 发送带操作按钮的通知，提示用户索引正在构建。
+    // 点击"查看索引状态"按钮时，通过 kShowSettingDialogWithGroup 信号
+    // 打开设置窗口并自动跳转到"高级设置—搜索"分组。
+    QStringList actions = { "view-index-status", tr("View index status") };
+    UniversalUtils::notifyMessage(
+            tr("dde-file-manager"),
+            tr("Index is being built. You can check the index status in Settings."),
+            actions,
+            [](const QString &actionId) {
+                if (actionId == "view-index-status") {
+                    auto window = FMWindowsIns.findWindowById(FMWindowsIns.lastActivedWindowId());
+                    if (window) {
+                        dpfSignalDispatcher->publish(
+                                DFMBASE_NAMESPACE::GlobalEventType::kShowSettingDialogWithGroup,
+                                window->winId(),
+                                QString(SEARCH_SETTING_GROUP));
+                    }
+                }
+            });
+}
+
+void SearchHelper::dismissAuthHint()
+{
+    // 用户拒绝授权，持久化标记以避免再次弹出提示。
+    DConfigManager::instance()->setValue(DConfig::kSearchCfgPath, DConfig::kSearchAuthHintDone, true);
+
+    // 通知用户当前仍处于关闭状态的搜索模式，
+    // 提示可在"设置—高级设置—搜索"中手动开启。
+    QStringList disabledModes = disabledSearchModes();
+    if (!disabledModes.isEmpty()) {
+        const QString &modeList = QLocale().createSeparatedList(disabledModes);
+        UniversalUtils::notifyMessage(
+                tr("dde-file-manager"),
+                tr("You can manually enable %1 in Settings — Advanced — Search.").arg(modeList));
+    }
+
+    fmInfo() << "Search authorization hint dismissed by user";
+}
+
+QStringList SearchHelper::disabledSearchModes()
+{
+    const QString &cfg = DConfig::kSearchCfgPath;
+    QStringList modes;
+    if (!DConfigManager::instance()->value(cfg, DConfig::kEnableFullTextSearch, true).toBool())
+        modes << tr("\"Full-Text search\"");
+    if (!DConfigManager::instance()->value(cfg, DConfig::kEnableOcrTextSearch, false).toBool())
+        modes << tr("\"Image-Content search\"");
+    if (!DConfigManager::instance()->value(cfg, DConfig::kEnableSemanticSearch, false).toBool())
+        modes << tr("\"Smart search\"");
+    return modes;
 }
 
 }
