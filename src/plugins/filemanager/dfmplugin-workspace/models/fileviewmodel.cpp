@@ -77,8 +77,7 @@ FileViewModel::~FileViewModel()
                 thread->quit();
                 if (!thread->wait(1000)) {
                     fmWarning() << "Force terminating discarded thread in destructor";
-                    thread->terminate();
-                    thread->wait(500);
+                    _exit(1);
                 }
             }
         }
@@ -1364,10 +1363,7 @@ void FileViewModel::quitFilterSortWork()
         // 等待线程优雅退出，增加超时处理
         if (!filterSortThread->wait(3000)) {
             fmWarning() << "FilterSortThread did not exit within 3 seconds, forcing termination for URL:" << dirRootUrl.toString();
-            filterSortThread->terminate();
-            if (!filterSortThread->wait(1000)) {
-                fmWarning() << "FilterSortThread termination failed, potential resource leak for URL:" << dirRootUrl.toString();
-            }
+            _exit(1);
         }
     }
 
