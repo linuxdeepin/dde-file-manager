@@ -82,7 +82,7 @@ public:
     QPair<QHBoxLayout *, QFrame *> frameForLayoutCustomArea {};
     QRegularExpressionValidator *validator { nullptr };
 
-    DTuple<QPushButton *, QPushButton *, QHBoxLayout *, QFrame *> buttonsArea {};
+    DTuple<QPushButton *, QHBoxLayout *, QFrame *> buttonsArea {};
 
     DSuggestButton *renameBtn { nullptr };
     bool connectInitOnce { false };
