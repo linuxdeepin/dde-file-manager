@@ -414,7 +414,7 @@ void DiskEncryptMenuScene::doEncryptDevice(const DeviceEncryptParam &param)
     }
 }
 
-void DiskEncryptMenuScene::doReencryptDevice(const DeviceEncryptParam &param)
+bool DiskEncryptMenuScene::doReencryptDevice(const DeviceEncryptParam &param)
 {
     // if tpm selected, use tpm to generate the key
     QString tpmToken;
@@ -423,15 +423,23 @@ void DiskEncryptMenuScene::doReencryptDevice(const DeviceEncryptParam &param)
         QString configPath = tpm_passphrase_utils::getGlobalTPMConfigPath();
         if (configPath.isEmpty()) {
             qCritical() << "Failed to create tpm config path";
-            return;
+            dialog_utils::showDialog(tr("Re-encryption failed"),
+                                     tr("Failed to get TPM information. Please check whether TPM is available."));
+            return false;
         }
         tpmToken = generateTPMToken(param.devDesc, param.secType == kPin, configPath);
+        if (tpmToken.isEmpty()) {
+            fmCritical() << "Failed to generate TPM token for re-encryption, device:" << param.devDesc;
+            dialog_utils::showDialog(tr("Re-encryption failed"),
+                                     tr("Failed to get TPM information. Please check whether TPM is available."));
+            return false;
+        }
     }
 
     CREATE_DAEMON_INTERFACE(iface);
     if (!iface.isValid()) {
         fmCritical() << "Failed to create DBus interface for SetupAuthArgs, service may be unavailable";
-        return;
+        return false;
     }
 
     // Prepare credentials data
@@ -445,9 +453,14 @@ void DiskEncryptMenuScene::doReencryptDevice(const DeviceEncryptParam &param)
 
     // Send credentials via fd
     fmDebug() << "Starting device re-encryption via fd";
-    if (sendCredentialsViaFd(iface, "SetupAuthArgs", params, true)) {
+    // SetupAuthArgs waits for Polkit authentication; keep the call alive while the user authorizes.
+    iface.setTimeout(120000);
+    if (sendCredentialsViaFd(iface, "SetupAuthArgs", params, false)) {
         QApplication::setOverrideCursor(Qt::WaitCursor);
+        return true;
     }
+
+    return false;
 }
 
 void DiskEncryptMenuScene::doDecryptDevice(const DeviceEncryptParam &param)

@@ -54,6 +54,7 @@
       <arg name="credentialsFd" type="h" direction="in"/>
     </method>
     <method name="SetupAuthArgs">
+      <arg type="b" direction="out"/>
       <arg name="credentialsFd" type="h" direction="in"/>
     </method>
     <method name="IgnoreAuthSetup">
