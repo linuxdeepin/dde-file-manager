@@ -187,24 +187,25 @@ bool DiskEncryptSetup::ChangePassphrase(const QDBusUnixFileDescriptor &credentia
     return true;
 }
 
-void DiskEncryptSetup::SetupAuthArgs(const QDBusUnixFileDescriptor &credentialsFd)
+bool DiskEncryptSetup::SetupAuthArgs(const QDBusUnixFileDescriptor &credentialsFd)
 {
     qInfo() << "[DiskEncryptSetup::SetupAuthArgs] Setting up authentication arguments via fd";
 
     if (!m_dptr->checkAuth(kActionEncrypt)) {
         qWarning() << "[DiskEncryptSetup::SetupAuthArgs] Authentication failed for auth args setup";
-        return;
+        return false;
     }
 
     // Parse credentials from fd using common method
     QVariantMap args;
     if (!m_dptr->parseCredentialsFromFd(credentialsFd, &args)) {
         qCritical() << "[DiskEncryptSetup::SetupAuthArgs] Failed to parse credentials from fd";
-        return;
+        return false;
     }
 
     qInfo() << "[DiskEncryptSetup::SetupAuthArgs] Successfully parsed authentication arguments from fd";
     Q_EMIT NotificationHelper::instance()->replyAuthArgs(args);
+    return true;
 }
 
 void DiskEncryptSetup::IgnoreAuthSetup()

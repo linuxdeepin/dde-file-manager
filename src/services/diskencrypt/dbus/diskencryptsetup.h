@@ -33,7 +33,7 @@ public Q_SLOTS:
     bool ResumeEncryption(const QVariantMap &args);
     bool Decryption(const QDBusUnixFileDescriptor &credentialsFd);
     bool ChangePassphrase(const QDBusUnixFileDescriptor &credentialsFd);
-    void SetupAuthArgs(const QDBusUnixFileDescriptor &credentialsFd);
+    bool SetupAuthArgs(const QDBusUnixFileDescriptor &credentialsFd);
     void IgnoreAuthSetup();
 
     QString TpmToken(const QString &dev);
