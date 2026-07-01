@@ -69,9 +69,23 @@ public:
     [[nodiscard]] static QWidget *createCheckBoxWithOcrIndex(QObject *opt);
     [[nodiscard]] static QWidget *createCheckBoxWithSemanticIndex(QObject *opt);
 
+    // View-hint "authorization experience": the workspace shows a floating hint on
+    // the search scheme; these statics supply its visibility/text predicate and react
+    // to the user's action (the built-in close button arrives with id "close").
+    // shouldShowAuthHint reads DConfig and fills *text when the hint should appear.
+    static bool shouldShowAuthHint(const QUrl &url, QString *text);
+    static void onAuthHintAction(const QString &id);
+    // Enable the advertised search modes / persist the opt-out. Moved here from
+    // SearchManager so all hint business logic lives in one helper.
+    static void authorizeSearchExperience();
+    static void dismissAuthHint();
+
 private:
     explicit SearchHelper(QObject *parent = nullptr);
     ~SearchHelper() override;
+
+    // 返回当前处于关闭状态的搜索模式名称列表（翻译后的名称）。
+    static QStringList disabledSearchModes();
 };
 
 }

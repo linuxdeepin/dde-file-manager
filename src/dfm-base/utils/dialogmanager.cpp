@@ -25,6 +25,7 @@
 
 #include <QDir>
 #include <QApplication>
+#include <QTimer>
 #include <QHeaderView>
 #include <QStandardItemModel>
 
@@ -306,6 +307,43 @@ void DialogManager::showSetingsDialog(FileManagerWindow *window)
 
     dsd->initialze();
     dsd->show();
+
+    connect(dsd, &DSettingsDialog::finished, [window] {
+        window->setProperty("isSettingDialogShown", false);
+    });
+}
+
+void DialogManager::showSetingsDialog(FileManagerWindow *window, const QString &groupKey)
+{
+    if (groupKey.isEmpty()) {
+        showSetingsDialog(window);
+        return;
+    }
+
+    Q_ASSERT(window);
+
+    if (window->property("isSettingDialogShown").toBool()) {
+        qCWarning(logDFMBase) << "isSettingDialogShown true";
+        return;
+    }
+
+    window->setProperty("isSettingDialogShown", true);
+    SettingDialog *dsd = new SettingDialog(window);
+
+    auto factory = dsd->widgetFactory();
+    for (auto iter = settingWidgetCreators.constBegin();
+         iter != settingWidgetCreators.constEnd();
+         ++iter) {
+        factory->registerWidget(iter.key(), iter.value());
+    }
+
+    dsd->initialze();
+    dsd->show();
+
+    // Scroll to the specified settings group after the dialog is visible.
+    QTimer::singleShot(0, dsd, [dsd, groupKey]() {
+        dsd->scrollToGroup(groupKey);
+    });
 
     connect(dsd, &DSettingsDialog::finished, [window] {
         window->setProperty("isSettingDialogShown", false);

@@ -29,6 +29,7 @@ enum GlobalEventType {
     kLoadPlugins,
     kHeadlessStarted,
     kShowSettingDialog,
+    kShowSettingDialogWithGroup,   // kShowSettingDialog + groupKey to scroll to a specific settings page
     kSaveRedoOperator,   // save  Ctrl+Z operator
     kCleanSaveOperatorByUrls, // if file delete,clear all ops which contains url
     kRedo,    // Ctrl+Y

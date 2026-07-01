@@ -8,10 +8,12 @@
 #include <dfm-base/dfm_base_global.h>
 
 #include <QString>
+#include <QStringList>
 #include <QtDBus/QDBusReply>
 #include <QtDBus/QDBusUnixFileDescriptor>
 #include <QFontMetrics>
 #include <QModelIndex>
+#include <functional>
 
 namespace dfmbase {
 
@@ -21,6 +23,18 @@ public:
     static bool inMainThread();
     static void notifyMessage(const QString &msg);
     static void notifyMessage(const QString &title, const QString &msg);
+
+    /*!
+     * \brief send a notification with action buttons to Notification Center
+     * \param title the notification title (summary)
+     * \param msg the notification body
+     * \param actions alternating action id and label pairs, e.g. {"ok", "OK", "cancel", "Cancel"}
+     * \param callback invoked when an action button is clicked; receives the action id
+     */
+    static void notifyMessage(const QString &title, const QString &msg,
+                              const QStringList &actions,
+                              const std::function<void(const QString &)> &callback);
+
     static QString userLoginState();
     static quint32 currentLoginUser();
     static bool isLogined();

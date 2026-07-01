@@ -26,6 +26,7 @@ public slots:
     void handleLoadPlugins(const QStringList &names);
     void handleHeadless();
     void handleShowSettingDialog(quint64 windowId);
+    void handleShowSettingDialogWithGroup(quint64 windowId, const QString &groupKey);
 
 private:
     explicit CoreEventReceiver(QObject *parent = nullptr);

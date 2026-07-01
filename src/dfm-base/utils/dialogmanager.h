@@ -54,6 +54,7 @@ public:
     void addTask(const JobHandlePointer task);
 
     void showSetingsDialog(DFMBASE_NAMESPACE::FileManagerWindow *window);
+    void showSetingsDialog(DFMBASE_NAMESPACE::FileManagerWindow *window, const QString &groupKey);
 
     bool askForFormat();
     QString askPasswordForLockedDevice(const QString &devName);
