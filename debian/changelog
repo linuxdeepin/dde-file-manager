@@ -1,3 +1,14 @@
+dde-file-manager (6.5.151) unstable; urgency=medium
+
+  * refactor: replace thread termination with _exit for clean shutdown
+  * fix(workspace): remove unused QPushButton from renamebar buttonsArea tuple
+  * fix(emblem): fix GioEmblemWorker leak at EmblemHelper shutdown
+  * fix(workspace): sync buttonsArea type declaration with 3-tuple assignment
+  * fix(workspace): remove dead setEnabled call on removed buttonsArea element
+  * fix: Fix and restore the issue of failed encrypted authentication submission.
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Wed, 01 Jul 2026 18:19:22 +0800
+
 dde-file-manager (6.5.150) unstable; urgency=medium
 
   * fix(workspace): parent CustomTopWidgetInterface to prevent leak
