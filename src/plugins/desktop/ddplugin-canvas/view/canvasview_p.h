@@ -132,6 +132,7 @@ public:
     ViewSettingUtil *viewSetting;
     OperState state;
     bool flicker = false;
+    bool imEnabled { true };   // 是否在桌面画布激活输入法（触屏大屏机型关闭以避免误弹软键盘）
 
     CanvasViewMenuProxy *menuProxy = nullptr;
     WatermaskContainer *waterMask = nullptr;

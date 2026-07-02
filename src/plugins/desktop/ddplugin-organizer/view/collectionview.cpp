@@ -24,6 +24,7 @@
 #include <dfm-base/utils/clipboard.h>
 #include <dfm-base/utils/filenamesorter.h>
 #include <dfm-base/base/application/application.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <DApplication>
 #include <DFileDragClient>
@@ -40,6 +41,8 @@ using namespace ddplugin_organizer;
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
+using namespace GlobalDConfDefines::ConfigPath;
+using namespace GlobalDConfDefines::BaseConfig;
 
 // no need view margin, this 2px used to draw inner and out order.
 static constexpr int kCollectionViewMargin = 0;   // 2
@@ -62,7 +65,9 @@ CollectionViewPrivate::~CollectionViewPrivate()
 void CollectionViewPrivate::initUI()
 {
     q->setAttribute(Qt::WA_TranslucentBackground);
-    q->setAttribute(Qt::WA_InputMethodEnabled);
+    imEnabled = DConfigManager::instance()->value(kDesktopDConfName, kKeyCanvasInputMethod, true).toBool();
+    if (imEnabled)
+        q->setAttribute(Qt::WA_InputMethodEnabled);
 
 #ifdef QT_SCROLL_WHEEL_ANI
     QScrollBar *bar = q->verticalScrollBar();
@@ -2270,7 +2275,7 @@ void CollectionView::focusInEvent(QFocusEvent *event)
 
     // WA_InputMethodEnabled will be set to false if current index is invalid in QAbstractItemView::focusInEvent
     // To enable WA_InputMethodEnabled no matter whether the current index is valid or not.
-    if (!testAttribute(Qt::WA_InputMethodEnabled))
+    if (d->imEnabled && !testAttribute(Qt::WA_InputMethodEnabled))
         setAttribute(Qt::WA_InputMethodEnabled, true);
 }
 
@@ -2328,7 +2333,7 @@ void CollectionView::keyboardSearch(const QString &search)
 QVariant CollectionView::inputMethodQuery(Qt::InputMethodQuery query) const
 {
     // When no item is selected, return input method area where the current mouse is located
-    if (query == Qt::ImCursorRectangle && !currentIndex().isValid())
+    if (d->imEnabled && query == Qt::ImCursorRectangle && !currentIndex().isValid())
         return QRect(mapFromGlobal(QCursor::pos()), iconSize());
 
     return QAbstractItemView::inputMethodQuery(query);
@@ -2368,7 +2373,7 @@ void CollectionView::currentChanged(const QModelIndex &current, const QModelInde
 
     // WA_InputMethodEnabled will be set to false if current index is invalid in QAbstractItemView::currentChanged
     // To enable WA_InputMethodEnabled no matter whether the current index is valid or not.
-    if (!testAttribute(Qt::WA_InputMethodEnabled))
+    if (d->imEnabled && !testAttribute(Qt::WA_InputMethodEnabled))
         setAttribute(Qt::WA_InputMethodEnabled, true);
 }
 

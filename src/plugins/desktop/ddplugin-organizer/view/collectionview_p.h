@@ -166,6 +166,7 @@ public:
 
     bool flicker = false;
     bool freeze { false };
+    bool imEnabled { true };   // 是否在桌面画布激活输入法（触屏大屏机型关闭以避免误弹软键盘）
 
     DFMBASE_NAMESPACE::DFMMimeData dfmmimeData;
 };

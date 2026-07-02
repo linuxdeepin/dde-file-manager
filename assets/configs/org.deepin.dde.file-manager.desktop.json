@@ -78,6 +78,17 @@
 			"description": "It's used to control whether to enable the WaterMask.",
 			"permissions": "readwrite",
 			"visibility": "public"
+		},
+		"enableCanvasInputMethod": {
+			"value": true,
+			"serial": 0,
+			"flags": [],
+			"name": "Enable Input Method on Desktop Canvas",
+			"name[zh_CN]": "桌面画布启用输入法",
+			"description": "Whether the desktop canvas activates the input method (for hotkey switching). Turn off on touch-screen large-display machines to prevent the soft keyboard from popping up on the desktop.",
+			"description[zh_CN]": "桌面画布是否激活输入法（用于快捷键切换）。触屏大屏机型应关闭，避免桌面弹出软键盘。",
+			"permissions": "readwrite",
+			"visibility": "public"
 		}
 	}
 }
