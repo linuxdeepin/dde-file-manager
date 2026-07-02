@@ -34,6 +34,9 @@ public:
 
     QString title() const override;
 
+    QWidget *statusBarWidget() const override;
+    Qt::Alignment statusBarWidgetAlignment() const override;
+
 private:
     QUrl currentFileUrl;
     QPointer<QLabel> messageStatusBar;

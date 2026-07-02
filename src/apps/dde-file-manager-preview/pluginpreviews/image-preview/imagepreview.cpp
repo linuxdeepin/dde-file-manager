@@ -9,8 +9,6 @@
 #include <dfm-base/utils/fileutils.h>
 #include "imageview.h"
 
-#include <DAnchors>
-
 #include <QImageReader>
 #include <QProcess>
 #include <QMimeType>
@@ -19,7 +17,6 @@
 #include <QFileInfo>
 #include <QMimeData>
 
-DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 using namespace plugin_filepreview;
 
@@ -32,7 +29,7 @@ ImagePreview::ImagePreview(QObject *parent)
 ImagePreview::~ImagePreview()
 {
     fmInfo() << "Image preview: ImagePreview instance destroyed";
-    
+
     if (imageView)
         imageView->deleteLater();
 
@@ -43,7 +40,7 @@ ImagePreview::~ImagePreview()
 bool ImagePreview::canPreview(const QUrl &url, QByteArray *format) const
 {
     fmDebug() << "Image preview: checking if can preview:" << url;
-    
+
     QByteArray f = QImageReader::imageFormat(url.toLocalFile());
 
     if (f.isEmpty()) {
@@ -77,23 +74,29 @@ void ImagePreview::initialize(QWidget *window, QWidget *statusBar)
     Q_UNUSED(window)
 
     fmDebug() << "Image preview: initializing with status bar";
-    
+
     messageStatusBar = new QLabel(statusBar);
     messageStatusBar->setStyleSheet("QLabel{font-family: Helvetica;\
                                    font-size: 12px;\
                                    font-weight: 300;}");
+    // Expanding 水平策略：让 messageStatusBar 在 QHBoxLayout 中抢占 previewTitle 与 openBtn
+    // 之间的多余空间，配合 AlignCenter 使分辨率文本在该空间内居中——previewTitle 短时
+    // 接近 statusBar 几何中心，previewTitle 长时多余空间被压缩，标签自然回缩避让。
+    messageStatusBar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    messageStatusBar->setAlignment(Qt::AlignCenter);
 
     messageStatusBar->show();
 
-    DAnchorsBase(messageStatusBar).setCenterIn(statusBar);
-    
+    // 分辨率标签通过 statusBarWidget() 交给 FilePreviewDialog 的 QHBoxLayout 统一管理，
+    // 不再用 DAnchors 绝对居中——避免与 previewTitle 在 statusBar 中心区域重叠。
+
     fmDebug() << "Image preview: status bar initialized";
 }
 
 bool ImagePreview::setFileUrl(const QUrl &url)
 {
     fmInfo() << "Image preview: setting file URL:" << url;
-    
+
     if (currentFileUrl == url) {
         fmDebug() << "Image preview: URL unchanged, skipping:" << url;
         return true;
@@ -159,4 +162,17 @@ QWidget *ImagePreview::contentWidget() const
 QString ImagePreview::title() const
 {
     return imageTitle;
+}
+
+QWidget *ImagePreview::statusBarWidget() const
+{
+    return messageStatusBar;
+}
+
+Qt::Alignment ImagePreview::statusBarWidgetAlignment() const
+{
+    // 返回 0（默认）让 widget 按 sizePolicy 参与 QHBoxLayout 的空间分配——
+    // 配合 messageStatusBar 的 Expanding 策略使其占满 previewTitle 与 openBtn 之间的多余空间。
+    // 文本居中由 QLabel::setAlignment(AlignCenter) 负责，不在此处设 alignment 以免抑制 Expanding。
+    return Qt::Alignment();
 }
