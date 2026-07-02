@@ -13,6 +13,7 @@ inline constexpr char kDefaultCfgPath[] { "org.deepin.dde.file-manager" };
 inline constexpr char kPluginsDConfName[] { "org.deepin.dde.file-manager.plugins" };
 inline constexpr char kViewDConfName[] { "org.deepin.dde.file-manager.view" };
 inline constexpr char kAnimationDConfName[] { "org.deepin.dde.file-manager.animation" };
+inline constexpr char kDesktopDConfName[] { "org.deepin.dde.file-manager.desktop" };
 }   // namespace ConfigPath
 
 /*!
@@ -25,6 +26,7 @@ inline constexpr char kOpenFolderWindowsInASeparateProcess[] { "dfm.open.in.sing
 inline constexpr char kCunstomFixedTabs[] { "dfm.custom.fixedtab" };
 inline constexpr char kPinnedTabs[] { "dfm.pinned.tabs" };
 inline constexpr char kDetailViewRemoteImageMaxSize[] { "dfm.detailview.remote.image.maxsize" };
+inline constexpr char kKeyCanvasInputMethod[] { "enableCanvasInputMethod" };
 }   // namespace BaseConfig
 
 /*!

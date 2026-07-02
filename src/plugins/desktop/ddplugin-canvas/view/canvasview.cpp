@@ -16,6 +16,7 @@
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-framework/dpf.h>
 #include <dfm-base/base/application/application.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <QPainter>
 #include <QDebug>
@@ -28,6 +29,8 @@
 
 DFMBASE_USE_NAMESPACE
 using namespace ddplugin_canvas;
+using namespace GlobalDConfDefines::ConfigPath;
+using namespace GlobalDConfDefines::BaseConfig;
 
 CanvasView::CanvasView(QWidget *parent)
     : QAbstractItemView(parent), d(new CanvasViewPrivate(this))
@@ -283,7 +286,7 @@ QRect CanvasView::expendedVisualRect(const QModelIndex &index) const
 QVariant CanvasView::inputMethodQuery(Qt::InputMethodQuery query) const
 {
     // When no item is selected, return input method area where the current mouse is located
-    if (query == Qt::ImCursorRectangle && !currentIndex().isValid())
+    if (d->imEnabled && query == Qt::ImCursorRectangle && !currentIndex().isValid())
         return QRect(mapFromGlobal(QCursor::pos()), iconSize());
 
     return QAbstractItemView::inputMethodQuery(query);
@@ -387,7 +390,7 @@ void CanvasView::contextMenuEvent(QContextMenuEvent *event)
         flags = model()->flags(index);
         d->menuProxy->showNormalMenu(index, flags, gridPos);
     }
-    if (WindowUtils::isWayLand())
+    if (WindowUtils::isWayLand() && d->imEnabled)
         setAttribute(Qt::WA_InputMethodEnabled, true);
 }
 
@@ -472,7 +475,7 @@ void CanvasView::focusInEvent(QFocusEvent *event)
 
     // WA_InputMethodEnabled will be set to false if current index is invalid in QAbstractItemView::focusInEvent
     // To enable WA_InputMethodEnabled no matter whether the current index is valid or not.
-    if (!testAttribute(Qt::WA_InputMethodEnabled))
+    if (d->imEnabled && !testAttribute(Qt::WA_InputMethodEnabled))
         setAttribute(Qt::WA_InputMethodEnabled, true);
 }
 
@@ -674,7 +677,7 @@ void CanvasView::currentChanged(const QModelIndex &current, const QModelIndex &p
 
     // WA_InputMethodEnabled will be set to false if current index is invalid in QAbstractItemView::currentChanged
     // To enable WA_InputMethodEnabled no matter whether the current index is valid or not.
-    if (!testAttribute(Qt::WA_InputMethodEnabled))
+    if (d->imEnabled && !testAttribute(Qt::WA_InputMethodEnabled))
         setAttribute(Qt::WA_InputMethodEnabled, true);
 }
 
@@ -770,7 +773,9 @@ void CanvasView::wheelEvent(QWheelEvent *event)
 void CanvasView::initUI()
 {
     setAttribute(Qt::WA_TranslucentBackground);
-    setAttribute(Qt::WA_InputMethodEnabled);
+    d->imEnabled = DConfigManager::instance()->value(kDesktopDConfName, kKeyCanvasInputMethod, true).toBool();
+    if (d->imEnabled)
+        setAttribute(Qt::WA_InputMethodEnabled);
     viewport()->setAttribute(Qt::WA_TranslucentBackground);
     viewport()->setAutoFillBackground(false);
     setFrameShape(QFrame::NoFrame);
