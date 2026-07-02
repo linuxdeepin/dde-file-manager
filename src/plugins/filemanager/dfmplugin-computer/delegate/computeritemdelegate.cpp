@@ -446,6 +446,7 @@ void ComputerItemDelegate::drawDeviceDetail(QPainter *painter, const QStyleOptio
     bool totalSizeVisiable = index.data(ComputerModel::kTotalSizeVisiableRole).toBool();
     bool usedSizeVisiable = index.data(ComputerModel::kUsedSizeVisiableRole).toBool();
     bool showSize = totalSizeVisiable || usedSizeVisiable;
+    QString detailText;
     if (showSize) {
         sizeUsage = index.data(ComputerModel::kSizeUsageRole).toLongLong();
         sizeTotal = index.data(ComputerModel::kSizeTotalRole).toLongLong();
@@ -455,13 +456,17 @@ void ComputerItemDelegate::drawDeviceDetail(QPainter *painter, const QStyleOptio
         }
         auto usage = DFMBASE_NAMESPACE::FileUtils::formatSize(sizeUsage);
         auto total = DFMBASE_NAMESPACE::FileUtils::formatSize(sizeTotal);
-        QString sizeText;
         if (totalSizeVisiable && usedSizeVisiable)
-            sizeText = QString("%1/%2").arg(usage).arg(total);
+            detailText = QString("%1/%2").arg(usage).arg(total);
         else
-            sizeText = total;
-        painter->drawText(detailRect, Qt::AlignLeft, sizeText);
+            detailText = total;
+    } else {
+        detailText = index.data(ComputerModel::kDeviceDescriptionRole).toString();
     }
+
+    // Detail text shares one line: capacity when logged in, description when not logged in.
+    if (!detailText.isEmpty())
+        painter->drawText(detailRect, Qt::AlignLeft, detailText);
 
     // paint progress bar
     bool progressVisiable = index.data(ComputerModel::kProgressVisiableRole).toBool();
@@ -513,11 +518,6 @@ void ComputerItemDelegate::drawDeviceDetail(QPainter *painter, const QStyleOptio
             painter->setBrush(grad);
             painter->drawRoundedRect(usedRect, 3, 3);
         }
-    }
-
-    QString deviceDescription = index.data(ComputerModel::kDeviceDescriptionRole).toString();
-    if (!showSize && !progressVisiable && !deviceDescription.isEmpty()) {
-        painter->drawText(detailRect, Qt::AlignLeft, deviceDescription);
     }
 }
 
