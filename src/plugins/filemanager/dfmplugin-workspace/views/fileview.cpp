@@ -132,8 +132,11 @@ FileView::~FileView()
     }
 
     // 3. 断开信号连接
-    if (model()) {
-        disconnect(model(), nullptr, this, nullptr);
+    //    保存 model 指针: setModel(nullptr) 后 model() 返回 nullptr,
+    //    需在解绑前获取以便后续显式删除。
+    FileViewModel *savedModel = model();
+    if (savedModel) {
+        disconnect(savedModel, nullptr, this, nullptr);
     }
     if (selectionModel()) {
         disconnect(selectionModel(), nullptr, this, nullptr);
@@ -144,13 +147,22 @@ FileView::~FileView()
     // 4. 解绑 model(关键步骤): 会触发 QAbstractItemView 清理持有的 QPersistentModelIndex
     DListView::setModel(nullptr);
 
-    // 5. 清理其他订阅
+    // 5. 显式删除 model: ~QAbstractItemModel() 会调用 invalidatePersistentIndexes(),
+    //    将所有残留 QPersistentModelIndex 的 model 指针置 null。
+    //    必须在 ~QObject() 子对象清理前执行,否则 headerView / selectionModel 等
+    //    子控件在 ~QObject() 中销毁时,其内部 QPersistentModelIndex 会访问已销毁
+    //    的 model 私有数据哈希表(removePersistentIndexData)而崩溃。
+    if (savedModel && savedModel->QObject::parent() == this) {
+        delete savedModel;
+    }
+
+    // 6. 清理其他订阅
     dpfSignalDispatcher->unsubscribe("dfmplugin_workspace", "signal_View_HeaderViewSectionChanged", this, &FileView::onHeaderViewSectionChanged);
     dpfSignalDispatcher->unsubscribe("dfmplugin_filepreview", "signal_ThumbnailDisplay_Changed", this, &FileView::onWidgetUpdate);
 
     fmDebug() << "FileView destruction completed";
 
-    // 注意: model 作为 FileView 的子对象,会在基类析构后由 Qt 自动释放
+    // model 已在步骤 5 显式删除,不会进入 ~QObject() 子对象清理流程
 }
 
 QWidget *FileView::widget() const
