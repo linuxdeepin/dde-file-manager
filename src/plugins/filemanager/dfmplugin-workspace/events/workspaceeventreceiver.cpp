@@ -9,6 +9,7 @@
 #include "views/workspacewidget.h"
 #include "views/fileview.h"
 #include "models/fileviewmodel.h"
+#include "groups/groupingfactory.h"
 
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/dfm_event_defines.h>
@@ -68,6 +69,10 @@ void WorkspaceEventReceiver::initConnection()
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleRegisterCustomTopWidget);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_RegisterViewHint",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleRegisterViewHint);
+    dpfSlotChannel->connect(kCurrentEventSpace, "slot_RegisterGroupStrategy",
+                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleRegisterGroupStrategy);
+    dpfSlotChannel->connect(kCurrentEventSpace, "slot_RegisteredGroupStrategies",
+                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleRegisteredGroupStrategies);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_GetCustomTopWidgetVisible",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleGetCustomTopWidgetVisible);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_ShowCustomTopWidget",
@@ -430,6 +435,37 @@ void WorkspaceEventReceiver::handleRegisterViewHint(const QVariantMap &dataMap)
     }
     fmDebug() << "WorkspaceEventReceiver: Registering view hint for scheme:" << spec.scheme;
     WorkspaceHelper::instance()->registerViewHint(spec.scheme, spec);
+}
+
+void WorkspaceEventReceiver::handleRegisterGroupStrategy(const QVariantMap &dataMap)
+{
+    const QString name = dataMap.value(PropertyKey::kGroupStrategyName).toString();
+    if (name.isEmpty()) {
+        fmWarning() << "WorkspaceEventReceiver: group strategy registration has empty name, ignored";
+        return;
+    }
+    RegisteredGroupStrategy entry(dataMap);
+    if (!entry.factory) {
+        fmWarning() << "WorkspaceEventReceiver: group strategy registration has null factory for" << name;
+        return;
+    }
+    fmInfo() << "WorkspaceEventReceiver: Registering group strategy" << name
+             << "schemes:" << entry.supportedSchemes;
+    GroupingFactory::registerStrategy(name, entry);
+}
+
+QVariantList WorkspaceEventReceiver::handleRegisteredGroupStrategies(const QString &schemeFilter)
+{
+    const auto entries = GroupingFactory::registeredStrategies(schemeFilter);
+    QVariantList result;
+    result.reserve(entries.size());
+    for (const auto &e : entries) {
+        QVariantMap m;
+        m["name"] = e.first;
+        m["displayName"] = e.second;
+        result.append(m);
+    }
+    return result;
 }
 
 bool WorkspaceEventReceiver::handleGetCustomTopWidgetVisible(const quint64 windowID, const QString &scheme)

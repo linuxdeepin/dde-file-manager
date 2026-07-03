@@ -14,7 +14,6 @@
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <dfm-search/dsearch_global.h>
-#include <dfm-search/semanticsearcher.h>
 
 #include <QDebug>
 
@@ -136,8 +135,9 @@ void SimplifiedSearchWorker::createSearchersForUrl(const QUrl &url)
     for (auto type : searchTypes)
         appendSearcher(new DFMSearcher(url, searchKeyword, this, type));
 
-    // 语义搜索：在索引就绪、dconfig 开启且 keyword 含语义意图时才创建
-    if (shouldEnableSemanticSearch())
+    // Reuse the shared gating predicate so the pre-search grouping setup and
+    // runtime adapter creation stay consistent.
+    if (SearchHelper::shouldEnableSemanticSearch(searchKeyword))
         appendSearcher(new SemanticAdapter(url, searchKeyword, this));
 }
 
@@ -156,22 +156,6 @@ QList<SearchType> SimplifiedSearchWorker::resolveEnabledSearchTypes() const
     }
 
     return types;
-}
-
-bool SimplifiedSearchWorker::shouldEnableSemanticSearch() const
-{
-    // 语义搜索依赖文件名索引（内部会编排 FileName/Content/OCR 子引擎）
-    if (!DFMSEARCH::Global::isFileNameIndexReadyForSearch())
-        return false;
-
-    if (!DConfigManager::instance()->value(
-                DConfig::kSearchCfgPath, DConfig::kEnableSemanticSearch, false).toBool()) {
-        return false;
-    }
-
-    // 仅当 keyword 真正包含语义意图时才创建 adapter，避免纯关键词触发无谓的语义搜索开销
-    DFMSEARCH::SemanticSearcher checker;
-    return checker.isSemanticQuery(searchKeyword);
 }
 
 void SimplifiedSearchWorker::appendSearcher(AbstractSearcher *searcher)

@@ -37,7 +37,26 @@ bool SearchManager::search(quint64 winId, const QString &taskId, const QUrl &url
     // Perform search
     if (mainController) {
         taskIdMap[winId] = taskId;
-        return mainController->doSearchTask(taskId, url, keyword);
+        const bool ok = mainController->doSearchTask(taskId, url, keyword);
+
+        // T1: auto-apply the MatchMethod grouping for this search when a
+        // SemanticAdapter will actually be created (C2). Stateless per-search
+        // — re-applied on every search start. The user can still switch to any
+        // other grouping manually; leaving search view restores the target
+        // URL's persisted strategy via the existing per-URL persistence.
+        //
+        // doSearch() runs on the iterator's worker thread, but the workspace
+        // model (slot_Model_SetGroup's target) lives on the main thread.
+        // dpfSlotChannel->push is synchronous and does NOT hop threads, so a
+        // direct push here would mutate the model from the wrong thread and
+        // silently no-op. Dispatch to SearchManager's thread (main) instead.
+        if (ok && SearchHelper::shouldEnableSemanticSearch(keyword)) {
+            QMetaObject::invokeMethod(this, [winId]() {
+                dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetGroup",
+                                     winId, QString(MatchMethod::kStrategyName));
+            }, Qt::QueuedConnection);
+        }
+        return ok;
     }
 
     fmWarning() << "MainController not available, cannot start search task:" << taskId;

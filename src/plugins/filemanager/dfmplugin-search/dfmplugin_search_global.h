@@ -30,6 +30,16 @@ inline constexpr char kSortByPath[] { "sort-by-path" };
 inline constexpr char kGroupByPath[] { "group-by-path" };
 }
 
+// Match Method grouping dimension. Lives in the search plugin — the workspace
+// only holds the strategy via the dfm-base abstract pointer and never knows
+// these constants. Registered with supportedSchemes = ["search"] so the
+// dimension only appears in search-view menus and the title-bar group button.
+namespace MatchMethod {
+inline constexpr char kStrategyName[] { "MatchMethod" };
+inline constexpr char kGroupExact[] { "exact" };   // keyword hits: FileName/Content/OCR
+inline constexpr char kGroupSmart[] { "smart" };   // semantic hits
+}   // namespace MatchMethod
+
 namespace CustomKey {
 inline constexpr char kDisableSearch[] { "Property_Key_DisableSearch" };
 inline constexpr char kRedirectedPath[] { "Property_Key_RedirectedPath" };
