@@ -36,6 +36,8 @@ class Workspace : public dpf::Plugin
     DPF_EVENT_REG_SLOT(slot_FindMenuScene)
     DPF_EVENT_REG_SLOT(slot_RegisterCustomTopWidget)
     DPF_EVENT_REG_SLOT(slot_RegisterViewHint)
+    DPF_EVENT_REG_SLOT(slot_RegisterGroupStrategy)
+    DPF_EVENT_REG_SLOT(slot_RegisteredGroupStrategies)
     DPF_EVENT_REG_SLOT(slot_ShowCustomTopWidget)
     DPF_EVENT_REG_SLOT(slot_GetCustomTopWidgetVisible)
     DPF_EVENT_REG_SLOT(slot_CheckSchemeViewIsFileView)

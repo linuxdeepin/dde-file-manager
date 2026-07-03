@@ -8,6 +8,7 @@
 #include "views/fileview.h"
 #include "models/fileviewmodel.h"
 #include "utils/workspacehelper.h"
+#include "groups/groupingfactory.h"
 #include "events/workspaceeventcaller.h"
 
 #include <dfm-base/dfm_log_defines.h>
@@ -245,6 +246,13 @@ bool SortAndDisplayMenuScene::triggered(QAction *action)
                 d->groupByStrategy(GroupStrategy::kType);
                 return true;
             }
+
+            // registered external strategies — action id is the strategy name
+            if (GroupingFactory::isRegistered(actionId)) {
+                fmInfo() << "Grouping by registered strategy:" << actionId;
+                d->groupByStrategy(actionId);
+                return true;
+            }
         }
     }
 
@@ -353,6 +361,22 @@ QMenu *SortAndDisplayMenuScenePrivate::addGroupByActions(QMenu *menu)
     predicateAction[ActionID::kGroupByType] = tempAction;
     tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kGroupByType));
 
+    // Registered external strategies (e.g. search plugin's "Match Method").
+    // Filtered by the current view's scheme so a strategy only appears where it
+    // declared support. The strategy name doubles as the action id — triggered
+    // routes through the same groupByStrategy(name) path as built-ins.
+    const QString scheme = view ? view->rootUrl().scheme() : QString();
+    for (const auto &entry : GroupingFactory::registeredStrategies(scheme)) {
+        const QString &name = entry.first;
+        const QString &display = entry.second;
+        if (predicateAction.contains(name))
+            continue;   // avoid clobbering a built-in slot of the same name
+        tempAction = subMenu->addAction(display);
+        tempAction->setCheckable(true);
+        predicateAction[name] = tempAction;
+        tempAction->setProperty(ActionPropertyKey::kActionID, name);
+    }
+
     return subMenu;
 }
 
@@ -450,6 +474,10 @@ void SortAndDisplayMenuScenePrivate::updateEmptyAreaActionState()
     } else if (currentStrategy == GroupStrategy::kType) {
         predicateAction[ActionID::kGroupByType]->setChecked(true);
         fmDebug() << "Set group by type action as checked";
+    } else if (predicateAction.contains(currentStrategy)) {
+        // Registered external strategy — its action id is the strategy name.
+        predicateAction[currentStrategy]->setChecked(true);
+        fmDebug() << "Set registered group action as checked:" << currentStrategy;
     } else {
         fmDebug() << "Unknown grouping strategy:" << currentStrategy;
     }

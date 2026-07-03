@@ -39,7 +39,8 @@ void insertToList(QList<T> &list, int index, const T &t)
 }
 }   // namespace
 
-FileSortWorker::FileSortWorker(const QUrl &url, const QString &key, FileViewFilterCallback callfun,
+FileSortWorker::FileSortWorker(const QUrl &url, const QString &key,
+                               FileViewFilterCallback callfun,
                                const QStringList &nameFilters, const QDir::Filters filters, QObject *parent)
     : QObject(parent),
       current(url),

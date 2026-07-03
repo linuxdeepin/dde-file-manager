@@ -7,6 +7,7 @@
 
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/interfaces/fileinfo.h>
+#include <dfm-base/interfaces/sortfileinfo.h>
 
 #include <QObject>
 #include <QString>
@@ -38,6 +39,26 @@ public:
      * @return The group key string that identifies which group this file belongs to
      */
     virtual QString getGroupKey(const FileInfoPointer &info) const = 0;
+
+    /**
+     * @brief Get the group key for a file item, with its SortFileInfo available
+     *
+     * Some grouping dimensions depend on data that lives on the SortFileInfo
+     * (e.g. search match type) rather than the FileInfo. The SortFileInfo is
+     * only carried through the data pipeline for the search scheme, so this
+     * overload is invoked when it is available; otherwise the basic overload
+     * is used. The default just delegates to the basic overload — existing
+     * strategies need not override this.
+     *
+     * @param info The file info to classify (always non-null)
+     * @param sortInfo The sort info to classify (may be null when not carried)
+     * @return The group key string that identifies which group this file belongs to
+     */
+    virtual QString getGroupKey(const FileInfoPointer &info, const SortInfoPointer &sortInfo) const
+    {
+        Q_UNUSED(sortInfo)
+        return getGroupKey(info);
+    }
 
     /**
      * @brief Get the display name for a group key
