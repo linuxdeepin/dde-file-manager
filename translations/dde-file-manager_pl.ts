@@ -3622,7 +3622,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="406"/>
         <source>Load thumbnails for network, mobile, and optical disc directories</source>
-        <translation>Wczytuj miniaturki dla katalogów sieciowych, mobilnych i dysków optycznych</translation>
+        <translation>Wczytuj miniaturki katalogów sieciowych, mobilnych i dysków optycznych</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="407"/>
@@ -3677,7 +3677,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="384"/>
         <source>Restore default view mode for all directories</source>
-        <translation>Przywróć domyślny tryb widoku dla wszystkich katalogów</translation>
+        <translation>Przywróć domyślny tryb widoku wszystkich katalogów</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="385"/>
@@ -6706,7 +6706,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthocrindex.cpp" line="16"/>
         <source>Enable to search text in images</source>
-        <translation>Włącz, aby szukać tekstu w obrazach</translation>
+        <translation>Włącz, aby wyszukiwać tekst w obrazach</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthocrindex.cpp" line="17"/>
