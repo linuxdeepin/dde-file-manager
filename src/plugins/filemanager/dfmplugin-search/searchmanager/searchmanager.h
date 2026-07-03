@@ -11,6 +11,9 @@
 #include <QObject>
 #include <QMap>
 #include <QMultiMap>
+#include <QHash>
+#include <QPair>
+#include <QUrl>
 
 namespace dfmplugin_search {
 
@@ -25,13 +28,13 @@ public:
 
     void init();
     bool search(quint64 winId, const QString &taskId, const QUrl &url, const QString &keyword);
-    
+
     // 获取统一的搜索结果数据
     DFMSearchResultMap matchedResults(const QString &taskId);
-    
+
     // 为向后兼容保留的接口，只获取URL列表
     QList<QUrl> matchedResultUrls(const QString &taskId);
-    
+
     void stop(const QString &taskId);
     void stop(quint64 winId);
 

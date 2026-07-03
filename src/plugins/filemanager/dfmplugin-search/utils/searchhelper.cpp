@@ -10,6 +10,9 @@
 #include "checkboxwithsemanticindex.h"
 #include "topwidget/advancesearchbar.h"
 
+#include <dfm-search/dsearch_global.h>
+#include <dfm-search/semanticsearcher.h>
+
 #include <dfm-base/interfaces/fileinfo.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/urlroute.h>
@@ -110,6 +113,23 @@ QUrl SearchHelper::setSearchWinId(const QUrl &searchUrl, const QString &winId)
     url.setQuery(query);
 
     return url;
+}
+
+bool SearchHelper::shouldEnableSemanticSearch(const QString &keyword)
+{
+    // Shared predicate for both the search-start path and the runtime worker:
+    // only enable semantic search when index readiness, config, and query
+    // intent all match.
+    if (!DFMSEARCH::Global::isFileNameIndexReadyForSearch())
+        return false;
+
+    if (!DConfigManager::instance()->value(DConfig::kSearchCfgPath,
+                                           DConfig::kEnableSemanticSearch, false).toBool()) {
+        return false;
+    }
+
+    DFMSEARCH::SemanticSearcher checker;
+    return checker.isSemanticQuery(keyword);
 }
 
 QUrl SearchHelper::viewModelUrl(const QUrl &url)

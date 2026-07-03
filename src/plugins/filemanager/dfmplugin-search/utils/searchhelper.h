@@ -39,6 +39,12 @@ public:
     static QUrl setSearchWinId(const QUrl &searchUrl, const QString &winId);
     static QUrl viewModelUrl(const QUrl &url);
 
+    // Whether a SemanticAdapter would actually be created for this keyword
+    // (C2: index ready + dconfig on + keyword carries semantic intent). Shared
+    // by the search-start path and the runtime worker so grouping setup and
+    // adapter creation use the same predicate.
+    static bool shouldEnableSemanticSearch(const QString &keyword);
+
     static QUrl fromSearchFile(const QString &filePath);
     static QUrl fromSearchFile(const QUrl &targetUrl, const QString &keyword, const QString &winId);
     static bool showTopWidget(QWidget *w, const QUrl &url);

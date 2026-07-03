@@ -10,6 +10,9 @@
 #include <dfm-base/dfm_global_defines.h>
 
 #include <QObject>
+#include <QList>
+#include <QPair>
+#include <QString>
 
 namespace dfmplugin_titlebar {
 
@@ -40,6 +43,10 @@ public:
     static QString sendCurrentGroupRoleStrategy(QWidget *sender);
     static void sendSetGroupStrategy(QWidget *sender, const QString &strategy);
     static bool sendGetCurrentModelBusy(QWidget *sender);
+
+    // Registered external group strategies (e.g. search's "Match Method"),
+    // filtered by the current view's scheme. Each entry is {strategyName, displayName}.
+    static QList<QPair<QString, QString>> sendRegisteredGroupStrategies(QWidget *sender);
 };
 
 }

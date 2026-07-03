@@ -31,6 +31,7 @@ static constexpr int kSortToolLeftButtonSize { 16 };   // 左侧排序图标尺�
 static constexpr int kSortToolArrowCircleSize { 18 };   // 右侧箭头圆形背景尺寸
 static constexpr int kSortToolArrowButtonSize { 12 };   // 右侧箭头图标尺寸
 static constexpr char kItemRole[] = "item-role";
+static constexpr char kItemStrategy[] = "item-strategy";   // registered strategy name
 // 按钮总宽 = padding + iconSize + spacing + circleSize + padding
 static constexpr int kSortToolButtonWidth { kSortToolPadding + kSortToolLeftButtonSize
                                             + kSortToolSpacing + kSortToolArrowCircleSize
@@ -91,6 +92,15 @@ void SortByButtonPrivate::setItemGroupRoles()
     const QString groupStrategy = TitleBarEventCaller::sendCurrentGroupRoleStrategy(q);
     auto actList = groupMenu->actions();
     for (auto act : actList) {
+        // Registered external strategies carry their strategy name directly.
+        const QVariant stratProp = act->property(kItemStrategy);
+        if (stratProp.isValid() && stratProp.typeId() == QMetaType::QString) {
+            if (stratProp.toString() == groupStrategy) {
+                act->setChecked(true);
+                return;
+            }
+            continue;
+        }
         auto role = act->property(kItemRole).value<DFMGLOBAL_NAMESPACE::ItemRoles>();
         const auto &strategy = roleToGroupingStrategy(role);
         if (strategy == groupStrategy) {
@@ -125,6 +135,19 @@ void SortByButtonPrivate::setupMenu()
         act = groupMenu->addAction(name);
         act->setCheckable(true);
         act->setProperty(kItemRole, role);
+    }
+
+    // Append registered external strategies (e.g. search's "Match Method"),
+    // filtered by the current view's scheme. Their strategy name is carried as
+    // a dedicated property so groupMenuTriggered can route them through the
+    // same sendSetGroupStrategy path as built-ins.
+    const auto registered = TitleBarEventCaller::sendRegisteredGroupStrategies(q);
+    for (const auto &e : registered) {
+        const QString &strategyName = e.first;
+        const QString &display = e.second;
+        auto regAct = groupMenu->addAction(display);
+        regAct->setCheckable(true);
+        regAct->setProperty(kItemStrategy, strategyName);
     }
 
     // Add Group by submenu
@@ -164,6 +187,16 @@ void SortByButtonPrivate::groupMenuTriggered(QAction *action)
 {
     if (!action)
         return;
+
+    // Registered external strategies carry their strategy name directly.
+    const QVariant stratProp = action->property(kItemStrategy);
+    if (stratProp.isValid() && stratProp.typeId() == QMetaType::QString) {
+        const QString &strategy = stratProp.toString();
+        if (!strategy.isEmpty()) {
+            TitleBarEventCaller::sendSetGroupStrategy(q, strategy);
+            return;
+        }
+    }
 
     auto property = action->property(kItemRole);
     if (!property.isValid()) {

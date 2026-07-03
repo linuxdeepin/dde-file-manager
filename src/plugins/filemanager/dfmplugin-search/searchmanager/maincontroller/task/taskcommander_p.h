@@ -62,9 +62,8 @@ private:
     void cleanupSearchers();
     void mergeResults(AbstractSearcher *searcher);
 
-    // 职责拆分：解析启用的搜索类型 / 判定是否需要语义搜索 / 注册 searcher
+    // 职责拆分：解析启用的搜索类型 / 注册 searcher
     QList<DFMSEARCH::SearchType> resolveEnabledSearchTypes() const;
-    bool shouldEnableSemanticSearch() const;
     void appendSearcher(AbstractSearcher *searcher);
 
     QString taskId;

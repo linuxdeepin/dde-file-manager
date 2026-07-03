@@ -156,7 +156,7 @@ QString GroupingEngine::getGroupKeyForFiles(const QList<FileItemDataPointer> &fi
 
     if (!groupKeyItem.isNull()) {
         auto groupKeyInfo = getFileInfoFromFileItem(groupKeyItem);
-        groupKey = strategy->getGroupKey(groupKeyInfo);
+        groupKey = strategy->getGroupKey(groupKeyInfo, groupKeyItem->fileSortInfo());
     }
 
     return groupKey;
@@ -589,7 +589,9 @@ GroupingEngine::GroupingResult GroupingEngine::performGrouping(const QList<FileI
                 }
             }
 
-            QString groupKey = strategy->getGroupKey(fileInfo);
+            // Pass the SortFileInfo too when available — search-strategy dimensions
+            // (Match Method) read match metadata from it rather than from FileInfo.
+            QString groupKey = strategy->getGroupKey(fileInfo, file->fileSortInfo());
             if (groupKey.isEmpty()) {
                 fmWarning() << "GroupingEngine: Empty group key for file" << file->data(DFMBASE_NAMESPACE::Global::kItemUrlRole).toUrl();
                 continue;
