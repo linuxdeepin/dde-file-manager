@@ -197,6 +197,12 @@ QList<QSharedPointer<SortFileInfo>> SearchDirIterator::sortFileInfoList()
     QList<QSharedPointer<SortFileInfo>> files;
     // 预分配空间以提高性能
     files.reserve(results.size());
+
+    // Stamp each SortFileInfo with its searchType — the workspace's
+    // MatchMethod strategy reads this later (via GroupingEngine passing the
+    // SortInfoPointer into getGroupKey) to classify Exact vs Smart. No shared
+    // registry: the match method travels with the data, so there is nothing
+    // to race against or to outlive.
     for (auto it = results.begin(); it != results.end(); ++it) {
         auto sortInfo = QSharedPointer<SortFileInfo>(new SortFileInfo());
         sortInfo->setUrl(it.key());

@@ -4,6 +4,7 @@
 
 #include "titlebareventcaller.h"
 #include "utils/titlebarhelper.h"
+#include "views/titlebarwidget.h"
 
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/base/schemefactory.h>
@@ -182,4 +183,27 @@ bool TitleBarEventCaller::sendGetCurrentModelBusy(QWidget *sender)
         return false;
     }
     return dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_GetCurrentBusy", id).toBool();
+}
+
+QList<QPair<QString, QString>> TitleBarEventCaller::sendRegisteredGroupStrategies(QWidget *sender)
+{
+    // Resolve the current view's scheme so the workspace can filter registered
+    // strategies by supportedSchemes (e.g. search's MatchMethod only appears
+    // under the "search" scheme). Falls back to empty (no filter) on failure.
+    quint64 id = TitleBarHelper::windowId(sender);
+    QString scheme;
+    if (id > 0) {
+        if (auto *bar = TitleBarHelper::findTileBarByWindowId(id))
+            scheme = bar->currentUrl().scheme();
+    }
+
+    QList<QPair<QString, QString>> result;
+    const QVariantList entries = dpfSlotChannel->push("dfmplugin_workspace",
+                                                      "slot_RegisteredGroupStrategies",
+                                                      scheme).toList();
+    for (const QVariant &v : entries) {
+        const QVariantMap m = v.toMap();
+        result.append({ m.value("name").toString(), m.value("displayName").toString() });
+    }
+    return result;
 }

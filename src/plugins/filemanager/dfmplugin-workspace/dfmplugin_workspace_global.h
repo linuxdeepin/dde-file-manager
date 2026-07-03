@@ -27,6 +27,7 @@
 namespace dfmbase {
 class FileInfo;
 class SortFileInfo;
+class AbstractGroupStrategy;
 }
 
 DPWORKSPACE_BEGIN_NAMESPACE
@@ -113,6 +114,11 @@ inline constexpr char kViewHintIcon[] { "Property_Key_ViewHintIcon" };
 inline constexpr char kViewHintActions[] { "Property_Key_ViewHintActions" };
 inline constexpr char kViewHintShouldShow[] { "Property_Key_ViewHintShouldShow" };
 inline constexpr char kViewHintOnAction[] { "Property_Key_ViewHintOnAction" };
+// Registered group strategy payload keys (for slot_RegisterGroupStrategy)
+inline constexpr char kGroupStrategyName[] { "Property_Key_GroupStrategyName" };
+inline constexpr char kGroupStrategyDisplayName[] { "Property_Key_GroupStrategyDisplayName" };
+inline constexpr char kGroupStrategySchemes[] { "Property_Key_GroupStrategySchemes" };
+inline constexpr char kGroupStrategyFactory[] { "Property_Key_GroupStrategyFactory" };
 }
 
 using CreateTopWidgetCallback = std::function<QWidget *()>;
@@ -129,6 +135,14 @@ using ViewModeUrlCallback = std::function<QUrl(const QUrl)>;
 // the built-in close button which arrives with id "close".
 using ViewHintShouldShowCallback = std::function<bool(const QUrl &, QString *text)>;
 using ViewHintActionCallback = std::function<void(const QString &id)>;
+
+// Registered group strategy factory: produces an AbstractGroupStrategy* for the
+// given parent. Strategies that need per-window context carry their own state
+// (the data they need — e.g. each item's SortFileInfo — already travels with
+// the item, so the factory need not thread winId). Cross-plugin transport uses
+// Q_DECLARE_METATYPE + DPF_NAMESPACE::paramGenerator — same pattern as the
+// ViewHint callbacks above.
+using StrategyFactory = std::function<DFMBASE_NAMESPACE::AbstractGroupStrategy *(QObject *)>;
 
 // Specification for a per-scheme floating view hint. Registered via
 // slot_RegisterViewHint; consumed by WorkspacePage on url/scheme switch.
@@ -221,6 +235,7 @@ Q_DECLARE_METATYPE(DPWORKSPACE_NAMESPACE::FileViewRoutePrehaldler);
 Q_DECLARE_METATYPE(DPWORKSPACE_NAMESPACE::ViewModeUrlCallback);
 Q_DECLARE_METATYPE(DPWORKSPACE_NAMESPACE::ViewHintShouldShowCallback);
 Q_DECLARE_METATYPE(DPWORKSPACE_NAMESPACE::ViewHintActionCallback);
+Q_DECLARE_METATYPE(DPWORKSPACE_NAMESPACE::StrategyFactory);
 Q_DECLARE_METATYPE(QString *)
 Q_DECLARE_METATYPE(QVariant *)
 Q_DECLARE_METATYPE(QDir::Filters)

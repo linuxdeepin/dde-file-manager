@@ -14,8 +14,10 @@
 #include "topwidget/advancesearchbar.h"
 #include "menus/searchmenuscene.h"
 #include "searchmanager/searchmanager.h"
+#include "groups/matchmethodgroupstrategy.h"
 
 #include <dfm-base/utils/highlightprovider.h>
+#include <dfm-base/interfaces/abstractgroupstrategy.h>
 
 #include <dfm-search/contentretriever.h>
 
@@ -40,6 +42,10 @@ using ShowTopWidgetCallback = std::function<bool(QWidget *, const QUrl &)>;
 using ViewModeUrlCallback = std::function<QUrl(const QUrl)>;
 using ViewHintShouldShowCallback = std::function<bool(const QUrl &, QString *)>;
 using ViewHintActionCallback = std::function<void(const QString &)>;
+// Identical signature to the workspace's StrategyFactory typedef — registered
+// the same way so DPF_NAMESPACE::paramGenerator resolves to the same metatype
+// across plugin boundaries.
+using StrategyFactory = std::function<DFMBASE_NAMESPACE::AbstractGroupStrategy *(QObject *)>;
 Q_DECLARE_METATYPE(CreateTopWidgetCallback);
 Q_DECLARE_METATYPE(ShowTopWidgetCallback);
 Q_DECLARE_METATYPE(QList<QVariantMap> *);
@@ -48,6 +54,7 @@ Q_DECLARE_METATYPE(QVariant *)
 Q_DECLARE_METATYPE(ViewModeUrlCallback)
 Q_DECLARE_METATYPE(ViewHintShouldShowCallback);
 Q_DECLARE_METATYPE(ViewHintActionCallback);
+Q_DECLARE_METATYPE(StrategyFactory);
 
 DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
@@ -182,6 +189,23 @@ void Search::regSearchToWorkspace()
         { "Property_Key_ViewHintOnAction", QVariant::fromValue(onAction) }
     };
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterViewHint", hintMap);
+
+    // Register the "Match Method" group strategy with the workspace's
+    // registered-strategy extension point. The strategy object crosses the
+    // plugin boundary through the dfm-base AbstractGroupStrategy abstract
+    // pointer; only control signaling crosses via dpf. supportedSchemes =
+    // ["search"] so the dimension only appears in search-view menus and the
+    // title-bar group button.
+    StrategyFactory factory { [](QObject *parent) -> AbstractGroupStrategy * {
+        return new MatchMethodGroupStrategy(parent);
+    } };
+    QVariantMap groupMap {
+        { "Property_Key_GroupStrategyName", QString(MatchMethod::kStrategyName) },
+        { "Property_Key_GroupStrategyDisplayName", tr("Match Method") },
+        { "Property_Key_GroupStrategySchemes", QStringList { SearchHelper::scheme() } },
+        { "Property_Key_GroupStrategyFactory", QVariant::fromValue(factory) }
+    };
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterGroupStrategy", groupMap);
 }
 
 void Search::regSearchSettingConfig()
