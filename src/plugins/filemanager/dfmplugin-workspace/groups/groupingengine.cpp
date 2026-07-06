@@ -718,6 +718,20 @@ bool GroupingEngine::isGroupVisibleWithConversion(const QString &groupKey,
         }
     }
 
+    // Fallback: when FileInfo is not yet materialized (e.g. search results in
+    // kPreserve mode where grouping runs before the view lazily creates FileInfo
+    // via data(kItemCreateFileInfoRole)), the conversion above yields an empty
+    // list. Most custom strategies' isGroupVisible simply checks !infos.isEmpty(),
+    // so falling back to !groupFiles.isEmpty() preserves correct visibility and
+    // avoids an empty-view deadlock where 0 groups → 0 items → FileInfo never
+    // created → 0 groups on regroup. Once FileInfo is materialized, subsequent
+    // regrouping calls go through the full conversion path as intended.
+    if (groupFileInfos.isEmpty() && !groupFiles.isEmpty()) {
+        fmDebug() << "GroupingEngine: FileInfo not yet materialized for custom strategy"
+                  << strategyName << "- falling back to non-empty check";
+        return true;
+    }
+
     return strategy->isGroupVisible(groupKey, groupFileInfos);
 }
 
