@@ -141,6 +141,11 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
         return QModelIndex();
     }
 
+    // New URL => any deferred grouping was for the previous directory; drop it
+    // so a stale strategy can't be applied after the new traversal finishes.
+    hasPendingGrouping = false;
+    pendingGroupStrategy.clear();
+
     fmInfo() << "Setting root URL:" << url.toString() << "with strategy:" << static_cast<int>(dirLoadStrategy);
 
     QVariantMap data;
@@ -691,7 +696,17 @@ void FileViewModel::sort(int column, Qt::SortOrder order)
 void FileViewModel::grouping(const QString &strategyName, Qt::SortOrder order)
 {
     if (state == ModelState::kBusy) {
-        fmWarning() << "Cannot group while model is busy for URL:" << dirRootUrl.toString();
+        // Defer, don't drop: callers such as SearchManager::search push the
+        // grouping request via a queued slot invocation that routinely lands
+        // while traversal is still streaming results in. Stash the latest
+        // request and replay it from onWorkFinish() once the model goes idle.
+        // Last-write-wins: a newer call overrides any previously pending one.
+        hasPendingGrouping = true;
+        pendingGroupStrategy = strategyName;
+        pendingGroupOrder = order;
+        fmDebug() << "Model is busy, deferring grouping request:" << strategyName
+                  << "order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending")
+                  << "URL:" << dirRootUrl.toString();
         return;
     }
     fmInfo() << "Grouping by :" << strategyName << "order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending") << "URL:" << dirRootUrl.toString();
@@ -707,6 +722,12 @@ void FileViewModel::grouping(const QString &strategyName, Qt::SortOrder order)
 void FileViewModel::stopTraversWork(const QUrl &newUrl)
 {
     fmInfo() << "Stopping traversal work, current URL:" << dirRootUrl.toString() << "new URL:" << newUrl.toString();
+
+    // URL is changing — any deferred grouping request was for the old URL and
+    // must not be replayed against the new one. Clear before changing state so
+    // the kIdle transition below can't trigger a stray replay.
+    hasPendingGrouping = false;
+    pendingGroupStrategy.clear();
 
     changeState(ModelState::kIdle);
     closeCursorTimer();
@@ -1238,6 +1259,23 @@ void FileViewModel::onWorkFinish(int visiableCount, int totalCount)
 
     this->changeState(ModelState::kIdle);
     closeCursorTimer();
+
+    // Replay a grouping request that was deferred while the model was busy
+    // (e.g. a semantic-search MatchMethod grouping request that arrived mid
+    // traversal). Dispatch via a queued connection so the apply runs outside
+    // of the stateChanged() signal emission stack — re-entering grouping()
+    // synchronously here would make the signal chain hard to reason about.
+    if (hasPendingGrouping) {
+        const QString strategy = pendingGroupStrategy;
+        const Qt::SortOrder order = pendingGroupOrder;
+        hasPendingGrouping = false;
+        pendingGroupStrategy.clear();
+        QMetaObject::invokeMethod(this, [this, strategy, order]() {
+            fmInfo() << "Replaying deferred grouping after work finish:" << strategy
+                     << "URL:" << dirRootUrl.toString();
+            grouping(strategy, order);
+        }, Qt::QueuedConnection);
+    }
 
     // 如果是保留策略，在加载完成后清理旧的RootInfo对象
     if (dirLoadStrategy == DirectoryLoadStrategy::kPreserve) {
