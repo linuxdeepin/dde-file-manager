@@ -36,7 +36,7 @@
             "visibility":"private"
         },
         "enableSemanticSearch": {
-            "value":false,
+            "value":true,
             "serial":0,
             "flags":[],
             "name":"Enable Semantic Search",

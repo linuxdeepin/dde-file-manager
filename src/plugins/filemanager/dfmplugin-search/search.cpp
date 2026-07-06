@@ -276,7 +276,7 @@ void Search::regSearchSettingConfig()
             []() {
                 return DConfigManager::instance()->value(DConfig::kSearchCfgPath,
                                                          DConfig::kEnableOcrTextSearch,
-                                                         true);
+                                                         false);
             },
             [](const QVariant &val) {
                 DConfigManager::instance()->setValue(DConfig::kSearchCfgPath,
@@ -291,14 +291,14 @@ void Search::regSearchSettingConfig()
                                                 { { "key", semanticIndexKey.mid(semanticIndexKey.lastIndexOf(".") + 1) },
                                                   { "text", tr("Smart search") },
                                                   { "type", "checkBoxWithSemanticIndex" },
-                                                  { "default", false } });
+                                                  { "default", true } });
 
     SettingBackend::instance()->addSettingAccessor(
             SearchSettings::kSemanticSearch,
             []() {
                 return DConfigManager::instance()->value(DConfig::kSearchCfgPath,
                                                          DConfig::kEnableSemanticSearch,
-                                                         false);
+                                                         true);
             },
             [](const QVariant &val) {
                 DConfigManager::instance()->setValue(DConfig::kSearchCfgPath,
