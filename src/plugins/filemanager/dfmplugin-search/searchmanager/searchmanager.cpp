@@ -50,10 +50,20 @@ bool SearchManager::search(quint64 winId, const QString &taskId, const QUrl &url
         // dpfSlotChannel->push is synchronous and does NOT hop threads, so a
         // direct push here would mutate the model from the wrong thread and
         // silently no-op. Dispatch to SearchManager's thread (main) instead.
+        //
+        // Guard: only push when the current strategy differs. Pushing the same
+        // strategy again triggers setGroupingStrategy's toggle behavior
+        // (Ascending↔Descending) — that's a UI affordance for menu clicks, not
+        // desired here. Re-pushing on every keyword change would otherwise
+        // flip the group order (Exact/Smart) on the second search.
         if (ok && SearchHelper::shouldEnableSemanticSearch(keyword)) {
             QMetaObject::invokeMethod(this, [winId]() {
-                dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetGroup",
-                                     winId, QString(MatchMethod::kStrategyName));
+                const QString current = dpfSlotChannel->push(
+                    "dfmplugin_workspace", "slot_Model_CurrentGroupStrategy", winId).toString();
+                if (current != MatchMethod::kStrategyName) {
+                    dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetGroup",
+                                         winId, QString(MatchMethod::kStrategyName));
+                }
             }, Qt::QueuedConnection);
         }
         return ok;
