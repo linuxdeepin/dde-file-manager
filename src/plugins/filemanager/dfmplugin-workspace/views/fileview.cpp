@@ -914,8 +914,12 @@ void FileView::setSort(const ItemRoles role, const Qt::SortOrder order)
 
 void FileView::setGroup(const QString &strategyName, const Qt::SortOrder order)
 {
-    if (model()->currentState() == ModelState::kBusy)
-        return;
+    // NOTE: do NOT short-circuit on ModelState::kBusy here. When a grouping
+    // request arrives mid-traversal (e.g. SearchManager::search pushes a
+    // queued slot_Model_SetGroup that lands while search results are still
+    // streaming in), the model's grouping() will stash it as a pending
+    // request and replay it from onWorkFinish() once traversal completes.
+    // Dropping the request here would silently defeat that deferral.
     if (strategyName == model()->groupingStrategy() && order == model()->groupingOrder())
         return;
 

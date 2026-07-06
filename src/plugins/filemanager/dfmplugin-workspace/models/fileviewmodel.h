@@ -206,6 +206,15 @@ private:
 
     DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy dirLoadStrategy { DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy::kCreateNew };
     QUrl preparedUrl;
+
+    // Deferred grouping: when grouping() is called while the model is kBusy
+    // (e.g. during search result streaming), the request is stashed here and
+    // replayed once traversal finishes in onWorkFinish(). A URL change clears
+    // it so a stale strategy never leaks across directories. Last-write-wins
+    // semantics: a newer grouping() call overrides any pending one.
+    bool hasPendingGrouping { false };
+    QString pendingGroupStrategy;
+    Qt::SortOrder pendingGroupOrder { Qt::AscendingOrder };
 };
 
 }
