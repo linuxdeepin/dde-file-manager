@@ -215,6 +215,11 @@ private:
     void initializeGroupHeaderTimer();
     void updateDelegateHighlightKeywords(const QStringList &keywords);
 
+    void resetDragState();
+    void updateDragHighlight(const QModelIndex &index);
+    void updateDragAutoScroll(QPoint pos);
+    bool processDragAutoScroll();
+
     void delayUpdateStatusBar();
     void updateStatusBar();
     void updateLoadingIndicator();
