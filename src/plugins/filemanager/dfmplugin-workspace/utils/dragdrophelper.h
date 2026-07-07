@@ -12,6 +12,7 @@
 
 #include <QObject>
 #include <QSharedPointer>
+#include <QBasicTimer>
 #include <QDragEnterEvent>
 #include <QDragMoveEvent>
 #include <QDropEvent>
@@ -37,6 +38,17 @@ public:
 
     bool isDragTarget(const QModelIndex &index) const;
 
+    // Drag auto-scroll & highlight state (migrated from FileView).
+    // State is owned by this helper, matching the existing self-contained
+    // pattern (currentDragUrls etc.).
+    void resetDragState();
+    void updateDragHighlight(const QModelIndex &index);
+    void updateDragAutoScroll(const QPoint &pos);
+    bool processDragAutoScroll();
+
+protected:
+    void timerEvent(QTimerEvent *event) override;
+
 private:
     bool handleDFileDrag(const QMimeData *data, const QUrl &url);
     void handleDropEvent(QDropEvent *event, bool *fall = nullptr);
@@ -55,6 +67,12 @@ private:
     QUrl currentHoverIndexUrl;
     bool dragFileFromCurrent { false };
     DFMBASE_NAMESPACE::DFMMimeData dfmmimeData;
+
+    // Auto-scroll/highlight state (owned by this helper).
+    QModelIndex dragUpdate;
+    QBasicTimer dragAutoScrollTimer;
+    QPoint dragCursorPos;
+    int dragAutoScrollCount { 0 };
 };
 
 }   // namespace dfmplugin_workspace

@@ -26,6 +26,8 @@ class FileViewItem;
 class FileViewModel;
 class FileViewPrivate;
 class BaseItemDelegate;
+class ViewGeometryHelper;
+class StickyGroupHeaderHelper;
 class FileView final : public DListView, public DFMBASE_NAMESPACE::AbstractBaseView
 {
     Q_OBJECT
@@ -37,6 +39,8 @@ class FileView final : public DListView, public DFMBASE_NAMESPACE::AbstractBaseV
     friend class FileViewPrivate;
     friend class FileViewHelper;
     friend class ViewAnimationHelper;
+    friend class ViewGeometryHelper;
+    friend class StickyGroupHeaderHelper;
     friend class IconItemDelegate;
 
     QSharedPointer<FileViewPrivate> d;
@@ -107,6 +111,10 @@ public:
         return index.row() / itemCountForRow();
     }
 
+    // Whether tree-view item expansion is enabled (DConfig + scheme support).
+    // Exposed for helpers (e.g. SelectHelper) that need this state.
+    bool isItemsExpandable() const;
+
     QModelIndex currentPressIndex() const;
 
     bool isDragTarget(const QModelIndex &index) const;
@@ -170,7 +178,6 @@ protected:
     void dragMoveEvent(QDragMoveEvent *event) override;
     void dragLeaveEvent(QDragLeaveEvent *event) override;
     void dropEvent(QDropEvent *event) override;
-    void timerEvent(QTimerEvent *event) override;
     void updateGeometries() override;
     void startDrag(Qt::DropActions supportedActions) override;
     QModelIndexList selectedIndexes() const override;
@@ -216,11 +223,6 @@ private:
     void initializePreSelectTimer();
     void initializeGroupHeaderTimer();
     void updateDelegateHighlightKeywords(const QStringList &keywords);
-
-    void resetDragState();
-    void updateDragHighlight(const QModelIndex &index);
-    void updateDragAutoScroll(QPoint pos);
-    bool processDragAutoScroll();
 
     void delayUpdateStatusBar();
     void updateStatusBar();
