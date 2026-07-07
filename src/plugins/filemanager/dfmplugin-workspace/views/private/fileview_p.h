@@ -89,6 +89,11 @@ class FileViewPrivate
     bool initHorizontalOffset { false };
     int columnCountByCalc { 0 };
 
+    QModelIndex currentStickyIndex;
+    QRect currentStickyRect;
+    bool stickyHeaderHovered { false };
+    QModelIndex cachedNextStickyHeader;
+
     bool itemsExpandable { false };
     std::atomic_bool isShowSmbMountError { false };
     QString previousGroupStrategy { GroupStrategy::kNoGroup };

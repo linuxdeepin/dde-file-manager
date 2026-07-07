@@ -164,6 +164,8 @@ protected:
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
+    void mouseDoubleClickEvent(QMouseEvent *event) override;
+    void leaveEvent(QEvent *event) override;
     void dragEnterEvent(QDragEnterEvent *event) override;
     void dragMoveEvent(QDragMoveEvent *event) override;
     void dragLeaveEvent(QDragLeaveEvent *event) override;
@@ -264,6 +266,15 @@ private:
     bool isGroupHeader(const QModelIndex &index) const;
     bool isClickInGroupHeaderSpacing(const QPoint &pos, const QModelIndex &index) const;
     QModelIndex indexAtForSelection(const QPoint &pos) const;
+
+    QModelIndex findStickyGroupIndex(int headerHeight) const;
+    int computeStickyY(int headerHeight) const;
+    int stickyHeaderHeight() const;
+    void paintStickyHeaderOverlay(const QModelIndex &index, int y, int headerHeight);
+    bool isPosInStickyHeader(const QPoint &pos) const;
+    void clearStickyHeaderState();
+    void scrollStickyHeaderToTop(const QModelIndex &headerIndex);
+    int groupHeaderContentTop(const QModelIndex &index) const;
 };
 
 }
