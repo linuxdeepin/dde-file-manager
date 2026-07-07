@@ -1279,6 +1279,10 @@ void FileViewModel::onWorkFinish(int visiableCount, int totalCount)
 
     // 如果是保留策略，在加载完成后清理旧的RootInfo对象
     if (dirLoadStrategy == DirectoryLoadStrategy::kPreserve) {
+        if (visiableCount == 0) {
+            beginResetModel();
+            endResetModel();
+        }
         fmDebug() << "Cleaning unused roots after preserve strategy completion for URL:" << dirRootUrl.toString();
         // 获取当前URL所有子目录的RootInfo
         FileDataManager::instance()->cleanUnusedRoots(dirRootUrl, currentKey);
