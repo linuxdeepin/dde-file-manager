@@ -168,6 +168,7 @@ protected:
     void dragMoveEvent(QDragMoveEvent *event) override;
     void dragLeaveEvent(QDragLeaveEvent *event) override;
     void dropEvent(QDropEvent *event) override;
+    void timerEvent(QTimerEvent *event) override;
     void updateGeometries() override;
     void startDrag(Qt::DropActions supportedActions) override;
     QModelIndexList selectedIndexes() const override;
