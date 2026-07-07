@@ -136,6 +136,8 @@ public:
     virtual bool isGroupHeaderItem(const QModelIndex &index) const;
     virtual QSize getGroupHeaderSizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
     virtual void paintGroupHeader(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    virtual void paintStickyGroupHeader(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    virtual int getGroupHeaderHeight(const QStyleOptionViewItem &option) const = 0;
 
     QRect getExpandButtonRect(const QStyleOptionViewItem &option) const;
     QRect getExpandButtonRect(const QRectF &rect) const;
@@ -145,14 +147,12 @@ protected:
 
     virtual void initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const override;
 
-    // Pure virtual method for group header height - must be implemented by subclasses
-    virtual int getGroupHeaderHeight(const QStyleOptionViewItem &option) const = 0;
-
     // Virtual method for group header background rect - can be overridden by subclasses
     virtual QRectF getGroupHeaderBackgroundRect(const QStyleOptionViewItem &option) const;
 
     // Group rendering helper methods
     void paintGroupBackground(QPainter *painter, const QStyleOptionViewItem &option) const;
+    void paintGroupHeaderContent(QPainter *painter, const QRectF &drawRect, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     void paintExpandButton(QPainter *painter, const QRect &buttonRect, bool isExpanded) const;
     void paintGroupText(QPainter *painter, const QRect &textRect, const QString &text, int count, const QStyleOptionViewItem &option) const;
 

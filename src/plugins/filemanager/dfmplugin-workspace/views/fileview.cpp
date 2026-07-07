@@ -940,6 +940,7 @@ void FileView::setGroup(const QString &strategyName, const Qt::SortOrder order)
 
     // 在分组开始前保存当前的分组策略
     d->previousGroupStrategy = model()->groupingStrategy();
+    clearStickyHeaderState();
 
     model()->grouping(strategyName, order);
 
@@ -1546,7 +1547,7 @@ bool FileView::groupExpandOrCollapseItem(const QModelIndex &index, const QPoint 
         return true;
     }
     QStyleOptionViewItem op;
-    QRect rect = visualRect(index);   // 绘制区域
+    QRect rect = (index == d->currentStickyIndex) ? d->currentStickyRect : visualRect(index);
     op.rect = rect;
     QRect arrowRect = itemDelegate()->getExpandButtonRect(op);
 
@@ -1714,6 +1715,22 @@ void FileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFla
 
 void FileView::mousePressEvent(QMouseEvent *event)
 {
+    if (isPosInStickyHeader(event->pos())) {
+        QModelIndex stickyIdx = d->currentStickyIndex;
+        if (event->button() == Qt::LeftButton) {
+            d->lastClickedIndex = stickyIdx;
+            if (groupExpandOrCollapseItem(stickyIdx, event->pos())) {
+                if (stickyIdx.data(Global::kItemGroupExpandedRole).toBool())
+                    scrollStickyHeaderToTop(stickyIdx);
+                return;
+            }
+            d->groupHeaderTimer->start();
+        } else if (event->button() == Qt::RightButton) {
+            onGroupHeaderClicked(stickyIdx);
+        }
+        return;
+    }
+
     if (event->buttons().testFlag(Qt::LeftButton)) {
         d->mouseLeftPressed = true;
         d->mouseLastPos = event->globalPos();
@@ -1809,6 +1826,10 @@ void FileView::mousePressEvent(QMouseEvent *event)
 
 void FileView::mouseMoveEvent(QMouseEvent *event)
 {
+    if (isPosInStickyHeader(event->pos())) {
+        return;
+    }
+
     if (d->pressedStartWithExpand)
         return;
 
@@ -1964,6 +1985,9 @@ bool FileView::processDragAutoScroll()
 
 QModelIndex FileView::indexAt(const QPoint &pos) const
 {
+    if (d->currentStickyIndex.isValid() && d->currentStickyRect.contains(pos))
+        return QModelIndex();
+
     // For icon mode, use custom calculation
     if (isIconViewMode()) {
         QSize itemSize = itemSizeHint();
@@ -2393,6 +2417,35 @@ bool FileView::eventFilter(QObject *obj, QEvent *event)
             d->headerView->doFileNameColumnResize(width());
         }
         break;
+    case QEvent::HoverMove: {
+        if (d->currentStickyIndex.isValid() && !d->currentStickyRect.isNull()) {
+            auto *he = static_cast<QHoverEvent *>(event);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+            QPoint hoverPos = he->pos();
+#else
+            QPoint hoverPos = he->position().toPoint();
+#endif
+            // currentStickyRect is in viewport coordinates; map hover pos
+            // from the event's target widget to the viewport if needed.
+            if (QWidget *w = qobject_cast<QWidget *>(obj)) {
+                if (w != viewport())
+                    hoverPos = viewport()->mapFromGlobal(w->mapToGlobal(hoverPos));
+            }
+            bool nowHovered = d->currentStickyRect.contains(hoverPos);
+            if (nowHovered != d->stickyHeaderHovered) {
+                d->stickyHeaderHovered = nowHovered;
+                viewport()->update(d->currentStickyRect);
+            }
+        }
+        break;
+    }
+    case QEvent::HoverLeave: {
+        if (d->stickyHeaderHovered && d->currentStickyIndex.isValid()) {
+            d->stickyHeaderHovered = false;
+            viewport()->update(d->currentStickyRect);
+        }
+        break;
+    }
     // blumia: 这里通过给横向滚动条加事件过滤器并监听其显示隐藏时间来判断是否应当进入吸附状态。
     //         不过其实可以通过 Resize 事件的 size 和 oldSize 判断是否由于窗口调整大小而进入了吸附状态。
     //         鉴于已经实现完了，如果当前的实现方式实际发现了较多问题，则应当调整为使用 Resize 事件来标记吸附状态的策略。
@@ -2450,6 +2503,19 @@ void FileView::paintEvent(QPaintEvent *event)
         QPen pen(color, kSelectBoxLineWidth);
         painter.setPen(pen);
         painter.drawRect(QRectF(kSelectBoxLineWidth / 2, kSelectBoxLineWidth / 2, viewport()->size().width() - kSelectBoxLineWidth, viewport()->size().height() - kSelectBoxLineWidth));
+    }
+
+    if (isGroupedView() && model()->groupingState() == GroupingState::kIdle) {
+        const int headerHeight = stickyHeaderHeight();
+        QModelIndex stickyIdx = findStickyGroupIndex(headerHeight);
+        if (stickyIdx.isValid()) {
+            int stickyY = computeStickyY(headerHeight);
+            paintStickyHeaderOverlay(stickyIdx, stickyY, headerHeight);
+        } else if (d->currentStickyIndex.isValid()) {
+            clearStickyHeaderState();
+        }
+    } else if (d->currentStickyIndex.isValid()) {
+        clearStickyHeaderState();
     }
 }
 
@@ -2657,6 +2723,10 @@ void FileView::initializeScrollBarWatcher()
                     d->headerView->syncOffset(hVal);
                 });
             }
+        }
+
+        if (isGroupedView()) {
+            viewport()->update();
         }
     });
 }
@@ -2916,6 +2986,7 @@ void FileView::onModelStateChanged()
 {
     fmDebug() << "Model state changed to:" << static_cast<int>(model()->currentState()) << "for URL:" << rootUrl().toString();
 
+    clearStickyHeaderState();
     updateContentLabel();
     updateLoadingIndicator();
     updateSelectedUrl();
@@ -3024,6 +3095,14 @@ bool FileView::isGroupHeader(const QModelIndex &index) const
     return !index.data(kItemGroupHeaderKey).toString().isEmpty();
 }
 
+int FileView::groupHeaderContentTop(const QModelIndex &index) const
+{
+    int top = visualRect(index).top();
+    if (index.data(Global::kItemGroupDisplayIndex).toInt() > 0)
+        top += kGroupHeaderInterval;
+    return top;
+}
+
 bool FileView::isClickInGroupHeaderSpacing(const QPoint &pos, const QModelIndex &index) const
 {
     if (!index.isValid() || !isGroupHeader(index))
@@ -3079,6 +3158,7 @@ void FileView::onGroupExpansionToggled(const QString &groupKey)
     }
 
     // Forward to model for handling
+    clearStickyHeaderState();
     if (model()) {
         model()->toggleGroupExpansion(groupKey);
     }
@@ -3097,4 +3177,179 @@ void FileView::onGroupHeaderClicked(const QModelIndex &index)
     if (d->selectHelper) {
         d->selectHelper->handleGroupHeaderClick(index, QApplication::keyboardModifiers());
     }
+}
+
+int FileView::stickyHeaderHeight() const
+{
+    if (!itemDelegate())
+        return 0;
+
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    QStyleOptionViewItem opt = viewOptions();
+#else
+    QStyleOptionViewItem opt;
+    initViewItemOption(&opt);
+#endif
+    return itemDelegate()->getGroupHeaderHeight(opt);
+}
+
+QModelIndex FileView::findStickyGroupIndex(int headerHeight) const
+{
+    if (!isGroupedView() || !model())
+        return QModelIndex();
+
+    const int rowCount = model()->rowCount(rootIndex());
+    if (rowCount == 0 || model()->groupingState() != GroupingState::kIdle)
+        return QModelIndex();
+
+    if (d->currentStickyIndex.isValid() && isGroupHeader(d->currentStickyIndex)
+        && groupHeaderContentTop(d->currentStickyIndex) < 0) {
+        if (!d->cachedNextStickyHeader.isValid())
+            return d->currentStickyIndex;
+        if (isGroupHeader(d->cachedNextStickyHeader)
+            && groupHeaderContentTop(d->cachedNextStickyHeader) >= 0)
+            return d->currentStickyIndex;
+    }
+
+    QModelIndex firstVisible;
+    if (isIconViewMode()) {
+        firstVisible = iconIndexAt(QPoint(0, 1), itemSizeHint());
+    } else {
+        firstVisible = DListView::indexAt(QPoint(0, 1));
+    }
+
+    if (!firstVisible.isValid()) {
+        for (int i = 0; i < rowCount; ++i) {
+            QModelIndex idx = model()->index(i, 0, rootIndex());
+            QRect rect = visualRect(idx);
+            if (rect.bottom() >= 0) {
+                firstVisible = idx;
+                break;
+            }
+            if (rect.top() > 0)
+                break;
+        }
+    }
+
+    if (!firstVisible.isValid())
+        return QModelIndex();
+
+    QModelIndex sticky;
+    for (int i = firstVisible.row(); i >= 0; --i) {
+        QModelIndex idx = model()->index(i, 0, rootIndex());
+        if (isGroupHeader(idx)) {
+            int contentTop = groupHeaderContentTop(idx);
+            if (contentTop >= headerHeight)
+                return QModelIndex();
+            if (contentTop >= 0) {
+                for (int j = idx.row() - 1; j >= 0; --j) {
+                    QModelIndex prevIdx = model()->index(j, 0, rootIndex());
+                    if (isGroupHeader(prevIdx)) {
+                        sticky = prevIdx;
+                        break;
+                    }
+                }
+            } else {
+                sticky = idx;
+            }
+            break;
+        }
+    }
+
+    // Cache the next group header so computeStickyY is O(1).
+    d->cachedNextStickyHeader = QModelIndex();
+    if (sticky.isValid()) {
+        for (int i = sticky.row() + 1; i < rowCount; ++i) {
+            QModelIndex idx = model()->index(i, 0, rootIndex());
+            if (isGroupHeader(idx)) {
+                d->cachedNextStickyHeader = idx;
+                break;
+            }
+        }
+    }
+    return sticky;
+}
+
+int FileView::computeStickyY(int headerHeight) const
+{
+    if (!d->cachedNextStickyHeader.isValid())
+        return 0;
+
+    int nextTop = visualRect(d->cachedNextStickyHeader).top();
+    return qMax(-headerHeight, qMin(0, nextTop - headerHeight));
+}
+
+void FileView::paintStickyHeaderOverlay(const QModelIndex &index, int y, int headerHeight)
+{
+    if (!index.isValid() || !itemDelegate())
+        return;
+
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    QStyleOptionViewItem opt = viewOptions();
+#else
+    QStyleOptionViewItem opt;
+    initViewItemOption(&opt);
+#endif
+    opt.widget = viewport();
+    opt.rect = QRect(0, y, viewport()->width(), headerHeight);
+    opt.index = index;
+
+    if (d->stickyHeaderHovered)
+        opt.state |= QStyle::State_MouseOver;
+    else
+        opt.state &= ~QStyle::State_MouseOver;
+
+    QPainter painter(viewport());
+    itemDelegate()->paintStickyGroupHeader(&painter, opt, index);
+
+    d->currentStickyIndex = index;
+    d->currentStickyRect = opt.rect;
+}
+
+bool FileView::isPosInStickyHeader(const QPoint &pos) const
+{
+    return d->currentStickyIndex.isValid() && d->currentStickyRect.contains(pos);
+}
+
+void FileView::clearStickyHeaderState()
+{
+    d->currentStickyIndex = QModelIndex();
+    d->currentStickyRect = QRect();
+    d->stickyHeaderHovered = false;
+    d->cachedNextStickyHeader = QModelIndex();
+}
+
+void FileView::scrollStickyHeaderToTop(const QModelIndex &headerIndex)
+{
+    const int row = headerIndex.row();
+    QTimer::singleShot(0, this, [this, row] {
+        QModelIndex idx = model()->index(row, 0, rootIndex());
+        if (idx.isValid())
+            scrollTo(idx, QAbstractItemView::PositionAtTop);
+    });
+}
+
+void FileView::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    if (isPosInStickyHeader(event->pos())) {
+        if (event->button() == Qt::LeftButton) {
+            d->groupHeaderTimer->stop();
+            QModelIndex stickyIdx = d->currentStickyIndex;
+            bool wasExpanded = stickyIdx.data(Global::kItemGroupExpandedRole).toBool();
+            groupExpandOrCollapseItem(stickyIdx, QPoint(), false);
+            if (wasExpanded)
+                scrollStickyHeaderToTop(stickyIdx);
+        }
+        return;
+    }
+    DListView::mouseDoubleClickEvent(event);
+}
+
+void FileView::leaveEvent(QEvent *event)
+{
+    if (d->stickyHeaderHovered && d->currentStickyIndex.isValid()) {
+        d->stickyHeaderHovered = false;
+        viewport()->update(d->currentStickyRect);
+    }
+    DListView::leaveEvent(event);
 }

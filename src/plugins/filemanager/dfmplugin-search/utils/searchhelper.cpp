@@ -124,7 +124,8 @@ bool SearchHelper::shouldEnableSemanticSearch(const QString &keyword)
         return false;
 
     if (!DConfigManager::instance()->value(DConfig::kSearchCfgPath,
-                                           DConfig::kEnableSemanticSearch, false).toBool()) {
+                                           DConfig::kEnableSemanticSearch, false)
+                 .toBool()) {
         return false;
     }
 
@@ -488,6 +489,10 @@ bool SearchHelper::shouldShowAuthHint(const QUrl &url, QString *text)
     if (DConfigManager::instance()->value(cfg, DConfig::kSearchAuthHintDone, false).toBool())
         return false;
 
+    bool needHint = !DConfigManager::instance()->value(cfg, DConfig::kEnableFileIndexSearch, false).toBool();
+    if (!needHint)
+        return false;
+
     // 收集尚未开启的搜索模式，仅在提示中展示用户实际需要开启的功能项。
     QStringList modes = disabledSearchModes();
     if (modes.isEmpty())
@@ -563,7 +568,8 @@ QStringList SearchHelper::disabledSearchModes()
         modes << tr("\"Full-Text search\"");
     if (!DConfigManager::instance()->value(cfg, DConfig::kEnableOcrTextSearch, false).toBool())
         modes << tr("\"Image-Content search\"");
-    if (!DConfigManager::instance()->value(cfg, DConfig::kEnableSemanticSearch, false).toBool())
+    if (!DConfigManager::instance()->value(cfg, DConfig::kEnableSemanticSearch, false).toBool()
+        || !DConfigManager::instance()->value(cfg, DConfig::kEnableFileIndexSearch, false).toBool())
         modes << tr("\"Smart search\"");
     return modes;
 }

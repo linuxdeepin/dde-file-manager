@@ -369,24 +369,53 @@ void BaseItemDelegate::paintGroupHeader(QPainter *painter, const QStyleOptionVie
 
     painter->restore();
 
-    // Get group information
+    paintGroupHeaderContent(painter, drawRect, option, index);
+}
+
+void BaseItemDelegate::paintStickyGroupHeader(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    if (!painter || !index.isValid()) {
+        return;
+    }
+
+    QRectF drawRect = option.rect;
+
+    if (option.widget) {
+        painter->save();
+
+        DPalette pl(DPaletteHelper::instance()->palette(option.widget));
+        painter->setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing | QPainter::SmoothPixmapTransform);
+
+        QColor baseColor = pl.color(QPalette::Active, QPalette::Window);
+        painter->fillRect(drawRect, baseColor);
+
+        if (option.state & QStyle::State_MouseOver) {
+            QRectF bgRect = getGroupHeaderBackgroundRect(option);
+            QColor itemColor = pl.color(DPalette::ColorGroup::Active, DPalette::ColorType::ItemBackground);
+            QColor adjustColor = DGuiApplicationHelper::adjustColor(itemColor, 0, 0, 0, 0, 0, 0, +10);
+
+            QPainterPath path;
+            path.addRoundedRect(bgRect, kListModeRectRadius, kListModeRectRadius);
+            painter->fillPath(path, adjustColor);
+        }
+
+        painter->restore();
+    }
+
+    paintGroupHeaderContent(painter, drawRect, option, index);
+}
+
+void BaseItemDelegate::paintGroupHeaderContent(QPainter *painter, const QRectF &drawRect, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
     QString groupText = index.data(Qt::DisplayRole).toString();
     int fileCount = index.data(Global::kItemGroupFileCount).toInt();
-    if (groupText.isEmpty()) {
+    if (groupText.isEmpty())
         groupText = "Group";
-    }
 
     bool isExpanded = index.data(Global::ItemRoles::kItemGroupExpandedRole).toBool();
 
-    // Use centralized layout methods for consistent positioning
-    QRect expandButtonRect = getExpandButtonRect(drawRect);
-    QRect textRect = getGroupTextRect(drawRect);
-
-    // Paint expand button
-    paintExpandButton(painter, expandButtonRect, isExpanded);
-
-    // Paint group text
-    paintGroupText(painter, textRect, groupText, fileCount, option);
+    paintExpandButton(painter, getExpandButtonRect(drawRect), isExpanded);
+    paintGroupText(painter, getGroupTextRect(drawRect), groupText, fileCount, option);
 }
 
 QRectF BaseItemDelegate::getGroupHeaderBackgroundRect(const QStyleOptionViewItem &option) const
