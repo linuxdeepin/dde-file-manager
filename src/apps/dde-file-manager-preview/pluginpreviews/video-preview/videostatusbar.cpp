@@ -15,7 +15,6 @@ VideoStatusBar::VideoStatusBar(VideoPreview *preview)
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     DIconButton *control_button = new DIconButton(this);
-    control_button->setFlat(true);
     control_button->setIconSize({ 24, 24 });
 
     control_button->setIcon(QIcon::fromTheme("dfm_pause"));
