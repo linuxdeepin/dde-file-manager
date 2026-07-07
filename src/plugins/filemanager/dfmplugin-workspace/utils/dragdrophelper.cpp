@@ -19,6 +19,7 @@
 
 #include <DFileDragClient>
 #include <QMimeData>
+#include <QScrollBar>
 
 Q_DECLARE_METATYPE(Qt::DropAction *)
 Q_DECLARE_METATYPE(QList<QUrl> *)
@@ -510,4 +511,93 @@ bool DragDropHelper::checkMoveEnable(const QUrl &dragUrl, const QUrl &toUrl) con
         return info->canAttributes(CanableInfoType::kCanMoveOrCopy) || (FileUtils::isTrashFile(toUrl) || FileUtils::isTrashDesktopFile(toUrl));
     }
     return !info->exists() || info->canAttributes(CanableInfoType::kCanRename);
+}
+
+// --- Drag auto-scroll & highlight (migrated from FileView) ---
+// Behavior preserved verbatim. Only the timer routing changed: the
+// QBasicTimer is now owned by this helper and dispatched via its own
+// timerEvent, instead of FileView's timerEvent.
+
+void DragDropHelper::resetDragState()
+{
+    dragUpdate = QModelIndex();
+    dragAutoScrollTimer.stop();
+    dragAutoScrollCount = 0;
+}
+
+void DragDropHelper::updateDragHighlight(const QModelIndex &index)
+{
+    const auto last = dragUpdate;
+    if (last.isValid() && last != index)
+        view->update(last);
+    if (index.isValid() && last != index)
+        view->update(index);
+    dragUpdate = index;
+}
+
+void DragDropHelper::updateDragAutoScroll(const QPoint &pos)
+{
+    dragCursorPos = pos;
+
+    const QRect area = view->viewport()->rect();
+    const int margin = view->autoScrollMargin();
+    const bool nearEdge = (pos.y() - area.top() < margin)
+                          || (area.bottom() - pos.y() < margin)
+                          || (pos.x() - area.left() < margin)
+                          || (area.right() - pos.x() < margin);
+
+    if (nearEdge) {
+        if (!dragAutoScrollTimer.isActive())
+            dragAutoScrollCount = 0;
+        dragAutoScrollTimer.start(50, this);   // 50ms = ScrollPerPixel 模式间隔
+    } else {
+        dragAutoScrollTimer.stop();
+        dragAutoScrollCount = 0;
+    }
+}
+
+bool DragDropHelper::processDragAutoScroll()
+{
+    const QRect area = view->viewport()->rect();
+    const int margin = view->autoScrollMargin();
+    QScrollBar *vb = view->verticalScrollBar();
+    QScrollBar *hb = view->horizontalScrollBar();
+    const int step = qMax(vb->pageStep(), hb->pageStep());
+
+    if (dragAutoScrollCount < step)
+        ++dragAutoScrollCount;
+
+    bool scrolled = false;
+    const QPoint &pos = dragCursorPos;
+
+    if (pos.y() - area.top() < margin) {
+        vb->setValue(vb->value() - dragAutoScrollCount);
+        scrolled = true;
+    } else if (area.bottom() - pos.y() < margin) {
+        vb->setValue(vb->value() + dragAutoScrollCount);
+        scrolled = true;
+    }
+
+    if (pos.x() - area.left() < margin) {
+        hb->setValue(hb->value() - dragAutoScrollCount);
+        scrolled = true;
+    } else if (area.right() - pos.x() < margin) {
+        hb->setValue(hb->value() + dragAutoScrollCount);
+        scrolled = true;
+    }
+
+    if (!scrolled) {
+        dragAutoScrollTimer.stop();
+        dragAutoScrollCount = 0;
+    }
+    return scrolled;
+}
+
+void DragDropHelper::timerEvent(QTimerEvent *event)
+{
+    if (event->timerId() == dragAutoScrollTimer.timerId()) {
+        processDragAutoScroll();
+        return;
+    }
+    QObject::timerEvent(event);
 }

@@ -23,6 +23,8 @@
 #include "utils/fileviewmenuhelper.h"
 #include "utils/fileoperatorhelper.h"
 #include "utils/viewanimationhelper.h"
+#include "utils/viewgeometryhelper.h"
+#include "utils/stickygroupheaderhelper.h"
 #include "events/workspaceeventsequence.h"
 
 #include <dfm-base/mimedata/dfmmimedata.h>
@@ -684,167 +686,17 @@ void FileView::viewModeChanged(quint64 windowId, int viewMode)
 
 FileView::RandeIndexList FileView::visibleIndexes(const QRect &rect) const
 {
-    RandeIndexList list;
-
-    QSize itemSize = itemSizeHint();
-
-    int count = this->count();
-    int spacing = this->spacing();
-    // int itemWidth = itemSize.width() + spacing * 2;
-    int itemHeight = itemSize.height() + spacing * 2;
-
-    if (isListViewMode() || isTreeViewMode()) {
-        int firstIndex = (rect.top() + spacing) / itemHeight;
-        int lastIndex = (rect.bottom() - spacing) / itemHeight;
-
-        if (firstIndex >= count)
-            return list;
-
-        list << RandeIndex(qMax(firstIndex, 0), qMin(lastIndex, count - 1));
-    } else if (isIconViewMode()) {
-
-        // 分组绘制时计算区域内的list
-        if (isGroupHeader(model()->index(0, 0, rootIndex()))) {
-            list << calcGroupRectContiansIndexes(rect);
-            return list;
-        }
-
-        int columnCount = d->calcColumnCount(rect.width(), itemSize.width());
-
-        list << calcRectContiansIndexes(columnCount, rect);
-    }
-
-    return list;
+    return d->geometryHelper->visibleIndexes(rect);
 }
 
 FileView::RandeIndexList FileView::rectContainsIndexes(const QRect &rect) const
 {
-    RandeIndexList list;
-
-    int count = this->count();
-    if (count == 0)
-        return list;
-
-    if (isListViewMode() || isTreeViewMode()) {
-        // For variable-height items (grouping enabled), use indexAtForSelection
-        if (isGroupedView()) {
-            // Convert rect to viewport coordinates for comparison
-            QRect viewportRect = rect;
-            viewportRect.translate(-horizontalOffset(), -verticalOffset());
-
-            // Use indexAtForSelection to get items at corners (doesn't skip spacing areas)
-            QModelIndex firstIndex = indexAtForSelection(viewportRect.topLeft());
-            QModelIndex lastIndex = indexAtForSelection(viewportRect.bottomRight());
-
-            // Handle invalid indices by clamping to valid range
-            if (!firstIndex.isValid()) {
-                // Check if above viewport
-                if (viewportRect.top() < 0) {
-                    firstIndex = model()->index(0, 0, rootIndex());
-                } else {
-                    return list;   // Empty selection
-                }
-            }
-
-            if (!lastIndex.isValid()) {
-                // Check if below viewport content
-                if (viewportRect.bottom() >= 0) {
-                    lastIndex = model()->index(count - 1, 0, rootIndex());
-                } else {
-                    return list;   // Empty selection
-                }
-            }
-
-            if (firstIndex.isValid() && lastIndex.isValid()) {
-                // Normalize rows to handle reversed selection (dragging upwards)
-                int startRow = qMin(firstIndex.row(), lastIndex.row());
-                int endRow = qMax(firstIndex.row(), lastIndex.row());
-                list << RandeIndex(startRow, endRow);
-            }
-        } else {
-            // Uniform height items (no grouping): use optimized calculation
-            QSize itemSize = itemSizeHint();
-            int spacing = this->spacing();
-            int itemHeight = itemSize.height() + spacing * 2;
-
-            int firstIndex = (rect.top() + spacing) / itemHeight;
-            int lastIndex = (rect.bottom() - spacing) / itemHeight;
-
-            if (firstIndex >= count)
-                return list;
-
-            list << RandeIndex(qMax(firstIndex, 0), qMin(lastIndex, count - 1));
-        }
-    } else if (isIconViewMode()) {
-        QSize itemSize = itemSizeHint();
-        int spacing = this->spacing();
-        int itemWidth = itemSize.width() + spacing * 2;
-        int columnCount = d->iconModeColumnCount(itemWidth);
-        list << calcRectContiansIndexes(columnCount, rect);
-    }
-
-    return list;
+    return d->geometryHelper->rectContainsIndexes(rect);
 }
 
 FileView::RandeIndexList FileView::calcRectContiansIndexes(int columnCount, const QRect &rect) const
 {
-    RandeIndexList list {};
-
-    QSize itemSize = itemSizeHint();
-    QSize aIconSize = iconSize();
-
-    int count = this->count();
-    int spacing = this->spacing();
-    int itemWidth = itemSize.width() + spacing * 2;
-    int itemHeight = itemSize.height() + spacing * 2;
-    QRect validRect = rect.marginsRemoved(QMargins(spacing, spacing, spacing, spacing));
-
-    if (columnCount <= 0)
-        return list;
-
-    int beginRowIndex = validRect.top() / itemHeight;
-    int endRowIndex = validRect.bottom() / itemHeight;
-    int beginColumnIndex = validRect.left() / itemWidth;
-    int endColumnIndex = validRect.right() / itemWidth;
-
-    if (validRect.top() % itemHeight > aIconSize.height())
-        ++beginRowIndex;
-
-    int iconMargin = (itemWidth - aIconSize.width()) / 2;
-
-    if (validRect.left() % itemWidth > itemWidth - iconMargin)
-        ++beginColumnIndex;
-
-    if (validRect.right() % itemWidth < iconMargin)
-        --endColumnIndex;
-
-    beginRowIndex = qMax(beginRowIndex, 0);
-    beginColumnIndex = qMax(beginColumnIndex, 0);
-    endRowIndex = qMin(endRowIndex, count / columnCount);
-    endColumnIndex = qMin(endColumnIndex, columnCount - 1);
-
-    if (beginRowIndex > endRowIndex || beginColumnIndex > endColumnIndex)
-        return list;
-
-    int beginIndex = beginRowIndex * columnCount;
-
-    if (endColumnIndex - beginColumnIndex + 1 == columnCount) {
-        list << RandeIndex(qMax(beginIndex, 0), qMin((endRowIndex + 1) * columnCount - 1, count - 1));
-
-        return list;
-    }
-
-    for (int i = beginRowIndex; i <= endRowIndex; ++i) {
-        if (beginIndex + beginColumnIndex >= count)
-            break;
-
-        list << RandeIndex(qMax(beginIndex + beginColumnIndex, 0),
-                           qMin(beginIndex + endColumnIndex, count - 1));
-
-        beginIndex += columnCount;
-    }
-
-    return list;
+    return d->geometryHelper->calcRectContiansIndexes(columnCount, rect);
 }
 
 BaseItemDelegate *FileView::itemDelegate() const
@@ -1040,158 +892,22 @@ void FileView::updateViewportContentsMargins(const QSize &itemSize)
 
 bool FileView::indexInRect(const QRect &actualRect, const QModelIndex &index)
 {
-    auto paintRect = visualRect(index);
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    auto opt = viewOptions();
-#else
-    QStyleOptionViewItem opt;
-    initViewItemOption(&opt);
-#endif
-    opt.rect = paintRect;
-    auto rectList = itemDelegate()->itemGeomertys(opt, index);
-    for (const auto &rect : rectList) {
-        if (!(actualRect.left() > rect.right()
-              || actualRect.top() > rect.bottom()
-              || rect.left() > actualRect.right()
-              || rect.top() > actualRect.bottom()))
-            return true;
-    }
-
-    return false;
+    return d->geometryHelper->indexInRect(actualRect, index);
 }
 
 QList<QUrl> FileView::selectedTreeViewUrlList() const
 {
-    if (isIconViewMode() || !d->itemsExpandable)
-        return selectedUrlList();
-
-    QModelIndex rootIndex = this->rootIndex();
-    QList<QUrl> list;
-
-    QModelIndex expandIndex;
-    auto selectIndex = selectedIndexes();
-    if (selectIndex.count() < 1)
-        return list;
-    if (selectIndex.count() >= 2)
-        std::sort(selectIndex.begin(), selectIndex.end(),
-                  [](const QModelIndex &left, const QModelIndex &right) {
-                      return left.row() < right.row();
-                  });
-    for (const QModelIndex &index : selectIndex) {
-        bool expandIsParent = false;
-        if (expandIndex.isValid()) {
-            auto parentUrl = expandIndex.data(Global::ItemRoles::kItemUrlRole).toUrl();
-            auto child = index.data(Global::ItemRoles::kItemUrlRole).toUrl();
-            expandIsParent = (index.data(Global::ItemRoles::kItemTreeViewDepthRole).toInt()
-                              > expandIndex.data(Global::ItemRoles::kItemTreeViewDepthRole).toInt())
-                    && UniversalUtils::isParentUrl(child, parentUrl);
-        }
-        if (index.parent() != rootIndex || (expandIndex.isValid() && expandIsParent))
-            continue;
-        if (!expandIndex.isValid() || !expandIsParent) {
-            list << model()->data(index, ItemRoles::kItemUrlRole).toUrl();
-            if (index.data(Global::ItemRoles::kItemTreeViewExpandedRole).toBool()) {
-                expandIndex = index;
-            } else if (expandIndex.isValid()) {
-                expandIndex = QModelIndex();
-            }
-        }
-    }
-
-    return list;
+    return d->selectHelper->selectedTreeViewUrlList();
 }
 
 void FileView::selectedTreeViewUrlList(QList<QUrl> &selectedUrls, QList<QUrl> &treeSelectedUrls) const
 {
-    selectedUrls.clear();
-    treeSelectedUrls.clear();
-    if (isIconViewMode() || !d->itemsExpandable)
-        return selectedUrls.append(selectedUrlList());
-
-    QModelIndex rootIndex = this->rootIndex();
-
-    QModelIndex expandIndex;
-    auto selectIndex = selectedIndexes();
-    if (selectIndex.count() < 1)
-        return;
-    if (selectIndex.count() >= 2)
-        std::sort(selectIndex.begin(), selectIndex.end(),
-                  [](const QModelIndex &left, const QModelIndex &right) {
-                      return left.row() < right.row();
-                  });
-    for (const QModelIndex &index : selectIndex) {
-        selectedUrls.append(index.data(Global::ItemRoles::kItemUrlRole).toUrl());
-        bool expandIsParent = false;
-        if (expandIndex.isValid()) {
-            auto parentUrl = expandIndex.data(Global::ItemRoles::kItemUrlRole).toUrl();
-            auto child = index.data(Global::ItemRoles::kItemUrlRole).toUrl();
-            expandIsParent = (index.data(Global::ItemRoles::kItemTreeViewDepthRole).toInt()
-                              > expandIndex.data(Global::ItemRoles::kItemTreeViewDepthRole).toInt())
-                    && UniversalUtils::isParentUrl(child, parentUrl);
-        }
-        if (index.parent() != rootIndex || (expandIndex.isValid() && expandIsParent))
-            continue;
-        if (!expandIndex.isValid() || !expandIsParent) {
-            treeSelectedUrls << model()->data(index, ItemRoles::kItemUrlRole).toUrl();
-            if (index.data(Global::ItemRoles::kItemTreeViewExpandedRole).toBool()) {
-                expandIndex = index;
-            } else if (expandIndex.isValid()) {
-                expandIndex = QModelIndex();
-            }
-        }
-    }
-
-    return;
+    d->selectHelper->selectedTreeViewUrlList(selectedUrls, treeSelectedUrls);
 }
 
 QRect FileView::calcVisualRect(int widgetWidth, int index) const
 {
-    int iconViewSpacing = spacing();
-    int iconHorizontalMargin = spacing();
-#ifdef DTKWIDGET_CLASS_DSizeMode
-    iconHorizontalMargin = DSizeModeHelper::element(kCompactIconHorizontalMargin, spacing());
-#endif
-    QSize itemSize = itemSizeHint();
-
-    // 计算列数
-    int columnCount = d->calcColumnCount(widgetWidth, itemSize.width());
-    if (columnCount == 0)
-        return QRect();
-
-    int columnIndex = index % columnCount;
-    int rowIndex = index / columnCount;
-
-    int iconVerticalTopMargin = 0;
-#ifdef DTKWIDGET_CLASS_DSizeMode
-    iconVerticalTopMargin = DSizeModeHelper::element(kCompactIconVerticalTopMargin, spacing());
-#endif
-
-    QRect rect;
-    // 计算顶部位置：上边距(VerticalTopMargin) + 行索引 * (项目高度 + 间距)
-    rect.setTop(iconVerticalTopMargin + rowIndex * (itemSize.height() + 2 * iconViewSpacing));
-
-    // 计算左侧位置：左边距(kIconHorizontalMargin) + 列索引 * (项目宽度 + 间距)
-    rect.setLeft(iconHorizontalMargin + columnIndex * (itemSize.width() + 2 * iconViewSpacing));
-
-    rect.setSize(itemSize);
-
-    // 计算水平居中偏移，仅当行数大于1时才应用
-    // In group mode, don't apply horizontal centering to keep group headers left-aligned
-    if (!isGroupedView()) {
-        int totalItems = model()->rowCount();
-        int rowCount = (totalItems + columnCount - 1) / columnCount;   // 向上取整
-        if (rowCount > 1) {
-            // 计算可用宽度（减去左右边距）
-            int availableWidth = widgetWidth - 2 * iconHorizontalMargin;
-            int totalItemsWidth = columnCount * itemSize.width() + (columnCount - 1) * 2 * iconViewSpacing;
-            int horizontalOffset = (availableWidth - totalItemsWidth) / 2;
-            rect.moveLeft(rect.left() + horizontalOffset);
-        }
-    }
-
-    rect.moveTop(rect.top() - verticalOffset());
-
-    return rect;
+    return d->geometryHelper->calcVisualRect(widgetWidth, index);
 }
 
 void FileView::aboutToChangeWidth(int deltaWidth)
@@ -1264,6 +980,11 @@ QSize FileView::itemSizeHint() const
 #endif
 
     return QSize();
+}
+
+bool FileView::isItemsExpandable() const
+{
+    return d->itemsExpandable;
 }
 
 void FileView::increaseIcon()
@@ -1862,7 +1583,7 @@ void FileView::mouseReleaseEvent(QMouseEvent *event)
 
 void FileView::dragEnterEvent(QDragEnterEvent *event)
 {
-    resetDragState();
+    d->dragDropHelper->resetDragState();
     if (d->dragDropHelper->dragEnter(event))
         return;
 
@@ -1874,17 +1595,17 @@ void FileView::dragMoveEvent(QDragMoveEvent *event)
     // 不调用 QAbstractItemView::dragMoveEvent：它在 canDrop 分支里执行
     // d->viewport->update() 做全 viewport 重绘，仅为绘制 Qt 内置 drop indicator。
     // 而 FileView 已 setDropIndicatorShown(false)，该重绘纯浪费，是拖拽卡顿根因。
-    // auto-scroll 由本类自管（见 timerEvent），保留滚动能力的同时彻底避免全屏重绘。
+    // auto-scroll 由 DragDropHelper 自管（见其 timerEvent），保留滚动能力的同时彻底避免全屏重绘。
     if (d->dragDropHelper->dragMove(event))
-        updateDragHighlight(indexAt(event->position().toPoint()));
+        d->dragDropHelper->updateDragHighlight(indexAt(event->position().toPoint()));
 
-    updateDragAutoScroll(event->position().toPoint());
+    d->dragDropHelper->updateDragAutoScroll(event->position().toPoint());
 }
 
 void FileView::dragLeaveEvent(QDragLeaveEvent *event)
 {
     setViewSelectState(false);
-    resetDragState();
+    d->dragDropHelper->resetDragState();
     if (d->dragDropHelper->dragLeave(event))
         return;
 
@@ -1896,91 +1617,7 @@ void FileView::dropEvent(QDropEvent *event)
     setViewSelectState(false);
     d->dragDropHelper->drop(event);
     setState(QAbstractItemView::NoState);
-    resetDragState();
-}
-
-void FileView::timerEvent(QTimerEvent *event)
-{
-    if (event->timerId() == d->dragAutoScrollTimer.timerId()) {
-        processDragAutoScroll();
-        return;
-    }
-    DListView::timerEvent(event);
-}
-
-void FileView::resetDragState()
-{
-    d->dragUpdate = QModelIndex();
-    d->dragAutoScrollTimer.stop();
-    d->dragAutoScrollCount = 0;
-}
-
-void FileView::updateDragHighlight(const QModelIndex &index)
-{
-    const auto last = d->dragUpdate;
-    if (last.isValid() && last != index)
-        update(last);
-    if (index.isValid() && last != index)
-        update(index);
-    d->dragUpdate = index;
-}
-
-void FileView::updateDragAutoScroll(QPoint pos)
-{
-    d->dragCursorPos = pos;
-
-    const QRect area = viewport()->rect();
-    const int margin = autoScrollMargin();
-    const bool nearEdge = (pos.y() - area.top() < margin)
-                          || (area.bottom() - pos.y() < margin)
-                          || (pos.x() - area.left() < margin)
-                          || (area.right() - pos.x() < margin);
-
-    if (nearEdge) {
-        if (!d->dragAutoScrollTimer.isActive())
-            d->dragAutoScrollCount = 0;
-        d->dragAutoScrollTimer.start(50, this);   // 50ms = ScrollPerPixel 模式间隔
-    } else {
-        d->dragAutoScrollTimer.stop();
-        d->dragAutoScrollCount = 0;
-    }
-}
-
-bool FileView::processDragAutoScroll()
-{
-    const QRect area = viewport()->rect();
-    const int margin = autoScrollMargin();
-    QScrollBar *vb = verticalScrollBar();
-    QScrollBar *hb = horizontalScrollBar();
-    const int step = qMax(vb->pageStep(), hb->pageStep());
-
-    if (d->dragAutoScrollCount < step)
-        ++d->dragAutoScrollCount;
-
-    bool scrolled = false;
-    const QPoint &pos = d->dragCursorPos;
-
-    if (pos.y() - area.top() < margin) {
-        vb->setValue(vb->value() - d->dragAutoScrollCount);
-        scrolled = true;
-    } else if (area.bottom() - pos.y() < margin) {
-        vb->setValue(vb->value() + d->dragAutoScrollCount);
-        scrolled = true;
-    }
-
-    if (pos.x() - area.left() < margin) {
-        hb->setValue(hb->value() - d->dragAutoScrollCount);
-        scrolled = true;
-    } else if (area.right() - pos.x() < margin) {
-        hb->setValue(hb->value() + d->dragAutoScrollCount);
-        scrolled = true;
-    }
-
-    if (!scrolled) {
-        d->dragAutoScrollTimer.stop();
-        d->dragAutoScrollCount = 0;
-    }
-    return scrolled;
+    d->dragDropHelper->resetDragState();
 }
 
 QModelIndex FileView::indexAt(const QPoint &pos) const
@@ -2598,6 +2235,8 @@ void FileView::initializeDelegate()
     fmDebug() << "Initializing FileView delegates";
 
     d->fileViewHelper = new FileViewHelper(this);
+    d->geometryHelper = new ViewGeometryHelper(this);
+    d->stickyHelper = new StickyGroupHeaderHelper(this);
 
     // Create delegates
     auto iconDelegate = new IconItemDelegate(d->fileViewHelper);
@@ -3055,23 +2694,7 @@ void FileView::setFileViewStateValue(const QUrl &url, const QString &key, const 
 
 FileView::RandeIndexList FileView::calcGroupRectContiansIndexes(const QRect &rect) const
 {
-    // 计算当前区域内的index，目前采用的是遍历的方式，这个有效率问题
-    // 后面优化，通过每行绘制个数，每个绘制大小，每个分组的个数，先计算出来大致的一个index的范围，再判断这个范围内的index
-    RandeIndexList list {};
-    int begin = -1, end = -1;
-    for (int i = 0; i < model()->rowCount(); ++i) {
-        auto indexRect = DListView::visualRect(model()->index(i, 0, rootIndex()));
-        if (rect.intersects(indexRect)) {
-            if (begin < 0)
-                begin = i;
-            end = i;
-        } else if (indexRect.top() >= rect.bottom() && indexRect.top() >= rect.top()) {
-            break;
-        }
-    }
-
-    list << RandeIndex(begin, end);
-    return list;
+    return d->geometryHelper->calcGroupRectContiansIndexes(rect);
 }
 
 void FileView::saveViewModeState()
@@ -3097,10 +2720,7 @@ bool FileView::isGroupHeader(const QModelIndex &index) const
 
 int FileView::groupHeaderContentTop(const QModelIndex &index) const
 {
-    int top = visualRect(index).top();
-    if (index.data(Global::kItemGroupDisplayIndex).toInt() > 0)
-        top += kGroupHeaderInterval;
-    return top;
+    return d->stickyHelper->groupHeaderContentTop(index);
 }
 
 bool FileView::isClickInGroupHeaderSpacing(const QPoint &pos, const QModelIndex &index) const
@@ -3181,152 +2801,37 @@ void FileView::onGroupHeaderClicked(const QModelIndex &index)
 
 int FileView::stickyHeaderHeight() const
 {
-    if (!itemDelegate())
-        return 0;
-
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    QStyleOptionViewItem opt = viewOptions();
-#else
-    QStyleOptionViewItem opt;
-    initViewItemOption(&opt);
-#endif
-    return itemDelegate()->getGroupHeaderHeight(opt);
+    return d->stickyHelper->stickyHeaderHeight();
 }
 
 QModelIndex FileView::findStickyGroupIndex(int headerHeight) const
 {
-    if (!isGroupedView() || !model())
-        return QModelIndex();
-
-    const int rowCount = model()->rowCount(rootIndex());
-    if (rowCount == 0 || model()->groupingState() != GroupingState::kIdle)
-        return QModelIndex();
-
-    if (d->currentStickyIndex.isValid() && isGroupHeader(d->currentStickyIndex)
-        && groupHeaderContentTop(d->currentStickyIndex) < 0) {
-        if (!d->cachedNextStickyHeader.isValid())
-            return d->currentStickyIndex;
-        if (isGroupHeader(d->cachedNextStickyHeader)
-            && groupHeaderContentTop(d->cachedNextStickyHeader) >= 0)
-            return d->currentStickyIndex;
-    }
-
-    QModelIndex firstVisible;
-    if (isIconViewMode()) {
-        firstVisible = iconIndexAt(QPoint(0, 1), itemSizeHint());
-    } else {
-        firstVisible = DListView::indexAt(QPoint(0, 1));
-    }
-
-    if (!firstVisible.isValid()) {
-        for (int i = 0; i < rowCount; ++i) {
-            QModelIndex idx = model()->index(i, 0, rootIndex());
-            QRect rect = visualRect(idx);
-            if (rect.bottom() >= 0) {
-                firstVisible = idx;
-                break;
-            }
-            if (rect.top() > 0)
-                break;
-        }
-    }
-
-    if (!firstVisible.isValid())
-        return QModelIndex();
-
-    QModelIndex sticky;
-    for (int i = firstVisible.row(); i >= 0; --i) {
-        QModelIndex idx = model()->index(i, 0, rootIndex());
-        if (isGroupHeader(idx)) {
-            int contentTop = groupHeaderContentTop(idx);
-            if (contentTop >= headerHeight)
-                return QModelIndex();
-            if (contentTop >= 0) {
-                for (int j = idx.row() - 1; j >= 0; --j) {
-                    QModelIndex prevIdx = model()->index(j, 0, rootIndex());
-                    if (isGroupHeader(prevIdx)) {
-                        sticky = prevIdx;
-                        break;
-                    }
-                }
-            } else {
-                sticky = idx;
-            }
-            break;
-        }
-    }
-
-    // Cache the next group header so computeStickyY is O(1).
-    d->cachedNextStickyHeader = QModelIndex();
-    if (sticky.isValid()) {
-        for (int i = sticky.row() + 1; i < rowCount; ++i) {
-            QModelIndex idx = model()->index(i, 0, rootIndex());
-            if (isGroupHeader(idx)) {
-                d->cachedNextStickyHeader = idx;
-                break;
-            }
-        }
-    }
-    return sticky;
+    return d->stickyHelper->findStickyGroupIndex(headerHeight);
 }
 
 int FileView::computeStickyY(int headerHeight) const
 {
-    if (!d->cachedNextStickyHeader.isValid())
-        return 0;
-
-    int nextTop = visualRect(d->cachedNextStickyHeader).top();
-    return qMax(-headerHeight, qMin(0, nextTop - headerHeight));
+    return d->stickyHelper->computeStickyY(headerHeight);
 }
 
 void FileView::paintStickyHeaderOverlay(const QModelIndex &index, int y, int headerHeight)
 {
-    if (!index.isValid() || !itemDelegate())
-        return;
-
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    QStyleOptionViewItem opt = viewOptions();
-#else
-    QStyleOptionViewItem opt;
-    initViewItemOption(&opt);
-#endif
-    opt.widget = viewport();
-    opt.rect = QRect(0, y, viewport()->width(), headerHeight);
-    opt.index = index;
-
-    if (d->stickyHeaderHovered)
-        opt.state |= QStyle::State_MouseOver;
-    else
-        opt.state &= ~QStyle::State_MouseOver;
-
-    QPainter painter(viewport());
-    itemDelegate()->paintStickyGroupHeader(&painter, opt, index);
-
-    d->currentStickyIndex = index;
-    d->currentStickyRect = opt.rect;
+    d->stickyHelper->paintStickyHeaderOverlay(index, y, headerHeight);
 }
 
 bool FileView::isPosInStickyHeader(const QPoint &pos) const
 {
-    return d->currentStickyIndex.isValid() && d->currentStickyRect.contains(pos);
+    return d->stickyHelper->isPosInStickyHeader(pos);
 }
 
 void FileView::clearStickyHeaderState()
 {
-    d->currentStickyIndex = QModelIndex();
-    d->currentStickyRect = QRect();
-    d->stickyHeaderHovered = false;
-    d->cachedNextStickyHeader = QModelIndex();
+    d->stickyHelper->clearStickyHeaderState();
 }
 
 void FileView::scrollStickyHeaderToTop(const QModelIndex &headerIndex)
 {
-    const int row = headerIndex.row();
-    QTimer::singleShot(0, this, [this, row] {
-        QModelIndex idx = model()->index(row, 0, rootIndex());
-        if (idx.isValid())
-            scrollTo(idx, QAbstractItemView::PositionAtTop);
-    });
+    d->stickyHelper->scrollStickyHeaderToTop(headerIndex);
 }
 
 void FileView::mouseDoubleClickEvent(QMouseEvent *event)

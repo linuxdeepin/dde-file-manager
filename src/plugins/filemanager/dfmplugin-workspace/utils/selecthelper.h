@@ -34,6 +34,10 @@ public:
     void resortSelectFiles();
     void filterSelectedFiles(const QList<QUrl> &urlList);
 
+    // Tree-view URL extraction (migrated from FileView)
+    QList<QUrl> selectedTreeViewUrlList() const;
+    void selectedTreeViewUrlList(QList<QUrl> &selectedUrls, QList<QUrl> &treeSelectedUrls) const;
+
     // Grouping-related selection methods
     void handleGroupHeaderClick(const QModelIndex &index, Qt::KeyboardModifiers modifiers);
     void selectGroup(const QString &groupKey, bool select = true);

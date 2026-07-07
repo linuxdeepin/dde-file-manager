@@ -30,9 +30,13 @@ class ViewAnimationHelper;
 class FileViewStatusBar;
 class HeaderView;
 class BaseItemDelegate;
+class ViewGeometryHelper;
+class StickyGroupHeaderHelper;
 class FileViewPrivate
 {
     friend class FileView;
+    friend class ViewGeometryHelper;
+    friend class StickyGroupHeaderHelper;
     FileView *const q;
 
     QAtomicInteger<bool> allowedAdjustColumnSize { true };
@@ -53,6 +57,8 @@ class FileViewPrivate
     FileViewMenuHelper *viewMenuHelper { nullptr };
     FileViewHelper *fileViewHelper { nullptr };
     ViewAnimationHelper *animationHelper { nullptr };
+    ViewGeometryHelper *geometryHelper { nullptr };
+    StickyGroupHeaderHelper *stickyHelper { nullptr };
     QWidget *headerWidget { nullptr };
 
     QList<FileView::SelectionMode> enabledSelectionModes;
@@ -97,10 +103,6 @@ class FileViewPrivate
     bool itemsExpandable { false };
     std::atomic_bool isShowSmbMountError { false };
     QString previousGroupStrategy { GroupStrategy::kNoGroup };
-    QModelIndex dragUpdate;
-    QBasicTimer dragAutoScrollTimer;
-    QPoint dragCursorPos;
-    int dragAutoScrollCount { 0 };
 
     explicit FileViewPrivate(FileView *qq);
     int iconModeColumnCount(int itemWidth = 0) const;
