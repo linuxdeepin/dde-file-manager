@@ -963,6 +963,9 @@ GroupingState FileView::groupingState()
 
 void FileView::setViewSelectState(bool isSelect)
 {
+    // 拖拽时一直在设置d->isShowViewSelectBox值，每次都在全屏绘制，绘制效率低下
+    if (d->isShowViewSelectBox == isSelect)
+        return;
     d->isShowViewSelectBox = isSelect;
     viewport()->update();
 }
@@ -1838,6 +1841,9 @@ void FileView::mouseReleaseEvent(QMouseEvent *event)
 
 void FileView::dragEnterEvent(QDragEnterEvent *event)
 {
+    d->dragUpdate = QModelIndex();
+    d->dragAutoScrollTimer.stop();
+    d->dragAutoScrollCount = 0;
     if (d->dragDropHelper->dragEnter(event))
         return;
 
@@ -1846,26 +1852,47 @@ void FileView::dragEnterEvent(QDragEnterEvent *event)
 
 void FileView::dragMoveEvent(QDragMoveEvent *event)
 {
-    // Always call parent implementation first - it includes auto-scroll logic
-
-    // Note: 此处一定要调用QAbstractItemView的dragMoveEvent,而非父类的。
-    // 这是因为QListView::dragMoveEvent中对viewMode的listview进行了特殊处理，导致后续
-    // 无法进入到QAbstractItemView::dragMoveEvent。
-    // 而当前类的viewMode是重定义的，并非QListView定义的ViewMode，这就导致图标模式
-    // 实际上被当作QListView::ListMode处理。最根因的解决方案应该是基于QAbstractItemView重写整个视图，
-    // 当前整个FileView的实现是畸形的，在QListView的实现上进行的魔改隐藏了很多问题
-    QAbstractItemView::dragMoveEvent(event);
-
-    // Handle drag-drop helper logic, but don't let it prevent Qt's auto-scroll logic
+    // 不调用 QAbstractItemView::dragMoveEvent：它在 canDrop 分支里执行
+    // d->viewport->update() 做全 viewport 重绘，仅为绘制 Qt 内置 drop indicator。
+    // 而 FileView 已 setDropIndicatorShown(false)，该重绘纯浪费，是拖拽卡顿根因。
+    // auto-scroll 由本类自管（见 timerEvent），保留滚动能力的同时彻底避免全屏重绘。
     if (d->dragDropHelper->dragMove(event)) {
-        viewport()->update();
-        // Note: We intentionally don't return here, so that both auto-scroll and dragDropHelper work
+        auto index = indexAt(event->position().toPoint());
+        auto last = d->dragUpdate;
+        if (last.isValid() && last != index)
+            update(last);
+
+        if (index.isValid() && last != index)
+            update(index);
+
+        d->dragUpdate = index;
+    }
+
+    // 自管 auto-scroll：复刻 QAbstractItemViewPrivate::shouldAutoScroll 的边界判定，
+    // 滚动经 scrollBar->setValue → scrollContentsBy → viewport->scroll(bitblt) + 窄条 update。
+    d->dragCursorPos = event->position().toPoint();
+    const QRect area = viewport()->rect();
+    const int margin = autoScrollMargin();
+    const bool nearEdge = (d->dragCursorPos.y() - area.top() < margin)
+                          || (area.bottom() - d->dragCursorPos.y() < margin)
+                          || (d->dragCursorPos.x() - area.left() < margin)
+                          || (area.right() - d->dragCursorPos.x() < margin);
+    if (nearEdge) {
+        if (!d->dragAutoScrollTimer.isActive())
+            d->dragAutoScrollCount = 0;
+        d->dragAutoScrollTimer.start(50, this);   // 50ms = ScrollPerPixel 模式间隔
+    } else {
+        d->dragAutoScrollTimer.stop();
+        d->dragAutoScrollCount = 0;
     }
 }
 
 void FileView::dragLeaveEvent(QDragLeaveEvent *event)
 {
     setViewSelectState(false);
+    d->dragUpdate = QModelIndex();
+    d->dragAutoScrollTimer.stop();
+    d->dragAutoScrollCount = 0;
     if (d->dragDropHelper->dragLeave(event))
         return;
 
@@ -1877,6 +1904,44 @@ void FileView::dropEvent(QDropEvent *event)
     setViewSelectState(false);
     d->dragDropHelper->drop(event);
     setState(QAbstractItemView::NoState);
+    d->dragUpdate = QModelIndex();
+    d->dragAutoScrollTimer.stop();
+    d->dragAutoScrollCount = 0;
+}
+
+void FileView::timerEvent(QTimerEvent *event)
+{
+    if (event->timerId() == d->dragAutoScrollTimer.timerId()) {
+        const QRect area = viewport()->rect();
+        const int margin = autoScrollMargin();
+        QScrollBar *vb = verticalScrollBar();
+        QScrollBar *hb = horizontalScrollBar();
+        const int step = qMax(vb->pageStep(), hb->pageStep());
+        if (d->dragAutoScrollCount < step)
+            ++d->dragAutoScrollCount;
+
+        bool scrolled = false;
+        if (d->dragCursorPos.y() - area.top() < margin) {
+            vb->setValue(vb->value() - d->dragAutoScrollCount);
+            scrolled = true;
+        } else if (area.bottom() - d->dragCursorPos.y() < margin) {
+            vb->setValue(vb->value() + d->dragAutoScrollCount);
+            scrolled = true;
+        }
+        if (d->dragCursorPos.x() - area.left() < margin) {
+            hb->setValue(hb->value() - d->dragAutoScrollCount);
+            scrolled = true;
+        } else if (area.right() - d->dragCursorPos.x() < margin) {
+            hb->setValue(hb->value() + d->dragAutoScrollCount);
+            scrolled = true;
+        }
+        if (!scrolled) {
+            d->dragAutoScrollTimer.stop();
+            d->dragAutoScrollCount = 0;
+        }
+        return;
+    }
+    DListView::timerEvent(event);
 }
 
 QModelIndex FileView::indexAt(const QPoint &pos) const

@@ -15,6 +15,7 @@
 #include <QObject>
 #include <QUrl>
 #include <QLabel>
+#include <QBasicTimer>
 
 namespace GlobalPrivate {
 inline constexpr int kListViewMinimumWidth { 80 };
@@ -91,6 +92,10 @@ class FileViewPrivate
     bool itemsExpandable { false };
     std::atomic_bool isShowSmbMountError { false };
     QString previousGroupStrategy { GroupStrategy::kNoGroup };
+    QModelIndex dragUpdate;
+    QBasicTimer dragAutoScrollTimer;
+    QPoint dragCursorPos;
+    int dragAutoScrollCount { 0 };
 
     explicit FileViewPrivate(FileView *qq);
     int iconModeColumnCount(int itemWidth = 0) const;

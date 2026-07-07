@@ -167,6 +167,7 @@ bool DragDropHelper::dragMove(QDragMoveEvent *event)
         }
 
         if (UniversalUtils::urlEquals(targetUrl, url)) {
+            currentHoverIndexUrl = targetUrl;
             view->setViewSelectState(false);
             event->ignore();
             return true;
