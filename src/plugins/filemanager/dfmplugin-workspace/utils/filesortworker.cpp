@@ -389,6 +389,7 @@ void FileSortWorker::handleTraversalFinish(const QString &key, bool noDataProduc
         visibleChildren.clear();
 
         children.clear();
+        groupedModelData.clear();
     }
 
     Q_EMIT requestSetIdel(visibleChildren.count(), childrenDataMap.count());
