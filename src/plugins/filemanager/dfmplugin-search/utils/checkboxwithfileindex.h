@@ -49,8 +49,6 @@ private:
     void refreshState();
     FileIndexState queryState() const;
     void applyState(const FileIndexState &state);
-    bool enableFileIndex();
-    bool disableFileIndex();
     bool restartFileIndex();
     bool confirmDisableFileIndex();
     bool createRefreshIndexFile() const;
@@ -62,7 +60,6 @@ private:
 private:
     QTimer *m_pollTimer { nullptr };
     bool m_syncingState { false };
-    bool m_operationInProgress { false };
 };
 
 }   // namespace dfmplugin_search
