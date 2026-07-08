@@ -183,6 +183,7 @@ public slots:
     // treeview solts
 public slots:
     void handleToggleGroupExpansion(const QString &key, const QString &groupKey);
+    void handleToggleGroupTruncation(const QString &key, const QString &groupKey);
     void handleCloseExpand(const QString &key, const QUrl &parent);
     // 如果不是tree视图，切换到tree视图，就去执行处理dir是否可以展开属性设置
     // 如果是tree视图，切换到普通试图，去掉所有子目录，去掉所有的是否可以展开属性

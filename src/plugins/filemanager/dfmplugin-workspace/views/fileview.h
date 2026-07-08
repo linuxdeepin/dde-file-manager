@@ -210,6 +210,7 @@ private slots:
 
     // Grouping-related slots
     void onGroupExpansionToggled(const QString &groupKey);
+    void onGroupTruncationToggled(const QString &groupKey);
     void onGroupHeaderClicked(const QModelIndex &index);
 
 private:
@@ -250,6 +251,9 @@ private:
     bool isListViewMode() const;
     bool isTreeViewMode() const;
     bool isGroupedView() const;
+    QString truncateButtonGroupKeyAt(const QPoint &pos) const;
+    void updateTruncateButtonHover(const QPoint &pos);
+    void clearTruncateButtonHover();
 
     void resetSelectionModes();
     QList<SelectionMode> fetchSupportSelectionModes();

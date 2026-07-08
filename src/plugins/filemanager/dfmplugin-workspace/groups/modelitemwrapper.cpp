@@ -23,7 +23,7 @@ ModelItemWrapper::ModelItemWrapper(const FileItemDataPointer &fileData, const QS
 {
 }
 
-ModelItemWrapper::ModelItemWrapper(const FileGroupData *groupData)
+ModelItemWrapper::ModelItemWrapper(const FileGroupData *groupData, bool isTruncated, bool isTruncationEnabled)
     : itemType(GroupHeaderItem), groupKey(groupData ? groupData->groupKey : QString())
 {
     if (groupData) {
@@ -44,6 +44,8 @@ ModelItemWrapper::ModelItemWrapper(const FileGroupData *groupData)
         groupValues[Global::kItemGroupHeaderKey] = groupData->groupKey;
         groupValues[Global::kItemGroupDisplayIndex] = groupData->displayIndex;
         groupValues[Global::kItemGroupExpandedRole] = groupData->isExpanded;
+        groupValues[Global::kItemGroupTruncatedRole] = isTruncated;
+        groupValues[Global::kItemGroupTruncationEnabledRole] = isTruncationEnabled;
     }
 }
 

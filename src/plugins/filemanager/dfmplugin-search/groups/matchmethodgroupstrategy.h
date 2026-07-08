@@ -37,6 +37,7 @@ public:
     int getGroupDisplayOrder(const QString &groupKey) const override;
     bool isGroupVisible(const QString &groupKey, const QList<FileInfoPointer> &infos) const override;
     QString getStrategyName() const override;
+    bool isTruncationEnabled() const override;
 };
 
 DPSEARCH_END_NAMESPACE

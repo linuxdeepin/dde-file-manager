@@ -84,3 +84,8 @@ QString MatchMethodGroupStrategy::getStrategyName() const
 {
     return MatchMethod::kStrategyName;
 }
+
+bool MatchMethodGroupStrategy::isTruncationEnabled() const
+{
+    return true;
+}

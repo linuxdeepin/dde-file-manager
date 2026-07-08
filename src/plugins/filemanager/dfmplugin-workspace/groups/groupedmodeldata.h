@@ -51,6 +51,7 @@ public:
     // Core data members
     QList<FileGroupData> groups;   ///< All group data
     QHash<QString, bool> groupExpansionStates;   ///< Group expansion state mapping
+    QHash<QString, bool> truncationStates;   ///< Group truncation state mapping
 
     /**
      * @brief Get all files from all groups
@@ -71,6 +72,13 @@ public:
      * @return True if the group is expanded, false otherwise
      */
     bool isGroupExpanded(const QString &groupKey) const;
+
+    void setGroupTruncated(const QString &groupKey, bool truncated, bool rebuild = true);
+    bool isGroupTruncated(const QString &groupKey) const;
+    bool isGroupTruncatedInitialized(const QString &groupKey) const;
+    int getVisibleFileCount(const QString &groupKey) const;
+    void setTruncationEnabled(bool enabled);
+    bool isTruncationEnabled() const;
 
     /**
      * @brief Rebuild the flattened items list
@@ -192,6 +200,7 @@ public:
 private:
     mutable QMutex m_mutex;   ///< Mutex for thread safety
     QList<ModelItemWrapper> flattenedItems;   ///< Flattened model items list
+    bool m_truncationEnabled { false };
 };
 
 DPWORKSPACE_END_NAMESPACE

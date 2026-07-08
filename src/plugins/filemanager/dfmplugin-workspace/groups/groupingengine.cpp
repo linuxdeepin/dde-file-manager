@@ -448,7 +448,9 @@ GroupingEngine::GroupingResult GroupingEngine::groupFiles(const QList<FileItemDa
 }
 
 GroupedModelData GroupingEngine::generateModelData(const GroupingResult &groupingResult,
-                                                   const QHash<QString, bool> &expansionStates) const
+                                                   const QHash<QString, bool> &expansionStates,
+                                                   const QHash<QString, bool> &truncationStates,
+                                                   const AbstractGroupStrategy *strategy) const
 {
     GroupedModelData modelData;
 
@@ -460,11 +462,14 @@ GroupedModelData GroupingEngine::generateModelData(const GroupingResult &groupin
     // Copy groups and set expansion states
     modelData.groups = groupingResult.groups;
     modelData.groupExpansionStates = expansionStates;
+    modelData.truncationStates = truncationStates;
 
     // Update group expansion states in the group data
     for (auto &group : modelData.groups) {
         group.isExpanded = expansionStates.value(group.groupKey, true);
     }
+
+    initializeTruncationStates(strategy, &modelData);
 
     // Build the flattened items list
     modelData.rebuildFlattenedItems();
@@ -474,6 +479,27 @@ GroupedModelData GroupingEngine::generateModelData(const GroupingResult &groupin
               << modelData.getItemCount() << "flattened items";
 
     return modelData;
+}
+
+void GroupingEngine::initializeTruncationStates(const AbstractGroupStrategy *strategy,
+                                                GroupedModelData *modelData) const
+{
+    if (!modelData) {
+        return;
+    }
+
+    const bool truncationEnabled = strategy && strategy->isTruncationEnabled();
+    modelData->setTruncationEnabled(truncationEnabled);
+    if (!truncationEnabled) {
+        return;
+    }
+
+    for (const auto &group : std::as_const(modelData->groups)) {
+        if (!modelData->isGroupTruncatedInitialized(group.groupKey)
+            && group.fileCount > kGroupTruncateLimit) {
+            modelData->truncationStates.insert(group.groupKey, true);
+        }
+    }
 }
 
 std::optional<QUrl> GroupingEngine::findPrecedingAnchor(const QList<QUrl> &container, const QPair<int, int> &sliceRange)

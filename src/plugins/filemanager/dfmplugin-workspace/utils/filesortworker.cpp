@@ -1110,6 +1110,47 @@ void FileSortWorker::handleToggleGroupExpansion(const QString &key, const QStrin
     fmDebug() << "FileSortWorker: Group" << groupKey << (currentState ? "collapsed" : "expanded");
 }
 
+void FileSortWorker::handleToggleGroupTruncation(const QString &key, const QString &groupKey)
+{
+    if (groupKey.isEmpty() || !isCurrentGroupingEnabled || isCanceled || key != currentKey) {
+        return;
+    }
+
+    auto group = groupedModelData.getGroup(groupKey);
+    if (!group || !groupedModelData.isTruncationEnabled() || !group->isExpanded
+        || group->fileCount <= kGroupTruncateLimit) {
+        return;
+    }
+
+    const int pos = groupedModelData.findGroupHeaderStartPos(groupKey).value_or(-1);
+    if (pos < 0) {
+        fmWarning() << "FileSortWorker: Group" << groupKey << "not found";
+        return;
+    }
+
+    const int oldVisibleCount = groupedModelData.getVisibleFileCount(groupKey);
+    const bool newState = !groupedModelData.isGroupTruncated(groupKey);
+    const int newVisibleCount = newState ? qMin(group->fileCount, kGroupTruncateLimit) : group->fileCount;
+
+    if (newVisibleCount > oldVisibleCount) {
+        doModelChanged(ModelChangeType::kInsertGroupRows, pos + 1 + oldVisibleCount, newVisibleCount - oldVisibleCount);
+    } else if (newVisibleCount < oldVisibleCount) {
+        doModelChanged(ModelChangeType::kRemoveGroupRows, pos + 1 + newVisibleCount, oldVisibleCount - newVisibleCount);
+    }
+
+    groupedModelData.setGroupTruncated(groupKey, newState, false);
+    groupedModelData.rebuildFlattenedItems();
+
+    if (newVisibleCount > oldVisibleCount) {
+        doModelChanged(ModelChangeType::kInsertGroupFinished);
+    } else if (newVisibleCount < oldVisibleCount) {
+        doModelChanged(ModelChangeType::kRemoveGroupFinished);
+    }
+
+    Q_EMIT dataChanged(pos, pos);
+    Q_EMIT requestUpdateView();
+}
+
 void FileSortWorker::handleCloseExpand(const QString &key, const QUrl &parent)
 {
     if (isCanceled || key != currentKey || UniversalUtils::urlEquals(parent, current))
@@ -2118,7 +2159,7 @@ void FileSortWorker::applyGrouping(const QList<FileItemDataPointer> &files)
     }
 
     // Generate model data with current expansion states
-    const auto &data = groupingEngine->generateModelData(result, groupExpansionStates);
+    const auto &data = groupingEngine->generateModelData(result, groupExpansionStates, groupedModelData.truncationStates, currentStrategy);
     doModelChanged(ModelChangeType::kInsertGroupRows, 0, data.getItemCount());
     groupedModelData = data;
     doModelChanged(ModelChangeType::kInsertGroupFinished);

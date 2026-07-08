@@ -303,6 +303,11 @@ void FileViewModel::toggleGroupExpansion(const QString &groupKey)
     Q_EMIT requestToggleGroupExpansion(currentKey, groupKey);
 }
 
+void FileViewModel::toggleGroupTruncation(const QString &groupKey)
+{
+    Q_EMIT requestToggleGroupTruncation(currentKey, groupKey);
+}
+
 FileInfoPointer FileViewModel::fileInfo(const QModelIndex &index) const
 {
     if (!index.isValid() || index.row() < 0 || filterSortWorker.isNull())
@@ -1526,6 +1531,7 @@ void FileViewModel::connectFilterSortWorkSignals()
     connect(this, &FileViewModel::requestClearThumbnail, filterSortWorker.data(), &FileSortWorker::handleClearThumbnail, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestShowHiddenChanged, filterSortWorker.data(), &FileSortWorker::onShowHiddenFileChanged, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestToggleGroupExpansion, filterSortWorker.data(), &FileSortWorker::handleToggleGroupExpansion, Qt::QueuedConnection);
+    connect(this, &FileViewModel::requestToggleGroupTruncation, filterSortWorker.data(), &FileSortWorker::handleToggleGroupTruncation, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestCollapseItem, filterSortWorker.data(), &FileSortWorker::handleCloseExpand, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestTreeView, filterSortWorker.data(), &FileSortWorker::handleSwitchTreeView, Qt::QueuedConnection);
     connect(filterSortWorker.data(), &FileSortWorker::requestUpdateView, this, &FileViewModel::onUpdateView, Qt::QueuedConnection);

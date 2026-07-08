@@ -1282,6 +1282,59 @@ bool FileView::groupExpandOrCollapseItem(const QModelIndex &index, const QPoint 
     return true;
 }
 
+QString FileView::truncateButtonGroupKeyAt(const QPoint &pos) const
+{
+    if (!itemDelegate()) {
+        return {};
+    }
+
+    auto hitGroupKey = [this, &pos](const QModelIndex &index, const QRect &rect) -> QString {
+        if (!index.isValid() || !isGroupHeader(index) || !itemDelegate()->shouldShowTruncateButton(index)) {
+            return {};
+        }
+
+        QStyleOptionViewItem option;
+        option.rect = rect;
+        if (!itemDelegate()->getTruncateButtonRect(option).contains(pos)) {
+            return {};
+        }
+
+        return index.data(kItemGroupHeaderKey).toString();
+    };
+
+    if (isPosInStickyHeader(pos)) {
+        return hitGroupKey(d->stickyHelper->currentStickyIndex(), d->stickyHelper->currentStickyRect());
+    }
+
+    const QModelIndex index = DListView::indexAt(pos);
+    return hitGroupKey(index, visualRect(index));
+}
+
+void FileView::updateTruncateButtonHover(const QPoint &pos)
+{
+    if (!itemDelegate()) {
+        return;
+    }
+
+    const QString groupKey = truncateButtonGroupKeyAt(pos);
+    if (groupKey == itemDelegate()->hoveredTruncateGroupKey()) {
+        return;
+    }
+
+    itemDelegate()->setHoveredTruncateGroupKey(groupKey);
+    viewport()->update();
+}
+
+void FileView::clearTruncateButtonHover()
+{
+    if (!itemDelegate() || itemDelegate()->hoveredTruncateGroupKey().isEmpty()) {
+        return;
+    }
+
+    itemDelegate()->setHoveredTruncateGroupKey({});
+    viewport()->update();
+}
+
 void FileView::recordSelectedUrls()
 {
     auto selectedUrls = selectedUrlList();
@@ -1447,6 +1500,12 @@ void FileView::mousePressEvent(QMouseEvent *event)
                     scrollStickyHeaderToTop(stickyIdx);
                 return;
             }
+            const QString truncateGroupKey = truncateButtonGroupKeyAt(event->pos());
+            if (!truncateGroupKey.isEmpty() && itemDelegate()) {
+                itemDelegate()->setPressedTruncateGroupKey(truncateGroupKey);
+                viewport()->update();
+                return;
+            }
             d->groupHeaderTimer->start();
         } else if (event->button() == Qt::RightButton) {
             onGroupHeaderClicked(stickyIdx);
@@ -1491,8 +1550,17 @@ void FileView::mousePressEvent(QMouseEvent *event)
         }
 
         // 分组视图展开逻辑处理
-        if (isGroupHeader(index) && groupExpandOrCollapseItem(index, event->pos())) {
-            return;
+        if (isGroupHeader(index)) {
+            if (groupExpandOrCollapseItem(index, event->pos())) {
+                return;
+            }
+
+            const QString truncateGroupKey = truncateButtonGroupKeyAt(event->pos());
+            if (!truncateGroupKey.isEmpty() && itemDelegate()) {
+                itemDelegate()->setPressedTruncateGroupKey(truncateGroupKey);
+                viewport()->update();
+                return;
+            }
         }
 
         d->selectHelper->click(isEmptyArea ? QModelIndex() : index);
@@ -1572,6 +1640,16 @@ void FileView::mouseReleaseEvent(QMouseEvent *event)
     }
 
     d->selectHelper->release();
+
+    if (itemDelegate() && !itemDelegate()->pressedTruncateGroupKey().isEmpty()) {
+        const QString pressedGroupKey = itemDelegate()->pressedTruncateGroupKey();
+        itemDelegate()->setPressedTruncateGroupKey({});
+        viewport()->update();
+        if (event->button() == Qt::LeftButton && pressedGroupKey == truncateButtonGroupKeyAt(event->pos())) {
+            onGroupTruncationToggled(pressedGroupKey);
+        }
+        return;
+    }
 
     if (!QScroller::hasScroller(this))
         return DListView::mouseReleaseEvent(event);
@@ -2057,25 +2135,26 @@ bool FileView::eventFilter(QObject *obj, QEvent *event)
         }
         break;
     case QEvent::HoverMove: {
-        if (d->stickyHelper->currentStickyIndex().isValid() && !d->stickyHelper->currentStickyRect().isNull()) {
-            auto *he = static_cast<QHoverEvent *>(event);
+        auto *he = static_cast<QHoverEvent *>(event);
+        QPoint hoverPos;
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-            QPoint hoverPos = he->pos();
+        hoverPos = he->pos();
 #else
-            QPoint hoverPos = he->position().toPoint();
+        hoverPos = he->position().toPoint();
 #endif
-            // currentStickyRect is in viewport coordinates; map hover pos
-            // from the event's target widget to the viewport if needed.
-            if (QWidget *w = qobject_cast<QWidget *>(obj)) {
-                if (w != viewport())
-                    hoverPos = viewport()->mapFromGlobal(w->mapToGlobal(hoverPos));
-            }
+        if (QWidget *w = qobject_cast<QWidget *>(obj)) {
+            if (w != viewport())
+                hoverPos = viewport()->mapFromGlobal(w->mapToGlobal(hoverPos));
+        }
+
+        if (d->stickyHelper->currentStickyIndex().isValid() && !d->stickyHelper->currentStickyRect().isNull()) {
             bool nowHovered = d->stickyHelper->currentStickyRect().contains(hoverPos);
             if (nowHovered != d->stickyHelper->isStickyHeaderHovered()) {
                 d->stickyHelper->setStickyHeaderHovered(nowHovered);
                 viewport()->update(d->stickyHelper->currentStickyRect());
             }
         }
+        updateTruncateButtonHover(hoverPos);
         break;
     }
     case QEvent::HoverLeave: {
@@ -2083,6 +2162,7 @@ bool FileView::eventFilter(QObject *obj, QEvent *event)
             d->stickyHelper->setStickyHeaderHovered(false);
             viewport()->update(d->stickyHelper->currentStickyRect());
         }
+        clearTruncateButtonHover();
         break;
     }
     // blumia: 这里通过给横向滚动条加事件过滤器并监听其显示隐藏时间来判断是否应当进入吸附状态。
@@ -2788,6 +2868,15 @@ void FileView::onGroupExpansionToggled(const QString &groupKey)
     }
 }
 
+void FileView::onGroupTruncationToggled(const QString &groupKey)
+{
+    if (groupKey.isEmpty() || !model()) {
+        return;
+    }
+
+    model()->toggleGroupTruncation(groupKey);
+}
+
 void FileView::onGroupHeaderClicked(const QModelIndex &index)
 {
     fmDebug() << "Group header clicked for:" << index << "for URL:" << rootUrl().toString();
@@ -2840,6 +2929,11 @@ void FileView::scrollStickyHeaderToTop(const QModelIndex &headerIndex)
 
 void FileView::mouseDoubleClickEvent(QMouseEvent *event)
 {
+    if (!truncateButtonGroupKeyAt(event->pos()).isEmpty()) {
+        d->groupHeaderTimer->stop();
+        return;
+    }
+
     if (isPosInStickyHeader(event->pos())) {
         if (event->button() == Qt::LeftButton) {
             d->groupHeaderTimer->stop();
@@ -2860,5 +2954,6 @@ void FileView::leaveEvent(QEvent *event)
         d->stickyHelper->setStickyHeaderHovered(false);
         viewport()->update(d->stickyHelper->currentStickyRect());
     }
+    clearTruncateButtonHover();
     DListView::leaveEvent(event);
 }

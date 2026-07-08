@@ -124,7 +124,7 @@ bool SearchHelper::shouldEnableSemanticSearch(const QString &keyword)
         return false;
 
     if (!DConfigManager::instance()->value(DConfig::kSearchCfgPath,
-                                           DConfig::kEnableSemanticSearch, false)
+                                           DConfig::kEnableSemanticSearch, true)
                  .toBool()) {
         return false;
     }

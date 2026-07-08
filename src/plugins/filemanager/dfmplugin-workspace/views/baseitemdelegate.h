@@ -141,6 +141,16 @@ public:
 
     QRect getExpandButtonRect(const QStyleOptionViewItem &option) const;
     QRect getExpandButtonRect(const QRectF &rect) const;
+    QRect getTruncateButtonRect(const QStyleOptionViewItem &option) const;
+    QRect getTruncateButtonRect(const QRectF &rect) const;
+    bool shouldShowTruncateButton(const QModelIndex &index) const;
+    QString truncateButtonText(bool isTruncated) const;
+    QStringList truncateButtonTexts() const;
+    void setHoveredTruncateGroupKey(const QString &groupKey);
+    QString hoveredTruncateGroupKey() const;
+    void setPressedTruncateGroupKey(const QString &groupKey);
+    QString pressedTruncateGroupKey() const;
+    int getTruncateButtonWidth() const;
 
 protected:
     explicit BaseItemDelegate(BaseItemDelegatePrivate &dd, FileViewHelper *parent);
@@ -154,12 +164,13 @@ protected:
     void paintGroupBackground(QPainter *painter, const QStyleOptionViewItem &option) const;
     void paintGroupHeaderContent(QPainter *painter, const QRectF &drawRect, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     void paintExpandButton(QPainter *painter, const QRect &buttonRect, bool isExpanded) const;
+    void paintTruncateButton(QPainter *painter, const QRect &buttonRect, const QModelIndex &index, const QStyleOptionViewItem &option) const;
     void paintGroupText(QPainter *painter, const QRect &textRect, const QString &text, int count, const QStyleOptionViewItem &option) const;
 
     // Group layout calculation methods
 
-    QRect getGroupTextRect(const QStyleOptionViewItem &option) const;
-    QRect getGroupTextRect(const QRectF &rect) const;
+    QRect getGroupTextRect(const QStyleOptionViewItem &option, bool hasTruncateButton = false) const;
+    QRect getGroupTextRect(const QRectF &rect, bool hasTruncateButton = false) const;
 
     QList<QRectF> getCornerGeometryList(const QRectF &baseRect, const QSizeF &cornerSize) const;
     void paintEmblems(QPainter *painter, const QRectF &iconRect, const QModelIndex &index) const;
