@@ -58,6 +58,14 @@ private:
     bool isGroupHeaderIndex(const QModelIndex &index) const;
     QString getGroupKeyFromIndex(const QModelIndex &index) const;
 
+    // Common logic for selectedTreeViewUrlList overloads:
+    //   - early-out when icon mode or tree expansion disabled (returns treeUrls = view->selectedUrlList())
+    //   - sorts selectedIndexes() by row
+    //   - walks sorted indexes, computing expandIsParent, skipping descendants,
+    //     collecting tree "top-level" urls into treeUrls and (if collectAll) all
+    //     selected urls into allUrls. Updates expandIndex state.
+    void collectTreeViewUrls(QList<QUrl> *allUrls, QList<QUrl> *treeUrls) const;
+
 private:
     FileView *view { nullptr };
     QModelIndex lastPressedIndex;

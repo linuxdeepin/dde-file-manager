@@ -20,13 +20,13 @@ using namespace dfmplugin_workspace;
 
 StickyGroupHeaderHelper::StickyGroupHeaderHelper(FileView *parent)
     : QObject(parent),
-      view(parent)
+      m_view(parent)
 {
 }
 
 int StickyGroupHeaderHelper::groupHeaderContentTop(const QModelIndex &index) const
 {
-    int top = view->visualRect(index).top();
+    int top = m_view->visualRect(index).top();
     if (index.data(Global::kItemGroupDisplayIndex).toInt() > 0)
         top += kGroupHeaderInterval;
     return top;
@@ -34,47 +34,44 @@ int StickyGroupHeaderHelper::groupHeaderContentTop(const QModelIndex &index) con
 
 int StickyGroupHeaderHelper::stickyHeaderHeight() const
 {
-    if (!view->itemDelegate())
+    if (!m_view->itemDelegate())
         return 0;
 
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    QStyleOptionViewItem opt = view->viewOptions();
-#else
     QStyleOptionViewItem opt;
-    view->initViewItemOption(&opt);
-#endif
-    return view->itemDelegate()->getGroupHeaderHeight(opt);
+    m_view->initViewItemOption(&opt);
+
+    return m_view->itemDelegate()->getGroupHeaderHeight(opt);
 }
 
-QModelIndex StickyGroupHeaderHelper::findStickyGroupIndex(int headerHeight) const
+QModelIndex StickyGroupHeaderHelper::findStickyGroupIndex(int headerHeight)
 {
-    if (!view->isGroupedView() || !view->model())
+    if (!m_view->isGroupedView() || !m_view->model())
         return QModelIndex();
 
-    const int rowCount = view->model()->rowCount(view->rootIndex());
-    if (rowCount == 0 || view->model()->groupingState() != GroupingState::kIdle)
+    const int rowCount = m_view->model()->rowCount(m_view->rootIndex());
+    if (rowCount == 0 || m_view->model()->groupingState() != GroupingState::kIdle)
         return QModelIndex();
 
-    if (view->d->currentStickyIndex.isValid() && view->isGroupHeader(view->d->currentStickyIndex)
-        && groupHeaderContentTop(view->d->currentStickyIndex) < 0) {
-        if (!view->d->cachedNextStickyHeader.isValid())
-            return view->d->currentStickyIndex;
-        if (view->isGroupHeader(view->d->cachedNextStickyHeader)
-            && groupHeaderContentTop(view->d->cachedNextStickyHeader) >= 0)
-            return view->d->currentStickyIndex;
+    if (m_currentStickyIndex.isValid() && m_view->isGroupHeader(m_currentStickyIndex)
+        && groupHeaderContentTop(m_currentStickyIndex) < 0) {
+        if (!m_cachedNextStickyHeader.isValid())
+            return m_currentStickyIndex;
+        if (m_view->isGroupHeader(m_cachedNextStickyHeader)
+            && groupHeaderContentTop(m_cachedNextStickyHeader) >= 0)
+            return m_currentStickyIndex;
     }
 
     QModelIndex firstVisible;
-    if (view->isIconViewMode()) {
-        firstVisible = view->iconIndexAt(QPoint(0, 1), view->itemSizeHint());
+    if (m_view->isIconViewMode()) {
+        firstVisible = m_view->iconIndexAt(QPoint(0, 1), m_view->itemSizeHint());
     } else {
-        firstVisible = view->DListView::indexAt(QPoint(0, 1));
+        firstVisible = m_view->DListView::indexAt(QPoint(0, 1));
     }
 
     if (!firstVisible.isValid()) {
         for (int i = 0; i < rowCount; ++i) {
-            QModelIndex idx = view->model()->index(i, 0, view->rootIndex());
-            QRect rect = view->visualRect(idx);
+            QModelIndex idx = m_view->model()->index(i, 0, m_view->rootIndex());
+            QRect rect = m_view->visualRect(idx);
             if (rect.bottom() >= 0) {
                 firstVisible = idx;
                 break;
@@ -89,15 +86,15 @@ QModelIndex StickyGroupHeaderHelper::findStickyGroupIndex(int headerHeight) cons
 
     QModelIndex sticky;
     for (int i = firstVisible.row(); i >= 0; --i) {
-        QModelIndex idx = view->model()->index(i, 0, view->rootIndex());
-        if (view->isGroupHeader(idx)) {
+        QModelIndex idx = m_view->model()->index(i, 0, m_view->rootIndex());
+        if (m_view->isGroupHeader(idx)) {
             int contentTop = groupHeaderContentTop(idx);
             if (contentTop >= headerHeight)
                 return QModelIndex();
             if (contentTop >= 0) {
                 for (int j = idx.row() - 1; j >= 0; --j) {
-                    QModelIndex prevIdx = view->model()->index(j, 0, view->rootIndex());
-                    if (view->isGroupHeader(prevIdx)) {
+                    QModelIndex prevIdx = m_view->model()->index(j, 0, m_view->rootIndex());
+                    if (m_view->isGroupHeader(prevIdx)) {
                         sticky = prevIdx;
                         break;
                     }
@@ -110,12 +107,12 @@ QModelIndex StickyGroupHeaderHelper::findStickyGroupIndex(int headerHeight) cons
     }
 
     // Cache the next group header so computeStickyY is O(1).
-    view->d->cachedNextStickyHeader = QModelIndex();
+    m_cachedNextStickyHeader = QModelIndex();
     if (sticky.isValid()) {
         for (int i = sticky.row() + 1; i < rowCount; ++i) {
-            QModelIndex idx = view->model()->index(i, 0, view->rootIndex());
-            if (view->isGroupHeader(idx)) {
-                view->d->cachedNextStickyHeader = idx;
+            QModelIndex idx = m_view->model()->index(i, 0, m_view->rootIndex());
+            if (m_view->isGroupHeader(idx)) {
+                m_cachedNextStickyHeader = idx;
                 break;
             }
         }
@@ -125,59 +122,56 @@ QModelIndex StickyGroupHeaderHelper::findStickyGroupIndex(int headerHeight) cons
 
 int StickyGroupHeaderHelper::computeStickyY(int headerHeight) const
 {
-    if (!view->d->cachedNextStickyHeader.isValid())
+    if (!m_cachedNextStickyHeader.isValid())
         return 0;
 
-    int nextTop = view->visualRect(view->d->cachedNextStickyHeader).top();
+    int nextTop = m_view->visualRect(m_cachedNextStickyHeader).top();
     return qMax(-headerHeight, qMin(0, nextTop - headerHeight));
 }
 
 void StickyGroupHeaderHelper::paintStickyHeaderOverlay(const QModelIndex &index, int y, int headerHeight)
 {
-    if (!index.isValid() || !view->itemDelegate())
+    if (!index.isValid() || !m_view->itemDelegate())
         return;
 
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    QStyleOptionViewItem opt = view->viewOptions();
-#else
     QStyleOptionViewItem opt;
-    view->initViewItemOption(&opt);
-#endif
-    opt.widget = view->viewport();
-    opt.rect = QRect(0, y, view->viewport()->width(), headerHeight);
+    m_view->initViewItemOption(&opt);
+
+    opt.widget = m_view->viewport();
+    opt.rect = QRect(0, y, m_view->viewport()->width(), headerHeight);
     opt.index = index;
 
-    if (view->d->stickyHeaderHovered)
+    if (m_stickyHeaderHovered)
         opt.state |= QStyle::State_MouseOver;
     else
         opt.state &= ~QStyle::State_MouseOver;
 
-    QPainter painter(view->viewport());
-    view->itemDelegate()->paintStickyGroupHeader(&painter, opt, index);
+    QPainter painter(m_view->viewport());
+    m_view->itemDelegate()->paintStickyGroupHeader(&painter, opt, index);
 
-    view->d->currentStickyIndex = index;
-    view->d->currentStickyRect = opt.rect;
+    m_currentStickyIndex = index;
+    m_currentStickyRect = opt.rect;
 }
 
 bool StickyGroupHeaderHelper::isPosInStickyHeader(const QPoint &pos) const
 {
-    return view->d->currentStickyIndex.isValid() && view->d->currentStickyRect.contains(pos);
+    return m_currentStickyIndex.isValid() && m_currentStickyRect.contains(pos);
 }
 
 void StickyGroupHeaderHelper::clearStickyHeaderState()
 {
-    view->d->currentStickyIndex = QModelIndex();
-    view->d->currentStickyRect = QRect();
-    view->d->stickyHeaderHovered = false;
-    view->d->cachedNextStickyHeader = QModelIndex();
+    m_currentStickyIndex = QModelIndex();
+    m_currentStickyRect = QRect();
+    m_stickyHeaderHovered = false;
+    m_cachedNextStickyHeader = QModelIndex();
 }
 
 void StickyGroupHeaderHelper::scrollStickyHeaderToTop(const QModelIndex &headerIndex)
 {
     const int row = headerIndex.row();
-    QTimer::singleShot(0, view, [this, row] {
-        QModelIndex idx = view->model()->index(row, 0, view->rootIndex());
+    QTimer::singleShot(0, m_view, [this, row] {
+        QModelIndex idx = m_view->model()->index(row, 0, m_view->rootIndex());
         if (idx.isValid())
-            view->scrollTo(idx, QAbstractItemView::PositionAtTop);
+            m_view->scrollTo(idx, QAbstractItemView::PositionAtTop);
     });
 }
