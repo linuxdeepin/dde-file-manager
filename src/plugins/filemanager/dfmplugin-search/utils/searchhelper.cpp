@@ -419,14 +419,14 @@ QWidget *SearchHelper::createCheckBoxWithFileIndex(QObject *opt)
 
     CheckBoxWithFileIndex *cb = new CheckBoxWithFileIndex;
     cb->setDisplayText(qApp->translate("QObject", text.toStdString().c_str()));
+    cb->setChecked(option->value().toBool());
     cb->initStatusBar();
 
-    QObject::connect(cb, &IndexStatusCheckBox::checkStateChanged, option, [=](Qt::CheckState state) {
-        option->setValue(state == Qt::CheckState::Checked);
-    });
-    QObject::connect(option, &Dtk::Core::DSettingsOption::valueChanged, cb, [cb](const QVariant &value) {
-        if (value.toBool() && !cb->isChecked())
-            cb->setChecked(true);
+    QObject::connect(cb, &CheckBoxWithFileIndex::checkStateChanged, option, [=](Qt::CheckState state) {
+        if (state == Qt::CheckState::Unchecked)
+            option->setValue(false);
+        else if (state == Qt::CheckState::Checked)
+            option->setValue(true);
     });
 
     return cb;

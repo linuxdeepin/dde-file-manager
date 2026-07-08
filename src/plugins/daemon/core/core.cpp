@@ -43,6 +43,8 @@ void Core::initialize()
     textIndexController->initialize();
     ocrIndexController.reset(new OcrIndexController);
     ocrIndexController->initialize();
+    fileIndexController.reset(new FileIndexController);
+    fileIndexController->initialize();
 }
 
 bool Core::start()

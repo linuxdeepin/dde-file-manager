@@ -4,6 +4,7 @@
 #include "checkboxwithfileindex.h"
 
 #include "dfmplugin_search_global.h"
+#include "searchmanager/searchmanager.h"
 
 #include <QDir>
 #include <QFile>
@@ -42,6 +43,12 @@ CheckBoxWithFileIndex::CheckBoxWithFileIndex(QWidget *parent)
         refreshState();
     });
     connect(m_pollTimer, &QTimer::timeout, this, &CheckBoxWithFileIndex::refreshState);
+
+    connect(SearchManager::instance(), &SearchManager::enableFileIndexSearchChanged, this, [this](bool enable) {
+        m_syncingState = true;
+        setChecked(enable);
+        m_syncingState = false;
+    });
 }
 
 void CheckBoxWithFileIndex::initStatusBar()
@@ -52,45 +59,28 @@ void CheckBoxWithFileIndex::initStatusBar()
 
 bool CheckBoxWithFileIndex::acceptCheckStateChange(Qt::CheckState oldState, Qt::CheckState newState)
 {
-    if (m_syncingState || m_operationInProgress)
+    if (m_syncingState)
         return true;
 
-    if (oldState == Qt::CheckState::Checked && newState == Qt::CheckState::Unchecked) {
-        refreshState();
+    if (oldState == Qt::CheckState::Checked && newState == Qt::CheckState::Unchecked)
         return confirmDisableFileIndex();
-    }
 
     return true;
 }
 
 void CheckBoxWithFileIndex::handleCheckStateChanged(Qt::CheckState state)
 {
-    if (m_syncingState || m_operationInProgress)
+    if (m_syncingState)
         return;
 
-    m_operationInProgress = true;
-
-    bool success = false;
-    if (state == Qt::CheckState::Checked) {
+    if (state == Qt::CheckState::Checked)
         setStatus(Status::Indexing);
-        success = enableFileIndex();
-    } else {
+    else
         setStatus(Status::Inactive);
-        success = disableFileIndex();
-    }
-
-    if (!success)
-        fmWarning() << "[FileIndex] Failed to handle check state change:" << state;
-
-    m_operationInProgress = false;
-    refreshState();
 }
 
 void CheckBoxWithFileIndex::refreshState()
 {
-    if (m_operationInProgress)
-        return;
-
     applyState(queryState());
 }
 
@@ -157,18 +147,18 @@ void CheckBoxWithFileIndex::applyState(const FileIndexState &state)
         return;
     }
 
-    m_syncingState = true;
-    setChecked(state.enabled);
-    m_syncingState = false;
-
     if (!state.enabled) {
         setStatus(Status::Inactive);
         return;
     }
 
     if (!state.serviceActive) {
-        setStatus(Status::Failed);
-        setFailedText(tr("Index update failed"), tr("try updating again"));
+        if (isChecked()) {
+            setStatus(Status::Failed);
+            setFailedText(tr("Index update failed"), tr("try updating again"));
+        } else {
+            setStatus(Status::Inactive);
+        }
         return;
     }
 
@@ -180,43 +170,6 @@ void CheckBoxWithFileIndex::applyState(const FileIndexState &state)
     }
 
     setStatus(Status::Indexing);
-}
-
-bool CheckBoxWithFileIndex::enableFileIndex()
-{
-    const auto unmaskResult = runSystemctlCommand({ "--user", "unmask", "deepin-anything-daemon" });
-    if (!unmaskResult.started || !unmaskResult.finished || !unmaskResult.normalExit || unmaskResult.exitCode != 0) {
-        fmWarning() << "[FileIndex] Failed to unmask service:" << unmaskResult.standardError.trimmed();
-        return false;
-    }
-
-    if (!createRefreshIndexFile())
-        return false;
-
-    const auto startResult = runSystemctlCommand({ "--user", "start", "deepin-anything-daemon" });
-    if (!startResult.started || !startResult.finished || !startResult.normalExit || startResult.exitCode != 0) {
-        fmWarning() << "[FileIndex] Failed to start service:" << startResult.standardError.trimmed();
-        return false;
-    }
-
-    return true;
-}
-
-bool CheckBoxWithFileIndex::disableFileIndex()
-{
-    const auto stopResult = runSystemctlCommand({ "--user", "stop", "deepin-anything-daemon" });
-    if (!stopResult.started || !stopResult.finished || !stopResult.normalExit || stopResult.exitCode != 0) {
-        fmWarning() << "[FileIndex] Failed to stop service:" << stopResult.standardError.trimmed();
-        return false;
-    }
-
-    const auto maskResult = runSystemctlCommand({ "--user", "mask", "deepin-anything-daemon" });
-    if (!maskResult.started || !maskResult.finished || !maskResult.normalExit || maskResult.exitCode != 0) {
-        fmWarning() << "[FileIndex] Failed to mask service:" << maskResult.standardError.trimmed();
-        return false;
-    }
-
-    return true;
 }
 
 bool CheckBoxWithFileIndex::restartFileIndex()

@@ -8,6 +8,7 @@
 #include "daemonplugin_core_global.h"
 #include "textindexcontroller.h"
 #include "ocrindexcontroller.h"
+#include "fileindexcontroller.h"
 
 #include <dfm-framework/dpf.h>
 
@@ -42,6 +43,7 @@ private:
     QScopedPointer<SyncDBus> syncDBus;
     QScopedPointer<TextIndexController> textIndexController;
     QScopedPointer<OcrIndexController> ocrIndexController;
+    QScopedPointer<FileIndexController> fileIndexController;
 };
 
 DAEMONPCORE_END_NAMESPACE
