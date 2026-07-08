@@ -684,17 +684,17 @@ void FileView::viewModeChanged(quint64 windowId, int viewMode)
     saveViewModeState();
 }
 
-FileView::RandeIndexList FileView::visibleIndexes(const QRect &rect) const
+FileView::RangeIndexList FileView::visibleIndexes(const QRect &rect) const
 {
     return d->geometryHelper->visibleIndexes(rect);
 }
 
-FileView::RandeIndexList FileView::rectContainsIndexes(const QRect &rect) const
+FileView::RangeIndexList FileView::rectContainsIndexes(const QRect &rect) const
 {
     return d->geometryHelper->rectContainsIndexes(rect);
 }
 
-FileView::RandeIndexList FileView::calcRectContiansIndexes(int columnCount, const QRect &rect) const
+FileView::RangeIndexList FileView::calcRectContiansIndexes(int columnCount, const QRect &rect) const
 {
     return d->geometryHelper->calcRectContiansIndexes(columnCount, rect);
 }
@@ -2692,7 +2692,7 @@ void FileView::setFileViewStateValue(const QUrl &url, const QString &key, const 
     WorkspaceHelper::instance()->setFileViewStateValue(url, key, value);
 }
 
-FileView::RandeIndexList FileView::calcGroupRectContiansIndexes(const QRect &rect) const
+FileView::RangeIndexList FileView::calcGroupRectContiansIndexes(const QRect &rect) const
 {
     return d->geometryHelper->calcGroupRectContiansIndexes(rect);
 }

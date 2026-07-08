@@ -26,9 +26,9 @@ ViewGeometryHelper::ViewGeometryHelper(FileView *parent)
 {
 }
 
-ViewGeometryHelper::RandeIndexList ViewGeometryHelper::visibleIndexes(const QRect &rect) const
+ViewGeometryHelper::RangeIndexList ViewGeometryHelper::visibleIndexes(const QRect &rect) const
 {
-    RandeIndexList list;
+    RangeIndexList list;
 
     QSize itemSize = view->itemSizeHint();
 
@@ -43,7 +43,7 @@ ViewGeometryHelper::RandeIndexList ViewGeometryHelper::visibleIndexes(const QRec
         if (firstIndex >= count)
             return list;
 
-        list << RandeIndex(qMax(firstIndex, 0), qMin(lastIndex, count - 1));
+        list << RangeIndex(qMax(firstIndex, 0), qMin(lastIndex, count - 1));
     } else if (view->isIconViewMode()) {
 
         // 分组绘制时计算区域内的list
@@ -60,9 +60,9 @@ ViewGeometryHelper::RandeIndexList ViewGeometryHelper::visibleIndexes(const QRec
     return list;
 }
 
-ViewGeometryHelper::RandeIndexList ViewGeometryHelper::rectContainsIndexes(const QRect &rect) const
+ViewGeometryHelper::RangeIndexList ViewGeometryHelper::rectContainsIndexes(const QRect &rect) const
 {
-    RandeIndexList list;
+    RangeIndexList list;
 
     int count = view->count();
     if (count == 0)
@@ -102,7 +102,7 @@ ViewGeometryHelper::RandeIndexList ViewGeometryHelper::rectContainsIndexes(const
                 // Normalize rows to handle reversed selection (dragging upwards)
                 int startRow = qMin(firstIndex.row(), lastIndex.row());
                 int endRow = qMax(firstIndex.row(), lastIndex.row());
-                list << RandeIndex(startRow, endRow);
+                list << RangeIndex(startRow, endRow);
             }
         } else {
             // Uniform height items (no grouping): use optimized calculation
@@ -116,7 +116,7 @@ ViewGeometryHelper::RandeIndexList ViewGeometryHelper::rectContainsIndexes(const
             if (firstIndex >= count)
                 return list;
 
-            list << RandeIndex(qMax(firstIndex, 0), qMin(lastIndex, count - 1));
+            list << RangeIndex(qMax(firstIndex, 0), qMin(lastIndex, count - 1));
         }
     } else if (view->isIconViewMode()) {
         QSize itemSize = view->itemSizeHint();
@@ -129,9 +129,9 @@ ViewGeometryHelper::RandeIndexList ViewGeometryHelper::rectContainsIndexes(const
     return list;
 }
 
-ViewGeometryHelper::RandeIndexList ViewGeometryHelper::calcRectContiansIndexes(int columnCount, const QRect &rect) const
+ViewGeometryHelper::RangeIndexList ViewGeometryHelper::calcRectContiansIndexes(int columnCount, const QRect &rect) const
 {
-    RandeIndexList list {};
+    RangeIndexList list {};
 
     QSize itemSize = view->itemSizeHint();
     QSize aIconSize = view->iconSize();
@@ -172,7 +172,7 @@ ViewGeometryHelper::RandeIndexList ViewGeometryHelper::calcRectContiansIndexes(i
     int beginIndex = beginRowIndex * columnCount;
 
     if (endColumnIndex - beginColumnIndex + 1 == columnCount) {
-        list << RandeIndex(qMax(beginIndex, 0), qMin((endRowIndex + 1) * columnCount - 1, count - 1));
+        list << RangeIndex(qMax(beginIndex, 0), qMin((endRowIndex + 1) * columnCount - 1, count - 1));
 
         return list;
     }
@@ -181,7 +181,7 @@ ViewGeometryHelper::RandeIndexList ViewGeometryHelper::calcRectContiansIndexes(i
         if (beginIndex + beginColumnIndex >= count)
             break;
 
-        list << RandeIndex(qMax(beginIndex + beginColumnIndex, 0),
+        list << RangeIndex(qMax(beginIndex + beginColumnIndex, 0),
                            qMin(beginIndex + endColumnIndex, count - 1));
 
         beginIndex += columnCount;
@@ -262,11 +262,11 @@ bool ViewGeometryHelper::indexInRect(const QRect &actualRect, const QModelIndex 
     return false;
 }
 
-ViewGeometryHelper::RandeIndexList ViewGeometryHelper::calcGroupRectContiansIndexes(const QRect &rect) const
+ViewGeometryHelper::RangeIndexList ViewGeometryHelper::calcGroupRectContiansIndexes(const QRect &rect) const
 {
     // 计算当前区域内的index，目前采用的是遍历的方式，这个有效率问题
     // 后面优化，通过每行绘制个数，每个绘制大小，每个分组的个数，先计算出来大致的一个index的范围，再判断这个范围内的index
-    RandeIndexList list {};
+    RangeIndexList list {};
     int begin = -1, end = -1;
     for (int i = 0; i < view->model()->rowCount(); ++i) {
         auto indexRect = view->visualRect(view->model()->index(i, 0, view->rootIndex()));
@@ -279,6 +279,6 @@ ViewGeometryHelper::RandeIndexList ViewGeometryHelper::calcGroupRectContiansInde
         }
     }
 
-    list << RandeIndex(begin, end);
+    list << RangeIndex(begin, end);
     return list;
 }

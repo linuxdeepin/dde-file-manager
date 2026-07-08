@@ -45,8 +45,8 @@ class FileView final : public DListView, public DFMBASE_NAMESPACE::AbstractBaseV
 
     QSharedPointer<FileViewPrivate> d;
 
-    using RandeIndex = QPair<int, int>;
-    using RandeIndexList = QList<RandeIndex>;
+    using RangeIndex = QPair<int, int>;
+    using RangeIndexList = QList<RangeIndex>;
 
 public:
     enum class ClickedAction : uint8_t {
@@ -238,10 +238,10 @@ private:
 
     void setFileViewStateValue(const QUrl &url, const QString &key, const QVariant &value);
 
-    RandeIndexList visibleIndexes(const QRect &rect) const;
-    RandeIndexList rectContainsIndexes(const QRect &rect) const;
-    RandeIndexList calcRectContiansIndexes(int columnCount, const QRect &rect) const;
-    RandeIndexList calcGroupRectContiansIndexes(const QRect &rect) const;
+    RangeIndexList visibleIndexes(const QRect &rect) const;
+    RangeIndexList rectContainsIndexes(const QRect &rect) const;
+    RangeIndexList calcRectContiansIndexes(int columnCount, const QRect &rect) const;
+    RangeIndexList calcGroupRectContiansIndexes(const QRect &rect) const;
 
     QSize itemSizeHint() const;
 
