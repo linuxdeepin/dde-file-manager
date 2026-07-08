@@ -281,6 +281,15 @@ QString DiskEncryptSetup::PendingDecryptionDevice()
     for (auto f : files) {
         auto name = m_dptr->resolveDeviceByDetachHeaderName(f);
         if (!name.isEmpty()) {
+            // Validate that the device is still encrypted; if it has been reformatted
+            // (e.g. via mke2fs), the LUKS header is gone and this backup file is stale.
+            auto status = crypt_setup_helper::encryptStatus(name);
+            if (status == disk_encrypt::kStatusNotEncrypted || status < 0) {
+                qInfo() << "[DiskEncryptSetup::PendingDecryptionDevice] Device is no longer encrypted, removing stale backup:"
+                         << name << "file:" << f;
+                QFile::remove(d.absoluteFilePath(f));
+                continue;
+            }
             qInfo() << "[DiskEncryptSetup::PendingDecryptionDevice] Found pending decryption device:" << name << "from header file:" << f;
             return name;
         }
