@@ -29,6 +29,16 @@ DWIDGET_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
 using namespace dfmplugin_workspace;
 
+namespace {
+inline constexpr int kTruncateButtonMinWidth { 68 };
+inline constexpr int kTruncateButtonMaxWidth { 180 };
+inline constexpr int kTruncateButtonRightMargin { 9 };
+inline constexpr int kTruncateButtonVerticalMargin { 3 };
+inline constexpr int kTruncateButtonHorizontalPadding { 12 };
+inline constexpr int kTruncateButtonTextSpacing { 6 };
+inline constexpr int kTruncateButtonWidthSlack { 10 };
+}   // namespace
+
 BaseItemDelegate::BaseItemDelegate(FileViewHelper *parent)
     : BaseItemDelegate(*new BaseItemDelegatePrivate(this), parent)
 {
@@ -341,15 +351,13 @@ void BaseItemDelegate::paintGroupHeader(QPainter *painter, const QStyleOptionVie
         drawRect.setTop(drawRect.top() + kGroupHeaderInterval);
     }
 
+    QStyleOptionViewItem contentOption = option;
+    contentOption.rect = drawRect.toRect();
+
     // Paint background using subclass-defined background rect
     if (option.widget) {
         // Get background rect from subclass (allows different implementations for list vs icon mode)
-        QRectF bgRect = getGroupHeaderBackgroundRect(option);
-
-        // Adjust bgRect top to match drawRect (skip 16px spacing for non-first groups)
-        if (displayIndex > 0) {
-            bgRect.setTop(drawRect.top());
-        }
+        QRectF bgRect = getGroupHeaderBackgroundRect(contentOption);
 
         DPalette pl(DPaletteHelper::instance()->palette(option.widget));
         QColor baseColor = pl.color(DPalette::ColorGroup::Active, DPalette::ColorType::ItemBackground);
@@ -369,7 +377,7 @@ void BaseItemDelegate::paintGroupHeader(QPainter *painter, const QStyleOptionVie
 
     painter->restore();
 
-    paintGroupHeaderContent(painter, drawRect, option, index);
+    paintGroupHeaderContent(painter, drawRect, contentOption, index);
 }
 
 void BaseItemDelegate::paintStickyGroupHeader(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -413,9 +421,13 @@ void BaseItemDelegate::paintGroupHeaderContent(QPainter *painter, const QRectF &
         groupText = "Group";
 
     bool isExpanded = index.data(Global::ItemRoles::kItemGroupExpandedRole).toBool();
+    const bool hasTruncateButton = shouldShowTruncateButton(index);
 
     paintExpandButton(painter, getExpandButtonRect(drawRect), isExpanded);
-    paintGroupText(painter, getGroupTextRect(drawRect), groupText, fileCount, option);
+    paintGroupText(painter, getGroupTextRect(drawRect, hasTruncateButton), groupText, fileCount, option);
+    if (hasTruncateButton) {
+        paintTruncateButton(painter, getTruncateButtonRect(option), index, option);
+    }
 }
 
 QRectF BaseItemDelegate::getGroupHeaderBackgroundRect(const QStyleOptionViewItem &option) const
@@ -542,6 +554,49 @@ void BaseItemDelegate::paintGroupText(QPainter *painter, const QRect &textRect, 
     painter->restore();
 }
 
+void BaseItemDelegate::paintTruncateButton(QPainter *painter, const QRect &buttonRect, const QModelIndex &index, const QStyleOptionViewItem &option) const
+{
+    if (!painter || buttonRect.isEmpty() || !index.isValid()) {
+        return;
+    }
+
+    painter->save();
+
+    const QString groupKey = index.data(Global::kItemGroupHeaderKey).toString();
+    const bool isHovered = groupKey == hoveredTruncateGroupKey();
+    const bool isPressed = groupKey == pressedTruncateGroupKey();
+    const bool isTruncated = index.data(Global::kItemGroupTruncatedRole).toBool();
+
+    const QString text = truncateButtonText(isTruncated);
+    const QFont buttonFont = DFontSizeManager::instance()->t8();
+    const QFontMetrics fm(buttonFont);
+
+    bool isLightTheme = DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::ColorType::LightType;
+    QColor textColor = isLightTheme ? QColor(0, 0, 0, qRound(255 * 0.7))
+                                    : QColor(255, 255, 255, qRound(255 * 0.7));
+
+    if (isHovered || isPressed) {
+        DPalette pl = option.widget
+                ? DPaletteHelper::instance()->palette(option.widget)
+                : DPalette(QApplication::palette());
+        QColor baseColor = pl.color(DPalette::ColorGroup::Active, DPalette::ColorType::ItemBackground);
+        QColor backgroundColor = DGuiApplicationHelper::adjustColor(baseColor, 0, 0, 0, 0, 0, 0, isPressed ? +20 : +10);
+        QPainterPath path;
+        path.addRoundedRect(buttonRect, kListModeRectRadius, kListModeRectRadius);
+        painter->setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing | QPainter::SmoothPixmapTransform);
+        painter->fillPath(path, backgroundColor);
+        if (isPressed) {
+            textColor = QColor(ThemeColor::kHighlightPressColor);
+        }
+    }
+
+    painter->setFont(buttonFont);
+    painter->setPen(textColor);
+    painter->drawText(buttonRect, Qt::AlignCenter,
+                      fm.elidedText(text, Qt::ElideRight, buttonRect.width() - kTruncateButtonHorizontalPadding * 2));
+    painter->restore();
+}
+
 QRect BaseItemDelegate::getExpandButtonRect(const QStyleOptionViewItem &option) const
 {
     return getExpandButtonRect(option.rect);
@@ -557,20 +612,101 @@ QRect BaseItemDelegate::getExpandButtonRect(const QRectF &rect) const
     return buttonRect;
 }
 
-QRect BaseItemDelegate::getGroupTextRect(const QStyleOptionViewItem &option) const
+QRect BaseItemDelegate::getTruncateButtonRect(const QStyleOptionViewItem &option) const
 {
-    return getGroupTextRect(option.rect);
+    QRectF buttonBaseRect = getGroupHeaderBackgroundRect(option);
+    const int contentHeight = qMin(getGroupHeaderHeight(option), qRound(buttonBaseRect.height()));
+    if (buttonBaseRect.height() > contentHeight) {
+        buttonBaseRect.setTop(buttonBaseRect.bottom() - contentHeight);
+    }
+    return getTruncateButtonRect(buttonBaseRect);
 }
 
-QRect BaseItemDelegate::getGroupTextRect(const QRectF &rect) const
+QRect BaseItemDelegate::getTruncateButtonRect(const QRectF &rect) const
+{
+    QRect buttonRect;
+    buttonRect.setWidth(getTruncateButtonWidth());
+    buttonRect.setHeight(qMax(0, static_cast<int>(rect.height()) - kTruncateButtonVerticalMargin * 2));
+    buttonRect.moveRight(rect.right() - kTruncateButtonRightMargin);
+    buttonRect.moveTop(rect.top() + kTruncateButtonVerticalMargin);
+
+    return buttonRect;
+}
+
+bool BaseItemDelegate::shouldShowTruncateButton(const QModelIndex &index) const
+{
+    return index.isValid()
+            && index.data(Global::kItemGroupExpandedRole).toBool()
+            && index.data(Global::kItemGroupTruncationEnabledRole).toBool()
+            && index.data(Global::kItemGroupFileCount).toInt() > kGroupTruncateLimit;
+}
+
+QString BaseItemDelegate::truncateButtonText(bool isTruncated) const
+{
+    return isTruncated ? tr("Show All") : tr("Show Partial");
+}
+
+QStringList BaseItemDelegate::truncateButtonTexts() const
+{
+    return { truncateButtonText(true), truncateButtonText(false) };
+}
+
+QRect BaseItemDelegate::getGroupTextRect(const QStyleOptionViewItem &option, bool hasTruncateButton) const
+{
+    return getGroupTextRect(option.rect, hasTruncateButton);
+}
+
+QRect BaseItemDelegate::getGroupTextRect(const QRectF &rect, bool hasTruncateButton) const
 {
     QRect expandButtonRect = getExpandButtonRect(rect);
+    const int rightReserved = hasTruncateButton
+            ? getTruncateButtonWidth() + kTruncateButtonRightMargin + kTruncateButtonTextSpacing
+            : 12;
 
     QRect textRect;
     textRect.setLeft(expandButtonRect.right() + 8);   // 8px spacing after button
     textRect.setTop(rect.top());
-    textRect.setRight(rect.right() - 12);   // 12px right margin
+    textRect.setRight(rect.right() - rightReserved);
     textRect.setBottom(rect.bottom());
 
     return textRect;
+}
+
+int BaseItemDelegate::getTruncateButtonWidth() const
+{
+    const QFont buttonFont = DFontSizeManager::instance()->t8();
+    const QFontMetrics fm(buttonFont);
+    int longestTextWidth = 0;
+    const QStringList texts = truncateButtonTexts();
+    for (const QString &text : texts) {
+        longestTextWidth = qMax(longestTextWidth, fm.horizontalAdvance(text));
+    }
+
+    return qBound(kTruncateButtonMinWidth,
+                  longestTextWidth + kTruncateButtonHorizontalPadding * 2 + kTruncateButtonWidthSlack,
+                  kTruncateButtonMaxWidth);
+}
+
+void BaseItemDelegate::setHoveredTruncateGroupKey(const QString &groupKey)
+{
+    Q_D(BaseItemDelegate);
+    d->hoveredTruncateGroupKey = groupKey;
+}
+
+QString BaseItemDelegate::hoveredTruncateGroupKey() const
+{
+    Q_D(const BaseItemDelegate);
+    return d->hoveredTruncateGroupKey;
+}
+
+void BaseItemDelegate::setPressedTruncateGroupKey(const QString &groupKey)
+{
+    Q_D(BaseItemDelegate);
+    d->pressedTruncateGroupKey = groupKey;
+}
+
+QString BaseItemDelegate::pressedTruncateGroupKey() const
+{
+    Q_D(const BaseItemDelegate);
+    return d->pressedTruncateGroupKey;
 }

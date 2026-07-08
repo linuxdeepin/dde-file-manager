@@ -134,10 +134,14 @@ public:
      * @brief Generate flattened model data from grouping result
      * @param groupingResult The result from groupFiles()
      * @param expansionStates Current expansion states for groups
+     * @param truncationStates Current truncation states for groups
+     * @param strategy The grouping strategy that owns the truncation capability
      * @return The flattened model data ready for use in views
      */
     GroupedModelData generateModelData(const GroupingResult &groupingResult,
-                                       const QHash<QString, bool> &expansionStates) const;
+                                       const QHash<QString, bool> &expansionStates,
+                                       const QHash<QString, bool> &truncationStates,
+                                       const DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy) const;
 
     /**
      * @brief Find the preceding anchor URL for a given slice range
@@ -193,6 +197,9 @@ public:
     void setCancellationCheckCallback(CancellationCheckCallback callback);
 
 private:
+    void initializeTruncationStates(const DFMBASE_NAMESPACE::AbstractGroupStrategy *strategy,
+                                    GroupedModelData *modelData) const;
+
     /**
      * @brief Perform the actual grouping algorithm
      * @param files List of files to group

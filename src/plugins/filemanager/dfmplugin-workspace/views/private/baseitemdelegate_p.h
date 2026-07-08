@@ -43,6 +43,8 @@ public:
     QWidget *commitDataCurentWidget { nullptr };
     QStringList highlightKeywords {};
     DFMBASE_NAMESPACE::ViewDefines viewDefines;
+    QString hoveredTruncateGroupKey {};
+    QString pressedTruncateGroupKey {};
 
     BaseItemDelegate *q_ptr;
     Q_DECLARE_PUBLIC(BaseItemDelegate)

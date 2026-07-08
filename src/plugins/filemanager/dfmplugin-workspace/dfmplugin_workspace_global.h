@@ -87,6 +87,7 @@ inline constexpr int kViewAnimationDuration { 366 };
 inline constexpr int kViewAnimationFrameDuration { 16 };
 inline constexpr int kGroupHeaderInterval { 16 };
 inline constexpr int kDefaultHeaderBottomMargin { 10 };
+inline constexpr int kGroupTruncateLimit { 30 };
 
 // tab defines
 inline constexpr int kMaxTabCount { 8 };
@@ -119,6 +120,10 @@ inline constexpr char kGroupStrategyName[] { "Property_Key_GroupStrategyName" };
 inline constexpr char kGroupStrategyDisplayName[] { "Property_Key_GroupStrategyDisplayName" };
 inline constexpr char kGroupStrategySchemes[] { "Property_Key_GroupStrategySchemes" };
 inline constexpr char kGroupStrategyFactory[] { "Property_Key_GroupStrategyFactory" };
+}
+
+namespace ThemeColor {
+inline constexpr char kHighlightPressColor[] { "#0081FF" };
 }
 
 using CreateTopWidgetCallback = std::function<QWidget *()>;

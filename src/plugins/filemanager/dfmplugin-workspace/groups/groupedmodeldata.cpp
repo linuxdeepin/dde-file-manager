@@ -25,6 +25,8 @@ GroupedModelData::GroupedModelData(const GroupedModelData &other)
     groups = other.groups;
     flattenedItems = other.flattenedItems;
     groupExpansionStates = other.groupExpansionStates;
+    truncationStates = other.truncationStates;
+    m_truncationEnabled = other.m_truncationEnabled;
 }
 
 GroupedModelData &GroupedModelData::operator=(const GroupedModelData &other)
@@ -36,6 +38,8 @@ GroupedModelData &GroupedModelData::operator=(const GroupedModelData &other)
         groups = other.groups;
         flattenedItems = other.flattenedItems;
         groupExpansionStates = other.groupExpansionStates;
+        truncationStates = other.truncationStates;
+        m_truncationEnabled = other.m_truncationEnabled;
     }
     return *this;
 }
@@ -81,6 +85,56 @@ bool GroupedModelData::isGroupExpanded(const QString &groupKey) const
     return groupExpansionStates.value(groupKey, true);   // Default to expanded
 }
 
+void GroupedModelData::setGroupTruncated(const QString &groupKey, bool truncated, bool rebuild)
+{
+    if (groupKey.isEmpty() || !m_truncationEnabled) {
+        return;
+    }
+
+    if (truncationStates.value(groupKey, false) == truncated) {
+        return;
+    }
+
+    truncationStates[groupKey] = truncated;
+    if (rebuild) {
+        rebuildFlattenedItems();
+    }
+}
+
+bool GroupedModelData::isGroupTruncated(const QString &groupKey) const
+{
+    return truncationStates.value(groupKey, false);
+}
+
+bool GroupedModelData::isGroupTruncatedInitialized(const QString &groupKey) const
+{
+    return truncationStates.contains(groupKey);
+}
+
+int GroupedModelData::getVisibleFileCount(const QString &groupKey) const
+{
+    const FileGroupData *group = getGroup(groupKey);
+    if (!group || !isGroupExpanded(groupKey)) {
+        return 0;
+    }
+
+    if (!m_truncationEnabled || !isGroupTruncated(groupKey)) {
+        return group->fileCount;
+    }
+
+    return qMin(group->fileCount, kGroupTruncateLimit);
+}
+
+void GroupedModelData::setTruncationEnabled(bool enabled)
+{
+    m_truncationEnabled = enabled;
+}
+
+bool GroupedModelData::isTruncationEnabled() const
+{
+    return m_truncationEnabled;
+}
+
 void GroupedModelData::updateGroupHeader(const QString &groupKey)
 {
     if (groupKey.isEmpty()) {
@@ -106,7 +160,7 @@ void GroupedModelData::updateGroupHeader(const QString &groupKey)
     for (auto &item : flattenedItems) {
         if (item.isGroupHeader() && item.groupKey == groupKey) {
             // Create a new ModelItemWrapper with updated group data
-            item = ModelItemWrapper(groupData);
+            item = ModelItemWrapper(groupData, isGroupTruncated(groupKey), m_truncationEnabled);
             break;
         }
     }
@@ -121,20 +175,21 @@ void GroupedModelData::rebuildFlattenedItems()
     int index = 0;
     for (auto &group : groups) {
         group.displayIndex = index;
+        group.isExpanded = groupExpansionStates.value(group.groupKey, true);
         // Always add the group header
-        flattenedItems.append(ModelItemWrapper(&group));
+        flattenedItems.append(ModelItemWrapper(&group, isGroupTruncated(group.groupKey), m_truncationEnabled));
 
         // Add files if the group is expanded
-        bool isExpanded = groupExpansionStates.value(group.groupKey, true);
-        if (isExpanded) {
-            for (const auto &file : group.files) {
+        if (group.isExpanded) {
+            const int visibleCount = getVisibleFileCount(group.groupKey);
+            for (int fileIndex = 0; fileIndex < visibleCount; ++fileIndex) {
+                const auto &file = group.files.at(fileIndex);
                 if (file) {
                     file->setGroupDisplayIndex(index);
                     flattenedItems.append(ModelItemWrapper(file, group.groupKey));
                 }
             }
         }
-        group.isExpanded = isExpanded;
         ++index;
     }
 }
@@ -146,6 +201,8 @@ void GroupedModelData::clear()
     groups.clear();
     flattenedItems.clear();
     groupExpansionStates.clear();
+    truncationStates.clear();
+    m_truncationEnabled = false;
 }
 
 bool GroupedModelData::isEmpty() const
@@ -188,6 +245,7 @@ bool GroupedModelData::removeGroup(const QString &groupKey)
         if (it->groupKey == groupKey) {
             groups.erase(it);
             groupExpansionStates.remove(groupKey);
+            truncationStates.remove(groupKey);
             return true;
         }
     }

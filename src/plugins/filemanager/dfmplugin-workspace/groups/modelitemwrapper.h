@@ -52,7 +52,7 @@ public:
      * @brief Constructor for group header item
      * @param groupData The group data pointer
      */
-    ModelItemWrapper(const FileGroupData *groupData);
+    ModelItemWrapper(const FileGroupData *groupData, bool isTruncated, bool isTruncationEnabled);
 
     /**
      * @brief Copy constructor

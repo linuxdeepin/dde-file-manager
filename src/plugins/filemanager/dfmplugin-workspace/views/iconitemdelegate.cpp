@@ -738,7 +738,7 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
                                                                                 lineHeight, Qt::AlignCenter, painter));
     layout->setHighlightEnabled(!isSelected);
     layout->setHighlightKeywords(effectiveHighlightKeywords(index));
-    layout->setHighlightColor(QColor("#0081FF"));
+    layout->setHighlightColor(QColor(ThemeColor::kHighlightPressColor));
 
     labelRect.setLeft(labelRect.left() + kIconModeRectRadius);
     labelRect.setWidth(labelRect.width() - kIconModeRectRadius);

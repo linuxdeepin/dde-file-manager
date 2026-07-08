@@ -93,6 +93,15 @@ public:
      * @return The name of this strategy
      */
     virtual QString getStrategyName() const = 0;
+
+    /**
+     * @brief Whether the workspace should enable per-group truncation for this strategy
+     * @return True when the strategy opts into the shared truncation behavior
+     */
+    virtual bool isTruncationEnabled() const
+    {
+        return false;
+    }
 };
 
 DFMBASE_END_NAMESPACE

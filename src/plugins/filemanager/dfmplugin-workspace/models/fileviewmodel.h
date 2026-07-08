@@ -59,6 +59,7 @@ public:
     void toggleTreeItemExpansion(const QModelIndex &index);
     void toggleTreeItemCollapse(const QModelIndex &index);
     void toggleGroupExpansion(const QString &groupKey);
+    void toggleGroupTruncation(const QString &groupKey);
 
     ModelState currentState() const;
     GroupingState groupingState() const;
@@ -140,6 +141,7 @@ Q_SIGNALS:
     void requestShowHiddenChanged(bool value);
 
     void requestToggleGroupExpansion(const QString &key, const QString &groupKey);
+    void requestToggleGroupTruncation(const QString &key, const QString &groupKey);
     void requestCollapseItem(const QString &key, const QUrl &parent);
     void requestTreeView(const bool isTree);
     void highlightKeywordsChanged(const QStringList &keywords);
