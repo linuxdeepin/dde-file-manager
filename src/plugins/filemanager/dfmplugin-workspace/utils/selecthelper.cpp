@@ -25,6 +25,11 @@ SelectHelper::SelectHelper(FileView *parent)
     fmDebug() << "SelectHelper created for FileView";
 }
 
+void SelectHelper::setItemsExpandable(bool expandable)
+{
+    m_itemsExpandable = expandable;
+}
+
 QModelIndex SelectHelper::getCurrentPressedIndex() const
 {
     return currentPressedIndex;
@@ -457,7 +462,7 @@ QString SelectHelper::getGroupKeyFromIndex(const QModelIndex &index) const
 // parents (kItemTreeViewExpandedRole gate) into the result list.
 QList<QUrl> SelectHelper::selectedTreeViewUrlList() const
 {
-    if (view->isIconViewMode() || !view->isItemsExpandable())
+    if (view->isIconViewMode() || !m_itemsExpandable)
         return view->selectedUrlList();
 
     QList<QUrl> treeUrls;
@@ -469,7 +474,7 @@ void SelectHelper::selectedTreeViewUrlList(QList<QUrl> &selectedUrls, QList<QUrl
 {
     selectedUrls.clear();
     treeSelectedUrls.clear();
-    if (view->isIconViewMode() || !view->isItemsExpandable())
+    if (view->isIconViewMode() || !m_itemsExpandable)
         return selectedUrls.append(view->selectedUrlList());
 
     collectTreeViewUrls(&selectedUrls, &treeSelectedUrls);
@@ -502,7 +507,8 @@ void SelectHelper::collectTreeViewUrls(QList<QUrl> *allUrls, QList<QUrl> *treeUr
         if (index.parent() != rootIndex || (expandIndex.isValid() && expandIsParent))
             continue;
         if (!expandIndex.isValid() || !expandIsParent) {
-            treeUrls->append(view->model()->data(index, ItemRoles::kItemUrlRole).toUrl());
+            if (treeUrls)
+                treeUrls->append(view->model()->data(index, ItemRoles::kItemUrlRole).toUrl());
             if (index.data(Global::ItemRoles::kItemTreeViewExpandedRole).toBool()) {
                 expandIndex = index;
             } else if (expandIndex.isValid()) {

@@ -44,6 +44,9 @@ public:
     QList<QModelIndex> getGroupFileIndexes(const QString &groupKey) const;
     bool isSelectableItem(const QModelIndex &index) const;
 
+    // Sync itemsExpandable state from FileView (called by FileView after DConfig/scheme resolution).
+    void setItemsExpandable(bool expandable);
+
 private:
     void caculateSelection(const QRect &rect, QItemSelection *selection);
     void caculateIconViewSelection(const QRect &rect, QItemSelection *selection);
@@ -75,6 +78,9 @@ private:
 
     QList<QUrl> selectedFiles {};
     QUrl currentSelectedFile {};
+
+    // Cached itemsExpandable state (synced from FileView via setItemsExpandable).
+    bool m_itemsExpandable { false };
 };
 
 }

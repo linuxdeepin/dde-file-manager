@@ -34,7 +34,6 @@ class ViewGeometryHelper;
 class FileViewPrivate
 {
     friend class FileView;
-    friend class ViewGeometryHelper;
     FileView *const q;
 
     QAtomicInteger<bool> allowedAdjustColumnSize { true };
@@ -99,7 +98,6 @@ class FileViewPrivate
 
     explicit FileViewPrivate(FileView *qq);
     int iconModeColumnCount(int itemWidth = 0) const;
-    int calcColumnCount(int widgetWidth, int itemWidth = 0) const;
     QUrl modelIndexUrl(const QModelIndex &index) const;
 
     void initIconModeView();
