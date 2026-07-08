@@ -26,6 +26,19 @@ ViewGeometryHelper::ViewGeometryHelper(FileView *parent)
 {
 }
 
+int ViewGeometryHelper::calcColumnCount(int widgetWidth, int itemWidth) const
+{
+    if (itemWidth <= 0)
+        itemWidth = m_view->itemSizeHint().width();
+
+    int availableWidth = widgetWidth - 2 * kIconHorizontalMargin;
+
+    // 计算列数
+    int columnCount = (availableWidth + 2 * m_view->spacing()) / (itemWidth + 2 * m_view->spacing());
+
+    return columnCount;
+}
+
 ViewGeometryHelper::RangeIndexList ViewGeometryHelper::visibleIndexes(const QRect &rect) const
 {
     RangeIndexList list;
@@ -52,7 +65,7 @@ ViewGeometryHelper::RangeIndexList ViewGeometryHelper::visibleIndexes(const QRec
             return list;
         }
 
-        int columnCount = m_view->d->calcColumnCount(rect.width(), itemSize.width());
+        int columnCount = calcColumnCount(rect.width(), itemSize.width());
 
         list << calcRectContiansIndexes(columnCount, rect);
     }
@@ -122,7 +135,7 @@ ViewGeometryHelper::RangeIndexList ViewGeometryHelper::rectContainsIndexes(const
         QSize itemSize = m_view->itemSizeHint();
         int spacing = m_view->spacing();
         int itemWidth = itemSize.width() + spacing * 2;
-        int columnCount = m_view->d->iconModeColumnCount(itemWidth);
+        int columnCount = m_view->iconModeColumnCount(itemWidth);
         list << calcRectContiansIndexes(columnCount, rect);
     }
 
@@ -200,7 +213,7 @@ QRect ViewGeometryHelper::calcVisualRect(int widgetWidth, int index) const
     QSize itemSize = m_view->itemSizeHint();
 
     // 计算列数
-    int columnCount = m_view->d->calcColumnCount(widgetWidth, itemSize.width());
+    int columnCount = calcColumnCount(widgetWidth, itemSize.width());
     if (columnCount == 0)
         return QRect();
 

@@ -57,7 +57,7 @@ private:
     QModelIndex m_currentStickyIndex;
     QRect m_currentStickyRect;
     bool m_stickyHeaderHovered { false };
-    mutable QModelIndex m_cachedNextStickyHeader;
+    QModelIndex m_cachedNextStickyHeader;
 };
 
 }   // namespace dfmplugin_workspace

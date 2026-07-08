@@ -68,19 +68,6 @@ int FileViewPrivate::iconModeColumnCount(int itemWidth) const
     return columnCountByCalc;
 }
 
-int FileViewPrivate::calcColumnCount(int widgetWidth, int itemWidth) const
-{
-    if (itemWidth <= 0)
-        itemWidth = q->itemSizeHint().width();
-
-    int availableWidth = widgetWidth - 2 * kIconHorizontalMargin;
-
-    // 计算列数
-    int columnCount = (availableWidth + 2 * q->spacing()) / (itemWidth + 2 * q->spacing());
-
-    return columnCount;
-}
-
 QUrl FileViewPrivate::modelIndexUrl(const QModelIndex &index) const
 {
     return index.data().toUrl();

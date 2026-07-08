@@ -36,6 +36,10 @@ public:
     bool indexInRect(const QRect &actualRect, const QModelIndex &index) const;
 
 private:
+    // Pure calculation: column count from widget width and item width.
+    // Depends only on view->itemSizeHint() and view->spacing() (public APIs).
+    int calcColumnCount(int widgetWidth, int itemWidth = 0) const;
+
     FileView *m_view { nullptr };
 };
 

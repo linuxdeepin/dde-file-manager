@@ -295,6 +295,8 @@ bool FileView::setRootUrl(const QUrl &url)
     const QModelIndex &index = model()->setRootUrl(fileUrl);
     d->itemsExpandable = DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool()
             && WorkspaceHelper::instance()->isViewModeSupported(rootUrl().scheme(), DFMGLOBAL_NAMESPACE::ViewMode::kTreeMode);
+    if (d->selectHelper)
+        d->selectHelper->setItemsExpandable(d->itemsExpandable);
 
     setRootIndex(index);
 
@@ -966,6 +968,11 @@ int FileView::itemCountForRow() const
     return d->iconModeColumnCount();
 }
 
+int FileView::iconModeColumnCount(int itemWidth) const
+{
+    return d->iconModeColumnCount(itemWidth);
+}
+
 QSize FileView::itemSizeHint() const
 {
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
@@ -980,11 +987,6 @@ QSize FileView::itemSizeHint() const
 #endif
 
     return QSize();
-}
-
-bool FileView::isItemsExpandable() const
-{
-    return d->itemsExpandable;
 }
 
 void FileView::increaseIcon()
@@ -2247,6 +2249,8 @@ void FileView::initializeDelegate()
 
     d->itemsExpandable = DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool()
             && WorkspaceHelper::instance()->isViewModeSupported(rootUrl().scheme(), DFMGLOBAL_NAMESPACE::ViewMode::kTreeMode);
+    if (d->selectHelper)
+        d->selectHelper->setItemsExpandable(d->itemsExpandable);
     updateDelegateHighlightKeywords(model()->getKeyWords());
 
     fmDebug() << "Delegates initialized with grouping signal connections, items expandable:" << d->itemsExpandable;

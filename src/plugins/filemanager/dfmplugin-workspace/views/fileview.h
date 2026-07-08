@@ -105,15 +105,13 @@ public:
     BaseItemDelegate *itemDelegate() const;
     int itemCountForRow() const;
     int rowCount() const;
+    // Icon-mode column count (cached from updateHorizontalOffset).
+    int iconModeColumnCount(int itemWidth = 0) const;
 
     inline int indexOfRow(const QModelIndex &index) const
     {
         return index.row() / itemCountForRow();
     }
-
-    // Whether tree-view item expansion is enabled (DConfig + scheme support).
-    // Exposed for helpers (e.g. SelectHelper) that need this state.
-    bool isItemsExpandable() const;
 
     QModelIndex currentPressIndex() const;
 
