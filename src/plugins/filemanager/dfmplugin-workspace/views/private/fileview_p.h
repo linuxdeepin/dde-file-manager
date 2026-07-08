@@ -31,12 +31,10 @@ class FileViewStatusBar;
 class HeaderView;
 class BaseItemDelegate;
 class ViewGeometryHelper;
-class StickyGroupHeaderHelper;
 class FileViewPrivate
 {
     friend class FileView;
     friend class ViewGeometryHelper;
-    friend class StickyGroupHeaderHelper;
     FileView *const q;
 
     QAtomicInteger<bool> allowedAdjustColumnSize { true };
@@ -94,11 +92,6 @@ class FileViewPrivate
     QRect mouseMoveRect { QRect(-1, -1, 1, 1) };
     bool initHorizontalOffset { false };
     int columnCountByCalc { 0 };
-
-    QModelIndex currentStickyIndex;
-    QRect currentStickyRect;
-    bool stickyHeaderHovered { false };
-    QModelIndex cachedNextStickyHeader;
 
     bool itemsExpandable { false };
     std::atomic_bool isShowSmbMountError { false };

@@ -36,7 +36,7 @@ public:
     bool indexInRect(const QRect &actualRect, const QModelIndex &index) const;
 
 private:
-    FileView *view { nullptr };
+    FileView *m_view { nullptr };
 };
 
 }   // namespace dfmplugin_workspace

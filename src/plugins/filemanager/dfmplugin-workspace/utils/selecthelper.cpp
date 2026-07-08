@@ -460,40 +460,9 @@ QList<QUrl> SelectHelper::selectedTreeViewUrlList() const
     if (view->isIconViewMode() || !view->isItemsExpandable())
         return view->selectedUrlList();
 
-    QModelIndex rootIndex = view->rootIndex();
-    QList<QUrl> list;
-
-    QModelIndex expandIndex;
-    auto selectIndex = view->selectedIndexes();
-    if (selectIndex.count() < 1)
-        return list;
-    if (selectIndex.count() >= 2)
-        std::sort(selectIndex.begin(), selectIndex.end(),
-                  [](const QModelIndex &left, const QModelIndex &right) {
-                      return left.row() < right.row();
-                  });
-    for (const QModelIndex &index : selectIndex) {
-        bool expandIsParent = false;
-        if (expandIndex.isValid()) {
-            auto parentUrl = expandIndex.data(Global::ItemRoles::kItemUrlRole).toUrl();
-            auto child = index.data(Global::ItemRoles::kItemUrlRole).toUrl();
-            expandIsParent = (index.data(Global::ItemRoles::kItemTreeViewDepthRole).toInt()
-                              > expandIndex.data(Global::ItemRoles::kItemTreeViewDepthRole).toInt())
-                    && UniversalUtils::isParentUrl(child, parentUrl);
-        }
-        if (index.parent() != rootIndex || (expandIndex.isValid() && expandIsParent))
-            continue;
-        if (!expandIndex.isValid() || !expandIsParent) {
-            list << view->model()->data(index, ItemRoles::kItemUrlRole).toUrl();
-            if (index.data(Global::ItemRoles::kItemTreeViewExpandedRole).toBool()) {
-                expandIndex = index;
-            } else if (expandIndex.isValid()) {
-                expandIndex = QModelIndex();
-            }
-        }
-    }
-
-    return list;
+    QList<QUrl> treeUrls;
+    collectTreeViewUrls(nullptr, &treeUrls);
+    return treeUrls;
 }
 
 void SelectHelper::selectedTreeViewUrlList(QList<QUrl> &selectedUrls, QList<QUrl> &treeSelectedUrls) const
@@ -503,6 +472,11 @@ void SelectHelper::selectedTreeViewUrlList(QList<QUrl> &selectedUrls, QList<QUrl
     if (view->isIconViewMode() || !view->isItemsExpandable())
         return selectedUrls.append(view->selectedUrlList());
 
+    collectTreeViewUrls(&selectedUrls, &treeSelectedUrls);
+}
+
+void SelectHelper::collectTreeViewUrls(QList<QUrl> *allUrls, QList<QUrl> *treeUrls) const
+{
     QModelIndex rootIndex = view->rootIndex();
 
     QModelIndex expandIndex;
@@ -515,7 +489,8 @@ void SelectHelper::selectedTreeViewUrlList(QList<QUrl> &selectedUrls, QList<QUrl
                       return left.row() < right.row();
                   });
     for (const QModelIndex &index : selectIndex) {
-        selectedUrls.append(index.data(Global::ItemRoles::kItemUrlRole).toUrl());
+        if (allUrls)
+            allUrls->append(index.data(Global::ItemRoles::kItemUrlRole).toUrl());
         bool expandIsParent = false;
         if (expandIndex.isValid()) {
             auto parentUrl = expandIndex.data(Global::ItemRoles::kItemUrlRole).toUrl();
@@ -527,7 +502,7 @@ void SelectHelper::selectedTreeViewUrlList(QList<QUrl> &selectedUrls, QList<QUrl
         if (index.parent() != rootIndex || (expandIndex.isValid() && expandIsParent))
             continue;
         if (!expandIndex.isValid() || !expandIsParent) {
-            treeSelectedUrls << view->model()->data(index, ItemRoles::kItemUrlRole).toUrl();
+            treeUrls->append(view->model()->data(index, ItemRoles::kItemUrlRole).toUrl());
             if (index.data(Global::ItemRoles::kItemTreeViewExpandedRole).toBool()) {
                 expandIndex = index;
             } else if (expandIndex.isValid()) {
@@ -535,6 +510,4 @@ void SelectHelper::selectedTreeViewUrlList(QList<QUrl> &selectedUrls, QList<QUrl
             }
         }
     }
-
-    return;
 }

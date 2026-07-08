@@ -269,7 +269,7 @@ private:
     bool isClickInGroupHeaderSpacing(const QPoint &pos, const QModelIndex &index) const;
     QModelIndex indexAtForSelection(const QPoint &pos) const;
 
-    QModelIndex findStickyGroupIndex(int headerHeight) const;
+    QModelIndex findStickyGroupIndex(int headerHeight);
     int computeStickyY(int headerHeight) const;
     int stickyHeaderHeight() const;
     void paintStickyHeaderOverlay(const QModelIndex &index, int y, int headerHeight);

@@ -1268,7 +1268,7 @@ bool FileView::groupExpandOrCollapseItem(const QModelIndex &index, const QPoint 
         return true;
     }
     QStyleOptionViewItem op;
-    QRect rect = (index == d->currentStickyIndex) ? d->currentStickyRect : visualRect(index);
+    QRect rect = (index == d->stickyHelper->currentStickyIndex()) ? d->stickyHelper->currentStickyRect() : visualRect(index);
     op.rect = rect;
     QRect arrowRect = itemDelegate()->getExpandButtonRect(op);
 
@@ -1437,7 +1437,7 @@ void FileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFla
 void FileView::mousePressEvent(QMouseEvent *event)
 {
     if (isPosInStickyHeader(event->pos())) {
-        QModelIndex stickyIdx = d->currentStickyIndex;
+        QModelIndex stickyIdx = d->stickyHelper->currentStickyIndex();
         if (event->button() == Qt::LeftButton) {
             d->lastClickedIndex = stickyIdx;
             if (groupExpandOrCollapseItem(stickyIdx, event->pos())) {
@@ -1622,7 +1622,7 @@ void FileView::dropEvent(QDropEvent *event)
 
 QModelIndex FileView::indexAt(const QPoint &pos) const
 {
-    if (d->currentStickyIndex.isValid() && d->currentStickyRect.contains(pos))
+    if (d->stickyHelper->currentStickyIndex().isValid() && d->stickyHelper->currentStickyRect().contains(pos))
         return QModelIndex();
 
     // For icon mode, use custom calculation
@@ -2055,7 +2055,7 @@ bool FileView::eventFilter(QObject *obj, QEvent *event)
         }
         break;
     case QEvent::HoverMove: {
-        if (d->currentStickyIndex.isValid() && !d->currentStickyRect.isNull()) {
+        if (d->stickyHelper->currentStickyIndex().isValid() && !d->stickyHelper->currentStickyRect().isNull()) {
             auto *he = static_cast<QHoverEvent *>(event);
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
             QPoint hoverPos = he->pos();
@@ -2068,18 +2068,18 @@ bool FileView::eventFilter(QObject *obj, QEvent *event)
                 if (w != viewport())
                     hoverPos = viewport()->mapFromGlobal(w->mapToGlobal(hoverPos));
             }
-            bool nowHovered = d->currentStickyRect.contains(hoverPos);
-            if (nowHovered != d->stickyHeaderHovered) {
-                d->stickyHeaderHovered = nowHovered;
-                viewport()->update(d->currentStickyRect);
+            bool nowHovered = d->stickyHelper->currentStickyRect().contains(hoverPos);
+            if (nowHovered != d->stickyHelper->isStickyHeaderHovered()) {
+                d->stickyHelper->setStickyHeaderHovered(nowHovered);
+                viewport()->update(d->stickyHelper->currentStickyRect());
             }
         }
         break;
     }
     case QEvent::HoverLeave: {
-        if (d->stickyHeaderHovered && d->currentStickyIndex.isValid()) {
-            d->stickyHeaderHovered = false;
-            viewport()->update(d->currentStickyRect);
+        if (d->stickyHelper->isStickyHeaderHovered() && d->stickyHelper->currentStickyIndex().isValid()) {
+            d->stickyHelper->setStickyHeaderHovered(false);
+            viewport()->update(d->stickyHelper->currentStickyRect());
         }
         break;
     }
@@ -2148,10 +2148,10 @@ void FileView::paintEvent(QPaintEvent *event)
         if (stickyIdx.isValid()) {
             int stickyY = computeStickyY(headerHeight);
             paintStickyHeaderOverlay(stickyIdx, stickyY, headerHeight);
-        } else if (d->currentStickyIndex.isValid()) {
+        } else if (d->stickyHelper->currentStickyIndex().isValid()) {
             clearStickyHeaderState();
         }
-    } else if (d->currentStickyIndex.isValid()) {
+    } else if (d->stickyHelper->currentStickyIndex().isValid()) {
         clearStickyHeaderState();
     }
 }
@@ -2804,7 +2804,7 @@ int FileView::stickyHeaderHeight() const
     return d->stickyHelper->stickyHeaderHeight();
 }
 
-QModelIndex FileView::findStickyGroupIndex(int headerHeight) const
+QModelIndex FileView::findStickyGroupIndex(int headerHeight)
 {
     return d->stickyHelper->findStickyGroupIndex(headerHeight);
 }
@@ -2839,7 +2839,7 @@ void FileView::mouseDoubleClickEvent(QMouseEvent *event)
     if (isPosInStickyHeader(event->pos())) {
         if (event->button() == Qt::LeftButton) {
             d->groupHeaderTimer->stop();
-            QModelIndex stickyIdx = d->currentStickyIndex;
+            QModelIndex stickyIdx = d->stickyHelper->currentStickyIndex();
             bool wasExpanded = stickyIdx.data(Global::kItemGroupExpandedRole).toBool();
             groupExpandOrCollapseItem(stickyIdx, QPoint(), false);
             if (wasExpanded)
@@ -2852,9 +2852,9 @@ void FileView::mouseDoubleClickEvent(QMouseEvent *event)
 
 void FileView::leaveEvent(QEvent *event)
 {
-    if (d->stickyHeaderHovered && d->currentStickyIndex.isValid()) {
-        d->stickyHeaderHovered = false;
-        viewport()->update(d->currentStickyRect);
+    if (d->stickyHelper->isStickyHeaderHovered() && d->stickyHelper->currentStickyIndex().isValid()) {
+        d->stickyHelper->setStickyHeaderHovered(false);
+        viewport()->update(d->stickyHelper->currentStickyRect());
     }
     DListView::leaveEvent(event);
 }

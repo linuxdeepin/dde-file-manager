@@ -22,7 +22,7 @@ using namespace dfmplugin_workspace;
 
 ViewGeometryHelper::ViewGeometryHelper(FileView *parent)
     : QObject(parent),
-      view(parent)
+      m_view(parent)
 {
 }
 
@@ -30,13 +30,13 @@ ViewGeometryHelper::RangeIndexList ViewGeometryHelper::visibleIndexes(const QRec
 {
     RangeIndexList list;
 
-    QSize itemSize = view->itemSizeHint();
+    QSize itemSize = m_view->itemSizeHint();
 
-    int count = view->count();
-    int spacing = view->spacing();
+    int count = m_view->count();
+    int spacing = m_view->spacing();
     int itemHeight = itemSize.height() + spacing * 2;
 
-    if (view->isListViewMode() || view->isTreeViewMode()) {
+    if (m_view->isListViewMode() || m_view->isTreeViewMode()) {
         int firstIndex = (rect.top() + spacing) / itemHeight;
         int lastIndex = (rect.bottom() - spacing) / itemHeight;
 
@@ -44,15 +44,15 @@ ViewGeometryHelper::RangeIndexList ViewGeometryHelper::visibleIndexes(const QRec
             return list;
 
         list << RangeIndex(qMax(firstIndex, 0), qMin(lastIndex, count - 1));
-    } else if (view->isIconViewMode()) {
+    } else if (m_view->isIconViewMode()) {
 
         // 分组绘制时计算区域内的list
-        if (view->isGroupHeader(view->model()->index(0, 0, view->rootIndex()))) {
+        if (m_view->isGroupHeader(m_view->model()->index(0, 0, m_view->rootIndex()))) {
             list << calcGroupRectContiansIndexes(rect);
             return list;
         }
 
-        int columnCount = view->d->calcColumnCount(rect.width(), itemSize.width());
+        int columnCount = m_view->d->calcColumnCount(rect.width(), itemSize.width());
 
         list << calcRectContiansIndexes(columnCount, rect);
     }
@@ -64,26 +64,26 @@ ViewGeometryHelper::RangeIndexList ViewGeometryHelper::rectContainsIndexes(const
 {
     RangeIndexList list;
 
-    int count = view->count();
+    int count = m_view->count();
     if (count == 0)
         return list;
 
-    if (view->isListViewMode() || view->isTreeViewMode()) {
+    if (m_view->isListViewMode() || m_view->isTreeViewMode()) {
         // For variable-height items (grouping enabled), use indexAtForSelection
-        if (view->isGroupedView()) {
+        if (m_view->isGroupedView()) {
             // Convert rect to viewport coordinates for comparison
             QRect viewportRect = rect;
-            viewportRect.translate(-view->horizontalOffset(), -view->verticalOffset());
+            viewportRect.translate(-m_view->horizontalOffset(), -m_view->verticalOffset());
 
             // Use indexAtForSelection to get items at corners (doesn't skip spacing areas)
-            QModelIndex firstIndex = view->indexAtForSelection(viewportRect.topLeft());
-            QModelIndex lastIndex = view->indexAtForSelection(viewportRect.bottomRight());
+            QModelIndex firstIndex = m_view->indexAtForSelection(viewportRect.topLeft());
+            QModelIndex lastIndex = m_view->indexAtForSelection(viewportRect.bottomRight());
 
             // Handle invalid indices by clamping to valid range
             if (!firstIndex.isValid()) {
                 // Check if above viewport
                 if (viewportRect.top() < 0) {
-                    firstIndex = view->model()->index(0, 0, view->rootIndex());
+                    firstIndex = m_view->model()->index(0, 0, m_view->rootIndex());
                 } else {
                     return list;   // Empty selection
                 }
@@ -92,7 +92,7 @@ ViewGeometryHelper::RangeIndexList ViewGeometryHelper::rectContainsIndexes(const
             if (!lastIndex.isValid()) {
                 // Check if below viewport content
                 if (viewportRect.bottom() >= 0) {
-                    lastIndex = view->model()->index(count - 1, 0, view->rootIndex());
+                    lastIndex = m_view->model()->index(count - 1, 0, m_view->rootIndex());
                 } else {
                     return list;   // Empty selection
                 }
@@ -106,8 +106,8 @@ ViewGeometryHelper::RangeIndexList ViewGeometryHelper::rectContainsIndexes(const
             }
         } else {
             // Uniform height items (no grouping): use optimized calculation
-            QSize itemSize = view->itemSizeHint();
-            int spacing = view->spacing();
+            QSize itemSize = m_view->itemSizeHint();
+            int spacing = m_view->spacing();
             int itemHeight = itemSize.height() + spacing * 2;
 
             int firstIndex = (rect.top() + spacing) / itemHeight;
@@ -118,11 +118,11 @@ ViewGeometryHelper::RangeIndexList ViewGeometryHelper::rectContainsIndexes(const
 
             list << RangeIndex(qMax(firstIndex, 0), qMin(lastIndex, count - 1));
         }
-    } else if (view->isIconViewMode()) {
-        QSize itemSize = view->itemSizeHint();
-        int spacing = view->spacing();
+    } else if (m_view->isIconViewMode()) {
+        QSize itemSize = m_view->itemSizeHint();
+        int spacing = m_view->spacing();
         int itemWidth = itemSize.width() + spacing * 2;
-        int columnCount = view->d->iconModeColumnCount(itemWidth);
+        int columnCount = m_view->d->iconModeColumnCount(itemWidth);
         list << calcRectContiansIndexes(columnCount, rect);
     }
 
@@ -133,11 +133,11 @@ ViewGeometryHelper::RangeIndexList ViewGeometryHelper::calcRectContiansIndexes(i
 {
     RangeIndexList list {};
 
-    QSize itemSize = view->itemSizeHint();
-    QSize aIconSize = view->iconSize();
+    QSize itemSize = m_view->itemSizeHint();
+    QSize aIconSize = m_view->iconSize();
 
-    int count = view->count();
-    int spacing = view->spacing();
+    int count = m_view->count();
+    int spacing = m_view->spacing();
     int itemWidth = itemSize.width() + spacing * 2;
     int itemHeight = itemSize.height() + spacing * 2;
     QRect validRect = rect.marginsRemoved(QMargins(spacing, spacing, spacing, spacing));
@@ -192,15 +192,15 @@ ViewGeometryHelper::RangeIndexList ViewGeometryHelper::calcRectContiansIndexes(i
 
 QRect ViewGeometryHelper::calcVisualRect(int widgetWidth, int index) const
 {
-    int iconViewSpacing = view->spacing();
-    int iconHorizontalMargin = view->spacing();
+    int iconViewSpacing = m_view->spacing();
+    int iconHorizontalMargin = m_view->spacing();
 #ifdef DTKWIDGET_CLASS_DSizeMode
-    iconHorizontalMargin = DSizeModeHelper::element(kCompactIconHorizontalMargin, view->spacing());
+    iconHorizontalMargin = DSizeModeHelper::element(kCompactIconHorizontalMargin, m_view->spacing());
 #endif
-    QSize itemSize = view->itemSizeHint();
+    QSize itemSize = m_view->itemSizeHint();
 
     // 计算列数
-    int columnCount = view->d->calcColumnCount(widgetWidth, itemSize.width());
+    int columnCount = m_view->d->calcColumnCount(widgetWidth, itemSize.width());
     if (columnCount == 0)
         return QRect();
 
@@ -209,7 +209,7 @@ QRect ViewGeometryHelper::calcVisualRect(int widgetWidth, int index) const
 
     int iconVerticalTopMargin = 0;
 #ifdef DTKWIDGET_CLASS_DSizeMode
-    iconVerticalTopMargin = DSizeModeHelper::element(kCompactIconVerticalTopMargin, view->spacing());
+    iconVerticalTopMargin = DSizeModeHelper::element(kCompactIconVerticalTopMargin, m_view->spacing());
 #endif
 
     QRect rect;
@@ -223,8 +223,8 @@ QRect ViewGeometryHelper::calcVisualRect(int widgetWidth, int index) const
 
     // 计算水平居中偏移，仅当行数大于1时才应用
     // In group mode, don't apply horizontal centering to keep group headers left-aligned
-    if (!view->isGroupedView()) {
-        int totalItems = view->model()->rowCount();
+    if (!m_view->isGroupedView()) {
+        int totalItems = m_view->model()->rowCount();
         int rowCount = (totalItems + columnCount - 1) / columnCount;   // 向上取整
         if (rowCount > 1) {
             // 计算可用宽度（减去左右边距）
@@ -235,22 +235,20 @@ QRect ViewGeometryHelper::calcVisualRect(int widgetWidth, int index) const
         }
     }
 
-    rect.moveTop(rect.top() - view->verticalOffset());
+    rect.moveTop(rect.top() - m_view->verticalOffset());
 
     return rect;
 }
 
 bool ViewGeometryHelper::indexInRect(const QRect &actualRect, const QModelIndex &index) const
 {
-    auto paintRect = view->visualRect(index);
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    auto opt = view->viewOptions();
-#else
+    auto paintRect = m_view->visualRect(index);
+
     QStyleOptionViewItem opt;
-    view->initViewItemOption(&opt);
-#endif
+    m_view->initViewItemOption(&opt);
+
     opt.rect = paintRect;
-    auto rectList = view->itemDelegate()->itemGeomertys(opt, index);
+    auto rectList = m_view->itemDelegate()->itemGeomertys(opt, index);
     for (const auto &rect : rectList) {
         if (!(actualRect.left() > rect.right()
               || actualRect.top() > rect.bottom()
@@ -268,8 +266,8 @@ ViewGeometryHelper::RangeIndexList ViewGeometryHelper::calcGroupRectContiansInde
     // 后面优化，通过每行绘制个数，每个绘制大小，每个分组的个数，先计算出来大致的一个index的范围，再判断这个范围内的index
     RangeIndexList list {};
     int begin = -1, end = -1;
-    for (int i = 0; i < view->model()->rowCount(); ++i) {
-        auto indexRect = view->visualRect(view->model()->index(i, 0, view->rootIndex()));
+    for (int i = 0; i < m_view->model()->rowCount(); ++i) {
+        auto indexRect = m_view->visualRect(m_view->model()->index(i, 0, m_view->rootIndex()));
         if (rect.intersects(indexRect)) {
             if (begin < 0)
                 begin = i;
