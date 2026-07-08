@@ -23,15 +23,15 @@ class ViewGeometryHelper : public QObject
 {
     Q_OBJECT
 public:
-    using RandeIndex = QPair<int, int>;
-    using RandeIndexList = QList<RandeIndex>;
+    using RangeIndex = QPair<int, int>;
+    using RangeIndexList = QList<RangeIndex>;
 
     explicit ViewGeometryHelper(FileView *parent = nullptr);
 
-    RandeIndexList visibleIndexes(const QRect &rect) const;
-    RandeIndexList rectContainsIndexes(const QRect &rect) const;
-    RandeIndexList calcRectContiansIndexes(int columnCount, const QRect &rect) const;
-    RandeIndexList calcGroupRectContiansIndexes(const QRect &rect) const;
+    RangeIndexList visibleIndexes(const QRect &rect) const;
+    RangeIndexList rectContainsIndexes(const QRect &rect) const;
+    RangeIndexList calcRectContiansIndexes(int columnCount, const QRect &rect) const;
+    RangeIndexList calcGroupRectContiansIndexes(const QRect &rect) const;
     QRect calcVisualRect(int widgetWidth, int index) const;
     bool indexInRect(const QRect &actualRect, const QModelIndex &index) const;
 

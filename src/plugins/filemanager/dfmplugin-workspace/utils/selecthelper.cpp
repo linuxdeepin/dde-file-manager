@@ -297,14 +297,14 @@ void SelectHelper::caculateListViewSelection(const QRect &rect, QItemSelection *
     tmpRect.setCoords(qMin(tmpRect.left(), tmpRect.right()), qMin(tmpRect.top(), tmpRect.bottom()),
                       qMax(tmpRect.left(), tmpRect.right()), qMax(tmpRect.top(), tmpRect.bottom()));
 
-    using RandeIndexList = FileView::RandeIndexList;
-    using RandeIndex = FileView::RandeIndex;
+    using RangeIndexList = FileView::RangeIndexList;
+    using RangeIndex = FileView::RangeIndex;
 
-    const RandeIndexList &list = view->rectContainsIndexes(tmpRect);
+    const RangeIndexList &list = view->rectContainsIndexes(tmpRect);
 
     // Non-grouped view: use efficient range selection (O(1))
     if (!view->isGroupedView()) {
-        for (const RandeIndex &indexRange : list) {
+        for (const RangeIndex &indexRange : list) {
             const QModelIndex &firstIdx = view->model()->index(indexRange.first, 0, view->rootIndex());
             const QModelIndex &lastIdx = view->model()->index(indexRange.second, 0, view->rootIndex());
             if (firstIdx.isValid() && lastIdx.isValid()) {
@@ -314,7 +314,7 @@ void SelectHelper::caculateListViewSelection(const QRect &rect, QItemSelection *
         return;
     }
 
-    for (const RandeIndex &indexRange : list) {
+    for (const RangeIndex &indexRange : list) {
         // Handle each index in the range individually to skip group headers
         for (int row = indexRange.first; row <= indexRange.second; ++row) {
             const QModelIndex &index = view->model()->index(row, 0, view->rootIndex());
