@@ -244,25 +244,60 @@ QStringList job_file_helper::validJobTypes()
 void job_file_helper::checkJobs()
 {
     qInfo() << "[job_file_helper::checkJobs] Checking and validating existing job files";
-    
+
+    // Check encrypt job files
     JobDescArgs job;
     loadEncryptJobFile(&job);
-    if (job.jobFile.isEmpty()) {
-        qInfo() << "[job_file_helper::checkJobs] No job files to check";
-        return;
+    if (!job.jobFile.isEmpty()) {
+        if (!QFile(job.devPath).exists()) {
+            qInfo() << "[job_file_helper::checkJobs] Encrypt job device no longer exists, removing job file - device:" << job.devPath << "job file:" << job.jobFile;
+            removeJobFile(job.jobFile);
+        } else if (crypt_setup_helper::encryptStatus(job.devPath) == disk_encrypt::kStatusNotEncrypted) {
+            qInfo() << "[job_file_helper::checkJobs] Device is no longer encrypted, removing encrypt job file - device:" << job.devPath << "job file:" << job.jobFile;
+            removeJobFile(job.jobFile);
+        } else {
+            qInfo() << "[job_file_helper::checkJobs] Encrypt job file validation completed - device:" << job.devPath << "job file:" << job.jobFile;
+        }
     }
 
-    if (!QFile(job.devPath).exists()) {
-        qInfo() << "[job_file_helper::checkJobs] Job device no longer exists, removing job file - device:" << job.devPath << "job file:" << job.jobFile;
-        removeJobFile(job.jobFile);
-        return;
+    // Check decrypt job file
+    QString decryptJobPath = QString(disk_encrypt::kUSecConfigDir) + "/decrypt.json";
+    QFile decryptJobFile(decryptJobPath);
+    if (decryptJobFile.exists()) {
+        qInfo() << "[job_file_helper::checkJobs] Found decrypt job file:" << decryptJobPath;
+        if (decryptJobFile.open(QIODevice::ReadOnly)) {
+            QByteArray data = decryptJobFile.readAll();
+            decryptJobFile.close();
+
+            QJsonParseError err;
+            QJsonDocument doc = QJsonDocument::fromJson(data, &err);
+            if (err.error == QJsonParseError::NoError && doc.isObject()) {
+                QJsonObject obj = doc.object();
+                QString devPath = obj.value(key_name::KeyDevPath).toString();
+
+                bool shouldRemove = false;
+                if (devPath.isEmpty()) {
+                    qInfo() << "[job_file_helper::checkJobs] Decrypt job file has no device-path, removing";
+                    shouldRemove = true;
+                } else if (!QFile(devPath).exists()) {
+                    qInfo() << "[job_file_helper::checkJobs] Decrypt job device no longer exists, removing job file - device:" << devPath;
+                    shouldRemove = true;
+                } else if (crypt_setup_helper::encryptStatus(devPath) == disk_encrypt::kStatusNotEncrypted) {
+                    qInfo() << "[job_file_helper::checkJobs] Device is no longer encrypted, removing decrypt job file - device:" << devPath;
+                    shouldRemove = true;
+                }
+
+                if (shouldRemove) {
+                    removeJobFile(decryptJobPath);
+                } else {
+                    qInfo() << "[job_file_helper::checkJobs] Decrypt job file validation completed - device:" << devPath;
+                }
+            } else {
+                qWarning() << "[job_file_helper::checkJobs] Failed to parse decrypt job file, removing";
+                removeJobFile(decryptJobPath);
+            }
+        }
     }
 
-    if (crypt_setup_helper::encryptStatus(job.devPath) == disk_encrypt::kStatusNotEncrypted) {
-        qInfo() << "[job_file_helper::checkJobs] Device is no longer encrypted, removing job file - device:" << job.devPath << "job file:" << job.jobFile;
-        removeJobFile(job.jobFile);
-        return;
-    }
-    
-    qInfo() << "[job_file_helper::checkJobs] Job file validation completed - device:" << job.devPath << "job file:" << job.jobFile;
+    qInfo() << "[job_file_helper::checkJobs] Job file validation completed";
 }
