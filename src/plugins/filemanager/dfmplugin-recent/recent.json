@@ -23,6 +23,7 @@
                 "VisiableControl" : "recent",
                 "ReportName" : "Recent"
             }
-        }]
+        }],
+        "PluginSchemes": ["recent"]
     }
 }
