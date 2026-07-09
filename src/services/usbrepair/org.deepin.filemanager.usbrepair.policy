@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE policyconfig PUBLIC
+  "-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN"
+  "http://www.freedesktop.org/standards/PolicyKit/1/policyconfig.dtd">
+<policyconfig>
+  <vendor>deepin</vendor>
+  <vendor_url>https://www.deepin.com/</vendor_url>
+  <action id="org.deepin.filemanager.usbrepair.repair">
+    <description>Repair USB drive filesystem</description>
+    <message>Authentication is required to repair the filesystem on a removable device</message>
+    <message xml:lang="zh_CN">需要授权以修复可移动设备的文件系统</message>
+    <icon_name>drive-removable-media</icon_name>
+    <defaults>
+      <allow_any>auth_admin</allow_any>
+      <allow_inactive>auth_admin</allow_inactive>
+      <allow_active>auth_admin_keep</allow_active>
+    </defaults>
+  </action>
+</policyconfig>

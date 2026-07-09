@@ -1,0 +1,35 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.deepin.Filemanager.UsbRepair">
+    <method name="Repair">
+      <arg type="b" direction="out"/>
+      <arg name="devicePath" type="s" direction="in"/>
+      <arg name="errorMessage" type="s" direction="out"/>
+    </method>
+    <method name="CancelRepair">
+      <arg type="b" direction="out"/>
+      <arg name="devicePath" type="s" direction="in"/>
+    </method>
+    <signal name="FsErrorDetected">
+      <arg name="devicePath" type="s" direction="out"/>
+      <arg name="deviceName" type="s" direction="out"/>
+      <arg name="fsType" type="s" direction="out"/>
+      <arg name="errorType" type="s" direction="out"/>
+      <arg name="canRepair" type="b" direction="out"/>
+      <arg name="message" type="s" direction="out"/>
+    </signal>
+    <signal name="RepairProgress">
+      <arg name="devicePath" type="s" direction="out"/>
+      <arg name="percent" type="i" direction="out"/>
+      <arg name="logLine" type="s" direction="out"/>
+    </signal>
+    <signal name="RepairFinished">
+      <arg name="devicePath" type="s" direction="out"/>
+      <arg name="success" type="b" direction="out"/>
+      <arg name="summary" type="s" direction="out"/>
+    </signal>
+    <signal name="FsErrorCleared">
+      <arg name="devicePath" type="s" direction="out"/>
+    </signal>
+  </interface>
+</node>
