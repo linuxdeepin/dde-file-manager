@@ -643,7 +643,7 @@ bool BaseItemDelegate::shouldShowTruncateButton(const QModelIndex &index) const
 
 QString BaseItemDelegate::truncateButtonText(bool isTruncated) const
 {
-    return isTruncated ? tr("Show All") : tr("Show Partial");
+    return isTruncated ? tr("Show all") : tr("Show partial");
 }
 
 QStringList BaseItemDelegate::truncateButtonTexts() const

@@ -201,7 +201,7 @@ void Search::regSearchToWorkspace()
     } };
     QVariantMap groupMap {
         { "Property_Key_GroupStrategyName", QString(MatchMethod::kStrategyName) },
-        { "Property_Key_GroupStrategyDisplayName", tr("Match Method") },
+        { "Property_Key_GroupStrategyDisplayName", tr("Match method") },
         { "Property_Key_GroupStrategySchemes", QStringList { SearchHelper::scheme() } },
         { "Property_Key_GroupStrategyFactory", QVariant::fromValue(factory) }
     };

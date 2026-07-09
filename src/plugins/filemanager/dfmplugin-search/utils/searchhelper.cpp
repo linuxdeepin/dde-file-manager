@@ -536,7 +536,7 @@ void SearchHelper::authorizeSearchExperience()
                                         QJsonDocument(argsObj).toJson(QJsonDocument::Compact) };
     QVariantMap hints = { { "x-deepin-action-view-index-status", cmdShowSettings } };
     UniversalUtils::notifyMessage(
-            tr("dde-file-manager"),
+            QObject::tr("dde-file-manager"),
             tr("Index is being built. You can check the index status in Settings."),
             actions,
             hints);
@@ -553,7 +553,7 @@ void SearchHelper::dismissAuthHint()
     if (!disabledModes.isEmpty()) {
         const QString &modeList = QLocale().createSeparatedList(disabledModes);
         UniversalUtils::notifyMessage(
-                tr("dde-file-manager"),
+                QObject::tr("dde-file-manager"),
                 tr("You can manually enable %1 in Settings — Advanced — Search.").arg(modeList));
     }
 
