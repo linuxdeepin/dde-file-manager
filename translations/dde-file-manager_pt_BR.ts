@@ -6712,22 +6712,22 @@ Você precisa atualizar este cofre para continuar usando-o.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="167"/>
         <source>Index update completed, last update time: %1</source>
-        <translation type="unfinished"/>
+        <translation>A atualização do índice foi concluída. Última atualização: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="168"/>
         <source>Update index now</source>
-        <translation type="unfinished"/>
+        <translation>Atualizar índice</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="192"/>
         <source>Confirm turning off file index?</source>
-        <translation type="unfinished"/>
+        <translation>Desativar a indexação de arquivos?</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="193"/>
         <source>If turned off, file searches will traverse the file system and severely reduce search speed, and the smart search feature will be unavailable.</source>
-        <translation type="unfinished"/>
+        <translation>Se desativada, a pesquisa de arquivos percorrerá o sistema de arquivos, reduzindo significativamente a velocidade de pesquisa, e o recurso de pesquisa inteligente ficará indisponível.</translation>
     </message>
 </context>
 <context>
