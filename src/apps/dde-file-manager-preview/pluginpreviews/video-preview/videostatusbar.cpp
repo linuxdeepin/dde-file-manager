@@ -45,7 +45,7 @@ QColor controlIconColor(bool hovered)
 }
 
 VideoStatusBar::VideoStatusBar(VideoPreview *preview)
-    : QWidget(nullptr), p(preview), slider(new QSlider(this)), timeLabel(new QLabel(this)), sliderIsPressed(false)
+    : QWidget(nullptr), p(preview), slider(new DSlider(Qt::Horizontal, this)), timeLabel(new QLabel(this)), sliderIsPressed(false)
 {
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
@@ -56,7 +56,6 @@ VideoStatusBar::VideoStatusBar(VideoPreview *preview)
 
     slider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     slider->setMinimum(0);
-    slider->setOrientation(Qt::Horizontal);
 
     QHBoxLayout *layout = new QHBoxLayout(this);
 
@@ -84,15 +83,15 @@ VideoStatusBar::VideoStatusBar(VideoPreview *preview)
         updateControlButtonIcon();
     });
 
-    connect(slider, &QSlider::valueChanged, this, [this] {
+    connect(slider, &DSlider::valueChanged, this, [this] {
         p->playerWidget->engine().seekAbsolute(slider->value());
     });
 
-    connect(slider, &QSlider::sliderPressed, this, [this] {
+    connect(slider, &DSlider::sliderPressed, this, [this] {
         sliderIsPressed = true;
     });
 
-    connect(slider, &QSlider::sliderReleased, this, [this] {
+    connect(slider, &DSlider::sliderReleased, this, [this] {
         sliderIsPressed = false;
     });
 

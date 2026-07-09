@@ -8,10 +8,10 @@
 #include "preview_plugin_global.h"
 
 #include <DIconButton>
+#include <DSlider>
 
-#include <QWidget>
-#include <QSlider>
 #include <QLabel>
+#include <QWidget>
 
 class QObject;
 class QEvent;
@@ -32,7 +32,7 @@ private:
 
 public:
     VideoPreview *p;
-    QSlider *slider;
+    DTK_WIDGET_NAMESPACE::DSlider *slider;
     QLabel *timeLabel;
     bool sliderIsPressed;
 
