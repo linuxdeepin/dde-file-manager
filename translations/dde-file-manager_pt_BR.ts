@@ -6735,17 +6735,17 @@ Você precisa atualizar este cofre para continuar usando-o.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="16"/>
         <source>Enable to search text in images</source>
-        <translation type="unfinished"/>
+        <translation>Ativar a pesquisa de texto em imagens</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="17"/>
         <source>Building index</source>
-        <translation type="unfinished"/>
+        <translation>Indexando arquivos</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="18"/>
         <source>Building index, %1 files indexed</source>
-        <translation type="unfinished"/>
+        <translation>Indexando arquivos, %1 arquivos indexados</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="19"/>
