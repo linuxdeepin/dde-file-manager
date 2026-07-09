@@ -1624,6 +1624,9 @@ void FileView::mouseMoveEvent(QMouseEvent *event)
     if (d->pressedStartWithExpand)
         return;
 
+    if (itemDelegate() && !itemDelegate()->pressedTruncateGroupKey().isEmpty())
+        return;
+
     if (event->buttons() & Qt::LeftButton)
         d->mouseMoveRect = QRect(event->globalPos(), d->mouseLastPos);
 
