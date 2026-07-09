@@ -1,3 +1,44 @@
+dde-file-manager (6.5.152) unstable; urgency=medium
+
+  * fix(preview): resolve filename/resolution overlap in image preview status bar
+  * fix: fix potential crash in FileView destructor
+  * feat: add file extension field indexing
+  * refactor: optimize search highlight implementation
+  * feat: add semantic search configuration and UI
+  * refactor: rename CheckBoxWidth to CheckBoxWith in search plugin
+  * refactor: optimize search result handling
+  * refactor: optimize search manager and add semantic search
+  * feat: implement semantic search highlighting
+  * fix: remove xwechat_files from textindex exclusion list
+  * feat: add match method grouping for search results
+  * fix: improve grouping request handling during busy state
+  * fix: prevent search grouping strategy toggle on repeated searches
+  * feat: enable semantic search by default
+  * perf: optimize drag-and-drop performance in FileView
+  * refactor: optimize drag handling in file view
+  * fix: handle empty directory refresh and clean sort data
+  * refactor: reorganize drag-drop and geometry helpers in FileView
+  * refactor: correct spelling of RangeIndex type names
+  * refactor: encapsulate sticky state in helper and dedup treeview url logic
+  * refactor: eliminate geometry helper friend access and narrow itemsExpandable exposure
+  * feat: add group truncation functionality for file views
+  * fix(textindex): add OcrIndex path to service manager idle policy
+  * fix: adjust capitalization in UI strings
+  * chore: update translations and add missing entries
+  * fix: prevent file selection when text eliding is active
+  * fix: correct desktop available geometry on treeland fractional scaling
+  * fix(computer): show detail text with progress
+  * fix(preview): show video play button background
+  * fix(preview): tune video control icon
+  * fix(preview): use DSlider in video status bar
+  * feat: add search authorization hint and view hint message component
+  * feat: add sticky group header and fix search auth hint
+  * refactor: move file index control to daemon core
+  * feat(desktop): add config to toggle input method on desktop canvas
+  * fix(diskencrypt): validate device encryption status before resuming operations
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 09 Jul 2026 19:03:49 +0800
+
 dde-file-manager (6.5.151) unstable; urgency=medium
 
   * refactor: replace thread termination with _exit for clean shutdown
