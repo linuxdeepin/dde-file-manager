@@ -6903,7 +6903,7 @@ Você precisa atualizar este cofre para continuar usando-o.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="573"/>
         <source>&quot;Smart search&quot;</source>
-        <translation type="unfinished"/>
+        <translation>&quot;Pesquisa inteligente&quot;</translation>
     </message>
 </context>
 <context>
@@ -8874,12 +8874,12 @@ remova os arquivos desse diretório e tente desbloquear novamente.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="646"/>
         <source>Show all</source>
-        <translation type="unfinished"/>
+        <translation>Exibir tudo</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="646"/>
         <source>Show partial</source>
-        <translation type="unfinished"/>
+        <translation>Exibir parcial</translation>
     </message>
 </context>
 <context>
