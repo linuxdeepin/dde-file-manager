@@ -7942,7 +7942,8 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/pathmanager.cpp" line="80"/>
         <source>The %1 directory is occupied,
  please clear the files in this directory and try to unlock the safe again.</source>
-        <translation type="unfinished"/>
+        <translation>Каталог %1 занят,
+ пожалуйста, очистите файлы в этом каталоге и попробуйте разблокировать хранилище снова.</translation>
     </message>
 </context>
 <context>
@@ -8873,12 +8874,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="646"/>
         <source>Show all</source>
-        <translation type="unfinished"/>
+        <translation>Показать все</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="646"/>
         <source>Show partial</source>
-        <translation type="unfinished"/>
+        <translation>Показать частично</translation>
     </message>
 </context>
 <context>
