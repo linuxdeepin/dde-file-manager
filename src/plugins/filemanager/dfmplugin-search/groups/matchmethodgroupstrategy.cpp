@@ -10,8 +10,9 @@
 
 #include <dfm-search/dsearch_global.h>
 
-DPSEARCH_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+
+namespace dfmplugin_search {
 
 MatchMethodGroupStrategy::MatchMethodGroupStrategy(QObject *parent)
     : AbstractGroupStrategy(parent)
@@ -52,9 +53,9 @@ QString MatchMethodGroupStrategy::getGroupKey(const FileInfoPointer &info, const
 QString MatchMethodGroupStrategy::getGroupDisplayName(const QString &groupKey) const
 {
     if (groupKey == MatchMethod::kGroupExact)
-        return tr("Exact Match");
+        return tr("Exact match");
     if (groupKey == MatchMethod::kGroupSmart)
-        return tr("Smart Match");
+        return tr("Smart match");
     return groupKey;
 }
 
@@ -89,3 +90,5 @@ bool MatchMethodGroupStrategy::isTruncationEnabled() const
 {
     return true;
 }
+
+}   // namespace dfmplugin_search
