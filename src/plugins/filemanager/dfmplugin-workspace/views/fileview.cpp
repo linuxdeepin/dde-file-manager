@@ -1765,6 +1765,22 @@ QRect FileView::visualRect(const QModelIndex &index) const
     return rect;
 }
 
+void FileView::scrollTo(const QModelIndex &index, ScrollHint hint)
+{
+    DListView::scrollTo(index, hint);
+
+    if (!isGroupedView() || !index.isValid() || isGroupHeader(index))
+        return;
+
+    int headerHeight = stickyHeaderHeight();
+    if (headerHeight <= 0)
+        return;
+
+    QRect rect = visualRect(index);
+    if (rect.isValid() && rect.top() < headerHeight)
+        verticalScrollBar()->setValue(verticalScrollBar()->value() - (headerHeight - rect.top()));
+}
+
 void FileView::setIconSize(const QSize &size)
 {
     DListView::setIconSize(size);
