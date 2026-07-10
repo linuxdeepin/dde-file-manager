@@ -8877,7 +8877,7 @@ Si us plau, esborreu els fitxers d&apos;aquest directori i intenteu tornar a des
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="646"/>
         <source>Show partial</source>
-        <translation type="unfinished"/>
+        <translation>Vista parcial</translation>
     </message>
 </context>
 <context>
