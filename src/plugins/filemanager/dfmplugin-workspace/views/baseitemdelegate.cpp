@@ -391,6 +391,7 @@ void BaseItemDelegate::paintStickyGroupHeader(QPainter *painter, const QStyleOpt
     if (option.widget) {
         painter->save();
 
+        painter->setClipRect(option.rect);
         DPalette pl(DPaletteHelper::instance()->palette(option.widget));
         painter->setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing | QPainter::SmoothPixmapTransform);
 
@@ -406,6 +407,11 @@ void BaseItemDelegate::paintStickyGroupHeader(QPainter *painter, const QStyleOpt
             path.addRoundedRect(bgRect, kListModeRectRadius, kListModeRectRadius);
             painter->fillPath(path, adjustColor);
         }
+
+        QColor separatorColor = pl.color(QPalette::Active, QPalette::BrightText);
+        separatorColor.setAlphaF(0.07);
+        painter->setPen(QPen(separatorColor, 1));
+        painter->drawLine(drawRect.bottomLeft(), drawRect.bottomRight());
 
         painter->restore();
     }
