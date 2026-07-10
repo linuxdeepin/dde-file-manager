@@ -10,7 +10,7 @@
 #include <dfm-base/interfaces/abstractgroupstrategy.h>
 #include <dfm-base/dfm_global_defines.h>
 
-DPSEARCH_BEGIN_NAMESPACE
+namespace dfmplugin_search {
 
 // Groups search results by how each URL was matched (Exact vs Smart). Pure
 // search business: lives in dfmplugin_search, crosses the plugin boundary to
@@ -40,6 +40,6 @@ public:
     bool isTruncationEnabled() const override;
 };
 
-DPSEARCH_END_NAMESPACE
+}   // namespace dfmplugin_search
 
 #endif   // MATCHMETHODGROUPSTRATEGY_H
