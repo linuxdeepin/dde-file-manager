@@ -78,6 +78,7 @@ public:
                      const QVector<int> &roles = QVector<int>()) override;
     QModelIndex indexAt(const QPoint &pos) const override;
     virtual QRect visualRect(const QModelIndex &index) const override;
+    void scrollTo(const QModelIndex &index, ScrollHint hint = EnsureVisible) override;
     void setIconSize(const QSize &size);
     int horizontalOffset() const override;
     int verticalOffset() const override;
