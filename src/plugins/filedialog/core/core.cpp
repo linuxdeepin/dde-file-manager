@@ -13,6 +13,10 @@
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
+#include <dfm-base/dfm_event_defines.h>
+#include <dfm-base/base/schemefactory.h>
+
+#include <QUrlQuery>
 
 #include <QDBusError>
 #include <QDBusConnection>
@@ -89,6 +93,13 @@ void Core::onAllPluginsStarted()
 
     dfmplugin_menu_util::menuSceneRegisterScene(FileDialogMenuCreator::name(), new FileDialogMenuCreator);
     bindScene("WorkspaceMenu");
+
+    // Follow the titlebar "tab-enter-dir" hook. In the file-chooser dialog process
+    // entering a file path means cd-ing into the parent directory and selecting the
+    // file, so we handle it here and return true to stop the hook chain. In the
+    // file-manager process no plugin follows this hook, so it returns false and
+    // the titlebar falls back to opening the file directly.
+    dpfHookSequence->follow("dfmplugin_titlebar", "hook_Tab_EnterDir", this, &Core::handleEnterDir);
 }
 
 void Core::bindScene(const QString &parentScene)
@@ -151,6 +162,25 @@ void Core::exitOnShutdown(bool shutdown)
         // 尝试正常、优雅地退出
         qApp->quit();
     }
+}
+
+bool Core::handleEnterDir(quint64 windowId, const QUrl &url)
+{
+    const FileInfoPointer &info = InfoFactory::create<FileInfo>(url);
+    if (!info || !info->exists()) {
+        fmWarning() << "Enter-dir failed: file not exists, url:" << url;
+        return true;   // consumed: the dialog should never fall back to opening the file
+    }
+
+    QUrl parentUrl = info->urlOf(FileInfo::FileUrlInfoType::kParentUrl);
+    QUrlQuery query;
+    query.addQueryItem("selectUrl", url.toString());
+    parentUrl.setQuery(query);
+
+    fmInfo() << "FileChooser enter-dir: cd to parent and select, window:" << windowId
+             << "parent:" << parentUrl.toString(QUrl::RemoveQuery) << "select:" << url.toString();
+    dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, windowId, parentUrl);
+    return true;
 }
 
 }   // namespace filedialog_core

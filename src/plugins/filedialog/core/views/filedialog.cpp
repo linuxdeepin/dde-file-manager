@@ -934,7 +934,15 @@ bool FileDialog::isFileNameEditFocused() const
 void FileDialog::handleEnterInSaveMode()
 {
     // INFO: [FileDialog::handleEnterInSaveMode] Processing Enter key in save mode.
-    
+
+    // 当焦点位于标题栏的地址栏时（如编辑路径），回车由地址栏自身处理跳转，
+    // 不应触发保存操作，直接返回。
+    QWidget *focusWidget = QApplication::focusWidget();
+    if (focusWidget && titleBar() && titleBar()->isAncestorOf(focusWidget)) {
+        // INFO: [FileDialog::handleEnterInSaveMode] Enter pressed in titlebar address bar, let it handle navigation.
+        return;
+    }
+
     // 保存模式下的逻辑：
     // 1. 如果焦点在文件名编辑框，直接触发保存
     // 2. 如果焦点在文件视图且选中目录，让文件视图处理（进入目录）
