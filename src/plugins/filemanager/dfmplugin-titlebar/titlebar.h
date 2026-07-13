@@ -52,6 +52,7 @@ class TitleBar : public dpf::Plugin
     DPF_EVENT_REG_HOOK(hook_Tab_SetTabName)
     DPF_EVENT_REG_HOOK(hook_Tab_Closeable)
     DPF_EVENT_REG_HOOK(hook_Tab_FileDeleteNotCdComputer)
+    DPF_EVENT_REG_HOOK(hook_Tab_EnterDir)
 
 public:
     virtual void initialize() override;
