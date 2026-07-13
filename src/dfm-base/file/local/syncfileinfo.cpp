@@ -497,7 +497,7 @@ QString SyncFileInfo::viewOfTip(const ViewType type) const
 {
     if (type == ViewType::kEmptyDir) {
         if (!exists()) {
-            return QObject::tr("File has been moved or deleted");
+            return QObject::tr("File or directory not found");
         } else if (!isAttributes(FileIsType::kIsReadable)) {
             return QObject::tr("You do not have permission to access this folder");
         } else if (isAttributes(FileIsType::kIsDir)) {
