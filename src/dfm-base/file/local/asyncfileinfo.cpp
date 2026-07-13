@@ -437,10 +437,10 @@ QString AsyncFileInfo::viewOfTip(const ViewType type) const
     if (type == ViewType::kEmptyDir) {
         if (!exists()) {
             if (d->hasAsyncAttribute(FileInfo::FileInfoAttributeID::kStandardFileExists))
-                return QObject::tr("File has been moved or deleted");
+                return QObject::tr("File or directory not found");
             dfmio::DFile file(fileUrl());
             if (!file.exists())
-                return QObject::tr("File has been moved or deleted");
+                return QObject::tr("File or directory not found");
         } else if (!isAttributes(FileIsType::kIsReadable)) {
             if (d->hasAsyncAttribute(FileInfo::FileInfoAttributeID::kAccessCanRead))
                 return QObject::tr("You do not have permission to access this folder");
