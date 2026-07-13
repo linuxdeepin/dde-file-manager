@@ -8,6 +8,7 @@
 #include <dfm-base/dfm_base_global.h>
 
 #include <QObject>
+#include <QStringList>
 #include <QUrl>
 #include <QThread>
 #include <QScopedPointer>
@@ -104,6 +105,19 @@ public:
      * @brief 获取当前选项
      */
     ScanOptions options() const;
+
+    /**
+     * @brief 设置排除路径列表
+     * @param paths 要排除的路径列表（精确匹配）
+     *
+     * 必须在 start() 之前调用。排除路径及其所有子内容将不被统计。
+     */
+    void setExcludePaths(const QStringList &paths);
+
+    /**
+     * @brief 获取当前排除路径列表
+     */
+    QStringList excludePaths() const;
 
     /**
      * @brief 获取最新结果
@@ -216,6 +230,7 @@ public:
 
     void setUrls(const QList<QUrl> &urls);
     void setOptions(FileScanner::ScanOptions options);
+    void setExcludePaths(const QStringList &paths);
 
 public Q_SLOTS:
     /**
@@ -250,6 +265,7 @@ private:
 private:
     QList<QUrl> urls;
     FileScanner::ScanOptions options { FileScanner::ScanOption::NoOption };
+    QStringList excludePaths;
 
     // 控制标志
     std::atomic<bool> stopped { false };

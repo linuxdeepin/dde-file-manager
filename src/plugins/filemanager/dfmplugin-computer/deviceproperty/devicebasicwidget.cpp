@@ -5,6 +5,7 @@
 #include "devicebasicwidget.h"
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/universalutils.h>
+#include <dfm-base/base/device/deviceutils.h>
 
 static constexpr int kMaximumHeight { 31 };
 
@@ -94,6 +95,12 @@ void DeviceBasicWidget::selectFileInfo(const DeviceInfo &info)
     freeSize->setRightValue(sizeFreeStr);
     freeSize->setRightFontSizeWeight(DFontSizeManager::SizeType::T7);
 
+    if (info.mountPoint.path() == QDir::rootPath()) {
+        const auto bindTable = DeviceUtils::fstabBindInfo();
+        fileCalculationUtils->setExcludePaths(bindTable.keys());
+    } else {
+        fileCalculationUtils->setExcludePaths({});
+    }
     fileCalculationUtils->start(QList<QUrl>() << info.mountPoint);
 }
 

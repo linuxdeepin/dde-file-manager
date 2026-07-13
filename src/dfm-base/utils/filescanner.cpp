@@ -43,6 +43,23 @@ public:
         return dir + '/' + name;
     }
 
+    // 路径规范化：去除尾部 '/'（根目录 "/" 保留），转为 UTF-8 QByteArray。
+    static inline QByteArray normalizePath(const QString &p)
+    {
+        QString normalized = p;
+        while (normalized.size() > 1 && normalized.endsWith('/'))
+            normalized.chop(1);
+        return normalized.toUtf8();
+    }
+
+    static inline QByteArray normalizePath(const QByteArray &p)
+    {
+        QByteArray normalized = p;
+        while (normalized.size() > 1 && normalized.endsWith('/'))
+            normalized.chop(1);
+        return normalized;
+    }
+
     // 目录条目结构
     struct DirEntry
     {
@@ -64,7 +81,8 @@ public:
     static FileScanner::ScanResult scanImpl(
             const QList<QUrl> &urls,
             FileScanner::ScanOptions options,
-            ProgressCallback progressCallback = nullptr);
+            ProgressCallback progressCallback = nullptr,
+            const QStringList &manualExcludePaths = {});
 
 private:
     // 扫描状态（在扫描过程中维护）
@@ -81,6 +99,9 @@ private:
 
         // inode 去重
         QHash<quint64, QSet<quint64>> processedInodes;
+
+        // 排除路径集合（规范化后的 UTF-8 QByteArray，精确匹配）
+        QSet<QByteArray> excludePathSet;
 
         // 停止标志（用于回调返回 false 时停止）
         bool shouldStop { false };
@@ -135,6 +156,9 @@ public:
 
     // 选项
     FileScanner::ScanOptions options { FileScanner::ScanOption::NoOption };
+
+    // 排除路径
+    QStringList excludePaths;
 };
 
 FileScannerPrivate::FileScannerPrivate(FileScanner *qq)
@@ -166,6 +190,7 @@ void FileScannerPrivate::startWorker(const QList<QUrl> &urls)
     // 设置参数
     worker->setUrls(urls);
     worker->setOptions(options);
+    worker->setExcludePaths(excludePaths);
 
     // 连接信号
     connect(worker, &ScannerWorker::resultReady, this, &FileScannerPrivate::onWorkerResultReady);
@@ -246,6 +271,16 @@ FileScanner::ScanOptions FileScanner::options() const
     return d->options;
 }
 
+void FileScanner::setExcludePaths(const QStringList &paths)
+{
+    d->excludePaths = paths;
+}
+
+QStringList FileScanner::excludePaths() const
+{
+    return d->excludePaths;
+}
+
 FileScanner::ScanResult FileScanner::result() const
 {
     return d->lastResult;
@@ -318,13 +353,18 @@ FileScanner::ScanResult FileScanner::scanSyncWithCallback(const QList<QUrl> &url
 FileScanner::ScanResult FileScannerCore::scanImpl(
         const QList<QUrl> &urls,
         FileScanner::ScanOptions options,
-        ProgressCallback progressCallback)
+        ProgressCallback progressCallback,
+        const QStringList &manualExcludePaths)
 {
     ScanState state;
     state.options = options;
     state.progressCallback = progressCallback;
     state.memoryPageSize = FileUtils::getMemoryPageSize();
     state.progressTimer.start();
+
+    for (const QString &path : manualExcludePaths) {
+        state.excludePathSet.insert(normalizePath(path));
+    }
 
     // 判断是否为本地文件路径
     if (!urls.isEmpty() && urls.first().scheme() == Global::Scheme::kFile) {
@@ -357,6 +397,10 @@ void FileScannerCore::scanLocalPathsImpl(ScanState &state, const QList<QUrl> &ur
         if (lstat(path.constData(), &statBuf) == 0) {
             // 判断是否为目录（包括指向目录的符号链接）
             if (isDirectoryPath(path, statBuf)) {
+                if (state.excludePathSet.contains(normalizePath(path))) {
+                    qCDebug(logDFMBase) << "FileScannerCore: Skipping excluded source path:" << path;
+                    continue;
+                }
                 ScanContext ctx;
                 ctx.fullPath = path;
                 ctx.depth = 0;
@@ -420,6 +464,10 @@ void FileScannerCore::scanLocalPathsImpl(ScanState &state, const QList<QUrl> &ur
             if (countOnly) {
                 // CountOnly 模式：直接用 d_type 计数，无需 stat
                 if (entry.d_type == DT_DIR) {
+                    if (state.excludePathSet.contains(normalizePath(entryPath))) {
+                        qCDebug(logDFMBase) << "FileScannerCore: Skipping excluded path:" << entryPath;
+                        continue;
+                    }
                     bool isSingleDepth = state.options & FileScanner::ScanOption::SingleDepth;
                     if (isSingleDepth) {
                         state.result.directoryCount++;
@@ -460,6 +508,10 @@ void FileScannerCore::scanLocalPathsImpl(ScanState &state, const QList<QUrl> &ur
             // 根据类型处理条目
             if (S_ISDIR(entry.statBuf.st_mode)) {
                 // 子目录
+                if (state.excludePathSet.contains(normalizePath(entryPath))) {
+                    qCDebug(logDFMBase) << "FileScannerCore: Skipping excluded path:" << entryPath;
+                    continue;
+                }
                 bool isSingleDepth = state.options & FileScanner::ScanOption::SingleDepth;
                 if (isSingleDepth) {
                     // SingleDepth 模式：计数但不递归
@@ -512,6 +564,10 @@ void FileScannerCore::scanOtherProtocolsImpl(ScanState &state, const QList<QUrl>
 
     // 初始化队列
     for (const QUrl &url : urls) {
+        if (state.excludePathSet.contains(normalizePath(url.path()))) {
+            qCDebug(logDFMBase) << "FileScannerCore: Skipping excluded source path:" << url.path();
+            continue;
+        }
         directoryQueue.enqueue(url);
         processedUrls.insert(url);
     }
@@ -576,6 +632,10 @@ void FileScannerCore::scanOtherProtocolsImpl(ScanState &state, const QList<QUrl>
 
                     if (childInfo) {
                         if (childInfo->isAttributes(OptInfoType::kIsDir)) {
+                            if (state.excludePathSet.contains(normalizePath(childUrl.path()))) {
+                                qCDebug(logDFMBase) << "FileScannerCore: Skipping excluded path:" << childUrl.path();
+                                continue;
+                            }
                             if (isSingleDepth) {
                                 // SingleDepth 模式：计数但不递归
                                 state.result.directoryCount++;
@@ -665,6 +725,11 @@ bool FileScannerCore::tryScanOtherProtocolCountOnlyByLocalPath(
         processedUrls->insert(childUrl);
 
         if (entry.d_type == DT_DIR) {
+            const QByteArray childLocalPath = joinPath(dirPath, entry.name);
+            if (state.excludePathSet.contains(normalizePath(childLocalPath))) {
+                qCDebug(logDFMBase) << "FileScannerCore: Skipping excluded path:" << childLocalPath;
+                continue;
+            }
             if (isSingleDepth) {
                 // SingleDepth 模式：计数但不递归
                 state.result.directoryCount++;
@@ -851,6 +916,11 @@ void ScannerWorker::setOptions(FileScanner::ScanOptions options)
     this->options = options;
 }
 
+void ScannerWorker::setExcludePaths(const QStringList &paths)
+{
+    excludePaths = paths;
+}
+
 void ScannerWorker::start()
 {
     qCDebug(logDFMBase) << "ScannerWorker: Starting work";
@@ -868,7 +938,7 @@ void ScannerWorker::start()
     };
 
     // 调用核心扫描逻辑
-    FileScanner::ScanResult finalResult = FileScannerCore::scanImpl(urls, options, progressCallback);
+    FileScanner::ScanResult finalResult = FileScannerCore::scanImpl(urls, options, progressCallback, excludePaths);
 
     // 发送最终结果
     emit resultReady(finalResult, true);
