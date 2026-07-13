@@ -33,6 +33,7 @@ ImageView::ImageView(const QString &fileName, const QByteArray &format, QWidget 
 void ImageView::setFile(const QString &fileName, const QByteArray &format)
 {
     const QSize &dsize = DFMBASE_NAMESPACE::WindowUtils::cursorScreen()->size();
+    const qreal targetDpr = qMax<qreal>(1.0, qApp->devicePixelRatio());
 
     if (format == QByteArrayLiteral("gif")) {
         if (movie) {
@@ -78,8 +79,10 @@ void ImageView::setFile(const QString &fileName, const QByteArray &format)
                       qMin(static_cast<int>(dsize.height() * 0.7), sourceImageSize.height()));
     QSize showSize = sourceImageSize.scaled(maxShowSize, Qt::KeepAspectRatio);
 
-    // 设置缩放尺寸，让 QImageReader 只加载需要的大小，避免加载完整大图
-    reader.setScaledSize(showSize);
+    // Keep the widget size in logical pixels, but decode extra backing pixels for HiDPI.
+    QSize decodeSize(qMax(1, qRound(showSize.width() * targetDpr)),
+                     qMax(1, qRound(showSize.height() * targetDpr)));
+    reader.setScaledSize(decodeSize);
 
     QImage image = reader.read();
     if (image.isNull()) {
@@ -92,7 +95,10 @@ void ImageView::setFile(const QString &fileName, const QByteArray &format)
     image = DFMBASE_NAMESPACE::FileUtils::convertToSRgbColorSpace(image);
 #endif
     QPixmap pixmap = QPixmap::fromImage(image);
-    pixmap.setDevicePixelRatio(qApp->devicePixelRatio());
+    const qreal widthDpr = showSize.width() > 0 ? static_cast<qreal>(image.width()) / showSize.width() : 1.0;
+    const qreal heightDpr = showSize.height() > 0 ? static_cast<qreal>(image.height()) / showSize.height() : 1.0;
+    const qreal effectiveDpr = qMax<qreal>(1.0, qMin(targetDpr, qMin(widthDpr, heightDpr)));
+    pixmap.setDevicePixelRatio(effectiveDpr);
     setPixmap(pixmap);
 }
 
