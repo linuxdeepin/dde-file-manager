@@ -6470,7 +6470,7 @@ Você precisa atualizar este cofre para continuar usando-o.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="109"/>
         <source>%1 file(s), %2 folder(s)</source>
-        <translation type="unfinished"/>
+        <translation>%1 arquivo(s), %2 pasta(s)</translation>
     </message>
 </context>
 <context>
@@ -6478,7 +6478,7 @@ Você precisa atualizar este cofre para continuar usando-o.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="59"/>
         <source>Permissions</source>
-        <translation type="unfinished"/>
+        <translation>Permissões</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="176"/>
