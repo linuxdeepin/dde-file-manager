@@ -24,7 +24,7 @@ private slots:
     void onAllPluginsStarted();
     void bindScene(const QString &parentScene);
     void bindSceneOnAdded(const QString &newScene);
-    bool handleEnterDir(quint64 windowId, const QUrl &url);
+    bool handleEnterDir(quint64 windowId, const QUrl &url, const QUrl &curRootUrl);
     void enterHighPerformanceMode();
     void exitOnShutdown(bool);
 

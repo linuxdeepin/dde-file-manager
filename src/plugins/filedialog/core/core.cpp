@@ -11,10 +11,11 @@
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
+#include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
 #include <dfm-base/dfm_event_defines.h>
-#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/utils/universalutils.h>
 
 #include <QUrlQuery>
 
@@ -164,7 +165,7 @@ void Core::exitOnShutdown(bool shutdown)
     }
 }
 
-bool Core::handleEnterDir(quint64 windowId, const QUrl &url)
+bool Core::handleEnterDir(quint64 windowId, const QUrl &url, const QUrl &curRootUrl)
 {
     const FileInfoPointer &info = InfoFactory::create<FileInfo>(url);
     if (!info || !info->exists()) {
@@ -173,13 +174,22 @@ bool Core::handleEnterDir(quint64 windowId, const QUrl &url)
     }
 
     QUrl parentUrl = info->urlOf(FileInfo::FileUrlInfoType::kParentUrl);
-    QUrlQuery query;
-    query.addQueryItem("selectUrl", url.toString());
-    parentUrl.setQuery(query);
+    // 如果当前 workspace 的 rootUrl 已经是目标文件的父目录，
+    // 则直接选中文件，避免不必要的 cd 导航和视图重刷
+    if (UniversalUtils::urlEquals(curRootUrl, parentUrl)) {
+        fmInfo() << "FileChooser enter-dir: select file, window:" << windowId
+                 << "parent:" << parentUrl.toString(QUrl::RemoveQuery) << "select:" << url.toString();
+        dpfSlotChannel->push("dfmplugin_workspace", "slot_View_SelectFiles", windowId, QList<QUrl>() << url);
+    } else {
+        QUrlQuery query;
+        query.addQueryItem("selectUrl", url.toString());
+        parentUrl.setQuery(query);
 
-    fmInfo() << "FileChooser enter-dir: cd to parent and select, window:" << windowId
-             << "parent:" << parentUrl.toString(QUrl::RemoveQuery) << "select:" << url.toString();
-    dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, windowId, parentUrl);
+        fmInfo() << "FileChooser enter-dir: cd to parent and select, window:" << windowId
+                 << "parent:" << parentUrl.toString(QUrl::RemoveQuery) << "select:" << url.toString();
+        dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, windowId, parentUrl);
+    }
+
     return true;
 }
 

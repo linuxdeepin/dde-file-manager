@@ -245,7 +245,11 @@ void TitleBarHelper::handleJumpToPressed(QWidget *sender, const QString &text)
         fmInfo() << "jump :" << inputStr;
         const FileInfoPointer &info = InfoFactory::create<FileInfo>(url);
         if (info && info->exists() && info->isAttributes(OptInfoType::kIsFile)) {
-            if (!dpfHookSequence->run("dfmplugin_titlebar", "hook_Tab_EnterDir", TitleBarHelper::windowId(sender), url))
+            if (!dpfHookSequence->run("dfmplugin_titlebar",
+                                      "hook_Tab_EnterDir",
+                                      TitleBarHelper::windowId(sender),
+                                      url,
+                                      currentUrl))
                 TitleBarEventCaller::sendOpenFile(sender, url);
         } else {
             TitleBarEventCaller::sendCd(sender, url);
