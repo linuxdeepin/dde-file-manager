@@ -19,6 +19,8 @@ public:
     static void sendSetPermissionManager(quint64 winID, const QUrl &url, const QFileDevice::Permissions permissions);
 
     static void sendFileHide(quint64 winID, const QList<QUrl> &urls);
+    static void sendFilesHideOrVisible(quint64 winID, const QUrl &parentUrl,
+                                       const QList<QUrl> &urls, bool isHide);
 };
 }
 

@@ -21,3 +21,8 @@ void PropertyEventCall::sendFileHide(quint64 winID, const QList<QUrl> &urls)
 {
     dpfSignalDispatcher->publish(GlobalEventType::kHideFiles, winID, urls);
 }
+
+void PropertyEventCall::sendFilesHideOrVisible(quint64 winID, const QUrl &parentUrl, const QList<QUrl> &urls, bool isHide)
+{
+    dpfSignalDispatcher->publish(GlobalEventType::kHideFiles, winID, parentUrl, urls, isHide);
+}
