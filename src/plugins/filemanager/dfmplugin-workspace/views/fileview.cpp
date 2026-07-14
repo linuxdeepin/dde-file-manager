@@ -2167,7 +2167,11 @@ bool FileView::eventFilter(QObject *obj, QEvent *event)
         }
 
         if (d->stickyHelper->currentStickyIndex().isValid() && !d->stickyHelper->currentStickyRect().isNull()) {
-            bool nowHovered = d->stickyHelper->currentStickyRect().contains(hoverPos);
+            QRect stickyRect = d->stickyHelper->currentStickyRect();
+            if (stickyRect.y() < 0)
+                stickyRect.setY(0);
+
+            bool nowHovered = stickyRect.contains(hoverPos);
             if (nowHovered != d->stickyHelper->isStickyHeaderHovered()) {
                 d->stickyHelper->setStickyHeaderHovered(nowHovered);
                 viewport()->update(d->stickyHelper->currentStickyRect());
