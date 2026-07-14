@@ -6510,7 +6510,7 @@ Você precisa atualizar este cofre para continuar usando-o.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="156"/>
         <source>Multiple Files</source>
-        <translation type="unfinished"/>
+        <translation>Vários arquivos</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="195"/>
@@ -6526,7 +6526,7 @@ Você precisa atualizar este cofre para continuar usando-o.</translation>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="285"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="287"/>
         <source>Hidden files</source>
-        <translation type="unfinished"/>
+        <translation>Arquivos ocultos</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="292"/>
