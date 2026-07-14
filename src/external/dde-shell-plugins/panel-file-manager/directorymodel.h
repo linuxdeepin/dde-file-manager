@@ -6,6 +6,7 @@
 
 #include <QAbstractListModel>
 #include <QFileInfo>
+#include <QFutureWatcher>
 
 namespace dock {
 
@@ -22,7 +23,6 @@ public:
     enum Roles {
         NameRole = Qt::DisplayRole,
         PathRole = Qt::UserRole + 1,
-        IconUrlRole,
         IconNameRole,
         IsDirRole,
         FileTypeRole,
@@ -67,26 +67,36 @@ Q_SIGNALS:
     void thumbnailChanged(int row);
 
 private:
-    void loadDirectory();
-    void onThumbnailGenerated(const QString &sourceFilePath, const QString &thumbnailPath);
-    static QString thumbnailUrlForFile(const QFileInfo &fileInfo);
-    static QString iconToDataUrl(const QString &iconName, int size);
-
     struct Entry {
         QString name;
         QString path;
         QString iconName;
-        QString iconUrl;
         bool isDir;
         FileType fileType = GenericFile;
         QString thumbnailUrl;
     };
+
+    struct LoadResult {
+        QVector<Entry> entries;
+        int folderCount = 0;
+        QVector<QFileInfo> pendingThumbnails;
+        int generation = 0;
+    };
+
+    void loadDirectory();
+    void onLoadFinished();
+    void enqueueThumbnails(const QVector<QFileInfo> &files);
+    void onThumbnailGenerated(const QString &sourceFilePath, const QString &thumbnailPath);
+    static QString cachedThumbnailUrl(const QFileInfo &fileInfo, bool *needsGeneration);
+    static LoadResult collectEntries(const QString &path, int generation);
 
     QString m_path;
     QVector<Entry> m_entries;
     int m_folderCount = 0;
     QStringList m_history;
     int m_historyIndex = -1;
+    QFutureWatcher<LoadResult> *m_watcher = nullptr;
+    int m_loadGeneration = 0;
 };
 
 }

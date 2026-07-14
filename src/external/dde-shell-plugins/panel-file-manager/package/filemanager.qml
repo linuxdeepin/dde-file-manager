@@ -55,8 +55,6 @@ AppletItem {
     readonly property real listHoverAlpha: 0.06
     readonly property real hoverAlpha: 0.15
     readonly property real pressAlpha: 0.25
-    readonly property real thumbInsideBorderAlpha: 0.14
-    readonly property real thumbOutsideBorderAlpha: 0.12
 
     implicitWidth: useColumnLayout ? Panel.rootObject.dockSize : Panel.rootObject.dockItemMaxSize * 0.8
     implicitHeight: useColumnLayout ? Panel.rootObject.dockItemMaxSize * 0.8 : Panel.rootObject.dockSize
@@ -275,65 +273,12 @@ AppletItem {
                             anchors.topMargin: gridTopMargin
                             spacing: popupSpacing
 
-                            // --- Thumbnail with OpacityMask ---
-                            Item {
+                            ThumbnailItem {
                                 anchors.horizontalCenter: parent.horizontalCenter
-                                width: gridThumbSize
-                                height: gridThumbSize
-
-                                Image {
-                                    id: gridThumbImg
-                                    anchors.fill: parent
-                                    source: model.thumbnailUrl || ""
-                                    sourceSize.width: gridThumbSize
-                                    sourceSize.height: gridThumbSize
-                                    fillMode: Image.PreserveAspectCrop
-                                    asynchronous: true
-                                    cache: false
-                                    smooth: true
-                                    visible: false
-                                }
-
-                                Rectangle {
-                                    id: gridThumbMask
-                                    anchors.fill: parent
-                                    radius: gridItemRadius
-                                    color: "white"
-                                    visible: false
-                                }
-
-                                OpacityMask {
-                                    anchors.fill: parent
-                                    source: gridThumbImg
-                                    maskSource: gridThumbMask
-                                    visible: gridThumbImg.status === Image.Ready
-                                }
-
-                                D.InsideBoxBorder {
-                                    anchors.fill: parent
-                                    radius: gridItemRadius
-                                    color: Qt.rgba(1, 1, 1, thumbInsideBorderAlpha)
-                                    borderWidth: 1 / Screen.devicePixelRatio
-                                    visible: gridThumbImg.status === Image.Ready
-                                }
-
-                                D.OutsideBoxBorder {
-                                    anchors.fill: parent
-                                    radius: gridItemRadius
-                                    color: Qt.rgba(0, 0, 0, thumbOutsideBorderAlpha)
-                                    borderWidth: 1 / Screen.devicePixelRatio
-                                    visible: gridThumbImg.status === Image.Ready
-                                }
-
-                                // Fallback icon when thumbnail not ready
-                                Image {
-                                    anchors.fill: parent
-                                    source: model.iconUrl
-                                    sourceSize.width: gridThumbSize
-                                    sourceSize.height: gridThumbSize
-                                    fillMode: Image.PreserveAspectFit
-                                    visible: gridThumbImg.status !== Image.Ready
-                                }
+                                thumbnailUrl: model.thumbnailUrl || ""
+                                iconName: model.iconName || "text-x-generic"
+                                thumbSize: gridThumbSize
+                                itemRadius: gridItemRadius
                             }
 
                             Text {
@@ -426,64 +371,12 @@ AppletItem {
                             anchors.rightMargin: listRowHPadding
                             spacing: popupSpacing
 
-                            // --- Thumbnail with OpacityMask for list view ---
-                            Item {
+                            ThumbnailItem {
                                 anchors.verticalCenter: parent.verticalCenter
-                                width: listThumbSize
-                                height: listThumbSize
-
-                                Image {
-                                    id: listThumbImg
-                                    anchors.fill: parent
-                                    source: model.thumbnailUrl || ""
-                                    sourceSize.width: listThumbSize
-                                    sourceSize.height: listThumbSize
-                                    fillMode: Image.PreserveAspectCrop
-                                    asynchronous: true
-                                    cache: false
-                                    smooth: true
-                                    visible: false
-                                }
-
-                                Rectangle {
-                                    id: listThumbMask
-                                    anchors.fill: parent
-                                    radius: listItemRadius
-                                    color: "white"
-                                    visible: false
-                                }
-
-                                OpacityMask {
-                                    anchors.fill: parent
-                                    source: listThumbImg
-                                    maskSource: listThumbMask
-                                    visible: listThumbImg.status === Image.Ready
-                                }
-
-                                D.InsideBoxBorder {
-                                    anchors.fill: parent
-                                    radius: listItemRadius
-                                    color: Qt.rgba(1, 1, 1, thumbInsideBorderAlpha)
-                                    borderWidth: 1 / Screen.devicePixelRatio
-                                    visible: listThumbImg.status === Image.Ready
-                                }
-
-                                D.OutsideBoxBorder {
-                                    anchors.fill: parent
-                                    radius: listItemRadius
-                                    color: Qt.rgba(0, 0, 0, thumbOutsideBorderAlpha)
-                                    borderWidth: 1 / Screen.devicePixelRatio
-                                    visible: listThumbImg.status === Image.Ready
-                                }
-
-                                Image {
-                                    anchors.fill: parent
-                                    source: model.iconUrl
-                                    sourceSize.width: listThumbSize
-                                    sourceSize.height: listThumbSize
-                                    fillMode: Image.PreserveAspectFit
-                                    visible: listThumbImg.status !== Image.Ready
-                                }
+                                thumbnailUrl: model.thumbnailUrl || ""
+                                iconName: model.iconName || "text-x-generic"
+                                thumbSize: listThumbSize
+                                itemRadius: listItemRadius
                             }
 
                             Text {
@@ -582,7 +475,7 @@ AppletItem {
             dragHovering = false
             if (drop.urls.length === 0)
                 return
-            var localPath = drop.urls[0].toString().replace(/^file:\/\//, "")
+            var localPath = Applet.localPathFromUrl(drop.urls[0].toString())
             if (!localPath)
                 return
             if (Applet.isDirectory(localPath) || Applet.isFile(localPath)) {
