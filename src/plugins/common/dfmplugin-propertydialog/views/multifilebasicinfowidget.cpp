@@ -28,6 +28,7 @@ MultiFileBasicInfoWidget::MultiFileBasicInfoWidget(const QList<QUrl> &urls,
     : DArrowLineDrawer(parent)
     , fileCalculationUtils(new FileScanner)
 {
+    fileCalculationUtils->setOptions(FileScanner::ScanOption::IncludeSource);
     initUI();
     loadData(urls);
 }
