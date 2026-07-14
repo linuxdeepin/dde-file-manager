@@ -8,6 +8,7 @@
 
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/universalutils.h>
+#include <dfm-base/utils/iconutils.h>
 
 #include <denhancedwidget.h>
 
@@ -147,11 +148,18 @@ void MultiFilePropertiesDialog::initUI()
     setAttribute(Qt::WA_DeleteOnClose, true);
 
     QLabel *headerIcon = new QLabel(this);
+    // 用 maximumSize + scaledContents 替代 fixedSize：当布局空间充足时 headerIcon
+    // 按 pixmap sizeHint(128x128) 显示，空间不足(scale>1 字体放大撑高布局)时
+    // iconLabel 可被压缩，pixmap 随之平滑缩放，避免与 multiFileLable 因 0 间距重叠。
+    headerIcon->setMaximumSize(kHeaderIconHeight, kHeaderIconHeight);
+    headerIcon->setScaledContents(true);
+    headerIcon->setAlignment(Qt::AlignCenter);
     QIcon icon;
     icon.addFile(QString { ":/images/images/multiple_files.png" });
     icon.addFile(QString { ":/images/images/multiple_files@2x.png" });
-    headerIcon->setPixmap(icon.pixmap(kHeaderIconHeight, kHeaderIconHeight));
-    headerIcon->setFixedHeight(kHeaderIconHeight);
+    headerIcon->setPixmap(IconUtils::hiDpiPixmap(icon,
+                                                 QSize(kHeaderIconHeight, kHeaderIconHeight),
+                                                 this));
 
     QLabel *headerFileName = new QLabel(tr("Multiple Files"), this);
     DFontSizeManager::instance()->bind(headerFileName, DFontSizeManager::T9,
