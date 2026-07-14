@@ -29,14 +29,13 @@ Q_SIGNALS:
     void hideBoxStateChanged(int state);
 
 private Q_SLOTS:
-    void updateFilesSizeLabel(const DFMBASE_NAMESPACE::FileScanner::ScanResult &result);
+    void updateFilesCountAndSizeLabel(const DFMBASE_NAMESPACE::FileScanner::ScanResult &result);
     void filesHideStateChanged(int state);
 
 private:
     void initUI();
     void loadData(const QList<QUrl> &urls);
-    void setFilesCount(const QList<QUrl> &urls);
-    void setFilesSize(const QList<QUrl> &urls);
+    void setFilesCountAndSize(const QList<QUrl> &urls);
     void setAccessTime(const QList<QUrl> &urls);
     void setModifyTime(const QList<QUrl> &urls);
     void setHideState(const QList<QUrl> &urls);

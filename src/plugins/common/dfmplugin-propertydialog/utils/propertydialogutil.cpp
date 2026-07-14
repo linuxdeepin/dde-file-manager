@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "propertydialogutil.h"
-#include "views/multifilepropertydialog.h"
+#include "views/multifilepropertiesdialog.h"
 #include "propertydialogmanager.h"
 
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
@@ -18,7 +18,7 @@
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_propertydialog;
-static constexpr int kMaxPropertyDialogNumber { 16 };
+static constexpr int kMaxPropertyDialogNumber { 2 };
 static constexpr int kBottomReserveHeight { 40 };
 PropertyDialogUtil::PropertyDialogUtil(QObject *parent)
     : QObject(parent)
@@ -63,7 +63,7 @@ void PropertyDialogUtil::showPropertyDialog(const QList<QUrl> &urls, const QVari
         if (!fileUrls.empty())
             showFilePropertyDialog(fileUrls, option);
     } else {
-        MultiFilePropertyDialog *multiFilePropertyDialog = new MultiFilePropertyDialog(urls);
+        MultiFilePropertiesDialog *multiFilePropertyDialog = new MultiFilePropertiesDialog(urls);
         multiFilePropertyDialog->show();
         multiFilePropertyDialog->moveToCenter();
         multiFilePropertyDialog->raise();
