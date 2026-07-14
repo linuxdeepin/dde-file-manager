@@ -294,7 +294,7 @@ void MultiFilePermissionWidget::updateComboBoxViewPalette()
         bgColor.setRgb(255, 255, 255);
     else
         bgColor.setRgb(40, 40, 40);
-    palette.setColor(QPalette::Background, bgColor);
+    palette.setColor(QPalette::Window, bgColor);
     setPalette(palette);
 }
 
