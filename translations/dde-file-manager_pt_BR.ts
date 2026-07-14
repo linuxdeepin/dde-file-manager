@@ -6532,37 +6532,37 @@ Você precisa atualizar este cofre para continuar usando-o.</translation>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="292"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="294"/>
         <source>Unhide files</source>
-        <translation type="unfinished"/>
+        <translation>Exibir arquivos ocultos</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="328"/>
         <source>Owner&gt;Read-write</source>
-        <translation type="unfinished"/>
+        <translation>Proprietário &gt; Leitura e gravação</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="330"/>
         <source>Owner&gt;Read only</source>
-        <translation type="unfinished"/>
+        <translation>Proprietário &gt; Somente leitura</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="364"/>
         <source>Group&gt;Read-write</source>
-        <translation type="unfinished"/>
+        <translation>Grupo &gt; Leitura e gravação</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="366"/>
         <source>Group&gt;Read only</source>
-        <translation type="unfinished"/>
+        <translation>Grupo &gt; Somente leitura</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="400"/>
         <source>Others&gt;Read-write</source>
-        <translation type="unfinished"/>
+        <translation>Outros &gt; Leitura e gravação</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="402"/>
         <source>Others&gt;Read only</source>
-        <translation type="unfinished"/>
+        <translation>Outros &gt; Somente leitura</translation>
     </message>
 </context>
 <context>
