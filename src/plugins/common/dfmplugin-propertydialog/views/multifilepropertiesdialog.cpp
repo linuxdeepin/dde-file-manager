@@ -40,6 +40,15 @@ MultiFilePropertiesDialog::MultiFilePropertiesDialog(const QList<QUrl> &urls,
     initConnect();
 }
 
+void MultiFilePropertiesDialog::showEvent(QShowEvent *event)
+{
+    DDialog::showEvent(event);
+
+    QTimer::singleShot(0, this, [this]() {
+        processHeight();
+    });
+}
+
 void MultiFilePropertiesDialog::processHeight()
 {
     // 调整滚动区域视图大小

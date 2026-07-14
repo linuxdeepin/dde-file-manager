@@ -43,12 +43,6 @@ void MultiFileBasicInfoWidget::getOrgHideBoxState(FilePropertyState &states)
     states.hideState = hideFile->checkState();
 }
 
-void MultiFileBasicInfoWidget::updateFilesSizeLabel(const FileScanner::ScanResult &result)
-{   
-    filesSize->setRightValue(FileUtils::formatSize(result.totalSize),
-                             Qt::ElideNone, Qt::AlignVCenter, true);
-}
-
 void MultiFileBasicInfoWidget::filesHideStateChanged(int state)
 {
     emit hideBoxStateChanged(state);
@@ -97,11 +91,8 @@ void MultiFileBasicInfoWidget::initUI()
 
 void MultiFileBasicInfoWidget::loadData(const QList<QUrl> &urls)
 {
-    // 获取文件个数
-    setFilesCount(urls);
-
-    // 获取文件大小
-    setFilesSize(urls);
+    // 获取文件个数和大小
+    setFilesCountAndSize(urls);
 
     // 获取所有文件的访问时间
     setAccessTime(urls);
@@ -113,19 +104,21 @@ void MultiFileBasicInfoWidget::loadData(const QList<QUrl> &urls)
     setHideState(urls);
 }
 
-void MultiFileBasicInfoWidget::setFilesCount(const QList<QUrl> &urls)
+void MultiFileBasicInfoWidget::updateFilesCountAndSizeLabel(const FileScanner::ScanResult &result)
 {
-    int dirCount, fileCount;
-    calculateFileCount(urls, dirCount, fileCount);
-    filesCount->setRightValue(tr("%1 file(s), %2 folder(s)").arg(fileCount).arg(dirCount),
+    filesCount->setRightValue(tr("%1 file(s), %2 folder(s)")
+                                      .arg(result.fileCount)
+                                      .arg(result.directoryCount),
                               Qt::ElideNone, Qt::AlignVCenter, true);
 
+    filesSize->setRightValue(FileUtils::formatSize(result.totalSize),
+                             Qt::ElideNone, Qt::AlignVCenter, true);
 }
 
-void MultiFileBasicInfoWidget::setFilesSize(const QList<QUrl> &urls)
+void MultiFileBasicInfoWidget::setFilesCountAndSize(const QList<QUrl> &urls)
 {
     connect(fileCalculationUtils, &FileScanner::progressChanged,
-            this, &MultiFileBasicInfoWidget::updateFilesSizeLabel);
+            this, &MultiFileBasicInfoWidget::updateFilesCountAndSizeLabel);
     QList<QUrl> targets;
     UniversalUtils::urlsTransformToLocal(urls, &targets);
     fileCalculationUtils->start(targets);

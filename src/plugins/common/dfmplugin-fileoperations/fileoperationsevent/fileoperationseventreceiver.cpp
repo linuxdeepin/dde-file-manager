@@ -1767,6 +1767,41 @@ void FileOperationsEventReceiver::handleOperationHideFiles(const quint64 windowI
     }
 }
 
+bool FileOperationsEventReceiver::handleOperationHideFiles(const quint64 windowId,
+                                                           const QUrl &parentUrl,
+                                                           const QList<QUrl> &urls,
+                                                           bool isHide)
+{
+    Q_UNUSED(windowId)
+
+    if (urls.size() < 1)
+        return false;
+
+    bool ok { true };
+    HideFileHelper helper(parentUrl);
+    for (const QUrl &url : urls) {
+        FileInfoPointer info = InfoFactory::create<FileInfo>(url);
+        if (info) {
+            const QString &fileName = info->nameOf(NameInfoType::kFileName);
+            if (isHide) {
+                if (!helper.contains(fileName))
+                    helper.insert(fileName);
+            } else {
+                if (helper.contains(fileName))
+                    helper.remove(fileName);
+            }
+        }
+    }
+    if (!helper.save())
+        ok = false;
+
+    if (ok && !urls.isEmpty())
+        FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType::kFileChanged, urls.first());
+
+    dpfSignalDispatcher->publish(GlobalEventType::kHideFilesResult, windowId, urls, ok);
+    return ok;
+}
+
 bool FileOperationsEventReceiver::handleShortCut(quint64, const QList<QUrl> &urls, const QUrl &rootUrl)
 {
     if (urls.isEmpty())

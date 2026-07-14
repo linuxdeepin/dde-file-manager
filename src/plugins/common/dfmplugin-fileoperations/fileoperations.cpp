@@ -296,6 +296,12 @@ void FileOperations::initEventHandle()
                                                                                      const QList<QUrl>,
                                                                                      const QVariant,
                                                                                      AbstractJobHandler::OperatorCallback)>(&FileOperationsEventReceiver::handleOperationHideFiles));
+    dpfSignalDispatcher->subscribe(GlobalEventType::kHideFiles,
+                                   FileOperationsEventReceiver::instance(),
+                                   static_cast<bool (FileOperationsEventReceiver::*)(const quint64,
+                                                                                     const QUrl &,
+                                                                                     const QList<QUrl> &,
+                                                                                     bool)>(&FileOperationsEventReceiver::handleOperationHideFiles));
     dpfSignalDispatcher->subscribe(GlobalEventType::kSaveRedoOperator,
                                    FileOperationsEventReceiver::instance(),
                                    &FileOperationsEventReceiver::handleOperationSaveRedoOperations);

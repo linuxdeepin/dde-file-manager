@@ -25,6 +25,9 @@ public:
     explicit MultiFilePropertiesDialog(const QList<QUrl> &urls,
                                        QWidget *parent = Q_NULLPTR);
 
+protected:
+    virtual void showEvent(QShowEvent *event) override;
+
 private slots:
     void processHeight();
     void saveBtnClicked();

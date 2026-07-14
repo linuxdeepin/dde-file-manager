@@ -187,6 +187,8 @@ public slots:
     bool handleOperationHideFiles(const quint64 windowId, const QList<QUrl> urls);
     void handleOperationHideFiles(const quint64 windowId, const QList<QUrl> urls,
                                   const QVariant custom, DFMBASE_NAMESPACE::AbstractJobHandler::OperatorCallback callback);
+    bool handleOperationHideFiles(const quint64 windowId, const QUrl &parentUrl,
+                                  const QList<QUrl> &urls, bool isHide);
 
     bool handleShortCut(quint64, const QList<QUrl> &urls, const QUrl &rootUrl);
     bool handleShortCutPaste(quint64, const QList<QUrl> &, const QUrl &target);
