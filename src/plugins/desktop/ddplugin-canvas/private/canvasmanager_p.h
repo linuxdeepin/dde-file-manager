@@ -40,6 +40,10 @@ public:
     inline QRect relativeRect(const QRect &avRect, const QRect &geometry)
     {
         QPoint relativePos = avRect.topLeft() - geometry.topLeft();
+        // The desktop root already starts at the screen origin; keep top/left
+        // dock offsets out of the child view origin.
+        relativePos.setX(qMin(relativePos.x(), 0));
+        relativePos.setY(qMin(relativePos.y(), 0));
         return QRect(relativePos, avRect.size());
     }
 
