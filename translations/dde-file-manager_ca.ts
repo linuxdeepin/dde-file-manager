@@ -420,7 +420,7 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
         <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="443"/>
         <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="500"/>
         <source>File or directory not found</source>
-        <translation type="unfinished"/>
+        <translation>No s&apos;ha trobat el fitxer o el directori.</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="446"/>
@@ -6438,37 +6438,37 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="58"/>
         <source>Basic info</source>
-        <translation type="unfinished"/>
+        <translation>Informació bàsica</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="65"/>
         <source>Total size</source>
-        <translation type="unfinished"/>
+        <translation>Mida total</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="67"/>
         <source>Number of files</source>
-        <translation type="unfinished"/>
+        <translation>Nombre de fitxers</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="69"/>
         <source>Time accessed</source>
-        <translation type="unfinished"/>
+        <translation>Hora d&apos;accés</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="71"/>
         <source>Time modified</source>
-        <translation type="unfinished"/>
+        <translation>Hora de modificació</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="76"/>
         <source>Hide this file</source>
-        <translation type="unfinished"/>
+        <translation>Amaga aquest fitxer</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="109"/>
         <source>%1 file(s), %2 folder(s)</source>
-        <translation type="unfinished"/>
+        <translation>%1 fitxer/s, %2 carpeta/es</translation>
     </message>
 </context>
 <context>
@@ -6476,21 +6476,21 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="59"/>
         <source>Permissions</source>
-        <translation type="unfinished"/>
+        <translation>Permisos</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="176"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="192"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="208"/>
         <source>No read/write</source>
-        <translation type="unfinished"/>
+        <translation>Sense lectura ni escriptura</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="180"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="196"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="212"/>
         <source>--</source>
-        <translation type="unfinished"/>
+        <translation>--</translation>
     </message>
 </context>
 <context>
@@ -6498,69 +6498,69 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="108"/>
         <source>Set %1 and %2 file attributes to %3.</source>
-        <translation type="unfinished"/>
+        <translation>Estableix els atributs dels fitxers %1 i %2 a %3.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="112"/>
         <source>File Manager</source>
-        <translation type="unfinished"/>
+        <translation>Gestor de fitxers</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="156"/>
         <source>Multiple Files</source>
-        <translation type="unfinished"/>
+        <translation>Fitxers múltiples</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="195"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Cancel·la</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="202"/>
         <source>Save</source>
-        <translation type="unfinished"/>
+        <translation>Desa</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="285"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="287"/>
         <source>Hidden files</source>
-        <translation type="unfinished"/>
+        <translation>Fitxers amagats</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="292"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="294"/>
         <source>Unhide files</source>
-        <translation type="unfinished"/>
+        <translation>Mostra els fitxers</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="328"/>
         <source>Owner&gt;Read-write</source>
-        <translation type="unfinished"/>
+        <translation>Propietari &gt; Lectura i escriptura</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="330"/>
         <source>Owner&gt;Read only</source>
-        <translation type="unfinished"/>
+        <translation>Propietari &gt; Només lectura</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="364"/>
         <source>Group&gt;Read-write</source>
-        <translation type="unfinished"/>
+        <translation>Grup &gt; Lectura i escriptura</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="366"/>
         <source>Group&gt;Read only</source>
-        <translation type="unfinished"/>
+        <translation>Grup &gt; Només lectura</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="400"/>
         <source>Others&gt;Read-write</source>
-        <translation type="unfinished"/>
+        <translation>Altres &gt; Lectura i escriptura</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="402"/>
         <source>Others&gt;Read only</source>
-        <translation type="unfinished"/>
+        <translation>Altres &gt; Només lectura</translation>
     </message>
 </context>
 <context>
