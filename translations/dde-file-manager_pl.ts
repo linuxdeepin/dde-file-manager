@@ -6499,69 +6499,69 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="108"/>
         <source>Set %1 and %2 file attributes to %3.</source>
-        <translation type="unfinished"/>
+        <translation>Ustaw atrybut %1 i %2 dla pliku %3.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="112"/>
         <source>File Manager</source>
-        <translation type="unfinished"/>
+        <translation>Menedżer plików</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="156"/>
         <source>Multiple Files</source>
-        <translation type="unfinished"/>
+        <translation>Wiele plików</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="195"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Anuluj</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="202"/>
         <source>Save</source>
-        <translation type="unfinished"/>
+        <translation>Zapisz</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="285"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="287"/>
         <source>Hidden files</source>
-        <translation type="unfinished"/>
+        <translation>Pliki ukryte</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="292"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="294"/>
         <source>Unhide files</source>
-        <translation type="unfinished"/>
+        <translation>Pokaż pliki ukryte</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="328"/>
         <source>Owner&gt;Read-write</source>
-        <translation type="unfinished"/>
+        <translation>Właściciel&gt;Odczyt-zapis</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="330"/>
         <source>Owner&gt;Read only</source>
-        <translation type="unfinished"/>
+        <translation>Właściciel&gt;Tylko-do-odczytu</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="364"/>
         <source>Group&gt;Read-write</source>
-        <translation type="unfinished"/>
+        <translation>Grupa&gt;Odczyt-zapis</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="366"/>
         <source>Group&gt;Read only</source>
-        <translation type="unfinished"/>
+        <translation>Grupa&gt;Tylko-do-odczytu</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="400"/>
         <source>Others&gt;Read-write</source>
-        <translation type="unfinished"/>
+        <translation>Pozostali&gt;Oczyt-zapis</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="402"/>
         <source>Others&gt;Read only</source>
-        <translation type="unfinished"/>
+        <translation>Pozostali&gt;Tylko-do-odczytu</translation>
     </message>
 </context>
 <context>
