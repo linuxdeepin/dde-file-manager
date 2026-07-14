@@ -18,6 +18,7 @@ add_library(ds-panel-file-manager SHARED
 
 target_link_libraries(ds-panel-file-manager PRIVATE
     Dde::Shell
+    DFM6::base
     Qt6::DBus
 )
 

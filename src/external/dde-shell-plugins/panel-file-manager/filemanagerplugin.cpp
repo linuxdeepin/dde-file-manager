@@ -5,28 +5,18 @@
 #include "filemanagerplugin.h"
 #include <dde-shell/pluginfactory.h>
 
+#include <dfm-base/utils/applaunchutils.h>
+
 #include <QLoggingCategory>
 #include <QDesktopServices>
 #include <QUrl>
 #include <QDir>
 #include <QFileInfo>
 #include <QSettings>
-#include <QStandardPaths>
-#include <QRegularExpression>
-#include <QDBusConnection>
-#include <QDBusMessage>
-#include <QDBusReply>
 
 Q_LOGGING_CATEGORY(fileManagerPluginLog, "org.deepin.dde.shell.filemanager")
 
 namespace dock {
-
-static const QStringList s_colorThemeNames = {
-    QStringLiteral("Ocean"),
-    QStringLiteral("Sunset"),
-    QStringLiteral("Aurora"),
-    QStringLiteral("Neon"),
-};
 
 FileManagerPlugin::FileManagerPlugin(QObject *parent)
     : DApplet(parent)
@@ -40,6 +30,8 @@ bool FileManagerPlugin::init()
     connect(m_directoryModel, &DirectoryModel::pathChanged, this, &FileManagerPlugin::directoryPathChanged);
     connect(m_directoryModel, &DirectoryModel::navigationChanged, this, &FileManagerPlugin::navigationChanged);
     connect(m_directoryModel, &DirectoryModel::countChanged, this, &FileManagerPlugin::folderCountChanged);
+    connect(m_directoryModel, &DirectoryModel::countChanged, this, &FileManagerPlugin::previewIconNamesChanged);
+    connect(m_directoryModel, &DirectoryModel::thumbnailChanged, this, &FileManagerPlugin::thumbnailChanged);
 
     // Auto-save path on navigation change
     connect(m_directoryModel, &DirectoryModel::pathChanged, this, [this]() {
@@ -54,32 +46,6 @@ bool FileManagerPlugin::init()
         lastPath = QDir::homePath();
     m_directoryModel->navigateTo(lastPath);
     return true;
-}
-
-int FileManagerPlugin::gridCount() const
-{
-    return m_gridCount;
-}
-
-void FileManagerPlugin::setGridCount(int count)
-{
-    if (m_gridCount != count && count >= 1 && count <= 4) {
-        m_gridCount = count;
-        Q_EMIT gridCountChanged();
-    }
-}
-
-int FileManagerPlugin::colorTheme() const
-{
-    return m_colorTheme;
-}
-
-void FileManagerPlugin::setColorTheme(int theme)
-{
-    if (m_colorTheme != theme && theme >= 0 && theme < s_colorThemeNames.size()) {
-        m_colorTheme = theme;
-        Q_EMIT colorThemeChanged();
-    }
 }
 
 DirectoryModel *FileManagerPlugin::directoryModel() const
@@ -115,53 +81,27 @@ void FileManagerPlugin::setIconViewMode(int mode)
     }
 }
 
-QStringList FileManagerPlugin::availableColorThemes() const
+QStringList FileManagerPlugin::previewIconNames() const
 {
-    return s_colorThemeNames;
+    QStringList names;
+    const int count = qMin(m_directoryModel->rowCount(), 4);
+    for (int i = 0; i < count; ++i) {
+        auto entry = m_directoryModel->get(i);
+        QString iconName = entry.value(QStringLiteral("iconName")).toString();
+        if (!iconName.isEmpty())
+            names << iconName;
+        if (names.size() >= 4)
+            break;
+    }
+    return names;
 }
 
 void FileManagerPlugin::openFile(const QString &filePath)
 {
     if (filePath.endsWith(QLatin1String(".desktop"))) {
-        QSettings desktopFile(filePath, QSettings::IniFormat);
-        desktopFile.beginGroup(QStringLiteral("Desktop Entry"));
-        QString execLine = desktopFile.value(QStringLiteral("Exec")).toString();
-        desktopFile.endGroup();
-
-        if (!execLine.isEmpty()) {
-            // Remove freedesktop field codes (%f, %F, %u, %U, etc.)
-            execLine.remove(QRegularExpression(QStringLiteral(R"(%[fFuUdDnNickvm)")));
-
-            QStringList parts = execLine.split(QLatin1Char(' '), Qt::SkipEmptyParts);
-            if (!parts.isEmpty()) {
-                QString program = parts.takeFirst();
-
-                // Resolve to absolute path if needed
-                if (!program.startsWith(QLatin1Char('/'))) {
-                    QString resolved = QStandardPaths::findExecutable(program);
-                    if (!resolved.isEmpty())
-                        program = resolved;
-                }
-
-                QString runId = QFileInfo(filePath).completeBaseName();
-
-                QDBusMessage msg = QDBusMessage::createMethodCall(
-                    QStringLiteral("org.desktopspec.ApplicationManager1"),
-                    QStringLiteral("/org/desktopspec/ApplicationManager1"),
-                    QStringLiteral("org.desktopspec.ApplicationManager1"),
-                    QStringLiteral("executeCommand"));
-                msg << program << parts
-                    << QStringLiteral("portablebinary") << runId
-                    << QVariant::fromValue(QMap<QString, QString>()) << QString();
-
-                QDBusReply<QDBusObjectPath> reply = QDBusConnection::sessionBus().call(msg);
-                if (reply.isValid())
-                    return;
-
-                qCWarning(fileManagerPluginLog) << "AM1 executeCommand failed:" << reply.error().message()
-                                                 << "falling back to openUrl";
-            }
-        }
+        if (DFMBASE_NAMESPACE::AppLaunchUtils::instance().launchApp(filePath, {}))
+            return;
+        qCWarning(fileManagerPluginLog) << "AppLaunchUtils failed, falling back to openUrl";
     }
 
     QDesktopServices::openUrl(QUrl::fromLocalFile(filePath));

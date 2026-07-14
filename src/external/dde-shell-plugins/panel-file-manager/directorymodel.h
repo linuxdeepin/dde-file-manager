@@ -5,6 +5,7 @@
 #pragma once
 
 #include <QAbstractListModel>
+#include <QFileInfo>
 
 namespace dock {
 
@@ -25,6 +26,7 @@ public:
         IconNameRole,
         IsDirRole,
         FileTypeRole,
+        ThumbnailUrlRole,
     };
 
     enum FileType {
@@ -62,9 +64,12 @@ Q_SIGNALS:
     void pathChanged();
     void countChanged();
     void navigationChanged();
+    void thumbnailChanged(int row);
 
 private:
     void loadDirectory();
+    void onThumbnailGenerated(const QString &sourceFilePath, const QString &thumbnailPath);
+    static QString thumbnailUrlForFile(const QFileInfo &fileInfo);
     static QString iconToDataUrl(const QString &iconName, int size);
 
     struct Entry {
@@ -74,6 +79,7 @@ private:
         QString iconUrl;
         bool isDir;
         FileType fileType = GenericFile;
+        QString thumbnailUrl;
     };
 
     QString m_path;
