@@ -31,7 +31,22 @@ bool FileManagerPlugin::init()
     connect(m_directoryModel, &DirectoryModel::navigationChanged, this, &FileManagerPlugin::navigationChanged);
     connect(m_directoryModel, &DirectoryModel::countChanged, this, &FileManagerPlugin::folderCountChanged);
     connect(m_directoryModel, &DirectoryModel::countChanged, this, &FileManagerPlugin::previewIconNamesChanged);
-    connect(m_directoryModel, &DirectoryModel::thumbnailChanged, this, &FileManagerPlugin::thumbnailChanged);
+
+    auto updatePreviewCache = [this]() {
+        m_cachedPreviewIconNames.clear();
+        const int count = qMin(m_directoryModel->rowCount(), 4);
+        for (int i = 0; i < count; ++i) {
+            auto entry = m_directoryModel->get(i);
+            QString iconName = entry.value(QStringLiteral("iconName")).toString();
+            if (!iconName.isEmpty())
+                m_cachedPreviewIconNames << iconName;
+            if (m_cachedPreviewIconNames.size() >= 4)
+                break;
+        }
+    };
+    connect(m_directoryModel, &DirectoryModel::countChanged, this, updatePreviewCache);
+    connect(m_directoryModel, &DirectoryModel::thumbnailChanged, this, updatePreviewCache);
+    updatePreviewCache();
 
     // Auto-save path on navigation change
     connect(m_directoryModel, &DirectoryModel::pathChanged, this, [this]() {
@@ -83,17 +98,7 @@ void FileManagerPlugin::setIconViewMode(int mode)
 
 QStringList FileManagerPlugin::previewIconNames() const
 {
-    QStringList names;
-    const int count = qMin(m_directoryModel->rowCount(), 4);
-    for (int i = 0; i < count; ++i) {
-        auto entry = m_directoryModel->get(i);
-        QString iconName = entry.value(QStringLiteral("iconName")).toString();
-        if (!iconName.isEmpty())
-            names << iconName;
-        if (names.size() >= 4)
-            break;
-    }
-    return names;
+    return m_cachedPreviewIconNames;
 }
 
 void FileManagerPlugin::openFile(const QString &filePath)
@@ -145,6 +150,15 @@ bool FileManagerPlugin::isDirectory(const QString &path) const
 bool FileManagerPlugin::isFile(const QString &path) const
 {
     return QFileInfo(path).isFile();
+}
+
+QString FileManagerPlugin::localPathFromUrl(const QString &urlString) const
+{
+    QUrl url(urlString);
+    if (url.isLocalFile())
+        return url.toLocalFile();
+    // Fallback for non-file schemes: return the decoded path component only.
+    return url.path();
 }
 
 D_APPLET_CLASS(FileManagerPlugin)

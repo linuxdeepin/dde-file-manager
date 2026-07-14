@@ -42,6 +42,7 @@ public:
     Q_INVOKABLE void goForward();
     Q_INVOKABLE bool isDirectory(const QString &path) const;
     Q_INVOKABLE bool isFile(const QString &path) const;
+    Q_INVOKABLE QString localPathFromUrl(const QString &urlString) const;
 
     QStringList previewIconNames() const;
     bool canGoBack() const;
@@ -53,11 +54,11 @@ Q_SIGNALS:
     void iconViewModeChanged();
     void navigationChanged();
     void previewIconNamesChanged();
-    void thumbnailChanged(int row);
 
 private:
     int m_iconViewMode = 0;
     DirectoryModel *m_directoryModel = nullptr;
+    QStringList m_cachedPreviewIconNames;
 };
 
 }

@@ -8,13 +8,11 @@
 #include <QFileInfo>
 #include <QMimeDatabase>
 #include <QMimeType>
-#include <QIcon>
-#include <QPixmap>
-#include <QBuffer>
 #include <QSettings>
 #include <QLocale>
 #include <QLoggingCategory>
 #include <QUrl>
+#include <QtConcurrent>
 
 #include <DThumbnailProvider>
 
@@ -25,6 +23,10 @@ namespace dock {
 DirectoryModel::DirectoryModel(QObject *parent)
     : QAbstractListModel(parent)
 {
+    m_watcher = new QFutureWatcher<LoadResult>(this);
+    connect(m_watcher, &QFutureWatcher<LoadResult>::finished,
+            this, &DirectoryModel::onLoadFinished);
+
     if (auto *provider = Dtk::Gui::DThumbnailProvider::instance()) {
         connect(provider, &Dtk::Gui::DThumbnailProvider::thumbnailChanged,
                 this, &DirectoryModel::onThumbnailGenerated);
@@ -49,7 +51,6 @@ QVariant DirectoryModel::data(const QModelIndex &index, int role) const
     switch (role) {
     case NameRole:   return entry.name;
     case PathRole:   return entry.path;
-    case IconUrlRole: return entry.iconUrl;
     case IconNameRole: return entry.iconName;
     case IsDirRole:  return entry.isDir;
     case FileTypeRole: return entry.fileType;
@@ -63,7 +64,6 @@ QHash<int, QByteArray> DirectoryModel::roleNames() const
     return {
         {NameRole,    "fileName"},
         {PathRole,    "filePath"},
-        {IconUrlRole, "iconUrl"},
         {IconNameRole, "iconName"},
         {IsDirRole,   "isDir"},
         {FileTypeRole, "fileType"},
@@ -120,6 +120,12 @@ void DirectoryModel::navigateTo(const QString &path)
     m_history.append(path);
     m_historyIndex = m_history.size() - 1;
 
+    static constexpr int kMaxHistory = 100;
+    if (m_history.size() > kMaxHistory) {
+        m_history = m_history.mid(m_history.size() - kMaxHistory);
+        m_historyIndex = m_history.size() - 1;
+    }
+
     setPath(path);
     Q_EMIT navigationChanged();
 }
@@ -150,7 +156,6 @@ QVariantMap DirectoryModel::get(int index) const
     return {
         {QStringLiteral("fileName"),  entry.name},
         {QStringLiteral("filePath"),  entry.path},
-        {QStringLiteral("iconUrl"),   entry.iconUrl},
         {QStringLiteral("iconName"),  entry.iconName},
         {QStringLiteral("isDir"),     entry.isDir},
         {QStringLiteral("fileType"),  entry.fileType},
@@ -160,16 +165,34 @@ QVariantMap DirectoryModel::get(int index) const
 
 void DirectoryModel::loadDirectory()
 {
+    ++m_loadGeneration;
+    const int generation = m_loadGeneration;
+
+    // Drop stale content immediately so the UI never shows the previous
+    // directory while the new one is being collected off-thread.
     beginResetModel();
     m_entries.clear();
     m_folderCount = 0;
+    endResetModel();
+    Q_EMIT countChanged();
 
-    QDir dir(m_path);
-    if (!dir.exists()) {
-        endResetModel();
-        Q_EMIT countChanged();
+    if (!QDir(m_path).exists())
         return;
-    }
+
+    const QString path = m_path;
+    m_watcher->setFuture(QtConcurrent::run([path, generation]() {
+        return collectEntries(path, generation);
+    }));
+}
+
+DirectoryModel::LoadResult DirectoryModel::collectEntries(const QString &path, int generation)
+{
+    LoadResult result;
+    result.generation = generation;
+
+    QDir dir(path);
+    if (!dir.exists())
+        return result;
 
     QMimeDatabase mimeDb;
 
@@ -186,7 +209,7 @@ void DirectoryModel::loadDirectory()
         if (entry.isDir) {
             entry.iconName = QStringLiteral("folder");
             entry.fileType = Folder;
-            m_folderCount++;
+            result.folderCount++;
         } else {
             auto mime = mimeDb.mimeTypeForFile(info);
             entry.iconName = mime.iconName();
@@ -241,15 +264,31 @@ void DirectoryModel::loadDirectory()
             }
         }
 
-        // Try to get real thumbnail for non-directory files
-        entry.thumbnailUrl = thumbnailUrlForFile(info);
+        bool needsGeneration = false;
+        entry.thumbnailUrl = cachedThumbnailUrl(info, &needsGeneration);
+        if (needsGeneration)
+            result.pendingThumbnails.append(info);
 
-        entry.iconUrl = iconToDataUrl(entry.iconName, 64);
-        m_entries.append(entry);
+        result.entries.append(entry);
     }
 
+    return result;
+}
+
+void DirectoryModel::onLoadFinished()
+{
+    const LoadResult result = m_watcher->result();
+
+    if (result.generation != m_loadGeneration)
+        return;
+
+    beginResetModel();
+    m_entries = std::move(result.entries);
+    m_folderCount = result.folderCount;
     endResetModel();
     Q_EMIT countChanged();
+
+    enqueueThumbnails(result.pendingThumbnails);
 }
 
 void DirectoryModel::onThumbnailGenerated(const QString &sourceFilePath, const QString &thumbnailPath)
@@ -269,8 +308,11 @@ void DirectoryModel::onThumbnailGenerated(const QString &sourceFilePath, const Q
     }
 }
 
-QString DirectoryModel::thumbnailUrlForFile(const QFileInfo &fileInfo)
+QString DirectoryModel::cachedThumbnailUrl(const QFileInfo &fileInfo, bool *needsGeneration)
 {
+    if (needsGeneration)
+        *needsGeneration = false;
+
     if (fileInfo.isDir())
         return {};
 
@@ -285,31 +327,20 @@ QString DirectoryModel::thumbnailUrlForFile(const QFileInfo &fileInfo)
     if (!thumbnailPath.isEmpty() && QFileInfo::exists(thumbnailPath))
         return QUrl::fromLocalFile(thumbnailPath).toString();
 
-    provider->appendToProduceQueue(fileInfo, Dtk::Gui::DThumbnailProvider::Small);
+    // No cached thumbnail yet: ask the GUI thread to request generation.
+    if (needsGeneration)
+        *needsGeneration = true;
     return {};
 }
 
-QString DirectoryModel::iconToDataUrl(const QString &iconName, int size)
+void DirectoryModel::enqueueThumbnails(const QVector<QFileInfo> &files)
 {
-    QIcon icon;
-    if (iconName.startsWith(QLatin1Char('/')))
-        icon = QIcon(iconName);
-    if (icon.isNull())
-        icon = QIcon::fromTheme(iconName);
-    if (icon.isNull())
-        icon = QIcon::fromTheme(QStringLiteral("text-x-generic"));
-    if (icon.isNull())
-        return QString();
+    auto *provider = Dtk::Gui::DThumbnailProvider::instance();
+    if (!provider)
+        return;
 
-    QPixmap pm = icon.pixmap(size, size);
-    if (pm.isNull())
-        return QString();
-
-    QByteArray ba;
-    QBuffer buf(&ba);
-    buf.open(QIODevice::WriteOnly);
-    pm.save(&buf, "PNG");
-    return QStringLiteral("data:image/png;base64,") + ba.toBase64();
+    for (const auto &info : files)
+        provider->appendToProduceQueue(info, Dtk::Gui::DThumbnailProvider::Small);
 }
 
 }
