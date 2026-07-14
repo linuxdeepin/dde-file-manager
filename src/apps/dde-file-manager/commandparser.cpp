@@ -317,7 +317,9 @@ void CommandParser::openInUrls()
             }
         }
 
-        QUrl url = UrlRoute::fromUserInput(path);
+        // Fix: QUrl::fromUserInput 会剥离首尾空白，当 URL 含未编码的尾随空格时
+        // 会导致路径丢失尾随空格，无法打开名称含尾随空格的目录 (BUG #370055)
+        QUrl url = path.contains("://") ? QUrl(path) : UrlRoute::fromUserInput(path);
 
         if (isSet("show-item")) {
             const FileInfoPointer &fileInfo = InfoFactory::create<FileInfo>(url);
