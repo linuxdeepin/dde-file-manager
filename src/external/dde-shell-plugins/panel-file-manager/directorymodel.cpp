@@ -5,6 +5,7 @@
 #include "directorymodel.h"
 
 #include <QDir>
+#include <QFileInfo>
 #include <QMimeDatabase>
 #include <QMimeType>
 #include <QIcon>
@@ -13,6 +14,9 @@
 #include <QSettings>
 #include <QLocale>
 #include <QLoggingCategory>
+#include <QUrl>
+
+#include <DThumbnailProvider>
 
 Q_LOGGING_CATEGORY(fileManagerDirModelLog, "org.deepin.dde.shell.filemanager.directorymodel")
 
@@ -21,6 +25,12 @@ namespace dock {
 DirectoryModel::DirectoryModel(QObject *parent)
     : QAbstractListModel(parent)
 {
+    if (auto *provider = Dtk::Gui::DThumbnailProvider::instance()) {
+        connect(provider, &Dtk::Gui::DThumbnailProvider::thumbnailChanged,
+                this, &DirectoryModel::onThumbnailGenerated);
+        connect(provider, &Dtk::Gui::DThumbnailProvider::createThumbnailFinished,
+                this, &DirectoryModel::onThumbnailGenerated);
+    }
 }
 
 int DirectoryModel::rowCount(const QModelIndex &parent) const
@@ -43,6 +53,7 @@ QVariant DirectoryModel::data(const QModelIndex &index, int role) const
     case IconNameRole: return entry.iconName;
     case IsDirRole:  return entry.isDir;
     case FileTypeRole: return entry.fileType;
+    case ThumbnailUrlRole: return entry.thumbnailUrl;
     }
     return {};
 }
@@ -56,6 +67,7 @@ QHash<int, QByteArray> DirectoryModel::roleNames() const
         {IconNameRole, "iconName"},
         {IsDirRole,   "isDir"},
         {FileTypeRole, "fileType"},
+        {ThumbnailUrlRole, "thumbnailUrl"},
     };
 }
 
@@ -142,6 +154,7 @@ QVariantMap DirectoryModel::get(int index) const
         {QStringLiteral("iconName"),  entry.iconName},
         {QStringLiteral("isDir"),     entry.isDir},
         {QStringLiteral("fileType"),  entry.fileType},
+        {QStringLiteral("thumbnailUrl"), entry.thumbnailUrl},
     };
 }
 
@@ -228,12 +241,52 @@ void DirectoryModel::loadDirectory()
             }
         }
 
+        // Try to get real thumbnail for non-directory files
+        entry.thumbnailUrl = thumbnailUrlForFile(info);
+
         entry.iconUrl = iconToDataUrl(entry.iconName, 64);
         m_entries.append(entry);
     }
 
     endResetModel();
     Q_EMIT countChanged();
+}
+
+void DirectoryModel::onThumbnailGenerated(const QString &sourceFilePath, const QString &thumbnailPath)
+{
+    if (sourceFilePath.isEmpty() || thumbnailPath.isEmpty())
+        return;
+
+    const QString cleanSourcePath = QDir::cleanPath(sourceFilePath);
+    for (int i = 0; i < m_entries.size(); ++i) {
+        if (QDir::cleanPath(m_entries[i].path) == cleanSourcePath) {
+            m_entries[i].thumbnailUrl = QUrl::fromLocalFile(thumbnailPath).toString();
+            Q_EMIT thumbnailChanged(i);
+            const auto idx = index(i, 0);
+            Q_EMIT dataChanged(idx, idx, {ThumbnailUrlRole});
+            return;
+        }
+    }
+}
+
+QString DirectoryModel::thumbnailUrlForFile(const QFileInfo &fileInfo)
+{
+    if (fileInfo.isDir())
+        return {};
+
+    if (fileInfo.suffix() == QLatin1String("desktop"))
+        return {};
+
+    auto *provider = Dtk::Gui::DThumbnailProvider::instance();
+    if (!provider || !provider->hasThumbnail(fileInfo))
+        return {};
+
+    const QString thumbnailPath = provider->thumbnailFilePath(fileInfo, Dtk::Gui::DThumbnailProvider::Small);
+    if (!thumbnailPath.isEmpty() && QFileInfo::exists(thumbnailPath))
+        return QUrl::fromLocalFile(thumbnailPath).toString();
+
+    provider->appendToProduceQueue(fileInfo, Dtk::Gui::DThumbnailProvider::Small);
+    return {};
 }
 
 QString DirectoryModel::iconToDataUrl(const QString &iconName, int size)

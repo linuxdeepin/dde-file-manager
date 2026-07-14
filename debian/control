@@ -88,6 +88,14 @@ Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: plugin of dde-dock
  Disk mount plugin of dde-dock which is created by dde-file-manager
 
+Package: dde-file-manager-dock-plugin
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: dde-shell dock plugin for file manager quick access
+ A dde-shell dock panel plugin that provides quick access to the home
+ directory from the taskbar, with real file thumbnail previews and
+ a file browser popup.
+
 Package: libdfm-extension
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
