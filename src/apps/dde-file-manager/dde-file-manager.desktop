@@ -253,9 +253,9 @@ Name[ur]=ڈیپن فائل منیجر
 Name[uz]=Deepin Fayl Menedjeri
 Name[vi]=Trình quản lý tệp tin
 Name[lo]=ຜູ້ຈັດການໄຟລ໌
-Name[zh_CN]=深度文件管理器
-Name[zh_HK]=Deepin 文件管理器
-Name[zh_TW]=Deepin 檔案管理器
+Name[zh_CN]=文件管理器
+Name[zh_HK]=文件管理器
+Name[zh_TW]=檔案管理器
 
 [Desktop Action new-window]
 Exec=dde-file-manager --new-window
