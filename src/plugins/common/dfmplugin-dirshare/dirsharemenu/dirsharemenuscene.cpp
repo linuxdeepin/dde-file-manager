@@ -120,20 +120,7 @@ bool DirShareMenuScene::triggered(QAction *action)
         return true;
     } else if (key == ShareActionId::kActRemoveShareKey) {
         QString filePath = u.path();
-
-        // Get share info before removing to check if it's anonymous share
-        auto shareInfo = UserShareHelperInstance->shareInfoByPath(filePath);
-        bool wasAnonymous = shareInfo.value(ShareInfoKeys::kAnonymous).toBool();
-
-        // Remove share
-        bool success = UserShareHelperInstance->removeShareByPath(filePath);
-
-        // Restore permissions if it was anonymous share
-        if (success && wasAnonymous) {
-            AnonymousPermissionManager::instance()->restoreDirectoryPermissions(filePath);
-            AnonymousPermissionManager::instance()->restoreHomeDirectoryIfNoAnonymousShares();
-        }
-
+        UserShareHelperInstance->removeShareByPath(filePath);
         return true;
     }
 
