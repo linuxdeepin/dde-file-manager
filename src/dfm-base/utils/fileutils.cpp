@@ -58,6 +58,12 @@
 
 #include <DDBusSender>
 
+#include <atomic>
+
+namespace {
+std::atomic<int> kTrashEmptyState { static_cast<int>(dfmbase::FileUtils::TrashEmptyState::kUnknown) };
+}
+
 #include <unistd.h>
 #include <sys/stat.h>
 #include <linux/limits.h>
@@ -377,6 +383,16 @@ bool FileUtils::trashIsEmpty()
         return info->countChildFile() == 0;
     }
     return true;
+}
+
+FileUtils::TrashEmptyState FileUtils::trashEmptyState()
+{
+    return static_cast<TrashEmptyState>(kTrashEmptyState.load());
+}
+
+void FileUtils::setTrashEmptyState(TrashEmptyState state)
+{
+    kTrashEmptyState.store(static_cast<int>(state));
 }
 
 QUrl FileUtils::trashRootUrl()

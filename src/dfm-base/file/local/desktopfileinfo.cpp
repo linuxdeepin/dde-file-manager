@@ -102,8 +102,13 @@ QString DesktopFileInfo::desktopIconName() const
 {
     // special handling for trash desktop file which has tash datas
     if (d->iconName == "user-trash") {
-        if (!FileUtils::trashIsEmpty())
-            return "user-trash-full";
+        const auto trashState = FileUtils::trashEmptyState();
+        if (trashState == FileUtils::TrashEmptyState::kEmpty)
+            return d->iconName;
+
+        // Fix: desktop startup must not synchronously touch trash:///.
+        // Default to the non-empty icon until trashcore finishes probing.
+        return "user-trash-full";
     }
 
     return d->iconName;
