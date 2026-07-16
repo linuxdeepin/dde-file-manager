@@ -1169,6 +1169,13 @@ void FileDialog::initConnect()
 {
     connect(statusBar()->acceptButton(), &QPushButton::clicked, this, &FileDialog::onAcceptButtonClicked);
     connect(statusBar()->rejectButton(), &QPushButton::clicked, this, &FileDialog::onRejectButtonClicked);
+    connect(DConfigManager::instance(), &DConfigManager::valueChanged, this,
+            [this](const QString &cfg, const QString &key) {
+                if (cfg != QString("org.deepin.dde.file-manager.sidebar") || key != QString("itemVisiable"))
+                    return;
+                if (d->acceptMode == QFileDialog::AcceptSave)
+                    urlSchemeEnable("recent", false);
+            });
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     connect(statusBar()->comboBox(),
             static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::activated),
