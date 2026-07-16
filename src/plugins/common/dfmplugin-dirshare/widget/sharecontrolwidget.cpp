@@ -522,22 +522,7 @@ bool ShareControlWidget::unshareFolder()
     }
 
     QString filePath = url.toLocalFile();
-
-    // Get share info before removing to check if it was anonymous share
-    auto oldShareInfo = UserShareHelperInstance->shareInfoByPath(filePath);
-    bool wasAnonymous = oldShareInfo.value(ShareInfoKeys::kAnonymous).toBool();
-
-    // Remove share
-    bool success = UserShareHelperInstance->removeShareByPath(filePath);
-
-    if (success && wasAnonymous) {
-        // Restore directory permissions (only if user didn't modify them)
-        AnonymousPermissionManager::instance()->restoreDirectoryPermissions(filePath);
-        // Check if we need to restore home directory permissions
-        AnonymousPermissionManager::instance()->restoreHomeDirectoryIfNoAnonymousShares();
-    }
-
-    return success;
+    return UserShareHelperInstance->removeShareByPath(filePath);
 }
 
 void ShareControlWidget::updateWidgetStatus(const QString &filePath)
@@ -573,6 +558,8 @@ void ShareControlWidget::updateWidgetStatus(const QString &filePath)
         sharePermissionSelector->setEnabled(false);
         shareAnonymousSelector->setEnabled(false);
     }
+
+    showMoreInfo(valid);
 }
 
 void ShareControlWidget::updateFile(const QUrl &oldOne, const QUrl &newOne)
