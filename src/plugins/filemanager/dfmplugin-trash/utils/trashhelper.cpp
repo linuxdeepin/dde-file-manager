@@ -285,8 +285,15 @@ bool TrashHelper::customRoleDisplayName(const QUrl &url, const Global::ItemRoles
 
 void TrashHelper::onTrashStateChanged()
 {
-    bool actuallyEmpty = FileUtils::trashIsEmpty();
-    trashState = actuallyEmpty ? TrashState::Empty : TrashState::NotEmpty;
+    const auto cachedState = FileUtils::trashEmptyState();
+    if (cachedState == FileUtils::TrashEmptyState::kUnknown) {
+        bool actuallyEmpty = FileUtils::trashIsEmpty();
+        trashState = actuallyEmpty ? TrashState::Empty : TrashState::NotEmpty;
+    } else {
+        trashState = (cachedState == FileUtils::TrashEmptyState::kEmpty)
+                ? TrashState::Empty
+                : TrashState::NotEmpty;
+    }
 
     // When trash becomes non-empty, update UI
     const QList<quint64> &windowIds = FMWindowsIns.windowIdList();

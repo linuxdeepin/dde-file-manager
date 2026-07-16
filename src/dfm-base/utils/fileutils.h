@@ -18,6 +18,12 @@ namespace dfmbase {
 class FileUtils
 {
 public:
+    enum class TrashEmptyState {
+        kUnknown,
+        kEmpty,
+        kNotEmpty
+    };
+
     struct FilesSizeInfo
     {
         qint64 totalSize { 0 };
@@ -50,6 +56,8 @@ public:
     static bool isSameFile(const QString &path1, const QString &path2);
     static bool isCdRomDevice(const QUrl &url);
     static bool trashIsEmpty();
+    static TrashEmptyState trashEmptyState();
+    static void setTrashEmptyState(TrashEmptyState state);
     static QUrl trashRootUrl();
     static bool isTrashFile(const QUrl &url);
     static bool isTrashRootFile(const QUrl &url);

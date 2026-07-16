@@ -19,6 +19,8 @@ class AbstractFileWatcher;
 
 namespace dfmplugin_trashcore {
 
+class TrashCoreStartupProbe;
+
 class TrashCoreEventSender final : public QObject
 {
     Q_OBJECT
@@ -28,6 +30,7 @@ public:
     static TrashCoreEventSender *instance();
 
 private slots:
+    void tryInitialize();
     void sendTrashStateChangedDel();
     void sendTrashStateChangedAdd();
 
@@ -40,12 +43,15 @@ private:
 
     explicit TrashCoreEventSender(QObject *parent = nullptr);
     void initTrashWatcher();
+    void initTrashState();
     bool checkAndStartWatcher();
 
 private:
+    TrashCoreStartupProbe *startupProbe { nullptr };
     QSharedPointer<DFMBASE_NAMESPACE::AbstractFileWatcher> trashFileWatcher = nullptr;
     TrashState trashState { TrashState::Unknown };
     QTimer timer;
+    bool watcherInitialized { false };
 };
 
 }

@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "trashcoreeventsender.h"
-#include "utils/trashcorehelper.h"
+#include "trashcorestartupprobe.h"
 
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/base/standardpaths.h>
@@ -18,32 +18,33 @@
 #include <QDebug>
 #include <QUrl>
 
-#include <functional>
-
 using namespace dfmplugin_trashcore;
 DFMBASE_USE_NAMESPACE
 
 TrashCoreEventSender::TrashCoreEventSender(QObject *parent)
     : QObject(parent)
 {
-    // Remove blocking FileUtils::trashIsEmpty() call from constructor
-    // State will be lazily initialized on first watcher event
-    initTrashWatcher();
+    FileUtils::setTrashEmptyState(FileUtils::TrashEmptyState::kUnknown);
+
+    timer.setSingleShot(true);
+    timer.setInterval(5000);
+    connect(&timer, &QTimer::timeout, this, &TrashCoreEventSender::tryInitialize);
+
+    startupProbe = new TrashCoreStartupProbe(this);
+    connect(startupProbe, &TrashCoreStartupProbe::ready,
+            this, &TrashCoreEventSender::tryInitialize);
+    startupProbe->start();
 }
 
 void TrashCoreEventSender::initTrashWatcher()
 {
+    if (trashFileWatcher)
+        return;
+
     trashFileWatcher.reset(new LocalFileWatcher(FileUtils::trashRootUrl(), this));
 
     connect(trashFileWatcher.data(), &AbstractFileWatcher::subfileCreated, this, &TrashCoreEventSender::sendTrashStateChangedAdd);
     connect(trashFileWatcher.data(), &AbstractFileWatcher::fileDeleted, this, &TrashCoreEventSender::sendTrashStateChangedDel);
-
-    if (!checkAndStartWatcher()) {
-        connect(&timer, &QTimer::timeout, this, &TrashCoreEventSender::checkAndStartWatcher);
-        timer.setSingleShot(true);
-        timer.setInterval(5000);
-        timer.start();
-    }
 }
 
 bool TrashCoreEventSender::checkAndStartWatcher()
@@ -52,7 +53,13 @@ bool TrashCoreEventSender::checkAndStartWatcher()
         timer.start();
         return false;
     }
-    return trashFileWatcher->startWatcher();
+
+    if (!trashFileWatcher->startWatcher()) {
+        timer.start();
+        return false;
+    }
+
+    return true;
 }
 
 TrashCoreEventSender *TrashCoreEventSender::instance()
@@ -61,10 +68,38 @@ TrashCoreEventSender *TrashCoreEventSender::instance()
     return &sender;
 }
 
+void TrashCoreEventSender::tryInitialize()
+{
+    if (watcherInitialized || !startupProbe || !startupProbe->isReady())
+        return;
+
+    initTrashWatcher();
+    if (!checkAndStartWatcher())
+        return;
+
+    watcherInitialized = true;
+    initTrashState();
+}
+
+void TrashCoreEventSender::initTrashState()
+{
+    const bool actuallyEmpty = FileUtils::trashIsEmpty();
+    trashState = actuallyEmpty ? TrashState::Empty : TrashState::NotEmpty;
+    FileUtils::setTrashEmptyState(actuallyEmpty ? FileUtils::TrashEmptyState::kEmpty
+                                                : FileUtils::TrashEmptyState::kNotEmpty);
+
+    // Startup defaults to the non-empty icon, so only an empty result needs
+    // an immediate correction signal.
+    if (trashState == TrashState::Empty)
+        dpfSignalDispatcher->publish("dfmplugin_trashcore", "signal_TrashCore_TrashStateChanged");
+}
+
 void TrashCoreEventSender::sendTrashStateChangedDel()
 {
     bool actuallyEmpty = FileUtils::trashIsEmpty();
     TrashState newState = actuallyEmpty ? TrashState::Empty : TrashState::NotEmpty;
+    FileUtils::setTrashEmptyState(actuallyEmpty ? FileUtils::TrashEmptyState::kEmpty
+                                                : FileUtils::TrashEmptyState::kNotEmpty);
 
     // Only send signal if state actually changed
     if (trashState == TrashState::Unknown || newState != trashState) {
@@ -81,6 +116,7 @@ void TrashCoreEventSender::sendTrashStateChangedDel()
 void TrashCoreEventSender::sendTrashStateChangedAdd()
 {
     // If trash was empty and files are being added, it's now not empty
+    FileUtils::setTrashEmptyState(FileUtils::TrashEmptyState::kNotEmpty);
     if (trashState == TrashState::Unknown || trashState == TrashState::Empty) {
         trashState = TrashState::NotEmpty;
         qInfo() << "TrashCore: Trash became non-empty, sending state changed signal";
