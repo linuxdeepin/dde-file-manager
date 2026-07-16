@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "usersharehelper.h"
+#include "anonymouspermissionmanager.h"
 #include "sharewatchermanager.h"
 
 #include <dfm-base/dfm_global_defines.h>
@@ -19,6 +20,7 @@
 #include <QDBusInterface>
 #include <QDBusConnection>
 #include <QDBusPendingCall>
+#include <QDBusPendingCallWatcher>
 #include <QDBusReply>
 #include <QDBusUnixFileDescriptor>
 #include <QDebug>
@@ -32,6 +34,7 @@
 #include <QSettings>
 #include <QTemporaryFile>
 
+#include <limits>
 #include <pwd.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -48,6 +51,8 @@ static constexpr char kFuncIsPasswordSet[] { "IsUserSharePasswordSet" };
 static constexpr char kFuncSetPasswd[] { "SetUserSharePassword" };
 static constexpr char kFuncCloseShare[] { "CloseSmbShareByShareName" };
 }   // namespace DaemonServiceIFace
+
+static constexpr int kCloseShareAsyncTimeoutMs = std::numeric_limits<int>::max();
 
 UserShareHelper *UserShareHelper::instance()
 {
@@ -477,17 +482,39 @@ void UserShareHelper::initMonitorPath()
 bool UserShareHelper::removeShareByShareName(const QString &name, bool silent)
 {
     QDBusInterface *interface = getUserShareInterface();
-    QDBusReply<bool> reply = interface->asyncCall(DaemonServiceIFace::kFuncCloseShare, name, !silent);
-    if (reply.isValid() && reply.value()) {
-        fmDebug() << "share closed: " << name;
-        runNetCmd(QStringList() << "usershare"
-                                << "delete" << name);
-        return true;
-    }
+    const auto oldShareInfo = shareInfoByShareName(name);
+    const QString sharePath = oldShareInfo.value(ShareInfoKeys::kPath).toString();
+    const bool wasAnonymous = oldShareInfo.value(ShareInfoKeys::kAnonymous).toBool();
+    const int originalTimeout = interface->timeout();
+    if (originalTimeout != kCloseShareAsyncTimeoutMs)
+        interface->setTimeout(kCloseShareAsyncTimeoutMs);
 
-    fmWarning() << "share close failed: " << name << ", " << reply.error();
-    // TODO(xust) regular user cannot remove the sharing which shared by root user. and should raise an error dialog to notify user.
-    return false;
+    auto *watcher = new QDBusPendingCallWatcher(interface->asyncCall(DaemonServiceIFace::kFuncCloseShare, name, !silent), this);
+
+    if (originalTimeout != kCloseShareAsyncTimeoutMs)
+        interface->setTimeout(originalTimeout);
+
+    connect(watcher, &QDBusPendingCallWatcher::finished, this, [this, watcher, name, sharePath, wasAnonymous](QDBusPendingCallWatcher *) {
+        QDBusPendingReply<bool> reply = *watcher;
+        watcher->deleteLater();
+
+        if (reply.isValid() && reply.value()) {
+            fmDebug() << "share closed: " << name;
+            runNetCmd(QStringList() << "usershare"
+                                    << "delete" << name);
+
+            if (wasAnonymous && !sharePath.isEmpty()) {
+                AnonymousPermissionManager::instance()->restoreDirectoryPermissions(sharePath);
+                AnonymousPermissionManager::instance()->restoreHomeDirectoryIfNoAnonymousShares();
+            }
+            return;
+        }
+
+        fmWarning() << "share close failed: " << name << ", " << reply.error();
+        emitShareRemoveFailed(sharePath);
+    });
+
+    return true;
 }
 
 void UserShareHelper::removeShareWhenShareFolderDeleted(const QString &deletedPath)
@@ -653,6 +680,8 @@ void UserShareHelper::emitShareRemoved(const QString &path)
 
 void UserShareHelper::emitShareRemoveFailed(const QString &path)
 {
+    Q_EMIT shareRemoveFailed(path);
+    dpfSignalDispatcher->publish(kEventSpace, "signal_Share_RemoveShareFailed", path);
 }
 
 UserShareHelper::UserShareHelper(QObject *parent)
