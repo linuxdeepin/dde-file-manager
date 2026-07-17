@@ -146,6 +146,15 @@ FileView::~FileView()
     }
     setCurrentIndex(QModelIndex());
 
+    // SelectHelper caches QItemSelection, which owns QPersistentModelIndex in Qt6.
+    // Destroy it before detaching/deleting the model to avoid helper teardown
+    // walking stale persistent indexes after the model has gone away.
+    if (d && d->selectHelper) {
+        d->selectHelper->prepareForModelTeardown();
+        delete d->selectHelper;
+        d->selectHelper = nullptr;
+    }
+
     // 4. 解绑 model(关键步骤): 会触发 QAbstractItemView 清理持有的 QPersistentModelIndex
     DListView::setModel(nullptr);
 
