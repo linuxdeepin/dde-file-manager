@@ -31,8 +31,17 @@ dfmplugin_search::SearchEventReceiver *dfmplugin_search::SearchEventReceiver::in
 
 void SearchEventReceiver::handleSearch(quint64 winId, const QString &keyword)
 {
-    auto window = FMWindowsIns.findWindowById(winId);
-    Q_ASSERT(window);
+    if (winId < 1) {
+        fmWarning() << "Ignore search request with invalid window id";
+        return;
+    }
+
+    auto *window = FMWindowsIns.findWindowById(winId);
+    if (!window) {
+        // Fix: shutdown can outlive a delayed search callback from the titlebar.
+        fmWarning() << "Ignore search request because window no longer exists:" << winId;
+        return;
+    }
 
     const auto &curUrl = window->currentUrl();
     if (ProtocolUtils::isRemoteFile(curUrl)
