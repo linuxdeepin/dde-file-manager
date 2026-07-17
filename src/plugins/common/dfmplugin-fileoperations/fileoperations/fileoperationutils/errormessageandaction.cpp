@@ -9,6 +9,29 @@
 #include <QUrl>
 #include <QLabel>
 
+namespace {
+
+// Keep the conflict path text aligned with TaskWidget's actual path label width.
+static constexpr int kConflictPathLabelWidth { 468 };
+
+QString elideTemplatePath(const QFontMetrics &metrics, const QString &pattern, const QString &path, int width)
+{
+    static const QString kPlaceholderToken { QStringLiteral("__DFM_PATH_PLACEHOLDER__") };
+    const QString templatedText = pattern.arg(kPlaceholderToken);
+    const int placeholderPos = templatedText.indexOf(kPlaceholderToken);
+    if (placeholderPos < 0)
+        return metrics.elidedText(pattern.arg(path), Qt::ElideMiddle, width);
+
+    const QString prefix = templatedText.left(placeholderPos);
+    const QString suffix = templatedText.mid(placeholderPos + kPlaceholderToken.size());
+    const int fixedWidth = metrics.horizontalAdvance(prefix) + metrics.horizontalAdvance(suffix);
+    const int pathWidth = qMax(0, width - fixedWidth);
+
+    return prefix + metrics.elidedText(path, Qt::ElideMiddle, pathWidth) + suffix;
+}
+
+}
+
 namespace dfmplugin_fileoperations {
 QString ErrorMessageAndAction::errorMsg(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType &error, const bool isTo, const QString &errorMsg, const bool allUsErrorMsg)
 {
@@ -244,25 +267,32 @@ void ErrorMessageAndAction::errorSrcAndDestString(const QUrl &from,
         *sorceMsg = QString(tr("%1 already exists in target folder")).arg(from.fileName());
         static QLabel label;
         static QFontMetrics metrics(label.font());
-        static Qt::TextElideMode em = Qt::TextElideMode::ElideMiddle;
-        int pre = metrics.horizontalAdvance(tr("Original path %1").arg(from.path()));
-        int last = metrics.horizontalAdvance(tr("Target path %1").arg(FileOperationsUtils::parentUrl(to).path()));
-        static int total = 350;
-        if (pre > total / 2 && last > total / 2) {
-            *toMsg = metrics.elidedText(tr("Original path %1").arg(from.path()), em, total / 2)
-                    + " " + metrics.elidedText(tr("Target path %1").arg(FileOperationsUtils::parentUrl(to).path()), em, total / 2);
+        const QString sourcePath = from.path();
+        const QString targetPath = FileOperationsUtils::parentUrl(to).path();
+        const QString originalPathPattern = tr("Original path %1");
+        const QString targetPathPattern = tr("Target path %1");
+        const QString separator { QStringLiteral(" ") };
+        const int separatorWidth = metrics.horizontalAdvance(separator);
+        const int availableWidth = kConflictPathLabelWidth - separatorWidth;
+        const int pre = metrics.horizontalAdvance(originalPathPattern.arg(sourcePath));
+        const int last = metrics.horizontalAdvance(targetPathPattern.arg(targetPath));
+
+        if (pre > availableWidth / 2 && last > availableWidth / 2) {
+            *toMsg = elideTemplatePath(metrics, originalPathPattern, sourcePath, availableWidth / 2)
+                    + separator
+                    + elideTemplatePath(metrics, targetPathPattern, targetPath, availableWidth - availableWidth / 2);
             return;
         }
-        if (pre + last > total) {
-            *toMsg = pre > total / 2
-                    ? metrics.elidedText(tr("Original path %1").arg(from.path()), em, total - last)
-                            + " " + tr("Target path %1").arg(FileOperationsUtils::parentUrl(to).path())
-                    : tr("Original path %1").arg(from.path())
-                            + " " + metrics.elidedText(tr("Target path %1").arg(FileOperationsUtils::parentUrl(to).path()), em, total - pre);
+        if (pre + last > availableWidth) {
+            *toMsg = pre > availableWidth / 2
+                    ? elideTemplatePath(metrics, originalPathPattern, sourcePath, availableWidth - last)
+                            + separator + targetPathPattern.arg(targetPath)
+                    : originalPathPattern.arg(sourcePath)
+                            + separator + elideTemplatePath(metrics, targetPathPattern, targetPath, availableWidth - pre);
             return;
         }
         *toMsg = QString(tr("Original path %1 Target path %2"))
-                         .arg(from.path(), FileOperationsUtils::parentUrl(to).path());
+                         .arg(sourcePath, targetPath);
     }
     return;
 }
