@@ -359,29 +359,42 @@ QImage ThumbnailCreators::imageThumbnailCreator(const QString &filePath, Thumbna
         return {};
     }
 
-    const QSize &imageSize = reader.size();
-
-    // fix 读取损坏icns文件（可能任意损坏的image类文件也有此情况）在arm平台上会导致递归循环的问题
-    // 这里先对损坏文件（imagesize无效）做处理，不再尝试读取其image数据
-    if (!imageSize.isValid()) {
-        qCWarning(logDFMBase) << "thumbnail: image file has invalid size attributes:" << filePath;
-        return {};
-    }
-
-    qCDebug(logDFMBase) << "thumbnail: image file size:" << imageSize << "for:" << filePath;
-
-    const QString &defaultMime = DMimeDatabase().mimeTypeForFile(QUrl::fromLocalFile(filePath)).name();
-    if (imageSize.width() > size || imageSize.height() > size || defaultMime == DFMGLOBAL_NAMESPACE::Mime::kTypeImageSvgXml) {
-        qCDebug(logDFMBase) << "thumbnail: scaling image from" << imageSize << "to fit size:" << size;
-        reader.setScaledSize(reader.size().scaled(size, size, Qt::KeepAspectRatio));
-    }
-
+    const QSize imageSize = reader.size();
     reader.setAutoTransform(true);
     QImage image;
-    if (!reader.read(&image)) {
-        qCWarning(logDFMBase) << "thumbnail: failed to read image file:" << filePath
-                              << "error:" << reader.errorString();
-        return image;
+
+    if (imageSize.isValid()) {
+        // size 有效：优先让 QImageReader 在解码阶段按比例缩放，效率更高
+        qCDebug(logDFMBase) << "thumbnail: image file size:" << imageSize << "for:" << filePath;
+
+        const QString &defaultMime = DMimeDatabase().mimeTypeForFile(QUrl::fromLocalFile(filePath)).name();
+        if (imageSize.width() > size || imageSize.height() > size || defaultMime == DFMGLOBAL_NAMESPACE::Mime::kTypeImageSvgXml) {
+            qCDebug(logDFMBase) << "thumbnail: scaling image from" << imageSize << "to fit size:" << size;
+            reader.setScaledSize(imageSize.scaled(size, size, Qt::KeepAspectRatio));
+        }
+
+        if (!reader.read(&image)) {
+            qCWarning(logDFMBase) << "thumbnail: failed to read image file:" << filePath
+                                  << "error:" << reader.errorString();
+            return image;
+        }
+    } else {
+        // 注意：icns 等格式的 QImageReader::size() 会返回 (-1,-1) 无效值，但文件本身是正常的、
+        // 可被 read() 解码。这里不再仅凭 size 无效就直接判定文件损坏，而是直接尝试 read()：
+        //  - 若 read() 失败，则认为文件确实损坏（保留对损坏文件的处理，不再读取其图像数据，
+        //    避免 arm 平台上损坏 icns 文件可能导致的递归循环问题）；
+        //  - 若 read() 成功，则对解码结果按需缩放，修复 icns 缩略图不显示的问题。
+        qCDebug(logDFMBase) << "thumbnail: image file reports invalid size, attempting direct read for:" << filePath;
+        if (!reader.read(&image)) {
+            qCWarning(logDFMBase) << "thumbnail: image file has invalid size and cannot be decoded:" << filePath
+                                  << "error:" << reader.errorString();
+            return image;
+        }
+
+        if (image.width() > size || image.height() > size) {
+            qCDebug(logDFMBase) << "thumbnail: scaling decoded image from" << image.size() << "to fit size:" << size;
+            image = image.scaled(size, size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        }
     }
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
