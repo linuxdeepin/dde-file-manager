@@ -33,6 +33,7 @@
 #include <QIcon>
 #include <QUuid>
 #include <QUrlQuery>
+#include <QScreen>
 #include <QToolTip>
 
 #include <unistd.h>
@@ -103,6 +104,7 @@ public:
     void closeRightTabs(int index);
     void closeOtherTabs(int index);
     bool hasDragPreviewTab() const;
+    void showWindow() const;
 
 public:
     TabBar *q;
@@ -252,7 +254,7 @@ void TabBarPrivate::handleTabReleased(int index)
     }
 
     if (q->count() == 1) {
-        q->window()->show();
+        showWindow();
     } else {
         currentTabIndex = -1;
 
@@ -796,6 +798,31 @@ bool TabBarPrivate::hasDragPreviewTab() const
     return false;
 }
 
+void TabBarPrivate::showWindow() const
+{
+    // Position window near cursor for good visual interaction when tearing off the last tab
+    if (!(q->window()->windowState() & Qt::WindowMaximized)) {
+        QScreen *screen = WindowUtils::cursorScreen();
+        if (screen) {
+            const QRect availGeo = screen->availableGeometry();
+            const QPoint cursorPos = QCursor::pos();
+            const int winW = q->window()->width();
+            const int winH = q->window()->height();
+
+            // Place cursor near the top-center of the window (tab bar area)
+            int x = cursorPos.x() - winW / 2;
+            int y = cursorPos.y() - 20;   // slightly above cursor to align with tab bar
+
+            // Clamp to keep the window fully visible on screen
+            x = qMax(availGeo.left(), qMin(x, availGeo.right() - winW));
+            y = qMax(availGeo.top(), qMin(y, availGeo.bottom() - winH));
+
+            q->window()->move(x, y);
+        }
+    }
+    q->window()->show();
+}
+
 bool TabBarPrivate::canPinned(int index)
 {
     if (qAppName() != "dde-file-manager")
@@ -1235,7 +1262,7 @@ QPixmap TabBar::createDragPixmapFromTab(int index, const QStyleOptionTab &option
     painter.setRenderHint(QPainter::Antialiasing, true);
 
     // Hide window during drag: single tab in non-Wayland environment
-    if (!WindowUtils::isWayLand() && 1 == count()) {
+    if (!WindowUtils::isWayLand() && 1 == count() && !isPinned(index)) {
         this->window()->hide();
         fmDebug() << "Hide window during drag: single tab in non-Wayland environment";
     }
