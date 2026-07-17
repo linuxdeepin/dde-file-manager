@@ -257,10 +257,20 @@ void TitleBarHelper::handleJumpToPressed(QWidget *sender, const QString &text)
 void TitleBarHelper::handleSearch(QWidget *sender, const QString &text)
 {
     const auto &currentDir = QDir::currentPath();
+    const auto winId = windowId(sender);
+    if (winId < 1) {
+        fmWarning() << "Cannot start search: invalid window id";
+        return;
+    }
+
     QUrl currentUrl;
-    auto curTitleBar = findTileBarByWindowId(windowId(sender));
-    if (curTitleBar)
-        currentUrl = curTitleBar->currentUrl();
+    auto curTitleBar = findTileBarByWindowId(winId);
+    if (!curTitleBar) {
+        // Fix: the titlebar can already be gone while a delayed search callback is still pending.
+        fmWarning() << "Cannot start search: titlebar already removed for window id" << winId;
+        return;
+    }
+    currentUrl = curTitleBar->currentUrl();
 
     if (currentUrl.isValid()) {
         bool isDisableSearch = dpfSlotChannel->push("dfmplugin_search", "slot_Custom_IsDisableSearch", currentUrl).toBool();

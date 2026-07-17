@@ -23,6 +23,7 @@
 #include <DPalette>
 
 #include <QHBoxLayout>
+#include <QCoreApplication>
 #include <QResizeEvent>
 #include <QKeyEvent>
 
@@ -41,6 +42,13 @@ SearchEditWidget::SearchEditWidget(QWidget *parent)
 {
     initUI();
     initConnect();
+    if (qApp) {
+        connect(qApp, &QCoreApplication::aboutToQuit, this, [this]() {
+            // Fix: stop delayed search before shutdown tears down the owning window.
+            delayTimer->stop();
+            pendingSearchText.clear();
+        });
+    }
     searchEdit->lineEdit()->installEventFilter(this);
     searchEdit->installEventFilter(this);
     advancedButton->installEventFilter(this);
@@ -249,6 +257,13 @@ void SearchEditWidget::performSearch()
     QString trimmedSearchText = pendingSearchText.trimmed();
     if (trimmedSearchText.isEmpty()) {
         fmDebug() << "Trimmed search text is empty, skipping search";
+        return;
+    }
+
+    if (TitleBarHelper::windowId(this) < 1) {
+        // Fix: ignore delayed search callbacks once the owner window is already invalid.
+        fmInfo() << "Skip delayed search because owner window is no longer valid";
+        pendingSearchText.clear();
         return;
     }
 

@@ -78,7 +78,10 @@ void TitleBarEventCaller::sendOpenTab(quint64 windowId, const QUrl &url)
 void TitleBarEventCaller::sendSearch(QWidget *sender, const QString &keyword)
 {
     quint64 id = TitleBarHelper::windowId(sender);
-    Q_ASSERT(id > 0);
+    if (id < 1) {
+        fmWarning() << "Cannot send search start signal: invalid window id";
+        return;
+    }
 
     fmInfo() << "Sending search start signal, window id:" << id << "keyword:" << keyword;
     dpfSignalDispatcher->publish("dfmplugin_titlebar", "signal_Search_Start", id, keyword);
