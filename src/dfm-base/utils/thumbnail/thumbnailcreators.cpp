@@ -359,7 +359,18 @@ QImage ThumbnailCreators::imageThumbnailCreator(const QString &filePath, Thumbna
         return {};
     }
 
-    const QSize &imageSize = reader.size();
+    reader.setAutoTransform(true);
+    QImage image;
+    if (!reader.read(&image)) {
+        qCWarning(logDFMBase) << "thumbnail: failed to read image file:" << filePath
+                              << "error:" << reader.errorString();
+        return image;
+    }
+    if (image.isNull()) {
+        qCWarning(logDFMBase) << "thumbnail: the image is null:" << filePath;
+        return image;
+    }
+    const QSize &imageSize = image.size();
 
     // fix 读取损坏icns文件（可能任意损坏的image类文件也有此情况）在arm平台上会导致递归循环的问题
     // 这里先对损坏文件（imagesize无效）做处理，不再尝试读取其image数据
@@ -373,15 +384,7 @@ QImage ThumbnailCreators::imageThumbnailCreator(const QString &filePath, Thumbna
     const QString &defaultMime = DMimeDatabase().mimeTypeForFile(QUrl::fromLocalFile(filePath)).name();
     if (imageSize.width() > size || imageSize.height() > size || defaultMime == DFMGLOBAL_NAMESPACE::Mime::kTypeImageSvgXml) {
         qCDebug(logDFMBase) << "thumbnail: scaling image from" << imageSize << "to fit size:" << size;
-        reader.setScaledSize(reader.size().scaled(size, size, Qt::KeepAspectRatio));
-    }
-
-    reader.setAutoTransform(true);
-    QImage image;
-    if (!reader.read(&image)) {
-        qCWarning(logDFMBase) << "thumbnail: failed to read image file:" << filePath
-                              << "error:" << reader.errorString();
-        return image;
+        image = image.scaled({ size, size }, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     }
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
