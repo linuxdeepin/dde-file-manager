@@ -69,9 +69,24 @@ void ImageView::setFile(const QString &fileName, const QByteArray &format)
     reader.setAutoTransform(true);
     sourceImageSize = reader.size();
 
+    QImage image;
+    bool needScaleAfterRead = false;   // 对于 size() 无法预知的格式（如 icns），读取后再缩放
+
     if (!sourceImageSize.isValid()) {
-        setPixmap(QPixmap());
-        return;
+        // 部分格式（如 icns）无法通过 size() 提前获取尺寸，这里先做一次解码，
+        // 失败则按原逻辑置空；成功则用实际图像尺寸进行后续处理。
+        image = reader.read();
+        if (image.isNull()) {
+            fmWarning() << "Image preview: failed to load image:" << reader.errorString();
+            setPixmap(QPixmap());
+            return;
+        }
+        sourceImageSize = image.size();
+        if (!sourceImageSize.isValid()) {
+            setPixmap(QPixmap());
+            return;
+        }
+        needScaleAfterRead = true;
     }
 
     // 计算保持宽高比的显示尺寸
@@ -82,13 +97,18 @@ void ImageView::setFile(const QString &fileName, const QByteArray &format)
     // Keep the widget size in logical pixels, but decode extra backing pixels for HiDPI.
     QSize decodeSize(qMax(1, qRound(showSize.width() * targetDpr)),
                      qMax(1, qRound(showSize.height() * targetDpr)));
-    reader.setScaledSize(decodeSize);
 
-    QImage image = reader.read();
-    if (image.isNull()) {
-        fmWarning() << "Image preview: failed to load image:" << reader.errorString();
-        setPixmap(QPixmap());
-        return;
+    if (needScaleAfterRead) {
+        // 该格式无法依赖 setScaledSize，直接对已解码图像做平滑缩放
+        image = image.scaled(decodeSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    } else {
+        reader.setScaledSize(decodeSize);
+        image = reader.read();
+        if (image.isNull()) {
+            fmWarning() << "Image preview: failed to load image:" << reader.errorString();
+            setPixmap(QPixmap());
+            return;
+        }
     }
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         // 应用颜色空间转换，解决CMYK等格式的颜色显示问题 (仅Qt6)
