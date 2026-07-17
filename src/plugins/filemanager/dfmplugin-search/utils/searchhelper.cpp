@@ -8,6 +8,7 @@
 #include "checkboxwithtextindex.h"
 #include "checkboxwithocrindex.h"
 #include "checkboxwithsemanticindex.h"
+#include "searchmanager/searcher/dfmsearch/querystrategies.h"
 #include "topwidget/advancesearchbar.h"
 
 #include <dfm-search/dsearch_global.h>
@@ -118,8 +119,8 @@ QUrl SearchHelper::setSearchWinId(const QUrl &searchUrl, const QString &winId)
 bool SearchHelper::shouldEnableSemanticSearch(const QString &keyword)
 {
     // Shared predicate for both the search-start path and the runtime worker:
-    // only enable semantic search when index readiness, config, and query
-    // intent all match.
+    // only enable semantic search when index readiness, config, explicit-query
+    // syntax, and semantic intent all match.
     if (!DFMSEARCH::Global::isFileNameIndexReadyForSearch())
         return false;
 
@@ -128,6 +129,12 @@ bool SearchHelper::shouldEnableSemanticSearch(const QString &keyword)
                  .toBool()) {
         return false;
     }
+
+    // Respect explicit traditional search syntax first. When the same keyword
+    // is already classified as Boolean / wildcard by the normal search path,
+    // do not start semantic search in parallel.
+    if (QuerySyntaxUtils::detect(keyword, DFMSEARCH::SearchType::FileName) != QuerySyntaxType::Simple)
+        return false;
 
     DFMSEARCH::SemanticSearcher checker;
     return checker.isSemanticQuery(keyword);
