@@ -12,11 +12,22 @@
 #include <dfm-search/dsearch_global.h>
 
 #include <QString>
-#include <QRegularExpression>
 #include <QSharedPointer>
 #include <QList>
 
 DPSEARCH_BEGIN_NAMESPACE
+
+enum class QuerySyntaxType {
+    Simple,
+    Wildcard,
+    Boolean,
+};
+
+class QuerySyntaxUtils
+{
+public:
+    [[nodiscard]] static QuerySyntaxType detect(const QString &keyword, DFMSEARCH::SearchType searchType);
+};
 
 /**
  * @brief 查询类型选择策略的抽象基类
@@ -82,11 +93,6 @@ class BooleanQueryStrategy : public QueryTypeStrategy
 public:
     DFMSEARCH::SearchQuery createQuery(const QString &keyword) const override;
     bool canHandle(const QString &keyword, DFMSEARCH::SearchType searchType) const override;
-
-private:
-    // 成员变量用于正则表达式匹配
-    const QRegularExpression whitespacePattern { "\\s" };
-    const QRegularExpression whitespaceDelimiter { "\\s+" };
 };
 
 /**

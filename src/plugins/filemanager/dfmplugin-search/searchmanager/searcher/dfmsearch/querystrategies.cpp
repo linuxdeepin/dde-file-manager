@@ -4,8 +4,43 @@
 
 #include "querystrategies.h"
 
+#include <QRegularExpression>
+
 DPSEARCH_USE_NAMESPACE
 DFM_SEARCH_USE_NS
+
+namespace {
+
+const QRegularExpression kWhitespacePattern { QStringLiteral("\\s") };
+const QRegularExpression kWhitespaceDelimiter { QStringLiteral("\\s+") };
+
+bool isBooleanKeyword(const QString &keyword)
+{
+    return keyword.contains(kWhitespacePattern);
+}
+
+bool isWildcardKeyword(const QString &keyword, SearchType searchType)
+{
+    if (searchType != SearchType::FileName)
+        return false;
+
+    return keyword.contains('*') || keyword.contains('?');
+}
+
+}   // namespace
+
+QuerySyntaxType QuerySyntaxUtils::detect(const QString &keyword, SearchType searchType)
+{
+    // Keep this order aligned with QueryTypeSelector so every caller interprets
+    // the same keyword with the same explicit-search precedence.
+    if (isBooleanKeyword(keyword))
+        return QuerySyntaxType::Boolean;
+
+    if (isWildcardKeyword(keyword, searchType))
+        return QuerySyntaxType::Wildcard;
+
+    return QuerySyntaxType::Simple;
+}
 
 // ============== SimpleQueryStrategy 实现 ==============
 
@@ -33,13 +68,7 @@ SearchQuery WildcardQueryStrategy::createQuery(const QString &keyword) const
 
 bool WildcardQueryStrategy::canHandle(const QString &keyword, SearchType searchType) const
 {
-    // 通配符搜索只支持文件名搜索
-    if (searchType != SearchType::FileName) {
-        return false;
-    }
-
-    // 检查是否包含通配符字符
-    return keyword.contains('*') || keyword.contains('?');
+    return QuerySyntaxUtils::detect(keyword, searchType) == QuerySyntaxType::Wildcard;
 }
 
 // ============== BooleanQueryStrategy 实现 ==============
@@ -47,7 +76,7 @@ bool WildcardQueryStrategy::canHandle(const QString &keyword, SearchType searchT
 SearchQuery BooleanQueryStrategy::createQuery(const QString &keyword) const
 {
     fmDebug() << "Create BooleanQueryStrategy for search" << keyword;
-    QStringList keywords = keyword.split(whitespaceDelimiter, Qt::SkipEmptyParts);
+    QStringList keywords = keyword.split(kWhitespaceDelimiter, Qt::SkipEmptyParts);
     SearchQuery query = SearchFactory::createQuery(keywords, SearchQuery::Type::Boolean);
     // 设置布尔操作符为 AND
     query.setBooleanOperator(SearchQuery::BooleanOperator::AND);
@@ -57,9 +86,7 @@ SearchQuery BooleanQueryStrategy::createQuery(const QString &keyword) const
 bool BooleanQueryStrategy::canHandle(const QString &keyword, SearchType searchType) const
 {
     Q_UNUSED(searchType)
-
-    // 检查是否包含空白字符
-    return keyword.contains(whitespacePattern);
+    return QuerySyntaxUtils::detect(keyword, SearchType::FileName) == QuerySyntaxType::Boolean;
 }
 
 // ============== QueryTypeSelector 实现 ==============

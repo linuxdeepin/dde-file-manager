@@ -77,6 +77,8 @@ AGENTS.md
 .worktrees
 .codex
 .opencode
+.codegraph
+.pms
 
 # autotests
 Testing

@@ -39,10 +39,10 @@ public:
     static QUrl setSearchWinId(const QUrl &searchUrl, const QString &winId);
     static QUrl viewModelUrl(const QUrl &url);
 
-    // Whether a SemanticAdapter would actually be created for this keyword
-    // (C2: index ready + dconfig on + keyword carries semantic intent). Shared
-    // by the search-start path and the runtime worker so grouping setup and
-    // adapter creation use the same predicate.
+    // Whether a SemanticAdapter would actually be created for this keyword.
+    // Shared by the search-start path and the runtime worker so grouping setup
+    // and adapter creation use the same predicate. Explicit traditional search
+    // syntax (for example Boolean / wildcard) vetoes semantic search here.
     static bool shouldEnableSemanticSearch(const QString &keyword);
 
     static QUrl fromSearchFile(const QString &filePath);
