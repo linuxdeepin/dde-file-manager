@@ -6669,7 +6669,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="207"/>
         <source>Open file location</source>
-        <translation>Avaa tiedoston sijainti</translation>
+        <translation>Avaa tiedostosijainti</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="208"/>
@@ -7026,22 +7026,22 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="557"/>
         <source>You can manually enable %1 in Settings — Advanced — Search.</source>
-        <translation type="unfinished"/>
+        <translation>Voit ottaa %1:n käyttöön kohdassa Asetukset — Lisäasetukset — Haku.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="568"/>
         <source>&quot;Full-Text search&quot;</source>
-        <translation type="unfinished"/>
+        <translation>&quot;Täysi tekstihaku&quot;</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="570"/>
         <source>&quot;Image-Content search&quot;</source>
-        <translation type="unfinished"/>
+        <translation>&quot;Kuvien tekstihaku sisällöstä&quot;</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="573"/>
         <source>&quot;Smart search&quot;</source>
-        <translation type="unfinished"/>
+        <translation>&quot;Älykäs haku&quot;</translation>
     </message>
 </context>
 <context>
@@ -7049,7 +7049,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="225"/>
         <source>Open file location</source>
-        <translation>Avaa tiedoston sijainti</translation>
+        <translation>Avaa tiedostosijainti</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="226"/>
@@ -7159,7 +7159,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/menu/tagdirmenuscene.cpp" line="93"/>
         <source>Open file location</source>
-        <translation>Avaa tiedoston sijainti</translation>
+        <translation>Avaa tiedostosijainti</translation>
     </message>
 </context>
 <context>
@@ -9012,12 +9012,12 @@ tyhjennä kansion tiedostot ja yritä avata lukitus uudelleen.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="652"/>
         <source>Show all</source>
-        <translation type="unfinished"/>
+        <translation>Näytä kaikki</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="652"/>
         <source>Show partial</source>
-        <translation type="unfinished"/>
+        <translation>Näytä osittainen</translation>
     </message>
 </context>
 <context>
