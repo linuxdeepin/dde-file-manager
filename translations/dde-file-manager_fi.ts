@@ -1130,7 +1130,7 @@ Kirjoita käyttäjä ja salasana kohteelle %1</translation>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="150"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="151"/>
         <source>Read-write</source>
-        <translation>Luku-kirjoitus</translation>
+        <translation>Luku/kirjoitus</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="63"/>
@@ -6484,7 +6484,7 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="192"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="208"/>
         <source>No read/write</source>
-        <translation type="unfinished"/>
+        <translation>Ei luku/kirjoitus</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="180"/>
@@ -6531,37 +6531,37 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="292"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="294"/>
         <source>Unhide files</source>
-        <translation type="unfinished"/>
+        <translation>Näytä tiedostot</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="328"/>
         <source>Owner&gt;Read-write</source>
-        <translation type="unfinished"/>
+        <translation>Omistaja luku/kirjoitus</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="330"/>
         <source>Owner&gt;Read only</source>
-        <translation type="unfinished"/>
+        <translation>Omistaja vain luku</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="364"/>
         <source>Group&gt;Read-write</source>
-        <translation type="unfinished"/>
+        <translation>Ryhmä luku/kirjoitus</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="366"/>
         <source>Group&gt;Read only</source>
-        <translation type="unfinished"/>
+        <translation>Ryhmä vain luku</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="400"/>
         <source>Others&gt;Read-write</source>
-        <translation type="unfinished"/>
+        <translation>Muut luku/kirjoitus</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="402"/>
         <source>Others&gt;Read only</source>
-        <translation type="unfinished"/>
+        <translation>Muut vain luku</translation>
     </message>
 </context>
 <context>
