@@ -6959,7 +6959,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/groups/matchmethodgroupstrategy.cpp" line="58"/>
         <source>Smart match</source>
-        <translation type="unfinished"/>
+        <translation>Älykäs osuma</translation>
     </message>
 </context>
 <context>
@@ -6973,12 +6973,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="182"/>
         <source>Enable</source>
-        <translation type="unfinished"/>
+        <translation>Käytä</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="204"/>
         <source>Match method</source>
-        <translation type="unfinished"/>
+        <translation>Hakutapa</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="227"/>
@@ -6998,7 +6998,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="292"/>
         <source>Smart search</source>
-        <translation type="unfinished"/>
+        <translation>Älykäs haku</translation>
     </message>
 </context>
 <context>
@@ -7011,17 +7011,17 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="503"/>
         <source>Authorize to enable %1</source>
-        <translation type="unfinished"/>
+        <translation>Salli käyttöön %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="528"/>
         <source>View index status</source>
-        <translation type="unfinished"/>
+        <translation>Indeksin tila</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="540"/>
         <source>Index is being built. You can check the index status in Settings.</source>
-        <translation type="unfinished"/>
+        <translation>Indeksiä muodostetaan. Voit tarkistaa indeksin tilan asetuksista.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="557"/>
