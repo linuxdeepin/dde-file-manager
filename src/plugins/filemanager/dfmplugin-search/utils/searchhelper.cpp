@@ -532,7 +532,7 @@ void SearchHelper::authorizeSearchExperience()
     // 发送带操作按钮的通知，提示用户索引正在构建。
     // 点击"查看索引状态"按钮时，通过 file-manager.sh --event 打开设置窗口
     // 并自动跳转到"高级设置—搜索"分组。
-    QStringList actions = { "view-index-status", tr("View index status") };
+    QStringList actions = { "view-index-status", tr("View") };
     QJsonObject paramObj;
     paramObj.insert("group", SEARCH_SETTING_GROUP);
     QJsonObject argsObj;
@@ -543,7 +543,7 @@ void SearchHelper::authorizeSearchExperience()
                                         QJsonDocument(argsObj).toJson(QJsonDocument::Compact) };
     QVariantMap hints = { { "x-deepin-action-view-index-status", cmdShowSettings } };
     UniversalUtils::notifyMessage(
-            QObject::tr("dde-file-manager"),
+            "",
             tr("Index is being built. You can check the index status in Settings."),
             actions,
             hints);
@@ -560,7 +560,7 @@ void SearchHelper::dismissAuthHint()
     if (!disabledModes.isEmpty()) {
         const QString &modeList = QLocale().createSeparatedList(disabledModes);
         UniversalUtils::notifyMessage(
-                QObject::tr("dde-file-manager"),
+                tr("File Manager"),
                 tr("You can manually enable %1 in Settings — Advanced — Search.").arg(modeList));
     }
 
