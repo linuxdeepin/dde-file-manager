@@ -141,6 +141,8 @@ public:
 
     QRect getExpandButtonRect(const QStyleOptionViewItem &option) const;
     QRect getExpandButtonRect(const QRectF &rect) const;
+    QRect getExpandButtonHitRect(const QStyleOptionViewItem &option) const;
+    QRect getExpandButtonHitRect(const QRectF &rect) const;
     QRect getTruncateButtonRect(const QStyleOptionViewItem &option) const;
     QRect getTruncateButtonRect(const QRectF &rect) const;
     bool shouldShowTruncateButton(const QModelIndex &index) const;

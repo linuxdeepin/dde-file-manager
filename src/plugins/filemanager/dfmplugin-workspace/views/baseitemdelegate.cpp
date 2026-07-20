@@ -618,6 +618,23 @@ QRect BaseItemDelegate::getExpandButtonRect(const QRectF &rect) const
     return buttonRect;
 }
 
+QRect BaseItemDelegate::getExpandButtonHitRect(const QStyleOptionViewItem &option) const
+{
+    return getExpandButtonHitRect(option.rect);
+}
+
+QRect BaseItemDelegate::getExpandButtonHitRect(const QRectF &rect) const
+{
+    const QRect visualRect = getExpandButtonRect(rect);
+
+    // Keep the arrow visuals unchanged while making the click target easier to hit.
+    QRect hitRect;
+    hitRect.setSize(QSize(qMax(visualRect.width(), 24), qMax(visualRect.height(), 24)));
+    hitRect.moveCenter(visualRect.center());
+
+    return hitRect;
+}
+
 QRect BaseItemDelegate::getTruncateButtonRect(const QStyleOptionViewItem &option) const
 {
     QRectF buttonBaseRect = getGroupHeaderBackgroundRect(option);

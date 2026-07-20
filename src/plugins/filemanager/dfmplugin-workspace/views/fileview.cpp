@@ -1279,9 +1279,17 @@ bool FileView::groupExpandOrCollapseItem(const QModelIndex &index, const QPoint 
         return true;
     }
     QStyleOptionViewItem op;
-    QRect rect = (index == d->stickyHelper->currentStickyIndex()) ? d->stickyHelper->currentStickyRect() : visualRect(index);
+    const bool isStickyHeader = (index == d->stickyHelper->currentStickyIndex());
+    QRect rect = isStickyHeader ? d->stickyHelper->currentStickyRect() : visualRect(index);
     op.rect = rect;
-    QRect arrowRect = itemDelegate()->getExpandButtonRect(op);
+
+    if (!isStickyHeader && index.data(Global::kItemGroupDisplayIndex).toInt() > 0) {
+        // Non-first group headers reserve a 16px transparent gap above the content.
+        // Align the hit area with the actual painted arrow inside the content rect.
+        op.rect.setTop(op.rect.top() + kGroupHeaderInterval);
+    }
+
+    QRect arrowRect = itemDelegate()->getExpandButtonHitRect(op);
 
     if (!arrowRect.contains(pos))
         return false;
