@@ -2400,6 +2400,10 @@ void FileView::initializeConnect()
     connect(d->statusBar->scalingSlider(), &DSlider::valueChanged, this, &FileView::onScalingValueChanged);
 
     connect(model(), &FileViewModel::stateChanged, this, &FileView::onModelStateChanged);
+    connect(model(), &FileViewModel::groupingStateChanged, this, [this](GroupingState) {
+        if (isIconViewMode())
+            d->adjustIconModeSpacing(model()->groupingStrategy());
+    }, Qt::QueuedConnection);
     connect(model(), &FileViewModel::highlightKeywordsChanged, this, [this](const QStringList &keywords) {
         updateDelegateHighlightKeywords(keywords);
         update();
