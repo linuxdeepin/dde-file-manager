@@ -400,13 +400,13 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="857"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="509"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="515"/>
         <source>%1 item</source>
         <translation>%1 element</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="858"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="510"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="516"/>
         <source>%1 items</source>
         <translation>%1 elements</translation>
     </message>
@@ -419,8 +419,8 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
         <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="440"/>
         <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="443"/>
         <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="500"/>
-        <source>File has been moved or deleted</source>
-        <translation>El fitxer s&apos;ha desplaçat o eliminat</translation>
+        <source>File or directory not found</source>
+        <translation>No s&apos;ha trobat el fitxer o el directori.</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="446"/>
@@ -969,7 +969,7 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
         <translation>Drecera</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1092"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1108"/>
         <source>This system wallpaper is locked. Please contact your admin.</source>
         <translation>Aquest fons de pantalla del sistema està blocat. Poseu-vos en contacte amb l&apos;administrador.</translation>
     </message>
@@ -990,8 +990,6 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
         <location filename="../src/dfm-base/utils/universalutils.cpp" line="66"/>
         <location filename="../src/dfm-base/utils/universalutils.cpp" line="89"/>
         <location filename="../src/dfm-base/utils/universalutils.cpp" line="120"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="539"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="556"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="116"/>
         <source>dde-file-manager</source>
         <translation>dde-file-manager</translation>
@@ -1115,28 +1113,37 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
         <translation>Només d&apos;escriptura</translation>
     </message>
     <message>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="69"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="77"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="85"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="148"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="149"/>
         <source>Read only</source>
         <translation>Només de lectura</translation>
     </message>
     <message>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="68"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="76"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="84"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="150"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="151"/>
         <source>Read-write</source>
         <translation>De lectura i escriptura</translation>
     </message>
     <message>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="63"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="157"/>
         <source>Owner</source>
         <translation>Propietari</translation>
     </message>
     <message>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="71"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="161"/>
         <source>Group</source>
         <translation>Grup</translation>
     </message>
     <message>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="79"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="165"/>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="26"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/namegroupstrategy.cpp" line="40"/>
@@ -2005,12 +2012,12 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Deconegut</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="308"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="323"/>
         <source>search</source>
         <translation>cerca</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="323"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="338"/>
         <source>advanced search</source>
         <translation>cerca avançada</translation>
     </message>
@@ -4640,42 +4647,42 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_computer::DeviceBasicWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="33"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="34"/>
         <source>Basic info</source>
         <translation>Informació bàsica</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="41"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="42"/>
         <source>Device type</source>
         <translation>Tipus de dispositiu</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="44"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="45"/>
         <source>Total space</source>
         <translation>Espai total</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="47"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="48"/>
         <source>File system</source>
         <translation>Sistema de fitxers</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="50"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="51"/>
         <source>Contains</source>
         <translation>Contingut</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="54"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="55"/>
         <source>Free space</source>
         <translation>Espai lliure</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="103"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="110"/>
         <source>%1 items</source>
         <translation>%1 elements</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="103"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="110"/>
         <source>%1 item</source>
         <translation>%1 element</translation>
     </message>
@@ -4806,20 +4813,20 @@ You need to upgrade this vault to continue using it.</source>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="286"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="597"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="584"/>
         <source>None</source>
         <translation>Cap</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="288"/>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="289"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="598"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="585"/>
         <source>Set password</source>
         <translation>Estableix la contrasenya</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="289"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="598"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="585"/>
         <source>Change password</source>
         <translation>Canvia la contrasenya</translation>
     </message>
@@ -4867,7 +4874,7 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Reemplaça</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="613"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="600"/>
         <source>The shared name is too long and will be truncated.</source>
         <translation>El nom compartit és massa llarg i es truncarà.</translation>
     </message>
@@ -4875,45 +4882,45 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_dirshare::UserShareHelper</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="73"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="78"/>
         <source>Kindly Reminder</source>
         <translation>Recordatori amable</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="73"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="78"/>
         <source>Please firstly install samba to continue</source>
         <translation>Primer, instal·leu samba per continuar.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="85"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="540"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="90"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="567"/>
         <source>The share name must not contain %1, and cannot start with a dash (-) or whitespace, or end with whitespace.</source>
         <translation>El nom de compartició no ha de contenir %1 i no pot començar amb un guió (-) o espai en blanc, ni acabar amb un espai en blanc.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="528"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="555"/>
         <source>Share folder can&apos;t be named after the current username</source>
         <translation>La carpeta de compartició no pot tenir el nom de l&apos;usuari actual.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="534"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="561"/>
         <source>To protect the files, you cannot share this folder.</source>
         <translation>Per protegir els fitxers, no podeu compartir aquesta carpeta.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="560"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="562"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="572"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="587"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="589"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="599"/>
         <source>Sharing failed</source>
         <translation>Ha fallat la compartició.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="563"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="590"/>
         <source>SMB port is banned, please check the firewall strategy.</source>
         <translation>El port SMB està prohibit, comproveu l&apos;estratègia del tallafoc.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="572"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="599"/>
         <source>The computer name is too long</source>
         <translation>El nom de l&apos;ordinador és massa llarg.</translation>
     </message>
@@ -5692,258 +5699,252 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_fileoperations::ErrorMessageAndAction</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="30"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="53"/>
         <source>Copying %1</source>
         <translation>Es copia %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="31"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="37"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="44"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="54"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="60"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="67"/>
         <source>to %1</source>
         <translation>a %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="34"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="46"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="57"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="69"/>
         <source>Deleting %1</source>
         <translation>S&apos;elimina %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="36"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="59"/>
         <source>Moving %1</source>
         <translation>Es mou %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="40"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="63"/>
         <source>Trashing %1</source>
         <translation>S&apos;envia a la paperera %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="42"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="65"/>
         <source>Restoring %1</source>
         <translation>Es restaura %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="116"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="180"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="139"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="203"/>
         <source>Permission error</source>
         <translation>Error de permís</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="118"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="182"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="141"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="205"/>
         <source>The action is denied</source>
         <translation>S&apos;ha denegat l&apos;acció.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="120"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="184"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="143"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="207"/>
         <source>Target file %1 already exists</source>
         <translation>El fitxer de destinació %1 ja existeix.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="122"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="186"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="145"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="209"/>
         <source>Target directory %1 already exists</source>
         <translation>El directori de destinació %1 ja existeix.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="124"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="147"/>
         <source>Failed to open the file %1</source>
         <translation>Ha fallat obrir el fitxer %1.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="126"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="149"/>
         <source>Failed to read the file %1</source>
         <translation>Ha fallat llegir el fitxer %1.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="128"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="151"/>
         <source>Failed to write the file %1</source>
         <translation>Ha fallat escriure al fitxer %1.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="131"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="154"/>
         <source>Failed to create the directory %1</source>
         <translation>Ha fallat crear el directori %1.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="134"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="157"/>
         <source>Failed to delete the file %1</source>
         <translation>Ha fallat eliminar el fitxer %1.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="136"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="159"/>
         <source>Failed to move the file %1 to trash</source>
         <translation>No s&apos;ha pogut moure el fitxer %1 a la paperera.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="138"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="161"/>
         <source>Failed to move the file %1</source>
         <translation>Ha fallat moure el fitxer %1.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="140"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="205"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="163"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="228"/>
         <source>Original file %1 does not exist</source>
         <translation>El fitxer original %1 no existeix.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="142"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="207"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="165"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="230"/>
         <source>Failed, the file size of %1 must be less than 4 GB</source>
         <translation>Ha fallat: la mida del fitxer %1 ha de ser inferior a 4 GB.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="144"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="209"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="167"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="232"/>
         <source>Not enough free space on the target disk</source>
         <translation>No hi ha prou espai al disc de destinació.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="146"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="169"/>
         <source>File %1 integrity was damaged</source>
         <translation>La integritat del fitxer %1 s&apos;ha danyat.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="148"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="213"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="171"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="236"/>
         <source>The target device is read only</source>
         <translation>El dispositiu de destinació és de només lectura.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="150"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="215"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="173"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="238"/>
         <source>Target folder is inside the source folder</source>
         <translation>La carpeta de destinació és dins de la carpeta d&apos;origen.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="152"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="217"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="175"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="240"/>
         <source>The action is not supported</source>
         <translation>L&apos;acció no s&apos;admet.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="154"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="219"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="177"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="242"/>
         <source>You do not have permission to traverse files in %1</source>
         <translation>No teniu permís per passar fitxers a %1.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="156"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="192"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="179"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="215"/>
         <source>Restore failed, original path could not be found</source>
         <translation>La restauració ha fallat, no s&apos;ha pogut trobar el camí original.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="158"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="181"/>
         <source>Unknown error</source>
         <translation>Error desconegut</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="160"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="183"/>
         <source>Failed to parse the url of trash</source>
         <translation>No s&apos;ha pogut analitzar l&apos;URL de la paperera.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="162"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="185"/>
         <source>Restore failed: the original file does not exist</source>
         <translation>Ha fallat la restauració: el fitxer original no existeix.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="165"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="188"/>
         <source>Copy or Cut File failed! Retry copy this file again!</source>
         <translation>Ha fallat copiar o tallar el fitxer! Torneu a provar de copiar-lo!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="167"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="190"/>
         <source>Can&apos;t access file!</source>
         <translation>No es pot accedir al fitxer!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="188"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="211"/>
         <source>Failed to open the file %1, cause: %2</source>
         <translation>Ha fallat obrir el fitxer %1. Causa: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="190"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="213"/>
         <source>Failed to read the file %1, cause: %2</source>
         <translation>Ha fallat llegir el fitxer %1. Causa: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="194"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="217"/>
         <source>Failed to write the file %1, cause: %2</source>
         <translation>Ha fallat escriure al fitxer %1. Causa: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="196"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="219"/>
         <source>Failed to create the directory %1, cause: %2</source>
         <translation>Ha fallat crear el directori %1. Causa: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="199"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="222"/>
         <source>Failed to delete the file %1, cause: %2</source>
         <translation>Ha fallat eliminar el fitxer %1. Causa: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="201"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="224"/>
         <source>Failed to move the file %1 to trash, cause: %2</source>
         <translation>No s&apos;ha pogut moure el fitxer %1 a la paperera, causa: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="203"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="226"/>
         <source>Failed to move the file %1, cause: %2</source>
         <translation>Ha fallat moure el fitxer %1. Causa: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="211"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="234"/>
         <source>File %1 integrity was damaged, cause: %2</source>
         <translation>La integritat del fitxer %1 s&apos;ha danyat. Causa: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="221"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="244"/>
         <source>Failed to create symlink, cause: %1</source>
         <translation>Ha fallat crear l&apos;enllaç simbòlic. Causa: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="223"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="246"/>
         <source>Copy or Cut File failed, cause: %1</source>
         <translation>Ha fallat copiar o tallar el fitxer. Causa: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="225"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="248"/>
         <source>Copy or Cut File failed, cause: %1. Retry copy this file again!</source>
         <translation>Ha fallat copiar o tallar el fitxer. Causa: %1. Torneu a provar de copiar-lo!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="227"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="250"/>
         <source>Copy or Cut File failed, cause: %1.</source>
         <translation>Ha fallat copiar o tallar el fitxer. Causa: %1.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="244"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="267"/>
         <source>%1 already exists in target folder</source>
         <translation>%1 ja existeix a la carpeta de destinació.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="248"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="252"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="258"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="260"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="272"/>
         <source>Original path %1</source>
         <translation>Camí original: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="249"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="253"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="259"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="261"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="273"/>
         <source>Target path %1</source>
         <translation>Camí de destinació: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="264"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="294"/>
         <source>Original path %1 Target path %2</source>
         <translation>Camí original: %1. Camí de destinació: %2</translation>
     </message>
@@ -5951,12 +5952,12 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_fileoperations::FileOperations</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations.cpp" line="339"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations.cpp" line="345"/>
         <source>External storage device</source>
         <translation>Dispositiu d&apos;emmagatzematge extern</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations.cpp" line="350"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations.cpp" line="356"/>
         <source>External storage device usage patterns</source>
         <translation>Patrons d&apos;ús de dispositius d&apos;emmagatzematge extern</translation>
     </message>
@@ -6425,41 +6426,133 @@ You need to upgrade this vault to continue using it.</source>
     </message>
 </context>
 <context>
-    <name>dfmplugin_propertydialog::MultiFilePropertyDialog</name>
+    <name>dfmplugin_propertydialog::MultiFileBasicInfoWidget</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="57"/>
-        <source>Multiple Files</source>
-        <translation>Fitxers múltiples</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="61"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="59"/>
         <source>Basic info</source>
         <translation>Informació bàsica</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="66"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="66"/>
         <source>Total size</source>
         <translation>Mida total</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="73"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="68"/>
         <source>Number of files</source>
         <translation>Nombre de fitxers</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="80"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="70"/>
         <source>Time accessed</source>
         <translation>Hora d&apos;accés</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="86"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="72"/>
         <source>Time modified</source>
         <translation>Hora de modificació</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="125"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="77"/>
+        <source>Hide this file</source>
+        <translation>Amaga aquest fitxer</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="110"/>
         <source>%1 file(s), %2 folder(s)</source>
         <translation>%1 fitxer/s, %2 carpeta/es</translation>
+    </message>
+</context>
+<context>
+    <name>dfmplugin_propertydialog::MultiFilePermissionWidget</name>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="59"/>
+        <source>Permissions</source>
+        <translation>Permisos</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="176"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="192"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="208"/>
+        <source>No read/write</source>
+        <translation>Sense lectura ni escriptura</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="180"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="196"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="212"/>
+        <source>--</source>
+        <translation>--</translation>
+    </message>
+</context>
+<context>
+    <name>dfmplugin_propertydialog::MultiFilePropertiesDialog</name>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="109"/>
+        <source>Set %1 and %2 file attributes to %3.</source>
+        <translation>Estableix els atributs dels fitxers %1 i %2 a %3.</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="113"/>
+        <source>File Manager</source>
+        <translation>Gestor de fitxers</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="164"/>
+        <source>Multiple Files</source>
+        <translation>Fitxers múltiples</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="203"/>
+        <source>Cancel</source>
+        <translation>Cancel·la</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="210"/>
+        <source>Save</source>
+        <translation>Desa</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="293"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="295"/>
+        <source>Hidden files</source>
+        <translation>Fitxers amagats</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="300"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="302"/>
+        <source>Unhide files</source>
+        <translation>Mostra els fitxers</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="336"/>
+        <source>Owner&gt;Read-write</source>
+        <translation>Propietari &gt; Lectura i escriptura</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="338"/>
+        <source>Owner&gt;Read only</source>
+        <translation>Propietari &gt; Només lectura</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="372"/>
+        <source>Group&gt;Read-write</source>
+        <translation>Grup &gt; Lectura i escriptura</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="374"/>
+        <source>Group&gt;Read only</source>
+        <translation>Grup &gt; Només lectura</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="408"/>
+        <source>Others&gt;Read-write</source>
+        <translation>Altres &gt; Lectura i escriptura</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="410"/>
+        <source>Others&gt;Read only</source>
+        <translation>Altres &gt; Només lectura</translation>
     </message>
 </context>
 <context>
@@ -6496,7 +6589,7 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_recent::Recent</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/recent.cpp" line="44"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/recent.cpp" line="45"/>
         <source>Recent</source>
         <translation>Recent</translation>
     </message>
@@ -6864,42 +6957,47 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_search::SearchHelper</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="220"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="227"/>
         <source>Path</source>
         <translation>Camí</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="503"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="510"/>
         <source>Authorize to enable %1</source>
         <translation>Autoritzeu habilitar %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="528"/>
-        <source>View index status</source>
-        <translation>Veure l&apos;estat de l&apos;índex</translation>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="535"/>
+        <source>View</source>
+        <translation>Visualització</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="540"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="547"/>
         <source>Index is being built. You can check the index status in Settings.</source>
         <translation>Es construeix l&apos;índex. En podeu consultar l&apos;estat a la configuració.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="557"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="563"/>
+        <source>File Manager</source>
+        <translation>Gestor de fitxers</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="564"/>
         <source>You can manually enable %1 in Settings — Advanced — Search.</source>
         <translation>Podeu activar manualment %1 a Configuració — Avançat — Cerca.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="568"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="575"/>
         <source>&quot;Full-Text search&quot;</source>
         <translation>Cerca de text complet</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="570"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="577"/>
         <source>&quot;Image-Content search&quot;</source>
         <translation>Cerca per contingut de la imatge</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="573"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="580"/>
         <source>&quot;Smart search&quot;</source>
         <translation>Cerca intel·ligent</translation>
     </message>
@@ -7316,34 +7414,34 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_titlebar::TabBar</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="308"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="371"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="310"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="373"/>
         <source>Unpin tab</source>
         <translation>Desenganxa la pestanya</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="310"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="312"/>
         <source>Pin tab</source>
         <translation>Enganxa la pestanya</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="315"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="371"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="317"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="373"/>
         <source>Close tab</source>
         <translation>Tanca la pestanya</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="318"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="320"/>
         <source>Close other tabs</source>
         <translation>Tanca altres pestanyes</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="319"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="321"/>
         <source>Close tabs to the left</source>
         <translation>Tanca les pestanyes de l&apos;esquerra</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="322"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="324"/>
         <source>Close tabs to the right</source>
         <translation>Tanca les pestanyes de la dreta</translation>
     </message>
@@ -8870,12 +8968,12 @@ Si us plau, esborreu els fitxers d&apos;aquest directori i intenteu tornar a des
 <context>
     <name>dfmplugin_workspace::BaseItemDelegate</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="646"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="652"/>
         <source>Show all</source>
         <translation>Mostra-ho tot</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="646"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="652"/>
         <source>Show partial</source>
         <translation>Vista parcial</translation>
     </message>
@@ -8891,12 +8989,12 @@ Si us plau, esborreu els fitxers d&apos;aquest directori i intenteu tornar a des
 <context>
     <name>dfmplugin_workspace::FileView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2401"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2430"/>
         <source>Mount error</source>
         <translation>Error de muntatge</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2402"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2431"/>
         <source>Server login credentials are invalid. Please uninstall and remount</source>
         <translation>Les credencials d&apos;inici de sessió del servidor no són vàlides. Desinstal·leu&lt;-lo i torneu-lo a muntar.</translation>
     </message>
@@ -9060,7 +9158,7 @@ Si us plau, esborreu els fitxers d&apos;aquest directori i intenteu tornar a des
 <context>
     <name>filedialog_core::FileDialog</name>
     <message>
-        <location filename="../src/plugins/filedialog/core/views/filedialog.cpp" line="1014"/>
+        <location filename="../src/plugins/filedialog/core/views/filedialog.cpp" line="1022"/>
         <source>Save</source>
         <comment>button</comment>
         <translation>Desa</translation>
