@@ -142,11 +142,8 @@ qreal ScreenProxyQt::devicePixelRatio() const
 
 DisplayMode ScreenProxyQt::displayMode() const
 {
-    if (DFMBASE_NAMESPACE::WindowUtils::isWayLand()) {
-        fmDebug() << "Wayland environment detected, using show-only mode";
-        return DisplayMode::kShowonly;
-    }
-
+    // 历史上为规避 treeland 多屏桌面问题，曾在此对 Wayland 强制返回 kShowonly（仅主屏显示桌面），
+    // 导致多屏扩展模式下非主屏无桌面窗口、右键菜单无法弹出。该限制已不再需要，现放开以恢复多屏扩展。
     QList<ScreenPointer> allScreen = screens();
     if (allScreen.isEmpty()) {
         fmWarning() << "No screens available, using custom mode";
