@@ -24,7 +24,6 @@ bool isServerSys();
 bool isDesktopSys();
 bool isOpenAsAdmin();
 bool isDeveloperModeEnabled();
-bool isProfessional();
 bool isDeepin23();
 bool isSameUser(const QMimeData *data);
 

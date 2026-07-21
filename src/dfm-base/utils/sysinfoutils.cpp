@@ -105,11 +105,6 @@ bool SysInfoUtils::isDeveloperModeEnabled()
     return developerModel;
 }
 
-bool SysInfoUtils::isProfessional()
-{
-    return DSysInfo::deepinType() == DSysInfo::DeepinProfessional;
-}
-
 bool SysInfoUtils::isDeepin23()
 {
     return DSysInfo::isCommunityEdition() && DSysInfo::productVersion() == "23";
