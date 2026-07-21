@@ -24,6 +24,9 @@
 
 #include <QHBoxLayout>
 #include <QCoreApplication>
+#include <QGuiApplication>
+#include <QInputMethod>
+#include <QMetaObject>
 #include <QResizeEvent>
 #include <QKeyEvent>
 
@@ -380,6 +383,11 @@ void SearchEditWidget::handleFocusInEvent(QFocusEvent *e)
 {
     advancedButton->setVisible(true);
     updateSpacing(true);   // Advanced button is now visible
+
+    QMetaObject::invokeMethod(this, [this] {
+        if (searchEdit->lineEdit()->hasFocus())
+            QGuiApplication::inputMethod()->show();
+    }, Qt::QueuedConnection);
 }
 
 void SearchEditWidget::handleFocusOutEvent(QFocusEvent *e)
