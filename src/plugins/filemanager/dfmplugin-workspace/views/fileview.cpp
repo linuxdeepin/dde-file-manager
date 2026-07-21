@@ -663,6 +663,22 @@ void FileView::keyPressEvent(QKeyEvent *event)
             case Qt::Key_Right:
                 return QWidget::keyPressEvent(event);
             }
+            break;
+        // Ctrl+Left/Right 用于前进/后退（由 FileManagerWindowPrivate::processKeyPressEvent
+        // 发射 reqBack/reqForward 信号处理）。此处必须显式转发给 QWidget::keyPressEvent，
+        // 否则会落入 DListView::keyPressEvent（即 QAbstractItemView）的默认实现：
+        // QAbstractItemView 会用 Ctrl 修饰键移动 currentIndex 并以 NoUpdate 标志调用
+        // setSelection，进而触发 SelectHelper::selection 打印
+        // "Selection with NoUpdate flag - skipping" 并 accept() 事件，导致按键事件被
+        // 父类消费、不再向上冒泡到 FileManagerWindow，前进/后退失效（BUG370967）。
+        // 交给 QWidget::keyPressEvent 后，事件会被 ignore()，从而冒泡到窗口层处理。
+        case Qt::ControlModifier:
+            switch (event->key()) {
+            case Qt::Key_Left:
+            case Qt::Key_Right:
+                return QWidget::keyPressEvent(event);
+            }
+            break;
         }
         return DListView::keyPressEvent(event);
     }
