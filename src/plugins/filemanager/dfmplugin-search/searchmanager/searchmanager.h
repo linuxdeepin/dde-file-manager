@@ -40,6 +40,8 @@ public:
 
 public Q_SLOTS:
     void onDConfigValueChanged(const QString &config, const QString &key);
+    void onWindowUrlChanged(quint64 winId, const QUrl &url);
+    void onWindowClosed(quint64 winId);
 
 signals:
     void matched(const QString &taskId);
@@ -55,6 +57,8 @@ signals:
     void fileRename(const QUrl &oldUrl, const QUrl &newUrl);
 
 private:
+    using SearchSignature = QPair<QUrl, QString>;
+
     explicit SearchManager(QObject *parent = nullptr);
     ~SearchManager();
 
@@ -62,6 +66,7 @@ private:
     QMap<quint64, QString> taskIdMap;  // 当前窗口最近一次的搜索taskId
     QMultiMap<quint64, QString> winTasksMap;  // 窗口ID对应的所有搜索任务ID
     QMap<QString, QPair<QUrl, QString>> taskInfoMap; // 保存任务ID对应的url和keyword
+    QMap<quint64, SearchSignature> autoGroupedSearches; // 每个窗口最近一次自动应用匹配方式分组的搜索签名
 };
 
 }
