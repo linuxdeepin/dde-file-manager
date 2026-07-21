@@ -23,6 +23,10 @@ CheckBoxWithSemanticIndex::CheckBoxWithSemanticIndex(QWidget *parent)
 
     connect(SearchManager::instance(), &SearchManager::enableFileIndexSearchChanged,
             this, &CheckBoxWithSemanticIndex::setDisabledByFileIndex);
+
+    connect(SearchManager::instance(), &SearchManager::enableSemanticSearchChanged, this, [this](bool enable) {
+        setChecked(enable);
+    });
 }
 
 void CheckBoxWithSemanticIndex::initStatusBar()
