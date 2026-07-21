@@ -341,6 +341,8 @@ void Search::bindEvents()
     // URL 切换时根据列宽更新 highlight 定位窗口大小
     dpfSignalDispatcher->subscribe(GlobalEventType::kChangeCurrentUrl,
                                    SearchEventReceiverIns, &SearchEventReceiver::handleUrlChanged);
+    dpfSignalDispatcher->subscribe(GlobalEventType::kChangeCurrentUrl,
+                                   SearchManager::instance(), &SearchManager::onWindowUrlChanged);
 
     // connect self slot events
     static constexpr auto selfSpace { DPF_MACRO_TO_STR(DPSEARCH_NAMESPACE) };
@@ -359,6 +361,8 @@ void Search::bindWindows()
         onWindowOpened(id);
     });
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &Search::onWindowOpened, Qt::DirectConnection);
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowClosed,
+            SearchManager::instance(), &SearchManager::onWindowClosed, Qt::DirectConnection);
 }
 
 }   // namespace Search

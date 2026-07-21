@@ -57,12 +57,16 @@ bool SearchManager::search(quint64 winId, const QString &taskId, const QUrl &url
         // desired here. Re-pushing on every keyword change would otherwise
         // flip the group order (Exact/Smart) on the second search.
         if (ok && SearchHelper::shouldEnableSemanticSearch(keyword)) {
-            QMetaObject::invokeMethod(this, [winId]() {
+            const SearchSignature signature { url, keyword };
+            QMetaObject::invokeMethod(this, [this, winId, signature]() {
                 const QString current = dpfSlotChannel->push(
                     "dfmplugin_workspace", "slot_Model_CurrentGroupStrategy", winId).toString();
-                if (current != MatchMethod::kStrategyName) {
+
+                const bool alreadyAutoGrouped = autoGroupedSearches.value(winId) == signature;
+                if (current != MatchMethod::kStrategyName && !alreadyAutoGrouped) {
                     dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetGroup",
                                          winId, QString(MatchMethod::kStrategyName));
+                    autoGroupedSearches.insert(winId, signature);
                 }
             }, Qt::QueuedConnection);
         }
@@ -152,6 +156,19 @@ void SearchManager::onDConfigValueChanged(const QString &config, const QString &
         fmInfo() << "Semantic search configuration changed - enabled:" << enabled;
         emit enableSemanticSearchChanged(enabled);
     }
+}
+
+void SearchManager::onWindowUrlChanged(quint64 winId, const QUrl &url)
+{
+    if (url.scheme() != SearchHelper::scheme())
+        autoGroupedSearches.remove(winId);
+}
+
+void SearchManager::onWindowClosed(quint64 winId)
+{
+    autoGroupedSearches.remove(winId);
+    winTasksMap.remove(winId);
+    taskIdMap.remove(winId);
 }
 
 SearchManager::SearchManager(QObject *parent)
