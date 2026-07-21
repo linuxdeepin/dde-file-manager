@@ -8,6 +8,7 @@
 #include <dfm-base/base/device/devicemanager.h>
 #include <dfm-base/base/device/deviceproxymanager.h>
 
+#include <DSysInfo>
 #include <QDebug>
 #include <QCoreApplication>
 #include <QRunnable>
@@ -25,6 +26,7 @@ static constexpr char kBlockDeviceIdPrefix[] { "/org/freedesktop/UDisks2/block_d
 
 using namespace dfmbase;
 using namespace DiscDevice;
+DCORE_USE_NAMESPACE
 
 Scanner::Scanner(const QString &dev)
     : device(dev)
@@ -70,7 +72,7 @@ bool DiscDeviceScanner::startScan()
     }
 
     // Usually the Community Edition does not require an optical drive to be inserted
-    if (SysInfoUtils::isDesktopSys() && !SysInfoUtils::isProfessional()) {
+    if (DSysInfo::isCommunityEdition()) {
         qCWarning(logDFMBase) << "Running on desktop community edition, disc scanning not required";
         return false;
     }
