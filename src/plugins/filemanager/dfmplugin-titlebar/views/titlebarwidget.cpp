@@ -33,9 +33,14 @@
 #    include <DSizeMode>
 #endif
 
+#include <QApplication>
+#include <QGuiApplication>
 #include <QHBoxLayout>
+#include <QInputMethod>
 #include <QEvent>
 #include <QResizeEvent>
+#include <QMetaObject>
+#include <QTimer>
 
 using namespace dfmplugin_titlebar;
 DFMBASE_USE_NAMESPACE
@@ -488,6 +493,7 @@ void TitleBarWidget::showAddrsssBar(const QUrl &url)
     crumbBar->hide();
     addressBar->show();
     addressBar->setFocus();
+    QGuiApplication::inputMethod()->show();
     addressBar->setCurrentUrl(url);
 }
 
@@ -500,7 +506,12 @@ void TitleBarWidget::showCrumbBar()
         addressBar->clear();
         addressBar->hide();
     }
-    setFocus();
+
+    QMetaObject::invokeMethod(this, [this] {
+        QWidget *focusWidget = QApplication::focusWidget();
+        if (!focusWidget || focusWidget == addressBar || addressBar->isAncestorOf(focusWidget))
+            setFocus();
+    }, Qt::QueuedConnection);
 }
 
 void TitleBarWidget::showSearchFilterButton(bool visible)
