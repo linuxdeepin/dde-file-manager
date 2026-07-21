@@ -17,7 +17,10 @@
 
 #include <QUuid>
 
+#include <fcntl.h>
 #include <sys/stat.h>
+#include <linux/stat.h>
+#include <unistd.h>
 #include <algorithm>
 
 DFMBASE_USE_NAMESPACE
@@ -259,33 +262,38 @@ void SearchDirIterator::doCompleteSortInfo(SortInfoPointer sortInfo)
         return;
     }
 
-    struct stat64 statBuffer;
+    struct statx statBuffer;
     const QString filePath = url.path();
 
-    if (::stat64(filePath.toUtf8().constData(), &statBuffer) != 0)
+    if (::statx(AT_FDCWD, filePath.toUtf8().constData(), AT_NO_AUTOMOUNT,
+                STATX_BASIC_STATS | STATX_BTIME, &statBuffer) != 0)
         return;
 
-    // 一次性设置所有从 stat64 获取的信息
+    // 一次性设置所有从 statx 获取的信息
 
     // 基础信息
-    sortInfo->setSize(statBuffer.st_size);
-    sortInfo->setFile(S_ISREG(statBuffer.st_mode));
-    sortInfo->setDir(S_ISDIR(statBuffer.st_mode));
-    sortInfo->setSymlink(S_ISLNK(statBuffer.st_mode));
+    sortInfo->setSize(statBuffer.stx_size);
+    sortInfo->setFile(S_ISREG(statBuffer.stx_mode));
+    sortInfo->setDir(S_ISDIR(statBuffer.stx_mode));
+    sortInfo->setSymlink(S_ISLNK(statBuffer.stx_mode));
 
     // 隐藏文件检查
     QString fileName = url.fileName();
     sortInfo->setHide(fileName.startsWith('.'));
 
     // 权限信息
-    sortInfo->setReadable(statBuffer.st_mode & S_IRUSR);
-    sortInfo->setWriteable(statBuffer.st_mode & S_IWUSR);
-    sortInfo->setExecutable(statBuffer.st_mode & S_IXUSR);
+    sortInfo->setReadable(statBuffer.stx_mode & S_IRUSR);
+    sortInfo->setWriteable(statBuffer.stx_mode & S_IWUSR);
+    sortInfo->setExecutable(statBuffer.stx_mode & S_IXUSR);
 
     // 时间信息
-    sortInfo->setLastReadTime(statBuffer.st_atime);
-    sortInfo->setLastModifiedTime(statBuffer.st_mtime);
-    sortInfo->setCreateTime(statBuffer.st_ctime);
+    // 创建时间使用 birth time（statx STATX_BTIME），与 FileInfo / localdiriterator 语义一致；
+    // 文件系统不支持 btime 时为 0（与 localdiriterator 一致），不回退 st_ctime
+    sortInfo->setLastReadTime(statBuffer.stx_atime.tv_sec);
+    sortInfo->setLastModifiedTime(statBuffer.stx_mtime.tv_sec);
+    sortInfo->setCreateTime((statBuffer.stx_mask & STATX_BTIME)
+                                    ? qint64(statBuffer.stx_btime.tv_sec)
+                                    : 0);
 
     // 标记所有信息已完成
     sortInfo->setInfoCompleted(true);
