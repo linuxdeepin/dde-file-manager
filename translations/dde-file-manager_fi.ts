@@ -17,12 +17,12 @@
     <message>
         <location filename="../src/apps/dde-file-manager/main.cpp" line="342"/>
         <source>File Manager</source>
-        <translation>Tiedostohallinta</translation>
+        <translation>Tiedostonhallinta</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager/main.cpp" line="347"/>
         <source>File Manager is a powerful and easy-to-use file management tool, featured with searching, copying, trash, compression/decompression, file property and other useful functions.</source>
-        <translation>Tiedostohallinta on tehokas ja helppokäyttöinen tiedostojen hallintatyökalu, joka sisältää etsinnän, kopioinnin, roskakorin, pakkaamisen/purkamisen, tiedosto-ominaisuudet ja muut hyödylliset toiminnot.</translation>
+        <translation>Tiedostonhallinta on tehokas tiedostojen hallintatyökalu. Sisältää etsinnän, kopioinnin, roskakorin, pakkaamisen/purkamisen, tiedosto-ominaisuudet ja muuta hyödyllistä.</translation>
     </message>
 </context>
 <context>
@@ -457,7 +457,7 @@ Kirjoita käyttäjä ja salasana kohteelle %1</translation>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="7"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="7"/>
         <source>Use the file chooser dialog of File Manager</source>
-        <translation>Käytä tiedostonhallinnan valintaikkunaa</translation>
+        <translation>Valitse tiedosto tiedostonhallinnan kautta</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="8"/>
@@ -3762,7 +3762,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="438"/>
         <source>Use the file chooser dialog of File Manager</source>
-        <translation>Käytä tiedostonhallinnan valintaikkunaa</translation>
+        <translation>Valitse tiedosto tiedostonhallinnan kautta</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="440"/>
@@ -6496,7 +6496,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="113"/>
         <source>File Manager</source>
-        <translation>Tiedostohallinta</translation>
+        <translation>Tiedostonhallinta</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="164"/>
@@ -6980,7 +6980,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="563"/>
         <source>File Manager</source>
-        <translation>Tiedostohallinta</translation>
+        <translation>Tiedostonhallinta</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="564"/>
