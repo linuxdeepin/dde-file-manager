@@ -21,6 +21,7 @@
 
 #include <QtConcurrent>
 #include <QDebug>
+#include <QCursor>
 #include <QMimeData>
 #include <QApplication>
 #include <QMouseEvent>
@@ -87,6 +88,48 @@ void SideBarViewPrivate::setTransparentPalette()
 void SideBarViewPrivate::restorePalette()
 {
     q->setPalette(originPalette);
+}
+
+void SideBarViewPrivate::updateHoverIndex(const QModelIndex &index)
+{
+    if (currentHoverIndex == index)
+        return;
+
+    const QModelIndex previousHoverIndex = currentHoverIndex;
+    currentHoverIndex = index;
+
+    if (previousHoverIndex.isValid())
+        q->update(previousHoverIndex);
+    if (currentHoverIndex.isValid())
+        q->update(currentHoverIndex);
+}
+
+void SideBarViewPrivate::clearHoverIndex()
+{
+    updateHoverIndex(QModelIndex());
+}
+
+bool SideBarViewPrivate::isCursorInsideIndex(const QModelIndex &index, const QPoint &fallbackPos) const
+{
+    if (!index.isValid())
+        return false;
+
+    const QRect itemRect = q->visualRect(index);
+    const QPoint globalPos = QCursor::pos();
+    if (QWidget *windowWidget = q->window()) {
+        const QPoint windowPos = windowWidget->mapFromGlobal(globalPos);
+        if (QWidget *targetWidget = windowWidget->childAt(windowPos)) {
+            if (!(targetWidget == q || q->isAncestorOf(targetWidget)))
+                return false;
+
+            const QPoint cursorPos = q->viewport()->mapFromGlobal(globalPos);
+            return itemRect.contains(cursorPos);
+        }
+    }
+
+    // Fallback for compositor paths where childAt/global lookup is unavailable
+    // but the sidebar viewport still owns the active pointer hover state.
+    return q->viewport()->underMouse() && itemRect.contains(fallbackPos);
 }
 
 void SideBarViewPrivate::notifyOrderChanged()
@@ -324,7 +367,7 @@ void SideBarView::mouseReleaseEvent(QMouseEvent *event)
 
 void SideBarView::dragEnterEvent(QDragEnterEvent *event)
 {
-    d->currentHoverIndex = QModelIndex();
+    d->clearHoverIndex();
     d->updateDFMMimeData(event);
     if (event->source() != this) {
         d->urlsForDragEvent = d->dfmMimeData.isValid() ? d->dfmMimeData.urls() : event->mimeData()->urls();
@@ -366,12 +409,20 @@ void SideBarView::dragEnterEvent(QDragEnterEvent *event)
 
 void SideBarView::dragMoveEvent(QDragMoveEvent *event)
 {
-    if (event->source() != this)
-        d->currentHoverIndex = indexAt(event->position().toPoint());
+    const QPoint eventPos = event->position().toPoint();
+    const QModelIndex hoverIndex = indexAt(eventPos);
 
-    SideBarItem *item = itemAt(event->position().toPoint());
+    if (event->source() != this)
+        d->updateHoverIndex(hoverIndex);
+
+    if (event->source() != this && !d->isCursorInsideIndex(hoverIndex, eventPos)) {
+        d->clearHoverIndex();
+        event->ignore();
+        return;
+    }
+
+    SideBarItem *item = itemAt(eventPos);
     if (item) {
-        viewport()->update();
         if (!d->canMove(event)) {
             event->setDropAction(Qt::IgnoreAction);
             event->ignore();
@@ -394,23 +445,21 @@ void SideBarView::dragLeaveEvent(QDragLeaveEvent *event)
     d->draggedUrl = QUrl("");
     d->isItemDragged = false;
     setState(State::NoState);
-
-    if (d->currentHoverIndex.isValid()) {
-        update(d->currentHoverIndex);
-        d->currentHoverIndex = QModelIndex();
-    }
+    d->clearHoverIndex();
 }
 
 void SideBarView::dropEvent(QDropEvent *event)
 {
-    d->currentHoverIndex = QModelIndex();
+    const QPoint eventPos = event->position().toPoint();
+    const QModelIndex hoverIndex = indexAt(eventPos);
+    d->clearHoverIndex();
     d->isItemDragged = false;
     if (d->draggedUrl.isValid()) {   // select the dragged item when dropped.
         d->notifyOrderChanged();   // notify to update the persistence data
     }
 
-    d->dropPos = event->position().toPoint();
-    SideBarItem *item = itemAt(event->position().toPoint());
+    d->dropPos = eventPos;
+    SideBarItem *item = itemAt(eventPos);
     if (!item)
         return DTreeView::dropEvent(event);
 
@@ -420,12 +469,7 @@ void SideBarView::dropEvent(QDropEvent *event)
     fmDebug() << "target item: " << item->group() << "|" << item->text() << "|" << item->url();
     fmDebug() << "item->itemInfo().finalUrl: " << item->itemInfo().finalUrl;
     fmDebug() << "item flags:" << item->flags();
-    // wayland环境下QCursor::pos()在此场景中不能获取正确的光标当前位置，代替方案为直接使用QDropEvent::pos()
-    // QDropEvent::pos() 实际上就是drop发生时光标在该widget坐标系中的position (mapFromGlobal(QCursor::pos()))
-    // 但rc本来就是由event->pos()计算item得出的Rect，这样判断似乎就没有意义了（虽然原来的逻辑感觉也没什么意义）
-    QPoint pt = event->position().toPoint();   // mapFromGlobal(QCursor::pos());
-    QRect rc = visualRect(indexAt(event->position().toPoint()));
-    if (!rc.contains(pt)) {
+    if (!d->isCursorInsideIndex(hoverIndex, eventPos)) {
         fmDebug() << "mouse not in my area";
         return DTreeView::dropEvent(event);
     }
