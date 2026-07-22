@@ -49,6 +49,9 @@ class SideBarViewPrivate : public QObject
     bool checkTargetEnable(const QUrl &targetUrl);
     bool canEnter(QDragEnterEvent *event);
     bool canMove(QDragMoveEvent *event);
+    void updateHoverIndex(const QModelIndex &index);
+    void clearHoverIndex();
+    bool isCursorInsideIndex(const QModelIndex &index, const QPoint &fallbackPos) const;
 
 private Q_SLOTS:
     void currentChanged(const QModelIndex &curIndex);
