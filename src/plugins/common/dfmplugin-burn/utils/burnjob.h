@@ -63,6 +63,8 @@ public:
     void setProperty(PropertyType type, const QVariant &val);
     void addTask();
 
+    bool failureDialogShown {};
+
 protected:
     virtual bool fileSystemLimitsValid();
     virtual void updateMessage(JobInfoPointer ptr);
