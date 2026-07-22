@@ -44,7 +44,7 @@ void BurnJobManager::startEraseDisc(const QString &dev)
     initBurnJobConnect(job);
     connect(qobject_cast<EraseJob *>(job), &EraseJob::eraseFinished, this, [job, this](bool result) {
         startAuditLogForEraseDisc(job->currentDeviceInfo(), result);
-        if (!result) {
+        if (!result && !job->failureDialogShown) {
             DialogManagerInstance->showErrorDialog(tr("Erase failed"),
                                                    tr("Unable to complete disc erasure. "
                                                       "This may be due to read/write limitations or the disc media status. "
@@ -263,7 +263,10 @@ void BurnJobManager::showOpticalJobFailureDialog(int type, const QString &err, c
     QWidget *detailsw = new QWidget(&d);
     detailsw->setLayout(new QVBoxLayout());
     QTextEdit *te = new QTextEdit();
-    te->setPlainText(details.join('\n'));
+    QStringList detailContent = details;
+    if (detailContent.isEmpty() && !err.isEmpty())
+        detailContent << err;
+    te->setPlainText(detailContent.join('\n'));
     te->setReadOnly(true);
     te->hide();
     detailsw->layout()->addWidget(te);

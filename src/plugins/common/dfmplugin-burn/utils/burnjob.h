@@ -14,13 +14,14 @@
 
 namespace dfmplugin_burn {
 
-struct VerifyResult {
+struct VerifyResult
+{
     bool dataVerifyEnabled { false };   // kVerifyDatas was enabled
-    bool dataVerifyOk { true };         // checkmedia passed (bad <= 2%)
-    bool checksumEnabled { false };     // kChecksum was enabled
-    bool checksumOk { true };           // verifyChecksum passed
-    bool checksumSkipped { false };     // true if skipped (e.g. data verify failed)
-    char checksumError[256] { 0 };      // error detail from verifyChecksum
+    bool dataVerifyOk { true };   // checkmedia passed (bad <= 2%)
+    bool checksumEnabled { false };   // kChecksum was enabled
+    bool checksumOk { true };   // verifyChecksum passed
+    bool checksumSkipped { false };   // true if skipped (e.g. data verify failed)
+    char checksumError[256] { 0 };   // error detail from verifyChecksum
 };
 
 class AbstractBurnJob : public QThread
@@ -56,12 +57,14 @@ public:
 
 public:
     explicit AbstractBurnJob(const QString &dev, const JobHandlePointer handler);
-    virtual ~AbstractBurnJob() override {}
+    virtual ~AbstractBurnJob() override { }
 
     QVariantMap currentDeviceInfo() const;
     QVariant property(PropertyType type) const;
     void setProperty(PropertyType type, const QVariant &val);
     void addTask();
+
+    std::atomic<bool> failureDialogShown {};
 
 protected:
     virtual bool fileSystemLimitsValid();
@@ -113,7 +116,7 @@ class EraseJob : public AbstractBurnJob
 
 public:
     explicit EraseJob(const QString &dev, const JobHandlePointer handler);
-    virtual ~EraseJob() override {}
+    virtual ~EraseJob() override { }
 
 signals:
     void eraseFinished(bool result);
@@ -129,7 +132,7 @@ class BurnISOFilesJob : public AbstractBurnJob
 
 public:
     explicit BurnISOFilesJob(const QString &dev, const JobHandlePointer handler);
-    virtual ~BurnISOFilesJob() override {}
+    virtual ~BurnISOFilesJob() override { }
 
 protected:
     virtual bool fileSystemLimitsValid() override;
@@ -143,7 +146,7 @@ class BurnISOImageJob : public AbstractBurnJob
 
 public:
     explicit BurnISOImageJob(const QString &dev, const JobHandlePointer handler);
-    virtual ~BurnISOImageJob() override {}
+    virtual ~BurnISOImageJob() override { }
 
 protected:
     virtual void writeFunc(int progressFd, int checkFd) override;
@@ -156,7 +159,7 @@ class BurnUDFFilesJob : public AbstractBurnJob
 
 public:
     explicit BurnUDFFilesJob(const QString &dev, const JobHandlePointer handler);
-    virtual ~BurnUDFFilesJob() override {}
+    virtual ~BurnUDFFilesJob() override { }
 
 protected:
     virtual bool fileSystemLimitsValid() override;
@@ -171,7 +174,7 @@ class DumpISOImageJob : public AbstractBurnJob
 
 public:
     explicit DumpISOImageJob(const QString &dev, const JobHandlePointer handler);
-    virtual ~DumpISOImageJob() override {}
+    virtual ~DumpISOImageJob() override { }
 
 signals:
     void requestOpticalDumpISOSuccessDialog(const QUrl &imageUrl);
