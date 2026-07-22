@@ -415,7 +415,13 @@ void EraseJob::work()
     if (!mediaChangDected()) {
         ret = false;
         fmWarning() << "Device disconnected:" << curDevId;
-        emit requestFailureDialog(static_cast<int>(curJobType), QObject::tr("Device disconnected"), {});
+    }
+
+    if (!ret) {
+        failureDialogShown = true;
+        emit requestFailureDialog(static_cast<int>(curJobType),
+                                 lastError.isEmpty() ? QObject::tr("Device disconnected") : lastError,
+                                 lastSrcMessages);
     }
 
     comfort();
