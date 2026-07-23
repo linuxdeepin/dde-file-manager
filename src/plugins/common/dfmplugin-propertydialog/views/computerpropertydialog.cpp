@@ -395,8 +395,12 @@ QString ComputerInfoThread::cpuInfo() const
 
 QString ComputerInfoThread::memoryInfo() const
 {
+    qint64 installedMemory = UniversalUtils::computerMemory();
+    if (installedMemory <= 0)
+        installedMemory = DSysInfo::memoryInstalledSize();
+
     return QString("%1 (%2 %3)")
-            .arg(formatCap(DSysInfo::memoryInstalledSize(), 1024, 0))
+            .arg(formatCap(installedMemory, 1024, 0))
             .arg(formatCap(DSysInfo::memoryTotalSize()))
             .arg(tr("Available"));
 }
