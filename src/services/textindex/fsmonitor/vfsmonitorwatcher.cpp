@@ -129,20 +129,6 @@ QString filterDirectPath(const QStringList &rootPaths,
     return fullPath;
 }
 
-QString filterEventPath(const QStringList &rootPaths,
-                        const VfsMonitorFileSystemWatcher::PathExcludePredicate &excludePredicate,
-                        const char *eventPath)
-{
-    if (!eventPath || eventPath[0] == '\0')
-        return {};
-
-    const QString fullPath = QDir::cleanPath(QString::fromUtf8(eventPath));
-    if (!fullPath.startsWith('/'))
-        return {};
-
-    return filterDirectPath(rootPaths, excludePredicate, fullPath);
-}
-
 }   // anonymous namespace
 
 // ========== VfsMonitorFileSystemWatcherPrivate ==========
@@ -175,6 +161,7 @@ VfsMonitorFileSystemWatcherPrivate::~VfsMonitorFileSystemWatcherPrivate()
 bool VfsMonitorFileSystemWatcherPrivate::initMountPoints()
 {
     mountPoints.clear();
+    orderedMountPoints.clear();
 
     libmnt_table *mtab = mnt_new_table();
     if (!mtab)
@@ -194,6 +181,7 @@ bool VfsMonitorFileSystemWatcherPrivate::initMountPoints()
             continue;
 
         mountPoints[entry.deviceId].append(entry.mountPoint);
+        orderedMountPoints.append({ entry.deviceId, entry.mountPoint });
     }
 
     for (auto &points : mountPoints) {
@@ -204,15 +192,16 @@ bool VfsMonitorFileSystemWatcherPrivate::initMountPoints()
                   });
     }
 
+    std::sort(orderedMountPoints.begin(), orderedMountPoints.end(),
+              [](const MountPointAlias &left, const MountPointAlias &right) {
+                  return left.mountPoint.length() > right.mountPoint.length();
+              });
+
     return !mountPoints.isEmpty();
 }
 
 QString VfsMonitorFileSystemWatcherPrivate::resolveAndFilterFullPath(const char *absolutePath) const
 {
-    const QString directPath = filterEventPath(rootPaths, excludePredicate, absolutePath);
-    if (!directPath.isNull())
-        return directPath;
-
     if (!absolutePath || absolutePath[0] == '\0')
         return {};
 
@@ -220,27 +209,34 @@ QString VfsMonitorFileSystemWatcherPrivate::resolveAndFilterFullPath(const char 
     if (!fullPath.startsWith('/'))
         return {};
 
-    for (auto deviceIt = mountPoints.cbegin(); deviceIt != mountPoints.cend(); ++deviceIt) {
-        const QStringList &points = deviceIt.value();
-        for (const QString &sourceMountPoint : points) {
-            if (!mountPointStartsWith(fullPath, sourceMountPoint))
-                continue;
+    const QString directPath = filterDirectPath(rootPaths, excludePredicate, fullPath);
+    if (!directPath.isNull())
+        return directPath;
 
-            const QString suffix = (sourceMountPoint == "/")
-                    ? fullPath
-                    : fullPath.mid(sourceMountPoint.length());
+    for (const MountPointAlias &sourceAlias : orderedMountPoints) {
+        if (!mountPointStartsWith(fullPath, sourceAlias.mountPoint))
+            continue;
 
-            for (const QString &candidateMountPoint : points) {
-                const QString candidateFullPath = (candidateMountPoint == "/")
-                        ? suffix
-                        : candidateMountPoint + suffix;
-                const QString filteredCandidate = filterDirectPath(rootPaths, excludePredicate, candidateFullPath);
-                if (!filteredCandidate.isNull())
-                    return filteredCandidate;
-            }
+        const auto pointsIt = mountPoints.constFind(sourceAlias.deviceId);
+        if (pointsIt == mountPoints.cend())
+            return {};
 
-            break;
+        const QString suffix = (sourceAlias.mountPoint == "/")
+                ? fullPath
+                : fullPath.mid(sourceAlias.mountPoint.length());
+
+        for (const QString &candidateMountPoint : pointsIt.value()) {
+            const QString candidateFullPath = (candidateMountPoint == "/")
+                    ? suffix
+                    : candidateMountPoint + suffix;
+            const QString filteredCandidate = filterDirectPath(rootPaths, excludePredicate, candidateFullPath);
+            if (!filteredCandidate.isNull())
+                return filteredCandidate;
         }
+
+        // The longest matching source mount point wins. If its aliases do not
+        // land inside a monitored root, do not fall back to shorter prefixes.
+        return {};
     }
 
     return {};
@@ -260,7 +256,8 @@ bool VfsMonitorFileSystemWatcherPrivate::initDispatcher()
         fmWarning() << "VfsMonitor: failed to initialize mount point aliases";
     }
 
-    socketFd = ::socket(AF_UNIX, SOCK_SEQPACKET, 0);
+    // The notifier runs on the GUI thread, so keep dispatcher reads nonblocking.
+    socketFd = ::socket(AF_UNIX, SOCK_SEQPACKET | SOCK_NONBLOCK, 0);
     if (socketFd < 0) {
         fmWarning() << "VfsMonitor: failed to create dispatcher socket:" << std::strerror(errno);
         return false;
@@ -292,136 +289,142 @@ void VfsMonitorFileSystemWatcherPrivate::handleSocketMessage()
         return;
     }
 
-    DispatchEvent event {};
-    ssize_t received = -1;
-    do {
-        received = ::recv(socketFd, &event, sizeof(event), 0);
-    } while (received < 0 && errno == EINTR);
-
-    if (received == 0) {
-        fmWarning() << "VfsMonitor: event dispatcher connection closed";
-        if (notifier) {
-            notifier->setEnabled(false);
-        }
-        ::close(socketFd);
-        socketFd = -1;
-        return;
-    }
-
-    if (received < 0) {
-        if (errno != EAGAIN && errno != EWOULDBLOCK) {
-            fmWarning() << "VfsMonitor: failed to receive dispatcher event:" << std::strerror(errno);
-        }
-        return;
-    }
-
+    auto *q = q_ptr;
     constexpr size_t kMinMessageSize = offsetof(DispatchEvent, eventPath) + 1;
-    if (static_cast<size_t>(received) < kMinMessageSize) {
-        fmWarning() << "VfsMonitor: received short dispatcher message:" << received;
-        return;
-    }
 
-    event.eventPath[kDispatchMaxPathLen - 1] = '\0';
+    // Drain all queued packets for this wakeup so the notifier stays level-safe.
+    while (true) {
+        DispatchEvent event {};
+        ssize_t received = -1;
+        do {
+            received = ::recv(socketFd, &event, sizeof(event), 0);
+        } while (received < 0 && errno == EINTR);
 
-    const int act = event.action;
-    const uint32_t cookie = event.cookie;
-    const char *pathCStr = event.eventPath;
-
-    if (act < ACT_NEW_FILE || act > ACT_UNMOUNT) {
-        return;
-    }
-
-    if (act == ACT_MOUNT || act == ACT_UNMOUNT) {
-        if (!initMountPoints()) {
-            fmWarning() << "VfsMonitor: failed to refresh mount point aliases";
-        }
-        return;
-    }
-
-    if (act == ACT_RENAME_FROM_FILE || act == ACT_RENAME_FROM_FOLDER) {
-        QString fullPath = resolveAndFilterFullPath(pathCStr);
-        if (fullPath.isNull())
+        if (received == 0) {
+            fmWarning() << "VfsMonitor: event dispatcher connection closed";
+            if (notifier) {
+                notifier->setEnabled(false);
+            }
+            ::close(socketFd);
+            socketFd = -1;
             return;
+        }
+
+        if (received < 0) {
+            if (errno == EAGAIN || errno == EWOULDBLOCK) {
+                return;
+            }
+
+            fmWarning() << "VfsMonitor: failed to receive dispatcher event:" << std::strerror(errno);
+            return;
+        }
+
+        if (static_cast<size_t>(received) < kMinMessageSize) {
+            fmWarning() << "VfsMonitor: received short dispatcher message:" << received;
+            continue;
+        }
+
+        event.eventPath[kDispatchMaxPathLen - 1] = '\0';
+
+        const int act = event.action;
+        const uint32_t cookie = event.cookie;
+        const char *pathCStr = event.eventPath;
+
+        if (act < ACT_NEW_FILE || act > ACT_UNMOUNT) {
+            continue;
+        }
+
+        if (act == ACT_MOUNT || act == ACT_UNMOUNT) {
+            if (!initMountPoints()) {
+                fmWarning() << "VfsMonitor: failed to refresh mount point aliases";
+            }
+            continue;
+        }
+
+        if (act == ACT_RENAME_FROM_FILE || act == ACT_RENAME_FROM_FOLDER) {
+            QString fullPath = resolveAndFilterFullPath(pathCStr);
+            if (fullPath.isNull())
+                continue;
+
+            auto [parentPath, name] = splitPath(fullPath);
+            RenameFromInfo info;
+            info.path = parentPath;
+            info.name = name;
+            info.isDirectory = (act == ACT_RENAME_FROM_FOLDER);
+            pendingRenames.insert(cookie, info);
+            continue;
+        }
+
+        if (act == ACT_RENAME_TO_FILE || act == ACT_RENAME_TO_FOLDER) {
+            const bool isDir = (act == ACT_RENAME_TO_FOLDER);
+            auto it = pendingRenames.find(cookie);
+            if (it != pendingRenames.end()) {
+                QString fullPath = resolveAndFilterFullPath(pathCStr);
+                if (!fullPath.isNull()) {
+                    auto [parentPath, name] = splitPath(fullPath);
+                    if (isDir)
+                        Q_EMIT q->directoryMoved(it->path, it->name, parentPath, name);
+                    else
+                        Q_EMIT q->fileMoved(it->path, it->name, parentPath, name);
+                } else {
+                    if (isDir)
+                        Q_EMIT q->directoryDeleted(it->path, it->name);
+                    else
+                        Q_EMIT q->fileDeleted(it->path, it->name);
+                }
+                pendingRenames.erase(it);
+            } else {
+                QString fullPath = resolveAndFilterFullPath(pathCStr);
+                if (!fullPath.isNull()) {
+                    auto [parentPath, name] = splitPath(fullPath);
+                    if (isDir)
+                        Q_EMIT q->directoryCreated(parentPath, name);
+                    else
+                        Q_EMIT q->fileCreated(parentPath, name);
+                }
+            }
+            continue;
+        }
+
+        const QString fullPath = resolveAndFilterFullPath(pathCStr);
+        if (fullPath.isNull()) {
+            continue;
+        }
 
         auto [parentPath, name] = splitPath(fullPath);
-        RenameFromInfo info;
-        info.path = parentPath;
-        info.name = name;
-        info.isDirectory = (act == ACT_RENAME_FROM_FOLDER);
-        pendingRenames.insert(cookie, info);
-        return;
-    }
 
-    auto *q = q_ptr;
-    if (act == ACT_RENAME_TO_FILE || act == ACT_RENAME_TO_FOLDER) {
-        const bool isDir = (act == ACT_RENAME_TO_FOLDER);
-        auto it = pendingRenames.find(cookie);
-        if (it != pendingRenames.end()) {
-            QString fullPath = resolveAndFilterFullPath(pathCStr);
-            if (!fullPath.isNull()) {
-                auto [parentPath, name] = splitPath(fullPath);
-                if (isDir)
-                    Q_EMIT q->directoryMoved(it->path, it->name, parentPath, name);
-                else
-                    Q_EMIT q->fileMoved(it->path, it->name, parentPath, name);
-            } else {
-                if (isDir)
-                    Q_EMIT q->directoryDeleted(it->path, it->name);
-                else
-                    Q_EMIT q->fileDeleted(it->path, it->name);
-            }
-            pendingRenames.erase(it);
-        } else {
-            QString fullPath = resolveAndFilterFullPath(pathCStr);
-            if (!fullPath.isNull()) {
-                auto [parentPath, name] = splitPath(fullPath);
-                if (isDir)
-                    Q_EMIT q->directoryCreated(parentPath, name);
-                else
-                    Q_EMIT q->fileCreated(parentPath, name);
-            }
+        switch (act) {
+        case ACT_NEW_FILE:
+        case ACT_NEW_LINK:
+        case ACT_NEW_SYMLINK:
+            Q_EMIT q->fileCreated(parentPath, name);
+            break;
+        case ACT_NEW_FOLDER:
+            Q_EMIT q->directoryCreated(parentPath, name);
+            break;
+        case ACT_DEL_FILE:
+            Q_EMIT q->fileDeleted(parentPath, name);
+            break;
+        case ACT_DEL_FOLDER:
+            Q_EMIT q->directoryDeleted(parentPath, name);
+            break;
+        case ACT_RENAME_FILE:
+            Q_EMIT q->fileCreated(parentPath, name);
+            break;
+        case ACT_RENAME_FOLDER:
+            Q_EMIT q->directoryCreated(parentPath, name);
+            break;
+        default:
+            break;
         }
-        return;
-    }
 
-    const QString fullPath = resolveAndFilterFullPath(pathCStr);
-    if (fullPath.isNull()) {
-        return;
-    }
-
-    auto [parentPath, name] = splitPath(fullPath);
-
-    switch (act) {
-    case ACT_NEW_FILE:
-    case ACT_NEW_LINK:
-    case ACT_NEW_SYMLINK:
-        Q_EMIT q->fileCreated(parentPath, name);
-        break;
-    case ACT_NEW_FOLDER:
-        Q_EMIT q->directoryCreated(parentPath, name);
-        break;
-    case ACT_DEL_FILE:
-        Q_EMIT q->fileDeleted(parentPath, name);
-        break;
-    case ACT_DEL_FOLDER:
-        Q_EMIT q->directoryDeleted(parentPath, name);
-        break;
-    case ACT_RENAME_FILE:
-        Q_EMIT q->fileCreated(parentPath, name);
-        break;
-    case ACT_RENAME_FOLDER:
-        Q_EMIT q->directoryCreated(parentPath, name);
-        break;
-    default:
-        break;
-    }
-
-    // Clean up orphaned RENAME_FROM entries.
-    static constexpr int kPendingRenameCleanupThreshold = 1000;
-    if (pendingRenames.size() > kPendingRenameCleanupThreshold) {
-        fmWarning() << "VfsMonitor: pending rename table too large ("
-                    << pendingRenames.size() << "), clearing";
-        pendingRenames.clear();
+        // Clean up orphaned RENAME_FROM entries.
+        static constexpr int kPendingRenameCleanupThreshold = 1000;
+        if (pendingRenames.size() > kPendingRenameCleanupThreshold) {
+            fmWarning() << "VfsMonitor: pending rename table too large ("
+                        << pendingRenames.size() << "), clearing";
+            pendingRenames.clear();
+        }
     }
 }
 
