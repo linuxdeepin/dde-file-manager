@@ -1,3 +1,38 @@
+dde-file-manager (6.6.1) unstable; urgency=medium
+
+  * fix: remove deepin prefix from Chinese translations in desktop file
+  * fix: add X-Deepin-Singleton flag to desktop file
+  * fix: improve trash state handling and initialization
+  * fix(filedialog): keep recent hidden in save dialog on config change
+  * fix(recent): register watcher for recent scheme to enable view refresh
+  * fix: optimize share removal and permission management
+  * fix: improve path display for file conflict messages
+  * refactor: improve search query detection and handling
+  * fix: improve search input handling robustness
+  * fix: properly handle selection state during model teardown
+  * fix(workspace): improve group header expand button hit area
+  * fix: improve search auto-grouping behavior
+  * fix(search): use birth time for create-time filtering
+  * fix: optimize disc device scanning logic
+  * fix(search): sync smart search checkbox on restore default
+  * fix: handle Ctrl+Left/Right key events properly
+  * fix(sidebar): avoid stale drop targets during external drags
+  * fix(burn): show error details in erase failure dialog
+  * refactor: switch from netlink to socket for deepin-anything events
+  * fix: improve mount point resolution in filesystem watcher
+  * fix(image-preview): support preview for formats with invalid size() like icns
+  * fix(thumbnail): support thumbnails for image formats with invalid size() like icns
+  * fix: reposition window near cursor on last tab tear-off
+  * fix: adjust notification titles for search experience
+  * chore: update translations
+  * feat: adjust icon spacing on grouping state change
+  * fix: restore desktop context menu on non-primary screens in treeland extend mode
+  * ci(cppcheck): bump actions/checkout to v7 and enable unsafe pr checkout
+  * fix(titlebar): stabilize virtual keyboard display
+  * fix(propertydialog): use D-Bus SystemInfo for installed memory size
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Fri, 24 Jul 2026 13:05:20 +0800
+
 dde-file-manager (6.5.152) unstable; urgency=medium
 
   * fix(preview): resolve filename/resolution overlap in image preview status bar
