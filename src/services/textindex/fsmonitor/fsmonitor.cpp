@@ -114,7 +114,7 @@ bool FSMonitorPrivate::init(const QStringList &rootPaths)
 
     // Try to create VfsMonitorFileSystemWatcher for global file system events.
     // Pass shouldExcludePath as the exclude predicate so filtering happens
-    // at the netlink callback level (before any signals are emitted).
+    // before any socket-delivered events are emitted.
     vfsWatcher.reset(VfsMonitorFileSystemWatcher::create(
         this->rootPaths,
         [this](const QString &path) { return shouldExcludePath(path); },
@@ -122,15 +122,15 @@ bool FSMonitorPrivate::init(const QStringList &rootPaths)
     vfsMonitorAvailable = (vfsWatcher != nullptr);
 
     if (vfsMonitorAvailable) {
-        // vfs_monitor mode: create/delete/move from vfs, fileClosed from inotify.
+        // deepin-anything dispatcher mode: create/delete/move from vfs, fileClosed from inotify.
         // Restrict inotify to IN_CLOSE_WRITE only, reducing kernel event delivery.
         watcher->setWatchFlags(InotifyFileSystemWatcher::WatchFlag::FileClose);
         setupVfsMonitorConnections();
-        fmInfo() << "FSMonitor: Using dual watcher mode (vfs_monitor + inotify fallback)";
+        fmInfo() << "FSMonitor: Using dual watcher mode (deepin-anything dispatcher + inotify fallback)";
     } else {
         // inotify-only mode: all signals from InotifyFileSystemWatcher (existing behavior).
         setupWatcherConnections();
-        fmInfo() << "FSMonitor: Using inotify-only mode (vfs_monitor not available)";
+        fmInfo() << "FSMonitor: Using inotify-only mode (deepin-anything dispatcher not available)";
     }
 
     fmDebug() << "FSMonitor: Initialized with" << excludeMatcher.patternCount()
