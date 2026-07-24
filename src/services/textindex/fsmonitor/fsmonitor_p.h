@@ -64,7 +64,7 @@ public:
     // Parse and connect watcher signals (inotify-only fallback mode)
     void setupWatcherConnections();
 
-    // Connect vfs_monitor watcher signals (create/delete/move from vfs, fileClosed from inotify)
+    // Connect deepin-anything watcher signals (create/delete/move from vfs, fileClosed from inotify)
     void setupVfsMonitorConnections();
 
     // Set up the worker thread and connections
