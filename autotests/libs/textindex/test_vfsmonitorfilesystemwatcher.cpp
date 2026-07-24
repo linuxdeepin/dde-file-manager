@@ -14,9 +14,9 @@
 
 using namespace SERVICETEXTINDEX_NAMESPACE;
 
-// VfsMonitorFileSystemWatcher 依赖 deepin-anything 内核模块
-// 如果模块不可用，create() 返回 nullptr，相关测试应被跳过
-// 注意: 当前内核 vfs_monitor 模块存在已知 bug（无法检测目录创建），
+// VfsMonitorFileSystemWatcher 依赖 deepin-anything 事件分发 socket
+// 如果事件分发不可用，create() 返回 nullptr，相关测试应被跳过
+// 注意: 当前 deepin-anything 事件链路若不可用，
 // 目录相关测试使用 ASSERT 严格模式，失败时直接终止当前测试而非崩溃
 class TestVfsMonitorFileSystemWatcher : public ::testing::Test
 {
@@ -33,7 +33,7 @@ protected:
         QStringList rootPaths = { testDir->path() };
         watcher = VfsMonitorFileSystemWatcher::create(rootPaths, {}, nullptr);
         if (!watcher) {
-            GTEST_SKIP() << "deepin-anything kernel module not available, skipping tests";
+            GTEST_SKIP() << "deepin-anything event dispatcher not available, skipping tests";
         }
     }
 

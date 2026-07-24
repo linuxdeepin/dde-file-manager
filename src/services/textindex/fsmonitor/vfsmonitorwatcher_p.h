@@ -11,9 +11,8 @@
 #include <QHash>
 #include <QStringList>
 
+#include <cstdint>
 #include <sys/types.h>
-
-struct nl_sock;
 
 SERVICETEXTINDEX_BEGIN_NAMESPACE
 
@@ -24,20 +23,6 @@ struct RenameFromInfo
     QString name;
     bool isDirectory { false };
 };
-
-// Netlink attribute indices (matching vfs_genl.h)
-enum VfsMonitorAttr : int {
-    VFSMONITOR_A_UNSPEC = 0,
-    VFSMONITOR_A_ACT,
-    VFSMONITOR_A_COOKIE,
-    VFSMONITOR_A_MAJOR,
-    VFSMONITOR_A_MINOR,
-    VFSMONITOR_A_PATH,
-    VFSMONITOR_A_UID,
-    VFSMONITOR_A_TGID,
-    __VFSMONITOR_A_MAX
-};
-#define VFSMONITOR_A_MAX (__VFSMONITOR_A_MAX - 1)
 
 // Event action constants (matching vfs_change_consts.h)
 enum VfsMonitorAct : uint8_t {
@@ -67,12 +52,13 @@ public:
                                        VfsMonitorFileSystemWatcher *qq);
     ~VfsMonitorFileSystemWatcherPrivate();
 
-    bool initNetlink();
-    void handleNetlinkMessage();
+    bool initDispatcher();
+    void handleSocketMessage();
 
-    // Reconstruct full path from relative path + device, then check against
-    // rootPaths and excludePredicate. Returns null if filtered out.
-    QString resolveAndFilterFullPath(dev_t deviceId, const char *relativePath) const;
+    // The event dispatcher sends absolute paths, but they may use a different
+    // mount alias than the monitored root path. This helper normalizes across
+    // same-device mount aliases before applying rootPaths and excludePredicate.
+    QString resolveAndFilterFullPath(const char *absolutePath) const;
 
     static QPair<QString, QString> splitPath(const QString &fullPath);
 
@@ -81,22 +67,13 @@ public:
     QStringList rootPaths;
     VfsMonitorFileSystemWatcher::PathExcludePredicate excludePredicate;
 
-    nl_sock *nlSock { nullptr };
+    int socketFd { -1 };
     QSocketNotifier *notifier { nullptr };
 
     QHash<uint32_t, RenameFromInfo> pendingRenames;
-
-    // dev_t -> sorted mount point list (longest first).
     QHash<dev_t, QStringList> mountPoints;
-    QHash<dev_t, QStringList> childMountPoints;
-    bool lowerFsExists { false };
-
-    // Set to true when an ACT_MOUNT/ACT_UNMOUNT event is received, cleared
-    // after initMountPoints() rebuilds the cache in handleNetlinkMessage().
-    bool mountPointsDirty { false };
 
     bool initMountPoints();
-    bool isLowerFsEvent(dev_t deviceId, const QString &fullPath) const;
 };
 
 SERVICETEXTINDEX_END_NAMESPACE

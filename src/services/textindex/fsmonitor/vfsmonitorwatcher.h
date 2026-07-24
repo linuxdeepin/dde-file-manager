@@ -16,16 +16,16 @@ SERVICETEXTINDEX_BEGIN_NAMESPACE
 class VfsMonitorFileSystemWatcherPrivate;
 
 // VfsMonitorFileSystemWatcher: File system watcher using deepin-anything
-// vfs_monitor kernel module via Linux Generic Netlink multicast.
+// event dispatcher socket exposed by deepin-anything-server.
 //
-// Receives global file system events (create, delete, move) from the kernel,
-// covering all mounted filesystems without the need for recursive inotify watches.
-// File close events (IN_CLOSE_WRITE) are NOT provided -- use InotifyFileSystemWatcher
-// for those.
+// Receives global file system events (create, delete, move) forwarded by
+// deepin-anything-server from /run/deepin-anything/event-dispatcher.sock.
+// File close events (IN_CLOSE_WRITE) are NOT provided -- use
+// InotifyFileSystemWatcher for those.
 //
 // Usage:
 //   auto *watcher = VfsMonitorFileSystemWatcher::create(rootPaths, excludePredicate, parent);
-//   if (watcher) { ... }  // kernel module available
+//   if (watcher) { ... }  // event dispatcher available
 //   // else: fallback to inotify-only mode
 class VfsMonitorFileSystemWatcher : public QObject
 {
@@ -35,13 +35,14 @@ class VfsMonitorFileSystemWatcher : public QObject
 
 public:
     // Predicate for path exclusion. Return true to suppress the event.
-    // Called from the netlink callback thread context (main thread via Qt event loop).
+    // Called from the main thread via Qt event loop.
     using PathExcludePredicate = std::function<bool(const QString &fullPath)>;
 
     ~VfsMonitorFileSystemWatcher() override;
 
-    // Factory method: attempts to connect to the vfsmonitor Generic Netlink family.
-    // Returns nullptr if the kernel module is not available (graceful degradation).
+    // Factory method: attempts to connect to the deepin-anything event
+    // dispatcher socket. Returns nullptr if the dispatcher is not available
+    // (graceful degradation).
     static VfsMonitorFileSystemWatcher *create(const QStringList &rootPaths,
                                                PathExcludePredicate excludePredicate,
                                                QObject *parent = nullptr);
