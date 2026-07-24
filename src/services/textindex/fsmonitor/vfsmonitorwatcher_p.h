@@ -10,6 +10,7 @@
 #include <QSocketNotifier>
 #include <QHash>
 #include <QStringList>
+#include <QVector>
 
 #include <cstdint>
 #include <sys/types.h>
@@ -22,6 +23,12 @@ struct RenameFromInfo
     QString path;
     QString name;
     bool isDirectory { false };
+};
+
+struct MountPointAlias
+{
+    dev_t deviceId { 0 };
+    QString mountPoint;
 };
 
 // Event action constants (matching vfs_change_consts.h)
@@ -72,6 +79,7 @@ public:
 
     QHash<uint32_t, RenameFromInfo> pendingRenames;
     QHash<dev_t, QStringList> mountPoints;
+    QVector<MountPointAlias> orderedMountPoints;
 
     bool initMountPoints();
 };
