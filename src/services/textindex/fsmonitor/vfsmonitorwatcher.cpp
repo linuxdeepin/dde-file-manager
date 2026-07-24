@@ -4,33 +4,26 @@
 
 #include "vfsmonitorwatcher_p.h"
 
-#include <QFileInfo>
 #include <QDir>
-#include <QFile>
-#include <QTextStream>
-
-#include <netlink/genl/ctrl.h>
-#include <netlink/genl/genl.h>
-#include <netlink/netlink.h>
-#include <netlink/socket.h>
-#include <netlink/attr.h>
-#include <netlink/msg.h>
+#include <QFileInfo>
 
 #include <libmount.h>
-#include <sys/sysmacros.h>
 
+#include <sys/socket.h>
+#include <sys/un.h>
+#include <unistd.h>
+
+#include <cerrno>
+#include <cstddef>
 #include <cstring>
 #include <algorithm>
 
 SERVICETEXTINDEX_BEGIN_NAMESPACE
 
-// Netlink family and multicast group names (matching vfs_genl.h)
-static constexpr char kVfsMonitorFamilyName[] = "vfsmonitor";
-static constexpr char kVfsMonitorMcgDentry[] = "vfsmonitor_de";
-
-// --- Per-instance C callback for libnl ---
-
 namespace {
+
+constexpr char kDispatcherSocketPath[] = "/run/deepin-anything/event-dispatcher.sock";
+constexpr size_t kDispatchMaxPathLen = 4096;
 
 struct MountEntry
 {
@@ -38,31 +31,14 @@ struct MountEntry
     int parentMountId { 0 };
     QString mountPoint;
     bool isBindMount { false };
-    bool isLowerFs { false };
 };
 
-// Netlink attribute policy for parsing vfs_monitor messages.
-struct nla_policy vfsPolicy[VFSMONITOR_A_MAX + 1];
-
-void initVfsPolicy()
+struct DispatchEvent
 {
-    std::memset(vfsPolicy, 0, sizeof(vfsPolicy));
-    vfsPolicy[VFSMONITOR_A_ACT].type = NLA_U8;
-    vfsPolicy[VFSMONITOR_A_COOKIE].type = NLA_U32;
-    vfsPolicy[VFSMONITOR_A_MAJOR].type = NLA_U16;
-    vfsPolicy[VFSMONITOR_A_MINOR].type = NLA_U8;
-    vfsPolicy[VFSMONITOR_A_PATH].type = NLA_NUL_STRING;
-    vfsPolicy[VFSMONITOR_A_PATH].maxlen = 4096;
-}
-
-bool mountPointStartsWith(const QString &path, const QString &mountPoint)
-{
-    if (!path.startsWith(mountPoint))
-        return false;
-
-    return mountPoint.endsWith('/') || path.length() == mountPoint.length()
-            || path.at(mountPoint.length()) == '/';
-}
+    int32_t action;
+    uint32_t cookie;
+    char eventPath[kDispatchMaxPathLen];
+};
 
 bool isDescendantOfRoot(const QString &path, const QString &root)
 {
@@ -78,15 +54,18 @@ bool isDescendantOfRoot(const QString &path, const QString &root)
     return root.endsWith('/') || path.at(root.length()) == '/';
 }
 
+bool mountPointStartsWith(const QString &path, const QString &mountPoint)
+{
+    if (!path.startsWith(mountPoint))
+        return false;
+
+    return mountPoint.endsWith('/') || path.length() == mountPoint.length()
+            || path.at(mountPoint.length()) == '/';
+}
+
 bool cStringEquals(const char *left, const char *right)
 {
     return left && right && qstrcmp(left, right) == 0;
-}
-
-bool isLowerFsType(const char *fsType)
-{
-    return cStringEquals(fsType, "overlay") || cStringEquals(fsType, "fuse.dlnfs")
-            || cStringEquals(fsType, "ulnfs");
 }
 
 bool isParentChainUnderRoot(const QHash<int, MountEntry> &byMountId, const MountEntry &entry)
@@ -112,25 +91,21 @@ bool isParentChainUnderRoot(const QHash<int, MountEntry> &byMountId, const Mount
 QHash<int, MountEntry> collectMountEntries(libmnt_table *mtab)
 {
     QHash<int, MountEntry> byMountId;
-    struct libmnt_iter *iter = mnt_new_iter(MNT_ITER_FORWARD);
+    libmnt_iter *iter = mnt_new_iter(MNT_ITER_FORWARD);
     if (!iter)
         return byMountId;
 
-    struct libmnt_fs *fs;
+    libmnt_fs *fs = nullptr;
     while (mnt_table_next_fs(mtab, iter, &fs) == 0) {
         const char *target = mnt_fs_get_target(fs);
         if (!target)
             continue;
 
-        const char *root = mnt_fs_get_root(fs);
-        const char *fsType = mnt_fs_get_fstype(fs);
-
         MountEntry entry;
         entry.deviceId = mnt_fs_get_devno(fs);
         entry.parentMountId = mnt_fs_get_parent_id(fs);
         entry.mountPoint = QString::fromUtf8(target);
-        entry.isBindMount = !cStringEquals(root, "/");
-        entry.isLowerFs = isLowerFsType(fsType);
+        entry.isBindMount = !cStringEquals(mnt_fs_get_root(fs), "/");
 
         byMountId.insert(mnt_fs_get_id(fs), entry);
     }
@@ -139,163 +114,33 @@ QHash<int, MountEntry> collectMountEntries(libmnt_table *mtab)
     return byMountId;
 }
 
-// Per-instance callback: arg is the VfsMonitorFileSystemWatcherPrivate pointer,
-// registered per-socket via nl_socket_modify_cb. No global state needed.
-int vfsMonitorMsgCallback(struct nl_msg *msg, void *arg)
+QString filterDirectPath(const QStringList &rootPaths,
+                         const VfsMonitorFileSystemWatcher::PathExcludePredicate &excludePredicate,
+                         const QString &fullPath)
 {
-    auto *d = static_cast<VfsMonitorFileSystemWatcherPrivate *>(arg);
-
-    if (!d) {
-        return NL_SKIP;
+    if (std::none_of(rootPaths.cbegin(), rootPaths.cend(),
+                     [&fullPath](const QString &root) { return isDescendantOfRoot(fullPath, root); })) {
+        return {};
     }
 
-    struct nlattr *tb[VFSMONITOR_A_MAX + 1];
-    std::memset(tb, 0, sizeof(tb));
+    if (excludePredicate && excludePredicate(fullPath))
+        return {};
 
-    struct nlmsghdr *nh = nlmsg_hdr(msg);
-    int err = genlmsg_parse(nh, 0, tb, VFSMONITOR_A_MAX, vfsPolicy);
-    if (err < 0) {
-        return NL_SKIP;
-    }
-
-    if (!tb[VFSMONITOR_A_PATH]) {
-        return NL_SKIP;
-    }
-
-    // Extract attributes.
-    uint8_t act = tb[VFSMONITOR_A_ACT] ? nla_get_u8(tb[VFSMONITOR_A_ACT]) : 0;
-    uint32_t cookie = tb[VFSMONITOR_A_COOKIE] ? nla_get_u32(tb[VFSMONITOR_A_COOKIE]) : 0;
-    uint16_t major = tb[VFSMONITOR_A_MAJOR] ? nla_get_u16(tb[VFSMONITOR_A_MAJOR]) : 0;
-    uint8_t minor = tb[VFSMONITOR_A_MINOR] ? nla_get_u8(tb[VFSMONITOR_A_MINOR]) : 0;
-    const char *pathCStr = reinterpret_cast<const char *>(nla_data(tb[VFSMONITOR_A_PATH]));
-
-    // Skip non-filesystem events.
-    if (act > ACT_UNMOUNT) {
-        return NL_OK;
-    }
-
-    // Mount/unmount events don't carry meaningful path data for indexing,
-    // but they invalidate our mount point cache. Flag the dirty bit so
-    // handleNetlinkMessage() can refresh the cache after this batch.
-    if (act == ACT_MOUNT || act == ACT_UNMOUNT) {
-        d->mountPointsDirty = true;
-        return NL_OK;
-    }
-
-    dev_t deviceId = makedev(major, minor);
-
-    // RENAME_FROM events must be stored before filtering, because the paired
-    // RENAME_TO may land in an excluded path (e.g., trash). We need the
-    // RENAME_FROM info to emit a delete when that happens.
-    if (act == ACT_RENAME_FROM_FILE || act == ACT_RENAME_FROM_FOLDER) {
-        QString fullPath = d->resolveAndFilterFullPath(deviceId, pathCStr);
-        if (fullPath.isNull())
-            return NL_OK;   // Source itself is excluded, no point tracking.
-
-        auto [parentPath, name] = VfsMonitorFileSystemWatcherPrivate::splitPath(fullPath);
-
-        RenameFromInfo info;
-        info.path = parentPath;
-        info.name = name;
-        info.isDirectory = (act == ACT_RENAME_FROM_FOLDER);
-        d->pendingRenames.insert(cookie, info);
-        return NL_OK;
-    }
-
-    // RENAME_TO events need independent path resolution because the target may
-    // be filtered (e.g., moved to trash). In that case we emit a delete for the
-    // source instead of a move — the generic fullPath.isNull() gate below would
-    // swallow this event before we could check pendingRenames.
-    if (act == ACT_RENAME_TO_FILE || act == ACT_RENAME_TO_FOLDER) {
-        auto *q = d->q_ptr;
-        const bool isDir = (act == ACT_RENAME_TO_FOLDER);
-
-        auto it = d->pendingRenames.find(cookie);
-        if (it != d->pendingRenames.end()) {
-            QString fullPath = d->resolveAndFilterFullPath(deviceId, pathCStr);
-            if (!fullPath.isNull()) {
-                auto [parentPath, name] = VfsMonitorFileSystemWatcherPrivate::splitPath(fullPath);
-                if (isDir)
-                    Q_EMIT q->directoryMoved(it->path, it->name, parentPath, name);
-                else
-                    Q_EMIT q->fileMoved(it->path, it->name, parentPath, name);
-            } else {
-                // Target is filtered (e.g., moved to trash) → source is gone.
-                if (isDir)
-                    Q_EMIT q->directoryDeleted(it->path, it->name);
-                else
-                    Q_EMIT q->fileDeleted(it->path, it->name);
-            }
-            d->pendingRenames.erase(it);
-        } else {
-            // Unpaired RENAME_TO: treat as creation if in monitored area.
-            QString fullPath = d->resolveAndFilterFullPath(deviceId, pathCStr);
-            if (!fullPath.isNull()) {
-                auto [parentPath, name] = VfsMonitorFileSystemWatcherPrivate::splitPath(fullPath);
-                if (isDir)
-                    Q_EMIT q->directoryCreated(parentPath, name);
-                else
-                    Q_EMIT q->fileCreated(parentPath, name);
-            }
-        }
-        return NL_OK;
-    }
-
-    // For all other events, reconstruct and filter the full path.
-    QString fullPath = d->resolveAndFilterFullPath(deviceId, pathCStr);
-    if (fullPath.isNull()) {
-        return NL_OK;
-    }
-
-    auto *q = d->q_ptr;
-    auto [parentPath, name] = VfsMonitorFileSystemWatcherPrivate::splitPath(fullPath);
-
-    switch (act) {
-    case ACT_NEW_FILE:
-    case ACT_NEW_LINK:
-    case ACT_NEW_SYMLINK:
-        Q_EMIT q->fileCreated(parentPath, name);
-        break;
-
-    case ACT_NEW_FOLDER:
-        Q_EMIT q->directoryCreated(parentPath, name);
-        break;
-
-    case ACT_DEL_FILE:
-        Q_EMIT q->fileDeleted(parentPath, name);
-        break;
-
-    case ACT_DEL_FOLDER:
-        Q_EMIT q->directoryDeleted(parentPath, name);
-        break;
-
-        // Synthetic events (kernel-paired rename).
-    case ACT_RENAME_FILE:
-        Q_EMIT q->fileCreated(parentPath, name);
-        break;
-
-    case ACT_RENAME_FOLDER:
-        Q_EMIT q->directoryCreated(parentPath, name);
-        break;
-
-    default:
-        break;
-    }
-
-    return NL_OK;
+    return fullPath;
 }
 
-static bool registerMessageCallback(nl_sock *sock, VfsMonitorFileSystemWatcherPrivate *d)
+QString filterEventPath(const QStringList &rootPaths,
+                        const VfsMonitorFileSystemWatcher::PathExcludePredicate &excludePredicate,
+                        const char *eventPath)
 {
-    // Pass d directly as per-socket callback data. Each nl_sock gets its own
-    // callback arg, so multiple instances are naturally supported.
-    int ret = nl_socket_modify_cb(sock, NL_CB_VALID, NL_CB_CUSTOM,
-                                  vfsMonitorMsgCallback, d);
-    if (ret != 0) {
-        return false;
-    }
+    if (!eventPath || eventPath[0] == '\0')
+        return {};
 
-    return true;
+    const QString fullPath = QDir::cleanPath(QString::fromUtf8(eventPath));
+    if (!fullPath.startsWith('/'))
+        return {};
+
+    return filterDirectPath(rootPaths, excludePredicate, fullPath);
 }
 
 }   // anonymous namespace
@@ -306,8 +151,13 @@ VfsMonitorFileSystemWatcherPrivate::VfsMonitorFileSystemWatcherPrivate(
         const QStringList &rootPaths,
         VfsMonitorFileSystemWatcher::PathExcludePredicate excludePredicate,
         VfsMonitorFileSystemWatcher *qq)
-    : q_ptr(qq), rootPaths(rootPaths), excludePredicate(std::move(excludePredicate))
+    : q_ptr(qq), excludePredicate(std::move(excludePredicate))
 {
+    this->rootPaths.reserve(rootPaths.size());
+    for (const QString &path : rootPaths) {
+        this->rootPaths.append(QDir(path).absolutePath());
+    }
+    this->rootPaths.removeDuplicates();
 }
 
 VfsMonitorFileSystemWatcherPrivate::~VfsMonitorFileSystemWatcherPrivate()
@@ -316,26 +166,19 @@ VfsMonitorFileSystemWatcherPrivate::~VfsMonitorFileSystemWatcherPrivate()
         notifier->setEnabled(false);
     }
 
-    // No global callback state to clear — the per-socket callback data (this
-    // pointer) becomes invalid when nlSock is freed below, and the callback
-    // checks for null before dereferencing.
-
-    if (nlSock) {
-        nl_socket_free(nlSock);
-        nlSock = nullptr;
+    if (socketFd >= 0) {
+        ::close(socketFd);
+        socketFd = -1;
     }
 }
 
 bool VfsMonitorFileSystemWatcherPrivate::initMountPoints()
 {
     mountPoints.clear();
-    childMountPoints.clear();
-    lowerFsExists = false;
 
-    struct libmnt_table *mtab = mnt_new_table();
-    if (!mtab) {
+    libmnt_table *mtab = mnt_new_table();
+    if (!mtab)
         return false;
-    }
 
     if (mnt_table_parse_mtab(mtab, nullptr) < 0) {
         mnt_free_table(mtab);
@@ -345,115 +188,59 @@ bool VfsMonitorFileSystemWatcherPrivate::initMountPoints()
     const QHash<int, MountEntry> byMountId = collectMountEntries(mtab);
     mnt_free_table(mtab);
 
-    QHash<int, MountEntry> rootMountTree;
     for (auto it = byMountId.cbegin(); it != byMountId.cend(); ++it) {
-        const auto &entry = it.value();
-
+        const MountEntry &entry = it.value();
         if (!isParentChainUnderRoot(byMountId, entry))
             continue;
 
         mountPoints[entry.deviceId].append(entry.mountPoint);
-        rootMountTree.insert(it.key(), entry);
-        lowerFsExists = lowerFsExists || entry.isLowerFs;
     }
 
     for (auto &points : mountPoints) {
-        std::sort(points.begin(), points.end(),
-                  [](const QString &a, const QString &b) {
-                      return a.length() > b.length();
-                  });
-    }
-
-    for (auto it = rootMountTree.cbegin(); it != rootMountTree.cend(); ++it) {
-        const auto &parent = it.value();
-        QStringList children;
-        for (const auto &entry : std::as_const(rootMountTree)) {
-            if (entry.parentMountId == it.key()) {
-                children.append(entry.mountPoint);
-            }
-        }
-
-        if (!children.isEmpty())
-            childMountPoints[parent.deviceId].append(children);
-    }
-
-    for (auto &points : childMountPoints) {
         points.removeDuplicates();
         std::sort(points.begin(), points.end(),
-                  [](const QString &a, const QString &b) {
-                      return a.length() > b.length();
+                  [](const QString &left, const QString &right) {
+                      return left.length() > right.length();
                   });
     }
 
-    int totalPoints = 0;
-    for (const auto &pts : std::as_const(mountPoints)) {
-        totalPoints += pts.size();
-    }
-    fmInfo() << "VfsMonitor: loaded" << mountPoints.size()
-             << "devices," << totalPoints << "mount points,"
-             << childMountPoints.size() << "devices with child mount points,"
-             << "lowerfs exists:" << lowerFsExists;
     return !mountPoints.isEmpty();
 }
 
-bool VfsMonitorFileSystemWatcherPrivate::isLowerFsEvent(dev_t deviceId, const QString &fullPath) const
+QString VfsMonitorFileSystemWatcherPrivate::resolveAndFilterFullPath(const char *absolutePath) const
 {
-    if (!lowerFsExists)
-        return false;
+    const QString directPath = filterEventPath(rootPaths, excludePredicate, absolutePath);
+    if (!directPath.isNull())
+        return directPath;
 
-    auto it = childMountPoints.find(deviceId);
-    if (it == childMountPoints.end())
-        return false;
-
-    for (const QString &childMountPoint : it.value()) {
-        if (mountPointStartsWith(fullPath, childMountPoint)) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-QString VfsMonitorFileSystemWatcherPrivate::resolveAndFilterFullPath(dev_t deviceId,
-                                                                     const char *relativePath) const
-{
-    auto it = mountPoints.find(deviceId);
-    if (it == mountPoints.end())
+    if (!absolutePath || absolutePath[0] == '\0')
         return {};
 
-    const QStringList &points = it.value();
-    const QString relPath = QString::fromUtf8(relativePath);
+    const QString fullPath = QDir::cleanPath(QString::fromUtf8(absolutePath));
+    if (!fullPath.startsWith('/'))
+        return {};
 
-    // Try each mount point (sorted longest first).
-    // Return the first one that falls under a monitored root path
-    // and passes the exclude predicate.
-    for (const QString &mp : points) {
-        QString fullPath = (mp == "/") ? relPath : (mp + relPath);
+    for (auto deviceIt = mountPoints.cbegin(); deviceIt != mountPoints.cend(); ++deviceIt) {
+        const QStringList &points = deviceIt.value();
+        for (const QString &sourceMountPoint : points) {
+            if (!mountPointStartsWith(fullPath, sourceMountPoint))
+                continue;
 
-        if (isLowerFsEvent(deviceId, fullPath))
-            continue;
+            const QString suffix = (sourceMountPoint == "/")
+                    ? fullPath
+                    : fullPath.mid(sourceMountPoint.length());
 
-        if (std::none_of(rootPaths.cbegin(), rootPaths.cend(),
-                         [&fullPath](const QString &root) { return isDescendantOfRoot(fullPath, root); }))
-            continue;
+            for (const QString &candidateMountPoint : points) {
+                const QString candidateFullPath = (candidateMountPoint == "/")
+                        ? suffix
+                        : candidateMountPoint + suffix;
+                const QString filteredCandidate = filterDirectPath(rootPaths, excludePredicate, candidateFullPath);
+                if (!filteredCandidate.isNull())
+                    return filteredCandidate;
+            }
 
-        if (excludePredicate && excludePredicate(fullPath))
-            continue;
-
-        return fullPath;
-    }
-
-    // In overlay root environments, the root "/" filesystem has no separate mount
-    // entry in mountPoints. When all mount points fail and relPath is already
-    // an absolute path, treat it as the true absolute path and re-check.
-    if (relPath.startsWith('/')) {
-        auto found = std::find_if(rootPaths.cbegin(), rootPaths.cend(),
-                                  [&relPath, this](const QString &root) {
-                                      return isDescendantOfRoot(relPath, root)
-                                              && (!excludePredicate || !excludePredicate(relPath));
-                                  });
-        if (found != rootPaths.cend())
-            return relPath;
+            break;
+        }
     }
 
     return {};
@@ -465,95 +252,168 @@ QPair<QString, QString> VfsMonitorFileSystemWatcherPrivate::splitPath(const QStr
     return qMakePair(fi.absolutePath(), fi.fileName());
 }
 
-bool VfsMonitorFileSystemWatcherPrivate::initNetlink()
+bool VfsMonitorFileSystemWatcherPrivate::initDispatcher()
 {
     Q_Q(VfsMonitorFileSystemWatcher);
 
-    // Build mount point cache first (no netlink dependency).
     if (!initMountPoints()) {
-        fmWarning() << "VfsMonitor: failed to initialize mount points";
+        fmWarning() << "VfsMonitor: failed to initialize mount point aliases";
     }
 
-    nlSock = nl_socket_alloc();
-    if (!nlSock) {
-        fmWarning() << "VfsMonitor: failed to allocate netlink socket";
+    socketFd = ::socket(AF_UNIX, SOCK_SEQPACKET, 0);
+    if (socketFd < 0) {
+        fmWarning() << "VfsMonitor: failed to create dispatcher socket:" << std::strerror(errno);
         return false;
     }
 
-    if (genl_connect(nlSock) != 0) {
-        fmWarning() << "VfsMonitor: genl_connect failed";
-        nl_socket_free(nlSock);
-        nlSock = nullptr;
+    sockaddr_un address {};
+    address.sun_family = AF_UNIX;
+    std::strncpy(address.sun_path, kDispatcherSocketPath, sizeof(address.sun_path) - 1);
+
+    if (::connect(socketFd, reinterpret_cast<sockaddr *>(&address), sizeof(address)) != 0) {
+        fmWarning() << "VfsMonitor: deepin-anything event dispatcher not available:" << std::strerror(errno);
+        ::close(socketFd);
+        socketFd = -1;
         return false;
     }
 
-    // Set receive buffer to system maximum to prevent event loss.
-    QFile rmemFile("/proc/sys/net/core/rmem_max");
-    if (rmemFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        QTextStream in(&rmemFile);
-        bool ok = false;
-        int maxRcvbuf = in.readLine().trimmed().toInt(&ok);
-        if (ok && maxRcvbuf > 0) {
-            if (nl_socket_set_buffer_size(nlSock, maxRcvbuf, 0) != 0) {
-                fmWarning() << "VfsMonitor: failed to set socket buffer size";
-            }
-        }
-        rmemFile.close();
-    }
-
-    nl_socket_disable_seq_check(nlSock);
-    nl_socket_disable_auto_ack(nlSock);
-
-    int mcgrpId = genl_ctrl_resolve_grp(nlSock, kVfsMonitorFamilyName, kVfsMonitorMcgDentry);
-    if (mcgrpId < 0) {
-        fmWarning() << "VfsMonitor: vfs_monitor kernel module not available";
-        nl_socket_free(nlSock);
-        nlSock = nullptr;
-        return false;
-    }
-
-    if (nl_socket_add_membership(nlSock, mcgrpId) != 0) {
-        fmWarning() << "VfsMonitor: failed to join multicast group";
-        nl_socket_free(nlSock);
-        nlSock = nullptr;
-        return false;
-    }
-
-    initVfsPolicy();
-
-    if (!registerMessageCallback(nlSock, this)) {
-        nl_socket_free(nlSock);
-        nlSock = nullptr;
-        return false;
-    }
-
-    int fd = nl_socket_get_fd(nlSock);
-    notifier = new QSocketNotifier(fd, QSocketNotifier::Read, q);
+    notifier = new QSocketNotifier(socketFd, QSocketNotifier::Read, q);
     QObject::connect(notifier, &QSocketNotifier::activated, q, [this]() {
-        handleNetlinkMessage();
+        handleSocketMessage();
     });
 
-    fmInfo() << "VfsMonitor: connected to vfs_monitor kernel module";
+    fmInfo() << "VfsMonitor: connected to deepin-anything event dispatcher";
     return true;
 }
 
-void VfsMonitorFileSystemWatcherPrivate::handleNetlinkMessage()
+void VfsMonitorFileSystemWatcherPrivate::handleSocketMessage()
 {
-    int ret = nl_recvmsgs_default(nlSock);
-    if (ret < 0 && ret != -NLE_AGAIN) {
-        fmWarning() << "VfsMonitor: nl_recvmsgs_default failed, error:" << ret;
+    if (socketFd < 0) {
+        return;
     }
 
-    // Refresh mount point cache if mount/unmount events were received.
-    // Done after nl_recvmsgs_default() so the cache is up-to-date for the
-    // next batch of file events.
-    if (mountPointsDirty) {
-        mountPointsDirty = false;
-        if (initMountPoints()) {
-            fmInfo() << "VfsMonitor: mount point cache refreshed";
-        } else {
-            fmWarning() << "VfsMonitor: failed to refresh mount point cache";
+    DispatchEvent event {};
+    ssize_t received = -1;
+    do {
+        received = ::recv(socketFd, &event, sizeof(event), 0);
+    } while (received < 0 && errno == EINTR);
+
+    if (received == 0) {
+        fmWarning() << "VfsMonitor: event dispatcher connection closed";
+        if (notifier) {
+            notifier->setEnabled(false);
         }
+        ::close(socketFd);
+        socketFd = -1;
+        return;
+    }
+
+    if (received < 0) {
+        if (errno != EAGAIN && errno != EWOULDBLOCK) {
+            fmWarning() << "VfsMonitor: failed to receive dispatcher event:" << std::strerror(errno);
+        }
+        return;
+    }
+
+    constexpr size_t kMinMessageSize = offsetof(DispatchEvent, eventPath) + 1;
+    if (static_cast<size_t>(received) < kMinMessageSize) {
+        fmWarning() << "VfsMonitor: received short dispatcher message:" << received;
+        return;
+    }
+
+    event.eventPath[kDispatchMaxPathLen - 1] = '\0';
+
+    const int act = event.action;
+    const uint32_t cookie = event.cookie;
+    const char *pathCStr = event.eventPath;
+
+    if (act < ACT_NEW_FILE || act > ACT_UNMOUNT) {
+        return;
+    }
+
+    if (act == ACT_MOUNT || act == ACT_UNMOUNT) {
+        if (!initMountPoints()) {
+            fmWarning() << "VfsMonitor: failed to refresh mount point aliases";
+        }
+        return;
+    }
+
+    if (act == ACT_RENAME_FROM_FILE || act == ACT_RENAME_FROM_FOLDER) {
+        QString fullPath = resolveAndFilterFullPath(pathCStr);
+        if (fullPath.isNull())
+            return;
+
+        auto [parentPath, name] = splitPath(fullPath);
+        RenameFromInfo info;
+        info.path = parentPath;
+        info.name = name;
+        info.isDirectory = (act == ACT_RENAME_FROM_FOLDER);
+        pendingRenames.insert(cookie, info);
+        return;
+    }
+
+    auto *q = q_ptr;
+    if (act == ACT_RENAME_TO_FILE || act == ACT_RENAME_TO_FOLDER) {
+        const bool isDir = (act == ACT_RENAME_TO_FOLDER);
+        auto it = pendingRenames.find(cookie);
+        if (it != pendingRenames.end()) {
+            QString fullPath = resolveAndFilterFullPath(pathCStr);
+            if (!fullPath.isNull()) {
+                auto [parentPath, name] = splitPath(fullPath);
+                if (isDir)
+                    Q_EMIT q->directoryMoved(it->path, it->name, parentPath, name);
+                else
+                    Q_EMIT q->fileMoved(it->path, it->name, parentPath, name);
+            } else {
+                if (isDir)
+                    Q_EMIT q->directoryDeleted(it->path, it->name);
+                else
+                    Q_EMIT q->fileDeleted(it->path, it->name);
+            }
+            pendingRenames.erase(it);
+        } else {
+            QString fullPath = resolveAndFilterFullPath(pathCStr);
+            if (!fullPath.isNull()) {
+                auto [parentPath, name] = splitPath(fullPath);
+                if (isDir)
+                    Q_EMIT q->directoryCreated(parentPath, name);
+                else
+                    Q_EMIT q->fileCreated(parentPath, name);
+            }
+        }
+        return;
+    }
+
+    const QString fullPath = resolveAndFilterFullPath(pathCStr);
+    if (fullPath.isNull()) {
+        return;
+    }
+
+    auto [parentPath, name] = splitPath(fullPath);
+
+    switch (act) {
+    case ACT_NEW_FILE:
+    case ACT_NEW_LINK:
+    case ACT_NEW_SYMLINK:
+        Q_EMIT q->fileCreated(parentPath, name);
+        break;
+    case ACT_NEW_FOLDER:
+        Q_EMIT q->directoryCreated(parentPath, name);
+        break;
+    case ACT_DEL_FILE:
+        Q_EMIT q->fileDeleted(parentPath, name);
+        break;
+    case ACT_DEL_FOLDER:
+        Q_EMIT q->directoryDeleted(parentPath, name);
+        break;
+    case ACT_RENAME_FILE:
+        Q_EMIT q->fileCreated(parentPath, name);
+        break;
+    case ACT_RENAME_FOLDER:
+        Q_EMIT q->directoryCreated(parentPath, name);
+        break;
+    default:
+        break;
     }
 
     // Clean up orphaned RENAME_FROM entries.
@@ -584,7 +444,7 @@ VfsMonitorFileSystemWatcher *VfsMonitorFileSystemWatcher::create(const QStringLi
 {
     auto *watcher = new VfsMonitorFileSystemWatcher(rootPaths, std::move(excludePredicate), parent);
 
-    if (!watcher->d_func()->initNetlink()) {
+    if (!watcher->d_func()->initDispatcher()) {
         delete watcher;
         return nullptr;
     }
