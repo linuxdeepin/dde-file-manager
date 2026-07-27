@@ -67,6 +67,17 @@
             "description":"Used to determine whether the search authorization experience hint has already been handled",
             "permissions":"readwrite",
             "visibility":"private"
+        },
+        "dfm.enable.search": {
+            "value": true,
+            "serial": 0,
+            "flags": [],
+            "name": "Search enable",
+            "name[zh_CN]": "搜索是否可用",
+            "description[zh_CN]": "搜索是否可用",
+            "description": "Search enable",
+            "permissions": "readwrite",
+            "visibility": "private"
         }
     }
 }

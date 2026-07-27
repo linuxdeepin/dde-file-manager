@@ -196,7 +196,8 @@ void TitleBarWidget::handleSplitterAnimation(const QVariant &position)
 
 void TitleBarWidget::handleHotkeyCtrlF()
 {
-    searchEditWidget->activateEdit();
+    if (searchEditWidget->isVisible())
+        searchEditWidget->activateEdit();
 }
 
 void TitleBarWidget::handleHotkeyCtrlL()
@@ -339,6 +340,8 @@ void TitleBarWidget::initializeUi()
     // search widget
     searchEditWidget = new SearchEditWidget(this);
     searchEditWidget->setFixedHeight(30);
+    if (!DConfigManager::instance()->value(kSearchDConfName, kConfigEnableSearch, true).toBool())
+        searchEditWidget->setVisible(false);
 
     // option button
     optionButtonBox = new OptionButtonBox(this);
@@ -444,6 +447,13 @@ void TitleBarWidget::initConnect()
     });
 
     connect(this, &TitleBarWidget::currentUrlChanged, searchEditWidget, &SearchEditWidget::onUrlChanged);
+
+    connect(DConfigManager::instance(), &DConfigManager::valueChanged, this, [this](const QString &config, const QString &key) {
+        if (config == kSearchDConfName && key == kConfigEnableSearch) {
+            bool enabled = DConfigManager::instance()->value(kSearchDConfName, kConfigEnableSearch, true).toBool();
+            searchEditWidget->setVisible(enabled);
+        }
+    });
 
     connect(bottomBar, &TabBar::newTabCreated, this, &TitleBarWidget::onTabCreated);
     connect(bottomBar, &TabBar::requestCreateView, this, &TitleBarWidget::handleCreateView);

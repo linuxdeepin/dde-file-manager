@@ -34,6 +34,17 @@
             "description":"Open this configuration and report the results of the paste event to the specified location.",
             "permissions":"readwrite",
             "visibility":"private"
+        },
+        "dfm.show.run.exec": {
+            "value": true,
+            "serial": 0,
+            "flags": [],
+            "name": "Show run exec file",
+            "name[zh_CN]": "显示/隐藏双击可执行文件时的\"运行\"和\"在终端中运行\"按钮",
+            "description[zh_CN]": "显示/隐藏双击可执行文件时的\"运行\"和\"在终端中运行\"按钮",
+            "description": "Show/hide the 'Run' and 'Run in Terminal' buttons when double clicking on an executable file",
+            "permissions": "readwrite",
+            "visibility": "private"
         }
     }
 }

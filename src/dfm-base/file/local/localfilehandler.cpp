@@ -21,6 +21,8 @@
 #include <dfm-base/utils/networkutils.h>
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/dbusservice/global_server_defines.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/base/configs/dconfig/global_dconf_defines.h>
 #include <dfm-base/utils/protocolutils.h>
 
 #include <dfm-io/doperator.h>
@@ -55,6 +57,8 @@ extern "C" {
 
 using namespace dfmbase;
 using namespace GlobalServerDefines;
+using namespace GlobalDConfDefines::ConfigPath;
+using namespace GlobalDConfDefines::BaseConfig;
 
 LocalFileHandler::LocalFileHandler()
     : d(new LocalFileHandlerPrivate(this))
@@ -1392,6 +1396,9 @@ bool LocalFileHandlerPrivate::handleExecutableFile(const QUrl &fileUrl, bool *re
         qCWarning(logDFMBase) << "Invalid parameters to handleExecutableFile";
         return false;
     }
+
+    if (!DConfigManager::instance()->value(kOperationsDConfName, kShowRunExec, true).toBool())
+        return false;
 
     // Handle executable scripts
     if (isExecutableScript(fileUrl.path())) {
