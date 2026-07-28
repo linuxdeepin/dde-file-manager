@@ -16,6 +16,7 @@ inline constexpr char kAnimationDConfName[] { "org.deepin.dde.file-manager.anima
 inline constexpr char kDesktopDConfName[] { "org.deepin.dde.file-manager.desktop" };
 inline constexpr char kSearchDConfName[] { "org.deepin.dde.file-manager.search" };
 inline constexpr char kOperationsDConfName[] { "org.deepin.dde.file-manager.operations" };
+inline constexpr char kMountDConfName[] { "org.deepin.dde.file-manager.mount" };
 }   // namespace ConfigPath
 
 /*!

@@ -4,6 +4,9 @@
 
 #include "networkutils.h"
 
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/base/configs/dconfig/global_dconf_defines.h>
+
 #include <QtConcurrent>
 #include <QFutureWatcher>
 #include <QTcpSocket>
@@ -19,11 +22,13 @@
 #include <libmount.h>
 
 using namespace dfmbase;
+using namespace GlobalDConfDefines::ConfigPath;
 
 static constexpr char kSmbPort[] { "445" };
 static constexpr char kSmbPortOther[] { "139" };
 static constexpr char kFtpPort[] { "21" };
 static constexpr char kSftpPort[] { "22" };
+static constexpr char kCheckNetworkAccessable[] { "checkNetworkAccessable" };
 
 NetworkUtils *NetworkUtils::instance()
 {
@@ -35,6 +40,15 @@ bool NetworkUtils::checkNetConnection(const QString &host, const QString &port, 
 {
     if (host.isEmpty())
         return true;
+
+    auto checkNet = DConfigManager::instance()->value(kMountDConfName, kCheckNetworkAccessable, false).toBool();
+
+    if (!checkNet) {
+        qCInfo(logDFMBase) << "NetworkUtils::checkNetConnection Skip network check." << host << port;
+        return true;
+    }
+
+    qCInfo(logDFMBase) << "NetworkUtils::checkNetConnection net work check host = " << host << ", port = " << port << " !!!";
 
     QTcpSocket conn;
     conn.connectToHost(host, port.toUShort());

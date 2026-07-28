@@ -9,6 +9,7 @@
 #include <dfm-base/base/device/deviceutils.h>
 #include <dfm-base/base/device/deviceproxymanager.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/base/configs/dconfig/global_dconf_defines.h>
 #include <dfm-base/dbusservice/global_server_defines.h>
 #include <dfm-base/utils/finallyutil.h>
 
@@ -26,6 +27,11 @@
 using namespace dfmbase;
 DFM_MOUNT_USE_NS
 using namespace GlobalServerDefines;
+using namespace GlobalDConfDefines::ConfigPath;
+
+namespace {
+inline constexpr char kKeyDeviceUsagePollingInterval[] { "deviceUsagePollingInterval" };
+}
 
 DeviceWatcher::DeviceWatcher(QObject *parent)
     : QObject(parent), d(new DeviceWatcherPrivate(this))
@@ -44,7 +50,7 @@ void DeviceWatcher::startPollingUsage()
         return;
 
     qCInfo(logDFMBase) << "Starting device usage polling";
-    d->pollingTimer.start(d->kPollingInterval);   // 然后启动定时器
+    d->pollingTimer.start(d->pollingInterval);   // 然后启动定时器
 }
 
 void DeviceWatcher::stopPollingUsage()
@@ -532,5 +538,34 @@ DeviceWatcherPrivate::DeviceWatcherPrivate(DeviceWatcher *qq)
     : QObject(qq), q(qq)
 {
     connect(DevProxyMng, &DeviceProxyManager::devSizeChanged, this, &DeviceWatcherPrivate::updateStorage, Qt::QueuedConnection);
-    DConfigManager::instance()->addConfig("org.deepin.dde.file-manager.mount");
+    DConfigManager::instance()->addConfig(kMountDConfName);
+
+    // 读取 DConfig 配置的轮询间隔
+    int cfgInterval = DConfigManager::instance()->value(kMountDConfName, kKeyDeviceUsagePollingInterval, 10).toInt();
+    // 配置单位为秒，转换为毫秒，并确保不小于最小值
+    pollingInterval = qMax(cfgInterval * 1000, kMinPollingInterval);
+    qCInfo(logDFMBase) << "Device usage polling interval set to" << pollingInterval << "ms";
+
+    // 监听配置变化
+    connect(DConfigManager::instance(), &DConfigManager::valueChanged, this, [this](const QString &config, const QString &key) {
+        if (config == kMountDConfName && key == kKeyDeviceUsagePollingInterval) {
+            onPollingIntervalChanged();
+        }
+    });
+}
+
+void DeviceWatcherPrivate::onPollingIntervalChanged()
+{
+    int cfgInterval = DConfigManager::instance()->value(kMountDConfName, kKeyDeviceUsagePollingInterval, 10).toInt();
+    int newInterval = qMax(cfgInterval * 1000, kMinPollingInterval);
+
+    if (newInterval != pollingInterval) {
+        pollingInterval = newInterval;
+        qCInfo(logDFMBase) << "Device usage polling interval changed to" << pollingInterval << "ms";
+
+        // 如果定时器正在运行，则更新间隔
+        if (pollingTimer.isActive()) {
+            pollingTimer.setInterval(pollingInterval);
+        }
+    }
 }
