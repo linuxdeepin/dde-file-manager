@@ -330,7 +330,7 @@ void VfsMonitorFileSystemWatcherPrivate::handleSocketMessage()
         const uint32_t cookie = event.cookie;
         const char *pathCStr = event.eventPath;
 
-        if (act < ACT_NEW_FILE || act > ACT_UNMOUNT) {
+        if (act < ACT_NEW_FILE || act > ACT_CLOSE_WRITE_FILE) {
             continue;
         }
 
@@ -413,6 +413,9 @@ void VfsMonitorFileSystemWatcherPrivate::handleSocketMessage()
             break;
         case ACT_RENAME_FOLDER:
             Q_EMIT q->directoryCreated(parentPath, name);
+            break;
+        case ACT_CLOSE_WRITE_FILE:
+            Q_EMIT q->fileClosed(parentPath, name);
             break;
         default:
             break;
