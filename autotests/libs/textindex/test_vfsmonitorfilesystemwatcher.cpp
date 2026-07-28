@@ -7,6 +7,9 @@
 #include <QDir>
 #include <QFile>
 #include <QSignalSpy>
+#include <QTest>
+#include <QSet>
+#include <QElapsedTimer>
 
 #include "services/textindex/service_textindex_global.h"
 #include "services/textindex/fsmonitor/vfsmonitorwatcher.h"
@@ -278,6 +281,120 @@ TEST_F(TestVfsMonitorFileSystemWatcher, FileClosedSignal)
     QList<QVariant> args = spy.takeFirst();
     EXPECT_EQ(args.at(0).toString(), testDir->path());
     EXPECT_EQ(args.at(1).toString(), "closewrite.txt");
+}
+
+// ========== 批量文件写入关闭（压力测试） ==========
+
+TEST_F(TestVfsMonitorFileSystemWatcher, BatchFileClosedStress)
+{
+    ASSERT_NE(watcher, nullptr);
+
+    QSignalSpy spy(watcher, &VfsMonitorFileSystemWatcher::fileClosed);
+    ASSERT_TRUE(spy.isValid());
+
+    constexpr int kFileCount = 20;
+    QStringList fileNames;
+
+    for (int i = 0; i < kFileCount; ++i) {
+        QString name = QString("stress_%1.txt").arg(i);
+        fileNames << name;
+        QString path = testDir->path() + "/" + name;
+        QFile f(path);
+        f.open(QIODevice::WriteOnly);
+        f.write(QString("content %1").arg(i).toUtf8());
+        f.close();
+    }
+
+    // deepin-anything 内核模块事件合并器每 100ms 最多发送 DUMP_SIZE(10) 个事件。
+    // 20 个文件产生 40 个事件(20 NEW_FILE + 20 CLOSE_WRITE_FILE)，需分多批发送。
+    // QSignalSpy::wait() 收到第一个信号就返回，需循环等待直到收齐或超时。
+    QElapsedTimer timer;
+    timer.start();
+    while (spy.count() < kFileCount && !timer.hasExpired(15000)) {
+        QTest::qWait(200);
+    }
+
+    EXPECT_GE(spy.count(), kFileCount)
+        << "Expected at least " << kFileCount << " fileClosed signals, got " << spy.count();
+
+    // 验证每个文件名都出现在信号参数中
+    QSet<QString> seenNames;
+    for (const auto &args : spy) {
+        if (args.count() >= 2)
+            seenNames << args.at(1).toString();
+    }
+    for (const QString &name : fileNames) {
+        EXPECT_TRUE(seenNames.contains(name))
+            << "Missing fileClosed for: " << name.toStdString();
+    }
+}
+
+// ========== 同一文件反复写入关闭（压力测试） ==========
+
+TEST_F(TestVfsMonitorFileSystemWatcher, RepeatedWriteCloseStress)
+{
+    ASSERT_NE(watcher, nullptr);
+
+    QSignalSpy spy(watcher, &VfsMonitorFileSystemWatcher::fileClosed);
+    ASSERT_TRUE(spy.isValid());
+
+    QString filePath = testDir->path() + "/repeated_stress.txt";
+    QString fileName = "repeated_stress.txt";
+
+    constexpr int kIterations = 15;
+    for (int i = 0; i < kIterations; ++i) {
+        QFile f(filePath);
+        f.open(QIODevice::WriteOnly | QIODevice::Truncate);
+        f.write(QString("iteration %1").arg(i).toUtf8());
+        f.close();
+        // 小间隔让事件合并器有机会刷新
+        QTest::qWait(50);
+    }
+
+    // 循环等待收齐所有信号
+    QElapsedTimer timer;
+    timer.start();
+    while (spy.count() < kIterations && !timer.hasExpired(10000)) {
+        QTest::qWait(200);
+    }
+
+    EXPECT_GE(spy.count(), kIterations)
+        << "Expected at least " << kIterations << " fileClosed signals, got " << spy.count();
+
+    // 所有信号的文件名应该一致
+    for (const auto &args : spy) {
+        if (args.count() >= 2) {
+            EXPECT_EQ(args.at(1).toString(), fileName)
+                << "Unexpected file name in fileClosed signal";
+        }
+    }
+}
+
+// ========== 大文件写入关闭 ==========
+
+TEST_F(TestVfsMonitorFileSystemWatcher, LargeFileWriteClose)
+{
+    ASSERT_NE(watcher, nullptr);
+
+    QSignalSpy spy(watcher, &VfsMonitorFileSystemWatcher::fileClosed);
+    ASSERT_TRUE(spy.isValid());
+
+    QString filePath = testDir->path() + "/large_stress.txt";
+    QString fileName = "large_stress.txt";
+
+    QFile f(filePath);
+    f.open(QIODevice::WriteOnly);
+    // 写入 1MB 数据
+    QByteArray chunk(1024 * 1024, 'X');
+    f.write(chunk);
+    f.close();
+
+    int count = waitForSignal(spy, 5000);
+    ASSERT_GT(count, 0) << "fileClosed signal not received for large file";
+
+    QList<QVariant> args = spy.takeFirst();
+    EXPECT_EQ(args.at(0).toString(), testDir->path());
+    EXPECT_EQ(args.at(1).toString(), fileName);
 }
 
 // ========== 路径排除 ==========
