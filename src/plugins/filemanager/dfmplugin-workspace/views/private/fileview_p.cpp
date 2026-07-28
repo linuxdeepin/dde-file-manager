@@ -351,12 +351,25 @@ void FileViewPrivate::updateHorizontalOffset()
         }
 
         // itemColumn每行绘制的个数，contentWidth绘制区域宽度，itemWidth每一个item + 2倍间距的绘制宽度
-        if (contentWidth - itemWidth * itemColumn <= 0
-            || (contentWidth - itemWidth * itemColumn) / 2 >= itemWidth) {
-            columnCountByCalc = 1;
-            initHorizontalOffset = false;
-            fmDebug() << "Resetting to single column layout";
-            return;
+        // 当 visualRect() 返回瞬态过程中上一轮（更窄）布局的坐标时，扫描得到的 itemColumn 会偏小，
+        // 代入新的 contentWidth 后会被误判为“过疏”而错误回退单列。在回退前先用 contentWidth/itemWidth
+        // 重推每行列数：若重推后不再过疏，说明是脏坐标导致的误判，采用重推值；仍过疏才真正回退单列。
+        auto wouldReset = [&]() {
+            return contentWidth - itemWidth * itemColumn <= 0
+                    || (contentWidth - itemWidth * itemColumn) / 2 >= itemWidth;
+        };
+        if (wouldReset()) {
+            int calcColumn = contentWidth / itemWidth;
+            if (calcColumn > 0 && calcColumn < rowCount) {
+                itemColumn = calcColumn;
+                columnCountByCalc = itemColumn;
+            }
+            if (wouldReset()) {
+                columnCountByCalc = 1;
+                initHorizontalOffset = false;
+                fmDebug() << "Resetting to single column layout";
+                return;
+            }
         }
         horizontalOffset = -(contentWidth - itemWidth * itemColumn) / 2;
     }
