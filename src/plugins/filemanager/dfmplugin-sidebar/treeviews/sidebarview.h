@@ -38,6 +38,9 @@ public:
     void setPreviousIndex(const QModelIndex &index);
     bool isDropTarget(const QModelIndex &index) const;
     bool isSideBarItemDragged() const;
+    bool isDraggedSource(const QModelIndex &index) const;
+    bool isRenderingDragPreview() const;
+    int dragItemVerticalOffset(const QModelIndex &index, int rowHeight) const;
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;

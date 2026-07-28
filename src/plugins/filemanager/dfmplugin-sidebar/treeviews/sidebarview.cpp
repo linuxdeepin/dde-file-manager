@@ -31,9 +31,11 @@
 #include <DGuiApplicationHelper>
 #include <QStyledItemDelegate>
 #include <QDrag>
+#include <QPainter>
 #include <QTextLayout>
 #include <QScrollBar>
 #include <QScroller>
+#include <QVariantAnimation>
 
 #include <unistd.h>
 
@@ -130,6 +132,143 @@ bool SideBarViewPrivate::isCursorInsideIndex(const QModelIndex &index, const QPo
     // Fallback for compositor paths where childAt/global lookup is unavailable
     // but the sidebar viewport still owns the active pointer hover state.
     return q->viewport()->underMouse() && itemRect.contains(fallbackPos);
+}
+
+void SideBarViewPrivate::setDragSourceIndex(const QModelIndex &index)
+{
+    const QModelIndex validIndex = index.isValid() && index.flags().testFlag(Qt::ItemIsDragEnabled)
+            ? index
+            : QModelIndex();
+    if (dragSourceIndex == validIndex)
+        return;
+
+    dragSourceIndex = validIndex;
+}
+
+void SideBarViewPrivate::clearInternalDragState()
+{
+    if (placeholderAnimation)
+        placeholderAnimation->stop();
+
+    isRenderingDragPreview = false;
+    dragSourceIndex = QModelIndex();
+    previousPlaceholderParent = QModelIndex();
+    placeholderParent = QModelIndex();
+    previousPlaceholderRow = -1;
+    placeholderRow = -1;
+    placeholderAnimationProgress = 1.0;
+    q->viewport()->update();
+}
+
+int SideBarViewPrivate::calculatePlaceholderRow(const QPoint &pos, const QMimeData *data) const
+{
+    if (!dragSourceIndex.isValid() || !data)
+        return -1;
+
+    const QModelIndex hoverIndex = q->indexAt(pos);
+    if (!hoverIndex.isValid() || hoverIndex.parent() != dragSourceIndex.parent())
+        return -1;
+
+    int row = dragSourceIndex.row();
+    if (hoverIndex.row() > dragSourceIndex.row())
+        row = hoverIndex.row() + 1;
+    else if (hoverIndex.row() < dragSourceIndex.row())
+        row = hoverIndex.row();
+
+    auto *sidebarModel = q->model();
+    if (!sidebarModel)
+        return -1;
+
+    if (!sidebarModel->canDropMimeData(data, Qt::MoveAction, row, 0, hoverIndex.parent()))
+        return -1;
+
+    return row;
+}
+
+void SideBarViewPrivate::updatePlaceholderRow(int row, const QModelIndex &parent)
+{
+    if (!dragSourceIndex.isValid() || !parent.isValid() || row < 0) {
+        previousPlaceholderParent = placeholderParent;
+        previousPlaceholderRow = placeholderRow;
+        placeholderParent = QModelIndex();
+        placeholderRow = -1;
+        placeholderAnimationProgress = 1.0;
+        q->viewport()->update();
+        return;
+    }
+
+    if (placeholderParent == parent && placeholderRow == row)
+        return;
+
+    previousPlaceholderParent = placeholderParent;
+    previousPlaceholderRow = placeholderRow;
+    placeholderParent = parent;
+    placeholderRow = row;
+
+    if (!placeholderAnimation) {
+        placeholderAnimation = new QVariantAnimation(this);
+        placeholderAnimation->setDuration(120);
+        placeholderAnimation->setEasingCurve(QEasingCurve::OutCubic);
+        connect(placeholderAnimation, &QVariantAnimation::valueChanged, this, [this](const QVariant &value) {
+            placeholderAnimationProgress = value.toReal();
+            q->viewport()->update();
+        });
+        connect(placeholderAnimation, &QVariantAnimation::finished, this, [this]() {
+            placeholderAnimationProgress = 1.0;
+            q->viewport()->update();
+        });
+    }
+
+    if (previousPlaceholderRow < 0 || previousPlaceholderParent != placeholderParent) {
+        placeholderAnimation->stop();
+        placeholderAnimationProgress = 1.0;
+        q->viewport()->update();
+        return;
+    }
+
+    if (placeholderAnimation->state() == QAbstractAnimation::Running)
+        placeholderAnimation->stop();
+
+    placeholderAnimationProgress = 0.0;
+    placeholderAnimation->setStartValue(0.0);
+    placeholderAnimation->setEndValue(1.0);
+    placeholderAnimation->start();
+}
+
+int SideBarViewPrivate::dragItemOffset(const QModelIndex &index, int rowHeight) const
+{
+    if (!isItemDragged || !dragSourceIndex.isValid() || !index.isValid() || rowHeight <= 0)
+        return 0;
+
+    auto calcOffset = [this, rowHeight, &index](const QPersistentModelIndex &parent, int row) -> int {
+        if (!parent.isValid() || row < 0 || index.parent() != parent || dragSourceIndex.parent() != parent)
+            return 0;
+
+        const int sourceRow = dragSourceIndex.row();
+        const int currentRow = index.row();
+        if (currentRow == sourceRow) {
+            if (sourceRow < row)
+                return (row - sourceRow - 1) * rowHeight;
+            if (sourceRow > row)
+                return (row - sourceRow) * rowHeight;
+            return 0;
+        }
+
+        if (sourceRow < row && currentRow > sourceRow && currentRow < row)
+            return -rowHeight;
+
+        if (sourceRow > row && currentRow >= row && currentRow < sourceRow)
+            return rowHeight;
+
+        return 0;
+    };
+
+    const int startOffset = calcOffset(previousPlaceholderParent, previousPlaceholderRow);
+    const int endOffset = calcOffset(placeholderParent, placeholderRow);
+    if (qFuzzyCompare(placeholderAnimationProgress, 1.0))
+        return endOffset;
+
+    return qRound(startOffset + (endOffset - startOffset) * placeholderAnimationProgress);
 }
 
 void SideBarViewPrivate::notifyOrderChanged()
@@ -254,23 +393,7 @@ SidebarViewStyle::SidebarViewStyle(QStyle *style)
 void SidebarViewStyle::drawPrimitive(PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const
 {
     if (element == QStyle::PE_IndicatorItemViewItemDrop && !option->rect.isNull()) {
-        painter->setRenderHint(QPainter::Antialiasing);
-        QStyleOption opt(*option);
-        opt.rect.setLeft(0);
-        if (widget)
-            opt.rect.setRight(widget->width());
-        DPalette pl(DPaletteHelper::instance()->palette(widget));
-        QColor bgColor = pl.color(DPalette::ColorGroup::Active, DPalette::ColorType::ItemBackground);
-        QPalette::ColorGroup colorGroup = QPalette::Normal;
-        bgColor = opt.palette.color(colorGroup, QPalette::Highlight);
-        QPen pen = painter->pen();
-        pen.setColor(bgColor);
-        pen.setWidth(2);
-        painter->setPen(pen);
-
-        QPoint posLeft = opt.rect.topLeft();
-        QPoint posRight = opt.rect.bottomRight();
-        painter->drawRoundedRect(QRect(posLeft + QPoint(10, 0), posRight + QPoint(-10, 0)), 8, 8);
+        // 不绘制拖拽指示线，改为拖动时选项位移动画
         return;
     }
     QProxyStyle::drawPrimitive(element, option, painter, widget);
@@ -287,6 +410,7 @@ SideBarView::SideBarView(QWidget *parent)
     setVerticalScrollBarPolicy(Qt::ScrollBarSlideAnimationOn);
 #endif
     setVerticalScrollMode(ScrollPerPixel);
+    setAnimated(true);
     setIconSize(QSize(16, 16));
     setHeaderHidden(true);
     setMouseTracking(true);   // sp3 feature 35，解除注释以便鼠标在移动时就能触发 mousemoveevent
@@ -309,7 +433,10 @@ SideBarView::SideBarView(QWidget *parent)
     d->originPalette = palette();
     d->lastOpTimer.start();
 
-    setStyle(new SidebarViewStyle(style()));
+    setDropIndicatorShown(false);
+    auto *sidebarStyle = new SidebarViewStyle(style());
+    setStyle(sidebarStyle);
+    viewport()->setStyle(sidebarStyle);
 }
 
 SideBarView::~SideBarView()
@@ -330,6 +457,8 @@ void SideBarView::mousePressEvent(QMouseEvent *event)
     if (!d->checkOpTime())
         return;
 
+    d->dragPressPos = event->pos();
+    d->setDragSourceIndex(indexAt(event->pos()));
     d->draggedUrl = urlAt(event->pos());
     auto item = itemAt(event->pos());
     d->draggedGroup = item ? item->group() : "";
@@ -392,7 +521,11 @@ void SideBarView::dragEnterEvent(QDragEnterEvent *event)
 
     } else {
         d->urlsForDragEvent.clear();
-        d->isItemDragged = true;
+        if (!d->dragSourceIndex.isValid())
+            d->setDragSourceIndex(currentIndex());
+        d->isItemDragged = d->dragSourceIndex.isValid();
+        if (d->dragSourceIndex.isValid())
+            d->updatePlaceholderRow(d->dragSourceIndex.row(), d->dragSourceIndex.parent());
     }
 
     d->previousRowCount = model()->rowCount();
@@ -414,6 +547,16 @@ void SideBarView::dragMoveEvent(QDragMoveEvent *event)
 
     if (event->source() != this)
         d->updateHoverIndex(hoverIndex);
+    else if (d->dragSourceIndex.isValid()) {
+        const int placeholderRow = d->calculatePlaceholderRow(eventPos, event->mimeData());
+        if (placeholderRow >= 0) {
+            d->updatePlaceholderRow(placeholderRow, hoverIndex.parent());
+            event->setDropAction(Qt::MoveAction);
+            event->accept();
+        } else {
+            d->updatePlaceholderRow(d->dragSourceIndex.row(), d->dragSourceIndex.parent());
+        }
+    }
 
     if (event->source() != this && !d->isCursorInsideIndex(hoverIndex, eventPos)) {
         d->clearHoverIndex();
@@ -433,7 +576,7 @@ void SideBarView::dragMoveEvent(QDragMoveEvent *event)
     if (isAccepteDragEvent(event))
         return;
 
-    DTreeView::dragMoveEvent(event);
+    // DTreeView::dragMoveEvent(event);  // 禁用拖拽指示线
 
     if (event->source() != this)
         event->ignore();
@@ -446,10 +589,12 @@ void SideBarView::dragLeaveEvent(QDragLeaveEvent *event)
     d->isItemDragged = false;
     setState(State::NoState);
     d->clearHoverIndex();
+    d->clearInternalDragState();
 }
 
 void SideBarView::dropEvent(QDropEvent *event)
 {
+    const bool isInternalDrag = event->source() == this;
     const QPoint eventPos = event->position().toPoint();
     const QModelIndex hoverIndex = indexAt(eventPos);
     d->clearHoverIndex();
@@ -457,6 +602,8 @@ void SideBarView::dropEvent(QDropEvent *event)
     if (d->draggedUrl.isValid()) {   // select the dragged item when dropped.
         d->notifyOrderChanged();   // notify to update the persistence data
     }
+    if (isInternalDrag)
+        d->clearInternalDragState();
 
     d->dropPos = eventPos;
     SideBarItem *item = itemAt(eventPos);
@@ -557,8 +704,78 @@ void SideBarView::startDrag(Qt::DropActions supportedActions)
         }
     }
 
+    QModelIndex sourceIndex = d->dragSourceIndex;
+    if (!sourceIndex.isValid())
+        sourceIndex = currentIndex();
+    if (!sourceIndex.isValid() || !sourceIndex.flags().testFlag(Qt::ItemIsDragEnabled))
+        return;
+    const QPersistentModelIndex sourcePersistentIndex(sourceIndex);
+
+    QMimeData *mimeData = model() ? model()->mimeData({ sourceIndex }) : nullptr;
+    if (!mimeData)
+        return;
+
+    QRect sourceRect = visualRect(sourceIndex);
+    auto *drag = new QDrag(this);
+    drag->setMimeData(mimeData);
+
+    auto *delegate = itemDelegateForIndex(sourceIndex);
+    if (!delegate)
+        delegate = itemDelegate();
+    if (delegate && sourceRect.isValid()) {
+        QStyleOptionViewItem option;
+        initViewItemOption(&option);
+        option.widget = this;
+        option.rect = QRect(QPoint(0, 0), sourceRect.size());
+        option.state |= QStyle::State_Enabled;
+        option.state &= ~(QStyle::State_MouseOver | QStyle::State_Sunken | QStyle::State_HasFocus);
+
+        const qreal dpr = devicePixelRatioF();
+        QPixmap pixmap(option.rect.size() * dpr);
+        pixmap.setDevicePixelRatio(dpr);
+        pixmap.fill(Qt::transparent);
+
+        d->isRenderingDragPreview = true;
+        QPainter painter(&pixmap);
+        painter.setRenderHint(QPainter::Antialiasing);
+        painter.setOpacity(0.9);
+        delegate->paint(&painter, option, sourceIndex);
+        d->isRenderingDragPreview = false;
+
+        drag->setPixmap(pixmap);
+
+        QPoint hotSpot = d->dragPressPos - sourceRect.topLeft();
+        hotSpot.setX(qBound(0, hotSpot.x(), qMax(0, option.rect.width() - 1)));
+        hotSpot.setY(qBound(0, hotSpot.y(), qMax(0, option.rect.height() - 1)));
+        drag->setHotSpot(hotSpot);
+    }
+
     d->isItemDragged = true;
-    DTreeView::startDrag(supportedActions);
+    d->updatePlaceholderRow(sourceIndex.row(), sourceIndex.parent());
+
+    Qt::DropAction defaultAction = defaultDropAction();
+    if (defaultAction == Qt::IgnoreAction || !(supportedActions & defaultAction)) {
+        if (dragDropMode() == QAbstractItemView::InternalMove)
+            defaultAction = Qt::MoveAction;
+        else if (supportedActions & Qt::CopyAction)
+            defaultAction = Qt::CopyAction;
+    }
+
+    const Qt::DropAction resultAction = drag->exec(supportedActions, defaultAction);
+    const QObject *dropTarget = drag->target();
+
+    // QStandardItemModel inserts the moved row on drop, and the default
+    // view implementation removes the original row afterwards. Since we
+    // render a custom drag preview here, we need to perform that cleanup.
+    if (resultAction == Qt::MoveAction
+        && sourcePersistentIndex.isValid()
+        && (dropTarget == this || dropTarget == viewport())) {
+        if (auto *sidebarModel = model())
+            sidebarModel->removeRows(sourcePersistentIndex.row(), 1, sourcePersistentIndex.parent());
+    }
+
+    d->isItemDragged = false;
+    d->clearInternalDragState();
 }
 
 QModelIndex SideBarView::indexAt(const QPoint &p) const
@@ -735,6 +952,21 @@ bool SideBarView::isDropTarget(const QModelIndex &index) const
 bool SideBarView::isSideBarItemDragged() const
 {
     return d->isItemDragged;
+}
+
+bool SideBarView::isDraggedSource(const QModelIndex &index) const
+{
+    return d->dragSourceIndex == index;
+}
+
+bool SideBarView::isRenderingDragPreview() const
+{
+    return d->isRenderingDragPreview;
+}
+
+int SideBarView::dragItemVerticalOffset(const QModelIndex &index, int rowHeight) const
+{
+    return d->dragItemOffset(index, rowHeight);
 }
 
 Qt::DropAction SideBarView::canDropMimeData(SideBarItem *item, const QMimeData *data, Qt::DropActions actions) const

@@ -17,6 +17,10 @@
 #include <QPalette>
 #include <QStyle>
 #include <QElapsedTimer>
+#include <QPersistentModelIndex>
+#include <QPointer>
+
+class QVariantAnimation;
 
 DPSIDEBAR_BEGIN_NAMESPACE
 
@@ -33,10 +37,19 @@ class SideBarViewPrivate : public QObject
     QModelIndex current;
     QModelIndex currentHoverIndex;
     bool isItemDragged = false;
+    bool isRenderingDragPreview = false;
     QList<QUrl> urlsForDragEvent;
     QElapsedTimer lastOpTimer;
     QUrl draggedUrl;
     QString draggedGroup;
+    QPoint dragPressPos;
+    QPersistentModelIndex dragSourceIndex;
+    QPersistentModelIndex previousPlaceholderParent;
+    QPersistentModelIndex placeholderParent;
+    int previousPlaceholderRow = -1;
+    int placeholderRow = -1;
+    QPointer<QVariantAnimation> placeholderAnimation;
+    qreal placeholderAnimationProgress = 1.0;
     QVariantMap groupExpandState;
     QUrl sidebarUrl;
     DFMBASE_NAMESPACE::DFMMimeData dfmMimeData;
@@ -52,6 +65,11 @@ class SideBarViewPrivate : public QObject
     void updateHoverIndex(const QModelIndex &index);
     void clearHoverIndex();
     bool isCursorInsideIndex(const QModelIndex &index, const QPoint &fallbackPos) const;
+    void setDragSourceIndex(const QModelIndex &index);
+    void clearInternalDragState();
+    int calculatePlaceholderRow(const QPoint &pos, const QMimeData *data) const;
+    void updatePlaceholderRow(int row, const QModelIndex &parent);
+    int dragItemOffset(const QModelIndex &index, int rowHeight) const;
 
 private Q_SLOTS:
     void currentChanged(const QModelIndex &curIndex);

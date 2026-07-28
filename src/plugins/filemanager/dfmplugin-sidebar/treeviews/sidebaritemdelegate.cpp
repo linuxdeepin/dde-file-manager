@@ -94,12 +94,27 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
         opt.state &= (~QStyle::State_Active);
 
     const bool isActive = opt.widget && opt.widget->isActiveWindow();
+    SideBarView *sidebarView = dynamic_cast<SideBarView *>(this->parent());
+    const bool isDragPreview = sidebarView && sidebarView->isRenderingDragPreview();
+    if (isDragPreview)
+        opt.state &= ~(QStyle::State_Selected | QStyle::State_MouseOver | QStyle::State_Sunken | QStyle::State_HasFocus);
 
     painter->setRenderHint(QPainter::Antialiasing);
-    painter->setClipRect(opt.rect);
-
-    if (!option.widget)
+    if (!option.widget) {
+        painter->restore();
         return;
+    }
+
+    const int dragOffset = sidebarView && !isDragPreview
+            ? sidebarView->dragItemVerticalOffset(index, opt.rect.height())
+            : 0;
+    if (dragOffset != 0)
+        opt.rect.translate(0, dragOffset);
+
+    if (sidebarView && !isDragPreview)
+        painter->setClipRect(sidebarView->viewport()->rect());
+    else
+        painter->setClipRect(opt.rect);
 
     DPalette palette(DPaletteHelper::instance()->palette(option.widget));
     auto widgetColor = option.widget->palette().base().color();
@@ -116,43 +131,47 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     QPoint dw = QPoint(-12, 0);
     bool selected = opt.state.testFlag(QStyle::State_Selected);
     QRect r(itemRect.topLeft() + dx, itemRect.bottomRight() + dw);
-    SideBarView *sidebarView = dynamic_cast<SideBarView *>(this->parent());
-
-    bool isDragedItem = sidebarView->isSideBarItemDragged();
-    bool isDropTarget = sidebarView->isDropTarget(index);
+    const bool isDragedItem = sidebarView && sidebarView->isSideBarItemDragged();
+    const bool isDropTarget = sidebarView && sidebarView->isDropTarget(index);
+    const bool isDraggedSource = sidebarView && sidebarView->isDraggedSource(index);
     bool keepDrawingHighlighted = false;
     const auto &itemUrl = index.data(SideBarItem::kItemUrlRole).toUrl();
-    bool isUrlEqual = UniversalUtils::urlEquals(itemUrl, sidebarView->currentUrl());
+    bool isUrlEqual = sidebarView && UniversalUtils::urlEquals(itemUrl, sidebarView->currentUrl());
     SideBarItem *subItem = dynamic_cast<SideBarItem *>(item);
     if (!isUrlEqual && subItem) {
-        bool foundByCb = subItem->itemInfo().findMeCb && subItem->itemInfo().findMeCb(subItem->url(), sidebarView->currentUrl());
-        if (foundByCb || UniversalUtils::urlEquals(subItem->url(), sidebarView->currentUrl()))
+        const bool foundByCb = sidebarView && subItem->itemInfo().findMeCb
+                && subItem->itemInfo().findMeCb(subItem->url(), sidebarView->currentUrl());
+        if (foundByCb || (sidebarView && UniversalUtils::urlEquals(subItem->url(), sidebarView->currentUrl())))
             isUrlEqual = true;
     }
-    bool isDraggingItemNotHighlighted = selected && !isUrlEqual;
     if (isUrlEqual) {
         // If the dragging and moving source item is not the current highlighted one,
         // the highlighted one must be keep its state.
         keepDrawingHighlighted = true;
     }
+    const bool suppressDraggedSelection = isDragPreview || (isDragedItem && isDraggedSource);
+    if (suppressDraggedSelection)
+        keepDrawingHighlighted = false;
+    const bool isDraggingItemNotHighlighted = !suppressDraggedSelection && selected && !isUrlEqual;
+    const bool hideDraggedSource = isDragedItem && isDraggedSource && !isDragPreview;
 
-    // Draw the background color when dragging files, rather than when dragging an item
-    if ((selected && isDragedItem) || keepDrawingHighlighted) {   // Draw selected background
-        QColor bgColor;
-        if (isDraggingItemNotHighlighted) {
-            if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType)
-                bgColor = DGuiApplicationHelper::adjustColor(widgetColor, 0, 0, 5, 0, 0, 0, 0);
-            else
-                bgColor = QColor(230, 230, 230);
-        } else {
-            bgColor = option.palette.color(QPalette::Active, QPalette::Highlight);
-            if (!isActive)
-                bgColor.setAlpha(102);
-        }
+    if (hideDraggedSource) {
+        painter->restore();
+        return;
+    }
+
+    // Draw the background color when dragging files, rather than when dragging an item.
+    // When the item itself is being dragged, the background is kept transparent.
+    if (keepDrawingHighlighted && !suppressDraggedSelection) {   // Draw selected background for the current highlighted item
+        QColor bgColor = option.palette.color(QPalette::Active, QPalette::Highlight);
+        if (!isActive)
+            bgColor.setAlpha(102);
 
         painter->setBrush(bgColor);
         painter->setPen(Qt::NoPen);
         painter->drawRoundedRect(r, kRadius, kRadius);
+    } else if (selected && isDragedItem) {
+        // Do nothing — keep background transparent when dragging the item
     } else if (!isDragedItem && (opt.state.testFlag(QStyle::State_MouseOver) || isDropTarget)) {   // Draw mouse over background
         if (item->sizeHint() != QSize(kEmptyItemSize, kEmptyItemSize))
             drawMouseHoverBackground(painter, palette, r, widgetColor);
@@ -183,7 +202,7 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     QIcon::Mode iconMode = QIcon::Normal;
     if (!(option.state.testFlag(QStyle::State_Enabled)))
         iconMode = QIcon::Disabled;
-    if (!isDraggingItemNotHighlighted && (selected || keepDrawingHighlighted))
+    if (!suppressDraggedSelection && !isDraggingItemNotHighlighted && (selected || keepDrawingHighlighted))
         iconMode = QIcon::Selected;
     if (opt.features & QStyleOptionViewItem::HasDecoration)
         drawIcon(opt, painter, index, itemRect, isEjectable, iconSize, iconMode, cg, keepDrawingHighlighted);
