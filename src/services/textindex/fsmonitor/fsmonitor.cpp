@@ -106,8 +106,6 @@ bool FSMonitorPrivate::init(const QStringList &rootPaths)
         return false;
     }
 
-    watcher.reset(new InotifyFileSystemWatcher());
-
     // Use static factory method to create configured blacklist matcher
     // BEFORE creating VfsMonitor watcher (needs it for excludePredicate).
     excludeMatcher = PathExcludeMatcher::createForIndex();
@@ -122,13 +120,13 @@ bool FSMonitorPrivate::init(const QStringList &rootPaths)
     vfsMonitorAvailable = (vfsWatcher != nullptr);
 
     if (vfsMonitorAvailable) {
-        // deepin-anything dispatcher mode: create/delete/move from vfs, fileClosed from inotify.
-        // Restrict inotify to IN_CLOSE_WRITE only, reducing kernel event delivery.
-        watcher->setWatchFlags(InotifyFileSystemWatcher::WatchFlag::FileClose);
+        // VfsMonitor handles all events including ACT_CLOSE_WRITE_FILE,
+        // so InotifyFileSystemWatcher is not needed.
         setupVfsMonitorConnections();
-        fmInfo() << "FSMonitor: Using dual watcher mode (deepin-anything dispatcher + inotify fallback)";
+        fmInfo() << "FSMonitor: Using vfs monitor mode (deepin-anything dispatcher)";
     } else {
-        // inotify-only mode: all signals from InotifyFileSystemWatcher (existing behavior).
+        // Inotify-only mode: create InotifyFileSystemWatcher for all events.
+        watcher.reset(new InotifyFileSystemWatcher());
         setupWatcherConnections();
         fmInfo() << "FSMonitor: Using inotify-only mode (deepin-anything dispatcher not available)";
     }
@@ -382,7 +380,7 @@ bool FSMonitorPrivate::addWatchForDirectory(const QString &path)
     }
 
     // Add to watcher
-    if (watcher->addPath(path)) {
+    if (watcher && watcher->addPath(path)) {
         watchedDirectories.insert(path);
         //   fmDebug() << "FSMonitor: Added watch for directory:" << path;
         return true;
@@ -399,7 +397,8 @@ void FSMonitorPrivate::removeWatchForDirectory(const QString &path)
     }
 
     if (watchedDirectories.contains(path)) {
-        watcher->removePath(path);
+        if (watcher)
+            watcher->removePath(path);
         watchedDirectories.remove(path);
         fmDebug() << "FSMonitor: Removed watch for directory:" << path;
     }
@@ -443,7 +442,7 @@ void FSMonitorPrivate::setupWatcherConnections()
 
 void FSMonitorPrivate::setupVfsMonitorConnections()
 {
-    // Create/delete/move events from VfsMonitorFileSystemWatcher.
+    // All events come from VfsMonitorFileSystemWatcher (create/delete/move/close-write).
     // The kernel already distinguishes files from directories, so we can
     // emit the specific directory* signals directly without QFileInfo checks.
     QObject::connect(vfsWatcher.data(), &VfsMonitorFileSystemWatcher::fileCreated,
@@ -454,7 +453,7 @@ void FSMonitorPrivate::setupVfsMonitorConnections()
     QObject::connect(vfsWatcher.data(), &VfsMonitorFileSystemWatcher::fileDeleted,
                      q_ptr, [this](const QString &path, const QString &name) {
                           handleFileDeleted(path, name);
-                     });
+                      });
 
     QObject::connect(vfsWatcher.data(), &VfsMonitorFileSystemWatcher::fileMoved,
                      q_ptr, [this](const QString &fromPath, const QString &fromName,
@@ -462,24 +461,19 @@ void FSMonitorPrivate::setupVfsMonitorConnections()
                          handleFileMoved(fromPath, fromName, toPath, toName);
                      });
 
+    QObject::connect(vfsWatcher.data(), &VfsMonitorFileSystemWatcher::fileClosed,
+                     q_ptr, [this](const QString &path, const QString &name) {
+                         handleFileClosed(path, name);
+                     });
+
     QObject::connect(vfsWatcher.data(), &VfsMonitorFileSystemWatcher::directoryCreated,
                      q_ptr, [this](const QString &path, const QString &name) {
-                         // VfsMonitor already knows it's a directory -- emit directly.
                          Q_EMIT q_ptr->directoryCreated(path, name);
-
-                         // Add new directory to inotify watch for fileClosed support.
-                         QString fullPath = QDir(path).absoluteFilePath(name);
-                         if (!isSymbolicLink(fullPath) && !shouldExcludePath(fullPath)) {
-                             addDirectoryRecursively(fullPath);
-                         }
                      });
 
     QObject::connect(vfsWatcher.data(), &VfsMonitorFileSystemWatcher::directoryDeleted,
                      q_ptr, [this](const QString &path, const QString &name) {
                          Q_EMIT q_ptr->directoryDeleted(path, name);
-
-                         QString fullPath = QDir(path).absoluteFilePath(name);
-                         removeWatchForDirectory(fullPath);
                      });
 
     QObject::connect(vfsWatcher.data(), &VfsMonitorFileSystemWatcher::directoryMoved,
@@ -489,20 +483,6 @@ void FSMonitorPrivate::setupVfsMonitorConnections()
                                    << "->" << toPath << "/" << toName;
 
                          Q_EMIT q_ptr->directoryMoved(fromPath, fromName, toPath, toName);
-
-                         QString fromFullPath = QDir(fromPath).absoluteFilePath(fromName);
-                         removeWatchForDirectory(fromFullPath);
-
-                         QString toFullPath = QDir(toPath).absoluteFilePath(toName);
-                         if (!toPath.isEmpty() && !isSymbolicLink(toFullPath) && !shouldExcludePath(toFullPath)) {
-                             addDirectoryRecursively(toFullPath);
-                         }
-                     });
-
-    // fileClosed always comes from InotifyFileSystemWatcher (IN_CLOSE_WRITE).
-    QObject::connect(watcher.data(), &InotifyFileSystemWatcher::fileClosed,
-                     q_ptr, [this](const QString &path, const QString &name) {
-                         handleFileClosed(path, name);
                      });
 }
 
@@ -656,7 +636,7 @@ void FSMonitorPrivate::handleDirectoriesBatch(const QStringList &paths)
         if (!watchedDirectories.contains(path) && !shouldExcludePath(path)) {
             qApp->processEvents();
             // Add each path individually to avoid blocking from addPaths
-            if (watcher->addPath(path)) {
+            if (watcher && watcher->addPath(path)) {
                 watchedDirectories.insert(path);
                 addedCount++;
             } else {

@@ -256,6 +256,30 @@ TEST_F(TestVfsMonitorFileSystemWatcher, SymlinkCreationEmitsFileCreated)
     EXPECT_EQ(args.at(1).toString(), "symlink_link.txt");
 }
 
+// ========== 文件写入关闭 ==========
+
+TEST_F(TestVfsMonitorFileSystemWatcher, FileClosedSignal)
+{
+    ASSERT_NE(watcher, nullptr);
+
+    QSignalSpy spy(watcher, &VfsMonitorFileSystemWatcher::fileClosed);
+    ASSERT_TRUE(spy.isValid());
+
+    // 创建文件并写入内容后关闭，触发 ACT_CLOSE_WRITE_FILE
+    QString filePath = testDir->path() + "/closewrite.txt";
+    QFile file(filePath);
+    file.open(QIODevice::WriteOnly);
+    file.write("close write test");
+    file.close();
+
+    int count = waitForSignal(spy);
+    ASSERT_GT(count, 0) << "fileClosed signal not received within timeout";
+
+    QList<QVariant> args = spy.takeFirst();
+    EXPECT_EQ(args.at(0).toString(), testDir->path());
+    EXPECT_EQ(args.at(1).toString(), "closewrite.txt");
+}
+
 // ========== 路径排除 ==========
 
 TEST_F(TestVfsMonitorFileSystemWatcher, ExcludePredicateFiltersEvents)
