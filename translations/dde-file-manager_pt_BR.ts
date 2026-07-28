@@ -119,33 +119,34 @@
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="475"/>
         <source>Ignore for Now</source>
-        <translation type="unfinished"/>
+        <translation>Ignorar por enquanto</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="479"/>
         <source>Hardware Failure Warning</source>
-        <translation type="unfinished"/>
+        <translation>Aviso de falha de hardware</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="480"/>
         <source>%1 is in hardware write-protected mode.
 Flash memory may be failing. Please back up data immediately.</source>
-        <translation type="unfinished"/>
+        <translation>%1 está em modo de proteção contra gravação por hardware.
+A memória flash pode estar apresentando falhas. Faça um backup dos seus dados imediatamente.</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="486"/>
         <source>Device Damaged, Cannot Auto Repair</source>
-        <translation type="unfinished"/>
+        <translation>Dispositivo danificado. Não é possível reparar automaticamente</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="487"/>
         <source>The data structure of %1 is severely damaged and cannot be recognized or repaired by the system. If there are important files inside, please stop using it. It is recommended to use professional data recovery software or seek professional assistance.</source>
-        <translation type="unfinished"/>
+        <translation>A estrutura de dados de %1 está gravemente danificada e não pode ser reconhecida nem reparada pelo sistema. Se houver arquivos importantes nele, pare de utilizá-lo. Recomenda-se o uso de um software profissional de recuperação de dados ou a busca de assistência especializada.</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="732"/>
         <source>Repair operation failed</source>
-        <translation type="unfinished"/>
+        <translation>Falha na operação de reparo</translation>
     </message>
 </context>
 <context>
@@ -2288,7 +2289,7 @@ Você precisa atualizar este cofre para continuar usando-o.</translation>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="94"/>
         <source>Repair Storage Device</source>
-        <translation type="unfinished"/>
+        <translation>Reparar dispositivo de armazenamento</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="99"/>
