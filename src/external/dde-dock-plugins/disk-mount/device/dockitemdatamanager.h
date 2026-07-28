@@ -14,6 +14,15 @@
 typedef QMap<QString, DockItemData> ItemContainer;
 
 using DeviceManager = OrgDeepinFilemanagerDaemonDeviceManagerInterface;
+class UsbRepairProxy;
+class RepairDialog;
+
+struct PendingErrorInfo {
+    QString deviceName;
+    QString fsType;
+    QString errorType;
+    QString message;
+};
 class DockItemDataManager : public QObject
 {
     Q_OBJECT
@@ -45,6 +54,19 @@ private Q_SLOTS:
     void onServiceRegistered();
     void onServiceUnregistered();
 
+    // USB Repair slots
+    void onFsErrorDetected(const QString &devicePath,
+                           const QString &deviceName,
+                           const QString &fsType,
+                           const QString &errorType,
+                           bool canRepair,
+                           const QString &message);
+    void onFsErrorCleared(const QString &devicePath);
+    void onNotifyActionInvoked(uint notificationId, const QString &action);
+    void onNotifyClosed(uint notificationId, uint reason);
+    void onRepairProgress(const QString &devicePath, int percent, const QString &logLine);
+    void onRepairFinished(const QString &devicePath, bool success, const QString &summary);
+
 private:
     explicit DockItemDataManager(QObject *parent = nullptr);
 
@@ -54,19 +76,29 @@ private:
     bool isMountPointInFstab(const QString &mountPoint);
     void playSoundOnDevPlugInOut(bool in);
     void updateDockVisible();
-    void notify(const QString &title, const QString &msg);
+    void notify(const QString &title, const QString &msg, int timeout = 3000);
+    void notifyWithActions(const QString &title, const QString &msg,
+                           const QStringList &actions, const QString &devicePath, int timeout = 10000);
+    void closeNotification(uint notificationId);
 
     DockItemData buildBlockItem(const QVariantMap &data);
     DockItemData buildProtocolItem(const QVariantMap &data);
 
     void connectDeviceManger();
     void watchService();
+    void connectRepairService();
 
 private:
     ItemContainer blocks;
     ItemContainer protocols;
 
     QScopedPointer<DeviceManager> devMng;
+
+    // USB Repair
+    UsbRepairProxy *m_repairProxy { nullptr };
+    QMap<uint, QString> m_notificationToDevice;   // notification ID → devicePath
+    QMap<QString, PendingErrorInfo> m_pendingErrors;   // devicePath → error info
+    QMap<QString, RepairDialog *> m_repairDialogs;   // devicePath → repair dialog
 };
 
 #endif   // DOCKITEMDATAMANAGER_H

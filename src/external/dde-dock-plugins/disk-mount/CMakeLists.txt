@@ -32,6 +32,11 @@ qt6_add_dbus_interface(MOUNT_PLUGIN_FILES
     devicemanager_interface
 )
 
+qt6_add_dbus_interface(MOUNT_PLUGIN_FILES
+    "${CMAKE_SOURCE_DIR}/assets/dbus/org.deepin.Filemanager.UsbRepair.xml"
+    usbrepair_interface
+)
+
 add_library(${PROJECT_NAME} SHARED
     ${MOUNT_PLUGIN_FILES}
     ${QRC_RESOURCES}
@@ -55,7 +60,30 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     PkgConfig::LibMount
 )
 
+# Standalone repair dialog executable (runs in its own process because
+# tray-loader cannot create top-level QWidget windows under dde-shell's
+# custom Wayland protocol)
+add_executable(dde-usb-repair-dialog
+    repair_dialog_main.cpp
+    widgets/repairdialog.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/usbrepair_interface.cpp
+    ${QRC_RESOURCES}
+)
+
+set_target_properties(dde-usb-repair-dialog PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ./
+)
+
+target_link_libraries(dde-usb-repair-dialog PRIVATE
+    Qt6::Widgets
+    Qt6::Core
+    Qt6::DBus
+    Dtk6::Widget
+    Dtk6::Gui
+)
+
 install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION lib/dde-dock/plugins/system-trays)
+install(TARGETS dde-usb-repair-dialog RUNTIME DESTINATION bin)
 
 dtk_add_config_meta_files(
     APPID "org.deepin.dde.dock"

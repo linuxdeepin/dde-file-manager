@@ -51,6 +51,7 @@ private:
     bool isDeviceMounted(const QString &deviceFile);
     bool isHardwareReadOnly(const QString &deviceFile);
     bool checkDirtyBit(const QString &deviceFile, const QString &fsType);
+    bool shouldIgnoreDevice(const QString &blockObjPath);
     QString getParentDriveObjPath(const QString &blockObjPath);
 
     QDBusInterface *m_udisks2ObjMgr { nullptr };

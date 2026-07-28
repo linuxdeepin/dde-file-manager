@@ -122,8 +122,15 @@ void UsbRepairMonitor::onInterfacesRemoved(
 
 void UsbRepairMonitor::checkDeviceHealth(const QString &blockObjPath)
 {
+    // Check if device should be ignored (e.g., UDISKS_IGNORE=1)
+    if (shouldIgnoreDevice(blockObjPath)) {
+        fmDebug() << "UsbRepairMonitor: device marked as ignored, skipping health check:" << blockObjPath;
+        return;
+    }
+
     QString deviceName;
     if (!isUsbDevice(blockObjPath, &deviceName)) {
+        fmDebug() << "UsbRepairMonitor: not a USB device, skipping health check:" << blockObjPath;
         return;
     }
 
@@ -198,8 +205,10 @@ bool UsbRepairMonitor::isUsbDevice(const QString &blockObjPath, QString *deviceN
 
     // Get drive object path
     QDBusObjectPath drivePath = blockIface.property("Drive").value<QDBusObjectPath>();
-    if (drivePath.path().isEmpty() || drivePath.path() == "/")
+    if (drivePath.path().isEmpty() || drivePath.path() == "/") {
+        fmDebug() << "UsbRepairMonitor: no drive associated with block device:" << blockObjPath;
         return false;
+    }
 
     // Check drive ConnectionBus == "usb"
     QDBusInterface driveIface(
@@ -208,12 +217,16 @@ bool UsbRepairMonitor::isUsbDevice(const QString &blockObjPath, QString *deviceN
         Defines::kUdisks2DriveIface,
         QDBusConnection::systemBus());
 
-    if (!driveIface.isValid())
+    if (!driveIface.isValid()) {
+        fmDebug() << "UsbRepairMonitor: drive interface invalid for:" << blockObjPath << "drive:" << drivePath.path();
         return false;
+    }
 
     QString connectionBus = driveIface.property("ConnectionBus").toString();
-    if (connectionBus != "usb")
+    if (connectionBus != "usb") {
+        fmDebug() << "UsbRepairMonitor: not USB (ConnectionBus =" << connectionBus << ") skipping:" << blockObjPath;
         return false;
+    }
 
     if (deviceName) {
         *deviceName = driveIface.property("Id").toString();
@@ -227,6 +240,9 @@ bool UsbRepairMonitor::isUsbDevice(const QString &blockObjPath, QString *deviceN
 
     // Check removable
     bool removable = driveIface.property("Removable").toBool();
+    if (!removable)
+        fmDebug() << "UsbRepairMonitor: drive not removable, skipping:" << blockObjPath;
+
     return removable;
 }
 
@@ -241,10 +257,13 @@ QString UsbRepairMonitor::getDeviceFile(const QString &blockObjPath)
     if (!blockIface.isValid())
         return {};
 
-    // Device 属性是 D-Bus 字节数组(ay)，常以 '\0' 结尾；直接 toString() 会保留尾部空字节，
-    // 导致后续路径匹配、进程参数出错。用 constData() 截断尾部空字节。
-    QByteArray dev = blockIface.property("Device").toByteArray();
-    return QString::fromUtf8(dev.constData());
+    // udisks2 "Device" property is type "ay" (byte array). Qt converts it to
+    // a QString that may contain a trailing NUL byte (e.g. "/dev/sda1\0"),
+    // which breaks string comparisons and regex matching. Strip trailing NULs.
+    QString deviceFile = blockIface.property("Device").toString();
+    while (deviceFile.endsWith(QChar::Null))
+        deviceFile.chop(1);
+    return deviceFile;
 }
 
 QString UsbRepairMonitor::getFsType(const QString &deviceFile)
@@ -343,8 +362,15 @@ bool UsbRepairMonitor::checkDirtyBit(const QString &deviceFile, const QString &f
 
 void UsbRepairMonitor::checkMissingFilesystem(const QString &blockObjPath)
 {
+    // Check if device should be ignored (e.g., UDISKS_IGNORE=1)
+    if (shouldIgnoreDevice(blockObjPath)) {
+        fmDebug() << "UsbRepairMonitor: device marked as ignored, skipping missing filesystem check:" << blockObjPath;
+        return;
+    }
+
     QString deviceName;
     if (!isUsbDevice(blockObjPath, &deviceName)) {
+        fmDebug() << "UsbRepairMonitor: not a USB device, skipping missing filesystem check:" << blockObjPath;
         return;
     }
 
@@ -437,3 +463,23 @@ void UsbRepairMonitor::checkMissingFilesystem(const QString &blockObjPath)
                           "Data may be recoverable through repair."));
 }
 
+bool UsbRepairMonitor::shouldIgnoreDevice(const QString &blockObjPath)
+{
+    QDBusInterface blockIface(
+        Defines::kUdisks2Service,
+        blockObjPath,
+        Defines::kUdisks2BlockIface,
+        QDBusConnection::systemBus());
+
+    if (!blockIface.isValid())
+        return false;
+
+    // Check HintIgnore property - this is set when UDISKS_IGNORE=1
+    bool hintIgnore = blockIface.property("HintIgnore").toBool();
+
+    if (hintIgnore) {
+        fmDebug() << "UsbRepairMonitor: device has HintIgnore=true (UDISKS_IGNORE):" << blockObjPath;
+    }
+
+    return hintIgnore;
+}

@@ -262,7 +262,6 @@ bool UsbRepairWorker::checkAuthorization(const QString &callerBusName)
 
     return result == Authority::Yes;
 }
-
 bool UsbRepairWorker::umountDevice(const QString &devicePath)
 {
     QProcess proc;
