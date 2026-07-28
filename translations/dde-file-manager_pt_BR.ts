@@ -104,12 +104,12 @@
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="470"/>
         <source>Detect Device Abnormality, Repair Recommended</source>
-        <translation>Foi detectada uma anormalidade no dispositivo. Recomenda-se repará-lo</translation>
+        <translation>Foi detectado um problema no dispositivo. Recomenda-se repará-lo</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="471"/>
         <source>Your %1 has data errors, possibly caused by unsafe removal!</source>
-        <translation>Foram detectados erros de dados em %1, possivelmente causados por uma remoção insegura!</translation>
+        <translation>Foram detectados erros de dados em %1, possivelmente causados pela remoção incorreta do dispositivo.</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="474"/>
