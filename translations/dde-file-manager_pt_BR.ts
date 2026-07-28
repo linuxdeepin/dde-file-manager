@@ -2294,7 +2294,7 @@ Você precisa atualizar este cofre para continuar usando-o.</translation>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="99"/>
         <source>Preparing to repair device: %1 (%2 %3)</source>
-        <translation type="unfinished"/>
+        <translation>Preparando para reparar o dispositivo: %1 (%2 %3)</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="104"/>
