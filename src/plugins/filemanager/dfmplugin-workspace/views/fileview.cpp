@@ -564,6 +564,20 @@ void FileView::onHeaderHiddenChanged(const QString &roleName, const bool isHidde
 
     d->columnForRoleHiddenMap[roleName] = isHidden;
 
+    const QUrl &url = rootUrl();
+    if (d->shouldPersistState(url)) {
+        for (int i = 0; i < model()->columnCount(); ++i) {
+            if (model()->headerData(i, Qt::Horizontal, Qt::DisplayRole).toString() == roleName) {
+                ItemRoles role = model()->getRoleByColumn(i);
+                QVariantMap hiddenState = d->fileViewStateValue(url, "columnHiddenState", {}).toMap();
+                hiddenState[QString::number(role)] = isHidden;
+                setFileViewStateValue(url, "columnHiddenState", hiddenState);
+                Application::appObtuselySetting()->sync();
+                break;
+            }
+        }
+    }
+
     if (d->allowedAdjustColumnSize) {
         updateListHeaderView();
     } else {
@@ -2425,10 +2439,12 @@ void FileView::initializeConnect()
     connect(d->statusBar->scalingSlider(), &DSlider::valueChanged, this, &FileView::onScalingValueChanged);
 
     connect(model(), &FileViewModel::stateChanged, this, &FileView::onModelStateChanged);
-    connect(model(), &FileViewModel::groupingStateChanged, this, [this](GroupingState) {
-        if (isIconViewMode())
-            d->adjustIconModeSpacing(model()->groupingStrategy());
-    }, Qt::QueuedConnection);
+    connect(
+            model(), &FileViewModel::groupingStateChanged, this, [this](GroupingState) {
+                if (isIconViewMode())
+                    d->adjustIconModeSpacing(model()->groupingStrategy());
+            },
+            Qt::QueuedConnection);
     connect(model(), &FileViewModel::highlightKeywordsChanged, this, [this](const QStringList &keywords) {
         updateDelegateHighlightKeywords(keywords);
         update();
@@ -2664,13 +2680,14 @@ void FileView::updateListHeaderView()
     d->columnRoles.clear();
 
     const QVariantMap &state = Application::appObtuselySetting()->value("WindowManager", "ViewColumnState").toMap();
+    const QVariantMap &hiddenState = d->fileViewStateValue(rootUrl(), "columnHiddenState", {}).toMap();
 
     for (int i = 0; i < d->headerView->count(); ++i) {
         int logicalIndex = d->headerView->logicalIndex(i);
         d->columnRoles << model()->getRoleByColumn(i);
+        ItemRoles curRole = d->columnRoles.last();
 
         if (d->allowedAdjustColumnSize) {
-            ItemRoles curRole = d->columnRoles.last();
             int colWidth = state.value(QString::number(curRole), -1).toInt();
             if (colWidth > 0) {
                 d->headerView->resizeSection(model()->getColumnByRole(curRole), colWidth);
@@ -2689,12 +2706,9 @@ void FileView::updateListHeaderView()
         }
 
         const QString &columnName = model()->headerData(i, Qt::Horizontal, Qt::DisplayRole).toString();
-
-        if (!d->columnForRoleHiddenMap.contains(columnName)) {
-            d->headerView->setSectionHidden(logicalIndex, false);
-        } else {
-            d->headerView->setSectionHidden(logicalIndex, d->columnForRoleHiddenMap.value(columnName));
-        }
+        bool hidden = hiddenState.value(QString::number(curRole), curRole == kItemFileCreatedRole).toBool();
+        d->columnForRoleHiddenMap[columnName] = hidden;
+        d->headerView->setSectionHidden(logicalIndex, hidden);
     }
 
     if (d->adjustFileNameColumn) {
