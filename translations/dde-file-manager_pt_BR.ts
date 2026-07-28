@@ -114,7 +114,7 @@
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="474"/>
         <source>Repair Immediately</source>
-        <translation type="unfinished"/>
+        <translation>Reparar</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="475"/>
