@@ -2380,7 +2380,7 @@ Você precisa atualizar este cofre para continuar usando-o.</translation>
     <message>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="432"/>
         <source>Filesystem is severely corrupted and cannot be recognized. Data may be recoverable through repair.</source>
-        <translation type="unfinished"/>
+        <translation>O sistema de arquivos está gravemente corrompido e não pode ser reconhecido. Os dados podem ser recuperáveis por meio de reparo.</translation>
     </message>
 </context>
 <context>
@@ -2388,32 +2388,32 @@ Você precisa atualizar este cofre para continuar usando-o.</translation>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="36"/>
         <source>Invalid device path: %1</source>
-        <translation type="unfinished"/>
+        <translation>Caminho de dispositivo inválido: %1</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="42"/>
         <source>Device is already being repaired: %1</source>
-        <translation type="unfinished"/>
+        <translation>O dispositivo já está sendo reparado: %1</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="49"/>
         <source>Cannot detect filesystem type for: %1</source>
-        <translation type="unfinished"/>
+        <translation>Não foi possível detectar o tipo de sistema de arquivos de: %1</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="55"/>
         <source>Unsupported filesystem type: %1</source>
-        <translation type="unfinished"/>
+        <translation>Tipo de sistema de arquivos não compatível: %1</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="70"/>
         <source>Device is hardware write-protected, cannot repair</source>
-        <translation type="unfinished"/>
+        <translation>O dispositivo está protegido contra gravação por hardware e não pode ser reparado</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="76"/>
         <source>Authorization failed</source>
-        <translation type="unfinished"/>
+        <translation>Falha na autorização</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="95"/>
