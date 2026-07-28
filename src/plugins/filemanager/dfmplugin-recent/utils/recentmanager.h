@@ -68,6 +68,7 @@ private:
     explicit RecentManager(QObject *parent = nullptr);
     ~RecentManager() override;
     void resetRecentNodes();
+    void processPendingItems();
 
 public slots:
     void reloadRecent();
@@ -76,6 +77,13 @@ public slots:
     void onItemChanged(const QString &path, qint64 modified);
 
 private:
+    struct PendingItem
+    {
+        QString path;
+        QString href;
+        qint64 modified {};
+    };
+
     QScopedPointer<RecentManagerDBusInterface> recentDBusInterce;
     struct RecentItem
     {
@@ -83,6 +91,8 @@ private:
         QString originPath;
     };
     QMap<QUrl, RecentItem> recentItems;
+    QQueue<PendingItem> pendingItems;
+    QTimer batchTimer;
 };
 }   // namespace dfmplugin_recent
 #endif   // RECENTMANAGER_H
