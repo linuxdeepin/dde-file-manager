@@ -1963,6 +1963,15 @@ void FileView::contextMenuEvent(QContextMenuEvent *event)
         return;
     }
 
+    // Reset any stale drag-select state left by touch long-press before showing the menu.
+    // On touch screens a long-press synthesizes a left-button press/move that sets
+    // DragSelectingState; the subsequent release is consumed by the modal menu exec()
+    // and never reaches mouseReleaseEvent, so the state is never reset. A stale
+    // DragSelectingState later makes QListView::resizeEvent skip doDelayedItemsLayout,
+    // leaving visualRect() with stale item positions and breaking icon layout on
+    // maximize. Resetting here mirrors what mouseReleaseEvent would do.
+    setState(QAbstractItemView::NoState);
+
     if (NetworkUtils::instance()->checkFtpOrSmbBusy(rootUrl())) {
         fmWarning() << "Cannot show context menu: FTP or SMB is busy for URL:" << rootUrl().toString();
         DialogManager::instance()->showUnableToVistDir(rootUrl().path());
