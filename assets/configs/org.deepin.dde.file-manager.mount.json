@@ -45,6 +45,28 @@
             "description":"Configures network protocols that support alias settings",
             "permissions":"readwrite",
             "visibility":"private"
+        },
+        "checkNetworkAccessable": {
+            "value": true,
+            "serial": 0,
+            "flags": ["global"],
+            "name": "Check that the target host is accessible before accessing the web directory.",
+            "name[zh_CN]": "访问网络目录前检查目标主机是否可访问。",
+            "description[zh_CN]": "可以有效保证访问目录不会因为网络不通而长时间阻塞。如果远程主机禁用了这些端口的连接，可以关闭此项。",
+            "description": "It can effectively ensure that access to the directory will not be blocked for a long time due to network failure. This can be turned off if the remote host has disabled connections to these ports.",
+            "permissions": "readwrite",
+            "visibility": "public"
+        },
+        "deviceUsagePollingInterval": {
+            "value": 10,
+            "serial": 0,
+            "flags": ["global"],
+            "name": "Device usage polling interval",
+            "name[zh_CN]": "设备容量轮询间隔",
+            "description[zh_CN]": "轮询设备使用量的时间间隔，单位为秒。较小的值更新更及时，但会消耗更多系统资源。最小值为10秒。",
+            "description": "The interval for polling device usage in seconds. Smaller values provide more timely updates but consume more system resources. Minimum value is 10 seconds.",
+            "permissions": "readwrite",
+            "visibility": "public"
         }
     }
 }

@@ -47,6 +47,7 @@ public:
 private Q_SLOTS:
     void queryUsageAsync();
     void updateStorage(const QString &id, quint64 total, quint64 avai);
+    void onPollingIntervalChanged();
 
 private:
     void queryUsageOfItem(const QVariantMap &itemData, DFMMOUNT::DeviceType type);
@@ -57,7 +58,8 @@ private:
     DeviceWatcher *q { nullptr };
 
     QTimer pollingTimer;
-    const int kPollingInterval = 10000;
+    int pollingInterval { 10000 };
+    static constexpr int kMinPollingInterval { 10000 };
 
     QHash<QString, QVariantMap> allBlockInfos;
     QHash<QString, QVariantMap> allProtocolInfos;
