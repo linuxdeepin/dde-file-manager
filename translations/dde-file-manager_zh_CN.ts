@@ -103,6 +103,53 @@
         <source>Device (%1) is busy, cannot %2 now.</source>
         <translation>设备（%1）正忙，无法%2。</translation>
     </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="470"/>
+        <source>Detect Device Abnormality, Repair Recommended</source>
+        <translation>检测到设备异常，建议立即修复</translation>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="471"/>
+        <source>Your %1 has data errors, possibly caused by unsafe removal!</source>
+        <translation>您的 %1 存在数据错误，可能是上次拔出时未安全弹出导致的！</translation>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="474"/>
+        <source>Repair Immediately</source>
+        <translation>立即修复</translation>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="475"/>
+        <source>Ignore for Now</source>
+        <translation>暂不处理</translation>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="479"/>
+        <source>Hardware Failure Warning</source>
+        <translation>硬件故障警告</translation>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="480"/>
+        <source>%1 is in hardware write-protected mode.
+Flash memory may be failing. Please back up data immediately.</source>
+        <translation>%1 处于硬件写保护模式。
+闪存可能正在失效。请立即备份数据。</translation>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="486"/>
+        <source>Device Damaged, Cannot Auto Repair</source>
+        <translation>设备已损坏，无法自动修复</translation>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="487"/>
+        <source>The data structure of %1 is severely damaged and cannot be recognized or repaired by the system. If there are important files inside, please stop using it. It is recommended to use professional data recovery software or seek professional assistance.</source>
+        <translation>%1 的数据结构受损严重，系统无法识别与修复。若里面有重要文件，请停止使用。建议使用专业的数据恢复软件或寻求专业人员帮助。</translation>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="732"/>
+        <source>Repair operation failed</source>
+        <translation>修复操作失败</translation>
+    </message>
 </context>
 <context>
     <name>FileDialogHandle</name>
@@ -2236,6 +2283,168 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewswitchbutton.cpp" line="59"/>
         <source>Tree view</source>
         <translation>树形视图</translation>
+    </message>
+</context>
+<context>
+    <name>RepairDialog</name>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="94"/>
+        <source>Repair Storage Device</source>
+        <translation>修复存储设备</translation>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="99"/>
+        <source>Preparing to repair device: %1 (%2 %3)</source>
+        <translation>准备修复设备：%1 (%2 %3)</translation>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="104"/>
+        <source>The device will be unmounted during repair. It will be automatically remounted after repair is complete. Please do not remove the device during the repair process.</source>
+        <translation>设备在修复过程中将被卸载。修复完成后将自动重新挂载。修复过程中请勿移除设备。</translation>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="118"/>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="119"/>
+        <source>Start Repair</source>
+        <translation>开始修复</translation>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="128"/>
+        <source>Repairing Storage Device</source>
+        <translation>正在修复存储设备</translation>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="133"/>
+        <source>Repairing device: %1 (%2 %3)</source>
+        <translation>正在修复设备：%1 (%2 %3)</translation>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="160"/>
+        <source>Repair Complete</source>
+        <translation>修复完成</translation>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="165"/>
+        <source>The device has been successfully repaired. The device has been remounted and is now ready to use.</source>
+        <translation>设备已成功修复。设备已重新挂载，现在可以使用了。</translation>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="177"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="230"/>
+        <source>Close</source>
+        <translation>关闭</translation>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="178"/>
+        <source>Open Device</source>
+        <translation>打开设备</translation>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="187"/>
+        <source>Repair Failed</source>
+        <translation>修复失败</translation>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="192"/>
+        <source>Failed to repair the device. This may be due to serious format errors or physical damage. To protect your data, it is recommended to stop writing new files and try using professional data recovery software or seek manual assistance.</source>
+        <translation>设备修复失败。这可能是由于严重的格式错误或物理损坏造成的。为了保护您的数据，建议停止写入新文件，并尝试使用专业的数据恢复软件或寻求人工帮助。</translation>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="206"/>
+        <source>Error Code: %1</source>
+        <translation>错误代码：%1</translation>
+    </message>
+</context>
+<context>
+    <name>UsbRepairMonitor</name>
+    <message>
+        <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="154"/>
+        <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="409"/>
+        <source>Filesystem type cannot be detected. The device may be severely damaged or formatted with an unsupported filesystem. Data recovery may require professional tools.</source>
+        <translation>无法检测文件系统类型。设备可能已严重损坏或使用不支持的文件系统格式化。数据恢复可能需要专业工具。</translation>
+    </message>
+    <message>
+        <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="169"/>
+        <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="424"/>
+        <source>Device is hardware write-protected, flash memory may be failing. Please back up data immediately.</source>
+        <translation>设备处于硬件写保护状态，闪存可能正在失效。请立即备份数据。</translation>
+    </message>
+    <message>
+        <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="186"/>
+        <source>Filesystem error detected, device may not have been safely ejected. Mount might have failed due to filesystem corruption.</source>
+        <translation>检测到文件系统错误，设备可能未安全弹出。由于文件系统损坏，挂载可能失败。</translation>
+    </message>
+    <message>
+        <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="432"/>
+        <source>Filesystem is severely corrupted and cannot be recognized. Data may be recoverable through repair.</source>
+        <translation>文件系统严重损坏，无法识别。数据可能通过修复恢复。</translation>
+    </message>
+</context>
+<context>
+    <name>UsbRepairWorker</name>
+    <message>
+        <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="36"/>
+        <source>Invalid device path: %1</source>
+        <translation>无效的设备路径：%1</translation>
+    </message>
+    <message>
+        <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="42"/>
+        <source>Device is already being repaired: %1</source>
+        <translation>设备正在修复中：%1</translation>
+    </message>
+    <message>
+        <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="49"/>
+        <source>Cannot detect filesystem type for: %1</source>
+        <translation>无法检测文件系统类型：%1</translation>
+    </message>
+    <message>
+        <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="55"/>
+        <source>Unsupported filesystem type: %1</source>
+        <translation>不支持的文件系统类型：%1</translation>
+    </message>
+    <message>
+        <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="70"/>
+        <source>Device is hardware write-protected, cannot repair</source>
+        <translation>设备处于硬件写保护状态，无法修复</translation>
+    </message>
+    <message>
+        <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="76"/>
+        <source>Authorization failed</source>
+        <translation>授权失败</translation>
+    </message>
+    <message>
+        <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="95"/>
+        <source>Failed to unmount device: %1</source>
+        <translation>卸载设备失败：%1</translation>
+    </message>
+    <message>
+        <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="165"/>
+        <source>Filesystem repair completed successfully</source>
+        <translation>文件系统修复成功</translation>
+    </message>
+    <message>
+        <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="168"/>
+        <source>NTFS repair capability is limited on Linux. Please connect the device to a Windows system for deep repair.</source>
+        <translation>Linux 上对 NTFS 的修复能力有限。请将设备连接到 Windows 系统进行深度修复。</translation>
+    </message>
+    <message>
+        <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="173"/>
+        <source>Filesystem errors have been repaired</source>
+        <translation>文件系统错误已修复</translation>
+    </message>
+    <message>
+        <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="175"/>
+        <source>Filesystem repair failed (exit code: %1)</source>
+        <translation>文件系统修复失败（退出码：%1）</translation>
+    </message>
+    <message>
+        <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="194"/>
+        <source>Repair timed out after %1 seconds</source>
+        <translation>修复超时（%1 秒后）</translation>
     </message>
 </context>
 <context>
