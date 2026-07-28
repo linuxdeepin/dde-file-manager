@@ -2345,17 +2345,17 @@ Você precisa atualizar este cofre para continuar usando-o.</translation>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="187"/>
         <source>Repair Failed</source>
-        <translation type="unfinished"/>
+        <translation>Falha no reparo</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="192"/>
         <source>Failed to repair the device. This may be due to serious format errors or physical damage. To protect your data, it is recommended to stop writing new files and try using professional data recovery software or seek manual assistance.</source>
-        <translation type="unfinished"/>
+        <translation>Falha ao reparar o dispositivo. Isso pode ser causado por erros graves de formatação ou danos físicos. Para proteger seus dados, recomenda-se interromper a gravação de novos arquivos e tentar usar um software profissional de recuperação de dados ou buscar assistência especializada.</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="206"/>
         <source>Error Code: %1</source>
-        <translation type="unfinished"/>
+        <translation>Código de erro: %1</translation>
     </message>
 </context>
 <context>
@@ -2364,18 +2364,18 @@ Você precisa atualizar este cofre para continuar usando-o.</translation>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="154"/>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="409"/>
         <source>Filesystem type cannot be detected. The device may be severely damaged or formatted with an unsupported filesystem. Data recovery may require professional tools.</source>
-        <translation type="unfinished"/>
+        <translation>Não foi possível detectar o tipo de sistema de arquivos. O dispositivo pode estar gravemente danificado ou ter sido formatado com um sistema de arquivos não compatível. A recuperação de dados pode exigir ferramentas profissionais.</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="169"/>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="424"/>
         <source>Device is hardware write-protected, flash memory may be failing. Please back up data immediately.</source>
-        <translation type="unfinished"/>
+        <translation>O dispositivo está protegido contra gravação por hardware. A memória flash pode estar falhando. Faça backup dos dados imediatamente.</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="186"/>
         <source>Filesystem error detected, device may not have been safely ejected. Mount might have failed due to filesystem corruption.</source>
-        <translation type="unfinished"/>
+        <translation>Erro no sistema de arquivos detectado. O dispositivo pode não ter sido ejetado com segurança. A montagem pode ter falhado devido à corrupção do sistema de arquivos.</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="432"/>
