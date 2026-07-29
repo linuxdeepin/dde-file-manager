@@ -2287,63 +2287,63 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="94"/>
         <source>Repair Storage Device</source>
-        <translation type="unfinished"/>
+        <translation>Repara el dispositiu d&apos;emmagatzematge</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="99"/>
         <source>Preparing to repair device: %1 (%2 %3)</source>
-        <translation type="unfinished"/>
+        <translation>Es prepara la reparació del dispositiu: %1 (%2 %3)</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="104"/>
         <source>The device will be unmounted during repair. It will be automatically remounted after repair is complete. Please do not remove the device during the repair process.</source>
-        <translation type="unfinished"/>
+        <translation>El dispositiu es desmuntarà durant la reparació. Es tornarà a muntar automàticament un cop acabada. Si us plau, no retireu el dispositiu durant el procés.</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="118"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Cancel·la</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="119"/>
         <source>Start Repair</source>
-        <translation type="unfinished"/>
+        <translation>Inicia la reparació</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="128"/>
         <source>Repairing Storage Device</source>
-        <translation type="unfinished"/>
+        <translation>Reparació del dispositiu d&apos;emmagatzematge</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="133"/>
         <source>Repairing device: %1 (%2 %3)</source>
-        <translation type="unfinished"/>
+        <translation>Es repara el dispositiu: %1 (%2 %3)</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="160"/>
         <source>Repair Complete</source>
-        <translation type="unfinished"/>
+        <translation>Reparació completa</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="165"/>
         <source>The device has been successfully repaired. The device has been remounted and is now ready to use.</source>
-        <translation type="unfinished"/>
+        <translation>El dispositiu s&apos;ha reparat correctament. S&apos;ha tornat a muntar i ja està a punt.</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="177"/>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="230"/>
         <source>Close</source>
-        <translation type="unfinished"/>
+        <translation>Tanca</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="178"/>
         <source>Open Device</source>
-        <translation type="unfinished"/>
+        <translation>Obre el dispositiu</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="187"/>
         <source>Repair Failed</source>
-        <translation type="unfinished"/>
+        <translation>La reparació ha fallat.</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="192"/>
