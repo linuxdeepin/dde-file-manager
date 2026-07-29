@@ -636,7 +636,8 @@ void FileManagerWindowPrivate::updateSideBarState()
     sideBarShrinking = totalWidth < requiredMinWidth;
 
     // Only save sidebar width when not shrinking and width is reasonable
-    if (!sideBarShrinking && sideBarWidth >= kMinimumLeftWidth) {
+    if (!sideBarShrinking && sideBarWidth >= kMinimumLeftWidth
+        && !(curSplitterAnimation && curSplitterAnimation->state() == QAbstractAnimation::Running)) {
         lastSidebarExpandedPostion = sideBarWidth;
     }
 }
@@ -651,13 +652,13 @@ void FileManagerWindowPrivate::updateSideBarVisibility()
     bool haveSpaceShowSidebar = totalWidth >= (actualMinRightWidth + kMinimumLeftWidth + splitter->handleWidth());
 
     if (haveSpaceShowSidebar && !sideBarAutoVisible) {
-        showSideBar();
+        animateSideBarShowForResize();
     } else if (!haveSpaceShowSidebar && sideBarAutoVisible) {
-        hideSideBar();
+        animateSideBarHideForResize();
     } else if (sideBarShrinking && sideBarAutoVisible) {
         int newSideBarWidth = totalWidth - actualMinRightWidth - splitter->handleWidth();
         if (newSideBarWidth <= kMinimumLeftWidth) {
-            hideSideBar();
+            animateSideBarHideForResize();
         }
     }
 
@@ -678,6 +679,151 @@ void FileManagerWindowPrivate::updateWindowMinimumWidth()
     }
 
     q->setMinimumWidth(requiredMinWidth);
+}
+
+void FileManagerWindowPrivate::animateSideBarHideForResize()
+{
+    // Mirror hideSideBar()'s early-return: when the sidebar is already hidden
+    // (e.g. user manually collapsed it via the expand button), the resize path
+    // must NOT touch sideBarAutoVisible — otherwise a subsequent window widen
+    // would incorrectly auto-show the manually-hidden sidebar.
+    if (sideBar && !sideBar->isVisible())
+        return;
+
+    if (!sideBar || !sidebarSep || !isAnimationEnabled()) {
+        hideSideBar();
+        return;
+    }
+
+    // Stop any running splitter animation and capture the current width as the
+    // animation start point.
+    if (curSplitterAnimation && curSplitterAnimation->state() == QAbstractAnimation::Running) {
+        curSplitterAnimation->stop();
+        delete curSplitterAnimation;
+        curSplitterAnimation = nullptr;
+    }
+
+    // State changes — identical to hideSideBar().
+    sideBarAutoVisible = false;
+    expandButton->setProperty("expand", false);
+
+    int start = splitter->sizes().at(0);
+    int end = 1;
+
+    // Keep the sidebar visible during the collapse animation so the user sees
+    // the shrink; hide it on completion.
+    sideBar->setMinimumWidth(1);
+
+    int duration = DConfigManager::instance()->value(kAnimationDConfName, kAnimationSidebarDuration, 366).toInt();
+    auto curve = static_cast<QEasingCurve::Type>(DConfigManager::instance()->value(kAnimationDConfName, kAnimationSidebarCurve, 22).toInt());
+
+    curSplitterAnimation = new QPropertyAnimation(splitter, "splitPosition");
+    curSplitterAnimation->setEasingCurve(curve);
+    curSplitterAnimation->setDuration(duration);
+    curSplitterAnimation->setStartValue(start);
+    curSplitterAnimation->setEndValue(end);
+
+    connect(curSplitterAnimation, &QPropertyAnimation::finished, this, [this]() {
+        sideBar->setVisible(false);
+        sidebarSep->setVisible(false);
+        emit q->windowSplitterWidthChanged(0);
+        updateSideBarSeparatorPosition();
+        updateRightAreaMinWidth();
+        // Do NOT call resetSideBarSize() here: at this point the splitter has
+        // collapsed to width 1, and resetSideBarSize() would overwrite
+        // lastSidebarExpandedPostion with 1, so the next expand would settle on
+        // the minimum width instead of restoring the user's preferred width.
+        // Min/max width constraints are restored when the sidebar is shown
+        // again (animateSideBarShowForResize finished lambda).
+        delete curSplitterAnimation;
+        curSplitterAnimation = nullptr;
+    });
+
+    connect(curSplitterAnimation, &QPropertyAnimation::valueChanged, q, [this](const QVariant &value) {
+        emit q->windowSplitterWidthChanged(value.toInt());
+        updateSideBarSeparatorPosition();
+    });
+
+    Q_EMIT q->aboutToPlaySplitterAnimation(start, end);
+    curSplitterAnimation->start();
+}
+
+void FileManagerWindowPrivate::animateSideBarShowForResize()
+{
+    if (!sideBar || !sidebarSep || !isAnimationEnabled()) {
+        showSideBar();
+        return;
+    }
+
+    // Stop any running splitter animation and capture the current width.
+    if (curSplitterAnimation && curSplitterAnimation->state() == QAbstractAnimation::Running) {
+        curSplitterAnimation->stop();
+        delete curSplitterAnimation;
+        curSplitterAnimation = nullptr;
+    }
+
+    // State changes — identical to showSideBar(), EXCEPT we skip the window
+    // geometry auto-enlarge (the user is actively dragging the window edge and
+    // auto-enlarging would fight the drag).
+    if (rightArea && detailSpace && detailSpace->isVisible()) {
+        int minRightWidth = kMinimumWorkspaceWidth + kMinimumDetailWidth;
+        if (detailSplitter)
+            minRightWidth += detailSplitter->handleWidth();
+        rightArea->setMinimumWidth(minRightWidth);
+    }
+
+    sideBar->setVisible(true);
+    sidebarSep->setVisible(true);
+    expandButton->setProperty("expand", true);
+    sideBarAutoVisible = true;
+
+    int start = splitter->sizes().at(0);
+    if (start < 1)
+        start = 1;
+    int end = qMax(lastSidebarExpandedPostion, kMinimumLeftWidth);
+
+    sideBar->setMinimumWidth(1);
+
+    int duration = DConfigManager::instance()->value(kAnimationDConfName, kAnimationSidebarDuration, 366).toInt();
+    auto curve = static_cast<QEasingCurve::Type>(DConfigManager::instance()->value(kAnimationDConfName, kAnimationSidebarCurve, 22).toInt());
+
+    curSplitterAnimation = new QPropertyAnimation(splitter, "splitPosition");
+    curSplitterAnimation->setEasingCurve(curve);
+    curSplitterAnimation->setDuration(duration);
+    curSplitterAnimation->setStartValue(start);
+    curSplitterAnimation->setEndValue(end);
+
+    connect(curSplitterAnimation, &QPropertyAnimation::finished, this, [this]() {
+        // Restore min/max width constraints but do NOT call resetSideBarSize():
+        // during a window resize the splitter may be clamped to less than the
+        // animation's target (the window is not wide enough), and
+        // resetSideBarSize() would save that clamped width as
+        // lastSidebarExpandedPostion, corrupting the user's preferred width.
+        // updateSideBarState() will save the correct value once the window is
+        // wide enough (sideBarShrinking becomes false).
+        if (sideBar) {
+            sideBar->setMaximumWidth(kMaximumLeftWidth);
+            sideBar->setMinimumWidth(kMinimumLeftWidth);
+        }
+        updateSideBarSeparatorPosition();
+        updateWindowMinimumWidth();
+        updateRightAreaMinWidth();
+        emit q->windowSplitterWidthChanged(lastSidebarExpandedPostion);
+        delete curSplitterAnimation;
+        curSplitterAnimation = nullptr;
+    });
+
+    connect(curSplitterAnimation, &QPropertyAnimation::valueChanged, q, [this](const QVariant &value) {
+        emit q->windowSplitterWidthChanged(value.toInt());
+        updateSideBarSeparatorPosition();
+    });
+
+    Q_EMIT q->aboutToPlaySplitterAnimation(start, end);
+    curSplitterAnimation->start();
+
+    updateSidebarSeparator();
+    updateWindowMinimumWidth();
+    updateRightAreaMinWidth();
 }
 
 int FileManagerWindowPrivate::calculateRequiredWindowWidth(bool includeSidebar, bool includeDetailSpace) const
