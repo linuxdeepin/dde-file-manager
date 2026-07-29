@@ -46,7 +46,7 @@ SPDX-FileCopyrightText = "2026 UnionTech Software Technology Co., Ltd."
 SPDX-License-Identifier = "CC-BY-4.0"
 
 [[annotations]]
-path = "translations/**.ts"
+path = "**/translations/**.ts"
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2026 UnionTech Software Technology Co., Ltd."
 SPDX-License-Identifier = "GPL-3.0-or-later"
