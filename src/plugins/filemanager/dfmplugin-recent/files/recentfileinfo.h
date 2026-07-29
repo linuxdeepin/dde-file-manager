@@ -9,12 +9,16 @@
 
 #include <dfm-base/interfaces/proxyfileinfo.h>
 
+#include <QDateTime>
+
 namespace dfmplugin_recent {
 class RecentFileInfo : public DFMBASE_NAMESPACE::ProxyFileInfo
 {
 public:
     explicit RecentFileInfo(const QUrl &url);
     ~RecentFileInfo() override;
+
+    void setLastReadTime(const QDateTime &time);
 
     virtual bool exists() const override;
     virtual QFile::Permissions permissions() const override;
@@ -28,6 +32,9 @@ public:
 
     virtual QString displayOf(const DisplayInfoType type) const override;
     virtual QVariant timeOf(const FileTimeType type) const override;
+
+private:
+    QDateTime lastReadTime;
 };
 
 using RecentFileInfoPointer = QSharedPointer<RecentFileInfo>;
