@@ -216,6 +216,53 @@ void FileManagerWindowPrivate::animateSplitter(bool expanded)
     curSplitterAnimation->start();
 }
 
+void FileManagerWindowPrivate::animateSideBarForResize(bool expanded)
+{
+    if (!sideBar || !sidebarSep || !splitter)
+        return;
+
+    if (!isAnimationEnabled()) {
+        if (expanded)
+            showSideBar();
+        else
+            hideSideBar();
+        return;
+    }
+
+    // Skip if an animation is already running toward the same target.
+    // This prevents the sidebar from restarting its animation on every
+    // high-frequency resize event while the user is still dragging.
+    if (curSplitterAnimation && curSplitterAnimation->state() == QAbstractAnimation::Running) {
+        bool currentTarget = curSplitterAnimation->endValue().toInt() > 1;
+        if (currentTarget == expanded)
+            return;
+    }
+
+    // Set sideBarAutoVisible BEFORE the animation starts so that:
+    //  - During a collapse, if the user reverses direction and widens the
+    //    window, updateSideBarVisibility immediately fires the expand path.
+    //  - During an expand, a subsequent narrowing fires the collapse path.
+    // Both reversals rely on the flag being flipped at animation start, not
+    // at animation end.
+    sideBarAutoVisible = expanded;
+
+    bool lastAnimationStopped = setupAnimation(expanded);
+
+    // Start from the current splitter position so that mid-animation reversal
+    // does not cause a visual jump back to width 1 or lastSidebarExpandedPostion.
+    int start = splitter->sizes().at(0);
+    int end = expanded ? lastSidebarExpandedPostion : 1;
+
+    if (!expanded && !lastAnimationStopped)
+        lastSidebarExpandedPostion = splitter->sizes().at(0);
+
+    configureAnimation(start, end);
+    connectAnimationSignals();
+
+    Q_EMIT q->aboutToPlaySplitterAnimation(start, end);
+    curSplitterAnimation->start();
+}
+
 bool FileManagerWindowPrivate::isAnimationEnabled() const
 {
     return DConfigManager::instance()->value(kAnimationDConfName, kAnimationSidebarEnable, true).toBool();
@@ -651,13 +698,13 @@ void FileManagerWindowPrivate::updateSideBarVisibility()
     bool haveSpaceShowSidebar = totalWidth >= (actualMinRightWidth + kMinimumLeftWidth + splitter->handleWidth());
 
     if (haveSpaceShowSidebar && !sideBarAutoVisible) {
-        showSideBar();
+        animateSideBarForResize(true);
     } else if (!haveSpaceShowSidebar && sideBarAutoVisible) {
-        hideSideBar();
+        animateSideBarForResize(false);
     } else if (sideBarShrinking && sideBarAutoVisible) {
         int newSideBarWidth = totalWidth - actualMinRightWidth - splitter->handleWidth();
         if (newSideBarWidth <= kMinimumLeftWidth) {
-            hideSideBar();
+            animateSideBarForResize(false);
         }
     }
 

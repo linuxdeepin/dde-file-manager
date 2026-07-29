@@ -51,6 +51,11 @@ public:
     void resetTitleBarSize();
     void resetSideBarSize();
     void animateSplitter(bool expanded);
+    // Animate sidebar show/hide triggered by window resize (not button click).
+    // Differs from animateSplitter: no window-geometry auto-resize, guards against
+    // high-frequency restart, and sets sideBarAutoVisible before animation so the
+    // sidebar can auto re-show after a resize-triggered collapse.
+    void animateSideBarForResize(bool expanded);
 
     void loadWindowState();
     void saveWindowState();
