@@ -111,7 +111,7 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     if (dragOffset != 0)
         opt.rect.translate(0, dragOffset);
 
-    if (sidebarView && !isDragPreview)
+    if (sidebarView && !isDragPreview && dragOffset != 0)
         painter->setClipRect(sidebarView->viewport()->rect());
     else
         painter->setClipRect(opt.rect);
