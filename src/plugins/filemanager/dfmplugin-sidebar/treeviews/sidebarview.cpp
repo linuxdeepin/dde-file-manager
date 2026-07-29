@@ -602,10 +602,28 @@ void SideBarView::dropEvent(QDropEvent *event)
     if (d->draggedUrl.isValid()) {   // select the dragged item when dropped.
         d->notifyOrderChanged();   // notify to update the persistence data
     }
-    if (isInternalDrag)
-        d->clearInternalDragState();
-
     d->dropPos = eventPos;
+
+    if (isInternalDrag) {
+        // Use calculatePlaceholderRow to ensure the actual drop row matches
+        // the visual placeholder shown during dragMoveEvent. The base class
+        // dropEvent relies on dropIndicatorPosition which is never updated
+        // because dragMoveEvent does not call the base class.
+        const int targetRow = d->calculatePlaceholderRow(eventPos, event->mimeData());
+        if (targetRow >= 0 && d->dragSourceIndex.isValid()) {
+            const QModelIndex parent = d->dragSourceIndex.parent();
+            if (auto *sidebarModel = model()) {
+                if (sidebarModel->dropMimeData(event->mimeData(), Qt::MoveAction,
+                                               targetRow, 0, parent)) {
+                    event->setDropAction(Qt::MoveAction);
+                    event->accept();
+                }
+            }
+        }
+        d->clearInternalDragState();
+        return;
+    }
+
     SideBarItem *item = itemAt(eventPos);
     if (!item)
         return DTreeView::dropEvent(event);
