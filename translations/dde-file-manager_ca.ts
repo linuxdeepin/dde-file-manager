@@ -2426,22 +2426,22 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="168"/>
         <source>NTFS repair capability is limited on Linux. Please connect the device to a Windows system for deep repair.</source>
-        <translation type="unfinished"/>
+        <translation>La capacitat de reparació d&apos;un sistema de fitxers NTFS a Linux és limitada. Connecteu el dispositiu a un sistema Windows per a una reparació a fons.</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="173"/>
         <source>Filesystem errors have been repaired</source>
-        <translation type="unfinished"/>
+        <translation>S&apos;han reparat els errors del sistema de fitxers.</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="175"/>
         <source>Filesystem repair failed (exit code: %1)</source>
-        <translation type="unfinished"/>
+        <translation>La reparació del sistema de fitxers ha fallat (codi de sortida: %1).</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="194"/>
         <source>Repair timed out after %1 seconds</source>
-        <translation type="unfinished"/>
+        <translation>La reparació ha superat el temps límit després de %1 segons.</translation>
     </message>
 </context>
 <context>
