@@ -2348,12 +2348,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="192"/>
         <source>Failed to repair the device. This may be due to serious format errors or physical damage. To protect your data, it is recommended to stop writing new files and try using professional data recovery software or seek manual assistance.</source>
-        <translation type="unfinished"/>
+        <translation>No s&apos;ha pogut reparar el dispositiu. Això pot ser degut a errors greus de format o a danys físics. Per protegir-ne les dades, es recomana deixar d&apos;escriure-hi fitxers nous i provar d&apos;usar un programari professional de recuperació de dades o bé sol·licitar assistència manual.</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="206"/>
         <source>Error Code: %1</source>
-        <translation type="unfinished"/>
+        <translation>Codi d&apos;error: %1</translation>
     </message>
 </context>
 <context>
@@ -2362,23 +2362,23 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="154"/>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="409"/>
         <source>Filesystem type cannot be detected. The device may be severely damaged or formatted with an unsupported filesystem. Data recovery may require professional tools.</source>
-        <translation type="unfinished"/>
+        <translation>No s&apos;ha pogut detectar el tipus de sistema de fitxers. És possible que el dispositiu estigui greument danyat o formatat amb un sistema de fitxers no compatible. La recuperació de dades pot requerir eines professionals.</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="169"/>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="424"/>
         <source>Device is hardware write-protected, flash memory may be failing. Please back up data immediately.</source>
-        <translation type="unfinished"/>
+        <translation>El dispositiu està protegit contra escriptura per maquinari, és possible que la memòria falli. Feu-ne una còpia de seguretat immediatament.</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="186"/>
         <source>Filesystem error detected, device may not have been safely ejected. Mount might have failed due to filesystem corruption.</source>
-        <translation type="unfinished"/>
+        <translation>S&apos;ha detectat un error del sistema de fitxers. És possible que el dispositiu no s&apos;hagi expulsat de manera segura. És possible que el muntatge hagi fallat a causa d&apos;una corrupció del sistema de fitxers.</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="432"/>
         <source>Filesystem is severely corrupted and cannot be recognized. Data may be recoverable through repair.</source>
-        <translation type="unfinished"/>
+        <translation>El sistema de fitxers està greument malmès i no es pot reconèixer. És possible que les dades es puguin recuperar mitjançant una reparació.</translation>
     </message>
 </context>
 <context>
@@ -2386,42 +2386,42 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="36"/>
         <source>Invalid device path: %1</source>
-        <translation type="unfinished"/>
+        <translation>Camí del dispositiu no vàlid: %1</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="42"/>
         <source>Device is already being repaired: %1</source>
-        <translation type="unfinished"/>
+        <translation>El dispositiu ja es repara: %1</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="49"/>
         <source>Cannot detect filesystem type for: %1</source>
-        <translation type="unfinished"/>
+        <translation>No es pot detectar el tipus de sistema de fitxers per a %1.</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="55"/>
         <source>Unsupported filesystem type: %1</source>
-        <translation type="unfinished"/>
+        <translation>Tipus de sistema de fitxers no admès: %1</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="70"/>
         <source>Device is hardware write-protected, cannot repair</source>
-        <translation type="unfinished"/>
+        <translation>El dispositiu té protecció d&apos;escriptura per maquinari. No es pot reparar.</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="76"/>
         <source>Authorization failed</source>
-        <translation type="unfinished"/>
+        <translation>L&apos;autorització ha fallat.</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="95"/>
         <source>Failed to unmount device: %1</source>
-        <translation type="unfinished"/>
+        <translation>Ha fallat desmuntar el dispositiu: %1</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="165"/>
         <source>Filesystem repair completed successfully</source>
-        <translation type="unfinished"/>
+        <translation>Reparació del sistema de fitxers completada correctament</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="168"/>
