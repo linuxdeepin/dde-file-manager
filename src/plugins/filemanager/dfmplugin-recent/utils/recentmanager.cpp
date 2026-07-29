@@ -4,6 +4,7 @@
 
 #include "recentmanager.h"
 #include "events/recenteventcaller.h"
+#include "files/recentfileinfo.h"
 
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/universalutils.h>
@@ -42,7 +43,7 @@ using namespace GlobalServerDefines;
 // per timer tick, yielding to the event loop between batches to keep the UI
 // responsive during startup when the recently-used list is large.
 static constexpr int kBatchIntervalMs = 10;   // timer tick interval (ms)
-static constexpr int kBatchSize = 50;          // items processed per tick
+static constexpr int kBatchSize = 50;   // items processed per tick
 
 RecentManager *RecentManager::instance()
 {
@@ -207,12 +208,14 @@ void RecentManager::onItemAdded(const QString &path, const QString &href, qint64
         return;
     }
 
-    fmDebug() << "Adding recent item to cache:" << url;
+    fmDebug() << "Adding recent item to cache:" << url << modified;
     RecentItem item;
     item.fileInfo = info;
     item.originPath = href;
     recentItems.insert(url, item);
-    item.fileInfo->cacheAttribute(DFMIO::DFileInfo::AttributeID::kTimeAccess, modified);
+    auto recentInfo = item.fileInfo.dynamicCast<RecentFileInfo>();
+    if (recentInfo)
+        recentInfo->setLastReadTime(QDateTime::fromSecsSinceEpoch(modified));
 
     QSharedPointer<AbstractFileWatcher> watcher = WatcherCache::instance().getCacheWatcher(RecentHelper::rootUrl());
     if (watcher)
@@ -250,8 +253,9 @@ void RecentManager::onItemChanged(const QString &path, qint64 modified)
     }
 
     fmDebug() << "Updating recent item access time - path:" << path << "timestamp:" << modified;
-    QDateTime dateTime { QDateTime::fromSecsSinceEpoch(modified) };
-    recentItems[url].fileInfo->cacheAttribute(DFMIO::DFileInfo::AttributeID::kTimeAccess, modified);
+    auto recentInfo = recentItems[url].fileInfo.dynamicCast<RecentFileInfo>();
+    if (recentInfo)
+        recentInfo->setLastReadTime(QDateTime::fromSecsSinceEpoch(modified));
 
     QSharedPointer<AbstractFileWatcher> watcher = WatcherCache::instance().getCacheWatcher(RecentHelper::rootUrl());
     if (watcher)

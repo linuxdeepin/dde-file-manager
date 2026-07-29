@@ -26,6 +26,11 @@ RecentFileInfo::~RecentFileInfo()
 {
 }
 
+void RecentFileInfo::setLastReadTime(const QDateTime &time)
+{
+    lastReadTime = time;
+}
+
 bool RecentFileInfo::exists() const
 {
     return ProxyFileInfo::exists() || url == RecentHelper::rootUrl();
@@ -120,6 +125,8 @@ QString RecentFileInfo::displayOf(const FileInfo::DisplayInfoType type) const
 QVariant RecentFileInfo::timeOf(const FileTimeType type) const
 {
     switch (type) {
+    case TimeInfoType::kLastRead:
+        return lastReadTime;
     case TimeInfoType::kCustomerSupport:
         return timeOf(TimeInfoType::kLastRead);
     default:
