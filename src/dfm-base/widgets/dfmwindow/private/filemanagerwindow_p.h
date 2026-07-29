@@ -145,6 +145,10 @@ private:
     bool isAnimationEnabled() const;
     bool isDetailViewAnimationEnabled() const;   // DetailSpace 专用动画检查
 
+    // Resize-triggered sidebar animation helpers (preserve original showSideBar/hideSideBar state semantics)
+    void animateSideBarHideForResize();
+    void animateSideBarShowForResize();
+
     // DetailSpace splitter internal methods
     void initDetailSplitter();
     void handleDetailSplitterMoved(int pos, int index);
