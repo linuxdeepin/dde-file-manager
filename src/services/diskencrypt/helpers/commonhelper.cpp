@@ -10,57 +10,23 @@
 #include <QFile>
 #include <QLibrary>
 #include <QRandomGenerator>
-#include <QDir>
 
 #include <DConfig>
-#include <unistd.h>
 
 FILE_ENCRYPT_USE_NS
 
 void common_helper::createDFMDesktopEntry()
 {
-    qInfo() << "[common_helper::createDFMDesktopEntry] Creating DFM desktop entry for reencryption";
-
-    const QString &kLocalShareApps = "/usr/local/share/applications";
-    QDir d(kLocalShareApps);
-    if (!d.exists()) {
-        auto ok = d.mkpath(kLocalShareApps);
-        qInfo() << "[common_helper::createDFMDesktopEntry] Applications directory created:" << kLocalShareApps << "success:" << ok;
+    // The desktop file is shipped via the package (installed to
+    // /usr/share/applications/dfm-reencrypt.desktop). There is no need to
+    // create it at runtime anymore -- writing to /usr at runtime fails on
+    // immutable systems (磐石) and triggers security interception.
+    // Keep this function as a no-op compatibility stub so existing callers
+    // (DiskEncryptSetupPrivate::initialize) stay unaffected.
+    if (!QFile::exists(disk_encrypt::kReencryptDesktopFile)) {
+        qWarning() << "[common_helper::createDFMDesktopEntry] Reencrypt desktop file is missing,"
+                   << "it should be shipped by the package:" << disk_encrypt::kReencryptDesktopFile;
     }
-
-    QFile f(disk_encrypt::kReencryptDesktopFile);
-    if (f.exists()) {
-        qInfo() << "[common_helper::createDFMDesktopEntry] Desktop file already exists, skipping creation:" << disk_encrypt::kReencryptDesktopFile;
-        return;
-    }
-
-    QByteArray desktop {
-        "[Desktop Entry]\n"
-        "Categories=System;\n"
-        "Comment=To auto launch reencryption\n"
-        "Exec=/usr/libexec/dde-file-manager -d\n"
-        "GenericName=Disk Reencrypt\n"
-        "Icon=dde-file-manager\n"
-        "Name=Disk Reencrypt\n"
-        "Terminal=false\n"
-        "Type=Application\n"
-        "NoDisplay=true\n"
-        "X-AppStream-Ignore=true\n"
-        "X-Deepin-AppID=dde-file-manager\n"
-        "X-Deepin-Vendor=deepin\n"
-    };
-
-    if (!f.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-        qCritical() << "[common_helper::createDFMDesktopEntry] Failed to open desktop file for writing:" << disk_encrypt::kReencryptDesktopFile;
-        return;
-    }
-    f.write(desktop);
-    f.flush();
-    auto ret = ::fsync(f.handle());
-    f.close();
-
-    qInfo() << "[common_helper::createDFMDesktopEntry] Desktop file created successfully:" << disk_encrypt::kReencryptDesktopFile
-            << "Sync status: " << ret;
 }
 
 QString common_helper::encryptCipher()
