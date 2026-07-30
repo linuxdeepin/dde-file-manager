@@ -126,7 +126,7 @@ bool FileOperatorMenuScene::create(QMenu *parent)
         }
 
         const auto mimeType = focusFileInfo->nameOf(NameInfoType::kMimeTypeName);
-        QList<QVariant> supportedTypes = { "image/jpeg", "image/png", "image/bmp", "image/tiff", "image/gif" };
+        QList<QVariant> supportedTypes = { "image/jpeg", "image/png", "image/bmp", "image/tiff" };
         if (supportedTypes.contains(mimeType) && focusFileInfo->isAttributes(OptInfoType::kIsReadable)) {
             tempAction = parent->addAction(d->predicateName.value(ActionID::kSetAsWallpaper));
             d->predicateAction[ActionID::kSetAsWallpaper] = tempAction;
