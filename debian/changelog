@@ -1,3 +1,14 @@
+dde-file-manager (6.5.161) unstable; urgency=medium
+
+  * fix: correct icon layout after maximizing window following touch long-press
+  * fix: batch-process recent items on startup to avoid UI freeze
+  * fix: ship dfm-reencrypt.desktop via package instead of runtime creation
+  * fix(workspace): improve group header expand button hit area
+  * fix: add last read time support for recent items
+  * fix: remove GIF from wallpaper supported types in file context menu
+
+ -- zhangsheng <zhangsheng@uniontech.com>  Thu, 30 Jul 2026 19:40:42 +0800
+
 dde-file-manager (6.5.160) unstable; urgency=medium
 
   * fix(preview): resolve filename/resolution overlap in image preview status bar
