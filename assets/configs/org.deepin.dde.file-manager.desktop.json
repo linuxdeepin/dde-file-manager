@@ -79,6 +79,17 @@
 			"permissions": "readwrite",
 			"visibility": "public"
 		},
+		"wallpaperFillStyle": {
+			"value": "",
+			"serial": 2,
+			"flags": [],
+			"name": "Wallpaper Fill Style",
+			"name[zh_CN]": "桌面壁纸填充方式",
+			"description": "The style used to fill the desktop wallpaper. Numeric values are used: 0 for Fill, 1 for Fit, 2 for Stretch, 3 for Flatten, and 4 for Center.",
+			"description[zh_CN]": "用于填充桌面壁纸的样式。使用数字表示：0 表示填充，1 表示适应，2 表示拉伸，3 表示平铺，4 表示居中。",
+			"permissions": "readwrite",
+			"visibility": "public"
+		},
 		"enableCanvasInputMethod": {
 			"value": true,
 			"serial": 0,

@@ -8,10 +8,14 @@
 #include "backgrounddefault.h"
 #include "desktoputils/ddplugin_eventinterface_helper.h"
 
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/dfm_desktop_defines.h>
 #include <dfm-base/utils/universalutils.h>
 
 #include <QImageReader>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QPainter>
 #include <QtConcurrent>
 #include <QPixmapCache>
 #include <QCryptographicHash>
@@ -24,6 +28,9 @@ DDP_BACKGROUND_USE_NAMESPACE
 
 #define CanvasCoreUnsubscribe(topic, func) \
     dpfSignalDispatcher->unsubscribe("ddplugin_core", QT_STRINGIFY2(topic), this, func);
+
+static constexpr char kConfName[] { "org.deepin.dde.file-manager.desktop" };
+static constexpr char KwallpaperFillStyle[] { "wallpaperFillStyle" };
 
 // Generate cache key for wallpaper: wallpaper:path@widthxheight
 static QString generateCacheKey(const QString &path, const QSize &size)
@@ -62,8 +69,8 @@ static QString getScaledPathFromCache(const QString &wallpaperPath, const QSize 
     sizeArray << QVariant::fromValue(screenSize);
 
     QDBusReply<QStringList> reply = iface.call("GetProcessedImagePathByFd",
-                                                QVariant::fromValue(dbusFd),
-                                                pathMd5, sizeArray);
+                                               QVariant::fromValue(dbusFd),
+                                               pathMd5, sizeArray);
     file.close();
 
     if (!reply.isValid() || reply.value().isEmpty())
@@ -125,6 +132,7 @@ BackgroundManager::BackgroundManager(QObject *parent)
     d->service = new BackgroundDDE(this);
 
     d->bridge = new BackgroundBridge(d);
+    connect(DConfigManager::instance(), &DConfigManager::valueChanged, this, &BackgroundManager::onConfigChanged, Qt::DirectConnection);
 }
 
 BackgroundManager::~BackgroundManager()
@@ -166,6 +174,16 @@ QMap<QString, QString> BackgroundManager::allBackgroundPath()
 QString BackgroundManager::backgroundPath(const QString &screen)
 {
     return d->backgroundPaths.value(screen);
+}
+
+void BackgroundManager::onConfigChanged(const QString &cfg, const QString &key)
+{
+    if (cfg != QString(kConfName) || key != QString(KwallpaperFillStyle))
+        return;
+
+    QPixmapCache::clear();
+    onBackgroundChanged();
+    return;
 }
 
 void BackgroundManager::onBackgroundBuild()
@@ -542,6 +560,24 @@ QPixmap BackgroundBridge::getPixmap(const QString &path, const QSize &targetSize
     return backgroundPixmap;
 }
 
+QPixmap BackgroundBridge::getPixmap(const QString &path, const QPixmap &defaultPixmap)
+{
+    if (path.isEmpty())
+        return defaultPixmap;
+
+    QString currentWallpaper = path.startsWith("file:") ? QUrl(path).toLocalFile() : path;
+    QPixmap backgroundPixmap(currentWallpaper);
+    // fix whiteboard shows when a jpeg file with filename xxx.png
+    // content formart not epual to extension
+    if (backgroundPixmap.isNull()) {
+        QImageReader reader(currentWallpaper);
+        reader.setDecideFormatFromContent(true);
+        backgroundPixmap = QPixmap::fromImage(reader.read());
+    }
+
+    return backgroundPixmap.isNull() ? defaultPixmap : backgroundPixmap;
+}
+
 void BackgroundBridge::onFinished(void *pData)
 {
     fmInfo() << "Background update finished - data pointer:" << pData << "force mode:" << force;
@@ -604,35 +640,52 @@ void BackgroundBridge::runUpdate(BackgroundBridge *self, QList<Requestion> reqs)
         QSize trueSize = req.size;
         QString wallpaperPath = req.path.startsWith("file:") ? QUrl(req.path).toLocalFile() : req.path;
 
-        // Try WallpaperCache service first for pre-scaled image
-        QString cachedPath = getScaledPathFromCache(wallpaperPath, trueSize);
-        QPixmap pix;
-        if (!cachedPath.isEmpty()) {
-            QImageReader cachedReader(cachedPath);
-            cachedReader.setDecideFormatFromContent(true);
-            QImage cachedImage = cachedReader.read();
-            if (!cachedImage.isNull()) {
-                pix = QPixmap::fromImage(std::move(cachedImage));
-                fmInfo() << "Using WallpaperCache scaled image:" << cachedPath
-                         << "for screen:" << req.screen;
-            }
-        }
+        // Read wallpaper fill style from dconfig
+        QString styleConfig = DConfigManager::instance()->value(kConfName, KwallpaperFillStyle, QString()).toString();
+        int style = getValueFromJson(styleConfig, req.screen);
+        auto wallpaperStyle = static_cast<WallpaperStyle>(style);
 
-        // Fallback: load and scale original image
-        if (pix.isNull()) {
-            QPixmap backgroundPixmap = BackgroundBridge::getPixmap(req.path, trueSize);
+        QPixmap pix;
+
+        if (wallpaperStyle == WallpaperStyle::Fill) {
+            // Fill style: use WallpaperCache service for pre-scaled image
+            QString cachedPath = getScaledPathFromCache(wallpaperPath, trueSize);
+            if (!cachedPath.isEmpty()) {
+                QImageReader cachedReader(cachedPath);
+                cachedReader.setDecideFormatFromContent(true);
+                QImage cachedImage = cachedReader.read();
+                if (!cachedImage.isNull()) {
+                    pix = QPixmap::fromImage(std::move(cachedImage));
+                    fmInfo() << "Using WallpaperCache scaled image:" << cachedPath
+                             << "for screen:" << req.screen;
+                }
+            }
+
+            // Fallback: load and scale original image
+            if (pix.isNull()) {
+                QPixmap backgroundPixmap = BackgroundBridge::getPixmap(req.path, trueSize);
+                if (backgroundPixmap.isNull()) {
+                    fmCritical() << "Failed to read background for screen:" << req.screen << "path:" << req.path;
+                    continue;
+                }
+
+                pix = backgroundPixmap;
+                if (pix.width() > trueSize.width() || pix.height() > trueSize.height()) {
+                    pix = pix.copy(QRect(static_cast<int>((pix.width() - trueSize.width()) / 2.0),
+                                         static_cast<int>((pix.height() - trueSize.height()) / 2.0),
+                                         trueSize.width(),
+                                         trueSize.height()));
+                }
+            }
+        } else {
+            // Non-Fill styles: load original image and apply processPixmap
+            QPixmap backgroundPixmap = BackgroundBridge::getPixmap(req.path);
             if (backgroundPixmap.isNull()) {
                 fmCritical() << "Failed to read background for screen:" << req.screen << "path:" << req.path;
                 continue;
             }
 
-            pix = backgroundPixmap;
-            if (pix.width() > trueSize.width() || pix.height() > trueSize.height()) {
-                pix = pix.copy(QRect(static_cast<int>((pix.width() - trueSize.width()) / 2.0),
-                                     static_cast<int>((pix.height() - trueSize.height()) / 2.0),
-                                     trueSize.width(),
-                                     trueSize.height()));
-            }
+            pix = processPixmap(backgroundPixmap, wallpaperStyle, trueSize);
         }
 
         // check stop
@@ -641,7 +694,7 @@ void BackgroundBridge::runUpdate(BackgroundBridge *self, QList<Requestion> reqs)
             return;
         }
 
-        fmInfo() << "Successfully processed background for screen:" << req.screen << "path:" << req.path << "size:" << trueSize;
+        fmInfo() << "Successfully processed background for screen:" << req.screen << "path:" << req.path << "size:" << trueSize << "style:" << style;
         req.pixmap = pix;
         recorder.append(req);
     }
@@ -656,4 +709,91 @@ void BackgroundBridge::runUpdate(BackgroundBridge *self, QList<Requestion> reqs)
     *pRecorder = std::move(recorder);
     QMetaObject::invokeMethod(self, "onFinished", Qt::QueuedConnection, Q_ARG(void *, pRecorder));
     self->getting = false;
+}
+
+QPixmap BackgroundBridge::processPixmap(const QPixmap &originalPixmap, WallpaperStyle style, const QSize &targetSize)
+{
+    switch (style) {
+    case WallpaperStyle::Fit: {
+        QPixmap flattenPixmap(targetSize);
+        flattenPixmap.fill(Qt::transparent);   // 填充透明
+        QPainter painter(&flattenPixmap);
+        QSize scaledSize = originalPixmap.size().scaled(targetSize, Qt::KeepAspectRatio);
+        int xOffset = (targetSize.width() - scaledSize.width()) / 2;
+        int yOffset = (targetSize.height() - scaledSize.height()) / 2;
+        painter.drawPixmap(xOffset, yOffset, originalPixmap.scaled(scaledSize, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        painter.end();
+        return flattenPixmap;
+    }
+    case WallpaperStyle::Stretch: {
+        return originalPixmap.scaled(targetSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    }
+    case WallpaperStyle::Flatten: {
+        QPixmap flattenPixmap(targetSize);
+        QPainter painter(&flattenPixmap);
+        int tileWidth = originalPixmap.width();
+        int tileHeight = originalPixmap.height();
+
+        for (int y = 0; y < targetSize.height(); y += tileHeight) {
+            for (int x = 0; x < targetSize.width(); x += tileWidth) {
+                painter.drawPixmap(x, y, originalPixmap);
+            }
+        }
+        painter.end();
+        return flattenPixmap;
+    }
+    case WallpaperStyle::Center: {
+        QPixmap centeredPixmap(targetSize);
+        centeredPixmap.fill(Qt::transparent);   // 填充透明
+        QPainter painter(&centeredPixmap);
+
+        // 获取原始图片的尺寸
+        QSize originalSize = originalPixmap.size();
+
+        // 计算居中偏移
+        int xOffset = (targetSize.width() - originalSize.width()) / 2;
+        int yOffset = (targetSize.height() - originalSize.height()) / 2;
+
+        // 直接居中绘制原始图片
+        painter.drawPixmap(xOffset, yOffset, originalPixmap);
+        painter.end();
+        return centeredPixmap;
+    }
+    case WallpaperStyle::Fill:
+    default: {
+        auto pix = originalPixmap.scaled(targetSize,
+                                         Qt::KeepAspectRatioByExpanding,
+                                         Qt::SmoothTransformation);
+
+        if (pix.width() > targetSize.width() || pix.height() > targetSize.height()) {
+            pix = pix.copy(QRect(static_cast<int>((pix.width() - targetSize.width()) / 2.0),
+                                 static_cast<int>((pix.height() - targetSize.height()) / 2.0),
+                                 targetSize.width(),
+                                 targetSize.height()));
+        }
+        return pix;   // 默认返回原始图像
+    }
+    }
+}
+
+int BackgroundBridge::getValueFromJson(QString json, const QString &screenName)
+{
+    // The string in dconfig contains extra characters
+    if (json.startsWith('"')) {
+        json.remove(0, 1);
+    }
+    if (json.endsWith('"')) {
+        json.chop(1);
+    }
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(json.toUtf8());
+
+    if (!jsonDoc.isObject())
+        return 0;
+
+    QJsonObject jsonObj = jsonDoc.object();
+
+    if (jsonObj.contains(screenName))
+        return jsonObj[screenName].toInt();
+
+    return 0;
 }
