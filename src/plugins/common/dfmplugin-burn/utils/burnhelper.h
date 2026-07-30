@@ -29,6 +29,7 @@ public:
     static void updateBurningStateToPersistence(const QString &id, const QString &dev, bool working);
     static void mapStagingFilesPath(const QList<QUrl> &srcList, const QList<QUrl> &targetList);
     static bool isBurnEnabled();
+    static int defaultBurnFs();
     static bool burnIsOnLocalStaging(const QUrl &url);
     static QFileInfoList localFileInfoList(const QString &path);
     static QFileInfoList localFileInfoListRecursive(const QString &path, QDir::Filters filters = (QDir::Files | QDir::NoSymLinks));
