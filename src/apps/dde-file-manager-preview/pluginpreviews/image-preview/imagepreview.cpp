@@ -16,6 +16,8 @@
 #include <QLabel>
 #include <QFileInfo>
 #include <QMimeData>
+ 
+#include <DGuiApplicationHelper>
 
 DFMBASE_USE_NAMESPACE
 using namespace plugin_filepreview;
@@ -76,9 +78,12 @@ void ImagePreview::initialize(QWidget *window, QWidget *statusBar)
     fmDebug() << "Image preview: initializing with status bar";
 
     messageStatusBar = new QLabel(statusBar);
-    messageStatusBar->setStyleSheet("QLabel{font-family: Helvetica;\
-                                   font-size: 12px;\
-                                   font-weight: 300;}");
+    // 不使用 setStyleSheet 设置字号——stylesheet 会阻断 DTK 调色板随主题更新，
+    // 导致深色模式下文字颜色不随主题变化（卡在白色）。改用 QFont 保留调色板传播，
+    // 同时避免显式指定 Helvetica + font-weight 300 触发 fontconfig 斜体回退。
+    QFont statusBarFont = messageStatusBar->font();
+    statusBarFont.setPixelSize(12);
+    messageStatusBar->setFont(statusBarFont);
     // Expanding 水平策略：让 messageStatusBar 在 QHBoxLayout 中抢占 previewTitle 与 openBtn
     // 之间的多余空间，配合 AlignCenter 使分辨率文本在该空间内居中——previewTitle 短时
     // 接近 statusBar 几何中心，previewTitle 长时多余空间被压缩，标签自然回缩避让。
