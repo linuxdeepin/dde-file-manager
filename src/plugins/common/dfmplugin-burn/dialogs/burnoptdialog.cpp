@@ -40,8 +40,11 @@ void BurnOptDialog::setUDFSupported(bool supported, bool disableISOOpts)
     if (!model || model->rowCount() < 4)
         return;
 
-    if (!supported)
+    if (!supported) {
         model->setData(model->index(3, 0), 0, Qt::UserRole - 1);
+        if (BurnHelper::defaultBurnFs() == 3)
+            fsComb->setCurrentIndex(1);
+    }
     if (disableISOOpts) {
         model->setData(model->index(0, 0), 0, Qt::UserRole - 1);
         model->setData(model->index(1, 0), 0, Qt::UserRole - 1);
@@ -175,7 +178,7 @@ void BurnOptDialog::initializeUi()
 
     fsComb = new QComboBox;
     fsComb->addItems(fsTypes);
-    fsComb->setCurrentIndex(1);   // 默认使用 i + j 的方式刻录
+    fsComb->setCurrentIndex(BurnHelper::defaultBurnFs());
     vLay->addWidget(fsComb);
     fsLabel->setFont(f13);
     fsComb->setFont(f14);

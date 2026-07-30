@@ -235,6 +235,15 @@ bool BurnHelper::isBurnEnabled()
     return ret.isValid() ? ret.toBool() : true;
 }
 
+int BurnHelper::defaultBurnFs()
+{
+    const auto &&ret = DConfigManager::instance()->value("org.deepin.dde.file-manager.burn", "defaultBurnFilesystemType", 1);
+    int r = ret.toInt();
+    if (r > 3 || r < 0)
+        r = 1;
+    return r;
+}
+
 bool BurnHelper::burnIsOnLocalStaging(const QUrl &url)
 {
     if (!url.path().contains("/.cache/deepin/discburn/_dev_"))

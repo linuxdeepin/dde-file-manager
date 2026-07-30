@@ -12,6 +12,17 @@
             "description":"It's used to control whether to enable the built-in burn.",
             "permissions":"readwrite",
             "visibility":"public"
+        },
+        "defaultBurnFilesystemType":{
+            "value": 1,
+            "serial":0,
+            "flags":[],
+            "name":"Default burn file system type",
+            "name[zh_CN]":"默认刻录文件系统类型",
+            "description[zh_CN]":"刻录光盘时文件系统的默认选项。0（仅 ISO9660），1（ISO9660 + Joliet 支持），2（ISO9660 + RockRidge 支持），3（UDF 支持）",
+            "description":"Default options for file system when burning discs. 0 (ISO9660 only), 1 (ISO9660 + Joliet support), 2 (ISO9660 + RockRidge support), 3 (UDF support)",
+            "permissions":"readwrite",
+            "visibility":"public"
         }
     }
 }
