@@ -15,6 +15,7 @@ usr/lib/*/dde-file-manager/plugins/previews/*.so
 usr/lib/*/dde-file-manager/plugins/previews/*.json
 usr/share/applications/dde-file-manager.desktop
 usr/share/applications/dde-open.desktop
+usr/share/applications/dfm-reencrypt.desktop
 usr/share/dde-file-manager/translations/*.qm
 usr/share/dbus-1/interfaces/*.xml
 usr/share/dbus-1/services/*.service
