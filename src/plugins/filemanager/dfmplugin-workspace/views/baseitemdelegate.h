@@ -136,6 +136,8 @@ public:
 
     QRect getExpandButtonRect(const QStyleOptionViewItem &option) const;
     QRect getExpandButtonRect(const QRectF &rect) const;
+    QRect getExpandButtonHitRect(const QStyleOptionViewItem &option) const;
+    QRect getExpandButtonHitRect(const QRectF &rect) const;
 
 protected:
     explicit BaseItemDelegate(BaseItemDelegatePrivate &dd, FileViewHelper *parent);
