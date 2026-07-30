@@ -1550,7 +1550,14 @@ bool FileView::groupExpandOrCollapseItem(const QModelIndex &index, const QPoint 
     QStyleOptionViewItem op;
     QRect rect = visualRect(index);   // 绘制区域
     op.rect = rect;
-    QRect arrowRect = itemDelegate()->getExpandButtonRect(op);
+
+    if (index.data(Global::kItemGroupDisplayIndex).toInt() > 0) {
+        // 非首个分组头在顶部预留 16px 透明间隔，实际内容区从间隔下方开始。
+        // 命中区与绘制区对齐，避免命中位置相对箭头上移。
+        op.rect.setTop(op.rect.top() + kGroupHeaderInterval);
+    }
+
+    QRect arrowRect = itemDelegate()->getExpandButtonHitRect(op);
 
     if (!arrowRect.contains(pos))
         return false;
