@@ -376,6 +376,20 @@ QImage ThumbnailCreators::imageThumbnailCreator(const QString &filePath, Thumbna
         if (!reader.read(&image)) {
             qCWarning(logDFMBase) << "thumbnail: failed to read image file:" << filePath
                                   << "error:" << reader.errorString();
+            // TGA 1.0 回退：canRead 返回 true 但 read 失败时尝试自带解析器
+            if (mimeType == "x-tga") {
+                QImage tgaImage = FileUtils::readTgaImage(filePath);
+                if (!tgaImage.isNull()) {
+                    if (tgaImage.width() > size || tgaImage.height() > size) {
+                        tgaImage = tgaImage.scaled(size, size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+                    }
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+                    tgaImage = FileUtils::convertToSRgbColorSpace(tgaImage);
+#endif
+                    qCDebug(logDFMBase) << "thumbnail: TGA 1.0 decoded via fallback for:" << filePath;
+                    return tgaImage;
+                }
+            }
             return image;
         }
     } else {
@@ -388,6 +402,20 @@ QImage ThumbnailCreators::imageThumbnailCreator(const QString &filePath, Thumbna
         if (!reader.read(&image)) {
             qCWarning(logDFMBase) << "thumbnail: image file has invalid size and cannot be decoded:" << filePath
                                   << "error:" << reader.errorString();
+            // TGA 1.0 回退：canRead 返回 true 但 read 失败时尝试自带解析器
+            if (mimeType == "x-tga") {
+                QImage tgaImage = FileUtils::readTgaImage(filePath);
+                if (!tgaImage.isNull()) {
+                    if (tgaImage.width() > size || tgaImage.height() > size) {
+                        tgaImage = tgaImage.scaled(size, size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+                    }
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+                    tgaImage = FileUtils::convertToSRgbColorSpace(tgaImage);
+#endif
+                    qCDebug(logDFMBase) << "thumbnail: TGA 1.0 decoded via fallback for:" << filePath;
+                    return tgaImage;
+                }
+            }
             return image;
         }
 

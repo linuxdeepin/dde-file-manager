@@ -44,6 +44,8 @@
 #include <QProcess>
 #include <QDebug>
 #include <QApplication>
+#include <QFile>
+#include <QDataStream>
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
 #    include <QTextCodec>
 #endif
@@ -1077,6 +1079,157 @@ QImage FileUtils::convertToSRgbColorSpace(const QImage &image)
     return convertedImage;
 }
 #endif
+
+/*!
+ * \brief 手动解析 TGA 1.0 格式图片。
+ *
+ * Qt 自带的 qtga 插件要求文件末尾有 TRUEVISION-XFILE 签名（TGA 2.0），
+ * TGA 1.0（原始 TGA）没有此签名，导致 QImageReader 无法读取。
+ * 本方法直接解析 TGA 1.0 格式，支持未压缩真彩色（type 2）和 RLE 压缩真彩色
+ * （type 10），像素深度 24/32 bpp，作为 QImageReader 失败时的回退。
+ */
+QImage FileUtils::readTgaImage(const QString &filePath)
+{
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly)) {
+        qCWarning(logDFMBase) << "TGA: failed to open file:" << filePath << file.errorString();
+        return {};
+    }
+
+    QDataStream stream(&file);
+    stream.setByteOrder(QDataStream::LittleEndian);
+
+    // --- 读取 18 字节 TGA 头（各字段类型须与规范逐一对应） ---
+    quint8 idLength, colorMapType, imageType, colorMapDepth, pixelDepth, descriptor;
+    quint16 colorMapOrigin, colorMapLength, xOrigin, yOrigin, width, height;
+
+    stream >> idLength;
+    stream >> colorMapType;
+    stream >> imageType;
+    stream >> colorMapOrigin;
+    stream >> colorMapLength;
+    stream >> colorMapDepth;
+    stream >> xOrigin;
+    stream >> yOrigin;
+    stream >> width;
+    stream >> height;
+    stream >> pixelDepth;
+    stream >> descriptor;
+
+    if (stream.status() != QDataStream::Ok) {
+        qCWarning(logDFMBase) << "TGA: failed to read header for:" << filePath;
+        return {};
+    }
+
+    // 仅支持真彩色（未压缩 type 2 和 RLE type 10）
+    if (imageType != 2 && imageType != 10) {
+        qCWarning(logDFMBase) << "TGA: unsupported image type" << imageType << "for:" << filePath;
+        return {};
+    }
+    if (pixelDepth != 24 && pixelDepth != 32) {
+        qCWarning(logDFMBase) << "TGA: unsupported pixel depth" << pixelDepth << "for:" << filePath;
+        return {};
+    }
+    if (width == 0 || height == 0) {
+        qCWarning(logDFMBase) << "TGA: invalid dimensions" << width << "x" << height << "for:" << filePath;
+        return {};
+    }
+
+    // 拒绝超大尺寸，避免对畸形文件做无意义的超大内存分配
+    const int bytesPerPixel = pixelDepth / 8;
+    const qint64 dataSize = qint64(width) * height * bytesPerPixel;
+    static constexpr qint64 kMaxTgaDataSize = 256 * 1024 * 1024;   // 256 MB
+    if (dataSize > kMaxTgaDataSize) {
+        qCWarning(logDFMBase) << "TGA: pixel data too large" << dataSize << "for:" << filePath;
+        return {};
+    }
+
+    // 跳过 ID 字段和颜色表
+    qint64 skipBytes = idLength;
+    if (colorMapType == 1) {
+        skipBytes += colorMapOrigin + colorMapLength * ((colorMapDepth + 7) / 8);
+    }
+    if (!file.seek(18 + skipBytes)) {
+        qCWarning(logDFMBase) << "TGA: failed to skip header data for:" << filePath;
+        return {};
+    }
+
+    // --- 读取像素数据 ---
+    QByteArray rawData;
+    if (imageType == 2) {
+        // 未压缩
+        rawData = file.read(dataSize);
+        if (rawData.size() != dataSize) {
+            qCWarning(logDFMBase) << "TGA: incomplete pixel data for:" << filePath;
+            return {};
+        }
+    } else {
+        // RLE 压缩
+        rawData.reserve(dataSize);
+        while (rawData.size() < dataSize && !stream.atEnd()) {
+            quint8 packetHeader;
+            stream >> packetHeader;
+            int count = (packetHeader & 0x7f) + 1;
+            if (packetHeader & 0x80) {
+                // RLE packet: read one pixel, repeat count times
+                QByteArray pixel(bytesPerPixel, '\0');
+                const int read = stream.readRawData(pixel.data(), bytesPerPixel);
+                if (read != bytesPerPixel) {
+                    qCWarning(logDFMBase) << "TGA: RLE pixel read failed for:" << filePath;
+                    return {};
+                }
+                for (int i = 0; i < count && rawData.size() + bytesPerPixel <= dataSize; ++i) {
+                    rawData.append(pixel);
+                }
+            } else {
+                // Raw packet: read count pixels
+                QByteArray pixels(count * bytesPerPixel, '\0');
+                const int read = stream.readRawData(pixels.data(), pixels.size());
+                if (read != pixels.size()) {
+                    qCWarning(logDFMBase) << "TGA: raw packet read failed for:" << filePath;
+                    return {};
+                }
+                rawData.append(pixels);
+            }
+        }
+        if (rawData.size() != dataSize) {
+            qCWarning(logDFMBase) << "TGA: incomplete RLE data for:" << filePath;
+            return {};
+        }
+    }
+
+    // --- 创建 QImage 并填充像素 ---
+    QImage::Format format = (pixelDepth == 32) ? QImage::Format_ARGB32 : QImage::Format_RGB32;
+    QImage image(width, height, format);
+    if (image.isNull()) {
+        qCWarning(logDFMBase) << "TGA: failed to allocate image" << width << "x" << height << "for:" << filePath;
+        return {};
+    }
+
+    const bool topOrigin = descriptor & 0x20;
+    const uchar *src = reinterpret_cast<const uchar *>(rawData.constData());
+
+    for (int y = 0; y < height; ++y) {
+        int destY = topOrigin ? y : (height - 1 - y);
+        QRgb *scanline = reinterpret_cast<QRgb *>(image.scanLine(destY));
+        for (int x = 0; x < width; ++x) {
+            uchar b = *src++;
+            uchar g = *src++;
+            uchar r = *src++;
+            uchar a = (pixelDepth == 32) ? *src++ : 0xff;
+            scanline[x] = qRgba(r, g, b, a);
+        }
+    }
+
+    qCDebug(logDFMBase) << "TGA: successfully decoded" << width << "x" << height << "image:" << filePath;
+    return image;
+}
+
+bool FileUtils::isTgaFile(const QString &filePath)
+{
+    const QMimeType &mimeType = DMimeDatabase().mimeTypeForFile(QUrl::fromLocalFile(filePath));
+    return mimeType.name() == "image/x-tga";
+}
 
 QString FileUtils::encryptString(const QString &str)
 {

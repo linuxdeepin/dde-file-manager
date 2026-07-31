@@ -104,6 +104,9 @@ public:
     static QImage convertToSRgbColorSpace(const QImage &image);
 #endif
 
+    static QImage readTgaImage(const QString &filePath);
+    static bool isTgaFile(const QString &filePath);
+
 private:
     static QMutex cacheCopyingMutex;
     static QSet<QUrl> copyingUrl;

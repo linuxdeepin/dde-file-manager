@@ -77,9 +77,16 @@ void ImageView::setFile(const QString &fileName, const QByteArray &format)
         // 失败则按原逻辑置空；成功则用实际图像尺寸进行后续处理。
         image = reader.read();
         if (image.isNull()) {
-            fmWarning() << "Image preview: failed to load image:" << reader.errorString();
-            setPixmap(QPixmap());
-            return;
+            // TGA 1.0 回退：TGA 1.0 文件没有 TGA 2.0 的 TRUEVISION-XFILE 签名，
+            // QImageReader 无法读取。用自带解析器作为回退。
+            if (DFMBASE_NAMESPACE::FileUtils::isTgaFile(fileName)) {
+                image = DFMBASE_NAMESPACE::FileUtils::readTgaImage(fileName);
+            }
+            if (image.isNull()) {
+                fmWarning() << "Image preview: failed to load image:" << reader.errorString();
+                setPixmap(QPixmap());
+                return;
+            }
         }
         sourceImageSize = image.size();
         if (!sourceImageSize.isValid()) {
@@ -105,9 +112,18 @@ void ImageView::setFile(const QString &fileName, const QByteArray &format)
         reader.setScaledSize(decodeSize);
         image = reader.read();
         if (image.isNull()) {
-            fmWarning() << "Image preview: failed to load image:" << reader.errorString();
-            setPixmap(QPixmap());
-            return;
+            // TGA 1.0 回退
+            if (DFMBASE_NAMESPACE::FileUtils::isTgaFile(fileName)) {
+                image = DFMBASE_NAMESPACE::FileUtils::readTgaImage(fileName);
+                if (!image.isNull()) {
+                    image = image.scaled(decodeSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+                }
+            }
+            if (image.isNull()) {
+                fmWarning() << "Image preview: failed to load image:" << reader.errorString();
+                setPixmap(QPixmap());
+                return;
+            }
         }
     }
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)

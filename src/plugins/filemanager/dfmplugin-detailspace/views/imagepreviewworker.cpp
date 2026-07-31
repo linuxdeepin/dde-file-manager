@@ -12,6 +12,7 @@
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/base/configs/dconfig/global_dconf_defines.h>
 #include <dfm-base/utils/protocolutils.h>
+#include <dfm-base/utils/fileutils.h>
 
 #include <dfm-framework/dpf.h>
 #include <dfm-base/file/local/syncfileinfo.h>
@@ -145,13 +146,31 @@ QPixmap ImagePreviewWorker::loadOriginalImage(const QString &filePath, const QSi
     QImageReader reader(filePath);
     reader.setAutoTransform(true);
 
+    const qreal dpr = qApp->devicePixelRatio();
+    const QSize maxSize = targetSize * dpr;
+
     QSize originalSize = reader.size();
     if (!originalSize.isValid()) {
+        // TGA 1.0 回退：QImageReader 无法识别时尝试自带解析器
+        if (FileUtils::isTgaFile(filePath)) {
+            QImage tgaImage = FileUtils::readTgaImage(filePath);
+            if (!tgaImage.isNull()) {
+                originalSize = tgaImage.size();
+                if (originalSize.width() > maxSize.width()
+                    || originalSize.height() > maxSize.height()) {
+                    tgaImage = tgaImage.scaled(originalSize.scaled(maxSize, Qt::KeepAspectRatio),
+                                               Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+                }
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+                tgaImage = FileUtils::convertToSRgbColorSpace(tgaImage);
+#endif
+                QPixmap pixmap = QPixmap::fromImage(tgaImage);
+                pixmap.setDevicePixelRatio(dpr);
+                return pixmap;
+            }
+        }
         return QPixmap();
     }
-
-    qreal dpr = qApp->devicePixelRatio();
-    QSize maxSize = targetSize * dpr;
 
     if (originalSize.width() > maxSize.width()
         || originalSize.height() > maxSize.height()) {
@@ -161,7 +180,20 @@ QPixmap ImagePreviewWorker::loadOriginalImage(const QString &filePath, const QSi
 
     QImage image = reader.read();
     if (image.isNull()) {
-        return QPixmap();
+        // TGA 1.0 回退
+        if (FileUtils::isTgaFile(filePath)) {
+            image = FileUtils::readTgaImage(filePath);
+        }
+        if (image.isNull()) {
+            return QPixmap();
+        }
+        if (image.width() > maxSize.width() || image.height() > maxSize.height()) {
+            image = image.scaled(image.size().scaled(maxSize, Qt::KeepAspectRatio),
+                                 Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+        }
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        image = FileUtils::convertToSRgbColorSpace(image);
+#endif
     }
 
     QPixmap pixmap = QPixmap::fromImage(image);
