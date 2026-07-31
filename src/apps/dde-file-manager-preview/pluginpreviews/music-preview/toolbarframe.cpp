@@ -5,6 +5,8 @@
 #include "toolbarframe.h"
 #include "cusmediaplayer.h"
 
+#include <DGuiApplicationHelper>
+
 #include <DSlider>
 
 #include <QPushButton>
@@ -14,8 +16,37 @@
 #include <QTimer>
 #include <QtMath>
 
+using namespace DTK_GUI_NAMESPACE;
+
 using namespace plugin_filepreview;
 DWIDGET_USE_NAMESPACE
+
+namespace {
+constexpr int kControlButtonIconSize { 16 };
+
+QIcon createColoredIcon(const QString &iconName, const QColor &color, const QSize &size, const QWidget *widget)
+{
+    const qreal dpr = widget ? widget->devicePixelRatioF() : qApp->devicePixelRatio();
+    QPixmap pixmap = QIcon::fromTheme(iconName).pixmap(size, dpr);
+    if (pixmap.isNull())
+        return QIcon();
+
+    QPainter painter(&pixmap);
+    painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
+    painter.fillRect(pixmap.rect(), color);
+
+    return QIcon(pixmap);
+}
+
+QColor controlIconColor(bool hovered)
+{
+    const bool darkTheme = DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType;
+    QColor color = darkTheme ? QColor(Qt::white) : QColor(Qt::black);
+    if (!hovered)
+        color.setAlphaF(0.7);
+    return color;
+}
+}   // namespace
 ToolBarFrame::ToolBarFrame(const QString &uri, QWidget *parent)
     : QFrame(parent)
 {
@@ -30,7 +61,9 @@ void ToolBarFrame::initUI()
 {
     playControlButton = new QPushButton(this);
     playControlButton->setFixedSize(36, 36);
-    playControlButton->setIcon(QIcon::fromTheme(":/icons/icons/start_normal.png"));
+    playControlButton->setIconSize({ kControlButtonIconSize, kControlButtonIconSize });
+    playControlButton->installEventFilter(this);
+    updatePlayButtonIcon();
 
     progressSlider = new DSlider(Qt::Horizontal, this);
     progressSlider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -55,6 +88,9 @@ void ToolBarFrame::initConnections()
     connect(CusMediaPlayer::instance(), &CusMediaPlayer::sigPositionChanged, this, &ToolBarFrame::onPlayPositionChanged);
     connect(playControlButton, &QPushButton::clicked, this, &ToolBarFrame::onPlayControlButtonClicked);
     connect(progressSlider, &DSlider::valueChanged, this, &ToolBarFrame::seekPosition);
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged, this, [this] {
+        updatePlayButtonIcon();
+    });
 }
 
 void ToolBarFrame::onPlayDurationChanged(qint64 duration)
@@ -80,11 +116,8 @@ void ToolBarFrame::onPlayStateChanged(const QMediaPlayer::PlaybackState &state)
     if (state == QMediaPlayer::StoppedState)
         progressSlider->setValue(0);
 
-    if (state == QMediaPlayer::StoppedState || state == QMediaPlayer::PausedState) {
-        playControlButton->setIcon(QIcon::fromTheme(":/icons/icons/start_normal.png"));
-    } else {
-        playControlButton->setIcon(QIcon::fromTheme(":/icons/icons/pause_normal.png"));
-    }
+    controlButtonShowsPause = (state == QMediaPlayer::PlayingState);
+    updatePlayButtonIcon();
 }
 
 void ToolBarFrame::onPlayStatusChanged(const QMediaPlayer::MediaStatus &status)
@@ -116,18 +149,21 @@ void ToolBarFrame::seekPosition(const int &pos)
 void ToolBarFrame::play()
 {
     curState = QMediaPlayer::PlayingState;
+    controlButtonShowsPause = true;
     emit CusMediaPlayer::instance()->sigPlay();
 }
 
 void ToolBarFrame::pause()
 {
     curState = QMediaPlayer::PausedState;
+    controlButtonShowsPause = false;
     emit CusMediaPlayer::instance()->sigPause();
 }
 
 void ToolBarFrame::stop()
 {
     curState = QMediaPlayer::StoppedState;
+    controlButtonShowsPause = false;
     progressSlider->setValue(0);
     emit CusMediaPlayer::instance()->sigStop();
 }
@@ -162,4 +198,40 @@ void ToolBarFrame::durationToLabel(qint64 duration)
 
     progressSlider->setMinimum(0);
     progressSlider->setMaximum(static_cast<int>(duration));
+}
+
+bool ToolBarFrame::eventFilter(QObject *watched, QEvent *event)
+{
+    if (watched == playControlButton) {
+        switch (event->type()) {
+        case QEvent::Enter:
+            playControlButtonHovered = true;
+            updatePlayButtonIcon();
+            break;
+        case QEvent::Leave:
+            playControlButtonHovered = false;
+            updatePlayButtonIcon();
+            break;
+        case QEvent::StyleChange:
+        case QEvent::PaletteChange:
+        case QEvent::ApplicationPaletteChange:
+            updatePlayButtonIcon();
+            break;
+        default:
+            break;
+        }
+    }
+    return QFrame::eventFilter(watched, event);
+}
+
+void ToolBarFrame::updatePlayButtonIcon()
+{
+    if (!playControlButton)
+        return;
+
+    const QString iconName = controlButtonShowsPause ? QStringLiteral("dfm_pause")
+                                                     : QStringLiteral("dfm_start");
+    const QSize iconSize(kControlButtonIconSize, kControlButtonIconSize);
+    playControlButton->setIconSize(iconSize);
+    playControlButton->setIcon(createColoredIcon(iconName, controlIconColor(playControlButtonHovered), iconSize, playControlButton));
 }
