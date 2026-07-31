@@ -10,14 +10,20 @@
 
 #include <dfm-base/dfm_desktop_defines.h>
 #include <dfm-base/utils/universalutils.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+#include <dfm-base/base/configs/dconfig/global_dconf_defines.h>
 
 #include <QImageReader>
+#include <QPainter>
 #include <QtConcurrent>
 #include <QPixmapCache>
 #include <QCryptographicHash>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 DFMBASE_USE_NAMESPACE
 DDP_BACKGROUND_USE_NAMESPACE
+using namespace GlobalDConfDefines::ConfigPath;
 
 #define CanvasCoreSubscribe(topic, func) \
     dpfSignalDispatcher->subscribe("ddplugin_core", QT_STRINGIFY2(topic), this, func);
@@ -25,13 +31,18 @@ DDP_BACKGROUND_USE_NAMESPACE
 #define CanvasCoreUnsubscribe(topic, func) \
     dpfSignalDispatcher->unsubscribe("ddplugin_core", QT_STRINGIFY2(topic), this, func);
 
-// Generate cache key for wallpaper: wallpaper:path@widthxheight
-static QString generateCacheKey(const QString &path, const QSize &size)
+static constexpr char kWallpaperFillStyle[] { "wallpaperFillStyle" };
+
+// Generate cache key for wallpaper: wallpaper:path@widthxheight#style
+// The fill style is part of the key so that screens sharing the same wallpaper
+// and resolution but using different fill styles do not cross-hit each other.
+static QString generateCacheKey(const QString &path, const QSize &size, int style)
 {
-    return QString("wallpaper:%1@%2x%3")
+    return QString("wallpaper:%1@%2x%3#%4")
             .arg(path)
             .arg(size.width())
-            .arg(size.height());
+            .arg(size.height())
+            .arg(style);
 }
 
 // Try to get pre-scaled wallpaper path from WallpaperCache service via fd.
@@ -76,6 +87,21 @@ static QString getScaledPathFromCache(const QString &wallpaperPath, const QSize 
         return path;
 
     return QString();
+}
+
+// Load the original wallpaper pixmap without any decode-time scaling.
+// Used as the source for Center/Flatten so they operate on the true image
+// dimensions rather than a pre-scaled copy. Follows the repo convention of
+// QImageReader -> QImage -> QPixmap::fromImage (also avoids constructing a
+// QPixmap from a path in a worker thread).
+static QPixmap getOriginalPixmap(const QString &wallpaperPath)
+{
+    if (wallpaperPath.isEmpty())
+        return QPixmap();
+
+    QImageReader reader(wallpaperPath);
+    reader.setDecideFormatFromContent(true);
+    return QPixmap::fromImage(reader.read());
 }
 
 inline QString getScreenName(QWidget *win)
@@ -125,6 +151,7 @@ BackgroundManager::BackgroundManager(QObject *parent)
     d->service = new BackgroundDDE(this);
 
     d->bridge = new BackgroundBridge(d);
+    connect(DConfigManager::instance(), &DConfigManager::valueChanged, this, &BackgroundManager::onConfigChanged);
 }
 
 BackgroundManager::~BackgroundManager()
@@ -166,6 +193,17 @@ QMap<QString, QString> BackgroundManager::allBackgroundPath()
 QString BackgroundManager::backgroundPath(const QString &screen)
 {
     return d->backgroundPaths.value(screen);
+}
+
+void BackgroundManager::onConfigChanged(const QString &cfg, const QString &key)
+{
+    if (cfg != QString(kDesktopDConfName) || key != QString(kWallpaperFillStyle))
+        return;
+
+    fmInfo() << "Wallpaper fill style config changed, refreshing background";
+    // Invalidate the in-process pixmap cache so the new fill style is applied.
+    QPixmapCache::clear();
+    onBackgroundChanged();
 }
 
 void BackgroundManager::onBackgroundBuild()
@@ -387,7 +425,7 @@ void BackgroundBridge::queryCacheAndClassify(Requestion &req, QList<Requestion> 
 
     // Query cache with file path
     QString wallpaperPath = req.path.startsWith("file:") ? QUrl(req.path).toLocalFile() : req.path;
-    QString cacheKey = generateCacheKey(wallpaperPath, req.size);
+    QString cacheKey = generateCacheKey(wallpaperPath, req.size, static_cast<int>(req.style));
     QPixmap cached;
 
     if (QPixmapCache::find(cacheKey, &cached)) {
@@ -437,6 +475,12 @@ void BackgroundBridge::request(bool refresh)
         // use the resolution before screen zooming
         req.size = root->property(DesktopFrameProperty::kPropScreenHandleGeometry).toRect().size();
 
+        // Read the per-screen fill style in the main thread so the cache key
+        // and the worker-thread processing stay consistent.
+        req.style = static_cast<WallpaperStyle>(getValueFromJson(
+                DConfigManager::instance()->value(kDesktopDConfName, kWallpaperFillStyle, QString()).toString(),
+                req.screen));
+
         // Get wallpaper path
         if (!refresh)
             req.path = d->backgroundPaths.value(req.screen);
@@ -468,6 +512,12 @@ void BackgroundBridge::forceRequest()
 
         // use the resolution before screen zooming
         req.size = sc->handleGeometry().size();
+
+        // Read the per-screen fill style in the main thread so the cache key
+        // and the worker-thread processing stay consistent.
+        req.style = static_cast<WallpaperStyle>(getValueFromJson(
+                DConfigManager::instance()->value(kDesktopDConfName, kWallpaperFillStyle, QString()).toString(),
+                req.screen));
 
         // Get wallpaper path
         req.path = d->service->background(req.screen);
@@ -562,7 +612,7 @@ void BackgroundBridge::onFinished(void *pData)
 
                 // Insert into cache
                 QString wallpaperPath = req.path.startsWith("file:") ? QUrl(req.path).toLocalFile() : req.path;
-                QString cacheKey = generateCacheKey(wallpaperPath, req.size);
+                QString cacheKey = generateCacheKey(wallpaperPath, req.size, static_cast<int>(req.style));
                 if (!QPixmapCache::find(cacheKey, nullptr)) {
                     bool cached = QPixmapCache::insert(cacheKey, req.pixmap);
                     fmDebug() << "Wallpaper cached in main thread - path:" << wallpaperPath
@@ -604,35 +654,46 @@ void BackgroundBridge::runUpdate(BackgroundBridge *self, QList<Requestion> reqs)
         QSize trueSize = req.size;
         QString wallpaperPath = req.path.startsWith("file:") ? QUrl(req.path).toLocalFile() : req.path;
 
-        // Try WallpaperCache service first for pre-scaled image
-        QString cachedPath = getScaledPathFromCache(wallpaperPath, trueSize);
+        // The fill style is pre-computed in the main thread (request/forceRequest)
+        // and stored in req.style so that the cache key and the processing stay
+        // consistent. Falls back to Fill (0) on parse error — see getValueFromJson
+        // and the default branch of processPixmap.
+        auto wallpaperStyle = req.style;
+        int style = static_cast<int>(wallpaperStyle);
+
         QPixmap pix;
-        if (!cachedPath.isEmpty()) {
-            QImageReader cachedReader(cachedPath);
-            cachedReader.setDecideFormatFromContent(true);
-            QImage cachedImage = cachedReader.read();
-            if (!cachedImage.isNull()) {
-                pix = QPixmap::fromImage(std::move(cachedImage));
-                fmInfo() << "Using WallpaperCache scaled image:" << cachedPath
-                         << "for screen:" << req.screen;
+        // The WallpaperCache service pre-scales with the Fill style (KeepAspectRatioByExpanding +
+        // center crop), so the cached image is only valid when the Fill style is selected.
+        if (wallpaperStyle == WallpaperStyle::Fill) {
+            QString cachedPath = getScaledPathFromCache(wallpaperPath, trueSize);
+            if (!cachedPath.isEmpty()) {
+                QImageReader cachedReader(cachedPath);
+                cachedReader.setDecideFormatFromContent(true);
+                QImage cachedImage = cachedReader.read();
+                if (!cachedImage.isNull()) {
+                    pix = QPixmap::fromImage(std::move(cachedImage));
+                    fmInfo() << "Using WallpaperCache scaled image:" << cachedPath
+                             << "for screen:" << req.screen;
+                }
             }
         }
 
-        // Fallback: load and scale original image
+        // Fallback: load the image and apply the selected fill style.
+        // Center/Flatten need the true original dimensions; other styles reuse
+        // getPixmap()'s decode-time scaling to bound peak memory for large images.
         if (pix.isNull()) {
-            QPixmap backgroundPixmap = BackgroundBridge::getPixmap(req.path, trueSize);
+            QPixmap backgroundPixmap;
+            if (wallpaperStyle == WallpaperStyle::Center || wallpaperStyle == WallpaperStyle::Flatten) {
+                backgroundPixmap = getOriginalPixmap(wallpaperPath);
+            } else {
+                backgroundPixmap = BackgroundBridge::getPixmap(req.path, trueSize);
+            }
             if (backgroundPixmap.isNull()) {
                 fmCritical() << "Failed to read background for screen:" << req.screen << "path:" << req.path;
                 continue;
             }
 
-            pix = backgroundPixmap;
-            if (pix.width() > trueSize.width() || pix.height() > trueSize.height()) {
-                pix = pix.copy(QRect(static_cast<int>((pix.width() - trueSize.width()) / 2.0),
-                                     static_cast<int>((pix.height() - trueSize.height()) / 2.0),
-                                     trueSize.width(),
-                                     trueSize.height()));
-            }
+            pix = processPixmap(backgroundPixmap, wallpaperStyle, trueSize);
         }
 
         // check stop
@@ -641,7 +702,8 @@ void BackgroundBridge::runUpdate(BackgroundBridge *self, QList<Requestion> reqs)
             return;
         }
 
-        fmInfo() << "Successfully processed background for screen:" << req.screen << "path:" << req.path << "size:" << trueSize;
+        fmInfo() << "Successfully processed background for screen:" << req.screen
+                 << "path:" << req.path << "size:" << trueSize << "style:" << style;
         req.pixmap = pix;
         recorder.append(req);
     }
@@ -656,4 +718,95 @@ void BackgroundBridge::runUpdate(BackgroundBridge *self, QList<Requestion> reqs)
     *pRecorder = std::move(recorder);
     QMetaObject::invokeMethod(self, "onFinished", Qt::QueuedConnection, Q_ARG(void *, pRecorder));
     self->getting = false;
+}
+
+QPixmap BackgroundBridge::processPixmap(const QPixmap &originalPixmap, WallpaperStyle style, const QSize &targetSize)
+{
+    switch (style) {
+    case WallpaperStyle::Fit: {
+        QPixmap fitPixmap(targetSize);
+        fitPixmap.fill(Qt::black);   // 边距区域以黑底填充，避免透明穿透合成器背景
+        QPainter painter(&fitPixmap);
+        QSize scaledSize = originalPixmap.size().scaled(targetSize, Qt::KeepAspectRatio);
+        int xOffset = (targetSize.width() - scaledSize.width()) / 2;
+        int yOffset = (targetSize.height() - scaledSize.height()) / 2;
+        painter.drawPixmap(xOffset, yOffset, originalPixmap.scaled(scaledSize, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        painter.end();
+        return fitPixmap;
+    }
+    case WallpaperStyle::Stretch: {
+        return originalPixmap.scaled(targetSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    }
+    case WallpaperStyle::Flatten: {
+        QPixmap flattenPixmap(targetSize);
+        flattenPixmap.fill(Qt::black);   // 统一打底，防止瓦片未完整覆盖时的边界异常
+        QPainter painter(&flattenPixmap);
+        int tileWidth = originalPixmap.width();
+        int tileHeight = originalPixmap.height();
+
+        // 防止图片损坏（宽或高为0）时 for 循环无限执行导致程序挂起
+        if (tileWidth <= 0 || tileHeight <= 0) {
+            painter.end();
+            return flattenPixmap;
+        }
+
+        for (int y = 0; y < targetSize.height(); y += tileHeight) {
+            for (int x = 0; x < targetSize.width(); x += tileWidth) {
+                painter.drawPixmap(x, y, originalPixmap);
+            }
+        }
+        painter.end();
+        return flattenPixmap;
+    }
+    case WallpaperStyle::Center: {
+        QPixmap centeredPixmap(targetSize);
+        centeredPixmap.fill(Qt::black);   // 边距区域以黑底填充，避免透明穿透合成器背景
+        QPainter painter(&centeredPixmap);
+
+        QSize originalSize = originalPixmap.size();
+        int xOffset = (targetSize.width() - originalSize.width()) / 2;
+        int yOffset = (targetSize.height() - originalSize.height()) / 2;
+
+        painter.drawPixmap(xOffset, yOffset, originalPixmap);
+        painter.end();
+        return centeredPixmap;
+    }
+    case WallpaperStyle::Fill:
+    default: {
+        auto pix = originalPixmap.scaled(targetSize,
+                                         Qt::KeepAspectRatioByExpanding,
+                                         Qt::SmoothTransformation);
+
+        if (pix.width() > targetSize.width() || pix.height() > targetSize.height()) {
+            pix = pix.copy(QRect(static_cast<int>((pix.width() - targetSize.width()) / 2.0),
+                                 static_cast<int>((pix.height() - targetSize.height()) / 2.0),
+                                 targetSize.width(),
+                                 targetSize.height()));
+        }
+        return pix;   // 默认返回填充图像
+    }
+    }
+}
+
+int BackgroundBridge::getValueFromJson(QString json, const QString &screenName)
+{
+    // DConfig may return the JSON string verbatim or wrapped in extra quotes.
+    // Try parsing as-is first; only strip surrounding quotes if that fails.
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(json.toUtf8());
+    if (!jsonDoc.isObject()) {
+        if (json.startsWith('"'))
+            json.remove(0, 1);
+        if (json.endsWith('"'))
+            json.chop(1);
+        jsonDoc = QJsonDocument::fromJson(json.toUtf8());
+    }
+
+    if (!jsonDoc.isObject())
+        return 0;   // falls back to Fill via processPixmap's default branch
+
+    QJsonObject jsonObj = jsonDoc.object();
+    if (jsonObj.contains(screenName))
+        return jsonObj[screenName].toInt();
+
+    return 0;   // unknown screen falls back to Fill
 }

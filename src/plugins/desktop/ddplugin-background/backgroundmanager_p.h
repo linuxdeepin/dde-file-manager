@@ -16,12 +16,21 @@ class BackgroundBridge : public QObject
 {
     Q_OBJECT
 public:
+    enum class WallpaperStyle {
+        Fill = 0,        // 填充
+        Fit,             // 适应
+        Stretch,         // 拉伸
+        Flatten,         // 平铺
+        Center           // 居中
+    };
+
     struct Requestion
     {
         QString screen;
         QString path;
         QSize size;
         QPixmap pixmap;
+        WallpaperStyle style { WallpaperStyle::Fill };
     };
 
 public:
@@ -51,6 +60,8 @@ private:
     void queryCacheAndClassify(Requestion &req, QList<Requestion> &cachedRequests, QList<Requestion> &uncachedRequests);
     void processRequests(const QList<Requestion> &cachedRequests, const QList<Requestion> &uncachedRequests, bool forceMode = false);
     static void runUpdate(BackgroundBridge *self, QList<Requestion> reqs);
+    static QPixmap processPixmap(const QPixmap &originalPixmap, WallpaperStyle style, const QSize &targetSize);
+    static int getValueFromJson(QString json, const QString &screenName);
 
 private:
     class BackgroundManagerPrivate *d = nullptr;
