@@ -114,5 +114,10 @@
         <file>built-in-icons/no_favorites_yet.dci</file>
         <file>built-in-icons/dfm-search-tips.dci</file>
         <file>built-in-icons/dfm-clear.dci</file>
+        <file>built-in-icons/ok.dci</file>
+        <file>built-in-icons/warning.dci</file>
+        <file>built-in-icons/alert.dci</file>
+        <file>built-in-icons/waiting.dci</file>
+        <file>built-in-icons/minor-warning.dci</file>
     </qresource>
 </RCC>
