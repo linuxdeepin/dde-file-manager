@@ -8,4 +8,8 @@
         <file>icons/pause_hover.png</file>
         <file>icons/default_music_cover.png</file>
     </qresource>
+    <qresource prefix="/">
+        <file>icons/deepin/builtin/actions/dfm_start_16px.svg</file>
+        <file>icons/deepin/builtin/actions/dfm_pause_16px.svg</file>
+    </qresource>
 </RCC>

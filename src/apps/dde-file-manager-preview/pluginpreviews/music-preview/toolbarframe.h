@@ -13,6 +13,7 @@
 #include <QMediaPlayer>
 
 QT_BEGIN_NAMESPACE
+class QEvent;
 class QPushButton;
 class QSlider;
 class QLabel;
@@ -34,6 +35,7 @@ public:
 private:
     void initUI();
     void initConnections();
+    bool eventFilter(QObject *watched, QEvent *event) override;
 
 public slots:
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
@@ -53,6 +55,7 @@ public slots:
 
 private:
     void durationToLabel(qint64 duration);
+    void updatePlayButtonIcon();
 
 private:
     QPushButton *playControlButton { nullptr };
@@ -60,6 +63,8 @@ private:
     QLabel *durationLabel { nullptr };
     QTimer *updateProgressTimer { nullptr };
     qint64 lastPos { -1 };
+    bool playControlButtonHovered { false };
+    bool controlButtonShowsPause { false };
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     QMediaPlayer::State curState { QMediaPlayer::State::StoppedState };
 #else
