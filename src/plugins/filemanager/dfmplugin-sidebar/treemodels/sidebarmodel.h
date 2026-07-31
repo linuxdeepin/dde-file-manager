@@ -9,6 +9,8 @@
 
 #include <QStandardItemModel>
 #include <QMutex>
+#include <QPersistentModelIndex>
+#include <QHash>
 
 DPSIDEBAR_BEGIN_NAMESPACE
 
@@ -65,6 +67,7 @@ private:
     mutable SideBarItem *curDragItem { nullptr };
 
     SidebarFileWatcher *fileWatcher { nullptr };
+    QHash<QUrl, QPersistentModelIndex> m_urlIndexMap;
 };
 
 DPSIDEBAR_END_NAMESPACE

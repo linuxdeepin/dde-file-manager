@@ -10,6 +10,8 @@
 #include <dfm-base/interfaces/fileinfo.h>
 
 #include <DStyledItemDelegate>
+#include <QHash>
+#include <QPixmap>
 
 DWIDGET_USE_NAMESPACE
 DGUI_USE_NAMESPACE
@@ -47,11 +49,19 @@ private:
                   QIcon::Mode iconMode, QPalette::ColorGroup cg, bool keepHighlighted) const;
     void drawDciIcon(const QStyleOptionViewItem &option, QPainter *painter,
                      const DTK_GUI_NAMESPACE::DDciIcon &dciIcon, const QRect &iconRect,
-                     const QPalette::ColorGroup &cg, bool keepHighlighted) const;
+                     const QPalette::ColorGroup &cg, bool keepHighlighted,
+                     const QString &iconId = QString()) const;
 
     void drawMouseHoverBackground(QPainter *painter, const DPalette &palette, const QRect &r, const QColor &widgetColor) const;
     void drawMouseHoverExpandButton(QPainter *painter, const QRect &r, bool isExpanded) const;
     void drawExpandIndicator(QPainter *painter, QRect &r, bool expandable, const QModelIndex &index, bool isHighlight) const;
+
+    mutable QHash<QString, QPixmap> m_iconCache;
+    QString makeIconCacheKey(const DTK_GUI_NAMESPACE::DDciIcon &icon, const QSize &size,
+                             DTK_GUI_NAMESPACE::DDciIcon::Theme theme,
+                             DTK_GUI_NAMESPACE::DDciIcon::Mode mode,
+                             const QString &iconId = QString()) const;
+    void clearIconCache();
 
 Q_SIGNALS:
     void rename(const QModelIndex &index, QString newName) const;

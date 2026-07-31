@@ -8,6 +8,7 @@
 #include "dfmplugin_sidebar_global.h"
 
 #include <DTreeView>
+#include <optional>
 
 DWIDGET_USE_NAMESPACE
 
@@ -58,6 +59,8 @@ protected:
 
 private:
     inline QString dragEventUrls() const;
+
+    mutable std::optional<bool> m_partitionExpandableCache;
 
 public Q_SLOTS:
     void updateSeparatorVisibleState();

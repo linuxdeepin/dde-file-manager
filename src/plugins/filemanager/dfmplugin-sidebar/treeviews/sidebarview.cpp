@@ -113,30 +113,31 @@ void SideBarViewPrivate::onItemDoubleClicked(const QModelIndex &index)
 
             QModelIndex capturedIndex = index;
             QPointer<SideBarView> view = q;
+            QPointer<SideBarViewPrivate> guard(this);
             QUrl deviceUrl = nodeUrl;
 
             int subId = DeviceMountSubscriber::instance()->subscribe(
                     nodeUrl,
-                    [capturedIndex, view, this, deviceUrl](const QUrl &mountedUrl) {
-                        pendingMountSubs.remove(deviceUrl);
-
-                        if (!view) {
+                    [capturedIndex, view, guard, deviceUrl](const QUrl &mountedUrl) {
+                        if (!view || !guard) {
                             fmDebug() << "SideBarViewPrivate: View destroyed before mount completed";
                             return;
                         }
 
+                        guard->pendingMountSubs.remove(deviceUrl);
+
                         fmDebug() << "SideBarViewPrivate: Device mounted at" << mountedUrl
                                   << ", auto-expanding directory";
 
-                        QTimer::singleShot(100, view, [capturedIndex, mountedUrl, view, this]() {
-                            if (!view) {
+                        QTimer::singleShot(100, view, [capturedIndex, mountedUrl, view, guard]() {
+                            if (!view || !guard) {
                                 fmDebug() << "SideBarViewPrivate: View destroyed during delayed expansion";
                                 return;
                             }
 
                             if (mountedUrl.isValid() && mountedUrl.scheme() == "file"
                                 && QDir(mountedUrl.path()).exists()) {
-                                expandPartitionItem(capturedIndex, mountedUrl);
+                                guard->expandPartitionItem(capturedIndex, mountedUrl);
                             } else {
                                 fmDebug() << "SideBarViewPrivate: Unable to expand - invalid mounted URL:"
                                           << mountedUrl;
@@ -587,6 +588,7 @@ SideBarView::SideBarView(QWidget *parent)
     connect(this, &DTreeView::doubleClicked, d, &SideBarViewPrivate::onItemDoubleClicked);
     connect(DConfigManager::instance(), &DConfigManager::valueChanged, this, [=](const QString &cfg, const QString &key) {
         if (cfg == ConfigInfos::kConfName && key == ConfigInfos::kPartitionExpandableKey) {
+            m_partitionExpandableCache.reset();
             d->onExpandableChanged();
         }
     });
@@ -1186,7 +1188,10 @@ int SideBarView::dragItemVerticalOffset(const QModelIndex &index, int rowHeight)
 
 bool SideBarView::isPartitionExpandable() const
 {
-    return SideBarHelper::partitionExpandable();
+    if (m_partitionExpandableCache.has_value())
+        return *m_partitionExpandableCache;
+    m_partitionExpandableCache = SideBarHelper::partitionExpandable();
+    return *m_partitionExpandableCache;
 }
 
 Qt::DropAction SideBarView::canDropMimeData(SideBarItem *item, const QMimeData *data, Qt::DropActions actions) const
