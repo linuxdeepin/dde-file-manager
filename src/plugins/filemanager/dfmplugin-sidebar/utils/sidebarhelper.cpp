@@ -322,6 +322,11 @@ QVariantMap SideBarHelper::groupExpandRules()
     return DConfigManager::instance()->value(ConfigInfos::kConfName, ConfigInfos::kGroupExpandedKey).toMap();
 }
 
+bool SideBarHelper::partitionExpandable()
+{
+    return DConfigManager::instance()->value(ConfigInfos::kConfName, ConfigInfos::kPartitionExpandableKey, false).toBool();
+}
+
 void SideBarHelper::saveGroupsStateToConfig(const QVariant &var)
 {
     const QStringList keys = var.toMap().keys();

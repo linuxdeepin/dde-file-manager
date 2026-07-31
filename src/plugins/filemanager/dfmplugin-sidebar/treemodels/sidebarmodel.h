@@ -14,10 +14,12 @@ DPSIDEBAR_BEGIN_NAMESPACE
 
 class SideBarItem;
 class SideBarItemSeparator;
+class SidebarFileWatcher;
 class SideBarModel : public QStandardItemModel
 {
     Q_OBJECT
     friend class SidebarView;
+    friend class SideBarView;
 
 public:
     explicit SideBarModel(QObject *parent = nullptr);
@@ -37,12 +39,32 @@ public:
     bool removeRow(const QUrl &url);
     void updateRow(const QUrl &url, const ItemInfo &newInfo);
     QModelIndex findRowByUrl(const QUrl &url) const;
+    QModelIndex findGroupIndex(const QString &name) const;
+    QModelIndexList findRowsByUrlRecursive(const QUrl &url, const QModelIndex &parent) const;
 
     void addEmptyItem();
+
+    // Partition sub-item management
+    void onItemExpanded(const QModelIndex &index);
+    void onItemCollapsed(const QModelIndex &index);
+    void addSubItems(const QModelIndex &index, const QList<QUrl> &urls);
+
+signals:
+    void requestCollapseItem(const QModelIndex &index);
+
+private slots:
+    void onDirectoryCreated(const QUrl &parentUrl, const QUrl &url);
+    void onDirectoryRemoved(const QUrl &parentUrl, const QUrl &url);
+    void onDirectoryRenamed(const QUrl &parentUrl, const QUrl &oldUrl, const QUrl &newUrl);
+
+    void addSubItem(const QModelIndex &index, const QUrl &url);
+    void removeSubItem(const QModelIndex &index, const QUrl &url);
 
 private:
     QMutex locker;
     mutable SideBarItem *curDragItem { nullptr };
+
+    SidebarFileWatcher *fileWatcher { nullptr };
 };
 
 DPSIDEBAR_END_NAMESPACE

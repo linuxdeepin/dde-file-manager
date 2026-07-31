@@ -38,6 +38,7 @@ public:
     void setPreviousIndex(const QModelIndex &index);
     bool isDropTarget(const QModelIndex &index) const;
     bool isSideBarItemDragged() const;
+    bool isPartitionExpandable() const;
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
@@ -58,6 +59,7 @@ private:
 public Q_SLOTS:
     void updateSeparatorVisibleState();
     void onChangeExpandState(const QModelIndex &index, bool expand);
+    void onRequestCollapseItem(const QModelIndex &index);
 
 Q_SIGNALS:
     void requestRemoveItem();
