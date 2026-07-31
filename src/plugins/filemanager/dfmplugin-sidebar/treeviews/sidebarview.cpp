@@ -8,14 +8,20 @@
 #include "sidebaritem.h"
 #include "utils/fileoperatorhelper.h"
 #include "utils/sidebarhelper.h"
+#include "utils/sidebarinfocachemananger.h"
+#include "utils/devicemountsubscriber.h"
 #include "private/sidebarview_p.h"
+#include "events/sidebareventcaller.h"
 
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/base/schemefactory.h>
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/sysinfoutils.h>
+#include <dfm-base/utils/traversaldirthread.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -36,6 +42,8 @@
 #include <QScrollBar>
 #include <QScroller>
 #include <QVariantAnimation>
+#include <QPointer>
+#include <QDir>
 
 #include <unistd.h>
 
@@ -72,12 +80,76 @@ void SideBarViewPrivate::onItemDoubleClicked(const QModelIndex &index)
         return;
     }
     SideBarItem *item = q->model()->itemFromIndex(index);
-    if (!dynamic_cast<SideBarItemSeparator *>(item)) {
-        fmDebug() << "Double clicked on non-separator item, ignoring";
+
+    // Handle group separator expand/collapse.
+    if (dynamic_cast<SideBarItemSeparator *>(item)) {
+        q->onChangeExpandState(index, !q->isExpanded(index));
         return;
     }
 
-    q->onChangeExpandState(index, !q->isExpanded(index));
+    // Handle partition sub-directory expand/collapse.
+    if (item && item->group() == DefaultGroup::kDevice) {
+        if (!SideBarHelper::partitionExpandable()) {
+            fmDebug() << "Partition expansion is disabled";
+            return;
+        }
+
+        QUrl finalUrl = item->itemInfo().finalUrl;
+        QUrl nodeUrl = item->url();
+        if (nodeUrl.scheme() == "file")
+            finalUrl = nodeUrl;
+
+        bool deviceMounted = !finalUrl.isEmpty() && finalUrl.isValid();
+
+        fmDebug() << "is mounted?" << deviceMounted << finalUrl;
+        if (deviceMounted) {
+            expandPartitionItem(index, finalUrl);
+        } else {
+            // Device not yet mounted; subscribe to mount event and auto-expand later.
+            // Cancel any previous subscription for the same device to avoid duplicate toggling.
+            cancelPendingMountSubscription(nodeUrl);
+
+            fmDebug() << "SideBarViewPrivate: Device not mounted, subscribing to mount events:" << nodeUrl;
+
+            QModelIndex capturedIndex = index;
+            QPointer<SideBarView> view = q;
+            QUrl deviceUrl = nodeUrl;
+
+            int subId = DeviceMountSubscriber::instance()->subscribe(
+                    nodeUrl,
+                    [capturedIndex, view, this, deviceUrl](const QUrl &mountedUrl) {
+                        pendingMountSubs.remove(deviceUrl);
+
+                        if (!view) {
+                            fmDebug() << "SideBarViewPrivate: View destroyed before mount completed";
+                            return;
+                        }
+
+                        fmDebug() << "SideBarViewPrivate: Device mounted at" << mountedUrl
+                                  << ", auto-expanding directory";
+
+                        QTimer::singleShot(100, view, [capturedIndex, mountedUrl, view, this]() {
+                            if (!view) {
+                                fmDebug() << "SideBarViewPrivate: View destroyed during delayed expansion";
+                                return;
+                            }
+
+                            if (mountedUrl.isValid() && mountedUrl.scheme() == "file"
+                                && QDir(mountedUrl.path()).exists()) {
+                                expandPartitionItem(capturedIndex, mountedUrl);
+                            } else {
+                                fmDebug() << "SideBarViewPrivate: Unable to expand - invalid mounted URL:"
+                                          << mountedUrl;
+                            }
+                        });
+                    });
+            if (subId >= 0)
+                pendingMountSubs.insert(nodeUrl, subId);
+        }
+        return;
+    }
+
+    fmDebug() << "Double clicked on non-separator item, ignoring";
 }
 
 void SideBarViewPrivate::setTransparentPalette()
@@ -90,6 +162,90 @@ void SideBarViewPrivate::setTransparentPalette()
 void SideBarViewPrivate::restorePalette()
 {
     q->setPalette(originPalette);
+}
+
+void SideBarViewPrivate::expandItem(const QModelIndex &index, const QList<QUrl> &subFolders)
+{
+    if (!index.isValid())
+        return;
+
+    q->model()->addSubItems(index, subFolders);
+    q->expand(index);
+    q->onChangeExpandState(index, true);
+    q->setCurrentUrl(sidebarUrl);
+}
+
+void SideBarViewPrivate::expandPartitionItem(const QModelIndex &index, const QUrl &url)
+{
+    // If already expanded, collapse it.
+    if (q->isExpanded(index)) {
+        q->collapse(index);
+        q->onChangeExpandState(index, false);
+        return;
+    }
+
+    auto filters = QDir::Dirs | QDir::NoDotAndDotDot;
+    if (Application::instance()->genericAttribute(Application::kShowedHiddenFiles).toBool())
+        filters |= QDir::Hidden;
+    TraversalDirThread *t = new TraversalDirThread(url, {}, filters, QDirIterator::FollowSymlinks);
+    connect(t, &TraversalDirThread::finished, t, &TraversalDirThread::deleteLater);
+    connect(t, &TraversalDirThread::updateChildren, this, [=](const QList<QUrl> &subs) {
+        this->expandItem(index, subs);
+    });
+    t->start();
+}
+
+void SideBarViewPrivate::cancelPendingMountSubscription(const QUrl &deviceUrl)
+{
+    auto it = pendingMountSubs.find(deviceUrl);
+    if (it != pendingMountSubs.end()) {
+        DeviceMountSubscriber::instance()->unsubscribe(it.value());
+        pendingMountSubs.erase(it);
+    }
+}
+
+void SideBarViewPrivate::onExpandableChanged()
+{
+    if (SideBarHelper::partitionExpandable())
+        return;
+
+    fmDebug() << "Partition expansion is disabled";
+    SideBarModel *sidebarModel = q->model();
+    if (!sidebarModel) {
+        fmDebug() << "SideBarViewPrivate: Model is null, cannot collapse partitions";
+        return;
+    }
+
+    auto groupIndex = sidebarModel->findGroupIndex(DefaultGroup::kDevice);
+    if (!groupIndex.isValid()) {
+        fmDebug() << "SideBarViewPrivate: Group index not found";
+        return;
+    }
+
+    // Use rowCount(groupIndex) — not rowCount() — so we iterate device children, not top-level groups.
+    for (int i = 0; i < sidebarModel->rowCount(groupIndex); ++i) {
+        QModelIndex index = sidebarModel->index(i, 0, groupIndex);
+        if (!index.isValid())
+            continue;
+
+        DStandardItem *item = sidebarModel->itemFromIndex(index);
+        SideBarItem *sidebarItem = dynamic_cast<SideBarItem *>(item);
+
+        if (sidebarItem && sidebarItem->group() == DefaultGroup::kDevice) {
+            // Collapse the partition and remove its sub-items so file watchers are released.
+            if (q->isExpanded(index)) {
+                fmDebug() << "SideBarViewPrivate: Collapsing expanded partition:" << sidebarItem->url();
+                q->collapse(index);
+                q->onChangeExpandState(index, false);
+            }
+            // Remove dynamically-added sub-items (keep the partition item itself).
+            while (sidebarItem->rowCount() > 0) {
+                if (auto *child = static_cast<SideBarItem *>(sidebarItem->child(0)))
+                    SideBarInfoCacheMananger::instance()->removeItemInfoCache(child->url());
+                sidebarItem->removeRow(0);
+            }
+        }
+    }
 }
 
 void SideBarViewPrivate::updateHoverIndex(const QModelIndex &index)
@@ -429,6 +585,11 @@ SideBarView::SideBarView(QWidget *parent)
 
     connect(this, &DTreeView::clicked, d, &SideBarViewPrivate::currentChanged);
     connect(this, &DTreeView::doubleClicked, d, &SideBarViewPrivate::onItemDoubleClicked);
+    connect(DConfigManager::instance(), &DConfigManager::valueChanged, this, [=](const QString &cfg, const QString &key) {
+        if (cfg == ConfigInfos::kConfName && key == ConfigInfos::kPartitionExpandableKey) {
+            d->onExpandableChanged();
+        }
+    });
 
     d->originPalette = palette();
     d->lastOpTimer.start();
@@ -441,6 +602,11 @@ SideBarView::SideBarView(QWidget *parent)
 
 SideBarView::~SideBarView()
 {
+    // Cancel any pending device-mount subscriptions to avoid lingering callbacks.
+    for (auto it = d->pendingMountSubs.begin(); it != d->pendingMountSubs.end(); ++it)
+        DeviceMountSubscriber::instance()->unsubscribe(it.value());
+    d->pendingMountSubs.clear();
+
     QScroller::ungrabGesture(viewport());
     setStyle(nullptr);
 }
@@ -462,6 +628,30 @@ void SideBarView::mousePressEvent(QMouseEvent *event)
     d->draggedUrl = urlAt(event->pos());
     auto item = itemAt(event->pos());
     d->draggedGroup = item ? item->group() : "";
+
+    auto index = indexAt(event->pos());
+    if (event->button() == Qt::LeftButton && index.isValid()
+        && item && item->group() == DefaultGroup::kDevice) {
+        if (item->itemInfo().isExpandable && SideBarHelper::partitionExpandable()) {
+            int layer = 0;
+            auto parentIdx = index;
+            while (parentIdx.parent().isValid()) {
+                parentIdx = parentIdx.parent();
+                layer++;
+            }
+            // see @SideBarItemDelegate::drawExpandIndicator
+            // The indicator is painted at (layer * kExpandIndentPerLayer + kExpandIconOffset).
+            // Expand the hit area by kExpandHitMargin on both sides for easier clicking.
+            int iconLeft = layer * ExpandIndicatorGeometry::kIndentPerLayer + ExpandIndicatorGeometry::kIconOffset;
+            int collapseIconLeft = iconLeft - ExpandIndicatorGeometry::kHitMargin;
+            int collapseIconRight = iconLeft + ExpandIndicatorGeometry::kIconSize + ExpandIndicatorGeometry::kHitMargin;
+            if (event->pos().x() >= collapseIconLeft && event->pos().x() <= collapseIconRight) {
+                d->onItemDoubleClicked(index);
+                d->ignoreNextMouseRelease = true;
+                return;   // do not select the item.
+            }
+        }
+    }
 
     if (event->button() == Qt::RightButton) {
         // fix bug#33502 鼠标挪动到侧边栏底部右键，滚动条滑动，不能定位到选中的栏目上
@@ -489,6 +679,13 @@ void SideBarView::mouseReleaseEvent(QMouseEvent *event)
 
             dpfSignalDispatcher->publish("dfmplugin_sidebar", "signal_ReportLog_Commit", QString("Sidebar"), data);
         }
+    }
+
+    // Prevent selecting an item when the mouse press was consumed by the
+    // expand-indicator click handler (see mousePressEvent).
+    if (d->ignoreNextMouseRelease) {
+        d->ignoreNextMouseRelease = false;
+        return;
     }
 
     DTreeView::mouseReleaseEvent(event);
@@ -987,6 +1184,11 @@ int SideBarView::dragItemVerticalOffset(const QModelIndex &index, int rowHeight)
     return d->dragItemOffset(index, rowHeight);
 }
 
+bool SideBarView::isPartitionExpandable() const
+{
+    return SideBarHelper::partitionExpandable();
+}
+
 Qt::DropAction SideBarView::canDropMimeData(SideBarItem *item, const QMimeData *data, Qt::DropActions actions) const
 {
     // Got a copy of urls so whatever data was changed, it won't affact the following code.
@@ -1196,7 +1398,24 @@ void SideBarView::onChangeExpandState(const QModelIndex &index, bool expand)
         if (expand)
             setCurrentUrl(d->sidebarUrl);   // To make sure, when expand the group item, the current item is highlighted.
     }
+
+    // Notify SideBarModel to start/stop file watching for partition items.
+    if (expand) {
+        sidebarModel->onItemExpanded(index);
+    } else {
+        sidebarModel->onItemCollapsed(index);
+    }
+
     update(index);
+}
+
+void SideBarView::onRequestCollapseItem(const QModelIndex &index)
+{
+    if (index.isValid()) {
+        collapse(index);
+        onChangeExpandState(index, false);
+        fmDebug() << "Collapsed item per model request:" << index.data(Qt::DisplayRole).toString();
+    }
 }
 
 bool SideBarViewPrivate::checkOpTime()

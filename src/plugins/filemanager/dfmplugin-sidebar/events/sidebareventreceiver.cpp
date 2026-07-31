@@ -9,6 +9,7 @@
 #include "treemodels/sidebarmodel.h"
 #include "utils/sidebarhelper.h"
 #include "utils/sidebarinfocachemananger.h"
+#include "utils/devicemountsubscriber.h"
 
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/dfm_global_defines.h>
@@ -200,8 +201,15 @@ bool SideBarEventReceiver::handleItemUpdate(const QUrl &url, const QVariantMap &
         info.editDisplayText = properties[PropertyKey::kEditDisplayText].toString();
     if (properties.contains(PropertyKey::kIcon))
         info.icon = qvariant_cast<QIcon>(properties[PropertyKey::kIcon]);
-    if (properties.contains(PropertyKey::kFinalUrl))
+    if (properties.contains(PropertyKey::kFinalUrl)) {
         info.finalUrl = properties[PropertyKey::kFinalUrl].toUrl();
+        // Notify device mount subscribers when a device's finalUrl becomes valid.
+        if (info.finalUrl.isValid() && info.group == DefaultGroup::kDevice && info.finalUrl.scheme() == "file") {
+            fmDebug() << "SideBarEventReceiver: Device mounted, notifying subscribers:"
+                      << url << "at" << info.finalUrl;
+            DeviceMountSubscriber::instance()->notifyMountFinished(url, info.finalUrl);
+        }
+    }
     if (properties.contains(PropertyKey::kQtItemFlags))
         info.flags = qvariant_cast<Qt::ItemFlags>(properties[PropertyKey::kQtItemFlags]);
     if (properties.contains(PropertyKey::kIsEjectable))
@@ -214,6 +222,8 @@ bool SideBarEventReceiver::handleItemUpdate(const QUrl &url, const QVariantMap &
         info.visiableDisplayName = properties[PropertyKey::kVisiableDisplayName].toString();
     if (properties.contains(PropertyKey::kReportName))
         info.reportName = properties[PropertyKey::kReportName].toString();
+    if (properties.contains(PropertyKey::kItemExpandable))
+        info.isExpandable = properties[PropertyKey::kItemExpandable].toBool();
 
     if (properties.contains(PropertyKey::kCallbackItemClicked))
         info.clickedCb = DPF_NAMESPACE::paramGenerator<ItemClickedActionCallback>(properties[PropertyKey::kCallbackItemClicked]);

@@ -637,7 +637,8 @@ void ComputerItemWatcher::updateSidebarItem(const QUrl &url, const QString &newN
     QVariantMap map {
         { "Property_Key_DisplayName", newName },
         { "Property_Key_Editable", editable },
-        { "Property_Key_FinalUrl", findFinalUrl(info) }
+        { "Property_Key_FinalUrl", findFinalUrl(info) },
+        { "Property_Key_ItemExpandable", info->targetUrl().isValid() }
     };
     dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", url, map);
 }
@@ -770,6 +771,7 @@ QVariantMap ComputerItemWatcher::makeSidebarItem(DFMEntryFileInfoPointer info)
         { "Property_Key_EditDisplayText", info->editDisplayText() },
         { "Property_Key_Icon", QIcon::fromTheme(iconName) },
         { "Property_Key_FinalUrl", findFinalUrl(info) },
+        { "Property_Key_ItemExpandable", info->targetUrl().isValid() },
         { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
         { "Property_Key_Ejectable", ejectableOrders.contains(info->order()) || netShareSchemes.contains(netShareUrl.scheme()) },
         { "Property_Key_CallbackItemClicked", QVariant::fromValue(cdCb) },
