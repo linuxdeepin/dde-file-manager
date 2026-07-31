@@ -41,6 +41,7 @@ public:
     bool isDraggedSource(const QModelIndex &index) const;
     bool isRenderingDragPreview() const;
     int dragItemVerticalOffset(const QModelIndex &index, int rowHeight) const;
+    bool isPartitionExpandable() const;
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
@@ -61,6 +62,7 @@ private:
 public Q_SLOTS:
     void updateSeparatorVisibleState();
     void onChangeExpandState(const QModelIndex &index, bool expand);
+    void onRequestCollapseItem(const QModelIndex &index);
 
 Q_SIGNALS:
     void requestRemoveItem();

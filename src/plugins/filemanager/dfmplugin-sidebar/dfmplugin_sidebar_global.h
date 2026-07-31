@@ -77,6 +77,9 @@ inline constexpr char kVisiableDisplayName[] { "Property_Key_VisiableDisplayName
 // a string, used to report log
 inline constexpr char kReportName[] { "Property_Key_ReportName" };
 
+// value is bool, whether the sidebar item can be expanded to show subdirectories
+inline constexpr char kItemExpandable[] { "Property_Key_ItemExpandable" };
+
 // calllbacks
 inline constexpr char kCallbackItemClicked[] { "Property_Key_CallbackItemClicked" };   // value is ItemClickedActionCallback
 inline constexpr char kCallbackContextMenu[] { "Property_Key_CallbackContextMenu" };   // value is ContextMenuCallback
@@ -89,6 +92,7 @@ namespace ConfigInfos {
 inline constexpr char kConfName[] { "org.deepin.dde.file-manager.sidebar" };
 inline constexpr char kVisiableKey[] { "itemVisiable" };
 inline constexpr char kGroupExpandedKey[] { "groupExpanded" };
+inline constexpr char kPartitionExpandableKey[] { "partitionExpandable" };
 }   // namespace ConfigInfos
 
 using ItemClickedActionCallback = std::function<void(quint64 windowId, const QUrl &url)>;
@@ -112,6 +116,7 @@ struct ItemInfo
     QString visiableControlKey;
     QString visiableDisplayName;
     QString reportName;
+    bool isExpandable { false };
 
     ItemClickedActionCallback clickedCb { nullptr };
     ContextMenuCallback contextMenuCb { nullptr };
@@ -132,6 +137,7 @@ struct ItemInfo
           visiableControlKey({ map[PropertyKey::kVisiableControlKey].toString() }),
           visiableDisplayName({ map[PropertyKey::kVisiableDisplayName].toString() }),
           reportName({ map[PropertyKey::kReportName].toString() }),
+          isExpandable { map[PropertyKey::kItemExpandable].toBool() },
           clickedCb { DPF_NAMESPACE::paramGenerator<ItemClickedActionCallback>(map[PropertyKey::kCallbackItemClicked]) },
           contextMenuCb { DPF_NAMESPACE::paramGenerator<ContextMenuCallback>(map[PropertyKey::kCallbackContextMenu]) },
           renameCb { DPF_NAMESPACE::paramGenerator<RenameCallback>(map[PropertyKey::kCallbackRename]) },
@@ -157,6 +163,14 @@ inline constexpr char kAcDmSideBar[] { "left_side_bar" };
 inline constexpr char kAcDmSideBarView[] { "side_bar_view" };
 inline constexpr char kAcSidebarMenuDefault[] { "default_sidebar_menu" };
 }
+
+// Geometry constants for partition expand indicator (shared by view and delegate).
+namespace ExpandIndicatorGeometry {
+inline constexpr int kIndentPerLayer { 10 };   // pixels per nesting level
+inline constexpr int kIconOffset { 8 };        // left offset within the indented rect
+inline constexpr int kIconSize { 10 };         // indicator icon size
+inline constexpr int kHitMargin { 4 };         // extra hit area on each side
+}   // namespace ExpandIndicatorGeometry
 
 DPSIDEBAR_END_NAMESPACE
 

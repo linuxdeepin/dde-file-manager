@@ -51,6 +51,7 @@ private:
 
     void drawMouseHoverBackground(QPainter *painter, const DPalette &palette, const QRect &r, const QColor &widgetColor) const;
     void drawMouseHoverExpandButton(QPainter *painter, const QRect &r, bool isExpanded) const;
+    void drawExpandIndicator(QPainter *painter, QRect &r, bool expandable, const QModelIndex &index, bool isHighlight) const;
 
 Q_SIGNALS:
     void rename(const QModelIndex &index, QString newName) const;

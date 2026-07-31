@@ -42,6 +42,7 @@ public:
     static void registCustomSettingItem();
     static QVariantMap hiddenRules();
     static QVariantMap groupExpandRules();
+    static bool partitionExpandable();
 
     static void saveGroupsStateToConfig(const QVariant &var);
     static void openFolderInASeparateProcess(const QUrl &url);
