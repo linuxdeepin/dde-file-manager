@@ -472,6 +472,8 @@ void SideBarModel::onItemExpanded(const QModelIndex &index)
     if (url.isEmpty())
         url = item->url();
 
+    m_urlIndexMap.insert(url, QPersistentModelIndex(index));
+
     if (fileWatcher)
         fileWatcher->watchDirectory(url);
 }
@@ -503,6 +505,9 @@ void SideBarModel::onItemCollapsed(const QModelIndex &index)
     auto idxes = findRowsByUrlRecursive(url, partGrp);
     bool needWatching = std::any_of(idxes.cbegin(), idxes.cend(), isExpandedInAnyView);
 
+    if (!needWatching)
+        m_urlIndexMap.remove(url);
+
     if (fileWatcher && !needWatching) {
         fmDebug() << url << "in sidebar no need to be watched anymore.";
         fileWatcher->unwatchDirectory(url);
@@ -517,39 +522,34 @@ void SideBarModel::addSubItems(const QModelIndex &index, const QList<QUrl> &urls
         return;
     }
 
-    // Collect existing child urls for comparison.
-    QList<QUrl> existingItems;
-    for (int i = 0; i < parentItem->rowCount(); i++) {
-        SideBarItem *childItem = static_cast<SideBarItem *>(parentItem->child(i));
-        if (childItem)
-            existingItems.append(childItem->url());
+    QSet<QUrl> urlSet(urls.begin(), urls.end());
+
+    QSet<QUrl> existingSet;
+    for (int i = 0; i < parentItem->rowCount(); ++i) {
+        SideBarItem *child = static_cast<SideBarItem *>(parentItem->child(i));
+        if (child)
+            existingSet.insert(child->url());
     }
 
-    // Remove children that no longer exist.
-    QList<QUrl> itemsToRemove;
-    for (auto existed : existingItems) {
-        if (!urls.contains(existed))
-            itemsToRemove.append(existed);
-    }
-
-    for (int i = itemsToRemove.size() - 1; i >= 0; --i) {
-        auto url = itemsToRemove.at(i);
-        for (int row = 0; row < parentItem->rowCount(); ++row) {
-            SideBarItem *child = static_cast<SideBarItem *>(parentItem->child(row));
-            if (child && UniversalUtils::urlEquals(child->url(), url)) {
-                SideBarInfoCacheMananger::instance()->removeItemInfoCache(child->url());
-                parentItem->removeRow(row);
-                break;
-            }
+    for (int i = parentItem->rowCount() - 1; i >= 0; --i) {
+        SideBarItem *child = static_cast<SideBarItem *>(parentItem->child(i));
+        if (child && !urlSet.contains(child->url())) {
+            SideBarInfoCacheMananger::instance()->removeItemInfoCache(child->url());
+            parentItem->removeRow(i);
         }
     }
 
-    for (auto url : urls)
+    for (const QUrl &url : urlSet - existingSet)
         addSubItem(index, url);
 }
 
 void SideBarModel::onDirectoryCreated(const QUrl &parentUrl, const QUrl &url)
 {
+    auto it = m_urlIndexMap.find(parentUrl);
+    if (it != m_urlIndexMap.end() && it->isValid()) {
+        addSubItem(*it, url);
+        return;
+    }
     auto partGrp = findGroupIndex(DefaultGroup::kDevice);
     auto idxes = findRowsByUrlRecursive(parentUrl, partGrp);
     for (auto idx : idxes)
@@ -558,6 +558,11 @@ void SideBarModel::onDirectoryCreated(const QUrl &parentUrl, const QUrl &url)
 
 void SideBarModel::onDirectoryRemoved(const QUrl &parentUrl, const QUrl &url)
 {
+    auto it = m_urlIndexMap.find(url);
+    if (it != m_urlIndexMap.end() && it->isValid()) {
+        removeSubItem(*it, url);
+        return;
+    }
     auto partGrp = findGroupIndex(DefaultGroup::kDevice);
     auto idxes = findRowsByUrlRecursive(url, partGrp);
     for (auto idx : idxes)
