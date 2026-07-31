@@ -46,6 +46,17 @@
             "description":"It's used to control the folding/unfolding state of groups in the sidebar.",
             "permissions":"readwrite",
             "visibility":"public"
+        },
+        "partitionExpandable":{
+            "value":false,
+            "serial":0,
+            "flags":[],
+            "name":"Partition expandable",
+            "name[zh_CN]":"分区展开功能",
+            "description[zh_CN]":"用于控制是否允许展开分区显示子文件夹",
+            "description":"It's used to control whether partition items can be expanded to show subdirectories.",
+            "permissions":"readwrite",
+            "visibility":"public"
         }
     }
 }

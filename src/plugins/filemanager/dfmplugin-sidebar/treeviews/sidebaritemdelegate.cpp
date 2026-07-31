@@ -185,6 +185,7 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
         iconMode = QIcon::Disabled;
     if (!isDraggingItemNotHighlighted && (selected || keepDrawingHighlighted))
         iconMode = QIcon::Selected;
+    drawExpandIndicator(painter, itemRect, sidebarItem ? sidebarItem->itemInfo().isExpandable : false, index, keepDrawingHighlighted);
     if (opt.features & QStyleOptionViewItem::HasDecoration)
         drawIcon(opt, painter, index, itemRect, isEjectable, iconSize, iconMode, cg, keepDrawingHighlighted);
 
@@ -556,6 +557,42 @@ void SideBarItemDelegate::drawMouseHoverExpandButton(QPainter *painter, const QR
     painter->setOpacity(1);
     painter->setPen(Qt::gray);
     QIcon icon = QIcon::fromTheme(isExpanded ? "go-up" : "go-down");
+    icon.paint(painter, iconRect, Qt::AlignmentFlag::AlignCenter);
+    painter->restore();
+}
+
+void SideBarItemDelegate::drawExpandIndicator(QPainter *painter, QRect &r, bool expandable, const QModelIndex &index, bool isHighlight) const
+{
+    DStandardItem *item = qobject_cast<const SideBarModel *>(index.model())->itemFromIndex(index);
+    SideBarItem *subItem = dynamic_cast<SideBarItem *>(item);
+
+    if (!expandable || !subItem || subItem->group() != DefaultGroup::kDevice)
+        return;
+
+    // Only draw the indicator when partition expansion is enabled.
+    SideBarView *view = dynamic_cast<SideBarView *>(this->parent());
+    if (!view || !view->isPartitionExpandable())
+        return;
+
+    // Apply indentation only for items that will actually draw an indicator.
+    auto layer = 0;
+    auto idx(index);
+    while (idx.parent().isValid()) {
+        idx = idx.parent();
+        layer++;
+    }
+    r.setX(r.x() + ExpandIndicatorGeometry::kIndentPerLayer * layer);
+
+    int iconSize = ExpandIndicatorGeometry::kIconSize;
+    int x = r.left() + ExpandIndicatorGeometry::kIconOffset;
+    int y = r.top() + (r.height() / 2) - (iconSize / 2);
+    QRect iconRect(QPoint(x, y), QSize(iconSize, iconSize));
+
+    painter->save();
+    painter->setOpacity(1);
+    painter->setPen(qApp->palette().color(isHighlight ? QPalette::HighlightedText : QPalette::Text));
+    bool expanded = view ? view->isExpanded(index) : false;
+    QIcon icon = QIcon::fromTheme(expanded ? "go-down" : "go-next");
     icon.paint(painter, iconRect, Qt::AlignmentFlag::AlignCenter);
     painter->restore();
 }

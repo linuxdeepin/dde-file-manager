@@ -459,6 +459,7 @@ void SideBarWidget::initConnect()
     connect(kSidebarModelIns.data(), &SideBarModel::rowsInserted, sidebarView, &SideBarView::updateSeparatorVisibleState);
     connect(kSidebarModelIns.data(), &SideBarModel::rowsRemoved, sidebarView, &SideBarView::updateSeparatorVisibleState);
     connect(kSidebarModelIns.data(), &SideBarModel::rowsMoved, sidebarView, &SideBarView::updateSeparatorVisibleState);
+    connect(kSidebarModelIns.data(), &SideBarModel::requestCollapseItem, sidebarView, &SideBarView::onRequestCollapseItem);
 
     // 监听窗口特效模式切换
     connect(compositingConfig, &DConfig::valueChanged, this, [this](const QString &key) {
