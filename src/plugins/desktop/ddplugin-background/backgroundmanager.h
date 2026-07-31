@@ -37,6 +37,7 @@ private slots:
     void onDetachWindows();
     void onGeometryChanged();
     void onBackgroundChanged();
+    void onConfigChanged(const QString &cfg, const QString &key);
 
 private:
     BackgroundWidgetPointer createBackgroundWidget(QWidget *root);
