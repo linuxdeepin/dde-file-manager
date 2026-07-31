@@ -14,7 +14,7 @@ FilePreviewDialogStatusBar::FilePreviewDialogStatusBar(QWidget *parent)
 {
     qCDebug(logLibFilePreview) << "FilePreviewDialogStatusBar: initializing status bar";
     
-    QSize iconSize(16, 16);
+    QSize iconSize(12, 12);
     preBtn = new QPushButton(this);
     preBtn->setObjectName("PreButton");
     preBtn->setIcon(QIcon::fromTheme("go-previous").pixmap(iconSize));
