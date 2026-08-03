@@ -66,14 +66,16 @@ inline constexpr int kTextIndexVersion { 6 };
 // Version 3: add new field "file_ext"
 inline constexpr int kOcrIndexVersion { 3 };
 
-// json
+// json - key
 inline const QString kTextVersionKey = QLatin1String("version");
 inline const QString kOcrVersionKey = QLatin1String("version");
 inline const QString kLastUpdateTimeKey = QLatin1String("lastUpdateTime");
 inline const QString kStateKey = QLatin1String("state");
-inline const QString kStateClean = QLatin1String("clean");
-inline const QString kStateDirty = QLatin1String("dirty");
 inline const QString kNeedsRebuildKey = QLatin1String("needsRebuild");
+
+// json - value
+inline const QString kStateClean = QLatin1String("clean");   // state
+inline const QString kStateDirty = QLatin1String("dirty");   // state
 }   // namespace Defines
 
 DFM_LOG_USE_CATEGORY(SERVICETEXTINDEX_NAMESPACE)

@@ -16,6 +16,18 @@ SERVICETEXTINDEX_BEGIN_NAMESPACE
 
 namespace {
 
+/**
+ * @brief 读取状态 JSON 文件并解析为 QJsonObject
+ *
+ * 状态文件采用 JSON 格式，包含以下 key（定义在 service_textindex_global.h 的 Defines 命名空间）：
+ * - "state"          → "clean" 或 "dirty"（kStateKey → kStateClean / kStateDirty）
+ * - "needsRebuild"   → true / false（kNeedsRebuildKey）
+ * - "lastUpdateTime" → ISO 时间字符串（kLastUpdateTimeKey）
+ * - "version"        → 整数版本号（kTextVersionKey / kOcrVersionKey，由 IndexProfile::versionKey() 提供）
+ *
+ * 文件不存在、无法打开、JSON 解析失败、根非 Object 时均返回空 QJsonObject（不抛异常）。
+ * 调用方应能处理空对象（各 getter 有对应的默认返回值）。
+ */
 QJsonObject readStatusJson(const QString &filePath)
 {
     QFile file(filePath);
@@ -42,6 +54,13 @@ QJsonObject readStatusJson(const QString &filePath)
     return doc.object();
 }
 
+/**
+ * @brief 将 QJsonObject 写入状态文件（原子写入）
+ *
+ * 使用 QSaveFile 实现原子写入：先写入临时文件，commit 时 rename 为目标文件。
+ * 这样即使写入过程中进程崩溃，也不会产生半写入的损坏文件。
+ * 如果目录不存在会先创建。
+ */
 bool writeStatusJson(const QString &filePath, const QJsonObject &obj)
 {
     QDir().mkpath(QFileInfo(filePath).absolutePath());
@@ -205,7 +224,8 @@ void IndexStateStore::saveLastUpdateTime(const QDateTime &lastUpdateTime) const
 {
     QJsonObject obj = readStatusJson(statusFilePath());
     obj[Defines::kLastUpdateTimeKey] = lastUpdateTime.toString(Qt::ISODate);
-    // Do NOT update version here - incremental tasks should not change version number
+    // 不更新 version：增量任务不应改变版本号。
+    // 若在 recoveryPending 期间增量任务提升了 version，会导致后续恢复任务的版本判断出错。
     writeStatusJson(statusFilePath(), obj);
 }
 
