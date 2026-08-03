@@ -149,6 +149,29 @@ public:
     void setNeedsRebuild(bool need) const;
 
     /**
+     * @brief 读取 createInProgress 标记
+     * @return true 表示 CREATE 任务未完成（重型 UPDATE 的判定依据）；false 表示无 CREATE 进行中
+     *
+     * 状态机：
+     * - CREATE startTask 时置 true
+     * - Create/Update 全量任务成功完成时置 false
+     * - 中断/失败时不操作（保持原值），下次重启仍判定为重型
+     * - 增量任务不操作
+     *
+     * 字段缺失时默认返回 false（旧版遗留文件或文件不存在）。
+     */
+    bool isCreateInProgress() const;
+
+    /**
+     * @brief 设置 createInProgress 标记并持久化
+     * @param inProgress CREATE 任务是否未完成
+     *
+     * 采用 read-modify-write 模式：先读取整个 JSON，更新字段，再写回。
+     * 不破坏文件中的其他字段（如 state、needsRebuild、version 等）。
+     */
+    void setCreateInProgress(bool inProgress) const;
+
+    /**
      * @brief 获取上次更新时间
      * @return 格式化时间字符串 "yyyy-MM-dd hh:mm:ss"，文件不存在时返回空字符串
      */

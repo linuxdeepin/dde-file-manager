@@ -157,6 +157,19 @@ void IndexStateStore::setNeedsRebuild(bool need) const
     writeStatusJson(statusFilePath(), obj);
 }
 
+bool IndexStateStore::isCreateInProgress() const
+{
+    const QJsonObject obj = readStatusJson(statusFilePath());
+    return obj.contains(Defines::kCreateInProgressKey) ? obj[Defines::kCreateInProgressKey].toBool() : false;
+}
+
+void IndexStateStore::setCreateInProgress(bool inProgress) const
+{
+    QJsonObject obj = readStatusJson(statusFilePath());
+    obj[Defines::kCreateInProgressKey] = inProgress;
+    writeStatusJson(statusFilePath(), obj);
+}
+
 QString IndexStateStore::getLastUpdateTime() const
 {
     const QJsonObject obj = readStatusJson(statusFilePath());
