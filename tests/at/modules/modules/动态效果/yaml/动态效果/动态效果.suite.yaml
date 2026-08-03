@@ -1,0 +1,407 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 动态效果_suite
+app: dde-file-manager
+description: ''
+module: 动态效果
+tags: []
+fast_fail: false
+env_check: []
+setup:
+- action: session_start
+  command: dde-file-manager
+  wait: 3.0
+suites:
+- id: case_1808019_s1
+  name: 启动 dde-file-manager
+  description: ''
+  tags: []
+  steps:
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    selector: {}
+    wait: 1.0
+  - action: wait
+    selector: {}
+    wait: 1.0
+  assert_steps:
+  - action: assert_window
+    selector: null
+    name_pattern: dde-file-manager
+  - action: assert_window
+    selector: null
+    name_pattern: dde-file-manager
+- id: case_1808017_s1
+  name: 启动 dde-file-manager
+  description: ''
+  tags: []
+  steps:
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  assert_steps: []
+- id: case_1808015_s1
+  name: 启动 dde-file-manager
+  description: ''
+  tags: []
+  steps:
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  assert_steps: []
+- id: case_1808013_s1
+  name: 启动 dde-file-manager
+  description: ''
+  tags: []
+  steps:
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  assert_steps: []
+- id: case_1808011_s1
+  name: 启动 dde-file-manager
+  description: ''
+  tags: []
+  steps:
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  assert_steps: []
+- id: case_1808009_s1
+  name: 启动 dde-file-manager
+  description: ''
+  tags: []
+  steps:
+  - action: wait
+    wait: 1.0
+  - action: wait
+    selector: {}
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    selector: {}
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  assert_steps:
+  - action: assert_window
+    selector: null
+    name_pattern: dde-file-manager
+- id: case_1808005_s1
+  name: 启动 dde-file-manager
+  description: ''
+  tags: []
+  steps:
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  assert_steps: []
+- id: case_1808003_s1
+  name: 启动 dde-file-manager
+  description: ''
+  tags: []
+  steps:
+  - action: wait
+    wait: 1.0
+  - action: element_action
+    selector:
+      name: side_bar_view
+      role: tree
+    do: click
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  assert_steps: []
+- id: case_1808001_s1
+  name: 启动 dde-file-manager
+  description: ''
+  tags: []
+  steps:
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    selector: {}
+    wait: 1.0
+  - action: wait
+    selector: {}
+    wait: 1.0
+  - action: wait
+    selector: {}
+    wait: 1.0
+  - action: wait
+    selector: {}
+    wait: 1.0
+  assert_steps:
+  - action: assert_window
+    selector: null
+    name_pattern: dde-file-manager
+  - action: assert_window
+    selector: null
+    name_pattern: dde-file-manager
+  - action: assert_window
+    selector: null
+    name_pattern: dde-file-manager
+  - action: assert_window
+    selector: null
+    name_pattern: dde-file-manager
+- id: case_1807999_s1
+  name: 启动 dde-file-manager
+  description: ''
+  tags: []
+  steps:
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    selector: {}
+    wait: 1.0
+  - action: wait
+    selector: {}
+    wait: 1.0
+  - action: wait
+    selector: {}
+    wait: 1.0
+  - action: wait
+    selector: {}
+    wait: 1.0
+  assert_steps:
+  - action: assert_window
+    selector: null
+    name_pattern: dde-file-manager
+  - action: assert_window
+    selector: null
+    name_pattern: dde-file-manager
+  - action: assert_window
+    selector: null
+    name_pattern: dde-file-manager
+  - action: assert_window
+    selector: null
+    name_pattern: dde-file-manager
+- id: case_1807995_s1
+  name: 启动 dde-file-manager
+  description: ''
+  tags: []
+  steps:
+  - action: wait
+    wait: 1.0
+  - action: wait
+    selector: {}
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    selector: {}
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  assert_steps:
+  - action: assert_window
+    selector: null
+    name_pattern: dde-file-manager
+- id: case_1807993_s1
+  name: 启动 dde-file-manager
+  description: ''
+  tags: []
+  steps:
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  assert_steps: []
+- id: case_1807987_s1
+  name: 启动 dde-file-manager
+  description: ''
+  tags: []
+  steps:
+  - action: wait
+    selector: {}
+    wait: 1.0
+  - action: wait
+    selector: {}
+    wait: 1.0
+  assert_steps:
+  - action: assert_window
+    selector: null
+    name_pattern: dde-file-manager
+- id: case_1807985_s1
+  name: 启动 dde-file-manager
+  description: ''
+  tags: []
+  steps:
+  - action: wait
+    wait: 1.0
+  - action: wait
+    selector: {}
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    selector: {}
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  assert_steps:
+  - action: assert_window
+    selector: null
+    name_pattern: dde-file-manager
+- id: case_1807983_s1
+  name: 启动 dde-file-manager
+  description: ''
+  tags: []
+  steps:
+  - action: wait
+    wait: 1.0
+  - action: wait
+    selector: {}
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    selector: {}
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  assert_steps:
+  - action: assert_window
+    selector: null
+    name_pattern: dde-file-manager
+- id: case_1807981_s1
+  name: 启动 dde-file-manager
+  description: ''
+  tags: []
+  steps:
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  assert_steps: []
+- id: case_1807979_s1
+  name: 启动 dde-file-manager
+  description: ''
+  tags: []
+  steps:
+  - action: wait
+    selector: {}
+    wait: 1.0
+  - action: wait
+    selector: {}
+    wait: 1.0
+  assert_steps:
+  - action: assert_window
+    selector: null
+    name_pattern: dde-file-manager
+teardown:
+- action: session_stop

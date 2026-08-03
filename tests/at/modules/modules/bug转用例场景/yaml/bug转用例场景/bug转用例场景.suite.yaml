@@ -1,0 +1,196 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: bug转用例场景_suite
+app: dde-file-manager
+description: ''
+module: bug转用例场景
+tags: []
+fast_fail: false
+env_check: []
+setup:
+- action: session_start
+  command: dde-file-manager
+  wait: 3.0
+suites:
+- id: case_1972987_s1
+  name: 启动 dde-file-manager
+  description: ''
+  tags: []
+  steps:
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  assert_steps:
+  - action: assert_window
+    selector: null
+    name_pattern: dde-file-manager
+  - action: assert_window
+    selector: null
+    name_pattern: dde-file-manager
+- id: case_1968781_s1
+  name: 启动 dde-file-manager
+  description: ''
+  tags: []
+  steps:
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  assert_steps: []
+- id: case_1857601_s1
+  name: 启动 dde-file-manager
+  description: ''
+  tags: []
+  steps:
+  - action: element_action
+    selector:
+      name: 计算机
+      role: table cell
+    do: click
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  assert_steps: []
+- id: case_1810647_s1
+  name: 启动 dde-file-manager
+  description: ''
+  tags: []
+  steps:
+  - action: mouse_drag
+    selector:
+      name: 最近使用
+      role: table cell
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  assert_steps: []
+- id: case_1810645_s1
+  name: 启动 dde-file-manager
+  description: ''
+  tags: []
+  steps:
+  - action: wait
+    selector: {}
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    selector: {}
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  assert_steps:
+  - action: assert_window
+    selector: null
+    name_pattern: dde-file-manager
+- id: case_1810643_s1
+  name: 启动 dde-file-manager
+  description: ''
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+c
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  assert_steps: []
+- id: case_1810641_s1
+  name: 启动 dde-file-manager
+  description: ''
+  tags: []
+  steps:
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: mouse_double_click
+    selector:
+      name: 计算机
+      role: table cell
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  assert_steps: []
+- id: case_1810639_s1
+  name: 启动 dde-file-manager
+  description: ''
+  tags: []
+  steps:
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  assert_steps: []
+- id: case_1810637_s1
+  name: 启动 dde-file-manager
+  description: ''
+  tags: []
+  steps:
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  assert_steps: []
+- id: case_1810633_s1
+  name: 启动 dde-file-manager
+  description: ''
+  tags: []
+  steps:
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  - action: wait
+    wait: 1.0
+  assert_steps: []
+teardown:
+- action: session_stop
