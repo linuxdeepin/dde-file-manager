@@ -72,6 +72,7 @@ inline const QString kOcrVersionKey = QLatin1String("version");
 inline const QString kLastUpdateTimeKey = QLatin1String("lastUpdateTime");
 inline const QString kStateKey = QLatin1String("state");
 inline const QString kNeedsRebuildKey = QLatin1String("needsRebuild");
+inline const QString kCreateInProgressKey = QLatin1String("createInProgress");
 
 // json - value
 inline const QString kStateClean = QLatin1String("clean");   // state

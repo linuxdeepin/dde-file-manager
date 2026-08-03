@@ -162,6 +162,7 @@ bool TaskManager::startTask(IndexTask::Type type, const QStringList &pathList, b
         // 创建索引的任务开销巨大，避免任务未完成时进程退出后，重复进入创建任务
         if (m_context && m_context->stateStore()) {
             m_context->stateStore()->saveIndexStatus(QDateTime::currentDateTime());
+            m_context->stateStore()->setCreateInProgress(true);
         }
     }
 
@@ -532,8 +533,10 @@ void TaskManager::finalizeIndexState(IndexTask::Type type, const HandlerResult &
 
     if (isFullScanTask(type)) {
         m_recoveryPending = false;
-        if (m_context && m_context->stateStore())
+        if (m_context && m_context->stateStore()) {
             m_context->stateStore()->setIndexState(IndexUtility::IndexState::Clean);
+            m_context->stateStore()->setCreateInProgress(false);
+        }
         fmInfo() << "[TaskManager::onTaskFinished] Full-scan task completed, index state set to clean";
     } else if (!m_recoveryPending) {
         if (m_context && m_context->stateStore())
