@@ -141,12 +141,12 @@ Pamięć flash może ulegać awarii. Wykonaj natychmiast kopię zapasową.</tran
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="487"/>
         <source>The data structure of %1 is severely damaged and cannot be recognized or repaired by the system. If there are important files inside, please stop using it. It is recommended to use professional data recovery software or seek professional assistance.</source>
-        <translation type="unfinished"/>
+        <translation>Struktura danych %1 jest poważnie uszkodzona i system nie jest w stanie jej rozpoznać, ani naprawić. Jeśli pamięć zawiera ważne dane, natychmiast przestań z niej korzystać. Zaleca się skorzystanie z profesjonalnego oprogramowania odzyskiwania danych lub zwrócenie się do specjalisty.</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="732"/>
         <source>Repair operation failed</source>
-        <translation type="unfinished"/>
+        <translation>Nie udało się naprawić</translation>
     </message>
 </context>
 <context>
@@ -2288,63 +2288,63 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="94"/>
         <source>Repair Storage Device</source>
-        <translation type="unfinished"/>
+        <translation>Napraw urządzenie pamięci masowej</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="99"/>
         <source>Preparing to repair device: %1 (%2 %3)</source>
-        <translation type="unfinished"/>
+        <translation>Przygotowuję naprawę urządzenia: %1 (%2 %3)</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="104"/>
         <source>The device will be unmounted during repair. It will be automatically remounted after repair is complete. Please do not remove the device during the repair process.</source>
-        <translation type="unfinished"/>
+        <translation>Urządzenie zostanie odmontowane podczas naprawy i zostanie ponownie zamontowane po ukończeniu. Nie usuwaj go w trakcie.</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="118"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Anuluj</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="119"/>
         <source>Start Repair</source>
-        <translation type="unfinished"/>
+        <translation>Rozpocznij naprawę</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="128"/>
         <source>Repairing Storage Device</source>
-        <translation type="unfinished"/>
+        <translation>Naprawianie urządzenia pamięci masowej</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="133"/>
         <source>Repairing device: %1 (%2 %3)</source>
-        <translation type="unfinished"/>
+        <translation>Naprawianie urządzenia: %1 (%2 %3)</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="160"/>
         <source>Repair Complete</source>
-        <translation type="unfinished"/>
+        <translation>Naprawa zakończona</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="165"/>
         <source>The device has been successfully repaired. The device has been remounted and is now ready to use.</source>
-        <translation type="unfinished"/>
+        <translation>Urządzenie naprawione pomyślnie. Zostało ponownie zamontowane i jest gotowe do użytku.</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="177"/>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="230"/>
         <source>Close</source>
-        <translation type="unfinished"/>
+        <translation>Zamknij</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="178"/>
         <source>Open Device</source>
-        <translation type="unfinished"/>
+        <translation>Otwórz urządzenie</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="187"/>
         <source>Repair Failed</source>
-        <translation type="unfinished"/>
+        <translation>Nie udało się naprawić</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="192"/>
