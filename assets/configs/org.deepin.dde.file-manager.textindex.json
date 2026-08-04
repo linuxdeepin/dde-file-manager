@@ -131,16 +131,16 @@
 			"visibility": "public"
 		},
 		"ocrImageScaleWidth": {
-				"value": 960,
-				"serial": 0,
-				"flags": [],
-				"name": "OCR image scale width",
-				"name[zh_CN]": "OCR 图片缩放宽度",
-				"description[zh_CN]": "OCR 处理前图片等比缩放的最大宽度（像素）。超过此宽度的图片将按比例缩小。设置为 0 表示不限制宽度。",
-				"description": "Maximum width in pixels for OCR image scaling. Images wider than this will be scaled down proportionally. Set to 0 to disable width scaling.",
-				"permissions": "readwrite",
-				"visibility": "public"
-			},
+			"value": 960,
+			"serial": 0,
+			"flags": [],
+			"name": "OCR image scale width",
+			"name[zh_CN]": "OCR 图片缩放宽度",
+			"description[zh_CN]": "OCR 处理前图片等比缩放的最大宽度（像素）。超过此宽度的图片将按比例缩小。设置为 0 表示不限制宽度。",
+			"description": "Maximum width in pixels for OCR image scaling. Images wider than this will be scaled down proportionally. Set to 0 to disable width scaling.",
+			"permissions": "readwrite",
+			"visibility": "public"
+		},
 		"ocrImageScaleHeight": {
 			"value": 540,
 			"serial": 0,
@@ -243,6 +243,50 @@
 			"description": "Number of files to process before committing during indexing, ranging from 100 to 10000. Smaller values commit more frequently, allowing users to see search results sooner, but may impact indexing performance.",
 			"permissions": "readwrite",
 			"visibility": "public"
+		},
+		"idleThresholdSeconds": {
+			"value": 30,
+			"serial": 0,
+			"flags": [],
+			"name": "Idle Threshold (seconds)",
+			"name[zh_CN]": "空闲阈值（秒）",
+			"description[zh_CN]": "系统连续无键盘/鼠标/触控输入的持续时间达到此阈值后判定为空闲，范围为 5 到 600 秒。",
+			"description": "Duration of continuous inactivity (no keyboard/mouse/touch input) before the system is considered idle, ranging from 5 to 600 seconds.",
+			"permissions": "readwrite",
+			"visibility": "private"
+		},
+		"loadSampleIntervalSeconds": {
+			"value": 5,
+			"serial": 0,
+			"flags": [],
+			"name": "Load Sample Interval (seconds)",
+			"name[zh_CN]": "负载采样间隔（秒）",
+			"description[zh_CN]": "CPU 和磁盘忙碌度的采样间隔，范围为 1 到 60 秒。滚动窗口保持最近 60 秒的采样数据。",
+			"description": "Sampling interval for CPU and disk busyness, ranging from 1 to 60 seconds. The rolling window keeps the last 60 seconds of samples.",
+			"permissions": "readwrite",
+			"visibility": "private"
+		},
+		"cpuLoadThresholdPercent": {
+			"value": 30,
+			"serial": 0,
+			"flags": [],
+			"name": "CPU Load Threshold (percent)",
+			"name[zh_CN]": "CPU 负载阈值（百分比）",
+			"description[zh_CN]": "最近 60 秒 CPU 平均占用率上限，超过此值时不判定为空闲，范围为 1 到 100。",
+			"description": "Maximum 60-second average CPU usage percentage for the system to be considered idle, ranging from 1 to 100.",
+			"permissions": "readwrite",
+			"visibility": "private"
+		},
+		"diskBusyThresholdPercent": {
+			"value": 50,
+			"serial": 0,
+			"flags": [],
+			"name": "Disk Busy Threshold (percent)",
+			"name[zh_CN]": "磁盘忙碌度阈值（百分比）",
+			"description[zh_CN]": "数据盘最近 60 秒平均忙碌度上限，超过此值时不判定为空闲，范围为 1 到 100。",
+			"description": "Maximum 60-second average busyness percentage of the data disk for the system to be considered idle, ranging from 1 to 100.",
+			"permissions": "readwrite",
+			"visibility": "private"
 		}
 	}
 }

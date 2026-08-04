@@ -12,6 +12,7 @@ function(dfm_setup_textindex_dependencies target_name)
     find_package(Qt6 REQUIRED COMPONENTS Core DBus Gui)
     find_package(Dtk6 COMPONENTS Core)
     find_package(dfm6-search REQUIRED)
+    find_package(KF6IdleTime REQUIRED)
     
     # Find system dependencies using pkg-config
     pkg_check_modules(Lucene REQUIRED IMPORTED_TARGET liblucene++ liblucene++-contrib)
@@ -37,6 +38,7 @@ function(dfm_setup_textindex_dependencies target_name)
         ${GLIB_LIBRARIES}
         PkgConfig::Lucene
         PkgConfig::mount
+        KF6::IdleTime
     )
     
     # Add textindex-specific include directories

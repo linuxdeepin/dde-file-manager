@@ -52,6 +52,7 @@ Build-Depends:
  libheif-dev,
  libappimage-dev,
  libkf6syntaxhighlighting-dev,
+ libkf6idletime-dev,
  libnl-3-dev,
  libnl-genl-3-dev,
  libminizip-dev

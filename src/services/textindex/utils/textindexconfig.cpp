@@ -198,6 +198,32 @@ void TextIndexConfig::loadAllConfigs()
         m_batchCommitInterval = DEFAULT_BATCH_COMMIT_INTERVAL;
     }
 
+    // --- Strategy optimization config keys (environment detection) ---
+
+    m_idleThresholdSeconds = m_dconfigManager->value(
+            Defines::DConf::kTextIndexSchema, Defines::DConf::kIdleThresholdSeconds,
+            DEFAULT_IDLE_THRESHOLD_SECONDS).toInt();
+    if (m_idleThresholdSeconds < 5 || m_idleThresholdSeconds > 600)
+        m_idleThresholdSeconds = DEFAULT_IDLE_THRESHOLD_SECONDS;
+
+    m_loadSampleIntervalSeconds = m_dconfigManager->value(
+            Defines::DConf::kTextIndexSchema, Defines::DConf::kLoadSampleIntervalSeconds,
+            DEFAULT_LOAD_SAMPLE_INTERVAL_SECONDS).toInt();
+    if (m_loadSampleIntervalSeconds < 1 || m_loadSampleIntervalSeconds > 60)
+        m_loadSampleIntervalSeconds = DEFAULT_LOAD_SAMPLE_INTERVAL_SECONDS;
+
+    m_cpuLoadThresholdPercent = m_dconfigManager->value(
+            Defines::DConf::kTextIndexSchema, Defines::DConf::kCpuLoadThresholdPercent,
+            DEFAULT_CPU_LOAD_THRESHOLD_PERCENT).toInt();
+    if (m_cpuLoadThresholdPercent < 1 || m_cpuLoadThresholdPercent > 100)
+        m_cpuLoadThresholdPercent = DEFAULT_CPU_LOAD_THRESHOLD_PERCENT;
+
+    m_diskBusyThresholdPercent = m_dconfigManager->value(
+            Defines::DConf::kTextIndexSchema, Defines::DConf::kDiskBusyThresholdPercent,
+            DEFAULT_DISK_BUSY_THRESHOLD_PERCENT).toInt();
+    if (m_diskBusyThresholdPercent < 1 || m_diskBusyThresholdPercent > 100)
+        m_diskBusyThresholdPercent = DEFAULT_DISK_BUSY_THRESHOLD_PERCENT;
+
     fmDebug() << "TextIndexConfig: Text index configurations loaded successfully";
     // You might want to print the loaded values here for debugging if needed
     // fmDebug() << "AutoIndexUpdateInterval:" << m_autoIndexUpdateInterval;
@@ -293,6 +319,30 @@ int TextIndexConfig::batchCommitInterval() const
 {
     QMutexLocker locker(&m_mutex);
     return m_batchCommitInterval;
+}
+
+int TextIndexConfig::idleThresholdSeconds() const
+{
+    QMutexLocker locker(&m_mutex);
+    return m_idleThresholdSeconds;
+}
+
+int TextIndexConfig::loadSampleIntervalSeconds() const
+{
+    QMutexLocker locker(&m_mutex);
+    return m_loadSampleIntervalSeconds;
+}
+
+int TextIndexConfig::cpuLoadThresholdPercent() const
+{
+    QMutexLocker locker(&m_mutex);
+    return m_cpuLoadThresholdPercent;
+}
+
+int TextIndexConfig::diskBusyThresholdPercent() const
+{
+    QMutexLocker locker(&m_mutex);
+    return m_diskBusyThresholdPercent;
 }
 
 SERVICETEXTINDEX_END_NAMESPACE
