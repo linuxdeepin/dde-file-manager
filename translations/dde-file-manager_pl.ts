@@ -130,7 +130,7 @@
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="480"/>
         <source>%1 is in hardware write-protected mode.
 Flash memory may be failing. Please back up data immediately.</source>
-        <translation>%1 jest w sprzętowej ochronie przed zapisem.
+        <translation>%1 ma włączoną sprzętową ochronę przed zapisem.
 Pamięć flash może ulegać awarii. Wykonaj natychmiast kopię zapasową.</translation>
     </message>
     <message>
@@ -2354,7 +2354,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="206"/>
         <source>Error Code: %1</source>
-        <translation type="unfinished"/>
+        <translation>Kod błędu: %1</translation>
     </message>
 </context>
 <context>
@@ -2387,42 +2387,42 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="36"/>
         <source>Invalid device path: %1</source>
-        <translation type="unfinished"/>
+        <translation>Błędna ścieżka urządzenia: %1</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="42"/>
         <source>Device is already being repaired: %1</source>
-        <translation type="unfinished"/>
+        <translation>Urządzenie już jest naprawiane: %1</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="49"/>
         <source>Cannot detect filesystem type for: %1</source>
-        <translation type="unfinished"/>
+        <translation>Nie można określić systemu plików: %1</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="55"/>
         <source>Unsupported filesystem type: %1</source>
-        <translation type="unfinished"/>
+        <translation>Nieobsługiwany system plików: %1</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="70"/>
         <source>Device is hardware write-protected, cannot repair</source>
-        <translation type="unfinished"/>
+        <translation>Urządzenie ma włączoną sprzętową ochronę przed zapisem, nie można naprawić.</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="76"/>
         <source>Authorization failed</source>
-        <translation type="unfinished"/>
+        <translation>Błąd uwierzytelniania</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="95"/>
         <source>Failed to unmount device: %1</source>
-        <translation type="unfinished"/>
+        <translation>Nie udało się odmontować urządzenia: %1</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="165"/>
         <source>Filesystem repair completed successfully</source>
-        <translation type="unfinished"/>
+        <translation>Naprawiono pomyślnie system plików</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="168"/>
