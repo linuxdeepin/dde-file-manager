@@ -157,7 +157,10 @@ void OpenWithDialogListItem::paintEvent(QPaintEvent *e)
 
     path.addRoundedRect(rect(), 6, 6);
     pa.setRenderHint(QPainter::Antialiasing);
-    pa.fillPath(path, QColor(0, 0, 0, static_cast<int>(0.05 * 255)));
+    bool isLightTheme = (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType);
+    int alpha = static_cast<int>(0.05 * 255);
+    QColor hoverColor = isLightTheme ? QColor(0, 0, 0, alpha) : QColor(255, 255, 255, alpha);
+    pa.fillPath(path, hoverColor);
 }
 
 class OpenWithDialogListSparerItem : public QWidget
