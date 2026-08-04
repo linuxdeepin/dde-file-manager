@@ -148,6 +148,10 @@ VfsMonitorFileSystemWatcherPrivate::VfsMonitorFileSystemWatcherPrivate(
 
 VfsMonitorFileSystemWatcherPrivate::~VfsMonitorFileSystemWatcherPrivate()
 {
+    if (reconnectTimer) {
+        reconnectTimer->stop();
+    }
+
     if (notifier) {
         notifier->setEnabled(false);
     }
@@ -248,13 +252,9 @@ QPair<QString, QString> VfsMonitorFileSystemWatcherPrivate::splitPath(const QStr
     return qMakePair(fi.absolutePath(), fi.fileName());
 }
 
-bool VfsMonitorFileSystemWatcherPrivate::initDispatcher()
+bool VfsMonitorFileSystemWatcherPrivate::establishConnection()
 {
     Q_Q(VfsMonitorFileSystemWatcher);
-
-    if (!initMountPoints()) {
-        fmWarning() << "VfsMonitor: failed to initialize mount point aliases";
-    }
 
     // The notifier runs on the GUI thread, so keep dispatcher reads nonblocking.
     socketFd = ::socket(AF_UNIX, SOCK_SEQPACKET | SOCK_NONBLOCK, 0);
@@ -265,7 +265,8 @@ bool VfsMonitorFileSystemWatcherPrivate::initDispatcher()
 
     sockaddr_un address {};
     address.sun_family = AF_UNIX;
-    std::strncpy(address.sun_path, kDispatcherSocketPath, sizeof(address.sun_path) - 1);
+    const QByteArray path = socketPath.toUtf8();
+    std::strncpy(address.sun_path, path.constData(), sizeof(address.sun_path) - 1);
 
     if (::connect(socketFd, reinterpret_cast<sockaddr *>(&address), sizeof(address)) != 0) {
         fmWarning() << "VfsMonitor: deepin-anything event dispatcher not available:" << std::strerror(errno);
@@ -274,10 +275,57 @@ bool VfsMonitorFileSystemWatcherPrivate::initDispatcher()
         return false;
     }
 
+    // Enlarge the receive buffer so bursts of 4 KB dispatch events don't fill
+    // the kernel buffer and cause the server to see EAGAIN on send() — which
+    // currently results in the server kicking this client ("slow client").
+    // Mirrors deepin-anything commit 5807fc0 (SO_RCVBUF = 1 MiB).
+    constexpr int kReceiveBufSize = 1 << 20;   // 1 MiB
+    if (::setsockopt(socketFd, SOL_SOCKET, SO_RCVBUF, &kReceiveBufSize,
+                     sizeof(kReceiveBufSize)) < 0) {
+        fmDebug() << "VfsMonitor: setsockopt(SO_RCVBUF) failed:" << std::strerror(errno);
+    }
+
     notifier = new QSocketNotifier(socketFd, QSocketNotifier::Read, q);
     QObject::connect(notifier, &QSocketNotifier::activated, q, [this]() {
         handleSocketMessage();
     });
+
+    return true;
+}
+
+bool VfsMonitorFileSystemWatcherPrivate::initDispatcher()
+{
+    Q_Q(VfsMonitorFileSystemWatcher);
+
+    if (!initMountPoints()) {
+        fmWarning() << "VfsMonitor: failed to initialize mount point aliases";
+    }
+
+    // Resolve the dispatcher socket path. Production uses the well-known
+    // path; the DFM_VFSMONITOR_SOCKET_PATH env var lets unit tests point the
+    // watcher at a mock dispatcher they control.
+    socketPath = QString::fromUtf8(qgetenv("DFM_VFSMONITOR_SOCKET_PATH"));
+    if (socketPath.isEmpty())
+        socketPath = QString::fromUtf8(kDispatcherSocketPath);
+
+    // Reconnect timer lives on the same thread as the notifier (the thread
+    // that called create()). It is single-shot and rearmed by attemptReconnect().
+    reconnectTimer = new QTimer(q);
+    reconnectTimer->setSingleShot(true);
+    QObject::connect(reconnectTimer, &QTimer::timeout, q, [this]() {
+        attemptReconnect();
+    });
+    reconnectBackoffMs = 0;
+
+    if (!establishConnection()) {
+        // Initial connection failed: the dispatcher is not running yet.
+        // Return false so create() reports the watcher as unavailable and
+        // FSMonitorPrivate degrades to inotify-only mode. The auto-reconnect
+        // timer created above only self-heals connections that were
+        // established at runtime and then dropped; it cannot help here
+        // because create() deletes this watcher on a failed first connect.
+        return false;
+    }
 
     fmInfo() << "VfsMonitor: connected to deepin-anything event dispatcher";
     return true;
@@ -302,11 +350,7 @@ void VfsMonitorFileSystemWatcherPrivate::handleSocketMessage()
 
         if (received == 0) {
             fmWarning() << "VfsMonitor: event dispatcher connection closed";
-            if (notifier) {
-                notifier->setEnabled(false);
-            }
-            ::close(socketFd);
-            socketFd = -1;
+            handleDisconnect();
             return;
         }
 
@@ -316,6 +360,9 @@ void VfsMonitorFileSystemWatcherPrivate::handleSocketMessage()
             }
 
             fmWarning() << "VfsMonitor: failed to receive dispatcher event:" << std::strerror(errno);
+            // A persistent recv error would spin the notifier. Treat it like a
+            // disconnect so the socket is rebuilt instead of looping forever.
+            handleDisconnect();
             return;
         }
 
@@ -426,6 +473,45 @@ void VfsMonitorFileSystemWatcherPrivate::handleSocketMessage()
             pendingRenames.clear();
         }
     }
+}
+
+void VfsMonitorFileSystemWatcherPrivate::handleDisconnect()
+{
+    if (notifier) {
+        notifier->setEnabled(false);
+        notifier->deleteLater();
+        notifier = nullptr;
+    }
+
+    if (socketFd >= 0) {
+        ::close(socketFd);
+        socketFd = -1;
+    }
+
+    // Backoff: start at 1 s, double up to 30 s. Reset to 0 on a successful
+    // reconnect (attemptReconnect) so the next outage starts fresh.
+    if (reconnectBackoffMs <= 0)
+        reconnectBackoffMs = 1000;
+
+    if (!reconnectTimer)
+        return;   // shutting down
+
+    fmInfo() << "VfsMonitor: scheduling dispatcher reconnect in" << reconnectBackoffMs << "ms";
+    reconnectTimer->start(reconnectBackoffMs);
+}
+
+void VfsMonitorFileSystemWatcherPrivate::attemptReconnect()
+{
+    if (establishConnection()) {
+        reconnectBackoffMs = 0;   // success: next outage restarts at 1 s
+        fmInfo() << "VfsMonitor: reconnected to deepin-anything event dispatcher";
+        return;
+    }
+
+    // Grow the backoff (cap at 30 s) and retry.
+    reconnectBackoffMs = std::min(reconnectBackoffMs * 2, 30000);
+    if (reconnectTimer)
+        reconnectTimer->start(reconnectBackoffMs);
 }
 
 // ========== VfsMonitorFileSystemWatcher ==========

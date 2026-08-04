@@ -7,6 +7,17 @@
 #include <QDir>
 #include <QFile>
 #include <QSignalSpy>
+#include <QTest>
+#include <QSet>
+#include <QElapsedTimer>
+#include <QSocketNotifier>
+
+#include <sys/socket.h>
+#include <sys/un.h>
+#include <unistd.h>
+
+#include <cerrno>
+#include <cstring>
 
 #include "services/textindex/service_textindex_global.h"
 #include "services/textindex/fsmonitor/vfsmonitorwatcher.h"
@@ -356,4 +367,171 @@ TEST_F(TestVfsMonitorFileSystemWatcher, EventsOutsideRootPathsNotEmitted)
 
     // 清理
     QFile::remove(outsidePath);
+}
+
+// ======================================================================
+// 重连机制单元测试
+// 通过 DFM_VFSMONITOR_SOCKET_PATH 环境变量将 watcher 指向测试自建的 mock
+// dispatcher socket，模拟服务端断开，验证 watcher 能自动重连。
+// ======================================================================
+
+// 创建并监听一个 AF_UNIX SOCK_SEQPACKET socket，返回 listen fd。
+static int createMockDispatcher(const QString &path)
+{
+    int fd = ::socket(AF_UNIX, SOCK_SEQPACKET | SOCK_NONBLOCK, 0);
+    if (fd < 0)
+        return -1;
+
+    ::unlink(path.toUtf8().constData());   // remove stale socket file
+
+    sockaddr_un addr {};
+    addr.sun_family = AF_UNIX;
+    std::strncpy(addr.sun_path, path.toUtf8().constData(), sizeof(addr.sun_path) - 1);
+
+    if (::bind(fd, reinterpret_cast<sockaddr *>(&addr), sizeof(addr)) < 0) {
+        ::close(fd);
+        return -1;
+    }
+    if (::listen(fd, 5) < 0) {
+        ::close(fd);
+        return -1;
+    }
+    return fd;
+}
+
+// 接受一个客户端连接（非阻塞 listen fd），返回 client fd 或 -1（无待连接）。
+static int acceptOneClient(int listenFd)
+{
+    int fd = ::accept4(listenFd, nullptr, nullptr, SOCK_NONBLOCK);
+    return fd;
+}
+
+class TestVfsMonitorReconnect : public ::testing::Test
+{
+protected:
+    void SetUp() override
+    {
+        // 在临时目录下创建 mock dispatcher socket
+        QString templatePath = QDir::homePath() + "/Documents/.test_vfsreconnect_XXXXXX";
+        testDir = std::make_unique<QTemporaryDir>(templatePath);
+        ASSERT_TRUE(testDir->isValid());
+        mockSocketPath = testDir->path() + "/mock-dispatcher.sock";
+
+        // 启动 mock dispatcher
+        listenFd = createMockDispatcher(mockSocketPath);
+        ASSERT_GE(listenFd, 0) << "Failed to create mock dispatcher";
+
+        // 设置环境变量，使 watcher 连接到 mock dispatcher
+        qputenv("DFM_VFSMONITOR_SOCKET_PATH", mockSocketPath.toUtf8());
+
+        // 创建 watcher
+        watcher = VfsMonitorFileSystemWatcher::create({ testDir->path() }, {}, nullptr);
+        ASSERT_NE(watcher, nullptr) << "Watcher creation failed";
+
+        // 接受初始连接
+        clientFd = waitForAccept(listenFd, 3000);
+        ASSERT_GE(clientFd, 0) << "Mock dispatcher did not accept initial connection";
+    }
+
+    void TearDown() override
+    {
+        if (clientFd >= 0)
+            ::close(clientFd);
+        if (listenFd >= 0) {
+            ::close(listenFd);
+        }
+        ::unlink(mockSocketPath.toUtf8().constData());
+        qunsetenv("DFM_VFSMONITOR_SOCKET_PATH");
+        delete watcher;
+        watcher = nullptr;
+        testDir.reset();
+    }
+
+    // 轮询等待 accept 返回 fd，超时返回 -1
+    int waitForAccept(int fd, int timeoutMs)
+    {
+        QElapsedTimer timer;
+        timer.start();
+        while (!timer.hasExpired(timeoutMs)) {
+            int cfd = acceptOneClient(fd);
+            if (cfd >= 0)
+                return cfd;
+            QTest::qWait(50);
+        }
+        return -1;
+    }
+
+    std::unique_ptr<QTemporaryDir> testDir;
+    QString mockSocketPath;
+    int listenFd { -1 };
+    int clientFd { -1 };
+    VfsMonitorFileSystemWatcher *watcher { nullptr };
+};
+
+// 断开后 watcher 应在退避时间后自动重连
+TEST_F(TestVfsMonitorReconnect, ReconnectsAfterServerClosesConnection)
+{
+    ASSERT_NE(watcher, nullptr);
+    ASSERT_GE(clientFd, 0);
+
+    // 模拟服务端踢掉客户端：关闭 server 端的 client fd。
+    // 客户端下次 recv() 将返回 0，触发 handleDisconnect()。
+    ::close(clientFd);
+    clientFd = -1;
+
+    // 给 watcher 的事件循环一点时间，让 QSocketNotifier 触发 handleSocketMessage()。
+    // handleSocketMessage 在收到 recv()==0 后调用 handleDisconnect，后者以 1s
+    // 退避启动 reconnectTimer。我们等待 ~2.5s 容纳事件循环 + 1s 退避。
+    int newClientFd = waitForAccept(listenFd, 5000);
+    ASSERT_GE(newClientFd, 0)
+            << "Watcher did not reconnect within 5s after server-side close";
+
+    ::close(newClientFd);
+}
+
+// 重连后 backoff 应复位：断开后先关闭 mock listen socket 使重连失败数次
+// （backoff 增至 2s/4s），恢复 listen 后重连成功，再次断开验证快速重连。
+TEST_F(TestVfsMonitorReconnect, BackoffResetsAfterSuccessfulReconnect)
+{
+    ASSERT_NE(watcher, nullptr);
+    ASSERT_GE(clientFd, 0);
+
+    // --- Phase 1: force backoff growth ---
+    // Close the server-side client fd to trigger a disconnect.
+    ::close(clientFd);
+    clientFd = -1;
+
+    // Close the listen socket so the watcher's first reconnect attempt fails.
+    // We need a fresh path because bind() to the same path would fail if the
+    // old socket file lingers; instead we close+reopen on the same path.
+    ::close(listenFd);
+    listenFd = -1;
+
+    // Wait long enough for the watcher to attempt at least one failed
+    // reconnect (1s initial backoff fires, attemptReconnect fails, backoff
+    // grows to 2s). Give it ~3s to be safe.
+    QTest::qWait(3000);
+
+    // Reopen the mock dispatcher on the same path so reconnect can succeed.
+    listenFd = createMockDispatcher(mockSocketPath);
+    ASSERT_GE(listenFd, 0) << "Failed to reopen mock dispatcher";
+
+    // Wait for the watcher to reconnect (backoff may be 2s or 4s at this
+    // point; give generous timeout).
+    int reconnectFd = waitForAccept(listenFd, 10000);
+    ASSERT_GE(reconnectFd, 0) << "Watcher did not reconnect after restoring listen socket";
+
+    // --- Phase 2: verify backoff was reset ---
+    // Disconnect again. If backoff was reset, the next reconnect fires in ~1s;
+    // if it was NOT reset, it could be 4s+. We use a 2500ms window: a 1s
+    // reconnect completes well within it, while a 4s+ reconnect does not.
+    ::close(reconnectFd);
+
+    QElapsedTimer timer;
+    timer.start();
+    int finalReconnectFd = waitForAccept(listenFd, 2500);
+    ASSERT_GE(finalReconnectFd, 0)
+            << "Reconnect took too long; backoff was not reset after success";
+
+    ::close(finalReconnectFd);
 }

@@ -8,6 +8,7 @@
 #include "vfsmonitorwatcher.h"
 
 #include <QSocketNotifier>
+#include <QTimer>
 #include <QHash>
 #include <QStringList>
 #include <QVector>
@@ -62,6 +63,16 @@ public:
     bool initDispatcher();
     void handleSocketMessage();
 
+    // Tear down the current connection (socket + notifier) and arm the
+    // reconnect timer. Safe to call whether or not a connection exists.
+    void handleDisconnect();
+    // Timer callback: attempt a fresh socket()+connect(); on success rebuild
+    // the notifier and stop the timer; on failure grow the backoff.
+    void attemptReconnect();
+    // Create the socket, connect, enlarge the receive buffer and build the
+    // notifier. Returns true on success. Does not touch the reconnect timer.
+    bool establishConnection();
+
     // The event dispatcher sends absolute paths, but they may use a different
     // mount alias than the monitored root path. This helper normalizes across
     // same-device mount aliases before applying rootPaths and excludePredicate.
@@ -76,6 +87,15 @@ public:
 
     int socketFd { -1 };
     QSocketNotifier *notifier { nullptr };
+
+    // Reconnection state. After a disconnect the watcher keeps trying to
+    // reconnect with exponential backoff so monitoring always recovers.
+    QTimer *reconnectTimer { nullptr };
+    int reconnectBackoffMs { 0 };
+
+    // Overridable socket path (env: DFM_VFSMONITOR_SOCKET_PATH). Defaults to
+    // kDispatcherSocketPath; used by unit tests to point at a mock dispatcher.
+    QString socketPath;
 
     QHash<uint32_t, RenameFromInfo> pendingRenames;
     QHash<dev_t, QStringList> mountPoints;
