@@ -2363,23 +2363,23 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="154"/>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="409"/>
         <source>Filesystem type cannot be detected. The device may be severely damaged or formatted with an unsupported filesystem. Data recovery may require professional tools.</source>
-        <translation type="unfinished"/>
+        <translation>Nie można określić systemu plików. Urządzenie może być poważnie uszkodzone lub sformatowane za pomocą nieznanego systemu plików. Odzyskiwanie danych może wymagać profesjonalnego oprogramowania.</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="169"/>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="424"/>
         <source>Device is hardware write-protected, flash memory may be failing. Please back up data immediately.</source>
-        <translation type="unfinished"/>
+        <translation>Urządzenie ma włączoną sprzętową ochronę przed zapisem. Pamięć flash może ulegać awarii. Wykonaj natychmiast kopię zapasową.</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="186"/>
         <source>Filesystem error detected, device may not have been safely ejected. Mount might have failed due to filesystem corruption.</source>
-        <translation type="unfinished"/>
+        <translation>Wykryto błąd systemu plików, urządzenie mogło nie zostać bezpiecznie wyjęte. Montowanie mogło się nie powieść z powodu uszkodzonego systemu plików.</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="432"/>
         <source>Filesystem is severely corrupted and cannot be recognized. Data may be recoverable through repair.</source>
-        <translation type="unfinished"/>
+        <translation>System plików jest poważnie uszkodzony i nie można go rozpoznać. Można spróbować przywrócić dane poprzez naprawę.</translation>
     </message>
 </context>
 <context>
