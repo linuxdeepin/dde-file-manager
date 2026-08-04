@@ -1,3 +1,39 @@
+dde-file-manager (6.6.2) unstable; urgency=medium
+
+  * feat: add USB repair service with D-Bus interface and PolKit authentication
+  * feat(usbrepair): add USB device repair dialog with error code, simulated progress and device ignore support
+  * chore(translations): add USB repair dialog translations
+  * feat: add configurable search and exec run
+  * feat: add configurable device polling and network check
+  * feat: make vault context menu actions configurable via DConfig
+  * feat: add configurable default burn filesystem type
+  * feat: integrate file close events into vfs monitor mode
+  * docs: add TagManager DBus interface guide
+  * test: add stress tests for VFS monitor file system watcher
+  * fix: ensure sidebar drag-drop consistency between visual and actual position
+  * feat: add last read time support for recent items
+  * feat: add built-in icons for search indexing status
+  * chore: reorganize autotests directory structure
+  * docs: refactor index state store constants and add documentation
+  * feat: track index creation progress to prevent duplicate builds
+  * Revert "fix: keep desktop canvas origin for top and left dock"
+  * fix: correct icon layout after maximizing window following touch long-press
+  * fix: persist list view column hidden state per URL
+  * fix: batch-process recent items on startup to avoid UI freeze
+  * fix: ship dfm-reencrypt.desktop via package instead of runtime creation
+  * fix: animate sidebar collapse/expand on window resize
+  * fix(sidebar): refine drag reorder feedback
+  * fix(image-preview): fix italic font and color issue in status bar
+  * fix(preview): reduce arrow icon size to match play/pause icons
+  * fix(music-preview): adapt play icons for dark theme
+  * fix: remove GIF from wallpaper supported types in file context menu
+  * feat(desktop): migrate wallpaper fill style from v20 to v25
+  * feat(sidebar): migrate partition expand/collapse feature from v20
+  * fix(sidebar): guard use-after-free in mount subscription callback
+  * test: add AT-SPI test suite for dde-file-manager (30 passing cases)
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Tue, 04 Aug 2026 14:06:11 +0800
+
 dde-file-manager (6.6.1) unstable; urgency=medium
 
   * fix: remove deepin prefix from Chinese translations in desktop file
