@@ -1361,8 +1361,12 @@ std::optional<QUrl> LocalFileHandlerPrivate::resolveSymlink(const QUrl &url)
         }
 
         // Check if link target exists
+        // For SMB targets, only skip the broken-link dialog when the share is
+        // unmounted (so the downstream mount/remount flow can take over).
+        // If the share is still mounted but the target is gone, the link is
+        // genuinely broken and the user should be notified.
         fileInfo.setFile(canonicalPath);
-        if (!fileInfo.exists() && !ProtocolUtils::isSMBFile(QUrl::fromLocalFile(canonicalPath))) {
+        if (!fileInfo.exists() && !DeviceUtils::isUnmountSamba(QUrl::fromLocalFile(canonicalPath))) {
             // Link is broken
             GlobalEventType dialogResult = DialogManagerInstance->showBreakSymlinkDialog(
                     QFileInfo(currentPath).fileName(),
