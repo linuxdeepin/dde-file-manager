@@ -1,3 +1,9 @@
+dde-file-manager (6.5.162) unstable; urgency=medium
+
+  * Revert "fix: keep desktop canvas origin for top and left dock"
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Tue, 04 Aug 2026 09:17:05 +0800
+
 dde-file-manager (6.5.161) unstable; urgency=medium
 
   * fix: correct icon layout after maximizing window following touch long-press
