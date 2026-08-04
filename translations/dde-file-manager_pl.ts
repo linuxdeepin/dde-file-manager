@@ -2349,7 +2349,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="192"/>
         <source>Failed to repair the device. This may be due to serious format errors or physical damage. To protect your data, it is recommended to stop writing new files and try using professional data recovery software or seek manual assistance.</source>
-        <translation type="unfinished"/>
+        <translation>Nie udało się naprawić urządzenia. Może to wynikać z poważnych błędów systemu plików lub uszkodzeń fizycznych. Aby zabezpieczyć dane, zaleca się zaprzestanie zapisywania nowych plików i skorzystanie z profesjonalnego oprogramowania do odzyskiwania danych lub zwrócenie się o pomoc do specjalisty.</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="206"/>
@@ -2427,22 +2427,22 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="168"/>
         <source>NTFS repair capability is limited on Linux. Please connect the device to a Windows system for deep repair.</source>
-        <translation type="unfinished"/>
+        <translation>Możliwości naprawy systemu plików NTFS są ograniczone w systemach Linux. Podłącz urządzenie do komputera z systemem Windows, aby zwiększyć szanse naprawy.</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="173"/>
         <source>Filesystem errors have been repaired</source>
-        <translation type="unfinished"/>
+        <translation>Błędy systemu plików zostały naprawione</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="175"/>
         <source>Filesystem repair failed (exit code: %1)</source>
-        <translation type="unfinished"/>
+        <translation>Nie udało się naprawić systemu plików (kod błędu: %1)</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="194"/>
         <source>Repair timed out after %1 seconds</source>
-        <translation type="unfinished"/>
+        <translation>Upłynął czas oczekiwania naprawy po %1 sekundach</translation>
     </message>
 </context>
 <context>
