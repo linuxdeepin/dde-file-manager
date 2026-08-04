@@ -39,6 +39,12 @@ public:
     double inotifyWatchesCoefficient() const;
     int batchCommitInterval() const;
 
+    // Strategy optimization – environment detection
+    int idleThresholdSeconds() const;
+    int loadSampleIntervalSeconds() const;
+    int cpuLoadThresholdPercent() const;
+    int diskBusyThresholdPercent() const;
+
     // Call this if you need to manually reload all configurations
     Q_INVOKABLE void reloadConfig();
 
@@ -70,6 +76,11 @@ private:
     double m_inotifyWatchesCoefficient;
     int m_batchCommitInterval;
 
+    int m_idleThresholdSeconds { 30 };
+    int m_loadSampleIntervalSeconds { 5 };
+    int m_cpuLoadThresholdPercent { 30 };
+    int m_diskBusyThresholdPercent { 50 };
+
     mutable QMutex m_mutex;
 
     // Default values (matching your JSON for robustness)
@@ -84,6 +95,10 @@ private:
     static const int DEFAULT_CPU_USAGE_LIMIT_PERCENT = 50;
     static constexpr double DEFAULT_INOTIFY_WATCHES_COEFFICIENT = 0.5;
     static const int DEFAULT_BATCH_COMMIT_INTERVAL = 1000;
+    static const int DEFAULT_IDLE_THRESHOLD_SECONDS = 30;
+    static const int DEFAULT_LOAD_SAMPLE_INTERVAL_SECONDS = 5;
+    static const int DEFAULT_CPU_LOAD_THRESHOLD_PERCENT = 30;
+    static const int DEFAULT_DISK_BUSY_THRESHOLD_PERCENT = 50;
     // Default QStringLists need to be initialized in the .cpp or constructor
     // For simplicity here, we'll define them directly in loadAllConfigs logic
 };

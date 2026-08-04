@@ -45,6 +45,12 @@ inline const QString kCpuUsageLimitPercent = QLatin1String("cpuUsageLimitPercent
 inline const QString kInotifyWatchesCoefficient = QLatin1String("inotifyWatchesCoefficient");
 inline const QString kBatchCommitInterval = QLatin1String("batchCommitInterval");
 
+// Strategy optimization – environment detection
+inline const QString kIdleThresholdSeconds = QLatin1String("idleThresholdSeconds");
+inline const QString kLoadSampleIntervalSeconds = QLatin1String("loadSampleIntervalSeconds");
+inline const QString kCpuLoadThresholdPercent = QLatin1String("cpuLoadThresholdPercent");
+inline const QString kDiskBusyThresholdPercent = QLatin1String("diskBusyThresholdPercent");
+
 }   // namesapce DConf
 
 // NOTE: The version number must be upgraded
