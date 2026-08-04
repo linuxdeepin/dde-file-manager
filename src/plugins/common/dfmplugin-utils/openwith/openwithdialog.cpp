@@ -308,7 +308,7 @@ void OpenWithDialog::initUI()
     buttonLayout->addWidget(setToDefaultCheckBox);
     buttonLayout->addSpacing(20);
     buttonLayout->addWidget(cancelButton);
-    buttonLayout->addSpacing(5);
+    buttonLayout->addSpacing(10);
     buttonLayout->addWidget(chooseButton);
     buttonLayout->setContentsMargins(10, 0, 10, 0);
 
