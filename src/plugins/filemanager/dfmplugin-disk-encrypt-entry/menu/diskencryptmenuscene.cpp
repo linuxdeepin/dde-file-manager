@@ -775,19 +775,24 @@ void DiskEncryptMenuScene::sortActions(QMenu *parent)
 {
     Q_ASSERT(parent);
     QList<QAction *> acts = parent->actions();
-    if (acts.isEmpty()) {
-        fmDebug() << "No actions to sort";
-        return;
-    }
 
-    QAction *before { acts.last() };
-    for (int i = 0; i < acts.count(); ++i) {
-        auto act = acts.at(i);
-        QString actID = act->property(ActionPropertyKey::kActionID).toString();
-        if (actID == "computer-rename"   // the encrypt actions should be under computer-rename
-            && (i + 1) < acts.count()) {
-            before = acts.at(i + 1);
-            break;
+    // When the menu is empty (e.g. programmatic trigger from
+    // processUnfinshedDecrypt), insertAction(nullptr, act) appends actions to
+    // the end. Do NOT early-return for empty menus — that prevents actions
+    // from being added and breaks the auto-resume-decrypt dialog (PMS BUG-372719,
+    // regression from BUG-307533). Only call acts.last() when non-empty to
+    // preserve the BUG-307533 null-safety fix.
+    QAction *before { nullptr };
+    if (!acts.isEmpty()) {
+        before = acts.last();
+        for (int i = 0; i < acts.count(); ++i) {
+            auto act = acts.at(i);
+            QString actID = act->property(ActionPropertyKey::kActionID).toString();
+            if (actID == "computer-rename"   // the encrypt actions should be under computer-rename
+                && (i + 1) < acts.count()) {
+                before = acts.at(i + 1);
+                break;
+            }
         }
     }
 
