@@ -20,6 +20,7 @@ TagColorListWidget::TagColorListWidget(QWidget *parent, UseType type)
     : QFrame(parent), useType(type)
 {
     setObjectName("tagActionWidget");
+    setAccessibleName("TagActionWidget");
     setFocusPolicy(Qt::StrongFocus);
 
     initUiElement();

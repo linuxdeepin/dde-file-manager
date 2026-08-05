@@ -313,6 +313,7 @@ void TitleBarWidget::initializeUi()
     placeholder->setFixedWidth(0);
     placeholder->setVisible(true);
     placeholder->setObjectName("Placeholder");
+    placeholder->setAccessibleName("Placeholder");
     placeholder->setAttribute(Qt::WA_TranslucentBackground);
     placeholder->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     topBarCustomLayout->addWidget(placeholder);

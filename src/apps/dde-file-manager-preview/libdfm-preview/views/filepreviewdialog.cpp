@@ -262,6 +262,7 @@ void FilePreviewDialog::initUI()
 
     statusBar = new FilePreviewDialogStatusBar(this);
     statusBar->setObjectName("StatusBar");
+    statusBar->setAccessibleName("StatusBar");
     statusBar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     // statusBar->openButton()->setFocus();
 

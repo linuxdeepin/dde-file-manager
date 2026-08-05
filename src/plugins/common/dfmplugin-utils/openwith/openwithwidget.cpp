@@ -42,6 +42,7 @@ void OpenWithWidget::initUI()
     openWithListWidget = new QListWidget(this);
     openWithListWidget->setSpacing(8);
     openWithListWidget->setObjectName("OpenWithListWidget");
+    openWithListWidget->setAccessibleName("OpenWithListWidget");
     openWithListWidget->setFrameShape(QFrame::HLine);
     openWithListWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     openWithListWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -86,6 +87,7 @@ void OpenWithWidget::slotExpandChange(bool state)
 
             DRadioButton *itemBox = new DRadioButton(desktopInfo.desktopDisplayName());
             itemBox->setObjectName("OpenWithItem");
+            itemBox->setAccessibleName("OpenWithItem");
             itemBox->setIcon(QIcon::fromTheme(desktopInfo.desktopIcon()));
             itemBox->setIconSize(QSize(16, 16));
             itemBox->setProperty("appPath", appFile);

@@ -1306,6 +1306,7 @@ FileManagerWindow::FileManagerWindow(const QUrl &url, QWidget *parent)
 
     d->centralView = new QFrame(this);
     d->centralView->setObjectName("CentralView");
+    d->centralView->setAccessibleName("CentralView");
 
     d->midLayout = new QHBoxLayout;
     d->midLayout->setContentsMargins(0, 0, 0, 0);

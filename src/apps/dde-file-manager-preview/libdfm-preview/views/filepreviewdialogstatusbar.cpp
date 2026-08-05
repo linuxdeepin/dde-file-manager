@@ -17,6 +17,7 @@ FilePreviewDialogStatusBar::FilePreviewDialogStatusBar(QWidget *parent)
     QSize iconSize(12, 12);
     preBtn = new QPushButton(this);
     preBtn->setObjectName("PreButton");
+    preBtn->setAccessibleName("PreButton");
     preBtn->setIcon(QIcon::fromTheme("go-previous").pixmap(iconSize));
     preBtn->setIconSize(iconSize);
     preBtn->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -25,6 +26,7 @@ FilePreviewDialogStatusBar::FilePreviewDialogStatusBar(QWidget *parent)
 
     nextBtn = new QPushButton(this);
     nextBtn->setObjectName("NextButton");
+    nextBtn->setAccessibleName("NextButton");
     nextBtn->setIcon(QIcon::fromTheme("go-next").pixmap(iconSize));
     nextBtn->setIconSize(iconSize);
     nextBtn->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -33,11 +35,13 @@ FilePreviewDialogStatusBar::FilePreviewDialogStatusBar(QWidget *parent)
 
     previewTitle = new QLabel(this);
     previewTitle->setObjectName("TitleLabel");
+    previewTitle->setAccessibleName("TitleLabel");
     previewTitle->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     previewTitle->hide();
 
     openBtn = new QPushButton(QObject::tr("Open", "button"), this);
     openBtn->setObjectName("OpenButton");
+    openBtn->setAccessibleName("OpenButton");
     QFont font = openBtn->font();
     font.setPixelSize(12);
     openBtn->setFont(font);

@@ -271,12 +271,14 @@ void FileDialogStatusBar::initializeUi()
     curAcceptButton = new DSuggestButton(this);
     curRejectButton = new DPushButton(tr("Cancel", "button"), this);
 
-    curRejectButton->setObjectName(tr("Cancel", "button"));
+    curRejectButton->setObjectName("CancelButton");
+    curRejectButton->setAccessibleName("CancelButton");
 
     curAcceptButton->setMinimumWidth(130);
     curRejectButton->setMinimumWidth(130);
 
     curAcceptButton->setObjectName("FileDialogStatusBarAcceptButton");
+    curAcceptButton->setAccessibleName("FileDialogStatusBarAcceptButton");
 
     contentLayout = new QHBoxLayout();
     contentLayout->setSpacing(10);

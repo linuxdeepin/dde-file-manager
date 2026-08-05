@@ -41,19 +41,23 @@ void TagWidgetPrivate::initializeUI()
     tagLable = new DLabel(name, q);
     DFontSizeManager::instance()->bind(tagLable, DFontSizeManager::SizeType::T6, QFont::DemiBold);
     tagLable->setObjectName(name);
+    tagLable->setAccessibleName("TagLabel");
     tagLeftLable = new DLabel(name, q);
     tagLeftLable->setObjectName(name);
+    tagLeftLable->setAccessibleName("TagLeftLabel");
     tagLeftLable->setHidden(true);
 
     colorListWidget = new TagColorListWidget(q, TagColorListWidget::kProperty);
     colorListWidget->setMaximumHeight(30);
     colorListWidget->setObjectName("tagActionWidget");
+    colorListWidget->setAccessibleName("TagActionWidget");
     colorListWidget->setToolTipVisible(false);
 
     colorListWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
     crumbEdit = new TagCrumbEdit(q);
     crumbEdit->setObjectName("tagCrumbEdit");
+    crumbEdit->setAccessibleName("TagCrumbEdit");
     crumbEdit->setFrameShape(QFrame::Shape::NoFrame);
     crumbEdit->viewport()->setBackgroundRole(QPalette::NoRole);
     crumbEdit->setFocusPolicy(Qt::ClickFocus);

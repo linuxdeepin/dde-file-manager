@@ -36,6 +36,7 @@ NameTextEdit::NameTextEdit(const QString &text, QWidget *parent)
     : DTextEdit(text, parent)
 {
     setObjectName("NameTextEdit");
+    setAccessibleName("NameTextEdit");
     setWordWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);

@@ -70,6 +70,7 @@ void CustomTabSettingWidget::addCustomItem(DSettingsOption *opt, const QUrl &url
     delBtn->setIconSize({ 16, 16 });
     delBtn->setFixedSize(32, 32);
     delBtn->setObjectName("DeleteButton");
+    delBtn->setAccessibleName("DeleteButton");
     connect(delBtn, &DToolButton::clicked, this,
             [=] {
                 if (removeRow(delBtn)) {

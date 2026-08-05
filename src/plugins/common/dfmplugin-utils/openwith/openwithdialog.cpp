@@ -288,9 +288,15 @@ void OpenWithDialog::initUI()
 
     openFileChooseButton = new DCommandLinkButton(tr("Add other programs"), this);
     setToDefaultCheckBox = new DCheckBox(tr("Set as default"), this);
+    setToDefaultCheckBox->setObjectName("SetAsDefaultCheckBox");
+    setToDefaultCheckBox->setAccessibleName("SetAsDefaultCheckBox");
     setToDefaultCheckBox->setChecked(true);
     cancelButton = new DPushButton(tr("Cancel", "button"));
+    cancelButton->setObjectName("CancelButton");
+    cancelButton->setAccessibleName("CancelButton");
     chooseButton = new DSuggestButton(tr("Confirm", "button"));
+    chooseButton->setObjectName("ConfirmButton");
+    chooseButton->setAccessibleName("ConfirmButton");
     cancelButton->setMinimumWidth(78);
     chooseButton->setMinimumWidth(78);
     chooseButton->setFocus();

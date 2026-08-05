@@ -39,6 +39,7 @@ void VaultPropertyDialog::initInfoUI()
     fmDebug() << "Vault: Initializing property dialog UI";
     scrollArea = new QScrollArea();
     scrollArea->setObjectName("PropertyDialog-QScrollArea");
+    scrollArea->setAccessibleName("PropertyDialogScrollArea");
     QPalette palette = scrollArea->viewport()->palette();
     palette.setBrush(QPalette::Window, Qt::NoBrush);
     scrollArea->viewport()->setPalette(palette);
