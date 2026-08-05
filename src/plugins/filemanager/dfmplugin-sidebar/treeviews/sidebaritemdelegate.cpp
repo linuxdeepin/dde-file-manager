@@ -74,14 +74,15 @@ void paintSeparator(QPainter *painter, const QStyleOptionViewItem &option)
 }
 }   // namespace GlobalPrivate
 
-QString SideBarItemDelegate::makeIconCacheKey(const DTK_GUI_NAMESPACE::DDciIcon &icon,
-                                             const QSize &size,
+QString SideBarItemDelegate::makeIconCacheKey(const QSize &size,
                                              DTK_GUI_NAMESPACE::DDciIcon::Theme theme,
                                              DTK_GUI_NAMESPACE::DDciIcon::Mode mode,
-                                             const QString &iconId) const
+                                             const QString &iconId,
+                                             const QColor &foreground) const
 {
-    return QString::asprintf("%s|%dx%d|%d|%d", iconId.toUtf8().constData(),
-                             size.width(), size.height(), static_cast<int>(theme), static_cast<int>(mode));
+    return QString::asprintf("%s|%dx%d|%d|%d|%08x", iconId.toUtf8().constData(),
+                             size.width(), size.height(), static_cast<int>(theme),
+                             static_cast<int>(mode), foreground.rgba());
 }
 
 void SideBarItemDelegate::clearIconCache()
@@ -534,7 +535,7 @@ void SideBarItemDelegate::drawDciIcon(const QStyleOptionViewItem &option, QPaint
         palette.setForeground(fg);
     }
 
-    QString key = makeIconCacheKey(dciIcon, iconRect.size(), theme, mode, iconId);
+    QString key = makeIconCacheKey(iconRect.size(), theme, mode, iconId, palette.foreground());
     if (m_iconCache.contains(key)) {
         painter->drawPixmap(iconRect, m_iconCache.value(key));
         return;
