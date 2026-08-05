@@ -25,6 +25,8 @@
 #include <QDir>
 #include <QFile>
 #include <QProcess>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 #include <polkit-qt6-1/PolkitQt1/Authority>
 
@@ -33,6 +35,7 @@
 static constexpr char kActionEncrypt[] { "org.deepin.Filemanager.DiskEncrypt.Encrypt" };
 static constexpr char kActionDecrypt[] { "org.deepin.Filemanager.DiskEncrypt.Decrypt" };
 static constexpr char kActionChgPwd[] { "org.deepin.Filemanager.DiskEncrypt.ChangePassphrase" };
+static constexpr char kActionChgPIN[] { "org.deepin.Filemanager.DiskEncrypt.ChangePIN" };
 
 FILE_ENCRYPT_USE_NS
 
@@ -161,15 +164,35 @@ bool DiskEncryptSetup::ChangePassphrase(const QDBusUnixFileDescriptor &credentia
 {
     qInfo() << "[DiskEncryptSetup::ChangePassphrase] Passphrase change request received via fd";
 
-    if (!m_dptr->checkAuth(kActionChgPwd)) {
-        qWarning() << "[DiskEncryptSetup::ChangePassphrase] Authentication failed for passphrase change action";
-        return false;
-    }
-
-    // Parse credentials from fd using common method
+    // Parse credentials first to determine the encryption type for the correct polkit action
     QVariantMap args;
     if (!m_dptr->parseCredentialsFromFd(credentialsFd, &args)) {
         qCritical() << "[DiskEncryptSetup::ChangePassphrase] Failed to parse credentials from fd";
+        return false;
+    }
+
+    // Determine the security key type to select the appropriate polkit action.
+    // The server independently infers secType from the device's TPM token
+    // (via TpmToken, which includes holder-device fallback) rather than
+    // trusting client-supplied input for the authorization decision.
+    auto dev = args.value(disk_encrypt::encrypt_param_keys::kKeyDevice).toString();
+    QString token = TpmToken(dev);
+    QString usePin;
+    if (!token.isEmpty()) {
+        QJsonParseError parseError;
+        QJsonDocument doc = QJsonDocument::fromJson(token.toLocal8Bit(), &parseError);
+        if (parseError.error != QJsonParseError::NoError || !doc.isObject()) {
+            qWarning() << "[DiskEncryptSetup::ChangePassphrase] Failed to parse TPM token JSON for device:" << dev << "Error:" << parseError.errorString();
+            return false;
+        }
+        QJsonObject obj = doc.object();
+        usePin = obj.value("pin").toString("");
+    }
+    auto secType = (usePin == "1") ? disk_encrypt::kPin : disk_encrypt::kPwd;
+    const QString &action = (secType == disk_encrypt::kPin) ? kActionChgPIN : kActionChgPwd;
+
+    if (!m_dptr->checkAuth(action)) {
+        qWarning() << "[DiskEncryptSetup::ChangePassphrase] Authentication failed for passphrase change action";
         return false;
     }
 
