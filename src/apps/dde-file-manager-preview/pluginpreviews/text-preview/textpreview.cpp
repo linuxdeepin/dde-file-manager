@@ -14,6 +14,8 @@
 #include <QUrl>
 #include <QFileInfo>
 #include <QDebug>
+#include <QByteArray>
+#include <climits>
 
 using namespace std;
 DFMBASE_USE_NAMESPACE
@@ -91,20 +93,51 @@ bool TextPreview::setFileUrl(const QUrl &url)
     device.seekg(0, ios::beg).read(buf, static_cast<streamsize>(len));
     device.close();
 
-    bool ok { false };
-    QString fileEncoding = DTK_NAMESPACE::DCORE_NAMESPACE::DTextEncoding::detectFileEncoding(filePath, &ok);
-    fmDebug() << "Text preview: detected file encoding:" << fileEncoding << "detection success:" << ok;
+    // len is already capped at kReadTextSize (5 MB) above, but guard the
+    // static_cast<int> explicitly to satisfy static analysis and prevent
+    // potential integer truncation on platforms where long > int.
+    if (len > INT_MAX) {
+        fmWarning() << "Text preview: file too large for preview:" << len;
+        delete[] buf;
+        return false;
+    }
 
-    std::string strBuf(buf, static_cast<unsigned long>(len));
-    if (ok && fileEncoding.toLower() != "utf-8") {
-        fmDebug() << "Text preview: converting from" << fileEncoding << "to UTF-8";
+    QByteArray rawData(buf, static_cast<int>(len));
+
+    // Step 1: if the raw bytes are already valid UTF-8, use them as-is.
+    // This covers ASCII and real UTF-8 files without any conversion overhead.
+    std::string strBuf;
+    if (rawData.isValidUtf8()) {
+        fmDebug() << "Text preview: raw data is valid UTF-8, using directly";
+        strBuf = rawData.toStdString();
+    } else {
+        // Step 2: try GB18030 → UTF-8 first.
+        // GB18030 is the national standard and GBK superset;
+        // in UOS it covers the overwhelming majority of non-UTF-8 CJK text.
+        // This avoids unreliable statistical encoding detection.
         QByteArray out;
-        QByteArray in(buf, static_cast<int>(len));
-        if (DTK_NAMESPACE::DCORE_NAMESPACE::DTextEncoding::convertTextEncoding(in, out, "utf-8")) {
+        if (DTK_NAMESPACE::DCORE_NAMESPACE::DTextEncoding::convertTextEncoding(
+                rawData, out, "utf-8", "gb18030")) {
             strBuf = out.toStdString();
-            fmDebug() << "Text preview: encoding conversion successful";
+            fmDebug() << "Text preview: GB18030 → UTF-8 conversion successful";
         } else {
-            fmWarning() << "Text preview: encoding conversion failed, using original data";
+            // Step 3: fall back to auto-detection for rare
+            // non-GB18030 encodings (Big5, EUC-JP, KOI8-R, …).
+            fmDebug() << "Text preview: GB18030 conversion failed, falling back to auto-detection";
+            bool ok { false };
+            QString fileEncoding = DTK_NAMESPACE::DCORE_NAMESPACE::DTextEncoding::detectFileEncoding(filePath, &ok);
+            fmDebug() << "Text preview: detected file encoding:" << fileEncoding << "detection success:" << ok;
+
+            strBuf = rawData.toStdString();
+            if (ok && fileEncoding.toLower() != "utf-8") {
+                fmDebug() << "Text preview: converting from" << fileEncoding << "to UTF-8";
+                if (DTK_NAMESPACE::DCORE_NAMESPACE::DTextEncoding::convertTextEncoding(rawData, out, "utf-8")) {
+                    strBuf = out.toStdString();
+                    fmDebug() << "Text preview: encoding conversion successful";
+                } else {
+                    fmWarning() << "Text preview: encoding conversion failed, using original data";
+                }
+            }
         }
     }
 
