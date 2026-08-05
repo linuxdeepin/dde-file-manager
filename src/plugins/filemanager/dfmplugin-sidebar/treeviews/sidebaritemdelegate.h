@@ -57,10 +57,11 @@ private:
     void drawExpandIndicator(QPainter *painter, QRect &r, bool expandable, const QModelIndex &index, bool isHighlight) const;
 
     mutable QHash<QString, QPixmap> m_iconCache;
-    QString makeIconCacheKey(const DTK_GUI_NAMESPACE::DDciIcon &icon, const QSize &size,
+    QString makeIconCacheKey(const QSize &size,
                              DTK_GUI_NAMESPACE::DDciIcon::Theme theme,
                              DTK_GUI_NAMESPACE::DDciIcon::Mode mode,
-                             const QString &iconId = QString()) const;
+                             const QString &iconId,
+                             const QColor &foreground) const;
     void clearIconCache();
 
 Q_SIGNALS:
