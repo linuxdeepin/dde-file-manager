@@ -319,7 +319,7 @@ void OpenWithDialog::initUI()
     QVBoxLayout *bottomLayout = new QVBoxLayout;
 
     bottomLayout->addWidget(new DHorizontalLine(this));
-    bottomLayout->addSpacing(5);
+    bottomLayout->addSpacing(10);
     bottomLayout->addLayout(buttonLayout);
     bottomLayout->setContentsMargins(10, 0, 10, 0);
 
