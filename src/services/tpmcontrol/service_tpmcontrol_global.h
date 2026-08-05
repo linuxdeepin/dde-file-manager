@@ -57,9 +57,7 @@ inline constexpr char kPcrBank[] { "PropertyKey_PcrBank" };
 
 // PolicyKit action IDs
 namespace PolicyKitActionId {
-inline constexpr char kQuery[] { "org.deepin.Filemanager.TPMControl.Query" };
-inline constexpr char kEncrypt[] { "org.deepin.Filemanager.TPMControl.Encrypt" };
-inline constexpr char kDecrypt[] { "org.deepin.Filemanager.TPMControl.Decrypt" };
+inline constexpr char kAccess[] { "org.deepin.Filemanager.TPMControl.Access" };
 }
 
 SERVICETPMCONTROL_END_NAMESPACE

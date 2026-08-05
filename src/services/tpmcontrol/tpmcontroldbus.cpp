@@ -152,7 +152,7 @@ int TPMControlDBus::IsTPMAvailable()
 {
     fmInfo() << "IsTPMAvailable called";
 
-    if (!checkAuthentication(PolicyKitActionId::kQuery)) {
+    if (!checkAuthentication(PolicyKitActionId::kAccess)) {
         return kAuthFailed;
     }
 
@@ -163,7 +163,7 @@ int TPMControlDBus::CheckTPMLockout()
 {
     fmInfo() << "CheckTPMLockout called";
 
-    if (!checkAuthentication(PolicyKitActionId::kQuery)) {
+    if (!checkAuthentication(PolicyKitActionId::kAccess)) {
         return kAuthFailed;
     }
 
@@ -174,7 +174,7 @@ int TPMControlDBus::IsSupportAlgo(const QString &algoName, bool &support)
 {
     fmInfo() << "IsSupportAlgo called for:" << algoName;
 
-    if (!checkAuthentication(PolicyKitActionId::kQuery)) {
+    if (!checkAuthentication(PolicyKitActionId::kAccess)) {
         return kAuthFailed;
     }
 
@@ -185,7 +185,7 @@ int TPMControlDBus::OwnerAuthStatus()
 {
     fmInfo() << "OwnerAuthStatus called";
 
-    if (!checkAuthentication(PolicyKitActionId::kQuery)) {
+    if (!checkAuthentication(PolicyKitActionId::kAccess)) {
         return kAuthFailed;
     }
 
@@ -196,7 +196,7 @@ int TPMControlDBus::GetRandom(int size, QDBusUnixFileDescriptor &randomData)
 {
     fmInfo() << "GetRandom called with size:" << size;
 
-    if (!checkAuthentication(PolicyKitActionId::kEncrypt)) {
+    if (!checkAuthentication(PolicyKitActionId::kAccess)) {
         return kAuthFailed;
     }
 
@@ -221,7 +221,7 @@ int TPMControlDBus::Encrypt(const QDBusUnixFileDescriptor &params)
 {
     fmInfo() << "Encrypt called";
 
-    if (!checkAuthentication(PolicyKitActionId::kEncrypt)) {
+    if (!checkAuthentication(PolicyKitActionId::kAccess)) {
         return kAuthFailed;
     }
 
@@ -239,7 +239,7 @@ int TPMControlDBus::Decrypt(const QDBusUnixFileDescriptor &params, QDBusUnixFile
 {
     fmInfo() << "Decrypt called";
 
-    if (!checkAuthentication(PolicyKitActionId::kDecrypt)) {
+    if (!checkAuthentication(PolicyKitActionId::kAccess)) {
         return kAuthFailed;
     }
 
