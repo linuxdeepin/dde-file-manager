@@ -20,7 +20,7 @@ QModelIndex ShredFileModel::index(int row, int column, const QModelIndex &parent
 
     if (row >= rowCount() || row < 0)
         return QModelIndex();
-    return createIndex(row, column, &urlList[row]);
+    return createIndex(row, column, &files[row]);
 }
 
 QModelIndex ShredFileModel::parent(const QModelIndex &child) const
@@ -32,7 +32,7 @@ QModelIndex ShredFileModel::parent(const QModelIndex &child) const
 int ShredFileModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return urlList.count();
+    return files.count();
 }
 
 int ShredFileModel::columnCount(const QModelIndex &parent) const
@@ -43,31 +43,29 @@ int ShredFileModel::columnCount(const QModelIndex &parent) const
 
 QVariant ShredFileModel::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid() || urlList.count() <= index.row()) {
-        fmWarning() << "ComputerModel::data invalid index row:" << index.row() << "items count:" << urlList.count();
+    if (!index.isValid() || files.count() <= index.row()) {
+        fmWarning() << "ShredFileModel::data invalid index row:" << index.row() << "items count:" << files.count();
         return {};
     }
 
-    const auto &url = urlList[index.row()];
-    auto info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoAuto);
-    if (!info || !info->exists()) {
-        fmWarning() << "The file is invalid: " << url;
-        return {};
-    }
-
-    switch (role) {
-    case Qt::DisplayRole:
-        return info->displayOf(DisPlayInfoType::kFileDisplayName);
-    case Qt::DecorationRole:
-        return info->fileIcon();
-    default:
-        return {};
-    }
+    if (role == Qt::DisplayRole)
+        return files[index.row()].displayName;
+    if (role == Qt::DecorationRole)
+        return files[index.row()].icon;
+    return {};
 }
 
 void ShredFileModel::setFileList(const QList<QUrl> &fileList)
 {
     beginResetModel();
-    urlList = fileList;
+    files.clear();
+    for (const auto &url : fileList) {
+        auto info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoAuto);
+        if (info && info->exists()) {
+            files.append({url, info->displayOf(DisPlayInfoType::kFileDisplayName), info->fileIcon()});
+        } else {
+            fmWarning() << "The file is invalid: " << url;
+        }
+    }
     endResetModel();
 }
