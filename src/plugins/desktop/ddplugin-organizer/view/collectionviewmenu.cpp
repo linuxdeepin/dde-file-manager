@@ -29,6 +29,7 @@ using namespace ddplugin_organizer;
 CollectionViewMenu::CollectionViewMenu(CollectionView *parent)
     : QObject(parent), view(parent)
 {
+    view->setAccessibleName("View_7");
 }
 
 bool CollectionViewMenu::disableMenu()

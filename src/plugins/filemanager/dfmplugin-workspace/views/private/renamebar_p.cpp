@@ -26,6 +26,7 @@ using namespace dfmplugin_workspace;
 RenameBarPrivate::RenameBarPrivate(RenameBar *const qPtr)
     : q_ptr(qPtr)
 {
+    q_ptr->setAccessibleName("QPtr");
     fmDebug() << "RenameBarPrivate initializing";
 
     initUI();

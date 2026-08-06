@@ -13,6 +13,7 @@ CollectionViewBroker::CollectionViewBroker(CollectionView *parent)
     : QObject(parent)
     , view(parent)
 {
+    view->setAccessibleName("View_6");
 
 }
 

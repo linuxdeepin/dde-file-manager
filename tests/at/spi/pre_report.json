@@ -8,8 +8,8 @@
   },
   "summary": {
     "total_widgets": 232,
-    "with_names": 48,
-    "missing_names": 184,
-    "coverage": "20.7%"
+    "with_names": 186,
+    "missing_names": 46,
+    "coverage": "80.2%"
   }
 }

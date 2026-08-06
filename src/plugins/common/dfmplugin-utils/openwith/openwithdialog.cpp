@@ -55,6 +55,7 @@ OpenWithDialogListItem::OpenWithDialogListItem(const QString &iconName, const QS
       label(new DLabel(this))
 
 {
+    checkButton->setAccessibleName("CheckButton");
     checkButton->setFixedSize(15, 15);
     checkButton->setFlat(true);
     label->setText(text);

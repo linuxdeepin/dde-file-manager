@@ -22,6 +22,7 @@ void OperState::setView(CanvasView *v)
 }
 
 QModelIndex OperState::current() const
+    view->setAccessibleName("View_4");
 {
     return view->currentIndex();
 }
