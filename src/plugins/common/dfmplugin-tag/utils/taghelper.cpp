@@ -15,6 +15,9 @@
 #include <QPainter>
 #include <QUrl>
 #include <QIcon>
+#include <QTextBlock>
+#include <QTextCursor>
+#include <QTextFragment>
 
 #include <random>
 #include <mutex>
@@ -275,22 +278,45 @@ void TagHelper::crumbEditInputFilter(DCrumbEdit *edit)
     if (!edit)
         return;
 
-    QString srcTcxt = edit->toPlainText().remove(QChar::ObjectReplacementCharacter);
     QRegularExpression rx("[\\\\/\':\\*\\?\"<>|%&]");
-    if (!srcTcxt.isEmpty() && srcTcxt.contains(rx)) {
-        edit->textCursor().document()->setPlainText(srcTcxt.remove(rx));
-        const auto &tagsColors = TagManager::instance()->getTagsColor(edit->crumbList());
-        edit->setProperty("updateCrumbsColor", true);
 
-        for (auto it = tagsColors.begin(); it != tagsColors.end(); ++it) {
-            DCrumbTextFormat format = edit->makeTextFormat();
-            format.setText(it.key());
-            format.setBackground(QBrush(it.value()));
-            format.setBackgroundRadius(5);
-            edit->insertCrumb(format, 0);
+    // Pass 1: collect ranges to sanitize without mutating the document.
+    //         QTextBlock::iterator holds internal pointers into the
+    //         fragment table; mutating during iteration can invalidate them.
+    struct Range
+    {
+        int pos;
+        int len;
+        QString newText;
+    };
+    QList<Range> ranges;
+    for (QTextBlock block = edit->textCursor().document()->begin(); block.isValid(); block = block.next()) {
+        for (auto it = block.begin(); it != block.end(); ++it) {
+            QTextFragment frag = it.fragment();
+            if (!frag.isValid())
+                continue;
+            QString text = frag.text();
+            // skip crumb objects (ObjectReplacementCharacter)
+            if (text.contains(QChar::ObjectReplacementCharacter))
+                continue;
+            if (text.contains(rx))
+                ranges.append({ frag.position(), frag.length(), text.remove(rx) });
         }
-        edit->setProperty("updateCrumbsColor", false);
     }
+
+    if (ranges.isEmpty())
+        return;
+
+    // Pass 2: apply changes from end to start so earlier positions stay valid.
+    QTextCursor cursor(edit->textCursor());
+    cursor.beginEditBlock();
+    for (int i = ranges.size() - 1; i >= 0; --i) {
+        const auto &r = ranges[i];
+        cursor.setPosition(r.pos);
+        cursor.setPosition(r.pos + r.len, QTextCursor::KeepAnchor);
+        cursor.insertText(r.newText);
+    }
+    cursor.endEditBlock();
 }
 
 void TagHelper::initTagColorDefines()
