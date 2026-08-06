@@ -55,8 +55,13 @@ TEST(LoggerRulesTest, InitLoggerRulesReadsEnvAndAppends)
 TEST(LoggerRulesTest, InitLoggerRulesIsIdempotentSafe)
 {
     LoggerRules &rules = LoggerRules::instance();
-    EXPECT_NO_FATAL_FAILURE({ rules.initLoggerRules(); });
-    EXPECT_NO_FATAL_FAILURE({ rules.initLoggerRules(); });
+    rules.setRules("dfm.idempotent.debug=true");
+    rules.initLoggerRules();
+    QString after1 = rules.rules();
+    rules.initLoggerRules();
+    QString after2 = rules.rules();
+    // Idempotent: calling initLoggerRules twice should not duplicate rules.
+    EXPECT_EQ(after1, after2);
 }
 
 TEST(LoggerRulesTest, RulesAccessorReturnsString)

@@ -5,14 +5,12 @@
 /**
  * @file test_abstractjobhandler.cpp
  * @brief Unit tests for AbstractJobHandler default implementations.
- *
- * Note: QMap<quint8, QVariant> (JobInfoPointer's value type) triggers a Qt6
- * static assertion when fully instantiated in some contexts, so we avoid
- * creating JobInfoPointer objects and only exercise the no-arg / primitive
- * default methods.
  */
 
 #include <gtest/gtest.h>
+#include <QMap>
+#include <QVariant>
+#include <QtGlobal>
 
 #include <dfm-base/interfaces/abstractjobhandler.h>
 
@@ -49,57 +47,75 @@ TEST(AbstractJobHandlerTest, DefaultCurrentStateIsUnknown)
     EXPECT_EQ(handler.currentState(), AbstractJobHandler::JobState::kUnknowState);
 }
 
-TEST(AbstractJobHandlerTest, SetSignalConnectFinished)
+TEST(AbstractJobHandlerTest, SetSignalConnectFinishedSetsFlag)
 {
     TestJobHandler handler;
-    EXPECT_NO_FATAL_FAILURE({ handler.setSignalConnectFinished(); });
+    handler.setSignalConnectFinished();
+    // After setSignalConnectFinished, isSignalConnectOver should be true.
+    EXPECT_TRUE(handler.isSignalConnectOver);
 }
 
-TEST(AbstractJobHandlerTest, OperateTaskJobNoCrash)
+TEST(AbstractJobHandlerTest, OperateTaskJobDoesNotChangeState)
 {
     TestJobHandler handler;
-    EXPECT_NO_FATAL_FAILURE({
-        handler.operateTaskJob(AbstractJobHandler::SupportAction::kStartAction);
-    });
+    handler.operateTaskJob(AbstractJobHandler::SupportAction::kStartAction);
+    // operateTaskJob on a default handler does not transition the state.
+    EXPECT_EQ(handler.currentState(), AbstractJobHandler::JobState::kUnknowState);
 }
 
 TEST(AbstractJobHandlerTest, StartCallsOperateTaskJob)
 {
     TestJobHandler handler;
-    EXPECT_NO_FATAL_FAILURE({ handler.start(); });
+    handler.start();
+    EXPECT_EQ(handler.currentState(), AbstractJobHandler::JobState::kUnknowState);
 }
 
 // ---- Coverage additions: on* slots with JobInfoPointer + dtor ----
-#include <QMap>
-#include <QVariant>
-#include <QtGlobal>
 
-TEST(AbstractJobHandlerTest, OnSlotsWithEmptyJobInfoPointer)
+TEST(AbstractJobHandlerTest, OnSlotsPopulateTaskInfoMap)
 {
     TestJobHandler handler;
+    // Before any on* call, taskInfo should be empty.
+    EXPECT_TRUE(handler.getAllTaskInfo().isEmpty());
+
     auto map = new QMap<quint8, QVariant>();
     (*map)[0] = QVariant(1);
     JobInfoPointer p(map);
-    EXPECT_NO_FATAL_FAILURE({ handler.onProccessChanged(p); });
-    EXPECT_NO_FATAL_FAILURE({ handler.onStateChanged(p); });
-    EXPECT_NO_FATAL_FAILURE({ handler.onFinished(p); });
-    EXPECT_NO_FATAL_FAILURE({ handler.onSpeedUpdated(p); });
-    EXPECT_NO_FATAL_FAILURE({ handler.onCurrentTask(p); });
-    EXPECT_NO_FATAL_FAILURE({ handler.onError(p); });
+
+    handler.onProccessChanged(p);
+    handler.onStateChanged(p);
+    handler.onFinished(p);
+    handler.onSpeedUpdated(p);
+    handler.onCurrentTask(p);
+    handler.onError(p);
+
+    // All 6 notify types should now be present in the task info map.
+    auto tasks = handler.getAllTaskInfo();
+    EXPECT_FALSE(tasks.isEmpty());
+    EXPECT_EQ(tasks.size(), 6);
+    EXPECT_TRUE(tasks.contains(AbstractJobHandler::NotifyType::kNotifyProccessChangedKey));
+    EXPECT_TRUE(tasks.contains(AbstractJobHandler::NotifyType::kNotifyStateChangedKey));
+    EXPECT_TRUE(tasks.contains(AbstractJobHandler::NotifyType::kNotifyCurrentTaskKey));
+    EXPECT_TRUE(tasks.contains(AbstractJobHandler::NotifyType::kNotifyFinishedKey));
+    EXPECT_TRUE(tasks.contains(AbstractJobHandler::NotifyType::kNotifySpeedUpdatedTaskKey));
+    EXPECT_TRUE(tasks.contains(AbstractJobHandler::NotifyType::kNotifyErrorTaskKey));
 }
 
-// ---- Coverage additions for task-info accessors + local destruction ----
-
-TEST(AbstractJobHandlerTest, GetAllTaskInfoReturnsEmptyMap)
+TEST(AbstractJobHandlerTest, GetTaskInfoByNotifyTypeReturnsStoredPointer)
 {
     TestJobHandler handler;
-    EXPECT_NO_FATAL_FAILURE({ (void)handler.getAllTaskInfo(); });
-}
+    // Before insert: returns null (default-constructed) pointer.
+    auto ptr = handler.getTaskInfoByNotifyType(AbstractJobHandler::NotifyType::kNotifyProccessChangedKey);
+    EXPECT_TRUE(ptr.isNull());
 
-TEST(AbstractJobHandlerTest, GetTaskInfoByNotifyTypeReturnsNullpointer)
-{
-    TestJobHandler handler;
-    EXPECT_NO_FATAL_FAILURE({ (void)handler.getTaskInfoByNotifyType(AbstractJobHandler::NotifyType::kNotifyProccessChangedKey); });
+    // After insert: returns the stored pointer.
+    auto map = new QMap<quint8, QVariant>();
+    (*map)[0] = QVariant(42);
+    JobInfoPointer p(map);
+    handler.onProccessChanged(p);
+    auto ptr2 = handler.getTaskInfoByNotifyType(AbstractJobHandler::NotifyType::kNotifyProccessChangedKey);
+    EXPECT_FALSE(ptr2.isNull());
+    EXPECT_EQ(ptr2->value(0).toInt(), 42);
 }
 
 TEST(AbstractJobHandlerTest, LocalHandlerDestructsCleanly)

@@ -209,7 +209,8 @@ TEST_F(TestFileScanner, DefaultResultIsValidAndRunningFalseBeforeScan)
 TEST_F(TestFileScanner, StopWhenIdleIsSafe)
 {
     FileScanner scanner;
-    EXPECT_NO_FATAL_FAILURE({ scanner.stop(); });
+    scanner.stop();
+    // Stopping an idle scanner should not set it to running.
     EXPECT_FALSE(scanner.isRunning());
 }
 

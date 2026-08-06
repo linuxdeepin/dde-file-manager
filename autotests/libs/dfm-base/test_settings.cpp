@@ -222,9 +222,10 @@ TEST_F(SettingsTest, DefaultConfigValueByUrlKeyReturnsFallback)
 TEST_F(SettingsTest, SetWatchChangesTrueRestartsWatcherSafely)
 {
     Settings s("ut_watch_test", Settings::kGenericConfig);
-    EXPECT_NO_FATAL_FAILURE({ s.setWatchChanges(true); });
+    s.setWatchChanges(true);
     EXPECT_TRUE(s.watchChanges());
-    EXPECT_NO_FATAL_FAILURE({ s.setWatchChanges(false); });
+    s.setWatchChanges(false);
+    EXPECT_FALSE(s.watchChanges());
 }
 
 TEST_F(SettingsTest, OnFileChangedWithSelfUrlIsSafe)
