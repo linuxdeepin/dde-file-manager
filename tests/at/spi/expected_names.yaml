@@ -90,10 +90,7 @@ expected_names:
   name: PasswordCheckBox
   source_file: src/dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.cpp
   variable: passwordCheckBox
-- line: 60
-  name: PasswordButtonGroup
-  source_file: src/dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.cpp
-  variable: passwordButtonGroup
+
 - line: 41
   name: PasswordLineEdit_2
   source_file: src/dfm-base/dialogs/mountpasswddialog/mountsecretdiskaskpassworddialog.cpp
@@ -314,10 +311,7 @@ expected_names:
   name: ChooseButton
   source_file: src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp
   variable: chooseButton
-- line: 35
-  name: OpenWithBtnGroup
-  source_file: src/plugins/common/dfmplugin-utils/openwith/openwithwidget.cpp
-  variable: openWithBtnGroup
+
 - line: 71
   name: StackedWidget_2
   source_file: src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp

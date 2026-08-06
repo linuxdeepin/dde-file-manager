@@ -49,7 +49,6 @@ void OpenWithWidget::initUI()
     DFontSizeManager::instance()->bind(openWithListWidget, DFontSizeManager::SizeType::T7, QFont::Normal);
 
     openWithBtnGroup = new QButtonGroup(openWithListWidget);
-    openWithBtnGroup->setAccessibleName("OpenWithBtnGroup");
 
     this->setContent(openWithListWidget);
 

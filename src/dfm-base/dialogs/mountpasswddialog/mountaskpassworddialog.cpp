@@ -89,7 +89,6 @@ void MountAskPasswordDialog::initUI()
     passwordLineEdit->setAttribute(Qt::WA_InputMethodEnabled, false);
 
     passwordButtonGroup = new QButtonGroup(this);
-    passwordButtonGroup->setAccessibleName("PasswordButtonGroup");
     passwordButtonGroup->setExclusive(true);
 
     passwordCheckBox = new QCheckBox();
