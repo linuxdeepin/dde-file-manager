@@ -45,11 +45,13 @@ void ResetPasswordByOldPasswordView::initUI()
 {
     DLabel *oldPasswordLabel = new DLabel(tr("Enter Old Password"), this);
     oldPasswordEdit = new DPasswordEdit(this);
+    oldPasswordEdit->setAccessibleName("OldPasswordEdit");
     oldPasswordEdit->lineEdit()->setPlaceholderText(tr("Please enter old password"));
     oldPasswordEdit->lineEdit()->setAttribute(Qt::WA_InputMethodEnabled, false);
 
     DLabel *newPasswordLabel = new DLabel(tr("Enter New Password"), this);
     newPasswordEdit = new DPasswordEdit(this);
+    newPasswordEdit->setAccessibleName("NewPasswordEdit_2");
     QRegularExpression regx("[A-Za-z0-9,.;?@/=()<>_+*&^%$#!`~'\"|]+");
     QValidator *validator = new QRegularExpressionValidator(regx, this);
     newPasswordEdit->lineEdit()->setValidator(validator);
@@ -58,12 +60,14 @@ void ResetPasswordByOldPasswordView::initUI()
 
     DLabel *repeatPasswordLabel = new DLabel(tr("Repeat Password"), this);
     repeatPasswordEdit = new DPasswordEdit(this);
+    repeatPasswordEdit->setAccessibleName("RepeatPasswordEdit_3");
     repeatPasswordEdit->lineEdit()->setValidator(validator);
     repeatPasswordEdit->lineEdit()->setPlaceholderText(tr("Enter new password again"));
     repeatPasswordEdit->lineEdit()->setAttribute(Qt::WA_InputMethodEnabled, false);
 
     DLabel *passwordHintLabel = new DLabel(tr("Password hint"), this);
     passwordHintEdit = new DLineEdit(this);
+    passwordHintEdit->setAccessibleName("PasswordHintEdit_2");
     passwordHintEdit->lineEdit()->setMaxLength(14);
     passwordHintEdit->setPlaceholderText(tr("Optional"));
 

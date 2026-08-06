@@ -52,6 +52,7 @@ void CustomTabSettingWidget::initUI()
     mainLayout->setVerticalSpacing(10);
 
     addItemBtn = new DToolButton(this);
+    addItemBtn->setAccessibleName("AddItemBtn");
     addItemBtn->setToolTip(tr("Add Directory"));
     addItemBtn->setIconSize({ 16, 16 });
     addItemBtn->setIcon(DStyle::standardIcon(style(), DStyle::SP_IncreaseElement));

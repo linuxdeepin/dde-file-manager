@@ -1,0 +1,15 @@
+{
+  "version": "1.0",
+  "source_dir": ".",
+  "stats": {
+    "total_files": 1009,
+    "parsed_files": 1009,
+    "failed_files": 0
+  },
+  "summary": {
+    "total_widgets": 232,
+    "with_names": 48,
+    "missing_names": 184,
+    "coverage": "20.7%"
+  }
+}

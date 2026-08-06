@@ -131,6 +131,7 @@ void BurnOptDialog::initializeUi()
     volnameLabel->setFont(f13);
 
     volnameEdit = new QLineEdit();
+    volnameEdit->setAccessibleName("VolnameEdit");
     QRegularExpression regx("[^\\\\/\':\\*\\?\"<>|%&.]+");   // 屏蔽特殊字符
     QValidator *validator = new QRegularExpressionValidator(regx, volnameEdit);
     volnameEdit->setValidator(validator);
@@ -145,6 +146,7 @@ void BurnOptDialog::initializeUi()
 
     // 高级设置内容
     advanceBtn = new DCommandLinkButton(BurnOptDialog::tr("Advanced settings"), this);
+    advanceBtn->setAccessibleName("AdvanceBtn");
     QFont f12 = advanceBtn->font();
     f12.setPixelSize(12);
     f12.setWeight(QFont::Normal);
@@ -177,6 +179,7 @@ void BurnOptDialog::initializeUi()
     };
 
     fsComb = new QComboBox;
+    fsComb->setAccessibleName("FsComb");
     fsComb->addItems(fsTypes);
     fsComb->setCurrentIndex(BurnHelper::defaultBurnFs());
     vLay->addWidget(fsComb);
@@ -194,6 +197,7 @@ void BurnOptDialog::initializeUi()
     writespeedLabel = new QLabel(QObject::tr("Write speed:"));
     vLay->addWidget(writespeedLabel, 0, Qt::AlignTop);
     writespeedComb = new QComboBox();
+    writespeedComb->setAccessibleName("WritespeedComb");
     writespeedComb->addItem(QObject::tr("Maximum"));
     vLay->addWidget(writespeedComb, 0, Qt::AlignTop);
     speedMap[QObject::tr("Maximum")] = 0;
@@ -202,6 +206,7 @@ void BurnOptDialog::initializeUi()
 
     // 刻录选项-封盘设置
     finalizeDiscCheckbox = new QCheckBox(QObject::tr("Finalize disc after burning \n(no additional data can be appended)"));
+    finalizeDiscCheckbox->setAccessibleName("FinalizeDiscCheckbox");
     finalizeDiscCheckbox->setChecked(false);
     vLay->addWidget(finalizeDiscCheckbox, 0, Qt::AlignTop);
     QWidget *wpostburn = new QWidget();
@@ -212,14 +217,17 @@ void BurnOptDialog::initializeUi()
 
     // 刻录选项-校验数据
     checkdiscCheckbox = new QCheckBox(QObject::tr("Verify data"));
+    checkdiscCheckbox->setAccessibleName("CheckdiscCheckbox");
     checkdiscCheckbox->setFont(f12);
     wpostburn->layout()->addWidget(checkdiscCheckbox);
     // 刻录选项-校验文件
     checksumCheckbox = new QCheckBox(QObject::tr("Verify files (checksum)"));
+    checksumCheckbox->setAccessibleName("ChecksumCheckbox");
     checksumCheckbox->setFont(f12);
     vLay->addWidget(checksumCheckbox, 0, Qt::AlignTop);
     // 刻录选项-弹出光盘（目前禁用）
     ejectCheckbox = new QCheckBox(QObject::tr("Eject"));
+    ejectCheckbox->setAccessibleName("EjectCheckbox");
     ejectCheckbox->setFont(f12);
     ejectCheckbox->setChecked(true);
     wpostburn->layout()->addWidget(ejectCheckbox);

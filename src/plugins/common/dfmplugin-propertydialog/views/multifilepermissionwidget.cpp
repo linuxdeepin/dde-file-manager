@@ -65,6 +65,7 @@ void MultiFilePermissionWidget::initUI()
                                        QFont::Medium);
     owner->setFixedWidth(kLabelWidth);
     ownerComboBox = new DComboBox(this);
+    ownerComboBox->setAccessibleName("OwnerComboBox");
     ownerComboBox->addItem(QObject::tr("Read-write"));
     ownerComboBox->addItem(QObject::tr("Read only"));
 
@@ -73,6 +74,7 @@ void MultiFilePermissionWidget::initUI()
                                        QFont::Medium);
     group->setFixedWidth(kLabelWidth);
     groupComboBox = new DComboBox(this);
+    groupComboBox->setAccessibleName("GroupComboBox");
     groupComboBox->addItem(QObject::tr("Read-write"));
     groupComboBox->addItem(QObject::tr("Read only"));
 
@@ -81,6 +83,7 @@ void MultiFilePermissionWidget::initUI()
                                        QFont::Medium);
     other->setFixedWidth(kLabelWidth);
     otherComboBox = new DComboBox(this);
+    otherComboBox->setAccessibleName("OtherComboBox");
     otherComboBox->addItem(QObject::tr("Read-write"));
     otherComboBox->addItem(QObject::tr("Read only"));
 

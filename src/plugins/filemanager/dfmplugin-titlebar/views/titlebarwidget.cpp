@@ -322,6 +322,7 @@ void TitleBarWidget::initializeUi()
 
     // tabbar
     bottomBar = new TabBar;
+    bottomBar->setAccessibleName("BottomBar");
     bottomBar->installEventFilter(this);
     topBarCustomLayout->addWidget(bottomBar, 1);
     topBarCustomLayout->addSpacing(10);

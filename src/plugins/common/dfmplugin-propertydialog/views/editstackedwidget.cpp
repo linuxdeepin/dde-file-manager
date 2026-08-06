@@ -210,6 +210,7 @@ void EditStackedWidget::initUI()
 {
     QFrame *editFrame = new QFrame;
     fileNameEdit = new NameTextEdit(QString(""), editFrame);
+    fileNameEdit->setAccessibleName("FileNameEdit");
     QHBoxLayout *editLayout = new QHBoxLayout;
     editLayout->addStretch();
     editLayout->addWidget(fileNameEdit);
@@ -241,6 +242,7 @@ void EditStackedWidget::initTextShowFrame(QString fileName)
     }
 
     nameEditIcon = new DIconButton(textShowFrame);
+    nameEditIcon->setAccessibleName("NameEditIcon");
     nameEditIcon->setObjectName(QString("EditButton"));
     nameEditIcon->setIcon(QIcon::fromTheme("dfm_rename"));
     nameEditIcon->setIconSize({ 12, 12 });
