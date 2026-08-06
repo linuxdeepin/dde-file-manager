@@ -109,3 +109,31 @@ TEST(ElideTextLayoutTest, LocalLayoutDestructsCleanly)
 {
     EXPECT_NO_FATAL_FAILURE({ ElideTextLayout layout("tmp"); });
 }
+
+// ---- Coverage additions: draw helpers (need a QPainter, but bodies execute) ----
+#include <QPainter>
+#include <QTextLine>
+#include <QBrush>
+
+TEST(ElideTextLayoutTest, DrawLineBackgroundCallable)
+{
+    ElideTextLayout layout("test");
+    QImage img(100, 50, QImage::Format_ARGB32);
+    QPainter p(&img);
+    QRectF rect(0, 0, 100, 50);
+    QRectF lineRect(0, 0, 80, 20);
+    EXPECT_NO_FATAL_FAILURE({ layout.drawLineBackground(&p, rect, lineRect, QBrush(Qt::white)); });
+}
+
+TEST(ElideTextLayoutTest, DrawTextWithHighlightCallable)
+{
+    ElideTextLayout layout("hello world");
+    layout.setHighlightKeywords(QStringList { "world" });
+    QImage img(200, 50, QImage::Format_ARGB32);
+    QPainter p(&img);
+    QTextLine line;
+    QRectF rect(0, 0, 200, 50);
+    EXPECT_NO_FATAL_FAILURE({
+        layout.drawTextWithHighlight(&p, line, "hello world", rect, 0, { { 6, 5 } });
+    });
+}

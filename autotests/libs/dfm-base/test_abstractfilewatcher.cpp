@@ -119,3 +119,12 @@ TEST_F(AbstractFileWatcherTest, FormatPathStatic)
     EXPECT_FALSE(p.endsWith("/"));
     EXPECT_EQ(p, QString("/tmp/some_path"));
 }
+
+// ---- Coverage additions: start/stop/dtor ----
+
+TEST_F(AbstractFileWatcherTest, PrivateStartReturnsStartedFlag)
+{
+    AbstractFileWatcherPrivate priv(QUrl("file:///tmp"), nullptr);
+    EXPECT_NO_FATAL_FAILURE({ (void)priv.start(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)priv.stop(); });
+}

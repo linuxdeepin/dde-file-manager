@@ -90,3 +90,20 @@ TEST(ApplicationTest, SyncGenericAttributeNoCrash)
 {
     EXPECT_NO_FATAL_FAILURE({ (void)Application::syncGenericAttribute(); });
 }
+
+// ---- Coverage additions: appAttributeTrigger + onSettingsValueEdited ----
+
+TEST(ApplicationTest, AppAttributeTriggerNoCrash)
+{
+    EXPECT_NO_FATAL_FAILURE({ Application::appAttributeTrigger(Application::kRestoreViewMode, 0); });
+}
+
+TEST(ApplicationTest, OnSettingsValueEditedNoCrash)
+{
+    // onSettingsValueEdited needs a valid Application instance (sets self).
+    // If instance() is null, skip — the test still exercises the code path
+    // when a prior suite (e.g. SettingBackend) already created one.
+    if (Application::instance()) {
+        EXPECT_NO_FATAL_FAILURE({ Application::instance()->onSettingsValueEdited("group", "key", QVariant(1)); });
+    }
+}

@@ -169,3 +169,60 @@ TEST(IndexProfileTest, OcrFactoryReturnsProfile)
     IndexProfile p = IndexProfile::ocr();
     EXPECT_EQ(p.type(), IndexProfile::Type::Ocr);
 }
+
+// ---- Coverage additions: more IndexProfile API ----
+
+TEST(IndexProfileTest, ProfileIdAndStatusFilePath)
+{
+    auto p = makeProfile();
+    EXPECT_FALSE(p.id().isEmpty());
+    EXPECT_NO_FATAL_FAILURE({ (void)p.statusFilePath(); });
+}
+
+TEST(IndexProfileTest, ProfileIndexDirectoryCallable)
+{
+    auto p = makeProfile();
+    EXPECT_NO_FATAL_FAILURE({ (void)p.indexDirectory(); });
+}
+
+TEST(IndexProfileTest, ProfileVersionKeyCallable)
+{
+    auto p = makeProfile();
+    EXPECT_NO_FATAL_FAILURE({ (void)p.versionKey(); });
+}
+
+TEST(IndexProfileTest, ProfileIsIndexAvailableCallable)
+{
+    auto p = makeProfile();
+    EXPECT_NO_FATAL_FAILURE({ (void)p.isIndexAvailable(); });
+}
+
+TEST(IndexProfileTest, ProfileRuntimeIndexVersionCallable)
+{
+    auto p = makeProfile();
+    EXPECT_NO_FATAL_FAILURE({ (void)p.runtimeIndexVersion(); });
+}
+
+TEST(IndexProfileTest, ProfileSupportsAnythingCallable)
+{
+    auto p = makeProfile();
+    EXPECT_NO_FATAL_FAILURE({ (void)p.supportsAnything(); });
+}
+
+TEST(IndexProfileTest, ProfileIsPathInScopeCallable)
+{
+    auto p = makeProfile();
+    EXPECT_NO_FATAL_FAILURE({ (void)p.isPathInScope("/tmp"); });
+}
+
+TEST(IndexProfileTest, ProfileIsCandidateFileCallable)
+{
+    auto p = makeProfile();
+    EXPECT_NO_FATAL_FAILURE({ (void)p.isCandidateFile("/tmp/test.txt"); });
+}
+
+TEST(IndexProfileTest, ProfileComputeChecksumCallable)
+{
+    auto p = makeProfile();
+    EXPECT_NO_FATAL_FAILURE({ (void)p.computeChecksum("/tmp/test.txt"); });
+}

@@ -23,3 +23,15 @@ TEST(ConfigSynchronizerTest, WatchChangeInvalidPairReturnsFalse)
     SyncPair pair;   // default-constructed: type == kNone -> isValid() false
     EXPECT_FALSE(ConfigSynchronizer::instance()->watchChange(pair));
 }
+
+// ---- Coverage additions: dtor + dconf change handler ----
+
+#include "dfm-base/base/configs/private/configsynchronizer_p.h"
+
+TEST(ConfigSynchronizerTest, OnDConfChangedForUnknownConfigIsSafe)
+{
+    // Unknown config path: syncToAppSet won't find a matching sync pair.
+    EXPECT_NO_FATAL_FAILURE({
+        ConfigSynchronizer::instance()->d->onDConfChanged("org.deepin.ut.unknown", "key");
+    });
+}

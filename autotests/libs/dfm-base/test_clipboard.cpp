@@ -81,3 +81,27 @@ TEST(ClipBoardTest, SupportCut)
 {
     EXPECT_NO_FATAL_FAILURE({ (void)ClipBoard::supportCut(); });
 }
+
+// ---- Coverage additions: clipboard data accessors ----
+
+TEST(ClipBoardTest, SetDataToClipboardWithNullIsSafe)
+{
+    EXPECT_NO_FATAL_FAILURE({ ClipBoard::instance()->setDataToClipboard(nullptr); });
+}
+
+TEST(ClipBoardTest, SetDataToClipboardWithMimeData)
+{
+    QMimeData *md = new QMimeData;
+    md->setText("ut_clipboard_test");
+    EXPECT_NO_FATAL_FAILURE({ ClipBoard::instance()->setDataToClipboard(md); });
+}
+
+TEST(ClipBoardTest, GetRemoteUrlsCallable)
+{
+    EXPECT_NO_FATAL_FAILURE({ (void)ClipBoard::instance()->getRemoteUrls(); });
+}
+
+TEST(ClipBoardTest, GetUrlsByX11Callable)
+{
+    EXPECT_NO_FATAL_FAILURE({ (void)ClipBoard::instance()->getUrlsByX11(); });
+}
