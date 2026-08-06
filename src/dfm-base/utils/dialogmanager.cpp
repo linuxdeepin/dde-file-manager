@@ -430,7 +430,18 @@ int DialogManager::showDeleteFilesDialog(const QList<QUrl> &urlList, bool isTras
         title = DeleteFileItems.arg(urlList.size());
     }
 
-    DDialog d(qApp->activeWindow());
+    // Don't parent the stack-allocated dialog to a window that may be destroyed
+    // during this dialog's own nested event loop. A WA_DeleteOnClose transient
+    // popup (e.g. TagEditor) closes and deleteLater()-destroys itself once it
+    // loses focus to this dialog; the deferred delete is processed inside
+    // d.exec(), and ~TagEditor -> deleteChildren would then `delete` this
+    // stack object, causing a double-free / corruption crash. Fall back to the
+    // parentless WindowStaysOnTopHint branch below for such windows.
+    QWidget *parent = qApp->activeWindow();
+    if (parent && parent->testAttribute(Qt::WA_DeleteOnClose))
+        parent = nullptr;
+
+    DDialog d(parent);
     if (!d.parentWidget()) {
         d.setWindowFlags(d.windowFlags() | Qt::WindowStaysOnTopHint);
     }
