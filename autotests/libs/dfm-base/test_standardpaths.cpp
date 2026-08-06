@@ -125,4 +125,26 @@ TEST(StandardPathsTest, ToStandardUrlUnmappedReturnsEmpty)
     EXPECT_TRUE(url.isEmpty());
 }
 
+// ---- Coverage additions: string-key accessors + cache path + ctor ----
+
+TEST(StandardPathsTest, GetCachePathCallable)
+{
+    EXPECT_NO_FATAL_FAILURE({ (void)StandardPaths::getCachePath(); });
+}
+
+TEST(StandardPathsTest, IconNameByDirNameCallable)
+{
+    EXPECT_NO_FATAL_FAILURE({ (void)StandardPaths::iconName(QString("Desktop")); });
+}
+
+TEST(StandardPathsTest, DisplayNameByDirNameCallable)
+{
+    EXPECT_NO_FATAL_FAILURE({ (void)StandardPaths::displayName(QString("Documents")); });
+}
+
+TEST(StandardPathsTest, LocalInstanceConstructsCleanly)
+{
+    EXPECT_NO_FATAL_FAILURE({ StandardPaths sp; });
+}
+
 

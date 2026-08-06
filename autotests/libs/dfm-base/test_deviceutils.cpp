@@ -88,3 +88,33 @@ TEST(DeviceUtilsTest, BindPathTransformIdentity)
     QString path = "/some/random/path";
     EXPECT_EQ(DeviceUtils::bindPathTransform(path, false), path);
 }
+
+// ---- Coverage additions for DeviceUtils safe query API ----
+
+TEST(DeviceUtilsTest, IsAutoMountEnableIsBool)
+{
+    EXPECT_NO_FATAL_FAILURE({ (void)DeviceUtils::isAutoMountEnable(); });
+}
+
+TEST(DeviceUtilsTest, GetSambaFileUriFromNativeWithInvalidUrlReturnsEmpty)
+{
+    QUrl result = DeviceUtils::getSambaFileUriFromNative(QUrl());
+    EXPECT_TRUE(result.isEmpty());
+}
+
+TEST(DeviceUtilsTest, GetSambaFileUriFromNativeWithNonSmbReturnsSame)
+{
+    QUrl local = QUrl::fromLocalFile("/tmp/test");
+    QUrl result = DeviceUtils::getSambaFileUriFromNative(local);
+    EXPECT_EQ(result.toString(), local.toString());
+}
+
+TEST(DeviceUtilsTest, IsWorkingOpticalDiscIdWithEmptyStringReturnsFalse)
+{
+    EXPECT_FALSE(DeviceUtils::isWorkingOpticalDiscId(QString()));
+}
+
+TEST(DeviceUtilsTest, ParseNetSourceUrlWithLocalFileReturnsEmpty)
+{
+    EXPECT_TRUE(DeviceUtils::parseNetSourceUrl(QUrl::fromLocalFile("/tmp")).isEmpty());
+}

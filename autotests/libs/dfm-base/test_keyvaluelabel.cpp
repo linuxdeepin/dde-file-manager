@@ -81,3 +81,8 @@ TEST(KeyValueLabelTest, RightValueWidgetSetCompleteText)
     ASSERT_NE(w, nullptr);
     EXPECT_NO_FATAL_FAILURE({ w->setCompleteText("complete text"); });
 }
+
+TEST(KeyValueLabelTest, KeyValueLabelDestructsCleanly)
+{
+    EXPECT_NO_FATAL_FAILURE({ KeyValueLabel label(nullptr); });
+}

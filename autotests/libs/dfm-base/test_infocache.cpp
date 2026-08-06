@@ -148,3 +148,12 @@ TEST_F(InfoCacheTest, ControllerGetCacheInfoNull)
 {
     EXPECT_NO_FATAL_FAILURE({ (void)InfoCacheController::instance().getCacheInfo(QUrl("file:///no/such/ctrl")); });
 }
+
+// ---- Coverage addition: exercise InfoCache / InfoCachePrivate destructors ----
+
+TEST_F(InfoCacheTest, LocalInfoCacheDestructsCleanly)
+{
+    // The static singleton is heap-allocated and never destroyed; a stack
+    // instance exercises the destructor path.
+    EXPECT_NO_FATAL_FAILURE({ InfoCache ic; });
+}

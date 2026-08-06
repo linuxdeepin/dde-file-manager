@@ -309,3 +309,8 @@ TEST(FileUtilsTest, FileCanTrashForLocalTempFileIsCallable)
     f.close();
     EXPECT_NO_FATAL_FAILURE({ (void)FileUtils::fileCanTrash(QUrl::fromLocalFile(path)); });
 }
+
+TEST(FileUtilsTest, TrashIsEmptyIsBool)
+{
+    EXPECT_NO_FATAL_FAILURE({ (void)FileUtils::trashIsEmpty(); });
+}
