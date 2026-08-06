@@ -10,6 +10,8 @@
 #include <gtest/gtest.h>
 #include <QUrl>
 #include <QTemporaryFile>
+#include <QTemporaryDir>
+#include <QFile>
 #include <QTest>
 
 #include <dfm-base/utils/fileutils.h>
@@ -230,4 +232,80 @@ TEST(FileUtilsTest, BindPathTransformIdentity)
 {
     QString p = "/tmp/some_path";
     EXPECT_EQ(FileUtils::bindPathTransform(p, false), p);
+}
+
+// ---- Coverage additions for previously-uncovered FileUtils API ----
+
+TEST(FileUtilsTest, RefreshIconCacheIsSafe)
+{
+    EXPECT_NO_FATAL_FAILURE({ FileUtils::refreshIconCache(); });
+}
+
+TEST(FileUtilsTest, IsComputerDesktopFileNonDesktopSuffixReturnsFalse)
+{
+    EXPECT_FALSE(FileUtils::isComputerDesktopFile(QUrl::fromLocalFile("/tmp/not_a_desktop_file.txt")));
+}
+
+TEST(FileUtilsTest, IsComputerDesktopFileRegularDesktopReturnsFalse)
+{
+    QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+    const QString path = dir.path() + "/regular.desktop";
+    QFile f(path);
+    ASSERT_TRUE(f.open(QIODevice::WriteOnly | QIODevice::Text));
+    f.write("[Desktop Entry]\nType=Application\nName=RegularApp\n");
+    f.close();
+    EXPECT_FALSE(FileUtils::isComputerDesktopFile(QUrl::fromLocalFile(path)));
+}
+
+TEST(FileUtilsTest, IsSameMountPointNonLocalReturnsFalse)
+{
+    EXPECT_FALSE(FileUtils::isSameMountPoint(QUrl("trash:///"), QUrl("trash:///")));
+}
+
+TEST(FileUtilsTest, IsSameMountPointDifferentSchemeReturnsFalse)
+{
+    EXPECT_FALSE(FileUtils::isSameMountPoint(QUrl("file:///tmp/a"), QUrl("trash:///")));
+}
+
+TEST(FileUtilsTest, IsSameMountPointLocalSameDirReturnsTrue)
+{
+    QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+    QUrl a = QUrl::fromLocalFile(dir.path() + "/a");
+    QUrl b = QUrl::fromLocalFile(dir.path() + "/b");
+    EXPECT_TRUE(FileUtils::isSameMountPoint(a, b));
+}
+
+TEST(FileUtilsTest, IsSameDeviceDifferentSchemeReturnsFalse)
+{
+    EXPECT_FALSE(FileUtils::isSameDevice(QUrl("file:///tmp/a"), QUrl("trash:///")));
+}
+
+TEST(FileUtilsTest, IsSameDeviceLocalSameDirReturnsTrue)
+{
+    QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+    QUrl a = QUrl::fromLocalFile(dir.path() + "/a");
+    QUrl b = QUrl::fromLocalFile(dir.path() + "/b");
+    EXPECT_TRUE(FileUtils::isSameDevice(a, b));
+}
+
+TEST(FileUtilsTest, IsSameDeviceNonLocalSameHostReturnsTrue)
+{
+    QUrl a("smb://host/share/dir");
+    QUrl b("smb://host/share/other");
+    EXPECT_TRUE(FileUtils::isSameDevice(a, b));
+}
+
+TEST(FileUtilsTest, FileCanTrashForLocalTempFileIsCallable)
+{
+    QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+    const QString path = dir.path() + "/trashable.txt";
+    QFile f(path);
+    ASSERT_TRUE(f.open(QIODevice::WriteOnly));
+    f.write("hello");
+    f.close();
+    EXPECT_NO_FATAL_FAILURE({ (void)FileUtils::fileCanTrash(QUrl::fromLocalFile(path)); });
 }
