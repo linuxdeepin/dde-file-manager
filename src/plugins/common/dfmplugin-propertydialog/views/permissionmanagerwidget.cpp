@@ -157,16 +157,20 @@ void PermissionManagerWidget::initUI()
     DLabel *owner = new DLabel(QObject::tr("Owner"), this);
     DFontSizeManager::instance()->bind(owner, DFontSizeManager::SizeType::T7, QFont::Medium);
     ownerComboBox = new QComboBox(this);
+    ownerComboBox->setAccessibleName("OwnerComboBox_2");
 
     DLabel *group = new DLabel(QObject::tr("Group"), this);
     DFontSizeManager::instance()->bind(group, DFontSizeManager::SizeType::T7, QFont::Medium);
     groupComboBox = new QComboBox(this);
+    groupComboBox->setAccessibleName("GroupComboBox_2");
 
     DLabel *other = new DLabel(QObject::tr("Others"), this);
     DFontSizeManager::instance()->bind(other, DFontSizeManager::SizeType::T7, QFont::Medium);
     otherComboBox = new QComboBox(this);
+    otherComboBox->setAccessibleName("OtherComboBox_2");
 
     executableCheckBox = new QCheckBox(this);
+    executableCheckBox->setAccessibleName("ExecutableCheckBox");
     executableCheckBox->setText(tr("Allow to execute as program"));
     executableCheckBox->setToolTip(executableCheckBox->text());
 

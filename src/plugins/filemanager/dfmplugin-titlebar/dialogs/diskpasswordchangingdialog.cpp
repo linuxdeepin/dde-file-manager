@@ -29,6 +29,7 @@ void DiskPasswordChangingDialog::initUI()
     setIcon(QIcon::fromTheme("dde-file-manager"));
 
     switchPageWidget = new QStackedWidget(this);
+    switchPageWidget->setAccessibleName("SwitchPageWidget");
     confirmWidget = new DPCConfirmWidget(this);
     progressWidget = new DPCProgressWidget(this);
     resultWidget = new DPCResultWidget(this);

@@ -32,6 +32,7 @@ RecoveryKeyView::RecoveryKeyView(QWidget *parent)
 {
     //! 密钥编辑框
     recoveryKeyEdit = new QPlainTextEdit(this);
+    recoveryKeyEdit->setAccessibleName("RecoveryKeyEdit");
     recoveryKeyEdit->setPlaceholderText(tr("Input the 32-digit recovery key"));
     recoveryKeyEdit->setMaximumBlockCount(MAX_KEY_LENGTH + 3);
     recoveryKeyEdit->installEventFilter(this);

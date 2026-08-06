@@ -29,6 +29,7 @@ using namespace ddplugin_organizer;
 CollectionViewMenu::CollectionViewMenu(CollectionView *parent)
     : QObject(parent), view(parent)
 {
+    view->setAccessibleName("View_7");
 }
 
 bool CollectionViewMenu::disableMenu()
@@ -77,6 +78,7 @@ void CollectionViewMenu::emptyAreaMenu()
         delete menuPtr;
 
     menuPtr = new DMenu(view);
+    menuPtr->setAccessibleName("MenuPtr_2");
     canvasScene->create(menuPtr);
     canvasScene->updateState(menuPtr);
 

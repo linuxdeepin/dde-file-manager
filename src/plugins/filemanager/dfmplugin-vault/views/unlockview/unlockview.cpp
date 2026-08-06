@@ -79,12 +79,14 @@ void UnlockView::initUI()
 
     //! 密码编辑框
     passwordEdit = new DPasswordEdit(this);
+    passwordEdit->setAccessibleName("PasswordEdit_4");
     passwordEdit->lineEdit()->setPlaceholderText(tr("Password"));
     passwordEdit->lineEdit()->installEventFilter(this);
     passwordEdit->lineEdit()->setAttribute(Qt::WA_InputMethodEnabled, false);
 
     // 提示按钮
     tipsButton = new QPushButton(this);
+    tipsButton->setAccessibleName("TipsButton");
     tipsButton->setIcon(QIcon(":/icons/images/icons/light_32px.svg"));
 
     //! 布局

@@ -112,8 +112,10 @@ void DecryptParamsInputDialog::initUI()
     QFrame *content = new QFrame(this);
     QVBoxLayout *lay = new QVBoxLayout(content);
     editor = new Dtk::Widget::DPasswordEdit(this);
+    editor->setAccessibleName("Editor");
     lay->addWidget(editor);
     recSwitch = new Dtk::Widget::DCommandLinkButton("", this);
+    recSwitch->setAccessibleName("RecSwitch_2");
     lay->addWidget(recSwitch, 0, Qt::AlignRight);
     addContent(content);
     addButton(tr("Confirm"));

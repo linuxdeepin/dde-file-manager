@@ -65,6 +65,7 @@ void ItemEditor::init()
     setFrameShape(QFrame::NoFrame);
     setContentsMargins(0, 0, 0, 0);
     textEditor = createEditor();
+    textEditor->setAccessibleName("TextEditor_2");
     textEditor->setParent(this);
     textEditor->installEventFilter(textEditor);   // for draw
 

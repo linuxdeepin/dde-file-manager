@@ -373,6 +373,7 @@ void ConnectToServerDialog::initializeUi()
     // init address area
     {
         schemeComboBox = new DComboBox(this);
+        schemeComboBox->setAccessibleName("SchemeComboBox");
         supportedSchemes << QString("%1://").arg(Scheme::kSmb)
                          << QString("%1://").arg(Scheme::kFtp)
                          << QString("%1://").arg(Scheme::kSFtp)
@@ -389,12 +390,14 @@ void ConnectToServerDialog::initializeUi()
         completer->setMaxVisibleItems(kMaxHistoryItems);
 
         serverComboBox = new DComboBox(this);
+        serverComboBox->setAccessibleName("ServerComboBox");
         serverComboBox->setEditable(true);
         serverComboBox->setMaxVisibleItems(kMaxHistoryItems);
         serverComboBox->clearEditText();
         serverComboBox->setCompleter(completer);
 
         theAddButton = new DIconButton(this);
+        theAddButton->setAccessibleName("TheAddButton");
         theAddButton->setMaximumSize(38, 38);
         theAddButton->setFlat(false);
         theAddButton->setIconSize({ 16, 16 });
@@ -411,6 +414,7 @@ void ConnectToServerDialog::initializeUi()
         charsetLabel->setContentsMargins(8, 0, 0, 0);
 
         charsetComboBox = new DComboBox();
+        charsetComboBox->setAccessibleName("CharsetComboBox");
         charsetComboBox->addItems({ tr("Default"), "UTF-8", "GBK" });
         charsetComboBox->setVisible(false);
 
@@ -421,6 +425,7 @@ void ConnectToServerDialog::initializeUi()
     // init collection area
     {
         collectionServerView = new DListView();
+        collectionServerView->setAccessibleName("CollectionServerView");
         collectionServerView->setVerticalScrollMode(DListView::ScrollPerPixel);
         collectionServerView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
         collectionServerView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);

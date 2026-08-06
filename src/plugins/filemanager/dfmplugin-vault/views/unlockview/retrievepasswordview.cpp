@@ -55,6 +55,7 @@ RetrievePasswordView::RetrievePasswordView(QWidget *parent)
     savePathTypeLabel->setText(tr("Unlock the Safe via Key File"));
 
     filePathEdit = new DFileChooserEdit(this);
+    filePathEdit->setAccessibleName("FilePathEdit_2");
     filePathEdit->lineEdit()->setPlaceholderText(tr("Select Key File"));
     fileDialog = new DFileDialog(this, QDir::homePath());
     fileDialog->setNameFilters({ QString("KEY file(*.key)") });

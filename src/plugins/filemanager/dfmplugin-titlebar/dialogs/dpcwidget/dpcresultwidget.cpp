@@ -59,6 +59,7 @@ void DPCResultWidget::initUI()
     resultIcon->setAlignment(Qt::AlignHCenter);
 
     closeBtn = new DPushButton(tr("Close", "button"), this);
+    closeBtn->setAccessibleName("CloseBtn_2");
 
     mainLayout->addWidget(titleLabel, 0, Qt::AlignHCenter);
     mainLayout->addWidget(resultIcon, 0, Qt::AlignHCenter);

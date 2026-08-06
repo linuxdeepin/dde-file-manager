@@ -250,6 +250,7 @@ void FilePreviewDialog::initUI()
     qCDebug(logLibFilePreview) << "FilePreviewDialog: initializing UI components";
 
     closeBtn = new DFloatingButton(DStyle::SP_CloseButton, this);
+    closeBtn->setAccessibleName("CloseBtn");
     closeBtn->setStyleSheet("background-color: transparent;");
     closeBtn->setFixedSize(46, 46);
     closeBtn->setIconSize(QSize(40, 40));

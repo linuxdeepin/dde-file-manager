@@ -1,0 +1,8 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: dde-file-manager
+Upstream-Contact: UnionTech Software Technology Co., Ltd.
+Source: https://github.com/linuxdeepin/dde-file-manager
+
+Files: tests/at/spi/*
+Copyright: 2026 UnionTech Software Technology Co., Ltd.
+License: GPL-3.0-or-later

@@ -22,6 +22,7 @@ ThumbnailDelegate::ThumbnailDelegate(QAbstractItemView *parent)
 }
 
 void ThumbnailDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+    itemViewParent->setAccessibleName("ItemViewParent");
 {
     if (index.isValid()) {
         qreal pixscale = itemViewParent->property("adaptScale").toDouble();

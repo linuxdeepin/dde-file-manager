@@ -1,0 +1,697 @@
+version: '1.0'
+summary:
+  total_widgets: 232
+  with_names: 186
+  missing_names: 46
+  coverage: 80.2%
+gaps:
+- variable: editInput
+  type: QLineEdit *
+  source_file: examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp
+  class_name: MainWindow
+  line: 23
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: text
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: textBrowser
+  type: QTextBrowser *
+  source_file: examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp
+  class_name: MainWindow
+  line: 24
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: ''
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: btnCheckTpm
+  type: QPushButton *
+  source_file: examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp
+  class_name: MainWindow
+  line: 25
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: push button
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: btnGetRandom
+  type: QPushButton *
+  source_file: examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp
+  class_name: MainWindow
+  line: 26
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: push button
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: btnCheckAlgo
+  type: QPushButton *
+  source_file: examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp
+  class_name: MainWindow
+  line: 27
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: push button
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: btnEncrypt
+  type: QPushButton *
+  source_file: examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp
+  class_name: MainWindow
+  line: 28
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: push button
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: btnDecrypt
+  type: QPushButton *
+  source_file: examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp
+  class_name: MainWindow
+  line: 29
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: push button
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: btnEncryptTwo
+  type: QPushButton *
+  source_file: examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp
+  class_name: MainWindow
+  line: 31
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: push button
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: btnDecryptTwo
+  type: QPushButton *
+  source_file: examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp
+  class_name: MainWindow
+  line: 32
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: push button
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: btnEncryptThree
+  type: QPushButton *
+  source_file: examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp
+  class_name: MainWindow
+  line: 34
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: push button
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: btnDecryptThree
+  type: QPushButton *
+  source_file: examples/dfmplugin-encrypt-manager-demo/mainwindow.cpp
+  class_name: MainWindow
+  line: 35
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: push button
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: preBtn
+  type: QPushButton *
+  source_file: src/apps/dde-file-manager-preview/libdfm-preview/views/filepreviewdialogstatusbar.cpp
+  class_name: ''
+  line: 29
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: push button
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: openBtn
+  type: QPushButton *
+  source_file: src/apps/dde-file-manager-preview/libdfm-preview/views/filepreviewdialogstatusbar.cpp
+  class_name: ''
+  line: 31
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: push button
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: echoBtn
+  type: Dtk::Widget::DPushButton *
+  source_file: src/apps/dde-file-manager-preview/pluginpreviews/pdf-preview/encryptionpage.cpp
+  class_name: ''
+  line: 77
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: push button
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: itemViewParent
+  type: QAbstractItemView *
+  source_file: src/apps/dde-file-manager-preview/pluginpreviews/pdf-preview/thumbnaildelegate.cpp
+  class_name: ''
+  line: 38
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: ''
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: passwordButtonGroup
+  type: QButtonGroup *
+  source_file: src/dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.cpp
+  class_name: ''
+  line: 60
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: ''
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: filedialogBtn
+  type: QAbstractButton *
+  source_file: src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp
+  class_name: ''
+  line: 44
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: ''
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: splitLineGray
+  type: QPushButton *
+  source_file: src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp
+  class_name: QHBoxLayout
+  line: 86
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: push button
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: hideFile
+  type: QCheckBox *
+  source_file: src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp
+  class_name: ''
+  line: 70
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: check box
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: closeButton
+  type: Dtk::Widget::DCommandLinkButton *
+  source_file: src/plugins/common/dfmplugin-propertydialog/views/closealldialog.cpp
+  class_name: ''
+  line: 39
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: ''
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: nameEditIcon
+  type: Dtk::Widget::DIconButton *
+  source_file: src/plugins/common/dfmplugin-propertydialog/views/editstackedwidget.cpp
+  class_name: ''
+  line: 88
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: ''
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: editStackWidget
+  type: EditStackedWidget *
+  source_file: src/plugins/common/dfmplugin-propertydialog/views/filepropertydialog.cpp
+  class_name: ''
+  line: 79
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: layered pane
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: editButton
+  type: Dtk::Widget::DIconButton *
+  source_file: src/plugins/common/dfmplugin-propertydialog/views/filepropertydialog.cpp
+  class_name: ''
+  line: 81
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: ''
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: hideFile
+  type: SkipPartiallyCheckBox *
+  source_file: src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp
+  class_name: ''
+  line: 52
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: check box
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: checkButton
+  type: DIconButton *
+  source_file: src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp
+  class_name: QCheckBox
+  line: 58
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: ''
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: openFileChooseButton
+  type: Dtk::Widget::DCommandLinkButton *
+  source_file: src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp
+  class_name: QCheckBox
+  line: 93
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: ''
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: setToDefaultCheckBox
+  type: QCheckBox *
+  source_file: src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp
+  class_name: QCheckBox
+  line: 94
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: check box
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: cancelButton
+  type: DPushButton *
+  source_file: src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp
+  class_name: QCheckBox
+  line: 95
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: push button
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: chooseButton
+  type: DSuggestButton *
+  source_file: src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp
+  class_name: QCheckBox
+  line: 96
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: ''
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: openWithBtnGroup
+  type: QButtonGroup *
+  source_file: src/plugins/common/dfmplugin-utils/openwith/openwithwidget.cpp
+  class_name: ''
+  line: 35
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: ''
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: serverComboBox
+  type: Dtk::Widget::DComboBox *
+  source_file: src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp
+  class_name: CollectionModel
+  line: 70
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: combo box
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: schemeComboBox
+  type: Dtk::Widget::DComboBox *
+  source_file: src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp
+  class_name: CollectionModel
+  line: 71
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: combo box
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: theAddButton
+  type: Dtk::Widget::DIconButton *
+  source_file: src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp
+  class_name: CollectionModel
+  line: 76
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: ''
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: theDelButton
+  type: Dtk::Widget::DIconButton *
+  source_file: src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp
+  class_name: CollectionModel
+  line: 77
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: ''
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: collectionServerView
+  type: Dtk::Widget::DListView *
+  source_file: src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp
+  class_name: CollectionModel
+  line: 78
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: list
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: charsetComboBox
+  type: Dtk::Widget::DComboBox *
+  source_file: src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp
+  class_name: CollectionModel
+  line: 83
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: combo box
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: addItemBtn
+  type: Dtk::Widget::DToolButton *
+  source_file: src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp
+  class_name: QGridLayout
+  line: 43
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: push button
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: searchButton
+  type: Dtk::Widget::DIconButton *
+  source_file: src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp
+  class_name: ''
+  line: 89
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: ''
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: advancedButton
+  type: Dtk::Widget::DToolButton *
+  source_file: src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp
+  class_name: ''
+  line: 90
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: push button
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: searchEdit
+  type: Dtk::Widget::DSearchEdit *
+  source_file: src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp
+  class_name: ''
+  line: 91
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: ''
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: selectfileSavePathEdit
+  type: Dtk::Widget::DFileChooserEdit *
+  source_file: src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp
+  class_name: ''
+  line: 71
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: ''
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: startBtn
+  type: Dtk::Widget::DSuggestButton *
+  source_file: src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp
+  class_name: ''
+  line: 31
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: ''
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: defaultFilePathEdit
+  type: QLineEdit *
+  source_file: src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp
+  class_name: ''
+  line: 96
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: text
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: scaleSlider
+  type: DSlider *
+  source_file: src/plugins/filemanager/dfmplugin-workspace/views/fileviewstatusbar.cpp
+  class_name: ''
+  line: 43
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: slider
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: headerView
+  type: HeaderView *
+  source_file: src/plugins/filemanager/dfmplugin-workspace/views/private/fileview_p.cpp
+  class_name: ''
+  line: 44
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: ''
+  context: ''
+  is_action: false
+  action_owner: ''
+- variable: q_ptr
+  type: RenameBar *
+  source_file: src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp
+  class_name: QPushButton
+  line: 65
+  instantiation: ''
+  has_object_name: false
+  has_accessible_name: false
+  existing_object_name: ''
+  existing_accessible_name: ''
+  display_text: ''
+  role: ''
+  context: ''
+  is_action: false
+  action_owner: ''

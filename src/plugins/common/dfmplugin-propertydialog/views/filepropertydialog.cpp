@@ -104,6 +104,7 @@ void FilePropertyDialog::createHeadUI(const QUrl &url)
     setFileIcon(fileIcon, currentInfo);
 
     editStackWidget = new EditStackedWidget(this);
+    editStackWidget->setAccessibleName("EditStackWidget");
     editStackWidget->selectFile(url);
     connect(editStackWidget, &EditStackedWidget::selectUrlRenamed, this, &FilePropertyDialog::onSelectUrlRenamed);
 
