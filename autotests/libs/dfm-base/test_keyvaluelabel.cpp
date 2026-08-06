@@ -86,3 +86,42 @@ TEST(KeyValueLabelTest, KeyValueLabelDestructsCleanly)
 {
     EXPECT_NO_FATAL_FAILURE({ KeyValueLabel label(nullptr); });
 }
+
+// ---- Coverage additions: RightValueWidget event handlers (direct, no show/QMenu) ----
+#include <QShowEvent>
+#include <QMouseEvent>
+#include <QFocusEvent>
+
+TEST(KeyValueLabelTest, RightValueWidgetShowEventCallable)
+{
+    KeyValueLabel label(nullptr);
+    auto *w = label.rightWidget();
+    ASSERT_NE(w, nullptr);
+    EXPECT_NO_FATAL_FAILURE({
+        QShowEvent se;
+        w->showEvent(&se);
+    });
+}
+
+TEST(KeyValueLabelTest, RightValueWidgetMouseReleaseEventCallable)
+{
+    KeyValueLabel label(nullptr);
+    auto *w = label.rightWidget();
+    ASSERT_NE(w, nullptr);
+    EXPECT_NO_FATAL_FAILURE({
+        QMouseEvent me(QEvent::MouseButtonRelease, QPointF(0, 0), QPointF(0, 0),
+                       Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+        w->mouseReleaseEvent(&me);
+    });
+}
+
+TEST(KeyValueLabelTest, RightValueWidgetFocusOutEventCallable)
+{
+    KeyValueLabel label(nullptr);
+    auto *w = label.rightWidget();
+    ASSERT_NE(w, nullptr);
+    EXPECT_NO_FATAL_FAILURE({
+        QFocusEvent fe(QEvent::FocusOut);
+        w->focusOutEvent(&fe);
+    });
+}

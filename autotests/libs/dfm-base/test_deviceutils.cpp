@@ -118,3 +118,37 @@ TEST(DeviceUtilsTest, ParseNetSourceUrlWithLocalFileReturnsEmpty)
 {
     EXPECT_TRUE(DeviceUtils::parseNetSourceUrl(QUrl::fromLocalFile("/tmp")).isEmpty());
 }
+
+// ---- Coverage additions: more device query API ----
+
+TEST(DeviceUtilsTest, FstabMountPointsCallable)
+{
+    EXPECT_NO_FATAL_FAILURE({ (void)DeviceUtils::fstabMountPoints(); });
+}
+
+TEST(DeviceUtilsTest, IsBlankOpticalDiscWithEmptyIdCallable)
+{
+    EXPECT_NO_FATAL_FAILURE({ (void)DeviceUtils::isBlankOpticalDisc(QString()); });
+}
+
+TEST(DeviceUtilsTest, NameOfEncryptedWithEmptyMapCallable)
+{
+    QVariantMap emptyMap;
+    EXPECT_NO_FATAL_FAILURE({ (void)DeviceUtils::nameOfEncrypted(emptyMap); });
+}
+
+TEST(DeviceUtilsTest, IsSiblingOfRootCallable)
+{
+    QVariantHash emptyInfo;
+    EXPECT_NO_FATAL_FAILURE({ (void)DeviceUtils::isSiblingOfRoot(emptyInfo); });
+}
+
+TEST(DeviceUtilsTest, IsPWOpticalDiscDevWithNonSrDevReturnsFalse)
+{
+    EXPECT_FALSE(DeviceUtils::isPWOpticalDiscDev("/dev/sda"));
+}
+
+TEST(DeviceUtilsTest, IsPWUserspaceOpticalDiscDevWithNonSrDevReturnsFalse)
+{
+    EXPECT_FALSE(DeviceUtils::isPWUserspaceOpticalDiscDev("/dev/sda"));
+}

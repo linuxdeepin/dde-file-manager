@@ -354,3 +354,25 @@ TEST_F(FileInfoTest, SyncFileInfoTwoArgConstructor)
     SyncFileInfo info(local, dfi);
     EXPECT_EQ(info.d->dfmFileInfo.data(), dfi.data());
 }
+
+// ---- Coverage additions: FileInfo base class operators + dtor ----
+
+TEST_F(FileInfoTest, FileInfoEqualityOperators)
+{
+    QString p1 = rootPath + "/eq1.txt";
+    QFile f1(p1); ASSERT_TRUE(f1.open(QIODevice::WriteOnly)); f1.close();
+    FileInfo a(QUrl::fromLocalFile(p1));
+    FileInfo b(QUrl::fromLocalFile(p1));
+    EXPECT_TRUE(a == b);
+    EXPECT_FALSE(a != b);
+}
+
+TEST_F(FileInfoTest, FileInfoAssignmentOperator)
+{
+    QString p1 = rootPath + "/assign.txt";
+    QFile f1(p1); ASSERT_TRUE(f1.open(QIODevice::WriteOnly)); f1.close();
+    FileInfo a(QUrl::fromLocalFile(p1));
+    FileInfo b(QUrl::fromLocalFile(rootPath + "/other.txt"));
+    b = a;
+    EXPECT_EQ(b.urlOf(FileInfo::FileUrlInfoType::kUrl), a.urlOf(FileInfo::FileUrlInfoType::kUrl));
+}

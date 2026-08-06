@@ -133,3 +133,27 @@ TEST(IndexUtilityTest, AnythingConfigWatcherBlacklistPaths)
     EXPECT_NO_FATAL_FAILURE({ (void)IndexUtility::AnythingConfigWatcher::instance()->defaultBlacklistPaths(); });
     EXPECT_NO_FATAL_FAILURE({ (void)IndexUtility::AnythingConfigWatcher::instance()->defaultBlacklistPathsRealtime(); });
 }
+
+// ---- Coverage additions: config watcher destructors + handleConfigChanged ----
+
+TEST(IndexUtilityTest, AnythingConfigWatcherHandleConfigChangedCallable)
+{
+    EXPECT_NO_FATAL_FAILURE({ IndexUtility::AnythingConfigWatcher::instance()->handleConfigChanged("log_rules"); });
+}
+
+TEST(IndexUtilityTest, DlnfsConfigWatcherInstanceCallable)
+{
+    EXPECT_NO_FATAL_FAILURE({ (void)IndexUtility::DlnfsConfigWatcher::instance(); });
+}
+
+TEST(IndexUtilityTest, PathCalculatorCalculateNewPathForDirectoryMove)
+{
+    EXPECT_NO_FATAL_FAILURE({
+        (void)PathCalculator::calculateNewPathForDirectoryMove("/old", "/old/sub", "/new");
+    });
+}
+
+TEST(IndexUtilityTest, SearchUtilityRunCliCallable)
+{
+    EXPECT_NO_FATAL_FAILURE({ (void)SearchUtility::runCli({ "echo", "hello" }, 5000); });
+}

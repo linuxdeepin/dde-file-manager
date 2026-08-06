@@ -13,6 +13,7 @@
 #include <QVariantHash>
 
 #include <dfm-base/interfaces/abstractmenuscene.h>
+#include "dfm-base/interfaces/private/abstractmenuscene_p.h"
 
 using namespace dfmbase;
 
@@ -104,4 +105,20 @@ TEST(AbstractMenuSceneTest, FilterActionBySubsceneHelperNull)
 {
     QAction action("act");
     EXPECT_FALSE(filterActionBySubscene(nullptr, &action));
+}
+
+// ---- Coverage additions: private init check + dtor ----
+
+TEST(AbstractMenuSceneTest, InitializeParamsIsValidDefaultFalse)
+{
+    AbstractMenuScenePrivate priv(nullptr);
+    // With isEmptyArea=false and empty selectFiles/focusFile/currentDir, returns false.
+    EXPECT_FALSE(priv.initializeParamsIsValid());
+}
+
+TEST(AbstractMenuSceneTest, InitializeParamsIsValidWithEmptyAreaTrue)
+{
+    AbstractMenuScenePrivate priv(nullptr);
+    priv.isEmptyArea = true;
+    EXPECT_TRUE(priv.initializeParamsIsValid());
 }

@@ -69,6 +69,25 @@ TEST(AbstractJobHandlerTest, StartCallsOperateTaskJob)
     EXPECT_NO_FATAL_FAILURE({ handler.start(); });
 }
 
+// ---- Coverage additions: on* slots with JobInfoPointer + dtor ----
+#include <QMap>
+#include <QVariant>
+#include <QtGlobal>
+
+TEST(AbstractJobHandlerTest, OnSlotsWithEmptyJobInfoPointer)
+{
+    TestJobHandler handler;
+    auto map = new QMap<quint8, QVariant>();
+    (*map)[0] = QVariant(1);
+    JobInfoPointer p(map);
+    EXPECT_NO_FATAL_FAILURE({ handler.onProccessChanged(p); });
+    EXPECT_NO_FATAL_FAILURE({ handler.onStateChanged(p); });
+    EXPECT_NO_FATAL_FAILURE({ handler.onFinished(p); });
+    EXPECT_NO_FATAL_FAILURE({ handler.onSpeedUpdated(p); });
+    EXPECT_NO_FATAL_FAILURE({ handler.onCurrentTask(p); });
+    EXPECT_NO_FATAL_FAILURE({ handler.onError(p); });
+}
+
 // ---- Coverage additions for task-info accessors + local destruction ----
 
 TEST(AbstractJobHandlerTest, GetAllTaskInfoReturnsEmptyMap)

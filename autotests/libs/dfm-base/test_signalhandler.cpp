@@ -60,3 +60,10 @@ TEST(SignalHandlerTest, DeliverSignalEmitsSignalReceived)
     // If the signal wasn't delivered in time, the test still passes —
     // we mainly want to exercise the watch/deliver code paths.
 }
+
+// ---- Coverage addition: local destructor ----
+
+TEST(SignalHandlerTest, LocalSignalHandlerDestructsCleanly)
+{
+    EXPECT_NO_FATAL_FAILURE({ SignalHandler sh; });
+}

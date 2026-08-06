@@ -161,3 +161,40 @@ TEST(UniversalUtilsTest, GetTextLineHeightWithInvalidIndexReturnsFontHeight)
     int h = UniversalUtils::getTextLineHeight(idx, fm);
     EXPECT_GT(h, 0);
 }
+
+// ---- Coverage additions: DBus connection helpers (safe to call, may fail) ----
+
+#include <QDBusReply>
+#include <QDBusUnixFileDescriptor>
+
+TEST(UniversalUtilsTest, BlockShutdownCallable)
+{
+    QDBusReply<QDBusUnixFileDescriptor> reply;
+    EXPECT_NO_FATAL_FAILURE({ UniversalUtils::blockShutdown(reply); });
+}
+
+TEST(UniversalUtilsTest, UserChangeCallable)
+{
+    QObject obj;
+    EXPECT_NO_FATAL_FAILURE({ UniversalUtils::userChange(&obj, SIGNAL(destroyed())); });
+}
+
+TEST(UniversalUtilsTest, PrepareForSleepCallable)
+{
+    QObject obj;
+    EXPECT_NO_FATAL_FAILURE({ UniversalUtils::prepareForSleep(&obj, SIGNAL(destroyed())); });
+}
+
+TEST(UniversalUtilsTest, BoardCastPastDataCallable)
+{
+    EXPECT_NO_FATAL_FAILURE({
+        UniversalUtils::boardCastPastData(QUrl("file:///tmp"), QUrl("file:///home"), { QUrl("file:///tmp/a") });
+    });
+}
+
+#include <QMimeData>
+TEST(UniversalUtilsTest, SetDockDnDMimeDataCallable)
+{
+    QMimeData md;
+    EXPECT_NO_FATAL_FAILURE({ UniversalUtils::setDockDnDMimeData(&md, QUrl("file:///tmp"), "test"); });
+}

@@ -314,3 +314,25 @@ TEST(FileUtilsTest, TrashIsEmptyIsBool)
 {
     EXPECT_NO_FATAL_FAILURE({ (void)FileUtils::trashIsEmpty(); });
 }
+
+// ---- Coverage additions: batch text operations + prohibit path ----
+
+TEST(FileUtilsTest, IsContainProhibitPathWithEmptyListReturnsFalse)
+{
+    EXPECT_FALSE(FileUtils::isContainProhibitPath({}));
+}
+
+TEST(FileUtilsTest, IsContainProhibitPathWithTempPathCallable)
+{
+    EXPECT_NO_FATAL_FAILURE({ (void)FileUtils::isContainProhibitPath({ QUrl::fromLocalFile("/tmp/ut_prohibit") }); });
+}
+
+TEST(FileUtilsTest, FileBatchAddTextWithEmptyListReturnsEmpty)
+{
+    EXPECT_TRUE(FileUtils::fileBatchAddText({}, { "prefix", AbstractJobHandler::FileNameAddFlag::kPrefix }).isEmpty());
+}
+
+TEST(FileUtilsTest, FileBatchReplaceTextWithEmptyListReturnsEmpty)
+{
+    EXPECT_TRUE(FileUtils::fileBatchReplaceText({}, { "old", "new" }).isEmpty());
+}

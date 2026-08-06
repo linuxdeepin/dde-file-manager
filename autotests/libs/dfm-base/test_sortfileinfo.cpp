@@ -119,3 +119,16 @@ TEST(SortFileInfoTest, MarkAsCompleted)
     info.markAsCompleted();
     EXPECT_TRUE(info.isInfoCompleted());
 }
+
+TEST(SortFileInfoTest, NeedsCompletionReturnsTrueWhenNotCompleted)
+{
+    SortFileInfo info;
+    EXPECT_TRUE(info.needsCompletion());
+}
+
+TEST(SortFileInfoTest, NeedsCompletionReturnsFalseWhenCompleted)
+{
+    SortFileInfo info;
+    info.markAsCompleted();
+    EXPECT_FALSE(info.needsCompletion());
+}
