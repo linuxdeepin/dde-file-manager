@@ -68,6 +68,14 @@ QVariant ShredFileModel::data(const QModelIndex &index, int role) const
 void ShredFileModel::setFileList(const QList<QUrl> &fileList)
 {
     beginResetModel();
-    urlList = fileList;
+    urlList.clear();
+    for (const auto &url : fileList) {
+        auto info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoAuto);
+        if (!info || !info->exists()) {
+            fmWarning() << "The file is invalid and will be excluded: " << url;
+            continue;
+        }
+        urlList.append(url);
+    }
     endResetModel();
 }
