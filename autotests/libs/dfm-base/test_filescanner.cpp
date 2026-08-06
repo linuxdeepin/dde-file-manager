@@ -187,3 +187,36 @@ TEST_F(TestFileScanner, ScanSyncWithCallback_BasicScan)
     EXPECT_EQ(result.directoryCount, 2);
     EXPECT_EQ(result.totalSize, 12);
 }
+
+// ---- Coverage additions for the public FileScanner / ScannerWorker API ----
+
+TEST_F(TestFileScanner, SetOptionsRoundTrip)
+{
+    FileScanner scanner;
+    scanner.setOptions(FileScanner::ScanOption::CountOnly | FileScanner::ScanOption::SingleDepth);
+    EXPECT_TRUE(scanner.options().testFlag(FileScanner::ScanOption::CountOnly));
+    EXPECT_TRUE(scanner.options().testFlag(FileScanner::ScanOption::SingleDepth));
+}
+
+TEST_F(TestFileScanner, DefaultResultIsValidAndRunningFalseBeforeScan)
+{
+    FileScanner scanner;
+    const FileScanner::ScanResult r = scanner.result();
+    EXPECT_TRUE(r.isValid());
+    EXPECT_FALSE(scanner.isRunning());
+}
+
+TEST_F(TestFileScanner, StopWhenIdleIsSafe)
+{
+    FileScanner scanner;
+    EXPECT_NO_FATAL_FAILURE({ scanner.stop(); });
+    EXPECT_FALSE(scanner.isRunning());
+}
+
+TEST_F(TestFileScanner, ScannerWorkerStopSetsShouldStopFlag)
+{
+    ScannerWorker worker;
+    EXPECT_FALSE(worker.shouldStop());
+    worker.stop();
+    EXPECT_TRUE(worker.shouldStop());
+}

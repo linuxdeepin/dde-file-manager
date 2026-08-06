@@ -207,3 +207,35 @@ TEST_F(SettingsTest, ConstructByNameGenericConfig)
 {
     EXPECT_NO_FATAL_FAILURE({ Settings s("test_generic_cfg", Settings::kGenericConfig); });
 }
+
+// ---- Coverage additions for Settings watcher / default-config / destructor ----
+
+TEST_F(SettingsTest, DefaultConfigValueByUrlKeyReturnsFallback)
+{
+    Settings s("ut_dcfg_test", Settings::kGenericConfig);
+    QUrl url = QUrl::fromLocalFile(settingFile);
+    // Unknown group/key with a QUrl key resolves to the supplied fallback.
+    QVariant v = s.defaultConfigValue("NoSuchGroup", url, QVariant("fb"));
+    EXPECT_EQ(v.toString().toStdString(), "fb");
+}
+
+TEST_F(SettingsTest, SetWatchChangesTrueRestartsWatcherSafely)
+{
+    Settings s("ut_watch_test", Settings::kGenericConfig);
+    EXPECT_NO_FATAL_FAILURE({ s.setWatchChanges(true); });
+    EXPECT_TRUE(s.watchChanges());
+    EXPECT_NO_FATAL_FAILURE({ s.setWatchChanges(false); });
+}
+
+TEST_F(SettingsTest, OnFileChangedWithSelfUrlIsSafe)
+{
+    Settings s("ut_onfile_test", Settings::kGenericConfig);
+    QUrl url = QUrl::fromLocalFile(settingFile);
+    EXPECT_NO_FATAL_FAILURE({ s.onFileChanged(url); });
+}
+
+TEST_F(SettingsTest, LocalSettingsDestructsCleanly)
+{
+    // Exercise the destructor (and SettingsPrivate teardown) on a stack instance.
+    EXPECT_NO_FATAL_FAILURE({ Settings s("ut_dtor_test", Settings::kGenericConfig); });
+}

@@ -19,6 +19,7 @@
 
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/file/local/localfilehandler.h>
+#include "dfm-base/file/local/localfilehandler_p.h"
 #include <dfm-base/file/local/syncfileinfo.h>
 #include <dfm-base/dfm_global_defines.h>
 
@@ -159,4 +160,77 @@ TEST_F(LocalFileHandlerTest, DefaultTerminalPathNonEmpty)
 {
     QString term = handler.defaultTerminalPath();
     EXPECT_FALSE(term.isEmpty());
+}
+
+// ---- Coverage additions for LocalFileHandler / LocalFileHandlerPrivate ----
+
+TEST_F(LocalFileHandlerTest, LastEventTypeAndErrorCodeDefault)
+{
+    EXPECT_NO_FATAL_FAILURE({ (void)handler.lastEventType(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)handler.errorCode(); });
+}
+
+TEST_F(LocalFileHandlerTest, OpenFileByAppWithEmptyDesktopReturnsFalse)
+{
+    QUrl url = QUrl::fromLocalFile(rootPath + "/x.txt");
+    EXPECT_FALSE(handler.openFileByApp(url, QString()));
+}
+
+TEST_F(LocalFileHandlerTest, OpenFilesByAppWithEmptyListReturnsFalse)
+{
+    EXPECT_FALSE(handler.openFilesByApp({}, QString::fromLatin1("/tmp/no.desktop")));
+}
+
+TEST_F(LocalFileHandlerTest, TrashFileOnNonExistentReturnsEmpty)
+{
+    QUrl url = QUrl::fromLocalFile(rootPath + "/never_exists_zzz");
+    QString target = handler.trashFile(url);
+    EXPECT_TRUE(target.isEmpty());
+}
+
+TEST_F(LocalFileHandlerTest, PrivateIsFileExecutableOnRegularFile)
+{
+    QString path = rootPath + "/exec_target.txt";
+    QFile f(path);
+    ASSERT_TRUE(f.open(QIODevice::WriteOnly));
+    f.write("data");
+    f.close();
+    bool r = false;
+    EXPECT_NO_FATAL_FAILURE({ r = handler.d->isFileExecutable(path); });
+    (void)r;
+}
+
+TEST_F(LocalFileHandlerTest, PrivateIsInvalidSymlinkFileOnMissingPath)
+{
+    // A path that does not exist resolves to an invalid symlink file.
+    bool r = false;
+    EXPECT_NO_FATAL_FAILURE({ r = handler.d->isInvalidSymlinkFile(QUrl::fromLocalFile(rootPath + "/missing_link_zzz")); });
+    (void)r;
+}
+
+TEST_F(LocalFileHandlerTest, PrivateIsFileManagerSelfDetectsDfmExec)
+{
+    QString desktop = rootPath + "/fm.desktop";
+    QFile f(desktop);
+    ASSERT_TRUE(f.open(QIODevice::WriteOnly | QIODevice::Text));
+    f.write("[Desktop Entry]\nType=Application\nExec=dde-file-manager --new-window\n");
+    f.close();
+    EXPECT_TRUE(handler.d->isFileManagerSelf(desktop));
+
+    QString other = rootPath + "/other.desktop";
+    QFile g(other);
+    ASSERT_TRUE(g.open(QIODevice::WriteOnly | QIODevice::Text));
+    g.write("[Desktop Entry]\nType=Application\nExec=other-app\n");
+    g.close();
+    EXPECT_FALSE(handler.d->isFileManagerSelf(other));
+}
+
+TEST_F(LocalFileHandlerTest, PrivateGetInternetShortcutUrlReadsUrlField)
+{
+    QString shortcut = rootPath + "/link.url";
+    QFile f(shortcut);
+    ASSERT_TRUE(f.open(QIODevice::WriteOnly | QIODevice::Text));
+    f.write("[InternetShortcut]\nURL=https://example.com/path\n");
+    f.close();
+    EXPECT_EQ(handler.d->getInternetShortcutUrl(shortcut).toStdString(), "https://example.com/path");
 }

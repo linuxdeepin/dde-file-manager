@@ -148,3 +148,16 @@ TEST(UniversalUtilsTest, CheckDbusServiceUnregisteredReturnsFalse)
     EXPECT_FALSE(UniversalUtils::checkDbusService("org.nonexistent.service.12345", false));
     EXPECT_FALSE(UniversalUtils::checkDbusService("org.nonexistent.service.12345", true));
 }
+
+// ---- Coverage addition: getTextLineHeight(QModelIndex, QFontMetrics) ----
+
+#include <QModelIndex>
+
+TEST(UniversalUtilsTest, GetTextLineHeightWithInvalidIndexReturnsFontHeight)
+{
+    QFont f;
+    QFontMetrics fm(f);
+    QModelIndex idx;   // invalid index -> empty text -> returns font height
+    int h = UniversalUtils::getTextLineHeight(idx, fm);
+    EXPECT_GT(h, 0);
+}

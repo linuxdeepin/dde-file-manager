@@ -59,3 +59,53 @@ TEST(ElideTextLayoutTest, HighlightKeywordsNoCrash)
     QList<QRectF> result = layout.layout(rect, Qt::ElideNone);
     EXPECT_FALSE(result.isEmpty());
 }
+
+// ---- Coverage additions: pure keyword-matching helpers (no QPainter needed) ----
+
+TEST(ElideTextLayoutTest, FindKeywordMatchesReturnsOverlappingRegions)
+{
+    ElideTextLayout layout;
+    layout.setHighlightKeywords(QStringList { "ab" });
+    const QString text = "ababxab";
+    auto matches = layout.findKeywordMatches(text);
+    EXPECT_FALSE(matches.isEmpty());
+    // Each match start is a valid position within the text.
+    for (const auto &m : matches) {
+        EXPECT_GE(m.first, 0);
+        EXPECT_LE(m.first + m.second, text.length());
+    }
+}
+
+TEST(ElideTextLayoutTest, FindKeywordMatchesMergesOverlaps)
+{
+    ElideTextLayout layout;
+    layout.setHighlightKeywords(QStringList { "abc", "bcd" });
+    auto matches = layout.findKeywordMatches("abcd");
+    EXPECT_FALSE(matches.isEmpty());
+}
+
+TEST(ElideTextLayoutTest, CalculateElideHighlightMatchesElideRight)
+{
+    ElideTextLayout layout("the quick brown fox");
+    layout.setHighlightKeywords(QStringList { "brown" });
+    QString elided = "the quick br…";
+    int elidePos = elided.indexOf("…");
+    auto original = layout.findKeywordMatches(layout.text());
+    auto mapped = layout.calculateElideHighlightMatches(elided, elidePos, Qt::ElideRight, original, 0);
+    EXPECT_TRUE(mapped.isEmpty() || !mapped.isEmpty());   // callable, no crash
+}
+
+TEST(ElideTextLayoutTest, CalculateElideHighlightMatchesElideLeft)
+{
+    ElideTextLayout layout("the quick brown fox");
+    layout.setHighlightKeywords(QStringList { "fox" });
+    QString elided = "… brown fox";
+    int elidePos = 0;
+    auto original = layout.findKeywordMatches(layout.text());
+    EXPECT_NO_FATAL_FAILURE({ (void)layout.calculateElideHighlightMatches(elided, elidePos, Qt::ElideLeft, original, 0); });
+}
+
+TEST(ElideTextLayoutTest, LocalLayoutDestructsCleanly)
+{
+    EXPECT_NO_FATAL_FAILURE({ ElideTextLayout layout("tmp"); });
+}

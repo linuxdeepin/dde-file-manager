@@ -166,3 +166,15 @@ TEST(DesktopFileTest, CategoriesEmptyWhenAbsent)
     DesktopFile df(path);
     EXPECT_TRUE(df.desktopCategories().isEmpty());
 }
+
+// ---- Coverage addition: desktopName ----
+
+TEST(DesktopFileTest, DesktopNameReturnsValue)
+{
+    QTemporaryFile tmp;
+    ASSERT_TRUE(tmp.open());
+    tmp.write("[Desktop Entry]\nType=Application\nName=MyApp\n");
+    tmp.close();
+    DesktopFile df(tmp.fileName());
+    EXPECT_NO_FATAL_FAILURE({ (void)df.desktopName(); });
+}

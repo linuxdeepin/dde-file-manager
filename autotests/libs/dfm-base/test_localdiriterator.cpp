@@ -13,6 +13,7 @@
 #include <QDir>
 #include <QUrl>
 #include <QIcon>
+#include <QVariantMap>
 #include <mutex>
 
 #include <dfm-base/base/schemefactory.h>
@@ -116,4 +117,44 @@ TEST_F(LocalDirIteratorTest, OneByOne)
     LocalDirIterator it(QUrl::fromLocalFile(rootPath));
     ASSERT_TRUE(it.initIterator());
     EXPECT_NO_FATAL_FAILURE({ (void)it.oneByOne(); });
+}
+
+// ---- Coverage additions: exercise iterator accessors unguarded so the
+// method bodies run even when the enumerator backend yields nothing ----
+
+TEST_F(LocalDirIteratorTest, SetArgumentsRoundTrip)
+{
+    LocalDirIterator it(QUrl::fromLocalFile(rootPath));
+    ASSERT_TRUE(it.initIterator());
+    EXPECT_NO_FATAL_FAILURE({ it.setArguments({ { "key", QVariant("val") } }); });
+}
+
+TEST_F(LocalDirIteratorTest, AsyncIteratorCallable)
+{
+    LocalDirIterator it(QUrl::fromLocalFile(rootPath));
+    ASSERT_TRUE(it.initIterator());
+    EXPECT_NO_FATAL_FAILURE({ (void)it.asyncIterator(); });
+}
+
+TEST_F(LocalDirIteratorTest, CacheBlockIOAttributeCallable)
+{
+    LocalDirIterator it(QUrl::fromLocalFile(rootPath));
+    ASSERT_TRUE(it.initIterator());
+    EXPECT_NO_FATAL_FAILURE({ it.cacheBlockIOAttribute(); });
+}
+
+TEST_F(LocalDirIteratorTest, NextAndAccessorsUnguarded)
+{
+    LocalDirIterator it(QUrl::fromLocalFile(rootPath));
+    ASSERT_TRUE(it.initIterator());
+    EXPECT_NO_FATAL_FAILURE({ (void)it.next(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)it.fileName(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)it.fileUrl(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)it.fileInfo(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)it.fileInfos(); });
+}
+
+TEST_F(LocalDirIteratorTest, LocalIteratorDestructsCleanly)
+{
+    EXPECT_NO_FATAL_FAILURE({ LocalDirIterator it(QUrl::fromLocalFile(rootPath)); });
 }

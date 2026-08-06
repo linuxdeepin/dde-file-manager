@@ -96,3 +96,35 @@ TEST(NetworkUtilsTest, ParseIpSmbReturnsTwoPorts)
     EXPECT_TRUE(ok);
     EXPECT_EQ(ports.size(), 2);
 }
+
+// ---- Coverage additions for remaining NetworkUtils API ----
+
+TEST(NetworkUtilsTest, CheckAllCifsBusyIsCallable)
+{
+    EXPECT_NO_FATAL_FAILURE({ (void)NetworkUtils::instance()->checkAllCIFSBusy(); });
+}
+
+TEST(NetworkUtilsTest, CheckNetConnectionHostStringListIsCallable)
+{
+    EXPECT_NO_FATAL_FAILURE({ (void)NetworkUtils::instance()->checkNetConnection("localhost", QStringList{"80"}, 200); });
+}
+
+TEST(NetworkUtilsTest, CheckNetConnectionHostPortIntIsCallable)
+{
+    EXPECT_NO_FATAL_FAILURE({ (void)NetworkUtils::instance()->checkNetConnection("localhost", "80", 200); });
+}
+
+TEST(NetworkUtilsTest, CheckFtpOrSmbBusyIsCallable)
+{
+    EXPECT_NO_FATAL_FAILURE({ (void)NetworkUtils::instance()->checkFtpOrSmbBusy(QUrl("file:///")); });
+}
+
+TEST(NetworkUtilsTest, CifsMountHostInfoIsCallable)
+{
+    EXPECT_NO_FATAL_FAILURE({ (void)NetworkUtils::instance()->cifsMountHostInfo(); });
+}
+
+TEST(NetworkUtilsTest, ResolveLocalSftpMountUrlIsCallable)
+{
+    EXPECT_NO_FATAL_FAILURE({ (void)NetworkUtils::instance()->resolveLocalSftpMountUrl(QUrl("file:///")); });
+}

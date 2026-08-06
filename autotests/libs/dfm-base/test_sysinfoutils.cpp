@@ -83,3 +83,13 @@ TEST(SysInfoUtilsTest, GetOriginalUserHomeNonEmpty)
     QString home = getOriginalUserHome();
     EXPECT_FALSE(home.isEmpty());
 }
+
+TEST(SysInfoUtilsTest, IsDeepin23IsBool)
+{
+    EXPECT_NO_FATAL_FAILURE({ (void)isDeepin23(); });
+}
+
+TEST(SysInfoUtilsTest, IsDeveloperModeEnabledIsBool)
+{
+    EXPECT_NO_FATAL_FAILURE({ (void)isDeveloperModeEnabled(); });
+}

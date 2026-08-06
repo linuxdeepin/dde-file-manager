@@ -13,6 +13,7 @@
 #include <QFileInfo>
 #include <QDateTime>
 #include <QFile>
+#include <QUrl>
 
 #include <dfm-base/mimetype/mimesappsmanager.h>
 
@@ -71,4 +72,29 @@ TEST(MimesAppsManagerTest, LessByDateTimeCompares)
     QFileInfo a("/usr/bin/true");
     QFileInfo b("/usr/bin/false");
     EXPECT_NO_FATAL_FAILURE({ (void)MimesAppsManager::lessByDateTime(a, b); });
+}
+
+// ---- Coverage additions for MimesAppsManager singleton + recommendation API ----
+
+TEST(MimesAppsManagerTest, InstanceReturnsSamePointer)
+{
+    EXPECT_EQ(MimesAppsManager::instance(), MimesAppsManager::instance());
+}
+
+TEST(MimesAppsManagerTest, GetRecommendedAppsForLocalFileIsCallable)
+{
+    // The file scheme is not registered in this suite, so InfoFactory returns
+    // null; the function body still executes (mimeType stays empty) and must
+    // not crash.
+    EXPECT_NO_FATAL_FAILURE({ (void)MimesAppsManager::getRecommendedApps(QUrl::fromLocalFile("/tmp")); });
+}
+
+TEST(MimesAppsManagerTest, GetRecommendedAppsFromMimeWhiteListIsCallable)
+{
+    EXPECT_NO_FATAL_FAILURE({ (void)MimesAppsManager::getrecommendedAppsFromMimeWhiteList(QUrl::fromLocalFile("/tmp")); });
+}
+
+TEST(MimesAppsManagerTest, InitMimeTypeAppsIsCallable)
+{
+    EXPECT_NO_FATAL_FAILURE({ MimesAppsManager::initMimeTypeApps(); });
 }

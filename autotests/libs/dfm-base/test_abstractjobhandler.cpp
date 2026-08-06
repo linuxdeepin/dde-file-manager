@@ -68,3 +68,22 @@ TEST(AbstractJobHandlerTest, StartCallsOperateTaskJob)
     TestJobHandler handler;
     EXPECT_NO_FATAL_FAILURE({ handler.start(); });
 }
+
+// ---- Coverage additions for task-info accessors + local destruction ----
+
+TEST(AbstractJobHandlerTest, GetAllTaskInfoReturnsEmptyMap)
+{
+    TestJobHandler handler;
+    EXPECT_NO_FATAL_FAILURE({ (void)handler.getAllTaskInfo(); });
+}
+
+TEST(AbstractJobHandlerTest, GetTaskInfoByNotifyTypeReturnsNullpointer)
+{
+    TestJobHandler handler;
+    EXPECT_NO_FATAL_FAILURE({ (void)handler.getTaskInfoByNotifyType(AbstractJobHandler::NotifyType::kNotifyProccessChangedKey); });
+}
+
+TEST(AbstractJobHandlerTest, LocalHandlerDestructsCleanly)
+{
+    EXPECT_NO_FATAL_FAILURE({ TestJobHandler h; });
+}

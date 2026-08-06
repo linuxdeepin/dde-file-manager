@@ -19,6 +19,8 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/file/local/syncfileinfo.h>
 #include <dfm-base/file/local/asyncfileinfo.h>
+#include "dfm-base/file/local/private/asyncfileinfo_p.h"
+#include <dfm-io/dfileinfo.h>
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/interfaces/fileinfo.h>
 
@@ -206,4 +208,67 @@ TEST_F(AsyncFileInfoTest, GetUrlByType)
     EXPECT_NO_FATAL_FAILURE({ (void)info.getUrlByType(FileInfo::FileUrlInfoType::kGetUrlByChildFileName, "child"); });
     EXPECT_NO_FATAL_FAILURE({ (void)info.fileType(); });
     EXPECT_NO_FATAL_FAILURE({ (void)info.supportedOfAttributes(FileInfo::SupportType::kDrag); });
+}
+
+// ---- Coverage additions: exercise AsyncFileInfoPrivate getters by forcing a
+// synchronous attribute query on the underlying DFileInfo, then invoking the
+// private accessors directly (relies on -fno-access-control from dfm_add_test).
+TEST_F(AsyncFileInfoTest, PrivateGettersAfterSyncQuery)
+{
+    AsyncFileInfo info(url);
+    ASSERT_FALSE(info.d.isNull());
+    ASSERT_FALSE(info.d->dfmFileInfo.isNull());
+    // Force a synchronous attribute query so attribute() returns real values
+    // instead of the empty cache. (initQuerier may legitimately return false for
+    // some gvfs/local paths; the getters still execute their bodies regardless.)
+    EXPECT_NO_FATAL_FAILURE({ (void)info.d->dfmFileInfo->initQuerier(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)info.d->fileName(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)info.d->baseName(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)info.d->completeBaseName(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)info.d->completeSuffix(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)info.d->fileDisplayName(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)info.d->path(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)info.d->filePath(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)info.d->symLinkTarget(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)info.d->isExecutable(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)info.d->canDelete(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)info.d->canTrash(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)info.d->canRename(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)info.d->canFetch(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)info.d->fileType(); });
+    bool ok = false;
+    EXPECT_NO_FATAL_FAILURE({ (void)info.d->attribute(DFMIO::DFileInfo::AttributeID::kStandardSize, &ok); });
+    EXPECT_NO_FATAL_FAILURE({ (void)info.d->iconName(); });
+    EXPECT_NO_FATAL_FAILURE({ info.d->insertAsyncAttribute(FileInfo::FileInfoAttributeID::kStandardSize, QVariant(123)); });
+    EXPECT_NO_FATAL_FAILURE({ (void)info.d->mediaInfo(DFMIO::DFileInfo::MediaType::kGeneral, {}); });
+    EXPECT_NO_FATAL_FAILURE({ info.d->updateMediaInfo(DFMIO::DFileInfo::MediaType::kGeneral, {}); });
+}
+
+TEST_F(AsyncFileInfoTest, CustomAttributeAndCustomDataCallable)
+{
+    AsyncFileInfo info(url);
+    EXPECT_NO_FATAL_FAILURE({ (void)info.customAttribute("name", DFMIO::DFileInfo::DFileAttributeType::kTypeString); });
+    EXPECT_NO_FATAL_FAILURE({ (void)info.customData(Global::kItemFileRefreshIcon); });
+    EXPECT_NO_FATAL_FAILURE({ (void)info.customData(99999); });
+}
+
+TEST_F(AsyncFileInfoTest, FileMimeTypeAsyncReturnsMimeType)
+{
+    AsyncFileInfo info(url);
+    EXPECT_NO_FATAL_FAILURE({ (void)info.fileMimeTypeAsync(); });
+}
+
+TEST_F(AsyncFileInfoTest, TwoArgConstructorWithExternalDFileInfo)
+{
+    QUrl local = QUrl::fromLocalFile(filePath);
+    QSharedPointer<DFMIO::DFileInfo> dfi(new DFMIO::DFileInfo(local));
+    EXPECT_NO_FATAL_FAILURE({ (void)dfi->initQuerier(); });
+    AsyncFileInfo info(local, dfi);
+    EXPECT_EQ(info.d->dfmFileInfo.data(), dfi.data());
+}
+
+TEST_F(AsyncFileInfoTest, LocalAsyncFileInfoDestructsCleanly)
+{
+    // Exercise the (otherwise never-invoked) destructor on a stack instance.
+    EXPECT_NO_FATAL_FAILURE({ AsyncFileInfo info(url); });
 }

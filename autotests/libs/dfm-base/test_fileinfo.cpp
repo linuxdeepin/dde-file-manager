@@ -18,6 +18,8 @@
 
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/file/local/syncfileinfo.h>
+#include "dfm-base/file/local/private/syncfileinfo_p.h"
+#include <dfm-io/dfileinfo.h>
 #include <dfm-base/file/local/localfilehandler.h>
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/interfaces/fileinfo.h>
@@ -297,4 +299,58 @@ TEST_F(FileInfoTest, PermissionCheck)
     ASSERT_NE(info, nullptr);
     info->initQuerier();
     EXPECT_NO_FATAL_FAILURE({ (void)info->permission(QFileDevice::ReadOwner); });
+}
+
+// ---- Coverage additions: SyncFileInfoPrivate getters + operators + 2-arg ctor.
+// Relies on -fno-access-control (dfm_add_test) to reach the private `d` member.
+TEST_F(FileInfoTest, SyncFileInfoPrivateGettersAfterSyncQuery)
+{
+    QString filePath = rootPath + "/archive.tar.gz";
+    QFile f(filePath);
+    ASSERT_TRUE(f.open(QIODevice::WriteOnly));
+    f.write("payload");
+    f.close();
+
+    SyncFileInfo info(QUrl::fromLocalFile(filePath));
+    ASSERT_FALSE(info.d.isNull());
+    ASSERT_FALSE(info.d->dfmFileInfo.isNull());
+    EXPECT_NO_FATAL_FAILURE({ (void)info.d->dfmFileInfo->initQuerier(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)info.d->baseName(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)info.d->completeSuffix(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)info.d->symLinkTarget(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)info.d->isExecutable(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)info.d->canFetch(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)info.d->redirectedFileUrl(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)info.d->iconName(); });
+    EXPECT_NO_FATAL_FAILURE({ info.d->updateMediaInfo(DFMIO::DFileInfo::MediaType::kGeneral, {}); });
+}
+
+TEST_F(FileInfoTest, SyncFileInfoEqualityOperators)
+{
+    QString filePath = rootPath + "/eq.txt";
+    QFile f(filePath);
+    ASSERT_TRUE(f.open(QIODevice::WriteOnly));
+    f.close();
+
+    SyncFileInfo a(QUrl::fromLocalFile(filePath));
+    SyncFileInfo b(QUrl::fromLocalFile(filePath));
+    // Distinct DFileInfo instances -> not equal by the dfmFileInfo pointer rule.
+    EXPECT_FALSE(a == b);
+    EXPECT_TRUE(a != b);
+    SyncFileInfo &ref = a;
+    EXPECT_TRUE(a == ref);
+    EXPECT_FALSE(a != ref);
+}
+
+TEST_F(FileInfoTest, SyncFileInfoTwoArgConstructor)
+{
+    QString filePath = rootPath + "/twoarg.txt";
+    QFile f(filePath);
+    ASSERT_TRUE(f.open(QIODevice::WriteOnly));
+    f.close();
+    QUrl local = QUrl::fromLocalFile(filePath);
+    QSharedPointer<DFMIO::DFileInfo> dfi(new DFMIO::DFileInfo(local));
+    EXPECT_NO_FATAL_FAILURE({ (void)dfi->initQuerier(); });
+    SyncFileInfo info(local, dfi);
+    EXPECT_EQ(info.d->dfmFileInfo.data(), dfi.data());
 }
