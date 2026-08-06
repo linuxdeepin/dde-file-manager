@@ -8,6 +8,8 @@
 #include "dfmplugin_utils_global.h"
 
 #include <QAbstractItemModel>
+#include <QIcon>
+#include <QUrl>
 
 namespace dfmplugin_utils {
 
@@ -27,7 +29,12 @@ public:
     void setFileList(const QList<QUrl> &fileList);
 
 private:
-    QList<QUrl> urlList;
+    struct CachedFile {
+        QUrl url;
+        QString displayName;
+        QIcon icon;
+    };
+    QList<CachedFile> files;
 };
 }
 
