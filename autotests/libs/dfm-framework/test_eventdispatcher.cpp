@@ -535,3 +535,52 @@ TEST_F(EventDispatcherManagerTest, AsyncPublish)
 }
 
 #include "test_eventdispatcher.moc"
+
+// ---- Round 9 additions: global event filters + unsubscribe overloads ----
+
+TEST_F(EventDispatcherManagerTest, InstallAndRemoveGlobalEventFilter)
+{
+    QObject filterObj;
+    auto filter = [](int, const QVariantList &) { return false; };
+    EXPECT_TRUE(manager->installGlobalEventFilter(&filterObj, filter));
+    EXPECT_TRUE(manager->removeGlobalEventFilter(&filterObj));   // found+removed -> true
+    EXPECT_FALSE(manager->removeGlobalEventFilter(&filterObj));   // already removed -> false
+}
+
+TEST_F(EventDispatcherManagerTest, RemoveGlobalEventFilterNotInstalled)
+{
+    QObject obj;
+    EXPECT_FALSE(manager->removeGlobalEventFilter(&obj));
+}
+
+TEST_F(EventDispatcherManagerTest, GlobalFilteredWithNoFiltersReturnsFalse)
+{
+    QVariantList params;
+    EXPECT_FALSE(manager->globalFiltered(testEventType, params));
+}
+
+TEST_F(EventDispatcherManagerTest, GlobalFilteredCallsInstalledFilter)
+{
+    QObject filterObj;
+    bool called = false;
+    auto filter = [&called](int type, const QVariantList &params) {
+        called = true;
+        return true;
+    };
+    manager->installGlobalEventFilter(&filterObj, filter);
+    QVariantList params;
+    EXPECT_TRUE(manager->globalFiltered(testEventType, params));
+    EXPECT_TRUE(called);
+    manager->removeGlobalEventFilter(&filterObj);
+}
+
+TEST_F(EventDispatcherManagerTest, UnsubscribeNonexistentTypeReturnsFalse)
+{
+    EXPECT_FALSE(manager->unsubscribe(99999));
+}
+
+TEST_F(EventDispatcherManagerTest, UnsubscribeNonexistentSpaceTopicReturnsFalse)
+{
+    // topic must start with "signal" prefix for Q_ASSERT
+    EXPECT_FALSE(manager->unsubscribe("nonexistent_space", "signal_topic"));
+}

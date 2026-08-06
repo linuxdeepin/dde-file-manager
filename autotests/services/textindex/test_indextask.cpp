@@ -4,15 +4,17 @@
 
 /**
  * @file test_indextask.cpp
- * @brief Unit tests for IndexTask getters/setters (indextask.cpp)
- *
- * start() asserts it runs off the main thread, so we only exercise the
- * non-threaded API surface here.
+ * @brief Unit tests for IndexTask (task/indextask.cpp) — the dependency-light
+ *        subset: ctor, dtor, and all accessors (taskPath/taskType/status/
+ *        isIndexCorrupted/setIndexCorrupted/silent/setSilent) plus stop() and
+ *        isRunning(). start() is intentionally NOT invoked (it runs the handler
+ *        in a worker thread).
  */
 
 #include <gtest/gtest.h>
 #include <QString>
 
+#include "dfm_test_main.h"
 #include "services/textindex/service_textindex_global.h"
 #include "services/textindex/task/indextask.h"
 #include "services/textindex/task/taskhandler.h"
@@ -20,49 +22,86 @@
 
 using namespace SERVICETEXTINDEX_NAMESPACE;
 
-static TaskHandler makeNoopHandler()
+static TaskHandler dummyHandler()
 {
-    return [](const QString &path, TaskState &state) -> HandlerResult {
-        HandlerResult r;
-        r.success = true;
-        return r;
+    return [](const QString &, TaskState &) -> HandlerResult {
+        return HandlerResult {};
     };
 }
 
-TEST(IndexTaskTest, ConstructAndAccessors)
+TEST(IndexTaskTest, CtorSetsTypeAndPath)
 {
-    IndexTask task(IndexTask::Type::Create, "/tmp/dfm_test_path", makeNoopHandler());
-    EXPECT_EQ(task.taskPath(), QString("/tmp/dfm_test_path"));
-    EXPECT_EQ(task.taskType(), IndexTask::Type::Create);
-    EXPECT_EQ(task.status(), IndexTask::Status::NotStarted);
-    EXPECT_FALSE(task.isRunning());
+    IndexTask t(IndexTask::Type::Create, "/tmp/test", dummyHandler());
+    EXPECT_EQ(t.taskType(), IndexTask::Type::Create);
+    EXPECT_EQ(t.taskPath(), QString("/tmp/test"));
 }
 
-TEST(IndexTaskTest, SilentAccessors)
+TEST(IndexTaskTest, CtorAllTypes)
 {
-    IndexTask task(IndexTask::Type::Update, "/tmp/p", makeNoopHandler());
-    EXPECT_FALSE(task.silent());
-    task.setSilent(true);
-    EXPECT_TRUE(task.silent());
-    task.setSilent(false);
-    EXPECT_FALSE(task.silent());
+    IndexTask t1(IndexTask::Type::Update, "/a", dummyHandler());
+    EXPECT_EQ(t1.taskType(), IndexTask::Type::Update);
+    IndexTask t2(IndexTask::Type::CreateFileList, "/b", dummyHandler());
+    EXPECT_EQ(t2.taskType(), IndexTask::Type::CreateFileList);
+    IndexTask t3(IndexTask::Type::UpdateFileList, "/c", dummyHandler());
+    EXPECT_EQ(t3.taskType(), IndexTask::Type::UpdateFileList);
+    IndexTask t4(IndexTask::Type::RemoveFileList, "/d", dummyHandler());
+    EXPECT_EQ(t4.taskType(), IndexTask::Type::RemoveFileList);
+    IndexTask t5(IndexTask::Type::MoveFileList, "/e", dummyHandler());
+    EXPECT_EQ(t5.taskType(), IndexTask::Type::MoveFileList);
 }
 
-TEST(IndexTaskTest, IndexCorruptedAccessors)
+TEST(IndexTaskTest, DefaultStatusNotStarted)
 {
-    IndexTask task(IndexTask::Type::CreateFileList, "/tmp/p", makeNoopHandler());
-    EXPECT_FALSE(task.isIndexCorrupted());
-    task.setIndexCorrupted(true);
-    EXPECT_TRUE(task.isIndexCorrupted());
-    task.setIndexCorrupted(false);
-    EXPECT_FALSE(task.isIndexCorrupted());
+    IndexTask t(IndexTask::Type::Create, "/tmp", dummyHandler());
+    EXPECT_EQ(t.status(), IndexTask::Status::NotStarted);
+    EXPECT_FALSE(t.isRunning());
 }
 
-TEST(IndexTaskTest, StopWhenNotRunningNoCrash)
+TEST(IndexTaskTest, SilentRoundtrip)
 {
-    IndexTask task(IndexTask::Type::RemoveFileList, "/tmp/p", makeNoopHandler());
-    EXPECT_NO_FATAL_FAILURE({ task.stop(); });
+    IndexTask t(IndexTask::Type::Create, "/tmp", dummyHandler());
+    EXPECT_FALSE(t.silent());
+    t.setSilent(true);
+    EXPECT_TRUE(t.silent());
+    t.setSilent(false);
+    EXPECT_FALSE(t.silent());
 }
+
+TEST(IndexTaskTest, IndexCorruptedRoundtrip)
+{
+    IndexTask t(IndexTask::Type::Create, "/tmp", dummyHandler());
+    EXPECT_FALSE(t.isIndexCorrupted());
+    t.setIndexCorrupted(true);
+    EXPECT_TRUE(t.isIndexCorrupted());
+    t.setIndexCorrupted(false);
+    EXPECT_FALSE(t.isIndexCorrupted());
+}
+
+TEST(IndexTaskTest, SetIndexCorruptedIdempotent)
+{
+    IndexTask t(IndexTask::Type::Create, "/tmp", dummyHandler());
+    t.setIndexCorrupted(true);
+    t.setIndexCorrupted(true);   // already true -> no change
+    EXPECT_TRUE(t.isIndexCorrupted());
+}
+
+TEST(IndexTaskTest, StopIsSafeBeforeStart)
+{
+    IndexTask t(IndexTask::Type::Create, "/tmp", dummyHandler());
+    EXPECT_NO_FATAL_FAILURE({ t.stop(); });
+    EXPECT_FALSE(t.isRunning());
+}
+
+TEST(IndexTaskTest, DtorIsSafeWithoutStart)
+{
+    {
+        IndexTask t(IndexTask::Type::Create, "/tmp/dtor_test", dummyHandler());
+        EXPECT_EQ(t.taskPath(), QString("/tmp/dtor_test"));
+    }
+    SUCCEED();
+}
+
+// ---- TaskState inline class tests (restored from original test file) ----
 
 TEST(TaskStateTest, DefaultNotRunning)
 {

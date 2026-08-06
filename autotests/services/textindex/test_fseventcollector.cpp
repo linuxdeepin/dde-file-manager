@@ -99,3 +99,69 @@ TEST(FSEventCollectorTest, StartWithoutInitMayFailGracefully)
     FSEventCollector collector(alwaysTrue());
     EXPECT_NO_FATAL_FAILURE({ (void)collector.start(); });
 }
+
+// ---- Round 10: cover getter methods ----
+
+TEST(FSEventCollectorTest, CollectionIntervalDefault)
+{
+    FSEventCollector collector(alwaysTrue());
+    EXPECT_NO_FATAL_FAILURE({ (void)collector.collectionInterval(); });
+}
+
+TEST(FSEventCollectorTest, CollectionIntervalAfterSet)
+{
+    FSEventCollector collector(alwaysTrue());
+    collector.setCollectionInterval(42);
+    EXPECT_EQ(collector.collectionInterval(), 42);
+}
+
+TEST(FSEventCollectorTest, MaxEventCountDefault)
+{
+    FSEventCollector collector(alwaysTrue());
+    EXPECT_NO_FATAL_FAILURE({ (void)collector.maxEventCount(); });
+}
+
+TEST(FSEventCollectorTest, MaxEventCountAfterSet)
+{
+    FSEventCollector collector(alwaysTrue());
+    collector.setMaxEventCount(5000);
+    EXPECT_EQ(collector.maxEventCount(), 5000);
+}
+
+TEST(FSEventCollectorTest, CreatedFilesCountZero)
+{
+    FSEventCollector collector(alwaysTrue());
+    EXPECT_EQ(collector.createdFilesCount(), 0);
+}
+
+TEST(FSEventCollectorTest, DeletedFilesCountZero)
+{
+    FSEventCollector collector(alwaysTrue());
+    EXPECT_EQ(collector.deletedFilesCount(), 0);
+}
+
+TEST(FSEventCollectorTest, ModifiedFilesCountZero)
+{
+    FSEventCollector collector(alwaysTrue());
+    EXPECT_EQ(collector.modifiedFilesCount(), 0);
+}
+
+TEST(FSEventCollectorTest, MovedFilesCountZero)
+{
+    FSEventCollector collector(alwaysTrue());
+    EXPECT_EQ(collector.movedFilesCount(), 0);
+}
+
+TEST(FSEventCollectorTest, TotalEventsCountZero)
+{
+    FSEventCollector collector(alwaysTrue());
+    EXPECT_EQ(collector.totalEventsCount(), 0);
+}
+
+TEST(FSEventCollectorTest, ConstructWithExplicitFSMonitor)
+{
+    FSMonitor &monitor = FSMonitor::instance();
+    FSEventCollector collector(alwaysTrue(), monitor);
+    EXPECT_FALSE(collector.isActive());
+    EXPECT_NO_FATAL_FAILURE({ (void)collector.collectionInterval(); });
+}
