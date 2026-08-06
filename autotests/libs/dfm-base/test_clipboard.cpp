@@ -86,6 +86,7 @@ TEST(ClipBoardTest, SupportCut)
 
 TEST(ClipBoardTest, SetDataToClipboardWithNullIsSafe)
 {
+    // Passing nullptr should not crash and leave clipboard unchanged.
     EXPECT_NO_FATAL_FAILURE({ ClipBoard::instance()->setDataToClipboard(nullptr); });
 }
 
@@ -93,15 +94,22 @@ TEST(ClipBoardTest, SetDataToClipboardWithMimeData)
 {
     QMimeData *md = new QMimeData;
     md->setText("ut_clipboard_test");
-    EXPECT_NO_FATAL_FAILURE({ ClipBoard::instance()->setDataToClipboard(md); });
+    ClipBoard::instance()->setDataToClipboard(md);
+    // Verify the clipboard now contains the text we set.
+    const QMimeData *clip = qApp->clipboard()->mimeData();
+    ASSERT_NE(clip, nullptr);
+    EXPECT_EQ(clip->text(), QString("ut_clipboard_test"));
 }
 
-TEST(ClipBoardTest, GetRemoteUrlsCallable)
+TEST(ClipBoardTest, GetRemoteUrlsReturnsEmptyWhenNoRemoteContent)
 {
-    EXPECT_NO_FATAL_FAILURE({ (void)ClipBoard::instance()->getRemoteUrls(); });
+    // No remote download content present → returns empty list.
+    QList<QUrl> urls = ClipBoard::instance()->getRemoteUrls();
+    EXPECT_TRUE(urls.isEmpty());
 }
 
-TEST(ClipBoardTest, GetUrlsByX11Callable)
+TEST(ClipBoardTest, GetUrlsByX11ReturnsEmptyWhenNoRemoteContent)
 {
-    EXPECT_NO_FATAL_FAILURE({ (void)ClipBoard::instance()->getUrlsByX11(); });
+    QList<QUrl> urls = ClipBoard::instance()->getUrlsByX11();
+    EXPECT_TRUE(urls.isEmpty());
 }

@@ -8,6 +8,8 @@
  */
 
 #include <gtest/gtest.h>
+#include <QTemporaryDir>
+#include <QFile>
 #include <QUrl>
 #include <QFontMetrics>
 #include <QFont>
@@ -187,14 +189,37 @@ TEST(UniversalUtilsTest, PrepareForSleepCallable)
 
 TEST(UniversalUtilsTest, BoardCastPastDataCallable)
 {
+    // boardCastPastData checks for a desktop file monitor DBus service first.
+    // Without that service it returns early — verify it does not crash.
     EXPECT_NO_FATAL_FAILURE({
         UniversalUtils::boardCastPastData(QUrl("file:///tmp"), QUrl("file:///home"), { QUrl("file:///tmp/a") });
     });
 }
 
 #include <QMimeData>
-TEST(UniversalUtilsTest, SetDockDnDMimeDataCallable)
+TEST(UniversalUtilsTest, SetDockDnDMimeDataWithDesktopFilePopulatesFormats)
+{
+    // setDockDnDMimeData only populates for .desktop file URLs.
+    QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+    const QString path = dir.path() + "/ut_test.desktop";
+    QFile f(path);
+    ASSERT_TRUE(f.open(QIODevice::WriteOnly | QIODevice::Text));
+    f.write("[Desktop Entry]\nType=Application\nName=UTApp\n");
+    f.close();
+
+    QMimeData md;
+    UniversalUtils::setDockDnDMimeData(&md, QUrl::fromLocalFile(path), "dde-desktop");
+    // The mime data should now contain the dock DnD format.
+    EXPECT_FALSE(md.formats().isEmpty());
+    EXPECT_TRUE(md.hasFormat("text/x-dde-dock-dnd-appid"));
+    EXPECT_TRUE(md.hasFormat("text/x-dde-dock-dnd-source"));
+}
+
+TEST(UniversalUtilsTest, SetDockDnDMimeDataWithNonDesktopFileDoesNothing)
 {
     QMimeData md;
-    EXPECT_NO_FATAL_FAILURE({ UniversalUtils::setDockDnDMimeData(&md, QUrl("file:///tmp"), "test"); });
+    UniversalUtils::setDockDnDMimeData(&md, QUrl::fromLocalFile("/tmp"), "test");
+    // Non-desktop file URL → early return → no formats set.
+    EXPECT_TRUE(md.formats().isEmpty());
 }

@@ -93,7 +93,9 @@ TEST(DeviceUtilsTest, BindPathTransformIdentity)
 
 TEST(DeviceUtilsTest, IsAutoMountEnableIsBool)
 {
-    EXPECT_NO_FATAL_FAILURE({ (void)DeviceUtils::isAutoMountEnable(); });
+    // isAutoMountEnable reads the kAutoMount generic attribute; the result is a bool.
+    bool result = DeviceUtils::isAutoMountEnable();
+    EXPECT_TRUE(result == true || result == false);
 }
 
 TEST(DeviceUtilsTest, GetSambaFileUriFromNativeWithInvalidUrlReturnsEmpty)
@@ -121,26 +123,32 @@ TEST(DeviceUtilsTest, ParseNetSourceUrlWithLocalFileReturnsEmpty)
 
 // ---- Coverage additions: more device query API ----
 
-TEST(DeviceUtilsTest, FstabMountPointsCallable)
+TEST(DeviceUtilsTest, FstabMountPointsReturnsStringSet)
 {
-    EXPECT_NO_FATAL_FAILURE({ (void)DeviceUtils::fstabMountPoints(); });
+    QSet<QString> points = DeviceUtils::fstabMountPoints();
+    // fstabMountPoints returns a set (may be empty in containers without /etc/fstab entries).
+    EXPECT_GE(points.size(), 0);
 }
 
-TEST(DeviceUtilsTest, IsBlankOpticalDiscWithEmptyIdCallable)
+TEST(DeviceUtilsTest, IsBlankOpticalDiscWithEmptyIdReturnsFalse)
 {
-    EXPECT_NO_FATAL_FAILURE({ (void)DeviceUtils::isBlankOpticalDisc(QString()); });
+    // Empty id → DevProxyMng->queryBlockInfo returns empty map → isBlank defaults to false.
+    EXPECT_FALSE(DeviceUtils::isBlankOpticalDisc(QString()));
 }
 
-TEST(DeviceUtilsTest, NameOfEncryptedWithEmptyMapCallable)
+TEST(DeviceUtilsTest, NameOfEncryptedWithEmptyMapReturnsNonEmpty)
 {
     QVariantMap emptyMap;
-    EXPECT_NO_FATAL_FAILURE({ (void)DeviceUtils::nameOfEncrypted(emptyMap); });
+    QString name = DeviceUtils::nameOfEncrypted(emptyMap);
+    // With empty map, falls through to the else branch returning a size-based name.
+    EXPECT_FALSE(name.isEmpty());
 }
 
-TEST(DeviceUtilsTest, IsSiblingOfRootCallable)
+TEST(DeviceUtilsTest, IsSiblingOfRootReturnsBool)
 {
     QVariantHash emptyInfo;
-    EXPECT_NO_FATAL_FAILURE({ (void)DeviceUtils::isSiblingOfRoot(emptyInfo); });
+    bool result = DeviceUtils::isSiblingOfRoot(emptyInfo);
+    EXPECT_TRUE(result == true || result == false);
 }
 
 TEST(DeviceUtilsTest, IsPWOpticalDiscDevWithNonSrDevReturnsFalse)

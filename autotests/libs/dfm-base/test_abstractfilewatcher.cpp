@@ -125,6 +125,9 @@ TEST_F(AbstractFileWatcherTest, FormatPathStatic)
 TEST_F(AbstractFileWatcherTest, PrivateStartReturnsStartedFlag)
 {
     AbstractFileWatcherPrivate priv(QUrl("file:///tmp"), nullptr);
-    EXPECT_NO_FATAL_FAILURE({ (void)priv.start(); });
-    EXPECT_NO_FATAL_FAILURE({ (void)priv.stop(); });
+    // start()/stop() both return the started flag, which is false by default.
+    bool startResult = priv.start();
+    EXPECT_FALSE(startResult);
+    bool stopResult = priv.stop();
+    EXPECT_FALSE(stopResult);
 }
