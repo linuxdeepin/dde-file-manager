@@ -226,3 +226,44 @@ TEST(IndexProfileTest, ProfileComputeChecksumCallable)
     auto p = makeProfile();
     EXPECT_NO_FATAL_FAILURE({ (void)p.computeChecksum("/tmp/test.txt"); });
 }
+
+// ---- Coverage additions: exercise the real provider lambdas wired up by the
+// IndexProfile::content() / IndexProfile::ocr() factories. Each accessor runs
+// the corresponding closure stored inside content()/ocr(), covering those
+// lambdas (which are otherwise defined but never invoked).
+
+TEST(IndexProfileTest, ContentProfile_ScopeAndOptionProviders)
+{
+    auto p = IndexProfile::content();
+    EXPECT_FALSE(p.indexDirectory().isEmpty());
+    EXPECT_NO_FATAL_FAILURE({ (void)p.isIndexAvailable(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)p.isPathInScope("/tmp/somefile.txt"); });
+    EXPECT_NO_FATAL_FAILURE({ (void)p.isCandidateFile("/tmp/somefile.txt"); });
+    EXPECT_NO_FATAL_FAILURE({ (void)p.anythingSearchOptions(); });
+}
+
+TEST(IndexProfileTest, ContentProfile_ChecksumTextCacheAndAnalyzer)
+{
+    auto p = IndexProfile::content();
+    EXPECT_NO_FATAL_FAILURE({ (void)p.computeChecksum("/nonexistent/file.txt"); });
+    EXPECT_NO_FATAL_FAILURE({ (void)p.lookupCachedText("deadbeef"); });
+    EXPECT_NO_FATAL_FAILURE({ (void)p.createAnalyzer(); });
+}
+
+TEST(IndexProfileTest, OcrProfile_ScopeAndOptionProviders)
+{
+    auto p = IndexProfile::ocr();
+    EXPECT_FALSE(p.indexDirectory().isEmpty());
+    EXPECT_NO_FATAL_FAILURE({ (void)p.isIndexAvailable(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)p.isPathInScope("/tmp/somefile.png"); });
+    EXPECT_NO_FATAL_FAILURE({ (void)p.isCandidateFile("/tmp/somefile.png"); });
+    EXPECT_NO_FATAL_FAILURE({ (void)p.anythingSearchOptions(); });
+}
+
+TEST(IndexProfileTest, OcrProfile_ChecksumTextCacheAndAnalyzer)
+{
+    auto p = IndexProfile::ocr();
+    EXPECT_NO_FATAL_FAILURE({ (void)p.computeChecksum("/nonexistent/file.png"); });
+    EXPECT_NO_FATAL_FAILURE({ (void)p.lookupCachedText("deadbeef"); });
+    EXPECT_NO_FATAL_FAILURE({ (void)p.createAnalyzer(); });
+}
