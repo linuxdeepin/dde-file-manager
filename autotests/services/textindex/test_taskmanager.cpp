@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_taskmanager_r13.cpp
+ * @file test_taskmanager.cpp
  * @brief Additional TaskManager tests: enqueueCompensationTask (empty/valid),
  *        applyDirectoryMovePlans (empty/no-directory-move/single-directory),
  *        onTaskProgress with null currentTask, startTask with empty pathList,
@@ -26,7 +26,7 @@
 
 using namespace SERVICETEXTINDEX_NAMESPACE;
 
-class TaskManagerR13Test : public testing::Test
+class TaskManagerTest : public testing::Test
 {
 protected:
     QTemporaryDir tmp;
@@ -47,32 +47,32 @@ protected:
     }
 };
 
-TEST_F(TaskManagerR13Test, EnqueueCompensationTaskEmptyPathsReturnsFalse)
+TEST_F(TaskManagerTest, EnqueueCompensationTaskEmptyPathsReturnsFalse)
 {
     EXPECT_FALSE(mgr->enqueueCompensationTask({}, false));
 }
 
-TEST_F(TaskManagerR13Test, EnqueueCompensationTaskWithPathsReturnsTrue)
+TEST_F(TaskManagerTest, EnqueueCompensationTaskWithPathsReturnsTrue)
 {
     EXPECT_TRUE(mgr->enqueueCompensationTask({"/tmp/a.txt"}, false));
     EXPECT_TRUE(mgr->hasQueuedTasks());
 }
 
-TEST_F(TaskManagerR13Test, ApplyDirectoryMovePlansEmptyReturnsEmpty)
+TEST_F(TaskManagerTest, ApplyDirectoryMovePlansEmptyReturnsEmpty)
 {
     QHash<QString, QString> empty;
     QStringList result = mgr->applyDirectoryMovePlans(empty);
     EXPECT_TRUE(result.isEmpty());
 }
 
-TEST_F(TaskManagerR13Test, ApplyDirectoryMovePlansNonDirectoryReturnsEmpty)
+TEST_F(TaskManagerTest, ApplyDirectoryMovePlansNonDirectoryReturnsEmpty)
 {
     QHash<QString, QString> moves { {"/old/file.txt", "/new/file.txt"} };
     QStringList result = mgr->applyDirectoryMovePlans(moves);
     EXPECT_TRUE(result.isEmpty());
 }
 
-TEST_F(TaskManagerR13Test, ApplyDirectoryMovePlansDirectoryMove)
+TEST_F(TaskManagerTest, ApplyDirectoryMovePlansDirectoryMove)
 {
     QHash<QString, QString> moves { {"/old/dir/", "/new/dir/"} };
     QStringList result = mgr->applyDirectoryMovePlans(moves);
@@ -80,23 +80,23 @@ TEST_F(TaskManagerR13Test, ApplyDirectoryMovePlansDirectoryMove)
     EXPECT_GE(result.size(), 1);
 }
 
-TEST_F(TaskManagerR13Test, OnTaskProgressWithNullTaskIsNoOp)
+TEST_F(TaskManagerTest, OnTaskProgressWithNullTaskIsNoOp)
 {
     EXPECT_NO_FATAL_FAILURE({ mgr->onTaskProgress(IndexTask::Type::Create, 10, 100); });
 }
 
-TEST_F(TaskManagerR13Test, StartTaskEmptyPathListReturnsFalse)
+TEST_F(TaskManagerTest, StartTaskEmptyPathListReturnsFalse)
 {
     // startTask(QString path) with empty path should fail
     EXPECT_FALSE(mgr->startTask(IndexTask::Type::Create, QString()));
 }
 
-TEST_F(TaskManagerR13Test, StartFileListTaskEmptyListReturnsFalse)
+TEST_F(TaskManagerTest, StartFileListTaskEmptyListReturnsFalse)
 {
     EXPECT_FALSE(mgr->startFileListTask(IndexTask::Type::CreateFileList, QStringList()));
 }
 
-TEST_F(TaskManagerR13Test, StartFileMoveTaskEmptyMovesReturnsFalse)
+TEST_F(TaskManagerTest, StartFileMoveTaskEmptyMovesReturnsFalse)
 {
     QHash<QString, QString> empty;
     EXPECT_FALSE(mgr->startFileMoveTask(empty));

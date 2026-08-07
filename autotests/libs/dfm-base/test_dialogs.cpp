@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_dialogs_r19.cpp
+ * @file test_dialogs.cpp
  * @brief Unit tests for GUI dialog classes using stub-ext to mock exec/show.
  *        Covers: SettingDialog, TaskDialog, BaseDialog, MountAskPasswordDialog,
  *        MountSecretDiskAskPasswordDialog, AliasComboBox, UserSharePasswordSettingDialog.
@@ -25,7 +25,7 @@
 
 using namespace dfmbase;
 
-class DialogsR19Test : public testing::Test
+class DialogsTest : public testing::Test
 {
 protected:
     void SetUp() override
@@ -41,25 +41,25 @@ protected:
     stub_ext::StubExt stub;
 };
 
-TEST_F(DialogsR19Test, BaseDialogConstructAndDestruct)
+TEST_F(DialogsTest, BaseDialogConstructAndDestruct)
 {
     BaseDialog d;
     SUCCEED();
 }
 
-TEST_F(DialogsR19Test, SettingDialogConstructAndDestruct)
+TEST_F(DialogsTest, SettingDialogConstructAndDestruct)
 {
     SettingDialog d;
     SUCCEED();
 }
 
-TEST_F(DialogsR19Test, SettingDialogNeedHide)
+TEST_F(DialogsTest, SettingDialogNeedHide)
 {
     // needHide is static; test with known and unknown keys
     EXPECT_NO_FATAL_FAILURE({ (void)SettingDialog::needHide("nonexistent_key"); });
 }
 
-TEST_F(DialogsR19Test, SettingDialogSetItemVisible)
+TEST_F(DialogsTest, SettingDialogSetItemVisible)
 {
     EXPECT_NO_FATAL_FAILURE({ SettingDialog::setItemVisiable("test_key", false); });
 }

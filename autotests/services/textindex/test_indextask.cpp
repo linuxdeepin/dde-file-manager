@@ -19,6 +19,7 @@
 #include "services/textindex/task/indextask.h"
 #include "services/textindex/task/taskhandler.h"
 #include "services/textindex/utils/taskstate.h"
+#include <QSignalSpy>
 
 using namespace SERVICETEXTINDEX_NAMESPACE;
 
@@ -124,4 +125,47 @@ TEST(TaskStateTest, Silent)
     EXPECT_FALSE(s.isSilent());
     s.setSilent(true);
     EXPECT_TRUE(s.isSilent());
+}
+
+static TaskHandler noopHandler()
+{
+    return [](const QString &, TaskState &) -> HandlerResult { return HandlerResult {}; };
+}
+TEST(IndexTaskTest, OnProgressChangedNoEmitWhenNotRunning)
+{
+    IndexTask t(IndexTask::Type::Create, "/tmp", noopHandler());
+    QSignalSpy spy(&t, &IndexTask::progressChanged);
+    t.onProgressChanged(10, 100);   // private; not running -> no emit
+    EXPECT_EQ(spy.count(), 0);
+}
+TEST(IndexTaskTest, ThrottleCpuUsageSkipsWhenNotSilent)
+{
+    IndexTask t(IndexTask::Type::Create, "/tmp", noopHandler());
+    EXPECT_FALSE(t.silent());
+    EXPECT_NO_FATAL_FAILURE({ t.throttleCpuUsage(); });   // private; returns early
+}
+TEST(IndexTaskTest, D0DestructorPath)
+{
+    auto *ptr = new IndexTask(IndexTask::Type::Create, "/tmp/heap", noopHandler());
+    EXPECT_NO_FATAL_FAILURE({ delete ptr; });
+}
+TEST(IndexTaskTest, DoTaskWithHandler)
+{
+    IndexTask t(IndexTask::Type::Create, "/tmp", noopHandler());
+    // doTask() runs the handler in the current thread (no thread check here);
+    // it returns HandlerResult{false,...} because noopHandler returns default.
+    EXPECT_NO_FATAL_FAILURE({ t.doTask(); });   // private
+}
+TEST(IndexTaskTest, DoTaskWithNullHandler)
+{
+    TaskHandler nullHandler;
+    IndexTask t(IndexTask::Type::Create, "/tmp", nullHandler);
+    EXPECT_NO_FATAL_FAILURE({ t.doTask(); });   // m_handler is null -> result stays default
+}
+TEST(IndexTaskTest, SetSilentThenThrottleCpuUsage)
+{
+    IndexTask t(IndexTask::Type::Create, "/tmp", noopHandler());
+    t.setSilent(true);
+    EXPECT_TRUE(t.silent());
+    EXPECT_NO_FATAL_FAILURE({ t.throttleCpuUsage(); });   // tries systemd (fails in sandbox)
 }

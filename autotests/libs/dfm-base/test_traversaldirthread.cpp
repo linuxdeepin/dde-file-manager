@@ -54,3 +54,23 @@ TEST(TraversalDirThreadTest, StopFlagDefaultIsFalse)
     TraversalDirThread t(QUrl::fromLocalFile(QDir::homePath()));
     EXPECT_FALSE(t.stopFlag);
 }
+
+TEST(TraversalDirThreadTest, SetQueryAttributes)
+{
+    TraversalDirThread t(QUrl::fromLocalFile("/tmp"));
+    EXPECT_NO_FATAL_FAILURE({ t.setQueryAttributes("test_attribute"); });
+}
+TEST(TraversalDirThreadTest, SetEnableSortAndCheck)
+{
+    TraversalDirThread t(QUrl::fromLocalFile("/tmp"));
+    EXPECT_FALSE(t.isSortEnabled());
+    t.setEnableSort(true);
+    EXPECT_TRUE(t.isSortEnabled());
+    t.setEnableSort(false);
+    EXPECT_FALSE(t.isSortEnabled());
+}
+TEST(TraversalDirThreadTest, D0DestructorPath)
+{
+    auto *ptr = new TraversalDirThread(QUrl::fromLocalFile("/tmp"));
+    EXPECT_NO_FATAL_FAILURE({ delete ptr; });
+}

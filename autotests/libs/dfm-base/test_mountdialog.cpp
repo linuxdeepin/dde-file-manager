@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_mountdialog_r19.cpp
+ * @file test_mountdialog.cpp
  * @brief Unit tests for MountAskPasswordDialog, MountSecretDiskAskPasswordDialog,
  *        UserSharePasswordSettingDialog, AliasComboBox.
  *        Uses stub-ext to mock exec/show.
@@ -22,7 +22,7 @@
 
 using namespace dfmbase;
 
-class MountDialogR19Test : public testing::Test
+class MountDialogTest : public testing::Test
 {
 protected:
     void SetUp() override
@@ -38,26 +38,26 @@ protected:
     stub_ext::StubExt stub;
 };
 
-TEST_F(MountDialogR19Test, MountAskPasswordDialogConstruct)
+TEST_F(MountDialogTest, MountAskPasswordDialogConstruct)
 {
     MountAskPasswordDialog d;
     SUCCEED();
 }
 
-TEST_F(MountDialogR19Test, MountAskPasswordDialogInitUI)
+TEST_F(MountDialogTest, MountAskPasswordDialogInitUI)
 {
     MountAskPasswordDialog d;
     EXPECT_NO_FATAL_FAILURE({ d.initUI(); });
 }
 
-TEST_F(MountDialogR19Test, MountAskPasswordDialogInitConnect)
+TEST_F(MountDialogTest, MountAskPasswordDialogInitConnect)
 {
     MountAskPasswordDialog d;
     d.initUI();
     EXPECT_NO_FATAL_FAILURE({ d.initConnect(); });
 }
 
-TEST_F(MountDialogR19Test, MountAskPasswordDialogGetLoginData)
+TEST_F(MountDialogTest, MountAskPasswordDialogGetLoginData)
 {
     MountAskPasswordDialog d;
     d.initUI();
@@ -65,7 +65,7 @@ TEST_F(MountDialogR19Test, MountAskPasswordDialogGetLoginData)
     EXPECT_TRUE(data.isEmpty() || !data.isEmpty()); // just verify callable
 }
 
-TEST_F(MountDialogR19Test, MountAskPasswordDialogDomainVisible)
+TEST_F(MountDialogTest, MountAskPasswordDialogDomainVisible)
 {
     MountAskPasswordDialog d;
     d.initUI();
@@ -74,34 +74,34 @@ TEST_F(MountDialogR19Test, MountAskPasswordDialogDomainVisible)
     EXPECT_EQ(d.getDomainLineVisible(), !visible);
 }
 
-TEST_F(MountDialogR19Test, MountAskPasswordDialogSetDomain)
+TEST_F(MountDialogTest, MountAskPasswordDialogSetDomain)
 {
     MountAskPasswordDialog d;
     d.initUI();
     d.setDomain("test_domain");
 }
 
-TEST_F(MountDialogR19Test, MountAskPasswordDialogSetUser)
+TEST_F(MountDialogTest, MountAskPasswordDialogSetUser)
 {
     MountAskPasswordDialog d;
     d.initUI();
     d.setUser("test_user");
 }
 
-TEST_F(MountDialogR19Test, MountAskPasswordDialogHandleConnect)
+TEST_F(MountDialogTest, MountAskPasswordDialogHandleConnect)
 {
     MountAskPasswordDialog d;
     d.initUI();
     EXPECT_NO_FATAL_FAILURE({ d.handleConnect(); });
 }
 
-TEST_F(MountDialogR19Test, MountSecretDiskAskPasswordDialogConstruct)
+TEST_F(MountDialogTest, MountSecretDiskAskPasswordDialogConstruct)
 {
     MountSecretDiskAskPasswordDialog d("test tip");
     SUCCEED();
 }
 
-TEST_F(MountDialogR19Test, MountSecretDiskAskPasswordDialogInitUI)
+TEST_F(MountDialogTest, MountSecretDiskAskPasswordDialogInitUI)
 {
     MountSecretDiskAskPasswordDialog d("test tip");
     EXPECT_NO_FATAL_FAILURE({ d.initUI(); });

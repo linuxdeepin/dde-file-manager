@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_taskdialog_r20.cpp
+ * @file test_taskdialog.cpp
  * @brief Unit tests for TaskDialog and TaskWidget (dialogs/taskdialog/taskdialog.cpp +
  *        dialogs/taskdialog/taskwidget.cpp) — GUI classes using stub-ext.
  *        TaskWidget ctor is private (friend TaskDialog), so we test via TaskDialog.
@@ -22,7 +22,7 @@
 
 using namespace dfmbase;
 
-class TaskDialogR20Test : public testing::Test
+class TaskDialogTest : public testing::Test
 {
 protected:
     void SetUp() override
@@ -38,7 +38,7 @@ protected:
     stub_ext::StubExt stub;
 };
 
-TEST_F(TaskDialogR20Test, ConstructAndDestruct)
+TEST_F(TaskDialogTest, ConstructAndDestruct)
 {
     {
         TaskDialog d;
@@ -46,20 +46,20 @@ TEST_F(TaskDialogR20Test, ConstructAndDestruct)
     }
 }
 
-TEST_F(TaskDialogR20Test, InitUI)
+TEST_F(TaskDialogTest, InitUI)
 {
     TaskDialog d;
     d.initUI();
 }
 
-TEST_F(TaskDialogR20Test, SetTitle)
+TEST_F(TaskDialogTest, SetTitle)
 {
     TaskDialog d;
     d.initUI();
     d.setTitle(5);
 }
 
-TEST_F(TaskDialogR20Test, AddTaskWithNullHandle)
+TEST_F(TaskDialogTest, AddTaskWithNullHandle)
 {
     TaskDialog d;
     d.initUI();
@@ -67,7 +67,7 @@ TEST_F(TaskDialogR20Test, AddTaskWithNullHandle)
     EXPECT_NO_FATAL_FAILURE({ d.addTask(nullHandle); });
 }
 
-TEST_F(TaskDialogR20Test, BlockShutdown)
+TEST_F(TaskDialogTest, BlockShutdown)
 {
     TaskDialog d;
     d.initUI();
@@ -75,7 +75,7 @@ TEST_F(TaskDialogR20Test, BlockShutdown)
     EXPECT_NO_FATAL_FAILURE({ d.blockShutdown(); });
 }
 
-TEST_F(TaskDialogR20Test, AdjustSize)
+TEST_F(TaskDialogTest, AdjustSize)
 {
     TaskDialog d;
     d.initUI();
@@ -83,7 +83,7 @@ TEST_F(TaskDialogR20Test, AdjustSize)
     d.adjustSize(0);
 }
 
-TEST_F(TaskDialogR20Test, MoveYCenter)
+TEST_F(TaskDialogTest, MoveYCenter)
 {
     TaskDialog d;
     d.initUI();

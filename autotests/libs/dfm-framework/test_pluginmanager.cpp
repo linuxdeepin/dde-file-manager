@@ -17,6 +17,8 @@
 
 // 包含待测试的类
 #include <dfm-framework/lifecycle/pluginmanager.h>
+#include <QSharedPointer>
+#include <dfm-framework/lifecycle/pluginmetaobject.h>
 #include <dfm-framework/lifecycle/lifecycle.h>
 
 using namespace dpf;
@@ -261,4 +263,55 @@ TEST_F(PluginManagerTest, SetFilters)
     });
     // 没有getter，我们只能测试调用不崩溃
     SUCCEED();
+}
+
+TEST(PluginManagerTest, CtorAndDtorSafe)
+{
+    PluginManager pm;
+    SUCCEED();
+}
+TEST(PluginManagerTest, PluginIIDsEmptyByDefault)
+{
+    PluginManager pm;
+    EXPECT_TRUE(pm.pluginIIDs().isEmpty());
+}
+TEST(PluginManagerTest, PluginPathsEmptyByDefault)
+{
+    PluginManager pm;
+    EXPECT_TRUE(pm.pluginPaths().isEmpty());
+}
+TEST(PluginManagerTest, BlackListEmptyByDefault)
+{
+    PluginManager pm;
+    EXPECT_TRUE(pm.blackList().isEmpty());
+}
+TEST(PluginManagerTest, ReadQueueEmptyByDefault)
+{
+    PluginManager pm;
+    EXPECT_TRUE(pm.readQueue().isEmpty());
+}
+TEST(PluginManagerTest, LoadQueueEmptyByDefault)
+{
+    PluginManager pm;
+    EXPECT_TRUE(pm.loadQueue().isEmpty());
+}
+TEST(PluginManagerTest, StopPluginsOnEmptyQueue)
+{
+    PluginManager pm;
+    EXPECT_NO_FATAL_FAILURE({ pm.stopPlugins(); });
+}
+TEST(PluginManagerTest, ReadPluginsFalseWithNoIIDs)
+{
+    PluginManager pm;
+    EXPECT_FALSE(pm.readPlugins());
+}
+TEST(PluginManagerTest, LoadPluginsTrueOnEmptyQueue)
+{
+    PluginManager pm;
+    EXPECT_TRUE(pm.loadPlugins());
+}
+TEST(PluginManagerTest, D0DestructorPath)
+{
+    auto *ptr = new PluginManager();
+    EXPECT_NO_FATAL_FAILURE({ delete ptr; });
 }

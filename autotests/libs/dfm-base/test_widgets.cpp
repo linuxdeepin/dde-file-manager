@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_widgets_r19.cpp
+ * @file test_widgets.cpp
  * @brief Unit tests for GUI widget/statusbar/hint classes using stub-ext.
  *        Covers: BasicStatusBar, BasicStatusBarPrivate, ViewHintMessage,
  *        ViewHintWidget, WindowUtils, Splitter, AbstractBaseView.
@@ -25,7 +25,7 @@
 
 using namespace dfmbase;
 
-class WidgetsR19Test : public testing::Test
+class WidgetsTest : public testing::Test
 {
 protected:
     void SetUp() override
@@ -37,62 +37,62 @@ protected:
     stub_ext::StubExt stub;
 };
 
-TEST_F(WidgetsR19Test, BasicStatusBarConstruct)
+TEST_F(WidgetsTest, BasicStatusBarConstruct)
 {
     BasicStatusBar bar;
     SUCCEED();
 }
 
-TEST_F(WidgetsR19Test, BasicStatusBarPrivateConstruct)
+TEST_F(WidgetsTest, BasicStatusBarPrivateConstruct)
 {
     BasicStatusBar bar;
     // Access private via -fno-access-control
     EXPECT_NO_FATAL_FAILURE({ (void)bar.d.data(); });
 }
 
-TEST_F(WidgetsR19Test, ViewHintMessageConstruct)
+TEST_F(WidgetsTest, ViewHintMessageConstruct)
 {
     ViewHintMessage msg;
     SUCCEED();
 }
 
-TEST_F(WidgetsR19Test, ViewHintWidgetConstruct)
+TEST_F(WidgetsTest, ViewHintWidgetConstruct)
 {
     ViewHintWidget w;
     SUCCEED();
 }
 
-TEST_F(WidgetsR19Test, WindowUtilsIsX11)
+TEST_F(WidgetsTest, WindowUtilsIsX11)
 {
     EXPECT_NO_FATAL_FAILURE({ (void)WindowUtils::isX11(); });
 }
 
-TEST_F(WidgetsR19Test, WindowUtilsIsWayLand)
+TEST_F(WidgetsTest, WindowUtilsIsWayLand)
 {
     EXPECT_NO_FATAL_FAILURE({ (void)WindowUtils::isWayLand(); });
 }
 
-TEST_F(WidgetsR19Test, WindowUtilsKeyShiftIsPressed)
+TEST_F(WidgetsTest, WindowUtilsKeyShiftIsPressed)
 {
     EXPECT_NO_FATAL_FAILURE({ (void)WindowUtils::keyShiftIsPressed(); });
 }
 
-TEST_F(WidgetsR19Test, WindowUtilsKeyCtrlIsPressed)
+TEST_F(WidgetsTest, WindowUtilsKeyCtrlIsPressed)
 {
     EXPECT_NO_FATAL_FAILURE({ (void)WindowUtils::keyCtrlIsPressed(); });
 }
 
-TEST_F(WidgetsR19Test, WindowUtilsKeyAltIsPressed)
+TEST_F(WidgetsTest, WindowUtilsKeyAltIsPressed)
 {
     EXPECT_NO_FATAL_FAILURE({ (void)WindowUtils::keyAltIsPressed(); });
 }
 
-TEST_F(WidgetsR19Test, WindowUtilsCursorScreen)
+TEST_F(WidgetsTest, WindowUtilsCursorScreen)
 {
     EXPECT_NO_FATAL_FAILURE({ (void)WindowUtils::cursorScreen(); });
 }
 
-TEST_F(WidgetsR19Test, WindowUtilsCloseAllFileManagerWindows)
+TEST_F(WidgetsTest, WindowUtilsCloseAllFileManagerWindows)
 {
     EXPECT_NO_FATAL_FAILURE({ WindowUtils::closeAllFileManagerWindows(); });
 }

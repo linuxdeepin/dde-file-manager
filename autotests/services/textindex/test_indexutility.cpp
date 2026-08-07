@@ -16,6 +16,9 @@
 
 #include "services/textindex/service_textindex_global.h"
 #include "services/textindex/utils/indexutility.h"
+#include <QList>
+#include <QObject>
+#include "dfm_test_main.h"
 
 using namespace SERVICETEXTINDEX_NAMESPACE;
 
@@ -156,4 +159,41 @@ TEST(IndexUtilityTest, PathCalculatorCalculateNewPathForDirectoryMove)
 TEST(IndexUtilityTest, SearchUtilityRunCliCallable)
 {
     EXPECT_NO_FATAL_FAILURE({ (void)SearchUtility::runCli({ "echo", "hello" }, 5000); });
+}
+
+TEST(IndexUtilityTest, ConfigRebuildWatcherConstructsEmpty)
+{
+    QList<IndexUtility::ConfigRebuildWatcher::WatchEntry> empty;
+    IndexUtility::ConfigRebuildWatcher w(empty, nullptr);
+    SUCCEED();
+}
+TEST(IndexUtilityTest, ConfigRebuildWatcherD0Destructor)
+{
+    QList<IndexUtility::ConfigRebuildWatcher::WatchEntry> empty;
+    auto *ptr = new IndexUtility::ConfigRebuildWatcher(empty, nullptr);
+    EXPECT_NO_FATAL_FAILURE({ delete ptr; });
+}
+TEST(IndexUtilityTest, DlnfsConfigWatcherInstanceExt)
+{
+    EXPECT_NO_FATAL_FAILURE({ (void)IndexUtility::DlnfsConfigWatcher::instance(); });
+}
+TEST(IndexUtilityTest, AnythingConfigWatcherInstanceExt)
+{
+    EXPECT_NO_FATAL_FAILURE({ (void)IndexUtility::AnythingConfigWatcher::instance(); });
+}
+TEST(IndexUtilityTest, IsDefaultIndexedDirectoryReturnsBool)
+{
+    EXPECT_NO_FATAL_FAILURE({ (void)IndexUtility::isDefaultIndexedDirectory("/tmp"); });
+}
+TEST(IndexUtilityTest, IsIndexWithAnythingReturnsBool)
+{
+    EXPECT_NO_FATAL_FAILURE({ (void)IndexUtility::isIndexWithAnything("/tmp"); });
+}
+TEST(IndexUtilityTest, IsSupportedTextFileReturnsBool)
+{
+    EXPECT_NO_FATAL_FAILURE({ (void)IndexUtility::isSupportedTextFile("/tmp/test.txt"); });
+}
+TEST(IndexUtilityTest, IsSupportedOCRFileReturnsBool)
+{
+    EXPECT_NO_FATAL_FAILURE({ (void)IndexUtility::isSupportedOCRFile("/tmp/test.png"); });
 }

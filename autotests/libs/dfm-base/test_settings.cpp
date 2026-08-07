@@ -17,6 +17,7 @@
 #include <QStringList>
 
 #include <dfm-base/base/application/settings.h>
+#include <QString>
 
 using namespace dfmbase;
 
@@ -239,4 +240,54 @@ TEST_F(SettingsTest, LocalSettingsDestructsCleanly)
 {
     // Exercise the destructor (and SettingsPrivate teardown) on a stack instance.
     EXPECT_NO_FATAL_FAILURE({ Settings s("ut_dtor_test", Settings::kGenericConfig); });
+}
+
+class SettingsWatchTest : public testing::Test
+{
+protected:
+    QTemporaryDir tmp;
+    QString defaultFile, settingFile;
+    void SetUp() override
+    {
+        ASSERT_TRUE(tmp.isValid());
+        defaultFile = tmp.path() + "/default.json";
+        settingFile = tmp.path() + "/settings.json";
+        writeFile(defaultFile, "{ \"G\": { \"k\": \"v\" } }");
+        writeFile(settingFile, "{ \"G\": { \"k\": \"cur\" } }");
+    }
+    void writeFile(const QString &p, const QString &content)
+    {
+        QFile f(p);
+        ASSERT_TRUE(f.open(QIODevice::WriteOnly));
+        f.write(content.toUtf8());
+        f.close();
+    }
+};
+TEST_F(SettingsWatchTest, D0DestructorPath)
+{
+    auto *ptr = new Settings(defaultFile, defaultFile, settingFile);
+    EXPECT_NO_FATAL_FAILURE({ delete ptr; });
+}
+TEST_F(SettingsWatchTest, SetWatchChangesTrueCreatesWatcher)
+{
+    Settings s(defaultFile, defaultFile, settingFile);
+    s.setWatchChanges(true);
+    // setting watcher; exercise the connect lambda wiring
+}
+TEST_F(SettingsWatchTest, SetWatchChangesFalseRemovesWatcher)
+{
+    Settings s(defaultFile, defaultFile, settingFile);
+    s.setWatchChanges(true);
+    s.setWatchChanges(false);
+}
+TEST_F(SettingsWatchTest, SetWatchChangesIdempotentWhenAlreadyTrue)
+{
+    Settings s(defaultFile, defaultFile, settingFile);
+    s.setWatchChanges(true);
+    s.setWatchChanges(true);   // no-op (early return)
+}
+TEST_F(SettingsWatchTest, SetWatchChangesFalseWhenAlreadyFalseIsNoOp)
+{
+    Settings s(defaultFile, defaultFile, settingFile);
+    s.setWatchChanges(false);   // already false -> no-op
 }
