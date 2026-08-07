@@ -42,6 +42,7 @@ class FileView final : public DListView, public DFMBASE_NAMESPACE::AbstractBaseV
     friend class ViewGeometryHelper;
     friend class StickyGroupHeaderHelper;
     friend class IconItemDelegate;
+    friend class ListItemDelegate;
 
     QSharedPointer<FileViewPrivate> d;
 
@@ -270,6 +271,7 @@ private:
 
     bool isGroupHeader(const QModelIndex &index) const;
     bool isClickInGroupHeaderSpacing(const QPoint &pos, const QModelIndex &index) const;
+    bool isClickInTopPadding(const QPoint &pos, const QModelIndex &index) const;
     QModelIndex indexAtForSelection(const QPoint &pos) const;
 
     QModelIndex findStickyGroupIndex(int headerHeight);

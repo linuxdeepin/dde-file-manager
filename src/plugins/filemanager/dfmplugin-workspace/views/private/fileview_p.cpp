@@ -77,17 +77,13 @@ void FileViewPrivate::initIconModeView()
 {
     fmDebug() << "Initializing icon mode view";
 
-    if (headerWidget) {
-        headerWidget->setVisible(false);
-
-        if (headerView) {
-            headerView->disconnect();
-            auto headerLayout = qobject_cast<QVBoxLayout *>(headerWidget->layout());
-            headerLayout->removeWidget(headerView);
-            headerView->deleteLater();
-            headerView = nullptr;
-            fmDebug() << "Header view removed for icon mode";
-        }
+    if (headerView) {
+        headerView->setVisible(false);
+        headerView->disconnect();
+        q->removeHeaderWidget(0);
+        headerView->deleteLater();
+        headerView = nullptr;
+        fmDebug() << "Header view removed for icon mode";
     }
 
     if (statusBar) {
@@ -121,19 +117,8 @@ void FileViewPrivate::initListModeView()
         fmDebug() << "Item delegate height level set to:" << currentListHeightLevel;
     }
 
-    if (!headerWidget) {
-        headerWidget = new QWidget(q);
-        QVBoxLayout *headerLayout = new QVBoxLayout(headerWidget);
-        headerLayout->setContentsMargins(0, 0, 0, 10);
-        headerLayout->setAlignment(Qt::AlignTop);
-        headerWidget->installEventFilter(q);
-        q->addHeaderWidget(headerWidget);
-        fmDebug() << "Header widget created for list mode";
-    }
-
     if (!headerView) {
         q->initDefaultHeaderView();
-        auto headerLayout = qobject_cast<QVBoxLayout *>(headerWidget->layout());
 
         headerView = new HeaderView(Qt::Orientation::Horizontal, q);
 
@@ -146,7 +131,8 @@ void FileViewPrivate::initListModeView()
             headerView->setSelectionModel(q->selectionModel());
         }
 
-        headerLayout->addWidget(headerView);
+        q->addHeaderWidget(headerView);
+        fmDebug() << "Header view created and added for list mode";
 
         QObject::connect(headerView, &HeaderView::mousePressed, q, &FileView::onHeaderViewMousePressed);
         QObject::connect(headerView, &HeaderView::mouseReleased, q, &FileView::onHeaderViewMouseReleased);
@@ -162,10 +148,8 @@ void FileViewPrivate::initListModeView()
         fmDebug() << "Header view created and configured for list mode";
     }
 
-    headerWidget->setVisible(true);
-
-    // Adjust header layout margin based on grouping state
-    adjustHeaderLayoutMargin(q->model()->groupingStrategy());
+    if (headerView)
+        headerView->setVisible(true);
 
     if (statusBar) {
         statusBar->setScalingVisible(false);
@@ -360,29 +344,6 @@ void FileViewPrivate::updateHorizontalOffset()
         }
         horizontalOffset = -(contentWidth - itemWidth * itemColumn) / 2;
     }
-}
-
-void FileViewPrivate::adjustHeaderLayoutMargin(const QString &strategyName)
-{
-    // Only adjust margins for list/tree mode
-    if (!(q->isListViewMode() || q->isTreeViewMode()))
-        return;
-
-    // Ensure headerWidget exists and is visible
-    if (!headerWidget || !headerWidget->isVisible())
-        return;
-
-    auto headerLayout = headerWidget->layout();
-    if (!headerLayout)
-        return;
-
-    // Determine margin based on grouping state
-    bool isGrouped = strategyName != GroupStrategy::kNoGroup;
-    int bottomMargin = isGrouped ? 0 : kDefaultHeaderBottomMargin;
-
-    headerLayout->setContentsMargins(0, 0, 0, bottomMargin);
-    fmDebug() << "Header layout bottom margin adjusted to:" << bottomMargin
-              << "for grouped view:" << isGrouped << "URL:" << q->rootUrl().toString();
 }
 
 void FileViewPrivate::adjustIconModeSpacing(const QString &strategyName)
