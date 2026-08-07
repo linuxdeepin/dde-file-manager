@@ -36,6 +36,15 @@ SERVICEMOUNTCONTROL_USE_NAMESPACE
 
 static constexpr char kPolicyKitActionIdCIFS[] { "org.deepin.Filemanager.MountController.CIFS" };
 
+// SMB URL 中不会携带真正的 fragment，地址里任何 '#' 都属于共享名/路径的一部分。
+// QUrl 会把字面 '#' 当作 fragment 起始符而在 path() 处截断，故解析前先把 '#' 百分号编码为 "%23"；
+// QUrl::path() 会把 "%23" 解码回 '#'，从而还原真实共享名交给 mount.cifs。
+// 对不含 '#' 的地址是 no-op，零影响。
+static QString normalizeSmbAddress(const QString &address)
+{
+    return QString(address).replace('#', "%23");
+}
+
 CifsMountHelper::CifsMountHelper(QDBusContext *context)
     : AbstractMountHelper(context), d(new CifsMountHelperPrivate()) { }
 
@@ -50,7 +59,8 @@ QVariantMap CifsMountHelper::mount(const QString &path, const QVariantMap &opts)
                  { kErrorMessage, "smb is only supported scheme now" } };
     }
 
-    QUrl smbUrl(path);
+    const QString smbAddr = normalizeSmbAddress(path);
+    QUrl smbUrl(smbAddr);
     int port = smbUrl.port();
     const QString &share = smbUrl.path();
     const QString &host = smbUrl.host();
@@ -66,7 +76,7 @@ QVariantMap CifsMountHelper::mount(const QString &path, const QVariantMap &opts)
                  { kErrorMessage, QString("%1 is already mounted at %2").arg(path).arg(mpt) } };
     }
 
-    auto mntPath = generateMountPath(path);
+    auto mntPath = generateMountPath(smbAddr);
     if (mntPath.isEmpty())
         return { { kMountPoint, "" },
                  { kResult, false },
