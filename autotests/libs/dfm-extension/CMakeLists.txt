@@ -7,7 +7,7 @@ file(GLOB_RECURSE TEST_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
 )
 
-dfm_add_test(test-dfm-extension
+dfm_add_test(ut-dfm-extension
     SOURCES ${TEST_SOURCES}
     LINK_LIBRARIES DFM::extension Qt6::Test
 )

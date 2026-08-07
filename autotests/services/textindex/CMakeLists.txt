@@ -11,14 +11,14 @@ file(GLOB_RECURSE TEST_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
 )
 
-dfm_add_test(test-textindex
+dfm_add_test(ut-textindex
     SOURCES ${TEST_SOURCES}
     LINK_LIBRARIES dde-filemanager-textindex dde-file-manager-extractor-lib dfm6-search Qt6::Core Qt6::Test PkgConfig::NL
 )
 
 # textindex source files use relative includes (e.g. "service_textindex_global.h")
 # so the textindex source root must be in the include path.
-target_include_directories(test-textindex PRIVATE
+target_include_directories(ut-textindex PRIVATE
     ${DFM_SOURCE_DIR}/services/textindex
     ${DFM_PROJECT_ROOT}/include
     ${DFM_SOURCE_DIR}/apps/dde-file-manager-extractor/libextractor
