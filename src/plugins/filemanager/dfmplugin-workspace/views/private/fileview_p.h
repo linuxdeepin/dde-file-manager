@@ -56,7 +56,6 @@ class FileViewPrivate
     ViewAnimationHelper *animationHelper { nullptr };
     ViewGeometryHelper *geometryHelper { nullptr };
     StickyGroupHeaderHelper *stickyHelper { nullptr };
-    QWidget *headerWidget { nullptr };
 
     QList<FileView::SelectionMode> enabledSelectionModes;
     DFMBASE_NAMESPACE::Global::ViewMode currentViewMode = DFMBASE_NAMESPACE::Global::ViewMode::kIconMode;
@@ -117,8 +116,6 @@ class FileViewPrivate
     bool shouldPersistState(const QUrl &url) const;
 
     void updateHorizontalOffset();
-    // 使用 strategyName 是因为当 setGroup 时，model并不是分组状态
-    void adjustHeaderLayoutMargin(const QString &strategyName);
     void adjustIconModeSpacing(const QString &strategyName);
 };
 

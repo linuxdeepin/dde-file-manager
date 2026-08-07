@@ -46,17 +46,36 @@ ViewGeometryHelper::RangeIndexList ViewGeometryHelper::visibleIndexes(const QRec
     QSize itemSize = m_view->itemSizeHint();
 
     int count = m_view->count();
-    int spacing = m_view->spacing();
-    int itemHeight = itemSize.height() + spacing * 2;
 
     if (m_view->isListViewMode() || m_view->isTreeViewMode()) {
-        int firstIndex = (rect.top() + spacing) / itemHeight;
-        int lastIndex = (rect.bottom() - spacing) / itemHeight;
+        // List/tree items may have variable heights (group-header spacing or
+        // first-row top padding). Use indexAtForSelection (Qt native, variable-
+        // height aware) instead of the uniform-height formula.
+        QRect viewportRect = rect;
+        viewportRect.translate(-m_view->horizontalOffset(), -m_view->verticalOffset());
 
-        if (firstIndex >= count)
-            return list;
+        QModelIndex firstIdx = m_view->indexAtForSelection(viewportRect.topLeft());
+        QModelIndex lastIdx = m_view->indexAtForSelection(viewportRect.bottomRight());
 
-        list << RangeIndex(qMax(firstIndex, 0), qMin(lastIndex, count - 1));
+        if (!firstIdx.isValid()) {
+            if (viewportRect.top() < 0) {
+                firstIdx = m_view->model()->index(0, 0, m_view->rootIndex());
+            } else {
+                return list;
+            }
+        }
+        if (!lastIdx.isValid()) {
+            if (viewportRect.bottom() >= 0) {
+                lastIdx = m_view->model()->index(count - 1, 0, m_view->rootIndex());
+            } else {
+                return list;
+            }
+        }
+        if (firstIdx.isValid() && lastIdx.isValid()) {
+            int startRow = qMin(firstIdx.row(), lastIdx.row());
+            int endRow = qMax(firstIdx.row(), lastIdx.row());
+            list << RangeIndex(qMax(startRow, 0), qMin(endRow, count - 1));
+        }
     } else if (m_view->isIconViewMode()) {
 
         // 分组绘制时计算区域内的list
@@ -82,54 +101,42 @@ ViewGeometryHelper::RangeIndexList ViewGeometryHelper::rectContainsIndexes(const
         return list;
 
     if (m_view->isListViewMode() || m_view->isTreeViewMode()) {
-        // For variable-height items (grouping enabled), use indexAtForSelection
-        if (m_view->isGroupedView()) {
-            // Convert rect to viewport coordinates for comparison
-            QRect viewportRect = rect;
-            viewportRect.translate(-m_view->horizontalOffset(), -m_view->verticalOffset());
+        // List/tree items may have variable heights in both grouped mode
+        // (non-first group headers add kGroupHeaderInterval) and non-grouped
+        // mode (first row adds a kDefaultHeaderBottomMargin top padding). Use
+        // indexAtForSelection (Qt native, variable-height aware) for both.
+        // Convert rect to viewport coordinates for comparison
+        QRect viewportRect = rect;
+        viewportRect.translate(-m_view->horizontalOffset(), -m_view->verticalOffset());
 
-            // Use indexAtForSelection to get items at corners (doesn't skip spacing areas)
-            QModelIndex firstIndex = m_view->indexAtForSelection(viewportRect.topLeft());
-            QModelIndex lastIndex = m_view->indexAtForSelection(viewportRect.bottomRight());
+        // Use indexAtForSelection to get items at corners (doesn't skip spacing areas)
+        QModelIndex firstIndex = m_view->indexAtForSelection(viewportRect.topLeft());
+        QModelIndex lastIndex = m_view->indexAtForSelection(viewportRect.bottomRight());
 
-            // Handle invalid indices by clamping to valid range
-            if (!firstIndex.isValid()) {
-                // Check if above viewport
-                if (viewportRect.top() < 0) {
-                    firstIndex = m_view->model()->index(0, 0, m_view->rootIndex());
-                } else {
-                    return list;   // Empty selection
-                }
+        // Handle invalid indices by clamping to valid range
+        if (!firstIndex.isValid()) {
+            // Check if above viewport
+            if (viewportRect.top() < 0) {
+                firstIndex = m_view->model()->index(0, 0, m_view->rootIndex());
+            } else {
+                return list;   // Empty selection
             }
+        }
 
-            if (!lastIndex.isValid()) {
-                // Check if below viewport content
-                if (viewportRect.bottom() >= 0) {
-                    lastIndex = m_view->model()->index(count - 1, 0, m_view->rootIndex());
-                } else {
-                    return list;   // Empty selection
-                }
+        if (!lastIndex.isValid()) {
+            // Check if below viewport content
+            if (viewportRect.bottom() >= 0) {
+                lastIndex = m_view->model()->index(count - 1, 0, m_view->rootIndex());
+            } else {
+                return list;   // Empty selection
             }
+        }
 
-            if (firstIndex.isValid() && lastIndex.isValid()) {
-                // Normalize rows to handle reversed selection (dragging upwards)
-                int startRow = qMin(firstIndex.row(), lastIndex.row());
-                int endRow = qMax(firstIndex.row(), lastIndex.row());
-                list << RangeIndex(startRow, endRow);
-            }
-        } else {
-            // Uniform height items (no grouping): use optimized calculation
-            QSize itemSize = m_view->itemSizeHint();
-            int spacing = m_view->spacing();
-            int itemHeight = itemSize.height() + spacing * 2;
-
-            int firstIndex = (rect.top() + spacing) / itemHeight;
-            int lastIndex = (rect.bottom() - spacing) / itemHeight;
-
-            if (firstIndex >= count)
-                return list;
-
-            list << RangeIndex(qMax(firstIndex, 0), qMin(lastIndex, count - 1));
+        if (firstIndex.isValid() && lastIndex.isValid()) {
+            // Normalize rows to handle reversed selection (dragging upwards)
+            int startRow = qMin(firstIndex.row(), lastIndex.row());
+            int endRow = qMax(firstIndex.row(), lastIndex.row());
+            list << RangeIndex(startRow, endRow);
         }
     } else if (m_view->isIconViewMode()) {
         QSize itemSize = m_view->itemSizeHint();

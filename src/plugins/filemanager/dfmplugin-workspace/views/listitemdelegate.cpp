@@ -55,6 +55,24 @@ ListItemDelegate::~ListItemDelegate()
 {
 }
 
+bool ListItemDelegate::isFirstRowWithTopPadding(const QModelIndex &index) const
+{
+    // Centralised guard for the non-grouped list/tree first-row 10px transparent
+    // top padding. parent()->parent() is the FileView (delegate is parented to
+    // the FileViewHelper which is parented to the FileView); qobject_cast keeps
+    // the cast type-safe if that hierarchy ever changes.
+    // parent == rootIndex() excludes tree-mode expanded sub-items (whose row is
+    // also 0 under a different parent) and the rootIndex itself (used by
+    // FileView::itemSizeHint).
+    FileView *view = qobject_cast<FileView *>(parent()->parent());
+    return view
+        && !view->isGroupedView()
+        && (view->isListViewMode() || view->isTreeViewMode())
+        && !isGroupHeaderItem(index)
+        && index.row() == 0
+        && index.parent() == view->rootIndex();
+}
+
 void ListItemDelegate::paint(QPainter *painter,
                              const QStyleOptionViewItem &option,
                              const QModelIndex &index) const
@@ -89,6 +107,13 @@ void ListItemDelegate::paint(QPainter *painter,
         painter->setOpacity(0.3);
     }
 
+    // First row in non-grouped list/tree carries a 10px transparent top padding
+    // (the design gap above the file list). Shift the painted content down by
+    // that padding so the top 10px stays transparent, mirroring how non-first
+    // group headers skip their top kGroupHeaderInterval spacing.
+    if (isFirstRowWithTopPadding(index))
+        opt.rect.setTop(opt.rect.top() + kDefaultHeaderBottomMargin);
+
     paintItemBackground(painter, opt, index);
 
     QRectF iconRect = paintItemIcon(painter, opt, index);
@@ -111,11 +136,17 @@ QSize ListItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QMode
         return size;
     }
 
-    Q_UNUSED(index)
     Q_D(const ListItemDelegate);
 
-    // Todo(yanghao): isColumnCompact (fontMetrics.height() * 2 + 10)
-    return QSize(d->itemSizeHint.width(), qMax(option.fontMetrics.height(), d->itemSizeHint.height()));
+    // In non-grouped list/tree mode the first row carries a 10px transparent top
+    // padding (the design-level gap above the file list). It is part of the row's
+    // content height, so it scrolls with the content and the empty top area is
+    // treated as an empty area for rubber-band selection, just like the inter-
+    // group gap in the grouped view (which adds kGroupHeaderInterval instead).
+    int height = qMax(option.fontMetrics.height(), d->itemSizeHint.height());
+    if (isFirstRowWithTopPadding(index))
+        height += kDefaultHeaderBottomMargin;
+    return QSize(d->itemSizeHint.width(), height);
 }
 
 QWidget *ListItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -127,8 +158,10 @@ QWidget *ListItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
     const quint64 sessionId = d->editingSessionId;
     d->editingIndex = index;
     d->editor = new ListItemEditor(parent);
-    auto size = sizeHint(option, index);
-    d->editor->setFixedHeight(size.height());
+    // Use the baseline item height (without the first-row top padding) for the
+    // editor so inline rename / Ctrl+M+M editing boxes are not 10px taller on row 0.
+    int editorHeight = qMax(option.fontMetrics.height(), d->itemSizeHint.height());
+    d->editor->setFixedHeight(editorHeight);
 
     connect(static_cast<ListItemEditor *>(d->editor), &ListItemEditor::inputFocusOut, this, &ListItemDelegate::editorFinished);
 
@@ -149,7 +182,15 @@ QWidget *ListItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
 
 void ListItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    const QRect &optRect = option.rect + QMargins(-kListModeLeftMargin - kListModeLeftPadding, 0, -kListModeRightMargin - kListModeRightMargin, 0);
+    QRect optRect = option.rect + QMargins(-kListModeLeftMargin - kListModeLeftPadding, 0, -kListModeRightMargin - kListModeRightPadding, 0);
+
+    // First row in non-grouped list/tree carries a 10px transparent top padding.
+    // The editor is positioned within the row's content area (below the padding),
+    // otherwise it would be vertically centered over the full itemH+10 row and sit
+    // a few px higher than the actual text/icon content (and higher than other rows).
+    if (isFirstRowWithTopPadding(index))
+        optRect.setTop(optRect.top() + kDefaultHeaderBottomMargin);
+
     QRect iconRect = getRectOfItem(RectOfItemType::kItemIconRect, index);
 
     const QList<ItemRoles> &columnRoleList = parent()->parent()->model()->getColumnRoles();

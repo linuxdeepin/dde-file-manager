@@ -63,6 +63,12 @@ private:
 
     int dataWidth(const QStyleOptionViewItem &option, const QModelIndex &index, int role) const;
 
+    // Whether `index` is the root's first row in non-grouped list/tree mode,
+    // i.e. the row that carries the 10px transparent top padding (the design
+    // gap above the file list). Centralised so paint/sizeHint/updateEditorGeometry
+    // share one copy of the guard instead of drifting.
+    bool isFirstRowWithTopPadding(const QModelIndex &index) const;
+
     // Group functionality implementation
     int getGroupHeaderHeight(const QStyleOptionViewItem &option) const override;
     QRectF getGroupHeaderBackgroundRect(const QStyleOptionViewItem &option) const override;
