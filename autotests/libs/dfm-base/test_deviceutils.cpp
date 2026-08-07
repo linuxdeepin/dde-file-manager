@@ -160,3 +160,9 @@ TEST(DeviceUtilsTest, IsPWUserspaceOpticalDiscDevWithNonSrDevReturnsFalse)
 {
     EXPECT_FALSE(DeviceUtils::isPWUserspaceOpticalDiscDev("/dev/sda"));
 }
+
+TEST(DeviceUtilsTest, IsSiblingOfRootQMapOverload)
+{
+    QVariantMap infos;
+    EXPECT_NO_FATAL_FAILURE({ (void)DeviceUtils::isSiblingOfRoot(infos); });
+}

@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_devicemanager_r20.cpp
+ * @file test_devicemanager.cpp
  * @brief Unit tests for DeviceManager safe methods (devicemanager.cpp) —
  *        instance, isMonitoring, enableBlockAutoMount, startOpticalDiscScan,
  *        retryMount (with timeout > 1 early return).
@@ -18,27 +18,27 @@
 
 using namespace dfmbase;
 
-TEST(DeviceManagerR20Test, InstanceReturnsSingleton)
+TEST(DeviceManagerTest, InstanceReturnsSingleton)
 {
     EXPECT_NO_FATAL_FAILURE({ (void)DeviceManager::instance(); });
 }
 
-TEST(DeviceManagerR20Test, IsMonitoringFalseByDefault)
+TEST(DeviceManagerTest, IsMonitoringFalseByDefault)
 {
     EXPECT_FALSE(DeviceManager::instance()->isMonitoring());
 }
 
-TEST(DeviceManagerR20Test, EnableBlockAutoMount)
+TEST(DeviceManagerTest, EnableBlockAutoMount)
 {
     EXPECT_NO_FATAL_FAILURE({ DeviceManager::instance()->enableBlockAutoMount(); });
 }
 
-TEST(DeviceManagerR20Test, StartOpticalDiscScanCallable)
+TEST(DeviceManagerTest, StartOpticalDiscScanCallable)
 {
     EXPECT_NO_FATAL_FAILURE({ DeviceManager::instance()->startOpticalDiscScan(); });
 }
 
-TEST(DeviceManagerR20Test, RetryMountExceedsTimeoutReturns)
+TEST(DeviceManagerTest, RetryMountExceedsTimeoutReturns)
 {
     // timeout > 1 -> early return, no QTimer::singleShot
     EXPECT_NO_FATAL_FAILURE({
@@ -46,88 +46,88 @@ TEST(DeviceManagerR20Test, RetryMountExceedsTimeoutReturns)
     });
 }
 
-TEST(DeviceManagerR20Test, DetachAllProtoDevsCallable)
+TEST(DeviceManagerTest, DetachAllProtoDevsCallable)
 {
     EXPECT_NO_FATAL_FAILURE({ DeviceManager::instance()->detachAllProtoDevs(); });
 }
 
-TEST(DeviceManagerR20Test, DetachProtoDevCallable)
+TEST(DeviceManagerTest, DetachProtoDevCallable)
 {
     EXPECT_NO_FATAL_FAILURE({ DeviceManager::instance()->detachProtoDev("/org/freedesktop/UDisks2/block_devices/sda1"); });
 }
 
-TEST(DeviceManagerR20Test, InitUsageCacheCallable)
+TEST(DeviceManagerTest, InitUsageCacheCallable)
 {
     EXPECT_NO_FATAL_FAILURE({ DeviceManager::instance()->initUsageCache(); });
 }
 
-TEST(DeviceManagerR20Test, RefreshUsageCallable)
+TEST(DeviceManagerTest, RefreshUsageCallable)
 {
     EXPECT_NO_FATAL_FAILURE({ DeviceManager::instance()->refreshUsage(); });
 }
 
-TEST(DeviceManagerR20Test, StartPollingDeviceUsageCallable)
+TEST(DeviceManagerTest, StartPollingDeviceUsageCallable)
 {
     EXPECT_NO_FATAL_FAILURE({ DeviceManager::instance()->startPollingDeviceUsage(); });
 }
 
-TEST(DeviceManagerR20Test, StopPollingDeviceUsageCallable)
+TEST(DeviceManagerTest, StopPollingDeviceUsageCallable)
 {
     EXPECT_NO_FATAL_FAILURE({ DeviceManager::instance()->stopPollingDeviceUsage(); });
 }
 
-TEST(DeviceManagerR20Test, D0DestructorPath)
+TEST(DeviceManagerTest, D0DestructorPath)
 {
     // singleton already exists; just verify instance is valid
     EXPECT_NE(DeviceManager::instance(), nullptr);
 }
 
-TEST(DeviceManagerR20Test, GetAllBlockDevIDCallable)
+TEST(DeviceManagerTest, GetAllBlockDevIDCallable)
 {
     EXPECT_NO_FATAL_FAILURE({ (void)DeviceManager::instance()->getAllBlockDevID(); });
 }
 
-TEST(DeviceManagerR20Test, GetAllProtocolDevIDCallable)
+TEST(DeviceManagerTest, GetAllProtocolDevIDCallable)
 {
     EXPECT_NO_FATAL_FAILURE({ (void)DeviceManager::instance()->getAllProtocolDevID(); });
 }
 
-TEST(DeviceManagerR20Test, GetBlockDevInfoCallable)
+TEST(DeviceManagerTest, GetBlockDevInfoCallable)
 {
     EXPECT_NO_FATAL_FAILURE({
         (void)DeviceManager::instance()->getBlockDevInfo("/org/freedesktop/UDisks2/block_devices/nonexistent");
     });
 }
 
-TEST(DeviceManagerR20Test, GetProtocolDevInfoCallable)
+TEST(DeviceManagerTest, GetProtocolDevInfoCallable)
 {
     EXPECT_NO_FATAL_FAILURE({
         (void)DeviceManager::instance()->getProtocolDevInfo("/nonexistent/protocol/dev");
     });
 }
 
-TEST(DeviceManagerR20Test, RescanBlockDevCallable)
+TEST(DeviceManagerTest, RescanBlockDevCallable)
 {
     EXPECT_NO_FATAL_FAILURE({
         (void)DeviceManager::instance()->rescanBlockDev("/org/freedesktop/UDisks2/block_devices/nonexistent");
     });
 }
 
-TEST(DeviceManagerR20Test, UnmountBlockDevCallable)
+TEST(DeviceManagerTest, UnmountBlockDevCallable)
 {
     EXPECT_NO_FATAL_FAILURE({
         (void)DeviceManager::instance()->unmountBlockDev("/org/freedesktop/UDisks2/block_devices/nonexistent");
     });
 }
 
-TEST(DeviceManagerR20Test, MountProtocolDevCallable)
+TEST(DeviceManagerTest, MountProtocolDevCallable)
 {
     EXPECT_NO_FATAL_FAILURE({
         (void)DeviceManager::instance()->mountProtocolDev("/nonexistent/protocol/dev");
     });
 }
 
-TEST(DeviceManagerR20Test, UnmountProtocolDevCallable)
+TEST(DeviceManagerTest, UnmountProtocolDevCallable)
 {
     EXPECT_NO_FATAL_FAILURE({
         (void)DeviceManager::instance()->unmountProtocolDev("/nonexistent/protocol/dev");

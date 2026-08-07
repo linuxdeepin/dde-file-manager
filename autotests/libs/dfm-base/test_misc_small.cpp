@@ -8,15 +8,28 @@
  *        - CustomSettingItemRegister (base/configs/customsettingitemregister.cpp)
  *        - AbstractFrame (interfaces/abstractframe.cpp) — ctor via minimal subclass
  *        - MimesAppsManager D0 destructor path (heap-allocate the singleton)
+ *        - LocalFileIconProvider, LocalFileWatcher, MimeTypeDisplayManager,
+ *          ConfigSynchronizer, SqliteConnectionPool, Shortcut, Settings
  */
 
 #include <gtest/gtest.h>
 #include <QString>
 #include <QMap>
+#include <QUrl>
+#include <QDir>
+#include <QTemporaryDir>
+#include <QFile>
 
 #include <dfm-base/settingdialog/customsettingitemregister.h>
 #include <dfm-base/interfaces/abstractframe.h>
 #include <dfm-base/mimetype/mimesappsmanager.h>
+#include <dfm-base/file/local/localfileiconprovider.h>
+#include <dfm-base/file/local/localfilewatcher.h>
+#include <dfm-base/mimetype/mimetypedisplaymanager.h>
+#include <dfm-base/base/configs/configsynchronizer.h>
+#include <dfm-base/base/db/sqliteconnectionpool.h>
+#include <dfm-base/shortcut/shortcut.h>
+#include <dfm-base/base/application/settings.h>
 
 using namespace dfmbase;
 
@@ -74,4 +87,53 @@ TEST(MimesAppsManagerTest, HeapAllocatedDtorPath)
     // heap-allocate a separate instance to hit that path.
     auto *ptr = new MimesAppsManager();
     EXPECT_NO_FATAL_FAILURE({ delete ptr; });
+}
+
+// ---- Misc small R20 coverage tests ----
+
+TEST(MiscSmallTest, LocalFileIconProviderCtor)
+{
+    LocalFileIconProvider p;
+    SUCCEED();
+}
+
+TEST(MiscSmallTest, LocalFileWatcherCtor)
+{
+    LocalFileWatcher w(QUrl::fromLocalFile("/tmp/dfm_test_watcher"));
+    SUCCEED();
+}
+
+TEST(MiscSmallTest, MimeTypeDisplayManagerInstance)
+{
+    EXPECT_NO_FATAL_FAILURE({ (void)MimeTypeDisplayManager::instance(); });
+}
+
+TEST(MiscSmallTest, ConfigSynchronizerInstance)
+{
+    EXPECT_NO_FATAL_FAILURE({ (void)ConfigSynchronizer::instance(); });
+}
+
+TEST(MiscSmallTest, SqliteConnectionPoolInstance)
+{
+    EXPECT_NO_FATAL_FAILURE({ (void)SqliteConnectionPool::instance(); });
+}
+
+TEST(MiscSmallTest, ShortcutToStrReturnsJson)
+{
+    Shortcut s;
+    QString result = s.toStr();
+    EXPECT_FALSE(result.isEmpty());
+}
+
+TEST(MiscSmallTest, SettingsHeapD0)
+{
+    QTemporaryDir tmp;
+    ASSERT_TRUE(tmp.isValid());
+    QString f = tmp.path() + "/s.json";
+    QFile out(f);
+    out.open(QIODevice::WriteOnly);
+    out.write("{}");
+    out.close();
+    auto *s = new Settings(f, f, f);
+    EXPECT_NO_FATAL_FAILURE({ delete s; });
 }

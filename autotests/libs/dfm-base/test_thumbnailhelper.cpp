@@ -13,7 +13,7 @@
 
 using namespace dfmbase;
 
-TEST(ThumbnailHelperR15Test, SetSizeLimitAndRetrieve)
+TEST(ThumbnailHelperTest, SetSizeLimitAndRetrieve)
 {
     ThumbnailHelper helper;
     QMimeType mime = QMimeDatabase().mimeTypeForName("text/plain");
@@ -23,7 +23,7 @@ TEST(ThumbnailHelperR15Test, SetSizeLimitAndRetrieve)
 }
 
 
-TEST(ThumbnailHelperR15Test, MakePathCreatesDirectory)
+TEST(ThumbnailHelperTest, MakePathCreatesDirectory)
 {
     ThumbnailHelper helper;
     QString path = "/tmp/dfm_test_thumbnail_helper_dir/sub";
@@ -31,7 +31,7 @@ TEST(ThumbnailHelperR15Test, MakePathCreatesDirectory)
     SUCCEED();
 }
 
-TEST(ThumbnailHelperR15Test, SaveThumbnailNullImage)
+TEST(ThumbnailHelperTest, SaveThumbnailNullImage)
 {
     ThumbnailHelper helper;
     QImage nullImg;
@@ -39,7 +39,7 @@ TEST(ThumbnailHelperR15Test, SaveThumbnailNullImage)
     EXPECT_TRUE(result.isEmpty());
 }
 
-TEST(ThumbnailHelperR15Test, StaticHelpersCallable)
+TEST(ThumbnailHelperTest, StaticHelpersCallable)
 {
     EXPECT_NO_FATAL_FAILURE({ (void)ThumbnailHelper::defaultThumbnailDirs(); });
     EXPECT_NO_FATAL_FAILURE({ (void)ThumbnailHelper::sizeToFilePath(Global::ThumbnailSize::kNormal); });

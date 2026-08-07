@@ -14,45 +14,45 @@
 
 using namespace dfmbase;
 
-TEST(GUIWidgetsR20Test, SplitterConstruct)
+TEST(GUIWidgetsTest, SplitterConstruct)
 {
     Splitter s(Qt::Horizontal);
     SUCCEED();
 }
 
-TEST(GUIWidgetsR20Test, SplitterHandleConstruct)
+TEST(GUIWidgetsTest, SplitterHandleConstruct)
 {
     Splitter s(Qt::Horizontal);
     SplitterHandle h(Qt::Horizontal, &s);
     SUCCEED();
 }
 
-TEST(GUIWidgetsR20Test, FMWindowsManagerInstance)
+TEST(GUIWidgetsTest, FMWindowsManagerInstance)
 {
     EXPECT_NO_FATAL_FAILURE({ (void)FMWindowsIns; });
 }
 
-TEST(GUIWidgetsR20Test, FMWindowsManagerWindowIdList)
+TEST(GUIWidgetsTest, FMWindowsManagerWindowIdList)
 {
     EXPECT_NO_FATAL_FAILURE({ (void)FMWindowsIns.windowIdList(); });
 }
 
-TEST(GUIWidgetsR20Test, FMWindowsManagerPreviousActivedWindowId)
+TEST(GUIWidgetsTest, FMWindowsManagerPreviousActivedWindowId)
 {
     EXPECT_NO_FATAL_FAILURE({ (void)FMWindowsIns.previousActivedWindowId(); });
 }
 
-TEST(GUIWidgetsR20Test, FMWindowsManagerLastActivedWindowId)
+TEST(GUIWidgetsTest, FMWindowsManagerLastActivedWindowId)
 {
     EXPECT_NO_FATAL_FAILURE({ (void)FMWindowsIns.lastActivedWindowId(); });
 }
 
-TEST(GUIWidgetsR20Test, FMWindowsManagerResetPreviousActivedWindowId)
+TEST(GUIWidgetsTest, FMWindowsManagerResetPreviousActivedWindowId)
 {
     EXPECT_NO_FATAL_FAILURE({ FMWindowsIns.resetPreviousActivedWindowId(); });
 }
 
-TEST(GUIWidgetsR20Test, FMWindowsManagerContainsCurrentUrl)
+TEST(GUIWidgetsTest, FMWindowsManagerContainsCurrentUrl)
 {
     QUrl url("file:///tmp");
     EXPECT_NO_FATAL_FAILURE({ (void)FMWindowsIns.containsCurrentUrl(url); });
@@ -69,61 +69,61 @@ public:
 };
 }   // namespace
 
-TEST(GUIWidgetsR20Test, AbstractBaseViewDefaultViewState)
+TEST(GUIWidgetsTest, AbstractBaseViewDefaultViewState)
 {
     FakeBaseView v;
     EXPECT_NO_FATAL_FAILURE({ (void)v.viewState(); });
 }
 
-TEST(GUIWidgetsR20Test, AbstractBaseViewDefaultToolBarActions)
+TEST(GUIWidgetsTest, AbstractBaseViewDefaultToolBarActions)
 {
     FakeBaseView v;
     EXPECT_TRUE(v.toolBarActionList().isEmpty());
 }
 
-TEST(GUIWidgetsR20Test, AbstractBaseViewDefaultSelectedUrlList)
+TEST(GUIWidgetsTest, AbstractBaseViewDefaultSelectedUrlList)
 {
     FakeBaseView v;
     EXPECT_TRUE(v.selectedUrlList().isEmpty());
 }
 
-TEST(GUIWidgetsR20Test, AbstractBaseViewDefaultRefresh)
+TEST(GUIWidgetsTest, AbstractBaseViewDefaultRefresh)
 {
     FakeBaseView v;
     EXPECT_NO_FATAL_FAILURE({ v.refresh(); });
 }
 
-TEST(GUIWidgetsR20Test, AbstractBaseViewDefaultContentWidget)
+TEST(GUIWidgetsTest, AbstractBaseViewDefaultContentWidget)
 {
     FakeBaseView v;
     EXPECT_EQ(v.contentWidget(), nullptr);
 }
 
-TEST(GUIWidgetsR20Test, BasicStatusBarConstruct)
+TEST(GUIWidgetsTest, BasicStatusBarConstruct)
 {
     BasicStatusBar bar;
     SUCCEED();
 }
 
-TEST(GUIWidgetsR20Test, BasicStatusBarItemSelected)
+TEST(GUIWidgetsTest, BasicStatusBarItemSelected)
 {
     BasicStatusBar bar;
     EXPECT_NO_FATAL_FAILURE({ bar.itemSelected(0, 0, 0, {}); });
 }
 
-TEST(GUIWidgetsR20Test, BasicStatusBarItemCounted)
+TEST(GUIWidgetsTest, BasicStatusBarItemCounted)
 {
     BasicStatusBar bar;
     EXPECT_NO_FATAL_FAILURE({ bar.itemCounted(10); });
 }
 
-TEST(GUIWidgetsR20Test, BasicStatusBarClearLayout)
+TEST(GUIWidgetsTest, BasicStatusBarClearLayout)
 {
     BasicStatusBar bar;
     EXPECT_NO_FATAL_FAILURE({ bar.clearLayoutAndAnchors(); });
 }
 
-TEST(GUIWidgetsR20Test, BasicStatusBarUpdateStatusMessage)
+TEST(GUIWidgetsTest, BasicStatusBarUpdateStatusMessage)
 {
     BasicStatusBar bar;
     EXPECT_NO_FATAL_FAILURE({ bar.updateStatusMessage(); });

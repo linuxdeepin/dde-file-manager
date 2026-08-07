@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_infodatafuture_r18.cpp
+ * @file test_infodatafuture.cpp
  * @brief Unit tests for InfoDataFuture (file/local/private/infodatafuture.cpp)
  *        — ctor with null DFileFuture (sets up connect), mediaInfo default,
  *        isFinished default, D0/D2 destructor, infoMedia slot.
@@ -18,33 +18,33 @@
 
 using namespace dfmbase;
 
-TEST(InfoDataFutureR18Test, CtorWithNullFuture)
+TEST(InfoDataFutureTest, CtorWithNullFuture)
 {
     InfoDataFuture f(nullptr, nullptr);
     // ctor sets up connect on null future — no crash
     SUCCEED();
 }
 
-TEST(InfoDataFutureR18Test, MediaInfoDefaultEmpty)
+TEST(InfoDataFutureTest, MediaInfoDefaultEmpty)
 {
     InfoDataFuture f(nullptr, nullptr);
     auto info = f.mediaInfo();
     EXPECT_TRUE(info.isEmpty());
 }
 
-TEST(InfoDataFutureR18Test, IsFinishedDefaultFalse)
+TEST(InfoDataFutureTest, IsFinishedDefaultFalse)
 {
     InfoDataFuture f(nullptr, nullptr);
     EXPECT_FALSE(f.isFinished());
 }
 
-TEST(InfoDataFutureR18Test, D0DestructorPath)
+TEST(InfoDataFutureTest, D0DestructorPath)
 {
     auto *ptr = new InfoDataFuture(nullptr, nullptr);
     EXPECT_NO_FATAL_FAILURE({ delete ptr; });
 }
 
-TEST(InfoDataFutureR18Test, InfoMediaSlotSetsFinished)
+TEST(InfoDataFutureTest, InfoMediaSlotSetsFinished)
 {
     InfoDataFuture f(nullptr, nullptr);
     QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> map;

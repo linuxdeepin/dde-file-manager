@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_iconutils_r15.cpp
+ * @file test_iconutils.cpp
  * @brief Unit tests for IconUtils free functions (utils/iconutils.cpp) — the
  *        pure-logic / painting subset that doesn't require a GUI display.
  *        Uses offscreen Qt platform.
@@ -20,47 +20,47 @@
 
 using namespace dfmbase::IconUtils;
 
-TEST(IconUtilsR15Test, RenderIconBackgroundReturnsPixmap)
+TEST(IconUtilsTest, RenderIconBackgroundReturnsPixmap)
 {
     QPixmap pm = renderIconBackground(QSize(32, 32));
     EXPECT_FALSE(pm.isNull());
     EXPECT_EQ(pm.size(), QSize(32, 32));
 }
 
-TEST(IconUtilsR15Test, RenderIconBackgroundSizeF)
+TEST(IconUtilsTest, RenderIconBackgroundSizeF)
 {
     QPixmap pm = renderIconBackground(QSizeF(48, 48));
     EXPECT_FALSE(pm.isNull());
 }
 
-TEST(IconUtilsR15Test, RenderIconBackgroundEmptySize)
+TEST(IconUtilsTest, RenderIconBackgroundEmptySize)
 {
     QPixmap pm = renderIconBackground(QSize(0, 0));
     EXPECT_TRUE(pm.isNull());
 }
 
-TEST(IconUtilsR15Test, ShouldSkipThumbnailFrameAppImage)
+TEST(IconUtilsTest, ShouldSkipThumbnailFrameAppImage)
 {
     EXPECT_TRUE(shouldSkipThumbnailFrame("application/vnd.appimage"));
 }
 
-TEST(IconUtilsR15Test, ShouldSkipThumbnailFrameNonExcluded)
+TEST(IconUtilsTest, ShouldSkipThumbnailFrameNonExcluded)
 {
     EXPECT_FALSE(shouldSkipThumbnailFrame("text/plain"));
 }
 
-TEST(IconUtilsR15Test, GetIconStyleReturnsValid)
+TEST(IconUtilsTest, GetIconStyleReturnsValid)
 {
     EXPECT_NO_FATAL_FAILURE({ (void)getIconStyle(48); });
 }
 
-TEST(IconUtilsR15Test, AddShadowToPixmapNullReturnsNull)
+TEST(IconUtilsTest, AddShadowToPixmapNullReturnsNull)
 {
     QPixmap result = addShadowToPixmap(QPixmap(), 5, 10.0, 0.5);
     EXPECT_NO_FATAL_FAILURE({ (void)result.isNull(); });
 }
 
-TEST(IconUtilsR15Test, AddShadowToPixmapValid)
+TEST(IconUtilsTest, AddShadowToPixmapValid)
 {
     QPixmap src(32, 32);
     src.fill(Qt::white);
@@ -68,7 +68,7 @@ TEST(IconUtilsR15Test, AddShadowToPixmapValid)
     EXPECT_FALSE(result.isNull());
 }
 
-TEST(IconUtilsR15Test, HiDpiPixmapReturnsPixmap)
+TEST(IconUtilsTest, HiDpiPixmapReturnsPixmap)
 {
     QIcon icon = QIcon::fromTheme("document-new");
     QPixmap result = hiDpiPixmap(icon, QSize(16, 16), nullptr);
