@@ -57,6 +57,14 @@ ViewGeometryHelper::RangeIndexList ViewGeometryHelper::visibleIndexes(const QRec
         QModelIndex firstIdx = m_view->indexAtForSelection(viewportRect.topLeft());
         QModelIndex lastIdx = m_view->indexAtForSelection(viewportRect.bottomRight());
 
+        // Non-grouped list/tree: if both corners fall in the first-row top
+        // padding, the rect is entirely within the gap — no items selected.
+        if (!m_view->isGroupedView()
+                && m_view->isClickInTopPadding(viewportRect.topLeft(), firstIdx)
+                && m_view->isClickInTopPadding(viewportRect.bottomRight(), lastIdx)) {
+            return list;
+        }
+
         if (!firstIdx.isValid()) {
             if (viewportRect.top() < 0) {
                 firstIdx = m_view->model()->index(0, 0, m_view->rootIndex());
@@ -112,6 +120,14 @@ ViewGeometryHelper::RangeIndexList ViewGeometryHelper::rectContainsIndexes(const
         // Use indexAtForSelection to get items at corners (doesn't skip spacing areas)
         QModelIndex firstIndex = m_view->indexAtForSelection(viewportRect.topLeft());
         QModelIndex lastIndex = m_view->indexAtForSelection(viewportRect.bottomRight());
+
+        // Non-grouped list/tree: if both corners fall in the first-row top
+        // padding, the rect is entirely within the gap — no items selected.
+        if (!m_view->isGroupedView()
+                && m_view->isClickInTopPadding(viewportRect.topLeft(), firstIndex)
+                && m_view->isClickInTopPadding(viewportRect.bottomRight(), lastIndex)) {
+            return list;
+        }
 
         // Handle invalid indices by clamping to valid range
         if (!firstIndex.isValid()) {
