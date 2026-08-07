@@ -10,6 +10,8 @@
 #include <QFrame>
 #include <QMouseEvent>
 
+class IconLabel;
+
 class QLabel;
 class QProgressBar;
 class DeviceItem : public QFrame
@@ -42,6 +44,7 @@ private:
     QLabel *sizeLabel { nullptr };
     QLabel *nameLabel { nullptr };
     QProgressBar *sizeProgress { nullptr };
+    IconLabel *deviceIconLabel { nullptr };
 };
 
 #endif   // DEVICEITEM_H
