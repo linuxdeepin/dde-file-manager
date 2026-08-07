@@ -7,7 +7,8 @@
 
 #include <QLabel>
 #include <QProgressBar>
-#include <QPushButton>
+#include <QIcon>
+#include <QPainter>
 #include <QVBoxLayout>
 #include <QStandardPaths>
 #include <QLoggingCategory>
@@ -21,6 +22,28 @@ Q_DECLARE_LOGGING_CATEGORY(logAppDock)
 
 using namespace Dtk::Gui;
 using namespace Dtk::Widget;
+
+// Renders the theme icon during paint events to avoid blurry cached rasters.
+class IconLabel : public QWidget {
+public:
+    explicit IconLabel(const QString &iconName, int size, QWidget *parent = nullptr)
+        : QWidget(parent), m_icon(QIcon::fromTheme(iconName)), m_size(size)
+    {
+        setFixedSize(m_size, m_size);
+        setAttribute(Qt::WA_TransparentForMouseEvents);
+    }
+
+protected:
+    void paintEvent(QPaintEvent *) override
+    {
+        QPainter painter(this);
+        m_icon.paint(&painter, 0, 0, m_size, m_size);
+    }
+
+private:
+    QIcon m_icon;
+    int m_size;
+};
 
 DeviceItem::DeviceItem(const DockItemData &item, QWidget *parent)
     : QFrame(parent), data(item)
@@ -99,17 +122,12 @@ void DeviceItem::initUI()
     ejectBtn->setIconSize({ 20, 20 });
     ejectBtn->setIcon(QIcon::fromTheme("dfm_dock_unmount"));
 
-    QPushButton *deviceIcon = new QPushButton(this);
-    deviceIcon->setFlat(true);
-    deviceIcon->setIcon(QIcon::fromTheme(data.iconName));
-    deviceIcon->setIconSize({ 48, 48 });
-    deviceIcon->setAttribute(Qt::WA_TransparentForMouseEvents);
-    deviceIcon->setStyleSheet("padding: 0;");
+    deviceIconLabel = new IconLabel(data.iconName, 48, this);
 
     QVBoxLayout *devIconLay = new QVBoxLayout();
     devIconLay->setContentsMargins(10, 8, 0, 8);
     devIconLay->setSpacing(0);
-    devIconLay->addWidget(deviceIcon);
+    devIconLay->addWidget(deviceIconLabel);
 
     QVBoxLayout *devInfoLay = new QVBoxLayout();
     devInfoLay->setSpacing(2);
