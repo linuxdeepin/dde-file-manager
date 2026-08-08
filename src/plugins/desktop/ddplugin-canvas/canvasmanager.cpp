@@ -7,6 +7,7 @@
 #include "grid/canvasgrid.h"
 #include "displayconfig.h"
 #include "view/operator/fileoperatorproxy.h"
+#include "view/operator/sortanimationoper.h"
 #include "desktoputils/ddplugin_eventinterface_helper.h"
 #include "menu/canvasmenuscene.h"
 #include "menu/canvasbasesortmenuscene.h"
@@ -37,6 +38,14 @@ using namespace GlobalDConfDefines::AnimationConfig;
     dpfSignalDispatcher->unsubscribe("ddplugin_core", QT_STRINGIFY2(topic), this, func);
 
 CanvasManager *CanvasManagerPrivate::global = nullptr;
+
+static QStringList urlListToStringList(const QList<QUrl> &urls)
+{
+    QStringList ret;
+    for (const QUrl &df : urls)
+        ret.append(df.toString());
+    return ret;
+}
 
 CanvasManager::CanvasManager(QObject *parent)
     : QObject(parent), d(new CanvasManagerPrivate(this))
@@ -641,31 +650,27 @@ void CanvasManagerPrivate::onFileModelReset()
 
 void CanvasManagerPrivate::onAboutToFileSort()
 {
-    // TODO(liuyangming): only one screen is valid now.
-    if (q->views().count() != 1)
+    if (q->views().isEmpty())
         return;
 
-    if (auto view = q->views().first())
-        view->aboutToResortFiles();
+    QStringList existItems = urlListToStringList(canvasModel->files());
+
+    SortAnimationOper::instance()->setMoveValue(existItems);
 }
 
 void CanvasManagerPrivate::onFileSorted()
 {
     bool animEnable = DConfigManager::instance()->value(kAnimationDConfName, kAnimationResortEnable, true).toBool();
-    // TODO(liuyangming): only one screen can play sort animation now.
-    if (animEnable && q->views().count() == 1) {
-        if (auto view = q->views().first()) {
-            view->filesResorted();
+    if (animEnable && !q->views().isEmpty()) {
+        QStringList existItems = urlListToStringList(canvasModel->files());
+
+        if (SortAnimationOper::instance()->tryMove(existItems))
             return;
-        }
     }
 
     auto oldMode = GridIns->mode();
     GridIns->setMode(CanvasGrid::Mode::Align);
-    QStringList existItems;
-    const QList<QUrl> &actualList = canvasModel->files();
-    for (const QUrl &df : actualList)
-        existItems.append(df.toString());
+    QStringList existItems = urlListToStringList(canvasModel->files());
 
     fmInfo() << "layout items to align" << existItems.size();
     GridIns->setItems(existItems);

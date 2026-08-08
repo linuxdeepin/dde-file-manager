@@ -70,9 +70,6 @@ public:
     void updateGrid();
     void showGrid(bool v) const;
 
-    void aboutToResortFiles();
-    void filesResorted();
-
 public Q_SLOTS:
     void reset() override;
     bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *event) override;
