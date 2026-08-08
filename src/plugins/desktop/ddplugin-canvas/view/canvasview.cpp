@@ -584,7 +584,12 @@ void CanvasView::filesResorted()
     if (!d->sortAnimOper)
         return;
 
-    d->sortAnimOper->tryMove();
+    QStringList existItems;
+    const QList<QUrl> &actualList = model()->files();
+    for (const QUrl &df : actualList)
+        existItems.append(df.toString());
+
+    d->sortAnimOper->tryMove(existItems);
 }
 
 void CanvasView::refresh(bool silent)
@@ -831,7 +836,7 @@ CanvasViewPrivate::CanvasViewPrivate(CanvasView *qq)
 
     dragDropOper = new DragDropOper(q);
     dodgeOper = new DodgeOper(q);
-    sortAnimOper = new SortAnimationOper(q);
+    sortAnimOper = SortAnimationOper::instance();
     shortcutOper = new ShortcutOper(q);
     menuProxy = new CanvasViewMenuProxy(q);
     viewSetting = new ViewSettingUtil(q);

@@ -7,6 +7,7 @@
 #include "grid/canvasgrid.h"
 #include "displayconfig.h"
 #include "view/operator/fileoperatorproxy.h"
+#include "view/operator/sortanimationoper.h"
 #include "desktoputils/ddplugin_eventinterface_helper.h"
 #include "menu/canvasmenuscene.h"
 #include "menu/canvasbasesortmenuscene.h"
@@ -641,23 +642,28 @@ void CanvasManagerPrivate::onFileModelReset()
 
 void CanvasManagerPrivate::onAboutToFileSort()
 {
-    // TODO(liuyangming): only one screen is valid now.
-    if (q->views().count() != 1)
+    if (q->views().isEmpty())
         return;
 
-    if (auto view = q->views().first())
-        view->aboutToResortFiles();
+    QStringList existItems;
+    const QList<QUrl> &actualList = canvasModel->files();
+    for (const QUrl &df : actualList)
+        existItems.append(df.toString());
+
+    SortAnimationOper::instance()->setMoveValue(existItems);
 }
 
 void CanvasManagerPrivate::onFileSorted()
 {
     bool animEnable = DConfigManager::instance()->value(kAnimationDConfName, kAnimationResortEnable, true).toBool();
-    // TODO(liuyangming): only one screen can play sort animation now.
-    if (animEnable && q->views().count() == 1) {
-        if (auto view = q->views().first()) {
-            view->filesResorted();
+    if (animEnable && !q->views().isEmpty()) {
+        QStringList existItems;
+        const QList<QUrl> &actualList = canvasModel->files();
+        for (const QUrl &df : actualList)
+            existItems.append(df.toString());
+
+        if (SortAnimationOper::instance()->tryMove(existItems))
             return;
-        }
     }
 
     auto oldMode = GridIns->mode();
