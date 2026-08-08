@@ -12,6 +12,33 @@
 
 using namespace ddplugin_canvas;
 
+static QRect mappedAnimationRect(CanvasViewPrivate *viewData, const GridPos &gridPos)
+{
+    if (!viewData || !viewData->q)
+        return QRect();
+
+    auto *view = viewData->q;
+    auto *d = viewData;
+    if (gridPos.first == view->screenNum())
+        return d->visualRect(gridPos.second).marginsRemoved(d->gridMargins);
+
+    const QSize sourceSize = GridIns->surfaceSize(gridPos.first);
+    const QSize targetSize = GridIns->surfaceSize(view->screenNum());
+    if (!sourceSize.isValid() || !targetSize.isValid())
+        return QRect();
+
+    const int srcWidth = qMax(1, sourceSize.width() - 1);
+    const int srcHeight = qMax(1, sourceSize.height() - 1);
+    const int dstWidth = qMax(1, targetSize.width() - 1);
+    const int dstHeight = qMax(1, targetSize.height() - 1);
+
+    const qreal xRatio = srcWidth > 0 ? static_cast<qreal>(gridPos.second.x()) / srcWidth : 0.0;
+    const qreal yRatio = srcHeight > 0 ? static_cast<qreal>(gridPos.second.y()) / srcHeight : 0.0;
+    const QPoint mappedPos(qBound(0, qRound(xRatio * dstWidth), dstWidth),
+                           qBound(0, qRound(yRatio * dstHeight), dstHeight));
+    return d->visualRect(mappedPos).marginsRemoved(d->gridMargins);
+}
+
 ViewPainter::ViewPainter(CanvasViewPrivate *dd)
     : QPainter(dd->q->viewport()), d(dd)
 {
@@ -238,29 +265,34 @@ void ViewPainter::drawMove(QStyleOptionViewItem option)
         qreal scale = view()->devicePixelRatioF();
         for (auto animationItem : moveItems) {
             auto index = model()->index(animationItem);
-            auto margins = view()->d->gridMargins;
 
             if (!index.isValid())
                 continue;
 
-            GridPos gridPos;
-            if (!d->sortAnimOper->getMoveItemGridPos(animationItem, gridPos))
+            GridPos fromPos;
+            GridPos toPos;
+            if (!d->sortAnimOper->getOriginItemGridPos(animationItem, fromPos)
+                || !d->sortAnimOper->getMoveItemGridPos(animationItem, toPos))
                 continue;
 
-            if (gridPos.first != view()->screenNum())
+            if (fromPos.first != view()->screenNum() && toPos.first != view()->screenNum())
                 continue;
 
-            QRect end = view()->d->visualRect(gridPos.second).marginsRemoved(margins);
+            QRect start = mappedAnimationRect(d, fromPos);
+            QRect end = mappedAnimationRect(d, toPos);
+            if (!start.isValid() || !end.isValid())
+                continue;
+
             auto tempCurrent = d->sortAnimOper->getMoveDuration();
-            option.rect = view()->visualRect(index).marginsRemoved(margins);
+            option.rect = start;
 
-            auto nx = option.rect.x() + (end.x() - option.rect.x()) * tempCurrent;
-            auto ny = option.rect.y() + (end.y() - option.rect.y()) * tempCurrent;
+            auto nx = start.x() + (end.x() - start.x()) * tempCurrent;
+            auto ny = start.y() + (end.y() - start.y()) * tempCurrent;
             option.rect.setX(static_cast<int>(nx));
             option.rect.setY(static_cast<int>(ny));
             option.rect.setSize(end.size());
 
-            QPixmap itemPix = d->sortAnimOper->findPixmap(animationItem);
+            QPixmap itemPix = d->sortAnimOper->findPixmap(animationItem, view()->screenNum());
             if (itemPix.isNull()) {
                 auto pixWidth = end.size().width() * scale;
                 auto pixHeight = end.size().height() * scale;
@@ -273,7 +305,7 @@ void ViewPainter::drawMove(QStyleOptionViewItem option)
 
                 drawFileToPixmap(&itemPix, opt, index);
 
-                d->sortAnimOper->setItemPixmap(animationItem, itemPix);
+                d->sortAnimOper->setItemPixmap(animationItem, itemPix, view()->screenNum());
             }
 
             drawPixmap(QPointF(nx, ny), itemPix);

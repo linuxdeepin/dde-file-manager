@@ -566,27 +566,6 @@ void CanvasView::showGrid(bool v) const
     d->showGrid = v;
 }
 
-void CanvasView::aboutToResortFiles()
-{
-    if (!d->sortAnimOper)
-        return;
-
-    QStringList existItems;
-    const QList<QUrl> &actualList = model()->files();
-    for (const QUrl &df : actualList)
-        existItems.append(df.toString());
-
-    d->sortAnimOper->setMoveValue(existItems);
-}
-
-void CanvasView::filesResorted()
-{
-    if (!d->sortAnimOper)
-        return;
-
-    d->sortAnimOper->tryMove();
-}
-
 void CanvasView::refresh(bool silent)
 {
     fmDebug() << "Refreshing canvas view - silent:" << silent;
@@ -831,7 +810,7 @@ CanvasViewPrivate::CanvasViewPrivate(CanvasView *qq)
 
     dragDropOper = new DragDropOper(q);
     dodgeOper = new DodgeOper(q);
-    sortAnimOper = new SortAnimationOper(q);
+    sortAnimOper = SortAnimationOper::instance();
     shortcutOper = new ShortcutOper(q);
     menuProxy = new CanvasViewMenuProxy(q);
     viewSetting = new ViewSettingUtil(q);

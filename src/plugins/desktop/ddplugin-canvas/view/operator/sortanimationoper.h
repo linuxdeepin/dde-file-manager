@@ -6,7 +6,6 @@
 #define SORTANIMATIONOPER_H
 
 #include "grid/gridcore.h"
-#include "view/canvasview.h"
 
 #include <QAtomicInteger>
 #include <QObject>
@@ -34,12 +33,13 @@ class SortAnimationOper : public QObject
 
     Q_PROPERTY(double moveDuration READ getMoveDuration WRITE setMoveDuration NOTIFY moveDurationChanged)
 public:
-    explicit SortAnimationOper(CanvasView *parent);
+    static SortAnimationOper *instance();
+    explicit SortAnimationOper(QObject *parent = nullptr);
 
     void setMoveValue(const QStringList &moveItems);
-    void setItemPixmap(const QString &item, const QPixmap &pix);
-    QPixmap findPixmap(const QString &item) const;
-    void tryMove();
+    void setItemPixmap(const QString &item, const QPixmap &pix, int screenNum);
+    QPixmap findPixmap(const QString &item, int screenNum) const;
+    bool tryMove(const QStringList &existItems);
 
     inline bool getPrepareMove() const { return prepareMove; }
     inline bool getMoveAnimationing() const { return moveAnimationing; }
@@ -47,6 +47,7 @@ public:
     inline double getMoveDuration() const { return moveDuration; }
 
     bool getMoveItemGridPos(const QString &item, GridPos &gridPos);
+    bool getOriginItemGridPos(const QString &item, GridPos &gridPos) const;
     void setMoveDuration(double duration);
     void startDelayMove();
     void stopDelayMove();
@@ -60,10 +61,9 @@ private slots:
     void moveAnimationFinished();
 
 private:
-    void calcMoveTargetGrid();
+    bool calcMoveTargetGrid(const QStringList &existItems);
 
 private:
-    CanvasView *view = nullptr;
     QSharedPointer<SortItemsOper> oper;
 
     QTimer moveDelayTimer;
@@ -72,7 +72,8 @@ private:
     QAtomicInteger<bool> moveAnimationing = false;
     double moveDuration = 0.0;
     QStringList moveItems;
-    QMap<QString, QPixmap> itemsPixmap;
+    QHash<QString, GridPos> originPos;
+    QMap<QPair<QString, int>, QPixmap> itemsPixmap;
 };
 
 }   // namespace ddplugin_canvas

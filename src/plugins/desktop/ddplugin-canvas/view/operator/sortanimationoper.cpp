@@ -5,7 +5,6 @@
 #include "sortanimationoper.h"
 #include "canvasmanager.h"
 #include "grid/canvasgrid.h"
-#include "model/canvasproxymodel.h"
 
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
@@ -14,8 +13,15 @@ using namespace ddplugin_canvas;
 using namespace GlobalDConfDefines::ConfigPath;
 using namespace GlobalDConfDefines::AnimationConfig;
 
-SortAnimationOper::SortAnimationOper(CanvasView *parent)
-    : QObject(parent), view(parent)
+Q_GLOBAL_STATIC(SortAnimationOper, sortAnimationOperGlobal)
+
+SortAnimationOper *SortAnimationOper::instance()
+{
+    return sortAnimationOperGlobal;
+}
+
+SortAnimationOper::SortAnimationOper(QObject *parent)
+    : QObject(parent)
 {
     moveDelayTimer.setInterval(100);
     moveDelayTimer.setSingleShot(true);
@@ -25,42 +31,60 @@ SortAnimationOper::SortAnimationOper(CanvasView *parent)
 
 void SortAnimationOper::setMoveValue(const QStringList &moveItems)
 {
+    if (moveAnimationing)
+        return;
+
     if (moveItems.isEmpty()) {
         fmDebug() << "Empty move items list - ignoring";
         return;
     }
 
     this->moveItems = moveItems;
+    originPos.clear();
+    itemsPixmap.clear();
+    prepareMove = false;
+
+    for (const QString &item : moveItems) {
+        GridPos pos;
+        if (GridIns->point(item, pos))
+            originPos.insert(item, pos);
+    }
 }
 
-void SortAnimationOper::setItemPixmap(const QString &item, const QPixmap &pix)
+void SortAnimationOper::setItemPixmap(const QString &item, const QPixmap &pix, int screenNum)
 {
     if (item.isEmpty() || pix.isNull())
         return;
 
-    itemsPixmap[item] = pix;
+    itemsPixmap[qMakePair(item, screenNum)] = pix;
 }
 
-QPixmap SortAnimationOper::findPixmap(const QString &item) const
+QPixmap SortAnimationOper::findPixmap(const QString &item, int screenNum) const
 {
-    return itemsPixmap.contains(item) ? itemsPixmap.value(item) : QPixmap();
+    auto key = qMakePair(item, screenNum);
+    return itemsPixmap.contains(key) ? itemsPixmap.value(key) : QPixmap();
 }
 
-void SortAnimationOper::tryMove()
+bool SortAnimationOper::tryMove(const QStringList &existItems)
 {
     if (moveAnimationing) {
         fmDebug() << "Move animation already in progress - ignoring";
-        return;
+        return false;
     }
 
-    QPair<int, QPoint> originPos;
-    if (moveItems.isEmpty() || !GridIns->point(moveItems.first(), originPos)) {
+    if (moveItems.isEmpty() || originPos.isEmpty()) {
         fmDebug() << "No move items or invalid origin position";
-        return;
+        return false;
     }
 
-    if (originPos.first == view->screenNum())
-        startDelayMove();
+    if (!calcMoveTargetGrid(existItems)) {
+        fmDebug() << "No moved items after sorting";
+        return false;
+    }
+
+    prepareMove = true;
+    startDelayMove();
+    return true;
 }
 
 bool SortAnimationOper::getMoveItemGridPos(const QString &item, GridPos &gridPos)
@@ -69,6 +93,15 @@ bool SortAnimationOper::getMoveItemGridPos(const QString &item, GridPos &gridPos
         return false;
 
     return oper->position(item, gridPos);
+}
+
+bool SortAnimationOper::getOriginItemGridPos(const QString &item, GridPos &gridPos) const
+{
+    if (!originPos.contains(item))
+        return false;
+
+    gridPos = originPos.value(item);
+    return true;
 }
 
 void SortAnimationOper::setMoveDuration(double duration)
@@ -92,9 +125,7 @@ void SortAnimationOper::stopDelayMove()
 void SortAnimationOper::startMoveAnimation()
 {
     moveAnimationing = true;
-
-    calcMoveTargetGrid();
-    itemsPixmap.clear();
+    prepareMove = false;
 
     if (animation.get())
         animation->disconnect();
@@ -147,17 +178,29 @@ void SortAnimationOper::moveAnimationFinished()
 
     GridIns->core().applay(oper.get());
     GridIns->requestSync();
+    itemsPixmap.clear();
+    originPos.clear();
+    moveItems.clear();
+    oper.reset();
 }
 
-void SortAnimationOper::calcMoveTargetGrid()
+bool SortAnimationOper::calcMoveTargetGrid(const QStringList &existItems)
 {
-    QStringList existItems;
-    const QList<QUrl> &actualList = view->model()->files();
-    for (const QUrl &df : actualList)
-        existItems.append(df.toString());
-
     oper.reset(new SortItemsOper(&GridIns->core()));
-    oper->tryMove(moveItems, existItems);
+    QStringList targetItems = existItems;
+    oper->tryMove(moveItems, targetItems);
+
+    for (const QString &item : moveItems) {
+        GridPos from;
+        GridPos to;
+        if (!getOriginItemGridPos(item, from) || !oper->position(item, to))
+            continue;
+        if (from != to)
+            return true;
+    }
+
+    oper.reset();
+    return false;
 }
 
 SortItemsOper::SortItemsOper(GridCore *core)
