@@ -2298,32 +2298,32 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="104"/>
         <source>The device will be unmounted during repair. It will be automatically remounted after repair is complete. Please do not remove the device during the repair process.</source>
-        <translation type="unfinished"/>
+        <translation>Laite irrotetaan korjauksen ajaksi. Se asennetaan automaattisesti takaisin paikalleen korjauksen jälkeen. Älä irrota laitetta korjausprosessin aikana.</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="118"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Peruuta</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="119"/>
         <source>Start Repair</source>
-        <translation type="unfinished"/>
+        <translation>Aloita korjaaminen</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="128"/>
         <source>Repairing Storage Device</source>
-        <translation type="unfinished"/>
+        <translation>Korjataan tallennuslaitetta</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="133"/>
         <source>Repairing device: %1 (%2 %3)</source>
-        <translation type="unfinished"/>
+        <translation>Laitteen korjaus: %1 (%2 %3)</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="160"/>
         <source>Repair Complete</source>
-        <translation type="unfinished"/>
+        <translation>Korjaaminen valmis</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="165"/>
