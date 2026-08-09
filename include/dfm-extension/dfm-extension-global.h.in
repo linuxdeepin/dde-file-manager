@@ -22,9 +22,9 @@
     Class(const Class &) = delete; \
     Class &operator=(const Class &) = delete;
 
-#define DFMEXT_VERSION_MAJOR 6
-#define DFMEXT_VERSION_MINOR 0
-#define DFMEXT_VERSION_PATCH 0
+#define DFMEXT_VERSION_MAJOR @DFMEXT_VERSION_MAJOR@
+#define DFMEXT_VERSION_MINOR @DFMEXT_VERSION_MINOR@
+#define DFMEXT_VERSION_PATCH @DFMEXT_VERSION_PATCH@
 
 /*
    DFMEXT_VERSION is (major << 16) + (minor << 8) + patch.
