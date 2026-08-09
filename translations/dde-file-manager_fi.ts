@@ -2427,22 +2427,22 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="168"/>
         <source>NTFS repair capability is limited on Linux. Please connect the device to a Windows system for deep repair.</source>
-        <translation type="unfinished"/>
+        <translation>NTFS-korjausominaisuudet ovat Linuxissa rajoitetut. Yhdistä laite Windows tietokoneeseen korjausta varten.</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="173"/>
         <source>Filesystem errors have been repaired</source>
-        <translation type="unfinished"/>
+        <translation>Tiedostojärjestelmän virheet on korjattu</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="175"/>
         <source>Filesystem repair failed (exit code: %1)</source>
-        <translation type="unfinished"/>
+        <translation>Tiedostojärjestelmän korjaaminen epäonnistui (koodi: %1)</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="194"/>
         <source>Repair timed out after %1 seconds</source>
-        <translation type="unfinished"/>
+        <translation>Korjaamisen aikakatkaisu %1 sekunnin jälkeen</translation>
     </message>
 </context>
 <context>
