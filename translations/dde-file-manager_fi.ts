@@ -130,22 +130,23 @@
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="480"/>
         <source>%1 is in hardware write-protected mode.
 Flash memory may be failing. Please back up data immediately.</source>
-        <translation type="unfinished"/>
+        <translation>%1 on kirjoitussuojatussa tilassa.
+Flash-muisti saattaa vioittua. Varmuuskopioi tiedot välittömästi.</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="486"/>
         <source>Device Damaged, Cannot Auto Repair</source>
-        <translation type="unfinished"/>
+        <translation>Laitevaurio, ei voitu korjata automaattisesti</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="487"/>
         <source>The data structure of %1 is severely damaged and cannot be recognized or repaired by the system. If there are important files inside, please stop using it. It is recommended to use professional data recovery software or seek professional assistance.</source>
-        <translation type="unfinished"/>
+        <translation>%1 tietorakenne on vakavasti vaurioitunut, eikä järjestelmä pysty tunnistamaan tai korjaamaan sitä. Jos siinä on tärkeitä tiedostoja, lopeta sen käyttö. On suositeltavaa käyttää ammattimaista tietojen palautusohjelmistoa tai hakea ammattilaisen apua.</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="732"/>
         <source>Repair operation failed</source>
-        <translation type="unfinished"/>
+        <translation>Korjaaminen epäonnistui</translation>
     </message>
 </context>
 <context>
@@ -2287,12 +2288,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="94"/>
         <source>Repair Storage Device</source>
-        <translation type="unfinished"/>
+        <translation>Korjaa tallennuslaite</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="99"/>
         <source>Preparing to repair device: %1 (%2 %3)</source>
-        <translation type="unfinished"/>
+        <translation>Valmistellaan korjaamista: %1 (%2 %3)</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="104"/>
