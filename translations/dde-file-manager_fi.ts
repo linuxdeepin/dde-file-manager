@@ -2387,42 +2387,42 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="36"/>
         <source>Invalid device path: %1</source>
-        <translation type="unfinished"/>
+        <translation>Virheellinen laitepolku: %1</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="42"/>
         <source>Device is already being repaired: %1</source>
-        <translation type="unfinished"/>
+        <translation>Laitetta korjataan jo: %1</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="49"/>
         <source>Cannot detect filesystem type for: %1</source>
-        <translation type="unfinished"/>
+        <translation>Tiedostojärjestelmän tyyppiä ei tunnistettu kohteelle %1</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="55"/>
         <source>Unsupported filesystem type: %1</source>
-        <translation type="unfinished"/>
+        <translation>Tiedostojärjestelmän tyyppiä ei tueta: %1</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="70"/>
         <source>Device is hardware write-protected, cannot repair</source>
-        <translation type="unfinished"/>
+        <translation>Laite on laitteiston kirjoitussuojaama, eikä sitä voi korjata</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="76"/>
         <source>Authorization failed</source>
-        <translation type="unfinished"/>
+        <translation>Valtuutus epäonnistui</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="95"/>
         <source>Failed to unmount device: %1</source>
-        <translation type="unfinished"/>
+        <translation>Laitteen irrottaminen epäonnistui: %1</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="165"/>
         <source>Filesystem repair completed successfully</source>
-        <translation type="unfinished"/>
+        <translation>Tiedostojärjestelmän korjaaminen onnistui</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="168"/>
