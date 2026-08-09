@@ -2328,33 +2328,33 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="165"/>
         <source>The device has been successfully repaired. The device has been remounted and is now ready to use.</source>
-        <translation type="unfinished"/>
+        <translation>Laite on korjattu ja asennettu takaisin paikoilleen. Se on nyt käyttövalmis.</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="177"/>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="230"/>
         <source>Close</source>
-        <translation type="unfinished"/>
+        <translation>Sulje</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="178"/>
         <source>Open Device</source>
-        <translation type="unfinished"/>
+        <translation>Avaa laite</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="187"/>
         <source>Repair Failed</source>
-        <translation type="unfinished"/>
+        <translation>Korjaaminen epäonnistui</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="192"/>
         <source>Failed to repair the device. This may be due to serious format errors or physical damage. To protect your data, it is recommended to stop writing new files and try using professional data recovery software or seek manual assistance.</source>
-        <translation type="unfinished"/>
+        <translation>Korjaaminen epäonnistui. Tämä voi johtua vakavista alustusvirheistä tai fyysisistä vaurioista. Tietojesi suojaamiseksi on suositeltavaa lopettaa uusien tiedostojen kirjoittaminen ja kokeilla ammattimaista tietojen palautusohjelmistoa tai hakea manuaalista apua.</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="206"/>
         <source>Error Code: %1</source>
-        <translation type="unfinished"/>
+        <translation>Vikakoodi: %1</translation>
     </message>
 </context>
 <context>
@@ -2363,23 +2363,23 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="154"/>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="409"/>
         <source>Filesystem type cannot be detected. The device may be severely damaged or formatted with an unsupported filesystem. Data recovery may require professional tools.</source>
-        <translation type="unfinished"/>
+        <translation>Tiedostojärjestelmän tyyppiä ei voi tunnistaa. Laite voi olla vakavasti vaurioitunut tai alustettu tukemattomalla tiedostojärjestelmällä. Tietojen palauttaminen saattaa vaatia ammattilaisen työkaluja.</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="169"/>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="424"/>
         <source>Device is hardware write-protected, flash memory may be failing. Please back up data immediately.</source>
-        <translation type="unfinished"/>
+        <translation>Laite on laitteiston kirjoitussuojaama, flash-muisti saattaa olla viallinen. Varmuuskopioi tiedot välittömästi.</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="186"/>
         <source>Filesystem error detected, device may not have been safely ejected. Mount might have failed due to filesystem corruption.</source>
-        <translation type="unfinished"/>
+        <translation>Havaittu tiedostojärjestelmävirhe, laitetta ei ehkä ole poistettu turvallisesti. Liitäntä on saattanut epäonnistua tiedostojärjestelmän vioittumisen vuoksi.</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="432"/>
         <source>Filesystem is severely corrupted and cannot be recognized. Data may be recoverable through repair.</source>
-        <translation type="unfinished"/>
+        <translation>Tiedostojärjestelmä on pahasti vioittunut eikä sitä voi tunnistaa. Tiedot voidaan mahdollisesti palauttaa korjaamalla.</translation>
     </message>
 </context>
 <context>
