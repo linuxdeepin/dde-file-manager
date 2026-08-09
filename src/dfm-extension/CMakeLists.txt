@@ -7,20 +7,7 @@ set(CMAKE_AUTOUIC OFF)
 set (VERSION "1.0.0" CACHE STRING "define project version")
 
 set(BIN_NAME dfm-extension)
-
-file(GLOB_RECURSE INCLUDE_FILES CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/include/${BIN_NAME}/*")
-file(GLOB_RECURSE SRCS CONFIGURE_DEPENDS
-    "./*.h"
-    "./*.cpp"
-)
-
-add_library(${BIN_NAME} SHARED
-    ${INCLUDE_FILES}
-    ${SRCS}
-)
-
-# Configure library using unified configuration function
-dfm_configure_extension_library(${BIN_NAME})
+set(DFMEXT_GENERATED_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/include")
 
 if (NOT VERSION)
     set(VERSION "1.0.0")
@@ -29,6 +16,39 @@ endif()
 if (NOT PROJECT_VERSION_MAJOR)
     set(PROJECT_VERSION_MAJOR 1)
 endif()
+
+string(REGEX MATCH "^([0-9]+)\\.([0-9]+)\\.([0-9]+)" DFMEXT_VERSION_MATCH "${VERSION}")
+if (NOT DFMEXT_VERSION_MATCH)
+    message(FATAL_ERROR "dfm-extension VERSION must start with <major>.<minor>.<patch>, got: ${VERSION}")
+endif()
+
+set(DFMEXT_VERSION_MAJOR "${CMAKE_MATCH_1}")
+set(DFMEXT_VERSION_MINOR "${CMAKE_MATCH_2}")
+set(DFMEXT_VERSION_PATCH "${CMAKE_MATCH_3}")
+
+configure_file(
+    ${PROJECT_SOURCE_DIR}/include/${BIN_NAME}/dfm-extension-global.h.in
+    ${DFMEXT_GENERATED_INCLUDE_DIR}/${BIN_NAME}/dfm-extension-global.h
+    @ONLY
+)
+
+file(GLOB_RECURSE INCLUDE_FILES CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/include/${BIN_NAME}/*.h")
+file(GLOB_RECURSE SRCS CONFIGURE_DEPENDS
+    "./*.h"
+    "./*.cpp"
+)
+
+add_library(${BIN_NAME} SHARED
+    ${INCLUDE_FILES}
+    ${SRCS}
+    ${DFMEXT_GENERATED_INCLUDE_DIR}/${BIN_NAME}/dfm-extension-global.h
+)
+
+# Configure library using unified configuration function
+dfm_configure_extension_library(${BIN_NAME})
+target_include_directories(${BIN_NAME} BEFORE PUBLIC
+    ${DFMEXT_GENERATED_INCLUDE_DIR}
+)
 
 set_target_properties(${BIN_NAME} PROPERTIES
     VERSION ${VERSION}
@@ -46,6 +66,10 @@ install(DIRECTORY
     DESTINATION include
     FILES_MATCHING PATTERN "*.h"
 )
+install(
+    FILES ${DFMEXT_GENERATED_INCLUDE_DIR}/${BIN_NAME}/dfm-extension-global.h
+    DESTINATION include/${BIN_NAME}
+)
 
 # config pkgconfig file
 configure_file(${PROJECT_SOURCE_DIR}/assets/dev/${BIN_NAME}/${BIN_NAME}.pc.in ${BIN_NAME}.pc @ONLY)
@@ -54,4 +78,3 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${BIN_NAME}.pc DESTINATION ${CMAKE_INS
 # config cmake file
 configure_file(${PROJECT_SOURCE_DIR}/assets/dev/${BIN_NAME}/${BIN_NAME}Config.cmake.in ${BIN_NAME}Config.cmake @ONLY)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${BIN_NAME}Config.cmake DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${BIN_NAME})
-
