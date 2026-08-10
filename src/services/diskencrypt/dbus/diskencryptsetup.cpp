@@ -304,16 +304,25 @@ QString DiskEncryptSetup::PendingDecryptionDevice()
     for (auto f : files) {
         auto name = m_dptr->resolveDeviceByDetachHeaderName(f);
         if (!name.isEmpty()) {
-            // Validate that the device is still encrypted; if it has been reformatted
-            // (e.g. via mke2fs), the LUKS header is gone and this backup file is stale.
-            auto status = crypt_setup_helper::encryptStatus(name);
-            if (status == disk_encrypt::kStatusNotEncrypted || status < 0) {
-                qInfo() << "[DiskEncryptSetup::PendingDecryptionDevice] Device is no longer encrypted, removing stale backup:"
-                         << name << "file:" << f;
-                QFile::remove(d.absoluteFilePath(f));
+            // Judge staleness by the backup header file itself, not by the device's
+            // own LUKS state: during an interrupted offline decrypt the on-disk LUKS
+            // header is already detached/rewritten, so the device no longer reports
+            // crypto_LUKS even though the decrypt is still in progress. The backup
+            // header is the only source for resuming the decrypt and must be kept
+            // unless headerStatus confirms the decrypt has fully completed.
+            //
+            // headerStatus is a best-effort heuristic (readLine-at-4096 JSON parse)
+            // and may return kInvalidHeader even for a valid interrupted-decrypt
+            // backup. Only delete when it definitively reports kDecryptFully.
+            const QString &backupPath = d.absoluteFilePath(f);
+            int hs = crypt_setup_helper::headerStatus(backupPath);
+            if (hs == crypt_setup_helper::kDecryptFully) {
+                qInfo() << "[DiskEncryptSetup::PendingDecryptionDevice] Backup header indicates the decrypt has fully completed, removing stale backup:"
+                         << name << "file:" << f << "headerStatus:" << hs;
+                QFile::remove(backupPath);
                 continue;
             }
-            qInfo() << "[DiskEncryptSetup::PendingDecryptionDevice] Found pending decryption device:" << name << "from header file:" << f;
+            qInfo() << "[DiskEncryptSetup::PendingDecryptionDevice] Found pending decryption device:" << name << "from header file:" << f << "headerStatus:" << hs;
             return name;
         }
     }
