@@ -26,17 +26,20 @@ DFMBASE_USE_NAMESPACE
 MultiFileBasicInfoWidget::MultiFileBasicInfoWidget(const QList<QUrl> &urls,
                                                    QWidget *parent)
     : DArrowLineDrawer(parent)
-    , fileCalculationUtils(new FileScanner)
 {
-    fileCalculationUtils->setOptions(FileScanner::ScanOption::IncludeSource);
+    // FileScanner is created on demand in setFilesCountAndSize() and retired
+    // asynchronously on destruction (see discardCurrentScanner), so the UI
+    // thread never blocks on a running scan thread via QThread::wait().
     initUI();
     loadData(urls);
 }
 
 MultiFileBasicInfoWidget::~MultiFileBasicInfoWidget()
 {
-    fileCalculationUtils->stop();
-    fileCalculationUtils->deleteLater();
+    // Retire any running scanner asynchronously instead of stop()+deleteLater()
+    // here: ~FileScanner waits for its worker thread, which would block the UI
+    // thread when closing the dialog while a large multi-file scan is running.
+    discardCurrentScanner();
 }
 
 void MultiFileBasicInfoWidget::getOrgHideBoxState(FilePropertyState &states)
@@ -118,11 +121,78 @@ void MultiFileBasicInfoWidget::updateFilesCountAndSizeLabel(const FileScanner::S
 
 void MultiFileBasicInfoWidget::setFilesCountAndSize(const QList<QUrl> &urls)
 {
-    connect(fileCalculationUtils, &FileScanner::progressChanged,
-            this, &MultiFileBasicInfoWidget::updateFilesCountAndSizeLabel);
+    // Retire any in-flight scan first; never wait on the worker thread so
+    // re-scanning cannot freeze the UI.
+    discardCurrentScanner();
+
+    // Bound the number of retired (still-running) scanners to avoid unbounded
+    // resource growth when a worker is stuck on slow I/O.
+    if (retiredScanners.size() >= kMaxRetiredScanners) {
+        fmWarning() << "MultiFileBasicInfoWidget: skip count/size scan, retired scanners reached limit"
+                    << retiredScanners.size() << ", limit:" << kMaxRetiredScanners;
+        return;
+    }
+
     QList<QUrl> targets;
     UniversalUtils::urlsTransformToLocal(urls, &targets);
-    fileCalculationUtils->start(targets);
+
+    auto *scanner = new FileScanner(this);
+    scanner->setOptions(FileScanner::ScanOption::IncludeSource);
+    finishedScanners.remove(scanner);
+
+    // Creation-time connection: track scanners that already emitted `finished`
+    // (the worker may finish before the worker thread fully stops, so isRunning()
+    // can still be true). retireScanner() then releases such a job directly
+    // instead of waiting for a retire-time connect(finished->deleteLater) that
+    // could never fire — closes the narrow race the V-1608 review flagged.
+    connect(scanner, &FileScanner::finished, this, [this, scanner](const FileScanner::ScanResult &) {
+        finishedScanners.insert(scanner);
+        if (retiredScanners.remove(scanner) > 0)
+            scanner->deleteLater();
+    });
+    connect(scanner, &QObject::destroyed, this, [this, scanner]() {
+        finishedScanners.remove(scanner);
+        retiredScanners.remove(scanner);
+    });
+
+    fileCalculationUtils = scanner;
+    const auto generation = ++scanGeneration;
+    connect(scanner, &FileScanner::progressChanged, this, [this, generation, scanner](const FileScanner::ScanResult &result) {
+        if (generation != scanGeneration || scanner != fileCalculationUtils)
+            return;
+        updateFilesCountAndSizeLabel(result);
+    });
+
+    scanner->start(targets);
+}
+
+void MultiFileBasicInfoWidget::discardCurrentScanner()
+{
+    if (!fileCalculationUtils)
+        return;
+
+    auto *oldScanner = fileCalculationUtils.data();
+    fileCalculationUtils = nullptr;
+    retireScanner(oldScanner);
+}
+
+void MultiFileBasicInfoWidget::retireScanner(FileScanner *scanner)
+{
+    if (!scanner)
+        return;
+
+    // Detach from this widget so the scanner is not destroyed synchronously
+    // when the widget is torn down (which would block the UI thread in
+    // ~FileScanner via QThread::wait()).
+    scanner->setParent(nullptr);
+
+    if (scanner->isRunning() && !finishedScanners.contains(scanner)) {
+        retiredScanners.insert(scanner);
+        scanner->stop();
+        return;
+    }
+
+    scanner->deleteLater();
 }
 
 void MultiFileBasicInfoWidget::setAccessTime(const QList<QUrl> &urls)

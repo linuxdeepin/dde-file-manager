@@ -11,6 +11,9 @@
 #include <dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.h>
 #include <dfm-base/utils/filescanner.h>
 
+#include <QPointer>
+#include <QSet>
+
 #include <DArrowLineDrawer>
 
 namespace dfmplugin_propertydialog {
@@ -45,12 +48,23 @@ private:
                             int &dirCount,
                             int &fileCount);
 
+    // Asynchronous FileScanner retirement (mirrors BasicStatusBarPrivate):
+    // never wait on the worker thread on the UI thread, so closing the dialog
+    // while a large multi-file scan is in progress cannot freeze the UI
+    // (cf. ~FileScanner -> QThread::wait()).
+    void discardCurrentScanner();
+    void retireScanner(DFMBASE_NAMESPACE::FileScanner *scanner);
+
     DFMBASE_NAMESPACE::KeyValueLabel *filesSize { Q_NULLPTR };
     DFMBASE_NAMESPACE::KeyValueLabel *filesCount { Q_NULLPTR };
     DFMBASE_NAMESPACE::KeyValueLabel *accessTime { Q_NULLPTR };
     DFMBASE_NAMESPACE::KeyValueLabel *modifyTime { Q_NULLPTR };
     SkipPartiallyCheckBox *hideFile { Q_NULLPTR };
-    DFMBASE_NAMESPACE::FileScanner *fileCalculationUtils { Q_NULLPTR };
+    QPointer<DFMBASE_NAMESPACE::FileScanner> fileCalculationUtils;
+    QSet<DFMBASE_NAMESPACE::FileScanner *> retiredScanners;
+    QSet<DFMBASE_NAMESPACE::FileScanner *> finishedScanners;
+    quint64 scanGeneration { 0 };
+    static constexpr int kMaxRetiredScanners { 2 };
 };
 
 }

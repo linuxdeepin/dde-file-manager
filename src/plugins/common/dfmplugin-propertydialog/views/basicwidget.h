@@ -12,6 +12,9 @@
 
 #include <dfm-io/dfileinfo.h>
 
+#include <QPointer>
+#include <QSet>
+
 #include <DArrowLineDrawer>
 #include <DCheckBox>
 
@@ -37,6 +40,14 @@ private:
     void basicFill(const QUrl &url);
 
     DFMBASE_NAMESPACE::KeyValueLabel *createValueLabel(QFrame *frame, QString leftValue);
+
+    // Asynchronous FileScanner retirement (mirrors BasicStatusBarPrivate):
+    // never wait on the worker thread on the UI thread, so closing/switching
+    // the property dialog while a large directory scan is in progress cannot
+    // freeze the UI (cf. ~FileScanner -> QThread::wait()).
+    void startFileCountScan(const QList<QUrl> &urls);
+    void discardCurrentScanner();
+    void retireScanner(DFMBASE_NAMESPACE::FileScanner *scanner);
 
 public:
     void selectFileUrl(const QUrl &url);
@@ -71,7 +82,11 @@ private:
     DFMBASE_NAMESPACE::KeyValueLabel *fileMediaResolution { nullptr };
     DFMBASE_NAMESPACE::KeyValueLabel *fileMediaDuration { nullptr };
     bool hideCheckBox { false };
-    DFMBASE_NAMESPACE::FileScanner *fileCalculationUtils { nullptr };
+    QPointer<DFMBASE_NAMESPACE::FileScanner> fileCalculationUtils;
+    QSet<DFMBASE_NAMESPACE::FileScanner *> retiredScanners;
+    QSet<DFMBASE_NAMESPACE::FileScanner *> finishedScanners;
+    quint64 scanGeneration { 0 };
+    static constexpr int kMaxRetiredScanners { 2 };
     qint64 fSize { 0 };
     int fCount { 0 };
     QMultiMap<BasicFieldExpandEnum, DFMBASE_NAMESPACE::KeyValueLabel *> fieldMap;
