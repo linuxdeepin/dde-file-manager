@@ -28,6 +28,7 @@ public:
 
 private:
     void setFileInfo(const FileInfoPointer &info);
+    void discardCurrentScanner();
 
 signals:
     void requestStartFolderSize();
@@ -42,7 +43,8 @@ private:
     QLabel *nameLabel { nullptr };
     QLabel *sizeLabel { nullptr };
     QLabel *typeLabel { nullptr };
-    DFMBASE_NAMESPACE::FileScanner *fileCalculationUtils { nullptr };
+    QPointer<DFMBASE_NAMESPACE::FileScanner> fileCalculationUtils;
+    quint64 scanGeneration { 0 };
 };
 }
 #endif   // UNKNOWFILEPREVIEW_H
