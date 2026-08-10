@@ -36,6 +36,20 @@ SERVICEMOUNTCONTROL_USE_NAMESPACE
 
 static constexpr char kPolicyKitActionIdCIFS[] { "org.deepin.Filemanager.MountController.CIFS" };
 
+// SMB share names may legally contain '#', but QUrl treats '#' as a fragment delimiter and
+// truncates it from smbUrl.path(), so the kernel mount UNC would lose the '#' and target a
+// non-existent share (BUG-373045). Merge any fragment back into the path to preserve the
+// share name. This is a no-op for URLs without a fragment, including the already-percent-
+// encoded form produced by networkAccessPrehandler (BUG-337999's fix) and '%20'-style
+// encoded paths, so existing behavior (and the BUG-337999 fix) is unchanged.
+static QUrl mergedSmbUrl(const QString &path)
+{
+    QUrl url(path);
+    if (url.hasFragment())
+        url.setPath(url.path() + '#' + url.fragment(QUrl::FullyDecoded));
+    return url;
+}
+
 CifsMountHelper::CifsMountHelper(QDBusContext *context)
     : AbstractMountHelper(context), d(new CifsMountHelperPrivate()) { }
 
@@ -50,7 +64,7 @@ QVariantMap CifsMountHelper::mount(const QString &path, const QVariantMap &opts)
                  { kErrorMessage, "smb is only supported scheme now" } };
     }
 
-    QUrl smbUrl(path);
+    QUrl smbUrl = mergedSmbUrl(path);
     int port = smbUrl.port();
     const QString &share = smbUrl.path();
     const QString &host = smbUrl.host();
@@ -160,7 +174,7 @@ QVariantMap CifsMountHelper::unmount(const QString &path, const QVariantMap &opt
     Q_UNUSED(opts);
     using namespace MountReturnField;
 
-    QUrl smbUrl(path);
+    QUrl smbUrl = mergedSmbUrl(path);
     QString aPath = QString("//%1%2").arg(smbUrl.host()).arg(smbUrl.path());
 
     QString mpt;
@@ -249,7 +263,7 @@ QString CifsMountHelper::generateMountPath(const QString &address)
         return "";
 
     // assume that all address is like 'smb://1.2.3.4/share'
-    QUrl smbUrl(address);
+    QUrl smbUrl = mergedSmbUrl(address);
     QString host = smbUrl.host();
     QString path = smbUrl.path().mid(1);   // remove first /
     int port = smbUrl.port();
