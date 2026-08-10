@@ -237,11 +237,15 @@ QString protocol_display_utilities::getStandardSmbPath(const QString &devId)
     if (!DeviceUtils::parseSmbInfo(dirName, host, share, &port))
         return id;
 
+    // Percent-encode the share name so URL-reserved characters (e.g. '#') it may legally
+    // contain are not misinterpreted by QUrl as delimiters when the string is later parsed
+    // as an smb:// URL. Keep '/' so sub-paths are preserved. (BUG-373045)
+    const QString &encShare = QString::fromUtf8(QUrl::toPercentEncoding(share, "/"));
     QString stdSmb;
     if (port.isEmpty())
-        stdSmb = QString("smb://%1/%2/").arg(host).arg(share);
+        stdSmb = QString("smb://%1/%2/").arg(host).arg(encShare);
     else
-        stdSmb = QString("smb://%1:%2/%3/").arg(host).arg(port).arg(share);
+        stdSmb = QString("smb://%1:%2/%3/").arg(host).arg(port).arg(encShare);
     return stdSmb;
 }
 

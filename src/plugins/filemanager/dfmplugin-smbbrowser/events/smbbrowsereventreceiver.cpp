@@ -14,6 +14,7 @@
 
 #include <QDebug>
 #include <QRegularExpression>
+#include <QUrl>
 
 using namespace dfmplugin_smbbrowser;
 DFMBASE_USE_NAMESPACE
@@ -162,7 +163,11 @@ bool SmbBrowserEventReceiver::getOriginalUri(const QUrl &in, QUrl *out)
             out->setHost(host);
             if (!port.isEmpty())
                 out->setPort(port.toInt());
-            QString subPath = "/" + share;
+            // Percent-encode the share name so URL-reserved characters (e.g. '#') it may
+            // legally contain are not misinterpreted by QUrl as delimiters. Keep '/' so
+            // sub-paths are preserved. (BUG-373045)
+            const QString &encShare = QString::fromUtf8(QUrl::toPercentEncoding(share, "/"));
+            QString subPath = "/" + encShare;
             subPath += path.remove(kCifsPrefix);
             out->setPath(subPath);
         }
