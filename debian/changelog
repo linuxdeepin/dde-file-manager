@@ -1,3 +1,25 @@
+dde-file-manager (6.6.3) unstable; urgency=medium
+
+  * fix(openwith): adjust dialog button gap
+  * fix(openwith): adapt hover color for dark mode
+  * fix(openwith): increase bottom action gap
+  * fix(disk-mount): avoid blurry popup theme icons
+  * fix: show broken-link dialog for deleted SMB share target
+  * fix(textindex): add auto-reconnect and enlarge SO_RCVBUF for vfsmonitor
+  * fix: avoid parenting delete dialog to WA_DeleteOnClose popup
+  * fix: fix special chars in tag editor clearing existing tags
+  * fix(shred): cache file info in model to avoid blank rows
+  * fix(workspace): make list/tree top gap part of viewport content for rubber-band
+  * feat: add environment detection for strategic indexing
+  * chore: standardize unit test naming conventions
+  * fix: handle top padding selection in non-grouped views
+  * fix: use decode-validation-first strategy for text preview encoding
+  * fix: correct polkit prompt for partition passphrase change
+  * fix(sidebar): include foreground color in icon cache key
+  * Fix(disk-encrypt): Enhance security.
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Mon, 10 Aug 2026 09:31:13 +0800
+
 dde-file-manager (6.6.2) unstable; urgency=medium
 
   * feat: add USB repair service with D-Bus interface and PolKit authentication
