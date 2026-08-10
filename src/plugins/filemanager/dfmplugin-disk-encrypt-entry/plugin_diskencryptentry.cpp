@@ -103,6 +103,7 @@ void DiskEncryptEntry::processUnfinshedDecrypt(const QString &device)
     }
 
     QMenu *menu = new QMenu();
+    menu->addSeparator();
     DiskEncryptMenuScene *scene = new DiskEncryptMenuScene();
 
     QUrl url;
