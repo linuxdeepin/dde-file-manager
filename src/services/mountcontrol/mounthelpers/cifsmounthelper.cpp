@@ -36,18 +36,19 @@ SERVICEMOUNTCONTROL_USE_NAMESPACE
 
 static constexpr char kPolicyKitActionIdCIFS[] { "org.deepin.Filemanager.MountController.CIFS" };
 
-// SMB share names may legally contain '#', but QUrl treats '#' as a fragment delimiter and
-// truncates it from smbUrl.path(), so the kernel mount UNC would lose the '#' and target a
-// non-existent share (BUG-373045). Merge any fragment back into the path to preserve the
-// share name. This is a no-op for URLs without a fragment, including the already-percent-
-// encoded form produced by networkAccessPrehandler (BUG-337999's fix) and '%20'-style
-// encoded paths, so existing behavior (and the BUG-337999 fix) is unchanged.
+// SMB share names may legally contain '#', but QUrl treats a literal '#' as a fragment
+// delimiter and truncates it from smbUrl.path(), so the kernel mount UNC would lose the
+// '#' and target a non-existent share (BUG-373045). Percent-encode any literal '#' to
+// '%23' before QUrl parses the string; QUrl then keeps it in path() (decoded back to '#')
+// and there is no fragment to process, so the FullyDecoded control-char / over-decode
+// concern is avoided. This is a no-op for URLs without '#', including the '%23'-encoded
+// form produced by networkAccessPrehandler (BUG-337999's fix) and '%20'-style encoded
+// paths, so existing behavior (and the BUG-337999 fix) is unchanged.
 static QUrl mergedSmbUrl(const QString &path)
 {
-    QUrl url(path);
-    if (url.hasFragment())
-        url.setPath(url.path() + '#' + url.fragment(QUrl::FullyDecoded));
-    return url;
+    QString encoded = path;
+    encoded.replace('#', "%23");
+    return QUrl(encoded);
 }
 
 CifsMountHelper::CifsMountHelper(QDBusContext *context)
