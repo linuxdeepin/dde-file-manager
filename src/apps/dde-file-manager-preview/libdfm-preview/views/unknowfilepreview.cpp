@@ -61,8 +61,9 @@ UnknowFilePreview::UnknowFilePreview(QObject *parent)
     hlayout->addLayout(vlayout);
     hlayout->addStretch();
 
-    fileCalculationUtils = new FileScanner(this);
-    connect(fileCalculationUtils, &FileScanner::progressChanged, this, &UnknowFilePreview::updateFolderSizeCount);
+    // FileScanner is created on demand per directory preview (see setFileInfo) and
+    // retired asynchronously on switch/destroy (see discardCurrentScanner), so the
+    // UI thread never blocks on a running scan thread via QThread::wait().
 
     qCDebug(logLibFilePreview) << "UnknowFilePreview: initialization completed";
 }
@@ -75,9 +76,10 @@ UnknowFilePreview::~UnknowFilePreview()
         contentView->deleteLater();
     }
 
-    if (fileCalculationUtils) {
-        fileCalculationUtils->deleteLater();
-    }
+    // Retire any running scanner asynchronously instead of deleteLater() here:
+    // ~FileScanner waits for its worker thread, which would block the UI thread
+    // when previewing large directory trees is still in progress.
+    discardCurrentScanner();
 }
 
 bool UnknowFilePreview::setFileUrl(const QUrl &url)
@@ -116,9 +118,10 @@ void UnknowFilePreview::setFileInfo(const FileInfoPointer &info)
 
     qCDebug(logLibFilePreview) << "UnknowFilePreview: setting file info for:" << info->nameOf(NameInfoType::kFileName);
 
-    if (fileCalculationUtils) {
-        fileCalculationUtils->stop();
-    }
+    // Retire any in-flight scan before refreshing the view. discardCurrentScanner()
+    // never waits on the worker thread, so switching between large directories
+    // cannot freeze the UI (cf. BasicStatusBar's retire/generation handling).
+    discardCurrentScanner();
 
     QIcon icon;
     ThumbnailHelper helper;
@@ -154,10 +157,42 @@ void UnknowFilePreview::setFileInfo(const FileInfoPointer &info)
         typeLabel->setText(QObject::tr("Type: %1").arg(typeText));
 
         qCDebug(logLibFilePreview) << "UnknowFilePreview: file info set - size:" << sizeText << "type:" << typeText;
-    } else if (fileCalculationUtils && info->isAttributes(OptInfoType::kIsDir)) {
+    } else if (info->isAttributes(OptInfoType::kIsDir)) {
         qCInfo(logLibFilePreview) << "UnknowFilePreview: starting directory size calculation for:" << info->urlOf(UrlInfoType::kUrl).toString();
-        fileCalculationUtils->start(QList<QUrl>() << info->urlOf(UrlInfoType::kUrl));
+        // Create a fresh scanner per directory and guard progress callbacks with a
+        // generation token so results from a retired (previous) scanner are ignored.
+        auto *scanner = new FileScanner();
+        fileCalculationUtils = scanner;
+        const auto generation = ++scanGeneration;
+        connect(scanner, &FileScanner::progressChanged, this, [this, generation](const FileScanner::ScanResult &result) {
+            if (generation != scanGeneration || !fileCalculationUtils)
+                return;
+            updateFolderSizeCount(result);
+        });
+        scanner->start(QList<QUrl>() << info->urlOf(UrlInfoType::kUrl));
         sizeLabel->setText(QObject::tr("Size: 0"));
+    }
+}
+
+void UnknowFilePreview::discardCurrentScanner()
+{
+    if (!fileCalculationUtils)
+        return;
+
+    auto *oldScanner = fileCalculationUtils.data();
+    fileCalculationUtils = nullptr;
+
+    // Detach from this preview so the scanner is not destroyed synchronously when
+    // the preview is torn down (which would block the UI thread in ~FileScanner).
+    oldScanner->setParent(nullptr);
+
+    if (oldScanner->isRunning()) {
+        // Let the worker finish on its own, then self-delete from its finished
+        // signal; never call deleteLater() while the thread is still running.
+        connect(oldScanner, &FileScanner::finished, oldScanner, &QObject::deleteLater);
+        oldScanner->stop();
+    } else {
+        oldScanner->deleteLater();
     }
 }
 
