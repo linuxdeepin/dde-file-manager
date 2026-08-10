@@ -52,7 +52,9 @@ BasicWidget::BasicWidget(QWidget *parent)
 
 {
     initUI();
-    fileCalculationUtils = new FileScanner(this);
+    // FileScanner is created on demand per directory scan (see startFileCountScan)
+    // and retired asynchronously on close/switch (see discardCurrentScanner), so
+    // the UI thread never blocks on a running scan thread via QThread::wait().
 
     connect(&fetchThread, &QThread::finished, infoFetchWorker, &QObject::deleteLater);
     infoFetchWorker->moveToThread(&fetchThread);
@@ -61,11 +63,86 @@ BasicWidget::BasicWidget(QWidget *parent)
 
 BasicWidget::~BasicWidget()
 {
-    fileCalculationUtils->deleteLater();
+    // Retire any running scanner asynchronously instead of deleteLater() here:
+    // ~FileScanner waits for its worker thread, which would block the UI thread
+    // when closing the dialog while a large directory scan is still in progress.
+    discardCurrentScanner();
     if (fetchThread.isRunning()) {
         fetchThread.quit();
         fetchThread.wait(5000);
     }
+}
+
+void BasicWidget::startFileCountScan(const QList<QUrl> &urls)
+{
+    // Retire any in-flight scan first; never wait on the worker thread so
+    // switching between large directories cannot freeze the UI.
+    discardCurrentScanner();
+
+    // Bound the number of retired (still-running) scanners to avoid unbounded
+    // resource growth when a worker is stuck on slow I/O.
+    if (retiredScanners.size() >= kMaxRetiredScanners) {
+        fmWarning() << "BasicWidget: skip folder count scan, retired scanners reached limit"
+                    << retiredScanners.size() << ", limit:" << kMaxRetiredScanners;
+        return;
+    }
+
+    auto *scanner = new FileScanner(this);
+    finishedScanners.remove(scanner);
+
+    // Creation-time connection: track scanners that already emitted `finished`
+    // (the worker may finish before the worker thread fully stops, so isRunning()
+    // can still be true). retireScanner() then releases such a job directly
+    // instead of waiting for a retire-time connect(finished->deleteLater) that
+    // could never fire — closes the narrow race the V-1608 review flagged.
+    connect(scanner, &FileScanner::finished, this, [this, scanner](const FileScanner::ScanResult &) {
+        finishedScanners.insert(scanner);
+        if (retiredScanners.remove(scanner) > 0)
+            scanner->deleteLater();
+    });
+    connect(scanner, &QObject::destroyed, this, [this, scanner]() {
+        finishedScanners.remove(scanner);
+        retiredScanners.remove(scanner);
+    });
+
+    fileCalculationUtils = scanner;
+    const auto generation = ++scanGeneration;
+    connect(scanner, &FileScanner::progressChanged, this, [this, generation, scanner](const FileScanner::ScanResult &result) {
+        if (generation != scanGeneration || scanner != fileCalculationUtils)
+            return;
+        slotFileCountAndSizeChange(result);
+    });
+
+    scanner->start(urls);
+}
+
+void BasicWidget::discardCurrentScanner()
+{
+    if (!fileCalculationUtils)
+        return;
+
+    auto *oldScanner = fileCalculationUtils.data();
+    fileCalculationUtils = nullptr;
+    retireScanner(oldScanner);
+}
+
+void BasicWidget::retireScanner(FileScanner *scanner)
+{
+    if (!scanner)
+        return;
+
+    // Detach from this widget so the scanner is not destroyed synchronously
+    // when the widget is torn down (which would block the UI thread in
+    // ~FileScanner via QThread::wait()).
+    scanner->setParent(nullptr);
+
+    if (scanner->isRunning() && !finishedScanners.contains(scanner)) {
+        retiredScanners.insert(scanner);
+        scanner->stop();
+        return;
+    }
+
+    scanner->deleteLater();
 }
 
 int BasicWidget::expansionPreditHeight()
@@ -300,12 +377,12 @@ void BasicWidget::basicFill(const QUrl &url)
         fileType->setRightValue(info->displayOf(DisPlayInfoType::kMimeTypeDisplayName), Qt::ElideMiddle, Qt::AlignVCenter, true);
         if (type == FileInfo::FileType::kDirectory && fileCount && fileCount->RightValue().isEmpty()) {
             fileCount->setRightValue(tr("%1 item").arg(0), Qt::ElideNone, Qt::AlignVCenter, true);
-            connect(fileCalculationUtils, &FileScanner::progressChanged, this, &BasicWidget::slotFileCountAndSizeChange);
-            if (info->canAttributes(CanableInfoType::kCanRedirectionFileUrl)) {
-                fileCalculationUtils->start(QList<QUrl>() << info->urlOf(UrlInfoType::kRedirectedFileUrl));
-            } else {
-                fileCalculationUtils->start(QList<QUrl>() << url);
-            }
+            QList<QUrl> scanUrls;
+            if (info->canAttributes(CanableInfoType::kCanRedirectionFileUrl))
+                scanUrls << info->urlOf(UrlInfoType::kRedirectedFileUrl);
+            else
+                scanUrls << url;
+            startFileCountScan(scanUrls);
         } else {
             layoutMain->removeWidget(fileCount);
             fieldMap.remove(BasicFieldExpandEnum::kFileCount);
