@@ -8,10 +8,10 @@
 
   <action id="org.deepin.Filemanager.TPMControl.Access">
     <description>Access the TPM chip</description>
-    <message>Authorization is required to access the TPM chip</message>
-    <message xml:lang="zh_CN">访问 TPM 芯片需要授权</message>
-    <message xml:lang="zh_HK">存取 TPM 晶片需要授權</message>
-    <message xml:lang="zh_TW">存取 TPM 晶片需要授權</message>
+    <message>TPM status verification requires authentication</message>
+    <message xml:lang="zh_CN">校验 TPM 芯片需要鉴权</message>
+    <message xml:lang="zh_HK">校驗 TPM 晶片需要鑑權</message>
+    <message xml:lang="zh_TW">驗證 TPM 晶片需要進行身分驗證</message>
     <icon_name>folder</icon_name>
     <defaults>
       <allow_any>auth_admin</allow_any>
