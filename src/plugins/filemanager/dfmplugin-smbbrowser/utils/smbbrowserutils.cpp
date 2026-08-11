@@ -72,7 +72,10 @@ bool isSmbMounted(const QString &stdSmb)
 {
     using namespace protocol_display_utilities;
     const QStringList &mountedSmbs = getStandardSmbPaths(getMountedSmb());
-    QString currSmbPath = stdSmb.toLower();
+    // getStandardSmbPath 返回的路径经过 QUrl::fromPercentEncoding 解码（如 %23 -> #），
+    // 而传入的 stdSmb 可能是 QUrl::toString() 的百分号编码形式。
+    // 为确保编码一致，需对 stdSmb 也进行解码后再比较。
+    QString currSmbPath = QUrl::fromPercentEncoding(stdSmb.toLocal8Bit()).toLower();
     if (!currSmbPath.endsWith("/"))
         currSmbPath.append("/");
     return mountedSmbs.contains(currSmbPath);
@@ -81,7 +84,7 @@ bool isSmbMounted(const QString &stdSmb)
 QString getDeviceIdByStdSmb(const QString &stdSmb)
 {
     using namespace protocol_display_utilities;
-    QString smb = stdSmb.toLower();
+    QString smb = QUrl::fromPercentEncoding(stdSmb.toLocal8Bit()).toLower();
     if (!smb.endsWith("/"))
         smb.append("/");
 
