@@ -724,9 +724,18 @@ void EventsHandler::onOverlayDMModeChanged(bool enabled, int result)
     fmInfo() << "Overlay DM mode changed, enabled:" << enabled << "result:" << result;
 
     QString title, message, icon;
-    bool isSuccess = (result == 0);
 
-    if (isSuccess) {
+    if (result == disk_encrypt::OverlayDMRolledBackInterrupted) {
+        // Previous enable/disable was interrupted before initramfs finished and has
+        // been rolled back to the disabled state; advise the user to reboot.
+        icon = "dde-file-manager";
+        title = tr("Partition Encryption Non-Reboot Mode Rolled Back");
+        message = tr("A previous configuration of Partition Encryption Non-Reboot Mode "
+                     "was interrupted and has been rolled back to the disabled state. "
+                     "Please reboot your system to ensure consistency. You may re-enable "
+                     "the feature after reboot if needed.");
+        fmInfo() << "Sending rolled-back notification:" << title << message;
+    } else if (result == disk_encrypt::OverlayDMSuccess) {
         // Operation succeeded, reboot required
         icon = "dde-file-manager";
         if (enabled) {

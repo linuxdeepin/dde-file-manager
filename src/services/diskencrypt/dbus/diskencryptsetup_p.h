@@ -31,6 +31,7 @@ class DiskEncryptSetupPrivate : public QObject
     bool currentTargetValue { false };         // 当前正在执行的目标值
     bool hasPendingConfigChange { false };     // 是否有待处理的变更
     bool pendingTargetValue { false };         // 待处理的目标值
+    bool isRollbackFromInterrupted { false };  // 当前操作是否为中断回滚（由 syncConfigWithFileSystem 触发）
 
     explicit DiskEncryptSetupPrivate(DiskEncryptSetup *parent);
     void initialize();
@@ -71,6 +72,10 @@ private:
     void syncConfigWithFileSystem();
     bool createOverlayDMFlagFile();
     bool removeOverlayDMFlagFile();
+    bool createOverlayDMPendingFile();
+    bool removeOverlayDMPendingFile();
+    bool createMarkerFile(const QString &path);
+    bool removeMarkerFile(const QString &path);
     bool updateInitramfs();
 };
 
