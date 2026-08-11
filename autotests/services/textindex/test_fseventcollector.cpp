@@ -12,8 +12,10 @@
 #include <QStringList>
 #include <QHash>
 
+#include "stubext.h"
 #include "services/textindex/service_textindex_global.h"
 #include "services/textindex/fsmonitor/fseventcollector.h"
+#include "services/textindex/fsmonitor/fsmonitor.h"
 
 using namespace SERVICETEXTINDEX_NAMESPACE;
 
@@ -96,6 +98,11 @@ TEST(FSEventCollectorTest, MovedFilesEmpty)
 
 TEST(FSEventCollectorTest, StartWithoutInitMayFailGracefully)
 {
+    stub_ext::StubExt stub;
+    stub.set_lamda(ADDR(FSMonitor, start), [](FSMonitor *) -> bool {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
     FSEventCollector collector(alwaysTrue());
     EXPECT_NO_FATAL_FAILURE({ (void)collector.start(); });
 }
