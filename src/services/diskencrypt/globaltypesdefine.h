@@ -27,6 +27,18 @@ inline constexpr char kUSecConfigDir[] { "/etc/usec-crypt" };
 inline constexpr char kReencryptDesktopFile[] { "/usr/share/applications/dfm-reencrypt.desktop" };
 inline constexpr char kRebootFlagFilePrefix[] { "/tmp/dfm_encrypt_reboot_flag_" };
 
+// Overlay DM mode settings directory and marker files
+inline constexpr char kOverlayDMSettingsDir[] { "/etc/usec-crypt/settings" };
+inline constexpr char kOverlayDMFlagFile[] { "/etc/usec-crypt/settings/overlay-dm" };
+inline constexpr char kOverlayDMPendingFile[] { "/etc/usec-crypt/settings/overlay-dm.pending" };
+
+// Overlay DM Mode change result codes (shared by service and plugin)
+enum OverlayDMModeChangeResult {
+    OverlayDMSuccess = 0,                  // Operation succeeded, reboot required
+    OverlayDMFailedUpdateInitramfs = 1,    // Failed to update initramfs
+    OverlayDMRolledBackInterrupted = 2     // Previous interrupted operation rolled back to disabled
+};
+
 namespace job_type {
 static const char *TypeFstab { "fstab" };
 static const char *TypeOverlay { "usec-overlay" };
