@@ -6,6 +6,8 @@
 #include "models/fileitemdata.h"
 
 #include <dfm-base/utils/filenamesorter.h>
+#include <dfm-base/utils/collation/collationstrategy.h>
+#include <dfm-base/utils/collation/collationstrategyprovider.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/mimetype/mimetypedisplaymanager.h>
@@ -140,10 +142,12 @@ QList<QUrl> FileViewSorter::sortMixed(const QList<QUrl> &urls)
     }
 
     // 预生成所有 sortKey（不包含目录/文件前缀）
-    QVector<QPair<QUrl, QCollatorSortKey>> items;
+    // 批次入口一次性获取策略，保证整个批次内策略一致（避免 dconfig 切换竞态）
+    const dfmbase::CollationStrategy &sortStrategy =
+            dfmbase::CollationStrategyProvider::instance()->strategy();
+    QVector<QPair<QUrl, QByteArray>> items;
     items.reserve(urls.size());
 
-    QCollator &c = collator();
     for (const QUrl &url : urls) {
         QString keyStr;
         // MimeType 排序使用预计算结果
@@ -160,7 +164,7 @@ QList<QUrl> FileViewSorter::sortMixed(const QList<QUrl> &urls)
         } else {
             keyStr = generateSortKeyStringInternal(url);
         }
-        items.append(qMakePair(url, c.sortKey(keyStr)));
+        items.append(qMakePair(url, sortStrategy.sortKey(keyStr)));
     }
 
     // 使用 FileNameSorter 的排序模板
@@ -294,8 +298,11 @@ int FileViewSorter::findInsertPosition(const QUrl &url, const QList<QUrl> &sorte
     if (sortedList.isEmpty())
         return 0;
 
+    // 批次入口一次性获取策略，保证二分查找过程中策略一致
+    const dfmbase::CollationStrategy &sortStrategy =
+            dfmbase::CollationStrategyProvider::instance()->strategy();
     QString newKeyStr = generateSortKeyString(url);
-    QCollatorSortKey newKey = collator().sortKey(newKeyStr);
+    QByteArray newKey = sortStrategy.sortKey(newKeyStr);
 
     // 二分查找
     int left = 0;
@@ -304,7 +311,7 @@ int FileViewSorter::findInsertPosition(const QUrl &url, const QList<QUrl> &sorte
     while (left < right) {
         int mid = left + (right - left) / 2;
         QString midKeyStr = generateSortKeyString(sortedList.at(mid));
-        QCollatorSortKey midKey = collator().sortKey(midKeyStr);
+        QByteArray midKey = sortStrategy.sortKey(midKeyStr);
 
         bool shouldMoveRight = (m_context.order == Qt::AscendingOrder)
                 ? (newKey < midKey)
@@ -626,12 +633,6 @@ QString FileViewSorter::getFileDisplayName(const QUrl &url, const FileItemDataPo
     }
 
     return url.fileName();
-}
-
-QCollator &FileViewSorter::collator()
-{
-    // 复用 FileNameSorter 的线程安全 collator
-    return dfmbase::FileNameSorter::collator();
 }
 
 DPWORKSPACE_END_NAMESPACE

@@ -32,6 +32,7 @@ inline constexpr char kDetailViewRemoteImageMaxSize[] { "dfm.detailview.remote.i
 inline constexpr char kKeyCanvasInputMethod[] { "enableCanvasInputMethod" };
 inline constexpr char kConfigEnableSearch[] { "dfm.enable.search" };
 inline constexpr char kShowRunExec[] { "dfm.show.run.exec" };
+inline constexpr char kSortLatinFirstZhCn[] { "dfm.sort.latinfirst.zhCn" };
 }   // namespace BaseConfig
 
 /*!

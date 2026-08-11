@@ -8,7 +8,7 @@
  */
 
 #include <gtest/gtest.h>
-#include <QCollator>
+#include <QByteArray>
 #include <QStringList>
 #include <QUrl>
 
@@ -16,29 +16,10 @@
 
 using namespace dfmbase;
 
-TEST(FileNameSorterTest, CollatorReturnsSameInstance)
-{
-    QCollator &c1 = FileNameSorter::collator();
-    QCollator &c2 = FileNameSorter::collator();
-    EXPECT_EQ(&c1, &c2);
-}
-
-TEST(FileNameSorterTest, CollatorHasNumericMode)
-{
-    QCollator &c = FileNameSorter::collator();
-    EXPECT_TRUE(c.numericMode());
-}
-
-TEST(FileNameSorterTest, CollatorIsCaseSensitive)
-{
-    QCollator &c = FileNameSorter::collator();
-    EXPECT_EQ(c.caseSensitivity(), Qt::CaseSensitive);
-}
-
 TEST(FileNameSorterTest, SortKeyProducesComparableKey)
 {
-    QCollatorSortKey k1 = FileNameSorter::sortKey("file10");
-    QCollatorSortKey k2 = FileNameSorter::sortKey("file2");
+    QByteArray k1 = FileNameSorter::sortKey("file10");
+    QByteArray k2 = FileNameSorter::sortKey("file2");
     EXPECT_TRUE(k2 < k1);
 }
 
@@ -108,7 +89,7 @@ TEST(FileNameSorterTest, CompareDescending)
 
 TEST(FileNameSorterTest, SortByKeyAscending)
 {
-    using Item = QPair<QString, QCollatorSortKey>;
+    using Item = QPair<QString, QByteArray>;
     QVector<Item> items {
         { "b", FileNameSorter::sortKey("b") },
         { "a", FileNameSorter::sortKey("a") },
@@ -122,7 +103,7 @@ TEST(FileNameSorterTest, SortByKeyAscending)
 
 TEST(FileNameSorterTest, SortByKeyDescending)
 {
-    using Item = QPair<QString, QCollatorSortKey>;
+    using Item = QPair<QString, QByteArray>;
     QVector<Item> items {
         { "b", FileNameSorter::sortKey("b") },
         { "a", FileNameSorter::sortKey("a") },
