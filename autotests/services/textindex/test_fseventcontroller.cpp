@@ -17,17 +17,33 @@
 #include <QString>
 #include <QStringList>
 
+#include "stubext.h"
+#include <dfm-search/dsearch_global.h>
+
 #include "dfm_test_main.h"
 #include "services/textindex/service_textindex_global.h"
 #include "services/textindex/profile/indexprofile.h"
 #include "services/textindex/fsmonitor/fseventcontroller.h"
 
 using namespace SERVICETEXTINDEX_NAMESPACE;
+using namespace DFMSEARCH;
 
 class FSEventControllerTest : public testing::Test
 {
 protected:
     QTemporaryDir tmp;
+    stub_ext::StubExt stub;
+
+    void SetUp() override
+    {
+        ASSERT_TRUE(tmp.isValid());
+
+        stub.set_lamda(ADDR(Global, defaultIndexedDirectory),
+                       []() -> QStringList {
+                           __DBG_STUB_INVOKE__
+                           return {};
+                       });
+    }
 
     IndexProfile makeProfile()
     {
