@@ -11,7 +11,6 @@
 #include <dfm-base/interfaces/fileinfo.h>
 #include <dfm-base/interfaces/sortfileinfo.h>
 
-#include <QCollator>
 #include <QUrl>
 #include <QVariant>
 #include <QHash>
@@ -27,7 +26,7 @@ typedef QSharedPointer<FileItemData> FileItemDataPointer;
  * @class FileViewSorter
  * @brief 文件视图高性能排序器
  *
- * 使用 QCollator::sortKey() 预处理排序数据，提供批量排序和增量插入定位功能。
+ * 使用 FileNameSorter::sortKey() 预处理排序数据，提供批量排序和增量插入定位功能。
  * 设计原则：
  * - 单一职责：专注于文件视图排序逻辑
  * - 高性能：使用 sortKey 避免重复比较
@@ -160,9 +159,6 @@ private:
 
 private:
     SortContext m_context;
-
-    // 线程安全的 QCollator（每个线程独立）
-    QCollator &collator();
 };
 
 DPWORKSPACE_END_NAMESPACE

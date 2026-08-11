@@ -42,6 +42,11 @@ add_library(${BIN_NAME}
 # Configure library using unified configuration function
 dfm_configure_base_library(${BIN_NAME})
 
+# ICU: utils/collation/icucollationstrategy.cpp 使用 ucol_* 做本地化排序
+# （zh_CN 下清除脚本重排）。libicu-dev 已在 debian/control Build-Depends。
+find_package(ICU COMPONENTS i18n uc REQUIRED)
+target_link_libraries(${BIN_NAME} PRIVATE ICU::i18n ICU::uc)
+
 set(ShareDir ${CMAKE_INSTALL_PREFIX}/share/dde-file-manager)
 set(AssetsPath ${DFM_PROJECT_ROOT}/assets)
 
