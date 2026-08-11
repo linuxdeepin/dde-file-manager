@@ -2414,7 +2414,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="76"/>
         <source>Authorization failed</source>
-        <translation type="unfinished"/>
+        <translation>Ошибка авторизации</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="95"/>
@@ -2434,17 +2434,17 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="173"/>
         <source>Filesystem errors have been repaired</source>
-        <translation type="unfinished"/>
+        <translation>Ошибки файловой системы были устранены</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="175"/>
         <source>Filesystem repair failed (exit code: %1)</source>
-        <translation type="unfinished"/>
+        <translation>Восстановление файловой системы не удалось (код завершения: %1)</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="194"/>
         <source>Repair timed out after %1 seconds</source>
-        <translation type="unfinished"/>
+        <translation>Время ожидания ремонта истекло через %1 секунд</translation>
     </message>
 </context>
 <context>
@@ -6642,37 +6642,37 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="59"/>
         <source>Basic info</source>
-        <translation type="unfinished"/>
+        <translation>Основная информация</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="66"/>
         <source>Total size</source>
-        <translation type="unfinished"/>
+        <translation>Общий размер</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="68"/>
         <source>Number of files</source>
-        <translation type="unfinished"/>
+        <translation>Количество файлов</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="70"/>
         <source>Time accessed</source>
-        <translation type="unfinished"/>
+        <translation>Время доступа</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="72"/>
         <source>Time modified</source>
-        <translation type="unfinished"/>
+        <translation>Время изменения</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="77"/>
         <source>Hide this file</source>
-        <translation type="unfinished"/>
+        <translation>Скрыть этот файл</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="110"/>
         <source>%1 file(s), %2 folder(s)</source>
-        <translation type="unfinished"/>
+        <translation>%1 файл(ов), %2 папка(и)</translation>
     </message>
 </context>
 <context>
@@ -6680,21 +6680,21 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="59"/>
         <source>Permissions</source>
-        <translation type="unfinished"/>
+        <translation>Права доступа</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="176"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="192"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="208"/>
         <source>No read/write</source>
-        <translation type="unfinished"/>
+        <translation>Без чтения/записи</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="180"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="196"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="212"/>
         <source>--</source>
-        <translation type="unfinished"/>
+        <translation>--</translation>
     </message>
 </context>
 <context>
@@ -6702,69 +6702,69 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="109"/>
         <source>Set %1 and %2 file attributes to %3.</source>
-        <translation type="unfinished"/>
+        <translation>Установить атрибуты файлов %1 и %2 в значение %3.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="113"/>
         <source>File Manager</source>
-        <translation type="unfinished"/>
+        <translation>Файловый менеджер</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="164"/>
         <source>Multiple Files</source>
-        <translation type="unfinished"/>
+        <translation>Несколько файлов</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="203"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Отменить</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="210"/>
         <source>Save</source>
-        <translation type="unfinished"/>
+        <translation>Сохранить</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="293"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="295"/>
         <source>Hidden files</source>
-        <translation type="unfinished"/>
+        <translation>Скрытые файлы</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="300"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="302"/>
         <source>Unhide files</source>
-        <translation type="unfinished"/>
+        <translation>Показать скрытые файлы</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="336"/>
         <source>Owner&gt;Read-write</source>
-        <translation type="unfinished"/>
+        <translation>Владелец&gt;Чтение-запись</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="338"/>
         <source>Owner&gt;Read only</source>
-        <translation type="unfinished"/>
+        <translation>Владелец&gt;Только для чтения</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="372"/>
         <source>Group&gt;Read-write</source>
-        <translation type="unfinished"/>
+        <translation>Группа&gt;Чтение-запись</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="374"/>
         <source>Group&gt;Read only</source>
-        <translation type="unfinished"/>
+        <translation>Группа&gt;Только для чтения</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="408"/>
         <source>Others&gt;Read-write</source>
-        <translation type="unfinished"/>
+        <translation>Прочее&gt;Чтение-запись</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="410"/>
         <source>Others&gt;Read only</source>
-        <translation type="unfinished"/>
+        <translation>Прочее&gt;Только для чтения</translation>
     </message>
 </context>
 <context>
