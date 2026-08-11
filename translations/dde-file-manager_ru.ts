@@ -2305,58 +2305,58 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="118"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Отменить</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="119"/>
         <source>Start Repair</source>
-        <translation type="unfinished"/>
+        <translation>Начать ремонт</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="128"/>
         <source>Repairing Storage Device</source>
-        <translation type="unfinished"/>
+        <translation>Ремонт устройства хранения данных</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="133"/>
         <source>Repairing device: %1 (%2 %3)</source>
-        <translation type="unfinished"/>
+        <translation>Устройство ремонта: %1 (%2 %3)</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="160"/>
         <source>Repair Complete</source>
-        <translation type="unfinished"/>
+        <translation>Ремонт завершен</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="165"/>
         <source>The device has been successfully repaired. The device has been remounted and is now ready to use.</source>
-        <translation type="unfinished"/>
+        <translation>Устройство было успешно отремонтировано. Устройство было установлено на место и теперь готово к использованию.</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="177"/>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="230"/>
         <source>Close</source>
-        <translation type="unfinished"/>
+        <translation>Закрыть</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="178"/>
         <source>Open Device</source>
-        <translation type="unfinished"/>
+        <translation>Открыть устройство</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="187"/>
         <source>Repair Failed</source>
-        <translation type="unfinished"/>
+        <translation>Ремонт не удался</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="192"/>
         <source>Failed to repair the device. This may be due to serious format errors or physical damage. To protect your data, it is recommended to stop writing new files and try using professional data recovery software or seek manual assistance.</source>
-        <translation type="unfinished"/>
+        <translation>Восстановить устройство не удалось. Это может быть связано с серьезными ошибками форматирования или физическим повреждением. Для защиты ваших данных рекомендуется прекратить запись новых файлов и попробовать воспользоваться профессиональным программным обеспечением для восстановления данных или обратиться за помощью к специалисту.</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="206"/>
         <source>Error Code: %1</source>
-        <translation type="unfinished"/>
+        <translation>Код ошибки: %1</translation>
     </message>
 </context>
 <context>
@@ -2365,23 +2365,23 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="154"/>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="409"/>
         <source>Filesystem type cannot be detected. The device may be severely damaged or formatted with an unsupported filesystem. Data recovery may require professional tools.</source>
-        <translation type="unfinished"/>
+        <translation>Не удается определить тип файловой системы. Возможно, устройство серьезно повреждено или отформатировано с использованием неподдерживаемой файловой системы. Для восстановления данных могут потребоваться профессиональные инструменты.</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="169"/>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="424"/>
         <source>Device is hardware write-protected, flash memory may be failing. Please back up data immediately.</source>
-        <translation type="unfinished"/>
+        <translation>Устройство защищено от записи на аппаратном уровне, возможно, произошел сбой флэш-памяти. Незамедлительно создайте резервную копию данных.</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="186"/>
         <source>Filesystem error detected, device may not have been safely ejected. Mount might have failed due to filesystem corruption.</source>
-        <translation type="unfinished"/>
+        <translation>Обнаружена ошибка файловой системы; возможно, устройство было извлечено некорректно. Монтирование, возможно, завершилось неудачей из-за повреждения файловой системы.</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="432"/>
         <source>Filesystem is severely corrupted and cannot be recognized. Data may be recoverable through repair.</source>
-        <translation type="unfinished"/>
+        <translation>Файловая система серьезно повреждена и не распознается. Данные, возможно, удастся восстановить с помощью средства восстановления.</translation>
     </message>
 </context>
 <context>
@@ -2389,27 +2389,27 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="36"/>
         <source>Invalid device path: %1</source>
-        <translation type="unfinished"/>
+        <translation>Неверный путь к устройству: %1</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="42"/>
         <source>Device is already being repaired: %1</source>
-        <translation type="unfinished"/>
+        <translation>Устройство уже находится в ремонте: %1</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="49"/>
         <source>Cannot detect filesystem type for: %1</source>
-        <translation type="unfinished"/>
+        <translation>Не удается определить тип файловой системы для: %1</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="55"/>
         <source>Unsupported filesystem type: %1</source>
-        <translation type="unfinished"/>
+        <translation>Неподдерживаемый тип файловой системы: %1</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="70"/>
         <source>Device is hardware write-protected, cannot repair</source>
-        <translation type="unfinished"/>
+        <translation>Устройство имеет аппаратную защиту от записи, восстановить его невозможно</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="76"/>
@@ -2419,17 +2419,17 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="95"/>
         <source>Failed to unmount device: %1</source>
-        <translation type="unfinished"/>
+        <translation>Не удалось отмонтировать устройство: %1</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="165"/>
         <source>Filesystem repair completed successfully</source>
-        <translation type="unfinished"/>
+        <translation>Восстановление файловой системы завершено успешно</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="168"/>
         <source>NTFS repair capability is limited on Linux. Please connect the device to a Windows system for deep repair.</source>
-        <translation type="unfinished"/>
+        <translation>В Linux возможности по восстановлению файловой системы NTFS ограничены. Для полного восстановления подключите устройство к компьютеру под управлением Windows.</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="173"/>
