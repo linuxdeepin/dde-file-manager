@@ -3,30 +3,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "filenamesorter.h"
+#include "collation/collationstrategy.h"
+#include "collation/collationstrategyprovider.h"
 
-#include <memory>
 #include <algorithm>
 
 DFMBASE_BEGIN_NAMESPACE
 
-QCollator &FileNameSorter::collator()
+QByteArray FileNameSorter::sortKey(const QString &fileName)
 {
-    // 使用 thread_local + unique_ptr 确保线程安全和自动内存清理
-    // 线程退出时，unique_ptr 自动析构，释放 QCollator 内存
-    static thread_local std::unique_ptr<QCollator> collator;
-
-    if (!collator) {
-        collator = std::make_unique<QCollator>();
-        collator->setNumericMode(true);   // 自然排序：file2 < file10
-        collator->setCaseSensitivity(Qt::CaseSensitive);   // 大小写敏感
-    }
-
-    return *collator;
-}
-
-QCollatorSortKey FileNameSorter::sortKey(const QString &fileName)
-{
-    return collator().sortKey(fileName);
+    return CollationStrategyProvider::instance()->strategy().sortKey(fileName);
 }
 
 void FileNameSorter::sort(QStringList &fileNames, Qt::SortOrder order)
@@ -34,11 +20,14 @@ void FileNameSorter::sort(QStringList &fileNames, Qt::SortOrder order)
     if (fileNames.size() <= 1)
         return;
 
+    // 批次入口一次性获取策略，保证整个批次内策略一致（避免 dconfig 切换竞态）
+    const CollationStrategy &s = CollationStrategyProvider::instance()->strategy();
+
     // 预生成所有 sortKey
-    QVector<QPair<QString, QCollatorSortKey>> fileWithKeys;
+    QVector<QPair<QString, QByteArray>> fileWithKeys;
     fileWithKeys.reserve(fileNames.size());
     for (const QString &name : fileNames) {
-        fileWithKeys.emplace_back(qMakePair(name, sortKey(name)));
+        fileWithKeys.emplace_back(qMakePair(name, s.sortKey(name)));
     }
 
     // 使用 sortKey 排序
@@ -58,11 +47,14 @@ void FileNameSorter::sortUrls(QList<QUrl> &urls, Qt::SortOrder order)
     if (urls.size() <= 1)
         return;
 
+    // 批次入口一次性获取策略，保证整个批次内策略一致（避免 dconfig 切换竞态）
+    const CollationStrategy &s = CollationStrategyProvider::instance()->strategy();
+
     // 预生成所有 sortKey
-    QVector<QPair<QUrl, QCollatorSortKey>> urlWithKeys;
+    QVector<QPair<QUrl, QByteArray>> urlWithKeys;
     urlWithKeys.reserve(urls.size());
     for (const QUrl &url : urls) {
-        urlWithKeys.emplace_back(qMakePair(url, sortKey(url.fileName())));
+        urlWithKeys.emplace_back(qMakePair(url, s.sortKey(url.fileName())));
     }
 
     // 使用 sortKey 排序
@@ -79,7 +71,7 @@ void FileNameSorter::sortUrls(QList<QUrl> &urls, Qt::SortOrder order)
 
 bool FileNameSorter::compare(const QString &left, const QString &right, Qt::SortOrder order)
 {
-    int result = collator().compare(left, right);
+    int result = CollationStrategyProvider::instance()->strategy().compare(left, right);
     return (order == Qt::AscendingOrder) ? (result < 0) : (result > 0);
 }
 
