@@ -25,6 +25,7 @@ inline constexpr char kOpenFolderWindowsInASeparateProcess[] { "dfm.open.in.sing
 inline constexpr char kCunstomFixedTabs[] { "dfm.custom.fixedtab" };
 inline constexpr char kPinnedTabs[] { "dfm.pinned.tabs" };
 inline constexpr char kDetailViewRemoteImageMaxSize[] { "dfm.detailview.remote.image.maxsize" };
+inline constexpr char kSortLatinFirstZhCn[] { "dfm.sort.latinfirst.zhCn" };
 }   // namespace BaseConfig
 
 /*!

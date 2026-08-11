@@ -199,6 +199,17 @@
             "description[zh_CN]": "日志规则",
             "permissions": "readwrite",
             "visibility": "public"
+        },
+        "dfm.sort.latinfirst.zhCn": {
+            "value": false,
+            "serial": 0,
+            "flags": [],
+            "name": "Sort Latin letters before Chinese in zh_CN",
+            "name[zh_CN]": "简体中文环境下拉丁字母排在中文之前",
+            "description": "When enabled and the system locale is zh_CN, Latin letters are sorted before Chinese characters in filename sorting. Other locales are unaffected.",
+            "description[zh_CN]": "开启后，在简体中文（zh_CN）系统环境下文件名排序时拉丁字母排在中文之前，其余语系不受影响",
+            "permissions": "readwrite",
+            "visibility": "public"
         }
     }
 }

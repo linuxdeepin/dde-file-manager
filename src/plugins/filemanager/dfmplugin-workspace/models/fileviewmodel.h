@@ -162,6 +162,7 @@ public Q_SLOTS:
     void onUpdateView();
     void onGenericAttributeChanged(DFMBASE_NAMESPACE::Application::GenericAttribute ga, const QVariant &value);
     void onDConfigChanged(const QString &config, const QString &key);
+    void onSortStrategyChanged();
     void onSetCursorWait();
     void onHiddenSettingChanged(bool value);
     void onWorkFinish(int visiableCount, int totalCount);
