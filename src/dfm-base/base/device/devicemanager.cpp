@@ -578,7 +578,10 @@ void DeviceManager::unmountProtocolDevAsync(const QString &id, const QVariantMap
 void DeviceManager::mountNetworkDeviceAsync(const QString &address, CallbackType1 cb, int timeout)
 {
     //    Q_ASSERT(qApp->thread() == QThread::currentThread());
-    Q_ASSERT_X(!address.isEmpty(), __FUNCTION__, "address is emtpy");
+    if (address.isEmpty()) {
+        qCWarning(logDFMBase) << "mountNetworkDeviceAsync: address is empty";
+        return;
+    }
     QUrl u(address);
     if (!u.isValid()) {
         qCWarning(logDFMBase) << "url is not valid: " << u << address;
