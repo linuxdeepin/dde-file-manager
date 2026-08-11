@@ -59,7 +59,7 @@ static inline void setDesktopWindowOld(QWidget *w)
     }
 }
 
-static inline void setDesktopWindow(QWidget *w)
+static inline void setDesktopWindow(QWidget *w, QScreen *screen = nullptr)
 {
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     setDesktopWindowOld(w);
@@ -73,6 +73,13 @@ static inline void setDesktopWindow(QWidget *w)
         qWarning() << w << "windowHandle is null";
         return;
     }
+
+    // 创建层壳窗口前将窗口绑定到目标屏：ScreenFromQWindow 会读取 QWindow::screen()
+    // 决定 layer surface 绑定到哪个 wl_output。未显式 setScreen 的顶层窗口在 Wayland
+    // 下默认落在主屏，导致副屏桌面被绑到主屏 output。对齐 dock 的 winId->setScreen->
+    // DLayerShellWindow::get 顺序。
+    if (screen)
+        window->setScreen(screen);
 
     // 使用 dde-shell 完成桌面窗口设置
     DS_USE_NAMESPACE
