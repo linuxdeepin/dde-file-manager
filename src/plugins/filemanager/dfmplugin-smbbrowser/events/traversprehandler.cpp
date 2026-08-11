@@ -44,8 +44,13 @@ void travers_prehandler::networkAccessPrehandler(quint64 winId, const QUrl &url,
     QUrl netUrl = url;
     if (url.hasFragment()) {
         netUrl = url.adjusted(QUrl::RemoveFragment);
-        // # 标识片段起始，后面的内容被分配到了fragment字段中
-        auto path = url.path() + '#' + url.fragment(QUrl::FullyDecoded);
+        // '#' 标识片段起始，后面的内容被分配到了fragment字段中。
+        // 当 '#' 紧跟 host（如 smb://1.2.3.4#share/）时 url.path() 为空，
+        // 此时需补前导 '/'，否则 QUrl::setPath 会生成无效 URL（toString 返回空串）。
+        auto path = url.path();
+        if (path.isEmpty())
+            path = "/";
+        path = path + '#' + url.fragment(QUrl::FullyDecoded);
         netUrl.setPath(path);
         fmInfo() << "networkAccessPrehandler: converted fragment into path."
                  << "oldUrl: " << url
