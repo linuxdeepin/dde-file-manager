@@ -42,11 +42,20 @@ static constexpr char kPolicyKitActionIdCIFS[] { "org.deepin.Filemanager.MountCo
 // share name. This is a no-op for URLs without a fragment, including the already-percent-
 // encoded form produced by networkAccessPrehandler (BUG-337999's fix) and '%20'-style
 // encoded paths, so existing behavior (and the BUG-337999 fix) is unchanged.
+//
+// 当 '#' 紧跟 host（如 smb://1.2.3.4#share/）时 url.path() 为空，需补前导 '/'
+// 否则 QUrl::setPath 会生成无效 URL。同时合并 fragment 后需清除旧 fragment，
+// 否则 URL 会同时包含合并后的 path 和旧 fragment。
 static QUrl mergedSmbUrl(const QString &path)
 {
     QUrl url(path);
-    if (url.hasFragment())
-        url.setPath(url.path() + '#' + url.fragment(QUrl::FullyDecoded));
+    if (url.hasFragment()) {
+        auto p = url.path();
+        if (p.isEmpty())
+            p = "/";
+        url.setPath(p + '#' + url.fragment(QUrl::FullyDecoded));
+        url.setFragment({});
+    }
     return url;
 }
 
