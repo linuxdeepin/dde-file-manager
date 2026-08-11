@@ -199,9 +199,23 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
             continue;
         }
 
+        // Prefer the local file:// URI (from STANDARD_TARGET_URI) over the
+        // trash:// URI for the move operation. Using a trash:// source causes
+        // g_file_move() to go through the GVFS daemon, where GVFS metadata
+        // (e.g. metadata::emblems) is transferred via an async fire-and-forget
+        // D-Bus call that can silently fail. A direct local-to-local move
+        // calls local_file_moved() in the client process, reliably migrating
+        // the metadata.
+        QUrl moveSourceUrl = trashUrl.isValid() ? trashUrl : url;
+
         DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-        bool trashSucc = fileHandler.moveFile(url, newTargetInfo->uri(), DFMIO::DFile::CopyFlag::kOverwrite);
+        bool trashSucc = fileHandler.moveFile(moveSourceUrl, newTargetInfo->uri(), DFMIO::DFile::CopyFlag::kOverwrite);
         if (trashSucc) {
+            // When using the local file:// URI we bypass trash_item_restore()
+            // which would normally delete the .trashinfo file, so do it here.
+            if (moveSourceUrl == trashUrl && trashInfoUrl.isValid())
+                removeTrashInfo(trashInfoUrl);
+
             completeFilesCount++;
             if (!completeSourceFiles.contains(fileUrl)) {
                 completeSourceFiles.append(fileUrl);
@@ -214,8 +228,10 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
             auto errorCode = fileHandler.errorCode();
             switch (errorCode) {
             case DFMIOErrorCode::DFM_IO_ERROR_WOULD_MERGE: {
-                fmDebug() << "Directory merge needed for restore - from:" << url << "to:" << newTargetInfo->uri();
-                trashSucc = this->mergeDir(url, newTargetInfo->uri(), DFMIO::DFile::CopyFlag::kOverwrite);
+                fmDebug() << "Directory merge needed for restore - from:" << moveSourceUrl << "to:" << newTargetInfo->uri();
+                trashSucc = this->mergeDir(moveSourceUrl, newTargetInfo->uri(), DFMIO::DFile::CopyFlag::kOverwrite);
+                if (trashSucc && trashInfoUrl.isValid())
+                    removeTrashInfo(trashInfoUrl);
                 break;
             };
             default:
