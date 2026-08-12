@@ -30,7 +30,6 @@
 #include <QDebug>
 #include <QApplication>
 #include <qdrawutil.h>
-#include <QImage>
 #include <QFontMetrics>
 #include <QEvent>
 #include <QMouseEvent>
@@ -50,6 +49,7 @@ DGUI_USE_NAMESPACE
 
 static constexpr int kRadius = 8;
 static constexpr int kExpandIconSize = 12;
+static constexpr int kSeparatorExpandIconSize = 14;
 static constexpr int kItemMargin = 10;
 static constexpr int kItemIconSize = 16;
 static constexpr int kEjectIconSize = 16;
@@ -58,6 +58,7 @@ static constexpr int kDefaultMaxLength = 40;
 
 #ifdef DTKWIDGET_CLASS_DSizeMode
 static constexpr int kCompactExpandIconSize = 10;
+static constexpr int kCompactSeparatorExpandIconSize = 12;
 static constexpr int kCompactModeIcon = 16;
 #endif
 
@@ -240,7 +241,7 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     qreal textWidthMax;
     bool isHovering = opt.state.testFlag(QStyle::State_MouseOver) || isDropTarget;
     if (separatorItem) {
-        textWidthMax = isHovering ? (baseValue - kExpandIconSize - 10) : baseValue;
+        textWidthMax = isHovering ? (baseValue - kSeparatorExpandIconSize - 10) : baseValue;
     } else {
         textWidthMax = isEjectable ? min : max;
     }
@@ -572,9 +573,15 @@ void SideBarItemDelegate::drawMouseHoverBackground(QPainter *painter, const DPal
 void SideBarItemDelegate::drawMouseHoverExpandButton(QPainter *painter, const QRect &r, bool isExpanded) const
 {
     painter->save();
-    int iconSize = kExpandIconSize;
+    SideBarView *sidebarView = dynamic_cast<SideBarView *>(this->parent());
+    if (!sidebarView) {
+        painter->restore();
+        return;
+    }
+
+    int iconSize = kSeparatorExpandIconSize;
 #ifdef DTKWIDGET_CLASS_DSizeMode
-    iconSize = DSizeModeHelper::element(kCompactExpandIconSize, kExpandIconSize);
+    iconSize = DSizeModeHelper::element(kCompactSeparatorExpandIconSize, kSeparatorExpandIconSize);
 #endif
 
     int x = r.right() - 10 - iconSize;
@@ -584,20 +591,51 @@ void SideBarItemDelegate::drawMouseHoverExpandButton(QPainter *painter, const QR
 
     bool isDarkType = DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType;
     QColor c(isDarkType ? qRgb(255, 255, 255) : qRgb(0, 0, 0));
+    QColor normalColor = isDarkType ? QColor(255, 255, 255, 102) : QColor(0, 0, 0, 102);
+    QColor hoverColor = isDarkType ? QColor(255, 255, 255, 179) : QColor(0, 0, 0, 179);
 
     painter->setPen(Qt::NoPen);
     painter->setBrush(c);
-    SideBarView *sidebarView = dynamic_cast<SideBarView *>(this->parent());
     QRect bgRect = iconRect.marginsAdded(QMargins(3, 3, 3, 3));
-    if (bgRect.contains(sidebarView->mapFromGlobal(QCursor::pos()))) {
+    const QPoint hoverPos = sidebarView->mapFromGlobal(QCursor::pos());
+    const bool isHoveringExpand = bgRect.contains(hoverPos);
+    if (isHoveringExpand) {
         painter->setOpacity(0.1);
-        painter->drawRoundedRect(bgRect, kRadius, kRadius);
+        painter->drawEllipse(QRectF(bgRect).adjusted(0.5, 0.5, -0.5, -0.5));
     }
 
     painter->setOpacity(1);
-    painter->setPen(Qt::gray);
-    QIcon icon = QIcon::fromTheme(isExpanded ? "go-up" : "go-down");
-    icon.paint(painter, iconRect, Qt::AlignmentFlag::AlignCenter);
+    QColor arrowColor = isHoveringExpand ? hoverColor : normalColor;
+    int arrowSize = kExpandIconSize;
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    arrowSize = DSizeModeHelper::element(kCompactExpandIconSize, kExpandIconSize);
+#endif
+    QRect arrowRect(QPoint(0, 0), QSize(arrowSize, arrowSize));
+    arrowRect.moveCenter(iconRect.center());
+
+    QStyleOptionButton arrowOpt;
+    arrowOpt.initFrom(sidebarView);
+    arrowOpt.rect = QRect(QPoint(0, 0), arrowRect.size());
+    arrowOpt.state |= QStyle::State_Enabled;
+    arrowOpt.palette.setColor(QPalette::ButtonText, Qt::white);
+    arrowOpt.palette.setColor(QPalette::WindowText, Qt::white);
+    arrowOpt.palette.setColor(QPalette::Text, Qt::white);
+
+    if (QStyle *style = sidebarView->style()) {
+        const qreal dpr = painter->device() ? painter->device()->devicePixelRatioF() : qApp->devicePixelRatio();
+        QPixmap arrowPixmap(arrowRect.size() * dpr);
+        arrowPixmap.setDevicePixelRatio(dpr);
+        arrowPixmap.fill(Qt::transparent);
+
+        QPainter arrowPainter(&arrowPixmap);
+        style->drawPrimitive(isExpanded ? QStyle::PE_IndicatorArrowUp : QStyle::PE_IndicatorArrowDown,
+                             &arrowOpt, &arrowPainter, sidebarView);
+        arrowPainter.setCompositionMode(QPainter::CompositionMode_SourceIn);
+        arrowPainter.fillRect(QRect(QPoint(0, 0), arrowRect.size()), arrowColor);
+        arrowPainter.end();
+
+        painter->drawPixmap(arrowRect.topLeft(), arrowPixmap);
+    }
     painter->restore();
 }
 
