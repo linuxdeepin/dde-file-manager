@@ -758,10 +758,6 @@ bool DiskEncryptSetupPrivate::createMarkerFile(const QString &path)
             qCritical() << "[DiskEncryptSetupPrivate::createMarkerFile] Failed to create settings directory:" << disk_encrypt::kOverlayDMSettingsDir;
             return false;
         }
-        if (!dir.setPermissions(QDir::ReadOwner | QDir::WriteOwner | QDir::ExeOwner)) {
-            qCritical() << "[DiskEncryptSetupPrivate::createMarkerFile] Failed to set permissions on settings directory";
-            return false;
-        }
         qInfo() << "[DiskEncryptSetupPrivate::createMarkerFile] Settings directory created:" << disk_encrypt::kOverlayDMSettingsDir;
     }
 
@@ -774,13 +770,6 @@ bool DiskEncryptSetupPrivate::createMarkerFile(const QString &path)
         }
         qCritical() << "[DiskEncryptSetupPrivate::createMarkerFile] Failed to create marker file:" << path
                     << "Error:" << file.errorString();
-        return false;
-    }
-
-    // Set owner-only permissions to prevent tampering by non-root users
-    if (!file.setPermissions(QFile::ReadOwner | QFile::WriteOwner)) {
-        qCritical() << "[DiskEncryptSetupPrivate::createMarkerFile] Failed to set permissions on marker file:" << path;
-        file.close();
         return false;
     }
 
