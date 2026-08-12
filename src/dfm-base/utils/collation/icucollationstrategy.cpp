@@ -75,9 +75,10 @@ QByteArray IcuCollationStrategy::sortKey(const QString &s) const
     const UChar *utf16 = reinterpret_cast<const UChar *>(s.utf16());
     const int32_t len = s.size();
 
-    // 启发式缓冲区生成；不够则按返回值扩容重试。ucol_getSortKey 不接收 UErrorCode。
-    QByteArray key;
-    key.resize(len * 4 + 16);
+    // 采用与 QCollator::sortKey (qtbase qcollator_icu.cpp) 相同的缓冲区策略：
+    // Qt::Uninitialized 避免零填充，容量 16+len+len/4 是 Qt 的启发式（多数 sort key
+    // 不会超出此容量，避免扩容重试）。ucol_getSortKey 不接收 UErrorCode。
+    QByteArray key(16 + len + (len >> 2), Qt::Uninitialized);
     int32_t n = ucol_getSortKey(m_collator, utf16, len,
                                 reinterpret_cast<uint8_t *>(key.data()), key.size());
     if (n > key.size()) {
