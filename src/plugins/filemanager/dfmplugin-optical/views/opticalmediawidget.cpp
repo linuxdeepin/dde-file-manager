@@ -106,7 +106,9 @@ void OpticalMediaWidget::initializeUi()
     lbAvailable = new QLabel("<Space Available>");
     lbUDFSupport = new QLabel(tr("It does not support burning UDF discs"));
     pbDump = new DPushButton();
+    pbDump->setAccessibleName("PbDump");
     pbBurn = new DPushButton();
+    pbBurn->setAccessibleName("PbBurn");
     iconCaution = new QSvgWidget();
 
     // 设置按钮文本

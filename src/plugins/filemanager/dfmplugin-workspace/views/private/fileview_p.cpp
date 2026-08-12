@@ -136,6 +136,7 @@ void FileViewPrivate::initListModeView()
         auto headerLayout = qobject_cast<QVBoxLayout *>(headerWidget->layout());
 
         headerView = new HeaderView(Qt::Orientation::Horizontal, q);
+    headerView->setAccessibleName("HeaderView");
 
         headerView->setDefaultAlignment(Qt::AlignLeft | Qt::AlignVCenter);
         headerView->setFixedHeight(kListViewHeaderHeight);

@@ -113,6 +113,7 @@ void FileViewStatusBar::initScalingSlider()
     fmDebug() << "Initializing scaling slider";
 
     scaleSlider = new DSlider(Qt::Horizontal, this);
+    scaleSlider->setAccessibleName("ScaleSlider");
     scaleSlider->adjustSize();
     scaleSlider->setFixedWidth(120);
     scaleSlider->setMaximum(1);

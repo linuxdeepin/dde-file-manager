@@ -1,0 +1,44 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+expected_names:
+- line: 111
+  name: PbBurn
+  source_file: src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp
+  variable: pbBurn
+- line: 109
+  name: PbDump
+  source_file: src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp
+  variable: pbDump
+- line: 29
+  name: CheckBox_3
+  source_file: src/plugins/filemanager/dfmplugin-search/utils/indexstatuscheckbox.cpp
+  variable: m_checkBox
+- line: 48
+  name: SidebarView
+  source_file: src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp
+  variable: sidebarView
+- line: 75
+  name: MenuPtr_3
+  source_file: src/plugins/filemanager/dfmplugin-workspace/utils/fileviewmenuhelper.cpp
+  variable: menuPtr
+- line: 116
+  name: ScaleSlider
+  source_file: src/plugins/filemanager/dfmplugin-workspace/views/fileviewstatusbar.cpp
+  variable: scaleSlider
+- line: 139
+  name: HeaderView
+  source_file: src/plugins/filemanager/dfmplugin-workspace/views/private/fileview_p.cpp
+  variable: headerView
+- line: 47
+  name: ComboBox_2
+  source_file: src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp
+  variable: comboBox
+- line: 49
+  name: StackWidget
+  source_file: src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp
+  variable: stackWidget
+- line: 138
+  name: RenameBtn
+  source_file: src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp
+  variable: renameBtn
