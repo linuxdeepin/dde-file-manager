@@ -61,7 +61,8 @@ QString config_utils::cipherType()
 
 int tpm_utils::checkTPM()
 {
-    CREATE_TPM_INTERFACE(iface);
+    QDBusInterface iface(kTPMControlService, kTPMControlPath, kTPMControlInterface, QDBusConnection::systemBus());
+    iface.setTimeout(kTPMDBusTimeoutMs);
     if (!iface.isValid()) {
         fmWarning() << "TPMControl DBus interface is invalid, service may be unavailable";
         return -1;
@@ -73,7 +74,8 @@ int tpm_utils::checkTPM()
 
 int tpm_utils::checkTPMLockoutStatus()
 {
-    CREATE_TPM_INTERFACE(iface);
+    QDBusInterface iface(kTPMControlService, kTPMControlPath, kTPMControlInterface, QDBusConnection::systemBus());
+    iface.setTimeout(kTPMDBusTimeoutMs);
     if (!iface.isValid()) {
         fmWarning() << "TPMControl DBus interface is invalid, service may be unavailable";
         return -1;
@@ -85,7 +87,8 @@ int tpm_utils::checkTPMLockoutStatus()
 
 int tpm_utils::getRandomByTPM(int size, QString *output)
 {
-    CREATE_TPM_INTERFACE(iface);
+    QDBusInterface iface(kTPMControlService, kTPMControlPath, kTPMControlInterface, QDBusConnection::systemBus());
+    iface.setTimeout(kTPMDBusTimeoutMs);
     if (!iface.isValid()) {
         fmWarning() << "TPMControl DBus interface is invalid, service may be unavailable";
         return -1;
@@ -143,7 +146,8 @@ int tpm_utils::getRandomByTPM(int size, QString *output)
 
 int tpm_utils::isSupportAlgoByTPM(const QString &algoName, bool *support)
 {
-    CREATE_TPM_INTERFACE(iface);
+    QDBusInterface iface(kTPMControlService, kTPMControlPath, kTPMControlInterface, QDBusConnection::systemBus());
+    iface.setTimeout(kTPMDBusTimeoutMs);
     if (!iface.isValid()) {
         fmWarning() << "TPMControl DBus interface is invalid, service may be unavailable";
         return -1;
@@ -168,7 +172,8 @@ int tpm_utils::isSupportAlgoByTPM(const QString &algoName, bool *support)
 
 int tpm_utils::encryptByTPM(const QVariantMap &map)
 {
-    CREATE_TPM_INTERFACE(iface);
+    QDBusInterface iface(kTPMControlService, kTPMControlPath, kTPMControlInterface, QDBusConnection::systemBus());
+    iface.setTimeout(kTPMDBusTimeoutMs);
     if (!iface.isValid()) {
         fmWarning() << "TPMControl DBus interface is invalid, service may be unavailable";
         return -1;
@@ -211,7 +216,8 @@ int tpm_utils::encryptByTPM(const QVariantMap &map)
 
 int tpm_utils::decryptByTPM(const QVariantMap &map, QString *psw)
 {
-    CREATE_TPM_INTERFACE(iface);
+    QDBusInterface iface(kTPMControlService, kTPMControlPath, kTPMControlInterface, QDBusConnection::systemBus());
+    iface.setTimeout(kTPMDBusTimeoutMs);
     if (!iface.isValid()) {
         fmWarning() << "TPMControl DBus interface is invalid, service may be unavailable";
         return -1;
@@ -300,7 +306,8 @@ int tpm_utils::decryptByTPM(const QVariantMap &map, QString *psw)
 
 int tpm_utils::ownerAuthStatus()
 {
-    CREATE_TPM_INTERFACE(iface);
+    QDBusInterface iface(kTPMControlService, kTPMControlPath, kTPMControlInterface, QDBusConnection::systemBus());
+    iface.setTimeout(kTPMDBusTimeoutMs);
     if (!iface.isValid()) {
         fmWarning() << "TPMControl DBus interface is invalid, service may be unavailable";
         return -1;
