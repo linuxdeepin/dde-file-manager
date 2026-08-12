@@ -171,7 +171,6 @@ void SideBarViewPrivate::expandItem(const QModelIndex &index, const QList<QUrl> 
         return;
 
     q->model()->addSubItems(index, subFolders);
-    q->expand(index);
     q->onChangeExpandState(index, true);
     q->setCurrentUrl(sidebarUrl);
 }
@@ -180,7 +179,6 @@ void SideBarViewPrivate::expandPartitionItem(const QModelIndex &index, const QUr
 {
     // If already expanded, collapse it.
     if (q->isExpanded(index)) {
-        q->collapse(index);
         q->onChangeExpandState(index, false);
         return;
     }
@@ -236,7 +234,6 @@ void SideBarViewPrivate::onExpandableChanged()
             // Collapse the partition and remove its sub-items so file watchers are released.
             if (q->isExpanded(index)) {
                 fmDebug() << "SideBarViewPrivate: Collapsing expanded partition:" << sidebarItem->url();
-                q->collapse(index);
                 q->onChangeExpandState(index, false);
             }
             // Remove dynamically-added sub-items (keep the partition item itself).
