@@ -19,6 +19,7 @@ ThumbnailDelegate::ThumbnailDelegate(QAbstractItemView *parent)
     : DStyledItemDelegate(parent)
 {
     itemViewParent = parent;
+    itemViewParent->setAccessibleName("ItemViewParent");
 }
 
 void ThumbnailDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const

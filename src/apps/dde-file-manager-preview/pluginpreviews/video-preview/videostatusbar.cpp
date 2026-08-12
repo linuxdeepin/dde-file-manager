@@ -50,6 +50,7 @@ VideoStatusBar::VideoStatusBar(VideoPreview *preview)
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     controlButton = new DIconButton(this);
+    controlButton->setAccessibleName("ControlButton");
     controlButton->setIconSize({ kControlButtonIconSize, kControlButtonIconSize });
     controlButton->installEventFilter(this);
     updateControlButtonIcon();
