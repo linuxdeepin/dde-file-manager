@@ -53,6 +53,7 @@ void TagWidgetPrivate::initializeUI()
     colorListWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
     crumbEdit = new TagCrumbEdit(q);
+    crumbEdit->setAccessibleName("CrumbEdit");
     crumbEdit->setObjectName("tagCrumbEdit");
     crumbEdit->setFrameShape(QFrame::Shape::NoFrame);
     crumbEdit->viewport()->setBackgroundRole(QPalette::NoRole);

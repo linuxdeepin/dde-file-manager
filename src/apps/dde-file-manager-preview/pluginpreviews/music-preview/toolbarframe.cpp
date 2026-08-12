@@ -60,12 +60,14 @@ ToolBarFrame::ToolBarFrame(const QString &uri, QWidget *parent)
 void ToolBarFrame::initUI()
 {
     playControlButton = new QPushButton(this);
+    playControlButton->setAccessibleName("PlayControlButton");
     playControlButton->setFixedSize(36, 36);
     playControlButton->setIconSize({ kControlButtonIconSize, kControlButtonIconSize });
     playControlButton->installEventFilter(this);
     updatePlayButtonIcon();
 
     progressSlider = new DSlider(Qt::Horizontal, this);
+    progressSlider->setAccessibleName("ProgressSlider");
     progressSlider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     durationLabel = new QLabel(this);

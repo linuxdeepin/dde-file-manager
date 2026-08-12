@@ -141,6 +141,7 @@ void ProgressDialog::initUi()
     failedWidget = new ShredFailedWidget(this);
 
     stackedWidget = new QStackedWidget(this);
+    stackedWidget->setAccessibleName("StackedWidget_2");
     stackedWidget->addWidget(proWidget);
     stackedWidget->addWidget(failedWidget);
     addContent(stackedWidget);

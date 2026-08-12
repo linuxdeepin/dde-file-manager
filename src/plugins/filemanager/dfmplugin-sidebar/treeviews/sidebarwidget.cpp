@@ -45,6 +45,7 @@ SideBarWidget::SideBarWidget(QFrame *parent)
 {
     compositingConfig = DConfig::create("org.kde.kwin", "org.kde.kwin.compositing", QString(), this);
     sidebarView = new SideBarView(sidebarViewContainer);
+    sidebarView->setAccessibleName("SidebarView");
 #ifdef ENABLE_TESTING
     dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
                          qobject_cast<QWidget *>(sidebarView), AcName::kAcDmSideBarView);

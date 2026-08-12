@@ -19,6 +19,7 @@ SwitchWidget::SwitchWidget(const QString &title, QWidget *parent)
     label->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
     switchBtn = qobject_cast<DSwitchButton *>(rightWidget);
+    switchBtn->setAccessibleName("SwitchBtn");
     switchBtn->setParent(this);
 
     connect(switchBtn, &DSwitchButton::toggled, this, &SwitchWidget::checkedChanged);

@@ -43,6 +43,7 @@ VaultActiveView::VaultActiveView(QWidget *parent)
 
     //! 初始化试图容器
     stackedWidget = new QStackedWidget(this);
+    stackedWidget->setAccessibleName("StackedWidget_3");
 
     //! 初始化内部窗体
     startVaultWidget = new VaultActiveStartView(this);

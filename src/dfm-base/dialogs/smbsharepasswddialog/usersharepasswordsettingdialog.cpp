@@ -50,6 +50,7 @@ void UserSharePasswordSettingDialog::initializeUi()
     editAreaLay->setContentsMargins(0, 20, 0, 6);
 
     passwordEdit = new Dtk::Widget::DPasswordEdit(this);
+    passwordEdit->setAccessibleName("PasswordEdit_2");
     passwordEdit->lineEdit()->setMaxLength(kMaxSmbPasswordLength);
     editAreaLay->addWidget(passwordEdit);
     DLabel *notice = new DLabel(tr("Set a password on the shared folder for non-anonymous access"), this);

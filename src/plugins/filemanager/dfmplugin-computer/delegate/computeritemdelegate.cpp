@@ -127,6 +127,7 @@ QWidget *ComputerItemDelegate::createEditor(QWidget *parent, const QStyleOptionV
     editingIndex = index;
     auto editor = new QLineEdit(parent);
     renameEditor = editor;
+    renameEditor->setAccessibleName("RenameEditor");
 
     int topMargin = editorMarginTop(option.font.family());
     editor->setFrame(false);

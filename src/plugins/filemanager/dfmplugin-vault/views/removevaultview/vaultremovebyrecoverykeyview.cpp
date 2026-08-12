@@ -50,6 +50,7 @@ void VaultRemoveByRecoverykeyView::initUI()
         QLabel *label = new QLabel(tr("Delete file vault with recovery key"), this);
 
         filePathEdit = new DFileChooserEdit(this);
+        filePathEdit->setAccessibleName("FilePathEdit");
         filePathEdit->lineEdit()->setPlaceholderText(tr("Select Key File"));
         filePathEdit->lineEdit()->setReadOnly(true);
         filePathEdit->lineEdit()->setClearButtonEnabled(false);
@@ -61,6 +62,7 @@ void VaultRemoveByRecoverykeyView::initUI()
         contentLayout->addWidget(filePathEdit);
     } else {
         keyEdit = new QPlainTextEdit(this);
+        keyEdit->setAccessibleName("KeyEdit_2");
         keyEdit->setFrameShape(QFrame::NoFrame);
         keyEdit->setPlaceholderText(tr("Input the 32-digit recovery key"));
         keyEdit->installEventFilter(this);

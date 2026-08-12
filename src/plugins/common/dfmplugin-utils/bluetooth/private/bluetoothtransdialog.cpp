@@ -217,6 +217,7 @@ void BluetoothTransDialog::initUI()
 
     // stacked area
     stackedWidget = new QStackedWidget(this);
+    stackedWidget->setAccessibleName("StackedWidget");
     stackedWidget->layout()->setContentsMargins(0, 0, 0, 0);
     stackedWidget->layout()->setSpacing(0);
 
@@ -388,6 +389,7 @@ QWidget *BluetoothTransDialog::createDeviceSelectorPage()
     pLayout->addWidget(statusTxt);
 
     devicesListView = new DListView(this);
+    devicesListView->setAccessibleName("DevicesListView");
     devModel = new QStandardItemModel(this);
     devicesListView->setFixedHeight(88);
     devicesListView->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);

@@ -33,6 +33,7 @@ using namespace ddplugin_canvas;
 CanvasViewMenuProxy::CanvasViewMenuProxy(CanvasView *parent)
     : QObject(parent), view(parent)
 {
+    view->setAccessibleName("View");
 }
 
 CanvasViewMenuProxy::~CanvasViewMenuProxy()
@@ -88,6 +89,7 @@ void CanvasViewMenuProxy::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags, con
     }
 
     menuPtr = new DMenu(view);
+    menuPtr->setAccessibleName("MenuPtr");
     canvasScene->create(menuPtr);
     canvasScene->updateState(menuPtr);
     if (QAction *act = menuPtr->exec(QCursor::pos())) {
