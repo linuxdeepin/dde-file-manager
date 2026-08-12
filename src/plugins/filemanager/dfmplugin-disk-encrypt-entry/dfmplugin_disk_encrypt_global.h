@@ -61,6 +61,11 @@ inline constexpr char kTCMPcrBank[] { "sm3_256" };
 // DBus timeout constant: 2 seconds to prevent UI blocking when service is unavailable
 inline constexpr int kDiskEncryptDBusTimeoutMs = 2000;
 
+// TPM DBus timeout constant: 1 minute. TPM operations (e.g. IsTPMAvailable / Encrypt)
+// may trigger a Polkit authentication dialog; we wait for the user to finish auth
+// instead of timing out after the Qt DBus default 25s and falling back incorrectly.
+inline constexpr int kTPMDBusTimeoutMs = 60 * 1000;   // 1 min
+
 // TPM Control service constants
 inline constexpr char kTPMControlService[] = "org.deepin.Filemanager.TPMControl";
 inline constexpr char kTPMControlPath[] = "/org/deepin/Filemanager/TPMControl";
