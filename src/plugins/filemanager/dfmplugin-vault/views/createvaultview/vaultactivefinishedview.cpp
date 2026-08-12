@@ -80,6 +80,7 @@ void VaultActiveFinishedView::initUi()
 
     // 加密保险箱按钮
     finishedBtn = new DSuggestButton(tr("Encrypt"), this);
+    finishedBtn->setAccessibleName("FinishedBtn");
     finishedBtn->setFixedWidth(200);
 
     // 布局
