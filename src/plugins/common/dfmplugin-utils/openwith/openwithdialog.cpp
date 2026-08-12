@@ -200,7 +200,8 @@ OpenWithDialogListSparerItem::OpenWithDialogListSparerItem(const QString &title,
     initUiForSizeMode();
     layout->addWidget(separator);
     layout->addWidget(titleLabel);
-    layout->setContentsMargins(20, 0, 20, 0);
+    layout->setContentsMargins(0, 0, 0, 0);
+    titleLabel->setContentsMargins(20, 0, 0, 0);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 }
 
