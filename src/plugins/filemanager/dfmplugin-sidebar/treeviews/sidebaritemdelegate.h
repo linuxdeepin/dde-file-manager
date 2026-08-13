@@ -40,6 +40,8 @@ public:
 
     bool helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index) override;
 
+    void invalidateIconCache(const QUrl &url);
+
 public Q_SLOTS:
     void onEditorTextChanged(const QString &text, SideBarItem *item) const;
 

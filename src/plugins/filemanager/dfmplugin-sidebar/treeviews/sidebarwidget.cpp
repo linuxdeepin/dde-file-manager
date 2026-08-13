@@ -120,6 +120,11 @@ bool SideBarWidget::removeItem(const QUrl &url)
 void SideBarWidget::updateItem(const QUrl &url, const ItemInfo &newInfo)
 {
     Q_ASSERT(qApp->thread() == QThread::currentThread());
+    // Drop the delegate's cached icon pixmap for this item before refreshing the
+    // model: the cache keys pixmaps by the item url, so a changed icon for the
+    // same url would otherwise be shadowed by the stale pixmap on the next paint.
+    if (auto *delegate = qobject_cast<SideBarItemDelegate *>(sidebarView->itemDelegate()))
+        delegate->invalidateIconCache(url);
     kSidebarModelIns->updateRow(url, newInfo);
     bool hidden { !SideBarHelper::hiddenRules().value(newInfo.visiableControlKey, true).toBool() };
     if (hidden)
