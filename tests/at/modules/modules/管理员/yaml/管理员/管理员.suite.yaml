@@ -11,8 +11,8 @@ fast_fail: false
 env_check: []
 setup:
 - action: session_start
-  command: dde-file-manager
-  wait: 3.0
+  command: dde-file-manager --new-window --open-home
+  wait: 5.0
 suites:
 - id: case_1806755_s1
   name: 启动 dde-file-manager
@@ -26,7 +26,7 @@ suites:
   - action: mouse_double_click
     selector:
       name: 文档
-      role: button
+      role: list item
   - action: wait
     wait: 1.0
   - action: wait
@@ -68,10 +68,10 @@ suites:
   assert_steps:
   - action: assert_window
     selector: null
-    name_pattern: dde-file-manager
+    name_pattern: DMainWindow
   - action: assert_window
     selector: null
-    name_pattern: dde-file-manager
+    name_pattern: DMainWindow
 - id: case_1806749_s1
   name: 启动 dde-file-manager
   description: ''

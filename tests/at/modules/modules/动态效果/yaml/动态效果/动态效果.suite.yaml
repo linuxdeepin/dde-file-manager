@@ -11,8 +11,8 @@ fast_fail: false
 env_check: []
 setup:
 - action: session_start
-  command: dde-file-manager
-  wait: 3.0
+  command: dde-file-manager --new-window --open-home
+  wait: 5.0
 suites:
 - id: case_1808019_s1
   name: 启动 dde-file-manager
@@ -32,10 +32,10 @@ suites:
   assert_steps:
   - action: assert_window
     selector: null
-    name_pattern: dde-file-manager
+    name_pattern: DMainWindow
   - action: assert_window
     selector: null
-    name_pattern: dde-file-manager
+    name_pattern: DMainWindow
 - id: case_1808017_s1
   name: 启动 dde-file-manager
   description: ''
@@ -134,7 +134,7 @@ suites:
   assert_steps:
   - action: assert_window
     selector: null
-    name_pattern: dde-file-manager
+    name_pattern: DMainWindow
 - id: case_1808005_s1
   name: 启动 dde-file-manager
   description: ''
@@ -202,16 +202,16 @@ suites:
   assert_steps:
   - action: assert_window
     selector: null
-    name_pattern: dde-file-manager
+    name_pattern: DMainWindow
   - action: assert_window
     selector: null
-    name_pattern: dde-file-manager
+    name_pattern: DMainWindow
   - action: assert_window
     selector: null
-    name_pattern: dde-file-manager
+    name_pattern: DMainWindow
   - action: assert_window
     selector: null
-    name_pattern: dde-file-manager
+    name_pattern: DMainWindow
 - id: case_1807999_s1
   name: 启动 dde-file-manager
   description: ''
@@ -240,16 +240,16 @@ suites:
   assert_steps:
   - action: assert_window
     selector: null
-    name_pattern: dde-file-manager
+    name_pattern: DMainWindow
   - action: assert_window
     selector: null
-    name_pattern: dde-file-manager
+    name_pattern: DMainWindow
   - action: assert_window
     selector: null
-    name_pattern: dde-file-manager
+    name_pattern: DMainWindow
   - action: assert_window
     selector: null
-    name_pattern: dde-file-manager
+    name_pattern: DMainWindow
 - id: case_1807995_s1
   name: 启动 dde-file-manager
   description: ''
@@ -276,7 +276,7 @@ suites:
   assert_steps:
   - action: assert_window
     selector: null
-    name_pattern: dde-file-manager
+    name_pattern: DMainWindow
 - id: case_1807993_s1
   name: 启动 dde-file-manager
   description: ''
@@ -315,7 +315,7 @@ suites:
   assert_steps:
   - action: assert_window
     selector: null
-    name_pattern: dde-file-manager
+    name_pattern: DMainWindow
 - id: case_1807985_s1
   name: 启动 dde-file-manager
   description: ''
@@ -342,7 +342,7 @@ suites:
   assert_steps:
   - action: assert_window
     selector: null
-    name_pattern: dde-file-manager
+    name_pattern: DMainWindow
 - id: case_1807983_s1
   name: 启动 dde-file-manager
   description: ''
@@ -363,7 +363,7 @@ suites:
   assert_steps:
   - action: assert_window
     selector: null
-    name_pattern: dde-file-manager
+    name_pattern: DMainWindow
 - id: case_1807981_s1
   name: 启动 dde-file-manager
   description: ''
