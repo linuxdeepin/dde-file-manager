@@ -17,11 +17,13 @@
 #include <QIcon>
 #include <mutex>
 
+#include "stubext.h"
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/file/local/localfilehandler.h>
 #include "dfm-base/file/local/localfilehandler_p.h"
 #include <dfm-base/file/local/syncfileinfo.h>
 #include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/utils/dialogmanager.h>
 
 using namespace dfmbase;
 
@@ -414,6 +416,16 @@ TEST_F(LocalFileHandlerTest, RenameFilesBatchEmpty)
 
 TEST_F(LocalFileHandlerTest, DoHiddenFileRemindHiddenFile)
 {
+    stub_ext::StubExt stub;
+    // doHiddenFileRemind calls DialogManager::showRenameNameDotBeginDialog()
+    // which creates a DDialog and calls exec() — stub the whole method to
+    // prevent any real dialog from appearing.
+    stub.set_lamda(ADDR(DialogManager, showRenameNameDotBeginDialog),
+                   [](DialogManager *) -> int {
+                       __DBG_STUB_INVOKE__
+                       return 1;
+                   });
+
     bool checkRule = false;
     bool result = handler.doHiddenFileRemind(".hiddenfile", &checkRule);
     // Result depends on config; just verify no crash

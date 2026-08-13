@@ -20,6 +20,7 @@
 
 #include "stubext.h"
 
+#include <DDialog>
 #include <dfm-base/dialogs/settingsdialog/settingdialog.h>
 #include <dfm-base/dialogs/basedialog/basedialog.h>
 
@@ -30,7 +31,7 @@ class DialogsTest : public testing::Test
 protected:
     void SetUp() override
     {
-        stub.set_lamda(VADDR(QDialog, exec), [] {
+        stub.set_lamda(VADDR(DTK_WIDGET_NAMESPACE::DDialog, exec), [] {
             __DBG_STUB_INVOKE__
             return QDialog::Accepted;
         });

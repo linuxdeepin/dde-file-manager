@@ -32,15 +32,22 @@
 
 using namespace dfmbase;
 
+// Controls DDialog::exec return value so individual tests can change the
+// dialog result WITHOUT re-stubbing the same function address (which would
+// corrupt the stub table after repeated patch/unpatch cycles).
+static int g_dialogExecReturn = QDialog::Accepted;
+
 class DialogManagerTest : public testing::Test
 {
 protected:
     void SetUp() override
     {
-        // Stub all exec() calls to avoid modal dialog loops
-        stub.set_lamda(VADDR(QDialog, exec), [](QDialog *) -> int {
+        g_dialogExecReturn = QDialog::Accepted;
+        // Stub DDialog::exec (NOT QDialog::exec — DDialog overrides exec() so
+        // VADDR(QDialog, exec) would not intercept DDialog::exec calls).
+        stub.set_lamda(VADDR(DDialog, exec), [](DDialog *) -> int {
             __DBG_STUB_INVOKE__
-            return QDialog::Accepted;
+            return g_dialogExecReturn;
         });
         stub.set_lamda(&QWidget::show, [](QWidget *) { __DBG_STUB_INVOKE__ });
         stub.set_lamda(&QWidget::hide, [](QWidget *) { __DBG_STUB_INVOKE__ });
@@ -721,11 +728,7 @@ TEST_F(DialogManagerTest, ShowUnableToVistDir)
 TEST_F(DialogManagerTest, ShowBreakSymlinkDialog_Cancel)
 {
     auto *dm = DialogManager::instance();
-    // Stub exec to return 0 (Cancel)
-    stub.set_lamda(VADDR(QDialog, exec), [](QDialog *) -> int {
-        __DBG_STUB_INVOKE__
-        return 0;
-    });
+    g_dialogExecReturn = 0;   // Cancel
     auto type = dm->showBreakSymlinkDialog("target.txt", QUrl("file:///tmp/link"));
     EXPECT_EQ(type, DFMBASE_NAMESPACE::GlobalEventType::kUnknowType);
 }
@@ -733,10 +736,7 @@ TEST_F(DialogManagerTest, ShowBreakSymlinkDialog_Cancel)
 TEST_F(DialogManagerTest, ShowBreakSymlinkDialog_ConfirmNonTrash)
 {
     auto *dm = DialogManager::instance();
-    stub.set_lamda(VADDR(QDialog, exec), [](QDialog *) -> int {
-        __DBG_STUB_INVOKE__
-        return 1;   // Confirm button
-    });
+    g_dialogExecReturn = 1;   // Confirm button
     // Stub FileUtils::isTrashFile to return false
     stub.set_lamda(&FileUtils::isTrashFile, [](const QUrl &) -> bool {
         __DBG_STUB_INVOKE__
@@ -749,10 +749,7 @@ TEST_F(DialogManagerTest, ShowBreakSymlinkDialog_ConfirmNonTrash)
 TEST_F(DialogManagerTest, ShowBreakSymlinkDialog_ConfirmTrash)
 {
     auto *dm = DialogManager::instance();
-    stub.set_lamda(VADDR(QDialog, exec), [](QDialog *) -> int {
-        __DBG_STUB_INVOKE__
-        return 1;
-    });
+    g_dialogExecReturn = 1;   // Confirm button
     stub.set_lamda(&FileUtils::isTrashFile, [](const QUrl &) -> bool {
         __DBG_STUB_INVOKE__
         return true;

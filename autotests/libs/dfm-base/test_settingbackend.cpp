@@ -19,8 +19,10 @@
 #include <QTest>
 #include <memory>
 
+#include "stubext.h"
 #include <dfm-base/base/configs/settingbackend.h>
 #include <dfm-base/base/application/application.h>
+#include <dfm-base/base/application/settings.h>
 
 using namespace dfmbase;
 
@@ -111,6 +113,7 @@ TEST_F(SettingBackendTest, AddSettingAccessorByGenericAttributeIsSafe)
 
 TEST_F(SettingBackendTest, DoSetOptionPersistsViaDelayedSave)
 {
+    // Settings::sync is globally stubbed in main.cpp to prevent real config writes.
     const QString key = QString::fromLatin1(kAllwayOpenOnNewWindowKey);
     // Force a known baseline, then flip it through the delayed-save path.
     Application::instance()->setAppAttribute(Application::kAllwayOpenOnNewWindow, false);

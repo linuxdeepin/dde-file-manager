@@ -5,6 +5,11 @@
 /**
  * @file test_application.cpp
  * @brief Unit tests for Application static config API (application.cpp)
+ *
+ * Settings::sync and DConfigManager::setValue are globally stubbed in main.cpp
+ * to prevent any writes to the user's real config files.  Per-test stubs of
+ * these functions are intentionally omitted to avoid double-patching the same
+ * function address (which corrupts the stub table).
  */
 
 #include <gtest/gtest.h>

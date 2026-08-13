@@ -359,7 +359,7 @@ TEST(DeviceHelperTest, PersistentOpticalInfoCallable)
 {
     // Stub OpticalShareProxy::setBurnAttribute to avoid DBus call
     stub_ext::StubExt stub;
-    stub.set_lamda(VADDR(OpticalShareProxy, setBurnAttribute), [](OpticalShareProxy *, const QString &, const QVariantMap &) -> bool { return true; });
+    stub.set_lamda(ADDR(OpticalShareProxy, setBurnAttribute), [](OpticalShareProxy *, const QString &, const QVariantMap &) -> bool { return true; });
     QVariantMap data;
     data[DP::kDevice] = "/dev/sr99";
     data[DP::kSizeTotal] = quint64(1024);
@@ -398,9 +398,24 @@ TEST(DeviceHelperTest, AskForStopScanningNonExistent)
 
 TEST(DeviceHelperTest, OpenFileManagerToDeviceDoesNotCrash)
 {
-    // openFileManagerToDevice calls QProcess::startDetached or DDesktopServices::showFolder
-    // Both will fail gracefully with a non-existent mount point, no crash.
-    // We use a non-existent path that won't trigger a real dialog.
+    stub_ext::StubExt stub;
+    // Prevent launching the real dde-file-manager process during testing.
+    using StartDetachedFunc = bool (*)(const QString &, const QStringList &, const QString &, qint64 *);
+    stub.set_lamda(static_cast<StartDetachedFunc>(QProcess::startDetached),
+                   [](const QString &, const QStringList &, const QString &, qint64 *) -> bool {
+                       __DBG_STUB_INVOKE__
+                       return true;
+                   });
+    // Stub findExecutable to return a non-empty path so the code takes the
+    // startDetached branch (which is stubbed above) rather than the
+    // DDesktopServices::showFolder branch (which would open a real window).
+    using FindExecType = QString (*)(const QString &, const QStringList &);
+    stub.set_lamda(static_cast<FindExecType>(&QStandardPaths::findExecutable),
+                   [](const QString &, const QStringList &) -> QString {
+                       __DBG_STUB_INVOKE__
+                       return QStringLiteral("fake-dde-file-manager");
+                   });
+
     EXPECT_NO_FATAL_FAILURE({
         DeviceHelper::openFileManagerToDevice("/dev/nonexistent_zzz", "/tmp/nonexistent_mpt_zzz");
     });
