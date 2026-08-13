@@ -36,6 +36,8 @@ DFMBASE_USE_NAMESPACE
 
 #define SETTING_GROUP_TOP "01_sidebar"
 #define SETTING_GROUP_LV2 "01_sidebar.00_items_in_sidebar"
+#define SETTING_GROUP_TREE "01_sidebar.01_sidebar_tree"
+#define SETTING_OPT_TREE "01_sidebar.01_sidebar_tree.00_partition_expandable"
 
 QMap<quint64, SideBarWidget *> SideBarHelper::kSideBarMap {};
 bool SideBarHelper::contextMenuEnabled { true };
@@ -240,6 +242,24 @@ void SideBarHelper::initDefaultSettingPanel()
 
     ins->addGroup(SETTING_GROUP_TOP, QObject::tr("Sidebar"));
     ins->addGroup(SETTING_GROUP_LV2, "Items on sidebar pane");
+
+    ins->addGroup(SETTING_GROUP_TREE, QObject::tr("Sidebar tree directory"));
+    ins->addCheckBoxConfig(SETTING_OPT_TREE,
+                           QObject::tr("Display sidebar disk partitions as a tree structure"),
+                           false);
+
+    SettingBackend::instance()->addSettingAccessor(
+            SETTING_OPT_TREE,
+            []() {
+                return DConfigManager::instance()->value(ConfigInfos::kConfName,
+                                                         ConfigInfos::kPartitionExpandableKey,
+                                                         false);
+            },
+            [](const QVariant &val) {
+                DConfigManager::instance()->setValue(ConfigInfos::kConfName,
+                                                     ConfigInfos::kPartitionExpandableKey,
+                                                     val);
+            });
 }
 
 void SideBarHelper::addItemToSettingPannel(const QString &group, const QString &key, const QString &value, QMap<QString, int> *levelMap)
