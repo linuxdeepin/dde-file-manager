@@ -91,6 +91,20 @@ void SideBarItemDelegate::clearIconCache()
     m_iconCache.clear();
 }
 
+void SideBarItemDelegate::invalidateIconCache(const QUrl &url)
+{
+    if (url.isEmpty())
+        return;
+    // Cache keys are formatted as "iconId|WxH|theme|mode|foreground" where iconId
+    // is the item url (see drawIcon/drawDciIcon). Match the url prefix + delimiter
+    // so all pixmaps of that item (any size/theme/mode) are dropped at once; other
+    // items are left untouched. The trailing "|" avoids matching a url that just
+    // happens to be a string prefix of another one.
+    const QString prefix = url.toString() + QLatin1Char('|');
+    for (auto it = m_iconCache.begin(); it != m_iconCache.end();)
+        it = it.key().startsWith(prefix) ? m_iconCache.erase(it) : ++it;
+}
+
 SideBarItemDelegate::SideBarItemDelegate(QAbstractItemView *parent)
     : DStyledItemDelegate(parent)
 {
