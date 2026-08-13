@@ -17,6 +17,7 @@
 #include <QPalette>
 #include <QStyle>
 #include <QElapsedTimer>
+#include <QPersistentModelIndex>
 #include <QHash>
 
 DPSIDEBAR_BEGIN_NAMESPACE

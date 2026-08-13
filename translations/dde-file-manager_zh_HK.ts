@@ -9172,5 +9172,15 @@ You need to upgrade this vault to continue using it.</source>
         <source>unknown album</source>
         <translation>未知專輯</translation>
     </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="246"/>
+        <source>Sidebar tree directory</source>
+        <translation>側邊欄樹目錄</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="248"/>
+        <source>Display sidebar disk partitions as a tree structure</source>
+        <translation>以樹形結構顯示側邊欄磁碟分區</translation>
+    </message>
 </context>
 </TS>
