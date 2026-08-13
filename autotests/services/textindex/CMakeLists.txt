@@ -22,4 +22,5 @@ target_include_directories(ut-textindex PRIVATE
     ${DFM_SOURCE_DIR}/services/textindex
     ${DFM_PROJECT_ROOT}/include
     ${DFM_SOURCE_DIR}/apps/dde-file-manager-extractor/libextractor
+    ${CMAKE_BINARY_DIR}/src/services/textindex
 )

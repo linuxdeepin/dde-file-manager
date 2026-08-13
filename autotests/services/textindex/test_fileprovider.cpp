@@ -148,3 +148,76 @@ TEST_F(FileProviderTest, MixedPathListProvider_TraverseMixedEntries)
     QStringList visited;
     EXPECT_NO_FATAL_FAILURE({ p.traverse(state, [&visited](const QString &path) { visited.append(path); }); });
 }
+
+TEST_F(FileProviderTest, MixedPathListProvider_TraverseRespectsStop)
+{
+    MixedPathListProvider p(makeProfile(), { tmp.path() });
+    TaskState state;
+    // Not started -> isRunning() false
+    QStringList visited;
+    EXPECT_NO_FATAL_FAILURE({ p.traverse(state, [&visited](const QString &) {}); });
+}
+
+TEST_F(FileProviderTest, MixedPathListProvider_TraverseEmptyList)
+{
+    MixedPathListProvider p(makeProfile(), {});
+    TaskState state;
+    state.start();
+    int count = 0;
+    p.traverse(state, [&count](const QString &) { count++; });
+    EXPECT_EQ(count, 0);
+}
+
+TEST_F(FileProviderTest, MixedPathListProvider_TraverseNonExistentPaths)
+{
+    MixedPathListProvider p(makeProfile(), { "/nonexistent/path1", "/nonexistent/path2" });
+    TaskState state;
+    state.start();
+    int count = 0;
+    EXPECT_NO_FATAL_FAILURE({ p.traverse(state, [&count](const QString &) { count++; }); });
+}
+
+TEST_F(FileProviderTest, MixedPathListProvider_TraverseFileOnly)
+{
+    MixedPathListProvider p(makeProfile(), { tmp.path() + "/a.txt" });
+    TaskState state;
+    state.start();
+    QStringList visited;
+    EXPECT_NO_FATAL_FAILURE({ p.traverse(state, [&visited](const QString &path) { visited.append(path); }); });
+    // a.txt exists and is a valid candidate file
+    EXPECT_FALSE(visited.isEmpty());
+}
+
+TEST_F(FileProviderTest, FileSystemProvider_TraverseNonExistentRoot)
+{
+    FileSystemProvider p(makeProfile(), "/nonexistent/root/path");
+    TaskState state;
+    state.start();
+    QStringList visited;
+    EXPECT_NO_FATAL_FAILURE({ p.traverse(state, [&visited](const QString &path) { visited.append(path); }); });
+    // Root doesn't exist, so nothing should be visited
+    EXPECT_TRUE(visited.isEmpty());
+}
+
+TEST_F(FileProviderTest, DirectFileListProvider_TraverseEmptyList)
+{
+    dfmsearch::SearchResultList list;
+    DirectFileListProvider p(list);
+    EXPECT_EQ(p.totalCount(), 0);
+    TaskState state;
+    state.start();
+    int count = 0;
+    p.traverse(state, [&count](const QString &) { count++; });
+    EXPECT_EQ(count, 0);
+}
+
+TEST_F(FileProviderTest, DirectFileListProvider_TraverseNotStarted)
+{
+    dfmsearch::SearchResultList list;
+    list.append(dfmsearch::SearchResult("/some/file.txt"));
+    DirectFileListProvider p(list);
+    TaskState state;  // not started
+    int count = 0;
+    p.traverse(state, [&count](const QString &) { count++; });
+    EXPECT_EQ(count, 0);
+}
