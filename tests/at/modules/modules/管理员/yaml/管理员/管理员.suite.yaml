@@ -9,16 +9,16 @@ module: 管理员
 tags: []
 fast_fail: false
 env_check: []
-setup:
-- action: session_start
-  command: dde-file-manager --new-window --open-home
-  wait: 5.0
+setup: []
 suites:
 - id: case_1806755_s1
   name: 启动 dde-file-manager
   description: ''
   tags: []
   steps:
+  - action: session_start
+    command: true; dde-file-manager --open-home
+    wait: 5.0
   - action: wait
     wait: 1.0
   - action: wait
@@ -26,7 +26,6 @@ suites:
   - action: mouse_double_click
     selector:
       name: 文档
-      role: list item
   - action: wait
     wait: 1.0
   - action: wait
@@ -51,6 +50,9 @@ suites:
   description: ''
   tags: []
   steps:
+  - action: session_start
+    command: true; dde-file-manager --open-home
+    wait: 5.0
   - action: wait
     selector: {}
     wait: 1.0
@@ -77,6 +79,9 @@ suites:
   description: ''
   tags: []
   steps:
+  - action: session_start
+    command: true; dde-file-manager --open-home
+    wait: 5.0
   - action: wait
     wait: 1.0
   - action: wait

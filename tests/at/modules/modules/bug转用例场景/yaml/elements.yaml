@@ -8,10 +8,8 @@ elements:
     role: menu item
   计算机:
     name: 计算机
-    role: table cell
   最近使用:
     name: 最近使用
-    role: table cell
   网络:
     name: 网络
     role: table cell

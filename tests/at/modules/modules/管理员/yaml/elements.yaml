@@ -5,13 +5,11 @@
 elements:
   文档:
     name: 文档
-    role: list item
   桌面:
     name: 桌面
     role: table cell
   最近使用:
     name: 最近使用
-    role: table cell
   视频:
     name: 视频
     role: table cell

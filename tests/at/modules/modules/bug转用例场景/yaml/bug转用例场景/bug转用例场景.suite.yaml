@@ -9,16 +9,16 @@ module: bug转用例场景
 tags: []
 fast_fail: false
 env_check: []
-setup:
-- action: session_start
-  command: dde-file-manager --new-window --open-home
-  wait: 5.0
+setup: []
 suites:
 - id: case_1972987_s1
   name: 启动 dde-file-manager
   description: ''
   tags: []
   steps:
+  - action: session_start
+    command: true; dde-file-manager --open-home
+    wait: 5.0
   - action: wait
     wait: 1.0
   - action: wait
@@ -43,6 +43,9 @@ suites:
   description: ''
   tags: []
   steps:
+  - action: session_start
+    command: true; dde-file-manager --open-home
+    wait: 5.0
   - action: wait
     wait: 1.0
   - action: wait
@@ -63,10 +66,12 @@ suites:
   description: ''
   tags: []
   steps:
+  - action: session_start
+    command: true; dde-file-manager --open-home
+    wait: 5.0
   - action: element_action
     selector:
       name: 计算机
-      role: table cell
     do: click
   - action: wait
     wait: 1.0
@@ -86,10 +91,12 @@ suites:
   description: ''
   tags: []
   steps:
+  - action: session_start
+    command: true; dde-file-manager --open-home
+    wait: 5.0
   - action: mouse_drag
     selector:
       name: 最近使用
-      role: table cell
   - action: wait
     wait: 1.0
   - action: wait
@@ -100,6 +107,9 @@ suites:
   description: ''
   tags: []
   steps:
+  - action: session_start
+    command: true; dde-file-manager --open-home
+    wait: 5.0
   - action: wait
     selector: {}
     wait: 1.0
@@ -123,6 +133,9 @@ suites:
   description: ''
   tags: []
   steps:
+  - action: session_start
+    command: true; dde-file-manager --open-home
+    wait: 5.0
   - action: keyboard_hot_key
     key: ctrl+c
   - action: wait
@@ -135,6 +148,9 @@ suites:
   description: ''
   tags: []
   steps:
+  - action: session_start
+    command: true; dde-file-manager --open-home
+    wait: 5.0
   - action: wait
     wait: 1.0
   - action: wait
@@ -142,7 +158,6 @@ suites:
   - action: mouse_double_click
     selector:
       name: 计算机
-      role: table cell
   - action: wait
     wait: 1.0
   - action: wait
@@ -161,6 +176,9 @@ suites:
   description: ''
   tags: []
   steps:
+  - action: session_start
+    command: true; dde-file-manager --open-home
+    wait: 5.0
   - action: wait
     wait: 1.0
   - action: wait
@@ -173,6 +191,9 @@ suites:
   description: ''
   tags: []
   steps:
+  - action: session_start
+    command: true; dde-file-manager --open-home
+    wait: 5.0
   - action: wait
     wait: 1.0
   - action: wait
@@ -185,6 +206,9 @@ suites:
   description: ''
   tags: []
   steps:
+  - action: session_start
+    command: true; dde-file-manager --open-home
+    wait: 5.0
   - action: wait
     wait: 1.0
   - action: wait
