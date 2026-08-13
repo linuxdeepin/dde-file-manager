@@ -16,23 +16,33 @@
 #include <QEventLoop>
 #include <QTimer>
 
+#include "stubext.h"
 #include "dfm_test_main.h"
 #include "services/textindex/service_textindex_global.h"
 #include "services/textindex/extractor/processextractor.h"
 #include "services/textindex/extractor/indexextractor.h"
+#include "controllerpipe.h"
 
 using namespace SERVICETEXTINDEX_NAMESPACE;
+using namespace EXTRACTOR_NAMESPACE;
 
 class ProcessExtractorExtraTest : public testing::Test
 {
 protected:
     QTemporaryDir tmp;
+    stub_ext::StubExt stub;
 
     void SetUp() override
     {
         ASSERT_TRUE(tmp.isValid());
         createFile("normal.txt", "normal content");
         createFile("empty.txt", QString(""));
+
+        // Stub ControllerPipe::start to always fail so the extractor
+        // subprocess never actually launches during tests.
+        stub.set_lamda(VADDR(ControllerPipe, start), [](ControllerPipe *, const QString &, const QString &) -> bool {
+            return false;
+        });
     }
 
     void createFile(const QString &name, const QString &content)
