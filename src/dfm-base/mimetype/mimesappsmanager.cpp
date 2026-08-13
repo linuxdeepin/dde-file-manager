@@ -272,7 +272,8 @@ QStringList MimesAppsManager::getRecommendedApps(const QUrl &url)
     QString mimeType;
 
     FileInfoPointer info = InfoFactory::create<FileInfo>(url);
-    mimeType = info->fileMimeType().name();
+    if (info)
+        mimeType = info->fileMimeType().name();
 
     DFMBASE_NAMESPACE::DMimeDatabase db;
 
@@ -390,6 +391,8 @@ QStringList MimesAppsManager::getRecommendedAppsByGio(const QString &mimeType)
 QStringList MimesAppsManager::getrecommendedAppsFromMimeWhiteList(const QUrl &url)
 {
     FileInfoPointer info = InfoFactory::create<FileInfo>(url);
+    if (!info)
+        return QStringList();
     QString aliasMimeType = info->fileMimeType().name();
     QStringList recommendedApps;
     QString mimeAssociationsFile = QString("%1/%2/%3").arg(StandardPaths::location(StandardPaths::kApplicationSharePath), "mimetypeassociations", "mimetypeassociations.json");
