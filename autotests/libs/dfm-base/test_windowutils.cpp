@@ -13,6 +13,8 @@
  */
 
 #include <gtest/gtest.h>
+#include <cstdlib>
+#include <cstring>
 #include <dfm-base/utils/windowutils.h>
 
 #include <QGuiApplication>
@@ -23,25 +25,39 @@ using namespace dfmbase;
 
 TEST(WindowUtilsTest, IsX11ReturnsFalseUnderOffscreenPlatform)
 {
-    // isX11() matches the actual platform; under X11 it returns true,
-    // under offscreen/Wayland it returns false.  We verify consistency
-    // with the platform name rather than assuming a specific platform.
-    if (QGuiApplication::platformName() == QStringLiteral("offscreen")) {
-        EXPECT_FALSE(WindowUtils::isX11());
-    } else {
-        // On X11-based platforms (xcb, dxcb;xcb, etc.) isX11() returns true
+    // isX11() checks platformName == "xcb" first, then falls back to
+    // DISPLAY / XDG_SESSION_TYPE environment variables.  Under offscreen
+    // the platformName is not "xcb", but if DISPLAY is set and
+    // XDG_SESSION_TYPE is "x11", isX11() still returns true.
+    const char *display = std::getenv("DISPLAY");
+    const char *session_type = std::getenv("XDG_SESSION_TYPE");
+    const bool envIndicatesX11 =
+            (display && display[0] != '\0') &&
+            (session_type && strcmp(session_type, "x11") == 0);
+
+    if (QGuiApplication::platformName() == QStringLiteral("xcb")) {
         EXPECT_TRUE(WindowUtils::isX11());
+    } else if (envIndicatesX11) {
+        // Offscreen platform but DISPLAY+XDG_SESSION_TYPE indicate X11
+        EXPECT_TRUE(WindowUtils::isX11());
+    } else {
+        EXPECT_FALSE(WindowUtils::isX11());
     }
 }
 
 TEST(WindowUtilsTest, IsWayLandReturnsFalseUnderOffscreenPlatform)
 {
-    if (QGuiApplication::platformName() == QStringLiteral("offscreen")) {
-        EXPECT_FALSE(WindowUtils::isWayLand());
-    } else if (QGuiApplication::platformName().contains(QStringLiteral("wayland"))) {
+    const char *wayland_display = std::getenv("WAYLAND_DISPLAY");
+    const char *session_type = std::getenv("XDG_SESSION_TYPE");
+    const bool envIndicatesWayland =
+            (wayland_display && wayland_display[0] != '\0') ||
+            (session_type && strcmp(session_type, "wayland") == 0);
+
+    if (QGuiApplication::platformName() == QStringLiteral("wayland")) {
+        EXPECT_TRUE(WindowUtils::isWayLand());
+    } else if (envIndicatesWayland) {
         EXPECT_TRUE(WindowUtils::isWayLand());
     } else {
-        // On X11-based platforms, isWayLand() returns false
         EXPECT_FALSE(WindowUtils::isWayLand());
     }
 }

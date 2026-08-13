@@ -21,20 +21,34 @@
 #include "services/textindex/service_textindex_global.h"
 #include "services/textindex/extractor/processextractor.h"
 #include "services/textindex/extractor/indexextractor.h"
+#include "controllerpipe.h"
 
 using namespace SERVICETEXTINDEX_NAMESPACE;
+using namespace EXTRACTOR_NAMESPACE;
 
-TEST(ProcessExtractorTest, ConstructAndDestruct)
+class ProcessExtractorTest : public testing::Test
+{
+protected:
+    stub_ext::StubExt stub;
+
+    void SetUp() override
+    {
+        // Stub ControllerPipe::start to always fail so the extractor
+        // subprocess never actually launches during tests.
+        stub.set_lamda(VADDR(ControllerPipe, start), [](ControllerPipe *, const QString &, const QString &) -> bool {
+            return false;
+        });
+    }
+};
+
+TEST_F(ProcessExtractorTest, ConstructAndDestruct)
 {
     { ProcessExtractor ext; }
     SUCCEED();
 }
 
-TEST(ProcessExtractorTest, Extract_NullProxy_ReturnsError)
+TEST_F(ProcessExtractorTest, Extract_NullProxy_ReturnsError)
 {
-    // We can't easily set d->proxy to null, but we can test extract
-    // which will go through the proxy. The proxy will fail because
-    // the extractor binary doesn't exist. Let's just verify it doesn't crash.
     ProcessExtractor ext;
     QTemporaryDir tmp;
     ASSERT_TRUE(tmp.isValid());
@@ -44,28 +58,25 @@ TEST(ProcessExtractorTest, Extract_NullProxy_ReturnsError)
     f.write("hello world");
     f.close();
 
-    // This will fail (extractor not available) but should not crash
     auto result = ext.extract(filePath);
-    // The extract should return an error result since the extractor binary
-    // won't start, or fail to send request
     EXPECT_FALSE(result.success);
 }
 
-TEST(ProcessExtractorTest, Extract_NonExistentFile)
+TEST_F(ProcessExtractorTest, Extract_NonExistentFile)
 {
     ProcessExtractor ext;
     auto result = ext.extract("/nonexistent/file/that/does/not/exist.txt");
     EXPECT_FALSE(result.success);
 }
 
-TEST(ProcessExtractorTest, Extract_EmptyFilePath)
+TEST_F(ProcessExtractorTest, Extract_EmptyFilePath)
 {
     ProcessExtractor ext;
     auto result = ext.extract(QString());
     EXPECT_FALSE(result.success);
 }
 
-TEST(ProcessExtractorTest, Extract_WithMaxBytes)
+TEST_F(ProcessExtractorTest, Extract_WithMaxBytes)
 {
     ProcessExtractor ext;
     QTemporaryDir tmp;
@@ -76,12 +87,11 @@ TEST(ProcessExtractorTest, Extract_WithMaxBytes)
     f.write("hello world");
     f.close();
 
-    // Pass a maxBytes value
     auto result = ext.extract(filePath, 1024);
     EXPECT_FALSE(result.success);
 }
 
-TEST(ProcessExtractorTest, ExtractResult_DefaultValues)
+TEST_F(ProcessExtractorTest, ExtractResult_DefaultValues)
 {
     IndexExtractionResult result;
     EXPECT_FALSE(result.success);
@@ -91,7 +101,7 @@ TEST(ProcessExtractorTest, ExtractResult_DefaultValues)
     EXPECT_FALSE(result.deduplicated);
 }
 
-TEST(ProcessExtractorTest, Extract_MultipleCalls)
+TEST_F(ProcessExtractorTest, Extract_MultipleCalls)
 {
     ProcessExtractor ext;
     QTemporaryDir tmp;
