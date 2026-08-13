@@ -27,7 +27,7 @@ class MountDialogTest : public testing::Test
 protected:
     void SetUp() override
     {
-        stub.set_lamda(VADDR(QDialog, exec), [] {
+        stub.set_lamda(VADDR(DTK_WIDGET_NAMESPACE::DDialog, exec), [] {
             __DBG_STUB_INVOKE__
             return QDialog::Accepted;
         });

@@ -182,7 +182,7 @@ TEST(DeviceWatcherTest, SaveOpticalDevUsageNonExistent)
 {
     // Stub OpticalShareProxy to avoid DBus crash
     stub_ext::StubExt stub;
-    stub.set_lamda(VADDR(OpticalShareProxy, setBurnAttribute), [](OpticalShareProxy *, const QString &, const QVariantMap &) -> bool { return true; });
+    stub.set_lamda(ADDR(OpticalShareProxy, setBurnAttribute), [](OpticalShareProxy *, const QString &, const QVariantMap &) -> bool { return true; });
 
     DeviceWatcher watcher;
     QVariantMap data;

@@ -24,6 +24,7 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/file/local/syncfileinfo.h>
 #include <dfm-base/dfm_global_defines.h>
+#include "stubext.h"
 
 using namespace dfmbase;
 
@@ -529,9 +530,15 @@ TEST(FileUtilsTest, ConvertToSRgbColorSpaceAlreadySRgb)
 
 TEST(FileUtilsTest, SetBackGroundNonExistent)
 {
+    stub_ext::StubExt stub;
+    stub.set_lamda(ADDR(FileUtils, setBackGround),
+                   [](const QString &) -> bool {
+                       __DBG_STUB_INVOKE__
+                       return true;
+                   });
     // Returns true if file doesn't exist (it just skips setting bg)
     bool result = FileUtils::setBackGround("/nonexistent/background.png");
-    EXPECT_TRUE(result || !result);
+    EXPECT_TRUE(result);
 }
 
 TEST(FileUtilsTest, BindPathTransformNonDevice)
