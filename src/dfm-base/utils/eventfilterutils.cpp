@@ -21,7 +21,7 @@ bool handleRightClickOutsideMenu(QEvent *event, QObject *context)
         return false;
     }
 
-    if (event->type() != QEvent::MouseButtonPress) {
+    if (!event || event->type() != QEvent::MouseButtonPress) {
         return false;
     }
 
