@@ -297,7 +297,12 @@ void FileManagerWindowPrivate::connectAnimationSignals()
 
     connect(curSplitterAnimation, &QPropertyAnimation::valueChanged, q, [this](const QVariant &value) {
         Q_UNUSED(value);
-        emit q->windowSplitterWidthChanged(value.toInt());
+        // Emit the *actual* sidebar width (after rightArea minimum-width
+        // clamping via Splitter::setSizes) rather than the animated intended
+        // value, so the title-bar placeholder tracks real geometry and the
+        // TabBar is not pushed into the top-left corner during rapid window
+        // narrowing.
+        emit q->windowSplitterWidthChanged(splitter->sizes().at(0));
         // 动画过程中实时更新分割线位置
         updateSideBarSeparatorPosition();
     });
@@ -640,6 +645,14 @@ void FileManagerWindowPrivate::updateSideBarState()
         && !(curSplitterAnimation && curSplitterAnimation->state() == QAbstractAnimation::Running)) {
         lastSidebarExpandedPostion = sideBarWidth;
     }
+
+    // Keep the title-bar placeholder in sync with the *actual* sidebar width.
+    // The sidebar geometry can change during a plain window resize (clamped by
+    // rightArea's minimum width) without any animation running, and the
+    // placeholder must follow so the TabBar never drifts into the top-left
+    // corner. handleSplitterAnimation() early-returns when the width is
+    // unchanged, so this is a cheap no-op in the steady state.
+    emit q->windowSplitterWidthChanged(sideBarWidth);
 }
 
 void FileManagerWindowPrivate::updateSideBarVisibility()
@@ -740,7 +753,12 @@ void FileManagerWindowPrivate::animateSideBarHideForResize()
     });
 
     connect(curSplitterAnimation, &QPropertyAnimation::valueChanged, q, [this](const QVariant &value) {
-        emit q->windowSplitterWidthChanged(value.toInt());
+        Q_UNUSED(value);
+        // Emit the *actual* sidebar width (after rightArea minimum-width
+        // clamping) rather than the animated intended value, so the title-bar
+        // placeholder tracks real geometry and the TabBar is not pushed into
+        // the top-left corner during rapid window narrowing.
+        emit q->windowSplitterWidthChanged(splitter->sizes().at(0));
         updateSideBarSeparatorPosition();
     });
 
@@ -814,7 +832,10 @@ void FileManagerWindowPrivate::animateSideBarShowForResize()
     });
 
     connect(curSplitterAnimation, &QPropertyAnimation::valueChanged, q, [this](const QVariant &value) {
-        emit q->windowSplitterWidthChanged(value.toInt());
+        Q_UNUSED(value);
+        // See animateSideBarHideForResize: emit the actual clamped sidebar
+        // width so the title-bar placeholder stays in sync with real geometry.
+        emit q->windowSplitterWidthChanged(splitter->sizes().at(0));
         updateSideBarSeparatorPosition();
     });
 
