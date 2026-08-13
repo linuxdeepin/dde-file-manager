@@ -5,7 +5,7 @@
 elements:
   文档:
     name: 文档
-    role: button
+    role: list item
   桌面:
     name: 桌面
     role: table cell
