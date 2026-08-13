@@ -217,8 +217,10 @@ void SideBarViewPrivate::cancelPendingMountSubscription(const QUrl &deviceUrl)
 
 void SideBarViewPrivate::onExpandableChanged()
 {
-    if (SideBarHelper::partitionExpandable())
+    if (SideBarHelper::partitionExpandable()) {
+        q->viewport()->update();
         return;
+    }
 
     fmDebug() << "Partition expansion is disabled";
     SideBarModel *sidebarModel = q->model();
@@ -256,6 +258,8 @@ void SideBarViewPrivate::onExpandableChanged()
             }
         }
     }
+
+    q->viewport()->update();
 }
 
 void SideBarViewPrivate::updateHoverIndex(const QModelIndex &index)
