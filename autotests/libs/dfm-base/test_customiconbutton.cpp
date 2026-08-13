@@ -11,6 +11,8 @@
 #include <dfm-base/widgets/dfmcustombuttons/customiconbutton.h>
 
 #include <DStyle>
+#include <QApplication>
+#include <QPaintEvent>
 
 using namespace dfmbase;
 
@@ -32,4 +34,35 @@ TEST(CustomDIconButtonTest, ConstructWithExplicitParentDoesNotCrash)
     CustomDIconButton *btn = new CustomDIconButton(&parent);
     EXPECT_EQ(btn->parent(), &parent);
     delete btn;
+}
+
+// ============================================================
+// Additional coverage for CustomDIconButton
+// ============================================================
+
+TEST(CustomDIconButtonTest, PaintEventDoesNotCrash)
+{
+    CustomDIconButton btn;
+    btn.setFixedSize(32, 32);
+    QPaintEvent evt(QRect(0, 0, 32, 32));
+    EXPECT_NO_FATAL_FAILURE({ QApplication::sendEvent(&btn, &evt); });
+}
+
+TEST(CustomDIconButtonTest, PaintEventWhenDisabled)
+{
+    CustomDIconButton btn(DTK_NAMESPACE::Widget::DStyle::SP_DeleteButton);
+    btn.setEnabled(false);
+    btn.setFixedSize(32, 32);
+    QPaintEvent evt(QRect(0, 0, 32, 32));
+    EXPECT_NO_FATAL_FAILURE({ QApplication::sendEvent(&btn, &evt); });
+}
+
+TEST(CustomDIconButtonTest, PaintEventWhenChecked)
+{
+    CustomDIconButton btn(DTK_NAMESPACE::Widget::DStyle::SP_DeleteButton);
+    btn.setCheckable(true);
+    btn.setChecked(true);
+    btn.setFixedSize(32, 32);
+    QPaintEvent evt(QRect(0, 0, 32, 32));
+    EXPECT_NO_FATAL_FAILURE({ QApplication::sendEvent(&btn, &evt); });
 }

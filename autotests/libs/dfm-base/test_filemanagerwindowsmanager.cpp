@@ -56,3 +56,32 @@ TEST(FileManagerWindowsManagerTest, ContainsCurrentUrlReturnsFalseForNoWindows)
     auto &m = FileManagerWindowsManager::instance();
     EXPECT_FALSE(m.containsCurrentUrl(QUrl(QStringLiteral("file:///tmp"))));
 }
+
+// --- Additional coverage for uncovered methods ---
+
+TEST(FileManagerWindowsManagerTest, FindWindowId_NullWidgetReturnsZero)
+{
+    auto &m = FileManagerWindowsManager::instance();
+    EXPECT_EQ(m.findWindowId(nullptr), 0);
+}
+
+TEST(FileManagerWindowsManagerTest, FindWindowById_ZeroReturnsNull)
+{
+    auto &m = FileManagerWindowsManager::instance();
+    EXPECT_EQ(m.findWindowById(0), nullptr);
+}
+
+TEST(FileManagerWindowsManagerTest, FindWindowById_NonExistentReturnsNull)
+{
+    auto &m = FileManagerWindowsManager::instance();
+    EXPECT_EQ(m.findWindowById(99999), nullptr);
+}
+
+TEST(FileManagerWindowsManagerTest, SetCustomWindowCreator)
+{
+    auto &m = FileManagerWindowsManager::instance();
+    FileManagerWindowsManager::WindowCreator creator = [](const QUrl &) -> FileManagerWindowsManager::FMWindow * {
+        return nullptr;
+    };
+    EXPECT_NO_FATAL_FAILURE({ m.setCustomWindowCreator(creator); });
+}

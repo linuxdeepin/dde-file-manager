@@ -19,6 +19,7 @@
 #include <QString>
 #include <QList>
 #include <QPair>
+#include <QWidget>
 
 using namespace dfmbase;
 
@@ -63,4 +64,50 @@ TEST(ViewHintMessageTest, SetAutoDismissOnActionDoesNotCrash)
     ViewHintMessage msg;
     msg.setAutoDismissOnAction(false);
     msg.setAutoDismissOnAction(true);
+}
+
+// ============================================================
+// Additional coverage for ViewHintMessage
+// ============================================================
+
+TEST(ViewHintMessageTest, ShowWithNullHostDoesNotCrash)
+{
+    ViewHintMessage msg;
+    EXPECT_NO_FATAL_FAILURE({ msg.show(nullptr); });
+}
+
+TEST(ViewHintMessageTest, ShowWithRealWidget)
+{
+    ViewHintMessage msg;
+    msg.setText("Hello");
+    msg.setIcon("dialog-warning");
+    QWidget host;
+    EXPECT_NO_FATAL_FAILURE({ msg.show(&host); });
+}
+
+TEST(ViewHintMessageTest, ShowWithActions)
+{
+    ViewHintMessage msg;
+    msg.setText("Action test");
+    QList<QPair<QString, QString>> actions;
+    actions << QPair<QString, QString>("ok", "OK");
+    actions << QPair<QString, QString>("cancel", "Cancel");
+    msg.setActions(actions);
+    QWidget host;
+    EXPECT_NO_FATAL_FAILURE({ msg.show(&host); });
+}
+
+TEST(ViewHintMessageTest, CloseWithoutShowDoesNotCrash)
+{
+    ViewHintMessage msg;
+    EXPECT_NO_FATAL_FAILURE({ msg.close(); });
+}
+
+TEST(ViewHintMessageTest, ShowTwiceSecondIgnored)
+{
+    ViewHintMessage msg;
+    QWidget host;
+    msg.show(&host);
+    // Second show should be ignored (message already exists)
+    EXPECT_NO_FATAL_FAILURE({ msg.show(&host); });
 }

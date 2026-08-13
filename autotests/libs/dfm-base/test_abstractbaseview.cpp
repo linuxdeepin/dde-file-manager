@@ -74,3 +74,35 @@ TEST(AbstractBaseViewTest, LocalViewDestructsCleanly)
 {
     EXPECT_NO_FATAL_FAILURE({ TestAbstractBaseView view; });
 }
+
+// ============================================================
+// Additional coverage for AbstractBaseView
+// ============================================================
+
+TEST(AbstractBaseViewTest, DeleteLaterIsNoop)
+{
+    TestAbstractBaseView view;
+    EXPECT_NO_FATAL_FAILURE({ view.deleteLater(); });
+    // deleteLater on a stack object is intentionally a no-op
+    SUCCEED();
+}
+
+TEST(AbstractBaseViewTest, NotifyStateChanged_SafelyNoop)
+{
+    // widget()->window() won't be a FileManagerWindow, so no crash
+    TestAbstractBaseView view;
+    EXPECT_NO_FATAL_FAILURE({ view.notifyStateChanged(); });
+}
+
+TEST(AbstractBaseViewTest, RequestCdTo_SafelyNoop)
+{
+    TestAbstractBaseView view;
+    EXPECT_NO_FATAL_FAILURE({ view.requestCdTo(QUrl("file:///tmp")); });
+}
+
+TEST(AbstractBaseViewTest, NotifySelectUrlChanged_SafelyNoop)
+{
+    TestAbstractBaseView view;
+    QList<QUrl> urls = { QUrl("file:///tmp/a"), QUrl("file:///tmp/b") };
+    EXPECT_NO_FATAL_FAILURE({ view.notifySelectUrlChanged(urls); });
+}

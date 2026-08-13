@@ -64,6 +64,26 @@ TEST_F(DialogsTest, SettingDialogSetItemVisible)
     EXPECT_NO_FATAL_FAILURE({ SettingDialog::setItemVisiable("test_key", false); });
 }
 
+// ============================================================
+// Additional coverage for SettingDialog
+// ============================================================
+
+TEST_F(DialogsTest, SettingDialog_SetItemVisiable_AddAndRemove)
+{
+    SettingDialog::setItemVisiable("key_a", false);
+    SettingDialog::setItemVisiable("key_b", false);
+    EXPECT_TRUE(SettingDialog::needHide("key_a"));
+    EXPECT_TRUE(SettingDialog::needHide("key_b"));
+    SettingDialog::setItemVisiable("key_a", true);
+    EXPECT_FALSE(SettingDialog::needHide("key_a"));
+    EXPECT_TRUE(SettingDialog::needHide("key_b"));
+}
+
+TEST_F(DialogsTest, SettingDialog_NeedHide_UnknownKey)
+{
+    EXPECT_FALSE(SettingDialog::needHide("nonexistent_key_at_all"));
+}
+
 
 
 

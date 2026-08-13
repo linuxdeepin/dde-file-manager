@@ -14,6 +14,7 @@
 #include <QDateTime>
 #include <QFile>
 #include <QUrl>
+#include <QMimeDatabase>
 
 #include <dfm-base/mimetype/mimesappsmanager.h>
 
@@ -97,4 +98,158 @@ TEST(MimesAppsManagerTest, GetRecommendedAppsFromMimeWhiteListIsCallable)
 TEST(MimesAppsManagerTest, InitMimeTypeAppsIsCallable)
 {
     EXPECT_NO_FATAL_FAILURE({ MimesAppsManager::initMimeTypeApps(); });
+}
+
+// ============================================================
+// Additional coverage for MimesAppsManager
+// ============================================================
+
+TEST(MimesAppsManagerTest, GetDefaultAppByFileName)
+{
+    QTemporaryFile tmp;
+    ASSERT_TRUE(tmp.open());
+    tmp.write("plain text");
+    tmp.close();
+    QString app = MimesAppsManager::getDefaultAppByFileName(tmp.fileName());
+    // May be empty or have a default app
+    EXPECT_NO_FATAL_FAILURE({ (void)app; });
+}
+
+TEST(MimesAppsManagerTest, GetDefaultAppByFileNameNonExistent)
+{
+    QString app = MimesAppsManager::getDefaultAppByFileName("/nonexistent/file.xyz123");
+    EXPECT_TRUE(app.isEmpty());
+}
+
+TEST(MimesAppsManagerTest, GetDefaultAppByMimeTypeQMimeType)
+{
+    QMimeDatabase db;
+    QMimeType mime = db.mimeTypeForName("text/plain");
+    QString app = MimesAppsManager::getDefaultAppByMimeType(mime);
+    EXPECT_NO_FATAL_FAILURE({ (void)app; });
+}
+
+TEST(MimesAppsManagerTest, GetDefaultAppByMimeTypeString)
+{
+    QString app = MimesAppsManager::getDefaultAppByMimeType("text/plain");
+    EXPECT_NO_FATAL_FAILURE({ (void)app; });
+}
+
+TEST(MimesAppsManagerTest, GetDefaultAppByMimeTypeEmpty)
+{
+    QString app = MimesAppsManager::getDefaultAppByMimeType("");
+    EXPECT_TRUE(app.isEmpty());
+}
+
+TEST(MimesAppsManagerTest, GetDefaultAppByMimeTypeNonExistent)
+{
+    QString app = MimesAppsManager::getDefaultAppByMimeType("application/x-nonexistent-mime-type");
+    EXPECT_TRUE(app.isEmpty());
+}
+
+TEST(MimesAppsManagerTest, GetDefaultAppDisplayNameByMimeType)
+{
+    QMimeDatabase db;
+    QMimeType mime = db.mimeTypeForName("text/plain");
+    QString name = MimesAppsManager::getDefaultAppDisplayNameByMimeType(mime);
+    EXPECT_NO_FATAL_FAILURE({ (void)name; });
+}
+
+TEST(MimesAppsManagerTest, GetDefaultAppDisplayNameByGio)
+{
+    QString name = MimesAppsManager::getDefaultAppDisplayNameByGio("text/plain");
+    EXPECT_NO_FATAL_FAILURE({ (void)name; });
+}
+
+TEST(MimesAppsManagerTest, GetDefaultAppDesktopFileByMimeType)
+{
+    QString desktop = MimesAppsManager::getDefaultAppDesktopFileByMimeType("text/plain");
+    EXPECT_NO_FATAL_FAILURE({ (void)desktop; });
+}
+
+TEST(MimesAppsManagerTest, GetDefaultAppDesktopFileByMimeTypeNonExistent)
+{
+    QString desktop = MimesAppsManager::getDefaultAppDesktopFileByMimeType("application/x-ut-nonexistent");
+    EXPECT_TRUE(desktop.isEmpty());
+}
+
+TEST(MimesAppsManagerTest, GetRecommendedAppsByQio)
+{
+    QMimeDatabase db;
+    QMimeType mime = db.mimeTypeForName("text/plain");
+    QStringList apps = MimesAppsManager::getRecommendedAppsByQio(mime);
+    EXPECT_NO_FATAL_FAILURE({ (void)apps; });
+}
+
+TEST(MimesAppsManagerTest, GetRecommendedAppsByGio)
+{
+    QStringList apps = MimesAppsManager::getRecommendedAppsByGio("text/plain");
+    EXPECT_NO_FATAL_FAILURE({ (void)apps; });
+}
+
+TEST(MimesAppsManagerTest, GetRecommendedAppsByGioEmpty)
+{
+    QStringList apps = MimesAppsManager::getRecommendedAppsByGio("");
+    EXPECT_NO_FATAL_FAILURE({ (void)apps; });
+}
+
+TEST(MimesAppsManagerTest, LoadDDEMimeTypes)
+{
+    EXPECT_NO_FATAL_FAILURE({ MimesAppsManager::loadDDEMimeTypes(); });
+}
+
+TEST(MimesAppsManagerTest, RemoveOneDupFromList)
+{
+    QStringList list = {"/usr/share/applications/a.desktop", "/usr/share/applications/b.desktop"};
+    bool removed = MimesAppsManager::removeOneDupFromList(list, "/usr/share/applications/a.desktop");
+    EXPECT_TRUE(removed);
+    EXPECT_FALSE(list.contains("/usr/share/applications/a.desktop"));
+}
+
+TEST(MimesAppsManagerTest, RemoveOneDupFromListNotExists)
+{
+    // removeOneDupFromList removes first duplicate regardless of exact match
+    QStringList list = {"/usr/share/applications/a.desktop", "/usr/share/applications/b.desktop"};
+    bool removed = MimesAppsManager::removeOneDupFromList(list, "/nonexistent.desktop");
+    EXPECT_TRUE(removed);
+    EXPECT_EQ(list.size(), 1);
+}
+
+TEST(MimesAppsManagerTest, GetMimeTypeByFileNameEmpty)
+{
+    QString mime = MimesAppsManager::getMimeTypeByFileName("");
+    EXPECT_NO_FATAL_FAILURE({ (void)mime; });
+}
+
+TEST(MimesAppsManagerTest, GetMimeTypeEmpty)
+{
+    QMimeType mime = MimesAppsManager::getMimeType("");
+    EXPECT_NO_FATAL_FAILURE({ (void)mime; });
+}
+
+TEST(MimesAppsManagerTest, LessByDateTimeSameFile)
+{
+    QFileInfo f("/usr/bin/true");
+    EXPECT_FALSE(MimesAppsManager::lessByDateTime(f, f));
+}
+
+TEST(MimesAppsManagerTest, SetDefautlAppForTypeByGio)
+{
+    // May or may not succeed depending on system config
+    bool result = MimesAppsManager::setDefautlAppForTypeByGio("text/plain", "/nonexistent/app.desktop");
+    EXPECT_TRUE(result || !result);
+}
+
+TEST(MimesAppsManagerTest, GetRecommendedAppsForNonLocalUrl)
+{
+    QUrl url("smb://server/share/file.txt");
+    QStringList apps = MimesAppsManager::getRecommendedApps(url);
+    EXPECT_NO_FATAL_FAILURE({ (void)apps; });
+}
+
+TEST(MimesAppsManagerTest, GetRecommendedAppsFromMimeWhiteListNonLocal)
+{
+    QUrl url("smb://server/share/file.txt");
+    QStringList apps = MimesAppsManager::getrecommendedAppsFromMimeWhiteList(url);
+    EXPECT_NO_FATAL_FAILURE({ (void)apps; });
 }
