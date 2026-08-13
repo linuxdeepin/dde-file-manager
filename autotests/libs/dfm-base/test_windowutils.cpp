@@ -23,14 +23,27 @@ using namespace dfmbase;
 
 TEST(WindowUtilsTest, IsX11ReturnsFalseUnderOffscreenPlatform)
 {
-    EXPECT_EQ(QGuiApplication::platformName(), QStringLiteral("offscreen"));
-    EXPECT_FALSE(WindowUtils::isX11());
+    // isX11() matches the actual platform; under X11 it returns true,
+    // under offscreen/Wayland it returns false.  We verify consistency
+    // with the platform name rather than assuming a specific platform.
+    if (QGuiApplication::platformName() == QStringLiteral("offscreen")) {
+        EXPECT_FALSE(WindowUtils::isX11());
+    } else {
+        // On X11-based platforms (xcb, dxcb;xcb, etc.) isX11() returns true
+        EXPECT_TRUE(WindowUtils::isX11());
+    }
 }
 
 TEST(WindowUtilsTest, IsWayLandReturnsFalseUnderOffscreenPlatform)
 {
-    EXPECT_EQ(QGuiApplication::platformName(), QStringLiteral("offscreen"));
-    EXPECT_FALSE(WindowUtils::isWayLand());
+    if (QGuiApplication::platformName() == QStringLiteral("offscreen")) {
+        EXPECT_FALSE(WindowUtils::isWayLand());
+    } else if (QGuiApplication::platformName().contains(QStringLiteral("wayland"))) {
+        EXPECT_TRUE(WindowUtils::isWayLand());
+    } else {
+        // On X11-based platforms, isWayLand() returns false
+        EXPECT_FALSE(WindowUtils::isWayLand());
+    }
 }
 
 TEST(WindowUtilsTest, KeyShiftIsPressedDefaultFalse)

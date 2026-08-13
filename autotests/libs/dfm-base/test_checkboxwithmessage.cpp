@@ -40,3 +40,41 @@ TEST(CheckBoxWithMessageTest, SetCheckedFalseDoesNotEmitWhenAlreadyUnchecked)
     w.setChecked(false);   // already unchecked
     EXPECT_EQ(spy.count(), 0);
 }
+
+// ============================================================
+// Additional coverage for CheckBoxWithMessage
+// ============================================================
+
+TEST(CheckBoxWithMessageTest, SetCheckedTrueEmitsOnce)
+{
+    CheckBoxWithMessage w;
+    QSignalSpy spy(&w, &CheckBoxWithMessage::stateChanged);
+    w.setChecked(true);
+    EXPECT_EQ(spy.count(), 1);
+    EXPECT_EQ(spy.at(0).at(0).toInt(), Qt::Checked);
+}
+
+TEST(CheckBoxWithMessageTest, ToggleChecked)
+{
+    CheckBoxWithMessage w;
+    w.setChecked(true);
+    w.setChecked(false);
+    QSignalSpy spy(&w, &CheckBoxWithMessage::stateChanged);
+    w.setChecked(true);
+    EXPECT_EQ(spy.count(), 1);
+}
+
+TEST(CheckBoxWithMessageTest, SetDisplayTextTwice)
+{
+    CheckBoxWithMessage w;
+    w.setDisplayText("first", "first message");
+    w.setDisplayText("second", "second message");
+    SUCCEED();
+}
+
+TEST(CheckBoxWithMessageTest, SetDisplayTextEmpty)
+{
+    CheckBoxWithMessage w;
+    w.setDisplayText("", "");
+    SUCCEED();
+}

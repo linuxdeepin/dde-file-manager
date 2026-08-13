@@ -16,6 +16,9 @@
 
 #include <QSplitter>
 #include <Qt>
+#include <QApplication>
+#include <QEvent>
+#include <QEnterEvent>
 
 using namespace dfmbase;
 
@@ -59,4 +62,61 @@ TEST(SplitterTest, CreateHandleReturnsSplitterHandle)
     ASSERT_NE(handle, nullptr);
     EXPECT_EQ(handle->orientation(), Qt::Horizontal);
     delete handle;
+}
+
+// ============================================================
+// Additional coverage for SplitterHandle events
+// ============================================================
+
+TEST(SplitterTest, SplitterHandle_EnterEvent_Horizontal)
+{
+    Splitter s(Qt::Horizontal);
+    QSplitterHandle *handle = s.createHandle();
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+    QEnterEvent enterEvt(QPointF(0,0), QPointF(0,0), QPointF(0,0));
+#else
+    QEvent enterEvt(QEvent::Enter);
+#endif
+    EXPECT_NO_FATAL_FAILURE({ QApplication::sendEvent(handle, &enterEvt); });
+    delete handle;
+}
+
+TEST(SplitterTest, SplitterHandle_EnterEvent_Vertical)
+{
+    Splitter s(Qt::Vertical);
+    QSplitterHandle *handle = s.createHandle();
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+    QEnterEvent enterEvt(QPointF(0,0), QPointF(0,0), QPointF(0,0));
+#else
+    QEvent enterEvt(QEvent::Enter);
+#endif
+    EXPECT_NO_FATAL_FAILURE({ QApplication::sendEvent(handle, &enterEvt); });
+    delete handle;
+}
+
+TEST(SplitterTest, SplitterHandle_LeaveEvent)
+{
+    Splitter s(Qt::Horizontal);
+    QSplitterHandle *handle = s.createHandle();
+    QEvent leaveEvt(QEvent::Leave);
+    EXPECT_NO_FATAL_FAILURE({ QApplication::sendEvent(handle, &leaveEvt); });
+    delete handle;
+}
+
+// ============================================================
+// Additional coverage for Splitter setSplitPosition edge cases
+// ============================================================
+
+TEST(SplitterTest, SetSplitPosition_Negative)
+{
+    Splitter s(Qt::Horizontal);
+    s.setSplitPosition(-10);
+    EXPECT_EQ(s.splitPosition(), -10);
+}
+
+TEST(SplitterTest, SetSplitPosition_VeryLarge)
+{
+    Splitter s(Qt::Horizontal);
+    s.setSplitPosition(999999);
+    EXPECT_EQ(s.splitPosition(), 999999);
 }

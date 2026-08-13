@@ -48,3 +48,22 @@ TEST(AbstractFrameTest, ConstructWithParentDoesNotCrash)
     EXPECT_EQ(f->parent(), &parent);
     delete f;
 }
+
+// ============================================================
+// Additional coverage for AbstractFrame
+// ============================================================
+
+TEST(AbstractFrameTest, DestructorDoesNotCrash)
+{
+    auto *f = new TestableFrame();
+    delete f;
+    SUCCEED();
+}
+
+TEST(AbstractFrameTest, WindowFlagsPassThrough)
+{
+    Qt::WindowFlags flags = Qt::Window | Qt::WindowMinMaxButtonsHint;
+    TestableFrame f(nullptr, flags);
+    // Just verify construction with custom flags doesn't crash
+    SUCCEED();
+}

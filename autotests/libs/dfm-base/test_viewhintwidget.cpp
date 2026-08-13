@@ -60,3 +60,40 @@ TEST(ViewHintWidgetTest, ReplaceCustomWidgetDoesNotCrash)
     w.setCustomWidget(second);
     EXPECT_EQ(w.customWidget(), second);
 }
+
+// ============================================================
+// Additional coverage for ViewHintWidget
+// ============================================================
+
+TEST(ViewHintWidgetTest, SetMessageTwice)
+{
+    ViewHintWidget w;
+    w.setMessage("first");
+    w.setMessage("second");
+    SUCCEED();
+}
+
+TEST(ViewHintWidgetTest, SetIconMultipleTimes)
+{
+    ViewHintWidget w;
+    w.setIcon("dialog-warning");
+    w.setIcon("dialog-information");
+    SUCCEED();
+}
+
+TEST(ViewHintWidgetTest, SetCustomWidgetNull)
+{
+    ViewHintWidget w;
+    auto *child = new QWidget();
+    w.setCustomWidget(child);
+    w.setCustomWidget(nullptr);
+    // After setting null, old widget should be removed
+    EXPECT_EQ(w.customWidget(), nullptr);
+}
+
+TEST(ViewHintWidgetTest, SetEmptyMessage)
+{
+    ViewHintWidget w;
+    w.setMessage("");
+    SUCCEED();
+}

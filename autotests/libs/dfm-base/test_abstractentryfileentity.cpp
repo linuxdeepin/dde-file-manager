@@ -82,3 +82,50 @@ TEST(AbstractEntryFileEntityTest, EntryEntityFactorCreateReturnsNullForUnknownSu
                                   QUrl(QStringLiteral("entry:///none")));
     EXPECT_EQ(entity, nullptr);
 }
+
+// --- Additional coverage for inline virtual methods ---
+
+TEST(AbstractEntryFileEntityTest, InlineMethods_AllDefaults)
+{
+    QUrl url(QStringLiteral("entry:///ut-inline"));
+    TestableEntryEntity entity(url);
+
+    // refresh() is inline no-op
+    EXPECT_NO_FATAL_FAILURE({ entity.refresh(); });
+
+    // sizeTotal() returns 0
+    EXPECT_EQ(entity.sizeTotal(), 0u);
+
+    // sizeUsage() returns 0
+    EXPECT_EQ(entity.sizeUsage(), 0u);
+
+    // description() returns empty string
+    EXPECT_TRUE(entity.description().isEmpty());
+
+    // targetUrl() returns empty
+    EXPECT_FALSE(entity.targetUrl().isValid());
+
+    // isAccessable() returns true
+    EXPECT_TRUE(entity.isAccessable());
+
+    // renamable() returns false
+    EXPECT_FALSE(entity.renamable());
+
+    // extraProperties() returns empty hash by default
+    QVariantHash props = entity.extraProperties();
+    EXPECT_TRUE(props.isEmpty());
+
+    // editDisplayText() returns displayName()
+    EXPECT_EQ(entity.editDisplayText(), entity.displayName());
+
+    // setExtraProperty / extraProperties round-trip
+    entity.setExtraProperty("key1", 42);
+    entity.setExtraProperty("key2", QStringLiteral("hello"));
+    QVariantHash props2 = entity.extraProperties();
+    EXPECT_EQ(props2.value("key1").toInt(), 42);
+    EXPECT_EQ(props2.value("key2").toString(), QStringLiteral("hello"));
+
+    // Overwrite a property
+    entity.setExtraProperty("key1", 99);
+    EXPECT_EQ(entity.extraProperties().value("key1").toInt(), 99);
+}

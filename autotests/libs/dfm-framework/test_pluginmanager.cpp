@@ -265,52 +265,52 @@ TEST_F(PluginManagerTest, SetFilters)
     SUCCEED();
 }
 
-TEST(PluginManagerTest, CtorAndDtorSafe)
+TEST(PluginManagerBasicTest, CtorAndDtorSafe)
 {
     PluginManager pm;
     SUCCEED();
 }
-TEST(PluginManagerTest, PluginIIDsEmptyByDefault)
+TEST(PluginManagerBasicTest, PluginIIDsEmptyByDefault)
 {
     PluginManager pm;
     EXPECT_TRUE(pm.pluginIIDs().isEmpty());
 }
-TEST(PluginManagerTest, PluginPathsEmptyByDefault)
+TEST(PluginManagerBasicTest, PluginPathsEmptyByDefault)
 {
     PluginManager pm;
     EXPECT_TRUE(pm.pluginPaths().isEmpty());
 }
-TEST(PluginManagerTest, BlackListEmptyByDefault)
+TEST(PluginManagerBasicTest, BlackListEmptyByDefault)
 {
     PluginManager pm;
     EXPECT_TRUE(pm.blackList().isEmpty());
 }
-TEST(PluginManagerTest, ReadQueueEmptyByDefault)
+TEST(PluginManagerBasicTest, ReadQueueEmptyByDefault)
 {
     PluginManager pm;
     EXPECT_TRUE(pm.readQueue().isEmpty());
 }
-TEST(PluginManagerTest, LoadQueueEmptyByDefault)
+TEST(PluginManagerBasicTest, LoadQueueEmptyByDefault)
 {
     PluginManager pm;
     EXPECT_TRUE(pm.loadQueue().isEmpty());
 }
-TEST(PluginManagerTest, StopPluginsOnEmptyQueue)
+TEST(PluginManagerBasicTest, StopPluginsOnEmptyQueue)
 {
     PluginManager pm;
     EXPECT_NO_FATAL_FAILURE({ pm.stopPlugins(); });
 }
-TEST(PluginManagerTest, ReadPluginsFalseWithNoIIDs)
+TEST(PluginManagerBasicTest, ReadPluginsFalseWithNoIIDs)
 {
     PluginManager pm;
     EXPECT_FALSE(pm.readPlugins());
 }
-TEST(PluginManagerTest, LoadPluginsTrueOnEmptyQueue)
+TEST(PluginManagerBasicTest, LoadPluginsTrueOnEmptyQueue)
 {
     PluginManager pm;
     EXPECT_TRUE(pm.loadPlugins());
 }
-TEST(PluginManagerTest, D0DestructorPath)
+TEST(PluginManagerBasicTest, D0DestructorPath)
 {
     auto *ptr = new PluginManager();
     EXPECT_NO_FATAL_FAILURE({ delete ptr; });
