@@ -2477,7 +2477,7 @@ Você precisa atualizar este cofre para continuar usando-o.</translation>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="237"/>
         <source>unknown error</source>
-        <translation type="unfinished"/>
+        <translation>Erro desconhecido</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="181"/>
@@ -5846,12 +5846,12 @@ Você precisa atualizar este cofre para continuar usando-o.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="732"/>
         <source>Partition Encryption Non-Reboot Mode Rolled Back</source>
-        <translation type="unfinished"/>
+        <translation>Modo de criptografia de partição sem reinicialização revertido</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="733"/>
         <source>A previous configuration of Partition Encryption Non-Reboot Mode was interrupted and has been rolled back to the disabled state. Please reboot your system to ensure consistency. You may re-enable the feature after reboot if needed.</source>
-        <translation type="unfinished"/>
+        <translation>Uma configuração anterior do modo de criptografia de partição sem reinicialização foi interrompida e revertida para o estado desativado. Reinicie o sistema para garantir a consistência. Se necessário, você poderá reativar o recurso após a reinicialização.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="742"/>
