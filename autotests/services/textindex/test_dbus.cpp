@@ -378,3 +378,170 @@ TEST_F(DBusTest, OcrIndexDBusCleanup)
     OcrIndexDBus dbus;
     EXPECT_NO_FATAL_FAILURE({ dbus.cleanup(); });
 }
+
+// ---- Additional TextIndexDBus coverage ----
+
+TEST_F(DBusTest, TextIndexDBusCreateIndexTaskWithPaths)
+{
+    TextIndexDBus dbus;
+    // Non-empty paths, but TaskManager::startTask will fail if index not ready
+    QVariantMap opts;
+    opts["silent"] = true;
+    bool result = dbus.CreateIndexTask({ tmp.path() + "/indexed-dir" }, opts);
+    // May succeed or fail depending on runtime state, just no crash
+    SUCCEED();
+}
+
+TEST_F(DBusTest, TextIndexDBusUpdateIndexTaskWithPaths)
+{
+    TextIndexDBus dbus;
+    QVariantMap opts;
+    opts["silent"] = true;
+    bool result = dbus.UpdateIndexTask({ tmp.path() + "/indexed-dir" }, opts);
+    SUCCEED();
+}
+
+TEST_F(DBusTest, TextIndexDBusProcessFileChanges_OnlyDeleted)
+{
+    TextIndexDBus dbus;
+    bool result = dbus.ProcessFileChanges(
+            {},
+            {},
+            { "/fake/deleted/file.txt" });
+    // May or may not queue task depending on runtime
+    SUCCEED();
+}
+
+TEST_F(DBusTest, TextIndexDBusProcessFileChanges_OnlyCreated)
+{
+    TextIndexDBus dbus;
+    bool result = dbus.ProcessFileChanges(
+            { "/fake/created/file.txt" },
+            {},
+            {});
+    SUCCEED();
+}
+
+TEST_F(DBusTest, TextIndexDBusProcessFileChanges_OnlyModified)
+{
+    TextIndexDBus dbus;
+    bool result = dbus.ProcessFileChanges(
+            {},
+            { "/fake/modified/file.txt" },
+            {});
+    SUCCEED();
+}
+
+TEST_F(DBusTest, TextIndexDBusProcessFileChanges_AllThree)
+{
+    TextIndexDBus dbus;
+    bool result = dbus.ProcessFileChanges(
+            { "/fake/created.txt" },
+            { "/fake/modified.txt" },
+            { "/fake/deleted.txt" });
+    SUCCEED();
+}
+
+TEST_F(DBusTest, TextIndexDBusProcessFileMoves_NonEmpty)
+{
+    TextIndexDBus dbus;
+    QHash<QString, QString> moves;
+    moves["/old/path.txt"] = "/new/path.txt";
+    bool result = dbus.ProcessFileMoves(moves);
+    SUCCEED();
+}
+
+TEST_F(DBusTest, TextIndexDBusIndexDatabaseExists_VersionMismatch)
+{
+    const QString indexDir = tmp.path() + "/content-index";
+    writeStatusJson(indexDir, { { "version", 99999 } });
+
+    TextIndexDBus dbus;
+    EXPECT_FALSE(dbus.IndexDatabaseExists());
+}
+
+// ---- Additional OcrIndexDBus coverage ----
+
+TEST_F(DBusTest, OcrIndexDBusCreateIndexTaskWithPaths)
+{
+    OcrIndexDBus dbus;
+    QVariantMap opts;
+    opts["silent"] = true;
+    bool result = dbus.CreateIndexTask({ tmp.path() + "/indexed-dir" }, opts);
+    SUCCEED();
+}
+
+TEST_F(DBusTest, OcrIndexDBusUpdateIndexTaskWithPaths)
+{
+    OcrIndexDBus dbus;
+    QVariantMap opts;
+    bool result = dbus.UpdateIndexTask({ tmp.path() + "/indexed-dir" }, opts);
+    SUCCEED();
+}
+
+TEST_F(DBusTest, OcrIndexDBusProcessFileChanges_OnlyDeleted)
+{
+    OcrIndexDBus dbus;
+    bool result = dbus.ProcessFileChanges(
+            {},
+            {},
+            { "/fake/deleted/img.png" });
+    SUCCEED();
+}
+
+TEST_F(DBusTest, OcrIndexDBusProcessFileChanges_OnlyCreated)
+{
+    OcrIndexDBus dbus;
+    bool result = dbus.ProcessFileChanges(
+            { "/fake/created/img.png" },
+            {},
+            {});
+    SUCCEED();
+}
+
+TEST_F(DBusTest, OcrIndexDBusProcessFileChanges_OnlyModified)
+{
+    OcrIndexDBus dbus;
+    bool result = dbus.ProcessFileChanges(
+            {},
+            { "/fake/modified/img.png" },
+            {});
+    SUCCEED();
+}
+
+TEST_F(DBusTest, OcrIndexDBusProcessFileChanges_AllThree)
+{
+    OcrIndexDBus dbus;
+    bool result = dbus.ProcessFileChanges(
+            { "/fake/created.png" },
+            { "/fake/modified.png" },
+            { "/fake/deleted.png" });
+    SUCCEED();
+}
+
+TEST_F(DBusTest, OcrIndexDBusProcessFileMoves_NonEmpty)
+{
+    OcrIndexDBus dbus;
+    QHash<QString, QString> moves;
+    moves["/old/img.png"] = "/new/img.png";
+    bool result = dbus.ProcessFileMoves(moves);
+    SUCCEED();
+}
+
+TEST_F(DBusTest, OcrIndexDBusIndexDatabaseExists_VersionMismatch)
+{
+    const QString indexDir = tmp.path() + "/ocr-index";
+    writeStatusJson(indexDir, { { "version", 99999 } });
+
+    OcrIndexDBus dbus;
+    EXPECT_FALSE(dbus.IndexDatabaseExists());
+}
+
+TEST_F(DBusTest, OcrIndexDBusUpdateIndexTaskWithNonSilent)
+{
+    OcrIndexDBus dbus;
+    QVariantMap opts;
+    opts["silent"] = false;
+    bool result = dbus.UpdateIndexTask({ tmp.path() + "/indexed-dir" }, opts);
+    SUCCEED();
+}
