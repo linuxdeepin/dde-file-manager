@@ -2301,7 +2301,7 @@ Você precisa atualizar este cofre para continuar usando-o.</translation>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/repair_dialog_main.cpp" line="151"/>
         <source>Mount failed after repair</source>
-        <translation type="unfinished"/>
+        <translation>Falha ao montar após o reparo</translation>
     </message>
 </context>
 <context>
@@ -2472,7 +2472,7 @@ Você precisa atualizar este cofre para continuar usando-o.</translation>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="235"/>
         <source>Failed to start repair process: %1</source>
-        <translation type="unfinished"/>
+        <translation>Falha ao iniciar o processo de reparo: %1</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="237"/>
