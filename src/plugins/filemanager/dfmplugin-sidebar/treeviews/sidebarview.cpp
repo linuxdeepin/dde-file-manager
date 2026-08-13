@@ -113,10 +113,11 @@ void SideBarViewPrivate::onItemDoubleClicked(const QModelIndex &index)
             QPointer<SideBarView> view = q;
             QPointer<SideBarViewPrivate> guard(this);
             QUrl deviceUrl = nodeUrl;
+            const QPersistentModelIndex persistentCapturedIndex(capturedIndex);
 
             int subId = DeviceMountSubscriber::instance()->subscribe(
                     nodeUrl,
-                    [capturedIndex, view, guard, deviceUrl](const QUrl &mountedUrl) {
+                    [persistentCapturedIndex, view, guard, deviceUrl](const QUrl &mountedUrl) {
                         if (!view || !guard) {
                             fmDebug() << "SideBarViewPrivate: View destroyed before mount completed";
                             return;
@@ -127,15 +128,21 @@ void SideBarViewPrivate::onItemDoubleClicked(const QModelIndex &index)
                         fmDebug() << "SideBarViewPrivate: Device mounted at" << mountedUrl
                                   << ", auto-expanding directory";
 
-                        QTimer::singleShot(100, view, [capturedIndex, mountedUrl, view, guard]() {
+                        QTimer::singleShot(100, view, [persistentCapturedIndex, mountedUrl, view, guard]() {
                             if (!view || !guard) {
                                 fmDebug() << "SideBarViewPrivate: View destroyed during delayed expansion";
                                 return;
                             }
 
+                            if (!persistentCapturedIndex.isValid()
+                                || persistentCapturedIndex.model() != view->model()) {
+                                fmDebug() << "SideBarViewPrivate: Stale index after mount, aborting auto-expand";
+                                return;
+                            }
+
                             if (mountedUrl.isValid() && mountedUrl.scheme() == "file"
                                 && QDir(mountedUrl.path()).exists()) {
-                                guard->expandPartitionItem(capturedIndex, mountedUrl);
+                                guard->expandPartitionItem(persistentCapturedIndex, mountedUrl);
                             } else {
                                 fmDebug() << "SideBarViewPrivate: Unable to expand - invalid mounted URL:"
                                           << mountedUrl;
@@ -186,8 +193,13 @@ void SideBarViewPrivate::expandPartitionItem(const QModelIndex &index, const QUr
         filters |= QDir::Hidden;
     TraversalDirThread *t = new TraversalDirThread(url, {}, filters, QDirIterator::FollowSymlinks);
     connect(t, &TraversalDirThread::finished, t, &TraversalDirThread::deleteLater);
+    const QPersistentModelIndex persistentIndex(index);
     connect(t, &TraversalDirThread::updateChildren, this, [=](const QList<QUrl> &subs) {
-        this->expandItem(index, subs);
+        if (!persistentIndex.isValid() || persistentIndex.model() != q->model()) {
+            fmDebug() << "SideBarViewPrivate: Stale index after traversal, aborting expand";
+            return;
+        }
+        this->expandItem(persistentIndex, subs);
     });
     t->start();
 }
@@ -252,10 +264,12 @@ void SideBarViewPrivate::updateHoverIndex(const QModelIndex &index)
     const QModelIndex previousHoverIndex = currentHoverIndex;
     currentHoverIndex = index;
 
-    if (previousHoverIndex.isValid())
-        q->update(previousHoverIndex);
-    if (currentHoverIndex.isValid())
-        q->update(currentHoverIndex);
+    auto safeUpdate = [this](const QModelIndex &idx) {
+        if (idx.isValid() && idx.model() == q->model())
+            q->update(idx);
+    };
+    safeUpdate(previousHoverIndex);
+    safeUpdate(currentHoverIndex);
 }
 
 void SideBarViewPrivate::clearHoverIndex()
@@ -1159,12 +1173,13 @@ void SideBarView::onChangeExpandState(const QModelIndex &index, bool expand)
         sidebarModel->onItemCollapsed(index);
     }
 
-    update(index);
+    if (index.isValid() && index.model() == sidebarModel)
+        update(index);
 }
 
 void SideBarView::onRequestCollapseItem(const QModelIndex &index)
 {
-    if (index.isValid()) {
+    if (index.isValid() && index.model() == model()) {
         collapse(index);
         onChangeExpandState(index, false);
         fmDebug() << "Collapsed item per model request:" << index.data(Qt::DisplayRole).toString();
