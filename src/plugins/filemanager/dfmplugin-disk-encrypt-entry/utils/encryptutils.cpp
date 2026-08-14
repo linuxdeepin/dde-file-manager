@@ -320,6 +320,7 @@ int tpm_utils::ownerAuthStatus()
 int device_utils::encKeyType(const QString &dev)
 {
     CREATE_DAEMON_INTERFACE(iface);
+    iface.setTimeout(kTPMDBusTimeoutMs);
     if (!iface.isValid()) {
         fmWarning() << "Failed to create DBus interface for TpmToken, service may be unavailable";
         return 0;
