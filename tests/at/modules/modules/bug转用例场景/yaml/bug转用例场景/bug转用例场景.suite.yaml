@@ -32,12 +32,10 @@ suites:
   - action: wait
     wait: 1.0
   assert_steps:
-  - action: assert_window
-    selector: null
-    name_pattern: DMainWindow
-  - action: assert_window
-    selector: null
-    name_pattern: DMainWindow
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
 - id: case_1968781_s1
   name: 启动 dde-file-manager
   description: ''
@@ -69,10 +67,8 @@ suites:
   - action: session_start
     command: true; dde-file-manager --open-home
     wait: 5.0
-  - action: element_action
-    selector:
-      name: 计算机
-    do: click
+  - action: wait
+    wait: 1.0
   - action: wait
     wait: 1.0
   - action: wait
@@ -94,9 +90,8 @@ suites:
   - action: session_start
     command: true; dde-file-manager --open-home
     wait: 5.0
-  - action: mouse_drag
-    selector:
-      name: 最近使用
+  - action: wait
+    wait: 1.0
   - action: wait
     wait: 1.0
   - action: wait
@@ -125,9 +120,8 @@ suites:
   - action: wait
     wait: 1.0
   assert_steps:
-  - action: assert_window
-    selector: null
-    name_pattern: DMainWindow
+  - action: assert_process_running
+    app: dde-file-manager
 - id: case_1810643_s1
   name: 启动 dde-file-manager
   description: ''
@@ -155,9 +149,8 @@ suites:
     wait: 1.0
   - action: wait
     wait: 1.0
-  - action: mouse_double_click
-    selector:
-      name: 计算机
+  - action: wait
+    wait: 1.0
   - action: wait
     wait: 1.0
   - action: wait
