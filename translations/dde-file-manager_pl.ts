@@ -2295,12 +2295,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/repair_dialog_main.cpp" line="64"/>
         <source>Cannot connect to repair service</source>
-        <translation type="unfinished"/>
+        <translation>Nie można połączyć się z usługą naprawiania</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/repair_dialog_main.cpp" line="151"/>
         <source>Mount failed after repair</source>
-        <translation type="unfinished"/>
+        <translation>Wystąpił błąd montowania dysku po próbie naprawy</translation>
     </message>
 </context>
 <context>
@@ -5845,7 +5845,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="732"/>
         <source>Partition Encryption Non-Reboot Mode Rolled Back</source>
-        <translation>Szyfrowanie partycji bez ponownego uruchamiania wyłączone</translation>
+        <translation>Wyłączono szyfrowanie partycji bez ponownego uruchamiania</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="733"/>
