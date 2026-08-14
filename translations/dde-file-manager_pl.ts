@@ -2046,12 +2046,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="246"/>
         <source>Sidebar tree directory</source>
-        <translation type="unfinished"/>
+        <translation>Widok drzewka na pasku bocznym</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="248"/>
         <source>Display sidebar disk partitions as a tree structure</source>
-        <translation type="unfinished"/>
+        <translation>Wyświetl partycje dyskowe na pasku bocznym w widoku drzewka</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="25"/>
