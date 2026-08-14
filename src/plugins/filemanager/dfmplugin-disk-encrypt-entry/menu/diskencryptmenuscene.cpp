@@ -392,6 +392,7 @@ void DiskEncryptMenuScene::unlockDevice(const QString &devObjPath)
 void DiskEncryptMenuScene::doEncryptDevice(const DeviceEncryptParam &param)
 {
     CREATE_DAEMON_INTERFACE(iface);
+    iface.setTimeout(kTPMDBusTimeoutMs);
     if (!iface.isValid()) {
         fmCritical() << "Failed to create DBus interface for InitEncryption, service may be unavailable";
         return;
@@ -437,6 +438,7 @@ bool DiskEncryptMenuScene::doReencryptDevice(const DeviceEncryptParam &param)
     }
 
     CREATE_DAEMON_INTERFACE(iface);
+    iface.setTimeout(kTPMDBusTimeoutMs);
     if (!iface.isValid()) {
         fmCritical() << "Failed to create DBus interface for SetupAuthArgs, service may be unavailable";
         return false;
@@ -466,6 +468,7 @@ bool DiskEncryptMenuScene::doReencryptDevice(const DeviceEncryptParam &param)
 void DiskEncryptMenuScene::doDecryptDevice(const DeviceEncryptParam &param)
 {
     CREATE_DAEMON_INTERFACE(iface);
+    iface.setTimeout(kTPMDBusTimeoutMs);
     if (!iface.isValid()) {
         fmCritical() << "Failed to create DBus interface for Decryption, service may be unavailable";
         return;
@@ -521,6 +524,7 @@ void DiskEncryptMenuScene::doChangePassphrase(const DeviceEncryptParam &param)
     }
 
     CREATE_DAEMON_INTERFACE(iface);
+    iface.setTimeout(kTPMDBusTimeoutMs);
     if (!iface.isValid()) {
         fmCritical() << "Failed to create DBus interface for ChangePassphrase, service may be unavailable";
         return;

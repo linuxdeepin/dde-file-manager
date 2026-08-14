@@ -145,16 +145,15 @@ int EventsHandler::deviceEncryptStatus(const QString &device)
 
 void EventsHandler::resumeEncrypt(const QString &device)
 {
-    QDBusInterface iface(kDaemonBusName,
-                         kDaemonBusPath,
-                         kDaemonBusIface,
-                         QDBusConnection::systemBus());
+    CREATE_DAEMON_INTERFACE(iface);
+    iface.setTimeout(kTPMDBusTimeoutMs);
     iface.asyncCall("ResumeEncryption", QVariantMap { { encrypt_param_keys::kKeyDevice, device } });
 }
 
 QString EventsHandler::holderDevice(const QString &device)
 {
     CREATE_DAEMON_INTERFACE(iface);
+    iface.setTimeout(kTPMDBusTimeoutMs);
     if (!iface.isValid()) {
         fmWarning() << "Failed to create DBus interface for HolderDevice, service may be unavailable, using original device";
         return device;
