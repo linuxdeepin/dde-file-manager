@@ -1,3 +1,25 @@
+dde-file-manager (6.5.164) unstable; urgency=medium
+
+  * Fix(disk-encrypt): change translate of tpm
+  * fix(disk-encrypt): set proper DBus timeout for TPM interface to prevent premature auth fallback
+  * fix(disk-encrypt): extend DBus timeout to 5min for long-running operations
+  * fix(smb): preserve '#' in SMB share names during CIFS mount
+  * fix(sidebar): route partition expand/collapse through onChangeExpandState
+  * fix(sidebar): guard stale QModelIndex across async sidebar expansion
+  * fix: handle empty address in mount and SMB URL fragment
+  * fix: fix SMB mount detection issue
+  * feat: add sidebar tree view display option
+  * chore: update translations
+  * fix: preserve backup header during interrupted decryption
+  * fix: invalidate icon cache on item update
+  * fix: detect interrupted overlay DM mode and roll back to disabled state
+  * feat(sidebar): migrate partition expand/collapse feature from v20
+  * fix(sidebar): guard use-after-free in mount subscription callback
+  * fix(sidebar): include foreground color in icon cache key
+  * fix(sidebar): unify group header arrow style
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Fri, 14 Aug 2026 11:24:22 +0800
+
 dde-file-manager (6.5.163) unstable; urgency=medium
 
   * fix: show broken-link dialog for deleted SMB share target
