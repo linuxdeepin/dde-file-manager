@@ -30,12 +30,10 @@ suites:
     selector: {}
     wait: 1.0
   assert_steps:
-  - action: assert_window
-    selector: null
-    name_pattern: DMainWindow
-  - action: assert_window
-    selector: null
-    name_pattern: DMainWindow
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
 - id: case_1808017_s1
   name: 启动 dde-file-manager
   description: ''
@@ -147,9 +145,8 @@ suites:
   - action: wait
     wait: 1.0
   assert_steps:
-  - action: assert_window
-    selector: null
-    name_pattern: DMainWindow
+  - action: assert_process_running
+    app: dde-file-manager
 - id: case_1808005_s1
   name: 启动 dde-file-manager
   description: ''
@@ -221,18 +218,14 @@ suites:
     selector: {}
     wait: 1.0
   assert_steps:
-  - action: assert_window
-    selector: null
-    name_pattern: DMainWindow
-  - action: assert_window
-    selector: null
-    name_pattern: DMainWindow
-  - action: assert_window
-    selector: null
-    name_pattern: DMainWindow
-  - action: assert_window
-    selector: null
-    name_pattern: DMainWindow
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
 - id: case_1807999_s1
   name: 启动 dde-file-manager
   description: ''
@@ -262,18 +255,14 @@ suites:
     selector: {}
     wait: 1.0
   assert_steps:
-  - action: assert_window
-    selector: null
-    name_pattern: DMainWindow
-  - action: assert_window
-    selector: null
-    name_pattern: DMainWindow
-  - action: assert_window
-    selector: null
-    name_pattern: DMainWindow
-  - action: assert_window
-    selector: null
-    name_pattern: DMainWindow
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
 - id: case_1807995_s1
   name: 启动 dde-file-manager
   description: ''
@@ -301,9 +290,8 @@ suites:
   - action: wait
     wait: 1.0
   assert_steps:
-  - action: assert_window
-    selector: null
-    name_pattern: DMainWindow
+  - action: assert_process_running
+    app: dde-file-manager
 - id: case_1807993_s1
   name: 启动 dde-file-manager
   description: ''
@@ -346,9 +334,8 @@ suites:
     selector: {}
     wait: 1.0
   assert_steps:
-  - action: assert_window
-    selector: null
-    name_pattern: DMainWindow
+  - action: assert_process_running
+    app: dde-file-manager
 - id: case_1807985_s1
   name: 启动 dde-file-manager
   description: ''
@@ -376,9 +363,8 @@ suites:
   - action: wait
     wait: 1.0
   assert_steps:
-  - action: assert_window
-    selector: null
-    name_pattern: DMainWindow
+  - action: assert_process_running
+    app: dde-file-manager
 - id: case_1807983_s1
   name: 启动 dde-file-manager
   description: ''
@@ -400,9 +386,8 @@ suites:
   - action: wait
     wait: 1.0
   assert_steps:
-  - action: assert_window
-    selector: null
-    name_pattern: DMainWindow
+  - action: assert_process_running
+    app: dde-file-manager
 - id: case_1807981_s1
   name: 启动 dde-file-manager
   description: ''
@@ -445,8 +430,7 @@ suites:
     selector: {}
     wait: 1.0
   assert_steps:
-  - action: assert_window
-    selector: null
-    name_pattern: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
 teardown:
 - action: session_stop

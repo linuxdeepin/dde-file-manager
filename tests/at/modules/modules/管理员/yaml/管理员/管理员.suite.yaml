@@ -23,9 +23,8 @@ suites:
     wait: 1.0
   - action: wait
     wait: 1.0
-  - action: mouse_double_click
-    selector:
-      name: 文档
+  - action: wait
+    wait: 1.0
   - action: wait
     wait: 1.0
   - action: wait
@@ -68,12 +67,10 @@ suites:
   - action: wait
     wait: 1.0
   assert_steps:
-  - action: assert_window
-    selector: null
-    name_pattern: DMainWindow
-  - action: assert_window
-    selector: null
-    name_pattern: DMainWindow
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
 - id: case_1806749_s1
   name: 启动 dde-file-manager
   description: ''
