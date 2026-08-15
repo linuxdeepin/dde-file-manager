@@ -73,7 +73,6 @@ public:
     // Create the socket, connect, enlarge the receive buffer and build the
     // notifier. Returns true on success. Does not touch the reconnect timer.
     bool establishConnection();
-
     // The event dispatcher sends absolute paths, but they may use a different
     // mount alias than the monitored root path. This helper normalizes across
     // same-device mount aliases before applying rootPaths and excludePredicate.
@@ -101,8 +100,10 @@ public:
     QHash<uint32_t, RenameFromInfo> pendingRenames;
     QHash<dev_t, QStringList> mountPoints;
     QVector<MountPointAlias> orderedMountPoints;
+    QVector<QPair<QString, QString>> rootAliases;
 
     bool initMountPoints();
+    void rebuildRootAliases();
 };
 
 SERVICETEXTINDEX_END_NAMESPACE
