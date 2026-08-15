@@ -6,10 +6,12 @@
 
 #include <QDir>
 #include <QFileInfo>
+#include <QTimer>
 
 #include <libmount.h>
 
 #include <sys/socket.h>
+#include <sys/stat.h>
 #include <sys/un.h>
 #include <unistd.h>
 
@@ -40,6 +42,13 @@ struct DispatchEvent
     char eventPath[kDispatchMaxPathLen];
 };
 
+struct FileIdentity
+{
+    dev_t deviceId { 0 };
+    ino_t inode { 0 };
+    bool valid { false };
+};
+
 bool isDescendantOfRoot(const QString &path, const QString &root)
 {
     if (root == "/")
@@ -66,6 +75,15 @@ bool mountPointStartsWith(const QString &path, const QString &mountPoint)
 bool cStringEquals(const char *left, const char *right)
 {
     return left && right && qstrcmp(left, right) == 0;
+}
+
+FileIdentity identifyPath(const QString &path)
+{
+    struct stat st {};
+    if (::stat(path.toUtf8().constData(), &st) != 0)
+        return {};
+
+    return { st.st_dev, st.st_ino, true };
 }
 
 bool isParentChainUnderRoot(const QHash<int, MountEntry> &byMountId, const MountEntry &entry)
@@ -166,6 +184,7 @@ bool VfsMonitorFileSystemWatcherPrivate::initMountPoints()
 {
     mountPoints.clear();
     orderedMountPoints.clear();
+    rootAliases.clear();
 
     libmnt_table *mtab = mnt_new_table();
     if (!mtab)
@@ -201,7 +220,44 @@ bool VfsMonitorFileSystemWatcherPrivate::initMountPoints()
                   return left.mountPoint.length() > right.mountPoint.length();
               });
 
+    rebuildRootAliases();
     return !mountPoints.isEmpty();
+}
+
+void VfsMonitorFileSystemWatcherPrivate::rebuildRootAliases()
+{
+    rootAliases.clear();
+
+    for (const QString &rootPath : std::as_const(rootPaths)) {
+        const FileIdentity rootIdentity = identifyPath(rootPath);
+        if (!rootIdentity.valid)
+            continue;
+
+        for (const MountPointAlias &alias : std::as_const(orderedMountPoints)) {
+            if (alias.mountPoint == "/")
+                continue;
+
+            const QString aliasRoot = QDir::cleanPath(alias.mountPoint + rootPath);
+            if (aliasRoot == rootPath)
+                continue;
+
+            const FileIdentity aliasIdentity = identifyPath(aliasRoot);
+            if (!aliasIdentity.valid)
+                continue;
+
+            if (aliasIdentity.deviceId != rootIdentity.deviceId
+                || aliasIdentity.inode != rootIdentity.inode) {
+                continue;
+            }
+
+            rootAliases.append(qMakePair(aliasRoot, rootPath));
+        }
+    }
+
+    std::sort(rootAliases.begin(), rootAliases.end(),
+              [](const QPair<QString, QString> &left, const QPair<QString, QString> &right) {
+                  return left.first.length() > right.first.length();
+              });
 }
 
 QString VfsMonitorFileSystemWatcherPrivate::resolveAndFilterFullPath(const char *absolutePath) const
@@ -216,6 +272,17 @@ QString VfsMonitorFileSystemWatcherPrivate::resolveAndFilterFullPath(const char 
     const QString directPath = filterDirectPath(rootPaths, excludePredicate, fullPath);
     if (!directPath.isNull())
         return directPath;
+
+    for (const auto &alias : rootAliases) {
+        if (!isDescendantOfRoot(fullPath, alias.first))
+            continue;
+
+        const QString suffix = fullPath.mid(alias.first.length());
+        const QString translatedPath = alias.second + suffix;
+        const QString filteredTranslated = filterDirectPath(rootPaths, excludePredicate, translatedPath);
+        if (!filteredTranslated.isNull())
+            return filteredTranslated;
+    }
 
     for (const MountPointAlias &sourceAlias : orderedMountPoints) {
         if (!mountPointStartsWith(fullPath, sourceAlias.mountPoint))
