@@ -162,6 +162,13 @@ bool FSMonitorPrivate::startMonitoring()
     active = true;
     watchedDirectories.clear();
 
+    if (vfsMonitorAvailable) {
+        fmInfo() << "FSMonitor: VfsMonitor active, skipping inotify directory watch setup";
+        fmInfo() << "FSMonitor: Started monitoring with max watches:" << maxWatches
+                 << "usage limit:" << (maxUsagePercentage * 100) << "%";
+        return true;
+    }
+
     // Start worker thread
     if (!workerThread.isRunning()) {
         workerThread.start();
@@ -614,6 +621,11 @@ void FSMonitorPrivate::handleFastScanCompleted(bool success)
 void FSMonitorPrivate::handleDirectoriesBatch(const QStringList &paths)
 {
     if (paths.isEmpty()) {
+        return;
+    }
+
+    if (vfsMonitorAvailable || !watcher) {
+        fmDebug() << "FSMonitor: Ignoring directory watch batch in vfs mode, size:" << paths.size();
         return;
     }
 
