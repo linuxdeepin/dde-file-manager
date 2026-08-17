@@ -20,6 +20,8 @@
 #include <QVBoxLayout>
 #include <QStandardItemModel>
 #include <QKeyEvent>
+
+#include <dfm-framework/event/event.h>
 #include <QApplication>
 #include <QScreen>
 #include <QToolTip>
@@ -176,6 +178,10 @@ void ViewOptionsWidgetPrivate::initializeUi()
     // Initialize checkbox state from window
     if (currentWindow)
         displayPreviewCheckBox->setChecked(currentWindow->isDetailSpaceVisible());
+#ifdef ENABLE_TESTING
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                         qobject_cast<QWidget *>(displayPreviewCheckBox), AcName::kAcComputerTitleBarDetailBtn);
+#endif
     QHBoxLayout *displayPreviewLayout = new QHBoxLayout(displayPreviewWidget);
     displayPreviewLayout->setContentsMargins(kViewOptionsFrameMargin, kViewOptionsFrameMargin,
                                              kViewOptionsFrameMargin, kViewOptionsFrameMargin);

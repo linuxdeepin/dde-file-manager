@@ -30,6 +30,8 @@
 #include <QResizeEvent>
 #include <QKeyEvent>
 
+#include <dfm-framework/event/event.h>
+
 DGUI_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -326,12 +328,19 @@ void SearchEditWidget::initUI()
     searchButton->setToolTip(QObject::tr("search"));
     searchButton->setFlat(true);
     searchButton->setVisible(false);
+#ifdef ENABLE_TESTING
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                         qobject_cast<QWidget *>(searchButton), AcName::kAcComputerTitleBarSearchBtn);
+#endif
 
     // search edit
     searchEdit = new DSearchEdit(this);
     searchEdit->setVisible(true);
     // searchEdit->setFocusPolicy(Qt::StrongFocus);
     searchEdit->lineEdit()->setFocusPolicy(Qt::ClickFocus);
+#ifdef ENABLE_TESTING
+    searchEdit->setAccessibleName("SearchEdit");
+#endif
 
     // advanced search button
     advancedButton = new CustomDToolButton(this);
@@ -341,6 +350,9 @@ void SearchEditWidget::initUI()
     advancedButton->setToolTip(QObject::tr("advanced search"));
     advancedButton->setCheckable(true);
     advancedButton->setVisible(false);
+#ifdef ENABLE_TESTING
+    advancedButton->setAccessibleName("AdvancedSearchButton");
+#endif
 
     layout->addWidget(searchButton);
     layout->addWidget(searchEdit);
