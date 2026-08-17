@@ -4,6 +4,8 @@
 
 #include "detailview.h"
 #include "imagepreviewwidget.h"
+
+#include <dfm-framework/event/event.h>
 #include "imagepreviewworker.h"
 #include "fileinfowidget.h"
 #include "utils/detailmanager.h"
@@ -25,6 +27,9 @@ DetailView::DetailView(QWidget *parent)
     : DFrame(parent)
 {
     initInfoUI();
+#ifdef ENABLE_TESTING
+    setAccessibleName("DetailView");
+#endif
 }
 
 DetailView::~DetailView()

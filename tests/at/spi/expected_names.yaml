@@ -2,6 +2,15 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 expected_names:
+- line: 71
+  name: DetailSpace
+  source_file: src/plugins/filemanager/dfmplugin-detailspace/views/detailspacewidget.cpp
+  variable: this
+- line: 31
+  name: DetailView
+  source_file: src/plugins/filemanager/dfmplugin-detailspace/views/detailview.cpp
+  variable: this
+
 - line: 253
   name: CloseBtn
   source_file: src/apps/dde-file-manager-preview/libdfm-preview/views/filepreviewdialog.cpp
