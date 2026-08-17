@@ -67,6 +67,9 @@ QUrl DetailSpaceWidget::currentUrl() const
 void DetailSpaceWidget::initializeUi()
 {
     setAutoFillBackground(true);
+#ifdef ENABLE_TESTING
+    setAccessibleName("DetailSpace");
+#endif
     setBackgroundRole(QPalette::ColorRole::Base);
 
     QHBoxLayout *rvLayout = new QHBoxLayout(this);
