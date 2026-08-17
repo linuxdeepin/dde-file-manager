@@ -11,6 +11,10 @@
 #include <QLabel>
 #include <QPushButton>
 
+QT_BEGIN_NAMESPACE
+class QEvent;
+QT_END_NAMESPACE
+
 namespace dfmplugin_filepreview {
 class FilePreviewDialogStatusBar : public QFrame
 {
@@ -23,12 +27,20 @@ public:
     QPushButton *nextButton() const;
     QPushButton *openButton() const;
 
+protected:
+    bool eventFilter(QObject *watched, QEvent *event) override;
+
 private:
+    void updateNavButtonIcons();
+
     QLabel *previewTitle { nullptr };
 
     QPushButton *preBtn { nullptr };
     QPushButton *nextBtn { nullptr };
     QPushButton *openBtn { nullptr };
+
+    bool preBtnHovered { false };
+    bool nextBtnHovered { false };
 };
 }
 #endif   // FILEPREVIEWDIALOGSTATUSBAR_H
