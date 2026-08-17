@@ -854,7 +854,32 @@ void SideBarView::saveStateWhenClose()
 
 void SideBarView::setCurrentUrl(const QUrl &url)
 {
+    // The sidebar highlight is URL-based (see SideBarItemDelegate::paint): an item is
+    // highlighted when its URL matches currentUrl(), and the highlight only refreshes
+    // when the item is repainted. setCurrentIndex() is meant to repaint the newly
+    // current item via currentChanged(), but that repaint is unreliable here:
+    //   - QItemSelectionModel::setCurrentIndex() is a no-op (no currentChanged) when
+    //     Qt's current index already equals the target, e.g. returning to a sidebar
+    //     item visited before, or coming back after navigating into a sub-folder that
+    //     has no sidebar item (which never changes the current index);
+    //   - the collapsed-group early-return and the not-found branch below skip
+    //     setCurrentIndex() entirely.
+    // The sidebar-click path works only because SideBarWidget::onItemActived explicitly
+    // update()s the previous/current items afterwards; the file-view navigation path
+    // (cd() -> setCurrentUrl) has no such repaint, so the highlight does not refresh
+    // until a hover triggers a viewport repaint.
+    //
+    // Fix: whenever the URL basis actually changes, repaint the whole viewport so every
+    // visible item re-evaluates its URL-based highlight against the new url -- the
+    // previously highlighted item drops its stale highlight and the newly matching
+    // item gains it, immediately, without depending on setCurrentIndex(). This is safe
+    // because the highlight background is purely URL-matched, so at most one item is
+    // highlighted (no "two items selected").
+    const QUrl previousUrl = d->sidebarUrl;
     d->sidebarUrl = url;
+    if (!UniversalUtils::urlEquals(previousUrl, url))
+        viewport()->update();   // refresh URL-based highlight for all visible items immediately
+
     bool urlNotChanged = UniversalUtils::urlEquals(d->current.data(SideBarItem::kItemUrlRole).toUrl(), url);
     const QModelIndex &index = urlNotChanged ? d->current : findItemIndex(url);
 
