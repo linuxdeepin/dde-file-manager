@@ -1,0 +1,267 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+# === 格式范例 ===
+# metadata:
+#   generated_at: "2026-08-17T00:00:00"
+#   source: "manual supplement"
+# cases:
+#   - id: "suite_id"
+#     name: "用例名称"
+#     module: "模块名"
+#     status: "active"
+#     annotation:
+#       测试界面: "主窗口"
+#       测试功能: "功能点"
+#       前置条件: "应用已启动"
+#       AT元素引用: ["side_bar_view"]
+#     steps:
+#       - step_type: "action"
+#         description: "启动应用"
+#         action: "session_start"
+#         command: "true; dde-file-manager --open-home"
+#       - step_type: "action"
+#         description: "主菜单点击设置"
+#         action: "dtk_main_menu"
+#         items: ["设置"]
+#       - step_type: "assert"
+#         description: "验证设置对话框显示"
+#         action: "assert_window"
+#         selector:
+#           name_pattern: "设置"
+# === 格式范例结束 ===
+
+metadata:
+  generated_at: "2026-08-17T00:00:00"
+  source: "manual supplement for dde-file-manager AT completion"
+
+cases:
+  - id: "fm_menu_new_window"
+    name: 主菜单新建窗口
+    module: 菜单操作
+    status: active
+    annotation:
+      测试界面: "主窗口-标题栏"
+      测试功能: "通过标题栏主菜单新建窗口"
+      前置条件: "dde-file-manager 已启动并显示主窗口"
+      AT元素引用: ["新建窗口"]
+    steps:
+      - step_type: "action"
+        description: "启动 dde-file-manager"
+        action: "session_start"
+        command: "true; dde-file-manager --open-home"
+      - step_type: "action"
+        description: "打开标题栏主菜单并选择新建窗口"
+        action: "dtk_main_menu"
+        items: ["新建窗口"]
+      - step_type: "assert"
+        description: "验证出现文件管理器窗口"
+        action: "assert_window"
+        selector:
+          name_pattern: "dde-file-manager"
+      - step_type: "assert"
+        description: "验证文件管理器进程运行"
+        action: "assert_process_running"
+        text: "dde-file-manager"
+
+  - id: "fm_menu_new_tab"
+    name: 主菜单新建标签
+    module: 菜单操作
+    status: active
+    annotation:
+      测试界面: "主窗口-标题栏"
+      测试功能: "通过标题栏主菜单在当前窗口新建标签页"
+      前置条件: "dde-file-manager 已启动并显示主窗口"
+      AT元素引用: ["新建标签"]
+    steps:
+      - step_type: "action"
+        description: "启动 dde-file-manager"
+        action: "session_start"
+        command: "true; dde-file-manager --open-home"
+      - step_type: "action"
+        description: "打开标题栏主菜单并选择新建标签"
+        action: "dtk_main_menu"
+        items: ["新建标签"]
+      - step_type: "assert"
+        description: "验证文件管理器进程运行"
+        action: "assert_process_running"
+        text: "dde-file-manager"
+
+  - id: "fm_menu_settings"
+    name: 主菜单打开设置
+    module: 菜单操作
+    status: active
+    annotation:
+      测试界面: "主窗口-标题栏"
+      测试功能: "通过标题栏主菜单打开设置对话框"
+      前置条件: "dde-file-manager 已启动并显示主窗口"
+      AT元素引用: ["设置"]
+    steps:
+      - step_type: "action"
+        description: "启动 dde-file-manager"
+        action: "session_start"
+        command: "true; dde-file-manager --open-home"
+      - step_type: "action"
+        description: "打开标题栏主菜单并选择设置"
+        action: "dtk_main_menu"
+        items: ["设置"]
+      - step_type: "assert"
+        description: "验证设置对话框已打开"
+        action: "assert_window"
+        selector:
+          name_pattern: "设置"
+
+  - id: "fm_sidebar_quickaccess"
+    name: 侧边栏快捷访问导航
+    module: 菜单操作
+    status: active
+    annotation:
+      测试界面: "主窗口-左侧边栏"
+      测试功能: "点击侧边栏快捷访问切换到对应视图"
+      前置条件: "dde-file-manager 已启动并显示主窗口"
+      AT元素引用: ["side_bar_view"]
+    steps:
+      - step_type: "action"
+        description: "启动 dde-file-manager"
+        action: "session_start"
+        command: "true; dde-file-manager --open-home"
+      - step_type: "action"
+        description: "点击侧边栏快捷访问项"
+        action: "element_action"
+        selector:
+          name: "快捷访问"
+        do: "click"
+      - step_type: "assert"
+        description: "验证侧边栏树存在"
+        action: "assert_element"
+        selector:
+          name: "side_bar_view"
+          role: "tree"
+
+  - id: "fm_sidebar_documents"
+    name: 侧边栏文档导航
+    module: 菜单操作
+    status: active
+    annotation:
+      测试界面: "主窗口-左侧边栏"
+      测试功能: "点击侧边栏文档切换到文档视图"
+      前置条件: "dde-file-manager 已启动并显示主窗口"
+      AT元素引用: ["文档"]
+    steps:
+      - step_type: "action"
+        description: "启动 dde-file-manager"
+        action: "session_start"
+        command: "true; dde-file-manager --open-home"
+      - step_type: "action"
+        description: "点击侧边栏文档项"
+        action: "element_action"
+        selector:
+          name: "文档"
+        do: "click"
+      - step_type: "assert"
+        description: "验证文件管理器进程运行"
+        action: "assert_process_running"
+        text: "dde-file-manager"
+
+  - id: "fm_sidebar_desktop"
+    name: 侧边栏桌面导航
+    module: 菜单操作
+    status: active
+    annotation:
+      测试界面: "主窗口-左侧边栏"
+      测试功能: "点击侧边栏桌面切换到桌面视图"
+      前置条件: "dde-file-manager 已启动并显示主窗口"
+      AT元素引用: ["桌面"]
+    steps:
+      - step_type: "action"
+        description: "启动 dde-file-manager"
+        action: "session_start"
+        command: "true; dde-file-manager --open-home"
+      - step_type: "action"
+        description: "点击侧边栏桌面项"
+        action: "element_action"
+        selector:
+          name: "桌面"
+        do: "click"
+      - step_type: "assert"
+        description: "验证文件管理器进程运行"
+        action: "assert_process_running"
+        text: "dde-file-manager"
+
+  - id: "fm_back_navigation"
+    name: 工具栏返回导航
+    module: 菜单操作
+    status: active
+    annotation:
+      测试界面: "主窗口-标题栏"
+      测试功能: "通过标题栏返回按钮进行后退导航"
+      前置条件: "dde-file-manager 已启动并显示主窗口"
+      AT元素引用: ["返 回"]
+    steps:
+      - step_type: "action"
+        description: "启动 dde-file-manager"
+        action: "session_start"
+        command: "true; dde-file-manager --open-home"
+      - step_type: "action"
+        description: "点击标题栏返回按钮"
+        action: "element_action"
+        selector:
+          name: "返 回"
+        do: "click"
+      - step_type: "assert"
+        description: "验证文件管理器进程运行"
+        action: "assert_process_running"
+        text: "dde-file-manager"
+
+  - id: "fm_menu_refresh"
+    name: 工作区右键菜单刷新
+    module: 菜单操作
+    status: active
+    annotation:
+      测试界面: "主窗口-文件视图"
+      测试功能: "在文件工作区右键菜单执行刷新"
+      前置条件: "dde-file-manager 已启动并显示主窗口"
+      AT元素引用: ["刷新"]
+    steps:
+      - step_type: "action"
+        description: "启动 dde-file-manager"
+        action: "session_start"
+        command: "true; dde-file-manager --open-home"
+      - step_type: "action"
+        description: "在文件工作区弹出右键菜单并选择刷新"
+        action: "dtk_context_menu"
+        selector:
+          name: "side_bar_view"
+          role: "tree"
+        items: ["刷新"]
+      - step_type: "assert"
+        description: "验证文件管理器进程运行"
+        action: "assert_process_running"
+        text: "dde-file-manager"
+
+  - id: "fm_copy_path"
+    name: 右键菜单复制路径
+    module: 菜单操作
+    status: active
+    annotation:
+      测试界面: "主窗口-文件视图"
+      测试功能: "在文件工作区右键菜单执行复制路径"
+      前置条件: "dde-file-manager 已启动并显示主窗口"
+      AT元素引用: ["复制路径"]
+    steps:
+      - step_type: "action"
+        description: "启动 dde-file-manager"
+        action: "session_start"
+        command: "true; dde-file-manager --open-home"
+      - step_type: "action"
+        description: "在文件工作区弹出右键菜单并选择复制路径"
+        action: "dtk_context_menu"
+        selector:
+          name: "side_bar_view"
+          role: "tree"
+        items: ["复制路径"]
+      - step_type: "assert"
+        description: "验证文件管理器进程运行"
+        action: "assert_process_running"
+        text: "dde-file-manager"

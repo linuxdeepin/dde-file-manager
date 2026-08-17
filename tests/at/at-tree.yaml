@@ -1,0 +1,114 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# 说明：本 at-tree.yaml 为静态合成定位基线（headless 环境无法运行 youqu at dump，
+# 应用 AT-SPI 未注册）。tree 层收录侧边栏/标题栏可持久定位元素，transient_contexts
+# 层收录标题栏主菜单与右键菜单等瞬态元素。名称取自 translations/dde-file-manager_zh_CN.ts
+# 及源码 setObjectName/setAccessibleName 契约。运行时以动态 AT-SPI 查找为准。
+
+version: "2.0"
+app: "dde-file-manager"
+metadata:
+  app: "dde-file-manager"
+  generated_at: "2026-08-17T00:00:00"
+  scan_mode: "static-synthesis"
+tree:
+  - id: n0
+    role: frame
+    name: "dde-file-manager"
+    children:
+      - id: n1
+        role: tree
+        name: "side_bar_view"
+        object_name: "side_bar_view"
+        classification: interactive
+        comment: "GUI位置: 主窗口左侧边栏 | 功能: 提供快捷访问/计算机/网络/回收站/桌面/文档等导航"
+        children:
+          - id: n1_1
+            role: table cell
+            name: "快捷访问"
+            classification: interactive
+            comment: "GUI位置: 左侧边栏首项 | 功能: 切换到快捷访问视图"
+          - id: n1_2
+            role: table cell
+            name: "最近使用"
+            classification: interactive
+            comment: "GUI位置: 左侧边栏 | 功能: 切换到最近使用视图"
+          - id: n1_3
+            role: table cell
+            name: "桌面"
+            classification: interactive
+            comment: "GUI位置: 左侧边栏 | 功能: 切换到桌面视图"
+          - id: n1_4
+            role: table cell
+            name: "文档"
+            classification: interactive
+            comment: "GUI位置: 左侧边栏 | 功能: 切换到文档视图"
+          - id: n1_5
+            role: table cell
+            name: "视频"
+            classification: interactive
+            comment: "GUI位置: 左侧边栏 | 功能: 切换到视频视图"
+          - id: n1_6
+            role: table cell
+            name: "图片"
+            classification: interactive
+            comment: "GUI位置: 左侧边栏 | 功能: 切换到图片视图"
+          - id: n1_7
+            role: table cell
+            name: "音乐"
+            classification: interactive
+            comment: "GUI位置: 左侧边栏 | 功能: 切换到音乐视图"
+          - id: n1_8
+            role: table cell
+            name: "下载"
+            classification: interactive
+            comment: "GUI位置: 左侧边栏 | 功能: 切换到下载视图"
+          - id: n1_9
+            role: table cell
+            name: "计算机"
+            classification: interactive
+            comment: "GUI位置: 左侧边栏 | 功能: 切换到计算机视图"
+          - id: n1_10
+            role: table cell
+            name: "网络"
+            classification: interactive
+            comment: "GUI位置: 左侧边栏 | 功能: 切换到网络视图"
+          - id: n1_11
+            role: table cell
+            name: "回收站"
+            classification: interactive
+            comment: "GUI位置: 左侧边栏 | 功能: 切换到回收站视图"
+      - id: n2
+        role: push button
+        name: "返 回"
+        classification: interactive
+        comment: "GUI位置: 标题栏左侧 | 功能: 后退到上一目录"
+      - id: n3
+        role: push button
+        name: "前进"
+        classification: interactive
+        comment: "GUI位置: 标题栏左侧 | 功能: 前进到下一目录"
+transient_contexts:
+  - id: titlebar_main_menu_000
+    trigger:
+      type: main_menu
+      element: {name: "标题栏主菜单", role: "push button"}
+    items:
+      - {name: "新建窗口", role: "menu item"}
+      - {name: "新建标签", role: "menu item"}
+      - {name: "连接到服务器", role: "menu item"}
+      - {name: "设置共享密码", role: "menu item"}
+      - {name: "修改磁盘密码", role: "menu item"}
+      - {name: "设置", role: "menu item"}
+  - id: workspace_context_menu_000
+    trigger:
+      type: right_click
+      element: {name: "side_bar_view", role: "tree"}
+    items:
+      - {name: "新建文件夹", role: "menu item"}
+      - {name: "刷新", role: "menu item"}
+      - {name: "全选", role: "menu item"}
+      - {name: "复制路径", role: "menu item"}
+      - {name: "属性", role: "menu item"}
