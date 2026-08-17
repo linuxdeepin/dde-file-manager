@@ -2,6 +2,26 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 expected_names:
+- line: 108
+  name: file_view
+  source_file: src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp
+  variable: this
+- line: 167
+  name: TabBar
+  source_file: src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp
+  variable: q
+- line: 168
+  name: NewTabButton
+  source_file: src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp
+  variable: addBtn
+- line: 172
+  name: LeftArrowButton
+  source_file: src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp
+  variable: leftBtn
+- line: 173
+  name: RightArrowButton
+  source_file: src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp
+  variable: rightBtn
 - line: 253
   name: CloseBtn
   source_file: src/apps/dde-file-manager-preview/libdfm-preview/views/filepreviewdialog.cpp

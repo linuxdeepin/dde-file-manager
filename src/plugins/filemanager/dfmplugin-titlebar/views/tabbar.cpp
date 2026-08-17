@@ -164,6 +164,15 @@ void TabBarPrivate::initUI()
     rightBtn->setFlat(true);
     rightBtn->installEventFilter(q);
 
+#ifdef ENABLE_TESTING
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                         qobject_cast<QWidget *>(q), AcName::kAcViewTabBar);
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                         qobject_cast<QWidget *>(addBtn), AcName::kAcViewTabBarNewButton);
+    leftBtn->setAccessibleName("LeftArrowButton");
+    rightBtn->setAccessibleName("RightArrowButton");
+#endif
+
     // for update close button state
     tabBar = q->findChild<QTabBar *>();
     if (tabBar) {
