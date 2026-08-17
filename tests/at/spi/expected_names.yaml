@@ -2,6 +2,23 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 expected_names:
+- line: 80
+  name: label_vault_remove_content
+  source_file: src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp
+  variable: hintInfo
+- line: 63
+  name: label_vault_remove_title
+  source_file: src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp
+  variable: label
+- line: 64
+  name: RecoveryKeyFileEdit
+  source_file: src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp
+  variable: filePathEdit
+- line: 74
+  name: RecoveryKeyEdit
+  source_file: src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp
+  variable: keyEdit
+
 - line: 253
   name: CloseBtn
   source_file: src/apps/dde-file-manager-preview/libdfm-preview/views/filepreviewdialog.cpp
