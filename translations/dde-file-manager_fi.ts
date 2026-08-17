@@ -5850,7 +5850,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="733"/>
         <source>A previous configuration of Partition Encryption Non-Reboot Mode was interrupted and has been rolled back to the disabled state. Please reboot your system to ensure consistency. You may re-enable the feature after reboot if needed.</source>
-        <translation type="unfinished"/>
+        <translation>Aiempi osion salauksen &quot;Ilman käynnistystä uudelleen&quot; määritys keskeytettiin ja se on palautettu. Käynnistä tietokone uudelleen varmistaaksesi yhdenmukaisuuden. Voit ottaa ominaisuuden uudelleen käyttöön käynnistyksen jälkeen tarvittaessa.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="742"/>
