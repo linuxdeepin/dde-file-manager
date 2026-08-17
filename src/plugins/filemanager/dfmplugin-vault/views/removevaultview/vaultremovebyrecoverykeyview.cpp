@@ -17,6 +17,8 @@
 #include <QVBoxLayout>
 #include <QTimer>
 #include <QPlainTextEdit>
+
+#include "dfmplugin_vault_global.h"
 #include <QtConcurrent>
 #include <QFutureWatcher>
 #include <QLabel>
@@ -57,6 +59,10 @@ void VaultRemoveByRecoverykeyView::initUI()
         filePathEdit->setFileMode(QFileDialog::ExistingFiles);
         filePathEdit->setNameFilters({ QString("KEY file(*.key)") });
 
+#ifdef ENABLE_TESTING
+        AddATTag(qobject_cast<QWidget *>(label), AcName::kAcLabelVaultRemoveTitle);
+        filePathEdit->setAccessibleName("RecoveryKeyFileEdit");
+#endif
         contentLayout->addWidget(label);
         contentLayout->addWidget(filePathEdit);
     } else {
@@ -64,6 +70,9 @@ void VaultRemoveByRecoverykeyView::initUI()
         keyEdit->setFrameShape(QFrame::NoFrame);
         keyEdit->setPlaceholderText(tr("Input the 32-digit recovery key"));
         keyEdit->installEventFilter(this);
+#ifdef ENABLE_TESTING
+        keyEdit->setAccessibleName("RecoveryKeyEdit");
+#endif
         contentLayout->addWidget(keyEdit);
 
         connect(keyEdit, &QPlainTextEdit::textChanged, this, &VaultRemoveByRecoverykeyView::onRecoveryKeyChanged);

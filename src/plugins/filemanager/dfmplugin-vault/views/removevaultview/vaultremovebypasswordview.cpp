@@ -77,6 +77,7 @@ VaultRemoveByPasswordView::VaultRemoveByPasswordView(QWidget *parent)
     spinner->hide();
 
 #ifdef ENABLE_TESTING
+    AddATTag(qobject_cast<QWidget *>(hintInfo), AcName::kAcLabelVaultRemoveContent);
     AddATTag(qobject_cast<QWidget *>(pwdEdit), AcName::kAcEditVaultRemovePassword);
     AddATTag(qobject_cast<QWidget *>(tipsBtn), AcName::kAcBtnVaultRemovePasswordHint);
 #endif
