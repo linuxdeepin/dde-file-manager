@@ -57,6 +57,8 @@
 #include <QUrlQuery>
 #include <QMimeData>
 #include <QLayout>
+#include <dfm-framework/event/event.h>
+
 #include <QAccessible>
 
 using namespace dfmplugin_workspace;
@@ -102,6 +104,11 @@ FileView::FileView(const QUrl &url, QWidget *parent)
     initializeGroupHeaderTimer();
 
     viewport()->installEventFilter(this);
+
+#ifdef ENABLE_TESTING
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                         qobject_cast<QWidget *>(this), AcName::kAcFileView);
+#endif
 }
 
 FileView::~FileView()
