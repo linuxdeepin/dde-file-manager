@@ -3,6 +3,22 @@
 
 expected_names:
 - line: 253
+  name: search_button
+  source_file: src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp
+  variable: searchButton
+- line: 342
+  name: SearchEdit
+  source_file: src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp
+  variable: searchEdit
+- line: 354
+  name: AdvancedSearchButton
+  source_file: src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp
+  variable: advancedButton
+- line: 181
+  name: detail_button
+  source_file: src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp
+  variable: displayPreviewCheckBox
+- line: 253
   name: CloseBtn
   source_file: src/apps/dde-file-manager-preview/libdfm-preview/views/filepreviewdialog.cpp
   variable: closeBtn
