@@ -92,4 +92,88 @@ function(dfm_add_test name)
     message(STATUS "DFM: Added test ${name}")
 endfunction()
 
+# ---------------------------------------------------------------------------
+# dfm_create_test_executable(<name> SOURCES ... [HEADERS ...] [LINK_LIBRARIES ...])
+#
+# Legacy-style helper retained for plugin/library tests that need to
+# recompile the target's own sources into the test binary (required for
+# stub-ext private-member access). Adapted to the lightweight framework:
+# reuses DFM_STUB_SOURCES from dfm_setup_test_env(), applies
+# -fno-access-control, and honors DFM_ENABLE_COVERAGE instead of
+# hardcoding sanitizers.
+# ---------------------------------------------------------------------------
+function(dfm_create_test_executable name)
+    cmake_parse_arguments(ARG "" "" "SOURCES;HEADERS;LINK_LIBRARIES" ${ARGN})
+
+    if(NOT ARG_SOURCES)
+        message(FATAL_ERROR "dfm_create_test_executable(${name}): SOURCES is required")
+    endif()
+
+    set(_all_sources ${ARG_SOURCES})
+    if(ARG_HEADERS)
+        list(APPEND _all_sources ${ARG_HEADERS})
+    endif()
+    if(DFM_STUB_SOURCES)
+        list(APPEND _all_sources ${DFM_STUB_SOURCES})
+    endif()
+
+    add_executable(${name} ${_all_sources})
+
+    target_compile_options(${name} PRIVATE -fno-access-control)
+    target_include_directories(${name} PRIVATE
+        ${CMAKE_SOURCE_DIR}/autotests   # dfm_test_main.h, dfm_asan_helper.h
+        ${DFM_INCLUDE_DIR}
+        ${DFM_SOURCE_DIR}
+    )
+
+    # QSignalSpy / QSignal objects are used pervasively across tests.
+    target_link_libraries(${name} PRIVATE Qt6::Test)
+
+    if(ARG_LINK_LIBRARIES)
+        target_link_libraries(${name} PRIVATE ${ARG_LINK_LIBRARIES})
+    endif()
+
+    if(DFM_ENABLE_COVERAGE)
+        target_compile_options(${name} PRIVATE --coverage -O0 -fno-inline)
+        target_link_libraries(${name} PRIVATE gcov)
+    endif()
+
+    add_test(NAME ${name} COMMAND ${name})
+    message(STATUS "DFM: Created test executable: ${name}")
+endfunction()
+
+# ---------------------------------------------------------------------------
+# dfm_create_plugin_test_enhanced(<plugin_name> <plugin_path>)
+#
+# Recompile a plugin's own sources into a unit test binary named
+# ut-<plugin_name>. Applies the plugin's dependencies.cmake (via
+# dfm_configure_plugin_dependencies) when present, else the default config.
+# ---------------------------------------------------------------------------
+function(dfm_create_plugin_test_enhanced plugin_name plugin_path)
+    set(test_name "ut-${plugin_name}")
+
+    file(GLOB_RECURSE _ut_files
+        "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
+    )
+    file(GLOB_RECURSE _plugin_files
+        "${plugin_path}/*.cpp"
+        "${plugin_path}/*.h"
+    )
+
+    dfm_create_test_executable(${test_name}
+        SOURCES ${_ut_files} ${_plugin_files}
+    )
+
+    dfm_configure_plugin_dependencies(${test_name} "${plugin_name}" "${plugin_path}")
+
+    target_include_directories(${test_name} PRIVATE "${plugin_path}")
+    message(STATUS "DFM: Created enhanced plugin test: ${test_name}")
+endfunction()
+
+# Backward-compatible alias.
+function(dfm_create_plugin_test plugin_name plugin_path)
+    dfm_create_plugin_test_enhanced(${plugin_name} ${plugin_path})
+endfunction()
+
 message(STATUS "DFM: Test utilities module loaded")

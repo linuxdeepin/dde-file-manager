@@ -3,6 +3,7 @@
 # No source recompilation — only test .cpp files are compiled here.
 
 include(DFMTestUtils)
+include(DFMPluginConfig)
 
 # Initialize test environment (GTest, testutils stubs)
 dfm_setup_test_env()
@@ -16,3 +17,4 @@ endif()
 # Test subdirectories
 add_subdirectory(libs)
 add_subdirectory(services)
+add_subdirectory(plugins)
