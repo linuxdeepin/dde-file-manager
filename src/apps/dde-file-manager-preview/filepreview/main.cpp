@@ -21,6 +21,14 @@ int main(int argc, char *argv[])
         qputenv("QT_QPA_PLATFORM", "dxcb");
     }
 
+#ifdef QT_DEBUG
+    // 未安装的 debug 构建中 DConfig 的 appId 为空，导致无法读取系统主题（DTK 偏好）。
+    // 切换到文件后端绕过此限制，使浅色/深色主题能正确跟随系统。
+    if (qEnvironmentVariableIsEmpty("DSG_DCONFIG_BACKEND_TYPE")) {
+        qputenv("DSG_DCONFIG_BACKEND_TYPE", "FileBackend");
+    }
+#endif
+
     // singlentan process
     PreviewSingleApplication app(argc, argv);
 
