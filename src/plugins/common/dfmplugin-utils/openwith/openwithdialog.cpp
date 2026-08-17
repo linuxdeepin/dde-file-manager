@@ -87,11 +87,11 @@ void OpenWithDialogListItem::initUiForSizeMode()
 {
 #ifdef DTKWIDGET_CLASS_DSizeMode
     int size = DSizeModeHelper::element(25, 30);
-    setFixedSize(220, DSizeModeHelper::element(40, 50));
+    setFixedSize(224, DSizeModeHelper::element(40, 50));
 #else
     int size = 30;
     iconLabel->setPixmap(icon.pixmap(iconLabel->size()));
-    setFixedSize(220, 50);
+    setFixedSize(224, 50);
 #endif
     iconLabel->setFixedSize(size, size);
     updateLabelIcon(size);
@@ -285,7 +285,9 @@ void OpenWithDialog::initUI()
     scrollArea->setWidget(contentWidget);
 
     recommandLayout = new DFlowLayout;
+    recommandLayout->setHorizontalSpacing(10);
     otherLayout = new DFlowLayout;
+    otherLayout->setHorizontalSpacing(10);
 
     openFileChooseButton = new DCommandLinkButton(tr("Add other programs"), this);
     setToDefaultCheckBox = new DCheckBox(tr("Set as default"), this);
