@@ -44,6 +44,11 @@ public:
     int dragItemVerticalOffset(const QModelIndex &index, int rowHeight) const;
     bool isPartitionExpandable() const;
 
+    // Sync the double-click rename trigger with the partition tree-view mode:
+    // when the sidebar tree view (partitionExpandable) is enabled, double-click is
+    // reserved for expanding/collapsing partitions and must not start inline renaming.
+    void updateEditTriggers();
+
 protected:
     void mousePressEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;

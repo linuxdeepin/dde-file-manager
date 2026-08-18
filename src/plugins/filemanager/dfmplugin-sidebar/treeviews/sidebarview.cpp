@@ -103,6 +103,14 @@ void SideBarViewPrivate::onItemDoubleClicked(const QModelIndex &index)
 
         fmDebug() << "is mounted?" << deviceMounted << finalUrl;
         if (deviceMounted) {
+            // Prevent a white-background flash during expansion by setting the
+            // transparent palette before the async expand path runs.  Qt's
+            // QAbstractItemView::mouseDoubleClickEvent may force a viewport
+            // repaint (executePostedLayout) after the doubleClicked signal
+            // is emitted; without the transparent palette that repaint shows
+            // a white flicker.  onChangeExpandState (called later in the
+            // async callback) also sets the transient palette and restores it.
+            setTransparentPalette();
             expandPartitionItem(index, finalUrl);
         } else {
             // Device not yet mounted; subscribe to mount event and auto-expand later.
@@ -605,6 +613,7 @@ SideBarView::SideBarView(QWidget *parent)
         if (cfg == ConfigInfos::kConfName && key == ConfigInfos::kPartitionExpandableKey) {
             m_partitionExpandableCache.reset();
             d->onExpandableChanged();
+            updateEditTriggers();
         }
     });
 
@@ -615,6 +624,9 @@ SideBarView::SideBarView(QWidget *parent)
     auto *sidebarStyle = new SidebarViewStyle(style());
     setStyle(sidebarStyle);
     viewport()->setStyle(sidebarStyle);
+
+    // Apply the initial edit-trigger policy according to the tree-view mode.
+    updateEditTriggers();
 }
 
 SideBarView::~SideBarView()
@@ -1232,6 +1244,18 @@ bool SideBarView::isPartitionExpandable() const
         return *m_partitionExpandableCache;
     m_partitionExpandableCache = SideBarHelper::partitionExpandable();
     return *m_partitionExpandableCache;
+}
+
+void SideBarView::updateEditTriggers()
+{
+    // The sidebar tree view (partitionExpandable) reserves double-click for
+    // expanding/collapsing a partition, so inline renaming on double-click must be
+    // disabled in that mode and restored when the tree view is turned off.
+    // F2 (EditKeyPressed) and the context-menu rename entry are kept in both modes.
+    if (isPartitionExpandable())
+        setEditTriggers(QAbstractItemView::EditKeyPressed);
+    else
+        setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
 }
 
 Qt::DropAction SideBarView::canDropMimeData(SideBarItem *item, const QMimeData *data, Qt::DropActions actions) const
