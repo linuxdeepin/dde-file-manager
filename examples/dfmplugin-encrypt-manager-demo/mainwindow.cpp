@@ -36,20 +36,40 @@ void MainWindow::initUi()
     mainWidget->setLayout(mainLay);
 
     editInput = new QLineEdit(mainWidget);
+    editInput->setObjectName("EditInput");
+    editInput->setAccessibleName("EditInput");
 
     textBrowser = new QTextBrowser(mainWidget);
     textBrowser->setReadOnly(true);
 
     QGridLayout *btnLay = new QGridLayout;
     btnCheckTpm = new QPushButton(tr("Check TPM"), mainWidget);
+    btnCheckTpm->setObjectName("BtnCheckTpm");
+    btnCheckTpm->setAccessibleName("BtnCheckTpm");
     btnGetRandom = new QPushButton(tr("Get Random"), mainWidget);
+    btnGetRandom->setObjectName("BtnGetRandom");
+    btnGetRandom->setAccessibleName("BtnGetRandom");
     btnCheckAlgo = new QPushButton(tr("Check Algo"), mainWidget);
+    btnCheckAlgo->setObjectName("BtnCheckAlgo");
+    btnCheckAlgo->setAccessibleName("BtnCheckAlgo");
     btnEncrypt = new QPushButton(tr("Encrypt"), mainWidget);
+    btnEncrypt->setObjectName("BtnEncrypt");
+    btnEncrypt->setAccessibleName("BtnEncrypt");
     btnDecrypt = new QPushButton(tr("Decrypt"), mainWidget);
+    btnDecrypt->setObjectName("BtnDecrypt");
+    btnDecrypt->setAccessibleName("BtnDecrypt");
     btnEncryptTwo = new QPushButton(tr("EncryptInProcess"), mainWidget);
+    btnEncryptTwo->setObjectName("BtnEncryptTwo");
+    btnEncryptTwo->setAccessibleName("BtnEncryptTwo");
     btnDecryptTwo = new QPushButton(tr("DecryptInProcess"), mainWidget);
+    btnDecryptTwo->setObjectName("BtnDecryptTwo");
+    btnDecryptTwo->setAccessibleName("BtnDecryptTwo");
     btnEncryptThree = new QPushButton(tr("EncryptByCommand"), mainWidget);
+    btnEncryptThree->setObjectName("BtnEncryptThree");
+    btnEncryptThree->setAccessibleName("BtnEncryptThree");
     btnDecryptThree = new QPushButton(tr("DecryptByCommand"), mainWidget);
+    btnDecryptThree->setObjectName("BtnDecryptThree");
+    btnDecryptThree->setAccessibleName("BtnDecryptThree");
     btnLay->addWidget(btnCheckTpm, 0, 0);
     btnLay->addWidget(btnGetRandom, 0, 1);
     btnLay->addWidget(btnCheckAlgo, 0, 2);

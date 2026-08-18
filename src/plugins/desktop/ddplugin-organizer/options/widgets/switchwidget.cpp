@@ -20,6 +20,8 @@ SwitchWidget::SwitchWidget(const QString &title, QWidget *parent)
 
     switchBtn = qobject_cast<DSwitchButton *>(rightWidget);
     switchBtn->setParent(this);
+    switchBtn->setObjectName("SwitchBtn");
+    switchBtn->setAccessibleName("SwitchBtn");
 
     connect(switchBtn, &DSwitchButton::toggled, this, &SwitchWidget::checkedChanged);
 }

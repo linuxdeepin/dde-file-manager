@@ -247,7 +247,11 @@ void FileDialogStatusBar::initializeUi()
     filtersLabel->setObjectName(labelFilters);
 
     fileNameEdit = new DLineEdit(this);
+    fileNameEdit->setObjectName("FileNameEdit");
+    fileNameEdit->setAccessibleName("FileNameEdit");
     filtersComboBox = new DComboBox(this);
+    filtersComboBox->setObjectName("FiltersComboBox");
+    filtersComboBox->setAccessibleName("FiltersComboBox");
 #ifdef ENABLE_TESTING
     dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
                          qobject_cast<QWidget *>(fileNameEdit), AcName::kAcFDStatusBarFileNameEdit);

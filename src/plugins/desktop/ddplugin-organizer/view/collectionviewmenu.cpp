@@ -77,6 +77,8 @@ void CollectionViewMenu::emptyAreaMenu()
         delete menuPtr;
 
     menuPtr = new DMenu(view);
+    menuPtr->setObjectName("MenuPtr");
+    menuPtr->setAccessibleName("MenuPtr");
     canvasScene->create(menuPtr);
     canvasScene->updateState(menuPtr);
 

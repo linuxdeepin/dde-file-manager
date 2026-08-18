@@ -82,12 +82,18 @@ void DPCConfirmWidget::initUI()
     QValidator *validator = new QRegularExpressionValidator(regx, this);
 
     oldPwdEdit = new DPasswordEdit(this);
+    oldPwdEdit->setObjectName("OldPwdEdit");
+    oldPwdEdit->setAccessibleName("OldPwdEdit");
     oldPwdEdit->lineEdit()->setValidator(validator);   // 设置验证器
 
     newPwdEdit = new DPasswordEdit(this);
+    newPwdEdit->setObjectName("NewPwdEdit");
+    newPwdEdit->setAccessibleName("NewPwdEdit");
     newPwdEdit->lineEdit()->setValidator(validator);
 
     repeatPwdEdit = new DPasswordEdit(this);
+    repeatPwdEdit->setObjectName("RepeatPwdEdit");
+    repeatPwdEdit->setAccessibleName("RepeatPwdEdit");
     repeatPwdEdit->lineEdit()->setValidator(validator);
 
     DLabel *oldPwdLabel = new DLabel(tr("Current password:"), this);
@@ -106,8 +112,12 @@ void DPCConfirmWidget::initUI()
     contentLayout->setVerticalSpacing(10);
 
     saveBtn = new DSuggestButton(tr("Save", "button"), this);
+    saveBtn->setObjectName("SaveBtn");
+    saveBtn->setAccessibleName("SaveBtn");
     saveBtn->setAttribute(Qt::WA_NoMousePropagation);
     cancelBtn = new DPushButton(tr("Cancel", "button"), this);
+    cancelBtn->setObjectName("CancelBtn");
+    cancelBtn->setAccessibleName("CancelBtn");
     cancelBtn->setAttribute(Qt::WA_NoMousePropagation);
 
     QHBoxLayout *buttonLayout = new QHBoxLayout;

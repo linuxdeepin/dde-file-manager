@@ -44,6 +44,8 @@ void MountSecretDiskAskPasswordDialog::initUI()
     descriptionLabel->setFont(tipfont);
 
     passwordLineEdit = new DPasswordEdit;
+    passwordLineEdit->setObjectName("PasswordLineEdit");
+    passwordLineEdit->setAccessibleName("PasswordLineEdit");
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addWidget(titleLabel);

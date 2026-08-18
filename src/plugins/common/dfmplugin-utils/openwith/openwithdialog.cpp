@@ -55,6 +55,8 @@ OpenWithDialogListItem::OpenWithDialogListItem(const QString &iconName, const QS
       label(new DLabel(this))
 
 {
+    checkButton->setObjectName("CheckButton");
+    checkButton->setAccessibleName("CheckButton");
     checkButton->setFixedSize(15, 15);
     checkButton->setFlat(true);
     label->setText(text);
@@ -288,10 +290,18 @@ void OpenWithDialog::initUI()
     otherLayout = new DFlowLayout;
 
     openFileChooseButton = new DCommandLinkButton(tr("Add other programs"), this);
+    openFileChooseButton->setObjectName("OpenFileChooseButton");
+    openFileChooseButton->setAccessibleName("OpenFileChooseButton");
     setToDefaultCheckBox = new DCheckBox(tr("Set as default"), this);
+    setToDefaultCheckBox->setObjectName("SetToDefaultCheckBox");
+    setToDefaultCheckBox->setAccessibleName("SetToDefaultCheckBox");
     setToDefaultCheckBox->setChecked(true);
     cancelButton = new DPushButton(tr("Cancel", "button"));
+    cancelButton->setObjectName("CancelButton");
+    cancelButton->setAccessibleName("CancelButton");
     chooseButton = new DSuggestButton(tr("Confirm", "button"));
+    chooseButton->setObjectName("ChooseButton");
+    chooseButton->setAccessibleName("ChooseButton");
     cancelButton->setMinimumWidth(78);
     chooseButton->setMinimumWidth(78);
     chooseButton->setFocus();
