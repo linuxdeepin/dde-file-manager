@@ -48,6 +48,8 @@ void CloseAllDialog::initUI()
     //    AC_SET_ACCESSIBLE_NAME(messageLabel, AC_CLOSE_ALL_DLG_INDICATOR_MSG_LABEL);
 
     closeButton = new DCommandLinkButton(tr("Close all"), this);
+    closeButton->setObjectName("CloseButton");
+    closeButton->setAccessibleName("CloseButton");
     // 设置按钮无焦点
     closeButton->setFocusPolicy(Qt::NoFocus);
     font = closeButton->font();

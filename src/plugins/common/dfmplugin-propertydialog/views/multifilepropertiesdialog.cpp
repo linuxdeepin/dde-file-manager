@@ -201,6 +201,8 @@ void MultiFilePropertiesDialog::initUI()
     scrollArea->setWidget(scrollWidget);
 
     cancelBtn = new QPushButton(tr("Cancel"), this);
+    cancelBtn->setObjectName("CancelBtn");
+    cancelBtn->setAccessibleName("CancelBtn");
     cancelBtn->setFixedHeight(kBtnHeight);
     cancelBtn->setAttribute(Qt::WA_NoMousePropagation);
 

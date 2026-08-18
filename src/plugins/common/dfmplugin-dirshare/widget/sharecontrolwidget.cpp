@@ -158,6 +158,8 @@ void ShareControlWidget::setupUi(bool disableState)
 void ShareControlWidget::setupShareSwitcher()
 {
     shareSwitcher = new QCheckBox(this);
+    shareSwitcher->setObjectName("ShareSwitcher");
+    shareSwitcher->setAccessibleName("ShareSwitcher");
     shareSwitcher->setFixedWidth(ConstDef::kWidgetFixedWidth);
     QString text = tr("Share this folder");
     shareSwitcher->setToolTip(text);
@@ -173,6 +175,8 @@ void ShareControlWidget::setupShareSwitcher()
 void ShareControlWidget::setupShareNameEditor()
 {
     shareNameEditor = new DLineEdit(this);
+    shareNameEditor->setObjectName("ShareNameEditor");
+    shareNameEditor->setAccessibleName("ShareNameEditor");
 
     static constexpr char kShareNameRegx[] { R"(^(?![ -])[^%<>*?|/\\+=;:,"]*+ ?$)" };
     QValidator *validator = new QRegularExpressionValidator(QRegularExpression(kShareNameRegx), this);
@@ -184,6 +188,8 @@ void ShareControlWidget::setupShareNameEditor()
 void ShareControlWidget::setupSharePermissionSelector()
 {
     sharePermissionSelector = new QComboBox(this);
+    sharePermissionSelector->setObjectName("SharePermissionSelector");
+    sharePermissionSelector->setAccessibleName("SharePermissionSelector");
 
     QPalette peMenuBg;
     QColor color = palette().color(QPalette::ColorGroup::Active, QPalette::ColorRole::Window);
@@ -197,6 +203,8 @@ void ShareControlWidget::setupSharePermissionSelector()
 void ShareControlWidget::setupShareAnonymousSelector()
 {
     shareAnonymousSelector = new QComboBox(this);
+    shareAnonymousSelector->setObjectName("ShareAnonymousSelector");
+    shareAnonymousSelector->setAccessibleName("ShareAnonymousSelector");
 
     QPalette peMenuBg;
     QColor color = palette().color(QPalette::ColorGroup::Active, QPalette::ColorRole::Window);
@@ -216,6 +224,8 @@ QHBoxLayout *ShareControlWidget::setupNetworkPath()
     networkAddrLabel->setFixedWidth(ConstDef::kWidgetFixedWidth);
 
     copyNetAddr = new QPushButton(this);
+    copyNetAddr->setObjectName("CopyNetAddr");
+    copyNetAddr->setAccessibleName("CopyNetAddr");
     copyNetAddr->setFlat(true);
     copyNetAddr->setToolTip(tr("Copy"));
     auto setBtnIcon = [=] {
@@ -250,6 +260,8 @@ QHBoxLayout *ShareControlWidget::setupUserName()
     userNamelineLabel->setFixedWidth(ConstDef::kWidgetFixedWidth);
 
     copyUserNameBt = new QPushButton(this);
+    copyUserNameBt->setObjectName("CopyUserNameBt");
+    copyUserNameBt->setAccessibleName("CopyUserNameBt");
     copyUserNameBt->setFlat(true);
     copyUserNameBt->setToolTip(tr("Copy"));
     auto setBtnIcon = [=] {
@@ -286,6 +298,8 @@ QHBoxLayout *ShareControlWidget::setupSharePassword()
     sharePassword->setText(isSharePasswordSet ? "●●●●●" : tr("None"));
 
     setPasswordBt = new DCommandLinkButton(tr("Set password"));
+    setPasswordBt->setObjectName("SetPasswordBt");
+    setPasswordBt->setAccessibleName("SetPasswordBt");
     setPasswordBt->setText(isSharePasswordSet ? tr("Change password") : tr("Set password"));
     setPasswordBt->setContentsMargins(0, 0, 0, 0);
     setPasswordBt->setToolTip(setPasswordBt->text());

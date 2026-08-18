@@ -98,6 +98,8 @@ void DumpISOOptDialog::initliazeUi()
 
     // file chooser
     fileChooser = new DFileChooserEdit;
+    fileChooser->setObjectName("FileChooser");
+    fileChooser->setAccessibleName("FileChooser");
     fileChooser->setFileMode(QFileDialog::FileMode::Directory);
     const QString &stdDocPath = QStandardPaths::writableLocation(QStandardPaths::StandardLocation::DocumentsLocation);
     fileChooser->setDirectoryUrl(QUrl::fromLocalFile(stdDocPath));
