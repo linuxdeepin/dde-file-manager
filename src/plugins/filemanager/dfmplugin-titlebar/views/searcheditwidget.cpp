@@ -319,6 +319,8 @@ void SearchEditWidget::initUI()
 
     // search button
     searchButton = new CustomDIconButton(this);
+    searchButton->setObjectName("SearchButton");
+    searchButton->setAccessibleName("SearchButton");
     searchButton->setIcon(QIcon::fromTheme("dfm_search_button"));
     searchButton->setFixedSize(kToolButtonSize, kToolButtonSize);
     searchButton->setIconSize(QSize(kToolButtonIconSize, kToolButtonIconSize));
@@ -329,12 +331,16 @@ void SearchEditWidget::initUI()
 
     // search edit
     searchEdit = new DSearchEdit(this);
+    searchEdit->setObjectName("SearchEdit");
+    searchEdit->setAccessibleName("SearchEdit");
     searchEdit->setVisible(true);
     // searchEdit->setFocusPolicy(Qt::StrongFocus);
     searchEdit->lineEdit()->setFocusPolicy(Qt::ClickFocus);
 
     // advanced search button
     advancedButton = new CustomDToolButton(this);
+    advancedButton->setObjectName("AdvancedButton");
+    advancedButton->setAccessibleName("AdvancedButton");
     advancedButton->setIcon(QIcon::fromTheme("dfm_view_filter"));
     advancedButton->setFixedSize(kToolButtonSize, kToolButtonSize);
     advancedButton->setFocusPolicy(Qt::NoFocus);
