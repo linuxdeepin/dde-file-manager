@@ -1,0 +1,47 @@
+name: 主菜单扩展_suite
+app: dde-file-manager
+description: ''
+module: 主菜单扩展
+tags: []
+fast_fail: false
+env_check: []
+setup:
+- action: session_start
+  command: true; dde-file-manager --open-home
+  wait: 3.0
+suites:
+- id: fm_menu_connect_server_s1
+  name: 主菜单连接到服务器
+  description: ''
+  tags: []
+  steps:
+  - action: dtk_main_menu
+    items:
+    - 连接到服务器
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: fm_menu_set_share_passwd_s1
+  name: 主菜单设置共享密码
+  description: ''
+  tags: []
+  steps:
+  - action: dtk_main_menu
+    items:
+    - 设置共享密码
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: fm_menu_change_disk_passwd_s1
+  name: 主菜单修改磁盘密码
+  description: ''
+  tags: []
+  steps:
+  - action: dtk_main_menu
+    items:
+    - 修改磁盘密码
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+teardown:
+- action: session_stop

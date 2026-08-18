@@ -1,0 +1,12 @@
+elements:
+  快捷访问:
+    name: 快捷访问
+  side_bar_view:
+    name: side_bar_view
+    role: tree
+  文档:
+    name: 文档
+  桌面:
+    name: 桌面
+  返 回:
+    name: 返 回
