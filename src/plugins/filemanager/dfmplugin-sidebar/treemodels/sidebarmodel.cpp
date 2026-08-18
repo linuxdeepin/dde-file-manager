@@ -13,6 +13,7 @@
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/filenamesorter.h>
+#include <dfm-base/utils/fileutils.h>
 #include <dfm-framework/event/event.h>
 
 #include <QMimeData>
@@ -598,6 +599,15 @@ void SideBarModel::addSubItem(const QModelIndex &index, const QUrl &url)
         return;
     }
 
+    // Hide system-default hidden directories (e.g. /<mount-point>/root, /<mount-point>/lost+found)
+    // to keep the sidebar sub-tree consistent with the file view, which filters them via
+    // FileSortWorker::isDefaultHiddenFile.
+    if (!Application::instance()->genericAttribute(dfmbase::Application::kShowedHiddenFiles).toBool()
+        && FileUtils::isDefaultHiddenFile(url)) {
+        fmInfo() << "Default hidden directory should not be displayed in sidebar" << url;
+        return;
+    }
+
     SideBarItem *parentItem = itemFromIndex(index);
     if (!parentItem) {
         fmDebug() << "Failed to get parent item from index";
@@ -613,7 +623,12 @@ void SideBarModel::addSubItem(const QModelIndex &index, const QUrl &url)
     }
 
     QString group = parentItem->group();
-    QString fileName = info ? info->fileName() : "Unknown";
+    // Use the file-view display name (translated via SystemPathUtil) so XDG directories
+    // (Desktop/Documents/...) and /home/<user> show localized names (桌面/文档/主目录) in the
+    // sidebar tree, consistent with the workspace file view.
+    QString fileName = info ? info->displayOf(DisPlayInfoType::kFileDisplayName) : "Unknown";
+    if (fileName.isEmpty())
+        fileName = info ? info->fileName() : "Unknown";
     QIcon folderIcon = QIcon::fromTheme("folder");
 
     SideBarItem *item = new SideBarItem(folderIcon, fileName, group, url);

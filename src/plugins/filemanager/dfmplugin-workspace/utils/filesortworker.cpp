@@ -1890,21 +1890,7 @@ bool FileSortWorker::checkFilters(const SortInfoPointer &sortInfo, const bool by
 
 bool FileSortWorker::isDefaultHiddenFile(const QUrl &fileUrl)
 {
-    static DThreadList<QUrl> defaultHiddenUrls;
-    static std::once_flag flg;
-    std::call_once(flg, [&] {
-        using namespace GlobalServerDefines;
-        const auto &systemBlks = DevProxyMng->getAllBlockIds(DeviceQueryOption::kSystem | DeviceQueryOption::kMounted);
-        for (const auto &blk : systemBlks) {
-            auto blkInfo = DevProxyMng->queryBlockInfo(blk);
-            const QStringList &mountPoints = blkInfo.value(DeviceProperty::kMountPoints).toStringList();
-            for (const auto &mpt : mountPoints) {
-                defaultHiddenUrls.push_backByLock(QUrl::fromLocalFile(mpt + (mpt == "/" ? "root" : "/root")));
-                defaultHiddenUrls.push_backByLock(QUrl::fromLocalFile(mpt + (mpt == "/" ? "lost+found" : "/lost+found")));
-            }
-        }
-    });
-    return defaultHiddenUrls.containsByLock(fileUrl);
+    return FileUtils::isDefaultHiddenFile(fileUrl);
 }
 
 QUrl FileSortWorker::makeParentUrl(const QUrl &url)
