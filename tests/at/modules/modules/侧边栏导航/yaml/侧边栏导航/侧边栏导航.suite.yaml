@@ -1,0 +1,98 @@
+name: 侧边栏导航_suite
+app: dde-file-manager
+description: ''
+module: 侧边栏导航
+tags: []
+fast_fail: false
+env_check: []
+setup:
+- action: session_start
+  command: true; dde-file-manager --open-home
+  wait: 3.0
+suites:
+- id: fm_sidebar_videos_s1
+  name: 侧边栏视频导航
+  description: ''
+  tags: []
+  steps:
+  - action: element_action
+    selector:
+      name: 视频
+    do: click
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: fm_sidebar_pictures_s1
+  name: 侧边栏图片导航
+  description: ''
+  tags: []
+  steps:
+  - action: element_action
+    selector:
+      name: 图片
+    do: click
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: fm_sidebar_music_s1
+  name: 侧边栏音乐导航
+  description: ''
+  tags: []
+  steps:
+  - action: element_action
+    selector:
+      name: 音乐
+    do: click
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: fm_sidebar_downloads_s1
+  name: 侧边栏下载导航
+  description: ''
+  tags: []
+  steps:
+  - action: element_action
+    selector:
+      name: 下载
+    do: click
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: fm_sidebar_computer_s1
+  name: 侧边栏计算机网络导航
+  description: ''
+  tags: []
+  steps:
+  - action: element_action
+    selector:
+      name: 计算机
+    do: click
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: fm_sidebar_network_s1
+  name: 侧边栏网络导航
+  description: ''
+  tags: []
+  steps:
+  - action: element_action
+    selector:
+      name: 网络
+    do: click
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: fm_sidebar_recent_s1
+  name: 侧边栏最近使用导航
+  description: ''
+  tags: []
+  steps:
+  - action: element_action
+    selector:
+      name: 最近使用
+    do: click
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+teardown:
+- action: session_stop

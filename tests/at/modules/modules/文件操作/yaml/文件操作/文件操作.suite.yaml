@@ -1,0 +1,70 @@
+name: 文件操作_suite
+app: dde-file-manager
+description: ''
+module: 文件操作
+tags: []
+fast_fail: false
+env_check: []
+setup:
+- action: session_start
+  command: true; dde-file-manager --open-home
+  wait: 3.0
+suites:
+- id: fm_files_new_folder_s1
+  name: 新建文件夹
+  description: ''
+  tags: []
+  steps:
+  - action: dtk_context_menu
+    selector:
+      name: side_bar_view
+      role: tree
+    items:
+    - 新建文件夹
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: fm_files_select_all_s1
+  name: 全选文件
+  description: ''
+  tags: []
+  steps:
+  - action: dtk_context_menu
+    selector:
+      name: side_bar_view
+      role: tree
+    items:
+    - 全选
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: fm_files_show_hidden_s1
+  name: 显示隐藏文件
+  description: ''
+  tags: []
+  steps:
+  - action: dtk_context_menu
+    selector:
+      name: side_bar_view
+      role: tree
+    items:
+    - 显示隐藏文件
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: fm_files_properties_s1
+  name: 查看文件属性
+  description: ''
+  tags: []
+  steps:
+  - action: dtk_context_menu
+    selector:
+      name: side_bar_view
+      role: tree
+    items:
+    - 属性
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+teardown:
+- action: session_stop
