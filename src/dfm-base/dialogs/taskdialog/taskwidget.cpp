@@ -542,14 +542,20 @@ QWidget *TaskWidget::createBtnWidget()
     QVariant variantCoexit;
     variantCoexit.setValue<AbstractJobHandler::SupportAction>(AbstractJobHandler::SupportAction::kCoexistAction);
     btnCoexist = new DPushButton(TaskWidget::tr("Keep both", "button"));
+    btnCoexist->setObjectName("BtnCoexist");
+    btnCoexist->setAccessibleName("BtnCoexist");
     btnCoexist->setProperty(kBtnPropertyActionName, variantCoexit);
 
     btnSkip = new DPushButton(TaskWidget::tr("Skip", "button"));
+    btnSkip->setObjectName("BtnSkip");
+    btnSkip->setAccessibleName("BtnSkip");
     QVariant variantSkip;
     variantSkip.setValue<AbstractJobHandler::SupportAction>(AbstractJobHandler::SupportAction::kSkipAction);
     btnSkip->setProperty(kBtnPropertyActionName, variantSkip);
 
     btnReplace = new DPushButton(TaskWidget::tr("Replace", "button"));
+    btnReplace->setObjectName("BtnReplace");
+    btnReplace->setAccessibleName("BtnReplace");
     QVariant variantReplace;
     variantReplace.setValue<AbstractJobHandler::SupportAction>(AbstractJobHandler::SupportAction::kReplaceAction);
     btnReplace->setProperty(kBtnPropertyActionName, variantReplace);
@@ -583,6 +589,8 @@ QWidget *TaskWidget::createBtnWidget()
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(0);
     chkboxNotAskAgain = new QCheckBox(TaskWidget::tr("Do not ask again"));
+    chkboxNotAskAgain->setObjectName("ChkboxNotAskAgain");
+    chkboxNotAskAgain->setAccessibleName("ChkboxNotAskAgain");
     layout->addSpacing(100);
     layout->addWidget(chkboxNotAskAgain);
 

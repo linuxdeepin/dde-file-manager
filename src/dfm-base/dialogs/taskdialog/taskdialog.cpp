@@ -78,6 +78,8 @@ void TaskDialog::initUI()
     titlebar->setAutoFillBackground(false);
 
     taskListWidget = new QListWidget(this);
+    taskListWidget->setObjectName("TaskListWidget");
+    taskListWidget->setAccessibleName("TaskListWidget");
     taskListWidget->setSelectionMode(QListWidget::NoSelection);
     taskListWidget->viewport()->setAutoFillBackground(false);
     taskListWidget->setFrameShape(QFrame::NoFrame);
