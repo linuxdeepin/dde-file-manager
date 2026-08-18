@@ -85,6 +85,8 @@ void UnlockView::initUI()
 
     // 提示按钮
     tipsButton = new QPushButton(this);
+    tipsButton->setObjectName("TipsButton");
+    tipsButton->setAccessibleName("TipsButton");
     tipsButton->setIcon(QIcon(":/icons/images/icons/light_32px.svg"));
 
     //! 布局

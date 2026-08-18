@@ -50,6 +50,8 @@ void VaultRemoveByRecoverykeyView::initUI()
         QLabel *label = new QLabel(tr("Delete file vault with recovery key"), this);
 
         filePathEdit = new DFileChooserEdit(this);
+        filePathEdit->setObjectName("FilePathEdit");
+        filePathEdit->setAccessibleName("FilePathEdit");
         filePathEdit->lineEdit()->setPlaceholderText(tr("Select Key File"));
         filePathEdit->lineEdit()->setReadOnly(true);
         filePathEdit->lineEdit()->setClearButtonEnabled(false);

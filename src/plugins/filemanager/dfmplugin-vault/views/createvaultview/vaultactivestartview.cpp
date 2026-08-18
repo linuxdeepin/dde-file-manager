@@ -41,6 +41,8 @@ void VaultActiveStartView::initUi()
     pLabel3->setAlignment(Qt::AlignHCenter);
 
     startBtn = new DSuggestButton(tr("Create"), this);
+    startBtn->setObjectName("StartBtn");
+    startBtn->setAccessibleName("StartBtn");
     startBtn->setFixedWidth(200);
 
     QVBoxLayout *play = new QVBoxLayout(this);

@@ -48,6 +48,8 @@ void VaultActiveSetUnlockMethodView::initUi()
 
     DLabel *pTypeLabel = new DLabel(tr("Encryption method"), this);
     typeCombo = new DComboBox(this);
+    typeCombo->setObjectName("TypeCombo");
+    typeCombo->setAccessibleName("TypeCombo");
     typeCombo->addItem(tr("Key encryption"), EncryptMode::kKeyMode);
     typeCombo->addItem(tr("Transparent encryption"), EncryptMode::kTransparentMode);
 
@@ -62,12 +64,16 @@ void VaultActiveSetUnlockMethodView::initUi()
 
     repeatPasswordLabel = new DLabel(tr("Repeat password"), this);
     repeatPasswordEdit = new DPasswordEdit(this);
+    repeatPasswordEdit->setObjectName("RepeatPasswordEdit");
+    repeatPasswordEdit->setAccessibleName("RepeatPasswordEdit");
     repeatPasswordEdit->lineEdit()->setValidator(validator);
     repeatPasswordEdit->lineEdit()->setPlaceholderText(tr("Input the password again"));
     repeatPasswordEdit->lineEdit()->setAttribute(Qt::WA_InputMethodEnabled, false);
 
     passwordHintLabel = new DLabel(tr("Password hint"), this);
     tipsEdit = new DLineEdit(this);
+    tipsEdit->setObjectName("TipsEdit");
+    tipsEdit->setAccessibleName("TipsEdit");
     tipsEdit->lineEdit()->setMaxLength(14);
     tipsEdit->setPlaceholderText(tr("Optional"));
 
@@ -83,6 +89,8 @@ void VaultActiveSetUnlockMethodView::initUi()
     transEncryptTextLay->addWidget(transEncryptionText);
 
     nextBtn = new DSuggestButton(tr("Next"), this);
+    nextBtn->setObjectName("NextBtn");
+    nextBtn->setAccessibleName("NextBtn");
     nextBtn->setFixedWidth(200);
     nextBtn->setEnabled(false);
 
