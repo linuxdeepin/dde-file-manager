@@ -16,6 +16,8 @@ MethodComBox::MethodComBox(const QString &title, QWidget *parent)
 
     comboBox = qobject_cast<DComboBox *>(rightWidget);
     comboBox->setParent(this);
+    comboBox->setObjectName("ComboBox");
+    comboBox->setAccessibleName("ComboBox");
     comboBox->setFixedSize(198, 36);
 
     //Enable the combo box

@@ -11,6 +11,8 @@ CheckBoxWidget::CheckBoxWidget(const QString &text, QWidget *parent)
     : EntryWidget(new DCheckBox(text), nullptr, parent)
 {
     checkBox = qobject_cast<DCheckBox *>(leftWidget);
+    checkBox->setObjectName("CheckBox");
+    checkBox->setAccessibleName("CheckBox");
     connect(checkBox, &QCheckBox::stateChanged, this, [this](int stat) {
         emit changed(stat == Qt::Checked);
     });

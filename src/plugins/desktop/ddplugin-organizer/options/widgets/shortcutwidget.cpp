@@ -16,6 +16,8 @@ ShortcutWidget::ShortcutWidget(const QString &title, QWidget *parent)
     label->setParent(this);
     label->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     keyEdit = qobject_cast<DKeySequenceEdit *>(rightWidget);
+    keyEdit->setObjectName("KeyEdit");
+    keyEdit->setAccessibleName("KeyEdit");
     keyEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
     auto p = keyEdit->palette();
