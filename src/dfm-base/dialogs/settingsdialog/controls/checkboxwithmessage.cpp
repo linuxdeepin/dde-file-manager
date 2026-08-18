@@ -16,6 +16,8 @@ CheckBoxWithMessage::CheckBoxWithMessage(QWidget *parent)
     layout->setContentsMargins(0, 0, 0, 0);
 
     checkBox = new QCheckBox(this);
+    checkBox->setObjectName("CheckBox");
+    checkBox->setAccessibleName("CheckBox");
     layout->addWidget(checkBox);
 
     QHBoxLayout *hLayout = new QHBoxLayout();

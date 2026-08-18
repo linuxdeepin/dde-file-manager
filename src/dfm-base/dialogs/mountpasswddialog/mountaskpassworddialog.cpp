@@ -66,6 +66,8 @@ void MountAskPasswordDialog::initUI()
     usernameLable->setFixedWidth(95);
 
     usernameLineEdit = new QLineEdit;
+    usernameLineEdit->setObjectName("UsernameLineEdit");
+    usernameLineEdit->setAccessibleName("UsernameLineEdit");
     usernameLineEdit->setMinimumWidth(240);
     usernameLineEdit->setText(qgetenv("USER"));
 
@@ -74,6 +76,8 @@ void MountAskPasswordDialog::initUI()
     domainLabel->setFixedWidth(95);
 
     domainLineEdit = new QLineEdit;
+    domainLineEdit->setObjectName("DomainLineEdit");
+    domainLineEdit->setAccessibleName("DomainLineEdit");
     domainLineEdit->setMinimumWidth(240);
     domainLineEdit->setText("WORKGROUP");
 
@@ -82,13 +86,18 @@ void MountAskPasswordDialog::initUI()
     passwordLable->setFixedWidth(90);
 
     passwordLineEdit = new DPasswordEdit;
+    passwordLineEdit->setObjectName("PasswordLineEdit");
+    passwordLineEdit->setAccessibleName("PasswordLineEdit");
     passwordLineEdit->setMinimumWidth(240);
     passwordLineEdit->setAttribute(Qt::WA_InputMethodEnabled, false);
 
     passwordButtonGroup = new QButtonGroup(this);
+    passwordButtonGroup->setObjectName("PasswordButtonGroup");
     passwordButtonGroup->setExclusive(true);
 
     passwordCheckBox = new QCheckBox();
+    passwordCheckBox->setObjectName("PasswordCheckBox");
+    passwordCheckBox->setAccessibleName("PasswordCheckBox");
     QWidget *empty = new QWidget();
     passwordCheckBox->setText(tr("Remember password"));
 

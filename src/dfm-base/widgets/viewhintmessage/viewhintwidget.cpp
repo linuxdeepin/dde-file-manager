@@ -46,6 +46,8 @@ void ViewHintWidget::initLayout()
     // 原因: 基类的 changeEvent() 会访问内部 d-pointer，复用其控件会导致悬空指针崩溃。
 
     m_iconButton = new DIconButton(this);
+    m_iconButton->setObjectName("IconButton");
+    m_iconButton->setAccessibleName("IconButton");
     m_iconButton->setFlat(true);
     m_iconButton->setFocusPolicy(Qt::NoFocus);
     m_iconButton->setAttribute(Qt::WA_TransparentForMouseEvents);
@@ -57,6 +59,8 @@ void ViewHintWidget::initLayout()
     m_messageLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     m_closeButton = new DIconButton(this);
+    m_closeButton->setObjectName("CloseButton");
+    m_closeButton->setAccessibleName("CloseButton");
     m_closeButton->setFlat(true);
     m_closeButton->setFocusPolicy(Qt::NoFocus);
     m_closeButton->setIcon(DDciIcon::fromTheme("dfm-clear"));
