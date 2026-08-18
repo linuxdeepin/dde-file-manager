@@ -12,6 +12,7 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/utils/universalutils.h>
+#include <dfm-base/utils/filenamesorter.h>
 #include <dfm-framework/event/event.h>
 
 #include <QMimeData>
@@ -539,8 +540,16 @@ void SideBarModel::addSubItems(const QModelIndex &index, const QList<QUrl> &urls
         }
     }
 
-    for (const QUrl &url : urlSet - existingSet)
-        addSubItem(index, url);
+    // Preserve the order of the incoming list (already sorted by
+    // TraversalDirThread via FileNameSorter) rather than iterating over a
+    // QSet (which discards order). addSubItem inserts each new item at the
+    // correct position relative to existing children; since the incoming list
+    // is already sorted, the linear scan in addSubItem hits the best case
+    // (append at end) for each item, giving overall O(n) on the batch path.
+    for (const QUrl &url : urls) {
+        if (!existingSet.contains(url))
+            addSubItem(index, url);
+    }
 }
 
 void SideBarModel::onDirectoryCreated(const QUrl &parentUrl, const QUrl &url)
@@ -624,14 +633,16 @@ void SideBarModel::addSubItem(const QModelIndex &index, const QUrl &url)
     flags &= ~Qt::ItemIsDragEnabled;
     item->setFlags(flags);
 
-    // Insert in alphabetical order.
+    // Insert in sorted order using the global FileNameSorter (numeric-aware ICU
+    // collation) so that the sidebar sub-tree ordering matches the file view,
+    // title bar crumb completion, and desktop canvas.
     QString newName = fileName;
     int insertRow = childCount;
     for (int i = 0; i < childCount; ++i) {
         SideBarItem *childItem = dynamic_cast<SideBarItem *>(parentItem->child(i));
         if (childItem) {
             QString childName = childItem->text();
-            if (newName.localeAwareCompare(childName) < 0) {
+            if (dfmbase::FileNameSorter::compare(newName, childName, Qt::AscendingOrder)) {
                 insertRow = i;
                 break;
             }
