@@ -72,6 +72,8 @@ void FileViewMenuHelper::showEmptyAreaMenu()
         delete menuPtr;
 
     menuPtr = new DMenu(this->view);
+    menuPtr->setObjectName("MenuPtr");
+    menuPtr->setAccessibleName("MenuPtr");
     scene->create(menuPtr);
     scene->updateState(menuPtr);
     reloadCursor();

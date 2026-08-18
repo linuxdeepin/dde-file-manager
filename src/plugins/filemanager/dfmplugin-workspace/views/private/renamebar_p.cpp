@@ -44,6 +44,8 @@ void RenameBarPrivate::initUI()
 
     mainLayout = new QHBoxLayout(widget);
     comboBox = new QComboBox;
+    comboBox->setObjectName("ComboBox");
+    comboBox->setAccessibleName("ComboBox");
     stackWidget = new QStackedWidget;
 
     replaceOperatorItems = std::make_tuple(new QLabel, new QLineEdit, new QLabel, new QLineEdit);
@@ -133,6 +135,8 @@ void RenameBarPrivate::setUIParameters()
     button->setText(QObject::tr("Cancel", "button"));
     button->setFixedWidth(82);
     renameBtn = new DSuggestButton();
+    renameBtn->setObjectName("RenameBtn");
+    renameBtn->setAccessibleName("RenameBtn");
     renameBtn->setText(QObject::tr("Rename", "button"));
     renameBtn->setFixedWidth(82);
     button->setEnabled(true);
