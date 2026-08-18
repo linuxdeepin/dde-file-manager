@@ -26,6 +26,8 @@ IndexStatusCheckBox::IndexStatusCheckBox(QWidget *parent)
     layout->setSpacing(4);
 
     m_checkBox = new QCheckBox(this);
+    m_checkBox->setObjectName("CheckBox");
+    m_checkBox->setAccessibleName("CheckBox");
     layout->addWidget(m_checkBox);
 
     auto *statusWidget = new QWidget(this);
