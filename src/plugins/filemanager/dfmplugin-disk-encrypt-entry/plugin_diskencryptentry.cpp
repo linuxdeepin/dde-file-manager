@@ -10,7 +10,6 @@
 #include <dfm-base/dfm_menu_defines.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
-#include <QTranslator>
 #include <QTimer>
 #include <QMenu>
 
@@ -102,13 +101,19 @@ void DiskEncryptEntry::processUnfinshedDecrypt(const QString &device)
         return;
     }
 
+    QString entryPath = device_utils::resolveEntryBlockDevPath(device);
+    if (entryPath.isEmpty()) {
+        fmWarning() << "Failed to resolve entry block dev path for device:" << device;
+        return;
+    }
+
     QMenu *menu = new QMenu();
     menu->addSeparator();
     DiskEncryptMenuScene *scene = new DiskEncryptMenuScene();
 
     QUrl url;
     url.setScheme("entry");
-    url.setPath(QString("%1.blockdev").arg(device.mid(5)));
+    url.setPath(entryPath);
     QVariant urls = QVariant::fromValue<QList<QUrl>>({ url });
     QVariantHash params;
     params.insert(dfmbase::MenuParamKey::kSelectFiles, urls);

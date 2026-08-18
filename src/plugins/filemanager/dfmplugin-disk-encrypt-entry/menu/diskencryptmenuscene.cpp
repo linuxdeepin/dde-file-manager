@@ -843,14 +843,7 @@ void DiskEncryptMenuScene::updateActions()
         }
     } else if (EventsHandler::instance()->unfinishedDecryptJob() == param.devDesc
                || EventsHandler::instance()->unfinishedDecryptJob() == param.devPhy) {
-        // Defensive check: only show "Continue decrypt" if device is actually LUKS encrypted.
-        // This handles the case where the partition was reformatted after a decrypt job was interrupted.
-        const QString &idType = selectedItemInfo.value("IdType").toString();
-        if (idType == "crypto_LUKS") {
-            actions[kActIDResumeDecrypt]->setVisible(true);
-        } else {
-            fmInfo() << "Device has pending decrypt job but is not LUKS (may have been reformatted), hiding resume decrypt option:" << param.devDesc << "idType:" << idType;
-        }
+        actions[kActIDResumeDecrypt]->setVisible(true);
     } else {
         actions[kActIDEncrypt]->setVisible(true);
     }
