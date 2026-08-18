@@ -99,6 +99,7 @@ public:
 
     static QString symlinkTarget(const QUrl &url);
     static QString resolveSymlink(const QUrl &url);
+    static bool isDefaultHiddenFile(const QUrl &url);
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     static QImage convertToSRgbColorSpace(const QImage &image);

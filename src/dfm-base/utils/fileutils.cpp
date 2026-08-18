@@ -8,6 +8,7 @@
 #include <dfm-base/utils/sysinfoutils.h>
 #include <dfm-base/utils/systempathutil.h>
 #include <dfm-base/utils/protocolutils.h>
+#include <dfm-base/utils/threadcontainer.h>
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/utils/dialogmanager.h>
 #include <dfm-base/base/urlroute.h>
@@ -1403,6 +1404,25 @@ QString FileUtils::findIconFromXdg(const QString &iconName)
         qCWarning(logDFMBase) << "qtxdg-iconfinder not found";
         return QString();
     }
+}
+
+bool FileUtils::isDefaultHiddenFile(const QUrl &fileUrl)
+{
+    static DThreadList<QUrl> defaultHiddenUrls;
+    static std::once_flag flg;
+    std::call_once(flg, [&] {
+        using namespace GlobalServerDefines;
+        const auto &systemBlks = DevProxyMng->getAllBlockIds(DeviceQueryOption::kSystem | DeviceQueryOption::kMounted);
+        for (const auto &blk : systemBlks) {
+            auto blkInfo = DevProxyMng->queryBlockInfo(blk);
+            const QStringList &mountPoints = blkInfo.value(DeviceProperty::kMountPoints).toStringList();
+            for (const auto &mpt : mountPoints) {
+                defaultHiddenUrls.push_backByLock(QUrl::fromLocalFile(mpt + (mpt == "/" ? "root" : "/root")));
+                defaultHiddenUrls.push_backByLock(QUrl::fromLocalFile(mpt + (mpt == "/" ? "lost+found" : "/lost+found")));
+            }
+        }
+    });
+    return defaultHiddenUrls.containsByLock(fileUrl);
 }
 
 }
