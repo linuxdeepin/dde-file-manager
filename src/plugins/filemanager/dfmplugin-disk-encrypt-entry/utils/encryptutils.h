@@ -82,6 +82,19 @@ namespace device_utils {
 int encKeyType(const QString &dev);
 void cacheToken(const QString &device, const QVariantMap &token);
 BlockDev createBlockDevice(const QString &devObjPath);
+
+/*!
+ * \brief Resolve the entry URL block device path from a physical device path.
+ *
+ * For overlay encryption, the physical partition (e.g., /dev/nvme0n1p5) has
+ * DM device holders in sysfs. This function traverses the holder chain to
+ * find the top DM device, then resolves its UDisks2 object path to construct
+ * the entry URL path (e.g., dm_2d2.blockdev).
+ *
+ * \param device The physical device path (e.g., /dev/nvme0n1p5)
+ * \return The entry URL path (e.g., dm_2d2.blockdev), or empty string on failure.
+ */
+QString resolveEntryBlockDevPath(const QString &device);
 }   // namespace device_utils
 
 namespace dialog_utils {
