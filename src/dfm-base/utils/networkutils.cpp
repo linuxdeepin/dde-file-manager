@@ -36,7 +36,7 @@ NetworkUtils *NetworkUtils::instance()
     return &s;
 }
 
-bool NetworkUtils::checkNetConnection(const QString &host, const QString &port, int msecs)
+bool NetworkUtils::checkNetConnection(const QString &host, const QString &port, int msecs, const bool useCache)
 {
     if (host.isEmpty())
         return true;
@@ -46,6 +46,13 @@ bool NetworkUtils::checkNetConnection(const QString &host, const QString &port, 
     if (!checkNet) {
         qCInfo(logDFMBase) << "NetworkUtils::checkNetConnection Skip network check." << host << port;
         return true;
+    }
+
+    if (useCache) {
+        // TTL 缓存命中 → 直接返回
+        auto cached = getFromCache(host, port);
+        if (cached.timestamp.isValid())
+            return !cached.busy;
     }
 
     qCInfo(logDFMBase) << "NetworkUtils::checkNetConnection net work check host = " << host << ", port = " << port << " !!!";
@@ -59,14 +66,16 @@ bool NetworkUtils::checkNetConnection(const QString &host, const QString &port, 
     if (!connected) {
         // 检查系统代理设置
         QNetworkProxy proxy = QNetworkProxy::applicationProxy();
-        if (proxy.type() == QNetworkProxy::NoProxy)
-            return connected;
-
-        conn.setProxy(QNetworkProxy::NoProxy);
-        conn.connectToHost(host, port.toUShort());
-        connected = conn.waitForConnected(msecs);
-        conn.close();
+        if (proxy.type() != QNetworkProxy::NoProxy) {
+            conn.setProxy(QNetworkProxy::NoProxy);
+            conn.connectToHost(host, port.toUShort());
+            connected = conn.waitForConnected(msecs);
+            conn.close();
+        }
     }
+
+    // 缓存结果（busy = !connected）
+    updateCache(host, port, !connected);
     return connected;
 }
 
@@ -105,7 +114,7 @@ void NetworkUtils::doAfterCheckNet(const QString &host, const QStringList &ports
 
         for (const auto &port : ports) {
             qApp->processEvents();
-            if (NetworkUtils::instance()->checkNetConnection(host, port, msecs))
+            if (NetworkUtils::instance()->checkNetConnection(host, port, msecs, false))
                 return true;
         }
         return false;
@@ -203,11 +212,63 @@ bool NetworkUtils::checkFtpOrSmbBusy(const QUrl &url)
     if (!parseIp(url.path(), host, ports))
         return false;
 
+    // 先查缓存，所有端口都 hit 且 busy=false 才算可用
+    bool allCached { true };
+    bool anyBusy { false };
+    for (const auto &port : ports) {
+        auto cached = getFromCache(host, port);
+        if (!cached.timestamp.isValid()) {
+            allCached = false;
+            break;
+        }
+        if (cached.busy) {
+            anyBusy = true;
+            break;
+        }
+    }
+    if (allCached)
+        return anyBusy;
+
     auto busy = !checkNetConnection(host, ports);
     if (busy)
         qCWarning(logDFMBase) << "Network connection failed for URL:" << url << "host:" << host << "ports:" << ports;
 
     return busy;
+}
+
+// ─── TTL 缓存实现 ─────────────────────────────────────────
+
+QString NetworkUtils::makeCacheKey(const QString &host, const QString &port)
+{
+    return host + QLatin1Char(':') + port;
+}
+
+NetworkUtils::NetCacheEntry NetworkUtils::getFromCache(const QString &host, const QString &port) const
+{
+    QMutexLocker locker(&cacheMutex);
+    auto it = netCache.find(makeCacheKey(host, port));
+    if (it == netCache.end())
+        return {};
+
+    // 惰性过期检查
+    if (it.value().timestamp.msecsTo(QDateTime::currentDateTime()) >= kNetCacheTTLMs) {
+        netCache.erase(it);
+        return {};
+    }
+
+    return it.value();
+}
+
+void NetworkUtils::updateCache(const QString &host, const QString &port, bool busy)
+{
+    QMutexLocker locker(&cacheMutex);
+    netCache[makeCacheKey(host, port)] = { busy, QDateTime::currentDateTime() };
+}
+
+void NetworkUtils::clearCache()
+{
+    QMutexLocker locker(&cacheMutex);
+    netCache.clear();
 }
 
 QMap<QString, QString> NetworkUtils::cifsMountHostInfo()

@@ -12,8 +12,11 @@
 #include <QString>
 #include <QStringList>
 #include <QUrl>
+#include <QThread>
+#include "stubext.h"
 
 #include <dfm-base/utils/networkutils.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 using namespace dfmbase;
 
@@ -155,4 +158,106 @@ TEST(NetworkUtilsTest, DoAfterCheckNetEmptyPortsReturnsTrue)
         QTest::qWait(50);
     }
     EXPECT_TRUE(called);
+}
+
+// ---- TTL cache tests ----
+
+TEST(NetworkUtilsTest, MakeCacheKey)
+{
+    EXPECT_EQ(NetworkUtils::makeCacheKey("1.2.3.4", "445"), QString("1.2.3.4:445"));
+    EXPECT_EQ(NetworkUtils::makeCacheKey("host", "21"), QString("host:21"));
+}
+
+TEST(NetworkUtilsTest, ClearCache)
+{
+    auto *nu = NetworkUtils::instance();
+    nu->updateCache("10.0.0.1", "445", true);
+    auto entry = nu->getFromCache("10.0.0.1", "445");
+    EXPECT_TRUE(entry.timestamp.isValid());
+
+    nu->clearCache();
+    entry = nu->getFromCache("10.0.0.1", "445");
+    EXPECT_FALSE(entry.timestamp.isValid());
+}
+
+TEST(NetworkUtilsTest, CacheMissReturnsInvalid)
+{
+    auto *nu = NetworkUtils::instance();
+    nu->clearCache();
+    auto entry = nu->getFromCache("nonexistent.host", "9999");
+    EXPECT_FALSE(entry.timestamp.isValid());
+}
+
+TEST(NetworkUtilsTest, CacheHitBeforeExpiry)
+{
+    auto *nu = NetworkUtils::instance();
+    nu->clearCache();
+
+    nu->updateCache("192.168.1.1", "80", false);
+    auto entry = nu->getFromCache("192.168.1.1", "80");
+    EXPECT_TRUE(entry.timestamp.isValid());
+    EXPECT_FALSE(entry.busy);
+}
+
+TEST(NetworkUtilsTest, CacheHitBusy)
+{
+    auto *nu = NetworkUtils::instance();
+    nu->clearCache();
+
+    nu->updateCache("192.168.1.1", "445", true);
+    auto entry = nu->getFromCache("192.168.1.1", "445");
+    EXPECT_TRUE(entry.timestamp.isValid());
+    EXPECT_TRUE(entry.busy);
+}
+
+TEST(NetworkUtilsTest, CacheExpiryAfterTTL)
+{
+    auto *nu = NetworkUtils::instance();
+    nu->clearCache();
+
+    nu->updateCache("10.0.0.2", "22", true);
+    auto entry = nu->getFromCache("10.0.0.2", "22");
+    EXPECT_TRUE(entry.timestamp.isValid());
+
+    QThread::msleep(NetworkUtils::kNetCacheTTLMs + 50);
+    entry = nu->getFromCache("10.0.0.2", "22");
+    EXPECT_FALSE(entry.timestamp.isValid());
+}
+
+TEST(NetworkUtilsTest, CacheUpdateOverwrites)
+{
+    auto *nu = NetworkUtils::instance();
+    nu->clearCache();
+
+    nu->updateCache("10.0.0.3", "445", true);
+    EXPECT_TRUE(nu->getFromCache("10.0.0.3", "445").busy);
+
+    nu->updateCache("10.0.0.3", "445", false);
+    EXPECT_FALSE(nu->getFromCache("10.0.0.3", "445").busy);
+}
+
+TEST(NetworkUtilsTest, CheckNetConnectionUseCacheFalse)
+{
+    auto *nu = NetworkUtils::instance();
+    nu->clearCache();
+
+    // Populate cache with busy=true
+    nu->updateCache("192.0.2.1", "445", true);
+
+    // useCache=false should bypass cache — but won't connect to fake host.
+    // Just verify it doesn't crash.
+    stub_ext::StubExt stub;
+    stub.set_lamda(ADDR(DConfigManager, value), [](DConfigManager *, const QString &, const QString &, const QVariant &def) -> QVariant {
+        return def;
+    });
+
+    EXPECT_NO_FATAL_FAILURE({
+        (void)nu->checkNetConnection("192.0.2.1", "445", 100, false);
+    });
+}
+
+TEST(NetworkUtilsTest, CheckNetConnectionEmptyHostReturnsTrue)
+{
+    auto *nu = NetworkUtils::instance();
+    EXPECT_TRUE(nu->checkNetConnection("", "445"));
 }
