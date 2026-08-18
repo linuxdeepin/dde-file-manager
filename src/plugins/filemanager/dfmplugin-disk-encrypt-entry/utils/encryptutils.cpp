@@ -563,6 +563,138 @@ BlockDev device_utils::createBlockDevice(const QString &devObjPath)
     return monitor->createDeviceById(devObjPath).objectCast<DBlockDevice>();
 }
 
+/*!
+ * \brief Encode a block device name to UDisks2 object path format.
+ *
+ * UDisks2 encodes characters that are not [a-zA-Z0-9] as _<hex> in object paths.
+ * For example, "dm-2" becomes "dm_2d2" (- is 0x2d).
+ */
+static QString encodeBlockDevName(const QString &devName)
+{
+    QString encoded;
+    for (const auto &ch : devName) {
+        if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9')) {
+            encoded.append(ch);
+        } else {
+            encoded.append(QString("_%1").arg(ch.unicode(), 2, 16, QChar('0')));
+        }
+    }
+    return encoded;
+}
+
+/*!
+ * \brief Traverse the sysfs holder chain to find the top DM device.
+ *
+ * For overlay encryption: nvme0n1p5 -> dm-0 (mid) -> dm-2 (top).
+ * The traversal stops at the first device that has no DM holders.
+ *
+ * \param device The physical device path (e.g., /dev/nvme0n1p5)
+ * \param devName The device name without /dev/ prefix (e.g., nvme0n1p5)
+ * \return The top DM device path, or the original device if no holders found.
+ */
+static QString traverseHolderChain(const QString &device, const QString &devName)
+{
+    static const QRegularExpression kValidDevName("^[a-zA-Z0-9_-]+$");
+
+    QString currentDev = device;
+    QString currentName = devName;
+
+    while (true) {
+        QString holdersPath = QString("/sys/class/block/%1/holders").arg(currentName);
+        QDir holdersDir(holdersPath);
+        if (!holdersDir.exists())
+            break;
+
+        auto holders = holdersDir.entryList(QDir::AllEntries | QDir::NoDotAndDotDot);
+        if (holders.isEmpty())
+            break;
+
+        // Find the first DM holder (defense in depth: also validate kernel-provided names)
+        QString nextDm;
+        for (const auto &h : holders) {
+            if (h.startsWith("dm-") && kValidDevName.match(h).hasMatch()) {
+                nextDm = h;
+                break;
+            }
+        }
+        if (nextDm.isEmpty())
+            break;
+
+        fmDebug() << "Found DM holder:" << nextDm << "for device:" << currentDev;
+        currentDev = "/dev/" + nextDm;
+        currentName = nextDm;
+    }
+
+    if (currentDev == device) {
+        fmDebug() << "No DM holder found for device, using original:" << device;
+    } else {
+        fmInfo() << "Resolved top DM device:" << currentDev << "from physical device:" << device;
+    }
+
+    return currentDev;
+}
+
+/*!
+ * \brief Resolve a device path to its UDisks2 entry URL path component.
+ *
+ * Uses the block monitor's resolveDeviceNode to get the canonical UDisks2
+ * object path, then strips the prefix and appends ".blockdev".
+ *
+ * \param currentDev The device path to resolve (e.g., /dev/dm-2)
+ * \param currentName The device name for fallback encoding (e.g., dm-2)
+ * \return The entry URL path (e.g., dm_2d2.blockdev), or empty string on failure.
+ */
+static QString resolveToEntryPath(const QString &currentDev, const QString &currentName)
+{
+    using namespace dfmmount;
+    auto monitor = DDeviceManager::instance()->getRegisteredMonitor(DeviceType::kBlockDevice).objectCast<DBlockMonitor>();
+    if (monitor) {
+        auto objPaths = monitor->resolveDeviceNode(currentDev, {});
+        if (!objPaths.isEmpty()) {
+            static constexpr char kBlockDeviceIdPrefix[] { "/org/freedesktop/UDisks2/block_devices/" };
+            QString shortName = objPaths.first();
+            shortName.remove(kBlockDeviceIdPrefix);
+            QString entryPath = QString("%1.blockdev").arg(shortName);
+            fmInfo() << "Resolved entry block dev path:" << entryPath << "from device:" << currentDev;
+            return entryPath;
+        }
+        fmWarning() << "resolveDeviceNode returned empty for:" << currentDev;
+    } else {
+        fmWarning() << "Failed to get block device monitor";
+    }
+
+    // Fallback: manually encode the device name
+    QString encodedName = encodeBlockDevName(currentName);
+    QString entryPath = QString("%1.blockdev").arg(encodedName);
+    fmInfo() << "Using fallback encoding for entry block dev path:" << entryPath << "from device:" << currentDev;
+    return entryPath;
+}
+
+QString device_utils::resolveEntryBlockDevPath(const QString &device)
+{
+    if (device.isEmpty()) {
+        fmWarning() << "Device path is empty, cannot resolve entry block dev path";
+        return QString();
+    }
+
+    // Extract device name from path (e.g., "/dev/nvme0n1p5" -> "nvme0n1p5")
+    QString devName = device;
+    if (devName.startsWith("/dev/"))
+        devName = devName.mid(5);
+
+    // Validate device name to prevent directory traversal attacks.
+    // Block device names only contain alphanumeric characters, hyphens, and underscores.
+    // This rejects inputs like "../../etc" that could escape /sys/class/block/.
+    static const QRegularExpression kValidDevName("^[a-zA-Z0-9_-]+$");
+    if (!kValidDevName.match(devName).hasMatch()) {
+        fmWarning() << "Invalid device name, potential path traversal detected:" << devName;
+        return QString();
+    }
+
+    QString currentDev = traverseHolderChain(device, devName);
+    return resolveToEntryPath(currentDev, currentDev.startsWith("/dev/") ? currentDev.mid(5) : currentDev);
+}
+
 int dialog_utils::showDialog(const QString &title, const QString &msg)
 {
     QString icon;
