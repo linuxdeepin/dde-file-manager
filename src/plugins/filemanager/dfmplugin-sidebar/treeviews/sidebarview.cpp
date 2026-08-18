@@ -30,6 +30,7 @@
 #include <QCursor>
 #include <QMimeData>
 #include <QApplication>
+#include <memory>
 #include <QMouseEvent>
 #include <QUrl>
 #include <QProxyStyle>
@@ -193,15 +194,44 @@ void SideBarViewPrivate::expandPartitionItem(const QModelIndex &index, const QUr
     auto filters = QDir::Dirs | QDir::NoDotAndDotDot;
     if (Application::instance()->genericAttribute(Application::kShowedHiddenFiles).toBool())
         filters |= QDir::Hidden;
+
+    // Show a wait cursor while traversing large directories (e.g. /proc with
+    // hundreds of pid entries) so the user gets immediate feedback that the
+    // expand is in progress. Restored exactly once when the traversal emits
+    // updateChildren or finishes (whichever fires first).
+    QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+
     TraversalDirThread *t = new TraversalDirThread(url, {}, filters, QDirIterator::FollowSymlinks);
+    // Pre-sort the traversal results on the worker thread using FileNameSorter
+    // (numeric-aware ICU collation) so the sidebar sub-tree ordering matches the
+    // file view / title bar / desktop and the heavy sorting is offloaded from
+    // the UI thread.
+    t->setEnableSort(true);
     connect(t, &TraversalDirThread::finished, t, &TraversalDirThread::deleteLater);
     const QPersistentModelIndex persistentIndex(index);
+    // Shared flag ensures restoreOverrideCursor is called exactly once per
+    // setOverrideCursor, regardless of which signal fires first. The cursor is
+    // a global QApplication resource, so restoring it does not depend on the
+    // view being alive.
+    auto cursorRestored = std::make_shared<bool>(false);
+    auto restoreCursorOnce = [cursorRestored]() {
+        if (*cursorRestored)
+            return;
+        *cursorRestored = true;
+        QApplication::restoreOverrideCursor();
+    };
     connect(t, &TraversalDirThread::updateChildren, this, [=](const QList<QUrl> &subs) {
+        restoreCursorOnce();
         if (!persistentIndex.isValid() || persistentIndex.model() != q->model()) {
             fmDebug() << "SideBarViewPrivate: Stale index after traversal, aborting expand";
             return;
         }
         this->expandItem(persistentIndex, subs);
+    });
+    // Ensure the cursor is restored even if the thread finishes without emitting
+    // updateChildren (e.g. empty directory or early cancellation).
+    connect(t, &TraversalDirThread::finished, this, [restoreCursorOnce]() {
+        restoreCursorOnce();
     });
     t->start();
 }
