@@ -1186,5 +1186,145 @@ widgets:
   source_file: src/apps/dde-file-manager-preview/pluginpreviews/pdf-preview/thumbnaildelegate.cpp
   class_name: ThumbnailDelegate
   line: 22
+- variable: hideFile
+  type: QCheckBox *
+  object_name: HideFile
+  accessible_name: HideFile
+  source_file: src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp
+  class_name: ''
+  line: 189
+- variable: closeButton
+  type: Dtk::Widget::DCommandLinkButton *
+  object_name: CloseButton
+  accessible_name: CloseButton
+  source_file: src/plugins/common/dfmplugin-propertydialog/views/closealldialog.cpp
+  class_name: ''
+  line: 52
+- variable: nameEditIcon
+  type: Dtk::Widget::DIconButton *
+  object_name: EditButton
+  accessible_name: NameEditIcon
+  source_file: src/plugins/common/dfmplugin-propertydialog/views/editstackedwidget.cpp
+  class_name: ''
+  line: 244
+- variable: checkButton
+  type: DIconButton *
+  object_name: CheckButton
+  accessible_name: CheckButton
+  source_file: src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp
+  class_name: ''
+  line: 59
+- variable: openFileChooseButton
+  type: Dtk::Widget::DCommandLinkButton *
+  object_name: OpenFileChooseButton
+  accessible_name: OpenFileChooseButton
+  source_file: src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp
+  class_name: ''
+  line: 294
+- variable: setToDefaultCheckBox
+  type: QCheckBox *
+  object_name: SetToDefaultCheckBox
+  accessible_name: SetToDefaultCheckBox
+  source_file: src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp
+  class_name: ''
+  line: 297
+- variable: cancelButton
+  type: DPushButton *
+  object_name: CancelButton
+  accessible_name: CancelButton
+  source_file: src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp
+  class_name: ''
+  line: 301
+- variable: chooseButton
+  type: DSuggestButton *
+  object_name: ChooseButton
+  accessible_name: ChooseButton
+  source_file: src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp
+  class_name: ''
+  line: 304
+- variable: serverComboBox
+  type: Dtk::Widget::DComboBox *
+  object_name: ServerComboBox
+  accessible_name: ServerComboBox
+  source_file: src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp
+  class_name: ''
+  line: 395
+- variable: schemeComboBox
+  type: Dtk::Widget::DComboBox *
+  object_name: SchemeComboBox
+  accessible_name: SchemeComboBox
+  source_file: src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp
+  class_name: ''
+  line: 377
+- variable: theAddButton
+  type: Dtk::Widget::DIconButton *
+  object_name: TheAddButton
+  accessible_name: TheAddButton
+  source_file: src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp
+  class_name: ''
+  line: 403
+- variable: collectionServerView
+  type: Dtk::Widget::DListView *
+  object_name: CollectionServerView
+  accessible_name: CollectionServerView
+  source_file: src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp
+  class_name: ''
+  line: 433
+- variable: charsetComboBox
+  type: Dtk::Widget::DComboBox *
+  object_name: CharsetComboBox
+  accessible_name: CharsetComboBox
+  source_file: src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp
+  class_name: ''
+  line: 421
+- variable: addItemBtn
+  type: Dtk::Widget::DToolButton *
+  object_name: AddItemBtn
+  accessible_name: AddItemBtn
+  source_file: src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp
+  class_name: ''
+  line: 56
+- variable: searchButton
+  type: Dtk::Widget::DIconButton *
+  object_name: SearchButton
+  accessible_name: SearchButton
+  source_file: src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp
+  class_name: ''
+  line: 323
+- variable: advancedButton
+  type: Dtk::Widget::DToolButton *
+  object_name: AdvancedButton
+  accessible_name: AdvancedButton
+  source_file: src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp
+  class_name: ''
+  line: 343
+- variable: searchEdit
+  type: Dtk::Widget::DSearchEdit *
+  object_name: SearchEdit
+  accessible_name: SearchEdit
+  source_file: src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp
+  class_name: ''
+  line: 335
+- variable: selectfileSavePathEdit
+  type: Dtk::Widget::DFileChooserEdit *
+  object_name: SelectfileSavePathEdit
+  accessible_name: SelectfileSavePathEdit
+  source_file: src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp
+  class_name: ''
+  line: 96
+- variable: startBtn
+  type: Dtk::Widget::DSuggestButton *
+  object_name: StartBtn
+  accessible_name: StartBtn
+  source_file: src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp
+  class_name: ''
+  line: 45
+- variable: scaleSlider
+  type: DSlider *
+  object_name: ScaleSlider
+  accessible_name: ScaleSlider
+  source_file: src/plugins/filemanager/dfmplugin-workspace/views/fileviewstatusbar.cpp
+  class_name: ''
+  line: 117
 qml_elements: []
 transient_elements: []
