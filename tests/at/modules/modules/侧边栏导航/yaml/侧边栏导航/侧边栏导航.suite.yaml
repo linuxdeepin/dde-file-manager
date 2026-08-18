@@ -94,5 +94,29 @@ suites:
   assert_steps:
   - action: assert_process_running
     app: dde-file-manager
+- id: fm_sidebar_home_s1
+  name: 侧边栏主目录导航
+  description: ''
+  tags: []
+  steps:
+  - action: element_action
+    selector:
+      name: 主目录
+    do: click
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: fm_sidebar_vault_s1
+  name: 侧边栏保险箱导航
+  description: ''
+  tags: []
+  steps:
+  - action: element_action
+    selector:
+      name: 保险箱
+    do: click
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
 teardown:
 - action: session_stop

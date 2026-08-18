@@ -626,3 +626,145 @@ cases:
         description: "验证文件管理器进程运行"
         action: "assert_process_running"
         text: "dde-file-manager"
+
+  - id: "fm_menu_connect_server"
+    name: 主菜单连接到服务器
+    module: 主菜单扩展
+    status: active
+    annotation:
+      测试界面: "主窗口-标题栏"
+      测试功能: "通过标题栏主菜单打开连接到服务器对话框"
+      前置条件: "dde-file-manager 已启动并显示主窗口"
+      AT元素引用: ["连接到服务器"]
+    steps:
+      - step_type: "action"
+        description: "启动 dde-file-manager"
+        action: "session_start"
+        command: "true; dde-file-manager --open-home"
+      - step_type: "action"
+        description: "打开标题栏主菜单并选择连接到服务器"
+        action: "dtk_main_menu"
+        items: ["连接到服务器"]
+      - step_type: "assert"
+        description: "验证文件管理器进程运行"
+        action: "assert_process_running"
+        text: "dde-file-manager"
+
+  - id: "fm_menu_set_share_passwd"
+    name: 主菜单设置共享密码
+    module: 主菜单扩展
+    status: active
+    annotation:
+      测试界面: "主窗口-标题栏"
+      测试功能: "通过标题栏主菜单入口设置共享密码"
+      前置条件: "dde-file-manager 已启动并显示主窗口"
+      AT元素引用: ["设置共享密码"]
+    steps:
+      - step_type: "action"
+        description: "启动 dde-file-manager"
+        action: "session_start"
+        command: "true; dde-file-manager --open-home"
+      - step_type: "action"
+        description: "打开标题栏主菜单并选择设置共享密码"
+        action: "dtk_main_menu"
+        items: ["设置共享密码"]
+      - step_type: "assert"
+        description: "验证文件管理器进程运行"
+        action: "assert_process_running"
+        text: "dde-file-manager"
+
+  - id: "fm_menu_change_disk_passwd"
+    name: 主菜单修改磁盘密码
+    module: 主菜单扩展
+    status: active
+    annotation:
+      测试界面: "主窗口-标题栏"
+      测试功能: "通过标题栏主菜单入口修改磁盘密码"
+      前置条件: "dde-file-manager 已启动并显示主窗口"
+      AT元素引用: ["修改磁盘密码"]
+    steps:
+      - step_type: "action"
+        description: "启动 dde-file-manager"
+        action: "session_start"
+        command: "true; dde-file-manager --open-home"
+      - step_type: "action"
+        description: "打开标题栏主菜单并选择修改磁盘密码"
+        action: "dtk_main_menu"
+        items: ["修改磁盘密码"]
+      - step_type: "assert"
+        description: "验证文件管理器进程运行"
+        action: "assert_process_running"
+        text: "dde-file-manager"
+
+  - id: "fm_sidebar_home"
+    name: 侧边栏主目录导航
+    module: 侧边栏导航
+    status: active
+    annotation:
+      测试界面: "主窗口-左侧边栏"
+      测试功能: "点击侧边栏主目录切换到主目录视图"
+      前置条件: "dde-file-manager 已启动并显示主窗口"
+      AT元素引用: ["主目录"]
+    steps:
+      - step_type: "action"
+        description: "启动 dde-file-manager"
+        action: "session_start"
+        command: "true; dde-file-manager --open-home"
+      - step_type: "action"
+        description: "点击侧边栏主目录项"
+        action: "element_action"
+        selector:
+          name: "主目录"
+        do: "click"
+      - step_type: "assert"
+        description: "验证文件管理器进程运行"
+        action: "assert_process_running"
+        text: "dde-file-manager"
+
+  - id: "fm_sidebar_vault"
+    name: 侧边栏保险箱导航
+    module: 侧边栏导航
+    status: active
+    annotation:
+      测试界面: "主窗口-左侧边栏"
+      测试功能: "点击侧边栏保险箱切换到保险箱视图"
+      前置条件: "dde-file-manager 已启动并显示主窗口"
+      AT元素引用: ["保险箱"]
+    steps:
+      - step_type: "action"
+        description: "启动 dde-file-manager"
+        action: "session_start"
+        command: "true; dde-file-manager --open-home"
+      - step_type: "action"
+        description: "点击侧边栏保险箱项"
+        action: "element_action"
+        selector:
+          name: "保险箱"
+        do: "click"
+      - step_type: "assert"
+        description: "验证文件管理器进程运行"
+        action: "assert_process_running"
+        text: "dde-file-manager"
+
+  - id: "fm_titlebar_new_tab_hotkey"
+    name: "快捷键新建标签页"
+    module: 标题栏
+    status: active
+    annotation:
+      测试界面: "主窗口-标题栏"
+      测试功能: "通过 Ctrl+T 快捷键新建标签页"
+      前置条件: "dde-file-manager 已启动并显示主窗口"
+      AT元素引用: ["新建标签"]
+    steps:
+      - step_type: "action"
+        description: "启动 dde-file-manager"
+        action: "session_start"
+        command: "true; dde-file-manager --open-home"
+      - step_type: "action"
+        description: "按 Ctrl+T 新建标签页"
+        action: "keyboard_hot_key"
+        key: "ctrl+t"
+      - step_type: "assert"
+        description: "验证文件管理器进程运行"
+        action: "assert_process_running"
+        text: "dde-file-manager"

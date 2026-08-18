@@ -22,5 +22,15 @@ suites:
   assert_steps:
   - action: assert_process_running
     app: dde-file-manager
+- id: fm_titlebar_new_tab_hotkey_s1
+  name: 快捷键新建标签页
+  description: ''
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+t
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
 teardown:
 - action: session_stop
