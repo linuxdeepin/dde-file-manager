@@ -241,6 +241,7 @@ void EditStackedWidget::initTextShowFrame(QString fileName)
     }
 
     nameEditIcon = new DIconButton(textShowFrame);
+    nameEditIcon->setAccessibleName("NameEditIcon");
     nameEditIcon->setObjectName(QString("EditButton"));
     nameEditIcon->setIcon(QIcon::fromTheme("dfm_rename"));
     nameEditIcon->setIconSize({ 12, 12 });

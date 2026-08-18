@@ -185,6 +185,8 @@ void BasicWidget::initUI()
     fileModified = createValueLabel(frameMain, tr("Modified"));
 
     hideFile = new DCheckBox(frameMain);
+    hideFile->setObjectName("HideFile");
+    hideFile->setAccessibleName("HideFile");
     DFontSizeManager::instance()->bind(hideFile, DFontSizeManager::SizeType::T7, QFont::Normal);
     hideFile->setText(tr("Hide this file"));
     hideFile->setToolTip(hideFile->text());

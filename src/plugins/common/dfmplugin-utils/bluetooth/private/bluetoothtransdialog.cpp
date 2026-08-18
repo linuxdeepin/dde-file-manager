@@ -388,6 +388,8 @@ QWidget *BluetoothTransDialog::createDeviceSelectorPage()
     pLayout->addWidget(statusTxt);
 
     devicesListView = new DListView(this);
+    devicesListView->setObjectName("DevicesListView");
+    devicesListView->setAccessibleName("DevicesListView");
     devModel = new QStandardItemModel(this);
     devicesListView->setFixedHeight(88);
     devicesListView->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
