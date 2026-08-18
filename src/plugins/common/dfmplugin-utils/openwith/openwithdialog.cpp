@@ -87,11 +87,11 @@ void OpenWithDialogListItem::initUiForSizeMode()
 {
 #ifdef DTKWIDGET_CLASS_DSizeMode
     int size = DSizeModeHelper::element(25, 30);
-    setFixedSize(224, DSizeModeHelper::element(40, 50));
+    setFixedSize(220, DSizeModeHelper::element(40, 50));
 #else
     int size = 30;
     iconLabel->setPixmap(icon.pixmap(iconLabel->size()));
-    setFixedSize(224, 50);
+    setFixedSize(220, 50);
 #endif
     iconLabel->setFixedSize(size, size);
     updateLabelIcon(size);
@@ -166,7 +166,7 @@ void OpenWithDialogListItem::paintEvent(QPaintEvent *e)
 class OpenWithDialogListSparerItem : public QWidget
 {
 public:
-    explicit OpenWithDialogListSparerItem(const QString &title, QWidget *parent = nullptr);
+    explicit OpenWithDialogListSparerItem(const QString &title, QWidget *parent = nullptr, bool showSeparator = true);
 
 private slots:
     void initUiForSizeMode();
@@ -190,15 +190,18 @@ void OpenWithDialogListSparerItem::initUiForSizeMode()
 #endif
 }
 
-OpenWithDialogListSparerItem::OpenWithDialogListSparerItem(const QString &title, QWidget *parent)
-    : QWidget(parent), separator(new DHorizontalLine(this)), titleLabel(new QLabel(title, this))
+OpenWithDialogListSparerItem::OpenWithDialogListSparerItem(const QString &title, QWidget *parent, bool showSeparator)
+    : QWidget(parent), titleLabel(new QLabel(title, this))
 {
 #ifdef DTKWIDGET_CLASS_DSizeMode
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, &OpenWithDialogListSparerItem::initUiForSizeMode);
 #endif
     QVBoxLayout *layout = new QVBoxLayout(this);
     initUiForSizeMode();
-    layout->addWidget(separator);
+    if (showSeparator) {
+        separator = new DHorizontalLine(this);
+        layout->addWidget(separator);
+    }
     layout->addWidget(titleLabel);
     layout->setContentsMargins(0, 0, 0, 0);
     titleLabel->setContentsMargins(20, 0, 0, 0);
@@ -285,9 +288,7 @@ void OpenWithDialog::initUI()
     scrollArea->setWidget(contentWidget);
 
     recommandLayout = new DFlowLayout;
-    recommandLayout->setHorizontalSpacing(10);
     otherLayout = new DFlowLayout;
-    otherLayout->setHorizontalSpacing(10);
 
     openFileChooseButton = new DCommandLinkButton(tr("Add other programs"), this);
     setToDefaultCheckBox = new DCheckBox(tr("Set as default"), this);
@@ -300,7 +301,7 @@ void OpenWithDialog::initUI()
 
     QVBoxLayout *contentLayout = new QVBoxLayout;
     contentLayout->setContentsMargins(10, 0, 10, 0);
-    contentLayout->addWidget(new OpenWithDialogListSparerItem(tr("Recommended Applications"), this));
+    contentLayout->addWidget(new OpenWithDialogListSparerItem(tr("Recommended Applications"), this, false));
     contentLayout->addLayout(recommandLayout);
     contentLayout->addWidget(new OpenWithDialogListSparerItem(tr("Other Applications"), this));
     contentLayout->addLayout(otherLayout);
@@ -332,6 +333,13 @@ void OpenWithDialog::initUI()
     mainLayout->addSpacing(15);
 #endif
     mainLayout->setSpacing(0);
+
+    // 固定分割线：位于大标题下方，不随内容滚动而消失
+    QHBoxLayout *titleSeparatorLayout = new QHBoxLayout;
+    titleSeparatorLayout->setContentsMargins(10, 0, 10, 0);
+    titleSeparatorLayout->addWidget(new DHorizontalLine(this));
+    mainLayout->addLayout(titleSeparatorLayout);
+
     mainLayout->addWidget(scrollArea);
     mainLayout->addLayout(bottomLayout);
     mainLayout->setContentsMargins(0, 35, 0, 10);
