@@ -145,6 +145,7 @@ void TabBarPrivate::initUI()
     addBtn = q->findChild<DIconButton *>("AddButton");
     Q_ASSERT(addBtn);
 
+    addBtn->setAccessibleName("AddBtn");
     addBtn->setFixedSize(30, 30);
     addBtn->setFlat(true);
     addBtn->setFocusPolicy(Qt::NoFocus);
@@ -167,6 +168,8 @@ void TabBarPrivate::initUI()
     // for update close button state
     tabBar = q->findChild<QTabBar *>();
     if (tabBar) {
+        tabBar->setObjectName("TabBar");
+        tabBar->setAccessibleName("TabBar");
         tabBar->setMouseTracking(true);
         tabBar->installEventFilter(q);
     }
