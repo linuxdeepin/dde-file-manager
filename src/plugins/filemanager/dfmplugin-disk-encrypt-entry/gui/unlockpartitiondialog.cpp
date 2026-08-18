@@ -42,7 +42,11 @@ void UnlockPartitionDialog::initUI()
 
     QFrame *content = new QFrame;
     passwordLineEdit = new DPasswordEdit;
+    passwordLineEdit->setObjectName("PasswordLineEdit");
+    passwordLineEdit->setAccessibleName("PasswordLineEdit");
     chgUnlockType = new DCommandLinkButton("");
+    chgUnlockType->setObjectName("ChgUnlockType");
+    chgUnlockType->setAccessibleName("ChgUnlockType");
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addSpacing(10);

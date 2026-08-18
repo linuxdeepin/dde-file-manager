@@ -114,6 +114,8 @@ QWidget *EncryptParamsInputDialog::createPasswordPage()
     wid->setLayout(lay);
 
     encType = new DComboBox(this);
+    encType->setObjectName("EncType");
+    encType->setAccessibleName("EncType");
     encType->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
     lay->addRow(tr("Unlock type"), encType);
 
@@ -128,11 +130,15 @@ QWidget *EncryptParamsInputDialog::createPasswordPage()
 
     keyHint1 = new QLabel(this);
     encKeyEdit1 = new DPasswordEdit(this);
+    encKeyEdit1->setObjectName("EncKeyEdit1");
+    encKeyEdit1->setAccessibleName("EncKeyEdit1");
     keyHint1->setMinimumWidth(66);
     lay->addRow(keyHint1, encKeyEdit1);
 
     keyHint2 = new QLabel(this);
     encKeyEdit2 = new DPasswordEdit(this);
+    encKeyEdit2->setObjectName("EncKeyEdit2");
+    encKeyEdit2->setAccessibleName("EncKeyEdit2");
     lay->addRow(keyHint2, encKeyEdit2);
 
     encType->addItems({ tr("Unlocked by passphrase"),
@@ -174,6 +180,8 @@ QWidget *EncryptParamsInputDialog::createExportPage()
     hint->setAlignment(Qt::AlignCenter);
 
     keyExportInput = new DFileChooserEdit(this);
+    keyExportInput->setObjectName("KeyExportInput");
+    keyExportInput->setAccessibleName("KeyExportInput");
     keyExportInput->setFileMode(QFileDialog::Directory);
     if (keyExportInput->fileDialog() && dialog_utils::isWayland())
         keyExportInput->fileDialog()->setWindowFlag(Qt::WindowStaysOnTopHint);

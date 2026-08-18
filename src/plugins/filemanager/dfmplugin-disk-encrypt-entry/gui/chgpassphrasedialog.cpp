@@ -63,8 +63,14 @@ void ChgPassphraseDialog::initUI()
 
     oldKeyHint = new QLabel(this);
     oldPass = new Dtk::Widget::DPasswordEdit(this);
+    oldPass->setObjectName("OldPass");
+    oldPass->setAccessibleName("OldPass");
     newPass1 = new Dtk::Widget::DPasswordEdit(this);
+    newPass1->setObjectName("NewPass1");
+    newPass1->setAccessibleName("NewPass1");
     newPass2 = new Dtk::Widget::DPasswordEdit(this);
+    newPass2->setObjectName("NewPass2");
+    newPass2->setAccessibleName("NewPass2");
 
     newPass2->setPlaceholderText(tr("Please enter %1 again").arg(keyTypeStr));
 
@@ -73,6 +79,8 @@ void ChgPassphraseDialog::initUI()
     lay->addRow(tr("Repeat %1").arg(encType), newPass2);
 
     recSwitch = new Dtk::Widget::DCommandLinkButton("", this);
+    recSwitch->setObjectName("RecSwitch");
+    recSwitch->setAccessibleName("RecSwitch");
     contentLay->addWidget(recSwitch, 0, Qt::AlignRight);
 
     addContent(content);
