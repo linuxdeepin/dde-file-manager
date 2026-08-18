@@ -22,6 +22,7 @@
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
 #include <dfm-base/utils/universalutils.h>
+#include <dfm-base/dbusservice/global_server_defines.h>
 #include <dfm-base/mimetype/dmimedatabase.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
@@ -369,6 +370,39 @@ bool FileUtils::isSameFile(const QString &path1, const QString &path2)
 bool FileUtils::isCdRomDevice(const QUrl &url)
 {
     return DFMIO::DFMUtils::devicePathFromUrl(url).startsWith("/dev/sr");
+}
+
+bool FileUtils::isDefaultHiddenFile(const QUrl &fileUrl)
+{
+    static QSet<QUrl> defaultHiddenUrls;
+    static QMutex mutex;
+    static bool initialized = false;
+
+    QMutexLocker locker(&mutex);
+    if (!initialized) {
+        using namespace GlobalServerDefines;
+        const auto &systemBlks = DevProxyMng->getAllBlockIds(
+                DeviceQueryOption::kSystem | DeviceQueryOption::kMounted);
+        for (const auto &blk : systemBlks) {
+            auto blkInfo = DevProxyMng->queryBlockInfo(blk);
+            const QStringList &mountPoints =
+                    blkInfo.value(DeviceProperty::kMountPoints).toStringList();
+            for (const auto &mpt : mountPoints) {
+                QUrl rootUrl = QUrl::fromLocalFile(
+                        mpt + (mpt == QStringLiteral("/") ? QStringLiteral("root")
+                                                           : QStringLiteral("/root")));
+                QUrl lostFoundUrl = QUrl::fromLocalFile(
+                        mpt + (mpt == QStringLiteral("/")
+                                       ? QStringLiteral("lost+found")
+                                       : QStringLiteral("/lost+found")));
+                defaultHiddenUrls.insert(rootUrl);
+                defaultHiddenUrls.insert(lostFoundUrl);
+            }
+        }
+        initialized = true;
+    }
+
+    return defaultHiddenUrls.contains(fileUrl);
 }
 
 bool FileUtils::trashIsEmpty()

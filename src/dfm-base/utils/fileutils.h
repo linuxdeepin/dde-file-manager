@@ -55,6 +55,7 @@ public:
                            const Global::CreateFileInfoType infoCache = Global::CreateFileInfoType::kCreateFileInfoAuto);
     static bool isSameFile(const QString &path1, const QString &path2);
     static bool isCdRomDevice(const QUrl &url);
+    static bool isDefaultHiddenFile(const QUrl &fileUrl);
     static bool trashIsEmpty();
     static TrashEmptyState trashEmptyState();
     static void setTrashEmptyState(TrashEmptyState state);

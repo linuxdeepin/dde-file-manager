@@ -12,6 +12,7 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/utils/universalutils.h>
+#include <dfm-base/utils/fileutils.h>
 #include <dfm-framework/event/event.h>
 
 #include <QMimeData>
@@ -589,6 +590,13 @@ void SideBarModel::addSubItem(const QModelIndex &index, const QUrl &url)
         return;
     }
 
+    // /mount-point/root, /mount-point/lost+found should be treated as hidden files.
+    if (!Application::instance()->genericAttribute(dfmbase::Application::kShowedHiddenFiles).toBool()
+        && FileUtils::isDefaultHiddenFile(url)) {
+        fmInfo() << "Default hidden file skipped in sidebar" << url;
+        return;
+    }
+
     SideBarItem *parentItem = itemFromIndex(index);
     if (!parentItem) {
         fmDebug() << "Failed to get parent item from index";
@@ -604,10 +612,10 @@ void SideBarModel::addSubItem(const QModelIndex &index, const QUrl &url)
     }
 
     QString group = parentItem->group();
-    QString fileName = info ? info->fileName() : "Unknown";
+    QString displayName = info ? info->displayOf(FileInfo::DisplayInfoType::kFileDisplayName) : "Unknown";
     QIcon folderIcon = QIcon::fromTheme("folder");
 
-    SideBarItem *item = new SideBarItem(folderIcon, fileName, group, url);
+    SideBarItem *item = new SideBarItem(folderIcon, displayName, group, url);
     if (!item) {
         fmDebug() << "Failed to create new sidebar item";
         return;
@@ -625,7 +633,7 @@ void SideBarModel::addSubItem(const QModelIndex &index, const QUrl &url)
     item->setFlags(flags);
 
     // Insert in alphabetical order.
-    QString newName = fileName;
+    QString newName = displayName;
     int insertRow = childCount;
     for (int i = 0; i < childCount; ++i) {
         SideBarItem *childItem = dynamic_cast<SideBarItem *>(parentItem->child(i));
