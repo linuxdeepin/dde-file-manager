@@ -92,6 +92,8 @@ void VaultActiveSaveKeyFileView::initUI()
     otherRadioBtnHitMsg->setForegroundRole(DPalette::TextWarning);
 
     selectfileSavePathEdit = new DFileChooserEdit(this);
+    selectfileSavePathEdit->setObjectName("SelectfileSavePathEdit");
+    selectfileSavePathEdit->setAccessibleName("SelectfileSavePathEdit");
     selectfileSavePathEdit->lineEdit()->setPlaceholderText(tr("Select a path"));
     selectfileSavePathEdit->lineEdit()->setReadOnly(true);
     selectfileSavePathEdit->lineEdit()->setClearButtonEnabled(false);
@@ -105,6 +107,8 @@ void VaultActiveSaveKeyFileView::initUI()
     selectfileSavePathEdit->setEnabled(true);
 
     nextBtn = new DSuggestButton(tr("Next"), this);
+    nextBtn->setObjectName("NextBtn");
+    nextBtn->setAccessibleName("NextBtn");
     nextBtn->setFixedWidth(200);
     nextBtn->setEnabled(false);
 

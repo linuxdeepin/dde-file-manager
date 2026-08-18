@@ -41,6 +41,8 @@ VaultRemoveByPasswordView::VaultRemoveByPasswordView(QWidget *parent)
     pwdEdit->lineEdit()->setAttribute(Qt::WA_InputMethodEnabled, false);
 
     tipsBtn = new QPushButton(this);
+    tipsBtn->setObjectName("TipsBtn");
+    tipsBtn->setAccessibleName("TipsBtn");
     tipsBtn->setIcon(QIcon(":/icons/images/icons/light_32px.svg"));
 
     QHBoxLayout *layout = new QHBoxLayout();
@@ -49,6 +51,8 @@ VaultRemoveByPasswordView::VaultRemoveByPasswordView(QWidget *parent)
     layout->setContentsMargins(0, 0, 0, 0);
 
     toggleModeBtn = new DCommandLinkButton(tr("Key delete"), this);
+    toggleModeBtn->setObjectName("ToggleModeBtn");
+    toggleModeBtn->setAccessibleName("ToggleModeBtn");
     DFontSizeManager::instance()->bind(toggleModeBtn, DFontSizeManager::T8, QFont::Medium);
 
     QVBoxLayout *mainLay = new QVBoxLayout;

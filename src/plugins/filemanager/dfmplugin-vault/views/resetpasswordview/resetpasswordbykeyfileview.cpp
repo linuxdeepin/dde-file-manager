@@ -44,6 +44,8 @@ void ResetPasswordByKeyFileView::initUI()
 {
     DLabel *keyFileLabel = new DLabel(tr("Select Key File"), this);
     keyFileEdit = new DFileChooserEdit(this);
+    keyFileEdit->setObjectName("KeyFileEdit");
+    keyFileEdit->setAccessibleName("KeyFileEdit");
     keyFileEdit->lineEdit()->setPlaceholderText(tr("Select key file save path"));
     fileDialog = new DFileDialog(this, QDir::homePath());
     keyFileEdit->setDirectoryUrl(QDir::homePath());
@@ -54,6 +56,8 @@ void ResetPasswordByKeyFileView::initUI()
 
     DLabel *newPasswordLabel = new DLabel(tr("Enter New Password"), this);
     newPasswordEdit = new DPasswordEdit(this);
+    newPasswordEdit->setObjectName("NewPasswordEdit");
+    newPasswordEdit->setAccessibleName("NewPasswordEdit");
     QRegularExpression regx("[A-Za-z0-9,.;?@/=()<>_+*&^%$#!`~'\"|]+");
     QValidator *validator = new QRegularExpressionValidator(regx, this);
     newPasswordEdit->lineEdit()->setValidator(validator);
@@ -62,12 +66,16 @@ void ResetPasswordByKeyFileView::initUI()
 
     DLabel *repeatPasswordLabel = new DLabel(tr("Repeat Password"), this);
     repeatPasswordEdit = new DPasswordEdit(this);
+    repeatPasswordEdit->setObjectName("RepeatPasswordEdit");
+    repeatPasswordEdit->setAccessibleName("RepeatPasswordEdit");
     repeatPasswordEdit->lineEdit()->setValidator(validator);
     repeatPasswordEdit->lineEdit()->setPlaceholderText(tr("Enter new password again"));
     repeatPasswordEdit->lineEdit()->setAttribute(Qt::WA_InputMethodEnabled, false);
 
     DLabel *passwordHintLabel = new DLabel(tr("Password hint"), this);
     passwordHintEdit = new DLineEdit(this);
+    passwordHintEdit->setObjectName("PasswordHintEdit");
+    passwordHintEdit->setAccessibleName("PasswordHintEdit");
     passwordHintEdit->lineEdit()->setMaxLength(14);
     passwordHintEdit->setPlaceholderText(tr("Optional"));
 
