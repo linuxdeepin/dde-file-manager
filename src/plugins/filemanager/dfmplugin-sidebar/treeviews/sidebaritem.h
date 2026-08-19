@@ -23,6 +23,7 @@ public:
         kItemGroupRole,
         kItemTypeRole,
         kItemHiddenRole,
+        kItemIconNameRole,
         kItemUserCustomRole = Dtk::UserRole + 0x0100
     };
 
