@@ -93,16 +93,12 @@ void SideBarItemDelegate::clearIconCache()
 
 void SideBarItemDelegate::invalidateIconCache(const QUrl &url)
 {
-    if (url.isEmpty())
-        return;
-    // Cache keys are formatted as "iconId|WxH|theme|mode|foreground" where iconId
-    // is the item url (see drawIcon/drawDciIcon). Match the url prefix + delimiter
-    // so all pixmaps of that item (any size/theme/mode) are dropped at once; other
-    // items are left untouched. The trailing "|" avoids matching a url that just
-    // happens to be a string prefix of another one.
-    const QString prefix = url.toString() + QLatin1Char('|');
-    for (auto it = m_iconCache.begin(); it != m_iconCache.end();)
-        it = it.key().startsWith(prefix) ? m_iconCache.erase(it) : ++it;
+    Q_UNUSED(url);
+    // Cache keys are now keyed by icon name (see drawIcon/drawDciIcon), not by
+    // url, so per-url invalidation is no longer possible. The cache is capped at
+    // 50 entries, so a full clear is cheap and avoids stale pixmaps when an
+    // item's icon changes.
+    clearIconCache();
 }
 
 SideBarItemDelegate::SideBarItemDelegate(QAbstractItemView *parent)
@@ -503,7 +499,7 @@ void SideBarItemDelegate::drawIcon(const QStyleOptionViewItem &option,
         option.icon.paint(painter, iconRect, option.decorationAlignment, iconMode, state);
     } else {
         drawDciIcon(optForIcon, painter, dciIcon, iconRect, cg, keepHighlighted,
-                    index.data(SideBarItem::kItemUrlRole).toUrl().toString());
+                    index.data(SideBarItem::kItemIconNameRole).toString());
     }
 
     painter->restore();
