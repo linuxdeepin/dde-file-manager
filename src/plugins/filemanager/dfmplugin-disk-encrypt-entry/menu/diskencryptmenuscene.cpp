@@ -847,7 +847,39 @@ void DiskEncryptMenuScene::updateActions()
         }
     } else if (EventsHandler::instance()->unfinishedDecryptJob() == param.devDesc
                || EventsHandler::instance()->unfinishedDecryptJob() == param.devPhy) {
-        actions[kActIDResumeDecrypt]->setVisible(true);
+        // Defensive check: only show "Continue decrypt" if device is actually LUKS encrypted.
+        // This handles the case where the partition was reformatted after a decrypt job was interrupted.
+        const QString &idType = selectedItemInfo.value("IdType").toString();
+        // For overlay encryption, the device has a 2-layer DM structure:
+        // e.g. nvme0n1p5 -> usec-overlay-unlock-home (crypt/LUKS) -> usec-overlay-home (top).
+        // The top overlay layer is not crypto_LUKS itself, but it sits on top of a crypt layer,
+        // so the resume decrypt option should also be shown for overlay devices.
+        // The top overlay device's symlinks only contain "usec-overlay-xxx" (not "usec-overlay-unlock-xxx"),
+        // so we derive the unlock device name from the overlay name and check if it exists.
+        // Naming rule (see DMInitEncryptWorker): "overlay" -> "overlay-unlock".
+        bool hasOverlayCrypt = false;
+        if (idType != "crypto_LUKS") {
+            auto devSymlinks = selectedItemInfo.value("Symlinks").toStringList();
+            for (const QString &symlink : devSymlinks) {
+                int idx = symlink.indexOf(kOverleyEncPrefix);
+                if (idx < 0)
+                    continue;
+                // Extract the overlay device name, e.g. "usec-overlay-home"
+                QString overlayName = symlink.mid(idx);
+                // Derive the unlock device name, e.g. "usec-overlay-unlock-home"
+                QString unlockName = QString(overlayName).replace("overlay", "overlay-unlock");
+                QString unlockDevPath = "/dev/mapper/" + unlockName;
+                if (QFile::exists(unlockDevPath)) {
+                    hasOverlayCrypt = true;
+                    break;
+                }
+            }
+        }
+        if (idType == "crypto_LUKS" || hasOverlayCrypt) {
+            actions[kActIDResumeDecrypt]->setVisible(true);
+        } else {
+            fmInfo() << "Device has pending decrypt job but is not LUKS (may have been reformatted), hiding resume decrypt option:" << param.devDesc << "idType:" << idType;
+        }
     } else {
         actions[kActIDEncrypt]->setVisible(true);
     }
