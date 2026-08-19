@@ -43,6 +43,7 @@ WaterMaskFrame::WaterMaskFrame(const QString &fileName, QWidget *parent)
 
     logoLabel = new QLabel(this);
     textLabel = new QLabel(this);
+    textLabel->setAccessibleName("TextLabel");
 }
 
 WaterMaskFrame::~WaterMaskFrame()

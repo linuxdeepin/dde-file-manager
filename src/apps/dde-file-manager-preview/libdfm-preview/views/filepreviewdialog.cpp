@@ -250,6 +250,7 @@ void FilePreviewDialog::initUI()
     qCDebug(logLibFilePreview) << "FilePreviewDialog: initializing UI components";
 
     closeBtn = new DFloatingButton(DStyle::SP_CloseButton, this);
+    closeBtn->setObjectName("CloseBtn");
     closeBtn->setAccessibleName("CloseBtn");
     closeBtn->setStyleSheet("background-color: transparent;");
     closeBtn->setFixedSize(46, 46);
@@ -262,6 +263,7 @@ void FilePreviewDialog::initUI()
     separator->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     statusBar = new FilePreviewDialogStatusBar(this);
+    statusBar->setAccessibleName("StatusBar");
     statusBar->setObjectName("StatusBar");
     statusBar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     // statusBar->openButton()->setFocus();

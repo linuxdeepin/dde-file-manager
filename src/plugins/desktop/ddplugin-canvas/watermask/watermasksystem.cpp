@@ -32,6 +32,7 @@ WatermaskSystem::WatermaskSystem(QWidget *parent) : QObject(parent)
     logoLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
     textLabel = new QLabel(parent);
+    textLabel->setAccessibleName("TextLabel");
     textLabel->lower();
     textLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 }

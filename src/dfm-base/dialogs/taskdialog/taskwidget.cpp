@@ -664,6 +664,7 @@ QWidget *TaskWidget::createBaseWidget()
     hLayout3->addWidget(lbErrorMsg, Qt::AlignLeft);
 
     btnStop = new DIconButton(this);
+    btnStop->setAccessibleName("BtnStop");
     btnStop->setObjectName("TaskWidgetStopButton");
     QVariant variantStop;
     variantStop.setValue<AbstractJobHandler::SupportAction>(AbstractJobHandler::SupportAction::kStopAction);
@@ -675,6 +676,7 @@ QWidget *TaskWidget::createBaseWidget()
     btnStop->setAttribute(Qt::WA_NoMousePropagation);
 
     btnPause = new DIconButton(this);
+    btnPause->setAccessibleName("BtnPause");
     btnPause->setObjectName("TaskWidgetPauseButton");
     QVariant variantPause;
     variantPause.setValue<AbstractJobHandler::SupportAction>(AbstractJobHandler::SupportAction::kPauseAction);

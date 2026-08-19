@@ -79,6 +79,8 @@ void UnlockView::initUI()
 
     //! 密码编辑框
     passwordEdit = new DPasswordEdit(this);
+    passwordEdit->setObjectName("PasswordEdit");
+    passwordEdit->setAccessibleName("PasswordEdit");
     passwordEdit->lineEdit()->setPlaceholderText(tr("Password"));
     passwordEdit->lineEdit()->installEventFilter(this);
     passwordEdit->lineEdit()->setAttribute(Qt::WA_InputMethodEnabled, false);
@@ -402,6 +404,7 @@ void UnlockView::showToolTip(const QString &text, int duration, UnlockView::ENTo
 {
     if (!tooltip) {
         tooltip = new DToolTip(text);
+        tooltip->setAccessibleName("Tooltip");
         tooltip->setObjectName("AlertTooltip");
         tooltip->setWordWrap(true);
 

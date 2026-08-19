@@ -144,7 +144,7 @@ void TabBarPrivate::initUI()
 
     addBtn = q->findChild<DIconButton *>("AddButton");
     Q_ASSERT(addBtn);
-
+    addBtn->setObjectName("AddBtn");
     addBtn->setAccessibleName("AddBtn");
     addBtn->setFixedSize(30, 30);
     addBtn->setFlat(true);
@@ -153,6 +153,8 @@ void TabBarPrivate::initUI()
 
     leftBtn = q->findChild<DIconButton *>("leftButton");
     Q_ASSERT(leftBtn);
+    leftBtn->setObjectName("LeftBtn");
+    leftBtn->setAccessibleName("LeftBtn");
     leftBtn->setFocusPolicy(Qt::NoFocus);
     leftBtn->setFixedSize(30, 30);
     leftBtn->setFlat(true);

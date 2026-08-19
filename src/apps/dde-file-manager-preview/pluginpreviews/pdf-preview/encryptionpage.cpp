@@ -36,6 +36,7 @@ void EncryptionPage::InitUI()
     stringinfolabel->setText(tr("Encrypted file, please enter the password"));
 
     passwordEdit = new DPasswordEdit(this);
+    passwordEdit->setObjectName("PasswordEdit");
     passwordEdit->setAccessibleName("PasswordEdit");
     passwordEdit->setFixedSize(360, 36);
     QLineEdit *edit = passwordEdit->lineEdit();
@@ -43,6 +44,7 @@ void EncryptionPage::InitUI()
     edit->setPlaceholderText(tr("Password"));
 
     nextbutton = new DPushButton(this);
+    nextbutton->setAccessibleName("Nextbutton");
     nextbutton->setObjectName("ensureBtn");
     nextbutton->setFixedSize(360, 36);
     nextbutton->setText(tr("OK", "button"));

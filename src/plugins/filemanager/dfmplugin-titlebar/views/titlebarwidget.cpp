@@ -309,6 +309,7 @@ void TitleBarWidget::initializeUi()
     topBarCustomLayout->setSpacing(0);
 
     placeholder = new QWidget(topCustomWidget);
+    placeholder->setAccessibleName("Placeholder");
     placeholder->setFixedHeight(40);
     placeholder->setFixedWidth(0);
     placeholder->setVisible(true);
