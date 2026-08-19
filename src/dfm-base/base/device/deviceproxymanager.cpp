@@ -6,6 +6,7 @@
 #include "devicemanager.h"
 #include "deviceutils.h"
 #include "private/deviceproxymanager_p.h"
+#include <dfm-base/utils/networkutils.h>
 
 #include <QDBusServiceWatcher>
 #include <QCoreApplication>
@@ -515,6 +516,9 @@ void DeviceProxyManagerPrivate::addMounts(const QString &id, const QString &mpt)
 
 void DeviceProxyManagerPrivate::removeMounts(const QString &id, const QString &mpt)
 {
+    // 网络连接缓存可能与挂载点状态相关，挂载点移除时清除缓存
+    NetworkUtils::instance()->clearCache();
+
     // NOTE: signals are emitted outside the write lock to avoid deadlock.
     if (!mpt.isEmpty()) {
         // A specific mount point was unmounted: remove only that one.
