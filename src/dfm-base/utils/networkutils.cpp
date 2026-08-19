@@ -31,11 +31,19 @@ NetworkUtils *NetworkUtils::instance()
     return &s;
 }
 
-bool NetworkUtils::checkNetConnection(const QString &host, const QString &port, int msecs)
+bool NetworkUtils::checkNetConnection(const QString &host, const QString &port, int msecs, const bool useCache)
 {
     if (host.isEmpty())
         return true;
 
+    if (useCache) {
+        // TTL 缓存命中 → 直接返回
+        auto cached = getFromCache(host, port);
+        if (cached.timestamp.isValid())
+            return !cached.busy;
+    }
+
+    qCInfo(logDFMBase) << "NetworkUtils::checkNetConnection net work check host = " << host << ", port = " << port << " !!!";
     QTcpSocket conn;
     conn.connectToHost(host, port.toUShort());
     bool connected = conn.waitForConnected(msecs);
@@ -44,15 +52,19 @@ bool NetworkUtils::checkNetConnection(const QString &host, const QString &port, 
     // 在QTcpSocket使用代理不能访问目标host的情况下，将QTcpSocket设置为不使用代理再次连接host，检查能否访问目标host
     if (!connected) {
         // 检查系统代理设置
+        // 注意：与 v20 不同，v25 仅在确实配置了代理（type != NoProxy）时才重试 NoProxy 连接；
+        // v20 无论是否有代理都会重置为 NoProxy 重连一次。此处保留 v25 既有语义。
         QNetworkProxy proxy = QNetworkProxy::applicationProxy();
-        if (proxy.type() == QNetworkProxy::NoProxy)
-            return connected;
-
-        conn.setProxy(QNetworkProxy::NoProxy);
-        conn.connectToHost(host, port.toUShort());
-        connected = conn.waitForConnected(msecs);
-        conn.close();
+        if (proxy.type() != QNetworkProxy::NoProxy) {
+            conn.setProxy(QNetworkProxy::NoProxy);
+            conn.connectToHost(host, port.toUShort());
+            connected = conn.waitForConnected(msecs);
+            conn.close();
+        }
     }
+
+    // 缓存结果（busy = !connected）
+    updateCache(host, port, !connected);
     return connected;
 }
 
@@ -91,7 +103,7 @@ void NetworkUtils::doAfterCheckNet(const QString &host, const QStringList &ports
 
         for (const auto &port : ports) {
             qApp->processEvents();
-            if (NetworkUtils::instance()->checkNetConnection(host, port, msecs))
+            if (NetworkUtils::instance()->checkNetConnection(host, port, msecs, false))
                 return true;
         }
         return false;
@@ -188,6 +200,23 @@ bool NetworkUtils::checkFtpOrSmbBusy(const QUrl &url)
     QStringList ports;
     if (!parseIp(url.path(), host, ports))
         return false;
+
+    // 先查缓存，所有端口都 hit 且 busy=false 才算可用
+    bool allCached { true };
+    bool anyBusy { false };
+    for (const auto &port : ports) {
+        auto cached = getFromCache(host, port);
+        if (!cached.timestamp.isValid()) {
+            allCached = false;
+            break;
+        }
+        if (cached.busy) {
+            anyBusy = true;
+            break;
+        }
+    }
+    if (allCached)
+        return anyBusy;
 
     auto busy = !checkNetConnection(host, ports);
     if (busy)
@@ -303,6 +332,41 @@ QUrl NetworkUtils::resolveLocalSftpMountUrl(const QUrl &url)
                           " resolved symlink target to local path:"
                        << localPath << "(original:" << url.toLocalFile() << ")";
     return QFile::exists(localPath) ? QUrl::fromLocalFile(localPath) : url;
+}
+
+// ─── TTL 缓存实现 ─────────────────────────────────────────
+
+QString NetworkUtils::makeCacheKey(const QString &host, const QString &port)
+{
+    return host + QLatin1Char(':') + port;
+}
+
+NetworkUtils::NetCacheEntry NetworkUtils::getFromCache(const QString &host, const QString &port) const
+{
+    QMutexLocker locker(&cacheMutex);
+    auto it = netCache.find(makeCacheKey(host, port));
+    if (it == netCache.end())
+        return {};
+
+    // 惰性过期检查
+    if (it.value().timestamp.msecsTo(QDateTime::currentDateTime()) >= kNetCacheTTLMs) {
+        netCache.erase(it);
+        return {};
+    }
+
+    return it.value();
+}
+
+void NetworkUtils::updateCache(const QString &host, const QString &port, bool busy)
+{
+    QMutexLocker locker(&cacheMutex);
+    netCache[makeCacheKey(host, port)] = { busy, QDateTime::currentDateTime() };
+}
+
+void NetworkUtils::clearCache()
+{
+    QMutexLocker locker(&cacheMutex);
+    netCache.clear();
 }
 
 NetworkUtils::NetworkUtils(QObject *parent)
