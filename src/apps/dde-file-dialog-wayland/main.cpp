@@ -13,6 +13,7 @@
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/utils/loggerrules.h>
 #include <dfm-base/utils/signalhandler.h>
+#include <dfm-base/utils/timezonewatcher.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -66,6 +67,9 @@ static void initEnv()
     if (qEnvironmentVariable("CLUTTER_IM_MODULE") == QStringLiteral("fcitx")) {
         setenv("QT_IM_MODULE", "fcitx", 1);
     }
+
+    // 启动时区监视器和时区环境变量设置
+    dfmbase::TimezoneWatcher::instance().init();
 }
 
 static bool singlePluginLoad(const QString &pluginName, const QString &libName)
