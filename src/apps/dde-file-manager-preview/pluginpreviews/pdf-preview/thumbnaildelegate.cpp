@@ -19,6 +19,7 @@ ThumbnailDelegate::ThumbnailDelegate(QAbstractItemView *parent)
     : DStyledItemDelegate(parent)
 {
     itemViewParent = parent;
+    itemViewParent->setObjectName("ItemViewParent");
     itemViewParent->setAccessibleName("ItemViewParent");
 }
 

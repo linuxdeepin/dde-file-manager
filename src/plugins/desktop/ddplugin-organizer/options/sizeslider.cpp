@@ -44,6 +44,8 @@ void SizeSlider::init()
     box->addWidget(label);
 
     slider = new DSlider(Qt::Horizontal, this);
+    slider->setObjectName("Slider");
+    slider->setAccessibleName("Slider");
     box->addWidget(slider);
 
     QIcon empty = QIcon::fromTheme("empty");

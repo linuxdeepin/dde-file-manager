@@ -109,6 +109,7 @@ void TagColorListWidget::initUiElement()
     mainLayout->addLayout(buttonLayout);
 
     toolTip = new DLabel(this);
+    toolTip->setAccessibleName("ToolTip");
     toolTip->setText(QStringLiteral(" "));
     toolTip->setStyleSheet("color: #707070; font-size: 10px");
     toolTip->setObjectName("tool_tip");

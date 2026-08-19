@@ -234,6 +234,7 @@ void FileDialogStatusBar::initializeUi()
     line->setFrameShape(QFrame::HLine);
 
     titleLabel = new DLabel(this);
+    titleLabel->setAccessibleName("TitleLabel");
 #ifdef ENABLE_TESTING
     dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
                          qobject_cast<QWidget *>(titleLabel), AcName::kAcFDStatusBarTitleLabel);
@@ -241,7 +242,9 @@ void FileDialogStatusBar::initializeUi()
     QString labelName = tr("File Name");
     QString labelFilters = tr("Format");
     fileNameLabel = new DLabel(labelName, this);
+    fileNameLabel->setAccessibleName("FileNameLabel");
     filtersLabel = new DLabel(labelFilters, this);
+    filtersLabel->setAccessibleName("FiltersLabel");
 
     fileNameLabel->setObjectName(labelName);
     filtersLabel->setObjectName(labelFilters);
@@ -273,7 +276,9 @@ void FileDialogStatusBar::initializeUi()
     itemView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 
     curAcceptButton = new DSuggestButton(this);
+    curAcceptButton->setAccessibleName("CurAcceptButton");
     curRejectButton = new DPushButton(tr("Cancel", "button"), this);
+    curRejectButton->setAccessibleName("CurRejectButton");
 
     curRejectButton->setObjectName(tr("Cancel", "button"));
 

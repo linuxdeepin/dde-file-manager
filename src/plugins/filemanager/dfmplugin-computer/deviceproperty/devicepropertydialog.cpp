@@ -74,6 +74,7 @@ void DevicePropertyDialog::iniUI()
     addContent(frame);
 
     scrollArea = new QScrollArea();
+    scrollArea->setAccessibleName("ScrollArea");
     scrollArea->setObjectName("PropertyDialog-QScrollArea");
     QPalette palette = scrollArea->viewport()->palette();
     palette.setBrush(QPalette::Window, Qt::NoBrush);

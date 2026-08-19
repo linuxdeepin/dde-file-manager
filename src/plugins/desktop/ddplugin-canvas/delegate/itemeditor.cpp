@@ -144,6 +144,7 @@ void ItemEditor::showAlertMessage(const QString &text, int duration)
 DArrowRectangle *ItemEditor::createTooltip()
 {
     auto tooltip = new DArrowRectangle(DArrowRectangle::ArrowTop);
+    tooltip->setAccessibleName("Tooltip");
     tooltip->setObjectName("AlertTooltip");
 
     QLabel *label = new QLabel(tooltip);

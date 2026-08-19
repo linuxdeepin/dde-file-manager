@@ -5,7 +5,7 @@ version: '1.0'
 widgets:
 - variable: closeBtn
   type: Dtk::Widget::DFloatingButton *
-  object_name: ''
+  object_name: CloseBtn
   accessible_name: CloseBtn
   source_file: src/apps/dde-file-manager-preview/libdfm-preview/views/filepreviewdialog.cpp
   class_name: ''
@@ -13,7 +13,7 @@ widgets:
 - variable: statusBar
   type: FilePreviewDialogStatusBar *
   object_name: StatusBar
-  accessible_name: ''
+  accessible_name: StatusBar
   source_file: src/apps/dde-file-manager-preview/libdfm-preview/views/filepreviewdialog.cpp
   class_name: ''
   line: 68
@@ -40,56 +40,56 @@ widgets:
   line: 41
 - variable: availableSizeCombo
   type: QComboBox *
-  object_name: ''
+  object_name: AvailableSizeCombo
   accessible_name: AvailableSizeCombo
   source_file: src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp
   class_name: AbstractBasePreview
   line: 216
 - variable: foregroundPaletteEdit
   type: QLineEdit *
-  object_name: ''
+  object_name: ForegroundPaletteEdit
   accessible_name: ForegroundPaletteEdit
   source_file: src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp
   class_name: AbstractBasePreview
   line: 219
 - variable: backgroundPaletteEdit
   type: QLineEdit *
-  object_name: ''
+  object_name: BackgroundPaletteEdit
   accessible_name: BackgroundPaletteEdit
   source_file: src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp
   class_name: AbstractBasePreview
   line: 220
 - variable: hightlightPaletteEdit
   type: QLineEdit *
-  object_name: ''
+  object_name: HightlightPaletteEdit
   accessible_name: HightlightPaletteEdit
   source_file: src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp
   class_name: AbstractBasePreview
   line: 221
 - variable: hFPaletteEdit
   type: QLineEdit *
-  object_name: ''
+  object_name: HFpaletteEdit
   accessible_name: HFpaletteEdit
   source_file: src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp
   class_name: AbstractBasePreview
   line: 222
 - variable: themeCom
   type: QComboBox *
-  object_name: ''
+  object_name: ThemeCom
   accessible_name: ThemeCom
   source_file: src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp
   class_name: AbstractBasePreview
   line: 224
 - variable: modeCom
   type: QComboBox *
-  object_name: ''
+  object_name: ModeCom
   accessible_name: ModeCom
   source_file: src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp
   class_name: AbstractBasePreview
   line: 225
 - variable: customSizeEdit
   type: QLineEdit *
-  object_name: ''
+  object_name: CustomSizeEdit
   accessible_name: CustomSizeEdit
   source_file: src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp
   class_name: AbstractBasePreview
@@ -97,48 +97,48 @@ widgets:
 - variable: titleLabel
   type: QLabel *
   object_name: Title
-  accessible_name: ''
+  accessible_name: TitleLabel
   source_file: src/apps/dde-file-manager-preview/pluginpreviews/music-preview/musicmessageview.cpp
   class_name: QLabel
   line: 70
 - variable: artistLabel
   type: QLabel *
   object_name: Artist
-  accessible_name: ''
+  accessible_name: ArtistLabel
   source_file: src/apps/dde-file-manager-preview/pluginpreviews/music-preview/musicmessageview.cpp
   class_name: QLabel
   line: 71
 - variable: albumLabel
   type: QLabel *
   object_name: Album
-  accessible_name: ''
+  accessible_name: AlbumLabel
   source_file: src/apps/dde-file-manager-preview/pluginpreviews/music-preview/musicmessageview.cpp
   class_name: QLabel
   line: 72
 - variable: artistValue
   type: QLabel *
   object_name: artistValue
-  accessible_name: ''
+  accessible_name: ArtistValue
   source_file: src/apps/dde-file-manager-preview/pluginpreviews/music-preview/musicmessageview.cpp
   class_name: QLabel
   line: 74
 - variable: albumValue
   type: QLabel *
   object_name: albumValue
-  accessible_name: ''
+  accessible_name: AlbumValue
   source_file: src/apps/dde-file-manager-preview/pluginpreviews/music-preview/musicmessageview.cpp
   class_name: QLabel
   line: 75
 - variable: playControlButton
   type: QPushButton *
-  object_name: ''
+  object_name: PlayControlButton
   accessible_name: PlayControlButton
   source_file: src/apps/dde-file-manager-preview/pluginpreviews/music-preview/toolbarframe.cpp
   class_name: QTimer
   line: 61
 - variable: progressSlider
   type: Dtk::Widget::DSlider *
-  object_name: ''
+  object_name: ProgressSlider
   accessible_name: ProgressSlider
   source_file: src/apps/dde-file-manager-preview/pluginpreviews/music-preview/toolbarframe.cpp
   class_name: QTimer
@@ -146,34 +146,34 @@ widgets:
 - variable: nextbutton
   type: Dtk::Widget::DPushButton *
   object_name: ensureBtn
-  accessible_name: ''
+  accessible_name: Nextbutton
   source_file: src/apps/dde-file-manager-preview/pluginpreviews/pdf-preview/encryptionpage.cpp
   class_name: ''
   line: 76
 - variable: passwordEdit
   type: Dtk::Widget::DPasswordEdit *
-  object_name: ''
+  object_name: PasswordEdit
   accessible_name: PasswordEdit
   source_file: src/apps/dde-file-manager-preview/pluginpreviews/pdf-preview/encryptionpage.cpp
   class_name: ''
   line: 78
 - variable: pImageListView
   type: SideBarImageListView *
-  object_name: ''
+  object_name: PImageListView
   accessible_name: View_ImageList
   source_file: src/apps/dde-file-manager-preview/pluginpreviews/pdf-preview/thumbnailwidget.cpp
   class_name: ''
   line: 61
 - variable: slider
   type: Dtk::Widget::DSlider *
-  object_name: ''
-  accessible_name: ''
+  object_name: Slider_2
+  accessible_name: Slider_2
   source_file: src/apps/dde-file-manager-preview/pluginpreviews/video-preview/videostatusbar.cpp
   class_name: QEvent
   line: 35
 - variable: controlButton
   type: Dtk::Widget::DIconButton *
-  object_name: ''
+  object_name: ControlButton
   accessible_name: ControlButton
   source_file: src/apps/dde-file-manager-preview/pluginpreviews/video-preview/videostatusbar.cpp
   class_name: QEvent
@@ -209,7 +209,7 @@ widgets:
 - variable: passwordButtonGroup
   type: QButtonGroup *
   object_name: PasswordButtonGroup
-  accessible_name: ''
+  accessible_name: PasswordButtonGroup
   source_file: src/dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.cpp
   class_name: ''
   line: 60
@@ -229,8 +229,8 @@ widgets:
   line: 24
 - variable: passwordEdit
   type: Dtk::Widget::DPasswordEdit *
-  object_name: ''
-  accessible_name: ''
+  object_name: PasswordEdit_2
+  accessible_name: PasswordEdit_2
   source_file: src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp
   class_name: ''
   line: 33
@@ -244,14 +244,14 @@ widgets:
 - variable: btnStop
   type: Dtk::Widget::DIconButton *
   object_name: TaskWidgetStopButton
-  accessible_name: ''
+  accessible_name: BtnStop
   source_file: src/dfm-base/dialogs/taskdialog/taskwidget.cpp
   class_name: QVBoxLayout
   line: 83
 - variable: btnPause
   type: Dtk::Widget::DIconButton *
   object_name: TaskWidgetPauseButton
-  accessible_name: ''
+  accessible_name: BtnPause
   source_file: src/dfm-base/dialogs/taskdialog/taskwidget.cpp
   class_name: QVBoxLayout
   line: 84
@@ -300,7 +300,7 @@ widgets:
 - variable: tipsLabel
   type: TipsWidget *
   object_name: diskmount
-  accessible_name: ''
+  accessible_name: TipsLabel
   source_file: src/external/dde-dock-plugins/disk-mount/diskmountplugin.cpp
   class_name: DiskMountPlugin
   line: 79
@@ -474,29 +474,29 @@ widgets:
   line: 65
 - variable: tagLable
   type: DLabel *
-  object_name: ''
-  accessible_name: ''
+  object_name: TagLable
+  accessible_name: TagLable
   source_file: src/plugins/common/dfmplugin-tag/widgets/private/tagwidget_p.cpp
   class_name: QHBoxLayout
   line: 42
 - variable: tagLeftLable
   type: DLabel *
-  object_name: ''
-  accessible_name: ''
+  object_name: TagLeftLable
+  accessible_name: TagLeftLable
   source_file: src/plugins/common/dfmplugin-tag/widgets/private/tagwidget_p.cpp
   class_name: QHBoxLayout
   line: 43
 - variable: toolTip
   type: DLabel *
   object_name: tool_tip
-  accessible_name: ''
+  accessible_name: ToolTip
   source_file: src/plugins/common/dfmplugin-tag/widgets/tagcolorlistwidget.cpp
   class_name: QHBoxLayout
   line: 59
 - variable: edit
   type: QTextEdit *
-  object_name: ''
-  accessible_name: ''
+  object_name: Edit_2
+  accessible_name: Edit_2
   source_file: src/plugins/common/dfmplugin-tag/widgets/tagcrumbedit.cpp
   class_name: ''
   line: 29
@@ -510,49 +510,49 @@ widgets:
 - variable: openWithListWidget
   type: QListWidget *
   object_name: OpenWithListWidget
-  accessible_name: ''
+  accessible_name: OpenWithListWidget
   source_file: src/plugins/common/dfmplugin-utils/openwith/openwithwidget.cpp
   class_name: ''
   line: 34
 - variable: openWithBtnGroup
   type: QButtonGroup *
   object_name: OpenWithBtnGroup
-  accessible_name: ''
+  accessible_name: OpenWithBtnGroup
   source_file: src/plugins/common/dfmplugin-utils/openwith/openwithwidget.cpp
   class_name: ''
   line: 35
 - variable: tooltip
   type: Dtk::Widget::DArrowRectangle *
-  object_name: AlertTooltip
-  accessible_name: ''
+  object_name: Tooltip
+  accessible_name: Tooltip
   source_file: src/plugins/desktop/ddplugin-canvas/delegate/itemeditor.cpp
   class_name: QGraphicsOpacityEffect
   line: 103
 - variable: menuPtr
   type: Dtk::Widget::DMenu *
-  object_name: ''
-  accessible_name: ''
+  object_name: MenuPtr
+  accessible_name: MenuPtr
   source_file: src/plugins/desktop/ddplugin-canvas/view/operator/canvasviewmenuproxy.cpp
   class_name: ''
   line: 30
 - variable: textLabel
   type: QLabel *
-  object_name: ''
-  accessible_name: ''
+  object_name: TextLabel
+  accessible_name: TextLabel
   source_file: src/plugins/desktop/ddplugin-canvas/watermask/watermaskframe.cpp
   class_name: QJsonObject
   line: 65
 - variable: textLabel
   type: QLabel *
-  object_name: ''
-  accessible_name: ''
+  object_name: TextLabel
+  accessible_name: TextLabel
   source_file: src/plugins/desktop/ddplugin-canvas/watermask/watermasksystem.cpp
   class_name: QLabel
   line: 44
 - variable: tooltip
   type: Dtk::Widget::DArrowRectangle *
-  object_name: AlertTooltip
-  accessible_name: ''
+  object_name: Tooltip_2
+  accessible_name: Tooltip_2
   source_file: src/plugins/desktop/ddplugin-organizer/delegate/itemeditor.cpp
   class_name: QGraphicsOpacityEffect
   line: 104
@@ -565,8 +565,8 @@ widgets:
   line: 29
 - variable: slider
   type: Dtk::Widget::DSlider *
-  object_name: ''
-  accessible_name: ''
+  object_name: Slider
+  accessible_name: Slider
   source_file: src/plugins/desktop/ddplugin-organizer/options/sizeslider.cpp
   class_name: QLabel
   line: 33
@@ -600,22 +600,22 @@ widgets:
   line: 29
 - variable: titleLabel
   type: Dtk::Widget::DLabel *
-  object_name: ''
-  accessible_name: ''
+  object_name: TitleLabel
+  accessible_name: TitleLabel
   source_file: src/plugins/filedialog/core/views/filedialogstatusbar.cpp
   class_name: QHBoxLayout
   line: 82
 - variable: fileNameLabel
   type: Dtk::Widget::DLabel *
-  object_name: ''
-  accessible_name: ''
+  object_name: FileNameLabel
+  accessible_name: FileNameLabel
   source_file: src/plugins/filedialog/core/views/filedialogstatusbar.cpp
   class_name: QHBoxLayout
   line: 83
 - variable: filtersLabel
   type: Dtk::Widget::DLabel *
-  object_name: ''
-  accessible_name: ''
+  object_name: FiltersLabel
+  accessible_name: FiltersLabel
   source_file: src/plugins/filedialog/core/views/filedialogstatusbar.cpp
   class_name: QHBoxLayout
   line: 84
@@ -636,14 +636,14 @@ widgets:
 - variable: curAcceptButton
   type: Dtk::Widget::DSuggestButton *
   object_name: FileDialogStatusBarAcceptButton
-  accessible_name: ''
+  accessible_name: CurAcceptButton
   source_file: src/plugins/filedialog/core/views/filedialogstatusbar.cpp
   class_name: QHBoxLayout
   line: 89
 - variable: curRejectButton
   type: Dtk::Widget::DPushButton *
-  object_name: ''
-  accessible_name: ''
+  object_name: CurRejectButton
+  accessible_name: CurRejectButton
   source_file: src/plugins/filedialog/core/views/filedialogstatusbar.cpp
   class_name: QHBoxLayout
   line: 90
@@ -657,7 +657,7 @@ widgets:
 - variable: scrollArea
   type: QScrollArea *
   object_name: PropertyDialog-QScrollArea
-  accessible_name: ''
+  accessible_name: ScrollArea
   source_file: src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicepropertydialog.cpp
   class_name: ''
   line: 78
@@ -691,8 +691,8 @@ widgets:
   line: 41
 - variable: editor
   type: Dtk::Widget::DPasswordEdit *
-  object_name: ''
-  accessible_name: ''
+  object_name: Editor_2
+  accessible_name: Editor_2
   source_file: src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp
   class_name: ''
   line: 37
@@ -803,22 +803,22 @@ widgets:
   line: 58
 - variable: closeBtn
   type: Dtk::Widget::DPushButton *
-  object_name: ''
-  accessible_name: ''
+  object_name: CloseBtn
+  accessible_name: CloseBtn
   source_file: src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcresultwidget.cpp
   class_name: ''
   line: 36
 - variable: addBtn
   type: DIconButton *
-  object_name: ''
+  object_name: AddBtn
   accessible_name: AddBtn
   source_file: src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp
   class_name: Tab
   line: 111
 - variable: leftBtn
   type: DIconButton *
-  object_name: ''
-  accessible_name: ''
+  object_name: LeftBtn
+  accessible_name: LeftBtn
   source_file: src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp
   class_name: Tab
   line: 112
@@ -832,7 +832,7 @@ widgets:
 - variable: placeholder
   type: QWidget *
   object_name: Placeholder
-  accessible_name: ''
+  accessible_name: Placeholder
   source_file: src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp
   class_name: DIconButton
   line: 103
@@ -845,8 +845,8 @@ widgets:
   line: 67
 - variable: nextBtn
   type: Dtk::Widget::DSuggestButton *
-  object_name: ''
-  accessible_name: ''
+  object_name: NextBtn
+  accessible_name: NextBtn
   source_file: src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp
   class_name: ''
   line: 73
@@ -859,8 +859,8 @@ widgets:
   line: 71
 - variable: passwordEdit
   type: Dtk::Widget::DPasswordEdit *
-  object_name: ''
-  accessible_name: ''
+  object_name: PasswordEdit
+  accessible_name: PasswordEdit
   source_file: src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp
   class_name: QVBoxLayout
   line: 74
@@ -887,8 +887,8 @@ widgets:
   line: 85
 - variable: pwdEdit
   type: Dtk::Widget::DPasswordEdit *
-  object_name: ''
-  accessible_name: ''
+  object_name: PwdEdit
+  accessible_name: PwdEdit
   source_file: src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp
   class_name: QPushButton
   line: 56
@@ -902,7 +902,7 @@ widgets:
 - variable: tooltip
   type: Dtk::Widget::DToolTip *
   object_name: AlertTooltip
-  accessible_name: ''
+  accessible_name: Tooltip
   source_file: src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp
   class_name: QPushButton
   line: 58
@@ -923,7 +923,7 @@ widgets:
 - variable: tooltip
   type: Dtk::Widget::DToolTip *
   object_name: AlertTooltip
-  accessible_name: ''
+  accessible_name: Tooltip
   source_file: src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp
   class_name: QPlainTextEdit
   line: 65
@@ -986,7 +986,7 @@ widgets:
 - variable: tooltip
   type: Dtk::Widget::DToolTip *
   object_name: AlertTooltip
-  accessible_name: ''
+  accessible_name: Tooltip
   source_file: src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp
   class_name: QPlainTextEdit
   line: 58
@@ -999,8 +999,8 @@ widgets:
   line: 93
 - variable: passwordEdit
   type: Dtk::Widget::DPasswordEdit *
-  object_name: ''
-  accessible_name: ''
+  object_name: PasswordEdit
+  accessible_name: PasswordEdit
   source_file: src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp
   class_name: ''
   line: 80
@@ -1014,28 +1014,28 @@ widgets:
 - variable: tooltip
   type: Dtk::Widget::DToolTip *
   object_name: AlertTooltip
-  accessible_name: ''
+  accessible_name: Tooltip
   source_file: src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp
   class_name: ''
   line: 84
 - variable: menuPtr
   type: Dtk::Widget::DMenu *
-  object_name: ''
-  accessible_name: ''
+  object_name: MenuPtr
+  accessible_name: MenuPtr
   source_file: src/plugins/filemanager/dfmplugin-workspace/utils/fileviewmenuhelper.cpp
   class_name: ''
   line: 35
 - variable: editor
   type: QLineEdit *
-  object_name: ''
-  accessible_name: ''
+  object_name: Editor
+  accessible_name: Editor
   source_file: src/plugins/filemanager/dfmplugin-workspace/views/private/baseitemdelegate_p.cpp
   class_name: QLineEdit
   line: 39
 - variable: edit
   type: QTextEdit *
-  object_name: ''
-  accessible_name: ''
+  object_name: Edit
+  accessible_name: Edit
   source_file: src/plugins/filemanager/dfmplugin-workspace/views/private/iconitemeditor_p.cpp
   class_name: QGraphicsOpacityEffect
   line: 30
@@ -1055,7 +1055,7 @@ widgets:
   line: 87
 - variable: itemViewParent
   type: QAbstractItemView *
-  object_name: ''
+  object_name: ItemViewParent
   accessible_name: ItemViewParent
   source_file: src/apps/dde-file-manager-preview/pluginpreviews/pdf-preview/thumbnaildelegate.cpp
   class_name: ThumbnailDelegate

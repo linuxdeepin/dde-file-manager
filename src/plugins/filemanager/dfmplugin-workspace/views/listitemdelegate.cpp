@@ -158,6 +158,8 @@ QWidget *ListItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
     const quint64 sessionId = d->editingSessionId;
     d->editingIndex = index;
     d->editor = new ListItemEditor(parent);
+    d->editor->setObjectName("Editor");
+    d->editor->setAccessibleName("Editor");
     // Use the baseline item height (without the first-row top padding) for the
     // editor so inline rename / Ctrl+M+M editing boxes are not 10px taller on row 0.
     int editorHeight = qMax(option.fontMetrics.height(), d->itemSizeHint.height());

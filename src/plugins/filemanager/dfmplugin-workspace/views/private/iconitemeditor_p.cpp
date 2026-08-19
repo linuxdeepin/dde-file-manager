@@ -28,6 +28,8 @@ void IconItemEditorPrivate::init()
 
     icon = new QLabel(q);
     edit = new CanSetDragTextEdit(q);
+    edit->setObjectName("Edit");
+    edit->setAccessibleName("Edit");
 
     icon->setAlignment(Qt::AlignCenter);
     icon->setFrameShape(QFrame::NoFrame);

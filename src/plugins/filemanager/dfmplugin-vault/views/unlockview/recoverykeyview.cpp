@@ -74,6 +74,7 @@ void RecoveryKeyView::showAlertMessage(const QString &text, int duration)
 {
     if (!tooltip) {
         tooltip = new DToolTip(text);
+        tooltip->setAccessibleName("Tooltip");
         tooltip->setObjectName("AlertTooltip");
         tooltip->setForegroundRole(DPalette::TextWarning);
         tooltip->setWordWrap(true);

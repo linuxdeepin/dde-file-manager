@@ -37,6 +37,8 @@ VaultRemoveByPasswordView::VaultRemoveByPasswordView(QWidget *parent)
     hintInfo->setWordWrap(true);
 
     pwdEdit = new DPasswordEdit(this);
+    pwdEdit->setObjectName("PwdEdit");
+    pwdEdit->setAccessibleName("PwdEdit");
     pwdEdit->lineEdit()->setPlaceholderText(tr("Password"));
     pwdEdit->lineEdit()->setAttribute(Qt::WA_InputMethodEnabled, false);
 
@@ -166,6 +168,7 @@ void VaultRemoveByPasswordView::showToolTip(const QString &text, int duration, V
 {
     if (!tooltip) {
         tooltip = new DToolTip(text);
+        tooltip->setAccessibleName("Tooltip");
         tooltip->setObjectName("AlertTooltip");
         tooltip->setWordWrap(true);
 

@@ -94,6 +94,7 @@ void VaultRemoveByRecoverykeyView::showAlertMessage(const QString &text, int dur
 
     if (!tooltip) {
         tooltip = new DToolTip(text);
+        tooltip->setAccessibleName("Tooltip");
         tooltip->setObjectName("AlertTooltip");
         tooltip->setForegroundRole(DPalette::TextWarning);
         tooltip->setWordWrap(true);

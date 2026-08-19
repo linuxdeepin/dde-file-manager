@@ -58,6 +58,8 @@ void VaultActiveSetUnlockMethodView::initUi()
 
     passwordLabel = new DLabel(tr("Password"), this);
     passwordEdit = new DPasswordEdit(this);
+    passwordEdit->setObjectName("PasswordEdit");
+    passwordEdit->setAccessibleName("PasswordEdit");
     passwordEdit->lineEdit()->setValidator(validator);
     passwordEdit->lineEdit()->setPlaceholderText(tr("≥ 8 chars, contains A-Z, a-z, 0-9, and symbols"));
     passwordEdit->lineEdit()->setAttribute(Qt::WA_InputMethodEnabled, false);

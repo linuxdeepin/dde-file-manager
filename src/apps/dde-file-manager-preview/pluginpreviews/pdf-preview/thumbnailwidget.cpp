@@ -29,6 +29,7 @@ ThumbnailWidget::~ThumbnailWidget()
 void ThumbnailWidget::initWidget()
 {
     pImageListView = new SideBarImageListView(docSheet, this);
+    pImageListView->setObjectName("PImageListView");
     pImageListView->setAccessibleName("View_ImageList");
     ThumbnailDelegate *imageDelegate = new ThumbnailDelegate(pImageListView);
     pImageListView->setItemDelegate(imageDelegate);

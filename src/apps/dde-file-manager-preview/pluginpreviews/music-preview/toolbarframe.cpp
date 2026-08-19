@@ -60,6 +60,7 @@ ToolBarFrame::ToolBarFrame(const QString &uri, QWidget *parent)
 void ToolBarFrame::initUI()
 {
     playControlButton = new QPushButton(this);
+    playControlButton->setObjectName("PlayControlButton");
     playControlButton->setAccessibleName("PlayControlButton");
     playControlButton->setFixedSize(36, 36);
     playControlButton->setIconSize({ kControlButtonIconSize, kControlButtonIconSize });
@@ -67,6 +68,7 @@ void ToolBarFrame::initUI()
     updatePlayButtonIcon();
 
     progressSlider = new DSlider(Qt::Horizontal, this);
+    progressSlider->setObjectName("ProgressSlider");
     progressSlider->setAccessibleName("ProgressSlider");
     progressSlider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 

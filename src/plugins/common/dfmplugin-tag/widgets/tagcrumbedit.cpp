@@ -18,6 +18,8 @@ TagCrumbEdit::TagCrumbEdit(QWidget *parent)
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     edit = qobject_cast<QTextEdit *>(this);
+    edit->setObjectName("Edit_2");
+    edit->setAccessibleName("Edit_2");
     if (edit) {
         auto layout = edit->document()->documentLayout();
         connect(layout, &QAbstractTextDocumentLayout::documentSizeChanged, this, &TagCrumbEdit::updateHeight);

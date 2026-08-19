@@ -40,6 +40,7 @@ void OpenWithWidget::initUI()
     setExpand(false);
 
     openWithListWidget = new QListWidget(this);
+    openWithListWidget->setAccessibleName("OpenWithListWidget");
     openWithListWidget->setSpacing(8);
     openWithListWidget->setObjectName("OpenWithListWidget");
     openWithListWidget->setFrameShape(QFrame::HLine);
