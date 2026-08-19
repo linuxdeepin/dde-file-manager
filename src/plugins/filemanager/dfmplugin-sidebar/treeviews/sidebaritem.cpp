@@ -69,6 +69,7 @@ void SideBarItem::setUrl(const QUrl &url)
 void SideBarItem::setIcon(const QIcon &icon)
 {
     const auto &iconName = icon.name();
+    setData(iconName, Roles::kItemIconNameRole);
     DDciIcon dciIcon = DDciIcon::fromTheme(iconName);
     if (!dciIcon.isNull())
         setDciIcon(dciIcon);
