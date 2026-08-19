@@ -14,6 +14,7 @@
 #include <dfm-base/utils/loggerrules.h>
 #include <dfm-base/utils/windowutils.h>
 #include <dfm-base/utils/signalhandler.h>
+#include <dfm-base/utils/timezonewatcher.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <dfm-framework/dpf.h>
@@ -255,6 +256,9 @@ static void initEnv()
         }
         setEnvForRoot();
     }
+
+    // 启动时区监视器和时区环境变量设置
+    dfmbase::TimezoneWatcher::instance().init();
 }
 
 static void initLogFilter()
