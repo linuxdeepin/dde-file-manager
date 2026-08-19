@@ -561,6 +561,8 @@ QWidget *TaskWidget::createBtnWidget()
     btnReplace->setProperty(kBtnPropertyActionName, variantReplace);
 
     btnDelete = new DWarningButton();
+    btnDelete->setObjectName("BtnDelete");
+    btnDelete->setAccessibleName("BtnDelete");
     btnDelete->setText(TaskWidget::tr("Permanently delete", "button"));
     QVariant varianDelete;
     varianDelete.setValue<AbstractJobHandler::SupportAction>(AbstractJobHandler::SupportAction::kPermanentlyDelete);

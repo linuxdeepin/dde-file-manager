@@ -1200,5 +1200,47 @@ widgets:
   source_file: src/plugins/filemanager/dfmplugin-workspace/views/fileviewstatusbar.cpp
   class_name: ''
   line: 117
+- variable: btnDelete
+  type: Dtk::Widget::DWarningButton *
+  object_name: BtnDelete
+  accessible_name: BtnDelete
+  source_file: src/dfm-base/dialogs/taskdialog/taskwidget.cpp
+  class_name: TaskWidget
+  line: 563
+- variable: hideFile
+  type: SkipPartiallyCheckBox *
+  object_name: HideFile_2
+  accessible_name: HideFile_2
+  source_file: src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp
+  class_name: MultiFileBasicInfoWidget
+  line: 78
+- variable: crumbEdit
+  type: Dtk::Widget::DCrumbEdit *
+  object_name: CrumbEdit
+  accessible_name: CrumbEdit
+  source_file: src/plugins/common/dfmplugin-tag/widgets/tageditor.cpp
+  class_name: TagEditor
+  line: 100
+- variable: edit
+  type: RenameEdit *
+  object_name: RenameEdit
+  accessible_name: RenameEdit
+  source_file: src/plugins/desktop/ddplugin-canvas/delegate/itemeditor.cpp
+  class_name: ItemEditor
+  line: 209
+- variable: edit
+  type: RenameEdit *
+  object_name: RenameEdit_2
+  accessible_name: RenameEdit_2
+  source_file: src/plugins/desktop/ddplugin-organizer/delegate/itemeditor.cpp
+  class_name: ItemEditor
+  line: 204
+- variable: recoveryKeyEdit
+  type: QPlainTextEdit *
+  object_name: RecoveryKeyEdit
+  accessible_name: RecoveryKeyEdit
+  source_file: src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp
+  class_name: RecoveryKeyView
+  line: 34
 qml_elements: []
 transient_elements: []

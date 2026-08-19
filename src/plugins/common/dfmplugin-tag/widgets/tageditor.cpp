@@ -98,6 +98,8 @@ void TagEditor::mouseMoveEvent(QMouseEvent *event)
 void TagEditor::initializeWidgets()
 {
     crumbEdit = new DCrumbEdit;
+    crumbEdit->setObjectName("CrumbEdit");
+    crumbEdit->setAccessibleName("CrumbEdit");
     promptLabel = new QLabel(tr("Input tag info, such as work, family. A comma is used between two tags."));
     totalLayout = new QVBoxLayout;
     totalLayout->setSizeConstraint(QLayout::SetFixedSize);

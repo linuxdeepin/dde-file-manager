@@ -76,6 +76,8 @@ void MultiFileBasicInfoWidget::initUI()
     modifyTime->setRightValue("-", Qt::ElideNone, Qt::AlignVCenter, true);
 
     hideFile = new SkipPartiallyCheckBox(frameMain);
+    hideFile->setObjectName("HideFile_2");
+    hideFile->setAccessibleName("HideFile_2");
     DFontSizeManager::instance()->bind(hideFile, DFontSizeManager::SizeType::T7, QFont::Normal);
     hideFile->setText(tr("Hide this file"));
     hideFile->setToolTip(hideFile->text());
