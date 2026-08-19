@@ -639,7 +639,8 @@ void SideBarModel::addSubItem(const QModelIndex &index, const QUrl &url)
 
     ItemInfo itemInfo = ItemInfo(url, { { PropertyKey::kItemExpandable, true },
                                         { PropertyKey::kFinalUrl, url },
-                                        { PropertyKey::kGroup, DefaultGroup::kDevice } });
+                                        { PropertyKey::kGroup, DefaultGroup::kDevice },
+                                        { PropertyKey::kDisplayName, fileName } });
     SideBarInfoCacheMananger::instance()->addItemInfoCache(itemInfo);
 
     // Sub-items are not editable and not draggable.

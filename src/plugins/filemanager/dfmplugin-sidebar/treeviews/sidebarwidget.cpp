@@ -508,7 +508,10 @@ void SideBarWidget::initSettingPannel()
         for (auto item : items) {
             const QString &key { item->itemInfo().visiableControlKey };
             const QString &name { item->itemInfo().visiableDisplayName };
-            Q_ASSERT(!key.isEmpty() && !name.isEmpty());
+            if (key.isEmpty() || name.isEmpty()) {
+                fmWarning() << "skip item with empty key or name, group:" << group << "url:" << item->url();
+                continue;
+            }
             if (itemKeysMap[group].contains(key) || key == "hidden_me") {
                 fmDebug() << "reject key:" << key << group;
                 continue;
