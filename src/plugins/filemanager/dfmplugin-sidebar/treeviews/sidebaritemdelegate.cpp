@@ -233,7 +233,7 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
         iconMode = QIcon::Disabled;
     if (!suppressDraggedSelection && !isDraggingItemNotHighlighted && (selected || keepDrawingHighlighted))
         iconMode = QIcon::Selected;
-    bool isExpandable = sidebarItem && sidebarItem->itemInfo().isExpandable;
+    bool isExpandable = sidebarItem && sidebarItem->isExpandable();
     if (isExpandable)
         drawExpandIndicator(painter, itemRect, true, index, keepDrawingHighlighted);
     if (opt.features & QStyleOptionViewItem::HasDecoration)
