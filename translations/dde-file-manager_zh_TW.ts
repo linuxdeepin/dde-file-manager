@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_TW">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="zh_TW">
 <context>
     <name>AccessControlDBus</name>
     <message>
@@ -32,7 +30,7 @@
     <message>
         <location filename="../src/services/diskencrypt/workers/dminitencryptworker.cpp" line="51"/>
         <source>Initialize encryption </source>
-        <translation>初始化加密</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -67,7 +65,7 @@
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="881"/>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="991"/>
         <source>Can&apos;t access file!</source>
-        <translation>無法存取檔案！</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -106,49 +104,48 @@
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="508"/>
         <source>Detect Device Abnormality, Repair Recommended</source>
-        <translation>檢測到設備異常，建議修復</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="509"/>
         <source>Your %1 has data errors, possibly caused by unsafe removal!</source>
-        <translation>您的 %1 發現數據錯誤，可能是由不安全移除造成的！</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="512"/>
         <source>Repair Immediately</source>
-        <translation>立即修復</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="513"/>
         <source>Ignore for Now</source>
-        <translation>暫時忽略</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="517"/>
         <source>Hardware Failure Warning</source>
-        <translation>硬體故障警告</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="518"/>
         <source>%1 is in hardware write-protected mode.
 Flash memory may be failing. Please back up data immediately.</source>
-        <translation>%1 處於硬體寫保護模式。
-閃存可能正在失效。請立即備份數據。</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="524"/>
         <source>Device Damaged, Cannot Auto Repair</source>
-        <translation>設備已損壞，無法自動修復</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="525"/>
         <source>The data structure of %1 is severely damaged and cannot be recognized or repaired by the system. If there are important files inside, please stop using it. It is recommended to use professional data recovery software or seek professional assistance.</source>
-        <translation>%1 的數據結構已嚴重損壞，系統無法識別或修復。如果有重要文件，請停止使用。建議使用專業數據恢復軟件或尋求專業幫助。</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="735"/>
         <source>Repair operation failed</source>
-        <translation>修復操作失敗</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -164,7 +161,7 @@ Flash memory may be failing. Please back up data immediately.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="735"/>
         <source>Cannot copy source directory: permission denied</source>
-        <translation>無法複製來源目錄：權限被拒絕</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="756"/>
@@ -177,7 +174,7 @@ Flash memory may be failing. Please back up data immediately.</source>
     <message>
         <location filename="../src/services/diskencrypt/workers/fstabdecryptworker.cpp" line="28"/>
         <source>Decrypting </source>
-        <translation>正在解密 </translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -185,7 +182,7 @@ Flash memory may be failing. Please back up data immediately.</source>
     <message>
         <location filename="../src/services/diskencrypt/workers/fstabinitencryptworker.cpp" line="27"/>
         <source>Initialize encryption </source>
-        <translation>初始化加密 </translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -201,7 +198,7 @@ Flash memory may be failing. Please back up data immediately.</source>
     <message>
         <location filename="../src/services/diskencrypt/workers/normaldecryptworker.cpp" line="24"/>
         <source>Decrypting </source>
-        <translation>正在解密 </translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -209,7 +206,7 @@ Flash memory may be failing. Please back up data immediately.</source>
     <message>
         <location filename="../src/services/diskencrypt/workers/normalinitencryptworker.cpp" line="27"/>
         <source>Initialize encryption </source>
-        <translation>初始化加密 </translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -233,8 +230,7 @@ Flash memory may be failing. Please back up data immediately.</source>
         <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1011"/>
         <source>Authentication Required
 Enter user and password for %1</source>
-        <translation>需要驗證身份
-請輸入%1的使用者名稱和密碼</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1074"/>
@@ -423,24 +419,24 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="397"/>
         <source>Specify directory</source>
-        <translation>指定目錄</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="407"/>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="428"/>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="478"/>
         <source>Specify directory %1</source>
-        <translation>指定目錄 %1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="473"/>
         <source>Invalid Directory</source>
-        <translation>無效的目錄</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="474"/>
         <source>This directory does not support pinning</source>
-        <translation>該目錄不支援釘選</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskdialog.cpp" line="157"/>
@@ -469,7 +465,7 @@ Enter user and password for %1</source>
         <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="443"/>
         <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="500"/>
         <source>File or directory not found</source>
-        <translation>找不到該路徑或檔案</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="446"/>
@@ -742,7 +738,7 @@ Enter user and password for %1</source>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="51"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="52"/>
         <source>Default icon size:</source>
-        <translation>預設圖示大小：</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="44"/>
@@ -1000,17 +996,17 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="577"/>
         <source>View details</source>
-        <translation>查看詳情</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="577"/>
         <source>Hide details</source>
-        <translation>隱藏詳情</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="579"/>
         <source>Failed to operate on %1 files, %2</source>
-        <translation>操作 %1 個檔案失敗，%2</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/filenameutils.cpp" line="207"/>
@@ -1020,7 +1016,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/dfm-base/utils/fileutils.cpp" line="1109"/>
         <source>This system wallpaper is locked. Please contact your admin.</source>
-        <translation>目前系統桌布已被鎖定，請聯絡管理員。</translation>
+        <translation>目前系統桌布已被鎖定，請聯絡管理員</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/filenameutils.cpp" line="139"/>
@@ -1225,7 +1221,7 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="212"/>
         <source>Finalize disc after burning 
 (no additional data can be appended)</source>
-        <translation>燒錄後關閉光碟（無法再追加資料）</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="224"/>
@@ -1235,7 +1231,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="230"/>
         <source>Verify files (checksum)</source>
-        <translation>驗證檔案（雜湊值）</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="236"/>
@@ -1701,7 +1697,7 @@ Enter user and password for %1</source>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="272"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="340"/>
         <source>Reset Password</source>
-        <translation>重設密碼</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="290"/>
@@ -1741,24 +1737,23 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="469"/>
         <source>Upgrade File Vault</source>
-        <translation>升級檔案保險箱</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="484"/>
         <source>The file vault encryption scheme has been upgraded.
 You need to upgrade this vault to continue using it.</source>
-        <translation>檔案保險箱加密方案已升級
-您需要升級此保險箱才能繼續使用。</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="493"/>
         <source>Later</source>
-        <translation>稍後</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="494"/>
         <source>Upgrade now</source>
-        <translation>立即升級</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="12"/>
@@ -1868,117 +1863,117 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="54"/>
         <source>Backup couldn&apos;t be created</source>
-        <translation>無法建立備份</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="56"/>
         <source>File&apos;s Entity Tag was incorrect</source>
-        <translation>檔案的實體標籤不正確</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="60"/>
         <source>Operation would be recursive</source>
-        <translation>操作將遞迴執行</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="64"/>
         <source>Operation would block</source>
-        <translation>操作將阻塞</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="66"/>
         <source>Host couldn&apos;t be found (remote operations)</source>
-        <translation>無法找到主機（遠端操作）</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="68"/>
         <source>Operation would merge files</source>
-        <translation>操作將合併檔案</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="70"/>
         <source>The current process has too many files open and can&apos;t open any more. Duplicate descriptors do count toward this limit</source>
-        <translation>目前行程開啟了過多檔案，無法再開啟更多檔案。重複的描述符也計入此限制</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="72"/>
         <source>The object has not been initialized</source>
-        <translation>物件未初始化</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="74"/>
         <source>The requested address is already in use</source>
-        <translation>請求的位址已被使用</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="76"/>
         <source>Need more input to finish operation</source>
-        <translation>需要更多輸入以完成操作</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="78"/>
         <source>The input data was invalid</source>
-        <translation>輸入資料無效</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="80"/>
         <source>A remote object generated an error(dbus)</source>
-        <translation>遠端物件產生錯誤(dbus)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="82"/>
         <source>Host unreachable</source>
-        <translation>主機不可達</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="84"/>
         <source>Network unreachable</source>
-        <translation>網路不可達</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="86"/>
         <source>Connection refused</source>
-        <translation>連線被拒絕</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="88"/>
         <source>Connection to proxy server failed</source>
-        <translation>連線代理伺服器失敗</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="90"/>
         <source>Proxy authentication failed</source>
-        <translation>代理認證失敗</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="92"/>
         <source>Proxy server needs authentication</source>
-        <translation>代理伺服器需要認證</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="94"/>
         <source>Proxy connection is not allowed by ruleset</source>
-        <translation>規則集不允許代理連線</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="96"/>
         <source>Broken pipe</source>
-        <translation>管線破裂</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="98"/>
         <source>Connection closed by peer</source>
-        <translation>連線被對端關閉</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="100"/>
         <source>Transport endpoint is not connected</source>
-        <translation>傳輸端點未連線</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="102"/>
         <source>Message too large</source>
-        <translation>訊息過大</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="104"/>
@@ -1988,17 +1983,17 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="106"/>
         <source>File open flag error</source>
-        <translation>檔案開啟旗標錯誤</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="108"/>
         <source>File info has no attribute</source>
-        <translation>檔案資訊無屬性</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="110"/>
         <source>Host is down</source>
-        <translation>主機已停機</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="112"/>
@@ -2013,7 +2008,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="10"/>
         <source>Generic error condition for when an operation fails and no more specific DFMIOErrorEnum value is defined</source>
-        <translation>操作失敗時的通用錯誤條件，未定義更具體的DFMIOErrorEnum值</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="62"/>
@@ -2046,6 +2041,16 @@ You need to upgrade this vault to continue using it.</source>
         <translation>側邊欄</translation>
     </message>
     <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="246"/>
+        <source>Sidebar tree directory</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="248"/>
+        <source>Display sidebar disk partitions as a tree structure</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="25"/>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="28"/>
         <source>or</source>
@@ -2059,57 +2064,57 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="355"/>
         <source>Unknow</source>
-        <translation>未知</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="328"/>
         <source>search</source>
-        <translation>搜尋</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="347"/>
         <source>advanced search</source>
-        <translation>進階搜尋</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="566"/>
         <source>Recovery key export path cannot be empty!</source>
-        <translation>復原金鑰匯出路徑不能為空！</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="572"/>
         <source>Recovery key export path is not exists!</source>
-        <translation>復原金鑰匯出路徑不存在！</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="579"/>
         <source>Recovery key export path cannot be a symlink or non-directory!</source>
-        <translation>還原密鑰匯出路徑不能是符號連結或非目錄！</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="587"/>
         <source>Cannot access the export path directory!</source>
-        <translation>無法存取匯出路徑目錄！</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="593"/>
         <source>The export path directory is world-writable, please choose a safer location!</source>
-        <translation>匯出路徑目錄為全域可寫，請選擇一個更安全的位置！</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="601"/>
         <source>This partition is read-only, please export to a writable partition</source>
-        <translation>該分區為唯讀權限，請匯出到可寫分區</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="628"/>
         <source>Please export to an external device such as a non-encrypted partition or USB flash drive.</source>
-        <translation>請匯出到非加密分區或隨身碟等外接裝置。</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="642"/>
         <source>The partition is encrypted, please export to a non-encrypted partition or external device such as a USB flash drive.</source>
-        <translation>該分區已加密，請匯出到非加密分區或隨身碟等外接裝置。</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="878"/>
@@ -2164,7 +2169,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="983"/>
         <source>Decrypt &quot;%1&quot; partition?</source>
-        <translation>取消加密“%1”分割區？</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="984"/>
@@ -2174,7 +2179,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/services/diskencrypt/helpers/abrecoveryhelper.cpp" line="66"/>
         <source>Updating grub...</source>
-        <translation>正在更新 grub...</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/fileutils/vaultfileinfo.cpp" line="311"/>
@@ -2190,24 +2195,24 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="211"/>
         <source>Last access</source>
-        <translation>最近訪問時間</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="154"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="42"/>
         <source>Group by</source>
-        <translation>分組方式</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="125"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="53"/>
         <source>None</source>
-        <translation>無</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="54"/>
         <source>Name</source>
-        <translation>名稱</translation>
+        <translation>文件名稱</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="55"/>
@@ -2237,42 +2242,42 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/namegroupstrategy.cpp" line="37"/>
         <source>Chinese A-H</source>
-        <translation>拼音 A-H</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/namegroupstrategy.cpp" line="38"/>
         <source>Chinese I-P</source>
-        <translation>拼音 I-P</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/namegroupstrategy.cpp" line="39"/>
         <source>Chinese Q-Z</source>
-        <translation>拼音 Q-Z</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="33"/>
         <source>Today</source>
-        <translation>今天</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="34"/>
         <source>Yesterday</source>
-        <translation>昨天</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="35"/>
         <source>Past 7 Days</source>
-        <translation>過去 7 天</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="36"/>
         <source>Past 30 Days</source>
-        <translation>過去 30 天</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="37"/>
         <source>Earlier</source>
-        <translation>更早</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/typegroupstrategy.cpp" line="36"/>
@@ -2312,37 +2317,27 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewswitchbutton.cpp" line="51"/>
         <source>Icon view</source>
-        <translation>圖示檢視</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewswitchbutton.cpp" line="55"/>
         <source>List view</source>
-        <translation>清單檢視</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewswitchbutton.cpp" line="59"/>
         <source>Tree view</source>
-        <translation>樹狀檢視</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="246"/>
-        <source>Sidebar tree directory</source>
-        <translation>側邊欄樹形目錄</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="248"/>
-        <source>Display sidebar disk partitions as a tree structure</source>
-        <translation>側邊欄磁碟分割區以樹形結構顯示</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/repair_dialog_main.cpp" line="64"/>
         <source>Cannot connect to repair service</source>
-        <translation>無法連線至修復服務</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/repair_dialog_main.cpp" line="151"/>
         <source>Mount failed after repair</source>
-        <translation>修復後掛載失敗</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2350,73 +2345,73 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="108"/>
         <source>Repair Storage Device</source>
-        <translation>修復存儲設備</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="113"/>
         <source>Preparing to repair device: %1 (%2 %3)</source>
-        <translation>準備修復設備：%1 (%2 %3)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="118"/>
         <source>The device will be unmounted during repair. It will be automatically remounted after repair is complete. Please do not remove the device during the repair process.</source>
-        <translation>修復期間設備將被卸載，修復完成後將自動重新掛載。修復過程中請勿移除設備。</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="132"/>
         <source>Cancel</source>
-        <translation>取消</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="133"/>
         <source>Start Repair</source>
-        <translation>開始修復</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="142"/>
         <source>Repairing Storage Device</source>
-        <translation>正在修復存儲設備</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="147"/>
         <source>Repairing device: %1 (%2 %3)</source>
-        <translation>正在修復設備：%1 (%2 %3)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="174"/>
         <source>Repair Complete</source>
-        <translation>修復完成</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="179"/>
         <source>The device has been successfully repaired. The device has been remounted and is now ready to use.</source>
-        <translation>設備已成功修復，設備已重新掛載，現已可以使用。</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="191"/>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="244"/>
         <source>Close</source>
-        <translation>關閉</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="192"/>
         <source>Open Device</source>
-        <translation>打開設備</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="201"/>
         <source>Repair Failed</source>
-        <translation>修復失敗</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="206"/>
         <source>Failed to repair the device. This may be due to serious format errors or physical damage. To protect your data, it is recommended to stop writing new files and try using professional data recovery software or seek manual assistance.</source>
-        <translation>修復設備失敗。這可能是由於嚴重的格式錯誤或物理損壞。為保護您的數據，建議停止寫入新文件，並嘗試使用專業數據恢復軟件或尋求人工幫助。</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="220"/>
         <source>Error Code: %1</source>
-        <translation>錯誤代碼：%1</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2424,7 +2419,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/services/diskencrypt/workers/resumeencryptworker.cpp" line="75"/>
         <source>Encrypting </source>
-        <translation>正在加密</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2433,23 +2428,23 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="158"/>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="439"/>
         <source>Filesystem type cannot be detected. The device may be severely damaged or formatted with an unsupported filesystem. Data recovery may require professional tools.</source>
-        <translation>無法檢測文件系統類型。設備可能已嚴重損壞或使用不支持的文件系統格式化。數據恢復可能需要專業工具。</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="173"/>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="454"/>
         <source>Device is hardware write-protected, flash memory may be failing. Please back up data immediately.</source>
-        <translation>設備已被硬體寫保護，閃存可能正在失效。請立即備份數據。</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="190"/>
         <source>Filesystem error detected, device may not have been safely ejected. Mount might have failed due to filesystem corruption.</source>
-        <translation>檢測到文件系統錯誤，設備可能未安全彈出。由於文件系統損壞，掛載可能失敗。</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="462"/>
         <source>Filesystem is severely corrupted and cannot be recognized. Data may be recoverable through repair.</source>
-        <translation>文件系統已嚴重損壞且無法識別。數據可能可以通過修復恢復。</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2457,73 +2452,73 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="40"/>
         <source>Invalid device path: %1</source>
-        <translation>無效的設備路徑：%1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="46"/>
         <source>Device is already being repaired: %1</source>
-        <translation>設備正在修復中：%1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="53"/>
         <source>Cannot detect filesystem type for: %1</source>
-        <translation>無法檢測文件系統類型：%1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="59"/>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="410"/>
         <source>Unsupported filesystem type: %1</source>
-        <translation>不支持的文件系統類型：%1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="74"/>
         <source>Device is hardware write-protected, cannot repair</source>
-        <translation>設備已被硬體寫保護，無法修復</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="80"/>
         <source>Authorization failed</source>
-        <translation>授權失敗</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="99"/>
         <source>Failed to unmount device: %1</source>
-        <translation>卸載設備失敗：%1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="185"/>
         <source>Filesystem repair completed successfully</source>
-        <translation>文件系統修復成功</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="188"/>
         <source>NTFS repair capability is limited on Linux. Please connect the device to a Windows system for deep repair.</source>
-        <translation>Linux上NTFS修復能力有限。請將設備連接到Windows系統進行深度修復。</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="193"/>
         <source>Filesystem errors have been repaired</source>
-        <translation>文件系統錯誤已修復</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="195"/>
         <source>Filesystem repair failed (exit code: %1)</source>
-        <translation>文件系統修復失敗（退出代碼：%1）</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="235"/>
         <source>Failed to start repair process: %1</source>
-        <translation>啟動修復程序失敗：%1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="237"/>
         <source>unknown error</source>
-        <translation>未知錯誤</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="181"/>
         <source>Repair timed out after %1 seconds</source>
-        <translation>修復超時（%1秒後）</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2577,7 +2572,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="142"/>
         <source>Time created</source>
-        <translation>建立時間</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="143"/>
@@ -2835,7 +2830,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="235"/>
         <source>Desktop Settings</source>
-        <translation>桌面設定</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="236"/>
@@ -2878,7 +2873,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="187"/>
         <source>To disable the One-Click Hide feature, invoke the &quot;Desktop Settings&quot; window in the desktop context menu and turn off the &quot;One-Click Hide Collection&quot;.</source>
-        <translation>若要停用一鍵隱藏功能，請呼叫桌面上下文功能表中的「桌面設定」視窗並關閉「一鍵隱藏集合」。</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="199"/>
@@ -2922,7 +2917,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="91"/>
         <source>Desktop Settings</source>
-        <translation>桌面設定</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="110"/>
@@ -3290,7 +3285,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="629"/>
         <source>Unable to connect to %1</source>
-        <translation>無法連線至 %1</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -3572,27 +3567,27 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="567"/>
         <source>File operation failed: %1</source>
-        <translation>檔案操作失敗：%1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="596"/>
         <source>File Name</source>
-        <translation>檔案名</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="596"/>
         <source>Error Reason</source>
-        <translation>錯誤原因</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="652"/>
         <source>After revocation, it will be completely deleted %1, do you want to delete it completely?</source>
-        <translation>復原後將會徹底刪除&amp;#xa0;%1&amp;#xa0;，您確定要徹底刪除？</translation>
+        <translation>復原後將會徹底刪除 %1 ，您確定要徹底刪除？</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="655"/>
         <source>These %1 contents will be completely deleted after revocation. Do you want to delete them completely?</source>
-        <translation>復原後將會徹底刪除這&amp;#xa0;%1&amp;#xa0;項內容，您確定要徹底刪除？</translation>
+        <translation>復原後將會徹底刪除這 %1 項內容，您確定要徹底刪除？</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="680"/>
@@ -3789,11 +3784,6 @@ You need to upgrade this vault to continue using it.</source>
         <translation>永遠在新視窗打開</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="244"/>
-        <source>Open new folder in a new tab</source>
-        <translation>在新分頁打開新文件夾</translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="263"/>
         <source>Open file:</source>
         <translation>文件打開方式：</translation>
@@ -3807,16 +3797,6 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="265"/>
         <source>Double click</source>
         <translation>雙擊</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="272"/>
-        <source>Display when launching a new window:</source>
-        <translation>啟動新視窗時顯示：</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="275"/>
-        <source>Default Directory</source>
-        <translation>預設目錄</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="277"/>
@@ -3909,12 +3889,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="354"/>
         <source>Default icon grid density:</source>
-        <translation>預設圖示網格密度：</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="364"/>
         <source>Default list height:</source>
-        <translation>預設列表高度：</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="374"/>
@@ -3929,17 +3909,22 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="406"/>
         <source>Load thumbnails for network, mobile, and optical disc directories</source>
-        <translation>載入網路、手機、光碟目錄的縮圖</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="407"/>
         <source>Thumbnails will be loaded for high-latency devices like network shares, phones, and optical drives, which may affect loading speed</source>
-        <translation>將在網路共用、手機及光碟機等高延遲裝置上載入縮圖，可能會影響載入速度</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="371"/>
         <source>Icon</source>
         <translation>圖示顯示</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="244"/>
+        <source>Open new folder in a new tab</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="247"/>
@@ -3949,17 +3934,27 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="269"/>
         <source>New window</source>
-        <translation>新視窗</translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="272"/>
+        <source>Display when launching a new window:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="275"/>
+        <source>Default Directory</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="296"/>
         <source>New tab</source>
-        <translation>新標籤</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="344"/>
         <source>Default icon size:</source>
-        <translation>預設圖示大小：</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="371"/>
@@ -4142,7 +4137,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="34"/>
         <source>Copy file path</source>
-        <translation>複製檔案路徑</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="35"/>
@@ -4400,12 +4395,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="244"/>
         <source>Cannot move &quot;%1&quot; to the Trash. Delete it immediately?</source>
-        <translation>無法將“%1”移至資源回收筒，是否要永久刪除？</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="245"/>
         <source>This action cannot be undone. Please proceed with caution!</source>
-        <translation>此動作無法復原，請謹慎操作！</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="393"/>
@@ -4436,7 +4431,7 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="566"/>
         <source>Permanently delete</source>
         <comment>button</comment>
-        <translation>徹底刪除</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="593"/>
@@ -4453,7 +4448,7 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="734"/>
         <source>Merge</source>
         <comment>button</comment>
-        <translation>合 並</translation>
+        <translation>合 併</translation>
     </message>
 </context>
 <context>
@@ -4535,32 +4530,32 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="92"/>
         <source>Verifying data...</source>
-        <translation>正在核證資料...</translation>
+        <translation>正在校驗資料...</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="94"/>
         <source>Verifying files...</source>
-        <translation>正在核證檔案...</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="171"/>
         <source>File verification successful.</source>
-        <translation>檔案核證成功。</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="178"/>
         <source>File checksum mismatch detected</source>
-        <translation>偵測到檔案雜湊值不符</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="182"/>
         <source>Data verification failed</source>
-        <translation>資料校驗失敗</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="185"/>
         <source>Data verification successful.</source>
-        <translation>資料核證成功。</translation>
+        <translation>資料驗證成功。</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="188"/>
@@ -4604,12 +4599,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="48"/>
         <source>Erase failed</source>
-        <translation>擦除失败</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="49"/>
         <source>Unable to complete disc erasure. This may be due to read/write limitations or the disc media status. Please check the relevant settings and try again.</source>
-        <translation>無法完成光碟抹除。這可能是由於讀取/寫入限制或光碟媒體狀態所致。請檢查相關設定並重試。</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="233"/>
@@ -4635,7 +4630,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="258"/>
         <source>File verification failed</source>
-        <translation>檔案校驗失敗</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="261"/>
@@ -4739,12 +4734,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="652"/>
         <source>Not enough free space on the disc</source>
-        <translation>光碟空間不足</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="653"/>
         <source>The remaining space on the current disc is insufficient to hold the files to be burned. Please reduce the number of files and try again.</source>
-        <translation>目前光碟的剩餘空間不足以容納要燒錄的檔案。請減少檔案數量後再試一次。</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -4776,7 +4771,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="81"/>
         <source>All files in the disc will be packaged and created as an ISO image file.</source>
-        <translation>目前光碟機內全盤文件，將被打包建立為ISO鏡像文件。</translation>
+        <translation>目前光碟機內全盤文件，將被打包建立為ISO鏡像文件</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="92"/>
@@ -4863,7 +4858,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="339"/>
         <source>Authorization dismissed</source>
-        <translation>授權已撤銷</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="583"/>
@@ -4985,37 +4980,37 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="45"/>
         <source>Name</source>
-        <translation></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="46"/>
         <source>Size</source>
-        <translation>大小</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="47"/>
         <source>Resolution</source>
-        <translation>解析度</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="49"/>
         <source>Duration</source>
-        <translation>時長</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="50"/>
         <source>Type</source>
-        <translation>類型</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="51"/>
         <source>Accessed</source>
-        <translation>訪問時間</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="52"/>
         <source>Modified</source>
-        <translation>修改時間</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5159,7 +5154,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="614"/>
         <source>The shared name is too long and will be truncated.</source>
-        <translation>共享名稱過長，將會被截斷。</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5328,12 +5323,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="54"/>
         <source>Please input recovery key to decrypt partition</source>
-        <translation>請輸入復原金鑰以取消分割區加密</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="60"/>
         <source>Please input %1 to decrypt partition</source>
-        <translation>請輸入%1以取消分割區加密</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="61"/>
@@ -5363,7 +5358,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="111"/>
         <source>Decrypt partition</source>
-        <translation>取消分割區加密</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="123"/>
@@ -5401,7 +5396,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="200"/>
         <source>Continue partition decryption</source>
-        <translation>繼續取消分割區加密</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="204"/>
@@ -5435,18 +5430,18 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="427"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="434"/>
         <source>Re-encryption failed</source>
-        <translation>重新加密失敗</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="428"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="435"/>
         <source>Failed to get TPM information. Please check whether TPM is available.</source>
-        <translation>獲取TPM資訊失敗，請檢查TPM是否可用。</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="704"/>
         <source>Unlock partition failed</source>
-        <translation>解鎖分割區失敗</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="705"/>
@@ -5461,7 +5456,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="773"/>
         <source>unmount</source>
-        <translation>移除</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="773"/>
@@ -5486,7 +5481,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="893"/>
         <source>Reboot to finish decrypt</source>
-        <translation>重新啟動以完成取消加密</translation>
+        <translation>重新啟動以完成加密</translation>
     </message>
 </context>
 <context>
@@ -5546,7 +5541,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="308"/>
         <source>Please continue to encrypt &quot;%1&quot; partition</source>
-        <translation>請繼續加密 &quot;%1&quot; 分割區</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="309"/>
@@ -5674,12 +5669,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="219"/>
         <source>Partition %1 has been encrypted</source>
-        <translation>分割區%1已完成加密</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="225"/>
         <source>Partition %1 encrypt failed, please see log for more information.(%2)</source>
-        <translation>分割區%1加密失敗，請查看日誌以獲取更多資訊。（%2）</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="339"/>
@@ -5730,52 +5725,52 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="492"/>
         <source>Partition %1 has been preencrypt, please reboot to finish encryption.</source>
-        <translation>分割區%1已完成預加密，請重啟完成加密。</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="501"/>
         <source>Partition %1 preencrypt failed, please see log for more information.(%2)</source>
-        <translation>分割區%1預加密失敗，請查看日誌以獲取更多資訊。（%2）</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="520"/>
         <source>Partition %1 has been decrypted</source>
-        <translation>分割區%1取消加密已完成</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="527"/>
         <source>Decrypt partition</source>
-        <translation>取消分割區加密</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="533"/>
         <source>Partition %1 is under encrypting, please decrypt after encryption finished.</source>
-        <translation>分割區%1正在加密，請在加密完成後操作取消加密。</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="539"/>
         <source>Partition %1 Decrypt failed, please see log for more information.(%2)</source>
-        <translation>分割區%1取消加密失敗，請查看日誌以獲取更多資訊。（%2）</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="588"/>
         <source>Partition %1 change %2 failed, please see log for more information.(%3)</source>
-        <translation>分割區%1修改%2失敗，請查看日誌以獲取更多資訊。（%3）</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="618"/>
         <source>Partition is not fully decrypted, please finish decryption before access.</source>
-        <translation>分割區未完全取消加密，請在取消加密完成後訪問。</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="625"/>
         <source>Unlocking partition failed</source>
-        <translation>解鎖分割區失敗</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="626"/>
         <source>Please click &quot;Continue Partition Encryption&quot; in the right-click menu to complete the partition encryption.</source>
-        <translation>請點擊右鍵選單中的「繼續分割區加密」以完成分割區加密。</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="500"/>
@@ -5785,12 +5780,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="338"/>
         <source>The &quot;%1&quot; partition is under encrypting...</source>
-        <translation>&quot;%1&quot; 分割區正在加密中...</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="359"/>
         <source>The &quot;%1&quot; partition is under decrypting...</source>
-        <translation>&quot;%1&quot; 分割區正在取消加密...</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="519"/>
@@ -5842,52 +5837,52 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="733"/>
         <source>Partition Encryption Non-Reboot Mode Rolled Back</source>
-        <translation>分區加密免重啟模式已回滾</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="734"/>
         <source>A previous configuration of Partition Encryption Non-Reboot Mode was interrupted and has been rolled back to the disabled state. Please reboot your system to ensure consistency. You may re-enable the feature after reboot if needed.</source>
-        <translation>先前的分區加密非重啟模式設定已中斷，並已回滾至停用狀態。請重啟系統以確保一致性。如有需要，您可在重啟後重新啟用此功能。</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="743"/>
         <source>Partition Encryption Non-Reboot Mode Enabled</source>
-        <translation>分割區加密不重啟模式已開啟</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="744"/>
         <source>Partition Encryption Non-Reboot Mode has been enabled successfully. Please reboot your system for the changes to take effect. After reboot, partition encryption operations will not require system restart.</source>
-        <translation>分割區加密不重啟模式開啟成功。請重新啟動系統以使變更生效。重新啟動後，執行分割區加密操作無需重新啟動系統。</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="748"/>
         <source>Partition Encryption Non-Reboot Mode Disabled</source>
-        <translation>分割區加密不重啟模式已關閉</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="749"/>
         <source>Partition Encryption Non-Reboot Mode has been disabled successfully. Please reboot your system for the changes to take effect. After reboot, partition encryption operations will require system restart.</source>
-        <translation>分割區加密不重啟模式關閉成功。請重新啟動系統以使變更生效。重新啟動後，執行分割區加密操作需重新啟動系統。</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="757"/>
         <source>Operation Failed</source>
-        <translation>操作失敗</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="759"/>
         <source>Failed to enable Partition Encryption Non-Reboot Mode. The system may not support this feature or encountered an error during initramfs update.</source>
-        <translation>無法開啟分割區加密不重啟模式。系統可能不支援此功能，或在初始化更新過程中發生錯誤。</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="762"/>
         <source>Failed to disable Partition Encryption Non-Reboot Mode. An error occurred during initramfs update.</source>
-        <translation>無法關閉分割區加密不重啟模式。初始化更新過程中發生錯誤。</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="774"/>
         <source>dde-file-manager</source>
-        <translation>dde-file-manager</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5926,17 +5921,17 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="102"/>
         <source>Please enter the 24-digit recovery key</source>
-        <translation>請輸入24位數的復原金鑰</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="110"/>
         <source>Please input passphrase to unlock partition</source>
-        <translation>請輸入口令來解鎖分割區</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="114"/>
         <source>Please input PIN to unlock partition</source>
-        <translation>請輸入PIN碼來解鎖分割區</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="128"/>
@@ -6144,7 +6139,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="224"/>
         <source>Failed to move the file %1 to trash, cause: %2</source>
-        <translation>移動文件 %1 到回收站失敗，原因： %2</translation>
+        <translation>移動文件 %1 到回收站失敗，原因： %2 </translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="226"/>
@@ -6164,7 +6159,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="246"/>
         <source>Copy or Cut File failed, cause: %1</source>
-        <translation>複製或剪貼文件失敗，原因： %1</translation>
+        <translation>複製或剪貼文件失敗，原因： %1 </translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="248"/>
@@ -6174,7 +6169,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="250"/>
         <source>Copy or Cut File failed, cause: %1.</source>
-        <translation>複製或剪貼文件失敗，原因： %1.</translation>
+        <translation>複製或剪貼文件失敗，原因： %1. </translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="267"/>
@@ -6202,12 +6197,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations.cpp" line="345"/>
         <source>External storage device</source>
-        <translation>外部存储設備</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations.cpp" line="356"/>
         <source>External storage device usage patterns</source>
-        <translation>外部存储設備使用模式</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6244,22 +6239,22 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="43"/>
         <source>Real-time data synchronization (Recommended)</source>
-        <translation>資料即時同步（建議）</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="50"/>
         <source>Once the files are copied, you can unplug the external drive without needing to &quot;Safely Remove&quot; it.</source>
-        <translation>檔案複製完成後，您可以直接移除外部存儲設備，無需使用「安全移除」功能</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="61"/>
         <source>Performance First (Requires Safe Removal)</source>
-        <translation>效能優先（需安全移除）</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="68"/>
         <source>File copy data is not synchronized in real-time. After the copy is complete, you must use &quot;Safe Removal&quot; to disconnect the external storage device. Otherwise, file corruption or data loss may occur.</source>
-        <translation>檔案複製資料不會即時同步，複製完成後您必須使用「安全移除」來移除外部存儲設備，否則可能導致檔案損毀或資料遺失</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6275,7 +6270,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/utils/previewfileoperation.cpp" line="41"/>
         <source>Failed to open %1, which may be moved or renamed</source>
-        <translation>%1打開失敗，該文件可能已移動或重新命名</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6545,17 +6540,17 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="183"/>
         <source>Created</source>
-        <translation>建立時間</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="184"/>
         <source>Accessed</source>
-        <translation>存取時間</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="185"/>
         <source>Modified</source>
-        <translation>修改時間</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="191"/>
@@ -6565,12 +6560,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="194"/>
         <source>Resolution</source>
-        <translation>解析度</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="195"/>
         <source>Duration</source>
-        <translation>時長</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="381"/>
@@ -6678,37 +6673,37 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="62"/>
         <source>Basic info</source>
-        <translation>基本訊息</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="69"/>
         <source>Total size</source>
-        <translation>總大小</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="71"/>
         <source>Number of files</source>
-        <translation>檔案數量</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="73"/>
         <source>Time accessed</source>
-        <translation>訪問時間</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="75"/>
         <source>Time modified</source>
-        <translation>修改時間</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="82"/>
         <source>Hide this file</source>
-        <translation>隱藏此文件</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="115"/>
         <source>%1 file(s), %2 folder(s)</source>
-        <translation>%1個文件，%2個資料夾</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6716,21 +6711,21 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="59"/>
         <source>Permissions</source>
-        <translation>權限管理</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="182"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="198"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="214"/>
         <source>No read/write</source>
-        <translation>不可讀寫</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="186"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="202"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="218"/>
         <source>--</source>
-        <translation>--</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6738,69 +6733,69 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="109"/>
         <source>Set %1 and %2 file attributes to %3.</source>
-        <translation>已將 %1 等 %2 個檔案屬性設定為 %3.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="113"/>
         <source>File Manager</source>
-        <translation>檔案管理器</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="164"/>
         <source>Multiple Files</source>
-        <translation>多個文件</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="203"/>
         <source>Cancel</source>
-        <translation>取 消</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="212"/>
         <source>Save</source>
-        <translation>儲 存</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="295"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="297"/>
         <source>Hidden files</source>
-        <translation>隱藏檔案</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="302"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="304"/>
         <source>Unhide files</source>
-        <translation>取消隱藏檔案</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="338"/>
         <source>Owner&gt;Read-write</source>
-        <translation>擁有者&gt;讀寫</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="340"/>
         <source>Owner&gt;Read only</source>
-        <translation>擁有者&gt;唯讀</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="374"/>
         <source>Group&gt;Read-write</source>
-        <translation>群組&gt;讀寫</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="376"/>
         <source>Group&gt;Read only</source>
-        <translation>群組&gt;唯讀</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="410"/>
         <source>Others&gt;Read-write</source>
-        <translation>其他&gt;讀寫</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="412"/>
         <source>Others&gt;Read only</source>
-        <translation>其他&gt;唯讀</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7016,44 +7011,44 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="28"/>
         <source>Enable to build the file index immediately for faster file name searches</source>
-        <translation>開啟後立即建立檔案索引，支援快速搜尋檔案名稱</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="29"/>
         <source>Building index</source>
-        <translation>正在建立索引</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="143"/>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="158"/>
         <source>Index update failed</source>
-        <translation>索引更新失敗</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="143"/>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="158"/>
         <source>try updating again</source>
-        <translation>嘗試重新更新</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="167"/>
         <source>Index update completed, last update time: %1</source>
-        <translation>索引更新完成，上次更新時間：%1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="168"/>
         <source>Update index now</source>
-        <translation>立即更新索引</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="192"/>
         <source>Confirm turning off file index?</source>
-        <translation>確認關閉檔案索引？</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="193"/>
         <source>If turned off, file searches will traverse the file system and severely reduce search speed, and the smart search feature will be unavailable.</source>
-        <translation>若關閉，檔案搜尋時將遍歷整個檔案系統，嚴重影響搜尋速度，您將無法使用「智慧搜尋」功能。</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7061,42 +7056,42 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="16"/>
         <source>Enable to search text in images</source>
-        <translation>開啟後支援搜尋圖片中的文字內容</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="17"/>
         <source>Building index</source>
-        <translation>正在建立索引</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="18"/>
         <source>Building index, %1 files indexed</source>
-        <translation>正在建立索引，已索引 %1 個檔案</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="19"/>
         <source>Building index, %1/%2 items indexed</source>
-        <translation>正在建立索引，已索引 %1/%2 項</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="20"/>
         <source>Index update failed, please</source>
-        <translation>索引更新失敗，請</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="21"/>
         <source>try updating again</source>
-        <translation>嘗試重新更新</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="22"/>
         <source>Index update completed, last update time: %1</source>
-        <translation>索引更新完成，上次更新時間：%1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="23"/>
         <source>Update index now</source>
-        <translation>立即更新索引</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7104,7 +7099,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithsemanticindex.cpp" line="17"/>
         <source>Enable to search files using natural language, e.g. &quot;PPT documents edited yesterday&quot;</source>
-        <translation>開啟智慧搜尋後可在檔案管理員中使用自然語言搜尋檔案，例如&quot;昨天編輯過的PPT文件&quot;</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7112,42 +7107,42 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="16"/>
         <source>Enable to search file contents. Indexing may take a few minutes</source>
-        <translation>啟用後可搜尋檔案內容。建立索引可能需要幾分鐘</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="17"/>
         <source>Building index</source>
-        <translation>正在建立索引</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="18"/>
         <source>Building index, %1 files indexed</source>
-        <translation>正在建立索引，已索引 %1 個檔案</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="19"/>
         <source>Building index, %1/%2 items indexed</source>
-        <translation>正在建立索引，已索引 %1/%2 項</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="20"/>
         <source>Index update failed, please</source>
-        <translation>索引更新失敗，請</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="21"/>
         <source>try updating again</source>
-        <translation>嘗試重新更新</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="22"/>
         <source>Index update completed, last update time: %1</source>
-        <translation>索引更新完成，上次更新時間：%1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="23"/>
         <source>Update index now</source>
-        <translation>立即更新索引</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7155,12 +7150,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/groups/matchmethodgroupstrategy.cpp" line="56"/>
         <source>Exact match</source>
-        <translation>精確匹配</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/groups/matchmethodgroupstrategy.cpp" line="58"/>
         <source>Smart match</source>
-        <translation>智慧匹配</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7174,17 +7169,17 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="182"/>
         <source>Enable</source>
-        <translation>開啟</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="204"/>
         <source>Match method</source>
-        <translation>比對方式</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="227"/>
         <source>File index</source>
-        <translation>檔案索引</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="248"/>
@@ -7194,12 +7189,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="270"/>
         <source>Image-Content search</source>
-        <translation>圖片文字內容搜尋</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="292"/>
         <source>Smart search</source>
-        <translation>智慧搜尋</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7212,42 +7207,42 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="510"/>
         <source>Authorize to enable %1</source>
-        <translation>一鍵授權體驗%1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="535"/>
         <source>View</source>
-        <translation>檢視</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="547"/>
         <source>Index is being built. You can check the index status in Settings.</source>
-        <translation>索引建構中，您可以在設定中查看索引狀態。</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="563"/>
         <source>File Manager</source>
-        <translation>檔案管理器</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="564"/>
         <source>You can manually enable %1 in Settings — Advanced — Search.</source>
-        <translation>您可以在檔案管理員設定「進階設定-搜尋」中手動開啟%1。</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="575"/>
         <source>&quot;Full-Text search&quot;</source>
-        <translation>“全文檢索”</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="577"/>
         <source>&quot;Image-Content search&quot;</source>
-        <translation>“圖片內容搜索”</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="580"/>
         <source>&quot;Smart search&quot;</source>
-        <translation>“智慧搜索”</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7407,7 +7402,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/private/addressbar_p.h" line="46"/>
         <source>Enter address</source>
-        <translation>輸入位址</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7431,7 +7426,7 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="140"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="289"/>
         <source>No history</source>
-        <translation>無歷史紀錄</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="308"/>
@@ -7486,22 +7481,22 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="62"/>
         <source>Custom Directory</source>
-        <translation>自訂目錄</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="102"/>
         <source>Invalid Directory</source>
-        <translation>無效的目錄</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="103"/>
         <source>This directory does not support pinning</source>
-        <translation>該目錄不支援釘選</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="57"/>
         <source>Add Directory</source>
-        <translation>新增目錄</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7636,27 +7631,27 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="266"/>
         <source>Icon view</source>
-        <translation>圖示檢視</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="274"/>
         <source>List view</source>
-        <translation>清單檢視</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="286"/>
         <source>Tree view</source>
-        <translation>樹狀檢視</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="309"/>
         <source>Sort by</source>
-        <translation>排序方式</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="315"/>
         <source>View options</source>
-        <translation>檢視選項</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7665,33 +7660,33 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="315"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="378"/>
         <source>Unpin tab</source>
-        <translation>取消釘選標籤</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="317"/>
         <source>Pin tab</source>
-        <translation>釘選標籤</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="322"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="378"/>
         <source>Close tab</source>
-        <translation>關閉標籤</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="325"/>
         <source>Close other tabs</source>
-        <translation>關閉其他標籤</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="326"/>
         <source>Close tabs to the left</source>
-        <translation>關閉左側標籤</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="329"/>
         <source>Close tabs to the right</source>
-        <translation>關閉右側標籤</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7699,24 +7694,24 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="616"/>
         <source>Directory not found</source>
-        <translation>找不到該目錄</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="617"/>
         <source>Directory not found. Remove it?</source>
-        <translation>找不到該目錄，是否要移除？</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="618"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation>取 消</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="618"/>
         <source>Remove</source>
         <comment>button</comment>
-        <translation>移 除</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7724,27 +7719,27 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="64"/>
         <source>View Options</source>
-        <translation>檢視選項</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="79"/>
         <source>Icon size</source>
-        <translation>圖示大小</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="113"/>
         <source>Grid density</source>
-        <translation>網格密度</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="147"/>
         <source>List height</source>
-        <translation>清單高度</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="175"/>
         <source>Display preview</source>
-        <translation>顯示預覽</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7922,7 +7917,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="56"/>
         <source>Error: The filename is too long</source>
-        <translation>原因：檔案名過長</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="58"/>
@@ -7970,7 +7965,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="39"/>
         <source>Analyzing files...</source>
-        <translation>分析檔案中...</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="43"/>
@@ -7980,32 +7975,32 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="163"/>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="217"/>
         <source>Operation cancelled</source>
-        <translation>操作已取消</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="66"/>
         <source>Starting file shredding...</source>
-        <translation>開始檔案粉碎...</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="91"/>
         <source>All files have been successfully shredded</source>
-        <translation>所有檔案已成功粉碎</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="207"/>
         <source>Failed to start shred command</source>
-        <translation>啟動粉碎命令失敗</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="237"/>
         <source>Permission denied</source>
-        <translation>權限不足</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="240"/>
         <source>The file has been moved or the process has exited</source>
-        <translation>檔案已被移動或程序已退出</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8071,17 +8066,17 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="112"/>
         <source>File shredder failure</source>
-        <translation>檔案粉碎失敗</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="114"/>
         <source>Close</source>
-        <translation>關閉</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="138"/>
         <source>Shredding file</source>
-        <translation>檔案粉碎中</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8089,7 +8084,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="43"/>
         <source>Shredding file &quot; %1 &quot;</source>
-        <translation>正在粉碎 &quot;%1&quot;</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8097,7 +8092,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredmenuscene.cpp" line="80"/>
         <source>File Shred</source>
-        <translation>檔案粉碎</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8105,32 +8100,32 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="163"/>
         <source>Enable File Shred</source>
-        <translation>開啟檔案粉碎功能</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="169"/>
         <source>Once enable, the &apos;File Shred&apos; option becomes available in the context menu for secure file deletion</source>
-        <translation>開啟後可以在檔案右鍵選單中使用「檔案粉碎」徹底刪除檔案</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="202"/>
         <source>Are you sure to shred these %1 items?</source>
-        <translation>您確定要粉碎這%1個項目嗎？</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="203"/>
         <source>The file will be completely deleted and cannot be recovered.</source>
-        <translation>該檔案將被徹底刪除且無法復原</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="233"/>
         <source>Cancel</source>
-        <translation>取消</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="234"/>
         <source>Shred</source>
-        <translation>粉碎</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8146,7 +8141,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/vitrualshredplugin.cpp" line="51"/>
         <source>File shred</source>
-        <translation>檔案粉碎</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8197,52 +8192,52 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="192"/>
         <source>Failed to create public key: The key length is too long!</source>
-        <translation>建立公鑰失敗：金鑰長度過長！</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="200"/>
         <source>Failed to save rsa ciphertext file: %1</source>
-        <translation>儲存RSA密文檔案失敗：%1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="216"/>
         <source>Failed to save public key file: The public key is empty.</source>
-        <translation>儲存公鑰檔案失敗：公鑰為空。</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="224"/>
         <source>Failed to save public key file: %1</source>
-        <translation>儲存公鑰檔案失敗：%1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="362"/>
         <source>Failed to create config dir: %1</source>
-        <translation>建立設定目錄失敗：%1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="394"/>
         <source>Failed to create rsa private key file: %1</source>
-        <translation>建立RSA私鑰檔案失敗：%1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="409"/>
         <source>Failed to create rsa ciphertext file: %1</source>
-        <translation>建立RSA密文檔案失敗：%1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="426"/>
         <source>Failed to create hint file: %1</source>
-        <translation>建立提示檔案失敗：%1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="458"/>
         <source>Failed to save hint info: %1</source>
-        <translation>儲存提示資訊失敗：%1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="789"/>
         <source>Save password failed: %1</source>
-        <translation>儲存密碼失敗：%1</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8280,13 +8275,13 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/pathmanager.cpp" line="79"/>
         <source>Unlock failed</source>
-        <translation>解鎖失敗</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/pathmanager.cpp" line="80"/>
         <source>The %1 directory is occupied,
  please clear the files in this directory and try to unlock the safe again.</source>
-        <translation> %1 目錄被占用，請清空該目錄下的文件後再嘗試解鎖保險箱。</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8316,7 +8311,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="129"/>
         <source>Invalid recovery key format</source>
-        <translation>無效的恢復金鑰格式</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="150"/>
@@ -8339,118 +8334,118 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="45"/>
         <source>Select Key File</source>
-        <translation>選取金鑰檔案</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="49"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="338"/>
         <source>Select key file save path</source>
-        <translation>選擇金鑰檔案儲存路徑</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="57"/>
         <source>Enter New Password</source>
-        <translation>輸入新密碼</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="64"/>
         <source>At least 8 characters, including A-Z, a-z, 0-9, and symbols</source>
-        <translation>至少 8 個字元，包含 A-Z、a-z、0-9 和符號</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="67"/>
         <source>Repeat Password</source>
-        <translation>重複密碼</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="72"/>
         <source>Enter new password again</source>
-        <translation>再次輸入密碼</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="75"/>
         <source>Password hint</source>
-        <translation>密碼提示</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="80"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="352"/>
         <source>Optional</source>
-        <translation>選填</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="82"/>
         <source>Use old password verification</source>
-        <translation>使用舊密碼驗證</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="152"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation>取 消</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="152"/>
         <source>Reset Password</source>
         <comment>button</comment>
-        <translation>重設密碼</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="157"/>
         <source>Reset Password</source>
-        <translation>重設密碼</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="169"/>
         <source>Unable to get the key file</source>
-        <translation>無法獲取金鑰文件</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="179"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="266"/>
         <source>≥ 8 chars, contains A-Z, a-z, 0-9, and symbols</source>
-        <translation>至少8位，包含A-Z, a-z, 0-9和符號</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="188"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="274"/>
         <source>Passwords do not match</source>
-        <translation>輸入密碼不一致</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="197"/>
         <source>Cannot reset password for old version vault. Please upgrade the vault first.</source>
-        <translation>無法重設舊版本保險箱的密碼。請先升級保險箱。</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="206"/>
         <source>Unable to read key file</source>
-        <translation>無法讀取金鑰檔案</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="219"/>
         <source>Invalid recovery key format: expected 32 characters, got %1</source>
-        <translation>無效的恢復金鑰格式：預期 32 個字元，實際得到 %1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="229"/>
         <source>Invalid recovery key format: must contain only letters and numbers</source>
-        <translation>無效的恢復金鑰格式：必須僅包含字母和數字</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="398"/>
         <source>Success</source>
-        <translation>成功</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="398"/>
         <source>Password reset successfully</source>
-        <translation>密碼重設成功</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="402"/>
         <source>Failed to reset password. Please check your key file.</source>
-        <translation>重設密碼失敗。請檢查您的金鑰檔案。</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8458,107 +8453,107 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="46"/>
         <source>Enter Old Password</source>
-        <translation>輸入舊密碼</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="50"/>
         <source>Please enter old password</source>
-        <translation>請輸入舊密碼</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="53"/>
         <source>Enter New Password</source>
-        <translation>輸入新密碼</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="60"/>
         <source>At least 8 characters, including A-Z, a-z, 0-9, and symbols</source>
-        <translation>至少 8 個字元，包含 A-Z、a-z、0-9 和符號</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="63"/>
         <source>Repeat Password</source>
-        <translation>重複密碼</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="68"/>
         <source>Enter new password again</source>
-        <translation>再次輸入密碼</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="71"/>
         <source>Password hint</source>
-        <translation>密碼提示</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="76"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="312"/>
         <source>Optional</source>
-        <translation>選填</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="78"/>
         <source>Use key verification</source>
-        <translation>使用金鑰檔案驗證</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="147"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation>取 消</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="147"/>
         <source>Reset Password</source>
         <comment>button</comment>
-        <translation>重設密碼</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="152"/>
         <source>Reset Password</source>
-        <translation>重設密碼</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="164"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="225"/>
         <source>≥ 8 chars, contains A-Z, a-z, 0-9, and symbols</source>
-        <translation>至少8位，包含A-Z, a-z, 0-9和符號</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="173"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="233"/>
         <source>Passwords do not match</source>
-        <translation>輸入密碼不一致</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="184"/>
         <source>Please try again %1 minutes later</source>
-        <translation>請%1分鐘後再試</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="361"/>
         <source>Success</source>
-        <translation>成功</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="361"/>
         <source>Password reset successfully</source>
-        <translation>密碼重設成功</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="377"/>
         <source>Failed to reset password. Please try again %1 minutes later</source>
-        <translation>重設密碼失敗。請在 %1 分鐘後重試</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="380"/>
         <source>Failed to reset password. One chance left</source>
-        <translation>重設密碼失敗。還剩一次機會</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="382"/>
         <source>Failed to reset password. %1 chances left</source>
-        <translation>重設密碼失敗。還剩 %1 次機會</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8566,12 +8561,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="55"/>
         <source>Unlock the Safe via Key File</source>
-        <translation>透過金鑰檔案解鎖保險箱</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="60"/>
         <source>Select Key File</source>
-        <translation>選取金鑰檔案</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="123"/>
@@ -8581,18 +8576,18 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="178"/>
         <source>Failed to generate recovery key. Please try again.</source>
-        <translation>生成恢復金鑰失敗。請重試。</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="190"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="192"/>
         <source>Upgrade vault</source>
-        <translation>升級保險箱</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="233"/>
         <source>Unlock vault failed</source>
-        <translation>解鎖保險箱失敗</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="159"/>
@@ -8609,12 +8604,12 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="248"/>
         <source>Key Unlock</source>
         <comment>button</comment>
-        <translation>使用金鑰解鎖</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="253"/>
         <source>Key Unlocks Safe</source>
-        <translation>使用金鑰解鎖保險箱</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8643,7 +8638,7 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="59"/>
         <source>Verify Password</source>
         <comment>button</comment>
-        <translation>驗證密碼</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="61"/>
@@ -8654,7 +8649,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="67"/>
         <source>Enter vault password</source>
-        <translation>輸入保險箱密碼</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="69"/>
@@ -8694,13 +8689,13 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="213"/>
         <source>Failed to generate recovery key. Please try again.</source>
-        <translation>生成恢復金鑰失敗。請重試。</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="225"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="227"/>
         <source>Upgrade vault</source>
-        <translation>升級保險箱</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="272"/>
@@ -8761,7 +8756,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="199"/>
         <source>Close</source>
-        <translation>關閉</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="82"/>
@@ -8784,17 +8779,17 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="76"/>
         <source>Recovery key file</source>
-        <translation>恢復金鑰檔案</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="83"/>
         <source>Save the recovery key file and keep it in a safe place</source>
-        <translation>儲存恢復金鑰檔案並將其存放在安全的地方</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="87"/>
         <source>It is recommended to save it to external storage devices such as a USB drive</source>
-        <translation>建議儲存至隨身碟等外部儲存裝置</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="89"/>
@@ -8818,48 +8813,48 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="242"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="288"/>
         <source>Vault</source>
-        <translation>保險箱</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="211"/>
         <source>Recovery key is not available. Please try again.</source>
-        <translation>恢復金鑰無法使用，請重試。</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="218"/>
         <source>Please select a path to save the recovery key.</source>
-        <translation>請選擇儲存恢復金鑰的路徑。</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="234"/>
         <source>Failed to save recovery key. Please check the path and try again.</source>
-        <translation>儲存恢復金鑰失敗，請檢查路徑並重試。</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="242"/>
         <source>Failed to start migration. Please try again.</source>
-        <translation>啟動移轉失敗，請重試。</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="288"/>
         <source>Failed to upgrade vault. Please try again.</source>
-        <translation>升級保險箱失敗。請重試。</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="297"/>
         <source>Success</source>
-        <translation>成功</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="311"/>
         <source>Vault upgraded successfully. Please keep your recovery key safe.</source>
-        <translation>保險箱升級成功，請妥善保管恢復金鑰。</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="318"/>
         <source>Enter Vault</source>
         <comment>button</comment>
-        <translation>進入保險箱</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8965,27 +8960,27 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="64"/>
         <source>Failed to create vault: %1</source>
-        <translation>建立保險箱失敗：%1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="176"/>
         <source>Failed to create vault: Get encryption method failed!</source>
-        <translation>建立保險箱失敗：獲取加密方式失敗！</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="192"/>
         <source>Failed to create vault: Unknown encryption method!</source>
-        <translation>建立保險箱失敗：未知的加密方式！</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="205"/>
         <source>Failed to create vault: Retrieved password is empty!</source>
-        <translation>建立保險箱失敗：取得的密碼為空！</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultcreatepage.cpp" line="238"/>
         <source>Auto generate password failed!</source>
-        <translation>自動產生密碼失敗！</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8993,7 +8988,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultentryfileentity.cpp" line="30"/>
         <source>File Vault</source>
-        <translation>保險箱</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -9033,7 +9028,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/vaultpropertydialog.cpp" line="74"/>
         <source>File Vault</source>
-        <translation>保險箱</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -9147,7 +9142,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="303"/>
         <source>Please select a recovery key file</source>
-        <translation>請選擇恢復密鑰文件</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="371"/>
@@ -9157,7 +9152,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="395"/>
         <source>Invalid recovery key file</source>
-        <translation>無效的恢復密鑰文件</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="224"/>
@@ -9167,12 +9162,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="50"/>
         <source>Delete file vault with recovery key</source>
-        <translation>使用恢復密鑰文件保險箱</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="55"/>
         <source>Select Key File</source>
-        <translation>選取密鑰文件</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="228"/>
@@ -9217,12 +9212,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="669"/>
         <source>Show all</source>
-        <translation>全部顯示</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="669"/>
         <source>Show partial</source>
-        <translation>顯示部分</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -9261,7 +9256,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="837"/>
         <source>Time created</source>
-        <translation>建立時間</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="839"/>
@@ -9303,42 +9298,42 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="34"/>
         <source>Unknown</source>
-        <translation>未知</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="35"/>
         <source>Empty</source>
-        <translation>空</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="36"/>
         <source>Tiny</source>
-        <translation>極小</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="37"/>
         <source>Small</source>
-        <translation>小</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="38"/>
         <source>Medium</source>
-        <translation>中等</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="39"/>
         <source>Large</source>
-        <translation>大</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="40"/>
         <source>Huge</source>
-        <translation>巨大</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/sizegroupstrategy.cpp" line="41"/>
         <source>Gigantic</source>
-        <translation>超大</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -9366,7 +9361,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="48"/>
         <source>Time created</source>
-        <translation>建立時間</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="49"/>
