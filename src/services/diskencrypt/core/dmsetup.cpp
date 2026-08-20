@@ -86,14 +86,29 @@ int dm_setup::dmSuspendDevice(const QString &dmDev)
         qCritical() << "[dm_setup::dmSuspendDevice] Failed to create DM task helper for device:" << dmDev;
         return -1;
     }
+    // 挂起设备时，跳过冻结文件系统
+    int r =  dm_task_skip_lockfs(h.task());
+    if (r != 1) {
+        qCritical() << "[dm_setup::dmSuspendDevice] Failed to set skip lockfs for " << dmDev << "error:" << r;
+        return -1;
+    }
+    // 挂起设备时，跳过刷新 I/O 缓冲区
+    r = dm_task_no_flush(h.task());
+    if (r != 1) {
+        qCritical() << "[dm_setup::dmSuspendDevice] Failed to set no flush for " << dmDev << "error:" << r;
+        return -1;
+    }
 
-    int r = dm_task_set_name(h.task(), dmDev.toStdString().c_str());
+
+    qDebug() << "[dm_setup::dmSuspendDevice] start call dm_task_set_name";
+    r = dm_task_set_name(h.task(), dmDev.toStdString().c_str());
     if (r == 0) {
         auto err = dm_task_get_errno(h.task());
         qCritical() << "[dm_setup::dmSuspendDevice] Failed to set DM device name for suspend:" << dmDev << "error:" << err;
         return -err;
     }
 
+    qDebug() << "[dm_setup::dmSuspendDevice] start call dm_task_set_name";
     r = dm_task_run(h.task());
     if (r == 0) {
         auto err = dm_task_get_errno(h.task());
@@ -114,8 +129,20 @@ int dm_setup::dmResumeDevice(const QString &dmDev)
         qCritical() << "[dm_setup::dmResumeDevice] Failed to create DM task helper for device:" << dmDev;
         return -1;
     }
+    // 挂起设备时，跳过冻结文件系统
+    int r =  dm_task_skip_lockfs(h.task());
+    if (r != 1) {
+        qCritical() << "[dm_setup::dmSuspendDevice] Failed to set skip lockfs for " << dmDev << "error:" << r;
+        return -1;
+    }
+    // 挂起设备时，跳过刷新 I/O 缓冲区
+    r = dm_task_no_flush(h.task());
+    if (r != 1) {
+        qCritical() << "[dm_setup::dmSuspendDevice] Failed to set no flush for " << dmDev << "error:" << r;
+        return -1;
+    }
 
-    int r = dm_task_set_name(h.task(), dmDev.toStdString().c_str());
+    r = dm_task_set_name(h.task(), dmDev.toStdString().c_str());
     if (r == 0) {
         auto err = dm_task_get_errno(h.task());
         qCritical() << "[dm_setup::dmResumeDevice] Failed to set DM device name for resume:" << dmDev << "error:" << err;

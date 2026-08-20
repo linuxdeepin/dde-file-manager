@@ -393,6 +393,7 @@ void DiskEncryptSetupPrivate::resumeEncryption(const QVariantMap &args)
             qptr, &DiskEncryptSetup::WaitAuthInput);
     connect(worker, &QThread::finished,
             this, &DiskEncryptSetupPrivate::onResumeEncryptFinished);
+    qDebug() << "[DiskEncryptSetupPrivate::resumeEncryption] start resumeEncryption";
     worker->start();
 }
 
@@ -550,7 +551,10 @@ void DiskEncryptSetupPrivate::initThreadConnection(const QThread *thread)
 void DiskEncryptSetupPrivate::onInitEncryptFinished()
 {
     auto worker = dynamic_cast<BaseEncryptWorker *>(sender());
-    if (!worker) return;
+    if (!worker) {
+        qCritical() << "======== the worker is nullptr, so return";
+        return;
+    }
     worker->deleteLater();
 
     auto args = worker->args();
