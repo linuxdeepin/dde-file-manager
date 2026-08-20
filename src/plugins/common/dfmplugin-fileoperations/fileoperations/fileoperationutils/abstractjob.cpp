@@ -183,10 +183,10 @@ void AbstractJob::handleFileRenamed(const QUrl &old, const QUrl &cur)
     dpfSignalDispatcher->publish("dfmplugin_fileoperations", "signal_File_Rename", old, cur);
 }
 
-void AbstractJob::handleFileDeleted(const QUrl &url)
+void AbstractJob::handleFileDeleted(const QList<QUrl> &urls)
 {
-    fmDebug() << "File deleted:" << url;
-    dpfSignalDispatcher->publish("dfmplugin_fileoperations", "signal_File_Delete", url);
+    dpfSignalDispatcher->publish("dfmplugin_fileoperations",
+                                 "signal_File_Delete", urls);
 }
 
 void AbstractJob::handleFileAdded(const QUrl &url)

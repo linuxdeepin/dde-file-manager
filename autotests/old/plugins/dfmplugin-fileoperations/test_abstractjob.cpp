@@ -446,7 +446,7 @@ TEST_F(TestAbstractJob, HandleFileDeleted_EmitsSignal)
 {
     QUrl url = QUrl::fromLocalFile("/tmp/deleted.txt");
 
-    job->handleFileDeleted(url);
+    job->handleFileDeleted({url});
     SUCCEED();
 }
 
