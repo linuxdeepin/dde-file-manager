@@ -12,11 +12,8 @@
 #include <QTimer>
 #include <QStackedLayout>
 #include <QIcon>
-#include <QStorageInfo>
 #include <QDebug>
 #include <DFileDialog>
-
-#include <dfm-mount/dmount.h>
 
 #include <dfm-base/utils/iconutils.h>
 
@@ -85,7 +82,7 @@ void EncryptProgressDialog::onCicked(int idx, const QString &btnTxt)
 
     QUrl url = DFileDialog::getExistingDirectoryUrl(this);
     QString msg;
-    if (!validateExportPath(url.toLocalFile(), &msg)) {
+    if (!recovery_key_utils::validateExportPath(url.toLocalFile(), device, &msg)) {
         fmWarning() << "Export path validation failed:" << msg;
         dialog_utils::showDialog(tr("Error"), msg);
     } else {
@@ -151,47 +148,6 @@ void EncryptProgressDialog::initUI()
 
     mainLay->addWidget(progressPage);
     mainLay->addWidget(resultPage);
-}
-
-bool EncryptProgressDialog::validateExportPath(const QString &path, QString *msg)
-{
-    auto setMsg = [&](const QString &info) { if (msg) *msg = info; };
-    if (path.isEmpty()) {
-        setMsg(tr("Recovery key export path cannot be empty!"));
-        return false;
-    }
-
-    if (!QDir(path).exists()) {
-        fmWarning() << "Export path does not exist:" << path;
-        setMsg(tr("Recovery key export path is not exists!"));
-        return false;
-    }
-
-    QStorageInfo storage(path);
-    if (storage.isReadOnly()) {
-        fmWarning() << "Export path is read-only:" << path;
-        setMsg(tr("This partition is read-only, please export to a writable "
-                  "partition"));
-        return false;
-    }
-
-    // Check if the export path itself is encrypted
-    using namespace dfmmount;
-    auto monitor = DDeviceManager::instance()->getRegisteredMonitor(DeviceType::kBlockDevice).objectCast<DBlockMonitor>();
-    Q_ASSERT(monitor);
-    auto devObjPaths = monitor->resolveDeviceNode(storage.device(), {});
-    if (!devObjPaths.isEmpty()) {
-        auto objPath = devObjPaths.constFirst();
-        auto devPtr = monitor->createDeviceById(objPath);
-        if (devPtr && devPtr->getProperty(Property::kBlockCryptoBackingDevice).toString() != "/") {
-            fmWarning() << "Export path is on an encrypted partition:" << path;
-            setMsg(tr("The partition is encrypted, please export to a non-encrypted "
-                      "partition or external device such as a USB flash drive."));
-            return false;
-        }
-    }
-
-    return true;
 }
 
 void EncryptProgressDialog::saveRecKey(const QString &path)

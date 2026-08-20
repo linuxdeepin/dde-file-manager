@@ -21,6 +21,8 @@
 #include <QJsonDocument>
 #include <QDir>
 #include <QApplication>
+#include <QStorageInfo>
+#include <QFileInfo>
 #include <QFutureWatcher>
 #include <QtConcurrent>
 
@@ -30,6 +32,7 @@
 #include <fstab.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <sys/stat.h>
 #include <cerrno>
 
 Q_DECLARE_METATYPE(bool *)
@@ -553,6 +556,96 @@ QString recovery_key_utils::formatRecoveryKey(const QString &raw)
     for (; dashCount > 0; dashCount--)
         formatted.insert(dashCount * kSectionLen, '-');
     return formatted;
+}
+
+bool recovery_key_utils::validateExportPath(const QString &path, const QString &targetDevice, QString *msg)
+{
+    auto setMsg = [&](const QString &info) { if (msg) *msg = info; };
+
+    if (path.isEmpty()) {
+        setMsg(QObject::tr("Recovery key export path cannot be empty!"));
+        return false;
+    }
+
+    if (!QDir(path).exists()) {
+        fmWarning() << "Export path does not exist:" << path;
+        setMsg(QObject::tr("Recovery key export path is not exists!"));
+        return false;
+    }
+
+    int dirFd = ::open(path.toLocal8Bit().constData(), O_PATH | O_NOFOLLOW | O_DIRECTORY);
+    if (dirFd < 0) {
+        fmWarning() << "Export path is a symlink or not a directory:" << path;
+        setMsg(QObject::tr("Recovery key export path cannot be a symlink or non-directory!"));
+        return false;
+    }
+
+    struct stat dirStat;
+    if (::fstat(dirFd, &dirStat) != 0) {
+        ::close(dirFd);
+        fmWarning() << "Cannot stat export path directory:" << path;
+        setMsg(QObject::tr("Cannot access the export path directory!"));
+        return false;
+    }
+    if (dirStat.st_mode & S_IWOTH) {
+        ::close(dirFd);
+        fmWarning() << "Export path directory is world-writable:" << path;
+        setMsg(QObject::tr("The export path directory is world-writable, please choose a safer location!"));
+        return false;
+    }
+    ::close(dirFd);
+
+    QStorageInfo storage(path);
+    if (storage.isReadOnly()) {
+        fmWarning() << "Export path is read-only:" << path;
+        setMsg(QObject::tr("This partition is read-only, please export to a writable partition"));
+        return false;
+    }
+
+    if (!targetDevice.isEmpty()) {
+        QString dev = storage.device();
+        QStringList associatedDevs { dev };
+        if (dev.startsWith("/dev/mapper/")) {
+            QFileInfo f(dev);
+            if (f.isSymbolicLink()) {
+                auto linkDev = f.symLinkTarget();
+                if (!linkDev.isEmpty()) {
+                    CREATE_DAEMON_INTERFACE(iface);
+                    if (iface.isValid()) {
+                        QDBusReply<QString> reply = iface.call("HolderDevice", linkDev);
+                        if (reply.isValid())
+                            associatedDevs.append(reply.value());
+                        else
+                            associatedDevs.append(linkDev);
+                    } else {
+                        associatedDevs.append(linkDev);
+                    }
+                }
+            }
+        }
+        if (associatedDevs.contains(targetDevice)) {
+            fmWarning() << "Export path is on the same device being encrypted:" << targetDevice;
+            setMsg(QObject::tr("Please export to an external device such as a non-encrypted partition or USB flash drive."));
+            return false;
+        }
+    }
+
+    using namespace dfmmount;
+    auto monitor = DDeviceManager::instance()->getRegisteredMonitor(DeviceType::kBlockDevice).objectCast<DBlockMonitor>();
+    Q_ASSERT(monitor);
+    auto devObjPaths = monitor->resolveDeviceNode(storage.device(), {});
+    if (!devObjPaths.isEmpty()) {
+        auto objPath = devObjPaths.constFirst();
+        auto devPtr = monitor->createDeviceById(objPath);
+        if (devPtr && devPtr->getProperty(Property::kBlockCryptoBackingDevice).toString() != "/") {
+            fmWarning() << "Export path is on an encrypted partition:" << path;
+            setMsg(QObject::tr("The partition is encrypted, please export to a non-encrypted "
+                              "partition or external device such as a USB flash drive."));
+            return false;
+        }
+    }
+
+    return true;
 }
 
 BlockDev device_utils::createBlockDevice(const QString &devObjPath)
