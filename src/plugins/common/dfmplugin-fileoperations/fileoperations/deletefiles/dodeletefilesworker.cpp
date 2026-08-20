@@ -10,6 +10,8 @@
 
 #include <unistd.h>
 #include <fts.h>
+// for DFMIO::DFMUtils::isInvalidCodecByPath used in originPath:: encoding handling
+#include <dfm-io/dfmio_utils.h>
 
 DPFILEOPERATIONS_USE_NAMESPACE
 DoDeleteFilesWorker::DoDeleteFilesWorker(QObject *parent)
@@ -31,13 +33,13 @@ bool DoDeleteFilesWorker::doWork()
         return false;
 
     fmInfo() << "Start deleting files - count:" << sourceUrls.count();
-    deleteAllFiles();
+    bool success = deleteAllFiles();
 
     // 完成
     fmInfo() << "Delete operation completed successfully";
     endWork();
 
-    return true;
+    return success;
 }
 
 void DoDeleteFilesWorker::stop()
@@ -153,6 +155,11 @@ bool DoDeleteFilesWorker::deleteFilesByFts()
             continue;
 
         auto url = QUrl::fromLocalFile(ent->fts_path);
+        // Match the encoding used by statisticsFilesSize() so that non-UTF8 / invalid
+        // codec paths produce the same originPath::-prefixed URL, keeping sourceUrlsSet
+        // lookups (completeSourceFiles / completeTargetFiles) consistent.
+        if (DFMIO::DFMUtils::isInvalidCodecByPath(ent->fts_path))
+            url.setUserInfo(QString::fromLatin1("originPath::") + QString::fromLatin1(ent->fts_path));
         emitCurrentTaskNotify(url, QUrl());
         // Only emit/count an entry when it was actually removed; a retry that is
         // interrupted by stop, or a non-retried failure, must not signal deletion.
