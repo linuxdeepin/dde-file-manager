@@ -44,17 +44,17 @@
 <context>
     <name>DiskMountPlugin</name>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskmountplugin.cpp" line="38"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/diskmountplugin.cpp" line="39"/>
         <source>Disk</source>
         <translation>Disk</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskmountplugin.cpp" line="85"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/diskmountplugin.cpp" line="86"/>
         <source>Open</source>
         <translation>Hape</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskmountplugin.cpp" line="92"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/diskmountplugin.cpp" line="93"/>
         <source>Eject all</source>
         <translation>Nxirri krejt</translation>
     </message>
@@ -71,35 +71,81 @@
 <context>
     <name>DockItemDataManager</name>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="209"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="214"/>
         <source>The device has been safely removed</source>
         <translation>Pajisja u hoq në mënyrë të parrezik</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="226"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="231"/>
         <source>eject</source>
         <translation>nxirre</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="227"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="232"/>
         <source>unmount</source>
         <translation>Çmontoje</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="228"/>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="233"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="238"/>
         <source>remove</source>
         <translation>hiqe</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="230"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="235"/>
         <source>Operation failed</source>
         <translation>Veprimi dështoi</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="231"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="236"/>
         <source>Device (%1) is busy, cannot %2 now.</source>
         <translation>Pajisja (%1) është e zënë, s’mund të %2 tani.</translation>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="508"/>
+        <source>Detect Device Abnormality, Repair Recommended</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="509"/>
+        <source>Your %1 has data errors, possibly caused by unsafe removal!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="512"/>
+        <source>Repair Immediately</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="513"/>
+        <source>Ignore for Now</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="517"/>
+        <source>Hardware Failure Warning</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="518"/>
+        <source>%1 is in hardware write-protected mode.
+Flash memory may be failing. Please back up data immediately.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="524"/>
+        <source>Device Damaged, Cannot Auto Repair</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="525"/>
+        <source>The data structure of %1 is severely damaged and cannot be recognized or repaired by the system. If there are important files inside, please stop using it. It is recommended to use professional data recovery software or seek professional assistance.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="735"/>
+        <source>Repair operation failed</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -142,7 +188,7 @@
 <context>
     <name>MimeTypeDisplayManager</name>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="850"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="862"/>
         <source>Unknown</source>
         <translation>I panjohur</translation>
     </message>
@@ -176,40 +222,40 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1001"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1004"/>
         <source>need authorization to access</source>
         <translation>lyp autorizim për hyrje</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1008"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1011"/>
         <source>Authentication Required
 Enter user and password for %1</source>
         <translation>Lypset Mirëfilltësim
 Jepni përdorues dhe fjalëkalim për %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1071"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1074"/>
         <source>Can&apos;t verify the identity of %1.</source>
         <translation>S’verifikohet dot identiteti i %1.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1072"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1075"/>
         <source>This happens when you log in to a computer the first time.</source>
         <translation>Kjo ndodh kur bëni hyrjen për herë të parë në një kompjuter.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1073"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1076"/>
         <source>The identity sent by the remote computer is</source>
         <translation>Identiteti i dërguar nga kompjuteri i largët është</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1075"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1078"/>
         <source>If you want to be absolutely sure it is safe to continue, contact the system administrator.</source>
         <translation>Nëse doni të jeni absolutisht i sigurt se të vazhdohet,  është pa rrezik, lidhuni me përgjegjësin e sistemit.</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/filepreview.cpp" line="80"/>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="369"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="365"/>
         <location filename="../src/plugins/filemanager/dfmplugin-core/core.cpp" line="52"/>
         <location filename="../src/plugins/filemanager/dfmplugin-core/core.cpp" line="53"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/pathgroupstrategy.cpp" line="31"/>
@@ -217,18 +263,18 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
         <translation>Disk Sistemi</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="372"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="368"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/pathgroupstrategy.cpp" line="32"/>
         <source>Data Disk</source>
         <translation>Disk të Dhënash</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="423"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="419"/>
         <source>Blank %1 Disc</source>
         <translation>Zbardh Diskun %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="423"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="419"/>
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="555"/>
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="566"/>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="348"/>
@@ -237,18 +283,18 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
         <translation>E panjohur</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="433"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="429"/>
         <source>%1 Drive</source>
         <translation>Pajisje %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="382"/>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="452"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="378"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="448"/>
         <source>%1 Encrypted</source>
         <translation>%1 i Fshehtëzuar</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="460"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="456"/>
         <location filename="../src/external/dde-dock-plugins/disk-mount/utils/dockutils.cpp" line="109"/>
         <source>%1 Volume</source>
         <translation>Vëllim %1</translation>
@@ -350,8 +396,8 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="28"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="28"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="28"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/files/recentfileinfo.cpp" line="76"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/files/recentfileinfo.cpp" line="114"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/files/recentfileinfo.cpp" line="81"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/files/recentfileinfo.cpp" line="119"/>
         <source>Recent</source>
         <translation>Së fundi</translation>
     </message>
@@ -394,24 +440,24 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
         <translation>Kjo drejtori s’mbulon fiksim</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskdialog.cpp" line="155"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskdialog.cpp" line="157"/>
         <source>%1 tasks in progress</source>
         <translation>%1 punë në përmbushje e sipër</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="857"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="458"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="869"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="515"/>
         <source>%1 item</source>
         <translation>%1 objekt</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="858"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="459"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="870"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="516"/>
         <source>%1 items</source>
         <translation>%1 objekte</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="1338"/>
+        <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="1351"/>
         <source>Unable to find the original file</source>
         <translation>S’arrihet të gjendet kartela origjinale</translation>
     </message>
@@ -419,8 +465,8 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
         <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="440"/>
         <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="443"/>
         <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="500"/>
-        <source>File has been moved or deleted</source>
-        <translation>Kartela është lëvizur ose fshirë</translation>
+        <source>File or directory not found</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="446"/>
@@ -491,7 +537,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="12"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="12"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="12"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="707"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="708"/>
         <source>Built-in disks</source>
         <translation>Disqe të brendshëm</translation>
     </message>
@@ -515,7 +561,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="19"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="19"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="19"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="707"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="708"/>
         <source>Loop partitions</source>
         <translation>Pjesë “loop”</translation>
     </message>
@@ -523,7 +569,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="20"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="20"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="20"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="708"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="709"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/utilities/protocoldisplayutilities.cpp" line="84"/>
         <source>Mounted sharing folders</source>
         <translation>Dosje të përbashkëta të montuara</translation>
@@ -539,7 +585,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="23"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="23"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="23"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="263"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="283"/>
         <source>Network</source>
         <translation>Rrjet</translation>
     </message>
@@ -547,7 +593,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="24"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="24"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="24"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="708"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="709"/>
         <source>Mounted partitions and discs</source>
         <translation>Pjesë dhe disqe të montuar</translation>
     </message>
@@ -555,7 +601,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="25"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="25"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="25"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="259"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="279"/>
         <source>Partitions</source>
         <translation>Pjesë</translation>
     </message>
@@ -563,7 +609,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="27"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="27"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="27"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="255"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="275"/>
         <source>Quick access</source>
         <translation>Përdorim i shpejtë</translation>
     </message>
@@ -571,7 +617,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="29"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="29"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="29"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="267"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="287"/>
         <source>Tag</source>
         <translation>Etiketë</translation>
     </message>
@@ -579,7 +625,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="30"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="30"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="30"/>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/taghelper.cpp" line="240"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/taghelper.cpp" line="243"/>
         <source>Added tags</source>
         <translation>Etiketa të shtuara</translation>
     </message>
@@ -594,7 +640,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="34"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="34"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="34"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/utils/smbbrowserutils.cpp" line="211"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/utils/smbbrowserutils.cpp" line="214"/>
         <source>Keep showing the mounted Samba shares</source>
         <translation>Vazhdo të shfaqësh ndarje Samba të montuara</translation>
     </message>
@@ -927,8 +973,8 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="39"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="50"/>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="110"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="51"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="113"/>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="56"/>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="38"/>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="64"/>
@@ -936,30 +982,30 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="330"/>
         <location filename="../src/plugins/filedialog/core/utils/corehelper.cpp" line="75"/>
         <location filename="../src/plugins/filedialog/core/utils/corehelper.cpp" line="106"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="235"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="133"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="279"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="135"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Anuloje</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="51"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="52"/>
         <source>Stop</source>
         <comment>button</comment>
         <translation>Ndale</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="550"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="577"/>
         <source>View details</source>
         <translation>Shihni hollësi</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="550"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="577"/>
         <source>Hide details</source>
         <translation>Fshihi hollësitë</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="552"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="579"/>
         <source>Failed to operate on %1 files, %2</source>
         <translation>S’u arrit të veprohej mbi %1 kartela, %2</translation>
     </message>
@@ -969,7 +1015,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
         <translation>Shkurtore</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1092"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1109"/>
         <source>This system wallpaper is locked. Please contact your admin.</source>
         <translation>Ky sfond sistemi është i kyçur. Ju lutemi, lidhuni me përgjegjësin tuaj.</translation>
     </message>
@@ -987,20 +1033,21 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/utils/previewfileoperation.cpp" line="40"/>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="63"/>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="86"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="66"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="89"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="120"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="116"/>
         <source>dde-file-manager</source>
         <translation>dde-file-manager</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="161"/>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="520"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="195"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="554"/>
         <source>Files are being processed</source>
         <translation>Kartelat po përpunohen</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="194"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="228"/>
         <source>Bit</source>
         <translation>Bit</translation>
     </message>
@@ -1021,8 +1068,8 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="643"/>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="12"/>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="72"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="299"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="186"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="343"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="188"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="87"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="320"/>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="62"/>
@@ -1035,8 +1082,8 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="647"/>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="16"/>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="75"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="303"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="190"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="347"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="192"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="90"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="324"/>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="66"/>
@@ -1058,7 +1105,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="60"/>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="40"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="201"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="203"/>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="81"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="343"/>
         <source>Properties</source>
@@ -1112,74 +1159,83 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
         <translation>Vetëm shkrim</translation>
     </message>
     <message>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="71"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="81"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="91"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="148"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="149"/>
         <source>Read only</source>
         <translation>Vetëm lexim</translation>
     </message>
     <message>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="70"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="80"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="90"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="150"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="151"/>
         <source>Read-write</source>
         <translation>Lexim-shkrim</translation>
     </message>
     <message>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="63"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="157"/>
         <source>Owner</source>
         <translation>Pronar</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="161"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="73"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="163"/>
         <source>Group</source>
         <translation>Grup</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="165"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="83"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="169"/>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="26"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/namegroupstrategy.cpp" line="40"/>
         <source>Others</source>
         <translation>Të tjera</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="111"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="114"/>
         <source>Burn</source>
         <comment>button</comment>
         <translation>Shkruaje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="122"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="125"/>
         <source>Disc name:</source>
         <translation>Emër disku:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="191"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="200"/>
         <source>Write speed:</source>
         <translation>Shpejtësi shkrimi:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="194"/>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="196"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="205"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="207"/>
         <source>Maximum</source>
         <translation>Maksimum</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="201"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="212"/>
         <source>Finalize disc after burning 
 (no additional data can be appended)</source>
         <translation>Finalizo diskun pas shkrimit (s’mund të shtohen të dhëna të tjera)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="211"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="224"/>
         <source>Verify data</source>
         <translation>Verifikoni të dhëna</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="215"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="230"/>
         <source>Verify files (checksum)</source>
         <translation>Verifikoni kartela (checksum)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="219"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="236"/>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="32"/>
         <source>Eject</source>
         <translation>Nxirre</translation>
@@ -1258,76 +1314,76 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
         <translation>Gabim i panjohur</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="306"/>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="351"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="309"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="354"/>
         <source>Close</source>
         <comment>button</comment>
         <translation>Mbylle</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/filepreviewdialogstatusbar.cpp" line="39"/>
+        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/filepreviewdialogstatusbar.cpp" line="74"/>
         <source>Open</source>
         <comment>button</comment>
         <translation>Hape</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="153"/>
-        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="169"/>
+        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="156"/>
+        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="204"/>
         <source>Size: %1</source>
         <translation>Madhësi: %1</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="154"/>
+        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="157"/>
         <source>Type: %1</source>
         <translation>Lloj: %1</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="160"/>
+        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="173"/>
         <source>Size: 0</source>
         <translation>Madhësi: 0</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="170"/>
+        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="205"/>
         <source>Items: %1</source>
         <translation>Objekte: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/taghelper.cpp" line="298"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/taghelper.cpp" line="324"/>
         <source>Orange</source>
         <translation>Portokalli</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/taghelper.cpp" line="299"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/taghelper.cpp" line="325"/>
         <source>Red</source>
         <translation>E kuqe</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/taghelper.cpp" line="300"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/taghelper.cpp" line="326"/>
         <source>Purple</source>
         <translation>E purpurt</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/taghelper.cpp" line="301"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/taghelper.cpp" line="327"/>
         <source>Navy-blue</source>
         <translation>Blu e errët</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/taghelper.cpp" line="302"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/taghelper.cpp" line="328"/>
         <source>Azure</source>
         <translation>E kaltër</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/taghelper.cpp" line="303"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/taghelper.cpp" line="329"/>
         <source>Green</source>
         <translation>E gjelbër</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/taghelper.cpp" line="304"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/taghelper.cpp" line="330"/>
         <source>Yellow</source>
         <translation>E verdhë</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/taghelper.cpp" line="305"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/taghelper.cpp" line="331"/>
         <source>Gray</source>
         <translation>Gri</translation>
     </message>
@@ -1339,7 +1395,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="330"/>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="331"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="136"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="140"/>
         <source>Rename</source>
         <comment>button</comment>
         <translation>Riemërtoni</translation>
@@ -1444,33 +1500,33 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
         <translation>Pajisje e panjohur</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="236"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="280"/>
         <source>Remove</source>
         <comment>button</comment>
         <translation>Hiqe</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="239"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="283"/>
         <source>Do you want to remove this item?</source>
         <translation>Doni të hiqet ky objekt?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="241"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="285"/>
         <source>Do yout want to remove %1 items?</source>
         <translation>Doni të hiqen %1 objekte?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="242"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="286"/>
         <source>It does not delete the original files</source>
         <translation>Kjo nuk sjell fshirjen e kartelave origjinale</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="310"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="354"/>
         <source>Clear recent history</source>
         <translation>Spastro historik së fundi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="327"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="371"/>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/menus/trashmenuscene.cpp" line="238"/>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="167"/>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="190"/>
@@ -1529,75 +1585,75 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="174"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="101"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="103"/>
         <source>Location</source>
         <translation>Vendndodhje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="67"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="69"/>
         <source>Replace Text</source>
         <translation>Zëvendësoni Tekst</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="67"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="69"/>
         <source>Add Text</source>
         <translation>Shtoni Tekst</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="67"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="69"/>
         <source>Custom Text</source>
         <translation>Tekst Vetjak</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="74"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="76"/>
         <source>Find</source>
         <translation>Gjej</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="77"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="94"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="111"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="118"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="79"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="96"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="113"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="120"/>
         <source>Required</source>
         <translation>E domosdoshme</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="83"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="85"/>
         <source>Replace</source>
         <translation>Zëvendësoje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="85"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="87"/>
         <source>Optional</source>
         <translation>Opsionale</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="93"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="95"/>
         <source>Add</source>
         <translation>Shto</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="102"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="104"/>
         <source>Before file name</source>
         <translation>Para emri kartele</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="102"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="104"/>
         <source>After file name</source>
         <translation>Pas emri kartele</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="110"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="112"/>
         <source>File name</source>
         <translation>Emër kartele</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="117"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="119"/>
         <source>Start at</source>
         <translation>Fillo në</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="128"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="130"/>
         <source>Tips: Sort by selected file order</source>
         <translation>Ndihmëza: Renditi sipas rendit të përzgjedhur kartelash</translation>
     </message>
@@ -1608,7 +1664,7 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
         <translation>Ndarjet e Mia</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="162"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="166"/>
         <source>Free Space %1</source>
         <translation>Hapësirë e Lirë %1</translation>
     </message>
@@ -1680,23 +1736,23 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
         <translation>Fshi Kasafortë Kartelash</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="466"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="469"/>
         <source>Upgrade File Vault</source>
         <translation>Përmirësoni Kasafortë Kartelash</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="481"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="484"/>
         <source>The file vault encryption scheme has been upgraded.
 You need to upgrade this vault to continue using it.</source>
         <translation>Skema e fshehtëzimit të kasafortës së kartelave është përmirësuar.Lypset ta përmirësoni këtë kartelë, që të vazhdoni ta përdorni.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="490"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="493"/>
         <source>Later</source>
         <translation>Më vonë</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="491"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="494"/>
         <source>Upgrade now</source>
         <translation>Përmirësoje tani</translation>
     </message>
@@ -1961,7 +2017,7 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Kartela është e zënë</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="418"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="423"/>
         <source>Device disconnected</source>
         <translation>Pajisja u shkëput</translation>
     </message>
@@ -1981,9 +2037,19 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Dështoi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="241"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="243"/>
         <source>Sidebar</source>
         <translation>Anështyllë</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="246"/>
+        <source>Sidebar tree directory</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="248"/>
+        <source>Display sidebar disk partitions as a tree structure</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="25"/>
@@ -2002,72 +2068,112 @@ You need to upgrade this vault to continue using it.</source>
         <translation>E panjohur</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="308"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="328"/>
         <source>search</source>
         <translation>kërkim</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="323"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="347"/>
         <source>advanced search</source>
         <translation>kërkim i thelluar</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="614"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="566"/>
+        <source>Recovery key export path cannot be empty!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="572"/>
+        <source>Recovery key export path is not exists!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="579"/>
+        <source>Recovery key export path cannot be a symlink or non-directory!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="587"/>
+        <source>Cannot access the export path directory!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="593"/>
+        <source>The export path directory is world-writable, please choose a safer location!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="601"/>
+        <source>This partition is read-only, please export to a writable partition</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="628"/>
+        <source>Please export to an external device such as a non-encrypted partition or USB flash drive.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="642"/>
+        <source>The partition is encrypted, please export to a non-encrypted partition or external device such as a USB flash drive.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="878"/>
         <source>Cannot generate random number by TPM</source>
         <translation>S’mund të prodhohet numër kuturu nga TMP-ja</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="617"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="881"/>
         <source>No available encrypt algorithm.</source>
         <translation>S’ka algoritëm fshehtëzimi.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="620"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="884"/>
         <source>TPM encrypt failed.</source>
         <translation>Fshehtëzimi me TMP dështoi.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="623"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="887"/>
         <source>TPM is locked.</source>
         <translation>TPM-ja është e kyçur.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="696"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="960"/>
         <source>Confirm encrypt %1?</source>
         <translation>E ripohoni fshehtëzimin e %1?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="699"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="963"/>
         <source>The current partition is about to be encrypted and cannot be canceled during the encryption process, please confirm the encryption.</source>
         <translation>Është gati të fshehtëzohet pjesa e tanishme dhe kjo s’mund të anulohet gjatë procesit të fshehtëzimit, ju lutemi, ripohoni fshehtëzimin.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="707"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="722"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="241"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="971"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="986"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="194"/>
         <source>Cancel</source>
         <translation>Anuloje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="708"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="723"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="972"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="987"/>
         <source>Confirm and Reboot</source>
         <translation>Ripohojeni dhe Riniseni</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="709"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="723"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="242"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="973"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="987"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="195"/>
         <source>Confirm</source>
         <translation>Ripohojeni</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="719"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="983"/>
         <source>Decrypt &quot;%1&quot; partition?</source>
         <translation>Të shfshehtëzohet pjesa “%1”?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="720"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="984"/>
         <source>Decryption can take a long time, so make sure power is connected until the decryption is complete.</source>
         <translation>Shfshehtëzimi mund të zgjasë një kohë të madhe, ndaj sigurohuni se është i lidhur me rrjetin e energjisë deri sa të je të plotësuar shfshehtëzimi.</translation>
     </message>
@@ -2093,39 +2199,39 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Hyrja e fundit</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="131"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="41"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="154"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="42"/>
         <source>Group by</source>
         <translation>Grupoji sipas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="115"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="52"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="125"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="53"/>
         <source>None</source>
         <translation>Asnjë</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="53"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="54"/>
         <source>Name</source>
         <translation>Emër</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="54"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="55"/>
         <source>Time modified</source>
         <translation>Kohë kur u ndryshua</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="55"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="56"/>
         <source>Time created</source>
         <translation>Kohë kur u krijua</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="56"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="57"/>
         <source>Size</source>
         <translation>Madhësi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="57"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="58"/>
         <source>Type</source>
         <translation>Lloj</translation>
     </message>
@@ -2224,6 +2330,90 @@ You need to upgrade this vault to continue using it.</source>
         <source>Tree view</source>
         <translation>Parje si pemë</translation>
     </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/repair_dialog_main.cpp" line="64"/>
+        <source>Cannot connect to repair service</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/repair_dialog_main.cpp" line="151"/>
+        <source>Mount failed after repair</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>RepairDialog</name>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="108"/>
+        <source>Repair Storage Device</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="113"/>
+        <source>Preparing to repair device: %1 (%2 %3)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="118"/>
+        <source>The device will be unmounted during repair. It will be automatically remounted after repair is complete. Please do not remove the device during the repair process.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="132"/>
+        <source>Cancel</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="133"/>
+        <source>Start Repair</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="142"/>
+        <source>Repairing Storage Device</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="147"/>
+        <source>Repairing device: %1 (%2 %3)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="174"/>
+        <source>Repair Complete</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="179"/>
+        <source>The device has been successfully repaired. The device has been remounted and is now ready to use.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="191"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="244"/>
+        <source>Close</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="192"/>
+        <source>Open Device</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="201"/>
+        <source>Repair Failed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="206"/>
+        <source>Failed to repair the device. This may be due to serious format errors or physical damage. To protect your data, it is recommended to stop writing new files and try using professional data recovery software or seek manual assistance.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="220"/>
+        <source>Error Code: %1</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>ResumeEncryptWorker</name>
@@ -2231,6 +2421,105 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/services/diskencrypt/workers/resumeencryptworker.cpp" line="75"/>
         <source>Encrypting </source>
         <translation>Fshehtëzim </translation>
+    </message>
+</context>
+<context>
+    <name>UsbRepairMonitor</name>
+    <message>
+        <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="158"/>
+        <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="439"/>
+        <source>Filesystem type cannot be detected. The device may be severely damaged or formatted with an unsupported filesystem. Data recovery may require professional tools.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="173"/>
+        <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="454"/>
+        <source>Device is hardware write-protected, flash memory may be failing. Please back up data immediately.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="190"/>
+        <source>Filesystem error detected, device may not have been safely ejected. Mount might have failed due to filesystem corruption.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="462"/>
+        <source>Filesystem is severely corrupted and cannot be recognized. Data may be recoverable through repair.</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>UsbRepairWorker</name>
+    <message>
+        <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="40"/>
+        <source>Invalid device path: %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="46"/>
+        <source>Device is already being repaired: %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="53"/>
+        <source>Cannot detect filesystem type for: %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="59"/>
+        <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="410"/>
+        <source>Unsupported filesystem type: %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="74"/>
+        <source>Device is hardware write-protected, cannot repair</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="80"/>
+        <source>Authorization failed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="99"/>
+        <source>Failed to unmount device: %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="185"/>
+        <source>Filesystem repair completed successfully</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="188"/>
+        <source>NTFS repair capability is limited on Linux. Please connect the device to a Windows system for deep repair.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="193"/>
+        <source>Filesystem errors have been repaired</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="195"/>
+        <source>Filesystem repair failed (exit code: %1)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="235"/>
+        <source>Failed to start repair process: %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="237"/>
+        <source>unknown error</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="181"/>
+        <source>Repair timed out after %1 seconds</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2325,7 +2614,7 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>ddplugin_canvas::ItemEditor</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-canvas/delegate/itemeditor.cpp" line="261"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/delegate/itemeditor.cpp" line="264"/>
         <source>%1 are not allowed</source>
         <translation>Nuk lejohen %1</translation>
     </message>
@@ -2417,14 +2706,14 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>ddplugin_canvas::WaterMaskFrame</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermaskframe.cpp" line="132"/>
         <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermaskframe.cpp" line="133"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermaskframe.cpp" line="134"/>
         <source>Not authorized</source>
         <translation>E paautorizuar</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermaskframe.cpp" line="140"/>
         <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermaskframe.cpp" line="141"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermaskframe.cpp" line="142"/>
         <source>In trial period</source>
         <translation>Në periudhë prove</translation>
     </message>
@@ -2432,14 +2721,14 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>ddplugin_canvas::WatermaskSystem</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermasksystem.cpp" line="286"/>
         <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermasksystem.cpp" line="287"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermasksystem.cpp" line="288"/>
         <source>Not authorized</source>
         <translation>E paautorizuar</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermasksystem.cpp" line="292"/>
         <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermasksystem.cpp" line="293"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermasksystem.cpp" line="294"/>
         <source>In trial period</source>
         <translation>Në periudhë prove</translation>
     </message>
@@ -2583,27 +2872,27 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>ddplugin_organizer::FrameManagerPrivate</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="185"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="187"/>
         <source>To disable the One-Click Hide feature, invoke the &quot;Desktop Settings&quot; window in the desktop context menu and turn off the &quot;One-Click Hide Collection&quot;.</source>
         <translation>Që të çaktivizoni veçorinë Fshehje Me Një Klikim, hapni dritaren “Rregullime Desktopi”, te menuja e kontekstit për desktopin dhe çaktivizoni “Fshehje Koleksioni Me Një Klikim”.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="197"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="199"/>
         <source>Desktop organizer</source>
         <translation>Sistemues desktopi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="200"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="202"/>
         <source>Shortcut &quot;%1&quot; to show collections</source>
         <translation>Shkurtore “%1” për shfaqje koleksionesh</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="202"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="204"/>
         <source>Close</source>
         <translation>Mbylle</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="202"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="204"/>
         <source>No more prompts</source>
         <translation>S’ka hapa të tjerë</translation>
     </message>
@@ -2611,7 +2900,7 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>ddplugin_organizer::ItemEditor</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/itemeditor.cpp" line="256"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/itemeditor.cpp" line="259"/>
         <source>%1 are not allowed</source>
         <translation>Nuk lejohen %1</translation>
     </message>
@@ -2619,7 +2908,7 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>ddplugin_organizer::MethodComBox</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/methodcombox.cpp" line="34"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/methodcombox.cpp" line="36"/>
         <source>Type</source>
         <translation>Lloj</translation>
     </message>
@@ -2752,7 +3041,7 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>ddplugin_organizer::SizeSlider</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/options/sizeslider.cpp" line="87"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/sizeslider.cpp" line="89"/>
         <source>Icon size</source>
         <translation>Madhësi ikonash</translation>
     </message>
@@ -2995,7 +3284,7 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmbase::DeviceManager</name>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="626"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="629"/>
         <source>Unable to connect to %1</source>
         <translation>S’arrihet të lidhet me %1</translation>
     </message>
@@ -3003,356 +3292,356 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmbase::DialogManager</name>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="64"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="671"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="685"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="724"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="745"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="65"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="698"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="712"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="751"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="772"/>
         <location filename="../src/dfm-base/utils/dialogmanager.h" line="51"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Ripohojeni</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="95"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="96"/>
         <source>Operating failed</source>
         <translation>Veprimi dështoi</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="96"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="97"/>
         <source>Mount failed</source>
         <translation>Montimi dështoi</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="97"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="98"/>
         <source>Unmount failed</source>
         <translation>Çmontimi dështoi</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="103"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="104"/>
         <source>Unmounting device now...</source>
         <translation>Po çmontohet pajisja tani…</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="106"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="107"/>
         <source>Mounting device now...</source>
         <translation>Po montohet pajisja tani…</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="109"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="110"/>
         <source>Erasing device now...</source>
         <translation>Po fshihet pajisja tani…</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="112"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="113"/>
         <source>Making filesystem for device now...</source>
         <translation>Tani po krijohet sistem kartelash për pajisjen…</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="115"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="116"/>
         <source>Locking device now...</source>
         <translation>Tani po kyçet pajisja…</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="118"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="119"/>
         <source>Unlocking device now...</source>
         <translation>Tani po shkyçet pajisja…</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="142"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="143"/>
         <source>The device is busy now</source>
         <translation>Pajisja tani është e zënë</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="154"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="155"/>
         <source>Anonymous mount is not allowed</source>
         <translation>Nuk lejohet montim si anonim</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="156"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="157"/>
         <source>Wrong password</source>
         <translation>Fjalëkalim i gabuar</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="160"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="161"/>
         <source>Cannot create the mountpoint: the file name is too long</source>
         <translation>S’krijohet dot pika e montimit: emri i kartelës është shumë i gjatë</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="170"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="171"/>
         <source>Authentication failed</source>
         <translation>Mirëfilltësimi dështoi</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="164"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="165"/>
         <source>No such file or directory</source>
         <translation>S’ka kartelë apo drejtori të tillë</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="173"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="174"/>
         <source>The device has been blocked and you do not have permission to access it. Please configure its connection policy in Security Center or contact your administrator.</source>
         <translation>Pajisja është bllokuar dhe s’keni leje për hyrje në të. Ju lutemi, formësoni rregullat për lidhje të saj, te Qendër Sigurie, ose lidhuni me përgjegjësin tuaj.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="182"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="183"/>
         <source>The device is busy, cannot remove now</source>
         <translation>Pajisja është e zënë, s’mund të hiqet tani</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="205"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="206"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>S’keni leje të bëni veprime në kartelë/dosje!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="222"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="223"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
         <translation>Na ndjeni, s’keni leje të veproni me %1 kartelën/dosjen(et) vijuese!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="251"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="261"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="530"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="615"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="781"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="252"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="262"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="557"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="642"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="808"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="258"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="523"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="537"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="259"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="550"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="564"/>
         <source>Operation failed!</source>
         <translation>Veprimi dështoi!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="259"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="260"/>
         <source>Target folder is inside the source folder!</source>
         <translation>Dosja e synuar gjendet brenda dosjes burim!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="321"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="337"/>
         <source>The passphrase is needed to access encrypted data on %1.</source>
         <translation>Frazëkalimi është i nevojshëm për të hyrë te të dhëna të fshehtëzuara në %1.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="329"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="349"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="378"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="399"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="448"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="509"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="632"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="744"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="768"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="345"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="365"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="394"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="415"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="475"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="536"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="659"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="771"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="795"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Anuloje</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="330"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="346"/>
         <source>Format</source>
         <comment>button</comment>
         <translation>Formatoje</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="331"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="347"/>
         <source>To access the device, you must format the disk first. Are you sure you want to format it now?</source>
         <translation>Që të përdorni pajisjen, së pari duhet ta formatoni diskun. Jeni i sigurt se doni të formatohet tani?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="345"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="361"/>
         <source>Do you want to run %1 or display its content?</source>
         <translation>Doni që %1 të xhirohet, apo të shfaqet lënda e saj?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="346"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="362"/>
         <source>It is an executable text file.</source>
         <translation>Është kartelë tekst e ekzekutueshme.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="350"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="380"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="769"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="366"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="396"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="796"/>
         <source>Run</source>
         <comment>button</comment>
         <translation>Xhiroje</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="351"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="379"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="367"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="395"/>
         <source>Run in terminal</source>
         <comment>button</comment>
         <translation>Xhiroje në terminal</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="352"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="368"/>
         <source>Display</source>
         <comment>button</comment>
         <translation>Shfaqe</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="375"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="391"/>
         <source>Do you want to run %1?</source>
         <translation>Doni të xhirohet %1?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="376"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="392"/>
         <source>It is an executable file.</source>
         <translation>Është kartelë e ekzekutueshme.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="393"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="409"/>
         <source>Cannot move the selected %1 items to the trash. Do you want to permanently delete them?</source>
         <translation>S’shpihen dot te hedhurinat %1 e përzgjedhur. Doni të fshihen përgjithmonë?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="394"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="410"/>
         <source>Permanently delete %1 items?</source>
         <translation>Të fshihen përgjithmonë %1 objekte?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="424"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="451"/>
         <source>Cannot move &quot;%1&quot; to the trash. Do you want to permanently delete it?</source>
         <translation>S’shpihet dot te hedhurinat “%1”. Doni të fshihet përgjithmonë?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="400"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="449"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="510"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="633"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="416"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="476"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="537"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="660"/>
         <source>Delete</source>
         <comment>button</comment>
         <translation>Fshije</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="162"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="163"/>
         <source>Permission denied</source>
         <translation>Leja u mohua</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="425"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="452"/>
         <source>Permanently delete %1?</source>
         <translation>Të fshihet përgjithmonë %1?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="431"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="468"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="458"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="495"/>
         <source>This action cannot be undone</source>
         <translation>Ky veprim s’mund të zhbëhet</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="444"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="471"/>
         <source>Are you sure you want to empty %1 item?</source>
         <translation>Jeni i sigurt se doni të zbrazet %1 objekt?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="445"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="472"/>
         <source>Are you sure you want to empty %1 items?</source>
         <translation>Jeni i sigurt se doni të zbrazen %1 objekte?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="454"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="481"/>
         <source>Empty</source>
         <translation>Zbraze</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="493"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="520"/>
         <source>Do you want to delete %1?</source>
         <translation>Doni të fshihet %1?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="494"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="521"/>
         <source>Do you want to delete the selected %1 items?</source>
         <translation>Doni të fshihen %1 objektet e përzgjedhur?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="525"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="552"/>
         <source>Failed to restore %1 file, the target folder is read-only</source>
         <translation>S’u arrit të rikthehet %1 kartelë, dosja e synuar është vetëm-lexim</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="527"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="554"/>
         <source>Failed to restore %1 files, the target folder is read-only</source>
         <translation>S’u arrit të rikthehen %1 kartela, dosja e synuar është vetëm-lexim</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="540"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="567"/>
         <source>File operation failed: %1</source>
         <translation>Dështoi veprim mbi kartela: %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="569"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="596"/>
         <source>File Name</source>
         <translation>Emër Kartele</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="569"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="596"/>
         <source>Error Reason</source>
         <translation>Arsye Gabimi</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="625"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="652"/>
         <source>After revocation, it will be completely deleted %1, do you want to delete it completely?</source>
         <translation>Pas shfuqizimit, do të fshihen plotësisht %1, doni të fshihet plotësisht?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="628"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="655"/>
         <source>These %1 contents will be completely deleted after revocation. Do you want to delete them completely?</source>
         <translation>Këto %1 lëndë do të fshihen plotësisht pas shfuqizimit. Doni të fshihen plotësisht?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="653"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="680"/>
         <source>This operation cannot be reversed.</source>
         <translation>Ky veprim s’mund të prapakthehet.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="669"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="696"/>
         <source>&quot;%1&quot; already exists, please use another name.</source>
         <translation>“%1” ekziston tashmë, ju lutemi, përdorni një emër tjetër.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="683"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="710"/>
         <source>Device or resource busy</source>
         <translation>Pajisje ose burim i zënë</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="696"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="723"/>
         <source>This file will be hidden if the file name starts with &apos;.&apos;. Do you want to hide it?</source>
         <translation>Kjo kartelë do të kalojë në fshehje, nëse emri i kartelës fillon me &apos;.&apos;. Doni të fshihet?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="697"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="724"/>
         <source>Hide</source>
         <translation>Fshihe</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="698"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="725"/>
         <source>Cancel</source>
         <translation>Anuloje</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="721"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="748"/>
         <source>Unable to access %1</source>
         <translation>S’arrihet të hyhet në %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="738"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="765"/>
         <source>%1 that this shortcut refers to has been changed or moved</source>
         <translation>%1, së cilës i referohet kjo shkurtore, është ndryshuar ose lëvizur</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="742"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="769"/>
         <source>Do you want to delete this shortcut？</source>
         <translation>Doni të fshihet kjo shkurtore？</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="767"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="794"/>
         <source>This file is not executable, do you want to add the execute permission and run?</source>
         <translation>Kjo kartelë s’është e ekzekutueshme, doni të shtohet leja e ekzekutimit dhe të xhirohet?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="779"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="806"/>
         <source>The selected files contain system file/directory, and it cannot be deleted</source>
         <translation>Kartelat e përzgjedhura përmbajnë kartelë/drejtori sistemit dhe s’mund të fshihen</translation>
     </message>
@@ -3445,17 +3734,17 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Emër përdoruesi</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.cpp" line="72"/>
+        <location filename="../src/dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.cpp" line="74"/>
         <source>Domain</source>
         <translation>Përkatësi</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.cpp" line="80"/>
+        <location filename="../src/dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.cpp" line="84"/>
         <source>Password</source>
         <translation>Fjalëkalim</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.cpp" line="93"/>
+        <location filename="../src/dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.cpp" line="102"/>
         <source>Remember password</source>
         <translation>Mbaje mend fjalëkalimin</translation>
     </message>
@@ -4058,43 +4347,43 @@ You need to upgrade this vault to continue using it.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="847"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="859"/>
         <source>Time modified: %1</source>
         <translation>Kohë kur u ndryshua: %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="852"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="864"/>
         <source>Original folder</source>
         <translation>Dosja origjinale</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="859"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="871"/>
         <source>Contains: %1</source>
         <translation>Përmban: %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="862"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="874"/>
         <source>Original file</source>
         <translation>Kartelë origjinale</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="863"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="875"/>
         <source>Size: %1</source>
         <translation>Madhësi: %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="852"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="864"/>
         <source>Target folder</source>
         <translation>Dosja e synuar</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="626"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="851"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="636"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="863"/>
         <source>In data statistics ...</source>
         <translation>Në statistika të dhënash …</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="862"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="874"/>
         <source>Target file</source>
         <translation>Kartela e synuar</translation>
     </message>
@@ -4127,37 +4416,37 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Mbaji të dyja</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="547"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="549"/>
         <source>Skip</source>
         <comment>button</comment>
         <translation>Anashkaloje</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="552"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="719"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="556"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="731"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>Zëvendësoje</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="558"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="566"/>
         <source>Permanently delete</source>
         <comment>button</comment>
         <translation>Fshije përgjithmonë</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="585"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="593"/>
         <source>Do not ask again</source>
         <translation>Mos pyet sërish</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="716"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="728"/>
         <source>Retry</source>
         <comment>button</comment>
         <translation>Riprovo</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="722"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="734"/>
         <source>Merge</source>
         <comment>button</comment>
         <translation>Përzieji</translation>
@@ -4171,7 +4460,7 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Që të mbrohen dosje të përbashkëta, jepni një fjalëkalim</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="55"/>
+        <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="57"/>
         <source>Set a password on the shared folder for non-anonymous access</source>
         <translation>Caktoni një fjalëkalim mbi dosjen e ndarë me të tjerë, për përdorim jo anonim</translation>
     </message>
@@ -4301,7 +4590,7 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_burn::BurnISOFilesJob</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="450"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="456"/>
         <source>The file name or the path is too long. Please shorten the file name or the path and try again.</source>
         <translation>Emri i kartelës, ose shtegu për te ajo është shumë i gjatë. Ju lutemi, shkurtojeni emrin ose shtegun dhe riprovoni.</translation>
     </message>
@@ -4350,45 +4639,45 @@ You need to upgrade this vault to continue using it.</source>
         <translation>%1: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="277"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="280"/>
         <source>Show details</source>
         <translation>Shfaq hollësi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="281"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="284"/>
         <source>Hide details</source>
         <translation>Fshihi hollësitë</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="282"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="285"/>
         <source>Error</source>
         <translation>Gabim</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="291"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="294"/>
         <source>Show details</source>
         <comment>button</comment>
         <translation>Shfaq hollësi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="292"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="295"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Ripohojeni</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="307"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="310"/>
         <source>View Image File</source>
         <comment>button</comment>
         <translation>Shihni Kartelën Pamje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="326"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="329"/>
         <source>Image successfully created</source>
         <translation>Pamja u krijua me sukses</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="361"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="364"/>
         <source>Image creation failed</source>
         <translation>Krijimi i pamjes dështoi</translation>
     </message>
@@ -4396,42 +4685,42 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_burn::BurnOptDialog</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="144"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="149"/>
         <source>Advanced settings</source>
         <translation>Rregullime të mëtejshme</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="168"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="175"/>
         <source>File system: </source>
         <translation>Sistem kartelash: </translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="171"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="178"/>
         <source>ISO9660 Only</source>
         <translation>Vetëm ISO9660</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="172"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="179"/>
         <source>ISO9660/Joliet (For Windows)</source>
         <translation>ISO9660/Joliet (Për Windows)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="173"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="180"/>
         <source>ISO9660/Rock Ridge (For Unix)</source>
         <translation>ISO9660/Rock Ridge (Për Unix)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="183"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="192"/>
         <source>%1 (Compatible with Windows CD/DVD mode)</source>
         <translation>%1 (E përputhshme me mënyrën CD/DVD Windows)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="328"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="347"/>
         <source>Device error</source>
         <translation>Gabim pajisjeje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="328"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="347"/>
         <source>Optical device %1 doesn&apos;t exist</source>
         <translation>Pajisja optike %1 s’ekziston</translation>
     </message>
@@ -4439,17 +4728,17 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_burn::BurnUDFFilesJob</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="602"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="608"/>
         <source>The file name or the path is too long. Please shorten the file name or the path and try again.</source>
         <translation>Emri i kartelës, ose shtegu për te ajo është shumë i gjatë. Ju lutemi, shkurtojeni emrin ose shtegun dhe riprovoni.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="646"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="652"/>
         <source>Not enough free space on the disc</source>
         <translation>Hapësirë e lirë e pamjaftueshme te disku</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="647"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="653"/>
         <source>The remaining space on the current disc is insufficient to hold the files to be burned. Please reduce the number of files and try again.</source>
         <translation>Hapësira e mbetur në diskun e tanishëm është e pamjaftueshme për të mbajtur kartelat që duhen shkruar. Ju lutemi, reduktoni numrin e kartelave dhe riprovoni.</translation>
     </message>
@@ -4457,12 +4746,12 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_burn::DumpISOImageJob</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="671"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="677"/>
         <source>Creating an ISO image</source>
         <translation>Krijim i një pamjeje ISO</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="672"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="678"/>
         <source>to %1</source>
         <translation>te %1</translation>
     </message>
@@ -4637,42 +4926,42 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_computer::DeviceBasicWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="33"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="34"/>
         <source>Basic info</source>
         <translation>Hollësi elementare</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="41"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="42"/>
         <source>Device type</source>
         <translation>Lloj pajisjeje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="44"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="45"/>
         <source>Total space</source>
         <translation>Hapësirë gjithsej</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="47"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="48"/>
         <source>File system</source>
         <translation>Sistem kartelash</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="50"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="51"/>
         <source>Contains</source>
         <translation>Përmban</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="54"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="55"/>
         <source>Free space</source>
         <translation>Hapësirë e lirë</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="103"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="110"/>
         <source>%1 items</source>
         <translation>%1 objekte</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="103"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="110"/>
         <source>%1 item</source>
         <translation>%1 objekt</translation>
     </message>
@@ -4746,7 +5035,7 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Ndarje me të tjerët</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="162"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="164"/>
         <source>Share this folder</source>
         <translation>Ndajeni këtë dosje me të tjerë</translation>
     </message>
@@ -4766,22 +5055,22 @@ You need to upgrade this vault to continue using it.</source>
         <translation>I paemër</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="193"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="199"/>
         <source>Read and write</source>
         <translation>Lexim dhe shkrim</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="193"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="199"/>
         <source>Read only</source>
         <translation>Vetëm lexim</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="206"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="214"/>
         <source>Not allow</source>
         <translation>Mos e lejo</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="206"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="214"/>
         <source>Allow</source>
         <translation>Lejoje</translation>
     </message>
@@ -4791,8 +5080,8 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Shteg rrjeti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="220"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="254"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="230"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="266"/>
         <source>Copy</source>
         <translation>Kopjoje</translation>
     </message>
@@ -4802,21 +5091,21 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Emër përdoruesi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="286"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="597"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="298"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="598"/>
         <source>None</source>
         <translation>Asnjë</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="288"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="289"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="598"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="300"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="303"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="599"/>
         <source>Set password</source>
         <translation>Caktoni fjalëkalimin</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="289"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="598"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="303"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="599"/>
         <source>Change password</source>
         <translation>Ndryshoni fjalëkalimin</translation>
     </message>
@@ -4826,45 +5115,45 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Fjalëkalim pjese</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="307"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="321"/>
         <source>This password will be applied to all shared folders, and users without the password can only access shared folders that allow anonymous access. </source>
         <translation>Ky fjalëkalim do të aplikohet mbi krejt dosjet e ndara dhe përdoruesit pa fjalëkalimin mund të hyjnë vetëm te dosje që lejojnë hyrje anonime. </translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="410"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="424"/>
         <source>The share name must not be two dots (..) or one dot (.)</source>
         <translation>Emri i ndarjes s’duhet të jetë dy pika (..) ose një pikë (.)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="428"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="442"/>
         <source>The share name is used by another user.</source>
         <translation>Emri i ndarjes është i përdorur nga tjetër përdorues.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="429"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="443"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="431"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="445"/>
         <source>The share name already exists. Do you want to replace the shared folder?</source>
         <translation>Emri i ndarjes ekziston tashmë. Doni të zëvendësohet dosja e ndarë?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="432"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="446"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Anuloje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="433"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="447"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>Zëvendësoje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="613"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="614"/>
         <source>The shared name is too long and will be truncated.</source>
         <translation>Emri i dhënë është shumë i gjatë dhe do të cungohet.</translation>
     </message>
@@ -4872,45 +5161,45 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_dirshare::UserShareHelper</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="73"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="78"/>
         <source>Kindly Reminder</source>
         <translation>Kujtues i Sjellshëm</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="73"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="78"/>
         <source>Please firstly install samba to continue</source>
         <translation>Ju lutemi, që të vazhdohet, së pari instaloni Samba-n</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="85"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="540"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="90"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="567"/>
         <source>The share name must not contain %1, and cannot start with a dash (-) or whitespace, or end with whitespace.</source>
         <translation>Pjesa s’duhet të përmbajë %1 dhe s’mund të fillojë me një vijë në mes (-) apo hapësirë të zbrazët, apo të përfundojë me një hapësirë të zbrazët.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="528"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="555"/>
         <source>Share folder can&apos;t be named after the current username</source>
         <translation>Dosja e ndarjes s’mund të emërtohet sipas emrit të tanishëm të përdoruesit</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="534"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="561"/>
         <source>To protect the files, you cannot share this folder.</source>
         <translation>Që të mbrohen kartelat, s’mund ta ndani këtë dosje me të tjerë.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="560"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="562"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="572"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="587"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="589"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="599"/>
         <source>Sharing failed</source>
         <translation>Ndarja me të tjerë dështoi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="563"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="590"/>
         <source>SMB port is banned, please check the firewall strategy.</source>
         <translation>Porta SMB është e ndaluar, ju lutemi, shihni strategjinë e firewall-it.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="572"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="599"/>
         <source>The computer name is too long</source>
         <translation>Emri i kompjuterit është shumë i gjatë</translation>
     </message>
@@ -4920,14 +5209,14 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="18"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="54"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="95"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="103"/>
         <source>passphrase</source>
         <translation>frazëkalim</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="20"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="56"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="97"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="105"/>
         <source>PIN</source>
         <translation>PIN</translation>
     </message>
@@ -4937,77 +5226,77 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Ndryshoni %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="69"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="75"/>
         <source>Please enter %1 again</source>
         <translation>Ju lutemi, rijepeni %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="72"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="78"/>
         <source>New %1</source>
         <translation>%1 i ri</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="73"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="79"/>
         <source>Repeat %1</source>
         <translation>Përsëriteni %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="79"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="87"/>
         <source>Cancel</source>
         <translation>Anuloje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="80"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="554"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="88"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="800"/>
         <source>Confirm</source>
         <translation>Ripohojeni</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="103"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="110"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="111"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="118"/>
         <source>%1 cannot be empty</source>
         <translation>%1 s’mund të jetë i zbrazët</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="112"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="177"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="120"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="185"/>
         <source>Recovery key</source>
         <translation>Kyç Rimarrjesh</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="119"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="127"/>
         <source>Recovery key is not valid!</source>
         <translation>Kyçi i rimarrjeve s’është i vlefshëm!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="147"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="188"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="191"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="155"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="196"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="199"/>
         <source>At least 8 bits, contains 3 types of A-Z, a-z, 0-9 and symbols</source>
         <translation>Të paktën 8 bite, të përmbajë 3 lloje shenjash, A-Z, a-z, 0-9 dhe simbole</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="153"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="161"/>
         <source>%1 inconsistency</source>
         <translation>Mospërputhje %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="180"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="188"/>
         <source>Validate with %1</source>
         <translation>Vleftësoje me %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="181"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="189"/>
         <source>Please input recovery key</source>
         <translation>Ju lutemi, jepni një kyç rimarrjesh</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="184"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="192"/>
         <source>Old %1</source>
         <translation>%1 i vjetër</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="187"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="195"/>
         <source>Validate with recovery key</source>
         <translation>Vleftësoje me kyç rimarrjesh</translation>
     </message>
@@ -5073,7 +5362,7 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Shfshehtëzoje pjesën</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="119"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="123"/>
         <source>Confirm</source>
         <translation>Ripohojeni</translation>
     </message>
@@ -5139,47 +5428,59 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Ndryshimi i frazëkalimit dështoi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="677"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="427"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="434"/>
+        <source>Re-encryption failed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="428"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="435"/>
+        <source>Failed to get TPM information. Please check whether TPM is available.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="704"/>
         <source>Unlock partition failed</source>
         <translation>Shkyçja e pjesës dështoi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="678"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="705"/>
         <source>Wrong passphrase</source>
         <translation>Frazëkalim i gabuar</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="697"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="724"/>
         <source>Mount device failed</source>
         <translation>Montimi i pajisjes dështoi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="746"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="773"/>
         <source>unmount</source>
         <translation>Çmontoje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="746"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="773"/>
         <source>lock</source>
         <translation>kyçje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="747"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="774"/>
         <source>Encrypt failed</source>
         <translation>Fshehtëzimi dështoi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="748"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="775"/>
         <source>Cannot %1 device %2</source>
         <translation>S’mund të %1 pajisjen %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="833"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="892"/>
         <source>Reboot to continue encrypt</source>
         <translation>Që të vazhdohet fshehtëzimi, bëni rinisjen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="834"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="893"/>
         <source>Reboot to finish decrypt</source>
         <translation>Që të përfundojë shfshehtëzimi, bëni rinisjen</translation>
     </message>
@@ -5192,159 +5493,134 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Lloj zhbllokimi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="138"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="142"/>
         <source>Unlocked by passphrase</source>
         <translation>Shkyçur me frazëkalim</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="139"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="143"/>
         <source>Use TPM+PIN to unlock on this computer (recommended)</source>
         <translation>Përdorni TPM+PIN që të shkyçni këtë kompjuter (e këshilluar)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="140"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="144"/>
         <source>Automatic unlocking on this computer by TPM</source>
         <translation>Shkyçje e automatizuar në këtë kompjuter nga TPM</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="167"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="171"/>
         <source>In special cases such as forgetting the password or the encryption hardware is damaged, you can decrypt the encrypted partition with the recovery key, please export it to a non-encrypted partition and keep it in a safe place!</source>
         <translation>Në raste të posaçme, f.v., harrim fjalëkalimi, ose nëse hardware-i i fshehtëzimit është dëmtuar, mund ta shfshehtëzoni pjesën e fshehtëzuar me kyçin e rimarrjeve, ju lutemi, eksportojeni te një pjesë e pafshehtëzuar dhe ruajeni në një vend të parrezik!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="182"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="188"/>
         <source>Please select a non-encrypted partition as the key file export path.</source>
         <translation>Ju lutemi, si shteg eksportimi kartele kyçi, përzgjidhni një pjesë të pafshehtëzuar.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="206"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="386"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="212"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="333"/>
         <source>Passphrase</source>
         <translation>Frazëkalim</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="208"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="214"/>
         <source>%1 cannot be empty</source>
         <translation>%1 s’mund të jetë i zbrazët</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="238"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="377"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="244"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="324"/>
         <source>At least 8 bits, contains 3 types of A-Z, a-z, 0-9 and symbols</source>
         <translation>Të paktën 8 bite, të përmbajë 3 lloje shenjash, A-Z, a-z, 0-9 dhe simbole</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="244"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="250"/>
         <source>%1 inconsistency</source>
         <translation>Mospërputhje %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="255"/>
-        <source>Recovery key export path cannot be empty!</source>
-        <translation>Shtegu i eksportimit të kyçit të rimarrjeve s’mund të jetë i zbrazët!</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="261"/>
-        <source>Recovery key export path is not exists!</source>
-        <translation>Shtegu i eksportimit të kyçit të rimarrjeve s’ekziston!</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="281"/>
-        <source>Please export to an external device such as a non-encrypted partition or USB flash drive.</source>
-        <translation>Ju lutemi, eksportojeni te një pajisje e jashtme, bie fjala, një pjesë jo e fshehtëzuar, ose një diskth USB.</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="287"/>
-        <source>This partition is read-only, please export to a writable partition</source>
-        <translation>Kjo pjesë është vetëm lexim, ju lutemi, eksportojeni te një pjesë e shkrueshme</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="301"/>
-        <source>The partition is encrypted, please export to a non-encrypted partition or external device such as a USB flash drive.</source>
-        <translation>Pjesa është e fshehtëzuar, ju lutemi, eksportojeni te një pjesë jo e fshehtëzuar, ose te një pajisje e jashtme, bie fjala, një diskth USB.</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="361"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="308"/>
         <source>Please continue to encrypt &quot;%1&quot; partition</source>
         <translation>Që të fshehtëzohet pjesa “%1”, ju lutemi, vazhdoni</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="362"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="309"/>
         <source>Next</source>
         <translation>Pasuesi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="362"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="368"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="309"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="315"/>
         <source>Confirm encrypt</source>
         <translation>Ripohoni fshehtëzimin </translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="366"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="313"/>
         <source>Export Recovery Key</source>
         <translation>Eksportoni Kyç Rimarrjesh</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="367"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="314"/>
         <source>Previous</source>
         <translation>I mëparshmi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="375"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="322"/>
         <source>Set %1</source>
         <translation>Ujdisni %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="376"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="323"/>
         <source>Repeat %1</source>
         <translation>Përsëriteni %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="378"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="325"/>
         <source>Please enter the %1 again</source>
         <translation>Ju lutemi, rijepeni %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="383"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="384"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="330"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="331"/>
         <source>passphrase</source>
         <translation>frazëkalim</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="387"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="334"/>
         <source>Access to the partition will be unlocked using a passphrase.</source>
         <translation>Hyrja te pjesa do të zhbllokohet duke përdorur një frazëkalim.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="391"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="392"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="394"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="338"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="339"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="341"/>
         <source>PIN</source>
         <translation>PIN</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="395"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="342"/>
         <source>Access to the partition will be unlocked using the TPM security chip and PIN.</source>
         <translation>Hyrja te pjesa do të zhbllokohet duke përdorur një modul hardware sigurie TPM dhe PIN.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="399"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="346"/>
         <source>Access to the partition will be automatically unlocked using the TPM security chip, no passphrase checking is required.</source>
         <translation>Hyrja te pjesa do të zhbllokohet automatikisht duke përdorur një modul hardware sigurie TPM, s’ka nevojë për kontroll frazëkalimi.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="462"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="410"/>
         <source>TPM is locked and cannot be used for partition encryption. Please cancel the TPM password or choose another unlocking method.</source>
         <translation>TPM-ja është e kyçur dhe s’mund të përdoret për fshehtëzim pjese. Ju lutemi, anulojeni fjalëkalimin TPM, ose zgjidhni një tjetër metodë shkyçjeje.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="464"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="469"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="412"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="417"/>
         <source>TPM error</source>
         <translation>Gabim TPM</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="469"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="417"/>
         <source>TPM status error!</source>
         <translation>Gabim gjendjeje TPM!</translation>
     </message>
@@ -5352,49 +5628,29 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_diskenc::EncryptProgressDialog</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="59"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="56"/>
         <source>Confirm</source>
         <translation>Ripohojeni</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="67"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="81"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="64"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="78"/>
         <source>Re-export the recovery key</source>
         <translation>Rieksporto kyçin e rimarrjeve</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="71"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="68"/>
         <source>*Recovery key saving failed, please re-save the recovery key to a non-encrypted partition and keep it in a safe place!</source>
         <translation>*Ruajtja e kyçit të rimarrjeve dështoi, ju lutemi, rijepeni kyçin e rimarrjeve te një pjesë e pafshehtëzuar dhe ruajeni në një vend të parrezik!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="90"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="205"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="87"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="161"/>
         <source>Error</source>
         <translation>Gabim</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="160"/>
-        <source>Recovery key export path cannot be empty!</source>
-        <translation>Shtegu i eksportimit të kyçit të rimarrjes s’mund të jetë i zbrazët!</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="166"/>
-        <source>Recovery key export path is not exists!</source>
-        <translation>Shtegu i eksportimit të kyçit të rimarrjeve s’ekziston!</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="173"/>
-        <source>This partition is read-only, please export to a writable partition</source>
-        <translation>Kjo pjesë është vetëm lexim, ju lutemi, eksportojeni te një pjesë e shkrueshme</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="188"/>
-        <source>The partition is encrypted, please export to a non-encrypted partition or external device such as a USB flash drive.</source>
-        <translation>Pjesa është e fshehtëzuar, ju lutemi, eksportojeni te një pjesë jo e fshehtëzuar, ose te një pajisje e jashtme, bie fjala, një diskth USB.</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="205"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="161"/>
         <source>Cannot create recovery key file!</source>
         <translation>S’krijohet dot kartelë kyçi rimarrjesh!</translation>
     </message>
@@ -5402,220 +5658,230 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_diskenc::EventsHandler</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="219"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="218"/>
         <source>Encrypt done</source>
         <translation>Fshehtëzimi u bë</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="225"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="224"/>
         <source>Encrypt failed</source>
         <translation>Fshehtëzimi dështoi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="220"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="219"/>
         <source>Partition %1 has been encrypted</source>
         <translation>Pjesa %1 u fshehtëzua</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="226"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="225"/>
         <source>Partition %1 encrypt failed, please see log for more information.(%2)</source>
         <translation>Fshehtëzimi i pjesës %1 dështoi, ju lutemi, për më tepër hollësi shihni regjistrat.(%2)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="334"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="339"/>
         <source>The encrypting process may have system lag, please minimize the system operation</source>
         <translation>Procesi i fshehtëzimit mund të sjellë vonesë në sistem, ju lutemi, minimizoni funksionimin e sistemit </translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="355"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="360"/>
         <source>The decrypting process may have system lag, please minimize the system operation</source>
         <translation>Procesi i shfshehtëzimit mund të sjellë vonesë në sistem, ju lutemi, minimizoni funksionimin e sistemit </translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="385"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="612"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="390"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="617"/>
         <source>Error</source>
         <translation>Gabim</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="385"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="390"/>
         <source>TPM status is abnormal, please use the recovery key to unlock it</source>
         <translation>Gjendja e TPM-së është jonormale, ju lutemi, përdorni kyçin e rimarrjeve për ta shkyçur</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="415"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="420"/>
         <source>Wrong PIN</source>
         <translation>PIN i Gabuar</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="417"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="422"/>
         <source>Wrong passphrase</source>
         <translation>Frazëkalim i gabuar</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="419"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="424"/>
         <source>TPM error</source>
         <translation>Gabim TPM-je</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="421"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="426"/>
         <source>Please use recovery key to unlock device.</source>
         <translation>Ju lutemi, që të shkyçet pajisja, përdorni kyç rimarrjesh.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="486"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="491"/>
         <source>Preencrypt done</source>
         <translation>Parafshehtëzimi u bë</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="487"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="492"/>
         <source>Partition %1 has been preencrypt, please reboot to finish encryption.</source>
         <translation>Pjesa %1 është parafshehtëzuar, ju lutemi, që të përfundojë fshehtëzimi, bëni rinisjen.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="496"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="501"/>
         <source>Partition %1 preencrypt failed, please see log for more information.(%2)</source>
         <translation>Parafshehtëzimi i pjesës %1 dështoi, ju lutemi, për më tepër hollësi shihni regjistrat.(%2)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="515"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="520"/>
         <source>Partition %1 has been decrypted</source>
         <translation>Pjesa %1 u shfshehtëzua</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="522"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="527"/>
         <source>Decrypt partition</source>
         <translation>Shfshehtëzoje pjesën</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="528"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="533"/>
         <source>Partition %1 is under encrypting, please decrypt after encryption finished.</source>
         <translation>Pjesa %1 gjendet nën fshehtëzim, ju lutemi, shfshehtëzojeni pasi të ketë përfunduar fshehtëzimi.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="534"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="539"/>
         <source>Partition %1 Decrypt failed, please see log for more information.(%2)</source>
         <translation>Shfshehtëzimi i pjesës %1 dështoi, ju lutemi, për më tepër hollësi shihni regjistrat.(%2)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="583"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="588"/>
         <source>Partition %1 change %2 failed, please see log for more information.(%3)</source>
         <translation>Ndryshimi i %2 për pjesën %1 dështoi, ju lutemi, për më tepër hollësi, shihni regjistrat.(%3)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="613"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="618"/>
         <source>Partition is not fully decrypted, please finish decryption before access.</source>
         <translation>Pjesa s’është shfshehtëzuar plotësisht, ju lutemi, përfundoni shfshehtëzimin, para se ta përdorni.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="620"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="625"/>
         <source>Unlocking partition failed</source>
         <translation>Shkyçja e pjesës dështoi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="621"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="626"/>
         <source>Please click &quot;Continue Partition Encryption&quot; in the right-click menu to complete the partition encryption.</source>
         <translation>Që të plotësohet fshehtëzimi i pjesës, ju lutemi, klikoni mbi “Vazhdo Fshehtëzimin e Pjesës” te menuja e djathtasklikimit.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="495"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="500"/>
         <source>Preencrypt failed</source>
         <translation>Parafshehtëzimi dështoi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="333"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="338"/>
         <source>The &quot;%1&quot; partition is under encrypting...</source>
         <translation>Pjesa “%1” është nën fshehtëzim…</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="354"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="359"/>
         <source>The &quot;%1&quot; partition is under decrypting...</source>
         <translation>Pjesa “%1” është nën shfshehtëzim…</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="514"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="519"/>
         <source>Decrypt done</source>
         <translation>Shfshehtëzimi u bë</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="523"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="528"/>
         <source>Wrong passpharse or PIN</source>
         <translation>Frazëkalim, ose PIN i gabuar</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="527"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="533"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="532"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="538"/>
         <source>Decrypt failed</source>
         <translation>Shfshehtëzimi dështoi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="560"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="565"/>
         <source>passphrase</source>
         <translation>frazëkalim</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="563"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="568"/>
         <source>PIN</source>
         <translation>PIN</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="569"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="574"/>
         <source>Change %1 done</source>
         <translation>Ndryshimi i %1 u bë</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="570"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="575"/>
         <source>%1&apos;s %2 has been changed</source>
         <translation>%2 i %1 u ndryshua</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="577"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="582"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="587"/>
         <source>Change %1 failed</source>
         <translation>Ndryshimi i %1 dështoi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="578"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="583"/>
         <source>Wrong %1</source>
         <translation>%1 i gabuar</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="729"/>
-        <source>Partition Encryption Non-Reboot Mode Enabled</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="730"/>
-        <source>Partition Encryption Non-Reboot Mode has been enabled successfully. Please reboot your system for the changes to take effect. After reboot, partition encryption operations will not require system restart.</source>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="733"/>
+        <source>Partition Encryption Non-Reboot Mode Rolled Back</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="734"/>
-        <source>Partition Encryption Non-Reboot Mode Disabled</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="735"/>
-        <source>Partition Encryption Non-Reboot Mode has been disabled successfully. Please reboot your system for the changes to take effect. After reboot, partition encryption operations will require system restart.</source>
+        <source>A previous configuration of Partition Encryption Non-Reboot Mode was interrupted and has been rolled back to the disabled state. Please reboot your system to ensure consistency. You may re-enable the feature after reboot if needed.</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="743"/>
-        <source>Operation Failed</source>
-        <translation>Veprimi Dështoi</translation>
+        <source>Partition Encryption Non-Reboot Mode Enabled</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="745"/>
-        <source>Failed to enable Partition Encryption Non-Reboot Mode. The system may not support this feature or encountered an error during initramfs update.</source>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="744"/>
+        <source>Partition Encryption Non-Reboot Mode has been enabled successfully. Please reboot your system for the changes to take effect. After reboot, partition encryption operations will not require system restart.</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="748"/>
+        <source>Partition Encryption Non-Reboot Mode Disabled</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="749"/>
+        <source>Partition Encryption Non-Reboot Mode has been disabled successfully. Please reboot your system for the changes to take effect. After reboot, partition encryption operations will require system restart.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="757"/>
+        <source>Operation Failed</source>
+        <translation>Veprimi Dështoi</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="759"/>
+        <source>Failed to enable Partition Encryption Non-Reboot Mode. The system may not support this feature or encountered an error during initramfs update.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="762"/>
         <source>Failed to disable Partition Encryption Non-Reboot Mode. An error occurred during initramfs update.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="760"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="774"/>
         <source>dde-file-manager</source>
         <translation>dde-file-manager</translation>
     </message>
@@ -5623,53 +5889,53 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_diskenc::UnlockPartitionDialog</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="55"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="59"/>
         <source>Cancel</source>
         <translation>Anuloje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="56"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="60"/>
         <source>Unlock</source>
         <translation>Shkyçe</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="85"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="89"/>
         <source>Unlock encryption partition</source>
         <translation>Shkyç pjesë fshehtëzimi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="89"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="93"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="97"/>
         <source>Unlock by recovery key</source>
         <translation>Shkyçe me kyç rimarrjesh</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="95"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="99"/>
         <source>Unlock by passphrase</source>
         <translation>Shkyçe me frazëkalim</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="96"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="100"/>
         <source>Unlock by PIN</source>
         <translation>Shkyçe me PIN</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="98"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="102"/>
         <source>Please enter the 24-digit recovery key</source>
         <translation>Ju lutemi, jepni kyçin 24-shifror të rimarrjes</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="106"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="110"/>
         <source>Please input passphrase to unlock partition</source>
         <translation>Që të shkyçet pjesa, ju lutemi, jepni frazëkalim</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="110"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="114"/>
         <source>Please input PIN to unlock partition</source>
         <translation>Që të shkyçet pjesa, ju lutemi, jepni PIN-in</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="124"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="128"/>
         <source>Recovery key is not valid!</source>
         <translation>Kyçi i rimarrjeve s’është i vlefshëm!</translation>
     </message>
@@ -5677,258 +5943,252 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_fileoperations::ErrorMessageAndAction</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="30"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="53"/>
         <source>Copying %1</source>
         <translation>Po kopjohet %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="31"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="37"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="44"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="54"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="60"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="67"/>
         <source>to %1</source>
         <translation>te %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="34"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="46"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="57"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="69"/>
         <source>Deleting %1</source>
         <translation>Po fshihet %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="36"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="59"/>
         <source>Moving %1</source>
         <translation>Po lëvizet %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="40"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="63"/>
         <source>Trashing %1</source>
         <translation>Po shpihet në hedhurina %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="42"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="65"/>
         <source>Restoring %1</source>
         <translation>Po rikthehet %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="116"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="180"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="139"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="203"/>
         <source>Permission error</source>
         <translation>Gabim lejesh</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="118"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="182"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="141"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="205"/>
         <source>The action is denied</source>
         <translation>Veprimi s’u lejua</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="120"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="184"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="143"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="207"/>
         <source>Target file %1 already exists</source>
         <translation>Kartela objektiv %1 ekziston tashmë</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="122"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="186"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="145"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="209"/>
         <source>Target directory %1 already exists</source>
         <translation>Drejtoria objektiv %1 ekziston tashmë</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="124"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="147"/>
         <source>Failed to open the file %1</source>
         <translation>S’u arrit të hapej kartela %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="126"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="149"/>
         <source>Failed to read the file %1</source>
         <translation>S’u arrit të lexohej kartela %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="128"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="151"/>
         <source>Failed to write the file %1</source>
         <translation>S’u arrit të shkruhej kartela %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="131"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="154"/>
         <source>Failed to create the directory %1</source>
         <translation>S’u arrit të krijohej drejtoria %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="134"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="157"/>
         <source>Failed to delete the file %1</source>
         <translation>S’u arrit të fshihej kartela %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="136"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="159"/>
         <source>Failed to move the file %1 to trash</source>
         <translation>S’u arrit të shpihej kartela %1 te hedhurinat</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="138"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="161"/>
         <source>Failed to move the file %1</source>
         <translation>S’u arrit të lëvizej kartela %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="140"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="205"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="163"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="228"/>
         <source>Original file %1 does not exist</source>
         <translation>Kartela origjinale %1 s’ekziston</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="142"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="207"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="165"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="230"/>
         <source>Failed, the file size of %1 must be less than 4 GB</source>
         <translation>Dështoi, madhësia e kartelës për %1 duhet të jetë më pak se 4GB</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="144"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="209"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="167"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="232"/>
         <source>Not enough free space on the target disk</source>
         <translation>S’ka hapësirë të mjaftueshme te disku i synuar</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="146"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="169"/>
         <source>File %1 integrity was damaged</source>
         <translation>Integriteti i kartelës %1 qe cenuar</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="148"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="213"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="171"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="236"/>
         <source>The target device is read only</source>
         <translation>Pajisja e synuar është vetëm-për-lexim</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="150"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="215"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="173"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="238"/>
         <source>Target folder is inside the source folder</source>
         <translation>Dosja e synuar gjendet brenda dosjes burim</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="152"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="217"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="175"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="240"/>
         <source>The action is not supported</source>
         <translation>Veprimi nuk mbulohet</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="154"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="219"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="177"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="242"/>
         <source>You do not have permission to traverse files in %1</source>
         <translation>S’keni leje për të kaluar kartela në %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="156"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="192"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="179"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="215"/>
         <source>Restore failed, original path could not be found</source>
         <translation>Rikthimi dështoi, shtegu origjinal s’u gjet dot</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="158"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="181"/>
         <source>Unknown error</source>
         <translation>Gabim i panjohur</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="160"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="183"/>
         <source>Failed to parse the url of trash</source>
         <translation>S’u arrit të analizohej URL-ja e hedhurinave</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="162"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="185"/>
         <source>Restore failed: the original file does not exist</source>
         <translation>Rikthimi dështoi: kartela origjinale s’ekziston</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="165"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="188"/>
         <source>Copy or Cut File failed! Retry copy this file again!</source>
         <translation>Kopjimi, ose Prerja dështoi! Riprovoni të kopjoni këtë kartelë!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="167"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="190"/>
         <source>Can&apos;t access file!</source>
         <translation>S’hyhet dot te kartela!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="188"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="211"/>
         <source>Failed to open the file %1, cause: %2</source>
         <translation>S’u arrit të hapej kartela %1, shkaku: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="190"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="213"/>
         <source>Failed to read the file %1, cause: %2</source>
         <translation>S’u arrit të lexohej kartela %1, shkaku: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="194"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="217"/>
         <source>Failed to write the file %1, cause: %2</source>
         <translation>S’u arrit të shkruhej kartela %1, shkaku: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="196"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="219"/>
         <source>Failed to create the directory %1, cause: %2</source>
         <translation>S’u arrit të krijohej drejtoria %1, shkaku: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="199"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="222"/>
         <source>Failed to delete the file %1, cause: %2</source>
         <translation>S’u arrit të fshihej kartela %1, shkaku: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="201"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="224"/>
         <source>Failed to move the file %1 to trash, cause: %2</source>
         <translation>S’u arrit të shpihej kartela %1 te hedhurinat, shkaku: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="203"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="226"/>
         <source>Failed to move the file %1, cause: %2</source>
         <translation>S’u arrit të lëvizej kartela %1, shkaku: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="211"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="234"/>
         <source>File %1 integrity was damaged, cause: %2</source>
         <translation>Integriteti i kartelës %1 qe cenuar, shkaku: %2</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="221"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="244"/>
         <source>Failed to create symlink, cause: %1</source>
         <translation>S’u arrit të krijohet lidhje simbolike, shkaku: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="223"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="246"/>
         <source>Copy or Cut File failed, cause: %1</source>
         <translation>Kopjimi ose Prerja e Kartelës dështoi，shkaku: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="225"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="248"/>
         <source>Copy or Cut File failed, cause: %1. Retry copy this file again!</source>
         <translation>Kopjimi, ose Prerja dështoi, për shkak të: %1. Riprovoni të kopjoni këtë kartelë!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="227"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="250"/>
         <source>Copy or Cut File failed, cause: %1.</source>
         <translation>Kopjimi, ose Prerja dështoi, për shkak të: %1.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="244"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="267"/>
         <source>%1 already exists in target folder</source>
         <translation>%1 ekziston tashmë te dosja e synuar</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="248"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="252"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="258"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="260"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="272"/>
         <source>Original path %1</source>
         <translation>Shteg origjinal %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="249"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="253"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="259"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="261"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="273"/>
         <source>Target path %1</source>
         <translation>Shteg i synuar %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="264"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="294"/>
         <source>Original path %1 Target path %2</source>
         <translation>Shtegu origjinal %1 Shtegu i synuar %2</translation>
     </message>
@@ -5936,12 +6196,12 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_fileoperations::FileOperations</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations.cpp" line="339"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations.cpp" line="345"/>
         <source>External storage device</source>
         <translation>Pajisje e jashtme depozitimi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations.cpp" line="350"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations.cpp" line="356"/>
         <source>External storage device usage patterns</source>
         <translation>Rregullsi përdorimi pajisjeje të jashtme depozitimi</translation>
     </message>
@@ -6214,39 +6474,39 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Nuk mbulon shkrim disqesh UDF</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="113"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="117"/>
         <source>Save as Image File</source>
         <translation>Ruaje si Kartelë Pamje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="114"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="118"/>
         <source>Burn</source>
         <translation>Shkruaje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="167"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="171"/>
         <source>%1 burning is not supported</source>
         <translation>Nuk mbulohet shkrimi %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="171"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="175"/>
         <source>1. It is not %1 disc;
 2. The version of this file system does not support adding files yet.</source>
         <translation>1. S’është disk %1;
 2. Versioni i këtij sistemi kartelash s’mbulon ende shtim kartelash.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="218"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="222"/>
         <source>Mounting failed</source>
         <translation>Montimi dështoi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="263"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="267"/>
         <source>No files to burn</source>
         <translation>S’ka kartela për shkrim</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="301"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="305"/>
         <source>Unable to burn. Not enough free space on the target disk.</source>
         <translation>S’arrihet të shkruhet. S’ka hapësirë të mjaftueshme te disku i synuar.</translation>
     </message>
@@ -6254,68 +6514,68 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_propertydialog::BasicWidget</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="94"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="171"/>
         <source>Basic info</source>
         <translation>Hollësi elementare</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="102"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="179"/>
         <source>Size</source>
         <translation>Madhësi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="103"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="180"/>
         <source>Contains</source>
         <translation>Përmban</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="104"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="181"/>
         <source>Type</source>
         <translation>Lloj</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="105"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="182"/>
         <source>Location</source>
         <translation>Vendndodhje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="106"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="183"/>
         <source>Created</source>
         <translation>Krijuar më</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="107"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="184"/>
         <source>Accessed</source>
         <translation>Përdorur më</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="108"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="185"/>
         <source>Modified</source>
         <translation>Ndryshuar më</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="112"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="191"/>
         <source>Hide this file</source>
         <translation>Fshihe këtë kartelë</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="115"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="194"/>
         <source>Resolution</source>
         <translation>Qartësi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="116"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="195"/>
         <source>Duration</source>
         <translation>Kohëzgjatje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="302"/>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="408"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="381"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="487"/>
         <source>%1 item</source>
         <translation>%1 objekt</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="408"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="487"/>
         <source>%1 items</source>
         <translation>%1 objekte</translation>
     </message>
@@ -6328,7 +6588,7 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Mbylli krejt</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/closealldialog.cpp" line="80"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/closealldialog.cpp" line="82"/>
         <source>Total size: %1, %2 files</source>
         <translation>Madhësi gjithsej: %1, %2 kartela</translation>
     </message>
@@ -6356,7 +6616,7 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Bit</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="401"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="405"/>
         <source>Available</source>
         <translation>Të passhme</translation>
     </message>
@@ -6410,41 +6670,133 @@ You need to upgrade this vault to continue using it.</source>
     </message>
 </context>
 <context>
-    <name>dfmplugin_propertydialog::MultiFilePropertyDialog</name>
+    <name>dfmplugin_propertydialog::MultiFileBasicInfoWidget</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="52"/>
-        <source>Multiple Files</source>
-        <translation>Disa Kartela Njëherësh</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="56"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="62"/>
         <source>Basic info</source>
-        <translation>Hollësi elementare</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="61"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="69"/>
         <source>Total size</source>
-        <translation>Madhësi gjithsej</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="68"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="71"/>
         <source>Number of files</source>
-        <translation>Numër kartelash</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="75"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="73"/>
         <source>Time accessed</source>
-        <translation>Kohë përdorimi</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="81"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="75"/>
         <source>Time modified</source>
-        <translation>Kohë ndryshimi</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="120"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="82"/>
+        <source>Hide this file</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="115"/>
         <source>%1 file(s), %2 folder(s)</source>
-        <translation>%1 kartelë(a), %2 dosje(e)</translation>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>dfmplugin_propertydialog::MultiFilePermissionWidget</name>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="59"/>
+        <source>Permissions</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="182"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="198"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="214"/>
+        <source>No read/write</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="186"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="202"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="218"/>
+        <source>--</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>dfmplugin_propertydialog::MultiFilePropertiesDialog</name>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="109"/>
+        <source>Set %1 and %2 file attributes to %3.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="113"/>
+        <source>File Manager</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="164"/>
+        <source>Multiple Files</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="203"/>
+        <source>Cancel</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="212"/>
+        <source>Save</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="295"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="297"/>
+        <source>Hidden files</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="302"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="304"/>
+        <source>Unhide files</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="338"/>
+        <source>Owner&gt;Read-write</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="340"/>
+        <source>Owner&gt;Read only</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="374"/>
+        <source>Group&gt;Read-write</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="376"/>
+        <source>Group&gt;Read only</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="410"/>
+        <source>Others&gt;Read-write</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="412"/>
+        <source>Others&gt;Read only</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6459,8 +6811,8 @@ You need to upgrade this vault to continue using it.</source>
     <name>dfmplugin_propertydialog::PermissionManagerWidget</name>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="96"/>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="170"/>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="317"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="178"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="325"/>
         <source>Allow to execute as program</source>
         <translation>Lejo të ekzekutohet si program</translation>
     </message>
@@ -6481,7 +6833,7 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_recent::Recent</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-recent/recent.cpp" line="44"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-recent/recent.cpp" line="45"/>
         <source>Recent</source>
         <translation>Së fundi</translation>
     </message>
@@ -6656,166 +7008,242 @@ You need to upgrade this vault to continue using it.</source>
     </message>
 </context>
 <context>
-    <name>dfmplugin_search::CheckBoxWidthFileIndex</name>
+    <name>dfmplugin_search::CheckBoxWithFileIndex</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="27"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="28"/>
         <source>Enable to build the file index immediately for faster file name searches</source>
-        <translation>Aktivizojeni, për ta krijuar treguesin e kartelave menjëherë, për kërkime më të shpejta emrash kartelash</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="28"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="29"/>
         <source>Building index</source>
-        <translation>Po krijohet treguesi</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="153"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="171"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="143"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="158"/>
         <source>Index update failed</source>
-        <translation>Përditësimi i treguesit dështoi</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="153"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="171"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="143"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="158"/>
         <source>try updating again</source>
-        <translation>riprovoni përditësimin</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="177"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="167"/>
         <source>Index update completed, last update time: %1</source>
-        <translation>Përditësimi i treguesit u plotësua, kohë e përditësimit të fundit: %1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="178"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="168"/>
         <source>Update index now</source>
-        <translation>Përditësoje treguesin tani</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="239"/>
-        <source>Turn off file index?</source>
-        <translation>Të çaktivizohet tregues kartelash?</translation>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="192"/>
+        <source>Confirm turning off file index?</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="240"/>
-        <source>If turned off, file searches will traverse the file system and severely reduce search speed.</source>
-        <translation>Në qoftë i çaktivizuar, kërkime kartelash do të përshkojnë sistemin e kartelave dhe do të reduktojnë rëndë shpejtësinë e kërkimeve.</translation>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="193"/>
+        <source>If turned off, file searches will traverse the file system and severely reduce search speed, and the smart search feature will be unavailable.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
-    <name>dfmplugin_search::CheckBoxWidthOcrIndex</name>
+    <name>dfmplugin_search::CheckBoxWithOcrIndex</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthocrindex.cpp" line="16"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="16"/>
         <source>Enable to search text in images</source>
-        <translation>Aktivizojeni, që të kërkohet tekst te figura</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthocrindex.cpp" line="17"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="17"/>
         <source>Building index</source>
-        <translation>Po krijohet treguesi</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthocrindex.cpp" line="18"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="18"/>
         <source>Building index, %1 files indexed</source>
-        <translation>Po ndërtohet treguesi, %1 kartela të indeksuara</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthocrindex.cpp" line="19"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="19"/>
         <source>Building index, %1/%2 items indexed</source>
-        <translation>Po krijohet treguesi, %1/%2 objekte të indeksuar</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthocrindex.cpp" line="20"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="20"/>
         <source>Index update failed, please</source>
-        <translation>Përditësimi i treguesit dështoi, ju lutemi</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthocrindex.cpp" line="22"/>
-        <source>Index update completed, last update time: %1</source>
-        <translation>Përditësimi i treguesit u plotësua, kohë e përditësimit të fundit: %1</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthocrindex.cpp" line="21"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="21"/>
         <source>try updating again</source>
-        <translation>riprovoni përditësimin</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthocrindex.cpp" line="23"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="22"/>
+        <source>Index update completed, last update time: %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="23"/>
         <source>Update index now</source>
-        <translation>Përditësoje treguesin tani</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
-    <name>dfmplugin_search::CheckBoxWidthTextIndex</name>
+    <name>dfmplugin_search::CheckBoxWithSemanticIndex</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="16"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithsemanticindex.cpp" line="17"/>
+        <source>Enable to search files using natural language, e.g. &quot;PPT documents edited yesterday&quot;</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>dfmplugin_search::CheckBoxWithTextIndex</name>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="16"/>
         <source>Enable to search file contents. Indexing may take a few minutes</source>
-        <translation>Aktivizoni lejim kërkimi në lëndë kartelash. Indeksimi mund të dojë pak minuta</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="17"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="17"/>
         <source>Building index</source>
-        <translation>Po krijohet treguesi</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="18"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="18"/>
         <source>Building index, %1 files indexed</source>
-        <translation>Po ndërtohet treguesi, %1 kartela të indeksuara</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="19"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="19"/>
         <source>Building index, %1/%2 items indexed</source>
-        <translation>Po krijohet treguesi, %1/%2 objekte të indeksuar</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="20"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="20"/>
         <source>Index update failed, please</source>
-        <translation>Përditësimi i treguesit dështoi, ju lutemi</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="21"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="21"/>
         <source>try updating again</source>
-        <translation>riprovoni përditësimin</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="22"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="22"/>
         <source>Index update completed, last update time: %1</source>
-        <translation>Përditësimi i treguesit u plotësua, kohë e përditësimit të fundit: %1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="23"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="23"/>
         <source>Update index now</source>
-        <translation>Përditësoje treguesin tani</translation>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>dfmplugin_search::MatchMethodGroupStrategy</name>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/groups/matchmethodgroupstrategy.cpp" line="56"/>
+        <source>Exact match</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/groups/matchmethodgroupstrategy.cpp" line="58"/>
+        <source>Smart match</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>dfmplugin_search::Search</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="54"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="162"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="67"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="221"/>
         <source>Search</source>
         <translation>Kërko</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="168"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="182"/>
+        <source>Enable</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="204"/>
+        <source>Match method</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="227"/>
         <source>File index</source>
         <translation>Tregues kartelash</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="189"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="248"/>
         <source>Full-Text search</source>
         <translation>Kërkim në Krejt Tekstin</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="211"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="270"/>
         <source>Image-Content search</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="292"/>
+        <source>Smart search</source>
         <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>dfmplugin_search::SearchHelper</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="192"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="227"/>
         <source>Path</source>
         <translation>Shteg</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="510"/>
+        <source>Authorize to enable %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="535"/>
+        <source>View</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="547"/>
+        <source>Index is being built. You can check the index status in Settings.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="563"/>
+        <source>File Manager</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="564"/>
+        <source>You can manually enable %1 in Settings — Advanced — Search.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="575"/>
+        <source>&quot;Full-Text search&quot;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="577"/>
+        <source>&quot;Image-Content search&quot;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="580"/>
+        <source>&quot;Smart search&quot;</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6839,32 +7267,32 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_sidebar::SideBarWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="414"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="419"/>
         <source>Quick access</source>
         <translation>Hyrje e shpejtë</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="415"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="420"/>
         <source>Partitions</source>
         <translation>Pjesë</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="416"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="421"/>
         <source>Network</source>
         <translation>Rrjet</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="417"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="422"/>
         <source>Tag</source>
         <translation>Etiketë</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="418"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="423"/>
         <source>Other</source>
         <translation>Tjetër</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="419"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="424"/>
         <source>Unknown Group</source>
         <translation>Gabim i Panjohur</translation>
     </message>
@@ -6939,7 +7367,7 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_tag::TagEditor</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-tag/widgets/tageditor.cpp" line="101"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/widgets/tageditor.cpp" line="103"/>
         <source>Input tag info, such as work, family. A comma is used between two tags.</source>
         <translation>Futni hollësi etikete, bie fjala, pune, familje. Ndajini etiketat me presje.</translation>
     </message>
@@ -7024,22 +7452,22 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Lidhu</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="409"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="415"/>
         <source>Charset Encoding</source>
         <translation>Kodim Shkronjash</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="414"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="422"/>
         <source>Default</source>
         <translation>Parazgjedhje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="473"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="483"/>
         <source>My Favorites</source>
         <translation>Të parapëlqyerat e Mia</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="460"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="470"/>
         <source>No favorites yet</source>
         <translation>Ende pa të parapëlqyera</translation>
     </message>
@@ -7052,22 +7480,22 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_titlebar::CustomTabSettingWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="60"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="62"/>
         <source>Custom Directory</source>
         <translation>Drejtori Vetjake</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="100"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="102"/>
         <source>Invalid Directory</source>
         <translation>Drejtori i Pavlefshme</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="101"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="103"/>
         <source>This directory does not support pinning</source>
         <translation>Kjo drejtori s’mbulon fiksim</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="55"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="57"/>
         <source>Add Directory</source>
         <translation>Shtoni Drejtori</translation>
     </message>
@@ -7080,61 +7508,61 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Ndryshoni fjalëkalim disku</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="93"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="99"/>
         <source>Current password:</source>
         <translation>Fjalëkalimi i tanishëm:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="94"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="100"/>
         <source>New password:</source>
         <translation>Fjalëkalimi i ri:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="95"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="101"/>
         <source>Repeat password:</source>
         <translation>Rijepeni fjalëkalimin:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="108"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="114"/>
         <source>Save</source>
         <comment>button</comment>
         <translation>Ruaje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="110"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="118"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Anuloje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="181"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="191"/>
         <source>Passwords do not match</source>
         <translation>Fjalëkalimet s’përputhen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="198"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="208"/>
         <source>New password should differ from the current one</source>
         <translation>Fjalëkalimi i ri duhet të jetë i ndryshëm nga i tanishmi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="253"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="263"/>
         <source>Minimum of 8 characters. At least 3 types: 0-9, a-z, A-Z and symbols. Different from the username.</source>
         <translation>E pakta 8 shenja. Të paktën 3 lloje: 0-9, a-z, A-Z dhe simbole. Tjetër gjë nga emri i përdoruesit.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="289"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="299"/>
         <source>Password must be no more than %1 characters</source>
         <translation>Fjalëkalimi s’duhet të jetë më tepër se %1 shenja</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="298"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="303"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="308"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="313"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="318"/>
         <source>Password cannot be empty</source>
         <translation>Fjalëkalimi s’mund të jetë i zbrazët</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="384"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="394"/>
         <source>Wrong password</source>
         <translation>Fjalëkalim i gabuar</translation>
     </message>
@@ -7230,34 +7658,34 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_titlebar::TabBar</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="308"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="371"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="315"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="378"/>
         <source>Unpin tab</source>
         <translation>Hiqja fiksimin skedës</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="310"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="317"/>
         <source>Pin tab</source>
         <translation>Fiksoje skedën</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="315"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="371"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="322"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="378"/>
         <source>Close tab</source>
         <translation>Mbylle skedën</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="318"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="325"/>
         <source>Close other tabs</source>
         <translation>Mbylli skedat e tjera</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="319"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="326"/>
         <source>Close tabs to the left</source>
         <translation>Mbyll skedat në të majtë</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="322"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="329"/>
         <source>Close tabs to the right</source>
         <translation>Mbyll skedat në të djathtë</translation>
     </message>
@@ -7265,23 +7693,23 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_titlebar::TitleBarWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="593"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="616"/>
         <source>Directory not found</source>
         <translation>Drejtoria s’u gjet</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="594"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="617"/>
         <source>Directory not found. Remove it?</source>
         <translation>Drejtoria s’u gjet. Të hiqet?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="595"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="618"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Anuloje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="595"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="618"/>
         <source>Remove</source>
         <comment>button</comment>
         <translation>Hiqe</translation>
@@ -7579,49 +8007,49 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_utils::OpenWithDialog</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="264"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="273"/>
         <source>Open with</source>
         <translation>Hape me</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="286"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="295"/>
         <source>Add other programs</source>
         <translation>Shtoni programe të tjerë</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="287"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="298"/>
         <source>Set as default</source>
         <translation>Caktojeni si parazgjedhje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="289"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="302"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Anuloje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="290"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="305"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Ripohojeni</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="297"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="314"/>
         <source>Recommended Applications</source>
         <translation>Aplikacione të Rekomanduara</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="299"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="316"/>
         <source>Other Applications</source>
         <translation>Aplikacione të Tjera</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="453"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="477"/>
         <source>Open File</source>
         <translation>Hapni Kartelë</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="455"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="479"/>
         <source>Applications (*.desktop);;All files (*)</source>
         <translation>Aplikacione (*.desktop);;Krejt kartelat (*)</translation>
     </message>
@@ -7761,21 +8189,6 @@ You need to upgrade this vault to continue using it.</source>
     </message>
 </context>
 <context>
-    <name>dfmplugin_vault::FileEncryptHandle</name>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/fileencrypthandle.cpp" line="200"/>
-        <source>Unlock failed</source>
-        <translation>Shkyçja dështoi</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/fileencrypthandle.cpp" line="200"/>
-        <source>The %1 directory is occupied,
- please clear the files in this directory and try to unlock the safe again.</source>
-        <translation>Drejtoria %1 është e zënë,
- ju lutemi, spastroni kartelat në këtë drejtori dhe riprovoni të shkyçni kasafortën.</translation>
-    </message>
-</context>
-<context>
     <name>dfmplugin_vault::OperatorCenter</name>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="192"/>
@@ -7859,46 +8272,60 @@ You need to upgrade this vault to continue using it.</source>
     </message>
 </context>
 <context>
+    <name>dfmplugin_vault::PathManager</name>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/pathmanager.cpp" line="79"/>
+        <source>Unlock failed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/pathmanager.cpp" line="80"/>
+        <source>The %1 directory is occupied,
+ please clear the files in this directory and try to unlock the safe again.</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>dfmplugin_vault::RecoveryKeyView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="68"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="70"/>
         <source>Unlock by Key</source>
         <translation>Shkyçeni përmes Kyçi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="35"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="37"/>
         <source>Input the 32-digit recovery key</source>
         <translation>Jepni kyçin 32-shifror të rimarrjeve</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="63"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="65"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Anuloje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="63"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="65"/>
         <source>Unlock</source>
         <comment>button</comment>
         <translation>Shkyçe</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="126"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="129"/>
         <source>Invalid recovery key format</source>
         <translation>Format i pavlefshëm kyçi rimarrjeje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="149"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="150"/>
         <source>Wrong recovery key</source>
         <translation>Kyç rimarrjesh i gabuar</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="273"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="274"/>
         <source>Failed to unlock file vault</source>
         <translation>S’u arrit të shkyçet kasafortë kartelash</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="277"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="278"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
@@ -7911,113 +8338,113 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Përzgjidhni Kartelë Kyçi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="47"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="330"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="49"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="338"/>
         <source>Select key file save path</source>
         <translation>Përzgjidhni shteg ruajtjeje kartele kyçi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="55"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="57"/>
         <source>Enter New Password</source>
         <translation>Jepni Fjalëkalimin e Ri</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="60"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="64"/>
         <source>At least 8 characters, including A-Z, a-z, 0-9, and symbols</source>
         <translation>Të paktën 8 shenja, përfshi A-Z, a-z, 0-9 dhe simbole</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="63"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="67"/>
         <source>Repeat Password</source>
         <translation>Përsëriteni Fjalëkalimin</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="66"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="72"/>
         <source>Enter new password again</source>
         <translation>Jepeni fjalëkalimin e ri sërish</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="69"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="75"/>
         <source>Password hint</source>
         <translation>Ndihmëz fjalëkalimi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="72"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="344"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="80"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="352"/>
         <source>Optional</source>
         <translation>Opsionale</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="74"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="82"/>
         <source>Use old password verification</source>
         <translation>Përdor verifikim të vjetër fjalëkalimi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="144"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="152"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Anuloje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="144"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="152"/>
         <source>Reset Password</source>
         <comment>button</comment>
         <translation>Ricaktoni Fjalëkalimin</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="149"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="157"/>
         <source>Reset Password</source>
         <translation>Ricaktoni Fjalëkalimin</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="161"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="169"/>
         <source>Unable to get the key file</source>
         <translation>S’arrihet të merret kartela e kyçit</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="171"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="258"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="179"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="266"/>
         <source>≥ 8 chars, contains A-Z, a-z, 0-9, and symbols</source>
         <translation>≥ 8 shenja, përmban A-Z, a-z, 0-9 dhe simbole</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="180"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="266"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="188"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="274"/>
         <source>Passwords do not match</source>
         <translation>Fjalëkalimet s’përputhen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="189"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="197"/>
         <source>Cannot reset password for old version vault. Please upgrade the vault first.</source>
         <translation>S’mund të ricaktohet fjalëkalim për kasafortën në version të vjetër. Ju lutemi, së pari, përmirësoni kasafortën.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="198"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="206"/>
         <source>Unable to read key file</source>
         <translation>S’arrihet të lexohet kartelë kyçi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="211"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="219"/>
         <source>Invalid recovery key format: expected 32 characters, got %1</source>
         <translation>Format i pavlefshëm kyçi rimarrjeje: priteshin 32 shenja, u morën %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="221"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="229"/>
         <source>Invalid recovery key format: must contain only letters and numbers</source>
         <translation>Format i pavlefshëm kyçi rimarrjesh: duhet të përmbajë vetëm shkronja dhe numra</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="387"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="398"/>
         <source>Success</source>
         <translation>Sukses</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="387"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="398"/>
         <source>Password reset successfully</source>
         <translation>Fjalëkalimi u ricaktua me sukses</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="391"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="402"/>
         <source>Failed to reset password. Please check your key file.</source>
         <translation>S’u arrit të ricaktohet fjalëkalimi. Ju lutemi, kontrolloni kartelën e kyçit tuaj.</translation>
     </message>
@@ -8030,102 +8457,102 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Jepni Fjalëkalimin e Vjetër</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="48"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="50"/>
         <source>Please enter old password</source>
         <translation>Ju lutemi, jepni fjalëkalimin e vjetër</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="51"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="53"/>
         <source>Enter New Password</source>
         <translation>Jepni Fjalëkalimin e Ri</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="56"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="60"/>
         <source>At least 8 characters, including A-Z, a-z, 0-9, and symbols</source>
         <translation>Të paktën 8 shenja, përfshi A-Z, a-z, 0-9 dhe simbole</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="59"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="63"/>
         <source>Repeat Password</source>
         <translation>Përsëriteni Fjalëkalimin</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="62"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="68"/>
         <source>Enter new password again</source>
         <translation>Jepeni fjalëkalimin e ri sërish</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="65"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="71"/>
         <source>Password hint</source>
         <translation>Ndihmëz fjalëkalimi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="68"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="304"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="76"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="312"/>
         <source>Optional</source>
         <translation>Opsionale</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="70"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="78"/>
         <source>Use key verification</source>
         <translation>Përdor verifikim kyçi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="139"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="147"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Anuloje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="139"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="147"/>
         <source>Reset Password</source>
         <comment>button</comment>
         <translation>Ricaktoni Fjalëkalimin</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="144"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="152"/>
         <source>Reset Password</source>
         <translation>Ricaktoni Fjalëkalimin</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="156"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="217"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="164"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="225"/>
         <source>≥ 8 chars, contains A-Z, a-z, 0-9, and symbols</source>
         <translation>≥ 8 shenja, përmban A-Z, a-z, 0-9 dhe simbole</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="165"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="225"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="173"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="233"/>
         <source>Passwords do not match</source>
         <translation>Fjalëkalimet s’përputhen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="176"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="184"/>
         <source>Please try again %1 minutes later</source>
         <translation>Ju lutemi, riprovoni pas %1 minutash</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="353"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="361"/>
         <source>Success</source>
         <translation>Sukses</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="353"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="361"/>
         <source>Password reset successfully</source>
         <translation>Fjalëkalimi u ricaktua me sukses</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="369"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="377"/>
         <source>Failed to reset password. Please try again %1 minutes later</source>
         <translation>S’u arrit të ricaktohej fjalëkalimi. Ju lutemi, riprovoni pas %1 minutash</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="372"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="380"/>
         <source>Failed to reset password. One chance left</source>
         <translation>S’u arrit të ricaktohet fjalëkalimi. Edhe një provë.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="374"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="382"/>
         <source>Failed to reset password. %1 chances left</source>
         <translation>S’u arrit të ricaktohet fjalëkalimi. Edhe %1 prova</translation>
     </message>
@@ -8133,55 +8560,55 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_vault::RetrievePasswordView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="54"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="55"/>
         <source>Unlock the Safe via Key File</source>
         <translation>Shkyçeni Kasafortën përmes Kartele Kyç</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="57"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="60"/>
         <source>Select Key File</source>
         <translation>Përzgjidhni Kartelë Kyç</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="113"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="123"/>
         <source>Unable to get the key file</source>
         <translation>S’arrihet të merret kartela e kyçit</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="165"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="178"/>
         <source>Failed to generate recovery key. Please try again.</source>
         <translation>S’u arrit të prodhohej kyç rimarrjeje. Ju lutemi, riprovoni.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="177"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="179"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="190"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="192"/>
         <source>Upgrade vault</source>
         <translation>Përmirësoni kasafortën</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="220"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="233"/>
         <source>Unlock vault failed</source>
         <translation>Shkyçja e kasafortës dështoi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="146"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="159"/>
         <source>Verification failed</source>
         <translation>Verifikimi dështoi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="235"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="248"/>
         <source>Back</source>
         <comment>button</comment>
         <translation>Mbrapsht</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="235"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="248"/>
         <source>Key Unlock</source>
         <comment>button</comment>
         <translation>Shkyçje me Kyç</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="240"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="253"/>
         <source>Key Unlocks Safe</source>
         <translation>Kyçi Shkyç Kasafortën</translation>
     </message>
@@ -8202,105 +8629,105 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_vault::UnlockView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="58"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="60"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="59"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="61"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Anuloje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="58"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="59"/>
         <source>Verify Password</source>
         <comment>button</comment>
         <translation>Verifiko Fjalëkalimin</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="60"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="61"/>
         <source>Unlock</source>
         <comment>button</comment>
         <translation>Shkyçe</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="66"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="67"/>
         <source>Enter vault password</source>
         <translation>Jepni fjalëkalim kasaforte</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="68"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="69"/>
         <source>Unlock File Vault</source>
         <translation>Shkyç Kasafortë Kartelash</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="74"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="75"/>
         <source>Forgot password?</source>
         <translation>Harruat fjalëkalimin?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="74"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="75"/>
         <source>Key unlock</source>
         <translation>Shkyçje kyçi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="81"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="84"/>
         <source>Password</source>
         <translation>Fjalëkalim</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="121"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="126"/>
         <source>Password hint: %1</source>
         <translation>Ndihmëz fjalëkalimi: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="148"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="155"/>
         <source>Can&apos;t unlock the vault under the networking!</source>
         <translation>S’mund të shkyçet kasaforta ndërkohë që punohet në rrjet!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="159"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="166"/>
         <source>Please try again %1 minutes later</source>
         <translation>Ju lutemi, riprovoni pas %1 minutash</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="206"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="213"/>
         <source>Failed to generate recovery key. Please try again.</source>
         <translation>S’u arrit të prodhohej kyç rimarrjeje. Ju lutemi, riprovoni.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="218"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="220"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="225"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="227"/>
         <source>Upgrade vault</source>
         <translation>Përmirësoni kasafortën</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="265"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="272"/>
         <source>Wrong password, please try again %1 minutes later</source>
         <translation>Fjalëkalim i gabuar, ju lutemi, riprovoni pas %1 minutash</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="268"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="275"/>
         <source>Wrong password, one chance left</source>
         <translation>Fjalëkalim i gabuar, edhe një provë</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="270"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="277"/>
         <source>Wrong password, %1 chances left</source>
         <translation>Fjalëkalim i gabuar, edhe %1 prova</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="324"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="331"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="338"/>
         <source>Wrong password</source>
         <translation>Fjalëkalim i gabuar</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="333"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="342"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="340"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="349"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="338"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="345"/>
         <source>Failed to unlock file vault, error code is %1</source>
         <translation>S’ua rrit të shkyçet kasafortë kartelash, kodi i gabimit është %1</translation>
     </message>
@@ -8323,27 +8750,27 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Po fshehtëzohet…</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="184"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="186"/>
         <source>The setup is complete</source>
         <translation>Ujdisja është e plotë</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="197"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="199"/>
         <source>Close</source>
         <translation>Mbylle</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="82"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="157"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="209"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="233"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="159"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="211"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="235"/>
         <source>Encrypt</source>
         <translation>Fshehtëzoje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="185"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="219"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="248"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="187"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="221"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="250"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
@@ -8371,61 +8798,61 @@ You need to upgrade this vault to continue using it.</source>
         <translation>S’kihen leje, ju lutemi, ripërzgjidhni</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="95"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="97"/>
         <source>Select a path</source>
         <translation>Përzgjidhni një shteg</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="107"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="109"/>
         <source>Next</source>
         <translation>Pasuesi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="204"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="211"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="227"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="235"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="278"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="218"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="234"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="242"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="288"/>
         <source>Vault</source>
         <translation>Kasafortë</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="204"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="211"/>
         <source>Recovery key is not available. Please try again.</source>
         <translation>Kyçi i rimarrjes s’është gati. Ju lutemi, riprovoni.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="211"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="218"/>
         <source>Please select a path to save the recovery key.</source>
         <translation>Ju lutemi, përzgjidhni një shteg ku të ruhet kyçi i rimarrjes.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="227"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="234"/>
         <source>Failed to save recovery key. Please check the path and try again.</source>
         <translation>S’u arrit të ruhej kyç rimarrjeje. Ju lutemi, kontrolloni shtegun dhe riprovoni.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="235"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="242"/>
         <source>Failed to start migration. Please try again.</source>
         <translation>S’u arrit të nisej migrimi. Ju lutemi, riprovoni.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="278"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="288"/>
         <source>Failed to upgrade vault. Please try again.</source>
         <translation>S’u arrit të përmirësohej kasaforta. Ju lutemi, riprovoni.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="287"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="297"/>
         <source>Success</source>
         <translation>Sukses</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="301"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="311"/>
         <source>Vault upgraded successfully. Please keep your recovery key safe.</source>
         <translation>Kasaforta u përmirësua me sukses. Ju lutemi, mbajeni të parrezik kyçin tuaj të rimarrjes.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="308"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="318"/>
         <source>Enter Vault</source>
         <comment>button</comment>
         <translation>Hyni Në Kasafortë</translation>
@@ -8444,59 +8871,59 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Metodë fshehtëzimi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="51"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="53"/>
         <source>Key encryption</source>
         <translation>Fshehtëzim me kyç</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="52"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="54"/>
         <source>Transparent encryption</source>
         <translation>Fshehtëzim i tejdukshëm</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="57"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="59"/>
         <source>Password</source>
         <translation>Fjalëkalim</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="60"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="221"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="64"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="231"/>
         <source>≥ 8 chars, contains A-Z, a-z, 0-9, and symbols</source>
         <translation>≥ 8 shenja, përmban A-Z, a-z, 0-9 dhe simbole</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="63"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="67"/>
         <source>Repeat password</source>
         <translation>Përsëritni fjalëkalimin</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="66"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="72"/>
         <source>Input the password again</source>
         <translation>Jepeni sërish fjalëkalimin</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="69"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="75"/>
         <source>Password hint</source>
         <translation>Ndihmëz fjalëkalimi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="72"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="80"/>
         <source>Optional</source>
         <translation>Opsionale</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="76"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="84"/>
         <source>The file vault will be automatically unlocked when accessed, without verifying the password. Files in it will be inaccessible under other user accounts. </source>
         <translation>Kasaforta e kartelave do të shkyçet automatikisht, kur hyhet në të, pa verifikuar fjalëkalimin. Kartelat në të do të jenë të papërdorshme nën llogari përdoruesish të tjerë. </translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="85"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="93"/>
         <source>Next</source>
         <translation>Pasuesi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="246"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="266"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="256"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="276"/>
         <source>Passwords do not match</source>
         <translation>Fjalëkalimet s’përputhen</translation>
     </message>
@@ -8568,12 +8995,12 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_vault::VaultEventReceiver</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/events/vaulteventreceiver.cpp" line="216"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/events/vaulteventreceiver.cpp" line="240"/>
         <source>Vault</source>
         <translation>Kasafortë</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/events/vaulteventreceiver.cpp" line="216"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/events/vaulteventreceiver.cpp" line="240"/>
         <source>Vault not available because cryfs not installed!</source>
         <translation>Kasaforta s’mund të përdoret, ngaqë s’është instaluar cryfs!</translation>
     </message>
@@ -8582,7 +9009,7 @@ You need to upgrade this vault to continue using it.</source>
     <name>dfmplugin_vault::VaultHelper</name>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="154"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="635"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="638"/>
         <source>Vault</source>
         <translation>Kasafortë</translation>
     </message>
@@ -8592,7 +9019,7 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Kasaforta s’mund të përdoret, ngaqë s’është instaluar cryfs!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="635"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="638"/>
         <source>A task is in progress, so it cannot perform your operation</source>
         <translation>Ka në kryerje e sipër një punë, ndaj s’mund të kryejë veprimin tuaj</translation>
     </message>
@@ -8646,47 +9073,47 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Pasi të jetë fshirë, kartelat në të do të fshihen përgjithnjë</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="40"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="42"/>
         <source>Password</source>
         <translation>Fjalëkalim</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="51"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="55"/>
         <source>Key delete</source>
         <translation>Fshirje kyçi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="65"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="71"/>
         <source>Password hint: %1</source>
         <translation>Ndihmëz fjalëkalimi: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="91"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="97"/>
         <source>Cancel</source>
         <translation>Anuloje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="91"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="97"/>
         <source>Delete</source>
         <translation>Fshije</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="96"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="102"/>
         <source>Delete File Vault</source>
         <translation>Fshi Kasafortë Kartelash</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="137"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="143"/>
         <source>Wrong password</source>
         <translation>Fjalëkalim i gabuar</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="237"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="244"/>
         <source>Failed to delete file vault</source>
         <translation>S’u arrit të fshihet kasafortë kartelash</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="241"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="248"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
@@ -8694,42 +9121,42 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_vault::VaultRemoveByRecoverykeyView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="65"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="67"/>
         <source>Input the 32-digit recovery key</source>
         <translation>Jepni kyçin 32-shifror të rimarrjeve</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="127"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="130"/>
         <source>Cancel</source>
         <translation>Anuloje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="127"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="130"/>
         <source>Delete</source>
         <translation>Fshije</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="132"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="135"/>
         <source>Delete File Vault</source>
         <translation>Fshi Kasafortë Kartelash</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="300"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="303"/>
         <source>Please select a recovery key file</source>
         <translation>Ju lutemi, përzgjidhni një kartelë kyçi rimarrjesh</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="368"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="371"/>
         <source>Wrong recovery key</source>
         <translation>Kyç i gabuar rimarrjesh</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="392"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="395"/>
         <source>Invalid recovery key file</source>
         <translation>Kartelë kyçi rimarrjesh e pavlefshme</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="221"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="224"/>
         <source>Failed to delete file vault</source>
         <translation>S’u arrit të fshihet kasafortë kartelash</translation>
     </message>
@@ -8739,12 +9166,12 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Fshije kasafortën e kartelave me kyç rimarrjeje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="53"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="55"/>
         <source>Select Key File</source>
         <translation>Përzgjidhni Kartelë Kyçi Rimarrjesh</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="225"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="228"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
@@ -8782,6 +9209,19 @@ You need to upgrade this vault to continue using it.</source>
     </message>
 </context>
 <context>
+    <name>dfmplugin_workspace::BaseItemDelegate</name>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="669"/>
+        <source>Show all</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="669"/>
+        <source>Show partial</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>dfmplugin_workspace::FileOperatorHelper</name>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="117"/>
@@ -8792,12 +9232,12 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_workspace::FileView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2510"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2464"/>
         <source>Mount error</source>
         <translation>Gabim montimi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2511"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2465"/>
         <source>Server login credentials are invalid. Please uninstall and remount</source>
         <translation>Kredencialet për hyrje në shërbyes janë të pavlefshme. Ju lutemi, çinstalojeni dhe rimontojeni</translation>
     </message>
@@ -8805,27 +9245,27 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_workspace::FileViewModel</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="805"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="833"/>
         <source>Name</source>
         <translation>Emër</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="807"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="835"/>
         <source>Time modified</source>
         <translation>Kohë ndryshimi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="809"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="837"/>
         <source>Time created</source>
         <translation>Kohë kur u krijua</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="811"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="839"/>
         <source>Size</source>
         <translation>Madhësi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="813"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="841"/>
         <source>Type</source>
         <translation>Lloj</translation>
     </message>
@@ -8900,52 +9340,52 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_workspace::SortAndDisplayMenuScene</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="40"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="41"/>
         <source>Sort by</source>
         <translation>Renditi sipas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="42"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="43"/>
         <source>Display as</source>
         <translation>Shfaqe si</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="45"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="46"/>
         <source>Name</source>
         <translation>Emër</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="46"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="47"/>
         <source>Time modified</source>
         <translation>Kohë ndryshimi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="47"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="48"/>
         <source>Time created</source>
         <translation>Kohë kur u krijua</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="48"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="49"/>
         <source>Size</source>
         <translation>Madhësi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="49"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="50"/>
         <source>Type</source>
         <translation>Lloj</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="60"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="61"/>
         <source>Icon</source>
         <translation>Ikonë</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="61"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="62"/>
         <source>List</source>
         <translation>Listë</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="62"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="63"/>
         <source>Tree</source>
         <translation>Pemë</translation>
     </message>
@@ -8961,7 +9401,7 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>filedialog_core::FileDialog</name>
     <message>
-        <location filename="../src/plugins/filedialog/core/views/filedialog.cpp" line="1014"/>
+        <location filename="../src/plugins/filedialog/core/views/filedialog.cpp" line="1022"/>
         <source>Save</source>
         <comment>button</comment>
         <translation>Ruaje</translation>
@@ -8994,18 +9434,18 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Hapni Kartelë</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filedialog/core/views/filedialogstatusbar.cpp" line="241"/>
+        <location filename="../src/plugins/filedialog/core/views/filedialogstatusbar.cpp" line="242"/>
         <source>File Name</source>
         <translation>Emër Kartele</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filedialog/core/views/filedialogstatusbar.cpp" line="242"/>
+        <location filename="../src/plugins/filedialog/core/views/filedialogstatusbar.cpp" line="243"/>
         <source>Format</source>
         <translation>Formatoje</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filedialog/core/views/filedialogstatusbar.cpp" line="272"/>
-        <location filename="../src/plugins/filedialog/core/views/filedialogstatusbar.cpp" line="274"/>
+        <location filename="../src/plugins/filedialog/core/views/filedialogstatusbar.cpp" line="280"/>
+        <location filename="../src/plugins/filedialog/core/views/filedialogstatusbar.cpp" line="283"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Anuloje</translation>
@@ -9019,107 +9459,107 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Madhësi të përdorshme:</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="281"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="283"/>
         <source>Custom Size</source>
         <translation>Madhësi Vetjake</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="308"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="312"/>
         <source>Device Pixel Ratio: </source>
         <translation>Përpjesëtim Pikselash i Pajisjes:</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="330"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="334"/>
         <source>Theme: </source>
         <translation>Temë: </translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="332"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="338"/>
         <source>Light</source>
         <translation>E çelët</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="332"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="338"/>
         <source>Dark</source>
         <translation>E errët</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="336"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="342"/>
         <source>Mode: </source>
         <translation>Mënyrë: </translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="338"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="346"/>
         <source>Normal</source>
         <translation>Normale</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="338"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="346"/>
         <source>Disabled</source>
         <translation>E çaktivizuar</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="338"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="346"/>
         <source>Hovered</source>
         <translation>Kur kalohet kursori përsipër</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="338"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="346"/>
         <source>Pressed</source>
         <translation>Kur shtypet</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="342"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="350"/>
         <source>Palette</source>
         <translation>Paletë</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="344"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="352"/>
         <source>Current mode icon does not support the palette</source>
         <translation>Ikona e tanishme për mënyrën nuk mbulon paletën</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="363"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="371"/>
         <source>Foreground:</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="378"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="388"/>
         <source>Background:</source>
         <translation>Sfond:</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="391"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="403"/>
         <source>Highlight:</source>
         <translation>Theksim:</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="403"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="417"/>
         <source>HighlightForeground:</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="419"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="435"/>
         <source>Background Color: </source>
         <translation>Ngjyrë Sfondi: </translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="421"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="437"/>
         <source>White</source>
         <translation>E bardhë</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="421"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="437"/>
         <source>Black</source>
         <translation>E zezë</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="421"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="437"/>
         <source>Transparent</source>
         <translation>E tejdukshme</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="421"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="437"/>
         <source>Custom</source>
         <translation>Vetjake</translation>
     </message>
@@ -9132,18 +9572,18 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Kartelë e fshehtëzuar, ju lutemi, jepni fjalëkalimin</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/pdf-preview/encryptionpage.cpp" line="42"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/pdf-preview/encryptionpage.cpp" line="44"/>
         <source>Password</source>
         <translation>Fjalëkalim</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/pdf-preview/encryptionpage.cpp" line="47"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/pdf-preview/encryptionpage.cpp" line="50"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/pdf-preview/encryptionpage.cpp" line="90"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/pdf-preview/encryptionpage.cpp" line="93"/>
         <source>Wrong password</source>
         <translation>Fjalëkalim i gabuar</translation>
     </message>
@@ -9151,22 +9591,22 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>plugin_filepreview::MusicMessageView</name>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="60"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="62"/>
         <source>Artist:</source>
         <translation>Artist:</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="72"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="76"/>
         <source>Album:</source>
         <translation>Album:</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="137"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="142"/>
         <source>unknown artist</source>
         <translation>artist i panjohur</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="141"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="146"/>
         <source>unknown album</source>
         <translation>album i panjohur</translation>
     </message>
