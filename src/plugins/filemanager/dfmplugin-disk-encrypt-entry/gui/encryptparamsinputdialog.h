@@ -36,7 +36,6 @@ protected:
     QWidget *createPasswordPage();
     QWidget *createExportPage();
     bool validatePassword();
-    bool validateExportPath(const QString &path, QString *msg);
     void setPasswordInputVisible(bool visible);
 
 protected Q_SLOTS:

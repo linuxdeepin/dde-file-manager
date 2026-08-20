@@ -34,7 +34,6 @@ protected Q_SLOTS:
 
 protected:
     void initUI();
-    bool validateExportPath(const QString &path, QString *msg);
     void saveRecKey(const QString &path);
 
 private:
