@@ -2098,17 +2098,17 @@ Você precisa atualizar este cofre para continuar usando-o.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="587"/>
         <source>Cannot access the export path directory!</source>
-        <translation type="unfinished"/>
+        <translation>Não foi possível acessar o diretório de exportação!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="593"/>
         <source>The export path directory is world-writable, please choose a safer location!</source>
-        <translation type="unfinished"/>
+        <translation>O diretório de exportação permite gravação por qualquer usuário. Escolha um local mais seguro!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="601"/>
         <source>This partition is read-only, please export to a writable partition</source>
-        <translation type="unfinished"/>
+        <translation>Esta partição é somente leitura. Exporte para uma partição com permissão de escrita</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="628"/>
