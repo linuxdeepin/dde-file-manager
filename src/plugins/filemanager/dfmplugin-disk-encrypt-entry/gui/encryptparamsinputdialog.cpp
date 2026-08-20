@@ -144,7 +144,7 @@ QWidget *EncryptParamsInputDialog::createPasswordPage()
     encType->addItems({ tr("Unlocked by passphrase"),
                         tr("Use TPM+PIN to unlock on this computer (recommended)"),
                         tr("Automatic unlocking on this computer by TPM") });
-
+    fmDebug() << "[EncryptParamsInputDialog::createPasswordPage] Befor checkTPM()";
     if (tpm_utils::checkTPM() != 0 || tpm_utils::checkTPMLockoutStatus() != 0) {
         // encType->setItemData(kTPMAndPIN, QVariant(0), Qt::UserRole - 1);
         // encType->setItemData(kTPMOnly, QVariant(0), Qt::UserRole - 1);

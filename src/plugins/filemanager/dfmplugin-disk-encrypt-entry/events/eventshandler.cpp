@@ -145,16 +145,15 @@ int EventsHandler::deviceEncryptStatus(const QString &device)
 
 void EventsHandler::resumeEncrypt(const QString &device)
 {
-    QDBusInterface iface(kDaemonBusName,
-                         kDaemonBusPath,
-                         kDaemonBusIface,
-                         QDBusConnection::systemBus());
+    CREATE_DAEMON_INTERFACE(iface);
+    iface.setTimeout(kTPMDBusTimeoutMs);
     iface.asyncCall("ResumeEncryption", QVariantMap { { encrypt_param_keys::kKeyDevice, device } });
 }
 
 QString EventsHandler::holderDevice(const QString &device)
 {
     CREATE_DAEMON_INTERFACE(iface);
+    iface.setTimeout(kTPMDBusTimeoutMs);
     if (!iface.isValid()) {
         fmWarning() << "Failed to create DBus interface for HolderDevice, service may be unavailable, using original device";
         return device;
@@ -280,7 +279,7 @@ void EventsHandler::onChgPwdFinished(const QVariantMap &result)
 
 void EventsHandler::onRequestAuthArgs(const QVariantMap &devInfo)
 {
-    qApp->restoreOverrideCursor();
+    fmDebug() << "[EventsHandler::onRequestAuthArgs] enter";
 
     QString devPath = devInfo.value(encrypt_param_keys::kKeyDevice).toString();
     if (devPath.isEmpty()) {
@@ -293,11 +292,13 @@ void EventsHandler::onRequestAuthArgs(const QVariantMap &devInfo)
         return;
     }
 
+    qApp->restoreOverrideCursor();
+
     QString objPath = "/org/freedesktop/UDisks2/block_devices/" + devPath.mid(5);
     auto blkDev = device_utils::createBlockDevice(objPath);
     auto dlg = new EncryptParamsInputDialog(devInfo, qApp->activeWindow());
     encryptInputs.insert(devPath, dlg);
-
+    fmDebug() << "[EventsHandler::onRequestAuthArgs] Had new Encrypt params input dialog.";
     connect(dlg, &DDialog::finished, this, [=](auto ret) {
         if (ret != QDialog::Accepted) {
             fmInfo() << "User cancelled auth input for device:" << devPath;
