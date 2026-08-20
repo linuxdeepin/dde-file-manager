@@ -636,6 +636,7 @@ void ComputerItemWatcher::updateSidebarItem(const QUrl &url, const QString &newN
     DFMEntryFileInfoPointer info(new EntryFileInfo(url));
     QVariantMap map {
         { "Property_Key_DisplayName", newName },
+        { "Property_Key_EditDisplayText", info->editDisplayText() },
         { "Property_Key_Editable", editable },
         { "Property_Key_FinalUrl", findFinalUrl(info) },
         { "Property_Key_ItemExpandable", info->targetUrl().isValid() }
@@ -921,7 +922,8 @@ void ComputerItemWatcher::onDevicePropertyChangedQDBusVar(const QString &id, con
             // when these properties changed, reload the cache.
             QStringList queryInfoOnChanged { DeviceProperty::kOptical,
                                              DeviceProperty::kFileSystem,
-                                             DeviceProperty::kCleartextDevice };
+                                             DeviceProperty::kCleartextDevice,
+                                             DeviceProperty::kIdLabel };
             if (queryInfoOnChanged.contains(propertyName))
                 onUpdateBlockItem(id);
 
