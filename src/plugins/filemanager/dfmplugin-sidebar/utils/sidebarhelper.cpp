@@ -133,6 +133,8 @@ SideBarItem *SideBarHelper::createItemByInfo(const ItemInfo &info)
                                         info.group,
                                         info.url);
 
+    item->setExpandable(info.isExpandable);
+
     item->setFlags(info.flags);
 
     // create `unmount action` for removable device

@@ -643,6 +643,8 @@ void SideBarModel::addSubItem(const QModelIndex &index, const QUrl &url)
                                         { PropertyKey::kDisplayName, fileName } });
     SideBarInfoCacheMananger::instance()->addItemInfoCache(itemInfo);
 
+    item->setExpandable(true);
+
     // Sub-items are not editable and not draggable.
     Qt::ItemFlags flags = item->flags();
     flags &= ~Qt::ItemIsEditable;

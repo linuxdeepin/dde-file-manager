@@ -562,7 +562,7 @@ void SideBarView::mousePressEvent(QMouseEvent *event)
     auto index = indexAt(event->pos());
     if (event->button() == Qt::LeftButton && index.isValid()
         && item && item->group() == DefaultGroup::kDevice) {
-        if (item->itemInfo().isExpandable && SideBarHelper::partitionExpandable()) {
+        if (item->isExpandable() && SideBarHelper::partitionExpandable()) {
             int layer = 0;
             auto parentIdx = index;
             while (parentIdx.parent().isValid()) {

@@ -30,6 +30,7 @@ SideBarItem::SideBarItem(const SideBarItem &item)
     setIcon(item.icon());
     setUrl(item.url());
     setGroup(item.group());
+    setExpandable(item.isExpandable());
     setText(item.text());
 
     setData(kSidebarItem, kItemTypeRole);
@@ -90,6 +91,16 @@ bool SideBarItem::isHidden() const
 void SideBarItem::setHiiden(bool hidden)
 {
     setData(hidden, Roles::kItemHiddenRole);
+}
+
+bool SideBarItem::isExpandable() const
+{
+    return data(Roles::kItemExpandableRole).toBool();
+}
+
+void SideBarItem::setExpandable(bool expandable)
+{
+    setData(expandable, Roles::kItemExpandableRole);
 }
 
 QString SideBarItem::subGourp() const

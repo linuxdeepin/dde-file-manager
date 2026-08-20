@@ -24,6 +24,7 @@ public:
         kItemTypeRole,
         kItemHiddenRole,
         kItemIconNameRole,
+        kItemExpandableRole,
         kItemUserCustomRole = Dtk::UserRole + 0x0100
     };
 
@@ -51,6 +52,9 @@ public:
 
     bool isHidden() const;
     void setHiiden(bool hidden);
+
+    bool isExpandable() const;
+    void setExpandable(bool expandable);
 
     ItemInfo itemInfo() const;
 };
