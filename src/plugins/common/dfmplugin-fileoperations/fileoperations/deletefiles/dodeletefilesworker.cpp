@@ -205,7 +205,7 @@ bool DoDeleteFilesWorker::deleteFilesByFts()
     fts_close(fts);
     flushFileDeletedBatch();
 
-    fmWarning() << "deleteFilesByFts: done â" << errorCount << "errors," << deleteFilesCount << "deleted";
+    fmWarning() << "deleteFilesByFts: done -" << errorCount << "errors," << deleteFilesCount << "deleted";
 
     return success && errorCount == 0;
 }
@@ -246,8 +246,10 @@ bool DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice()
 
     AbstractJobHandler::SupportAction action { AbstractJobHandler::SupportAction::kNoAction };
     for (QList<QUrl>::iterator it = --allFilesList.end(); it != --allFilesList.begin(); --it) {
-        if (!stateCheck())
+        if (!stateCheck()) {
+            flushFileDeletedBatch();
             return false;
+        }
         const QUrl &url = *it;
         emitCurrentTaskNotify(url, QUrl());
         do {
@@ -314,6 +316,7 @@ bool DoDeleteFilesWorker::deleteFilesOnOtherDevice()
                 fmInfo() << "Skipped file due to info creation failure:" << url;
                 continue;
             }
+            flushFileDeletedBatch();
             return false;
         }
 
@@ -327,6 +330,7 @@ bool DoDeleteFilesWorker::deleteFilesOnOtherDevice()
 
         if (!ok) {
             fmWarning() << "Failed to delete item:" << url;
+            flushFileDeletedBatch();
             return false;
         }
 
