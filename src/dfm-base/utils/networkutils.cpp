@@ -214,22 +214,21 @@ bool NetworkUtils::checkFtpOrSmbBusy(const QUrl &url)
     if (!parseIp(url.path(), host, ports))
         return false;
 
-    // 先查缓存，所有端口都 hit 且 busy=false 才算可用
+    // 先查缓存：所有端口都有缓存命中时，仅当全部 busy 才判 busy，
+    // 与非缓存路径 !checkNetConnection(host, ports) 语义一致
     bool allCached { true };
-    bool anyBusy { false };
+    bool allBusy { true };
     for (const auto &port : ports) {
         auto cached = getFromCache(host, port);
         if (!cached.timestamp.isValid()) {
             allCached = false;
             break;
         }
-        if (cached.busy) {
-            anyBusy = true;
-            break;
-        }
+        if (!cached.busy)
+            allBusy = false;
     }
     if (allCached)
-        return anyBusy;
+        return allBusy;
 
     auto busy = !checkNetConnection(host, ports);
     if (busy)
