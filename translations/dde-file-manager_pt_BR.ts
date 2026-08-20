@@ -2088,12 +2088,12 @@ Você precisa atualizar este cofre para continuar usando-o.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="572"/>
         <source>Recovery key export path is not exists!</source>
-        <translation type="unfinished"/>
+        <translation>O caminho para exportar a chave de recuperação não existe!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="579"/>
         <source>Recovery key export path cannot be a symlink or non-directory!</source>
-        <translation type="unfinished"/>
+        <translation>O caminho para exportar a chave de recuperação não pode ser um link simbólico nem um arquivo!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="587"/>
