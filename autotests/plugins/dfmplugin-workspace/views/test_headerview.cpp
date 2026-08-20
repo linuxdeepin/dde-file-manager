@@ -14,6 +14,7 @@
 #include <QHeaderView>
 #include <QStyleOptionHeader>
 #include <QPainter>
+#include <QImage>
 #include <QFontMetrics>
 #include <QRect>
 #include <QPoint>
@@ -177,7 +178,8 @@ TEST_F(HeaderViewTest, PaintEvent_HandlesPaint)
 
 TEST_F(HeaderViewTest, PaintSection_PaintsSection)
 {
-    QPainter painter;
+    QImage image(100, 30, QImage::Format_ARGB32);
+    QPainter painter(&image);
     QStyleOptionHeader option;
     option.rect = QRect(0, 0, 100, 30);
     option.section = 0;

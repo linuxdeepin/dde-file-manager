@@ -62,7 +62,10 @@ public:
         // afterwards stops the thread AND releases the QSharedPointer<AbstractWorker>
         // doWorker member, which deletes worker automatically. Do NOT delete
         // worker explicitly here - that would double-free it.
-        worker->moveToThread(QThread::currentThread());
+        // Guard against null: some tests (e.g. Destructor_StopsThread) delete job
+        // and null worker in the test body, so TearDown must not dereference it.
+        if (worker)
+            worker->moveToThread(QThread::currentThread());
         delete job;
         job = nullptr;
         worker = nullptr;

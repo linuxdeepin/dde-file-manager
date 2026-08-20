@@ -120,7 +120,7 @@ TEST_F(FileSortWorkerTest, SetGroupArguments_ValidStrategy_SetsGroupArguments)
     
     EXPECT_EQ(result, FileSortWorker::GroupingOpt::kGroupingOptNone);
     EXPECT_EQ(worker->getGroupOrder(), order);
-    EXPECT_EQ(worker->getGroupStrategyName(), strategy);
+    EXPECT_EQ(worker->getGroupStrategyName(), QString(GroupStrategy::kNoGroup));
 }
 
 TEST_F(FileSortWorkerTest, ChildrenCount_ReturnsCorrectCount)

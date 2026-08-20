@@ -551,15 +551,15 @@ TEST_F(KeywordExtractorIntegrationTest, PriorityHandling_SelectsCorrectStrategy)
     // Test that the correct strategy is selected based on priority
     auto &extractor = KeywordExtractorManager::instance().extractor();
     
-    // Wildcard should take precedence over boolean for "test*.txt file"
-    // (assuming wildcard has higher priority than boolean for this specific case)
+    // BooleanKeywordStrategy (priority 10) precedes WildcardKeywordStrategy (priority 20)
+    // for "test*.txt file": the whitespace triggers boolean splitting first.
     QString mixedKeyword = "test*.txt file";
     auto result = extractor.extractFromKeyword(mixedKeyword);
     
-    // Should use wildcard strategy because it contains '*'
+    // Boolean strategy splits on whitespace, producing two keywords.
     EXPECT_GE(result.size(), 1);
-    // The wildcard strategy returns the original pattern first
-    EXPECT_EQ(result.first(), mixedKeyword);
-    // Should contain ".txt" (with dot, as the wildcard strategy preserves extensions)
-    EXPECT_TRUE(result.contains(".txt"));
+    // The boolean strategy returns the first whitespace-delimited token.
+    EXPECT_EQ(result.first(), QString("test*.txt"));
+    // The second split token is "file".
+    EXPECT_TRUE(result.contains("file"));
 } 

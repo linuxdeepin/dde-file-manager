@@ -95,7 +95,7 @@ TEST_F(WorkspaceHelperTest, CreateTopWidgetByUrl_ValidUrl_CreatesWidget)
     // Test creating a top widget by URL
     WorkspaceHelper *helper = WorkspaceHelper::instance();
     // Use a unique scheme to avoid collision with singleton state
-    QString scheme = "test_scheme_byurl_" + QString::number(QDateTime::currentMSecsSinceEpoch());
+    QString scheme = "test-scheme-byurl-" + QString::number(QDateTime::currentMSecsSinceEpoch());
     QUrl testUrl(scheme + "://path");
     
     auto creatorCalled = std::make_shared<bool>(false);
