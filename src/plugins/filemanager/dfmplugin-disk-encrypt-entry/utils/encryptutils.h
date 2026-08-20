@@ -76,6 +76,7 @@ bool useOverlayDMMode();
 
 namespace recovery_key_utils {
 QString formatRecoveryKey(const QString &raw);
+bool validateExportPath(const QString &path, const QString &targetDevice, QString *msg = nullptr);
 }
 
 namespace device_utils {
