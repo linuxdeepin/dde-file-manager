@@ -538,6 +538,15 @@ TEST_F(TestGroupingEngine, UpdateFilesToModelData_ValidData)
     engine->setUpdateMode(GroupingEngine::UpdateMode::kUpdate);
     engine->setUpdateChildren(visibleChildren);
     
+    // MockGroupStrategy::getGroupKey returns "mock_group" for any file, so the
+    // group must already exist in oldData for processFilesAndUpdateGroups to
+    // find it; otherwise getGroup() returns null and the update fails.
+    FileGroupData group;
+    group.groupKey = "mock_group";
+    group.addFile(testFileData);
+    oldData.addGroup(group);
+    oldData.rebuildFlattenedItems();
+    
     auto result = engine->updateFilesToModelData(testUrl, oldData, &strategy);
     EXPECT_TRUE(result.success);
 }
@@ -572,6 +581,7 @@ TEST_F(TestGroupingEngine, RemoveFilesFromModelData_ValidData)
     FileGroupData group;
     group.groupKey = "test_group";
     group.addFile(testFileData);
+    group.addFile(testFileData2);
     oldData.addGroup(group);
     oldData.rebuildFlattenedItems();
     

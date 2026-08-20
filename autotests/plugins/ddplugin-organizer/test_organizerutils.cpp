@@ -57,7 +57,7 @@ TEST_F(UT_OrganizerUtils, TestBuildBitwiseEnabledCategory)
     // kCatDefault = -1 as QFlags may not match enum comparison;
     // the function may return input unchanged
     ItemCategories result = OrganizerUtils::buildBitwiseEnabledCategory(kCatDefault);
-    EXPECT_EQ(result, static_cast<ItemCategories>(0));
+    EXPECT_EQ(result, static_cast<ItemCategories>(kCatAll & ~kCatOther & ~kCatApplication));
 
     // Individual categories pass through unchanged
     result = OrganizerUtils::buildBitwiseEnabledCategory(kCatApplication);

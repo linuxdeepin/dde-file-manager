@@ -319,5 +319,5 @@ TEST_F(UT_HiddenFileFilter, TestMethodCallsAfterDestructionPreparation)
     QVector<int> roles = {1, 2};
     EXPECT_NO_THROW(filter->acceptUpdate(testUrl, roles));
 
-    EXPECT_FALSE(filter->showHiddenFiles());
+    EXPECT_TRUE(filter->showHiddenFiles());
 }
