@@ -475,6 +475,7 @@ void ComputerModel::onItemPropertyChanged(const QUrl &url, const QString &key, c
     if (key == DeviceProperty::kIdLabel && !val.toString().isEmpty()) {
         QVariantMap map {
             { "Property_Key_DisplayName", val.toString() },
+            { "Property_Key_EditDisplayText", val.toString() },
             { "Property_Key_Editable", true }
         };
         dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", url, map);
