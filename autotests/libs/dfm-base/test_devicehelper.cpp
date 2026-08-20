@@ -425,11 +425,12 @@ TEST(DeviceHelperTest, CheckNetworkConnectionNonExistent)
 {
     stub_ext::StubExt stub;
     // Stub network check to avoid TCP timeout to broadcast address
-    // Select the (QString, QString, int) overload explicitly
-    bool (NetworkUtils::*checkNetFn)(const QString &, const QString &, int) =
+    // Select the (QString, QString, int, bool) overload explicitly
+    // (the bool useCache param was added to enable the TTL cache)
+    bool (NetworkUtils::*checkNetFn)(const QString &, const QString &, int, bool) =
         &NetworkUtils::checkNetConnection;
     stub.set_lamda(checkNetFn,
-                   [](NetworkUtils *, const QString &, const QString &, int) -> bool {
+                   [](NetworkUtils *, const QString &, const QString &, int, bool) -> bool {
                        return false;
                    });
 
