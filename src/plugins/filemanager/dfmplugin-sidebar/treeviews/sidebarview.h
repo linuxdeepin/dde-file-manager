@@ -33,7 +33,7 @@ public:
     void saveStateWhenClose();
     void setCurrentUrl(const QUrl &sidebarUrl);
     QUrl currentUrl() const;
-    QModelIndex currentTrackedIndex() const;
+    bool isCurrentUrlHighlightIndex(const QModelIndex &index) const;
     QModelIndex findItemIndex(const QUrl &url) const;
     QVariantMap groupExpandState() const;
     QModelIndex previousIndex() const;
