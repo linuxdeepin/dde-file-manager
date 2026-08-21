@@ -173,7 +173,7 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
         if (foundByCb || (sidebarView && UniversalUtils::urlEquals(subItem->url(), sidebarView->currentUrl())))
             isUrlEqual = true;
     }
-    if (isUrlEqual && sidebarView && index == sidebarView->currentTrackedIndex()) {
+    if (isUrlEqual && sidebarView && sidebarView->isCurrentUrlHighlightIndex(index)) {
         // If the dragging and moving source item is not the current highlighted one,
         // the highlighted one must be keep its state.
         keepDrawingHighlighted = true;
