@@ -638,14 +638,46 @@ std::optional<IndexTask::Grade> TaskManager::currentTaskGrade() const
 
 QString TaskManager::currentIndexStatus() const
 {
-    if (!hasRunningTask() && !currentTask) {
-        if (!taskQueue.isEmpty())
-            return "Blocked";
+    if (hasRunningTask() && currentTask)
+        return "Running";
+
+    if (!hasRunningTask() && !currentTask && !taskQueue.isEmpty()) {
+        // Tasks queued but not running → blocked by environment.
+        const EnvState env = EnvDetector::instance().currentState();
+        const IndexTask::Grade headGrade = taskQueue.head().grade;
+
+        if (canRun(headGrade, taskQueue.head().forceBypass, env))
+            return "Running";
+
+        // Distinguish by the first unsatisfied condition.
+        // The order matters: battery is the most restrictive, then power-save, then idle.
+        // Light tasks only require !powerSaveMode, so they won't trigger WaitingPower/WaitingIdle.
+        if (env.onBattery && headGrade != IndexTask::Grade::Light)
+            return "WaitingPower";
+        if (env.powerSaveMode)
+            return "WaitingPowerSave";
+        if (!env.idle && headGrade != IndexTask::Grade::Light)
+            return "WaitingIdle";
+
+        // Should not reach here: canRun returned false but no known condition matched.
+        // This can only happen with an unknown grade (None) — treat as Idle.
+        fmWarning() << "[TaskManager::currentIndexStatus] Unreachable: canRun=false but no condition matched"
+                    << "grade:" << static_cast<int>(headGrade)
+                    << "battery:" << env.onBattery
+                    << "powerSave:" << env.powerSaveMode
+                    << "idle:" << env.idle;
         return "Idle";
     }
 
-    if (hasRunningTask() && currentTask)
-        return "Running";
+    // No running task, no queued tasks
+    if (m_lastTaskFailed)
+        return "Failed";
+
+    // Idle: index exists → Completed; index not yet built → WaitingUpgrade
+    if (m_context && m_context->stateStore()) {
+        if (!m_context->stateStore()->isCleanState())
+            return "WaitingUpgrade";
+    }
 
     return "Idle";
 }
@@ -671,8 +703,14 @@ void TaskManager::onTaskFinished(IndexTask::Type type, HandlerResult result)
     handleRootPathFailure(result.success, result.interrupted, taskPath);
     updateIndexStatusOnSuccess(type, result);
 
+    // Track failure state for status reporting (ignore interrupted/paused)
+    if (!result.interrupted && !result.paused)
+        m_lastTaskFailed = !result.success;
+
     emit taskFinished(typeToString(type), taskPath, result.success);
     cleanupTask();
+
+    emit indexStatusChanged(currentIndexStatus(), gradeToString(IndexTask::Grade::None));
 
     schedule();
 

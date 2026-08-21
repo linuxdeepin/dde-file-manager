@@ -113,6 +113,7 @@ private:
     // Recovery pending flag - set at service startup if Dirty state detected
     // Prevents incremental tasks from clearing Dirty state before recovery completes
     bool m_recoveryPending { false };
+    bool m_lastTaskFailed { false };
 };
 
 SERVICETEXTINDEX_END_NAMESPACE
