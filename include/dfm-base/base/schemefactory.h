@@ -288,12 +288,18 @@ public:
     }
 
     // 提供任意子类的转换方法模板，仅限DAbstractFileInfo树族，
-    // 与qSharedPointerDynamicCast保持一致
+    // 与qSharedPointerDynamicCast保持一致。
+    // isCacheMiss 仅对 kCreateFileInfoAuto 路径有意义：缓存未命中（新建对象）时
+    // 置为 true，其余早期返回路径保持 false。
     template<class T>
     static QSharedPointer<T> create(const QUrl &url,
                                     const Global::CreateFileInfoType type = Global::CreateFileInfoType::kCreateFileInfoAuto,
-                                    QString *errorString = nullptr)
+                                    QString *errorString = nullptr,
+                                    bool *isCacheMiss = nullptr)
     {
+        if (isCacheMiss)
+            *isCacheMiss = false;
+
         if (!url.isValid()) {
             qCWarning(logDFMBase) << "url is invalid !!! url = " << url;
             return nullptr;
@@ -331,6 +337,9 @@ public:
 
             if (type != Global::CreateFileInfoType::kCreateFileInfoAutoNoCache)
                 emit InfoCacheController::instance().cacheFileInfo(url, info);
+
+            if (isCacheMiss)
+                *isCacheMiss = true;
         }
 
         if (!info)

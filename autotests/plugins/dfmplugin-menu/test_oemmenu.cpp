@@ -119,7 +119,7 @@ TEST_F(UT_OemMenu, NormalActions_SingleFile_ReturnsSingleFileActions)
     QList<QUrl> urls = { QUrl::fromLocalFile("/tmp/test.txt") };
 
     stub.set_lamda(&InfoFactory::create<FileInfo>,
-        [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+        [](const QUrl &url, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
             __DBG_STUB_INVOKE__
             return QSharedPointer<FileInfo>(new FileInfo(url));
         });
@@ -138,7 +138,7 @@ TEST_F(UT_OemMenu, NormalActions_SingleDirectory_ReturnsSingleDirActions)
     QList<QUrl> urls = { QUrl::fromLocalFile("/tmp/testdir") };
 
     stub.set_lamda(&InfoFactory::create<FileInfo>,
-        [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+        [](const QUrl &url, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
             __DBG_STUB_INVOKE__
             return QSharedPointer<FileInfo>(new FileInfo(url));
         });
@@ -160,7 +160,7 @@ TEST_F(UT_OemMenu, NormalActions_MultipleFiles_ReturnsMultiActions)
     };
 
     stub.set_lamda(&InfoFactory::create<FileInfo>,
-        [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+        [](const QUrl &url, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
             __DBG_STUB_INVOKE__
             return QSharedPointer<FileInfo>(new FileInfo(url));
         });
@@ -179,7 +179,7 @@ TEST_F(UT_OemMenu, NormalActions_FTPFile_FiltersCompressAction)
     QList<QUrl> urls = { QUrl("ftp://server/test.txt") };
 
     stub.set_lamda(&InfoFactory::create<FileInfo>,
-        [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+        [](const QUrl &url, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
             __DBG_STUB_INVOKE__
             return QSharedPointer<FileInfo>(new FileInfo(url));
         });
@@ -199,7 +199,7 @@ TEST_F(UT_OemMenu, FocusNormalActions_ValidFocus_ReturnsActionList)
     QList<QUrl> urls = { focus };
 
     stub.set_lamda(&InfoFactory::create<FileInfo>,
-        [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+        [](const QUrl &url, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
             __DBG_STUB_INVOKE__
             return QSharedPointer<FileInfo>(new FileInfo(url));
         });
@@ -219,7 +219,7 @@ TEST_F(UT_OemMenu, FocusNormalActions_FileInfoCreationFails_ReturnsEmpty)
     QList<QUrl> urls = { focus };
 
     stub.set_lamda(&InfoFactory::create<FileInfo>,
-        [](const QUrl &, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+        [](const QUrl &, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
             __DBG_STUB_INVOKE__
             return nullptr;
         });
@@ -666,7 +666,7 @@ TEST_F(UT_OemMenu, IsAllEx7zFile_SingleUrl_ReturnsFalse)
 TEST_F(UT_OemMenu, IsAllEx7zFile_AllSplitArchives_ReturnsTrue)
 {
     stub.set_lamda(&InfoFactory::create<FileInfo>,
-        [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+        [](const QUrl &url, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
             __DBG_STUB_INVOKE__
             return QSharedPointer<FileInfo>(new FileInfo(url));
         });
@@ -686,7 +686,7 @@ TEST_F(UT_OemMenu, IsAllEx7zFile_AllSplitArchives_ReturnsTrue)
 TEST_F(UT_OemMenu, IsAllEx7zFile_MixedFiles_ReturnsFalse)
 {
     stub.set_lamda(&InfoFactory::create<FileInfo>,
-        [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+        [](const QUrl &url, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
             __DBG_STUB_INVOKE__
             return QSharedPointer<FileInfo>(new FileInfo(url));
         });
@@ -706,7 +706,7 @@ TEST_F(UT_OemMenu, IsAllEx7zFile_MixedFiles_ReturnsFalse)
 TEST_F(UT_OemMenu, IsAllEx7zFile_NullInfo_ReturnsFalse)
 {
     stub.set_lamda(&InfoFactory::create<FileInfo>,
-        [](const QUrl &, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+        [](const QUrl &, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
             __DBG_STUB_INVOKE__
             return nullptr;
         });

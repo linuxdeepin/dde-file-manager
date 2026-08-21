@@ -472,7 +472,7 @@ TEST_F(TitleBarHelperTest, HandleJumpToPressed_FileUrl_SendsOpenFile)
     });
 
     stub.set_lamda(&InfoFactory::create<FileInfo>,
-                   [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+                   [](const QUrl &url, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return QSharedPointer<FileInfo>(new FileInfo(url));
                    });

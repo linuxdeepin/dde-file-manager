@@ -30,6 +30,11 @@
 #include <stdio.h>
 #include <mntent.h>
 
+inline constexpr char kFileAttributes[] { "standard::name,standard::type,standard::is-file,standard::is-dir,"
+    "standard::display-name,standard::size,standard::is-symlink,standard::symlink-target,standard::is-hidden,"
+    "access::*,time::*,"
+    "owner::*,unix::uid,unix::inode,unix::gid,unix::mode,id::filesystem" };
+
 /*!
  * \class SyncFileInfo 本地文件信息类
  * \brief 内部实现本地文件的fileinfo，对应url的scheme是file://
@@ -637,7 +642,7 @@ void SyncFileInfoPrivate::init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo>
         return;
     }
 
-    dfmFileInfo.reset(new DFileInfo(cvtResultUrl));
+    dfmFileInfo.reset(new DFileInfo(cvtResultUrl, kFileAttributes));
 
     if (!dfmFileInfo) {
         qCWarning(logDFMBase, "Failed, dfm-io use factory create fileinfo");

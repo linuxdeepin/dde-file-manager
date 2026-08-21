@@ -117,7 +117,7 @@ TEST_F(UT_ShareMenuScene, Initialize_ValidFiles_ReturnsTrue)
     params[MenuParamKey::kSelectFiles] = QVariant::fromValue(urls);
 
     stub.set_lamda(&InfoFactory::create<FileInfo>,
-                   [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+                   [](const QUrl &url, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return QSharedPointer<FileInfo>(new FileInfo(url));
                    });

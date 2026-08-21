@@ -71,7 +71,7 @@ TEST_F(UT_DCustomActionBuilder, SetActiveDir_ValidDir_SetsDirectoryName)
     QUrl dirUrl = QUrl::fromLocalFile("/tmp/testdir");
 
     stub.set_lamda(&InfoFactory::create<FileInfo>,
-                   [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+                   [](const QUrl &url, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return QSharedPointer<FileInfo>(new FileInfo(url));
                    });
@@ -89,7 +89,7 @@ TEST_F(UT_DCustomActionBuilder, SetActiveDir_RootDir_SetsSlashAsName)
     QUrl dirUrl = QUrl::fromLocalFile("/");
 
     stub.set_lamda(&InfoFactory::create<FileInfo>,
-                   [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+                   [](const QUrl &url, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return QSharedPointer<FileInfo>(new FileInfo(url));
                    });
@@ -107,7 +107,7 @@ TEST_F(UT_DCustomActionBuilder, SetActiveDir_FileInfoCreationFails_ReturnsEarly)
     QUrl dirUrl = QUrl::fromLocalFile("/tmp/testdir");
 
     stub.set_lamda(&InfoFactory::create<FileInfo>,
-                   [](const QUrl &, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+                   [](const QUrl &, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return nullptr;
                    });
@@ -122,7 +122,7 @@ TEST_F(UT_DCustomActionBuilder, SetFocusFile_RegularFile_SetsBaseName)
     QUrl fileUrl = QUrl::fromLocalFile("/tmp/test.txt");
 
     stub.set_lamda(&InfoFactory::create<FileInfo>,
-                   [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+                   [](const QUrl &url, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return QSharedPointer<FileInfo>(new FileInfo(url));
                    });
@@ -145,7 +145,7 @@ TEST_F(UT_DCustomActionBuilder, SetFocusFile_Directory_KeepsFullName)
     QUrl dirUrl = QUrl::fromLocalFile("/tmp/testdir");
 
     stub.set_lamda(&InfoFactory::create<FileInfo>,
-                   [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+                   [](const QUrl &url, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return QSharedPointer<FileInfo>(new FileInfo(url));
                    });
@@ -168,7 +168,7 @@ TEST_F(UT_DCustomActionBuilder, SetFocusFile_FileInfoCreationFails_ReturnsEarly)
     QUrl fileUrl = QUrl::fromLocalFile("/tmp/test.txt");
 
     stub.set_lamda(&InfoFactory::create<FileInfo>,
-                   [](const QUrl &, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+                   [](const QUrl &, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return nullptr;
                    });
@@ -216,7 +216,7 @@ TEST_F(UT_DCustomActionBuilder, CheckFileCombo_SingleFile_ReturnsSingleFile)
     QList<QUrl> files = { QUrl::fromLocalFile("/tmp/test.txt") };
 
     stub.set_lamda(&InfoFactory::create<FileInfo>,
-                   [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+                   [](const QUrl &url, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return QSharedPointer<FileInfo>(new FileInfo(url));
                    });
@@ -238,7 +238,7 @@ TEST_F(UT_DCustomActionBuilder, CheckFileCombo_MultipleFiles_ReturnsMultiFiles)
     };
 
     stub.set_lamda(&InfoFactory::create<FileInfo>,
-                   [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+                   [](const QUrl &url, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return QSharedPointer<FileInfo>(new FileInfo(url));
                    });
@@ -257,7 +257,7 @@ TEST_F(UT_DCustomActionBuilder, CheckFileCombo_SingleDir_ReturnsSingleDir)
     QList<QUrl> files = { QUrl::fromLocalFile("/tmp/testdir") };
 
     stub.set_lamda(&InfoFactory::create<FileInfo>,
-                   [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+                   [](const QUrl &url, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return QSharedPointer<FileInfo>(new FileInfo(url));
                    });
@@ -279,7 +279,7 @@ TEST_F(UT_DCustomActionBuilder, CheckFileCombo_MultipleDirs_ReturnsMultiDirs)
     };
 
     stub.set_lamda(&InfoFactory::create<FileInfo>,
-                   [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+                   [](const QUrl &url, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return QSharedPointer<FileInfo>(new FileInfo(url));
                    });
@@ -302,7 +302,7 @@ TEST_F(UT_DCustomActionBuilder, CheckFileCombo_MixedFilesAndDirs_ReturnsFileAndD
 
     int callCount = 0;
     stub.set_lamda(&InfoFactory::create<FileInfo>,
-                   [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+                   [](const QUrl &url, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return QSharedPointer<FileInfo>(new FileInfo(url));
                    });
@@ -325,7 +325,7 @@ TEST_F(UT_DCustomActionBuilder, CheckFileCombo_FileInfoCreationFails_SkipsFile)
 
     int callCount = 0;
     stub.set_lamda(&InfoFactory::create<FileInfo>,
-                   [&callCount](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+                   [&callCount](const QUrl &url, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        if (callCount++ == 0)
                            return nullptr;   // 第一次失败
@@ -349,7 +349,7 @@ TEST_F(UT_DCustomActionBuilder, CheckFileComboWithFocus_FocusIsFile_ReturnsSingl
     QList<QUrl> files = { focus };
 
     stub.set_lamda(&InfoFactory::create<FileInfo>,
-                   [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+                   [](const QUrl &url, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return QSharedPointer<FileInfo>(new FileInfo(url));
                    });
@@ -369,7 +369,7 @@ TEST_F(UT_DCustomActionBuilder, CheckFileComboWithFocus_FocusIsDir_ReturnsSingle
     QList<QUrl> files = { focus };
 
     stub.set_lamda(&InfoFactory::create<FileInfo>,
-                   [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+                   [](const QUrl &url, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return QSharedPointer<FileInfo>(new FileInfo(url));
                    });
@@ -475,7 +475,7 @@ TEST_F(UT_DCustomActionBuilder, CheckFileComboWithFocus_MultipleFiles_ReturnsMul
     QList<QUrl> files = { focus, QUrl::fromLocalFile("/tmp/other.txt") };
 
     stub.set_lamda(&InfoFactory::create<FileInfo>,
-                   [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+                   [](const QUrl &url, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return QSharedPointer<FileInfo>(new FileInfo(url));
                    });
@@ -495,7 +495,7 @@ TEST_F(UT_DCustomActionBuilder, CheckFileComboWithFocus_MultipleDirs_ReturnsMult
     QList<QUrl> files = { focus, QUrl::fromLocalFile("/tmp/otherdir") };
 
     stub.set_lamda(&InfoFactory::create<FileInfo>,
-                   [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+                   [](const QUrl &url, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return QSharedPointer<FileInfo>(new FileInfo(url));
                    });
@@ -515,7 +515,7 @@ TEST_F(UT_DCustomActionBuilder, CheckFileComboWithFocus_FileInfoCreationFails_Re
     QList<QUrl> files = { focus };
 
     stub.set_lamda(&InfoFactory::create<FileInfo>,
-                   [](const QUrl &, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+                   [](const QUrl &, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return nullptr;
                    });
@@ -891,7 +891,7 @@ TEST_F(UT_DCustomActionBuilder, SetFocusFile_HiddenFile_HandlesCorrectly)
     QUrl fileUrl = QUrl::fromLocalFile("/tmp/.hidden");
 
     stub.set_lamda(&InfoFactory::create<FileInfo>,
-                   [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+                   [](const QUrl &url, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return QSharedPointer<FileInfo>(new FileInfo(url));
                    });
@@ -914,7 +914,7 @@ TEST_F(UT_DCustomActionBuilder, SetFocusFile_CompoundSuffix_ExtractsBaseName)
     QUrl fileUrl = QUrl::fromLocalFile("/tmp/archive.tar.gz");
 
     stub.set_lamda(&InfoFactory::create<FileInfo>,
-                   [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+                   [](const QUrl &url, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return QSharedPointer<FileInfo>(new FileInfo(url));
                    });
@@ -953,7 +953,7 @@ TEST_F(UT_DCustomActionBuilder, MatchActions_FileInfoCreationFails_ContinuesProc
     actions.append(entry);
 
     stub.set_lamda(&InfoFactory::create<FileInfo>,
-                   [](const QUrl &, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+                   [](const QUrl &, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return nullptr;
                    });
