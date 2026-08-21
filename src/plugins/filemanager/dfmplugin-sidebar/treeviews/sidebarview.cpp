@@ -947,6 +947,7 @@ void SideBarView::setCurrentUrl(const QUrl &url)
         // the unexpanded group would be expaned again.
         if (groupItem && !groupItem->isExpanded()) {
             fmDebug() << "Group not expanded, skipping current index set for URL:" << url;
+            d->current = index;
             return;
         }
     }
@@ -961,6 +962,11 @@ void SideBarView::setCurrentUrl(const QUrl &url)
 QUrl SideBarView::currentUrl() const
 {
     return d->sidebarUrl;
+}
+
+QModelIndex SideBarView::currentTrackedIndex() const
+{
+    return d->current;
 }
 
 QModelIndex SideBarView::findItemIndex(const QUrl &url) const
