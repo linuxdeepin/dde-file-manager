@@ -914,9 +914,9 @@ void SideBarView::setCurrentUrl(const QUrl &url)
     // Fix: whenever the URL basis actually changes, repaint the whole viewport so every
     // visible item re-evaluates its URL-based highlight against the new url -- the
     // previously highlighted item drops its stale highlight and the newly matching
-    // item gains it, immediately, without depending on setCurrentIndex(). This is safe
-    // because the highlight background is purely URL-matched, so at most one item is
-    // highlighted (no "two items selected").
+    // item gains it, immediately, without depending on setCurrentIndex(). Duplicate
+    // URL matches are de-duplicated by SideBarItemDelegate via
+    // isCurrentUrlHighlightIndex().
     const QUrl previousUrl = d->sidebarUrl;
     d->sidebarUrl = url;
     if (!UniversalUtils::urlEquals(previousUrl, url))
@@ -964,9 +964,68 @@ QUrl SideBarView::currentUrl() const
     return d->sidebarUrl;
 }
 
-QModelIndex SideBarView::currentTrackedIndex() const
+bool SideBarView::isCurrentUrlHighlightIndex(const QModelIndex &index) const
 {
-    return d->current;
+    if (!index.isValid())
+        return false;
+
+    SideBarModel *sidebarModel = dynamic_cast<SideBarModel *>(model());
+    if (!sidebarModel)
+        return true;
+
+    const auto matchesCurrentUrl = [this, sidebarModel](const QModelIndex &candidate) {
+        if (!candidate.isValid())
+            return false;
+
+        SideBarItem *item = sidebarModel->itemFromIndex(candidate);
+        if (!item)
+            return false;
+
+        return UniversalUtils::urlEquals(item->url(), d->sidebarUrl)
+                || UniversalUtils::urlEquals(item->targetUrl(), d->sidebarUrl)
+                || (item->itemInfo().findMeCb && item->itemInfo().findMeCb(item->url(), d->sidebarUrl));
+    };
+    const auto isVisibleCandidate = [this](const QModelIndex &candidate) {
+        if (isIndexHidden(candidate))
+            return false;
+
+        for (QModelIndex parent = candidate.parent(); parent.isValid(); parent = parent.parent()) {
+            if (isIndexHidden(parent) || !isExpanded(parent))
+                return false;
+        }
+
+        return true;
+    };
+
+    QList<QModelIndex> matches;
+    QList<QModelIndex> pending { QModelIndex() };
+    while (!pending.isEmpty()) {
+        const QModelIndex parent = pending.takeLast();
+        const int childCount = sidebarModel->rowCount(parent);
+        for (int row = 0; row < childCount; ++row) {
+            const QModelIndex candidate = sidebarModel->index(row, 0, parent);
+            if (!candidate.isValid())
+                continue;
+
+            if (matchesCurrentUrl(candidate) && isVisibleCandidate(candidate))
+                matches.append(candidate);
+
+            if (sidebarModel->rowCount(candidate) > 0)
+                pending.append(candidate);
+        }
+    }
+
+    if (matches.size() <= 1)
+        return true;
+
+    if (matches.contains(d->current) && matchesCurrentUrl(d->current))
+        return index == d->current;
+
+    const QModelIndex viewCurrent = currentIndex();
+    if (matches.contains(viewCurrent) && matchesCurrentUrl(viewCurrent))
+        return index == viewCurrent;
+
+    return index == matches.first();
 }
 
 QModelIndex SideBarView::findItemIndex(const QUrl &url) const

@@ -160,7 +160,7 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     }
 
     bool isDraggingItemNotHighlighted = selected && !isUrlEqual;
-    if (isUrlEqual && sidebarView && index == sidebarView->currentTrackedIndex()) {
+    if (isUrlEqual && sidebarView && sidebarView->isCurrentUrlHighlightIndex(index)) {
         // If the dragging and moving source item is not the current highlighted one,
         // the highlighted one must be keep its state.
         keepDrawingHighlighted = true;
