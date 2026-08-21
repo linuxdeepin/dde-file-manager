@@ -284,7 +284,6 @@ TEST_F(UT_ExtensionMonitor, ProcessExtensionDirectory_MissingTarget_CreatesTarge
     EXPECT_TRUE(QDir(targetPath).exists());
 }
 
-// 不打桩 QTimer：真实等待 5 秒超时，执行 start() 中注册的延迟初始化 lambda。
 TEST_F(UT_ExtensionMonitor, Start_DeferredInitLambda_RunsAfterTimeout)
 {
     auto *monitor = ExtensionMonitor::instance();
@@ -300,12 +299,20 @@ TEST_F(UT_ExtensionMonitor, Start_DeferredInitLambda_RunsAfterTimeout)
         setupCalled = true;
     });
 
-    monitor->start();
+    // Stub singleShotImpl to execute the deferred-init slot synchronously
+    // instead of waiting for a real 5-second timer (flaky under CI load).
+    typedef void (*FuncType)(std::chrono::nanoseconds, Qt::TimerType, const QObject *, QtPrivate::QSlotObjectBase *);
+    stub.set_lamda(static_cast<FuncType>(&QTimer::singleShotImpl),
+        [](std::chrono::nanoseconds, Qt::TimerType, const QObject *receiver, QtPrivate::QSlotObjectBase *slotObj) {
+            __DBG_STUB_INVOKE__
+            if (slotObj) {
+                void *args[1] = { nullptr };
+                slotObj->call(const_cast<QObject *>(receiver), args);
+                slotObj->destroyIfLastRef();
+            }
+        });
 
-    QElapsedTimer elapsed;
-    elapsed.start();
-    while (elapsed.elapsed() < 5200)
-        QApplication::processEvents(QEventLoop::AllEvents, 100);
+    EXPECT_NO_FATAL_FAILURE(monitor->start());
 
     EXPECT_TRUE(copyCalled);
     EXPECT_TRUE(setupCalled);
