@@ -28,6 +28,11 @@
 
 #include <sys/stat.h>
 
+inline constexpr char kFileAsyncAttributes[] { "standard::name,standard::type,standard::is-file,standard::is-dir,"
+    "standard::display-name,standard::size,standard::is-symlink,standard::symlink-target,standard::is-hidden,"
+    "access::*,time::*,"
+    "owner::*,unix::uid,unix::inode,unix::gid,unix::mode,id::filesystem" };
+
 namespace dfmbase {
 
 AsyncFileInfo::AsyncFileInfo(const QUrl &url)
@@ -683,7 +688,7 @@ void AsyncFileInfoPrivate::init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo
         tokenKey = quintptr(dfmFileInfo.data());
         return;
     }
-    dfmFileInfo.reset(new DFileInfo(cvtResultUrl));
+    dfmFileInfo.reset(new DFileInfo(cvtResultUrl, kFileAsyncAttributes));
     if (!dfmFileInfo) {
         qCWarning(logDFMBase, "Failed, dfm-io use factory create fileinfo");
         abort();

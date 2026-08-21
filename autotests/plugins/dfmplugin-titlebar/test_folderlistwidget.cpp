@@ -61,7 +61,7 @@ protected:
 
         // Stub InfoFactory
         stub.set_lamda(&InfoFactory::create<FileInfo>,
-                       [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+                       [](const QUrl &url, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
                            __DBG_STUB_INVOKE__
                            auto info = QSharedPointer<FileInfo>(new FileInfo(url));
                            return info;

@@ -73,7 +73,7 @@ protected:
     void stubInfoFactory()
     {
         stub.set_lamda(&InfoFactory::create<FileInfo>,
-                       [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+                       [](const QUrl &url, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
                            __DBG_STUB_INVOKE__
                            return QSharedPointer<FileInfo>(new FileInfo(url));
                        });
@@ -224,7 +224,7 @@ TEST_F(UT_TemplateMenu, CreateActionByNormalFile_EmptyPath_NoAction)
 TEST_F(UT_TemplateMenu, CreateActionByNormalFile_NullFileInfo_NoAction)
 {
     stub.set_lamda(&InfoFactory::create<FileInfo>,
-                   [](const QUrl &, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+                   [](const QUrl &, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return nullptr;
                    });
@@ -300,7 +300,7 @@ TEST_F(UT_TemplateMenu, CreateActionByDesktopFile_NullFileInfo_NoAction)
                           "URL=/tmp/ut-nonexistent-target.doc\n"));
 
     stub.set_lamda(&InfoFactory::create<FileInfo>,
-                   [](const QUrl &, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+                   [](const QUrl &, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return nullptr;
                    });

@@ -95,7 +95,7 @@ public:
         });
 
         // Mock InfoFactory::create
-        stub.set_lamda(&dfmbase::InfoFactory::create<dfmbase::FileInfo>, [](const QUrl &url, dfmbase::Global::CreateFileInfoType type, QString *) -> FileInfoPointer {
+        stub.set_lamda(&dfmbase::InfoFactory::create<dfmbase::FileInfo>, [](const QUrl &url, dfmbase::Global::CreateFileInfoType type, QString *, bool *) -> FileInfoPointer {
             __DBG_STUB_INVOKE__
             Q_UNUSED(type)
             Q_UNUSED(url)

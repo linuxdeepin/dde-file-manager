@@ -316,7 +316,7 @@ TEST_F(UT_MenuHelper, CanOpenSelectedItems_AtThreshold_NoScanPerformed)
 
     int createCallCount = 0;
     stub.set_lamda(&InfoFactory::create<FileInfo>,
-                   [&createCallCount](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+                   [&createCallCount](const QUrl &url, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        createCallCount++;
                        return QSharedPointer<FileInfo>(new FileInfo(url));
@@ -333,7 +333,7 @@ TEST_F(UT_MenuHelper, CanOpenSelectedItems_TooManyDirectories_ReturnsFalse)
         urls.append(QUrl::fromLocalFile(QString("/tmp/dir%1").arg(i)));
 
     stub.set_lamda(&InfoFactory::create<FileInfo>,
-                   [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+                   [](const QUrl &url, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return QSharedPointer<FileInfo>(new FileInfo(url));
                    });
@@ -353,7 +353,7 @@ TEST_F(UT_MenuHelper, CanOpenSelectedItems_AboveThresholdAllFiles_ReturnsTrue)
         urls.append(QUrl::fromLocalFile(QString("/tmp/test%1.txt").arg(i)));
 
     stub.set_lamda(&InfoFactory::create<FileInfo>,
-                   [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+                   [](const QUrl &url, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return QSharedPointer<FileInfo>(new FileInfo(url));
                    });
@@ -373,7 +373,7 @@ TEST_F(UT_MenuHelper, CanOpenSelectedItems_NullFileInfo_Skipped)
         urls.append(QUrl::fromLocalFile(QString("/tmp/test%1").arg(i)));
 
     stub.set_lamda(&InfoFactory::create<FileInfo>,
-                   [](const QUrl &, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+                   [](const QUrl &, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return nullptr;
                    });
@@ -390,7 +390,7 @@ TEST_F(UT_MenuHelper, CanOpenSelectedItems_MixedFilesAndDirs_BelowThreshold_Retu
 
     int checkCount = 0;
     stub.set_lamda(&InfoFactory::create<FileInfo>,
-                   [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+                   [](const QUrl &url, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return QSharedPointer<FileInfo>(new FileInfo(url));
                    });
@@ -412,7 +412,7 @@ TEST_F(UT_MenuHelper, CanOpenSelectedItems_ScanLimit_StopsScanning)
 
     int createCallCount = 0;
     stub.set_lamda(&InfoFactory::create<FileInfo>,
-                   [&createCallCount](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+                   [&createCallCount](const QUrl &url, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        createCallCount++;
                        return QSharedPointer<FileInfo>(new FileInfo(url));

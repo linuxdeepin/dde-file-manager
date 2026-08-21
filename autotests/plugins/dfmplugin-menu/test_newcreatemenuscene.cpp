@@ -229,7 +229,7 @@ TEST_F(UT_NewCreateMenuScene, UpdateState_NotWritableDir_DisablesNewActions)
     });
 
     stub.set_lamda(&InfoFactory::create<FileInfo>,
-                   [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+                   [](const QUrl &url, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return QSharedPointer<FileInfo>(new FileInfo(url));
                    });
@@ -267,7 +267,7 @@ TEST_F(UT_NewCreateMenuScene, UpdateState_WritableDir_KeepsNewActionsEnabled)
     });
 
     stub.set_lamda(&InfoFactory::create<FileInfo>,
-                   [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+                   [](const QUrl &url, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return QSharedPointer<FileInfo>(new FileInfo(url));
                    });
@@ -306,7 +306,7 @@ TEST_F(UT_NewCreateMenuScene, UpdateState_NullDirInfo_ChangesNothing)
 
     // info creation fails: updateState returns early, actions stay enabled
     stub.set_lamda(&InfoFactory::create<FileInfo>,
-                   [](const QUrl &, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+                   [](const QUrl &, Global::CreateFileInfoType, QString *, bool *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return nullptr;
                    });
