@@ -1,3 +1,26 @@
+dde-file-manager (6.5.165) unstable; urgency=medium
+
+  * fix(textindex): add auto-reconnect and enlarge SO_RCVBUF for vfsmonitor
+  * fix: refresh sidebar highlight immediately on url change
+  * fix: correct sidebar tree directory setting translations
+  * fix: unify sidebar tree sort with file view using numeric-aware collation
+  * fix: sidebar tree view blocks double-click rename
+  * fix: align sidebar tree with file workspace display
+  * fix: use icon name instead of url as sidebar icon cache key
+  * fix: store isExpandable in item data role
+  * fix: sync sidebar editDisplayText on device rename
+  * fix: sidebar double highlight on duplicate URL
+  * fix: normalize VFS monitor root aliases and skip inotify watch setup in vfs mode
+  * fix: fix sidebar setting panel initialization
+  * fix(diskencrypt): skip filesystem freeze on DM suspend/resume and adjust cursor restore timing
+  * fix: show resume decrypt option correctly for overlay encryption
+  * fix: hide resume decrypt option for non-LUKS devices after interrupted decrypt job
+  * refactor: extract validateExportPath to recovery_key_utils
+  * chore: update translations
+  * fix: ensure fallback fd for failed D-Bus methods
+
+ -- zhangsheng <zhangsheng@uniontech.com>  Fri, 21 Aug 2026 12:54:44 +0800
+
 dde-file-manager (6.5.164) unstable; urgency=medium
 
   * Fix(disk-encrypt): change translate of tpm
