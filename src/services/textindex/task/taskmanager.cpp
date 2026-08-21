@@ -137,6 +137,22 @@ bool TaskManager::startTask(IndexTask::Type type, const QStringList &pathList,
     // 获取第一个路径作为任务的主路径（用于日志和进度通知）
     QString primaryPath = pathList.first();
 
+    // 环境检查：如果当前环境不允许该分级任务运行，入队等待而非直接执行
+    const EnvState env = EnvDetector::instance().currentState();
+    if (!canRun(grade, forceBypass, env)) {
+        fmInfo() << "[TaskManager::startTask] Environment not suitable for grade" << static_cast<int>(grade)
+                 << ", queuing task - battery:" << env.onBattery
+                 << "powerSave:" << env.powerSaveMode << "idle:" << env.idle;
+        TaskQueueItem item;
+        item.type = type;
+        item.grade = grade;
+        item.forceBypass = forceBypass;
+        item.path = primaryPath;
+        item.pathList = pathList;
+        taskQueue.enqueue(item);
+        return true;
+    }
+
     // 如果当前有任务在运行，停止它并将新任务保存为待执行任务
     if (hasRunningTask()) {
         fmInfo() << "[TaskManager::startTask] Current task running, queuing new task - paths:" << pathList.size()
@@ -276,6 +292,20 @@ bool TaskManager::startFileListTask(IndexTask::Type type, const QStringList &fil
             ? IndexTask::Grade::Light
             : gradeFileListTask(fileList);
 
+    // 环境检查：如果当前环境不允许该分级任务运行，入队等待而非直接执行
+    const EnvState env = EnvDetector::instance().currentState();
+    if (!canRun(grade, false, env)) {
+        fmInfo() << "[TaskManager::startFileListTask] Environment not suitable for grade" << static_cast<int>(grade)
+                 << ", queuing task - powerSave:" << env.powerSaveMode;
+        TaskQueueItem item;
+        item.type = type;
+        item.grade = grade;
+        item.path = QString("FileList-%1").arg(QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss"));
+        item.fileList = fileList;
+        taskQueue.enqueue(item);
+        return true;
+    }
+
     // 如果当前有任务在运行，将新任务加入队列
     if (hasRunningTask() || currentTask) {
         fmInfo() << "[TaskManager::startFileListTask] Current task running, queuing file list task with"
@@ -347,6 +377,20 @@ bool TaskManager::startFileMoveTask(const QHash<QString, QString> &movedFiles)
     }
 
     const QStringList compensationPaths = applyDirectoryMovePlans(movedFiles);
+
+    // 环境检查：MoveFileList 始终为 Light，节能模式时入队等待
+    const EnvState env = EnvDetector::instance().currentState();
+    if (!canRun(IndexTask::Grade::Light, false, env)) {
+        fmInfo() << "[TaskManager::startFileMoveTask] Environment not suitable for Light grade, queuing task - powerSave:" << env.powerSaveMode;
+        TaskQueueItem item;
+        item.type = IndexTask::Type::MoveFileList;
+        item.grade = IndexTask::Grade::Light;
+        item.path = QString("MoveList-%1").arg(QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss"));
+        item.movedFiles = movedFiles;
+        taskQueue.enqueue(item);
+        enqueueCompensationTask(compensationPaths);
+        return true;
+    }
 
     // 如果当前有任务在运行，将新任务加入队列
     if (hasRunningTask() || currentTask) {
