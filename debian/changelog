@@ -1,3 +1,9 @@
+dde-file-manager (6.5.166) unstable; urgency=medium
+
+  * fix: improve sidebar URL highlight deduplication
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Fri, 21 Aug 2026 13:58:01 +0800
+
 dde-file-manager (6.5.165) unstable; urgency=medium
 
   * fix(textindex): add auto-reconnect and enlarge SO_RCVBUF for vfsmonitor
