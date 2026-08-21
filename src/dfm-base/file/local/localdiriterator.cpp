@@ -9,6 +9,7 @@
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/sortfileinfoutils.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/utils/protocolutils.h>
 #include <dfm-base/mimetype/mimetypedisplaymanager.h>
@@ -34,90 +35,6 @@ using namespace GlobalDConfDefines::ConfigPath;
 namespace DConfigKeys {
 static constexpr char kAllAsync[] { "dfm.iterator.allasync" };
 }
-
-namespace {
-
-QSet<QString> loadHideFileList(const QString &dirPath)
-{
-    QFile hiddenFile(QDir(dirPath).filePath(".hidden"));
-    if (!hiddenFile.open(QIODevice::ReadOnly | QIODevice::Text))
-        return {};
-
-    const QString data = QString::fromUtf8(hiddenFile.readAll());
-    const QStringList entries = data.split('\n', Qt::SkipEmptyParts);
-    return QSet<QString>(entries.begin(), entries.end());
-}
-
-QString resolveSymlinkTargetPath(const QString &entryPath, const QString &parentPath)
-{
-    QByteArray buffer;
-    buffer.resize(PATH_MAX);
-    const QByteArray nativePath = QFile::encodeName(entryPath);
-    const ssize_t size = ::readlink(nativePath.constData(), buffer.data(), buffer.size() - 1);
-    if (size <= 0)
-        return QString();
-
-    buffer[static_cast<int>(size)] = '\0';
-    QString targetPath = QFile::decodeName(buffer.constData());
-    if (QDir::isRelativePath(targetPath))
-        targetPath = QDir(parentPath).absoluteFilePath(targetPath);
-
-    return QDir::cleanPath(targetPath);
-}
-
-SortInfoPointer createSortInfo(const QString &parentPath, const QString &fileName, const QSet<QString> &hideList)
-{
-    const QString entryPath = QDir(parentPath).filePath(fileName);
-    const QByteArray nativePath = QFile::encodeName(entryPath);
-
-    // 使用 statx 获取所有文件属性（包括创建时间 birth time）
-    struct statx stx;
-    unsigned int mask = STATX_BASIC_STATS | STATX_BTIME;
-    if (statx(AT_FDCWD, nativePath.constData(), AT_SYMLINK_NOFOLLOW | AT_NO_AUTOMOUNT, mask, &stx) != 0)
-        return nullptr;
-
-    const bool isSymLink = S_ISLNK(stx.stx_mode);
-    mode_t effectiveMode = stx.stx_mode;
-    uint64_t effectiveSize = stx.stx_size;
-    time_t effectiveAtime = stx.stx_atime.tv_sec;
-    time_t effectiveMtime = stx.stx_mtime.tv_sec;
-    time_t effectiveBtime = (stx.stx_mask & STATX_BTIME) ? stx.stx_btime.tv_sec : 0;
-
-    // 符号链接：获取目标文件属性
-    if (isSymLink) {
-        const QString targetPath = resolveSymlinkTargetPath(entryPath, parentPath);
-        if (!targetPath.isEmpty() && !ProtocolUtils::isRemoteFile(QUrl::fromLocalFile(targetPath))) {
-            const QByteArray targetNativePath = QFile::encodeName(targetPath);
-            struct statx targetStx;
-            if (statx(AT_FDCWD, targetNativePath.constData(), AT_SYMLINK_NOFOLLOW | AT_NO_AUTOMOUNT, mask, &targetStx) == 0) {
-                effectiveMode = targetStx.stx_mode;
-                effectiveSize = targetStx.stx_size;
-                effectiveAtime = targetStx.stx_atime.tv_sec;
-                effectiveMtime = targetStx.stx_mtime.tv_sec;
-                if (targetStx.stx_mask & STATX_BTIME)
-                    effectiveBtime = targetStx.stx_btime.tv_sec;
-            }
-        }
-    }
-
-    SortInfoPointer info(new SortFileInfo);
-    info->setUrl(QUrl::fromLocalFile(entryPath));
-    info->setSize(effectiveSize);
-    info->setSymlink(isSymLink);
-    info->setDir(S_ISDIR(effectiveMode));
-    info->setFile(!S_ISDIR(effectiveMode));
-    info->setHide(fileName.startsWith(".") || hideList.contains(fileName));
-    info->setReadable((effectiveMode & S_IRUSR) != 0);
-    info->setWriteable((effectiveMode & S_IWUSR) != 0);
-    info->setExecutable((effectiveMode & S_IXUSR) != 0);
-    info->setLastReadTime(effectiveAtime);
-    info->setLastModifiedTime(effectiveMtime);
-    info->setCreateTime(effectiveBtime);
-    info->setInfoCompleted(true);
-    return info;
-}
-
-}   // namespace
 
 LocalDirIteratorPrivate::LocalDirIteratorPrivate(const QUrl &url, const QStringList &nameFilters,
                                                  QDir::Filters filters, QDirIterator::IteratorFlags flags,
@@ -332,7 +249,7 @@ QList<SortInfoPointer> LocalDirIterator::sortFileInfoList()
         return {};
 
     d->canceled.storeRelease(false);
-    const QSet<QString> hideList = loadHideFileList(d->rootPath);
+    const QSet<QString> hideList = SortFileInfoUtils::loadHideFileList(d->rootPath);
 
     DIR *dir = ::opendir(QFile::encodeName(d->rootPath).constData());
     if (!dir) {
@@ -358,7 +275,7 @@ QList<SortInfoPointer> LocalDirIterator::sortFileInfoList()
         if (fileName == "." || fileName == "..")
             continue;
 
-        auto info = createSortInfo(d->rootPath, fileName, hideList);
+        auto info = SortFileInfoUtils::createSortInfo(d->rootPath, fileName, hideList);
         if (info.isNull())
             continue;
         sortList.append(info);
