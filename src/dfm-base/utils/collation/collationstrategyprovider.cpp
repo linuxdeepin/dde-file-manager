@@ -30,7 +30,7 @@ CollationStrategyProvider::CollationStrategyProvider(QObject *parent)
 
 bool CollationStrategyProvider::latinFirstEnabled() const
 {
-    return DConfigManager::instance()->value(kDefaultCfgPath, kSortLatinFirstZhCn, false).toBool();
+    return DConfigManager::instance()->value(kDefaultCfgPath, kSortLatinFirstZhCn, true).toBool();
 }
 
 bool CollationStrategyProvider::isZhCn()

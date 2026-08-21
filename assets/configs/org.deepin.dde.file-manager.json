@@ -201,7 +201,7 @@
             "visibility": "public"
         },
         "dfm.sort.latinfirst.zhCn": {
-            "value": false,
+            "value": true,
             "serial": 0,
             "flags": [],
             "name": "Sort Latin letters before Chinese in zh_CN",
