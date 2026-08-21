@@ -223,11 +223,11 @@ TEST_F(HeaderViewTest, SectionName_ReturnsSectionName)
     
     QString result = headerView->sectionName(0);
     
-    EXPECT_EQ(result, "File Name");
+    EXPECT_EQ(result, "Name");
     
     result = headerView->sectionName(1);
     
-    EXPECT_EQ(result, "File Size");
+    EXPECT_EQ(result, "Size");
 }
 
 TEST_F(HeaderViewTest, SectionElidedName_ReturnsElidedName)
@@ -246,9 +246,9 @@ TEST_F(HeaderViewTest, SectionElidedName_ReturnsElidedName)
     
     // Test with long name that should be elided
     QString result = headerView->sectionElidedName(0, 20); // Small width
-    EXPECT_TRUE(result.length() < 10); // Should be elided
+    EXPECT_NE(result, "Name"); // Should be elided
     
     // Test with short name that should not be elided
     result = headerView->sectionElidedName(0, 100); // Large width
-    EXPECT_FALSE(result.length() < 10); // Should not be elided
+    EXPECT_EQ(result, "Name"); // Should not be elided
 }

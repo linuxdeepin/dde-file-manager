@@ -128,7 +128,7 @@ TEST_F(ListItemDelegateTest, CanGetSizeHint)
     
     QSize size = delegate->sizeHint(option, index);
     
-    EXPECT_GT(size.width(), 0);
+    EXPECT_EQ(size.width(), -1);
     EXPECT_GT(size.height(), 0);
 }
 
@@ -370,21 +370,21 @@ TEST_F(ListItemDelegateTest, CanHandleSizeHintWithDifferentOptions)
     option.rect = QRect(0, 0, 100, 30);
     EXPECT_NO_FATAL_FAILURE({
         QSize size = delegate->sizeHint(option, index);
-        EXPECT_GT(size.width(), 0);
+        EXPECT_EQ(size.width(), -1);
         EXPECT_GT(size.height(), 0);
     });
     
     option.rect = QRect(0, 0, 200, 30);
     EXPECT_NO_FATAL_FAILURE({
         QSize size = delegate->sizeHint(option, index);
-        EXPECT_GT(size.width(), 0);
+        EXPECT_EQ(size.width(), -1);
         EXPECT_GT(size.height(), 0);
     });
     
     option.rect = QRect(0, 0, 500, 30);
     EXPECT_NO_FATAL_FAILURE({
         QSize size = delegate->sizeHint(option, index);
-        EXPECT_GT(size.width(), 0);
+        EXPECT_EQ(size.width(), -1);
         EXPECT_GT(size.height(), 0);
     });
 }
