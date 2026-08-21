@@ -6,7 +6,6 @@
 #include "taskqueueutils.h"
 #include "utils/indexutility.h"
 #include "utils/textindexconfig.h"
-#include "utils/systemdcpuutils.h"
 #include "env/envdetector.h"
 
 #include <QMetaType>
@@ -459,7 +458,6 @@ void TaskManager::onTaskPaused(IndexTask::Type type, HandlerResult result)
 
     taskQueue.enqueue(item);
 
-    resetCpuQuota();
     cleanupTask();
     emit indexStatusChanged(currentIndexStatus(), gradeToString(grade));
 
@@ -520,14 +518,6 @@ void TaskManager::pauseCurrentTask()
         fmInfo() << "[TaskManager::pauseCurrentTask] Requesting pause for current task - type:"
                  << static_cast<int>(currentTask->taskType()) << "path:" << currentTask->taskPath();
         currentTask->requestPause();
-    }
-}
-
-void TaskManager::resetCpuQuota()
-{
-    QString msg;
-    if (!SystemdCpuUtils::resetCpuQuota(Defines::kTextIndexServiceName, &msg)) {
-        fmWarning() << "[TaskManager::resetCpuQuota] Failed to reset CPU quota:" << msg;
     }
 }
 
@@ -682,7 +672,6 @@ void TaskManager::onTaskFinished(IndexTask::Type type, HandlerResult result)
     updateIndexStatusOnSuccess(type, result);
 
     emit taskFinished(typeToString(type), taskPath, result.success);
-    resetCpuQuota();
     cleanupTask();
 
     schedule();
