@@ -1,0 +1,23 @@
+name: view_hint_suite
+app: dde-file-manager
+module: view_hint
+setup:
+- action: session_start
+  command: dde-file-manager
+  wait: 3.0
+suites:
+- id: suite_view_hint_001_s1
+  name: 视图提示栏按钮验证
+  description: ''
+  steps: []
+  assert_steps:
+  - action: assert_element
+    selector:
+      name: IconButton
+      role: push button
+  - action: assert_element
+    selector:
+      name: CloseButton
+      role: push button
+teardown:
+- action: session_stop

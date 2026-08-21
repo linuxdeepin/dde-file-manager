@@ -1,0 +1,995 @@
+# === 格式范例 ===
+# cases_mapped.yaml — AT-SPI 测试用例映射文件
+# 格式: cases 列表，每条用例包含 id, name, module, steps, annotation
+# annotation 字段包含: 测试界面, 测试功能, 前置条件, AT元素引用
+# === 格式范例 ===
+
+version: '1.0'
+cases:
+- id: suite_conflict_dialog_001_s1
+  name: 文件冲突对话框按钮验证
+  module: conflict_dialog
+  steps:
+  - action: assert_element
+    selector:
+      name: BtnStop
+      role: push button
+  - action: assert_element
+    selector:
+      name: BtnPause
+      role: push button
+  - action: assert_element
+    selector:
+      name: BtnCoexist
+      role: push button
+  - action: assert_element
+    selector:
+      name: BtnSkip
+      role: push button
+  - action: assert_element
+    selector:
+      name: BtnReplace
+      role: push button
+  - action: assert_element
+    selector:
+      name: ChkboxNotAskAgain
+      role: check box
+  annotation:
+    测试界面: 文件冲突对话框
+    测试功能: 冲突处理按钮
+    前置条件: 应用已启动
+    AT元素引用:
+    - BtnStop
+    - BtnPause
+    - BtnCoexist
+    - BtnSkip
+    - BtnReplace
+    - ChkboxNotAskAgain
+- id: suite_disc_burn_001_s1
+  name: 刻录选项对话框控件验证
+  module: disc_burn
+  steps:
+  - action: element_action
+    selector:
+      name: VolnameEdit
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: VolnameEdit
+      role: entry
+    text: MyDisc2026
+  - action: assert_element
+    selector:
+      name: AdvanceBtn
+      role: push button
+  - action: assert_element
+    selector:
+      name: WritespeedComb
+      role: combo box
+  - action: assert_element
+    selector:
+      name: FsComb
+      role: combo box
+  - action: assert_element
+    selector:
+      name: FinalizeDiscCheckbox
+      role: check box
+  - action: assert_element
+    selector:
+      name: EjectCheckbox
+      role: check box
+  annotation:
+    测试界面: 刻录选项对话框
+    测试功能: 刻录参数设置
+    前置条件: 应用已启动
+    AT元素引用:
+    - AdvanceBtn
+    - VolnameEdit
+    - WritespeedComb
+    - FsComb
+- id: suite_disc_burn_002_s1
+  name: 光盘刻录操作按钮验证
+  module: disc_burn
+  steps:
+  - action: assert_element
+    selector:
+      name: PbBurn
+      role: push button
+  - action: assert_element
+    selector:
+      name: PbDump
+      role: push button
+  - action: assert_element
+    selector:
+      name: FileChooser
+      role: entry
+  annotation:
+    测试界面: 光盘操作界面
+    测试功能: 刻录和转储操作
+    前置条件: 应用已启动
+    AT元素引用:
+    - PbBurn
+    - PbDump
+- id: suite_encryption_001_s1
+  name: 加密参数输入验证
+  module: encryption
+  steps:
+  - action: element_action
+    selector:
+      name: EncKeyEdit1
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: EncKeyEdit1
+      role: entry
+    text: enckey_abc123
+  - action: element_action
+    selector:
+      name: EncKeyEdit2
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: EncKeyEdit2
+      role: entry
+    text: enckey_abc123
+  - action: assert_element
+    selector:
+      name: EncType
+      role: combo box
+  - action: assert_element
+    selector:
+      name: KeyExportInput
+      role: entry
+  - action: assert_element
+    selector:
+      name: Editor_2
+      role: entry
+  annotation:
+    测试界面: 加密参数对话框
+    测试功能: 设置加密密钥
+    前置条件: 应用已启动
+    AT元素引用:
+    - EncType
+    - EncKeyEdit1
+    - EncKeyEdit2
+    - KeyExportInput
+- id: suite_encryption_002_s1
+  name: 修改密码短语验证
+  module: encryption
+  steps:
+  - action: element_action
+    selector:
+      name: OldPass
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: OldPass
+      role: entry
+    text: oldphrase_01
+  - action: element_action
+    selector:
+      name: NewPass1
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: NewPass1
+      role: entry
+    text: newphrase_02
+  - action: element_action
+    selector:
+      name: NewPass2
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: NewPass2
+      role: entry
+    text: newphrase_02
+  - action: assert_element
+    selector:
+      name: RecSwitch
+      role: check box
+  annotation:
+    测试界面: 修改密码短语对话框
+    测试功能: 修改加密密码
+    前置条件: 应用已启动
+    AT元素引用:
+    - OldPass
+    - NewPass1
+    - NewPass2
+    - RecSwitch
+- id: suite_file_dialog_001_s1
+  name: 文件对话框控件验证
+  module: file_dialog
+  steps:
+  - action: element_action
+    selector:
+      name: FileNameEdit
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: FileNameEdit
+      role: entry
+    text: test_file.txt
+  - action: assert_element
+    selector:
+      name: FiltersComboBox
+      role: combo box
+  - action: assert_element
+    selector:
+      name: CurAcceptButton
+      role: push button
+  - action: assert_element
+    selector:
+      name: CurRejectButton
+      role: push button
+  annotation:
+    测试界面: 文件对话框
+    测试功能: 文件选择交互
+    前置条件: 应用已启动
+    AT元素引用:
+    - FileNameEdit
+    - FiltersComboBox
+    - CurAcceptButton
+    - CurRejectButton
+- id: suite_file_preview_001_s1
+  name: 预览对话框导航按钮验证
+  module: file_preview
+  steps:
+  - action: assert_element
+    selector:
+      name: OpenBtn
+      role: push button
+  - action: assert_element
+    selector:
+      name: CloseBtn
+      role: push button
+  - action: assert_element
+    selector:
+      name: NextBtn
+      role: push button
+  - action: assert_element
+    selector:
+      name: PreBtn
+      role: push button
+  annotation:
+    测试界面: 文件预览对话框
+    测试功能: 预览导航按钮
+    前置条件: 应用已启动
+    AT元素引用:
+    - CloseBtn
+    - NextBtn
+    - PreBtn
+    - OpenBtn
+- id: suite_file_preview_002_s1
+  name: DCI图标预览控件验证
+  module: file_preview
+  steps:
+  - action: assert_element
+    selector:
+      name: AvailableSizeCombo
+      role: combo box
+  - action: assert_element
+    selector:
+      name: ThemeCom
+      role: combo box
+  - action: assert_element
+    selector:
+      name: ModeCom
+      role: combo box
+  - action: assert_element
+    selector:
+      name: CustomSizeEdit
+      role: entry
+  - action: assert_element
+    selector:
+      name: ForegroundPaletteEdit
+      role: entry
+  - action: assert_element
+    selector:
+      name: BackgroundPaletteEdit
+      role: entry
+  - action: assert_element
+    selector:
+      name: HFpaletteEdit
+      role: entry
+  - action: assert_element
+    selector:
+      name: HightlightPaletteEdit
+      role: entry
+  annotation:
+    测试界面: DCI图标预览
+    测试功能: 图标预览参数控件
+    前置条件: 应用已启动
+    AT元素引用:
+    - AvailableSizeCombo
+    - ThemeCom
+    - ModeCom
+    - CustomSizeEdit
+- id: suite_file_preview_003_s1
+  name: 视频预览播放控件验证
+  module: file_preview
+  steps:
+  - action: assert_element
+    selector:
+      name: PlayControlButton
+      role: push button
+  - action: assert_element
+    selector:
+      name: ProgressSlider
+      role: slider
+  - action: assert_element
+    selector:
+      name: ControlButton
+      role: push button
+  annotation:
+    测试界面: 视频预览
+    测试功能: 视频播放控件
+    前置条件: 应用已启动
+    AT元素引用:
+    - PlayControlButton
+    - ProgressSlider
+    - ControlButton
+- id: suite_file_share_001_s1
+  name: 文件共享控件验证
+  module: file_share
+  steps:
+  - action: element_action
+    selector:
+      name: ShareSwitcher
+      role: check box
+    do: click
+  - action: element_action
+    selector:
+      name: ShareNameEditor
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: ShareNameEditor
+      role: entry
+    text: shared_folder_01
+  - action: assert_element
+    selector:
+      name: SharePermissionSelector
+      role: combo box
+  - action: assert_element
+    selector:
+      name: ShareAnonymousSelector
+      role: combo box
+  - action: assert_element
+    selector:
+      name: CopyNetAddr
+      role: push button
+  - action: assert_element
+    selector:
+      name: CopyUserNameBt
+      role: push button
+  - action: assert_element
+    selector:
+      name: SetPasswordBt
+      role: push button
+  annotation:
+    测试界面: 文件共享控件
+    测试功能: 共享设置交互
+    前置条件: 应用已启动
+    AT元素引用:
+    - ShareSwitcher
+    - ShareNameEditor
+    - SharePermissionSelector
+    - CopyNetAddr
+- id: suite_misc_views_001_s1
+  name: 隐藏文件复选框验证
+  module: misc_views
+  steps:
+  - action: element_action
+    selector:
+      name: HideFile
+      role: check box
+    do: click
+  - action: assert_element
+    selector:
+      name: NameEditIcon
+      role: push button
+  - action: assert_element
+    selector:
+      name: HideFile_2
+      role: check box
+  - action: assert_element
+    selector:
+      name: Slider
+      role: slider
+  annotation:
+    测试界面: 文件视图
+    测试功能: 隐藏文件设置
+    前置条件: 应用已启动
+    AT元素引用:
+    - HideFile
+    - NameEditIcon
+- id: suite_misc_views_002_s1
+  name: 文件视图状态栏控件验证
+  module: misc_views
+  steps:
+  - action: assert_element
+    selector:
+      name: ScaleSlider
+      role: slider
+  - action: assert_element
+    selector:
+      name: MenuPtr
+      role: menu
+  - action: assert_element
+    selector:
+      name: Edit
+      role: text
+  annotation:
+    测试界面: 文件视图状态栏
+    测试功能: 状态栏交互
+    前置条件: 应用已启动
+    AT元素引用:
+    - ScaleSlider
+    - MenuPtr
+- id: suite_misc_views_003_s1
+  name: 标签编辑控件验证
+  module: misc_views
+  steps:
+  - action: assert_element
+    selector:
+      name: Edit
+      role: text
+  - action: assert_element
+    selector:
+      name: Slider
+      role: slider
+  annotation:
+    测试界面: 标签编辑
+    测试功能: 标签编辑交互
+    前置条件: 应用已启动
+    AT元素引用:
+    - Edit
+    - Slider
+- id: suite_mount_dialog_001_s1
+  name: 挂载密码对话框输入验证
+  module: mount_dialog
+  steps:
+  - action: element_action
+    selector:
+      name: UsernameLineEdit
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: UsernameLineEdit
+      role: entry
+    text: testuser123
+  - action: element_action
+    selector:
+      name: PasswordLineEdit
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: PasswordLineEdit
+      role: entry
+    text: testpass456
+  - action: element_action
+    selector:
+      name: PasswordCheckBox
+      role: check box
+    do: click
+  - action: assert_element
+    selector:
+      name: UsernameLineEdit
+      role: entry
+  - action: assert_element
+    selector:
+      name: PasswordCheckBox
+      role: check box
+  - action: assert_element
+    selector:
+      name: DomainLineEdit
+      role: entry
+  annotation:
+    测试界面: 挂载密码对话框
+    测试功能: 挂载认证输入
+    前置条件: 应用已启动
+    AT元素引用:
+    - UsernameLineEdit
+    - PasswordLineEdit
+    - PasswordCheckBox
+- id: suite_open_with_001_s1
+  name: 打开方式对话框验证
+  module: open_with
+  steps:
+  - action: assert_element
+    selector:
+      name: CheckButton
+      role: push button
+  - action: assert_element
+    selector:
+      name: OpenFileChooseButton
+      role: push button
+  - action: assert_element
+    selector:
+      name: SetToDefaultCheckBox
+      role: check box
+  - action: assert_element
+    selector:
+      name: CancelButton
+      role: push button
+  - action: assert_element
+    selector:
+      name: ChooseButton
+      role: push button
+  annotation:
+    测试界面: 打开方式对话框
+    测试功能: 选择打开方式
+    前置条件: 应用已启动
+    AT元素引用:
+    - CheckButton
+    - OpenFileChooseButton
+    - SetToDefaultCheckBox
+    - CancelButton
+    - ChooseButton
+- id: suite_password_dialog_001_s1
+  name: 密码确认对话框输入验证
+  module: password_dialog
+  steps:
+  - action: element_action
+    selector:
+      name: OldPwdEdit
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: OldPwdEdit
+      role: entry
+    text: oldpwd_001
+  - action: element_action
+    selector:
+      name: NewPwdEdit
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: NewPwdEdit
+      role: entry
+    text: newpwd_002
+  - action: element_action
+    selector:
+      name: RepeatPwdEdit
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: RepeatPwdEdit
+      role: entry
+    text: newpwd_002
+  - action: assert_element
+    selector:
+      name: SaveBtn
+      role: push button
+  - action: assert_element
+    selector:
+      name: CancelBtn
+      role: push button
+  annotation:
+    测试界面: 密码确认对话框
+    测试功能: 修改密码输入
+    前置条件: 应用已启动
+    AT元素引用:
+    - OldPwdEdit
+    - NewPwdEdit
+    - RepeatPwdEdit
+    - SaveBtn
+    - CancelBtn
+- id: suite_permission_001_s1
+  name: 权限管理控件验证
+  module: permission
+  steps:
+  - action: assert_element
+    selector:
+      name: OwnerComboBox
+      role: combo box
+  - action: assert_element
+    selector:
+      name: GroupComboBox
+      role: combo box
+  - action: assert_element
+    selector:
+      name: OtherComboBox
+      role: combo box
+  - action: assert_element
+    selector:
+      name: ExecutableCheckBox
+      role: check box
+  annotation:
+    测试界面: 权限管理对话框
+    测试功能: 文件权限设置
+    前置条件: 应用已启动
+    AT元素引用:
+    - OwnerComboBox
+    - GroupComboBox
+    - OtherComboBox
+    - ExecutableCheckBox
+- id: suite_property_dialog_001_s1
+  name: 属性对话框缩放控件验证
+  module: property_dialog
+  steps:
+  - action: assert_element
+    selector:
+      name: ScaleSlider
+      role: slider
+  - action: assert_element
+    selector:
+      name: AddItemBtn
+      role: toggle button
+  annotation:
+    测试界面: 属性对话框
+    测试功能: 属性缩放设置
+    前置条件: 应用已启动
+    AT元素引用:
+    - ScaleSlider
+    - AddItemBtn
+- id: suite_rename_bar_001_s1
+  name: 重命名栏控件验证
+  module: rename_bar
+  steps:
+  - action: element_action
+    selector:
+      name: Editor
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: Editor
+      role: entry
+    text: renamed_file.txt
+  - action: assert_element
+    selector:
+      name: RenameBtn
+      role: push button
+  - action: assert_element
+    selector:
+      name: ComboBox
+      role: combo box
+  - action: assert_element
+    selector:
+      name: RenameEditor
+      role: entry
+  - action: assert_element
+    selector:
+      name: RenameEdit
+      role: entry
+  - action: assert_element
+    selector:
+      name: RenameEdit_2
+      role: entry
+  annotation:
+    测试界面: 重命名栏
+    测试功能: 文件重命名
+    前置条件: 应用已启动
+    AT元素引用:
+    - RenameBtn
+    - ComboBox
+    - Editor
+- id: suite_search_and_tabs_001_s1
+  name: 搜索栏控件验证
+  module: search_and_tabs
+  steps:
+  - action: element_action
+    selector:
+      name: SearchButton
+      role: push button
+    do: click
+    wait_after: 1.0
+  - action: assert_element
+    selector:
+      name: AdvancedButton
+      role: toggle button
+  annotation:
+    测试界面: 搜索栏
+    测试功能: 搜索交互
+    前置条件: 应用已启动
+    AT元素引用:
+    - SearchButton
+    - AdvancedButton
+- id: suite_search_and_tabs_002_s1
+  name: 标签页栏控件验证
+  module: search_and_tabs
+  steps:
+  - action: element_action
+    selector:
+      name: AddBtn
+      role: push button
+    do: click
+    wait_after: 1.0
+  - action: assert_element
+    selector:
+      name: LeftBtn
+      role: push button
+  - action: assert_element
+    selector:
+      name: TabBar
+      role: tab
+  annotation:
+    测试界面: 标签页栏
+    测试功能: 标签页操作
+    前置条件: 应用已启动
+    AT元素引用:
+    - AddBtn
+    - LeftBtn
+    - TabBar
+- id: suite_server_connection_001_s1
+  name: 连接服务器对话框验证
+  module: server_connection
+  steps:
+  - action: element_action
+    selector:
+      name: ServerComboBox
+      role: combo box
+    do: click
+  - action: assert_element
+    selector:
+      name: SchemeComboBox
+      role: combo box
+  - action: assert_element
+    selector:
+      name: CharsetComboBox
+      role: combo box
+  - action: assert_element
+    selector:
+      name: TheAddButton
+      role: push button
+  annotation:
+    测试界面: 连接服务器对话框
+    测试功能: 服务器连接设置
+    前置条件: 应用已启动
+    AT元素引用:
+    - ServerComboBox
+    - SchemeComboBox
+    - TheAddButton
+    - CharsetComboBox
+- id: suite_unlock_partition_001_s1
+  name: 解锁分区对话框验证
+  module: unlock_partition
+  steps:
+  - action: element_action
+    selector:
+      name: PasswordLineEdit
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: PasswordLineEdit
+      role: entry
+    text: part_pass_789
+  - action: assert_element
+    selector:
+      name: ChgUnlockType
+      role: push button
+  annotation:
+    测试界面: 解锁分区对话框
+    测试功能: 分区解锁输入
+    前置条件: 应用已启动
+    AT元素引用:
+    - PasswordLineEdit
+    - ChgUnlockType
+- id: suite_vault_001_s1
+  name: 保险箱创建向导验证
+  module: vault
+  steps:
+  - action: element_action
+    selector:
+      name: StartBtn
+      role: push button
+    do: click
+    wait_after: 1.0
+  - action: element_action
+    selector:
+      name: PasswordEdit
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: PasswordEdit
+      role: entry
+    text: vault_pass_789
+  - action: element_action
+    selector:
+      name: RepeatPasswordEdit
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: RepeatPasswordEdit
+      role: entry
+    text: vault_pass_789
+  - action: assert_element
+    selector:
+      name: TypeCombo
+      role: combo box
+  - action: assert_element
+    selector:
+      name: NextBtn
+      role: push button
+  - action: assert_element
+    selector:
+      name: TipsEdit
+      role: entry
+  - action: assert_element
+    selector:
+      name: SelectfileSavePathEdit
+      role: entry
+  annotation:
+    测试界面: 保险箱创建向导
+    测试功能: 创建保险箱流程
+    前置条件: 应用已启动
+    AT元素引用:
+    - StartBtn
+    - TypeCombo
+    - PasswordEdit
+    - RepeatPasswordEdit
+- id: suite_vault_002_s1
+  name: 保险箱解锁界面验证
+  module: vault
+  steps:
+  - action: element_action
+    selector:
+      name: PasswordEdit
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: PasswordEdit
+      role: entry
+    text: unlock_pass_456
+  - action: assert_element
+    selector:
+      name: TipsButton
+      role: push button
+  annotation:
+    测试界面: 保险箱解锁界面
+    测试功能: 解锁保险箱
+    前置条件: 应用已启动
+    AT元素引用:
+    - PasswordEdit
+    - TipsButton
+- id: suite_vault_003_s1
+  name: 保险箱密码重置验证
+  module: vault
+  steps:
+  - action: element_action
+    selector:
+      name: OldPasswordEdit
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: OldPasswordEdit
+      role: entry
+    text: old_pass_123
+  - action: element_action
+    selector:
+      name: NewPasswordEdit
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: NewPasswordEdit
+      role: entry
+    text: new_pass_456
+  - action: element_action
+    selector:
+      name: RepeatPasswordEdit
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: RepeatPasswordEdit
+      role: entry
+    text: new_pass_456
+  - action: element_action
+    selector:
+      name: PasswordHintEdit
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: PasswordHintEdit
+      role: entry
+    text: my hint text
+  - action: assert_element
+    selector:
+      name: OldPasswordEdit
+      role: entry
+  - action: assert_element
+    selector:
+      name: KeyFileEdit
+      role: entry
+  annotation:
+    测试界面: 密码重置界面
+    测试功能: 通过旧密码重置
+    前置条件: 应用已启动
+    AT元素引用:
+    - OldPasswordEdit
+    - NewPasswordEdit
+    - RepeatPasswordEdit
+    - PasswordHintEdit
+- id: suite_vault_004_s1
+  name: 保险箱恢复密钥验证
+  module: vault
+  steps:
+  - action: assert_element
+    selector:
+      name: RecoveryKeyEdit
+      role: text
+  annotation:
+    测试界面: 恢复密钥界面
+    测试功能: 查看恢复密钥
+    前置条件: 应用已启动
+    AT元素引用:
+    - RecoveryKeyEdit
+- id: suite_vault_005_s1
+  name: 保险箱移除验证
+  module: vault
+  steps:
+  - action: element_action
+    selector:
+      name: PwdEdit
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: PwdEdit
+      role: entry
+    text: remove_pass_99
+  - action: assert_element
+    selector:
+      name: TipsBtn
+      role: push button
+  - action: assert_element
+    selector:
+      name: ToggleModeBtn
+      role: push button
+  - action: assert_element
+    selector:
+      name: FinishedBtn
+      role: push button
+  - action: assert_element
+    selector:
+      name: FilePathEdit
+      role: entry
+  annotation:
+    测试界面: 保险箱移除界面
+    测试功能: 通过密码移除保险箱
+    前置条件: 应用已启动
+    AT元素引用:
+    - PwdEdit
+    - TipsBtn
+    - ToggleModeBtn
+- id: suite_view_hint_001_s1
+  name: 视图提示栏按钮验证
+  module: view_hint
+  steps:
+  - action: assert_element
+    selector:
+      name: IconButton
+      role: push button
+  - action: assert_element
+    selector:
+      name: CloseButton
+      role: push button
+  annotation:
+    测试界面: 视图提示栏
+    测试功能: 提示栏交互按钮
+    前置条件: 应用已启动
+    AT元素引用:
+    - IconButton
+    - CloseButton

@@ -1,0 +1,355 @@
+elements:
+  BtnStop:
+    name: BtnStop
+    role: push button
+  BtnPause:
+    name: BtnPause
+    role: push button
+  BtnCoexist:
+    name: BtnCoexist
+    role: push button
+  BtnSkip:
+    name: BtnSkip
+    role: push button
+  BtnReplace:
+    name: BtnReplace
+    role: push button
+  ChkboxNotAskAgain:
+    name: ChkboxNotAskAgain
+    role: check box
+  VolnameEdit:
+    name: VolnameEdit
+    role: entry
+  AdvanceBtn:
+    name: AdvanceBtn
+    role: push button
+  WritespeedComb:
+    name: WritespeedComb
+    role: combo box
+  FsComb:
+    name: FsComb
+    role: combo box
+  FinalizeDiscCheckbox:
+    name: FinalizeDiscCheckbox
+    role: check box
+  EjectCheckbox:
+    name: EjectCheckbox
+    role: check box
+  PbBurn:
+    name: PbBurn
+    role: push button
+  PbDump:
+    name: PbDump
+    role: push button
+  FileChooser:
+    name: FileChooser
+    role: entry
+  EncType:
+    name: EncType
+    role: combo box
+  EncKeyEdit1:
+    name: EncKeyEdit1
+    role: entry
+  EncKeyEdit2:
+    name: EncKeyEdit2
+    role: entry
+  KeyExportInput:
+    name: KeyExportInput
+    role: entry
+  Editor_2:
+    name: Editor_2
+    role: entry
+  OldPass:
+    name: OldPass
+    role: entry
+  NewPass1:
+    name: NewPass1
+    role: entry
+  NewPass2:
+    name: NewPass2
+    role: entry
+  RecSwitch:
+    name: RecSwitch
+    role: check box
+  FileNameEdit:
+    name: FileNameEdit
+    role: entry
+  FiltersComboBox:
+    name: FiltersComboBox
+    role: combo box
+  CurAcceptButton:
+    name: CurAcceptButton
+    role: push button
+  CurRejectButton:
+    name: CurRejectButton
+    role: push button
+  OpenBtn:
+    name: OpenBtn
+    role: push button
+  CloseBtn:
+    name: CloseBtn
+    role: push button
+  NextBtn:
+    name: NextBtn
+    role: push button
+  PreBtn:
+    name: PreBtn
+    role: push button
+  AvailableSizeCombo:
+    name: AvailableSizeCombo
+    role: combo box
+  ThemeCom:
+    name: ThemeCom
+    role: combo box
+  ModeCom:
+    name: ModeCom
+    role: combo box
+  CustomSizeEdit:
+    name: CustomSizeEdit
+    role: entry
+  ForegroundPaletteEdit:
+    name: ForegroundPaletteEdit
+    role: entry
+  BackgroundPaletteEdit:
+    name: BackgroundPaletteEdit
+    role: entry
+  HFpaletteEdit:
+    name: HFpaletteEdit
+    role: entry
+  HightlightPaletteEdit:
+    name: HightlightPaletteEdit
+    role: entry
+  PlayControlButton:
+    name: PlayControlButton
+    role: push button
+  ProgressSlider:
+    name: ProgressSlider
+    role: slider
+  ControlButton:
+    name: ControlButton
+    role: push button
+  ShareSwitcher:
+    name: ShareSwitcher
+    role: check box
+  ShareNameEditor:
+    name: ShareNameEditor
+    role: entry
+  SharePermissionSelector:
+    name: SharePermissionSelector
+    role: combo box
+  ShareAnonymousSelector:
+    name: ShareAnonymousSelector
+    role: combo box
+  CopyNetAddr:
+    name: CopyNetAddr
+    role: push button
+  CopyUserNameBt:
+    name: CopyUserNameBt
+    role: push button
+  SetPasswordBt:
+    name: SetPasswordBt
+    role: push button
+  HideFile:
+    name: HideFile
+    role: check box
+  NameEditIcon:
+    name: NameEditIcon
+    role: push button
+  HideFile_2:
+    name: HideFile_2
+    role: check box
+  Slider:
+    name: Slider
+    role: slider
+  ScaleSlider:
+    name: ScaleSlider
+    role: slider
+  MenuPtr:
+    name: MenuPtr
+    role: menu
+  Edit:
+    name: Edit
+    role: text
+  UsernameLineEdit:
+    name: UsernameLineEdit
+    role: entry
+  PasswordLineEdit:
+    name: PasswordLineEdit
+    role: entry
+  PasswordCheckBox:
+    name: PasswordCheckBox
+    role: check box
+  DomainLineEdit:
+    name: DomainLineEdit
+    role: entry
+  CheckButton:
+    name: CheckButton
+    role: push button
+  OpenFileChooseButton:
+    name: OpenFileChooseButton
+    role: push button
+  SetToDefaultCheckBox:
+    name: SetToDefaultCheckBox
+    role: check box
+  CancelButton:
+    name: CancelButton
+    role: push button
+  ChooseButton:
+    name: ChooseButton
+    role: push button
+  OldPwdEdit:
+    name: OldPwdEdit
+    role: entry
+  NewPwdEdit:
+    name: NewPwdEdit
+    role: entry
+  RepeatPwdEdit:
+    name: RepeatPwdEdit
+    role: entry
+  SaveBtn:
+    name: SaveBtn
+    role: push button
+  CancelBtn:
+    name: CancelBtn
+    role: push button
+  OwnerComboBox:
+    name: OwnerComboBox
+    role: combo box
+  GroupComboBox:
+    name: GroupComboBox
+    role: combo box
+  OtherComboBox:
+    name: OtherComboBox
+    role: combo box
+  ExecutableCheckBox:
+    name: ExecutableCheckBox
+    role: check box
+  AddItemBtn:
+    name: AddItemBtn
+    role: toggle button
+  Editor:
+    name: Editor
+    role: entry
+  RenameBtn:
+    name: RenameBtn
+    role: push button
+  ComboBox:
+    name: ComboBox
+    role: combo box
+  RenameEditor:
+    name: RenameEditor
+    role: entry
+  RenameEdit:
+    name: RenameEdit
+    role: entry
+  RenameEdit_2:
+    name: RenameEdit_2
+    role: entry
+  SearchButton:
+    name: SearchButton
+    role: push button
+  AdvancedButton:
+    name: AdvancedButton
+    role: toggle button
+  AddBtn:
+    name: AddBtn
+    role: push button
+  LeftBtn:
+    name: LeftBtn
+    role: push button
+  TabBar:
+    name: TabBar
+    role: tab
+  ServerComboBox:
+    name: ServerComboBox
+    role: combo box
+  SchemeComboBox:
+    name: SchemeComboBox
+    role: combo box
+  CharsetComboBox:
+    name: CharsetComboBox
+    role: combo box
+  TheAddButton:
+    name: TheAddButton
+    role: push button
+  ChgUnlockType:
+    name: ChgUnlockType
+    role: push button
+  StartBtn:
+    name: StartBtn
+    role: push button
+  TypeCombo:
+    name: TypeCombo
+    role: combo box
+  PasswordEdit:
+    name: PasswordEdit
+    role: entry
+  RepeatPasswordEdit:
+    name: RepeatPasswordEdit
+    role: entry
+  TipsEdit:
+    name: TipsEdit
+    role: entry
+  SelectfileSavePathEdit:
+    name: SelectfileSavePathEdit
+    role: entry
+  TipsButton:
+    name: TipsButton
+    role: push button
+  OldPasswordEdit:
+    name: OldPasswordEdit
+    role: entry
+  NewPasswordEdit:
+    name: NewPasswordEdit
+    role: entry
+  PasswordHintEdit:
+    name: PasswordHintEdit
+    role: entry
+  KeyFileEdit:
+    name: KeyFileEdit
+    role: entry
+  RecoveryKeyEdit:
+    name: RecoveryKeyEdit
+    role: text
+  PwdEdit:
+    name: PwdEdit
+    role: entry
+  TipsBtn:
+    name: TipsBtn
+    role: push button
+  ToggleModeBtn:
+    name: ToggleModeBtn
+    role: push button
+  FinishedBtn:
+    name: FinishedBtn
+    role: push button
+  FilePathEdit:
+    name: FilePathEdit
+    role: entry
+  IconButton:
+    name: IconButton
+    role: push button
+  CloseButton:
+    name: CloseButton
+    role: push button
+  Nextbutton:
+    name: Nextbutton
+    role: push button
+  Slider_2:
+    name: Slider_2
+    role: slider
+  CheckBox:
+    name: CheckBox
+    role: check box
+  PasswordEdit_2:
+    name: PasswordEdit_2
+    role: entry
+  CheckdiscCheckbox:
+    name: CheckdiscCheckbox
+    role: check box
+  ChecksumCheckbox:
+    name: ChecksumCheckbox
+    role: check box
+  Edit_2:
+    name: Edit_2
+    role: text

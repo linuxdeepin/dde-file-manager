@@ -1,0 +1,29 @@
+name: unlock_partition_suite
+app: dde-file-manager
+module: unlock_partition
+setup:
+- action: session_start
+  command: dde-file-manager
+  wait: 3.0
+suites:
+- id: suite_unlock_partition_001_s1
+  name: 解锁分区对话框验证
+  description: ''
+  steps:
+  - action: element_action
+    selector:
+      name: PasswordLineEdit
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: PasswordLineEdit
+      role: entry
+    text: part_pass_789
+  assert_steps:
+  - action: assert_element
+    selector:
+      name: ChgUnlockType
+      role: push button
+teardown:
+- action: session_stop

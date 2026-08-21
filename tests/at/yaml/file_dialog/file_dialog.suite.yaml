@@ -1,0 +1,37 @@
+name: file_dialog_suite
+app: dde-file-manager
+module: file_dialog
+setup:
+- action: session_start
+  command: dde-file-manager
+  wait: 3.0
+suites:
+- id: suite_file_dialog_001_s1
+  name: 文件对话框控件验证
+  description: ''
+  steps:
+  - action: element_action
+    selector:
+      name: FileNameEdit
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: FileNameEdit
+      role: entry
+    text: test_file.txt
+  assert_steps:
+  - action: assert_element
+    selector:
+      name: FiltersComboBox
+      role: combo box
+  - action: assert_element
+    selector:
+      name: CurAcceptButton
+      role: push button
+  - action: assert_element
+    selector:
+      name: CurRejectButton
+      role: push button
+teardown:
+- action: session_stop

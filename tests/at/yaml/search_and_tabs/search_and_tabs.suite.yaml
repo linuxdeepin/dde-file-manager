@@ -1,0 +1,44 @@
+name: search_and_tabs_suite
+app: dde-file-manager
+module: search_and_tabs
+setup:
+- action: session_start
+  command: dde-file-manager
+  wait: 3.0
+suites:
+- id: suite_search_and_tabs_001_s1
+  name: 搜索栏控件验证
+  description: ''
+  steps:
+  - action: element_action
+    selector:
+      name: SearchButton
+      role: push button
+    do: click
+    wait_after: 1.0
+  assert_steps:
+  - action: assert_element
+    selector:
+      name: AdvancedButton
+      role: toggle button
+- id: suite_search_and_tabs_002_s1
+  name: 标签页栏控件验证
+  description: ''
+  steps:
+  - action: element_action
+    selector:
+      name: AddBtn
+      role: push button
+    do: click
+    wait_after: 1.0
+  assert_steps:
+  - action: assert_element
+    selector:
+      name: LeftBtn
+      role: push button
+  - action: assert_element
+    selector:
+      name: TabBar
+      role: tab
+teardown:
+- action: session_stop

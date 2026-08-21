@@ -1,0 +1,45 @@
+name: rename_bar_suite
+app: dde-file-manager
+module: rename_bar
+setup:
+- action: session_start
+  command: dde-file-manager
+  wait: 3.0
+suites:
+- id: suite_rename_bar_001_s1
+  name: 重命名栏控件验证
+  description: ''
+  steps:
+  - action: element_action
+    selector:
+      name: Editor
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: Editor
+      role: entry
+    text: renamed_file.txt
+  assert_steps:
+  - action: assert_element
+    selector:
+      name: RenameBtn
+      role: push button
+  - action: assert_element
+    selector:
+      name: ComboBox
+      role: combo box
+  - action: assert_element
+    selector:
+      name: RenameEditor
+      role: entry
+  - action: assert_element
+    selector:
+      name: RenameEdit
+      role: entry
+  - action: assert_element
+    selector:
+      name: RenameEdit_2
+      role: entry
+teardown:
+- action: session_stop

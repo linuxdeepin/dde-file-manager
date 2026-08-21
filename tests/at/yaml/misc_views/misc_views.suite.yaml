@@ -1,0 +1,62 @@
+name: misc_views_suite
+app: dde-file-manager
+module: misc_views
+setup:
+- action: session_start
+  command: dde-file-manager
+  wait: 3.0
+suites:
+- id: suite_misc_views_001_s1
+  name: 隐藏文件复选框验证
+  description: ''
+  steps:
+  - action: element_action
+    selector:
+      name: HideFile
+      role: check box
+    do: click
+  assert_steps:
+  - action: assert_element
+    selector:
+      name: NameEditIcon
+      role: push button
+  - action: assert_element
+    selector:
+      name: HideFile_2
+      role: check box
+  - action: assert_element
+    selector:
+      name: Slider
+      role: slider
+- id: suite_misc_views_002_s1
+  name: 文件视图状态栏控件验证
+  description: ''
+  steps: []
+  assert_steps:
+  - action: assert_element
+    selector:
+      name: ScaleSlider
+      role: slider
+  - action: assert_element
+    selector:
+      name: MenuPtr
+      role: menu
+  - action: assert_element
+    selector:
+      name: Edit
+      role: text
+- id: suite_misc_views_003_s1
+  name: 标签编辑控件验证
+  description: ''
+  steps: []
+  assert_steps:
+  - action: assert_element
+    selector:
+      name: Edit
+      role: text
+  - action: assert_element
+    selector:
+      name: Slider
+      role: slider
+teardown:
+- action: session_stop
