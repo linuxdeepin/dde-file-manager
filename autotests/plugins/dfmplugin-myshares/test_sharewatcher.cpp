@@ -43,7 +43,7 @@ public:
 
 TEST_F(UT_ShareWatcher, ShareAdded_NullInfo_EmitsSubfileCreated)
 {
-    stub.set_lamda(InfoFactory::create<FileInfo>, [] { __DBG_STUB_INVOKE__ return nullptr; });
+    stub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>), [] { __DBG_STUB_INVOKE__ return nullptr; });
     QSignalSpy spy(watcher, &AbstractFileWatcher::subfileCreated);
 
     watcher->shareAdded("/hello/world");
@@ -54,7 +54,7 @@ TEST_F(UT_ShareWatcher, ShareAdded_NullInfo_EmitsSubfileCreated)
 TEST_F(UT_ShareWatcher, ShareAdded_ValidInfo_RefreshesInfoAndEmits)
 {
     bool infoCreated = false;
-    stub.set_lamda(InfoFactory::create<FileInfo>, [&infoCreated]() -> FileInfoPointer {
+    stub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>), [&infoCreated]() -> FileInfoPointer {
         infoCreated = true;
         return FileInfoPointer(new FileInfo(QUrl::fromLocalFile("/tmp")));
     });
