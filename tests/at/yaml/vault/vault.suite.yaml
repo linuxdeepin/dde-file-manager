@@ -1,0 +1,169 @@
+name: vault_suite
+app: dde-file-manager
+module: vault
+setup:
+- action: session_start
+  command: dde-file-manager
+  wait: 3.0
+suites:
+- id: suite_vault_001_s1
+  name: 保险箱创建向导验证
+  description: ''
+  steps:
+  - action: element_action
+    selector:
+      name: StartBtn
+      role: push button
+    do: click
+    wait_after: 1.0
+  - action: element_action
+    selector:
+      name: PasswordEdit
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: PasswordEdit
+      role: entry
+    text: vault_pass_789
+  - action: element_action
+    selector:
+      name: RepeatPasswordEdit
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: RepeatPasswordEdit
+      role: entry
+    text: vault_pass_789
+  assert_steps:
+  - action: assert_element
+    selector:
+      name: TypeCombo
+      role: combo box
+  - action: assert_element
+    selector:
+      name: NextBtn
+      role: push button
+  - action: assert_element
+    selector:
+      name: TipsEdit
+      role: entry
+  - action: assert_element
+    selector:
+      name: SelectfileSavePathEdit
+      role: entry
+- id: suite_vault_002_s1
+  name: 保险箱解锁界面验证
+  description: ''
+  steps:
+  - action: element_action
+    selector:
+      name: PasswordEdit
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: PasswordEdit
+      role: entry
+    text: unlock_pass_456
+  assert_steps:
+  - action: assert_element
+    selector:
+      name: TipsButton
+      role: push button
+- id: suite_vault_003_s1
+  name: 保险箱密码重置验证
+  description: ''
+  steps:
+  - action: element_action
+    selector:
+      name: OldPasswordEdit
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: OldPasswordEdit
+      role: entry
+    text: old_pass_123
+  - action: element_action
+    selector:
+      name: NewPasswordEdit
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: NewPasswordEdit
+      role: entry
+    text: new_pass_456
+  - action: element_action
+    selector:
+      name: RepeatPasswordEdit
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: RepeatPasswordEdit
+      role: entry
+    text: new_pass_456
+  - action: element_action
+    selector:
+      name: PasswordHintEdit
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: PasswordHintEdit
+      role: entry
+    text: my hint text
+  assert_steps:
+  - action: assert_element
+    selector:
+      name: OldPasswordEdit
+      role: entry
+  - action: assert_element
+    selector:
+      name: KeyFileEdit
+      role: entry
+- id: suite_vault_004_s1
+  name: 保险箱恢复密钥验证
+  description: ''
+  steps: []
+  assert_steps:
+  - action: assert_element
+    selector:
+      name: RecoveryKeyEdit
+      role: text
+- id: suite_vault_005_s1
+  name: 保险箱移除验证
+  description: ''
+  steps:
+  - action: element_action
+    selector:
+      name: PwdEdit
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: PwdEdit
+      role: entry
+    text: remove_pass_99
+  assert_steps:
+  - action: assert_element
+    selector:
+      name: TipsBtn
+      role: push button
+  - action: assert_element
+    selector:
+      name: ToggleModeBtn
+      role: push button
+  - action: assert_element
+    selector:
+      name: FinishedBtn
+      role: push button
+  - action: assert_element
+    selector:
+      name: FilePathEdit
+      role: entry
+teardown:
+- action: session_stop

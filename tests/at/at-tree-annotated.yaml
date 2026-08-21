@@ -1,0 +1,1760 @@
+version: '1.0'
+tree:
+- id: n3
+  role: panel
+  name: filepreviewdialog
+  object_name: ''
+  accessible_id: ''
+  classification: container
+  comment: ''
+  annotation_status: draft
+  children:
+  - id: n1
+    role: push button
+    name: CloseBtn
+    object_name: CloseBtn
+    accessible_id: CloseBtn
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n2
+    role: panel
+    name: StatusBar
+    object_name: StatusBar
+    accessible_id: StatusBar
+    classification: container
+    comment: ''
+    annotation_status: draft
+- id: n7
+  role: panel
+  name: filepreviewdialogstatusbar
+  object_name: ''
+  accessible_id: ''
+  classification: container
+  comment: ''
+  annotation_status: draft
+  children:
+  - id: n4
+    role: push button
+    name: NextBtn
+    object_name: NextButton
+    accessible_id: NextBtn
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n5
+    role: push button
+    name: PreBtn
+    object_name: PreButton
+    accessible_id: PreBtn
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n6
+    role: push button
+    name: OpenBtn
+    object_name: OpenButton
+    accessible_id: OpenBtn
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+- id: n16
+  role: panel
+  name: ddciiconpreview
+  object_name: ''
+  accessible_id: ''
+  classification: container
+  comment: ''
+  annotation_status: draft
+  children:
+  - id: n8
+    role: combo box
+    name: AvailableSizeCombo
+    object_name: AvailableSizeCombo
+    accessible_id: AvailableSizeCombo
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n9
+    role: entry
+    name: ForegroundPaletteEdit
+    object_name: ForegroundPaletteEdit
+    accessible_id: ForegroundPaletteEdit
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n10
+    role: entry
+    name: BackgroundPaletteEdit
+    object_name: BackgroundPaletteEdit
+    accessible_id: BackgroundPaletteEdit
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n11
+    role: entry
+    name: HightlightPaletteEdit
+    object_name: HightlightPaletteEdit
+    accessible_id: HightlightPaletteEdit
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n12
+    role: entry
+    name: HFpaletteEdit
+    object_name: HFpaletteEdit
+    accessible_id: HFpaletteEdit
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n13
+    role: combo box
+    name: ThemeCom
+    object_name: ThemeCom
+    accessible_id: ThemeCom
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n14
+    role: combo box
+    name: ModeCom
+    object_name: ModeCom
+    accessible_id: ModeCom
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n15
+    role: entry
+    name: CustomSizeEdit
+    object_name: CustomSizeEdit
+    accessible_id: CustomSizeEdit
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+- id: n22
+  role: panel
+  name: musicmessageview
+  object_name: ''
+  accessible_id: ''
+  classification: container
+  comment: ''
+  annotation_status: draft
+  children:
+  - id: n17
+    role: label
+    name: TitleLabel
+    object_name: Title
+    accessible_id: TitleLabel
+    classification: container
+    comment: ''
+    annotation_status: draft
+  - id: n18
+    role: label
+    name: ArtistLabel
+    object_name: Artist
+    accessible_id: ArtistLabel
+    classification: container
+    comment: ''
+    annotation_status: draft
+  - id: n19
+    role: label
+    name: AlbumLabel
+    object_name: Album
+    accessible_id: AlbumLabel
+    classification: container
+    comment: ''
+    annotation_status: draft
+  - id: n20
+    role: label
+    name: ArtistValue
+    object_name: artistValue
+    accessible_id: ArtistValue
+    classification: container
+    comment: ''
+    annotation_status: draft
+  - id: n21
+    role: label
+    name: AlbumValue
+    object_name: albumValue
+    accessible_id: AlbumValue
+    classification: container
+    comment: ''
+    annotation_status: draft
+- id: n25
+  role: panel
+  name: toolbarframe
+  object_name: ''
+  accessible_id: ''
+  classification: container
+  comment: ''
+  annotation_status: draft
+  children:
+  - id: n23
+    role: push button
+    name: PlayControlButton
+    object_name: PlayControlButton
+    accessible_id: PlayControlButton
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n24
+    role: slider
+    name: ProgressSlider
+    object_name: ProgressSlider
+    accessible_id: ProgressSlider
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+- id: n28
+  role: panel
+  name: encryptionpage
+  object_name: ''
+  accessible_id: ''
+  classification: container
+  comment: ''
+  annotation_status: draft
+  children:
+  - id: n26
+    role: push button
+    name: Nextbutton
+    object_name: ensureBtn
+    accessible_id: Nextbutton
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n27
+    role: entry
+    name: PasswordEdit
+    object_name: PasswordEdit
+    accessible_id: PasswordEdit
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+- id: n29
+  role: panel
+  name: ItemViewParent
+  object_name: ItemViewParent
+  accessible_id: ItemViewParent
+  classification: container
+  comment: ''
+  annotation_status: draft
+- id: n30
+  role: list
+  name: View_ImageList
+  object_name: PImageListView
+  accessible_id: View_ImageList
+  classification: container
+  comment: ''
+  annotation_status: draft
+- id: n33
+  role: panel
+  name: videostatusbar
+  object_name: ''
+  accessible_id: ''
+  classification: container
+  comment: ''
+  annotation_status: draft
+  children:
+  - id: n31
+    role: slider
+    name: Slider_2
+    object_name: Slider_2
+    accessible_id: Slider_2
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n32
+    role: push button
+    name: ControlButton
+    object_name: ControlButton
+    accessible_id: ControlButton
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+- id: n39
+  role: panel
+  name: mountaskpassworddialog
+  object_name: ''
+  accessible_id: ''
+  classification: container
+  comment: ''
+  annotation_status: draft
+  children:
+  - id: n34
+    role: entry
+    name: UsernameLineEdit
+    object_name: UsernameLineEdit
+    accessible_id: UsernameLineEdit
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n35
+    role: entry
+    name: DomainLineEdit
+    object_name: DomainLineEdit
+    accessible_id: DomainLineEdit
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n36
+    role: entry
+    name: PasswordLineEdit
+    object_name: PasswordLineEdit
+    accessible_id: PasswordLineEdit
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n37
+    role: check box
+    name: PasswordCheckBox
+    object_name: PasswordCheckBox
+    accessible_id: PasswordCheckBox
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n38
+    role: panel
+    name: PasswordButtonGroup
+    object_name: PasswordButtonGroup
+    accessible_id: PasswordButtonGroup
+    classification: container
+    comment: ''
+    annotation_status: draft
+- id: n40
+  role: entry
+  name: PasswordLineEdit
+  object_name: PasswordLineEdit
+  accessible_id: PasswordLineEdit
+  classification: interactive
+  comment: ''
+  annotation_status: draft
+- id: n41
+  role: check box
+  name: CheckBox
+  object_name: CheckBox
+  accessible_id: CheckBox
+  classification: interactive
+  comment: ''
+  annotation_status: draft
+- id: n42
+  role: entry
+  name: PasswordEdit_2
+  object_name: PasswordEdit_2
+  accessible_id: PasswordEdit_2
+  classification: interactive
+  comment: ''
+  annotation_status: draft
+- id: n43
+  role: list
+  name: TaskListWidget
+  object_name: TaskListWidget
+  accessible_id: TaskListWidget
+  classification: container
+  comment: ''
+  annotation_status: draft
+- id: n51
+  role: panel
+  name: taskwidget
+  object_name: ''
+  accessible_id: ''
+  classification: container
+  comment: ''
+  annotation_status: draft
+  children:
+  - id: n44
+    role: push button
+    name: BtnStop
+    object_name: TaskWidgetStopButton
+    accessible_id: BtnStop
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n45
+    role: push button
+    name: BtnPause
+    object_name: TaskWidgetPauseButton
+    accessible_id: BtnPause
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n46
+    role: check box
+    name: ChkboxNotAskAgain
+    object_name: ChkboxNotAskAgain
+    accessible_id: ChkboxNotAskAgain
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n47
+    role: push button
+    name: BtnCoexist
+    object_name: BtnCoexist
+    accessible_id: BtnCoexist
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n48
+    role: push button
+    name: BtnSkip
+    object_name: BtnSkip
+    accessible_id: BtnSkip
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n49
+    role: push button
+    name: BtnReplace
+    object_name: BtnReplace
+    accessible_id: BtnReplace
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n50
+    role: panel
+    name: BtnDelete
+    object_name: BtnDelete
+    accessible_id: BtnDelete
+    classification: container
+    comment: ''
+    annotation_status: draft
+- id: n54
+  role: panel
+  name: viewhintwidget
+  object_name: ''
+  accessible_id: ''
+  classification: container
+  comment: ''
+  annotation_status: draft
+  children:
+  - id: n52
+    role: push button
+    name: IconButton
+    object_name: IconButton
+    accessible_id: IconButton
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n53
+    role: push button
+    name: CloseButton
+    object_name: CloseButton
+    accessible_id: CloseButton
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+- id: n55
+  role: label
+  name: TipsLabel
+  object_name: diskmount
+  accessible_id: TipsLabel
+  classification: container
+  comment: ''
+  annotation_status: draft
+- id: n64
+  role: panel
+  name: burnoptdialog
+  object_name: ''
+  accessible_id: ''
+  classification: container
+  comment: ''
+  annotation_status: draft
+  children:
+  - id: n56
+    role: push button
+    name: AdvanceBtn
+    object_name: AdvanceBtn
+    accessible_id: AdvanceBtn
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n57
+    role: entry
+    name: VolnameEdit
+    object_name: VolnameEdit
+    accessible_id: VolnameEdit
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n58
+    role: combo box
+    name: WritespeedComb
+    object_name: WritespeedComb
+    accessible_id: WritespeedComb
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n59
+    role: combo box
+    name: FsComb
+    object_name: FsComb
+    accessible_id: FsComb
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n60
+    role: check box
+    name: FinalizeDiscCheckbox
+    object_name: FinalizeDiscCheckbox
+    accessible_id: FinalizeDiscCheckbox
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n61
+    role: check box
+    name: CheckdiscCheckbox
+    object_name: CheckdiscCheckbox
+    accessible_id: CheckdiscCheckbox
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n62
+    role: check box
+    name: ChecksumCheckbox
+    object_name: ChecksumCheckbox
+    accessible_id: ChecksumCheckbox
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n63
+    role: check box
+    name: EjectCheckbox
+    object_name: EjectCheckbox
+    accessible_id: EjectCheckbox
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+- id: n65
+  role: entry
+  name: FileChooser
+  object_name: FileChooser
+  accessible_id: FileChooser
+  classification: interactive
+  comment: ''
+  annotation_status: draft
+- id: n73
+  role: panel
+  name: sharecontrolwidget
+  object_name: ''
+  accessible_id: ''
+  classification: container
+  comment: ''
+  annotation_status: draft
+  children:
+  - id: n66
+    role: check box
+    name: ShareSwitcher
+    object_name: ShareSwitcher
+    accessible_id: ShareSwitcher
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n67
+    role: entry
+    name: ShareNameEditor
+    object_name: ShareNameEditor
+    accessible_id: ShareNameEditor
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n68
+    role: combo box
+    name: SharePermissionSelector
+    object_name: SharePermissionSelector
+    accessible_id: SharePermissionSelector
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n69
+    role: combo box
+    name: ShareAnonymousSelector
+    object_name: ShareAnonymousSelector
+    accessible_id: ShareAnonymousSelector
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n70
+    role: push button
+    name: CopyNetAddr
+    object_name: CopyNetAddr
+    accessible_id: CopyNetAddr
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n71
+    role: push button
+    name: CopyUserNameBt
+    object_name: CopyUserNameBt
+    accessible_id: CopyUserNameBt
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n72
+    role: push button
+    name: SetPasswordBt
+    object_name: SetPasswordBt
+    accessible_id: SetPasswordBt
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+- id: n74
+  role: check box
+  name: HideFile
+  object_name: HideFile
+  accessible_id: HideFile
+  classification: interactive
+  comment: ''
+  annotation_status: draft
+- id: n75
+  role: push button
+  name: CloseButton
+  object_name: CloseButton
+  accessible_id: CloseButton
+  classification: interactive
+  comment: ''
+  annotation_status: draft
+- id: n76
+  role: push button
+  name: NameEditIcon
+  object_name: EditButton
+  accessible_id: NameEditIcon
+  classification: interactive
+  comment: ''
+  annotation_status: draft
+- id: n77
+  role: check box
+  name: HideFile_2
+  object_name: HideFile_2
+  accessible_id: HideFile_2
+  classification: interactive
+  comment: ''
+  annotation_status: draft
+- id: n81
+  role: panel
+  name: multifilepermissionwidget
+  object_name: ''
+  accessible_id: ''
+  classification: container
+  comment: ''
+  annotation_status: draft
+  children:
+  - id: n78
+    role: combo box
+    name: OwnerComboBox
+    object_name: OwnerComboBox
+    accessible_id: OwnerComboBox
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n79
+    role: combo box
+    name: GroupComboBox
+    object_name: GroupComboBox
+    accessible_id: GroupComboBox
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n80
+    role: combo box
+    name: OtherComboBox
+    object_name: OtherComboBox
+    accessible_id: OtherComboBox
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+- id: n82
+  role: push button
+  name: CancelBtn
+  object_name: CancelBtn
+  accessible_id: CancelBtn
+  classification: interactive
+  comment: ''
+  annotation_status: draft
+- id: n87
+  role: panel
+  name: permissionmanagerwidget
+  object_name: ''
+  accessible_id: ''
+  classification: container
+  comment: ''
+  annotation_status: draft
+  children:
+  - id: n83
+    role: combo box
+    name: OwnerComboBox
+    object_name: OwnerComboBox
+    accessible_id: OwnerComboBox
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n84
+    role: combo box
+    name: GroupComboBox
+    object_name: GroupComboBox
+    accessible_id: GroupComboBox
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n85
+    role: combo box
+    name: OtherComboBox
+    object_name: OtherComboBox
+    accessible_id: OtherComboBox
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n86
+    role: check box
+    name: ExecutableCheckBox
+    object_name: ExecutableCheckBox
+    accessible_id: ExecutableCheckBox
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+- id: n90
+  role: panel
+  name: tagwidget_p
+  object_name: ''
+  accessible_id: ''
+  classification: container
+  comment: ''
+  annotation_status: draft
+  children:
+  - id: n88
+    role: label
+    name: TagLable
+    object_name: TagLable
+    accessible_id: TagLable
+    classification: container
+    comment: ''
+    annotation_status: draft
+  - id: n89
+    role: label
+    name: TagLeftLable
+    object_name: TagLeftLable
+    accessible_id: TagLeftLable
+    classification: container
+    comment: ''
+    annotation_status: draft
+- id: n91
+  role: label
+  name: ToolTip
+  object_name: tool_tip
+  accessible_id: ToolTip
+  classification: container
+  comment: ''
+  annotation_status: draft
+- id: n92
+  role: text
+  name: Edit_2
+  object_name: Edit_2
+  accessible_id: Edit_2
+  classification: interactive
+  comment: ''
+  annotation_status: draft
+- id: n93
+  role: panel
+  name: CrumbEdit
+  object_name: CrumbEdit
+  accessible_id: CrumbEdit
+  classification: container
+  comment: ''
+  annotation_status: draft
+- id: n94
+  role: list
+  name: DevicesListView
+  object_name: DevicesListView
+  accessible_id: DevicesListView
+  classification: container
+  comment: ''
+  annotation_status: draft
+- id: n100
+  role: panel
+  name: openwithdialog
+  object_name: ''
+  accessible_id: ''
+  classification: container
+  comment: ''
+  annotation_status: draft
+  children:
+  - id: n95
+    role: push button
+    name: CheckButton
+    object_name: CheckButton
+    accessible_id: CheckButton
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n96
+    role: push button
+    name: OpenFileChooseButton
+    object_name: OpenFileChooseButton
+    accessible_id: OpenFileChooseButton
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n97
+    role: check box
+    name: SetToDefaultCheckBox
+    object_name: SetToDefaultCheckBox
+    accessible_id: SetToDefaultCheckBox
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n98
+    role: push button
+    name: CancelButton
+    object_name: CancelButton
+    accessible_id: CancelButton
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n99
+    role: push button
+    name: ChooseButton
+    object_name: ChooseButton
+    accessible_id: ChooseButton
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+- id: n103
+  role: panel
+  name: openwithwidget
+  object_name: ''
+  accessible_id: ''
+  classification: container
+  comment: ''
+  annotation_status: draft
+  children:
+  - id: n101
+    role: list
+    name: OpenWithListWidget
+    object_name: OpenWithListWidget
+    accessible_id: OpenWithListWidget
+    classification: container
+    comment: ''
+    annotation_status: draft
+  - id: n102
+    role: panel
+    name: OpenWithBtnGroup
+    object_name: OpenWithBtnGroup
+    accessible_id: OpenWithBtnGroup
+    classification: container
+    comment: ''
+    annotation_status: draft
+- id: n106
+  role: panel
+  name: itemeditor
+  object_name: ''
+  accessible_id: ''
+  classification: container
+  comment: ''
+  annotation_status: draft
+  children:
+  - id: n104
+    role: panel
+    name: Tooltip
+    object_name: Tooltip
+    accessible_id: Tooltip
+    classification: container
+    comment: ''
+    annotation_status: draft
+  - id: n105
+    role: entry
+    name: RenameEdit
+    object_name: RenameEdit
+    accessible_id: RenameEdit
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+- id: n107
+  role: menu
+  name: MenuPtr
+  object_name: MenuPtr
+  accessible_id: MenuPtr
+  classification: interactive
+  comment: ''
+  annotation_status: draft
+- id: n108
+  role: label
+  name: TextLabel
+  object_name: TextLabel
+  accessible_id: TextLabel
+  classification: container
+  comment: ''
+  annotation_status: draft
+- id: n109
+  role: label
+  name: TextLabel
+  object_name: TextLabel
+  accessible_id: TextLabel
+  classification: container
+  comment: ''
+  annotation_status: draft
+- id: n112
+  role: panel
+  name: itemeditor
+  object_name: ''
+  accessible_id: ''
+  classification: container
+  comment: ''
+  annotation_status: draft
+  children:
+  - id: n110
+    role: panel
+    name: Tooltip_2
+    object_name: Tooltip_2
+    accessible_id: Tooltip_2
+    classification: container
+    comment: ''
+    annotation_status: draft
+  - id: n111
+    role: entry
+    name: RenameEdit_2
+    object_name: RenameEdit_2
+    accessible_id: RenameEdit_2
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+- id: n113
+  role: combo box
+  name: ComboBox
+  object_name: ComboBox
+  accessible_id: ComboBox
+  classification: interactive
+  comment: ''
+  annotation_status: draft
+- id: n114
+  role: slider
+  name: Slider
+  object_name: Slider
+  accessible_id: Slider
+  classification: interactive
+  comment: ''
+  annotation_status: draft
+- id: n115
+  role: check box
+  name: CheckBox
+  object_name: CheckBox
+  accessible_id: CheckBox
+  classification: interactive
+  comment: ''
+  annotation_status: draft
+- id: n116
+  role: panel
+  name: KeyEdit
+  object_name: KeyEdit
+  accessible_id: KeyEdit
+  classification: container
+  comment: ''
+  annotation_status: draft
+- id: n117
+  role: panel
+  name: SwitchBtn
+  object_name: SwitchBtn
+  accessible_id: SwitchBtn
+  classification: container
+  comment: ''
+  annotation_status: draft
+- id: n118
+  role: menu
+  name: MenuPtr
+  object_name: MenuPtr
+  accessible_id: MenuPtr
+  classification: interactive
+  comment: ''
+  annotation_status: draft
+- id: n126
+  role: panel
+  name: filedialogstatusbar
+  object_name: ''
+  accessible_id: ''
+  classification: container
+  comment: ''
+  annotation_status: draft
+  children:
+  - id: n119
+    role: label
+    name: TitleLabel
+    object_name: TitleLabel
+    accessible_id: TitleLabel
+    classification: container
+    comment: ''
+    annotation_status: draft
+  - id: n120
+    role: label
+    name: FileNameLabel
+    object_name: FileNameLabel
+    accessible_id: FileNameLabel
+    classification: container
+    comment: ''
+    annotation_status: draft
+  - id: n121
+    role: label
+    name: FiltersLabel
+    object_name: FiltersLabel
+    accessible_id: FiltersLabel
+    classification: container
+    comment: ''
+    annotation_status: draft
+  - id: n122
+    role: entry
+    name: FileNameEdit
+    object_name: FileNameEdit
+    accessible_id: FileNameEdit
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n123
+    role: combo box
+    name: FiltersComboBox
+    object_name: FiltersComboBox
+    accessible_id: FiltersComboBox
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n124
+    role: push button
+    name: CurAcceptButton
+    object_name: FileDialogStatusBarAcceptButton
+    accessible_id: CurAcceptButton
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n125
+    role: push button
+    name: CurRejectButton
+    object_name: CurRejectButton
+    accessible_id: CurRejectButton
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+- id: n127
+  role: entry
+  name: RenameEditor
+  object_name: RenameEditor
+  accessible_id: RenameEditor
+  classification: interactive
+  comment: ''
+  annotation_status: draft
+- id: n128
+  role: panel
+  name: ScrollArea
+  object_name: PropertyDialog-QScrollArea
+  accessible_id: ScrollArea
+  classification: container
+  comment: ''
+  annotation_status: draft
+- id: n133
+  role: panel
+  name: chgpassphrasedialog
+  object_name: ''
+  accessible_id: ''
+  classification: container
+  comment: ''
+  annotation_status: draft
+  children:
+  - id: n129
+    role: entry
+    name: OldPass
+    object_name: OldPass
+    accessible_id: OldPass
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n130
+    role: entry
+    name: NewPass1
+    object_name: NewPass1
+    accessible_id: NewPass1
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n131
+    role: entry
+    name: NewPass2
+    object_name: NewPass2
+    accessible_id: NewPass2
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n132
+    role: push button
+    name: RecSwitch
+    object_name: RecSwitch
+    accessible_id: RecSwitch
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+- id: n136
+  role: panel
+  name: decryptparamsinputdialog
+  object_name: ''
+  accessible_id: ''
+  classification: container
+  comment: ''
+  annotation_status: draft
+  children:
+  - id: n134
+    role: entry
+    name: Editor_2
+    object_name: Editor_2
+    accessible_id: Editor_2
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n135
+    role: push button
+    name: RecSwitch
+    object_name: RecSwitch
+    accessible_id: RecSwitch
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+- id: n141
+  role: panel
+  name: encryptparamsinputdialog
+  object_name: ''
+  accessible_id: ''
+  classification: container
+  comment: ''
+  annotation_status: draft
+  children:
+  - id: n137
+    role: combo box
+    name: EncType
+    object_name: EncType
+    accessible_id: EncType
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n138
+    role: entry
+    name: EncKeyEdit1
+    object_name: EncKeyEdit1
+    accessible_id: EncKeyEdit1
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n139
+    role: entry
+    name: EncKeyEdit2
+    object_name: EncKeyEdit2
+    accessible_id: EncKeyEdit2
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n140
+    role: entry
+    name: KeyExportInput
+    object_name: KeyExportInput
+    accessible_id: KeyExportInput
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+- id: n144
+  role: panel
+  name: unlockpartitiondialog
+  object_name: ''
+  accessible_id: ''
+  classification: container
+  comment: ''
+  annotation_status: draft
+  children:
+  - id: n142
+    role: entry
+    name: PasswordLineEdit
+    object_name: PasswordLineEdit
+    accessible_id: PasswordLineEdit
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n143
+    role: push button
+    name: ChgUnlockType
+    object_name: ChgUnlockType
+    accessible_id: ChgUnlockType
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+- id: n147
+  role: panel
+  name: opticalmediawidget
+  object_name: ''
+  accessible_id: ''
+  classification: container
+  comment: ''
+  annotation_status: draft
+  children:
+  - id: n145
+    role: push button
+    name: PbBurn
+    object_name: PbBurn
+    accessible_id: PbBurn
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n146
+    role: push button
+    name: PbDump
+    object_name: PbDump
+    accessible_id: PbDump
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+- id: n148
+  role: check box
+  name: CheckBox
+  object_name: CheckBox
+  accessible_id: CheckBox
+  classification: interactive
+  comment: ''
+  annotation_status: draft
+- id: n154
+  role: panel
+  name: connecttoserverdialog
+  object_name: ''
+  accessible_id: ''
+  classification: container
+  comment: ''
+  annotation_status: draft
+  children:
+  - id: n149
+    role: combo box
+    name: ServerComboBox
+    object_name: ServerComboBox
+    accessible_id: ServerComboBox
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n150
+    role: combo box
+    name: SchemeComboBox
+    object_name: SchemeComboBox
+    accessible_id: SchemeComboBox
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n151
+    role: push button
+    name: TheAddButton
+    object_name: TheAddButton
+    accessible_id: TheAddButton
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n152
+    role: list
+    name: CollectionServerView
+    object_name: CollectionServerView
+    accessible_id: CollectionServerView
+    classification: container
+    comment: ''
+    annotation_status: draft
+  - id: n153
+    role: combo box
+    name: CharsetComboBox
+    object_name: CharsetComboBox
+    accessible_id: CharsetComboBox
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+- id: n160
+  role: panel
+  name: dpcconfirmwidget
+  object_name: ''
+  accessible_id: ''
+  classification: container
+  comment: ''
+  annotation_status: draft
+  children:
+  - id: n155
+    role: entry
+    name: OldPwdEdit
+    object_name: OldPwdEdit
+    accessible_id: OldPwdEdit
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n156
+    role: entry
+    name: NewPwdEdit
+    object_name: NewPwdEdit
+    accessible_id: NewPwdEdit
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n157
+    role: entry
+    name: RepeatPwdEdit
+    object_name: RepeatPwdEdit
+    accessible_id: RepeatPwdEdit
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n158
+    role: push button
+    name: SaveBtn
+    object_name: SaveBtn
+    accessible_id: SaveBtn
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n159
+    role: push button
+    name: CancelBtn
+    object_name: CancelBtn
+    accessible_id: CancelBtn
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+- id: n161
+  role: push button
+  name: CloseBtn
+  object_name: CloseBtn
+  accessible_id: CloseBtn
+  classification: interactive
+  comment: ''
+  annotation_status: draft
+- id: n162
+  role: toggle button
+  name: AddItemBtn
+  object_name: AddItemBtn
+  accessible_id: AddItemBtn
+  classification: interactive
+  comment: ''
+  annotation_status: draft
+- id: n166
+  role: panel
+  name: searcheditwidget
+  object_name: ''
+  accessible_id: ''
+  classification: container
+  comment: ''
+  annotation_status: draft
+  children:
+  - id: n163
+    role: push button
+    name: SearchButton
+    object_name: SearchButton
+    accessible_id: SearchButton
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n164
+    role: toggle button
+    name: AdvancedButton
+    object_name: AdvancedButton
+    accessible_id: AdvancedButton
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n165
+    role: panel
+    name: SearchEdit
+    object_name: SearchEdit
+    accessible_id: SearchEdit
+    classification: container
+    comment: ''
+    annotation_status: draft
+- id: n170
+  role: panel
+  name: tabbar
+  object_name: ''
+  accessible_id: ''
+  classification: container
+  comment: ''
+  annotation_status: draft
+  children:
+  - id: n167
+    role: push button
+    name: AddBtn
+    object_name: AddBtn
+    accessible_id: AddBtn
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n168
+    role: push button
+    name: LeftBtn
+    object_name: LeftBtn
+    accessible_id: LeftBtn
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n169
+    role: tab
+    name: TabBar
+    object_name: TabBar
+    accessible_id: TabBar
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+- id: n171
+  role: panel
+  name: Placeholder
+  object_name: Placeholder
+  accessible_id: Placeholder
+  classification: container
+  comment: ''
+  annotation_status: draft
+- id: n172
+  role: push button
+  name: FinishedBtn
+  object_name: FinishedBtn
+  accessible_id: FinishedBtn
+  classification: interactive
+  comment: ''
+  annotation_status: draft
+- id: n175
+  role: panel
+  name: vaultactivesavekeyfileview
+  object_name: ''
+  accessible_id: ''
+  classification: container
+  comment: ''
+  annotation_status: draft
+  children:
+  - id: n173
+    role: push button
+    name: NextBtn
+    object_name: NextBtn
+    accessible_id: NextBtn
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n174
+    role: entry
+    name: SelectfileSavePathEdit
+    object_name: SelectfileSavePathEdit
+    accessible_id: SelectfileSavePathEdit
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+- id: n181
+  role: panel
+  name: vaultactivesetunlockmethodview
+  object_name: ''
+  accessible_id: ''
+  classification: container
+  comment: ''
+  annotation_status: draft
+  children:
+  - id: n176
+    role: combo box
+    name: TypeCombo
+    object_name: TypeCombo
+    accessible_id: TypeCombo
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n177
+    role: entry
+    name: PasswordEdit
+    object_name: PasswordEdit
+    accessible_id: PasswordEdit
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n178
+    role: entry
+    name: RepeatPasswordEdit
+    object_name: RepeatPasswordEdit
+    accessible_id: RepeatPasswordEdit
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n179
+    role: entry
+    name: TipsEdit
+    object_name: TipsEdit
+    accessible_id: TipsEdit
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n180
+    role: push button
+    name: NextBtn
+    object_name: NextBtn
+    accessible_id: NextBtn
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+- id: n182
+  role: push button
+  name: StartBtn
+  object_name: StartBtn
+  accessible_id: StartBtn
+  classification: interactive
+  comment: ''
+  annotation_status: draft
+- id: n187
+  role: panel
+  name: vaultremovebypasswordview
+  object_name: ''
+  accessible_id: ''
+  classification: container
+  comment: ''
+  annotation_status: draft
+  children:
+  - id: n183
+    role: entry
+    name: PwdEdit
+    object_name: PwdEdit
+    accessible_id: PwdEdit
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n184
+    role: push button
+    name: TipsBtn
+    object_name: TipsBtn
+    accessible_id: TipsBtn
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n185
+    role: label
+    name: Tooltip
+    object_name: AlertTooltip
+    accessible_id: Tooltip
+    classification: container
+    comment: ''
+    annotation_status: draft
+  - id: n186
+    role: push button
+    name: ToggleModeBtn
+    object_name: ToggleModeBtn
+    accessible_id: ToggleModeBtn
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+- id: n190
+  role: panel
+  name: vaultremovebyrecoverykeyview
+  object_name: ''
+  accessible_id: ''
+  classification: container
+  comment: ''
+  annotation_status: draft
+  children:
+  - id: n188
+    role: entry
+    name: FilePathEdit
+    object_name: FilePathEdit
+    accessible_id: FilePathEdit
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n189
+    role: label
+    name: Tooltip
+    object_name: AlertTooltip
+    accessible_id: Tooltip
+    classification: container
+    comment: ''
+    annotation_status: draft
+- id: n195
+  role: panel
+  name: resetpasswordbykeyfileview
+  object_name: ''
+  accessible_id: ''
+  classification: container
+  comment: ''
+  annotation_status: draft
+  children:
+  - id: n191
+    role: entry
+    name: KeyFileEdit
+    object_name: KeyFileEdit
+    accessible_id: KeyFileEdit
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n192
+    role: entry
+    name: NewPasswordEdit
+    object_name: NewPasswordEdit
+    accessible_id: NewPasswordEdit
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n193
+    role: entry
+    name: RepeatPasswordEdit
+    object_name: RepeatPasswordEdit
+    accessible_id: RepeatPasswordEdit
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n194
+    role: entry
+    name: PasswordHintEdit
+    object_name: PasswordHintEdit
+    accessible_id: PasswordHintEdit
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+- id: n200
+  role: panel
+  name: resetpasswordbyoldpasswordview
+  object_name: ''
+  accessible_id: ''
+  classification: container
+  comment: ''
+  annotation_status: draft
+  children:
+  - id: n196
+    role: entry
+    name: OldPasswordEdit
+    object_name: OldPasswordEdit
+    accessible_id: OldPasswordEdit
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n197
+    role: entry
+    name: NewPasswordEdit
+    object_name: NewPasswordEdit
+    accessible_id: NewPasswordEdit
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n198
+    role: entry
+    name: RepeatPasswordEdit
+    object_name: RepeatPasswordEdit
+    accessible_id: RepeatPasswordEdit
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n199
+    role: entry
+    name: PasswordHintEdit
+    object_name: PasswordHintEdit
+    accessible_id: PasswordHintEdit
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+- id: n203
+  role: panel
+  name: recoverykeyview
+  object_name: ''
+  accessible_id: ''
+  classification: container
+  comment: ''
+  annotation_status: draft
+  children:
+  - id: n201
+    role: label
+    name: Tooltip
+    object_name: AlertTooltip
+    accessible_id: Tooltip
+    classification: container
+    comment: ''
+    annotation_status: draft
+  - id: n202
+    role: text
+    name: RecoveryKeyEdit
+    object_name: RecoveryKeyEdit
+    accessible_id: RecoveryKeyEdit
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+- id: n204
+  role: entry
+  name: FilePathEdit
+  object_name: FilePathEdit
+  accessible_id: FilePathEdit
+  classification: interactive
+  comment: ''
+  annotation_status: draft
+- id: n208
+  role: panel
+  name: unlockview
+  object_name: ''
+  accessible_id: ''
+  classification: container
+  comment: ''
+  annotation_status: draft
+  children:
+  - id: n205
+    role: entry
+    name: PasswordEdit
+    object_name: PasswordEdit
+    accessible_id: PasswordEdit
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n206
+    role: push button
+    name: TipsButton
+    object_name: TipsButton
+    accessible_id: TipsButton
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n207
+    role: label
+    name: Tooltip
+    object_name: AlertTooltip
+    accessible_id: Tooltip
+    classification: container
+    comment: ''
+    annotation_status: draft
+- id: n209
+  role: menu
+  name: MenuPtr
+  object_name: MenuPtr
+  accessible_id: MenuPtr
+  classification: interactive
+  comment: ''
+  annotation_status: draft
+- id: n210
+  role: slider
+  name: ScaleSlider
+  object_name: ScaleSlider
+  accessible_id: ScaleSlider
+  classification: interactive
+  comment: ''
+  annotation_status: draft
+- id: n211
+  role: entry
+  name: Editor
+  object_name: Editor
+  accessible_id: Editor
+  classification: interactive
+  comment: ''
+  annotation_status: draft
+- id: n212
+  role: text
+  name: Edit
+  object_name: Edit
+  accessible_id: Edit
+  classification: interactive
+  comment: ''
+  annotation_status: draft
+- id: n215
+  role: panel
+  name: renamebar_p
+  object_name: ''
+  accessible_id: ''
+  classification: container
+  comment: ''
+  annotation_status: draft
+  children:
+  - id: n213
+    role: combo box
+    name: ComboBox
+    object_name: ComboBox
+    accessible_id: ComboBox
+    classification: interactive
+    comment: ''
+    annotation_status: draft
+  - id: n214
+    role: push button
+    name: RenameBtn
+    object_name: RenameBtn
+    accessible_id: RenameBtn
+    classification: interactive
+    comment: ''
+    annotation_status: draft

@@ -1,0 +1,23 @@
+name: property_dialog_suite
+app: dde-file-manager
+module: property_dialog
+setup:
+- action: session_start
+  command: dde-file-manager
+  wait: 3.0
+suites:
+- id: suite_property_dialog_001_s1
+  name: 属性对话框缩放控件验证
+  description: ''
+  steps: []
+  assert_steps:
+  - action: assert_element
+    selector:
+      name: ScaleSlider
+      role: slider
+  - action: assert_element
+    selector:
+      name: AddItemBtn
+      role: toggle button
+teardown:
+- action: session_stop

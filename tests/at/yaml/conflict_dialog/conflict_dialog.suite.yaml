@@ -1,0 +1,39 @@
+name: conflict_dialog_suite
+app: dde-file-manager
+module: conflict_dialog
+setup:
+- action: session_start
+  command: dde-file-manager
+  wait: 3.0
+suites:
+- id: suite_conflict_dialog_001_s1
+  name: 文件冲突对话框按钮验证
+  description: ''
+  steps: []
+  assert_steps:
+  - action: assert_element
+    selector:
+      name: BtnStop
+      role: push button
+  - action: assert_element
+    selector:
+      name: BtnPause
+      role: push button
+  - action: assert_element
+    selector:
+      name: BtnCoexist
+      role: push button
+  - action: assert_element
+    selector:
+      name: BtnSkip
+      role: push button
+  - action: assert_element
+    selector:
+      name: BtnReplace
+      role: push button
+  - action: assert_element
+    selector:
+      name: ChkboxNotAskAgain
+      role: check box
+teardown:
+- action: session_stop

@@ -1,0 +1,50 @@
+name: file_share_suite
+app: dde-file-manager
+module: file_share
+setup:
+- action: session_start
+  command: dde-file-manager
+  wait: 3.0
+suites:
+- id: suite_file_share_001_s1
+  name: 文件共享控件验证
+  description: ''
+  steps:
+  - action: element_action
+    selector:
+      name: ShareSwitcher
+      role: check box
+    do: click
+  - action: element_action
+    selector:
+      name: ShareNameEditor
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: ShareNameEditor
+      role: entry
+    text: shared_folder_01
+  assert_steps:
+  - action: assert_element
+    selector:
+      name: SharePermissionSelector
+      role: combo box
+  - action: assert_element
+    selector:
+      name: ShareAnonymousSelector
+      role: combo box
+  - action: assert_element
+    selector:
+      name: CopyNetAddr
+      role: push button
+  - action: assert_element
+    selector:
+      name: CopyUserNameBt
+      role: push button
+  - action: assert_element
+    selector:
+      name: SetPasswordBt
+      role: push button
+teardown:
+- action: session_stop

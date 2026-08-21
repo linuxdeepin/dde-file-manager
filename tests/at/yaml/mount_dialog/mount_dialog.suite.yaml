@@ -1,0 +1,52 @@
+name: mount_dialog_suite
+app: dde-file-manager
+module: mount_dialog
+setup:
+- action: session_start
+  command: dde-file-manager
+  wait: 3.0
+suites:
+- id: suite_mount_dialog_001_s1
+  name: 挂载密码对话框输入验证
+  description: ''
+  steps:
+  - action: element_action
+    selector:
+      name: UsernameLineEdit
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: UsernameLineEdit
+      role: entry
+    text: testuser123
+  - action: element_action
+    selector:
+      name: PasswordLineEdit
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: PasswordLineEdit
+      role: entry
+    text: testpass456
+  - action: element_action
+    selector:
+      name: PasswordCheckBox
+      role: check box
+    do: click
+  assert_steps:
+  - action: assert_element
+    selector:
+      name: UsernameLineEdit
+      role: entry
+  - action: assert_element
+    selector:
+      name: PasswordCheckBox
+      role: check box
+  - action: assert_element
+    selector:
+      name: DomainLineEdit
+      role: entry
+teardown:
+- action: session_stop

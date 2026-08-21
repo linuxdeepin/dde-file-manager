@@ -1,0 +1,35 @@
+name: open_with_suite
+app: dde-file-manager
+module: open_with
+setup:
+- action: session_start
+  command: dde-file-manager
+  wait: 3.0
+suites:
+- id: suite_open_with_001_s1
+  name: 打开方式对话框验证
+  description: ''
+  steps: []
+  assert_steps:
+  - action: assert_element
+    selector:
+      name: CheckButton
+      role: push button
+  - action: assert_element
+    selector:
+      name: OpenFileChooseButton
+      role: push button
+  - action: assert_element
+    selector:
+      name: SetToDefaultCheckBox
+      role: check box
+  - action: assert_element
+    selector:
+      name: CancelButton
+      role: push button
+  - action: assert_element
+    selector:
+      name: ChooseButton
+      role: push button
+teardown:
+- action: session_stop

@@ -1,0 +1,32 @@
+name: server_connection_suite
+app: dde-file-manager
+module: server_connection
+setup:
+- action: session_start
+  command: dde-file-manager
+  wait: 3.0
+suites:
+- id: suite_server_connection_001_s1
+  name: 连接服务器对话框验证
+  description: ''
+  steps:
+  - action: element_action
+    selector:
+      name: ServerComboBox
+      role: combo box
+    do: click
+  assert_steps:
+  - action: assert_element
+    selector:
+      name: SchemeComboBox
+      role: combo box
+  - action: assert_element
+    selector:
+      name: CharsetComboBox
+      role: combo box
+  - action: assert_element
+    selector:
+      name: TheAddButton
+      role: push button
+teardown:
+- action: session_stop

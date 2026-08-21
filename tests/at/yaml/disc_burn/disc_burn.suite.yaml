@@ -1,0 +1,62 @@
+name: disc_burn_suite
+app: dde-file-manager
+module: disc_burn
+setup:
+- action: session_start
+  command: dde-file-manager
+  wait: 3.0
+suites:
+- id: suite_disc_burn_001_s1
+  name: 刻录选项对话框控件验证
+  description: ''
+  steps:
+  - action: element_action
+    selector:
+      name: VolnameEdit
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: VolnameEdit
+      role: entry
+    text: MyDisc2026
+  assert_steps:
+  - action: assert_element
+    selector:
+      name: AdvanceBtn
+      role: push button
+  - action: assert_element
+    selector:
+      name: WritespeedComb
+      role: combo box
+  - action: assert_element
+    selector:
+      name: FsComb
+      role: combo box
+  - action: assert_element
+    selector:
+      name: FinalizeDiscCheckbox
+      role: check box
+  - action: assert_element
+    selector:
+      name: EjectCheckbox
+      role: check box
+- id: suite_disc_burn_002_s1
+  name: 光盘刻录操作按钮验证
+  description: ''
+  steps: []
+  assert_steps:
+  - action: assert_element
+    selector:
+      name: PbBurn
+      role: push button
+  - action: assert_element
+    selector:
+      name: PbDump
+      role: push button
+  - action: assert_element
+    selector:
+      name: FileChooser
+      role: entry
+teardown:
+- action: session_stop

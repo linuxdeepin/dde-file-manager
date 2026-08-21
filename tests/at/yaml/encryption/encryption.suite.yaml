@@ -1,0 +1,86 @@
+name: encryption_suite
+app: dde-file-manager
+module: encryption
+setup:
+- action: session_start
+  command: dde-file-manager
+  wait: 3.0
+suites:
+- id: suite_encryption_001_s1
+  name: 加密参数输入验证
+  description: ''
+  steps:
+  - action: element_action
+    selector:
+      name: EncKeyEdit1
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: EncKeyEdit1
+      role: entry
+    text: enckey_abc123
+  - action: element_action
+    selector:
+      name: EncKeyEdit2
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: EncKeyEdit2
+      role: entry
+    text: enckey_abc123
+  assert_steps:
+  - action: assert_element
+    selector:
+      name: EncType
+      role: combo box
+  - action: assert_element
+    selector:
+      name: KeyExportInput
+      role: entry
+  - action: assert_element
+    selector:
+      name: Editor_2
+      role: entry
+- id: suite_encryption_002_s1
+  name: 修改密码短语验证
+  description: ''
+  steps:
+  - action: element_action
+    selector:
+      name: OldPass
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: OldPass
+      role: entry
+    text: oldphrase_01
+  - action: element_action
+    selector:
+      name: NewPass1
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: NewPass1
+      role: entry
+    text: newphrase_02
+  - action: element_action
+    selector:
+      name: NewPass2
+      role: entry
+    do: click
+  - action: keyboard_type
+    selector:
+      name: NewPass2
+      role: entry
+    text: newphrase_02
+  assert_steps:
+  - action: assert_element
+    selector:
+      name: RecSwitch
+      role: check box
+teardown:
+- action: session_stop

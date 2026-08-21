@@ -1,0 +1,31 @@
+name: permission_suite
+app: dde-file-manager
+module: permission
+setup:
+- action: session_start
+  command: dde-file-manager
+  wait: 3.0
+suites:
+- id: suite_permission_001_s1
+  name: 权限管理控件验证
+  description: ''
+  steps: []
+  assert_steps:
+  - action: assert_element
+    selector:
+      name: OwnerComboBox
+      role: combo box
+  - action: assert_element
+    selector:
+      name: GroupComboBox
+      role: combo box
+  - action: assert_element
+    selector:
+      name: OtherComboBox
+      role: combo box
+  - action: assert_element
+    selector:
+      name: ExecutableCheckBox
+      role: check box
+teardown:
+- action: session_stop
