@@ -5,6 +5,7 @@
 #include "dodeletefilesworker.h"
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/finallyutil.h>
 
 #include <QUrl>
 
@@ -109,6 +110,8 @@ bool DoDeleteFilesWorker::deleteFilesByFts()
         fmWarning() << "deleteFilesByFts: fts_open failed:" << strerror(errno);
         return false;
     }
+    // Flush any buffered fileDeleted signals on every exit path.
+    dfmbase::FinallyUtil atFinish([&] { flushFileDeletedBatch(); });
 
     // FTS only traverses local files (non-local sources are filtered above), so the
     // local inotify watcher already delivers delete notifications - no manual notify
@@ -203,7 +206,6 @@ bool DoDeleteFilesWorker::deleteFilesByFts()
     }
 
     fts_close(fts);
-    flushFileDeletedBatch();
 
     fmWarning() << "deleteFilesByFts: done -" << errorCount << "errors," << deleteFilesCount << "deleted";
 
@@ -235,6 +237,8 @@ void DoDeleteFilesWorker::batchEmitFileDeleted(const QUrl &url)
 bool DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice()
 {
     fmDebug() << "Deleting files on non-removable device - file count:" << allFilesList.count();
+    // Flush any buffered fileDeleted signals on every exit path.
+    dfmbase::FinallyUtil atFinish([&] { flushFileDeletedBatch(); });
 
     if (allFilesList.count() == 1 && isConvert) {
         auto info = InfoFactory::create<FileInfo>(allFilesList.first(), Global::CreateFileInfoType::kCreateFileInfoSync);
@@ -247,7 +251,6 @@ bool DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice()
     AbstractJobHandler::SupportAction action { AbstractJobHandler::SupportAction::kNoAction };
     for (QList<QUrl>::iterator it = --allFilesList.end(); it != --allFilesList.begin(); --it) {
         if (!stateCheck()) {
-            flushFileDeletedBatch();
             return false;
         }
         const QUrl &url = *it;
@@ -278,14 +281,11 @@ bool DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice()
         }
 
         if (action != AbstractJobHandler::SupportAction::kNoAction) {
-            flushFileDeletedBatch();
             return false;
         }
 
         batchEmitFileDeleted(url);
     }
-
-    flushFileDeletedBatch();
 
     fmInfo() << "Completed deletion on non-removable device - deleted count:" << deleteFilesCount;
     return true;
@@ -297,6 +297,8 @@ bool DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice()
 bool DoDeleteFilesWorker::deleteFilesOnOtherDevice()
 {
     fmDebug() << "Deleting files on other device - source count:" << sourceUrls.count();
+    // Flush any buffered fileDeleted signals on every exit path.
+    dfmbase::FinallyUtil atFinish([&] { flushFileDeletedBatch(); });
 
     bool ok = true;
     if (sourceUrls.count() == 1 && isConvert) {
@@ -316,7 +318,6 @@ bool DoDeleteFilesWorker::deleteFilesOnOtherDevice()
                 fmInfo() << "Skipped file due to info creation failure:" << url;
                 continue;
             }
-            flushFileDeletedBatch();
             return false;
         }
 
@@ -330,7 +331,6 @@ bool DoDeleteFilesWorker::deleteFilesOnOtherDevice()
 
         if (!ok) {
             fmWarning() << "Failed to delete item:" << url;
-            flushFileDeletedBatch();
             return false;
         }
 
@@ -339,8 +339,6 @@ bool DoDeleteFilesWorker::deleteFilesOnOtherDevice()
         batchEmitFileDeleted(url);
         fmDebug() << "Successfully deleted item:" << url;
     }
-
-    flushFileDeletedBatch();
 
     fmInfo() << "Completed deletion on other device - processed count:" << sourceUrls.count();
     return true;
