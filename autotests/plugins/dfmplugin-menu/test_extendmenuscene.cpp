@@ -60,7 +60,7 @@ protected:
 
     void stubFileInfoCreate()
     {
-        stub.set_lamda(&InfoFactory::create<FileInfo>,
+        stub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
                        [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
                            __DBG_STUB_INVOKE__
                            return QSharedPointer<FileInfo>(new FileInfo(url));
@@ -141,7 +141,7 @@ TEST_F(UT_ExtendMenuScene, Initialize_FileInfoCreationFails_ReturnsFalse)
     params[MenuParamKey::kSelectFiles] = QVariant::fromValue(QList<QUrl> { QUrl::fromLocalFile("/tmp/test.txt") });
     params[MenuParamKey::kIsEmptyArea] = false;
 
-    stub.set_lamda(&InfoFactory::create<FileInfo>,
+    stub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
                    [](const QUrl &, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return nullptr;

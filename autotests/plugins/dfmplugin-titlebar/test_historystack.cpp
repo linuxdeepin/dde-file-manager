@@ -93,7 +93,7 @@ TEST_F(HistoryStackTest, Append_AfterBackNavigation_ForwardHistoryCleared)
     stack->append(QUrl("file:///3"));
 
     // Stub for back navigation
-    stub.set_lamda(&InfoFactory::create<FileInfo>,
+    stub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
                    [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        FileInfoPointer info(new FileInfo(url));
@@ -135,7 +135,7 @@ TEST_F(HistoryStackTest, Back_WithHistory_ReturnsPreviousUrl)
     stack->append(url2);
 
     // Stub file existence
-    stub.set_lamda(&InfoFactory::create<FileInfo>,
+    stub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
                    [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        FileInfoPointer info(new FileInfo(url));
@@ -174,7 +174,7 @@ TEST_F(HistoryStackTest, Forward_AfterBack_ReturnsNextUrl)
     stack->append(url2);
 
     // Stub file existence
-    stub.set_lamda(&InfoFactory::create<FileInfo>,
+    stub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
                    [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        FileInfoPointer info(new FileInfo(url));
@@ -236,7 +236,7 @@ TEST_F(HistoryStackTest, IsLast_NotAtLast_ReturnsFalse)
     stack->append(QUrl("file:///test2"));
 
     // Stub for back
-    stub.set_lamda(&InfoFactory::create<FileInfo>,
+    stub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
                    [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        FileInfoPointer info(new FileInfo(url));
@@ -342,7 +342,7 @@ TEST_F(HistoryStackTest, BackIsExist_WithBackUrl_ReturnsTrue)
     stack->append(QUrl("file:///test1"));
     stack->append(QUrl("file:///test2"));
 
-    stub.set_lamda(&InfoFactory::create<FileInfo>,
+    stub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
                    [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        FileInfoPointer info(new FileInfo(url));
@@ -372,7 +372,7 @@ TEST_F(HistoryStackTest, ForwardIsExist_AfterBack_ReturnsTrue)
     stack->append(QUrl("file:///test1"));
     stack->append(QUrl("file:///test2"));
 
-    stub.set_lamda(&InfoFactory::create<FileInfo>,
+    stub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
                    [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        FileInfoPointer info(new FileInfo(url));
@@ -396,7 +396,7 @@ TEST_F(HistoryStackTest, Back_NonFileScheme_SkipsExistenceCheck)
     stack->append(url2);
 
     // Stub to return nullptr for non-file schemes
-    stub.set_lamda(&InfoFactory::create<FileInfo>,
+    stub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
                    [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        if (url.scheme() != "file")
@@ -420,7 +420,7 @@ TEST_F(HistoryStackTest, Back_NonExistentFile_SkipsToValidUrl)
     stack->append(url3);
 
     int callCount = 0;
-    stub.set_lamda(&InfoFactory::create<FileInfo>,
+    stub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
                    [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        FileInfoPointer info(new FileInfo(url));

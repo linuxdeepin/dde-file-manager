@@ -123,7 +123,7 @@ TEST_F(UT_ShareIterator, FileUrl_MakesShareUrlFromCurrentSharePath)
 
 TEST_F(UT_ShareIterator, FileInfo_ReturnsInfoFactoryResult)
 {
-    stub.set_lamda(InfoFactory::create<FileInfo>, [] { __DBG_STUB_INVOKE__ return nullptr; });
+    stub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>), [] { __DBG_STUB_INVOKE__ return nullptr; });
     it->d->currentInfo = { { ShareInfoKeys::kPath, "/hello/world" } };
     EXPECT_TRUE(it->fileInfo() == nullptr);
 }

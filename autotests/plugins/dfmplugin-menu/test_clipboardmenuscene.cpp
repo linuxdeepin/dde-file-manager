@@ -146,7 +146,7 @@ TEST_F(UT_ClipBoardMenuScene, Initialize_ValidFiles_ReturnsTrue)
     params[MenuParamKey::kSelectFiles] = QVariant::fromValue(urls);
     params[MenuParamKey::kIsEmptyArea] = false;
 
-    stub.set_lamda(&InfoFactory::create<FileInfo>,
+    stub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
                    [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return QSharedPointer<FileInfo>(new FileInfo(url));
@@ -165,7 +165,7 @@ TEST_F(UT_ClipBoardMenuScene, Initialize_FileInfoCreationFails_ReturnsFalse)
     params[MenuParamKey::kSelectFiles] = QVariant::fromValue(urls);
     params[MenuParamKey::kIsEmptyArea] = false;
 
-    stub.set_lamda(&InfoFactory::create<FileInfo>,
+    stub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
                    [](const QUrl &, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return nullptr;
@@ -246,7 +246,7 @@ TEST_F(UT_ClipBoardMenuScene, Create_NormalFile_AddsCutAndCopyActions)
     params[MenuParamKey::kSelectFiles] = QVariant::fromValue(urls);
     params[MenuParamKey::kIsEmptyArea] = false;
 
-    stub.set_lamda(&InfoFactory::create<FileInfo>,
+    stub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
                    [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return QSharedPointer<FileInfo>(new FileInfo(url));
@@ -296,7 +296,7 @@ TEST_F(UT_ClipBoardMenuScene, Create_SystemPathIncluded_SkipsCutAction)
     params[MenuParamKey::kIsDDEDesktopFileIncluded] = false;
     params[MenuParamKey::kIsFocusOnDDEDesktopFile] = false;
 
-    stub.set_lamda(&InfoFactory::create<FileInfo>,
+    stub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
                    [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return QSharedPointer<FileInfo>(new FileInfo(url));
@@ -342,7 +342,7 @@ TEST_F(UT_ClipBoardMenuScene, Create_FocusOnDDEDesktopFile_NoActions)
     params[MenuParamKey::kIsDDEDesktopFileIncluded] = true;
     params[MenuParamKey::kIsFocusOnDDEDesktopFile] = true;
 
-    stub.set_lamda(&InfoFactory::create<FileInfo>,
+    stub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
                    [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return QSharedPointer<FileInfo>(new FileInfo(url));
@@ -388,7 +388,7 @@ TEST_F(UT_ClipBoardMenuScene, UpdateState_EmptyArea_DisablesPasteWhenNoClipboard
         return ClipBoard::kUnknownAction;
     });
 
-    stub.set_lamda(&InfoFactory::create<FileInfo>,
+    stub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
                    [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return QSharedPointer<FileInfo>(new FileInfo(url));
@@ -438,7 +438,7 @@ TEST_F(UT_ClipBoardMenuScene, UpdateState_EmptyArea_DisablesPasteWhenNotWritable
         return ClipBoard::kCopyAction;
     });
 
-    stub.set_lamda(&InfoFactory::create<FileInfo>,
+    stub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
                    [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return QSharedPointer<FileInfo>(new FileInfo(url));
@@ -487,7 +487,7 @@ TEST_F(UT_ClipBoardMenuScene, UpdateState_EmptyArea_CopyAction_EnablesPaste)
         return ClipBoard::kCopyAction;
     });
 
-    stub.set_lamda(&InfoFactory::create<FileInfo>,
+    stub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
                    [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return QSharedPointer<FileInfo>(new FileInfo(url));
@@ -538,7 +538,7 @@ TEST_F(UT_ClipBoardMenuScene, UpdateState_EmptyArea_ImageInClipboard_EnablesPast
         return ClipBoard::kUnknownAction;
     });
 
-    stub.set_lamda(&InfoFactory::create<FileInfo>,
+    stub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
                    [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return QSharedPointer<FileInfo>(new FileInfo(url));
@@ -581,7 +581,7 @@ TEST_F(UT_ClipBoardMenuScene, UpdateState_NotWritableDir_DisablesCut)
     params[MenuParamKey::kSelectFiles] = QVariant::fromValue(urls);
     params[MenuParamKey::kIsEmptyArea] = false;
 
-    stub.set_lamda(&InfoFactory::create<FileInfo>,
+    stub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
                    [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return QSharedPointer<FileInfo>(new FileInfo(url));
@@ -625,7 +625,7 @@ TEST_F(UT_ClipBoardMenuScene, UpdateState_WritableDir_KeepsCutEnabled)
     params[MenuParamKey::kSelectFiles] = QVariant::fromValue(urls);
     params[MenuParamKey::kIsEmptyArea] = false;
 
-    stub.set_lamda(&InfoFactory::create<FileInfo>,
+    stub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
                    [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return QSharedPointer<FileInfo>(new FileInfo(url));
@@ -728,7 +728,7 @@ TEST_F(UT_ClipBoardMenuScene, Triggered_CutAction_PublishesWriteUrlsEvent)
     params[MenuParamKey::kSelectFiles] = QVariant::fromValue(urls);
     params[MenuParamKey::kIsEmptyArea] = false;
 
-    stub.set_lamda(&InfoFactory::create<FileInfo>,
+    stub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
                    [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return QSharedPointer<FileInfo>(new FileInfo(url));
@@ -801,7 +801,7 @@ TEST_F(UT_ClipBoardMenuScene, Triggered_TreeSelectFiles_UsesTreeUrls)
     params[MenuParamKey::kTreeSelectFiles] = QVariant::fromValue(treeUrls);
     params[MenuParamKey::kIsEmptyArea] = false;
 
-    stub.set_lamda(&InfoFactory::create<FileInfo>,
+    stub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
                    [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return QSharedPointer<FileInfo>(new FileInfo(url));
@@ -977,7 +977,7 @@ TEST_F(UT_ClipBoardMenuScene, Initialize_TreeSelectFiles_StoredInPrivate)
     params[MenuParamKey::kTreeSelectFiles] = QVariant::fromValue(treeUrls);
     params[MenuParamKey::kIsEmptyArea] = true;
 
-    stub.set_lamda(&InfoFactory::create<FileInfo>,
+    stub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
                    [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return QSharedPointer<FileInfo>(new FileInfo(url));
