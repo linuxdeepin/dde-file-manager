@@ -49,12 +49,12 @@ protected:
 
 TEST_F(TaskManagerTest, EnqueueCompensationTaskEmptyPathsReturnsFalse)
 {
-    EXPECT_FALSE(mgr->enqueueCompensationTask({}, false));
+    EXPECT_FALSE(mgr->enqueueCompensationTask({}));
 }
 
 TEST_F(TaskManagerTest, EnqueueCompensationTaskWithPathsReturnsTrue)
 {
-    EXPECT_TRUE(mgr->enqueueCompensationTask({"/tmp/a.txt"}, false));
+    EXPECT_TRUE(mgr->enqueueCompensationTask({"/tmp/a.txt"}));
     EXPECT_TRUE(mgr->hasQueuedTasks());
 }
 

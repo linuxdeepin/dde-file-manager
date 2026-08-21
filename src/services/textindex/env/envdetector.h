@@ -43,7 +43,8 @@ class EnvDetector : public QObject
 {
     Q_OBJECT
 public:
-    explicit EnvDetector(QObject *parent = nullptr);
+    static EnvDetector &instance();
+
     ~EnvDetector() override;
 
     void start();
@@ -58,6 +59,8 @@ Q_SIGNALS:
     void envStateChanged(const EnvState &state);
 
 private:
+    explicit EnvDetector(QObject *parent = nullptr);
+
     void recomputeState();
 
     PowerMonitor *m_powerMonitor { nullptr };

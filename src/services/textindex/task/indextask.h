@@ -30,45 +30,58 @@ public:
 
     enum class Status {
         NotStarted,
+        Ready,
         Running,
+        Paused,
+        Blocked,
         Finished,
         Failed
     };
     Q_ENUM(Status)
+
+    enum class Grade {
+        None,     // 未分级
+        Light,    // 轻量增量
+        Medium,   // 中量增量
+        Heavy,    // 重型（首次建库/完整重建/补全未完成Create）
+        Manual    // 手动更新（绕过环境门槛）
+    };
+    Q_ENUM(Grade)
 
     explicit IndexTask(Type type, const QString &path, TaskHandler handler, QObject *parent = nullptr);
     ~IndexTask();
 
     void start();
     void stop();
+    void requestPause();
     bool isRunning() const;
 
     QString taskPath() const;
     Type taskType() const;
     Status status() const;
+    Grade grade() const;
+    void setGrade(Grade grade);
 
     bool isIndexCorrupted() const;
     void setIndexCorrupted(bool corrupted);
 
-    bool silent() const;
-    void setSilent(bool newSilent);
-
 Q_SIGNALS:
     void progressChanged(SERVICETEXTINDEX_NAMESPACE::IndexTask::Type type, qint64 count, qint64 total);
     void finished(SERVICETEXTINDEX_NAMESPACE::IndexTask::Type type, SERVICETEXTINDEX_NAMESPACE::HandlerResult result);
+    void paused(SERVICETEXTINDEX_NAMESPACE::IndexTask::Type type, SERVICETEXTINDEX_NAMESPACE::HandlerResult result);
 
 private:
-    void throttleCpuUsage();
+    void applyResourcePolicy();
     void doTask();
     void onProgressChanged(qint64 count, qint64 total);
 
     Type m_type;
     QString m_path;
     Status m_status { Status::NotStarted };
+    Grade m_grade { Grade::None };
     TaskState m_state;
     TaskHandler m_handler;
     bool m_indexCorrupted { false };
-    bool m_silent { false };
 };
 
 SERVICETEXTINDEX_END_NAMESPACE

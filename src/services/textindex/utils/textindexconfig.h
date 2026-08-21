@@ -45,6 +45,11 @@ public:
     int cpuLoadThresholdPercent() const;
     int diskBusyThresholdPercent() const;
 
+    // Strategy optimization – task grading thresholds
+    int lightIncrementFileCountThreshold() const;
+    int lightIncrementOcrFileCountThreshold() const;
+    qint64 lightIncrementSizeThresholdMB() const;
+
     // Call this if you need to manually reload all configurations
     Q_INVOKABLE void reloadConfig();
 
@@ -81,6 +86,10 @@ private:
     int m_cpuLoadThresholdPercent { 30 };
     int m_diskBusyThresholdPercent { 50 };
 
+    int m_lightIncrementFileCountThreshold { 100 };
+    int m_lightIncrementOcrFileCountThreshold { 30 };
+    qint64 m_lightIncrementSizeThresholdMB { 200 };
+
     mutable QMutex m_mutex;
 
     // Default values (matching your JSON for robustness)
@@ -99,6 +108,9 @@ private:
     static const int DEFAULT_LOAD_SAMPLE_INTERVAL_SECONDS = 5;
     static const int DEFAULT_CPU_LOAD_THRESHOLD_PERCENT = 30;
     static const int DEFAULT_DISK_BUSY_THRESHOLD_PERCENT = 50;
+    static const int DEFAULT_LIGHT_INCREMENT_FILE_COUNT_THRESHOLD = 100;
+    static const int DEFAULT_LIGHT_INCREMENT_OCR_FILE_COUNT_THRESHOLD = 30;
+    static const qint64 DEFAULT_LIGHT_INCREMENT_SIZE_THRESHOLD_MB = 200;
     // Default QStringLists need to be initialized in the .cpp or constructor
     // For simplicity here, we'll define them directly in loadAllConfigs logic
 };

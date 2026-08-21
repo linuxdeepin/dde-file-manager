@@ -16,7 +16,7 @@ SERVICETEXTINDEX_BEGIN_NAMESPACE
 class TaskState
 {
 public:
-    TaskState() : m_running(false) { }
+    TaskState() : m_running(false), m_pauseRequested(false) { }
 
     bool isRunning() const
     {
@@ -33,12 +33,24 @@ public:
         m_running.storeRelease(false);
     }
 
-    bool isSilent() const { return m_silent; }
-    void setSilent(bool silent) { m_silent = silent; }
+    void requestPause()
+    {
+        m_pauseRequested.storeRelease(true);
+    }
+
+    bool isPauseRequested() const
+    {
+        return m_pauseRequested.loadAcquire();
+    }
+
+    void clearPauseRequest()
+    {
+        m_pauseRequested.storeRelease(false);
+    }
 
 private:
     QAtomicInteger<bool> m_running;
-    bool m_silent { false };
+    QAtomicInteger<bool> m_pauseRequested;
 };
 
 SERVICETEXTINDEX_END_NAMESPACE

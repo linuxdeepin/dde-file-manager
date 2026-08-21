@@ -9,6 +9,12 @@
 
 SERVICETEXTINDEX_BEGIN_NAMESPACE
 
+EnvDetector &EnvDetector::instance()
+{
+    static EnvDetector self;
+    return self;
+}
+
 EnvDetector::EnvDetector(QObject *parent)
     : QObject(parent)
 {

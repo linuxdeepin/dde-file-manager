@@ -5,6 +5,9 @@
 #include "taskmanager.h"
 #include "taskqueueutils.h"
 #include "utils/indexutility.h"
+#include "utils/textindexconfig.h"
+#include "utils/systemdcpuutils.h"
+#include "env/envdetector.h"
 
 #include <QMetaType>
 #include <QJsonDocument>
@@ -12,6 +15,7 @@
 #include <QFile>
 #include <QDir>
 #include <QDateTime>
+#include <QFileInfo>
 
 SERVICETEXTINDEX_USE_NAMESPACE
 
@@ -30,13 +34,13 @@ void registerMetaTypes()
     }
 }
 
-TaskQueueItem createCompensationTaskItem(const QStringList &paths, bool silent)
+TaskQueueItem createCompensationTaskItem(const QStringList &paths)
 {
     TaskQueueItem item;
     item.type = IndexTask::Type::UpdateFileList;
+    item.grade = IndexTask::Grade::Light;
     item.path = paths.isEmpty() ? QString() : paths.first();
     item.fileList = paths;
-    item.silent = silent;
     return item;
 }
 
@@ -48,6 +52,10 @@ TaskManager::TaskManager(const IndexContext *context, QObject *parent)
 {
     fmInfo() << "[TaskManager] Initializing TaskManager instance";
     registerMetaTypes();
+
+    connect(&EnvDetector::instance(), &EnvDetector::envStateChanged,
+            this, &TaskManager::onEnvStateChanged);
+
     fmInfo() << "[TaskManager] TaskManager initialization completed";
 }
 
@@ -81,21 +89,28 @@ TaskManager::~TaskManager()
 }
 
 // 单路径版本，调用多路径版本保持兼容性
-bool TaskManager::startTask(IndexTask::Type type, const QString &path, bool silent)
+bool TaskManager::startTask(IndexTask::Type type, const QString &path)
 {
     fmDebug() << "[TaskManager::startTask] Single path task request - type:" << static_cast<int>(type)
-              << "path:" << path << "silent:" << silent;
-    return startTask(type, QStringList { path }, silent);
+              << "path:" << path;
+    return startTask(type, QStringList { path });
 }
 
 // 多路径版本的startTask实现
-bool TaskManager::startTask(IndexTask::Type type, const QStringList &pathList, bool silent)
+bool TaskManager::startTask(IndexTask::Type type, const QStringList &pathList,
+                            IndexTask::Grade grade, bool forceBypass)
 {
     Q_ASSERT_X(type == IndexTask::Type::Create || type == IndexTask::Type::Update,
                "Type error", "Only create and update supported");
 
     fmInfo() << "[TaskManager::startTask] Multi-path task request - type:" << static_cast<int>(type)
-             << "paths:" << pathList.size() << "silent:" << silent;
+             << "paths:" << pathList.size()
+             << "grade:" << static_cast<int>(grade) << "forceBypass:" << forceBypass;
+
+    // 如果 grade 未指定，自动判定
+    if (grade == IndexTask::Grade::None) {
+        grade = (type == IndexTask::Type::Create) ? IndexTask::Grade::Heavy : gradeUpdateTask();
+    }
 
     // 检查路径列表是否为空
     if (pathList.isEmpty()) {
@@ -139,9 +154,10 @@ bool TaskManager::startTask(IndexTask::Type type, const QStringList &pathList, b
         // 将任务加入队列
         TaskQueueItem item;
         item.type = type;
+        item.grade = grade;
+        item.forceBypass = forceBypass;
         item.path = primaryPath;   // 保留主路径用于兼容现有代码
         item.pathList = pathList;   // 保存所有路径
-        item.silent = silent;
         taskQueue.enqueue(item);
 
         fmInfo() << "[TaskManager::startTask] Task queued successfully, will execute after current task stops";
@@ -151,7 +167,7 @@ bool TaskManager::startTask(IndexTask::Type type, const QStringList &pathList, b
 
     // 正常启动任务流程
     fmInfo() << "[TaskManager::startTask] Starting new task immediately - paths:" << pathList.size()
-             << "primary:" << primaryPath << "type:" << static_cast<int>(type) << "silent:" << silent;
+             << "primary:" << primaryPath << "type:" << static_cast<int>(type);
 
     // status文件存储了修改时间，清除后外部无法获取时间，外部利用该特性判断索引状态
     if (type == IndexTask::Type::Create) {
@@ -226,11 +242,12 @@ bool TaskManager::startTask(IndexTask::Type type, const QStringList &pathList, b
         return finalResult;
     });
 
-    currentTask->setSilent(silent);
+    currentTask->setGrade(grade);
     currentTask->moveToThread(&workerThread);
 
     connect(currentTask, &IndexTask::progressChanged, this, &TaskManager::onTaskProgress, Qt::QueuedConnection);
     connect(currentTask, &IndexTask::finished, this, &TaskManager::onTaskFinished, Qt::QueuedConnection);
+    connect(currentTask, &IndexTask::paused, this, &TaskManager::onTaskPaused, Qt::QueuedConnection);
     connect(this, &TaskManager::startTaskInThread, currentTask, &IndexTask::start, Qt::QueuedConnection);
     workerThread.start();
 
@@ -244,15 +261,20 @@ bool TaskManager::startTask(IndexTask::Type type, const QStringList &pathList, b
     return true;
 }
 
-bool TaskManager::startFileListTask(IndexTask::Type type, const QStringList &fileList, bool silent)
+bool TaskManager::startFileListTask(IndexTask::Type type, const QStringList &fileList)
 {
     fmInfo() << "[TaskManager::startFileListTask] File list task request - type:" << static_cast<int>(type)
-             << "files:" << fileList.size() << "silent:" << silent;
+             << "files:" << fileList.size();
 
     if (fileList.isEmpty()) {
         fmWarning() << "[TaskManager::startFileListTask] Cannot start task - file list is empty";
         return false;
     }
+
+    // RemoveFileList 始终视为轻量任务，与大小和总数无关
+    const IndexTask::Grade grade = (type == IndexTask::Type::RemoveFileList)
+            ? IndexTask::Grade::Light
+            : gradeFileListTask(fileList);
 
     // 如果当前有任务在运行，将新任务加入队列
     if (hasRunningTask() || currentTask) {
@@ -262,18 +284,18 @@ bool TaskManager::startFileListTask(IndexTask::Type type, const QStringList &fil
         // 将任务加入队列
         TaskQueueItem item;
         item.type = type;
+        item.grade = grade;
         item.path = QString("FileList-%1").arg(QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss"));
         item.fileList = fileList;
-        item.silent = silent;
         taskQueue.enqueue(item);
 
-        fmDebug() << "[TaskManager::startFileListTask] File list task queued successfully";
+        fmDebug() << "[TaskManager::startFileListTask] File list task queued successfully with grade:" << static_cast<int>(item.grade);
         return true;
     }
 
     // 正常启动任务流程
     fmInfo() << "[TaskManager::startFileListTask] Starting file list task immediately - files:" << fileList.size()
-             << "type:" << static_cast<int>(type) << "silent:" << silent;
+             << "type:" << static_cast<int>(type);
 
     // 获取对应的任务处理器
     TaskHandler handler;
@@ -296,11 +318,12 @@ bool TaskManager::startFileListTask(IndexTask::Type type, const QStringList &fil
 
     Q_ASSERT(!currentTask);
     currentTask = new IndexTask(type, pathId, handler);
-    currentTask->setSilent(silent);
+    currentTask->setGrade(grade);
     currentTask->moveToThread(&workerThread);
 
     connect(currentTask, &IndexTask::progressChanged, this, &TaskManager::onTaskProgress, Qt::QueuedConnection);
     connect(currentTask, &IndexTask::finished, this, &TaskManager::onTaskFinished, Qt::QueuedConnection);
+    connect(currentTask, &IndexTask::paused, this, &TaskManager::onTaskPaused, Qt::QueuedConnection);
     connect(this, &TaskManager::startTaskInThread, currentTask, &IndexTask::start, Qt::QueuedConnection);
     workerThread.start();
 
@@ -314,10 +337,9 @@ bool TaskManager::startFileListTask(IndexTask::Type type, const QStringList &fil
     return true;
 }
 
-bool TaskManager::startFileMoveTask(const QHash<QString, QString> &movedFiles, bool silent)
+bool TaskManager::startFileMoveTask(const QHash<QString, QString> &movedFiles)
 {
-    fmInfo() << "[TaskManager::startFileMoveTask] File move task request - moves:" << movedFiles.size()
-             << "silent:" << silent;
+    fmInfo() << "[TaskManager::startFileMoveTask] File move task request - moves:" << movedFiles.size();
 
     if (movedFiles.isEmpty()) {
         fmWarning() << "[TaskManager::startFileMoveTask] Cannot start task - moved files list is empty";
@@ -334,19 +356,18 @@ bool TaskManager::startFileMoveTask(const QHash<QString, QString> &movedFiles, b
         // 将任务加入队列
         TaskQueueItem item;
         item.type = IndexTask::Type::MoveFileList;
+        item.grade = IndexTask::Grade::Light;
         item.path = QString("MoveList-%1").arg(QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss"));
         item.movedFiles = movedFiles;
-        item.silent = silent;
         taskQueue.enqueue(item);
-        enqueueCompensationTask(compensationPaths, silent);
+        enqueueCompensationTask(compensationPaths);
 
         fmDebug() << "[TaskManager::startFileMoveTask] File move task queued successfully";
         return true;
     }
 
     // 正常启动任务流程
-    fmInfo() << "[TaskManager::startFileMoveTask] Starting file move task immediately - moves:" << movedFiles.size()
-             << "silent:" << silent;
+    fmInfo() << "[TaskManager::startFileMoveTask] Starting file move task immediately - moves:" << movedFiles.size();
 
     // 获取对应的任务处理器
     TaskHandler handler = TaskHandlers::MoveFileListHandler(*m_context, movedFiles);
@@ -359,11 +380,12 @@ bool TaskManager::startFileMoveTask(const QHash<QString, QString> &movedFiles, b
 
     Q_ASSERT(!currentTask);
     currentTask = new IndexTask(IndexTask::Type::MoveFileList, pathId, handler);
-    currentTask->setSilent(silent);
+    currentTask->setGrade(IndexTask::Grade::Light);
     currentTask->moveToThread(&workerThread);
 
     connect(currentTask, &IndexTask::progressChanged, this, &TaskManager::onTaskProgress, Qt::QueuedConnection);
     connect(currentTask, &IndexTask::finished, this, &TaskManager::onTaskFinished, Qt::QueuedConnection);
+    connect(currentTask, &IndexTask::paused, this, &TaskManager::onTaskPaused, Qt::QueuedConnection);
     connect(this, &TaskManager::startTaskInThread, currentTask, &IndexTask::start, Qt::QueuedConnection);
     workerThread.start();
 
@@ -375,7 +397,7 @@ bool TaskManager::startFileMoveTask(const QHash<QString, QString> &movedFiles, b
     emit startTaskInThread();
     fmDebug() << "[TaskManager::startFileMoveTask] File move task started successfully in worker thread";
 
-    enqueueCompensationTask(compensationPaths, silent);
+    enqueueCompensationTask(compensationPaths);
     return true;
 }
 
@@ -426,6 +448,210 @@ void TaskManager::onTaskProgress(IndexTask::Type type, qint64 count, qint64 tota
     emit taskProgressChanged(typeToString(type), currentTask->taskPath(), count, total);
 }
 
+void TaskManager::onTaskPaused(IndexTask::Type type, HandlerResult result)
+{
+    if (!currentTask) {
+        fmWarning() << "[TaskManager::onTaskPaused] Received paused signal but no current task exists";
+        return;
+    }
+
+    const QString taskPath = currentTask->taskPath();
+    const IndexTask::Grade grade = currentTask->grade();
+    fmInfo() << "[TaskManager::onTaskPaused] Task paused - type:" << static_cast<int>(type)
+             << "path:" << taskPath << "grade:" << static_cast<int>(grade);
+
+    // Save remaining work to queue
+    TaskQueueItem item;
+    item.grade = grade;
+
+    if (!result.remainingFiles.isEmpty()) {
+        // File list task: save remaining files
+        item.type = IndexTask::Type::UpdateFileList;
+        item.fileList = result.remainingFiles;
+        item.path = QString("Resumed-%1").arg(QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss"));
+    } else if (grade == IndexTask::Grade::Heavy) {
+        // Heavy task: resume as Update (skip already indexed files)
+        item.type = IndexTask::Type::Update;
+        item.path = taskPath;
+        item.pathList = QStringList { taskPath };
+    } else {
+        // Light/Medium full-scan task: also resume as Update
+        item.type = IndexTask::Type::Update;
+        item.path = taskPath;
+        item.pathList = QStringList { taskPath };
+    }
+
+    taskQueue.enqueue(item);
+
+    resetCpuQuota();
+    cleanupTask();
+    emit indexStatusChanged(currentIndexStatus(), gradeToString(grade));
+
+    // Try to schedule the next runnable task
+    schedule();
+}
+
+void TaskManager::onEnvStateChanged(const EnvState &env)
+{
+    fmInfo() << "[TaskManager::onEnvStateChanged] Environment changed -"
+             << "battery:" << env.onBattery << "powerSave:" << env.powerSaveMode << "idle:" << env.idle;
+
+    // 1. Check if current running task needs to be paused
+    if (hasRunningTask() && currentTask) {
+        if (!canRun(currentTask->grade(), false, env)) {
+            fmInfo() << "[TaskManager::onEnvStateChanged] Current task can no longer run, pausing";
+            pauseCurrentTask();
+            return;   // schedule() will be called from onTaskPaused
+        }
+    }
+
+    // 2. Try to schedule next task if worker is idle
+    if (!hasRunningTask()) {
+        schedule();
+    }
+}
+
+bool TaskManager::canRun(IndexTask::Grade grade, bool forceBypass, const EnvState &env) const
+{
+    if (forceBypass || grade == IndexTask::Grade::Manual)
+        return true;
+
+    switch (grade) {
+    case IndexTask::Grade::Light:
+        return !env.powerSaveMode;
+    case IndexTask::Grade::Medium:
+    case IndexTask::Grade::Heavy:
+        return !env.onBattery && !env.powerSaveMode && env.idle;
+    default:
+        return false;
+    }
+}
+
+bool TaskManager::shouldPreempt(IndexTask::Grade newGrade, IndexTask::Grade currentGrade) const
+{
+    // Manual can preempt everything
+    if (newGrade == IndexTask::Grade::Manual)
+        return true;
+    // Heavy can preempt Light and Medium
+    if (newGrade == IndexTask::Grade::Heavy && currentGrade <= IndexTask::Grade::Medium)
+        return true;
+    return false;
+}
+
+void TaskManager::pauseCurrentTask()
+{
+    if (currentTask) {
+        fmInfo() << "[TaskManager::pauseCurrentTask] Requesting pause for current task - type:"
+                 << static_cast<int>(currentTask->taskType()) << "path:" << currentTask->taskPath();
+        currentTask->requestPause();
+    }
+}
+
+void TaskManager::resetCpuQuota()
+{
+    QString msg;
+    if (!SystemdCpuUtils::resetCpuQuota(Defines::kTextIndexServiceName, &msg)) {
+        fmWarning() << "[TaskManager::resetCpuQuota] Failed to reset CPU quota:" << msg;
+    }
+}
+
+void TaskManager::schedule()
+{
+    if (hasRunningTask() || currentTask) {
+        fmDebug() << "[TaskManager::schedule] Worker busy, skipping schedule";
+        return;
+    }
+
+    if (taskQueue.isEmpty()) {
+        fmDebug() << "[TaskManager::schedule] No tasks in queue";
+        return;
+    }
+
+    const EnvState env = EnvDetector::instance().currentState();
+
+    int bestIdx = -1;
+    int bestPri = -1;
+    for (int i = 0; i < taskQueue.size(); ++i) {
+        const auto &item = taskQueue[i];
+        if (canRun(item.grade, item.forceBypass, env)) {
+            int pri = gradePriority(item.grade);
+            if (pri > bestPri) {
+                bestPri = pri;
+                bestIdx = i;
+            }
+        }
+    }
+
+    if (bestIdx < 0) {
+        fmInfo() << "[TaskManager::schedule] No runnable tasks in queue (blocked by environment)";
+        return;
+    }
+
+    TaskQueueItem item = taskQueue.takeAt(bestIdx);
+    fmInfo() << "[TaskManager::schedule] Scheduling task - type:" << static_cast<int>(item.type)
+             << "grade:" << static_cast<int>(item.grade) << "remaining:" << taskQueue.count();
+    startQueuedTask(item);
+}
+
+void TaskManager::startQueuedTask(const TaskQueueItem &item)
+{
+    if (item.type == IndexTask::Type::CreateFileList
+        || item.type == IndexTask::Type::UpdateFileList
+        || item.type == IndexTask::Type::RemoveFileList) {
+        startFileListTask(item.type, item.fileList);
+    } else if (item.type == IndexTask::Type::MoveFileList) {
+        startFileMoveTask(item.movedFiles);
+    } else if (!item.pathList.isEmpty()) {
+        startTask(item.type, item.pathList, item.grade, item.forceBypass);
+    } else {
+        startTask(item.type, QStringList { item.path }, item.grade, item.forceBypass);
+    }
+}
+
+QString TaskManager::gradeToString(IndexTask::Grade grade)
+{
+    switch (grade) {
+    case IndexTask::Grade::None:   return "none";
+    case IndexTask::Grade::Light:  return "light";
+    case IndexTask::Grade::Medium: return "medium";
+    case IndexTask::Grade::Heavy:  return "heavy";
+    case IndexTask::Grade::Manual: return "manual";
+    default: return "unknown";
+    }
+}
+
+int TaskManager::gradePriority(IndexTask::Grade grade)
+{
+    switch (grade) {
+    case IndexTask::Grade::Manual: return 4;
+    case IndexTask::Grade::Heavy:  return 3;
+    case IndexTask::Grade::Medium: return 2;
+    case IndexTask::Grade::Light:  return 1;
+    default: return 0;
+    }
+}
+
+std::optional<IndexTask::Grade> TaskManager::currentTaskGrade() const
+{
+    if (!hasRunningTask())
+        return std::nullopt;
+    return currentTask->grade();
+}
+
+QString TaskManager::currentIndexStatus() const
+{
+    if (!hasRunningTask() && !currentTask) {
+        if (!taskQueue.isEmpty())
+            return "Blocked";
+        return "Idle";
+    }
+
+    if (hasRunningTask() && currentTask)
+        return "Running";
+
+    return "Idle";
+}
+
 void TaskManager::onTaskFinished(IndexTask::Type type, HandlerResult result)
 {
     if (!currentTask) {
@@ -448,12 +674,13 @@ void TaskManager::onTaskFinished(IndexTask::Type type, HandlerResult result)
     updateIndexStatusOnSuccess(type, result);
 
     emit taskFinished(typeToString(type), taskPath, result.success);
+    resetCpuQuota();
     cleanupTask();
 
-    if (startNextTask()) {
-        fmInfo() << "[TaskManager::onTaskFinished] Started next queued task";
-    } else {
-        fmDebug() << "[TaskManager::onTaskFinished] No more tasks in queue";
+    schedule();
+
+    if (!hasRunningTask()) {
+        fmDebug() << "[TaskManager::onTaskFinished] No more runnable tasks";
         finalizeIndexState(type, result);
     }
 }
@@ -609,57 +836,51 @@ void TaskManager::cleanupTask()
     }
 }
 
-bool TaskManager::startNextTask()
-{
-    // 检查队列是否为空
-    if (taskQueue.isEmpty()) {
-        fmDebug() << "[TaskManager::startNextTask] No tasks in queue";
-        return false;
-    }
-
-    // 从队列中取出下一个任务
-    TaskQueueItem nextTask = taskQueue.dequeue();
-
-    fmInfo() << "[TaskManager::startNextTask] Starting next queued task - type:" << static_cast<int>(nextTask.type)
-             << "remaining in queue:" << taskQueue.count();
-
-    // 根据任务类型启动相应的任务
-    if (nextTask.type == IndexTask::Type::CreateFileList
-        || nextTask.type == IndexTask::Type::UpdateFileList
-        || nextTask.type == IndexTask::Type::RemoveFileList) {
-        // 启动文件列表任务
-        fmInfo() << "[TaskManager::startNextTask] Starting queued file list task - type:" << static_cast<int>(nextTask.type)
-                 << "files:" << nextTask.fileList.size();
-        return startFileListTask(nextTask.type, nextTask.fileList, nextTask.silent);
-    } else if (nextTask.type == IndexTask::Type::MoveFileList) {
-        // 启动文件移动任务
-        fmInfo() << "[TaskManager::startNextTask] Starting queued file move task - moves:" << nextTask.movedFiles.size();
-        return startFileMoveTask(nextTask.movedFiles, nextTask.silent);
-    } else if (!nextTask.pathList.isEmpty()) {
-        // 启动多路径任务
-        fmInfo() << "[TaskManager::startNextTask] Starting queued multi-path task - type:" << static_cast<int>(nextTask.type)
-                 << "paths:" << nextTask.pathList.size();
-        return startTask(nextTask.type, nextTask.pathList, nextTask.silent);
-    } else {
-        // 启动单路径任务
-        fmInfo() << "[TaskManager::startNextTask] Starting queued single-path task - type:" << static_cast<int>(nextTask.type)
-                 << "path:" << nextTask.path;
-        return startTask(nextTask.type, nextTask.path, nextTask.silent);
-    }
-}
-
 bool TaskManager::isFullScanTask(IndexTask::Type type) const
 {
     return type == IndexTask::Type::Create || type == IndexTask::Type::Update;
 }
 
-bool TaskManager::enqueueCompensationTask(const QStringList &paths, bool silent)
+IndexTask::Grade TaskManager::gradeFileListTask(const QStringList &fileList) const
+{
+    auto &config = TextIndexConfig::instance();
+    int countThreshold = isOcrProfile()
+            ? config.lightIncrementOcrFileCountThreshold()
+            : config.lightIncrementFileCountThreshold();
+
+    if (fileList.size() > countThreshold)
+        return IndexTask::Grade::Medium;
+
+    qint64 sizeThreshold = config.lightIncrementSizeThresholdMB() * 1024 * 1024;
+    qint64 totalSize = 0;
+    for (const auto &filePath : fileList) {
+        QFileInfo info(filePath);
+        totalSize += info.size();
+        if (totalSize > sizeThreshold)
+            return IndexTask::Grade::Medium;
+    }
+    return IndexTask::Grade::Light;
+}
+
+IndexTask::Grade TaskManager::gradeUpdateTask() const
+{
+    if (m_context && m_context->stateStore() && m_context->stateStore()->isCreateInProgress())
+        return IndexTask::Grade::Heavy;
+    return IndexTask::Grade::Light;
+}
+
+bool TaskManager::isOcrProfile() const
+{
+    return m_context && m_context->profile().type() == IndexProfile::Type::Ocr;
+}
+
+bool TaskManager::enqueueCompensationTask(const QStringList &paths)
 {
     if (paths.isEmpty()) {
         return false;
     }
 
-    taskQueue.enqueue(createCompensationTaskItem(paths, silent));
+    taskQueue.enqueue(createCompensationTaskItem(paths));
     fmInfo() << "[TaskManager::enqueueCompensationTask] Queued directory compensation update for"
              << paths.size() << "path(s), primary:" << paths.first();
     return true;

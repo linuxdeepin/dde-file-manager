@@ -22,9 +22,11 @@ struct HandlerResult
 {
     bool success { false };
     bool interrupted { false };
+    bool paused { false };
     bool useAnything { false };
     bool fatal { false };
     bool indexChanged { false };
+    QStringList remainingFiles;
 };
 
 using TaskHandler = std::function<HandlerResult(const QString &path, TaskState &state)>;

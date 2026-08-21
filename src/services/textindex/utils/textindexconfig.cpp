@@ -224,6 +224,26 @@ void TextIndexConfig::loadAllConfigs()
     if (m_diskBusyThresholdPercent < 1 || m_diskBusyThresholdPercent > 100)
         m_diskBusyThresholdPercent = DEFAULT_DISK_BUSY_THRESHOLD_PERCENT;
 
+    // --- Strategy optimization config keys (task grading thresholds) ---
+
+    m_lightIncrementFileCountThreshold = m_dconfigManager->value(
+            Defines::DConf::kTextIndexSchema, Defines::DConf::kLightIncrementFileCountThreshold,
+            DEFAULT_LIGHT_INCREMENT_FILE_COUNT_THRESHOLD).toInt();
+    if (m_lightIncrementFileCountThreshold < 1 || m_lightIncrementFileCountThreshold > 100000)
+        m_lightIncrementFileCountThreshold = DEFAULT_LIGHT_INCREMENT_FILE_COUNT_THRESHOLD;
+
+    m_lightIncrementOcrFileCountThreshold = m_dconfigManager->value(
+            Defines::DConf::kTextIndexSchema, Defines::DConf::kLightIncrementOcrFileCountThreshold,
+            DEFAULT_LIGHT_INCREMENT_OCR_FILE_COUNT_THRESHOLD).toInt();
+    if (m_lightIncrementOcrFileCountThreshold < 1 || m_lightIncrementOcrFileCountThreshold > 100000)
+        m_lightIncrementOcrFileCountThreshold = DEFAULT_LIGHT_INCREMENT_OCR_FILE_COUNT_THRESHOLD;
+
+    m_lightIncrementSizeThresholdMB = m_dconfigManager->value(
+            Defines::DConf::kTextIndexSchema, Defines::DConf::kLightIncrementSizeThresholdMB,
+            DEFAULT_LIGHT_INCREMENT_SIZE_THRESHOLD_MB).toLongLong();
+    if (m_lightIncrementSizeThresholdMB < 1 || m_lightIncrementSizeThresholdMB > 10240)
+        m_lightIncrementSizeThresholdMB = DEFAULT_LIGHT_INCREMENT_SIZE_THRESHOLD_MB;
+
     fmDebug() << "TextIndexConfig: Text index configurations loaded successfully";
     // You might want to print the loaded values here for debugging if needed
     // fmDebug() << "AutoIndexUpdateInterval:" << m_autoIndexUpdateInterval;
@@ -343,6 +363,24 @@ int TextIndexConfig::diskBusyThresholdPercent() const
 {
     QMutexLocker locker(&m_mutex);
     return m_diskBusyThresholdPercent;
+}
+
+int TextIndexConfig::lightIncrementFileCountThreshold() const
+{
+    QMutexLocker locker(&m_mutex);
+    return m_lightIncrementFileCountThreshold;
+}
+
+int TextIndexConfig::lightIncrementOcrFileCountThreshold() const
+{
+    QMutexLocker locker(&m_mutex);
+    return m_lightIncrementOcrFileCountThreshold;
+}
+
+qint64 TextIndexConfig::lightIncrementSizeThresholdMB() const
+{
+    QMutexLocker locker(&m_mutex);
+    return m_lightIncrementSizeThresholdMB;
 }
 
 SERVICETEXTINDEX_END_NAMESPACE

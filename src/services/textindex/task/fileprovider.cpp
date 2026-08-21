@@ -40,8 +40,9 @@ void FileSystemProvider::traverse(TaskState &state, const FileHandler &handler)
     int processedFiles = 0;
 
     while (!dirQueue.isEmpty()) {
-        if (!state.isRunning()) {
-            fmInfo() << "[FileSystemProvider::traverse] Traversal interrupted by user request";
+        if (!state.isRunning() || state.isPauseRequested()) {
+            fmInfo() << "[FileSystemProvider::traverse] Traversal interrupted - running:" << state.isRunning()
+                     << "pauseRequested:" << state.isPauseRequested();
             break;
         }
 
@@ -86,8 +87,8 @@ void FileSystemProvider::traverse(TaskState &state, const FileHandler &handler)
 
         struct dirent *entry;
         while ((entry = readdir(dir))) {
-            if (!state.isRunning()) {
-                fmInfo() << "[FileSystemProvider::traverse] Traversal interrupted during directory scan";
+            if (!state.isRunning() || state.isPauseRequested()) {
+                fmInfo() << "[FileSystemProvider::traverse] Traversal interrupted during directory scan - pause:" << state.isPauseRequested();
                 break;
             }
 
@@ -137,8 +138,8 @@ void DirectFileListProvider::traverse(TaskState &state, const FileHandler &handl
 
     int processedCount = 0;
     for (const auto &file : std::as_const(m_fileList)) {
-        if (!state.isRunning()) {
-            fmInfo() << "[DirectFileListProvider::traverse] Processing interrupted after" << processedCount << "files";
+        if (!state.isRunning() || state.isPauseRequested()) {
+            fmInfo() << "[DirectFileListProvider::traverse] Processing interrupted after" << processedCount << "files - pause:" << state.isPauseRequested();
             break;
         }
         handler(file.path());
@@ -177,8 +178,8 @@ void MixedPathListProvider::traverse(TaskState &state, const FileHandler &handle
     int initialDirs = 0;
 
     for (const auto &path : std::as_const(m_pathList)) {
-        if (!state.isRunning()) {
-            fmInfo() << "[MixedPathListProvider::traverse] Initial processing interrupted";
+        if (!state.isRunning() || state.isPauseRequested()) {
+            fmInfo() << "[MixedPathListProvider::traverse] Initial processing interrupted - pause:" << state.isPauseRequested();
             break;
         }
 
@@ -230,8 +231,8 @@ void MixedPathListProvider::traverse(TaskState &state, const FileHandler &handle
     int skippedFilesByExtension = 0;   // 统计因扩展名过滤跳过的文件数
 
     while (!dirQueue.isEmpty()) {
-        if (!state.isRunning()) {
-            fmInfo() << "[MixedPathListProvider::traverse] Directory traversal interrupted";
+        if (!state.isRunning() || state.isPauseRequested()) {
+            fmInfo() << "[MixedPathListProvider::traverse] Directory traversal interrupted - pause:" << state.isPauseRequested();
             break;
         }
 
@@ -268,8 +269,8 @@ void MixedPathListProvider::traverse(TaskState &state, const FileHandler &handle
 
         struct dirent *entry;
         while ((entry = readdir(dir))) {
-            if (!state.isRunning()) {
-                fmInfo() << "[MixedPathListProvider::traverse] Directory scan interrupted";
+            if (!state.isRunning() || state.isPauseRequested()) {
+                fmInfo() << "[MixedPathListProvider::traverse] Directory scan interrupted - pause:" << state.isPauseRequested();
                 break;
             }
 
