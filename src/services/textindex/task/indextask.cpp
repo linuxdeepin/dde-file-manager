@@ -55,22 +55,36 @@ void IndexTask::applyResourcePolicy()
     case Grade::Medium:
     case Grade::Heavy: {
         int limit = TextIndexConfig::instance().cpuUsageLimitPercent();
-        fmDebug() << "[IndexTask::applyResourcePolicy] Applying CPU quota:" << limit
+        fmDebug() << "[IndexTask::applyResourcePolicy] Acquiring CPU quota:" << limit
                   << "% for grade:" << static_cast<int>(m_grade) << "service:" << Defines::kTextIndexServiceName;
-        QString msg;
-        if (!SystemdCpuUtils::setCpuQuota(Defines::kTextIndexServiceName, limit, &msg)) {
-            fmWarning() << "[IndexTask::applyResourcePolicy] Failed to set CPU quota:" << msg;
-        }
+        SystemdCpuUtils::acquireCpuQuota(Defines::kTextIndexServiceName, limit);
         break;
     }
     case Grade::Manual: {
         fmInfo() << "[IndexTask::applyResourcePolicy] Manual grade - resetting CPU quota for service:" << Defines::kTextIndexServiceName;
-        QString msg;
-        SystemdCpuUtils::resetCpuQuota(Defines::kTextIndexServiceName, &msg);
+        SystemdCpuUtils::manualTaskCpuQuota(Defines::kTextIndexServiceName);
         break;
     }
     default:
         fmWarning() << "[IndexTask::applyResourcePolicy] Unknown grade:" << static_cast<int>(m_grade);
+        break;
+    }
+}
+
+void IndexTask::releaseResourcePolicy()
+{
+    switch (m_grade) {
+    case Grade::Light:
+    case Grade::Medium:
+    case Grade::Heavy:
+        fmDebug() << "[IndexTask::releaseResourcePolicy] Releasing CPU quota for grade:" << static_cast<int>(m_grade);
+        SystemdCpuUtils::releaseCpuQuota(Defines::kTextIndexServiceName);
+        break;
+    case Grade::Manual:
+        fmDebug() << "[IndexTask::releaseResourcePolicy] Manual grade - resetting CPU quota";
+        SystemdCpuUtils::manualTaskCpuQuota(Defines::kTextIndexServiceName);
+        break;
+    default:
         break;
     }
 }
@@ -158,11 +172,14 @@ void IndexTask::doTask()
              << "path:" << m_path << "grade:" << static_cast<int>(m_grade);
 
     HandlerResult result { false, false };
+    bool resourcePolicyApplied = false;
+
     if (m_handler) {
         try {
             setIndexCorrupted(false);
             m_state.clearPauseRequest();
             applyResourcePolicy();
+            resourcePolicyApplied = true;
 
             fmDebug() << "[IndexTask::doTask] Invoking task handler for path:" << m_path;
             result = m_handler(m_path, m_state);
@@ -193,6 +210,10 @@ void IndexTask::doTask()
         }
     } else {
         fmCritical() << "[IndexTask::doTask] No task handler provided - path:" << m_path;
+    }
+
+    if (resourcePolicyApplied) {
+        releaseResourcePolicy();
     }
 
     if (result.paused) {

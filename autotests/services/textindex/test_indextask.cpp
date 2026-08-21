@@ -169,4 +169,28 @@ TEST(IndexTaskTest, SetGradeThenApplyResourcePolicy)
     t.setGrade(IndexTask::Grade::Heavy);
     EXPECT_EQ(t.grade(), IndexTask::Grade::Heavy);
     EXPECT_NO_FATAL_FAILURE({ t.applyResourcePolicy(); });
+    EXPECT_NO_FATAL_FAILURE({ t.releaseResourcePolicy(); });
+}
+
+TEST(IndexTaskTest, SetManualGradeThenApplyResourcePolicy)
+{
+    IndexTask t(IndexTask::Type::Create, "/tmp", noopHandler());
+    t.setGrade(IndexTask::Grade::Manual);
+    EXPECT_EQ(t.grade(), IndexTask::Grade::Manual);
+    EXPECT_NO_FATAL_FAILURE({ t.applyResourcePolicy(); });
+    EXPECT_NO_FATAL_FAILURE({ t.releaseResourcePolicy(); });
+}
+
+TEST(IndexTaskTest, DoTaskWithHeavyGradeReleasesCpuQuota)
+{
+    IndexTask t(IndexTask::Type::Create, "/tmp", noopHandler());
+    t.setGrade(IndexTask::Grade::Heavy);
+    EXPECT_NO_FATAL_FAILURE({ t.doTask(); });
+}
+
+TEST(IndexTaskTest, DoTaskWithManualGradeReleasesCpuQuota)
+{
+    IndexTask t(IndexTask::Type::Create, "/tmp", noopHandler());
+    t.setGrade(IndexTask::Grade::Manual);
+    EXPECT_NO_FATAL_FAILURE({ t.doTask(); });
 }

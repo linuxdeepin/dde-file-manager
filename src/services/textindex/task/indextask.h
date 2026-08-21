@@ -72,6 +72,7 @@ Q_SIGNALS:
 
 private:
     void applyResourcePolicy();
+    void releaseResourcePolicy();
     void doTask();
     void onProgressChanged(qint64 count, qint64 total);
 
