@@ -57,7 +57,7 @@ Q_SIGNALS:
                              dfmio::DEnumerator::SortRoleCompareFlag sortRole,
                              Qt::SortOrder sortOrder,
                              bool isMixDirAndFile, QString traversalToken);
-    void updateChildrenInfo(const QList<SortInfoPointer> updateInfos, QString traversalToken);
+    void updateChildrenInfo(const QList<SortInfoPointer> updateInfos, QString traversalToken, bool increment = false);
     void traversalFinished(QString traversalToken);
     void traversalRequestSort(QString traversalToken);
 
@@ -69,6 +69,7 @@ protected:
 private:
     int iteratorOneByOne(const QElapsedTimer &timere);
     QList<SortInfoPointer> iteratorAll();
+    int iteratorOneByOneByDirent();
 };
 }
 

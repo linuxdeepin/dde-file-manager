@@ -12,6 +12,7 @@
 #include <QThread>
 #include <QMutex>
 #include <QUrl>
+#include <atomic>
 #include <functional>
 
 namespace dfmbase {
@@ -29,7 +30,7 @@ protected:
     QDir::Filters filters;
     QDirIterator::IteratorFlags flags;
     QList<QUrl> childrenList;   // 当前遍历出来的所有文件
-    bool stopFlag = false;
+    std::atomic_bool stopFlag { false };
     QString fileInfoQueryAttributes;
     bool enableSort = false;   // 是否启用排序
 

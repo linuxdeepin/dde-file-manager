@@ -94,7 +94,7 @@ public Q_SLOTS:
     void doThreadWatcherEvent();
 
     void handleTraversalResults(const QList<FileInfoPointer> children, const QString &travseToken);
-    void handleTraversalResultsUpdate(const QList<SortInfoPointer> children, const QString &travseToken);
+    void handleTraversalResultsUpdate(const QList<SortInfoPointer> children, const QString &travseToken, bool increment = false);
     void handleTraversalLocalResult(QList<SortInfoPointer> children,
                                     dfmio::DEnumerator::SortRoleCompareFlag sortRole,
                                     Qt::SortOrder sortOrder,
