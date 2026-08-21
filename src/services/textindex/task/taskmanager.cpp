@@ -138,19 +138,15 @@ bool TaskManager::startTask(IndexTask::Type type, const QStringList &pathList,
     QString primaryPath = pathList.first();
 
     // 环境检查：如果当前环境不允许该分级任务运行，入队等待而非直接执行
-    const EnvState env = EnvDetector::instance().currentState();
-    if (!canRun(grade, forceBypass, env)) {
-        fmInfo() << "[TaskManager::startTask] Environment not suitable for grade" << static_cast<int>(grade)
-                 << ", queuing task - battery:" << env.onBattery
-                 << "powerSave:" << env.powerSaveMode << "idle:" << env.idle;
+    {
         TaskQueueItem item;
         item.type = type;
         item.grade = grade;
         item.forceBypass = forceBypass;
         item.path = primaryPath;
         item.pathList = pathList;
-        taskQueue.enqueue(item);
-        return true;
+        if (tryEnqueueIfBlocked(grade, forceBypass, item))
+            return true;
     }
 
     // 如果当前有任务在运行，停止它并将新任务保存为待执行任务
@@ -208,9 +204,8 @@ bool TaskManager::startTask(IndexTask::Type type, const QStringList &pathList,
     Q_ASSERT(!currentTask);
     // 创建新的任务对象，使用路径列表作为输入
     // 注意：为了最小修改现有代码，我们仍然将主路径作为任务路径，但在handler中会使用整个路径列表
-    currentTask = new IndexTask(type, primaryPath, [handler, pathList](const QString &, TaskState &state) -> HandlerResult {
+    IndexTask *task = new IndexTask(type, primaryPath, [handler, pathList](const QString &, TaskState &state) -> HandlerResult {
         fmDebug() << "[TaskManager::startTask] Executing task handler for" << pathList.size() << "paths";
-        // 在这个lambda中，我们会对每个路径执行原始的handler
         HandlerResult finalResult { true, false, false, false };
 
         for (const auto &path : pathList) {
@@ -221,10 +216,8 @@ bool TaskManager::startTask(IndexTask::Type type, const QStringList &pathList,
             }
 
             fmDebug() << "[TaskManager::startTask] Processing path:" << path;
-            // 对每个路径执行handler
             HandlerResult pathResult = handler(path, state);
 
-            // 如果任何一个路径处理失败，整个任务就失败
             if (!pathResult.success) {
                 fmWarning() << "[TaskManager::startTask] Path processing failed:" << path;
                 finalResult.success = false;
@@ -236,7 +229,6 @@ bool TaskManager::startTask(IndexTask::Type type, const QStringList &pathList,
                 break;
             }
 
-            // 如果被中断，设置中断标志并退出循环
             if (pathResult.interrupted) {
                 fmInfo() << "[TaskManager::startTask] Path processing interrupted:" << path;
                 finalResult.interrupted = true;
@@ -258,21 +250,7 @@ bool TaskManager::startTask(IndexTask::Type type, const QStringList &pathList,
         return finalResult;
     });
 
-    currentTask->setGrade(grade);
-    currentTask->moveToThread(&workerThread);
-
-    connect(currentTask, &IndexTask::progressChanged, this, &TaskManager::onTaskProgress, Qt::QueuedConnection);
-    connect(currentTask, &IndexTask::finished, this, &TaskManager::onTaskFinished, Qt::QueuedConnection);
-    connect(currentTask, &IndexTask::paused, this, &TaskManager::onTaskPaused, Qt::QueuedConnection);
-    connect(this, &TaskManager::startTaskInThread, currentTask, &IndexTask::start, Qt::QueuedConnection);
-    workerThread.start();
-
-    // Mark index state as dirty before starting task
-    if (m_context && m_context->stateStore()) {
-        m_context->stateStore()->setIndexState(IndexUtility::IndexState::Dirty);
-    }
-
-    emit startTaskInThread();
+    launchTask(task, grade);
     fmInfo() << "[TaskManager::startTask] Task started successfully in worker thread";
     return true;
 }
@@ -293,17 +271,14 @@ bool TaskManager::startFileListTask(IndexTask::Type type, const QStringList &fil
             : gradeFileListTask(fileList);
 
     // 环境检查：如果当前环境不允许该分级任务运行，入队等待而非直接执行
-    const EnvState env = EnvDetector::instance().currentState();
-    if (!canRun(grade, false, env)) {
-        fmInfo() << "[TaskManager::startFileListTask] Environment not suitable for grade" << static_cast<int>(grade)
-                 << ", queuing task - powerSave:" << env.powerSaveMode;
+    {
         TaskQueueItem item;
         item.type = type;
         item.grade = grade;
         item.path = QString("FileList-%1").arg(QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss"));
         item.fileList = fileList;
-        taskQueue.enqueue(item);
-        return true;
+        if (tryEnqueueIfBlocked(grade, false, item))
+            return true;
     }
 
     // 如果当前有任务在运行，将新任务加入队列
@@ -311,7 +286,6 @@ bool TaskManager::startFileListTask(IndexTask::Type type, const QStringList &fil
         fmInfo() << "[TaskManager::startFileListTask] Current task running, queuing file list task with"
                  << fileList.size() << "files";
 
-        // 将任务加入队列
         TaskQueueItem item;
         item.type = type;
         item.grade = grade;
@@ -345,24 +319,7 @@ bool TaskManager::startFileListTask(IndexTask::Type type, const QStringList &fil
     }
 
     QString pathId = QString("FileList-%1").arg(QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss"));
-
-    Q_ASSERT(!currentTask);
-    currentTask = new IndexTask(type, pathId, handler);
-    currentTask->setGrade(grade);
-    currentTask->moveToThread(&workerThread);
-
-    connect(currentTask, &IndexTask::progressChanged, this, &TaskManager::onTaskProgress, Qt::QueuedConnection);
-    connect(currentTask, &IndexTask::finished, this, &TaskManager::onTaskFinished, Qt::QueuedConnection);
-    connect(currentTask, &IndexTask::paused, this, &TaskManager::onTaskPaused, Qt::QueuedConnection);
-    connect(this, &TaskManager::startTaskInThread, currentTask, &IndexTask::start, Qt::QueuedConnection);
-    workerThread.start();
-
-    // Mark index state as dirty before starting task
-    if (m_context && m_context->stateStore()) {
-        m_context->stateStore()->setIndexState(IndexUtility::IndexState::Dirty);
-    }
-
-    emit startTaskInThread();
+    launchTask(new IndexTask(type, pathId, handler), grade);
     fmDebug() << "[TaskManager::startFileListTask] File list task started successfully in worker thread";
     return true;
 }
@@ -379,17 +336,16 @@ bool TaskManager::startFileMoveTask(const QHash<QString, QString> &movedFiles)
     const QStringList compensationPaths = applyDirectoryMovePlans(movedFiles);
 
     // 环境检查：MoveFileList 始终为 Light，节能模式时入队等待
-    const EnvState env = EnvDetector::instance().currentState();
-    if (!canRun(IndexTask::Grade::Light, false, env)) {
-        fmInfo() << "[TaskManager::startFileMoveTask] Environment not suitable for Light grade, queuing task - powerSave:" << env.powerSaveMode;
+    {
         TaskQueueItem item;
         item.type = IndexTask::Type::MoveFileList;
         item.grade = IndexTask::Grade::Light;
         item.path = QString("MoveList-%1").arg(QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss"));
         item.movedFiles = movedFiles;
-        taskQueue.enqueue(item);
-        enqueueCompensationTask(compensationPaths);
-        return true;
+        if (tryEnqueueIfBlocked(IndexTask::Grade::Light, false, item)) {
+            enqueueCompensationTask(compensationPaths);
+            return true;
+        }
     }
 
     // 如果当前有任务在运行，将新任务加入队列
@@ -397,7 +353,6 @@ bool TaskManager::startFileMoveTask(const QHash<QString, QString> &movedFiles)
         fmInfo() << "[TaskManager::startFileMoveTask] Current task running, queuing file move task with"
                  << movedFiles.size() << "moves";
 
-        // 将任务加入队列
         TaskQueueItem item;
         item.type = IndexTask::Type::MoveFileList;
         item.grade = IndexTask::Grade::Light;
@@ -413,7 +368,6 @@ bool TaskManager::startFileMoveTask(const QHash<QString, QString> &movedFiles)
     // 正常启动任务流程
     fmInfo() << "[TaskManager::startFileMoveTask] Starting file move task immediately - moves:" << movedFiles.size();
 
-    // 获取对应的任务处理器
     TaskHandler handler = TaskHandlers::MoveFileListHandler(*m_context, movedFiles);
     if (!handler) {
         fmCritical() << "[TaskManager::startFileMoveTask] Failed to create move file list handler";
@@ -421,24 +375,7 @@ bool TaskManager::startFileMoveTask(const QHash<QString, QString> &movedFiles)
     }
 
     QString pathId = QString("MoveList-%1").arg(QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss"));
-
-    Q_ASSERT(!currentTask);
-    currentTask = new IndexTask(IndexTask::Type::MoveFileList, pathId, handler);
-    currentTask->setGrade(IndexTask::Grade::Light);
-    currentTask->moveToThread(&workerThread);
-
-    connect(currentTask, &IndexTask::progressChanged, this, &TaskManager::onTaskProgress, Qt::QueuedConnection);
-    connect(currentTask, &IndexTask::finished, this, &TaskManager::onTaskFinished, Qt::QueuedConnection);
-    connect(currentTask, &IndexTask::paused, this, &TaskManager::onTaskPaused, Qt::QueuedConnection);
-    connect(this, &TaskManager::startTaskInThread, currentTask, &IndexTask::start, Qt::QueuedConnection);
-    workerThread.start();
-
-    // Mark index state as dirty before starting task
-    if (m_context && m_context->stateStore()) {
-        m_context->stateStore()->setIndexState(IndexUtility::IndexState::Dirty);
-    }
-
-    emit startTaskInThread();
+    launchTask(new IndexTask(IndexTask::Type::MoveFileList, pathId, handler), IndexTask::Grade::Light);
     fmDebug() << "[TaskManager::startFileMoveTask] File move task started successfully in worker thread";
 
     enqueueCompensationTask(compensationPaths);
@@ -513,13 +450,8 @@ void TaskManager::onTaskPaused(IndexTask::Type type, HandlerResult result)
         item.type = IndexTask::Type::UpdateFileList;
         item.fileList = result.remainingFiles;
         item.path = QString("Resumed-%1").arg(QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss"));
-    } else if (grade == IndexTask::Grade::Heavy) {
-        // Heavy task: resume as Update (skip already indexed files)
-        item.type = IndexTask::Type::Update;
-        item.path = taskPath;
-        item.pathList = QStringList { taskPath };
     } else {
-        // Light/Medium full-scan task: also resume as Update
+        // Full-scan task (Heavy or Light/Medium): resume as Update (skip already indexed files)
         item.type = IndexTask::Type::Update;
         item.path = taskPath;
         item.pathList = QStringList { taskPath };
@@ -597,6 +529,38 @@ void TaskManager::resetCpuQuota()
     if (!SystemdCpuUtils::resetCpuQuota(Defines::kTextIndexServiceName, &msg)) {
         fmWarning() << "[TaskManager::resetCpuQuota] Failed to reset CPU quota:" << msg;
     }
+}
+
+void TaskManager::launchTask(IndexTask *task, IndexTask::Grade grade)
+{
+    Q_ASSERT(!currentTask);
+    currentTask = task;
+    currentTask->setGrade(grade);
+    currentTask->moveToThread(&workerThread);
+
+    connect(currentTask, &IndexTask::progressChanged, this, &TaskManager::onTaskProgress, Qt::QueuedConnection);
+    connect(currentTask, &IndexTask::finished, this, &TaskManager::onTaskFinished, Qt::QueuedConnection);
+    connect(currentTask, &IndexTask::paused, this, &TaskManager::onTaskPaused, Qt::QueuedConnection);
+    connect(this, &TaskManager::startTaskInThread, currentTask, &IndexTask::start, Qt::QueuedConnection);
+    workerThread.start();
+
+    if (m_context && m_context->stateStore())
+        m_context->stateStore()->setIndexState(IndexUtility::IndexState::Dirty);
+
+    emit startTaskInThread();
+}
+
+bool TaskManager::tryEnqueueIfBlocked(IndexTask::Grade grade, bool forceBypass, const TaskQueueItem &item)
+{
+    const EnvState env = EnvDetector::instance().currentState();
+    if (canRun(grade, forceBypass, env))
+        return false;
+
+    fmInfo() << "[TaskManager] Environment not suitable for grade" << static_cast<int>(grade)
+             << ", queuing task - battery:" << env.onBattery
+             << "powerSave:" << env.powerSaveMode << "idle:" << env.idle;
+    taskQueue.enqueue(item);
+    return true;
 }
 
 void TaskManager::schedule()

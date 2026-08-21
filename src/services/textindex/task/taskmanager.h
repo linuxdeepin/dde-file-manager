@@ -82,6 +82,8 @@ private:
     bool shouldPreempt(IndexTask::Grade newGrade, IndexTask::Grade currentGrade) const;
     void pauseCurrentTask();
     void resetCpuQuota();
+    void launchTask(IndexTask *task, IndexTask::Grade grade);
+    bool tryEnqueueIfBlocked(IndexTask::Grade grade, bool forceBypass, const TaskQueueItem &item);
     void startQueuedTask(const TaskQueueItem &item);
     TaskHandler getTaskHandler(IndexTask::Type type);
     bool isFullScanTask(IndexTask::Type type) const;
