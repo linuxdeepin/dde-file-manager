@@ -33,6 +33,7 @@ public:
     void saveStateWhenClose();
     void setCurrentUrl(const QUrl &sidebarUrl);
     QUrl currentUrl() const;
+    QModelIndex currentTrackedIndex() const;
     QModelIndex findItemIndex(const QUrl &url) const;
     QVariantMap groupExpandState() const;
     QModelIndex previousIndex() const;

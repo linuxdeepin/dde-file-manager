@@ -76,10 +76,10 @@ void paintSeparator(QPainter *painter, const QStyleOptionViewItem &option)
 }   // namespace GlobalPrivate
 
 QString SideBarItemDelegate::makeIconCacheKey(const QSize &size,
-                                             DTK_GUI_NAMESPACE::DDciIcon::Theme theme,
-                                             DTK_GUI_NAMESPACE::DDciIcon::Mode mode,
-                                             const QString &iconId,
-                                             const QColor &foreground) const
+                                              DTK_GUI_NAMESPACE::DDciIcon::Theme theme,
+                                              DTK_GUI_NAMESPACE::DDciIcon::Mode mode,
+                                              const QString &iconId,
+                                              const QColor &foreground) const
 {
     return QString::asprintf("%s|%dx%d|%d|%d|%08x", iconId.toUtf8().constData(),
                              size.width(), size.height(), static_cast<int>(theme),
@@ -158,8 +158,9 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
         if (foundByCb || UniversalUtils::urlEquals(subItem->url(), sidebarView->currentUrl()))
             isUrlEqual = true;
     }
+
     bool isDraggingItemNotHighlighted = selected && !isUrlEqual;
-    if (isUrlEqual) {
+    if (isUrlEqual && sidebarView && index == sidebarView->currentTrackedIndex()) {
         // If the dragging and moving source item is not the current highlighted one,
         // the highlighted one must be keep its state.
         keepDrawingHighlighted = true;
