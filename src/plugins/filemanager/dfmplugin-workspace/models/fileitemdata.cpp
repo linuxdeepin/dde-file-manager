@@ -159,10 +159,12 @@ QVariant FileItemData::data(int role) const
     case kItemCreateFileInfoRole:
         assert(qApp->thread() == QThread::currentThread());
         if (info.isNull()) {
-            const_cast<FileItemData *>(this)->info = InfoFactory::create<FileInfo>(url);
+            bool isCacheMiss = false;
+            const_cast<FileItemData *>(this)->info = InfoFactory::create<FileInfo>(url, &isCacheMiss);
             if (info) {
                 info->customData(kItemFileRefreshIcon);
-                info->updateAttributes();
+                if (isCacheMiss)
+                    info->updateAttributes();
             } else {
                 fmWarning() << "Failed to create FileInfo for URL:" << url.toString();
             }
