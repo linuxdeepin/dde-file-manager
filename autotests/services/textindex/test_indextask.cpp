@@ -6,7 +6,7 @@
  * @file test_indextask.cpp
  * @brief Unit tests for IndexTask (task/indextask.cpp) — the dependency-light
  *        subset: ctor, dtor, and all accessors (taskPath/taskType/status/
- *        isIndexCorrupted/setIndexCorrupted/silent/setSilent) plus stop() and
+ *        isIndexCorrupted/setIndexCorrupted/grade/setGrade) plus stop() and
  *        isRunning(). start() is intentionally NOT invoked (it runs the handler
  *        in a worker thread).
  */
@@ -58,14 +58,14 @@ TEST(IndexTaskTest, DefaultStatusNotStarted)
     EXPECT_FALSE(t.isRunning());
 }
 
-TEST(IndexTaskTest, SilentRoundtrip)
+TEST(IndexTaskTest, GradeRoundtrip)
 {
     IndexTask t(IndexTask::Type::Create, "/tmp", dummyHandler());
-    EXPECT_FALSE(t.silent());
-    t.setSilent(true);
-    EXPECT_TRUE(t.silent());
-    t.setSilent(false);
-    EXPECT_FALSE(t.silent());
+    EXPECT_EQ(t.grade(), IndexTask::Grade::None);
+    t.setGrade(IndexTask::Grade::Heavy);
+    EXPECT_EQ(t.grade(), IndexTask::Grade::Heavy);
+    t.setGrade(IndexTask::Grade::Manual);
+    EXPECT_EQ(t.grade(), IndexTask::Grade::Manual);
 }
 
 TEST(IndexTaskTest, IndexCorruptedRoundtrip)
@@ -102,7 +102,7 @@ TEST(IndexTaskTest, DtorIsSafeWithoutStart)
     SUCCEED();
 }
 
-// ---- TaskState inline class tests (restored from original test file) ----
+// ---- TaskState inline class tests ----
 
 TEST(TaskStateTest, DefaultNotRunning)
 {
@@ -119,12 +119,14 @@ TEST(TaskStateTest, StartStop)
     EXPECT_FALSE(s.isRunning());
 }
 
-TEST(TaskStateTest, Silent)
+TEST(TaskStateTest, PauseRequest)
 {
     TaskState s;
-    EXPECT_FALSE(s.isSilent());
-    s.setSilent(true);
-    EXPECT_TRUE(s.isSilent());
+    EXPECT_FALSE(s.isPauseRequested());
+    s.requestPause();
+    EXPECT_TRUE(s.isPauseRequested());
+    s.clearPauseRequest();
+    EXPECT_FALSE(s.isPauseRequested());
 }
 
 static TaskHandler noopHandler()
@@ -138,11 +140,10 @@ TEST(IndexTaskTest, OnProgressChangedNoEmitWhenNotRunning)
     t.onProgressChanged(10, 100);   // private; not running -> no emit
     EXPECT_EQ(spy.count(), 0);
 }
-TEST(IndexTaskTest, ThrottleCpuUsageSkipsWhenNotSilent)
+TEST(IndexTaskTest, ApplyResourcePolicyDefaultGradeNoCrash)
 {
     IndexTask t(IndexTask::Type::Create, "/tmp", noopHandler());
-    EXPECT_FALSE(t.silent());
-    EXPECT_NO_FATAL_FAILURE({ t.throttleCpuUsage(); });   // private; returns early
+    EXPECT_NO_FATAL_FAILURE({ t.applyResourcePolicy(); });   // default grade -> logs warning, returns
 }
 TEST(IndexTaskTest, D0DestructorPath)
 {
@@ -162,10 +163,10 @@ TEST(IndexTaskTest, DoTaskWithNullHandler)
     IndexTask t(IndexTask::Type::Create, "/tmp", nullHandler);
     EXPECT_NO_FATAL_FAILURE({ t.doTask(); });   // m_handler is null -> result stays default
 }
-TEST(IndexTaskTest, SetSilentThenThrottleCpuUsage)
+TEST(IndexTaskTest, SetGradeThenApplyResourcePolicy)
 {
     IndexTask t(IndexTask::Type::Create, "/tmp", noopHandler());
-    t.setSilent(true);
-    EXPECT_TRUE(t.silent());
-    EXPECT_NO_FATAL_FAILURE({ t.throttleCpuUsage(); });   // tries systemd (fails in sandbox)
+    t.setGrade(IndexTask::Grade::Heavy);
+    EXPECT_EQ(t.grade(), IndexTask::Grade::Heavy);
+    EXPECT_NO_FATAL_FAILURE({ t.applyResourcePolicy(); });
 }

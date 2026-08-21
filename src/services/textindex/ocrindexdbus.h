@@ -40,10 +40,13 @@ public Q_SLOTS:
     QString GetLastUpdateTime();
     bool ProcessFileChanges(const QStringList &createdFiles, const QStringList &modifiedFiles, const QStringList &deletedFiles);
     bool ProcessFileMoves(const QHash<QString, QString> &movedFiles);
+    QVariantMap GetIndexStatus();
+    bool ForceUpdateIndex(const QStringList &paths, const QVariantMap &options = QVariantMap());
 
 Q_SIGNALS:
     void TaskFinished(const QString &type, const QString &path, bool success);
     void TaskProgressChanged(const QString &type, const QString &path, qint64 count, qint64 total);
+    void IndexStatusChanged(const QString &state, const QString &grade);
 
 private:
     QScopedPointer<SERVICETEXTINDEX_NAMESPACE::OcrIndexDBusPrivate> d;

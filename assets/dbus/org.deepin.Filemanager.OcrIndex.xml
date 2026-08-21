@@ -12,6 +12,10 @@
       <arg name="count" type="x" direction="out"/>
       <arg name="total" type="x" direction="out"/>
     </signal>
+    <signal name="IndexStatusChanged">
+      <arg name="state" type="s" direction="out"/>
+      <arg name="grade" type="s" direction="out"/>
+    </signal>
     <method name="Init">
     </method>
     <method name="IsEnabled">
@@ -54,6 +58,16 @@
       <arg type="b" direction="out"/>
       <arg name="movedFiles" type="a{ss}" direction="in"/>
       <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QHash&lt;QString,QString&gt;"/>
+    </method>
+    <method name="GetIndexStatus">
+      <arg type="a{sv}" direction="out"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+    </method>
+    <method name="ForceUpdateIndex">
+      <arg type="b" direction="out"/>
+      <arg name="paths" type="as" direction="in"/>
+      <arg name="options" type="a{sv}" direction="in"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="QVariantMap"/>
     </method>
   </interface>
 </node>

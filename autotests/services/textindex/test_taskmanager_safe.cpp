@@ -76,9 +76,9 @@ TEST_F(TaskManagerSafeTest, StopCurrentTaskAndCleanupAreNoOps)
     EXPECT_NO_FATAL_FAILURE({ mgr->cleanupTask(); });   // private
 }
 
-TEST_F(TaskManagerSafeTest, StartNextTaskReturnsFalseOnEmptyQueue)
+TEST_F(TaskManagerSafeTest, ScheduleOnEmptyQueueIsNoOp)
 {
-    EXPECT_FALSE(mgr->startNextTask());   // private
+    EXPECT_NO_FATAL_FAILURE({ mgr->schedule(); });   // private
 }
 
 TEST_F(TaskManagerSafeTest, RecoveryFlagRoundtrip)

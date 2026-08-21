@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "indexruntime.h"
+#include "env/envdetector.h"
 
 SERVICETEXTINDEX_BEGIN_NAMESPACE
 
@@ -14,6 +15,7 @@ IndexRuntime::IndexRuntime(IndexProfile profile, QObject *parent)
       m_taskManager(new TaskManager(&m_context, this)),
       m_fsEventController(new FSEventController(m_profile, this))
 {
+    EnvDetector::instance().start();
 }
 
 const IndexProfile &IndexRuntime::profile() const

@@ -6,7 +6,7 @@
  * @file test_taskmanager_private.cpp
  * @brief Additional TaskManager tests covering onTaskFinished,
  *        handleCorruptedIndex, handleRootPathFailure, updateIndexStatusOnSuccess,
- *        finalizeIndexState, enqueueCompensationTask with silent flag, and
+ *        finalizeIndexState, enqueueCompensationTask, and
  *        startTask/StartFileListTask/StartFileMoveTask with additional paths.
  */
 
@@ -46,16 +46,11 @@ protected:
     }
 };
 
-// ---- enqueueCompensationTask with silent ----
-TEST_F(TaskManagerPrivateTest, EnqueueCompensationTaskWithSilentTrue)
+// ---- enqueueCompensationTask ----
+TEST_F(TaskManagerPrivateTest, EnqueueCompensationTask)
 {
-    EXPECT_TRUE(mgr->enqueueCompensationTask({ "/tmp/a.txt" }, true));
+    EXPECT_TRUE(mgr->enqueueCompensationTask({ "/tmp/a.txt" }));
     EXPECT_TRUE(mgr->hasQueuedTasks());
-}
-
-TEST_F(TaskManagerPrivateTest, EnqueueCompensationTaskWithSilentFalse)
-{
-    EXPECT_TRUE(mgr->enqueueCompensationTask({ "/tmp/a.txt" }, false));
 }
 
 // ---- startTask with QStringList ----
@@ -66,9 +61,9 @@ TEST_F(TaskManagerPrivateTest, StartTask_MultiplePaths)
     SUCCEED();
 }
 
-TEST_F(TaskManagerPrivateTest, StartTask_SilentTrue)
+TEST_F(TaskManagerPrivateTest, StartTask_Create)
 {
-    bool result = mgr->startTask(IndexTask::Type::Create, tmp.path(), true);
+    bool result = mgr->startTask(IndexTask::Type::Create, tmp.path());
     SUCCEED();
 }
 
@@ -106,14 +101,6 @@ TEST_F(TaskManagerPrivateTest, StartFileMoveTask_SingleMove)
     SUCCEED();
 }
 
-TEST_F(TaskManagerPrivateTest, StartFileMoveTask_SilentTrue)
-{
-    QHash<QString, QString> moves;
-    moves["/old.txt"] = "/new.txt";
-    bool result = mgr->startFileMoveTask(moves, true);
-    SUCCEED();
-}
-
 // ---- onTaskFinished with null current task ----
 TEST_F(TaskManagerPrivateTest, OnTaskFinished_NoCurrentTask)
 {
@@ -131,14 +118,14 @@ TEST_F(TaskManagerPrivateTest, ApplyDirectoryMovePlans_MultipleDirectoryMoves)
     EXPECT_GE(result.size(), 2);
 }
 
-// ---- Multiple enqueue then startNext ----
-TEST_F(TaskManagerPrivateTest, MultipleEnqueueThenStartNext)
+// ---- Multiple enqueue then schedule ----
+TEST_F(TaskManagerPrivateTest, MultipleEnqueueThenSchedule)
 {
-    mgr->enqueueCompensationTask({ "/tmp/x.txt" }, false);
-    mgr->enqueueCompensationTask({ "/tmp/y.txt" }, false);
-    // Queue has items, startNext should try to run one
+    mgr->enqueueCompensationTask({ "/tmp/x.txt" });
+    mgr->enqueueCompensationTask({ "/tmp/y.txt" });
+    // Queue has items, schedule should try to run one
     // But without a valid index directory, it may fail gracefully
-    EXPECT_NO_FATAL_FAILURE({ mgr->startNextTask(); });
+    EXPECT_NO_FATAL_FAILURE({ mgr->schedule(); });
 }
 
 // ---- cleanupTask ----

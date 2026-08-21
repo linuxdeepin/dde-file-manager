@@ -287,6 +287,39 @@
 			"description": "Maximum 60-second average busyness percentage of the data disk for the system to be considered idle, ranging from 1 to 100.",
 			"permissions": "readwrite",
 			"visibility": "private"
+		},
+		"lightIncrementFileCountThreshold": {
+			"value": 100,
+			"serial": 0,
+			"flags": [],
+			"name": "Light Increment File Count Threshold (fulltext)",
+			"name[zh_CN]": "全文轻量增量文件数阈值",
+			"description[zh_CN]": "全文搜索轻量增量任务的文件数量上限。3 秒内去重后文件数超过此值则升级为中量增量，范围为 1 到 100000。",
+			"description": "File count threshold for fulltext light increment tasks. If deduplicated file count within 3 seconds exceeds this value, the task is upgraded to medium increment. Range 1 to 100000.",
+			"permissions": "readwrite",
+			"visibility": "private"
+		},
+		"lightIncrementOcrFileCountThreshold": {
+			"value": 30,
+			"serial": 0,
+			"flags": [],
+			"name": "Light Increment File Count Threshold (OCR)",
+			"name[zh_CN]": "OCR 轻量增量文件数阈值",
+			"description[zh_CN]": "OCR 图片文本搜索轻量增量任务的文件数量上限。3 秒内去重后文件数超过此值则升级为中量增量，范围为 1 到 100000。",
+			"description": "File count threshold for OCR light increment tasks. If deduplicated file count within 3 seconds exceeds this value, the task is upgraded to medium increment. Range 1 to 100000.",
+			"permissions": "readwrite",
+			"visibility": "private"
+		},
+		"lightIncrementSizeThresholdMB": {
+			"value": 200,
+			"serial": 0,
+			"flags": [],
+			"name": "Light Increment Size Threshold (MB)",
+			"name[zh_CN]": "轻量增量总大小阈值（MB）",
+			"description[zh_CN]": "轻量增量任务的待解析文件总大小上限。超过此值则升级为中量增量，范围为 1 到 10240。",
+			"description": "Total size threshold for light increment tasks in MB. If total size of files to be parsed exceeds this value, the task is upgraded to medium increment. Range 1 to 10240.",
+			"permissions": "readwrite",
+			"visibility": "private"
 		}
 	}
 }

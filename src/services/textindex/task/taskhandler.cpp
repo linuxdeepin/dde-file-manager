@@ -485,7 +485,7 @@ bool cleanupIndexs(const IndexContext &context, IndexReaderPtr reader, IndexWrit
         int removedCount = 0;
 
         // 检查每个文档对应的文件是否存在
-        for (int32_t i = 0; i < allDocs->totalHits && running.isRunning(); ++i) {
+        for (int32_t i = 0; i < allDocs->totalHits && running.isRunning() && !running.isPauseRequested(); ++i) {
             // Ensure scoreDocs[i] is not null before accessing ->doc
             if (!allDocs->scoreDocs || !allDocs->scoreDocs[i]) {
                 fmWarning() << "[cleanupIndexs] Null scoreDoc at index" << i << "during index cleanup";
@@ -738,6 +738,14 @@ TaskHandler TaskHandlers::CreateIndexHandler(const IndexContext &context)
                       migrator.isActive() ? &migrator : nullptr);
             });
 
+            if (running.isPauseRequested()) {
+                fmInfo() << "[CreateIndexHandler] Index creation paused by scheduler request";
+                writer->commit();
+                result.paused = true;
+                result.success = false;
+                return result;
+            }
+
             // Only the creation of an index that is interrupted is also considered a failure
             // Created indexes must be guaranteed to be complete
             if (!running.isRunning()) {
@@ -857,6 +865,14 @@ TaskHandler TaskHandlers::UpdateIndexHandler(const IndexContext &context)
                        migrator.isActive() ? &migrator : nullptr);
             });
 
+            if (running.isPauseRequested()) {
+                fmInfo() << "[UpdateIndexHandler] Index update paused by scheduler request";
+                writer->commit();
+                result.paused = true;
+                result.success = false;
+                return result;
+            }
+
             if (!running.isRunning()) {
                 fmWarning() << "[UpdateIndexHandler] Index update was interrupted by user request";
                 result.interrupted = true;
@@ -956,6 +972,15 @@ TaskHandler TaskHandlers::CreateOrUpdateFileListHandler(const IndexContext &cont
             provider->traverse(running, [&](const QString &file) {
                 updateFile(context, file, excludeMatcher, reader, writer, &reporter);
             });
+
+            if (running.isPauseRequested()) {
+                fmInfo() << "[CreateOrUpdateFileListHandler] File list update paused by scheduler request";
+                writer->commit();
+                result.paused = true;
+                result.success = false;
+                result.remainingFiles = fileList;
+                return result;
+            }
 
             if (!running.isRunning()) {
                 fmWarning() << "[CreateOrUpdateFileListHandler] File list update was interrupted by user request";

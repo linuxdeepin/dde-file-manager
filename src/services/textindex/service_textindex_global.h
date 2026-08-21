@@ -51,6 +51,11 @@ inline const QString kLoadSampleIntervalSeconds = QLatin1String("loadSampleInter
 inline const QString kCpuLoadThresholdPercent = QLatin1String("cpuLoadThresholdPercent");
 inline const QString kDiskBusyThresholdPercent = QLatin1String("diskBusyThresholdPercent");
 
+// Strategy optimization – task grading thresholds
+inline const QString kLightIncrementFileCountThreshold = QLatin1String("lightIncrementFileCountThreshold");
+inline const QString kLightIncrementOcrFileCountThreshold = QLatin1String("lightIncrementOcrFileCountThreshold");
+inline const QString kLightIncrementSizeThresholdMB = QLatin1String("lightIncrementSizeThresholdMB");
+
 }   // namesapce DConf
 
 // NOTE: The version number must be upgraded
