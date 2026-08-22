@@ -2102,22 +2102,22 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="593"/>
         <source>The export path directory is world-writable, please choose a safer location!</source>
-        <translation type="unfinished"/>
+        <translation>Vientipolku on kirjoitussuojattu, valitse toinen polku!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="601"/>
         <source>This partition is read-only, please export to a writable partition</source>
-        <translation type="unfinished"/>
+        <translation>Tämä osio on muodossa &quot;vain luku&quot;, vie osioon johon voi kirjoittaa</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="628"/>
         <source>Please export to an external device such as a non-encrypted partition or USB flash drive.</source>
-        <translation type="unfinished"/>
+        <translation>Vie ulkoiseen laitteeseen, kuten salaamattomaan osioon tai USB-muistitikulle.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="642"/>
         <source>The partition is encrypted, please export to a non-encrypted partition or external device such as a USB flash drive.</source>
-        <translation type="unfinished"/>
+        <translation>Osio on salattu. Vie salaamattomaan osioon tai ulkoiseen laitteeseen, kuten USB-muistitikulle.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="878"/>
