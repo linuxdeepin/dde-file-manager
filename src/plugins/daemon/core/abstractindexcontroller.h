@@ -46,7 +46,7 @@ private:
 
     void setupStateHandlers();
     void setupDBusConnections();
-    void startIndexTask(bool isCreate, bool silent = false);
+    void startIndexTask(bool isCreate);
     void updateState(State newState);
     void handleConfigChanged(const QString &config, const QString &key);
     void activeBackend(bool isInit = false);
