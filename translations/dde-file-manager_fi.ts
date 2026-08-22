@@ -2087,17 +2087,17 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="572"/>
         <source>Recovery key export path is not exists!</source>
-        <translation type="unfinished"/>
+        <translation>Palautusavaimen vientipolkua ei ole olemassa!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="579"/>
         <source>Recovery key export path cannot be a symlink or non-directory!</source>
-        <translation type="unfinished"/>
+        <translation>Palautusavaimen vientipolku on oltava hakemisto ja symlink ei kelpaa!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="587"/>
         <source>Cannot access the export path directory!</source>
-        <translation type="unfinished"/>
+        <translation>Vientipolkuun ei ole käyttöoikeuksia!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="593"/>
