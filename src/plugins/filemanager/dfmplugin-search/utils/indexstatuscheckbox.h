@@ -24,7 +24,11 @@ public:
         Indexing,
         Completed,
         Failed,
-        Inactive
+        Inactive,
+        WaitingPower,
+        WaitingPowerSave,
+        WaitingIdle,
+        WaitingUpgrade
     };
 
     explicit IndexStatusCheckBox(QWidget *parent = nullptr);
@@ -43,6 +47,9 @@ public:
     void setFailedText(const QString &mainText,
                        const QString &linkText,
                        const QString &href = QStringLiteral("update"));
+    void setWaitingText(const QString &mainText,
+                        const QString &linkText,
+                        const QString &href = QStringLiteral("update"));
 
     void setStatus(Status status);
     Status status() const;

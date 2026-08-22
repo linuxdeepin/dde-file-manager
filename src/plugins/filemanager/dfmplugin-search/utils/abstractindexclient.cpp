@@ -66,6 +66,8 @@ bool AbstractIndexClient::ensureInterface()
             this, SLOT(onDBusTaskFinished(QString, QString, bool)));
     connect(interface.get(), SIGNAL(TaskProgressChanged(QString, QString, qlonglong, qlonglong)),
             this, SLOT(onDBusTaskProgressChanged(QString, QString, qlonglong, qlonglong)));
+    connect(interface.get(), SIGNAL(IndexStatusChanged(QString, QString)),
+            this, SLOT(onDBusIndexStatusChanged(QString, QString)));
 
     fmInfo() << "[" << m_descriptor.clientName << "] interface successfully initialized";
     return true;
@@ -332,4 +334,48 @@ void AbstractIndexClient::handleGetLastUpdateTimeReply(QDBusPendingCallWatcher *
     } else {
         emit lastUpdateTimeResult(reply.value(), true);
     }
+}
+
+void AbstractIndexClient::getIndexStatus()
+{
+    if (!ensureInterface()) {
+        fmWarning() << "[" << m_descriptor.clientName << "] cannot get index status: interface unavailable";
+        emit indexStatusResult(QString(), QString(), false);
+        return;
+    }
+
+    auto watcher = new QDBusPendingCallWatcher(interface->asyncCall(QStringLiteral("GetIndexStatus")), this);
+    connect(watcher, &QDBusPendingCallWatcher::finished,
+            this, [this](QDBusPendingCallWatcher *watcher) {
+                FinallyUtil finaly([watcher]() { watcher->deleteLater(); });
+                QDBusPendingReply<QVariantMap> reply = *watcher;
+
+                if (reply.isError()) {
+                    fmWarning() << "[" << m_descriptor.clientName << "] get index status failed:" << reply.error().message();
+                    emit indexStatusResult(QString(), QString(), false);
+                    return;
+                }
+
+                const QVariantMap status = reply.value();
+                const QString state = status.value("state").toString();
+                const QString grade = status.value("grade").toString();
+                emit indexStatusResult(state, grade, true);
+            });
+}
+
+void AbstractIndexClient::forceUpdateIndex(const QStringList &paths)
+{
+    if (!ensureInterface()) {
+        fmCritical() << "[" << m_descriptor.clientName << "] cannot force update: interface unavailable";
+        return;
+    }
+
+    fmInfo() << "[" << m_descriptor.clientName << "] requesting force update for" << paths.size() << "paths";
+    interface->asyncCall(QStringLiteral("ForceUpdateIndex"), QVariant::fromValue(paths), QVariantMap());
+}
+
+void AbstractIndexClient::onDBusIndexStatusChanged(const QString &state, const QString &grade)
+{
+    fmDebug() << "[" << m_descriptor.clientName << "] index status changed - state:" << state << "grade:" << grade;
+    emit indexStatusChanged(state, grade);
 }

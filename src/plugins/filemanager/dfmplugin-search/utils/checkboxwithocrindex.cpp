@@ -21,6 +21,12 @@ CheckBoxWithOcrIndex::CheckBoxWithOcrIndex(QWidget *parent)
     options.failedLinkText = tr("try updating again");
     options.completedMainText = tr("Index update completed, last update time: %1");
     options.completedLinkText = tr("Update index now");
+    options.waitingPowerMainText = tr("Currently using battery, index update has been paused");
+    options.waitingPowerSaveMainText = tr("Power saving mode is enabled, index update has been paused");
+    options.waitingIdleMainText = tr("Waiting for the device to become idle to continue updating");
+    options.waitingUpgradeMainText = tr("Waiting for index service upgrade");
+    options.waitingUpdateLinkText = tr("Continue updating");
+    options.waitingUpgradeLinkText = tr("Update index now");
 
     m_controller = new IndexStatusController(this, OcrIndexClient::instance(), options, this);
     connect(SearchManager::instance(), &SearchManager::enableOcrTextSearchChanged, this, [this](bool enable) {
