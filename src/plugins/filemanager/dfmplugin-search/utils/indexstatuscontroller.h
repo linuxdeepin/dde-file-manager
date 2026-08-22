@@ -22,6 +22,13 @@ struct IndexStatusControllerOptions
     QString failedLinkText;
     QString completedMainText;
     QString completedLinkText;
+    // Waiting state texts
+    QString waitingPowerMainText;
+    QString waitingPowerSaveMainText;
+    QString waitingIdleMainText;
+    QString waitingUpgradeMainText;
+    QString waitingUpdateLinkText;    // "仍要更新"
+    QString waitingUpgradeLinkText;   // "立即更新"
     std::function<bool(const QString &, AbstractIndexClient::TaskType)> shouldHandleEvent;
 };
 
@@ -47,6 +54,8 @@ public:
 
 private:
     bool shouldHandleIndexEvent(const QString &path, AbstractIndexClient::TaskType type) const;
+    void applyServerStatus(const QString &state);
+    void applyWaitingStatus(IndexStatusCheckBox::Status status);
 
 private:
     IndexStatusCheckBox *m_view { nullptr };

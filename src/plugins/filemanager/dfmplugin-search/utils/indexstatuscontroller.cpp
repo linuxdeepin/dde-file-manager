@@ -1,4 +1,5 @@
 // SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+//
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "indexstatuscontroller.h"
@@ -22,39 +23,30 @@ IndexStatusController::IndexStatusController(IndexStatusCheckBox *view,
                              m_options.indexingItemsText);
 
     connect(m_view, &IndexStatusCheckBox::checkStateChanged, this, [this](Qt::CheckState state) {
-        if (state == Qt::CheckState::Checked)
+        if (state == Qt::CheckState::Checked) {
             m_view->setStatus(IndexStatusCheckBox::Status::Indexing);
-        else
+            m_client->getIndexStatus();
+        } else {
             m_view->setStatus(IndexStatusCheckBox::Status::Inactive);
+        }
     });
 
     connect(m_view, &IndexStatusCheckBox::resetRequested, this, [this]() {
-        m_checkContext = CheckContext::ResetIndex;
-        m_client->checkIndexExists();
+        m_client->forceUpdateIndex(DFMSEARCH::Global::defaultIndexedDirectory());
     });
 
-    connect(m_client, &AbstractIndexClient::indexExistsResult, this, [this](bool exists, bool success) {
+    // Server-driven status: initial query result
+    connect(m_client, &AbstractIndexClient::indexStatusResult, this, [this](const QString &state, const QString &grade, bool success) {
         if (!success) {
-            fmWarning() << "[" << m_options.logTag << "] Failed to check if index exists";
+            fmWarning() << "[" << m_options.logTag << "] Failed to get index status";
             return;
         }
+        applyServerStatus(state);
+    });
 
-        if (m_checkContext == CheckContext::ResetIndex) {
-            m_client->setEnable(true);
-            const auto taskType = exists ? AbstractIndexClient::TaskType::Update
-                                         : AbstractIndexClient::TaskType::Create;
-            m_client->startTask(taskType, DFMSEARCH::Global::defaultIndexedDirectory());
-            m_view->setStatus(IndexStatusCheckBox::Status::Indexing);
-        } else if (m_checkContext == CheckContext::InitStatus && m_view->isChecked()) {
-            m_view->setStatus(exists ? IndexStatusCheckBox::Status::Completed
-                                     : IndexStatusCheckBox::Status::Failed);
-            if (exists)
-                m_client->getLastUpdateTime();
-            else
-                m_view->setFailedText(m_options.failedMainText, m_options.failedLinkText);
-        }
-
-        m_checkContext = CheckContext::None;
+    // Server-driven status: real-time changes
+    connect(m_client, &AbstractIndexClient::indexStatusChanged, this, [this](const QString &state, const QString &grade) {
+        applyServerStatus(state);
     });
 
     connect(m_client, &AbstractIndexClient::lastUpdateTimeResult, this, [this](const QString &time, bool success) {
@@ -65,24 +57,6 @@ IndexStatusController::IndexStatusController(IndexStatusCheckBox *view,
         }
 
         fmWarning() << "Failed to get" << m_options.logTag << "last update time, success:" << success;
-    });
-
-    connect(m_client, &AbstractIndexClient::hasRunningRootTaskResult, this, [this](bool running, bool success) {
-        if (!success) {
-            fmWarning() << "[" << m_options.logTag << "] Failed to check if root task is running";
-            return;
-        }
-
-        if (!m_view->isChecked())
-            return;
-
-        if (running) {
-            m_view->setStatus(IndexStatusCheckBox::Status::Indexing);
-            return;
-        }
-
-        m_checkContext = CheckContext::InitStatus;
-        m_client->checkIndexExists();
     });
 }
 
@@ -100,10 +74,9 @@ void IndexStatusController::connectToBackend()
         fmDebug() << m_options.logTag << "backend status:" << status;
     });
 
+    // Progress only updates numbers, not status (status driven by indexStatusChanged)
     connect(m_client, &AbstractIndexClient::taskProgressChanged, this,
             [this](AbstractIndexClient::TaskType type, const QString &path, qlonglong count, qlonglong total) {
-                fmDebug() << m_options.logTag << "task progress changed - type:" << static_cast<int>(type)
-                          << "path:" << path << "progress:" << count << "/" << total;
                 if (!shouldHandleIndexEvent(path, type))
                     return;
 
@@ -112,42 +85,32 @@ void IndexStatusController::connectToBackend()
                 m_view->updateIndexingProgress(count, total);
             });
 
+    // Task finished → query authoritative status from server
     connect(m_client, &AbstractIndexClient::taskFinished, this,
             [this](AbstractIndexClient::TaskType type, const QString &path, bool success) {
-                fmDebug() << m_options.logTag << "task finished - type:" << static_cast<int>(type)
-                          << "path:" << path << "success:" << success;
                 if (!shouldHandleIndexEvent(path, type))
                     return;
-
-                if (success) {
-                    m_view->setStatus(IndexStatusCheckBox::Status::Completed);
+                m_client->getIndexStatus();
+                if (success)
                     m_client->getLastUpdateTime();
-                } else {
-                    m_view->setStatus(IndexStatusCheckBox::Status::Failed);
-                    m_view->setFailedText(m_options.failedMainText, m_options.failedLinkText);
-                }
             });
 
     connect(m_client, &AbstractIndexClient::taskFailed, this,
             [this](AbstractIndexClient::TaskType type, const QString &path, const QString &error) {
-                fmWarning() << m_options.logTag << "task failed - type:" << static_cast<int>(type)
-                            << "path:" << path << "error:" << error;
                 if (!shouldHandleIndexEvent(path, type))
                     return;
-
-                m_view->setStatus(IndexStatusCheckBox::Status::Failed);
-                m_view->setFailedText(m_options.failedMainText, m_options.failedLinkText);
+                m_client->getIndexStatus();
             });
 }
 
 void IndexStatusController::initStatusBar()
 {
-    if (m_view->isChecked()) {
-        m_client->checkHasRunningRootTask();
+    if (!m_view->isChecked()) {
+        m_view->setStatus(IndexStatusCheckBox::Status::Inactive);
         return;
     }
 
-    m_view->setStatus(IndexStatusCheckBox::Status::Inactive);
+    m_client->getIndexStatus();
 }
 
 bool IndexStatusController::shouldHandleIndexEvent(const QString &path, AbstractIndexClient::TaskType type) const
@@ -159,6 +122,66 @@ bool IndexStatusController::shouldHandleIndexEvent(const QString &path, Abstract
         return true;
 
     return m_options.shouldHandleEvent(path, type);
+}
+
+void IndexStatusController::applyServerStatus(const QString &state)
+{
+    if (!m_view->isChecked())
+        return;
+
+    fmDebug() << "[" << m_options.logTag << "] applying server status:" << state;
+
+    if (state == "Running") {
+        m_view->setStatus(IndexStatusCheckBox::Status::Indexing);
+    } else if (state == "Idle") {
+        m_view->setStatus(IndexStatusCheckBox::Status::Completed);
+        m_client->getLastUpdateTime();
+    } else if (state == "Failed") {
+        m_view->setStatus(IndexStatusCheckBox::Status::Failed);
+        m_view->setFailedText(m_options.failedMainText, m_options.failedLinkText);
+    } else if (state == "WaitingPower") {
+        applyWaitingStatus(IndexStatusCheckBox::Status::WaitingPower);
+    } else if (state == "WaitingPowerSave") {
+        applyWaitingStatus(IndexStatusCheckBox::Status::WaitingPowerSave);
+    } else if (state == "WaitingIdle") {
+        applyWaitingStatus(IndexStatusCheckBox::Status::WaitingIdle);
+    } else if (state == "WaitingUpgrade") {
+        applyWaitingStatus(IndexStatusCheckBox::Status::WaitingUpgrade);
+    } else {
+        fmWarning() << "[" << m_options.logTag << "] unknown server status:" << state;
+    }
+}
+
+void IndexStatusController::applyWaitingStatus(IndexStatusCheckBox::Status status)
+{
+    m_view->setStatus(status);
+
+    QString mainText;
+    QString linkText;
+    QString href = QStringLiteral("update");
+
+    switch (status) {
+    case IndexStatusCheckBox::Status::WaitingPower:
+        mainText = m_options.waitingPowerMainText;
+        linkText = m_options.waitingUpdateLinkText;
+        break;
+    case IndexStatusCheckBox::Status::WaitingPowerSave:
+        mainText = m_options.waitingPowerSaveMainText;
+        linkText = m_options.waitingUpdateLinkText;
+        break;
+    case IndexStatusCheckBox::Status::WaitingIdle:
+        mainText = m_options.waitingIdleMainText;
+        linkText = m_options.waitingUpdateLinkText;
+        break;
+    case IndexStatusCheckBox::Status::WaitingUpgrade:
+        mainText = m_options.waitingUpgradeMainText;
+        linkText = m_options.waitingUpgradeLinkText;
+        break;
+    default:
+        return;
+    }
+
+    m_view->setWaitingText(mainText, linkText, href);
 }
 
 }   // namespace dfmplugin_search

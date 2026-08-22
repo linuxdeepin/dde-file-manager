@@ -48,6 +48,8 @@ public:
     void checkHasRunningTask();
     void getLastUpdateTime();
     void setEnable(bool enabled);
+    void getIndexStatus();
+    void forceUpdateIndex(const QStringList &paths);
 
 Q_SIGNALS:
     void taskStarted(TaskType type, const QString &path);
@@ -59,6 +61,8 @@ Q_SIGNALS:
     void hasRunningTaskResult(bool running, bool success);
     void hasRunningRootTaskResult(bool running, bool success);
     void lastUpdateTimeResult(const QString &time, bool success);
+    void indexStatusResult(const QString &state, const QString &grade, bool success);
+    void indexStatusChanged(const QString &state, const QString &grade);
 
 protected:
     bool ensureInterface();
@@ -75,6 +79,7 @@ private:
 private Q_SLOTS:
     void onDBusTaskFinished(const QString &type, const QString &path, bool success);
     void onDBusTaskProgressChanged(const QString &type, const QString &path, qlonglong count, qlonglong total);
+    void onDBusIndexStatusChanged(const QString &state, const QString &grade);
 
 private:
     IndexClientDescriptor m_descriptor;

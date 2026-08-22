@@ -138,6 +138,13 @@ void IndexStatusCheckBox::setFailedText(const QString &mainText, const QString &
     setFormattedTextWithLink(mainText, linkText, href);
 }
 
+void IndexStatusCheckBox::setWaitingText(const QString &mainText, const QString &linkText, const QString &href)
+{
+    m_iconLabel->setPixmap(iconPixmap("waiting", 16));
+    setRunning(false);
+    setFormattedTextWithLink(mainText, linkText, href);
+}
+
 void IndexStatusCheckBox::setStatus(Status status)
 {
     m_status = status;
@@ -157,6 +164,16 @@ void IndexStatusCheckBox::setStatus(Status status)
         setRunning(false);
         m_iconLabel->show();
         m_iconLabel->setPixmap(iconPixmap("warning", 16));
+        break;
+    case Status::WaitingPower:
+    case Status::WaitingPowerSave:
+    case Status::WaitingIdle:
+    case Status::WaitingUpgrade:
+        // Waiting states use "waiting" icon, no spinner
+        m_spinner->hide();
+        m_spinner->stop();
+        m_iconLabel->show();
+        m_iconLabel->setPixmap(iconPixmap("waiting", 16));
         break;
     case Status::Inactive:
         m_spinner->hide();
