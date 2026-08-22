@@ -4,8 +4,15 @@
 
 #include "dodeletefilesworker.h"
 #include <dfm-base/base/schemefactory.h>
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/finallyutil.h>
 
 #include <QUrl>
+
+#include <unistd.h>
+#include <fts.h>
+// for DFMIO::DFMUtils::isInvalidCodecByPath used in originPath:: encoding handling
+#include <dfm-io/dfmio_utils.h>
 
 DPFILEOPERATIONS_USE_NAMESPACE
 DoDeleteFilesWorker::DoDeleteFilesWorker(QObject *parent)
@@ -27,13 +34,13 @@ bool DoDeleteFilesWorker::doWork()
         return false;
 
     fmInfo() << "Start deleting files - count:" << sourceUrls.count();
-    deleteAllFiles();
+    bool success = deleteAllFiles();
 
     // 完成
     fmInfo() << "Delete operation completed successfully";
     endWork();
 
-    return true;
+    return success;
 }
 
 void DoDeleteFilesWorker::stop()
@@ -57,10 +64,171 @@ bool DoDeleteFilesWorker::deleteAllFiles()
     fmDebug() << "Delete all files - source file local:" << isSourceFileLocal;
     // sources file list is checked
     // delete files on can't remove device
+    useFts = FileOperationsUtils::useFtsDelete();
+    if (useFts) {
+        // FTS only handles local files; if any source is non-local, fall back to the
+        // per-device paths so remote files are actually deleted (not silently dropped).
+        bool allLocal = true;
+        for (const auto &url : sourceUrls) {
+            if (!url.isLocalFile()) {
+                allLocal = false;
+                break;
+            }
+        }
+        if (allLocal)
+            return deleteFilesByFts();
+    }
     if (isSourceFileLocal) {
         return deleteFilesOnCanNotRemoveDevice();
     }
     return deleteFilesOnOtherDevice();
+}
+
+bool DoDeleteFilesWorker::deleteFilesByFts()
+{
+    if (sourceUrls.isEmpty())
+        return false;
+
+    QList<QByteArray> pathData;
+    pathData.reserve(sourceUrls.size());
+    for (const auto &url : sourceUrls) {
+        if (!url.isLocalFile()) {
+            fmWarning() << "deleteFilesByFts: skip non-local path:" << url;
+            continue;
+        }
+        pathData.append(url.toLocalFile().toUtf8());
+    }
+    if (pathData.isEmpty())
+        return false;
+
+    QVector<char *> pathPtrs(pathData.size() + 1, nullptr);
+    for (int i = 0; i < pathData.size(); ++i)
+        pathPtrs[i] = pathData[i].data();
+
+    FTS *fts = fts_open(pathPtrs.data(), FTS_PHYSICAL | FTS_NOSTAT | FTS_NOCHDIR, nullptr);
+    if (!fts) {
+        fmWarning() << "deleteFilesByFts: fts_open failed:" << strerror(errno);
+        return false;
+    }
+    // Flush any buffered fileDeleted signals on every exit path.
+    dfmbase::FinallyUtil atFinish([&] { flushFileDeletedBatch(); });
+
+    // FTS only traverses local files (non-local sources are filtered above), so the
+    // local inotify watcher already delivers delete notifications - no manual notify
+    // is needed here (mirrors deleteFilesOnCanNotRemoveDevice's local behavior).
+    QSet<QUrl> sourceUrlsSet(sourceUrls.begin(), sourceUrls.end());
+    bool success = true;
+    int errorCount = 0;
+
+    FTSENT *ent;
+    AbstractJobHandler::SupportAction action { AbstractJobHandler::SupportAction::kNoAction };
+    while ((ent = fts_read(fts)) != nullptr) {
+        if (!stateCheck()) {
+            success = false;
+            break;
+        }
+
+        bool isDir = false;
+        bool shouldDelete = false;
+
+        switch (ent->fts_info) {
+        case FTS_F:
+        case FTS_SL:
+        case FTS_SLNONE:
+        case FTS_NSOK:
+            shouldDelete = true;
+            isDir = false;
+            break;
+        case FTS_DP:
+            shouldDelete = true;
+            isDir = true;
+            break;
+        case FTS_DNR:
+        case FTS_ERR:
+        case FTS_DC:
+            fmWarning() << "deleteFilesByFts: traversal error:" << ent->fts_path
+                       << strerror(ent->fts_errno);
+            errorCount++;
+            continue;
+        default:
+            continue;
+        }
+
+        if (!shouldDelete)
+            continue;
+
+        auto url = QUrl::fromLocalFile(ent->fts_path);
+        // Match the encoding used by statisticsFilesSize() so that non-UTF8 / invalid
+        // codec paths produce the same originPath::-prefixed URL, keeping sourceUrlsSet
+        // lookups (completeSourceFiles / completeTargetFiles) consistent.
+        if (DFMIO::DFMUtils::isInvalidCodecByPath(ent->fts_path))
+            url.setUserInfo(QString::fromLatin1("originPath::") + QString::fromLatin1(ent->fts_path));
+        emitCurrentTaskNotify(url, QUrl());
+        // Only emit/count an entry when it was actually removed; a retry that is
+        // interrupted by stop, or a non-retried failure, must not signal deletion.
+        bool deleted = false;
+        do {
+            action = AbstractJobHandler::SupportAction::kNoAction;
+            int ret = isDir ? ::rmdir(ent->fts_accpath) : ::unlink(ent->fts_accpath);
+            if (ret == 0) {
+                deleted = true;
+                break;
+            }
+            // Already gone - nothing left to remove; treat as deleted.
+            if (errno == ENOENT || errno == ENOTDIR) {
+                deleted = true;
+                break;
+            }
+            fmWarning() << "deleteFilesByFts: delete failed:" << ent->fts_path
+                       << strerror(errno);
+            errorCount++;
+            action = doHandleErrorAndWait(url, AbstractJobHandler::JobErrorType::kDeleteFileError,
+                                          strerror(errno));
+        } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
+
+        // Stopped mid-operation: do not emit/count the in-flight entry; abort traversal.
+        if (isStopped()) {
+            success = false;
+            break;
+        }
+        // Not actually deleted (failed/skipped): no signal, no count.
+        if (!deleted)
+            continue;
+
+        batchEmitFileDeleted(url);
+
+        if (sourceUrlsSet.contains(url)) {
+            completeSourceFiles.append(url);
+            completeTargetFiles.append(url);
+        }
+
+        deleteFilesCount++;
+    }
+
+    fts_close(fts);
+
+    fmWarning() << "deleteFilesByFts: done -" << errorCount << "errors," << deleteFilesCount << "deleted";
+
+    return success && errorCount == 0;
+}
+
+void DoDeleteFilesWorker::flushFileDeletedBatch()
+{
+    if (!fileDeletedBuffer.isEmpty()) {
+        emit fileDeleted(fileDeletedBuffer);
+        fileDeletedBuffer.clear();
+    }
+}
+
+void DoDeleteFilesWorker::batchEmitFileDeleted(const QUrl &url)
+{
+    if (fileDeletedBuffer.isEmpty())
+        fileDeletedTimer.start();
+
+    fileDeletedBuffer.append(url);
+
+    if (fileDeletedBuffer.size() >= 1000 || fileDeletedTimer.hasExpired(500))
+        flushFileDeletedBatch();
 }
 /*!
  * \brief DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice Delete files on non removable devices
@@ -69,6 +237,8 @@ bool DoDeleteFilesWorker::deleteAllFiles()
 bool DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice()
 {
     fmDebug() << "Deleting files on non-removable device - file count:" << allFilesList.count();
+    // Flush any buffered fileDeleted signals on every exit path.
+    dfmbase::FinallyUtil atFinish([&] { flushFileDeletedBatch(); });
 
     if (allFilesList.count() == 1 && isConvert) {
         auto info = InfoFactory::create<FileInfo>(allFilesList.first(), Global::CreateFileInfoType::kCreateFileInfoSync);
@@ -80,8 +250,9 @@ bool DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice()
 
     AbstractJobHandler::SupportAction action { AbstractJobHandler::SupportAction::kNoAction };
     for (QList<QUrl>::iterator it = --allFilesList.end(); it != --allFilesList.begin(); --it) {
-        if (!stateCheck())
+        if (!stateCheck()) {
             return false;
+        }
         const QUrl &url = *it;
         emitCurrentTaskNotify(url, QUrl());
         do {
@@ -109,10 +280,11 @@ bool DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice()
             continue;
         }
 
-        if (action != AbstractJobHandler::SupportAction::kNoAction)
+        if (action != AbstractJobHandler::SupportAction::kNoAction) {
             return false;
+        }
 
-        emit fileDeleted(url);
+        batchEmitFileDeleted(url);
     }
 
     fmInfo() << "Completed deletion on non-removable device - deleted count:" << deleteFilesCount;
@@ -125,6 +297,8 @@ bool DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice()
 bool DoDeleteFilesWorker::deleteFilesOnOtherDevice()
 {
     fmDebug() << "Deleting files on other device - source count:" << sourceUrls.count();
+    // Flush any buffered fileDeleted signals on every exit path.
+    dfmbase::FinallyUtil atFinish([&] { flushFileDeletedBatch(); });
 
     bool ok = true;
     if (sourceUrls.count() == 1 && isConvert) {
@@ -162,7 +336,7 @@ bool DoDeleteFilesWorker::deleteFilesOnOtherDevice()
 
         completeTargetFiles.append(url);
         completeSourceFiles.append(url);
-        emit fileDeleted(url);
+        batchEmitFileDeleted(url);
         fmDebug() << "Successfully deleted item:" << url;
     }
 

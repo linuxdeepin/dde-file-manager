@@ -269,9 +269,9 @@ bool AbstractWorker::statisticsFilesSize()
     // Set workData flags for use in DoCopyFileWorker
     workData->isSourceFileLocal = isSourceFileLocal;
 
-    if (isSourceFileLocal) {
+    if (isSourceFileLocal || (firstUrl.isLocalFile() && jobType == AbstractJobHandler::JobType::kDeleteType)) {
         fmDebug() << "Using synchronous file size calculation for local files";
-        const SizeInfoPointer &fileSizeInfo = FileOperationsUtils::statisticsFilesSize(sourceUrls, true);
+        const SizeInfoPointer &fileSizeInfo = FileOperationsUtils::statisticsFilesSize(sourceUrls, true, jobType == AbstractJobHandler::JobType::kDeleteType);
         allFilesList = fileSizeInfo->allFiles;
         sourceFilesTotalSize = fileSizeInfo->totalSize;
         workData->dirSize = fileSizeInfo->dirSize;
