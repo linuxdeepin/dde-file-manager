@@ -469,7 +469,7 @@ void RootInfo::handleTraversalResults(const QList<FileInfoPointer> children, con
     }
 }
 
-void RootInfo::handleTraversalResultsUpdate(const QList<SortInfoPointer> children, const QString &travseToken)
+void RootInfo::handleTraversalResultsUpdate(const QList<SortInfoPointer> children, const QString &travseToken, bool increment)
 {
     if (children.isEmpty()) {
         fmDebug() << "Empty traversal results update for token:" << travseToken;
@@ -477,8 +477,23 @@ void RootInfo::handleTraversalResultsUpdate(const QList<SortInfoPointer> childre
     }
 
     QWriteLocker lk(&childrenLock);
-    // 更新已存在的文件信息
-    sourceDataList = children;
+    if (!increment) {
+        // 首批或全量更新（如搜索结果刷新）：替换整个列表并重建 URL 索引
+        childrenUrlList.clear();
+        sourceDataList = children;
+        for (const auto &file : children) {
+            if (file)
+                childrenUrlList.append(file->fileUrl());
+        }
+    } else {
+        // 增量批次（如 dirent 逐批遍历）：追加到已有列表
+        for (const auto &file : children) {
+            if (!file)
+                continue;
+            childrenUrlList.append(file->fileUrl());
+            sourceDataList.append(file);
+        }
+    }
 
     bool isFirst = isFirstBatch.exchange(false);   // Get and reset the flag
     fmDebug() << "Emitting iterator update files signal - children:" << children.size() << "isFirst:" << isFirst;
