@@ -47,8 +47,7 @@ enum VfsMonitorAct : uint8_t {
     ACT_RENAME_FROM_FOLDER = 10,
     ACT_RENAME_TO_FOLDER = 11,
     ACT_MOUNT = 12,
-    ACT_UNMOUNT = 13,
-    ACT_CLOSE_WRITE_FILE = 14
+    ACT_UNMOUNT = 13
 };
 
 class VfsMonitorFileSystemWatcherPrivate
