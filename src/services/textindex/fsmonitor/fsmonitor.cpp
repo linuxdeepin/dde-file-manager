@@ -164,14 +164,9 @@ bool FSMonitorPrivate::startMonitoring()
     active = true;
     watchedDirectories.clear();
 
-    if (vfsMonitorAvailable) {
-        fmInfo() << "FSMonitor: VfsMonitor active, skipping inotify directory watch setup";
-        fmInfo() << "FSMonitor: Started monitoring with max watches:" << maxWatches
-                 << "usage limit:" << (maxUsagePercentage * 100) << "%";
-        return true;
-    }
-
-    // Start worker thread
+    // Start worker thread -- needed even in vfs mode, because inotify
+    // (restricted to IN_CLOSE_WRITE) must traverse and watch directories
+    // to deliver fileClosed events.  VfsMonitor handles create/delete/move.
     if (!workerThread.isRunning()) {
         workerThread.start();
     }
@@ -644,8 +639,8 @@ void FSMonitorPrivate::handleDirectoriesBatch(const QStringList &paths)
         return;
     }
 
-    if (vfsMonitorAvailable || !watcher) {
-        fmDebug() << "FSMonitor: Ignoring directory watch batch in vfs mode, size:" << paths.size();
+    if (!watcher) {
+        fmDebug() << "FSMonitor: No watcher available, ignoring directory watch batch, size:" << paths.size();
         return;
     }
 
