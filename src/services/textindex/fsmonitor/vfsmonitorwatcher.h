@@ -18,9 +18,10 @@ class VfsMonitorFileSystemWatcherPrivate;
 // VfsMonitorFileSystemWatcher: File system watcher using deepin-anything
 // event dispatcher socket exposed by deepin-anything-server.
 //
-// Receives global file system events (create, delete, move, close-write)
-// forwarded by deepin-anything-server from
-// /run/deepin-anything/event-dispatcher.sock.
+// Receives global file system events (create, delete, move) forwarded by
+// deepin-anything-server from /run/deepin-anything/event-dispatcher.sock.
+// File close events (IN_CLOSE_WRITE) are NOT provided -- use
+// InotifyFileSystemWatcher for those.
 //
 // Usage:
 //   auto *watcher = VfsMonitorFileSystemWatcher::create(rootPaths, excludePredicate, parent);
@@ -55,7 +56,6 @@ Q_SIGNALS:
     void directoryDeleted(const QString &path, const QString &name);
     void directoryMoved(const QString &fromPath, const QString &fromName,
                         const QString &toPath, const QString &toName);
-    void fileClosed(const QString &path, const QString &name);
 
 private:
     explicit VfsMonitorFileSystemWatcher(const QStringList &rootPaths,
