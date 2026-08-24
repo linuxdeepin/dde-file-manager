@@ -46,7 +46,7 @@ signals:
     void enableOcrTextSearchChanged(bool enable);
 
     void fileAdd(const QUrl &url);
-    void fileDelete(const QUrl &url);
+    void fileDelete(const QList<QUrl> &urls);
     void fileRename(const QUrl &oldUrl, const QUrl &newUrl);
 
 private:

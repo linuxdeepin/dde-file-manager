@@ -307,7 +307,7 @@ TEST_F(TestDoDeleteFilesWorker, DeleteFilesOnOtherDevice_SingleFile)
 
     bool signalEmitted = false;
     QObject::connect(worker, &DoDeleteFilesWorker::fileDeleted,
-                     [&signalEmitted](const QUrl &) {
+                     [&signalEmitted](const QList<QUrl> &) {
                          signalEmitted = true;
                      });
 
@@ -380,7 +380,7 @@ TEST_F(TestDoDeleteFilesWorker, DeleteFilesOnCanNotRemoveDevice_MultipleFiles)
 
     bool signalEmitted = false;
     QObject::connect(worker, &DoDeleteFilesWorker::fileDeleted,
-                     [&signalEmitted](const QUrl &) {
+                     [&signalEmitted](const QList<QUrl> &) {
                          signalEmitted = true;
                      });
 
