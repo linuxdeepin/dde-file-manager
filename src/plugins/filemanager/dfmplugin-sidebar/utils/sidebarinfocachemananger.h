@@ -30,7 +30,8 @@ public:
     bool contains(const QUrl &url) const;
     GroupList groups() const;
     CacheInfoList indexCacheList(const Group &name) const;
-    ItemInfo itemInfo(const QUrl &url);   // the funcs is for QHash<QUrl, ItemInfo> bindedInfos;
+    ItemInfo itemInfo(const QUrl &url);   // fallback: any group matching the url
+    ItemInfo itemInfo(const QUrl &url, const Group &group);
 
     bool addItemInfoCache(const ItemInfo &info);
     bool insertItemInfoCache(Index i, const ItemInfo &info);
@@ -52,7 +53,7 @@ private:
 
 private:
     GroupCacheMap cacheInfoMap;
-    QHash<QUrl, ItemInfo> bindedInfos;
+    QHash<QUrl, QHash<QString, ItemInfo>> bindedInfos;
     QStringList lastSettingKeys;
     QStringList lastSettingBindingKeys;
 };

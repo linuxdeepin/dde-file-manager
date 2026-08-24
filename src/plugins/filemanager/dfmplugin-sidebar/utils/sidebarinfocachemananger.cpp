@@ -67,7 +67,7 @@ bool SideBarInfoCacheMananger::addItemInfoCache(const ItemInfo &info)
 
     CacheInfoList &cache = cacheInfoMap[info.group];
     cache.push_back(info);
-    bindedInfos[info.url] = info;
+    bindedInfos[info.url][info.group] = info;
 
     return true;
 }
@@ -84,7 +84,7 @@ bool SideBarInfoCacheMananger::insertItemInfoCache(SideBarInfoCacheMananger::Ind
     else
         cache.insert(i, info);
 
-    bindedInfos[info.url] = info;
+    bindedInfos[info.url][info.group] = info;
 
     return true;
 }
@@ -96,7 +96,9 @@ bool SideBarInfoCacheMananger::removeItemInfoCache(const SideBarInfoCacheManange
     for (int i = 0; i != size; i++) {
         if (DFMBASE_NAMESPACE::UniversalUtils::urlEquals(url, cache[i].url)) {
             cache.removeAt(i);
-            bindedInfos.remove(url);
+            bindedInfos[url].remove(name);
+            if (bindedInfos[url].isEmpty())
+                bindedInfos.remove(url);
             return true;
         }
     }
@@ -122,7 +124,7 @@ bool SideBarInfoCacheMananger::updateItemInfoCache(const SideBarInfoCacheManange
     for (int i = 0; i != size; i++) {
         if (DFMBASE_NAMESPACE::UniversalUtils::urlEquals(url, cache[i].url)) {
             cache[i] = info;
-            bindedInfos[url] = info;
+            bindedInfos[url][name] = info;
             return true;
         }
     }
@@ -143,7 +145,15 @@ bool SideBarInfoCacheMananger::updateItemInfoCache(const QUrl &url, const ItemIn
 
 ItemInfo SideBarInfoCacheMananger::itemInfo(const QUrl &url)
 {
-    return bindedInfos.value(url);
+    auto it = bindedInfos.find(url);
+    if (it != bindedInfos.end() && !it.value().isEmpty())
+        return it.value().constBegin().value();
+    return ItemInfo();
+}
+
+ItemInfo SideBarInfoCacheMananger::itemInfo(const QUrl &url, const Group &group)
+{
+    return bindedInfos.value(url).value(group);
 }
 
 bool SideBarInfoCacheMananger::contains(const ItemInfo &info) const
