@@ -152,21 +152,23 @@ void SearchFileWatcher::handleFileAdd(const QUrl &url)
     }
 }
 
-void SearchFileWatcher::handleFileDelete(const QUrl &url)
+void SearchFileWatcher::handleFileDelete(const QList<QUrl> &urls)
 {
     // 首先检查文件是否在搜索目录范围内
     auto targetUrl = SearchHelper::searchTargetUrl(this->url());
-    if (!url.path().startsWith(targetUrl.path())) {
-        fmDebug() << "File delete ignored: not within search target path" << targetUrl.path();
-        return;
-    }
-
     auto searchKey = SearchHelper::instance()->searchKeyword(this->url());
-    if (url.fileName().contains(searchKey) &&
-            !dpfHookSequence->run("dfmplugin_search", "hook_Url_IsNotSubFile",
-                                  targetUrl, url)) {
-        fmDebug() << "File delete matches search criteria:" << url.toString();
-        onFileDeleted(url);
+    for (const QUrl &url : urls) {
+        if (!url.path().startsWith(targetUrl.path())) {
+            fmDebug() << "File delete ignored: not within search target path" << targetUrl.path();
+            continue;
+        }
+
+        if (url.fileName().contains(searchKey) &&
+                !dpfHookSequence->run("dfmplugin_search", "hook_Url_IsNotSubFile",
+                                      targetUrl, url)) {
+            fmDebug() << "File delete matches search criteria:" << url.toString();
+            onFileDeleted(url);
+        }
     }
 }
 

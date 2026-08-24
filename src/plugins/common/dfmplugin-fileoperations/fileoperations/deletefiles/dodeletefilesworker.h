@@ -12,6 +12,9 @@
 #include <dfm-base/interfaces/fileinfo.h>
 
 #include <QObject>
+#include <QElapsedTimer>
+#include <QList>
+#include <QUrl>
 
 DPFILEOPERATIONS_BEGIN_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -35,12 +38,20 @@ protected:
     bool deleteFilesOnOtherDevice();
     bool deleteFileOnOtherDevice(const QUrl &url);
     bool deleteDirOnOtherDevice(const FileInfoPointer &dir);
+    bool deleteFilesByFts();
     AbstractJobHandler::SupportAction doHandleErrorAndWait(const QUrl &from,
                                                            const AbstractJobHandler::JobErrorType &error,
                                                            const QString &errorMsg = QString());
 
 private:
+    void batchEmitFileDeleted(const QUrl &url);
+    void flushFileDeletedBatch();
+
+private:
     QAtomicInteger<qint64> deleteFilesCount { 0 };
+    QList<QUrl> fileDeletedBuffer;
+    QElapsedTimer fileDeletedTimer;
+    QAtomicInteger<bool> useFts{false};
 };
 DPFILEOPERATIONS_END_NAMESPACE
 

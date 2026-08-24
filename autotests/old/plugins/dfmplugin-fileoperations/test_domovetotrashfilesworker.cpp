@@ -378,7 +378,7 @@ TEST_F(TestDoMoveToTrashFilesWorker, SignalEmission_FileDeleted)
 
     bool signalEmitted = false;
     QObject::connect(worker, &DoMoveToTrashFilesWorker::fileDeleted,
-                     [&signalEmitted](const QUrl &) {
+                     [&signalEmitted](const QList<QUrl> &) {
                          signalEmitted = true;
                      });
     using WaitFunc = bool (QWaitCondition::*)(QMutex *, QDeadlineTimer);

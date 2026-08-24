@@ -32,7 +32,7 @@ private:
 
 private Q_SLOTS:
     void handleFileAdd(const QUrl &url);
-    void handleFileDelete(const QUrl &url);
+    void handleFileDelete(const QList<QUrl> &urls);
     void handleFileRename(const QUrl &oldUrl, const QUrl &newUrl);
 
 private:

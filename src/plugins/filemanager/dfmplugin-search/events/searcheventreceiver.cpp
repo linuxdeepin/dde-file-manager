@@ -84,9 +84,9 @@ void SearchEventReceiver::handleFileAdd(const QUrl &url)
     emit SearchManager::instance()->fileAdd(url);
 }
 
-void SearchEventReceiver::handleFileDelete(const QUrl &url)
+void SearchEventReceiver::handleFileDelete(const QList<QUrl> &urls)
 {
-    emit SearchManager::instance()->fileDelete(url);
+    emit SearchManager::instance()->fileDelete(urls);
 }
 
 void SearchEventReceiver::handleFileRename(const QUrl &oldUrl, const QUrl &newUrl)
