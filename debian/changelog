@@ -1,3 +1,12 @@
+dde-file-manager (6.5.167) unstable; urgency=medium
+
+  * feat: add dconfig-gated Latin-first sort strategy for zh_CN
+  * perf: adopt QCollator buffer strategy for ICU sort key generation
+  * fix: enable Latin-first sort by default for zh_CN
+  * fix: fix vfs mode directory monitoring for fileClose events
+
+ -- zhangsheng <zhangsheng@uniontech.com>  Mon, 24 Aug 2026 16:35:08 +0800
+
 dde-file-manager (6.5.166) unstable; urgency=medium
 
   * fix: improve sidebar URL highlight deduplication
