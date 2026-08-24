@@ -26,7 +26,7 @@ public slots:
     void handleShowAdvanceSearchBar(quint64 winId, bool visible);
     void handleAddressInputStr(quint64 windId, QString *str);
     void handleFileAdd(const QUrl &url);
-    void handleFileDelete(const QUrl &url);
+    void handleFileDelete(const QList<QUrl> &urls);
     void handleFileRename(const QUrl &oldUrl, const QUrl &newUrl);
     void handleUrlChanged(quint64 winId, const QUrl &url);
 

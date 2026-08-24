@@ -4,6 +4,7 @@
 
 #include <gtest/gtest.h>
 #include <QUrl>
+#include <QList>
 #include <QSignalSpy>
 
 #include "events/searcheventreceiver.h"
@@ -252,10 +253,10 @@ TEST_F(TestSearchEventReceiver, HandleFileDelete_EmitsSearchManagerSignal)
     // Use QSignalSpy to verify signal emission
     QSignalSpy spy(&mockManager, &SearchManager::fileDelete);
 
-    receiver->handleFileDelete(url);
+    receiver->handleFileDelete({url});
 
     EXPECT_EQ(spy.count(), 1);
-    EXPECT_EQ(spy.at(0).at(0).toUrl(), url);
+    EXPECT_EQ(spy.at(0).at(0).value<QList<QUrl>>(), QList<QUrl>{url});
 }
 
 TEST_F(TestSearchEventReceiver, HandleFileRename_EmitsSearchManagerSignal)
