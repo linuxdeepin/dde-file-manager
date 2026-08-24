@@ -7,9 +7,18 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/file/local/localdiriterator.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/finallyutil.h>
+#include <dfm-base/utils/sortfileinfoutils.h>
 
 #include <QElapsedTimer>
 #include <QDebug>
+#include <QFile>
+
+#include <cerrno>
+#include <cstring>
+#include <dirent.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 typedef QList<QSharedPointer<DFMBASE_NAMESPACE::SortFileInfo>> &SortInfoList;
 
@@ -92,6 +101,18 @@ void TraversalDirThreadManager::start()
     fmInfo() << "Starting TraversalDirThreadManager for URL:" << dirUrl.toString() << "token:" << traversalToken;
 
     running = true;
+
+    // Local directories use dirent-based traversal (iteratorOneByOneByDirent) for
+    // better performance: it reads entries with raw opendir/readdir and builds
+    // lightweight SortFileInfo via statx, bypassing the dfm-io enumerator.  Skip
+    // the async iterator pre-fetch and go straight to the worker thread.
+    // Non-local URLs keep the original async/sync flow below.
+    if (dirUrl.isLocalFile() && dirIterator && dirIterator->oneByOne()) {
+        fmDebug() << "Using dirent traversal for local directory, token:" << traversalToken;
+        TraversalDirThread::start();
+        return;
+    }
+
     if (this->sortRole != dfmio::DEnumerator::SortRoleCompareFlag::kSortRoleCompareDefault
         && dirIterator->oneByOne()) {
         fmDebug() << "Setting QueryAttributes for sorted one-by-one iteration";
@@ -147,6 +168,9 @@ void TraversalDirThreadManager::run()
         const QList<SortInfoPointer> &fileList = iteratorAll();
         count = fileList.count();
         fmInfo() << "local dir query end, file count: " << count << " url: " << dirUrl << " elapsed: " << timer.elapsed();
+    } else if (dirUrl.isLocalFile()) {
+        count = iteratorOneByOneByDirent();
+        fmInfo() << "dir query by dirent end, file count: " << count << " url: " << dirUrl << " elapsed: " << timer.elapsed();
     } else {
         count = iteratorOneByOne(timer);
         fmInfo() << "dir query end, file count: " << count << " url: " << dirUrl << " elapsed: " << timer.elapsed();
@@ -246,10 +270,13 @@ QList<SortInfoPointer> TraversalDirThreadManager::iteratorAll()
     emit updateLocalChildren(fileList, sortRole, sortOrder, isMixDirAndFile, traversalToken);
 
     // Check if the iterator is waiting for more updates (search still in progress, etc.)
+    // 搜索场景逐批以 increment=false 发送：RootInfo 的 sourceDataList/childrenUrlList 仅保留
+    // 最后一批，但下游视图层（FileSortWorker / handleAddChildren）会累积全部搜索结果，
+    // 故不会丢失数据（既有行为，非本次回归）。
     while (dirIterator->isWaitingForUpdates()) {
         fileList = dirIterator->sortFileInfoList();
         if (!fileList.isEmpty())
-            emit updateChildrenInfo(fileList, traversalToken);
+            emit updateChildrenInfo(fileList, traversalToken, false);
     }
 
     emit traversalRequestSort(traversalToken);
@@ -258,4 +285,69 @@ QList<SortInfoPointer> TraversalDirThreadManager::iteratorAll()
     emit traversalFinished(traversalToken);
 
     return fileList;
+}
+
+int TraversalDirThreadManager::iteratorOneByOneByDirent()
+{
+    if (stopFlag || !dirUrl.isLocalFile()) {
+        emit traversalFinished(traversalToken);
+        if (!dirUrl.isLocalFile())
+            fmWarning() << "file is not local file!" << dirUrl;
+        return 0;
+    }
+
+    const QSet<QString> hideList = loadHideFileList(dirUrl.path());
+
+    timer.restart();
+
+    Q_EMIT iteratorInitFinished();
+
+    const QByteArray dirPath = QFile::encodeName(dirUrl.path());
+    DIR *dir = ::opendir(dirPath.constData());
+    if (!dir) {
+        fmWarning() << "Failed to open directory:" << dirUrl << "error:" << strerror(errno);
+        emit traversalFinished(traversalToken);
+        return 0;
+    }
+    FinallyUtil closeDir([dir]() { ::closedir(dir); });
+
+    QList<SortInfoPointer> sortList;
+    bool increment = false;
+    int totalCount = 0;
+
+    while (!stopFlag) {
+        errno = 0;
+        dirent *entry = ::readdir(dir);
+        if (!entry) {
+            if (errno != 0)
+                fmWarning() << "Failed to read directory" << dirUrl << "error:" << qt_error_string(errno);
+            break;
+        }
+
+        const QString fileName = QFile::decodeName(entry->d_name);
+        if (fileName == "." || fileName == "..")
+            continue;
+
+        auto info = createSortInfo(dirUrl.path(), fileName, hideList);
+        if (info.isNull())
+            continue;
+        sortList.append(info);
+        totalCount++;
+
+        if (timer.elapsed() > timeCeiling || sortList.count() > countCeiling) {
+            emit updateChildrenInfo(sortList, traversalToken, increment);
+            timer.restart();
+            sortList.clear();
+            increment = true;
+        }
+    }
+
+    if (!sortList.isEmpty())
+        emit updateChildrenInfo(sortList, traversalToken, increment);
+
+    emit traversalRequestSort(traversalToken);
+
+    emit traversalFinished(traversalToken);
+
+    return totalCount;
 }
