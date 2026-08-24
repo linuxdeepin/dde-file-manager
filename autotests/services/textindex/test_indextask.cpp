@@ -68,6 +68,16 @@ TEST(IndexTaskTest, GradeRoundtrip)
     EXPECT_EQ(t.grade(), IndexTask::Grade::Manual);
 }
 
+TEST(IndexTaskTest, ForceBypassRoundtrip)
+{
+    IndexTask t(IndexTask::Type::Create, "/tmp", dummyHandler());
+    EXPECT_FALSE(t.forceBypass());
+    t.setForceBypass(true);
+    EXPECT_TRUE(t.forceBypass());
+    t.setForceBypass(false);
+    EXPECT_FALSE(t.forceBypass());
+}
+
 TEST(IndexTaskTest, IndexCorruptedRoundtrip)
 {
     IndexTask t(IndexTask::Type::Create, "/tmp", dummyHandler());

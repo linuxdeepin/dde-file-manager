@@ -62,6 +62,9 @@ public:
     Grade grade() const;
     void setGrade(Grade grade);
 
+    bool forceBypass() const;
+    void setForceBypass(bool bypass);
+
     bool isIndexCorrupted() const;
     void setIndexCorrupted(bool corrupted);
 
@@ -80,6 +83,7 @@ private:
     QString m_path;
     Status m_status { Status::NotStarted };
     Grade m_grade { Grade::None };
+    bool m_forceBypass { false };
     TaskState m_state;
     TaskHandler m_handler;
     bool m_indexCorrupted { false };
