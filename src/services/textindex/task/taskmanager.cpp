@@ -249,7 +249,7 @@ bool TaskManager::startTask(IndexTask::Type type, const QStringList &pathList,
         return finalResult;
     });
 
-    launchTask(task, grade);
+    launchTask(task, grade, forceBypass);
     fmInfo() << "[TaskManager::startTask] Task started successfully in worker thread";
     return true;
 }
@@ -269,14 +269,19 @@ bool TaskManager::startFileListTask(IndexTask::Type type, const QStringList &fil
             ? IndexTask::Grade::Light
             : gradeFileListTask(fileList);
 
+    // RemoveFileList 是纯索引元数据删除操作，开销极低且需要保持索引与现实同步，
+    // 不受环境门槛限制（电池/节能/空闲），始终立即执行
+    const bool bypassEnv = (type == IndexTask::Type::RemoveFileList);
+
     // 环境检查：如果当前环境不允许该分级任务运行，入队等待而非直接执行
     {
         TaskQueueItem item;
         item.type = type;
         item.grade = grade;
+        item.forceBypass = bypassEnv;
         item.path = QString("FileList-%1").arg(QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss"));
         item.fileList = fileList;
-        if (tryEnqueueIfBlocked(grade, false, item))
+        if (tryEnqueueIfBlocked(grade, bypassEnv, item))
             return true;
     }
 
@@ -288,6 +293,7 @@ bool TaskManager::startFileListTask(IndexTask::Type type, const QStringList &fil
         TaskQueueItem item;
         item.type = type;
         item.grade = grade;
+        item.forceBypass = bypassEnv;
         item.path = QString("FileList-%1").arg(QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss"));
         item.fileList = fileList;
         taskQueue.enqueue(item);
@@ -318,7 +324,7 @@ bool TaskManager::startFileListTask(IndexTask::Type type, const QStringList &fil
     }
 
     QString pathId = QString("FileList-%1").arg(QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss"));
-    launchTask(new IndexTask(type, pathId, handler), grade);
+    launchTask(new IndexTask(type, pathId, handler), grade, bypassEnv);
     fmDebug() << "[TaskManager::startFileListTask] File list task started successfully in worker thread";
     return true;
 }
@@ -334,14 +340,16 @@ bool TaskManager::startFileMoveTask(const QHash<QString, QString> &movedFiles)
 
     const QStringList compensationPaths = applyDirectoryMovePlans(movedFiles);
 
-    // 环境检查：MoveFileList 始终为 Light，节能模式时入队等待
+    // MoveFileList 是纯索引路径更新操作，开销极低且需要保持索引与现实同步，
+    // 不受环境门槛限制（电池/节能/空闲），始终立即执行
     {
         TaskQueueItem item;
         item.type = IndexTask::Type::MoveFileList;
         item.grade = IndexTask::Grade::Light;
+        item.forceBypass = true;
         item.path = QString("MoveList-%1").arg(QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss"));
         item.movedFiles = movedFiles;
-        if (tryEnqueueIfBlocked(IndexTask::Grade::Light, false, item)) {
+        if (tryEnqueueIfBlocked(IndexTask::Grade::Light, true, item)) {
             enqueueCompensationTask(compensationPaths);
             return true;
         }
@@ -355,6 +363,7 @@ bool TaskManager::startFileMoveTask(const QHash<QString, QString> &movedFiles)
         TaskQueueItem item;
         item.type = IndexTask::Type::MoveFileList;
         item.grade = IndexTask::Grade::Light;
+        item.forceBypass = true;
         item.path = QString("MoveList-%1").arg(QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss"));
         item.movedFiles = movedFiles;
         taskQueue.enqueue(item);
@@ -374,7 +383,7 @@ bool TaskManager::startFileMoveTask(const QHash<QString, QString> &movedFiles)
     }
 
     QString pathId = QString("MoveList-%1").arg(QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss"));
-    launchTask(new IndexTask(IndexTask::Type::MoveFileList, pathId, handler), IndexTask::Grade::Light);
+    launchTask(new IndexTask(IndexTask::Type::MoveFileList, pathId, handler), IndexTask::Grade::Light, true);
     fmDebug() << "[TaskManager::startFileMoveTask] File move task started successfully in worker thread";
 
     enqueueCompensationTask(compensationPaths);
@@ -472,7 +481,7 @@ void TaskManager::onEnvStateChanged(const EnvState &env)
 
     // 1. Check if current running task needs to be paused
     if (hasRunningTask() && currentTask) {
-        if (!canRun(currentTask->grade(), false, env)) {
+        if (!canRun(currentTask->grade(), currentTask->forceBypass(), env)) {
             fmInfo() << "[TaskManager::onEnvStateChanged] Current task can no longer run, pausing";
             pauseCurrentTask();
             return;   // schedule() will be called from onTaskPaused
@@ -521,11 +530,12 @@ void TaskManager::pauseCurrentTask()
     }
 }
 
-void TaskManager::launchTask(IndexTask *task, IndexTask::Grade grade)
+void TaskManager::launchTask(IndexTask *task, IndexTask::Grade grade, bool forceBypass)
 {
     Q_ASSERT(!currentTask);
     currentTask = task;
     currentTask->setGrade(grade);
+    currentTask->setForceBypass(forceBypass);
     currentTask->moveToThread(&workerThread);
 
     connect(currentTask, &IndexTask::progressChanged, this, &TaskManager::onTaskProgress, Qt::QueuedConnection);

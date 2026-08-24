@@ -152,6 +152,16 @@ void IndexTask::setGrade(Grade grade)
     fmInfo() << "[IndexTask::setGrade] Grade set to:" << static_cast<int>(grade) << "for path:" << m_path;
 }
 
+bool IndexTask::forceBypass() const
+{
+    return m_forceBypass;
+}
+
+void IndexTask::setForceBypass(bool bypass)
+{
+    m_forceBypass = bypass;
+}
+
 bool IndexTask::isIndexCorrupted() const
 {
     return m_indexCorrupted;
