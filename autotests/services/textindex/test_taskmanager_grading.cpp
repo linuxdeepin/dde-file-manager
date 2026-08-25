@@ -336,13 +336,6 @@ TEST_F(TaskManagerGradingOcrTest, GradeFileList_OcrSizeOverThreshold_Medium)
 // currentIndexStatus() – status string generation
 // ===========================================================================
 
-TEST_F(TaskManagerGradingTest, Status_NoTaskNoQueue_NotClean_WaitingUpgrade)
-{
-    // Fresh temp dir: no status file → state is Unknown (not Clean)
-    // → "WaitingUpgrade"
-    EXPECT_EQ(mgr->currentIndexStatus(), QString("WaitingUpgrade"));
-}
-
 TEST_F(TaskManagerGradingTest, Status_NoTaskNoQueue_CleanState_Idle)
 {
     // Set index state to Clean → "Idle"
@@ -587,4 +580,161 @@ TEST_F(TaskManagerGradingTest, GradeUpdate_DirtyState_Light)
     // Dirty state (not create in progress) → Light
     runtime->stateStore().setIndexState(IndexUtility::IndexState::Dirty);
     EXPECT_EQ(mgr->gradeUpdateTask(), IndexTask::Grade::Light);
+}
+
+// ===========================================================================
+// currentIndexStatus() – no task, dirty index, bad environment
+//
+// Two sub-scenarios depending on whether the index DB actually exists:
+//
+//   A) DB doesn't exist (fresh temp dir, no status file) → Heavy
+//      Heavy requires !onBattery, !powerSaveMode, idle — all three checked.
+//
+//   B) DB exists, dirty, not CreateInProgress → Light (开机全盘扫描对比)
+//      Light only requires !powerSaveMode — idle is NOT checked.
+//      This is the user's actual scenario: startup with dirty index should
+//      NOT show WaitingIdle because the update task is Light.
+// ===========================================================================
+
+// --- Sub-scenario A: DB doesn't exist → Heavy → always WaitingUpgrade ---
+
+TEST_F(TaskManagerGradingTest, Status_NoTaskNoDB_GoodEnv_WaitingUpgrade)
+{
+    // Fresh temp dir: no status file → state is Unknown (not Clean), no DB → Heavy.
+    // Heavy always shows WaitingUpgrade during the update interval.
+    EnvDetector::instance().m_state = EnvState { false, false, true };
+    EXPECT_EQ(mgr->currentIndexStatus(), QString("WaitingUpgrade"));
+}
+
+TEST_F(TaskManagerGradingTest, Status_NoTaskNoDB_NotIdle_WaitingUpgrade)
+{
+    // No DB → Heavy. Not idle, but during interval → WaitingUpgrade.
+    EXPECT_EQ(mgr->currentIndexStatus(), QString("WaitingUpgrade"));
+}
+
+TEST_F(TaskManagerGradingTest, Status_NoTaskNoDB_Battery_WaitingUpgrade)
+{
+    // No DB → Heavy. On battery, but during interval → WaitingUpgrade.
+    EnvDetector::instance().m_state = EnvState { true, false, false };
+    EXPECT_EQ(mgr->currentIndexStatus(), QString("WaitingUpgrade"));
+}
+
+TEST_F(TaskManagerGradingTest, Status_NoTaskNoDB_PowerSave_WaitingUpgrade)
+{
+    // No DB → Heavy. Power save, but during interval → WaitingUpgrade.
+    EnvDetector::instance().m_state = EnvState { false, true, false };
+    EXPECT_EQ(mgr->currentIndexStatus(), QString("WaitingUpgrade"));
+}
+
+TEST_F(TaskManagerGradingTest, Status_NoTask_DirtyNoDB_GoodEnv_WaitingUpgrade)
+{
+    runtime->stateStore().setIndexState(IndexUtility::IndexState::Dirty);
+    EnvDetector::instance().m_state = EnvState { false, false, true };
+    EXPECT_EQ(mgr->currentIndexStatus(), QString("WaitingUpgrade"));
+}
+
+// --- Sub-scenario B: DB exists, dirty, not CreateInProgress → Light ---
+//   Light shows "Idle" (completed) to the user — pending changes will be
+//   silently updated when the timer fires. Only power-save blocks Light.
+
+TEST_F(TaskManagerGradingTest, Status_NoTask_DirtyDB_NotIdle_Idle)
+{
+    // DB exists, dirty, Light → environment OK (not powerSave) → Idle.
+    runtime->stateStore().setIndexState(IndexUtility::IndexState::Dirty);
+    runtime->stateStore().saveIndexStatus(QDateTime::currentDateTime());
+    EnvDetector::instance().m_state = EnvState { false, false, false };   // not idle
+    EXPECT_EQ(mgr->currentIndexStatus(), QString("Idle"));
+}
+
+TEST_F(TaskManagerGradingTest, Status_NoTask_DirtyDB_OnBattery_Idle)
+{
+    // DB exists, dirty, Light → can run on battery → Idle.
+    runtime->stateStore().setIndexState(IndexUtility::IndexState::Dirty);
+    runtime->stateStore().saveIndexStatus(QDateTime::currentDateTime());
+    EnvDetector::instance().m_state = EnvState { true, false, false };
+    EXPECT_EQ(mgr->currentIndexStatus(), QString("Idle"));
+}
+
+TEST_F(TaskManagerGradingTest, Status_NoTask_DirtyDB_PowerSave_WaitingPowerSave)
+{
+    // DB exists, dirty, Light → only blocked by powerSave.
+    runtime->stateStore().setIndexState(IndexUtility::IndexState::Dirty);
+    runtime->stateStore().saveIndexStatus(QDateTime::currentDateTime());
+    EnvDetector::instance().m_state = EnvState { false, true, false };
+    EXPECT_EQ(mgr->currentIndexStatus(), QString("WaitingPowerSave"));
+}
+
+TEST_F(TaskManagerGradingTest, Status_NoTask_DirtyDB_GoodEnv_Idle)
+{
+    // DB exists, dirty, Light → all good → Idle (will silently update).
+    runtime->stateStore().setIndexState(IndexUtility::IndexState::Dirty);
+    runtime->stateStore().saveIndexStatus(QDateTime::currentDateTime());
+    EnvDetector::instance().m_state = EnvState { false, false, true };
+    EXPECT_EQ(mgr->currentIndexStatus(), QString("Idle"));
+}
+
+// --- Sub-scenario C: DB exists, dirty, CreateInProgress → Heavy ---
+//   Heavy always shows WaitingUpgrade during the interval.
+
+TEST_F(TaskManagerGradingTest, Status_NoTask_DirtyDB_CreateInProgress_WaitingUpgrade)
+{
+    // DB exists, dirty, CreateInProgress → Heavy → WaitingUpgrade.
+    runtime->stateStore().setIndexState(IndexUtility::IndexState::Dirty);
+    runtime->stateStore().saveIndexStatus(QDateTime::currentDateTime());
+    runtime->stateStore().setCreateInProgress(true);
+    EnvDetector::instance().m_state = EnvState { true, false, false };
+    EXPECT_EQ(mgr->currentIndexStatus(), QString("WaitingUpgrade"));
+}
+
+TEST_F(TaskManagerGradingTest, Status_NoTask_DirtyDB_CreateInProgress_NotIdle_WaitingUpgrade)
+{
+    runtime->stateStore().setIndexState(IndexUtility::IndexState::Dirty);
+    runtime->stateStore().saveIndexStatus(QDateTime::currentDateTime());
+    runtime->stateStore().setCreateInProgress(true);
+    EnvDetector::instance().m_state = EnvState { false, false, false };
+    EXPECT_EQ(mgr->currentIndexStatus(), QString("WaitingUpgrade"));
+}
+
+TEST_F(TaskManagerGradingTest, Status_NoTask_CleanIndex_Battery_Idle)
+{
+    // Clean index, no task, on battery → Idle (nothing to do)
+    runtime->stateStore().setIndexState(IndexUtility::IndexState::Clean);
+    EnvDetector::instance().m_state = EnvState { true, false, false };
+    EXPECT_EQ(mgr->currentIndexStatus(), QString("Idle"));
+}
+
+TEST_F(TaskManagerGradingTest, Status_NoTask_CleanIndex_PowerSave_Idle)
+{
+    // Clean index, no task, power-save → Idle (nothing to do)
+    runtime->stateStore().setIndexState(IndexUtility::IndexState::Clean);
+    EnvDetector::instance().m_state = EnvState { false, true, false };
+    EXPECT_EQ(mgr->currentIndexStatus(), QString("Idle"));
+}
+
+// ===========================================================================
+// currentOrQueuedGrade() – grade from running task or queue head
+// ===========================================================================
+
+TEST_F(TaskManagerGradingTest, CurrentOrQueuedGrade_NoTaskNoQueue_Nullopt)
+{
+    EXPECT_FALSE(mgr->currentOrQueuedGrade().has_value());
+}
+
+TEST_F(TaskManagerGradingTest, CurrentOrQueuedGrade_QueuedTask_ReturnsQueueHeadGrade)
+{
+    TaskQueueItem item;
+    item.type = IndexTask::Type::Update;
+    item.grade = IndexTask::Grade::Heavy;
+    item.path = tmp.path();
+    mgr->taskQueue.enqueue(item);
+    EXPECT_EQ(mgr->currentOrQueuedGrade().value(), IndexTask::Grade::Heavy);
+}
+
+TEST_F(TaskManagerGradingTest, CurrentOrQueuedGrade_QueuedLight_ReturnsLight)
+{
+    TaskQueueItem item;
+    item.type = IndexTask::Type::UpdateFileList;
+    item.grade = IndexTask::Grade::Light;
+    mgr->taskQueue.enqueue(item);
+    EXPECT_EQ(mgr->currentOrQueuedGrade().value(), IndexTask::Grade::Light);
 }

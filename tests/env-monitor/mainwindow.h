@@ -52,7 +52,7 @@ private:
     DTextBrowser *m_logView = nullptr;
     QTimer *m_refreshTimer = nullptr;
 
-    EnvDetector *m_envDetector = nullptr;
+    EnvDetector *m_envDetector = nullptr;   // singleton reference (not owned)
     PowerMonitor *m_powerMonitor = nullptr;
     IdleMonitor *m_idleMonitor = nullptr;
     LoadMonitor *m_loadMonitor = nullptr;

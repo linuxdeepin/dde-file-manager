@@ -54,6 +54,7 @@ public:
     std::optional<IndexTask::Type> currentTaskType() const;
     std::optional<QString> currentTaskPath() const;
     std::optional<IndexTask::Grade> currentTaskGrade() const;
+    std::optional<IndexTask::Grade> currentOrQueuedGrade() const;
     QString currentIndexStatus() const;
 
     static QString gradeToString(IndexTask::Grade grade);

@@ -14,7 +14,7 @@
 
 MainWindow::MainWindow(QWidget *parent)
     : DMainWindow(parent)
-    , m_envDetector(new EnvDetector(this))
+    , m_envDetector(&EnvDetector::instance())
     , m_powerMonitor(new PowerMonitor(this))
     , m_idleMonitor(new IdleMonitor(this))
     , m_loadMonitor(new LoadMonitor(this))
@@ -39,7 +39,8 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     if (m_running) {
-        m_envDetector->stop();
+        // EnvDetector is a singleton — don't stop it here, only stop the
+        // monitors we own.
         m_powerMonitor->stop();
         m_idleMonitor->stop();
         m_loadMonitor->stop();
@@ -128,7 +129,7 @@ void MainWindow::onStart()
 
 void MainWindow::onStop()
 {
-    m_envDetector->stop();
+    // EnvDetector is a singleton — don't stop it, only stop owned monitors.
     m_powerMonitor->stop();
     m_idleMonitor->stop();
     m_loadMonitor->stop();
