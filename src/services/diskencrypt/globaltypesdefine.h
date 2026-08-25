@@ -32,6 +32,9 @@ inline constexpr char kOverlayDMSettingsDir[] { "/etc/usec-crypt/settings" };
 inline constexpr char kOverlayDMFlagFile[] { "/etc/usec-crypt/settings/overlay-dm" };
 inline constexpr char kOverlayDMPendingFile[] { "/etc/usec-crypt/settings/overlay-dm.pending" };
 
+inline constexpr char kOverlayDMNotifyDir[] { "/tmp/dfm-overlay-dm-notify" };
+inline constexpr char kOverlayDMNotifyFile[] { "/tmp/dfm-overlay-dm-notify/pending.json" };
+
 // Overlay DM Mode change result codes (shared by service and plugin)
 enum OverlayDMModeChangeResult {
     OverlayDMSuccess = 0,                  // Operation succeeded, reboot required
