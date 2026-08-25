@@ -18,6 +18,7 @@ public:
     static EventsHandler *instance();
     void bindDaemonSignals();
     void hookEvents();
+    void checkPendingOverlayDMNotify();
     bool isTaskWorking();
     bool hasPendingTask();
     QString unfinishedDecryptJob();

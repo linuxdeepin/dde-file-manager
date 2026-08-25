@@ -71,6 +71,7 @@ void DiskEncryptEntry::initEncryptEvents()
 
     EventsHandler::instance()->bindDaemonSignals();
     EventsHandler::instance()->hookEvents();
+    EventsHandler::instance()->checkPendingOverlayDMNotify();
 
     QString decJob = EventsHandler::instance()->unfinishedDecryptJob();
     if (!decJob.isEmpty() && !EventsHandler::instance()->isTaskWorking()) {
