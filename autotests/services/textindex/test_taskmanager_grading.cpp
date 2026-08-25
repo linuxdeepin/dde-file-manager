@@ -172,10 +172,22 @@ TEST_F(TaskManagerGradingTest, CanRun_Heavy_NotIdle_Pauses)
     EXPECT_FALSE(mgr->canRun(IndexTask::Grade::Heavy, false, env));
 }
 
-TEST_F(TaskManagerGradingTest, CanRun_Manual_BypassesAll)
+TEST_F(TaskManagerGradingTest, CanRun_Manual_PowerSave_Pauses)
 {
     EnvState env { true, true, false };
+    EXPECT_FALSE(mgr->canRun(IndexTask::Grade::Manual, false, env));
+}
+
+TEST_F(TaskManagerGradingTest, CanRun_Manual_NoPowerSave_Runs)
+{
+    EnvState env { true, false, false };
     EXPECT_TRUE(mgr->canRun(IndexTask::Grade::Manual, false, env));
+}
+
+TEST_F(TaskManagerGradingTest, CanRun_Manual_ForceBypass_BypassesAll)
+{
+    EnvState env { true, true, false };
+    EXPECT_TRUE(mgr->canRun(IndexTask::Grade::Manual, true, env));
 }
 
 TEST_F(TaskManagerGradingTest, CanRun_ForceBypass_BypassesAll)

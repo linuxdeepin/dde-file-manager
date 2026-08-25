@@ -198,7 +198,7 @@ private:
 using FileHandler = std::function<void(const QString &path)>;
 
 DocumentPtr createFileDocument(const IndexContext &context, const QString &file,
-                                  const IndexContentMigrator *migrator = nullptr)
+                               const IndexContentMigrator *migrator = nullptr)
 {
     try {
         if (!context.extractor() || !context.documentBuilder()) {
@@ -735,7 +735,7 @@ TaskHandler TaskHandlers::CreateIndexHandler(const IndexContext &context)
 
             provider->traverse(running, [&](const QString &file) {
                 processFile(context, file, excludeMatcher, writer, &reporter,
-                      migrator.isActive() ? &migrator : nullptr);
+                            migrator.isActive() ? &migrator : nullptr);
             });
 
             if (running.isPauseRequested()) {
@@ -843,6 +843,14 @@ TaskHandler TaskHandlers::UpdateIndexHandler(const IndexContext &context)
                 return result;
             }
 
+            if (running.isPauseRequested()) {
+                fmInfo() << "[UpdateIndexHandler] Index update paused during index cleanup";
+                writer->commit();
+                result.paused = true;
+                result.success = false;
+                return result;
+            }
+
             // 使用文件提供者遍历文件
             auto provider = createFileProvider(context, path);
             if (!provider) {
@@ -862,7 +870,7 @@ TaskHandler TaskHandlers::UpdateIndexHandler(const IndexContext &context)
 
             provider->traverse(running, [&](const QString &file) {
                 updateFile(context, file, excludeMatcher, reader, writer, &reporter,
-                       migrator.isActive() ? &migrator : nullptr);
+                           migrator.isActive() ? &migrator : nullptr);
             });
 
             if (running.isPauseRequested()) {

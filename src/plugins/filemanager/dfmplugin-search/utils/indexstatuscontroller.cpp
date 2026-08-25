@@ -31,8 +31,13 @@ IndexStatusController::IndexStatusController(IndexStatusCheckBox *view,
         }
     });
 
-    connect(m_view, &IndexStatusCheckBox::resetRequested, this, [this]() {
-        m_client->forceUpdateIndex(DFMSEARCH::Global::defaultIndexedDirectory());
+    connect(m_view, &IndexStatusCheckBox::resetRequested, this, [this](const QString &href) {
+        const QStringList &paths = DFMSEARCH::Global::defaultIndexedDirectory();
+        if (href == QLatin1String("manual")) {
+            m_client->forceUpdateIndex(paths);
+        } else {
+            m_client->updateIndexBypassEnv(paths);
+        }
     });
 
     // Server-driven status: initial query result
@@ -51,8 +56,9 @@ IndexStatusController::IndexStatusController(IndexStatusCheckBox *view,
 
     connect(m_client, &AbstractIndexClient::lastUpdateTimeResult, this, [this](const QString &time, bool success) {
         if (success && !time.isEmpty()) {
-            m_view->setCompletedText(m_options.completedMainText.arg(time),
-                                     m_options.completedLinkText);
+            if (m_view->status() == IndexStatusCheckBox::Status::Completed)
+                m_view->setCompletedText(m_options.completedMainText.arg(time),
+                                         m_options.completedLinkText, QStringLiteral("manual"));
             return;
         }
 
@@ -91,8 +97,6 @@ void IndexStatusController::connectToBackend()
                 if (!shouldHandleIndexEvent(path, type))
                     return;
                 m_client->getIndexStatus();
-                if (success)
-                    m_client->getLastUpdateTime();
             });
 
     connect(m_client, &AbstractIndexClient::taskFailed, this,
@@ -138,7 +142,7 @@ void IndexStatusController::applyServerStatus(const QString &state)
         m_client->getLastUpdateTime();
     } else if (state == "Failed") {
         m_view->setStatus(IndexStatusCheckBox::Status::Failed);
-        m_view->setFailedText(m_options.failedMainText, m_options.failedLinkText);
+        m_view->setFailedText(m_options.failedMainText, m_options.failedLinkText, QStringLiteral("manual"));
     } else if (state == "WaitingPower") {
         applyWaitingStatus(IndexStatusCheckBox::Status::WaitingPower);
     } else if (state == "WaitingPowerSave") {
@@ -158,24 +162,28 @@ void IndexStatusController::applyWaitingStatus(IndexStatusCheckBox::Status statu
 
     QString mainText;
     QString linkText;
-    QString href = QStringLiteral("update");
+    QString href;
 
     switch (status) {
     case IndexStatusCheckBox::Status::WaitingPower:
         mainText = m_options.waitingPowerMainText;
         linkText = m_options.waitingUpdateLinkText;
+        href = QStringLiteral("bypass");
         break;
     case IndexStatusCheckBox::Status::WaitingPowerSave:
         mainText = m_options.waitingPowerSaveMainText;
         linkText = m_options.waitingUpdateLinkText;
+        href = QStringLiteral("bypass");
         break;
     case IndexStatusCheckBox::Status::WaitingIdle:
         mainText = m_options.waitingIdleMainText;
         linkText = m_options.waitingUpdateLinkText;
+        href = QStringLiteral("bypass");
         break;
     case IndexStatusCheckBox::Status::WaitingUpgrade:
         mainText = m_options.waitingUpgradeMainText;
         linkText = m_options.waitingUpgradeLinkText;
+        href = QStringLiteral("manual");
         break;
     default:
         return;

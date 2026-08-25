@@ -371,7 +371,22 @@ void AbstractIndexClient::forceUpdateIndex(const QStringList &paths)
     }
 
     fmInfo() << "[" << m_descriptor.clientName << "] requesting force update for" << paths.size() << "paths";
-    interface->asyncCall(QStringLiteral("ForceUpdateIndex"), QVariant::fromValue(paths), QVariantMap());
+    QVariantMap options;
+    options["manual"] = true;
+    interface->asyncCall(QStringLiteral("ForceUpdateIndex"), QVariant::fromValue(paths), options);
+}
+
+void AbstractIndexClient::updateIndexBypassEnv(const QStringList &paths)
+{
+    if (!ensureInterface()) {
+        fmCritical() << "[" << m_descriptor.clientName << "] cannot update (bypass env): interface unavailable";
+        return;
+    }
+
+    fmInfo() << "[" << m_descriptor.clientName << "] requesting update (bypass env, CPU limited) for" << paths.size() << "paths";
+    QVariantMap options;
+    options["manual"] = false;
+    interface->asyncCall(QStringLiteral("ForceUpdateIndex"), QVariant::fromValue(paths), options);
 }
 
 void AbstractIndexClient::onDBusIndexStatusChanged(const QString &state, const QString &grade)

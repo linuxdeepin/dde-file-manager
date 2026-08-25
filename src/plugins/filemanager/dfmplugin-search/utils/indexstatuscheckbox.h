@@ -57,7 +57,7 @@ public:
 
 Q_SIGNALS:
     void checkStateChanged(Qt::CheckState state);
-    void resetRequested();
+    void resetRequested(const QString &href);
 
 protected:
     virtual bool acceptCheckStateChange(Qt::CheckState oldState, Qt::CheckState newState);

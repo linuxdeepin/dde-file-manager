@@ -6,7 +6,7 @@
 #include <QProcess>
 #include <QDebug>
 #include <QStringList>
-#include <atomic>
+#include <mutex>
 
 SERVICETEXTINDEX_BEGIN_NAMESPACE
 
@@ -63,10 +63,12 @@ namespace SystemdCpuUtils {
 // 全局引用计数器：跟踪当前有多少个限制型任务(Light/Medium/Heavy)在运行。
 // 只有计数从 0→1 时才实际 setCpuQuota，从 1→0 时才实际 resetCpuQuota。
 // Manual 任务不改变计数器，仅在计数为 0 时才 reset。
-// 当 Manual 启动时，同一 TaskManager 的当前任务已被 stopCurrentTask 停止，
-// 其 releaseResourcePolicy 先执行使计数递减，因此 Manual 的 applyResourcePolicy
-// 执行时计数已正确反映实际状态。
-static std::atomic<int> g_limitedTaskCount { 0 };
+//
+// 使用 mutex 而非裸原子计数器：TextIndex 和 OcrIndex 共享同一进程但各自有独立的
+// worker 线程，setCpuQuota/resetCpuQuota 调用必须在锁保护下进行，否则一个线程
+// 的 resetCpuQuota 可能覆盖另一个线程刚设置的 setCpuQuota，导致 CPU 限制失效。
+static std::mutex g_cpuQuotaMutex;
+static int g_limitedTaskCount { 0 };
 
 bool setCpuQuota(const QString &serviceName, int percentage, QString *errorMsg)
 {
@@ -112,19 +114,21 @@ bool resetCpuQuota(const QString &serviceName, QString *errorMsg)
 
 void acquireCpuQuota(const QString &serviceName, int percentage)
 {
-    int prev = g_limitedTaskCount.fetch_add(1, std::memory_order_acq_rel);
-    if (prev == 0) {
+    std::lock_guard<std::mutex> lock(g_cpuQuotaMutex);
+    if (g_limitedTaskCount == 0) {
         QString msg;
         if (!setCpuQuota(serviceName, percentage, &msg)) {
             fmWarning() << "SystemdCpuUtils: acquireCpuQuota failed to set CPU quota:" << msg;
         }
     }
+    ++g_limitedTaskCount;
 }
 
 void releaseCpuQuota(const QString &serviceName)
 {
-    int prev = g_limitedTaskCount.fetch_sub(1, std::memory_order_acq_rel);
-    if (prev == 1) {
+    std::lock_guard<std::mutex> lock(g_cpuQuotaMutex);
+    --g_limitedTaskCount;
+    if (g_limitedTaskCount == 0) {
         QString msg;
         if (!resetCpuQuota(serviceName, &msg)) {
             fmWarning() << "SystemdCpuUtils: releaseCpuQuota failed to reset CPU quota:" << msg;
@@ -134,7 +138,8 @@ void releaseCpuQuota(const QString &serviceName)
 
 void manualTaskCpuQuota(const QString &serviceName)
 {
-    if (g_limitedTaskCount.load(std::memory_order_acquire) == 0) {
+    std::lock_guard<std::mutex> lock(g_cpuQuotaMutex);
+    if (g_limitedTaskCount == 0) {
         QString msg;
         if (!resetCpuQuota(serviceName, &msg)) {
             fmWarning() << "SystemdCpuUtils: manualTaskCpuQuota failed to reset CPU quota:" << msg;

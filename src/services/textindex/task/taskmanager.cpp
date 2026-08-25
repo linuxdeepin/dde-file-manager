@@ -180,6 +180,9 @@ bool TaskManager::startTask(IndexTask::Type type, const QStringList &pathList,
     fmInfo() << "[TaskManager::startTask] Starting new task immediately - paths:" << pathList.size()
              << "primary:" << primaryPath << "type:" << static_cast<int>(type);
 
+    // 清除队列中与新任务同类型同路径的冗余任务，避免暂停→手动更新→完成后重复执行
+    removeDuplicateFullScanTasks(type, pathList);
+
     // status文件存储了修改时间，清除后外部无法获取时间，外部利用该特性判断索引状态
     if (type == IndexTask::Type::Create) {
         fmInfo() << "[TaskManager::startTask] Create task detected, clearing existing index status";
@@ -480,8 +483,13 @@ void TaskManager::onEnvStateChanged(const EnvState &env)
              << "battery:" << env.onBattery << "powerSave:" << env.powerSaveMode << "idle:" << env.idle;
 
     // 1. Check if current running task needs to be paused
-    if (hasRunningTask() && currentTask) {
-        if (!canRun(currentTask->grade(), currentTask->forceBypass(), env)) {
+    //    forceBypass only bypasses the start gate. At runtime, only
+    //    RemoveFileList/MoveFileList are exempt from env-based pausing.
+    if (currentTask) {
+        const auto type = currentTask->taskType();
+        const bool exempt = (type == IndexTask::Type::RemoveFileList
+                             || type == IndexTask::Type::MoveFileList);
+        if (!exempt && !canRun(currentTask->grade(), false, env)) {
             fmInfo() << "[TaskManager::onEnvStateChanged] Current task can no longer run, pausing";
             pauseCurrentTask();
             return;   // schedule() will be called from onTaskPaused, which emits
@@ -503,10 +511,11 @@ void TaskManager::onEnvStateChanged(const EnvState &env)
 
 bool TaskManager::canRun(IndexTask::Grade grade, bool forceBypass, const EnvState &env) const
 {
-    if (forceBypass || grade == IndexTask::Grade::Manual)
+    if (forceBypass)
         return true;
 
     switch (grade) {
+    case IndexTask::Grade::Manual:
     case IndexTask::Grade::Light:
         return !env.powerSaveMode;
     case IndexTask::Grade::Medium:
@@ -555,6 +564,7 @@ void TaskManager::launchTask(IndexTask *task, IndexTask::Grade grade, bool force
         m_context->stateStore()->setIndexState(IndexUtility::IndexState::Dirty);
 
     emit startTaskInThread();
+    emit indexStatusChanged("Running", gradeToString(grade));
 }
 
 bool TaskManager::tryEnqueueIfBlocked(IndexTask::Grade grade, bool forceBypass, const TaskQueueItem &item)
@@ -677,7 +687,7 @@ std::optional<IndexTask::Grade> TaskManager::currentOrQueuedGrade() const
 
 QString TaskManager::currentIndexStatus() const
 {
-    if (hasRunningTask() && currentTask)
+    if (currentTask)
         return "Running";
 
     if (!hasRunningTask() && !currentTask && !taskQueue.isEmpty()) {
@@ -862,8 +872,14 @@ void TaskManager::finalizeIndexState(IndexTask::Type type, const HandlerResult &
     // Only set Clean state when:
     // 1. Task completed successfully without interruption
     // 2. No recovery is pending (or this is the recovery task completing)
+    // 3. No tasks are still queued (otherwise there's pending work)
     if (!result.success || result.interrupted)
         return;
+
+    if (!taskQueue.isEmpty()) {
+        fmInfo() << "[TaskManager::onTaskFinished] Tasks still queued, keeping Dirty state";
+        return;
+    }
 
     if (isFullScanTask(type)) {
         m_recoveryPending = false;
@@ -946,6 +962,29 @@ void TaskManager::cleanupTask()
 bool TaskManager::isFullScanTask(IndexTask::Type type) const
 {
     return type == IndexTask::Type::Create || type == IndexTask::Type::Update;
+}
+
+void TaskManager::removeDuplicateFullScanTasks(IndexTask::Type type, const QStringList &pathList)
+{
+    if (!isFullScanTask(type))
+        return;
+
+    const QSet<QString> newPathSet(pathList.begin(), pathList.end());
+    for (int i = taskQueue.size() - 1; i >= 0; --i) {
+        const auto &item = taskQueue[i];
+        if (!isFullScanTask(item.type))
+            continue;
+
+        const QStringList itemPaths = item.pathList.isEmpty()
+                ? QStringList { item.path }
+                : item.pathList;
+        const QSet<QString> itemPathSet(itemPaths.begin(), itemPaths.end());
+        if (newPathSet == itemPathSet) {
+            fmInfo() << "[TaskManager] Removing duplicate full-scan task from queue - type:"
+                     << static_cast<int>(item.type) << "path:" << item.path;
+            taskQueue.removeAt(i);
+        }
+    }
 }
 
 IndexTask::Grade TaskManager::gradeFileListTask(const QStringList &fileList) const
