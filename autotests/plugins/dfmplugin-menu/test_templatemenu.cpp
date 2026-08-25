@@ -72,7 +72,7 @@ protected:
     // 用纯字符串实现的 FileInfo 替代真实 InfoFactory，保证确定性
     void stubInfoFactory()
     {
-        stub.set_lamda(&InfoFactory::create<FileInfo>,
+        stub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
                        [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
                            __DBG_STUB_INVOKE__
                            return QSharedPointer<FileInfo>(new FileInfo(url));
@@ -223,7 +223,7 @@ TEST_F(UT_TemplateMenu, CreateActionByNormalFile_EmptyPath_NoAction)
 
 TEST_F(UT_TemplateMenu, CreateActionByNormalFile_NullFileInfo_NoAction)
 {
-    stub.set_lamda(&InfoFactory::create<FileInfo>,
+    stub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
                    [](const QUrl &, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return nullptr;
@@ -299,7 +299,7 @@ TEST_F(UT_TemplateMenu, CreateActionByDesktopFile_NullFileInfo_NoAction)
                           "Name=Broken\n"
                           "URL=/tmp/ut-nonexistent-target.doc\n"));
 
-    stub.set_lamda(&InfoFactory::create<FileInfo>,
+    stub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
                    [](const QUrl &, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return nullptr;

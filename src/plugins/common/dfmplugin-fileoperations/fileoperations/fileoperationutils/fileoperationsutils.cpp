@@ -10,6 +10,7 @@
 #include <dfm-io/dfmio_utils.h>
 
 #include <QDirIterator>
+#include <QSet>
 #include <QUrl>
 #include <QDebug>
 #include <QMutexLocker>
@@ -33,6 +34,7 @@ inline constexpr char kFileOperations[] { "org.deepin.dde.file-manager.operation
 inline constexpr char kFileBigSize[] { "file.operation.bigfilesize" };
 inline constexpr char kBlockEverySync[] { "file.operation.blockeverysync" };
 inline constexpr char kBroadcastPaste[] { "file.operation.broadcastpastevent" };
+inline constexpr char kUseFtsDelete[] { "file.operation.useftsdelete" };
 
 /*!
  * \brief FileOperationsUtils::statisticsFilesSize 使用c库统计文件大小
@@ -42,15 +44,116 @@ inline constexpr char kBroadcastPaste[] { "file.operation.broadcastpastevent" };
  * \param isRecordUrl 是否统计所有的文件及子目录路径
  * \return QSharedPointer<FileOperationsUtils::FilesSizeInfo> 文件大小信息
  */
-SizeInfoPointer FileOperationsUtils::statisticsFilesSize(const QList<QUrl> &files, const bool &isRecordUrl)
-{
-    SizeInfoPointer filesSizeInfo(new DFMBASE_NAMESPACE::FileUtils::FilesSizeInfo);
-    filesSizeInfo->dirSize = FileUtils::getMemoryPageSize();
 
-    for (auto url : files) {
-        statisticFilesSize(url, filesSizeInfo, isRecordUrl);
+/*!
+ * \brief collectFtsEntries  Common FTS traversal logic shared by
+ *        statisticsFilesSize() (batch) and statisticFilesSize() (single URL).
+ *
+ * Opens fts_open on the given path array, walks the tree, and accumulates
+ * file count, total size, and optionally all file URLs into \a sizeInfo.
+ * Deduplicates overlapping source paths via a QSet.
+ *
+ * \param paths     NULL-terminated array of C strings (as required by fts_open)
+ * \param ftsFlags  flags passed to fts_open (e.g. FTS_PHYSICAL | FTS_NOCHDIR [ | FTS_NOSTAT])
+ * \param sizeInfo  accumulator (modified in place)
+ * \param isRecordUrl  whether to record every URL into sizeInfo->allFiles
+ * \param noStat    whether FTS_NOSTAT was set (skip size accumulation)
+ */
+static void collectFtsEntries(char *const *paths, int ftsFlags,
+                              SizeInfoPointer &sizeInfo,
+                              const bool &isRecordUrl, const bool noStat)
+{
+    FTS *fts = fts_open(paths, ftsFlags, nullptr);
+    if (!fts) {
+        fmWarning() << "collectFtsEntries: fts_open failed:" << strerror(errno);
+        return;
     }
 
+    const qint64 pageSize = FileUtils::getMemoryPageSize();
+
+    // Dedup: fts_open does not dedup overlapping source paths, so entries reachable
+    // via more than one source URL would be counted multiple times.
+    QSet<QUrl> urlCounted;
+    FTSENT *ent;
+    while ((ent = fts_read(fts)) != nullptr) {
+        unsigned short flag = ent->fts_info;
+
+        // Handle errors / unstatable entries
+        if (flag == FTS_DNR || flag == FTS_ERR || flag == FTS_DC || flag == FTS_NS) {
+            fmWarning() << "collectFtsEntries: traversal error:" << ent->fts_path
+                        << strerror(ent->fts_errno);
+            continue;
+        }
+        // Post-order dir: children already processed, skip
+        if (flag == FTS_DP)
+            continue;
+
+        QUrl curUrl = QUrl::fromLocalFile(ent->fts_path);
+        if (DFMIO::DFMUtils::isInvalidCodecByPath(ent->fts_path))
+            curUrl.setUserInfo(QString::fromLatin1("originPath::") + QString::fromLatin1(ent->fts_path));
+
+        // Skip entries already counted via an overlapping source path.
+        if (urlCounted.contains(curUrl))
+            continue;
+        urlCounted.insert(curUrl);
+
+        // url record
+        if (isRecordUrl)
+            sizeInfo->allFiles.append(curUrl);
+
+        // file counted — include FTS_NSOK to match deleteFilesByFts() (FTS_NOSTAT
+        // returns FTS_NSOK instead of FTS_F for regular files when d_type is available).
+        if (flag == FTS_F || flag == FTS_SL || flag == FTS_SLNONE || flag == FTS_NSOK)
+            sizeInfo->fileCount++;
+
+        if (noStat)
+            continue;
+
+        // total size
+        if (flag == FTS_D) {
+            sizeInfo->totalSize += pageSize;
+        } else {
+            const qint64 fileSize = ent->fts_statp->st_size;
+            sizeInfo->totalSize += (fileSize > 0 ? fileSize : pageSize);
+        }
+    }
+
+    fts_close(fts);
+}
+
+SizeInfoPointer FileOperationsUtils::statisticsFilesSize(const QList<QUrl> &files, const bool &isRecordUrl,
+                                                         const bool noStat)
+{
+    SizeInfoPointer filesSizeInfo(new DFMBASE_NAMESPACE::FileUtils::FilesSizeInfo);
+    const qint64 pageSize = FileUtils::getMemoryPageSize();
+    filesSizeInfo->dirSize = pageSize;
+
+    if (files.isEmpty())
+        return filesSizeInfo;
+
+    // Build path array for batch fts_open (handles originPath encoding)
+    QList<QByteArray> pathData;
+    pathData.reserve(files.size());
+    for (const auto &url : files) {
+        if (!url.isLocalFile())
+            continue;
+        if (url.userInfo().contains("originPath::"))
+            pathData.append(url.userInfo().replace("originPath::", "").toLatin1());
+        else
+            pathData.append(url.path().toUtf8());
+    }
+    if (pathData.isEmpty())
+        return filesSizeInfo;
+
+    QVector<char *> pathPtrs(pathData.size() + 1, nullptr);
+    for (int i = 0; i < pathData.size(); ++i)
+        pathPtrs[i] = pathData[i].data();
+
+    auto flags = FTS_PHYSICAL | FTS_NOCHDIR;
+    if (noStat)
+        flags |= FTS_NOSTAT;
+
+    collectFtsEntries(pathPtrs.data(), flags, filesSizeInfo, isRecordUrl, noStat);
     return filesSizeInfo;
 }
 
@@ -89,70 +192,28 @@ bool FileOperationsUtils::isFilesSizeOutLimit(const QUrl &url, const qint64 limi
 
 void FileOperationsUtils::statisticFilesSize(const QUrl &url,
                                              SizeInfoPointer &sizeInfo,
-                                             const bool &isRecordUrl)
+                                             const bool &isRecordUrl, const bool noStat)
 {
-    static const QString kOriginPathPrefix = QLatin1String("originPath::");
+    // Build path string with originPath encoding support
+    QByteArray pathBytes;
+    if (url.userInfo().contains("originPath::"))
+        pathBytes = url.userInfo().replace("originPath::", "").toLatin1();
+    else
+        pathBytes = url.path().toUtf8();
 
-    QSet<QUrl> urlCounted;
+    char *paths[2] = { strdup(pathBytes.constData()), nullptr };
 
-    char *paths[2] = { nullptr, nullptr };
-
-    // 对无效的文件名称进行处理
-    QByteArray pathData;
-    if (url.userInfo().contains(kOriginPathPrefix)) {
-        pathData = url.userInfo().replace(kOriginPathPrefix, "").toLatin1();
-    } else {
-        pathData = url.path().toUtf8();
-    }
-
-    paths[0] = strdup(pathData.constData());
     if (!paths[0]) {
-        fmWarning() << "Failed to allocate memory for path";
+        fmWarning() << "statisticFilesSize: strdup failed for" << url;
         return;
     }
 
-    FTS *fts = fts_open(paths, 0, nullptr);
-    if (!fts) {
-        perror("fts_open");
-        fmWarning() << "fts_open open error : " << QString::fromLocal8Bit(strerror(errno));
-        free(paths[0]);
-        return;
-    }
+    auto flags = FTS_PHYSICAL | FTS_NOCHDIR;
+    if (noStat)
+        flags |= FTS_NOSTAT;
 
+    collectFtsEntries(paths, flags, sizeInfo, isRecordUrl, noStat);
     free(paths[0]);
-
-    while (1) {
-        FTSENT *ent = fts_read(fts);
-        if (ent == nullptr) {
-            break;
-        }
-        QUrl curUrl = QUrl::fromLocalFile(ent->fts_path);
-        if (DFMIO::DFMUtils::isInvalidCodecByPath(ent->fts_path))
-            curUrl.setUserInfo(kOriginPathPrefix + QString::fromLatin1(ent->fts_path));
-        if (urlCounted.contains(curUrl))
-            continue;
-
-        urlCounted.insert(curUrl);
-
-        unsigned short flag = ent->fts_info;
-
-        const auto &fileSize = ent->fts_statp->st_size;
-
-        // url record
-        if (isRecordUrl && flag != FTS_DP)
-            sizeInfo->allFiles.append(curUrl);
-
-        // file counted
-        if (flag == FTS_F || flag == FTS_SL || flag == FTS_SLNONE)
-            sizeInfo->fileCount++;
-
-        // total size
-        if (flag == FTS_D)
-            sizeInfo->totalSize += FileUtils::getMemoryPageSize();
-        else if (flag != FTS_DP)
-            sizeInfo->totalSize += (fileSize > 0 ? fileSize : FileUtils::getMemoryPageSize());
-    }
-    fts_close(fts);
 }
 
 bool FileOperationsUtils::isAncestorUrl(const QUrl &from, const QUrl &to)
@@ -204,4 +265,9 @@ bool FileOperationsUtils::canBroadcastPaste()
 {
     // 组策略中配置
     return DConfigManager::instance()->value(kFileOperations, kBroadcastPaste, false).toBool();
+}
+
+bool FileOperationsUtils::useFtsDelete()
+{
+    return DConfigManager::instance()->value(kFileOperations, kUseFtsDelete, true).toBool();
 }

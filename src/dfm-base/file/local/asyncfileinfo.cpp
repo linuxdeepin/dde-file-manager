@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "asyncfileinfo.h"
+#include "localfileinfodefs.h"
 #include "private/asyncfileinfo_p.h"
 
 #include <dfm-base/base/urlroute.h>
@@ -683,7 +684,7 @@ void AsyncFileInfoPrivate::init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo
         tokenKey = quintptr(dfmFileInfo.data());
         return;
     }
-    dfmFileInfo.reset(new DFileInfo(cvtResultUrl));
+    dfmFileInfo.reset(new DFileInfo(cvtResultUrl, kFileAttributes));
     if (!dfmFileInfo) {
         qCWarning(logDFMBase, "Failed, dfm-io use factory create fileinfo");
         abort();

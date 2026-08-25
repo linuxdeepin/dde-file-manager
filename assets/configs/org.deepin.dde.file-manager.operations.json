@@ -45,6 +45,17 @@
             "description": "Show/hide the 'Run' and 'Run in Terminal' buttons when double clicking on an executable file",
             "permissions": "readwrite",
             "visibility": "private"
+        },
+        "file.operation.useftsdelete": {
+            "value":true,
+            "serial":0,
+            "flags":[],
+            "name":"FTS delete files",
+            "name[zh_CN]":"使用FTS删除文件",
+            "description[zh_CN]":"是否使用FTS接口删除文件",
+            "description":"Whether to use the FTS interface to delete files",
+            "permissions":"readwrite",
+            "visibility":"private"
         }
     }
 }

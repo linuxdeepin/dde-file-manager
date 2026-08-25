@@ -31,7 +31,7 @@ protected:
         testUrl = QUrl("file:///test.txt");
         
         // Mock InfoFactory::create to return null to avoid issues
-        stub.set_lamda(&InfoFactory::create<FileInfo>, [&]() -> FileInfoPointer {
+        stub.set_lamda(static_cast<FileInfoPointer(*)(const QUrl &, bool *, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>), [](const QUrl &, bool *, Global::CreateFileInfoType, QString *) -> FileInfoPointer {
             return FileInfoPointer(); // Return null pointer
         });
         
@@ -416,7 +416,7 @@ TEST_F(FileItemDataTest, Data_WithCreateFileInfoRole_DoesNotCrash)
     FileItemData itemData(testUrl, nullptr); // No initial info
     
     // Mock InfoFactory::create
-    stub.set_lamda(&InfoFactory::create<FileInfo>, [&]() -> FileInfoPointer {
+    stub.set_lamda(static_cast<FileInfoPointer(*)(const QUrl &, bool *, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>), [&](const QUrl &, bool *, Global::CreateFileInfoType, QString *) -> FileInfoPointer {
         return testInfo;
     });
     

@@ -29,7 +29,7 @@ protected:
     virtual void SetUp() override
     {
         conStub.set_lamda(&ShareFileInfo::setProxy, [] { __DBG_STUB_INVOKE__ });
-        conStub.set_lamda(InfoFactory::create<FileInfo>, [] { __DBG_STUB_INVOKE__ return nullptr; });
+        conStub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>), [] { __DBG_STUB_INVOKE__ return nullptr; });
         typedef QVariant (dpf::EventChannelManager::*Push)(const QString &, const QString &, QString);
         conStub.set_lamda(static_cast<Push>(&dpf::EventChannelManager::push), [] { __DBG_STUB_INVOKE__ return QVariant(); });
         info = new ShareFileInfo(kTestUrl);
@@ -169,7 +169,7 @@ protected:
     virtual void SetUp() override
     {
         // setProxy is NOT stubbed here: a valid proxy is set from the factory result.
-        proxyStub.set_lamda(InfoFactory::create<FileInfo>, [] {
+        proxyStub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>), [] {
             __DBG_STUB_INVOKE__
             return FileInfoPointer(new FileInfo(QUrl::fromLocalFile("/tmp")));
         });
@@ -212,7 +212,7 @@ protected:
     virtual void SetUp() override
     {
         stub.set_lamda(&ShareFileInfo::setProxy, [] { __DBG_STUB_INVOKE__ });
-        stub.set_lamda(InfoFactory::create<FileInfo>, [] { __DBG_STUB_INVOKE__ return nullptr; });
+        stub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>), [] { __DBG_STUB_INVOKE__ return nullptr; });
         typedef QVariant (dpf::EventChannelManager::*Push)(const QString &, const QString &, QString);
         stub.set_lamda(static_cast<Push>(&dpf::EventChannelManager::push), [] { __DBG_STUB_INVOKE__ return QVariant(); });
         info = new ShareFileInfo(kTestUrl);

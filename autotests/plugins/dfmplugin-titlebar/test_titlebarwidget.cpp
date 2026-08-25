@@ -539,7 +539,7 @@ TEST_F(TitleBarWidgetTest, HandleCreateTabList_ValidUrls_CreatesTabsForDirectori
 
     int createTabCount = 0;
 
-    stub.set_lamda(&InfoFactory::create<FileInfo>,
+    stub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
                    [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
                        __DBG_STUB_INVOKE__
                        return QSharedPointer<FileInfo>(new FileInfo(url));

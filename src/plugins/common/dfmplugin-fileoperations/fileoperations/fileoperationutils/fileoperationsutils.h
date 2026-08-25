@@ -64,17 +64,21 @@ class FileOperationsUtils
     friend class DoRestoreTrashFilesWorker;
     friend class FileOperateBaseWorker;
     friend class ErrorMessageAndAction;
+    friend class DoDeleteFilesWorker;
 
 private:
-    static SizeInfoPointer statisticsFilesSize(const QList<QUrl> &files, const bool &isRecordUrl = false);
+    static SizeInfoPointer statisticsFilesSize(const QList<QUrl> &files, const bool &isRecordUrl = false,
+                                               const bool noStat = false);
     static bool isFilesSizeOutLimit(const QUrl &url, const qint64 limitSize);
-    static void statisticFilesSize(const QUrl &url, SizeInfoPointer &sizeInfo, const bool &isRecordUrl = false);
+    static void statisticFilesSize(const QUrl &url, SizeInfoPointer &sizeInfo, const bool &isRecordUrl = false,
+                                   const bool noStat = false);
     static bool isAncestorUrl(const QUrl &from, const QUrl &to);
     static bool isFileOnDisk(const QUrl &url);
     static qint64 bigFileSize();
     static bool blockSync();
     static QUrl parentUrl(const QUrl &url);
     static bool canBroadcastPaste();
+    static bool useFtsDelete();
 };
 DPFILEOPERATIONS_END_NAMESPACE
 
