@@ -12,7 +12,7 @@
 #include "models/fileviewmodel.h"
 
 #include <dfm-base/dfm_base_global.h>
-#include <dfm-base/utils/iconutils.h>
+#include <dfm-base/utils/iconpainterutils.h>
 
 #include <DPalette>
 #include <DPaletteHelper>
@@ -85,16 +85,7 @@ bool BaseItemDelegate::isThumnailIconIndex(const QModelIndex &index) const
     if (!index.isValid() || !parent())
         return false;
 
-    FileInfoPointer info { parent()->fileInfo(index) };
-    if (info) {
-        if (IconUtils::shouldSkipThumbnailFrame(info->nameOf(NameInfoType::kMimeTypeName)))
-            return false;
-
-        const auto &attribute { info->extendAttributes(ExtInfoType::kFileThumbnail) };
-        if (attribute.isValid() && !attribute.value<QIcon>().isNull())
-            return true;
-    }
-    return false;
+    return IconPainterUtils::isThumbnailIcon(parent()->fileInfo(index));
 }
 
 BaseItemDelegate::~BaseItemDelegate()
@@ -239,19 +230,24 @@ void BaseItemDelegate::paintDragIcon(QPainter *painter, const QStyleOptionViewIt
     QRectF iconRect = opt.rect;
     iconRect.setSize(size);
 
+    auto iconName = index.data(dfmbase::Global::ItemRoles::kItemFileIconNameRole).toString();
     painter->setRenderHint(QPainter::Antialiasing, true);
     painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
     auto drawFileIcon = ItemDelegateHelper::paintIcon(painter, opt.icon,
                                                       { iconRect, Qt::AlignCenter,
                                                         QIcon::Normal, QIcon::Off,
-                                                        ViewMode::kIconMode, isThumnailIconIndex(index) });
+                                                        isThumnailIconIndex(index),
+                                                        iconName,
+                                                        ViewMode::kIconMode });
     // If the thumbnail drawing is empty, then redraw the file fileicon
     if (!drawFileIcon) {
         const QIcon &fileIcon = index.data(dfmbase::Global::ItemRoles::kItemFileIconRole).value<QIcon>();
         ItemDelegateHelper::paintIcon(painter, fileIcon,
                                       { iconRect, Qt::AlignCenter,
                                         QIcon::Normal, QIcon::Off,
-                                        ViewMode::kIconMode, false });
+                                        false,
+                                        iconName,
+                                        ViewMode::kIconMode });
     }
 }
 

@@ -12,10 +12,36 @@
 #include <QDir>
 #include <QSettings>
 #include <QLocale>
+#include <QApplication>
+#include <QAtomicInteger>
+#include <DGuiApplicationHelper>
 
+DGUI_USE_NAMESPACE
 using namespace dfmbase;
 
 namespace dfmbase {
+
+// 主题版本号：主题类型/调色板变化时自增，用于失效桌面项缓存的图标状态（#8）
+static QAtomicInteger<int> s_iconThemeGeneration { 0 };
+static void invalidateDesktopIconCache()
+{
+    s_iconThemeGeneration.storeRelease(s_iconThemeGeneration.loadAcquire() + 1);
+}
+static int iconThemeGeneration()
+{
+    // C++11 魔法静态：连接只建立一次，线程安全
+    static const bool s_connected = []() {
+        QObject::connect(DGuiApplicationHelper::instance(),
+                         &DGuiApplicationHelper::themeTypeChanged,
+                         &invalidateDesktopIconCache);
+        QObject::connect(qApp, &QApplication::paletteChanged,
+                         &invalidateDesktopIconCache);
+        return true;
+    }();
+    Q_UNUSED(s_connected)
+    return s_iconThemeGeneration.loadAcquire();
+}
+
 class DesktopFileInfoPrivate : public QSharedData
 {
 public:
@@ -52,7 +78,27 @@ public:
             categories.removeFirst();
         }
 
+        if (iconName == "user-trash") {
+            if (!FileUtils::trashIsEmpty())
+                iconName = "user-trash-full";
+        }
+
+        if (!iconName.isEmpty() && QIcon::hasThemeIcon(iconName))
+            hasThemeIcon.storeRelease(true);
+
         icon = QIcon();
+    }
+
+    // 主题变化时失效缓存的图标状态（#8）：icon / useProxyIcon / hasThemeIcon
+    void ensureIconCacheFresh()
+    {
+        const int gen = iconThemeGeneration();
+        if (iconThemeGen == gen)
+            return;
+        iconThemeGen = gen;
+        icon = QIcon();
+        useProxyIcon.storeRelease(false);
+        hasThemeIcon.storeRelease(!iconName.isEmpty() && QIcon::hasThemeIcon(iconName));
     }
 
 public:
@@ -66,6 +112,9 @@ public:
     QStringList mimeType;
     QString deepinID;
     QString deepinVendor;
+    QAtomicInteger<bool> hasThemeIcon { false };
+    QAtomicInteger<bool> useProxyIcon { false };
+    qint64 iconThemeGen { -1 };   // 上次校验图标缓存时所用的主题版本号
 };
 }
 
@@ -100,6 +149,8 @@ QString DesktopFileInfo::desktopExec() const
 
 QString DesktopFileInfo::desktopIconName() const
 {
+    d->ensureIconCacheFresh();   // 主题切换后失效陈旧的 hasThemeIcon 缓存（#8）
+
     // special handling for trash desktop file which has tash datas
     if (d->iconName == "user-trash") {
         const auto trashState = FileUtils::trashEmptyState();
@@ -111,7 +162,10 @@ QString DesktopFileInfo::desktopIconName() const
         return "user-trash-full";
     }
 
-    return d->iconName;
+    if (d->hasThemeIcon.loadAcquire())
+        return d->iconName;
+
+    return "desktopNotThemeIcon::" + d->iconName;
 }
 
 QString DesktopFileInfo::desktopType() const
@@ -126,11 +180,16 @@ QStringList DesktopFileInfo::desktopCategories() const
 
 QIcon DesktopFileInfo::fileIcon()
 {
+    d->ensureIconCacheFresh();   // 主题切换后失效陈旧的 icon / useProxyIcon 缓存（#8）
+
     if (Q_LIKELY(!d->icon.isNull())) {
         return d->icon;
     }
 
-    const QString &iconName = this->nameOf(NameInfoType::kIconName);
+    if (d->useProxyIcon)
+        return proxy->fileIcon();
+
+    const QString iconName = this->nameOf(NameInfoType::kIconName).replace("desktopNotThemeIcon::", "");
 
     if (iconName.startsWith("data:image/")) {
         int firstSemicolon = iconName.indexOf(';', 11);
@@ -172,11 +231,13 @@ QIcon DesktopFileInfo::fileIcon()
             d->icon = QIcon();
     }
 
-    if (d->icon.isNull()) {
+    if (d->icon.isNull() && !iconName.isEmpty()) {
         d->icon = QIcon::fromTheme(iconName);
 
-        if (d->icon.isNull())
+        if (d->icon.isNull()) {
+            d->useProxyIcon.storeRelease(true);
             return ProxyFileInfo::fileIcon();
+        }
     }
 
     return d->icon;
@@ -196,7 +257,8 @@ QString DesktopFileInfo::nameOf(const NameInfoType type) const
     case NameInfoType::kIconName:
         return desktopIconName();
     case NameInfoType::kGenericIconName:
-        return QStringLiteral("application-default-icon");
+        return !d->genericName.isEmpty() && QIcon::hasThemeIcon(d->genericName)
+                ? d->genericName : QStringLiteral("application-default-icon");
     default:
         return ProxyFileInfo::nameOf(type);
     }

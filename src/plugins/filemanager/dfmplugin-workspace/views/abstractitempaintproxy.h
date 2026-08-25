@@ -7,6 +7,8 @@
 
 #include "dfmplugin_workspace_global.h"
 
+#include <dfm-base/utils/iconpainterutils.h>
+
 #include <QObject>
 #include <QPainter>
 #include <QStyleOptionViewItem>

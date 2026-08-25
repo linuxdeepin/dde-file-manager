@@ -7,7 +7,7 @@
 #include "models/fileviewmodel.h"
 
 #include <dfm-base/interfaces/fileinfo.h>
-#include <dfm-base/utils/iconutils.h>
+#include <dfm-base/utils/iconpainterutils.h>
 
 using namespace dfmplugin_workspace;
 DFMGLOBAL_USE_NAMESPACE
@@ -74,18 +74,12 @@ void AbstractItemPaintProxy::setStyleProxy(QStyle *style)
 
 bool AbstractItemPaintProxy::isThumnailIconIndex(const QModelIndex &index) const
 {
-    auto parent = dynamic_cast<FileView *>(this->parent());
-    if (!index.isValid() || !parent)
+    if (!index.isValid())
         return false;
 
-    FileInfoPointer info { parent->model()->fileInfo(index) };
-    if (info) {
-        if (IconUtils::shouldSkipThumbnailFrame(info->nameOf(NameInfoType::kMimeTypeName)))
-            return false;
+    auto parent = dynamic_cast<FileView *>(this->parent());
+    if (!parent || !parent->model())
+        return false;
 
-        const auto &attribute { info->extendAttributes(ExtInfoType::kFileThumbnail) };
-        if (attribute.isValid() && !attribute.value<QIcon>().isNull())
-            return true;
-    }
-    return false;
+    return IconPainterUtils::isThumbnailIcon(parent->model()->fileInfo(index));
 }

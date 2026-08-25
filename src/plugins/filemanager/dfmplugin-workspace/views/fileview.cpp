@@ -863,9 +863,9 @@ QModelIndex FileView::currentPressIndex() const
     return d->selectHelper->getCurrentPressedIndex();
 }
 
-bool FileView::isDragTarget(const QModelIndex &index) const
+bool FileView::isDropTarget(const QModelIndex &index) const
 {
-    return d->dragDropHelper->isDragTarget(index);
+    return d->dragDropHelper->isDropTarget(index);
 }
 
 QRectF FileView::itemRect(const QUrl &url, const ItemRoles role) const

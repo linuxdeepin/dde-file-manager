@@ -78,6 +78,17 @@ IconStyle getIconStyle(int size);
 bool shouldSkipThumbnailFrame(const QString &mimeType);
 
 /*!
+ * \brief 规范化图标名称：将部分 mime 解析出的图标名映射为主题中实际存在的等价名。
+ *
+ * 集中维护 deb / rar / htmlhelp / Zoom 等历史兼容映射，供 SyncFileInfo /
+ * AsyncFileInfo 共用，避免在两处重复维护同一张表（#6）。
+ *
+ * \param iconName 经 mime 解析得到的原始图标名
+ * \return 映射后的图标名（无需映射时原样返回）
+ */
+QString normalizeIconName(const QString &iconName);
+
+/*!
  * \brief Generate a HiDPI-aware pixmap from QIcon.
  * Returns a pixmap scaled by the given widget's devicePixelRatio,
  * so it renders crisply on high-DPI screens.
