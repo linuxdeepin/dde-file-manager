@@ -60,8 +60,8 @@ IndexStatusCheckBox::IndexStatusCheckBox(QWidget *parent)
     msgPolicy.setHorizontalStretch(1);
     m_msgLabel->setSizePolicy(msgPolicy);
 
-    connect(m_msgLabel, &QLabel::linkActivated, this, [this](const QString &) {
-        emit resetRequested();
+    connect(m_msgLabel, &QLabel::linkActivated, this, [this](const QString &href) {
+        emit resetRequested(href);
     });
 
     connect(m_checkBox, &QCheckBox::clicked, this, [this](bool checked) {

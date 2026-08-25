@@ -50,6 +50,7 @@ public:
     void setEnable(bool enabled);
     void getIndexStatus();
     void forceUpdateIndex(const QStringList &paths);
+    void updateIndexBypassEnv(const QStringList &paths);
 
 Q_SIGNALS:
     void taskStarted(TaskType type, const QString &path);

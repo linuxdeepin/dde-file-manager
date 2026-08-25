@@ -314,13 +314,17 @@ QVariantMap TextIndexDBus::GetIndexStatus()
 
 bool TextIndexDBus::ForceUpdateIndex(const QStringList &paths, const QVariantMap &options)
 {
-    Q_UNUSED(options)
-    fmInfo() << "TextIndexDBus: Force update index requested for" << paths.size() << "paths";
+    const bool manual = options.value("manual", true).toBool();
+    fmInfo() << "TextIndexDBus: Force update index requested for" << paths.size() << "paths"
+             << "manual:" << manual;
 
     bool exists = IndexDatabaseExists();
     auto type = exists ? IndexTask::Type::Update : IndexTask::Type::Create;
 
-    return d->runtime->taskManager()->startTask(type, paths, IndexTask::Grade::Manual, true);
+    if (manual) {
+        return d->runtime->taskManager()->startTask(type, paths, IndexTask::Grade::Manual, true);
+    }
+    return d->runtime->taskManager()->startTask(type, paths, IndexTask::Grade::None, true);
 }
 
 void TextIndexDBusPrivate::initializeSupportedExtensions()

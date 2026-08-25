@@ -89,6 +89,7 @@ private:
     bool isFullScanTask(IndexTask::Type type) const;
     bool enqueueCompensationTask(const QStringList &paths);
     QStringList applyDirectoryMovePlans(const QHash<QString, QString> &movedFiles);
+    void removeDuplicateFullScanTasks(IndexTask::Type type, const QStringList &pathList);
 
     // Task grading
     IndexTask::Grade gradeFileListTask(const QStringList &fileList) const;
