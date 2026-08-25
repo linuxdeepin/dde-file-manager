@@ -484,7 +484,7 @@ void TaskManager::onEnvStateChanged(const EnvState &env)
         if (!canRun(currentTask->grade(), currentTask->forceBypass(), env)) {
             fmInfo() << "[TaskManager::onEnvStateChanged] Current task can no longer run, pausing";
             pauseCurrentTask();
-            return;   // schedule() will be called from onTaskPaused
+            return;   // schedule() will be called from onTaskPaused, which emits
         }
     }
 
@@ -492,6 +492,13 @@ void TaskManager::onEnvStateChanged(const EnvState &env)
     if (!hasRunningTask()) {
         schedule();
     }
+
+    // 3. Always emit status change so clients can update their display.
+    //    Even with no running/queued task, the status may have changed
+    //    (e.g., "Idle" → "WaitingPowerSave" when entering power-save mode
+    //    with a dirty index that needs updating).
+    emit indexStatusChanged(currentIndexStatus(),
+                            gradeToString(currentOrQueuedGrade().value_or(IndexTask::Grade::None)));
 }
 
 bool TaskManager::canRun(IndexTask::Grade grade, bool forceBypass, const EnvState &env) const
@@ -560,6 +567,19 @@ bool TaskManager::tryEnqueueIfBlocked(IndexTask::Grade grade, bool forceBypass, 
              << ", queuing task - battery:" << env.onBattery
              << "powerSave:" << env.powerSaveMode << "idle:" << env.idle;
     taskQueue.enqueue(item);
+
+    // A task being blocked means there's pending index work that hasn't been
+    // reflected in the index yet.  Mark the state Dirty so that:
+    // 1. A kill -9 (no cleanup) still leaves Dirty on disk → next startup
+    //    detects it and runs a recovery Update.
+    // 2. The indexStatusChanged signal (below) carries the correct status.
+    if (m_context && m_context->stateStore())
+        m_context->stateStore()->setIndexState(IndexUtility::IndexState::Dirty);
+
+    // Notify clients immediately — the status changed from whatever it was
+    // (e.g., "Idle") to a waiting state because a task is now blocked.
+    emit indexStatusChanged(currentIndexStatus(),
+                            gradeToString(currentOrQueuedGrade().value_or(IndexTask::Grade::None)));
     return true;
 }
 
@@ -646,6 +666,15 @@ std::optional<IndexTask::Grade> TaskManager::currentTaskGrade() const
     return currentTask->grade();
 }
 
+std::optional<IndexTask::Grade> TaskManager::currentOrQueuedGrade() const
+{
+    if (hasRunningTask() && currentTask)
+        return currentTask->grade();
+    if (!taskQueue.isEmpty())
+        return taskQueue.head().grade;
+    return std::nullopt;
+}
+
 QString TaskManager::currentIndexStatus() const
 {
     if (hasRunningTask() && currentTask)
@@ -683,10 +712,43 @@ QString TaskManager::currentIndexStatus() const
     if (m_lastTaskFailed)
         return "Failed";
 
-    // Idle: index exists → Completed; index not yet built → WaitingUpgrade
+    // Index is dirty or not yet built — there's pending work.
+    // The status shown to the user depends on the *effective grade* of the
+    // pending work, mirroring gradeUpdateTask() / handleSlientStart() logic:
+    //
+    //   isCreateInProgress() → Heavy (resume interrupted full build)
+    //   DB doesn't exist      → Heavy (fresh Create / version mismatch)
+    //   Otherwise             → Light  (开机全盘扫描对比 — incremental update)
+    //
+    // Display rules (per spec):
+    //
+    //   Heavy: always show "WaitingUpgrade" during the update interval —
+    //   the user needs to know a major rebuild is pending.  When the timer
+    //   fires and the task is blocked, it lands in the queue and the
+    //   "queue not empty" branch above reports the specific waiting state
+    //   (WaitingPower / WaitingPowerSave / WaitingIdle).
+    //
+    //   Light: show "Idle" (as if completed) — minor pending changes will be
+    //   silently picked up when the update timer fires.  The only exception is
+    //   power-save mode, which blocks even Light tasks and is worth telling
+    //   the user about.
     if (m_context && m_context->stateStore()) {
-        if (!m_context->stateStore()->isCleanState())
-            return "WaitingUpgrade";
+        if (!m_context->stateStore()->isCleanState()) {
+            const bool createInProgress = m_context->stateStore()->isCreateInProgress();
+            const bool dbExists = m_context->profile().isIndexAvailable()
+                                && m_context->stateStore()->isCompatibleVersion()
+                                && !m_context->stateStore()->getLastUpdateTime().isEmpty();
+            const bool heavy = createInProgress || !dbExists;
+
+            if (heavy) {
+                return "WaitingUpgrade";
+            } else {
+                const EnvState env = EnvDetector::instance().currentState();
+                if (env.powerSaveMode)
+                    return "WaitingPowerSave";
+                return "Idle";
+            }
+        }
     }
 
     return "Idle";

@@ -286,17 +286,13 @@ QVariantMap OcrIndexDBus::GetIndexStatus()
     QVariantMap status;
     auto *tm = d->runtime->taskManager();
 
-    if (!tm->hasRunningTask()) {
-        if (tm->hasQueuedTasks())
-            status["state"] = QStringLiteral("Blocked");
-        else
-            status["state"] = QStringLiteral("Idle");
-        status["grade"] = QStringLiteral("none");
-    } else {
-        status["state"] = tm->currentIndexStatus();
-        auto grade = tm->currentTaskGrade();
-        status["grade"] = grade.has_value() ? TaskManager::gradeToString(*grade) : QStringLiteral("none");
-    }
+    // Always delegate to TaskManager::currentIndexStatus() so the client
+    // receives the specific waiting state (WaitingPower / WaitingPowerSave /
+    // WaitingIdle / WaitingUpgrade / Failed / Running / Idle) rather than
+    // the generic "Blocked"/"Idle" that bypasses environment checks.
+    status["state"] = tm->currentIndexStatus();
+    auto grade = tm->currentOrQueuedGrade();
+    status["grade"] = grade.has_value() ? TaskManager::gradeToString(*grade) : QStringLiteral("none");
 
     return status;
 }
