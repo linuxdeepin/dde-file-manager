@@ -9,6 +9,7 @@
 #include "workers/cryptworkers.h"
 #include "helpers/jobfilehelper.h"
 #include "helpers/notificationhelper.h"
+#include "helpers/overlaydmnotifyhelper.h"
 #include "helpers/crypttabhelper.h"
 #include "helpers/commonhelper.h"
 #include "helpers/filesystemhelper.h"
@@ -1029,6 +1030,9 @@ void DiskEncryptSetupPrivate::onOverlayDMModeChangeFinished(bool success, bool t
     // Emit DBus signal to notify upper layer application
     qInfo() << "[DiskEncryptSetupPrivate::onOverlayDMModeChangeFinished] Emitting DBus signal, enabled:" << targetValue
             << "result code:" << resultCode;
+
+    OverlayDMNotifyHelper::instance()->ensureNotificationDelivery(targetValue, resultCode);
+
     Q_EMIT qptr->OverlayDMModeChanged(targetValue, resultCode);
 
     // Check if there's a pending config change

@@ -19,6 +19,10 @@
 #include <QDBusInterface>
 #include <QDBusPendingCall>
 #include <QDBusReply>
+#include <QFile>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QTimer>
 
 #include <DDialog>
 #include <DDBusSender>
@@ -74,6 +78,41 @@ void EventsHandler::hookEvents()
 {
     dpfHookSequence->follow("dfmplugin_computer", "hook_Device_AcquireDevPwd",
                             this, &EventsHandler::onAcquireDevicePwd);
+}
+
+void EventsHandler::checkPendingOverlayDMNotify()
+{
+    QFile file(disk_encrypt::kOverlayDMNotifyFile);
+    if (!file.exists()) {
+        fmInfo() << "No pending overlay DM notification file found";
+        return;
+    }
+
+    if (!file.open(QIODevice::ReadOnly)) {
+        fmWarning() << "Failed to open pending notification file:" << disk_encrypt::kOverlayDMNotifyFile;
+        return;
+    }
+
+    QJsonParseError parseError;
+    QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &parseError);
+    file.close();
+
+    if (parseError.error != QJsonParseError::NoError || !doc.isObject()) {
+        fmWarning() << "Failed to parse pending notification JSON:" << parseError.errorString();
+        QFile::remove(disk_encrypt::kOverlayDMNotifyFile);
+        return;
+    }
+
+    QJsonObject obj = doc.object();
+    bool enabled = obj.value("enabled").toBool();
+    int result = obj.value("result").toInt();
+
+    QFile::remove(disk_encrypt::kOverlayDMNotifyFile);
+    fmInfo() << "Found pending overlay DM notification, enabled:" << enabled << "result:" << result;
+
+    QTimer::singleShot(2000, this, [this, enabled, result]() {
+        onOverlayDMModeChanged(enabled, result);
+    });
 }
 
 /**
@@ -723,6 +762,8 @@ void EventsHandler::setAutoStartDFM(bool enable)
 void EventsHandler::onOverlayDMModeChanged(bool enabled, int result)
 {
     fmInfo() << "Overlay DM mode changed, enabled:" << enabled << "result:" << result;
+
+    QFile::remove(disk_encrypt::kOverlayDMNotifyFile);
 
     QString title, message, icon;
 
