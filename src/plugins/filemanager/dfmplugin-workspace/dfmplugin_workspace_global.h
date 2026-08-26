@@ -115,11 +115,21 @@ inline constexpr char kViewHintIcon[] { "Property_Key_ViewHintIcon" };
 inline constexpr char kViewHintActions[] { "Property_Key_ViewHintActions" };
 inline constexpr char kViewHintShouldShow[] { "Property_Key_ViewHintShouldShow" };
 inline constexpr char kViewHintOnAction[] { "Property_Key_ViewHintOnAction" };
+inline constexpr char kViewHintLeftCustomWidgetFactory[] { "Property_Key_ViewHintLeftCustomWidgetFactory" };
+inline constexpr char kViewHintRightCustomWidgetFactory[] { "Property_Key_ViewHintRightCustomWidgetFactory" };
 // Registered group strategy payload keys (for slot_RegisterGroupStrategy)
 inline constexpr char kGroupStrategyName[] { "Property_Key_GroupStrategyName" };
 inline constexpr char kGroupStrategyDisplayName[] { "Property_Key_GroupStrategyDisplayName" };
 inline constexpr char kGroupStrategySchemes[] { "Property_Key_GroupStrategySchemes" };
 inline constexpr char kGroupStrategyFactory[] { "Property_Key_GroupStrategyFactory" };
+}
+
+namespace ViewHintUpdateKey {
+inline constexpr char kIcon[] { "icon" };
+inline constexpr char kText[] { "text" };
+inline constexpr char kActions[] { "actions" };
+inline constexpr char kLeftCustomWidgetFactory[] { "leftCustomWidgetFactory" };
+inline constexpr char kRightCustomWidgetFactory[] { "rightCustomWidgetFactory" };
 }
 
 namespace ThemeColor {
@@ -140,6 +150,7 @@ using ViewModeUrlCallback = std::function<QUrl(const QUrl)>;
 // the built-in close button which arrives with id "close".
 using ViewHintShouldShowCallback = std::function<bool(const QUrl &, QString *text)>;
 using ViewHintActionCallback = std::function<void(const QString &id)>;
+using ViewHintCustomWidgetFactory = std::function<QWidget *(QWidget *parent)>;
 
 // Registered group strategy factory: produces an AbstractGroupStrategy* for the
 // given parent. Strategies that need per-window context carry their own state
@@ -155,6 +166,8 @@ struct ViewHintSpec
 {
     QString scheme;
     QString icon;
+    ViewHintCustomWidgetFactory leftCustomWidgetFactory { nullptr };
+    ViewHintCustomWidgetFactory rightCustomWidgetFactory { nullptr };
     QList<QPair<QString, QString>> actions;   // {id, label}
     ViewHintShouldShowCallback shouldShow { nullptr };
     ViewHintActionCallback onAction { nullptr };
@@ -171,6 +184,8 @@ struct ViewHintSpec
         }
         shouldShow = DPF_NAMESPACE::paramGenerator<ViewHintShouldShowCallback>(map.value(PropertyKey::kViewHintShouldShow));
         onAction = DPF_NAMESPACE::paramGenerator<ViewHintActionCallback>(map.value(PropertyKey::kViewHintOnAction));
+        leftCustomWidgetFactory = DPF_NAMESPACE::paramGenerator<ViewHintCustomWidgetFactory>(map.value(PropertyKey::kViewHintLeftCustomWidgetFactory));
+        rightCustomWidgetFactory = DPF_NAMESPACE::paramGenerator<ViewHintCustomWidgetFactory>(map.value(PropertyKey::kViewHintRightCustomWidgetFactory));
     }
 };
 
@@ -240,6 +255,7 @@ Q_DECLARE_METATYPE(DPWORKSPACE_NAMESPACE::FileViewRoutePrehaldler);
 Q_DECLARE_METATYPE(DPWORKSPACE_NAMESPACE::ViewModeUrlCallback);
 Q_DECLARE_METATYPE(DPWORKSPACE_NAMESPACE::ViewHintShouldShowCallback);
 Q_DECLARE_METATYPE(DPWORKSPACE_NAMESPACE::ViewHintActionCallback);
+Q_DECLARE_METATYPE(DPWORKSPACE_NAMESPACE::ViewHintCustomWidgetFactory);
 Q_DECLARE_METATYPE(DPWORKSPACE_NAMESPACE::StrategyFactory);
 Q_DECLARE_METATYPE(QString *)
 Q_DECLARE_METATYPE(QVariant *)

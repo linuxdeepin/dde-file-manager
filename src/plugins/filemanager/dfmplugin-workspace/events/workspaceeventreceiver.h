@@ -69,6 +69,9 @@ public slots:
     QString handleFindMenuScene(const QString &scheme);
     void handleRegisterCustomTopWidget(const QVariantMap &dataMap);
     void handleRegisterViewHint(const QVariantMap &dataMap);
+    void handleShowViewHint(const QString &scheme, const QVariantMap &content);
+    void handleCloseViewHint(const QString &scheme);
+    void handleUpdateViewHint(const QString &scheme, const QVariantMap &updates);
     void handleRegisterGroupStrategy(const QVariantMap &dataMap);
     QVariantList handleRegisteredGroupStrategies(const QString &schemeFilter = QString());
     bool handleGetCustomTopWidgetVisible(const quint64 windowID, const QString &scheme);

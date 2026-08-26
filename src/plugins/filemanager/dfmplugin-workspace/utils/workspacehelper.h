@@ -64,6 +64,10 @@ public:
     bool hasViewHint(const QString &scheme) const;
     ViewHintSpec findViewHint(const QString &scheme) const;
 
+    void requestShowViewHint(const QString &scheme, const QVariantMap &content);
+    void requestCloseViewHint(const QString &scheme);
+    void requestUpdateViewHint(const QString &scheme, const QVariantMap &updates);
+
     WorkspaceWidget *findWorkspaceByWindowId(quint64 windowId);
     void closeTab(const QUrl &url);
     void addWorkspace(quint64 windowId, WorkspaceWidget *workspace);
@@ -135,6 +139,9 @@ public Q_SLOTS:
 signals:
     void requestSelectFiles(const QList<QUrl> &urlList);
     void trashStateChanged();
+    void viewHintShowRequested(const QString &scheme, const QVariantMap &content);
+    void viewHintCloseRequested(const QString &scheme);
+    void viewHintUpdateRequested(const QString &scheme, const QVariantMap &updates);
 
 private:
     explicit WorkspaceHelper(QObject *parent = nullptr);
