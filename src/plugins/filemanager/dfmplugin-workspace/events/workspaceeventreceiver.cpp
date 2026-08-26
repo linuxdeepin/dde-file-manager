@@ -69,6 +69,12 @@ void WorkspaceEventReceiver::initConnection()
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleRegisterCustomTopWidget);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_RegisterViewHint",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleRegisterViewHint);
+    dpfSlotChannel->connect(kCurrentEventSpace, "slot_ShowViewHint",
+                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleShowViewHint);
+    dpfSlotChannel->connect(kCurrentEventSpace, "slot_CloseViewHint",
+                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleCloseViewHint);
+    dpfSlotChannel->connect(kCurrentEventSpace, "slot_UpdateViewHint",
+                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleUpdateViewHint);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_RegisterGroupStrategy",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleRegisterGroupStrategy);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_RegisteredGroupStrategies",
@@ -435,6 +441,24 @@ void WorkspaceEventReceiver::handleRegisterViewHint(const QVariantMap &dataMap)
     }
     fmDebug() << "WorkspaceEventReceiver: Registering view hint for scheme:" << spec.scheme;
     WorkspaceHelper::instance()->registerViewHint(spec.scheme, spec);
+}
+
+void WorkspaceEventReceiver::handleShowViewHint(const QString &scheme, const QVariantMap &content)
+{
+    fmDebug() << "WorkspaceEventReceiver: handleShowViewHint for scheme:" << scheme;
+    WorkspaceHelper::instance()->requestShowViewHint(scheme, content);
+}
+
+void WorkspaceEventReceiver::handleCloseViewHint(const QString &scheme)
+{
+    fmDebug() << "WorkspaceEventReceiver: handleCloseViewHint for scheme:" << scheme;
+    WorkspaceHelper::instance()->requestCloseViewHint(scheme);
+}
+
+void WorkspaceEventReceiver::handleUpdateViewHint(const QString &scheme, const QVariantMap &updates)
+{
+    fmDebug() << "WorkspaceEventReceiver: handleUpdateViewHint for scheme:" << scheme;
+    WorkspaceHelper::instance()->requestUpdateViewHint(scheme, updates);
 }
 
 void WorkspaceEventReceiver::handleRegisterGroupStrategy(const QVariantMap &dataMap)

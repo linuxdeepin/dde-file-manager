@@ -172,6 +172,24 @@ ViewHintSpec WorkspaceHelper::findViewHint(const QString &scheme) const
     return viewHintMap.value(scheme);
 }
 
+void WorkspaceHelper::requestShowViewHint(const QString &scheme, const QVariantMap &content)
+{
+    fmDebug() << "WorkspaceHelper: requestShowViewHint for scheme:" << scheme;
+    emit viewHintShowRequested(scheme, content);
+}
+
+void WorkspaceHelper::requestCloseViewHint(const QString &scheme)
+{
+    fmDebug() << "WorkspaceHelper: requestCloseViewHint for scheme:" << scheme;
+    emit viewHintCloseRequested(scheme);
+}
+
+void WorkspaceHelper::requestUpdateViewHint(const QString &scheme, const QVariantMap &updates)
+{
+    fmDebug() << "WorkspaceHelper: requestUpdateViewHint for scheme:" << scheme;
+    emit viewHintUpdateRequested(scheme, updates);
+}
+
 bool WorkspaceHelper::isViewModeSupported(const QString &scheme, const dfmbase::Global::ViewMode mode) const
 {
     auto customProperty = findCustomViewProperty(scheme);

@@ -5,6 +5,7 @@
 #include "search.h"
 #include "events/searcheventreceiver.h"
 #include "utils/searchhelper.h"
+#include "utils/searchhintcontroller.h"
 #include "utils/custommanager.h"
 #include "utils/ocrindexclient.h"
 #include "utils/textindexclient.h"
@@ -42,6 +43,7 @@ using ShowTopWidgetCallback = std::function<bool(QWidget *, const QUrl &)>;
 using ViewModeUrlCallback = std::function<QUrl(const QUrl)>;
 using ViewHintShouldShowCallback = std::function<bool(const QUrl &, QString *)>;
 using ViewHintActionCallback = std::function<void(const QString &)>;
+using ViewHintCustomWidgetFactory = std::function<QWidget *(QWidget *)>;
 // Identical signature to the workspace's StrategyFactory typedef — registered
 // the same way so DPF_NAMESPACE::paramGenerator resolves to the same metatype
 // across plugin boundaries.
@@ -54,6 +56,7 @@ Q_DECLARE_METATYPE(QVariant *)
 Q_DECLARE_METATYPE(ViewModeUrlCallback)
 Q_DECLARE_METATYPE(ViewHintShouldShowCallback);
 Q_DECLARE_METATYPE(ViewHintActionCallback);
+Q_DECLARE_METATYPE(ViewHintCustomWidgetFactory);
 Q_DECLARE_METATYPE(StrategyFactory);
 
 DFMBASE_USE_NAMESPACE
@@ -172,11 +175,11 @@ void Search::regSearchToWorkspace()
     // owns the floating message and shows/hides it on url/scheme switch; the search
     // plugin only supplies the spec -- icon/actions, a shouldShow predicate (reads
     // DConfig and dynamically fills the message text), and an onAction handler. Both
-    // live as statics on SearchHelper. The built-in close button arrives as action
-    // "close"; "Smart search" has no backing key yet and is intentionally not
+    // live as statics on SearchHintController. The built-in close button arrives as
+    // action "close"; "Smart search" has no backing key yet and is intentionally not
     // enabled by the action handler (per current scope).
-    ViewHintShouldShowCallback shouldShow { SearchHelper::shouldShowAuthHint };
-    ViewHintActionCallback onAction { SearchHelper::onAuthHintAction };
+    ViewHintShouldShowCallback shouldShow { SearchHintController::shouldShowAuthHint };
+    ViewHintActionCallback onAction { SearchHintController::onAuthHintAction };
 
     QVariantList hintActions;
     hintActions.append(QVariantMap { { "id", "authorize" }, { "label", tr("Enable") } });

@@ -118,7 +118,6 @@ void FileViewPrivate::initListModeView()
     }
 
     if (!headerView) {
-        q->initDefaultHeaderView();
 
         headerView = new HeaderView(Qt::Orientation::Horizontal, q);
         headerView->setObjectName("HeaderView");
