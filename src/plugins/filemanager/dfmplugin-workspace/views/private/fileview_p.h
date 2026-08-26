@@ -33,6 +33,7 @@ class BaseItemDelegate;
 class ViewGeometryHelper;
 class FileViewPrivate
 {
+    Q_DISABLE_COPY_MOVE(FileViewPrivate)
     friend class FileView;
     FileView *const q;
 
@@ -79,7 +80,6 @@ class FileViewPrivate
     QTimer *groupHeaderTimer { nullptr };
 
     QList<DFMGLOBAL_NAMESPACE::ItemRoles> columnRoles;
-    QMap<QString, bool> columnForRoleHiddenMap;
 
     QTimer *scrollBarValueChangedTimer { nullptr };
     bool scrollBarSliderPressed { false };
