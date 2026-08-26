@@ -4,210 +4,149 @@
 
 name: bug转用例场景_suite
 app: dde-file-manager
-description: ''
+description: 'bug转用例场景模块 AT-SPI 用例：侧边栏导航项及主菜单交互'
 module: bug转用例场景
 tags: []
 fast_fail: false
 env_check: []
 setup: []
 suites:
-- id: case_1972987_s1
-  name: 启动 dde-file-manager
-  description: ''
+- id: case_bug_sidebar_computer
+  name: 侧边栏导航-计算机
+  description: '验证侧边栏"计算机"导航项存在并可点击'
   tags: []
   steps:
   - action: session_start
-    command: true; dde-file-manager --open-home
+    command: dde-file-manager --open-home
     wait: 5.0
-  - action: wait
+  - action: element_action
+    ref: 计算机
+    do: click
     wait: 1.0
-  - action: wait
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+- id: case_bug_sidebar_desktop
+  name: 侧边栏导航-桌面
+  description: '验证侧边栏"桌面"导航项存在并可点击'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
     wait: 1.0
-  - action: wait
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: case_bug_sidebar_recent
+  name: 侧边栏导航-最近使用
+  description: '验证侧边栏"最近使用"导航项存在并可点击'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 最近使用
+    do: click
     wait: 1.0
-  - action: wait
+  assert_steps:
+  - action: assert_element
+    ref: 最近使用
+- id: case_bug_sidebar_network
+  name: 侧边栏导航-网络
+  description: '验证侧边栏"网络"导航项存在并可点击'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 网络
+    do: click
     wait: 1.0
-  - action: wait
+  assert_steps:
+  - action: assert_element
+    ref: 网络
+- id: case_bug_sidebar_trash
+  name: 侧边栏导航-回收站
+  description: '验证侧边栏"回收站"导航项存在并可点击'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
     wait: 1.0
-  - action: wait
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: case_bug_sidebar_system_disk
+  name: 侧边栏导航-系统盘
+  description: '验证侧边栏"系统盘"导航项存在并可点击'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 系统盘
+    do: click
     wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 系统盘
+- id: case_bug_sidebar_pictures
+  name: 侧边栏导航-图片
+  description: '验证侧边栏"图片"导航项存在并可点击'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+- id: case_bug_menu_settings
+  name: 主菜单-设置
+  description: '通过主菜单打开设置对话框'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: dtk_main_menu
+    ref: 设置
+    items:
+    - 设置
+    wait: 2.0
   assert_steps:
   - action: assert_process_running
     app: dde-file-manager
-  - action: assert_process_running
-    app: dde-file-manager
-- id: case_1968781_s1
-  name: 启动 dde-file-manager
-  description: ''
+- id: case_bug_menu_new_window
+  name: 主菜单-新建窗口
+  description: '通过主菜单新建窗口'
   tags: []
   steps:
   - action: session_start
-    command: true; dde-file-manager --open-home
+    command: dde-file-manager --open-home
     wait: 5.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  assert_steps: []
-- id: case_1857601_s1
-  name: 启动 dde-file-manager
-  description: ''
-  tags: []
-  steps:
-  - action: session_start
-    command: true; dde-file-manager --open-home
-    wait: 5.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  assert_steps: []
-- id: case_1810647_s1
-  name: 启动 dde-file-manager
-  description: ''
-  tags: []
-  steps:
-  - action: session_start
-    command: true; dde-file-manager --open-home
-    wait: 5.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  assert_steps: []
-- id: case_1810645_s1
-  name: 启动 dde-file-manager
-  description: ''
-  tags: []
-  steps:
-  - action: session_start
-    command: true; dde-file-manager --open-home
-    wait: 5.0
-  - action: wait
-    selector: {}
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    selector: {}
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
+  - action: dtk_main_menu
+    ref: 新建窗口
+    items:
+    - 新建窗口
+    wait: 2.0
   assert_steps:
   - action: assert_process_running
     app: dde-file-manager
-- id: case_1810643_s1
-  name: 启动 dde-file-manager
-  description: ''
-  tags: []
-  steps:
-  - action: session_start
-    command: true; dde-file-manager --open-home
-    wait: 5.0
-  - action: keyboard_hot_key
-    key: ctrl+c
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  assert_steps: []
-- id: case_1810641_s1
-  name: 启动 dde-file-manager
-  description: ''
-  tags: []
-  steps:
-  - action: session_start
-    command: true; dde-file-manager --open-home
-    wait: 5.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  assert_steps: []
-- id: case_1810639_s1
-  name: 启动 dde-file-manager
-  description: ''
-  tags: []
-  steps:
-  - action: session_start
-    command: true; dde-file-manager --open-home
-    wait: 5.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  assert_steps: []
-- id: case_1810637_s1
-  name: 启动 dde-file-manager
-  description: ''
-  tags: []
-  steps:
-  - action: session_start
-    command: true; dde-file-manager --open-home
-    wait: 5.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  assert_steps: []
-- id: case_1810633_s1
-  name: 启动 dde-file-manager
-  description: ''
-  tags: []
-  steps:
-  - action: session_start
-    command: true; dde-file-manager --open-home
-    wait: 5.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  assert_steps: []
 teardown:
 - action: session_stop
