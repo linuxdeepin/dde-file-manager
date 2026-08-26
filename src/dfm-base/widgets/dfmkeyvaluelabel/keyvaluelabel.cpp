@@ -43,6 +43,8 @@ void KeyValueLabel::initUI()
 {
     leftValueLabel = new DLabel(this);
     rightValueEdit = new RightValueWidget(this);
+    rightValueEdit->setObjectName("RightValueEdit");
+    rightValueEdit->setAccessibleName("RightValueEdit");
     auto layout = rightValueEdit->document()->documentLayout();
     connect(rightValueEdit, &RightValueWidget::clicked, this, &KeyValueLabel::valueAreaClicked);
     connect(layout, &QAbstractTextDocumentLayout::documentSizeChanged, this, &KeyValueLabel::adjustHeight);

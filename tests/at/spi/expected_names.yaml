@@ -1242,5 +1242,33 @@ widgets:
   source_file: src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp
   class_name: RecoveryKeyView
   line: 34
+- variable: rightValueEdit
+  type: RightValueWidget *
+  object_name: RightValueEdit
+  accessible_name: RightValueEdit
+  source_file: src/dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.cpp
+  class_name: KeyValueLabel
+  line: 45
+- variable: createImgBtn
+  type: QAbstractButton *
+  object_name: CreateImgBtn
+  accessible_name: CreateImgBtn
+  source_file: src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp
+  class_name: DumpISOOptDialog
+  line: 58
+- variable: bottomBar
+  type: TabBar *
+  object_name: BottomBar
+  accessible_name: BottomBar
+  source_file: src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp
+  class_name: TitleBarWidget
+  line: 325
+- variable: headerView
+  type: HeaderView *
+  object_name: HeaderView
+  accessible_name: HeaderView
+  source_file: src/plugins/filemanager/dfmplugin-workspace/views/private/fileview_p.cpp
+  class_name: FileViewPrivate
+  line: 123
 qml_elements: []
 transient_elements: []
