@@ -30,7 +30,8 @@ public:
     bool contains(const QUrl &url) const;
     GroupList groups() const;
     CacheInfoList indexCacheList(const Group &name) const;
-    ItemInfo itemInfo(const QUrl &url);   // the funcs is for QHash<QUrl, ItemInfo> bindedInfos;
+    ItemInfo itemInfo(const Group &group, const QUrl &url) const;   // 查找指定分组内匹配 URL 的 ItemInfo / Find ItemInfo by URL within a specific group
+    ItemInfo itemInfo(const QUrl &url) const;   // 在所有分组中查找匹配 URL 的任一 ItemInfo（顺序未定义）/ Find any matching ItemInfo by URL across all groups (order undefined)
 
     bool addItemInfoCache(const ItemInfo &info);
     bool insertItemInfoCache(Index i, const ItemInfo &info);
@@ -52,7 +53,6 @@ private:
 
 private:
     GroupCacheMap cacheInfoMap;
-    QHash<QUrl, ItemInfo> bindedInfos;
     QStringList lastSettingKeys;
     QStringList lastSettingBindingKeys;
 };

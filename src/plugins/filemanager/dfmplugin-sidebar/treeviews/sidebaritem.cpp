@@ -111,7 +111,7 @@ QString SideBarItem::subGourp() const
 ItemInfo SideBarItem::itemInfo() const
 {
     // if this is storage as a member variable, click item after dragged, dfm crash.
-    return SideBarInfoCacheMananger::instance()->itemInfo(url());
+    return SideBarInfoCacheMananger::instance()->itemInfo(group(), url());
 }
 
 QString SideBarItem::group() const

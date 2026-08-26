@@ -179,75 +179,85 @@ bool SideBarEventReceiver::handleItemUpdate(const QUrl &url, const QVariantMap &
         return false;
     }
 
-    ItemInfo info { SideBarInfoCacheMananger::instance()->itemInfo(url) };
-
-    bool urlUpdated { false };
-    if (properties.contains(PropertyKey::kUrl)) {
-        auto &&newUrl { properties[PropertyKey::kUrl].toUrl() };
-        if (!DFMBASE_NAMESPACE::UniversalUtils::urlEquals(newUrl, info.url)) {
-            urlUpdated = true;
-            info.url = newUrl;
-            SideBarInfoCacheMananger::instance()->removeItemInfoCache(url);
-        }
-    }
-
-    if (properties.contains(PropertyKey::kGroup))
-        info.group = properties[PropertyKey::kGroup].toString();
-    if (properties.contains(PropertyKey::kSubGroup))
-        info.subGroup = properties[PropertyKey::kSubGroup].toString();
-    if (properties.contains(PropertyKey::kDisplayName))
-        info.displayName = properties[PropertyKey::kDisplayName].toString();
-    if (properties.contains(PropertyKey::kEditDisplayText))
-        info.editDisplayText = properties[PropertyKey::kEditDisplayText].toString();
-    if (properties.contains(PropertyKey::kIcon))
-        info.icon = qvariant_cast<QIcon>(properties[PropertyKey::kIcon]);
-    if (properties.contains(PropertyKey::kFinalUrl)) {
-        info.finalUrl = properties[PropertyKey::kFinalUrl].toUrl();
-        // Notify device mount subscribers when a device's finalUrl becomes valid.
-        if (info.finalUrl.isValid() && info.group == DefaultGroup::kDevice && info.finalUrl.scheme() == "file") {
-            fmDebug() << "SideBarEventReceiver: Device mounted, notifying subscribers:"
-                      << url << "at" << info.finalUrl;
-            DeviceMountSubscriber::instance()->notifyMountFinished(url, info.finalUrl);
-        }
-    }
-    if (properties.contains(PropertyKey::kQtItemFlags))
-        info.flags = qvariant_cast<Qt::ItemFlags>(properties[PropertyKey::kQtItemFlags]);
-    if (properties.contains(PropertyKey::kIsEjectable))
-        info.isEjectable = properties[PropertyKey::kIsEjectable].toBool();
-    if (properties.contains(PropertyKey::kIsEditable))
-        info.isEditable = properties[PropertyKey::kIsEditable].toBool();
-    if (properties.contains(PropertyKey::kVisiableControlKey))
-        info.visiableControlKey = properties[PropertyKey::kVisiableControlKey].toString();
-    if (properties.contains(PropertyKey::kVisiableDisplayName))
-        info.visiableDisplayName = properties[PropertyKey::kVisiableDisplayName].toString();
-    if (properties.contains(PropertyKey::kReportName))
-        info.reportName = properties[PropertyKey::kReportName].toString();
-    if (properties.contains(PropertyKey::kItemExpandable))
-        info.isExpandable = properties[PropertyKey::kItemExpandable].toBool();
-
-    if (properties.contains(PropertyKey::kCallbackItemClicked))
-        info.clickedCb = DPF_NAMESPACE::paramGenerator<ItemClickedActionCallback>(properties[PropertyKey::kCallbackItemClicked]);
-    if (properties.contains(PropertyKey::kCallbackContextMenu))
-        info.contextMenuCb = DPF_NAMESPACE::paramGenerator<ContextMenuCallback>(properties[PropertyKey::kCallbackContextMenu]);
-    if (properties.contains(PropertyKey::kCallbackRename))
-        info.renameCb = DPF_NAMESPACE::paramGenerator<RenameCallback>(properties[PropertyKey::kCallbackRename]);
-    if (properties.contains(PropertyKey::kCallbackFindMe))
-        info.findMeCb = DPF_NAMESPACE::paramGenerator<FindMeCallback>(properties[PropertyKey::kCallbackFindMe]);
-
+    // Iterate all groups that contain this URL. The URL-only itemInfo() overload
+    // returns a non-deterministic match when the same URL exists across groups
+    // (QHash key order is undefined). By iterating per-group, each group's
+    // ItemInfo retains its own callbacks while receiving the property updates.
     bool ret { false };
-    if (urlUpdated)
-        ret = SideBarInfoCacheMananger::instance()->addItemInfoCache(info);
-    else
-        ret = SideBarInfoCacheMananger::instance()->updateItemInfoCache(url, info);
+    ItemInfo lastInfo;
+    for (const auto &group : SideBarInfoCacheMananger::instance()->groups()) {
+        ItemInfo info { SideBarInfoCacheMananger::instance()->itemInfo(group, url) };
+        if (info.url.isEmpty())
+            continue;
+        lastInfo = info;
+
+        bool urlUpdated { false };
+        if (properties.contains(PropertyKey::kUrl)) {
+            auto &&newUrl { properties[PropertyKey::kUrl].toUrl() };
+            if (!DFMBASE_NAMESPACE::UniversalUtils::urlEquals(newUrl, info.url)) {
+                urlUpdated = true;
+                info.url = newUrl;
+                SideBarInfoCacheMananger::instance()->removeItemInfoCache(info.group, url);
+            }
+        }
+
+        if (properties.contains(PropertyKey::kGroup))
+            info.group = properties[PropertyKey::kGroup].toString();
+        if (properties.contains(PropertyKey::kSubGroup))
+            info.subGroup = properties[PropertyKey::kSubGroup].toString();
+        if (properties.contains(PropertyKey::kDisplayName))
+            info.displayName = properties[PropertyKey::kDisplayName].toString();
+        if (properties.contains(PropertyKey::kEditDisplayText))
+            info.editDisplayText = properties[PropertyKey::kEditDisplayText].toString();
+        if (properties.contains(PropertyKey::kIcon))
+            info.icon = qvariant_cast<QIcon>(properties[PropertyKey::kIcon]);
+        if (properties.contains(PropertyKey::kFinalUrl)) {
+            info.finalUrl = properties[PropertyKey::kFinalUrl].toUrl();
+            // Notify device mount subscribers when a device's finalUrl becomes valid.
+            if (info.finalUrl.isValid() && info.group == DefaultGroup::kDevice && info.finalUrl.scheme() == "file") {
+                fmDebug() << "SideBarEventReceiver: Device mounted, notifying subscribers:"
+                          << url << "at" << info.finalUrl;
+                DeviceMountSubscriber::instance()->notifyMountFinished(url, info.finalUrl);
+            }
+        }
+        if (properties.contains(PropertyKey::kQtItemFlags))
+            info.flags = qvariant_cast<Qt::ItemFlags>(properties[PropertyKey::kQtItemFlags]);
+        if (properties.contains(PropertyKey::kIsEjectable))
+            info.isEjectable = properties[PropertyKey::kIsEjectable].toBool();
+        if (properties.contains(PropertyKey::kIsEditable))
+            info.isEditable = properties[PropertyKey::kIsEditable].toBool();
+        if (properties.contains(PropertyKey::kVisiableControlKey))
+            info.visiableControlKey = properties[PropertyKey::kVisiableControlKey].toString();
+        if (properties.contains(PropertyKey::kVisiableDisplayName))
+            info.visiableDisplayName = properties[PropertyKey::kVisiableDisplayName].toString();
+        if (properties.contains(PropertyKey::kReportName))
+            info.reportName = properties[PropertyKey::kReportName].toString();
+        if (properties.contains(PropertyKey::kItemExpandable))
+            info.isExpandable = properties[PropertyKey::kItemExpandable].toBool();
+
+        if (properties.contains(PropertyKey::kCallbackItemClicked))
+            info.clickedCb = DPF_NAMESPACE::paramGenerator<ItemClickedActionCallback>(properties[PropertyKey::kCallbackItemClicked]);
+        if (properties.contains(PropertyKey::kCallbackContextMenu))
+            info.contextMenuCb = DPF_NAMESPACE::paramGenerator<ContextMenuCallback>(properties[PropertyKey::kCallbackContextMenu]);
+        if (properties.contains(PropertyKey::kCallbackRename))
+            info.renameCb = DPF_NAMESPACE::paramGenerator<RenameCallback>(properties[PropertyKey::kCallbackRename]);
+        if (properties.contains(PropertyKey::kCallbackFindMe))
+            info.findMeCb = DPF_NAMESPACE::paramGenerator<FindMeCallback>(properties[PropertyKey::kCallbackFindMe]);
+
+        if (urlUpdated)
+            ret = SideBarInfoCacheMananger::instance()->addItemInfoCache(info) || ret;
+        else
+            ret = SideBarInfoCacheMananger::instance()->updateItemInfoCache(info.group, url, info) || ret;
+    }
 
     QList<SideBarWidget *> allSideBar = SideBarHelper::allSideBar();
     if (!allSideBar.isEmpty()) {
-        allSideBar.first()->updateItem(url, info);
+        allSideBar.first()->updateItem(url, lastInfo);
         return ret;
     }
 
     if (SideBarWidget::kSidebarModelIns)
-        SideBarWidget::kSidebarModelIns->updateRow(url, info);
+        SideBarWidget::kSidebarModelIns->updateRow(url, lastInfo);
 
     fmDebug() << "Updated sidebar cache without visible widget, url:" << url;
     return ret;
