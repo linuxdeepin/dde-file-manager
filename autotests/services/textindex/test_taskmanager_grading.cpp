@@ -7,7 +7,7 @@
  * @brief Unit tests for the core scheduling business logic of TaskManager:
  *        canRun() (grade×environment matrix), gradeFileListTask() (threshold
  *        boundaries), currentIndexStatus() (status string generation),
- *        gradePriority(), gradeToString(), shouldPreempt().
+ *        gradePriority(), gradeToString().
  *
  *        These tests verify the decision logic that maps task grades and
  *        environment states to run/queue/preempt decisions, covering
@@ -70,14 +70,14 @@ protected:
         EnvDetector::instance().m_state = EnvState {};
     }
 
-    /// Helper: create a temp file of the given size in bytes.
+    /// Helper: create a sparse temp file of the given size in bytes.
     QString createTempFile(qint64 sizeBytes)
     {
         auto *f = new QTemporaryFile();
         f->setAutoRemove(false);
         f->open();
         if (sizeBytes > 0)
-            f->write(QByteArray(sizeBytes, 'x'));
+            f->resize(sizeBytes);
         f->close();
         QString path = f->fileName();
         delete f;
@@ -310,7 +310,7 @@ protected:
         f->setAutoRemove(false);
         f->open();
         if (sizeBytes > 0)
-            f->write(QByteArray(sizeBytes, 'x'));
+            f->resize(sizeBytes);
         f->close();
         QString path = f->fileName();
         delete f;
@@ -532,42 +532,6 @@ TEST_F(TaskManagerGradingTest, GradeToString_AllGrades)
     EXPECT_EQ(mgr->gradeToString(IndexTask::Grade::Medium), QString("medium"));
     EXPECT_EQ(mgr->gradeToString(IndexTask::Grade::Heavy), QString("heavy"));
     EXPECT_EQ(mgr->gradeToString(IndexTask::Grade::Manual), QString("manual"));
-}
-
-// ===========================================================================
-// shouldPreempt() – preemption decision
-// ===========================================================================
-
-TEST_F(TaskManagerGradingTest, ShouldPreempt_Manual_PreemptsAll)
-{
-    EXPECT_TRUE(mgr->shouldPreempt(IndexTask::Grade::Manual, IndexTask::Grade::Light));
-    EXPECT_TRUE(mgr->shouldPreempt(IndexTask::Grade::Manual, IndexTask::Grade::Medium));
-    EXPECT_TRUE(mgr->shouldPreempt(IndexTask::Grade::Manual, IndexTask::Grade::Heavy));
-    EXPECT_TRUE(mgr->shouldPreempt(IndexTask::Grade::Manual, IndexTask::Grade::Manual));
-}
-
-TEST_F(TaskManagerGradingTest, ShouldPreempt_Heavy_PreemptsLightAndMedium)
-{
-    EXPECT_TRUE(mgr->shouldPreempt(IndexTask::Grade::Heavy, IndexTask::Grade::Light));
-    EXPECT_TRUE(mgr->shouldPreempt(IndexTask::Grade::Heavy, IndexTask::Grade::Medium));
-}
-
-TEST_F(TaskManagerGradingTest, ShouldPreempt_Heavy_DoesNotPreemptHeavyOrManual)
-{
-    EXPECT_FALSE(mgr->shouldPreempt(IndexTask::Grade::Heavy, IndexTask::Grade::Heavy));
-    EXPECT_FALSE(mgr->shouldPreempt(IndexTask::Grade::Heavy, IndexTask::Grade::Manual));
-}
-
-TEST_F(TaskManagerGradingTest, ShouldPreempt_Medium_DoesNotPreempt)
-{
-    EXPECT_FALSE(mgr->shouldPreempt(IndexTask::Grade::Medium, IndexTask::Grade::Light));
-    EXPECT_FALSE(mgr->shouldPreempt(IndexTask::Grade::Medium, IndexTask::Grade::Medium));
-}
-
-TEST_F(TaskManagerGradingTest, ShouldPreempt_Light_DoesNotPreempt)
-{
-    EXPECT_FALSE(mgr->shouldPreempt(IndexTask::Grade::Light, IndexTask::Grade::Light));
-    EXPECT_FALSE(mgr->shouldPreempt(IndexTask::Grade::Light, IndexTask::Grade::Medium));
 }
 
 // ===========================================================================

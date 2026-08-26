@@ -30,10 +30,8 @@ public:
 
     enum class Status {
         NotStarted,
-        Ready,
         Running,
         Paused,
-        Blocked,
         Finished,
         Failed
     };

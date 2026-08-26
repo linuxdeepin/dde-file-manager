@@ -524,18 +524,7 @@ bool TaskManager::canRun(IndexTask::Grade grade, bool forceBypass, const EnvStat
     default:
         return false;
     }
-}
-
-bool TaskManager::shouldPreempt(IndexTask::Grade newGrade, IndexTask::Grade currentGrade) const
-{
-    // Manual can preempt everything
-    if (newGrade == IndexTask::Grade::Manual)
-        return true;
-    // Heavy can preempt Light and Medium
-    if (newGrade == IndexTask::Grade::Heavy && currentGrade <= IndexTask::Grade::Medium)
-        return true;
-    return false;
-}
+    }
 
 void TaskManager::pauseCurrentTask()
 {

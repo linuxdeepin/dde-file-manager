@@ -80,7 +80,6 @@ private:
     void cleanupTask();
     void schedule();
     bool canRun(IndexTask::Grade grade, bool forceBypass, const EnvState &env) const;
-    bool shouldPreempt(IndexTask::Grade newGrade, IndexTask::Grade currentGrade) const;
     void pauseCurrentTask();
     void launchTask(IndexTask *task, IndexTask::Grade grade, bool forceBypass = false);
     bool tryEnqueueIfBlocked(IndexTask::Grade grade, bool forceBypass, const TaskQueueItem &item);

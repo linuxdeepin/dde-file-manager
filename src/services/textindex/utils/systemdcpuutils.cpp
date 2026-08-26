@@ -127,6 +127,10 @@ void acquireCpuQuota(const QString &serviceName, int percentage)
 void releaseCpuQuota(const QString &serviceName)
 {
     std::lock_guard<std::mutex> lock(g_cpuQuotaMutex);
+    if (g_limitedTaskCount <= 0) {
+        fmWarning() << "SystemdCpuUtils: releaseCpuQuota called with no active limited tasks";
+        return;
+    }
     --g_limitedTaskCount;
     if (g_limitedTaskCount == 0) {
         QString msg;
