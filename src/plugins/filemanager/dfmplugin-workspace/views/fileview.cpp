@@ -220,6 +220,8 @@ void FileView::setViewMode(Global::ViewMode mode)
 
     setItemDelegate(d->delegates.value(delegateModeIndex));
     switch (d->currentViewMode) {
+    case Global::ViewMode::kNoneMode:
+        break;
     case Global::ViewMode::kIconMode:
         d->initHorizontalOffset = false;
         setUniformItemSizes(false);
@@ -257,8 +259,8 @@ void FileView::setViewMode(Global::ViewMode mode)
         break;
     case Global::ViewMode::kAllViewMode:
         break;
-    default:
-        break;
+    // 无 default 分支:新增 ViewMode 时由 -Wswitch 提示补全
+    // No default label: -Wswitch prompts completion when new ViewMode values are added
     }
     fmDebug() << "View mode change completed for URL:" << rootUrl().toString();
 }
