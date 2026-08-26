@@ -4,433 +4,53 @@
 
 name: 动态效果_suite
 app: dde-file-manager
-description: ''
+description: '动态效果模块 AT-SPI 用例：侧边栏视图及导航项交互'
 module: 动态效果
 tags: []
 fast_fail: false
 env_check: []
 setup: []
 suites:
-- id: case_1808019_s1
-  name: 启动 dde-file-manager
-  description: ''
+- id: case_dynamic_sidebar_view
+  name: 侧边栏视图验证
+  description: '验证侧边栏树视图(side_bar_view)存在'
   tags: []
   steps:
   - action: session_start
-    command: true; dde-file-manager --open-home
+    command: dde-file-manager --open-home
     wait: 5.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    selector: {}
-    wait: 1.0
-  - action: wait
-    selector: {}
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_dynamic_sidebar_desktop
+  name: 侧边栏导航-桌面
+  description: '验证侧边栏"桌面"导航项存在并可点击'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
     wait: 1.0
   assert_steps:
-  - action: assert_process_running
-    app: dde-file-manager
-  - action: assert_process_running
-    app: dde-file-manager
-- id: case_1808017_s1
-  name: 启动 dde-file-manager
-  description: ''
+  - action: assert_element
+    ref: 桌面
+- id: case_dynamic_sidebar_quick_access
+  name: 侧边栏导航-快捷访问
+  description: '验证侧边栏"快捷访问"导航项存在并可点击'
   tags: []
   steps:
   - action: session_start
-    command: true; dde-file-manager --open-home
+    command: dde-file-manager --open-home
     wait: 5.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  assert_steps: []
-- id: case_1808015_s1
-  name: 启动 dde-file-manager
-  description: ''
-  tags: []
-  steps:
-  - action: session_start
-    command: true; dde-file-manager --open-home
-    wait: 5.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  assert_steps: []
-- id: case_1808013_s1
-  name: 启动 dde-file-manager
-  description: ''
-  tags: []
-  steps:
-  - action: session_start
-    command: true; dde-file-manager --open-home
-    wait: 5.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  assert_steps: []
-- id: case_1808011_s1
-  name: 启动 dde-file-manager
-  description: ''
-  tags: []
-  steps:
-  - action: session_start
-    command: true; dde-file-manager --open-home
-    wait: 5.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  assert_steps: []
-- id: case_1808009_s1
-  name: 启动 dde-file-manager
-  description: ''
-  tags: []
-  steps:
-  - action: session_start
-    command: true; dde-file-manager --open-home
-    wait: 5.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    selector: {}
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    selector: {}
-    wait: 1.0
-  - action: wait
+  - action: element_action
+    ref: 快捷访问
+    do: click
     wait: 1.0
   assert_steps:
-  - action: assert_process_running
-    app: dde-file-manager
-- id: case_1808005_s1
-  name: 启动 dde-file-manager
-  description: ''
-  tags: []
-  steps:
-  - action: session_start
-    command: true; dde-file-manager --open-home
-    wait: 5.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  assert_steps: []
-- id: case_1808003_s1
-  name: 启动 dde-file-manager
-  description: ''
-  tags: []
-  steps:
-  - action: session_start
-    command: true; dde-file-manager --open-home
-    wait: 5.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  assert_steps: []
-- id: case_1808001_s1
-  name: 启动 dde-file-manager
-  description: ''
-  tags: []
-  steps:
-  - action: session_start
-    command: true; dde-file-manager --open-home
-    wait: 5.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    selector: {}
-    wait: 1.0
-  - action: wait
-    selector: {}
-    wait: 1.0
-  - action: wait
-    selector: {}
-    wait: 1.0
-  - action: wait
-    selector: {}
-    wait: 1.0
-  assert_steps:
-  - action: assert_process_running
-    app: dde-file-manager
-  - action: assert_process_running
-    app: dde-file-manager
-  - action: assert_process_running
-    app: dde-file-manager
-  - action: assert_process_running
-    app: dde-file-manager
-- id: case_1807999_s1
-  name: 启动 dde-file-manager
-  description: ''
-  tags: []
-  steps:
-  - action: session_start
-    command: true; dde-file-manager --open-home
-    wait: 5.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    selector: {}
-    wait: 1.0
-  - action: wait
-    selector: {}
-    wait: 1.0
-  - action: wait
-    selector: {}
-    wait: 1.0
-  - action: wait
-    selector: {}
-    wait: 1.0
-  assert_steps:
-  - action: assert_process_running
-    app: dde-file-manager
-  - action: assert_process_running
-    app: dde-file-manager
-  - action: assert_process_running
-    app: dde-file-manager
-  - action: assert_process_running
-    app: dde-file-manager
-- id: case_1807995_s1
-  name: 启动 dde-file-manager
-  description: ''
-  tags: []
-  steps:
-  - action: session_start
-    command: true; dde-file-manager --open-home
-    wait: 5.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    selector: {}
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    selector: {}
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  assert_steps:
-  - action: assert_process_running
-    app: dde-file-manager
-- id: case_1807993_s1
-  name: 启动 dde-file-manager
-  description: ''
-  tags: []
-  steps:
-  - action: session_start
-    command: true; dde-file-manager --open-home
-    wait: 5.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  assert_steps: []
-- id: case_1807987_s1
-  name: 启动 dde-file-manager
-  description: ''
-  tags: []
-  steps:
-  - action: session_start
-    command: true; dde-file-manager --open-home
-    wait: 5.0
-  - action: wait
-    selector: {}
-    wait: 1.0
-  - action: wait
-    selector: {}
-    wait: 1.0
-  assert_steps:
-  - action: assert_process_running
-    app: dde-file-manager
-- id: case_1807985_s1
-  name: 启动 dde-file-manager
-  description: ''
-  tags: []
-  steps:
-  - action: session_start
-    command: true; dde-file-manager --open-home
-    wait: 5.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    selector: {}
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    selector: {}
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  assert_steps:
-  - action: assert_process_running
-    app: dde-file-manager
-- id: case_1807983_s1
-  name: 启动 dde-file-manager
-  description: ''
-  tags: []
-  steps:
-  - action: session_start
-    command: true; dde-file-manager --open-home
-    wait: 5.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    selector: {}
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    selector: {}
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  assert_steps:
-  - action: assert_process_running
-    app: dde-file-manager
-- id: case_1807981_s1
-  name: 启动 dde-file-manager
-  description: ''
-  tags: []
-  steps:
-  - action: session_start
-    command: true; dde-file-manager --open-home
-    wait: 5.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  - action: wait
-    wait: 1.0
-  assert_steps: []
-- id: case_1807979_s1
-  name: 启动 dde-file-manager
-  description: ''
-  tags: []
-  steps:
-  - action: session_start
-    command: true; dde-file-manager --open-home
-    wait: 5.0
-  - action: wait
-    selector: {}
-    wait: 1.0
-  - action: wait
-    selector: {}
-    wait: 1.0
-  assert_steps:
-  - action: assert_process_running
-    app: dde-file-manager
+  - action: assert_element
+    ref: 快捷访问
 teardown:
 - action: session_stop
