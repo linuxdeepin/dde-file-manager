@@ -128,6 +128,12 @@ void ViewHintWidget::setIcon(const QString &icon)
     if (!m_iconButton)
         return;
 
+    if (icon.isEmpty()) {
+        m_iconButton->hide();
+        return;
+    }
+
+    m_iconButton->show();
     auto dciIcon = DDciIcon::fromTheme(icon);
     if (!dciIcon.isNull())
         m_iconButton->setIcon(dciIcon);

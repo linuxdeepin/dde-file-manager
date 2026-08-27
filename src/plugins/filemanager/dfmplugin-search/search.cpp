@@ -5,7 +5,6 @@
 #include "search.h"
 #include "events/searcheventreceiver.h"
 #include "utils/searchhelper.h"
-#include "utils/searchhintcontroller.h"
 #include "utils/custommanager.h"
 #include "utils/ocrindexclient.h"
 #include "utils/textindexclient.h"
@@ -41,9 +40,6 @@
 using CreateTopWidgetCallback = std::function<QWidget *()>;
 using ShowTopWidgetCallback = std::function<bool(QWidget *, const QUrl &)>;
 using ViewModeUrlCallback = std::function<QUrl(const QUrl)>;
-using ViewHintShouldShowCallback = std::function<bool(const QUrl &, QString *)>;
-using ViewHintActionCallback = std::function<void(const QString &)>;
-using ViewHintCustomWidgetFactory = std::function<QWidget *(QWidget *)>;
 // Identical signature to the workspace's StrategyFactory typedef — registered
 // the same way so DPF_NAMESPACE::paramGenerator resolves to the same metatype
 // across plugin boundaries.
@@ -54,9 +50,6 @@ Q_DECLARE_METATYPE(QList<QVariantMap> *);
 Q_DECLARE_METATYPE(QString *);
 Q_DECLARE_METATYPE(QVariant *)
 Q_DECLARE_METATYPE(ViewModeUrlCallback)
-Q_DECLARE_METATYPE(ViewHintShouldShowCallback);
-Q_DECLARE_METATYPE(ViewHintActionCallback);
-Q_DECLARE_METATYPE(ViewHintCustomWidgetFactory);
 Q_DECLARE_METATYPE(StrategyFactory);
 
 DFMBASE_USE_NAMESPACE
@@ -170,28 +163,6 @@ void Search::regSearchToWorkspace()
     };
 
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterCustomTopWidget", map);
-
-    // Register the per-scheme "authorization experience" view hint. The workspace
-    // owns the floating message and shows/hides it on url/scheme switch; the search
-    // plugin only supplies the spec -- icon/actions, a shouldShow predicate (reads
-    // DConfig and dynamically fills the message text), and an onAction handler. Both
-    // live as statics on SearchHintController. The built-in close button arrives as
-    // action "close"; "Smart search" has no backing key yet and is intentionally not
-    // enabled by the action handler (per current scope).
-    ViewHintShouldShowCallback shouldShow { SearchHintController::shouldShowAuthHint };
-    ViewHintActionCallback onAction { SearchHintController::onAuthHintAction };
-
-    QVariantList hintActions;
-    hintActions.append(QVariantMap { { "id", "authorize" }, { "label", tr("Enable") } });
-
-    QVariantMap hintMap {
-        { "Property_Key_Scheme", SearchHelper::scheme() },
-        { "Property_Key_ViewHintIcon", "dfm-search-tips" },
-        { "Property_Key_ViewHintActions", hintActions },
-        { "Property_Key_ViewHintShouldShow", QVariant::fromValue(shouldShow) },
-        { "Property_Key_ViewHintOnAction", QVariant::fromValue(onAction) }
-    };
-    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterViewHint", hintMap);
 
     // Register the "Match Method" group strategy with the workspace's
     // registered-strategy extension point. The strategy object crosses the

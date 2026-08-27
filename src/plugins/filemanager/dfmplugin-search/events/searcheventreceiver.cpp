@@ -5,6 +5,7 @@
 #include "searcheventreceiver.h"
 #include "searcheventcaller.h"
 #include "utils/searchhelper.h"
+#include "utils/searchhintcontroller.h"
 #include "searchmanager/searchmanager.h"
 
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
@@ -96,11 +97,18 @@ void SearchEventReceiver::handleFileRename(const QUrl &oldUrl, const QUrl &newUr
 
 void SearchEventReceiver::handleUrlChanged(quint64 winId, const QUrl &url)
 {
-    if (url.scheme() != SearchHelper::scheme())
+    if (url.scheme() != SearchHelper::scheme()) {
+        SearchHintController::instance()->stopListening();
         return;
+    }
 
     // 延迟到下一事件循环：此时视图已创建完成，列宽已调整
     QTimer::singleShot(0, this, [winId] {
+        // 提示显示：创建前校验窗口仍存在且仍在搜索界面
+        auto *window = FMWindowsIns.findWindowById(winId);
+        if (window && SearchHelper::isSearchFile(window->currentUrl()))
+            SearchHintController::instance()->tryShowHint(winId);
+
         int nameColWidth = dpfSlotChannel->push("dfmplugin_workspace",
                                                 "slot_View_GetColumnWidth",
                                                 winId,
