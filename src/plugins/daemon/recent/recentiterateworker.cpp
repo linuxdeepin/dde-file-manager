@@ -10,6 +10,7 @@
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/utils/finallyutil.h>
 #include <dfm-base/utils/protocolutils.h>
+#include <dfm-base/utils/networkutils.h>
 
 #include <QCoreApplication>
 #include <QThread>
@@ -81,8 +82,12 @@ void RecentIterateWorker::processBookmarkElement(QXmlStreamReader &reader, QStri
     const QUrl url(location);
     if (!url.isLocalFile())
         return;
-    if (ProtocolUtils::isRemoteFile(url))
-        return;
+
+    // 断网时跳过远程 gvfs 挂载路径，避免 stat() 阻塞 worker 线程
+    if (ProtocolUtils::isRemoteFile(url)) {
+        if (NetworkUtils::instance()->checkFtpOrSmbBusy(url))
+            return;
+    }
 
     QFileInfo info(url.toLocalFile());
     if (!info.exists() || !info.isFile())
