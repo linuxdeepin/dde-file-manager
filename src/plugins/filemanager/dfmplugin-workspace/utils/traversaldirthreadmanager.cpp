@@ -296,7 +296,7 @@ int TraversalDirThreadManager::iteratorOneByOneByDirent()
         return 0;
     }
 
-    const QSet<QString> hideList = loadHideFileList(dirUrl.path());
+    const QSet<QString> hideList = SortInfoUtils::loadHideFileList(dirUrl.path());
 
     timer.restart();
 
@@ -328,7 +328,7 @@ int TraversalDirThreadManager::iteratorOneByOneByDirent()
         if (fileName == "." || fileName == "..")
             continue;
 
-        auto info = createSortInfo(dirUrl.path(), fileName, hideList);
+        auto info = SortInfoUtils::createSortInfo(dirUrl.path(), fileName, hideList);
         if (info.isNull())
             continue;
         sortList.append(info);

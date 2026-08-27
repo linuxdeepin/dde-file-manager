@@ -13,6 +13,8 @@
 
 DFMBASE_BEGIN_NAMESPACE
 
+namespace SortInfoUtils {
+
 /**
  * @brief 加载 .hidden 文件中的隐藏文件列表
  * @param dirPath 目录路径
@@ -33,6 +35,8 @@ QSet<QString> loadHideFileList(const QString &dirPath);
 SortInfoPointer createSortInfo(const QString &parentPath,
                                const QString &fileName,
                                const QSet<QString> &hideList);
+
+}   // namespace SortInfoUtils
 
 DFMBASE_END_NAMESPACE
 
