@@ -5,6 +5,7 @@
 #include "sortfileinfoutils.h"
 
 #include <dfm-base/utils/protocolutils.h>
+#include <dfm-base/dfm_log_defines.h>
 
 #include <QDir>
 #include <QFile>
@@ -16,6 +17,8 @@
 #include <unistd.h>
 
 DFMBASE_BEGIN_NAMESPACE
+
+namespace SortInfoUtils {
 
 /**
  * @brief 解析符号链接目标路径
@@ -61,8 +64,10 @@ SortInfoPointer createSortInfo(const QString &parentPath,
     // 使用 statx 获取所有文件属性（包括创建时间 birth time）
     struct statx stx;
     unsigned int mask = STATX_BASIC_STATS | STATX_BTIME;
-    if (statx(AT_FDCWD, nativePath.constData(), AT_SYMLINK_NOFOLLOW | AT_NO_AUTOMOUNT, mask, &stx) != 0)
+    if (statx(AT_FDCWD, nativePath.constData(), AT_SYMLINK_NOFOLLOW | AT_NO_AUTOMOUNT, mask, &stx) != 0) {
+        qCWarning(logDFMBase) << "createSortInfo: statx failed for" << entryPath << ":" << strerror(errno);
         return nullptr;
+    }
 
     const bool isSymLink = S_ISLNK(stx.stx_mode);
     mode_t effectiveMode = stx.stx_mode;
@@ -77,13 +82,15 @@ SortInfoPointer createSortInfo(const QString &parentPath,
         if (!targetPath.isEmpty() && !ProtocolUtils::isRemoteFile(QUrl::fromLocalFile(targetPath))) {
             const QByteArray targetNativePath = QFile::encodeName(targetPath);
             struct statx targetStx;
-            if (statx(AT_FDCWD, targetNativePath.constData(), AT_SYMLINK_FOLLOW | AT_NO_AUTOMOUNT, mask, &targetStx) == 0) {
+            if (statx(AT_FDCWD, targetNativePath.constData(), AT_SYMLINK_NOFOLLOW | AT_NO_AUTOMOUNT, mask, &targetStx) == 0) {
                 effectiveMode = targetStx.stx_mode;
                 effectiveSize = targetStx.stx_size;
                 effectiveAtime = targetStx.stx_atime.tv_sec;
                 effectiveMtime = targetStx.stx_mtime.tv_sec;
                 if (targetStx.stx_mask & STATX_BTIME)
                     effectiveBtime = targetStx.stx_btime.tv_sec;
+            } else {
+                qCWarning(logDFMBase) << "createSortInfo: statx failed for symlink target" << targetPath << ":" << strerror(errno);
             }
         }
     }
@@ -104,5 +111,7 @@ SortInfoPointer createSortInfo(const QString &parentPath,
     info->setInfoCompleted(true);
     return info;
 }
+
+}   // namespace SortInfoUtils
 
 DFMBASE_END_NAMESPACE

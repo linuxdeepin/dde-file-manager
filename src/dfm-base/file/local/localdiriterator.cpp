@@ -249,7 +249,7 @@ QList<SortInfoPointer> LocalDirIterator::sortFileInfoList()
         return {};
 
     d->canceled.storeRelease(false);
-    const QSet<QString> hideList = loadHideFileList(d->rootPath);
+    const QSet<QString> hideList = SortInfoUtils::loadHideFileList(d->rootPath);
 
     DIR *dir = ::opendir(QFile::encodeName(d->rootPath).constData());
     if (!dir) {
@@ -275,7 +275,7 @@ QList<SortInfoPointer> LocalDirIterator::sortFileInfoList()
         if (fileName == "." || fileName == "..")
             continue;
 
-        auto info = createSortInfo(d->rootPath, fileName, hideList);
+        auto info = SortInfoUtils::createSortInfo(d->rootPath, fileName, hideList);
         if (info.isNull())
             continue;
         sortList.append(info);
