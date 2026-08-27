@@ -1,0 +1,47 @@
+{
+  "project": "dde-file-manager",
+  "generated_at": "2026-01-20T12:00:00Z",
+  "defects": [
+    {
+      "id": "DFM-DEF-001",
+      "title": "LoadMonitor::readProcDiskstats returns partition IO ticks instead of parent disk ticks",
+      "severity": "medium",
+      "status": "open",
+      "file_path": "src/services/textindex/env/loadmonitor.cpp",
+      "line_start": 77,
+      "line_end": 120,
+      "test_name": "TestLoadMonitor.ReadProcDiskstats_RealDiskstats_MatchesPrefix",
+      "test_file": "autotests/services/textindex/test_loadmonitor.cpp",
+      "description": "When given a partition device name (e.g. 'sda1'), readProcDiskstats iterates all /proc/diskstats entries and keeps the longest matching device name. Since the exact match 'sda1' is longer than the parent disk 'sda', it returns the partition's IO ticks instead of the parent disk's IO ticks. The comparison 'devName.size() > bestMatch.size()' causes the partition match to override the parent disk match. For load monitoring purposes, the parent disk's aggregate IO ticks should be preferred.",
+      "expected_behavior": "readProcDiskstats('sda1') should return IO ticks from the 'sda' line (the parent whole-disk entry), not the 'sda1' partition entry.",
+      "actual_behavior": "readProcDiskstats('sda1') returns IO ticks from the 'sda1' line because the exact-match comparison overrides the shorter parent-disk prefix match.",
+      "reproduction": "1. Build test-textindex with coverage instrumentation. 2. Run: xvfb-run -a ./test-textindex --gtest_filter='TestLoadMonitor.ReadProcDiskstats_RealDiskstats_MatchesPrefix' 3. Observe: ioTicks (partition) != expectedTicks (parent disk)."
+    }
+  ],
+  "version": 1,
+  "stats": {
+    "last_updated": "2026-08-27T05:38:53.446109+00:00",
+    "total": 1,
+    "by_status": {
+      "open": 1,
+      "fixed": 0,
+      "reopened": 0,
+      "wontfix": 0
+    },
+    "by_severity": {
+      "high": 0,
+      "mid": 0,
+      "low": 0,
+      "medium": 1
+    },
+    "by_type_category": {
+      "compile": 0,
+      "runtime": 0,
+      "logic": 0,
+      "manual": 1
+    },
+    "affected_methods": 1,
+    "affected_classes": 1
+  },
+  "history": {}
+}
