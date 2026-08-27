@@ -38,7 +38,6 @@ public:
     using TopWidgetCreatorMap = QMap<KeyType, TopWidgetCreator>;
     using MenuSceneMap = QMap<QString, QString>;
     using DefaultViewMode = QMap<QString, DFMBASE_NAMESPACE::Global::ViewMode>;
-    using ViewHintSpecMap = QMap<QString, ViewHintSpec>;
 
     void registerTopWidgetCreator(const KeyType &scheme, const TopWidgetCreator &creator);
     bool isRegistedTopWidget(const KeyType &scheme) const;
@@ -56,17 +55,7 @@ public:
     CustomViewProperty findCustomViewProperty(const QString &scheme) const;
     bool isViewModeSupported(const QString &scheme, const DFMBASE_NAMESPACE::Global::ViewMode mode) const;
 
-    // Per-scheme floating view-hint registry. Registrant supplies icon/actions
-    // + shouldShow/onAction callbacks; WorkspacePage consults this on url/scheme
-    // switch to show or hide the hint. shouldShow also supplies the message text;
-    // onAction receives the clicked action's id (the built-in close button is "close").
-    void registerViewHint(const QString &scheme, const ViewHintSpec &spec);
-    bool hasViewHint(const QString &scheme) const;
-    ViewHintSpec findViewHint(const QString &scheme) const;
-
-    void requestShowViewHint(const QString &scheme, const QVariantMap &content);
-    void requestCloseViewHint(const QString &scheme);
-    void requestUpdateViewHint(const QString &scheme, const QVariantMap &updates);
+    QObject *requestShowViewHint(quint64 windowId, const QVariantMap &content);
 
     WorkspaceWidget *findWorkspaceByWindowId(quint64 windowId);
     void closeTab(const QUrl &url);
@@ -139,9 +128,6 @@ public Q_SLOTS:
 signals:
     void requestSelectFiles(const QList<QUrl> &urlList);
     void trashStateChanged();
-    void viewHintShowRequested(const QString &scheme, const QVariantMap &content);
-    void viewHintCloseRequested(const QString &scheme);
-    void viewHintUpdateRequested(const QString &scheme, const QVariantMap &updates);
 
 private:
     explicit WorkspaceHelper(QObject *parent = nullptr);
@@ -159,7 +145,6 @@ private:
     QMap<QString, CustomViewProperty> customViewPropertyMap {};
     QMap<QString, DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy> loadStrategyMap {};
     QList<QString> focusFileViewDisabledScheme {};
-    ViewHintSpecMap viewHintMap {};
     QList<QUrl> undoFiles {};
 
     Q_DISABLE_COPY(WorkspaceHelper)

@@ -47,6 +47,8 @@ public:
     void setCustomTopWidgetVisible(const QString &scheme, bool visible);
     bool getCustomTopWidgetVisible(const QString &scheme);
 
+    QObject *showViewHint(const QVariantMap &content);
+
 public Q_SLOTS:
     void onAnimDelayTimeout();
 
@@ -55,12 +57,8 @@ private:
     void initCustomTopWidgets(const QUrl &url);
     void setCurrentView(const QUrl &url);
     void playDisappearAnimation(ViewPtr view);
-    void tryShowViewHint(const QUrl &url, const QVariantMap &content = {});
-    void handleViewHintShow(const QString &scheme, const QVariantMap &content);
-    void handleViewHintClose(const QString &scheme);
-    void handleViewHintUpdate(const QString &scheme, const QVariantMap &updates);
-    void applyContentToHint(DFMBASE_NAMESPACE::ViewHintMessage *hint, const QVariantMap &content, const ViewHintSpec &spec, bool isInitial = true);
-    void connectHintAction(DFMBASE_NAMESPACE::ViewHintMessage *hint, const ViewHintSpec &spec);
+    void applyContentToHint(DFMBASE_NAMESPACE::ViewHintMessage *hint, const QVariantMap &content);
+    void trackHintLifetime(DFMBASE_NAMESPACE::ViewHintMessage *hint);
 
     QWidget *topContainer { nullptr };   // 顶部容器
     QVBoxLayout *topLayout { nullptr };   // 顶部布局

@@ -55,6 +55,13 @@ Global::ViewMode WorkspaceWidget::currentViewMode() const
     return Global::ViewMode::kNoneMode;
 }
 
+QObject *WorkspaceWidget::showViewHint(const QVariantMap &content)
+{
+    if (currentPageId.isEmpty() || !pages.value(currentPageId))
+        return nullptr;
+    return pages[currentPageId]->showViewHint(content);
+}
+
 void WorkspaceWidget::setCurrentUrl(const QUrl &url)
 {
     fmInfo() << "WorkspaceWidget setCurrentUrl called with url:" << url;

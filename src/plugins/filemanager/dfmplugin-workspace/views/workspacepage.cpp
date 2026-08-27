@@ -29,13 +29,6 @@ WorkspacePage::WorkspacePage(QWidget *parent)
     : QWidget(parent)
 {
     initUI();
-
-    connect(WorkspaceHelper::instance(), &WorkspaceHelper::viewHintShowRequested,
-            this, &WorkspacePage::handleViewHintShow);
-    connect(WorkspaceHelper::instance(), &WorkspaceHelper::viewHintCloseRequested,
-            this, &WorkspacePage::handleViewHintClose);
-    connect(WorkspaceHelper::instance(), &WorkspaceHelper::viewHintUpdateRequested,
-            this, &WorkspacePage::handleViewHintUpdate);
 }
 
 WorkspacePage::~WorkspacePage()
@@ -360,99 +353,33 @@ void WorkspacePage::setCurrentView(const QUrl &url)
         viewStateChanged();
 
     if (prevScheme != url.scheme()) {
-        tryShowViewHint(url);
-        fmDebug() << "setCurrentView: tryShowViewHint called for url:" << url;
+        if (currentHint) {
+            currentHint->close();
+            currentHint = nullptr;
+        }
     }
 }
 
-void WorkspacePage::tryShowViewHint(const QUrl &url, const QVariantMap &content)
+QObject *WorkspacePage::showViewHint(const QVariantMap &content)
 {
-    if (currentHint) {
-        currentHint->close();   // -> msg WA_DeleteOnClose-deleted -> controller self-deletes
-        currentHint = nullptr;   // detach our handle now; object cleans up asynchronously
-    }
-
-    const ViewHintSpec spec = WorkspaceHelper::instance()->findViewHint(url.scheme());
-    if (!spec.shouldShow && content.isEmpty())
-        return;
-
-    QString text;
-    if (content.isEmpty()) {
-        if (!spec.shouldShow)
-            return;
-        if (!spec.shouldShow(url, &text))
-            return;
-    } else {
-        text = content.value(ViewHintUpdateKey::kText, text).toString();
-    }
-
-    auto *hint = new ViewHintMessage(this);
-    applyContentToHint(hint, content.isEmpty() ? QVariantMap {} : content, spec);
-    if (content.isEmpty())
-        hint->setText(text);
-    hint->setAutoDismissOnAction(true);
-    connectHintAction(hint, spec);
-    hint->show(this);
-    currentHint = hint;
-}
-
-void WorkspacePage::handleViewHintShow(const QString &scheme, const QVariantMap &content)
-{
-    if (currentViewScheme != scheme)
-        return;
-
     if (currentHint) {
         currentHint->close();
         currentHint = nullptr;
     }
 
-    const ViewHintSpec spec = WorkspaceHelper::instance()->findViewHint(scheme);
-
-    QString text;
-    if (content.isEmpty()) {
-        if (!spec.shouldShow)
-            return;
-        if (!spec.shouldShow(currentPageUrl, &text))
-            return;
-    }
-
     auto *hint = new ViewHintMessage(this);
-    applyContentToHint(hint, content.isEmpty() ? QVariantMap {} : content, spec);
-    if (content.isEmpty())
-        hint->setText(text);
+    applyContentToHint(hint, content);
     hint->setAutoDismissOnAction(true);
-    connectHintAction(hint, spec);
+    trackHintLifetime(hint);
     hint->show(this);
     currentHint = hint;
+    return hint;
 }
 
-void WorkspacePage::handleViewHintClose(const QString &scheme)
-{
-    if (currentViewScheme != scheme)
-        return;
-
-    if (currentHint) {
-        currentHint->close();
-        currentHint = nullptr;
-    }
-}
-
-void WorkspacePage::handleViewHintUpdate(const QString &scheme, const QVariantMap &updates)
-{
-    if (currentViewScheme != scheme)
-        return;
-    if (!currentHint)
-        return;
-
-    applyContentToHint(currentHint, updates, WorkspaceHelper::instance()->findViewHint(scheme), false);
-}
-
-void WorkspacePage::applyContentToHint(ViewHintMessage *hint, const QVariantMap &content, const ViewHintSpec &spec, bool isInitial)
+void WorkspacePage::applyContentToHint(ViewHintMessage *hint, const QVariantMap &content)
 {
     if (content.contains(ViewHintUpdateKey::kIcon))
         hint->setIcon(content.value(ViewHintUpdateKey::kIcon).toString());
-    else if (isInitial && !spec.icon.isEmpty())
-        hint->setIcon(spec.icon);
 
     if (content.contains(ViewHintUpdateKey::kText))
         hint->setText(content.value(ViewHintUpdateKey::kText).toString());
@@ -465,36 +392,23 @@ void WorkspacePage::applyContentToHint(ViewHintMessage *hint, const QVariantMap 
             actions.append({ m.value("id").toString(), m.value("label").toString() });
         }
         hint->setActions(actions);
-    } else if (isInitial) {
-        hint->setActions(spec.actions);
     }
 
     if (content.contains(ViewHintUpdateKey::kLeftCustomWidgetFactory)) {
-        auto factory = DPF_NAMESPACE::paramGenerator<ViewHintCustomWidgetFactory>(
+        auto factory = DPF_NAMESPACE::paramGenerator<DFMBASE_NAMESPACE::ViewHintCustomWidgetFactory>(
                 content.value(ViewHintUpdateKey::kLeftCustomWidgetFactory));
         hint->setCustomWidgetFactory(factory, ViewHintMessage::Side::Left);
-    } else if (isInitial && spec.leftCustomWidgetFactory) {
-        hint->setCustomWidgetFactory(spec.leftCustomWidgetFactory, ViewHintMessage::Side::Left);
     }
 
     if (content.contains(ViewHintUpdateKey::kRightCustomWidgetFactory)) {
-        auto factory = DPF_NAMESPACE::paramGenerator<ViewHintCustomWidgetFactory>(
+        auto factory = DPF_NAMESPACE::paramGenerator<DFMBASE_NAMESPACE::ViewHintCustomWidgetFactory>(
                 content.value(ViewHintUpdateKey::kRightCustomWidgetFactory));
         hint->setCustomWidgetFactory(factory, ViewHintMessage::Side::Right);
-    } else if (isInitial && spec.rightCustomWidgetFactory && !content.contains(ViewHintUpdateKey::kActions)) {
-        hint->setCustomWidgetFactory(spec.rightCustomWidgetFactory, ViewHintMessage::Side::Right);
     }
 }
 
-void WorkspacePage::connectHintAction(ViewHintMessage *hint, const ViewHintSpec &spec)
+void WorkspacePage::trackHintLifetime(ViewHintMessage *hint)
 {
-    connect(hint, &ViewHintMessage::actionTriggered, this, [this, spec, hint](const QString &id) {
-        if (currentHint != hint)
-            return;
-        if (spec.onAction)
-            spec.onAction(id);
-        currentHint = nullptr;
-    });
     connect(hint, &ViewHintMessage::closed, this, [this, hint]() {
         if (currentHint == hint)
             currentHint = nullptr;

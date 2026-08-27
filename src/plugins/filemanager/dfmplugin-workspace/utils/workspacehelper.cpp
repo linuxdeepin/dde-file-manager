@@ -152,42 +152,14 @@ CustomViewProperty WorkspaceHelper::findCustomViewProperty(const QString &scheme
     return CustomViewProperty();
 }
 
-void WorkspaceHelper::registerViewHint(const QString &scheme, const ViewHintSpec &spec)
+QObject *WorkspaceHelper::requestShowViewHint(quint64 windowId, const QVariantMap &content)
 {
-    if (scheme.isEmpty()) {
-        fmWarning() << "Cannot register view hint with empty scheme";
-        return;
+    auto *widget = findWorkspaceByWindowId(windowId);
+    if (!widget) {
+        fmWarning() << "WorkspaceHelper: no workspace for windowId:" << windowId;
+        return nullptr;
     }
-    viewHintMap.insert(scheme, spec);
-    fmInfo() << "Registered view hint for scheme:" << scheme;
-}
-
-bool WorkspaceHelper::hasViewHint(const QString &scheme) const
-{
-    return viewHintMap.contains(scheme);
-}
-
-ViewHintSpec WorkspaceHelper::findViewHint(const QString &scheme) const
-{
-    return viewHintMap.value(scheme);
-}
-
-void WorkspaceHelper::requestShowViewHint(const QString &scheme, const QVariantMap &content)
-{
-    fmDebug() << "WorkspaceHelper: requestShowViewHint for scheme:" << scheme;
-    emit viewHintShowRequested(scheme, content);
-}
-
-void WorkspaceHelper::requestCloseViewHint(const QString &scheme)
-{
-    fmDebug() << "WorkspaceHelper: requestCloseViewHint for scheme:" << scheme;
-    emit viewHintCloseRequested(scheme);
-}
-
-void WorkspaceHelper::requestUpdateViewHint(const QString &scheme, const QVariantMap &updates)
-{
-    fmDebug() << "WorkspaceHelper: requestUpdateViewHint for scheme:" << scheme;
-    emit viewHintUpdateRequested(scheme, updates);
+    return widget->showViewHint(content);
 }
 
 bool WorkspaceHelper::isViewModeSupported(const QString &scheme, const dfmbase::Global::ViewMode mode) const

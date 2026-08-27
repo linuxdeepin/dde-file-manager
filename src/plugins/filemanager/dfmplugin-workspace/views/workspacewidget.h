@@ -52,6 +52,8 @@ public:
     QRectF viewVisibleGeometry();
     QRectF itemRect(const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role);
 
+    QObject *showViewHint(const QVariantMap &content);
+
     void createNewPage(const QString &uniqueId);
     void removePage(const QString &removedId, const QString &nextId);
     void setCurrentPage(const QString &uniqueId);
