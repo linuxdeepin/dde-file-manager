@@ -67,7 +67,6 @@ bool SideBarInfoCacheMananger::addItemInfoCache(const ItemInfo &info)
 
     CacheInfoList &cache = cacheInfoMap[info.group];
     cache.push_back(info);
-    bindedInfos[info.url] = info;
 
     return true;
 }
@@ -83,9 +82,6 @@ bool SideBarInfoCacheMananger::insertItemInfoCache(SideBarInfoCacheMananger::Ind
         cache.append(info);
     else
         cache.insert(i, info);
-
-    bindedInfos[info.url] = info;
-
     return true;
 }
 
@@ -96,7 +92,6 @@ bool SideBarInfoCacheMananger::removeItemInfoCache(const SideBarInfoCacheManange
     for (int i = 0; i != size; i++) {
         if (DFMBASE_NAMESPACE::UniversalUtils::urlEquals(url, cache[i].url)) {
             cache.removeAt(i);
-            bindedInfos.remove(url);
             return true;
         }
     }
@@ -122,7 +117,6 @@ bool SideBarInfoCacheMananger::updateItemInfoCache(const SideBarInfoCacheManange
     for (int i = 0; i != size; i++) {
         if (DFMBASE_NAMESPACE::UniversalUtils::urlEquals(url, cache[i].url)) {
             cache[i] = info;
-            bindedInfos[url] = info;
             return true;
         }
     }
@@ -143,7 +137,27 @@ bool SideBarInfoCacheMananger::updateItemInfoCache(const QUrl &url, const ItemIn
 
 ItemInfo SideBarInfoCacheMananger::itemInfo(const QUrl &url)
 {
-    return bindedInfos.value(url);
+    GroupList &&allGroup = cacheInfoMap.keys();
+    for (const Group &name : allGroup) {
+        const CacheInfoList &cache = cacheInfoMap.value(name);
+        int size = cache.size();
+        for (int i = 0; i != size; i++) {
+            if (DFMBASE_NAMESPACE::UniversalUtils::urlEquals(url, cache[i].url))
+                return cache[i];
+        }
+    }
+    return ItemInfo {};
+}
+
+ItemInfo SideBarInfoCacheMananger::itemInfo(const Group &name, const QUrl &url)
+{
+    const CacheInfoList &cache = cacheInfoMap.value(name);
+    int size = cache.size();
+    for (int i = 0; i != size; i++) {
+        if (DFMBASE_NAMESPACE::UniversalUtils::urlEquals(url, cache[i].url))
+            return cache[i];
+    }
+    return ItemInfo {};
 }
 
 bool SideBarInfoCacheMananger::contains(const ItemInfo &info) const
@@ -159,5 +173,14 @@ bool SideBarInfoCacheMananger::contains(const ItemInfo &info) const
 
 bool SideBarInfoCacheMananger::contains(const QUrl &url) const
 {
-    return bindedInfos.contains(url);
+    GroupList &&allGroup = cacheInfoMap.keys();
+    for (const Group &name : allGroup) {
+        const CacheInfoList &cache = cacheInfoMap.value(name);
+        int size = cache.size();
+        for (int i = 0; i != size; i++) {
+            if (DFMBASE_NAMESPACE::UniversalUtils::urlEquals(url, cache[i].url))
+                return true;
+        }
+    }
+    return false;
 }
