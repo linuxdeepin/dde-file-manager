@@ -238,7 +238,7 @@ bool SideBarEventReceiver::handleItemUpdate(const QUrl &url, const QVariantMap &
     if (urlUpdated)
         ret = SideBarInfoCacheMananger::instance()->addItemInfoCache(info);
     else
-        ret = SideBarInfoCacheMananger::instance()->updateItemInfoCache(url, info);
+        ret = SideBarInfoCacheMananger::instance()->updateItemInfoCache(info.group, url, info);
 
     QList<SideBarWidget *> allSideBar = SideBarHelper::allSideBar();
     if (!allSideBar.isEmpty()) {
