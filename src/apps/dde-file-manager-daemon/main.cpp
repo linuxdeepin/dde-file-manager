@@ -10,9 +10,9 @@
 
 #include <dfm-framework/dpf.h>
 
-#include <DApplication>
 #include <DSysInfo>
 
+#include <QCoreApplication>
 #include <QDebug>
 #include <QDir>
 #include <QTimer>
@@ -35,7 +35,6 @@ using namespace GlobalDConfDefines::BaseConfig;
 #    define ORGANIZATION_NAME "deepin"
 #endif
 
-DWIDGET_USE_NAMESPACE
 DCORE_USE_NAMESPACE
 
 static void initLogFilter()
@@ -108,24 +107,15 @@ static bool pluginsLoad()
     return true;
 }
 
-DWIDGET_USE_NAMESPACE
-
 int main(int argc, char *argv[])
 {
     initLogFilter();
-    DApplication a(argc, argv);
+    QCoreApplication a(argc, argv);
 
     // BUG-278055
     initLogSetting();
 
     a.setOrganizationName(ORGANIZATION_NAME);
-    {
-        // load translation
-        QString appName = a.applicationName();
-        a.setApplicationName("dde-file-manager");
-        a.loadTranslator();
-        a.setApplicationName(appName);
-    }
 
     qCInfo(logAppDaemon) << "main: File manager daemon started, version:" << a.applicationVersion();
 
