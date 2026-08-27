@@ -43,11 +43,13 @@ void MountAskPasswordDialog::initUI()
     anonmymousButtonBox->setEnabled(true);
     anonymousButton = new DButtonBoxButton(tr("Anonymous"));
     anonymousButton->setObjectName("AnonymousButton");
+    anonymousButton->setAccessibleName("AnonymousButton");
     anonymousButton->setCheckable(true);
     anonymousButton->setMinimumWidth(100);
     anonymousButton->setFocusPolicy(Qt::NoFocus);
     registerButton = new DButtonBoxButton(tr("Registered user"));
     registerButton->setObjectName("RegisterButton");
+    registerButton->setAccessibleName("RegisterButton");
     registerButton->setCheckable(true);
     registerButton->setMinimumWidth(100);
     registerButton->setFocusPolicy(Qt::NoFocus);
