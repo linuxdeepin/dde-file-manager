@@ -29,6 +29,21 @@ bool setCpuQuota(const QString &serviceName, int percentage, QString *errorMsg);
  */
 bool resetCpuQuota(const QString &serviceName, QString *errorMsg);
 
+/**
+ * @brief Acquires a CPU quota slot for a limited (silent) task.
+ *        Uses a reference counter: only the first caller actually sets the quota.
+ * @param serviceName Full service name
+ * @param percentage CPU quota percentage
+ */
+void acquireCpuQuota(const QString &serviceName, int percentage);
+
+/**
+ * @brief Releases a CPU quota slot for a limited (silent) task.
+ *        Only the last caller (counter drops to 0) actually resets the quota.
+ * @param serviceName Full service name
+ */
+void releaseCpuQuota(const QString &serviceName);
+
 }   // namespace SystemdCpuUtils
 
 SERVICETEXTINDEX_END_NAMESPACE

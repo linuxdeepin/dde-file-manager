@@ -5,7 +5,6 @@
 #include "ocrindexdbus.h"
 #include "private/ocrindexdbus_p.h"
 #include "utils/indexutility.h"
-#include "utils/systemdcpuutils.h"
 #include "utils/textindexconfig.h"
 
 #include <QDir>
@@ -45,11 +44,6 @@ void OcrIndexDBusPrivate::initConnect()
 {
     QObject::connect(runtime->taskManager(), &TaskManager::taskFinished,
                      q, [this](const QString &type, const QString &path, bool success) {
-                         QString msg;
-                         fmDebug() << "OcrIndexDBus: Resetting CPU limit after task completion";
-                         if (!SystemdCpuUtils::resetCpuQuota(Defines::kTextIndexServiceName, &msg)) {
-                             fmWarning() << "OcrIndexDBus: Failed to reset CPU quota:" << msg;
-                         }
                          emit q->TaskFinished(type, path, success);
                      });
 

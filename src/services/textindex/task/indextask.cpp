@@ -70,13 +70,8 @@ void IndexTask::throttleCpuUsage()
     fmDebug() << "[IndexTask::throttleCpuUsage] Applying CPU usage limit:" << limit << "% for service:"
               << Defines::kTextIndexServiceName;
 
-    QString msg;
-    if (!SystemdCpuUtils::setCpuQuota(Defines::kTextIndexServiceName, limit, &msg)) {
-        fmWarning() << "[IndexTask::throttleCpuUsage] Failed to set CPU quota:" << msg
-                    << "service:" << Defines::kTextIndexServiceName << "limit:" << limit << "%";
-    } else {
-        fmDebug() << "[IndexTask::throttleCpuUsage] CPU quota applied successfully - limit:" << limit << "%";
-    }
+    SystemdCpuUtils::acquireCpuQuota(Defines::kTextIndexServiceName, limit);
+    fmDebug() << "[IndexTask::throttleCpuUsage] CPU quota acquired successfully - limit:" << limit << "%";
 }
 
 void IndexTask::start()
@@ -190,6 +185,13 @@ void IndexTask::doTask()
     } else {
         fmWarning() << "[IndexTask::doTask] Task failed - type:" << static_cast<int>(m_type)
                     << "path:" << m_path << "corrupted:" << m_indexCorrupted;
+    }
+
+    // Release the CPU quota slot acquired in throttleCpuUsage().
+    // Only silent tasks acquire, so only silent tasks release.
+    // Reference counting ensures the quota is reset only when the last silent task finishes.
+    if (silent()) {
+        SystemdCpuUtils::releaseCpuQuota(Defines::kTextIndexServiceName);
     }
 
     emit finished(m_type, result);
