@@ -5,7 +5,6 @@
 #include "textindexdbus.h"
 #include "private/textindexdbus_p.h"
 #include "utils/indexutility.h"
-#include "utils/systemdcpuutils.h"
 #include "utils/textindexconfig.h"
 
 #include <QDir>
@@ -36,11 +35,6 @@ void TextIndexDBusPrivate::initConnect()
 {
     QObject::connect(runtime->taskManager(), &TaskManager::taskFinished,
                      q, [this](const QString &type, const QString &path, bool success) {
-                         QString msg;
-                         fmDebug() << "TextIndexDBus: Resetting CPU limit after task completion";
-                         if (!SystemdCpuUtils::resetCpuQuota(Defines::kTextIndexServiceName, &msg)) {
-                             fmWarning() << "TextIndexDBus: Failed to reset CPU quota:" << msg;
-                         }
                          emit q->TaskFinished(type, path, success);
                      });
 

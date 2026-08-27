@@ -6,6 +6,7 @@
 #include <QProcess>
 #include <QDebug>
 #include <QStringList>
+#include <mutex>
 
 SERVICETEXTINDEX_BEGIN_NAMESPACE
 
@@ -99,6 +100,42 @@ bool resetCpuQuota(const QString &serviceName, QString *errorMsg)
               << "CPUQuota=";   // 设置为空字符串以取消限制
 
     return executeSystemctlCommand(arguments, errorMsg);   // 调用匿名命名空间中的辅助函数
+}
+
+// --- Reference-counted CPU quota for concurrent limited tasks ---
+namespace {
+std::mutex g_cpuQuotaMutex;
+int g_limitedTaskCount = 0;
+}   // anonymous namespace
+
+void acquireCpuQuota(const QString &serviceName, int percentage)
+{
+    std::lock_guard<std::mutex> lock(g_cpuQuotaMutex);
+    if (g_limitedTaskCount == 0) {
+        QString msg;
+        if (!setCpuQuota(serviceName, percentage, &msg)) {
+            fmWarning() << "SystemdCpuUtils: acquireCpuQuota failed to set CPU quota:" << msg;
+        }
+    }
+    ++g_limitedTaskCount;
+    fmDebug() << "SystemdCpuUtils: acquireCpuQuota - active limited tasks:" << g_limitedTaskCount;
+}
+
+void releaseCpuQuota(const QString &serviceName)
+{
+    std::lock_guard<std::mutex> lock(g_cpuQuotaMutex);
+    if (g_limitedTaskCount <= 0) {
+        fmWarning() << "SystemdCpuUtils: releaseCpuQuota called with no active limited tasks";
+        return;
+    }
+    --g_limitedTaskCount;
+    fmDebug() << "SystemdCpuUtils: releaseCpuQuota - active limited tasks:" << g_limitedTaskCount;
+    if (g_limitedTaskCount == 0) {
+        QString msg;
+        if (!resetCpuQuota(serviceName, &msg)) {
+            fmWarning() << "SystemdCpuUtils: releaseCpuQuota failed to reset CPU quota:" << msg;
+        }
+    }
 }
 
 }   // namespace SystemdCpuUtils
