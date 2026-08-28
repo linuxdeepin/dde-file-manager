@@ -174,12 +174,17 @@ bool SideBarEventReceiver::handleItemRemove(const QUrl &url)
 
 bool SideBarEventReceiver::handleItemUpdate(const QUrl &url, const QVariantMap &properties)
 {
-    if (!SideBarInfoCacheMananger::instance()->contains(url)) {
+    bool hasGroup = properties.contains(PropertyKey::kGroup);
+    QString group = hasGroup ? properties[PropertyKey::kGroup].toString() : QString();
+
+    auto *cacheMgr = SideBarInfoCacheMananger::instance();
+    bool found = hasGroup ? cacheMgr->contains(group, url) : cacheMgr->contains(url);
+    if (!found) {
         fmWarning() << "Item not found in cache for update, url:" << url;
         return false;
     }
 
-    ItemInfo info { SideBarInfoCacheMananger::instance()->itemInfo(url) };
+    ItemInfo info = hasGroup ? cacheMgr->itemInfo(group, url) : cacheMgr->itemInfo(url);
 
     bool urlUpdated { false };
     if (properties.contains(PropertyKey::kUrl)) {
@@ -187,7 +192,10 @@ bool SideBarEventReceiver::handleItemUpdate(const QUrl &url, const QVariantMap &
         if (!DFMBASE_NAMESPACE::UniversalUtils::urlEquals(newUrl, info.url)) {
             urlUpdated = true;
             info.url = newUrl;
-            SideBarInfoCacheMananger::instance()->removeItemInfoCache(url);
+            if (hasGroup)
+                cacheMgr->removeItemInfoCache(group, url);
+            else
+                cacheMgr->removeItemInfoCache(url);
         }
     }
 
