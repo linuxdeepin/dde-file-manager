@@ -171,6 +171,17 @@ bool SideBarInfoCacheMananger::contains(const ItemInfo &info) const
     return false;
 }
 
+bool SideBarInfoCacheMananger::contains(const SideBarInfoCacheMananger::Group &name, const QUrl &url) const
+{
+    const CacheInfoList &cache = cacheInfoMap.value(name);
+    int size = cache.size();
+    for (int i = 0; i != size; i++) {
+        if (DFMBASE_NAMESPACE::UniversalUtils::urlEquals(url, cache[i].url))
+            return true;
+    }
+    return false;
+}
+
 bool SideBarInfoCacheMananger::contains(const QUrl &url) const
 {
     GroupList &&allGroup = cacheInfoMap.keys();
