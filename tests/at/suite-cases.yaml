@@ -1,0 +1,380 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# 用例规范化产物，按 GUI 界面分组，每 suite 含 4 字段注释与原子化步骤描述。
+# 继续补全（查漏补缺）后更新。
+cases:
+- id: fm_menu_new_window
+  name: 主菜单新建窗口
+  status: active
+  annotation:
+    测试界面: 主窗口-标题栏
+    测试功能: 通过标题栏主菜单新建窗口
+    前置条件: dde-file-manager 已启动并显示主窗口
+    AT元素引用:
+    - 新建窗口
+  steps:
+  - step_type: action
+    description: 启动 dde-file-manager
+  - step_type: action
+    description: 打开标题栏主菜单并选择新建窗口
+  - step_type: assert
+    description: 验证出现文件管理器窗口
+  - step_type: assert
+    description: 验证文件管理器进程运行
+- id: fm_menu_new_tab
+  name: 主菜单新建标签
+  status: active
+  annotation:
+    测试界面: 主窗口-标题栏
+    测试功能: 通过标题栏主菜单在当前窗口新建标签页
+    前置条件: dde-file-manager 已启动并显示主窗口
+    AT元素引用:
+    - 新建标签
+  steps:
+  - step_type: action
+    description: 启动 dde-file-manager
+  - step_type: action
+    description: 打开标题栏主菜单并选择新建标签
+  - step_type: assert
+    description: 验证文件管理器进程运行
+- id: fm_menu_settings
+  name: 主菜单打开设置
+  status: active
+  annotation:
+    测试界面: 主窗口-标题栏
+    测试功能: 通过标题栏主菜单打开设置对话框
+    前置条件: dde-file-manager 已启动并显示主窗口
+    AT元素引用:
+    - 设置
+  steps:
+  - step_type: action
+    description: 启动 dde-file-manager
+  - step_type: action
+    description: 打开标题栏主菜单并选择设置
+  - step_type: assert
+    description: 验证设置对话框已打开
+- id: fm_sidebar_quickaccess
+  name: 侧边栏快捷访问导航
+  status: active
+  annotation:
+    测试界面: 主窗口-左侧边栏
+    测试功能: 点击侧边栏快捷访问切换到对应视图
+    前置条件: dde-file-manager 已启动并显示主窗口
+    AT元素引用:
+    - side_bar_view
+  steps:
+  - step_type: action
+    description: 启动 dde-file-manager
+  - step_type: action
+    description: 点击侧边栏快捷访问项
+  - step_type: assert
+    description: 验证侧边栏树存在
+- id: fm_sidebar_documents
+  name: 侧边栏文档导航
+  status: active
+  annotation:
+    测试界面: 主窗口-左侧边栏
+    测试功能: 点击侧边栏文档切换到文档视图
+    前置条件: dde-file-manager 已启动并显示主窗口
+    AT元素引用:
+    - 文档
+  steps:
+  - step_type: action
+    description: 启动 dde-file-manager
+  - step_type: action
+    description: 点击侧边栏文档项
+  - step_type: assert
+    description: 验证文件管理器进程运行
+- id: fm_sidebar_desktop
+  name: 侧边栏桌面导航
+  status: active
+  annotation:
+    测试界面: 主窗口-左侧边栏
+    测试功能: 点击侧边栏桌面切换到桌面视图
+    前置条件: dde-file-manager 已启动并显示主窗口
+    AT元素引用:
+    - 桌面
+  steps:
+  - step_type: action
+    description: 启动 dde-file-manager
+  - step_type: action
+    description: 点击侧边栏桌面项
+  - step_type: assert
+    description: 验证文件管理器进程运行
+- id: fm_back_navigation
+  name: 工具栏返回导航
+  status: active
+  annotation:
+    测试界面: 主窗口-标题栏
+    测试功能: 通过标题栏返回按钮进行后退导航
+    前置条件: dde-file-manager 已启动并显示主窗口
+    AT元素引用:
+    - 返 回
+  steps:
+  - step_type: action
+    description: 启动 dde-file-manager
+  - step_type: action
+    description: 点击标题栏返回按钮
+  - step_type: assert
+    description: 验证文件管理器进程运行
+- id: fm_menu_refresh
+  name: 工作区右键菜单刷新
+  status: active
+  annotation:
+    测试界面: 主窗口-文件视图
+    测试功能: 在文件工作区右键菜单执行刷新
+    前置条件: dde-file-manager 已启动并显示主窗口
+    AT元素引用:
+    - 刷新
+  steps:
+  - step_type: action
+    description: 启动 dde-file-manager
+  - step_type: action
+    description: 在文件工作区弹出右键菜单并选择刷新
+  - step_type: assert
+    description: 验证文件管理器进程运行
+- id: fm_copy_path
+  name: 右键菜单复制路径
+  status: active
+  annotation:
+    测试界面: 主窗口-文件视图
+    测试功能: 在文件工作区右键菜单执行复制路径
+    前置条件: dde-file-manager 已启动并显示主窗口
+    AT元素引用:
+    - 复制路径
+  steps:
+  - step_type: action
+    description: 启动 dde-file-manager
+  - step_type: action
+    description: 在文件工作区弹出右键菜单并选择复制路径
+  - step_type: assert
+    description: 验证文件管理器进程运行
+- id: fm_files_new_folder
+  name: 新建文件夹
+  status: active
+  annotation:
+    测试界面: 主窗口-文件视图
+    测试功能: 在工作区空白处右键菜单新建文件夹
+    前置条件: dde-file-manager 已启动并显示主窗口
+    AT元素引用:
+    - 新建文件夹
+  steps:
+  - step_type: action
+    description: 启动 dde-file-manager
+  - step_type: action
+    description: 在工作区弹出右键菜单并选择新建文件夹
+  - step_type: assert
+    description: 验证文件管理器进程运行
+- id: fm_files_select_all
+  name: 全选文件
+  status: active
+  annotation:
+    测试界面: 主窗口-文件视图
+    测试功能: 通过文件视图右键菜单全选当前目录
+    前置条件: dde-file-manager 已启动并显示主窗口
+    AT元素引用:
+    - 全选
+  steps:
+  - step_type: action
+    description: 启动 dde-file-manager
+  - step_type: action
+    description: 在工作区弹出右键菜单并选择全选
+  - step_type: assert
+    description: 验证文件管理器进程运行
+- id: fm_files_show_hidden
+  name: 显示隐藏文件
+  status: active
+  annotation:
+    测试界面: 主窗口-文件视图
+    测试功能: 通过文件视图右键菜单切换显示隐藏文件
+    前置条件: dde-file-manager 已启动并显示主窗口
+    AT元素引用:
+    - 显示隐藏文件
+  steps:
+  - step_type: action
+    description: 启动 dde-file-manager
+  - step_type: action
+    description: 打开文件视图菜单并选择显示隐藏文件
+  - step_type: assert
+    description: 验证文件管理器进程运行
+- id: fm_files_properties
+  name: 查看文件属性
+  status: active
+  annotation:
+    测试界面: 主窗口-文件视图
+    测试功能: 在文件视图通过右键菜单打开属性对话框
+    前置条件: dde-file-manager 已启动并显示主窗口
+    AT元素引用:
+    - 属性
+  steps:
+  - step_type: action
+    description: 启动 dde-file-manager
+  - step_type: action
+    description: 在工作区弹出右键菜单并选择属性
+  - step_type: assert
+    description: 验证文件管理器进程运行
+- id: fm_trash_navigate
+  name: 导航到回收站
+  status: active
+  annotation:
+    测试界面: 主窗口-左侧边栏
+    测试功能: 点击侧边栏回收站切换到回收站视图
+    前置条件: dde-file-manager 已启动并显示主窗口
+    AT元素引用:
+    - 回收站
+  steps:
+  - step_type: action
+    description: 启动 dde-file-manager
+  - step_type: action
+    description: 点击侧边栏回收站项
+  - step_type: assert
+    description: 验证文件管理器进程运行
+- id: fm_trash_empty
+  name: 清空回收站
+  status: active
+  annotation:
+    测试界面: 主窗口-回收站视图
+    测试功能: 在回收站视图点击清空回收站按钮
+    前置条件: dde-file-manager 已启动并显示主窗口并进入回收站
+    AT元素引用:
+    - 清空回收站
+  steps:
+  - step_type: action
+    description: 启动 dde-file-manager
+  - step_type: action
+    description: 点击侧边栏回收站项进入回收站视图
+  - step_type: action
+    description: 在回收站视图打开菜单选择清空回收站
+  - step_type: assert
+    description: 验证文件管理器进程运行
+- id: fm_sidebar_videos
+  name: 侧边栏视频导航
+  status: active
+  annotation:
+    测试界面: 主窗口-左侧边栏
+    测试功能: 点击侧边栏视频切换到视频视图
+    前置条件: dde-file-manager 已启动并显示主窗口
+    AT元素引用:
+    - 视频
+  steps:
+  - step_type: action
+    description: 启动 dde-file-manager
+  - step_type: action
+    description: 点击侧边栏视频项
+  - step_type: assert
+    description: 验证文件管理器进程运行
+- id: fm_sidebar_pictures
+  name: 侧边栏图片导航
+  status: active
+  annotation:
+    测试界面: 主窗口-左侧边栏
+    测试功能: 点击侧边栏图片切换到图片视图
+    前置条件: dde-file-manager 已启动并显示主窗口
+    AT元素引用:
+    - 图片
+  steps:
+  - step_type: action
+    description: 启动 dde-file-manager
+  - step_type: action
+    description: 点击侧边栏图片项
+  - step_type: assert
+    description: 验证文件管理器进程运行
+- id: fm_sidebar_music
+  name: 侧边栏音乐导航
+  status: active
+  annotation:
+    测试界面: 主窗口-左侧边栏
+    测试功能: 点击侧边栏音乐切换到音乐视图
+    前置条件: dde-file-manager 已启动并显示主窗口
+    AT元素引用:
+    - 音乐
+  steps:
+  - step_type: action
+    description: 启动 dde-file-manager
+  - step_type: action
+    description: 点击侧边栏音乐项
+  - step_type: assert
+    description: 验证文件管理器进程运行
+- id: fm_sidebar_downloads
+  name: 侧边栏下载导航
+  status: active
+  annotation:
+    测试界面: 主窗口-左侧边栏
+    测试功能: 点击侧边栏下载切换到下载视图
+    前置条件: dde-file-manager 已启动并显示主窗口
+    AT元素引用:
+    - 下载
+  steps:
+  - step_type: action
+    description: 启动 dde-file-manager
+  - step_type: action
+    description: 点击侧边栏下载项
+  - step_type: assert
+    description: 验证文件管理器进程运行
+- id: fm_sidebar_computer
+  name: 侧边栏计算机网络导航
+  status: active
+  annotation:
+    测试界面: 主窗口-左侧边栏
+    测试功能: 点击侧边栏计算机或网络切换到对应视图
+    前置条件: dde-file-manager 已启动并显示主窗口
+    AT元素引用:
+    - 计算机
+    - 网络
+  steps:
+  - step_type: action
+    description: 启动 dde-file-manager
+  - step_type: action
+    description: 点击侧边栏计算机项
+  - step_type: assert
+    description: 验证文件管理器进程运行
+- id: fm_sidebar_network
+  name: 侧边栏网络导航
+  status: active
+  annotation:
+    测试界面: 主窗口-左侧边栏
+    测试功能: 点击侧边栏网络切换到网络视图
+    前置条件: dde-file-manager 已启动并显示主窗口
+    AT元素引用:
+    - 网络
+  steps:
+  - step_type: action
+    description: 启动 dde-file-manager
+  - step_type: action
+    description: 点击侧边栏网络项
+  - step_type: assert
+    description: 验证文件管理器进程运行
+- id: fm_sidebar_recent
+  name: 侧边栏最近使用导航
+  status: active
+  annotation:
+    测试界面: 主窗口-左侧边栏
+    测试功能: 点击侧边栏最近使用切换到最近使用视图
+    前置条件: dde-file-manager 已启动并显示主窗口
+    AT元素引用:
+    - 最近使用
+  steps:
+  - step_type: action
+    description: 启动 dde-file-manager
+  - step_type: action
+    description: 点击侧边栏最近使用项
+  - step_type: assert
+    description: 验证文件管理器进程运行
+- id: fm_titlebar_forward
+  name: 工具栏前进导航
+  status: active
+  annotation:
+    测试界面: 主窗口-标题栏
+    测试功能: 通过标题栏前进按钮进行前进导航
+    前置条件: dde-file-manager 已启动并显示主窗口
+    AT元素引用:
+    - 前进
+  steps:
+  - step_type: action
+    description: 启动 dde-file-manager
+  - step_type: action
+    description: 点击标题栏前进按钮
+  - step_type: assert
+    description: 验证文件管理器进程运行

@@ -1,0 +1,34 @@
+elements:
+  快捷访问:
+    name: 快捷访问
+  side_bar_view:
+    name: side_bar_view
+    role: tree
+  文档:
+    name: 文档
+  桌面:
+    name: 桌面
+  返 回:
+    name: 返 回
+  回收站:
+    name: 回收站
+  视频:
+    name: 视频
+  图片:
+    name: 图片
+  音乐:
+    name: 音乐
+  下载:
+    name: 下载
+  计算机:
+    name: 计算机
+  网络:
+    name: 网络
+  最近使用:
+    name: 最近使用
+  前进:
+    name: 前进
+  主目录:
+    name: 主目录
+  保险箱:
+    name: 保险箱

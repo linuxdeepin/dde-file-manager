@@ -1,0 +1,127 @@
+name: 菜单操作_suite
+app: dde-file-manager
+description: ''
+module: 菜单操作
+tags: []
+fast_fail: false
+env_check: []
+setup:
+- action: session_start
+  command: true; dde-file-manager --open-home
+  wait: 3.0
+suites:
+- id: fm_menu_new_window_s1
+  name: 主菜单新建窗口
+  description: ''
+  tags: []
+  steps:
+  - action: dtk_main_menu
+    items:
+    - 新建窗口
+  assert_steps:
+  - action: assert_window
+    name_pattern: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: fm_menu_new_tab_s1
+  name: 主菜单新建标签
+  description: ''
+  tags: []
+  steps:
+  - action: dtk_main_menu
+    items:
+    - 新建标签
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: fm_menu_settings_s1
+  name: 主菜单打开设置
+  description: ''
+  tags: []
+  steps:
+  - action: dtk_main_menu
+    items:
+    - 设置
+  assert_steps:
+  - action: assert_window
+    name_pattern: 设置
+- id: fm_sidebar_quickaccess_s1
+  name: 侧边栏快捷访问导航
+  description: ''
+  tags: []
+  steps:
+  - action: element_action
+    selector:
+      name: 快捷访问
+    do: click
+  assert_steps:
+  - action: assert_element
+    selector:
+      name: side_bar_view
+      role: tree
+- id: fm_sidebar_documents_s1
+  name: 侧边栏文档导航
+  description: ''
+  tags: []
+  steps:
+  - action: element_action
+    selector:
+      name: 文档
+    do: click
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: fm_sidebar_desktop_s1
+  name: 侧边栏桌面导航
+  description: ''
+  tags: []
+  steps:
+  - action: element_action
+    selector:
+      name: 桌面
+    do: click
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: fm_back_navigation_s1
+  name: 工具栏返回导航
+  description: ''
+  tags: []
+  steps:
+  - action: element_action
+    selector:
+      name: 返 回
+    do: click
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: fm_menu_refresh_s1
+  name: 工作区右键菜单刷新
+  description: ''
+  tags: []
+  steps:
+  - action: dtk_context_menu
+    selector:
+      name: side_bar_view
+      role: tree
+    items:
+    - 刷新
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: fm_copy_path_s1
+  name: 右键菜单复制路径
+  description: ''
+  tags: []
+  steps:
+  - action: dtk_context_menu
+    selector:
+      name: side_bar_view
+      role: tree
+    items:
+    - 复制路径
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+teardown:
+- action: session_stop
