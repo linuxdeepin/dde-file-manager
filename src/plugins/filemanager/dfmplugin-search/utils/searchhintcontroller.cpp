@@ -250,16 +250,6 @@ void SearchHintController::evaluateAndShow(quint64 winId)
     HintType newType = evaluateHint(winId);
     auto &ws = windowStates[winId];
 
-    if (newType == ws.currentType) {
-        if (newType == HintType::None) {
-            if (hints.value(winId)) {
-                hints[winId]->close();
-                hints[winId] = nullptr;
-            }
-        }
-        return;
-    }
-
     if (newType == HintType::None) {
         if (hints.value(winId)) {
             hints[winId]->close();
