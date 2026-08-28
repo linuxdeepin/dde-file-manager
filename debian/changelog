@@ -1,3 +1,15 @@
+dde-file-manager (6.5.168) unstable; urgency=medium
+
+  * fix: add ref-counted CPU quota for index tasks
+  * fix: show gvfs-mounted files in recent access list
+  * fix: skip stale remote gvfs paths in recent access to avoid worker thread blocking
+  * fix: sidebar quick access missing remove option on same URL
+  * fix: scope sidebar item update to group on rename
+  * fix: resolve symlink path in search method selection
+  * fix(accesscontrol): activate diskencrypt service when enableEncrypt flips to true
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Fri, 28 Aug 2026 14:29:56 +0800
+
 dde-file-manager (6.5.167) unstable; urgency=medium
 
   * feat: add dconfig-gated Latin-first sort strategy for zh_CN
