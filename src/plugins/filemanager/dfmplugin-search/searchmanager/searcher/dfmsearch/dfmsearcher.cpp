@@ -12,6 +12,7 @@
 #include <dfm-search/searchfactory.h>
 
 #include <QDebug>
+#include <QFileInfo>
 
 DFMBASE_USE_NAMESPACE
 DPSEARCH_USE_NAMESPACE
@@ -350,6 +351,16 @@ SearchMethod DFMSearcher::getSearchMethod(const QString &path) const
     // 因此需要切换搜索方法
     if (DevProxyMng->isFileOfExternalMounts(path)) {
         fmInfo() << "Use reltime method to: " << path << " - is external mount";
+        return SearchMethod::Realtime;
+    }
+
+    // 路径可能通过符号链接指向索引目录之外的位置（例如将 /media 下的目录
+    // 软链接到主目录），此时 anything 索引并不包含目标路径的文件，
+    // 需要解析符号链接后重新判断，若实际路径不在索引目录中则使用实时搜索
+    const QString &canonicalPath = QFileInfo(path).canonicalFilePath();
+    if (!canonicalPath.isEmpty()
+        && !DFMSEARCH::Global::isPathInFileNameIndexDirectory(canonicalPath)) {
+        fmInfo() << "Use realtime method to:" << path << "- symlink resolves outside index dir:" << canonicalPath;
         return SearchMethod::Realtime;
     }
 
