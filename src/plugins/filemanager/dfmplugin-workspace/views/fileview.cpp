@@ -69,6 +69,8 @@ using namespace GlobalDConfDefines::BaseConfig;
 FileView::FileView(const QUrl &url, QWidget *parent)
     : DListView(parent), d(new FileViewPrivate(this))
 {
+    setObjectName("dd_file_view");
+    setAccessibleName("dd_file_view");
     d->url = url;
     setMinimumHeight(10);
     setDragDropMode(QAbstractItemView::DragDrop);

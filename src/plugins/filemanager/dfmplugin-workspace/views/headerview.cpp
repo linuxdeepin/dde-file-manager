@@ -26,6 +26,8 @@ HeaderView::HeaderView(Qt::Orientation orientation, FileView *parent)
     : QHeaderView(orientation, parent),
       view(parent)
 {
+    setObjectName("dd_file_view_header");
+    setAccessibleName("dd_file_view_header");
     fmInfo() << "Creating HeaderView with orientation:" << (orientation == Qt::Horizontal ? "Horizontal" : "Vertical");
 
     setHighlightSections(false);
