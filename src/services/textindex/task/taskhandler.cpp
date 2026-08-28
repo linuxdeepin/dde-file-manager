@@ -143,6 +143,12 @@ public:
         fmInfo() << "[ProgressReporter::setTotal] Total count set to:" << count;
     }
 
+    void setProcessedCount(qint64 count)
+    {
+        processedCount = count;
+        m_lastCommitCount = count;
+    }
+
     void increment()
     {
         ++processedCount;
@@ -636,6 +642,71 @@ void removeDirectoryIndex(const IndexContext &context, const QString &dirPath, c
     }
 }
 
+struct CreateResumeFileList {
+    QStringList fileList;
+    int checkpoint { 0 };
+    bool useAnything { false };
+    bool hasFileList { false };   // true = fileList 可直接迭代; false = 需走 BFS traverse
+};
+
+CreateResumeFileList resolveFileListForCreateResume(const IndexContext &context, const QString &path,
+                                                    TaskState &running, bool createInProgress)
+{
+    CreateResumeFileList resolved;
+
+    if (createInProgress && context.stateStore()) {
+        resolved.fileList = context.stateStore()->createFileListCache();
+        resolved.checkpoint = context.stateStore()->createCheckpoint();
+    }
+
+    if (!resolved.fileList.isEmpty()) {
+        resolved.useAnything = true;
+        resolved.hasFileList = true;
+        return resolved;
+    }
+
+    auto provider = TaskHandlers::createFileProvider(context, path);
+    if (!provider) {
+        fmCritical() << "[resolveFileListForCreateResume] Failed to create file provider for path:" << path;
+        return resolved;
+    }
+
+    if (provider->name() == "DirectFileListProvider") {
+        resolved.useAnything = true;
+        resolved.hasFileList = true;
+        auto *directProvider = static_cast<DirectFileListProvider *>(provider.get());
+        resolved.fileList = directProvider->filePaths();
+        if (createInProgress && context.stateStore()) {
+            context.stateStore()->setCreateFileListCache(resolved.fileList);
+            context.stateStore()->setCreateCheckpoint(0);
+            fmInfo() << "[resolveFileListForCreateResume] Cached" << resolved.fileList.size()
+                     << "files from ANYTHING for Create resume";
+        }
+    }
+
+    return resolved;
+}
+
+void processFileListWithCheckpoint(const IndexContext &context, const QStringList &fileList,
+                                    int checkpoint, bool createInProgress,
+                                    const PathExcludeMatcher &excludeMatcher,
+                                    const IndexReaderPtr &reader, const IndexWriterPtr &writer,
+                                    ProgressReporter &reporter, const IndexContentMigrator &migrator,
+                                    TaskState &running)
+{
+    int fileIndex = checkpoint;
+    for (int i = checkpoint; i < fileList.size(); ++i) {
+        if (!running.isRunning() || running.isPauseRequested()) {
+            fmInfo() << "[processFileListWithCheckpoint] Processing interrupted at index" << i;
+            break;
+        }
+        updateFile(context, fileList[i], excludeMatcher, reader, writer, &reporter,
+                   migrator.isActive() ? &migrator : nullptr);
+        if (createInProgress && context.stateStore())
+            context.stateStore()->setCreateCheckpoint(++fileIndex);
+    }
+}
+
 }   // namespace
 
 // 创建文件提供者
@@ -725,6 +796,12 @@ TaskHandler TaskHandlers::CreateIndexHandler(const IndexContext &context)
             if (provider->name() == "DirectFileListProvider") {
                 result.useAnything = true;
                 fmInfo() << "[CreateIndexHandler] Using ANYTHING for file discovery";
+                if (context.stateStore()) {
+                    auto *directProvider = static_cast<DirectFileListProvider *>(provider.get());
+                    context.stateStore()->setCreateFileListCache(directProvider->filePaths());
+                    context.stateStore()->setCreateCheckpoint(0);
+                    fmInfo() << "[CreateIndexHandler] Cached" << directProvider->totalCount() << "files from ANYTHING";
+                }
             }
 
             ProgressReporter reporter(writer);
@@ -733,9 +810,12 @@ TaskHandler TaskHandlers::CreateIndexHandler(const IndexContext &context)
             reporter.setTotal(totalCount);
             fmInfo() << "[CreateIndexHandler] Starting file processing, estimated total files:" << totalCount;
 
+            int fileIndex = 0;
             provider->traverse(running, [&](const QString &file) {
                 processFile(context, file, excludeMatcher, writer, &reporter,
                             migrator.isActive() ? &migrator : nullptr);
+                if (context.stateStore())
+                    context.stateStore()->setCreateCheckpoint(++fileIndex);
             });
 
             if (running.isPauseRequested()) {
@@ -801,15 +881,11 @@ TaskHandler TaskHandlers::UpdateIndexHandler(const IndexContext &context)
             IndexReaderPtr reader = IndexReader::open(
                     FSDirectory::open(indexDir.toStdWString()), true);
 
-            // 添加 reader 的 ScopeGuard
             ScopeGuard readerCloser([&reader]() {
                 try {
-                    if (reader) {
-                        reader->close();
-                        fmDebug() << "[UpdateIndexHandler] Index reader closed successfully";
-                    }
+                    if (reader) reader->close();
                 } catch (...) {
-                    fmWarning() << "[UpdateIndexHandler] Exception occurred while closing index reader";
+                    fmWarning() << "[UpdateIndexHandler] Exception closing index reader";
                 }
             });
 
@@ -819,23 +895,16 @@ TaskHandler TaskHandlers::UpdateIndexHandler(const IndexContext &context)
                     false,
                     IndexWriter::MaxFieldLengthUNLIMITED);
 
-            // 添加 writer 的 ScopeGuard
             ScopeGuard writerCloser([&writer]() {
                 try {
-                    if (writer) {
-                        writer->close();
-                        fmDebug() << "[UpdateIndexHandler] Index writer closed successfully";
-                    }
+                    if (writer) writer->close();
                 } catch (...) {
-                    fmWarning() << "[UpdateIndexHandler] Exception occurred while closing index writer";
+                    fmWarning() << "[UpdateIndexHandler] Exception closing index writer";
                 }
             });
 
-            fmDebug() << "[UpdateIndexHandler] Index reader and writer initialized for directory:" << indexDir;
-
             ProgressReporter reporter(writer);
 
-            // 清理已删除文件的索引
             if (!cleanupIndexs(context, reader, writer, running, &reporter)) {
                 fmCritical() << "[UpdateIndexHandler] Index cleanup failed, aborting update";
                 result.success = false;
@@ -851,7 +920,7 @@ TaskHandler TaskHandlers::UpdateIndexHandler(const IndexContext &context)
                 return result;
             }
 
-            // 使用文件提供者遍历文件
+            const PathExcludeMatcher excludeMatcher = PathExcludeMatcher::createForIndex();
             auto provider = createFileProvider(context, path);
             if (!provider) {
                 fmCritical() << "[UpdateIndexHandler] Failed to create file provider for path:" << path;
@@ -863,10 +932,8 @@ TaskHandler TaskHandlers::UpdateIndexHandler(const IndexContext &context)
                 fmInfo() << "[UpdateIndexHandler] Using ANYTHING for file discovery";
             }
 
-            const PathExcludeMatcher excludeMatcher = PathExcludeMatcher::createForIndex();
-            qint64 totalCount = provider->totalCount();
-            reporter.setTotal(totalCount);
-            fmDebug() << "[UpdateIndexHandler] Starting file update processing, estimated total files:" << totalCount;
+            reporter.setTotal(provider->totalCount());
+            fmDebug() << "[UpdateIndexHandler] Starting file update processing, estimated total files:" << provider->totalCount();
 
             provider->traverse(running, [&](const QString &file) {
                 updateFile(context, file, excludeMatcher, reader, writer, &reporter,
@@ -886,32 +953,147 @@ TaskHandler TaskHandlers::UpdateIndexHandler(const IndexContext &context)
                 result.interrupted = true;
             }
 
-            // ProgressReporter的析构函数会处理最后的commit，确保所有更改都已提交
-            fmDebug() << "[UpdateIndexHandler] Ensuring all changes are committed";
             writer->commit();
-
-            // 不再调用 optimize()：增量更新场景下 lucene++ 的自动合并策略已足够保证查询性能
-            // optimize() 会强制合并所有 segment 为单个 segment，产生巨大的 IO 开销
-            fmDebug() << "[UpdateIndexHandler] Relying on lucene++ automatic merge policy instead of optimize";
-
-            // 仅在完整完成时清理旧索引；中断时保留 .old 供下次恢复使用
-            if (!result.interrupted) {
+            if (!result.interrupted)
                 migrator.cleanup();
-            }
 
             result.success = true;
             result.indexChanged = reporter.indexChanged();
             fmDebug() << "[UpdateIndexHandler] Index update completed successfully for path:" << path;
-
             return result;
         } catch (const LuceneException &e) {
-            // Lucene异常表示索引损坏
             fmCritical() << "[UpdateIndexHandler] Index update failed with Lucene exception, index may be corrupted:"
                          << QString::fromStdWString(e.getError());
-            throw;   // 重新抛出异常，让 IndexTask 捕获并处理
+            throw;
         } catch (const std::exception &e) {
-            // 其他异常不需要重建
             fmCritical() << "[UpdateIndexHandler] Index update failed with exception:" << e.what();
+        }
+
+        return result;
+    };
+}
+
+TaskHandler TaskHandlers::CreateResumeHandler(const IndexContext &context)
+{
+    return [context](const QString &path, TaskState &running) -> HandlerResult {
+        fmInfo() << "[CreateResumeHandler] Resuming index creation for path:" << path;
+        HandlerResult result { false, false, false };
+
+        QString indexDir = context.profile().indexDirectory();
+
+        IndexContentMigrator migrator;
+        if (IndexContentMigrator::hasResidue(indexDir)) {
+            migrator.prepare(indexDir, context.profile());
+        }
+
+        try {
+            IndexReaderPtr reader = IndexReader::open(
+                    FSDirectory::open(indexDir.toStdWString()), true);
+
+            ScopeGuard readerCloser([&reader]() {
+                try {
+                    if (reader) reader->close();
+                } catch (...) {
+                    fmWarning() << "[CreateResumeHandler] Exception closing index reader";
+                }
+            });
+
+            IndexWriterPtr writer = newLucene<IndexWriter>(
+                    FSDirectory::open(indexDir.toStdWString()),
+                    boost::static_pointer_cast<Lucene::Analyzer>(context.profile().createAnalyzer()),
+                    false,
+                    IndexWriter::MaxFieldLengthUNLIMITED);
+
+            ScopeGuard writerCloser([&writer]() {
+                try {
+                    if (writer) writer->close();
+                } catch (...) {
+                    fmWarning() << "[CreateResumeHandler] Exception closing index writer";
+                }
+            });
+
+            ProgressReporter reporter(writer);
+            const PathExcludeMatcher excludeMatcher = PathExcludeMatcher::createForIndex();
+
+            fmInfo() << "[CreateResumeHandler] Create in progress, skipping cleanup";
+
+            auto resolved = resolveFileListForCreateResume(context, path, running, true);
+
+            if (!resolved.hasFileList) {
+                // BFS path: traverse directly, cannot materialize full list.
+                auto provider = createFileProvider(context, path);
+                if (!provider) {
+                    fmCritical() << "[CreateResumeHandler] Failed to create file provider for path:" << path;
+                    return result;
+                }
+
+                reporter.setTotal(provider->totalCount());
+                fmDebug() << "[CreateResumeHandler] Starting BFS file update processing";
+
+                int bfsIndex = 0;
+                provider->traverse(running, [&](const QString &file) {
+                    updateFile(context, file, excludeMatcher, reader, writer, &reporter,
+                               migrator.isActive() ? &migrator : nullptr);
+                    if (context.stateStore())
+                        context.stateStore()->setCreateCheckpoint(++bfsIndex);
+                });
+
+                if (running.isPauseRequested()) {
+                    fmInfo() << "[CreateResumeHandler] Paused by scheduler request";
+                    writer->commit();
+                    result.paused = true;
+                    result.success = false;
+                    return result;
+                }
+                if (!running.isRunning()) {
+                    fmWarning() << "[CreateResumeHandler] Interrupted by user request";
+                    result.interrupted = true;
+                }
+                writer->commit();
+                if (!result.interrupted)
+                    migrator.cleanup();
+                result.success = true;
+                result.indexChanged = reporter.indexChanged();
+                return result;
+            }
+
+            result.useAnything = resolved.useAnything;
+            reporter.setTotal(resolved.fileList.size());
+            reporter.setProcessedCount(resolved.checkpoint);
+            fmInfo() << "[CreateResumeHandler] Processing" << resolved.fileList.size()
+                     << "files from checkpoint" << resolved.checkpoint;
+
+            processFileListWithCheckpoint(context, resolved.fileList, resolved.checkpoint,
+                                          true, excludeMatcher,
+                                          reader, writer, reporter, migrator, running);
+
+            if (running.isPauseRequested()) {
+                fmInfo() << "[CreateResumeHandler] Paused by scheduler request";
+                writer->commit();
+                result.paused = true;
+                result.success = false;
+                return result;
+            }
+
+            if (!running.isRunning()) {
+                fmWarning() << "[CreateResumeHandler] Interrupted by user request";
+                result.interrupted = true;
+            }
+
+            writer->commit();
+            if (!result.interrupted)
+                migrator.cleanup();
+
+            result.success = true;
+            result.indexChanged = reporter.indexChanged();
+            fmDebug() << "[CreateResumeHandler] Completed successfully for path:" << path;
+            return result;
+        } catch (const LuceneException &e) {
+            fmCritical() << "[CreateResumeHandler] Failed with Lucene exception, index may be corrupted:"
+                         << QString::fromStdWString(e.getError());
+            throw;
+        } catch (const std::exception &e) {
+            fmCritical() << "[CreateResumeHandler] Failed with exception:" << e.what();
         }
 
         return result;

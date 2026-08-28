@@ -154,6 +154,15 @@ qint64 DirectFileListProvider::totalCount()
     return m_fileList.count();
 }
 
+QStringList DirectFileListProvider::filePaths() const
+{
+    QStringList paths;
+    paths.reserve(m_fileList.size());
+    for (const auto &result : std::as_const(m_fileList))
+        paths.append(result.path());
+    return paths;
+}
+
 MixedPathListProvider::MixedPathListProvider(IndexProfile profile, const QStringList &pathList)
     : m_profile(std::move(profile)),
       m_pathList(pathList)

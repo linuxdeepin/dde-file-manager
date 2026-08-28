@@ -242,4 +242,24 @@ void IndexStateStore::saveLastUpdateTime(const QDateTime &lastUpdateTime) const
     writeStatusJson(statusFilePath(), obj);
 }
 
+QStringList IndexStateStore::createFileListCache() const
+{
+    return m_createFileListCache;
+}
+
+void IndexStateStore::setCreateFileListCache(const QStringList &cache) const
+{
+    m_createFileListCache = cache;
+}
+
+int IndexStateStore::createCheckpoint() const
+{
+    return m_createCheckpoint.loadRelaxed();
+}
+
+void IndexStateStore::setCreateCheckpoint(int checkpoint) const
+{
+    m_createCheckpoint.storeRelaxed(checkpoint);
+}
+
 SERVICETEXTINDEX_END_NAMESPACE

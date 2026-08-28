@@ -54,6 +54,8 @@ public:
     qint64 totalCount() override;
     QString name() override { return "DirectFileListProvider"; }
 
+    QStringList filePaths() const;
+
 private:
     DFMSEARCH::SearchResultList m_fileList;
 };
