@@ -39,13 +39,13 @@ signals:
     void editFinished();
 
 public slots:
-    void setPlainText(const QString &text);
     void slotTextChanged();
     void showAlertMessage(const QString &text, int duration = 3000);
 
 protected:
     void focusOutEvent(QFocusEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
+    bool eventFilter(QObject *obj, QEvent *e) override;
     inline int textLength(const QString &text)
     {
         return useCharCount ? text.length() : text.toLocal8Bit().length();
@@ -53,6 +53,8 @@ protected:
 
 private:
     DTK_WIDGET_NAMESPACE::DArrowRectangle *createTooltip();
+
+    void adjustStyle();
 
     bool isCancel = false;
     bool useCharCount = false;

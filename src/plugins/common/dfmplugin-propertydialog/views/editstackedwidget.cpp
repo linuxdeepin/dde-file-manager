@@ -21,7 +21,7 @@
 #include <QPainter>
 #include <QFileInfo>
 #include <QLabel>
-#include <QPainterPath>
+#include <DStyle>
 
 Q_DECLARE_METATYPE(QList<QUrl> *)
 
@@ -29,8 +29,9 @@ DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_propertydialog;
 
-static constexpr int kTextLineHeight { 18 };
 static constexpr int kExtendedWidgetWidth { 360 };
+static constexpr int kTextPadding { 4 };
+static constexpr int kTextShowWidth { 340 };
 
 NameTextEdit::NameTextEdit(const QString &text, QWidget *parent)
     : DTextEdit(text, parent)
@@ -40,8 +41,11 @@ NameTextEdit::NameTextEdit(const QString &text, QWidget *parent)
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setFrameShape(QFrame::NoFrame);
-    setFixedSize(kExtendedWidgetWidth, 60);
+    setFixedWidth(kExtendedWidgetWidth);
     setContextMenuPolicy(Qt::NoContextMenu);
+
+    installEventFilter(this);
+    adjustStyle();
 
     connect(this, &QTextEdit::textChanged, this, &NameTextEdit::slotTextChanged);
 }
@@ -63,12 +67,6 @@ bool NameTextEdit::isCanceled() const
 void NameTextEdit::setIsCanceled(bool isCanceled)
 {
     isCancel = isCanceled;
-}
-
-void NameTextEdit::setPlainText(const QString &text)
-{
-    QTextEdit::setPlainText(text);
-    setAlignment(Qt::AlignCenter);
 }
 
 void NameTextEdit::slotTextChanged()
@@ -109,19 +107,12 @@ void NameTextEdit::slotTextChanged()
 
     // Step 4: Apply changes to the editor
     if (text != toPlainText()) {
-        setPlainText(text);
+        QTextEdit::setPlainText(text);
     }
 
     QTextCursor cursor = textCursor();
-    cursor.movePosition(QTextCursor::Start);
-    do {
-        QTextBlockFormat fmt = cursor.blockFormat();
-        fmt.setLineHeight(kTextLineHeight, QTextBlockFormat::FixedHeight);
-        cursor.setBlockFormat(fmt);
-    } while (cursor.movePosition(QTextCursor::NextBlock));
     cursor.setPosition(endPos);
     setTextCursor(cursor);
-    setAlignment(Qt::AlignHCenter);
 
     if (isReadOnly())
         setFixedHeight(static_cast<int>(document()->size().height()));
@@ -160,6 +151,37 @@ void NameTextEdit::showAlertMessage(const QString &text, int duration)
 void NameTextEdit::focusOutEvent(QFocusEvent *event)
 {
     QTextEdit::focusOutEvent(event);
+}
+
+bool NameTextEdit::eventFilter(QObject *obj, QEvent *e)
+{
+    if (e->type() == QEvent::Paint && obj == this) {
+        const int oldFrameRadius = DStyle::pixelMetric(style(), DStyle::PM_FrameRadius, nullptr, this);
+        const int frameRadius = DStyle::pixelMetric(style(), DStyle::PM_FrameRadius);
+
+        DStyle::setFrameRadius(this, frameRadius);
+
+        QPainter p(this);
+        p.setRenderHints(QPainter::Antialiasing);
+
+        QStyleOptionFrame panel;
+        initStyleOption(&panel);
+        style()->drawPrimitive(QStyle::PE_PanelLineEdit, &panel, &p, this);
+
+        DStyle::setFrameRadius(this, oldFrameRadius);
+        return true;
+    }
+
+    return DTextEdit::eventFilter(obj, e);
+}
+
+void NameTextEdit::adjustStyle()
+{
+    document()->setDocumentMargin(kTextPadding);
+    QTextOption opt = document()->defaultTextOption();
+    opt.setAlignment(Qt::AlignLeft);
+    document()->setDefaultTextOption(opt);
+    DTK_WIDGET_NAMESPACE::DStyle::setFrameRadius(this, 0);
 }
 
 void NameTextEdit::keyPressEvent(QKeyEvent *event)
@@ -226,7 +248,7 @@ void EditStackedWidget::initUI()
 void EditStackedWidget::initTextShowFrame(QString fileName)
 {
     auto originalFileName = fileName;   // 存储原始文件名
-    QRect rect(QPoint(0, 0), QSize(200, 66));
+    QRect rect(QPoint(0, 0), QSize(kTextShowWidth, 66));
     QStringList labelTexts;
     ElideTextLayout layout(fileName);
     layout.layout(rect, Qt::ElideMiddle, nullptr, Qt::NoBrush, &labelTexts);
@@ -239,6 +261,7 @@ void EditStackedWidget::initTextShowFrame(QString fileName)
     } else {
         textShowFrame = new QFrame(this);
     }
+    textShowFrame->setFixedWidth(kExtendedWidgetWidth);
 
     nameEditIcon = new DIconButton(textShowFrame);
     nameEditIcon->setObjectName(QString("EditButton"));
