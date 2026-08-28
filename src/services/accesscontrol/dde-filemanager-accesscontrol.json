@@ -1,7 +1,0 @@
-{
-    "name": "org.deepin.Filemanager.AccessControlManager",
-    "libPath": "libdde-filemanager-accesscontrol.so",
-    "group": "app",
-    "policyStartType": "Resident",
-    "pluginType": "qt"
-}

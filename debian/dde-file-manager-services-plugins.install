@@ -1,6 +1,0 @@
-usr/lib/*/deepin-service-manager/*.so
-usr/share/deepin-service-manager/system/*.json
-usr/share/deepin-service-manager/user/*.json
-usr/share/deepin-service-manager/other/*.json
-etc/systemd/system/deepin-service-group@.service.d/*
-

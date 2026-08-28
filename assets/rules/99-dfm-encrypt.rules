@@ -1,1 +1,0 @@
-ENV{DM_NAME}=="usec-overlay-unlock-*",ENV{UDISKS_IGNORE}="1"
