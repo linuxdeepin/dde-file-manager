@@ -35,6 +35,8 @@ using namespace GlobalDConfDefines::BaseConfig;
 CanvasView::CanvasView(QWidget *parent)
     : QAbstractItemView(parent), d(new CanvasViewPrivate(this))
 {
+    setObjectName("dd_canvas_view");
+    setAccessibleName("dd_canvas_view");
 }
 
 QRect CanvasView::visualRect(const QModelIndex &index) const
