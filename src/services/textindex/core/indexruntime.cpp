@@ -15,6 +15,7 @@ IndexRuntime::IndexRuntime(IndexProfile profile, QObject *parent)
       m_taskManager(new TaskManager(&m_context, this)),
       m_fsEventController(new FSEventController(m_profile, this))
 {
+    EnvDetector::instance().setDataPath(m_profile.indexDirectory());
     EnvDetector::instance().start();
 }
 
