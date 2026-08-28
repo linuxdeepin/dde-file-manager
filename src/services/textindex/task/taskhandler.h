@@ -35,6 +35,7 @@ using TaskHandler = std::function<HandlerResult(const QString &path, TaskState &
 namespace TaskHandlers {
 TaskHandler CreateIndexHandler(const IndexContext &context);
 TaskHandler UpdateIndexHandler(const IndexContext &context);
+TaskHandler CreateResumeHandler(const IndexContext &context);
 
 // 文件列表任务处理器
 TaskHandler CreateOrUpdateFileListHandler(const IndexContext &context, const QStringList &fileList);

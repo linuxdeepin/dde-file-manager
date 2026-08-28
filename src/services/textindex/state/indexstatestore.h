@@ -8,7 +8,9 @@
 #include "profile/indexprofile.h"
 #include "utils/indexutility.h"
 
+#include <QAtomicInteger>
 #include <QDateTime>
+#include <QStringList>
 
 SERVICETEXTINDEX_BEGIN_NAMESPACE
 
@@ -238,8 +240,16 @@ public:
      */
     void saveLastUpdateTime(const QDateTime &lastUpdateTime) const;
 
+    QStringList createFileListCache() const;
+    void setCreateFileListCache(const QStringList &cache) const;
+
+    int createCheckpoint() const;
+    void setCreateCheckpoint(int checkpoint) const;
+
 private:
     IndexProfile m_profile;
+    mutable QStringList m_createFileListCache;
+    mutable QAtomicInteger<int> m_createCheckpoint { 0 };
 };
 
 SERVICETEXTINDEX_END_NAMESPACE

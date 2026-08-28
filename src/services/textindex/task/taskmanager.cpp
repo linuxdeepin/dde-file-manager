@@ -188,6 +188,8 @@ bool TaskManager::startTask(IndexTask::Type type, const QStringList &pathList,
         fmInfo() << "[TaskManager::startTask] Create task detected, clearing existing index status";
         if (m_context && m_context->stateStore()) {
             m_context->stateStore()->removeIndexStatusFile();
+            m_context->stateStore()->setCreateFileListCache({});
+            m_context->stateStore()->setCreateCheckpoint(0);
         }
         // 创建索引的任务开销巨大，避免任务未完成时进程退出后，重复进入创建任务
         if (m_context && m_context->stateStore()) {
@@ -402,6 +404,8 @@ TaskHandler TaskManager::getTaskHandler(IndexTask::Type type)
     case IndexTask::Type::Create:
         return TaskHandlers::CreateIndexHandler(*m_context);
     case IndexTask::Type::Update:
+        if (m_context->stateStore() && m_context->stateStore()->isCreateInProgress())
+            return TaskHandlers::CreateResumeHandler(*m_context);
         return TaskHandlers::UpdateIndexHandler(*m_context);
     default:
         fmWarning() << "[TaskManager::getTaskHandler] Unknown task type:" << static_cast<int>(type);
@@ -875,6 +879,8 @@ void TaskManager::finalizeIndexState(IndexTask::Type type, const HandlerResult &
         if (m_context && m_context->stateStore()) {
             m_context->stateStore()->setIndexState(IndexUtility::IndexState::Clean);
             m_context->stateStore()->setCreateInProgress(false);
+            m_context->stateStore()->setCreateFileListCache({});
+            m_context->stateStore()->setCreateCheckpoint(0);
         }
         fmInfo() << "[TaskManager::onTaskFinished] Full-scan task completed, index state set to clean";
     } else if (!m_recoveryPending) {
