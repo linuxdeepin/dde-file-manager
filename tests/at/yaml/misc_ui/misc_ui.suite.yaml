@@ -1,0 +1,138 @@
+name: misc_ui_suite
+app: dde-file-manager
+module: misc_ui
+setup:
+- action: session_start
+  command: dde-file-manager
+  wait: 3.0
+suites:
+- id: suite_misc_ui_001_s1
+  name: 视图提示消息控件
+  description: ''
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: IconButton
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: IconButton
+    do: point
+  - step_type: action
+    action: element_action
+    selector:
+      name: CloseButton
+    do: click
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: IconButton
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CloseButton
+  - step_type: assert
+    action: assert_not_exists
+    selector:
+      name: CloseButton
+- id: suite_misc_ui_002_s1
+  name: 桌面图标整理设置对话框
+  description: ''
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: Slider
+      role: slider
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: Slider
+      role: slider
+    do: point
+  - step_type: action
+    action: element_action
+    selector:
+      name: SwitchBtn
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: KeyEdit
+      role: text
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: KeyEdit
+      role: text
+    do: point
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: Slider
+      role: slider
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SwitchBtn
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: KeyEdit
+      role: text
+- id: suite_misc_ui_003_s1
+  name: 磁盘托盘提示、桌面水印与属性键值标签
+  description: ''
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: TextLabel
+      role: label
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: TipsLabel
+    do: point
+    wait: 1.5
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: TextLabel
+    items:
+    - 属性
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: RightValueEdit
+    do: focus
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TextLabel
+      role: label
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TipsLabel
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: RightValueEdit
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: RightValueEdit
+teardown:
+- action: session_stop
