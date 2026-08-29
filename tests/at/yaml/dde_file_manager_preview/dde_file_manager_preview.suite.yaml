@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
 name: dde_file_manager_preview_suite
 app: dde-file-manager
 module: dde_file_manager_preview

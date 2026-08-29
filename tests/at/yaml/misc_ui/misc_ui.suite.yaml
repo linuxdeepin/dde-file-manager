@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
 name: misc_ui_suite
 app: dde-file-manager
 module: misc_ui
