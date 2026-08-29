@@ -1,0 +1,149 @@
+name: dialogs_suite
+app: dde-file-manager
+module: dialogs
+setup:
+- action: session_start
+  command: dde-file-manager
+  wait: 3.0
+suites:
+- id: suite_dialogs_001_s1
+  name: 网络挂载认证对话框
+  description: ''
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: AnonymousButton
+      role: push button
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: RegisterButton
+      role: push button
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: UsernameLineEdit
+      role: text
+    text: testuser
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: DomainLineEdit
+      role: text
+    text: WORKGROUP
+  - step_type: action
+    action: element_action
+    selector:
+      name: PasswordCheckBox
+      role: check box
+    do: click
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: PasswordButtonGroup
+- id: suite_dialogs_002_s1
+  name: 文件冲突确认对话框
+  description: ''
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: ChkboxNotAskAgain
+      role: check box
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: ChkboxNotAskAgain
+      role: check box
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: BtnCoexist
+      role: push button
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: BtnSkip
+      role: push button
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: BtnDelete
+    do: point
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: BtnReplace
+      role: push button
+- id: suite_dialogs_003_s1
+  name: 批量操作进度对话框
+  description: ''
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: TaskListWidget
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: BtnPause
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: BtnPause
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: BtnStop
+    do: point
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TaskListWidget
+- id: suite_dialogs_004_s1
+  name: SMB共享密码设置对话框
+  description: ''
+  steps:
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: PasswordEdit_2
+    text: SharePassw0rd!
+  - step_type: action
+    action: element_action
+    selector:
+      name: PasswordEdit_2
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: PasswordEdit_2
+    do: point
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: PasswordEdit_2
+teardown:
+- action: session_stop
