@@ -36,6 +36,10 @@ public:
     void setToolTip(const std::string &tip);
     std::string toolTip() const;
 
+    // since 6.6.4
+    void setActionId(const std::string &actionId);
+    std::string actionId() const;
+
     void setMenu(DFMExtMenu *menu);
     DFMExtMenu *menu() const;
 

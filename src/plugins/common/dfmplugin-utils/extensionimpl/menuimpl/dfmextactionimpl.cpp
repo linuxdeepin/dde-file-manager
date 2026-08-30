@@ -8,6 +8,8 @@
 #include "dfmextmendefine.h"
 #include "dfmextmenuimpl.h"
 
+#include <dfm-base/dfm_menu_defines.h>
+
 #include <QAction>
 #include <QMenu>
 #include <QFile>
@@ -123,6 +125,23 @@ std::string DFMExtActionImplPrivate::toolTip() const
 {
     if (action)
         return action->toolTip().toStdString();
+
+    return "";
+}
+
+void DFMExtActionImplPrivate::setActionId(const std::string &actionId)
+{
+    if (interiorEntity)
+        return;
+
+    if (action)
+        action->setProperty(dfmbase::ActionPropertyKey::kActionID, QString::fromStdString(actionId));
+}
+
+std::string DFMExtActionImplPrivate::actionId() const
+{
+    if (action)
+        return action->property(dfmbase::ActionPropertyKey::kActionID).toString().toStdString();
 
     return "";
 }

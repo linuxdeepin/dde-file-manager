@@ -241,6 +241,7 @@ public:
 - `setIcon()`：设置菜单图标，参数为主题图标名称或绝对路径
 - `addAction()`：添加菜单项到末尾
 - `insertAction()`：在指定菜单项前插入
+- `findActionById()`：按 `actionID` 查找菜单项，返回第一个匹配
 - `deleted()`：菜单销毁前的回调，用于释放插件自定义资源
 
 #### DFMExtAction 接口
@@ -261,6 +262,8 @@ public:
     std::string icon() const;
     void setToolTip(const std::string &tip);
     std::string toolTip() const;
+    void setActionId(const std::string &actionId);
+    std::string actionId() const;
 
     // 菜单关联
     void setMenu(DFMExtMenu *menu);
@@ -291,6 +294,7 @@ public:
 **常用方法说明**：
 - `setText()`：设置菜单项显示文本
 - `setIcon()`：设置图标，支持主题图标名或绝对路径
+- `setActionId()`：设置动作标识，底层复用文件管理器已有 `actionID`
 - `setMenu()`：关联子菜单，实现多级菜单
 - `setSeparator()`：设置为分隔线
 - `setCheckable()`：设置为可选中的菜单项
@@ -765,22 +769,17 @@ std::string removeScheme(const std::string &url) {
 
 ```cpp
 // 查找"刷新"菜单项
-auto actions = main->actions();
-auto it = std::find_if(actions.cbegin(), actions.cend(),
-    [](const DFMExtAction *action) {
-        return action->text().find("刷新") == 0;
-    });
-
-if (it != actions.cend()) {
+auto refreshAction = main->findActionById("refresh");
+if (refreshAction) {
     // 在"刷新"前插入分隔线和自定义项
     auto separator = m_proxy->createAction();
     separator->setSeparator(true);
-    main->insertAction(*it, separator);
-    main->insertAction(*it, myAction);
+    main->insertAction(refreshAction, separator);
+    main->insertAction(refreshAction, myAction);
 }
 ```
 
-- **注：**当前不满足国际化场景，后续提供action id
+- **注：**`actionId` 由插件作者设置，底层直接复用已有 `actionID`
 
 #### 4. 多选文件处理
 
@@ -1202,4 +1201,3 @@ ldd my-plugin.so
 |------|------|---------|
 | 6.0.0 | 2024 | 移除 URL 前缀，新增 Window 和 File 插件接口 |
 | 5.x | 2020-2023 | 初始版本，提供 Menu 和 Emblem 插件接口 |
-

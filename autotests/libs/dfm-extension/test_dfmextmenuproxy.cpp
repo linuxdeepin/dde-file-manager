@@ -35,6 +35,9 @@ public:
     void setToolTip(const std::string &tip) override { this->m_toolTip = tip; }
     std::string toolTip() const override { return m_toolTip; }
 
+    void setActionId(const std::string &actionId) override { this->m_actionId = actionId; }
+    std::string actionId() const override { return m_actionId; }
+
     void setMenu(DFMEXT::DFMExtMenu *menu) override { this->m_menu = menu; }
     DFMEXT::DFMExtMenu *menu() const override { return m_menu; }
 
@@ -54,6 +57,7 @@ private:
     std::string m_text;
     std::string m_icon;
     std::string m_toolTip;
+    std::string m_actionId;
     DFMExtMenu *m_menu = nullptr;
     bool m_separator = false;
     bool m_checkable = false;
@@ -908,6 +912,24 @@ TEST_F(DFMExtMenuTest, InsertAction)
     EXPECT_EQ(actions.back(), testAction3);
     
     delete nonExistentAction;
+}
+
+TEST_F(DFMExtMenuTest, ActionIdLookup)
+{
+    EXPECT_EQ(testAction1->actionId(), "");
+
+    testAction1->setActionId("custom.refresh");
+    EXPECT_EQ(testAction1->actionId(), "custom.refresh");
+
+    testAction2->setActionId("refresh");
+    testAction3->setActionId("refresh");
+
+    testMenu->addAction(testAction1);
+    testMenu->addAction(testAction2);
+    testMenu->addAction(testAction3);
+
+    EXPECT_EQ(testMenu->findActionById("refresh"), testAction2);
+    EXPECT_EQ(testMenu->findActionById("missing"), nullptr);
 }
 
 /**
