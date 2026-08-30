@@ -31,6 +31,9 @@ public:
     virtual void setToolTip(const std::string &tip) = 0;
     virtual std::string toolTip() const = 0;
 
+    virtual void setActionId(const std::string &actionId) = 0;
+    virtual std::string actionId() const = 0;
+
     virtual void setMenu(DFMExtMenu *menu) = 0;
     virtual DFMExtMenu *menu() const = 0;
 

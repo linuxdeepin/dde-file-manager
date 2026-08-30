@@ -51,6 +51,16 @@ std::string DFMExtAction::toolTip() const
     return d->toolTip();
 }
 
+void DFMExtAction::setActionId(const std::string &actionId)
+{
+    d->setActionId(actionId);
+}
+
+std::string DFMExtAction::actionId() const
+{
+    return d->actionId();
+}
+
 void DFMExtAction::setMenu(DFMExtMenu *menu)
 {
     d->setMenu(menu);

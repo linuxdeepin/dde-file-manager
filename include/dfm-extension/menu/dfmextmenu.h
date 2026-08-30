@@ -38,6 +38,8 @@ public:
 
     DFMExtAction *menuAction() const;
     std::list<DFMExtAction *> actions() const;
+    // since 6.6.4
+    DFMExtAction *findActionById(const std::string &actionId) const;
 
     DFM_FAKE_VIRTUAL void triggered(DFMExtAction *action);
     DFM_FAKE_VIRTUAL void hovered(DFMExtAction *action);

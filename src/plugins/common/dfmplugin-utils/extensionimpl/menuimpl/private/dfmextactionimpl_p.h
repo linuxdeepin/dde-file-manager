@@ -36,6 +36,9 @@ public:
     void setToolTip(const std::string &tip) Q_DECL_OVERRIDE;
     std::string toolTip() const Q_DECL_OVERRIDE;
 
+    void setActionId(const std::string &actionId) Q_DECL_OVERRIDE;
+    std::string actionId() const Q_DECL_OVERRIDE;
+
     void setMenu(DFMEXT::DFMExtMenu *menu) Q_DECL_OVERRIDE;
     DFMEXT::DFMExtMenu *menu() const Q_DECL_OVERRIDE;
 
