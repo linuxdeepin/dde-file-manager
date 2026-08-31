@@ -166,12 +166,18 @@ bool DiskEncryptMenuScene::initialize(const QVariantHash &params)
     param.deviceDisplayName = info->displayOf(dfmbase::FileInfo::kFileDisplayName);
     param.secType = SecKeyType::kPwd;
 
+    param.devPhy = EventsHandler::instance()->holderDevice(device);
+
     if (param.states != kStatusNotEncrypted) {
         param.secType = static_cast<SecKeyType>(device_utils::encKeyType(device));
         fmDebug() << "Device encryption finished, security type:" << param.secType;
+    } else {
+        const QString &pendingDev = EventsHandler::instance()->unfinishedDecryptJob();
+        if (pendingDev == device || pendingDev == param.devPhy) {
+            param.secType = static_cast<SecKeyType>(device_utils::encKeyType(device));
+            fmDebug() << "Device has unfinished decrypt job, security type:" << param.secType;
+        }
     }
-
-    param.devPhy = EventsHandler::instance()->holderDevice(device);
 
     return true;
 }
