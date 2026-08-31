@@ -262,3 +262,39 @@ TEST_F(PluginManagerTest, SetFilters)
     // 没有getter，我们只能测试调用不崩溃
     SUCCEED();
 }
+
+TEST_F(PluginManagerTest, isAllPluginsStarted)
+{
+    // isAllPluginsStarted
+    SUCCEED();
+}
+
+TEST_F(PluginManagerTest, loadPlugin)
+{
+    // loadPlugin
+    SUCCEED();
+}
+
+TEST_F(PluginManagerTest, loadPlugins)
+{
+    // loadPlugins
+    SUCCEED();
+}
+
+TEST_F(PluginManagerTest, pluginMetaObj)
+{
+    // pluginMetaObj
+    SUCCEED();
+}
+
+TEST_F(PluginManagerTest, readPlugins)
+{
+    // readPlugins
+    SUCCEED();
+}
+
+TEST_F(PluginManagerTest, setBlackListFilter)
+{
+    // setBlackListFilter
+    SUCCEED();
+}

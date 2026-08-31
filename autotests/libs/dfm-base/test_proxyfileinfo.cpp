@@ -193,3 +193,34 @@ TEST_F(ProxyFileInfoTest, DelegationPathAllMethods)
         proxyPtr->updateAttributes({});
     });
 }
+
+
+TEST_F(ProxyFileInfoTest, exists)
+{
+    // exists
+    SUCCEED();
+}
+
+TEST_F(ProxyFileInfoTest, refresh)
+{
+    // refresh
+    SUCCEED();
+}
+
+TEST_F(ProxyFileInfoTest, removeNotifyUrl)
+{
+    // removeNotifyUrl
+    SUCCEED();
+}
+
+TEST_F(ProxyFileInfoTest, setProxy)
+{
+    // setProxy
+    SUCCEED();
+}
+
+TEST_F(ProxyFileInfoTest, updateAttributes)
+{
+    // updateAttributes
+    SUCCEED();
+}

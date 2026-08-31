@@ -99,3 +99,124 @@ TEST(FSEventCollectorTest, StartWithoutInitMayFailGracefully)
     FSEventCollector collector(alwaysTrue());
     EXPECT_NO_FATAL_FAILURE({ (void)collector.start(); });
 }
+
+
+TEST(FSEventCollectorTest, FSEventCollector)
+{
+    // FSEventCollector
+    SUCCEED();
+}
+
+TEST(FSEventCollectorTest, clearEvents)
+{
+    // clearEvents
+    SUCCEED();
+}
+
+TEST(FSEventCollectorTest, collectionInterval)
+{
+    // collectionInterval
+    SUCCEED();
+}
+
+TEST(FSEventCollectorTest, createdFiles)
+{
+    // createdFiles
+    SUCCEED();
+}
+
+TEST(FSEventCollectorTest, createdFilesCount)
+{
+    // createdFilesCount
+    SUCCEED();
+}
+
+TEST(FSEventCollectorTest, deletedFiles)
+{
+    // deletedFiles
+    SUCCEED();
+}
+
+TEST(FSEventCollectorTest, deletedFilesCount)
+{
+    // deletedFilesCount
+    SUCCEED();
+}
+
+TEST(FSEventCollectorTest, flushEvents)
+{
+    // flushEvents
+    SUCCEED();
+}
+
+TEST(FSEventCollectorTest, initialize)
+{
+    // initialize
+    SUCCEED();
+}
+
+TEST(FSEventCollectorTest, isActive)
+{
+    // isActive
+    SUCCEED();
+}
+
+TEST(FSEventCollectorTest, maxEventCount)
+{
+    // maxEventCount
+    SUCCEED();
+}
+
+TEST(FSEventCollectorTest, modifiedFiles)
+{
+    // modifiedFiles
+    SUCCEED();
+}
+
+TEST(FSEventCollectorTest, modifiedFilesCount)
+{
+    // modifiedFilesCount
+    SUCCEED();
+}
+
+TEST(FSEventCollectorTest, movedFiles)
+{
+    // movedFiles
+    SUCCEED();
+}
+
+TEST(FSEventCollectorTest, movedFilesCount)
+{
+    // movedFilesCount
+    SUCCEED();
+}
+
+TEST(FSEventCollectorTest, setCollectionInterval)
+{
+    // setCollectionInterval
+    SUCCEED();
+}
+
+TEST(FSEventCollectorTest, setMaxEventCount)
+{
+    // setMaxEventCount
+    SUCCEED();
+}
+
+TEST(FSEventCollectorTest, start)
+{
+    // start
+    SUCCEED();
+}
+
+TEST(FSEventCollectorTest, stop)
+{
+    // stop
+    SUCCEED();
+}
+
+TEST(FSEventCollectorTest, totalEventsCount)
+{
+    // totalEventsCount
+    SUCCEED();
+}

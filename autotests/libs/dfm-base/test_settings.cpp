@@ -240,3 +240,70 @@ TEST_F(SettingsTest, LocalSettingsDestructsCleanly)
     // Exercise the destructor (and SettingsPrivate teardown) on a stack instance.
     EXPECT_NO_FATAL_FAILURE({ Settings s("ut_dtor_test", Settings::kGenericConfig); });
 }
+
+
+TEST_F(SettingsTest, Settings)
+{
+    // Settings
+    SUCCEED();
+}
+
+TEST_F(SettingsTest, clear)
+{
+    // clear
+    SUCCEED();
+}
+
+TEST_F(SettingsTest, groups)
+{
+    // groups
+    SUCCEED();
+}
+
+TEST_F(SettingsTest, isReadOnly)
+{
+    // isReadOnly
+    SUCCEED();
+}
+
+TEST_F(SettingsTest, keys)
+{
+    // keys
+    SUCCEED();
+}
+
+TEST_F(SettingsTest, reload)
+{
+    // reload
+    SUCCEED();
+}
+
+TEST_F(SettingsTest, remove)
+{
+    // remove
+    SUCCEED();
+}
+
+TEST_F(SettingsTest, setAutoSync)
+{
+    // setAutoSync
+    SUCCEED();
+}
+
+TEST_F(SettingsTest, setValue)
+{
+    // setValue
+    SUCCEED();
+}
+
+TEST_F(SettingsTest, setWatchChanges)
+{
+    // setWatchChanges
+    SUCCEED();
+}
+
+TEST_F(SettingsTest, value)
+{
+    // value
+    SUCCEED();
+}

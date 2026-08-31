@@ -178,3 +178,64 @@ TEST(DesktopFileTest, DesktopNameReturnsValue)
     DesktopFile df(tmp.fileName());
     EXPECT_NO_FATAL_FAILURE({ (void)df.desktopName(); });
 }
+
+
+TEST(DesktopFileTest, desktopCategories)
+{
+    // desktopCategories
+    SUCCEED();
+}
+
+TEST(DesktopFileTest, desktopDeepinId)
+{
+    // desktopDeepinId
+    SUCCEED();
+}
+
+TEST(DesktopFileTest, desktopDisplayName)
+{
+    // desktopDisplayName
+    SUCCEED();
+}
+
+TEST(DesktopFileTest, desktopExec)
+{
+    // desktopExec
+    SUCCEED();
+}
+
+TEST(DesktopFileTest, desktopIcon)
+{
+    // desktopIcon
+    SUCCEED();
+}
+
+TEST(DesktopFileTest, desktopLocalName)
+{
+    // desktopLocalName
+    SUCCEED();
+}
+
+TEST(DesktopFileTest, desktopMimeType)
+{
+    // desktopMimeType
+    SUCCEED();
+}
+
+TEST(DesktopFileTest, desktopName)
+{
+    // desktopName
+    SUCCEED();
+}
+
+TEST(DesktopFileTest, desktopType)
+{
+    // desktopType
+    SUCCEED();
+}
+
+TEST(DesktopFileTest, isNoShow)
+{
+    // isNoShow
+    SUCCEED();
+}

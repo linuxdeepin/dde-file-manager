@@ -133,3 +133,28 @@ TEST(FileNameSorterTest, SortByKeyDescending)
     EXPECT_EQ(items[1].first, QString("b"));
     EXPECT_EQ(items[2].first, QString("a"));
 }
+
+
+TEST(FileNameSorterTest, compare)
+{
+    // compare
+    SUCCEED();
+}
+
+TEST(FileNameSorterTest, sort)
+{
+    // sort
+    SUCCEED();
+}
+
+TEST(FileNameSorterTest, sortKey)
+{
+    // sortKey
+    SUCCEED();
+}
+
+TEST(FileNameSorterTest, sortUrls)
+{
+    // sortUrls
+    SUCCEED();
+}

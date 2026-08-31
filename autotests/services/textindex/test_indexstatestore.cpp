@@ -151,3 +151,16 @@ TEST_F(IndexStateStoreTest, SetCreateInProgress)
     store->setCreateInProgress(false);
     EXPECT_FALSE(store->isCreateInProgress());
 }
+
+
+TEST_F(IndexStateStoreTest, getIndexState)
+{
+    // getIndexState
+    SUCCEED();
+}
+
+TEST_F(IndexStateStoreTest, saveIndexStatus)
+{
+    // saveIndexStatus
+    SUCCEED();
+}

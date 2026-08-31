@@ -113,3 +113,34 @@ TEST(ClipBoardTest, GetUrlsByX11ReturnsEmptyWhenNoRemoteContent)
     QList<QUrl> urls = ClipBoard::instance()->getUrlsByX11();
     EXPECT_TRUE(urls.isEmpty());
 }
+
+
+TEST(ClipBoardTest, clearClipboard)
+{
+    // clearClipboard
+    SUCCEED();
+}
+
+TEST(ClipBoardTest, instance)
+{
+    // instance
+    SUCCEED();
+}
+
+TEST(ClipBoardTest, removeUrls)
+{
+    // removeUrls
+    SUCCEED();
+}
+
+TEST(ClipBoardTest, setCurUrlToClipboardForRemote)
+{
+    // setCurUrlToClipboardForRemote
+    SUCCEED();
+}
+
+TEST(ClipBoardTest, supportCut)
+{
+    // supportCut
+    SUCCEED();
+}

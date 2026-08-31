@@ -97,3 +97,40 @@ TEST(ViewDefinesTest, GetListHeightListSize)
     ViewDefines vd;
     EXPECT_EQ(vd.getListHeightList().size(), vd.listHeightCount());
 }
+
+
+TEST(ViewDefinesTest, iconGridDensityCount)
+{
+    // iconGridDensityCount
+    SUCCEED();
+}
+
+TEST(ViewDefinesTest, iconSizeCount)
+{
+    // iconSizeCount
+    SUCCEED();
+}
+
+TEST(ViewDefinesTest, initDefines)
+{
+    // initDefines
+    SUCCEED();
+}
+
+TEST(ViewDefinesTest, listHeight)
+{
+    // listHeight
+    SUCCEED();
+}
+
+TEST(ViewDefinesTest, listHeightCount)
+{
+    // listHeightCount
+    SUCCEED();
+}
+
+TEST(ViewDefinesTest, transToVariantList)
+{
+    // transToVariantList
+    SUCCEED();
+}

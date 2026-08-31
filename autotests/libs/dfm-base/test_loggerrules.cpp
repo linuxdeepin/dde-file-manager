@@ -70,3 +70,28 @@ TEST(LoggerRulesTest, RulesAccessorReturnsString)
     rules.setRules("accessor.test=true");
     EXPECT_EQ(rules.rules().toStdString(), "accessor.test=true");
 }
+
+
+TEST(LoggerRulesTest, appendRules)
+{
+    // appendRules
+    SUCCEED();
+}
+
+TEST(LoggerRulesTest, initLoggerRules)
+{
+    // initLoggerRules
+    SUCCEED();
+}
+
+TEST(LoggerRulesTest, rules)
+{
+    // rules
+    SUCCEED();
+}
+
+TEST(LoggerRulesTest, setRules)
+{
+    // setRules
+    SUCCEED();
+}

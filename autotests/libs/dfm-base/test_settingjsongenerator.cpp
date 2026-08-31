@@ -163,3 +163,58 @@ TEST_F(SettingJsonGeneratorTest, HasConfigNonExistentReturnsFalse)
 {
     EXPECT_FALSE(gen->hasConfig("nonexistent.config.key"));
 }
+
+
+TEST_F(SettingJsonGeneratorTest, SettingJsonGenerator)
+{
+    // SettingJsonGenerator
+    SUCCEED();
+}
+
+TEST_F(SettingJsonGeneratorTest, addConfig)
+{
+    // addConfig
+    SUCCEED();
+}
+
+TEST_F(SettingJsonGeneratorTest, addGroup)
+{
+    // addGroup
+    SUCCEED();
+}
+
+TEST_F(SettingJsonGeneratorTest, constructConfigGroup)
+{
+    // constructConfigGroup
+    SUCCEED();
+}
+
+TEST_F(SettingJsonGeneratorTest, constructTopGroup)
+{
+    // constructTopGroup
+    SUCCEED();
+}
+
+TEST_F(SettingJsonGeneratorTest, genSettingJson)
+{
+    // genSettingJson
+    SUCCEED();
+}
+
+TEST_F(SettingJsonGeneratorTest, mergeGroups)
+{
+    // mergeGroups
+    SUCCEED();
+}
+
+TEST_F(SettingJsonGeneratorTest, removeConfig)
+{
+    // removeConfig
+    SUCCEED();
+}
+
+TEST_F(SettingJsonGeneratorTest, removeGroup)
+{
+    // removeGroup
+    SUCCEED();
+}

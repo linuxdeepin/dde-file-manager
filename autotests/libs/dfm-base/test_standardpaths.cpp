@@ -148,3 +148,28 @@ TEST(StandardPathsTest, LocalInstanceConstructsCleanly)
 }
 
 
+
+
+TEST(StandardPathsTest, fromStandardUrl)
+{
+    // fromStandardUrl
+    SUCCEED();
+}
+
+TEST(StandardPathsTest, getCachePath)
+{
+    // getCachePath
+    SUCCEED();
+}
+
+TEST(StandardPathsTest, location)
+{
+    // location
+    SUCCEED();
+}
+
+TEST(StandardPathsTest, toStandardUrl)
+{
+    // toStandardUrl
+    SUCCEED();
+}

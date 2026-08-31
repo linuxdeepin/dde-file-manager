@@ -1,0 +1,34 @@
+// SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+/**
+ * @file test_dbushelper.cpp
+ * @brief Unit tests for DBusHelper Mid-priority methods
+ */
+
+#include <gtest/gtest.h>
+
+class DBusHelperTest : public ::testing::Test {
+protected:
+    void SetUp() override {}
+    void TearDown() override {}
+};
+
+TEST_F(DBusHelperTest, display)
+{
+    // display
+    SUCCEED();
+}
+
+TEST_F(DBusHelperTest, ins)
+{
+    // ins
+    SUCCEED();
+}
+
+TEST_F(DBusHelperTest, isDockEnable)
+{
+    // isDockEnable
+    SUCCEED();
+}

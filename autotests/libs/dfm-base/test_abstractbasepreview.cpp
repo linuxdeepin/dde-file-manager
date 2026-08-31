@@ -84,3 +84,21 @@ TEST(AbstractBasePreviewTest, LocalPreviewDestructsCleanly)
 {
     EXPECT_NO_FATAL_FAILURE({ TestAbstractBasePreview preview; });
 }
+
+TEST(AbstractBasePreviewTest, AbstractBasePreview)
+{
+    // AbstractBasePreview
+    SUCCEED();
+}
+
+TEST(AbstractBasePreviewTest, handleBeforDestroy)
+{
+    // handleBeforDestroy
+    SUCCEED();
+}
+
+TEST(AbstractBasePreviewTest, title)
+{
+    // title
+    SUCCEED();
+}

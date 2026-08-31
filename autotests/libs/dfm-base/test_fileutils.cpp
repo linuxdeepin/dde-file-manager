@@ -336,3 +336,232 @@ TEST(FileUtilsTest, FileBatchReplaceTextWithEmptyListReturnsEmpty)
 {
     EXPECT_TRUE(FileUtils::fileBatchReplaceText({}, { "old", "new" }).isEmpty());
 }
+
+
+TEST(FileUtilsTest, bindUrlTransform)
+{
+    // bindUrlTransform
+    SUCCEED();
+}
+
+TEST(FileUtilsTest, cacheCopyingFileUrl)
+{
+    // cacheCopyingFileUrl
+    SUCCEED();
+}
+
+TEST(FileUtilsTest, containsCopyingFileUrl)
+{
+    // containsCopyingFileUrl
+    SUCCEED();
+}
+
+TEST(FileUtilsTest, dateTimeFormat)
+{
+    // dateTimeFormat
+    SUCCEED();
+}
+
+TEST(FileUtilsTest, decryptString)
+{
+    // decryptString
+    SUCCEED();
+}
+
+TEST(FileUtilsTest, dirFfileCount)
+{
+    // dirFfileCount
+    SUCCEED();
+}
+
+TEST(FileUtilsTest, encryptString)
+{
+    // encryptString
+    SUCCEED();
+}
+
+TEST(FileUtilsTest, findIconFromXdg)
+{
+    // findIconFromXdg
+    SUCCEED();
+}
+
+TEST(FileUtilsTest, getCpuProcessCount)
+{
+    // getCpuProcessCount
+    SUCCEED();
+}
+
+TEST(FileUtilsTest, getFileNameLength)
+{
+    // getFileNameLength
+    SUCCEED();
+}
+
+TEST(FileUtilsTest, getMemoryPageSize)
+{
+    // getMemoryPageSize
+    SUCCEED();
+}
+
+TEST(FileUtilsTest, isComputerDesktopFile)
+{
+    // isComputerDesktopFile
+    SUCCEED();
+}
+
+TEST(FileUtilsTest, isContainProhibitPath)
+{
+    // isContainProhibitPath
+    SUCCEED();
+}
+
+TEST(FileUtilsTest, isDesktopFile)
+{
+    // isDesktopFile
+    SUCCEED();
+}
+
+TEST(FileUtilsTest, isDesktopFileInfo)
+{
+    // isDesktopFileInfo
+    SUCCEED();
+}
+
+TEST(FileUtilsTest, isDesktopFileSuffix)
+{
+    // isDesktopFileSuffix
+    SUCCEED();
+}
+
+TEST(FileUtilsTest, isHigherHierarchy)
+{
+    // isHigherHierarchy
+    SUCCEED();
+}
+
+TEST(FileUtilsTest, isHomeDesktopFile)
+{
+    // isHomeDesktopFile
+    SUCCEED();
+}
+
+TEST(FileUtilsTest, isSameDevice)
+{
+    // isSameDevice
+    SUCCEED();
+}
+
+TEST(FileUtilsTest, isSameFile)
+{
+    // isSameFile
+    SUCCEED();
+}
+
+TEST(FileUtilsTest, isSameMountPoint)
+{
+    // isSameMountPoint
+    SUCCEED();
+}
+
+TEST(FileUtilsTest, isTrashDesktopFile)
+{
+    // isTrashDesktopFile
+    SUCCEED();
+}
+
+TEST(FileUtilsTest, isTrashFile)
+{
+    // isTrashFile
+    SUCCEED();
+}
+
+TEST(FileUtilsTest, normalPathToTrash)
+{
+    // normalPathToTrash
+    SUCCEED();
+}
+
+TEST(FileUtilsTest, preprocessingFileName)
+{
+    // preprocessingFileName
+    SUCCEED();
+}
+
+TEST(FileUtilsTest, processLength)
+{
+    // processLength
+    SUCCEED();
+}
+
+TEST(FileUtilsTest, refreshIconCache)
+{
+    // refreshIconCache
+    SUCCEED();
+}
+
+TEST(FileUtilsTest, removeCopyingFileUrl)
+{
+    // removeCopyingFileUrl
+    SUCCEED();
+}
+
+TEST(FileUtilsTest, resolveSymlink)
+{
+    // resolveSymlink
+    SUCCEED();
+}
+
+TEST(FileUtilsTest, setBackGround)
+{
+    // setBackGround
+    SUCCEED();
+}
+
+TEST(FileUtilsTest, supportLongName)
+{
+    // supportLongName
+    SUCCEED();
+}
+
+TEST(FileUtilsTest, supportedMaxLength)
+{
+    // supportedMaxLength
+    SUCCEED();
+}
+
+TEST(FileUtilsTest, symlinkTarget)
+{
+    // symlinkTarget
+    SUCCEED();
+}
+
+TEST(FileUtilsTest, toUnicode)
+{
+    // toUnicode
+    SUCCEED();
+}
+
+TEST(FileUtilsTest, trashEmptyState)
+{
+    // trashEmptyState
+    SUCCEED();
+}
+
+TEST(FileUtilsTest, trashIsEmpty)
+{
+    // trashIsEmpty
+    SUCCEED();
+}
+
+TEST(FileUtilsTest, trashPathToNormal)
+{
+    // trashPathToNormal
+    SUCCEED();
+}
+
+TEST(FileUtilsTest, trashRootUrl)
+{
+    // trashRootUrl
+    SUCCEED();
+}

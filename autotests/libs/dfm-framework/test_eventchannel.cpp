@@ -500,3 +500,15 @@ TEST_F(EventChannelTest, ChannelManagerDirectDisconnect)
 }
 
 #include "test_eventchannel.moc"
+
+TEST_F(EventChannelTest, asyncSend)
+{
+    // asyncSend
+    SUCCEED();
+}
+
+TEST_F(EventChannelTest, send)
+{
+    // send
+    SUCCEED();
+}

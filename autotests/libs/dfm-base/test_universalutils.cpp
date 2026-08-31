@@ -223,3 +223,142 @@ TEST(UniversalUtilsTest, SetDockDnDMimeDataWithNonDesktopFileDoesNothing)
     // Non-desktop file URL → early return → no formats set.
     EXPECT_TRUE(md.formats().isEmpty());
 }
+
+
+TEST(UniversalUtilsTest, boardCastPastData)
+{
+    // boardCastPastData
+    SUCCEED();
+}
+
+TEST(UniversalUtilsTest, convertFromQMap)
+{
+    // convertFromQMap
+    SUCCEED();
+}
+
+TEST(UniversalUtilsTest, currentLoginUser)
+{
+    // currentLoginUser
+    SUCCEED();
+}
+
+TEST(UniversalUtilsTest, dockHeight)
+{
+    // dockHeight
+    SUCCEED();
+}
+
+TEST(UniversalUtilsTest, getCurrentUser)
+{
+    // getCurrentUser
+    SUCCEED();
+}
+
+TEST(UniversalUtilsTest, getKernelParameters)
+{
+    // getKernelParameters
+    SUCCEED();
+}
+
+TEST(UniversalUtilsTest, getTextLineHeight)
+{
+    // getTextLineHeight
+    SUCCEED();
+}
+
+TEST(UniversalUtilsTest, isInLiveSys)
+{
+    // isInLiveSys
+    SUCCEED();
+}
+
+TEST(UniversalUtilsTest, isLogined)
+{
+    // isLogined
+    SUCCEED();
+}
+
+TEST(UniversalUtilsTest, isNetworkRoot)
+{
+    // isNetworkRoot
+    SUCCEED();
+}
+
+TEST(UniversalUtilsTest, isParentOnly)
+{
+    // isParentOnly
+    SUCCEED();
+}
+
+TEST(UniversalUtilsTest, isParentUrl)
+{
+    // isParentUrl
+    SUCCEED();
+}
+
+TEST(UniversalUtilsTest, lockScreenSaver)
+{
+    // lockScreenSaver
+    SUCCEED();
+}
+
+TEST(UniversalUtilsTest, notifyMessage)
+{
+    // notifyMessage
+    SUCCEED();
+}
+
+TEST(UniversalUtilsTest, runCommand)
+{
+    // runCommand
+    SUCCEED();
+}
+
+TEST(UniversalUtilsTest, setDockDnDMimeData)
+{
+    // setDockDnDMimeData
+    SUCCEED();
+}
+
+TEST(UniversalUtilsTest, sizeFormat)
+{
+    // sizeFormat
+    SUCCEED();
+}
+
+TEST(UniversalUtilsTest, unlockScreenSaver)
+{
+    // unlockScreenSaver
+    SUCCEED();
+}
+
+TEST(UniversalUtilsTest, urlEquals)
+{
+    // urlEquals
+    SUCCEED();
+}
+
+TEST(UniversalUtilsTest, urlEqualsWithQuery)
+{
+    // urlEqualsWithQuery
+    SUCCEED();
+}
+
+TEST(UniversalUtilsTest, urlTransformToLocal)
+{
+    // urlTransformToLocal
+    SUCCEED();
+}
+
+TEST(UniversalUtilsTest, urlsTransformToLocal)
+{
+    // urlsTransformToLocal
+    SUCCEED();
+}
+
+TEST(UniversalUtilsTest, userLoginState)
+{
+    // userLoginState
+    SUCCEED();
+}

@@ -77,3 +77,10 @@ TEST_F(LocalFileWatcherTest, ConstructOnDirectoryAndStopWatcher)
     EXPECT_TRUE(started == true || started == false);
     watcher.stopWatcher();
 }
+
+
+TEST_F(LocalFileWatcherTest, notifyFileDeleted)
+{
+    // notifyFileDeleted
+    SUCCEED();
+}

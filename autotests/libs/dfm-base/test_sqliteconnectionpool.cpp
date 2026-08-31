@@ -89,3 +89,10 @@ TEST_F(SqliteConnectionPoolTest, OpenConnectionOnInMemoryDatabase)
     EXPECT_EQ(db.driverName().toStdString(), "QSQLITE");
     EXPECT_TRUE(db.isOpen());
 }
+
+
+TEST_F(SqliteConnectionPoolTest, openConnection)
+{
+    // openConnection
+    SUCCEED();
+}

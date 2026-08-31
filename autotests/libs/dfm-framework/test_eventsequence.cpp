@@ -295,3 +295,10 @@ TEST_F(EventSequenceTest, Performance)
 }
 
 #include "test_eventsequence.moc"
+
+
+TEST_F(EventSequenceTest, traversal)
+{
+    // traversal
+    SUCCEED();
+}

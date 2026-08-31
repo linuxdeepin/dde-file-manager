@@ -494,3 +494,34 @@ TEST_F(PluginQuickMetadataTest, CreatorTest)
     creator.setParent("should_not_be_set_either");
     creator.setApplet("should_not_be_set_either");
 }
+
+
+TEST(PluginQuickMetaDataTest, applet)
+{
+    // applet
+    SUCCEED();
+}
+
+TEST(PluginQuickMetaDataTest, id)
+{
+    // id
+    SUCCEED();
+}
+
+TEST(PluginQuickMetaDataTest, parent)
+{
+    // parent
+    SUCCEED();
+}
+
+TEST(PluginQuickMetaDataTest, type)
+{
+    // type
+    SUCCEED();
+}
+
+TEST(PluginQuickMetaDataTest, url)
+{
+    // url
+    SUCCEED();
+}

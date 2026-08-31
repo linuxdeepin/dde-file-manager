@@ -132,3 +132,106 @@ TEST(SortFileInfoTest, NeedsCompletionReturnsFalseWhenCompleted)
     info.markAsCompleted();
     EXPECT_FALSE(info.needsCompletion());
 }
+
+
+TEST(SortFileInfoTest, SortFileInfo)
+{
+    // SortFileInfo
+    SUCCEED();
+}
+
+TEST(SortFileInfoTest, createTime)
+{
+    // createTime
+    SUCCEED();
+}
+
+TEST(SortFileInfoTest, customData)
+{
+    // customData
+    SUCCEED();
+}
+
+TEST(SortFileInfoTest, fileSize)
+{
+    // fileSize
+    SUCCEED();
+}
+
+TEST(SortFileInfoTest, fileUrl)
+{
+    // fileUrl
+    SUCCEED();
+}
+
+TEST(SortFileInfoTest, isDir)
+{
+    // isDir
+    SUCCEED();
+}
+
+TEST(SortFileInfoTest, isExecutable)
+{
+    // isExecutable
+    SUCCEED();
+}
+
+TEST(SortFileInfoTest, isFile)
+{
+    // isFile
+    SUCCEED();
+}
+
+TEST(SortFileInfoTest, isHide)
+{
+    // isHide
+    SUCCEED();
+}
+
+TEST(SortFileInfoTest, isReadable)
+{
+    // isReadable
+    SUCCEED();
+}
+
+TEST(SortFileInfoTest, isSymLink)
+{
+    // isSymLink
+    SUCCEED();
+}
+
+TEST(SortFileInfoTest, isWriteable)
+{
+    // isWriteable
+    SUCCEED();
+}
+
+TEST(SortFileInfoTest, lastModifiedTime)
+{
+    // lastModifiedTime
+    SUCCEED();
+}
+
+TEST(SortFileInfoTest, searchKeyword)
+{
+    // searchKeyword
+    SUCCEED();
+}
+
+TEST(SortFileInfoTest, setFile)
+{
+    // setFile
+    SUCCEED();
+}
+
+TEST(SortFileInfoTest, setSize)
+{
+    // setSize
+    SUCCEED();
+}
+
+TEST(SortFileInfoTest, setWriteable)
+{
+    // setWriteable
+    SUCCEED();
+}

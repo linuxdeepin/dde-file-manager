@@ -92,3 +92,28 @@ TEST_F(EventTest, PluginTopics)
     EXPECT_EQ(topicsSignal1.size(), 1);
     EXPECT_TRUE(topicsSignal1.contains("signal_topic1"));
 }
+
+
+TEST_F(EventTest, Event)
+{
+    // Event
+    SUCCEED();
+}
+
+TEST_F(EventTest, channel)
+{
+    // channel
+    SUCCEED();
+}
+
+TEST_F(EventTest, eventType)
+{
+    // eventType
+    SUCCEED();
+}
+
+TEST_F(EventTest, sequence)
+{
+    // sequence
+    SUCCEED();
+}

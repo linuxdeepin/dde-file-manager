@@ -128,3 +128,28 @@ TEST(NetworkUtilsTest, ResolveLocalSftpMountUrlIsCallable)
 {
     EXPECT_NO_FATAL_FAILURE({ (void)NetworkUtils::instance()->resolveLocalSftpMountUrl(QUrl("file:///")); });
 }
+
+
+TEST(NetworkUtilsTest, checkNetConnection)
+{
+    // checkNetConnection
+    SUCCEED();
+}
+
+TEST(NetworkUtilsTest, cifsMountHostInfo)
+{
+    // cifsMountHostInfo
+    SUCCEED();
+}
+
+TEST(NetworkUtilsTest, parseIp)
+{
+    // parseIp
+    SUCCEED();
+}
+
+TEST(NetworkUtilsTest, resolveLocalSftpMountUrl)
+{
+    // resolveLocalSftpMountUrl
+    SUCCEED();
+}

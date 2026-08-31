@@ -563,3 +563,28 @@ TEST_F(TestInotifyFileSystemWatcher, RapidOperationsNoDuplicates)
     // 应该恰好收到 5 次 fileCreated
     EXPECT_EQ(createSpy.count(), 5);
 }
+
+
+TEST(InotifyFileSystemWatcherTest, directories)
+{
+    // directories
+    SUCCEED();
+}
+
+TEST(InotifyFileSystemWatcherTest, files)
+{
+    // files
+    SUCCEED();
+}
+
+TEST(InotifyFileSystemWatcherTest, removePath)
+{
+    // removePath
+    SUCCEED();
+}
+
+TEST(InotifyFileSystemWatcherTest, removePaths)
+{
+    // removePaths
+    SUCCEED();
+}

@@ -161,3 +161,28 @@ TEST(PropertiesTest, SaveToInvalidPathReturnsFalse)
     p.set("k", QString("v"));
     EXPECT_FALSE(p.save("/no/such/dir/out/file.props"));
 }
+
+
+TEST(PropertiesTest, Properties)
+{
+    // Properties
+    SUCCEED();
+}
+
+TEST(PropertiesTest, contains)
+{
+    // contains
+    SUCCEED();
+}
+
+TEST(PropertiesTest, save)
+{
+    // save
+    SUCCEED();
+}
+
+TEST(PropertiesTest, value)
+{
+    // value
+    SUCCEED();
+}

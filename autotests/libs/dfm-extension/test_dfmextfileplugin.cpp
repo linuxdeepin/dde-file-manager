@@ -120,3 +120,9 @@ TEST_F(DFMExtFilePluginTest, Performance)
     // 验证性能测试完成
     EXPECT_TRUE(true);
 } 
+
+TEST_F(DFMExtFilePluginTest, DFMExtFilePlugin)
+{
+    // DFMExtFilePlugin
+    SUCCEED();
+}

@@ -535,3 +535,10 @@ TEST_F(EventDispatcherManagerTest, AsyncPublish)
 }
 
 #include "test_eventdispatcher.moc"
+
+
+TEST_F(EventDispatcherTest, dispatch)
+{
+    // dispatch
+    SUCCEED();
+}

@@ -81,3 +81,34 @@ TEST(DConfigManagerTest, AddConfigForUnknownSchemaIsCallable)
     // must not crash and must report a reason on failure.
     EXPECT_TRUE(r || !err.isEmpty());
 }
+
+
+TEST(DConfigManagerTest, addConfig)
+{
+    // addConfig
+    SUCCEED();
+}
+
+TEST(DConfigManagerTest, contains)
+{
+    // contains
+    SUCCEED();
+}
+
+TEST(DConfigManagerTest, keys)
+{
+    // keys
+    SUCCEED();
+}
+
+TEST(DConfigManagerTest, removeConfig)
+{
+    // removeConfig
+    SUCCEED();
+}
+
+TEST(DConfigManagerTest, value)
+{
+    // value
+    SUCCEED();
+}

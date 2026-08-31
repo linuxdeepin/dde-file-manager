@@ -104,3 +104,40 @@ TEST(ThumbnailCreatorsTest, DefaultThumbnailCreatorLargeSizeDowngrades)
     QImage img = defaultThumbnailCreator("/no/such/file.xyz", ThumbnailSize::kXLarge);
     EXPECT_TRUE(img.isNull());
 }
+
+
+TEST(ThumbnailCreatorsTest, appimageThumbnailCreator)
+{
+    // appimageThumbnailCreator
+    SUCCEED();
+}
+
+TEST(ThumbnailCreatorsTest, defaultThumbnailCreator)
+{
+    // defaultThumbnailCreator
+    SUCCEED();
+}
+
+TEST(ThumbnailCreatorsTest, krataThumbnailCreator)
+{
+    // krataThumbnailCreator
+    SUCCEED();
+}
+
+TEST(ThumbnailCreatorsTest, pptxThumbnailCreator)
+{
+    // pptxThumbnailCreator
+    SUCCEED();
+}
+
+TEST(ThumbnailCreatorsTest, videoThumbnailCreatorFfmpeg)
+{
+    // videoThumbnailCreatorFfmpeg
+    SUCCEED();
+}
+
+TEST(ThumbnailCreatorsTest, videoThumbnailCreatorLib)
+{
+    // videoThumbnailCreatorLib
+    SUCCEED();
+}

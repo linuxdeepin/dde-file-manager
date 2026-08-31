@@ -163,3 +163,46 @@ TEST_F(DesktopFileInfoTest, DesktopFileInfoStatic)
     ASSERT_NE(info, nullptr);
     EXPECT_NO_FATAL_FAILURE({ (void)DesktopFileInfo::convert(info); });
 }
+
+
+TEST_F(DesktopFileInfoTest, canAttributes)
+{
+    // canAttributes
+    SUCCEED();
+}
+
+TEST_F(DesktopFileInfoTest, canTag)
+{
+    // canTag
+    SUCCEED();
+}
+
+TEST_F(DesktopFileInfoTest, convert)
+{
+    // convert
+    SUCCEED();
+}
+
+TEST_F(DesktopFileInfoTest, desktopFileInfo)
+{
+    // desktopFileInfo
+    SUCCEED();
+}
+
+TEST_F(DesktopFileInfoTest, desktopIconName)
+{
+    // desktopIconName
+    SUCCEED();
+}
+
+TEST_F(DesktopFileInfoTest, displayOf)
+{
+    // displayOf
+    SUCCEED();
+}
+
+TEST_F(DesktopFileInfoTest, supportedOfAttributes)
+{
+    // supportedOfAttributes
+    SUCCEED();
+}

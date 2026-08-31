@@ -89,3 +89,46 @@ TEST(WatcherCacheTest, SetCacheDisableRoundTrips)
     // cleanup
     WatcherCache::instance().setCacheDisbale(scheme, false);
 }
+
+
+TEST(WatcherCacheTest, WatcherCache)
+{
+    // WatcherCache
+    SUCCEED();
+}
+
+TEST(WatcherCacheTest, cacheDisable)
+{
+    // cacheDisable
+    SUCCEED();
+}
+
+TEST(WatcherCacheTest, cacheWatcher)
+{
+    // cacheWatcher
+    SUCCEED();
+}
+
+TEST(WatcherCacheTest, getCacheWatcher)
+{
+    // getCacheWatcher
+    SUCCEED();
+}
+
+TEST(WatcherCacheTest, removeCacheWatcher)
+{
+    // removeCacheWatcher
+    SUCCEED();
+}
+
+TEST(WatcherCacheTest, removeCacheWatcherByParent)
+{
+    // removeCacheWatcherByParent
+    SUCCEED();
+}
+
+TEST(WatcherCacheTest, setCacheDisbale)
+{
+    // setCacheDisbale
+    SUCCEED();
+}

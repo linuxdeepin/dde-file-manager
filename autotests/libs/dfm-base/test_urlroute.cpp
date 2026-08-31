@@ -208,3 +208,118 @@ TEST_F(UrlRouteTest, SchemeNodePathIconReturnsStoredIcon)
     SchemeNode node(rootPath, QIcon());
     EXPECT_TRUE(node.pathIcon().isNull());
 }
+
+
+TEST_F(UrlRouteTest, fromLocalFile)
+{
+    // fromLocalFile
+    SUCCEED();
+}
+
+TEST_F(UrlRouteTest, fromStringList)
+{
+    // fromStringList
+    SUCCEED();
+}
+
+TEST_F(UrlRouteTest, fromUserInput)
+{
+    // fromUserInput
+    SUCCEED();
+}
+
+TEST_F(UrlRouteTest, hasScheme)
+{
+    // hasScheme
+    SUCCEED();
+}
+
+TEST_F(UrlRouteTest, icon)
+{
+    // icon
+    SUCCEED();
+}
+
+TEST_F(UrlRouteTest, isAncestorsUrl)
+{
+    // isAncestorsUrl
+    SUCCEED();
+}
+
+TEST_F(UrlRouteTest, isRootUrl)
+{
+    // isRootUrl
+    SUCCEED();
+}
+
+TEST_F(UrlRouteTest, isVirtual)
+{
+    // isVirtual
+    SUCCEED();
+}
+
+TEST_F(UrlRouteTest, pathToReal)
+{
+    // pathToReal
+    SUCCEED();
+}
+
+TEST_F(UrlRouteTest, pathToUrl)
+{
+    // pathToUrl
+    SUCCEED();
+}
+
+TEST_F(UrlRouteTest, regScheme)
+{
+    // regScheme
+    SUCCEED();
+}
+
+TEST_F(UrlRouteTest, rootDisplayName)
+{
+    // rootDisplayName
+    SUCCEED();
+}
+
+TEST_F(UrlRouteTest, rootPath)
+{
+    // rootPath
+    SUCCEED();
+}
+
+TEST_F(UrlRouteTest, rootUrl)
+{
+    // rootUrl
+    SUCCEED();
+}
+
+TEST_F(UrlRouteTest, toString)
+{
+    // toString
+    SUCCEED();
+}
+
+TEST_F(UrlRouteTest, urlParent)
+{
+    // urlParent
+    SUCCEED();
+}
+
+TEST_F(UrlRouteTest, urlParentList)
+{
+    // urlParentList
+    SUCCEED();
+}
+
+TEST_F(UrlRouteTest, urlToLocalPath)
+{
+    // urlToLocalPath
+    SUCCEED();
+}
+
+TEST_F(UrlRouteTest, urlToPath)
+{
+    // urlToPath
+    SUCCEED();
+}

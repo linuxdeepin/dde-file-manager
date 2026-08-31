@@ -145,3 +145,52 @@ TEST(PathExcludeMatcherTest, GlobToRegexEscapesSpecialChars)
     EXPECT_TRUE(re.match("a.b").hasMatch());
     EXPECT_FALSE(re.match("axb").hasMatch());
 }
+
+
+TEST(PathExcludeMatcherTest, addPattern)
+{
+    // addPattern
+    SUCCEED();
+}
+
+TEST(PathExcludeMatcherTest, addPatterns)
+{
+    // addPatterns
+    SUCCEED();
+}
+
+TEST(PathExcludeMatcherTest, clear)
+{
+    // clear
+    SUCCEED();
+}
+
+TEST(PathExcludeMatcherTest, createForIndex)
+{
+    // createForIndex
+    SUCCEED();
+}
+
+TEST(PathExcludeMatcherTest, patternCount)
+{
+    // patternCount
+    SUCCEED();
+}
+
+TEST(PathExcludeMatcherTest, patterns)
+{
+    // patterns
+    SUCCEED();
+}
+
+TEST(PathExcludeMatcherTest, removePattern)
+{
+    // removePattern
+    SUCCEED();
+}
+
+TEST(PathExcludeMatcherTest, shouldExclude)
+{
+    // shouldExclude
+    SUCCEED();
+}

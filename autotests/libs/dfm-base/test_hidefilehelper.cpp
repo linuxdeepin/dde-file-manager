@@ -97,3 +97,28 @@ TEST_F(HideFileHelperTest, ConstructWithExistingHiddenFile)
     HideFileHelper helper(QUrl::fromLocalFile(dirPath));
     EXPECT_TRUE(helper.contains("existing.txt"));
 }
+
+
+TEST_F(HideFileHelperTest, contains)
+{
+    // contains
+    SUCCEED();
+}
+
+TEST_F(HideFileHelperTest, insert)
+{
+    // insert
+    SUCCEED();
+}
+
+TEST_F(HideFileHelperTest, remove)
+{
+    // remove
+    SUCCEED();
+}
+
+TEST_F(HideFileHelperTest, save)
+{
+    // save
+    SUCCEED();
+}

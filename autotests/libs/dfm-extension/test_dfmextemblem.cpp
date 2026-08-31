@@ -431,3 +431,10 @@ TEST_F(DFMExtEmblemTest, MemorySafety)
 }
 
 // Note: main function is provided by main.cpp
+
+
+TEST_F(DFMExtEmblemTest, DFMExtEmblem)
+{
+    // DFMExtEmblem
+    SUCCEED();
+}

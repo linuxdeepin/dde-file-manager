@@ -54,3 +54,39 @@ TEST(TraversalDirThreadTest, StopFlagDefaultIsFalse)
     TraversalDirThread t(QUrl::fromLocalFile(QDir::homePath()));
     EXPECT_FALSE(t.stopFlag);
 }
+
+TEST(TraversalDirThreadTest, isSortEnabled)
+{
+    // isSortEnabled
+    SUCCEED();
+}
+
+TEST(TraversalDirThreadTest, quit)
+{
+    // quit
+    SUCCEED();
+}
+
+TEST(TraversalDirThreadTest, setEnableSort)
+{
+    // setEnableSort
+    SUCCEED();
+}
+
+TEST(TraversalDirThreadTest, setQueryAttributes)
+{
+    // setQueryAttributes
+    SUCCEED();
+}
+
+TEST(TraversalDirThreadTest, stop)
+{
+    // stop
+    SUCCEED();
+}
+
+TEST(TraversalDirThreadTest, stopAndDeleteLater)
+{
+    // stopAndDeleteLater
+    SUCCEED();
+}

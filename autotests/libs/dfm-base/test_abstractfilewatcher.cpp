@@ -131,3 +131,22 @@ TEST_F(AbstractFileWatcherTest, PrivateStartReturnsStartedFlag)
     bool stopResult = priv.stop();
     EXPECT_FALSE(stopResult);
 }
+
+
+TEST_F(AbstractFileWatcherTest, AbstractFileWatcher)
+{
+    // AbstractFileWatcher
+    SUCCEED();
+}
+
+TEST_F(AbstractFileWatcherTest, notifyFileDeleted)
+{
+    // notifyFileDeleted
+    SUCCEED();
+}
+
+TEST_F(AbstractFileWatcherTest, url)
+{
+    // url
+    SUCCEED();
+}

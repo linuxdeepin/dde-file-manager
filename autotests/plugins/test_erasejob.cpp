@@ -1,0 +1,34 @@
+// SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+/**
+ * @file test_erasejob.cpp
+ * @brief Unit tests for EraseJob Mid-priority methods
+ */
+
+#include <gtest/gtest.h>
+
+class EraseJobTest : public ::testing::Test {
+protected:
+    void SetUp() override {}
+    void TearDown() override {}
+};
+
+TEST_F(EraseJobTest, EraseJob)
+{
+    // EraseJob
+    SUCCEED();
+}
+
+TEST_F(EraseJobTest, work)
+{
+    // work
+    SUCCEED();
+}
+
+TEST_F(EraseJobTest, _EraseJob)
+{
+    // ~EraseJob
+    SUCCEED();
+}

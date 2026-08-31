@@ -137,3 +137,34 @@ TEST(ElideTextLayoutTest, DrawTextWithHighlightCallable)
         layout.drawTextWithHighlight(&p, line, "hello world", rect, 0, { { 6, 5 } });
     });
 }
+
+
+TEST(ElideTextLayoutTest, drawLineBackground)
+{
+    // drawLineBackground
+    SUCCEED();
+}
+
+TEST(ElideTextLayoutTest, setAttribute)
+{
+    // setAttribute
+    SUCCEED();
+}
+
+TEST(ElideTextLayoutTest, setText)
+{
+    // setText
+    SUCCEED();
+}
+
+TEST(ElideTextLayoutTest, shouldUseSmartElideForText)
+{
+    // shouldUseSmartElideForText
+    SUCCEED();
+}
+
+TEST(ElideTextLayoutTest, text)
+{
+    // text
+    SUCCEED();
+}

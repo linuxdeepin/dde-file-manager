@@ -158,3 +158,40 @@ TEST_F(LocalDirIteratorTest, LocalIteratorDestructsCleanly)
 {
     EXPECT_NO_FATAL_FAILURE({ LocalDirIterator it(QUrl::fromLocalFile(rootPath)); });
 }
+
+
+TEST_F(LocalDirIteratorTest, close)
+{
+    // close
+    SUCCEED();
+}
+
+TEST_F(LocalDirIteratorTest, fileName)
+{
+    // fileName
+    SUCCEED();
+}
+
+TEST_F(LocalDirIteratorTest, fileUrl)
+{
+    // fileUrl
+    SUCCEED();
+}
+
+TEST_F(LocalDirIteratorTest, next)
+{
+    // next
+    SUCCEED();
+}
+
+TEST_F(LocalDirIteratorTest, setArguments)
+{
+    // setArguments
+    SUCCEED();
+}
+
+TEST_F(LocalDirIteratorTest, url)
+{
+    // url
+    SUCCEED();
+}

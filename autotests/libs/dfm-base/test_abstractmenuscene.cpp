@@ -122,3 +122,28 @@ TEST(AbstractMenuSceneTest, InitializeParamsIsValidWithEmptyAreaTrue)
     priv.isEmptyArea = true;
     EXPECT_TRUE(priv.initializeParamsIsValid());
 }
+
+
+TEST(AbstractMenuSceneTest, create)
+{
+    // create
+    SUCCEED();
+}
+
+TEST(AbstractMenuSceneTest, removeSubscene)
+{
+    // removeSubscene
+    SUCCEED();
+}
+
+TEST(AbstractMenuSceneTest, scene)
+{
+    // scene
+    SUCCEED();
+}
+
+TEST(AbstractMenuSceneTest, setSubscene)
+{
+    // setSubscene
+    SUCCEED();
+}

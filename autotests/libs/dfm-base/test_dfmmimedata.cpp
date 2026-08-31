@@ -98,3 +98,82 @@ TEST_F(DFMMimeDataTest, VersionString)
     QString v = data.version();
     EXPECT_FALSE(v.isEmpty());
 }
+
+
+TEST_F(DFMMimeDataTest, attritube)
+{
+    // attritube
+    SUCCEED();
+}
+
+TEST_F(DFMMimeDataTest, canDelete)
+{
+    // canDelete
+    SUCCEED();
+}
+
+TEST_F(DFMMimeDataTest, canTrash)
+{
+    // canTrash
+    SUCCEED();
+}
+
+TEST_F(DFMMimeDataTest, clear)
+{
+    // clear
+    SUCCEED();
+}
+
+TEST_F(DFMMimeDataTest, fromByteArray)
+{
+    // fromByteArray
+    SUCCEED();
+}
+
+TEST_F(DFMMimeDataTest, isTrashFile)
+{
+    // isTrashFile
+    SUCCEED();
+}
+
+TEST_F(DFMMimeDataTest, isValid)
+{
+    // isValid
+    SUCCEED();
+}
+
+TEST_F(DFMMimeDataTest, setAttritube)
+{
+    // setAttritube
+    SUCCEED();
+}
+
+TEST_F(DFMMimeDataTest, setUrls)
+{
+    // setUrls
+    SUCCEED();
+}
+
+TEST_F(DFMMimeDataTest, swap)
+{
+    // swap
+    SUCCEED();
+}
+
+TEST_F(DFMMimeDataTest, toByteArray)
+{
+    // toByteArray
+    SUCCEED();
+}
+
+TEST_F(DFMMimeDataTest, urls)
+{
+    // urls
+    SUCCEED();
+}
+
+TEST_F(DFMMimeDataTest, version)
+{
+    // version
+    SUCCEED();
+}

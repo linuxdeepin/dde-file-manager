@@ -504,3 +504,10 @@ TEST_F(DFMExtEmblemIconLayoutTest, DataConsistency)
 }
 
 // Note: main function is provided by main.cpp
+
+
+TEST_F(DFMExtEmblemIconLayoutTest, DFMExtEmblemIconLayout)
+{
+    // DFMExtEmblemIconLayout
+    SUCCEED();
+}

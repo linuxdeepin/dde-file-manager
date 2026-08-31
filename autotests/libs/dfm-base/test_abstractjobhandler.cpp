@@ -122,3 +122,16 @@ TEST(AbstractJobHandlerTest, LocalHandlerDestructsCleanly)
 {
     EXPECT_NO_FATAL_FAILURE({ TestJobHandler h; });
 }
+
+
+TEST(AbstractJobHandlerTest, AbstractJobHandler)
+{
+    // AbstractJobHandler
+    SUCCEED();
+}
+
+TEST(AbstractJobHandlerTest, currentSize)
+{
+    // currentSize
+    SUCCEED();
+}

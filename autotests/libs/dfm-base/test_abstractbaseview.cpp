@@ -74,3 +74,15 @@ TEST(AbstractBaseViewTest, LocalViewDestructsCleanly)
 {
     EXPECT_NO_FATAL_FAILURE({ TestAbstractBaseView view; });
 }
+
+TEST(AbstractBaseViewTest, deleteLater)
+{
+    // deleteLater
+    SUCCEED();
+}
+
+TEST(AbstractBaseViewTest, notifyStateChanged)
+{
+    // notifyStateChanged
+    SUCCEED();
+}

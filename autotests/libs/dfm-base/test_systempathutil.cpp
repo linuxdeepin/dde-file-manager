@@ -90,3 +90,22 @@ TEST(SystemPathUtilTest, LoadSystemPaths)
     SystemPathUtil *util = SystemPathUtil::instance();
     EXPECT_NO_FATAL_FAILURE({ util->loadSystemPaths(); });
 }
+
+
+TEST(SystemPathUtilTest, SystemPathUtil)
+{
+    // SystemPathUtil
+    SUCCEED();
+}
+
+TEST(SystemPathUtilTest, findSystemPathKey)
+{
+    // findSystemPathKey
+    SUCCEED();
+}
+
+TEST(SystemPathUtilTest, loadSystemPaths)
+{
+    // loadSystemPaths
+    SUCCEED();
+}

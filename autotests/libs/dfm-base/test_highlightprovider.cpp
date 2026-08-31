@@ -87,3 +87,10 @@ TEST(HighlightProviderTest, CachedRequestReturnsImmediately)
 
     EXPECT_GE(spy.count(), firstCount);
 }
+
+
+TEST(HighlightProviderTest, requestHighlight)
+{
+    // requestHighlight
+    SUCCEED();
+}

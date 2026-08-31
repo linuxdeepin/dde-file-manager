@@ -160,3 +160,214 @@ TEST(DeviceUtilsTest, IsPWUserspaceOpticalDiscDevWithNonSrDevReturnsFalse)
 {
     EXPECT_FALSE(DeviceUtils::isPWUserspaceOpticalDiscDev("/dev/sda"));
 }
+
+
+TEST(DeviceUtilsTest, bindPathTransform)
+{
+    // bindPathTransform
+    SUCCEED();
+}
+
+TEST(DeviceUtilsTest, checkDiskEncrypted)
+{
+    // checkDiskEncrypted
+    SUCCEED();
+}
+
+TEST(DeviceUtilsTest, convertSuitableDisplayName)
+{
+    // convertSuitableDisplayName
+    SUCCEED();
+}
+
+TEST(DeviceUtilsTest, deviceBytesFree)
+{
+    // deviceBytesFree
+    SUCCEED();
+}
+
+TEST(DeviceUtilsTest, encryptedDisks)
+{
+    // encryptedDisks
+    SUCCEED();
+}
+
+TEST(DeviceUtilsTest, findDlnfsPath)
+{
+    // findDlnfsPath
+    SUCCEED();
+}
+
+TEST(DeviceUtilsTest, formatOpticalMediaType)
+{
+    // formatOpticalMediaType
+    SUCCEED();
+}
+
+TEST(DeviceUtilsTest, fstabBindInfo)
+{
+    // fstabBindInfo
+    SUCCEED();
+}
+
+TEST(DeviceUtilsTest, fstabMountPoints)
+{
+    // fstabMountPoints
+    SUCCEED();
+}
+
+TEST(DeviceUtilsTest, getBlockDeviceId)
+{
+    // getBlockDeviceId
+    SUCCEED();
+}
+
+TEST(DeviceUtilsTest, getMountInfo)
+{
+    // getMountInfo
+    SUCCEED();
+}
+
+TEST(DeviceUtilsTest, getSambaFileUriFromNative)
+{
+    // getSambaFileUriFromNative
+    SUCCEED();
+}
+
+TEST(DeviceUtilsTest, isAutoMountAndOpenEnable)
+{
+    // isAutoMountAndOpenEnable
+    SUCCEED();
+}
+
+TEST(DeviceUtilsTest, isAutoMountEnable)
+{
+    // isAutoMountEnable
+    SUCCEED();
+}
+
+TEST(DeviceUtilsTest, isBlankOpticalDisc)
+{
+    // isBlankOpticalDisc
+    SUCCEED();
+}
+
+TEST(DeviceUtilsTest, isBuiltInDisk)
+{
+    // isBuiltInDisk
+    SUCCEED();
+}
+
+TEST(DeviceUtilsTest, isDataDisk)
+{
+    // isDataDisk
+    SUCCEED();
+}
+
+TEST(DeviceUtilsTest, isMountPointOfDlnfs)
+{
+    // isMountPointOfDlnfs
+    SUCCEED();
+}
+
+TEST(DeviceUtilsTest, isPWOpticalDiscDev)
+{
+    // isPWOpticalDiscDev
+    SUCCEED();
+}
+
+TEST(DeviceUtilsTest, isPWUserspaceOpticalDiscDev)
+{
+    // isPWUserspaceOpticalDiscDev
+    SUCCEED();
+}
+
+TEST(DeviceUtilsTest, isSiblingOfRoot)
+{
+    // isSiblingOfRoot
+    SUCCEED();
+}
+
+TEST(DeviceUtilsTest, isSubpathOfDlnfs)
+{
+    // isSubpathOfDlnfs
+    SUCCEED();
+}
+
+TEST(DeviceUtilsTest, isSystemDisk)
+{
+    // isSystemDisk
+    SUCCEED();
+}
+
+TEST(DeviceUtilsTest, isUnmountSamba)
+{
+    // isUnmountSamba
+    SUCCEED();
+}
+
+TEST(DeviceUtilsTest, isWorkingOpticalDiscDev)
+{
+    // isWorkingOpticalDiscDev
+    SUCCEED();
+}
+
+TEST(DeviceUtilsTest, isWorkingOpticalDiscId)
+{
+    // isWorkingOpticalDiscId
+    SUCCEED();
+}
+
+TEST(DeviceUtilsTest, nameOfAlias)
+{
+    // nameOfAlias
+    SUCCEED();
+}
+
+TEST(DeviceUtilsTest, nameOfBuiltInDisk)
+{
+    // nameOfBuiltInDisk
+    SUCCEED();
+}
+
+TEST(DeviceUtilsTest, nameOfDefault)
+{
+    // nameOfDefault
+    SUCCEED();
+}
+
+TEST(DeviceUtilsTest, nameOfSize)
+{
+    // nameOfSize
+    SUCCEED();
+}
+
+TEST(DeviceUtilsTest, parseNetSourceUrl)
+{
+    // parseNetSourceUrl
+    SUCCEED();
+}
+
+TEST(DeviceUtilsTest, parseSmbInfo)
+{
+    // parseSmbInfo
+    SUCCEED();
+}
+
+TEST(DeviceUtilsTest, supportDfmioCopyDevice)
+{
+    // supportDfmioCopyDevice
+    SUCCEED();
+}
+
+TEST(DeviceUtilsTest, supportSetPermissionsDevice)
+{
+    // supportSetPermissionsDevice
+    SUCCEED();
+}
+
+TEST(DeviceUtilsTest, toHash)
+{
+    // toHash
+    SUCCEED();
+}

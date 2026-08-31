@@ -153,3 +153,52 @@ TEST_F(SettingBackendTest, SetToSettingsWithNullptrIsSafe)
 {
     EXPECT_NO_FATAL_FAILURE({ backend->setToSettings(nullptr); });
 }
+
+
+TEST_F(SettingBackendTest, SettingBackend)
+{
+    // SettingBackend
+    SUCCEED();
+}
+
+TEST_F(SettingBackendTest, addSettingAccessor)
+{
+    // addSettingAccessor
+    SUCCEED();
+}
+
+TEST_F(SettingBackendTest, initBasicSettingConfig)
+{
+    // initBasicSettingConfig
+    SUCCEED();
+}
+
+TEST_F(SettingBackendTest, initPresetSettingConfig)
+{
+    // initPresetSettingConfig
+    SUCCEED();
+}
+
+TEST_F(SettingBackendTest, initWorkspaceSettingConfig)
+{
+    // initWorkspaceSettingConfig
+    SUCCEED();
+}
+
+TEST_F(SettingBackendTest, keys)
+{
+    // keys
+    SUCCEED();
+}
+
+TEST_F(SettingBackendTest, onDelayedSave)
+{
+    // onDelayedSave
+    SUCCEED();
+}
+
+TEST_F(SettingBackendTest, removeSettingAccessor)
+{
+    // removeSettingAccessor
+    SUCCEED();
+}

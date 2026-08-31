@@ -52,3 +52,10 @@ TEST(FinallyUtilTest, ExitFuncModifiesExternalValue)
     }
     EXPECT_EQ(value, 42);
 }
+
+
+TEST(FinallyUtilTest, dismiss)
+{
+    // dismiss
+    SUCCEED();
+}

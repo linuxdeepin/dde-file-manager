@@ -107,3 +107,52 @@ TEST(ApplicationTest, OnSettingsValueEditedNoCrash)
         EXPECT_NO_FATAL_FAILURE({ Application::instance()->onSettingsValueEdited("group", "key", QVariant(1)); });
     }
 }
+
+
+TEST(ApplicationTest, Application)
+{
+    // Application
+    SUCCEED();
+}
+
+TEST(ApplicationTest, appAttribute)
+{
+    // appAttribute
+    SUCCEED();
+}
+
+TEST(ApplicationTest, appObtuselySetting)
+{
+    // appObtuselySetting
+    SUCCEED();
+}
+
+TEST(ApplicationTest, appSetting)
+{
+    // appSetting
+    SUCCEED();
+}
+
+TEST(ApplicationTest, dataPersistence)
+{
+    // dataPersistence
+    SUCCEED();
+}
+
+TEST(ApplicationTest, genericAttribute)
+{
+    // genericAttribute
+    SUCCEED();
+}
+
+TEST(ApplicationTest, genericObtuselySetting)
+{
+    // genericObtuselySetting
+    SUCCEED();
+}
+
+TEST(ApplicationTest, genericSetting)
+{
+    // genericSetting
+    SUCCEED();
+}

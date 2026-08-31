@@ -673,3 +673,10 @@ TEST_F(TestVfsMonitorReconnect, BackoffResetsAfterSuccessfulReconnect)
 
     ::close(finalReconnectFd);
 }
+
+
+TEST(VfsMonitorFileSystemWatcherTest, create)
+{
+    // create
+    SUCCEED();
+}

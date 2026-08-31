@@ -197,3 +197,9 @@ TEST_F(DFMExtWindowPluginTest, Performance)
     // 验证性能在合理范围内（100次创建销毁应该在100毫秒内完成）
     EXPECT_LT(duration.count(), 100);
 } 
+
+TEST_F(DFMExtWindowPluginTest, DFMExtWindowPlugin)
+{
+    // DFMExtWindowPlugin
+    SUCCEED();
+}

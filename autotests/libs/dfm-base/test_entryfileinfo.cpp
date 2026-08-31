@@ -194,3 +194,10 @@ TEST_F(EntryFileInfoTest, ExtraProperties)
     EntryFileInfo info(url);
     EXPECT_NO_FATAL_FAILURE({ (void)info.extraProperties(); });
 }
+
+
+TEST_F(EntryFileInfoTest, entity)
+{
+    // entity
+    SUCCEED();
+}

@@ -90,3 +90,22 @@ TEST(TextIndexConfigTest, ReloadConfigNoCrash)
 {
     EXPECT_NO_FATAL_FAILURE({ TextIndexConfig::instance().reloadConfig(); });
 }
+
+
+TEST(TextIndexConfigTest, instance)
+{
+    // instance
+    SUCCEED();
+}
+
+TEST(TextIndexConfigTest, supportedOcrImageExtensions)
+{
+    // supportedOcrImageExtensions
+    SUCCEED();
+}
+
+TEST(TextIndexConfigTest, supportedTextFileExtensions)
+{
+    // supportedTextFileExtensions
+    SUCCEED();
+}

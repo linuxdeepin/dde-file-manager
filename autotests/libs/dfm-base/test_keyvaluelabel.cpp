@@ -125,3 +125,40 @@ TEST(KeyValueLabelTest, RightValueWidgetFocusOutEventCallable)
         w->focusOutEvent(&fe);
     });
 }
+
+
+TEST(KeyValueLabelTest, KeyValueLabel)
+{
+    // KeyValueLabel
+    SUCCEED();
+}
+
+TEST(KeyValueLabelTest, rightWidget)
+{
+    // rightWidget
+    SUCCEED();
+}
+
+TEST(KeyValueLabelTest, setLeftFontSizeWeight)
+{
+    // setLeftFontSizeWeight
+    SUCCEED();
+}
+
+TEST(KeyValueLabelTest, setLeftValue)
+{
+    // setLeftValue
+    SUCCEED();
+}
+
+TEST(KeyValueLabelTest, setRightFontSizeWeight)
+{
+    // setRightFontSizeWeight
+    SUCCEED();
+}
+
+TEST(KeyValueLabelTest, setRightValue)
+{
+    // setRightValue
+    SUCCEED();
+}

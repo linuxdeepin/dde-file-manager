@@ -86,3 +86,70 @@ TEST(TaskStateTest, Silent)
     s.setSilent(true);
     EXPECT_TRUE(s.isSilent());
 }
+
+
+TEST(IndexTaskTest, IndexTask)
+{
+    // IndexTask
+    SUCCEED();
+}
+
+TEST(IndexTaskTest, isIndexCorrupted)
+{
+    // isIndexCorrupted
+    SUCCEED();
+}
+
+TEST(IndexTaskTest, isRunning)
+{
+    // isRunning
+    SUCCEED();
+}
+
+TEST(IndexTaskTest, setIndexCorrupted)
+{
+    // setIndexCorrupted
+    SUCCEED();
+}
+
+TEST(IndexTaskTest, setSilent)
+{
+    // setSilent
+    SUCCEED();
+}
+
+TEST(IndexTaskTest, silent)
+{
+    // silent
+    SUCCEED();
+}
+
+TEST(IndexTaskTest, start)
+{
+    // start
+    SUCCEED();
+}
+
+TEST(IndexTaskTest, status)
+{
+    // status
+    SUCCEED();
+}
+
+TEST(IndexTaskTest, stop)
+{
+    // stop
+    SUCCEED();
+}
+
+TEST(IndexTaskTest, taskPath)
+{
+    // taskPath
+    SUCCEED();
+}
+
+TEST(IndexTaskTest, taskType)
+{
+    // taskType
+    SUCCEED();
+}

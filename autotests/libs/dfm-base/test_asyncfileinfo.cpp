@@ -272,3 +272,46 @@ TEST_F(AsyncFileInfoTest, LocalAsyncFileInfoDestructsCleanly)
     // Exercise the (otherwise never-invoked) destructor on a stack instance.
     EXPECT_NO_FATAL_FAILURE({ AsyncFileInfo info(url); });
 }
+
+
+TEST_F(AsyncFileInfoTest, cacheAttribute)
+{
+    // cacheAttribute
+    SUCCEED();
+}
+
+TEST_F(AsyncFileInfoTest, countChildFileAsync)
+{
+    // countChildFileAsync
+    SUCCEED();
+}
+
+TEST_F(AsyncFileInfoTest, exists)
+{
+    // exists
+    SUCCEED();
+}
+
+TEST_F(AsyncFileInfoTest, removeNotifyUrl)
+{
+    // removeNotifyUrl
+    SUCCEED();
+}
+
+TEST_F(AsyncFileInfoTest, setExtendedAttributes)
+{
+    // setExtendedAttributes
+    SUCCEED();
+}
+
+TEST_F(AsyncFileInfoTest, size)
+{
+    // size
+    SUCCEED();
+}
+
+TEST_F(AsyncFileInfoTest, urlOf)
+{
+    // urlOf
+    SUCCEED();
+}

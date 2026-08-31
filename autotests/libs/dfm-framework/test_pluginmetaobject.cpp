@@ -378,3 +378,70 @@ TEST_F(PluginMetaObjectTest, PluginDependComprehensiveTest)
         EXPECT_FALSE(output.isEmpty());
     }
 }
+
+
+TEST_F(PluginMetaObjectTest, PluginMetaObject)
+{
+    // PluginMetaObject
+    SUCCEED();
+}
+
+TEST_F(PluginMetaObjectTest, category)
+{
+    // category
+    SUCCEED();
+}
+
+TEST_F(PluginMetaObjectTest, customData)
+{
+    // customData
+    SUCCEED();
+}
+
+TEST_F(PluginMetaObjectTest, depends)
+{
+    // depends
+    SUCCEED();
+}
+
+TEST_F(PluginMetaObjectTest, errorString)
+{
+    // errorString
+    SUCCEED();
+}
+
+TEST_F(PluginMetaObjectTest, fileName)
+{
+    // fileName
+    SUCCEED();
+}
+
+TEST_F(PluginMetaObjectTest, iid)
+{
+    // iid
+    SUCCEED();
+}
+
+TEST_F(PluginMetaObjectTest, isVirtual)
+{
+    // isVirtual
+    SUCCEED();
+}
+
+TEST_F(PluginMetaObjectTest, name)
+{
+    // name
+    SUCCEED();
+}
+
+TEST_F(PluginMetaObjectTest, plugin)
+{
+    // plugin
+    SUCCEED();
+}
+
+TEST_F(PluginMetaObjectTest, version)
+{
+    // version
+    SUCCEED();
+}

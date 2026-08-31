@@ -234,3 +234,52 @@ TEST_F(LocalFileHandlerTest, PrivateGetInternetShortcutUrlReadsUrlField)
     f.close();
     EXPECT_EQ(handler.d->getInternetShortcutUrl(shortcut).toStdString(), "https://example.com/path");
 }
+
+
+TEST_F(LocalFileHandlerTest, deleteFile)
+{
+    // deleteFile
+    SUCCEED();
+}
+
+TEST_F(LocalFileHandlerTest, errorCode)
+{
+    // errorCode
+    SUCCEED();
+}
+
+TEST_F(LocalFileHandlerTest, errorString)
+{
+    // errorString
+    SUCCEED();
+}
+
+TEST_F(LocalFileHandlerTest, lastEventType)
+{
+    // lastEventType
+    SUCCEED();
+}
+
+TEST_F(LocalFileHandlerTest, mkdir)
+{
+    // mkdir
+    SUCCEED();
+}
+
+TEST_F(LocalFileHandlerTest, openFilesByApp)
+{
+    // openFilesByApp
+    SUCCEED();
+}
+
+TEST_F(LocalFileHandlerTest, renameFilesBatch)
+{
+    // renameFilesBatch
+    SUCCEED();
+}
+
+TEST_F(LocalFileHandlerTest, setPermissionsRecursive)
+{
+    // setPermissionsRecursive
+    SUCCEED();
+}

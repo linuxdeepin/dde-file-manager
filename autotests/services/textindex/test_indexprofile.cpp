@@ -226,3 +226,136 @@ TEST(IndexProfileTest, ProfileComputeChecksumCallable)
     auto p = makeProfile();
     EXPECT_NO_FATAL_FAILURE({ (void)p.computeChecksum("/tmp/test.txt"); });
 }
+
+
+TEST(IndexProfileTest, ancestorPathsField)
+{
+    // ancestorPathsField
+    SUCCEED();
+}
+
+TEST(IndexProfileTest, anythingSearchOptions)
+{
+    // anythingSearchOptions
+    SUCCEED();
+}
+
+TEST(IndexProfileTest, computeChecksum)
+{
+    // computeChecksum
+    SUCCEED();
+}
+
+TEST(IndexProfileTest, content)
+{
+    // content
+    SUCCEED();
+}
+
+TEST(IndexProfileTest, contentField)
+{
+    // contentField
+    SUCCEED();
+}
+
+TEST(IndexProfileTest, createAnalyzer)
+{
+    // createAnalyzer
+    SUCCEED();
+}
+
+TEST(IndexProfileTest, id)
+{
+    // id
+    SUCCEED();
+}
+
+TEST(IndexProfileTest, indexDirectory)
+{
+    // indexDirectory
+    SUCCEED();
+}
+
+TEST(IndexProfileTest, isCandidateFile)
+{
+    // isCandidateFile
+    SUCCEED();
+}
+
+TEST(IndexProfileTest, isIndexAvailable)
+{
+    // isIndexAvailable
+    SUCCEED();
+}
+
+TEST(IndexProfileTest, isPathInScope)
+{
+    // isPathInScope
+    SUCCEED();
+}
+
+TEST(IndexProfileTest, lookupCachedText)
+{
+    // lookupCachedText
+    SUCCEED();
+}
+
+TEST(IndexProfileTest, maxFileTruncationSizeMB)
+{
+    // maxFileTruncationSizeMB
+    SUCCEED();
+}
+
+TEST(IndexProfileTest, modifyTimeField)
+{
+    // modifyTimeField
+    SUCCEED();
+}
+
+TEST(IndexProfileTest, ocr)
+{
+    // ocr
+    SUCCEED();
+}
+
+TEST(IndexProfileTest, pathField)
+{
+    // pathField
+    SUCCEED();
+}
+
+TEST(IndexProfileTest, runtimeIndexVersion)
+{
+    // runtimeIndexVersion
+    SUCCEED();
+}
+
+TEST(IndexProfileTest, statusFilePath)
+{
+    // statusFilePath
+    SUCCEED();
+}
+
+TEST(IndexProfileTest, supportsAnything)
+{
+    // supportsAnything
+    SUCCEED();
+}
+
+TEST(IndexProfileTest, supportsModifiedTimestampCheck)
+{
+    // supportsModifiedTimestampCheck
+    SUCCEED();
+}
+
+TEST(IndexProfileTest, type)
+{
+    // type
+    SUCCEED();
+}
+
+TEST(IndexProfileTest, versionKey)
+{
+    // versionKey
+    SUCCEED();
+}

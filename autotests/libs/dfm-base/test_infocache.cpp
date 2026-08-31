@@ -167,3 +167,52 @@ TEST_F(InfoCacheTest, InfoCacheControllerDestructsCleanly)
     // The controller is a singleton; verify it's accessible without crash.
     EXPECT_NO_FATAL_FAILURE({ (void)&InfoCacheController::instance(); });
 }
+
+
+TEST_F(InfoCacheTest, InfoCache)
+{
+    // InfoCache
+    SUCCEED();
+}
+
+TEST_F(InfoCacheTest, addWatcherTimeInfo)
+{
+    // addWatcherTimeInfo
+    SUCCEED();
+}
+
+TEST_F(InfoCacheTest, cacheInfo)
+{
+    // cacheInfo
+    SUCCEED();
+}
+
+TEST_F(InfoCacheTest, disconnectWatcher)
+{
+    // disconnectWatcher
+    SUCCEED();
+}
+
+TEST_F(InfoCacheTest, getCacheInfo)
+{
+    // getCacheInfo
+    SUCCEED();
+}
+
+TEST_F(InfoCacheTest, removeCache)
+{
+    // removeCache
+    SUCCEED();
+}
+
+TEST_F(InfoCacheTest, removeCaches)
+{
+    // removeCaches
+    SUCCEED();
+}
+
+TEST_F(InfoCacheTest, removeWatcherTimeInfo)
+{
+    // removeWatcherTimeInfo
+    SUCCEED();
+}

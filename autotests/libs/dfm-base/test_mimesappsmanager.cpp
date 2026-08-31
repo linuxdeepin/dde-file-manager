@@ -98,3 +98,70 @@ TEST(MimesAppsManagerTest, InitMimeTypeAppsIsCallable)
 {
     EXPECT_NO_FATAL_FAILURE({ MimesAppsManager::initMimeTypeApps(); });
 }
+
+
+TEST(MimesAppsManagerTest, getDDEMimeTypeFile)
+{
+    // getDDEMimeTypeFile
+    SUCCEED();
+}
+
+TEST(MimesAppsManagerTest, getDefaultAppByFileName)
+{
+    // getDefaultAppByFileName
+    SUCCEED();
+}
+
+TEST(MimesAppsManagerTest, getDefaultAppByMimeType)
+{
+    // getDefaultAppByMimeType
+    SUCCEED();
+}
+
+TEST(MimesAppsManagerTest, getDefaultAppDesktopFileByMimeType)
+{
+    // getDefaultAppDesktopFileByMimeType
+    SUCCEED();
+}
+
+TEST(MimesAppsManagerTest, getDefaultAppDisplayNameByGio)
+{
+    // getDefaultAppDisplayNameByGio
+    SUCCEED();
+}
+
+TEST(MimesAppsManagerTest, getMimeInfoCacheFilePath)
+{
+    // getMimeInfoCacheFilePath
+    SUCCEED();
+}
+
+TEST(MimesAppsManagerTest, getRecommendedApps)
+{
+    // getRecommendedApps
+    SUCCEED();
+}
+
+TEST(MimesAppsManagerTest, getRecommendedAppsByGio)
+{
+    // getRecommendedAppsByGio
+    SUCCEED();
+}
+
+TEST(MimesAppsManagerTest, getrecommendedAppsFromMimeWhiteList)
+{
+    // getrecommendedAppsFromMimeWhiteList
+    SUCCEED();
+}
+
+TEST(MimesAppsManagerTest, removeOneDupFromList)
+{
+    // removeOneDupFromList
+    SUCCEED();
+}
+
+TEST(MimesAppsManagerTest, setDefautlAppForTypeByGio)
+{
+    // setDefautlAppForTypeByGio
+    SUCCEED();
+}

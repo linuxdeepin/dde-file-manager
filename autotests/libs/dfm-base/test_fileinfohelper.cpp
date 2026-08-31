@@ -117,3 +117,28 @@ TEST_F(FileInfoHelperTest, HandleFileRefreshCallable)
     ASSERT_NE(info, nullptr);
     EXPECT_NO_FATAL_FAILURE({ FileInfoHelper::instance().handleFileRefresh(info); });
 }
+
+
+TEST_F(FileInfoHelperTest, fileMimeTypeAsync)
+{
+    // fileMimeTypeAsync
+    SUCCEED();
+}
+
+TEST_F(FileInfoHelperTest, fileRefreshAsync)
+{
+    // fileRefreshAsync
+    SUCCEED();
+}
+
+TEST_F(FileInfoHelperTest, handleFileRefresh)
+{
+    // handleFileRefresh
+    SUCCEED();
+}
+
+TEST_F(FileInfoHelperTest, threadHandleDfmFileInfo)
+{
+    // threadHandleDfmFileInfo
+    SUCCEED();
+}

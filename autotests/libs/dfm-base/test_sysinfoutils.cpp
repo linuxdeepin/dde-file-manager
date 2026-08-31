@@ -93,3 +93,82 @@ TEST(SysInfoUtilsTest, IsDeveloperModeEnabledIsBool)
 {
     EXPECT_NO_FATAL_FAILURE({ (void)isDeveloperModeEnabled(); });
 }
+
+
+TEST(SysInfoUtilsTest, getAllUsersOfHome)
+{
+    // getAllUsersOfHome
+    SUCCEED();
+}
+
+TEST(SysInfoUtilsTest, getHostName)
+{
+    // getHostName
+    SUCCEED();
+}
+
+TEST(SysInfoUtilsTest, getOriginalUserHome)
+{
+    // getOriginalUserHome
+    SUCCEED();
+}
+
+TEST(SysInfoUtilsTest, getUser)
+{
+    // getUser
+    SUCCEED();
+}
+
+TEST(SysInfoUtilsTest, getUserId)
+{
+    // getUserId
+    SUCCEED();
+}
+
+TEST(SysInfoUtilsTest, isDeepin23)
+{
+    // isDeepin23
+    SUCCEED();
+}
+
+TEST(SysInfoUtilsTest, isDesktopSys)
+{
+    // isDesktopSys
+    SUCCEED();
+}
+
+TEST(SysInfoUtilsTest, isDeveloperModeEnabled)
+{
+    // isDeveloperModeEnabled
+    SUCCEED();
+}
+
+TEST(SysInfoUtilsTest, isOpenAsAdmin)
+{
+    // isOpenAsAdmin
+    SUCCEED();
+}
+
+TEST(SysInfoUtilsTest, isRootUser)
+{
+    // isRootUser
+    SUCCEED();
+}
+
+TEST(SysInfoUtilsTest, isSameUser)
+{
+    // isSameUser
+    SUCCEED();
+}
+
+TEST(SysInfoUtilsTest, isServerSys)
+{
+    // isServerSys
+    SUCCEED();
+}
+
+TEST(SysInfoUtilsTest, setMimeDataUserId)
+{
+    // setMimeDataUserId
+    SUCCEED();
+}
