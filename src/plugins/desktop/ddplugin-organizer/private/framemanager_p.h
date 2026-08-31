@@ -31,6 +31,8 @@ public:
     void layoutSurface(QWidget *root, SurfacePointer surface, bool hidden = false);
     void buildOrganizer();
     QList<SurfacePointer> surfaces() const;
+    // resize every surface to its root window's current geometry
+    void relayoutSurfaces();
 
 public slots:
     void refeshCanvas();
