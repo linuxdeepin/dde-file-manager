@@ -792,8 +792,20 @@ int crypt_setup_helper::getToken(const QString &dev, QString *token)
     struct crypt_device *cdev { nullptr };
     dfmbase::FinallyUtil atFinish([&] {if (cdev) crypt_free(cdev); });
 
-    int r = crypt_init(&cdev,
+    int r = 0;
+    QString detachHeader;
+    r = genDetachHeaderPath(dev, &detachHeader);
+    if (r < 0)
+        return r;
+
+    if (QFile(detachHeader).exists()) {
+        r = crypt_init_data_device(&cdev,
+                                   detachHeader.toStdString().c_str(),
+                                   dev.toStdString().c_str());
+    } else {
+        r = crypt_init(&cdev,
                        dev.toStdString().c_str());
+    }
     if (r < 0) {
         qCritical() << "[crypt_setup_helper::getToken] Cannot initialize crypt device, device:" << dev << "error:" << r << " (" << strerror(-r) << ")";
         return -disk_encrypt::kErrorInitCrypt;
