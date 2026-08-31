@@ -506,13 +506,13 @@ QWidget *TaskWidget::createConflictWidget()
     conflictMainLayout->addWidget(lbSrcIcon, 0, 0, 2, 1, Qt::AlignVCenter);
     conflictMainLayout->addWidget(lbSrcTitle, 0, 1, 1, 2, Qt::AlignVCenter);
     conflictMainLayout->addWidget(lbSrcModTime, 1, 1, Qt::AlignVCenter);
-    conflictMainLayout->addWidget(lbSrcFileSize, 1, 2, Qt::AlignVCenter);
+    conflictMainLayout->addWidget(lbSrcFileSize, 1, 2, Qt::AlignVCenter | Qt::AlignRight);
 
     if (createDestLabels) {
         conflictMainLayout->addWidget(lbDstIcon, 2, 0, 2, 1, Qt::AlignVCenter);
         conflictMainLayout->addWidget(lbDstTitle, 2, 1, 1, 2, Qt::AlignVCenter);
         conflictMainLayout->addWidget(lbDstModTime, 3, 1, Qt::AlignVCenter);
-        conflictMainLayout->addWidget(lbDstFileSize, 3, 2, Qt::AlignVCenter);
+        conflictMainLayout->addWidget(lbDstFileSize, 3, 2, Qt::AlignVCenter | Qt::AlignRight);
     }
 
     conflictMainLayout->setHorizontalSpacing(4);
