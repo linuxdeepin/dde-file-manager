@@ -136,6 +136,24 @@ bool TaskManager::startTask(IndexTask::Type type, const QStringList &pathList,
     // 获取第一个路径作为任务的主路径（用于日志和进度通知）
     QString primaryPath = pathList.first();
 
+    // Create 任务的 createInProgress 标记必须在入队检查之前完成，否则当任务被环境
+    // 阻塞入队时，服务重启后队列丢失，恢复逻辑会误判为 Light 级 Update。
+    //
+    // 注意：此处不调用 saveIndexStatus() 写入版本号。版本号仅在 CreateIndexHandler
+    // 实际执行并创建 .old 目录后才写入（taskhandler.cpp），或任务成功完成后由
+    // updateIndexStatusOnSuccess 写入。若在入队前就写入新版本号，一旦服务在
+    // handler 执行前重启，IndexDatabaseExists() 会因版本匹配返回 true，导致
+    // 进入 CreateResumeHandler 但无 .old 目录可迁移，索引不会真正重建。
+    if (type == IndexTask::Type::Create) {
+        fmInfo() << "[TaskManager::startTask] Create task detected, clearing existing index status";
+        if (m_context && m_context->stateStore()) {
+            m_context->stateStore()->removeIndexStatusFile();
+            m_context->stateStore()->setCreateFileListCache({});
+            m_context->stateStore()->setCreateCheckpoint(0);
+            m_context->stateStore()->setCreateInProgress(true);
+        }
+    }
+
     // 环境检查：如果当前环境不允许该分级任务运行，入队等待而非直接执行
     {
         TaskQueueItem item;
@@ -182,21 +200,6 @@ bool TaskManager::startTask(IndexTask::Type type, const QStringList &pathList,
 
     // 清除队列中与新任务同类型同路径的冗余任务，避免暂停→手动更新→完成后重复执行
     removeDuplicateFullScanTasks(type, pathList);
-
-    // status文件存储了修改时间，清除后外部无法获取时间，外部利用该特性判断索引状态
-    if (type == IndexTask::Type::Create) {
-        fmInfo() << "[TaskManager::startTask] Create task detected, clearing existing index status";
-        if (m_context && m_context->stateStore()) {
-            m_context->stateStore()->removeIndexStatusFile();
-            m_context->stateStore()->setCreateFileListCache({});
-            m_context->stateStore()->setCreateCheckpoint(0);
-        }
-        // 创建索引的任务开销巨大，避免任务未完成时进程退出后，重复进入创建任务
-        if (m_context && m_context->stateStore()) {
-            m_context->stateStore()->saveIndexStatus(QDateTime::currentDateTime());
-            m_context->stateStore()->setCreateInProgress(true);
-        }
-    }
 
     // 获取对应的任务处理器
     TaskHandler handler = getTaskHandler(type);
@@ -715,7 +718,15 @@ QString TaskManager::currentIndexStatus() const
     if (m_lastTaskFailed)
         return "Failed";
 
-    // Index is dirty or not yet built — there's pending work.
+    // There's pending work when: the state is dirty (unsynced changes), a
+    // create was interrupted (needs resuming), or the database doesn't exist
+    // or its version is incompatible (needs creation or upgrade).
+    //
+    // Even a "clean" state needs an upgrade when the stored version doesn't
+    // match the runtime version — the old status.json still says "clean" but
+    // a rebuild is required.  Without this check the user would see "Idle"
+    // until the silent-start timer fires, instead of "WaitingUpgrade".
+    //
     // The status shown to the user depends on the *effective grade* of the
     // pending work, mirroring gradeUpdateTask() / handleSlientStart() logic:
     //
@@ -736,13 +747,15 @@ QString TaskManager::currentIndexStatus() const
     //   power-save mode, which blocks even Light tasks and is worth telling
     //   the user about.
     if (m_context && m_context->stateStore()) {
-        if (!m_context->stateStore()->isCleanState()) {
-            const bool createInProgress = m_context->stateStore()->isCreateInProgress();
-            const bool dbExists = m_context->profile().isIndexAvailable()
-                                && m_context->stateStore()->isCompatibleVersion()
-                                && !m_context->stateStore()->getLastUpdateTime().isEmpty();
-            const bool heavy = createInProgress || !dbExists;
+        const bool createInProgress = m_context->stateStore()->isCreateInProgress();
+        const bool dbExists = m_context->profile().isIndexAvailable()
+                            && m_context->stateStore()->isCompatibleVersion()
+                            && !m_context->stateStore()->getLastUpdateTime().isEmpty();
+        const bool hasPendingWork = !m_context->stateStore()->isCleanState()
+                                  || createInProgress || !dbExists;
 
+        if (hasPendingWork) {
+            const bool heavy = createInProgress || !dbExists;
             if (heavy) {
                 return "WaitingUpgrade";
             } else {

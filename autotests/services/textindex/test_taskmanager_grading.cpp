@@ -350,8 +350,9 @@ TEST_F(TaskManagerGradingOcrTest, GradeFileList_OcrSizeOverThreshold_Medium)
 
 TEST_F(TaskManagerGradingTest, Status_NoTaskNoQueue_CleanState_Idle)
 {
-    // Set index state to Clean → "Idle"
+    // Set index state to Clean with matching version → "Idle"
     runtime->stateStore().setIndexState(IndexUtility::IndexState::Clean);
+    runtime->stateStore().saveIndexStatus(QDateTime::currentDateTime());
     EXPECT_EQ(mgr->currentIndexStatus(), QString("Idle"));
 }
 
@@ -673,18 +674,49 @@ TEST_F(TaskManagerGradingTest, Status_NoTask_DirtyDB_CreateInProgress_NotIdle_Wa
 
 TEST_F(TaskManagerGradingTest, Status_NoTask_CleanIndex_Battery_Idle)
 {
-    // Clean index, no task, on battery → Idle (nothing to do)
+    // Clean index with matching version, no task, on battery → Idle (nothing to do)
     runtime->stateStore().setIndexState(IndexUtility::IndexState::Clean);
+    runtime->stateStore().saveIndexStatus(QDateTime::currentDateTime());
     EnvDetector::instance().m_state = EnvState { true, false, false };
     EXPECT_EQ(mgr->currentIndexStatus(), QString("Idle"));
 }
 
 TEST_F(TaskManagerGradingTest, Status_NoTask_CleanIndex_PowerSave_Idle)
 {
-    // Clean index, no task, power-save → Idle (nothing to do)
+    // Clean index with matching version, no task, power-save → Idle (nothing to do)
     runtime->stateStore().setIndexState(IndexUtility::IndexState::Clean);
+    runtime->stateStore().saveIndexStatus(QDateTime::currentDateTime());
     EnvDetector::instance().m_state = EnvState { false, true, false };
     EXPECT_EQ(mgr->currentIndexStatus(), QString("Idle"));
+}
+
+// --- Sub-scenario D: Clean state but version mismatch → Heavy → WaitingUpgrade ---
+//   When the index version is upgraded, the old status.json may still say
+//   "clean" with an old version number.  Before silentStart fires, the status
+//   should show "WaitingUpgrade", not "Idle".
+
+TEST_F(TaskManagerGradingTest, Status_NoTask_CleanState_VersionMismatch_WaitingUpgrade)
+{
+    // Clean state but with an old version (0 instead of runtime version 1)
+    runtime->stateStore().setIndexState(IndexUtility::IndexState::Clean);
+    runtime->stateStore().saveIndexStatus(QDateTime::currentDateTime(), 0);
+    EXPECT_EQ(mgr->currentIndexStatus(), QString("WaitingUpgrade"));
+}
+
+TEST_F(TaskManagerGradingTest, Status_NoTask_CleanState_VersionMismatch_Battery_WaitingUpgrade)
+{
+    runtime->stateStore().setIndexState(IndexUtility::IndexState::Clean);
+    runtime->stateStore().saveIndexStatus(QDateTime::currentDateTime(), 0);
+    EnvDetector::instance().m_state = EnvState { true, false, false };
+    EXPECT_EQ(mgr->currentIndexStatus(), QString("WaitingUpgrade"));
+}
+
+TEST_F(TaskManagerGradingTest, Status_NoTask_CleanState_VersionMismatch_PowerSave_WaitingUpgrade)
+{
+    runtime->stateStore().setIndexState(IndexUtility::IndexState::Clean);
+    runtime->stateStore().saveIndexStatus(QDateTime::currentDateTime(), 0);
+    EnvDetector::instance().m_state = EnvState { false, true, false };
+    EXPECT_EQ(mgr->currentIndexStatus(), QString("WaitingUpgrade"));
 }
 
 // ===========================================================================
