@@ -12,6 +12,7 @@
 #include <dfm-base/utils/elidetextlayout.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/widgets/dfmcustombuttons/customiconbutton.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -263,13 +264,12 @@ void EditStackedWidget::initTextShowFrame(QString fileName)
     }
     textShowFrame->setFixedWidth(kExtendedWidgetWidth);
 
-    nameEditIcon = new DIconButton(textShowFrame);
+    nameEditIcon = new CustomDIconButton(textShowFrame);
     nameEditIcon->setAccessibleName("NameEditIcon");
     nameEditIcon->setObjectName(QString("EditButton"));
     nameEditIcon->setIcon(QIcon::fromTheme("dfm_rename"));
     nameEditIcon->setIconSize({ 12, 12 });
-    nameEditIcon->setFixedSize(24, 24);
-    nameEditIcon->setFlat(true);
+    nameEditIcon->setFixedSize(30, 30);
 
     connect(nameEditIcon, &QPushButton::clicked, this, &EditStackedWidget::renameFile);
 
@@ -278,15 +278,21 @@ void EditStackedWidget::initTextShowFrame(QString fileName)
         DLabel *fileNameLabel = new DLabel(labelText, textShowFrame);
         fileNameLabel->setTextFormat(Qt::PlainText);
         fileNameLabel->setAlignment(Qt::AlignHCenter);
+        fileNameLabel->setContentsMargins(0, 0, 0, 0);
+        fileNameLabel->setMargin(0);
         textHeight += fileNameLabel->fontInfo().pixelSize() + 10;
 
         QHBoxLayout *hLayout = new QHBoxLayout;
         hLayout->addStretch(1);
-        hLayout->addWidget(fileNameLabel);
+        hLayout->addWidget(fileNameLabel, 0, Qt::AlignVCenter);
 
         if (labelText == labelTexts.last()) {
-            hLayout->addSpacing(2);
-            hLayout->addWidget(nameEditIcon);
+            fileNameLabel->setStyleSheet("padding-right: 6px;");
+            QVBoxLayout *btnWrap = new QVBoxLayout;
+            btnWrap->setContentsMargins(0, -7, 0, 0);
+            btnWrap->setSpacing(0);
+            btnWrap->addWidget(nameEditIcon);
+            hLayout->addLayout(btnWrap);
         } else if (fileNameLabel->fontMetrics().horizontalAdvance(labelText) > (rect.width() - 10)) {
             fileNameLabel->setFixedWidth(rect.width());
         }

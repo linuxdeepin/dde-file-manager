@@ -9,6 +9,7 @@
 
 #include <DLabel>
 #include <DIconButton>
+#include <dfm-base/widgets/dfmcustombuttons/customiconbutton.h>
 #include <DArrowRectangle>
 #include <DTextEdit>
 
@@ -87,7 +88,7 @@ Q_SIGNALS:
 
 private:
     NameTextEdit *fileNameEdit { nullptr };
-    DTK_WIDGET_NAMESPACE::DIconButton *nameEditIcon { nullptr };
+    dfmbase::CustomDIconButton *nameEditIcon { nullptr };
     QFrame *textShowFrame { nullptr };
     QUrl fileUrl {};
 };
