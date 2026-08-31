@@ -815,11 +815,13 @@ TaskHandler TaskHandlers::CreateIndexHandler(const IndexContext &context)
                 fmInfo() << "[CreateIndexHandler] Created index directory:" << indexDir;
             }
 
-            // prepare() 可能将旧索引目录重命名为 .old，导致 status 文件随旧目录被移走
-            // 在新目录确认存在后重新保存 status，防止进程中途退出后重复进入 Create
+            // prepare() 可能将旧索引目录重命名为 .old，导致 status 文件随旧目录被移走。
+            // 在新目录确认存在后重新保存 status（含 createInProgress），防止进程中途退出后
+            // 重启误判为 Light 级 Update。
             if (migrator.isActive() && context.stateStore()) {
                 context.stateStore()->saveIndexStatus(QDateTime::currentDateTime());
-                fmInfo() << "[CreateIndexHandler] Re-saved index status after migration rename";
+                context.stateStore()->setCreateInProgress(true);
+                fmInfo() << "[CreateIndexHandler] Re-saved index status (with createInProgress) after migration rename";
             }
 
             IndexWriterPtr writer = newLucene<IndexWriter>(
