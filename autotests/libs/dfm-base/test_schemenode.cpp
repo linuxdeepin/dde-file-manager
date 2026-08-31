@@ -4,31 +4,58 @@
 
 /**
  * @file test_schemenode.cpp
- * @brief Unit tests for SchemeNode Mid-priority methods
+ * @brief Unit tests for SchemeNode methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class SchemeNodeTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "dfm-base/base/urlroute.h"
+
+#include <QTest>
+
+using namespace include;
+
+class SchemeNodeTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new SchemeNode();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    SchemeNode *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(SchemeNodeTest, displayName)
 {
-    // displayName
-    SUCCEED();
+    // Test getter: QString displayName()
+    auto result = obj->displayName();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(SchemeNodeTest, isEmpty)
 {
-    // isEmpty
-    SUCCEED();
+    // Test bool getter: isEmpty()
+    bool result = obj->isEmpty();
+    EXPECT_TRUE(result);
+
 }
 
 TEST_F(SchemeNodeTest, rootPath)
 {
-    // rootPath
-    SUCCEED();
+    // Test getter: QString rootPath()
+    auto result = obj->rootPath();
+    EXPECT_TRUE(result.isEmpty());
+
 }

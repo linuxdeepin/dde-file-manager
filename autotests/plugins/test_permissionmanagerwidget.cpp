@@ -4,31 +4,55 @@
 
 /**
  * @file test_permissionmanagerwidget.cpp
- * @brief Unit tests for PermissionManagerWidget Mid-priority methods
+ * @brief Unit tests for PermissionManagerWidget methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class PermissionManagerWidgetTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/permissionmanagerwidget.h"
+
+#include <QTest>
+
+using namespace dfmplugin_propertydialog;
+
+class PermissionManagerWidgetTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new PermissionManagerWidget();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    PermissionManagerWidget *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(PermissionManagerWidgetTest, PermissionManagerWidget)
 {
-    // PermissionManagerWidget
-    SUCCEED();
+    // Test constructor: PermissionManagerWidget((QWidget *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(PermissionManagerWidgetTest, canChmod)
 {
-    // canChmod
-    SUCCEED();
+    // Test method: bool canChmod((const FileInfoPointer &info))
+    FileInfoPointer _arg0{};
+    auto result = obj->canChmod(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(PermissionManagerWidgetTest, initUI)
 {
-    // initUI
-    SUCCEED();
+    // Test method: void initUI(())
+    EXPECT_NO_FATAL_FAILURE(obj->initUI());
 }

@@ -3,57 +3,85 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_low_smbcapi.cpp
- * @brief Unit tests for SmbcAPI Low-priority methods
+ * @file test_low_smbcapi.cpp
+ * @brief Unit tests for SmbcAPI methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class SmbcAPILowTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "services/mountcontrol/mounthelpers/cifsmounthelper.h"
+
+#include <QTest>
+
+using namespace src;
+
+class SmbcAPITest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new SmbcAPI();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    SmbcAPI *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
-TEST_F(SmbcAPILowTest, SmbcAPI)
+TEST_F(SmbcAPITest, SmbcAPI)
 {
-    // SmbcAPI
-    SUCCEED();
+    // Test constructor: SmbcAPI(())
+    ASSERT_NE(obj, nullptr);
 }
 
-TEST_F(SmbcAPILowTest, getSmbcNegprot)
+TEST_F(SmbcAPITest, getSmbcNegprot)
 {
-    // getSmbcNegprot
-    SUCCEED();
+    // Test getter: FnSmbcNegprot getSmbcNegprot()
+    auto result = obj->getSmbcNegprot();
+    EXPECT_NO_FATAL_FAILURE({ obj->getSmbcNegprot(); });
+
 }
 
-TEST_F(SmbcAPILowTest, getSmbcResolveHost)
+TEST_F(SmbcAPITest, getSmbcResolveHost)
 {
-    // getSmbcResolveHost
-    SUCCEED();
+    // Test getter: FnSmbcResolveHost getSmbcResolveHost()
+    auto result = obj->getSmbcResolveHost();
+    EXPECT_NO_FATAL_FAILURE({ obj->getSmbcResolveHost(); });
+
 }
 
-TEST_F(SmbcAPILowTest, init)
+TEST_F(SmbcAPITest, init)
 {
-    // init
-    SUCCEED();
+    // Test method: void init(())
+    EXPECT_NO_FATAL_FAILURE(obj->init());
 }
 
-TEST_F(SmbcAPILowTest, isInitialized)
+TEST_F(SmbcAPITest, isInitialized)
 {
-    // isInitialized
-    SUCCEED();
+    // Test bool getter: isInitialized()
+    bool result = obj->isInitialized();
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(SmbcAPILowTest, versionMapper)
+TEST_F(SmbcAPITest, versionMapper)
 {
-    // versionMapper
-    SUCCEED();
+    // Test getter: QMap<QString, QString> versionMapper()
+    auto result = obj->versionMapper();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
-TEST_F(SmbcAPILowTest, SmbcAPI_Destructor)
+TEST_F(SmbcAPITest, SmbcAPI_Destructor)
 {
-    // ~SmbcAPI
-    SUCCEED();
+    // Test method:  ~SmbcAPI(())
+    EXPECT_NO_FATAL_FAILURE({ SmbcAPI *tmp = new SmbcAPI(); delete tmp; });
 }
-

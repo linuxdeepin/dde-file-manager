@@ -4,25 +4,50 @@
 
 /**
  * @file test_canvasbasesortmenusceneprivate.cpp
- * @brief Unit tests for CanvasBaseSortMenuScenePrivate Mid-priority methods
+ * @brief Unit tests for CanvasBaseSortMenuScenePrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class CanvasBaseSortMenuScenePrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "menu/canvasbasesortmenuscene.h"
+
+#include <QTest>
+
+using namespace ddplugin_canvas;
+
+class CanvasBaseSortMenuScenePrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new CanvasBaseSortMenuScenePrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    CanvasBaseSortMenuScenePrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(CanvasBaseSortMenuScenePrivateTest, primaryMenuRule)
 {
-    // primaryMenuRule
-    SUCCEED();
+    // Test getter: QStringList primaryMenuRule()
+    auto result = obj->primaryMenuRule();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(CanvasBaseSortMenuScenePrivateTest, secondaryMenuRule)
 {
-    // secondaryMenuRule
-    SUCCEED();
+    // Test getter: QMap<QString, QStringList> secondaryMenuRule()
+    auto result = obj->secondaryMenuRule();
+    EXPECT_TRUE(result.isEmpty());
+
 }

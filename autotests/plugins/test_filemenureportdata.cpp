@@ -3,27 +3,52 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_filemenureportdata.cpp
- * @brief Unit tests for FileMenuReportData Low-priority methods
+ * @file test_filemenureportdata.cpp
+ * @brief Unit tests for FileMenuReportData methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class FileMenuReportDataTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "reportlog/datas/filemenureportdata.h"
+
+#include <QTest>
+
+using namespace dfmplugin_utils;
+
+class FileMenuReportDataTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new FileMenuReportData();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FileMenuReportData *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(FileMenuReportDataTest, prepareData)
 {
-    // prepareData
-    SUCCEED();
+    // Test method: QJsonObject prepareData((const QVariantMap &args))
+    QVariantMap _arg0{};
+    auto result = obj->prepareData(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(FileMenuReportDataTest, type)
 {
-    // type
-    SUCCEED();
-}
+    // Test getter: QString type()
+    auto result = obj->type();
+    EXPECT_TRUE(result.isEmpty());
 
+}

@@ -3,21 +3,41 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_crumbdata.cpp
- * @brief Unit tests for CrumbData Low-priority methods
+ * @file test_crumbdata.cpp
+ * @brief Unit tests for CrumbData methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class CrumbDataTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "dfmplugin_titlebar_global.h"
+
+#include <QTest>
+
+using namespace dfmplugin_titlebar;
+
+class CrumbDataTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new CrumbData();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    CrumbData *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(CrumbDataTest, CrumbData)
 {
-    // CrumbData
-    SUCCEED();
+    // Test constructor: CrumbData(())
+    ASSERT_NE(obj, nullptr);
 }
-

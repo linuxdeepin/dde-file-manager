@@ -3,51 +3,74 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_low_fseventcontroller.cpp
- * @brief Unit tests for FSEventController Low-priority methods
+ * @file test_low_fseventcontroller.cpp
+ * @brief Unit tests for FSEventController methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class FSEventControllerLowTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "services/textindex/fsmonitor/fseventcontroller.h"
+
+#include <QTest>
+
+using namespace src;
+
+class FSEventControllerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new FSEventController();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FSEventController *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
-TEST_F(FSEventControllerLowTest, onConfigChanged)
+TEST_F(FSEventControllerTest, onConfigChanged)
 {
-    // onConfigChanged
-    SUCCEED();
+    // Test method: void onConfigChanged(())
+    EXPECT_NO_FATAL_FAILURE(obj->onConfigChanged());
 }
 
-TEST_F(FSEventControllerLowTest, onFilesCreated)
+TEST_F(FSEventControllerTest, onFilesCreated)
 {
-    // onFilesCreated
-    SUCCEED();
+    // Test method: void onFilesCreated((const QStringList &paths))
+    QStringList _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->onFilesCreated(_arg0));
 }
 
-TEST_F(FSEventControllerLowTest, onFilesModified)
+TEST_F(FSEventControllerTest, onFilesModified)
 {
-    // onFilesModified
-    SUCCEED();
+    // Test method: void onFilesModified((const QStringList &paths))
+    QStringList _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->onFilesModified(_arg0));
 }
 
-TEST_F(FSEventControllerLowTest, onFilesMoved)
+TEST_F(FSEventControllerTest, onFilesMoved)
 {
-    // onFilesMoved
-    SUCCEED();
+    // Test method: void onFilesMoved((const QHash<QString, QString> &movedPaths))
+    QHash<QString, QString> _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->onFilesMoved(_arg0));
 }
 
-TEST_F(FSEventControllerLowTest, onFlushFinished)
+TEST_F(FSEventControllerTest, onFlushFinished)
 {
-    // onFlushFinished
-    SUCCEED();
+    // Test method: void onFlushFinished(())
+    EXPECT_NO_FATAL_FAILURE(obj->onFlushFinished());
 }
 
-TEST_F(FSEventControllerLowTest, setEnabledNow)
+TEST_F(FSEventControllerTest, setEnabledNow)
 {
-    // setEnabledNow
-    SUCCEED();
+    // Test setter: void setEnabledNow((bool enabled))
+    EXPECT_NO_FATAL_FAILURE(obj->setEnabledNow(false));
 }
-

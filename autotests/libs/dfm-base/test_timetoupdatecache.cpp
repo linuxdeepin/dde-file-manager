@@ -4,19 +4,40 @@
 
 /**
  * @file test_timetoupdatecache.cpp
- * @brief Unit tests for TimeToUpdateCache Mid-priority methods
+ * @brief Unit tests for TimeToUpdateCache methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class TimeToUpdateCacheTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "dfm-base/utils/infocache.h"
+
+#include <QTest>
+
+using namespace src;
+
+class TimeToUpdateCacheTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new TimeToUpdateCache();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    TimeToUpdateCache *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(TimeToUpdateCacheTest, dealRemoveInfo)
 {
-    // dealRemoveInfo
-    SUCCEED();
+    // Test method: void dealRemoveInfo(())
+    EXPECT_NO_FATAL_FAILURE(obj->dealRemoveInfo());
 }

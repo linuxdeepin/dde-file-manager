@@ -4,19 +4,40 @@
 
 /**
  * @file test_viewoptionswidget.cpp
- * @brief Unit tests for ViewOptionsWidget Mid-priority methods
+ * @brief Unit tests for ViewOptionsWidget methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ViewOptionsWidgetTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/viewoptionswidget.h"
+
+#include <QTest>
+
+using namespace dfmplugin_titlebar;
+
+class ViewOptionsWidgetTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ViewOptionsWidget();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ViewOptionsWidget *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ViewOptionsWidgetTest, ViewOptionsWidget)
 {
-    // ViewOptionsWidget
-    SUCCEED();
+    // Test constructor: ViewOptionsWidget((QWidget *parent))
+    ASSERT_NE(obj, nullptr);
 }

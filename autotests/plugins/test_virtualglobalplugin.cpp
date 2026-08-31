@@ -3,27 +3,49 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_virtualglobalplugin.cpp
- * @brief Unit tests for VirtualGlobalPlugin Low-priority methods
+ * @file test_virtualglobalplugin.cpp
+ * @brief Unit tests for VirtualGlobalPlugin methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class VirtualGlobalPluginTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "global/virtualglobalplugin.h"
+
+#include <QTest>
+
+using namespace dfmplugin_utils;
+
+class VirtualGlobalPluginTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new VirtualGlobalPlugin();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    VirtualGlobalPlugin *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(VirtualGlobalPluginTest, initialize)
 {
-    // initialize
-    SUCCEED();
+    // Test method: void initialize(())
+    EXPECT_NO_FATAL_FAILURE(obj->initialize());
 }
 
 TEST_F(VirtualGlobalPluginTest, start)
 {
-    // start
-    SUCCEED();
-}
+    // Test bool getter: start()
+    bool result = obj->start();
+    EXPECT_FALSE(result);
 
+}

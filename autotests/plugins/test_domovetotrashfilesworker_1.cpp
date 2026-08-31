@@ -3,51 +3,81 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_domovetotrashfilesworker_1.cpp
- * @brief Unit tests for DoMoveToTrashFilesWorker Low-priority methods
+ * @file test_domovetotrashfilesworker_1.cpp
+ * @brief Unit tests for DoMoveToTrashFilesWorker methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class DoMoveToTrashFilesWorkerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "fileoperations/trashfiles/domovetotrashfilesworker.h"
+
+#include <QTest>
+
+using namespace dfmplugin_fileoperations;
+
+class DoMoveToTrashFilesWorkerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new DoMoveToTrashFilesWorker();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    DoMoveToTrashFilesWorker *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(DoMoveToTrashFilesWorkerTest, doHandleErrorNoSpace)
 {
-    // doHandleErrorNoSpace
-    SUCCEED();
+    // Test method: AbstractJobHandler::SupportAction doHandleErrorNoSpace((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->doHandleErrorNoSpace(_arg0);
+    EXPECT_GE(static_cast<int>(result), 0);
+
 }
 
 TEST_F(DoMoveToTrashFilesWorkerTest, doWork)
 {
-    // doWork
-    SUCCEED();
+    // Test bool getter: doWork()
+    bool result = obj->doWork();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(DoMoveToTrashFilesWorkerTest, isCanMoveToTrash)
 {
-    // isCanMoveToTrash
-    SUCCEED();
+    // Test method: bool isCanMoveToTrash((const QUrl &url, bool *result))
+    QUrl _arg0{};
+    auto result = obj->isCanMoveToTrash(_arg0, nullptr);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(DoMoveToTrashFilesWorkerTest, onUpdateProgress)
 {
-    // onUpdateProgress
-    SUCCEED();
+    // Test method: void onUpdateProgress(())
+    EXPECT_NO_FATAL_FAILURE(obj->onUpdateProgress());
 }
 
 TEST_F(DoMoveToTrashFilesWorkerTest, statisticsFilesSize)
 {
-    // statisticsFilesSize
-    SUCCEED();
+    // Test bool getter: statisticsFilesSize()
+    bool result = obj->statisticsFilesSize();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(DoMoveToTrashFilesWorkerTest, DoMoveToTrashFilesWorker_Destructor)
 {
-    // ~DoMoveToTrashFilesWorker
-    SUCCEED();
+    // Test method:  ~DoMoveToTrashFilesWorker(())
+    EXPECT_NO_FATAL_FAILURE({ DoMoveToTrashFilesWorker *tmp = new DoMoveToTrashFilesWorker(); delete tmp; });
 }
-

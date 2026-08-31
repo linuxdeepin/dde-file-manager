@@ -4,37 +4,61 @@
 
 /**
  * @file test_opticalmediawidget.cpp
- * @brief Unit tests for OpticalMediaWidget Mid-priority methods
+ * @brief Unit tests for OpticalMediaWidget methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class OpticalMediaWidgetTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/opticalmediawidget.h"
+
+#include <QTest>
+
+using namespace dfmplugin_optical;
+
+class OpticalMediaWidgetTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new OpticalMediaWidget();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    OpticalMediaWidget *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(OpticalMediaWidgetTest, OpticalMediaWidget)
 {
-    // OpticalMediaWidget
-    SUCCEED();
+    // Test constructor: OpticalMediaWidget((QWidget *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(OpticalMediaWidgetTest, initializeUi)
 {
-    // initializeUi
-    SUCCEED();
+    // Test method: void initializeUi(())
+    EXPECT_NO_FATAL_FAILURE(obj->initializeUi());
 }
 
 TEST_F(OpticalMediaWidgetTest, updateDiscInfo)
 {
-    // updateDiscInfo
-    SUCCEED();
+    // Test method: bool updateDiscInfo((const QUrl &url, bool retry))
+    QUrl _arg0{};
+    auto result = obj->updateDiscInfo(_arg0, false);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(OpticalMediaWidgetTest, updateUi)
 {
-    // updateUi
-    SUCCEED();
+    // Test method: void updateUi(())
+    EXPECT_NO_FATAL_FAILURE(obj->updateUi());
 }

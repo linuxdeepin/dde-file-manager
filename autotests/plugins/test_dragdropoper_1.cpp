@@ -3,99 +3,134 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_dragdropoper_1.cpp
- * @brief Unit tests for DragDropOper Low-priority methods
+ * @file test_dragdropoper_1.cpp
+ * @brief Unit tests for DragDropOper methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class DragDropOperTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "view/operator/dragdropoper.h"
+
+#include <QTest>
+
+using namespace ddplugin_canvas;
+
+class DragDropOperTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new DragDropOper();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    DragDropOper *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(DragDropOperTest, DragDropOper)
 {
-    // DragDropOper
-    SUCCEED();
+    // Test constructor: DragDropOper((CanvasView *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(DragDropOperTest, checkProhibitPaths)
 {
-    // checkProhibitPaths
-    SUCCEED();
+    // Test method: bool checkProhibitPaths((QDragEnterEvent *event))
+    auto result = obj->checkProhibitPaths(nullptr);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(DragDropOperTest, checkSourceValid)
 {
-    // checkSourceValid
-    SUCCEED();
+    // Test method: bool checkSourceValid((const QList<QUrl> &srcUrls))
+    QList<QUrl> _arg0{};
+    auto result = obj->checkSourceValid(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(DragDropOperTest, checkTargetEnable)
 {
-    // checkTargetEnable
-    SUCCEED();
+    // Test method: bool checkTargetEnable((const QUrl &targetUrl))
+    QUrl _arg0{};
+    auto result = obj->checkTargetEnable(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(DragDropOperTest, dropClientDownload)
 {
-    // dropClientDownload
-    SUCCEED();
+    // Test method: bool dropClientDownload((QDropEvent *event))
+    auto result = obj->dropClientDownload(nullptr);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(DragDropOperTest, dropFilter)
 {
-    // dropFilter
-    SUCCEED();
+    // Test method: bool dropFilter((QDropEvent *event))
+    auto result = obj->dropFilter(nullptr);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(DragDropOperTest, handleMoveMimeData)
 {
-    // handleMoveMimeData
-    SUCCEED();
+    // Test method: void handleMoveMimeData((QDropEvent *event, const QUrl &url))
+    QUrl _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleMoveMimeData(nullptr, _arg1));
 }
 
 TEST_F(DragDropOperTest, leave)
 {
-    // leave
-    SUCCEED();
+    // Test method: void leave((QDragLeaveEvent *event))
+    EXPECT_NO_FATAL_FAILURE(obj->leave(nullptr));
 }
 
 TEST_F(DragDropOperTest, stopDelayDodge)
 {
-    // stopDelayDodge
-    SUCCEED();
+    // Test method: void stopDelayDodge(())
+    EXPECT_NO_FATAL_FAILURE(obj->stopDelayDodge());
 }
 
 TEST_F(DragDropOperTest, tryDodge)
 {
-    // tryDodge
-    SUCCEED();
+    // Test method: void tryDodge((QDragMoveEvent *event))
+    EXPECT_NO_FATAL_FAILURE(obj->tryDodge(nullptr));
 }
 
 TEST_F(DragDropOperTest, updateDFMMimeData)
 {
-    // updateDFMMimeData
-    SUCCEED();
+    // Test method: void updateDFMMimeData((QDropEvent *event))
+    EXPECT_NO_FATAL_FAILURE(obj->updateDFMMimeData(nullptr));
 }
 
 TEST_F(DragDropOperTest, updateDragHover)
 {
-    // updateDragHover
-    SUCCEED();
+    // Test method: void updateDragHover((const QPoint &pos))
+    QPoint _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->updateDragHover(_arg0));
 }
 
 TEST_F(DragDropOperTest, updatePrepareDodgeValue)
 {
-    // updatePrepareDodgeValue
-    SUCCEED();
+    // Test method: void updatePrepareDodgeValue((QEvent *event))
+    EXPECT_NO_FATAL_FAILURE(obj->updatePrepareDodgeValue(nullptr));
 }
 
 TEST_F(DragDropOperTest, updateTarget)
 {
-    // updateTarget
-    SUCCEED();
+    // Test method: void updateTarget((const QMimeData *data, const QUrl &url))
+    QUrl _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->updateTarget(nullptr, _arg1));
 }
-

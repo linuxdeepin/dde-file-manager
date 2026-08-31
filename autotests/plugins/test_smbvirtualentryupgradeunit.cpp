@@ -4,25 +4,47 @@
 
 /**
  * @file test_smbvirtualentryupgradeunit.cpp
- * @brief Unit tests for SmbVirtualEntryUpgradeUnit Mid-priority methods
+ * @brief Unit tests for SmbVirtualEntryUpgradeUnit methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class SmbVirtualEntryUpgradeUnitTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "tools/upgrade/units/smbvirtualentryupgradeunit.h"
+
+#include <QTest>
+
+using namespace src;
+
+class SmbVirtualEntryUpgradeUnitTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new SmbVirtualEntryUpgradeUnit();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    SmbVirtualEntryUpgradeUnit *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(SmbVirtualEntryUpgradeUnitTest, clearOldItems)
 {
-    // clearOldItems
-    SUCCEED();
+    // Test method: void clearOldItems(())
+    EXPECT_NO_FATAL_FAILURE(obj->clearOldItems());
 }
 
 TEST_F(SmbVirtualEntryUpgradeUnitTest, saveToDb)
 {
-    // saveToDb
-    SUCCEED();
+    // Test method: void saveToDb((const QList<VirtualEntryData> &entries))
+    QList<VirtualEntryData> _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->saveToDb(_arg0));
 }

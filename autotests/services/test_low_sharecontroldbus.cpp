@@ -3,45 +3,73 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_low_sharecontroldbus.cpp
- * @brief Unit tests for ShareControlDBus Low-priority methods
+ * @file test_low_sharecontroldbus.cpp
+ * @brief Unit tests for ShareControlDBus methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ShareControlDBusLowTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "services/sharecontrol/sharecontroldbus.h"
+
+#include <QTest>
+
+using namespace src;
+
+class ShareControlDBusTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ShareControlDBus();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ShareControlDBus *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
-TEST_F(ShareControlDBusLowTest, IsUserSharePasswordSet)
+TEST_F(ShareControlDBusTest, IsUserSharePasswordSet)
 {
-    // IsUserSharePasswordSet
-    SUCCEED();
+    // Test method: bool IsUserSharePasswordSet((const QString &username))
+    QString _arg0{};
+    auto result = obj->IsUserSharePasswordSet(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(ShareControlDBusLowTest, ShareControlDBus)
+TEST_F(ShareControlDBusTest, ShareControlDBus)
 {
-    // ShareControlDBus
-    SUCCEED();
+    // Test constructor: ShareControlDBus((const char *name, QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
-TEST_F(ShareControlDBusLowTest, checkAuthentication)
+TEST_F(ShareControlDBusTest, checkAuthentication)
 {
-    // checkAuthentication
-    SUCCEED();
+    // Test bool getter: checkAuthentication()
+    bool result = obj->checkAuthentication();
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(ShareControlDBusLowTest, isValidUsername)
+TEST_F(ShareControlDBusTest, isValidUsername)
 {
-    // isValidUsername
-    SUCCEED();
+    // Test method: bool isValidUsername((const QString &username))
+    QString _arg0{};
+    auto result = obj->isValidUsername(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(ShareControlDBusLowTest, ShareControlDBus_Destructor)
+TEST_F(ShareControlDBusTest, ShareControlDBus_Destructor)
 {
-    // ~ShareControlDBus
-    SUCCEED();
+    // Test method:  ~ShareControlDBus(())
+    EXPECT_NO_FATAL_FAILURE({ ShareControlDBus *tmp = new ShareControlDBus(); delete tmp; });
 }
-

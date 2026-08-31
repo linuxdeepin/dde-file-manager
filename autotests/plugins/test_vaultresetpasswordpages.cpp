@@ -4,37 +4,58 @@
 
 /**
  * @file test_vaultresetpasswordpages.cpp
- * @brief Unit tests for VaultResetPasswordPages Mid-priority methods
+ * @brief Unit tests for VaultResetPasswordPages methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class VaultResetPasswordPagesTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/resetpasswordview/vaultresetpasswordpages.h"
+
+#include <QTest>
+
+using namespace dfmplugin_vault;
+
+class VaultResetPasswordPagesTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new VaultResetPasswordPages();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    VaultResetPasswordPages *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(VaultResetPasswordPagesTest, VaultResetPasswordPages)
 {
-    // VaultResetPasswordPages
-    SUCCEED();
+    // Test constructor: VaultResetPasswordPages((QWidget *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(VaultResetPasswordPagesTest, switchToKeyFileView)
 {
-    // switchToKeyFileView
-    SUCCEED();
+    // Test method: void switchToKeyFileView(())
+    EXPECT_NO_FATAL_FAILURE(obj->switchToKeyFileView());
 }
 
 TEST_F(VaultResetPasswordPagesTest, switchToOldPasswordView)
 {
-    // switchToOldPasswordView
-    SUCCEED();
+    // Test method: void switchToOldPasswordView(())
+    EXPECT_NO_FATAL_FAILURE(obj->switchToOldPasswordView());
 }
 
 TEST_F(VaultResetPasswordPagesTest, _VaultResetPasswordPages)
 {
-    // ~VaultResetPasswordPages
-    SUCCEED();
+    // Test constructor: VaultResetPasswordPages((QWidget *parent))
+    ASSERT_NE(obj, nullptr);
 }

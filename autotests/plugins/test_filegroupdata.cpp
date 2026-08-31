@@ -4,71 +4,78 @@
 
 /**
  * @file test_filegroupdata.cpp
- * @brief Unit tests for FileGroupData Mid-priority methods (dfmplugin-workspace)
+ * @brief Unit tests for FileGroupData methods with real assertions
  */
 
 #include <gtest/gtest.h>
-#include <QTest>
-#include <QUrl>
-#include <QString>
-#include <QStringList>
-#include <QColor>
-#include <QPoint>
-#include <QVariant>
+
+#include "stubext.h"
 
 #include "groups/filegroupdata.h"
 
+#include <QTest>
+
 using namespace dfmplugin_workspace;
 
-class FileGroupDataTest : public ::testing::Test {
+class FileGroupDataTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {
+    void SetUp() override
+    {
+        obj = new FileGroupData();
     }
-    void TearDown() override {}
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FileGroupData *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(FileGroupDataTest, addFile)
 {
-    // Instance method addFile
-    FileGroupData obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.addFile({}); });
+    // Test method: void addFile((const FileItemDataPointer &file))
+    FileItemDataPointer _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->addFile(_arg0));
 }
 
 TEST_F(FileGroupDataTest, clear)
 {
-    // Instance method clear
-    FileGroupData obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.clear(); });
+    // Test method: void clear(())
+    EXPECT_NO_FATAL_FAILURE(obj->clear());
 }
 
 TEST_F(FileGroupDataTest, getHeaderText)
 {
-    // Instance method getHeaderText
-    FileGroupData obj;
-    EXPECT_NO_FATAL_FAILURE({ auto r = obj.getHeaderText(); (void)r; });
+    // Test getter: QString getHeaderText()
+    auto result = obj->getHeaderText();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(FileGroupDataTest, isEmpty)
 {
-    // Instance method isEmpty
-    FileGroupData obj;
-    bool result = false;
-    EXPECT_NO_FATAL_FAILURE({ result = obj.isEmpty(); });
-    (void)result;
+    // Test bool getter: isEmpty()
+    bool result = obj->isEmpty();
+    EXPECT_TRUE(result);
+
 }
 
 TEST_F(FileGroupDataTest, removeFile)
 {
-    // Instance method removeFile
-    FileGroupData obj;
-    bool result = false;
-    EXPECT_NO_FATAL_FAILURE({ result = obj.removeFile(QUrl("file:///tmp/test")); });
-    (void)result;
+    // Test method: bool removeFile((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->removeFile(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(FileGroupDataTest, updateFileCount)
 {
-    // Instance method updateFileCount
-    FileGroupData obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.updateFileCount(); });
+    // Test method: void updateFileCount(())
+    EXPECT_NO_FATAL_FAILURE(obj->updateFileCount());
 }

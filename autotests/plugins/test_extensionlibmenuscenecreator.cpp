@@ -3,27 +3,49 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_extensionlibmenuscenecreator.cpp
- * @brief Unit tests for ExtensionLibMenuSceneCreator Low-priority methods
+ * @file test_extensionlibmenuscenecreator.cpp
+ * @brief Unit tests for ExtensionLibMenuSceneCreator methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ExtensionLibMenuSceneCreatorTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "extensionimpl/menuimpl/extensionlibmenuscene.h"
+
+#include <QTest>
+
+using namespace dfmplugin_utils;
+
+class ExtensionLibMenuSceneCreatorTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ExtensionLibMenuSceneCreator();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ExtensionLibMenuSceneCreator *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ExtensionLibMenuSceneCreatorTest, create)
 {
-    // create
-    SUCCEED();
+    // Test getter: DFMBASE_USE_NAMESPACE create()
+    EXPECT_NO_FATAL_FAILURE({ obj->create(); });
 }
 
 TEST_F(ExtensionLibMenuSceneCreatorTest, name)
 {
-    // name
-    SUCCEED();
-}
+    // Test getter: QString name()
+    auto result = obj->name();
+    EXPECT_TRUE(result.isEmpty());
 
+}

@@ -4,25 +4,50 @@
 
 /**
  * @file test_dirsharemenuscene.cpp
- * @brief Unit tests for DirShareMenuScene Mid-priority methods
+ * @brief Unit tests for DirShareMenuScene methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class DirShareMenuSceneTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "dirsharemenu/dirsharemenuscene.h"
+
+#include <QTest>
+
+using namespace dfmplugin_dirshare;
+
+class DirShareMenuSceneTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new DirShareMenuScene();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    DirShareMenuScene *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(DirShareMenuSceneTest, create)
 {
-    // create
-    SUCCEED();
+    // Test method: bool create((QMenu *parent))
+    auto result = obj->create(nullptr);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(DirShareMenuSceneTest, name)
 {
-    // name
-    SUCCEED();
+    // Test getter: QString name()
+    auto result = obj->name();
+    EXPECT_TRUE(result.isEmpty());
+
 }

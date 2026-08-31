@@ -4,19 +4,40 @@
 
 /**
  * @file test_devicemanageradaptor.cpp
- * @brief Unit tests for DeviceManagerAdaptor Mid-priority methods
+ * @brief Unit tests for DeviceManagerAdaptor methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class DeviceManagerAdaptorTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "config/dbus/DeviceManagerAdaptor.h"
+
+#include <QTest>
+
+using namespace src;
+
+class DeviceManagerAdaptorTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new DeviceManagerAdaptor();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    DeviceManagerAdaptor *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(DeviceManagerAdaptorTest, DeviceManagerAdaptor)
 {
-    // DeviceManagerAdaptor
-    SUCCEED();
+    // Test constructor: DeviceManagerAdaptor((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }

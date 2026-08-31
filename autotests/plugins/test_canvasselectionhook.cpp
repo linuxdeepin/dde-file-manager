@@ -4,25 +4,46 @@
 
 /**
  * @file test_canvasselectionhook.cpp
- * @brief Unit tests for CanvasSelectionHook Mid-priority methods
+ * @brief Unit tests for CanvasSelectionHook methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class CanvasSelectionHookTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "hook/canvasselectionhook.h"
+
+#include <QTest>
+
+using namespace ddplugin_canvas;
+
+class CanvasSelectionHookTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new CanvasSelectionHook();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    CanvasSelectionHook *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(CanvasSelectionHookTest, CanvasSelectionHook)
 {
-    // CanvasSelectionHook
-    SUCCEED();
+    // Test constructor: CanvasSelectionHook((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(CanvasSelectionHookTest, clear)
 {
-    // clear
-    SUCCEED();
+    // Test method: void clear(())
+    EXPECT_NO_FATAL_FAILURE(obj->clear());
 }

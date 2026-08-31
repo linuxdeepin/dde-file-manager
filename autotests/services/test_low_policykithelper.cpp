@@ -3,33 +3,57 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_low_policykithelper.cpp
- * @brief Unit tests for PolicyKitHelper Low-priority methods
+ * @file test_low_policykithelper.cpp
+ * @brief Unit tests for PolicyKitHelper methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class PolicyKitHelperLowTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "services/common/polkit/policykithelper.h"
+
+#include <QTest>
+
+using namespace src;
+
+class PolicyKitHelperTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new PolicyKitHelper();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    PolicyKitHelper *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
-TEST_F(PolicyKitHelperLowTest, PolicyKitHelper)
+TEST_F(PolicyKitHelperTest, PolicyKitHelper)
 {
-    // PolicyKitHelper
-    SUCCEED();
+    // Test constructor: PolicyKitHelper(())
+    ASSERT_NE(obj, nullptr);
 }
 
-TEST_F(PolicyKitHelperLowTest, checkAuthorization)
+TEST_F(PolicyKitHelperTest, checkAuthorization)
 {
-    // checkAuthorization
-    SUCCEED();
+    // Test method: bool checkAuthorization((const QString &actionId, const QString &appBusName))
+    QString _arg0{};
+    QString _arg1{};
+    auto result = obj->checkAuthorization(_arg0, _arg1);
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(PolicyKitHelperLowTest, PolicyKitHelper_Destructor)
+TEST_F(PolicyKitHelperTest, PolicyKitHelper_Destructor)
 {
-    // ~PolicyKitHelper
-    SUCCEED();
+    // Test method:  ~PolicyKitHelper(())
+    EXPECT_NO_FATAL_FAILURE({ PolicyKitHelper *tmp = new PolicyKitHelper(); delete tmp; });
 }
-

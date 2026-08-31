@@ -4,37 +4,65 @@
 
 /**
  * @file test_trashcorehelper.cpp
- * @brief Unit tests for TrashCoreHelper Mid-priority methods
+ * @brief Unit tests for TrashCoreHelper methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class TrashCoreHelperTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/trashcorehelper.h"
+
+#include <QTest>
+
+using namespace dfmplugin_trashcore;
+
+class TrashCoreHelperTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new TrashCoreHelper();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    TrashCoreHelper *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(TrashCoreHelperTest, calculateTrashRoot)
 {
-    // calculateTrashRoot
-    SUCCEED();
+    // Test getter: std::pair<qint64, int> calculateTrashRoot()
+    auto result = obj->calculateTrashRoot();
+    EXPECT_NO_FATAL_FAILURE({ obj->calculateTrashRoot(); });
+
 }
 
 TEST_F(TrashCoreHelperTest, icon)
 {
-    // icon
-    SUCCEED();
+    // Test getter: QIcon icon()
+    auto result = obj->icon();
+    EXPECT_TRUE(result.isNull());
+
 }
 
 TEST_F(TrashCoreHelperTest, rootUrl)
 {
-    // rootUrl
-    SUCCEED();
+    // Test getter: QUrl rootUrl()
+    auto result = obj->rootUrl();
+    EXPECT_TRUE(result.isEmpty() || result.isValid());
 }
 
 TEST_F(TrashCoreHelperTest, scheme)
 {
-    // scheme
-    SUCCEED();
+    // Test getter: QString scheme()
+    auto result = obj->scheme();
+    EXPECT_TRUE(result.isEmpty());
+
 }

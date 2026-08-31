@@ -4,19 +4,42 @@
 
 /**
  * @file test_pluginloader.cpp
- * @brief Unit tests for PluginLoader Mid-priority methods
+ * @brief Unit tests for PluginLoader methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class PluginLoaderTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "apps/dde-file-manager-extractor/extractor/pluginloader.h"
+
+#include <QTest>
+
+using namespace src;
+
+class PluginLoaderTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new PluginLoader();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    PluginLoader *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(PluginLoaderTest, plugins)
 {
-    // plugins
-    SUCCEED();
+    // Test getter: QList<QSharedPointer<AbstractExtractorPlugin>> plugins()
+    auto result = obj->plugins();
+    EXPECT_TRUE(result.isEmpty());
+
 }

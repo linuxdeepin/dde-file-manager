@@ -4,25 +4,46 @@
 
 /**
  * @file test_propertymenusceneprivate.cpp
- * @brief Unit tests for PropertyMenuScenePrivate Mid-priority methods
+ * @brief Unit tests for PropertyMenuScenePrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class PropertyMenuScenePrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "menu/propertymenuscene.h"
+
+#include <QTest>
+
+using namespace dfmplugin_propertydialog;
+
+class PropertyMenuScenePrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new PropertyMenuScenePrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    PropertyMenuScenePrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(PropertyMenuScenePrivateTest, PropertyMenuScenePrivate)
 {
-    // PropertyMenuScenePrivate
-    SUCCEED();
+    // Test constructor: PropertyMenuScenePrivate((PropertyMenuScene *qq))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(PropertyMenuScenePrivateTest, updateMenu)
 {
-    // updateMenu
-    SUCCEED();
+    // Test method: void updateMenu((QMenu *menu))
+    EXPECT_NO_FATAL_FAILURE(obj->updateMenu(nullptr));
 }

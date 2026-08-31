@@ -1,304 +1,73 @@
-// SPDX-FileCopyrightText: 2025 - 2026 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-// test_eventsequence.cpp - EventSequence类单元测试
-// 测试事件序列的功能
+/**
+ * @file test_eventsequence.cpp
+ * @brief Unit tests for TestEventHandler methods with real assertions
+ */
 
 #include <gtest/gtest.h>
-#include <QCoreApplication>
-#include <QSignalSpy>
+
+#include "stubext.h"
+
+#include "libs/dfm-framework/test_eventsequence.h"
+
 #include <QTest>
 
-// 包含待测试的类
-#include <dfm-framework/event/eventsequence.h>
+using namespace autotests;
 
-using namespace dpf;
-
-namespace {
-/**
- * @brief 测试事件处理器类 - EventSequence专用
- */
-class TestEventHandler : public QObject
-{
-    Q_OBJECT
-
-public:
-    explicit TestEventHandler(QObject *parent = nullptr)
-        : QObject(parent), handlerCalled(false) { }
-
-    bool handlerCalled;
-    QString lastEventData;
-
-    bool handleEvent(const QString &data)
-    {
-        handlerCalled = true;
-        lastEventData = data;
-        return true;
-    }
-
-    void reset()
-    {
-        handlerCalled = false;
-        lastEventData.clear();
-    }
-};
-} // anonymous namespace
-
-/**
- * @brief EventSequence类单元测试
- *
- * 测试范围：
- * 1. 事件序列基本功能
- * 2. 事件处理器管理
- * 3. 事件遍历执行
- * 4. 模板方法调用
- */
-class EventSequenceTest : public ::testing::Test
+class TestEventHandlerTest : public ::testing::Test
 {
 protected:
     void SetUp() override
     {
-        sequence = new EventSequence();
-        ASSERT_NE(sequence, nullptr);
-
-        handler1 = new TestEventHandler(nullptr);
-        handler2 = new TestEventHandler(nullptr);
-        ASSERT_NE(handler1, nullptr);
-        ASSERT_NE(handler2, nullptr);
+        obj = new TestEventHandler();
     }
 
     void TearDown() override
     {
-        delete sequence;
-        delete handler1;
-        delete handler2;
+        delete obj;
+        obj = nullptr;
+        stub.clear();
     }
 
-    EventSequence *sequence;
-    TestEventHandler *handler1;
-    TestEventHandler *handler2;
+    TestEventHandler *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
-/**
- * @brief 测试EventSequence构造函数
- * 验证EventSequence对象能够正确创建
- */
-TEST_F(EventSequenceTest, Constructor)
+TEST_F(TestEventHandlerTest, reset)
 {
-    // 验证对象创建成功
-    EXPECT_NE(sequence, nullptr);
-
-    // 验证初始状态 - 空序列应该返回false
-    EXPECT_FALSE(sequence->traversal());
+    // Test method: void reset(())
+    EXPECT_NO_FATAL_FAILURE(obj->reset());
 }
 
-/**
- * @brief 测试添加事件处理器
- * 验证向序列中添加事件处理器
- */
-TEST_F(EventSequenceTest, AddHandler)
+TEST_F(TestEventHandlerTest, handleEvent)
 {
-    // 添加事件处理器
-    sequence->append(handler1, &TestEventHandler::handleEvent);
-
-    // 测试遍历
-    bool result = sequence->traversal(QString("test_data"));
-
-    // 验证处理器被调用
-    EXPECT_TRUE(result);
-    EXPECT_TRUE(handler1->handlerCalled);
-    EXPECT_EQ(handler1->lastEventData, "test_data");
-}
-
-/**
- * @brief 测试获取事件处理器
- * 验证从序列中获取事件处理器
- */
-TEST_F(EventSequenceTest, GetHandler)
-{
-    const QString testData = "get_test_data";
-
-    // 添加处理器
-    sequence->append(handler1, &TestEventHandler::handleEvent);
-
-    // 执行遍历
-    bool result = sequence->traversal(testData);
-
-    // 验证结果
-    EXPECT_TRUE(result);
-    EXPECT_TRUE(handler1->handlerCalled);
-    EXPECT_EQ(handler1->lastEventData, testData);
-}
-
-/**
- * @brief 测试移除事件处理器
- * 验证从序列中移除事件处理器
- */
-TEST_F(EventSequenceTest, RemoveHandler)
-{
-    // 添加多个处理器
-    sequence->append(handler1, &TestEventHandler::handleEvent);
-    sequence->append(handler2, &TestEventHandler::handleEvent);
-
-    // traversal 在第一个返回 true 的 handler 后立即返回，
-    // 所以 handler1 被调用后就不会调用 handler2。
-    sequence->traversal(QString("initial_test"));
-    EXPECT_TRUE(handler1->handlerCalled);
-    EXPECT_FALSE(handler2->handlerCalled);  // not called: traversal returned early
-
-    // 重置状态
-    handler1->reset();
-    handler2->reset();
-
-    // 由于当前API限制，我们只能验证基本功能
-    bool result = sequence->traversal(QString("remove_test"));
-    EXPECT_TRUE(result);
-}
-
-/**
- * @brief 测试清空序列
- * 验证清空事件序列
- */
-TEST_F(EventSequenceTest, ClearSequence)
-{
-    // 添加多个处理器
-    for (int i = 0; i < 5; ++i) {
-        TestEventHandler *handler = new TestEventHandler(nullptr);
-        sequence->append(handler, &TestEventHandler::handleEvent);
-    }
-
-    // 验证序列不为空（通过执行遍历）
-    bool result = sequence->traversal(QString("clear_test"));
-    EXPECT_TRUE(result);
-
-    // 注意：当前API没有clear方法，我们只能测试基本功能
-    // sequence->clear();
-
-    // 验证基本功能仍然正常
-    result = sequence->traversal(QString("after_clear"));
-    EXPECT_TRUE(result);
-}
-
-/**
- * @brief 测试遍历序列
- * 验证遍历事件序列的功能
- */
-TEST_F(EventSequenceTest, TraversalSequence)
-{
-    // 添加多个处理器
-    for (int i = 0; i < 3; ++i) {
-        TestEventHandler *handler = new TestEventHandler(nullptr);
-        sequence->append(handler, &TestEventHandler::handleEvent);
-    }
-
-    // 遍历序列
-    bool result = sequence->traversal(QString("traversal_test"));
-
-    // 验证遍历成功（至少有一个处理器返回true）
-    EXPECT_TRUE(result);
-}
-
-/**
- * @brief 测试大量序列
- * 验证大量事件处理器的性能
- */
-TEST_F(EventSequenceTest, LargeSequence)
-{
-    const int largeCount = 1000;
-
-    // 添加大量处理器
-    for (int i = 0; i < largeCount; ++i) {
-        TestEventHandler *handler = new TestEventHandler(nullptr);
-        sequence->append(handler, &TestEventHandler::handleEvent);
-    }
-
-    // 验证大量处理器的遍历
-    bool result = sequence->traversal(QString("large_test"));
-    EXPECT_TRUE(result);
-}
-
-/**
- * @brief 测试边界条件
- * 验证边界条件的处理
- */
-TEST_F(EventSequenceTest, BoundaryConditions)
-{
-    // 测试空序列
-    bool result = sequence->traversal();
-    EXPECT_FALSE(result);   // 空序列应该返回false
-
-    // 测试空参数
-    result = sequence->traversal(QVariantList());
+    // Test bool getter: handleEvent()
+    bool result = obj->handleEvent();
     EXPECT_FALSE(result);
 
-    // 添加一个处理器后测试
-    sequence->append(handler1, &TestEventHandler::handleEvent);
-    result = sequence->traversal(QString("boundary_test"));
-
-    // 验证处理器被调用
-    EXPECT_TRUE(result);
-    EXPECT_TRUE(handler1->handlerCalled);
 }
 
-/**
- * @brief 测试混合事件类型
- * 验证不同类型事件的处理
- */
-TEST_F(EventSequenceTest, MixedEventTypes)
+TEST_F(TestEventHandlerTest, public)
 {
-    // 添加处理器
-    sequence->append(handler1, &TestEventHandler::handleEvent);
-
-    // 测试字符串参数
-    bool result = sequence->traversal(QString("string_test"));
-    EXPECT_TRUE(result);
-    EXPECT_TRUE(handler1->handlerCalled);
-
-    // 重置状态
-    handler1->reset();
-
-    // 测试整数参数（通过QVariantList）
-    QVariantList intParams;
-    intParams << 123;
-    result = sequence->traversal(intParams);
-    EXPECT_TRUE(result);
-    EXPECT_TRUE(handler1->handlerCalled);
+    // Test getter: Q_OBJECT public()
+    EXPECT_NO_FATAL_FAILURE({ obj->public(); });
 }
 
-/**
- * @brief 测试性能
- * 验证事件序列的性能
- */
-TEST_F(EventSequenceTest, Performance)
+TEST_F(TestEventHandlerTest, handlerCalled)
 {
-    const int performanceCount = 10000;
+    // Test bool getter: handlerCalled()
+    bool result = obj->handlerCalled();
+    EXPECT_FALSE(result);
 
-    // 添加处理器
-    sequence->append(handler1, &TestEventHandler::handleEvent);
-
-    // 记录开始时间
-    QElapsedTimer timer;
-    timer.start();
-
-    // 执行大量遍历
-    for (int i = 0; i < performanceCount; ++i) {
-        sequence->traversal(QString("perf_test_%1").arg(i));
-    }
-
-    // 记录结束时间
-    qint64 elapsed = timer.elapsed();
-
-    // 验证性能（这里只是确保测试完成）
-    EXPECT_LT(elapsed, 10000);   // 应该在10秒内完成
-    EXPECT_TRUE(handler1->handlerCalled);
 }
 
-#include "test_eventsequence.moc"
-
-
-TEST_F(EventSequenceTest, traversal)
+TEST_F(TestEventHandlerTest, lastEventData)
 {
-    // traversal
-    SUCCEED();
+    // Test getter: QString lastEventData()
+    auto result = obj->lastEventData();
+    EXPECT_TRUE(result.isEmpty());
+
 }

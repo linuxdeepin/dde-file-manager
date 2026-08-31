@@ -3,81 +3,118 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_resetpasswordbyoldpasswordview_1.cpp
- * @brief Unit tests for ResetPasswordByOldPasswordView Low-priority methods
+ * @file test_resetpasswordbyoldpasswordview_1.cpp
+ * @brief Unit tests for ResetPasswordByOldPasswordView methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ResetPasswordByOldPasswordViewTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/resetpasswordview/resetpasswordbyoldpasswordview.h"
+
+#include <QTest>
+
+using namespace dfmplugin_vault;
+
+class ResetPasswordByOldPasswordViewTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ResetPasswordByOldPasswordView();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ResetPasswordByOldPasswordView *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ResetPasswordByOldPasswordViewTest, btnText)
 {
-    // btnText
-    SUCCEED();
+    // Test getter: QStringList btnText()
+    auto result = obj->btnText();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(ResetPasswordByOldPasswordViewTest, checkInputInfo)
 {
-    // checkInputInfo
-    SUCCEED();
+    // Test bool getter: checkInputInfo()
+    bool result = obj->checkInputInfo();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(ResetPasswordByOldPasswordViewTest, checkPassword)
 {
-    // checkPassword
-    SUCCEED();
+    // Test method: bool checkPassword((const QString &password))
+    QString _arg0{};
+    auto result = obj->checkPassword(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(ResetPasswordByOldPasswordViewTest, checkRepeatPassword)
 {
-    // checkRepeatPassword
-    SUCCEED();
+    // Test bool getter: checkRepeatPassword()
+    bool result = obj->checkRepeatPassword();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(ResetPasswordByOldPasswordViewTest, eventFilter)
 {
-    // eventFilter
-    SUCCEED();
+    // Test method: bool eventFilter((QObject *obj, QEvent *evt))
+    auto result = obj->eventFilter(nullptr, nullptr);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(ResetPasswordByOldPasswordViewTest, onNewPasswordChanged)
 {
-    // onNewPasswordChanged
-    SUCCEED();
+    // Test method: void onNewPasswordChanged((const QString &pwd))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->onNewPasswordChanged(_arg0));
 }
 
 TEST_F(ResetPasswordByOldPasswordViewTest, onOldPasswordChanged)
 {
-    // onOldPasswordChanged
-    SUCCEED();
+    // Test method: void onOldPasswordChanged((const QString &pwd))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->onOldPasswordChanged(_arg0));
 }
 
 TEST_F(ResetPasswordByOldPasswordViewTest, onPasswordChanged)
 {
-    // onPasswordChanged
-    SUCCEED();
+    // Test method: void onPasswordChanged(())
+    EXPECT_NO_FATAL_FAILURE(obj->onPasswordChanged());
 }
 
 TEST_F(ResetPasswordByOldPasswordViewTest, onRepeatPasswordChanged)
 {
-    // onRepeatPasswordChanged
-    SUCCEED();
+    // Test method: void onRepeatPasswordChanged((const QString &pwd))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->onRepeatPasswordChanged(_arg0));
 }
 
 TEST_F(ResetPasswordByOldPasswordViewTest, showEvent)
 {
-    // showEvent
-    SUCCEED();
+    // Test event handler: showEvent((QShowEvent *event))
+    QShowEvent _event(QShowEvent::None);
+    EXPECT_NO_FATAL_FAILURE(obj->showEvent(&_event));
 }
 
 TEST_F(ResetPasswordByOldPasswordViewTest, titleText)
 {
-    // titleText
-    SUCCEED();
-}
+    // Test getter: QString titleText()
+    auto result = obj->titleText();
+    EXPECT_TRUE(result.isEmpty());
 
+}

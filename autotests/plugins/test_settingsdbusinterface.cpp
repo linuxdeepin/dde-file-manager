@@ -4,19 +4,41 @@
 
 /**
  * @file test_settingsdbusinterface.cpp
- * @brief Unit tests for SettingsDBusInterface Mid-priority methods
+ * @brief Unit tests for SettingsDBusInterface methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class SettingsDBusInterfaceTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "settingsdbusinterface.h"
+
+#include <QTest>
+
+using namespace ddplugin_wallpapersetting;
+
+class SettingsDBusInterfaceTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new SettingsDBusInterface();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    SettingsDBusInterface *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(SettingsDBusInterfaceTest, ShowScreensaverChooser)
 {
-    // ShowScreensaverChooser
-    SUCCEED();
+    // Test method: void ShowScreensaverChooser((const QString &screen))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->ShowScreensaverChooser(_arg0));
 }

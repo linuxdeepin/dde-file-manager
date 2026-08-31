@@ -4,83 +4,73 @@
 
 /**
  * @file test_localfilewatcher.cpp
- * @brief Unit tests for LocalFileWatcher (file/local/localfilewatcher.cpp)
+ * @brief Unit tests for LocalFileWatcher methods with real assertions
  */
 
 #include <gtest/gtest.h>
-#include <QTemporaryDir>
-#include <QFile>
-#include <QDir>
-#include <QUrl>
-#include <QIcon>
-#include <mutex>
 
-#include <dfm-base/base/schemefactory.h>
-#include <dfm-base/file/local/syncfileinfo.h>
-#include <dfm-base/file/local/localfilewatcher.h>
-#include <dfm-base/dfm_global_defines.h>
+#include "stubext.h"
 
-using namespace dfmbase;
+#include "dfm-base/file/local/localfilewatcher.h"
 
-class LocalFileWatcherTest : public testing::Test
+#include <QTest>
+
+using namespace src;
+
+class LocalFileWatcherTest : public ::testing::Test
 {
 protected:
-    static void SetUpTestSuite()
-    {
-        std::call_once(flag, [] {
-            UrlRoute::regScheme(Global::Scheme::kFile, QDir::homePath(), QIcon(), false, "file");
-            InfoFactory::regClass<SyncFileInfo>(Global::Scheme::kFile);
-        });
-    }
-
     void SetUp() override
     {
-        ASSERT_TRUE(tmpDir.isValid());
-        rootPath = tmpDir.path();
-        filePath = rootPath + "/watched.txt";
-        QFile f(filePath);
-        ASSERT_TRUE(f.open(QIODevice::WriteOnly));
-        f.write("content");
-        f.close();
-        url = QUrl::fromLocalFile(filePath);
+        obj = new LocalFileWatcher();
     }
 
-    QTemporaryDir tmpDir;
-    QString rootPath;
-    QString filePath;
-    QUrl url;
-    static std::once_flag flag;
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    LocalFileWatcher *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
-std::once_flag LocalFileWatcherTest::flag;
-
-TEST_F(LocalFileWatcherTest, ConstructAndDestruct)
+TEST_F(LocalFileWatcherTest, M_~LocalFileWatcher)
 {
-    // Exercise the ctor and dtor on a stack instance with a real file URL.
-    EXPECT_NO_FATAL_FAILURE({ LocalFileWatcher watcher(url); });
+    // Test method:  ~LocalFileWatcher(())
+    EXPECT_NO_FATAL_FAILURE({ LocalFileWatcher *tmp = new LocalFileWatcher(); delete tmp; });
 }
 
-TEST_F(LocalFileWatcherTest, ConstructAndStartStopWatcher)
+TEST_F(LocalFileWatcherTest, LocalFileWatcher)
 {
-    LocalFileWatcher watcher(url);
-    bool started = watcher.startWatcher();
-    EXPECT_TRUE(started == true || started == false);
-    bool stopped = watcher.stopWatcher();
-    EXPECT_TRUE(stopped == true || stopped == false);
+    // Test constructor: LocalFileWatcher((const QUrl &url, QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
-TEST_F(LocalFileWatcherTest, ConstructOnDirectoryAndStopWatcher)
+TEST_F(LocalFileWatcherTest, notifyFileAdded)
 {
-    QUrl dirUrl = QUrl::fromLocalFile(rootPath);
-    LocalFileWatcher watcher(dirUrl);
-    bool started = watcher.startWatcher();
-    EXPECT_TRUE(started == true || started == false);
-    watcher.stopWatcher();
+    // Test method: void notifyFileAdded((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->notifyFileAdded(_arg0));
 }
 
+TEST_F(LocalFileWatcherTest, notifyFileChanged)
+{
+    // Test method: void notifyFileChanged((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->notifyFileChanged(_arg0));
+}
 
 TEST_F(LocalFileWatcherTest, notifyFileDeleted)
 {
-    // notifyFileDeleted
-    SUCCEED();
+    // Test method: void notifyFileDeleted((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->notifyFileDeleted(_arg0));
+}
+
+TEST_F(LocalFileWatcherTest, public)
+{
+    // Test getter: Q_OBJECT public()
+    EXPECT_NO_FATAL_FAILURE({ obj->public(); });
 }

@@ -3,21 +3,41 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_baseitemdelegateprivate_1.cpp
- * @brief Unit tests for BaseItemDelegatePrivate Low-priority methods
+ * @file test_baseitemdelegateprivate_1.cpp
+ * @brief Unit tests for BaseItemDelegatePrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class BaseItemDelegatePrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/private/baseitemdelegate_p.h"
+
+#include <QTest>
+
+using namespace dfmplugin_workspace;
+
+class BaseItemDelegatePrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new BaseItemDelegatePrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    BaseItemDelegatePrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(BaseItemDelegatePrivateTest, init)
 {
-    // init
-    SUCCEED();
+    // Test method: void init(())
+    EXPECT_NO_FATAL_FAILURE(obj->init());
 }
-

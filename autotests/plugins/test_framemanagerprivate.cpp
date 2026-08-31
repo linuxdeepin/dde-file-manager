@@ -4,49 +4,73 @@
 
 /**
  * @file test_framemanagerprivate.cpp
- * @brief Unit tests for FrameManagerPrivate Mid-priority methods
+ * @brief Unit tests for FrameManagerPrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class FrameManagerPrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "framemanager.h"
+
+#include <QTest>
+
+using namespace ddplugin_organizer;
+
+class FrameManagerPrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new FrameManagerPrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FrameManagerPrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(FrameManagerPrivateTest, buildSurface)
 {
-    // buildSurface
-    SUCCEED();
+    // Test method: void buildSurface(())
+    EXPECT_NO_FATAL_FAILURE(obj->buildSurface());
 }
 
 TEST_F(FrameManagerPrivateTest, clearSurface)
 {
-    // clearSurface
-    SUCCEED();
+    // Test method: void clearSurface(())
+    EXPECT_NO_FATAL_FAILURE(obj->clearSurface());
 }
 
 TEST_F(FrameManagerPrivateTest, onHideAllKeyPressed)
 {
-    // onHideAllKeyPressed
-    SUCCEED();
+    // Test method: void onHideAllKeyPressed(())
+    EXPECT_NO_FATAL_FAILURE(obj->onHideAllKeyPressed());
 }
 
 TEST_F(FrameManagerPrivateTest, saveHideAllSequence)
 {
-    // saveHideAllSequence
-    SUCCEED();
+    // Test method: void saveHideAllSequence((const QKeySequence &seq))
+    QKeySequence _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->saveHideAllSequence(_arg0));
 }
 
 TEST_F(FrameManagerPrivateTest, surfaces)
 {
-    // surfaces
-    SUCCEED();
+    // Test getter: QList<SurfacePointer> surfaces()
+    auto result = obj->surfaces();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(FrameManagerPrivateTest, FrameManagerPrivate)
 {
-    // FrameManagerPrivate
-    SUCCEED();
+    // Test constructor: FrameManagerPrivate((FrameManager *qq))
+    ASSERT_NE(obj, nullptr);
 }

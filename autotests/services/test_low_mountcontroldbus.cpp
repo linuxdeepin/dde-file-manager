@@ -3,39 +3,69 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_low_mountcontroldbus.cpp
- * @brief Unit tests for MountControlDBus Low-priority methods
+ * @file test_low_mountcontroldbus.cpp
+ * @brief Unit tests for MountControlDBus methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class MountControlDBusLowTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "services/mountcontrol/mountcontroldbus.h"
+
+#include <QTest>
+
+using namespace src;
+
+class MountControlDBusTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new MountControlDBus();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    MountControlDBus *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
-TEST_F(MountControlDBusLowTest, Mount)
+TEST_F(MountControlDBusTest, Mount)
 {
-    // Mount
-    SUCCEED();
+    // Test method: QVariantMap Mount((const QString &path, const QVariantMap &opts))
+    QString _arg0{};
+    QVariantMap _arg1{};
+    auto result = obj->Mount(_arg0, _arg1);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
-TEST_F(MountControlDBusLowTest, SupportedFileSystems)
+TEST_F(MountControlDBusTest, SupportedFileSystems)
 {
-    // SupportedFileSystems
-    SUCCEED();
+    // Test getter: QStringList SupportedFileSystems()
+    auto result = obj->SupportedFileSystems();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
-TEST_F(MountControlDBusLowTest, Unmount)
+TEST_F(MountControlDBusTest, Unmount)
 {
-    // Unmount
-    SUCCEED();
+    // Test method: QVariantMap Unmount((const QString &path, const QVariantMap &opts))
+    QString _arg0{};
+    QVariantMap _arg1{};
+    auto result = obj->Unmount(_arg0, _arg1);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
-TEST_F(MountControlDBusLowTest, MountControlDBus_Destructor)
+TEST_F(MountControlDBusTest, MountControlDBus_Destructor)
 {
-    // ~MountControlDBus
-    SUCCEED();
+    // Test method:  ~MountControlDBus(())
+    EXPECT_NO_FATAL_FAILURE({ MountControlDBus *tmp = new MountControlDBus(); delete tmp; });
 }
-

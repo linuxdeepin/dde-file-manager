@@ -3,21 +3,43 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_low_serviceusbrepair_use_namespace.cpp
- * @brief Unit tests for SERVICEUSBREPAIR_USE_NAMESPACE Low-priority methods
+ * @file test_low_serviceusbrepair_use_namespace.cpp
+ * @brief Unit tests for SERVICEUSBREPAIR_USE_NAMESPACE methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class SERVICEUSBREPAIR_USE_NAMESPACELowTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "services/usbrepair/usbrepairdbus.h"
+
+#include <QTest>
+
+using namespace src;
+
+class SERVICEUSBREPAIR_USE_NAMESPACETest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new SERVICEUSBREPAIR_USE_NAMESPACE();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    SERVICEUSBREPAIR_USE_NAMESPACE *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
-TEST_F(SERVICEUSBREPAIR_USE_NAMESPACELowTest, initConnect)
+TEST_F(SERVICEUSBREPAIR_USE_NAMESPACETest, initConnect)
 {
-    // initConnect
-    SUCCEED();
-}
+    // Test getter: SERVICEUSBREPAIR_END_NAMESPACE initConnect()
+    auto result = obj->initConnect();
+    EXPECT_NO_FATAL_FAILURE({ obj->initConnect(); });
 
+}

@@ -3,69 +3,107 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_modelhookinterface_1.cpp
- * @brief Unit tests for ModelHookInterface Low-priority methods
+ * @file test_modelhookinterface_1.cpp
+ * @brief Unit tests for ModelHookInterface methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ModelHookInterfaceTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "model/modelhookinterface.h"
+
+#include <QTest>
+
+using namespace ddplugin_canvas;
+
+class ModelHookInterfaceTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ModelHookInterface();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ModelHookInterface *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ModelHookInterfaceTest, ModelHookInterface)
 {
-    // ModelHookInterface
-    SUCCEED();
+    // Test constructor: ModelHookInterface(())
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(ModelHookInterfaceTest, dataChanged)
 {
-    // dataChanged
-    SUCCEED();
+    // Test method: bool dataChanged((const QUrl &url, const QVector<int> &roles, void *extData))
+    QUrl _arg0{};
+    QVector<int> _arg1{};
+    auto result = obj->dataChanged(_arg0, _arg1, nullptr);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(ModelHookInterfaceTest, dataInserted)
 {
-    // dataInserted
-    SUCCEED();
+    // Test method: bool dataInserted((const QUrl &url, void *extData))
+    QUrl _arg0{};
+    auto result = obj->dataInserted(_arg0, nullptr);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(ModelHookInterfaceTest, dataRenamed)
 {
-    // dataRenamed
-    SUCCEED();
+    // Test method: bool dataRenamed((const QUrl &oldUrl, const QUrl &newUrl, void *extData))
+    QUrl _arg0{};
+    QUrl _arg1{};
+    auto result = obj->dataRenamed(_arg0, _arg1, nullptr);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(ModelHookInterfaceTest, dataRested)
 {
-    // dataRested
-    SUCCEED();
+    // Test method: bool dataRested((QList<QUrl> *urls, void *extData))
+    auto result = obj->dataRested(nullptr, nullptr);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(ModelHookInterfaceTest, dropMimeData)
 {
-    // dropMimeData
-    SUCCEED();
+    // Test method: bool dropMimeData((const QMimeData *data, const QUrl &dir, Qt::DropAction action, void *extData))
+    QUrl _arg1{};
+    auto result = obj->dropMimeData(nullptr, _arg1, Qt::DropAction(), nullptr);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(ModelHookInterfaceTest, hiddenFlagChanged)
 {
-    // hiddenFlagChanged
-    SUCCEED();
+    // Test method: void hiddenFlagChanged((bool show))
+    EXPECT_NO_FATAL_FAILURE(obj->hiddenFlagChanged(false));
 }
 
 TEST_F(ModelHookInterfaceTest, sortData)
 {
-    // sortData
-    SUCCEED();
+    // Test method: bool sortData((int role, int order, QList<QUrl> *files, void *extData))
+    auto result = obj->sortData(0, 0, nullptr, nullptr);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(ModelHookInterfaceTest, ModelHookInterface_Destructor)
 {
-    // ~ModelHookInterface
-    SUCCEED();
+    // Test method:  ~ModelHookInterface(())
+    EXPECT_NO_FATAL_FAILURE({ ModelHookInterface *tmp = new ModelHookInterface(); delete tmp; });
 }
-

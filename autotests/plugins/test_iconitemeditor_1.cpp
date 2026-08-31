@@ -3,165 +3,211 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_iconitemeditor_1.cpp
- * @brief Unit tests for IconItemEditor Low-priority methods
+ * @file test_iconitemeditor_1.cpp
+ * @brief Unit tests for IconItemEditor methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class IconItemEditorTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/iconitemeditor.h"
+
+#include <QTest>
+
+using namespace dfmplugin_workspace;
+
+class IconItemEditorTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new IconItemEditor();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    IconItemEditor *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(IconItemEditorTest, createTooltip)
 {
-    // createTooltip
-    SUCCEED();
+    // Test getter: DArrowRectangle createTooltip()
+    auto result = obj->createTooltip();
+    EXPECT_NO_FATAL_FAILURE({ obj->createTooltip(); });
+
 }
 
 TEST_F(IconItemEditorTest, editRedo)
 {
-    // editRedo
-    SUCCEED();
+    // Test method: void editRedo(())
+    EXPECT_NO_FATAL_FAILURE(obj->editRedo());
 }
 
 TEST_F(IconItemEditorTest, editTextStackAdvance)
 {
-    // editTextStackAdvance
-    SUCCEED();
+    // Test getter: QString editTextStackAdvance()
+    auto result = obj->editTextStackAdvance();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(IconItemEditorTest, editTextStackBack)
 {
-    // editTextStackBack
-    SUCCEED();
+    // Test getter: QString editTextStackBack()
+    auto result = obj->editTextStackBack();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(IconItemEditorTest, editTextStackCurrentItem)
 {
-    // editTextStackCurrentItem
-    SUCCEED();
+    // Test getter: QString editTextStackCurrentItem()
+    auto result = obj->editTextStackCurrentItem();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(IconItemEditorTest, editUndo)
 {
-    // editUndo
-    SUCCEED();
+    // Test method: void editUndo(())
+    EXPECT_NO_FATAL_FAILURE(obj->editUndo());
 }
 
 TEST_F(IconItemEditorTest, event)
 {
-    // event
-    SUCCEED();
+    // Test method: bool event((QEvent *ee))
+    auto result = obj->event(nullptr);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(IconItemEditorTest, getIconLabel)
 {
-    // getIconLabel
-    SUCCEED();
+    // Test getter: QLabel getIconLabel()
+    auto result = obj->getIconLabel();
+    EXPECT_NO_FATAL_FAILURE({ obj->getIconLabel(); });
+
 }
 
 TEST_F(IconItemEditorTest, getTextEdit)
 {
-    // getTextEdit
-    SUCCEED();
+    // Test getter: QTextEdit getTextEdit()
+    auto result = obj->getTextEdit();
+    EXPECT_NO_FATAL_FAILURE({ obj->getTextEdit(); });
+
 }
 
 TEST_F(IconItemEditorTest, isEditReadOnly)
 {
-    // isEditReadOnly
-    SUCCEED();
+    // Test bool getter: isEditReadOnly()
+    bool result = obj->isEditReadOnly();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(IconItemEditorTest, maxCharSize)
 {
-    // maxCharSize
-    SUCCEED();
+    // Test getter: int maxCharSize()
+    auto result = obj->maxCharSize();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(IconItemEditorTest, opacity)
 {
-    // opacity
-    SUCCEED();
+    // Test getter: qreal opacity()
+    auto result = obj->opacity();
+    EXPECT_EQ(result, 0.0);
+
 }
 
 TEST_F(IconItemEditorTest, popupEditContentMenu)
 {
-    // popupEditContentMenu
-    SUCCEED();
+    // Test method: void popupEditContentMenu(())
+    EXPECT_NO_FATAL_FAILURE(obj->popupEditContentMenu());
 }
 
 TEST_F(IconItemEditorTest, pushItemToEditTextStack)
 {
-    // pushItemToEditTextStack
-    SUCCEED();
+    // Test method: void pushItemToEditTextStack((const QString &item))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->pushItemToEditTextStack(_arg0));
 }
 
 TEST_F(IconItemEditorTest, resizeFromEditTextChanged)
 {
-    // resizeFromEditTextChanged
-    SUCCEED();
+    // Test method: void resizeFromEditTextChanged(())
+    EXPECT_NO_FATAL_FAILURE(obj->resizeFromEditTextChanged());
 }
 
 TEST_F(IconItemEditorTest, select)
 {
-    // select
-    SUCCEED();
+    // Test method: void select((const QString &part))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->select(_arg0));
 }
 
 TEST_F(IconItemEditorTest, setCharCountLimit)
 {
-    // setCharCountLimit
-    SUCCEED();
+    // Test method: void setCharCountLimit(())
+    EXPECT_NO_FATAL_FAILURE(obj->setCharCountLimit());
 }
 
 TEST_F(IconItemEditorTest, setMaxCharSize)
 {
-    // setMaxCharSize
-    SUCCEED();
+    // Test setter: void setMaxCharSize((int maxSize))
+    EXPECT_NO_FATAL_FAILURE(obj->setMaxCharSize(0));
 }
 
 TEST_F(IconItemEditorTest, setMaxHeight)
 {
-    // setMaxHeight
-    SUCCEED();
+    // Test setter: void setMaxHeight((int h))
+    EXPECT_NO_FATAL_FAILURE(obj->setMaxHeight(0));
 }
 
 TEST_F(IconItemEditorTest, setOpacity)
 {
-    // setOpacity
-    SUCCEED();
+    // Test setter: void setOpacity((qreal opacity))
+    EXPECT_NO_FATAL_FAILURE(obj->setOpacity(0.0));
 }
 
 TEST_F(IconItemEditorTest, setText)
 {
-    // setText
-    SUCCEED();
+    // Test setter: void setText((const QString &text))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->setText(_arg0));
 }
 
 TEST_F(IconItemEditorTest, showAlertMessage)
 {
-    // showAlertMessage
-    SUCCEED();
+    // Test method: void showAlertMessage((const QString &text, int duration))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->showAlertMessage(_arg0, 0));
 }
 
 TEST_F(IconItemEditorTest, sizeHint)
 {
-    // sizeHint
-    SUCCEED();
+    // Test getter: QSize sizeHint()
+    auto result = obj->sizeHint();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(IconItemEditorTest, updateEditorGeometry)
 {
-    // updateEditorGeometry
-    SUCCEED();
+    // Test method: void updateEditorGeometry(())
+    EXPECT_NO_FATAL_FAILURE(obj->updateEditorGeometry());
 }
 
 TEST_F(IconItemEditorTest, updateStyleSheet)
 {
-    // updateStyleSheet
-    SUCCEED();
+    // Test method: void updateStyleSheet(())
+    EXPECT_NO_FATAL_FAILURE(obj->updateStyleSheet());
 }
-

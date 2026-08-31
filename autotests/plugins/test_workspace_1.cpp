@@ -3,87 +3,135 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_workspace_1.cpp
- * @brief Unit tests for Workspace Low-priority methods
+ * @file test_workspace_1.cpp
+ * @brief Unit tests for Workspace methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class WorkspaceTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "workspace.h"
+
+#include <QTest>
+
+using namespace dfmplugin_workspace;
+
+class WorkspaceTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new Workspace();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    Workspace *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(WorkspaceTest, initConfig)
 {
-    // initConfig
-    SUCCEED();
+    // Test method: void initConfig(())
+    EXPECT_NO_FATAL_FAILURE(obj->initConfig());
 }
 
 TEST_F(WorkspaceTest, initialize)
 {
-    // initialize
-    SUCCEED();
+    // Test method: void initialize(())
+    EXPECT_NO_FATAL_FAILURE(obj->initialize());
 }
 
 TEST_F(WorkspaceTest, isGridDensityConfEqual)
 {
-    // isGridDensityConfEqual
-    SUCCEED();
+    // Test method: bool isGridDensityConfEqual((const QVariant &dcon, const QVariant &dset))
+    QVariant _arg0{};
+    QVariant _arg1{};
+    auto result = obj->isGridDensityConfEqual(_arg0, _arg1);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(WorkspaceTest, isIconSizeConfEqual)
 {
-    // isIconSizeConfEqual
-    SUCCEED();
+    // Test method: bool isIconSizeConfEqual((const QVariant &dcon, const QVariant &dset))
+    QVariant _arg0{};
+    QVariant _arg1{};
+    auto result = obj->isIconSizeConfEqual(_arg0, _arg1);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(WorkspaceTest, isListHeightConfEqual)
 {
-    // isListHeightConfEqual
-    SUCCEED();
+    // Test method: bool isListHeightConfEqual((const QVariant &dcon, const QVariant &dset))
+    QVariant _arg0{};
+    QVariant _arg1{};
+    auto result = obj->isListHeightConfEqual(_arg0, _arg1);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(WorkspaceTest, isRemoteThumbnailConfEqual)
 {
-    // isRemoteThumbnailConfEqual
-    SUCCEED();
+    // Test method: bool isRemoteThumbnailConfEqual((const QVariant &dcon, const QVariant &dset))
+    QVariant _arg0{};
+    QVariant _arg1{};
+    auto result = obj->isRemoteThumbnailConfEqual(_arg0, _arg1);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(WorkspaceTest, onWindowClosed)
 {
-    // onWindowClosed
-    SUCCEED();
+    // Test method: void onWindowClosed((quint64 windId))
+    EXPECT_NO_FATAL_FAILURE(obj->onWindowClosed(0));
 }
 
 TEST_F(WorkspaceTest, onWindowOpened)
 {
-    // onWindowOpened
-    SUCCEED();
+    // Test method: void onWindowOpened((quint64 windId))
+    EXPECT_NO_FATAL_FAILURE(obj->onWindowOpened(0));
 }
 
 TEST_F(WorkspaceTest, syncGridDensityToAppSet)
 {
-    // syncGridDensityToAppSet
-    SUCCEED();
+    // Test method: void syncGridDensityToAppSet((const QString &, const QString &, const QVariant &var))
+    QString _arg0{};
+    QString _arg1{};
+    QVariant _arg2{};
+    EXPECT_NO_FATAL_FAILURE(obj->syncGridDensityToAppSet(_arg0, _arg1, _arg2));
 }
 
 TEST_F(WorkspaceTest, syncIconSizeToAppSet)
 {
-    // syncIconSizeToAppSet
-    SUCCEED();
+    // Test method: void syncIconSizeToAppSet((const QString &, const QString &, const QVariant &var))
+    QString _arg0{};
+    QString _arg1{};
+    QVariant _arg2{};
+    EXPECT_NO_FATAL_FAILURE(obj->syncIconSizeToAppSet(_arg0, _arg1, _arg2));
 }
 
 TEST_F(WorkspaceTest, syncListHeightToAppSet)
 {
-    // syncListHeightToAppSet
-    SUCCEED();
+    // Test method: void syncListHeightToAppSet((const QString &, const QString &, const QVariant &var))
+    QString _arg0{};
+    QString _arg1{};
+    QVariant _arg2{};
+    EXPECT_NO_FATAL_FAILURE(obj->syncListHeightToAppSet(_arg0, _arg1, _arg2));
 }
 
 TEST_F(WorkspaceTest, syncRemoteThumbnailToAppSet)
 {
-    // syncRemoteThumbnailToAppSet
-    SUCCEED();
+    // Test method: void syncRemoteThumbnailToAppSet((const QString &, const QString &, const QVariant &var))
+    QString _arg0{};
+    QString _arg1{};
+    QVariant _arg2{};
+    EXPECT_NO_FATAL_FAILURE(obj->syncRemoteThumbnailToAppSet(_arg0, _arg1, _arg2));
 }
-

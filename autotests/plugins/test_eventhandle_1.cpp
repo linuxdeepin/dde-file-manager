@@ -3,171 +3,213 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_eventhandle_1.cpp
- * @brief Unit tests for EventHandle Low-priority methods
+ * @file test_eventhandle_1.cpp
+ * @brief Unit tests for EventHandle methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class EventHandleTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "core.h"
+
+#include <QTest>
+
+using namespace ddplugin_core;
+
+class EventHandleTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new EventHandle();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    EventHandle *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(EventHandleTest, EventHandle)
 {
-    // EventHandle
-    SUCCEED();
+    // Test constructor: EventHandle((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(EventHandleTest, EventHandle_EventHan)
 {
-    // EventHandle
-    SUCCEED();
+    // Test constructor: EventHandle((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(EventHandleTest, desktopFrame)
 {
-    // desktopFrame
-    SUCCEED();
+    // Test getter: AbstractDesktopFrame desktopFrame()
+    auto result = obj->desktopFrame();
+    EXPECT_NO_FATAL_FAILURE({ obj->desktopFrame(); });
+
 }
 
 TEST_F(EventHandleTest, displayMode)
 {
-    // displayMode
-    SUCCEED();
+    // Test getter: int displayMode()
+    auto result = obj->displayMode();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(EventHandleTest, hookCanvasRequest)
 {
-    // hookCanvasRequest
-    SUCCEED();
+    // Test method: bool hookCanvasRequest((const QString &screen))
+    QString _arg0{};
+    auto result = obj->hookCanvasRequest(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(EventHandleTest, init)
 {
-    // init
-    SUCCEED();
+    // Test bool getter: init()
+    bool result = obj->init();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(EventHandleTest, init_init)
 {
-    // init
-    SUCCEED();
+    // Test bool getter: init()
+    bool result = obj->init();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(EventHandleTest, lastChangedMode)
 {
-    // lastChangedMode
-    SUCCEED();
+    // Test getter: int lastChangedMode()
+    auto result = obj->lastChangedMode();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(EventHandleTest, layoutWidget)
 {
-    // layoutWidget
-    SUCCEED();
+    // Test method: void layoutWidget(())
+    EXPECT_NO_FATAL_FAILURE(obj->layoutWidget());
 }
 
 TEST_F(EventHandleTest, logicScreens)
 {
-    // logicScreens
-    SUCCEED();
+    // Test getter: QList<ScreenPointer> logicScreens()
+    auto result = obj->logicScreens();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(EventHandleTest, onChanged)
 {
-    // onChanged
-    SUCCEED();
+    // Test method: void onChanged(())
+    EXPECT_NO_FATAL_FAILURE(obj->onChanged());
 }
 
 TEST_F(EventHandleTest, onQuit)
 {
-    // onQuit
-    SUCCEED();
+    // Test method: void onQuit(())
+    EXPECT_NO_FATAL_FAILURE(obj->onQuit());
 }
 
 TEST_F(EventHandleTest, publishAvailableGeometryChanged)
 {
-    // publishAvailableGeometryChanged
-    SUCCEED();
+    // Test method: void publishAvailableGeometryChanged(())
+    EXPECT_NO_FATAL_FAILURE(obj->publishAvailableGeometryChanged());
 }
 
 TEST_F(EventHandleTest, publishDisplayModeChanged)
 {
-    // publishDisplayModeChanged
-    SUCCEED();
+    // Test method: void publishDisplayModeChanged(())
+    EXPECT_NO_FATAL_FAILURE(obj->publishDisplayModeChanged());
 }
 
 TEST_F(EventHandleTest, publishGeometryChanged)
 {
-    // publishGeometryChanged
-    SUCCEED();
+    // Test method: void publishGeometryChanged(())
+    EXPECT_NO_FATAL_FAILURE(obj->publishGeometryChanged());
 }
 
 TEST_F(EventHandleTest, publishScreenAvailableGeometryChanged)
 {
-    // publishScreenAvailableGeometryChanged
-    SUCCEED();
+    // Test method: void publishScreenAvailableGeometryChanged(())
+    EXPECT_NO_FATAL_FAILURE(obj->publishScreenAvailableGeometryChanged());
 }
 
 TEST_F(EventHandleTest, publishScreenChanged)
 {
-    // publishScreenChanged
-    SUCCEED();
+    // Test method: void publishScreenChanged(())
+    EXPECT_NO_FATAL_FAILURE(obj->publishScreenChanged());
 }
 
 TEST_F(EventHandleTest, publishScreenGeometryChanged)
 {
-    // publishScreenGeometryChanged
-    SUCCEED();
+    // Test method: void publishScreenGeometryChanged(())
+    EXPECT_NO_FATAL_FAILURE(obj->publishScreenGeometryChanged());
 }
 
 TEST_F(EventHandleTest, publishWindowAboutToBeBuilded)
 {
-    // publishWindowAboutToBeBuilded
-    SUCCEED();
+    // Test method: void publishWindowAboutToBeBuilded(())
+    EXPECT_NO_FATAL_FAILURE(obj->publishWindowAboutToBeBuilded());
 }
 
 TEST_F(EventHandleTest, publishWindowBuilded)
 {
-    // publishWindowBuilded
-    SUCCEED();
+    // Test method: void publishWindowBuilded(())
+    EXPECT_NO_FATAL_FAILURE(obj->publishWindowBuilded());
 }
 
 TEST_F(EventHandleTest, publishWindowShowed)
 {
-    // publishWindowShowed
-    SUCCEED();
+    // Test method: void publishWindowShowed(())
+    EXPECT_NO_FATAL_FAILURE(obj->publishWindowShowed());
 }
 
 TEST_F(EventHandleTest, rootWindows)
 {
-    // rootWindows
-    SUCCEED();
+    // Test getter: QList<QWidget *> rootWindows()
+    auto result = obj->rootWindows();
+    // Pointer return type
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(EventHandleTest, screenProxyInstance)
 {
-    // screenProxyInstance
-    SUCCEED();
+    // Test getter: AbstractScreenProxy screenProxyInstance()
+    auto result = obj->screenProxyInstance();
+    EXPECT_NO_FATAL_FAILURE({ obj->screenProxyInstance(); });
+
 }
 
 TEST_F(EventHandleTest, screensInUse)
 {
-    // screensInUse
-    SUCCEED();
+    // Test method: bool screensInUse((QStringList *out))
+    auto result = obj->screensInUse(nullptr);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(EventHandleTest, EventHandle_Destructor)
 {
-    // ~EventHandle
-    SUCCEED();
+    // Test method:  ~EventHandle(())
+    EXPECT_NO_FATAL_FAILURE({ EventHandle *tmp = new EventHandle(); delete tmp; });
 }
 
 TEST_F(EventHandleTest, EventHandle_Destructor_xEventHa)
 {
-    // ~EventHandle
-    SUCCEED();
+    // Test method:  ~EventHandle(())
+    EXPECT_NO_FATAL_FAILURE({ EventHandle *tmp = new EventHandle(); delete tmp; });
 }
-

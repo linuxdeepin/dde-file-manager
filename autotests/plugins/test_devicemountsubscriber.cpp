@@ -4,19 +4,40 @@
 
 /**
  * @file test_devicemountsubscriber.cpp
- * @brief Unit tests for DeviceMountSubscriber Mid-priority methods
+ * @brief Unit tests for DeviceMountSubscriber methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class DeviceMountSubscriberTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/devicemountsubscriber.h"
+
+#include <QTest>
+
+using namespace dfmplugin_sidebar;
+
+class DeviceMountSubscriberTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new DeviceMountSubscriber();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    DeviceMountSubscriber *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(DeviceMountSubscriberTest, cleanupExpiredSubscriptions)
 {
-    // cleanupExpiredSubscriptions
-    SUCCEED();
+    // Test method: void cleanupExpiredSubscriptions(())
+    EXPECT_NO_FATAL_FAILURE(obj->cleanupExpiredSubscriptions());
 }

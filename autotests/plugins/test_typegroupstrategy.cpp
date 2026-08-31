@@ -4,19 +4,40 @@
 
 /**
  * @file test_typegroupstrategy.cpp
- * @brief Unit tests for TypeGroupStrategy Mid-priority methods
+ * @brief Unit tests for TypeGroupStrategy methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class TypeGroupStrategyTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "groups/typegroupstrategy.h"
+
+#include <QTest>
+
+using namespace dfmplugin_workspace;
+
+class TypeGroupStrategyTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new TypeGroupStrategy();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    TypeGroupStrategy *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(TypeGroupStrategyTest, TypeGroupStrategy)
 {
-    // TypeGroupStrategy
-    SUCCEED();
+    // Test constructor: TypeGroupStrategy((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }

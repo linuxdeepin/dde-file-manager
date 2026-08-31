@@ -3,21 +3,43 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_organizerbroker_1.cpp
- * @brief Unit tests for OrganizerBroker Low-priority methods
+ * @file test_organizerbroker_1.cpp
+ * @brief Unit tests for OrganizerBroker methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class OrganizerBrokerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "broker/organizerbroker.h"
+
+#include <QTest>
+
+using namespace ddplugin_organizer;
+
+class OrganizerBrokerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new OrganizerBroker();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    OrganizerBroker *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(OrganizerBrokerTest, init)
 {
-    // init
-    SUCCEED();
-}
+    // Test bool getter: init()
+    bool result = obj->init();
+    EXPECT_FALSE(result);
 
+}

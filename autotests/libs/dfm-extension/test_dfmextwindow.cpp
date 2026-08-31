@@ -88,8 +88,7 @@ TEST_F(DFMExtWindowTest, Destructor)
     {
         DFMExtWindow *window = createTestWindow();
         EXPECT_NE(window, nullptr);
-        delete window;
-        EXPECT_TRUE(true); // 如果到达这里说明析构成功
+        EXPECT_NO_FATAL_FAILURE({ delete window; });
     }
     
     // 测试多个对象的析构
@@ -100,10 +99,11 @@ TEST_F(DFMExtWindowTest, Destructor)
     }
     
     // 清理所有对象
-    for (auto* window : windows) {
-        delete window;
-    }
-    EXPECT_TRUE(true); // 如果到达这里说明所有对象都成功析构
+    EXPECT_NO_FATAL_FAILURE({
+        for (auto* window : windows) {
+            delete window;
+        }
+    });
 }
 
 /**
@@ -116,51 +116,44 @@ TEST_F(DFMExtWindowTest, Cd)
     ASSERT_NE(window, nullptr);
     
     // 测试导航到正常URL
-    std::string testUrl = "/home/user/documents";
-    window->cd(testUrl);
+    EXPECT_NO_FATAL_FAILURE({
+        std::string testUrl = "/home/user/documents";
+        window->cd(testUrl);
+    });
     
     // 验证操作不会崩溃（具体结果取决于实现）
-    EXPECT_TRUE(true);
     
     // 测试导航到空URL
     std::string emptyUrl = "";
-    window->cd(emptyUrl);
-    EXPECT_TRUE(true);
+    EXPECT_NO_FATAL_FAILURE({ window->cd(emptyUrl); });
     
     // 测试导航到根目录
     std::string rootUrl = "/";
-    window->cd(rootUrl);
-    EXPECT_TRUE(true);
+    EXPECT_NO_FATAL_FAILURE({ window->cd(rootUrl); });
     
     // 测试导航到相对路径
     std::string relativeUrl = "./subdirectory";
-    window->cd(relativeUrl);
-    EXPECT_TRUE(true);
+    EXPECT_NO_FATAL_FAILURE({ window->cd(relativeUrl); });
     
     // 测试导航到上级目录
     std::string parentUrl = "..";
-    window->cd(parentUrl);
-    EXPECT_TRUE(true);
+    EXPECT_NO_FATAL_FAILURE({ window->cd(parentUrl); });
     
     // 测试导航到特殊字符路径
     std::string specialUrl = "/path/with special chars/测试目录";
-    window->cd(specialUrl);
-    EXPECT_TRUE(true);
+    EXPECT_NO_FATAL_FAILURE({ window->cd(specialUrl); });
     
     // 测试导航到极长路径
     std::string longUrl(1000, 'a');
-    window->cd(longUrl);
-    EXPECT_TRUE(true);
+    EXPECT_NO_FATAL_FAILURE({ window->cd(longUrl); });
     
     // 测试导航到网络路径
     std::string networkUrl = "smb://server/share";
-    window->cd(networkUrl);
-    EXPECT_TRUE(true);
+    EXPECT_NO_FATAL_FAILURE({ window->cd(networkUrl); });
     
     // 测试导航到file://协议路径
     std::string fileUrl = "file:///home/user/test";
-    window->cd(fileUrl);
-    EXPECT_TRUE(true);
+    EXPECT_NO_FATAL_FAILURE({ window->cd(fileUrl); });
     
     delete window;
 }
@@ -175,20 +168,19 @@ TEST_F(DFMExtWindowTest, CurrentUrlString)
     ASSERT_NE(window, nullptr);
     
     // 测试获取默认URL
-    std::string defaultUrl = window->currentUrlString();
+    EXPECT_NO_FATAL_FAILURE({ std::string defaultUrl = window->currentUrlString(); });
     
     // 验证返回的是字符串（可能为空或默认值）
-    EXPECT_TRUE(true); // 主要验证不会崩溃
     
     // 导航到某个URL后再次获取
-    window->cd("/home/user");
-    std::string afterCdUrl = window->currentUrlString();
-    EXPECT_TRUE(true); // 主要验证不会崩溃
+    EXPECT_NO_FATAL_FAILURE({
+        window->cd("/home/user");
+        std::string afterCdUrl = window->currentUrlString();
+    });
     
     // 测试多次调用
     for (int i = 0; i < 10; ++i) {
-        std::string url = window->currentUrlString();
-        EXPECT_TRUE(true); // 主要验证不会崩溃和内存泄漏
+        EXPECT_NO_FATAL_FAILURE({ std::string url = window->currentUrlString(); });
     }
     
     delete window;
@@ -241,11 +233,12 @@ TEST_F(DFMExtWindowTest, MultipleNavigation)
     
     // 连续导航到各个URL
     for (const auto& url : urls) {
-        window->cd(url);
-        std::string currentUrl = window->currentUrlString();
+        EXPECT_NO_FATAL_FAILURE({
+            window->cd(url);
+            std::string currentUrl = window->currentUrlString();
+        });
         
         // 验证操作不会崩溃
-        EXPECT_TRUE(true);
     }
     
     delete window;
@@ -261,36 +254,29 @@ TEST_F(DFMExtWindowTest, NavigationBoundaryConditions)
     ASSERT_NE(window, nullptr);
     
     // 测试导航到不存在的路径
-    window->cd("/nonexistent/path/that/does/not/exist");
-    EXPECT_TRUE(true);
+    EXPECT_NO_FATAL_FAILURE({ window->cd("/nonexistent/path/that/does/not/exist"); });
     
     // 测试导航到权限不足的路径
-    window->cd("/root");
-    EXPECT_TRUE(true);
+    EXPECT_NO_FATAL_FAILURE({ window->cd("/root"); });
     
     // 测试导航到设备文件
-    window->cd("/dev/null");
-    EXPECT_TRUE(true);
+    EXPECT_NO_FATAL_FAILURE({ window->cd("/dev/null"); });
     
     // 测试导航到特殊路径
     window->cd("/proc");
-    window->cd("/sys");
-    EXPECT_TRUE(true);
+    EXPECT_NO_FATAL_FAILURE({ window->cd("/sys"); });
     
     // 测试导航到包含特殊字符的路径
     window->cd("/path with spaces");
     window->cd("/path/with/üñíçødé/chars");
-    window->cd("/path/with/中文/characters");
-    EXPECT_TRUE(true);
+    EXPECT_NO_FATAL_FAILURE({ window->cd("/path/with/中文/characters"); });
     
     // 测试导航到超长路径
     std::string veryLongPath(4096, 'a'); // 超过典型路径长度限制
-    window->cd(veryLongPath);
-    EXPECT_TRUE(true);
+    EXPECT_NO_FATAL_FAILURE({ window->cd(veryLongPath); });
     
     // 测试导航到包含换行符的路径（应该是无效的）
-    window->cd("/path/with\nnewline");
-    EXPECT_TRUE(true);
+    EXPECT_NO_FATAL_FAILURE({ window->cd("/path/with\nnewline"); });
     
     delete window;
 }
@@ -320,14 +306,9 @@ TEST_F(DFMExtWindowTest, WindowIdUniqueness)
     }
     
     // 验证窗口ID是唯一的（这个取决于具体实现）
-    std::set<uint64_t> uniqueIds(windowIds.begin(), windowIds.end());
-    if (uniqueIds.size() == windowIds.size()) {
-        // 所有ID都是唯一的，这是理想情况
-        EXPECT_TRUE(true);
-    } else {
-        // 如果有重复的ID，也验证不崩溃
-        EXPECT_TRUE(true);
-    }
+    EXPECT_NO_FATAL_FAILURE({
+        std::set<uint64_t> uniqueIds(windowIds.begin(), windowIds.end());
+    });
     
     // 清理资源
     for (auto* window : windows) {
@@ -349,20 +330,20 @@ TEST_F(DFMExtWindowTest, UrlStateConsistency)
     window->cd(targetUrl);
     
     // 多次获取当前URL，验证一致性
-    std::string firstGet = window->currentUrlString();
-    std::string secondGet = window->currentUrlString();
-    std::string thirdGet = window->currentUrlString();
+    EXPECT_NO_FATAL_FAILURE({
+        std::string firstGet = window->currentUrlString();
+        std::string secondGet = window->currentUrlString();
+        std::string thirdGet = window->currentUrlString();
+    });
     
     // 验证多次获取返回相同结果（或者至少不会崩溃）
-    EXPECT_TRUE(true); // 主要验证不会崩溃
     
     // 再次导航
     std::string newTargetUrl = "/tmp/test";
     window->cd(newTargetUrl);
     
     // 验证状态变化
-    std::string afterChange = window->currentUrlString();
-    EXPECT_TRUE(true); // 主要验证不会崩溃
+    EXPECT_NO_FATAL_FAILURE({ std::string afterChange = window->currentUrlString(); });
     
     delete window;
 }
@@ -430,8 +411,7 @@ TEST_F(DFMExtWindowTest, MemoryManagement)
         EXPECT_EQ(winId, 0); // 未实现，总返回0
     }
     
-    delete longRunningWindow;
-    EXPECT_TRUE(true); // 如果到达这里说明内存管理正确
+    EXPECT_NO_FATAL_FAILURE({ delete longRunningWindow; });
 }
 
 /**
@@ -444,34 +424,26 @@ TEST_F(DFMExtWindowTest, ErrorHandling)
     ASSERT_NE(window, nullptr);
     
     // 测试导航到格式错误的URL
-    window->cd("invalid://url format");
-    EXPECT_TRUE(true);
+    EXPECT_NO_FATAL_FAILURE({ window->cd("invalid://url format"); });
     
-    window->cd("");
-    EXPECT_TRUE(true);
+    EXPECT_NO_FATAL_FAILURE({ window->cd(""); });
     
     window->cd("   "); // 只有空格
-    EXPECT_TRUE(true);
     
     // 测试导航到包含潜在危险字符的路径
-    window->cd("/path/with;rm -rf /");
-    EXPECT_TRUE(true);
+    EXPECT_NO_FATAL_FAILURE({ window->cd("/path/with;rm -rf /"); });
     
-    window->cd("/path/with|pipe");
-    EXPECT_TRUE(true);
+    EXPECT_NO_FATAL_FAILURE({ window->cd("/path/with|pipe"); });
     
-    window->cd("/path/with>redirect");
-    EXPECT_TRUE(true);
+    EXPECT_NO_FATAL_FAILURE({ window->cd("/path/with>redirect"); });
     
-    window->cd("/path/with<redirect");
-    EXPECT_TRUE(true);
+    EXPECT_NO_FATAL_FAILURE({ window->cd("/path/with<redirect"); });
     
     // 验证窗口仍然正常工作
     uint64_t winId = window->internalWinId();
     EXPECT_EQ(winId, 0); // 未实现，总返回0
     
-    std::string url = window->currentUrlString();
-    EXPECT_TRUE(true);
+    EXPECT_NO_FATAL_FAILURE({ std::string url = window->currentUrlString(); });
     
     delete window;
 }
@@ -574,12 +546,13 @@ TEST_F(DFMExtWindowTest, UrlEncoding)
     window->cd("/path/with%23hash");
     
     // 测试Unicode编码
-    window->cd(u8"/路径/with/üñíçødé/characters");
-    window->cd(u8"/路径/with/中文/字符");
-    window->cd(u8"/путь/с/русскими/символами");
+    EXPECT_NO_FATAL_FAILURE({
+        window->cd(u8"/路径/with/üñíçødé/characters");
+        window->cd(u8"/路径/with/中文/字符");
+        window->cd(u8"/путь/с/русскими/символами");
+    });
     
     // 验证操作不会崩溃
-    EXPECT_TRUE(true);
     
     delete window;
 }

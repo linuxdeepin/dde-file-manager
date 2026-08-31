@@ -3,33 +3,57 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_opticalmenusceneprivate.cpp
- * @brief Unit tests for OpticalMenuScenePrivate Low-priority methods
+ * @file test_opticalmenusceneprivate.cpp
+ * @brief Unit tests for OpticalMenuScenePrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class OpticalMenuScenePrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "menus/opticalmenuscene.h"
+
+#include <QTest>
+
+using namespace dfmplugin_optical;
+
+class OpticalMenuScenePrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new OpticalMenuScenePrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    OpticalMenuScenePrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(OpticalMenuScenePrivateTest, OpticalMenuScenePrivate)
 {
-    // OpticalMenuScenePrivate
-    SUCCEED();
+    // Test constructor: OpticalMenuScenePrivate((OpticalMenuScene *qq))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(OpticalMenuScenePrivateTest, enablePaste)
 {
-    // enablePaste
-    SUCCEED();
+    // Test bool getter: enablePaste()
+    bool result = obj->enablePaste();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(OpticalMenuScenePrivateTest, findSceneName)
 {
-    // findSceneName
-    SUCCEED();
-}
+    // Test method: QString findSceneName((QAction *act))
+    auto result = obj->findSceneName(nullptr);
+    EXPECT_TRUE(result.isEmpty());
 
+}

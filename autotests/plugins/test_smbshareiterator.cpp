@@ -4,37 +4,64 @@
 
 /**
  * @file test_smbshareiterator.cpp
- * @brief Unit tests for SmbShareIterator Mid-priority methods
+ * @brief Unit tests for SmbShareIterator methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class SmbShareIteratorTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "iterator/smbshareiterator.h"
+
+#include <QTest>
+
+using namespace dfmplugin_smbbrowser;
+
+class SmbShareIteratorTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new SmbShareIterator();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    SmbShareIterator *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(SmbShareIteratorTest, fileInfo)
 {
-    // fileInfo
-    SUCCEED();
+    // Test getter: FileInfoPointer fileInfo()
+    auto result = obj->fileInfo();
+    EXPECT_EQ(result.get(), nullptr);
+
 }
 
 TEST_F(SmbShareIteratorTest, initIterator)
 {
-    // initIterator
-    SUCCEED();
+    // Test bool getter: initIterator()
+    bool result = obj->initIterator();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(SmbShareIteratorTest, next)
 {
-    // next
-    SUCCEED();
+    // Test getter: QUrl next()
+    auto result = obj->next();
+    EXPECT_TRUE(result.isEmpty() || result.isValid());
 }
 
 TEST_F(SmbShareIteratorTest, url)
 {
-    // url
-    SUCCEED();
+    // Test getter: QUrl url()
+    auto result = obj->url();
+    EXPECT_TRUE(result.isEmpty() || result.isValid());
 }

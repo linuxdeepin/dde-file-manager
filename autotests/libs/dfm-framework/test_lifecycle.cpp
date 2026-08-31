@@ -835,10 +835,9 @@ TEST_F(LifeCycleTest, ShutdownPlugin_NullPointer)
     PluginMetaObjectPointer nullPlugin;
 
     // 调用函数应该不会崩溃
-    shutdownPlugin(nullPlugin);
+    EXPECT_NO_FATAL_FAILURE({ shutdownPlugin(nullPlugin); });
 
     // 如果到达这里说明没有崩溃
-    EXPECT_TRUE(true);
 }
 
 /**
@@ -1033,10 +1032,7 @@ TEST_F(LifeCycleTest, ComprehensiveTest)
         __DBG_STUB_INVOKE__
     });
 
-    shutdownPlugins();  // 应该不会崩溃
-
-    // 如果到达这里说明综合测试通过
-    EXPECT_TRUE(true);
+    EXPECT_NO_FATAL_FAILURE({ shutdownPlugins(); });
 }
 
 /**
@@ -1067,11 +1063,12 @@ TEST_F(LifeCycleTest, EdgeCases)
         return PluginMetaObjectPointer();  // 返回空指针
     });
 
-    auto result = pluginMetaObj("NonExistentPlugin");
-    EXPECT_TRUE(result.isNull());
+    EXPECT_NO_FATAL_FAILURE({
+        auto result = pluginMetaObj("NonExistentPlugin");
+        EXPECT_TRUE(result.isNull());
+    });
 
     // 如果到达这里说明边界测试通过
-    EXPECT_TRUE(true);
 }
 
 /**

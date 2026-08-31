@@ -4,31 +4,60 @@
 
 /**
  * @file test_mountcontroladaptor.cpp
- * @brief Unit tests for MountControlAdaptor Mid-priority methods
+ * @brief Unit tests for MountControlAdaptor methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class MountControlAdaptorTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "config/dbus/MountControlAdaptor.h"
+
+#include <QTest>
+
+using namespace src;
+
+class MountControlAdaptorTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new MountControlAdaptor();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    MountControlAdaptor *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(MountControlAdaptorTest, Mount)
 {
-    // Mount
-    SUCCEED();
+    // Test method: QVariantMap Mount((const QString &path, const QVariantMap &opts))
+    QString _arg0{};
+    QVariantMap _arg1{};
+    auto result = obj->Mount(_arg0, _arg1);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(MountControlAdaptorTest, MountControlAdaptor)
 {
-    // MountControlAdaptor
-    SUCCEED();
+    // Test constructor: MountControlAdaptor((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(MountControlAdaptorTest, Unmount)
 {
-    // Unmount
-    SUCCEED();
+    // Test method: QVariantMap Unmount((const QString &path, const QVariantMap &opts))
+    QString _arg0{};
+    QVariantMap _arg1{};
+    auto result = obj->Unmount(_arg0, _arg1);
+    EXPECT_TRUE(result.isEmpty());
+
 }

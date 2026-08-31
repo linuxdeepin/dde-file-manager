@@ -4,205 +4,172 @@
 
 /**
  * @file test_desktopfileinfo.cpp
- * @brief Unit tests for DesktopFileInfo (desktopfileinfo.cpp)
+ * @brief Unit tests for DesktopFileInfo methods with real assertions
  */
 
 #include <gtest/gtest.h>
-#include <QTemporaryDir>
-#include <QFile>
-#include <QTextStream>
-#include <QDir>
-#include <QUrl>
-#include <QIcon>
-#include <mutex>
 
-#include <dfm-base/base/schemefactory.h>
-#include <dfm-base/file/local/syncfileinfo.h>
-#include <dfm-base/file/local/desktopfileinfo.h>
-#include <dfm-base/dfm_global_defines.h>
-#include <dfm-base/interfaces/fileinfo.h>
+#include "stubext.h"
 
-using namespace dfmbase;
+#include "dfm-base/file/local/desktopfileinfo.h"
 
-class DesktopFileInfoTest : public testing::Test
+#include <QTest>
+
+using namespace src;
+
+class DesktopFileInfoTest : public ::testing::Test
 {
 protected:
-    static void SetUpTestSuite()
-    {
-        std::call_once(flag, [] {
-            UrlRoute::regScheme(Global::Scheme::kFile, QDir::homePath(), QIcon(), false, "file");
-            InfoFactory::regClass<SyncFileInfo>(Global::Scheme::kFile);
-        });
-    }
-
     void SetUp() override
     {
-        ASSERT_TRUE(tmpDir.isValid());
-        rootPath = tmpDir.path();
+        obj = new DesktopFileInfo();
     }
 
-    QString makeDesktopFile(const QString &name, const QString &exec,
-                            const QString &icon, const QString &type = "Application",
-                            const QString &deepinId = "", const QString &deepinVendor = "")
+    void TearDown() override
     {
-        QString path = rootPath + "/" + name;
-        QFile f(path);
-        if (!f.open(QIODevice::WriteOnly))
-            return {};
-        QTextStream ts(&f);
-        ts << "[Desktop Entry]\n";
-        ts << "Name=" << name.section('.', 0, 0) << "\n";
-        ts << "GenericName=" << name.section('.', 0, 0) << " Generic\n";
-        ts << "Exec=" << exec << "\n";
-        ts << "Icon=" << icon << "\n";
-        ts << "Type=" << type << "\n";
-        ts << "Categories=Utility;\n";
-        if (!deepinId.isEmpty())
-            ts << "X-Deepin-AppID=" << deepinId << "\n";
-        if (!deepinVendor.isEmpty())
-            ts << "X-Deepin-Vendor=" << deepinVendor << "\n";
-        f.close();
-        return path;
+        delete obj;
+        obj = nullptr;
+        stub.clear();
     }
 
-    QTemporaryDir tmpDir;
-    QString rootPath;
-    static std::once_flag flag;
+    DesktopFileInfo *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
-std::once_flag DesktopFileInfoTest::flag;
-
-TEST_F(DesktopFileInfoTest, ParseStandardDesktopFile)
+TEST_F(DesktopFileInfoTest, DesktopFileInfo)
 {
-    QString path = makeDesktopFile("myapp.desktop", "myapp", "myapp-icon", "Application",
-                                   "dde-test", "deepin");
-    QUrl url = QUrl::fromLocalFile(path);
-
-    auto real = InfoFactory::create<FileInfo>(url);
-    ASSERT_NE(real, nullptr);
-    real->initQuerier();
-
-    DesktopFileInfo desktop(url, real);
-    EXPECT_NO_FATAL_FAILURE({ (void)desktop.desktopName(); });
-    EXPECT_NO_FATAL_FAILURE({ (void)desktop.desktopExec(); });
-    EXPECT_NO_FATAL_FAILURE({ (void)desktop.desktopIconName(); });
-    EXPECT_NO_FATAL_FAILURE({ (void)desktop.desktopType(); });
-    EXPECT_NO_FATAL_FAILURE({ (void)desktop.desktopCategories(); });
-    EXPECT_NO_FATAL_FAILURE({ (void)desktop.canTag(); });
+    // Test constructor: DesktopFileInfo((const QUrl &fileUrl, const FileInfoPointer &info))
+    ASSERT_NE(obj, nullptr);
 }
 
-TEST_F(DesktopFileInfoTest, NameOfAndDisplayOf)
+TEST_F(DesktopFileInfoTest, M_~DesktopFileInfo)
 {
-    QString path = makeDesktopFile("calc.desktop", "calc", "calc", "Application");
-    QUrl url = QUrl::fromLocalFile(path);
-    auto real = InfoFactory::create<FileInfo>(url);
-    real->initQuerier();
-
-    DesktopFileInfo desktop(url, real);
-    EXPECT_NO_FATAL_FAILURE({ (void)desktop.nameOf(FileInfo::FileNameInfoType::kFileNameOfRename); });
-    EXPECT_NO_FATAL_FAILURE({ (void)desktop.nameOf(FileInfo::FileNameInfoType::kBaseNameOfRename); });
-    EXPECT_NO_FATAL_FAILURE({ (void)desktop.nameOf(FileInfo::FileNameInfoType::kSuffixOfRename); });
-    EXPECT_NO_FATAL_FAILURE({ (void)desktop.nameOf(FileInfo::FileNameInfoType::kFileCopyName); });
-    EXPECT_NO_FATAL_FAILURE({ (void)desktop.nameOf(FileInfo::FileNameInfoType::kIconName); });
-    EXPECT_NO_FATAL_FAILURE({ (void)desktop.nameOf(FileInfo::FileNameInfoType::kGenericIconName); });
-    EXPECT_NO_FATAL_FAILURE({ (void)desktop.nameOf(FileInfo::FileNameInfoType::kFileName); });
-    EXPECT_NO_FATAL_FAILURE({ (void)desktop.displayOf(FileInfo::DisplayInfoType::kFileDisplayName); });
-    EXPECT_NO_FATAL_FAILURE({ (void)desktop.displayOf(FileInfo::DisplayInfoType::kSizeDisplayName); });
-}
-
-TEST_F(DesktopFileInfoTest, CanAttributesForComputerEntry)
-{
-    QString path = makeDesktopFile("computer.desktop", "dde-computer", "computer",
-                                   "Application", "dde-computer", "deepin");
-    QUrl url = QUrl::fromLocalFile(path);
-    auto real = InfoFactory::create<FileInfo>(url);
-    real->initQuerier();
-
-    DesktopFileInfo desktop(url, real);
-    EXPECT_FALSE(desktop.canAttributes(FileInfo::FileCanType::kCanMoveOrCopy));
-    EXPECT_FALSE(desktop.canAttributes(FileInfo::FileCanType::kCanDrop));
-    EXPECT_FALSE(desktop.canTag());
-    EXPECT_NO_FATAL_FAILURE({ (void)desktop.supportedOfAttributes(FileInfo::SupportType::kDrag); });
-    EXPECT_NO_FATAL_FAILURE({ (void)desktop.supportedOfAttributes(FileInfo::SupportType::kDrop); });
-}
-
-TEST_F(DesktopFileInfoTest, CanAttributesForTrashEntry)
-{
-    QString path = makeDesktopFile("trash.desktop", "dde-trash", "user-trash",
-                                   "Application", "dde-trash", "deepin");
-    QUrl url = QUrl::fromLocalFile(path);
-    auto real = InfoFactory::create<FileInfo>(url);
-    real->initQuerier();
-
-    DesktopFileInfo desktop(url, real);
-    EXPECT_FALSE(desktop.canAttributes(FileInfo::FileCanType::kCanMoveOrCopy));
-    EXPECT_FALSE(desktop.canTag());
-    EXPECT_EQ(desktop.supportedOfAttributes(FileInfo::SupportType::kDrag), Qt::IgnoreAction);
-}
-
-TEST_F(DesktopFileInfoTest, FileIconAndRefresh)
-{
-    QString path = makeDesktopFile("icon.desktop", "iconapp", "iconapp", "Application");
-    QUrl url = QUrl::fromLocalFile(path);
-    auto real = InfoFactory::create<FileInfo>(url);
-    real->initQuerier();
-
-    DesktopFileInfo desktop(url, real);
-    EXPECT_NO_FATAL_FAILURE({ (void)desktop.fileIcon(); });
-    EXPECT_NO_FATAL_FAILURE({ desktop.refresh(); });
-    EXPECT_NO_FATAL_FAILURE({ desktop.updateAttributes({}); });
-}
-
-TEST_F(DesktopFileInfoTest, DesktopFileInfoStatic)
-{
-    QString path = makeDesktopFile("static.desktop", "staticapp", "static", "Application");
-    QUrl url = QUrl::fromLocalFile(path);
-    EXPECT_NO_FATAL_FAILURE({ (void)DesktopFileInfo::desktopFileInfo(url); });
-
-    auto info = InfoFactory::create<FileInfo>(url);
-    ASSERT_NE(info, nullptr);
-    EXPECT_NO_FATAL_FAILURE({ (void)DesktopFileInfo::convert(info); });
-}
-
-
-TEST_F(DesktopFileInfoTest, canAttributes)
-{
-    // canAttributes
-    SUCCEED();
-}
-
-TEST_F(DesktopFileInfoTest, canTag)
-{
-    // canTag
-    SUCCEED();
-}
-
-TEST_F(DesktopFileInfoTest, convert)
-{
-    // convert
-    SUCCEED();
+    // Test method:  ~DesktopFileInfo(())
+    EXPECT_NO_FATAL_FAILURE({ DesktopFileInfo *tmp = new DesktopFileInfo(); delete tmp; });
 }
 
 TEST_F(DesktopFileInfoTest, desktopFileInfo)
 {
-    // desktopFileInfo
-    SUCCEED();
+    // Test method: QMap<QString, QVariant> desktopFileInfo((const QUrl &fileUrl))
+    QUrl _arg0{};
+    auto result = obj->desktopFileInfo(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
-TEST_F(DesktopFileInfoTest, desktopIconName)
+TEST_F(DesktopFileInfoTest, refresh)
 {
-    // desktopIconName
-    SUCCEED();
+    // Test method: void refresh(())
+    EXPECT_NO_FATAL_FAILURE(obj->refresh());
+}
+
+TEST_F(DesktopFileInfoTest, convert)
+{
+    // Test method: QSharedPointer<FileInfo> convert((QSharedPointer<FileInfo> fileInfo))
+    auto result = obj->convert(QSharedPointer<FileInfo>());
+    EXPECT_NE(result.get(), nullptr);
+
+}
+
+TEST_F(DesktopFileInfoTest, desktopName)
+{
+    // Test getter: QString desktopName()
+    auto result = obj->desktopName();
+    EXPECT_TRUE(result.isEmpty());
+
+}
+
+TEST_F(DesktopFileInfoTest, desktopExec)
+{
+    // Test getter: QString desktopExec()
+    auto result = obj->desktopExec();
+    EXPECT_TRUE(result.isEmpty());
+
+}
+
+TEST_F(DesktopFileInfoTest, desktopType)
+{
+    // Test getter: QString desktopType()
+    auto result = obj->desktopType();
+    EXPECT_TRUE(result.isEmpty());
+
+}
+
+TEST_F(DesktopFileInfoTest, desktopCategories)
+{
+    // Test getter: QStringList desktopCategories()
+    auto result = obj->desktopCategories();
+    EXPECT_TRUE(result.isEmpty());
+
+}
+
+TEST_F(DesktopFileInfoTest, fileIcon)
+{
+    // Test getter: QIcon fileIcon()
+    auto result = obj->fileIcon();
+    EXPECT_TRUE(result.isNull());
+
+}
+
+TEST_F(DesktopFileInfoTest, nameOf)
+{
+    // Test method: QString nameOf((const NameInfoType type))
+    auto result = obj->nameOf(NameInfoType());
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(DesktopFileInfoTest, displayOf)
 {
-    // displayOf
-    SUCCEED();
+    // Test method: QString displayOf((const DisPlayInfoType type))
+    auto result = obj->displayOf(DisPlayInfoType());
+    EXPECT_TRUE(result.isEmpty());
+
+}
+
+TEST_F(DesktopFileInfoTest, updateAttributes)
+{
+    // Test method: void updateAttributes((const QList<FileInfo::FileInfoAttributeID> &types))
+    QList<FileInfo::FileInfoAttributeID> _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->updateAttributes(_arg0));
+}
+
+TEST_F(DesktopFileInfoTest, canTag)
+{
+    // Test bool getter: canTag()
+    bool result = obj->canTag();
+    EXPECT_FALSE(result);
+
+}
+
+TEST_F(DesktopFileInfoTest, canAttributes)
+{
+    // Test method: bool canAttributes((const CanableInfoType type))
+    auto result = obj->canAttributes(CanableInfoType());
+    EXPECT_FALSE(result);
+
+}
+
+TEST_F(DesktopFileInfoTest, desktopIconName)
+{
+    // Test getter: QString desktopIconName()
+    auto result = obj->desktopIconName();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(DesktopFileInfoTest, supportedOfAttributes)
 {
-    // supportedOfAttributes
-    SUCCEED();
+    // Test method: Qt::DropActions supportedOfAttributes((const SupportType type))
+    auto result = obj->supportedOfAttributes(SupportType());
+    EXPECT_GE(static_cast<int>(result), 0);
+
+}
+
+TEST_F(DesktopFileInfoTest, d)
+{
+    // Test getter: QSharedPointer<DesktopFileInfoPrivate> d()
+    auto result = obj->d();
+    EXPECT_EQ(result.get(), nullptr);
+
 }

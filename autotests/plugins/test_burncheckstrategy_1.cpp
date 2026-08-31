@@ -3,81 +3,130 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_burncheckstrategy_1.cpp
- * @brief Unit tests for BurnCheckStrategy Low-priority methods
+ * @file test_burncheckstrategy_1.cpp
+ * @brief Unit tests for BurnCheckStrategy methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class BurnCheckStrategyTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/burncheckstrategy.h"
+
+#include <QTest>
+
+using namespace dfmplugin_burn;
+
+class BurnCheckStrategyTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new BurnCheckStrategy();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    BurnCheckStrategy *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(BurnCheckStrategyTest, BurnCheckStrategy)
 {
-    // BurnCheckStrategy
-    SUCCEED();
+    // Test constructor: BurnCheckStrategy((const QString &path, QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(BurnCheckStrategyTest, autoFeed)
 {
-    // autoFeed
-    SUCCEED();
+    // Test method: QString autoFeed((const QString &text))
+    QString _arg0{};
+    auto result = obj->autoFeed(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(BurnCheckStrategyTest, lastInvalidName)
 {
-    // lastInvalidName
-    SUCCEED();
+    // Test getter: QString lastInvalidName()
+    auto result = obj->lastInvalidName();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(BurnCheckStrategyTest, validCommonFileNameBytes)
 {
-    // validCommonFileNameBytes
-    SUCCEED();
+    // Test method: bool validCommonFileNameBytes((const QString &fileName))
+    QString _arg0{};
+    auto result = obj->validCommonFileNameBytes(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(BurnCheckStrategyTest, validCommonFilePathDeepLength)
 {
-    // validCommonFilePathDeepLength
-    SUCCEED();
+    // Test method: bool validCommonFilePathDeepLength((const QString &filePath))
+    QString _arg0{};
+    auto result = obj->validCommonFilePathDeepLength(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(BurnCheckStrategyTest, validComontFilePathBytes)
 {
-    // validComontFilePathBytes
-    SUCCEED();
+    // Test method: bool validComontFilePathBytes((const QString &filePath))
+    QString _arg0{};
+    auto result = obj->validComontFilePathBytes(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(BurnCheckStrategyTest, validFileNameBytes)
 {
-    // validFileNameBytes
-    SUCCEED();
+    // Test method: bool validFileNameBytes((const QString &fileName))
+    QString _arg0{};
+    auto result = obj->validFileNameBytes(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(BurnCheckStrategyTest, validFileNameCharacters)
 {
-    // validFileNameCharacters
-    SUCCEED();
+    // Test method: bool validFileNameCharacters((const QString &fileName))
+    QString _arg0{};
+    auto result = obj->validFileNameCharacters(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(BurnCheckStrategyTest, validFilePathBytes)
 {
-    // validFilePathBytes
-    SUCCEED();
+    // Test method: bool validFilePathBytes((const QString &filePath))
+    QString _arg0{};
+    auto result = obj->validFilePathBytes(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(BurnCheckStrategyTest, validFilePathCharacters)
 {
-    // validFilePathCharacters
-    SUCCEED();
+    // Test method: bool validFilePathCharacters((const QString &filePath))
+    QString _arg0{};
+    auto result = obj->validFilePathCharacters(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(BurnCheckStrategyTest, validFilePathDeepLength)
 {
-    // validFilePathDeepLength
-    SUCCEED();
-}
+    // Test method: bool validFilePathDeepLength((const QString &filePath))
+    QString _arg0{};
+    auto result = obj->validFilePathDeepLength(_arg0);
+    EXPECT_FALSE(result);
 
+}

@@ -4,91 +4,107 @@
 
 /**
  * @file test_canvasproxymodel.cpp
- * @brief Unit tests for CanvasProxyModel Mid-priority methods (ddplugin-canvas)
+ * @brief Unit tests for CanvasProxyModel methods with real assertions
  */
 
 #include <gtest/gtest.h>
-#include <QTest>
-#include <QUrl>
-#include <QString>
-#include <QStringList>
-#include <QColor>
-#include <QPoint>
-#include <QVariant>
+
+#include "stubext.h"
 
 #include "model/canvasproxymodel.h"
 
+#include <QTest>
+
 using namespace ddplugin_canvas;
 
-class CanvasProxyModelTest : public ::testing::Test {
+class CanvasProxyModelTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {
+    void SetUp() override
+    {
+        obj = new CanvasProxyModel();
     }
-    void TearDown() override {}
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    CanvasProxyModel *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(CanvasProxyModelTest, data)
 {
-    // Instance method data
-    CanvasProxyModel obj;
-    EXPECT_NO_FATAL_FAILURE({ auto r = obj.data(QModelIndex(), 0); (void)r; });
+    // Test method: QVariant data((const QModelIndex &index, int itemRole))
+    QModelIndex _arg0{};
+    auto result = obj->data(_arg0, 0);
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(CanvasProxyModelTest, fileUrl)
 {
-    // Instance method fileUrl
-    CanvasProxyModel obj;
-    EXPECT_NO_FATAL_FAILURE({ auto r = obj.fileUrl(QModelIndex()); (void)r; });
+    // Test method: QUrl fileUrl((const QModelIndex &index))
+    QModelIndex _arg0{};
+    auto result = obj->fileUrl(_arg0);
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(CanvasProxyModelTest, files)
 {
-    // Instance method files
-    CanvasProxyModel obj;
-    EXPECT_NO_FATAL_FAILURE({ auto r = obj.files(); (void)r; });
+    // Test getter: QList<QUrl> files()
+    auto result = obj->files();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(CanvasProxyModelTest, index)
 {
-    // Instance method index
-    CanvasProxyModel obj;
-    EXPECT_NO_FATAL_FAILURE({ auto r = obj.index(0, 0, QModelIndex()); (void)r; });
+    // Test method: QModelIndex index((int row, int column, const QModelIndex &parent))
+    QModelIndex _arg2{};
+    auto result = obj->index(0, 0, _arg2);
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(CanvasProxyModelTest, parent)
 {
-    // Instance method parent
-    CanvasProxyModel obj;
-    EXPECT_NO_FATAL_FAILURE({ auto r = obj.parent(QModelIndex()); (void)r; });
+    // Test method: QModelIndex parent((const QModelIndex &child))
+    QModelIndex _arg0{};
+    auto result = obj->parent(_arg0);
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(CanvasProxyModelTest, setSourceModel)
 {
-    // Instance method setSourceModel
-    CanvasProxyModel obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.setSourceModel(nullptr); });
+    // Test setter: void setSourceModel((QAbstractItemModel *model))
+    EXPECT_NO_FATAL_FAILURE(obj->setSourceModel(nullptr));
 }
 
 TEST_F(CanvasProxyModelTest, sort)
 {
-    // Instance method sort
-    CanvasProxyModel obj;
-    bool result = false;
-    EXPECT_NO_FATAL_FAILURE({ result = obj.sort(); });
-    (void)result;
+    // Test bool getter: sort()
+    bool result = obj->sort();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(CanvasProxyModelTest, take)
 {
-    // Instance method take
-    CanvasProxyModel obj;
-    bool result = false;
-    EXPECT_NO_FATAL_FAILURE({ result = obj.take(QUrl("file:///tmp/test")); });
-    (void)result;
+    // Test method: bool take((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->take(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(CanvasProxyModelTest, CanvasProxyModel)
 {
-    // CanvasProxyModel
-    SUCCEED();
+    // Test constructor: CanvasProxyModel((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }

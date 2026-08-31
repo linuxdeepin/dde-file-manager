@@ -3,27 +3,49 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_canvasmenusceneprivate.cpp
- * @brief Unit tests for CanvasMenuScenePrivate Low-priority methods
+ * @file test_canvasmenusceneprivate.cpp
+ * @brief Unit tests for CanvasMenuScenePrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class CanvasMenuScenePrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "menu/canvasmenuscene.h"
+
+#include <QTest>
+
+using namespace ddplugin_canvas;
+
+class CanvasMenuScenePrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new CanvasMenuScenePrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    CanvasMenuScenePrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(CanvasMenuScenePrivateTest, CanvasMenuScenePrivate)
 {
-    // CanvasMenuScenePrivate
-    SUCCEED();
+    // Test constructor: CanvasMenuScenePrivate((CanvasMenuScene *qq))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(CanvasMenuScenePrivateTest, checkOrganizerPlugin)
 {
-    // checkOrganizerPlugin
-    SUCCEED();
-}
+    // Test bool getter: checkOrganizerPlugin()
+    bool result = obj->checkOrganizerPlugin();
+    EXPECT_FALSE(result);
 
+}

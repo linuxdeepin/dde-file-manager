@@ -3,75 +3,104 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_fileprovider_1.cpp
- * @brief Unit tests for FileProvider Low-priority methods
+ * @file test_fileprovider_1.cpp
+ * @brief Unit tests for FileProvider methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class FileProviderTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "services/textindex/task/fileprovider.h"
+
+#include <QTest>
+
+using namespace src;
+
+class FileProviderTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new FileProvider();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FileProvider *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(FileProviderTest, FileProvider)
 {
-    // FileProvider
-    SUCCEED();
+    // Test constructor: FileProvider((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(FileProviderTest, installFileFilter)
 {
-    // installFileFilter
-    SUCCEED();
+    // Test method: void installFileFilter((QSharedPointer<FileFilter> filter))
+    EXPECT_NO_FATAL_FAILURE(obj->installFileFilter(QSharedPointer<FileFilter>()));
 }
 
 TEST_F(FileProviderTest, isUpdating)
 {
-    // isUpdating
-    SUCCEED();
+    // Test bool getter: isUpdating()
+    bool result = obj->isUpdating();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(FileProviderTest, onFileInfoUpdated)
 {
-    // onFileInfoUpdated
-    SUCCEED();
+    // Test method: void onFileInfoUpdated((const QUrl &url, const QString &infoPtr, const bool isLinkOrg))
+    QUrl _arg0{};
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->onFileInfoUpdated(_arg0, _arg1, false));
 }
 
 TEST_F(FileProviderTest, preupdateData)
 {
-    // preupdateData
-    SUCCEED();
+    // Test method: void preupdateData((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->preupdateData(_arg0));
 }
 
 TEST_F(FileProviderTest, refresh)
 {
-    // refresh
-    SUCCEED();
+    // Test method: void refresh((QDir::Filters filters))
+    EXPECT_NO_FATAL_FAILURE(obj->refresh(QDir::Filters()));
 }
 
 TEST_F(FileProviderTest, setRoot)
 {
-    // setRoot
-    SUCCEED();
+    // Test method: bool setRoot((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->setRoot(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(FileProviderTest, traversalFinished)
 {
-    // traversalFinished
-    SUCCEED();
+    // Test method: void traversalFinished(())
+    EXPECT_NO_FATAL_FAILURE(obj->traversalFinished());
 }
 
 TEST_F(FileProviderTest, update)
 {
-    // update
-    SUCCEED();
+    // Test method: void update((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->update(_arg0));
 }
 
 TEST_F(FileProviderTest, FileProvider_Destructor)
 {
-    // ~FileProvider
-    SUCCEED();
+    // Test method:  ~FileProvider(())
+    EXPECT_NO_FATAL_FAILURE({ FileProvider *tmp = new FileProvider(); delete tmp; });
 }
-

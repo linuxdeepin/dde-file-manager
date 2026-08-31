@@ -3,33 +3,61 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_simplekeywordstrategy.cpp
- * @brief Unit tests for SimpleKeywordStrategy Low-priority methods
+ * @file test_simplekeywordstrategy.cpp
+ * @brief Unit tests for SimpleKeywordStrategy methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class SimpleKeywordStrategyTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/keywordextractor.h"
+
+#include <QTest>
+
+using namespace dfmplugin_workspace;
+
+class SimpleKeywordStrategyTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new SimpleKeywordStrategy();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    SimpleKeywordStrategy *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(SimpleKeywordStrategyTest, canHandle)
 {
-    // canHandle
-    SUCCEED();
+    // Test method: bool canHandle((const QString &keyword))
+    QString _arg0{};
+    auto result = obj->canHandle(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(SimpleKeywordStrategyTest, extractKeywords)
 {
-    // extractKeywords
-    SUCCEED();
+    // Test method: QStringList extractKeywords((const QString &keyword))
+    QString _arg0{};
+    auto result = obj->extractKeywords(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(SimpleKeywordStrategyTest, priority)
 {
-    // priority
-    SUCCEED();
-}
+    // Test getter: int priority()
+    auto result = obj->priority();
+    EXPECT_EQ(result, 0);
 
+}

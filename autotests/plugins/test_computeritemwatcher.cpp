@@ -4,125 +4,173 @@
 
 /**
  * @file test_computeritemwatcher.cpp
- * @brief Unit tests for ComputerItemWatcher Mid-priority methods (stub)
+ * @brief Unit tests for ComputerItemWatcher methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
+#include "stubext.h"
+
 #include "watcher/computeritemwatcher.h"
+
+#include <QTest>
 
 using namespace dfmplugin_computer;
 
-class ComputerItemWatcherTest : public ::testing::Test {
+class ComputerItemWatcherTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ComputerItemWatcher();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ComputerItemWatcher *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ComputerItemWatcherTest, addGroup)
 {
-    // addGroup - stub test (class requires special construction)
-    SUCCEED();
+    // Test method: int addGroup((const QString &name))
+    QString _arg0{};
+    auto result = obj->addGroup(_arg0);
+    EXPECT_GE(result, 0);
+
 }
 
 TEST_F(ComputerItemWatcherTest, cacheItem)
 {
-    // cacheItem - stub test (class requires special construction)
-    SUCCEED();
+    // Test method: void cacheItem((const ComputerItemData &in))
+    ComputerItemData _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->cacheItem(_arg0));
 }
 
 TEST_F(ComputerItemWatcherTest, clearAsyncThread)
 {
-    // clearAsyncThread - stub test (class requires special construction)
-    SUCCEED();
+    // Test method: void clearAsyncThread(())
+    EXPECT_NO_FATAL_FAILURE(obj->clearAsyncThread());
 }
 
 TEST_F(ComputerItemWatcherTest, diskGroup)
 {
-    // diskGroup - stub test (class requires special construction)
-    SUCCEED();
+    // Test getter: QString diskGroup()
+    auto result = obj->diskGroup();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(ComputerItemWatcherTest, getBlockDeviceItems)
 {
-    // getBlockDeviceItems - stub test (class requires special construction)
-    SUCCEED();
+    // Test method: ComputerDataList getBlockDeviceItems((bool *hasNewItem))
+    auto result = obj->getBlockDeviceItems(nullptr);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(ComputerItemWatcherTest, getPreDefineItems)
 {
-    // getPreDefineItems - stub test (class requires special construction)
-    SUCCEED();
+    // Test getter: ComputerDataList getPreDefineItems()
+    auto result = obj->getPreDefineItems();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(ComputerItemWatcherTest, getProtocolDeviceItems)
 {
-    // getProtocolDeviceItems - stub test (class requires special construction)
-    SUCCEED();
+    // Test method: ComputerDataList getProtocolDeviceItems((bool *hasNewItem))
+    auto result = obj->getProtocolDeviceItems(nullptr);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(ComputerItemWatcherTest, getUserDirItems)
 {
-    // getUserDirItems - stub test (class requires special construction)
-    SUCCEED();
+    // Test getter: ComputerDataList getUserDirItems()
+    auto result = obj->getUserDirItems();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(ComputerItemWatcherTest, items)
 {
-    // items - stub test (class requires special construction)
-    SUCCEED();
+    // Test getter: ComputerDataList items()
+    auto result = obj->items();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(ComputerItemWatcherTest, onBlockDeviceRemoved)
 {
-    // onBlockDeviceRemoved - stub test (class requires special construction)
-    SUCCEED();
+    // Test method: void onBlockDeviceRemoved((const QString &id))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->onBlockDeviceRemoved(_arg0));
 }
 
 TEST_F(ComputerItemWatcherTest, onProtocolDeviceRemoved)
 {
-    // onProtocolDeviceRemoved - stub test (class requires special construction)
-    SUCCEED();
+    // Test method: void onProtocolDeviceRemoved((const QString &id))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->onProtocolDeviceRemoved(_arg0));
 }
 
 TEST_F(ComputerItemWatcherTest, removeDevice)
 {
-    // removeDevice - stub test (class requires special construction)
-    SUCCEED();
+    // Test method: void removeDevice((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->removeDevice(_arg0));
 }
 
 TEST_F(ComputerItemWatcherTest, removeGroup)
 {
-    // removeGroup - stub test (class requires special construction)
-    SUCCEED();
+    // Test method: bool removeGroup((const QString &groupName))
+    QString _arg0{};
+    auto result = obj->removeGroup(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(ComputerItemWatcherTest, removeSidebarItem)
 {
-    // removeSidebarItem - stub test (class requires special construction)
-    SUCCEED();
+    // Test method: void removeSidebarItem((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->removeSidebarItem(_arg0));
 }
 
 TEST_F(ComputerItemWatcherTest, typeCompare)
 {
-    // typeCompare - stub test (class requires special construction)
-    SUCCEED();
+    // Test method: bool typeCompare((const ComputerItemData &a, const ComputerItemData &b))
+    ComputerItemData _arg0{};
+    ComputerItemData _arg1{};
+    auto result = obj->typeCompare(_arg0, _arg1);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(ComputerItemWatcherTest, userDirGroup)
 {
-    // userDirGroup - stub test (class requires special construction)
-    SUCCEED();
+    // Test getter: QString userDirGroup()
+    auto result = obj->userDirGroup();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(ComputerItemWatcherTest, ComputerItemWatcher)
 {
-    // ComputerItemWatcher
-    SUCCEED();
+    // Test constructor: ComputerItemWatcher((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(ComputerItemWatcherTest, instance)
 {
-    // instance
-    SUCCEED();
+    // Test getter: ComputerItemWatcher instance()
+    auto result = obj->instance();
+    EXPECT_NO_FATAL_FAILURE({ obj->instance(); });
+
 }

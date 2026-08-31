@@ -4,25 +4,46 @@
 
 /**
  * @file test_shortcutoper.cpp
- * @brief Unit tests for ShortcutOper Mid-priority methods
+ * @brief Unit tests for ShortcutOper methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ShortcutOperTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "view/operator/shortcutoper.h"
+
+#include <QTest>
+
+using namespace ddplugin_canvas;
+
+class ShortcutOperTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ShortcutOper();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ShortcutOper *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ShortcutOperTest, clearClipBoard)
 {
-    // clearClipBoard
-    SUCCEED();
+    // Test method: void clearClipBoard(())
+    EXPECT_NO_FATAL_FAILURE(obj->clearClipBoard());
 }
 
 TEST_F(ShortcutOperTest, showMenu)
 {
-    // showMenu
-    SUCCEED();
+    // Test method: void showMenu(())
+    EXPECT_NO_FATAL_FAILURE(obj->showMenu());
 }

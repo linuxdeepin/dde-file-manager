@@ -4,19 +4,42 @@
 
 /**
  * @file test_textindexclient.cpp
- * @brief Unit tests for TextIndexClient Mid-priority methods
+ * @brief Unit tests for TextIndexClient methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class TextIndexClientTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/textindexclient.h"
+
+#include <QTest>
+
+using namespace dfmplugin_search;
+
+class TextIndexClientTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new TextIndexClient();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    TextIndexClient *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(TextIndexClientTest, instance)
 {
-    // instance
-    SUCCEED();
+    // Test getter: TextIndexClient instance()
+    auto result = obj->instance();
+    EXPECT_NO_FATAL_FAILURE({ obj->instance(); });
+
 }

@@ -4,19 +4,42 @@
 
 /**
  * @file test_viewdrawhelper.cpp
- * @brief Unit tests for ViewDrawHelper Mid-priority methods
+ * @brief Unit tests for ViewDrawHelper methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ViewDrawHelperTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/viewdrawhelper.h"
+
+#include <QTest>
+
+using namespace dfmplugin_workspace;
+
+class ViewDrawHelperTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ViewDrawHelper();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ViewDrawHelper *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ViewDrawHelperTest, renderDragPixmap)
 {
-    // renderDragPixmap
-    SUCCEED();
+    // Test method: QPixmap renderDragPixmap((dfmbase::Global::ViewMode mode, QModelIndexList indexes))
+    auto result = obj->renderDragPixmap({}, QModelIndexList());
+    EXPECT_TRUE(result.isNull());
+
 }

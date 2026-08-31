@@ -227,138 +227,165 @@ TEST(UniversalUtilsTest, SetDockDnDMimeDataWithNonDesktopFileDoesNothing)
 
 TEST(UniversalUtilsTest, boardCastPastData)
 {
-    // boardCastPastData
-    SUCCEED();
+    UniversalUtils obj;
+    QUrl _arg0{};
+    QUrl _arg1{};
+    QList<QUrl> _arg2{};
+    EXPECT_NO_FATAL_FAILURE(obj.boardCastPastData(_arg0, _arg1, _arg2));
 }
 
 TEST(UniversalUtilsTest, convertFromQMap)
 {
-    // convertFromQMap
-    SUCCEED();
+    UniversalUtils obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.convertFromQMap(QVariantMap()); });
 }
 
 TEST(UniversalUtilsTest, currentLoginUser)
 {
-    // currentLoginUser
-    SUCCEED();
+    UniversalUtils obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.currentLoginUser(); });
 }
 
 TEST(UniversalUtilsTest, dockHeight)
 {
-    // dockHeight
-    SUCCEED();
+    UniversalUtils obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.dockHeight(); });
 }
 
 TEST(UniversalUtilsTest, getCurrentUser)
 {
-    // getCurrentUser
-    SUCCEED();
+    UniversalUtils obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.getCurrentUser(); });
 }
 
 TEST(UniversalUtilsTest, getKernelParameters)
 {
-    // getKernelParameters
-    SUCCEED();
+    UniversalUtils obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.getKernelParameters(); });
 }
 
 TEST(UniversalUtilsTest, getTextLineHeight)
 {
-    // getTextLineHeight
-    SUCCEED();
+    UniversalUtils obj;
+    QString _arg0{};
+    QFontMetrics _arg1{};
+    EXPECT_NO_FATAL_FAILURE({ obj.getTextLineHeight(_arg0, _arg1); });
 }
 
 TEST(UniversalUtilsTest, isInLiveSys)
 {
-    // isInLiveSys
-    SUCCEED();
+    UniversalUtils obj;
+    bool result = obj.isInLiveSys();
+    EXPECT_FALSE(result);
 }
 
 TEST(UniversalUtilsTest, isLogined)
 {
-    // isLogined
-    SUCCEED();
+    UniversalUtils obj;
+    bool result = obj.isLogined();
+    EXPECT_FALSE(result);
 }
 
 TEST(UniversalUtilsTest, isNetworkRoot)
 {
-    // isNetworkRoot
-    SUCCEED();
+    UniversalUtils obj;
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.isNetworkRoot(_arg0); });
 }
 
 TEST(UniversalUtilsTest, isParentOnly)
 {
-    // isParentOnly
-    SUCCEED();
+    UniversalUtils obj;
+    QUrl _arg0{};
+    QUrl _arg1{};
+    EXPECT_NO_FATAL_FAILURE({ obj.isParentOnly(_arg0, _arg1); });
 }
 
 TEST(UniversalUtilsTest, isParentUrl)
 {
-    // isParentUrl
-    SUCCEED();
+    UniversalUtils obj;
+    QUrl _arg0{};
+    QUrl _arg1{};
+    EXPECT_NO_FATAL_FAILURE({ obj.isParentUrl(_arg0, _arg1); });
 }
 
 TEST(UniversalUtilsTest, lockScreenSaver)
 {
-    // lockScreenSaver
-    SUCCEED();
+    UniversalUtils obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.lockScreenSaver(); });
 }
 
 TEST(UniversalUtilsTest, notifyMessage)
 {
-    // notifyMessage
-    SUCCEED();
+    UniversalUtils obj;
+    QString _arg0{};
+    QString _arg1{};
+    QStringList _arg2{};
+    QVariantMap _arg3{};
+    EXPECT_NO_FATAL_FAILURE(obj.notifyMessage(_arg0, _arg1, _arg2, _arg3));
 }
 
 TEST(UniversalUtilsTest, runCommand)
 {
-    // runCommand
-    SUCCEED();
+    UniversalUtils obj;
+    QString _arg0{};
+    QStringList _arg1{};
+    QString _arg2{};
+    EXPECT_NO_FATAL_FAILURE({ obj.runCommand(_arg0, _arg1, _arg2); });
 }
 
 TEST(UniversalUtilsTest, setDockDnDMimeData)
 {
-    // setDockDnDMimeData
-    SUCCEED();
+    UniversalUtils obj;
+    QUrl _arg1{};
+    QString _arg2{};
+    EXPECT_NO_FATAL_FAILURE(obj.setDockDnDMimeData(nullptr, _arg1, _arg2));
 }
 
 TEST(UniversalUtilsTest, sizeFormat)
 {
-    // sizeFormat
-    SUCCEED();
+    UniversalUtils obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.sizeFormat(0, 0); });
 }
 
 TEST(UniversalUtilsTest, unlockScreenSaver)
 {
-    // unlockScreenSaver
-    SUCCEED();
+    UniversalUtils obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.unlockScreenSaver({}); });
 }
 
 TEST(UniversalUtilsTest, urlEquals)
 {
-    // urlEquals
-    SUCCEED();
+    UniversalUtils obj;
+    QUrl _arg0{};
+    QUrl _arg1{};
+    EXPECT_NO_FATAL_FAILURE({ obj.urlEquals(_arg0, _arg1); });
 }
 
 TEST(UniversalUtilsTest, urlEqualsWithQuery)
 {
-    // urlEqualsWithQuery
-    SUCCEED();
+    UniversalUtils obj;
+    QUrl _arg0{};
+    QUrl _arg1{};
+    EXPECT_NO_FATAL_FAILURE({ obj.urlEqualsWithQuery(_arg0, _arg1); });
 }
 
 TEST(UniversalUtilsTest, urlTransformToLocal)
 {
-    // urlTransformToLocal
-    SUCCEED();
+    UniversalUtils obj;
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.urlTransformToLocal(_arg0, nullptr); });
 }
 
 TEST(UniversalUtilsTest, urlsTransformToLocal)
 {
-    // urlsTransformToLocal
-    SUCCEED();
+    UniversalUtils obj;
+    QList<QUrl> _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.urlsTransformToLocal(_arg0, nullptr); });
 }
 
 TEST(UniversalUtilsTest, userLoginState)
 {
-    // userLoginState
-    SUCCEED();
+    UniversalUtils obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.userLoginState(); });
 }

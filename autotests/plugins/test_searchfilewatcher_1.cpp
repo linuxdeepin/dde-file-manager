@@ -3,63 +3,90 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_searchfilewatcher_1.cpp
- * @brief Unit tests for SearchFileWatcher Low-priority methods
+ * @file test_searchfilewatcher_1.cpp
+ * @brief Unit tests for SearchFileWatcher methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class SearchFileWatcherTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "watcher/searchfilewatcher.h"
+
+#include <QTest>
+
+using namespace dfmplugin_search;
+
+class SearchFileWatcherTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new SearchFileWatcher();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    SearchFileWatcher *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(SearchFileWatcherTest, SearchFileWatcher)
 {
-    // SearchFileWatcher
-    SUCCEED();
+    // Test constructor: SearchFileWatcher((const QUrl &url, QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(SearchFileWatcherTest, addWatcher)
 {
-    // addWatcher
-    SUCCEED();
+    // Test method: void addWatcher((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->addWatcher(_arg0));
 }
 
 TEST_F(SearchFileWatcherTest, handleFileAdd)
 {
-    // handleFileAdd
-    SUCCEED();
+    // Test method: void handleFileAdd((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleFileAdd(_arg0));
 }
 
 TEST_F(SearchFileWatcherTest, onFileAdd)
 {
-    // onFileAdd
-    SUCCEED();
+    // Test method: void onFileAdd((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->onFileAdd(_arg0));
 }
 
 TEST_F(SearchFileWatcherTest, onFileAttributeChanged)
 {
-    // onFileAttributeChanged
-    SUCCEED();
+    // Test method: void onFileAttributeChanged((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->onFileAttributeChanged(_arg0));
 }
 
 TEST_F(SearchFileWatcherTest, onFileRenamed)
 {
-    // onFileRenamed
-    SUCCEED();
+    // Test method: void onFileRenamed((const QUrl &fromUrl, const QUrl &toUrl))
+    QUrl _arg0{};
+    QUrl _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->onFileRenamed(_arg0, _arg1));
 }
 
 TEST_F(SearchFileWatcherTest, setEnabledSubfileWatcher)
 {
-    // setEnabledSubfileWatcher
-    SUCCEED();
+    // Test setter: void setEnabledSubfileWatcher((const QUrl &subfileUrl, bool enabled))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->setEnabledSubfileWatcher(_arg0, false));
 }
 
 TEST_F(SearchFileWatcherTest, SearchFileWatcher_Destructor)
 {
-    // ~SearchFileWatcher
-    SUCCEED();
+    // Test method:  ~SearchFileWatcher(())
+    EXPECT_NO_FATAL_FAILURE({ SearchFileWatcher *tmp = new SearchFileWatcher(); delete tmp; });
 }
-

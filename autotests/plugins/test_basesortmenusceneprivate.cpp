@@ -4,31 +4,56 @@
 
 /**
  * @file test_basesortmenusceneprivate.cpp
- * @brief Unit tests for BaseSortMenuScenePrivate Mid-priority methods
+ * @brief Unit tests for BaseSortMenuScenePrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class BaseSortMenuScenePrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "menus/basesortmenuscene.h"
+
+#include <QTest>
+
+using namespace dfmplugin_workspace;
+
+class BaseSortMenuScenePrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new BaseSortMenuScenePrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    BaseSortMenuScenePrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(BaseSortMenuScenePrivateTest, primaryMenuRule)
 {
-    // primaryMenuRule
-    SUCCEED();
+    // Test getter: QStringList primaryMenuRule()
+    auto result = obj->primaryMenuRule();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(BaseSortMenuScenePrivateTest, secondaryMenuRule)
 {
-    // secondaryMenuRule
-    SUCCEED();
+    // Test getter: QMap<QString, QStringList> secondaryMenuRule()
+    auto result = obj->secondaryMenuRule();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(BaseSortMenuScenePrivateTest, sortSecondaryMenu)
 {
-    // sortSecondaryMenu
-    SUCCEED();
+    // Test method: void sortSecondaryMenu((QMenu *menu))
+    EXPECT_NO_FATAL_FAILURE(obj->sortSecondaryMenu(nullptr));
 }

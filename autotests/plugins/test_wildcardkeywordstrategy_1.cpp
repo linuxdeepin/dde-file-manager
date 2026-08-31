@@ -3,33 +3,61 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_wildcardkeywordstrategy_1.cpp
- * @brief Unit tests for WildcardKeywordStrategy Low-priority methods
+ * @file test_wildcardkeywordstrategy_1.cpp
+ * @brief Unit tests for WildcardKeywordStrategy methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class WildcardKeywordStrategyTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/keywordextractor.h"
+
+#include <QTest>
+
+using namespace dfmplugin_workspace;
+
+class WildcardKeywordStrategyTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new WildcardKeywordStrategy();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    WildcardKeywordStrategy *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(WildcardKeywordStrategyTest, canHandle)
 {
-    // canHandle
-    SUCCEED();
+    // Test method: bool canHandle((const QString &keyword))
+    QString _arg0{};
+    auto result = obj->canHandle(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(WildcardKeywordStrategyTest, extractKeywords)
 {
-    // extractKeywords
-    SUCCEED();
+    // Test method: QStringList extractKeywords((const QString &keyword))
+    QString _arg0{};
+    auto result = obj->extractKeywords(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(WildcardKeywordStrategyTest, priority)
 {
-    // priority
-    SUCCEED();
-}
+    // Test getter: int priority()
+    auto result = obj->priority();
+    EXPECT_EQ(result, 0);
 
+}

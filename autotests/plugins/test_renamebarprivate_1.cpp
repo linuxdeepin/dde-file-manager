@@ -3,45 +3,70 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_renamebarprivate_1.cpp
- * @brief Unit tests for RenameBarPrivate Low-priority methods
+ * @file test_renamebarprivate_1.cpp
+ * @brief Unit tests for RenameBarPrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class RenameBarPrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/private/renamebar_p.h"
+
+#include <QTest>
+
+using namespace dfmplugin_workspace;
+
+class RenameBarPrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new RenameBarPrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    RenameBarPrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(RenameBarPrivateTest, RenameBarPrivate)
 {
-    // RenameBarPrivate
-    SUCCEED();
+    // Test constructor: RenameBarPrivate((RenameBar *const qPtr))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(RenameBarPrivateTest, filteringText)
 {
-    // filteringText
-    SUCCEED();
+    // Test method: QString filteringText((const QString &text))
+    QString _arg0{};
+    auto result = obj->filteringText(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(RenameBarPrivateTest, initUI)
 {
-    // initUI
-    SUCCEED();
+    // Test method: void initUI(())
+    EXPECT_NO_FATAL_FAILURE(obj->initUI());
 }
 
 TEST_F(RenameBarPrivateTest, setRenameBtnStatus)
 {
-    // setRenameBtnStatus
-    SUCCEED();
+    // Test setter: void setRenameBtnStatus((const bool &value))
+    bool _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->setRenameBtnStatus(_arg0));
 }
 
 TEST_F(RenameBarPrivateTest, updateLineEditText)
 {
-    // updateLineEditText
-    SUCCEED();
+    // Test method: void updateLineEditText((QLineEdit *lineEdit, const QString &defaultValue))
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->updateLineEditText(nullptr, _arg1));
 }
-

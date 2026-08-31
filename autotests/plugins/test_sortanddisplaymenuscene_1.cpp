@@ -3,45 +3,74 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_sortanddisplaymenuscene_1.cpp
- * @brief Unit tests for SortAndDisplayMenuScene Low-priority methods
+ * @file test_sortanddisplaymenuscene_1.cpp
+ * @brief Unit tests for SortAndDisplayMenuScene methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class SortAndDisplayMenuSceneTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "menus/sortanddisplaymenuscene.h"
+
+#include <QTest>
+
+using namespace dfmplugin_workspace;
+
+class SortAndDisplayMenuSceneTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new SortAndDisplayMenuScene();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    SortAndDisplayMenuScene *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(SortAndDisplayMenuSceneTest, create)
 {
-    // create
-    SUCCEED();
+    // Test method: bool create((QMenu *parent))
+    auto result = obj->create(nullptr);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(SortAndDisplayMenuSceneTest, initialize)
 {
-    // initialize
-    SUCCEED();
+    // Test method: bool initialize((const QVariantHash &params))
+    QVariantHash _arg0{};
+    auto result = obj->initialize(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(SortAndDisplayMenuSceneTest, name)
 {
-    // name
-    SUCCEED();
+    // Test getter: QString name()
+    auto result = obj->name();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(SortAndDisplayMenuSceneTest, scene)
 {
-    // scene
-    SUCCEED();
+    // Test method: AbstractMenuScene scene((QAction *action))
+    auto result = obj->scene(nullptr);
+    EXPECT_NO_FATAL_FAILURE({ obj->scene(nullptr); });
+
 }
 
 TEST_F(SortAndDisplayMenuSceneTest, updateState)
 {
-    // updateState
-    SUCCEED();
+    // Test method: void updateState((QMenu *parent))
+    EXPECT_NO_FATAL_FAILURE(obj->updateState(nullptr));
 }
-

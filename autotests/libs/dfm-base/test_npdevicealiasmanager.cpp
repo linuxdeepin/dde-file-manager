@@ -4,25 +4,50 @@
 
 /**
  * @file test_npdevicealiasmanager.cpp
- * @brief Unit tests for NPDeviceAliasManager Mid-priority methods
+ * @brief Unit tests for NPDeviceAliasManager methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class NPDeviceAliasManagerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "dfm-base/base/device/devicealiasmanager.h"
+
+#include <QTest>
+
+using namespace src;
+
+class NPDeviceAliasManagerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new NPDeviceAliasManager();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    NPDeviceAliasManager *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(NPDeviceAliasManagerTest, getAlias)
 {
-    // getAlias
-    SUCCEED();
+    // Test method: QString getAlias((const QUrl &protocolUrl))
+    QUrl _arg0{};
+    auto result = obj->getAlias(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(NPDeviceAliasManagerTest, removeAlias)
 {
-    // removeAlias
-    SUCCEED();
+    // Test method: void removeAlias((const QUrl &protocolUrl))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->removeAlias(_arg0));
 }

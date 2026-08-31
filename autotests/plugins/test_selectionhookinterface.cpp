@@ -4,25 +4,46 @@
 
 /**
  * @file test_selectionhookinterface.cpp
- * @brief Unit tests for SelectionHookInterface Mid-priority methods
+ * @brief Unit tests for SelectionHookInterface methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class SelectionHookInterfaceTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "model/selectionhookinterface.h"
+
+#include <QTest>
+
+using namespace ddplugin_canvas;
+
+class SelectionHookInterfaceTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new SelectionHookInterface();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    SelectionHookInterface *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(SelectionHookInterfaceTest, SelectionHookInterface)
 {
-    // SelectionHookInterface
-    SUCCEED();
+    // Test constructor: SelectionHookInterface(())
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(SelectionHookInterfaceTest, clear)
 {
-    // clear
-    SUCCEED();
+    // Test method: void clear(())
+    EXPECT_NO_FATAL_FAILURE(obj->clear());
 }

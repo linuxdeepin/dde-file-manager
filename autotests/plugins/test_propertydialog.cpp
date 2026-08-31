@@ -4,19 +4,42 @@
 
 /**
  * @file test_propertydialog.cpp
- * @brief Unit tests for PropertyDialog Mid-priority methods
+ * @brief Unit tests for PropertyDialog methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class PropertyDialogTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "propertydialog.h"
+
+#include <QTest>
+
+using namespace dfmplugin_propertydialog;
+
+class PropertyDialogTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new PropertyDialog();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    PropertyDialog *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(PropertyDialogTest, start)
 {
-    // start
-    SUCCEED();
+    // Test bool getter: start()
+    bool result = obj->start();
+    EXPECT_FALSE(result);
+
 }

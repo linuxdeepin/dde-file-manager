@@ -3,69 +3,111 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_opticalsharedbus_1.cpp
- * @brief Unit tests for OpticalShareDBus Low-priority methods
+ * @file test_opticalsharedbus_1.cpp
+ * @brief Unit tests for OpticalShareDBus methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class OpticalShareDBusTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "opticalsharedbus.h"
+
+#include <QTest>
+
+using namespace opticalshare;
+
+class OpticalShareDBusTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new OpticalShareDBus();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    OpticalShareDBus *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(OpticalShareDBusTest, GetBurnAttribute)
 {
-    // GetBurnAttribute
-    SUCCEED();
+    // Test method: QVariantMap GetBurnAttribute((const QString &tag))
+    QString _arg0{};
+    auto result = obj->GetBurnAttribute(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(OpticalShareDBusTest, GetBurnState)
 {
-    // GetBurnState
-    SUCCEED();
+    // Test method: QVariantMap GetBurnState((const QString &dev))
+    QString _arg0{};
+    auto result = obj->GetBurnState(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(OpticalShareDBusTest, GetBurnStates)
 {
-    // GetBurnStates
-    SUCCEED();
+    // Test getter: QVariantMap GetBurnStates()
+    auto result = obj->GetBurnStates();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(OpticalShareDBusTest, OpticalShareDBus)
 {
-    // OpticalShareDBus
-    SUCCEED();
+    // Test constructor: OpticalShareDBus((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(OpticalShareDBusTest, SetBurnAttribute)
 {
-    // SetBurnAttribute
-    SUCCEED();
+    // Test method: bool SetBurnAttribute((const QString &tag, const QVariantMap &attribute))
+    QString _arg0{};
+    QVariantMap _arg1{};
+    auto result = obj->SetBurnAttribute(_arg0, _arg1);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(OpticalShareDBusTest, SetBurnState)
 {
-    // SetBurnState
-    SUCCEED();
+    // Test method: bool SetBurnState((const QString &dev, const QVariantMap &state))
+    QString _arg0{};
+    QVariantMap _arg1{};
+    auto result = obj->SetBurnState(_arg0, _arg1);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(OpticalShareDBusTest, normalizeBurnAttribute)
 {
-    // normalizeBurnAttribute
-    SUCCEED();
+    // Test method: QVariantMap normalizeBurnAttribute((const QVariantMap &attribute))
+    QVariantMap _arg0{};
+    auto result = obj->normalizeBurnAttribute(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(OpticalShareDBusTest, normalizeBurnState)
 {
-    // normalizeBurnState
-    SUCCEED();
+    // Test method: QVariantMap normalizeBurnState((const QVariantMap &state))
+    QVariantMap _arg0{};
+    auto result = obj->normalizeBurnState(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(OpticalShareDBusTest, OpticalShareDBus_Destructor)
 {
-    // ~OpticalShareDBus
-    SUCCEED();
+    // Test method:  ~OpticalShareDBus(())
+    EXPECT_NO_FATAL_FAILURE({ OpticalShareDBus *tmp = new OpticalShareDBus(); delete tmp; });
 }
-

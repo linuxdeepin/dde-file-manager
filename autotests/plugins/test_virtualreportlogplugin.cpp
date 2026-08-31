@@ -3,27 +3,49 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_virtualreportlogplugin.cpp
- * @brief Unit tests for VirtualReportLogPlugin Low-priority methods
+ * @file test_virtualreportlogplugin.cpp
+ * @brief Unit tests for VirtualReportLogPlugin methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class VirtualReportLogPluginTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "reportlog/virtualreportlogplugin.h"
+
+#include <QTest>
+
+using namespace dfmplugin_utils;
+
+class VirtualReportLogPluginTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new VirtualReportLogPlugin();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    VirtualReportLogPlugin *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(VirtualReportLogPluginTest, initialize)
 {
-    // initialize
-    SUCCEED();
+    // Test method: void initialize(())
+    EXPECT_NO_FATAL_FAILURE(obj->initialize());
 }
 
 TEST_F(VirtualReportLogPluginTest, start)
 {
-    // start
-    SUCCEED();
-}
+    // Test bool getter: start()
+    bool result = obj->start();
+    EXPECT_FALSE(result);
 
+}

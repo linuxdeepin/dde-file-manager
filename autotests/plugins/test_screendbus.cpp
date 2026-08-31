@@ -4,37 +4,66 @@
 
 /**
  * @file test_screendbus.cpp
- * @brief Unit tests for ScreenDBus Mid-priority methods
+ * @brief Unit tests for ScreenDBus methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ScreenDBusTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "screen/screendbus.h"
+
+#include <QTest>
+
+using namespace ddplugin_core;
+
+class ScreenDBusTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ScreenDBus();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ScreenDBus *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ScreenDBusTest, enabled)
 {
-    // enabled
-    SUCCEED();
+    // Test bool getter: enabled()
+    bool result = obj->enabled();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(ScreenDBusTest, geometry)
 {
-    // geometry
-    SUCCEED();
+    // Test getter: QRect geometry()
+    auto result = obj->geometry();
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(ScreenDBusTest, name)
 {
-    // name
-    SUCCEED();
+    // Test getter: QString name()
+    auto result = obj->name();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(ScreenDBusTest, path)
 {
-    // path
-    SUCCEED();
+    // Test getter: QString path()
+    auto result = obj->path();
+    EXPECT_TRUE(result.isEmpty());
+
 }

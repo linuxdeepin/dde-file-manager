@@ -4,19 +4,40 @@
 
 /**
  * @file test_appendcompresseventreceiver.cpp
- * @brief Unit tests for AppendCompressEventReceiver Mid-priority methods
+ * @brief Unit tests for AppendCompressEventReceiver methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class AppendCompressEventReceiverTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "appendcompress/appendcompresseventreceiver.h"
+
+#include <QTest>
+
+using namespace dfmplugin_utils;
+
+class AppendCompressEventReceiverTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new AppendCompressEventReceiver();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    AppendCompressEventReceiver *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(AppendCompressEventReceiverTest, AppendCompressEventReceiver)
 {
-    // AppendCompressEventReceiver
-    SUCCEED();
+    // Test constructor: AppendCompressEventReceiver((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }

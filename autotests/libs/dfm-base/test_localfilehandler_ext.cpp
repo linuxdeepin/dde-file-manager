@@ -89,9 +89,7 @@ TEST_F(LocalFileHandlerExtTest, SetFileTime)
     f.write("t");
     f.close();
     QDateTime now = QDateTime::currentDateTime();
-    EXPECT_NO_FATAL_FAILURE({
-        (void)handler.setFileTime(QUrl::fromLocalFile(path), now, now);
-    });
+    EXPECT_NO_FATAL_FAILURE({ handler.setFileTime(QUrl::fromLocalFile(path), now, now); });
 }
 
 TEST_F(LocalFileHandlerExtTest, RenameFilesBatch)
@@ -104,21 +102,21 @@ TEST_F(LocalFileHandlerExtTest, RenameFilesBatch)
     QMap<QUrl, QUrl> mapping;
     mapping.insert(QUrl::fromLocalFile(src), QUrl::fromLocalFile(rootPath + "/batch_dst.txt"));
     QMap<QUrl, QUrl> success;
-    EXPECT_NO_FATAL_FAILURE({ (void)handler.renameFilesBatch(mapping, success); });
+    EXPECT_NO_FATAL_FAILURE({ handler.renameFilesBatch(mapping, success); });
 }
 
 TEST_F(LocalFileHandlerExtTest, DoHiddenFileRemind)
 {
     LocalFileHandler handler;
     bool check = false;
-    EXPECT_NO_FATAL_FAILURE({ (void)handler.doHiddenFileRemind(".hidden", &check); });
+    EXPECT_NO_FATAL_FAILURE({ handler.doHiddenFileRemind(".hidden", &check); });
 }
 
 TEST_F(LocalFileHandlerExtTest, GetInvalidPathAfterFailure)
 {
     LocalFileHandler handler;
     handler.deleteFile(QUrl::fromLocalFile(rootPath + "/nonexistent_for_invalid.txt"));
-    EXPECT_NO_FATAL_FAILURE({ (void)handler.getInvalidPath(); });
+    EXPECT_NO_FATAL_FAILURE({ handler.getInvalidPath(); });
 }
 
 TEST_F(LocalFileHandlerExtTest, SetPermissionsRecursive)
@@ -129,7 +127,7 @@ TEST_F(LocalFileHandlerExtTest, SetPermissionsRecursive)
     ASSERT_TRUE(f.open(QIODevice::WriteOnly));
     f.close();
     EXPECT_NO_FATAL_FAILURE({
-        (void)handler.setPermissionsRecursive(QUrl::fromLocalFile(path),
+        handler.setPermissionsRecursive(QUrl::fromLocalFile(path),
                                               QFileDevice::ReadOwner | QFileDevice::WriteOwner);
     });
 }
@@ -144,7 +142,5 @@ TEST_F(LocalFileHandlerExtTest, TouchFileWithTempUrl)
 {
     LocalFileHandler handler;
     QString path = rootPath + "/touch_temp.txt";
-    EXPECT_NO_FATAL_FAILURE({
-        (void)handler.touchFile(QUrl::fromLocalFile(path), QUrl::fromLocalFile(rootPath + "/tmp_template"));
-    });
+    EXPECT_NO_FATAL_FAILURE({ handler.touchFile(QUrl::fromLocalFile(path), QUrl::fromLocalFile(rootPath + "/tmp_template")); });
 }

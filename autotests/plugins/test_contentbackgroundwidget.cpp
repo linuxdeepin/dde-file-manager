@@ -4,25 +4,50 @@
 
 /**
  * @file test_contentbackgroundwidget.cpp
- * @brief Unit tests for ContentBackgroundWidget Mid-priority methods
+ * @brief Unit tests for ContentBackgroundWidget methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ContentBackgroundWidgetTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "options/widgets/contentbackgroundwidget.h"
+
+#include <QTest>
+
+using namespace ddplugin_organizer;
+
+class ContentBackgroundWidgetTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ContentBackgroundWidget();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ContentBackgroundWidget *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ContentBackgroundWidgetTest, radius)
 {
-    // radius
-    SUCCEED();
+    // Test getter: int radius()
+    auto result = obj->radius();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(ContentBackgroundWidgetTest, roundEdge)
 {
-    // roundEdge
-    SUCCEED();
+    // Test getter: RoundEdge roundEdge()
+    auto result = obj->roundEdge();
+    EXPECT_GE(static_cast<int>(result), 0);
+
 }

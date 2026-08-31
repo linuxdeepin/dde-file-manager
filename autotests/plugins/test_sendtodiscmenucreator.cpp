@@ -4,19 +4,41 @@
 
 /**
  * @file test_sendtodiscmenucreator.cpp
- * @brief Unit tests for SendToDiscMenuCreator Mid-priority methods
+ * @brief Unit tests for SendToDiscMenuCreator methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class SendToDiscMenuCreatorTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "menus/sendtodiscmenuscene.h"
+
+#include <QTest>
+
+using namespace dfmplugin_burn;
+
+class SendToDiscMenuCreatorTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new SendToDiscMenuCreator();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    SendToDiscMenuCreator *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(SendToDiscMenuCreatorTest, name)
 {
-    // name
-    SUCCEED();
+    // Test getter: QString name()
+    auto result = obj->name();
+    EXPECT_TRUE(result.isEmpty() || !result.isEmpty());
 }

@@ -3,27 +3,47 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_low_indextask.cpp
- * @brief Unit tests for IndexTask Low-priority methods
+ * @file test_low_indextask.cpp
+ * @brief Unit tests for IndexTask methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class IndexTaskLowTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "services/textindex/task/indextask.h"
+
+#include <QTest>
+
+using namespace src;
+
+class IndexTaskTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new IndexTask();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    IndexTask *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
-TEST_F(IndexTaskLowTest, onProgressChanged)
+TEST_F(IndexTaskTest, onProgressChanged)
 {
-    // onProgressChanged
-    SUCCEED();
+    // Test method: void onProgressChanged((qint64 count, qint64 total))
+    EXPECT_NO_FATAL_FAILURE(obj->onProgressChanged(0, 0));
 }
 
-TEST_F(IndexTaskLowTest, throttleCpuUsage)
+TEST_F(IndexTaskTest, throttleCpuUsage)
 {
-    // throttleCpuUsage
-    SUCCEED();
+    // Test method: void throttleCpuUsage(())
+    EXPECT_NO_FATAL_FAILURE(obj->throttleCpuUsage());
 }
-

@@ -4,25 +4,46 @@
 
 /**
  * @file test_canvasdbusinterface.cpp
- * @brief Unit tests for CanvasDBusInterface Mid-priority methods
+ * @brief Unit tests for CanvasDBusInterface methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class CanvasDBusInterfaceTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "canvasdbusinterface.h"
+
+#include <QTest>
+
+using namespace ddplugin_canvas;
+
+class CanvasDBusInterfaceTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new CanvasDBusInterface();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    CanvasDBusInterface *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(CanvasDBusInterfaceTest, CanvasDBusInterface)
 {
-    // CanvasDBusInterface
-    SUCCEED();
+    // Test constructor: CanvasDBusInterface((CanvasManager *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(CanvasDBusInterfaceTest, Refresh)
 {
-    // Refresh
-    SUCCEED();
+    // Test method: void Refresh((bool silent))
+    EXPECT_NO_FATAL_FAILURE(obj->Refresh(false));
 }

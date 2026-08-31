@@ -4,31 +4,52 @@
 
 /**
  * @file test_smbbrowser.cpp
- * @brief Unit tests for SmbBrowser Mid-priority methods
+ * @brief Unit tests for SmbBrowser methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class SmbBrowserTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "smbbrowser.h"
+
+#include <QTest>
+
+using namespace dfmplugin_smbbrowser;
+
+class SmbBrowserTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new SmbBrowser();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    SmbBrowser *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(SmbBrowserTest, bindWindows)
 {
-    // bindWindows
-    SUCCEED();
+    // Test method: void bindWindows(())
+    EXPECT_NO_FATAL_FAILURE(obj->bindWindows());
 }
 
 TEST_F(SmbBrowserTest, followEvents)
 {
-    // followEvents
-    SUCCEED();
+    // Test method: void followEvents(())
+    EXPECT_NO_FATAL_FAILURE(obj->followEvents());
 }
 
 TEST_F(SmbBrowserTest, onWindowOpened)
 {
-    // onWindowOpened
-    SUCCEED();
+    // Test method: void onWindowOpened((quint64 winId))
+    EXPECT_NO_FATAL_FAILURE(obj->onWindowOpened(0));
 }

@@ -3,21 +3,41 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_itemindicator.cpp
- * @brief Unit tests for ItemIndicator Low-priority methods
+ * @file test_itemindicator.cpp
+ * @brief Unit tests for ItemIndicator methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ItemIndicatorTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "private/surface.h"
+
+#include <QTest>
+
+using namespace ddplugin_organizer;
+
+class ItemIndicatorTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ItemIndicator();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ItemIndicator *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ItemIndicatorTest, ItemIndicator)
 {
-    // ItemIndicator
-    SUCCEED();
+    // Test constructor: ItemIndicator((QWidget *parent))
+    ASSERT_NE(obj, nullptr);
 }
-

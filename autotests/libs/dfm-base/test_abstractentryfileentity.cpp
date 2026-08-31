@@ -4,19 +4,40 @@
 
 /**
  * @file test_abstractentryfileentity.cpp
- * @brief Unit tests for AbstractEntryFileEntity Mid-priority methods
+ * @brief Unit tests for AbstractEntryFileEntity methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class AbstractEntryFileEntityTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "dfm-base/file/entry/entities/abstractentryfileentity.h"
+
+#include <QTest>
+
+using namespace src;
+
+class AbstractEntryFileEntityTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new AbstractEntryFileEntity();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    AbstractEntryFileEntity *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(AbstractEntryFileEntityTest, AbstractEntryFileEntity)
 {
-    // AbstractEntryFileEntity
-    SUCCEED();
+    // Test constructor: AbstractEntryFileEntity((const QUrl &url))
+    ASSERT_NE(obj, nullptr);
 }

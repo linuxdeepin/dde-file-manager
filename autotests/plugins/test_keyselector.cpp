@@ -4,19 +4,40 @@
 
 /**
  * @file test_keyselector.cpp
- * @brief Unit tests for KeySelector Mid-priority methods
+ * @brief Unit tests for KeySelector methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class KeySelectorTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "view/operator/keyselector.h"
+
+#include <QTest>
+
+using namespace ddplugin_canvas;
+
+class KeySelectorTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new KeySelector();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    KeySelector *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(KeySelectorTest, clearSearchKey)
 {
-    // clearSearchKey
-    SUCCEED();
+    // Test method: void clearSearchKey(())
+    EXPECT_NO_FATAL_FAILURE(obj->clearSearchKey());
 }

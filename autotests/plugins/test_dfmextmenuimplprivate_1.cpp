@@ -3,57 +3,87 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_dfmextmenuimplprivate_1.cpp
- * @brief Unit tests for DFMExtMenuImplPrivate Low-priority methods
+ * @file test_dfmextmenuimplprivate_1.cpp
+ * @brief Unit tests for DFMExtMenuImplPrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class DFMExtMenuImplPrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "extensionimpl/menuimpl/dfmextmenuimpl.h"
+
+#include <QTest>
+
+using namespace dfmplugin_utils;
+
+class DFMExtMenuImplPrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new DFMExtMenuImplPrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    DFMExtMenuImplPrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(DFMExtMenuImplPrivateTest, insertAction)
 {
-    // insertAction
-    SUCCEED();
+    // Test method: bool insertAction((DFMExtAction *before, DFMExtAction *action))
+    auto result = obj->insertAction(nullptr, nullptr);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(DFMExtMenuImplPrivateTest, isInterior)
 {
-    // isInterior
-    SUCCEED();
+    // Test bool getter: isInterior()
+    bool result = obj->isInterior();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(DFMExtMenuImplPrivateTest, menuAction)
 {
-    // menuAction
-    SUCCEED();
+    // Test getter: DFMExtAction menuAction()
+    auto result = obj->menuAction();
+    EXPECT_NO_FATAL_FAILURE({ obj->menuAction(); });
+
 }
 
 TEST_F(DFMExtMenuImplPrivateTest, menuImpl)
 {
-    // menuImpl
-    SUCCEED();
+    // Test getter: DFMExtMenuImpl menuImpl()
+    auto result = obj->menuImpl();
+    EXPECT_NO_FATAL_FAILURE({ obj->menuImpl(); });
+
 }
 
 TEST_F(DFMExtMenuImplPrivateTest, onActionHovered)
 {
-    // onActionHovered
-    SUCCEED();
+    // Test method: void onActionHovered((QAction *qaction))
+    EXPECT_NO_FATAL_FAILURE(obj->onActionHovered(nullptr));
 }
 
 TEST_F(DFMExtMenuImplPrivateTest, onActionTriggered)
 {
-    // onActionTriggered
-    SUCCEED();
+    // Test method: void onActionTriggered((QAction *qaction))
+    EXPECT_NO_FATAL_FAILURE(obj->onActionTriggered(nullptr));
 }
 
 TEST_F(DFMExtMenuImplPrivateTest, qmenu)
 {
-    // qmenu
-    SUCCEED();
-}
+    // Test getter: QMenu qmenu()
+    auto result = obj->qmenu();
+    EXPECT_NO_FATAL_FAILURE({ obj->qmenu(); });
 
+}

@@ -3,45 +3,69 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_tagfilewatcherprivate.cpp
- * @brief Unit tests for TagFileWatcherPrivate Low-priority methods
+ * @file test_tagfilewatcherprivate.cpp
+ * @brief Unit tests for TagFileWatcherPrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class TagFileWatcherPrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "files/private/tagfilewatcher_p.h"
+
+#include <QTest>
+
+using namespace dfmplugin_tag;
+
+class TagFileWatcherPrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new TagFileWatcherPrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    TagFileWatcherPrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(TagFileWatcherPrivateTest, TagFileWatcherPrivate)
 {
-    // TagFileWatcherPrivate
-    SUCCEED();
+    // Test constructor: TagFileWatcherPrivate((const QUrl &fileUrl, TagFileWatcher *qq))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(TagFileWatcherPrivateTest, initConnect)
 {
-    // initConnect
-    SUCCEED();
+    // Test method: void initConnect(())
+    EXPECT_NO_FATAL_FAILURE(obj->initConnect());
 }
 
 TEST_F(TagFileWatcherPrivateTest, initFileWatcher)
 {
-    // initFileWatcher
-    SUCCEED();
+    // Test method: void initFileWatcher(())
+    EXPECT_NO_FATAL_FAILURE(obj->initFileWatcher());
 }
 
 TEST_F(TagFileWatcherPrivateTest, start)
 {
-    // start
-    SUCCEED();
+    // Test bool getter: start()
+    bool result = obj->start();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(TagFileWatcherPrivateTest, stop)
 {
-    // stop
-    SUCCEED();
-}
+    // Test bool getter: stop()
+    bool result = obj->stop();
+    EXPECT_FALSE(result);
 
+}

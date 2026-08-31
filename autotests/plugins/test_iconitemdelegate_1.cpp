@@ -3,171 +3,245 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_iconitemdelegate_1.cpp
- * @brief Unit tests for IconItemDelegate Low-priority methods
+ * @file test_iconitemdelegate_1.cpp
+ * @brief Unit tests for IconItemDelegate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class IconItemDelegateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/iconitemdelegate.h"
+
+#include <QTest>
+
+using namespace dfmplugin_workspace;
+
+class IconItemDelegateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new IconItemDelegate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    IconItemDelegate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(IconItemDelegateTest, calcFileNameRect)
 {
-    // calcFileNameRect
-    SUCCEED();
+    // Test method: QList<QRectF> calcFileNameRect((const QModelIndex &index, const QRectF &rect, Qt::TextElideMode elideMode))
+    QModelIndex _arg0{};
+    QRectF _arg1{};
+    auto result = obj->calcFileNameRect(_arg0, _arg1, Qt::TextElideMode());
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(IconItemDelegateTest, createEditor)
 {
-    // createEditor
-    SUCCEED();
+    // Test method: QWidget createEditor((QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index))
+    QStyleOptionViewItem _arg1{};
+    QModelIndex _arg2{};
+    auto result = obj->createEditor(nullptr, _arg1, _arg2);
+    EXPECT_NO_FATAL_FAILURE({ obj->createEditor(nullptr, _arg1, _arg2); });
+
 }
 
 TEST_F(IconItemDelegateTest, decreaseIcon)
 {
-    // decreaseIcon
-    SUCCEED();
+    // Test getter: int decreaseIcon()
+    auto result = obj->decreaseIcon();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(IconItemDelegateTest, displayFileName)
 {
-    // displayFileName
-    SUCCEED();
+    // Test method: QString displayFileName((const QModelIndex &index))
+    QModelIndex _arg0{};
+    auto result = obj->displayFileName(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(IconItemDelegateTest, editorEvent)
 {
-    // editorEvent
-    SUCCEED();
+    // Test event handler: editorEvent((QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index))
+    QEvent _event(QEvent::None);
+    EXPECT_NO_FATAL_FAILURE(obj->editorEvent(&_event));
 }
 
 TEST_F(IconItemDelegateTest, editorFinished)
 {
-    // editorFinished
-    SUCCEED();
+    // Test method: void editorFinished(())
+    EXPECT_NO_FATAL_FAILURE(obj->editorFinished());
 }
 
 TEST_F(IconItemDelegateTest, eventFilter)
 {
-    // eventFilter
-    SUCCEED();
+    // Test method: bool eventFilter((QObject *object, QEvent *event))
+    auto result = obj->eventFilter(nullptr, nullptr);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(IconItemDelegateTest, expandItemRect)
 {
-    // expandItemRect
-    SUCCEED();
+    // Test getter: QRect expandItemRect()
+    auto result = obj->expandItemRect();
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(IconItemDelegateTest, expandedIndex)
 {
-    // expandedIndex
-    SUCCEED();
+    // Test getter: QModelIndex expandedIndex()
+    auto result = obj->expandedIndex();
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(IconItemDelegateTest, getGroupHeaderBackgroundRect)
 {
-    // getGroupHeaderBackgroundRect
-    SUCCEED();
+    // Test method: QRectF getGroupHeaderBackgroundRect((const QStyleOptionViewItem &option))
+    QStyleOptionViewItem _arg0{};
+    auto result = obj->getGroupHeaderBackgroundRect(_arg0);
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(IconItemDelegateTest, getGroupHeaderHeight)
 {
-    // getGroupHeaderHeight
-    SUCCEED();
+    // Test method: int getGroupHeaderHeight((const QStyleOptionViewItem &option))
+    QStyleOptionViewItem _arg0{};
+    auto result = obj->getGroupHeaderHeight(_arg0);
+    EXPECT_GE(result, 0);
+
 }
 
 TEST_F(IconItemDelegateTest, hideNotEditingIndexWidget)
 {
-    // hideNotEditingIndexWidget
-    SUCCEED();
+    // Test method: void hideNotEditingIndexWidget(())
+    EXPECT_NO_FATAL_FAILURE(obj->hideNotEditingIndexWidget());
 }
 
 TEST_F(IconItemDelegateTest, iconSizeByIconSizeLevel)
 {
-    // iconSizeByIconSizeLevel
-    SUCCEED();
+    // Test getter: QSize iconSizeByIconSizeLevel()
+    auto result = obj->iconSizeByIconSizeLevel();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(IconItemDelegateTest, iconSizeLevel)
 {
-    // iconSizeLevel
-    SUCCEED();
+    // Test getter: int iconSizeLevel()
+    auto result = obj->iconSizeLevel();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(IconItemDelegateTest, increaseIcon)
 {
-    // increaseIcon
-    SUCCEED();
+    // Test getter: int increaseIcon()
+    auto result = obj->increaseIcon();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(IconItemDelegateTest, itemExpanded)
 {
-    // itemExpanded
-    SUCCEED();
+    // Test bool getter: itemExpanded()
+    bool result = obj->itemExpanded();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(IconItemDelegateTest, itemIconRect)
 {
-    // itemIconRect
-    SUCCEED();
+    // Test method: QRectF itemIconRect((const QRectF &itemRect))
+    QRectF _arg0{};
+    auto result = obj->itemIconRect(_arg0);
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(IconItemDelegateTest, maximumIconSizeLevel)
 {
-    // maximumIconSizeLevel
-    SUCCEED();
+    // Test getter: int maximumIconSizeLevel()
+    auto result = obj->maximumIconSizeLevel();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(IconItemDelegateTest, minimumIconSizeLevel)
 {
-    // minimumIconSizeLevel
-    SUCCEED();
+    // Test getter: int minimumIconSizeLevel()
+    auto result = obj->minimumIconSizeLevel();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(IconItemDelegateTest, minimumWidthLevel)
 {
-    // minimumWidthLevel
-    SUCCEED();
+    // Test getter: int minimumWidthLevel()
+    auto result = obj->minimumWidthLevel();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(IconItemDelegateTest, onTriggerEdit)
 {
-    // onTriggerEdit
-    SUCCEED();
+    // Test method: void onTriggerEdit((const QModelIndex &index))
+    QModelIndex _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->onTriggerEdit(_arg0));
 }
 
 TEST_F(IconItemDelegateTest, paintItemIcon)
 {
-    // paintItemIcon
-    SUCCEED();
+    // Test method: QRectF paintItemIcon((QPainter *painter, const QStyleOptionViewItem &opt, const QModelIndex &index))
+    QStyleOptionViewItem _arg1{};
+    QModelIndex _arg2{};
+    auto result = obj->paintItemIcon(nullptr, _arg1, _arg2);
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(IconItemDelegateTest, setIconSizeByIconSizeLevel)
 {
-    // setIconSizeByIconSizeLevel
-    SUCCEED();
+    // Test method: int setIconSizeByIconSizeLevel((int level))
+    auto result = obj->setIconSizeByIconSizeLevel(0);
+    EXPECT_GE(result, 0);
+
 }
 
 TEST_F(IconItemDelegateTest, setItemMinimumWidthByWidthLevel)
 {
-    // setItemMinimumWidthByWidthLevel
-    SUCCEED();
+    // Test setter: void setItemMinimumWidthByWidthLevel((int level))
+    EXPECT_NO_FATAL_FAILURE(obj->setItemMinimumWidthByWidthLevel(0));
 }
 
 TEST_F(IconItemDelegateTest, sizeHint)
 {
-    // sizeHint
-    SUCCEED();
+    // Test method: QSize sizeHint((const QStyleOptionViewItem &option, const QModelIndex &index))
+    QStyleOptionViewItem _arg0{};
+    QModelIndex _arg1{};
+    auto result = obj->sizeHint(_arg0, _arg1);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(IconItemDelegateTest, updateItemSizeHint)
 {
-    // updateItemSizeHint
-    SUCCEED();
+    // Test method: void updateItemSizeHint(())
+    EXPECT_NO_FATAL_FAILURE(obj->updateItemSizeHint());
 }
-

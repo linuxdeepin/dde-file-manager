@@ -4,31 +4,56 @@
 
 /**
  * @file test_baseencryptworker.cpp
- * @brief Unit tests for BaseEncryptWorker Mid-priority methods
+ * @brief Unit tests for BaseEncryptWorker methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class BaseEncryptWorkerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "services/diskencrypt/workers/baseencryptworker.h"
+
+#include <QTest>
+
+using namespace src;
+
+class BaseEncryptWorkerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new BaseEncryptWorker();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    BaseEncryptWorker *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(BaseEncryptWorkerTest, args)
 {
-    // args
-    SUCCEED();
+    // Test getter: QVariantMap args()
+    auto result = obj->args();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(BaseEncryptWorkerTest, exitCode)
 {
-    // exitCode
-    SUCCEED();
+    // Test getter: int exitCode()
+    auto result = obj->exitCode();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(BaseEncryptWorkerTest, setExitCode)
 {
-    // setExitCode
-    SUCCEED();
+    // Test setter: void setExitCode((int code))
+    EXPECT_NO_FATAL_FAILURE(obj->setExitCode(0));
 }

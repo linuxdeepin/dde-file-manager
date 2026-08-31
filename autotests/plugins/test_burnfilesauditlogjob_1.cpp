@@ -3,27 +3,49 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_burnfilesauditlogjob_1.cpp
- * @brief Unit tests for BurnFilesAuditLogJob Low-priority methods
+ * @file test_burnfilesauditlogjob_1.cpp
+ * @brief Unit tests for BurnFilesAuditLogJob methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class BurnFilesAuditLogJobTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/auditlogjob.h"
+
+#include <QTest>
+
+using namespace dfmplugin_burn;
+
+class BurnFilesAuditLogJobTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new BurnFilesAuditLogJob();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    BurnFilesAuditLogJob *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(BurnFilesAuditLogJobTest, BurnFilesAuditLogJob)
 {
-    // BurnFilesAuditLogJob
-    SUCCEED();
+    // Test constructor: BurnFilesAuditLogJob((const QUrl &stagingUrl, bool result, QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(BurnFilesAuditLogJobTest, burnedFileInfoList)
 {
-    // burnedFileInfoList
-    SUCCEED();
-}
+    // Test getter: QFileInfoList burnedFileInfoList()
+    auto result = obj->burnedFileInfoList();
+    EXPECT_TRUE(result.isEmpty());
 
+}

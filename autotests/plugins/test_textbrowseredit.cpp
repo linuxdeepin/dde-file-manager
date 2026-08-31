@@ -4,19 +4,42 @@
 
 /**
  * @file test_textbrowseredit.cpp
- * @brief Unit tests for TextBrowserEdit Mid-priority methods
+ * @brief Unit tests for TextBrowserEdit methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class TextBrowserEditTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "apps/dde-file-manager-preview/pluginpreviews/text-preview/textbrowseredit.h"
+
+#include <QTest>
+
+using namespace src;
+
+class TextBrowserEditTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new TextBrowserEdit();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    TextBrowserEdit *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(TextBrowserEditTest, verifyEndOfStrIntegrity)
 {
-    // verifyEndOfStrIntegrity
-    SUCCEED();
+    // Test method: int verifyEndOfStrIntegrity((const char *s, int l))
+    auto result = obj->verifyEndOfStrIntegrity(nullptr, 0);
+    EXPECT_GE(result, 0);
+
 }

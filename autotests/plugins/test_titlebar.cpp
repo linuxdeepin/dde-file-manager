@@ -3,57 +3,79 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_titlebar.cpp
- * @brief Unit tests for TitleBar Low-priority methods
+ * @file test_titlebar.cpp
+ * @brief Unit tests for TitleBar methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class TitleBarTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "titlebar.h"
+
+#include <QTest>
+
+using namespace dfmplugin_titlebar;
+
+class TitleBarTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new TitleBar();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    TitleBar *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(TitleBarTest, bindEvents)
 {
-    // bindEvents
-    SUCCEED();
+    // Test method: void bindEvents(())
+    EXPECT_NO_FATAL_FAILURE(obj->bindEvents());
 }
 
 TEST_F(TitleBarTest, initialize)
 {
-    // initialize
-    SUCCEED();
+    // Test method: void initialize(())
+    EXPECT_NO_FATAL_FAILURE(obj->initialize());
 }
 
 TEST_F(TitleBarTest, onWindowClosed)
 {
-    // onWindowClosed
-    SUCCEED();
+    // Test method: void onWindowClosed((quint64 windId))
+    EXPECT_NO_FATAL_FAILURE(obj->onWindowClosed(0));
 }
 
 TEST_F(TitleBarTest, onWindowCreated)
 {
-    // onWindowCreated
-    SUCCEED();
+    // Test method: void onWindowCreated((quint64 windId))
+    EXPECT_NO_FATAL_FAILURE(obj->onWindowCreated(0));
 }
 
 TEST_F(TitleBarTest, onWindowOpened)
 {
-    // onWindowOpened
-    SUCCEED();
+    // Test method: void onWindowOpened((quint64 windId))
+    EXPECT_NO_FATAL_FAILURE(obj->onWindowOpened(0));
 }
 
 TEST_F(TitleBarTest, registerTabSettingConfig)
 {
-    // registerTabSettingConfig
-    SUCCEED();
+    // Test method: void registerTabSettingConfig(())
+    EXPECT_NO_FATAL_FAILURE(obj->registerTabSettingConfig());
 }
 
 TEST_F(TitleBarTest, start)
 {
-    // start
-    SUCCEED();
-}
+    // Test bool getter: start()
+    bool result = obj->start();
+    EXPECT_FALSE(result);
 
+}

@@ -4,43 +4,67 @@
 
 /**
  * @file test_wallpapersettingsprivate.cpp
- * @brief Unit tests for WallpaperSettingsPrivate Mid-priority methods
+ * @brief Unit tests for WallpaperSettingsPrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class WallpaperSettingsPrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "wallpapersettings.h"
+
+#include <QTest>
+
+using namespace ddplugin_wallpapersetting;
+
+class WallpaperSettingsPrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new WallpaperSettingsPrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    WallpaperSettingsPrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(WallpaperSettingsPrivateTest, adjustModeSwitcher)
 {
-    // adjustModeSwitcher
-    SUCCEED();
+    // Test method: void adjustModeSwitcher(())
+    EXPECT_NO_FATAL_FAILURE(obj->adjustModeSwitcher());
 }
 
 TEST_F(WallpaperSettingsPrivateTest, initScreenSaver)
 {
-    // initScreenSaver
-    SUCCEED();
+    // Test method: void initScreenSaver(())
+    EXPECT_NO_FATAL_FAILURE(obj->initScreenSaver());
 }
 
 TEST_F(WallpaperSettingsPrivateTest, initUI)
 {
-    // initUI
-    SUCCEED();
+    // Test method: void initUI(())
+    EXPECT_NO_FATAL_FAILURE(obj->initUI());
 }
 
 TEST_F(WallpaperSettingsPrivateTest, onMousePressed)
 {
-    // onMousePressed
-    SUCCEED();
+    // Test method: void onMousePressed((const QPoint &pos, int button))
+    QPoint _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->onMousePressed(_arg0, 0));
 }
 
 TEST_F(WallpaperSettingsPrivateTest, timeFormat)
 {
-    // timeFormat
-    SUCCEED();
+    // Test method: QString timeFormat((int second))
+    auto result = obj->timeFormat(0);
+    EXPECT_TRUE(result.isEmpty());
+
 }

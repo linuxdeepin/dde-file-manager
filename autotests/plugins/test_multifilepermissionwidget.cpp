@@ -4,25 +4,49 @@
 
 /**
  * @file test_multifilepermissionwidget.cpp
- * @brief Unit tests for MultiFilePermissionWidget Mid-priority methods
+ * @brief Unit tests for MultiFilePermissionWidget methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class MultiFilePermissionWidgetTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/multifilepermissionwidget.h"
+
+#include <QTest>
+
+using namespace dfmplugin_propertydialog;
+
+class MultiFilePermissionWidgetTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new MultiFilePermissionWidget();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    MultiFilePermissionWidget *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(MultiFilePermissionWidgetTest, canChmodByFile)
 {
-    // canChmodByFile
-    SUCCEED();
+    // Test method: bool canChmodByFile((const FileInfoPointer &info))
+    FileInfoPointer _arg0{};
+    auto result = obj->canChmodByFile(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(MultiFilePermissionWidgetTest, initUI)
 {
-    // initUI
-    SUCCEED();
+    // Test method: void initUI(())
+    EXPECT_NO_FATAL_FAILURE(obj->initUI());
 }

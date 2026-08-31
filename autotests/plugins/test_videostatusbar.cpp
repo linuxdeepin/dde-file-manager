@@ -4,19 +4,40 @@
 
 /**
  * @file test_videostatusbar.cpp
- * @brief Unit tests for VideoStatusBar Mid-priority methods
+ * @brief Unit tests for VideoStatusBar methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class VideoStatusBarTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "apps/dde-file-manager-preview/pluginpreviews/video-preview/videostatusbar.h"
+
+#include <QTest>
+
+using namespace src;
+
+class VideoStatusBarTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new VideoStatusBar();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    VideoStatusBar *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(VideoStatusBarTest, VideoStatusBar)
 {
-    // VideoStatusBar
-    SUCCEED();
+    // Test constructor: VideoStatusBar((VideoPreview *preview))
+    ASSERT_NE(obj, nullptr);
 }

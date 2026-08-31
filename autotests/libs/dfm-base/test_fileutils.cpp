@@ -307,12 +307,12 @@ TEST(FileUtilsTest, FileCanTrashForLocalTempFileIsCallable)
     ASSERT_TRUE(f.open(QIODevice::WriteOnly));
     f.write("hello");
     f.close();
-    EXPECT_NO_FATAL_FAILURE({ (void)FileUtils::fileCanTrash(QUrl::fromLocalFile(path)); });
+    EXPECT_NO_FATAL_FAILURE({ FileUtils::fileCanTrash(QUrl::fromLocalFile(path)); });
 }
 
 TEST(FileUtilsTest, TrashIsEmptyIsBool)
 {
-    EXPECT_NO_FATAL_FAILURE({ (void)FileUtils::trashIsEmpty(); });
+    EXPECT_NO_FATAL_FAILURE({ FileUtils::trashIsEmpty(); });
 }
 
 // ---- Coverage additions: batch text operations + prohibit path ----
@@ -324,7 +324,7 @@ TEST(FileUtilsTest, IsContainProhibitPathWithEmptyListReturnsFalse)
 
 TEST(FileUtilsTest, IsContainProhibitPathWithTempPathCallable)
 {
-    EXPECT_NO_FATAL_FAILURE({ (void)FileUtils::isContainProhibitPath({ QUrl::fromLocalFile("/tmp/ut_prohibit") }); });
+    EXPECT_NO_FATAL_FAILURE({ FileUtils::isContainProhibitPath({ QUrl::fromLocalFile("/tmp/ut_prohibit") }); });
 }
 
 TEST(FileUtilsTest, FileBatchAddTextWithEmptyListReturnsEmpty)
@@ -340,228 +340,267 @@ TEST(FileUtilsTest, FileBatchReplaceTextWithEmptyListReturnsEmpty)
 
 TEST(FileUtilsTest, bindUrlTransform)
 {
-    // bindUrlTransform
-    SUCCEED();
+    FileUtils obj;
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.bindUrlTransform(_arg0); });
 }
 
 TEST(FileUtilsTest, cacheCopyingFileUrl)
 {
-    // cacheCopyingFileUrl
-    SUCCEED();
+    FileUtils obj;
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj.cacheCopyingFileUrl(_arg0));
 }
 
 TEST(FileUtilsTest, containsCopyingFileUrl)
 {
-    // containsCopyingFileUrl
-    SUCCEED();
+    FileUtils obj;
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.containsCopyingFileUrl(_arg0); });
 }
 
 TEST(FileUtilsTest, dateTimeFormat)
 {
-    // dateTimeFormat
-    SUCCEED();
+    FileUtils obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.dateTimeFormat(); });
 }
 
 TEST(FileUtilsTest, decryptString)
 {
-    // decryptString
-    SUCCEED();
+    FileUtils obj;
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.decryptString(_arg0); });
 }
 
 TEST(FileUtilsTest, dirFfileCount)
 {
-    // dirFfileCount
-    SUCCEED();
+    FileUtils obj;
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.dirFfileCount(_arg0); });
 }
 
 TEST(FileUtilsTest, encryptString)
 {
-    // encryptString
-    SUCCEED();
+    FileUtils obj;
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.encryptString(_arg0); });
 }
 
 TEST(FileUtilsTest, findIconFromXdg)
 {
-    // findIconFromXdg
-    SUCCEED();
+    FileUtils obj;
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.findIconFromXdg(_arg0); });
 }
 
 TEST(FileUtilsTest, getCpuProcessCount)
 {
-    // getCpuProcessCount
-    SUCCEED();
+    FileUtils obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.getCpuProcessCount(); });
 }
 
 TEST(FileUtilsTest, getFileNameLength)
 {
-    // getFileNameLength
-    SUCCEED();
+    FileUtils obj;
+    QUrl _arg0{};
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE({ obj.getFileNameLength(_arg0, _arg1); });
 }
 
 TEST(FileUtilsTest, getMemoryPageSize)
 {
-    // getMemoryPageSize
-    SUCCEED();
+    FileUtils obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.getMemoryPageSize(); });
 }
 
 TEST(FileUtilsTest, isComputerDesktopFile)
 {
-    // isComputerDesktopFile
-    SUCCEED();
+    FileUtils obj;
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.isComputerDesktopFile(_arg0); });
 }
 
 TEST(FileUtilsTest, isContainProhibitPath)
 {
-    // isContainProhibitPath
-    SUCCEED();
+    FileUtils obj;
+    QList<QUrl> _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.isContainProhibitPath(_arg0); });
 }
 
 TEST(FileUtilsTest, isDesktopFile)
 {
-    // isDesktopFile
-    SUCCEED();
+    FileUtils obj;
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.isDesktopFile(_arg0); });
 }
 
 TEST(FileUtilsTest, isDesktopFileInfo)
 {
-    // isDesktopFileInfo
-    SUCCEED();
+    FileUtils obj;
+    FileInfoPointer _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.isDesktopFileInfo(_arg0); });
 }
 
 TEST(FileUtilsTest, isDesktopFileSuffix)
 {
-    // isDesktopFileSuffix
-    SUCCEED();
+    FileUtils obj;
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.isDesktopFileSuffix(_arg0); });
 }
 
 TEST(FileUtilsTest, isHigherHierarchy)
 {
-    // isHigherHierarchy
-    SUCCEED();
+    FileUtils obj;
+    QUrl _arg0{};
+    QUrl _arg1{};
+    EXPECT_NO_FATAL_FAILURE({ obj.isHigherHierarchy(_arg0, _arg1); });
 }
 
 TEST(FileUtilsTest, isHomeDesktopFile)
 {
-    // isHomeDesktopFile
-    SUCCEED();
+    FileUtils obj;
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.isHomeDesktopFile(_arg0); });
 }
 
 TEST(FileUtilsTest, isSameDevice)
 {
-    // isSameDevice
-    SUCCEED();
+    FileUtils obj;
+    QUrl _arg0{};
+    QUrl _arg1{};
+    EXPECT_NO_FATAL_FAILURE({ obj.isSameDevice(_arg0, _arg1); });
 }
 
 TEST(FileUtilsTest, isSameFile)
 {
-    // isSameFile
-    SUCCEED();
+    FileUtils obj;
+    QString _arg0{};
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE({ obj.isSameFile(_arg0, _arg1); });
 }
 
 TEST(FileUtilsTest, isSameMountPoint)
 {
-    // isSameMountPoint
-    SUCCEED();
+    FileUtils obj;
+    QUrl _arg0{};
+    QUrl _arg1{};
+    EXPECT_NO_FATAL_FAILURE({ obj.isSameMountPoint(_arg0, _arg1); });
 }
 
 TEST(FileUtilsTest, isTrashDesktopFile)
 {
-    // isTrashDesktopFile
-    SUCCEED();
+    FileUtils obj;
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.isTrashDesktopFile(_arg0); });
 }
 
 TEST(FileUtilsTest, isTrashFile)
 {
-    // isTrashFile
-    SUCCEED();
+    FileUtils obj;
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.isTrashFile(_arg0); });
 }
 
 TEST(FileUtilsTest, normalPathToTrash)
 {
-    // normalPathToTrash
-    SUCCEED();
+    FileUtils obj;
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.normalPathToTrash(_arg0); });
 }
 
 TEST(FileUtilsTest, preprocessingFileName)
 {
-    // preprocessingFileName
-    SUCCEED();
+    FileUtils obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.preprocessingFileName(QString()); });
 }
 
 TEST(FileUtilsTest, processLength)
 {
-    // processLength
-    SUCCEED();
+    FileUtils obj;
+    QString _arg0{};
+    QString _arg4{};
+    int _arg5{};
+    EXPECT_NO_FATAL_FAILURE({ obj.processLength(_arg0, 0, 0, false, _arg4, _arg5); });
 }
 
 TEST(FileUtilsTest, refreshIconCache)
 {
-    // refreshIconCache
-    SUCCEED();
+    FileUtils obj;
+    EXPECT_NO_FATAL_FAILURE(obj.refreshIconCache());
 }
 
 TEST(FileUtilsTest, removeCopyingFileUrl)
 {
-    // removeCopyingFileUrl
-    SUCCEED();
+    FileUtils obj;
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj.removeCopyingFileUrl(_arg0));
 }
 
 TEST(FileUtilsTest, resolveSymlink)
 {
-    // resolveSymlink
-    SUCCEED();
+    FileUtils obj;
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.resolveSymlink(_arg0); });
 }
 
 TEST(FileUtilsTest, setBackGround)
 {
-    // setBackGround
-    SUCCEED();
+    FileUtils obj;
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.setBackGround(_arg0); });
 }
 
 TEST(FileUtilsTest, supportLongName)
 {
-    // supportLongName
-    SUCCEED();
+    FileUtils obj;
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.supportLongName(_arg0); });
 }
 
 TEST(FileUtilsTest, supportedMaxLength)
 {
-    // supportedMaxLength
-    SUCCEED();
+    FileUtils obj;
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.supportedMaxLength(_arg0); });
 }
 
 TEST(FileUtilsTest, symlinkTarget)
 {
-    // symlinkTarget
-    SUCCEED();
+    FileUtils obj;
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.symlinkTarget(_arg0); });
 }
 
 TEST(FileUtilsTest, toUnicode)
 {
-    // toUnicode
-    SUCCEED();
+    FileUtils obj;
+    QByteArray _arg0{};
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE({ obj.toUnicode(_arg0, _arg1); });
 }
 
 TEST(FileUtilsTest, trashEmptyState)
 {
-    // trashEmptyState
-    SUCCEED();
+    FileUtils obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.trashEmptyState(); });
 }
 
 TEST(FileUtilsTest, trashIsEmpty)
 {
-    // trashIsEmpty
-    SUCCEED();
+    FileUtils obj;
+    bool result = obj.trashIsEmpty();
+    EXPECT_FALSE(result);
 }
 
 TEST(FileUtilsTest, trashPathToNormal)
 {
-    // trashPathToNormal
-    SUCCEED();
+    FileUtils obj;
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.trashPathToNormal(_arg0); });
 }
 
 TEST(FileUtilsTest, trashRootUrl)
 {
-    // trashRootUrl
-    SUCCEED();
+    FileUtils obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.trashRootUrl(); });
 }

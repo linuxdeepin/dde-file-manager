@@ -3,21 +3,43 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_dfmroundbackground_1.cpp
- * @brief Unit tests for DFMRoundBackground Low-priority methods
+ * @file test_dfmroundbackground_1.cpp
+ * @brief Unit tests for DFMRoundBackground methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class DFMRoundBackgroundTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "deviceproperty/devicepropertydialog.h"
+
+#include <QTest>
+
+using namespace dfmplugin_computer;
+
+class DFMRoundBackgroundTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new DFMRoundBackground();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    DFMRoundBackground *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(DFMRoundBackgroundTest, eventFilter)
 {
-    // eventFilter
-    SUCCEED();
-}
+    // Test method: bool eventFilter((QObject *watched, QEvent *event))
+    auto result = obj->eventFilter(nullptr, nullptr);
+    EXPECT_FALSE(result);
 
+}

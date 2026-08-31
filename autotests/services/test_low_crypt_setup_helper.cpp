@@ -3,45 +3,79 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_low_crypt_setup_helper.cpp
- * @brief Unit tests for crypt_setup_helper Low-priority methods
+ * @file test_low_crypt_setup_helper.cpp
+ * @brief Unit tests for crypt_setup_helper methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class crypt_setup_helperLowTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "services/diskencrypt/core/cryptsetup.h"
+
+#include <QTest>
+
+using namespace src;
+
+class crypt_setup_helperTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new crypt_setup_helper();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    crypt_setup_helper *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
-TEST_F(crypt_setup_helperLowTest, createHeaderFile)
+TEST_F(crypt_setup_helperTest, createHeaderFile)
 {
-    // createHeaderFile
-    SUCCEED();
+    // Test method: int createHeaderFile((const QString &dev, QString *headerPath))
+    QString _arg0{};
+    auto result = obj->createHeaderFile(_arg0, nullptr);
+    EXPECT_GE(result, 0);
+
 }
 
-TEST_F(crypt_setup_helperLowTest, initDeviceHeader)
+TEST_F(crypt_setup_helperTest, initDeviceHeader)
 {
-    // initDeviceHeader
-    SUCCEED();
+    // Test method: int initDeviceHeader((const QString &dev, const QString &fileHeader))
+    QString _arg0{};
+    QString _arg1{};
+    auto result = obj->initDeviceHeader(_arg0, _arg1);
+    EXPECT_GE(result, 0);
+
 }
 
-TEST_F(crypt_setup_helperLowTest, initiable)
+TEST_F(crypt_setup_helperTest, initiable)
 {
-    // initiable
-    SUCCEED();
+    // Test method: int initiable((const QString &dev))
+    QString _arg0{};
+    auto result = obj->initiable(_arg0);
+    EXPECT_GE(result, 0);
+
 }
 
-TEST_F(crypt_setup_helperLowTest, onDecrypting)
+TEST_F(crypt_setup_helperTest, onDecrypting)
 {
-    // onDecrypting
-    SUCCEED();
+    // Test method: int onDecrypting((uint64_t size, uint64_t offset, void *usrptr))
+    auto result = obj->onDecrypting({}, {}, nullptr);
+    EXPECT_GE(result, 0);
+
 }
 
-TEST_F(crypt_setup_helperLowTest, onEncrypting)
+TEST_F(crypt_setup_helperTest, onEncrypting)
 {
-    // onEncrypting
-    SUCCEED();
-}
+    // Test method: int onEncrypting((uint64_t size, uint64_t offset, void *usrptr))
+    auto result = obj->onEncrypting({}, {}, nullptr);
+    EXPECT_GE(result, 0);
 
+}

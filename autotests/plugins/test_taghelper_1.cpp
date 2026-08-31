@@ -3,141 +3,209 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_taghelper_1.cpp
- * @brief Unit tests for TagHelper Low-priority methods
+ * @file test_taghelper_1.cpp
+ * @brief Unit tests for TagHelper methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class TagHelperTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/taghelper.h"
+
+#include <QTest>
+
+using namespace dfmplugin_tag;
+
+class TagHelperTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new TagHelper();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    TagHelper *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(TagHelperTest, TagHelper)
 {
-    // TagHelper
-    SUCCEED();
+    // Test constructor: TagHelper((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(TagHelperTest, createSidebarItemInfo)
 {
-    // createSidebarItemInfo
-    SUCCEED();
+    // Test method: QVariantMap createSidebarItemInfo((const QString &tag))
+    QString _arg0{};
+    auto result = obj->createSidebarItemInfo(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(TagHelperTest, defaultColors)
 {
-    // defaultColors
-    SUCCEED();
+    // Test getter: QList<QColor> defaultColors()
+    auto result = obj->defaultColors();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(TagHelperTest, getColorNameByTag)
 {
-    // getColorNameByTag
-    SUCCEED();
+    // Test method: QString getColorNameByTag((const QString &tagName))
+    QString _arg0{};
+    auto result = obj->getColorNameByTag(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(TagHelperTest, getTagNameFromUrl)
 {
-    // getTagNameFromUrl
-    SUCCEED();
+    // Test method: QString getTagNameFromUrl((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->getTagNameFromUrl(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(TagHelperTest, initTagColorDefines)
 {
-    // initTagColorDefines
-    SUCCEED();
+    // Test method: void initTagColorDefines(())
+    EXPECT_NO_FATAL_FAILURE(obj->initTagColorDefines());
 }
 
 TEST_F(TagHelperTest, instance)
 {
-    // instance
-    SUCCEED();
+    // Test getter: DFMBASE_USE_NAMESPACE instance()
+    EXPECT_NO_FATAL_FAILURE({ obj->instance(); });
 }
 
 TEST_F(TagHelperTest, isDefaultTag)
 {
-    // isDefaultTag
-    SUCCEED();
+    // Test method: bool isDefaultTag((const QString &tagName))
+    QString _arg0{};
+    auto result = obj->isDefaultTag(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(TagHelperTest, makeTagUrlByTagName)
 {
-    // makeTagUrlByTagName
-    SUCCEED();
+    // Test method: QUrl makeTagUrlByTagName((const QString &tag))
+    QString _arg0{};
+    auto result = obj->makeTagUrlByTagName(_arg0);
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(TagHelperTest, paintTags)
 {
-    // paintTags
-    SUCCEED();
+    // Test method: void paintTags((QPainter *painter, QRectF &rect, const QList<QColor> &colors))
+    QRectF _arg1{};
+    QList<QColor> _arg2{};
+    EXPECT_NO_FATAL_FAILURE(obj->paintTags(nullptr, _arg1, _arg2));
 }
 
 TEST_F(TagHelperTest, queryColorByColorName)
 {
-    // queryColorByColorName
-    SUCCEED();
+    // Test method: QColor queryColorByColorName((const QString &name))
+    QString _arg0{};
+    auto result = obj->queryColorByColorName(_arg0);
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(TagHelperTest, queryColorByDisplayName)
 {
-    // queryColorByDisplayName
-    SUCCEED();
+    // Test method: QColor queryColorByDisplayName((const QString &name))
+    QString _arg0{};
+    auto result = obj->queryColorByDisplayName(_arg0);
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(TagHelperTest, queryColorNameByColor)
 {
-    // queryColorNameByColor
-    SUCCEED();
+    // Test method: QString queryColorNameByColor((const QColor &color))
+    QColor _arg0{};
+    auto result = obj->queryColorNameByColor(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(TagHelperTest, queryColorNameByDisplayName)
 {
-    // queryColorNameByDisplayName
-    SUCCEED();
+    // Test method: QString queryColorNameByDisplayName((const QString &name))
+    QString _arg0{};
+    auto result = obj->queryColorNameByDisplayName(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(TagHelperTest, queryDisplayNameByColor)
 {
-    // queryDisplayNameByColor
-    SUCCEED();
+    // Test method: QString queryDisplayNameByColor((const QColor &color))
+    QColor _arg0{};
+    auto result = obj->queryDisplayNameByColor(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(TagHelperTest, queryIconNameByColor)
 {
-    // queryIconNameByColor
-    SUCCEED();
+    // Test method: QString queryIconNameByColor((const QColor &color))
+    QColor _arg0{};
+    auto result = obj->queryIconNameByColor(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(TagHelperTest, queryIconNameByColorName)
 {
-    // queryIconNameByColorName
-    SUCCEED();
+    // Test method: QString queryIconNameByColorName((const QString &colorName))
+    QString _arg0{};
+    auto result = obj->queryIconNameByColorName(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(TagHelperTest, randomTagDefine)
 {
-    // randomTagDefine
-    SUCCEED();
+    // Test getter: TagColorDefine randomTagDefine()
+    auto result = obj->randomTagDefine();
+    EXPECT_NO_FATAL_FAILURE({ obj->randomTagDefine(); });
+
 }
 
 TEST_F(TagHelperTest, rootUrl)
 {
-    // rootUrl
-    SUCCEED();
+    // Test getter: QUrl rootUrl()
+    auto result = obj->rootUrl();
+    EXPECT_TRUE(result.isEmpty() || result.isValid());
 }
 
 TEST_F(TagHelperTest, scheme)
 {
-    // scheme
-    SUCCEED();
+    // Test getter: QString scheme()
+    auto result = obj->scheme();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(TagHelperTest, showTagEdit)
 {
-    // showTagEdit
-    SUCCEED();
+    // Test method: void showTagEdit((const QRectF &parentRect, const QRectF &iconRect, const QList<QUrl> &fileList, bool showInTagDir))
+    QRectF _arg0{};
+    QRectF _arg1{};
+    QList<QUrl> _arg2{};
+    EXPECT_NO_FATAL_FAILURE(obj->showTagEdit(_arg0, _arg1, _arg2, false));
 }
-

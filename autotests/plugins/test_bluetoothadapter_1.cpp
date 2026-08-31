@@ -3,69 +3,103 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_bluetoothadapter_1.cpp
- * @brief Unit tests for BluetoothAdapter Low-priority methods
+ * @file test_bluetoothadapter_1.cpp
+ * @brief Unit tests for BluetoothAdapter methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class BluetoothAdapterTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "bluetooth/private/bluetoothadapter.h"
+
+#include <QTest>
+
+using namespace dfmplugin_utils;
+
+class BluetoothAdapterTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new BluetoothAdapter();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    BluetoothAdapter *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(BluetoothAdapterTest, addDevice)
 {
-    // addDevice
-    SUCCEED();
+    // Test method: void addDevice((const BluetoothDevice *device))
+    EXPECT_NO_FATAL_FAILURE(obj->addDevice(nullptr));
 }
 
 TEST_F(BluetoothAdapterTest, deviceById)
 {
-    // deviceById
-    SUCCEED();
+    // Test method: BluetoothDevice deviceById((const QString &id))
+    QString _arg0{};
+    auto result = obj->deviceById(_arg0);
+    EXPECT_NO_FATAL_FAILURE({ obj->deviceById(_arg0); });
+
 }
 
 TEST_F(BluetoothAdapterTest, getDevices)
 {
-    // getDevices
-    SUCCEED();
+    // Test getter: QMap<QString, const BluetoothDevice *> getDevices()
+    auto result = obj->getDevices();
+    // Pointer return type
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(BluetoothAdapterTest, getId)
 {
-    // getId
-    SUCCEED();
+    // Test getter: QString getId()
+    auto result = obj->getId();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(BluetoothAdapterTest, getName)
 {
-    // getName
-    SUCCEED();
+    // Test getter: QString getName()
+    auto result = obj->getName();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(BluetoothAdapterTest, isPowered)
 {
-    // isPowered
-    SUCCEED();
+    // Test bool getter: isPowered()
+    bool result = obj->isPowered();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(BluetoothAdapterTest, setId)
 {
-    // setId
-    SUCCEED();
+    // Test setter: void setId((const QString &id))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->setId(_arg0));
 }
 
 TEST_F(BluetoothAdapterTest, setName)
 {
-    // setName
-    SUCCEED();
+    // Test setter: void setName((const QString &name))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->setName(_arg0));
 }
 
 TEST_F(BluetoothAdapterTest, setPowered)
 {
-    // setPowered
-    SUCCEED();
+    // Test setter: void setPowered((bool powered))
+    EXPECT_NO_FATAL_FAILURE(obj->setPowered(false));
 }
-

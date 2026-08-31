@@ -4,25 +4,46 @@
 
 /**
  * @file test_simplifiedsearchworker.cpp
- * @brief Unit tests for SimplifiedSearchWorker Mid-priority methods
+ * @brief Unit tests for SimplifiedSearchWorker methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class SimplifiedSearchWorkerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "searchmanager/maincontroller/task/taskcommander.h"
+
+#include <QTest>
+
+using namespace dfmplugin_search;
+
+class SimplifiedSearchWorkerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new SimplifiedSearchWorker();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    SimplifiedSearchWorker *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(SimplifiedSearchWorkerTest, createSearchers)
 {
-    // createSearchers
-    SUCCEED();
+    // Test method: void createSearchers(())
+    EXPECT_NO_FATAL_FAILURE(obj->createSearchers());
 }
 
 TEST_F(SimplifiedSearchWorkerTest, mergeResults)
 {
-    // mergeResults
-    SUCCEED();
+    // Test method: void mergeResults((AbstractSearcher *searcher))
+    EXPECT_NO_FATAL_FAILURE(obj->mergeResults(nullptr));
 }

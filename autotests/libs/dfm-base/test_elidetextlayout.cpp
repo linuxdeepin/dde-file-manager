@@ -102,7 +102,7 @@ TEST(ElideTextLayoutTest, CalculateElideHighlightMatchesElideLeft)
     QString elided = "… brown fox";
     int elidePos = 0;
     auto original = layout.findKeywordMatches(layout.text());
-    EXPECT_NO_FATAL_FAILURE({ (void)layout.calculateElideHighlightMatches(elided, elidePos, Qt::ElideLeft, original, 0); });
+    EXPECT_NO_FATAL_FAILURE({ layout.calculateElideHighlightMatches(elided, elidePos, Qt::ElideLeft, original, 0); });
 }
 
 TEST(ElideTextLayoutTest, LocalLayoutDestructsCleanly)
@@ -141,30 +141,34 @@ TEST(ElideTextLayoutTest, DrawTextWithHighlightCallable)
 
 TEST(ElideTextLayoutTest, drawLineBackground)
 {
-    // drawLineBackground
-    SUCCEED();
+    ElideTextLayout obj;
+    QRectF _arg1{};
+    QBrush _arg3{};
+    EXPECT_NO_FATAL_FAILURE({ obj.drawLineBackground(nullptr, _arg1, QRectF(), _arg3); });
 }
 
 TEST(ElideTextLayoutTest, setAttribute)
 {
-    // setAttribute
-    SUCCEED();
+    ElideTextLayout obj;
+    EXPECT_NO_FATAL_FAILURE(obj.setAttribute());
 }
 
 TEST(ElideTextLayoutTest, setText)
 {
-    // setText
-    SUCCEED();
+    ElideTextLayout obj;
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj.setText(_arg0));
 }
 
 TEST(ElideTextLayoutTest, shouldUseSmartElideForText)
 {
-    // shouldUseSmartElideForText
-    SUCCEED();
+    ElideTextLayout obj;
+    bool result = obj.shouldUseSmartElideForText();
+    EXPECT_FALSE(result);
 }
 
 TEST(ElideTextLayoutTest, text)
 {
-    // text
-    SUCCEED();
+    ElideTextLayout obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.text(); });
 }

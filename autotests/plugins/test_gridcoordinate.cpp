@@ -4,43 +4,74 @@
 
 /**
  * @file test_gridcoordinate.cpp
- * @brief Unit tests for GridCoordinate Mid-priority methods
+ * @brief Unit tests for GridCoordinate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class GridCoordinateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "view/gridcoordinate.h"
+
+#include <QTest>
+
+using namespace ddplugin_canvas;
+
+class GridCoordinateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new GridCoordinate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    GridCoordinate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(GridCoordinateTest, moveLeft)
 {
-    // moveLeft
-    SUCCEED();
+    // Test getter: GridCoordinate moveLeft()
+    auto result = obj->moveLeft();
+    EXPECT_NO_FATAL_FAILURE({ obj->moveLeft(); });
+
 }
 
 TEST_F(GridCoordinateTest, moveRight)
 {
-    // moveRight
-    SUCCEED();
+    // Test getter: GridCoordinate moveRight()
+    auto result = obj->moveRight();
+    EXPECT_NO_FATAL_FAILURE({ obj->moveRight(); });
+
 }
 
 TEST_F(GridCoordinateTest, point)
 {
-    // point
-    SUCCEED();
+    // Test getter: QPoint point()
+    auto result = obj->point();
+    EXPECT_TRUE(result.isNull());
+
 }
 
 TEST_F(GridCoordinateTest, x)
 {
-    // x
-    SUCCEED();
+    // Test getter: int x()
+    auto result = obj->x();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(GridCoordinateTest, y)
 {
-    // y
-    SUCCEED();
+    // Test getter: int y()
+    auto result = obj->y();
+    EXPECT_EQ(result, 0);
+
 }

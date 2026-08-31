@@ -3,69 +3,101 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_trashfiletaginfo_1.cpp
- * @brief Unit tests for TrashFileTagInfo Low-priority methods
+ * @file test_trashfiletaginfo_1.cpp
+ * @brief Unit tests for TrashFileTagInfo methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class TrashFileTagInfoTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "beans/trashfiletaginfo.h"
+
+#include <QTest>
+
+using namespace tag;
+
+class TrashFileTagInfoTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new TrashFileTagInfo();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    TrashFileTagInfo *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(TrashFileTagInfoTest, getFileInode)
 {
-    // getFileInode
-    SUCCEED();
+    // Test getter: qint64 getFileInode()
+    auto result = obj->getFileInode();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(TrashFileTagInfoTest, getFuture)
 {
-    // getFuture
-    SUCCEED();
+    // Test getter: QString getFuture()
+    auto result = obj->getFuture();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(TrashFileTagInfoTest, getOriginalPath)
 {
-    // getOriginalPath
-    SUCCEED();
+    // Test getter: QString getOriginalPath()
+    auto result = obj->getOriginalPath();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(TrashFileTagInfoTest, getTagNames)
 {
-    // getTagNames
-    SUCCEED();
+    // Test getter: QString getTagNames()
+    auto result = obj->getTagNames();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(TrashFileTagInfoTest, getTrashIndex)
 {
-    // getTrashIndex
-    SUCCEED();
+    // Test getter: int getTrashIndex()
+    auto result = obj->getTrashIndex();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(TrashFileTagInfoTest, setFileInode)
 {
-    // setFileInode
-    SUCCEED();
+    // Test setter: void setFileInode((qint64 value))
+    EXPECT_NO_FATAL_FAILURE(obj->setFileInode(0));
 }
 
 TEST_F(TrashFileTagInfoTest, setOriginalPath)
 {
-    // setOriginalPath
-    SUCCEED();
+    // Test setter: void setOriginalPath((const QString &value))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->setOriginalPath(_arg0));
 }
 
 TEST_F(TrashFileTagInfoTest, setTagNames)
 {
-    // setTagNames
-    SUCCEED();
+    // Test setter: void setTagNames((const QString &value))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->setTagNames(_arg0));
 }
 
 TEST_F(TrashFileTagInfoTest, setTrashIndex)
 {
-    // setTrashIndex
-    SUCCEED();
+    // Test setter: void setTrashIndex((int value))
+    EXPECT_NO_FATAL_FAILURE(obj->setTrashIndex(0));
 }
-

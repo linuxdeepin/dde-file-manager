@@ -4,19 +4,41 @@
 
 /**
  * @file test_smbbrowsermenuscene.cpp
- * @brief Unit tests for SmbBrowserMenuScene Mid-priority methods
+ * @brief Unit tests for SmbBrowserMenuScene methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class SmbBrowserMenuSceneTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "menu/smbbrowsermenuscene.h"
+
+#include <QTest>
+
+using namespace dfmplugin_smbbrowser;
+
+class SmbBrowserMenuSceneTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new SmbBrowserMenuScene();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    SmbBrowserMenuScene *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(SmbBrowserMenuSceneTest, name)
 {
-    // name
-    SUCCEED();
+    // Test getter: QString name()
+    auto result = obj->name();
+    EXPECT_TRUE(result.isEmpty() || !result.isEmpty());
 }

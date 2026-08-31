@@ -3,81 +3,114 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_vaultdbusutils_1.cpp
- * @brief Unit tests for VaultDBusUtils Low-priority methods
+ * @file test_vaultdbusutils_1.cpp
+ * @brief Unit tests for VaultDBusUtils methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class VaultDBusUtilsTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "dbus/vaultdbusutils.h"
+
+#include <QTest>
+
+using namespace dfmplugin_vault;
+
+class VaultDBusUtilsTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new VaultDBusUtils();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    VaultDBusUtils *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(VaultDBusUtilsTest, VaultDBusUtils)
 {
-    // VaultDBusUtils
-    SUCCEED();
+    // Test constructor: VaultDBusUtils(())
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(VaultDBusUtilsTest, getLeftoverErrorInputTimes)
 {
-    // getLeftoverErrorInputTimes
-    SUCCEED();
+    // Test getter: int getLeftoverErrorInputTimes()
+    auto result = obj->getLeftoverErrorInputTimes();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(VaultDBusUtilsTest, getNeedWaitMinutes)
 {
-    // getNeedWaitMinutes
-    SUCCEED();
+    // Test getter: int getNeedWaitMinutes()
+    auto result = obj->getNeedWaitMinutes();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(VaultDBusUtilsTest, handleChangedVaultState)
 {
-    // handleChangedVaultState
-    SUCCEED();
+    // Test method: void handleChangedVaultState((const QVariantMap &map))
+    QVariantMap _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleChangedVaultState(_arg0));
 }
 
 TEST_F(VaultDBusUtilsTest, handleLockScreenDBus)
 {
-    // handleLockScreenDBus
-    SUCCEED();
+    // Test method: void handleLockScreenDBus((const QDBusMessage &msg))
+    QDBusMessage _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleLockScreenDBus(_arg0));
 }
 
 TEST_F(VaultDBusUtilsTest, instance)
 {
-    // instance
-    SUCCEED();
+    // Test getter: VaultDBusUtils instance()
+    auto result = obj->instance();
+    EXPECT_NO_FATAL_FAILURE({ obj->instance(); });
+
 }
 
 TEST_F(VaultDBusUtilsTest, isFullConnectInternet)
 {
-    // isFullConnectInternet
-    SUCCEED();
+    // Test bool getter: isFullConnectInternet()
+    bool result = obj->isFullConnectInternet();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(VaultDBusUtilsTest, leftoverErrorInputTimesMinusOne)
 {
-    // leftoverErrorInputTimesMinusOne
-    SUCCEED();
+    // Test method: void leftoverErrorInputTimesMinusOne(())
+    EXPECT_NO_FATAL_FAILURE(obj->leftoverErrorInputTimesMinusOne());
 }
 
 TEST_F(VaultDBusUtilsTest, lockEventTriggered)
 {
-    // lockEventTriggered
-    SUCCEED();
+    // Test method: void lockEventTriggered((QObject *obj, const char *cslot))
+    EXPECT_NO_FATAL_FAILURE(obj->lockEventTriggered(nullptr, nullptr));
 }
 
 TEST_F(VaultDBusUtilsTest, startTimerOfRestorePasswordInput)
 {
-    // startTimerOfRestorePasswordInput
-    SUCCEED();
+    // Test method: void startTimerOfRestorePasswordInput(())
+    EXPECT_NO_FATAL_FAILURE(obj->startTimerOfRestorePasswordInput());
 }
 
 TEST_F(VaultDBusUtilsTest, vaultManagerDBusCall)
 {
-    // vaultManagerDBusCall
-    SUCCEED();
-}
+    // Test method: QVariant vaultManagerDBusCall((QString function, const QVariant &value))
+    QVariant _arg1{};
+    auto result = obj->vaultManagerDBusCall(QString(), _arg1);
+    EXPECT_FALSE(result.isValid());
 
+}

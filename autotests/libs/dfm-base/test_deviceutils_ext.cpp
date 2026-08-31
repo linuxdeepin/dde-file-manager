@@ -70,12 +70,12 @@ TEST(DeviceUtilsExtTest, NameOfDefaultNoLabel)
 
 TEST(DeviceUtilsExtTest, NameOfSizeZero)
 {
-    EXPECT_NO_FATAL_FAILURE({ (void)DeviceUtils::nameOfSize(0); });
+    EXPECT_NO_FATAL_FAILURE({ DeviceUtils::nameOfSize(0); });
 }
 
 TEST(DeviceUtilsExtTest, NameOfSizeLarge)
 {
-    EXPECT_NO_FATAL_FAILURE({ (void)DeviceUtils::nameOfSize(1024ULL * 1024 * 1024 * 500); });
+    EXPECT_NO_FATAL_FAILURE({ DeviceUtils::nameOfSize(1024ULL * 1024 * 1024 * 500); });
 }
 
 TEST(DeviceUtilsExtTest, IsSystemDiskRootMount)
@@ -138,17 +138,17 @@ TEST(DeviceUtilsExtTest, BindPathTransformRootUnchanged)
 
 TEST(DeviceUtilsExtTest, IsSubpathOfDlnfs)
 {
-    EXPECT_NO_FATAL_FAILURE({ (void)DeviceUtils::isSubpathOfDlnfs("/some/path"); });
+    EXPECT_NO_FATAL_FAILURE({ DeviceUtils::isSubpathOfDlnfs("/some/path"); });
 }
 
 TEST(DeviceUtilsExtTest, IsMountPointOfDlnfs)
 {
-    EXPECT_NO_FATAL_FAILURE({ (void)DeviceUtils::isMountPointOfDlnfs("/some/path"); });
+    EXPECT_NO_FATAL_FAILURE({ DeviceUtils::isMountPointOfDlnfs("/some/path"); });
 }
 
 TEST(DeviceUtilsExtTest, GetLongestMountRootPath)
 {
-    EXPECT_NO_FATAL_FAILURE({ (void)DeviceUtils::getLongestMountRootPath("/some/path"); });
+    EXPECT_NO_FATAL_FAILURE({ DeviceUtils::getLongestMountRootPath("/some/path"); });
 }
 
 TEST(DeviceUtilsExtTest, ConvertSuitableDisplayNameVariantHash)
@@ -156,7 +156,7 @@ TEST(DeviceUtilsExtTest, ConvertSuitableDisplayNameVariantHash)
     QVariantHash info;
     info.insert("IdLabel", "usb");
     info.insert("SizeTotal", 0);
-    EXPECT_NO_FATAL_FAILURE({ (void)DeviceUtils::convertSuitableDisplayName(info); });
+    EXPECT_NO_FATAL_FAILURE({ DeviceUtils::convertSuitableDisplayName(info); });
 }
 
 TEST(DeviceUtilsExtTest, NameOfAliasEmpty)

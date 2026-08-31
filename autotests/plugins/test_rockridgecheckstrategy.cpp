@@ -3,39 +3,68 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_rockridgecheckstrategy.cpp
- * @brief Unit tests for RockRidgeCheckStrategy Low-priority methods
+ * @file test_rockridgecheckstrategy.cpp
+ * @brief Unit tests for RockRidgeCheckStrategy methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class RockRidgeCheckStrategyTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/burncheckstrategy.h"
+
+#include <QTest>
+
+using namespace dfmplugin_burn;
+
+class RockRidgeCheckStrategyTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new RockRidgeCheckStrategy();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    RockRidgeCheckStrategy *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(RockRidgeCheckStrategyTest, RockRidgeCheckStrategy)
 {
-    // RockRidgeCheckStrategy
-    SUCCEED();
+    // Test constructor: RockRidgeCheckStrategy((const QString &path, QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(RockRidgeCheckStrategyTest, validFileNameBytes)
 {
-    // validFileNameBytes
-    SUCCEED();
+    // Test method: bool validFileNameBytes((const QString &fileName))
+    QString _arg0{};
+    auto result = obj->validFileNameBytes(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(RockRidgeCheckStrategyTest, validFilePathBytes)
 {
-    // validFilePathBytes
-    SUCCEED();
+    // Test method: bool validFilePathBytes((const QString &filePath))
+    QString _arg0{};
+    auto result = obj->validFilePathBytes(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(RockRidgeCheckStrategyTest, validFilePathDeepLength)
 {
-    // validFilePathDeepLength
-    SUCCEED();
-}
+    // Test method: bool validFilePathDeepLength((const QString &filePath))
+    QString _arg0{};
+    auto result = obj->validFilePathDeepLength(_arg0);
+    EXPECT_FALSE(result);
 
+}

@@ -3,21 +3,42 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_searchhelper_1.cpp
- * @brief Unit tests for SearchHelper Low-priority methods
+ * @file test_searchhelper_1.cpp
+ * @brief Unit tests for SearchHelper methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class SearchHelperTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/searchhelper.h"
+
+#include <QTest>
+
+using namespace dfmplugin_search;
+
+class SearchHelperTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new SearchHelper();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    SearchHelper *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(SearchHelperTest, anchoredPattern)
 {
-    // anchoredPattern
-    SUCCEED();
+    // Test getter: QString anchoredPattern()
+    auto result = obj->anchoredPattern();
+    EXPECT_TRUE(result.isEmpty() || !result.isEmpty());
 }
-

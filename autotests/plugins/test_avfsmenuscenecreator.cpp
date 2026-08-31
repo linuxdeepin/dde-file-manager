@@ -3,27 +3,51 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_avfsmenuscenecreator.cpp
- * @brief Unit tests for AvfsMenuSceneCreator Low-priority methods
+ * @file test_avfsmenuscenecreator.cpp
+ * @brief Unit tests for AvfsMenuSceneCreator methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class AvfsMenuSceneCreatorTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "menu/avfsmenuscene.h"
+
+#include <QTest>
+
+using namespace dfmplugin_avfsbrowser;
+
+class AvfsMenuSceneCreatorTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new AvfsMenuSceneCreator();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    AvfsMenuSceneCreator *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(AvfsMenuSceneCreatorTest, create)
 {
-    // create
-    SUCCEED();
+    // Test getter: AbstractMenuScene create()
+    auto result = obj->create();
+    EXPECT_NO_FATAL_FAILURE({ obj->create(); });
+
 }
 
 TEST_F(AvfsMenuSceneCreatorTest, name)
 {
-    // name
-    SUCCEED();
-}
+    // Test getter: QString name()
+    auto result = obj->name();
+    EXPECT_TRUE(result.isEmpty());
 
+}

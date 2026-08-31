@@ -4,25 +4,50 @@
 
 /**
  * @file test_processprioritymanager.cpp
- * @brief Unit tests for ProcessPriorityManager Mid-priority methods
+ * @brief Unit tests for ProcessPriorityManager methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ProcessPriorityManagerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "dfm-base/utils/processprioritymanager.h"
+
+#include <QTest>
+
+using namespace src;
+
+class ProcessPriorityManagerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ProcessPriorityManager();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ProcessPriorityManager *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ProcessPriorityManagerTest, lowerCpuNicePriority)
 {
-    // lowerCpuNicePriority
-    SUCCEED();
+    // Test method: bool lowerCpuNicePriority((int niceValue))
+    auto result = obj->lowerCpuNicePriority(0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(ProcessPriorityManagerTest, lowerIoPriority)
 {
-    // lowerIoPriority
-    SUCCEED();
+    // Test bool getter: lowerIoPriority()
+    bool result = obj->lowerIoPriority();
+    EXPECT_FALSE(result);
+
 }

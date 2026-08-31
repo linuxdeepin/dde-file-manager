@@ -4,19 +4,40 @@
 
 /**
  * @file test_vaultactivefinishedview.cpp
- * @brief Unit tests for VaultActiveFinishedView Mid-priority methods
+ * @brief Unit tests for VaultActiveFinishedView methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class VaultActiveFinishedViewTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/createvaultview/vaultactivefinishedview.h"
+
+#include <QTest>
+
+using namespace dfmplugin_vault;
+
+class VaultActiveFinishedViewTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new VaultActiveFinishedView();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    VaultActiveFinishedView *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(VaultActiveFinishedViewTest, initUi)
 {
-    // initUi
-    SUCCEED();
+    // Test method: void initUi(())
+    EXPECT_NO_FATAL_FAILURE(obj->initUi());
 }

@@ -4,43 +4,70 @@
 
 /**
  * @file test_emblemhelper.cpp
- * @brief Unit tests for EmblemHelper Mid-priority methods
+ * @brief Unit tests for EmblemHelper methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class EmblemHelperTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/emblemhelper.h"
+
+#include <QTest>
+
+using namespace dfmplugin_emblem;
+
+class EmblemHelperTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new EmblemHelper();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    EmblemHelper *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(EmblemHelperTest, clearEmblem)
 {
-    // clearEmblem
-    SUCCEED();
+    // Test method: void clearEmblem(())
+    EXPECT_NO_FATAL_FAILURE(obj->clearEmblem());
 }
 
 TEST_F(EmblemHelperTest, pending)
 {
-    // pending
-    SUCCEED();
+    // Test method: void pending((const FileInfoPointer &info))
+    FileInfoPointer _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->pending(_arg0));
 }
 
 TEST_F(EmblemHelperTest, standardEmblem)
 {
-    // standardEmblem
-    SUCCEED();
+    // Test method: QIcon standardEmblem((const SystemEmblemType type))
+    auto result = obj->standardEmblem(SystemEmblemType());
+    EXPECT_TRUE(result.isNull());
+
 }
 
 TEST_F(EmblemHelperTest, systemEmblems)
 {
-    // systemEmblems
-    SUCCEED();
+    // Test method: QList<QIcon> systemEmblems((const FileInfoPointer &info))
+    FileInfoPointer _arg0{};
+    auto result = obj->systemEmblems(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(EmblemHelperTest, EmblemHelper)
 {
-    // EmblemHelper
-    SUCCEED();
+    // Test constructor: EmblemHelper((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }

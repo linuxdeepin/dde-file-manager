@@ -4,31 +4,56 @@
 
 /**
  * @file test_fileviewmenuhelper.cpp
- * @brief Unit tests for FileViewMenuHelper Mid-priority methods
+ * @brief Unit tests for FileViewMenuHelper methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class FileViewMenuHelperTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/fileviewmenuhelper.h"
+
+#include <QTest>
+
+using namespace dfmplugin_workspace;
+
+class FileViewMenuHelperTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new FileViewMenuHelper();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FileViewMenuHelper *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(FileViewMenuHelperTest, disableMenu)
 {
-    // disableMenu
-    SUCCEED();
+    // Test bool getter: disableMenu()
+    bool result = obj->disableMenu();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(FileViewMenuHelperTest, showEmptyAreaMenu)
 {
-    // showEmptyAreaMenu
-    SUCCEED();
+    // Test method: void showEmptyAreaMenu(())
+    EXPECT_NO_FATAL_FAILURE(obj->showEmptyAreaMenu());
 }
 
 TEST_F(FileViewMenuHelperTest, showNormalMenu)
 {
-    // showNormalMenu
-    SUCCEED();
+    // Test method: void showNormalMenu((const QModelIndex &index, const Qt::ItemFlags &indexFlags))
+    QModelIndex _arg0{};
+    Qt::ItemFlags _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->showNormalMenu(_arg0, _arg1));
 }

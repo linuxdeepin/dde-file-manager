@@ -3,27 +3,47 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_sidebarviewstyle.cpp
- * @brief Unit tests for SidebarViewStyle Low-priority methods
+ * @file test_sidebarviewstyle.cpp
+ * @brief Unit tests for SidebarViewStyle methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class SidebarViewStyleTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "treeviews/sidebarview.h"
+
+#include <QTest>
+
+using namespace dfmplugin_sidebar;
+
+class SidebarViewStyleTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new SidebarViewStyle();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    SidebarViewStyle *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(SidebarViewStyleTest, SidebarViewStyle)
 {
-    // SidebarViewStyle
-    SUCCEED();
+    // Test constructor: SidebarViewStyle((QStyle *style))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(SidebarViewStyleTest, drawPrimitive)
 {
-    // drawPrimitive
-    SUCCEED();
+    // Test method: void drawPrimitive((PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget))
+    EXPECT_NO_FATAL_FAILURE(obj->drawPrimitive(PrimitiveElement(), nullptr, nullptr, nullptr));
 }
-

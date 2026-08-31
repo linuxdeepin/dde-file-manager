@@ -3,27 +3,50 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_organizerutils_1.cpp
- * @brief Unit tests for OrganizerUtils Low-priority methods
+ * @file test_organizerutils_1.cpp
+ * @brief Unit tests for OrganizerUtils methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class OrganizerUtilsTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/organizerutils.h"
+
+#include <QTest>
+
+using namespace ddplugin_organizer;
+
+class OrganizerUtilsTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new OrganizerUtils();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    OrganizerUtils *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(OrganizerUtilsTest, OrganizerUtils)
 {
-    // OrganizerUtils
-    SUCCEED();
+    // Test constructor: OrganizerUtils(())
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(OrganizerUtilsTest, isAllItemCategory)
 {
-    // isAllItemCategory
-    SUCCEED();
-}
+    // Test method: bool isAllItemCategory((const ItemCategories &flags))
+    ItemCategories _arg0{};
+    auto result = obj->isAllItemCategory(_arg0);
+    EXPECT_FALSE(result);
 
+}

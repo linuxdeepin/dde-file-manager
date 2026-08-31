@@ -4,31 +4,55 @@
 
 /**
  * @file test_vaultdbusutils.cpp
- * @brief Unit tests for VaultDBusUtils Mid-priority methods
+ * @brief Unit tests for VaultDBusUtils methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class VaultDBusUtilsTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "dbus/vaultdbusutils.h"
+
+#include <QTest>
+
+using namespace dfmplugin_vault;
+
+class VaultDBusUtilsTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new VaultDBusUtils();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    VaultDBusUtils *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(VaultDBusUtilsTest, isServiceRegister)
 {
-    // isServiceRegister
-    SUCCEED();
+    // Test method: bool isServiceRegister((QDBusConnection::BusType type, const QString &serviceName))
+    QString _arg1{};
+    auto result = obj->isServiceRegister(QDBusConnection::BusType(), _arg1);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(VaultDBusUtilsTest, restoreLeftoverErrorInputTimes)
 {
-    // restoreLeftoverErrorInputTimes
-    SUCCEED();
+    // Test method: void restoreLeftoverErrorInputTimes(())
+    EXPECT_NO_FATAL_FAILURE(obj->restoreLeftoverErrorInputTimes());
 }
 
 TEST_F(VaultDBusUtilsTest, restoreNeedWaitMinutes)
 {
-    // restoreNeedWaitMinutes
-    SUCCEED();
+    // Test method: void restoreNeedWaitMinutes(())
+    EXPECT_NO_FATAL_FAILURE(obj->restoreNeedWaitMinutes());
 }

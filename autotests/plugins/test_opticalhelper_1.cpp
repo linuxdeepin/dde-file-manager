@@ -3,93 +3,144 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_opticalhelper_1.cpp
- * @brief Unit tests for OpticalHelper Low-priority methods
+ * @file test_opticalhelper_1.cpp
+ * @brief Unit tests for OpticalHelper methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class OpticalHelperTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/opticalhelper.h"
+
+#include <QTest>
+
+using namespace dfmplugin_optical;
+
+class OpticalHelperTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new OpticalHelper();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    OpticalHelper *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(OpticalHelperTest, OpticalHelper)
 {
-    // OpticalHelper
-    SUCCEED();
+    // Test constructor: OpticalHelper((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(OpticalHelperTest, allOpticalDiscMountPoints)
 {
-    // allOpticalDiscMountPoints
-    SUCCEED();
+    // Test getter: QStringList allOpticalDiscMountPoints()
+    auto result = obj->allOpticalDiscMountPoints();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(OpticalHelperTest, burnIsOnStaging)
 {
-    // burnIsOnStaging
-    SUCCEED();
+    // Test method: bool burnIsOnStaging((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->burnIsOnStaging(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(OpticalHelperTest, burnRxp)
 {
-    // burnRxp
-    SUCCEED();
+    // Test getter: QRegularExpression burnRxp()
+    auto result = obj->burnRxp();
+    EXPECT_NO_FATAL_FAILURE({ obj->burnRxp(); });
+
 }
 
 TEST_F(OpticalHelperTest, icon)
 {
-    // icon
-    SUCCEED();
+    // Test getter: QIcon icon()
+    auto result = obj->icon();
+    EXPECT_TRUE(result.isNull());
+
 }
 
 TEST_F(OpticalHelperTest, iconString)
 {
-    // iconString
-    SUCCEED();
+    // Test getter: QString iconString()
+    auto result = obj->iconString();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(OpticalHelperTest, instance)
 {
-    // instance
-    SUCCEED();
+    // Test getter: OpticalHelper instance()
+    auto result = obj->instance();
+    EXPECT_NO_FATAL_FAILURE({ obj->instance(); });
+
 }
 
 TEST_F(OpticalHelperTest, isDupFileNameInPath)
 {
-    // isDupFileNameInPath
-    SUCCEED();
+    // Test method: bool isDupFileNameInPath((const QString &path, const QUrl &url))
+    QString _arg0{};
+    QUrl _arg1{};
+    auto result = obj->isDupFileNameInPath(_arg0, _arg1);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(OpticalHelperTest, isSupportedUDFMedium)
 {
-    // isSupportedUDFMedium
-    SUCCEED();
+    // Test method: bool isSupportedUDFMedium((int type))
+    auto result = obj->isSupportedUDFMedium(0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(OpticalHelperTest, isSupportedUDFVersion)
 {
-    // isSupportedUDFVersion
-    SUCCEED();
+    // Test method: bool isSupportedUDFVersion((const QString &version))
+    QString _arg0{};
+    auto result = obj->isSupportedUDFVersion(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(OpticalHelperTest, isTransparent)
 {
-    // isTransparent
-    SUCCEED();
+    // Test method: bool isTransparent((const QUrl &url, Global::TransparentStatus *status))
+    QUrl _arg0{};
+    auto result = obj->isTransparent(_arg0, nullptr);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(OpticalHelperTest, localDiscFile)
 {
-    // localDiscFile
-    SUCCEED();
+    // Test method: QUrl localDiscFile((const QUrl &dest))
+    QUrl _arg0{};
+    auto result = obj->localDiscFile(_arg0);
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(OpticalHelperTest, tansToBurnFile)
 {
-    // tansToBurnFile
-    SUCCEED();
-}
+    // Test method: QUrl tansToBurnFile((const QUrl &in))
+    QUrl _arg0{};
+    auto result = obj->tansToBurnFile(_arg0);
+    EXPECT_FALSE(result.isValid());
 
+}

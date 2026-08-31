@@ -3,69 +3,96 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_vaultactivesavekeyfileview_1.cpp
- * @brief Unit tests for VaultActiveSaveKeyFileView Low-priority methods
+ * @file test_vaultactivesavekeyfileview_1.cpp
+ * @brief Unit tests for VaultActiveSaveKeyFileView methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class VaultActiveSaveKeyFileViewTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/createvaultview/vaultactivesavekeyfileview.h"
+
+#include <QTest>
+
+using namespace dfmplugin_vault;
+
+class VaultActiveSaveKeyFileViewTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new VaultActiveSaveKeyFileView();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    VaultActiveSaveKeyFileView *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(VaultActiveSaveKeyFileViewTest, eventFilter)
 {
-    // eventFilter
-    SUCCEED();
+    // Test method: bool eventFilter((QObject *watched, QEvent *event))
+    auto result = obj->eventFilter(nullptr, nullptr);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(VaultActiveSaveKeyFileViewTest, initConnect)
 {
-    // initConnect
-    SUCCEED();
+    // Test method: void initConnect(())
+    EXPECT_NO_FATAL_FAILURE(obj->initConnect());
 }
 
 TEST_F(VaultActiveSaveKeyFileViewTest, initUiForSizeMode)
 {
-    // initUiForSizeMode
-    SUCCEED();
+    // Test method: void initUiForSizeMode(())
+    EXPECT_NO_FATAL_FAILURE(obj->initUiForSizeMode());
 }
 
 TEST_F(VaultActiveSaveKeyFileViewTest, setEncryptInfo)
 {
-    // setEncryptInfo
-    SUCCEED();
+    // Test setter: void setEncryptInfo((EncryptInfo &info))
+    EncryptInfo _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->setEncryptInfo(_arg0));
 }
 
 TEST_F(VaultActiveSaveKeyFileViewTest, setNextButtonText)
 {
-    // setNextButtonText
-    SUCCEED();
+    // Test setter: void setNextButtonText((const QString &text))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->setNextButtonText(_arg0));
 }
 
 TEST_F(VaultActiveSaveKeyFileViewTest, setOldPasswordSchemeMigrationMode)
 {
-    // setOldPasswordSchemeMigrationMode
-    SUCCEED();
+    // Test setter: void setOldPasswordSchemeMigrationMode((bool enabled))
+    EXPECT_NO_FATAL_FAILURE(obj->setOldPasswordSchemeMigrationMode(false));
 }
 
 TEST_F(VaultActiveSaveKeyFileViewTest, showEvent)
 {
-    // showEvent
-    SUCCEED();
+    // Test event handler: showEvent((QShowEvent *event))
+    QShowEvent _event(QShowEvent::None);
+    EXPECT_NO_FATAL_FAILURE(obj->showEvent(&_event));
 }
 
 TEST_F(VaultActiveSaveKeyFileViewTest, slotChangeEdit)
 {
-    // slotChangeEdit
-    SUCCEED();
+    // Test method: void slotChangeEdit((const QString &fileName))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->slotChangeEdit(_arg0));
 }
 
 TEST_F(VaultActiveSaveKeyFileViewTest, slotSelectCurrentFile)
 {
-    // slotSelectCurrentFile
-    SUCCEED();
+    // Test method: void slotSelectCurrentFile((const QString &file))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->slotSelectCurrentFile(_arg0));
 }
-

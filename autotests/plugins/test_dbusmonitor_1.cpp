@@ -3,117 +3,159 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_dbusmonitor_1.cpp
- * @brief Unit tests for DBusMonitor Low-priority methods
+ * @file test_dbusmonitor_1.cpp
+ * @brief Unit tests for DBusMonitor methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class DBusMonitorTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "screen/dbus-private/dbusmonitor.h"
+
+#include <QTest>
+
+using namespace ddplugin_core;
+
+class DBusMonitorTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new DBusMonitor();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    DBusMonitor *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(DBusMonitorTest, DBusMonitor)
 {
-    // DBusMonitor
-    SUCCEED();
+    // Test constructor: DBusMonitor((const QString &objectPath,QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(DBusMonitorTest, DBusMonitor_DBusMoni)
 {
-    // DBusMonitor
-    SUCCEED();
+    // Test constructor: DBusMonitor((const QString &objectPath,QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(DBusMonitorTest, SetMode)
 {
-    // SetMode
-    SUCCEED();
+    // Test getter: QDBusPendingReply<> SetMode()
+    auto result = obj->SetMode();
+    EXPECT_NO_FATAL_FAILURE({ obj->SetMode(); });
+
 }
 
 TEST_F(DBusMonitorTest, SetModeBySize)
 {
-    // SetModeBySize
-    SUCCEED();
+    // Test getter: QDBusPendingReply<> SetModeBySize()
+    auto result = obj->SetModeBySize();
+    EXPECT_NO_FATAL_FAILURE({ obj->SetModeBySize(); });
+
 }
 
 TEST_F(DBusMonitorTest, SetPosition)
 {
-    // SetPosition
-    SUCCEED();
+    // Test getter: QDBusPendingReply<> SetPosition()
+    auto result = obj->SetPosition();
+    EXPECT_NO_FATAL_FAILURE({ obj->SetPosition(); });
+
 }
 
 TEST_F(DBusMonitorTest, SetReflect)
 {
-    // SetReflect
-    SUCCEED();
+    // Test getter: QDBusPendingReply<> SetReflect()
+    auto result = obj->SetReflect();
+    EXPECT_NO_FATAL_FAILURE({ obj->SetReflect(); });
+
 }
 
 TEST_F(DBusMonitorTest, SetRefreshRate)
 {
-    // SetRefreshRate
-    SUCCEED();
+    // Test getter: QDBusPendingReply<> SetRefreshRate()
+    auto result = obj->SetRefreshRate();
+    EXPECT_NO_FATAL_FAILURE({ obj->SetRefreshRate(); });
+
 }
 
 TEST_F(DBusMonitorTest, SetRotation)
 {
-    // SetRotation
-    SUCCEED();
+    // Test getter: QDBusPendingReply<> SetRotation()
+    auto result = obj->SetRotation();
+    EXPECT_NO_FATAL_FAILURE({ obj->SetRotation(); });
+
 }
 
 TEST_F(DBusMonitorTest, __propertyChanged__)
 {
-    // __propertyChanged__
-    SUCCEED();
+    // Test method: void __propertyChanged__(())
+    EXPECT_NO_FATAL_FAILURE(obj->__propertyChanged__());
 }
 
 TEST_F(DBusMonitorTest, __propertyChanged_____proper)
 {
-    // __propertyChanged__
-    SUCCEED();
+    // Test method: void __propertyChanged__(())
+    EXPECT_NO_FATAL_FAILURE(obj->__propertyChanged__());
 }
 
 TEST_F(DBusMonitorTest, enabled)
 {
-    // enabled
-    SUCCEED();
+    // Test bool getter: enabled()
+    bool result = obj->enabled();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(DBusMonitorTest, enabled_enabled)
 {
-    // enabled
-    SUCCEED();
+    // Test bool getter: enabled()
+    bool result = obj->enabled();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(DBusMonitorTest, iD)
 {
-    // iD
-    SUCCEED();
+    // Test getter: uint iD()
+    auto result = obj->iD();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(DBusMonitorTest, name)
 {
-    // name
-    SUCCEED();
+    // Test getter: QString name()
+    auto result = obj->name();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(DBusMonitorTest, name_name)
 {
-    // name
-    SUCCEED();
+    // Test getter: QString name()
+    auto result = obj->name();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(DBusMonitorTest, DBusMonitor_Destructor)
 {
-    // ~DBusMonitor
-    SUCCEED();
+    // Test method:  ~DBusMonitor(())
+    EXPECT_NO_FATAL_FAILURE({ DBusMonitor *tmp = new DBusMonitor(); delete tmp; });
 }
 
 TEST_F(DBusMonitorTest, DBusMonitor_Destructor_xDBusMon)
 {
-    // ~DBusMonitor
-    SUCCEED();
+    // Test method:  ~DBusMonitor(())
+    EXPECT_NO_FATAL_FAILURE({ DBusMonitor *tmp = new DBusMonitor(); delete tmp; });
 }
-

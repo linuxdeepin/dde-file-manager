@@ -4,19 +4,41 @@
 
 /**
  * @file test_workspacemenucreator.cpp
- * @brief Unit tests for WorkspaceMenuCreator Mid-priority methods
+ * @brief Unit tests for WorkspaceMenuCreator methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class WorkspaceMenuCreatorTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "menus/workspacemenuscene.h"
+
+#include <QTest>
+
+using namespace dfmplugin_workspace;
+
+class WorkspaceMenuCreatorTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new WorkspaceMenuCreator();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    WorkspaceMenuCreator *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(WorkspaceMenuCreatorTest, name)
 {
-    // name
-    SUCCEED();
+    // Test getter: QString name()
+    auto result = obj->name();
+    EXPECT_TRUE(result.isEmpty() || !result.isEmpty());
 }

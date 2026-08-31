@@ -4,19 +4,40 @@
 
 /**
  * @file test_iconitemdelegateprivate.cpp
- * @brief Unit tests for IconItemDelegatePrivate Mid-priority methods
+ * @brief Unit tests for IconItemDelegatePrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class IconItemDelegatePrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/private/iconitemdelegate_p.h"
+
+#include <QTest>
+
+using namespace dfmplugin_workspace;
+
+class IconItemDelegatePrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new IconItemDelegatePrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    IconItemDelegatePrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(IconItemDelegatePrivateTest, IconItemDelegatePrivate)
 {
-    // IconItemDelegatePrivate
-    SUCCEED();
+    // Test constructor: IconItemDelegatePrivate((IconItemDelegate *qq))
+    ASSERT_NE(obj, nullptr);
 }

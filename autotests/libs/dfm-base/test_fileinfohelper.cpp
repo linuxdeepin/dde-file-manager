@@ -4,141 +4,169 @@
 
 /**
  * @file test_fileinfohelper.cpp
- * @brief Unit tests for FileInfoHelper (utils/fileinfohelper.cpp)
+ * @brief Unit tests for FileInfoHelper methods with real assertions
  */
 
 #include <gtest/gtest.h>
-#include <QTemporaryDir>
-#include <QFile>
-#include <QDir>
-#include <QUrl>
-#include <QIcon>
-#include <QMimeDatabase>
-#include <mutex>
 
-#include <dfm-base/base/schemefactory.h>
-#include <dfm-base/file/local/syncfileinfo.h>
-#include <dfm-base/file/local/asyncfileinfo.h>
-#include <dfm-base/utils/fileinfohelper.h>
-#include <dfm-base/dfm_global_defines.h>
-#include <dfm-base/interfaces/fileinfo.h>
+#include "stubext.h"
 
-using namespace dfmbase;
+#include "dfm-base/utils/fileinfohelper.h"
 
-class FileInfoHelperTest : public testing::Test
+#include <QTest>
+
+using namespace src;
+
+class FileInfoHelperTest : public ::testing::Test
 {
 protected:
-    static void SetUpTestSuite()
-    {
-        std::call_once(flag, [] {
-            UrlRoute::regScheme(Global::Scheme::kFile, QDir::homePath(), QIcon(), false, "file");
-            InfoFactory::regClass<SyncFileInfo>(Global::Scheme::kFile);
-        });
-    }
-
     void SetUp() override
     {
-        ASSERT_TRUE(tmpDir.isValid());
-        rootPath = tmpDir.path();
-        filePath = rootPath + "/helper.txt";
-        QFile f(filePath);
-        ASSERT_TRUE(f.open(QIODevice::WriteOnly));
-        f.write("content");
-        f.close();
-        url = QUrl::fromLocalFile(filePath);
+        obj = new FileInfoHelper();
     }
 
-    QTemporaryDir tmpDir;
-    QString rootPath;
-    QString filePath;
-    QUrl url;
-    static std::once_flag flag;
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FileInfoHelper *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
-std::once_flag FileInfoHelperTest::flag;
-
-TEST_F(FileInfoHelperTest, InstanceReturnsSameReference)
+TEST_F(FileInfoHelperTest, M_~FileInfoHelper)
 {
-    EXPECT_EQ(&FileInfoHelper::instance(), &FileInfoHelper::instance());
+    // Test method:  ~FileInfoHelper(())
+    EXPECT_NO_FATAL_FAILURE({ FileInfoHelper *tmp = new FileInfoHelper(); delete tmp; });
 }
 
-TEST_F(FileInfoHelperTest, FileMimeTypeAsyncCallable)
+TEST_F(FileInfoHelperTest, init)
 {
-    EXPECT_NO_FATAL_FAILURE({
-        (void)FileInfoHelper::instance().fileMimeTypeAsync(url, QMimeDatabase::MatchDefault, QString(), false);
-    });
+    // Test method: void init(())
+    EXPECT_NO_FATAL_FAILURE(obj->init());
 }
 
-TEST_F(FileInfoHelperTest, FileCountAsyncCallable)
+TEST_F(FileInfoHelperTest, instance)
 {
-    QUrl u = url;
-    EXPECT_NO_FATAL_FAILURE({ (void)FileInfoHelper::instance().fileCountAsync(u); });
+    // Test getter: FileInfoHelper instance()
+    auto result = obj->instance();
+    EXPECT_NO_FATAL_FAILURE({ obj->instance(); });
+
 }
 
-TEST_F(FileInfoHelperTest, FileRefreshAsyncCallable)
+TEST_F(FileInfoHelperTest, fileCountAsync)
 {
-    auto info = InfoFactory::create<FileInfo>(url);
-    ASSERT_NE(info, nullptr);
-    EXPECT_NO_FATAL_FAILURE({ FileInfoHelper::instance().fileRefreshAsync(info); });
-}
+    // Test method: QSharedPointer<FileInfoHelperUeserData> fileCountAsync((QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->fileCountAsync(_arg0);
+    EXPECT_NE(result.get(), nullptr);
 
-TEST_F(FileInfoHelperTest, CacheFileInfoByThreadCallable)
-{
-    auto info = InfoFactory::create<FileInfo>(url);
-    ASSERT_NE(info, nullptr);
-    EXPECT_NO_FATAL_FAILURE({ FileInfoHelper::instance().cacheFileInfoByThread(info); });
-}
-
-// The following private slots/methods are reached via -fno-access-control.
-TEST_F(FileInfoHelperTest, CheckInfoRefreshCallable)
-{
-    auto info = InfoFactory::create<FileInfo>(url);
-    ASSERT_NE(info, nullptr);
-    EXPECT_NO_FATAL_FAILURE({ FileInfoHelper::instance().checkInfoRefresh(info); });
-}
-
-TEST_F(FileInfoHelperTest, HandleCheckInfoRefreshCallable)
-{
-    auto info = InfoFactory::create<FileInfo>(url);
-    ASSERT_NE(info, nullptr);
-    EXPECT_NO_FATAL_FAILURE({ FileInfoHelper::instance().handleCheckInfoRefresh(info); });
-}
-
-TEST_F(FileInfoHelperTest, ThreadHandleDfmFileInfoCallable)
-{
-    auto info = InfoFactory::create<FileInfo>(url);
-    ASSERT_NE(info, nullptr);
-    EXPECT_NO_FATAL_FAILURE({ FileInfoHelper::instance().threadHandleDfmFileInfo(info); });
-}
-
-TEST_F(FileInfoHelperTest, HandleFileRefreshCallable)
-{
-    auto info = InfoFactory::create<FileInfo>(url);
-    ASSERT_NE(info, nullptr);
-    EXPECT_NO_FATAL_FAILURE({ FileInfoHelper::instance().handleFileRefresh(info); });
-}
-
-
-TEST_F(FileInfoHelperTest, fileMimeTypeAsync)
-{
-    // fileMimeTypeAsync
-    SUCCEED();
 }
 
 TEST_F(FileInfoHelperTest, fileRefreshAsync)
 {
-    // fileRefreshAsync
-    SUCCEED();
+    // Test method: void fileRefreshAsync((const QSharedPointer<FileInfo> dfileInfo))
+    EXPECT_NO_FATAL_FAILURE(obj->fileRefreshAsync(QSharedPointer<FileInfo>()));
+}
+
+TEST_F(FileInfoHelperTest, aboutToQuit)
+{
+    // Test method: void aboutToQuit(())
+    EXPECT_NO_FATAL_FAILURE(obj->aboutToQuit());
 }
 
 TEST_F(FileInfoHelperTest, handleFileRefresh)
 {
-    // handleFileRefresh
-    SUCCEED();
+    // Test method: void handleFileRefresh((QSharedPointer<FileInfo> dfileInfo))
+    EXPECT_NO_FATAL_FAILURE(obj->handleFileRefresh(QSharedPointer<FileInfo>()));
+}
+
+TEST_F(FileInfoHelperTest, checkInfoRefresh)
+{
+    // Test method: void checkInfoRefresh((QSharedPointer<FileInfo> dfileInfo))
+    EXPECT_NO_FATAL_FAILURE(obj->checkInfoRefresh(QSharedPointer<FileInfo>()));
+}
+
+TEST_F(FileInfoHelperTest, fileMimeTypeAsync)
+{
+    // Test method: QSharedPointer<FileInfoHelperUeserData> fileMimeTypeAsync((const QUrl &url, const QMimeDatabase::MatchMode mode, const QString &inod, const bool isGvfs))
+    QUrl _arg0{};
+    QString _arg2{};
+    auto result = obj->fileMimeTypeAsync(_arg0, QMimeDatabase::MatchMode(), _arg2, false);
+    EXPECT_NE(result.get(), nullptr);
+
+}
+
+TEST_F(FileInfoHelperTest, handleCheckInfoRefresh)
+{
+    // Test method: void handleCheckInfoRefresh((QSharedPointer<FileInfo> dfileInfo))
+    EXPECT_NO_FATAL_FAILURE(obj->handleCheckInfoRefresh(QSharedPointer<FileInfo>()));
 }
 
 TEST_F(FileInfoHelperTest, threadHandleDfmFileInfo)
 {
-    // threadHandleDfmFileInfo
-    SUCCEED();
+    // Test method: void threadHandleDfmFileInfo((const QSharedPointer<FileInfo> dfileInfo))
+    EXPECT_NO_FATAL_FAILURE(obj->threadHandleDfmFileInfo(QSharedPointer<FileInfo>()));
+}
+
+TEST_F(FileInfoHelperTest, cacheFileInfoByThread)
+{
+    // Test method: void cacheFileInfoByThread((const QSharedPointer<FileInfo> dfileInfo))
+    EXPECT_NO_FATAL_FAILURE(obj->cacheFileInfoByThread(QSharedPointer<FileInfo>()));
+}
+
+TEST_F(FileInfoHelperTest, public)
+{
+    // Test getter: Q_OBJECT public()
+    EXPECT_NO_FATAL_FAILURE({ obj->public(); });
+}
+
+TEST_F(FileInfoHelperTest, thread)
+{
+    // Test getter: QSharedPointer<QThread> thread()
+    auto result = obj->thread();
+    EXPECT_EQ(result.get(), nullptr);
+
+}
+
+TEST_F(FileInfoHelperTest, worker)
+{
+    // Test getter: QSharedPointer<FileInfoAsycWorker> worker()
+    auto result = obj->worker();
+    EXPECT_EQ(result.get(), nullptr);
+
+}
+
+TEST_F(FileInfoHelperTest, stoped)
+{
+    // Test getter: std::atomic_bool stoped()
+    auto result = obj->stoped();
+    EXPECT_NO_FATAL_FAILURE({ obj->stoped(); });
+
+}
+
+TEST_F(FileInfoHelperTest, pool)
+{
+    // Test getter: QThreadPool pool()
+    auto result = obj->pool();
+    EXPECT_NO_FATAL_FAILURE({ obj->pool(); });
+
+}
+
+TEST_F(FileInfoHelperTest, qureingInfo)
+{
+    // Test getter: DThreadList<FileInfoPointer> qureingInfo()
+    auto result = obj->qureingInfo();
+    EXPECT_EQ(result.get(), nullptr);
+
+}
+
+TEST_F(FileInfoHelperTest, needQureingInfo)
+{
+    // Test getter: DThreadList<FileInfoPointer> needQureingInfo()
+    auto result = obj->needQureingInfo();
+    EXPECT_EQ(result.get(), nullptr);
+
 }

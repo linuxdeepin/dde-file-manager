@@ -86,89 +86,95 @@ TEST(SysInfoUtilsTest, GetOriginalUserHomeNonEmpty)
 
 TEST(SysInfoUtilsTest, IsDeepin23IsBool)
 {
-    EXPECT_NO_FATAL_FAILURE({ (void)isDeepin23(); });
+    EXPECT_NO_FATAL_FAILURE({ isDeepin23(); });
 }
 
 TEST(SysInfoUtilsTest, IsDeveloperModeEnabledIsBool)
 {
-    EXPECT_NO_FATAL_FAILURE({ (void)isDeveloperModeEnabled(); });
+    EXPECT_NO_FATAL_FAILURE({ isDeveloperModeEnabled(); });
 }
 
 
 TEST(SysInfoUtilsTest, getAllUsersOfHome)
 {
-    // getAllUsersOfHome
-    SUCCEED();
+    SysInfoUtils obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.getAllUsersOfHome(); });
 }
 
 TEST(SysInfoUtilsTest, getHostName)
 {
-    // getHostName
-    SUCCEED();
+    SysInfoUtils obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.getHostName(); });
 }
 
 TEST(SysInfoUtilsTest, getOriginalUserHome)
 {
-    // getOriginalUserHome
-    SUCCEED();
+    SysInfoUtils obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.getOriginalUserHome(); });
 }
 
 TEST(SysInfoUtilsTest, getUser)
 {
-    // getUser
-    SUCCEED();
+    SysInfoUtils obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.getUser(); });
 }
 
 TEST(SysInfoUtilsTest, getUserId)
 {
-    // getUserId
-    SUCCEED();
+    SysInfoUtils obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.getUserId(); });
 }
 
 TEST(SysInfoUtilsTest, isDeepin23)
 {
-    // isDeepin23
-    SUCCEED();
+    SysInfoUtils obj;
+    bool result = obj.isDeepin23();
+    EXPECT_FALSE(result);
 }
 
 TEST(SysInfoUtilsTest, isDesktopSys)
 {
-    // isDesktopSys
-    SUCCEED();
+    SysInfoUtils obj;
+    bool result = obj.isDesktopSys();
+    EXPECT_FALSE(result);
 }
 
 TEST(SysInfoUtilsTest, isDeveloperModeEnabled)
 {
-    // isDeveloperModeEnabled
-    SUCCEED();
+    SysInfoUtils obj;
+    bool result = obj.isDeveloperModeEnabled();
+    EXPECT_FALSE(result);
 }
 
 TEST(SysInfoUtilsTest, isOpenAsAdmin)
 {
-    // isOpenAsAdmin
-    SUCCEED();
+    SysInfoUtils obj;
+    bool result = obj.isOpenAsAdmin();
+    EXPECT_FALSE(result);
 }
 
 TEST(SysInfoUtilsTest, isRootUser)
 {
-    // isRootUser
-    SUCCEED();
+    SysInfoUtils obj;
+    bool result = obj.isRootUser();
+    EXPECT_FALSE(result);
 }
 
 TEST(SysInfoUtilsTest, isSameUser)
 {
-    // isSameUser
-    SUCCEED();
+    SysInfoUtils obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.isSameUser(nullptr); });
 }
 
 TEST(SysInfoUtilsTest, isServerSys)
 {
-    // isServerSys
-    SUCCEED();
+    SysInfoUtils obj;
+    bool result = obj.isServerSys();
+    EXPECT_FALSE(result);
 }
 
 TEST(SysInfoUtilsTest, setMimeDataUserId)
 {
-    // setMimeDataUserId
-    SUCCEED();
+    SysInfoUtils obj;
+    EXPECT_NO_FATAL_FAILURE(obj.setMimeDataUserId(nullptr));
 }

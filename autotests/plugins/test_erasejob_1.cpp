@@ -3,21 +3,41 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_erasejob_1.cpp
- * @brief Unit tests for EraseJob Low-priority methods
+ * @file test_erasejob_1.cpp
+ * @brief Unit tests for EraseJob methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class EraseJobTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/burnjob.h"
+
+#include <QTest>
+
+using namespace dfmplugin_burn;
+
+class EraseJobTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new EraseJob();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    EraseJob *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(EraseJobTest, updateMessage)
 {
-    // updateMessage
-    SUCCEED();
+    // Test method: void updateMessage((JobInfoPointer ptr))
+    EXPECT_NO_FATAL_FAILURE(obj->updateMessage(JobInfoPointer()));
 }
-

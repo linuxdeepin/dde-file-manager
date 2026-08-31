@@ -4,37 +4,64 @@
 
 /**
  * @file test_recoverykeyview.cpp
- * @brief Unit tests for RecoveryKeyView Mid-priority methods
+ * @brief Unit tests for RecoveryKeyView methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class RecoveryKeyViewTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/unlockview/recoverykeyview.h"
+
+#include <QTest>
+
+using namespace dfmplugin_vault;
+
+class RecoveryKeyViewTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new RecoveryKeyView();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    RecoveryKeyView *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(RecoveryKeyViewTest, RecoveryKeyView)
 {
-    // RecoveryKeyView
-    SUCCEED();
+    // Test constructor: RecoveryKeyView((QWidget *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(RecoveryKeyViewTest, afterRecoveryKeyChanged)
 {
-    // afterRecoveryKeyChanged
-    SUCCEED();
+    // Test method: int afterRecoveryKeyChanged((QString &str))
+    QString _arg0{};
+    auto result = obj->afterRecoveryKeyChanged(_arg0);
+    EXPECT_GE(result, 0);
+
 }
 
 TEST_F(RecoveryKeyViewTest, buttonClicked)
 {
-    // buttonClicked
-    SUCCEED();
+    // Test method: void buttonClicked((int index, const QString &text))
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->buttonClicked(0, _arg1));
 }
 
 TEST_F(RecoveryKeyViewTest, eventFilter)
 {
-    // eventFilter
-    SUCCEED();
+    // Test method: bool eventFilter((QObject *watched, QEvent *event))
+    auto result = obj->eventFilter(nullptr, nullptr);
+    EXPECT_FALSE(result);
+
 }

@@ -4,31 +4,58 @@
 
 /**
  * @file test_screenqt.cpp
- * @brief Unit tests for ScreenQt Mid-priority methods
+ * @brief Unit tests for ScreenQt methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ScreenQtTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "screen/screenqt.h"
+
+#include <QTest>
+
+using namespace ddplugin_core;
+
+class ScreenQtTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ScreenQt();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ScreenQt *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ScreenQtTest, geometry)
 {
-    // geometry
-    SUCCEED();
+    // Test getter: QRect geometry()
+    auto result = obj->geometry();
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(ScreenQtTest, handleGeometry)
 {
-    // handleGeometry
-    SUCCEED();
+    // Test getter: QRect handleGeometry()
+    auto result = obj->handleGeometry();
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(ScreenQtTest, name)
 {
-    // name
-    SUCCEED();
+    // Test getter: QString name()
+    auto result = obj->name();
+    EXPECT_TRUE(result.isEmpty());
+
 }

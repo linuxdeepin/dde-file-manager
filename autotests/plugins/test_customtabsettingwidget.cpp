@@ -4,31 +4,54 @@
 
 /**
  * @file test_customtabsettingwidget.cpp
- * @brief Unit tests for CustomTabSettingWidget Mid-priority methods
+ * @brief Unit tests for CustomTabSettingWidget methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class CustomTabSettingWidgetTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/customtabsettingwidget.h"
+
+#include <QTest>
+
+using namespace dfmplugin_titlebar;
+
+class CustomTabSettingWidgetTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new CustomTabSettingWidget();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    CustomTabSettingWidget *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(CustomTabSettingWidgetTest, CustomTabSettingWidget)
 {
-    // CustomTabSettingWidget
-    SUCCEED();
+    // Test constructor: CustomTabSettingWidget((QWidget *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(CustomTabSettingWidgetTest, clearCustomItems)
 {
-    // clearCustomItems
-    SUCCEED();
+    // Test method: void clearCustomItems(())
+    EXPECT_NO_FATAL_FAILURE(obj->clearCustomItems());
 }
 
 TEST_F(CustomTabSettingWidgetTest, removeRow)
 {
-    // removeRow
-    SUCCEED();
+    // Test method: bool removeRow((QWidget *w))
+    auto result = obj->removeRow(nullptr);
+    EXPECT_FALSE(result);
+
 }

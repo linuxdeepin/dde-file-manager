@@ -3,39 +3,61 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_burnudffilesjob_1.cpp
- * @brief Unit tests for BurnUDFFilesJob Low-priority methods
+ * @file test_burnudffilesjob_1.cpp
+ * @brief Unit tests for BurnUDFFilesJob methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class BurnUDFFilesJobTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/burnjob.h"
+
+#include <QTest>
+
+using namespace dfmplugin_burn;
+
+class BurnUDFFilesJobTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new BurnUDFFilesJob();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    BurnUDFFilesJob *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(BurnUDFFilesJobTest, BurnUDFFilesJob)
 {
-    // BurnUDFFilesJob
-    SUCCEED();
+    // Test constructor: BurnUDFFilesJob((const QString &dev, const JobHandlePointer handler))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(BurnUDFFilesJobTest, fileSystemLimitsValid)
 {
-    // fileSystemLimitsValid
-    SUCCEED();
+    // Test bool getter: fileSystemLimitsValid()
+    bool result = obj->fileSystemLimitsValid();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(BurnUDFFilesJobTest, work)
 {
-    // work
-    SUCCEED();
+    // Test method: void work(())
+    EXPECT_NO_FATAL_FAILURE(obj->work());
 }
 
 TEST_F(BurnUDFFilesJobTest, BurnUDFFilesJob_Destructor)
 {
-    // ~BurnUDFFilesJob
-    SUCCEED();
+    // Test method:  ~BurnUDFFilesJob(())
+    EXPECT_NO_FATAL_FAILURE({ BurnUDFFilesJob *tmp = new BurnUDFFilesJob(); delete tmp; });
 }
-

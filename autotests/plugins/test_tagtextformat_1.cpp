@@ -3,21 +3,41 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_tagtextformat_1.cpp
- * @brief Unit tests for TagTextFormat Low-priority methods
+ * @file test_tagtextformat_1.cpp
+ * @brief Unit tests for TagTextFormat methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class TagTextFormatTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/tagtextformat.h"
+
+#include <QTest>
+
+using namespace dfmplugin_tag;
+
+class TagTextFormatTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new TagTextFormat();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    TagTextFormat *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(TagTextFormatTest, TagTextFormat)
 {
-    // TagTextFormat
-    SUCCEED();
+    // Test constructor: TagTextFormat((int objectType, const QList<QColor> &colors, const QColor &borderColor))
+    ASSERT_NE(obj, nullptr);
 }
-

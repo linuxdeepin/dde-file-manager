@@ -164,210 +164,245 @@ TEST(DeviceUtilsTest, IsPWUserspaceOpticalDiscDevWithNonSrDevReturnsFalse)
 
 TEST(DeviceUtilsTest, bindPathTransform)
 {
-    // bindPathTransform
-    SUCCEED();
+    DeviceUtils obj;
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.bindPathTransform(_arg0, false); });
 }
 
 TEST(DeviceUtilsTest, checkDiskEncrypted)
 {
-    // checkDiskEncrypted
-    SUCCEED();
+    DeviceUtils obj;
+    bool result = obj.checkDiskEncrypted();
+    EXPECT_FALSE(result);
 }
 
 TEST(DeviceUtilsTest, convertSuitableDisplayName)
 {
-    // convertSuitableDisplayName
-    SUCCEED();
+    DeviceUtils obj;
+    QVariantHash _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.convertSuitableDisplayName(_arg0); });
 }
 
 TEST(DeviceUtilsTest, deviceBytesFree)
 {
-    // deviceBytesFree
-    SUCCEED();
+    DeviceUtils obj;
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.deviceBytesFree(_arg0); });
 }
 
 TEST(DeviceUtilsTest, encryptedDisks)
 {
-    // encryptedDisks
-    SUCCEED();
+    DeviceUtils obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.encryptedDisks(); });
 }
 
 TEST(DeviceUtilsTest, findDlnfsPath)
 {
-    // findDlnfsPath
-    SUCCEED();
+    DeviceUtils obj;
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.findDlnfsPath(_arg0, Compare()); });
 }
 
 TEST(DeviceUtilsTest, formatOpticalMediaType)
 {
-    // formatOpticalMediaType
-    SUCCEED();
+    DeviceUtils obj;
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.formatOpticalMediaType(_arg0); });
 }
 
 TEST(DeviceUtilsTest, fstabBindInfo)
 {
-    // fstabBindInfo
-    SUCCEED();
+    DeviceUtils obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.fstabBindInfo(); });
 }
 
 TEST(DeviceUtilsTest, fstabMountPoints)
 {
-    // fstabMountPoints
-    SUCCEED();
+    DeviceUtils obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.fstabMountPoints(); });
 }
 
 TEST(DeviceUtilsTest, getBlockDeviceId)
 {
-    // getBlockDeviceId
-    SUCCEED();
+    DeviceUtils obj;
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.getBlockDeviceId(_arg0); });
 }
 
 TEST(DeviceUtilsTest, getMountInfo)
 {
-    // getMountInfo
-    SUCCEED();
+    DeviceUtils obj;
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.getMountInfo(_arg0, false); });
 }
 
 TEST(DeviceUtilsTest, getSambaFileUriFromNative)
 {
-    // getSambaFileUriFromNative
-    SUCCEED();
+    DeviceUtils obj;
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.getSambaFileUriFromNative(_arg0); });
 }
 
 TEST(DeviceUtilsTest, isAutoMountAndOpenEnable)
 {
-    // isAutoMountAndOpenEnable
-    SUCCEED();
+    DeviceUtils obj;
+    bool result = obj.isAutoMountAndOpenEnable();
+    EXPECT_FALSE(result);
 }
 
 TEST(DeviceUtilsTest, isAutoMountEnable)
 {
-    // isAutoMountEnable
-    SUCCEED();
+    DeviceUtils obj;
+    bool result = obj.isAutoMountEnable();
+    EXPECT_FALSE(result);
 }
 
 TEST(DeviceUtilsTest, isBlankOpticalDisc)
 {
-    // isBlankOpticalDisc
-    SUCCEED();
+    DeviceUtils obj;
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.isBlankOpticalDisc(_arg0); });
 }
 
 TEST(DeviceUtilsTest, isBuiltInDisk)
 {
-    // isBuiltInDisk
-    SUCCEED();
+    DeviceUtils obj;
+    QVariantMap _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.isBuiltInDisk(_arg0); });
 }
 
 TEST(DeviceUtilsTest, isDataDisk)
 {
-    // isDataDisk
-    SUCCEED();
+    DeviceUtils obj;
+    QVariantMap _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.isDataDisk(_arg0); });
 }
 
 TEST(DeviceUtilsTest, isMountPointOfDlnfs)
 {
-    // isMountPointOfDlnfs
-    SUCCEED();
+    DeviceUtils obj;
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.isMountPointOfDlnfs(_arg0); });
 }
 
 TEST(DeviceUtilsTest, isPWOpticalDiscDev)
 {
-    // isPWOpticalDiscDev
-    SUCCEED();
+    DeviceUtils obj;
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.isPWOpticalDiscDev(_arg0); });
 }
 
 TEST(DeviceUtilsTest, isPWUserspaceOpticalDiscDev)
 {
-    // isPWUserspaceOpticalDiscDev
-    SUCCEED();
+    DeviceUtils obj;
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.isPWUserspaceOpticalDiscDev(_arg0); });
 }
 
 TEST(DeviceUtilsTest, isSiblingOfRoot)
 {
-    // isSiblingOfRoot
-    SUCCEED();
+    DeviceUtils obj;
+    QVariantMap _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.isSiblingOfRoot(_arg0); });
 }
 
 TEST(DeviceUtilsTest, isSubpathOfDlnfs)
 {
-    // isSubpathOfDlnfs
-    SUCCEED();
+    DeviceUtils obj;
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.isSubpathOfDlnfs(_arg0); });
 }
 
 TEST(DeviceUtilsTest, isSystemDisk)
 {
-    // isSystemDisk
-    SUCCEED();
+    DeviceUtils obj;
+    QVariantMap _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.isSystemDisk(_arg0); });
 }
 
 TEST(DeviceUtilsTest, isUnmountSamba)
 {
-    // isUnmountSamba
-    SUCCEED();
+    DeviceUtils obj;
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.isUnmountSamba(_arg0); });
 }
 
 TEST(DeviceUtilsTest, isWorkingOpticalDiscDev)
 {
-    // isWorkingOpticalDiscDev
-    SUCCEED();
+    DeviceUtils obj;
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.isWorkingOpticalDiscDev(_arg0); });
 }
 
 TEST(DeviceUtilsTest, isWorkingOpticalDiscId)
 {
-    // isWorkingOpticalDiscId
-    SUCCEED();
+    DeviceUtils obj;
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.isWorkingOpticalDiscId(_arg0); });
 }
 
 TEST(DeviceUtilsTest, nameOfAlias)
 {
-    // nameOfAlias
-    SUCCEED();
+    DeviceUtils obj;
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.nameOfAlias(_arg0); });
 }
 
 TEST(DeviceUtilsTest, nameOfBuiltInDisk)
 {
-    // nameOfBuiltInDisk
-    SUCCEED();
+    DeviceUtils obj;
+    QVariantMap _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.nameOfBuiltInDisk(_arg0); });
 }
 
 TEST(DeviceUtilsTest, nameOfDefault)
 {
-    // nameOfDefault
-    SUCCEED();
+    DeviceUtils obj;
+    QString _arg0{};
+    quint64 _arg1{};
+    EXPECT_NO_FATAL_FAILURE({ obj.nameOfDefault(_arg0, _arg1); });
 }
 
 TEST(DeviceUtilsTest, nameOfSize)
 {
-    // nameOfSize
-    SUCCEED();
+    DeviceUtils obj;
+    quint64 _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.nameOfSize(_arg0); });
 }
 
 TEST(DeviceUtilsTest, parseNetSourceUrl)
 {
-    // parseNetSourceUrl
-    SUCCEED();
+    DeviceUtils obj;
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.parseNetSourceUrl(_arg0); });
 }
 
 TEST(DeviceUtilsTest, parseSmbInfo)
 {
-    // parseSmbInfo
-    SUCCEED();
+    DeviceUtils obj;
+    QString _arg0{};
+    QString _arg1{};
+    QString _arg2{};
+    EXPECT_NO_FATAL_FAILURE({ obj.parseSmbInfo(_arg0, _arg1, _arg2, nullptr); });
 }
 
 TEST(DeviceUtilsTest, supportDfmioCopyDevice)
 {
-    // supportDfmioCopyDevice
-    SUCCEED();
+    DeviceUtils obj;
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.supportDfmioCopyDevice(_arg0); });
 }
 
 TEST(DeviceUtilsTest, supportSetPermissionsDevice)
 {
-    // supportSetPermissionsDevice
-    SUCCEED();
+    DeviceUtils obj;
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.supportSetPermissionsDevice(_arg0); });
 }
 
 TEST(DeviceUtilsTest, toHash)
 {
-    // toHash
-    SUCCEED();
+    DeviceUtils obj;
+    QVariantMap _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.toHash(_arg0); });
 }

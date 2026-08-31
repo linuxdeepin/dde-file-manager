@@ -58,8 +58,8 @@ TEST(SystemPathUtilTest, SystemPathDisplayNameByPath)
 TEST(SystemPathUtilTest, SystemPathIconName)
 {
     SystemPathUtil *util = SystemPathUtil::instance();
-    EXPECT_NO_FATAL_FAILURE({ (void)util->systemPathIconName("Desktop"); });
-    EXPECT_NO_FATAL_FAILURE({ (void)util->systemPathIconNameByPath(util->systemPath("Desktop")); });
+    EXPECT_NO_FATAL_FAILURE({ util->systemPathIconName("Desktop"); });
+    EXPECT_NO_FATAL_FAILURE({ util->systemPathIconNameByPath(util->systemPath("Desktop")); });
 }
 
 TEST(SystemPathUtilTest, IsSystemPath)
@@ -94,18 +94,20 @@ TEST(SystemPathUtilTest, LoadSystemPaths)
 
 TEST(SystemPathUtilTest, SystemPathUtil)
 {
-    // SystemPathUtil
-    SUCCEED();
-}
+    SystemPathUtil obj;
+    EXPECT_NO_FATAL_FAILURE({ SystemPathUtil obj; });
+    }
+
 
 TEST(SystemPathUtilTest, findSystemPathKey)
 {
-    // findSystemPathKey
-    SUCCEED();
+    SystemPathUtil obj;
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.findSystemPathKey(_arg0); });
 }
 
 TEST(SystemPathUtilTest, loadSystemPaths)
 {
-    // loadSystemPaths
-    SUCCEED();
+    SystemPathUtil obj;
+    EXPECT_NO_FATAL_FAILURE(obj.loadSystemPaths());
 }

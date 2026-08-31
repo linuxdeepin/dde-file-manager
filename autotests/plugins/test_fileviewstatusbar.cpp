@@ -4,37 +4,58 @@
 
 /**
  * @file test_fileviewstatusbar.cpp
- * @brief Unit tests for FileViewStatusBar Mid-priority methods
+ * @brief Unit tests for FileViewStatusBar methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class FileViewStatusBarTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/fileviewstatusbar.h"
+
+#include <QTest>
+
+using namespace dfmplugin_workspace;
+
+class FileViewStatusBarTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new FileViewStatusBar();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FileViewStatusBar *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(FileViewStatusBarTest, FileViewStatusBar)
 {
-    // FileViewStatusBar
-    SUCCEED();
+    // Test constructor: FileViewStatusBar((QWidget *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(FileViewStatusBarTest, clearLayoutAndAnchors)
 {
-    // clearLayoutAndAnchors
-    SUCCEED();
+    // Test method: void clearLayoutAndAnchors(())
+    EXPECT_NO_FATAL_FAILURE(obj->clearLayoutAndAnchors());
 }
 
 TEST_F(FileViewStatusBarTest, resetScalingSlider)
 {
-    // resetScalingSlider
-    SUCCEED();
+    // Test method: void resetScalingSlider((const int stepCount))
+    EXPECT_NO_FATAL_FAILURE(obj->resetScalingSlider(0));
 }
 
 TEST_F(FileViewStatusBarTest, setCustomLayout)
 {
-    // setCustomLayout
-    SUCCEED();
+    // Test method: void setCustomLayout(())
+    EXPECT_NO_FATAL_FAILURE(obj->setCustomLayout());
 }

@@ -3,21 +3,41 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_sharemenusceneprivate.cpp
- * @brief Unit tests for ShareMenuScenePrivate Low-priority methods
+ * @file test_sharemenusceneprivate.cpp
+ * @brief Unit tests for ShareMenuScenePrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ShareMenuScenePrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "menuscene/sharemenuscene.h"
+
+#include <QTest>
+
+using namespace dfmplugin_menu;
+
+class ShareMenuScenePrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ShareMenuScenePrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ShareMenuScenePrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ShareMenuScenePrivateTest, ShareMenuScenePrivate)
 {
-    // ShareMenuScenePrivate
-    SUCCEED();
+    // Test constructor: ShareMenuScenePrivate((AbstractMenuScene *qq))
+    ASSERT_NE(obj, nullptr);
 }
-

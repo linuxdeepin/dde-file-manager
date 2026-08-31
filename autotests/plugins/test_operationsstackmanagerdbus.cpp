@@ -4,31 +4,54 @@
 
 /**
  * @file test_operationsstackmanagerdbus.cpp
- * @brief Unit tests for OperationsStackManagerDbus Mid-priority methods
+ * @brief Unit tests for OperationsStackManagerDbus methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class OperationsStackManagerDbusTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "operationsstackmanagerdbus.h"
+
+#include <QTest>
+
+using namespace core;
+
+class OperationsStackManagerDbusTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new OperationsStackManagerDbus();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    OperationsStackManagerDbus *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(OperationsStackManagerDbusTest, OperationsStackManagerDbus)
 {
-    // OperationsStackManagerDbus
-    SUCCEED();
+    // Test constructor: OperationsStackManagerDbus((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(OperationsStackManagerDbusTest, SaveOperations)
 {
-    // SaveOperations
-    SUCCEED();
+    // Test method: void SaveOperations((const QVariantMap &values))
+    QVariantMap _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->SaveOperations(_arg0));
 }
 
 TEST_F(OperationsStackManagerDbusTest, SaveRedoOperations)
 {
-    // SaveRedoOperations
-    SUCCEED();
+    // Test method: void SaveRedoOperations((const QVariantMap &values))
+    QVariantMap _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->SaveRedoOperations(_arg0));
 }

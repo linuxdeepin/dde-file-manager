@@ -4,19 +4,40 @@
 
 /**
  * @file test_fstabinitencryptworker.cpp
- * @brief Unit tests for FstabInitEncryptWorker Mid-priority methods
+ * @brief Unit tests for FstabInitEncryptWorker methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class FstabInitEncryptWorkerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "services/diskencrypt/workers/fstabinitencryptworker.h"
+
+#include <QTest>
+
+using namespace src;
+
+class FstabInitEncryptWorkerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new FstabInitEncryptWorker();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FstabInitEncryptWorker *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(FstabInitEncryptWorkerTest, run)
 {
-    // run
-    SUCCEED();
+    // Test method: void run(())
+    EXPECT_NO_FATAL_FAILURE(obj->run());
 }

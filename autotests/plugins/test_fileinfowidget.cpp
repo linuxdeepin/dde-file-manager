@@ -4,31 +4,53 @@
 
 /**
  * @file test_fileinfowidget.cpp
- * @brief Unit tests for FileInfoWidget Mid-priority methods
+ * @brief Unit tests for FileInfoWidget methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class FileInfoWidgetTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/fileinfowidget.h"
+
+#include <QTest>
+
+using namespace dfmplugin_detailspace;
+
+class FileInfoWidgetTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new FileInfoWidget();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FileInfoWidget *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(FileInfoWidgetTest, FileInfoWidget)
 {
-    // FileInfoWidget
-    SUCCEED();
+    // Test constructor: FileInfoWidget((QWidget *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(FileInfoWidgetTest, applyFieldFilters)
 {
-    // applyFieldFilters
-    SUCCEED();
+    // Test method: void applyFieldFilters((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->applyFieldFilters(_arg0));
 }
 
 TEST_F(FileInfoWidgetTest, resetAllFields)
 {
-    // resetAllFields
-    SUCCEED();
+    // Test method: void resetAllFields(())
+    EXPECT_NO_FATAL_FAILURE(obj->resetAllFields());
 }

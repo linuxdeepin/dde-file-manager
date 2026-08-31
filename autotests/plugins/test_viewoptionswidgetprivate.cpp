@@ -4,25 +4,46 @@
 
 /**
  * @file test_viewoptionswidgetprivate.cpp
- * @brief Unit tests for ViewOptionsWidgetPrivate Mid-priority methods
+ * @brief Unit tests for ViewOptionsWidgetPrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ViewOptionsWidgetPrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/viewoptionswidget.h"
+
+#include <QTest>
+
+using namespace dfmplugin_titlebar;
+
+class ViewOptionsWidgetPrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ViewOptionsWidgetPrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ViewOptionsWidgetPrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ViewOptionsWidgetPrivateTest, ViewOptionsWidgetPrivate)
 {
-    // ViewOptionsWidgetPrivate
-    SUCCEED();
+    // Test constructor: ViewOptionsWidgetPrivate((ViewOptionsWidget *qq))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(ViewOptionsWidgetPrivateTest, initializeUi)
 {
-    // initializeUi
-    SUCCEED();
+    // Test method: void initializeUi(())
+    EXPECT_NO_FATAL_FAILURE(obj->initializeUi());
 }

@@ -4,108 +4,129 @@
 
 /**
  * @file test_customdatahandler.cpp
- * @brief Unit tests for CustomDataHandler Mid-priority methods (ddplugin-organizer)
+ * @brief Unit tests for CustomDataHandler methods with real assertions
  */
 
 #include <gtest/gtest.h>
-#include <QTest>
-#include <QUrl>
-#include <QString>
-#include <QStringList>
-#include <QColor>
-#include <QPoint>
-#include <QVariant>
+
+#include "stubext.h"
 
 #include "mode/custom/customdatahandler.h"
 
+#include <QTest>
+
 using namespace ddplugin_organizer;
 
-class CustomDataHandlerTest : public ::testing::Test {
+class CustomDataHandlerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {
+    void SetUp() override
+    {
+        obj = new CustomDataHandler();
     }
-    void TearDown() override {}
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    CustomDataHandler *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(CustomDataHandlerTest, acceptInsert)
 {
-    // Instance method acceptInsert
-    CustomDataHandler obj;
-    bool result = false;
-    EXPECT_NO_FATAL_FAILURE({ result = obj.acceptInsert(QUrl("file:///tmp/test")); });
-    (void)result;
+    // Test method: bool acceptInsert((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->acceptInsert(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(CustomDataHandlerTest, acceptRename)
 {
-    // Instance method acceptRename
-    CustomDataHandler obj;
-    bool result = false;
-    EXPECT_NO_FATAL_FAILURE({ result = obj.acceptRename(QUrl("file:///tmp/test"), QUrl("file:///tmp/test")); });
-    (void)result;
+    // Test method: bool acceptRename((const QUrl &oldUrl, const QUrl &newUrl))
+    QUrl _arg0{};
+    QUrl _arg1{};
+    auto result = obj->acceptRename(_arg0, _arg1);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(CustomDataHandlerTest, acceptReset)
 {
-    // Instance method acceptReset
-    CustomDataHandler obj;
-    EXPECT_NO_FATAL_FAILURE({ auto r = obj.acceptReset(QList<QUrl>{QUrl("file:///tmp/test")}); (void)r; });
+    // Test method: QList<QUrl> acceptReset((const QList<QUrl> &urls))
+    QList<QUrl> _arg0{};
+    auto result = obj->acceptReset(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(CustomDataHandlerTest, append)
 {
-    // Instance method append
-    CustomDataHandler obj;
-    EXPECT_NO_FATAL_FAILURE({ auto r = obj.append(QUrl("file:///tmp/test")); (void)r; });
+    // Test method: QString append((const QUrl &))
+    QUrl _arg0{};
+    auto result = obj->append(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(CustomDataHandlerTest, change)
 {
-    // Instance method change
-    CustomDataHandler obj;
-    EXPECT_NO_FATAL_FAILURE({ auto r = obj.change(QUrl("file:///tmp/test")); (void)r; });
+    // Test method: QString change((const QUrl &))
+    QUrl _arg0{};
+    auto result = obj->change(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(CustomDataHandlerTest, check)
 {
-    // Instance method check
-    CustomDataHandler obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.check(QSet<QUrl>()); });
+    // Test method: void check((const QSet<QUrl> &vaild))
+    QSet<QUrl> _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->check(_arg0));
 }
 
 TEST_F(CustomDataHandlerTest, insert)
 {
-    // Instance method insert
-    CustomDataHandler obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.insert(QUrl("file:///tmp/test"), QString("test"), 0); });
+    // Test method: void insert((const QUrl &url, const QString &key, const int index))
+    QUrl _arg0{};
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->insert(_arg0, _arg1, 0));
 }
 
 TEST_F(CustomDataHandlerTest, prepend)
 {
-    // Instance method prepend
-    CustomDataHandler obj;
-    EXPECT_NO_FATAL_FAILURE({ auto r = obj.prepend(QUrl("file:///tmp/test")); (void)r; });
+    // Test method: QString prepend((const QUrl &))
+    QUrl _arg0{};
+    auto result = obj->prepend(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(CustomDataHandlerTest, remove)
 {
-    // Instance method remove
-    CustomDataHandler obj;
-    EXPECT_NO_FATAL_FAILURE({ auto r = obj.remove(QUrl("file:///tmp/test")); (void)r; });
+    // Test method: QString remove((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->remove(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(CustomDataHandlerTest, removeBaseData)
 {
-    // Instance method removeBaseData
-    CustomDataHandler obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.removeBaseData(QString("test")); });
+    // Test method: void removeBaseData((const QString &key))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->removeBaseData(_arg0));
 }
 
 TEST_F(CustomDataHandlerTest, reset)
 {
-    // Instance method reset
-    CustomDataHandler obj;
-    bool result = false;
-    EXPECT_NO_FATAL_FAILURE({ result = obj.reset({}); });
-    (void)result;
+    // Test method: bool reset((const QList<CollectionBaseDataPtr> &datas))
+    QList<CollectionBaseDataPtr> _arg0{};
+    auto result = obj->reset(_arg0);
+    EXPECT_FALSE(result);
+
 }

@@ -3,27 +3,49 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_collectionviewmenu_1.cpp
- * @brief Unit tests for CollectionViewMenu Low-priority methods
+ * @file test_collectionviewmenu_1.cpp
+ * @brief Unit tests for CollectionViewMenu methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class CollectionViewMenuTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "view/collectionviewmenu.h"
+
+#include <QTest>
+
+using namespace ddplugin_organizer;
+
+class CollectionViewMenuTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new CollectionViewMenu();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    CollectionViewMenu *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(CollectionViewMenuTest, CollectionViewMenu)
 {
-    // CollectionViewMenu
-    SUCCEED();
+    // Test constructor: CollectionViewMenu((CollectionView *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(CollectionViewMenuTest, disableMenu)
 {
-    // disableMenu
-    SUCCEED();
-}
+    // Test bool getter: disableMenu()
+    bool result = obj->disableMenu();
+    EXPECT_FALSE(result);
 
+}

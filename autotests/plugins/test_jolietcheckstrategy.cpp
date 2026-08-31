@@ -3,33 +3,59 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_jolietcheckstrategy.cpp
- * @brief Unit tests for JolietCheckStrategy Low-priority methods
+ * @file test_jolietcheckstrategy.cpp
+ * @brief Unit tests for JolietCheckStrategy methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class JolietCheckStrategyTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/burncheckstrategy.h"
+
+#include <QTest>
+
+using namespace dfmplugin_burn;
+
+class JolietCheckStrategyTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new JolietCheckStrategy();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    JolietCheckStrategy *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(JolietCheckStrategyTest, JolietCheckStrategy)
 {
-    // JolietCheckStrategy
-    SUCCEED();
+    // Test constructor: JolietCheckStrategy((const QString &path, QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(JolietCheckStrategyTest, validFileNameCharacters)
 {
-    // validFileNameCharacters
-    SUCCEED();
+    // Test method: bool validFileNameCharacters((const QString &fileName))
+    QString _arg0{};
+    auto result = obj->validFileNameCharacters(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(JolietCheckStrategyTest, validFilePathCharacters)
 {
-    // validFilePathCharacters
-    SUCCEED();
-}
+    // Test method: bool validFilePathCharacters((const QString &filePath))
+    QString _arg0{};
+    auto result = obj->validFilePathCharacters(_arg0);
+    EXPECT_FALSE(result);
 
+}

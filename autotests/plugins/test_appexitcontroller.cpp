@@ -4,25 +4,48 @@
 
 /**
  * @file test_appexitcontroller.cpp
- * @brief Unit tests for AppExitController Mid-priority methods
+ * @brief Unit tests for AppExitController methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class AppExitControllerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/appexitcontroller.h"
+
+#include <QTest>
+
+using namespace core;
+
+class AppExitControllerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new AppExitController();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    AppExitController *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(AppExitControllerTest, dismiss)
 {
-    // dismiss
-    SUCCEED();
+    // Test method: void dismiss(())
+    EXPECT_NO_FATAL_FAILURE(obj->dismiss());
 }
 
 TEST_F(AppExitControllerTest, instance)
 {
-    // instance
-    SUCCEED();
+    // Test getter: AppExitController instance()
+    auto result = obj->instance();
+    EXPECT_NO_FATAL_FAILURE({ obj->instance(); });
+
 }

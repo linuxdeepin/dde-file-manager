@@ -3,27 +3,49 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_tagfilehelper_1.cpp
- * @brief Unit tests for TagFileHelper Low-priority methods
+ * @file test_tagfilehelper_1.cpp
+ * @brief Unit tests for TagFileHelper methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class TagFileHelperTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/tagfilehelper.h"
+
+#include <QTest>
+
+using namespace dfmplugin_tag;
+
+class TagFileHelperTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new TagFileHelper();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    TagFileHelper *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(TagFileHelperTest, TagFileHelper)
 {
-    // TagFileHelper
-    SUCCEED();
+    // Test constructor: TagFileHelper((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(TagFileHelperTest, instance)
 {
-    // instance
-    SUCCEED();
-}
+    // Test getter: DPTAG_USE_NAMESPACE instance()
+    auto result = obj->instance();
+    EXPECT_NO_FATAL_FAILURE({ obj->instance(); });
 
+}

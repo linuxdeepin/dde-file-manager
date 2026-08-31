@@ -4,19 +4,42 @@
 
 /**
  * @file test_viewoptionsbutton.cpp
- * @brief Unit tests for ViewOptionsButton Mid-priority methods
+ * @brief Unit tests for ViewOptionsButton methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ViewOptionsButtonTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/viewoptionsbutton.h"
+
+#include <QTest>
+
+using namespace dfmplugin_titlebar;
+
+class ViewOptionsButtonTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ViewOptionsButton();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ViewOptionsButton *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ViewOptionsButtonTest, event)
 {
-    // event
-    SUCCEED();
+    // Test method: bool event((QEvent *event))
+    auto result = obj->event(nullptr);
+    EXPECT_FALSE(result);
+
 }

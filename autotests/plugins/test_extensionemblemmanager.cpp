@@ -4,19 +4,40 @@
 
 /**
  * @file test_extensionemblemmanager.cpp
- * @brief Unit tests for ExtensionEmblemManager Mid-priority methods
+ * @brief Unit tests for ExtensionEmblemManager methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ExtensionEmblemManagerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "extensionimpl/emblemimpl/extensionemblemmanager.h"
+
+#include <QTest>
+
+using namespace dfmplugin_utils;
+
+class ExtensionEmblemManagerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ExtensionEmblemManager();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ExtensionEmblemManager *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ExtensionEmblemManagerTest, ExtensionEmblemManager)
 {
-    // ExtensionEmblemManager
-    SUCCEED();
+    // Test constructor: ExtensionEmblemManager((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }

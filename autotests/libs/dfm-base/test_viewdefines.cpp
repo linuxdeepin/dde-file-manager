@@ -101,36 +101,36 @@ TEST(ViewDefinesTest, GetListHeightListSize)
 
 TEST(ViewDefinesTest, iconGridDensityCount)
 {
-    // iconGridDensityCount
-    SUCCEED();
+    ViewDefines obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.iconGridDensityCount(); });
 }
 
 TEST(ViewDefinesTest, iconSizeCount)
 {
-    // iconSizeCount
-    SUCCEED();
+    ViewDefines obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.iconSizeCount(); });
 }
 
 TEST(ViewDefinesTest, initDefines)
 {
-    // initDefines
-    SUCCEED();
+    ViewDefines obj;
+    EXPECT_NO_FATAL_FAILURE(obj.initDefines());
 }
 
 TEST(ViewDefinesTest, listHeight)
 {
-    // listHeight
-    SUCCEED();
+    ViewDefines obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.listHeight(0); });
 }
 
 TEST(ViewDefinesTest, listHeightCount)
 {
-    // listHeightCount
-    SUCCEED();
+    ViewDefines obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.listHeightCount(); });
 }
 
 TEST(ViewDefinesTest, transToVariantList)
 {
-    // transToVariantList
-    SUCCEED();
+    ViewDefines obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.transToVariantList(QList<int>()); });
 }

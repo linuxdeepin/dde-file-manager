@@ -3,45 +3,68 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_dumpisooptdialog_1.cpp
- * @brief Unit tests for DumpISOOptDialog Low-priority methods
+ * @file test_dumpisooptdialog_1.cpp
+ * @brief Unit tests for DumpISOOptDialog methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class DumpISOOptDialogTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "dialogs/dumpisooptdialog.h"
+
+#include <QTest>
+
+using namespace dfmplugin_burn;
+
+class DumpISOOptDialogTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new DumpISOOptDialog();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    DumpISOOptDialog *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(DumpISOOptDialogTest, initConnect)
 {
-    // initConnect
-    SUCCEED();
+    // Test method: void initConnect(())
+    EXPECT_NO_FATAL_FAILURE(obj->initConnect());
 }
 
 TEST_F(DumpISOOptDialogTest, initData)
 {
-    // initData
-    SUCCEED();
+    // Test method: void initData(())
+    EXPECT_NO_FATAL_FAILURE(obj->initData());
 }
 
 TEST_F(DumpISOOptDialogTest, onButtonClicked)
 {
-    // onButtonClicked
-    SUCCEED();
+    // Test method: void onButtonClicked((int index, const QString &text))
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->onButtonClicked(0, _arg1));
 }
 
 TEST_F(DumpISOOptDialogTest, onFileChoosed)
 {
-    // onFileChoosed
-    SUCCEED();
+    // Test method: void onFileChoosed((const QString &fileName))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->onFileChoosed(_arg0));
 }
 
 TEST_F(DumpISOOptDialogTest, onPathChanged)
 {
-    // onPathChanged
-    SUCCEED();
+    // Test method: void onPathChanged((const QString &path))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->onPathChanged(_arg0));
 }
-

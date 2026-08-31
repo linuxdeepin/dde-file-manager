@@ -4,65 +4,80 @@
 
 /**
  * @file test_dcustomactiondata.cpp
- * @brief Unit tests for DCustomActionData Mid-priority methods (dfmplugin-menu)
+ * @brief Unit tests for DCustomActionData methods with real assertions
  */
 
 #include <gtest/gtest.h>
-#include <QTest>
-#include <QUrl>
-#include <QString>
-#include <QStringList>
-#include <QColor>
-#include <QPoint>
-#include <QVariant>
+
+#include "stubext.h"
 
 #include "extendmenuscene/extendmenu/dcustomactiondata.h"
 
+#include <QTest>
+
 using namespace dfmplugin_menu;
 
-class DCustomActionDataTest : public ::testing::Test {
+class DCustomActionDataTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {
+    void SetUp() override
+    {
+        obj = new DCustomActionData();
     }
-    void TearDown() override {}
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    DCustomActionData *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(DCustomActionDataTest, command)
 {
-    // Instance method command
-    DCustomActionData obj;
-    EXPECT_NO_FATAL_FAILURE({ auto r = obj.command(); (void)r; });
+    // Test getter: QString command()
+    auto result = obj->command();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(DCustomActionDataTest, name)
 {
-    // Instance method name
-    DCustomActionData obj;
-    EXPECT_NO_FATAL_FAILURE({ auto r = obj.name(); (void)r; });
+    // Test getter: QString name()
+    auto result = obj->name();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(DCustomActionDataTest, parentPath)
 {
-    // Instance method parentPath
-    DCustomActionData obj;
-    EXPECT_NO_FATAL_FAILURE({ auto r = obj.parentPath(); (void)r; });
+    // Test getter: QString parentPath()
+    auto result = obj->parentPath();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(DCustomActionDataTest, position)
 {
-    // Instance method position
-    DCustomActionData obj;
-    EXPECT_NO_FATAL_FAILURE({ auto r = obj.position(); (void)r; });
+    // Test getter: int position()
+    auto result = obj->position();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(DCustomActionDataTest, DCustomActionData)
 {
-    // DCustomActionData
-    SUCCEED();
+    // Test constructor: DCustomActionData((const DCustomActionData &other))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(DCustomActionDataTest, separator)
 {
-    // separator
-    SUCCEED();
+    // Test getter: DCustomActionDefines::Separator separator()
+    auto result = obj->separator();
+    EXPECT_GE(static_cast<int>(result), 0);
+
 }

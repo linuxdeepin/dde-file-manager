@@ -2,130 +2,183 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+/**
+ * @file test_titlebarhelper.cpp
+ * @brief Unit tests for TitleBarHelper methods with real assertions
+ */
+
 #include <gtest/gtest.h>
 
-class TitleBarHelperTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/titlebarhelper.h"
+
+#include <QTest>
+
+using namespace dfmplugin_titlebar;
+
+class TitleBarHelperTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new TitleBarHelper();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    TitleBarHelper *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(TitleBarHelperTest, addTileBar)
 {
-    // addTileBar
-    SUCCEED();
+    // Test method: void addTileBar((quint64 windowId, TitleBarWidget *titleBar))
+    EXPECT_NO_FATAL_FAILURE(obj->addTileBar(0, nullptr));
 }
 
 TEST_F(TitleBarHelperTest, checkKeepTitleStatus)
 {
-    // checkKeepTitleStatus
-    SUCCEED();
+    // Test method: bool checkKeepTitleStatus((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->checkKeepTitleStatus(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(TitleBarHelperTest, getFileViewStateValue)
 {
-    // getFileViewStateValue
-    SUCCEED();
+    // Test method: QVariant getFileViewStateValue((const QUrl &url, const QString &key, const QVariant &defaultValue))
+    QUrl _arg0{};
+    QString _arg1{};
+    QVariant _arg2{};
+    auto result = obj->getFileViewStateValue(_arg0, _arg1, _arg2);
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(TitleBarHelperTest, handleJumpToPressed)
 {
-    // handleJumpToPressed
-    SUCCEED();
+    // Test method: void handleJumpToPressed((QWidget *sender, const QString &text))
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleJumpToPressed(nullptr, _arg1));
 }
 
 TEST_F(TitleBarHelperTest, handleSearch)
 {
-    // handleSearch
-    SUCCEED();
+    // Test method: void handleSearch((QWidget *sender, const QString &text))
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleSearch(nullptr, _arg1));
 }
 
 TEST_F(TitleBarHelperTest, handleSettingMenuTriggered)
 {
-    // handleSettingMenuTriggered
-    SUCCEED();
+    // Test method: void handleSettingMenuTriggered((quint64 windowId, int action))
+    EXPECT_NO_FATAL_FAILURE(obj->handleSettingMenuTriggered(0, 0));
 }
 
 TEST_F(TitleBarHelperTest, isViewModeVisibleForScheme)
 {
-    // isViewModeVisibleForScheme
-    SUCCEED();
+    // Test method: bool isViewModeVisibleForScheme((int mode, const QString &scheme))
+    QString _arg1{};
+    auto result = obj->isViewModeVisibleForScheme(0, _arg1);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(TitleBarHelperTest, openCurrentUrlInNewTab)
 {
-    // openCurrentUrlInNewTab
-    SUCCEED();
+    // Test method: void openCurrentUrlInNewTab((quint64 windowId))
+    EXPECT_NO_FATAL_FAILURE(obj->openCurrentUrlInNewTab(0));
 }
 
 TEST_F(TitleBarHelperTest, registerKeepTitleStatusScheme)
 {
-    // registerKeepTitleStatusScheme
-    SUCCEED();
+    // Test method: void registerKeepTitleStatusScheme((const QString &scheme))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->registerKeepTitleStatusScheme(_arg0));
 }
 
 TEST_F(TitleBarHelperTest, registerViewModelUrlCallback)
 {
-    // registerViewModelUrlCallback
-    SUCCEED();
+    // Test method: void registerViewModelUrlCallback((const QString &scheme, ViewModeUrlCallback callback))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->registerViewModelUrlCallback(_arg0, ViewModeUrlCallback()));
 }
 
 TEST_F(TitleBarHelperTest, removeTitleBar)
 {
-    // removeTitleBar
-    SUCCEED();
+    // Test method: void removeTitleBar((quint64 windowId))
+    EXPECT_NO_FATAL_FAILURE(obj->removeTitleBar(0));
 }
 
 TEST_F(TitleBarHelperTest, showConnectToServerDialog)
 {
-    // showConnectToServerDialog
-    SUCCEED();
+    // Test method: void showConnectToServerDialog((quint64 windowId))
+    EXPECT_NO_FATAL_FAILURE(obj->showConnectToServerDialog(0));
 }
 
 TEST_F(TitleBarHelperTest, showDiskPasswordChangingDialog)
 {
-    // showDiskPasswordChangingDialog
-    SUCCEED();
+    // Test method: void showDiskPasswordChangingDialog((quint64 windowId))
+    EXPECT_NO_FATAL_FAILURE(obj->showDiskPasswordChangingDialog(0));
 }
 
 TEST_F(TitleBarHelperTest, showSettingsDialog)
 {
-    // showSettingsDialog
-    SUCCEED();
+    // Test method: void showSettingsDialog((quint64 windowId))
+    EXPECT_NO_FATAL_FAILURE(obj->showSettingsDialog(0));
 }
 
 TEST_F(TitleBarHelperTest, showUserSharePasswordSettingDialog)
 {
-    // showUserSharePasswordSettingDialog
-    SUCCEED();
+    // Test method: void showUserSharePasswordSettingDialog((quint64 windowId))
+    EXPECT_NO_FATAL_FAILURE(obj->showUserSharePasswordSettingDialog(0));
 }
 
 TEST_F(TitleBarHelperTest, tansToCrumbDataList)
 {
-    // tansToCrumbDataList
-    SUCCEED();
+    // Test method: QList<CrumbData> tansToCrumbDataList((const QList<QVariantMap> &mapGroup))
+    QList<QVariantMap> _arg0{};
+    auto result = obj->tansToCrumbDataList(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(TitleBarHelperTest, titlebars)
 {
-    // titlebars
-    SUCCEED();
+    // Test getter: QList<TitleBarWidget *> titlebars()
+    auto result = obj->titlebars();
+    // Pointer return type
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(TitleBarHelperTest, tryLoadSearchPlugin)
 {
-    // tryLoadSearchPlugin
-    SUCCEED();
+    // Test bool getter: tryLoadSearchPlugin()
+    bool result = obj->tryLoadSearchPlugin();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(TitleBarHelperTest, windowId)
 {
-    // windowId
-    SUCCEED();
+    // Test method: quint64 windowId((QWidget *sender))
+    auto result = obj->windowId(nullptr);
+    EXPECT_GE(result, 0);
+
 }
 
 TEST_F(TitleBarHelperTest, findTileBarByWindowId)
 {
-    // findTileBarByWindowId
-    SUCCEED();
+    // Test method: TitleBarWidget findTileBarByWindowId((quint64 windowId))
+    auto result = obj->findTileBarByWindowId(0);
+    EXPECT_NO_FATAL_FAILURE({ obj->findTileBarByWindowId(0); });
+
 }

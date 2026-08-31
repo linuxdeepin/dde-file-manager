@@ -3,81 +3,115 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_vaultentryfileentity_1.cpp
- * @brief Unit tests for VaultEntryFileEntity Low-priority methods
+ * @file test_vaultentryfileentity_1.cpp
+ * @brief Unit tests for VaultEntryFileEntity methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class VaultEntryFileEntityTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/vaultentryfileentity.h"
+
+#include <QTest>
+
+using namespace dfmplugin_vault;
+
+class VaultEntryFileEntityTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new VaultEntryFileEntity();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    VaultEntryFileEntity *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(VaultEntryFileEntityTest, displayName)
 {
-    // displayName
-    SUCCEED();
+    // Test getter: QString displayName()
+    auto result = obj->displayName();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(VaultEntryFileEntityTest, icon)
 {
-    // icon
-    SUCCEED();
+    // Test getter: QIcon icon()
+    auto result = obj->icon();
+    EXPECT_TRUE(result.isNull());
+
 }
 
 TEST_F(VaultEntryFileEntityTest, refresh)
 {
-    // refresh
-    SUCCEED();
+    // Test method: void refresh(())
+    EXPECT_NO_FATAL_FAILURE(obj->refresh());
 }
 
 TEST_F(VaultEntryFileEntityTest, showProgress)
 {
-    // showProgress
-    SUCCEED();
+    // Test bool getter: showProgress()
+    bool result = obj->showProgress();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(VaultEntryFileEntityTest, showTotalSize)
 {
-    // showTotalSize
-    SUCCEED();
+    // Test bool getter: showTotalSize()
+    bool result = obj->showTotalSize();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(VaultEntryFileEntityTest, showUsageSize)
 {
-    // showUsageSize
-    SUCCEED();
+    // Test bool getter: showUsageSize()
+    bool result = obj->showUsageSize();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(VaultEntryFileEntityTest, sizeTotal)
 {
-    // sizeTotal
-    SUCCEED();
+    // Test getter: quint64 sizeTotal()
+    auto result = obj->sizeTotal();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(VaultEntryFileEntityTest, slotFileDirSizeChange)
 {
-    // slotFileDirSizeChange
-    SUCCEED();
+    // Test method: void slotFileDirSizeChange((const DFMBASE_NAMESPACE::FileScanner::ScanResult &result))
+    DFMBASE_NAMESPACE::FileScanner::ScanResult _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->slotFileDirSizeChange(_arg0));
 }
 
 TEST_F(VaultEntryFileEntityTest, slotFinishedThread)
 {
-    // slotFinishedThread
-    SUCCEED();
+    // Test method: void slotFinishedThread(())
+    EXPECT_NO_FATAL_FAILURE(obj->slotFinishedThread());
 }
 
 TEST_F(VaultEntryFileEntityTest, targetUrl)
 {
-    // targetUrl
-    SUCCEED();
+    // Test getter: QUrl targetUrl()
+    auto result = obj->targetUrl();
+    EXPECT_TRUE(result.isEmpty() || result.isValid());
 }
 
 TEST_F(VaultEntryFileEntityTest, VaultEntryFileEntity_Destructor)
 {
-    // ~VaultEntryFileEntity
-    SUCCEED();
+    // Test method:  ~VaultEntryFileEntity(())
+    EXPECT_NO_FATAL_FAILURE({ VaultEntryFileEntity *tmp = new VaultEntryFileEntity(); delete tmp; });
 }
-

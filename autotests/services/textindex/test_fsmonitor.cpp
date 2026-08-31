@@ -4,103 +4,143 @@
 
 /**
  * @file test_fsmonitor.cpp
- * @brief Unit tests for FSMonitor Mid-priority methods
+ * @brief Unit tests for FSMonitor methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class FSMonitorTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "services/textindex/fsmonitor/fsmonitor.h"
+
+#include <QTest>
+
+using namespace src;
+
+class FSMonitorTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new FSMonitor();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FSMonitor *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(FSMonitorTest, FSMonitor)
 {
-    // FSMonitor
-    SUCCEED();
+    // Test constructor: FSMonitor((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(FSMonitorTest, addBlacklistedPath)
 {
-    // addBlacklistedPath
-    SUCCEED();
+    // Test method: void addBlacklistedPath((const QString &path))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->addBlacklistedPath(_arg0));
 }
 
 TEST_F(FSMonitorTest, addBlacklistedPaths)
 {
-    // addBlacklistedPaths
-    SUCCEED();
+    // Test method: void addBlacklistedPaths((const QStringList &paths))
+    QStringList _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->addBlacklistedPaths(_arg0));
 }
 
 TEST_F(FSMonitorTest, blacklistedPaths)
 {
-    // blacklistedPaths
-    SUCCEED();
+    // Test getter: QStringList blacklistedPaths()
+    auto result = obj->blacklistedPaths();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(FSMonitorTest, currentWatchCount)
 {
-    // currentWatchCount
-    SUCCEED();
+    // Test getter: int currentWatchCount()
+    auto result = obj->currentWatchCount();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(FSMonitorTest, instance)
 {
-    // instance
-    SUCCEED();
+    // Test getter: FSMonitor instance()
+    auto result = obj->instance();
+    EXPECT_NO_FATAL_FAILURE({ obj->instance(); });
+
 }
 
 TEST_F(FSMonitorTest, isActive)
 {
-    // isActive
-    SUCCEED();
+    // Test bool getter: isActive()
+    bool result = obj->isActive();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(FSMonitorTest, maxAvailableWatchCount)
 {
-    // maxAvailableWatchCount
-    SUCCEED();
+    // Test getter: int maxAvailableWatchCount()
+    auto result = obj->maxAvailableWatchCount();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(FSMonitorTest, maxResourceUsage)
 {
-    // maxResourceUsage
-    SUCCEED();
+    // Test getter: double maxResourceUsage()
+    auto result = obj->maxResourceUsage();
+    EXPECT_EQ(result, 0.0);
+
 }
 
 TEST_F(FSMonitorTest, removeBlacklistedPath)
 {
-    // removeBlacklistedPath
-    SUCCEED();
+    // Test method: void removeBlacklistedPath((const QString &path))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->removeBlacklistedPath(_arg0));
 }
 
 TEST_F(FSMonitorTest, setMaxResourceUsage)
 {
-    // setMaxResourceUsage
-    SUCCEED();
+    // Test setter: void setMaxResourceUsage((double percentage))
+    EXPECT_NO_FATAL_FAILURE(obj->setMaxResourceUsage(0.0));
 }
 
 TEST_F(FSMonitorTest, setUseFastScan)
 {
-    // setUseFastScan
-    SUCCEED();
+    // Test setter: void setUseFastScan((bool enable))
+    EXPECT_NO_FATAL_FAILURE(obj->setUseFastScan(false));
 }
 
 TEST_F(FSMonitorTest, start)
 {
-    // start
-    SUCCEED();
+    // Test bool getter: start()
+    bool result = obj->start();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(FSMonitorTest, stop)
 {
-    // stop
-    SUCCEED();
+    // Test method: void stop(())
+    EXPECT_NO_FATAL_FAILURE(obj->stop());
 }
 
 TEST_F(FSMonitorTest, useFastScan)
 {
-    // useFastScan
-    SUCCEED();
+    // Test bool getter: useFastScan()
+    bool result = obj->useFastScan();
+    EXPECT_FALSE(result);
+
 }

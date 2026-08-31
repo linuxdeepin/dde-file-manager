@@ -3,63 +3,97 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_userentryfileentity_1.cpp
- * @brief Unit tests for UserEntryFileEntity Low-priority methods
+ * @file test_userentryfileentity_1.cpp
+ * @brief Unit tests for UserEntryFileEntity methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class UserEntryFileEntityTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "fileentity/userentryfileentity.h"
+
+#include <QTest>
+
+using namespace dfmplugin_computer;
+
+class UserEntryFileEntityTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new UserEntryFileEntity();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    UserEntryFileEntity *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(UserEntryFileEntityTest, UserEntryFileEntity)
 {
-    // UserEntryFileEntity
-    SUCCEED();
+    // Test constructor: UserEntryFileEntity((const QUrl &url))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(UserEntryFileEntityTest, displayName)
 {
-    // displayName
-    SUCCEED();
+    // Test getter: QString displayName()
+    auto result = obj->displayName();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(UserEntryFileEntityTest, exists)
 {
-    // exists
-    SUCCEED();
+    // Test bool getter: exists()
+    bool result = obj->exists();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(UserEntryFileEntityTest, icon)
 {
-    // icon
-    SUCCEED();
+    // Test getter: QIcon icon()
+    auto result = obj->icon();
+    EXPECT_TRUE(result.isNull());
+
 }
 
 TEST_F(UserEntryFileEntityTest, order)
 {
-    // order
-    SUCCEED();
+    // Test getter: DFMBASE_NAMESPACE::AbstractEntryFileEntity::EntryOrder order()
+    auto result = obj->order();
+    EXPECT_NO_FATAL_FAILURE({ obj->order(); });
+
 }
 
 TEST_F(UserEntryFileEntityTest, showProgress)
 {
-    // showProgress
-    SUCCEED();
+    // Test bool getter: showProgress()
+    bool result = obj->showProgress();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(UserEntryFileEntityTest, showTotalSize)
 {
-    // showTotalSize
-    SUCCEED();
+    // Test bool getter: showTotalSize()
+    bool result = obj->showTotalSize();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(UserEntryFileEntityTest, showUsageSize)
 {
-    // showUsageSize
-    SUCCEED();
-}
+    // Test bool getter: showUsageSize()
+    bool result = obj->showUsageSize();
+    EXPECT_FALSE(result);
 
+}

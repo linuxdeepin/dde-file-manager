@@ -3,21 +3,41 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_skippartiallycheckbox.cpp
- * @brief Unit tests for SkipPartiallyCheckBox Low-priority methods
+ * @file test_skippartiallycheckbox.cpp
+ * @brief Unit tests for SkipPartiallyCheckBox methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class SkipPartiallyCheckBoxTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/skippartiallycheckbox.h"
+
+#include <QTest>
+
+using namespace dfmplugin_propertydialog;
+
+class SkipPartiallyCheckBoxTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new SkipPartiallyCheckBox();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    SkipPartiallyCheckBox *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(SkipPartiallyCheckBoxTest, nextCheckState)
 {
-    // nextCheckState
-    SUCCEED();
+    // Test method: void nextCheckState(())
+    EXPECT_NO_FATAL_FAILURE(obj->nextCheckState());
 }
-

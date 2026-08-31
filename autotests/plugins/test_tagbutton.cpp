@@ -4,37 +4,63 @@
 
 /**
  * @file test_tagbutton.cpp
- * @brief Unit tests for TagButton Mid-priority methods
+ * @brief Unit tests for TagButton methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class TagButtonTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "widgets/tagbutton.h"
+
+#include <QTest>
+
+using namespace dfmplugin_tag;
+
+class TagButtonTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new TagButton();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    TagButton *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(TagButtonTest, color)
 {
-    // color
-    SUCCEED();
+    // Test getter: QColor color()
+    auto result = obj->color();
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(TagButtonTest, isChecked)
 {
-    // isChecked
-    SUCCEED();
+    // Test bool getter: isChecked()
+    bool result = obj->isChecked();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(TagButtonTest, mousePressEvent)
 {
-    // mousePressEvent
-    SUCCEED();
+    // Test event handler: mousePressEvent((QMouseEvent *event))
+    QMouseEvent _event(QMouseEvent::None);
+    EXPECT_NO_FATAL_FAILURE(obj->mousePressEvent(&_event));
 }
 
 TEST_F(TagButtonTest, setChecked)
 {
-    // setChecked
-    SUCCEED();
+    // Test setter: void setChecked((bool checked))
+    EXPECT_NO_FATAL_FAILURE(obj->setChecked(false));
 }

@@ -4,25 +4,48 @@
 
 /**
  * @file test_fileoperatorproxyprivate.cpp
- * @brief Unit tests for FileOperatorProxyPrivate Mid-priority methods
+ * @brief Unit tests for FileOperatorProxyPrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class FileOperatorProxyPrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "view/operator/fileoperatorproxy.h"
+
+#include <QTest>
+
+using namespace ddplugin_canvas;
+
+class FileOperatorProxyPrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new FileOperatorProxyPrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FileOperatorProxyPrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(FileOperatorProxyPrivateTest, callBackPasteFiles)
 {
-    // callBackPasteFiles
-    SUCCEED();
+    // Test method: void callBackPasteFiles((const JobInfoPointer info))
+    EXPECT_NO_FATAL_FAILURE(obj->callBackPasteFiles(JobInfoPointer()));
 }
 
 TEST_F(FileOperatorProxyPrivateTest, callBackRenameFiles)
 {
-    // callBackRenameFiles
-    SUCCEED();
+    // Test method: void callBackRenameFiles((const QList<QUrl> &sources, const QList<QUrl> &targets))
+    QList<QUrl> _arg0{};
+    QList<QUrl> _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->callBackRenameFiles(_arg0, _arg1));
 }

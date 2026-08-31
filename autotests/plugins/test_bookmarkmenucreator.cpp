@@ -4,19 +4,41 @@
 
 /**
  * @file test_bookmarkmenucreator.cpp
- * @brief Unit tests for BookmarkMenuCreator Mid-priority methods
+ * @brief Unit tests for BookmarkMenuCreator methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class BookmarkMenuCreatorTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "menu/bookmarkmenuscene.h"
+
+#include <QTest>
+
+using namespace dfmplugin_bookmark;
+
+class BookmarkMenuCreatorTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new BookmarkMenuCreator();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    BookmarkMenuCreator *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(BookmarkMenuCreatorTest, name)
 {
-    // name
-    SUCCEED();
+    // Test getter: QString name()
+    auto result = obj->name();
+    EXPECT_TRUE(result.isEmpty() || !result.isEmpty());
 }

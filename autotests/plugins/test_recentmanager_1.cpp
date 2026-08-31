@@ -3,135 +3,171 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_recentmanager_1.cpp
- * @brief Unit tests for RecentManager Low-priority methods
+ * @file test_recentmanager_1.cpp
+ * @brief Unit tests for RecentManager methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class RecentManagerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "recentmanager.h"
+
+#include <QTest>
+
+using namespace recent;
+
+class RecentManagerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new RecentManager();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    RecentManager *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(RecentManagerTest, RecentManager)
 {
-    // RecentManager
-    SUCCEED();
+    // Test constructor: RecentManager((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(RecentManagerTest, RecentManager_RecentMa)
 {
-    // RecentManager
-    SUCCEED();
+    // Test constructor: RecentManager((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(RecentManagerTest, doReload)
 {
-    // doReload
-    SUCCEED();
+    // Test method: void doReload((qint64 timestamp))
+    EXPECT_NO_FATAL_FAILURE(obj->doReload(0));
 }
 
 TEST_F(RecentManagerTest, forceReload)
 {
-    // forceReload
-    SUCCEED();
+    // Test method: void forceReload((qint64 timestamp))
+    EXPECT_NO_FATAL_FAILURE(obj->forceReload(0));
 }
 
 TEST_F(RecentManagerTest, getItemInfo)
 {
-    // getItemInfo
-    SUCCEED();
+    // Test method: QVariantMap getItemInfo((const QString &path))
+    QString _arg0{};
+    auto result = obj->getItemInfo(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(RecentManagerTest, getItemsInfo)
 {
-    // getItemsInfo
-    SUCCEED();
+    // Test getter: QVariantList getItemsInfo()
+    auto result = obj->getItemsInfo();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(RecentManagerTest, getItemsPath)
 {
-    // getItemsPath
-    SUCCEED();
+    // Test getter: QStringList getItemsPath()
+    auto result = obj->getItemsPath();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(RecentManagerTest, getRecentNodes)
 {
-    // getRecentNodes
-    SUCCEED();
+    // Test getter: QMap<QUrl, FileInfoPointer> getRecentNodes()
+    auto result = obj->getRecentNodes();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(RecentManagerTest, getRecentOriginPaths)
 {
-    // getRecentOriginPaths
-    SUCCEED();
+    // Test method: QString getRecentOriginPaths((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->getRecentOriginPaths(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(RecentManagerTest, init)
 {
-    // init
-    SUCCEED();
+    // Test method: void init(())
+    EXPECT_NO_FATAL_FAILURE(obj->init());
 }
 
 TEST_F(RecentManagerTest, initialize)
 {
-    // initialize
-    SUCCEED();
+    // Test method: void initialize(())
+    EXPECT_NO_FATAL_FAILURE(obj->initialize());
 }
 
 TEST_F(RecentManagerTest, onItemChanged)
 {
-    // onItemChanged
-    SUCCEED();
+    // Test method: void onItemChanged((const QString &path, const RecentItem &item))
+    QString _arg0{};
+    RecentItem _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->onItemChanged(_arg0, _arg1));
 }
 
 TEST_F(RecentManagerTest, onItemChanged_onItemCh)
 {
-    // onItemChanged
-    SUCCEED();
+    // Test method: void onItemChanged((const QString &path, const RecentItem &item))
+    QString _arg0{};
+    RecentItem _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->onItemChanged(_arg0, _arg1));
 }
 
 TEST_F(RecentManagerTest, processPendingItems)
 {
-    // processPendingItems
-    SUCCEED();
+    // Test method: void processPendingItems(())
+    EXPECT_NO_FATAL_FAILURE(obj->processPendingItems());
 }
 
 TEST_F(RecentManagerTest, purgeItems)
 {
-    // purgeItems
-    SUCCEED();
+    // Test method: void purgeItems(())
+    EXPECT_NO_FATAL_FAILURE(obj->purgeItems());
 }
 
 TEST_F(RecentManagerTest, reloadRecent)
 {
-    // reloadRecent
-    SUCCEED();
+    // Test method: void reloadRecent(())
+    EXPECT_NO_FATAL_FAILURE(obj->reloadRecent());
 }
 
 TEST_F(RecentManagerTest, startWatch)
 {
-    // startWatch
-    SUCCEED();
+    // Test method: void startWatch(())
+    EXPECT_NO_FATAL_FAILURE(obj->startWatch());
 }
 
 TEST_F(RecentManagerTest, stopWatch)
 {
-    // stopWatch
-    SUCCEED();
+    // Test method: void stopWatch(())
+    EXPECT_NO_FATAL_FAILURE(obj->stopWatch());
 }
 
 TEST_F(RecentManagerTest, RecentManager_Destructor)
 {
-    // ~RecentManager
-    SUCCEED();
+    // Test method:  ~RecentManager(())
+    EXPECT_NO_FATAL_FAILURE({ RecentManager *tmp = new RecentManager(); delete tmp; });
 }
 
 TEST_F(RecentManagerTest, RecentManager_Destructor_xRecentM)
 {
-    // ~RecentManager
-    SUCCEED();
+    // Test method:  ~RecentManager(())
+    EXPECT_NO_FATAL_FAILURE({ RecentManager *tmp = new RecentManager(); delete tmp; });
 }
-

@@ -3,27 +3,53 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_shredfilemodel_1.cpp
- * @brief Unit tests for ShredFileModel Low-priority methods
+ * @file test_shredfilemodel_1.cpp
+ * @brief Unit tests for ShredFileModel methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ShredFileModelTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "shred/shredfilemodel.h"
+
+#include <QTest>
+
+using namespace dfmplugin_utils;
+
+class ShredFileModelTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ShredFileModel();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ShredFileModel *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ShredFileModelTest, columnCount)
 {
-    // columnCount
-    SUCCEED();
+    // Test method: int columnCount((const QModelIndex &parent))
+    QModelIndex _arg0{};
+    auto result = obj->columnCount(_arg0);
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(ShredFileModelTest, rowCount)
 {
-    // rowCount
-    SUCCEED();
-}
+    // Test method: int rowCount((const QModelIndex &parent))
+    QModelIndex _arg0{};
+    auto result = obj->rowCount(_arg0);
+    EXPECT_EQ(result, 0);
 
+}

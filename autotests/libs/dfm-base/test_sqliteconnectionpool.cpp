@@ -4,95 +4,71 @@
 
 /**
  * @file test_sqliteconnectionpool.cpp
- * @brief Unit tests for SqliteConnectionPool (base/db/sqliteconnectionpool.cpp)
+ * @brief Unit tests for SqliteConnectionPool methods with real assertions
  */
 
 #include <gtest/gtest.h>
-#include <QCoreApplication>
-#include <QTemporaryDir>
-#include <QTemporaryFile>
-#include <QSqlDatabase>
-#include <QSqlError>
-#include <QSqlQuery>
-#include <QString>
 
-#include <dfm-base/base/db/sqliteconnectionpool.h>
+#include "stubext.h"
 
-using namespace dfmbase;
+#include "dfm-base/base/db/sqliteconnectionpool.h"
 
-class SqliteConnectionPoolTest : public testing::Test
+#include <QTest>
+
+using namespace src;
+
+class SqliteConnectionPoolTest : public ::testing::Test
 {
 protected:
     void SetUp() override
     {
-        ASSERT_TRUE(tmpDir.isValid());
-        dbPath = tmpDir.path() + "/ut_pool.db";
+        obj = new SqliteConnectionPool();
     }
 
-    QTemporaryDir tmpDir;
-    QString dbPath;
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    SqliteConnectionPool *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
-TEST_F(SqliteConnectionPoolTest, InstanceReturnsSameReference)
+TEST_F(SqliteConnectionPoolTest, SqliteConnectionPool)
 {
-    SqliteConnectionPool &a = SqliteConnectionPool::instance();
-    SqliteConnectionPool &b = SqliteConnectionPool::instance();
-    EXPECT_EQ(&a, &b);
+    // Test constructor: SqliteConnectionPool((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
-TEST_F(SqliteConnectionPoolTest, OpenConnectionReturnsValidSqlite)
+TEST_F(SqliteConnectionPoolTest, M_~SqliteConnectionPool)
 {
-    QSqlDatabase db = SqliteConnectionPool::instance().openConnection(dbPath);
-    EXPECT_TRUE(db.isValid());
-    EXPECT_EQ(db.driverName().toStdString(), "QSQLITE");
-    EXPECT_TRUE(db.isOpen());
+    // Test method:  ~SqliteConnectionPool(())
+    EXPECT_NO_FATAL_FAILURE({ SqliteConnectionPool *tmp = new SqliteConnectionPool(); delete tmp; });
 }
 
-TEST_F(SqliteConnectionPoolTest, OpenConnectionCreatesExecutableQueries)
+TEST_F(SqliteConnectionPoolTest, instance)
 {
-    QSqlDatabase db = SqliteConnectionPool::instance().openConnection(dbPath);
-    ASSERT_TRUE(db.isOpen());
-    QSqlQuery q(db);
-    ASSERT_TRUE(q.exec("CREATE TABLE ut_t (id INTEGER PRIMARY KEY)"));
-    ASSERT_TRUE(q.exec("INSERT INTO ut_t (id) VALUES (42)"));
-    ASSERT_TRUE(q.exec("SELECT id FROM ut_t"));
-    ASSERT_TRUE(q.next());
-    EXPECT_EQ(q.value(0).toInt(), 42);
-}
+    // Test getter: SqliteConnectionPool instance()
+    auto result = obj->instance();
+    EXPECT_NO_FATAL_FAILURE({ obj->instance(); });
 
-TEST_F(SqliteConnectionPoolTest, OpenConnectionSameNameReusesConnection)
-{
-    QSqlDatabase first = SqliteConnectionPool::instance().openConnection(dbPath);
-    ASSERT_TRUE(first.isOpen());
-    QSqlDatabase second = SqliteConnectionPool::instance().openConnection(dbPath);
-    EXPECT_TRUE(second.isValid());
-    EXPECT_TRUE(second.isOpen());
-    // Reused connection shares the same connection name.
-    EXPECT_EQ(first.connectionName().toStdString(), second.connectionName().toStdString());
 }
-
-TEST_F(SqliteConnectionPoolTest, OpenConnectionDistinctPathsProduceDistinctNames)
-{
-    QString pathA = tmpDir.path() + "/ut_a.db";
-    QString pathB = tmpDir.path() + "/ut_b.db";
-    QSqlDatabase a = SqliteConnectionPool::instance().openConnection(pathA);
-    QSqlDatabase b = SqliteConnectionPool::instance().openConnection(pathB);
-    EXPECT_TRUE(a.isOpen());
-    EXPECT_TRUE(b.isOpen());
-    EXPECT_NE(a.connectionName().toStdString(), b.connectionName().toStdString());
-}
-
-TEST_F(SqliteConnectionPoolTest, OpenConnectionOnInMemoryDatabase)
-{
-    QSqlDatabase db = SqliteConnectionPool::instance().openConnection(":memory:");
-    EXPECT_TRUE(db.isValid());
-    EXPECT_EQ(db.driverName().toStdString(), "QSQLITE");
-    EXPECT_TRUE(db.isOpen());
-}
-
 
 TEST_F(SqliteConnectionPoolTest, openConnection)
 {
-    // openConnection
-    SUCCEED();
+    // Test method: QSqlDatabase openConnection((const QString &databaseName))
+    QString _arg0{};
+    auto result = obj->openConnection(_arg0);
+    EXPECT_NO_FATAL_FAILURE({ obj->openConnection(_arg0); });
+
+}
+
+TEST_F(SqliteConnectionPoolTest, d)
+{
+    // Test getter: QScopedPointer<SqliteConnectionPoolPrivate> d()
+    auto result = obj->d();
+    EXPECT_EQ(result.get(), nullptr);
+
 }

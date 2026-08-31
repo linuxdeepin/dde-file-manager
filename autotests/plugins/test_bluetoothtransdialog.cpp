@@ -4,47 +4,69 @@
 
 /**
  * @file test_bluetoothtransdialog.cpp
- * @brief Unit tests for BluetoothTransDialog Mid-priority methods (stub)
+ * @brief Unit tests for BluetoothTransDialog methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
+#include "stubext.h"
+
 #include "bluetooth/private/bluetoothtransdialog.h"
+
+#include <QTest>
 
 using namespace dfmplugin_utils;
 
-class BluetoothTransDialogTest : public ::testing::Test {
+class BluetoothTransDialogTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new BluetoothTransDialog();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    BluetoothTransDialog *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(BluetoothTransDialogTest, connectDevice)
 {
-    // connectDevice - stub test (class requires special construction)
-    SUCCEED();
+    // Test method: void connectDevice((const BluetoothDevice *dev))
+    EXPECT_NO_FATAL_FAILURE(obj->connectDevice(nullptr));
 }
 
 TEST_F(BluetoothTransDialogTest, isBluetoothIdle)
 {
-    // isBluetoothIdle - stub test (class requires special construction)
-    SUCCEED();
+    // Test bool getter: isBluetoothIdle()
+    bool result = obj->isBluetoothIdle();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(BluetoothTransDialogTest, removeDevice)
 {
-    // removeDevice - stub test (class requires special construction)
-    SUCCEED();
+    // Test method: void removeDevice((const QString &id))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->removeDevice(_arg0));
 }
 
 TEST_F(BluetoothTransDialogTest, BluetoothTransDialog)
 {
-    // BluetoothTransDialog
-    SUCCEED();
+    // Test constructor: BluetoothTransDialog((const QStringList &urls, QString targetDevId, QWidget *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(BluetoothTransDialogTest, createDeviceSelectorPage)
 {
-    // createDeviceSelectorPage
-    SUCCEED();
+    // Test getter: QWidget createDeviceSelectorPage()
+    auto result = obj->createDeviceSelectorPage();
+    EXPECT_NO_FATAL_FAILURE({ obj->createDeviceSelectorPage(); });
+
 }

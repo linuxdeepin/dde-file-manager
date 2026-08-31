@@ -74,24 +74,26 @@ TEST(LoggerRulesTest, RulesAccessorReturnsString)
 
 TEST(LoggerRulesTest, appendRules)
 {
-    // appendRules
-    SUCCEED();
+    LoggerRules obj;
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj.appendRules(_arg0));
 }
 
 TEST(LoggerRulesTest, initLoggerRules)
 {
-    // initLoggerRules
-    SUCCEED();
+    LoggerRules obj;
+    EXPECT_NO_FATAL_FAILURE(obj.initLoggerRules());
 }
 
 TEST(LoggerRulesTest, rules)
 {
-    // rules
-    SUCCEED();
+    LoggerRules obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.rules(); });
 }
 
 TEST(LoggerRulesTest, setRules)
 {
-    // setRules
-    SUCCEED();
+    LoggerRules obj;
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj.setRules(_arg0));
 }

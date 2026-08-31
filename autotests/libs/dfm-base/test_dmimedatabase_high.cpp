@@ -105,10 +105,7 @@ TEST(DMimeDatabaseTest, MimeTypeForPidFileNotMatchExtension)
     DMimeDatabase db;
     QFileInfo fi(filePath);
     // With MatchDefault (not MatchExtension), .pid files trigger special handling
-    EXPECT_NO_FATAL_FAILURE({
-        QMimeType mt = db.mimeTypeForFile(fi, QMimeDatabase::MatchDefault, QString());
-        (void)mt;
-    });
+    EXPECT_NO_FATAL_FAILURE({ db.mimeTypeForFile(fi, QMimeDatabase::MatchDefault, QString()); });
 }
 
 TEST(DMimeDatabaseTest, MimeTypeForLockFileNotMatchExtension)
@@ -123,10 +120,7 @@ TEST(DMimeDatabaseTest, MimeTypeForLockFileNotMatchExtension)
 
     DMimeDatabase db;
     QFileInfo fi(filePath);
-    EXPECT_NO_FATAL_FAILURE({
-        QMimeType mt = db.mimeTypeForFile(fi, QMimeDatabase::MatchDefault, QString());
-        (void)mt;
-    });
+    EXPECT_NO_FATAL_FAILURE({ db.mimeTypeForFile(fi, QMimeDatabase::MatchDefault, QString()); });
 }
 
 TEST(DMimeDatabaseTest, MimeTypeForLockfileSuffixNotMatchExtension)
@@ -141,10 +135,7 @@ TEST(DMimeDatabaseTest, MimeTypeForLockfileSuffixNotMatchExtension)
 
     DMimeDatabase db;
     QFileInfo fi(filePath);
-    EXPECT_NO_FATAL_FAILURE({
-        QMimeType mt = db.mimeTypeForFile(fi, QMimeDatabase::MatchDefault, QString());
-        (void)mt;
-    });
+    EXPECT_NO_FATAL_FAILURE({ db.mimeTypeForFile(fi, QMimeDatabase::MatchDefault, QString()); });
 }
 
 TEST(DMimeDatabaseTest, MimeTypeForSymlink)
@@ -163,29 +154,20 @@ TEST(DMimeDatabaseTest, MimeTypeForSymlink)
 
     DMimeDatabase db;
     QFileInfo fi(linkPath);
-    EXPECT_NO_FATAL_FAILURE({
-        QMimeType mt = db.mimeTypeForFile(fi, QMimeDatabase::MatchDefault, QString());
-        (void)mt;
-    });
+    EXPECT_NO_FATAL_FAILURE({ db.mimeTypeForFile(fi, QMimeDatabase::MatchDefault, QString()); });
 }
 
 TEST(DMimeDatabaseTest, MimeTypeForNonExistentFile)
 {
     DMimeDatabase db;
     QFileInfo fi("/nonexistent/path/file.txt");
-    EXPECT_NO_FATAL_FAILURE({
-        QMimeType mt = db.mimeTypeForFile(fi, QMimeDatabase::MatchExtension, QString());
-        (void)mt;
-    });
+    EXPECT_NO_FATAL_FAILURE({ db.mimeTypeForFile(fi, QMimeDatabase::MatchExtension, QString()); });
 }
 
 TEST(DMimeDatabaseTest, MimeTypeForUrl)
 {
     DMimeDatabase db;
-    EXPECT_NO_FATAL_FAILURE({
-        QMimeType mt = db.mimeTypeForUrl(QUrl::fromLocalFile("/tmp/test.txt"));
-        (void)mt;
-    });
+    EXPECT_NO_FATAL_FAILURE({ db.mimeTypeForUrl(QUrl::fromLocalFile("/tmp/test.txt")); });
 }
 
 // Cover the QString overload: mimeTypeForFile(QString, MatchMode, inod, isGvfs)
@@ -215,10 +197,7 @@ TEST(DMimeDatabaseTest, MimeTypeForFileQStringOverload)
     EXPECT_EQ(mt3.name(), QString("text/plain"));
 
     // isGvfs = true
-    EXPECT_NO_FATAL_FAILURE({
-        QMimeType mt4 = db.mimeTypeForFile(filePath, QMimeDatabase::MatchDefault, QString(), true);
-        (void)mt4;
-    });
+    EXPECT_NO_FATAL_FAILURE({ db.mimeTypeForFile(filePath, QMimeDatabase::MatchDefault, QString(), true); });
 
     QFile::remove(filePath);
 }

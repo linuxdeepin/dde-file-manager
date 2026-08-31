@@ -4,76 +4,110 @@
 
 /**
  * @file test_avfsutils.cpp
- * @brief Unit tests for AvfsUtils Mid-priority methods (dfmplugin-avfsbrowser)
+ * @brief Unit tests for AvfsUtils methods with real assertions
  */
 
 #include <gtest/gtest.h>
-#include <QTest>
-#include <QUrl>
-#include <QString>
-#include <QStringList>
-#include <QColor>
-#include <QPoint>
-#include <QVariant>
+
+#include "stubext.h"
 
 #include "utils/avfsutils.h"
 
+#include <QTest>
+
 using namespace dfmplugin_avfsbrowser;
 
-class AvfsUtilsTest : public ::testing::Test {
+class AvfsUtilsTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {
-        // AvfsUtils uses singleton pattern
+    void SetUp() override
+    {
+        obj = new AvfsUtils();
     }
-    void TearDown() override {}
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    AvfsUtils *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(AvfsUtilsTest, archivePreviewEnabled)
 {
-    bool result = false;
-    EXPECT_NO_FATAL_FAILURE({ result = AvfsUtils::instance()->archivePreviewEnabled(); });
-    (void)result;
+    // Test bool getter: archivePreviewEnabled()
+    bool result = obj->archivePreviewEnabled();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(AvfsUtilsTest, avfsMountPoint)
 {
-    EXPECT_NO_FATAL_FAILURE({ auto r = AvfsUtils::instance()->avfsMountPoint(); (void)r; });
+    // Test getter: QString avfsMountPoint()
+    auto result = obj->avfsMountPoint();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(AvfsUtilsTest, avfsUrlToLocal)
 {
-    EXPECT_NO_FATAL_FAILURE({ auto r = AvfsUtils::instance()->avfsUrlToLocal(QUrl("file:///tmp/test")); (void)r; });
+    // Test method: QUrl avfsUrlToLocal((const QUrl &avfsUrl))
+    QUrl _arg0{};
+    auto result = obj->avfsUrlToLocal(_arg0);
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(AvfsUtilsTest, isSupportedArchives)
 {
-    bool result = false;
-    EXPECT_NO_FATAL_FAILURE({ result = AvfsUtils::instance()->isSupportedArchives(QString("test")); });
-    (void)result;
+    // Test method: bool isSupportedArchives((const QString &path))
+    QString _arg0{};
+    auto result = obj->isSupportedArchives(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(AvfsUtilsTest, localUrlToAvfsUrl)
 {
-    EXPECT_NO_FATAL_FAILURE({ auto r = AvfsUtils::instance()->localUrlToAvfsUrl(QUrl("file:///tmp/test")); (void)r; });
+    // Test method: QUrl localUrlToAvfsUrl((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->localUrlToAvfsUrl(_arg0);
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(AvfsUtilsTest, parseDirIcon)
 {
-    EXPECT_NO_FATAL_FAILURE({ auto r = AvfsUtils::instance()->parseDirIcon(QString("test")); (void)r; });
+    // Test method: QString parseDirIcon((QString path))
+    auto result = obj->parseDirIcon(QString());
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(AvfsUtilsTest, scheme)
 {
-    EXPECT_NO_FATAL_FAILURE({ auto r = AvfsUtils::scheme(); (void)r; });
+    // Test getter: QString scheme()
+    auto result = obj->scheme();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(AvfsUtilsTest, seperateUrl)
 {
-    EXPECT_NO_FATAL_FAILURE({ auto r = AvfsUtils::instance()->seperateUrl(QUrl("file:///tmp/test")); (void)r; });
+    // Test method: QList<QVariantMap> seperateUrl((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->seperateUrl(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(AvfsUtilsTest, instance)
 {
-    // instance
-    SUCCEED();
+    // Test getter: AvfsUtils instance()
+    auto result = obj->instance();
+    EXPECT_NO_FATAL_FAILURE({ obj->instance(); });
+
 }

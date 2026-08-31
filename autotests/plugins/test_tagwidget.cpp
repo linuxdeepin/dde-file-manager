@@ -4,25 +4,47 @@
 
 /**
  * @file test_tagwidget.cpp
- * @brief Unit tests for TagWidget Mid-priority methods
+ * @brief Unit tests for TagWidget methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class TagWidgetTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "widgets/tagwidget.h"
+
+#include <QTest>
+
+using namespace dfmplugin_tag;
+
+class TagWidgetTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new TagWidget();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    TagWidget *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(TagWidgetTest, TagWidget)
 {
-    // TagWidget
-    SUCCEED();
+    // Test constructor: TagWidget((QUrl url, QWidget *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(TagWidgetTest, onCheckedColorChanged)
 {
-    // onCheckedColorChanged
-    SUCCEED();
+    // Test method: void onCheckedColorChanged((const QColor &color))
+    QColor _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->onCheckedColorChanged(_arg0));
 }

@@ -4,25 +4,50 @@
 
 /**
  * @file test_localdiriteratorprivate.cpp
- * @brief Unit tests for LocalDirIteratorPrivate Mid-priority methods
+ * @brief Unit tests for LocalDirIteratorPrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class LocalDirIteratorPrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "dfm-base/file/local/localdiriterator.h"
+
+#include <QTest>
+
+using namespace src;
+
+class LocalDirIteratorPrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new LocalDirIteratorPrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    LocalDirIteratorPrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(LocalDirIteratorPrivateTest, fileInfo)
 {
-    // fileInfo
-    SUCCEED();
+    // Test method: FileInfoPointer fileInfo((const QSharedPointer<DFileInfo> dfmInfo))
+    auto result = obj->fileInfo(QSharedPointer<DFileInfo>());
+    EXPECT_NE(result.get(), nullptr);
+
 }
 
 TEST_F(LocalDirIteratorPrivateTest, fileInfos)
 {
-    // fileInfos
-    SUCCEED();
+    // Test getter: QList<FileInfoPointer> fileInfos()
+    auto result = obj->fileInfos();
+    EXPECT_TRUE(result.isEmpty());
+
 }

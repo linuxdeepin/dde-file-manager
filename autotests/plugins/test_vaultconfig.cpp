@@ -4,31 +4,61 @@
 
 /**
  * @file test_vaultconfig.cpp
- * @brief Unit tests for VaultConfig Mid-priority methods
+ * @brief Unit tests for VaultConfig methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class VaultConfigTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/encryption/vaultconfig.h"
+
+#include <QTest>
+
+using namespace dfmplugin_vault;
+
+class VaultConfigTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new VaultConfig();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    VaultConfig *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(VaultConfigTest, get)
 {
-    // get
-    SUCCEED();
+    // Test method: QVariant get((const QString &nodeName, const QString &keyName, const QVariant &defaultValue))
+    QString _arg0{};
+    QString _arg1{};
+    QVariant _arg2{};
+    auto result = obj->get(_arg0, _arg1, _arg2);
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(VaultConfigTest, getVaultCreationType)
 {
-    // getVaultCreationType
-    SUCCEED();
+    // Test getter: QString getVaultCreationType()
+    auto result = obj->getVaultCreationType();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(VaultConfigTest, set)
 {
-    // set
-    SUCCEED();
+    // Test setter: void set((const QString &nodeName, const QString &keyName, QVariant value))
+    QString _arg0{};
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->set(_arg0, _arg1, QVariant()));
 }

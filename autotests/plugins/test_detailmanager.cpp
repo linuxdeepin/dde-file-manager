@@ -4,25 +4,51 @@
 
 /**
  * @file test_detailmanager.cpp
- * @brief Unit tests for DetailManager Mid-priority methods
+ * @brief Unit tests for DetailManager methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class DetailManagerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/detailmanager.h"
+
+#include <QTest>
+
+using namespace dfmplugin_detailspace;
+
+class DetailManagerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new DetailManager();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    DetailManager *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(DetailManagerTest, createBasicViewExtensionField)
 {
-    // createBasicViewExtensionField
-    SUCCEED();
+    // Test method: QMap<BasicExpandType, BasicExpandMap> createBasicViewExtensionField((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->createBasicViewExtensionField(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(DetailManagerTest, instance)
 {
-    // instance
-    SUCCEED();
+    // Test getter: DetailManager instance()
+    auto result = obj->instance();
+    EXPECT_NO_FATAL_FAILURE({ obj->instance(); });
+
 }

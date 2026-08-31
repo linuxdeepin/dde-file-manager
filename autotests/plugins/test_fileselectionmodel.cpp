@@ -4,68 +4,76 @@
 
 /**
  * @file test_fileselectionmodel.cpp
- * @brief Unit tests for FileSelectionModel Mid-priority methods (dfmplugin-workspace)
+ * @brief Unit tests for FileSelectionModel methods with real assertions
  */
 
 #include <gtest/gtest.h>
-#include <QTest>
-#include <QUrl>
-#include <QString>
-#include <QStringList>
-#include <QColor>
-#include <QPoint>
-#include <QVariant>
+
+#include "stubext.h"
 
 #include "models/fileselectionmodel.h"
 
+#include <QTest>
+
 using namespace dfmplugin_workspace;
 
-class FileSelectionModelTest : public ::testing::Test {
+class FileSelectionModelTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {
+    void SetUp() override
+    {
+        obj = new FileSelectionModel();
     }
-    void TearDown() override {}
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FileSelectionModel *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(FileSelectionModelTest, clear)
 {
-    // Instance method clear
-    FileSelectionModel obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.clear(); });
+    // Test method: void clear(())
+    EXPECT_NO_FATAL_FAILURE(obj->clear());
 }
 
 TEST_F(FileSelectionModelTest, clearSelectList)
 {
-    // Instance method clearSelectList
-    FileSelectionModel obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.clearSelectList(); });
+    // Test method: void clearSelectList(())
+    EXPECT_NO_FATAL_FAILURE(obj->clearSelectList());
 }
 
 TEST_F(FileSelectionModelTest, isSelected)
 {
-    // Instance method isSelected
-    FileSelectionModel obj;
-    bool result = false;
-    EXPECT_NO_FATAL_FAILURE({ result = obj.isSelected(QModelIndex()); });
-    (void)result;
+    // Test method: bool isSelected((const QModelIndex &index))
+    QModelIndex _arg0{};
+    auto result = obj->isSelected(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(FileSelectionModelTest, select)
 {
-    // Instance method select
-    FileSelectionModel obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.select(QItemSelection(), QItemSelectionModel::SelectionFlags()); });
+    // Test method: void select((const QItemSelection &selection, QItemSelectionModel::SelectionFlags command))
+    QItemSelection _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->select(_arg0, QItemSelectionModel::SelectionFlags()));
 }
 
 TEST_F(FileSelectionModelTest, selectedIndexes)
 {
-    // Instance method selectedIndexes
-    FileSelectionModel obj;
-    EXPECT_NO_FATAL_FAILURE({ auto r = obj.selectedIndexes(); (void)r; });
+    // Test getter: QModelIndexList selectedIndexes()
+    auto result = obj->selectedIndexes();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(FileSelectionModelTest, FileSelectionModel)
 {
-    // FileSelectionModel
-    SUCCEED();
+    // Test constructor: FileSelectionModel((QAbstractItemModel *model, QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }

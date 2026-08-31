@@ -3,51 +3,73 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_shortcutoper_1.cpp
- * @brief Unit tests for ShortcutOper Low-priority methods
+ * @file test_shortcutoper_1.cpp
+ * @brief Unit tests for ShortcutOper methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ShortcutOperTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "view/operator/shortcutoper.h"
+
+#include <QTest>
+
+using namespace ddplugin_canvas;
+
+class ShortcutOperTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ShortcutOper();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ShortcutOper *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ShortcutOperTest, ShortcutOper)
 {
-    // ShortcutOper
-    SUCCEED();
+    // Test constructor: ShortcutOper((CanvasView *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(ShortcutOperTest, disableShortcut)
 {
-    // disableShortcut
-    SUCCEED();
+    // Test bool getter: disableShortcut()
+    bool result = obj->disableShortcut();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(ShortcutOperTest, helpAction)
 {
-    // helpAction
-    SUCCEED();
+    // Test method: void helpAction(())
+    EXPECT_NO_FATAL_FAILURE(obj->helpAction());
 }
 
 TEST_F(ShortcutOperTest, previewFiles)
 {
-    // previewFiles
-    SUCCEED();
+    // Test method: void previewFiles(())
+    EXPECT_NO_FATAL_FAILURE(obj->previewFiles());
 }
 
 TEST_F(ShortcutOperTest, switchHidden)
 {
-    // switchHidden
-    SUCCEED();
+    // Test method: void switchHidden(())
+    EXPECT_NO_FATAL_FAILURE(obj->switchHidden());
 }
 
 TEST_F(ShortcutOperTest, tabToFirst)
 {
-    // tabToFirst
-    SUCCEED();
+    // Test method: void tabToFirst(())
+    EXPECT_NO_FATAL_FAILURE(obj->tabToFirst());
 }
-

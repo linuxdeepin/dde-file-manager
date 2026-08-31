@@ -3,111 +3,149 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_low_taskmanager.cpp
- * @brief Unit tests for TaskManager Low-priority methods
+ * @file test_low_taskmanager.cpp
+ * @brief Unit tests for TaskManager methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class TaskManagerLowTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "services/textindex/task/taskmanager.h"
+
+#include <QTest>
+
+using namespace src;
+
+class TaskManagerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new TaskManager();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    TaskManager *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
-TEST_F(TaskManagerLowTest, TaskManager)
+TEST_F(TaskManagerTest, TaskManager)
 {
-    // TaskManager
-    SUCCEED();
+    // Test constructor: TaskManager((const IndexContext *context, QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
-TEST_F(TaskManagerLowTest, cleanupTask)
+TEST_F(TaskManagerTest, cleanupTask)
 {
-    // cleanupTask
-    SUCCEED();
+    // Test method: void cleanupTask(())
+    EXPECT_NO_FATAL_FAILURE(obj->cleanupTask());
 }
 
-TEST_F(TaskManagerLowTest, currentTaskPath)
+TEST_F(TaskManagerTest, currentTaskPath)
 {
-    // currentTaskPath
-    SUCCEED();
+    // Test getter: std::optional<QString> currentTaskPath()
+    auto result = obj->currentTaskPath();
+    EXPECT_FALSE(result.has_value());
+
 }
 
-TEST_F(TaskManagerLowTest, currentTaskType)
+TEST_F(TaskManagerTest, currentTaskType)
 {
-    // currentTaskType
-    SUCCEED();
+    // Test getter: std::optional<IndexTask::Type> currentTaskType()
+    auto result = obj->currentTaskType();
+    EXPECT_FALSE(result.has_value());
+
 }
 
-TEST_F(TaskManagerLowTest, enqueueCompensationTask)
+TEST_F(TaskManagerTest, enqueueCompensationTask)
 {
-    // enqueueCompensationTask
-    SUCCEED();
+    // Test method: bool enqueueCompensationTask((const QStringList &paths, bool silent))
+    QStringList _arg0{};
+    auto result = obj->enqueueCompensationTask(_arg0, false);
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(TaskManagerLowTest, handleRootPathFailure)
+TEST_F(TaskManagerTest, handleRootPathFailure)
 {
-    // handleRootPathFailure
-    SUCCEED();
+    // Test method: void handleRootPathFailure((bool success, bool interrupted, const QString &taskPath))
+    QString _arg2{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleRootPathFailure(false, false, _arg2));
 }
 
-TEST_F(TaskManagerLowTest, hasQueuedTasks)
+TEST_F(TaskManagerTest, hasQueuedTasks)
 {
-    // hasQueuedTasks
-    SUCCEED();
+    // Test bool getter: hasQueuedTasks()
+    bool result = obj->hasQueuedTasks();
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(TaskManagerLowTest, hasRunningTask)
+TEST_F(TaskManagerTest, hasRunningTask)
 {
-    // hasRunningTask
-    SUCCEED();
+    // Test bool getter: hasRunningTask()
+    bool result = obj->hasRunningTask();
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(TaskManagerLowTest, isFullScanTask)
+TEST_F(TaskManagerTest, isFullScanTask)
 {
-    // isFullScanTask
-    SUCCEED();
+    // Test method: bool isFullScanTask((IndexTask::Type type))
+    auto result = obj->isFullScanTask(IndexTask::Type());
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(TaskManagerLowTest, isRecoveryPending)
+TEST_F(TaskManagerTest, isRecoveryPending)
 {
-    // isRecoveryPending
-    SUCCEED();
+    // Test bool getter: isRecoveryPending()
+    bool result = obj->isRecoveryPending();
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(TaskManagerLowTest, onTaskFinished)
+TEST_F(TaskManagerTest, onTaskFinished)
 {
-    // onTaskFinished
-    SUCCEED();
+    // Test method: void onTaskFinished((IndexTask::Type type, HandlerResult result))
+    EXPECT_NO_FATAL_FAILURE(obj->onTaskFinished(IndexTask::Type(), HandlerResult()));
 }
 
-TEST_F(TaskManagerLowTest, onTaskProgress)
+TEST_F(TaskManagerTest, onTaskProgress)
 {
-    // onTaskProgress
-    SUCCEED();
+    // Test method: void onTaskProgress((IndexTask::Type type, qint64 count, qint64 total))
+    EXPECT_NO_FATAL_FAILURE(obj->onTaskProgress(IndexTask::Type(), 0, 0));
 }
 
-TEST_F(TaskManagerLowTest, setRecoveryPending)
+TEST_F(TaskManagerTest, setRecoveryPending)
 {
-    // setRecoveryPending
-    SUCCEED();
+    // Test setter: void setRecoveryPending((bool pending))
+    EXPECT_NO_FATAL_FAILURE(obj->setRecoveryPending(false));
 }
 
-TEST_F(TaskManagerLowTest, startNextTask)
+TEST_F(TaskManagerTest, startNextTask)
 {
-    // startNextTask
-    SUCCEED();
+    // Test bool getter: startNextTask()
+    bool result = obj->startNextTask();
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(TaskManagerLowTest, stopCurrentTask)
+TEST_F(TaskManagerTest, stopCurrentTask)
 {
-    // stopCurrentTask
-    SUCCEED();
+    // Test method: void stopCurrentTask(())
+    EXPECT_NO_FATAL_FAILURE(obj->stopCurrentTask());
 }
 
-TEST_F(TaskManagerLowTest, TaskManager_Destructor)
+TEST_F(TaskManagerTest, TaskManager_Destructor)
 {
-    // ~TaskManager
-    SUCCEED();
+    // Test method:  ~TaskManager(())
+    EXPECT_NO_FATAL_FAILURE({ TaskManager *tmp = new TaskManager(); delete tmp; });
 }
-

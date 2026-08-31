@@ -3,147 +3,190 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_basicwidget_1.cpp
- * @brief Unit tests for BasicWidget Low-priority methods
+ * @file test_basicwidget_1.cpp
+ * @brief Unit tests for BasicWidget methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class BasicWidgetTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/basicwidget.h"
+
+#include <QTest>
+
+using namespace dfmplugin_propertydialog;
+
+class BasicWidgetTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new BasicWidget();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    BasicWidget *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(BasicWidgetTest, audioExtenInfo)
 {
-    // audioExtenInfo
-    SUCCEED();
+    // Test method: void audioExtenInfo((const QUrl &url, QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> properties))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->audioExtenInfo(_arg0, QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant>()));
 }
 
 TEST_F(BasicWidgetTest, closeEvent)
 {
-    // closeEvent
-    SUCCEED();
+    // Test event handler: closeEvent((QCloseEvent *event))
+    QCloseEvent _event(QCloseEvent::None);
+    EXPECT_NO_FATAL_FAILURE(obj->closeEvent(&_event));
 }
 
 TEST_F(BasicWidgetTest, closeEvent_closeEve)
 {
-    // closeEvent
-    SUCCEED();
+    // Test event handler: closeEvent((QCloseEvent *event))
+    QCloseEvent _event(QCloseEvent::None);
+    EXPECT_NO_FATAL_FAILURE(obj->closeEvent(&_event));
 }
 
 TEST_F(BasicWidgetTest, createValueLabel)
 {
-    // createValueLabel
-    SUCCEED();
+    // Test method: KeyValueLabel createValueLabel((QFrame *frame, QString leftValue))
+    auto result = obj->createValueLabel(nullptr, QString());
+    EXPECT_NO_FATAL_FAILURE({ obj->createValueLabel(nullptr, QString()); });
+
 }
 
 TEST_F(BasicWidgetTest, discardCurrentScanner)
 {
-    // discardCurrentScanner
-    SUCCEED();
+    // Test method: void discardCurrentScanner(())
+    EXPECT_NO_FATAL_FAILURE(obj->discardCurrentScanner());
 }
 
 TEST_F(BasicWidgetTest, expansionPreditHeight)
 {
-    // expansionPreditHeight
-    SUCCEED();
+    // Test getter: int expansionPreditHeight()
+    auto result = obj->expansionPreditHeight();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(BasicWidgetTest, getFileCount)
 {
-    // getFileCount
-    SUCCEED();
+    // Test getter: int getFileCount()
+    auto result = obj->getFileCount();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(BasicWidgetTest, getFileCount_getFileC)
 {
-    // getFileCount
-    SUCCEED();
+    // Test getter: int getFileCount()
+    auto result = obj->getFileCount();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(BasicWidgetTest, getFileSize)
 {
-    // getFileSize
-    SUCCEED();
+    // Test getter: qint64 getFileSize()
+    auto result = obj->getFileSize();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(BasicWidgetTest, getFileSize_getFileS)
 {
-    // getFileSize
-    SUCCEED();
+    // Test getter: qint64 getFileSize()
+    auto result = obj->getFileSize();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(BasicWidgetTest, imageExtenInfo)
 {
-    // imageExtenInfo
-    SUCCEED();
+    // Test method: void imageExtenInfo((const QUrl &url, QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> properties))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->imageExtenInfo(_arg0, QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant>()));
 }
 
 TEST_F(BasicWidgetTest, initFileMap)
 {
-    // initFileMap
-    SUCCEED();
+    // Test method: void initFileMap(())
+    EXPECT_NO_FATAL_FAILURE(obj->initFileMap());
 }
 
 TEST_F(BasicWidgetTest, retireScanner)
 {
-    // retireScanner
-    SUCCEED();
+    // Test method: void retireScanner((FileScanner *scanner))
+    EXPECT_NO_FATAL_FAILURE(obj->retireScanner(nullptr));
 }
 
 TEST_F(BasicWidgetTest, selectFileUrl)
 {
-    // selectFileUrl
-    SUCCEED();
+    // Test method: void selectFileUrl((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->selectFileUrl(_arg0));
 }
 
 TEST_F(BasicWidgetTest, selectFileUrl_selectFi)
 {
-    // selectFileUrl
-    SUCCEED();
+    // Test method: void selectFileUrl((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->selectFileUrl(_arg0));
 }
 
 TEST_F(BasicWidgetTest, slotFileCountAndSizeChange)
 {
-    // slotFileCountAndSizeChange
-    SUCCEED();
+    // Test method: void slotFileCountAndSizeChange((const FileScanner::ScanResult &result))
+    FileScanner::ScanResult _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->slotFileCountAndSizeChange(_arg0));
 }
 
 TEST_F(BasicWidgetTest, slotFileCountAndSizeChange_slotFile)
 {
-    // slotFileCountAndSizeChange
-    SUCCEED();
+    // Test method: void slotFileCountAndSizeChange((const FileScanner::ScanResult &result))
+    FileScanner::ScanResult _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->slotFileCountAndSizeChange(_arg0));
 }
 
 TEST_F(BasicWidgetTest, slotFileHide)
 {
-    // slotFileHide
-    SUCCEED();
+    // Test method: void slotFileHide((Qt::CheckState state))
+    EXPECT_NO_FATAL_FAILURE(obj->slotFileHide(Qt::CheckState()));
 }
 
 TEST_F(BasicWidgetTest, slotOpenFileLocation)
 {
-    // slotOpenFileLocation
-    SUCCEED();
+    // Test method: void slotOpenFileLocation(())
+    EXPECT_NO_FATAL_FAILURE(obj->slotOpenFileLocation());
 }
 
 TEST_F(BasicWidgetTest, startFileCountScan)
 {
-    // startFileCountScan
-    SUCCEED();
+    // Test method: void startFileCountScan((const QList<QUrl> &urls))
+    QList<QUrl> _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->startFileCountScan(_arg0));
 }
 
 TEST_F(BasicWidgetTest, updateFileUrl)
 {
-    // updateFileUrl
-    SUCCEED();
+    // Test method: void updateFileUrl((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->updateFileUrl(_arg0));
 }
 
 TEST_F(BasicWidgetTest, videoExtenInfo)
 {
-    // videoExtenInfo
-    SUCCEED();
+    // Test method: void videoExtenInfo((const QUrl &url, QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> properties))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->videoExtenInfo(_arg0, QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant>()));
 }
-

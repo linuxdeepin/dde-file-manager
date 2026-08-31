@@ -3,51 +3,71 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_vaultremovepages_1.cpp
- * @brief Unit tests for VaultRemovePages Low-priority methods
+ * @file test_vaultremovepages_1.cpp
+ * @brief Unit tests for VaultRemovePages methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class VaultRemovePagesTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/vaultremovepages.h"
+
+#include <QTest>
+
+using namespace dfmplugin_vault;
+
+class VaultRemovePagesTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new VaultRemovePages();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    VaultRemovePages *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(VaultRemovePagesTest, initConnect)
 {
-    // initConnect
-    SUCCEED();
+    // Test method: void initConnect(())
+    EXPECT_NO_FATAL_FAILURE(obj->initConnect());
 }
 
 TEST_F(VaultRemovePagesTest, initUI)
 {
-    // initUI
-    SUCCEED();
+    // Test method: void initUI(())
+    EXPECT_NO_FATAL_FAILURE(obj->initUI());
 }
 
 TEST_F(VaultRemovePagesTest, setBtnEnable)
 {
-    // setBtnEnable
-    SUCCEED();
+    // Test setter: void setBtnEnable((int index, bool enable))
+    EXPECT_NO_FATAL_FAILURE(obj->setBtnEnable(0, false));
 }
 
 TEST_F(VaultRemovePagesTest, showNodeWidget)
 {
-    // showNodeWidget
-    SUCCEED();
+    // Test method: void showNodeWidget(())
+    EXPECT_NO_FATAL_FAILURE(obj->showNodeWidget());
 }
 
 TEST_F(VaultRemovePagesTest, showPasswordWidget)
 {
-    // showPasswordWidget
-    SUCCEED();
+    // Test method: void showPasswordWidget(())
+    EXPECT_NO_FATAL_FAILURE(obj->showPasswordWidget());
 }
 
 TEST_F(VaultRemovePagesTest, showRecoveryKeyWidget)
 {
-    // showRecoveryKeyWidget
-    SUCCEED();
+    // Test method: void showRecoveryKeyWidget(())
+    EXPECT_NO_FATAL_FAILURE(obj->showRecoveryKeyWidget());
 }
-

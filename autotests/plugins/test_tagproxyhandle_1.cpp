@@ -3,111 +3,169 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_tagproxyhandle_1.cpp
- * @brief Unit tests for TagProxyHandle Low-priority methods
+ * @file test_tagproxyhandle_1.cpp
+ * @brief Unit tests for TagProxyHandle methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class TagProxyHandleTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "data/tagproxyhandle.h"
+
+#include <QTest>
+
+using namespace dfmplugin_tag;
+
+class TagProxyHandleTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new TagProxyHandle();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    TagProxyHandle *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(TagProxyHandleTest, TagProxyHandle)
 {
-    // TagProxyHandle
-    SUCCEED();
+    // Test constructor: TagProxyHandle((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(TagProxyHandleTest, addTags)
 {
-    // addTags
-    SUCCEED();
+    // Test method: bool addTags((const QVariantMap &value))
+    QVariantMap _arg0{};
+    auto result = obj->addTags(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(TagProxyHandleTest, addTagsForFiles)
 {
-    // addTagsForFiles
-    SUCCEED();
+    // Test method: bool addTagsForFiles((const QVariantMap &value))
+    QVariantMap _arg0{};
+    auto result = obj->addTagsForFiles(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(TagProxyHandleTest, changeFilePaths)
 {
-    // changeFilePaths
-    SUCCEED();
+    // Test method: bool changeFilePaths((const QVariantMap &value))
+    QVariantMap _arg0{};
+    auto result = obj->changeFilePaths(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(TagProxyHandleTest, changeTagNamesWithFiles)
 {
-    // changeTagNamesWithFiles
-    SUCCEED();
+    // Test method: bool changeTagNamesWithFiles((const QVariantMap &value))
+    QVariantMap _arg0{};
+    auto result = obj->changeTagNamesWithFiles(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(TagProxyHandleTest, changeTagsColor)
 {
-    // changeTagsColor
-    SUCCEED();
+    // Test method: bool changeTagsColor((const QVariantMap &value))
+    QVariantMap _arg0{};
+    auto result = obj->changeTagsColor(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(TagProxyHandleTest, connectToService)
 {
-    // connectToService
-    SUCCEED();
+    // Test bool getter: connectToService()
+    bool result = obj->connectToService();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(TagProxyHandleTest, getAllFileWithTags)
 {
-    // getAllFileWithTags
-    SUCCEED();
+    // Test getter: QVariantHash getAllFileWithTags()
+    auto result = obj->getAllFileWithTags();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(TagProxyHandleTest, getAllTags)
 {
-    // getAllTags
-    SUCCEED();
+    // Test getter: QVariantMap getAllTags()
+    auto result = obj->getAllTags();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(TagProxyHandleTest, getAllTrashFileTags)
 {
-    // getAllTrashFileTags
-    SUCCEED();
+    // Test getter: QVariantHash getAllTrashFileTags()
+    auto result = obj->getAllTrashFileTags();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(TagProxyHandleTest, getFilesThroughTag)
 {
-    // getFilesThroughTag
-    SUCCEED();
+    // Test method: QVariantMap getFilesThroughTag((const QStringList &value))
+    QStringList _arg0{};
+    auto result = obj->getFilesThroughTag(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(TagProxyHandleTest, getSameTagsOfDiffFiles)
 {
-    // getSameTagsOfDiffFiles
-    SUCCEED();
+    // Test method: QVariant getSameTagsOfDiffFiles((const QStringList &value))
+    QStringList _arg0{};
+    auto result = obj->getSameTagsOfDiffFiles(_arg0);
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(TagProxyHandleTest, getTagsColor)
 {
-    // getTagsColor
-    SUCCEED();
+    // Test method: QVariantMap getTagsColor((const QStringList &value))
+    QStringList _arg0{};
+    auto result = obj->getTagsColor(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(TagProxyHandleTest, getTagsThroughFile)
 {
-    // getTagsThroughFile
-    SUCCEED();
+    // Test method: QVariantMap getTagsThroughFile((const QStringList &value))
+    QStringList _arg0{};
+    auto result = obj->getTagsThroughFile(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(TagProxyHandleTest, getTrashFileTags)
 {
-    // getTrashFileTags
-    SUCCEED();
+    // Test method: QStringList getTrashFileTags((const QString &originalPath, qint64 inode))
+    QString _arg0{};
+    auto result = obj->getTrashFileTags(_arg0, 0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(TagProxyHandleTest, TagProxyHandle_Destructor)
 {
-    // ~TagProxyHandle
-    SUCCEED();
+    // Test method:  ~TagProxyHandle(())
+    EXPECT_NO_FATAL_FAILURE({ TagProxyHandle *tmp = new TagProxyHandle(); delete tmp; });
 }
-

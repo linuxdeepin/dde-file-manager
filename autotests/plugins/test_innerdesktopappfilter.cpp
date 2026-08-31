@@ -4,37 +4,65 @@
 
 /**
  * @file test_innerdesktopappfilter.cpp
- * @brief Unit tests for InnerDesktopAppFilter Mid-priority methods
+ * @brief Unit tests for InnerDesktopAppFilter methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class InnerDesktopAppFilterTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "models/filters/innerdesktopappfilter.h"
+
+#include <QTest>
+
+using namespace ddplugin_organizer;
+
+class InnerDesktopAppFilterTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new InnerDesktopAppFilter();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    InnerDesktopAppFilter *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(InnerDesktopAppFilterTest, InnerDesktopAppFilter)
 {
-    // InnerDesktopAppFilter
-    SUCCEED();
+    // Test constructor: InnerDesktopAppFilter((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(InnerDesktopAppFilterTest, acceptReset)
 {
-    // acceptReset
-    SUCCEED();
+    // Test method: QList<QUrl> acceptReset((const QList<QUrl> &urls))
+    QList<QUrl> _arg0{};
+    auto result = obj->acceptReset(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(InnerDesktopAppFilterTest, changed)
 {
-    // changed
-    SUCCEED();
+    // Test method: void changed((const QString &key))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->changed(_arg0));
 }
 
 TEST_F(InnerDesktopAppFilterTest, resetFilter)
 {
-    // resetFilter
-    SUCCEED();
+    // Test method: bool resetFilter((QList<QUrl> &urls))
+    QList<QUrl> _arg0{};
+    auto result = obj->resetFilter(_arg0);
+    EXPECT_FALSE(result);
+
 }

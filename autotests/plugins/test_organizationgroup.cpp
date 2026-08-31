@@ -4,43 +4,66 @@
 
 /**
  * @file test_organizationgroup.cpp
- * @brief Unit tests for OrganizationGroup Mid-priority methods
+ * @brief Unit tests for OrganizationGroup methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class OrganizationGroupTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "options/organizationgroup.h"
+
+#include <QTest>
+
+using namespace ddplugin_organizer;
+
+class OrganizationGroupTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new OrganizationGroup();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    OrganizationGroup *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(OrganizationGroupTest, OrganizationGroup)
 {
-    // OrganizationGroup
-    SUCCEED();
+    // Test constructor: OrganizationGroup((QWidget *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(OrganizationGroupTest, buildTypeLayout)
 {
-    // buildTypeLayout
-    SUCCEED();
+    // Test getter: QLayout buildTypeLayout()
+    auto result = obj->buildTypeLayout();
+    EXPECT_NO_FATAL_FAILURE({ obj->buildTypeLayout(); });
+
 }
 
 TEST_F(OrganizationGroupTest, clearShortcutWidget)
 {
-    // clearShortcutWidget
-    SUCCEED();
+    // Test method: void clearShortcutWidget(())
+    EXPECT_NO_FATAL_FAILURE(obj->clearShortcutWidget());
 }
 
 TEST_F(OrganizationGroupTest, clearlAll)
 {
-    // clearlAll
-    SUCCEED();
+    // Test method: void clearlAll(())
+    EXPECT_NO_FATAL_FAILURE(obj->clearlAll());
 }
 
 TEST_F(OrganizationGroupTest, reset)
 {
-    // reset
-    SUCCEED();
+    // Test method: void reset(())
+    EXPECT_NO_FATAL_FAILURE(obj->reset());
 }

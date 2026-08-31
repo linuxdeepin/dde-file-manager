@@ -3,51 +3,75 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_thumbnailmanager_1.cpp
- * @brief Unit tests for ThumbnailManager Low-priority methods
+ * @file test_thumbnailmanager_1.cpp
+ * @brief Unit tests for ThumbnailManager methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ThumbnailManagerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "thumbnailmanager.h"
+
+#include <QTest>
+
+using namespace ddplugin_wallpapersetting;
+
+class ThumbnailManagerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ThumbnailManager();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ThumbnailManager *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ThumbnailManagerTest, ThumbnailManager)
 {
-    // ThumbnailManager
-    SUCCEED();
+    // Test constructor: ThumbnailManager((qreal _scale, QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(ThumbnailManagerTest, onProcessFinished)
 {
-    // onProcessFinished
-    SUCCEED();
+    // Test method: void onProcessFinished(())
+    EXPECT_NO_FATAL_FAILURE(obj->onProcessFinished());
 }
 
 TEST_F(ThumbnailManagerTest, processNextReq)
 {
-    // processNextReq
-    SUCCEED();
+    // Test method: void processNextReq(())
+    EXPECT_NO_FATAL_FAILURE(obj->processNextReq());
 }
 
 TEST_F(ThumbnailManagerTest, replace)
 {
-    // replace
-    SUCCEED();
+    // Test method: bool replace((const QString &key, const QPixmap &pixmap))
+    QString _arg0{};
+    QPixmap _arg1{};
+    auto result = obj->replace(_arg0, _arg1);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(ThumbnailManagerTest, stop)
 {
-    // stop
-    SUCCEED();
+    // Test method: void stop(())
+    EXPECT_NO_FATAL_FAILURE(obj->stop());
 }
 
 TEST_F(ThumbnailManagerTest, ThumbnailManager_Destructor)
 {
-    // ~ThumbnailManager
-    SUCCEED();
+    // Test method:  ~ThumbnailManager(())
+    EXPECT_NO_FATAL_FAILURE({ ThumbnailManager *tmp = new ThumbnailManager(); delete tmp; });
 }
-

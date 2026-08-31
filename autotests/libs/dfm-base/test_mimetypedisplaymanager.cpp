@@ -4,31 +4,58 @@
 
 /**
  * @file test_mimetypedisplaymanager.cpp
- * @brief Unit tests for MimeTypeDisplayManager Mid-priority methods
+ * @brief Unit tests for MimeTypeDisplayManager methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class MimeTypeDisplayManagerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "dfm-base/mimetype/mimetypedisplaymanager.h"
+
+#include <QTest>
+
+using namespace src;
+
+class MimeTypeDisplayManagerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new MimeTypeDisplayManager();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    MimeTypeDisplayManager *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(MimeTypeDisplayManagerTest, MimeTypeDisplayManager)
 {
-    // MimeTypeDisplayManager
-    SUCCEED();
+    // Test constructor: MimeTypeDisplayManager((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(MimeTypeDisplayManagerTest, displayNameToEnum)
 {
-    // displayNameToEnum
-    SUCCEED();
+    // Test method: FileInfo::FileType displayNameToEnum((const QString &mimeType))
+    QString _arg0{};
+    auto result = obj->displayNameToEnum(_arg0);
+    EXPECT_GE(static_cast<int>(result), 0);
+
 }
 
 TEST_F(MimeTypeDisplayManagerTest, readlines)
 {
-    // readlines
-    SUCCEED();
+    // Test method: QStringList readlines((const QString &path))
+    QString _arg0{};
+    auto result = obj->readlines(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }

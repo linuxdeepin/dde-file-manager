@@ -77,12 +77,12 @@ TEST(AbstractBaseViewTest, LocalViewDestructsCleanly)
 
 TEST(AbstractBaseViewTest, deleteLater)
 {
-    // deleteLater
-    SUCCEED();
+    AbstractBaseView obj;
+    EXPECT_NO_FATAL_FAILURE(obj.deleteLater());
 }
 
 TEST(AbstractBaseViewTest, notifyStateChanged)
 {
-    // notifyStateChanged
-    SUCCEED();
+    AbstractBaseView obj;
+    EXPECT_NO_FATAL_FAILURE(obj.notifyStateChanged());
 }

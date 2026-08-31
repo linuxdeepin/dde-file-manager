@@ -4,19 +4,40 @@
 
 /**
  * @file test_extendcanvasscene.cpp
- * @brief Unit tests for ExtendCanvasScene Mid-priority methods
+ * @brief Unit tests for ExtendCanvasScene methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ExtendCanvasSceneTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "menus/extendcanvasscene.h"
+
+#include <QTest>
+
+using namespace ddplugin_organizer;
+
+class ExtendCanvasSceneTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ExtendCanvasScene();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ExtendCanvasScene *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ExtendCanvasSceneTest, ExtendCanvasScene)
 {
-    // ExtendCanvasScene
-    SUCCEED();
+    // Test constructor: ExtendCanvasScene((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }

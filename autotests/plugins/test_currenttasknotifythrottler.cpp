@@ -4,19 +4,42 @@
 
 /**
  * @file test_currenttasknotifythrottler.cpp
- * @brief Unit tests for CurrentTaskNotifyThrottler Mid-priority methods
+ * @brief Unit tests for CurrentTaskNotifyThrottler methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class CurrentTaskNotifyThrottlerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "fileoperations/fileoperationutils/currenttasknotifythrottler.h"
+
+#include <QTest>
+
+using namespace dfmplugin_fileoperations;
+
+class CurrentTaskNotifyThrottlerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new CurrentTaskNotifyThrottler();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    CurrentTaskNotifyThrottler *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(CurrentTaskNotifyThrottlerTest, flush)
 {
-    // flush
-    SUCCEED();
+    // Test getter: std::optional<CurrentTaskNotifyThrottler::Task> flush()
+    auto result = obj->flush();
+    EXPECT_FALSE(result.has_value());
+
 }

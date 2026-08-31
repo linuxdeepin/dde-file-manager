@@ -223,7 +223,7 @@ TEST_F(FileUtilsHighTest, FileCanTrashExistingFileNoCrash)
     QString path = makeFile("trashable.txt");
     QUrl url = QUrl::fromLocalFile(path);
     // Just verify no crash — result depends on environment (root vs user)
-    EXPECT_NO_FATAL_FAILURE({ (void)FileUtils::fileCanTrash(url); });
+    EXPECT_NO_FATAL_FAILURE({ FileUtils::fileCanTrash(url); });
 }
 
 TEST_F(FileUtilsHighTest, FileCanTrashEmptyUrl)
@@ -266,8 +266,7 @@ TEST_F(FileUtilsHighTest, FileBatchAddTextNonExistentFileNoCrash)
     QUrl url = QUrl::fromLocalFile(rootPath + "/ghost.txt");
     // InfoFactory creates info lazily even for non-existent files; verify no crash
     EXPECT_NO_FATAL_FAILURE({
-        auto result = FileUtils::fileBatchAddText({ url }, { QString("_x"), AbstractJobHandler::FileNameAddFlag::kSuffix });
-        (void)result;
+        EXPECT_NO_FATAL_FAILURE({ auto result = FileUtils::fileBatchAddText({ url }, { QString("_x"), AbstractJobHandler::FileNameAddFlag::kSuffix }); });
     });
 }
 
@@ -342,8 +341,7 @@ TEST_F(FileUtilsHighTest, FileBatchReplaceTextNonExistentNoCrash)
     QUrl url = QUrl::fromLocalFile(rootPath + "/nope.txt");
     // InfoFactory creates info lazily even for non-existent files; verify no crash
     EXPECT_NO_FATAL_FAILURE({
-        auto result = FileUtils::fileBatchReplaceText({ url }, { QString("a"), QString("b") });
-        (void)result;
+        EXPECT_NO_FATAL_FAILURE({ auto result = FileUtils::fileBatchReplaceText({ url }, { QString("a"), QString("b") }); });
     });
 }
 
@@ -351,14 +349,10 @@ TEST_F(FileUtilsHighTest, FileBatchReplaceTextNonExistentNoCrash)
 
 TEST_F(FileUtilsHighTest, NotifyFileChangeManualFileDeleted)
 {
-    EXPECT_NO_FATAL_FAILURE({
-        FileUtils::notifyFileChangeManual(Global::FileNotifyType::kFileDeleted, QUrl("file:///tmp/dfm_high_notify_del"));
-    });
+    EXPECT_NO_FATAL_FAILURE({ FileUtils::notifyFileChangeManual(Global::FileNotifyType::kFileDeleted, QUrl("file:///tmp/dfm_high_notify_del")); });
 }
 
 TEST_F(FileUtilsHighTest, NotifyFileChangeManualFileChanged)
 {
-    EXPECT_NO_FATAL_FAILURE({
-        FileUtils::notifyFileChangeManual(Global::FileNotifyType::kFileChanged, QUrl("file:///tmp/dfm_high_notify_chg"));
-    });
+    EXPECT_NO_FATAL_FAILURE({ FileUtils::notifyFileChangeManual(Global::FileNotifyType::kFileChanged, QUrl("file:///tmp/dfm_high_notify_chg")); });
 }

@@ -3,87 +3,123 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_collectionframe_1.cpp
- * @brief Unit tests for CollectionFrame Low-priority methods
+ * @file test_collectionframe_1.cpp
+ * @brief Unit tests for CollectionFrame methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class CollectionFrameTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "view/collectionframe.h"
+
+#include <QTest>
+
+using namespace ddplugin_organizer;
+
+class CollectionFrameTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new CollectionFrame();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    CollectionFrame *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(CollectionFrameTest, collectionFeatures)
 {
-    // collectionFeatures
-    SUCCEED();
+    // Test getter: CollectionFrame::CollectionFrameFeatures collectionFeatures()
+    auto result = obj->collectionFeatures();
+    EXPECT_GE(static_cast<int>(result), 0);
+
 }
 
 TEST_F(CollectionFrameTest, eventFilter)
 {
-    // eventFilter
-    SUCCEED();
+    // Test method: bool eventFilter((QObject *obj, QEvent *event))
+    auto result = obj->eventFilter(nullptr, nullptr);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(CollectionFrameTest, focusOutEvent)
 {
-    // focusOutEvent
-    SUCCEED();
+    // Test event handler: focusOutEvent((QFocusEvent *event))
+    QFocusEvent _event(QFocusEvent::None);
+    EXPECT_NO_FATAL_FAILURE(obj->focusOutEvent(&_event));
 }
 
 TEST_F(CollectionFrameTest, initUi)
 {
-    // initUi
-    SUCCEED();
+    // Test method: void initUi(())
+    EXPECT_NO_FATAL_FAILURE(obj->initUi());
 }
 
 TEST_F(CollectionFrameTest, paintEvent)
 {
-    // paintEvent
-    SUCCEED();
+    // Test event handler: paintEvent((QPaintEvent *event))
+    QPaintEvent _event(QPaintEvent::None);
+    EXPECT_NO_FATAL_FAILURE(obj->paintEvent(&_event));
 }
 
 TEST_F(CollectionFrameTest, resizeEvent)
 {
-    // resizeEvent
-    SUCCEED();
+    // Test event handler: resizeEvent((QResizeEvent *event))
+    QResizeEvent _event(QResizeEvent::None);
+    EXPECT_NO_FATAL_FAILURE(obj->resizeEvent(&_event));
 }
 
 TEST_F(CollectionFrameTest, setCollectionFeatures)
 {
-    // setCollectionFeatures
-    SUCCEED();
+    // Test setter: void setCollectionFeatures((const CollectionFrameFeatures &features))
+    CollectionFrameFeatures _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->setCollectionFeatures(_arg0));
 }
 
 TEST_F(CollectionFrameTest, setStretchStyle)
 {
-    // setStretchStyle
-    SUCCEED();
+    // Test setter: void setStretchStyle((const CollectionFrame::CollectionFrameStretchStyle &style))
+    CollectionFrame::CollectionFrameStretchStyle _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->setStretchStyle(_arg0));
 }
 
 TEST_F(CollectionFrameTest, showEvent)
 {
-    // showEvent
-    SUCCEED();
+    // Test event handler: showEvent((QShowEvent *event))
+    QShowEvent _event(QShowEvent::None);
+    EXPECT_NO_FATAL_FAILURE(obj->showEvent(&_event));
 }
 
 TEST_F(CollectionFrameTest, stretchStep)
 {
-    // stretchStep
-    SUCCEED();
+    // Test getter: int stretchStep()
+    auto result = obj->stretchStep();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(CollectionFrameTest, stretchStyle)
 {
-    // stretchStyle
-    SUCCEED();
+    // Test getter: CollectionFrame::CollectionFrameStretchStyle stretchStyle()
+    auto result = obj->stretchStyle();
+    EXPECT_GE(static_cast<int>(result), 0);
+
 }
 
 TEST_F(CollectionFrameTest, widget)
 {
-    // widget
-    SUCCEED();
-}
+    // Test getter: QWidget widget()
+    auto result = obj->widget();
+    EXPECT_NO_FATAL_FAILURE({ obj->widget(); });
 
+}

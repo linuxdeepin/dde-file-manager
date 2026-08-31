@@ -70,11 +70,10 @@ TEST_F(BacktraceTest, InstallStackTraceHandler_Basic)
 {
     // 测试安装堆栈跟踪处理器
     // 由于使用std::once_flag，多次调用只会执行一次
-    dpf::backtrace::installStackTraceHandler();
-    dpf::backtrace::installStackTraceHandler();   // 第二次调用应该被忽略
-
-    // 验证函数调用成功（如果到达这里说明没有崩溃）
-    EXPECT_TRUE(true);
+    EXPECT_NO_FATAL_FAILURE({
+        dpf::backtrace::installStackTraceHandler();
+        dpf::backtrace::installStackTraceHandler();
+    });
 }
 
 /**
@@ -478,8 +477,7 @@ TEST_F(BacktraceTest, ComprehensiveTest)
     dpf::backtrace::inner::printStack(frames, 2);
 
     // 4. 重复安装验证once_flag
-    dpf::backtrace::installStackTraceHandler();
+    EXPECT_NO_FATAL_FAILURE({ dpf::backtrace::installStackTraceHandler(); });
 
     // 如果到达这里说明所有功能都正常工作
-    EXPECT_TRUE(true);
 }

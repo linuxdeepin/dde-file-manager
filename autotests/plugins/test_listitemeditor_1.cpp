@@ -3,75 +3,102 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_listitemeditor_1.cpp
- * @brief Unit tests for ListItemEditor Low-priority methods
+ * @file test_listitemeditor_1.cpp
+ * @brief Unit tests for ListItemEditor methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ListItemEditorTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/listitemeditor.h"
+
+#include <QTest>
+
+using namespace dfmplugin_workspace;
+
+class ListItemEditorTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ListItemEditor();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ListItemEditor *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ListItemEditorTest, ListItemEditor)
 {
-    // ListItemEditor
-    SUCCEED();
+    // Test constructor: ListItemEditor((QWidget *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(ListItemEditorTest, createTooltip)
 {
-    // createTooltip
-    SUCCEED();
+    // Test getter: DArrowRectangle createTooltip()
+    auto result = obj->createTooltip();
+    EXPECT_NO_FATAL_FAILURE({ obj->createTooltip(); });
+
 }
 
 TEST_F(ListItemEditorTest, init)
 {
-    // init
-    SUCCEED();
+    // Test method: void init(())
+    EXPECT_NO_FATAL_FAILURE(obj->init());
 }
 
 TEST_F(ListItemEditorTest, maxCharSize)
 {
-    // maxCharSize
-    SUCCEED();
+    // Test getter: int maxCharSize()
+    auto result = obj->maxCharSize();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(ListItemEditorTest, onEditorTextChanged)
 {
-    // onEditorTextChanged
-    SUCCEED();
+    // Test method: void onEditorTextChanged((const QString &text))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->onEditorTextChanged(_arg0));
 }
 
 TEST_F(ListItemEditorTest, select)
 {
-    // select
-    SUCCEED();
+    // Test method: void select((const QString &part))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->select(_arg0));
 }
 
 TEST_F(ListItemEditorTest, setCharCountLimit)
 {
-    // setCharCountLimit
-    SUCCEED();
+    // Test method: void setCharCountLimit(())
+    EXPECT_NO_FATAL_FAILURE(obj->setCharCountLimit());
 }
 
 TEST_F(ListItemEditorTest, setMaxCharSize)
 {
-    // setMaxCharSize
-    SUCCEED();
+    // Test method: void setMaxCharSize(())
+    EXPECT_NO_FATAL_FAILURE(obj->setMaxCharSize());
 }
 
 TEST_F(ListItemEditorTest, showAlertMessage)
 {
-    // showAlertMessage
-    SUCCEED();
+    // Test method: void showAlertMessage((const QString &text, int duration))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->showAlertMessage(_arg0, 0));
 }
 
 TEST_F(ListItemEditorTest, ListItemEditor_Destructor)
 {
-    // ~ListItemEditor
-    SUCCEED();
+    // Test method:  ~ListItemEditor(())
+    EXPECT_NO_FATAL_FAILURE({ ListItemEditor *tmp = new ListItemEditor(); delete tmp; });
 }
-

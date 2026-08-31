@@ -3,57 +3,88 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_filetaginfo_1.cpp
- * @brief Unit tests for FileTagInfo Low-priority methods
+ * @file test_filetaginfo_1.cpp
+ * @brief Unit tests for FileTagInfo methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class FileTagInfoTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "tools/upgrade/units/beans/filetaginfo.h"
+
+#include <QTest>
+
+using namespace src;
+
+class FileTagInfoTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new FileTagInfo();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FileTagInfo *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(FileTagInfoTest, getFileIndex)
 {
-    // getFileIndex
-    SUCCEED();
+    // Test getter: int getFileIndex()
+    auto result = obj->getFileIndex();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(FileTagInfoTest, getFilePath)
 {
-    // getFilePath
-    SUCCEED();
+    // Test getter: QString getFilePath()
+    auto result = obj->getFilePath();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(FileTagInfoTest, getFuture)
 {
-    // getFuture
-    SUCCEED();
+    // Test getter: QString getFuture()
+    auto result = obj->getFuture();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(FileTagInfoTest, getTagName)
 {
-    // getTagName
-    SUCCEED();
+    // Test getter: QString getTagName()
+    auto result = obj->getTagName();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(FileTagInfoTest, getTagOrder)
 {
-    // getTagOrder
-    SUCCEED();
+    // Test getter: int getTagOrder()
+    auto result = obj->getTagOrder();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(FileTagInfoTest, setFileIndex)
 {
-    // setFileIndex
-    SUCCEED();
+    // Test setter: void setFileIndex((int value))
+    EXPECT_NO_FATAL_FAILURE(obj->setFileIndex(0));
 }
 
 TEST_F(FileTagInfoTest, setFuture)
 {
-    // setFuture
-    SUCCEED();
+    // Test setter: void setFuture((const QString &value))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->setFuture(_arg0));
 }
-

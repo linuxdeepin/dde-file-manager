@@ -4,31 +4,53 @@
 
 /**
  * @file test_addressbarprivate.cpp
- * @brief Unit tests for AddressBarPrivate Mid-priority methods
+ * @brief Unit tests for AddressBarPrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class AddressBarPrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/addressbar.h"
+
+#include <QTest>
+
+using namespace dfmplugin_titlebar;
+
+class AddressBarPrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new AddressBarPrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    AddressBarPrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(AddressBarPrivateTest, AddressBarPrivate)
 {
-    // AddressBarPrivate
-    SUCCEED();
+    // Test constructor: AddressBarPrivate((AddressBar *qq))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(AddressBarPrivateTest, clearCompleterModel)
 {
-    // clearCompleterModel
-    SUCCEED();
+    // Test method: void clearCompleterModel(())
+    EXPECT_NO_FATAL_FAILURE(obj->clearCompleterModel());
 }
 
 TEST_F(AddressBarPrivateTest, completeIpAddress)
 {
-    // completeIpAddress
-    SUCCEED();
+    // Test method: void completeIpAddress((const QString &text))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->completeIpAddress(_arg0));
 }

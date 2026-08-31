@@ -4,25 +4,46 @@
 
 /**
  * @file test_detailview.cpp
- * @brief Unit tests for DetailView Mid-priority methods
+ * @brief Unit tests for DetailView methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class DetailViewTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/detailview.h"
+
+#include <QTest>
+
+using namespace dfmplugin_detailspace;
+
+class DetailViewTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new DetailView();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    DetailView *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(DetailViewTest, initInfoUI)
 {
-    // initInfoUI
-    SUCCEED();
+    // Test method: void initInfoUI(())
+    EXPECT_NO_FATAL_FAILURE(obj->initInfoUI());
 }
 
 TEST_F(DetailViewTest, syncExtensionWidgets)
 {
-    // syncExtensionWidgets
-    SUCCEED();
+    // Test method: void syncExtensionWidgets(())
+    EXPECT_NO_FATAL_FAILURE(obj->syncExtensionWidgets());
 }

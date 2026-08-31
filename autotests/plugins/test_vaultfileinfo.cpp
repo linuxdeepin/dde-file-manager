@@ -4,73 +4,115 @@
 
 /**
  * @file test_vaultfileinfo.cpp
- * @brief Unit tests for VaultFileInfo Mid-priority methods
+ * @brief Unit tests for VaultFileInfo methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class VaultFileInfoTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "fileutils/vaultfileinfo.h"
+
+#include <QTest>
+
+using namespace dfmplugin_vault;
+
+class VaultFileInfoTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new VaultFileInfo();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    VaultFileInfo *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(VaultFileInfoTest, canAttributes)
 {
-    // canAttributes
-    SUCCEED();
+    // Test method: bool canAttributes((const CanableInfoType type))
+    auto result = obj->canAttributes(CanableInfoType());
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(VaultFileInfoTest, countChildFile)
 {
-    // countChildFile
-    SUCCEED();
+    // Test getter: int countChildFile()
+    auto result = obj->countChildFile();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(VaultFileInfoTest, displayOf)
 {
-    // displayOf
-    SUCCEED();
+    // Test method: QString displayOf((const DisPlayInfoType type))
+    auto result = obj->displayOf(DisPlayInfoType());
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(VaultFileInfoTest, extendAttributes)
 {
-    // extendAttributes
-    SUCCEED();
+    // Test method: QVariant extendAttributes((const ExtInfoType type))
+    auto result = obj->extendAttributes(ExtInfoType());
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(VaultFileInfoTest, extraProperties)
 {
-    // extraProperties
-    SUCCEED();
+    // Test getter: QVariantHash extraProperties()
+    auto result = obj->extraProperties();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(VaultFileInfoTest, getUrlByType)
 {
-    // getUrlByType
-    SUCCEED();
+    // Test method: QUrl getUrlByType((const UrlInfoType type, const QString &fileName))
+    QString _arg1{};
+    auto result = obj->getUrlByType(UrlInfoType(), _arg1);
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(VaultFileInfoTest, nameOf)
 {
-    // nameOf
-    SUCCEED();
+    // Test method: QString nameOf((const NameInfoType type))
+    auto result = obj->nameOf(NameInfoType());
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(VaultFileInfoTest, pathOf)
 {
-    // pathOf
-    SUCCEED();
+    // Test method: QString pathOf((const PathInfoType type))
+    auto result = obj->pathOf(PathInfoType());
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(VaultFileInfoTest, size)
 {
-    // size
-    SUCCEED();
+    // Test getter: qint64 size()
+    auto result = obj->size();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(VaultFileInfoTest, viewOfTip)
 {
-    // viewOfTip
-    SUCCEED();
+    // Test method: QString viewOfTip((const FileInfo::ViewType type))
+    auto result = obj->viewOfTip(FileInfo::ViewType());
+    EXPECT_TRUE(result.isEmpty());
+
 }

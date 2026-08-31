@@ -165,24 +165,30 @@ TEST(PropertiesTest, SaveToInvalidPathReturnsFalse)
 
 TEST(PropertiesTest, Properties)
 {
-    // Properties
-    SUCCEED();
-}
+    Properties obj;
+    EXPECT_NO_FATAL_FAILURE({ Properties obj; });
+    }
+
 
 TEST(PropertiesTest, contains)
 {
-    // contains
-    SUCCEED();
+    Properties obj;
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.contains(_arg0); });
 }
 
 TEST(PropertiesTest, save)
 {
-    // save
-    SUCCEED();
+    Properties obj;
+    QString _arg0{};
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE({ obj.save(_arg0, _arg1); });
 }
 
 TEST(PropertiesTest, value)
 {
-    // value
-    SUCCEED();
+    Properties obj;
+    QString _arg0{};
+    QVariant _arg1{};
+    EXPECT_NO_FATAL_FAILURE({ obj.value(_arg0, _arg1); });
 }

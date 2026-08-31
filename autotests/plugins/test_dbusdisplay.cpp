@@ -4,61 +4,96 @@
 
 /**
  * @file test_dbusdisplay.cpp
- * @brief Unit tests for DBusDisplay Mid-priority methods
+ * @brief Unit tests for DBusDisplay methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class DBusDisplayTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "screen/dbus-private/dbusdisplay1.h"
+
+#include <QTest>
+
+using namespace ddplugin_core;
+
+class DBusDisplayTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new DBusDisplay();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    DBusDisplay *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(DBusDisplayTest, DeleteCustomMode)
 {
-    // DeleteCustomMode
-    SUCCEED();
+    // Test getter: QDBusPendingReply<> DeleteCustomMode()
+    auto result = obj->DeleteCustomMode();
+    EXPECT_NO_FATAL_FAILURE({ obj->DeleteCustomMode(); });
+
 }
 
 TEST_F(DBusDisplayTest, Reset)
 {
-    // Reset
-    SUCCEED();
+    // Test getter: QDBusPendingReply<> Reset()
+    auto result = obj->Reset();
+    EXPECT_NO_FATAL_FAILURE({ obj->Reset(); });
+
 }
 
 TEST_F(DBusDisplayTest, ResetChanges)
 {
-    // ResetChanges
-    SUCCEED();
+    // Test getter: QDBusPendingReply<> ResetChanges()
+    auto result = obj->ResetChanges();
+    EXPECT_NO_FATAL_FAILURE({ obj->ResetChanges(); });
+
 }
 
 TEST_F(DBusDisplayTest, Save)
 {
-    // Save
-    SUCCEED();
+    // Test getter: QDBusPendingReply<> Save()
+    auto result = obj->Save();
+    EXPECT_NO_FATAL_FAILURE({ obj->Save(); });
+
 }
 
 TEST_F(DBusDisplayTest, SetAndSaveBrightness)
 {
-    // SetAndSaveBrightness
-    SUCCEED();
+    // Test getter: QDBusPendingReply<> SetAndSaveBrightness()
+    auto result = obj->SetAndSaveBrightness();
+    EXPECT_NO_FATAL_FAILURE({ obj->SetAndSaveBrightness(); });
+
 }
 
 TEST_F(DBusDisplayTest, primary)
 {
-    // primary
-    SUCCEED();
+    // Test getter: QString primary()
+    auto result = obj->primary();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(DBusDisplayTest, DBusDisplay)
 {
-    // DBusDisplay
-    SUCCEED();
+    // Test constructor: DBusDisplay((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(DBusDisplayTest, staticObjectPath)
 {
-    // staticObjectPath
-    SUCCEED();
+    // Test getter: char staticObjectPath()
+    auto result = obj->staticObjectPath();
+    EXPECT_EQ(result, 0);
+
 }

@@ -3,21 +3,43 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_low_notificationhelper.cpp
- * @brief Unit tests for NotificationHelper Low-priority methods
+ * @file test_low_notificationhelper.cpp
+ * @brief Unit tests for NotificationHelper methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class NotificationHelperLowTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "services/diskencrypt/helpers/notificationhelper.h"
+
+#include <QTest>
+
+using namespace src;
+
+class NotificationHelperTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new NotificationHelper();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    NotificationHelper *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
-TEST_F(NotificationHelperLowTest, instance)
+TEST_F(NotificationHelperTest, instance)
 {
-    // instance
-    SUCCEED();
-}
+    // Test getter: FILE_ENCRYPT_USE_NS instance()
+    auto result = obj->instance();
+    EXPECT_NO_FATAL_FAILURE({ obj->instance(); });
 
+}

@@ -4,19 +4,42 @@
 
 /**
  * @file test_avfsmenuscene.cpp
- * @brief Unit tests for AvfsMenuScene Mid-priority methods
+ * @brief Unit tests for AvfsMenuScene methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class AvfsMenuSceneTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "menu/avfsmenuscene.h"
+
+#include <QTest>
+
+using namespace dfmplugin_avfsbrowser;
+
+class AvfsMenuSceneTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new AvfsMenuScene();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    AvfsMenuScene *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(AvfsMenuSceneTest, create)
 {
-    // create
-    SUCCEED();
+    // Test method: bool create((QMenu *parent))
+    auto result = obj->create(nullptr);
+    EXPECT_FALSE(result);
+
 }

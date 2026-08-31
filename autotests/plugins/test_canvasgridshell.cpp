@@ -4,25 +4,52 @@
 
 /**
  * @file test_canvasgridshell.cpp
- * @brief Unit tests for CanvasGridShell Mid-priority methods
+ * @brief Unit tests for CanvasGridShell methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class CanvasGridShellTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "interface/canvasgridshell.h"
+
+#include <QTest>
+
+using namespace ddplugin_organizer;
+
+class CanvasGridShellTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new CanvasGridShell();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    CanvasGridShell *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(CanvasGridShellTest, item)
 {
-    // item
-    SUCCEED();
+    // Test method: QString item((int index, const QPoint &gridPos))
+    QPoint _arg1{};
+    auto result = obj->item(0, _arg1);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(CanvasGridShellTest, point)
 {
-    // point
-    SUCCEED();
+    // Test method: int point((const QString &item, QPoint *pos))
+    QString _arg0{};
+    auto result = obj->point(_arg0, nullptr);
+    EXPECT_GE(result, 0);
+
 }

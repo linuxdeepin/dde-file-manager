@@ -4,19 +4,43 @@
 
 /**
  * @file test_organizerutils.cpp
- * @brief Unit tests for OrganizerUtils Mid-priority methods
+ * @brief Unit tests for OrganizerUtils methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class OrganizerUtilsTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/organizerutils.h"
+
+#include <QTest>
+
+using namespace ddplugin_organizer;
+
+class OrganizerUtilsTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new OrganizerUtils();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    OrganizerUtils *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(OrganizerUtilsTest, buildBitwiseEnabledCategory)
 {
-    // buildBitwiseEnabledCategory
-    SUCCEED();
+    // Test method: ItemCategories buildBitwiseEnabledCategory((const ItemCategories &flags))
+    ItemCategories _arg0{};
+    auto result = obj->buildBitwiseEnabledCategory(_arg0);
+    EXPECT_NO_FATAL_FAILURE({ obj->buildBitwiseEnabledCategory(_arg0); });
+
 }

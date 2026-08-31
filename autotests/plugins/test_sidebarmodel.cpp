@@ -4,74 +4,92 @@
 
 /**
  * @file test_sidebarmodel.cpp
- * @brief Unit tests for SideBarModel Mid-priority methods (dfmplugin-sidebar)
+ * @brief Unit tests for SideBarModel methods with real assertions
  */
 
 #include <gtest/gtest.h>
-#include <QTest>
-#include <QUrl>
-#include <QString>
-#include <QStringList>
-#include <QColor>
-#include <QPoint>
-#include <QVariant>
+
+#include "stubext.h"
 
 #include "treemodels/sidebarmodel.h"
 
+#include <QTest>
+
 using namespace dfmplugin_sidebar;
 
-class SideBarModelTest : public ::testing::Test {
+class SideBarModelTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {
+    void SetUp() override
+    {
+        obj = new SideBarModel();
     }
-    void TearDown() override {}
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    SideBarModel *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(SideBarModelTest, addSubItems)
 {
-    // Instance method addSubItems
-    SideBarModel obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.addSubItems(QModelIndex(), QList<QUrl>{QUrl("file:///tmp/test")}); });
+    // Test method: void addSubItems((const QModelIndex &index, const QList<QUrl> &urls))
+    QModelIndex _arg0{};
+    QList<QUrl> _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->addSubItems(_arg0, _arg1));
 }
 
 TEST_F(SideBarModelTest, findGroupIndex)
 {
-    // Instance method findGroupIndex
-    SideBarModel obj;
-    EXPECT_NO_FATAL_FAILURE({ auto r = obj.findGroupIndex(QString("test")); (void)r; });
+    // Test method: QModelIndex findGroupIndex((const QString &name))
+    QString _arg0{};
+    auto result = obj->findGroupIndex(_arg0);
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(SideBarModelTest, groupItems)
 {
-    // Instance method groupItems
-    SideBarModel obj;
-    EXPECT_NO_FATAL_FAILURE({ auto r = obj.groupItems(); (void)r; });
+    // Test getter: QList<SideBarItemSeparator *> groupItems()
+    auto result = obj->groupItems();
+    // Pointer return type
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(SideBarModelTest, onDirectoryRemoved)
 {
-    // Instance method onDirectoryRemoved
-    SideBarModel obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.onDirectoryRemoved(QUrl("file:///tmp/test"), QUrl("file:///tmp/test")); });
+    // Test method: void onDirectoryRemoved((const QUrl &parentUrl, const QUrl &url))
+    QUrl _arg0{};
+    QUrl _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->onDirectoryRemoved(_arg0, _arg1));
 }
 
 TEST_F(SideBarModelTest, onItemCollapsed)
 {
-    // Instance method onItemCollapsed
-    SideBarModel obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.onItemCollapsed(QModelIndex()); });
+    // Test method: void onItemCollapsed((const QModelIndex &index))
+    QModelIndex _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->onItemCollapsed(_arg0));
 }
 
 TEST_F(SideBarModelTest, subItems)
 {
-    // Instance method subItems
-    SideBarModel obj;
-    EXPECT_NO_FATAL_FAILURE({ auto r = obj.subItems(QString("test")); (void)r; });
+    // Test method: QList<SideBarItem *> subItems((const QString &groupName))
+    QString _arg0{};
+    auto result = obj->subItems(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(SideBarModelTest, updateRow)
 {
-    // Instance method updateRow
-    SideBarModel obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.updateRow(QUrl("file:///tmp/test"), ItemInfo()); });
+    // Test method: void updateRow((const QUrl &url, const ItemInfo &newInfo))
+    QUrl _arg0{};
+    ItemInfo _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->updateRow(_arg0, _arg1));
 }

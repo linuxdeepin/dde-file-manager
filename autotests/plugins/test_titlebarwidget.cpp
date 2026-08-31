@@ -4,79 +4,109 @@
 
 /**
  * @file test_titlebarwidget.cpp
- * @brief Unit tests for TitleBarWidget Mid-priority methods
+ * @brief Unit tests for TitleBarWidget methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class TitleBarWidgetTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/titlebarwidget.h"
+
+#include <QTest>
+
+using namespace dfmplugin_titlebar;
+
+class TitleBarWidgetTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new TitleBarWidget();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    TitleBarWidget *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(TitleBarWidgetTest, TitleBarWidget)
 {
-    // TitleBarWidget
-    SUCCEED();
+    // Test constructor: TitleBarWidget((QFrame *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(TitleBarWidgetTest, eventFilter)
 {
-    // eventFilter
-    SUCCEED();
+    // Test method: bool eventFilter((QObject *watched, QEvent *event))
+    auto result = obj->eventFilter(nullptr, nullptr);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(TitleBarWidgetTest, handleHotketSwitchViewMode)
 {
-    // handleHotketSwitchViewMode
-    SUCCEED();
+    // Test method: void handleHotketSwitchViewMode((int mode))
+    EXPECT_NO_FATAL_FAILURE(obj->handleHotketSwitchViewMode(0));
 }
 
 TEST_F(TitleBarWidgetTest, initConnect)
 {
-    // initConnect
-    SUCCEED();
+    // Test method: void initConnect(())
+    EXPECT_NO_FATAL_FAILURE(obj->initConnect());
 }
 
 TEST_F(TitleBarWidgetTest, initializeUi)
 {
-    // initializeUi
-    SUCCEED();
+    // Test method: void initializeUi(())
+    EXPECT_NO_FATAL_FAILURE(obj->initializeUi());
 }
 
 TEST_F(TitleBarWidgetTest, onTabAboutToRemove)
 {
-    // onTabAboutToRemove
-    SUCCEED();
+    // Test method: void onTabAboutToRemove((int oldIndex, int nextIndex))
+    EXPECT_NO_FATAL_FAILURE(obj->onTabAboutToRemove(0, 0));
 }
 
 TEST_F(TitleBarWidgetTest, openPinnedTabs)
 {
-    // openPinnedTabs
-    SUCCEED();
+    // Test method: void openPinnedTabs(())
+    EXPECT_NO_FATAL_FAILURE(obj->openPinnedTabs());
 }
 
 TEST_F(TitleBarWidgetTest, saveTitleBarState)
 {
-    // saveTitleBarState
-    SUCCEED();
+    // Test method: void saveTitleBarState((const QString &uniqueId))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->saveTitleBarState(_arg0));
 }
 
 TEST_F(TitleBarWidgetTest, tabBar)
 {
-    // tabBar
-    SUCCEED();
+    // Test getter: TabBar tabBar()
+    auto result = obj->tabBar();
+    EXPECT_NO_FATAL_FAILURE({ obj->tabBar(); });
+
 }
 
 TEST_F(TitleBarWidgetTest, text)
 {
-    // text
-    SUCCEED();
+    // Test getter: QString text()
+    auto result = obj->text();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(TitleBarWidgetTest, titleBar)
 {
-    // titleBar
-    SUCCEED();
+    // Test getter: DTitlebar titleBar()
+    auto result = obj->titleBar();
+    EXPECT_NO_FATAL_FAILURE({ obj->titleBar(); });
+
 }

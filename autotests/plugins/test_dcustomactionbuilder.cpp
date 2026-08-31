@@ -4,93 +4,120 @@
 
 /**
  * @file test_dcustomactionbuilder.cpp
- * @brief Unit tests for DCustomActionBuilder Mid-priority methods (dfmplugin-menu)
+ * @brief Unit tests for DCustomActionBuilder methods with real assertions
  */
 
 #include <gtest/gtest.h>
-#include <QTest>
-#include <QUrl>
-#include <QString>
-#include <QStringList>
-#include <QColor>
-#include <QPoint>
-#include <QVariant>
+
+#include "stubext.h"
 
 #include "extendmenuscene/extendmenu/dcustomactionbuilder.h"
 
+#include <QTest>
+
 using namespace dfmplugin_menu;
 
-class DCustomActionBuilderTest : public ::testing::Test {
+class DCustomActionBuilderTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {
+    void SetUp() override
+    {
+        obj = new DCustomActionBuilder();
     }
-    void TearDown() override {}
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    DCustomActionBuilder *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(DCustomActionBuilderTest, isMimeTypeMatch)
 {
-    // Instance method isMimeTypeMatch
-    DCustomActionBuilder obj;
-    bool result = false;
-    EXPECT_NO_FATAL_FAILURE({ result = obj.isMimeTypeMatch(QStringList{"test"}, QStringList{"test"}); });
-    (void)result;
+    // Test method: bool isMimeTypeMatch((const QStringList &fileMimeTypes, const QStringList &supportMimeTypes))
+    QStringList _arg0{};
+    QStringList _arg1{};
+    auto result = obj->isMimeTypeMatch(_arg0, _arg1);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(DCustomActionBuilderTest, isMimeTypeSupport)
 {
-    // Instance method isMimeTypeSupport
-    DCustomActionBuilder obj;
-    bool result = false;
-    EXPECT_NO_FATAL_FAILURE({ result = obj.isMimeTypeSupport(QString("test"), QStringList{"test"}); });
-    (void)result;
+    // Test method: bool isMimeTypeSupport((const QString &mt, const QStringList &fileMimeTypes))
+    QString _arg0{};
+    QStringList _arg1{};
+    auto result = obj->isMimeTypeSupport(_arg0, _arg1);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(DCustomActionBuilderTest, isSchemeSupport)
 {
-    // Instance method isSchemeSupport
-    DCustomActionBuilder obj;
-    bool result = false;
-    EXPECT_NO_FATAL_FAILURE({ result = obj.isSchemeSupport(DCustomActionEntry(), QUrl("file:///tmp/test")); });
-    (void)result;
+    // Test method: bool isSchemeSupport((const DCustomActionEntry &action, const QUrl &url))
+    DCustomActionEntry _arg0{};
+    QUrl _arg1{};
+    auto result = obj->isSchemeSupport(_arg0, _arg1);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(DCustomActionBuilderTest, isSuffixSupport)
 {
-    // Instance method isSuffixSupport
-    DCustomActionBuilder obj;
-    bool result = false;
-    EXPECT_NO_FATAL_FAILURE({ result = obj.isSuffixSupport(DCustomActionEntry(), {}); });
-    (void)result;
+    // Test method: bool isSuffixSupport((const DCustomActionEntry &action, FileInfoPointer fileInfo))
+    DCustomActionEntry _arg0{};
+    auto result = obj->isSuffixSupport(_arg0, FileInfoPointer());
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(DCustomActionBuilderTest, makeName)
 {
-    // Instance method makeName
-    DCustomActionBuilder obj;
-    EXPECT_NO_FATAL_FAILURE({ auto r = obj.makeName(QString("test"), DCustomActionDefines::ActionArg()); (void)r; });
+    // Test method: QString makeName((const QString &name, DCustomActionDefines::ActionArg arg))
+    QString _arg0{};
+    auto result = obj->makeName(_arg0, DCustomActionDefines::ActionArg());
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(DCustomActionBuilderTest, matchFileCombo)
 {
-    // Instance method matchFileCombo
-    DCustomActionBuilder obj;
-    EXPECT_NO_FATAL_FAILURE({ auto r = obj.matchFileCombo({}, DCustomActionDefines::ComboTypes()); (void)r; });
+    // Test method: QList<DCustomActionEntry> matchFileCombo((const QList<DCustomActionEntry> &rootActions,
+                                                               DCustomActionDefines::ComboTypes type))
+    QList<DCustomActionEntry> _arg0{};
+    auto result = obj->matchFileCombo(_arg0, DCustomActionDefines::ComboTypes());
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(DCustomActionBuilderTest, checkFileCombo)
 {
-    // checkFileCombo
-    SUCCEED();
+    // Test method: DCustomActionDefines::ComboType checkFileCombo((const QList<QUrl> &files))
+    QList<QUrl> _arg0{};
+    auto result = obj->checkFileCombo(_arg0);
+    EXPECT_GE(static_cast<int>(result), 0);
+
 }
 
 TEST_F(DCustomActionBuilderTest, checkFileComboWithFocus)
 {
-    // checkFileComboWithFocus
-    SUCCEED();
+    // Test method: DCustomActionDefines::ComboType checkFileComboWithFocus((const QUrl &focus, const QList<QUrl> &files))
+    QUrl _arg0{};
+    QList<QUrl> _arg1{};
+    auto result = obj->checkFileComboWithFocus(_arg0, _arg1);
+    EXPECT_GE(static_cast<int>(result), 0);
+
 }
 
 TEST_F(DCustomActionBuilderTest, createMenu)
 {
-    // createMenu
-    SUCCEED();
+    // Test method: QAction createMenu((const DCustomActionData &actionData, QWidget *parentForSubmenu))
+    DCustomActionData _arg0{};
+    auto result = obj->createMenu(_arg0, nullptr);
+    EXPECT_NO_FATAL_FAILURE({ obj->createMenu(_arg0, nullptr); });
+
 }

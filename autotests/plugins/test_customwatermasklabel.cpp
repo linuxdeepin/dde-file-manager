@@ -4,31 +4,52 @@
 
 /**
  * @file test_customwatermasklabel.cpp
- * @brief Unit tests for CustomWaterMaskLabel Mid-priority methods
+ * @brief Unit tests for CustomWaterMaskLabel methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class CustomWaterMaskLabelTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "watermask/customwatermasklabel.h"
+
+#include <QTest>
+
+using namespace ddplugin_canvas;
+
+class CustomWaterMaskLabelTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new CustomWaterMaskLabel();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    CustomWaterMaskLabel *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(CustomWaterMaskLabelTest, loadConfig)
 {
-    // loadConfig
-    SUCCEED();
+    // Test method: void loadConfig(())
+    EXPECT_NO_FATAL_FAILURE(obj->loadConfig());
 }
 
 TEST_F(CustomWaterMaskLabelTest, setPosition)
 {
-    // setPosition
-    SUCCEED();
+    // Test method: void setPosition(())
+    EXPECT_NO_FATAL_FAILURE(obj->setPosition());
 }
 
 TEST_F(CustomWaterMaskLabelTest, update)
 {
-    // update
-    SUCCEED();
+    // Test method: void update(())
+    EXPECT_NO_FATAL_FAILURE(obj->update());
 }

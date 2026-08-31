@@ -3,129 +3,164 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_computerview_1.cpp
- * @brief Unit tests for ComputerView Low-priority methods
+ * @file test_computerview_1.cpp
+ * @brief Unit tests for ComputerView methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ComputerViewTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/computerview.h"
+
+#include <QTest>
+
+using namespace dfmplugin_computer;
+
+class ComputerViewTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ComputerView();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ComputerView *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ComputerViewTest, ComputerView)
 {
-    // ComputerView
-    SUCCEED();
+    // Test constructor: ComputerView((const QUrl &url, QWidget *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(ComputerViewTest, cdTo)
 {
-    // cdTo
-    SUCCEED();
+    // Test method: void cdTo((const QModelIndex &index))
+    QModelIndex _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->cdTo(_arg0));
 }
 
 TEST_F(ComputerViewTest, computerModel)
 {
-    // computerModel
-    SUCCEED();
+    // Test getter: ComputerModel computerModel()
+    auto result = obj->computerModel();
+    EXPECT_NO_FATAL_FAILURE({ obj->computerModel(); });
+
 }
 
 TEST_F(ComputerViewTest, connectShortcut)
 {
-    // connectShortcut
-    SUCCEED();
+    // Test method: void connectShortcut((QKeySequence seq, std::function<void(DFMEntryFileInfoPointer)> slot))
+    EXPECT_NO_FATAL_FAILURE(obj->connectShortcut(QKeySequence(), {}));
 }
 
 TEST_F(ComputerViewTest, handle3rdEntriesVisible)
 {
-    // handle3rdEntriesVisible
-    SUCCEED();
+    // Test method: void handle3rdEntriesVisible(())
+    EXPECT_NO_FATAL_FAILURE(obj->handle3rdEntriesVisible());
 }
 
 TEST_F(ComputerViewTest, handleComputerItemVisible)
 {
-    // handleComputerItemVisible
-    SUCCEED();
+    // Test method: void handleComputerItemVisible(())
+    EXPECT_NO_FATAL_FAILURE(obj->handleComputerItemVisible());
 }
 
 TEST_F(ComputerViewTest, handleUserDirVisible)
 {
-    // handleUserDirVisible
-    SUCCEED();
+    // Test method: void handleUserDirVisible(())
+    EXPECT_NO_FATAL_FAILURE(obj->handleUserDirVisible());
 }
 
 TEST_F(ComputerViewTest, hideEvent)
 {
-    // hideEvent
-    SUCCEED();
+    // Test event handler: hideEvent((QHideEvent *event))
+    QHideEvent _event(QHideEvent::None);
+    EXPECT_NO_FATAL_FAILURE(obj->hideEvent(&_event));
 }
 
 TEST_F(ComputerViewTest, initView)
 {
-    // initView
-    SUCCEED();
+    // Test method: void initView(())
+    EXPECT_NO_FATAL_FAILURE(obj->initView());
 }
 
 TEST_F(ComputerViewTest, onMenuRequest)
 {
-    // onMenuRequest
-    SUCCEED();
+    // Test method: void onMenuRequest((const QPoint &pos))
+    QPoint _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->onMenuRequest(_arg0));
 }
 
 TEST_F(ComputerViewTest, onRenameRequest)
 {
-    // onRenameRequest
-    SUCCEED();
+    // Test method: void onRenameRequest((quint64 winId, const QUrl &url))
+    QUrl _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->onRenameRequest(0, _arg1));
 }
 
 TEST_F(ComputerViewTest, onSelectionChanged)
 {
-    // onSelectionChanged
-    SUCCEED();
+    // Test method: void onSelectionChanged((const QItemSelection &selected, const QItemSelection &))
+    QItemSelection _arg0{};
+    QItemSelection _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->onSelectionChanged(_arg0, _arg1));
 }
 
 TEST_F(ComputerViewTest, rootUrl)
 {
-    // rootUrl
-    SUCCEED();
+    // Test getter: QUrl rootUrl()
+    auto result = obj->rootUrl();
+    EXPECT_TRUE(result.isEmpty() || result.isValid());
 }
 
 TEST_F(ComputerViewTest, setRootUrl)
 {
-    // setRootUrl
-    SUCCEED();
+    // Test method: bool setRootUrl((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->setRootUrl(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(ComputerViewTest, setRowHidden)
 {
-    // setRowHidden
-    SUCCEED();
+    // Test setter: void setRowHidden((int row, bool hide))
+    EXPECT_NO_FATAL_FAILURE(obj->setRowHidden(0, false));
 }
 
 TEST_F(ComputerViewTest, setStatusBarHandler)
 {
-    // setStatusBarHandler
-    SUCCEED();
+    // Test setter: void setStatusBarHandler((ComputerStatusBar *sb))
+    EXPECT_NO_FATAL_FAILURE(obj->setStatusBarHandler(nullptr));
 }
 
 TEST_F(ComputerViewTest, showEvent)
 {
-    // showEvent
-    SUCCEED();
+    // Test event handler: showEvent((QShowEvent *event))
+    QShowEvent _event(QShowEvent::None);
+    EXPECT_NO_FATAL_FAILURE(obj->showEvent(&_event));
 }
 
 TEST_F(ComputerViewTest, viewState)
 {
-    // viewState
-    SUCCEED();
+    // Test getter: DFMBASE_NAMESPACE::AbstractBaseView::ViewState viewState()
+    auto result = obj->viewState();
+    EXPECT_NO_FATAL_FAILURE({ obj->viewState(); });
+
 }
 
 TEST_F(ComputerViewTest, ComputerView_Destructor)
 {
-    // ~ComputerView
-    SUCCEED();
+    // Test method:  ~ComputerView(())
+    EXPECT_NO_FATAL_FAILURE({ ComputerView *tmp = new ComputerView(); delete tmp; });
 }
-

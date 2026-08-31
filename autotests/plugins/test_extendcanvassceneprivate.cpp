@@ -3,51 +3,76 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_extendcanvassceneprivate.cpp
- * @brief Unit tests for ExtendCanvasScenePrivate Low-priority methods
+ * @file test_extendcanvassceneprivate.cpp
+ * @brief Unit tests for ExtendCanvasScenePrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ExtendCanvasScenePrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "menus/extendcanvasscene.h"
+
+#include <QTest>
+
+using namespace ddplugin_organizer;
+
+class ExtendCanvasScenePrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ExtendCanvasScenePrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ExtendCanvasScenePrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ExtendCanvasScenePrivateTest, ExtendCanvasScenePrivate)
 {
-    // ExtendCanvasScenePrivate
-    SUCCEED();
+    // Test constructor: ExtendCanvasScenePrivate((ExtendCanvasScene *qq))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(ExtendCanvasScenePrivateTest, emptyMenu)
 {
-    // emptyMenu
-    SUCCEED();
+    // Test method: void emptyMenu((QMenu *parent))
+    EXPECT_NO_FATAL_FAILURE(obj->emptyMenu(nullptr));
 }
 
 TEST_F(ExtendCanvasScenePrivateTest, normalMenu)
 {
-    // normalMenu
-    SUCCEED();
+    // Test method: void normalMenu((QMenu *parent))
+    EXPECT_NO_FATAL_FAILURE(obj->normalMenu(nullptr));
 }
 
 TEST_F(ExtendCanvasScenePrivateTest, organizeBySubActions)
 {
-    // organizeBySubActions
-    SUCCEED();
+    // Test method: QMenu organizeBySubActions((QMenu *menu))
+    auto result = obj->organizeBySubActions(nullptr);
+    EXPECT_NO_FATAL_FAILURE({ obj->organizeBySubActions(nullptr); });
+
 }
 
 TEST_F(ExtendCanvasScenePrivateTest, triggerSortby)
 {
-    // triggerSortby
-    SUCCEED();
+    // Test method: bool triggerSortby((const QString &actionId))
+    QString _arg0{};
+    auto result = obj->triggerSortby(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(ExtendCanvasScenePrivateTest, updateNormalMenu)
 {
-    // updateNormalMenu
-    SUCCEED();
+    // Test method: void updateNormalMenu((QMenu *parent))
+    EXPECT_NO_FATAL_FAILURE(obj->updateNormalMenu(nullptr));
 }
-

@@ -3,63 +3,87 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_permissionmanagerwidget_1.cpp
- * @brief Unit tests for PermissionManagerWidget Low-priority methods
+ * @file test_permissionmanagerwidget_1.cpp
+ * @brief Unit tests for PermissionManagerWidget methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class PermissionManagerWidgetTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/permissionmanagerwidget.h"
+
+#include <QTest>
+
+using namespace dfmplugin_propertydialog;
+
+class PermissionManagerWidgetTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new PermissionManagerWidget();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    PermissionManagerWidget *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(PermissionManagerWidgetTest, getPermissionString)
 {
-    // getPermissionString
-    SUCCEED();
+    // Test method: QString getPermissionString((int enumFlag))
+    auto result = obj->getPermissionString(0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(PermissionManagerWidgetTest, onComboBoxChanged)
 {
-    // onComboBoxChanged
-    SUCCEED();
+    // Test method: void onComboBoxChanged(())
+    EXPECT_NO_FATAL_FAILURE(obj->onComboBoxChanged());
 }
 
 TEST_F(PermissionManagerWidgetTest, paintEvent)
 {
-    // paintEvent
-    SUCCEED();
+    // Test event handler: paintEvent((QPaintEvent *evt))
+    QPaintEvent _event(QPaintEvent::None);
+    EXPECT_NO_FATAL_FAILURE(obj->paintEvent(&_event));
 }
 
 TEST_F(PermissionManagerWidgetTest, setComboBoxByPermission)
 {
-    // setComboBoxByPermission
-    SUCCEED();
+    // Test setter: void setComboBoxByPermission((QComboBox *cb, int permission, int offset))
+    EXPECT_NO_FATAL_FAILURE(obj->setComboBoxByPermission(nullptr, 0, 0));
 }
 
 TEST_F(PermissionManagerWidgetTest, setExecText)
 {
-    // setExecText
-    SUCCEED();
+    // Test method: void setExecText(())
+    EXPECT_NO_FATAL_FAILURE(obj->setExecText());
 }
 
 TEST_F(PermissionManagerWidgetTest, toggleFileExecutable)
 {
-    // toggleFileExecutable
-    SUCCEED();
+    // Test method: void toggleFileExecutable((bool isChecked))
+    EXPECT_NO_FATAL_FAILURE(obj->toggleFileExecutable(false));
 }
 
 TEST_F(PermissionManagerWidgetTest, updateBackgroundColor)
 {
-    // updateBackgroundColor
-    SUCCEED();
+    // Test method: void updateBackgroundColor(())
+    EXPECT_NO_FATAL_FAILURE(obj->updateBackgroundColor());
 }
 
 TEST_F(PermissionManagerWidgetTest, updateFileUrl)
 {
-    // updateFileUrl
-    SUCCEED();
+    // Test method: void updateFileUrl((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->updateFileUrl(_arg0));
 }
-

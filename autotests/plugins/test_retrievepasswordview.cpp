@@ -4,25 +4,46 @@
 
 /**
  * @file test_retrievepasswordview.cpp
- * @brief Unit tests for RetrievePasswordView Mid-priority methods
+ * @brief Unit tests for RetrievePasswordView methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class RetrievePasswordViewTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/unlockview/retrievepasswordview.h"
+
+#include <QTest>
+
+using namespace dfmplugin_vault;
+
+class RetrievePasswordViewTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new RetrievePasswordView();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    RetrievePasswordView *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(RetrievePasswordViewTest, RetrievePasswordView)
 {
-    // RetrievePasswordView
-    SUCCEED();
+    // Test constructor: RetrievePasswordView((QWidget *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(RetrievePasswordViewTest, onKeyVerificationFinished)
 {
-    // onKeyVerificationFinished
-    SUCCEED();
+    // Test method: void onKeyVerificationFinished(())
+    EXPECT_NO_FATAL_FAILURE(obj->onKeyVerificationFinished());
 }

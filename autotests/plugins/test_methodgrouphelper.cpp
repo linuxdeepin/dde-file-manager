@@ -4,25 +4,48 @@
 
 /**
  * @file test_methodgrouphelper.cpp
- * @brief Unit tests for MethodGroupHelper Mid-priority methods
+ * @brief Unit tests for MethodGroupHelper methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class MethodGroupHelperTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "options/methodgroup/methodgrouphelper.h"
+
+#include <QTest>
+
+using namespace ddplugin_organizer;
+
+class MethodGroupHelperTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new MethodGroupHelper();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    MethodGroupHelper *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(MethodGroupHelperTest, MethodGroupHelper)
 {
-    // MethodGroupHelper
-    SUCCEED();
+    // Test constructor: MethodGroupHelper((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(MethodGroupHelperTest, build)
 {
-    // build
-    SUCCEED();
+    // Test bool getter: build()
+    bool result = obj->build();
+    EXPECT_FALSE(result);
+
 }

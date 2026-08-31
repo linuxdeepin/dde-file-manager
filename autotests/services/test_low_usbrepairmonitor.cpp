@@ -3,69 +3,108 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_low_usbrepairmonitor.cpp
- * @brief Unit tests for UsbRepairMonitor Low-priority methods
+ * @file test_low_usbrepairmonitor.cpp
+ * @brief Unit tests for UsbRepairMonitor methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class UsbRepairMonitorLowTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "services/usbrepair/usbrepairmonitor.h"
+
+#include <QTest>
+
+using namespace src;
+
+class UsbRepairMonitorTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new UsbRepairMonitor();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    UsbRepairMonitor *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
-TEST_F(UsbRepairMonitorLowTest, getDeviceFile)
+TEST_F(UsbRepairMonitorTest, getDeviceFile)
 {
-    // getDeviceFile
-    SUCCEED();
+    // Test method: QString getDeviceFile((const QString &blockObjPath))
+    QString _arg0{};
+    auto result = obj->getDeviceFile(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
-TEST_F(UsbRepairMonitorLowTest, getFsType)
+TEST_F(UsbRepairMonitorTest, getFsType)
 {
-    // getFsType
-    SUCCEED();
+    // Test method: QString getFsType((const QString &deviceFile))
+    QString _arg0{};
+    auto result = obj->getFsType(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
-TEST_F(UsbRepairMonitorLowTest, isDeviceMounted)
+TEST_F(UsbRepairMonitorTest, isDeviceMounted)
 {
-    // isDeviceMounted
-    SUCCEED();
+    // Test method: bool isDeviceMounted((const QString &deviceFile))
+    QString _arg0{};
+    auto result = obj->isDeviceMounted(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(UsbRepairMonitorLowTest, isHardwareReadOnly)
+TEST_F(UsbRepairMonitorTest, isHardwareReadOnly)
 {
-    // isHardwareReadOnly
-    SUCCEED();
+    // Test method: bool isHardwareReadOnly((const QString &deviceFile))
+    QString _arg0{};
+    auto result = obj->isHardwareReadOnly(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(UsbRepairMonitorLowTest, onInterfacesAdded)
+TEST_F(UsbRepairMonitorTest, onInterfacesAdded)
 {
-    // onInterfacesAdded
-    SUCCEED();
+    // Test method: void onInterfacesAdded((
+    const QDBusObjectPath &objectPath,
+    const QMap<QString, QVariantMap> &interfacesAndProperties))
+    QDBusObjectPath _arg0{};
+    QMap<QString, QVariantMap> _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->onInterfacesAdded(_arg0, _arg1));
 }
 
-TEST_F(UsbRepairMonitorLowTest, shouldIgnoreDevice)
+TEST_F(UsbRepairMonitorTest, shouldIgnoreDevice)
 {
-    // shouldIgnoreDevice
-    SUCCEED();
+    // Test method: bool shouldIgnoreDevice((const QString &blockObjPath))
+    QString _arg0{};
+    auto result = obj->shouldIgnoreDevice(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(UsbRepairMonitorLowTest, startMonitoring)
+TEST_F(UsbRepairMonitorTest, startMonitoring)
 {
-    // startMonitoring
-    SUCCEED();
+    // Test method: void startMonitoring(())
+    EXPECT_NO_FATAL_FAILURE(obj->startMonitoring());
 }
 
-TEST_F(UsbRepairMonitorLowTest, stopMonitoring)
+TEST_F(UsbRepairMonitorTest, stopMonitoring)
 {
-    // stopMonitoring
-    SUCCEED();
+    // Test method: void stopMonitoring(())
+    EXPECT_NO_FATAL_FAILURE(obj->stopMonitoring());
 }
 
-TEST_F(UsbRepairMonitorLowTest, UsbRepairMonitor_Destructor)
+TEST_F(UsbRepairMonitorTest, UsbRepairMonitor_Destructor)
 {
-    // ~UsbRepairMonitor
-    SUCCEED();
+    // Test method:  ~UsbRepairMonitor(())
+    EXPECT_NO_FATAL_FAILURE({ UsbRepairMonitor *tmp = new UsbRepairMonitor(); delete tmp; });
 }
-

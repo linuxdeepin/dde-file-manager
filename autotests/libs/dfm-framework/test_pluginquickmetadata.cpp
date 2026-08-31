@@ -498,30 +498,30 @@ TEST_F(PluginQuickMetadataTest, CreatorTest)
 
 TEST(PluginQuickMetaDataTest, applet)
 {
-    // applet
-    SUCCEED();
+    PluginQuickMetaData obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.applet(); });
 }
 
 TEST(PluginQuickMetaDataTest, id)
 {
-    // id
-    SUCCEED();
+    PluginQuickMetaData obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.id(); });
 }
 
 TEST(PluginQuickMetaDataTest, parent)
 {
-    // parent
-    SUCCEED();
+    PluginQuickMetaData obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.parent(); });
 }
 
 TEST(PluginQuickMetaDataTest, type)
 {
-    // type
-    SUCCEED();
+    PluginQuickMetaData obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.type(); });
 }
 
 TEST(PluginQuickMetaDataTest, url)
 {
-    // url
-    SUCCEED();
+    PluginQuickMetaData obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.url(); });
 }

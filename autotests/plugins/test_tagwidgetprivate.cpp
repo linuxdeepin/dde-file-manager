@@ -4,25 +4,46 @@
 
 /**
  * @file test_tagwidgetprivate.cpp
- * @brief Unit tests for TagWidgetPrivate Mid-priority methods
+ * @brief Unit tests for TagWidgetPrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class TagWidgetPrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "widgets/private/tagwidget_p.h"
+
+#include <QTest>
+
+using namespace dfmplugin_tag;
+
+class TagWidgetPrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new TagWidgetPrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    TagWidgetPrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(TagWidgetPrivateTest, TagWidgetPrivate)
 {
-    // TagWidgetPrivate
-    SUCCEED();
+    // Test constructor: TagWidgetPrivate((TagWidget *qq, const QUrl &url))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(TagWidgetPrivateTest, initializeUI)
 {
-    // initializeUI
-    SUCCEED();
+    // Test method: void initializeUI(())
+    EXPECT_NO_FATAL_FAILURE(obj->initializeUI());
 }

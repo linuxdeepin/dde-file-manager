@@ -3,21 +3,41 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_tagcolordefine.cpp
- * @brief Unit tests for TagColorDefine Low-priority methods
+ * @file test_tagcolordefine.cpp
+ * @brief Unit tests for TagColorDefine methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class TagColorDefineTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/taghelper.h"
+
+#include <QTest>
+
+using namespace dfmplugin_tag;
+
+class TagColorDefineTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new TagColorDefine();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    TagColorDefine *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(TagColorDefineTest, TagColorDefine)
 {
-    // TagColorDefine
-    SUCCEED();
+    // Test constructor: TagColorDefine((const QString &colorName, const QString &iconName, const QString &dispaly, const QColor &color))
+    ASSERT_NE(obj, nullptr);
 }
-

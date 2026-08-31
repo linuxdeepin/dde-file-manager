@@ -4,19 +4,42 @@
 
 /**
  * @file test_fileinfomodelbroker.cpp
- * @brief Unit tests for FileInfoModelBroker Mid-priority methods
+ * @brief Unit tests for FileInfoModelBroker methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class FileInfoModelBrokerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "broker/fileinfomodelbroker.h"
+
+#include <QTest>
+
+using namespace ddplugin_canvas;
+
+class FileInfoModelBrokerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new FileInfoModelBroker();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FileInfoModelBroker *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(FileInfoModelBrokerTest, files)
 {
-    // files
-    SUCCEED();
+    // Test getter: QList<QUrl> files()
+    auto result = obj->files();
+    EXPECT_TRUE(result.isEmpty());
+
 }

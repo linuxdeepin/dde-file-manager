@@ -130,10 +130,7 @@ TEST_F(ElideTextLayoutExt3Test, CalculateElideHighlightMiddleWithEllipsis)
     QString elided = "Hell…orld";   // middle elision
     int elidePos = layout.determineElidePosition(elided, original, Qt::ElideMiddle);
     auto origMatches = layout.findKeywordMatches(original);
-    EXPECT_NO_FATAL_FAILURE({
-        auto mapped = layout.calculateElideHighlightMatches(elided, elidePos, Qt::ElideMiddle, origMatches, 0);
-        (void)mapped;
-    });
+    EXPECT_NO_FATAL_FAILURE({ layout.calculateElideHighlightMatches(elided, elidePos, Qt::ElideMiddle, origMatches, 0); });
 }
 
 TEST_F(ElideTextLayoutExt3Test, CalculateElideHighlightMiddleNoEllipsis)
@@ -144,10 +141,7 @@ TEST_F(ElideTextLayoutExt3Test, CalculateElideHighlightMiddleNoEllipsis)
     QString elided = "abfg";   // middle truncated, no ellipsis
     int elidePos = layout.determineElidePosition(elided, original, Qt::ElideMiddle);
     auto origMatches = layout.findKeywordMatches(original);
-    EXPECT_NO_FATAL_FAILURE({
-        auto mapped = layout.calculateElideHighlightMatches(elided, elidePos, Qt::ElideMiddle, origMatches, 0);
-        (void)mapped;
-    });
+    EXPECT_NO_FATAL_FAILURE({ layout.calculateElideHighlightMatches(elided, elidePos, Qt::ElideMiddle, origMatches, 0); });
 }
 
 // ── calculateElideHighlightMatches: ElideNone ──
@@ -159,10 +153,7 @@ TEST_F(ElideTextLayoutExt3Test, CalculateElideHighlightNoneFullText)
     QString original = layout.text();
     int elidePos = layout.determineElidePosition(original, original, Qt::ElideNone);
     auto origMatches = layout.findKeywordMatches(original);
-    EXPECT_NO_FATAL_FAILURE({
-        auto mapped = layout.calculateElideHighlightMatches(original, elidePos, Qt::ElideNone, origMatches, 0);
-        (void)mapped;
-    });
+    EXPECT_NO_FATAL_FAILURE({ layout.calculateElideHighlightMatches(original, elidePos, Qt::ElideNone, origMatches, 0); });
 }
 
 // ── calculateElideHighlightMatches: edge cases ──
@@ -175,10 +166,7 @@ TEST_F(ElideTextLayoutExt3Test, CalculateElideHighlightEmptyOriginalMatches)
     QString elided = "hello…";
     int elidePos = layout.determineElidePosition(elided, original, Qt::ElideRight);
     QList<QPair<int, int>> emptyMatches;
-    EXPECT_NO_FATAL_FAILURE({
-        auto mapped = layout.calculateElideHighlightMatches(elided, elidePos, Qt::ElideRight, emptyMatches, 0);
-        (void)mapped;
-    });
+    EXPECT_NO_FATAL_FAILURE({ layout.calculateElideHighlightMatches(elided, elidePos, Qt::ElideRight, emptyMatches, 0); });
 }
 
 TEST_F(ElideTextLayoutExt3Test, CalculateElideHighlightWithLineStartPos)
@@ -192,8 +180,5 @@ TEST_F(ElideTextLayoutExt3Test, CalculateElideHighlightWithLineStartPos)
     QString elided = "line2 key…";
     int elidePos = layout.determineElidePosition(elided, lineText, Qt::ElideRight);
     auto origMatches = layout.findKeywordMatches(original);
-    EXPECT_NO_FATAL_FAILURE({
-        auto mapped = layout.calculateElideHighlightMatches(elided, elidePos, Qt::ElideRight, origMatches, lineStart);
-        (void)mapped;
-    });
+    EXPECT_NO_FATAL_FAILURE({ layout.calculateElideHighlightMatches(elided, elidePos, Qt::ElideRight, origMatches, lineStart); });
 }

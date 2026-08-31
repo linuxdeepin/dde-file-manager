@@ -3,51 +3,80 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_filedialogmenuscene.cpp
- * @brief Unit tests for FileDialogMenuScene Low-priority methods
+ * @file test_filedialogmenuscene.cpp
+ * @brief Unit tests for FileDialogMenuScene methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class FileDialogMenuSceneTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "menus/filedialogmenuscene.h"
+
+#include <QTest>
+
+using namespace core;
+
+class FileDialogMenuSceneTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new FileDialogMenuScene();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FileDialogMenuScene *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(FileDialogMenuSceneTest, FileDialogMenuScene)
 {
-    // FileDialogMenuScene
-    SUCCEED();
+    // Test constructor: FileDialogMenuScene((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(FileDialogMenuSceneTest, actionFilter)
 {
-    // actionFilter
-    SUCCEED();
+    // Test method: bool actionFilter((AbstractMenuScene *caller, QAction *action))
+    auto result = obj->actionFilter(nullptr, nullptr);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(FileDialogMenuSceneTest, findSceneName)
 {
-    // findSceneName
-    SUCCEED();
+    // Test method: QString findSceneName((QAction *act))
+    auto result = obj->findSceneName(nullptr);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(FileDialogMenuSceneTest, initialize)
 {
-    // initialize
-    SUCCEED();
+    // Test method: bool initialize((const QVariantHash &params))
+    QVariantHash _arg0{};
+    auto result = obj->initialize(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(FileDialogMenuSceneTest, name)
 {
-    // name
-    SUCCEED();
+    // Test getter: QString name()
+    auto result = obj->name();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(FileDialogMenuSceneTest, updateState)
 {
-    // updateState
-    SUCCEED();
+    // Test method: void updateState((QMenu *parent))
+    EXPECT_NO_FATAL_FAILURE(obj->updateState(nullptr));
 }
-

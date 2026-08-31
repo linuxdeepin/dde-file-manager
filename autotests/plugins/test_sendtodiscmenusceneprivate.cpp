@@ -4,25 +4,46 @@
 
 /**
  * @file test_sendtodiscmenusceneprivate.cpp
- * @brief Unit tests for SendToDiscMenuScenePrivate Mid-priority methods
+ * @brief Unit tests for SendToDiscMenuScenePrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class SendToDiscMenuScenePrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "menus/sendtodiscmenuscene.h"
+
+#include <QTest>
+
+using namespace dfmplugin_burn;
+
+class SendToDiscMenuScenePrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new SendToDiscMenuScenePrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    SendToDiscMenuScenePrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(SendToDiscMenuScenePrivateTest, addToSendto)
 {
-    // addToSendto
-    SUCCEED();
+    // Test method: void addToSendto((QMenu *menu))
+    EXPECT_NO_FATAL_FAILURE(obj->addToSendto(nullptr));
 }
 
 TEST_F(SendToDiscMenuScenePrivateTest, initDestDevices)
 {
-    // initDestDevices
-    SUCCEED();
+    // Test method: void initDestDevices(())
+    EXPECT_NO_FATAL_FAILURE(obj->initDestDevices());
 }

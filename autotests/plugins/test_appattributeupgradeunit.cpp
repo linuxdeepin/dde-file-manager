@@ -4,37 +4,67 @@
 
 /**
  * @file test_appattributeupgradeunit.cpp
- * @brief Unit tests for AppAttributeUpgradeUnit Mid-priority methods
+ * @brief Unit tests for AppAttributeUpgradeUnit methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class AppAttributeUpgradeUnitTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "tools/upgrade/units/appattributeupgradeunit.h"
+
+#include <QTest>
+
+using namespace src;
+
+class AppAttributeUpgradeUnitTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new AppAttributeUpgradeUnit();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    AppAttributeUpgradeUnit *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(AppAttributeUpgradeUnitTest, backupAppAttribute)
 {
-    // backupAppAttribute
-    SUCCEED();
+    // Test bool getter: backupAppAttribute()
+    bool result = obj->backupAppAttribute();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(AppAttributeUpgradeUnitTest, initialize)
 {
-    // initialize
-    SUCCEED();
+    // Test method: bool initialize((const QMap<QString, QString> &args))
+    QMap<QString, QString> _arg0{};
+    auto result = obj->initialize(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(AppAttributeUpgradeUnitTest, transIconSizeLevel)
 {
-    // transIconSizeLevel
-    SUCCEED();
+    // Test method: int transIconSizeLevel((int oldIconSizeLevel))
+    auto result = obj->transIconSizeLevel(0);
+    EXPECT_GE(result, 0);
+
 }
 
 TEST_F(AppAttributeUpgradeUnitTest, writeConfigFile)
 {
-    // writeConfigFile
-    SUCCEED();
+    // Test bool getter: writeConfigFile()
+    bool result = obj->writeConfigFile();
+    EXPECT_FALSE(result);
+
 }

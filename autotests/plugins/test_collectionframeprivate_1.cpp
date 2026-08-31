@@ -3,81 +3,113 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_collectionframeprivate_1.cpp
- * @brief Unit tests for CollectionFramePrivate Low-priority methods
+ * @file test_collectionframeprivate_1.cpp
+ * @brief Unit tests for CollectionFramePrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class CollectionFramePrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "view/collectionframe.h"
+
+#include <QTest>
+
+using namespace ddplugin_organizer;
+
+class CollectionFramePrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new CollectionFramePrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    CollectionFramePrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(CollectionFramePrivateTest, CollectionFramePrivate)
 {
-    // CollectionFramePrivate
-    SUCCEED();
+    // Test constructor: CollectionFramePrivate((CollectionFrame *qq))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(CollectionFramePrivateTest, calcBottomY)
 {
-    // calcBottomY
-    SUCCEED();
+    // Test getter: int calcBottomY()
+    auto result = obj->calcBottomY();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(CollectionFramePrivateTest, calcLeftX)
 {
-    // calcLeftX
-    SUCCEED();
+    // Test getter: int calcLeftX()
+    auto result = obj->calcLeftX();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(CollectionFramePrivateTest, calcRightX)
 {
-    // calcRightX
-    SUCCEED();
+    // Test getter: int calcRightX()
+    auto result = obj->calcRightX();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(CollectionFramePrivateTest, calcTopY)
 {
-    // calcTopY
-    SUCCEED();
+    // Test getter: int calcTopY()
+    auto result = obj->calcTopY();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(CollectionFramePrivateTest, canMove)
 {
-    // canMove
-    SUCCEED();
+    // Test bool getter: canMove()
+    bool result = obj->canMove();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(CollectionFramePrivateTest, canStretch)
 {
-    // canStretch
-    SUCCEED();
+    // Test bool getter: canStretch()
+    bool result = obj->canStretch();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(CollectionFramePrivateTest, updateMouseTrackingState)
 {
-    // updateMouseTrackingState
-    SUCCEED();
+    // Test method: void updateMouseTrackingState(())
+    EXPECT_NO_FATAL_FAILURE(obj->updateMouseTrackingState());
 }
 
 TEST_F(CollectionFramePrivateTest, updateMoveRect)
 {
-    // updateMoveRect
-    SUCCEED();
+    // Test method: void updateMoveRect(())
+    EXPECT_NO_FATAL_FAILURE(obj->updateMoveRect());
 }
 
 TEST_F(CollectionFramePrivateTest, updateStretchRect)
 {
-    // updateStretchRect
-    SUCCEED();
+    // Test method: void updateStretchRect(())
+    EXPECT_NO_FATAL_FAILURE(obj->updateStretchRect());
 }
 
 TEST_F(CollectionFramePrivateTest, CollectionFramePrivate_Destructor)
 {
-    // ~CollectionFramePrivate
-    SUCCEED();
+    // Test method:  ~CollectionFramePrivate(())
+    EXPECT_NO_FATAL_FAILURE({ CollectionFramePrivate *tmp = new CollectionFramePrivate(); delete tmp; });
 }
-

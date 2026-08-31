@@ -91,6 +91,9 @@ TEST(HighlightProviderTest, CachedRequestReturnsImmediately)
 
 TEST(HighlightProviderTest, requestHighlight)
 {
-    // requestHighlight
-    SUCCEED();
+    HighlightProvider obj;
+    QString _arg0{};
+    QString _arg1{};
+    QString _arg2{};
+    EXPECT_NO_FATAL_FAILURE(obj.requestHighlight(_arg0, _arg1, _arg2, 0, false));
 }

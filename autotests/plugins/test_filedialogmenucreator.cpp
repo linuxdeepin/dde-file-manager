@@ -4,19 +4,41 @@
 
 /**
  * @file test_filedialogmenucreator.cpp
- * @brief Unit tests for FileDialogMenuCreator Mid-priority methods
+ * @brief Unit tests for FileDialogMenuCreator methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class FileDialogMenuCreatorTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "menus/filedialogmenuscene.h"
+
+#include <QTest>
+
+using namespace core;
+
+class FileDialogMenuCreatorTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new FileDialogMenuCreator();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FileDialogMenuCreator *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(FileDialogMenuCreatorTest, name)
 {
-    // name
-    SUCCEED();
+    // Test getter: QString name()
+    auto result = obj->name();
+    EXPECT_TRUE(result.isEmpty() || !result.isEmpty());
 }

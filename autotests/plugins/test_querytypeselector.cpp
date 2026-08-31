@@ -3,33 +3,58 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_querytypeselector.cpp
- * @brief Unit tests for QueryTypeSelector Low-priority methods
+ * @file test_querytypeselector.cpp
+ * @brief Unit tests for QueryTypeSelector methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class QueryTypeSelectorTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "searchmanager/searcher/dfmsearch/querystrategies.h"
+
+#include <QTest>
+
+using namespace dfmplugin_search;
+
+class QueryTypeSelectorTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new QueryTypeSelector();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    QueryTypeSelector *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(QueryTypeSelectorTest, QueryTypeSelector)
 {
-    // QueryTypeSelector
-    SUCCEED();
+    // Test constructor: QueryTypeSelector(())
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(QueryTypeSelectorTest, createQuery)
 {
-    // createQuery
-    SUCCEED();
+    // Test method: SearchQuery createQuery((const QString &keyword, SearchType searchType))
+    QString _arg0{};
+    auto result = obj->createQuery(_arg0, SearchType());
+    EXPECT_NO_FATAL_FAILURE({ obj->createQuery(_arg0, SearchType()); });
+
 }
 
 TEST_F(QueryTypeSelectorTest, getStrategies)
 {
-    // getStrategies
-    SUCCEED();
-}
+    // Test getter: QList<QSharedPointer<QueryTypeStrategy>> getStrategies()
+    auto result = obj->getStrategies();
+    EXPECT_TRUE(result.isEmpty());
 
+}

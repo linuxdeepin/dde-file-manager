@@ -4,19 +4,42 @@
 
 /**
  * @file test_tagmenucreator.cpp
- * @brief Unit tests for TagMenuCreator Mid-priority methods
+ * @brief Unit tests for TagMenuCreator methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class TagMenuCreatorTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "menu/tagmenuscene.h"
+
+#include <QTest>
+
+using namespace dfmplugin_tag;
+
+class TagMenuCreatorTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new TagMenuCreator();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    TagMenuCreator *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(TagMenuCreatorTest, create)
 {
-    // create
-    SUCCEED();
+    // Test getter: AbstractMenuScene create()
+    auto result = obj->create();
+    EXPECT_NO_FATAL_FAILURE({ obj->create(); });
+
 }

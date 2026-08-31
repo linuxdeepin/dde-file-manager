@@ -3,123 +3,155 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_sharecontrolwidget_1.cpp
- * @brief Unit tests for ShareControlWidget Low-priority methods
+ * @file test_sharecontrolwidget_1.cpp
+ * @brief Unit tests for ShareControlWidget methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ShareControlWidgetTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "widget/sharecontrolwidget.h"
+
+#include <QTest>
+
+using namespace dfmplugin_dirshare;
+
+class ShareControlWidgetTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ShareControlWidget();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ShareControlWidget *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ShareControlWidgetTest, initConnection)
 {
-    // initConnection
-    SUCCEED();
+    // Test method: void initConnection(())
+    EXPECT_NO_FATAL_FAILURE(obj->initConnection());
 }
 
 TEST_F(ShareControlWidgetTest, onSambaPasswordSet)
 {
-    // onSambaPasswordSet
-    SUCCEED();
+    // Test method: void onSambaPasswordSet((bool result))
+    EXPECT_NO_FATAL_FAILURE(obj->onSambaPasswordSet(false));
 }
 
 TEST_F(ShareControlWidgetTest, onShareNameChanged)
 {
-    // onShareNameChanged
-    SUCCEED();
+    // Test method: void onShareNameChanged((const QString &name))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->onShareNameChanged(_arg0));
 }
 
 TEST_F(ShareControlWidgetTest, setOption)
 {
-    // setOption
-    SUCCEED();
+    // Test setter: void setOption((QWidget *w, const QVariantHash &option))
+    QVariantHash _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->setOption(nullptr, _arg1));
 }
 
 TEST_F(ShareControlWidgetTest, setupNetworkPath)
 {
-    // setupNetworkPath
-    SUCCEED();
+    // Test getter: QHBoxLayout setupNetworkPath()
+    auto result = obj->setupNetworkPath();
+    EXPECT_NO_FATAL_FAILURE({ obj->setupNetworkPath(); });
+
 }
 
 TEST_F(ShareControlWidgetTest, setupShareAnonymousSelector)
 {
-    // setupShareAnonymousSelector
-    SUCCEED();
+    // Test method: void setupShareAnonymousSelector(())
+    EXPECT_NO_FATAL_FAILURE(obj->setupShareAnonymousSelector());
 }
 
 TEST_F(ShareControlWidgetTest, setupShareNameEditor)
 {
-    // setupShareNameEditor
-    SUCCEED();
+    // Test method: void setupShareNameEditor(())
+    EXPECT_NO_FATAL_FAILURE(obj->setupShareNameEditor());
 }
 
 TEST_F(ShareControlWidgetTest, setupShareNotes)
 {
-    // setupShareNotes
-    SUCCEED();
+    // Test method: void setupShareNotes(())
+    EXPECT_NO_FATAL_FAILURE(obj->setupShareNotes());
 }
 
 TEST_F(ShareControlWidgetTest, setupSharePassword)
 {
-    // setupSharePassword
-    SUCCEED();
+    // Test getter: QHBoxLayout setupSharePassword()
+    auto result = obj->setupSharePassword();
+    EXPECT_NO_FATAL_FAILURE({ obj->setupSharePassword(); });
+
 }
 
 TEST_F(ShareControlWidgetTest, setupSharePermissionSelector)
 {
-    // setupSharePermissionSelector
-    SUCCEED();
+    // Test method: void setupSharePermissionSelector(())
+    EXPECT_NO_FATAL_FAILURE(obj->setupSharePermissionSelector());
 }
 
 TEST_F(ShareControlWidgetTest, setupShareSwitcher)
 {
-    // setupShareSwitcher
-    SUCCEED();
+    // Test method: void setupShareSwitcher(())
+    EXPECT_NO_FATAL_FAILURE(obj->setupShareSwitcher());
 }
 
 TEST_F(ShareControlWidgetTest, setupUserName)
 {
-    // setupUserName
-    SUCCEED();
+    // Test getter: QHBoxLayout setupUserName()
+    auto result = obj->setupUserName();
+    EXPECT_NO_FATAL_FAILURE({ obj->setupUserName(); });
+
 }
 
 TEST_F(ShareControlWidgetTest, showMoreInfo)
 {
-    // showMoreInfo
-    SUCCEED();
+    // Test method: void showMoreInfo((bool showMore))
+    EXPECT_NO_FATAL_FAILURE(obj->showMoreInfo(false));
 }
 
 TEST_F(ShareControlWidgetTest, showSharePasswordSettingsDialog)
 {
-    // showSharePasswordSettingsDialog
-    SUCCEED();
+    // Test method: void showSharePasswordSettingsDialog(())
+    EXPECT_NO_FATAL_FAILURE(obj->showSharePasswordSettingsDialog());
 }
 
 TEST_F(ShareControlWidgetTest, unshareFolder)
 {
-    // unshareFolder
-    SUCCEED();
+    // Test bool getter: unshareFolder()
+    bool result = obj->unshareFolder();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(ShareControlWidgetTest, updateFile)
 {
-    // updateFile
-    SUCCEED();
+    // Test method: void updateFile((const QUrl &oldOne, const QUrl &newOne))
+    QUrl _arg0{};
+    QUrl _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->updateFile(_arg0, _arg1));
 }
 
 TEST_F(ShareControlWidgetTest, updateShare)
 {
-    // updateShare
-    SUCCEED();
+    // Test method: void updateShare(())
+    EXPECT_NO_FATAL_FAILURE(obj->updateShare());
 }
 
 TEST_F(ShareControlWidgetTest, userShareOperation)
 {
-    // userShareOperation
-    SUCCEED();
+    // Test method: void userShareOperation((bool checked))
+    EXPECT_NO_FATAL_FAILURE(obj->userShareOperation(false));
 }
-

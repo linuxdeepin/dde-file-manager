@@ -4,37 +4,59 @@
 
 /**
  * @file test_shortcuthelper.cpp
- * @brief Unit tests for ShortcutHelper Mid-priority methods
+ * @brief Unit tests for ShortcutHelper methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ShortcutHelperTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/shortcuthelper.h"
+
+#include <QTest>
+
+using namespace dfmplugin_workspace;
+
+class ShortcutHelperTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ShortcutHelper();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ShortcutHelper *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ShortcutHelperTest, ShortcutHelper)
 {
-    // ShortcutHelper
-    SUCCEED();
+    // Test constructor: ShortcutHelper((FileView *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(ShortcutHelperTest, acitonTriggered)
 {
-    // acitonTriggered
-    SUCCEED();
+    // Test method: void acitonTriggered(())
+    EXPECT_NO_FATAL_FAILURE(obj->acitonTriggered());
 }
 
 TEST_F(ShortcutHelperTest, deleteFiles)
 {
-    // deleteFiles
-    SUCCEED();
+    // Test method: void deleteFiles(())
+    EXPECT_NO_FATAL_FAILURE(obj->deleteFiles());
 }
 
 TEST_F(ShortcutHelperTest, openAction)
 {
-    // openAction
-    SUCCEED();
+    // Test method: void openAction((const QList<QUrl> &urls, const DirOpenMode openMode))
+    QList<QUrl> _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->openAction(_arg0, DirOpenMode()));
 }

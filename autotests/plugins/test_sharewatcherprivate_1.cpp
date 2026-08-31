@@ -3,27 +3,49 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_sharewatcherprivate_1.cpp
- * @brief Unit tests for ShareWatcherPrivate Low-priority methods
+ * @file test_sharewatcherprivate_1.cpp
+ * @brief Unit tests for ShareWatcherPrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ShareWatcherPrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "watcher/sharewatcher.h"
+
+#include <QTest>
+
+using namespace dfmplugin_myshares;
+
+class ShareWatcherPrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ShareWatcherPrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ShareWatcherPrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ShareWatcherPrivateTest, ShareWatcherPrivate)
 {
-    // ShareWatcherPrivate
-    SUCCEED();
+    // Test constructor: ShareWatcherPrivate((const QUrl &fileUrl, ShareWatcher *qq))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(ShareWatcherPrivateTest, start)
 {
-    // start
-    SUCCEED();
-}
+    // Test bool getter: start()
+    bool result = obj->start();
+    EXPECT_FALSE(result);
 
+}

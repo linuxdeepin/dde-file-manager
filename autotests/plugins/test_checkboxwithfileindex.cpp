@@ -4,25 +4,49 @@
 
 /**
  * @file test_checkboxwithfileindex.cpp
- * @brief Unit tests for CheckBoxWithFileIndex Mid-priority methods
+ * @brief Unit tests for CheckBoxWithFileIndex methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class CheckBoxWithFileIndexTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/checkboxwithfileindex.h"
+
+#include <QTest>
+
+using namespace dfmplugin_search;
+
+class CheckBoxWithFileIndexTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new CheckBoxWithFileIndex();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    CheckBoxWithFileIndex *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(CheckBoxWithFileIndexTest, applyState)
 {
-    // applyState
-    SUCCEED();
+    // Test method: void applyState((const FileIndexState &state))
+    FileIndexState _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->applyState(_arg0));
 }
 
 TEST_F(CheckBoxWithFileIndexTest, queryState)
 {
-    // queryState
-    SUCCEED();
+    // Test getter: CheckBoxWithFileIndex::FileIndexState queryState()
+    auto result = obj->queryState();
+    EXPECT_GE(static_cast<int>(result), 0);
+
 }

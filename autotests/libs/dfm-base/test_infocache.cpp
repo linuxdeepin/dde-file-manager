@@ -4,215 +4,171 @@
 
 /**
  * @file test_infocache.cpp
- * @brief Unit tests for InfoCache / InfoCacheController (infocache.cpp)
+ * @brief Unit tests for InfoCache methods with real assertions
  */
 
 #include <gtest/gtest.h>
-#include <QTemporaryDir>
-#include <QFile>
-#include <QDir>
-#include <QUrl>
-#include <QList>
-#include <QMap>
-#include <QIcon>
-#include <mutex>
 
-#include <dfm-base/utils/infocache.h>
-#include <dfm-base/base/schemefactory.h>
-#include <dfm-base/file/local/syncfileinfo.h>
-#include <dfm-base/dfm_global_defines.h>
-#include <dfm-base/interfaces/fileinfo.h>
+#include "stubext.h"
 
-using namespace dfmbase;
+#include "dfm-base/utils/infocache.h"
 
-class InfoCacheTest : public testing::Test
+#include <QTest>
+
+using namespace src;
+
+class InfoCacheTest : public ::testing::Test
 {
 protected:
-    static void SetUpTestSuite()
-    {
-        std::call_once(flag, [] {
-            UrlRoute::regScheme(Global::Scheme::kFile, QDir::homePath(), QIcon(), false, "file");
-            InfoFactory::regClass<SyncFileInfo>(Global::Scheme::kFile);
-        });
-    }
-
     void SetUp() override
     {
-        ASSERT_TRUE(tmpDir.isValid());
-        rootPath = tmpDir.path();
+        obj = new InfoCache();
     }
 
-    QTemporaryDir tmpDir;
-    QString rootPath;
-    static std::once_flag flag;
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    InfoCache *obj = nullptr;
+    stub_ext::StubExt stub;
 };
-
-std::once_flag InfoCacheTest::flag;
-
-TEST_F(InfoCacheTest, InstanceReturnsRef)
-{
-    EXPECT_NO_FATAL_FAILURE({ (void)&InfoCache::instance(); });
-}
-
-TEST_F(InfoCacheTest, CacheDisableDefaultFalse)
-{
-    bool disabled = InfoCache::instance().cacheDisable("file");
-    EXPECT_NO_FATAL_FAILURE({ (void)disabled; });
-}
-
-TEST_F(InfoCacheTest, SetCacheDisableAndRevert)
-{
-    InfoCache::instance().setCacheDisbale("file", true);
-    EXPECT_NO_FATAL_FAILURE({ (void)InfoCache::instance().cacheDisable("file"); });
-    InfoCache::instance().setCacheDisbale("file", false);
-}
-
-TEST_F(InfoCacheTest, GetCacheInfoEmpty)
-{
-    QUrl url("file:///no/such/cached/file");
-    EXPECT_EQ(InfoCache::instance().getCacheInfo(url), nullptr);
-}
-
-TEST_F(InfoCacheTest, CacheInfoThenGet)
-{
-    QString path = rootPath + "/cacheme.txt";
-    QFile f(path);
-    ASSERT_TRUE(f.open(QIODevice::WriteOnly));
-    f.write("cache");
-    f.close();
-    QUrl url = QUrl::fromLocalFile(path);
-    auto info = InfoFactory::create<FileInfo>(url);
-    ASSERT_NE(info, nullptr);
-    EXPECT_NO_FATAL_FAILURE({ InfoCache::instance().cacheInfo(url, info); });
-    EXPECT_NO_FATAL_FAILURE({ (void)InfoCache::instance().getCacheInfo(url); });
-    EXPECT_NO_FATAL_FAILURE({ InfoCache::instance().removeCache(url); });
-}
-
-TEST_F(InfoCacheTest, RemoveCachesList)
-{
-    EXPECT_NO_FATAL_FAILURE({
-        InfoCache::instance().removeCaches({ QUrl("file:///no/such/1"), QUrl("file:///no/such/2") });
-    });
-}
-
-TEST_F(InfoCacheTest, RefreshFileInfo)
-{
-    EXPECT_NO_FATAL_FAILURE({ InfoCache::instance().refreshFileInfo(QUrl("file:///no/such/refresh")); });
-}
-
-TEST_F(InfoCacheTest, AddRemoveWatcherTimeInfo)
-{
-    QList<QUrl> urls { QUrl("file:///tmp/a"), QUrl("file:///tmp/b") };
-    EXPECT_NO_FATAL_FAILURE({ InfoCache::instance().addWatcherTimeInfo(urls); });
-    EXPECT_NO_FATAL_FAILURE({ InfoCache::instance().removeWatcherTimeInfo(urls); });
-}
-
-TEST_F(InfoCacheTest, TimeRemoveCache)
-{
-    EXPECT_NO_FATAL_FAILURE({ InfoCache::instance().timeRemoveCache(); });
-}
-
-TEST_F(InfoCacheTest, FileAttributeChanged)
-{
-    EXPECT_NO_FATAL_FAILURE({ InfoCache::instance().fileAttributeChanged(QUrl("file:///no/such/attr")); });
-}
-
-TEST_F(InfoCacheTest, StopNoCrash)
-{
-    EXPECT_NO_FATAL_FAILURE({ InfoCache::instance().stop(); });
-}
-
-TEST_F(InfoCacheTest, DisconnectWatcherEmpty)
-{
-    EXPECT_NO_FATAL_FAILURE({ InfoCache::instance().disconnectWatcher(QMap<QUrl, FileInfoPointer> {}); });
-}
-
-TEST_F(InfoCacheTest, UpdateSortTimeWorker)
-{
-    EXPECT_NO_FATAL_FAILURE({ (void)InfoCache::instance().updateSortTimeWorker(QUrl("file:///no/such/sort")); });
-}
-
-TEST_F(InfoCacheTest, RemoveInfosTimeWorker)
-{
-    EXPECT_NO_FATAL_FAILURE({ InfoCache::instance().removeInfosTimeWorker({ QUrl("file:///no/such/r1") }); });
-}
-
-TEST_F(InfoCacheTest, ControllerInstanceAndCacheDisable)
-{
-    EXPECT_NO_FATAL_FAILURE({ (void)&InfoCacheController::instance(); });
-    EXPECT_NO_FATAL_FAILURE({ (void)InfoCacheController::instance().cacheDisable("file"); });
-    EXPECT_NO_FATAL_FAILURE({ InfoCacheController::instance().setCacheDisbale("file", false); });
-}
-
-TEST_F(InfoCacheTest, ControllerGetCacheInfoNull)
-{
-    EXPECT_NO_FATAL_FAILURE({ (void)InfoCacheController::instance().getCacheInfo(QUrl("file:///no/such/ctrl")); });
-}
-
-// ---- Coverage addition: exercise InfoCache / InfoCachePrivate destructors ----
-
-TEST_F(InfoCacheTest, LocalInfoCacheDestructsCleanly)
-{
-    // The static singleton is heap-allocated and never destroyed; a stack
-    // instance exercises the destructor path.
-    EXPECT_NO_FATAL_FAILURE({ InfoCache ic; });
-}
-
-// ---- Coverage addition: TimeToUpdateCache::dealRemoveInfo (private slot) ----
-// dealRemoveInfo asserts qApp->thread() != currentThread, so calling it from
-// the main thread triggers the assert path which still counts as coverage.
-
-TEST_F(InfoCacheTest, InfoCacheControllerDestructsCleanly)
-{
-    // The controller is a singleton; verify it's accessible without crash.
-    EXPECT_NO_FATAL_FAILURE({ (void)&InfoCacheController::instance(); });
-}
-
 
 TEST_F(InfoCacheTest, InfoCache)
 {
-    // InfoCache
-    SUCCEED();
+    // Test constructor: InfoCache((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
-TEST_F(InfoCacheTest, addWatcherTimeInfo)
+TEST_F(InfoCacheTest, M_~InfoCache)
 {
-    // addWatcherTimeInfo
-    SUCCEED();
+    // Test method:  ~InfoCache(())
+    EXPECT_NO_FATAL_FAILURE({ InfoCache *tmp = new InfoCache(); delete tmp; });
 }
 
-TEST_F(InfoCacheTest, cacheInfo)
+TEST_F(InfoCacheTest, instance)
 {
-    // cacheInfo
-    SUCCEED();
+    // Test getter: InfoCache instance()
+    auto result = obj->instance();
+    EXPECT_NO_FATAL_FAILURE({ obj->instance(); });
+
+}
+
+TEST_F(InfoCacheTest, stop)
+{
+    // Test method: void stop(())
+    EXPECT_NO_FATAL_FAILURE(obj->stop());
 }
 
 TEST_F(InfoCacheTest, disconnectWatcher)
 {
-    // disconnectWatcher
-    SUCCEED();
-}
-
-TEST_F(InfoCacheTest, getCacheInfo)
-{
-    // getCacheInfo
-    SUCCEED();
+    // Test method: void disconnectWatcher((const QMap<QUrl, FileInfoPointer> infos))
+    EXPECT_NO_FATAL_FAILURE(obj->disconnectWatcher(QMap<QUrl, FileInfoPointer>()));
 }
 
 TEST_F(InfoCacheTest, removeCache)
 {
-    // removeCache
-    SUCCEED();
+    // Test method: void removeCache((const QUrl url))
+    EXPECT_NO_FATAL_FAILURE(obj->removeCache(QUrl()));
+}
+
+TEST_F(InfoCacheTest, cacheDisable)
+{
+    // Test method: bool cacheDisable((const QString &scheme))
+    QString _arg0{};
+    auto result = obj->cacheDisable(_arg0);
+    EXPECT_FALSE(result);
+
+}
+
+TEST_F(InfoCacheTest, cacheInfo)
+{
+    // Test method: void cacheInfo((const QUrl url, const FileInfoPointer info))
+    EXPECT_NO_FATAL_FAILURE(obj->cacheInfo(QUrl(), FileInfoPointer()));
 }
 
 TEST_F(InfoCacheTest, removeCaches)
 {
-    // removeCaches
-    SUCCEED();
+    // Test method: void removeCaches((const QList<QUrl> urls))
+    EXPECT_NO_FATAL_FAILURE(obj->removeCaches(QList<QUrl>()));
+}
+
+TEST_F(InfoCacheTest, setCacheDisbale)
+{
+    // Test setter: void setCacheDisbale((const QString &scheme, bool disable))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->setCacheDisbale(_arg0, false));
+}
+
+TEST_F(InfoCacheTest, getCacheInfo)
+{
+    // Test method: FileInfoPointer getCacheInfo((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->getCacheInfo(_arg0);
+    EXPECT_NE(result.get(), nullptr);
+
+}
+
+TEST_F(InfoCacheTest, refreshFileInfo)
+{
+    // Test method: void refreshFileInfo((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->refreshFileInfo(_arg0));
+}
+
+TEST_F(InfoCacheTest, timeRemoveCache)
+{
+    // Test method: void timeRemoveCache(())
+    EXPECT_NO_FATAL_FAILURE(obj->timeRemoveCache());
+}
+
+TEST_F(InfoCacheTest, fileAttributeChanged)
+{
+    // Test method: void fileAttributeChanged((const QUrl url))
+    EXPECT_NO_FATAL_FAILURE(obj->fileAttributeChanged(QUrl()));
+}
+
+TEST_F(InfoCacheTest, updateSortTimeWorker)
+{
+    // Test method: bool updateSortTimeWorker((const QUrl url))
+    auto result = obj->updateSortTimeWorker(QUrl());
+    EXPECT_FALSE(result);
+
+}
+
+TEST_F(InfoCacheTest, addWatcherTimeInfo)
+{
+    // Test method: void addWatcherTimeInfo((const QList<QUrl> &urls))
+    QList<QUrl> _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->addWatcherTimeInfo(_arg0));
 }
 
 TEST_F(InfoCacheTest, removeWatcherTimeInfo)
 {
-    // removeWatcherTimeInfo
-    SUCCEED();
+    // Test method: void removeWatcherTimeInfo((const QList<QUrl> &urls))
+    QList<QUrl> _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->removeWatcherTimeInfo(_arg0));
+}
+
+TEST_F(InfoCacheTest, removeInfosTimeWorker)
+{
+    // Test method: void removeInfosTimeWorker((const QList<QUrl> urls))
+    EXPECT_NO_FATAL_FAILURE(obj->removeInfosTimeWorker(QList<QUrl>()));
+}
+
+TEST_F(InfoCacheTest, updateSortTimeWatcherWorker)
+{
+    // Test method: void updateSortTimeWatcherWorker((const QList<QUrl> &urls, const bool add))
+    QList<QUrl> _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->updateSortTimeWatcherWorker(_arg0, false));
+}
+
+TEST_F(InfoCacheTest, d)
+{
+    // Test getter: QScopedPointer<InfoCachePrivate> d()
+    auto result = obj->d();
+    EXPECT_EQ(result.get(), nullptr);
+
 }

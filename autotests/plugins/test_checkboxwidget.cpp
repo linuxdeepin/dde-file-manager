@@ -3,33 +3,55 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_checkboxwidget.cpp
- * @brief Unit tests for CheckBoxWidget Low-priority methods
+ * @file test_checkboxwidget.cpp
+ * @brief Unit tests for CheckBoxWidget methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class CheckBoxWidgetTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "options/widgets/checkboxwidget.h"
+
+#include <QTest>
+
+using namespace ddplugin_organizer;
+
+class CheckBoxWidgetTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new CheckBoxWidget();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    CheckBoxWidget *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(CheckBoxWidgetTest, CheckBoxWidget)
 {
-    // CheckBoxWidget
-    SUCCEED();
+    // Test constructor: CheckBoxWidget((const QString &text, QWidget *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(CheckBoxWidgetTest, checked)
 {
-    // checked
-    SUCCEED();
+    // Test bool getter: checked()
+    bool result = obj->checked();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(CheckBoxWidgetTest, setChecked)
 {
-    // setChecked
-    SUCCEED();
+    // Test setter: void setChecked((bool checked))
+    EXPECT_NO_FATAL_FAILURE(obj->setChecked(false));
 }
-

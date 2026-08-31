@@ -4,49 +4,83 @@
 
 /**
  * @file test_dodgeitemsoper.cpp
- * @brief Unit tests for DodgeItemsOper Mid-priority methods
+ * @brief Unit tests for DodgeItemsOper methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class DodgeItemsOperTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "view/operator/dodgeoper.h"
+
+#include <QTest>
+
+using namespace ddplugin_canvas;
+
+class DodgeItemsOperTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new DodgeItemsOper();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    DodgeItemsOper *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(DodgeItemsOperTest, findEmptyBackward)
 {
-    // findEmptyBackward
-    SUCCEED();
+    // Test method: int findEmptyBackward((int screenNum, int index, int targetAfterNeedEmptyCount))
+    auto result = obj->findEmptyBackward(0, 0, 0);
+    EXPECT_GE(result, 0);
+
 }
 
 TEST_F(DodgeItemsOperTest, findEmptyForward)
 {
-    // findEmptyForward
-    SUCCEED();
+    // Test method: int findEmptyForward((int screenNum, int index, int targetBeforNeedEmptyCount))
+    auto result = obj->findEmptyForward(0, 0, 0);
+    EXPECT_GE(result, 0);
+
 }
 
 TEST_F(DodgeItemsOperTest, reloachBackward)
 {
-    // reloachBackward
-    SUCCEED();
+    // Test method: QStringList reloachBackward((int screenNum, int start, int end))
+    auto result = obj->reloachBackward(0, 0, 0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(DodgeItemsOperTest, reloachForward)
 {
-    // reloachForward
-    SUCCEED();
+    // Test method: QStringList reloachForward((int screenNum, int start, int end))
+    auto result = obj->reloachForward(0, 0, 0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(DodgeItemsOperTest, toIndex)
 {
-    // toIndex
-    SUCCEED();
+    // Test method: QList<int> toIndex((const int screenNumber, const QList<QPoint> &pos))
+    QList<QPoint> _arg1{};
+    auto result = obj->toIndex(0, _arg1);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(DodgeItemsOperTest, toPos)
 {
-    // toPos
-    SUCCEED();
+    // Test method: QPoint toPos((const int screenNumber, const int index))
+    auto result = obj->toPos(0, 0);
+    EXPECT_TRUE(result.isNull());
+
 }

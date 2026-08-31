@@ -3,21 +3,41 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_filedialogmenusceneprivate.cpp
- * @brief Unit tests for FileDialogMenuScenePrivate Low-priority methods
+ * @file test_filedialogmenusceneprivate.cpp
+ * @brief Unit tests for FileDialogMenuScenePrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class FileDialogMenuScenePrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "menus/filedialogmenuscene.h"
+
+#include <QTest>
+
+using namespace core;
+
+class FileDialogMenuScenePrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new FileDialogMenuScenePrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FileDialogMenuScenePrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(FileDialogMenuScenePrivateTest, FileDialogMenuScenePrivate)
 {
-    // FileDialogMenuScenePrivate
-    SUCCEED();
+    // Test constructor: FileDialogMenuScenePrivate((FileDialogMenuScene *qq))
+    ASSERT_NE(obj, nullptr);
 }
-

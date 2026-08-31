@@ -3,51 +3,79 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_low_inotifyfilesystemwatcher.cpp
- * @brief Unit tests for InotifyFileSystemWatcher Low-priority methods
+ * @file test_low_inotifyfilesystemwatcher.cpp
+ * @brief Unit tests for InotifyFileSystemWatcher methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class InotifyFileSystemWatcherLowTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "services/textindex/fsmonitor/inotifyfilesystemwatcher.h"
+
+#include <QTest>
+
+using namespace src;
+
+class InotifyFileSystemWatcherTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new InotifyFileSystemWatcher();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    InotifyFileSystemWatcher *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
-TEST_F(InotifyFileSystemWatcherLowTest, InotifyFileSystemWatcher)
+TEST_F(InotifyFileSystemWatcherTest, InotifyFileSystemWatcher)
 {
-    // InotifyFileSystemWatcher
-    SUCCEED();
+    // Test constructor: InotifyFileSystemWatcher((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
-TEST_F(InotifyFileSystemWatcherLowTest, addPath)
+TEST_F(InotifyFileSystemWatcherTest, addPath)
 {
-    // addPath
-    SUCCEED();
+    // Test method: bool addPath((const QString &path))
+    QString _arg0{};
+    auto result = obj->addPath(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(InotifyFileSystemWatcherLowTest, addPaths)
+TEST_F(InotifyFileSystemWatcherTest, addPaths)
 {
-    // addPaths
-    SUCCEED();
+    // Test method: QStringList addPaths((const QStringList &paths))
+    QStringList _arg0{};
+    auto result = obj->addPaths(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
-TEST_F(InotifyFileSystemWatcherLowTest, setWatchFlags)
+TEST_F(InotifyFileSystemWatcherTest, setWatchFlags)
 {
-    // setWatchFlags
-    SUCCEED();
+    // Test setter: void setWatchFlags((WatchFlags flags))
+    EXPECT_NO_FATAL_FAILURE(obj->setWatchFlags(WatchFlags()));
 }
 
-TEST_F(InotifyFileSystemWatcherLowTest, watchFlags)
+TEST_F(InotifyFileSystemWatcherTest, watchFlags)
 {
-    // watchFlags
-    SUCCEED();
+    // Test getter: InotifyFileSystemWatcher::WatchFlags watchFlags()
+    auto result = obj->watchFlags();
+    EXPECT_GE(static_cast<int>(result), 0);
+
 }
 
-TEST_F(InotifyFileSystemWatcherLowTest, InotifyFileSystemWatcher_Destructor)
+TEST_F(InotifyFileSystemWatcherTest, InotifyFileSystemWatcher_Destructor)
 {
-    // ~InotifyFileSystemWatcher
-    SUCCEED();
+    // Test method:  ~InotifyFileSystemWatcher(())
+    EXPECT_NO_FATAL_FAILURE({ InotifyFileSystemWatcher *tmp = new InotifyFileSystemWatcher(); delete tmp; });
 }
-

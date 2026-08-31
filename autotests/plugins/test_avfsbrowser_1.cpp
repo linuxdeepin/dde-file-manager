@@ -3,45 +3,68 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_avfsbrowser_1.cpp
- * @brief Unit tests for AvfsBrowser Low-priority methods
+ * @file test_avfsbrowser_1.cpp
+ * @brief Unit tests for AvfsBrowser methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class AvfsBrowserTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "avfsbrowser.h"
+
+#include <QTest>
+
+using namespace dfmplugin_avfsbrowser;
+
+class AvfsBrowserTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new AvfsBrowser();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    AvfsBrowser *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(AvfsBrowserTest, beMySubOnAdded)
 {
-    // beMySubOnAdded
-    SUCCEED();
+    // Test method: void beMySubOnAdded((const QString &newScene))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->beMySubOnAdded(_arg0));
 }
 
 TEST_F(AvfsBrowserTest, followEvents)
 {
-    // followEvents
-    SUCCEED();
+    // Test method: void followEvents(())
+    EXPECT_NO_FATAL_FAILURE(obj->followEvents());
 }
 
 TEST_F(AvfsBrowserTest, initialize)
 {
-    // initialize
-    SUCCEED();
+    // Test getter: DFMBASE_USE_NAMESPACE initialize()
+    EXPECT_NO_FATAL_FAILURE({ obj->initialize(); });
 }
 
 TEST_F(AvfsBrowserTest, regCrumb)
 {
-    // regCrumb
-    SUCCEED();
+    // Test method: void regCrumb(())
+    EXPECT_NO_FATAL_FAILURE(obj->regCrumb());
 }
 
 TEST_F(AvfsBrowserTest, start)
 {
-    // start
-    SUCCEED();
-}
+    // Test bool getter: start()
+    bool result = obj->start();
+    EXPECT_FALSE(result);
 
+}

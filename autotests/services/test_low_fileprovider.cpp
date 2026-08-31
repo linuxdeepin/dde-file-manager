@@ -3,27 +3,49 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_low_fileprovider.cpp
- * @brief Unit tests for FileProvider Low-priority methods
+ * @file test_low_fileprovider.cpp
+ * @brief Unit tests for FileProvider methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class FileProviderLowTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "services/textindex/task/fileprovider.h"
+
+#include <QTest>
+
+using namespace src;
+
+class FileProviderTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new FileProvider();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FileProvider *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
-TEST_F(FileProviderLowTest, totalCount)
+TEST_F(FileProviderTest, totalCount)
 {
-    // totalCount
-    SUCCEED();
+    // Test getter: qint64 totalCount()
+    auto result = obj->totalCount();
+    EXPECT_EQ(result, 0);
+
 }
 
-TEST_F(FileProviderLowTest, FileProvider_Destructor)
+TEST_F(FileProviderTest, FileProvider_Destructor)
 {
-    // ~FileProvider
-    SUCCEED();
+    // Test method:  ~FileProvider(())
+    EXPECT_NO_FATAL_FAILURE({ FileProvider *tmp = new FileProvider(); delete tmp; });
 }
-

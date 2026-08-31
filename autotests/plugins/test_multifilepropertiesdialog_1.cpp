@@ -3,63 +3,84 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_multifilepropertiesdialog_1.cpp
- * @brief Unit tests for MultiFilePropertiesDialog Low-priority methods
+ * @file test_multifilepropertiesdialog_1.cpp
+ * @brief Unit tests for MultiFilePropertiesDialog methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class MultiFilePropertiesDialogTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/multifilepropertiesdialog.h"
+
+#include <QTest>
+
+using namespace dfmplugin_propertydialog;
+
+class MultiFilePropertiesDialogTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new MultiFilePropertiesDialog();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    MultiFilePropertiesDialog *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(MultiFilePropertiesDialogTest, connectHeightChange)
 {
-    // connectHeightChange
-    SUCCEED();
+    // Test method: void connectHeightChange((DArrowLineDrawer *w))
+    EXPECT_NO_FATAL_FAILURE(obj->connectHeightChange(nullptr));
 }
 
 TEST_F(MultiFilePropertiesDialogTest, handleGroupBoxStateChanged)
 {
-    // handleGroupBoxStateChanged
-    SUCCEED();
+    // Test method: void handleGroupBoxStateChanged((int index))
+    EXPECT_NO_FATAL_FAILURE(obj->handleGroupBoxStateChanged(0));
 }
 
 TEST_F(MultiFilePropertiesDialogTest, handleHideBoxStateChanged)
 {
-    // handleHideBoxStateChanged
-    SUCCEED();
+    // Test method: void handleHideBoxStateChanged((int state))
+    EXPECT_NO_FATAL_FAILURE(obj->handleHideBoxStateChanged(0));
 }
 
 TEST_F(MultiFilePropertiesDialogTest, handleOtherBoxStateChanged)
 {
-    // handleOtherBoxStateChanged
-    SUCCEED();
+    // Test method: void handleOtherBoxStateChanged((int index))
+    EXPECT_NO_FATAL_FAILURE(obj->handleOtherBoxStateChanged(0));
 }
 
 TEST_F(MultiFilePropertiesDialogTest, handleOwnerBoxStateChanged)
 {
-    // handleOwnerBoxStateChanged
-    SUCCEED();
+    // Test method: void handleOwnerBoxStateChanged((int index))
+    EXPECT_NO_FATAL_FAILURE(obj->handleOwnerBoxStateChanged(0));
 }
 
 TEST_F(MultiFilePropertiesDialogTest, initConnect)
 {
-    // initConnect
-    SUCCEED();
+    // Test method: void initConnect(())
+    EXPECT_NO_FATAL_FAILURE(obj->initConnect());
 }
 
 TEST_F(MultiFilePropertiesDialogTest, processHeight)
 {
-    // processHeight
-    SUCCEED();
+    // Test method: void processHeight(())
+    EXPECT_NO_FATAL_FAILURE(obj->processHeight());
 }
 
 TEST_F(MultiFilePropertiesDialogTest, showEvent)
 {
-    // showEvent
-    SUCCEED();
+    // Test event handler: showEvent((QShowEvent *event))
+    QShowEvent _event(QShowEvent::None);
+    EXPECT_NO_FATAL_FAILURE(obj->showEvent(&_event));
 }
-

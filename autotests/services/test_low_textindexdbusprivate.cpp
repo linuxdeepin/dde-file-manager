@@ -3,51 +3,74 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_low_textindexdbusprivate.cpp
- * @brief Unit tests for TextIndexDBusPrivate Low-priority methods
+ * @file test_low_textindexdbusprivate.cpp
+ * @brief Unit tests for TextIndexDBusPrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class TextIndexDBusPrivateLowTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "services/textindex/textindexdbus.h"
+
+#include <QTest>
+
+using namespace src;
+
+class TextIndexDBusPrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new TextIndexDBusPrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    TextIndexDBusPrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
-TEST_F(TextIndexDBusPrivateLowTest, canSilentlyRefreshIndex)
+TEST_F(TextIndexDBusPrivateTest, canSilentlyRefreshIndex)
 {
-    // canSilentlyRefreshIndex
-    SUCCEED();
+    // Test method: bool canSilentlyRefreshIndex((const QString &path))
+    QString _arg0{};
+    auto result = obj->canSilentlyRefreshIndex(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(TextIndexDBusPrivateLowTest, handleConfigChanged)
+TEST_F(TextIndexDBusPrivateTest, handleConfigChanged)
 {
-    // handleConfigChanged
-    SUCCEED();
+    // Test method: void handleConfigChanged(())
+    EXPECT_NO_FATAL_FAILURE(obj->handleConfigChanged());
 }
 
-TEST_F(TextIndexDBusPrivateLowTest, handleMonitoring)
+TEST_F(TextIndexDBusPrivateTest, handleMonitoring)
 {
-    // handleMonitoring
-    SUCCEED();
+    // Test method: void handleMonitoring((bool start))
+    EXPECT_NO_FATAL_FAILURE(obj->handleMonitoring(false));
 }
 
-TEST_F(TextIndexDBusPrivateLowTest, initConnect)
+TEST_F(TextIndexDBusPrivateTest, initConnect)
 {
-    // initConnect
-    SUCCEED();
+    // Test method: void initConnect(())
+    EXPECT_NO_FATAL_FAILURE(obj->initConnect());
 }
 
-TEST_F(TextIndexDBusPrivateLowTest, initialize)
+TEST_F(TextIndexDBusPrivateTest, initialize)
 {
-    // initialize
-    SUCCEED();
+    // Test method: void initialize(())
+    EXPECT_NO_FATAL_FAILURE(obj->initialize());
 }
 
-TEST_F(TextIndexDBusPrivateLowTest, initializeSupportedExtensions)
+TEST_F(TextIndexDBusPrivateTest, initializeSupportedExtensions)
 {
-    // initializeSupportedExtensions
-    SUCCEED();
+    // Test method: void initializeSupportedExtensions(())
+    EXPECT_NO_FATAL_FAILURE(obj->initializeSupportedExtensions());
 }
-

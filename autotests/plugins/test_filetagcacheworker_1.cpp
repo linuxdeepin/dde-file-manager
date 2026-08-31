@@ -3,57 +3,82 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_filetagcacheworker_1.cpp
- * @brief Unit tests for FileTagCacheWorker Low-priority methods
+ * @file test_filetagcacheworker_1.cpp
+ * @brief Unit tests for FileTagCacheWorker methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class FileTagCacheWorkerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/filetagcache.h"
+
+#include <QTest>
+
+using namespace dfmplugin_tag;
+
+class FileTagCacheWorkerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new FileTagCacheWorker();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FileTagCacheWorker *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(FileTagCacheWorkerTest, onFilesTagged)
 {
-    // onFilesTagged
-    SUCCEED();
+    // Test method: void onFilesTagged((const QVariantMap &fileAndTags))
+    QVariantMap _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->onFilesTagged(_arg0));
 }
 
 TEST_F(FileTagCacheWorkerTest, onFilesUntagged)
 {
-    // onFilesUntagged
-    SUCCEED();
+    // Test method: void onFilesUntagged((const QVariantMap &fileAndTags))
+    QVariantMap _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->onFilesUntagged(_arg0));
 }
 
 TEST_F(FileTagCacheWorkerTest, onTagAdded)
 {
-    // onTagAdded
-    SUCCEED();
+    // Test method: void onTagAdded((const QVariantMap &tags))
+    QVariantMap _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->onTagAdded(_arg0));
 }
 
 TEST_F(FileTagCacheWorkerTest, onTagsColorChanged)
 {
-    // onTagsColorChanged
-    SUCCEED();
+    // Test method: void onTagsColorChanged((const QVariantMap &tagAndColorName))
+    QVariantMap _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->onTagsColorChanged(_arg0));
 }
 
 TEST_F(FileTagCacheWorkerTest, onTagsNameChanged)
 {
-    // onTagsNameChanged
-    SUCCEED();
+    // Test method: void onTagsNameChanged((const QVariantMap &oldAndNew))
+    QVariantMap _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->onTagsNameChanged(_arg0));
 }
 
 TEST_F(FileTagCacheWorkerTest, onTrashFileTagsChanged)
 {
-    // onTrashFileTagsChanged
-    SUCCEED();
+    // Test method: void onTrashFileTagsChanged(())
+    EXPECT_NO_FATAL_FAILURE(obj->onTrashFileTagsChanged());
 }
 
 TEST_F(FileTagCacheWorkerTest, FileTagCacheWorker_Destructor)
 {
-    // ~FileTagCacheWorker
-    SUCCEED();
+    // Test method:  ~FileTagCacheWorker(())
+    EXPECT_NO_FATAL_FAILURE({ FileTagCacheWorker *tmp = new FileTagCacheWorker(); delete tmp; });
 }
-

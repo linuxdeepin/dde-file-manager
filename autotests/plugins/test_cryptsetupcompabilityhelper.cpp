@@ -4,19 +4,42 @@
 
 /**
  * @file test_cryptsetupcompabilityhelper.cpp
- * @brief Unit tests for CryptSetupCompabilityHelper Mid-priority methods
+ * @brief Unit tests for CryptSetupCompabilityHelper methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class CryptSetupCompabilityHelperTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "services/diskencrypt/helpers/cryptsetupcompabilityhelper.h"
+
+#include <QTest>
+
+using namespace src;
+
+class CryptSetupCompabilityHelperTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new CryptSetupCompabilityHelper();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    CryptSetupCompabilityHelper *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(CryptSetupCompabilityHelperTest, instance)
 {
-    // instance
-    SUCCEED();
+    // Test getter: CryptSetupCompabilityHelper instance()
+    auto result = obj->instance();
+    EXPECT_TRUE(result.isEmpty());
+
 }

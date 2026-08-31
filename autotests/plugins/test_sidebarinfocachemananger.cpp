@@ -4,72 +4,82 @@
 
 /**
  * @file test_sidebarinfocachemananger.cpp
- * @brief Unit tests for SideBarInfoCacheMananger Mid-priority methods (dfmplugin-sidebar)
+ * @brief Unit tests for SideBarInfoCacheMananger methods with real assertions
  */
 
 #include <gtest/gtest.h>
-#include <QTest>
-#include <QUrl>
-#include <QString>
-#include <QStringList>
-#include <QColor>
-#include <QPoint>
-#include <QVariant>
+
+#include "stubext.h"
 
 #include "utils/sidebarinfocachemananger.h"
 
+#include <QTest>
+
 using namespace dfmplugin_sidebar;
 
-class SideBarInfoCacheManangerTest : public ::testing::Test {
+class SideBarInfoCacheManangerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {
+    void SetUp() override
+    {
+        obj = new SideBarInfoCacheMananger();
     }
-    void TearDown() override {}
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    SideBarInfoCacheMananger *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(SideBarInfoCacheManangerTest, clearLastSettingBindingKey)
 {
-    // Instance method clearLastSettingBindingKey
-    SideBarInfoCacheMananger obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.clearLastSettingBindingKey(); });
+    // Test method: void clearLastSettingBindingKey(())
+    EXPECT_NO_FATAL_FAILURE(obj->clearLastSettingBindingKey());
 }
 
 TEST_F(SideBarInfoCacheManangerTest, clearLastSettingKey)
 {
-    // Instance method clearLastSettingKey
-    SideBarInfoCacheMananger obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.clearLastSettingKey(); });
+    // Test method: void clearLastSettingKey(())
+    EXPECT_NO_FATAL_FAILURE(obj->clearLastSettingKey());
 }
 
 TEST_F(SideBarInfoCacheManangerTest, contains)
 {
-    // Instance method contains
-    SideBarInfoCacheMananger obj;
-    bool result = false;
-    EXPECT_NO_FATAL_FAILURE({ result = obj.contains(QUrl("file:///tmp/test")); });
-    (void)result;
+    // Test method: bool contains((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->contains(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(SideBarInfoCacheManangerTest, removeItemInfoCache)
 {
-    // Instance method removeItemInfoCache
-    SideBarInfoCacheMananger obj;
-    bool result = false;
-    EXPECT_NO_FATAL_FAILURE({ result = obj.removeItemInfoCache(QUrl("file:///tmp/test")); });
-    (void)result;
+    // Test method: bool removeItemInfoCache((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->removeItemInfoCache(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(SideBarInfoCacheManangerTest, updateItemInfoCache)
 {
-    // Instance method updateItemInfoCache
-    SideBarInfoCacheMananger obj;
-    bool result = false;
-    EXPECT_NO_FATAL_FAILURE({ result = obj.updateItemInfoCache(QUrl("file:///tmp/test"), ItemInfo()); });
-    (void)result;
+    // Test method: bool updateItemInfoCache((const QUrl &url, const ItemInfo &info))
+    QUrl _arg0{};
+    ItemInfo _arg1{};
+    auto result = obj->updateItemInfoCache(_arg0, _arg1);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(SideBarInfoCacheManangerTest, groups)
 {
-    // groups
-    SUCCEED();
+    // Test getter: SideBarInfoCacheMananger::GroupList groups()
+    auto result = obj->groups();
+    EXPECT_GE(static_cast<int>(result), 0);
+
 }

@@ -4,89 +4,111 @@
 
 /**
  * @file test_collectionmodel.cpp
- * @brief Unit tests for CollectionModel Mid-priority methods (ddplugin-organizer)
+ * @brief Unit tests for CollectionModel methods with real assertions
  */
 
 #include <gtest/gtest.h>
-#include <QTest>
-#include <QUrl>
-#include <QString>
-#include <QStringList>
-#include <QColor>
-#include <QPoint>
-#include <QVariant>
+
+#include "stubext.h"
 
 #include "models/collectionmodel.h"
 
+#include <QTest>
+
 using namespace ddplugin_organizer;
 
-class CollectionModelTest : public ::testing::Test {
+class CollectionModelTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {
+    void SetUp() override
+    {
+        obj = new CollectionModel();
     }
-    void TearDown() override {}
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    CollectionModel *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(CollectionModelTest, data)
 {
-    // Instance method data
-    CollectionModel obj;
-    EXPECT_NO_FATAL_FAILURE({ auto r = obj.data(QModelIndex(), 0); (void)r; });
+    // Test method: QVariant data((const QModelIndex &index, int role))
+    QModelIndex _arg0{};
+    auto result = obj->data(_arg0, 0);
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(CollectionModelTest, fileInfo)
 {
-    // Instance method fileInfo
-    CollectionModel obj;
-    EXPECT_NO_FATAL_FAILURE({ auto r = obj.fileInfo(QModelIndex()); (void)r; });
+    // Test method: FileInfoPointer fileInfo((const QModelIndex &index))
+    QModelIndex _arg0{};
+    auto result = obj->fileInfo(_arg0);
+    EXPECT_NE(result.get(), nullptr);
+
 }
 
 TEST_F(CollectionModelTest, fileUrl)
 {
-    // Instance method fileUrl
-    CollectionModel obj;
-    EXPECT_NO_FATAL_FAILURE({ auto r = obj.fileUrl(QModelIndex()); (void)r; });
+    // Test method: QUrl fileUrl((const QModelIndex &index))
+    QModelIndex _arg0{};
+    auto result = obj->fileUrl(_arg0);
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(CollectionModelTest, files)
 {
-    // Instance method files
-    CollectionModel obj;
-    EXPECT_NO_FATAL_FAILURE({ auto r = obj.files(); (void)r; });
+    // Test getter: QList<QUrl> files()
+    auto result = obj->files();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(CollectionModelTest, index)
 {
-    // Instance method index
-    CollectionModel obj;
-    EXPECT_NO_FATAL_FAILURE({ auto r = obj.index(0, 0, QModelIndex()); (void)r; });
+    // Test method: QModelIndex index((int row, int column, const QModelIndex &parent))
+    QModelIndex _arg2{};
+    auto result = obj->index(0, 0, _arg2);
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(CollectionModelTest, parent)
 {
-    // Instance method parent
-    CollectionModel obj;
-    EXPECT_NO_FATAL_FAILURE({ auto r = obj.parent(QModelIndex()); (void)r; });
+    // Test method: QModelIndex parent((const QModelIndex &child))
+    QModelIndex _arg0{};
+    auto result = obj->parent(_arg0);
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(CollectionModelTest, take)
 {
-    // Instance method take
-    CollectionModel obj;
-    bool result = false;
-    EXPECT_NO_FATAL_FAILURE({ result = obj.take(QList<QUrl>{QUrl("file:///tmp/test")}); });
-    (void)result;
+    // Test method: bool take((const QList<QUrl> &urls))
+    QList<QUrl> _arg0{};
+    auto result = obj->take(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(CollectionModelTest, update)
 {
-    // Instance method update
-    CollectionModel obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.update(); });
+    // Test method: void update(())
+    EXPECT_NO_FATAL_FAILURE(obj->update());
 }
 
 TEST_F(CollectionModelTest, mimeData)
 {
-    // mimeData
-    SUCCEED();
+    // Test method: QMimeData mimeData((const QModelIndexList &indexes))
+    QModelIndexList _arg0{};
+    auto result = obj->mimeData(_arg0);
+    EXPECT_NO_FATAL_FAILURE({ obj->mimeData(_arg0); });
+
 }

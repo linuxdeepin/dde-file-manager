@@ -4,47 +4,72 @@
 
 /**
  * @file test_appentryfileentity.cpp
- * @brief Unit tests for AppEntryFileEntity Mid-priority methods (stub)
+ * @brief Unit tests for AppEntryFileEntity methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
+#include "stubext.h"
+
 #include "fileentity/appentryfileentity.h"
+
+#include <QTest>
 
 using namespace dfmplugin_computer;
 
-class AppEntryFileEntityTest : public ::testing::Test {
+class AppEntryFileEntityTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new AppEntryFileEntity();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    AppEntryFileEntity *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(AppEntryFileEntityTest, displayName)
 {
-    // displayName - stub test (class requires special construction)
-    SUCCEED();
+    // Test getter: QString displayName()
+    auto result = obj->displayName();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(AppEntryFileEntityTest, exists)
 {
-    // exists - stub test (class requires special construction)
-    SUCCEED();
+    // Test bool getter: exists()
+    bool result = obj->exists();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(AppEntryFileEntityTest, extraProperties)
 {
-    // extraProperties - stub test (class requires special construction)
-    SUCCEED();
+    // Test getter: QVariantHash extraProperties()
+    auto result = obj->extraProperties();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(AppEntryFileEntityTest, AppEntryFileEntity)
 {
-    // AppEntryFileEntity
-    SUCCEED();
+    // Test constructor: AppEntryFileEntity((const QUrl &url))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(AppEntryFileEntityTest, order)
 {
-    // order
-    SUCCEED();
+    // Test getter: DFMBASE_NAMESPACE::AbstractEntryFileEntity::EntryOrder order()
+    auto result = obj->order();
+    EXPECT_NO_FATAL_FAILURE({ obj->order(); });
+
 }

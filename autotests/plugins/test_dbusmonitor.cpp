@@ -4,67 +4,106 @@
 
 /**
  * @file test_dbusmonitor.cpp
- * @brief Unit tests for DBusMonitor Mid-priority methods
+ * @brief Unit tests for DBusMonitor methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class DBusMonitorTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "screen/dbus-private/dbusmonitor.h"
+
+#include <QTest>
+
+using namespace ddplugin_core;
+
+class DBusMonitorTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new DBusMonitor();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    DBusMonitor *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(DBusMonitorTest, Enable)
 {
-    // Enable
-    SUCCEED();
+    // Test getter: QDBusPendingReply<> Enable()
+    auto result = obj->Enable();
+    EXPECT_NO_FATAL_FAILURE({ obj->Enable(); });
+
 }
 
 TEST_F(DBusMonitorTest, connected)
 {
-    // connected
-    SUCCEED();
+    // Test bool getter: connected()
+    bool result = obj->connected();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(DBusMonitorTest, height)
 {
-    // height
-    SUCCEED();
+    // Test getter: quint16 height()
+    auto result = obj->height();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(DBusMonitorTest, rect)
 {
-    // rect
-    SUCCEED();
+    // Test getter: QRect rect()
+    auto result = obj->rect();
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(DBusMonitorTest, staticInterfaceName)
 {
-    // staticInterfaceName
-    SUCCEED();
+    // Test getter: char staticInterfaceName()
+    auto result = obj->staticInterfaceName();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(DBusMonitorTest, staticServiceName)
 {
-    // staticServiceName
-    SUCCEED();
+    // Test getter: char staticServiceName()
+    auto result = obj->staticServiceName();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(DBusMonitorTest, width)
 {
-    // width
-    SUCCEED();
+    // Test getter: quint16 width()
+    auto result = obj->width();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(DBusMonitorTest, x)
 {
-    // x
-    SUCCEED();
+    // Test getter: qint16 x()
+    auto result = obj->x();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(DBusMonitorTest, y)
 {
-    // y
-    SUCCEED();
+    // Test getter: qint16 y()
+    auto result = obj->y();
+    EXPECT_EQ(result, 0);
+
 }

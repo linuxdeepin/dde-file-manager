@@ -4,37 +4,64 @@
 
 /**
  * @file test_browserpage.cpp
- * @brief Unit tests for BrowserPage Mid-priority methods
+ * @brief Unit tests for BrowserPage methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class BrowserPageTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "apps/dde-file-manager-preview/pluginpreviews/pdf-preview/browserpage.h"
+
+#include <QTest>
+
+using namespace src;
+
+class BrowserPageTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new BrowserPage();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    BrowserPage *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(BrowserPageTest, clearPixmap)
 {
-    // clearPixmap
-    SUCCEED();
+    // Test method: void clearPixmap(())
+    EXPECT_NO_FATAL_FAILURE(obj->clearPixmap());
 }
 
 TEST_F(BrowserPageTest, getTopLeftPos)
 {
-    // getTopLeftPos
-    SUCCEED();
+    // Test getter: QPointF getTopLeftPos()
+    auto result = obj->getTopLeftPos();
+    EXPECT_TRUE(result.isNull());
+
 }
 
 TEST_F(BrowserPageTest, itemIndex)
 {
-    // itemIndex
-    SUCCEED();
+    // Test getter: int itemIndex()
+    auto result = obj->itemIndex();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(BrowserPageTest, rect)
 {
-    // rect
-    SUCCEED();
+    // Test getter: QRectF rect()
+    auto result = obj->rect();
+    EXPECT_FALSE(result.isValid());
+
 }

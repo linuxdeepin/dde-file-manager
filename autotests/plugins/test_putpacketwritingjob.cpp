@@ -3,39 +3,64 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_putpacketwritingjob.cpp
- * @brief Unit tests for PutPacketWritingJob Low-priority methods
+ * @file test_putpacketwritingjob.cpp
+ * @brief Unit tests for PutPacketWritingJob methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class PutPacketWritingJobTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/packetwritingjob.h"
+
+#include <QTest>
+
+using namespace dfmplugin_burn;
+
+class PutPacketWritingJobTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new PutPacketWritingJob();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    PutPacketWritingJob *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(PutPacketWritingJobTest, PutPacketWritingJob)
 {
-    // PutPacketWritingJob
-    SUCCEED();
+    // Test constructor: PutPacketWritingJob((const QString &device, QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(PutPacketWritingJobTest, getPendingUrls)
 {
-    // getPendingUrls
-    SUCCEED();
+    // Test getter: QList<QUrl> getPendingUrls()
+    auto result = obj->getPendingUrls();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(PutPacketWritingJobTest, setPendingUrls)
 {
-    // setPendingUrls
-    SUCCEED();
+    // Test setter: void setPendingUrls((const QList<QUrl> &value))
+    QList<QUrl> _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->setPendingUrls(_arg0));
 }
 
 TEST_F(PutPacketWritingJobTest, work)
 {
-    // work
-    SUCCEED();
-}
+    // Test bool getter: work()
+    bool result = obj->work();
+    EXPECT_FALSE(result);
 
+}

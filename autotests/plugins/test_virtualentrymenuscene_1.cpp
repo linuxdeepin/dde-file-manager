@@ -3,45 +3,69 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_virtualentrymenuscene_1.cpp
- * @brief Unit tests for VirtualEntryMenuScene Low-priority methods
+ * @file test_virtualentrymenuscene_1.cpp
+ * @brief Unit tests for VirtualEntryMenuScene methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class VirtualEntryMenuSceneTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "displaycontrol/menu/virtualentrymenuscene.h"
+
+#include <QTest>
+
+using namespace dfmplugin_smbbrowser;
+
+class VirtualEntryMenuSceneTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new VirtualEntryMenuScene();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    VirtualEntryMenuScene *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(VirtualEntryMenuSceneTest, VirtualEntryMenuScene)
 {
-    // VirtualEntryMenuScene
-    SUCCEED();
+    // Test constructor: VirtualEntryMenuScene((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(VirtualEntryMenuSceneTest, create)
 {
-    // create
-    SUCCEED();
+    // Test method: bool create((QMenu *parent))
+    auto result = obj->create(nullptr);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(VirtualEntryMenuSceneTest, name)
 {
-    // name
-    SUCCEED();
+    // Test getter: QString name()
+    auto result = obj->name();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(VirtualEntryMenuSceneTest, updateState)
 {
-    // updateState
-    SUCCEED();
+    // Test method: void updateState((QMenu *parent))
+    EXPECT_NO_FATAL_FAILURE(obj->updateState(nullptr));
 }
 
 TEST_F(VirtualEntryMenuSceneTest, VirtualEntryMenuScene_Destructor)
 {
-    // ~VirtualEntryMenuScene
-    SUCCEED();
+    // Test method:  ~VirtualEntryMenuScene(())
+    EXPECT_NO_FATAL_FAILURE({ VirtualEntryMenuScene *tmp = new VirtualEntryMenuScene(); delete tmp; });
 }
-

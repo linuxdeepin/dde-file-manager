@@ -4,25 +4,48 @@
 
 /**
  * @file test_dragdrophelper.cpp
- * @brief Unit tests for DragDropHelper Mid-priority methods
+ * @brief Unit tests for DragDropHelper methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class DragDropHelperTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/dragdrophelper.h"
+
+#include <QTest>
+
+using namespace dfmplugin_workspace;
+
+class DragDropHelperTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new DragDropHelper();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    DragDropHelper *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(DragDropHelperTest, processDragAutoScroll)
 {
-    // processDragAutoScroll
-    SUCCEED();
+    // Test bool getter: processDragAutoScroll()
+    bool result = obj->processDragAutoScroll();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(DragDropHelperTest, resetDragState)
 {
-    // resetDragState
-    SUCCEED();
+    // Test method: void resetDragState(())
+    EXPECT_NO_FATAL_FAILURE(obj->resetDragState());
 }

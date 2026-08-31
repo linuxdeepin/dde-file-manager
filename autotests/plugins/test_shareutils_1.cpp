@@ -3,45 +3,72 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_shareutils_1.cpp
- * @brief Unit tests for ShareUtils Low-priority methods
+ * @file test_shareutils_1.cpp
+ * @brief Unit tests for ShareUtils methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ShareUtilsTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/shareutils.h"
+
+#include <QTest>
+
+using namespace dfmplugin_myshares;
+
+class ShareUtilsTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ShareUtils();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ShareUtils *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ShareUtilsTest, ShareUtils)
 {
-    // ShareUtils
-    SUCCEED();
+    // Test constructor: ShareUtils((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(ShareUtilsTest, displayName)
 {
-    // displayName
-    SUCCEED();
+    // Test getter: QString displayName()
+    auto result = obj->displayName();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(ShareUtilsTest, icon)
 {
-    // icon
-    SUCCEED();
+    // Test getter: QIcon icon()
+    auto result = obj->icon();
+    EXPECT_TRUE(result.isNull());
+
 }
 
 TEST_F(ShareUtilsTest, instance)
 {
-    // instance
-    SUCCEED();
+    // Test getter: ShareUtils instance()
+    auto result = obj->instance();
+    EXPECT_NO_FATAL_FAILURE({ obj->instance(); });
+
 }
 
 TEST_F(ShareUtilsTest, rootUrl)
 {
-    // rootUrl
-    SUCCEED();
+    // Test getter: QUrl rootUrl()
+    auto result = obj->rootUrl();
+    EXPECT_TRUE(result.isEmpty() || result.isValid());
 }
-

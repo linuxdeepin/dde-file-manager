@@ -4,19 +4,42 @@
 
 /**
  * @file test_opticalsignalmanager.cpp
- * @brief Unit tests for OpticalSignalManager Mid-priority methods
+ * @brief Unit tests for OpticalSignalManager methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class OpticalSignalManagerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/opticalsignalmanager.h"
+
+#include <QTest>
+
+using namespace dfmplugin_optical;
+
+class OpticalSignalManagerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new OpticalSignalManager();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    OpticalSignalManager *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(OpticalSignalManagerTest, instance)
 {
-    // instance
-    SUCCEED();
+    // Test getter: OpticalSignalManager instance()
+    auto result = obj->instance();
+    EXPECT_NO_FATAL_FAILURE({ obj->instance(); });
+
 }

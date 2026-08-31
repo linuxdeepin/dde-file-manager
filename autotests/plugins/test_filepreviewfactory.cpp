@@ -4,19 +4,42 @@
 
 /**
  * @file test_filepreviewfactory.cpp
- * @brief Unit tests for FilePreviewFactory Mid-priority methods
+ * @brief Unit tests for FilePreviewFactory methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class FilePreviewFactoryTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "apps/dde-file-manager-preview/libdfm-preview/pluginInterface/filepreviewfactory.h"
+
+#include <QTest>
+
+using namespace src;
+
+class FilePreviewFactoryTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new FilePreviewFactory();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FilePreviewFactory *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(FilePreviewFactoryTest, keys)
 {
-    // keys
-    SUCCEED();
+    // Test getter: QStringList keys()
+    auto result = obj->keys();
+    EXPECT_TRUE(result.isEmpty());
+
 }

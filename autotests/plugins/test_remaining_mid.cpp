@@ -17,827 +17,936 @@ protected:
 
 TEST_F(RemainingMidTest, BackgroundService)
 {
-    SUCCEED();
+    BackgroundService *obj = new BackgroundService();
+    ASSERT_NE(obj, nullptr);
+    EXPECT_NO_FATAL_FAILURE(obj->onWorkspaceSwitched(0, 0));
+    EXPECT_NO_FATAL_FAILURE({ obj->getDefaultBackground(); });
+    EXPECT_NO_FATAL_FAILURE({ obj->getCurrentWorkspaceIndex(); });
+    delete obj;
 }
 
 TEST_F(RemainingMidTest, BaseEncryptWorker)
 {
-    SUCCEED();
+    BaseEncryptWorker *obj = new BaseEncryptWorker();
+    ASSERT_NE(obj, nullptr);
+    EXPECT_NO_FATAL_FAILURE({ obj->args(); });
+    EXPECT_NO_FATAL_FAILURE({ obj->exitCode(); });
+    EXPECT_NO_FATAL_FAILURE(obj->setExitCode(0));
+    delete obj;
 }
 
 TEST_F(RemainingMidTest, DCheckBox)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ DCheckBox({}); });
 }
 
 TEST_F(RemainingMidTest, DDialog)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ DDialog({}); });
 }
 
 TEST_F(RemainingMidTest, DFMExtEmblemIconLayoutPrivate)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ DFMExtEmblemIconLayoutPrivate(); });
 }
 
 TEST_F(RemainingMidTest, DFMExtEmblemIconPluginPrivate)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ DFMExtEmblemIconPluginPrivate(); });
 }
 
 TEST_F(RemainingMidTest, DFMExtWindowPluginPrivate)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ DFMExtWindowPluginPrivate(); });
 }
 
 TEST_F(RemainingMidTest, DFMExtWindowPrivate)
 {
-    SUCCEED();
+    DFMExtWindowPrivate *obj = new DFMExtWindowPrivate();
+    ASSERT_NE(obj, nullptr);
+    delete obj;
 }
 
 TEST_F(RemainingMidTest, DFMExtWindowProxyPrivate)
 {
-    SUCCEED();
+    DFMExtWindowProxyPrivate *obj = new DFMExtWindowProxyPrivate();
+    ASSERT_NE(obj, nullptr);
+    delete obj;
 }
 
 TEST_F(RemainingMidTest, DIconButton)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ DIconButton({}); });
 }
 
 TEST_F(RemainingMidTest, DStyledItemDelegate)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ DStyledItemDelegate({}); });
 }
 
 TEST_F(RemainingMidTest, FileNameSorter)
 {
-    SUCCEED();
+    FileNameSorter *obj = new FileNameSorter();
+    ASSERT_NE(obj, nullptr);
+    EXPECT_NO_FATAL_FAILURE(obj->sort(_arg0, Qt::SortOrder()));
+    EXPECT_NO_FATAL_FAILURE({ obj->compare(_arg0, _arg1, Qt::SortOrder()); });
+    EXPECT_NO_FATAL_FAILURE({ obj->sortKey(_arg0); });
+    EXPECT_NO_FATAL_FAILURE(obj->sortUrls(_arg0, Qt::SortOrder()));
+    delete obj;
 }
 
 TEST_F(RemainingMidTest, QAbstractItemModel)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ QAbstractItemModel({}); });
 }
 
 TEST_F(RemainingMidTest, QDBusAbstractAdaptor)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ QDBusAbstractAdaptor(); });
 }
 
 TEST_F(RemainingMidTest, QDBusAbstractInterface)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ QDBusAbstractInterface({}, {}, {}, {}, {}); });
 }
 
 TEST_F(RemainingMidTest, QFrame)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ QFrame({}); });
 }
 
 TEST_F(RemainingMidTest, QLabel)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ QLabel(); });
 }
 
 TEST_F(RemainingMidTest, QObject)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ QObject({}); });
 }
 
 TEST_F(RemainingMidTest, QStandardItemModel)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ QStandardItemModel({}); });
 }
 
 TEST_F(RemainingMidTest, QStyledItemDelegate)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ QStyledItemDelegate({}); });
 }
 
 TEST_F(RemainingMidTest, QWidget)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ QWidget(); });
 }
 
 TEST_F(RemainingMidTest, SideBarItem)
 {
-    SUCCEED();
+    SideBarItem *obj = new SideBarItem();
+    ASSERT_NE(obj, nullptr);
+    EXPECT_NO_FATAL_FAILURE({ obj->url(); });
+    EXPECT_NO_FATAL_FAILURE({ obj->group(); });
+    EXPECT_NO_FATAL_FAILURE({ obj->targetUrl(); });
+    delete obj;
 }
 
 TEST_F(RemainingMidTest, aggregate)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE(aggregate());
 }
 
 TEST_F(RemainingMidTest, applicationAttribute)
 {
-    SUCCEED();
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ applicationAttribute(_arg0); });
 }
 
 TEST_F(RemainingMidTest, avg)
 {
-    SUCCEED();
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ avg(_arg0); });
 }
 
 TEST_F(RemainingMidTest, backupFile)
 {
-    SUCCEED();
+    QString _arg0{};
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE({ backupFile(_arg0, _arg1); });
 }
 
 TEST_F(RemainingMidTest, bindSetting)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE(bindSetting());
 }
 
 TEST_F(RemainingMidTest, bunner)
 {
-    SUCCEED();
+    QVariant _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ bunner(_arg0); });
 }
 
 TEST_F(RemainingMidTest, calculateNewPathForDirectoryMove)
 {
-    SUCCEED();
+    QString _arg0{};
+    QString _arg1{};
+    QString _arg2{};
+    EXPECT_NO_FATAL_FAILURE({ calculateNewPathForDirectoryMove(_arg0, _arg1, _arg2); });
 }
 
 TEST_F(RemainingMidTest, canOpenSelectedItems)
 {
-    SUCCEED();
+    QList<QUrl> _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ canOpenSelectedItems(_arg0); });
 }
 
 TEST_F(RemainingMidTest, checkAndEnableService)
 {
-    SUCCEED();
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ checkAndEnableService(_arg0); });
 }
 
 TEST_F(RemainingMidTest, constructFileName)
 {
-    SUCCEED();
+    FileNameComponents _arg0{};
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE({ constructFileName(_arg0, _arg1); });
 }
 
 TEST_F(RemainingMidTest, controlIconColor)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ controlIconColor(false); });
 }
 
 TEST_F(RemainingMidTest, convertQStringListToVector)
 {
-    SUCCEED();
+    QStringList _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ convertQStringListToVector(_arg0); });
 }
 
 TEST_F(RemainingMidTest, convertVectorToQStringList)
 {
-    SUCCEED();
+    std::vector<std::string> _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ convertVectorToQStringList(_arg0); });
 }
 
 TEST_F(RemainingMidTest, covertUrlToLocalPath)
 {
-    SUCCEED();
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ covertUrlToLocalPath(_arg0); });
 }
 
 TEST_F(RemainingMidTest, createColoredIcon)
 {
-    SUCCEED();
+    QIcon _arg0{};
+    QColor _arg1{};
+    QSize _arg2{};
+    EXPECT_NO_FATAL_FAILURE({ createColoredIcon(_arg0, _arg1, _arg2); });
 }
 
 TEST_F(RemainingMidTest, createSortInfo)
 {
-    SUCCEED();
+    QString _arg0{};
+    QString _arg1{};
+    QSet<QString> _arg2{};
+    EXPECT_NO_FATAL_FAILURE({ createSortInfo(_arg0, _arg1, _arg2); });
 }
 
 TEST_F(RemainingMidTest, d)
 {
-    SUCCEED();
+    d *obj = new d();
+    ASSERT_NE(obj, nullptr);
+    EXPECT_NO_FATAL_FAILURE(obj->[Service]
+());
+    delete obj;
 }
 
 TEST_F(RemainingMidTest, dLoadPluginList)
 {
-    SUCCEED();
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE({ dLoadPluginList(nullptr, _arg1); });
 }
 
 TEST_F(RemainingMidTest, daemonplugin_vaultdaemon)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ daemonplugin_vaultdaemon(); });
 }
 
 TEST_F(RemainingMidTest, ddplugin_canvas)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ ddplugin_canvas(); });
 }
 
 TEST_F(RemainingMidTest, ddplugin_organizer)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ ddplugin_organizer(); });
 }
 
 TEST_F(RemainingMidTest, ddplugin_wallpapersetting)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ ddplugin_wallpapersetting(); });
 }
 
 TEST_F(RemainingMidTest, decodeHeifThumbnail)
 {
-    SUCCEED();
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ decodeHeifThumbnail(_arg0, 0); });
 }
 
 TEST_F(RemainingMidTest, desktopFrameRootWindows)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ desktopFrameRootWindows(); });
 }
 
 TEST_F(RemainingMidTest, dfm_apply_service_polkit_to_target)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE(dfm_apply_service_polkit_to_target());
 }
 
 TEST_F(RemainingMidTest, dfm_setup_daemon_core_dependencies)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE(dfm_setup_daemon_core_dependencies());
 }
 
 TEST_F(RemainingMidTest, dfm_setup_textindex_dependencies)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE(dfm_setup_textindex_dependencies());
 }
 
 TEST_F(RemainingMidTest, dfm_tools_upgrade_doUpgrade)
 {
-    SUCCEED();
+    QMap<QString, QString> _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ dfm_tools_upgrade_doUpgrade(_arg0); });
 }
 
 TEST_F(RemainingMidTest, dfmplugin_bookmark)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ dfmplugin_bookmark(); });
 }
 
 TEST_F(RemainingMidTest, dfmplugin_computer)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ dfmplugin_computer(); });
 }
 
 TEST_F(RemainingMidTest, dfmplugin_dirshare)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ dfmplugin_dirshare(); });
 }
 
 TEST_F(RemainingMidTest, dfmplugin_emblem)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ dfmplugin_emblem(); });
 }
 
 TEST_F(RemainingMidTest, dfmplugin_propertydialog)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ dfmplugin_propertydialog(); });
 }
 
 TEST_F(RemainingMidTest, dfmplugin_recent)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ dfmplugin_recent(); });
 }
 
 TEST_F(RemainingMidTest, dfmplugin_search)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ dfmplugin_search(); });
 }
 
 TEST_F(RemainingMidTest, dfmplugin_sidebar)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ dfmplugin_sidebar(); });
 }
 
 TEST_F(RemainingMidTest, dfmplugin_tag)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ dfmplugin_tag(); });
 }
 
 TEST_F(RemainingMidTest, dfmplugin_titlebar)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ dfmplugin_titlebar(); });
 }
 
 TEST_F(RemainingMidTest, dfmplugin_trash)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ dfmplugin_trash(); });
 }
 
 TEST_F(RemainingMidTest, dfmplugin_utils)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ dfmplugin_utils(); });
 }
 
 TEST_F(RemainingMidTest, dfmplugin_vault)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ dfmplugin_vault(); });
 }
 
 TEST_F(RemainingMidTest, dfmplugin_workspace)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ dfmplugin_workspace(); });
 }
 
 TEST_F(RemainingMidTest, disabled)
 {
-    SUCCEED();
+    bool _arg0{};
+    EXPECT_NO_FATAL_FAILURE(disabled(_arg0));
 }
 
 TEST_F(RemainingMidTest, disctinct)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ disctinct(); });
 }
 
 TEST_F(RemainingMidTest, enable)
 {
-    SUCCEED();
+    bool _arg0{};
+    EXPECT_NO_FATAL_FAILURE(enable(_arg0));
 }
 
 TEST_F(RemainingMidTest, enableScreensaver)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ enableScreensaver(); });
 }
 
 TEST_F(RemainingMidTest, enableServiceNow)
 {
-    SUCCEED();
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ enableServiceNow(_arg0); });
 }
 
 TEST_F(RemainingMidTest, ensureNetworkDiscoveryService)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ ensureNetworkDiscoveryService(nullptr); });
 }
 
 TEST_F(RemainingMidTest, errorCode_dfmio_trans)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE(errorCode_dfmio_trans());
 }
 
 TEST_F(RemainingMidTest, extractAncestorPaths)
 {
-    SUCCEED();
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ extractAncestorPaths(_arg0); });
 }
 
 TEST_F(RemainingMidTest, fileExists)
 {
-    SUCCEED();
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE({ fileExists(FileInfoPointer(), _arg1); });
 }
 
 TEST_F(RemainingMidTest, filedialog_core)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ filedialog_core(); });
 }
 
 TEST_F(RemainingMidTest, fromBase64)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ fromBase64(QString()); });
 }
 
 TEST_F(RemainingMidTest, generateCopySuffix)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ generateCopySuffix(0); });
 }
 
 TEST_F(RemainingMidTest, generateNonConflictingName)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ generateNonConflictingName(FileInfoPointer(), FileInfoPointer()); });
 }
 
 TEST_F(RemainingMidTest, generateUniqueFileName)
 {
-    SUCCEED();
+    FileNameComponents _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ generateUniqueFileName(_arg0, FileInfoPointer()); });
 }
 
 TEST_F(RemainingMidTest, generateUniqueSymlinkName)
 {
-    SUCCEED();
+    FileNameComponents _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ generateUniqueSymlinkName(_arg0, FileInfoPointer()); });
 }
 
 TEST_F(RemainingMidTest, getDeviceIdByStdSmb)
 {
-    SUCCEED();
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ getDeviceIdByStdSmb(_arg0); });
 }
 
 TEST_F(RemainingMidTest, getIntelAccessibleName)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ getIntelAccessibleName(nullptr, QAccessible::Role(), QString()); });
 }
 
 TEST_F(RemainingMidTest, getLimit)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ getLimit(); });
 }
 
 TEST_F(RemainingMidTest, getScaledPathFromCache)
 {
-    SUCCEED();
+    QString _arg0{};
+    QSize _arg1{};
+    EXPECT_NO_FATAL_FAILURE({ getScaledPathFromCache(_arg0, _arg1); });
 }
 
 TEST_F(RemainingMidTest, global_setting_template_fedora_trans)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE(global_setting_template_fedora_trans());
 }
 
 TEST_F(RemainingMidTest, global_setting_template_pro_trans)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE(global_setting_template_pro_trans());
 }
 
 TEST_F(RemainingMidTest, global_setting_template_trans)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE(global_setting_template_trans());
 }
 
 TEST_F(RemainingMidTest, groupBy)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ groupBy(); });
 }
 
 TEST_F(RemainingMidTest, having)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ having(); });
 }
 
 TEST_F(RemainingMidTest, hidden)
 {
-    SUCCEED();
+    QList<QVariant> _arg0{};
+    EXPECT_NO_FATAL_FAILURE(hidden(_arg0));
 }
 
 TEST_F(RemainingMidTest, idGenerator)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ idGenerator(); });
 }
 
 TEST_F(RemainingMidTest, isCtrlOrShiftPressed)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ isCtrlOrShiftPressed(); });
 }
 
 TEST_F(RemainingMidTest, isCtrlPressed)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ isCtrlPressed(); });
 }
 
 TEST_F(RemainingMidTest, isDirectoryMove)
 {
-    SUCCEED();
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ isDirectoryMove(_arg0); });
 }
 
 TEST_F(RemainingMidTest, isHiddenDesktopMenu)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ isHiddenDesktopMenu(); });
 }
 
 TEST_F(RemainingMidTest, isHiddenExtMenu)
 {
-    SUCCEED();
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ isHiddenExtMenu(_arg0); });
 }
 
 TEST_F(RemainingMidTest, isHiddenMenu)
 {
-    SUCCEED();
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ isHiddenMenu(_arg0); });
 }
 
 TEST_F(RemainingMidTest, isServiceRuning)
 {
-    SUCCEED();
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ isServiceRuning(_arg0); });
 }
 
 TEST_F(RemainingMidTest, isShiftPressed)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ isShiftPressed(); });
 }
 
 TEST_F(RemainingMidTest, isSmbMounted)
 {
-    SUCCEED();
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ isSmbMounted(_arg0); });
 }
 
 TEST_F(RemainingMidTest, isValidTargetDirectory)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ isValidTargetDirectory(FileInfoPointer()); });
 }
 
 TEST_F(RemainingMidTest, lookupByTextChecksum)
 {
-    SUCCEED();
+    QString _arg0{};
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE({ lookupByTextChecksum(_arg0, _arg1); });
 }
 
 TEST_F(RemainingMidTest, main)
 {
-    SUCCEED();
+    main *obj = new main();
+    ASSERT_NE(obj, nullptr);
+    EXPECT_NO_FATAL_FAILURE({ obj->pluginsLoad(); });
+    EXPECT_NO_FATAL_FAILURE(obj->initEnv());
+    EXPECT_NO_FATAL_FAILURE(obj->checkUpgrade(nullptr));
+    EXPECT_NO_FATAL_FAILURE(obj->initLogFilter());
+    delete obj;
 }
 
 TEST_F(RemainingMidTest, max)
 {
-    SUCCEED();
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ max(_arg0); });
 }
 
 TEST_F(RemainingMidTest, menuPerfectParams)
 {
-    SUCCEED();
+    QVariantHash _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ menuPerfectParams(_arg0); });
 }
 
 TEST_F(RemainingMidTest, menuSceneBind)
 {
-    SUCCEED();
+    QString _arg0{};
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE({ menuSceneBind(_arg0, _arg1); });
 }
 
 TEST_F(RemainingMidTest, menuSceneContains)
 {
-    SUCCEED();
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ menuSceneContains(_arg0); });
 }
 
 TEST_F(RemainingMidTest, menuSceneCreateScene)
 {
-    SUCCEED();
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ menuSceneCreateScene(_arg0); });
 }
 
 TEST_F(RemainingMidTest, menuSceneRegisterScene)
 {
-    SUCCEED();
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ menuSceneRegisterScene(_arg0, nullptr); });
 }
 
 TEST_F(RemainingMidTest, min)
 {
-    SUCCEED();
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ min(_arg0); });
 }
 
 TEST_F(RemainingMidTest, namespace)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ namespace(); });
 }
 
 TEST_F(RemainingMidTest, netNeighborRootUrl)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ netNeighborRootUrl(); });
 }
 
 TEST_F(RemainingMidTest, networkScheme)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ networkScheme(); });
 }
 
 TEST_F(RemainingMidTest, nodesMutex)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ nodesMutex(); });
 }
 
 TEST_F(RemainingMidTest, normalizeDirectoryPath)
 {
-    SUCCEED();
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ normalizeDirectoryPath(_arg0); });
 }
 
 TEST_F(RemainingMidTest, opticalMedia)
 {
-    SUCCEED();
+    QVariant _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ opticalMedia(_arg0); });
 }
 
 TEST_F(RemainingMidTest, orderBy)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ orderBy(); });
 }
 
 TEST_F(RemainingMidTest, orderByDescending)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ orderByDescending(); });
 }
 
 TEST_F(RemainingMidTest, plugin_filepreview)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ plugin_filepreview(); });
 }
 
 TEST_F(RemainingMidTest, pluginsLoad)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ pluginsLoad(); });
 }
 
 TEST_F(RemainingMidTest, protocol_display_utilities)
 {
-    SUCCEED();
+    protocol_display_utilities *obj = new protocol_display_utilities();
+    ASSERT_NE(obj, nullptr);
+    EXPECT_NO_FATAL_FAILURE({ obj->getMountedSmb(); });
+    EXPECT_NO_FATAL_FAILURE({ obj->makeVEntryUrl(_arg0); });
+    EXPECT_NO_FATAL_FAILURE({ obj->getStandardSmbPaths(_arg0); });
+    EXPECT_NO_FATAL_FAILURE({ obj->getSmbHostPath(_arg0); });
+    EXPECT_NO_FATAL_FAILURE({ obj->getStandardSmbPath(_arg0); });
+    delete obj;
 }
 
 TEST_F(RemainingMidTest, pwPluginVersionGreaterThen)
 {
-    SUCCEED();
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ pwPluginVersionGreaterThen(_arg0); });
 }
 
 TEST_F(RemainingMidTest, q)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ q({}); });
 }
 
 TEST_F(RemainingMidTest, qHash)
 {
-    SUCCEED();
+    QPoint _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ qHash(_arg0, 0); });
 }
 
 TEST_F(RemainingMidTest, queryToMaps)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ queryToMaps(nullptr); });
 }
 
 TEST_F(RemainingMidTest, resetCpuQuota)
 {
-    SUCCEED();
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ resetCpuQuota(_arg0, nullptr); });
 }
 
 TEST_F(RemainingMidTest, rootMap)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ rootMap(); });
 }
 
 TEST_F(RemainingMidTest, runCli)
 {
-    SUCCEED();
+    QStringList _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ runCli(_arg0, 0); });
 }
 
 TEST_F(RemainingMidTest, screenProxyLastChangedMode)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ screenProxyLastChangedMode(); });
 }
 
 TEST_F(RemainingMidTest, screenProxyLogicScreens)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ screenProxyLogicScreens(); });
 }
 
 TEST_F(RemainingMidTest, screenProxyPrimaryScreen)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ screenProxyPrimaryScreen(); });
 }
 
 TEST_F(RemainingMidTest, screenProxyScreen)
 {
-    SUCCEED();
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ screenProxyScreen(_arg0); });
 }
 
 TEST_F(RemainingMidTest, screenProxyScreens)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ screenProxyScreens(); });
 }
 
 TEST_F(RemainingMidTest, serviceUnitName)
 {
-    SUCCEED();
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ serviceUnitName(_arg0); });
 }
 
 TEST_F(RemainingMidTest, setCpuQuota)
 {
-    SUCCEED();
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ setCpuQuota(_arg0, 0, nullptr); });
 }
 
 TEST_F(RemainingMidTest, setDesktopWindow)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE(setDesktopWindow(nullptr, nullptr));
 }
 
 TEST_F(RemainingMidTest, setEnvForRoot)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE(setEnvForRoot());
 }
 
 TEST_F(RemainingMidTest, setItemVisiable)
 {
-    SUCCEED();
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(setItemVisiable(_arg0, false));
 }
 
 TEST_F(RemainingMidTest, shareNodes)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ shareNodes(); });
 }
 
 TEST_F(RemainingMidTest, sizeString)
 {
-    SUCCEED();
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ sizeString(_arg0); });
 }
 
 TEST_F(RemainingMidTest, skip)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ skip(); });
 }
 
 TEST_F(RemainingMidTest, statusToString)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ statusToString(ExtractorStatus()); });
 }
 
 TEST_F(RemainingMidTest, sum)
 {
-    SUCCEED();
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ sum(_arg0); });
 }
 
 TEST_F(RemainingMidTest, textHeight)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ textHeight(); });
 }
 
 TEST_F(RemainingMidTest, textWidth)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ textWidth(); });
 }
 
 TEST_F(RemainingMidTest, toBase64)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ toBase64(QString()); });
 }
 
 TEST_F(RemainingMidTest, toBean)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ toBean(); });
 }
 
 TEST_F(RemainingMidTest, toBeans)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ toBeans(); });
 }
 
 TEST_F(RemainingMidTest, toMap)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ toMap(); });
 }
 
 TEST_F(RemainingMidTest, toMaps)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ toMaps(); });
 }
 
 TEST_F(RemainingMidTest, trEject)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ trEject(); });
 }
 
 TEST_F(RemainingMidTest, trErase)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ trErase(); });
 }
 
 TEST_F(RemainingMidTest, trFormat)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ trFormat(); });
 }
 
 TEST_F(RemainingMidTest, trLogoutAndClearSavedPasswd)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ trLogoutAndClearSavedPasswd(); });
 }
 
 TEST_F(RemainingMidTest, trMount)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ trMount(); });
 }
 
 TEST_F(RemainingMidTest, trOpen)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ trOpen(); });
 }
 
 TEST_F(RemainingMidTest, trOpenInNewTab)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ trOpenInNewTab(); });
 }
 
 TEST_F(RemainingMidTest, trOpenInNewWin)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ trOpenInNewWin(); });
 }
 
 TEST_F(RemainingMidTest, trProperties)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ trProperties(); });
 }
 
 TEST_F(RemainingMidTest, trRename)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ trRename(); });
 }
 
 TEST_F(RemainingMidTest, trSafelyRemove)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ trSafelyRemove(); });
 }
 
 TEST_F(RemainingMidTest, trUnmount)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ trUnmount(); });
 }
 
 TEST_F(RemainingMidTest, tryUpgrade)
 {
-    SUCCEED();
+    QString _arg0{};
+    QMap<QString, QString> _arg1{};
+    EXPECT_NO_FATAL_FAILURE({ tryUpgrade(_arg0, _arg1); });
 }
 
 TEST_F(RemainingMidTest, updateValue)
 {
-    SUCCEED();
+    QString _arg0{};
+    QVariant _arg1{};
+    EXPECT_NO_FATAL_FAILURE(updateValue(_arg0, _arg1));
 }
 
 TEST_F(RemainingMidTest, urlListToStringList)
 {
-    SUCCEED();
+    QList<QUrl> _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ urlListToStringList(_arg0); });
 }
 
 TEST_F(RemainingMidTest, where)
 {
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ where(); });
 }
 
 class DFMExtWindowProxyTest : public ::testing::Test {
@@ -848,7 +957,10 @@ protected:
 
 TEST_F(DFMExtWindowProxyTest, windowIdList)
 {
-    SUCCEED();
+    // Test getter: std::vector<uint64_t> windowIdList()
+    auto result = obj->windowIdList();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 class DeleteFilesTest : public ::testing::Test {
@@ -859,7 +971,9 @@ protected:
 
 TEST_F(DeleteFilesTest, DeleteFiles)
 {
-    SUCCEED();
+    DeleteFiles *obj = new DeleteFiles();
+    ASSERT_NE(obj, nullptr);
+    delete obj;
 }
 
 class DoDeleteFilesWorkerTest : public ::testing::Test {
@@ -870,7 +984,13 @@ protected:
 
 TEST_F(DoDeleteFilesWorkerTest, DoDeleteFilesWorker)
 {
-    SUCCEED();
+    DoDeleteFilesWorker *obj = new DoDeleteFilesWorker();
+    ASSERT_NE(obj, nullptr);
+    EXPECT_NO_FATAL_FAILURE(obj->stop());
+    EXPECT_NO_FATAL_FAILURE({ obj->doWork(); });
+    EXPECT_NO_FATAL_FAILURE(obj->onUpdateProgress());
+    EXPECT_NO_FATAL_FAILURE({ obj->deleteAllFiles(); });
+    delete obj;
 }
 
 class FileViewTest : public ::testing::Test {
@@ -881,6 +1001,7 @@ protected:
 
 TEST_F(FileViewTest, FileView)
 {
-    SUCCEED();
+    // Test constructor: FileView((const QUrl &url, QWidget *parent))
+    ASSERT_NE(obj, nullptr);
 }
 

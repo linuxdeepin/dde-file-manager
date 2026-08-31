@@ -4,31 +4,54 @@
 
 /**
  * @file test_fileoperatorhelper.cpp
- * @brief Unit tests for FileOperatorHelper Mid-priority methods
+ * @brief Unit tests for FileOperatorHelper methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class FileOperatorHelperTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/fileoperatorhelper.h"
+
+#include <QTest>
+
+using namespace dfmplugin_sidebar;
+
+class FileOperatorHelperTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new FileOperatorHelper();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FileOperatorHelper *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(FileOperatorHelperTest, deleteFiles)
 {
-    // deleteFiles
-    SUCCEED();
+    // Test method: void deleteFiles((const FileView *view))
+    EXPECT_NO_FATAL_FAILURE(obj->deleteFiles(nullptr));
 }
 
 TEST_F(FileOperatorHelperTest, instance)
 {
-    // instance
-    SUCCEED();
+    // Test getter: DFMBASE_USE_NAMESPACE instance()
+    EXPECT_NO_FATAL_FAILURE({ obj->instance(); });
 }
 
 TEST_F(FileOperatorHelperTest, pasteTraditionalFiles)
 {
-    // pasteTraditionalFiles
-    SUCCEED();
+    // Test method: bool pasteTraditionalFiles((const FileView *view))
+    auto result = obj->pasteTraditionalFiles(nullptr);
+    EXPECT_FALSE(result);
+
 }

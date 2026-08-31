@@ -3,33 +3,57 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_gridcoordinate_1.cpp
- * @brief Unit tests for GridCoordinate Low-priority methods
+ * @file test_gridcoordinate_1.cpp
+ * @brief Unit tests for GridCoordinate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class GridCoordinateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "view/gridcoordinate.h"
+
+#include <QTest>
+
+using namespace ddplugin_canvas;
+
+class GridCoordinateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new GridCoordinate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    GridCoordinate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(GridCoordinateTest, GridCoordinate)
 {
-    // GridCoordinate
-    SUCCEED();
+    // Test constructor: GridCoordinate((QPoint pos))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(GridCoordinateTest, moveDown)
 {
-    // moveDown
-    SUCCEED();
+    // Test getter: GridCoordinate moveDown()
+    auto result = obj->moveDown();
+    EXPECT_NO_FATAL_FAILURE({ obj->moveDown(); });
+
 }
 
 TEST_F(GridCoordinateTest, moveUp)
 {
-    // moveUp
-    SUCCEED();
-}
+    // Test getter: GridCoordinate moveUp()
+    auto result = obj->moveUp();
+    EXPECT_NO_FATAL_FAILURE({ obj->moveUp(); });
 
+}

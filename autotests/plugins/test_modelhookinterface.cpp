@@ -4,37 +4,69 @@
 
 /**
  * @file test_modelhookinterface.cpp
- * @brief Unit tests for ModelHookInterface Mid-priority methods
+ * @brief Unit tests for ModelHookInterface methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ModelHookInterfaceTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "model/modelhookinterface.h"
+
+#include <QTest>
+
+using namespace ddplugin_canvas;
+
+class ModelHookInterfaceTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ModelHookInterface();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ModelHookInterface *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ModelHookInterfaceTest, dataRemoved)
 {
-    // dataRemoved
-    SUCCEED();
+    // Test method: bool dataRemoved((const QUrl &url, void *extData))
+    QUrl _arg0{};
+    auto result = obj->dataRemoved(_arg0, nullptr);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(ModelHookInterfaceTest, mimeData)
 {
-    // mimeData
-    SUCCEED();
+    // Test method: bool mimeData((const QList<QUrl> &urls, QMimeData *out, void *extData))
+    QList<QUrl> _arg0{};
+    auto result = obj->mimeData(_arg0, nullptr, nullptr);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(ModelHookInterfaceTest, mimeTypes)
 {
-    // mimeTypes
-    SUCCEED();
+    // Test method: bool mimeTypes((QStringList *types, void *extData))
+    auto result = obj->mimeTypes(nullptr, nullptr);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(ModelHookInterfaceTest, modelData)
 {
-    // modelData
-    SUCCEED();
+    // Test method: bool modelData((const QUrl &url, int role, QVariant *out, void *extData))
+    QUrl _arg0{};
+    auto result = obj->modelData(_arg0, 0, nullptr, nullptr);
+    EXPECT_FALSE(result);
+
 }

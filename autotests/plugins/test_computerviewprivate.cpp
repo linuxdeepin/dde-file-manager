@@ -3,27 +3,49 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_computerviewprivate.cpp
- * @brief Unit tests for ComputerViewPrivate Low-priority methods
+ * @file test_computerviewprivate.cpp
+ * @brief Unit tests for ComputerViewPrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ComputerViewPrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/computerview.h"
+
+#include <QTest>
+
+using namespace dfmplugin_computer;
+
+class ComputerViewPrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ComputerViewPrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ComputerViewPrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ComputerViewPrivateTest, ComputerViewPrivate)
 {
-    // ComputerViewPrivate
-    SUCCEED();
+    // Test constructor: ComputerViewPrivate((ComputerView *qq))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(ComputerViewPrivateTest, visibleItemCount)
 {
-    // visibleItemCount
-    SUCCEED();
-}
+    // Test getter: int visibleItemCount()
+    auto result = obj->visibleItemCount();
+    EXPECT_EQ(result, 0);
 
+}

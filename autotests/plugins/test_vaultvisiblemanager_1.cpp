@@ -3,51 +3,73 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_vaultvisiblemanager_1.cpp
- * @brief Unit tests for VaultVisibleManager Low-priority methods
+ * @file test_vaultvisiblemanager_1.cpp
+ * @brief Unit tests for VaultVisibleManager methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class VaultVisibleManagerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/vaultvisiblemanager.h"
+
+#include <QTest>
+
+using namespace dfmplugin_vault;
+
+class VaultVisibleManagerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new VaultVisibleManager();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    VaultVisibleManager *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(VaultVisibleManagerTest, addVaultComputerMenu)
 {
-    // addVaultComputerMenu
-    SUCCEED();
+    // Test method: void addVaultComputerMenu(())
+    EXPECT_NO_FATAL_FAILURE(obj->addVaultComputerMenu());
 }
 
 TEST_F(VaultVisibleManagerTest, infoRegister)
 {
-    // infoRegister
-    SUCCEED();
+    // Test method: void infoRegister(())
+    EXPECT_NO_FATAL_FAILURE(obj->infoRegister());
 }
 
 TEST_F(VaultVisibleManagerTest, instance)
 {
-    // instance
-    SUCCEED();
+    // Test getter: VaultVisibleManager instance()
+    auto result = obj->instance();
+    EXPECT_NO_FATAL_FAILURE({ obj->instance(); });
+
 }
 
 TEST_F(VaultVisibleManagerTest, onWindowOpened)
 {
-    // onWindowOpened
-    SUCCEED();
+    // Test method: void onWindowOpened((quint64 winID))
+    EXPECT_NO_FATAL_FAILURE(obj->onWindowOpened(0));
 }
 
 TEST_F(VaultVisibleManagerTest, pluginServiceRegister)
 {
-    // pluginServiceRegister
-    SUCCEED();
+    // Test method: void pluginServiceRegister(())
+    EXPECT_NO_FATAL_FAILURE(obj->pluginServiceRegister());
 }
 
 TEST_F(VaultVisibleManagerTest, updateSideBarVaultItem)
 {
-    // updateSideBarVaultItem
-    SUCCEED();
+    // Test method: void updateSideBarVaultItem(())
+    EXPECT_NO_FATAL_FAILURE(obj->updateSideBarVaultItem());
 }
-

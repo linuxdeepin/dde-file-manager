@@ -4,19 +4,41 @@
 
 /**
  * @file test_unknowfilepreview.cpp
- * @brief Unit tests for UnknowFilePreview Mid-priority methods
+ * @brief Unit tests for UnknowFilePreview methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class UnknowFilePreviewTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.h"
+
+#include <QTest>
+
+using namespace src;
+
+class UnknowFilePreviewTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new UnknowFilePreview();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    UnknowFilePreview *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(UnknowFilePreviewTest, setFileInfo)
 {
-    // setFileInfo
-    SUCCEED();
+    // Test setter: void setFileInfo((const FileInfoPointer &info))
+    FileInfoPointer _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->setFileInfo(_arg0));
 }

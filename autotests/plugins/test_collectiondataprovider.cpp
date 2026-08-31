@@ -4,71 +4,117 @@
 
 /**
  * @file test_collectiondataprovider.cpp
- * @brief Unit tests for CollectionDataProvider Mid-priority methods (stub)
+ * @brief Unit tests for CollectionDataProvider methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
+#include "stubext.h"
+
 #include "mode/collectiondataprovider.h"
+
+#include <QTest>
 
 using namespace ddplugin_organizer;
 
-class CollectionDataProviderTest : public ::testing::Test {
+class CollectionDataProviderTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new CollectionDataProvider();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    CollectionDataProvider *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(CollectionDataProviderTest, checkPreItem)
 {
-    // checkPreItem - stub test (class requires special construction)
-    SUCCEED();
+    // Test method: bool checkPreItem((const QUrl &url, QString &key, int &index))
+    QUrl _arg0{};
+    QString _arg1{};
+    int _arg2{};
+    auto result = obj->checkPreItem(_arg0, _arg1, _arg2);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(CollectionDataProviderTest, contains)
 {
-    // contains - stub test (class requires special construction)
-    SUCCEED();
+    // Test method: bool contains((const QString &key, const QUrl &url))
+    QString _arg0{};
+    QUrl _arg1{};
+    auto result = obj->contains(_arg0, _arg1);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(CollectionDataProviderTest, items)
 {
-    // items - stub test (class requires special construction)
-    SUCCEED();
+    // Test method: QList<QUrl> items((const QString &key))
+    QString _arg0{};
+    auto result = obj->items(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(CollectionDataProviderTest, key)
 {
-    // key - stub test (class requires special construction)
-    SUCCEED();
+    // Test method: QString key((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->key(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(CollectionDataProviderTest, keys)
 {
-    // keys - stub test (class requires special construction)
-    SUCCEED();
+    // Test getter: QList<QString> keys()
+    auto result = obj->keys();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(CollectionDataProviderTest, name)
 {
-    // name - stub test (class requires special construction)
-    SUCCEED();
+    // Test method: QString name((const QString &key))
+    QString _arg0{};
+    auto result = obj->name(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(CollectionDataProviderTest, sorted)
 {
-    // sorted - stub test (class requires special construction)
-    SUCCEED();
+    // Test method: bool sorted((const QString &key, const QList<QUrl> &urls))
+    QString _arg0{};
+    QList<QUrl> _arg1{};
+    auto result = obj->sorted(_arg0, _arg1);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(CollectionDataProviderTest, takePreItem)
 {
-    // takePreItem - stub test (class requires special construction)
-    SUCCEED();
+    // Test method: bool takePreItem((const QUrl &url, QString &key, int &index))
+    QUrl _arg0{};
+    QString _arg1{};
+    int _arg2{};
+    auto result = obj->takePreItem(_arg0, _arg1, _arg2);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(CollectionDataProviderTest, CollectionDataProvider)
 {
-    // CollectionDataProvider
-    SUCCEED();
+    // Test constructor: CollectionDataProvider((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }

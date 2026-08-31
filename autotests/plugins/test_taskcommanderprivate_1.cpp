@@ -3,27 +3,49 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_taskcommanderprivate_1.cpp
- * @brief Unit tests for TaskCommanderPrivate Low-priority methods
+ * @file test_taskcommanderprivate_1.cpp
+ * @brief Unit tests for TaskCommanderPrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class TaskCommanderPrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "searchmanager/maincontroller/task/taskcommander.h"
+
+#include <QTest>
+
+using namespace dfmplugin_search;
+
+class TaskCommanderPrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new TaskCommanderPrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    TaskCommanderPrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(TaskCommanderPrivateTest, onResultsUpdated)
 {
-    // onResultsUpdated
-    SUCCEED();
+    // Test method: void onResultsUpdated((const QString &id))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->onResultsUpdated(_arg0));
 }
 
 TEST_F(TaskCommanderPrivateTest, onSearchCompleted)
 {
-    // onSearchCompleted
-    SUCCEED();
+    // Test method: void onSearchCompleted((const QString &id))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->onSearchCompleted(_arg0));
 }
-

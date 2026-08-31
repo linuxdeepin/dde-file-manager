@@ -3,69 +3,104 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_fileindexcontroller_1.cpp
- * @brief Unit tests for FileIndexController Low-priority methods
+ * @file test_fileindexcontroller_1.cpp
+ * @brief Unit tests for FileIndexController methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class FileIndexControllerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "fileindexcontroller.h"
+
+#include <QTest>
+
+using namespace core;
+
+class FileIndexControllerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new FileIndexController();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FileIndexController *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(FileIndexControllerTest, FileIndexController)
 {
-    // FileIndexController
-    SUCCEED();
+    // Test constructor: FileIndexController((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(FileIndexControllerTest, createRefreshIndexFile)
 {
-    // createRefreshIndexFile
-    SUCCEED();
+    // Test bool getter: createRefreshIndexFile()
+    bool result = obj->createRefreshIndexFile();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(FileIndexControllerTest, disableFileIndex)
 {
-    // disableFileIndex
-    SUCCEED();
+    // Test bool getter: disableFileIndex()
+    bool result = obj->disableFileIndex();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(FileIndexControllerTest, handleConfigChanged)
 {
-    // handleConfigChanged
-    SUCCEED();
+    // Test method: void handleConfigChanged((const QString &config, const QString &key))
+    QString _arg0{};
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleConfigChanged(_arg0, _arg1));
 }
 
 TEST_F(FileIndexControllerTest, initialize)
 {
-    // initialize
-    SUCCEED();
+    // Test method: void initialize(())
+    EXPECT_NO_FATAL_FAILURE(obj->initialize());
 }
 
 TEST_F(FileIndexControllerTest, isServiceActive)
 {
-    // isServiceActive
-    SUCCEED();
+    // Test bool getter: isServiceActive()
+    bool result = obj->isServiceActive();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(FileIndexControllerTest, isServiceEnabled)
 {
-    // isServiceEnabled
-    SUCCEED();
+    // Test bool getter: isServiceEnabled()
+    bool result = obj->isServiceEnabled();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(FileIndexControllerTest, refreshFilePath)
 {
-    // refreshFilePath
-    SUCCEED();
+    // Test getter: QString refreshFilePath()
+    auto result = obj->refreshFilePath();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(FileIndexControllerTest, runSystemctlCommand)
 {
-    // runSystemctlCommand
-    SUCCEED();
-}
+    // Test method: bool runSystemctlCommand((const QStringList &arguments))
+    QStringList _arg0{};
+    auto result = obj->runSystemctlCommand(_arg0);
+    EXPECT_FALSE(result);
 
+}

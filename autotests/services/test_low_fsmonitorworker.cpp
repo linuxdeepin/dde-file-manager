@@ -3,39 +3,63 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_low_fsmonitorworker.cpp
- * @brief Unit tests for FSMonitorWorker Low-priority methods
+ * @file test_low_fsmonitorworker.cpp
+ * @brief Unit tests for FSMonitorWorker methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class FSMonitorWorkerLowTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "services/textindex/fsmonitor/fsmonitorworker.h"
+
+#include <QTest>
+
+using namespace src;
+
+class FSMonitorWorkerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new FSMonitorWorker();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FSMonitorWorker *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
-TEST_F(FSMonitorWorkerLowTest, fetchDirectoriesViaApi)
+TEST_F(FSMonitorWorkerTest, fetchDirectoriesViaApi)
 {
-    // fetchDirectoriesViaApi
-    SUCCEED();
+    // Test getter: QStringList fetchDirectoriesViaApi()
+    auto result = obj->fetchDirectoriesViaApi();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
-TEST_F(FSMonitorWorkerLowTest, fetchDirectoriesViaCli)
+TEST_F(FSMonitorWorkerTest, fetchDirectoriesViaCli)
 {
-    // fetchDirectoriesViaCli
-    SUCCEED();
+    // Test getter: QStringList fetchDirectoriesViaCli()
+    auto result = obj->fetchDirectoriesViaCli();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
-TEST_F(FSMonitorWorkerLowTest, handleFastScanResult)
+TEST_F(FSMonitorWorkerTest, handleFastScanResult)
 {
-    // handleFastScanResult
-    SUCCEED();
+    // Test method: void handleFastScanResult(())
+    EXPECT_NO_FATAL_FAILURE(obj->handleFastScanResult());
 }
 
-TEST_F(FSMonitorWorkerLowTest, FSMonitorWorker_Destructor)
+TEST_F(FSMonitorWorkerTest, FSMonitorWorker_Destructor)
 {
-    // ~FSMonitorWorker
-    SUCCEED();
+    // Test method:  ~FSMonitorWorker(())
+    EXPECT_NO_FATAL_FAILURE({ FSMonitorWorker *tmp = new FSMonitorWorker(); delete tmp; });
 }
-

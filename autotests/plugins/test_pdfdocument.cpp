@@ -4,19 +4,42 @@
 
 /**
  * @file test_pdfdocument.cpp
- * @brief Unit tests for PDFDocument Mid-priority methods
+ * @brief Unit tests for PDFDocument methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class PDFDocumentTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "apps/dde-file-manager-preview/pluginpreviews/pdf-preview/pdfmodel.h"
+
+#include <QTest>
+
+using namespace src;
+
+class PDFDocumentTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new PDFDocument();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    PDFDocument *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(PDFDocumentTest, page)
 {
-    // page
-    SUCCEED();
+    // Test method: Page page((int index))
+    auto result = obj->page(0);
+    EXPECT_NO_FATAL_FAILURE({ obj->page(0); });
+
 }

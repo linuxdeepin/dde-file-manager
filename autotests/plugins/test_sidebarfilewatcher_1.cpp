@@ -3,69 +3,96 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_sidebarfilewatcher_1.cpp
- * @brief Unit tests for SidebarFileWatcher Low-priority methods
+ * @file test_sidebarfilewatcher_1.cpp
+ * @brief Unit tests for SidebarFileWatcher methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class SidebarFileWatcherTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/sidebarfilewatcher.h"
+
+#include <QTest>
+
+using namespace dfmplugin_sidebar;
+
+class SidebarFileWatcherTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new SidebarFileWatcher();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    SidebarFileWatcher *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(SidebarFileWatcherTest, onFileAttributeChanged)
 {
-    // onFileAttributeChanged
-    SUCCEED();
+    // Test method: void onFileAttributeChanged((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->onFileAttributeChanged(_arg0));
 }
 
 TEST_F(SidebarFileWatcherTest, onFileRename)
 {
-    // onFileRename
-    SUCCEED();
+    // Test method: void onFileRename((const QUrl &oldUrl, const QUrl &newUrl))
+    QUrl _arg0{};
+    QUrl _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->onFileRename(_arg0, _arg1));
 }
 
 TEST_F(SidebarFileWatcherTest, onHiddenFileStatusChanged)
 {
-    // onHiddenFileStatusChanged
-    SUCCEED();
+    // Test method: void onHiddenFileStatusChanged((bool showHidden))
+    EXPECT_NO_FATAL_FAILURE(obj->onHiddenFileStatusChanged(false));
 }
 
 TEST_F(SidebarFileWatcherTest, onSubfileCreated)
 {
-    // onSubfileCreated
-    SUCCEED();
+    // Test method: void onSubfileCreated((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->onSubfileCreated(_arg0));
 }
 
 TEST_F(SidebarFileWatcherTest, setDirsVisible)
 {
-    // setDirsVisible
-    SUCCEED();
+    // Test setter: void setDirsVisible((bool showHidden, const QList<QUrl> &dirs))
+    QList<QUrl> _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->setDirsVisible(false, _arg1));
 }
 
 TEST_F(SidebarFileWatcherTest, stopAllWatchers)
 {
-    // stopAllWatchers
-    SUCCEED();
+    // Test method: void stopAllWatchers(())
+    EXPECT_NO_FATAL_FAILURE(obj->stopAllWatchers());
 }
 
 TEST_F(SidebarFileWatcherTest, unwatchDirectory)
 {
-    // unwatchDirectory
-    SUCCEED();
+    // Test method: void unwatchDirectory((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->unwatchDirectory(_arg0));
 }
 
 TEST_F(SidebarFileWatcherTest, watchDirectory)
 {
-    // watchDirectory
-    SUCCEED();
+    // Test method: void watchDirectory((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->watchDirectory(_arg0));
 }
 
 TEST_F(SidebarFileWatcherTest, SidebarFileWatcher_Destructor)
 {
-    // ~SidebarFileWatcher
-    SUCCEED();
+    // Test method:  ~SidebarFileWatcher(())
+    EXPECT_NO_FATAL_FAILURE({ SidebarFileWatcher *tmp = new SidebarFileWatcher(); delete tmp; });
 }
-

@@ -3,33 +3,57 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_vaultfilewatcherprivate.cpp
- * @brief Unit tests for VaultFileWatcherPrivate Low-priority methods
+ * @file test_vaultfilewatcherprivate.cpp
+ * @brief Unit tests for VaultFileWatcherPrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class VaultFileWatcherPrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "fileutils/private/vaultfilewatcherprivate.h"
+
+#include <QTest>
+
+using namespace dfmplugin_vault;
+
+class VaultFileWatcherPrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new VaultFileWatcherPrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    VaultFileWatcherPrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(VaultFileWatcherPrivateTest, VaultFileWatcherPrivate)
 {
-    // VaultFileWatcherPrivate
-    SUCCEED();
+    // Test constructor: VaultFileWatcherPrivate((const QUrl &fileUrl, VaultFileWatcher *qq))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(VaultFileWatcherPrivateTest, start)
 {
-    // start
-    SUCCEED();
+    // Test bool getter: start()
+    bool result = obj->start();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(VaultFileWatcherPrivateTest, stop)
 {
-    // stop
-    SUCCEED();
-}
+    // Test bool getter: stop()
+    bool result = obj->stop();
+    EXPECT_FALSE(result);
 
+}

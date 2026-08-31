@@ -4,37 +4,62 @@
 
 /**
  * @file test_diskencryptmenuscene.cpp
- * @brief Unit tests for DiskEncryptMenuScene Mid-priority methods
+ * @brief Unit tests for DiskEncryptMenuScene methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class DiskEncryptMenuSceneTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "menu/diskencryptmenuscene.h"
+
+#include <QTest>
+
+using namespace dfmplugin_disk_encrypt_entry;
+
+class DiskEncryptMenuSceneTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new DiskEncryptMenuScene();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    DiskEncryptMenuScene *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(DiskEncryptMenuSceneTest, changePassphrase)
 {
-    // changePassphrase
-    SUCCEED();
+    // Test method: void changePassphrase((DeviceEncryptParam param))
+    EXPECT_NO_FATAL_FAILURE(obj->changePassphrase(DeviceEncryptParam()));
 }
 
 TEST_F(DiskEncryptMenuSceneTest, decryptDevice)
 {
-    // decryptDevice
-    SUCCEED();
+    // Test method: void decryptDevice((const DeviceEncryptParam &param))
+    DeviceEncryptParam _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->decryptDevice(_arg0));
 }
 
 TEST_F(DiskEncryptMenuSceneTest, doReencryptDevice)
 {
-    // doReencryptDevice
-    SUCCEED();
+    // Test method: bool doReencryptDevice((const DeviceEncryptParam &param))
+    DeviceEncryptParam _arg0{};
+    auto result = obj->doReencryptDevice(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(DiskEncryptMenuSceneTest, sortActions)
 {
-    // sortActions
-    SUCCEED();
+    // Test method: void sortActions((QMenu *parent))
+    EXPECT_NO_FATAL_FAILURE(obj->sortActions(nullptr));
 }

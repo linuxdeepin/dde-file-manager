@@ -3,165 +3,217 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_low_diskencryptsetupprivate.cpp
- * @brief Unit tests for DiskEncryptSetupPrivate Low-priority methods
+ * @file test_low_diskencryptsetupprivate.cpp
+ * @brief Unit tests for DiskEncryptSetupPrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class DiskEncryptSetupPrivateLowTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "services/diskencrypt/dbus/diskencryptsetup.h"
+
+#include <QTest>
+
+using namespace src;
+
+class DiskEncryptSetupPrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new DiskEncryptSetupPrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    DiskEncryptSetupPrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
-TEST_F(DiskEncryptSetupPrivateLowTest, DiskEncryptSetupPrivate)
+TEST_F(DiskEncryptSetupPrivateTest, DiskEncryptSetupPrivate)
 {
-    // DiskEncryptSetupPrivate
-    SUCCEED();
+    // Test constructor: DiskEncryptSetupPrivate((DiskEncryptSetup *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
-TEST_F(DiskEncryptSetupPrivateLowTest, checkAuth)
+TEST_F(DiskEncryptSetupPrivateTest, checkAuth)
 {
-    // checkAuth
-    SUCCEED();
+    // Test method: bool checkAuth((const QString &action))
+    QString _arg0{};
+    auto result = obj->checkAuth(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(DiskEncryptSetupPrivateLowTest, createDecryptWorker)
+TEST_F(DiskEncryptSetupPrivateTest, createDecryptWorker)
 {
-    // createDecryptWorker
-    SUCCEED();
+    // Test method: BaseEncryptWorker createDecryptWorker((const QString &type, const QVariantMap &args))
+    QString _arg0{};
+    QVariantMap _arg1{};
+    auto result = obj->createDecryptWorker(_arg0, _arg1);
+    EXPECT_NO_FATAL_FAILURE({ obj->createDecryptWorker(_arg0, _arg1); });
+
 }
 
-TEST_F(DiskEncryptSetupPrivateLowTest, createInitWorker)
+TEST_F(DiskEncryptSetupPrivateTest, createInitWorker)
 {
-    // createInitWorker
-    SUCCEED();
+    // Test method: BaseEncryptWorker createInitWorker((const QString &type, const QVariantMap &args))
+    QString _arg0{};
+    QVariantMap _arg1{};
+    auto result = obj->createInitWorker(_arg0, _arg1);
+    EXPECT_NO_FATAL_FAILURE({ obj->createInitWorker(_arg0, _arg1); });
+
 }
 
-TEST_F(DiskEncryptSetupPrivateLowTest, createMarkerFile)
+TEST_F(DiskEncryptSetupPrivateTest, createMarkerFile)
 {
-    // createMarkerFile
-    SUCCEED();
+    // Test method: bool createMarkerFile((const QString &path))
+    QString _arg0{};
+    auto result = obj->createMarkerFile(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(DiskEncryptSetupPrivateLowTest, createOverlayDMFlagFile)
+TEST_F(DiskEncryptSetupPrivateTest, createOverlayDMFlagFile)
 {
-    // createOverlayDMFlagFile
-    SUCCEED();
+    // Test bool getter: createOverlayDMFlagFile()
+    bool result = obj->createOverlayDMFlagFile();
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(DiskEncryptSetupPrivateLowTest, createOverlayDMPendingFile)
+TEST_F(DiskEncryptSetupPrivateTest, createOverlayDMPendingFile)
 {
-    // createOverlayDMPendingFile
-    SUCCEED();
+    // Test bool getter: createOverlayDMPendingFile()
+    bool result = obj->createOverlayDMPendingFile();
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(DiskEncryptSetupPrivateLowTest, handleOverlayDMModeChangeAsync)
+TEST_F(DiskEncryptSetupPrivateTest, handleOverlayDMModeChangeAsync)
 {
-    // handleOverlayDMModeChangeAsync
-    SUCCEED();
+    // Test method: void handleOverlayDMModeChangeAsync((bool enabled))
+    EXPECT_NO_FATAL_FAILURE(obj->handleOverlayDMModeChangeAsync(false));
 }
 
-TEST_F(DiskEncryptSetupPrivateLowTest, initThreadConnection)
+TEST_F(DiskEncryptSetupPrivateTest, initThreadConnection)
 {
-    // initThreadConnection
-    SUCCEED();
+    // Test method: void initThreadConnection((const QThread *thread))
+    EXPECT_NO_FATAL_FAILURE(obj->initThreadConnection(nullptr));
 }
 
-TEST_F(DiskEncryptSetupPrivateLowTest, initialize)
+TEST_F(DiskEncryptSetupPrivateTest, initialize)
 {
-    // initialize
-    SUCCEED();
+    // Test method: void initialize(())
+    EXPECT_NO_FATAL_FAILURE(obj->initialize());
 }
 
-TEST_F(DiskEncryptSetupPrivateLowTest, onConfigValueChanged)
+TEST_F(DiskEncryptSetupPrivateTest, onConfigValueChanged)
 {
-    // onConfigValueChanged
-    SUCCEED();
+    // Test method: void onConfigValueChanged((const QString &key))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->onConfigValueChanged(_arg0));
 }
 
-TEST_F(DiskEncryptSetupPrivateLowTest, onDecryptFinished)
+TEST_F(DiskEncryptSetupPrivateTest, onDecryptFinished)
 {
-    // onDecryptFinished
-    SUCCEED();
+    // Test method: void onDecryptFinished(())
+    EXPECT_NO_FATAL_FAILURE(obj->onDecryptFinished());
 }
 
-TEST_F(DiskEncryptSetupPrivateLowTest, onInitEncryptFinished)
+TEST_F(DiskEncryptSetupPrivateTest, onInitEncryptFinished)
 {
-    // onInitEncryptFinished
-    SUCCEED();
+    // Test method: void onInitEncryptFinished(())
+    EXPECT_NO_FATAL_FAILURE(obj->onInitEncryptFinished());
 }
 
-TEST_F(DiskEncryptSetupPrivateLowTest, onLongTimeJobStarted)
+TEST_F(DiskEncryptSetupPrivateTest, onLongTimeJobStarted)
 {
-    // onLongTimeJobStarted
-    SUCCEED();
+    // Test method: void onLongTimeJobStarted(())
+    EXPECT_NO_FATAL_FAILURE(obj->onLongTimeJobStarted());
 }
 
-TEST_F(DiskEncryptSetupPrivateLowTest, onLongTimeJobStopped)
+TEST_F(DiskEncryptSetupPrivateTest, onLongTimeJobStopped)
 {
-    // onLongTimeJobStopped
-    SUCCEED();
+    // Test method: void onLongTimeJobStopped(())
+    EXPECT_NO_FATAL_FAILURE(obj->onLongTimeJobStopped());
 }
 
-TEST_F(DiskEncryptSetupPrivateLowTest, onOverlayDMModeChangeFinished)
+TEST_F(DiskEncryptSetupPrivateTest, onOverlayDMModeChangeFinished)
 {
-    // onOverlayDMModeChangeFinished
-    SUCCEED();
+    // Test method: void onOverlayDMModeChangeFinished((bool success, bool targetValue))
+    EXPECT_NO_FATAL_FAILURE(obj->onOverlayDMModeChangeFinished(false, false));
 }
 
-TEST_F(DiskEncryptSetupPrivateLowTest, onPassphraseChanged)
+TEST_F(DiskEncryptSetupPrivateTest, onPassphraseChanged)
 {
-    // onPassphraseChanged
-    SUCCEED();
+    // Test method: void onPassphraseChanged(())
+    EXPECT_NO_FATAL_FAILURE(obj->onPassphraseChanged());
 }
 
-TEST_F(DiskEncryptSetupPrivateLowTest, onResumeEncryptFinished)
+TEST_F(DiskEncryptSetupPrivateTest, onResumeEncryptFinished)
 {
-    // onResumeEncryptFinished
-    SUCCEED();
+    // Test method: void onResumeEncryptFinished(())
+    EXPECT_NO_FATAL_FAILURE(obj->onResumeEncryptFinished());
 }
 
-TEST_F(DiskEncryptSetupPrivateLowTest, processPendingConfigChange)
+TEST_F(DiskEncryptSetupPrivateTest, processPendingConfigChange)
 {
-    // processPendingConfigChange
-    SUCCEED();
+    // Test method: void processPendingConfigChange(())
+    EXPECT_NO_FATAL_FAILURE(obj->processPendingConfigChange());
 }
 
-TEST_F(DiskEncryptSetupPrivateLowTest, resolveDeviceByDetachHeaderName)
+TEST_F(DiskEncryptSetupPrivateTest, resolveDeviceByDetachHeaderName)
 {
-    // resolveDeviceByDetachHeaderName
-    SUCCEED();
+    // Test method: QString resolveDeviceByDetachHeaderName((const QString &fileName))
+    QString _arg0{};
+    auto result = obj->resolveDeviceByDetachHeaderName(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
-TEST_F(DiskEncryptSetupPrivateLowTest, resumeEncryption)
+TEST_F(DiskEncryptSetupPrivateTest, resumeEncryption)
 {
-    // resumeEncryption
-    SUCCEED();
+    // Test method: void resumeEncryption((const QVariantMap &args))
+    QVariantMap _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->resumeEncryption(_arg0));
 }
 
-TEST_F(DiskEncryptSetupPrivateLowTest, setupConfigWatcher)
+TEST_F(DiskEncryptSetupPrivateTest, setupConfigWatcher)
 {
-    // setupConfigWatcher
-    SUCCEED();
+    // Test method: void setupConfigWatcher(())
+    EXPECT_NO_FATAL_FAILURE(obj->setupConfigWatcher());
 }
 
-TEST_F(DiskEncryptSetupPrivateLowTest, validateChgPwdArgs)
+TEST_F(DiskEncryptSetupPrivateTest, validateChgPwdArgs)
 {
-    // validateChgPwdArgs
-    SUCCEED();
+    // Test method: bool validateChgPwdArgs((const QVariantMap &args))
+    QVariantMap _arg0{};
+    auto result = obj->validateChgPwdArgs(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(DiskEncryptSetupPrivateLowTest, validateInitArgs)
+TEST_F(DiskEncryptSetupPrivateTest, validateInitArgs)
 {
-    // validateInitArgs
-    SUCCEED();
+    // Test method: bool validateInitArgs((const QVariantMap &args))
+    QVariantMap _arg0{};
+    auto result = obj->validateInitArgs(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(DiskEncryptSetupPrivateLowTest, validateResumeArgs)
+TEST_F(DiskEncryptSetupPrivateTest, validateResumeArgs)
 {
-    // validateResumeArgs
-    SUCCEED();
-}
+    // Test method: bool validateResumeArgs((const QVariantMap &args))
+    QVariantMap _arg0{};
+    auto result = obj->validateResumeArgs(_arg0);
+    EXPECT_FALSE(result);
 
+}

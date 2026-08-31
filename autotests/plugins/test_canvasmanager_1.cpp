@@ -3,105 +3,133 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_canvasmanager_1.cpp
- * @brief Unit tests for CanvasManager Low-priority methods
+ * @file test_canvasmanager_1.cpp
+ * @brief Unit tests for CanvasManager methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class CanvasManagerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "canvasmanager.h"
+
+#include <QTest>
+
+using namespace ddplugin_canvas;
+
+class CanvasManagerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new CanvasManager();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    CanvasManager *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(CanvasManagerTest, autoArrange)
 {
-    // autoArrange
-    SUCCEED();
+    // Test bool getter: autoArrange()
+    bool result = obj->autoArrange();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(CanvasManagerTest, fileModel)
 {
-    // fileModel
-    SUCCEED();
+    // Test getter: FileInfoModel fileModel()
+    auto result = obj->fileModel();
+    EXPECT_NO_FATAL_FAILURE({ obj->fileModel(); });
+
 }
 
 TEST_F(CanvasManagerTest, iconLevel)
 {
-    // iconLevel
-    SUCCEED();
+    // Test getter: int iconLevel()
+    auto result = obj->iconLevel();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(CanvasManagerTest, init)
 {
-    // init
-    SUCCEED();
+    // Test method: void init(())
+    EXPECT_NO_FATAL_FAILURE(obj->init());
 }
 
 TEST_F(CanvasManagerTest, onChangeIconLevel)
 {
-    // onChangeIconLevel
-    SUCCEED();
+    // Test method: void onChangeIconLevel((bool increase))
+    EXPECT_NO_FATAL_FAILURE(obj->onChangeIconLevel(false));
 }
 
 TEST_F(CanvasManagerTest, onDetachWindows)
 {
-    // onDetachWindows
-    SUCCEED();
+    // Test method: void onDetachWindows(())
+    EXPECT_NO_FATAL_FAILURE(obj->onDetachWindows());
 }
 
 TEST_F(CanvasManagerTest, onFontChanged)
 {
-    // onFontChanged
-    SUCCEED();
+    // Test method: void onFontChanged(())
+    EXPECT_NO_FATAL_FAILURE(obj->onFontChanged());
 }
 
 TEST_F(CanvasManagerTest, onGeometryChanged)
 {
-    // onGeometryChanged
-    SUCCEED();
+    // Test method: void onGeometryChanged(())
+    EXPECT_NO_FATAL_FAILURE(obj->onGeometryChanged());
 }
 
 TEST_F(CanvasManagerTest, onTrashStateChanged)
 {
-    // onTrashStateChanged
-    SUCCEED();
+    // Test method: void onTrashStateChanged(())
+    EXPECT_NO_FATAL_FAILURE(obj->onTrashStateChanged());
 }
 
 TEST_F(CanvasManagerTest, onWallperSetting)
 {
-    // onWallperSetting
-    SUCCEED();
+    // Test method: void onWallperSetting((CanvasView *view))
+    EXPECT_NO_FATAL_FAILURE(obj->onWallperSetting(nullptr));
 }
 
 TEST_F(CanvasManagerTest, refresh)
 {
-    // refresh
-    SUCCEED();
+    // Test method: void refresh((bool silent))
+    EXPECT_NO_FATAL_FAILURE(obj->refresh(false));
 }
 
 TEST_F(CanvasManagerTest, selectionModel)
 {
-    // selectionModel
-    SUCCEED();
+    // Test getter: CanvasSelectionModel selectionModel()
+    auto result = obj->selectionModel();
+    EXPECT_NO_FATAL_FAILURE({ obj->selectionModel(); });
+
 }
 
 TEST_F(CanvasManagerTest, setAutoArrange)
 {
-    // setAutoArrange
-    SUCCEED();
+    // Test setter: void setAutoArrange((bool on))
+    EXPECT_NO_FATAL_FAILURE(obj->setAutoArrange(false));
 }
 
 TEST_F(CanvasManagerTest, setIconLevel)
 {
-    // setIconLevel
-    SUCCEED();
+    // Test setter: void setIconLevel((int level))
+    EXPECT_NO_FATAL_FAILURE(obj->setIconLevel(0));
 }
 
 TEST_F(CanvasManagerTest, update)
 {
-    // update
-    SUCCEED();
+    // Test method: void update(())
+    EXPECT_NO_FATAL_FAILURE(obj->update());
 }
-

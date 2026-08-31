@@ -4,31 +4,59 @@
 
 /**
  * @file test_collectionframeprivate.cpp
- * @brief Unit tests for CollectionFramePrivate Mid-priority methods
+ * @brief Unit tests for CollectionFramePrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class CollectionFramePrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "view/collectionframe.h"
+
+#include <QTest>
+
+using namespace ddplugin_organizer;
+
+class CollectionFramePrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new CollectionFramePrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    CollectionFramePrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(CollectionFramePrivateTest, getCurrentResponseArea)
 {
-    // getCurrentResponseArea
-    SUCCEED();
+    // Test method: CollectionFramePrivate::ResponseArea getCurrentResponseArea((const QPoint &pos))
+    QPoint _arg0{};
+    auto result = obj->getCurrentResponseArea(_arg0);
+    EXPECT_GE(static_cast<int>(result), 0);
+
 }
 
 TEST_F(CollectionFramePrivateTest, moveResultRectPos)
 {
-    // moveResultRectPos
-    SUCCEED();
+    // Test method: QPoint moveResultRectPos((bool *validPos))
+    auto result = obj->moveResultRectPos(nullptr);
+    EXPECT_TRUE(result.isNull());
+
 }
 
 TEST_F(CollectionFramePrivateTest, surface)
 {
-    // surface
-    SUCCEED();
+    // Test getter: Surface surface()
+    auto result = obj->surface();
+    EXPECT_NO_FATAL_FAILURE({ obj->surface(); });
+
 }

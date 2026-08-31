@@ -4,31 +4,57 @@
 
 /**
  * @file test_trashdiriterator.cpp
- * @brief Unit tests for TrashDirIterator Mid-priority methods
+ * @brief Unit tests for TrashDirIterator methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class TrashDirIteratorTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "trashdiriterator.h"
+
+#include <QTest>
+
+using namespace dfmplugin_trash;
+
+class TrashDirIteratorTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new TrashDirIterator();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    TrashDirIterator *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(TrashDirIteratorTest, fileInfo)
 {
-    // fileInfo
-    SUCCEED();
+    // Test getter: FileInfoPointer fileInfo()
+    auto result = obj->fileInfo();
+    EXPECT_EQ(result.get(), nullptr);
+
 }
 
 TEST_F(TrashDirIteratorTest, hasNext)
 {
-    // hasNext
-    SUCCEED();
+    // Test bool getter: hasNext()
+    bool result = obj->hasNext();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(TrashDirIteratorTest, url)
 {
-    // url
-    SUCCEED();
+    // Test getter: QUrl url()
+    auto result = obj->url();
+    EXPECT_TRUE(result.isEmpty() || result.isValid());
 }

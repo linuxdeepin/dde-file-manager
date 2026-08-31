@@ -4,19 +4,40 @@
 
 /**
  * @file test_controllerpipe.cpp
- * @brief Unit tests for ControllerPipe Mid-priority methods
+ * @brief Unit tests for ControllerPipe methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ControllerPipeTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "apps/dde-file-manager-extractor/libextractor/controllerpipe.h"
+
+#include <QTest>
+
+using namespace src;
+
+class ControllerPipeTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ControllerPipe();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ControllerPipe *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ControllerPipeTest, processInputBuffer)
 {
-    // processInputBuffer
-    SUCCEED();
+    // Test method: void processInputBuffer(())
+    EXPECT_NO_FATAL_FAILURE(obj->processInputBuffer());
 }

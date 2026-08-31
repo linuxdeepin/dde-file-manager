@@ -3,39 +3,67 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_low_indexruntime.cpp
- * @brief Unit tests for IndexRuntime Low-priority methods
+ * @file test_low_indexruntime.cpp
+ * @brief Unit tests for IndexRuntime methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class IndexRuntimeLowTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "services/textindex/core/indexruntime.h"
+
+#include <QTest>
+
+using namespace src;
+
+class IndexRuntimeTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new IndexRuntime();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    IndexRuntime *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
-TEST_F(IndexRuntimeLowTest, fsEventController)
+TEST_F(IndexRuntimeTest, fsEventController)
 {
-    // fsEventController
-    SUCCEED();
+    // Test getter: FSEventController fsEventController()
+    auto result = obj->fsEventController();
+    EXPECT_NO_FATAL_FAILURE({ obj->fsEventController(); });
+
 }
 
-TEST_F(IndexRuntimeLowTest, selectDocumentBuilder)
+TEST_F(IndexRuntimeTest, selectDocumentBuilder)
 {
-    // selectDocumentBuilder
-    SUCCEED();
+    // Test getter: IndexDocumentBuilder selectDocumentBuilder()
+    auto result = obj->selectDocumentBuilder();
+    EXPECT_NO_FATAL_FAILURE({ obj->selectDocumentBuilder(); });
+
 }
 
-TEST_F(IndexRuntimeLowTest, selectExtractor)
+TEST_F(IndexRuntimeTest, selectExtractor)
 {
-    // selectExtractor
-    SUCCEED();
+    // Test getter: IndexExtractor selectExtractor()
+    auto result = obj->selectExtractor();
+    EXPECT_NO_FATAL_FAILURE({ obj->selectExtractor(); });
+
 }
 
-TEST_F(IndexRuntimeLowTest, taskManager)
+TEST_F(IndexRuntimeTest, taskManager)
 {
-    // taskManager
-    SUCCEED();
-}
+    // Test getter: TaskManager taskManager()
+    auto result = obj->taskManager();
+    EXPECT_NO_FATAL_FAILURE({ obj->taskManager(); });
 
+}

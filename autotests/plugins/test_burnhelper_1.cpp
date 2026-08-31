@@ -3,27 +3,52 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_burnhelper_1.cpp
- * @brief Unit tests for BurnHelper Low-priority methods
+ * @file test_burnhelper_1.cpp
+ * @brief Unit tests for BurnHelper methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class BurnHelperTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/burnhelper.h"
+
+#include <QTest>
+
+using namespace dfmplugin_burn;
+
+class BurnHelperTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new BurnHelper();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    BurnHelper *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(BurnHelperTest, burnIsOnLocalStaging)
 {
-    // burnIsOnLocalStaging
-    SUCCEED();
+    // Test method: bool burnIsOnLocalStaging((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->burnIsOnLocalStaging(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(BurnHelperTest, defaultBurnFs)
 {
-    // defaultBurnFs
-    SUCCEED();
-}
+    // Test getter: int defaultBurnFs()
+    auto result = obj->defaultBurnFs();
+    EXPECT_EQ(result, 0);
 
+}

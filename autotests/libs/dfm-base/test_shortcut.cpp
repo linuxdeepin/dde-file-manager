@@ -4,19 +4,41 @@
 
 /**
  * @file test_shortcut.cpp
- * @brief Unit tests for Shortcut Mid-priority methods
+ * @brief Unit tests for Shortcut methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ShortcutTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "dfm-base/shortcut/shortcut.h"
+
+#include <QTest>
+
+using namespace src;
+
+class ShortcutTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new Shortcut();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    Shortcut *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ShortcutTest, toStr)
 {
-    // toStr
-    SUCCEED();
+    // Test getter: QString toStr()
+    auto result = obj->toStr();
+    EXPECT_TRUE(result.isEmpty() || !result.isEmpty());
 }

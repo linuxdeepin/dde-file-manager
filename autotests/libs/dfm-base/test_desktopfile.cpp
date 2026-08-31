@@ -176,66 +176,67 @@ TEST(DesktopFileTest, DesktopNameReturnsValue)
     tmp.write("[Desktop Entry]\nType=Application\nName=MyApp\n");
     tmp.close();
     DesktopFile df(tmp.fileName());
-    EXPECT_NO_FATAL_FAILURE({ (void)df.desktopName(); });
+    EXPECT_NO_FATAL_FAILURE({ df.desktopName(); });
 }
 
 
 TEST(DesktopFileTest, desktopCategories)
 {
-    // desktopCategories
-    SUCCEED();
+    DesktopFile obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.desktopCategories(); });
 }
 
 TEST(DesktopFileTest, desktopDeepinId)
 {
-    // desktopDeepinId
-    SUCCEED();
+    DesktopFile obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.desktopDeepinId(); });
 }
 
 TEST(DesktopFileTest, desktopDisplayName)
 {
-    // desktopDisplayName
-    SUCCEED();
+    DesktopFile obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.desktopDisplayName(); });
 }
 
 TEST(DesktopFileTest, desktopExec)
 {
-    // desktopExec
-    SUCCEED();
+    DesktopFile obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.desktopExec(); });
 }
 
 TEST(DesktopFileTest, desktopIcon)
 {
-    // desktopIcon
-    SUCCEED();
+    DesktopFile obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.desktopIcon(); });
 }
 
 TEST(DesktopFileTest, desktopLocalName)
 {
-    // desktopLocalName
-    SUCCEED();
+    DesktopFile obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.desktopLocalName(); });
 }
 
 TEST(DesktopFileTest, desktopMimeType)
 {
-    // desktopMimeType
-    SUCCEED();
+    DesktopFile obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.desktopMimeType(); });
 }
 
 TEST(DesktopFileTest, desktopName)
 {
-    // desktopName
-    SUCCEED();
+    DesktopFile obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.desktopName(); });
 }
 
 TEST(DesktopFileTest, desktopType)
 {
-    // desktopType
-    SUCCEED();
+    DesktopFile obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.desktopType(); });
 }
 
 TEST(DesktopFileTest, isNoShow)
 {
-    // isNoShow
-    SUCCEED();
+    DesktopFile obj;
+    bool result = obj.isNoShow();
+    EXPECT_FALSE(result);
 }

@@ -4,37 +4,62 @@
 
 /**
  * @file test_vaultremovebyrecoverykeyview.cpp
- * @brief Unit tests for VaultRemoveByRecoverykeyView Mid-priority methods
+ * @brief Unit tests for VaultRemoveByRecoverykeyView methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class VaultRemoveByRecoverykeyViewTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/removevaultview/vaultremovebyrecoverykeyview.h"
+
+#include <QTest>
+
+using namespace dfmplugin_vault;
+
+class VaultRemoveByRecoverykeyViewTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new VaultRemoveByRecoverykeyView();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    VaultRemoveByRecoverykeyView *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(VaultRemoveByRecoverykeyViewTest, VaultRemoveByRecoverykeyView)
 {
-    // VaultRemoveByRecoverykeyView
-    SUCCEED();
+    // Test constructor: VaultRemoveByRecoverykeyView((QWidget *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(VaultRemoveByRecoverykeyViewTest, afterRecoveryKeyChanged)
 {
-    // afterRecoveryKeyChanged
-    SUCCEED();
+    // Test method: int afterRecoveryKeyChanged((QString &str))
+    QString _arg0{};
+    auto result = obj->afterRecoveryKeyChanged(_arg0);
+    EXPECT_GE(result, 0);
+
 }
 
 TEST_F(VaultRemoveByRecoverykeyViewTest, buttonClicked)
 {
-    // buttonClicked
-    SUCCEED();
+    // Test method: void buttonClicked((int index, const QString &text))
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->buttonClicked(0, _arg1));
 }
 
 TEST_F(VaultRemoveByRecoverykeyViewTest, _VaultRemoveByRecoverykeyView)
 {
-    // ~VaultRemoveByRecoverykeyView
-    SUCCEED();
+    // Test constructor: VaultRemoveByRecoverykeyView((QWidget *parent))
+    ASSERT_NE(obj, nullptr);
 }

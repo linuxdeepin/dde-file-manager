@@ -3,123 +3,177 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_fileviewhelper_1.cpp
- * @brief Unit tests for FileViewHelper Low-priority methods
+ * @file test_fileviewhelper_1.cpp
+ * @brief Unit tests for FileViewHelper methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class FileViewHelperTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/fileviewhelper.h"
+
+#include <QTest>
+
+using namespace dfmplugin_workspace;
+
+class FileViewHelperTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new FileViewHelper();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FileViewHelper *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(FileViewHelperTest, caculateIconItemIndex)
 {
-    // caculateIconItemIndex
-    SUCCEED();
+    // Test method: int caculateIconItemIndex((const FileView *view, const QSize &itemSize, const QPoint &pos))
+    QSize _arg1{};
+    QPoint _arg2{};
+    auto result = obj->caculateIconItemIndex(nullptr, _arg1, _arg2);
+    EXPECT_GE(result, 0);
+
 }
 
 TEST_F(FileViewHelperTest, caculateListItemIndex)
 {
-    // caculateListItemIndex
-    SUCCEED();
+    // Test method: int caculateListItemIndex((const QSize &itemSize, const QPoint &pos))
+    QSize _arg0{};
+    QPoint _arg1{};
+    auto result = obj->caculateListItemIndex(_arg0, _arg1);
+    EXPECT_GE(result, 0);
+
 }
 
 TEST_F(FileViewHelperTest, canChangeListItemHeight)
 {
-    // canChangeListItemHeight
-    SUCCEED();
+    // Test bool getter: canChangeListItemHeight()
+    bool result = obj->canChangeListItemHeight();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(FileViewHelperTest, clipboardDataChanged)
 {
-    // clipboardDataChanged
-    SUCCEED();
+    // Test method: void clipboardDataChanged(())
+    EXPECT_NO_FATAL_FAILURE(obj->clipboardDataChanged());
 }
 
 TEST_F(FileViewHelperTest, customDefaultListItemHeightLevel)
 {
-    // customDefaultListItemHeightLevel
-    SUCCEED();
+    // Test getter: int customDefaultListItemHeightLevel()
+    auto result = obj->customDefaultListItemHeightLevel();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(FileViewHelperTest, customDefaultViewMode)
 {
-    // customDefaultViewMode
-    SUCCEED();
+    // Test getter: ViewMode customDefaultViewMode()
+    auto result = obj->customDefaultViewMode();
+    EXPECT_GE(static_cast<int>(result), 0);
+
 }
 
 TEST_F(FileViewHelperTest, fileViewViewportMargins)
 {
-    // fileViewViewportMargins
-    SUCCEED();
+    // Test getter: QMargins fileViewViewportMargins()
+    auto result = obj->fileViewViewportMargins();
+    EXPECT_NO_FATAL_FAILURE({ obj->fileViewViewportMargins(); });
+
 }
 
 TEST_F(FileViewHelperTest, handleTrashStateChanged)
 {
-    // handleTrashStateChanged
-    SUCCEED();
+    // Test method: void handleTrashStateChanged(())
+    EXPECT_NO_FATAL_FAILURE(obj->handleTrashStateChanged());
 }
 
 TEST_F(FileViewHelperTest, init)
 {
-    // init
-    SUCCEED();
+    // Test method: void init(())
+    EXPECT_NO_FATAL_FAILURE(obj->init());
 }
 
 TEST_F(FileViewHelperTest, isDropTarget)
 {
-    // isDropTarget
-    SUCCEED();
+    // Test method: bool isDropTarget((const QModelIndex &index))
+    QModelIndex _arg0{};
+    auto result = obj->isDropTarget(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(FileViewHelperTest, isLastIndex)
 {
-    // isLastIndex
-    SUCCEED();
+    // Test method: bool isLastIndex((const QModelIndex &index))
+    QModelIndex _arg0{};
+    auto result = obj->isLastIndex(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(FileViewHelperTest, isSelected)
 {
-    // isSelected
-    SUCCEED();
+    // Test method: bool isSelected((const QModelIndex &index))
+    QModelIndex _arg0{};
+    auto result = obj->isSelected(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(FileViewHelperTest, itemDelegate)
 {
-    // itemDelegate
-    SUCCEED();
+    // Test getter: BaseItemDelegate itemDelegate()
+    auto result = obj->itemDelegate();
+    EXPECT_NO_FATAL_FAILURE({ obj->itemDelegate(); });
+
 }
 
 TEST_F(FileViewHelperTest, keyboardSearch)
 {
-    // keyboardSearch
-    SUCCEED();
+    // Test method: void keyboardSearch((const QString &search))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->keyboardSearch(_arg0));
 }
 
 TEST_F(FileViewHelperTest, selectedIndexsCount)
 {
-    // selectedIndexsCount
-    SUCCEED();
+    // Test getter: int selectedIndexsCount()
+    auto result = obj->selectedIndexsCount();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(FileViewHelperTest, updateGeometries)
 {
-    // updateGeometries
-    SUCCEED();
+    // Test method: void updateGeometries(())
+    EXPECT_NO_FATAL_FAILURE(obj->updateGeometries());
 }
 
 TEST_F(FileViewHelperTest, verticalOffset)
 {
-    // verticalOffset
-    SUCCEED();
+    // Test getter: int verticalOffset()
+    auto result = obj->verticalOffset();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(FileViewHelperTest, viewContentSize)
 {
-    // viewContentSize
-    SUCCEED();
-}
+    // Test getter: QSize viewContentSize()
+    auto result = obj->viewContentSize();
+    EXPECT_TRUE(result.isEmpty());
 
+}

@@ -3,33 +3,61 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_currenttasknotifythrottler_1.cpp
- * @brief Unit tests for CurrentTaskNotifyThrottler Low-priority methods
+ * @file test_currenttasknotifythrottler_1.cpp
+ * @brief Unit tests for CurrentTaskNotifyThrottler methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class CurrentTaskNotifyThrottlerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "fileoperations/fileoperationutils/currenttasknotifythrottler.h"
+
+#include <QTest>
+
+using namespace dfmplugin_fileoperations;
+
+class CurrentTaskNotifyThrottlerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new CurrentTaskNotifyThrottler();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    CurrentTaskNotifyThrottler *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(CurrentTaskNotifyThrottlerTest, submit)
 {
-    // submit
-    SUCCEED();
+    // Test method: std::optional<CurrentTaskNotifyThrottler::Task> submit((const QUrl &sourceUrl, const QUrl &targetUrl))
+    QUrl _arg0{};
+    QUrl _arg1{};
+    auto result = obj->submit(_arg0, _arg1);
+    EXPECT_FALSE(result.has_value());
+
 }
 
 TEST_F(CurrentTaskNotifyThrottlerTest, takePendingTaskUnlocked)
 {
-    // takePendingTaskUnlocked
-    SUCCEED();
+    // Test method: std::optional<CurrentTaskNotifyThrottler::Task> takePendingTaskUnlocked((qint64 elapsed))
+    auto result = obj->takePendingTaskUnlocked(0);
+    EXPECT_FALSE(result.has_value());
+
 }
 
 TEST_F(CurrentTaskNotifyThrottlerTest, takeReadyTask)
 {
-    // takeReadyTask
-    SUCCEED();
-}
+    // Test getter: std::optional<CurrentTaskNotifyThrottler::Task> takeReadyTask()
+    auto result = obj->takeReadyTask();
+    EXPECT_FALSE(result.has_value());
 
+}

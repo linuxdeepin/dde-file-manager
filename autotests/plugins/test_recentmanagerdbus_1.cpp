@@ -3,57 +3,87 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_recentmanagerdbus_1.cpp
- * @brief Unit tests for RecentManagerDBus Low-priority methods
+ * @file test_recentmanagerdbus_1.cpp
+ * @brief Unit tests for RecentManagerDBus methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class RecentManagerDBusTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "recentmanagerdbus.h"
+
+#include <QTest>
+
+using namespace recent;
+
+class RecentManagerDBusTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new RecentManagerDBus();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    RecentManagerDBus *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(RecentManagerDBusTest, AddItem)
 {
-    // AddItem
-    SUCCEED();
+    // Test method: void AddItem((const QVariantMap &item))
+    QVariantMap _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->AddItem(_arg0));
 }
 
 TEST_F(RecentManagerDBusTest, GetItemInfo)
 {
-    // GetItemInfo
-    SUCCEED();
+    // Test method: QVariantMap GetItemInfo((const QString &path))
+    QString _arg0{};
+    auto result = obj->GetItemInfo(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(RecentManagerDBusTest, GetItemsInfo)
 {
-    // GetItemsInfo
-    SUCCEED();
+    // Test getter: QVariantList GetItemsInfo()
+    auto result = obj->GetItemsInfo();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(RecentManagerDBusTest, GetItemsPath)
 {
-    // GetItemsPath
-    SUCCEED();
+    // Test getter: QStringList GetItemsPath()
+    auto result = obj->GetItemsPath();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(RecentManagerDBusTest, PurgeItems)
 {
-    // PurgeItems
-    SUCCEED();
+    // Test method: void PurgeItems(())
+    EXPECT_NO_FATAL_FAILURE(obj->PurgeItems());
 }
 
 TEST_F(RecentManagerDBusTest, Reload)
 {
-    // Reload
-    SUCCEED();
+    // Test getter: qint64 Reload()
+    auto result = obj->Reload();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(RecentManagerDBusTest, initConnect)
 {
-    // initConnect
-    SUCCEED();
+    // Test method: void initConnect(())
+    EXPECT_NO_FATAL_FAILURE(obj->initConnect());
 }
-

@@ -3,51 +3,76 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_operationsstackproxy_1.cpp
- * @brief Unit tests for OperationsStackProxy Low-priority methods
+ * @file test_operationsstackproxy_1.cpp
+ * @brief Unit tests for OperationsStackProxy methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class OperationsStackProxyTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "fileoperations/operationsstackproxy.h"
+
+#include <QTest>
+
+using namespace dfmplugin_fileoperations;
+
+class OperationsStackProxyTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new OperationsStackProxy();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    OperationsStackProxy *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(OperationsStackProxyTest, CleanOperationsByUrl)
 {
-    // CleanOperationsByUrl
-    SUCCEED();
+    // Test method: void CleanOperationsByUrl((const QStringList &urls))
+    QStringList _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->CleanOperationsByUrl(_arg0));
 }
 
 TEST_F(OperationsStackProxyTest, OperationsStackProxy)
 {
-    // OperationsStackProxy
-    SUCCEED();
+    // Test constructor: OperationsStackProxy((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(OperationsStackProxyTest, RevocationRedoOperations)
 {
-    // RevocationRedoOperations
-    SUCCEED();
+    // Test getter: QVariantMap RevocationRedoOperations()
+    auto result = obj->RevocationRedoOperations();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(OperationsStackProxyTest, cleanOperations)
 {
-    // cleanOperations
-    SUCCEED();
+    // Test method: void cleanOperations(())
+    EXPECT_NO_FATAL_FAILURE(obj->cleanOperations());
 }
 
 TEST_F(OperationsStackProxyTest, initialize)
 {
-    // initialize
-    SUCCEED();
+    // Test method: void initialize(())
+    EXPECT_NO_FATAL_FAILURE(obj->initialize());
 }
 
 TEST_F(OperationsStackProxyTest, revocationOperations)
 {
-    // revocationOperations
-    SUCCEED();
-}
+    // Test getter: QVariantMap revocationOperations()
+    auto result = obj->revocationOperations();
+    EXPECT_TRUE(result.isEmpty());
 
+}

@@ -101,55 +101,60 @@ TEST(NetworkUtilsTest, ParseIpSmbReturnsTwoPorts)
 
 TEST(NetworkUtilsTest, CheckAllCifsBusyIsCallable)
 {
-    EXPECT_NO_FATAL_FAILURE({ (void)NetworkUtils::instance()->checkAllCIFSBusy(); });
+    EXPECT_NO_FATAL_FAILURE({ NetworkUtils::instance()->checkAllCIFSBusy(); });
 }
 
 TEST(NetworkUtilsTest, CheckNetConnectionHostStringListIsCallable)
 {
-    EXPECT_NO_FATAL_FAILURE({ (void)NetworkUtils::instance()->checkNetConnection("localhost", QStringList{"80"}, 200); });
+    EXPECT_NO_FATAL_FAILURE({ NetworkUtils::instance()->checkNetConnection("localhost", QStringList{"80"}, 200); });
 }
 
 TEST(NetworkUtilsTest, CheckNetConnectionHostPortIntIsCallable)
 {
-    EXPECT_NO_FATAL_FAILURE({ (void)NetworkUtils::instance()->checkNetConnection("localhost", "80", 200); });
+    EXPECT_NO_FATAL_FAILURE({ NetworkUtils::instance()->checkNetConnection("localhost", "80", 200); });
 }
 
 TEST(NetworkUtilsTest, CheckFtpOrSmbBusyIsCallable)
 {
-    EXPECT_NO_FATAL_FAILURE({ (void)NetworkUtils::instance()->checkFtpOrSmbBusy(QUrl("file:///")); });
+    EXPECT_NO_FATAL_FAILURE({ NetworkUtils::instance()->checkFtpOrSmbBusy(QUrl("file:///")); });
 }
 
 TEST(NetworkUtilsTest, CifsMountHostInfoIsCallable)
 {
-    EXPECT_NO_FATAL_FAILURE({ (void)NetworkUtils::instance()->cifsMountHostInfo(); });
+    EXPECT_NO_FATAL_FAILURE({ NetworkUtils::instance()->cifsMountHostInfo(); });
 }
 
 TEST(NetworkUtilsTest, ResolveLocalSftpMountUrlIsCallable)
 {
-    EXPECT_NO_FATAL_FAILURE({ (void)NetworkUtils::instance()->resolveLocalSftpMountUrl(QUrl("file:///")); });
+    EXPECT_NO_FATAL_FAILURE({ NetworkUtils::instance()->resolveLocalSftpMountUrl(QUrl("file:///")); });
 }
 
 
 TEST(NetworkUtilsTest, checkNetConnection)
 {
-    // checkNetConnection
-    SUCCEED();
+    NetworkUtils obj;
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.checkNetConnection(_arg0, QStringList(), 0); });
 }
 
 TEST(NetworkUtilsTest, cifsMountHostInfo)
 {
-    // cifsMountHostInfo
-    SUCCEED();
+    NetworkUtils obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.cifsMountHostInfo(); });
 }
 
 TEST(NetworkUtilsTest, parseIp)
 {
-    // parseIp
-    SUCCEED();
+    NetworkUtils obj;
+    QString _arg0{};
+    QString _arg1{};
+    QStringList _arg2{};
+    EXPECT_NO_FATAL_FAILURE({ obj.parseIp(_arg0, _arg1, _arg2); });
 }
 
 TEST(NetworkUtilsTest, resolveLocalSftpMountUrl)
 {
-    // resolveLocalSftpMountUrl
-    SUCCEED();
+    NetworkUtils obj;
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.resolveLocalSftpMountUrl(_arg0); });
 }

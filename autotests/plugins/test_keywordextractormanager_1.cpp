@@ -3,39 +3,77 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_keywordextractormanager_1.cpp
- * @brief Unit tests for KeywordExtractorManager Low-priority methods
+ * @file test_keywordextractormanager_1.cpp
+ * @brief Unit tests for KeywordExtractorManager methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class KeywordExtractorManagerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/keywordextractor.h"
+
+#include <QTest>
+
+using namespace dfmplugin_workspace;
+
+class KeywordExtractorManagerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new KeywordExtractorManager();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    KeywordExtractorManager *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(KeywordExtractorManagerTest, KeywordExtractorManager)
 {
-    // KeywordExtractorManager
-    SUCCEED();
+    // Test constructor: KeywordExtractorManager(())
+    ASSERT_NE(obj, nullptr);
+}
+
+TEST_F(KeywordExtractorManagerTest, M_~KeywordExtractorManager)
+{
+    // Test method:  ~KeywordExtractorManager(())
+    EXPECT_NO_FATAL_FAILURE({ KeywordExtractorManager *tmp = new KeywordExtractorManager(); delete tmp; });
 }
 
 TEST_F(KeywordExtractorManagerTest, instance)
 {
-    // instance
-    SUCCEED();
+    // Test getter: KeywordExtractorManager instance()
+    auto result = obj->instance();
+    EXPECT_NO_FATAL_FAILURE({ obj->instance(); });
+
 }
 
-TEST_F(KeywordExtractorManagerTest, Operator_Assign)
+TEST_F(KeywordExtractorManagerTest, extractor)
 {
-    // operator=
-    SUCCEED();
+    // Test getter: KeywordExtractor extractor()
+    auto result = obj->extractor();
+    EXPECT_NO_FATAL_FAILURE({ obj->extractor(); });
+
 }
 
-TEST_F(KeywordExtractorManagerTest, KeywordExtractorManager_Destructor)
+TEST_F(KeywordExtractorManagerTest, operator=)
 {
-    // ~KeywordExtractorManager
-    SUCCEED();
+    // Test getter: KeywordExtractorManager operator=()
+    EXPECT_NO_FATAL_FAILURE({ obj->operator=(); });
 }
 
+TEST_F(KeywordExtractorManagerTest, keywordExtractor)
+{
+    // Test getter: KeywordExtractor keywordExtractor()
+    auto result = obj->keywordExtractor();
+    EXPECT_NO_FATAL_FAILURE({ obj->keywordExtractor(); });
+
+}

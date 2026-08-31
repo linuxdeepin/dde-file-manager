@@ -3,45 +3,70 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_computereventcaller_1.cpp
- * @brief Unit tests for ComputerEventCaller Low-priority methods
+ * @file test_computereventcaller_1.cpp
+ * @brief Unit tests for ComputerEventCaller methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ComputerEventCallerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "events/computereventcaller.h"
+
+#include <QTest>
+
+using namespace dfmplugin_computer;
+
+class ComputerEventCallerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ComputerEventCaller();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ComputerEventCaller *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ComputerEventCallerTest, ComputerEventCaller)
 {
-    // ComputerEventCaller
-    SUCCEED();
+    // Test constructor: ComputerEventCaller(())
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(ComputerEventCallerTest, sendCtrlNOnItem)
 {
-    // sendCtrlNOnItem
-    SUCCEED();
+    // Test method: void sendCtrlNOnItem((quint64 winId, const QUrl &url))
+    QUrl _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->sendCtrlNOnItem(0, _arg1));
 }
 
 TEST_F(ComputerEventCallerTest, sendCtrlTOnItem)
 {
-    // sendCtrlTOnItem
-    SUCCEED();
+    // Test method: void sendCtrlTOnItem((quint64 winId, const QUrl &url))
+    QUrl _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->sendCtrlTOnItem(0, _arg1));
 }
 
 TEST_F(ComputerEventCallerTest, sendItemRenamed)
 {
-    // sendItemRenamed
-    SUCCEED();
+    // Test method: void sendItemRenamed((const QUrl &url, const QString &name))
+    QUrl _arg0{};
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->sendItemRenamed(_arg0, _arg1));
 }
 
 TEST_F(ComputerEventCallerTest, sendOpenItem)
 {
-    // sendOpenItem
-    SUCCEED();
+    // Test method: void sendOpenItem((quint64 winId, const QUrl &url))
+    QUrl _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->sendOpenItem(0, _arg1));
 }
-

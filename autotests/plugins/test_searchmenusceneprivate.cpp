@@ -4,25 +4,47 @@
 
 /**
  * @file test_searchmenusceneprivate.cpp
- * @brief Unit tests for SearchMenuScenePrivate Mid-priority methods
+ * @brief Unit tests for SearchMenuScenePrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class SearchMenuScenePrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "menus/searchmenuscene.h"
+
+#include <QTest>
+
+using namespace dfmplugin_search;
+
+class SearchMenuScenePrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new SearchMenuScenePrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    SearchMenuScenePrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(SearchMenuScenePrivateTest, disableSubScene)
 {
-    // disableSubScene
-    SUCCEED();
+    // Test method: void disableSubScene((AbstractMenuScene *scene, const QString &sceneName))
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->disableSubScene(nullptr, _arg1));
 }
 
 TEST_F(SearchMenuScenePrivateTest, updateGroupSubMenu)
 {
-    // updateGroupSubMenu
-    SUCCEED();
+    // Test method: void updateGroupSubMenu((QMenu *menu))
+    EXPECT_NO_FATAL_FAILURE(obj->updateGroupSubMenu(nullptr));
 }

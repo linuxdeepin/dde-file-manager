@@ -137,24 +137,29 @@ TEST(FileNameSorterTest, SortByKeyDescending)
 
 TEST(FileNameSorterTest, compare)
 {
-    // compare
-    SUCCEED();
+    FileNameSorter obj;
+    QString _arg0{};
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE({ obj.compare(_arg0, _arg1, Qt::SortOrder()); });
 }
 
 TEST(FileNameSorterTest, sort)
 {
-    // sort
-    SUCCEED();
+    FileNameSorter obj;
+    QStringList _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj.sort(_arg0, Qt::SortOrder()));
 }
 
 TEST(FileNameSorterTest, sortKey)
 {
-    // sortKey
-    SUCCEED();
+    FileNameSorter obj;
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.sortKey(_arg0); });
 }
 
 TEST(FileNameSorterTest, sortUrls)
 {
-    // sortUrls
-    SUCCEED();
+    FileNameSorter obj;
+    QList<QUrl> _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj.sortUrls(_arg0, Qt::SortOrder()));
 }

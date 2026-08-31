@@ -3,27 +3,49 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_low_vfsmonitorfilesystemwatcher.cpp
- * @brief Unit tests for VfsMonitorFileSystemWatcher Low-priority methods
+ * @file test_low_vfsmonitorfilesystemwatcher.cpp
+ * @brief Unit tests for VfsMonitorFileSystemWatcher methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class VfsMonitorFileSystemWatcherLowTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "services/textindex/fsmonitor/vfsmonitorwatcher.h"
+
+#include <QTest>
+
+using namespace src;
+
+class VfsMonitorFileSystemWatcherTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new VfsMonitorFileSystemWatcher();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    VfsMonitorFileSystemWatcher *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
-TEST_F(VfsMonitorFileSystemWatcherLowTest, VfsMonitorFileSystemWatcher)
+TEST_F(VfsMonitorFileSystemWatcherTest, VfsMonitorFileSystemWatcher)
 {
-    // VfsMonitorFileSystemWatcher
-    SUCCEED();
+    // Test constructor: VfsMonitorFileSystemWatcher((const QStringList &rootPaths,
+                                                         PathExcludePredicate excludePredicate,
+                                                         QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
-TEST_F(VfsMonitorFileSystemWatcherLowTest, VfsMonitorFileSystemWatcher_Destructor)
+TEST_F(VfsMonitorFileSystemWatcherTest, VfsMonitorFileSystemWatcher_Destructor)
 {
-    // ~VfsMonitorFileSystemWatcher
-    SUCCEED();
+    // Test method:  ~VfsMonitorFileSystemWatcher(())
+    EXPECT_NO_FATAL_FAILURE({ VfsMonitorFileSystemWatcher *tmp = new VfsMonitorFileSystemWatcher(); delete tmp; });
 }
-

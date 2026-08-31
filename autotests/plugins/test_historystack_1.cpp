@@ -3,63 +3,97 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_historystack_1.cpp
- * @brief Unit tests for HistoryStack Low-priority methods
+ * @file test_historystack_1.cpp
+ * @brief Unit tests for HistoryStack methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class HistoryStackTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/historystack.h"
+
+#include <QTest>
+
+using namespace dfmplugin_titlebar;
+
+class HistoryStackTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new HistoryStack();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    HistoryStack *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(HistoryStackTest, HistoryStack)
 {
-    // HistoryStack
-    SUCCEED();
+    // Test constructor: HistoryStack((int threshold))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(HistoryStackTest, backIsExist)
 {
-    // backIsExist
-    SUCCEED();
+    // Test bool getter: backIsExist()
+    bool result = obj->backIsExist();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(HistoryStackTest, checkPathIsExist)
 {
-    // checkPathIsExist
-    SUCCEED();
+    // Test method: bool checkPathIsExist((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->checkPathIsExist(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(HistoryStackTest, forwardIsExist)
 {
-    // forwardIsExist
-    SUCCEED();
+    // Test bool getter: forwardIsExist()
+    bool result = obj->forwardIsExist();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(HistoryStackTest, isFirst)
 {
-    // isFirst
-    SUCCEED();
+    // Test bool getter: isFirst()
+    bool result = obj->isFirst();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(HistoryStackTest, isLast)
 {
-    // isLast
-    SUCCEED();
+    // Test bool getter: isLast()
+    bool result = obj->isLast();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(HistoryStackTest, needCheckExist)
 {
-    // needCheckExist
-    SUCCEED();
+    // Test method: bool needCheckExist((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->needCheckExist(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(HistoryStackTest, setThreshold)
 {
-    // setThreshold
-    SUCCEED();
+    // Test setter: void setThreshold((int threshold))
+    EXPECT_NO_FATAL_FAILURE(obj->setThreshold(0));
 }
-

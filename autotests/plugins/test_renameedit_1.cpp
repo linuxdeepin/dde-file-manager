@@ -3,123 +3,167 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_renameedit_1.cpp
- * @brief Unit tests for RenameEdit Low-priority methods
+ * @file test_renameedit_1.cpp
+ * @brief Unit tests for RenameEdit methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class RenameEditTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "delegate/itemeditor.h"
+
+#include <QTest>
+
+using namespace ddplugin_canvas;
+
+class RenameEditTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new RenameEdit();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    RenameEdit *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(RenameEditTest, adjustStyle)
 {
-    // adjustStyle
-    SUCCEED();
+    // Test method: void adjustStyle(())
+    EXPECT_NO_FATAL_FAILURE(obj->adjustStyle());
 }
 
 TEST_F(RenameEditTest, adjustStyle_adjustSt)
 {
-    // adjustStyle
-    SUCCEED();
+    // Test method: void adjustStyle(())
+    EXPECT_NO_FATAL_FAILURE(obj->adjustStyle());
 }
 
 TEST_F(RenameEditTest, contextMenuEvent)
 {
-    // contextMenuEvent
-    SUCCEED();
+    // Test event handler: contextMenuEvent((QContextMenuEvent *e))
+    QContextMenuEvent _event(QContextMenuEvent::None);
+    EXPECT_NO_FATAL_FAILURE(obj->contextMenuEvent(&_event));
 }
 
 TEST_F(RenameEditTest, contextMenuEvent_contextM)
 {
-    // contextMenuEvent
-    SUCCEED();
+    // Test event handler: contextMenuEvent((QContextMenuEvent *e))
+    QContextMenuEvent _event(QContextMenuEvent::None);
+    EXPECT_NO_FATAL_FAILURE(obj->contextMenuEvent(&_event));
 }
 
 TEST_F(RenameEditTest, eventFilter)
 {
-    // eventFilter
-    SUCCEED();
+    // Test method: bool eventFilter((QObject *obj, QEvent *e))
+    auto result = obj->eventFilter(nullptr, nullptr);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(RenameEditTest, eventFilter_eventFil)
 {
-    // eventFilter
-    SUCCEED();
+    // Test method: bool eventFilter((QObject *obj, QEvent *e))
+    auto result = obj->eventFilter(nullptr, nullptr);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(RenameEditTest, focusOutEvent)
 {
-    // focusOutEvent
-    SUCCEED();
+    // Test event handler: focusOutEvent((QFocusEvent *e))
+    QFocusEvent _event(QFocusEvent::None);
+    EXPECT_NO_FATAL_FAILURE(obj->focusOutEvent(&_event));
 }
 
 TEST_F(RenameEditTest, focusOutEvent_focusOut)
 {
-    // focusOutEvent
-    SUCCEED();
+    // Test event handler: focusOutEvent((QFocusEvent *e))
+    QFocusEvent _event(QFocusEvent::None);
+    EXPECT_NO_FATAL_FAILURE(obj->focusOutEvent(&_event));
 }
 
 TEST_F(RenameEditTest, pushStatck)
 {
-    // pushStatck
-    SUCCEED();
+    // Test method: void pushStatck((const QString &item))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->pushStatck(_arg0));
 }
 
 TEST_F(RenameEditTest, pushStatck_pushStat)
 {
-    // pushStatck
-    SUCCEED();
+    // Test method: void pushStatck((const QString &item))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->pushStatck(_arg0));
 }
 
 TEST_F(RenameEditTest, showEvent)
 {
-    // showEvent
-    SUCCEED();
+    // Test event handler: showEvent((QShowEvent *e))
+    QShowEvent _event(QShowEvent::None);
+    EXPECT_NO_FATAL_FAILURE(obj->showEvent(&_event));
 }
 
 TEST_F(RenameEditTest, showEvent_showEven)
 {
-    // showEvent
-    SUCCEED();
+    // Test event handler: showEvent((QShowEvent *e))
+    QShowEvent _event(QShowEvent::None);
+    EXPECT_NO_FATAL_FAILURE(obj->showEvent(&_event));
 }
 
 TEST_F(RenameEditTest, stackAdvance)
 {
-    // stackAdvance
-    SUCCEED();
+    // Test getter: QString stackAdvance()
+    auto result = obj->stackAdvance();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(RenameEditTest, stackAdvance_stackAdv)
 {
-    // stackAdvance
-    SUCCEED();
+    // Test getter: QString stackAdvance()
+    auto result = obj->stackAdvance();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(RenameEditTest, stackBack)
 {
-    // stackBack
-    SUCCEED();
+    // Test getter: QString stackBack()
+    auto result = obj->stackBack();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(RenameEditTest, stackBack_stackBac)
 {
-    // stackBack
-    SUCCEED();
+    // Test getter: QString stackBack()
+    auto result = obj->stackBack();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(RenameEditTest, stackCurrent)
 {
-    // stackCurrent
-    SUCCEED();
+    // Test getter: QString stackCurrent()
+    auto result = obj->stackCurrent();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(RenameEditTest, stackCurrent_stackCur)
 {
-    // stackCurrent
-    SUCCEED();
-}
+    // Test getter: QString stackCurrent()
+    auto result = obj->stackCurrent();
+    EXPECT_TRUE(result.isEmpty());
 
+}

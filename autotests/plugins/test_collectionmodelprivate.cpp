@@ -4,59 +4,80 @@
 
 /**
  * @file test_collectionmodelprivate.cpp
- * @brief Unit tests for CollectionModelPrivate Mid-priority methods (stub)
+ * @brief Unit tests for CollectionModelPrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
+#include "stubext.h"
+
 #include "models/collectionmodel.h"
+
+#include <QTest>
 
 using namespace ddplugin_organizer;
 
-class CollectionModelPrivateTest : public ::testing::Test {
+class CollectionModelPrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new CollectionModelPrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    CollectionModelPrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(CollectionModelPrivateTest, clearMapping)
 {
-    // clearMapping - stub test (class requires special construction)
-    SUCCEED();
+    // Test method: void clearMapping(())
+    EXPECT_NO_FATAL_FAILURE(obj->clearMapping());
 }
 
 TEST_F(CollectionModelPrivateTest, reset)
 {
-    // reset - stub test (class requires special construction)
-    SUCCEED();
+    // Test method: void reset(())
+    EXPECT_NO_FATAL_FAILURE(obj->reset());
 }
 
 TEST_F(CollectionModelPrivateTest, sourceAboutToBeReset)
 {
-    // sourceAboutToBeReset - stub test (class requires special construction)
-    SUCCEED();
+    // Test method: void sourceAboutToBeReset(())
+    EXPECT_NO_FATAL_FAILURE(obj->sourceAboutToBeReset());
 }
 
 TEST_F(CollectionModelPrivateTest, sourceDataRenamed)
 {
-    // sourceDataRenamed - stub test (class requires special construction)
-    SUCCEED();
+    // Test method: void sourceDataRenamed((const QUrl &oldUrl, const QUrl &newUrl))
+    QUrl _arg0{};
+    QUrl _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->sourceDataRenamed(_arg0, _arg1));
 }
 
 TEST_F(CollectionModelPrivateTest, sourceReset)
 {
-    // sourceReset - stub test (class requires special construction)
-    SUCCEED();
+    // Test method: void sourceReset(())
+    EXPECT_NO_FATAL_FAILURE(obj->sourceReset());
 }
 
 TEST_F(CollectionModelPrivateTest, sourceRowsAboutToBeRemoved)
 {
-    // sourceRowsAboutToBeRemoved - stub test (class requires special construction)
-    SUCCEED();
+    // Test method: void sourceRowsAboutToBeRemoved((const QModelIndex &sourceParent, int start, int end))
+    QModelIndex _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->sourceRowsAboutToBeRemoved(_arg0, 0, 0));
 }
 
 TEST_F(CollectionModelPrivateTest, sourceRowsInserted)
 {
-    // sourceRowsInserted - stub test (class requires special construction)
-    SUCCEED();
+    // Test method: void sourceRowsInserted((const QModelIndex &sourceParent, int start, int end))
+    QModelIndex _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->sourceRowsInserted(_arg0, 0, 0));
 }

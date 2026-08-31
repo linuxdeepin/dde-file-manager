@@ -136,102 +136,111 @@ TEST(SortFileInfoTest, NeedsCompletionReturnsFalseWhenCompleted)
 
 TEST(SortFileInfoTest, SortFileInfo)
 {
-    // SortFileInfo
-    SUCCEED();
-}
+    SortFileInfo obj;
+    EXPECT_NO_FATAL_FAILURE({ SortFileInfo obj; });
+    }
+
 
 TEST(SortFileInfoTest, createTime)
 {
-    // createTime
-    SUCCEED();
+    SortFileInfo obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.createTime(); });
 }
 
 TEST(SortFileInfoTest, customData)
 {
-    // customData
-    SUCCEED();
+    SortFileInfo obj;
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.customData(_arg0); });
 }
 
 TEST(SortFileInfoTest, fileSize)
 {
-    // fileSize
-    SUCCEED();
+    SortFileInfo obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.fileSize(); });
 }
 
 TEST(SortFileInfoTest, fileUrl)
 {
-    // fileUrl
-    SUCCEED();
+    SortFileInfo obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.fileUrl(); });
 }
 
 TEST(SortFileInfoTest, isDir)
 {
-    // isDir
-    SUCCEED();
+    SortFileInfo obj;
+    bool result = obj.isDir();
+    EXPECT_FALSE(result);
 }
 
 TEST(SortFileInfoTest, isExecutable)
 {
-    // isExecutable
-    SUCCEED();
+    SortFileInfo obj;
+    bool result = obj.isExecutable();
+    EXPECT_FALSE(result);
 }
 
 TEST(SortFileInfoTest, isFile)
 {
-    // isFile
-    SUCCEED();
+    SortFileInfo obj;
+    bool result = obj.isFile();
+    EXPECT_FALSE(result);
 }
 
 TEST(SortFileInfoTest, isHide)
 {
-    // isHide
-    SUCCEED();
+    SortFileInfo obj;
+    bool result = obj.isHide();
+    EXPECT_FALSE(result);
 }
 
 TEST(SortFileInfoTest, isReadable)
 {
-    // isReadable
-    SUCCEED();
+    SortFileInfo obj;
+    bool result = obj.isReadable();
+    EXPECT_FALSE(result);
 }
 
 TEST(SortFileInfoTest, isSymLink)
 {
-    // isSymLink
-    SUCCEED();
+    SortFileInfo obj;
+    bool result = obj.isSymLink();
+    EXPECT_FALSE(result);
 }
 
 TEST(SortFileInfoTest, isWriteable)
 {
-    // isWriteable
-    SUCCEED();
+    SortFileInfo obj;
+    bool result = obj.isWriteable();
+    EXPECT_FALSE(result);
 }
 
 TEST(SortFileInfoTest, lastModifiedTime)
 {
-    // lastModifiedTime
-    SUCCEED();
+    SortFileInfo obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.lastModifiedTime(); });
 }
 
 TEST(SortFileInfoTest, searchKeyword)
 {
-    // searchKeyword
-    SUCCEED();
+    SortFileInfo obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.searchKeyword(); });
 }
 
 TEST(SortFileInfoTest, setFile)
 {
-    // setFile
-    SUCCEED();
+    SortFileInfo obj;
+    EXPECT_NO_FATAL_FAILURE(obj.setFile(false));
 }
 
 TEST(SortFileInfoTest, setSize)
 {
-    // setSize
-    SUCCEED();
+    SortFileInfo obj;
+    EXPECT_NO_FATAL_FAILURE(obj.setSize(0));
 }
 
 TEST(SortFileInfoTest, setWriteable)
 {
-    // setWriteable
-    SUCCEED();
+    SortFileInfo obj;
+    EXPECT_NO_FATAL_FAILURE(obj.setWriteable(false));
 }

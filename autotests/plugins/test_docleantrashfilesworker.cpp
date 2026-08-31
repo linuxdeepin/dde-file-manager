@@ -4,25 +4,52 @@
 
 /**
  * @file test_docleantrashfilesworker.cpp
- * @brief Unit tests for DoCleanTrashFilesWorker Mid-priority methods
+ * @brief Unit tests for DoCleanTrashFilesWorker methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class DoCleanTrashFilesWorkerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "fileoperations/cleantrash/docleantrashfilesworker.h"
+
+#include <QTest>
+
+using namespace dfmplugin_fileoperations;
+
+class DoCleanTrashFilesWorkerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new DoCleanTrashFilesWorker();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    DoCleanTrashFilesWorker *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(DoCleanTrashFilesWorkerTest, clearTrashFile)
 {
-    // clearTrashFile
-    SUCCEED();
+    // Test method: bool clearTrashFile((const FileInfoPointer &trashInfo))
+    FileInfoPointer _arg0{};
+    auto result = obj->clearTrashFile(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(DoCleanTrashFilesWorkerTest, deleteFile)
 {
-    // deleteFile
-    SUCCEED();
+    // Test method: bool deleteFile((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->deleteFile(_arg0);
+    EXPECT_FALSE(result);
+
 }

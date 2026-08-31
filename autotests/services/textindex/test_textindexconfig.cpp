@@ -18,7 +18,7 @@ using namespace SERVICETEXTINDEX_NAMESPACE;
 
 TEST(TextIndexConfigTest, InstanceReturnsRef)
 {
-    EXPECT_NO_FATAL_FAILURE({ (void)&TextIndexConfig::instance(); });
+    EXPECT_NO_FATAL_FAILURE({ &TextIndexConfig::instance(); });
 }
 
 TEST(TextIndexConfigTest, AutoIndexUpdateIntervalPositive)
@@ -58,7 +58,7 @@ TEST(TextIndexConfigTest, SupportedTextFileExtensionsNonEmpty)
 
 TEST(TextIndexConfigTest, SupportedOcrImageExtensions)
 {
-    EXPECT_NO_FATAL_FAILURE({ (void)TextIndexConfig::instance().supportedOcrImageExtensions(); });
+    EXPECT_NO_FATAL_FAILURE({ TextIndexConfig::instance().supportedOcrImageExtensions(); });
 }
 
 TEST(TextIndexConfigTest, MaxOcrImageSizeMBPositive)
@@ -68,22 +68,22 @@ TEST(TextIndexConfigTest, MaxOcrImageSizeMBPositive)
 
 TEST(TextIndexConfigTest, IndexHiddenFilesReturnsBool)
 {
-    EXPECT_NO_FATAL_FAILURE({ (void)TextIndexConfig::instance().indexHiddenFiles(); });
+    EXPECT_NO_FATAL_FAILURE({ TextIndexConfig::instance().indexHiddenFiles(); });
 }
 
 TEST(TextIndexConfigTest, FolderExcludeFilters)
 {
-    EXPECT_NO_FATAL_FAILURE({ (void)TextIndexConfig::instance().folderExcludeFilters(); });
+    EXPECT_NO_FATAL_FAILURE({ TextIndexConfig::instance().folderExcludeFilters(); });
 }
 
 TEST(TextIndexConfigTest, CpuUsageLimitPercent)
 {
-    EXPECT_NO_FATAL_FAILURE({ (void)TextIndexConfig::instance().cpuUsageLimitPercent(); });
+    EXPECT_NO_FATAL_FAILURE({ TextIndexConfig::instance().cpuUsageLimitPercent(); });
 }
 
 TEST(TextIndexConfigTest, BatchCommitInterval)
 {
-    EXPECT_NO_FATAL_FAILURE({ (void)TextIndexConfig::instance().batchCommitInterval(); });
+    EXPECT_NO_FATAL_FAILURE({ TextIndexConfig::instance().batchCommitInterval(); });
 }
 
 TEST(TextIndexConfigTest, ReloadConfigNoCrash)
@@ -94,18 +94,18 @@ TEST(TextIndexConfigTest, ReloadConfigNoCrash)
 
 TEST(TextIndexConfigTest, instance)
 {
-    // instance
-    SUCCEED();
+    TextIndexConfig obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.instance(); });
 }
 
 TEST(TextIndexConfigTest, supportedOcrImageExtensions)
 {
-    // supportedOcrImageExtensions
-    SUCCEED();
+    TextIndexConfig obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.supportedOcrImageExtensions(); });
 }
 
 TEST(TextIndexConfigTest, supportedTextFileExtensions)
 {
-    // supportedTextFileExtensions
-    SUCCEED();
+    TextIndexConfig obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.supportedTextFileExtensions(); });
 }

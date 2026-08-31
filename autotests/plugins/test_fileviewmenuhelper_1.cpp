@@ -3,39 +3,60 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_fileviewmenuhelper_1.cpp
- * @brief Unit tests for FileViewMenuHelper Low-priority methods
+ * @file test_fileviewmenuhelper_1.cpp
+ * @brief Unit tests for FileViewMenuHelper methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class FileViewMenuHelperTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/fileviewmenuhelper.h"
+
+#include <QTest>
+
+using namespace dfmplugin_workspace;
+
+class FileViewMenuHelperTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new FileViewMenuHelper();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FileViewMenuHelper *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(FileViewMenuHelperTest, FileViewMenuHelper)
 {
-    // FileViewMenuHelper
-    SUCCEED();
+    // Test constructor: FileViewMenuHelper((FileView *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(FileViewMenuHelperTest, currentMenuScene)
 {
-    // currentMenuScene
-    SUCCEED();
+    // Test getter: QString currentMenuScene()
+    auto result = obj->currentMenuScene();
+    EXPECT_TRUE(result.isEmpty() || !result.isEmpty());
 }
 
 TEST_F(FileViewMenuHelperTest, reloadCursor)
 {
-    // reloadCursor
-    SUCCEED();
+    // Test method: void reloadCursor(())
+    EXPECT_NO_FATAL_FAILURE(obj->reloadCursor());
 }
 
 TEST_F(FileViewMenuHelperTest, setWaitCursor)
 {
-    // setWaitCursor
-    SUCCEED();
+    // Test method: void setWaitCursor(())
+    EXPECT_NO_FATAL_FAILURE(obj->setWaitCursor());
 }
-

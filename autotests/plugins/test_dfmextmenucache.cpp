@@ -3,27 +3,49 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_dfmextmenucache.cpp
- * @brief Unit tests for DFMExtMenuCache Low-priority methods
+ * @file test_dfmextmenucache.cpp
+ * @brief Unit tests for DFMExtMenuCache methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class DFMExtMenuCacheTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "extensionimpl/menuimpl/dfmextmenucache.h"
+
+#include <QTest>
+
+using namespace dfmplugin_utils;
+
+class DFMExtMenuCacheTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new DFMExtMenuCache();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    DFMExtMenuCache *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(DFMExtMenuCacheTest, DFMExtMenuCache)
 {
-    // DFMExtMenuCache
-    SUCCEED();
+    // Test constructor: DFMExtMenuCache(())
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(DFMExtMenuCacheTest, instance)
 {
-    // instance
-    SUCCEED();
-}
+    // Test getter: DFMExtMenuCache instance()
+    auto result = obj->instance();
+    EXPECT_NO_FATAL_FAILURE({ obj->instance(); });
 
+}

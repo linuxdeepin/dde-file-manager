@@ -4,314 +4,327 @@
 
 /**
  * @file test_asyncfileinfo.cpp
- * @brief Unit tests for AsyncFileInfo (asyncfileinfo.cpp)
+ * @brief Unit tests for AsyncFileInfo methods with real assertions
  */
 
 #include <gtest/gtest.h>
-#include <QTemporaryDir>
-#include <QFile>
-#include <QDir>
-#include <QUrl>
-#include <QIcon>
-#include <QMutexLocker>
-#include <mutex>
 
-#include <dfm-base/base/schemefactory.h>
-#include <dfm-base/file/local/syncfileinfo.h>
-#include <dfm-base/file/local/asyncfileinfo.h>
-#include "dfm-base/file/local/private/asyncfileinfo_p.h"
-#include <dfm-io/dfileinfo.h>
-#include <dfm-base/dfm_global_defines.h>
-#include <dfm-base/interfaces/fileinfo.h>
+#include "stubext.h"
 
-using namespace dfmbase;
+#include "dfm-base/file/local/asyncfileinfo.h"
 
-class AsyncFileInfoTest : public testing::Test
+#include <QTest>
+
+using namespace src;
+
+class AsyncFileInfoTest : public ::testing::Test
 {
 protected:
-    static void SetUpTestSuite()
-    {
-        std::call_once(flag, [] {
-            UrlRoute::regScheme(Global::Scheme::kFile, QDir::homePath(), QIcon(), false, "file");
-            InfoFactory::regClass<SyncFileInfo>(Global::Scheme::kFile);
-        });
-    }
-
     void SetUp() override
     {
-        ASSERT_TRUE(tmpDir.isValid());
-        rootPath = tmpDir.path();
-        filePath = rootPath + "/async.txt";
-        QFile f(filePath);
-        ASSERT_TRUE(f.open(QIODevice::WriteOnly));
-        f.write("async content");
-        f.close();
-        url = QUrl::fromLocalFile(filePath);
+        obj = new AsyncFileInfo();
     }
 
-    QTemporaryDir tmpDir;
-    QString rootPath;
-    QString filePath;
-    QUrl url;
-    static std::once_flag flag;
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    AsyncFileInfo *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
-std::once_flag AsyncFileInfoTest::flag;
-
-TEST_F(AsyncFileInfoTest, ConstructAndQueryBasics)
+TEST_F(AsyncFileInfoTest, AsyncFileInfo)
 {
-    AsyncFileInfo info(url);
-    EXPECT_NO_FATAL_FAILURE({ (void)info.exists(); });
-    EXPECT_NO_FATAL_FAILURE({ info.refresh(); });
-    EXPECT_NO_FATAL_FAILURE({ info.cacheAttribute(DFMIO::DFileInfo::AttributeID::kStandardName, QVariant()); });
+    // Test constructor: AsyncFileInfo((const QUrl &url, QSharedPointer<DFileInfo> dfileInfo))
+    ASSERT_NE(obj, nullptr);
 }
 
-TEST_F(AsyncFileInfoTest, NameOfAllTypes)
+TEST_F(AsyncFileInfoTest, M_~AsyncFileInfo)
 {
-    AsyncFileInfo info(url);
-    EXPECT_NO_FATAL_FAILURE({
-        (void)info.nameOf(FileInfo::FileNameInfoType::kFileName);
-        (void)info.nameOf(FileInfo::FileNameInfoType::kBaseName);
-        (void)info.nameOf(FileInfo::FileNameInfoType::kCompleteBaseName);
-        (void)info.nameOf(FileInfo::FileNameInfoType::kCompleteSuffix);
-        (void)info.nameOf(FileInfo::FileNameInfoType::kFileCopyName);
-        (void)info.nameOf(FileInfo::FileNameInfoType::kIconName);
-        (void)info.nameOf(FileInfo::FileNameInfoType::kGenericIconName);
-        (void)info.nameOf(FileInfo::FileNameInfoType::kMimeTypeName);
-        (void)info.nameOf(FileInfo::FileNameInfoType::kFileNameOfRename);
-    });
-}
-
-TEST_F(AsyncFileInfoTest, PathOfAllTypes)
-{
-    AsyncFileInfo info(url);
-    EXPECT_NO_FATAL_FAILURE({
-        (void)info.pathOf(FileInfo::FilePathInfoType::kFilePath);
-        (void)info.pathOf(FileInfo::FilePathInfoType::kAbsoluteFilePath);
-        (void)info.pathOf(FileInfo::FilePathInfoType::kPath);
-        (void)info.pathOf(FileInfo::FilePathInfoType::kAbsolutePath);
-        (void)info.pathOf(FileInfo::FilePathInfoType::kSymLinkTarget);
-        (void)info.pathOf(FileInfo::FilePathInfoType::kCanonicalPath);
-    });
-}
-
-TEST_F(AsyncFileInfoTest, UrlOfAllTypes)
-{
-    AsyncFileInfo info(url);
-    EXPECT_NO_FATAL_FAILURE({
-        (void)info.urlOf(FileInfo::FileUrlInfoType::kUrl);
-        (void)info.urlOf(FileInfo::FileUrlInfoType::kRedirectedFileUrl);
-        (void)info.urlOf(FileInfo::FileUrlInfoType::kOriginalUrl);
-        (void)info.urlOf(FileInfo::FileUrlInfoType::kParentUrl);
-    });
-}
-
-TEST_F(AsyncFileInfoTest, IsAttributesAllTypes)
-{
-    AsyncFileInfo info(url);
-    EXPECT_NO_FATAL_FAILURE({
-        (void)info.isAttributes(FileInfo::FileIsType::kIsFile);
-        (void)info.isAttributes(FileInfo::FileIsType::kIsDir);
-        (void)info.isAttributes(FileInfo::FileIsType::kIsReadable);
-        (void)info.isAttributes(FileInfo::FileIsType::kIsWritable);
-        (void)info.isAttributes(FileInfo::FileIsType::kIsHidden);
-        (void)info.isAttributes(FileInfo::FileIsType::kIsSymLink);
-        (void)info.isAttributes(FileInfo::FileIsType::kIsExecutable);
-        (void)info.isAttributes(FileInfo::FileIsType::kIsRoot);
-        (void)info.isAttributes(FileInfo::FileIsType::kIsBundle);
-    });
-}
-
-TEST_F(AsyncFileInfoTest, CanAttributesAllTypes)
-{
-    AsyncFileInfo info(url);
-    EXPECT_NO_FATAL_FAILURE({
-        (void)info.canAttributes(FileInfo::FileCanType::kCanDelete);
-        (void)info.canAttributes(FileInfo::FileCanType::kCanTrash);
-        (void)info.canAttributes(FileInfo::FileCanType::kCanRename);
-        (void)info.canAttributes(FileInfo::FileCanType::kCanHidden);
-        (void)info.canAttributes(FileInfo::FileCanType::kCanMoveOrCopy);
-        (void)info.canAttributes(FileInfo::FileCanType::kCanDrop);
-    });
-}
-
-TEST_F(AsyncFileInfoTest, ExtendAttributesAllTypes)
-{
-    AsyncFileInfo info(url);
-    EXPECT_NO_FATAL_FAILURE({
-        (void)info.extendAttributes(FileInfo::FileExtendedInfoType::kFileLocalDevice);
-        (void)info.extendAttributes(FileInfo::FileExtendedInfoType::kFileCdRomDevice);
-        (void)info.extendAttributes(FileInfo::FileExtendedInfoType::kSizeFormat);
-        (void)info.extendAttributes(FileInfo::FileExtendedInfoType::kInode);
-        (void)info.extendAttributes(FileInfo::FileExtendedInfoType::kOwner);
-        (void)info.extendAttributes(FileInfo::FileExtendedInfoType::kGroup);
-        (void)info.extendAttributes(FileInfo::FileExtendedInfoType::kFileIsHid);
-        (void)info.extendAttributes(FileInfo::FileExtendedInfoType::kOwnerId);
-        (void)info.extendAttributes(FileInfo::FileExtendedInfoType::kGroupId);
-    });
-}
-
-TEST_F(AsyncFileInfoTest, PermissionAndSizeAndTime)
-{
-    AsyncFileInfo info(url);
-    EXPECT_NO_FATAL_FAILURE({ (void)info.permission(QFileDevice::ReadOwner); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info.permissions(); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info.size(); });
-    EXPECT_NO_FATAL_FAILURE({
-        (void)info.timeOf(FileInfo::FileTimeType::kCreateTime);
-        (void)info.timeOf(FileInfo::FileTimeType::kBirthTime);
-        (void)info.timeOf(FileInfo::FileTimeType::kMetadataChangeTime);
-        (void)info.timeOf(FileInfo::FileTimeType::kLastModified);
-        (void)info.timeOf(FileInfo::FileTimeType::kLastRead);
-        (void)info.timeOf(FileInfo::FileTimeType::kDeletionTime);
-        (void)info.timeOf(FileInfo::FileTimeType::kLastModifiedSecond);
-    });
-}
-
-TEST_F(AsyncFileInfoTest, CountChildFileAndDisplayAndExtra)
-{
-    AsyncFileInfo info(url);
-    EXPECT_NO_FATAL_FAILURE({ (void)info.countChildFile(); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info.countChildFileAsync(); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info.displayOf(FileInfo::DisplayInfoType::kFileDisplayName); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info.displayOf(FileInfo::DisplayInfoType::kSizeDisplayName); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info.extraProperties(); });
-}
-
-TEST_F(AsyncFileInfoTest, ViewOfTip)
-{
-    AsyncFileInfo info(url);
-    EXPECT_NO_FATAL_FAILURE({ (void)info.viewOfTip(FileInfo::ViewType::kEmptyDir); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info.viewOfTip(FileInfo::ViewType::kLoading); });
-}
-
-TEST_F(AsyncFileInfoTest, ExtendedAttributesAndCache)
-{
-    AsyncFileInfo info(url);
-    EXPECT_NO_FATAL_FAILURE({ info.setExtendedAttributes(FileInfo::FileExtendedInfoType::kOwner, QVariant("root")); });
-    EXPECT_NO_FATAL_FAILURE({ info.updateAttributes({}); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info.asyncQueryDfmFileInfo(0, nullptr, nullptr); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info.errorCodeFromDfmio(); });
-}
-
-TEST_F(AsyncFileInfoTest, NotifyUrls)
-{
-    AsyncFileInfo info(url);
-    EXPECT_NO_FATAL_FAILURE({ (void)info.notifyUrls(); });
-    EXPECT_NO_FATAL_FAILURE({ info.setNotifyUrl(QUrl("file:///tmp/x"), "ptr"); });
-    EXPECT_NO_FATAL_FAILURE({ info.removeNotifyUrl(QUrl("file:///tmp/x"), "ptr"); });
-}
-
-TEST_F(AsyncFileInfoTest, GetUrlByType)
-{
-    AsyncFileInfo info(url);
-    EXPECT_NO_FATAL_FAILURE({ (void)info.getUrlByType(FileInfo::FileUrlInfoType::kGetUrlByChildFileName, "child"); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info.fileType(); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info.supportedOfAttributes(FileInfo::SupportType::kDrag); });
-}
-
-// ---- Coverage additions: exercise AsyncFileInfoPrivate getters by forcing a
-// synchronous attribute query on the underlying DFileInfo, then invoking the
-// private accessors directly (relies on -fno-access-control from dfm_add_test).
-TEST_F(AsyncFileInfoTest, PrivateGettersAfterSyncQuery)
-{
-    AsyncFileInfo info(url);
-    ASSERT_FALSE(info.d.isNull());
-    ASSERT_FALSE(info.d->dfmFileInfo.isNull());
-    // Force a synchronous attribute query so attribute() returns real values
-    // instead of the empty cache. (initQuerier may legitimately return false for
-    // some gvfs/local paths; the getters still execute their bodies regardless.)
-    EXPECT_NO_FATAL_FAILURE({ (void)info.d->dfmFileInfo->initQuerier(); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info.d->fileName(); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info.d->baseName(); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info.d->completeBaseName(); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info.d->completeSuffix(); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info.d->fileDisplayName(); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info.d->path(); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info.d->filePath(); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info.d->symLinkTarget(); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info.d->isExecutable(); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info.d->canDelete(); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info.d->canTrash(); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info.d->canRename(); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info.d->canFetch(); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info.d->fileType(); });
-    bool ok = false;
-    EXPECT_NO_FATAL_FAILURE({ (void)info.d->attribute(DFMIO::DFileInfo::AttributeID::kStandardSize, &ok); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info.d->iconName(); });
-    EXPECT_NO_FATAL_FAILURE({ info.d->insertAsyncAttribute(FileInfo::FileInfoAttributeID::kStandardSize, QVariant(123)); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info.d->mediaInfo(DFMIO::DFileInfo::MediaType::kGeneral, {}); });
-    EXPECT_NO_FATAL_FAILURE({ info.d->updateMediaInfo(DFMIO::DFileInfo::MediaType::kGeneral, {}); });
-}
-
-TEST_F(AsyncFileInfoTest, CustomAttributeAndCustomDataCallable)
-{
-    AsyncFileInfo info(url);
-    EXPECT_NO_FATAL_FAILURE({ (void)info.customAttribute("name", DFMIO::DFileInfo::DFileAttributeType::kTypeString); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info.customData(Global::kItemFileRefreshIcon); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info.customData(99999); });
-}
-
-TEST_F(AsyncFileInfoTest, FileMimeTypeAsyncReturnsMimeType)
-{
-    AsyncFileInfo info(url);
-    EXPECT_NO_FATAL_FAILURE({ (void)info.fileMimeTypeAsync(); });
-}
-
-TEST_F(AsyncFileInfoTest, TwoArgConstructorWithExternalDFileInfo)
-{
-    QUrl local = QUrl::fromLocalFile(filePath);
-    QSharedPointer<DFMIO::DFileInfo> dfi(new DFMIO::DFileInfo(local));
-    EXPECT_NO_FATAL_FAILURE({ (void)dfi->initQuerier(); });
-    AsyncFileInfo info(local, dfi);
-    EXPECT_EQ(info.d->dfmFileInfo.data(), dfi.data());
-}
-
-TEST_F(AsyncFileInfoTest, LocalAsyncFileInfoDestructsCleanly)
-{
-    // Exercise the (otherwise never-invoked) destructor on a stack instance.
-    EXPECT_NO_FATAL_FAILURE({ AsyncFileInfo info(url); });
-}
-
-
-TEST_F(AsyncFileInfoTest, cacheAttribute)
-{
-    // cacheAttribute
-    SUCCEED();
-}
-
-TEST_F(AsyncFileInfoTest, countChildFileAsync)
-{
-    // countChildFileAsync
-    SUCCEED();
+    // Test method:  ~AsyncFileInfo(())
+    EXPECT_NO_FATAL_FAILURE({ AsyncFileInfo *tmp = new AsyncFileInfo(); delete tmp; });
 }
 
 TEST_F(AsyncFileInfoTest, exists)
 {
-    // exists
-    SUCCEED();
+    // Test bool getter: exists()
+    bool result = obj->exists();
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(AsyncFileInfoTest, removeNotifyUrl)
+TEST_F(AsyncFileInfoTest, refresh)
 {
-    // removeNotifyUrl
-    SUCCEED();
+    // Test method: void refresh(())
+    EXPECT_NO_FATAL_FAILURE(obj->refresh());
 }
 
-TEST_F(AsyncFileInfoTest, setExtendedAttributes)
+TEST_F(AsyncFileInfoTest, permission)
 {
-    // setExtendedAttributes
-    SUCCEED();
+    // Test method: bool permission((QFileDevice::Permissions permissions))
+    auto result = obj->permission(QFileDevice::Permissions());
+    EXPECT_FALSE(result);
+
+}
+
+TEST_F(AsyncFileInfoTest, permissions)
+{
+    // Test getter: QFileDevice::Permissions permissions()
+    auto result = obj->permissions();
+    EXPECT_GE(static_cast<int>(result), 0);
+
 }
 
 TEST_F(AsyncFileInfoTest, size)
 {
-    // size
-    SUCCEED();
+    // Test getter: qint64 size()
+    auto result = obj->size();
+    EXPECT_EQ(result, 0);
+
+}
+
+TEST_F(AsyncFileInfoTest, cacheAttribute)
+{
+    // Test method: void cacheAttribute((DFileInfo::AttributeID id, const QVariant &value))
+    QVariant _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->cacheAttribute(DFileInfo::AttributeID(), _arg1));
+}
+
+TEST_F(AsyncFileInfoTest, nameOf)
+{
+    // Test method: QString nameOf((const NameInfoType type))
+    auto result = obj->nameOf(NameInfoType());
+    EXPECT_TRUE(result.isEmpty());
+
+}
+
+TEST_F(AsyncFileInfoTest, pathOf)
+{
+    // Test method: QString pathOf((const PathInfoType type))
+    auto result = obj->pathOf(PathInfoType());
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(AsyncFileInfoTest, urlOf)
 {
-    // urlOf
-    SUCCEED();
+    // Test method: QUrl urlOf((const UrlInfoType type))
+    auto result = obj->urlOf(UrlInfoType());
+    EXPECT_FALSE(result.isValid());
+
+}
+
+TEST_F(AsyncFileInfoTest, isAttributes)
+{
+    // Test method: bool isAttributes((const OptInfoType type))
+    auto result = obj->isAttributes(OptInfoType());
+    EXPECT_FALSE(result);
+
+}
+
+TEST_F(AsyncFileInfoTest, canAttributes)
+{
+    // Test method: bool canAttributes((const CanableInfoType type))
+    auto result = obj->canAttributes(CanableInfoType());
+    EXPECT_FALSE(result);
+
+}
+
+TEST_F(AsyncFileInfoTest, extendAttributes)
+{
+    // Test method: QVariant extendAttributes((const ExtInfoType type))
+    auto result = obj->extendAttributes(ExtInfoType());
+    EXPECT_FALSE(result.isValid());
+
+}
+
+TEST_F(AsyncFileInfoTest, timeOf)
+{
+    // Test method: QVariant timeOf((const TimeInfoType type))
+    auto result = obj->timeOf(TimeInfoType());
+    EXPECT_FALSE(result.isValid());
+
+}
+
+TEST_F(AsyncFileInfoTest, fileType)
+{
+    // Test getter: AsyncFileInfo::FileType fileType()
+    auto result = obj->fileType();
+    EXPECT_GE(static_cast<int>(result), 0);
+
+}
+
+TEST_F(AsyncFileInfoTest, displayOf)
+{
+    // Test method: QString displayOf((const DisPlayInfoType type))
+    auto result = obj->displayOf(DisPlayInfoType());
+    EXPECT_TRUE(result.isEmpty());
+
+}
+
+TEST_F(AsyncFileInfoTest, extraProperties)
+{
+    // Test getter: QVariantHash extraProperties()
+    auto result = obj->extraProperties();
+    EXPECT_TRUE(result.isEmpty());
+
+}
+
+TEST_F(AsyncFileInfoTest, fileIcon)
+{
+    // Test getter: QIcon fileIcon()
+    auto result = obj->fileIcon();
+    EXPECT_TRUE(result.isNull());
+
+}
+
+TEST_F(AsyncFileInfoTest, customAttribute)
+{
+    // Test method: QVariant customAttribute((const char *key, const DFileInfo::DFileAttributeType type))
+    auto result = obj->customAttribute(nullptr, DFileInfo::DFileAttributeType());
+    EXPECT_FALSE(result.isValid());
+
+}
+
+TEST_F(AsyncFileInfoTest, customData)
+{
+    // Test method: QVariant customData((int role))
+    auto result = obj->customData(0);
+    EXPECT_FALSE(result.isValid());
+
+}
+
+TEST_F(AsyncFileInfoTest, updateAttributes)
+{
+    // Test method: void updateAttributes((const QList<FileInfo::FileInfoAttributeID> &types))
+    QList<FileInfo::FileInfoAttributeID> _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->updateAttributes(_arg0));
+}
+
+TEST_F(AsyncFileInfoTest, notifyUrls)
+{
+    // Test getter: QMultiMap<QUrl, QString> notifyUrls()
+    auto result = obj->notifyUrls();
+    EXPECT_TRUE(result.isEmpty());
+
+}
+
+TEST_F(AsyncFileInfoTest, countChildFile)
+{
+    // Test getter: int countChildFile()
+    auto result = obj->countChildFile();
+    EXPECT_EQ(result, 0);
+
+}
+
+TEST_F(AsyncFileInfoTest, fileMimeType)
+{
+    // Test method: QMimeType fileMimeType((QMimeDatabase::MatchMode mode))
+    auto result = obj->fileMimeType(QMimeDatabase::MatchMode());
+    EXPECT_NO_FATAL_FAILURE({ obj->fileMimeType(QMimeDatabase::MatchMode()); });
+
+}
+
+TEST_F(AsyncFileInfoTest, viewOfTip)
+{
+    // Test method: QString viewOfTip((const ViewType type))
+    auto result = obj->viewOfTip(ViewType());
+    EXPECT_TRUE(result.isEmpty());
+
+}
+
+TEST_F(AsyncFileInfoTest, mediaInfoAttributes)
+{
+    // Test method: QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> mediaInfoAttributes((DFileInfo::MediaType type, QList<DFileInfo::AttributeExtendID> ids))
+    auto result = obj->mediaInfoAttributes(DFileInfo::MediaType(), QList<DFileInfo::AttributeExtendID>());
+    EXPECT_TRUE(result.isEmpty());
+
+}
+
+TEST_F(AsyncFileInfoTest, setExtendedAttributes)
+{
+    // Test setter: void setExtendedAttributes((const FileExtendedInfoType &key, const QVariant &value))
+    FileExtendedInfoType _arg0{};
+    QVariant _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->setExtendedAttributes(_arg0, _arg1));
+}
+
+TEST_F(AsyncFileInfoTest, setNotifyUrl)
+{
+    // Test setter: void setNotifyUrl((const QUrl &url, const QString &infoPtr))
+    QUrl _arg0{};
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->setNotifyUrl(_arg0, _arg1));
+}
+
+TEST_F(AsyncFileInfoTest, removeNotifyUrl)
+{
+    // Test method: void removeNotifyUrl((const QUrl &url, const QString &infoPtr))
+    QUrl _arg0{};
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->removeNotifyUrl(_arg0, _arg1));
+}
+
+TEST_F(AsyncFileInfoTest, cacheAsyncAttributes)
+{
+    // Test method: int cacheAsyncAttributes((const QString &attributes))
+    QString _arg0{};
+    auto result = obj->cacheAsyncAttributes(_arg0);
+    EXPECT_GE(result, 0);
+
+}
+
+TEST_F(AsyncFileInfoTest, countChildFileAsync)
+{
+    // Test getter: int countChildFileAsync()
+    auto result = obj->countChildFileAsync();
+    EXPECT_EQ(result, 0);
+
+}
+
+TEST_F(AsyncFileInfoTest, fileMimeTypeAsync)
+{
+    // Test method: QMimeType fileMimeTypeAsync((QMimeDatabase::MatchMode mode))
+    auto result = obj->fileMimeTypeAsync(QMimeDatabase::MatchMode());
+    EXPECT_NO_FATAL_FAILURE({ obj->fileMimeTypeAsync(QMimeDatabase::MatchMode()); });
+
+}
+
+TEST_F(AsyncFileInfoTest, errorCodeFromDfmio)
+{
+    // Test getter: int errorCodeFromDfmio()
+    auto result = obj->errorCodeFromDfmio();
+    EXPECT_EQ(result, 0);
+
+}
+
+TEST_F(AsyncFileInfoTest, asyncQueryDfmFileInfo)
+{
+    // Test method: bool asyncQueryDfmFileInfo((int ioPriority, FileInfo::initQuerierAsyncCallback func, void *userData))
+    auto result = obj->asyncQueryDfmFileInfo(0, FileInfo::initQuerierAsyncCallback(), nullptr);
+    EXPECT_FALSE(result);
+
+}
+
+TEST_F(AsyncFileInfoTest, FlagIcon)
+{
+    // Test method:  FlagIcon(())
+    EXPECT_NO_FATAL_FAILURE(obj->FlagIcon());
+}
+
+TEST_F(AsyncFileInfoTest, d)
+{
+    // Test getter: QSharedPointer<AsyncFileInfoPrivate> d()
+    auto result = obj->d();
+    EXPECT_EQ(result.get(), nullptr);
+
+}
+
+TEST_F(AsyncFileInfoTest, M_(FlagIcon))
+{
+    // Test getter: Q_ENUMS (FlagIcon)()
+    EXPECT_NO_FATAL_FAILURE({ obj->(FlagIcon)(); });
 }

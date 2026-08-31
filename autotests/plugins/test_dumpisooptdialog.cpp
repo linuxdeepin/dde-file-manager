@@ -4,25 +4,46 @@
 
 /**
  * @file test_dumpisooptdialog.cpp
- * @brief Unit tests for DumpISOOptDialog Mid-priority methods
+ * @brief Unit tests for DumpISOOptDialog methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class DumpISOOptDialogTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "dialogs/dumpisooptdialog.h"
+
+#include <QTest>
+
+using namespace dfmplugin_burn;
+
+class DumpISOOptDialogTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new DumpISOOptDialog();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    DumpISOOptDialog *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(DumpISOOptDialogTest, DumpISOOptDialog)
 {
-    // DumpISOOptDialog
-    SUCCEED();
+    // Test constructor: DumpISOOptDialog((const QString &devId, QWidget *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(DumpISOOptDialogTest, initliazeUi)
 {
-    // initliazeUi
-    SUCCEED();
+    // Test method: void initliazeUi(())
+    EXPECT_NO_FATAL_FAILURE(obj->initliazeUi());
 }

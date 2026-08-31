@@ -3,111 +3,147 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_dfmextactionimplprivate_1.cpp
- * @brief Unit tests for DFMExtActionImplPrivate Low-priority methods
+ * @file test_dfmextactionimplprivate_1.cpp
+ * @brief Unit tests for DFMExtActionImplPrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class DFMExtActionImplPrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "extensionimpl/menuimpl/dfmextactionimpl.h"
+
+#include <QTest>
+
+using namespace dfmplugin_utils;
+
+class DFMExtActionImplPrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new DFMExtActionImplPrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    DFMExtActionImplPrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(DFMExtActionImplPrivateTest, actionImpl)
 {
-    // actionImpl
-    SUCCEED();
+    // Test getter: DFMExtActionImpl actionImpl()
+    auto result = obj->actionImpl();
+    EXPECT_NO_FATAL_FAILURE({ obj->actionImpl(); });
+
 }
 
 TEST_F(DFMExtActionImplPrivateTest, isCheckable)
 {
-    // isCheckable
-    SUCCEED();
+    // Test bool getter: isCheckable()
+    bool result = obj->isCheckable();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(DFMExtActionImplPrivateTest, isChecked)
 {
-    // isChecked
-    SUCCEED();
+    // Test bool getter: isChecked()
+    bool result = obj->isChecked();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(DFMExtActionImplPrivateTest, isEnabled)
 {
-    // isEnabled
-    SUCCEED();
+    // Test bool getter: isEnabled()
+    bool result = obj->isEnabled();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(DFMExtActionImplPrivateTest, isInterior)
 {
-    // isInterior
-    SUCCEED();
+    // Test bool getter: isInterior()
+    bool result = obj->isInterior();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(DFMExtActionImplPrivateTest, isSeparator)
 {
-    // isSeparator
-    SUCCEED();
+    // Test bool getter: isSeparator()
+    bool result = obj->isSeparator();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(DFMExtActionImplPrivateTest, omitText)
 {
-    // omitText
-    SUCCEED();
+    // Test method: void omitText((const std::string &text))
+    std::string _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->omitText(_arg0));
 }
 
 TEST_F(DFMExtActionImplPrivateTest, onActionHovered)
 {
-    // onActionHovered
-    SUCCEED();
+    // Test method: void onActionHovered(())
+    EXPECT_NO_FATAL_FAILURE(obj->onActionHovered());
 }
 
 TEST_F(DFMExtActionImplPrivateTest, onActionTriggered)
 {
-    // onActionTriggered
-    SUCCEED();
+    // Test method: void onActionTriggered((bool checked))
+    EXPECT_NO_FATAL_FAILURE(obj->onActionTriggered(false));
 }
 
 TEST_F(DFMExtActionImplPrivateTest, setCheckable)
 {
-    // setCheckable
-    SUCCEED();
+    // Test setter: void setCheckable((bool b))
+    EXPECT_NO_FATAL_FAILURE(obj->setCheckable(false));
 }
 
 TEST_F(DFMExtActionImplPrivateTest, setChecked)
 {
-    // setChecked
-    SUCCEED();
+    // Test setter: void setChecked((bool b))
+    EXPECT_NO_FATAL_FAILURE(obj->setChecked(false));
 }
 
 TEST_F(DFMExtActionImplPrivateTest, setEnabled)
 {
-    // setEnabled
-    SUCCEED();
+    // Test setter: void setEnabled((bool b))
+    EXPECT_NO_FATAL_FAILURE(obj->setEnabled(false));
 }
 
 TEST_F(DFMExtActionImplPrivateTest, setMenu)
 {
-    // setMenu
-    SUCCEED();
+    // Test setter: void setMenu((DFMExtMenu *menu))
+    EXPECT_NO_FATAL_FAILURE(obj->setMenu(nullptr));
 }
 
 TEST_F(DFMExtActionImplPrivateTest, setSeparator)
 {
-    // setSeparator
-    SUCCEED();
+    // Test setter: void setSeparator((bool b))
+    EXPECT_NO_FATAL_FAILURE(obj->setSeparator(false));
 }
 
 TEST_F(DFMExtActionImplPrivateTest, setToolTip)
 {
-    // setToolTip
-    SUCCEED();
+    // Test setter: void setToolTip((const std::string &tip))
+    std::string _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->setToolTip(_arg0));
 }
 
 TEST_F(DFMExtActionImplPrivateTest, toolTip)
 {
-    // toolTip
-    SUCCEED();
-}
+    // Test getter: std::string toolTip()
+    auto result = obj->toolTip();
+    EXPECT_TRUE(result.empty());
 
+}

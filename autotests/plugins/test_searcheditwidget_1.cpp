@@ -3,159 +3,194 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_searcheditwidget_1.cpp
- * @brief Unit tests for SearchEditWidget Low-priority methods
+ * @file test_searcheditwidget_1.cpp
+ * @brief Unit tests for SearchEditWidget methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class SearchEditWidgetTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/searcheditwidget.h"
+
+#include <QTest>
+
+using namespace dfmplugin_titlebar;
+
+class SearchEditWidgetTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new SearchEditWidget();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    SearchEditWidget *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(SearchEditWidgetTest, activateEdit)
 {
-    // activateEdit
-    SUCCEED();
+    // Test method: void activateEdit((bool setAdvanceBtn))
+    EXPECT_NO_FATAL_FAILURE(obj->activateEdit(false));
 }
 
 TEST_F(SearchEditWidgetTest, deactivateEdit)
 {
-    // deactivateEdit
-    SUCCEED();
+    // Test method: void deactivateEdit(())
+    EXPECT_NO_FATAL_FAILURE(obj->deactivateEdit());
 }
 
 TEST_F(SearchEditWidgetTest, determineSearchDelay)
 {
-    // determineSearchDelay
-    SUCCEED();
+    // Test method: int determineSearchDelay((const QString &inputText))
+    QString _arg0{};
+    auto result = obj->determineSearchDelay(_arg0);
+    EXPECT_GE(result, 0);
+
 }
 
 TEST_F(SearchEditWidgetTest, expandSearchEdit)
 {
-    // expandSearchEdit
-    SUCCEED();
+    // Test method: void expandSearchEdit(())
+    EXPECT_NO_FATAL_FAILURE(obj->expandSearchEdit());
 }
 
 TEST_F(SearchEditWidgetTest, handleFocusInEvent)
 {
-    // handleFocusInEvent
-    SUCCEED();
+    // Test event handler: handleFocusInEvent((QFocusEvent *e))
+    QFocusEvent _event(QFocusEvent::None);
+    EXPECT_NO_FATAL_FAILURE(obj->handleFocusInEvent(&_event));
 }
 
 TEST_F(SearchEditWidgetTest, handleFocusOutEvent)
 {
-    // handleFocusOutEvent
-    SUCCEED();
+    // Test event handler: handleFocusOutEvent((QFocusEvent *e))
+    QFocusEvent _event(QFocusEvent::None);
+    EXPECT_NO_FATAL_FAILURE(obj->handleFocusOutEvent(&_event));
 }
 
 TEST_F(SearchEditWidgetTest, handleInputMethodEvent)
 {
-    // handleInputMethodEvent
-    SUCCEED();
+    // Test event handler: handleInputMethodEvent((QInputMethodEvent *e))
+    QInputMethodEvent _event(QInputMethodEvent::None);
+    EXPECT_NO_FATAL_FAILURE(obj->handleInputMethodEvent(&_event));
 }
 
 TEST_F(SearchEditWidgetTest, initConnect)
 {
-    // initConnect
-    SUCCEED();
+    // Test method: void initConnect(())
+    EXPECT_NO_FATAL_FAILURE(obj->initConnect());
 }
 
 TEST_F(SearchEditWidgetTest, initUI)
 {
-    // initUI
-    SUCCEED();
+    // Test method: void initUI(())
+    EXPECT_NO_FATAL_FAILURE(obj->initUI());
 }
 
 TEST_F(SearchEditWidgetTest, isAdvancedButtonChecked)
 {
-    // isAdvancedButtonChecked
-    SUCCEED();
+    // Test bool getter: isAdvancedButtonChecked()
+    bool result = obj->isAdvancedButtonChecked();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(SearchEditWidgetTest, isAdvancedButtonVisible)
 {
-    // isAdvancedButtonVisible
-    SUCCEED();
+    // Test bool getter: isAdvancedButtonVisible()
+    bool result = obj->isAdvancedButtonVisible();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(SearchEditWidgetTest, onAdvancedButtonClicked)
 {
-    // onAdvancedButtonClicked
-    SUCCEED();
+    // Test method: void onAdvancedButtonClicked(())
+    EXPECT_NO_FATAL_FAILURE(obj->onAdvancedButtonClicked());
 }
 
 TEST_F(SearchEditWidgetTest, onTextEdited)
 {
-    // onTextEdited
-    SUCCEED();
+    // Test method: void onTextEdited((const QString &text))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->onTextEdited(_arg0));
 }
 
 TEST_F(SearchEditWidgetTest, performSearch)
 {
-    // performSearch
-    SUCCEED();
+    // Test method: void performSearch(())
+    EXPECT_NO_FATAL_FAILURE(obj->performSearch());
 }
 
 TEST_F(SearchEditWidgetTest, quitSearch)
 {
-    // quitSearch
-    SUCCEED();
+    // Test method: void quitSearch(())
+    EXPECT_NO_FATAL_FAILURE(obj->quitSearch());
 }
 
 TEST_F(SearchEditWidgetTest, setAdvancedButtonChecked)
 {
-    // setAdvancedButtonChecked
-    SUCCEED();
+    // Test setter: void setAdvancedButtonChecked((bool checked))
+    EXPECT_NO_FATAL_FAILURE(obj->setAdvancedButtonChecked(false));
 }
 
 TEST_F(SearchEditWidgetTest, setAdvancedButtonVisible)
 {
-    // setAdvancedButtonVisible
-    SUCCEED();
+    // Test setter: void setAdvancedButtonVisible((bool visible))
+    EXPECT_NO_FATAL_FAILURE(obj->setAdvancedButtonVisible(false));
 }
 
 TEST_F(SearchEditWidgetTest, setSearchMode)
 {
-    // setSearchMode
-    SUCCEED();
+    // Test setter: void setSearchMode((SearchMode mode))
+    EXPECT_NO_FATAL_FAILURE(obj->setSearchMode(SearchMode()));
 }
 
 TEST_F(SearchEditWidgetTest, setText)
 {
-    // setText
-    SUCCEED();
+    // Test setter: void setText((const QString &text))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->setText(_arg0));
 }
 
 TEST_F(SearchEditWidgetTest, shouldDelaySearch)
 {
-    // shouldDelaySearch
-    SUCCEED();
+    // Test method: bool shouldDelaySearch((const QString &inputText))
+    QString _arg0{};
+    auto result = obj->shouldDelaySearch(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(SearchEditWidgetTest, stopSearch)
 {
-    // stopSearch
-    SUCCEED();
+    // Test method: void stopSearch(())
+    EXPECT_NO_FATAL_FAILURE(obj->stopSearch());
 }
 
 TEST_F(SearchEditWidgetTest, updateSearchEditWidget)
 {
-    // updateSearchEditWidget
-    SUCCEED();
+    // Test method: void updateSearchEditWidget((int parentWidth))
+    EXPECT_NO_FATAL_FAILURE(obj->updateSearchEditWidget(0));
 }
 
 TEST_F(SearchEditWidgetTest, updateSearchWidgetLayout)
 {
-    // updateSearchWidgetLayout
-    SUCCEED();
+    // Test method: void updateSearchWidgetLayout(())
+    EXPECT_NO_FATAL_FAILURE(obj->updateSearchWidgetLayout());
 }
 
 TEST_F(SearchEditWidgetTest, updateSpacing)
 {
-    // updateSpacing
-    SUCCEED();
+    // Test method: void updateSpacing((bool showAdvancedButton))
+    EXPECT_NO_FATAL_FAILURE(obj->updateSpacing(false));
 }
-

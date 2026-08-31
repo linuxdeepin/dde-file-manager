@@ -18,46 +18,42 @@ using namespace dfmbase;
 
 TEST(ApplicationTest, InstanceReturnsPointer)
 {
-    EXPECT_NO_FATAL_FAILURE({ (void)Application::instance(); });
+    EXPECT_NO_FATAL_FAILURE({ Application::instance(); });
 }
 
 TEST(ApplicationTest, AppObtuselySettingReturnsPointer)
 {
-    EXPECT_NO_FATAL_FAILURE({ (void)Application::appObtuselySetting(); });
+    EXPECT_NO_FATAL_FAILURE({ Application::appObtuselySetting(); });
 }
 
 TEST(ApplicationTest, GenericObtuselySettingReturnsPointer)
 {
-    EXPECT_NO_FATAL_FAILURE({ (void)Application::genericObtuselySetting(); });
+    EXPECT_NO_FATAL_FAILURE({ Application::genericObtuselySetting(); });
 }
 
 TEST(ApplicationTest, GenericSettingReturnsPointer)
 {
-    EXPECT_NO_FATAL_FAILURE({ (void)Application::genericSetting(); });
+    EXPECT_NO_FATAL_FAILURE({ Application::genericSetting(); });
 }
 
 TEST(ApplicationTest, AppSettingReturnsPointer)
 {
-    EXPECT_NO_FATAL_FAILURE({ (void)Application::appSetting(); });
+    EXPECT_NO_FATAL_FAILURE({ Application::appSetting(); });
 }
 
 TEST(ApplicationTest, DataPersistenceReturnsPointer)
 {
-    EXPECT_NO_FATAL_FAILURE({ (void)Application::dataPersistence(); });
+    EXPECT_NO_FATAL_FAILURE({ Application::dataPersistence(); });
 }
 
 TEST(ApplicationTest, AppAttributeReturnsValid)
 {
-    EXPECT_NO_FATAL_FAILURE({
-        (void)Application::appAttribute(Application::kIconSizeLevel);
-    });
+    EXPECT_NO_FATAL_FAILURE({ Application::appAttribute(Application::kIconSizeLevel); });
 }
 
 TEST(ApplicationTest, AppUrlAttributeReturnsValid)
 {
-    EXPECT_NO_FATAL_FAILURE({
-        (void)Application::appUrlAttribute(Application::kUrlOfNewWindow);
-    });
+    EXPECT_NO_FATAL_FAILURE({ Application::appUrlAttribute(Application::kUrlOfNewWindow); });
 }
 
 TEST(ApplicationTest, SetAppAttributeNoCrash)
@@ -69,14 +65,12 @@ TEST(ApplicationTest, SetAppAttributeNoCrash)
 
 TEST(ApplicationTest, SyncAppAttributeNoCrash)
 {
-    EXPECT_NO_FATAL_FAILURE({ (void)Application::syncAppAttribute(); });
+    EXPECT_NO_FATAL_FAILURE({ Application::syncAppAttribute(); });
 }
 
 TEST(ApplicationTest, GenericAttributeReturnsValid)
 {
-    EXPECT_NO_FATAL_FAILURE({
-        (void)Application::genericAttribute(Application::kPreviewTextFile);
-    });
+    EXPECT_NO_FATAL_FAILURE({ Application::genericAttribute(Application::kPreviewTextFile); });
 }
 
 TEST(ApplicationTest, SetGenericAttributeNoCrash)
@@ -88,7 +82,7 @@ TEST(ApplicationTest, SetGenericAttributeNoCrash)
 
 TEST(ApplicationTest, SyncGenericAttributeNoCrash)
 {
-    EXPECT_NO_FATAL_FAILURE({ (void)Application::syncGenericAttribute(); });
+    EXPECT_NO_FATAL_FAILURE({ Application::syncGenericAttribute(); });
 }
 
 // ---- Coverage additions: appAttributeTrigger + onSettingsValueEdited ----
@@ -111,48 +105,49 @@ TEST(ApplicationTest, OnSettingsValueEditedNoCrash)
 
 TEST(ApplicationTest, Application)
 {
-    // Application
-    SUCCEED();
-}
+    Application obj;
+    EXPECT_NO_FATAL_FAILURE({ Application obj; });
+    }
+
 
 TEST(ApplicationTest, appAttribute)
 {
-    // appAttribute
-    SUCCEED();
+    Application obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.appAttribute(Application::ApplicationAttribute()); });
 }
 
 TEST(ApplicationTest, appObtuselySetting)
 {
-    // appObtuselySetting
-    SUCCEED();
+    Application obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.appObtuselySetting(); });
 }
 
 TEST(ApplicationTest, appSetting)
 {
-    // appSetting
-    SUCCEED();
+    Application obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.appSetting(); });
 }
 
 TEST(ApplicationTest, dataPersistence)
 {
-    // dataPersistence
-    SUCCEED();
+    Application obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.dataPersistence(); });
 }
 
 TEST(ApplicationTest, genericAttribute)
 {
-    // genericAttribute
-    SUCCEED();
+    Application obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.genericAttribute(Application::GenericAttribute()); });
 }
 
 TEST(ApplicationTest, genericObtuselySetting)
 {
-    // genericObtuselySetting
-    SUCCEED();
+    Application obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.genericObtuselySetting(); });
 }
 
 TEST(ApplicationTest, genericSetting)
 {
-    // genericSetting
-    SUCCEED();
+    Application obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.genericSetting(); });
 }

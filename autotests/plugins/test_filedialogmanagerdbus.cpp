@@ -4,43 +4,69 @@
 
 /**
  * @file test_filedialogmanagerdbus.cpp
- * @brief Unit tests for FileDialogManagerDBus Mid-priority methods
+ * @brief Unit tests for FileDialogManagerDBus methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class FileDialogManagerDBusTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "dbus/filedialogmanagerdbus.h"
+
+#include <QTest>
+
+using namespace core;
+
+class FileDialogManagerDBusTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new FileDialogManagerDBus();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FileDialogManagerDBus *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(FileDialogManagerDBusTest, destroyDialog)
 {
-    // destroyDialog
-    SUCCEED();
+    // Test method: void destroyDialog((const QDBusObjectPath &path))
+    QDBusObjectPath _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->destroyDialog(_arg0));
 }
 
 TEST_F(FileDialogManagerDBusTest, dialogs)
 {
-    // dialogs
-    SUCCEED();
+    // Test getter: QList<QDBusObjectPath> dialogs()
+    auto result = obj->dialogs();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(FileDialogManagerDBusTest, errorString)
 {
-    // errorString
-    SUCCEED();
+    // Test getter: QString errorString()
+    auto result = obj->errorString();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(FileDialogManagerDBusTest, initEventsFilter)
 {
-    // initEventsFilter
-    SUCCEED();
+    // Test method: void initEventsFilter(())
+    EXPECT_NO_FATAL_FAILURE(obj->initEventsFilter());
 }
 
 TEST_F(FileDialogManagerDBusTest, onDialogDestroy)
 {
-    // onDialogDestroy
-    SUCCEED();
+    // Test method: void onDialogDestroy(())
+    EXPECT_NO_FATAL_FAILURE(obj->onDialogDestroy());
 }

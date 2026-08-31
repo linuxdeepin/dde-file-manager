@@ -3,57 +3,78 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_extensionwindowsmanager_1.cpp
- * @brief Unit tests for ExtensionWindowsManager Low-priority methods
+ * @file test_extensionwindowsmanager_1.cpp
+ * @brief Unit tests for ExtensionWindowsManager methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ExtensionWindowsManagerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "extensionimpl/windowimpl/extensionwindowsmanager.h"
+
+#include <QTest>
+
+using namespace dfmplugin_utils;
+
+class ExtensionWindowsManagerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ExtensionWindowsManager();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ExtensionWindowsManager *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ExtensionWindowsManagerTest, ExtensionWindowsManager)
 {
-    // ExtensionWindowsManager
-    SUCCEED();
+    // Test constructor: ExtensionWindowsManager((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(ExtensionWindowsManagerTest, handleWindowOpened)
 {
-    // handleWindowOpened
-    SUCCEED();
+    // Test method: void handleWindowOpened((quint64 id))
+    EXPECT_NO_FATAL_FAILURE(obj->handleWindowOpened(0));
 }
 
 TEST_F(ExtensionWindowsManagerTest, initialize)
 {
-    // initialize
-    SUCCEED();
+    // Test method: void initialize(())
+    EXPECT_NO_FATAL_FAILURE(obj->initialize());
 }
 
 TEST_F(ExtensionWindowsManagerTest, onCurrentUrlChanged)
 {
-    // onCurrentUrlChanged
-    SUCCEED();
+    // Test method: void onCurrentUrlChanged((quint64 id, const QUrl &url))
+    QUrl _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->onCurrentUrlChanged(0, _arg1));
 }
 
 TEST_F(ExtensionWindowsManagerTest, onLastWindowClosed)
 {
-    // onLastWindowClosed
-    SUCCEED();
+    // Test method: void onLastWindowClosed((quint64 id))
+    EXPECT_NO_FATAL_FAILURE(obj->onLastWindowClosed(0));
 }
 
 TEST_F(ExtensionWindowsManagerTest, onWindowClosed)
 {
-    // onWindowClosed
-    SUCCEED();
+    // Test method: void onWindowClosed((quint64 id))
+    EXPECT_NO_FATAL_FAILURE(obj->onWindowClosed(0));
 }
 
 TEST_F(ExtensionWindowsManagerTest, onWindowOpened)
 {
-    // onWindowOpened
-    SUCCEED();
+    // Test method: void onWindowOpened((quint64 id))
+    EXPECT_NO_FATAL_FAILURE(obj->onWindowOpened(0));
 }
-

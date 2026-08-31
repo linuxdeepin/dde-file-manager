@@ -3,45 +3,71 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_oemmenuscene_1.cpp
- * @brief Unit tests for OemMenuScene Low-priority methods
+ * @file test_oemmenuscene_1.cpp
+ * @brief Unit tests for OemMenuScene methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class OemMenuSceneTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "oemmenuscene/oemmenuscene.h"
+
+#include <QTest>
+
+using namespace dfmplugin_menu;
+
+class OemMenuSceneTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new OemMenuScene();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    OemMenuScene *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(OemMenuSceneTest, OemMenuScene)
 {
-    // OemMenuScene
-    SUCCEED();
+    // Test constructor: OemMenuScene((OemMenu *oem, QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(OemMenuSceneTest, name)
 {
-    // name
-    SUCCEED();
+    // Test getter: QString name()
+    auto result = obj->name();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(OemMenuSceneTest, scene)
 {
-    // scene
-    SUCCEED();
+    // Test method: AbstractMenuScene scene((QAction *action))
+    auto result = obj->scene(nullptr);
+    EXPECT_NO_FATAL_FAILURE({ obj->scene(nullptr); });
+
 }
 
 TEST_F(OemMenuSceneTest, triggered)
 {
-    // triggered
-    SUCCEED();
+    // Test method: bool triggered((QAction *action))
+    auto result = obj->triggered(nullptr);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(OemMenuSceneTest, updateState)
 {
-    // updateState
-    SUCCEED();
+    // Test method: void updateState((QMenu *parent))
+    EXPECT_NO_FATAL_FAILURE(obj->updateState(nullptr));
 }
-

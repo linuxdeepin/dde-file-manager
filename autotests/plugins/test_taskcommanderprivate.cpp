@@ -4,19 +4,40 @@
 
 /**
  * @file test_taskcommanderprivate.cpp
- * @brief Unit tests for TaskCommanderPrivate Mid-priority methods
+ * @brief Unit tests for TaskCommanderPrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class TaskCommanderPrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "searchmanager/maincontroller/task/taskcommander.h"
+
+#include <QTest>
+
+using namespace dfmplugin_search;
+
+class TaskCommanderPrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new TaskCommanderPrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    TaskCommanderPrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(TaskCommanderPrivateTest, TaskCommanderPrivate)
 {
-    // TaskCommanderPrivate
-    SUCCEED();
+    // Test constructor: TaskCommanderPrivate((TaskCommander *parent))
+    ASSERT_NE(obj, nullptr);
 }

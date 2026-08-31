@@ -199,9 +199,10 @@ TEST_F(DFMExtMenuPluginTest, BoundaryConditions) {
 TEST_F(DFMExtMenuPluginTest, ErrorHandling) {
     // Test that plugin handles errors gracefully
     try {
-        plugin->initialize(nullptr);
-        plugin->shutdown();
-        SUCCEED();
+        EXPECT_NO_FATAL_FAILURE({
+            plugin->initialize(nullptr);
+            plugin->shutdown();
+        });
     } catch (...) {
         FAIL() << "Plugin should handle operations gracefully";
     }

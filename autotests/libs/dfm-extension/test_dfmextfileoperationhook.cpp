@@ -72,7 +72,7 @@ TEST_F(DFMExtFileOperationHookTest, Constructor)
     EXPECT_NE(hook, nullptr);
     
     // 清理资源
-    delete hook;
+    EXPECT_NO_FATAL_FAILURE({ delete hook; });
 }
 
 /**
@@ -85,8 +85,7 @@ TEST_F(DFMExtFileOperationHookTest, Destructor)
     {
         DFMExtFileOperationHook *hook = createTestHook();
         EXPECT_NE(hook, nullptr);
-        delete hook;
-        EXPECT_TRUE(true); // 如果到达这里说明析构成功
+        EXPECT_NO_FATAL_FAILURE({ delete hook; });
     }
     
     // 测试多个对象的析构
@@ -97,10 +96,11 @@ TEST_F(DFMExtFileOperationHookTest, Destructor)
     }
     
     // 清理所有对象
-    for (auto* hook : hooks) {
-        delete hook;
-    }
-    EXPECT_TRUE(true); // 如果到达这里说明所有对象都成功析构
+    EXPECT_NO_FATAL_FAILURE({
+        for (auto* hook : hooks) {
+            delete hook;
+        }
+    });
 }
 
 /**
@@ -132,9 +132,8 @@ TEST_F(DFMExtFileOperationHookTest, RegisterOpenFiles)
     
     // 验证回调函数注册成功（通过私有成员检查）
     // 注意：由于无法直接调用私有方法，我们主要验证注册过程不会崩溃
-    EXPECT_TRUE(true);
     
-    delete hook;
+    EXPECT_NO_FATAL_FAILURE({ delete hook; });
 }
 
 /**
@@ -168,9 +167,8 @@ TEST_F(DFMExtFileOperationHookTest, MultipleRegisterOpenFiles)
     });
     
     // 验证多次注册不会崩溃
-    EXPECT_TRUE(true);
     
-    delete hook;
+    EXPECT_NO_FATAL_FAILURE({ delete hook; });
 }
 
 /**
@@ -190,9 +188,8 @@ TEST_F(DFMExtFileOperationHookTest, CallbackParameterValidation)
     });
     
     // 由于无法直接触发回调，我们验证注册过程
-    EXPECT_TRUE(true);
     
-    delete hook;
+    EXPECT_NO_FATAL_FAILURE({ delete hook; });
 }
 
 /**
@@ -215,9 +212,8 @@ TEST_F(DFMExtFileOperationHookTest, EmptyFilesList)
     });
     
     // 验证注册成功
-    EXPECT_TRUE(true);
     
-    delete hook;
+    EXPECT_NO_FATAL_FAILURE({ delete hook; });
 }
 
 /**
@@ -252,7 +248,7 @@ TEST_F(DFMExtFileOperationHookTest, ThreadSafety)
     // 验证所有注册都完成了
     EXPECT_EQ(registrationCount.load(), 5);
     
-    delete hook;
+    EXPECT_NO_FATAL_FAILURE({ delete hook; });
 }
 
 /**
@@ -286,8 +282,7 @@ TEST_F(DFMExtFileOperationHookTest, MemoryManagement)
         });
     }
     
-    delete hook;
-    EXPECT_TRUE(true); // 如果到达这里说明内存管理正确
+    EXPECT_NO_FATAL_FAILURE({ delete hook; });
 }
 
 /**
@@ -317,7 +312,7 @@ TEST_F(DFMExtFileOperationHookTest, Performance)
     // 验证性能在合理范围内
     EXPECT_LT(duration.count(), 1000); // 100次注册应该在1秒内完成
     
-    delete hook;
+    EXPECT_NO_FATAL_FAILURE({ delete hook; });
 }
 
 // Note: main function is provided by main.cpp

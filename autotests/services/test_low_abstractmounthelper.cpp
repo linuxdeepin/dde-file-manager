@@ -3,33 +3,55 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_low_abstractmounthelper.cpp
- * @brief Unit tests for AbstractMountHelper Low-priority methods
+ * @file test_low_abstractmounthelper.cpp
+ * @brief Unit tests for AbstractMountHelper methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class AbstractMountHelperLowTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "services/mountcontrol/mounthelpers/abstractmounthelper.h"
+
+#include <QTest>
+
+using namespace src;
+
+class AbstractMountHelperTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new AbstractMountHelper();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    AbstractMountHelper *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
-TEST_F(AbstractMountHelperLowTest, AbstractMountHelper)
+TEST_F(AbstractMountHelperTest, AbstractMountHelper)
 {
-    // AbstractMountHelper
-    SUCCEED();
+    // Test constructor: AbstractMountHelper(())
+    ASSERT_NE(obj, nullptr);
 }
 
-TEST_F(AbstractMountHelperLowTest, checkAuthentication)
+TEST_F(AbstractMountHelperTest, checkAuthentication)
 {
-    // checkAuthentication
-    SUCCEED();
+    // Test bool getter: checkAuthentication()
+    bool result = obj->checkAuthentication();
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(AbstractMountHelperLowTest, AbstractMountHelper_Destructor)
+TEST_F(AbstractMountHelperTest, AbstractMountHelper_Destructor)
 {
-    // ~AbstractMountHelper
-    SUCCEED();
+    // Test method:  ~AbstractMountHelper(())
+    EXPECT_NO_FATAL_FAILURE({ AbstractMountHelper *tmp = new AbstractMountHelper(); delete tmp; });
 }
-

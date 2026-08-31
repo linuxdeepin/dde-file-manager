@@ -4,19 +4,43 @@
 
 /**
  * @file test_sharecontroldbus.cpp
- * @brief Unit tests for ShareControlDBus Mid-priority methods
+ * @brief Unit tests for ShareControlDBus methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ShareControlDBusTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "services/sharecontrol/sharecontroldbus.h"
+
+#include <QTest>
+
+using namespace src;
+
+class ShareControlDBusTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ShareControlDBus();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ShareControlDBus *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ShareControlDBusTest, CloseSmbShareByShareName)
 {
-    // CloseSmbShareByShareName
-    SUCCEED();
+    // Test method: bool CloseSmbShareByShareName((const QString &name, bool show))
+    QString _arg0{};
+    auto result = obj->CloseSmbShareByShareName(_arg0, false);
+    EXPECT_FALSE(result);
+
 }

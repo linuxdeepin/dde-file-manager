@@ -4,19 +4,40 @@
 
 /**
  * @file test_collectionviewbroker.cpp
- * @brief Unit tests for CollectionViewBroker Mid-priority methods
+ * @brief Unit tests for CollectionViewBroker methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class CollectionViewBrokerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "broker/collectionviewbroker.h"
+
+#include <QTest>
+
+using namespace ddplugin_organizer;
+
+class CollectionViewBrokerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new CollectionViewBroker();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    CollectionViewBroker *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(CollectionViewBrokerTest, setView)
 {
-    // setView
-    SUCCEED();
+    // Test setter: void setView((CollectionView *v))
+    EXPECT_NO_FATAL_FAILURE(obj->setView(nullptr));
 }

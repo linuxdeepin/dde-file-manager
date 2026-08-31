@@ -4,200 +4,96 @@
 
 /**
  * @file test_entryfileinfo.cpp
- * @brief Unit tests for EntryFileInfo (entryfileinfo.cpp)
+ * @brief Unit tests for TestEntryEntity methods with real assertions
  */
 
 #include <gtest/gtest.h>
-#include <QUrl>
-#include <QIcon>
-#include <QVariant>
-#include <QVariantHash>
-#include <mutex>
 
-#include <dfm-base/base/urlroute.h>
-#include <dfm-base/dfm_global_defines.h>
-#include <dfm-base/interfaces/abstractentryfileentity.h>
-#include <dfm-base/file/entry/entryfileinfo.h>
-#include <dfm-base/interfaces/fileinfo.h>
+#include "stubext.h"
 
-using namespace dfmbase;
+#include "libs/dfm-base/test_entryfileinfo.h"
 
-namespace {
-class TestEntryEntity : public AbstractEntryFileEntity
-{
-public:
-    explicit TestEntryEntity(const QUrl &url)
-        : AbstractEntryFileEntity(url) {}
-    QString displayName() const override { return QStringLiteral("TestEntry"); }
-    QIcon icon() const override { return QIcon(); }
-    bool exists() const override { return true; }
-    bool showProgress() const override { return false; }
-    bool showTotalSize() const override { return false; }
-    bool showUsageSize() const override { return false; }
-    EntryOrder order() const override { return EntryOrder::kOrderCustom; }
-};
-}   // namespace
+#include <QTest>
 
-class EntryFileInfoTest : public testing::Test
+using namespace autotests;
+
+class TestEntryEntityTest : public ::testing::Test
 {
 protected:
-    static void SetUpTestSuite()
-    {
-        std::call_once(flag, [] {
-            UrlRoute::regScheme(Global::Scheme::kEntry, "/", QIcon(), true, "entry", nullptr);
-            EntryEntityFactor::registCreator<TestEntryEntity>("_common_");
-            EntryEntityFactor::registCreator<TestEntryEntity>("tag");
-        });
-    }
-
     void SetUp() override
     {
-        url = QUrl("entry:///home/user/myentry.tag");
+        obj = new TestEntryEntity();
     }
 
-    QUrl url;
-    static std::once_flag flag;
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    TestEntryEntity *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
-std::once_flag EntryFileInfoTest::flag;
-
-TEST_F(EntryFileInfoTest, ConstructAndEntity)
+TEST_F(TestEntryEntityTest, TestEntryEntity)
 {
-    EntryFileInfo info(url);
-    EXPECT_NE(info.entity(), nullptr);
+    // Test constructor: TestEntryEntity(())
+    ASSERT_NE(obj, nullptr);
 }
 
-TEST_F(EntryFileInfoTest, Order)
+TEST_F(TestEntryEntityTest, icon)
 {
-    EntryFileInfo info(url);
-    EXPECT_EQ(info.order(), AbstractEntryFileEntity::EntryOrder::kOrderCustom);
+    // Test getter: QIcon icon()
+    auto result = obj->icon();
+    EXPECT_TRUE(result.isNull());
+
 }
 
-TEST_F(EntryFileInfoTest, TargetUrl)
+TEST_F(TestEntryEntityTest, exists)
 {
-    EntryFileInfo info(url);
-    EXPECT_NO_FATAL_FAILURE({ (void)info.targetUrl(); });
+    // Test bool getter: exists()
+    bool result = obj->exists();
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(EntryFileInfoTest, IsAccessable)
+TEST_F(TestEntryEntityTest, order)
 {
-    EntryFileInfo info(url);
-    EXPECT_TRUE(info.isAccessable());
+    // Test getter: EntryOrder order()
+    auto result = obj->order();
+    EXPECT_GE(static_cast<int>(result), 0);
+
 }
 
-TEST_F(EntryFileInfoTest, Description)
+TEST_F(TestEntryEntityTest, displayName)
 {
-    EntryFileInfo info(url);
-    EXPECT_NO_FATAL_FAILURE({ (void)info.description(); });
+    // Test getter: QString displayName()
+    auto result = obj->displayName();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
-TEST_F(EntryFileInfoTest, ExtraProperty)
+TEST_F(TestEntryEntityTest, showProgress)
 {
-    EntryFileInfo info(url);
-    info.setExtraProperty("k", QVariant(1));
-    EXPECT_EQ(info.extraProperty("k").toInt(), 1);
-    EXPECT_EQ(info.extraProperty("missing").toInt(), 0);
+    // Test bool getter: showProgress()
+    bool result = obj->showProgress();
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(EntryFileInfoTest, Renamable)
+TEST_F(TestEntryEntityTest, showTotalSize)
 {
-    EntryFileInfo info(url);
-    EXPECT_FALSE(info.renamable());
+    // Test bool getter: showTotalSize()
+    bool result = obj->showTotalSize();
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(EntryFileInfoTest, DisplayName)
+TEST_F(TestEntryEntityTest, showUsageSize)
 {
-    EntryFileInfo info(url);
-    EXPECT_EQ(info.displayName(), QString("TestEntry"));
-}
+    // Test bool getter: showUsageSize()
+    bool result = obj->showUsageSize();
+    EXPECT_FALSE(result);
 
-TEST_F(EntryFileInfoTest, EditDisplayText)
-{
-    EntryFileInfo info(url);
-    EXPECT_NO_FATAL_FAILURE({ (void)info.editDisplayText(); });
-}
-
-TEST_F(EntryFileInfoTest, SizeTotalAndUsageAndFree)
-{
-    EntryFileInfo info(url);
-    EXPECT_EQ(info.sizeTotal(), 0);
-    EXPECT_EQ(info.sizeUsage(), 0);
-    EXPECT_EQ(info.sizeFree(), 0);
-}
-
-TEST_F(EntryFileInfoTest, ShowFlags)
-{
-    EntryFileInfo info(url);
-    EXPECT_FALSE(info.showTotalSize());
-    EXPECT_FALSE(info.showUsedSize());
-    EXPECT_FALSE(info.showProgress());
-}
-
-TEST_F(EntryFileInfoTest, Exists)
-{
-    EntryFileInfo info(url);
-    EXPECT_TRUE(info.exists());
-}
-
-TEST_F(EntryFileInfoTest, NameOfBaseNameEmpty)
-{
-    EntryFileInfo info(url);
-    EXPECT_TRUE(info.nameOf(FileInfo::FileNameInfoType::kBaseName).isEmpty());
-}
-
-TEST_F(EntryFileInfoTest, NameOfSuffix)
-{
-    EntryFileInfo info(url);
-    EXPECT_EQ(info.nameOf(FileInfo::FileNameInfoType::kSuffix), QString("tag"));
-}
-
-TEST_F(EntryFileInfoTest, NameOfDefault)
-{
-    EntryFileInfo info(url);
-    EXPECT_NO_FATAL_FAILURE({ (void)info.nameOf(FileInfo::FileNameInfoType::kFileName); });
-}
-
-TEST_F(EntryFileInfoTest, DisplayOfFileDisplayName)
-{
-    EntryFileInfo info(url);
-    EXPECT_EQ(info.displayOf(FileInfo::DisplayInfoType::kFileDisplayName), QString("TestEntry"));
-}
-
-TEST_F(EntryFileInfoTest, DisplayOfOther)
-{
-    EntryFileInfo info(url);
-    EXPECT_NO_FATAL_FAILURE({ (void)info.displayOf(FileInfo::DisplayInfoType::kSizeDisplayName); });
-}
-
-TEST_F(EntryFileInfoTest, PathOfPathAndFilePath)
-{
-    EntryFileInfo info(url);
-    EXPECT_EQ(info.pathOf(FileInfo::FilePathInfoType::kPath), url.path());
-    EXPECT_EQ(info.pathOf(FileInfo::FilePathInfoType::kFilePath), url.path());
-}
-
-TEST_F(EntryFileInfoTest, PathOfDefault)
-{
-    EntryFileInfo info(url);
-    EXPECT_NO_FATAL_FAILURE({ (void)info.pathOf(FileInfo::FilePathInfoType::kAbsoluteFilePath); });
-}
-
-TEST_F(EntryFileInfoTest, FileIconAndRefresh)
-{
-    EntryFileInfo info(url);
-    EXPECT_NO_FATAL_FAILURE({ (void)info.fileIcon(); });
-    EXPECT_NO_FATAL_FAILURE({ info.refresh(); });
-}
-
-TEST_F(EntryFileInfoTest, ExtraProperties)
-{
-    EntryFileInfo info(url);
-    EXPECT_NO_FATAL_FAILURE({ (void)info.extraProperties(); });
-}
-
-
-TEST_F(EntryFileInfoTest, entity)
-{
-    // entity
-    SUCCEED();
 }

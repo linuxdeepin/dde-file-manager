@@ -4,19 +4,42 @@
 
 /**
  * @file test_listitemeditor.cpp
- * @brief Unit tests for ListItemEditor Mid-priority methods
+ * @brief Unit tests for ListItemEditor methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ListItemEditorTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/listitemeditor.h"
+
+#include <QTest>
+
+using namespace dfmplugin_workspace;
+
+class ListItemEditorTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ListItemEditor();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ListItemEditor *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ListItemEditorTest, event)
 {
-    // event
-    SUCCEED();
+    // Test method: bool event((QEvent *ee))
+    auto result = obj->event(nullptr);
+    EXPECT_FALSE(result);
+
 }

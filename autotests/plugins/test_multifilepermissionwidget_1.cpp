@@ -3,69 +3,94 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_multifilepermissionwidget_1.cpp
- * @brief Unit tests for MultiFilePermissionWidget Low-priority methods
+ * @file test_multifilepermissionwidget_1.cpp
+ * @brief Unit tests for MultiFilePermissionWidget methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class MultiFilePermissionWidgetTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/multifilepermissionwidget.h"
+
+#include <QTest>
+
+using namespace dfmplugin_propertydialog;
+
+class MultiFilePermissionWidgetTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new MultiFilePermissionWidget();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    MultiFilePermissionWidget *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(MultiFilePermissionWidgetTest, MultiFilePermissionWidget)
 {
-    // MultiFilePermissionWidget
-    SUCCEED();
+    // Test constructor: MultiFilePermissionWidget((const QList<QUrl> &urls,
+                                                     QWidget *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(MultiFilePermissionWidgetTest, canChmodByFs)
 {
-    // canChmodByFs
-    SUCCEED();
+    // Test method: bool canChmodByFs((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->canChmodByFs(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(MultiFilePermissionWidgetTest, disablePermissionComboBox)
 {
-    // disablePermissionComboBox
-    SUCCEED();
+    // Test method: void disablePermissionComboBox(())
+    EXPECT_NO_FATAL_FAILURE(obj->disablePermissionComboBox());
 }
 
 TEST_F(MultiFilePermissionWidgetTest, getOrgPermissonBoxState)
 {
-    // getOrgPermissonBoxState
-    SUCCEED();
+    // Test method: void getOrgPermissonBoxState((FilePropertyState &states))
+    FilePropertyState _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->getOrgPermissonBoxState(_arg0));
 }
 
 TEST_F(MultiFilePermissionWidgetTest, initConnect)
 {
-    // initConnect
-    SUCCEED();
+    // Test method: void initConnect(())
+    EXPECT_NO_FATAL_FAILURE(obj->initConnect());
 }
 
 TEST_F(MultiFilePermissionWidgetTest, onGroupComboBoxChanged)
 {
-    // onGroupComboBoxChanged
-    SUCCEED();
+    // Test method: void onGroupComboBoxChanged((int index))
+    EXPECT_NO_FATAL_FAILURE(obj->onGroupComboBoxChanged(0));
 }
 
 TEST_F(MultiFilePermissionWidgetTest, onOtherComboBoxChanged)
 {
-    // onOtherComboBoxChanged
-    SUCCEED();
+    // Test method: void onOtherComboBoxChanged((int index))
+    EXPECT_NO_FATAL_FAILURE(obj->onOtherComboBoxChanged(0));
 }
 
 TEST_F(MultiFilePermissionWidgetTest, onOwnerComboBoxChanged)
 {
-    // onOwnerComboBoxChanged
-    SUCCEED();
+    // Test method: void onOwnerComboBoxChanged((int index))
+    EXPECT_NO_FATAL_FAILURE(obj->onOwnerComboBoxChanged(0));
 }
 
 TEST_F(MultiFilePermissionWidgetTest, updateComboBoxViewPalette)
 {
-    // updateComboBoxViewPalette
-    SUCCEED();
+    // Test method: void updateComboBoxViewPalette(())
+    EXPECT_NO_FATAL_FAILURE(obj->updateComboBoxViewPalette());
 }
-

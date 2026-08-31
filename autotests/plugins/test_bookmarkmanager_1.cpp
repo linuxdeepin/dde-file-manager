@@ -3,57 +3,87 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_bookmarkmanager_1.cpp
- * @brief Unit tests for BookMarkManager Low-priority methods
+ * @file test_bookmarkmanager_1.cpp
+ * @brief Unit tests for BookMarkManager methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class BookMarkManagerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "controller/bookmarkmanager.h"
+
+#include <QTest>
+
+using namespace dfmplugin_bookmark;
+
+class BookMarkManagerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new BookMarkManager();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    BookMarkManager *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(BookMarkManagerTest, BookMarkManager)
 {
-    // BookMarkManager
-    SUCCEED();
+    // Test constructor: BookMarkManager((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(BookMarkManagerTest, addBookmarkToDConfig)
 {
-    // addBookmarkToDConfig
-    SUCCEED();
+    // Test method: void addBookmarkToDConfig((const QVariantMap &data))
+    QVariantMap _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->addBookmarkToDConfig(_arg0));
 }
 
 TEST_F(BookMarkManagerTest, addQuickAccessItemsFromConfig)
 {
-    // addQuickAccessItemsFromConfig
-    SUCCEED();
+    // Test method: void addQuickAccessItemsFromConfig(())
+    EXPECT_NO_FATAL_FAILURE(obj->addQuickAccessItemsFromConfig());
 }
 
 TEST_F(BookMarkManagerTest, getBookMarkDataMap)
 {
-    // getBookMarkDataMap
-    SUCCEED();
+    // Test getter: QMap<QUrl, BookmarkData> getBookMarkDataMap()
+    auto result = obj->getBookMarkDataMap();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(BookMarkManagerTest, isItemDuplicated)
 {
-    // isItemDuplicated
-    SUCCEED();
+    // Test method: bool isItemDuplicated((const BookmarkData &data))
+    BookmarkData _arg0{};
+    auto result = obj->isItemDuplicated(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(BookMarkManagerTest, renameBookmarkToDConfig)
 {
-    // renameBookmarkToDConfig
-    SUCCEED();
+    // Test method: void renameBookmarkToDConfig((const QString &oldName, const QString &newName))
+    QString _arg0{};
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->renameBookmarkToDConfig(_arg0, _arg1));
 }
 
 TEST_F(BookMarkManagerTest, updateBookmarkUrlToDconfig)
 {
-    // updateBookmarkUrlToDconfig
-    SUCCEED();
+    // Test method: void updateBookmarkUrlToDconfig((const QUrl &oldUrl, const QUrl &newUrl))
+    QUrl _arg0{};
+    QUrl _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->updateBookmarkUrlToDconfig(_arg0, _arg1));
 }
-

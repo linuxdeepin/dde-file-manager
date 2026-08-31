@@ -3,51 +3,74 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_low_ocrindexdbusprivate.cpp
- * @brief Unit tests for OcrIndexDBusPrivate Low-priority methods
+ * @file test_low_ocrindexdbusprivate.cpp
+ * @brief Unit tests for OcrIndexDBusPrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class OcrIndexDBusPrivateLowTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "services/textindex/ocrindexdbus.h"
+
+#include <QTest>
+
+using namespace src;
+
+class OcrIndexDBusPrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new OcrIndexDBusPrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    OcrIndexDBusPrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
-TEST_F(OcrIndexDBusPrivateLowTest, canSilentlyRefreshIndex)
+TEST_F(OcrIndexDBusPrivateTest, canSilentlyRefreshIndex)
 {
-    // canSilentlyRefreshIndex
-    SUCCEED();
+    // Test method: bool canSilentlyRefreshIndex((const QString &path))
+    QString _arg0{};
+    auto result = obj->canSilentlyRefreshIndex(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(OcrIndexDBusPrivateLowTest, handleConfigChanged)
+TEST_F(OcrIndexDBusPrivateTest, handleConfigChanged)
 {
-    // handleConfigChanged
-    SUCCEED();
+    // Test method: void handleConfigChanged(())
+    EXPECT_NO_FATAL_FAILURE(obj->handleConfigChanged());
 }
 
-TEST_F(OcrIndexDBusPrivateLowTest, handleMonitoring)
+TEST_F(OcrIndexDBusPrivateTest, handleMonitoring)
 {
-    // handleMonitoring
-    SUCCEED();
+    // Test method: void handleMonitoring((bool start))
+    EXPECT_NO_FATAL_FAILURE(obj->handleMonitoring(false));
 }
 
-TEST_F(OcrIndexDBusPrivateLowTest, initConnect)
+TEST_F(OcrIndexDBusPrivateTest, initConnect)
 {
-    // initConnect
-    SUCCEED();
+    // Test method: void initConnect(())
+    EXPECT_NO_FATAL_FAILURE(obj->initConnect());
 }
 
-TEST_F(OcrIndexDBusPrivateLowTest, initialize)
+TEST_F(OcrIndexDBusPrivateTest, initialize)
 {
-    // initialize
-    SUCCEED();
+    // Test method: void initialize(())
+    EXPECT_NO_FATAL_FAILURE(obj->initialize());
 }
 
-TEST_F(OcrIndexDBusPrivateLowTest, initializeSupportedExtensions)
+TEST_F(OcrIndexDBusPrivateTest, initializeSupportedExtensions)
 {
-    // initializeSupportedExtensions
-    SUCCEED();
+    // Test method: void initializeSupportedExtensions(())
+    EXPECT_NO_FATAL_FAILURE(obj->initializeSupportedExtensions());
 }
-

@@ -4,19 +4,42 @@
 
 /**
  * @file test_contentindexupgradeunit.cpp
- * @brief Unit tests for ContentIndexUpgradeUnit Mid-priority methods
+ * @brief Unit tests for ContentIndexUpgradeUnit methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ContentIndexUpgradeUnitTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "tools/upgrade/units/contentindexupgradeunit.h"
+
+#include <QTest>
+
+using namespace src;
+
+class ContentIndexUpgradeUnitTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ContentIndexUpgradeUnit();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ContentIndexUpgradeUnit *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ContentIndexUpgradeUnitTest, upgrade)
 {
-    // upgrade
-    SUCCEED();
+    // Test bool getter: upgrade()
+    bool result = obj->upgrade();
+    EXPECT_FALSE(result);
+
 }

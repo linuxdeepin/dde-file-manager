@@ -4,25 +4,49 @@
 
 /**
  * @file test_generalmodelfilter.cpp
- * @brief Unit tests for GeneralModelFilter Mid-priority methods
+ * @brief Unit tests for GeneralModelFilter methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class GeneralModelFilterTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "models/generalmodelfilter.h"
+
+#include <QTest>
+
+using namespace ddplugin_organizer;
+
+class GeneralModelFilterTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new GeneralModelFilter();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    GeneralModelFilter *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(GeneralModelFilterTest, acceptReset)
 {
-    // acceptReset
-    SUCCEED();
+    // Test method: QList<QUrl> acceptReset((const QList<QUrl> &urls))
+    QList<QUrl> _arg0{};
+    auto result = obj->acceptReset(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(GeneralModelFilterTest, removeFilter)
 {
-    // removeFilter
-    SUCCEED();
+    // Test method: void removeFilter((ModelDataHandler *filter))
+    EXPECT_NO_FATAL_FAILURE(obj->removeFilter(nullptr));
 }

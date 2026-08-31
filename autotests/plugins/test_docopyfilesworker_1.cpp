@@ -3,33 +3,53 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_docopyfilesworker_1.cpp
- * @brief Unit tests for DoCopyFilesWorker Low-priority methods
+ * @file test_docopyfilesworker_1.cpp
+ * @brief Unit tests for DoCopyFilesWorker methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class DoCopyFilesWorkerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "fileoperations/copyfiles/docopyfilesworker.h"
+
+#include <QTest>
+
+using namespace dfmplugin_fileoperations;
+
+class DoCopyFilesWorkerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new DoCopyFilesWorker();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    DoCopyFilesWorker *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(DoCopyFilesWorkerTest, onUpdateProgress)
 {
-    // onUpdateProgress
-    SUCCEED();
+    // Test method: void onUpdateProgress(())
+    EXPECT_NO_FATAL_FAILURE(obj->onUpdateProgress());
 }
 
 TEST_F(DoCopyFilesWorkerTest, stop)
 {
-    // stop
-    SUCCEED();
+    // Test method: void stop(())
+    EXPECT_NO_FATAL_FAILURE(obj->stop());
 }
 
 TEST_F(DoCopyFilesWorkerTest, DoCopyFilesWorker_Destructor)
 {
-    // ~DoCopyFilesWorker
-    SUCCEED();
+    // Test method:  ~DoCopyFilesWorker(())
+    EXPECT_NO_FATAL_FAILURE({ DoCopyFilesWorker *tmp = new DoCopyFilesWorker(); delete tmp; });
 }
-

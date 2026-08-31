@@ -4,183 +4,203 @@
 
 /**
  * @file test_groupedmodeldata.cpp
- * @brief Unit tests for GroupedModelData Mid-priority methods (dfmplugin-workspace)
+ * @brief Unit tests for GroupedModelData methods with real assertions
  */
 
 #include <gtest/gtest.h>
-#include <QTest>
-#include <QUrl>
-#include <QString>
-#include <QStringList>
-#include <QColor>
-#include <QPoint>
-#include <QVariant>
+
+#include "stubext.h"
 
 #include "groups/groupedmodeldata.h"
 
+#include <QTest>
+
 using namespace dfmplugin_workspace;
 
-class GroupedModelDataTest : public ::testing::Test {
+class GroupedModelDataTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {
+    void SetUp() override
+    {
+        obj = new GroupedModelData();
     }
-    void TearDown() override {}
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    GroupedModelData *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(GroupedModelDataTest, addGroup)
 {
-    // Instance method addGroup
-    GroupedModelData obj;
-    bool result = false;
-    EXPECT_NO_FATAL_FAILURE({ result = obj.addGroup(FileGroupData()); });
-    (void)result;
+    // Test method: bool addGroup((const FileGroupData &group))
+    FileGroupData _arg0{};
+    auto result = obj->addGroup(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(GroupedModelDataTest, clear)
 {
-    // Instance method clear
-    GroupedModelData obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.clear(); });
+    // Test method: void clear(())
+    EXPECT_NO_FATAL_FAILURE(obj->clear());
 }
 
 TEST_F(GroupedModelDataTest, getAllFiles)
 {
-    // Instance method getAllFiles
-    GroupedModelData obj;
-    EXPECT_NO_FATAL_FAILURE({ auto r = obj.getAllFiles(); (void)r; });
+    // Test getter: QList<FileItemDataPointer> getAllFiles()
+    auto result = obj->getAllFiles();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(GroupedModelDataTest, getFileItemCount)
 {
-    // Instance method getFileItemCount
-    GroupedModelData obj;
-    EXPECT_NO_FATAL_FAILURE({ auto r = obj.getFileItemCount(); (void)r; });
+    // Test getter: int getFileItemCount()
+    auto result = obj->getFileItemCount();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(GroupedModelDataTest, getGroupItemCount)
 {
-    // Instance method getGroupItemCount
-    GroupedModelData obj;
-    EXPECT_NO_FATAL_FAILURE({ auto r = obj.getGroupItemCount(); (void)r; });
+    // Test getter: int getGroupItemCount()
+    auto result = obj->getGroupItemCount();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(GroupedModelDataTest, getItemAt)
 {
-    // Instance method getItemAt
-    GroupedModelData obj;
-    EXPECT_NO_FATAL_FAILURE({ auto r = obj.getItemAt(0); (void)r; });
+    // Test method: ModelItemWrapper getItemAt((int index))
+    auto result = obj->getItemAt(0);
+    EXPECT_NO_FATAL_FAILURE({ obj->getItemAt(0); });
+
 }
 
 TEST_F(GroupedModelDataTest, getItemCount)
 {
-    // Instance method getItemCount
-    GroupedModelData obj;
-    EXPECT_NO_FATAL_FAILURE({ auto r = obj.getItemCount(); (void)r; });
+    // Test getter: int getItemCount()
+    auto result = obj->getItemCount();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(GroupedModelDataTest, isEmpty)
 {
-    // Instance method isEmpty
-    GroupedModelData obj;
-    bool result = false;
-    EXPECT_NO_FATAL_FAILURE({ result = obj.isEmpty(); });
-    (void)result;
+    // Test bool getter: isEmpty()
+    bool result = obj->isEmpty();
+    EXPECT_TRUE(result);
+
 }
 
 TEST_F(GroupedModelDataTest, isGroupExpanded)
 {
-    // Instance method isGroupExpanded
-    GroupedModelData obj;
-    bool result = false;
-    EXPECT_NO_FATAL_FAILURE({ result = obj.isGroupExpanded(QString("test")); });
-    (void)result;
+    // Test method: bool isGroupExpanded((const QString &groupKey))
+    QString _arg0{};
+    auto result = obj->isGroupExpanded(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(GroupedModelDataTest, isGroupTruncated)
 {
-    // Instance method isGroupTruncated
-    GroupedModelData obj;
-    bool result = false;
-    EXPECT_NO_FATAL_FAILURE({ result = obj.isGroupTruncated(QString("test")); });
-    (void)result;
+    // Test method: bool isGroupTruncated((const QString &groupKey))
+    QString _arg0{};
+    auto result = obj->isGroupTruncated(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(GroupedModelDataTest, isGroupTruncatedInitialized)
 {
-    // Instance method isGroupTruncatedInitialized
-    GroupedModelData obj;
-    bool result = false;
-    EXPECT_NO_FATAL_FAILURE({ result = obj.isGroupTruncatedInitialized(QString("test")); });
-    (void)result;
+    // Test method: bool isGroupTruncatedInitialized((const QString &groupKey))
+    QString _arg0{};
+    auto result = obj->isGroupTruncatedInitialized(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(GroupedModelDataTest, isTruncationEnabled)
 {
-    // Instance method isTruncationEnabled
-    GroupedModelData obj;
-    bool result = false;
-    EXPECT_NO_FATAL_FAILURE({ result = obj.isTruncationEnabled(); });
-    (void)result;
+    // Test bool getter: isTruncationEnabled()
+    bool result = obj->isTruncationEnabled();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(GroupedModelDataTest, rebuildFlattenedItems)
 {
-    // Instance method rebuildFlattenedItems
-    GroupedModelData obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.rebuildFlattenedItems(); });
+    // Test method: void rebuildFlattenedItems(())
+    EXPECT_NO_FATAL_FAILURE(obj->rebuildFlattenedItems());
 }
 
 TEST_F(GroupedModelDataTest, removeGroup)
 {
-    // Instance method removeGroup
-    GroupedModelData obj;
-    bool result = false;
-    EXPECT_NO_FATAL_FAILURE({ result = obj.removeGroup(QString("test")); });
-    (void)result;
+    // Test method: bool removeGroup((const QString &groupKey))
+    QString _arg0{};
+    auto result = obj->removeGroup(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(GroupedModelDataTest, removeItems)
 {
-    // Instance method removeItems
-    GroupedModelData obj;
-    EXPECT_NO_FATAL_FAILURE({ auto r = obj.removeItems(0, 0); (void)r; });
+    // Test method: int removeItems((int index, int count))
+    auto result = obj->removeItems(0, 0);
+    EXPECT_GE(result, 0);
+
 }
 
 TEST_F(GroupedModelDataTest, setGroupExpanded)
 {
-    // Instance method setGroupExpanded
-    GroupedModelData obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.setGroupExpanded(QString("test"), true); });
+    // Test setter: void setGroupExpanded((const QString &groupKey, bool expanded))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->setGroupExpanded(_arg0, false));
 }
 
 TEST_F(GroupedModelDataTest, setGroupTruncated)
 {
-    // Instance method setGroupTruncated
-    GroupedModelData obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.setGroupTruncated(QString("test"), true, true); });
+    // Test setter: void setGroupTruncated((const QString &groupKey, bool truncated, bool rebuild))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->setGroupTruncated(_arg0, false, false));
 }
 
 TEST_F(GroupedModelDataTest, updateGroupHeader)
 {
-    // Instance method updateGroupHeader
-    GroupedModelData obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.updateGroupHeader(QString("test")); });
+    // Test method: void updateGroupHeader((const QString &groupKey))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->updateGroupHeader(_arg0));
 }
 
 TEST_F(GroupedModelDataTest, findFileStartPos)
 {
-    // findFileStartPos
-    SUCCEED();
+    // Test method: std::optional<int> findFileStartPos((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->findFileStartPos(_arg0);
+    EXPECT_FALSE(result.has_value());
+
 }
 
 TEST_F(GroupedModelDataTest, findGroupHeaderStartPos)
 {
-    // findGroupHeaderStartPos
-    SUCCEED();
+    // Test method: std::optional<int> findGroupHeaderStartPos((const QString &key))
+    QString _arg0{};
+    auto result = obj->findGroupHeaderStartPos(_arg0);
+    EXPECT_FALSE(result.has_value());
+
 }
 
 TEST_F(GroupedModelDataTest, getGroup)
 {
-    // getGroup
-    SUCCEED();
+    // Test method: FileGroupData getGroup((const QString &groupKey))
+    QString _arg0{};
+    auto result = obj->getGroup(_arg0);
+    EXPECT_NO_FATAL_FAILURE({ obj->getGroup(_arg0); });
+
 }

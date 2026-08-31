@@ -3,393 +3,516 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_workspacehelper_1.cpp
- * @brief Unit tests for WorkspaceHelper Low-priority methods
+ * @file test_workspacehelper_1.cpp
+ * @brief Unit tests for WorkspaceHelper methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class WorkspaceHelperTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/workspacehelper.h"
+
+#include <QTest>
+
+using namespace dfmplugin_workspace;
+
+class WorkspaceHelperTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new WorkspaceHelper();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    WorkspaceHelper *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(WorkspaceHelperTest, aboutToChangeViewWidth)
 {
-    // aboutToChangeViewWidth
-    SUCCEED();
+    // Test method: void aboutToChangeViewWidth((const quint64 windowID, int deltaWidth))
+    EXPECT_NO_FATAL_FAILURE(obj->aboutToChangeViewWidth(0, 0));
 }
 
 TEST_F(WorkspaceHelperTest, actionNewWindow)
 {
-    // actionNewWindow
-    SUCCEED();
+    // Test method: void actionNewWindow((const QList<QUrl> &urls))
+    QList<QUrl> _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->actionNewWindow(_arg0));
 }
 
 TEST_F(WorkspaceHelperTest, addScheme)
 {
-    // addScheme
-    SUCCEED();
+    // Test method: void addScheme((const QString &scheme))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->addScheme(_arg0));
 }
 
 TEST_F(WorkspaceHelperTest, addWorkspace)
 {
-    // addWorkspace
-    SUCCEED();
+    // Test method: void addWorkspace((quint64 windowId, WorkspaceWidget *workspace))
+    EXPECT_NO_FATAL_FAILURE(obj->addWorkspace(0, nullptr));
 }
 
 TEST_F(WorkspaceHelperTest, closeTab)
 {
-    // closeTab
-    SUCCEED();
+    // Test method: void closeTab((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->closeTab(_arg0));
 }
 
 TEST_F(WorkspaceHelperTest, columnRoles)
 {
-    // columnRoles
-    SUCCEED();
+    // Test method: QList<ItemRoles> columnRoles((quint64 windowId))
+    auto result = obj->columnRoles(0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(WorkspaceHelperTest, createTopWidgetByScheme)
 {
-    // createTopWidgetByScheme
-    SUCCEED();
+    // Test method: CustomTopWidgetInterface createTopWidgetByScheme((const QString &scheme))
+    QString _arg0{};
+    auto result = obj->createTopWidgetByScheme(_arg0);
+    EXPECT_NO_FATAL_FAILURE({ obj->createTopWidgetByScheme(_arg0); });
+
 }
 
 TEST_F(WorkspaceHelperTest, createTopWidgetByUrl)
 {
-    // createTopWidgetByUrl
-    SUCCEED();
+    // Test method: CustomTopWidgetInterface createTopWidgetByUrl((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->createTopWidgetByUrl(_arg0);
+    EXPECT_NO_FATAL_FAILURE({ obj->createTopWidgetByUrl(_arg0); });
+
 }
 
 TEST_F(WorkspaceHelperTest, fileUpdate)
 {
-    // fileUpdate
-    SUCCEED();
+    // Test method: void fileUpdate((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->fileUpdate(_arg0));
 }
 
 TEST_F(WorkspaceHelperTest, filterUndoFiles)
 {
-    // filterUndoFiles
-    SUCCEED();
+    // Test method: QList<QUrl> filterUndoFiles((const QList<QUrl> &urlList))
+    QList<QUrl> _arg0{};
+    auto result = obj->filterUndoFiles(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(WorkspaceHelperTest, findCustomViewProperty)
 {
-    // findCustomViewProperty
-    SUCCEED();
+    // Test method: CustomViewProperty findCustomViewProperty((const QString &scheme))
+    QString _arg0{};
+    auto result = obj->findCustomViewProperty(_arg0);
+    EXPECT_NO_FATAL_FAILURE({ obj->findCustomViewProperty(_arg0); });
+
 }
 
 TEST_F(WorkspaceHelperTest, findFileViewByWindowID)
 {
-    // findFileViewByWindowID
-    SUCCEED();
+    // Test method: FileView findFileViewByWindowID((const quint64 windowID))
+    auto result = obj->findFileViewByWindowID(0);
+    EXPECT_NO_FATAL_FAILURE({ obj->findFileViewByWindowID(0); });
+
 }
 
 TEST_F(WorkspaceHelperTest, findMenuScene)
 {
-    // findMenuScene
-    SUCCEED();
+    // Test method: QString findMenuScene((const QString &scheme))
+    QString _arg0{};
+    auto result = obj->findMenuScene(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(WorkspaceHelperTest, findViewHint)
 {
-    // findViewHint
-    SUCCEED();
+    // Test method: ViewHintSpec findViewHint((const QString &scheme))
+    QString _arg0{};
+    auto result = obj->findViewHint(_arg0);
+    EXPECT_NO_FATAL_FAILURE({ obj->findViewHint(_arg0); });
+
 }
 
 TEST_F(WorkspaceHelperTest, findViewMode)
 {
-    // findViewMode
-    SUCCEED();
+    // Test method: Global::ViewMode findViewMode((const QString &scheme))
+    QString _arg0{};
+    auto result = obj->findViewMode(_arg0);
+    EXPECT_GE(static_cast<int>(result), 0);
+
 }
 
 TEST_F(WorkspaceHelperTest, findWorkspaceByWindowId)
 {
-    // findWorkspaceByWindowId
-    SUCCEED();
+    // Test method: WorkspaceWidget findWorkspaceByWindowId((quint64 windowId))
+    auto result = obj->findWorkspaceByWindowId(0);
+    EXPECT_NO_FATAL_FAILURE({ obj->findWorkspaceByWindowId(0); });
+
 }
 
 TEST_F(WorkspaceHelperTest, getFileViewStateValue)
 {
-    // getFileViewStateValue
-    SUCCEED();
+    // Test method: QVariant getFileViewStateValue((const QUrl &url, const QString &key, const QVariant &defaultValue))
+    QUrl _arg0{};
+    QString _arg1{};
+    QVariant _arg2{};
+    auto result = obj->getFileViewStateValue(_arg0, _arg1, _arg2);
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(WorkspaceHelperTest, getGroupingStrategy)
 {
-    // getGroupingStrategy
-    SUCCEED();
+    // Test method: QString getGroupingStrategy((quint64 windowId))
+    auto result = obj->getGroupingStrategy(0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(WorkspaceHelperTest, getLoadStrategy)
 {
-    // getLoadStrategy
-    SUCCEED();
+    // Test method: DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy getLoadStrategy((const QString &scheme))
+    QString _arg0{};
+    auto result = obj->getLoadStrategy(_arg0);
+    EXPECT_GE(static_cast<int>(result), 0);
+
 }
 
 TEST_F(WorkspaceHelperTest, getNameFilter)
 {
-    // getNameFilter
-    SUCCEED();
+    // Test method: QStringList getNameFilter((const quint64 windowId))
+    auto result = obj->getNameFilter(0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(WorkspaceHelperTest, getViewFilter)
 {
-    // getViewFilter
-    SUCCEED();
+    // Test method: int getViewFilter((const quint64 windowID))
+    auto result = obj->getViewFilter(0);
+    EXPECT_GE(result, 0);
+
 }
 
 TEST_F(WorkspaceHelperTest, handleRefreshDir)
 {
-    // handleRefreshDir
-    SUCCEED();
+    // Test method: void handleRefreshDir((const QList<QUrl> &urls))
+    QList<QUrl> _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleRefreshDir(_arg0));
 }
 
 TEST_F(WorkspaceHelperTest, hasViewHint)
 {
-    // hasViewHint
-    SUCCEED();
+    // Test method: bool hasViewHint((const QString &scheme))
+    QString _arg0{};
+    auto result = obj->hasViewHint(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(WorkspaceHelperTest, haveViewRoutePrehandler)
 {
-    // haveViewRoutePrehandler
-    SUCCEED();
+    // Test method: bool haveViewRoutePrehandler((const QString &scheme))
+    QString _arg0{};
+    auto result = obj->haveViewRoutePrehandler(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(WorkspaceHelperTest, installWorkspaceWidgetToWindow)
 {
-    // installWorkspaceWidgetToWindow
-    SUCCEED();
+    // Test method: void installWorkspaceWidgetToWindow((const quint64 windowID))
+    EXPECT_NO_FATAL_FAILURE(obj->installWorkspaceWidgetToWindow(0));
 }
 
 TEST_F(WorkspaceHelperTest, isFocusFileViewDisabled)
 {
-    // isFocusFileViewDisabled
-    SUCCEED();
+    // Test method: bool isFocusFileViewDisabled((const QString &scheme))
+    QString _arg0{};
+    auto result = obj->isFocusFileViewDisabled(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(WorkspaceHelperTest, isRegistedTopWidget)
 {
-    // isRegistedTopWidget
-    SUCCEED();
+    // Test method: bool isRegistedTopWidget((const WorkspaceHelper::KeyType &scheme))
+    WorkspaceHelper::KeyType _arg0{};
+    auto result = obj->isRegistedTopWidget(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(WorkspaceHelperTest, laterRequestSelectFiles)
 {
-    // laterRequestSelectFiles
-    SUCCEED();
+    // Test method: void laterRequestSelectFiles((const QList<QUrl> &urls))
+    QList<QUrl> _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->laterRequestSelectFiles(_arg0));
 }
 
 TEST_F(WorkspaceHelperTest, mutex)
 {
-    // mutex
-    SUCCEED();
+    // Test getter: QMutex mutex()
+    auto result = obj->mutex();
+    EXPECT_NO_FATAL_FAILURE({ obj->mutex(); });
+
 }
 
 TEST_F(WorkspaceHelperTest, registerCustomViewProperty)
 {
-    // registerCustomViewProperty
-    SUCCEED();
+    // Test method: void registerCustomViewProperty((const QString &scheme, const QVariantMap &propertise))
+    QString _arg0{};
+    QVariantMap _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->registerCustomViewProperty(_arg0, _arg1));
 }
 
 TEST_F(WorkspaceHelperTest, registerFileView)
 {
-    // registerFileView
-    SUCCEED();
+    // Test method: void registerFileView((const QString &scheme))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->registerFileView(_arg0));
 }
 
 TEST_F(WorkspaceHelperTest, registerFocusFileViewDisabled)
 {
-    // registerFocusFileViewDisabled
-    SUCCEED();
+    // Test method: void registerFocusFileViewDisabled((const QString &scheme))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->registerFocusFileViewDisabled(_arg0));
 }
 
 TEST_F(WorkspaceHelperTest, registerLoadStrategy)
 {
-    // registerLoadStrategy
-    SUCCEED();
+    // Test method: void registerLoadStrategy((const QString &scheme, DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy strategy))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->registerLoadStrategy(_arg0, DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy()));
 }
 
 TEST_F(WorkspaceHelperTest, registerTopWidgetCreator)
 {
-    // registerTopWidgetCreator
-    SUCCEED();
+    // Test method: void registerTopWidgetCreator((const WorkspaceHelper::KeyType &scheme, const WorkspaceHelper::TopWidgetCreator &creator))
+    WorkspaceHelper::KeyType _arg0{};
+    WorkspaceHelper::TopWidgetCreator _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->registerTopWidgetCreator(_arg0, _arg1));
 }
 
 TEST_F(WorkspaceHelperTest, registerViewHint)
 {
-    // registerViewHint
-    SUCCEED();
+    // Test method: void registerViewHint((const QString &scheme, const ViewHintSpec &spec))
+    QString _arg0{};
+    ViewHintSpec _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->registerViewHint(_arg0, _arg1));
 }
 
 TEST_F(WorkspaceHelperTest, registeredFileView)
 {
-    // registeredFileView
-    SUCCEED();
+    // Test method: bool registeredFileView((const QString &scheme))
+    QString _arg0{};
+    auto result = obj->registeredFileView(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(WorkspaceHelperTest, reigsterViewRoutePrehandler)
 {
-    // reigsterViewRoutePrehandler
-    SUCCEED();
+    // Test method: bool reigsterViewRoutePrehandler((const QString &scheme, const FileViewRoutePrehaldler prehandler))
+    QString _arg0{};
+    auto result = obj->reigsterViewRoutePrehandler(_arg0, FileViewRoutePrehaldler());
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(WorkspaceHelperTest, requestSelectFilesDelayMs)
 {
-    // requestSelectFilesDelayMs
-    SUCCEED();
+    // Test method: int requestSelectFilesDelayMs((int urlCount))
+    auto result = obj->requestSelectFilesDelayMs(0);
+    EXPECT_GE(result, 0);
+
 }
 
 TEST_F(WorkspaceHelperTest, reverseSelect)
 {
-    // reverseSelect
-    SUCCEED();
+    // Test method: void reverseSelect((quint64 windowId))
+    EXPECT_NO_FATAL_FAILURE(obj->reverseSelect(0));
 }
 
 TEST_F(WorkspaceHelperTest, roleDisplayName)
 {
-    // roleDisplayName
-    SUCCEED();
+    // Test method: QString roleDisplayName((quint64 windowId, dfmbase::Global::ItemRoles role))
+    auto result = obj->roleDisplayName(0, {});
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(WorkspaceHelperTest, selectAll)
 {
-    // selectAll
-    SUCCEED();
+    // Test method: void selectAll((quint64 windowId))
+    EXPECT_NO_FATAL_FAILURE(obj->selectAll(0));
 }
 
 TEST_F(WorkspaceHelperTest, selectFiles)
 {
-    // selectFiles
-    SUCCEED();
+    // Test method: void selectFiles((quint64 windowId, const QList<QUrl> &files))
+    QList<QUrl> _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->selectFiles(0, _arg1));
 }
 
 TEST_F(WorkspaceHelperTest, setAlwaysOpenInCurrentWindow)
 {
-    // setAlwaysOpenInCurrentWindow
-    SUCCEED();
+    // Test setter: void setAlwaysOpenInCurrentWindow((const quint64 windowID))
+    EXPECT_NO_FATAL_FAILURE(obj->setAlwaysOpenInCurrentWindow(0));
 }
 
 TEST_F(WorkspaceHelperTest, setCustomTopWidgetVisible)
 {
-    // setCustomTopWidgetVisible
-    SUCCEED();
+    // Test setter: void setCustomTopWidgetVisible((quint64 windowId, const QString &scheme, bool visible))
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->setCustomTopWidgetVisible(0, _arg1, false));
 }
 
 TEST_F(WorkspaceHelperTest, setEnabledSelectionModes)
 {
-    // setEnabledSelectionModes
-    SUCCEED();
+    // Test setter: void setEnabledSelectionModes((const quint64 windowID, const QList<QAbstractItemView::SelectionMode> &modes))
+    QList<QAbstractItemView::SelectionMode> _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->setEnabledSelectionModes(0, _arg1));
 }
 
 TEST_F(WorkspaceHelperTest, setFileViewStateValue)
 {
-    // setFileViewStateValue
-    SUCCEED();
+    // Test setter: void setFileViewStateValue((const QUrl &url, const QString &key, const QVariant &value))
+    QUrl _arg0{};
+    QString _arg1{};
+    QVariant _arg2{};
+    EXPECT_NO_FATAL_FAILURE(obj->setFileViewStateValue(_arg0, _arg1, _arg2));
 }
 
 TEST_F(WorkspaceHelperTest, setFilterCallback)
 {
-    // setFilterCallback
-    SUCCEED();
+    // Test setter: void setFilterCallback((quint64 windowId, const QUrl &url, const FileViewFilterCallback callback))
+    QUrl _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->setFilterCallback(0, _arg1, FileViewFilterCallback()));
 }
 
 TEST_F(WorkspaceHelperTest, setFilterData)
 {
-    // setFilterData
-    SUCCEED();
+    // Test setter: void setFilterData((quint64 windowId, const QUrl &url, const QVariant &data))
+    QUrl _arg1{};
+    QVariant _arg2{};
+    EXPECT_NO_FATAL_FAILURE(obj->setFilterData(0, _arg1, _arg2));
 }
 
 TEST_F(WorkspaceHelperTest, setGroupingStrategy)
 {
-    // setGroupingStrategy
-    SUCCEED();
+    // Test setter: void setGroupingStrategy((quint64 windowId, const QString &strategyName))
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->setGroupingStrategy(0, _arg1));
 }
 
 TEST_F(WorkspaceHelperTest, setNameFilter)
 {
-    // setNameFilter
-    SUCCEED();
+    // Test setter: void setNameFilter((const quint64 windowID, const QStringList &filter))
+    QStringList _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->setNameFilter(0, _arg1));
 }
 
 TEST_F(WorkspaceHelperTest, setReadOnly)
 {
-    // setReadOnly
-    SUCCEED();
+    // Test setter: void setReadOnly((const quint64 windowID, const bool readOnly))
+    EXPECT_NO_FATAL_FAILURE(obj->setReadOnly(0, false));
 }
 
 TEST_F(WorkspaceHelperTest, setSelectionMode)
 {
-    // setSelectionMode
-    SUCCEED();
+    // Test setter: void setSelectionMode((const quint64 windowID, const QAbstractItemView::SelectionMode &mode))
+    QAbstractItemView::SelectionMode _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->setSelectionMode(0, _arg1));
 }
 
 TEST_F(WorkspaceHelperTest, setSort)
 {
-    // setSort
-    SUCCEED();
+    // Test setter: void setSort((quint64 windowId, Global::ItemRoles role))
+    EXPECT_NO_FATAL_FAILURE(obj->setSort(0, Global::ItemRoles()));
 }
 
 TEST_F(WorkspaceHelperTest, setUndoFiles)
 {
-    // setUndoFiles
-    SUCCEED();
+    // Test setter: void setUndoFiles((const QList<QUrl> &files))
+    QList<QUrl> _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->setUndoFiles(_arg0));
 }
 
 TEST_F(WorkspaceHelperTest, setViewDragDropMode)
 {
-    // setViewDragDropMode
-    SUCCEED();
+    // Test setter: void setViewDragDropMode((const quint64 windowID, const QAbstractItemView::DragDropMode mode))
+    EXPECT_NO_FATAL_FAILURE(obj->setViewDragDropMode(0, QAbstractItemView::DragDropMode()));
 }
 
 TEST_F(WorkspaceHelperTest, setViewDragEnabled)
 {
-    // setViewDragEnabled
-    SUCCEED();
+    // Test setter: void setViewDragEnabled((const quint64 windowID, const bool enable))
+    EXPECT_NO_FATAL_FAILURE(obj->setViewDragEnabled(0, false));
 }
 
 TEST_F(WorkspaceHelperTest, setViewFilter)
 {
-    // setViewFilter
-    SUCCEED();
+    // Test setter: void setViewFilter((const quint64 windowID, const QDir::Filters filter))
+    EXPECT_NO_FATAL_FAILURE(obj->setViewFilter(0, QDir::Filters()));
 }
 
 TEST_F(WorkspaceHelperTest, setWorkspaceMenuScene)
 {
-    // setWorkspaceMenuScene
-    SUCCEED();
+    // Test setter: void setWorkspaceMenuScene((const QString &scheme, const QString &scene))
+    QString _arg0{};
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->setWorkspaceMenuScene(_arg0, _arg1));
 }
 
 TEST_F(WorkspaceHelperTest, sortRole)
 {
-    // sortRole
-    SUCCEED();
+    // Test method: Global::ItemRoles sortRole((quint64 windowId))
+    auto result = obj->sortRole(0);
+    EXPECT_GE(static_cast<int>(result), 0);
+
 }
 
 TEST_F(WorkspaceHelperTest, switchViewMode)
 {
-    // switchViewMode
-    SUCCEED();
+    // Test method: void switchViewMode((quint64 windowId, int viewMode))
+    EXPECT_NO_FATAL_FAILURE(obj->switchViewMode(0, 0));
 }
 
 TEST_F(WorkspaceHelperTest, transformViewModeUrl)
 {
-    // transformViewModeUrl
-    SUCCEED();
+    // Test method: QUrl transformViewModeUrl((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->transformViewModeUrl(_arg0);
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(WorkspaceHelperTest, updateRootFile)
 {
-    // updateRootFile
-    SUCCEED();
+    // Test method: void updateRootFile((const QList<QUrl> urls))
+    EXPECT_NO_FATAL_FAILURE(obj->updateRootFile(QList<QUrl>()));
 }
 
 TEST_F(WorkspaceHelperTest, viewRoutePrehandler)
 {
-    // viewRoutePrehandler
-    SUCCEED();
-}
+    // Test method: FileViewRoutePrehaldler viewRoutePrehandler((const QString &scheme))
+    QString _arg0{};
+    auto result = obj->viewRoutePrehandler(_arg0);
+    EXPECT_NO_FATAL_FAILURE({ obj->viewRoutePrehandler(_arg0); });
 
+}

@@ -4,25 +4,49 @@
 
 /**
  * @file test_recordsheetpath.cpp
- * @brief Unit tests for recordSheetPath Mid-priority methods
+ * @brief Unit tests for recordSheetPath methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class recordSheetPathTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "apps/dde-file-manager-preview/pluginpreviews/pdf-preview/pdfwidget.h"
+
+#include <QTest>
+
+using namespace src;
+
+class recordSheetPathTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new recordSheetPath();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    recordSheetPath *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(recordSheetPathTest, indexOfFilePath)
 {
-    // indexOfFilePath
-    SUCCEED();
+    // Test method: int indexOfFilePath((const QString &filePath))
+    QString _arg0{};
+    auto result = obj->indexOfFilePath(_arg0);
+    EXPECT_GE(result, 0);
+
 }
 
 TEST_F(recordSheetPathTest, removeSheet)
 {
-    // removeSheet
-    SUCCEED();
+    // Test method: void removeSheet((DocSheet *sheet))
+    EXPECT_NO_FATAL_FAILURE(obj->removeSheet(nullptr));
 }

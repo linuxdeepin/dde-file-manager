@@ -3,45 +3,65 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_collectiontitlebarprivate_1.cpp
- * @brief Unit tests for CollectionTitleBarPrivate Low-priority methods
+ * @file test_collectiontitlebarprivate_1.cpp
+ * @brief Unit tests for CollectionTitleBarPrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class CollectionTitleBarPrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "view/collectiontitlebar.h"
+
+#include <QTest>
+
+using namespace ddplugin_organizer;
+
+class CollectionTitleBarPrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new CollectionTitleBarPrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    CollectionTitleBarPrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(CollectionTitleBarPrivateTest, modifyTitleName)
 {
-    // modifyTitleName
-    SUCCEED();
+    // Test method: void modifyTitleName(())
+    EXPECT_NO_FATAL_FAILURE(obj->modifyTitleName());
 }
 
 TEST_F(CollectionTitleBarPrivateTest, sendRequestClose)
 {
-    // sendRequestClose
-    SUCCEED();
+    // Test method: void sendRequestClose(())
+    EXPECT_NO_FATAL_FAILURE(obj->sendRequestClose());
 }
 
 TEST_F(CollectionTitleBarPrivateTest, titleNameModified)
 {
-    // titleNameModified
-    SUCCEED();
+    // Test method: void titleNameModified(())
+    EXPECT_NO_FATAL_FAILURE(obj->titleNameModified());
 }
 
 TEST_F(CollectionTitleBarPrivateTest, updateDisplayName)
 {
-    // updateDisplayName
-    SUCCEED();
+    // Test method: void updateDisplayName(())
+    EXPECT_NO_FATAL_FAILURE(obj->updateDisplayName());
 }
 
 TEST_F(CollectionTitleBarPrivateTest, CollectionTitleBarPrivate_Destructor)
 {
-    // ~CollectionTitleBarPrivate
-    SUCCEED();
+    // Test method:  ~CollectionTitleBarPrivate(())
+    EXPECT_NO_FATAL_FAILURE({ CollectionTitleBarPrivate *tmp = new CollectionTitleBarPrivate(); delete tmp; });
 }
-

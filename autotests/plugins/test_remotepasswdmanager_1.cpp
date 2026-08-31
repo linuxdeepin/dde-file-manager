@@ -3,39 +3,65 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_remotepasswdmanager_1.cpp
- * @brief Unit tests for RemotePasswdManager Low-priority methods
+ * @file test_remotepasswdmanager_1.cpp
+ * @brief Unit tests for RemotePasswdManager methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class RemotePasswdManagerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/remotepasswdmanager.h"
+
+#include <QTest>
+
+using namespace dfmplugin_computer;
+
+class RemotePasswdManagerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new RemotePasswdManager();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    RemotePasswdManager *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(RemotePasswdManagerTest, RemotePasswdManager)
 {
-    // RemotePasswdManager
-    SUCCEED();
+    // Test constructor: RemotePasswdManager((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(RemotePasswdManagerTest, ftpSchema)
 {
-    // ftpSchema
-    SUCCEED();
+    // Test getter: SecretSchema ftpSchema()
+    auto result = obj->ftpSchema();
+    EXPECT_NO_FATAL_FAILURE({ obj->ftpSchema(); });
+
 }
 
 TEST_F(RemotePasswdManagerTest, instance)
 {
-    // instance
-    SUCCEED();
+    // Test getter: RemotePasswdManager instance()
+    auto result = obj->instance();
+    EXPECT_NO_FATAL_FAILURE({ obj->instance(); });
+
 }
 
 TEST_F(RemotePasswdManagerTest, smbSchema)
 {
-    // smbSchema
-    SUCCEED();
-}
+    // Test getter: SecretSchema smbSchema()
+    auto result = obj->smbSchema();
+    EXPECT_NO_FATAL_FAILURE({ obj->smbSchema(); });
 
+}

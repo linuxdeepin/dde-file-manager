@@ -353,8 +353,7 @@ TEST_F(TestLoadMonitor, StartStop_TimerRunningState)
 
 TEST_F(TestLoadMonitor, Stop_WhenNotRunning_NoCrash)
 {
-    monitor->stop();
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ monitor->stop(); });
 }
 
 // ============================================================================
@@ -394,9 +393,10 @@ TEST_F(TestPowerMonitor, Construction_DefaultValues)
 
 TEST_F(TestPowerMonitor, StartStop_NoCrash)
 {
-    monitor->start();
-    monitor->stop();
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({
+        monitor->start();
+        monitor->stop();
+    });
 }
 
 // --- onBatteryChanged delay logic ---
@@ -502,9 +502,10 @@ TEST_F(TestIdleMonitor, Construction_DefaultValues)
 
 TEST_F(TestIdleMonitor, StartStop_NoCrash)
 {
-    monitor->start();
-    monitor->stop();
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({
+        monitor->start();
+        monitor->stop();
+    });
 }
 
 TEST_F(TestIdleMonitor, Stop_ResetsIdle)
@@ -557,16 +558,16 @@ TEST_F(TestEnvDetector, Construction_DefaultState)
 
 TEST_F(TestEnvDetector, SetDataPath_NoCrash)
 {
-    detector->setDataPath(QDir::homePath());
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ detector->setDataPath(QDir::homePath()); });
 }
 
 TEST_F(TestEnvDetector, StartStop_NoCrash)
 {
-    detector->setDataPath(QDir::homePath());
-    detector->start();
-    detector->stop();
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({
+        detector->setDataPath(QDir::homePath());
+        detector->start();
+        detector->stop();
+    });
 }
 
 TEST_F(TestEnvDetector, EnvStateChanged_EmittedOnStart)

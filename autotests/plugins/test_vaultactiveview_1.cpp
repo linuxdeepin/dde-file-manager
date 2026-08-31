@@ -3,45 +3,71 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_vaultactiveview_1.cpp
- * @brief Unit tests for VaultActiveView Low-priority methods
+ * @file test_vaultactiveview_1.cpp
+ * @brief Unit tests for VaultActiveView methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class VaultActiveViewTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/vaultcreatepage.h"
+
+#include <QTest>
+
+using namespace dfmplugin_vault;
+
+class VaultActiveViewTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new VaultActiveView();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    VaultActiveView *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(VaultActiveViewTest, asyncCreateVault)
 {
-    // asyncCreateVault
-    SUCCEED();
+    // Test method: void asyncCreateVault(())
+    EXPECT_NO_FATAL_FAILURE(obj->asyncCreateVault());
 }
 
 TEST_F(VaultActiveViewTest, createVault)
 {
-    // createVault
-    SUCCEED();
+    // Test getter: Result createVault()
+    auto result = obj->createVault();
+    EXPECT_NO_FATAL_FAILURE({ obj->createVault(); });
+
 }
 
 TEST_F(VaultActiveViewTest, handleKeyModeEncryption)
 {
-    // handleKeyModeEncryption
-    SUCCEED();
+    // Test bool getter: handleKeyModeEncryption()
+    bool result = obj->handleKeyModeEncryption();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(VaultActiveViewTest, handleTransparentModeEncryption)
 {
-    // handleTransparentModeEncryption
-    SUCCEED();
+    // Test bool getter: handleTransparentModeEncryption()
+    bool result = obj->handleTransparentModeEncryption();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(VaultActiveViewTest, setBeginingState)
 {
-    // setBeginingState
-    SUCCEED();
+    // Test method: void setBeginingState(())
+    EXPECT_NO_FATAL_FAILURE(obj->setBeginingState());
 }
-

@@ -4,31 +4,56 @@
 
 /**
  * @file test_fileviewprivate.cpp
- * @brief Unit tests for FileViewPrivate Mid-priority methods
+ * @brief Unit tests for FileViewPrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class FileViewPrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/private/fileview_p.h"
+
+#include <QTest>
+
+using namespace dfmplugin_workspace;
+
+class FileViewPrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new FileViewPrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FileViewPrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(FileViewPrivateTest, initListModeView)
 {
-    // initListModeView
-    SUCCEED();
+    // Test method: void initListModeView(())
+    EXPECT_NO_FATAL_FAILURE(obj->initListModeView());
 }
 
 TEST_F(FileViewPrivateTest, loadViewMode)
 {
-    // loadViewMode
-    SUCCEED();
+    // Test method: void loadViewMode((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->loadViewMode(_arg0));
 }
 
 TEST_F(FileViewPrivateTest, shouldPersistState)
 {
-    // shouldPersistState
-    SUCCEED();
+    // Test method: bool shouldPersistState((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->shouldPersistState(_arg0);
+    EXPECT_FALSE(result);
+
 }

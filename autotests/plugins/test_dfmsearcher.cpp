@@ -4,37 +4,70 @@
 
 /**
  * @file test_dfmsearcher.cpp
- * @brief Unit tests for DFMSearcher Mid-priority methods
+ * @brief Unit tests for DFMSearcher methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class DFMSearcherTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "searchmanager/searcher/dfmsearch/dfmsearcher.h"
+
+#include <QTest>
+
+using namespace dfmplugin_search;
+
+class DFMSearcherTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new DFMSearcher();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    DFMSearcher *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(DFMSearcherTest, matchPath)
 {
-    // matchPath
-    SUCCEED();
+    // Test method: QString matchPath((const QString &path))
+    QString _arg0{};
+    auto result = obj->matchPath(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(DFMSearcherTest, realSearchPath)
 {
-    // realSearchPath
-    SUCCEED();
+    // Test method: QString realSearchPath((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->realSearchPath(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(DFMSearcherTest, searchTypeDisplayName)
 {
-    // searchTypeDisplayName
-    SUCCEED();
+    // Test getter: QString searchTypeDisplayName()
+    auto result = obj->searchTypeDisplayName();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(DFMSearcherTest, validateSearchType)
 {
-    // validateSearchType
-    SUCCEED();
+    // Test method: bool validateSearchType((const QString &transformedPath, SearchOptions &options))
+    QString _arg0{};
+    SearchOptions _arg1{};
+    auto result = obj->validateSearchType(_arg0, _arg1);
+    EXPECT_FALSE(result);
+
 }

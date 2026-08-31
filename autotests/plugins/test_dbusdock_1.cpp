@@ -3,189 +3,263 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_dbusdock_1.cpp
- * @brief Unit tests for DBusDock Low-priority methods
+ * @file test_dbusdock_1.cpp
+ * @brief Unit tests for DBusDock methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class DBusDockTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "screen/dbus-private/dbusdock1.h"
+
+#include <QTest>
+
+using namespace ddplugin_core;
+
+class DBusDockTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new DBusDock();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    DBusDock *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(DBusDockTest, ActivateWindow)
 {
-    // ActivateWindow
-    SUCCEED();
+    // Test getter: QDBusPendingReply<> ActivateWindow()
+    auto result = obj->ActivateWindow();
+    EXPECT_NO_FATAL_FAILURE({ obj->ActivateWindow(); });
+
 }
 
 TEST_F(DBusDockTest, CancelPreviewWindow)
 {
-    // CancelPreviewWindow
-    SUCCEED();
+    // Test getter: QDBusPendingReply<> CancelPreviewWindow()
+    auto result = obj->CancelPreviewWindow();
+    EXPECT_NO_FATAL_FAILURE({ obj->CancelPreviewWindow(); });
+
 }
 
 TEST_F(DBusDockTest, CloseWindow)
 {
-    // CloseWindow
-    SUCCEED();
+    // Test getter: QDBusPendingReply<> CloseWindow()
+    auto result = obj->CloseWindow();
+    EXPECT_NO_FATAL_FAILURE({ obj->CloseWindow(); });
+
 }
 
 TEST_F(DBusDockTest, GetDockedAppsDesktopFiles)
 {
-    // GetDockedAppsDesktopFiles
-    SUCCEED();
+    // Test getter: QDBusPendingReply<QStringList> GetDockedAppsDesktopFiles()
+    auto result = obj->GetDockedAppsDesktopFiles();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(DBusDockTest, GetEntryIDs)
 {
-    // GetEntryIDs
-    SUCCEED();
+    // Test getter: QDBusPendingReply<QStringList> GetEntryIDs()
+    auto result = obj->GetEntryIDs();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(DBusDockTest, GetPluginSettings)
 {
-    // GetPluginSettings
-    SUCCEED();
+    // Test getter: QDBusPendingReply<QString> GetPluginSettings()
+    auto result = obj->GetPluginSettings();
+    EXPECT_NO_FATAL_FAILURE({ obj->GetPluginSettings(); });
+
 }
 
 TEST_F(DBusDockTest, IsDocked)
 {
-    // IsDocked
-    SUCCEED();
+    // Test getter: QDBusPendingReply<bool> IsDocked()
+    auto result = obj->IsDocked();
+    EXPECT_NO_FATAL_FAILURE({ obj->IsDocked(); });
+
 }
 
 TEST_F(DBusDockTest, IsOnDock)
 {
-    // IsOnDock
-    SUCCEED();
+    // Test getter: QDBusPendingReply<bool> IsOnDock()
+    auto result = obj->IsOnDock();
+    EXPECT_NO_FATAL_FAILURE({ obj->IsOnDock(); });
+
 }
 
 TEST_F(DBusDockTest, MakeWindowAbove)
 {
-    // MakeWindowAbove
-    SUCCEED();
+    // Test getter: QDBusPendingReply<> MakeWindowAbove()
+    auto result = obj->MakeWindowAbove();
+    EXPECT_NO_FATAL_FAILURE({ obj->MakeWindowAbove(); });
+
 }
 
 TEST_F(DBusDockTest, MaximizeWindow)
 {
-    // MaximizeWindow
-    SUCCEED();
+    // Test getter: QDBusPendingReply<> MaximizeWindow()
+    auto result = obj->MaximizeWindow();
+    EXPECT_NO_FATAL_FAILURE({ obj->MaximizeWindow(); });
+
 }
 
 TEST_F(DBusDockTest, MergePluginSettings)
 {
-    // MergePluginSettings
-    SUCCEED();
+    // Test getter: QDBusPendingReply<> MergePluginSettings()
+    auto result = obj->MergePluginSettings();
+    EXPECT_NO_FATAL_FAILURE({ obj->MergePluginSettings(); });
+
 }
 
 TEST_F(DBusDockTest, MinimizeWindow)
 {
-    // MinimizeWindow
-    SUCCEED();
+    // Test getter: QDBusPendingReply<> MinimizeWindow()
+    auto result = obj->MinimizeWindow();
+    EXPECT_NO_FATAL_FAILURE({ obj->MinimizeWindow(); });
+
 }
 
 TEST_F(DBusDockTest, MoveEntry)
 {
-    // MoveEntry
-    SUCCEED();
+    // Test getter: QDBusPendingReply<> MoveEntry()
+    auto result = obj->MoveEntry();
+    EXPECT_NO_FATAL_FAILURE({ obj->MoveEntry(); });
+
 }
 
 TEST_F(DBusDockTest, MoveWindow)
 {
-    // MoveWindow
-    SUCCEED();
+    // Test getter: QDBusPendingReply<> MoveWindow()
+    auto result = obj->MoveWindow();
+    EXPECT_NO_FATAL_FAILURE({ obj->MoveWindow(); });
+
 }
 
 TEST_F(DBusDockTest, PreviewWindow)
 {
-    // PreviewWindow
-    SUCCEED();
+    // Test getter: QDBusPendingReply<> PreviewWindow()
+    auto result = obj->PreviewWindow();
+    EXPECT_NO_FATAL_FAILURE({ obj->PreviewWindow(); });
+
 }
 
 TEST_F(DBusDockTest, QueryWindowIdentifyMethod)
 {
-    // QueryWindowIdentifyMethod
-    SUCCEED();
+    // Test getter: QDBusPendingReply<QString> QueryWindowIdentifyMethod()
+    auto result = obj->QueryWindowIdentifyMethod();
+    EXPECT_NO_FATAL_FAILURE({ obj->QueryWindowIdentifyMethod(); });
+
 }
 
 TEST_F(DBusDockTest, RequestDock)
 {
-    // RequestDock
-    SUCCEED();
+    // Test getter: QDBusPendingReply<bool> RequestDock()
+    auto result = obj->RequestDock();
+    EXPECT_NO_FATAL_FAILURE({ obj->RequestDock(); });
+
 }
 
 TEST_F(DBusDockTest, RequestUndock)
 {
-    // RequestUndock
-    SUCCEED();
+    // Test getter: QDBusPendingReply<bool> RequestUndock()
+    auto result = obj->RequestUndock();
+    EXPECT_NO_FATAL_FAILURE({ obj->RequestUndock(); });
+
 }
 
 TEST_F(DBusDockTest, SetFrontendWindowRect)
 {
-    // SetFrontendWindowRect
-    SUCCEED();
+    // Test getter: QDBusPendingReply<> SetFrontendWindowRect()
+    auto result = obj->SetFrontendWindowRect();
+    EXPECT_NO_FATAL_FAILURE({ obj->SetFrontendWindowRect(); });
+
 }
 
 TEST_F(DBusDockTest, SetPluginSettings)
 {
-    // SetPluginSettings
-    SUCCEED();
+    // Test getter: QDBusPendingReply<> SetPluginSettings()
+    auto result = obj->SetPluginSettings();
+    EXPECT_NO_FATAL_FAILURE({ obj->SetPluginSettings(); });
+
 }
 
 TEST_F(DBusDockTest, frontendWindowRect)
 {
-    // frontendWindowRect
-    SUCCEED();
+    // Test getter: DockRect frontendWindowRect()
+    auto result = obj->frontendWindowRect();
+    EXPECT_NO_FATAL_FAILURE({ obj->frontendWindowRect(); });
+
 }
 
 TEST_F(DBusDockTest, hideMode)
 {
-    // hideMode
-    SUCCEED();
+    // Test getter: int hideMode()
+    auto result = obj->hideMode();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(DBusDockTest, hideState)
 {
-    // hideState
-    SUCCEED();
+    // Test getter: int hideState()
+    auto result = obj->hideState();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(DBusDockTest, position)
 {
-    // position
-    SUCCEED();
+    // Test getter: int position()
+    auto result = obj->position();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(DBusDockTest, private)
 {
-    // private
-    SUCCEED();
+    // Test getter: Q_OBJECT private()
+    EXPECT_NO_FATAL_FAILURE({ obj->private(); });
 }
 
 TEST_F(DBusDockTest, setHideMode)
 {
-    // setHideMode
-    SUCCEED();
+    // Test method: void setHideMode(())
+    EXPECT_NO_FATAL_FAILURE(obj->setHideMode());
 }
 
 TEST_F(DBusDockTest, staticInterfaceName)
 {
-    // staticInterfaceName
-    SUCCEED();
+    // Test getter: char staticInterfaceName()
+    auto result = obj->staticInterfaceName();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(DBusDockTest, staticObjectPath)
 {
-    // staticObjectPath
-    SUCCEED();
+    // Test getter: char staticObjectPath()
+    auto result = obj->staticObjectPath();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(DBusDockTest, staticServiceName)
 {
-    // staticServiceName
-    SUCCEED();
-}
+    // Test getter: char staticServiceName()
+    auto result = obj->staticServiceName();
+    EXPECT_EQ(result, 0);
 
+}

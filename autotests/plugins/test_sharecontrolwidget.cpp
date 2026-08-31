@@ -4,49 +4,75 @@
 
 /**
  * @file test_sharecontrolwidget.cpp
- * @brief Unit tests for ShareControlWidget Mid-priority methods
+ * @brief Unit tests for ShareControlWidget methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ShareControlWidgetTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "widget/sharecontrolwidget.h"
+
+#include <QTest>
+
+using namespace dfmplugin_dirshare;
+
+class ShareControlWidgetTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ShareControlWidget();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ShareControlWidget *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ShareControlWidgetTest, init)
 {
-    // init
-    SUCCEED();
+    // Test method: void init(())
+    EXPECT_NO_FATAL_FAILURE(obj->init());
 }
 
 TEST_F(ShareControlWidgetTest, setupUi)
 {
-    // setupUi
-    SUCCEED();
+    // Test setter: void setupUi((bool disableState))
+    EXPECT_NO_FATAL_FAILURE(obj->setupUi(false));
 }
 
 TEST_F(ShareControlWidgetTest, shareFolder)
 {
-    // shareFolder
-    SUCCEED();
+    // Test bool getter: shareFolder()
+    bool result = obj->shareFolder();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(ShareControlWidgetTest, updateWidgetStatus)
 {
-    // updateWidgetStatus
-    SUCCEED();
+    // Test method: void updateWidgetStatus((const QString &filePath))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->updateWidgetStatus(_arg0));
 }
 
 TEST_F(ShareControlWidgetTest, validateShareName)
 {
-    // validateShareName
-    SUCCEED();
+    // Test bool getter: validateShareName()
+    bool result = obj->validateShareName();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(ShareControlWidgetTest, ShareControlWidget)
 {
-    // ShareControlWidget
-    SUCCEED();
+    // Test constructor: ShareControlWidget((const QUrl &url, bool disableState, QWidget *parent))
+    ASSERT_NE(obj, nullptr);
 }

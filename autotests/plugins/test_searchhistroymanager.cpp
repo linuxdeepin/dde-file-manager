@@ -4,43 +4,68 @@
 
 /**
  * @file test_searchhistroymanager.cpp
- * @brief Unit tests for SearchHistroyManager Mid-priority methods
+ * @brief Unit tests for SearchHistroyManager methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class SearchHistroyManagerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/searchhistroymanager.h"
+
+#include <QTest>
+
+using namespace dfmplugin_titlebar;
+
+class SearchHistroyManagerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new SearchHistroyManager();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    SearchHistroyManager *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(SearchHistroyManagerTest, clearHistory)
 {
-    // clearHistory
-    SUCCEED();
+    // Test method: void clearHistory((const QStringList &schemeFilters))
+    QStringList _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->clearHistory(_arg0));
 }
 
 TEST_F(SearchHistroyManagerTest, clearIPHistory)
 {
-    // clearIPHistory
-    SUCCEED();
+    // Test method: void clearIPHistory(())
+    EXPECT_NO_FATAL_FAILURE(obj->clearIPHistory());
 }
 
 TEST_F(SearchHistroyManagerTest, removeSearchHistory)
 {
-    // removeSearchHistory
-    SUCCEED();
+    // Test method: bool removeSearchHistory((QString keyword))
+    auto result = obj->removeSearchHistory(QString());
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(SearchHistroyManagerTest, writeIntoIPHistory)
 {
-    // writeIntoIPHistory
-    SUCCEED();
+    // Test method: void writeIntoIPHistory((const QString &ipAddr))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->writeIntoIPHistory(_arg0));
 }
 
 TEST_F(SearchHistroyManagerTest, writeIntoSearchHistory)
 {
-    // writeIntoSearchHistory
-    SUCCEED();
+    // Test method: void writeIntoSearchHistory((QString keyword))
+    EXPECT_NO_FATAL_FAILURE(obj->writeIntoSearchHistory(QString()));
 }

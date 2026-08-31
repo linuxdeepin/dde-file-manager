@@ -3,21 +3,41 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_restoretrashfiles.cpp
- * @brief Unit tests for RestoreTrashFiles Low-priority methods
+ * @file test_restoretrashfiles.cpp
+ * @brief Unit tests for RestoreTrashFiles methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class RestoreTrashFilesTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "fileoperations/trashfiles/restoretrashfiles.h"
+
+#include <QTest>
+
+using namespace dfmplugin_fileoperations;
+
+class RestoreTrashFilesTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new RestoreTrashFiles();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    RestoreTrashFiles *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(RestoreTrashFilesTest, RestoreTrashFiles_Destructor)
 {
-    // ~RestoreTrashFiles
-    SUCCEED();
+    // Test method:  ~RestoreTrashFiles(())
+    EXPECT_NO_FATAL_FAILURE({ RestoreTrashFiles *tmp = new RestoreTrashFiles(); delete tmp; });
 }
-

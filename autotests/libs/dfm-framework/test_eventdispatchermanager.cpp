@@ -4,25 +4,50 @@
 
 /**
  * @file test_eventdispatchermanager.cpp
- * @brief Unit tests for EventDispatcherManager Mid-priority methods
+ * @brief Unit tests for EventDispatcherManager methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class EventDispatcherManagerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "dfm-framework/event/eventdispatcher.h"
+
+#include <QTest>
+
+using namespace include;
+
+class EventDispatcherManagerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new EventDispatcherManager();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    EventDispatcherManager *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(EventDispatcherManagerTest, removeGlobalEventFilter)
 {
-    // removeGlobalEventFilter
-    SUCCEED();
+    // Test method: bool removeGlobalEventFilter((QObject *obj))
+    auto result = obj->removeGlobalEventFilter(nullptr);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(EventDispatcherManagerTest, unsubscribe)
 {
-    // unsubscribe
-    SUCCEED();
+    // Test method: bool unsubscribe((EventType type))
+    auto result = obj->unsubscribe(EventType());
+    EXPECT_FALSE(result);
+
 }

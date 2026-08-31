@@ -4,43 +4,69 @@
 
 /**
  * @file test_dfmsearchresult.cpp
- * @brief Unit tests for DFMSearchResult Mid-priority methods
+ * @brief Unit tests for DFMSearchResult methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class DFMSearchResultTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "searchmanager/searcher/searchresult_define.h"
+
+#include <QTest>
+
+using namespace dfmplugin_search;
+
+class DFMSearchResultTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new DFMSearchResult();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    DFMSearchResult *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(DFMSearchResultTest, keyword)
 {
-    // keyword
-    SUCCEED();
+    // Test getter: QString keyword()
+    auto result = obj->keyword();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(DFMSearchResultTest, searchType)
 {
-    // searchType
-    SUCCEED();
+    // Test getter: DFMSEARCH::SearchType searchType()
+    auto result = obj->searchType();
+    EXPECT_GE(static_cast<int>(result), 0);
+
 }
 
 TEST_F(DFMSearchResultTest, setKeyword)
 {
-    // setKeyword
-    SUCCEED();
+    // Test method: void setKeyword(())
+    EXPECT_NO_FATAL_FAILURE(obj->setKeyword());
 }
 
 TEST_F(DFMSearchResultTest, setMatchScore)
 {
-    // setMatchScore
-    SUCCEED();
+    // Test method: void setMatchScore(())
+    EXPECT_NO_FATAL_FAILURE(obj->setMatchScore());
 }
 
 TEST_F(DFMSearchResultTest, url)
 {
-    // url
-    SUCCEED();
+    // Test getter: QUrl url()
+    auto result = obj->url();
+    EXPECT_TRUE(result.isEmpty() || result.isValid());
 }

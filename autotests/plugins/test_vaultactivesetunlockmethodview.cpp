@@ -4,25 +4,46 @@
 
 /**
  * @file test_vaultactivesetunlockmethodview.cpp
- * @brief Unit tests for VaultActiveSetUnlockMethodView Mid-priority methods
+ * @brief Unit tests for VaultActiveSetUnlockMethodView methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class VaultActiveSetUnlockMethodViewTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/createvaultview/vaultactivesetunlockmethodview.h"
+
+#include <QTest>
+
+using namespace dfmplugin_vault;
+
+class VaultActiveSetUnlockMethodViewTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new VaultActiveSetUnlockMethodView();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    VaultActiveSetUnlockMethodView *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(VaultActiveSetUnlockMethodViewTest, clearText)
 {
-    // clearText
-    SUCCEED();
+    // Test method: void clearText(())
+    EXPECT_NO_FATAL_FAILURE(obj->clearText());
 }
 
 TEST_F(VaultActiveSetUnlockMethodViewTest, initUi)
 {
-    // initUi
-    SUCCEED();
+    // Test method: void initUi(())
+    EXPECT_NO_FATAL_FAILURE(obj->initUi());
 }

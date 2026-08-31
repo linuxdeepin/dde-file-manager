@@ -3,45 +3,72 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_low_vfsmonitorfilesystemwatcherprivate.cpp
- * @brief Unit tests for VfsMonitorFileSystemWatcherPrivate Low-priority methods
+ * @file test_low_vfsmonitorfilesystemwatcherprivate.cpp
+ * @brief Unit tests for VfsMonitorFileSystemWatcherPrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class VfsMonitorFileSystemWatcherPrivateLowTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "services/textindex/fsmonitor/vfsmonitorwatcher.h"
+
+#include <QTest>
+
+using namespace src;
+
+class VfsMonitorFileSystemWatcherPrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new VfsMonitorFileSystemWatcherPrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    VfsMonitorFileSystemWatcherPrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
-TEST_F(VfsMonitorFileSystemWatcherPrivateLowTest, attemptReconnect)
+TEST_F(VfsMonitorFileSystemWatcherPrivateTest, attemptReconnect)
 {
-    // attemptReconnect
-    SUCCEED();
+    // Test method: void attemptReconnect(())
+    EXPECT_NO_FATAL_FAILURE(obj->attemptReconnect());
 }
 
-TEST_F(VfsMonitorFileSystemWatcherPrivateLowTest, establishConnection)
+TEST_F(VfsMonitorFileSystemWatcherPrivateTest, establishConnection)
 {
-    // establishConnection
-    SUCCEED();
+    // Test bool getter: establishConnection()
+    bool result = obj->establishConnection();
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(VfsMonitorFileSystemWatcherPrivateLowTest, handleDisconnect)
+TEST_F(VfsMonitorFileSystemWatcherPrivateTest, handleDisconnect)
 {
-    // handleDisconnect
-    SUCCEED();
+    // Test method: void handleDisconnect(())
+    EXPECT_NO_FATAL_FAILURE(obj->handleDisconnect());
 }
 
-TEST_F(VfsMonitorFileSystemWatcherPrivateLowTest, initDispatcher)
+TEST_F(VfsMonitorFileSystemWatcherPrivateTest, initDispatcher)
 {
-    // initDispatcher
-    SUCCEED();
+    // Test bool getter: initDispatcher()
+    bool result = obj->initDispatcher();
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(VfsMonitorFileSystemWatcherPrivateLowTest, splitPath)
+TEST_F(VfsMonitorFileSystemWatcherPrivateTest, splitPath)
 {
-    // splitPath
-    SUCCEED();
-}
+    // Test method: QPair<QString, QString> splitPath((const QString &fullPath))
+    QString _arg0{};
+    auto result = obj->splitPath(_arg0);
+    EXPECT_NO_FATAL_FAILURE({ obj->splitPath(_arg0); });
 
+}

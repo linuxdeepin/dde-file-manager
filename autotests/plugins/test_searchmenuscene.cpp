@@ -4,37 +4,65 @@
 
 /**
  * @file test_searchmenuscene.cpp
- * @brief Unit tests for SearchMenuScene Mid-priority methods
+ * @brief Unit tests for SearchMenuScene methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class SearchMenuSceneTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "menus/searchmenuscene.h"
+
+#include <QTest>
+
+using namespace dfmplugin_search;
+
+class SearchMenuSceneTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new SearchMenuScene();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    SearchMenuScene *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(SearchMenuSceneTest, SearchMenuScene)
 {
-    // SearchMenuScene
-    SUCCEED();
+    // Test constructor: SearchMenuScene((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(SearchMenuSceneTest, initialize)
 {
-    // initialize
-    SUCCEED();
+    // Test method: bool initialize((const QVariantHash &params))
+    QVariantHash _arg0{};
+    auto result = obj->initialize(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(SearchMenuSceneTest, scene)
 {
-    // scene
-    SUCCEED();
+    // Test method: AbstractMenuScene scene((QAction *action))
+    auto result = obj->scene(nullptr);
+    EXPECT_NO_FATAL_FAILURE({ obj->scene(nullptr); });
+
 }
 
 TEST_F(SearchMenuSceneTest, triggered)
 {
-    // triggered
-    SUCCEED();
+    // Test method: bool triggered((QAction *action))
+    auto result = obj->triggered(nullptr);
+    EXPECT_FALSE(result);
+
 }

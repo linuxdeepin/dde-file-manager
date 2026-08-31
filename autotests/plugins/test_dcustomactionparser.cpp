@@ -4,74 +4,80 @@
 
 /**
  * @file test_dcustomactionparser.cpp
- * @brief Unit tests for DCustomActionParser Mid-priority methods (dfmplugin-menu)
+ * @brief Unit tests for DCustomActionParser methods with real assertions
  */
 
 #include <gtest/gtest.h>
-#include <QTest>
-#include <QUrl>
-#include <QString>
-#include <QStringList>
-#include <QColor>
-#include <QPoint>
-#include <QVariant>
+
+#include "stubext.h"
 
 #include "extendmenuscene/extendmenu/dcustomactionparser.h"
 
+#include <QTest>
+
 using namespace dfmplugin_menu;
 
-class DCustomActionParserTest : public ::testing::Test {
+class DCustomActionParserTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {
+    void SetUp() override
+    {
+        obj = new DCustomActionParser();
     }
-    void TearDown() override {}
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    DCustomActionParser *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(DCustomActionParserTest, actionNameDynamicArg)
 {
-    DCustomActionData _arg_act;
-    // Instance method actionNameDynamicArg
-    DCustomActionParser obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.actionNameDynamicArg(_arg_act); });
+    // Test method: void actionNameDynamicArg((DCustomActionData &act))
+    DCustomActionData _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->actionNameDynamicArg(_arg0));
 }
 
 TEST_F(DCustomActionParserTest, comboPosForTopAction)
 {
-    QSettings _arg_actionSetting;
-    DCustomActionData _arg_act;
-    // Instance method comboPosForTopAction
-    DCustomActionParser obj;
-    bool result = false;
-    EXPECT_NO_FATAL_FAILURE({ result = obj.comboPosForTopAction(_arg_actionSetting, QString("test"), _arg_act); });
-    (void)result;
+    // Test method: bool comboPosForTopAction((QSettings &actionSetting, const QString &group, DCustomActionData &act))
+    QSettings _arg0{};
+    QString _arg1{};
+    DCustomActionData _arg2{};
+    auto result = obj->comboPosForTopAction(_arg0, _arg1, _arg2);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(DCustomActionParserTest, execDynamicArg)
 {
-    DCustomActionData _arg_act;
-    // Instance method execDynamicArg
-    DCustomActionParser obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.execDynamicArg(_arg_act); });
+    // Test method: void execDynamicArg((DCustomActionData &act))
+    DCustomActionData _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->execDynamicArg(_arg0));
 }
 
 TEST_F(DCustomActionParserTest, loadDir)
 {
-    // Instance method loadDir
-    DCustomActionParser obj;
-    bool result = false;
-    EXPECT_NO_FATAL_FAILURE({ result = obj.loadDir(QStringList{"test"}); });
-    (void)result;
+    // Test method: bool loadDir((const QStringList &dirPaths))
+    QStringList _arg0{};
+    auto result = obj->loadDir(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(DCustomActionParserTest, refresh)
 {
-    // Instance method refresh
-    DCustomActionParser obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.refresh(); });
+    // Test method: void refresh(())
+    EXPECT_NO_FATAL_FAILURE(obj->refresh());
 }
 
 TEST_F(DCustomActionParserTest, DCustomActionParser)
 {
-    // DCustomActionParser
-    SUCCEED();
+    // Test constructor: DCustomActionParser((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }

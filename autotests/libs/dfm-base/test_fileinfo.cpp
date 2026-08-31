@@ -61,9 +61,9 @@ TEST_F(FileInfoTest, CreateFileInfoAndQueryBasicAttributes)
     auto info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(filePath));
     ASSERT_NE(info, nullptr);
     info->initQuerier();
-    EXPECT_NO_FATAL_FAILURE({ (void)info->exists(); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info->size(); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info->nameOf(FileInfo::FileNameInfoType::kFileName); });
+    EXPECT_NO_FATAL_FAILURE({ info->exists(); });
+    EXPECT_NO_FATAL_FAILURE({ info->size(); });
+    EXPECT_NO_FATAL_FAILURE({ info->nameOf(FileInfo::FileNameInfoType::kFileName); });
 }
 
 TEST_F(FileInfoTest, FileInfoNameOfReturnsFileName)
@@ -121,7 +121,7 @@ TEST_F(FileInfoTest, FileInfoIsAttributesForDirectory)
     auto info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(dirPath));
     ASSERT_NE(info, nullptr);
     info->initQuerier();
-    EXPECT_NO_FATAL_FAILURE({ (void)info->isAttributes(FileInfo::FileIsType::kIsDir); });
+    EXPECT_NO_FATAL_FAILURE({ info->isAttributes(FileInfo::FileIsType::kIsDir); });
 }
 
 TEST_F(FileInfoTest, FileInfoRefreshUpdatesContent)
@@ -152,7 +152,7 @@ TEST_F(FileInfoTest, FileInfoPermissions)
     auto info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(filePath));
     ASSERT_NE(info, nullptr);
     info->initQuerier();
-    EXPECT_NO_FATAL_FAILURE({ (void)info->permissions(); });
+    EXPECT_NO_FATAL_FAILURE({ info->permissions(); });
 }
 
 TEST_F(FileInfoTest, FileInfoFileType)
@@ -164,7 +164,7 @@ TEST_F(FileInfoTest, FileInfoFileType)
 
     auto info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(filePath));
     ASSERT_NE(info, nullptr);
-    EXPECT_NO_FATAL_FAILURE({ (void)info->fileType(); });
+    EXPECT_NO_FATAL_FAILURE({ info->fileType(); });
 }
 
 TEST_F(FileInfoTest, FileInfoDisplayOf)
@@ -176,7 +176,7 @@ TEST_F(FileInfoTest, FileInfoDisplayOf)
 
     auto info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(filePath));
     ASSERT_NE(info, nullptr);
-    EXPECT_NO_FATAL_FAILURE({ (void)info->displayOf(FileInfo::DisplayInfoType::kFileDisplayName); });
+    EXPECT_NO_FATAL_FAILURE({ info->displayOf(FileInfo::DisplayInfoType::kFileDisplayName); });
 }
 
 TEST_F(FileInfoTest, FileInfoTimeOf)
@@ -188,7 +188,7 @@ TEST_F(FileInfoTest, FileInfoTimeOf)
 
     auto info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(filePath));
     ASSERT_NE(info, nullptr);
-    EXPECT_NO_FATAL_FAILURE({ (void)info->timeOf(FileInfo::FileTimeType::kLastModified); });
+    EXPECT_NO_FATAL_FAILURE({ info->timeOf(FileInfo::FileTimeType::kLastModified); });
 }
 
 // Exercise many SyncFileInfo attribute query paths for coverage.
@@ -203,11 +203,11 @@ TEST_F(FileInfoTest, CanAttributesMultipleTypes)
     auto info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(filePath));
     ASSERT_NE(info, nullptr);
     info->initQuerier();
-    EXPECT_NO_FATAL_FAILURE({ (void)info->canAttributes(FileInfo::FileCanType::kCanRename); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info->canAttributes(FileInfo::FileCanType::kCanHidden); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info->canAttributes(FileInfo::FileCanType::kCanMoveOrCopy); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info->canAttributes(FileInfo::FileCanType::kCanDelete); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info->canAttributes(FileInfo::FileCanType::kCanTrash); });
+    EXPECT_NO_FATAL_FAILURE({ info->canAttributes(FileInfo::FileCanType::kCanRename); });
+    EXPECT_NO_FATAL_FAILURE({ info->canAttributes(FileInfo::FileCanType::kCanHidden); });
+    EXPECT_NO_FATAL_FAILURE({ info->canAttributes(FileInfo::FileCanType::kCanMoveOrCopy); });
+    EXPECT_NO_FATAL_FAILURE({ info->canAttributes(FileInfo::FileCanType::kCanDelete); });
+    EXPECT_NO_FATAL_FAILURE({ info->canAttributes(FileInfo::FileCanType::kCanTrash); });
 }
 
 TEST_F(FileInfoTest, IsAttributesMultipleTypes)
@@ -220,11 +220,11 @@ TEST_F(FileInfoTest, IsAttributesMultipleTypes)
     auto info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(filePath));
     ASSERT_NE(info, nullptr);
     info->initQuerier();
-    EXPECT_NO_FATAL_FAILURE({ (void)info->isAttributes(FileInfo::FileIsType::kIsFile); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info->isAttributes(FileInfo::FileIsType::kIsReadable); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info->isAttributes(FileInfo::FileIsType::kIsWritable); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info->isAttributes(FileInfo::FileIsType::kIsHidden); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info->isAttributes(FileInfo::FileIsType::kIsSymLink); });
+    EXPECT_NO_FATAL_FAILURE({ info->isAttributes(FileInfo::FileIsType::kIsFile); });
+    EXPECT_NO_FATAL_FAILURE({ info->isAttributes(FileInfo::FileIsType::kIsReadable); });
+    EXPECT_NO_FATAL_FAILURE({ info->isAttributes(FileInfo::FileIsType::kIsWritable); });
+    EXPECT_NO_FATAL_FAILURE({ info->isAttributes(FileInfo::FileIsType::kIsHidden); });
+    EXPECT_NO_FATAL_FAILURE({ info->isAttributes(FileInfo::FileIsType::kIsSymLink); });
 }
 
 TEST_F(FileInfoTest, ExtendAttributesMultipleTypes)
@@ -237,12 +237,12 @@ TEST_F(FileInfoTest, ExtendAttributesMultipleTypes)
     auto info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(filePath));
     ASSERT_NE(info, nullptr);
     info->initQuerier();
-    EXPECT_NO_FATAL_FAILURE({ (void)info->extendAttributes(FileInfo::FileExtendedInfoType::kFileLocalDevice); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info->extendAttributes(FileInfo::FileExtendedInfoType::kSizeFormat); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info->extendAttributes(FileInfo::FileExtendedInfoType::kInode); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info->extendAttributes(FileInfo::FileExtendedInfoType::kOwner); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info->extendAttributes(FileInfo::FileExtendedInfoType::kGroup); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info->extendAttributes(FileInfo::FileExtendedInfoType::kFileIsHid); });
+    EXPECT_NO_FATAL_FAILURE({ info->extendAttributes(FileInfo::FileExtendedInfoType::kFileLocalDevice); });
+    EXPECT_NO_FATAL_FAILURE({ info->extendAttributes(FileInfo::FileExtendedInfoType::kSizeFormat); });
+    EXPECT_NO_FATAL_FAILURE({ info->extendAttributes(FileInfo::FileExtendedInfoType::kInode); });
+    EXPECT_NO_FATAL_FAILURE({ info->extendAttributes(FileInfo::FileExtendedInfoType::kOwner); });
+    EXPECT_NO_FATAL_FAILURE({ info->extendAttributes(FileInfo::FileExtendedInfoType::kGroup); });
+    EXPECT_NO_FATAL_FAILURE({ info->extendAttributes(FileInfo::FileExtendedInfoType::kFileIsHid); });
 }
 
 TEST_F(FileInfoTest, ExtraPropertiesAndCountChildFile)
@@ -257,8 +257,8 @@ TEST_F(FileInfoTest, ExtraPropertiesAndCountChildFile)
     auto info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(dirPath));
     ASSERT_NE(info, nullptr);
     info->initQuerier();
-    EXPECT_NO_FATAL_FAILURE({ (void)info->extraProperties(); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info->countChildFile(); });
+    EXPECT_NO_FATAL_FAILURE({ info->extraProperties(); });
+    EXPECT_NO_FATAL_FAILURE({ info->countChildFile(); });
 }
 
 TEST_F(FileInfoTest, FileIcon)
@@ -271,7 +271,7 @@ TEST_F(FileInfoTest, FileIcon)
     auto info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(filePath));
     ASSERT_NE(info, nullptr);
     info->initQuerier();
-    EXPECT_NO_FATAL_FAILURE({ (void)info->fileIcon(); });
+    EXPECT_NO_FATAL_FAILURE({ info->fileIcon(); });
 }
 
 TEST_F(FileInfoTest, FileMimeType)
@@ -285,7 +285,7 @@ TEST_F(FileInfoTest, FileMimeType)
     auto info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(filePath));
     ASSERT_NE(info, nullptr);
     info->initQuerier();
-    EXPECT_NO_FATAL_FAILURE({ (void)info->fileMimeType(); });
+    EXPECT_NO_FATAL_FAILURE({ info->fileMimeType(); });
 }
 
 TEST_F(FileInfoTest, PermissionCheck)
@@ -298,7 +298,7 @@ TEST_F(FileInfoTest, PermissionCheck)
     auto info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(filePath));
     ASSERT_NE(info, nullptr);
     info->initQuerier();
-    EXPECT_NO_FATAL_FAILURE({ (void)info->permission(QFileDevice::ReadOwner); });
+    EXPECT_NO_FATAL_FAILURE({ info->permission(QFileDevice::ReadOwner); });
 }
 
 // ---- Coverage additions: SyncFileInfoPrivate getters + operators + 2-arg ctor.
@@ -314,14 +314,14 @@ TEST_F(FileInfoTest, SyncFileInfoPrivateGettersAfterSyncQuery)
     SyncFileInfo info(QUrl::fromLocalFile(filePath));
     ASSERT_FALSE(info.d.isNull());
     ASSERT_FALSE(info.d->dfmFileInfo.isNull());
-    EXPECT_NO_FATAL_FAILURE({ (void)info.d->dfmFileInfo->initQuerier(); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info.d->baseName(); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info.d->completeSuffix(); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info.d->symLinkTarget(); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info.d->isExecutable(); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info.d->canFetch(); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info.d->redirectedFileUrl(); });
-    EXPECT_NO_FATAL_FAILURE({ (void)info.d->iconName(); });
+    EXPECT_NO_FATAL_FAILURE({ info.d->dfmFileInfo->initQuerier(); });
+    EXPECT_NO_FATAL_FAILURE({ info.d->baseName(); });
+    EXPECT_NO_FATAL_FAILURE({ info.d->completeSuffix(); });
+    EXPECT_NO_FATAL_FAILURE({ info.d->symLinkTarget(); });
+    EXPECT_NO_FATAL_FAILURE({ info.d->isExecutable(); });
+    EXPECT_NO_FATAL_FAILURE({ info.d->canFetch(); });
+    EXPECT_NO_FATAL_FAILURE({ info.d->redirectedFileUrl(); });
+    EXPECT_NO_FATAL_FAILURE({ info.d->iconName(); });
     EXPECT_NO_FATAL_FAILURE({ info.d->updateMediaInfo(DFMIO::DFileInfo::MediaType::kGeneral, {}); });
 }
 
@@ -350,7 +350,7 @@ TEST_F(FileInfoTest, SyncFileInfoTwoArgConstructor)
     f.close();
     QUrl local = QUrl::fromLocalFile(filePath);
     QSharedPointer<DFMIO::DFileInfo> dfi(new DFMIO::DFileInfo(local));
-    EXPECT_NO_FATAL_FAILURE({ (void)dfi->initQuerier(); });
+    EXPECT_NO_FATAL_FAILURE({ dfi->initQuerier(); });
     SyncFileInfo info(local, dfi);
     EXPECT_EQ(info.d->dfmFileInfo.data(), dfi.data());
 }

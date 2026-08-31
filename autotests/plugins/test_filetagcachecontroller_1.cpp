@@ -3,57 +3,88 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_filetagcachecontroller_1.cpp
- * @brief Unit tests for FileTagCacheController Low-priority methods
+ * @file test_filetagcachecontroller_1.cpp
+ * @brief Unit tests for FileTagCacheController methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class FileTagCacheControllerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/filetagcache.h"
+
+#include <QTest>
+
+using namespace dfmplugin_tag;
+
+class FileTagCacheControllerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new FileTagCacheController();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FileTagCacheController *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(FileTagCacheControllerTest, FileTagCacheController)
 {
-    // FileTagCacheController
-    SUCCEED();
+    // Test constructor: FileTagCacheController((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(FileTagCacheControllerTest, getCacheTagsColor)
 {
-    // getCacheTagsColor
-    SUCCEED();
+    // Test method: QMap<QString, QColor> getCacheTagsColor((const QStringList &tags))
+    QStringList _arg0{};
+    auto result = obj->getCacheTagsColor(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(FileTagCacheControllerTest, getTagsByFile)
 {
-    // getTagsByFile
-    SUCCEED();
+    // Test method: QStringList getTagsByFile((const QString &path))
+    QString _arg0{};
+    auto result = obj->getTagsByFile(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(FileTagCacheControllerTest, getTrashFileTags)
 {
-    // getTrashFileTags
-    SUCCEED();
+    // Test method: QStringList getTrashFileTags((const QString &path, qint64 inode))
+    QString _arg0{};
+    auto result = obj->getTrashFileTags(_arg0, 0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(FileTagCacheControllerTest, init)
 {
-    // init
-    SUCCEED();
+    // Test method: void init(())
+    EXPECT_NO_FATAL_FAILURE(obj->init());
 }
 
 TEST_F(FileTagCacheControllerTest, instance)
 {
-    // instance
-    SUCCEED();
+    // Test getter: FileTagCacheController instance()
+    auto result = obj->instance();
+    EXPECT_NO_FATAL_FAILURE({ obj->instance(); });
+
 }
 
 TEST_F(FileTagCacheControllerTest, FileTagCacheController_Destructor)
 {
-    // ~FileTagCacheController
-    SUCCEED();
+    // Test method:  ~FileTagCacheController(())
+    EXPECT_NO_FATAL_FAILURE({ FileTagCacheController *tmp = new FileTagCacheController(); delete tmp; });
 }
-

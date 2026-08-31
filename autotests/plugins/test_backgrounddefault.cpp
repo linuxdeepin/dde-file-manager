@@ -3,33 +3,55 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_backgrounddefault.cpp
- * @brief Unit tests for BackgroundDefault Low-priority methods
+ * @file test_backgrounddefault.cpp
+ * @brief Unit tests for BackgroundDefault methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class BackgroundDefaultTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "backgrounddefault.h"
+
+#include <QTest>
+
+using namespace ddplugin_background;
+
+class BackgroundDefaultTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new BackgroundDefault();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    BackgroundDefault *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(BackgroundDefaultTest, paintEvent)
 {
-    // paintEvent
-    SUCCEED();
+    // Test event handler: paintEvent((QPaintEvent *event))
+    QPaintEvent _event(QPaintEvent::None);
+    EXPECT_NO_FATAL_FAILURE(obj->paintEvent(&_event));
 }
 
 TEST_F(BackgroundDefaultTest, sendPaintReport)
 {
-    // sendPaintReport
-    SUCCEED();
+    // Test method: void sendPaintReport(())
+    EXPECT_NO_FATAL_FAILURE(obj->sendPaintReport());
 }
 
 TEST_F(BackgroundDefaultTest, setPixmap)
 {
-    // setPixmap
-    SUCCEED();
+    // Test setter: void setPixmap((const QPixmap &pix))
+    QPixmap _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->setPixmap(_arg0));
 }
-

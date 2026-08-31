@@ -3,99 +3,127 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_computercontroller_1.cpp
- * @brief Unit tests for ComputerController Low-priority methods
+ * @file test_computercontroller_1.cpp
+ * @brief Unit tests for ComputerController methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ComputerControllerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "controller/computercontroller.h"
+
+#include <QTest>
+
+using namespace dfmplugin_computer;
+
+class ComputerControllerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ComputerController();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ComputerController *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ComputerControllerTest, actEject)
 {
-    // actEject
-    SUCCEED();
+    // Test method: void actEject((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->actEject(_arg0));
 }
 
 TEST_F(ComputerControllerTest, actFormat)
 {
-    // actFormat
-    SUCCEED();
+    // Test method: void actFormat((quint64 winId, DFMEntryFileInfoPointer info))
+    EXPECT_NO_FATAL_FAILURE(obj->actFormat(0, DFMEntryFileInfoPointer()));
 }
 
 TEST_F(ComputerControllerTest, actLogoutAndForgetPasswd)
 {
-    // actLogoutAndForgetPasswd
-    SUCCEED();
+    // Test method: void actLogoutAndForgetPasswd((DFMEntryFileInfoPointer info))
+    EXPECT_NO_FATAL_FAILURE(obj->actLogoutAndForgetPasswd(DFMEntryFileInfoPointer()));
 }
 
 TEST_F(ComputerControllerTest, actMount)
 {
-    // actMount
-    SUCCEED();
+    // Test method: void actMount((quint64 winId, DFMEntryFileInfoPointer info, bool enterAfterMounted))
+    EXPECT_NO_FATAL_FAILURE(obj->actMount(0, DFMEntryFileInfoPointer(), false));
 }
 
 TEST_F(ComputerControllerTest, actOpenInNewTab)
 {
-    // actOpenInNewTab
-    SUCCEED();
+    // Test method: void actOpenInNewTab((quint64 winId, DFMEntryFileInfoPointer info))
+    EXPECT_NO_FATAL_FAILURE(obj->actOpenInNewTab(0, DFMEntryFileInfoPointer()));
 }
 
 TEST_F(ComputerControllerTest, actOpenInNewWindow)
 {
-    // actOpenInNewWindow
-    SUCCEED();
+    // Test method: void actOpenInNewWindow((quint64 winId, DFMEntryFileInfoPointer info))
+    EXPECT_NO_FATAL_FAILURE(obj->actOpenInNewWindow(0, DFMEntryFileInfoPointer()));
 }
 
 TEST_F(ComputerControllerTest, actProperties)
 {
-    // actProperties
-    SUCCEED();
+    // Test method: void actProperties((quint64 winId, DFMEntryFileInfoPointer info))
+    EXPECT_NO_FATAL_FAILURE(obj->actProperties(0, DFMEntryFileInfoPointer()));
 }
 
 TEST_F(ComputerControllerTest, actRename)
 {
-    // actRename
-    SUCCEED();
+    // Test method: void actRename((quint64 winId, DFMEntryFileInfoPointer info, bool triggerFromSidebar))
+    EXPECT_NO_FATAL_FAILURE(obj->actRename(0, DFMEntryFileInfoPointer(), false));
 }
 
 TEST_F(ComputerControllerTest, doSetProtocolDeviceAlias)
 {
-    // doSetProtocolDeviceAlias
-    SUCCEED();
+    // Test method: bool doSetProtocolDeviceAlias((DFMEntryFileInfoPointer info, const QString &alias))
+    QString _arg1{};
+    auto result = obj->doSetProtocolDeviceAlias(DFMEntryFileInfoPointer(), _arg1);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(ComputerControllerTest, handleNetworkCdCall)
 {
-    // handleNetworkCdCall
-    SUCCEED();
+    // Test method: void handleNetworkCdCall((quint64 winId, DFMEntryFileInfoPointer info))
+    EXPECT_NO_FATAL_FAILURE(obj->handleNetworkCdCall(0, DFMEntryFileInfoPointer()));
 }
 
 TEST_F(ComputerControllerTest, handleUnAccessableDevCdCall)
 {
-    // handleUnAccessableDevCdCall
-    SUCCEED();
+    // Test method: void handleUnAccessableDevCdCall((quint64 winId, DFMEntryFileInfoPointer info))
+    EXPECT_NO_FATAL_FAILURE(obj->handleUnAccessableDevCdCall(0, DFMEntryFileInfoPointer()));
 }
 
 TEST_F(ComputerControllerTest, instance)
 {
-    // instance
-    SUCCEED();
+    // Test getter: ComputerController instance()
+    auto result = obj->instance();
+    EXPECT_NO_FATAL_FAILURE({ obj->instance(); });
+
 }
 
 TEST_F(ComputerControllerTest, onMenuRequest)
 {
-    // onMenuRequest
-    SUCCEED();
+    // Test method: void onMenuRequest((quint64 winId, const QUrl &url, bool triggerFromSidebar))
+    QUrl _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->onMenuRequest(0, _arg1, false));
 }
 
 TEST_F(ComputerControllerTest, waitUDisks2DataReady)
 {
-    // waitUDisks2DataReady
-    SUCCEED();
+    // Test method: void waitUDisks2DataReady((const QString &id))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->waitUDisks2DataReady(_arg0));
 }
-

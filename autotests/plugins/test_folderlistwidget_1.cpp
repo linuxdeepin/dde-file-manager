@@ -3,33 +3,56 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_folderlistwidget_1.cpp
- * @brief Unit tests for FolderListWidget Low-priority methods
+ * @file test_folderlistwidget_1.cpp
+ * @brief Unit tests for FolderListWidget methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class FolderListWidgetTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/folderlistwidget.h"
+
+#include <QTest>
+
+using namespace dfmplugin_titlebar;
+
+class FolderListWidgetTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new FolderListWidget();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FolderListWidget *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(FolderListWidgetTest, hideEvent)
 {
-    // hideEvent
-    SUCCEED();
+    // Test event handler: hideEvent((QHideEvent *event))
+    QHideEvent _event(QHideEvent::None);
+    EXPECT_NO_FATAL_FAILURE(obj->hideEvent(&_event));
 }
 
 TEST_F(FolderListWidgetTest, keyPressEvent)
 {
-    // keyPressEvent
-    SUCCEED();
+    // Test event handler: keyPressEvent((QKeyEvent *event))
+    QKeyEvent _event(QKeyEvent::None);
+    EXPECT_NO_FATAL_FAILURE(obj->keyPressEvent(&_event));
 }
 
 TEST_F(FolderListWidgetTest, setFolderList)
 {
-    // setFolderList
-    SUCCEED();
+    // Test setter: void setFolderList((const QList<CrumbData> &datas, bool stacked))
+    QList<CrumbData> _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->setFolderList(_arg0, false));
 }
-

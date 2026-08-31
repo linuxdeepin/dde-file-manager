@@ -4,19 +4,40 @@
 
 /**
  * @file test_abstractfilepreviewplugin.cpp
- * @brief Unit tests for AbstractFilePreviewPlugin Mid-priority methods
+ * @brief Unit tests for AbstractFilePreviewPlugin methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class AbstractFilePreviewPluginTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "dfm-base/interfaces/abstractfilepreviewplugin.h"
+
+#include <QTest>
+
+using namespace src;
+
+class AbstractFilePreviewPluginTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new AbstractFilePreviewPlugin();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    AbstractFilePreviewPlugin *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(AbstractFilePreviewPluginTest, AbstractFilePreviewPlugin)
 {
-    // AbstractFilePreviewPlugin
-    SUCCEED();
+    // Test constructor: AbstractFilePreviewPlugin((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }

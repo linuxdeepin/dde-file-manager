@@ -4,19 +4,42 @@
 
 /**
  * @file test_oemmenusceneprivate.cpp
- * @brief Unit tests for OemMenuScenePrivate Mid-priority methods
+ * @brief Unit tests for OemMenuScenePrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class OemMenuScenePrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "oemmenuscene/oemmenuscene.h"
+
+#include <QTest>
+
+using namespace dfmplugin_menu;
+
+class OemMenuScenePrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new OemMenuScenePrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    OemMenuScenePrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(OemMenuScenePrivateTest, childActions)
 {
-    // childActions
-    SUCCEED();
+    // Test method: QList<QAction *> childActions((QAction *action))
+    auto result = obj->childActions(nullptr);
+    EXPECT_TRUE(result.isEmpty());
+
 }

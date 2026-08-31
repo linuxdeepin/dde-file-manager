@@ -3,165 +3,222 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_rootinfo_1.cpp
- * @brief Unit tests for RootInfo Low-priority methods
+ * @file test_rootinfo_1.cpp
+ * @brief Unit tests for RootInfo methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class RootInfoTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "models/rootinfo.h"
+
+#include <QTest>
+
+using namespace dfmplugin_workspace;
+
+class RootInfoTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new RootInfo();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    RootInfo *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(RootInfoTest, RootInfo)
 {
-    // RootInfo
-    SUCCEED();
+    // Test constructor: RootInfo((const QUrl &u, QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(RootInfoTest, addChild)
 {
-    // addChild
-    SUCCEED();
+    // Test method: SortInfoPointer addChild((const FileInfoPointer &child))
+    FileInfoPointer _arg0{};
+    auto result = obj->addChild(_arg0);
+    EXPECT_NE(result.get(), nullptr);
+
 }
 
 TEST_F(RootInfoTest, addConnectToken)
 {
-    // addConnectToken
-    SUCCEED();
+    // Test method: void addConnectToken(())
+    EXPECT_NO_FATAL_FAILURE(obj->addConnectToken());
 }
 
 TEST_F(RootInfoTest, checkFileEventQueue)
 {
-    // checkFileEventQueue
-    SUCCEED();
+    // Test bool getter: checkFileEventQueue()
+    bool result = obj->checkFileEventQueue();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(RootInfoTest, checkKeyOnly)
 {
-    // checkKeyOnly
-    SUCCEED();
+    // Test method: bool checkKeyOnly((const QString &key))
+    QString _arg0{};
+    auto result = obj->checkKeyOnly(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(RootInfoTest, connectTokens)
 {
-    // connectTokens
-    SUCCEED();
+    // Test getter: QStringList connectTokens()
+    auto result = obj->connectTokens();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(RootInfoTest, containsChild)
 {
-    // containsChild
-    SUCCEED();
+    // Test method: bool containsChild((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->containsChild(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(RootInfoTest, dequeueEvent)
 {
-    // dequeueEvent
-    SUCCEED();
+    // Test getter: QPair<QUrl, RootInfo::EventType> dequeueEvent()
+    auto result = obj->dequeueEvent();
+    EXPECT_NO_FATAL_FAILURE({ obj->dequeueEvent(); });
+
 }
 
 TEST_F(RootInfoTest, doFileUpdated)
 {
-    // doFileUpdated
-    SUCCEED();
+    // Test method: void doFileUpdated((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->doFileUpdated(_arg0));
 }
 
 TEST_F(RootInfoTest, doThreadWatcherEvent)
 {
-    // doThreadWatcherEvent
-    SUCCEED();
+    // Test method: void doThreadWatcherEvent(())
+    EXPECT_NO_FATAL_FAILURE(obj->doThreadWatcherEvent());
 }
 
 TEST_F(RootInfoTest, dofileCreated)
 {
-    // dofileCreated
-    SUCCEED();
+    // Test method: void dofileCreated((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->dofileCreated(_arg0));
 }
 
 TEST_F(RootInfoTest, dofileMoved)
 {
-    // dofileMoved
-    SUCCEED();
+    // Test method: void dofileMoved((const QUrl &fromUrl, const QUrl &toUrl))
+    QUrl _arg0{};
+    QUrl _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->dofileMoved(_arg0, _arg1));
 }
 
 TEST_F(RootInfoTest, enqueueEvent)
 {
-    // enqueueEvent
-    SUCCEED();
+    // Test event handler: enqueueEvent((const QPair<QUrl, EventType> &e))
+    QPair<QUrl, EventType> _event(QPair<QUrl, EventType>::None);
+    EXPECT_NO_FATAL_FAILURE(obj->enqueueEvent(&_event));
 }
 
 TEST_F(RootInfoTest, fileInfo)
 {
-    // fileInfo
-    SUCCEED();
+    // Test method: FileInfoPointer fileInfo((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->fileInfo(_arg0);
+    EXPECT_NE(result.get(), nullptr);
+
 }
 
 TEST_F(RootInfoTest, handleTraversalFinish)
 {
-    // handleTraversalFinish
-    SUCCEED();
+    // Test method: void handleTraversalFinish((const QString &travseToken))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleTraversalFinish(_arg0));
 }
 
 TEST_F(RootInfoTest, handleTraversalLocalResult)
 {
-    // handleTraversalLocalResult
-    SUCCEED();
+    // Test method: void handleTraversalLocalResult((QList<SortInfoPointer> children,
+                                          dfmio::DEnumerator::SortRoleCompareFlag sortRole,
+                                          Qt::SortOrder sortOrder, bool isMixDirAndFile, const QString &travseToken))
+    QString _arg4{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleTraversalLocalResult(QList<SortInfoPointer>(), {}, Qt::SortOrder(), false, _arg4));
 }
 
 TEST_F(RootInfoTest, handleTraversalResultsUpdate)
 {
-    // handleTraversalResultsUpdate
-    SUCCEED();
+    // Test method: void handleTraversalResultsUpdate((const QList<SortInfoPointer> children, const QString &travseToken))
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleTraversalResultsUpdate(QList<SortInfoPointer>(), _arg1));
 }
 
 TEST_F(RootInfoTest, handleTraversalSort)
 {
-    // handleTraversalSort
-    SUCCEED();
+    // Test method: void handleTraversalSort((const QString &travseToken))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleTraversalSort(_arg0));
 }
 
 TEST_F(RootInfoTest, initConnection)
 {
-    // initConnection
-    SUCCEED();
+    // Test method: void initConnection((const TraversalThreadManagerPointer &traversalThread))
+    TraversalThreadManagerPointer _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->initConnection(_arg0));
 }
 
 TEST_F(RootInfoTest, setFirstBatch)
 {
-    // setFirstBatch
-    SUCCEED();
+    // Test setter: void setFirstBatch((bool first))
+    EXPECT_NO_FATAL_FAILURE(obj->setFirstBatch(false));
 }
 
 TEST_F(RootInfoTest, sortFileInfo)
 {
-    // sortFileInfo
-    SUCCEED();
+    // Test method: SortInfoPointer sortFileInfo((const FileInfoPointer &info))
+    FileInfoPointer _arg0{};
+    auto result = obj->sortFileInfo(_arg0);
+    EXPECT_NE(result.get(), nullptr);
+
 }
 
 TEST_F(RootInfoTest, startWatcher)
 {
-    // startWatcher
-    SUCCEED();
+    // Test method: void startWatcher(())
+    EXPECT_NO_FATAL_FAILURE(obj->startWatcher());
 }
 
 TEST_F(RootInfoTest, startWork)
 {
-    // startWork
-    SUCCEED();
+    // Test method: void startWork((const QString &key))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->startWork(_arg0));
 }
 
 TEST_F(RootInfoTest, updateChild)
 {
-    // updateChild
-    SUCCEED();
+    // Test method: SortInfoPointer updateChild((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->updateChild(_arg0);
+    EXPECT_NE(result.get(), nullptr);
+
 }
 
 TEST_F(RootInfoTest, RootInfo_Destructor)
 {
-    // ~RootInfo
-    SUCCEED();
+    // Test method:  ~RootInfo(())
+    EXPECT_NO_FATAL_FAILURE({ RootInfo *tmp = new RootInfo(); delete tmp; });
 }
-

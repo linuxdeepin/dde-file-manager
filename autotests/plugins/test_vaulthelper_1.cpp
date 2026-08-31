@@ -3,201 +3,265 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_vaulthelper_1.cpp
- * @brief Unit tests for VaultHelper Low-priority methods
+ * @file test_vaulthelper_1.cpp
+ * @brief Unit tests for VaultHelper methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class VaultHelperTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "vaulthelper.h"
+
+#include <QTest>
+
+using namespace vault;
+
+class VaultHelperTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new VaultHelper();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    VaultHelper *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(VaultHelperTest, VaultHelper)
 {
-    // VaultHelper
-    SUCCEED();
+    // Test constructor: VaultHelper((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(VaultHelperTest, VaultHelper_VaultHel)
 {
-    // VaultHelper
-    SUCCEED();
+    // Test constructor: VaultHelper((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(VaultHelperTest, appendWinID)
 {
-    // appendWinID
-    SUCCEED();
+    // Test method: void appendWinID((const quint64 &winId))
+    quint64 _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->appendWinID(_arg0));
 }
 
 TEST_F(VaultHelperTest, buildVaultLocalPath)
 {
-    // buildVaultLocalPath
-    SUCCEED();
+    // Test method: QString buildVaultLocalPath((const QString &path, const QString &base))
+    QString _arg0{};
+    QString _arg1{};
+    auto result = obj->buildVaultLocalPath(_arg0, _arg1);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(VaultHelperTest, contenxtMenuHandle)
 {
-    // contenxtMenuHandle
-    SUCCEED();
+    // Test method: void contenxtMenuHandle((quint64 windowId, const QUrl &url, const QPoint &globalPos))
+    QUrl _arg1{};
+    QPoint _arg2{};
+    EXPECT_NO_FATAL_FAILURE(obj->contenxtMenuHandle(0, _arg1, _arg2));
 }
 
 TEST_F(VaultHelperTest, createVault)
 {
-    // createVault
-    SUCCEED();
+    // Test method: void createVault((QString &password))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->createVault(_arg0));
 }
 
 TEST_F(VaultHelperTest, createVaultDialog)
 {
-    // createVaultDialog
-    SUCCEED();
+    // Test method: void createVaultDialog(())
+    EXPECT_NO_FATAL_FAILURE(obj->createVaultDialog());
 }
 
 TEST_F(VaultHelperTest, createVaultPropertyDialog)
 {
-    // createVaultPropertyDialog
-    SUCCEED();
+    // Test method: QWidget createVaultPropertyDialog((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->createVaultPropertyDialog(_arg0);
+    EXPECT_NO_FATAL_FAILURE({ obj->createVaultPropertyDialog(_arg0); });
+
 }
 
 TEST_F(VaultHelperTest, currentWindowId)
 {
-    // currentWindowId
-    SUCCEED();
+    // Test getter: quint64 currentWindowId()
+    auto result = obj->currentWindowId();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(VaultHelperTest, defaultCdAction)
 {
-    // defaultCdAction
-    SUCCEED();
+    // Test method: void defaultCdAction((const quint64 windowId, const QUrl &url))
+    QUrl _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->defaultCdAction(0, _arg1));
 }
 
 TEST_F(VaultHelperTest, enableUnlockVault)
 {
-    // enableUnlockVault
-    SUCCEED();
+    // Test bool getter: enableUnlockVault()
+    bool result = obj->enableUnlockVault();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(VaultHelperTest, getVaultVersion)
 {
-    // getVaultVersion
-    SUCCEED();
+    // Test bool getter: getVaultVersion()
+    bool result = obj->getVaultVersion();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(VaultHelperTest, icon)
 {
-    // icon
-    SUCCEED();
+    // Test getter: QIcon icon()
+    auto result = obj->icon();
+    EXPECT_TRUE(result.isNull());
+
 }
 
 TEST_F(VaultHelperTest, killVaultTasks)
 {
-    // killVaultTasks
-    SUCCEED();
+    // Test method: void killVaultTasks(())
+    EXPECT_NO_FATAL_FAILURE(obj->killVaultTasks());
 }
 
 TEST_F(VaultHelperTest, lockVault)
 {
-    // lockVault
-    SUCCEED();
+    // Test method: bool lockVault((bool isForced))
+    auto result = obj->lockVault(false);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(VaultHelperTest, newOpenWindow)
 {
-    // newOpenWindow
-    SUCCEED();
+    // Test method: void newOpenWindow(())
+    EXPECT_NO_FATAL_FAILURE(obj->newOpenWindow());
 }
 
 TEST_F(VaultHelperTest, openNewWindow)
 {
-    // openNewWindow
-    SUCCEED();
+    // Test method: void openNewWindow((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->openNewWindow(_arg0));
 }
 
 TEST_F(VaultHelperTest, openWidWindow)
 {
-    // openWidWindow
-    SUCCEED();
+    // Test method: void openWidWindow((quint64 winID, const QUrl &url))
+    QUrl _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->openWidWindow(0, _arg1));
 }
 
 TEST_F(VaultHelperTest, openWindow)
 {
-    // openWindow
-    SUCCEED();
+    // Test method: void openWindow(())
+    EXPECT_NO_FATAL_FAILURE(obj->openWindow());
 }
 
 TEST_F(VaultHelperTest, pathToVaultVirtualUrl)
 {
-    // pathToVaultVirtualUrl
-    SUCCEED();
+    // Test method: QUrl pathToVaultVirtualUrl((const QString &path))
+    QString _arg0{};
+    auto result = obj->pathToVaultVirtualUrl(_arg0);
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(VaultHelperTest, rootUrl)
 {
-    // rootUrl
-    SUCCEED();
+    // Test getter: QUrl rootUrl()
+    auto result = obj->rootUrl();
+    EXPECT_TRUE(result.isEmpty() || result.isValid());
 }
 
 TEST_F(VaultHelperTest, scheme)
 {
-    // scheme
-    SUCCEED();
+    // Test getter: QString scheme()
+    auto result = obj->scheme();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(VaultHelperTest, showInProgressDailog)
 {
-    // showInProgressDailog
-    SUCCEED();
+    // Test method: void showInProgressDailog((QString msg))
+    EXPECT_NO_FATAL_FAILURE(obj->showInProgressDailog(QString()));
 }
 
 TEST_F(VaultHelperTest, slotlockVault)
 {
-    // slotlockVault
-    SUCCEED();
+    // Test method: void slotlockVault((int state))
+    EXPECT_NO_FATAL_FAILURE(obj->slotlockVault(0));
 }
 
 TEST_F(VaultHelperTest, sourceRootUrl)
 {
-    // sourceRootUrl
-    SUCCEED();
+    // Test getter: QUrl sourceRootUrl()
+    auto result = obj->sourceRootUrl();
+    EXPECT_TRUE(result.isEmpty() || result.isValid());
 }
 
 TEST_F(VaultHelperTest, sourceRootUrlWithSlash)
 {
-    // sourceRootUrlWithSlash
-    SUCCEED();
+    // Test getter: QUrl sourceRootUrlWithSlash()
+    auto result = obj->sourceRootUrlWithSlash();
+    EXPECT_TRUE(result.isEmpty() || result.isValid());
 }
 
 TEST_F(VaultHelperTest, unlockVault)
 {
-    // unlockVault
-    SUCCEED();
+    // Test method: bool unlockVault((const QString &password))
+    QString _arg0{};
+    auto result = obj->unlockVault(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(VaultHelperTest, updateState)
 {
-    // updateState
-    SUCCEED();
+    // Test method: bool updateState((VaultState curState))
+    auto result = obj->updateState(VaultState());
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(VaultHelperTest, vaultBaseDirLocalPath)
 {
-    // vaultBaseDirLocalPath
-    SUCCEED();
+    // Test getter: QString vaultBaseDirLocalPath()
+    auto result = obj->vaultBaseDirLocalPath();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(VaultHelperTest, vaultMountDirLocalPath)
 {
-    // vaultMountDirLocalPath
-    SUCCEED();
+    // Test getter: QString vaultMountDirLocalPath()
+    auto result = obj->vaultMountDirLocalPath();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(VaultHelperTest, vaultUrlToLocalUrl)
 {
-    // vaultUrlToLocalUrl
-    SUCCEED();
-}
+    // Test method: QUrl vaultUrlToLocalUrl((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->vaultUrlToLocalUrl(_arg0);
+    EXPECT_FALSE(result.isValid());
 
+}

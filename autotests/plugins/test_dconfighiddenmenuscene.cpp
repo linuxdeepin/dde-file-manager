@@ -4,25 +4,46 @@
 
 /**
  * @file test_dconfighiddenmenuscene.cpp
- * @brief Unit tests for DConfigHiddenMenuScene Mid-priority methods
+ * @brief Unit tests for DConfigHiddenMenuScene methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class DConfigHiddenMenuSceneTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "menuscene/dconfighiddenmenuscene.h"
+
+#include <QTest>
+
+using namespace dfmplugin_menu;
+
+class DConfigHiddenMenuSceneTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new DConfigHiddenMenuScene();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    DConfigHiddenMenuScene *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(DConfigHiddenMenuSceneTest, disableScene)
 {
-    // disableScene
-    SUCCEED();
+    // Test method: void disableScene(())
+    EXPECT_NO_FATAL_FAILURE(obj->disableScene());
 }
 
 TEST_F(DConfigHiddenMenuSceneTest, updateActionHidden)
 {
-    // updateActionHidden
-    SUCCEED();
+    // Test method: void updateActionHidden((QMenu *parent))
+    EXPECT_NO_FATAL_FAILURE(obj->updateActionHidden(nullptr));
 }

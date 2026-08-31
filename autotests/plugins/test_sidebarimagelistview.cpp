@@ -4,19 +4,40 @@
 
 /**
  * @file test_sidebarimagelistview.cpp
- * @brief Unit tests for SideBarImageListView Mid-priority methods
+ * @brief Unit tests for SideBarImageListView methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class SideBarImageListViewTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "apps/dde-file-manager-preview/pluginpreviews/pdf-preview/sidebarimagelistview.h"
+
+#include <QTest>
+
+using namespace src;
+
+class SideBarImageListViewTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new SideBarImageListView();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    SideBarImageListView *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(SideBarImageListViewTest, handleOpenSuccess)
 {
-    // handleOpenSuccess
-    SUCCEED();
+    // Test method: void handleOpenSuccess(())
+    EXPECT_NO_FATAL_FAILURE(obj->handleOpenSuccess());
 }

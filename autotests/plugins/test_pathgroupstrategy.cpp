@@ -4,25 +4,48 @@
 
 /**
  * @file test_pathgroupstrategy.cpp
- * @brief Unit tests for PathGroupStrategy Mid-priority methods
+ * @brief Unit tests for PathGroupStrategy methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class PathGroupStrategyTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "groups/pathgroupstrategy.h"
+
+#include <QTest>
+
+using namespace dfmplugin_workspace;
+
+class PathGroupStrategyTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new PathGroupStrategy();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    PathGroupStrategy *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(PathGroupStrategyTest, PathGroupStrategy)
 {
-    // PathGroupStrategy
-    SUCCEED();
+    // Test constructor: PathGroupStrategy((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(PathGroupStrategyTest, getGroupOrder)
 {
-    // getGroupOrder
-    SUCCEED();
+    // Test getter: QStringList getGroupOrder()
+    auto result = obj->getGroupOrder();
+    EXPECT_TRUE(result.isEmpty());
+
 }

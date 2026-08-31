@@ -4,25 +4,46 @@
 
 /**
  * @file test_dfmextmenu.cpp
- * @brief Unit tests for DFMExtMenu Mid-priority methods
+ * @brief Unit tests for DFMExtMenu methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class DFMExtMenuTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "dfm-extension/menu/dfmextmenu.h"
+
+#include <QTest>
+
+using namespace src;
+
+class DFMExtMenuTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new DFMExtMenu();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    DFMExtMenu *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(DFMExtMenuTest, deleted)
 {
-    // deleted
-    SUCCEED();
+    // Test method: void deleted((DFMExtMenu *self))
+    EXPECT_NO_FATAL_FAILURE(obj->deleted(nullptr));
 }
 
 TEST_F(DFMExtMenuTest, hovered)
 {
-    // hovered
-    SUCCEED();
+    // Test method: void hovered((DFMExtAction *action))
+    EXPECT_NO_FATAL_FAILURE(obj->hovered(nullptr));
 }

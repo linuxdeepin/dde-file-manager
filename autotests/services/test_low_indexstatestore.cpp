@@ -3,45 +3,71 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_low_indexstatestore.cpp
- * @brief Unit tests for IndexStateStore Low-priority methods
+ * @file test_low_indexstatestore.cpp
+ * @brief Unit tests for IndexStateStore methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class IndexStateStoreLowTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "services/textindex/state/indexstatestore.h"
+
+#include <QTest>
+
+using namespace src;
+
+class IndexStateStoreTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new IndexStateStore();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    IndexStateStore *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
-TEST_F(IndexStateStoreLowTest, IndexStateStore)
+TEST_F(IndexStateStoreTest, IndexStateStore)
 {
-    // IndexStateStore
-    SUCCEED();
+    // Test constructor: IndexStateStore((IndexProfile profile))
+    ASSERT_NE(obj, nullptr);
 }
 
-TEST_F(IndexStateStoreLowTest, isCreateInProgress)
+TEST_F(IndexStateStoreTest, isCreateInProgress)
 {
-    // isCreateInProgress
-    SUCCEED();
+    // Test bool getter: isCreateInProgress()
+    bool result = obj->isCreateInProgress();
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(IndexStateStoreLowTest, needsRebuild)
+TEST_F(IndexStateStoreTest, needsRebuild)
 {
-    // needsRebuild
-    SUCCEED();
+    // Test bool getter: needsRebuild()
+    bool result = obj->needsRebuild();
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(IndexStateStoreLowTest, setIndexState)
+TEST_F(IndexStateStoreTest, setIndexState)
 {
-    // setIndexState
-    SUCCEED();
+    // Test setter: void setIndexState((IndexUtility::IndexState state))
+    EXPECT_NO_FATAL_FAILURE(obj->setIndexState(IndexUtility::IndexState()));
 }
 
-TEST_F(IndexStateStoreLowTest, statusFilePath)
+TEST_F(IndexStateStoreTest, statusFilePath)
 {
-    // statusFilePath
-    SUCCEED();
-}
+    // Test getter: QString statusFilePath()
+    auto result = obj->statusFilePath();
+    EXPECT_TRUE(result.isEmpty());
 
+}

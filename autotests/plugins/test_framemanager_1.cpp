@@ -3,63 +3,87 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_framemanager_1.cpp
- * @brief Unit tests for FrameManager Low-priority methods
+ * @file test_framemanager_1.cpp
+ * @brief Unit tests for FrameManager methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class FrameManagerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "framemanager.h"
+
+#include <QTest>
+
+using namespace ddplugin_organizer;
+
+class FrameManagerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new FrameManager();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FrameManager *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(FrameManagerTest, initialize)
 {
-    // initialize
-    SUCCEED();
+    // Test bool getter: initialize()
+    bool result = obj->initialize();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(FrameManagerTest, onBuild)
 {
-    // onBuild
-    SUCCEED();
+    // Test method: void onBuild(())
+    EXPECT_NO_FATAL_FAILURE(obj->onBuild());
 }
 
 TEST_F(FrameManagerTest, onDetachWindows)
 {
-    // onDetachWindows
-    SUCCEED();
+    // Test method: void onDetachWindows(())
+    EXPECT_NO_FATAL_FAILURE(obj->onDetachWindows());
 }
 
 TEST_F(FrameManagerTest, onGeometryChanged)
 {
-    // onGeometryChanged
-    SUCCEED();
+    // Test method: void onGeometryChanged(())
+    EXPECT_NO_FATAL_FAILURE(obj->onGeometryChanged());
 }
 
 TEST_F(FrameManagerTest, onWindowShowed)
 {
-    // onWindowShowed
-    SUCCEED();
+    // Test method: void onWindowShowed(())
+    EXPECT_NO_FATAL_FAILURE(obj->onWindowShowed());
 }
 
 TEST_F(FrameManagerTest, organizerEnabled)
 {
-    // organizerEnabled
-    SUCCEED();
+    // Test bool getter: organizerEnabled()
+    bool result = obj->organizerEnabled();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(FrameManagerTest, switchMode)
 {
-    // switchMode
-    SUCCEED();
+    // Test method: void switchMode((OrganizerMode mode))
+    EXPECT_NO_FATAL_FAILURE(obj->switchMode(OrganizerMode()));
 }
 
 TEST_F(FrameManagerTest, turnOff)
 {
-    // turnOff
-    SUCCEED();
+    // Test method: void turnOff(())
+    EXPECT_NO_FATAL_FAILURE(obj->turnOff());
 }
-

@@ -3,21 +3,41 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_textindexclient_1.cpp
- * @brief Unit tests for TextIndexClient Low-priority methods
+ * @file test_textindexclient_1.cpp
+ * @brief Unit tests for TextIndexClient methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class TextIndexClientTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/textindexclient.h"
+
+#include <QTest>
+
+using namespace dfmplugin_search;
+
+class TextIndexClientTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new TextIndexClient();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    TextIndexClient *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(TextIndexClientTest, TextIndexClient)
 {
-    // TextIndexClient
-    SUCCEED();
+    // Test constructor: TextIndexClient((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
-

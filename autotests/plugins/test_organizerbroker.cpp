@@ -4,19 +4,40 @@
 
 /**
  * @file test_organizerbroker.cpp
- * @brief Unit tests for OrganizerBroker Mid-priority methods
+ * @brief Unit tests for OrganizerBroker methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class OrganizerBrokerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "broker/organizerbroker.h"
+
+#include <QTest>
+
+using namespace ddplugin_organizer;
+
+class OrganizerBrokerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new OrganizerBroker();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    OrganizerBroker *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(OrganizerBrokerTest, OrganizerBroker)
 {
-    // OrganizerBroker
-    SUCCEED();
+    // Test constructor: OrganizerBroker((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }

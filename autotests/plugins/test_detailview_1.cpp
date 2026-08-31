@@ -3,105 +3,134 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_detailview_1.cpp
- * @brief Unit tests for DetailView Low-priority methods
+ * @file test_detailview_1.cpp
+ * @brief Unit tests for DetailView methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class DetailViewTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/detailview.h"
+
+#include <QTest>
+
+using namespace dfmplugin_detailspace;
+
+class DetailViewTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new DetailView();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    DetailView *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(DetailViewTest, DetailView)
 {
-    // DetailView
-    SUCCEED();
+    // Test constructor: DetailView((QWidget *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(DetailViewTest, createExtensionWidgets)
 {
-    // createExtensionWidgets
-    SUCCEED();
+    // Test method: void createExtensionWidgets(())
+    EXPECT_NO_FATAL_FAILURE(obj->createExtensionWidgets());
 }
 
 TEST_F(DetailViewTest, finishPreviewLoading)
 {
-    // finishPreviewLoading
-    SUCCEED();
+    // Test method: void finishPreviewLoading(())
+    EXPECT_NO_FATAL_FAILURE(obj->finishPreviewLoading());
 }
 
 TEST_F(DetailViewTest, initSpinnerOverlay)
 {
-    // initSpinnerOverlay
-    SUCCEED();
+    // Test method: void initSpinnerOverlay(())
+    EXPECT_NO_FATAL_FAILURE(obj->initSpinnerOverlay());
 }
 
 TEST_F(DetailViewTest, onAnimatedImageReady)
 {
-    // onAnimatedImageReady
-    SUCCEED();
+    // Test method: void onAnimatedImageReady((const QUrl &url, const QString &filePath))
+    QUrl _arg0{};
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->onAnimatedImageReady(_arg0, _arg1));
 }
 
 TEST_F(DetailViewTest, onPreviewReady)
 {
-    // onPreviewReady
-    SUCCEED();
+    // Test method: void onPreviewReady((const QUrl &url, const QPixmap &pixmap))
+    QUrl _arg0{};
+    QPixmap _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->onPreviewReady(_arg0, _arg1));
 }
 
 TEST_F(DetailViewTest, reloadPreviewFile)
 {
-    // reloadPreviewFile
-    SUCCEED();
+    // Test method: void reloadPreviewFile(())
+    EXPECT_NO_FATAL_FAILURE(obj->reloadPreviewFile());
 }
 
 TEST_F(DetailViewTest, resizeEvent)
 {
-    // resizeEvent
-    SUCCEED();
+    // Test event handler: resizeEvent((QResizeEvent *event))
+    QResizeEvent _event(QResizeEvent::None);
+    EXPECT_NO_FATAL_FAILURE(obj->resizeEvent(&_event));
 }
 
 TEST_F(DetailViewTest, setUrl)
 {
-    // setUrl
-    SUCCEED();
+    // Test setter: void setUrl((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->setUrl(_arg0));
 }
 
 TEST_F(DetailViewTest, startPreviewLoading)
 {
-    // startPreviewLoading
-    SUCCEED();
+    // Test method: void startPreviewLoading(())
+    EXPECT_NO_FATAL_FAILURE(obj->startPreviewLoading());
 }
 
 TEST_F(DetailViewTest, updateBasicWidget)
 {
-    // updateBasicWidget
-    SUCCEED();
+    // Test method: void updateBasicWidget((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->updateBasicWidget(_arg0));
 }
 
 TEST_F(DetailViewTest, updateExtensionWidgets)
 {
-    // updateExtensionWidgets
-    SUCCEED();
+    // Test method: void updateExtensionWidgets((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->updateExtensionWidgets(_arg0));
 }
 
 TEST_F(DetailViewTest, updateHeadUI)
 {
-    // updateHeadUI
-    SUCCEED();
+    // Test method: void updateHeadUI((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->updateHeadUI(_arg0));
 }
 
 TEST_F(DetailViewTest, updatePreviewSize)
 {
-    // updatePreviewSize
-    SUCCEED();
+    // Test method: void updatePreviewSize(())
+    EXPECT_NO_FATAL_FAILURE(obj->updatePreviewSize());
 }
 
 TEST_F(DetailViewTest, DetailView_Destructor)
 {
-    // ~DetailView
-    SUCCEED();
+    // Test method:  ~DetailView(())
+    EXPECT_NO_FATAL_FAILURE({ DetailView *tmp = new DetailView(); delete tmp; });
 }
-

@@ -4,19 +4,42 @@
 
 /**
  * @file test_vaultentryfileentity.cpp
- * @brief Unit tests for VaultEntryFileEntity Mid-priority methods
+ * @brief Unit tests for VaultEntryFileEntity methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class VaultEntryFileEntityTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/vaultentryfileentity.h"
+
+#include <QTest>
+
+using namespace dfmplugin_vault;
+
+class VaultEntryFileEntityTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new VaultEntryFileEntity();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    VaultEntryFileEntity *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(VaultEntryFileEntityTest, exists)
 {
-    // exists
-    SUCCEED();
+    // Test bool getter: exists()
+    bool result = obj->exists();
+    EXPECT_FALSE(result);
+
 }

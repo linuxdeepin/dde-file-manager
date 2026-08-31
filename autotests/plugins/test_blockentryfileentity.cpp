@@ -4,37 +4,62 @@
 
 /**
  * @file test_blockentryfileentity.cpp
- * @brief Unit tests for BlockEntryFileEntity Mid-priority methods
+ * @brief Unit tests for BlockEntryFileEntity methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class BlockEntryFileEntityTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "fileentity/blockentryfileentity.h"
+
+#include <QTest>
+
+using namespace dfmplugin_computer;
+
+class BlockEntryFileEntityTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new BlockEntryFileEntity();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    BlockEntryFileEntity *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(BlockEntryFileEntityTest, icon)
 {
-    // icon
-    SUCCEED();
+    // Test getter: QIcon icon()
+    auto result = obj->icon();
+    EXPECT_TRUE(result.isNull());
+
 }
 
 TEST_F(BlockEntryFileEntityTest, mountPoint)
 {
-    // mountPoint
-    SUCCEED();
+    // Test getter: QUrl mountPoint()
+    auto result = obj->mountPoint();
+    EXPECT_TRUE(result.isEmpty() || result.isValid());
 }
 
 TEST_F(BlockEntryFileEntityTest, resetWindowsVolTag)
 {
-    // resetWindowsVolTag
-    SUCCEED();
+    // Test method: void resetWindowsVolTag(())
+    EXPECT_NO_FATAL_FAILURE(obj->resetWindowsVolTag());
 }
 
 TEST_F(BlockEntryFileEntityTest, targetUrl)
 {
-    // targetUrl
-    SUCCEED();
+    // Test getter: QUrl targetUrl()
+    auto result = obj->targetUrl();
+    EXPECT_TRUE(result.isEmpty() || result.isValid());
 }

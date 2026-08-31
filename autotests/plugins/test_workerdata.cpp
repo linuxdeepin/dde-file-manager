@@ -4,19 +4,40 @@
 
 /**
  * @file test_workerdata.cpp
- * @brief Unit tests for WorkerData Mid-priority methods
+ * @brief Unit tests for WorkerData methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class WorkerDataTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "fileoperations/fileoperationutils/workerdata.h"
+
+#include <QTest>
+
+using namespace dfmplugin_fileoperations;
+
+class WorkerDataTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new WorkerData();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    WorkerData *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(WorkerDataTest, WorkerData)
 {
-    // WorkerData
-    SUCCEED();
+    // Test constructor: WorkerData(())
+    ASSERT_NE(obj, nullptr);
 }

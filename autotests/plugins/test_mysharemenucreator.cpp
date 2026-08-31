@@ -3,27 +3,51 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_mysharemenucreator.cpp
- * @brief Unit tests for MyShareMenuCreator Low-priority methods
+ * @file test_mysharemenucreator.cpp
+ * @brief Unit tests for MyShareMenuCreator methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class MyShareMenuCreatorTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "menu/mysharemenuscene.h"
+
+#include <QTest>
+
+using namespace dfmplugin_myshares;
+
+class MyShareMenuCreatorTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new MyShareMenuCreator();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    MyShareMenuCreator *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(MyShareMenuCreatorTest, create)
 {
-    // create
-    SUCCEED();
+    // Test getter: AbstractMenuScene create()
+    auto result = obj->create();
+    EXPECT_NO_FATAL_FAILURE({ obj->create(); });
+
 }
 
 TEST_F(MyShareMenuCreatorTest, name)
 {
-    // name
-    SUCCEED();
-}
+    // Test getter: QString name()
+    auto result = obj->name();
+    EXPECT_TRUE(result.isEmpty());
 
+}

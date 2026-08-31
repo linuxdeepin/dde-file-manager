@@ -4,139 +4,179 @@
 
 /**
  * @file test_filedialog.cpp
- * @brief Unit tests for FileDialog Mid-priority methods
+ * @brief Unit tests for FileDialog methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class FileDialogTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/filedialog.h"
+
+#include <QTest>
+
+using namespace core;
+
+class FileDialogTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new FileDialog();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FileDialog *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(FileDialogTest, accept)
 {
-    // accept
-    SUCCEED();
+    // Test method: void accept(())
+    EXPECT_NO_FATAL_FAILURE(obj->accept());
 }
 
 TEST_F(FileDialogTest, addCustomWidget)
 {
-    // addCustomWidget
-    SUCCEED();
+    // Test method: void addCustomWidget((FileDialog::CustomWidgetType type, const QString &data))
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->addCustomWidget(FileDialog::CustomWidgetType(), _arg1));
 }
 
 TEST_F(FileDialogTest, directory)
 {
-    // directory
-    SUCCEED();
+    // Test getter: QDir directory()
+    auto result = obj->directory();
+    EXPECT_NO_FATAL_FAILURE({ obj->directory(); });
+
 }
 
 TEST_F(FileDialogTest, done)
 {
-    // done
-    SUCCEED();
+    // Test method: void done((int r))
+    EXPECT_NO_FATAL_FAILURE(obj->done(0));
 }
 
 TEST_F(FileDialogTest, eventFilter)
 {
-    // eventFilter
-    SUCCEED();
+    // Test method: bool eventFilter((QObject *watched, QEvent *event))
+    auto result = obj->eventFilter(nullptr, nullptr);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(FileDialogTest, exec)
 {
-    // exec
-    SUCCEED();
+    // Test getter: int exec()
+    auto result = obj->exec();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(FileDialogTest, handleEnterInSaveMode)
 {
-    // handleEnterInSaveMode
-    SUCCEED();
+    // Test method: void handleEnterInSaveMode(())
+    EXPECT_NO_FATAL_FAILURE(obj->handleEnterInSaveMode());
 }
 
 TEST_F(FileDialogTest, nameFilters)
 {
-    // nameFilters
-    SUCCEED();
+    // Test getter: QStringList nameFilters()
+    auto result = obj->nameFilters();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(FileDialogTest, onViewItemClicked)
 {
-    // onViewItemClicked
-    SUCCEED();
+    // Test method: void onViewItemClicked((const QVariantMap &data))
+    QVariantMap _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->onViewItemClicked(_arg0));
 }
 
 TEST_F(FileDialogTest, open)
 {
-    // open
-    SUCCEED();
+    // Test method: void open(())
+    EXPECT_NO_FATAL_FAILURE(obj->open());
 }
 
 TEST_F(FileDialogTest, reject)
 {
-    // reject
-    SUCCEED();
+    // Test method: void reject(())
+    EXPECT_NO_FATAL_FAILURE(obj->reject());
 }
 
 TEST_F(FileDialogTest, saveClosedSate)
 {
-    // saveClosedSate
-    SUCCEED();
+    // Test bool getter: saveClosedSate()
+    bool result = obj->saveClosedSate();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(FileDialogTest, saveLastVisitedUrl)
 {
-    // saveLastVisitedUrl
-    SUCCEED();
+    // Test method: void saveLastVisitedUrl((const QUrl &currentUrl))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->saveLastVisitedUrl(_arg0));
 }
 
 TEST_F(FileDialogTest, selectNameFilterByIndex)
 {
-    // selectNameFilterByIndex
-    SUCCEED();
+    // Test method: void selectNameFilterByIndex((int index))
+    EXPECT_NO_FATAL_FAILURE(obj->selectNameFilterByIndex(0));
 }
 
 TEST_F(FileDialogTest, selectedFiles)
 {
-    // selectedFiles
-    SUCCEED();
+    // Test getter: QStringList selectedFiles()
+    auto result = obj->selectedFiles();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(FileDialogTest, selectedUrls)
 {
-    // selectedUrls
-    SUCCEED();
+    // Test getter: QList<QUrl> selectedUrls()
+    auto result = obj->selectedUrls();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(FileDialogTest, setFileMode)
 {
-    // setFileMode
-    SUCCEED();
+    // Test setter: void setFileMode((QFileDialog::FileMode mode))
+    EXPECT_NO_FATAL_FAILURE(obj->setFileMode(QFileDialog::FileMode()));
 }
 
 TEST_F(FileDialogTest, updateAcceptButtonState)
 {
-    // updateAcceptButtonState
-    SUCCEED();
+    // Test method: void updateAcceptButtonState(())
+    EXPECT_NO_FATAL_FAILURE(obj->updateAcceptButtonState());
 }
 
 TEST_F(FileDialogTest, updateViewState)
 {
-    // updateViewState
-    SUCCEED();
+    // Test method: void updateViewState(())
+    EXPECT_NO_FATAL_FAILURE(obj->updateViewState());
 }
 
 TEST_F(FileDialogTest, FileDialog)
 {
-    // FileDialog
-    SUCCEED();
+    // Test constructor: FileDialog((const QUrl &url, QWidget *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(FileDialogTest, filter)
 {
-    // filter
-    SUCCEED();
+    // Test getter: QDir::Filters filter()
+    auto result = obj->filter();
+    EXPECT_NO_FATAL_FAILURE({ obj->filter(); });
+
 }

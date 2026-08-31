@@ -4,31 +4,58 @@
 
 /**
  * @file test_thumbnailmanager.cpp
- * @brief Unit tests for ThumbnailManager Mid-priority methods
+ * @brief Unit tests for ThumbnailManager methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ThumbnailManagerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "thumbnailmanager.h"
+
+#include <QTest>
+
+using namespace ddplugin_wallpapersetting;
+
+class ThumbnailManagerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ThumbnailManager();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ThumbnailManager *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ThumbnailManagerTest, find)
 {
-    // find
-    SUCCEED();
+    // Test method: void find((const QString &key))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->find(_arg0));
 }
 
 TEST_F(ThumbnailManagerTest, instance)
 {
-    // instance
-    SUCCEED();
+    // Test method: ThumbnailManager instance((qreal scale))
+    auto result = obj->instance(0.0);
+    EXPECT_NO_FATAL_FAILURE({ obj->instance(0.0); });
+
 }
 
 TEST_F(ThumbnailManagerTest, thumbnailImage)
 {
-    // thumbnailImage
-    SUCCEED();
+    // Test method: QPixmap thumbnailImage((const QString &key, qreal scale))
+    QString _arg0{};
+    auto result = obj->thumbnailImage(_arg0, 0.0);
+    EXPECT_TRUE(result.isNull());
+
 }

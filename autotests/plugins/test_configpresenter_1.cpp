@@ -3,201 +3,269 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_configpresenter_1.cpp
- * @brief Unit tests for ConfigPresenter Low-priority methods
+ * @file test_configpresenter_1.cpp
+ * @brief Unit tests for ConfigPresenter methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ConfigPresenterTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "config/configpresenter.h"
+
+#include <QTest>
+
+using namespace ddplugin_organizer;
+
+class ConfigPresenterTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ConfigPresenter();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ConfigPresenter *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ConfigPresenterTest, ConfigPresenter)
 {
-    // ConfigPresenter
-    SUCCEED();
+    // Test constructor: ConfigPresenter((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(ConfigPresenterTest, classification)
 {
-    // classification
-    SUCCEED();
+    // Test getter: Classifier classification()
+    auto result = obj->classification();
+    EXPECT_NO_FATAL_FAILURE({ obj->classification(); });
+
 }
 
 TEST_F(ConfigPresenterTest, customProfile)
 {
-    // customProfile
-    SUCCEED();
+    // Test getter: QList<CollectionBaseDataPtr> customProfile()
+    auto result = obj->customProfile();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(ConfigPresenterTest, customStyle)
 {
-    // customStyle
-    SUCCEED();
+    // Test method: CollectionStyle customStyle((const QString &key))
+    QString _arg0{};
+    auto result = obj->customStyle(_arg0);
+    EXPECT_NO_FATAL_FAILURE({ obj->customStyle(_arg0); });
+
 }
 
 TEST_F(ConfigPresenterTest, enabledTypeCategories)
 {
-    // enabledTypeCategories
-    SUCCEED();
+    // Test getter: ItemCategories enabledTypeCategories()
+    auto result = obj->enabledTypeCategories();
+    EXPECT_NO_FATAL_FAILURE({ obj->enabledTypeCategories(); });
+
 }
 
 TEST_F(ConfigPresenterTest, hasConfigId)
 {
-    // hasConfigId
-    SUCCEED();
+    // Test method: bool hasConfigId((const QString &configId))
+    QString _arg0{};
+    auto result = obj->hasConfigId(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(ConfigPresenterTest, hideAllKeySequence)
 {
-    // hideAllKeySequence
-    SUCCEED();
+    // Test getter: QKeySequence hideAllKeySequence()
+    auto result = obj->hideAllKeySequence();
+    EXPECT_NO_FATAL_FAILURE({ obj->hideAllKeySequence(); });
+
 }
 
 TEST_F(ConfigPresenterTest, initialize)
 {
-    // initialize
-    SUCCEED();
+    // Test bool getter: initialize()
+    bool result = obj->initialize();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(ConfigPresenterTest, instance)
 {
-    // instance
-    SUCCEED();
+    // Test getter: ConfigPresenter instance()
+    auto result = obj->instance();
+    EXPECT_NO_FATAL_FAILURE({ obj->instance(); });
+
 }
 
 TEST_F(ConfigPresenterTest, isEnable)
 {
-    // isEnable
-    SUCCEED();
+    // Test bool getter: isEnable()
+    bool result = obj->isEnable();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(ConfigPresenterTest, isEnableVisibility)
 {
-    // isEnableVisibility
-    SUCCEED();
+    // Test bool getter: isEnableVisibility()
+    bool result = obj->isEnableVisibility();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(ConfigPresenterTest, isRepeatNoMore)
 {
-    // isRepeatNoMore
-    SUCCEED();
+    // Test bool getter: isRepeatNoMore()
+    bool result = obj->isRepeatNoMore();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(ConfigPresenterTest, lastStyleConfigId)
 {
-    // lastStyleConfigId
-    SUCCEED();
+    // Test getter: QString lastStyleConfigId()
+    auto result = obj->lastStyleConfigId();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(ConfigPresenterTest, normalProfile)
 {
-    // normalProfile
-    SUCCEED();
+    // Test getter: QList<CollectionBaseDataPtr> normalProfile()
+    auto result = obj->normalProfile();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(ConfigPresenterTest, normalStyle)
 {
-    // normalStyle
-    SUCCEED();
+    // Test method: CollectionStyle normalStyle((const QString &configId, const QString &key))
+    QString _arg0{};
+    QString _arg1{};
+    auto result = obj->normalStyle(_arg0, _arg1);
+    EXPECT_NO_FATAL_FAILURE({ obj->normalStyle(_arg0, _arg1); });
+
 }
 
 TEST_F(ConfigPresenterTest, optimizeMovingPerformance)
 {
-    // optimizeMovingPerformance
-    SUCCEED();
+    // Test bool getter: optimizeMovingPerformance()
+    bool result = obj->optimizeMovingPerformance();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(ConfigPresenterTest, organizeAction)
 {
-    // organizeAction
-    SUCCEED();
+    // Test getter: OrganizeAction organizeAction()
+    auto result = obj->organizeAction();
+    EXPECT_NO_FATAL_FAILURE({ obj->organizeAction(); });
+
 }
 
 TEST_F(ConfigPresenterTest, organizeOnTriggered)
 {
-    // organizeOnTriggered
-    SUCCEED();
+    // Test bool getter: organizeOnTriggered()
+    bool result = obj->organizeOnTriggered();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(ConfigPresenterTest, setClassification)
 {
-    // setClassification
-    SUCCEED();
+    // Test setter: void setClassification((Classifier cf))
+    EXPECT_NO_FATAL_FAILURE(obj->setClassification(Classifier()));
 }
 
 TEST_F(ConfigPresenterTest, setEnable)
 {
-    // setEnable
-    SUCCEED();
+    // Test setter: void setEnable((bool e))
+    EXPECT_NO_FATAL_FAILURE(obj->setEnable(false));
 }
 
 TEST_F(ConfigPresenterTest, setEnableVisibility)
 {
-    // setEnableVisibility
-    SUCCEED();
+    // Test setter: void setEnableVisibility((bool v))
+    EXPECT_NO_FATAL_FAILURE(obj->setEnableVisibility(false));
 }
 
 TEST_F(ConfigPresenterTest, setHideAllKeySequence)
 {
-    // setHideAllKeySequence
-    SUCCEED();
+    // Test setter: void setHideAllKeySequence((const QKeySequence &seq))
+    QKeySequence _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->setHideAllKeySequence(_arg0));
 }
 
 TEST_F(ConfigPresenterTest, setLastStyleConfigId)
 {
-    // setLastStyleConfigId
-    SUCCEED();
+    // Test setter: void setLastStyleConfigId((const QString &id))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->setLastStyleConfigId(_arg0));
 }
 
 TEST_F(ConfigPresenterTest, setMode)
 {
-    // setMode
-    SUCCEED();
+    // Test setter: void setMode((OrganizerMode m))
+    EXPECT_NO_FATAL_FAILURE(obj->setMode(OrganizerMode()));
 }
 
 TEST_F(ConfigPresenterTest, setRepeatNoMore)
 {
-    // setRepeatNoMore
-    SUCCEED();
+    // Test setter: void setRepeatNoMore((bool e))
+    EXPECT_NO_FATAL_FAILURE(obj->setRepeatNoMore(false));
 }
 
 TEST_F(ConfigPresenterTest, setVersion)
 {
-    // setVersion
-    SUCCEED();
+    // Test setter: void setVersion((const QString &v))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->setVersion(_arg0));
 }
 
 TEST_F(ConfigPresenterTest, surfaceSizes)
 {
-    // surfaceSizes
-    SUCCEED();
+    // Test getter: QList<QSize> surfaceSizes()
+    auto result = obj->surfaceSizes();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(ConfigPresenterTest, updateCustomStyle)
 {
-    // updateCustomStyle
-    SUCCEED();
+    // Test method: void updateCustomStyle((const CollectionStyle &style))
+    CollectionStyle _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->updateCustomStyle(_arg0));
 }
 
 TEST_F(ConfigPresenterTest, updateNormalStyle)
 {
-    // updateNormalStyle
-    SUCCEED();
+    // Test method: void updateNormalStyle((const QString &configId, const CollectionStyle &style))
+    QString _arg0{};
+    CollectionStyle _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->updateNormalStyle(_arg0, _arg1));
 }
 
 TEST_F(ConfigPresenterTest, version)
 {
-    // version
-    SUCCEED();
+    // Test getter: QString version()
+    auto result = obj->version();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(ConfigPresenterTest, ConfigPresenter_Destructor)
 {
-    // ~ConfigPresenter
-    SUCCEED();
+    // Test method:  ~ConfigPresenter(())
+    EXPECT_NO_FATAL_FAILURE({ ConfigPresenter *tmp = new ConfigPresenter(); delete tmp; });
 }
-

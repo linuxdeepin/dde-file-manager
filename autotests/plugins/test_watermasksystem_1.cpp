@@ -3,69 +3,97 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_watermasksystem_1.cpp
- * @brief Unit tests for WatermaskSystem Low-priority methods
+ * @file test_watermasksystem_1.cpp
+ * @brief Unit tests for WatermaskSystem methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class WatermaskSystemTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "watermask/watermasksystem.h"
+
+#include <QTest>
+
+using namespace ddplugin_canvas;
+
+class WatermaskSystemTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new WatermaskSystem();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    WatermaskSystem *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(WatermaskSystemTest, WatermaskSystem)
 {
-    // WatermaskSystem
-    SUCCEED();
+    // Test constructor: WatermaskSystem((QWidget *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(WatermaskSystemTest, getResource)
 {
-    // getResource
-    SUCCEED();
+    // Test method: void getResource((const QString &root, const QString &lang, QString *logo, QString *text))
+    QString _arg0{};
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->getResource(_arg0, _arg1, nullptr, nullptr));
 }
 
 TEST_F(WatermaskSystemTest, isEnable)
 {
-    // isEnable
-    SUCCEED();
+    // Test bool getter: isEnable()
+    bool result = obj->isEnable();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(WatermaskSystemTest, loadConfig)
 {
-    // loadConfig
-    SUCCEED();
+    // Test method: void loadConfig(())
+    EXPECT_NO_FATAL_FAILURE(obj->loadConfig());
 }
 
 TEST_F(WatermaskSystemTest, refresh)
 {
-    // refresh
-    SUCCEED();
+    // Test method: void refresh(())
+    EXPECT_NO_FATAL_FAILURE(obj->refresh());
 }
 
 TEST_F(WatermaskSystemTest, showLicenseState)
 {
-    // showLicenseState
-    SUCCEED();
+    // Test bool getter: showLicenseState()
+    bool result = obj->showLicenseState();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(WatermaskSystemTest, stackUnder)
 {
-    // stackUnder
-    SUCCEED();
+    // Test method: void stackUnder((QWidget *w))
+    EXPECT_NO_FATAL_FAILURE(obj->stackUnder(nullptr));
 }
 
 TEST_F(WatermaskSystemTest, updatePosition)
 {
-    // updatePosition
-    SUCCEED();
+    // Test method: void updatePosition(())
+    EXPECT_NO_FATAL_FAILURE(obj->updatePosition());
 }
 
 TEST_F(WatermaskSystemTest, usingCn)
 {
-    // usingCn
-    SUCCEED();
-}
+    // Test bool getter: usingCn()
+    bool result = obj->usingCn();
+    EXPECT_FALSE(result);
 
+}

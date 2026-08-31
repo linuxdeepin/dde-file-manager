@@ -4,19 +4,40 @@
 
 /**
  * @file test_watermaskcontainer.cpp
- * @brief Unit tests for WatermaskContainer Mid-priority methods
+ * @brief Unit tests for WatermaskContainer methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class WatermaskContainerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "watermask/watermaskcontainer.h"
+
+#include <QTest>
+
+using namespace ddplugin_canvas;
+
+class WatermaskContainerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new WatermaskContainer();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    WatermaskContainer *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(WatermaskContainerTest, WatermaskContainer)
 {
-    // WatermaskContainer
-    SUCCEED();
+    // Test constructor: WatermaskContainer((QWidget *parent))
+    ASSERT_NE(obj, nullptr);
 }

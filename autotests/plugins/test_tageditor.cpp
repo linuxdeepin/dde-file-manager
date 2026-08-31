@@ -4,25 +4,47 @@
 
 /**
  * @file test_tageditor.cpp
- * @brief Unit tests for TagEditor Mid-priority methods
+ * @brief Unit tests for TagEditor methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class TagEditorTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "widgets/tageditor.h"
+
+#include <QTest>
+
+using namespace dfmplugin_tag;
+
+class TagEditorTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new TagEditor();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    TagEditor *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(TagEditorTest, TagEditor)
 {
-    // TagEditor
-    SUCCEED();
+    // Test constructor: TagEditor(())
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(TagEditorTest, keyPressEvent)
 {
-    // keyPressEvent
-    SUCCEED();
+    // Test event handler: keyPressEvent((QKeyEvent *event))
+    QKeyEvent _event(QKeyEvent::None);
+    EXPECT_NO_FATAL_FAILURE(obj->keyPressEvent(&_event));
 }

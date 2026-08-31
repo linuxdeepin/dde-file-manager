@@ -4,31 +4,58 @@
 
 /**
  * @file test_viewpainter.cpp
- * @brief Unit tests for ViewPainter Mid-priority methods
+ * @brief Unit tests for ViewPainter methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ViewPainterTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "view/operator/viewpainter.h"
+
+#include <QTest>
+
+using namespace ddplugin_canvas;
+
+class ViewPainterTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ViewPainter();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ViewPainter *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ViewPainterTest, model)
 {
-    // model
-    SUCCEED();
+    // Test getter: CanvasProxyModel model()
+    auto result = obj->model();
+    EXPECT_NO_FATAL_FAILURE({ obj->model(); });
+
 }
 
 TEST_F(ViewPainterTest, selectionModel)
 {
-    // selectionModel
-    SUCCEED();
+    // Test getter: CanvasSelectionModel selectionModel()
+    auto result = obj->selectionModel();
+    EXPECT_NO_FATAL_FAILURE({ obj->selectionModel(); });
+
 }
 
 TEST_F(ViewPainterTest, view)
 {
-    // view
-    SUCCEED();
+    // Test getter: CanvasView view()
+    auto result = obj->view();
+    EXPECT_NO_FATAL_FAILURE({ obj->view(); });
+
 }

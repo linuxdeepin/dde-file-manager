@@ -4,19 +4,42 @@
 
 /**
  * @file test_localfileiconproviderprivate.cpp
- * @brief Unit tests for LocalFileIconProviderPrivate Mid-priority methods
+ * @brief Unit tests for LocalFileIconProviderPrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class LocalFileIconProviderPrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "dfm-base/file/local/localfileiconprovider.h"
+
+#include <QTest>
+
+using namespace src;
+
+class LocalFileIconProviderPrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new LocalFileIconProviderPrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    LocalFileIconProviderPrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(LocalFileIconProviderPrivateTest, fromTheme)
 {
-    // fromTheme
-    SUCCEED();
+    // Test method: QIcon fromTheme((QString iconName))
+    auto result = obj->fromTheme(QString());
+    EXPECT_TRUE(result.isNull());
+
 }

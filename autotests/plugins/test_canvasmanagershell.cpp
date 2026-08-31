@@ -3,45 +3,69 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_canvasmanagershell.cpp
- * @brief Unit tests for CanvasManagerShell Low-priority methods
+ * @file test_canvasmanagershell.cpp
+ * @brief Unit tests for CanvasManagerShell methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class CanvasManagerShellTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "interface/canvasmanagershell.h"
+
+#include <QTest>
+
+using namespace ddplugin_organizer;
+
+class CanvasManagerShellTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new CanvasManagerShell();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    CanvasManagerShell *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(CanvasManagerShellTest, CanvasManagerShell)
 {
-    // CanvasManagerShell
-    SUCCEED();
+    // Test constructor: CanvasManagerShell((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(CanvasManagerShellTest, iconLevel)
 {
-    // iconLevel
-    SUCCEED();
+    // Test getter: int iconLevel()
+    auto result = obj->iconLevel();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(CanvasManagerShellTest, initialize)
 {
-    // initialize
-    SUCCEED();
+    // Test bool getter: initialize()
+    bool result = obj->initialize();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(CanvasManagerShellTest, setIconLevel)
 {
-    // setIconLevel
-    SUCCEED();
+    // Test setter: void setIconLevel((const int level))
+    EXPECT_NO_FATAL_FAILURE(obj->setIconLevel(0));
 }
 
 TEST_F(CanvasManagerShellTest, CanvasManagerShell_Destructor)
 {
-    // ~CanvasManagerShell
-    SUCCEED();
+    // Test method:  ~CanvasManagerShell(())
+    EXPECT_NO_FATAL_FAILURE({ CanvasManagerShell *tmp = new CanvasManagerShell(); delete tmp; });
 }
-

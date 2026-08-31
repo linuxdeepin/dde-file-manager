@@ -4,25 +4,50 @@
 
 /**
  * @file test_extensionpluginloader.cpp
- * @brief Unit tests for ExtensionPluginLoader Mid-priority methods
+ * @brief Unit tests for ExtensionPluginLoader methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ExtensionPluginLoaderTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "extensionimpl/pluginsload/extensionpluginloader.h"
+
+#include <QTest>
+
+using namespace dfmplugin_utils;
+
+class ExtensionPluginLoaderTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ExtensionPluginLoader();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ExtensionPluginLoader *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ExtensionPluginLoaderTest, fileName)
 {
-    // fileName
-    SUCCEED();
+    // Test getter: QString fileName()
+    auto result = obj->fileName();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(ExtensionPluginLoaderTest, shutdown)
 {
-    // shutdown
-    SUCCEED();
+    // Test bool getter: shutdown()
+    bool result = obj->shutdown();
+    EXPECT_FALSE(result);
+
 }

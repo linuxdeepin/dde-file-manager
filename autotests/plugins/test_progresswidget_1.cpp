@@ -3,21 +3,41 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_progresswidget_1.cpp
- * @brief Unit tests for ProgressWidget Low-priority methods
+ * @file test_progresswidget_1.cpp
+ * @brief Unit tests for ProgressWidget methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ProgressWidgetTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "shred/progressdialog.h"
+
+#include <QTest>
+
+using namespace dfmplugin_utils;
+
+class ProgressWidgetTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ProgressWidget();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ProgressWidget *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ProgressWidgetTest, stopProgress)
 {
-    // stopProgress
-    SUCCEED();
+    // Test method: void stopProgress(())
+    EXPECT_NO_FATAL_FAILURE(obj->stopProgress());
 }
-

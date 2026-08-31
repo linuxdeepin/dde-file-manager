@@ -4,37 +4,67 @@
 
 /**
  * @file test_workspaceeventcaller.cpp
- * @brief Unit tests for WorkspaceEventCaller Mid-priority methods
+ * @brief Unit tests for WorkspaceEventCaller methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class WorkspaceEventCallerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "events/workspaceeventcaller.h"
+
+#include <QTest>
+
+using namespace dfmplugin_workspace;
+
+class WorkspaceEventCallerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new WorkspaceEventCaller();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    WorkspaceEventCaller *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(WorkspaceEventCallerTest, sendOpenWindow)
 {
-    // sendOpenWindow
-    SUCCEED();
+    // Test method: void sendOpenWindow((const QList<QUrl> &urls, const bool isNew))
+    QList<QUrl> _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->sendOpenWindow(_arg0, false));
 }
 
 TEST_F(WorkspaceEventCallerTest, sendRenameEndEdit)
 {
-    // sendRenameEndEdit
-    SUCCEED();
+    // Test method: bool sendRenameEndEdit((const quint64 &winId, const QUrl &url))
+    quint64 _arg0{};
+    QUrl _arg1{};
+    auto result = obj->sendRenameEndEdit(_arg0, _arg1);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(WorkspaceEventCallerTest, sendRenameStartEdit)
 {
-    // sendRenameStartEdit
-    SUCCEED();
+    // Test method: bool sendRenameStartEdit((const quint64 &winId, const QUrl &url))
+    quint64 _arg0{};
+    QUrl _arg1{};
+    auto result = obj->sendRenameStartEdit(_arg0, _arg1);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(WorkspaceEventCallerTest, sendViewModeChanged)
 {
-    // sendViewModeChanged
-    SUCCEED();
+    // Test method: void sendViewModeChanged((quint64 windowId, Global::ViewMode mode))
+    EXPECT_NO_FATAL_FAILURE(obj->sendViewModeChanged(0, Global::ViewMode()));
 }

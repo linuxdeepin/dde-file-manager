@@ -3,63 +3,87 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_bookmark.cpp
- * @brief Unit tests for BookMark Low-priority methods
+ * @file test_bookmark.cpp
+ * @brief Unit tests for BookMark methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class BookMarkTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "bookmark.h"
+
+#include <QTest>
+
+using namespace dfmplugin_bookmark;
+
+class BookMarkTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new BookMark();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    BookMark *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(BookMarkTest, bindEvents)
 {
-    // bindEvents
-    SUCCEED();
+    // Test method: void bindEvents(())
+    EXPECT_NO_FATAL_FAILURE(obj->bindEvents());
 }
 
 TEST_F(BookMarkTest, bindScene)
 {
-    // bindScene
-    SUCCEED();
+    // Test method: void bindScene((const QString &parentScene))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->bindScene(_arg0));
 }
 
 TEST_F(BookMarkTest, bindWindows)
 {
-    // bindWindows
-    SUCCEED();
+    // Test method: void bindWindows(())
+    EXPECT_NO_FATAL_FAILURE(obj->bindWindows());
 }
 
 TEST_F(BookMarkTest, initialize)
 {
-    // initialize
-    SUCCEED();
+    // Test method: void initialize(())
+    EXPECT_NO_FATAL_FAILURE(obj->initialize());
 }
 
 TEST_F(BookMarkTest, onMenuSceneAdded)
 {
-    // onMenuSceneAdded
-    SUCCEED();
+    // Test method: void onMenuSceneAdded((const QString &scene))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->onMenuSceneAdded(_arg0));
 }
 
 TEST_F(BookMarkTest, onSideBarInstallFinished)
 {
-    // onSideBarInstallFinished
-    SUCCEED();
+    // Test method: void onSideBarInstallFinished(())
+    EXPECT_NO_FATAL_FAILURE(obj->onSideBarInstallFinished());
 }
 
 TEST_F(BookMarkTest, onWindowOpened)
 {
-    // onWindowOpened
-    SUCCEED();
+    // Test method: void onWindowOpened((quint64 winId))
+    EXPECT_NO_FATAL_FAILURE(obj->onWindowOpened(0));
 }
 
 TEST_F(BookMarkTest, start)
 {
-    // start
-    SUCCEED();
-}
+    // Test bool getter: start()
+    bool result = obj->start();
+    EXPECT_FALSE(result);
 
+}

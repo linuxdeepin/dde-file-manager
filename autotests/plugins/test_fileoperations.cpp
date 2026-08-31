@@ -4,31 +4,54 @@
 
 /**
  * @file test_fileoperations.cpp
- * @brief Unit tests for FileOperations Mid-priority methods
+ * @brief Unit tests for FileOperations methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class FileOperationsTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "fileoperations.h"
+
+#include <QTest>
+
+using namespace dfmplugin_fileoperations;
+
+class FileOperationsTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new FileOperations();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FileOperations *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(FileOperationsTest, followEvents)
 {
-    // followEvents
-    SUCCEED();
+    // Test method: void followEvents(())
+    EXPECT_NO_FATAL_FAILURE(obj->followEvents());
 }
 
 TEST_F(FileOperationsTest, initEventHandle)
 {
-    // initEventHandle
-    SUCCEED();
+    // Test method: void initEventHandle(())
+    EXPECT_NO_FATAL_FAILURE(obj->initEventHandle());
 }
 
 TEST_F(FileOperationsTest, start)
 {
-    // start
-    SUCCEED();
+    // Test bool getter: start()
+    bool result = obj->start();
+    EXPECT_FALSE(result);
+
 }

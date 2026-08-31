@@ -4,19 +4,40 @@
 
 /**
  * @file test_templatemenuscene.cpp
- * @brief Unit tests for TemplateMenuScene Mid-priority methods
+ * @brief Unit tests for TemplateMenuScene methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class TemplateMenuSceneTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "templatemenuscene/templatemenuscene.h"
+
+#include <QTest>
+
+using namespace dfmplugin_menu;
+
+class TemplateMenuSceneTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new TemplateMenuScene();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    TemplateMenuScene *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(TemplateMenuSceneTest, TemplateMenuScene)
 {
-    // TemplateMenuScene
-    SUCCEED();
+    // Test constructor: TemplateMenuScene((TemplateMenu *menu, QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }

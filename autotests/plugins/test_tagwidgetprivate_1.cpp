@@ -3,21 +3,41 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_tagwidgetprivate_1.cpp
- * @brief Unit tests for TagWidgetPrivate Low-priority methods
+ * @file test_tagwidgetprivate_1.cpp
+ * @brief Unit tests for TagWidgetPrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class TagWidgetPrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "widgets/private/tagwidget_p.h"
+
+#include <QTest>
+
+using namespace dfmplugin_tag;
+
+class TagWidgetPrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new TagWidgetPrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    TagWidgetPrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(TagWidgetPrivateTest, initUiForSizeMode)
 {
-    // initUiForSizeMode
-    SUCCEED();
+    // Test method: void initUiForSizeMode(())
+    EXPECT_NO_FATAL_FAILURE(obj->initUiForSizeMode());
 }
-

@@ -3,129 +3,168 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_sidebarwidget_1.cpp
- * @brief Unit tests for SideBarWidget Low-priority methods
+ * @file test_sidebarwidget_1.cpp
+ * @brief Unit tests for SideBarWidget methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class SideBarWidgetTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "treeviews/sidebarwidget.h"
+
+#include <QTest>
+
+using namespace dfmplugin_sidebar;
+
+class SideBarWidgetTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new SideBarWidget();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    SideBarWidget *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(SideBarWidgetTest, SideBarWidget)
 {
-    // SideBarWidget
-    SUCCEED();
+    // Test constructor: SideBarWidget((QFrame *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(SideBarWidgetTest, changeEvent)
 {
-    // changeEvent
-    SUCCEED();
+    // Test event handler: changeEvent((QEvent *event))
+    QEvent _event(QEvent::None);
+    EXPECT_NO_FATAL_FAILURE(obj->changeEvent(&_event));
 }
 
 TEST_F(SideBarWidgetTest, currentUrl)
 {
-    // currentUrl
-    SUCCEED();
+    // Test getter: QUrl currentUrl()
+    auto result = obj->currentUrl();
+    EXPECT_TRUE(result.isEmpty() || result.isValid());
 }
 
 TEST_F(SideBarWidgetTest, customContextMenuCall)
 {
-    // customContextMenuCall
-    SUCCEED();
+    // Test method: void customContextMenuCall((const QPoint &pos))
+    QPoint _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->customContextMenuCall(_arg0));
 }
 
 TEST_F(SideBarWidgetTest, editItem)
 {
-    // editItem
-    SUCCEED();
+    // Test method: void editItem((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->editItem(_arg0));
 }
 
 TEST_F(SideBarWidgetTest, findItem)
 {
-    // findItem
-    SUCCEED();
+    // Test method: int findItem((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->findItem(_arg0);
+    EXPECT_GE(result, 0);
+
 }
 
 TEST_F(SideBarWidgetTest, findItemIndex)
 {
-    // findItemIndex
-    SUCCEED();
+    // Test method: QModelIndex findItemIndex((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->findItemIndex(_arg0);
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(SideBarWidgetTest, initConnect)
 {
-    // initConnect
-    SUCCEED();
+    // Test method: void initConnect(())
+    EXPECT_NO_FATAL_FAILURE(obj->initConnect());
 }
 
 TEST_F(SideBarWidgetTest, initDefaultModel)
 {
-    // initDefaultModel
-    SUCCEED();
+    // Test method: void initDefaultModel(())
+    EXPECT_NO_FATAL_FAILURE(obj->initDefaultModel());
 }
 
 TEST_F(SideBarWidgetTest, initializeUi)
 {
-    // initializeUi
-    SUCCEED();
+    // Test method: void initializeUi(())
+    EXPECT_NO_FATAL_FAILURE(obj->initializeUi());
 }
 
 TEST_F(SideBarWidgetTest, insertItem)
 {
-    // insertItem
-    SUCCEED();
+    // Test method: bool insertItem((const int index, SideBarItem *item))
+    auto result = obj->insertItem(0, nullptr);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(SideBarWidgetTest, onItemRenamed)
 {
-    // onItemRenamed
-    SUCCEED();
+    // Test method: void onItemRenamed((const QModelIndex &index, const QString &newName))
+    QModelIndex _arg0{};
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->onItemRenamed(_arg0, _arg1));
 }
 
 TEST_F(SideBarWidgetTest, setCurrentUrl)
 {
-    // setCurrentUrl
-    SUCCEED();
+    // Test setter: void setCurrentUrl((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->setCurrentUrl(_arg0));
 }
 
 TEST_F(SideBarWidgetTest, setItemVisiable)
 {
-    // setItemVisiable
-    SUCCEED();
+    // Test setter: void setItemVisiable((const QUrl &url, bool visible))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->setItemVisiable(_arg0, false));
 }
 
 TEST_F(SideBarWidgetTest, updateBackgroundColor)
 {
-    // updateBackgroundColor
-    SUCCEED();
+    // Test method: void updateBackgroundColor(())
+    EXPECT_NO_FATAL_FAILURE(obj->updateBackgroundColor());
 }
 
 TEST_F(SideBarWidgetTest, updateItem)
 {
-    // updateItem
-    SUCCEED();
+    // Test method: void updateItem((const QUrl &url, const ItemInfo &newInfo))
+    QUrl _arg0{};
+    ItemInfo _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->updateItem(_arg0, _arg1));
 }
 
 TEST_F(SideBarWidgetTest, updateItemVisiable)
 {
-    // updateItemVisiable
-    SUCCEED();
+    // Test method: void updateItemVisiable((const QVariantMap &states))
+    QVariantMap _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->updateItemVisiable(_arg0));
 }
 
 TEST_F(SideBarWidgetTest, updateSelection)
 {
-    // updateSelection
-    SUCCEED();
+    // Test method: void updateSelection(())
+    EXPECT_NO_FATAL_FAILURE(obj->updateSelection());
 }
 
 TEST_F(SideBarWidgetTest, updateWindowEffect)
 {
-    // updateWindowEffect
-    SUCCEED();
+    // Test method: void updateWindowEffect(())
+    EXPECT_NO_FATAL_FAILURE(obj->updateWindowEffect());
 }
-

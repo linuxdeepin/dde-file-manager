@@ -4,19 +4,41 @@
 
 /**
  * @file test_abstractscreenproxy.cpp
- * @brief Unit tests for AbstractScreenProxy Mid-priority methods
+ * @brief Unit tests for AbstractScreenProxy methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class AbstractScreenProxyTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "dfm-base/interfaces/screen/abstractscreenproxy.h"
+
+#include <QTest>
+
+using namespace src;
+
+class AbstractScreenProxyTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new AbstractScreenProxy();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    AbstractScreenProxy *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(AbstractScreenProxyTest, appendEvent)
 {
-    // appendEvent
-    SUCCEED();
+    // Test event handler: appendEvent((AbstractScreenProxy::Event e))
+    AbstractScreenProxy::Event _event(AbstractScreenProxy::Event::None);
+    EXPECT_NO_FATAL_FAILURE(obj->appendEvent(&_event));
 }

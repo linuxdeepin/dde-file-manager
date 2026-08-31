@@ -3,69 +3,94 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_screenproxyqt_1.cpp
- * @brief Unit tests for ScreenProxyQt Low-priority methods
+ * @file test_screenproxyqt_1.cpp
+ * @brief Unit tests for ScreenProxyQt methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ScreenProxyQtTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "screen/screenproxyqt.h"
+
+#include <QTest>
+
+using namespace ddplugin_core;
+
+class ScreenProxyQtTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ScreenProxyQt();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ScreenProxyQt *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ScreenProxyQtTest, connectScreen)
 {
-    // connectScreen
-    SUCCEED();
+    // Test method: void connectScreen((ScreenPointer sp))
+    EXPECT_NO_FATAL_FAILURE(obj->connectScreen(ScreenPointer()));
 }
 
 TEST_F(ScreenProxyQtTest, disconnectScreen)
 {
-    // disconnectScreen
-    SUCCEED();
+    // Test method: void disconnectScreen((ScreenPointer sp))
+    EXPECT_NO_FATAL_FAILURE(obj->disconnectScreen(ScreenPointer()));
 }
 
 TEST_F(ScreenProxyQtTest, displayMode)
 {
-    // displayMode
-    SUCCEED();
+    // Test getter: DisplayMode displayMode()
+    auto result = obj->displayMode();
+    EXPECT_GE(static_cast<int>(result), 0);
+
 }
 
 TEST_F(ScreenProxyQtTest, onDockChanged)
 {
-    // onDockChanged
-    SUCCEED();
+    // Test method: void onDockChanged(())
+    EXPECT_NO_FATAL_FAILURE(obj->onDockChanged());
 }
 
 TEST_F(ScreenProxyQtTest, onPrimaryChanged)
 {
-    // onPrimaryChanged
-    SUCCEED();
+    // Test method: void onPrimaryChanged(())
+    EXPECT_NO_FATAL_FAILURE(obj->onPrimaryChanged());
 }
 
 TEST_F(ScreenProxyQtTest, onScreenAdded)
 {
-    // onScreenAdded
-    SUCCEED();
+    // Test method: void onScreenAdded((QScreen *screen))
+    EXPECT_NO_FATAL_FAILURE(obj->onScreenAdded(nullptr));
 }
 
 TEST_F(ScreenProxyQtTest, onScreenAvailableGeometryChanged)
 {
-    // onScreenAvailableGeometryChanged
-    SUCCEED();
+    // Test method: void onScreenAvailableGeometryChanged((const QRect &rect))
+    QRect _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->onScreenAvailableGeometryChanged(_arg0));
 }
 
 TEST_F(ScreenProxyQtTest, onScreenGeometryChanged)
 {
-    // onScreenGeometryChanged
-    SUCCEED();
+    // Test method: void onScreenGeometryChanged((const QRect &rect))
+    QRect _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->onScreenGeometryChanged(_arg0));
 }
 
 TEST_F(ScreenProxyQtTest, validateEvent)
 {
-    // validateEvent
-    SUCCEED();
+    // Test event handler: validateEvent((Event event))
+    Event _event(Event::None);
+    EXPECT_NO_FATAL_FAILURE(obj->validateEvent(&_event));
 }
-

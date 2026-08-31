@@ -3,27 +3,50 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_low_fstabdecryptworker.cpp
- * @brief Unit tests for FstabDecryptWorker Low-priority methods
+ * @file test_low_fstabdecryptworker.cpp
+ * @brief Unit tests for FstabDecryptWorker methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class FstabDecryptWorkerLowTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "services/diskencrypt/workers/fstabdecryptworker.h"
+
+#include <QTest>
+
+using namespace src;
+
+class FstabDecryptWorkerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new FstabDecryptWorker();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FstabDecryptWorker *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
-TEST_F(FstabDecryptWorkerLowTest, partitionUUID)
+TEST_F(FstabDecryptWorkerTest, partitionUUID)
 {
-    // partitionUUID
-    SUCCEED();
+    // Test method: QString partitionUUID((const QString &dev))
+    QString _arg0{};
+    auto result = obj->partitionUUID(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
-TEST_F(FstabDecryptWorkerLowTest, run)
+TEST_F(FstabDecryptWorkerTest, run)
 {
-    // run
-    SUCCEED();
+    // Test method: void run(())
+    EXPECT_NO_FATAL_FAILURE(obj->run());
 }
-

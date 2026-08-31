@@ -85,30 +85,38 @@ TEST(DConfigManagerTest, AddConfigForUnknownSchemaIsCallable)
 
 TEST(DConfigManagerTest, addConfig)
 {
-    // addConfig
-    SUCCEED();
+    DConfigManager obj;
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.addConfig(_arg0, nullptr); });
 }
 
 TEST(DConfigManagerTest, contains)
 {
-    // contains
-    SUCCEED();
+    DConfigManager obj;
+    QString _arg0{};
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE({ obj.contains(_arg0, _arg1); });
 }
 
 TEST(DConfigManagerTest, keys)
 {
-    // keys
-    SUCCEED();
+    DConfigManager obj;
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.keys(_arg0); });
 }
 
 TEST(DConfigManagerTest, removeConfig)
 {
-    // removeConfig
-    SUCCEED();
+    DConfigManager obj;
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.removeConfig(_arg0, nullptr); });
 }
 
 TEST(DConfigManagerTest, value)
 {
-    // value
-    SUCCEED();
+    DConfigManager obj;
+    QString _arg0{};
+    QString _arg1{};
+    QVariant _arg2{};
+    EXPECT_NO_FATAL_FAILURE({ obj.value(_arg0, _arg1, _arg2); });
 }

@@ -4,112 +4,116 @@
 
 /**
  * @file test_abstractworker.cpp
- * @brief Unit tests for AbstractWorker Mid-priority methods (dfmplugin-fileoperations)
+ * @brief Unit tests for AbstractWorker methods with real assertions
  */
 
 #include <gtest/gtest.h>
-#include <QTest>
-#include <QUrl>
-#include <QString>
-#include <QStringList>
-#include <QColor>
-#include <QPoint>
-#include <QVariant>
+
+#include "stubext.h"
 
 #include "fileoperations/fileoperationutils/abstractworker.h"
 
+#include <QTest>
+
 using namespace dfmplugin_fileoperations;
 
-class AbstractWorkerTest : public ::testing::Test {
+class AbstractWorkerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {
+    void SetUp() override
+    {
+        obj = new AbstractWorker();
     }
-    void TearDown() override {}
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    AbstractWorker *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(AbstractWorkerTest, checkRetry)
 {
-    // Instance method checkRetry
-    AbstractWorker obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.checkRetry(); });
+    // Test method: void checkRetry(())
+    EXPECT_NO_FATAL_FAILURE(obj->checkRetry());
 }
 
 TEST_F(AbstractWorkerTest, doOperateWork)
 {
-    // Instance method doOperateWork
-    AbstractWorker obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.doOperateWork(AbstractJobHandler::SupportActions(), AbstractJobHandler::JobErrorType(), 0); });
+    // Test method: void doOperateWork((AbstractJobHandler::SupportActions actions, AbstractJobHandler::JobErrorType error, const quint64 id))
+    EXPECT_NO_FATAL_FAILURE(obj->doOperateWork(AbstractJobHandler::SupportActions(), AbstractJobHandler::JobErrorType(), 0));
 }
 
 TEST_F(AbstractWorkerTest, emitProgressChangedNotify)
 {
-    // Instance method emitProgressChangedNotify
-    AbstractWorker obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.emitProgressChangedNotify(0); });
+    // Test method: void emitProgressChangedNotify((const qint64 &writSize))
+    qint64 _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->emitProgressChangedNotify(_arg0));
 }
 
 TEST_F(AbstractWorkerTest, endWork)
 {
-    // Instance method endWork
-    AbstractWorker obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.endWork(); });
+    // Test method: void endWork(())
+    EXPECT_NO_FATAL_FAILURE(obj->endWork());
 }
 
 TEST_F(AbstractWorkerTest, isStopped)
 {
-    // Instance method isStopped
-    AbstractWorker obj;
-    bool result = false;
-    EXPECT_NO_FATAL_FAILURE({ result = obj.isStopped(); });
-    (void)result;
+    // Test bool getter: isStopped()
+    bool result = obj->isStopped();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(AbstractWorkerTest, parentUrl)
 {
-    // Instance method parentUrl
-    AbstractWorker obj;
-    EXPECT_NO_FATAL_FAILURE({ auto r = obj.parentUrl(QUrl("file:///tmp/test")); (void)r; });
+    // Test method: QUrl parentUrl((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->parentUrl(_arg0);
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(AbstractWorkerTest, pause)
 {
-    // Instance method pause
-    AbstractWorker obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.pause(); });
+    // Test method: void pause(())
+    EXPECT_NO_FATAL_FAILURE(obj->pause());
 }
 
 TEST_F(AbstractWorkerTest, resumeThread)
 {
-    // Instance method resumeThread
-    AbstractWorker obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.resumeThread({}); });
+    // Test method: void resumeThread((const QList<quint64> &errorIds))
+    QList<quint64> _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->resumeThread(_arg0));
 }
 
 TEST_F(AbstractWorkerTest, setStat)
 {
-    // Instance method setStat
-    AbstractWorker obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.setStat(AbstractJobHandler::JobState()); });
+    // Test setter: void setStat((const AbstractJobHandler::JobState &stat))
+    AbstractJobHandler::JobState _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->setStat(_arg0));
 }
 
 TEST_F(AbstractWorkerTest, stateCheck)
 {
-    // Instance method stateCheck
-    AbstractWorker obj;
-    bool result = false;
-    EXPECT_NO_FATAL_FAILURE({ result = obj.stateCheck(); });
-    (void)result;
+    // Test bool getter: stateCheck()
+    bool result = obj->stateCheck();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(AbstractWorkerTest, stop)
 {
-    // Instance method stop
-    AbstractWorker obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.stop(); });
+    // Test method: void stop(())
+    EXPECT_NO_FATAL_FAILURE(obj->stop());
 }
 
 TEST_F(AbstractWorkerTest, AbstractWorker)
 {
-    // AbstractWorker
-    SUCCEED();
+    // Test constructor: AbstractWorker((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }

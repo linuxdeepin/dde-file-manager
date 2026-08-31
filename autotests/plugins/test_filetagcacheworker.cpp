@@ -4,25 +4,47 @@
 
 /**
  * @file test_filetagcacheworker.cpp
- * @brief Unit tests for FileTagCacheWorker Mid-priority methods
+ * @brief Unit tests for FileTagCacheWorker methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class FileTagCacheWorkerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/filetagcache.h"
+
+#include <QTest>
+
+using namespace dfmplugin_tag;
+
+class FileTagCacheWorkerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new FileTagCacheWorker();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FileTagCacheWorker *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(FileTagCacheWorkerTest, loadFileTagsFromDatabase)
 {
-    // loadFileTagsFromDatabase
-    SUCCEED();
+    // Test method: void loadFileTagsFromDatabase(())
+    EXPECT_NO_FATAL_FAILURE(obj->loadFileTagsFromDatabase());
 }
 
 TEST_F(FileTagCacheWorkerTest, onTagDeleted)
 {
-    // onTagDeleted
-    SUCCEED();
+    // Test method: void onTagDeleted((const QVariant &tags))
+    QVariant _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->onTagDeleted(_arg0));
 }

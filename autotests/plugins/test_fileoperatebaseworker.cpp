@@ -4,91 +4,145 @@
 
 /**
  * @file test_fileoperatebaseworker.cpp
- * @brief Unit tests for FileOperateBaseWorker Mid-priority methods
+ * @brief Unit tests for FileOperateBaseWorker methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class FileOperateBaseWorkerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "fileoperations/fileoperationutils/fileoperatebaseworker.h"
+
+#include <QTest>
+
+using namespace dfmplugin_fileoperations;
+
+class FileOperateBaseWorkerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new FileOperateBaseWorker();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FileOperateBaseWorker *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(FileOperateBaseWorkerTest, checkAndCopyFile)
 {
-    // checkAndCopyFile
-    SUCCEED();
+    // Test method: bool checkAndCopyFile((const DFileInfoPointer fromInfo, const DFileInfoPointer toInfo, bool *skip))
+    auto result = obj->checkAndCopyFile(DFileInfoPointer(), DFileInfoPointer(), nullptr);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(FileOperateBaseWorkerTest, checkFileSize)
 {
-    // checkFileSize
-    SUCCEED();
+    // Test method: bool checkFileSize((qint64 size, const QUrl &fromUrl,
+                                          const QUrl &toUrl, bool *skip))
+    QUrl _arg1{};
+    QUrl _arg2{};
+    auto result = obj->checkFileSize(0, _arg1, _arg2, nullptr);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(FileOperateBaseWorkerTest, emitCurrentTaskNotify)
 {
-    // emitCurrentTaskNotify
-    SUCCEED();
+    // Test method: void emitCurrentTaskNotify((const QUrl &from, const QUrl &to))
+    QUrl _arg0{};
+    QUrl _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->emitCurrentTaskNotify(_arg0, _arg1));
 }
 
 TEST_F(FileOperateBaseWorkerTest, emitErrorNotify)
 {
-    // emitErrorNotify
-    SUCCEED();
+    // Test method: void emitErrorNotify((const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType &error,
+                                            const bool isTo, const quint64 id, const QString &errorMsg,
+                                            const bool allUsErrorMsg))
+    QUrl _arg0{};
+    QUrl _arg1{};
+    AbstractJobHandler::JobErrorType _arg2{};
+    QString _arg5{};
+    EXPECT_NO_FATAL_FAILURE(obj->emitErrorNotify(_arg0, _arg1, _arg2, false, 0, _arg5, false));
 }
 
 TEST_F(FileOperateBaseWorkerTest, getTidWriteSize)
 {
-    // getTidWriteSize
-    SUCCEED();
+    // Test getter: qint64 getTidWriteSize()
+    auto result = obj->getTidWriteSize();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(FileOperateBaseWorkerTest, getWriteDataSize)
 {
-    // getWriteDataSize
-    SUCCEED();
+    // Test getter: qint64 getWriteDataSize()
+    auto result = obj->getWriteDataSize();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(FileOperateBaseWorkerTest, initCopyWay)
 {
-    // initCopyWay
-    SUCCEED();
+    // Test method: void initCopyWay(())
+    EXPECT_NO_FATAL_FAILURE(obj->initCopyWay());
 }
 
 TEST_F(FileOperateBaseWorkerTest, initThreadCopy)
 {
-    // initThreadCopy
-    SUCCEED();
+    // Test method: void initThreadCopy(())
+    EXPECT_NO_FATAL_FAILURE(obj->initThreadCopy());
 }
 
 TEST_F(FileOperateBaseWorkerTest, removeTrashInfo)
 {
-    // removeTrashInfo
-    SUCCEED();
+    // Test method: void removeTrashInfo((const QUrl &trashInfoUrl))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->removeTrashInfo(_arg0));
 }
 
 TEST_F(FileOperateBaseWorkerTest, shouldUseBlockWriteType)
 {
-    // shouldUseBlockWriteType
-    SUCCEED();
+    // Test bool getter: shouldUseBlockWriteType()
+    bool result = obj->shouldUseBlockWriteType();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(FileOperateBaseWorkerTest, trashInfo)
 {
-    // trashInfo
-    SUCCEED();
+    // Test method: QUrl trashInfo((const DFileInfoPointer &fromInfo))
+    DFileInfoPointer _arg0{};
+    auto result = obj->trashInfo(_arg0);
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(FileOperateBaseWorkerTest, FileOperateBaseWorker)
 {
-    // FileOperateBaseWorker
-    SUCCEED();
+    // Test constructor: FileOperateBaseWorker((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(FileOperateBaseWorkerTest, doHandleErrorAndWait)
 {
-    // doHandleErrorAndWait
-    SUCCEED();
+    // Test method: AbstractJobHandler::SupportAction doHandleErrorAndWait((const QUrl &urlFrom, const QUrl &urlTo,
+                                                                              const AbstractJobHandler::JobErrorType &error, const bool isTo,
+                                                                              const QString &errorMsg, const bool errorMsgAll))
+    QUrl _arg0{};
+    QUrl _arg1{};
+    AbstractJobHandler::JobErrorType _arg2{};
+    QString _arg4{};
+    auto result = obj->doHandleErrorAndWait(_arg0, _arg1, _arg2, false, _arg4, false);
+    EXPECT_GE(static_cast<int>(result), 0);
+
 }

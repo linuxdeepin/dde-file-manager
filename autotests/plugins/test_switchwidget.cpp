@@ -4,19 +4,42 @@
 
 /**
  * @file test_switchwidget.cpp
- * @brief Unit tests for SwitchWidget Mid-priority methods
+ * @brief Unit tests for SwitchWidget methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class SwitchWidgetTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "options/widgets/switchwidget.h"
+
+#include <QTest>
+
+using namespace ddplugin_organizer;
+
+class SwitchWidgetTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new SwitchWidget();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    SwitchWidget *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(SwitchWidgetTest, checked)
 {
-    // checked
-    SUCCEED();
+    // Test bool getter: checked()
+    bool result = obj->checked();
+    EXPECT_FALSE(result);
+
 }

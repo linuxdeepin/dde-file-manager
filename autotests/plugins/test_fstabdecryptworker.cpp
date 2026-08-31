@@ -4,19 +4,43 @@
 
 /**
  * @file test_fstabdecryptworker.cpp
- * @brief Unit tests for FstabDecryptWorker Mid-priority methods
+ * @brief Unit tests for FstabDecryptWorker methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class FstabDecryptWorkerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "services/diskencrypt/workers/fstabdecryptworker.h"
+
+#include <QTest>
+
+using namespace src;
+
+class FstabDecryptWorkerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new FstabDecryptWorker();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FstabDecryptWorker *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(FstabDecryptWorkerTest, clearDeviceUUID)
 {
-    // clearDeviceUUID
-    SUCCEED();
+    // Test method: QString clearDeviceUUID((const QString &dev))
+    QString _arg0{};
+    auto result = obj->clearDeviceUUID(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }

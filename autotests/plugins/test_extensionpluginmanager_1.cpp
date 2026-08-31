@@ -3,75 +3,113 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_extensionpluginmanager_1.cpp
- * @brief Unit tests for ExtensionPluginManager Low-priority methods
+ * @file test_extensionpluginmanager_1.cpp
+ * @brief Unit tests for ExtensionPluginManager methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ExtensionPluginManagerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "extensionimpl/pluginsload/extensionpluginmanager.h"
+
+#include <QTest>
+
+using namespace dfmplugin_utils;
+
+class ExtensionPluginManagerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ExtensionPluginManager();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ExtensionPluginManager *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ExtensionPluginManagerTest, ExtensionPluginManager)
 {
-    // ExtensionPluginManager
-    SUCCEED();
+    // Test constructor: ExtensionPluginManager((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(ExtensionPluginManagerTest, currentState)
 {
-    // currentState
-    SUCCEED();
+    // Test getter: ExtensionPluginManager::InitState currentState()
+    auto result = obj->currentState();
+    EXPECT_GE(static_cast<int>(result), 0);
+
 }
 
 TEST_F(ExtensionPluginManagerTest, emblemPlugins)
 {
-    // emblemPlugins
-    SUCCEED();
+    // Test getter: QList<DFMEXT::DFMExtEmblemIconPlugin *> emblemPlugins()
+    auto result = obj->emblemPlugins();
+    // Pointer return type
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(ExtensionPluginManagerTest, filePlugins)
 {
-    // filePlugins
-    SUCCEED();
+    // Test getter: QList<DFMEXT::DFMExtFilePlugin *> filePlugins()
+    auto result = obj->filePlugins();
+    // Pointer return type
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(ExtensionPluginManagerTest, instance)
 {
-    // instance
-    SUCCEED();
+    // Test getter: ExtensionPluginManager instance()
+    auto result = obj->instance();
+    EXPECT_NO_FATAL_FAILURE({ obj->instance(); });
+
 }
 
 TEST_F(ExtensionPluginManagerTest, menuPlugins)
 {
-    // menuPlugins
-    SUCCEED();
+    // Test getter: QList<DFMEXT::DFMExtMenuPlugin *> menuPlugins()
+    auto result = obj->menuPlugins();
+    // Pointer return type
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(ExtensionPluginManagerTest, onLoadingPlugins)
 {
-    // onLoadingPlugins
-    SUCCEED();
+    // Test method: void onLoadingPlugins(())
+    EXPECT_NO_FATAL_FAILURE(obj->onLoadingPlugins());
 }
 
 TEST_F(ExtensionPluginManagerTest, pluginMenuProxy)
 {
-    // pluginMenuProxy
-    SUCCEED();
+    // Test getter: DFMEXT::DFMExtMenuProxy pluginMenuProxy()
+    auto result = obj->pluginMenuProxy();
+    EXPECT_GE(static_cast<int>(result), 0);
+
 }
 
 TEST_F(ExtensionPluginManagerTest, windowPlugins)
 {
-    // windowPlugins
-    SUCCEED();
+    // Test getter: QList<DFMEXT::DFMExtWindowPlugin *> windowPlugins()
+    auto result = obj->windowPlugins();
+    // Pointer return type
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(ExtensionPluginManagerTest, ExtensionPluginManager_Destructor)
 {
-    // ~ExtensionPluginManager
-    SUCCEED();
+    // Test method:  ~ExtensionPluginManager(())
+    EXPECT_NO_FATAL_FAILURE({ ExtensionPluginManager *tmp = new ExtensionPluginManager(); delete tmp; });
 }
-

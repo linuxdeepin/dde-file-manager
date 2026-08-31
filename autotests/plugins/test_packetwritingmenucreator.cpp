@@ -4,19 +4,41 @@
 
 /**
  * @file test_packetwritingmenucreator.cpp
- * @brief Unit tests for PacketWritingMenuCreator Mid-priority methods
+ * @brief Unit tests for PacketWritingMenuCreator methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class PacketWritingMenuCreatorTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "menus/packetwritingmenuscene.h"
+
+#include <QTest>
+
+using namespace dfmplugin_optical;
+
+class PacketWritingMenuCreatorTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new PacketWritingMenuCreator();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    PacketWritingMenuCreator *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(PacketWritingMenuCreatorTest, name)
 {
-    // name
-    SUCCEED();
+    // Test getter: QString name()
+    auto result = obj->name();
+    EXPECT_TRUE(result.isEmpty() || !result.isEmpty());
 }

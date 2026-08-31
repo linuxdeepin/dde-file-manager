@@ -4,31 +4,56 @@
 
 /**
  * @file test_folderlistwidget.cpp
- * @brief Unit tests for FolderListWidget Mid-priority methods
+ * @brief Unit tests for FolderListWidget methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class FolderListWidgetTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/folderlistwidget.h"
+
+#include <QTest>
+
+using namespace dfmplugin_titlebar;
+
+class FolderListWidgetTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new FolderListWidget();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FolderListWidget *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(FolderListWidgetTest, FolderListWidget)
 {
-    // FolderListWidget
-    SUCCEED();
+    // Test constructor: FolderListWidget((QWidget *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(FolderListWidgetTest, availableGeometry)
 {
-    // availableGeometry
-    SUCCEED();
+    // Test method: QRect availableGeometry((const QPoint &popUpPos))
+    QPoint _arg0{};
+    auto result = obj->availableGeometry(_arg0);
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(FolderListWidgetTest, popUp)
 {
-    // popUp
-    SUCCEED();
+    // Test method: void popUp((const QPoint &popupPos))
+    QPoint _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->popUp(_arg0));
 }

@@ -3,57 +3,91 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_appentryfileentity_1.cpp
- * @brief Unit tests for AppEntryFileEntity Low-priority methods
+ * @file test_appentryfileentity_1.cpp
+ * @brief Unit tests for AppEntryFileEntity methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class AppEntryFileEntityTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "fileentity/appentryfileentity.h"
+
+#include <QTest>
+
+using namespace dfmplugin_computer;
+
+class AppEntryFileEntityTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new AppEntryFileEntity();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    AppEntryFileEntity *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(AppEntryFileEntityTest, description)
 {
-    // description
-    SUCCEED();
+    // Test getter: QString description()
+    auto result = obj->description();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(AppEntryFileEntityTest, getFormattedExecCommand)
 {
-    // getFormattedExecCommand
-    SUCCEED();
+    // Test getter: QString getFormattedExecCommand()
+    auto result = obj->getFormattedExecCommand();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(AppEntryFileEntityTest, icon)
 {
-    // icon
-    SUCCEED();
+    // Test getter: QIcon icon()
+    auto result = obj->icon();
+    EXPECT_TRUE(result.isNull());
+
 }
 
 TEST_F(AppEntryFileEntityTest, isAccessable)
 {
-    // isAccessable
-    SUCCEED();
+    // Test bool getter: isAccessable()
+    bool result = obj->isAccessable();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(AppEntryFileEntityTest, showProgress)
 {
-    // showProgress
-    SUCCEED();
+    // Test bool getter: showProgress()
+    bool result = obj->showProgress();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(AppEntryFileEntityTest, showTotalSize)
 {
-    // showTotalSize
-    SUCCEED();
+    // Test bool getter: showTotalSize()
+    bool result = obj->showTotalSize();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(AppEntryFileEntityTest, showUsageSize)
 {
-    // showUsageSize
-    SUCCEED();
-}
+    // Test bool getter: showUsageSize()
+    bool result = obj->showUsageSize();
+    EXPECT_FALSE(result);
 
+}

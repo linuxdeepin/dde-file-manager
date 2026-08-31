@@ -4,37 +4,59 @@
 
 /**
  * @file test_computercontroller.cpp
- * @brief Unit tests for ComputerController Mid-priority methods
+ * @brief Unit tests for ComputerController methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ComputerControllerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "controller/computercontroller.h"
+
+#include <QTest>
+
+using namespace dfmplugin_computer;
+
+class ComputerControllerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ComputerController();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ComputerController *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ComputerControllerTest, ComputerController)
 {
-    // ComputerController
-    SUCCEED();
+    // Test constructor: ComputerController((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(ComputerControllerTest, actErase)
 {
-    // actErase
-    SUCCEED();
+    // Test method: void actErase((DFMEntryFileInfoPointer info))
+    EXPECT_NO_FATAL_FAILURE(obj->actErase(DFMEntryFileInfoPointer()));
 }
 
 TEST_F(ComputerControllerTest, actSafelyRemove)
 {
-    // actSafelyRemove
-    SUCCEED();
+    // Test method: void actSafelyRemove((DFMEntryFileInfoPointer info))
+    EXPECT_NO_FATAL_FAILURE(obj->actSafelyRemove(DFMEntryFileInfoPointer()));
 }
 
 TEST_F(ComputerControllerTest, onOpenItem)
 {
-    // onOpenItem
-    SUCCEED();
+    // Test method: void onOpenItem((quint64 winId, const QUrl &url))
+    QUrl _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->onOpenItem(0, _arg1));
 }

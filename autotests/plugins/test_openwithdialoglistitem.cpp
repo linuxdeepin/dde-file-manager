@@ -4,19 +4,40 @@
 
 /**
  * @file test_openwithdialoglistitem.cpp
- * @brief Unit tests for OpenWithDialogListItem Mid-priority methods
+ * @brief Unit tests for OpenWithDialogListItem methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class OpenWithDialogListItemTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "openwith/openwithdialog.h"
+
+#include <QTest>
+
+using namespace dfmplugin_utils;
+
+class OpenWithDialogListItemTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new OpenWithDialogListItem();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    OpenWithDialogListItem *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(OpenWithDialogListItemTest, OpenWithDialogListItem)
 {
-    // OpenWithDialogListItem
-    SUCCEED();
+    // Test constructor: OpenWithDialogListItem((const QString &iconName, const QString &text, QWidget *parent))
+    ASSERT_NE(obj, nullptr);
 }

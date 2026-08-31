@@ -4,19 +4,40 @@
 
 /**
  * @file test_namegroupstrategy.cpp
- * @brief Unit tests for NameGroupStrategy Mid-priority methods
+ * @brief Unit tests for NameGroupStrategy methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class NameGroupStrategyTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "groups/namegroupstrategy.h"
+
+#include <QTest>
+
+using namespace dfmplugin_workspace;
+
+class NameGroupStrategyTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new NameGroupStrategy();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    NameGroupStrategy *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(NameGroupStrategyTest, NameGroupStrategy)
 {
-    // NameGroupStrategy
-    SUCCEED();
+    // Test constructor: NameGroupStrategy((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }

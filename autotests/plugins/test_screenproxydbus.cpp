@@ -4,31 +4,54 @@
 
 /**
  * @file test_screenproxydbus.cpp
- * @brief Unit tests for ScreenProxyDBus Mid-priority methods
+ * @brief Unit tests for ScreenProxyDBus methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ScreenProxyDBusTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "screen/screenproxydbus.h"
+
+#include <QTest>
+
+using namespace ddplugin_core;
+
+class ScreenProxyDBusTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ScreenProxyDBus();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ScreenProxyDBus *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ScreenProxyDBusTest, onMonitorChanged)
 {
-    // onMonitorChanged
-    SUCCEED();
+    // Test method: void onMonitorChanged(())
+    EXPECT_NO_FATAL_FAILURE(obj->onMonitorChanged());
 }
 
 TEST_F(ScreenProxyDBusTest, reset)
 {
-    // reset
-    SUCCEED();
+    // Test method: void reset(())
+    EXPECT_NO_FATAL_FAILURE(obj->reset());
 }
 
 TEST_F(ScreenProxyDBusTest, screens)
 {
-    // screens
-    SUCCEED();
+    // Test getter: QList<ScreenPointer> screens()
+    auto result = obj->screens();
+    EXPECT_TRUE(result.isEmpty());
+
 }

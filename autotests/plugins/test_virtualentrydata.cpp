@@ -4,103 +4,123 @@
 
 /**
  * @file test_virtualentrydata.cpp
- * @brief Unit tests for VirtualEntryData Mid-priority methods (dfmplugin-smbbrowser)
+ * @brief Unit tests for VirtualEntryData methods with real assertions
  */
 
 #include <gtest/gtest.h>
+
+#include "stubext.h"
+
+#include "tools/upgrade/units/beans/virtualentrydata.h"
+
 #include <QTest>
-#include <QUrl>
-#include <QString>
-#include <QStringList>
-#include <QColor>
-#include <QPoint>
-#include <QVariant>
 
-#include "displaycontrol/datahelper/virtualentrydata.h"
+using namespace src;
 
-using namespace dfmplugin_smbbrowser;
-
-class VirtualEntryDataTest : public ::testing::Test {
+class VirtualEntryDataTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {
+    void SetUp() override
+    {
+        obj = new VirtualEntryData();
     }
-    void TearDown() override {}
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    VirtualEntryData *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(VirtualEntryDataTest, setDisplayName)
 {
-    // Instance method setDisplayName
-    VirtualEntryData obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.setDisplayName(QString("test")); });
+    // Test setter: void setDisplayName((const QString &newDisplayName))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->setDisplayName(_arg0));
 }
 
 TEST_F(VirtualEntryDataTest, setHost)
 {
-    // Instance method setHost
-    VirtualEntryData obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.setHost(QString("test")); });
+    // Test setter: void setHost((const QString &newHost))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->setHost(_arg0));
 }
 
 TEST_F(VirtualEntryDataTest, setKey)
 {
-    // Instance method setKey
-    VirtualEntryData obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.setKey(QString("test")); });
+    // Test setter: void setKey((const QString &newKey))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->setKey(_arg0));
 }
 
 TEST_F(VirtualEntryDataTest, setPort)
 {
-    // Instance method setPort
-    VirtualEntryData obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.setPort(0); });
+    // Test setter: void setPort((int newPort))
+    EXPECT_NO_FATAL_FAILURE(obj->setPort(0));
 }
 
 TEST_F(VirtualEntryDataTest, setProtocol)
 {
-    // Instance method setProtocol
-    VirtualEntryData obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.setProtocol(QString("test")); });
+    // Test setter: void setProtocol((const QString &newProtocol))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->setProtocol(_arg0));
 }
 
 TEST_F(VirtualEntryDataTest, setTargetPath)
 {
-    // Instance method setTargetPath
-    VirtualEntryData obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.setTargetPath(QString("test")); });
+    // Test setter: void setTargetPath((const QString &targetPath))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->setTargetPath(_arg0));
 }
 
 TEST_F(VirtualEntryDataTest, getDisplayName)
 {
-    // getDisplayName
-    SUCCEED();
+    // Test getter: QString getDisplayName()
+    auto result = obj->getDisplayName();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(VirtualEntryDataTest, getHost)
 {
-    // getHost
-    SUCCEED();
+    // Test getter: QString getHost()
+    auto result = obj->getHost();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(VirtualEntryDataTest, getKey)
 {
-    // getKey
-    SUCCEED();
+    // Test getter: QString getKey()
+    auto result = obj->getKey();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(VirtualEntryDataTest, getPort)
 {
-    // getPort
-    SUCCEED();
+    // Test getter: int getPort()
+    auto result = obj->getPort();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(VirtualEntryDataTest, getProtocol)
 {
-    // getProtocol
-    SUCCEED();
+    // Test getter: QString getProtocol()
+    auto result = obj->getProtocol();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(VirtualEntryDataTest, getTargetPath)
 {
-    // getTargetPath
-    SUCCEED();
+    // Test getter: QString getTargetPath()
+    auto result = obj->getTargetPath();
+    EXPECT_TRUE(result.isEmpty());
+
 }

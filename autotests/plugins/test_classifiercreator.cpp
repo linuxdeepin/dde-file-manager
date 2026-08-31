@@ -4,19 +4,42 @@
 
 /**
  * @file test_classifiercreator.cpp
- * @brief Unit tests for ClassifierCreator Mid-priority methods
+ * @brief Unit tests for ClassifierCreator methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ClassifierCreatorTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "mode/normalized/fileclassifier.h"
+
+#include <QTest>
+
+using namespace ddplugin_organizer;
+
+class ClassifierCreatorTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ClassifierCreator();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ClassifierCreator *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ClassifierCreatorTest, createClassifier)
 {
-    // createClassifier
-    SUCCEED();
+    // Test method: FileClassifier createClassifier((Classifier mode))
+    auto result = obj->createClassifier(Classifier());
+    EXPECT_NO_FATAL_FAILURE({ obj->createClassifier(Classifier()); });
+
 }

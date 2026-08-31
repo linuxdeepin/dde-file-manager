@@ -3,123 +3,195 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_tagdbhandler_1.cpp
- * @brief Unit tests for TagDbHandler Low-priority methods
+ * @file test_tagdbhandler_1.cpp
+ * @brief Unit tests for TagDbHandler methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class TagDbHandlerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "tagdbhandler.h"
+
+#include <QTest>
+
+using namespace tag;
+
+class TagDbHandlerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new TagDbHandler();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    TagDbHandler *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(TagDbHandlerTest, TagDbHandler)
 {
-    // TagDbHandler
-    SUCCEED();
+    // Test constructor: TagDbHandler((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(TagDbHandlerTest, addTagProperty)
 {
-    // addTagProperty
-    SUCCEED();
+    // Test method: bool addTagProperty((const QVariantMap &data))
+    QVariantMap _arg0{};
+    auto result = obj->addTagProperty(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(TagDbHandlerTest, changeFilePath)
 {
-    // changeFilePath
-    SUCCEED();
+    // Test method: bool changeFilePath((const QString &oldPath, const QString &newPath))
+    QString _arg0{};
+    QString _arg1{};
+    auto result = obj->changeFilePath(_arg0, _arg1);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(TagDbHandlerTest, changeFilePaths)
 {
-    // changeFilePaths
-    SUCCEED();
+    // Test method: bool changeFilePaths((const QVariantMap &data))
+    QVariantMap _arg0{};
+    auto result = obj->changeFilePaths(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(TagDbHandlerTest, changeTagColor)
 {
-    // changeTagColor
-    SUCCEED();
+    // Test method: bool changeTagColor((const QString &tagName, const QString &newTagColor))
+    QString _arg0{};
+    QString _arg1{};
+    auto result = obj->changeTagColor(_arg0, _arg1);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(TagDbHandlerTest, changeTagColors)
 {
-    // changeTagColors
-    SUCCEED();
+    // Test method: bool changeTagColors((const QVariantMap &data))
+    QVariantMap _arg0{};
+    auto result = obj->changeTagColors(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(TagDbHandlerTest, changeTagNameWithFile)
 {
-    // changeTagNameWithFile
-    SUCCEED();
+    // Test method: bool changeTagNameWithFile((const QString &tagName, const QString &newName))
+    QString _arg0{};
+    QString _arg1{};
+    auto result = obj->changeTagNameWithFile(_arg0, _arg1);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(TagDbHandlerTest, changeTagNamesWithFiles)
 {
-    // changeTagNamesWithFiles
-    SUCCEED();
+    // Test method: bool changeTagNamesWithFiles((const QVariantMap &data))
+    QVariantMap _arg0{};
+    auto result = obj->changeTagNamesWithFiles(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(TagDbHandlerTest, checkTag)
 {
-    // checkTag
-    SUCCEED();
+    // Test method: bool checkTag((const QString &tag))
+    QString _arg0{};
+    auto result = obj->checkTag(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(TagDbHandlerTest, createTable)
 {
-    // createTable
-    SUCCEED();
+    // Test method: bool createTable((const QString &tableName))
+    QString _arg0{};
+    auto result = obj->createTable(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(TagDbHandlerTest, getAllTags)
 {
-    // getAllTags
-    SUCCEED();
+    // Test getter: QVariantMap getAllTags()
+    auto result = obj->getAllTags();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(TagDbHandlerTest, getAllTrashFileTags)
 {
-    // getAllTrashFileTags
-    SUCCEED();
+    // Test getter: QVariantHash getAllTrashFileTags()
+    auto result = obj->getAllTrashFileTags();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(TagDbHandlerTest, getTagsColor)
 {
-    // getTagsColor
-    SUCCEED();
+    // Test method: QVariantMap getTagsColor((const QStringList &tags))
+    QStringList _arg0{};
+    auto result = obj->getTagsColor(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(TagDbHandlerTest, hasTrashFileTags)
 {
-    // hasTrashFileTags
-    SUCCEED();
+    // Test method: bool hasTrashFileTags((const QString &originalPath, qint64 inode))
+    QString _arg0{};
+    auto result = obj->hasTrashFileTags(_arg0, 0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(TagDbHandlerTest, insertTagProperty)
 {
-    // insertTagProperty
-    SUCCEED();
+    // Test method: bool insertTagProperty((const QString &name, const QVariant &value))
+    QString _arg0{};
+    QVariant _arg1{};
+    auto result = obj->insertTagProperty(_arg0, _arg1);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(TagDbHandlerTest, instance)
 {
-    // instance
-    SUCCEED();
+    // Test getter: TagDbHandler instance()
+    auto result = obj->instance();
+    EXPECT_NO_FATAL_FAILURE({ obj->instance(); });
+
 }
 
 TEST_F(TagDbHandlerTest, lastError)
 {
-    // lastError
-    SUCCEED();
+    // Test getter: QString lastError()
+    auto result = obj->lastError();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(TagDbHandlerTest, tagFile)
 {
-    // tagFile
-    SUCCEED();
-}
+    // Test method: bool tagFile((const QString &file, const QVariant &tags))
+    QString _arg0{};
+    QVariant _arg1{};
+    auto result = obj->tagFile(_arg0, _arg1);
+    EXPECT_FALSE(result);
 
+}

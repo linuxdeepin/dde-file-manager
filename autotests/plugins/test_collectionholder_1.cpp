@@ -3,219 +3,278 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_collectionholder_1.cpp
- * @brief Unit tests for CollectionHolder Low-priority methods
+ * @file test_collectionholder_1.cpp
+ * @brief Unit tests for CollectionHolder methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class CollectionHolderTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "collection/collectionholder.h"
+
+#include <QTest>
+
+using namespace ddplugin_organizer;
+
+class CollectionHolderTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new CollectionHolder();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    CollectionHolder *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(CollectionHolderTest, adjustable)
 {
-    // adjustable
-    SUCCEED();
+    // Test bool getter: adjustable()
+    bool result = obj->adjustable();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(CollectionHolderTest, closable)
 {
-    // closable
-    SUCCEED();
+    // Test bool getter: closable()
+    bool result = obj->closable();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(CollectionHolderTest, createAnimation)
 {
-    // createAnimation
-    SUCCEED();
+    // Test getter: QPropertyAnimation createAnimation()
+    auto result = obj->createAnimation();
+    EXPECT_NO_FATAL_FAILURE({ obj->createAnimation(); });
+
 }
 
 TEST_F(CollectionHolderTest, createFrame)
 {
-    // createFrame
-    SUCCEED();
+    // Test method: void createFrame((Surface *surface, CollectionModel *model))
+    EXPECT_NO_FATAL_FAILURE(obj->createFrame(nullptr, nullptr));
 }
 
 TEST_F(CollectionHolderTest, fileShiftable)
 {
-    // fileShiftable
-    SUCCEED();
+    // Test bool getter: fileShiftable()
+    bool result = obj->fileShiftable();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(CollectionHolderTest, floatable)
 {
-    // floatable
-    SUCCEED();
+    // Test bool getter: floatable()
+    bool result = obj->floatable();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(CollectionHolderTest, frame)
 {
-    // frame
-    SUCCEED();
+    // Test getter: DFrame frame()
+    auto result = obj->frame();
+    EXPECT_NO_FATAL_FAILURE({ obj->frame(); });
+
 }
 
 TEST_F(CollectionHolderTest, hiddableCollection)
 {
-    // hiddableCollection
-    SUCCEED();
+    // Test bool getter: hiddableCollection()
+    bool result = obj->hiddableCollection();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(CollectionHolderTest, hiddableTitleBar)
 {
-    // hiddableTitleBar
-    SUCCEED();
+    // Test bool getter: hiddableTitleBar()
+    bool result = obj->hiddableTitleBar();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(CollectionHolderTest, hiddableView)
 {
-    // hiddableView
-    SUCCEED();
+    // Test bool getter: hiddableView()
+    bool result = obj->hiddableView();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(CollectionHolderTest, id)
 {
-    // id
-    SUCCEED();
+    // Test getter: QString id()
+    auto result = obj->id();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(CollectionHolderTest, itemView)
 {
-    // itemView
-    SUCCEED();
+    // Test getter: CollectionView itemView()
+    auto result = obj->itemView();
+    EXPECT_NO_FATAL_FAILURE({ obj->itemView(); });
+
 }
 
 TEST_F(CollectionHolderTest, movable)
 {
-    // movable
-    SUCCEED();
+    // Test bool getter: movable()
+    bool result = obj->movable();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(CollectionHolderTest, name)
 {
-    // name
-    SUCCEED();
+    // Test getter: QString name()
+    auto result = obj->name();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(CollectionHolderTest, openEditor)
 {
-    // openEditor
-    SUCCEED();
+    // Test method: void openEditor((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->openEditor(_arg0));
 }
 
 TEST_F(CollectionHolderTest, renamable)
 {
-    // renamable
-    SUCCEED();
+    // Test bool getter: renamable()
+    bool result = obj->renamable();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(CollectionHolderTest, selectFiles)
 {
-    // selectFiles
-    SUCCEED();
+    // Test method: void selectFiles((const QList<QUrl> &urls))
+    QList<QUrl> _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->selectFiles(_arg0));
 }
 
 TEST_F(CollectionHolderTest, selectUrl)
 {
-    // selectUrl
-    SUCCEED();
+    // Test method: void selectUrl((const QUrl &url, const QItemSelectionModel::SelectionFlag &flags))
+    QUrl _arg0{};
+    QItemSelectionModel::SelectionFlag _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->selectUrl(_arg0, _arg1));
 }
 
 TEST_F(CollectionHolderTest, setAdjustable)
 {
-    // setAdjustable
-    SUCCEED();
+    // Test setter: void setAdjustable((const bool adjustable))
+    EXPECT_NO_FATAL_FAILURE(obj->setAdjustable(false));
 }
 
 TEST_F(CollectionHolderTest, setClosable)
 {
-    // setClosable
-    SUCCEED();
+    // Test setter: void setClosable((const bool closable))
+    EXPECT_NO_FATAL_FAILURE(obj->setClosable(false));
 }
 
 TEST_F(CollectionHolderTest, setFileShiftable)
 {
-    // setFileShiftable
-    SUCCEED();
+    // Test setter: void setFileShiftable((bool enable))
+    EXPECT_NO_FATAL_FAILURE(obj->setFileShiftable(false));
 }
 
 TEST_F(CollectionHolderTest, setFloatable)
 {
-    // setFloatable
-    SUCCEED();
+    // Test setter: void setFloatable((const bool floatable))
+    EXPECT_NO_FATAL_FAILURE(obj->setFloatable(false));
 }
 
 TEST_F(CollectionHolderTest, setFreeze)
 {
-    // setFreeze
-    SUCCEED();
+    // Test setter: void setFreeze((bool freeze))
+    EXPECT_NO_FATAL_FAILURE(obj->setFreeze(false));
 }
 
 TEST_F(CollectionHolderTest, setHiddableCollection)
 {
-    // setHiddableCollection
-    SUCCEED();
+    // Test setter: void setHiddableCollection((const bool hiddable))
+    EXPECT_NO_FATAL_FAILURE(obj->setHiddableCollection(false));
 }
 
 TEST_F(CollectionHolderTest, setHiddableTitleBar)
 {
-    // setHiddableTitleBar
-    SUCCEED();
+    // Test setter: void setHiddableTitleBar((const bool hiddable))
+    EXPECT_NO_FATAL_FAILURE(obj->setHiddableTitleBar(false));
 }
 
 TEST_F(CollectionHolderTest, setHiddableView)
 {
-    // setHiddableView
-    SUCCEED();
+    // Test setter: void setHiddableView((const bool hiddable))
+    EXPECT_NO_FATAL_FAILURE(obj->setHiddableView(false));
 }
 
 TEST_F(CollectionHolderTest, setMovable)
 {
-    // setMovable
-    SUCCEED();
+    // Test setter: void setMovable((const bool movable))
+    EXPECT_NO_FATAL_FAILURE(obj->setMovable(false));
 }
 
 TEST_F(CollectionHolderTest, setName)
 {
-    // setName
-    SUCCEED();
+    // Test setter: void setName((const QString &text))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->setName(_arg0));
 }
 
 TEST_F(CollectionHolderTest, setRenamable)
 {
-    // setRenamable
-    SUCCEED();
+    // Test setter: void setRenamable((const bool renamable))
+    EXPECT_NO_FATAL_FAILURE(obj->setRenamable(false));
 }
 
 TEST_F(CollectionHolderTest, setStretchable)
 {
-    // setStretchable
-    SUCCEED();
+    // Test setter: void setStretchable((const bool stretchable))
+    EXPECT_NO_FATAL_FAILURE(obj->setStretchable(false));
 }
 
 TEST_F(CollectionHolderTest, setSurface)
 {
-    // setSurface
-    SUCCEED();
+    // Test setter: void setSurface((Surface *surface))
+    EXPECT_NO_FATAL_FAILURE(obj->setSurface(nullptr));
 }
 
 TEST_F(CollectionHolderTest, stretchable)
 {
-    // stretchable
-    SUCCEED();
+    // Test bool getter: stretchable()
+    bool result = obj->stretchable();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(CollectionHolderTest, surface)
 {
-    // surface
-    SUCCEED();
+    // Test getter: Surface surface()
+    auto result = obj->surface();
+    EXPECT_NO_FATAL_FAILURE({ obj->surface(); });
+
 }
 
 TEST_F(CollectionHolderTest, widget)
 {
-    // widget
-    SUCCEED();
-}
+    // Test getter: CollectionWidget widget()
+    auto result = obj->widget();
+    EXPECT_NO_FATAL_FAILURE({ obj->widget(); });
 
+}

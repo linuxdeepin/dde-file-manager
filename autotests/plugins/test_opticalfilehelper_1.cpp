@@ -3,57 +3,87 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_opticalfilehelper_1.cpp
- * @brief Unit tests for OpticalFileHelper Low-priority methods
+ * @file test_opticalfilehelper_1.cpp
+ * @brief Unit tests for OpticalFileHelper methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class OpticalFileHelperTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/opticalfilehelper.h"
+
+#include <QTest>
+
+using namespace dfmplugin_optical;
+
+class OpticalFileHelperTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new OpticalFileHelper();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    OpticalFileHelper *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(OpticalFileHelperTest, OpticalFileHelper)
 {
-    // OpticalFileHelper
-    SUCCEED();
+    // Test constructor: OpticalFileHelper((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(OpticalFileHelperTest, copyFile)
 {
-    // copyFile
-    SUCCEED();
+    // Test method: bool copyFile((const quint64 windowId, const QList<QUrl> sources, const QUrl target, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags))
+    auto result = obj->copyFile(0, QList<QUrl>(), QUrl(), DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags());
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(OpticalFileHelperTest, cutFile)
 {
-    // cutFile
-    SUCCEED();
+    // Test method: bool cutFile((const quint64 windowId, const QList<QUrl> sources, const QUrl target, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags))
+    auto result = obj->cutFile(0, QList<QUrl>(), QUrl(), DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags());
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(OpticalFileHelperTest, instance)
 {
-    // instance
-    SUCCEED();
+    // Test getter: DPOPTICAL_USE_NAMESPACE instance()
+    auto result = obj->instance();
+    EXPECT_NO_FATAL_FAILURE({ obj->instance(); });
+
 }
 
 TEST_F(OpticalFileHelperTest, openFileInPlugin)
 {
-    // openFileInPlugin
-    SUCCEED();
+    // Test method: bool openFileInPlugin((quint64 winId, QList<QUrl> urls))
+    auto result = obj->openFileInPlugin(0, QList<QUrl>());
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(OpticalFileHelperTest, openFileInTerminal)
 {
-    // openFileInTerminal
-    SUCCEED();
+    // Test method: bool openFileInTerminal((const quint64 windowId, const QList<QUrl> urls))
+    auto result = obj->openFileInTerminal(0, QList<QUrl>());
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(OpticalFileHelperTest, pasteFilesHandle)
 {
-    // pasteFilesHandle
-    SUCCEED();
+    // Test method: void pasteFilesHandle((const QList<QUrl> sources, const QUrl target, bool isCopy))
+    EXPECT_NO_FATAL_FAILURE(obj->pasteFilesHandle(QList<QUrl>(), QUrl(), false));
 }
-

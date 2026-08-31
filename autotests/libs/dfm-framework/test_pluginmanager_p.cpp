@@ -1275,12 +1275,13 @@ TEST_F(PluginManagerPrivateTest, ComprehensiveTest)
     EXPECT_TRUE(managerPrivate->isBlackListed("TestPlugin"));
 
     // 4. 测试JSON元数据解析
-    QJsonObject metaData = createTestMetaData("TestPlugin", "1.0.0");
-    managerPrivate->jsonToMeta(plugin, metaData);
-    EXPECT_EQ(plugin->version(), "1.0.0");
+    EXPECT_NO_FATAL_FAILURE({
+        QJsonObject metaData = createTestMetaData("TestPlugin", "1.0.0");
+        managerPrivate->jsonToMeta(plugin, metaData);
+        EXPECT_EQ(plugin->version(), "1.0.0");
+    });
 
     // 如果到达这里说明所有功能都正常工作
-    EXPECT_TRUE(true);
 }
 
 /**
@@ -1303,9 +1304,8 @@ TEST_F(PluginManagerPrivateTest, EdgeCases)
     EXPECT_TRUE(nonExistent.isNull());
 
     // 测试虚拟插件的scanfVirtualPlugin空数据
-    managerPrivate->scanfVirtualPlugin("/invalid/path.so", QJsonObject());
+    EXPECT_NO_FATAL_FAILURE({ managerPrivate->scanfVirtualPlugin("/invalid/path.so", QJsonObject()); });
     // 应该不会崩溃
-    EXPECT_TRUE(true);
 }
 
 /**

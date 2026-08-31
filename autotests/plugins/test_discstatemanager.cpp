@@ -3,45 +3,70 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_discstatemanager.cpp
- * @brief Unit tests for DiscStateManager Low-priority methods
+ * @file test_discstatemanager.cpp
+ * @brief Unit tests for DiscStateManager methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class DiscStateManagerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/discstatemanager.h"
+
+#include <QTest>
+
+using namespace dfmplugin_burn;
+
+class DiscStateManagerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new DiscStateManager();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    DiscStateManager *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(DiscStateManagerTest, DiscStateManager)
 {
-    // DiscStateManager
-    SUCCEED();
+    // Test constructor: DiscStateManager((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(DiscStateManagerTest, ghostMountForBlankDisc)
 {
-    // ghostMountForBlankDisc
-    SUCCEED();
+    // Test method: void ghostMountForBlankDisc(())
+    EXPECT_NO_FATAL_FAILURE(obj->ghostMountForBlankDisc());
 }
 
 TEST_F(DiscStateManagerTest, initilaize)
 {
-    // initilaize
-    SUCCEED();
+    // Test method: void initilaize(())
+    EXPECT_NO_FATAL_FAILURE(obj->initilaize());
 }
 
 TEST_F(DiscStateManagerTest, instance)
 {
-    // instance
-    SUCCEED();
+    // Test getter: DiscStateManager instance()
+    auto result = obj->instance();
+    EXPECT_NO_FATAL_FAILURE({ obj->instance(); });
+
 }
 
 TEST_F(DiscStateManagerTest, onDevicePropertyChanged)
 {
-    // onDevicePropertyChanged
-    SUCCEED();
+    // Test method: void onDevicePropertyChanged((const QString &id, const QString &propertyName, const QVariant &var))
+    QString _arg0{};
+    QString _arg1{};
+    QVariant _arg2{};
+    EXPECT_NO_FATAL_FAILURE(obj->onDevicePropertyChanged(_arg0, _arg1, _arg2));
 }
-

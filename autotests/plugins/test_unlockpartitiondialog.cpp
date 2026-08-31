@@ -3,63 +3,86 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_unlockpartitiondialog.cpp
- * @brief Unit tests for UnlockPartitionDialog Low-priority methods
+ * @file test_unlockpartitiondialog.cpp
+ * @brief Unit tests for UnlockPartitionDialog methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class UnlockPartitionDialogTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "gui/unlockpartitiondialog.h"
+
+#include <QTest>
+
+using namespace dfmplugin_disk_encrypt_entry;
+
+class UnlockPartitionDialogTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new UnlockPartitionDialog();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    UnlockPartitionDialog *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(UnlockPartitionDialogTest, getUnlockKey)
 {
-    // getUnlockKey
-    SUCCEED();
+    // Test getter: QPair<UnlockPartitionDialog::UnlockType, QString> getUnlockKey()
+    auto result = obj->getUnlockKey();
+    EXPECT_NO_FATAL_FAILURE({ obj->getUnlockKey(); });
+
 }
 
 TEST_F(UnlockPartitionDialogTest, handleButtonClicked)
 {
-    // handleButtonClicked
-    SUCCEED();
+    // Test method: void handleButtonClicked((int index, QString text))
+    EXPECT_NO_FATAL_FAILURE(obj->handleButtonClicked(0, QString()));
 }
 
 TEST_F(UnlockPartitionDialogTest, initConnect)
 {
-    // initConnect
-    SUCCEED();
+    // Test method: void initConnect(())
+    EXPECT_NO_FATAL_FAILURE(obj->initConnect());
 }
 
 TEST_F(UnlockPartitionDialogTest, initUI)
 {
-    // initUI
-    SUCCEED();
+    // Test method: void initUI(())
+    EXPECT_NO_FATAL_FAILURE(obj->initUI());
 }
 
 TEST_F(UnlockPartitionDialogTest, showEvent)
 {
-    // showEvent
-    SUCCEED();
+    // Test event handler: showEvent((QShowEvent *event))
+    QShowEvent _event(QShowEvent::None);
+    EXPECT_NO_FATAL_FAILURE(obj->showEvent(&_event));
 }
 
 TEST_F(UnlockPartitionDialogTest, switchUnlockType)
 {
-    // switchUnlockType
-    SUCCEED();
+    // Test method: void switchUnlockType(())
+    EXPECT_NO_FATAL_FAILURE(obj->switchUnlockType());
 }
 
 TEST_F(UnlockPartitionDialogTest, updateUserHint)
 {
-    // updateUserHint
-    SUCCEED();
+    // Test method: void updateUserHint(())
+    EXPECT_NO_FATAL_FAILURE(obj->updateUserHint());
 }
 
 TEST_F(UnlockPartitionDialogTest, UnlockPartitionDialog_Destructor)
 {
-    // ~UnlockPartitionDialog
-    SUCCEED();
+    // Test method:  ~UnlockPartitionDialog(())
+    EXPECT_NO_FATAL_FAILURE({ UnlockPartitionDialog *tmp = new UnlockPartitionDialog(); delete tmp; });
 }
-

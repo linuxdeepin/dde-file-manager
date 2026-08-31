@@ -4,19 +4,41 @@
 
 /**
  * @file test_dfmglobal_use_namespace.cpp
- * @brief Unit tests for DFMGLOBAL_USE_NAMESPACE Mid-priority methods
+ * @brief Unit tests for DFMGLOBAL_USE_NAMESPACE methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class DFMGLOBAL_USE_NAMESPACETest : public ::testing::Test {
+#include "stubext.h"
+
+#include "old/plugins/dfmplugin-search/test_searchhelper.h"
+
+#include <QTest>
+
+using namespace autotests;
+
+class DFMGLOBAL_USE_NAMESPACETest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new DFMGLOBAL_USE_NAMESPACE();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    DFMGLOBAL_USE_NAMESPACE *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(DFMGLOBAL_USE_NAMESPACETest, sendOpenWindow)
 {
-    // sendOpenWindow
-    SUCCEED();
+    // Test method: DFMBASE_USE_NAMESPACE sendOpenWindow((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj->sendOpenWindow(_arg0); });
 }

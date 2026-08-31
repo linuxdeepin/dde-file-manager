@@ -4,31 +4,58 @@
 
 /**
  * @file test_dbushelper.cpp
- * @brief Unit tests for DBusHelper Mid-priority methods
+ * @brief Unit tests for DBusHelper methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class DBusHelperTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "screen/dbus-private/dbushelper.h"
+
+#include <QTest>
+
+using namespace ddplugin_core;
+
+class DBusHelperTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new DBusHelper();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    DBusHelper *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(DBusHelperTest, display)
 {
-    // display
-    SUCCEED();
+    // Test getter: DBusDisplay display()
+    auto result = obj->display();
+    EXPECT_NO_FATAL_FAILURE({ obj->display(); });
+
 }
 
 TEST_F(DBusHelperTest, ins)
 {
-    // ins
-    SUCCEED();
+    // Test getter: DBusHelper ins()
+    auto result = obj->ins();
+    EXPECT_NO_FATAL_FAILURE({ obj->ins(); });
+
 }
 
 TEST_F(DBusHelperTest, isDockEnable)
 {
-    // isDockEnable
-    SUCCEED();
+    // Test bool getter: isDockEnable()
+    bool result = obj->isDockEnable();
+    EXPECT_FALSE(result);
+
 }

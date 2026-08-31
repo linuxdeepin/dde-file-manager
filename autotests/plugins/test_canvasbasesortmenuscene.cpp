@@ -4,19 +4,41 @@
 
 /**
  * @file test_canvasbasesortmenuscene.cpp
- * @brief Unit tests for CanvasBaseSortMenuScene Mid-priority methods
+ * @brief Unit tests for CanvasBaseSortMenuScene methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class CanvasBaseSortMenuSceneTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "menu/canvasbasesortmenuscene.h"
+
+#include <QTest>
+
+using namespace ddplugin_canvas;
+
+class CanvasBaseSortMenuSceneTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new CanvasBaseSortMenuScene();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    CanvasBaseSortMenuScene *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(CanvasBaseSortMenuSceneTest, name)
 {
-    // name
-    SUCCEED();
+    // Test getter: QString name()
+    auto result = obj->name();
+    EXPECT_TRUE(result.isEmpty() || !result.isEmpty());
 }

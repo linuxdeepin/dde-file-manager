@@ -3,21 +3,41 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_registeredgroupstrategy.cpp
- * @brief Unit tests for RegisteredGroupStrategy Low-priority methods
+ * @file test_registeredgroupstrategy.cpp
+ * @brief Unit tests for RegisteredGroupStrategy methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class RegisteredGroupStrategyTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "groups/groupingfactory.h"
+
+#include <QTest>
+
+using namespace dfmplugin_workspace;
+
+class RegisteredGroupStrategyTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new RegisteredGroupStrategy();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    RegisteredGroupStrategy *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(RegisteredGroupStrategyTest, RegisteredGroupStrategy)
 {
-    // RegisteredGroupStrategy
-    SUCCEED();
+    // Test constructor: RegisteredGroupStrategy(())
+    ASSERT_NE(obj, nullptr);
 }
-

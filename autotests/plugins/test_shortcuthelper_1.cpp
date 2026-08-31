@@ -3,129 +3,153 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_shortcuthelper_1.cpp
- * @brief Unit tests for ShortcutHelper Low-priority methods
+ * @file test_shortcuthelper_1.cpp
+ * @brief Unit tests for ShortcutHelper methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ShortcutHelperTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/shortcuthelper.h"
+
+#include <QTest>
+
+using namespace dfmplugin_workspace;
+
+class ShortcutHelperTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ShortcutHelper();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ShortcutHelper *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ShortcutHelperTest, cdUp)
 {
-    // cdUp
-    SUCCEED();
+    // Test method: void cdUp(())
+    EXPECT_NO_FATAL_FAILURE(obj->cdUp());
 }
 
 TEST_F(ShortcutHelperTest, copyFilePath)
 {
-    // copyFilePath
-    SUCCEED();
+    // Test method: void copyFilePath(())
+    EXPECT_NO_FATAL_FAILURE(obj->copyFilePath());
 }
 
 TEST_F(ShortcutHelperTest, copyFiles)
 {
-    // copyFiles
-    SUCCEED();
+    // Test method: void copyFiles(())
+    EXPECT_NO_FATAL_FAILURE(obj->copyFiles());
 }
 
 TEST_F(ShortcutHelperTest, cutFiles)
 {
-    // cutFiles
-    SUCCEED();
+    // Test method: void cutFiles(())
+    EXPECT_NO_FATAL_FAILURE(obj->cutFiles());
 }
 
 TEST_F(ShortcutHelperTest, doEnterPressed)
 {
-    // doEnterPressed
-    SUCCEED();
+    // Test bool getter: doEnterPressed()
+    bool result = obj->doEnterPressed();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(ShortcutHelperTest, initRenameProcessTimer)
 {
-    // initRenameProcessTimer
-    SUCCEED();
+    // Test method: void initRenameProcessTimer(())
+    EXPECT_NO_FATAL_FAILURE(obj->initRenameProcessTimer());
 }
 
 TEST_F(ShortcutHelperTest, moveToTrash)
 {
-    // moveToTrash
-    SUCCEED();
+    // Test method: void moveToTrash(())
+    EXPECT_NO_FATAL_FAILURE(obj->moveToTrash());
 }
 
 TEST_F(ShortcutHelperTest, openInTerminal)
 {
-    // openInTerminal
-    SUCCEED();
+    // Test method: void openInTerminal(())
+    EXPECT_NO_FATAL_FAILURE(obj->openInTerminal());
 }
 
 TEST_F(ShortcutHelperTest, pasteFiles)
 {
-    // pasteFiles
-    SUCCEED();
+    // Test method: void pasteFiles(())
+    EXPECT_NO_FATAL_FAILURE(obj->pasteFiles());
 }
 
 TEST_F(ShortcutHelperTest, previewFiles)
 {
-    // previewFiles
-    SUCCEED();
+    // Test method: void previewFiles(())
+    EXPECT_NO_FATAL_FAILURE(obj->previewFiles());
 }
 
 TEST_F(ShortcutHelperTest, redoFiles)
 {
-    // redoFiles
-    SUCCEED();
+    // Test method: void redoFiles(())
+    EXPECT_NO_FATAL_FAILURE(obj->redoFiles());
 }
 
 TEST_F(ShortcutHelperTest, registerAction)
 {
-    // registerAction
-    SUCCEED();
+    // Test method: void registerAction((QKeySequence::StandardKey shortcut, bool autoRepeat))
+    EXPECT_NO_FATAL_FAILURE(obj->registerAction(QKeySequence::StandardKey(), false));
 }
 
 TEST_F(ShortcutHelperTest, registerShortcut)
 {
-    // registerShortcut
-    SUCCEED();
+    // Test method: void registerShortcut(())
+    EXPECT_NO_FATAL_FAILURE(obj->registerShortcut());
 }
 
 TEST_F(ShortcutHelperTest, renameProcessing)
 {
-    // renameProcessing
-    SUCCEED();
+    // Test method: void renameProcessing(())
+    EXPECT_NO_FATAL_FAILURE(obj->renameProcessing());
 }
 
 TEST_F(ShortcutHelperTest, reverseSelect)
 {
-    // reverseSelect
-    SUCCEED();
+    // Test bool getter: reverseSelect()
+    bool result = obj->reverseSelect();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(ShortcutHelperTest, showFilesProperty)
 {
-    // showFilesProperty
-    SUCCEED();
+    // Test method: void showFilesProperty(())
+    EXPECT_NO_FATAL_FAILURE(obj->showFilesProperty());
 }
 
 TEST_F(ShortcutHelperTest, toggleHiddenFiles)
 {
-    // toggleHiddenFiles
-    SUCCEED();
+    // Test method: void toggleHiddenFiles(())
+    EXPECT_NO_FATAL_FAILURE(obj->toggleHiddenFiles());
 }
 
 TEST_F(ShortcutHelperTest, touchFolder)
 {
-    // touchFolder
-    SUCCEED();
+    // Test method: void touchFolder(())
+    EXPECT_NO_FATAL_FAILURE(obj->touchFolder());
 }
 
 TEST_F(ShortcutHelperTest, undoFiles)
 {
-    // undoFiles
-    SUCCEED();
+    // Test method: void undoFiles(())
+    EXPECT_NO_FATAL_FAILURE(obj->undoFiles());
 }
-

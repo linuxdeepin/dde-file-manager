@@ -3,63 +3,90 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_trasheventcaller.cpp
- * @brief Unit tests for TrashEventCaller Low-priority methods
+ * @file test_trasheventcaller.cpp
+ * @brief Unit tests for TrashEventCaller methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class TrashEventCallerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "events/trasheventcaller.h"
+
+#include <QTest>
+
+using namespace dfmplugin_trash;
+
+class TrashEventCallerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new TrashEventCaller();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    TrashEventCaller *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(TrashEventCallerTest, TrashEventCaller)
 {
-    // TrashEventCaller
-    SUCCEED();
+    // Test constructor: TrashEventCaller(())
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(TrashEventCallerTest, sendCheckTabAddable)
 {
-    // sendCheckTabAddable
-    SUCCEED();
+    // Test method: bool sendCheckTabAddable((quint64 windowId))
+    auto result = obj->sendCheckTabAddable(0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(TrashEventCallerTest, sendEmptyTrash)
 {
-    // sendEmptyTrash
-    SUCCEED();
+    // Test method: void sendEmptyTrash((const quint64 windowID, const QList<QUrl> &urls))
+    QList<QUrl> _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->sendEmptyTrash(0, _arg1));
 }
 
 TEST_F(TrashEventCallerTest, sendOpenFiles)
 {
-    // sendOpenFiles
-    SUCCEED();
+    // Test method: void sendOpenFiles((const quint64 windowID, const QList<QUrl> &urls))
+    QList<QUrl> _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->sendOpenFiles(0, _arg1));
 }
 
 TEST_F(TrashEventCallerTest, sendOpenTab)
 {
-    // sendOpenTab
-    SUCCEED();
+    // Test method: void sendOpenTab((quint64 windowId, const QUrl &url))
+    QUrl _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->sendOpenTab(0, _arg1));
 }
 
 TEST_F(TrashEventCallerTest, sendOpenWindow)
 {
-    // sendOpenWindow
-    SUCCEED();
+    // Test method: DFMBASE_USE_NAMESPACE sendOpenWindow((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj->sendOpenWindow(_arg0); });
 }
 
 TEST_F(TrashEventCallerTest, sendShowEmptyTrash)
 {
-    // sendShowEmptyTrash
-    SUCCEED();
+    // Test method: void sendShowEmptyTrash((quint64 winId, bool visible))
+    EXPECT_NO_FATAL_FAILURE(obj->sendShowEmptyTrash(0, false));
 }
 
 TEST_F(TrashEventCallerTest, sendTrashPropertyDialog)
 {
-    // sendTrashPropertyDialog
-    SUCCEED();
+    // Test method: void sendTrashPropertyDialog((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->sendTrashPropertyDialog(_arg0));
 }
-

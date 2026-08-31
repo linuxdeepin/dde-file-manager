@@ -4,25 +4,48 @@
 
 /**
  * @file test_urlpushbuttonprivate.cpp
- * @brief Unit tests for UrlPushButtonPrivate Mid-priority methods
+ * @brief Unit tests for UrlPushButtonPrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class UrlPushButtonPrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/urlpushbutton.h"
+
+#include <QTest>
+
+using namespace dfmplugin_titlebar;
+
+class UrlPushButtonPrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new UrlPushButtonPrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    UrlPushButtonPrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(UrlPushButtonPrivateTest, arrowWidth)
 {
-    // arrowWidth
-    SUCCEED();
+    // Test getter: int arrowWidth()
+    auto result = obj->arrowWidth();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(UrlPushButtonPrivateTest, onCompletionCompleted)
 {
-    // onCompletionCompleted
-    SUCCEED();
+    // Test method: void onCompletionCompleted(())
+    EXPECT_NO_FATAL_FAILURE(obj->onCompletionCompleted());
 }

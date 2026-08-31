@@ -4,19 +4,40 @@
 
 /**
  * @file test_checkboxwithmessage.cpp
- * @brief Unit tests for CheckBoxWithMessage Mid-priority methods
+ * @brief Unit tests for CheckBoxWithMessage methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class CheckBoxWithMessageTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "dfm-base/dialogs/settingsdialog/controls/checkboxwithmessage.h"
+
+#include <QTest>
+
+using namespace src;
+
+class CheckBoxWithMessageTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new CheckBoxWithMessage();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    CheckBoxWithMessage *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(CheckBoxWithMessageTest, CheckBoxWithMessage)
 {
-    // CheckBoxWithMessage
-    SUCCEED();
+    // Test constructor: CheckBoxWithMessage((QWidget *parent))
+    ASSERT_NE(obj, nullptr);
 }

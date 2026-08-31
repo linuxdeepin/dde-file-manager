@@ -3,63 +3,100 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_low_cifsmounthelper.cpp
- * @brief Unit tests for CifsMountHelper Low-priority methods
+ * @file test_low_cifsmounthelper.cpp
+ * @brief Unit tests for CifsMountHelper methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class CifsMountHelperLowTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "services/mountcontrol/mounthelpers/cifsmounthelper.h"
+
+#include <QTest>
+
+using namespace src;
+
+class CifsMountHelperTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new CifsMountHelper();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    CifsMountHelper *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
-TEST_F(CifsMountHelperLowTest, CifsMountHelper)
+TEST_F(CifsMountHelperTest, CifsMountHelper)
 {
-    // CifsMountHelper
-    SUCCEED();
+    // Test constructor: CifsMountHelper((QDBusContext *context))
+    ASSERT_NE(obj, nullptr);
 }
 
-TEST_F(CifsMountHelperLowTest, checkAuthentication)
+TEST_F(CifsMountHelperTest, checkAuthentication)
 {
-    // checkAuthentication
-    SUCCEED();
+    // Test method: bool checkAuthentication((const QString &appName))
+    QString _arg0{};
+    auto result = obj->checkAuthentication(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(CifsMountHelperLowTest, generateMountPath)
+TEST_F(CifsMountHelperTest, generateMountPath)
 {
-    // generateMountPath
-    SUCCEED();
+    // Test method: QString generateMountPath((const QString &address))
+    QString _arg0{};
+    auto result = obj->generateMountPath(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
-TEST_F(CifsMountHelperLowTest, invokerUid)
+TEST_F(CifsMountHelperTest, invokerUid)
 {
-    // invokerUid
-    SUCCEED();
+    // Test getter: uint invokerUid()
+    auto result = obj->invokerUid();
+    EXPECT_EQ(result, 0);
+
 }
 
-TEST_F(CifsMountHelperLowTest, mkdir)
+TEST_F(CifsMountHelperTest, mkdir)
 {
-    // mkdir
-    SUCCEED();
+    // Test method: bool mkdir((const QString &path))
+    QString _arg0{};
+    auto result = obj->mkdir(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(CifsMountHelperLowTest, mkdirMountRootPath)
+TEST_F(CifsMountHelperTest, mkdirMountRootPath)
 {
-    // mkdirMountRootPath
-    SUCCEED();
+    // Test bool getter: mkdirMountRootPath()
+    bool result = obj->mkdirMountRootPath();
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(CifsMountHelperLowTest, mountRoot)
+TEST_F(CifsMountHelperTest, mountRoot)
 {
-    // mountRoot
-    SUCCEED();
+    // Test getter: QString mountRoot()
+    auto result = obj->mountRoot();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
-TEST_F(CifsMountHelperLowTest, overrideOptions)
+TEST_F(CifsMountHelperTest, overrideOptions)
 {
-    // overrideOptions
-    SUCCEED();
-}
+    // Test getter: QVariantMap overrideOptions()
+    auto result = obj->overrideOptions();
+    EXPECT_TRUE(result.isEmpty());
 
+}

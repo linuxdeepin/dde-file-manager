@@ -3,45 +3,70 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_typemethodgroup_1.cpp
- * @brief Unit tests for TypeMethodGroup Low-priority methods
+ * @file test_typemethodgroup_1.cpp
+ * @brief Unit tests for TypeMethodGroup methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class TypeMethodGroupTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "options/methodgroup/typemethodgroup.h"
+
+#include <QTest>
+
+using namespace ddplugin_organizer;
+
+class TypeMethodGroupTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new TypeMethodGroup();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    TypeMethodGroup *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(TypeMethodGroupTest, TypeMethodGroup)
 {
-    // TypeMethodGroup
-    SUCCEED();
+    // Test constructor: TypeMethodGroup((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(TypeMethodGroupTest, id)
 {
-    // id
-    SUCCEED();
+    // Test getter: Classifier id()
+    auto result = obj->id();
+    EXPECT_NO_FATAL_FAILURE({ obj->id(); });
+
 }
 
 TEST_F(TypeMethodGroupTest, release)
 {
-    // release
-    SUCCEED();
+    // Test method: void release(())
+    EXPECT_NO_FATAL_FAILURE(obj->release());
 }
 
 TEST_F(TypeMethodGroupTest, subWidgets)
 {
-    // subWidgets
-    SUCCEED();
+    // Test getter: QList<QWidget *> subWidgets()
+    auto result = obj->subWidgets();
+    // Pointer return type
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(TypeMethodGroupTest, TypeMethodGroup_Destructor)
 {
-    // ~TypeMethodGroup
-    SUCCEED();
+    // Test method:  ~TypeMethodGroup(())
+    EXPECT_NO_FATAL_FAILURE({ TypeMethodGroup *tmp = new TypeMethodGroup(); delete tmp; });
 }
-

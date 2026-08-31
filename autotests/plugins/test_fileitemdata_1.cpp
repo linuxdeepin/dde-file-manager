@@ -3,81 +3,105 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_fileitemdata_1.cpp
- * @brief Unit tests for FileItemData Low-priority methods
+ * @file test_fileitemdata_1.cpp
+ * @brief Unit tests for FileItemData methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class FileItemDataTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "models/fileitemdata.h"
+
+#include <QTest>
+
+using namespace dfmplugin_workspace;
+
+class FileItemDataTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new FileItemData();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FileItemData *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(FileItemDataTest, FileItemData)
 {
-    // FileItemData
-    SUCCEED();
+    // Test constructor: FileItemData((const SortInfoPointer &info, FileItemData *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(FileItemDataTest, fileSortInfo)
 {
-    // fileSortInfo
-    SUCCEED();
+    // Test getter: SortInfoPointer fileSortInfo()
+    auto result = obj->fileSortInfo();
+    EXPECT_EQ(result.get(), nullptr);
+
 }
 
 TEST_F(FileItemDataTest, parentData)
 {
-    // parentData
-    SUCCEED();
+    // Test getter: FileItemData parentData()
+    auto result = obj->parentData();
+    EXPECT_NO_FATAL_FAILURE({ obj->parentData(); });
+
 }
 
 TEST_F(FileItemDataTest, refreshInfo)
 {
-    // refreshInfo
-    SUCCEED();
+    // Test method: void refreshInfo(())
+    EXPECT_NO_FATAL_FAILURE(obj->refreshInfo());
 }
 
 TEST_F(FileItemDataTest, setAvailableState)
 {
-    // setAvailableState
-    SUCCEED();
+    // Test setter: void setAvailableState((bool b))
+    EXPECT_NO_FATAL_FAILURE(obj->setAvailableState(false));
 }
 
 TEST_F(FileItemDataTest, setDepth)
 {
-    // setDepth
-    SUCCEED();
+    // Test setter: void setDepth((const int8_t depth))
+    EXPECT_NO_FATAL_FAILURE(obj->setDepth({}));
 }
 
 TEST_F(FileItemDataTest, setExpanded)
 {
-    // setExpanded
-    SUCCEED();
+    // Test setter: void setExpanded((bool b))
+    EXPECT_NO_FATAL_FAILURE(obj->setExpanded(false));
 }
 
 TEST_F(FileItemDataTest, setGroupDisplayIndex)
 {
-    // setGroupDisplayIndex
-    SUCCEED();
+    // Test setter: void setGroupDisplayIndex((int index))
+    EXPECT_NO_FATAL_FAILURE(obj->setGroupDisplayIndex(0));
 }
 
 TEST_F(FileItemDataTest, setParentData)
 {
-    // setParentData
-    SUCCEED();
+    // Test setter: void setParentData((FileItemData *p))
+    EXPECT_NO_FATAL_FAILURE(obj->setParentData(nullptr));
 }
 
 TEST_F(FileItemDataTest, setSortFileInfo)
 {
-    // setSortFileInfo
-    SUCCEED();
+    // Test setter: void setSortFileInfo((SortInfoPointer info))
+    EXPECT_NO_FATAL_FAILURE(obj->setSortFileInfo(SortInfoPointer()));
 }
 
 TEST_F(FileItemDataTest, transFileInfo)
 {
-    // transFileInfo
-    SUCCEED();
+    // Test method: void transFileInfo(())
+    EXPECT_NO_FATAL_FAILURE(obj->transFileInfo());
 }
-

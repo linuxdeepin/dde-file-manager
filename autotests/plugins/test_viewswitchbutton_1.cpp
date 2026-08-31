@@ -3,51 +3,76 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_viewswitchbutton_1.cpp
- * @brief Unit tests for ViewSwitchButton Low-priority methods
+ * @file test_viewswitchbutton_1.cpp
+ * @brief Unit tests for ViewSwitchButton methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ViewSwitchButtonTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/viewswitchbutton.h"
+
+#include <QTest>
+
+using namespace dfmplugin_titlebar;
+
+class ViewSwitchButtonTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ViewSwitchButton();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ViewSwitchButton *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ViewSwitchButtonTest, ViewSwitchButton)
 {
-    // ViewSwitchButton
-    SUCCEED();
+    // Test constructor: ViewSwitchButton((QWidget *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(ViewSwitchButtonTest, enterEvent)
 {
-    // enterEvent
-    SUCCEED();
+    // Test event handler: enterEvent((QEnterEvent *event))
+    QEnterEvent _event(QEnterEvent::None);
+    EXPECT_NO_FATAL_FAILURE(obj->enterEvent(&_event));
 }
 
 TEST_F(ViewSwitchButtonTest, leaveEvent)
 {
-    // leaveEvent
-    SUCCEED();
+    // Test event handler: leaveEvent((QEvent *event))
+    QEvent _event(QEvent::None);
+    EXPECT_NO_FATAL_FAILURE(obj->leaveEvent(&_event));
 }
 
 TEST_F(ViewSwitchButtonTest, mouseMoveEvent)
 {
-    // mouseMoveEvent
-    SUCCEED();
+    // Test event handler: mouseMoveEvent((QMouseEvent *event))
+    QMouseEvent _event(QMouseEvent::None);
+    EXPECT_NO_FATAL_FAILURE(obj->mouseMoveEvent(&_event));
 }
 
 TEST_F(ViewSwitchButtonTest, mousePressEvent)
 {
-    // mousePressEvent
-    SUCCEED();
+    // Test event handler: mousePressEvent((QMouseEvent *event))
+    QMouseEvent _event(QMouseEvent::None);
+    EXPECT_NO_FATAL_FAILURE(obj->mousePressEvent(&_event));
 }
 
 TEST_F(ViewSwitchButtonTest, mouseReleaseEvent)
 {
-    // mouseReleaseEvent
-    SUCCEED();
+    // Test event handler: mouseReleaseEvent((QMouseEvent *event))
+    QMouseEvent _event(QMouseEvent::None);
+    EXPECT_NO_FATAL_FAILURE(obj->mouseReleaseEvent(&_event));
 }
-

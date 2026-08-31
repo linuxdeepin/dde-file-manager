@@ -4,31 +4,52 @@
 
 /**
  * @file test_computerpropertydialog.cpp
- * @brief Unit tests for ComputerPropertyDialog Mid-priority methods
+ * @brief Unit tests for ComputerPropertyDialog methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ComputerPropertyDialogTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/computerpropertydialog.h"
+
+#include <QTest>
+
+using namespace dfmplugin_propertydialog;
+
+class ComputerPropertyDialogTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ComputerPropertyDialog();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ComputerPropertyDialog *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ComputerPropertyDialogTest, ComputerPropertyDialog)
 {
-    // ComputerPropertyDialog
-    SUCCEED();
+    // Test constructor: ComputerPropertyDialog((QWidget *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(ComputerPropertyDialogTest, computerProcess)
 {
-    // computerProcess
-    SUCCEED();
+    // Test method: void computerProcess((QMap<ComputerInfoItem, QString> computerInfo))
+    EXPECT_NO_FATAL_FAILURE(obj->computerProcess(QMap<ComputerInfoItem, QString>()));
 }
 
 TEST_F(ComputerPropertyDialogTest, iniUI)
 {
-    // iniUI
-    SUCCEED();
+    // Test method: void iniUI(())
+    EXPECT_NO_FATAL_FAILURE(obj->iniUI());
 }

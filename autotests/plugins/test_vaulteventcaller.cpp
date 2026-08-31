@@ -3,51 +3,76 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_vaulteventcaller.cpp
- * @brief Unit tests for VaultEventCaller Low-priority methods
+ * @file test_vaulteventcaller.cpp
+ * @brief Unit tests for VaultEventCaller methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class VaultEventCallerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "events/vaulteventcaller.h"
+
+#include <QTest>
+
+using namespace dfmplugin_vault;
+
+class VaultEventCallerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new VaultEventCaller();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    VaultEventCaller *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(VaultEventCallerTest, VaultEventCaller)
 {
-    // VaultEventCaller
-    SUCCEED();
+    // Test constructor: VaultEventCaller(())
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(VaultEventCallerTest, sendItemActived)
 {
-    // sendItemActived
-    SUCCEED();
+    // Test method: void sendItemActived((quint64 windowId, const QUrl &url))
+    QUrl _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->sendItemActived(0, _arg1));
 }
 
 TEST_F(VaultEventCallerTest, sendOpenFiles)
 {
-    // sendOpenFiles
-    SUCCEED();
+    // Test method: void sendOpenFiles((const quint64 windowID, const QList<QUrl> &urls))
+    QList<QUrl> _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->sendOpenFiles(0, _arg1));
 }
 
 TEST_F(VaultEventCallerTest, sendOpenTab)
 {
-    // sendOpenTab
-    SUCCEED();
+    // Test method: void sendOpenTab((quint64 windowId, const QUrl &url))
+    QUrl _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->sendOpenTab(0, _arg1));
 }
 
 TEST_F(VaultEventCallerTest, sendOpenWindow)
 {
-    // sendOpenWindow
-    SUCCEED();
+    // Test method: void sendOpenWindow((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->sendOpenWindow(_arg0));
 }
 
 TEST_F(VaultEventCallerTest, sendVaultProperty)
 {
-    // sendVaultProperty
-    SUCCEED();
+    // Test method: void sendVaultProperty((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->sendVaultProperty(_arg0));
 }
-

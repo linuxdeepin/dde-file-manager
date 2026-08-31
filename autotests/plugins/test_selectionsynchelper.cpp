@@ -4,43 +4,64 @@
 
 /**
  * @file test_selectionsynchelper.cpp
- * @brief Unit tests for SelectionSyncHelper Mid-priority methods
+ * @brief Unit tests for SelectionSyncHelper methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class SelectionSyncHelperTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "mode/selectionsynchelper.h"
+
+#include <QTest>
+
+using namespace ddplugin_organizer;
+
+class SelectionSyncHelperTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new SelectionSyncHelper();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    SelectionSyncHelper *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(SelectionSyncHelperTest, SelectionSyncHelper)
 {
-    // SelectionSyncHelper
-    SUCCEED();
+    // Test constructor: SelectionSyncHelper((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(SelectionSyncHelperTest, clearExteralSelection)
 {
-    // clearExteralSelection
-    SUCCEED();
+    // Test method: void clearExteralSelection(())
+    EXPECT_NO_FATAL_FAILURE(obj->clearExteralSelection());
 }
 
 TEST_F(SelectionSyncHelperTest, clearInnerSelection)
 {
-    // clearInnerSelection
-    SUCCEED();
+    // Test method: void clearInnerSelection(())
+    EXPECT_NO_FATAL_FAILURE(obj->clearInnerSelection());
 }
 
 TEST_F(SelectionSyncHelperTest, externalModelDestroyed)
 {
-    // externalModelDestroyed
-    SUCCEED();
+    // Test method: void externalModelDestroyed(())
+    EXPECT_NO_FATAL_FAILURE(obj->externalModelDestroyed());
 }
 
 TEST_F(SelectionSyncHelperTest, innerModelDestroyed)
 {
-    // innerModelDestroyed
-    SUCCEED();
+    // Test method: void innerModelDestroyed(())
+    EXPECT_NO_FATAL_FAILURE(obj->innerModelDestroyed());
 }

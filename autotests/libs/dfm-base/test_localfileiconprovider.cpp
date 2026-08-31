@@ -4,25 +4,51 @@
 
 /**
  * @file test_localfileiconprovider.cpp
- * @brief Unit tests for LocalFileIconProvider Mid-priority methods
+ * @brief Unit tests for LocalFileIconProvider methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class LocalFileIconProviderTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "dfm-base/file/local/localfileiconprovider.h"
+
+#include <QTest>
+
+using namespace src;
+
+class LocalFileIconProviderTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new LocalFileIconProvider();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    LocalFileIconProvider *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(LocalFileIconProviderTest, globalProvider)
 {
-    // globalProvider
-    SUCCEED();
+    // Test getter: LocalFileIconProvider globalProvider()
+    auto result = obj->globalProvider();
+    EXPECT_NO_FATAL_FAILURE({ obj->globalProvider(); });
+
 }
 
 TEST_F(LocalFileIconProviderTest, icon)
 {
-    // icon
-    SUCCEED();
+    // Test method: QIcon icon((FileInfoPointer info, const QIcon &feedback))
+    QIcon _arg1{};
+    auto result = obj->icon(FileInfoPointer(), _arg1);
+    EXPECT_TRUE(result.isNull());
+
 }

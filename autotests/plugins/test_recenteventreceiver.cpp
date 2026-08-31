@@ -4,25 +4,48 @@
 
 /**
  * @file test_recenteventreceiver.cpp
- * @brief Unit tests for RecentEventReceiver Mid-priority methods
+ * @brief Unit tests for RecentEventReceiver methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class RecentEventReceiverTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "events/recenteventreceiver.h"
+
+#include <QTest>
+
+using namespace dfmplugin_recent;
+
+class RecentEventReceiverTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new RecentEventReceiver();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    RecentEventReceiver *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(RecentEventReceiverTest, RecentEventReceiver)
 {
-    // RecentEventReceiver
-    SUCCEED();
+    // Test constructor: RecentEventReceiver((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(RecentEventReceiverTest, handleRemoveFilesResult)
 {
-    // handleRemoveFilesResult
-    SUCCEED();
+    // Test method: void handleRemoveFilesResult((const QList<QUrl> &urls, bool ok, const QString &errMsg))
+    QList<QUrl> _arg0{};
+    QString _arg2{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleRemoveFilesResult(_arg0, false, _arg2));
 }

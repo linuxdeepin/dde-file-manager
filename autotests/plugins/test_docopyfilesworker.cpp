@@ -4,31 +4,56 @@
 
 /**
  * @file test_docopyfilesworker.cpp
- * @brief Unit tests for DoCopyFilesWorker Mid-priority methods
+ * @brief Unit tests for DoCopyFilesWorker methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class DoCopyFilesWorkerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "fileoperations/copyfiles/docopyfilesworker.h"
+
+#include <QTest>
+
+using namespace dfmplugin_fileoperations;
+
+class DoCopyFilesWorkerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new DoCopyFilesWorker();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    DoCopyFilesWorker *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(DoCopyFilesWorkerTest, doWork)
 {
-    // doWork
-    SUCCEED();
+    // Test bool getter: doWork()
+    bool result = obj->doWork();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(DoCopyFilesWorkerTest, endWork)
 {
-    // endWork
-    SUCCEED();
+    // Test method: void endWork(())
+    EXPECT_NO_FATAL_FAILURE(obj->endWork());
 }
 
 TEST_F(DoCopyFilesWorkerTest, initArgs)
 {
-    // initArgs
-    SUCCEED();
+    // Test bool getter: initArgs()
+    bool result = obj->initArgs();
+    EXPECT_FALSE(result);
+
 }

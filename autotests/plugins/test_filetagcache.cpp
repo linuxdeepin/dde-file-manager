@@ -4,73 +4,85 @@
 
 /**
  * @file test_filetagcache.cpp
- * @brief Unit tests for FileTagCache Mid-priority methods (dfmplugin-tag)
+ * @brief Unit tests for FileTagCache methods with real assertions
  */
 
 #include <gtest/gtest.h>
-#include <QTest>
-#include <QUrl>
-#include <QString>
-#include <QStringList>
-#include <QColor>
-#include <QPoint>
-#include <QVariant>
+
+#include "stubext.h"
 
 #include "utils/filetagcache.h"
 
+#include <QTest>
+
 using namespace dfmplugin_tag;
 
-class FileTagCacheTest : public ::testing::Test {
+class FileTagCacheTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {
+    void SetUp() override
+    {
+        obj = new FileTagCache();
     }
-    void TearDown() override {}
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FileTagCache *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(FileTagCacheTest, addTags)
 {
-    // Instance method addTags
-    FileTagCache obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.addTags(QVariantMap()); });
+    // Test method: void addTags((const QVariantMap &tags))
+    QVariantMap _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->addTags(_arg0));
 }
 
 TEST_F(FileTagCacheTest, changeTagColor)
 {
-    // Instance method changeTagColor
-    FileTagCache obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.changeTagColor(QVariantMap()); });
+    // Test method: void changeTagColor((const QVariantMap &tagAndColorName))
+    QVariantMap _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->changeTagColor(_arg0));
 }
 
 TEST_F(FileTagCacheTest, changeTagName)
 {
-    // Instance method changeTagName
-    FileTagCache obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.changeTagName(QVariantMap()); });
+    // Test method: void changeTagName((const QVariantMap &oldAndNew))
+    QVariantMap _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->changeTagName(_arg0));
 }
 
 TEST_F(FileTagCacheTest, deleteTags)
 {
-    // Instance method deleteTags
-    FileTagCache obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.deleteTags(QStringList{"test"}); });
+    // Test method: void deleteTags((const QStringList &tags))
+    QStringList _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->deleteTags(_arg0));
 }
 
 TEST_F(FileTagCacheTest, taggeFiles)
 {
-    // Instance method taggeFiles
-    FileTagCache obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.taggeFiles(QVariantMap()); });
+    // Test method: void taggeFiles((const QVariantMap &fileAndTags))
+    QVariantMap _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->taggeFiles(_arg0));
 }
 
 TEST_F(FileTagCacheTest, untaggeFiles)
 {
-    // Instance method untaggeFiles
-    FileTagCache obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.untaggeFiles(QVariantMap()); });
+    // Test method: void untaggeFiles((const QVariantMap &fileAndTags))
+    QVariantMap _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->untaggeFiles(_arg0));
 }
 
 TEST_F(FileTagCacheTest, getTagsColor)
 {
-    // getTagsColor
-    SUCCEED();
+    // Test method: FileTagCache::TagColorMap getTagsColor((const QStringList &tags))
+    QStringList _arg0{};
+    auto result = obj->getTagsColor(_arg0);
+    EXPECT_GE(static_cast<int>(result), 0);
+
 }

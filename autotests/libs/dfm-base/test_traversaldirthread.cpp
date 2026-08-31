@@ -57,36 +57,38 @@ TEST(TraversalDirThreadTest, StopFlagDefaultIsFalse)
 
 TEST(TraversalDirThreadTest, isSortEnabled)
 {
-    // isSortEnabled
-    SUCCEED();
+    TraversalDirThread obj;
+    bool result = obj.isSortEnabled();
+    EXPECT_FALSE(result);
 }
 
 TEST(TraversalDirThreadTest, quit)
 {
-    // quit
-    SUCCEED();
+    TraversalDirThread obj;
+    EXPECT_NO_FATAL_FAILURE(obj.quit());
 }
 
 TEST(TraversalDirThreadTest, setEnableSort)
 {
-    // setEnableSort
-    SUCCEED();
+    TraversalDirThread obj;
+    EXPECT_NO_FATAL_FAILURE(obj.setEnableSort(false));
 }
 
 TEST(TraversalDirThreadTest, setQueryAttributes)
 {
-    // setQueryAttributes
-    SUCCEED();
+    TraversalDirThread obj;
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj.setQueryAttributes(_arg0));
 }
 
 TEST(TraversalDirThreadTest, stop)
 {
-    // stop
-    SUCCEED();
+    TraversalDirThread obj;
+    EXPECT_NO_FATAL_FAILURE(obj.stop());
 }
 
 TEST(TraversalDirThreadTest, stopAndDeleteLater)
 {
-    // stopAndDeleteLater
-    SUCCEED();
+    TraversalDirThread obj;
+    EXPECT_NO_FATAL_FAILURE(obj.stopAndDeleteLater());
 }

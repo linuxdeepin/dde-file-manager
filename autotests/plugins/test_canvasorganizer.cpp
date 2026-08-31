@@ -4,25 +4,46 @@
 
 /**
  * @file test_canvasorganizer.cpp
- * @brief Unit tests for CanvasOrganizer Mid-priority methods
+ * @brief Unit tests for CanvasOrganizer methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class CanvasOrganizerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "mode/canvasorganizer.h"
+
+#include <QTest>
+
+using namespace ddplugin_organizer;
+
+class CanvasOrganizerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new CanvasOrganizer();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    CanvasOrganizer *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(CanvasOrganizerTest, CanvasOrganizer)
 {
-    // CanvasOrganizer
-    SUCCEED();
+    // Test constructor: CanvasOrganizer((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(CanvasOrganizerTest, reset)
 {
-    // reset
-    SUCCEED();
+    // Test method: void reset(())
+    EXPECT_NO_FATAL_FAILURE(obj->reset());
 }

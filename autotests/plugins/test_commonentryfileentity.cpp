@@ -4,19 +4,42 @@
 
 /**
  * @file test_commonentryfileentity.cpp
- * @brief Unit tests for CommonEntryFileEntity Mid-priority methods
+ * @brief Unit tests for CommonEntryFileEntity methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class CommonEntryFileEntityTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "fileentity/commonentryfileentity.h"
+
+#include <QTest>
+
+using namespace dfmplugin_computer;
+
+class CommonEntryFileEntityTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new CommonEntryFileEntity();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    CommonEntryFileEntity *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(CommonEntryFileEntityTest, extraProperties)
 {
-    // extraProperties
-    SUCCEED();
+    // Test getter: QVariantHash extraProperties()
+    auto result = obj->extraProperties();
+    EXPECT_TRUE(result.isEmpty());
+
 }

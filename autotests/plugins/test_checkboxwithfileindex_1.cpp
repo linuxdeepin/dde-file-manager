@@ -3,87 +3,125 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_checkboxwithfileindex_1.cpp
- * @brief Unit tests for CheckBoxWithFileIndex Low-priority methods
+ * @file test_checkboxwithfileindex_1.cpp
+ * @brief Unit tests for CheckBoxWithFileIndex methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class CheckBoxWithFileIndexTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/checkboxwithfileindex.h"
+
+#include <QTest>
+
+using namespace dfmplugin_search;
+
+class CheckBoxWithFileIndexTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new CheckBoxWithFileIndex();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    CheckBoxWithFileIndex *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(CheckBoxWithFileIndexTest, CheckBoxWithFileIndex)
 {
-    // CheckBoxWithFileIndex
-    SUCCEED();
+    // Test constructor: CheckBoxWithFileIndex((QWidget *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(CheckBoxWithFileIndexTest, acceptCheckStateChange)
 {
-    // acceptCheckStateChange
-    SUCCEED();
+    // Test method: bool acceptCheckStateChange((Qt::CheckState oldState, Qt::CheckState newState))
+    auto result = obj->acceptCheckStateChange(Qt::CheckState(), Qt::CheckState());
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(CheckBoxWithFileIndexTest, confirmDisableFileIndex)
 {
-    // confirmDisableFileIndex
-    SUCCEED();
+    // Test bool getter: confirmDisableFileIndex()
+    bool result = obj->confirmDisableFileIndex();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(CheckBoxWithFileIndexTest, createRefreshIndexFile)
 {
-    // createRefreshIndexFile
-    SUCCEED();
+    // Test bool getter: createRefreshIndexFile()
+    bool result = obj->createRefreshIndexFile();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(CheckBoxWithFileIndexTest, formatDisplayTime)
 {
-    // formatDisplayTime
-    SUCCEED();
+    // Test method: QString formatDisplayTime((const QString &isoTime))
+    QString _arg0{};
+    auto result = obj->formatDisplayTime(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(CheckBoxWithFileIndexTest, handleCheckStateChanged)
 {
-    // handleCheckStateChanged
-    SUCCEED();
+    // Test method: void handleCheckStateChanged((Qt::CheckState state))
+    EXPECT_NO_FATAL_FAILURE(obj->handleCheckStateChanged(Qt::CheckState()));
 }
 
 TEST_F(CheckBoxWithFileIndexTest, initStatusBar)
 {
-    // initStatusBar
-    SUCCEED();
+    // Test method: void initStatusBar(())
+    EXPECT_NO_FATAL_FAILURE(obj->initStatusBar());
 }
 
 TEST_F(CheckBoxWithFileIndexTest, refreshFilePath)
 {
-    // refreshFilePath
-    SUCCEED();
+    // Test getter: QString refreshFilePath()
+    auto result = obj->refreshFilePath();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(CheckBoxWithFileIndexTest, refreshState)
 {
-    // refreshState
-    SUCCEED();
+    // Test method: void refreshState(())
+    EXPECT_NO_FATAL_FAILURE(obj->refreshState());
 }
 
 TEST_F(CheckBoxWithFileIndexTest, restartFileIndex)
 {
-    // restartFileIndex
-    SUCCEED();
+    // Test bool getter: restartFileIndex()
+    bool result = obj->restartFileIndex();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(CheckBoxWithFileIndexTest, runSystemctlCommand)
 {
-    // runSystemctlCommand
-    SUCCEED();
+    // Test method: CheckBoxWithFileIndex::CommandResult runSystemctlCommand((const QStringList &arguments))
+    QStringList _arg0{};
+    auto result = obj->runSystemctlCommand(_arg0);
+    EXPECT_GE(static_cast<int>(result), 0);
+
 }
 
 TEST_F(CheckBoxWithFileIndexTest, statusFilePath)
 {
-    // statusFilePath
-    SUCCEED();
-}
+    // Test getter: QString statusFilePath()
+    auto result = obj->statusFilePath();
+    EXPECT_TRUE(result.isEmpty());
 
+}

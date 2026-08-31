@@ -4,19 +4,42 @@
 
 /**
  * @file test_opendirmenuscene.cpp
- * @brief Unit tests for OpenDirMenuScene Mid-priority methods
+ * @brief Unit tests for OpenDirMenuScene methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class OpenDirMenuSceneTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "menuscene/opendirmenuscene.h"
+
+#include <QTest>
+
+using namespace dfmplugin_menu;
+
+class OpenDirMenuSceneTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new OpenDirMenuScene();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    OpenDirMenuScene *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(OpenDirMenuSceneTest, triggered)
 {
-    // triggered
-    SUCCEED();
+    // Test method: bool triggered((QAction *action))
+    auto result = obj->triggered(nullptr);
+    EXPECT_FALSE(result);
+
 }

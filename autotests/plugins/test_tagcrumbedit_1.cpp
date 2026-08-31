@@ -3,33 +3,56 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_tagcrumbedit_1.cpp
- * @brief Unit tests for TagCrumbEdit Low-priority methods
+ * @file test_tagcrumbedit_1.cpp
+ * @brief Unit tests for TagCrumbEdit methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class TagCrumbEditTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "widgets/tagcrumbedit.h"
+
+#include <QTest>
+
+using namespace dfmplugin_tag;
+
+class TagCrumbEditTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new TagCrumbEdit();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    TagCrumbEdit *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(TagCrumbEditTest, isEditing)
 {
-    // isEditing
-    SUCCEED();
+    // Test bool getter: isEditing()
+    bool result = obj->isEditing();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(TagCrumbEditTest, mouseDoubleClickEvent)
 {
-    // mouseDoubleClickEvent
-    SUCCEED();
+    // Test event handler: mouseDoubleClickEvent((QMouseEvent *event))
+    QMouseEvent _event(QMouseEvent::None);
+    EXPECT_NO_FATAL_FAILURE(obj->mouseDoubleClickEvent(&_event));
 }
 
 TEST_F(TagCrumbEditTest, updateHeight)
 {
-    // updateHeight
-    SUCCEED();
+    // Test method: void updateHeight(())
+    EXPECT_NO_FATAL_FAILURE(obj->updateHeight());
 }
-

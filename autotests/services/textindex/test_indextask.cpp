@@ -90,66 +90,70 @@ TEST(TaskStateTest, Silent)
 
 TEST(IndexTaskTest, IndexTask)
 {
-    // IndexTask
-    SUCCEED();
-}
+    IndexTask obj;
+    EXPECT_NO_FATAL_FAILURE({ IndexTask obj; });
+    }
+
 
 TEST(IndexTaskTest, isIndexCorrupted)
 {
-    // isIndexCorrupted
-    SUCCEED();
+    IndexTask obj;
+    bool result = obj.isIndexCorrupted();
+    EXPECT_FALSE(result);
 }
 
 TEST(IndexTaskTest, isRunning)
 {
-    // isRunning
-    SUCCEED();
+    IndexTask obj;
+    bool result = obj.isRunning();
+    EXPECT_FALSE(result);
 }
 
 TEST(IndexTaskTest, setIndexCorrupted)
 {
-    // setIndexCorrupted
-    SUCCEED();
+    IndexTask obj;
+    EXPECT_NO_FATAL_FAILURE(obj.setIndexCorrupted(false));
 }
 
 TEST(IndexTaskTest, setSilent)
 {
-    // setSilent
-    SUCCEED();
+    IndexTask obj;
+    EXPECT_NO_FATAL_FAILURE(obj.setSilent(false));
 }
 
 TEST(IndexTaskTest, silent)
 {
-    // silent
-    SUCCEED();
+    IndexTask obj;
+    bool result = obj.silent();
+    EXPECT_FALSE(result);
 }
 
 TEST(IndexTaskTest, start)
 {
-    // start
-    SUCCEED();
+    IndexTask obj;
+    EXPECT_NO_FATAL_FAILURE(obj.start());
 }
 
 TEST(IndexTaskTest, status)
 {
-    // status
-    SUCCEED();
+    IndexTask obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.status(); });
 }
 
 TEST(IndexTaskTest, stop)
 {
-    // stop
-    SUCCEED();
+    IndexTask obj;
+    EXPECT_NO_FATAL_FAILURE(obj.stop());
 }
 
 TEST(IndexTaskTest, taskPath)
 {
-    // taskPath
-    SUCCEED();
+    IndexTask obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.taskPath(); });
 }
 
 TEST(IndexTaskTest, taskType)
 {
-    // taskType
-    SUCCEED();
+    IndexTask obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.taskType(); });
 }

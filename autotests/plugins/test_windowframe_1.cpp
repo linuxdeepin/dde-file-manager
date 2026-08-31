@@ -3,51 +3,75 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_windowframe_1.cpp
- * @brief Unit tests for WindowFrame Low-priority methods
+ * @file test_windowframe_1.cpp
+ * @brief Unit tests for WindowFrame methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class WindowFrameTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "frame/windowframe.h"
+
+#include <QTest>
+
+using namespace ddplugin_core;
+
+class WindowFrameTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new WindowFrame();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    WindowFrame *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(WindowFrameTest, WindowFrame)
 {
-    // WindowFrame
-    SUCCEED();
+    // Test constructor: WindowFrame((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(WindowFrameTest, bindedScreens)
 {
-    // bindedScreens
-    SUCCEED();
+    // Test getter: QStringList bindedScreens()
+    auto result = obj->bindedScreens();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(WindowFrameTest, init)
 {
-    // init
-    SUCCEED();
+    // Test bool getter: init()
+    bool result = obj->init();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(WindowFrameTest, onAvailableGeometryChanged)
 {
-    // onAvailableGeometryChanged
-    SUCCEED();
+    // Test method: void onAvailableGeometryChanged(())
+    EXPECT_NO_FATAL_FAILURE(obj->onAvailableGeometryChanged());
 }
 
 TEST_F(WindowFrameTest, onGeometryChanged)
 {
-    // onGeometryChanged
-    SUCCEED();
+    // Test method: void onGeometryChanged(())
+    EXPECT_NO_FATAL_FAILURE(obj->onGeometryChanged());
 }
 
 TEST_F(WindowFrameTest, WindowFrame_Destructor)
 {
-    // ~WindowFrame
-    SUCCEED();
+    // Test method:  ~WindowFrame(())
+    EXPECT_NO_FATAL_FAILURE({ WindowFrame *tmp = new WindowFrame(); delete tmp; });
 }
-

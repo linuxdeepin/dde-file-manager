@@ -4,25 +4,51 @@
 
 /**
  * @file test_vfsmonitorfilesystemwatcherprivate.cpp
- * @brief Unit tests for VfsMonitorFileSystemWatcherPrivate Mid-priority methods
+ * @brief Unit tests for VfsMonitorFileSystemWatcherPrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class VfsMonitorFileSystemWatcherPrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "services/textindex/fsmonitor/vfsmonitorwatcher.h"
+
+#include <QTest>
+
+using namespace src;
+
+class VfsMonitorFileSystemWatcherPrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new VfsMonitorFileSystemWatcherPrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    VfsMonitorFileSystemWatcherPrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(VfsMonitorFileSystemWatcherPrivateTest, VfsMonitorFileSystemWatcherPrivate)
 {
-    // VfsMonitorFileSystemWatcherPrivate
-    SUCCEED();
+    // Test constructor: VfsMonitorFileSystemWatcherPrivate((
+        const QStringList &rootPaths,
+        VfsMonitorFileSystemWatcher::PathExcludePredicate excludePredicate,
+        VfsMonitorFileSystemWatcher *qq))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(VfsMonitorFileSystemWatcherPrivateTest, initMountPoints)
 {
-    // initMountPoints
-    SUCCEED();
+    // Test bool getter: initMountPoints()
+    bool result = obj->initMountPoints();
+    EXPECT_FALSE(result);
+
 }

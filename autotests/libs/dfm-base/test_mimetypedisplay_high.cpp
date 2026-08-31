@@ -131,7 +131,7 @@ TEST(MimeTypeDisplayManagerHighTest, AccurateLocalMimeTypeNameNonExistent)
     // Non-existent file should still return something (may be based on extension)
     EXPECT_NO_FATAL_FAILURE({
         QString result = mgr->accurateLocalMimeTypeName("/nonexistent/file.txt");
-        (void)result;
+        EXPECT_FALSE(result.isEmpty());
     });
 }
 
@@ -142,24 +142,13 @@ TEST(MimeTypeDisplayManagerHighTest, ShouldSkipAncestorMimeType)
 
     // Test with common mime types
     EXPECT_NO_FATAL_FAILURE({
-        bool skip = mgr->shouldSkipAncestorMimeType("text/plain");
-        (void)skip;
-    });
+        bool skip = mgr->shouldSkipAncestorMimeType("text/plain"); });
 
-    EXPECT_NO_FATAL_FAILURE({
-        bool skip = mgr->shouldSkipAncestorMimeType("application/octet-stream");
-        (void)skip;
-    });
+    EXPECT_NO_FATAL_FAILURE({ mgr->shouldSkipAncestorMimeType("application/octet-stream"); });
 
     // Test with empty/unknown mime type
-    EXPECT_NO_FATAL_FAILURE({
-        bool skip = mgr->shouldSkipAncestorMimeType("");
-        (void)skip;
-    });
+    EXPECT_NO_FATAL_FAILURE({ mgr->shouldSkipAncestorMimeType(""); });
 
     // Test with a known mime type that might have ancestors
-    EXPECT_NO_FATAL_FAILURE({
-        bool skip = mgr->shouldSkipAncestorMimeType("video/mp4");
-        (void)skip;
-    });
+    EXPECT_NO_FATAL_FAILURE({ mgr->shouldSkipAncestorMimeType("video/mp4"); });
 }

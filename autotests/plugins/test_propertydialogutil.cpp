@@ -4,90 +4,124 @@
 
 /**
  * @file test_propertydialogutil.cpp
- * @brief Unit tests for PropertyDialogUtil Mid-priority methods (dfmplugin-propertydialog)
+ * @brief Unit tests for PropertyDialogUtil methods with real assertions
  */
 
 #include <gtest/gtest.h>
-#include <QTest>
-#include <QUrl>
-#include <QString>
-#include <QStringList>
-#include <QColor>
-#include <QPoint>
-#include <QVariant>
+
+#include "stubext.h"
 
 #include "utils/propertydialogutil.h"
 
+#include <QTest>
+
 using namespace dfmplugin_propertydialog;
 
-class PropertyDialogUtilTest : public ::testing::Test {
+class PropertyDialogUtilTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {
-        // PropertyDialogUtil uses singleton pattern
+    void SetUp() override
+    {
+        obj = new PropertyDialogUtil();
     }
-    void TearDown() override {}
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    PropertyDialogUtil *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(PropertyDialogUtilTest, addExtendedControlFileProperty)
 {
-    EXPECT_NO_FATAL_FAILURE({ PropertyDialogUtil::instance()->addExtendedControlFileProperty(QUrl("file:///tmp/test"), nullptr, ViewExtensionUpdateFunc()); });
+    // Test method: void addExtendedControlFileProperty((const QUrl &url, QWidget *widget, ViewExtensionUpdateFunc updater))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->addExtendedControlFileProperty(_arg0, nullptr, ViewExtensionUpdateFunc()));
 }
 
 TEST_F(PropertyDialogUtilTest, closeAllFilePropertyDialog)
 {
-    EXPECT_NO_FATAL_FAILURE({ PropertyDialogUtil::instance()->closeAllFilePropertyDialog(); });
+    // Test method: void closeAllFilePropertyDialog(())
+    EXPECT_NO_FATAL_FAILURE(obj->closeAllFilePropertyDialog());
 }
 
 TEST_F(PropertyDialogUtilTest, closeAllPropertyDialog)
 {
-    EXPECT_NO_FATAL_FAILURE({ PropertyDialogUtil::instance()->closeAllPropertyDialog(); });
+    // Test method: void closeAllPropertyDialog(())
+    EXPECT_NO_FATAL_FAILURE(obj->closeAllPropertyDialog());
 }
 
 TEST_F(PropertyDialogUtilTest, closeCustomPropertyDialog)
 {
-    EXPECT_NO_FATAL_FAILURE({ PropertyDialogUtil::instance()->closeCustomPropertyDialog(QUrl("file:///tmp/test")); });
+    // Test method: void closeCustomPropertyDialog((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->closeCustomPropertyDialog(_arg0));
 }
 
 TEST_F(PropertyDialogUtilTest, closeFilePropertyDialog)
 {
-    EXPECT_NO_FATAL_FAILURE({ PropertyDialogUtil::instance()->closeFilePropertyDialog(QUrl("file:///tmp/test")); });
+    // Test method: void closeFilePropertyDialog((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->closeFilePropertyDialog(_arg0));
 }
 
 TEST_F(PropertyDialogUtilTest, createView)
 {
-    EXPECT_NO_FATAL_FAILURE({ auto r = PropertyDialogUtil::instance()->createView(QUrl("file:///tmp/test"), QVariantHash()); (void)r; });
+    // Test method: QMap<int, QWidget *> createView((const QUrl &url, const QVariantHash &option))
+    QUrl _arg0{};
+    QVariantHash _arg1{};
+    auto result = obj->createView(_arg0, _arg1);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(PropertyDialogUtilTest, insertExtendedControlFileProperty)
 {
-    EXPECT_NO_FATAL_FAILURE({ PropertyDialogUtil::instance()->insertExtendedControlFileProperty(QUrl("file:///tmp/test"), 0, nullptr, ViewExtensionUpdateFunc()); });
+    // Test method: void insertExtendedControlFileProperty((const QUrl &url, int index, QWidget *widget, ViewExtensionUpdateFunc updater))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->insertExtendedControlFileProperty(_arg0, 0, nullptr, ViewExtensionUpdateFunc()));
 }
 
 TEST_F(PropertyDialogUtilTest, showCustomDialog)
 {
-    bool result = false;
-    EXPECT_NO_FATAL_FAILURE({ result = PropertyDialogUtil::instance()->showCustomDialog(QUrl("file:///tmp/test")); });
-    (void)result;
+    // Test method: bool showCustomDialog((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->showCustomDialog(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(PropertyDialogUtilTest, showPropertyDialog)
 {
-    EXPECT_NO_FATAL_FAILURE({ PropertyDialogUtil::instance()->showPropertyDialog(QList<QUrl>{QUrl("file:///tmp/test")}, QVariantHash()); });
+    // Test method: void showPropertyDialog((const QList<QUrl> &urls, const QVariantHash &option))
+    QList<QUrl> _arg0{};
+    QVariantHash _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->showPropertyDialog(_arg0, _arg1));
 }
 
 TEST_F(PropertyDialogUtilTest, updateCloseIndicator)
 {
-    EXPECT_NO_FATAL_FAILURE({ PropertyDialogUtil::instance()->updateCloseIndicator(); });
+    // Test method: void updateCloseIndicator(())
+    EXPECT_NO_FATAL_FAILURE(obj->updateCloseIndicator());
 }
 
 TEST_F(PropertyDialogUtilTest, createCustomizeView)
 {
-    // createCustomizeView
-    SUCCEED();
+    // Test method: QWidget createCustomizeView((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->createCustomizeView(_arg0);
+    EXPECT_NO_FATAL_FAILURE({ obj->createCustomizeView(_arg0); });
+
 }
 
 TEST_F(PropertyDialogUtilTest, instance)
 {
-    // instance
-    SUCCEED();
+    // Test getter: PropertyDialogUtil instance()
+    auto result = obj->instance();
+    EXPECT_NO_FATAL_FAILURE({ obj->instance(); });
+
 }

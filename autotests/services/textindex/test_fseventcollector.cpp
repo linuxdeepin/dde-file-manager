@@ -24,8 +24,7 @@ static FSEventCollector::PathPredicate alwaysTrue()
 
 TEST(FSEventCollectorTest, ConstructAndDestruct)
 {
-    FSEventCollector collector(alwaysTrue());
-    SUCCEED();
+    EXPECT_NO_FATAL_FAILURE({ FSEventCollector collector(alwaysTrue()); });
 }
 
 TEST(FSEventCollectorTest, IsActiveDefaultFalse)
@@ -37,7 +36,7 @@ TEST(FSEventCollectorTest, IsActiveDefaultFalse)
 TEST(FSEventCollectorTest, InitializeWithEmptyRootPaths)
 {
     FSEventCollector collector(alwaysTrue());
-    EXPECT_NO_FATAL_FAILURE({ (void)collector.initialize({}); });
+    EXPECT_NO_FATAL_FAILURE({ collector.initialize({}); });
 }
 
 TEST(FSEventCollectorTest, SetCollectionInterval)
@@ -97,126 +96,130 @@ TEST(FSEventCollectorTest, MovedFilesEmpty)
 TEST(FSEventCollectorTest, StartWithoutInitMayFailGracefully)
 {
     FSEventCollector collector(alwaysTrue());
-    EXPECT_NO_FATAL_FAILURE({ (void)collector.start(); });
+    EXPECT_NO_FATAL_FAILURE({ collector.start(); });
 }
 
 
 TEST(FSEventCollectorTest, FSEventCollector)
 {
-    // FSEventCollector
-    SUCCEED();
-}
+    FSEventCollector obj;
+    EXPECT_NO_FATAL_FAILURE({ FSEventCollector obj; });
+    }
+
 
 TEST(FSEventCollectorTest, clearEvents)
 {
-    // clearEvents
-    SUCCEED();
+    FSEventCollector obj;
+    EXPECT_NO_FATAL_FAILURE(obj.clearEvents());
 }
 
 TEST(FSEventCollectorTest, collectionInterval)
 {
-    // collectionInterval
-    SUCCEED();
+    FSEventCollector obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.collectionInterval(); });
 }
 
 TEST(FSEventCollectorTest, createdFiles)
 {
-    // createdFiles
-    SUCCEED();
+    FSEventCollector obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.createdFiles(); });
 }
 
 TEST(FSEventCollectorTest, createdFilesCount)
 {
-    // createdFilesCount
-    SUCCEED();
+    FSEventCollector obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.createdFilesCount(); });
 }
 
 TEST(FSEventCollectorTest, deletedFiles)
 {
-    // deletedFiles
-    SUCCEED();
+    FSEventCollector obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.deletedFiles(); });
 }
 
 TEST(FSEventCollectorTest, deletedFilesCount)
 {
-    // deletedFilesCount
-    SUCCEED();
+    FSEventCollector obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.deletedFilesCount(); });
 }
 
 TEST(FSEventCollectorTest, flushEvents)
 {
-    // flushEvents
-    SUCCEED();
+    FSEventCollector obj;
+    EXPECT_NO_FATAL_FAILURE(obj.flushEvents());
 }
 
 TEST(FSEventCollectorTest, initialize)
 {
-    // initialize
-    SUCCEED();
+    FSEventCollector obj;
+    QStringList _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.initialize(_arg0); });
 }
 
 TEST(FSEventCollectorTest, isActive)
 {
-    // isActive
-    SUCCEED();
+    FSEventCollector obj;
+    bool result = obj.isActive();
+    EXPECT_FALSE(result);
 }
 
 TEST(FSEventCollectorTest, maxEventCount)
 {
-    // maxEventCount
-    SUCCEED();
+    FSEventCollector obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.maxEventCount(); });
 }
 
 TEST(FSEventCollectorTest, modifiedFiles)
 {
-    // modifiedFiles
-    SUCCEED();
+    FSEventCollector obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.modifiedFiles(); });
 }
 
 TEST(FSEventCollectorTest, modifiedFilesCount)
 {
-    // modifiedFilesCount
-    SUCCEED();
+    FSEventCollector obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.modifiedFilesCount(); });
 }
 
 TEST(FSEventCollectorTest, movedFiles)
 {
-    // movedFiles
-    SUCCEED();
+    FSEventCollector obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.movedFiles(); });
 }
 
 TEST(FSEventCollectorTest, movedFilesCount)
 {
-    // movedFilesCount
-    SUCCEED();
+    FSEventCollector obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.movedFilesCount(); });
 }
 
 TEST(FSEventCollectorTest, setCollectionInterval)
 {
-    // setCollectionInterval
-    SUCCEED();
+    FSEventCollector obj;
+    EXPECT_NO_FATAL_FAILURE(obj.setCollectionInterval(0));
 }
 
 TEST(FSEventCollectorTest, setMaxEventCount)
 {
-    // setMaxEventCount
-    SUCCEED();
+    FSEventCollector obj;
+    EXPECT_NO_FATAL_FAILURE(obj.setMaxEventCount(0));
 }
 
 TEST(FSEventCollectorTest, start)
 {
-    // start
-    SUCCEED();
+    FSEventCollector obj;
+    bool result = obj.start();
+    EXPECT_FALSE(result);
 }
 
 TEST(FSEventCollectorTest, stop)
 {
-    // stop
-    SUCCEED();
+    FSEventCollector obj;
+    EXPECT_NO_FATAL_FAILURE(obj.stop());
 }
 
 TEST(FSEventCollectorTest, totalEventsCount)
 {
-    // totalEventsCount
-    SUCCEED();
+    FSEventCollector obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.totalEventsCount(); });
 }

@@ -122,7 +122,7 @@ TEST(PathExcludeMatcherTest, PatternsListReturnsOriginals)
 TEST(PathExcludeMatcherTest, CreateForIndexReturnsMatcher)
 {
     PathExcludeMatcher matcher = PathExcludeMatcher::createForIndex();
-    EXPECT_NO_FATAL_FAILURE({ (void)matcher.hasPatterns(); });
+    EXPECT_NO_FATAL_FAILURE({ matcher.hasPatterns(); });
 }
 
 TEST(PathExcludeMatcherTest, GlobToRegexSimple)
@@ -149,48 +149,52 @@ TEST(PathExcludeMatcherTest, GlobToRegexEscapesSpecialChars)
 
 TEST(PathExcludeMatcherTest, addPattern)
 {
-    // addPattern
-    SUCCEED();
+    PathExcludeMatcher obj;
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj.addPattern(_arg0));
 }
 
 TEST(PathExcludeMatcherTest, addPatterns)
 {
-    // addPatterns
-    SUCCEED();
+    PathExcludeMatcher obj;
+    QStringList _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj.addPatterns(_arg0));
 }
 
 TEST(PathExcludeMatcherTest, clear)
 {
-    // clear
-    SUCCEED();
+    PathExcludeMatcher obj;
+    EXPECT_NO_FATAL_FAILURE(obj.clear());
 }
 
 TEST(PathExcludeMatcherTest, createForIndex)
 {
-    // createForIndex
-    SUCCEED();
+    PathExcludeMatcher obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.createForIndex(); });
 }
 
 TEST(PathExcludeMatcherTest, patternCount)
 {
-    // patternCount
-    SUCCEED();
+    PathExcludeMatcher obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.patternCount(); });
 }
 
 TEST(PathExcludeMatcherTest, patterns)
 {
-    // patterns
-    SUCCEED();
+    PathExcludeMatcher obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.patterns(); });
 }
 
 TEST(PathExcludeMatcherTest, removePattern)
 {
-    // removePattern
-    SUCCEED();
+    PathExcludeMatcher obj;
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj.removePattern(_arg0));
 }
 
 TEST(PathExcludeMatcherTest, shouldExclude)
 {
-    // shouldExclude
-    SUCCEED();
+    PathExcludeMatcher obj;
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.shouldExclude(_arg0); });
 }

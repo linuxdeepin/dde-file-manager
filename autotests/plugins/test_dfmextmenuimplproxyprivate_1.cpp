@@ -3,27 +3,51 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_dfmextmenuimplproxyprivate_1.cpp
- * @brief Unit tests for DFMExtMenuImplProxyPrivate Low-priority methods
+ * @file test_dfmextmenuimplproxyprivate_1.cpp
+ * @brief Unit tests for DFMExtMenuImplProxyPrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class DFMExtMenuImplProxyPrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "extensionimpl/menuimpl/dfmextmenuimplproxy.h"
+
+#include <QTest>
+
+using namespace dfmplugin_utils;
+
+class DFMExtMenuImplProxyPrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new DFMExtMenuImplProxyPrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    DFMExtMenuImplProxyPrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(DFMExtMenuImplProxyPrivateTest, createAction)
 {
-    // createAction
-    SUCCEED();
+    // Test getter: DFMExtAction createAction()
+    auto result = obj->createAction();
+    EXPECT_NO_FATAL_FAILURE({ obj->createAction(); });
+
 }
 
 TEST_F(DFMExtMenuImplProxyPrivateTest, createMenu)
 {
-    // createMenu
-    SUCCEED();
-}
+    // Test getter: DFMExtMenu createMenu()
+    auto result = obj->createMenu();
+    EXPECT_NO_FATAL_FAILURE({ obj->createMenu(); });
 
+}

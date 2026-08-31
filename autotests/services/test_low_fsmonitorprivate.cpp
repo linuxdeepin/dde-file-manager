@@ -3,105 +3,149 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_low_fsmonitorprivate.cpp
- * @brief Unit tests for FSMonitorPrivate Low-priority methods
+ * @file test_low_fsmonitorprivate.cpp
+ * @brief Unit tests for FSMonitorPrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class FSMonitorPrivateLowTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "services/textindex/fsmonitor/fsmonitor.h"
+
+#include <QTest>
+
+using namespace src;
+
+class FSMonitorPrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new FSMonitorPrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FSMonitorPrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
-TEST_F(FSMonitorPrivateLowTest, addDirectoryRecursively)
+TEST_F(FSMonitorPrivateTest, addDirectoryRecursively)
 {
-    // addDirectoryRecursively
-    SUCCEED();
+    // Test method: void addDirectoryRecursively((const QString &path))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->addDirectoryRecursively(_arg0));
 }
 
-TEST_F(FSMonitorPrivateLowTest, addWatchForDirectory)
+TEST_F(FSMonitorPrivateTest, addWatchForDirectory)
 {
-    // addWatchForDirectory
-    SUCCEED();
+    // Test method: bool addWatchForDirectory((const QString &path))
+    QString _arg0{};
+    auto result = obj->addWatchForDirectory(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(FSMonitorPrivateLowTest, getMaxUserWatches)
+TEST_F(FSMonitorPrivateTest, getMaxUserWatches)
 {
-    // getMaxUserWatches
-    SUCCEED();
+    // Test getter: int getMaxUserWatches()
+    auto result = obj->getMaxUserWatches();
+    EXPECT_EQ(result, 0);
+
 }
 
-TEST_F(FSMonitorPrivateLowTest, handleFastScanCompleted)
+TEST_F(FSMonitorPrivateTest, handleFastScanCompleted)
 {
-    // handleFastScanCompleted
-    SUCCEED();
+    // Test method: void handleFastScanCompleted((bool success))
+    EXPECT_NO_FATAL_FAILURE(obj->handleFastScanCompleted(false));
 }
 
-TEST_F(FSMonitorPrivateLowTest, handleFileClosed)
+TEST_F(FSMonitorPrivateTest, handleFileClosed)
 {
-    // handleFileClosed
-    SUCCEED();
+    // Test method: void handleFileClosed((const QString &path, const QString &name))
+    QString _arg0{};
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleFileClosed(_arg0, _arg1));
 }
 
-TEST_F(FSMonitorPrivateLowTest, handleFileCreated)
+TEST_F(FSMonitorPrivateTest, handleFileCreated)
 {
-    // handleFileCreated
-    SUCCEED();
+    // Test method: void handleFileCreated((const QString &path, const QString &name))
+    QString _arg0{};
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleFileCreated(_arg0, _arg1));
 }
 
-TEST_F(FSMonitorPrivateLowTest, handleFileMoved)
+TEST_F(FSMonitorPrivateTest, handleFileMoved)
 {
-    // handleFileMoved
-    SUCCEED();
+    // Test method: void handleFileMoved((const QString &fromPath, const QString &fromName,
+                                       const QString &toPath, const QString &toName))
+    QString _arg0{};
+    QString _arg1{};
+    QString _arg2{};
+    QString _arg3{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleFileMoved(_arg0, _arg1, _arg2, _arg3));
 }
 
-TEST_F(FSMonitorPrivateLowTest, isDirectory)
+TEST_F(FSMonitorPrivateTest, isDirectory)
 {
-    // isDirectory
-    SUCCEED();
+    // Test method: bool isDirectory((const QString &path, const QString &name))
+    QString _arg0{};
+    QString _arg1{};
+    auto result = obj->isDirectory(_arg0, _arg1);
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(FSMonitorPrivateLowTest, isSymbolicLink)
+TEST_F(FSMonitorPrivateTest, isSymbolicLink)
 {
-    // isSymbolicLink
-    SUCCEED();
+    // Test method: bool isSymbolicLink((const QString &path))
+    QString _arg0{};
+    auto result = obj->isSymbolicLink(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(FSMonitorPrivateLowTest, isWithinWatchLimit)
+TEST_F(FSMonitorPrivateTest, isWithinWatchLimit)
 {
-    // isWithinWatchLimit
-    SUCCEED();
+    // Test bool getter: isWithinWatchLimit()
+    bool result = obj->isWithinWatchLimit();
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(FSMonitorPrivateLowTest, setupVfsMonitorConnections)
+TEST_F(FSMonitorPrivateTest, setupVfsMonitorConnections)
 {
-    // setupVfsMonitorConnections
-    SUCCEED();
+    // Test method: void setupVfsMonitorConnections(())
+    EXPECT_NO_FATAL_FAILURE(obj->setupVfsMonitorConnections());
 }
 
-TEST_F(FSMonitorPrivateLowTest, setupWatcherConnections)
+TEST_F(FSMonitorPrivateTest, setupWatcherConnections)
 {
-    // setupWatcherConnections
-    SUCCEED();
+    // Test method: void setupWatcherConnections(())
+    EXPECT_NO_FATAL_FAILURE(obj->setupWatcherConnections());
 }
 
-TEST_F(FSMonitorPrivateLowTest, stopMonitoring)
+TEST_F(FSMonitorPrivateTest, stopMonitoring)
 {
-    // stopMonitoring
-    SUCCEED();
+    // Test method: void stopMonitoring(())
+    EXPECT_NO_FATAL_FAILURE(obj->stopMonitoring());
 }
 
-TEST_F(FSMonitorPrivateLowTest, travelRootDirectories)
+TEST_F(FSMonitorPrivateTest, travelRootDirectories)
 {
-    // travelRootDirectories
-    SUCCEED();
+    // Test method: void travelRootDirectories(())
+    EXPECT_NO_FATAL_FAILURE(obj->travelRootDirectories());
 }
 
-TEST_F(FSMonitorPrivateLowTest, FSMonitorPrivate_Destructor)
+TEST_F(FSMonitorPrivateTest, FSMonitorPrivate_Destructor)
 {
-    // ~FSMonitorPrivate
-    SUCCEED();
+    // Test method:  ~FSMonitorPrivate(())
+    EXPECT_NO_FATAL_FAILURE({ FSMonitorPrivate *tmp = new FSMonitorPrivate(); delete tmp; });
 }
-

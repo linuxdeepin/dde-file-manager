@@ -3,57 +3,93 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_abstractitempaintproxy_1.cpp
- * @brief Unit tests for AbstractItemPaintProxy Low-priority methods
+ * @file test_abstractitempaintproxy_1.cpp
+ * @brief Unit tests for AbstractItemPaintProxy methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class AbstractItemPaintProxyTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/abstractitempaintproxy.h"
+
+#include <QTest>
+
+using namespace dfmplugin_workspace;
+
+class AbstractItemPaintProxyTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new AbstractItemPaintProxy();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    AbstractItemPaintProxy *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(AbstractItemPaintProxyTest, allPaintRect)
 {
-    // allPaintRect
-    SUCCEED();
+    // Test method: QList<QRect> allPaintRect((const QStyleOptionViewItem &option, const QModelIndex &index))
+    QStyleOptionViewItem _arg0{};
+    QModelIndex _arg1{};
+    auto result = obj->allPaintRect(_arg0, _arg1);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(AbstractItemPaintProxyTest, drawIcon)
 {
-    // drawIcon
-    SUCCEED();
+    // Test method: void drawIcon((QPainter *painter, QRectF *rect, const QStyleOptionViewItem &option, const QModelIndex &index))
+    QStyleOptionViewItem _arg2{};
+    QModelIndex _arg3{};
+    EXPECT_NO_FATAL_FAILURE(obj->drawIcon(nullptr, nullptr, _arg2, _arg3));
 }
 
 TEST_F(AbstractItemPaintProxyTest, iconRectIndex)
 {
-    // iconRectIndex
-    SUCCEED();
+    // Test getter: int iconRectIndex()
+    auto result = obj->iconRectIndex();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(AbstractItemPaintProxyTest, isThumnailIconIndex)
 {
-    // isThumnailIconIndex
-    SUCCEED();
+    // Test method: bool isThumnailIconIndex((const QModelIndex &index))
+    QModelIndex _arg0{};
+    auto result = obj->isThumnailIconIndex(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(AbstractItemPaintProxyTest, rectByType)
 {
-    // rectByType
-    SUCCEED();
+    // Test method: QRectF rectByType((RectOfItemType type, const QModelIndex &index))
+    QModelIndex _arg1{};
+    auto result = obj->rectByType(RectOfItemType(), _arg1);
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(AbstractItemPaintProxyTest, setStyleProxy)
 {
-    // setStyleProxy
-    SUCCEED();
+    // Test setter: void setStyleProxy((QStyle *style))
+    EXPECT_NO_FATAL_FAILURE(obj->setStyleProxy(nullptr));
 }
 
 TEST_F(AbstractItemPaintProxyTest, supportContentPreview)
 {
-    // supportContentPreview
-    SUCCEED();
-}
+    // Test bool getter: supportContentPreview()
+    bool result = obj->supportContentPreview();
+    EXPECT_FALSE(result);
 
+}

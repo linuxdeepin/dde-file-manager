@@ -3,21 +3,41 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_cutfiles.cpp
- * @brief Unit tests for CutFiles Low-priority methods
+ * @file test_cutfiles.cpp
+ * @brief Unit tests for CutFiles methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class CutFilesTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "fileoperations/cutfiles/cutfiles.h"
+
+#include <QTest>
+
+using namespace dfmplugin_fileoperations;
+
+class CutFilesTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new CutFiles();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    CutFiles *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(CutFilesTest, CutFiles_Destructor)
 {
-    // ~CutFiles
-    SUCCEED();
+    // Test method:  ~CutFiles(())
+    EXPECT_NO_FATAL_FAILURE({ CutFiles *tmp = new CutFiles(); delete tmp; });
 }
-

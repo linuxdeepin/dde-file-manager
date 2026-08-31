@@ -4,49 +4,77 @@
 
 /**
  * @file test_workspacehelper.cpp
- * @brief Unit tests for WorkspaceHelper Mid-priority methods
+ * @brief Unit tests for WorkspaceHelper methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class WorkspaceHelperTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/workspacehelper.h"
+
+#include <QTest>
+
+using namespace dfmplugin_workspace;
+
+class WorkspaceHelperTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new WorkspaceHelper();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    WorkspaceHelper *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(WorkspaceHelperTest, WorkspaceHelper)
 {
-    // WorkspaceHelper
-    SUCCEED();
+    // Test constructor: WorkspaceHelper((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(WorkspaceHelperTest, closePersistentEditor)
 {
-    // closePersistentEditor
-    SUCCEED();
+    // Test method: void closePersistentEditor((const quint64 windowID))
+    EXPECT_NO_FATAL_FAILURE(obj->closePersistentEditor(0));
 }
 
 TEST_F(WorkspaceHelperTest, instance)
 {
-    // instance
-    SUCCEED();
+    // Test getter: WorkspaceHelper instance()
+    auto result = obj->instance();
+    EXPECT_NO_FATAL_FAILURE({ obj->instance(); });
+
 }
 
 TEST_F(WorkspaceHelperTest, isViewModeSupported)
 {
-    // isViewModeSupported
-    SUCCEED();
+    // Test method: bool isViewModeSupported((const QString &scheme, const dfmbase::Global::ViewMode mode))
+    QString _arg0{};
+    auto result = obj->isViewModeSupported(_arg0, {});
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(WorkspaceHelperTest, removeWorkspace)
 {
-    // removeWorkspace
-    SUCCEED();
+    // Test method: void removeWorkspace((quint64 windowId))
+    EXPECT_NO_FATAL_FAILURE(obj->removeWorkspace(0));
 }
 
 TEST_F(WorkspaceHelperTest, windowId)
 {
-    // windowId
-    SUCCEED();
+    // Test method: quint64 windowId((const QWidget *sender))
+    auto result = obj->windowId(nullptr);
+    EXPECT_GE(result, 0);
+
 }

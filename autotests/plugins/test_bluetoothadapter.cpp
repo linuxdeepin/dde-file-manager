@@ -4,25 +4,47 @@
 
 /**
  * @file test_bluetoothadapter.cpp
- * @brief Unit tests for BluetoothAdapter Mid-priority methods
+ * @brief Unit tests for BluetoothAdapter methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class BluetoothAdapterTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "bluetooth/private/bluetoothadapter.h"
+
+#include <QTest>
+
+using namespace dfmplugin_utils;
+
+class BluetoothAdapterTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new BluetoothAdapter();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    BluetoothAdapter *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(BluetoothAdapterTest, BluetoothAdapter)
 {
-    // BluetoothAdapter
-    SUCCEED();
+    // Test constructor: BluetoothAdapter((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(BluetoothAdapterTest, removeDevice)
 {
-    // removeDevice
-    SUCCEED();
+    // Test method: void removeDevice((const QString &deviceId))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->removeDevice(_arg0));
 }

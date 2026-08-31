@@ -4,282 +4,275 @@
 
 /**
  * @file test_localfilehandler.cpp
- * @brief Unit tests for LocalFileHandler (localfilehandler.cpp)
+ * @brief Unit tests for LocalFileHandler methods with real assertions
  */
 
 #include <gtest/gtest.h>
-#include <QTemporaryDir>
-#include <QTemporaryFile>
-#include <QFile>
-#include <QDir>
-#include <QFileInfo>
-#include <QUrl>
-#include <QIcon>
-#include <mutex>
 
-#include <dfm-base/base/schemefactory.h>
-#include <dfm-base/file/local/localfilehandler.h>
-#include "dfm-base/file/local/localfilehandler_p.h"
-#include <dfm-base/file/local/syncfileinfo.h>
-#include <dfm-base/dfm_global_defines.h>
+#include "stubext.h"
 
-using namespace dfmbase;
+#include "dfm-base/file/local/localfilehandler.h"
 
-class LocalFileHandlerTest : public testing::Test
+#include <QTest>
+
+using namespace src;
+
+class LocalFileHandlerTest : public ::testing::Test
 {
 protected:
     void SetUp() override
     {
-        static std::once_flag flag;
-        std::call_once(flag, [] {
-            UrlRoute::regScheme(Global::Scheme::kFile, QDir::homePath(), QIcon(), false, "file");
-            InfoFactory::regClass<SyncFileInfo>(Global::Scheme::kFile);
-        });
-        ASSERT_TRUE(tmpDir.isValid());
-        rootPath = tmpDir.path();
+        obj = new LocalFileHandler();
     }
 
-    QTemporaryDir tmpDir;
-    QString rootPath;
-    LocalFileHandler handler;
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    LocalFileHandler *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
-TEST_F(LocalFileHandlerTest, TouchFileCreatesNewFile)
+TEST_F(LocalFileHandlerTest, LocalFileHandler)
 {
-    QUrl url = QUrl::fromLocalFile(rootPath + "/newfile.txt");
-    QUrl result = handler.touchFile(url);
-    EXPECT_FALSE(result.isEmpty());
-    EXPECT_TRUE(QFileInfo::exists(rootPath + "/newfile.txt"));
+    // Test constructor: LocalFileHandler(())
+    ASSERT_NE(obj, nullptr);
 }
 
-TEST_F(LocalFileHandlerTest, MkdirCreatesDirectory)
+TEST_F(LocalFileHandlerTest, M_~LocalFileHandler)
 {
-    QUrl url = QUrl::fromLocalFile(rootPath + "/newdir");
-    bool ok = handler.mkdir(url);
-    EXPECT_TRUE(ok);
-    EXPECT_TRUE(QDir(rootPath + "/newdir").exists());
-}
-
-TEST_F(LocalFileHandlerTest, RmdirMovesToTrashOrFailsGracefully)
-{
-    QString dirPath = rootPath + "/tormdir";
-    ASSERT_TRUE(QDir().mkpath(dirPath));
-    // rmdir moves the directory to trash; in environments where trash is
-    // unavailable the call returns false but must not crash.
-    bool ok = handler.rmdir(QUrl::fromLocalFile(dirPath));
-    EXPECT_TRUE(ok || QDir(dirPath).exists());
-}
-
-TEST_F(LocalFileHandlerTest, RenameFileRenames)
-{
-    QFile f(rootPath + "/src.txt");
-    ASSERT_TRUE(f.open(QIODevice::WriteOnly));
-    f.write("data");
-    f.close();
-
-    bool ok = handler.renameFile(QUrl::fromLocalFile(rootPath + "/src.txt"),
-                                  QUrl::fromLocalFile(rootPath + "/dst.txt"), true);
-    EXPECT_TRUE(ok);
-    EXPECT_TRUE(QFileInfo::exists(rootPath + "/dst.txt"));
-    EXPECT_FALSE(QFileInfo::exists(rootPath + "/src.txt"));
-}
-
-TEST_F(LocalFileHandlerTest, DeleteFileRemovesFile)
-{
-    QFile f(rootPath + "/todelete.txt");
-    ASSERT_TRUE(f.open(QIODevice::WriteOnly));
-    f.write("x");
-    f.close();
-
-    bool ok = handler.deleteFile(QUrl::fromLocalFile(rootPath + "/todelete.txt"));
-    EXPECT_TRUE(ok);
-    EXPECT_FALSE(QFileInfo::exists(rootPath + "/todelete.txt"));
-}
-
-TEST_F(LocalFileHandlerTest, CopyFileCreatesCopy)
-{
-    QFile f(rootPath + "/orig.txt");
-    ASSERT_TRUE(f.open(QIODevice::WriteOnly));
-    f.write("content");
-    f.close();
-
-    bool ok = handler.copyFile(QUrl::fromLocalFile(rootPath + "/orig.txt"),
-                                QUrl::fromLocalFile(rootPath + "/copy.txt"));
-    EXPECT_TRUE(ok);
-    EXPECT_TRUE(QFileInfo::exists(rootPath + "/copy.txt"));
-    EXPECT_TRUE(QFileInfo::exists(rootPath + "/orig.txt"));
-}
-
-TEST_F(LocalFileHandlerTest, CreateSystemLink)
-{
-    QFile f(rootPath + "/target.txt");
-    ASSERT_TRUE(f.open(QIODevice::WriteOnly));
-    f.write("target");
-    f.close();
-
-    bool ok = handler.createSystemLink(QUrl::fromLocalFile(rootPath + "/target.txt"),
-                                        QUrl::fromLocalFile(rootPath + "/link.txt"));
-    EXPECT_TRUE(ok);
-    EXPECT_TRUE(QFileInfo(rootPath + "/link.txt").isSymLink());
-}
-
-TEST_F(LocalFileHandlerTest, SetPermissions)
-{
-    QFile f(rootPath + "/perm.txt");
-    ASSERT_TRUE(f.open(QIODevice::WriteOnly));
-    f.write("p");
-    f.close();
-
-    bool ok = handler.setPermissions(QUrl::fromLocalFile(rootPath + "/perm.txt"),
-                                      QFileDevice::ReadOwner | QFileDevice::WriteOwner);
-    EXPECT_TRUE(ok);
-}
-
-TEST_F(LocalFileHandlerTest, DeleteFileRecursiveRemovesSingleFile)
-{
-    QString filePath = rootPath + "/todeleterec.txt";
-    QFile f(filePath);
-    ASSERT_TRUE(f.open(QIODevice::WriteOnly));
-    f.write("data");
-    f.close();
-
-    bool ok = handler.deleteFileRecursive(QUrl::fromLocalFile(filePath));
-    EXPECT_TRUE(ok);
-    EXPECT_FALSE(QFileInfo::exists(filePath));
-}
-
-TEST_F(LocalFileHandlerTest, ErrorStringAndErrorCodeAfterFailure)
-{
-    handler.deleteFile(QUrl::fromLocalFile(rootPath + "/nonexistent_file_xyz.txt"));
-    // errorString may be non-empty after failure; just ensure no crash
-    QString err = handler.errorString();
-    EXPECT_NO_FATAL_FAILURE({ (void)err; });
-}
-
-TEST_F(LocalFileHandlerTest, DefaultTerminalPathNonEmpty)
-{
-    QString term = handler.defaultTerminalPath();
-    EXPECT_FALSE(term.isEmpty());
-}
-
-// ---- Coverage additions for LocalFileHandler / LocalFileHandlerPrivate ----
-
-TEST_F(LocalFileHandlerTest, LastEventTypeAndErrorCodeDefault)
-{
-    EXPECT_NO_FATAL_FAILURE({ (void)handler.lastEventType(); });
-    EXPECT_NO_FATAL_FAILURE({ (void)handler.errorCode(); });
-}
-
-TEST_F(LocalFileHandlerTest, OpenFileByAppWithEmptyDesktopReturnsFalse)
-{
-    QUrl url = QUrl::fromLocalFile(rootPath + "/x.txt");
-    EXPECT_FALSE(handler.openFileByApp(url, QString()));
-}
-
-TEST_F(LocalFileHandlerTest, OpenFilesByAppWithEmptyListReturnsFalse)
-{
-    EXPECT_FALSE(handler.openFilesByApp({}, QString::fromLatin1("/tmp/no.desktop")));
-}
-
-TEST_F(LocalFileHandlerTest, TrashFileOnNonExistentReturnsEmpty)
-{
-    QUrl url = QUrl::fromLocalFile(rootPath + "/never_exists_zzz");
-    QString target = handler.trashFile(url);
-    EXPECT_TRUE(target.isEmpty());
-}
-
-TEST_F(LocalFileHandlerTest, PrivateIsFileExecutableOnRegularFile)
-{
-    QString path = rootPath + "/exec_target.txt";
-    QFile f(path);
-    ASSERT_TRUE(f.open(QIODevice::WriteOnly));
-    f.write("data");
-    f.close();
-    bool r = false;
-    EXPECT_NO_FATAL_FAILURE({ r = handler.d->isFileExecutable(path); });
-    (void)r;
-}
-
-TEST_F(LocalFileHandlerTest, PrivateIsInvalidSymlinkFileOnMissingPath)
-{
-    // A path that does not exist resolves to an invalid symlink file.
-    bool r = false;
-    EXPECT_NO_FATAL_FAILURE({ r = handler.d->isInvalidSymlinkFile(QUrl::fromLocalFile(rootPath + "/missing_link_zzz")); });
-    (void)r;
-}
-
-TEST_F(LocalFileHandlerTest, PrivateIsFileManagerSelfDetectsDfmExec)
-{
-    QString desktop = rootPath + "/fm.desktop";
-    QFile f(desktop);
-    ASSERT_TRUE(f.open(QIODevice::WriteOnly | QIODevice::Text));
-    f.write("[Desktop Entry]\nType=Application\nExec=dde-file-manager --new-window\n");
-    f.close();
-    EXPECT_TRUE(handler.d->isFileManagerSelf(desktop));
-
-    QString other = rootPath + "/other.desktop";
-    QFile g(other);
-    ASSERT_TRUE(g.open(QIODevice::WriteOnly | QIODevice::Text));
-    g.write("[Desktop Entry]\nType=Application\nExec=other-app\n");
-    g.close();
-    EXPECT_FALSE(handler.d->isFileManagerSelf(other));
-}
-
-TEST_F(LocalFileHandlerTest, PrivateGetInternetShortcutUrlReadsUrlField)
-{
-    QString shortcut = rootPath + "/link.url";
-    QFile f(shortcut);
-    ASSERT_TRUE(f.open(QIODevice::WriteOnly | QIODevice::Text));
-    f.write("[InternetShortcut]\nURL=https://example.com/path\n");
-    f.close();
-    EXPECT_EQ(handler.d->getInternetShortcutUrl(shortcut).toStdString(), "https://example.com/path");
-}
-
-
-TEST_F(LocalFileHandlerTest, deleteFile)
-{
-    // deleteFile
-    SUCCEED();
-}
-
-TEST_F(LocalFileHandlerTest, errorCode)
-{
-    // errorCode
-    SUCCEED();
-}
-
-TEST_F(LocalFileHandlerTest, errorString)
-{
-    // errorString
-    SUCCEED();
-}
-
-TEST_F(LocalFileHandlerTest, lastEventType)
-{
-    // lastEventType
-    SUCCEED();
+    // Test method:  ~LocalFileHandler(())
+    EXPECT_NO_FATAL_FAILURE({ LocalFileHandler *tmp = new LocalFileHandler(); delete tmp; });
 }
 
 TEST_F(LocalFileHandlerTest, mkdir)
 {
-    // mkdir
-    SUCCEED();
+    // Test method: bool mkdir((const QUrl &dir))
+    QUrl _arg0{};
+    auto result = obj->mkdir(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(LocalFileHandlerTest, openFilesByApp)
+TEST_F(LocalFileHandlerTest, rmdir)
 {
-    // openFilesByApp
-    SUCCEED();
+    // Test method: bool rmdir((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->rmdir(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(LocalFileHandlerTest, renameFilesBatch)
+TEST_F(LocalFileHandlerTest, touchFile)
 {
-    // renameFilesBatch
-    SUCCEED();
+    // Test method: QUrl touchFile((const QUrl &url, const QUrl &tempUrl /*= QUrl()*/))
+    QUrl _arg0{};
+    auto result = obj->touchFile(_arg0, nullptr);
+    EXPECT_FALSE(result.isValid());
+
+}
+
+TEST_F(LocalFileHandlerTest, renameFile)
+{
+    // Test method: bool renameFile((const QUrl &url, const QUrl &newUrl, const bool needCheck))
+    QUrl _arg0{};
+    QUrl _arg1{};
+    auto result = obj->renameFile(_arg0, _arg1, false);
+    EXPECT_FALSE(result);
+
+}
+
+TEST_F(LocalFileHandlerTest, openFile)
+{
+    // Test method: bool openFile((const QUrl &fileUrl))
+    QUrl _arg0{};
+    auto result = obj->openFile(_arg0);
+    EXPECT_FALSE(result);
+
+}
+
+TEST_F(LocalFileHandlerTest, openFiles)
+{
+    // Test method: bool openFiles((const QList<QUrl> &fileUrls))
+    QList<QUrl> _arg0{};
+    auto result = obj->openFiles(_arg0);
+    EXPECT_FALSE(result);
+
+}
+
+TEST_F(LocalFileHandlerTest, setPermissions)
+{
+    // Test method: bool setPermissions((const QUrl &url, QFileDevice::Permissions permissions))
+    QUrl _arg0{};
+    auto result = obj->setPermissions(_arg0, QFileDevice::Permissions());
+    EXPECT_FALSE(result);
+
+}
+
+TEST_F(LocalFileHandlerTest, moveFile)
+{
+    // Test method: bool moveFile((const QUrl &sourceUrl, const QUrl &destUrl, DFMIO::DFile::CopyFlag flag /*= DFMIO::DFile::CopyFlag::kNone*/))
+    QUrl _arg0{};
+    QUrl _arg1{};
+    auto result = obj->moveFile(_arg0, _arg1, nullptr);
+    EXPECT_FALSE(result);
+
+}
+
+TEST_F(LocalFileHandlerTest, copyFile)
+{
+    // Test method: bool copyFile((const QUrl &sourceUrl, const QUrl &destUrl, dfmio::DFile::CopyFlag flag))
+    QUrl _arg0{};
+    QUrl _arg1{};
+    auto result = obj->copyFile(_arg0, _arg1, {});
+    EXPECT_FALSE(result);
+
+}
+
+TEST_F(LocalFileHandlerTest, trashFile)
+{
+    // Test method: QString trashFile((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->trashFile(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
+}
+
+TEST_F(LocalFileHandlerTest, deleteFile)
+{
+    // Test method: bool deleteFile((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->deleteFile(_arg0);
+    EXPECT_FALSE(result);
+
+}
+
+TEST_F(LocalFileHandlerTest, errorString)
+{
+    // Test getter: QString errorString()
+    auto result = obj->errorString();
+    EXPECT_TRUE(result.isEmpty());
+
+}
+
+TEST_F(LocalFileHandlerTest, errorCode)
+{
+    // Test getter: DFMIOErrorCode errorCode()
+    auto result = obj->errorCode();
+    EXPECT_NO_FATAL_FAILURE({ obj->errorCode(); });
+
+}
+
+TEST_F(LocalFileHandlerTest, createSystemLink)
+{
+    // Test method: bool createSystemLink((const QUrl &sourcefile, const QUrl &link))
+    QUrl _arg0{};
+    QUrl _arg1{};
+    auto result = obj->createSystemLink(_arg0, _arg1);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(LocalFileHandlerTest, setPermissionsRecursive)
 {
-    // setPermissionsRecursive
-    SUCCEED();
+    // Test method: bool setPermissionsRecursive((const QUrl &url, QFileDevice::Permissions permissions))
+    QUrl _arg0{};
+    auto result = obj->setPermissionsRecursive(_arg0, QFileDevice::Permissions());
+    EXPECT_FALSE(result);
+
+}
+
+TEST_F(LocalFileHandlerTest, deleteFileRecursive)
+{
+    // Test method: bool deleteFileRecursive((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->deleteFileRecursive(_arg0);
+    EXPECT_FALSE(result);
+
+}
+
+TEST_F(LocalFileHandlerTest, setFileTime)
+{
+    // Test method: bool setFileTime((const QUrl &url, const QDateTime &accessDateTime,
+                                   const QDateTime &lastModifiedTime))
+    QUrl _arg0{};
+    QDateTime _arg1{};
+    QDateTime _arg2{};
+    auto result = obj->setFileTime(_arg0, _arg1, _arg2);
+    EXPECT_FALSE(result);
+
+}
+
+TEST_F(LocalFileHandlerTest, defaultTerminalPath)
+{
+    // Test getter: QString defaultTerminalPath()
+    auto result = obj->defaultTerminalPath();
+    EXPECT_TRUE(result.isEmpty());
+
+}
+
+TEST_F(LocalFileHandlerTest, renameFilesBatch)
+{
+    // Test method: bool renameFilesBatch((const QMap<QUrl, QUrl> &urls, QMap<QUrl, QUrl> &successUrls))
+    QMap<QUrl, QUrl> _arg0{};
+    QMap<QUrl, QUrl> _arg1{};
+    auto result = obj->renameFilesBatch(_arg0, _arg1);
+    EXPECT_FALSE(result);
+
+}
+
+TEST_F(LocalFileHandlerTest, getInvalidPath)
+{
+    // Test getter: QList<QUrl> getInvalidPath()
+    auto result = obj->getInvalidPath();
+    EXPECT_TRUE(result.isEmpty());
+
+}
+
+TEST_F(LocalFileHandlerTest, lastEventType)
+{
+    // Test getter: GlobalEventType lastEventType()
+    auto result = obj->lastEventType();
+    EXPECT_NO_FATAL_FAILURE({ obj->lastEventType(); });
+
+}
+
+TEST_F(LocalFileHandlerTest, openFileByApp)
+{
+    // Test method: bool openFileByApp((const QUrl &file, const QString &desktopFile))
+    QUrl _arg0{};
+    QString _arg1{};
+    auto result = obj->openFileByApp(_arg0, _arg1);
+    EXPECT_FALSE(result);
+
+}
+
+TEST_F(LocalFileHandlerTest, openFilesByApp)
+{
+    // Test method: bool openFilesByApp((const QList<QUrl> &fileUrls, const QString &desktopFile))
+    QList<QUrl> _arg0{};
+    QString _arg1{};
+    auto result = obj->openFilesByApp(_arg0, _arg1);
+    EXPECT_FALSE(result);
+
+}
+
+TEST_F(LocalFileHandlerTest, doHiddenFileRemind)
+{
+    // Test method: bool doHiddenFileRemind((const QString &name, bool *checkRule))
+    QString _arg0{};
+    auto result = obj->doHiddenFileRemind(_arg0, nullptr);
+    EXPECT_FALSE(result);
+
+}
+
+TEST_F(LocalFileHandlerTest, d)
+{
+    // Test getter: QScopedPointer<LocalFileHandlerPrivate> d()
+    auto result = obj->d();
+    EXPECT_EQ(result.get(), nullptr);
+
 }

@@ -3,147 +3,196 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_abstractworker_1.cpp
- * @brief Unit tests for AbstractWorker Low-priority methods
+ * @file test_abstractworker_1.cpp
+ * @brief Unit tests for AbstractWorker methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class AbstractWorkerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "fileoperations/fileoperationutils/abstractworker.h"
+
+#include <QTest>
+
+using namespace dfmplugin_fileoperations;
+
+class AbstractWorkerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new AbstractWorker();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    AbstractWorker *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(AbstractWorkerTest, createCopyJobInfo)
 {
-    // createCopyJobInfo
-    SUCCEED();
+    // Test method: JobInfoPointer createCopyJobInfo((const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType error))
+    QUrl _arg0{};
+    QUrl _arg1{};
+    auto result = obj->createCopyJobInfo(_arg0, _arg1, AbstractJobHandler::JobErrorType());
+    EXPECT_NE(result.get(), nullptr);
+
 }
 
 TEST_F(AbstractWorkerTest, doWork)
 {
-    // doWork
-    SUCCEED();
+    // Test bool getter: doWork()
+    bool result = obj->doWork();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(AbstractWorkerTest, emitCurrentTaskNotify)
 {
-    // emitCurrentTaskNotify
-    SUCCEED();
+    // Test method: void emitCurrentTaskNotify((const QUrl &from, const QUrl &to))
+    QUrl _arg0{};
+    QUrl _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->emitCurrentTaskNotify(_arg0, _arg1));
 }
 
 TEST_F(AbstractWorkerTest, emitErrorNotify)
 {
-    // emitErrorNotify
-    SUCCEED();
+    // Test method: void emitErrorNotify((const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType &error, const bool isTo,
+                                     const quint64 id, const QString &errorMsg, const bool allUsErrorMsg))
+    QUrl _arg0{};
+    QUrl _arg1{};
+    AbstractJobHandler::JobErrorType _arg2{};
+    QString _arg5{};
+    EXPECT_NO_FATAL_FAILURE(obj->emitErrorNotify(_arg0, _arg1, _arg2, false, 0, _arg5, false));
 }
 
 TEST_F(AbstractWorkerTest, emitStateChangedNotify)
 {
-    // emitStateChangedNotify
-    SUCCEED();
+    // Test method: void emitStateChangedNotify(())
+    EXPECT_NO_FATAL_FAILURE(obj->emitStateChangedNotify());
 }
 
 TEST_F(AbstractWorkerTest, formatFileName)
 {
-    // formatFileName
-    SUCCEED();
+    // Test method: QString formatFileName((const QString &fileName))
+    QString _arg0{};
+    auto result = obj->formatFileName(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(AbstractWorkerTest, initArgs)
 {
-    // initArgs
-    SUCCEED();
+    // Test bool getter: initArgs()
+    bool result = obj->initArgs();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(AbstractWorkerTest, initHandleConnects)
 {
-    // initHandleConnects
-    SUCCEED();
+    // Test method: void initHandleConnects((const JobHandlePointer handle))
+    EXPECT_NO_FATAL_FAILURE(obj->initHandleConnects(JobHandlePointer()));
 }
 
 TEST_F(AbstractWorkerTest, needsSync)
 {
-    // needsSync
-    SUCCEED();
+    // Test bool getter: needsSync()
+    bool result = obj->needsSync();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(AbstractWorkerTest, onUpdateProgress)
 {
-    // onUpdateProgress
-    SUCCEED();
+    // Test method: void onUpdateProgress(())
+    EXPECT_NO_FATAL_FAILURE(obj->onUpdateProgress());
 }
 
 TEST_F(AbstractWorkerTest, pauseAllThread)
 {
-    // pauseAllThread
-    SUCCEED();
+    // Test method: void pauseAllThread(())
+    EXPECT_NO_FATAL_FAILURE(obj->pauseAllThread());
 }
 
 TEST_F(AbstractWorkerTest, performAsyncSync)
 {
-    // performAsyncSync
-    SUCCEED();
+    // Test method: void performAsyncSync(())
+    EXPECT_NO_FATAL_FAILURE(obj->performAsyncSync());
 }
 
 TEST_F(AbstractWorkerTest, performSync)
 {
-    // performSync
-    SUCCEED();
+    // Test method: void performSync(())
+    EXPECT_NO_FATAL_FAILURE(obj->performSync());
 }
 
 TEST_F(AbstractWorkerTest, resume)
 {
-    // resume
-    SUCCEED();
+    // Test method: void resume(())
+    EXPECT_NO_FATAL_FAILURE(obj->resume());
 }
 
 TEST_F(AbstractWorkerTest, resumeAllThread)
 {
-    // resumeAllThread
-    SUCCEED();
+    // Test method: void resumeAllThread(())
+    EXPECT_NO_FATAL_FAILURE(obj->resumeAllThread());
 }
 
 TEST_F(AbstractWorkerTest, setWorkArgs)
 {
-    // setWorkArgs
-    SUCCEED();
+    // Test setter: void setWorkArgs((const JobHandlePointer handle, const QList<QUrl> &sources, const QUrl &target,
+                                 const AbstractJobHandler::JobFlags &flags))
+    QList<QUrl> _arg1{};
+    QUrl _arg2{};
+    AbstractJobHandler::JobFlags _arg3{};
+    EXPECT_NO_FATAL_FAILURE(obj->setWorkArgs(JobHandlePointer(), _arg1, _arg2, _arg3));
 }
 
 TEST_F(AbstractWorkerTest, startAsyncStatistics)
 {
-    // startAsyncStatistics
-    SUCCEED();
+    // Test method: void startAsyncStatistics((const QList<QUrl> &urls))
+    QList<QUrl> _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->startAsyncStatistics(_arg0));
 }
 
 TEST_F(AbstractWorkerTest, startCountProccess)
 {
-    // startCountProccess
-    SUCCEED();
+    // Test method: void startCountProccess(())
+    EXPECT_NO_FATAL_FAILURE(obj->startCountProccess());
 }
 
 TEST_F(AbstractWorkerTest, statisticsFilesSize)
 {
-    // statisticsFilesSize
-    SUCCEED();
+    // Test bool getter: statisticsFilesSize()
+    bool result = obj->statisticsFilesSize();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(AbstractWorkerTest, stopAllThread)
 {
-    // stopAllThread
-    SUCCEED();
+    // Test method: void stopAllThread(())
+    EXPECT_NO_FATAL_FAILURE(obj->stopAllThread());
 }
 
 TEST_F(AbstractWorkerTest, syncFilesToDevice)
 {
-    // syncFilesToDevice
-    SUCCEED();
+    // Test method: void syncFilesToDevice(())
+    EXPECT_NO_FATAL_FAILURE(obj->syncFilesToDevice());
 }
 
 TEST_F(AbstractWorkerTest, workerWait)
 {
-    // workerWait
-    SUCCEED();
-}
+    // Test bool getter: workerWait()
+    bool result = obj->workerWait();
+    EXPECT_FALSE(result);
 
+}

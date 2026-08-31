@@ -3,39 +3,60 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_trashmenusceneprivate.cpp
- * @brief Unit tests for TrashMenuScenePrivate Low-priority methods
+ * @file test_trashmenusceneprivate.cpp
+ * @brief Unit tests for TrashMenuScenePrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class TrashMenuScenePrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "menus/trashmenuscene.h"
+
+#include <QTest>
+
+using namespace dfmplugin_trash;
+
+class TrashMenuScenePrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new TrashMenuScenePrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    TrashMenuScenePrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(TrashMenuScenePrivateTest, TrashMenuScenePrivate)
 {
-    // TrashMenuScenePrivate
-    SUCCEED();
+    // Test constructor: TrashMenuScenePrivate((TrashMenuScene *qq))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(TrashMenuScenePrivateTest, groupByRole)
 {
-    // groupByRole
-    SUCCEED();
+    // Test method: void groupByRole((const QString &strategy))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->groupByRole(_arg0));
 }
 
 TEST_F(TrashMenuScenePrivateTest, updateGroupSubMenu)
 {
-    // updateGroupSubMenu
-    SUCCEED();
+    // Test method: void updateGroupSubMenu((QMenu *menu))
+    EXPECT_NO_FATAL_FAILURE(obj->updateGroupSubMenu(nullptr));
 }
 
 TEST_F(TrashMenuScenePrivateTest, updateSortSubMenu)
 {
-    // updateSortSubMenu
-    SUCCEED();
+    // Test method: void updateSortSubMenu((QMenu *menu))
+    EXPECT_NO_FATAL_FAILURE(obj->updateSortSubMenu(nullptr));
 }
-

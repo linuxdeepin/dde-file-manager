@@ -3,111 +3,163 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_canvasviewprivate_1.cpp
- * @brief Unit tests for CanvasViewPrivate Low-priority methods
+ * @file test_canvasviewprivate_1.cpp
+ * @brief Unit tests for CanvasViewPrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class CanvasViewPrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "view/canvasview.h"
+
+#include <QTest>
+
+using namespace ddplugin_canvas;
+
+class CanvasViewPrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new CanvasViewPrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    CanvasViewPrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(CanvasViewPrivateTest, CanvasViewPrivate)
 {
-    // CanvasViewPrivate
-    SUCCEED();
+    // Test constructor: CanvasViewPrivate((CanvasView *qq))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(CanvasViewPrivateTest, calcMargins)
 {
-    // calcMargins
-    SUCCEED();
+    // Test method: QMargins calcMargins((const QSize &inSize, const QSize &outSize))
+    QSize _arg0{};
+    QSize _arg1{};
+    auto result = obj->calcMargins(_arg0, _arg1);
+    EXPECT_NO_FATAL_FAILURE({ obj->calcMargins(_arg0, _arg1); });
+
 }
 
 TEST_F(CanvasViewPrivateTest, gridAt)
 {
-    // gridAt
-    SUCCEED();
+    // Test getter: QPoint gridAt()
+    auto result = obj->gridAt();
+    EXPECT_TRUE(result.isNull());
+
 }
 
 TEST_F(CanvasViewPrivateTest, gridCoordinate)
 {
-    // gridCoordinate
-    SUCCEED();
+    // Test getter: GridCoordinate gridCoordinate()
+    auto result = obj->gridCoordinate();
+    EXPECT_NO_FATAL_FAILURE({ obj->gridCoordinate(); });
+
 }
 
 TEST_F(CanvasViewPrivateTest, gridIndex)
 {
-    // gridIndex
-    SUCCEED();
+    // Test getter: int gridIndex()
+    auto result = obj->gridIndex();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(CanvasViewPrivateTest, gridMarginsHelper)
 {
-    // gridMarginsHelper
-    SUCCEED();
+    // Test getter: QMargins gridMarginsHelper()
+    auto result = obj->gridMarginsHelper();
+    EXPECT_NO_FATAL_FAILURE({ obj->gridMarginsHelper(); });
+
 }
 
 TEST_F(CanvasViewPrivateTest, isWaterMaskOn)
 {
-    // isWaterMaskOn
-    SUCCEED();
+    // Test bool getter: isWaterMaskOn()
+    bool result = obj->isWaterMaskOn();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(CanvasViewPrivateTest, itemGridpos)
 {
-    // itemGridpos
-    SUCCEED();
+    // Test method: bool itemGridpos((const QString &item, QPoint &gridPos))
+    QString _arg0{};
+    QPoint _arg1{};
+    auto result = obj->itemGridpos(_arg0, _arg1);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(CanvasViewPrivateTest, itemRect)
 {
-    // itemRect
-    SUCCEED();
+    // Test getter: QRect itemRect()
+    auto result = obj->itemRect();
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(CanvasViewPrivateTest, openIndex)
 {
-    // openIndex
-    SUCCEED();
+    // Test method: void openIndex((const QModelIndex &index))
+    QModelIndex _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->openIndex(_arg0));
 }
 
 TEST_F(CanvasViewPrivateTest, openIndexByClicked)
 {
-    // openIndexByClicked
-    SUCCEED();
+    // Test method: void openIndexByClicked((const ClickedAction action, const QModelIndex &index))
+    QModelIndex _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->openIndexByClicked(ClickedAction(), _arg1));
 }
 
 TEST_F(CanvasViewPrivateTest, operState)
 {
-    // operState
-    SUCCEED();
+    // Test getter: OperState operState()
+    auto result = obj->operState();
+    EXPECT_NO_FATAL_FAILURE({ obj->operState(); });
+
 }
 
 TEST_F(CanvasViewPrivateTest, overlapPos)
 {
-    // overlapPos
-    SUCCEED();
+    // Test getter: QPoint overlapPos()
+    auto result = obj->overlapPos();
+    EXPECT_TRUE(result.isNull());
+
 }
 
 TEST_F(CanvasViewPrivateTest, visualItem)
 {
-    // visualItem
-    SUCCEED();
+    // Test method: QString visualItem((const QPoint &gridPos))
+    QPoint _arg0{};
+    auto result = obj->visualItem(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(CanvasViewPrivateTest, visualRect)
 {
-    // visualRect
-    SUCCEED();
+    // Test method: QRect visualRect((const QPoint &gridPos))
+    QPoint _arg0{};
+    auto result = obj->visualRect(_arg0);
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(CanvasViewPrivateTest, CanvasViewPrivate_Destructor)
 {
-    // ~CanvasViewPrivate
-    SUCCEED();
+    // Test method:  ~CanvasViewPrivate(())
+    EXPECT_NO_FATAL_FAILURE({ CanvasViewPrivate *tmp = new CanvasViewPrivate(); delete tmp; });
 }
-

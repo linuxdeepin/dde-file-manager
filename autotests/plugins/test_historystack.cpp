@@ -4,49 +4,77 @@
 
 /**
  * @file test_historystack.cpp
- * @brief Unit tests for HistoryStack Mid-priority methods
+ * @brief Unit tests for HistoryStack methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class HistoryStackTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/historystack.h"
+
+#include <QTest>
+
+using namespace dfmplugin_titlebar;
+
+class HistoryStackTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new HistoryStack();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    HistoryStack *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(HistoryStackTest, append)
 {
-    // append
-    SUCCEED();
+    // Test method: void append((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->append(_arg0));
 }
 
 TEST_F(HistoryStackTest, currentIndex)
 {
-    // currentIndex
-    SUCCEED();
+    // Test getter: int currentIndex()
+    auto result = obj->currentIndex();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(HistoryStackTest, forward)
 {
-    // forward
-    SUCCEED();
+    // Test getter: QUrl forward()
+    auto result = obj->forward();
+    EXPECT_TRUE(result.isEmpty() || result.isValid());
 }
 
 TEST_F(HistoryStackTest, removeAt)
 {
-    // removeAt
-    SUCCEED();
+    // Test method: void removeAt((int i))
+    EXPECT_NO_FATAL_FAILURE(obj->removeAt(0));
 }
 
 TEST_F(HistoryStackTest, removeUrl)
 {
-    // removeUrl
-    SUCCEED();
+    // Test method: void removeUrl((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->removeUrl(_arg0));
 }
 
 TEST_F(HistoryStackTest, size)
 {
-    // size
-    SUCCEED();
+    // Test getter: int size()
+    auto result = obj->size();
+    EXPECT_EQ(result, 0);
+
 }

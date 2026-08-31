@@ -4,19 +4,42 @@
 
 /**
  * @file test_syncdbus.cpp
- * @brief Unit tests for SyncDBus Mid-priority methods
+ * @brief Unit tests for SyncDBus methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class SyncDBusTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "syncdbus.h"
+
+#include <QTest>
+
+using namespace core;
+
+class SyncDBusTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new SyncDBus();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    SyncDBus *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(SyncDBusTest, GetSyncStatus)
 {
-    // GetSyncStatus
-    SUCCEED();
+    // Test getter: QVariantMap GetSyncStatus()
+    auto result = obj->GetSyncStatus();
+    EXPECT_TRUE(result.isEmpty());
+
 }

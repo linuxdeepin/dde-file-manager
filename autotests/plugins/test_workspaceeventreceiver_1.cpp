@@ -3,333 +3,426 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_workspaceeventreceiver_1.cpp
- * @brief Unit tests for WorkspaceEventReceiver Low-priority methods
+ * @file test_workspaceeventreceiver_1.cpp
+ * @brief Unit tests for WorkspaceEventReceiver methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class WorkspaceEventReceiverTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "events/workspaceeventreceiver.h"
+
+#include <QTest>
+
+using namespace dfmplugin_workspace;
+
+class WorkspaceEventReceiverTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new WorkspaceEventReceiver();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    WorkspaceEventReceiver *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(WorkspaceEventReceiverTest, WorkspaceEventReceiver)
 {
-    // WorkspaceEventReceiver
-    SUCCEED();
+    // Test constructor: WorkspaceEventReceiver((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleAboutToChangeViewWidth)
 {
-    // handleAboutToChangeViewWidth
-    SUCCEED();
+    // Test method: void handleAboutToChangeViewWidth((const quint64 windowID, int deltaWidth))
+    EXPECT_NO_FATAL_FAILURE(obj->handleAboutToChangeViewWidth(0, 0));
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleCheckSchemeViewIsFileView)
 {
-    // handleCheckSchemeViewIsFileView
-    SUCCEED();
+    // Test method: bool handleCheckSchemeViewIsFileView((const QString &scheme))
+    QString _arg0{};
+    auto result = obj->handleCheckSchemeViewIsFileView(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleColumnDisplayName)
 {
-    // handleColumnDisplayName
-    SUCCEED();
+    // Test method: QString handleColumnDisplayName((quint64 windowId, dfmbase::Global::ItemRoles role))
+    auto result = obj->handleColumnDisplayName(0, {});
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleColumnRoles)
 {
-    // handleColumnRoles
-    SUCCEED();
+    // Test method: QList<ItemRoles> handleColumnRoles((quint64 windowId))
+    auto result = obj->handleColumnRoles(0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleCurrentGroupStrategy)
 {
-    // handleCurrentGroupStrategy
-    SUCCEED();
+    // Test method: QString handleCurrentGroupStrategy((quint64 windowId))
+    auto result = obj->handleCurrentGroupStrategy(0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleCurrentSortRole)
 {
-    // handleCurrentSortRole
-    SUCCEED();
+    // Test method: ItemRoles handleCurrentSortRole((quint64 windowId))
+    auto result = obj->handleCurrentSortRole(0);
+    EXPECT_NO_FATAL_FAILURE({ obj->handleCurrentSortRole(0); });
+
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleFileUpdate)
 {
-    // handleFileUpdate
-    SUCCEED();
+    // Test method: void handleFileUpdate((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleFileUpdate(_arg0));
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleFindMenuScene)
 {
-    // handleFindMenuScene
-    SUCCEED();
+    // Test method: QString handleFindMenuScene((const QString &scheme))
+    QString _arg0{};
+    auto result = obj->handleFindMenuScene(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleGetColumnWidth)
 {
-    // handleGetColumnWidth
-    SUCCEED();
+    // Test method: int handleGetColumnWidth((quint64 windowId, DFMBASE_NAMESPACE::Global::ItemRoles role))
+    auto result = obj->handleGetColumnWidth(0, DFMBASE_NAMESPACE::Global::ItemRoles());
+    EXPECT_GE(result, 0);
+
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleGetCurrentModelBusy)
 {
-    // handleGetCurrentModelBusy
-    SUCCEED();
+    // Test method: bool handleGetCurrentModelBusy((quint64 windowId))
+    auto result = obj->handleGetCurrentModelBusy(0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleGetCurrentViewMode)
 {
-    // handleGetCurrentViewMode
-    SUCCEED();
+    // Test method: ViewMode handleGetCurrentViewMode((const quint64 windowID))
+    auto result = obj->handleGetCurrentViewMode(0);
+    EXPECT_GE(static_cast<int>(result), 0);
+
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleGetCustomTopWidgetVisible)
 {
-    // handleGetCustomTopWidgetVisible
-    SUCCEED();
+    // Test method: bool handleGetCustomTopWidgetVisible((const quint64 windowID, const QString &scheme))
+    QString _arg1{};
+    auto result = obj->handleGetCustomTopWidgetVisible(0, _arg1);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleGetDefaultViewMode)
 {
-    // handleGetDefaultViewMode
-    SUCCEED();
+    // Test method: ViewMode handleGetDefaultViewMode((const QString &scheme))
+    QString _arg0{};
+    auto result = obj->handleGetDefaultViewMode(_arg0);
+    EXPECT_GE(static_cast<int>(result), 0);
+
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleGetNameFilter)
 {
-    // handleGetNameFilter
-    SUCCEED();
+    // Test method: QStringList handleGetNameFilter((const quint64 windowId))
+    auto result = obj->handleGetNameFilter(0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleGetSelectedUrls)
 {
-    // handleGetSelectedUrls
-    SUCCEED();
+    // Test method: QList<QUrl> handleGetSelectedUrls((const quint64 windowID))
+    auto result = obj->handleGetSelectedUrls(0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleGetViewFilter)
 {
-    // handleGetViewFilter
-    SUCCEED();
+    // Test method: int handleGetViewFilter((const quint64 windowId))
+    auto result = obj->handleGetViewFilter(0);
+    EXPECT_GE(result, 0);
+
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleGetViewItemRect)
 {
-    // handleGetViewItemRect
-    SUCCEED();
+    // Test method: QRectF handleGetViewItemRect((const quint64 windowID, const QUrl &url, const ItemRoles role))
+    QUrl _arg1{};
+    auto result = obj->handleGetViewItemRect(0, _arg1, ItemRoles());
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleGetVisualGeometry)
 {
-    // handleGetVisualGeometry
-    SUCCEED();
+    // Test method: QRectF handleGetVisualGeometry((const quint64 windowID))
+    auto result = obj->handleGetVisualGeometry(0);
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleMoveToTrashFileResult)
 {
-    // handleMoveToTrashFileResult
-    SUCCEED();
+    // Test method: void handleMoveToTrashFileResult((const QList<QUrl> &srcUrls, bool ok, const QString &errMsg))
+    QList<QUrl> _arg0{};
+    QString _arg2{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleMoveToTrashFileResult(_arg0, false, _arg2));
 }
 
 TEST_F(WorkspaceEventReceiverTest, handlePasteFileResult)
 {
-    // handlePasteFileResult
-    SUCCEED();
+    // Test method: void handlePasteFileResult((const QList<QUrl> &srcUrls, const QList<QUrl> &destUrls, bool ok, const QString &errMsg))
+    QList<QUrl> _arg0{};
+    QList<QUrl> _arg1{};
+    QString _arg3{};
+    EXPECT_NO_FATAL_FAILURE(obj->handlePasteFileResult(_arg0, _arg1, false, _arg3));
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleRegisterCustomTopWidget)
 {
-    // handleRegisterCustomTopWidget
-    SUCCEED();
+    // Test method: void handleRegisterCustomTopWidget((const QVariantMap &dataMap))
+    QVariantMap _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleRegisterCustomTopWidget(_arg0));
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleRegisterDataCache)
 {
-    // handleRegisterDataCache
-    SUCCEED();
+    // Test method: void handleRegisterDataCache((const QString &scheme))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleRegisterDataCache(_arg0));
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleRegisterFileView)
 {
-    // handleRegisterFileView
-    SUCCEED();
+    // Test method: void handleRegisterFileView((const QString &scheme))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleRegisterFileView(_arg0));
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleRegisterFocusFileViewDisabled)
 {
-    // handleRegisterFocusFileViewDisabled
-    SUCCEED();
+    // Test method: void handleRegisterFocusFileViewDisabled((const QString &scheme))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleRegisterFocusFileViewDisabled(_arg0));
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleRegisterGroupStrategy)
 {
-    // handleRegisterGroupStrategy
-    SUCCEED();
+    // Test method: void handleRegisterGroupStrategy((const QVariantMap &dataMap))
+    QVariantMap _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleRegisterGroupStrategy(_arg0));
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleRegisterLoadStrategy)
 {
-    // handleRegisterLoadStrategy
-    SUCCEED();
+    // Test method: void handleRegisterLoadStrategy((const QString &scheme, DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy strategy))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleRegisterLoadStrategy(_arg0, DFMGLOBAL_NAMESPACE::DirectoryLoadStrategy()));
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleRegisterMenuScene)
 {
-    // handleRegisterMenuScene
-    SUCCEED();
+    // Test method: void handleRegisterMenuScene((const QString &scheme, const QString &scene))
+    QString _arg0{};
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleRegisterMenuScene(_arg0, _arg1));
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleRegisterRoutePrehandle)
 {
-    // handleRegisterRoutePrehandle
-    SUCCEED();
+    // Test method: bool handleRegisterRoutePrehandle((const QString &scheme, const FileViewRoutePrehaldler &prehandler))
+    QString _arg0{};
+    FileViewRoutePrehaldler _arg1{};
+    auto result = obj->handleRegisterRoutePrehandle(_arg0, _arg1);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleRegisterViewHint)
 {
-    // handleRegisterViewHint
-    SUCCEED();
+    // Test method: void handleRegisterViewHint((const QVariantMap &dataMap))
+    QVariantMap _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleRegisterViewHint(_arg0));
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleRenameFileResult)
 {
-    // handleRenameFileResult
-    SUCCEED();
+    // Test method: void handleRenameFileResult((const quint64 windowId, const QMap<QUrl, QUrl> &renamedUrls, bool ok, const QString &errMsg))
+    QMap<QUrl, QUrl> _arg1{};
+    QString _arg3{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleRenameFileResult(0, _arg1, false, _arg3));
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleReverseSelect)
 {
-    // handleReverseSelect
-    SUCCEED();
+    // Test method: void handleReverseSelect((quint64 windowId))
+    EXPECT_NO_FATAL_FAILURE(obj->handleReverseSelect(0));
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleSelectAll)
 {
-    // handleSelectAll
-    SUCCEED();
+    // Test method: void handleSelectAll((quint64 windowId))
+    EXPECT_NO_FATAL_FAILURE(obj->handleSelectAll(0));
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleSelectFiles)
 {
-    // handleSelectFiles
-    SUCCEED();
+    // Test method: void handleSelectFiles((quint64 windowId, const QList<QUrl> &files))
+    QList<QUrl> _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleSelectFiles(0, _arg1));
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleSetAlwaysOpenInCurrentWindow)
 {
-    // handleSetAlwaysOpenInCurrentWindow
-    SUCCEED();
+    // Test method: void handleSetAlwaysOpenInCurrentWindow((const quint64 windowID))
+    EXPECT_NO_FATAL_FAILURE(obj->handleSetAlwaysOpenInCurrentWindow(0));
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleSetCustomFilterCallback)
 {
-    // handleSetCustomFilterCallback
-    SUCCEED();
+    // Test method: void handleSetCustomFilterCallback((quint64 windowID, const QUrl &url, const QVariant callback))
+    QUrl _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleSetCustomFilterCallback(0, _arg1, QVariant()));
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleSetCustomFilterData)
 {
-    // handleSetCustomFilterData
-    SUCCEED();
+    // Test method: void handleSetCustomFilterData((quint64 windowID, const QUrl &url, const QVariant &data))
+    QUrl _arg1{};
+    QVariant _arg2{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleSetCustomFilterData(0, _arg1, _arg2));
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleSetCustomViewProperty)
 {
-    // handleSetCustomViewProperty
-    SUCCEED();
+    // Test method: void handleSetCustomViewProperty((const QString &scheme, const QVariantMap &properties))
+    QString _arg0{};
+    QVariantMap _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleSetCustomViewProperty(_arg0, _arg1));
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleSetEnabledSelectionModes)
 {
-    // handleSetEnabledSelectionModes
-    SUCCEED();
+    // Test method: void handleSetEnabledSelectionModes((const quint64 windowId, const QList<QAbstractItemView::SelectionMode> &modes))
+    QList<QAbstractItemView::SelectionMode> _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleSetEnabledSelectionModes(0, _arg1));
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleSetGroup)
 {
-    // handleSetGroup
-    SUCCEED();
+    // Test method: void handleSetGroup((quint64 windowId, const QString &strategyName))
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleSetGroup(0, _arg1));
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleSetNameFilter)
 {
-    // handleSetNameFilter
-    SUCCEED();
+    // Test method: void handleSetNameFilter((const quint64 windowId, const QStringList &filters))
+    QStringList _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleSetNameFilter(0, _arg1));
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleSetReadOnly)
 {
-    // handleSetReadOnly
-    SUCCEED();
+    // Test method: void handleSetReadOnly((const quint64 windowId, const bool readOnly))
+    EXPECT_NO_FATAL_FAILURE(obj->handleSetReadOnly(0, false));
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleSetSelectionMode)
 {
-    // handleSetSelectionMode
-    SUCCEED();
+    // Test method: void handleSetSelectionMode((const quint64 windowId, const QAbstractItemView::SelectionMode mode))
+    EXPECT_NO_FATAL_FAILURE(obj->handleSetSelectionMode(0, QAbstractItemView::SelectionMode()));
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleSetSort)
 {
-    // handleSetSort
-    SUCCEED();
+    // Test method: void handleSetSort((quint64 windowId, ItemRoles role))
+    EXPECT_NO_FATAL_FAILURE(obj->handleSetSort(0, ItemRoles()));
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleSetViewDragDropMode)
 {
-    // handleSetViewDragDropMode
-    SUCCEED();
+    // Test method: void handleSetViewDragDropMode((const quint64 windowId, const QAbstractItemView::DragDropMode mode))
+    EXPECT_NO_FATAL_FAILURE(obj->handleSetViewDragDropMode(0, QAbstractItemView::DragDropMode()));
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleSetViewDragEnabled)
 {
-    // handleSetViewDragEnabled
-    SUCCEED();
+    // Test method: void handleSetViewDragEnabled((const quint64 windowId, const bool enabled))
+    EXPECT_NO_FATAL_FAILURE(obj->handleSetViewDragEnabled(0, false));
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleSetViewFilter)
 {
-    // handleSetViewFilter
-    SUCCEED();
+    // Test method: void handleSetViewFilter((const quint64 windowId, const QDir::Filters &filters))
+    QDir::Filters _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleSetViewFilter(0, _arg1));
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleShowCustomTopWidget)
 {
-    // handleShowCustomTopWidget
-    SUCCEED();
+    // Test method: void handleShowCustomTopWidget((quint64 windowId, const QString &scheme, bool visible))
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleShowCustomTopWidget(0, _arg1, false));
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleTabChanged)
 {
-    // handleTabChanged
-    SUCCEED();
+    // Test method: void handleTabChanged((const quint64 windowId, const QString &uniqueId))
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleTabChanged(0, _arg1));
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleTabCreated)
 {
-    // handleTabCreated
-    SUCCEED();
+    // Test method: void handleTabCreated((const quint64 windowId, const QString &uniqueId))
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleTabCreated(0, _arg1));
 }
 
 TEST_F(WorkspaceEventReceiverTest, handleTileBarSwitchModeTriggered)
 {
-    // handleTileBarSwitchModeTriggered
-    SUCCEED();
+    // Test method: void handleTileBarSwitchModeTriggered((quint64 windowId, int mode))
+    EXPECT_NO_FATAL_FAILURE(obj->handleTileBarSwitchModeTriggered(0, 0));
 }
 
 TEST_F(WorkspaceEventReceiverTest, instance)
 {
-    // instance
-    SUCCEED();
+    // Test getter: WorkspaceEventReceiver instance()
+    auto result = obj->instance();
+    EXPECT_NO_FATAL_FAILURE({ obj->instance(); });
+
 }
 
 TEST_F(WorkspaceEventReceiverTest, WorkspaceEventReceiver_Destructor)
 {
-    // ~WorkspaceEventReceiver
-    SUCCEED();
+    // Test method:  ~WorkspaceEventReceiver(())
+    EXPECT_NO_FATAL_FAILURE({ WorkspaceEventReceiver *tmp = new WorkspaceEventReceiver(); delete tmp; });
 }
-

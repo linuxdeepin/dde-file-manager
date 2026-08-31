@@ -3,57 +3,87 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_canvasmenuscene_1.cpp
- * @brief Unit tests for CanvasMenuScene Low-priority methods
+ * @file test_canvasmenuscene_1.cpp
+ * @brief Unit tests for CanvasMenuScene methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class CanvasMenuSceneTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "menu/canvasmenuscene.h"
+
+#include <QTest>
+
+using namespace ddplugin_canvas;
+
+class CanvasMenuSceneTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new CanvasMenuScene();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    CanvasMenuScene *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(CanvasMenuSceneTest, create)
 {
-    // create
-    SUCCEED();
+    // Test method: bool create((QMenu *parent))
+    auto result = obj->create(nullptr);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(CanvasMenuSceneTest, emptyMenu)
 {
-    // emptyMenu
-    SUCCEED();
+    // Test method: void emptyMenu((QMenu *parent))
+    EXPECT_NO_FATAL_FAILURE(obj->emptyMenu(nullptr));
 }
 
 TEST_F(CanvasMenuSceneTest, iconSizeSubActions)
 {
-    // iconSizeSubActions
-    SUCCEED();
+    // Test method: QMenu iconSizeSubActions((QMenu *menu))
+    auto result = obj->iconSizeSubActions(nullptr);
+    EXPECT_NO_FATAL_FAILURE({ obj->iconSizeSubActions(nullptr); });
+
 }
 
 TEST_F(CanvasMenuSceneTest, name)
 {
-    // name
-    SUCCEED();
+    // Test getter: QString name()
+    auto result = obj->name();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(CanvasMenuSceneTest, scene)
 {
-    // scene
-    SUCCEED();
+    // Test method: AbstractMenuScene scene((QAction *action))
+    auto result = obj->scene(nullptr);
+    EXPECT_NO_FATAL_FAILURE({ obj->scene(nullptr); });
+
 }
 
 TEST_F(CanvasMenuSceneTest, sortBySubActions)
 {
-    // sortBySubActions
-    SUCCEED();
+    // Test method: QMenu sortBySubActions((QMenu *menu))
+    auto result = obj->sortBySubActions(nullptr);
+    EXPECT_NO_FATAL_FAILURE({ obj->sortBySubActions(nullptr); });
+
 }
 
 TEST_F(CanvasMenuSceneTest, updateState)
 {
-    // updateState
-    SUCCEED();
+    // Test method: void updateState((QMenu *parent))
+    EXPECT_NO_FATAL_FAILURE(obj->updateState(nullptr));
 }
-

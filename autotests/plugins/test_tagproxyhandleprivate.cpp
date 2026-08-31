@@ -3,57 +3,82 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_tagproxyhandleprivate.cpp
- * @brief Unit tests for TagProxyHandlePrivate Low-priority methods
+ * @file test_tagproxyhandleprivate.cpp
+ * @brief Unit tests for TagProxyHandlePrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class TagProxyHandlePrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "data/tagproxyhandle.h"
+
+#include <QTest>
+
+using namespace dfmplugin_tag;
+
+class TagProxyHandlePrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new TagProxyHandlePrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    TagProxyHandlePrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(TagProxyHandlePrivateTest, TagProxyHandlePrivate)
 {
-    // TagProxyHandlePrivate
-    SUCCEED();
+    // Test constructor: TagProxyHandlePrivate((TagProxyHandle *qq, QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(TagProxyHandlePrivateTest, connectToDBus)
 {
-    // connectToDBus
-    SUCCEED();
+    // Test method: void connectToDBus(())
+    EXPECT_NO_FATAL_FAILURE(obj->connectToDBus());
 }
 
 TEST_F(TagProxyHandlePrivateTest, disconnCurrentConnections)
 {
-    // disconnCurrentConnections
-    SUCCEED();
+    // Test method: void disconnCurrentConnections(())
+    EXPECT_NO_FATAL_FAILURE(obj->disconnCurrentConnections());
 }
 
 TEST_F(TagProxyHandlePrivateTest, initConnection)
 {
-    // initConnection
-    SUCCEED();
+    // Test method: void initConnection(())
+    EXPECT_NO_FATAL_FAILURE(obj->initConnection());
 }
 
 TEST_F(TagProxyHandlePrivateTest, isDBusRuning)
 {
-    // isDBusRuning
-    SUCCEED();
+    // Test bool getter: isDBusRuning()
+    bool result = obj->isDBusRuning();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(TagProxyHandlePrivateTest, parseDBusVariant)
 {
-    // parseDBusVariant
-    SUCCEED();
+    // Test method: QVariant parseDBusVariant((const QDBusVariant &var))
+    QDBusVariant _arg0{};
+    auto result = obj->parseDBusVariant(_arg0);
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(TagProxyHandlePrivateTest, TagProxyHandlePrivate_Destructor)
 {
-    // ~TagProxyHandlePrivate
-    SUCCEED();
+    // Test method:  ~TagProxyHandlePrivate(())
+    EXPECT_NO_FATAL_FAILURE({ TagProxyHandlePrivate *tmp = new TagProxyHandlePrivate(); delete tmp; });
 }
-

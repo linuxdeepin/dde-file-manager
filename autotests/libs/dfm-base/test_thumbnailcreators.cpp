@@ -108,36 +108,42 @@ TEST(ThumbnailCreatorsTest, DefaultThumbnailCreatorLargeSizeDowngrades)
 
 TEST(ThumbnailCreatorsTest, appimageThumbnailCreator)
 {
-    // appimageThumbnailCreator
-    SUCCEED();
+    ThumbnailCreators obj;
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.appimageThumbnailCreator(_arg0, ThumbnailSize()); });
 }
 
 TEST(ThumbnailCreatorsTest, defaultThumbnailCreator)
 {
-    // defaultThumbnailCreator
-    SUCCEED();
+    ThumbnailCreators obj;
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.defaultThumbnailCreator(_arg0, ThumbnailSize()); });
 }
 
 TEST(ThumbnailCreatorsTest, krataThumbnailCreator)
 {
-    // krataThumbnailCreator
-    SUCCEED();
+    ThumbnailCreators obj;
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.krataThumbnailCreator(_arg0, DFMGLOBAL_NAMESPACE::ThumbnailSize()); });
 }
 
 TEST(ThumbnailCreatorsTest, pptxThumbnailCreator)
 {
-    // pptxThumbnailCreator
-    SUCCEED();
+    ThumbnailCreators obj;
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.pptxThumbnailCreator(_arg0, ThumbnailSize()); });
 }
 
 TEST(ThumbnailCreatorsTest, videoThumbnailCreatorFfmpeg)
 {
-    // videoThumbnailCreatorFfmpeg
-    SUCCEED();
+    ThumbnailCreators obj;
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.videoThumbnailCreatorFfmpeg(_arg0, ThumbnailSize()); });
 }
 
 TEST(ThumbnailCreatorsTest, videoThumbnailCreatorLib)
 {
-    // videoThumbnailCreatorLib
-    SUCCEED();
+    ThumbnailCreators obj;
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE({ obj.videoThumbnailCreatorLib(_arg0, ThumbnailSize()); });
 }

@@ -3,33 +3,55 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_methodcombox.cpp
- * @brief Unit tests for MethodComBox Low-priority methods
+ * @file test_methodcombox.cpp
+ * @brief Unit tests for MethodComBox methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class MethodComBoxTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "options/methodgroup/methodcombox.h"
+
+#include <QTest>
+
+using namespace ddplugin_organizer;
+
+class MethodComBoxTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new MethodComBox();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    MethodComBox *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(MethodComBoxTest, currentMethod)
 {
-    // currentMethod
-    SUCCEED();
+    // Test getter: int currentMethod()
+    auto result = obj->currentMethod();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(MethodComBoxTest, initCheckBox)
 {
-    // initCheckBox
-    SUCCEED();
+    // Test method: void initCheckBox(())
+    EXPECT_NO_FATAL_FAILURE(obj->initCheckBox());
 }
 
 TEST_F(MethodComBoxTest, setCurrentMethod)
 {
-    // setCurrentMethod
-    SUCCEED();
+    // Test setter: void setCurrentMethod((int idx))
+    EXPECT_NO_FATAL_FAILURE(obj->setCurrentMethod(0));
 }
-

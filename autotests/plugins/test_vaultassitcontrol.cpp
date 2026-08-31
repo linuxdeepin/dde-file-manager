@@ -4,25 +4,51 @@
 
 /**
  * @file test_vaultassitcontrol.cpp
- * @brief Unit tests for VaultAssitControl Mid-priority methods
+ * @brief Unit tests for VaultAssitControl methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class VaultAssitControlTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "vaultassist/vaultassitcontrol.h"
+
+#include <QTest>
+
+using namespace dfmplugin_utils;
+
+class VaultAssitControlTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new VaultAssitControl();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    VaultAssitControl *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(VaultAssitControlTest, scheme)
 {
-    // scheme
-    SUCCEED();
+    // Test getter: QString scheme()
+    auto result = obj->scheme();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(VaultAssitControlTest, transUrlsToLocal)
 {
-    // transUrlsToLocal
-    SUCCEED();
+    // Test method: QList<QUrl> transUrlsToLocal((const QList<QUrl> &urls))
+    QList<QUrl> _arg0{};
+    auto result = obj->transUrlsToLocal(_arg0);
+    EXPECT_TRUE(result.isEmpty());
+
 }

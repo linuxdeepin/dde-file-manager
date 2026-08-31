@@ -4,25 +4,50 @@
 
 /**
  * @file test_syncpair.cpp
- * @brief Unit tests for SyncPair Mid-priority methods
+ * @brief Unit tests for SyncPair methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class SyncPairTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "dfm-base/base/configs/configsyncdefs.h"
+
+#include <QTest>
+
+using namespace src;
+
+class SyncPairTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new SyncPair();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    SyncPair *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(SyncPairTest, isValid)
 {
-    // isValid
-    SUCCEED();
+    // Test bool getter: isValid()
+    bool result = obj->isValid();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(SyncPairTest, serialize)
 {
-    // serialize
-    SUCCEED();
+    // Test getter: QString serialize()
+    auto result = obj->serialize();
+    EXPECT_TRUE(result.isEmpty());
+
 }

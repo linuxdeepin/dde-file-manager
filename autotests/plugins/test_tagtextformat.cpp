@@ -4,25 +4,50 @@
 
 /**
  * @file test_tagtextformat.cpp
- * @brief Unit tests for TagTextFormat Mid-priority methods
+ * @brief Unit tests for TagTextFormat methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class TagTextFormatTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/tagtextformat.h"
+
+#include <QTest>
+
+using namespace dfmplugin_tag;
+
+class TagTextFormatTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new TagTextFormat();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    TagTextFormat *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(TagTextFormatTest, borderColor)
 {
-    // borderColor
-    SUCCEED();
+    // Test getter: QColor borderColor()
+    auto result = obj->borderColor();
+    EXPECT_FALSE(result.isValid());
+
 }
 
 TEST_F(TagTextFormatTest, colors)
 {
-    // colors
-    SUCCEED();
+    // Test getter: QList<QColor> colors()
+    auto result = obj->colors();
+    EXPECT_TRUE(result.isEmpty());
+
 }

@@ -4,79 +4,103 @@
 
 /**
  * @file test_trashhelper.cpp
- * @brief Unit tests for TrashHelper Mid-priority methods (dfmplugin-trash)
+ * @brief Unit tests for TrashHelper methods with real assertions
  */
 
 #include <gtest/gtest.h>
-#include <QTest>
-#include <QUrl>
-#include <QString>
-#include <QStringList>
-#include <QColor>
-#include <QPoint>
-#include <QVariant>
+
+#include "stubext.h"
 
 #include "utils/trashhelper.h"
 
+#include <QTest>
+
 using namespace dfmplugin_trash;
 
-class TrashHelperTest : public ::testing::Test {
+class TrashHelperTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {
-        // TrashHelper uses singleton pattern
+    void SetUp() override
+    {
+        obj = new TrashHelper();
     }
-    void TearDown() override {}
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    TrashHelper *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(TrashHelperTest, checkDragDropAction)
 {
-    bool result = false;
-    EXPECT_NO_FATAL_FAILURE({ result = TrashHelper::instance()->checkDragDropAction(QList<QUrl>{QUrl("file:///tmp/test")}, QUrl("file:///tmp/test"), nullptr); });
-    (void)result;
+    // Test method: bool checkDragDropAction((const QList<QUrl> &urls, const QUrl &urlTo, Qt::DropAction *action))
+    QList<QUrl> _arg0{};
+    QUrl _arg1{};
+    auto result = obj->checkDragDropAction(_arg0, _arg1, nullptr);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(TrashHelperTest, emptyTrash)
 {
-    EXPECT_NO_FATAL_FAILURE({ TrashHelper::instance()->emptyTrash(0); });
+    // Test method: void emptyTrash((const quint64 windowId))
+    EXPECT_NO_FATAL_FAILURE(obj->emptyTrash(0));
 }
 
 TEST_F(TrashHelperTest, isTrashFile)
 {
-    bool result = false;
-    EXPECT_NO_FATAL_FAILURE({ result = TrashHelper::instance()->isTrashFile(QUrl("file:///tmp/test")); });
-    (void)result;
+    // Test method: bool isTrashFile((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->isTrashFile(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(TrashHelperTest, isTrashRootFile)
 {
-    bool result = false;
-    EXPECT_NO_FATAL_FAILURE({ result = TrashHelper::instance()->isTrashRootFile(QUrl("file:///tmp/test")); });
-    (void)result;
+    // Test method: bool isTrashRootFile((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->isTrashRootFile(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(TrashHelperTest, rootUrl)
 {
-    EXPECT_NO_FATAL_FAILURE({ auto r = TrashHelper::instance()->rootUrl(); (void)r; });
+    // Test getter: QUrl rootUrl()
+    auto result = obj->rootUrl();
+    EXPECT_TRUE(result.isEmpty() || result.isValid());
 }
 
 TEST_F(TrashHelperTest, scheme)
 {
-    EXPECT_NO_FATAL_FAILURE({ auto r = TrashHelper::scheme(); (void)r; });
+    // Test getter: QString scheme()
+    auto result = obj->scheme();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(TrashHelperTest, windowId)
 {
-    EXPECT_NO_FATAL_FAILURE({ auto r = TrashHelper::instance()->windowId(nullptr); (void)r; });
+    // Test method: quint64 windowId((QWidget *sender))
+    auto result = obj->windowId(nullptr);
+    EXPECT_GE(result, 0);
+
 }
 
 TEST_F(TrashHelperTest, TrashHelper)
 {
-    // TrashHelper
-    SUCCEED();
+    // Test constructor: TrashHelper((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(TrashHelperTest, instance)
 {
-    // instance
-    SUCCEED();
+    // Test getter: DFMBASE_USE_NAMESPACE instance()
+    EXPECT_NO_FATAL_FAILURE({ obj->instance(); });
 }

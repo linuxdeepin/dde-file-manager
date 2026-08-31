@@ -4,43 +4,64 @@
 
 /**
  * @file test_tag.cpp
- * @brief Unit tests for Tag Mid-priority methods
+ * @brief Unit tests for Tag methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class TagTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "tag.h"
+
+#include <QTest>
+
+using namespace dfmplugin_tag;
+
+class TagTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new Tag();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    Tag *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(TagTest, bindWindows)
 {
-    // bindWindows
-    SUCCEED();
+    // Test method: void bindWindows(())
+    EXPECT_NO_FATAL_FAILURE(obj->bindWindows());
 }
 
 TEST_F(TagTest, installToSideBar)
 {
-    // installToSideBar
-    SUCCEED();
+    // Test method: void installToSideBar(())
+    EXPECT_NO_FATAL_FAILURE(obj->installToSideBar());
 }
 
 TEST_F(TagTest, onAllPluginsStarted)
 {
-    // onAllPluginsStarted
-    SUCCEED();
+    // Test method: void onAllPluginsStarted(())
+    EXPECT_NO_FATAL_FAILURE(obj->onAllPluginsStarted());
 }
 
 TEST_F(TagTest, onWindowOpened)
 {
-    // onWindowOpened
-    SUCCEED();
+    // Test method: void onWindowOpened((quint64 windId))
+    EXPECT_NO_FATAL_FAILURE(obj->onWindowOpened(0));
 }
 
 TEST_F(TagTest, regTagCrumbToTitleBar)
 {
-    // regTagCrumbToTitleBar
-    SUCCEED();
+    // Test method: void regTagCrumbToTitleBar(())
+    EXPECT_NO_FATAL_FAILURE(obj->regTagCrumbToTitleBar());
 }

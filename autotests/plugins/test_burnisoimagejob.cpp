@@ -4,19 +4,40 @@
 
 /**
  * @file test_burnisoimagejob.cpp
- * @brief Unit tests for BurnISOImageJob Mid-priority methods
+ * @brief Unit tests for BurnISOImageJob methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class BurnISOImageJobTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/burnjob.h"
+
+#include <QTest>
+
+using namespace dfmplugin_burn;
+
+class BurnISOImageJobTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new BurnISOImageJob();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    BurnISOImageJob *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(BurnISOImageJobTest, writeFunc)
 {
-    // writeFunc
-    SUCCEED();
+    // Test method: void writeFunc((int progressFd, int checkFd))
+    EXPECT_NO_FATAL_FAILURE(obj->writeFunc(0, 0));
 }

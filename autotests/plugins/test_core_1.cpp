@@ -3,117 +3,142 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_core_1.cpp
- * @brief Unit tests for Core Low-priority methods
+ * @file test_core_1.cpp
+ * @brief Unit tests for Core methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class CoreTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "core.h"
+
+#include <QTest>
+
+using namespace core;
+
+class CoreTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new Core();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    Core *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(CoreTest, eventFilter)
 {
-    // eventFilter
-    SUCCEED();
+    // Test method: bool eventFilter((QObject *watched, QEvent *event))
+    auto result = obj->eventFilter(nullptr, nullptr);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(CoreTest, eventFilter_eventFil)
 {
-    // eventFilter
-    SUCCEED();
+    // Test method: bool eventFilter((QObject *watched, QEvent *event))
+    auto result = obj->eventFilter(nullptr, nullptr);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(CoreTest, exitOnShutdown)
 {
-    // exitOnShutdown
-    SUCCEED();
+    // Test method: void exitOnShutdown((bool shutdown))
+    EXPECT_NO_FATAL_FAILURE(obj->exitOnShutdown(false));
 }
 
 TEST_F(CoreTest, handleLoadPlugins)
 {
-    // handleLoadPlugins
-    SUCCEED();
+    // Test method: void handleLoadPlugins((const QStringList &names))
+    QStringList _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleLoadPlugins(_arg0));
 }
 
 TEST_F(CoreTest, initDeviceDBus)
 {
-    // initDeviceDBus
-    SUCCEED();
+    // Test method: void initDeviceDBus((QDBusConnection *connection))
+    EXPECT_NO_FATAL_FAILURE(obj->initDeviceDBus(nullptr));
 }
 
 TEST_F(CoreTest, initOperationsDBus)
 {
-    // initOperationsDBus
-    SUCCEED();
+    // Test method: void initOperationsDBus((QDBusConnection *connection))
+    EXPECT_NO_FATAL_FAILURE(obj->initOperationsDBus(nullptr));
 }
 
 TEST_F(CoreTest, initServiceDBusInterfaces)
 {
-    // initServiceDBusInterfaces
-    SUCCEED();
+    // Test method: void initServiceDBusInterfaces((QDBusConnection *connection))
+    EXPECT_NO_FATAL_FAILURE(obj->initServiceDBusInterfaces(nullptr));
 }
 
 TEST_F(CoreTest, initSyncDBus)
 {
-    // initSyncDBus
-    SUCCEED();
+    // Test method: void initSyncDBus((QDBusConnection *connection))
+    EXPECT_NO_FATAL_FAILURE(obj->initSyncDBus(nullptr));
 }
 
 TEST_F(CoreTest, initialize)
 {
-    // initialize
-    SUCCEED();
+    // Test method: void initialize(())
+    EXPECT_NO_FATAL_FAILURE(obj->initialize());
 }
 
 TEST_F(CoreTest, initialize_initiali)
 {
-    // initialize
-    SUCCEED();
+    // Test method: void initialize(())
+    EXPECT_NO_FATAL_FAILURE(obj->initialize());
 }
 
 TEST_F(CoreTest, initializeAfterPainted)
 {
-    // initializeAfterPainted
-    SUCCEED();
+    // Test method: void initializeAfterPainted(())
+    EXPECT_NO_FATAL_FAILURE(obj->initializeAfterPainted());
 }
 
 TEST_F(CoreTest, onAllPluginsInitialized)
 {
-    // onAllPluginsInitialized
-    SUCCEED();
+    // Test method: void onAllPluginsInitialized(())
+    EXPECT_NO_FATAL_FAILURE(obj->onAllPluginsInitialized());
 }
 
 TEST_F(CoreTest, onAllPluginsStarted)
 {
-    // onAllPluginsStarted
-    SUCCEED();
+    // Test method: void onAllPluginsStarted(())
+    EXPECT_NO_FATAL_FAILURE(obj->onAllPluginsStarted());
 }
 
 TEST_F(CoreTest, onFrameReady)
 {
-    // onFrameReady
-    SUCCEED();
+    // Test method: void onFrameReady(())
+    EXPECT_NO_FATAL_FAILURE(obj->onFrameReady());
 }
 
 TEST_F(CoreTest, onStart)
 {
-    // onStart
-    SUCCEED();
+    // Test method: void onStart(())
+    EXPECT_NO_FATAL_FAILURE(obj->onStart());
 }
 
 TEST_F(CoreTest, stop)
 {
-    // stop
-    SUCCEED();
+    // Test method: void stop(())
+    EXPECT_NO_FATAL_FAILURE(obj->stop());
 }
 
 TEST_F(CoreTest, stop_stop)
 {
-    // stop
-    SUCCEED();
+    // Test method: void stop(())
+    EXPECT_NO_FATAL_FAILURE(obj->stop());
 }
-

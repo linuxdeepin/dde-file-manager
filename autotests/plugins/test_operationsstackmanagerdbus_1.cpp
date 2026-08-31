@@ -3,39 +3,64 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_operationsstackmanagerdbus_1.cpp
- * @brief Unit tests for OperationsStackManagerDbus Low-priority methods
+ * @file test_operationsstackmanagerdbus_1.cpp
+ * @brief Unit tests for OperationsStackManagerDbus methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class OperationsStackManagerDbusTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "operationsstackmanagerdbus.h"
+
+#include <QTest>
+
+using namespace core;
+
+class OperationsStackManagerDbusTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new OperationsStackManagerDbus();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    OperationsStackManagerDbus *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(OperationsStackManagerDbusTest, CleanOperations)
 {
-    // CleanOperations
-    SUCCEED();
+    // Test method: void CleanOperations(())
+    EXPECT_NO_FATAL_FAILURE(obj->CleanOperations());
 }
 
 TEST_F(OperationsStackManagerDbusTest, CleanOperationsByUrl)
 {
-    // CleanOperationsByUrl
-    SUCCEED();
+    // Test method: void CleanOperationsByUrl((const QStringList &urls))
+    QStringList _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->CleanOperationsByUrl(_arg0));
 }
 
 TEST_F(OperationsStackManagerDbusTest, RevocationOperations)
 {
-    // RevocationOperations
-    SUCCEED();
+    // Test getter: QVariantMap RevocationOperations()
+    auto result = obj->RevocationOperations();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(OperationsStackManagerDbusTest, RevocationRedoOperations)
 {
-    // RevocationRedoOperations
-    SUCCEED();
-}
+    // Test getter: QVariantMap RevocationRedoOperations()
+    auto result = obj->RevocationRedoOperations();
+    EXPECT_TRUE(result.isEmpty());
 
+}

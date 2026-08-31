@@ -4,55 +4,89 @@
 
 /**
  * @file test_protocolentryfileentity.cpp
- * @brief Unit tests for ProtocolEntryFileEntity Mid-priority methods
+ * @brief Unit tests for ProtocolEntryFileEntity methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ProtocolEntryFileEntityTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "fileentity/protocolentryfileentity.h"
+
+#include <QTest>
+
+using namespace dfmplugin_computer;
+
+class ProtocolEntryFileEntityTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ProtocolEntryFileEntity();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ProtocolEntryFileEntity *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ProtocolEntryFileEntityTest, displayName)
 {
-    // displayName
-    SUCCEED();
+    // Test getter: QString displayName()
+    auto result = obj->displayName();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(ProtocolEntryFileEntityTest, exists)
 {
-    // exists
-    SUCCEED();
+    // Test bool getter: exists()
+    bool result = obj->exists();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(ProtocolEntryFileEntityTest, icon)
 {
-    // icon
-    SUCCEED();
+    // Test getter: QIcon icon()
+    auto result = obj->icon();
+    EXPECT_TRUE(result.isNull());
+
 }
 
 TEST_F(ProtocolEntryFileEntityTest, renamable)
 {
-    // renamable
-    SUCCEED();
+    // Test bool getter: renamable()
+    bool result = obj->renamable();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(ProtocolEntryFileEntityTest, sizeTotal)
 {
-    // sizeTotal
-    SUCCEED();
+    // Test getter: quint64 sizeTotal()
+    auto result = obj->sizeTotal();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(ProtocolEntryFileEntityTest, sizeUsage)
 {
-    // sizeUsage
-    SUCCEED();
+    // Test getter: quint64 sizeUsage()
+    auto result = obj->sizeUsage();
+    EXPECT_EQ(result, 0);
+
 }
 
 TEST_F(ProtocolEntryFileEntityTest, targetUrl)
 {
-    // targetUrl
-    SUCCEED();
+    // Test getter: QUrl targetUrl()
+    auto result = obj->targetUrl();
+    EXPECT_TRUE(result.isEmpty() || result.isValid());
 }

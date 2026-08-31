@@ -3,111 +3,148 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_collectiontitlebar_1.cpp
- * @brief Unit tests for CollectionTitleBar Low-priority methods
+ * @file test_collectiontitlebar_1.cpp
+ * @brief Unit tests for CollectionTitleBar methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class CollectionTitleBarTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "view/collectiontitlebar.h"
+
+#include <QTest>
+
+using namespace ddplugin_organizer;
+
+class CollectionTitleBarTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new CollectionTitleBar();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    CollectionTitleBar *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(CollectionTitleBarTest, CollectionTitleBar)
 {
-    // CollectionTitleBar
-    SUCCEED();
+    // Test constructor: CollectionTitleBar((const QString &uuid, QWidget *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(CollectionTitleBarTest, collectionSize)
 {
-    // collectionSize
-    SUCCEED();
+    // Test getter: CollectionFrameSize collectionSize()
+    auto result = obj->collectionSize();
+    EXPECT_NO_FATAL_FAILURE({ obj->collectionSize(); });
+
 }
 
 TEST_F(CollectionTitleBarTest, contextMenuEvent)
 {
-    // contextMenuEvent
-    SUCCEED();
+    // Test event handler: contextMenuEvent((QContextMenuEvent *))
+    QContextMenuEvent _event(QContextMenuEvent::None);
+    EXPECT_NO_FATAL_FAILURE(obj->contextMenuEvent(&_event));
 }
 
 TEST_F(CollectionTitleBarTest, eventFilter)
 {
-    // eventFilter
-    SUCCEED();
+    // Test method: bool eventFilter((QObject *obj, QEvent *event))
+    auto result = obj->eventFilter(nullptr, nullptr);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(CollectionTitleBarTest, renamable)
 {
-    // renamable
-    SUCCEED();
+    // Test bool getter: renamable()
+    bool result = obj->renamable();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(CollectionTitleBarTest, resizeEvent)
 {
-    // resizeEvent
-    SUCCEED();
+    // Test event handler: resizeEvent((QResizeEvent *e))
+    QResizeEvent _event(QResizeEvent::None);
+    EXPECT_NO_FATAL_FAILURE(obj->resizeEvent(&_event));
 }
 
 TEST_F(CollectionTitleBarTest, rounded)
 {
-    // rounded
-    SUCCEED();
+    // Test method: void rounded(())
+    EXPECT_NO_FATAL_FAILURE(obj->rounded());
 }
 
 TEST_F(CollectionTitleBarTest, setAdjustable)
 {
-    // setAdjustable
-    SUCCEED();
+    // Test setter: void setAdjustable((const bool adjustable))
+    EXPECT_NO_FATAL_FAILURE(obj->setAdjustable(false));
 }
 
 TEST_F(CollectionTitleBarTest, setClosable)
 {
-    // setClosable
-    SUCCEED();
+    // Test setter: void setClosable((const bool closable))
+    EXPECT_NO_FATAL_FAILURE(obj->setClosable(false));
 }
 
 TEST_F(CollectionTitleBarTest, setCollectionSize)
 {
-    // setCollectionSize
-    SUCCEED();
+    // Test setter: void setCollectionSize((const CollectionFrameSize &size))
+    CollectionFrameSize _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->setCollectionSize(_arg0));
 }
 
 TEST_F(CollectionTitleBarTest, setRenamable)
 {
-    // setRenamable
-    SUCCEED();
+    // Test setter: void setRenamable((const bool renamable))
+    EXPECT_NO_FATAL_FAILURE(obj->setRenamable(false));
 }
 
 TEST_F(CollectionTitleBarTest, setTitleBarVisible)
 {
-    // setTitleBarVisible
-    SUCCEED();
+    // Test method: bool setTitleBarVisible((const bool &visible))
+    bool _arg0{};
+    auto result = obj->setTitleBarVisible(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(CollectionTitleBarTest, setTitleName)
 {
-    // setTitleName
-    SUCCEED();
+    // Test setter: void setTitleName((const QString &name))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->setTitleName(_arg0));
 }
 
 TEST_F(CollectionTitleBarTest, titleBarVisible)
 {
-    // titleBarVisible
-    SUCCEED();
+    // Test bool getter: titleBarVisible()
+    bool result = obj->titleBarVisible();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(CollectionTitleBarTest, titleName)
 {
-    // titleName
-    SUCCEED();
+    // Test getter: QString titleName()
+    auto result = obj->titleName();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(CollectionTitleBarTest, CollectionTitleBar_Destructor)
 {
-    // ~CollectionTitleBar
-    SUCCEED();
+    // Test method:  ~CollectionTitleBar(())
+    EXPECT_NO_FATAL_FAILURE({ CollectionTitleBar *tmp = new CollectionTitleBar(); delete tmp; });
 }
-

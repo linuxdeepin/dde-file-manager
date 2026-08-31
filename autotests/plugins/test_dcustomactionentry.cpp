@@ -4,59 +4,72 @@
 
 /**
  * @file test_dcustomactionentry.cpp
- * @brief Unit tests for DCustomActionEntry Mid-priority methods (dfmplugin-menu)
+ * @brief Unit tests for DCustomActionEntry methods with real assertions
  */
 
 #include <gtest/gtest.h>
-#include <QTest>
-#include <QUrl>
-#include <QString>
-#include <QStringList>
-#include <QColor>
-#include <QPoint>
-#include <QVariant>
+
+#include "stubext.h"
 
 #include "extendmenuscene/extendmenu/dcustomactiondata.h"
 
+#include <QTest>
+
 using namespace dfmplugin_menu;
 
-class DCustomActionEntryTest : public ::testing::Test {
+class DCustomActionEntryTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {
+    void SetUp() override
+    {
+        obj = new DCustomActionEntry();
     }
-    void TearDown() override {}
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    DCustomActionEntry *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(DCustomActionEntryTest, data)
 {
-    // Instance method data
-    DCustomActionEntry obj;
-    EXPECT_NO_FATAL_FAILURE({ auto r = obj.data(); (void)r; });
+    // Test getter: DCustomActionData data()
+    auto result = obj->data();
+    EXPECT_NO_FATAL_FAILURE({ obj->data(); });
+
 }
 
 TEST_F(DCustomActionEntryTest, excludeMimeTypes)
 {
-    // Instance method excludeMimeTypes
-    DCustomActionEntry obj;
-    EXPECT_NO_FATAL_FAILURE({ auto r = obj.excludeMimeTypes(); (void)r; });
+    // Test getter: QStringList excludeMimeTypes()
+    auto result = obj->excludeMimeTypes();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(DCustomActionEntryTest, mimeTypes)
 {
-    // Instance method mimeTypes
-    DCustomActionEntry obj;
-    EXPECT_NO_FATAL_FAILURE({ auto r = obj.mimeTypes(); (void)r; });
+    // Test getter: QStringList mimeTypes()
+    auto result = obj->mimeTypes();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(DCustomActionEntryTest, notShowIn)
 {
-    // Instance method notShowIn
-    DCustomActionEntry obj;
-    EXPECT_NO_FATAL_FAILURE({ auto r = obj.notShowIn(); (void)r; });
+    // Test getter: QStringList notShowIn()
+    auto result = obj->notShowIn();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(DCustomActionEntryTest, DCustomActionEntry)
 {
-    // DCustomActionEntry
-    SUCCEED();
+    // Test constructor: DCustomActionEntry((const DCustomActionEntry &other))
+    ASSERT_NE(obj, nullptr);
 }

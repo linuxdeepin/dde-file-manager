@@ -3,27 +3,49 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_vaultresetpasswordpages_1.cpp
- * @brief Unit tests for VaultResetPasswordPages Low-priority methods
+ * @file test_vaultresetpasswordpages_1.cpp
+ * @brief Unit tests for VaultResetPasswordPages methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class VaultResetPasswordPagesTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/resetpasswordview/vaultresetpasswordpages.h"
+
+#include <QTest>
+
+using namespace dfmplugin_vault;
+
+class VaultResetPasswordPagesTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new VaultResetPasswordPages();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    VaultResetPasswordPages *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(VaultResetPasswordPagesTest, onButtonClicked)
 {
-    // onButtonClicked
-    SUCCEED();
+    // Test method: void onButtonClicked((int index, const QString &text))
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->onButtonClicked(0, _arg1));
 }
 
 TEST_F(VaultResetPasswordPagesTest, onSetBtnEnabled)
 {
-    // onSetBtnEnabled
-    SUCCEED();
+    // Test method: void onSetBtnEnabled((int index, const bool &state))
+    bool _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->onSetBtnEnabled(0, _arg1));
 }
-

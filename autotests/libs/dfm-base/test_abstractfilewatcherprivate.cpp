@@ -4,19 +4,40 @@
 
 /**
  * @file test_abstractfilewatcherprivate.cpp
- * @brief Unit tests for AbstractFileWatcherPrivate Mid-priority methods
+ * @brief Unit tests for AbstractFileWatcherPrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class AbstractFileWatcherPrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "dfm-base/interfaces/abstractfilewatcher.h"
+
+#include <QTest>
+
+using namespace src;
+
+class AbstractFileWatcherPrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new AbstractFileWatcherPrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    AbstractFileWatcherPrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(AbstractFileWatcherPrivateTest, AbstractFileWatcherPrivate)
 {
-    // AbstractFileWatcherPrivate
-    SUCCEED();
+    // Test constructor: AbstractFileWatcherPrivate((const QUrl &fileUrl, AbstractFileWatcher *qq))
+    ASSERT_NE(obj, nullptr);
 }

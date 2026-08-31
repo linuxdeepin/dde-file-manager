@@ -4,37 +4,63 @@
 
 /**
  * @file test_searchfilewatcher.cpp
- * @brief Unit tests for SearchFileWatcher Mid-priority methods
+ * @brief Unit tests for SearchFileWatcher methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class SearchFileWatcherTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "watcher/searchfilewatcher.h"
+
+#include <QTest>
+
+using namespace dfmplugin_search;
+
+class SearchFileWatcherTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new SearchFileWatcher();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    SearchFileWatcher *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(SearchFileWatcherTest, handleFileDelete)
 {
-    // handleFileDelete
-    SUCCEED();
+    // Test method: void handleFileDelete((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleFileDelete(_arg0));
 }
 
 TEST_F(SearchFileWatcherTest, handleFileRename)
 {
-    // handleFileRename
-    SUCCEED();
+    // Test method: void handleFileRename((const QUrl &oldUrl, const QUrl &newUrl))
+    QUrl _arg0{};
+    QUrl _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleFileRename(_arg0, _arg1));
 }
 
 TEST_F(SearchFileWatcherTest, onFileDeleted)
 {
-    // onFileDeleted
-    SUCCEED();
+    // Test method: void onFileDeleted((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->onFileDeleted(_arg0));
 }
 
 TEST_F(SearchFileWatcherTest, removeWatcher)
 {
-    // removeWatcher
-    SUCCEED();
+    // Test method: void removeWatcher((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->removeWatcher(_arg0));
 }

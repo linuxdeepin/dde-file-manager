@@ -4,25 +4,50 @@
 
 /**
  * @file test_collectiontitlebar.cpp
- * @brief Unit tests for CollectionTitleBar Mid-priority methods
+ * @brief Unit tests for CollectionTitleBar methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class CollectionTitleBarTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "view/collectiontitlebar.h"
+
+#include <QTest>
+
+using namespace ddplugin_organizer;
+
+class CollectionTitleBarTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new CollectionTitleBar();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    CollectionTitleBar *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(CollectionTitleBarTest, adjustable)
 {
-    // adjustable
-    SUCCEED();
+    // Test bool getter: adjustable()
+    bool result = obj->adjustable();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(CollectionTitleBarTest, closable)
 {
-    // closable
-    SUCCEED();
+    // Test bool getter: closable()
+    bool result = obj->closable();
+    EXPECT_FALSE(result);
+
 }

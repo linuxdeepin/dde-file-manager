@@ -129,36 +129,37 @@ TEST(KeyValueLabelTest, RightValueWidgetFocusOutEventCallable)
 
 TEST(KeyValueLabelTest, KeyValueLabel)
 {
-    // KeyValueLabel
-    SUCCEED();
-}
+    KeyValueLabel obj;
+    EXPECT_NO_FATAL_FAILURE({ KeyValueLabel obj; });
+    }
+
 
 TEST(KeyValueLabelTest, rightWidget)
 {
-    // rightWidget
-    SUCCEED();
+    KeyValueLabel obj;
+    EXPECT_NO_FATAL_FAILURE({ obj.rightWidget(); });
 }
 
 TEST(KeyValueLabelTest, setLeftFontSizeWeight)
 {
-    // setLeftFontSizeWeight
-    SUCCEED();
+    KeyValueLabel obj;
+    EXPECT_NO_FATAL_FAILURE(obj.setLeftFontSizeWeight(DFontSizeManager::SizeType(), QFont::Weight(), DPalette::ColorType()));
 }
 
 TEST(KeyValueLabelTest, setLeftValue)
 {
-    // setLeftValue
-    SUCCEED();
+    KeyValueLabel obj;
+    EXPECT_NO_FATAL_FAILURE(obj.setLeftValue(QString(), Qt::TextElideMode(), Qt::Alignment(), false, 0));
 }
 
 TEST(KeyValueLabelTest, setRightFontSizeWeight)
 {
-    // setRightFontSizeWeight
-    SUCCEED();
+    KeyValueLabel obj;
+    EXPECT_NO_FATAL_FAILURE(obj.setRightFontSizeWeight(DFontSizeManager::SizeType(), QFont::Weight(), DPalette::ColorType()));
 }
 
 TEST(KeyValueLabelTest, setRightValue)
 {
-    // setRightValue
-    SUCCEED();
+    KeyValueLabel obj;
+    EXPECT_NO_FATAL_FAILURE(obj.setRightValue(QString(), Qt::TextElideMode(), Qt::Alignment(), false, 0));
 }

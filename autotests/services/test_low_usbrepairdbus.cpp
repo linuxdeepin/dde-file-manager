@@ -3,27 +3,50 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_low_usbrepairdbus.cpp
- * @brief Unit tests for UsbRepairDBus Low-priority methods
+ * @file test_low_usbrepairdbus.cpp
+ * @brief Unit tests for UsbRepairDBus methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class UsbRepairDBusLowTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "services/usbrepair/usbrepairdbus.h"
+
+#include <QTest>
+
+using namespace src;
+
+class UsbRepairDBusTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new UsbRepairDBus();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    UsbRepairDBus *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
-TEST_F(UsbRepairDBusLowTest, CancelRepair)
+TEST_F(UsbRepairDBusTest, CancelRepair)
 {
-    // CancelRepair
-    SUCCEED();
+    // Test method: bool CancelRepair((const QString &devicePath))
+    QString _arg0{};
+    auto result = obj->CancelRepair(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(UsbRepairDBusLowTest, cleanup)
+TEST_F(UsbRepairDBusTest, cleanup)
 {
-    // cleanup
-    SUCCEED();
+    // Test method: void cleanup(())
+    EXPECT_NO_FATAL_FAILURE(obj->cleanup());
 }
-

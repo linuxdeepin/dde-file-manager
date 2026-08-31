@@ -3,51 +3,74 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_protocoldevicedisplaymanagerprivate_1.cpp
- * @brief Unit tests for ProtocolDeviceDisplayManagerPrivate Low-priority methods
+ * @file test_protocoldevicedisplaymanagerprivate_1.cpp
+ * @brief Unit tests for ProtocolDeviceDisplayManagerPrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ProtocolDeviceDisplayManagerPrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "displaycontrol/protocoldevicedisplaymanager_p.h"
+
+#include <QTest>
+
+using namespace dfmplugin_smbbrowser;
+
+class ProtocolDeviceDisplayManagerPrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ProtocolDeviceDisplayManagerPrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ProtocolDeviceDisplayManagerPrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ProtocolDeviceDisplayManagerPrivateTest, ProtocolDeviceDisplayManagerPrivate)
 {
-    // ProtocolDeviceDisplayManagerPrivate
-    SUCCEED();
+    // Test constructor: ProtocolDeviceDisplayManagerPrivate(())
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(ProtocolDeviceDisplayManagerPrivateTest, init)
 {
-    // init
-    SUCCEED();
+    // Test method: void init(())
+    EXPECT_NO_FATAL_FAILURE(obj->init());
 }
 
 TEST_F(ProtocolDeviceDisplayManagerPrivateTest, isSupportVEntry)
 {
-    // isSupportVEntry
-    SUCCEED();
+    // Test method: bool isSupportVEntry((const QString &devId))
+    QString _arg0{};
+    auto result = obj->isSupportVEntry(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(ProtocolDeviceDisplayManagerPrivateTest, onDisplayModeChanged)
 {
-    // onDisplayModeChanged
-    SUCCEED();
+    // Test method: void onDisplayModeChanged(())
+    EXPECT_NO_FATAL_FAILURE(obj->onDisplayModeChanged());
 }
 
 TEST_F(ProtocolDeviceDisplayManagerPrivateTest, onShowOfflineChanged)
 {
-    // onShowOfflineChanged
-    SUCCEED();
+    // Test method: void onShowOfflineChanged(())
+    EXPECT_NO_FATAL_FAILURE(obj->onShowOfflineChanged());
 }
 
 TEST_F(ProtocolDeviceDisplayManagerPrivateTest, ProtocolDeviceDisplayManagerPrivate_Destructor)
 {
-    // ~ProtocolDeviceDisplayManagerPrivate
-    SUCCEED();
+    // Test method:  ~ProtocolDeviceDisplayManagerPrivate(())
+    EXPECT_NO_FATAL_FAILURE({ ProtocolDeviceDisplayManagerPrivate *tmp = new ProtocolDeviceDisplayManagerPrivate(); delete tmp; });
 }
-

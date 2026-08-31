@@ -4,19 +4,42 @@
 
 /**
  * @file test_mimeappsworker.cpp
- * @brief Unit tests for MimeAppsWorker Mid-priority methods
+ * @brief Unit tests for MimeAppsWorker methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class MimeAppsWorkerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "dfm-base/mimetype/mimesappsmanager.h"
+
+#include <QTest>
+
+using namespace src;
+
+class MimeAppsWorkerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new MimeAppsWorker();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    MimeAppsWorker *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(MimeAppsWorkerTest, writeData)
 {
-    // writeData
-    SUCCEED();
+    // Test method: void writeData((const QString &path, const QByteArray &content))
+    QString _arg0{};
+    QByteArray _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->writeData(_arg0, _arg1));
 }

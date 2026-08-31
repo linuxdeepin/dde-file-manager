@@ -3,123 +3,183 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_operatorcenter_1.cpp
- * @brief Unit tests for OperatorCenter Low-priority methods
+ * @file test_operatorcenter_1.cpp
+ * @brief Unit tests for OperatorCenter methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class OperatorCenterTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/encryption/operatorcenter.h"
+
+#include <QTest>
+
+using namespace dfmplugin_vault;
+
+class OperatorCenterTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new OperatorCenter();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    OperatorCenter *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(OperatorCenterTest, autoGeneratePassword)
 {
-    // autoGeneratePassword
-    SUCCEED();
+    // Test method: QString autoGeneratePassword((int length))
+    auto result = obj->autoGeneratePassword(0);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(OperatorCenterTest, createKeyNew)
 {
-    // createKeyNew
-    SUCCEED();
+    // Test method: Result createKeyNew((const QString &password))
+    QString _arg0{};
+    auto result = obj->createKeyNew(_arg0);
+    EXPECT_NO_FATAL_FAILURE({ obj->createKeyNew(_arg0); });
+
 }
 
 TEST_F(OperatorCenterTest, executeProcess)
 {
-    // executeProcess
-    SUCCEED();
+    // Test method: bool executeProcess((const QString &cmd))
+    QString _arg0{};
+    auto result = obj->executeProcess(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(OperatorCenterTest, generateRecoveryKeyForNewVault)
 {
-    // generateRecoveryKeyForNewVault
-    SUCCEED();
+    // Test getter: QString generateRecoveryKeyForNewVault()
+    auto result = obj->generateRecoveryKeyForNewVault();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(OperatorCenterTest, getConfigFilePath)
 {
-    // getConfigFilePath
-    SUCCEED();
+    // Test getter: QStringList getConfigFilePath()
+    auto result = obj->getConfigFilePath();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(OperatorCenterTest, getPasswordHint)
 {
-    // getPasswordHint
-    SUCCEED();
+    // Test method: bool getPasswordHint((QString &passwordHint))
+    QString _arg0{};
+    auto result = obj->getPasswordHint(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(OperatorCenterTest, getPendingOldPasswordSchemeMigrationPassword)
 {
-    // getPendingOldPasswordSchemeMigrationPassword
-    SUCCEED();
+    // Test getter: QString getPendingOldPasswordSchemeMigrationPassword()
+    auto result = obj->getPendingOldPasswordSchemeMigrationPassword();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(OperatorCenterTest, getPubKey)
 {
-    // getPubKey
-    SUCCEED();
+    // Test getter: QString getPubKey()
+    auto result = obj->getPubKey();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(OperatorCenterTest, getRecoveryKey)
 {
-    // getRecoveryKey
-    SUCCEED();
+    // Test getter: QString getRecoveryKey()
+    auto result = obj->getRecoveryKey();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(OperatorCenterTest, getSaltAndPasswordCipher)
 {
-    // getSaltAndPasswordCipher
-    SUCCEED();
+    // Test getter: QString getSaltAndPasswordCipher()
+    auto result = obj->getSaltAndPasswordCipher();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(OperatorCenterTest, getUserKey)
 {
-    // getUserKey
-    SUCCEED();
+    // Test getter: QString getUserKey()
+    auto result = obj->getUserKey();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(OperatorCenterTest, getdecryptDirPath)
 {
-    // getdecryptDirPath
-    SUCCEED();
+    // Test getter: QString getdecryptDirPath()
+    auto result = obj->getdecryptDirPath();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(OperatorCenterTest, isNewVaultVersion)
 {
-    // isNewVaultVersion
-    SUCCEED();
+    // Test bool getter: isNewVaultVersion()
+    bool result = obj->isNewVaultVersion();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(OperatorCenterTest, makeVaultLocalPath)
 {
-    // makeVaultLocalPath
-    SUCCEED();
+    // Test method: QString makeVaultLocalPath((const QString &before, const QString &behind))
+    QString _arg0{};
+    QString _arg1{};
+    auto result = obj->makeVaultLocalPath(_arg0, _arg1);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(OperatorCenterTest, passwordFromKeyring)
 {
-    // passwordFromKeyring
-    SUCCEED();
+    // Test getter: QString passwordFromKeyring()
+    auto result = obj->passwordFromKeyring();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(OperatorCenterTest, runCmd)
 {
-    // runCmd
-    SUCCEED();
+    // Test method: bool runCmd((const QString &cmd))
+    QString _arg0{};
+    auto result = obj->runCmd(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(OperatorCenterTest, setPendingOldPasswordSchemeMigrationPassword)
 {
-    // setPendingOldPasswordSchemeMigrationPassword
-    SUCCEED();
+    // Test setter: void setPendingOldPasswordSchemeMigrationPassword((const QString &password))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->setPendingOldPasswordSchemeMigrationPassword(_arg0));
 }
 
 TEST_F(OperatorCenterTest, setRecoveryKey)
 {
-    // setRecoveryKey
-    SUCCEED();
+    // Test setter: void setRecoveryKey((const QString &recoveryKey))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->setRecoveryKey(_arg0));
 }
-

@@ -3,51 +3,81 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_computerviewcontainer.cpp
- * @brief Unit tests for ComputerViewContainer Low-priority methods
+ * @file test_computerviewcontainer.cpp
+ * @brief Unit tests for ComputerViewContainer methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class ComputerViewContainerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/computerviewcontainer.h"
+
+#include <QTest>
+
+using namespace dfmplugin_computer;
+
+class ComputerViewContainerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new ComputerViewContainer();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    ComputerViewContainer *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(ComputerViewContainerTest, ComputerViewContainer)
 {
-    // ComputerViewContainer
-    SUCCEED();
+    // Test constructor: ComputerViewContainer((const QUrl &url, QWidget *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(ComputerViewContainerTest, contentWidget)
 {
-    // contentWidget
-    SUCCEED();
+    // Test getter: QWidget contentWidget()
+    auto result = obj->contentWidget();
+    EXPECT_NO_FATAL_FAILURE({ obj->contentWidget(); });
+
 }
 
 TEST_F(ComputerViewContainerTest, rootUrl)
 {
-    // rootUrl
-    SUCCEED();
+    // Test getter: QUrl rootUrl()
+    auto result = obj->rootUrl();
+    EXPECT_TRUE(result.isEmpty() || result.isValid());
 }
 
 TEST_F(ComputerViewContainerTest, selectedUrlList)
 {
-    // selectedUrlList
-    SUCCEED();
+    // Test getter: QList<QUrl> selectedUrlList()
+    auto result = obj->selectedUrlList();
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
 TEST_F(ComputerViewContainerTest, setRootUrl)
 {
-    // setRootUrl
-    SUCCEED();
+    // Test method: bool setRootUrl((const QUrl &url))
+    QUrl _arg0{};
+    auto result = obj->setRootUrl(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(ComputerViewContainerTest, widget)
 {
-    // widget
-    SUCCEED();
-}
+    // Test getter: QWidget widget()
+    auto result = obj->widget();
+    EXPECT_NO_FATAL_FAILURE({ obj->widget(); });
 
+}

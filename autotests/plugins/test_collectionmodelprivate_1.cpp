@@ -3,39 +3,59 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_collectionmodelprivate_1.cpp
- * @brief Unit tests for CollectionModelPrivate Low-priority methods
+ * @file test_collectionmodelprivate_1.cpp
+ * @brief Unit tests for CollectionModelPrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class CollectionModelPrivateTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "models/collectionmodel.h"
+
+#include <QTest>
+
+using namespace ddplugin_organizer;
+
+class CollectionModelPrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new CollectionModelPrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    CollectionModelPrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(CollectionModelPrivateTest, CollectionModelPrivate)
 {
-    // CollectionModelPrivate
-    SUCCEED();
+    // Test constructor: CollectionModelPrivate((CollectionModel *qq))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(CollectionModelPrivateTest, createMapping)
 {
-    // createMapping
-    SUCCEED();
+    // Test method: void createMapping(())
+    EXPECT_NO_FATAL_FAILURE(obj->createMapping());
 }
 
 TEST_F(CollectionModelPrivateTest, doRefresh)
 {
-    // doRefresh
-    SUCCEED();
+    // Test method: void doRefresh((bool global, bool file))
+    EXPECT_NO_FATAL_FAILURE(obj->doRefresh(false, false));
 }
 
 TEST_F(CollectionModelPrivateTest, CollectionModelPrivate_Destructor)
 {
-    // ~CollectionModelPrivate
-    SUCCEED();
+    // Test method:  ~CollectionModelPrivate(())
+    EXPECT_NO_FATAL_FAILURE({ CollectionModelPrivate *tmp = new CollectionModelPrivate(); delete tmp; });
 }
-

@@ -4,31 +4,52 @@
 
 /**
  * @file test_vaultvisiblemanager.cpp
- * @brief Unit tests for VaultVisibleManager Mid-priority methods
+ * @brief Unit tests for VaultVisibleManager methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class VaultVisibleManagerTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/vaultvisiblemanager.h"
+
+#include <QTest>
+
+using namespace dfmplugin_vault;
+
+class VaultVisibleManagerTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new VaultVisibleManager();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    VaultVisibleManager *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(VaultVisibleManagerTest, VaultVisibleManager)
 {
-    // VaultVisibleManager
-    SUCCEED();
+    // Test constructor: VaultVisibleManager((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(VaultVisibleManagerTest, removeComputerVaultItem)
 {
-    // removeComputerVaultItem
-    SUCCEED();
+    // Test method: void removeComputerVaultItem(())
+    EXPECT_NO_FATAL_FAILURE(obj->removeComputerVaultItem());
 }
 
 TEST_F(VaultVisibleManagerTest, removeSideBarVaultItem)
 {
-    // removeSideBarVaultItem
-    SUCCEED();
+    // Test method: void removeSideBarVaultItem(())
+    EXPECT_NO_FATAL_FAILURE(obj->removeSideBarVaultItem());
 }

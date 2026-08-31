@@ -45,59 +45,59 @@ TEST(MimesAppsManagerExtTest, GetDefaultAppByFileName)
     ASSERT_TRUE(tmp.open());
     tmp.write("plain text");
     tmp.close();
-    EXPECT_NO_FATAL_FAILURE({ (void)MimesAppsManager::getDefaultAppByFileName(tmp.fileName()); });
+    EXPECT_NO_FATAL_FAILURE({ MimesAppsManager::getDefaultAppByFileName(tmp.fileName()); });
 }
 
 TEST(MimesAppsManagerExtTest, GetDefaultAppByMimeTypeString)
 {
-    EXPECT_NO_FATAL_FAILURE({ (void)MimesAppsManager::getDefaultAppByMimeType(QString("text/plain")); });
+    EXPECT_NO_FATAL_FAILURE({ MimesAppsManager::getDefaultAppByMimeType(QString("text/plain")); });
 }
 
 TEST(MimesAppsManagerExtTest, GetDefaultAppByMimeTypeObject)
 {
     QMimeDatabase db;
     QMimeType mt = db.mimeTypeForName("text/plain");
-    EXPECT_NO_FATAL_FAILURE({ (void)MimesAppsManager::getDefaultAppByMimeType(mt); });
+    EXPECT_NO_FATAL_FAILURE({ MimesAppsManager::getDefaultAppByMimeType(mt); });
 }
 
 TEST(MimesAppsManagerExtTest, GetDefaultAppDisplayNameByMimeType)
 {
     QMimeDatabase db;
     QMimeType mt = db.mimeTypeForName("text/plain");
-    EXPECT_NO_FATAL_FAILURE({ (void)MimesAppsManager::getDefaultAppDisplayNameByMimeType(mt); });
+    EXPECT_NO_FATAL_FAILURE({ MimesAppsManager::getDefaultAppDisplayNameByMimeType(mt); });
 }
 
 TEST(MimesAppsManagerExtTest, GetDefaultAppDisplayNameByGio)
 {
-    EXPECT_NO_FATAL_FAILURE({ (void)MimesAppsManager::getDefaultAppDisplayNameByGio(QString("text/plain")); });
+    EXPECT_NO_FATAL_FAILURE({ MimesAppsManager::getDefaultAppDisplayNameByGio(QString("text/plain")); });
 }
 
 TEST(MimesAppsManagerExtTest, GetDefaultAppDesktopFileByMimeType)
 {
-    EXPECT_NO_FATAL_FAILURE({ (void)MimesAppsManager::getDefaultAppDesktopFileByMimeType(QString("text/plain")); });
+    EXPECT_NO_FATAL_FAILURE({ MimesAppsManager::getDefaultAppDesktopFileByMimeType(QString("text/plain")); });
 }
 
 TEST(MimesAppsManagerExtTest, GetRecommendedAppsByQio)
 {
     QMimeDatabase db;
     QMimeType mt = db.mimeTypeForName("text/plain");
-    EXPECT_NO_FATAL_FAILURE({ (void)MimesAppsManager::getRecommendedAppsByQio(mt); });
+    EXPECT_NO_FATAL_FAILURE({ MimesAppsManager::getRecommendedAppsByQio(mt); });
 }
 
 TEST(MimesAppsManagerExtTest, GetRecommendedAppsByGio)
 {
-    EXPECT_NO_FATAL_FAILURE({ (void)MimesAppsManager::getRecommendedAppsByGio(QString("text/plain")); });
+    EXPECT_NO_FATAL_FAILURE({ MimesAppsManager::getRecommendedAppsByGio(QString("text/plain")); });
 }
 
 TEST(MimesAppsManagerExtTest, SetDefaultAppForTypeByGio)
 {
-    EXPECT_NO_FATAL_FAILURE({ (void)MimesAppsManager::setDefautlAppForTypeByGio(QString("text/plain"), QString("/no/such/app.desktop")); });
+    EXPECT_NO_FATAL_FAILURE({ MimesAppsManager::setDefautlAppForTypeByGio(QString("text/plain"), QString("/no/such/app.desktop")); });
 }
 
 TEST(MimesAppsManagerExtTest, RemoveOneDupFromList)
 {
     QStringList list { "a", "b", "a", "c" };
-    EXPECT_NO_FATAL_FAILURE({ (void)MimesAppsManager::removeOneDupFromList(list, "a"); });
+    EXPECT_NO_FATAL_FAILURE({ MimesAppsManager::removeOneDupFromList(list, "a"); });
 }
 
 TEST(MimesAppsManagerExtTest, LoadDDEMimeTypes)

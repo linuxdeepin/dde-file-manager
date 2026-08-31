@@ -4,37 +4,59 @@
 
 /**
  * @file test_vaultremoveprogressview.cpp
- * @brief Unit tests for VaultRemoveProgressView Mid-priority methods
+ * @brief Unit tests for VaultRemoveProgressView methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class VaultRemoveProgressViewTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/removevaultview/vaultremoveprogressview.h"
+
+#include <QTest>
+
+using namespace dfmplugin_vault;
+
+class VaultRemoveProgressViewTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new VaultRemoveProgressView();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    VaultRemoveProgressView *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(VaultRemoveProgressViewTest, VaultRemoveProgressView)
 {
-    // VaultRemoveProgressView
-    SUCCEED();
+    // Test constructor: VaultRemoveProgressView((QWidget *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(VaultRemoveProgressViewTest, handleVaultRemovedProgress)
 {
-    // handleVaultRemovedProgress
-    SUCCEED();
+    // Test method: void handleVaultRemovedProgress((int value))
+    EXPECT_NO_FATAL_FAILURE(obj->handleVaultRemovedProgress(0));
 }
 
 TEST_F(VaultRemoveProgressViewTest, removeVault)
 {
-    // removeVault
-    SUCCEED();
+    // Test method: void removeVault((const QString &basePath))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->removeVault(_arg0));
 }
 
 TEST_F(VaultRemoveProgressViewTest, _VaultRemoveProgressView)
 {
-    // ~VaultRemoveProgressView
-    SUCCEED();
+    // Test constructor: VaultRemoveProgressView((QWidget *parent))
+    ASSERT_NE(obj, nullptr);
 }

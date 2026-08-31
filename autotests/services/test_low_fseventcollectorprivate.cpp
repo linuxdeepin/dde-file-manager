@@ -3,87 +3,135 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_low_fseventcollectorprivate.cpp
- * @brief Unit tests for FSEventCollectorPrivate Low-priority methods
+ * @file test_low_fseventcollectorprivate.cpp
+ * @brief Unit tests for FSEventCollectorPrivate methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class FSEventCollectorPrivateLowTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "services/textindex/fsmonitor/fseventcollector.h"
+
+#include <QTest>
+
+using namespace src;
+
+class FSEventCollectorPrivateTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new FSEventCollectorPrivate();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FSEventCollectorPrivate *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
-TEST_F(FSEventCollectorPrivateLowTest, FSEventCollectorPrivate)
+TEST_F(FSEventCollectorPrivateTest, FSEventCollectorPrivate)
 {
-    // FSEventCollectorPrivate
-    SUCCEED();
+    // Test constructor: FSEventCollectorPrivate((FSEventCollector *qq,
+                                                 FSEventCollector::PathPredicate pathPredicate,
+                                                 FSMonitor &monitor))
+    ASSERT_NE(obj, nullptr);
 }
 
-TEST_F(FSEventCollectorPrivateLowTest, buildPath)
+TEST_F(FSEventCollectorPrivateTest, buildPath)
 {
-    // buildPath
-    SUCCEED();
+    // Test method: QString buildPath((const QString &dirPath, const QString &fileName))
+    QString _arg0{};
+    QString _arg1{};
+    auto result = obj->buildPath(_arg0, _arg1);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
-TEST_F(FSEventCollectorPrivateLowTest, flushCollectedEvents)
+TEST_F(FSEventCollectorPrivateTest, flushCollectedEvents)
 {
-    // flushCollectedEvents
-    SUCCEED();
+    // Test method: void flushCollectedEvents(())
+    EXPECT_NO_FATAL_FAILURE(obj->flushCollectedEvents());
 }
 
-TEST_F(FSEventCollectorPrivateLowTest, handleDirectoryCreated)
+TEST_F(FSEventCollectorPrivateTest, handleDirectoryCreated)
 {
-    // handleDirectoryCreated
-    SUCCEED();
+    // Test method: void handleDirectoryCreated((const QString &path, const QString &name))
+    QString _arg0{};
+    QString _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleDirectoryCreated(_arg0, _arg1));
 }
 
-TEST_F(FSEventCollectorPrivateLowTest, handleDirectoryMoved)
+TEST_F(FSEventCollectorPrivateTest, handleDirectoryMoved)
 {
-    // handleDirectoryMoved
-    SUCCEED();
+    // Test method: void handleDirectoryMoved((const QString &fromPath, const QString &fromName,
+                                                   const QString &toPath, const QString &toName))
+    QString _arg0{};
+    QString _arg1{};
+    QString _arg2{};
+    QString _arg3{};
+    EXPECT_NO_FATAL_FAILURE(obj->handleDirectoryMoved(_arg0, _arg1, _arg2, _arg3));
 }
 
-TEST_F(FSEventCollectorPrivateLowTest, init)
+TEST_F(FSEventCollectorPrivateTest, init)
 {
-    // init
-    SUCCEED();
+    // Test method: bool init((const QStringList &rootPaths))
+    QStringList _arg0{};
+    auto result = obj->init(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(FSEventCollectorPrivateLowTest, isDirectory)
+TEST_F(FSEventCollectorPrivateTest, isDirectory)
 {
-    // isDirectory
-    SUCCEED();
+    // Test method: bool isDirectory((const QString &path))
+    QString _arg0{};
+    auto result = obj->isDirectory(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(FSEventCollectorPrivateLowTest, isMaxEventCountExceeded)
+TEST_F(FSEventCollectorPrivateTest, isMaxEventCountExceeded)
 {
-    // isMaxEventCountExceeded
-    SUCCEED();
+    // Test bool getter: isMaxEventCountExceeded()
+    bool result = obj->isMaxEventCountExceeded();
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(FSEventCollectorPrivateLowTest, normalizePath)
+TEST_F(FSEventCollectorPrivateTest, normalizePath)
 {
-    // normalizePath
-    SUCCEED();
+    // Test method: QString normalizePath((const QString &dirPath, const QString &fileName))
+    QString _arg0{};
+    QString _arg1{};
+    auto result = obj->normalizePath(_arg0, _arg1);
+    EXPECT_TRUE(result.isEmpty());
+
 }
 
-TEST_F(FSEventCollectorPrivateLowTest, shouldTrackPath)
+TEST_F(FSEventCollectorPrivateTest, shouldTrackPath)
 {
-    // shouldTrackPath
-    SUCCEED();
+    // Test method: bool shouldTrackPath((const QString &path))
+    QString _arg0{};
+    auto result = obj->shouldTrackPath(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(FSEventCollectorPrivateLowTest, stopCollecting)
+TEST_F(FSEventCollectorPrivateTest, stopCollecting)
 {
-    // stopCollecting
-    SUCCEED();
+    // Test method: void stopCollecting(())
+    EXPECT_NO_FATAL_FAILURE(obj->stopCollecting());
 }
 
-TEST_F(FSEventCollectorPrivateLowTest, FSEventCollectorPrivate_Destructor)
+TEST_F(FSEventCollectorPrivateTest, FSEventCollectorPrivate_Destructor)
 {
-    // ~FSEventCollectorPrivate
-    SUCCEED();
+    // Test method:  ~FSEventCollectorPrivate(())
+    EXPECT_NO_FATAL_FAILURE({ FSEventCollectorPrivate *tmp = new FSEventCollectorPrivate(); delete tmp; });
 }
-

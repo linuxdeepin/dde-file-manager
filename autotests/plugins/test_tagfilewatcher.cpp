@@ -4,43 +4,69 @@
 
 /**
  * @file test_tagfilewatcher.cpp
- * @brief Unit tests for TagFileWatcher Mid-priority methods
+ * @brief Unit tests for TagFileWatcher methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class TagFileWatcherTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "files/tagfilewatcher.h"
+
+#include <QTest>
+
+using namespace dfmplugin_tag;
+
+class TagFileWatcherTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new TagFileWatcher();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    TagFileWatcher *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(TagFileWatcherTest, onFilesHidden)
 {
-    // onFilesHidden
-    SUCCEED();
+    // Test method: void onFilesHidden((const QVariantMap &fileAndTags))
+    QVariantMap _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->onFilesHidden(_arg0));
 }
 
 TEST_F(TagFileWatcherTest, onFilesTagged)
 {
-    // onFilesTagged
-    SUCCEED();
+    // Test method: void onFilesTagged((const QVariantMap &fileAndTags))
+    QVariantMap _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->onFilesTagged(_arg0));
 }
 
 TEST_F(TagFileWatcherTest, onFilesUntagged)
 {
-    // onFilesUntagged
-    SUCCEED();
+    // Test method: void onFilesUntagged((const QVariantMap &fileAndTags))
+    QVariantMap _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->onFilesUntagged(_arg0));
 }
 
 TEST_F(TagFileWatcherTest, onTagRemoved)
 {
-    // onTagRemoved
-    SUCCEED();
+    // Test method: void onTagRemoved((const QString &tagName))
+    QString _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->onTagRemoved(_arg0));
 }
 
 TEST_F(TagFileWatcherTest, setEnabledSubfileWatcher)
 {
-    // setEnabledSubfileWatcher
-    SUCCEED();
+    // Test setter: void setEnabledSubfileWatcher((const QUrl &subfileUrl, bool enabled))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->setEnabledSubfileWatcher(_arg0, false));
 }

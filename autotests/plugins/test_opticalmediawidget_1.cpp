@@ -3,57 +3,80 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_opticalmediawidget_1.cpp
- * @brief Unit tests for OpticalMediaWidget Low-priority methods
+ * @file test_opticalmediawidget_1.cpp
+ * @brief Unit tests for OpticalMediaWidget methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class OpticalMediaWidgetTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/opticalmediawidget.h"
+
+#include <QTest>
+
+using namespace dfmplugin_optical;
+
+class OpticalMediaWidgetTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new OpticalMediaWidget();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    OpticalMediaWidget *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(OpticalMediaWidgetTest, handleErrorMount)
 {
-    // handleErrorMount
-    SUCCEED();
+    // Test method: void handleErrorMount(())
+    EXPECT_NO_FATAL_FAILURE(obj->handleErrorMount());
 }
 
 TEST_F(OpticalMediaWidgetTest, initConnect)
 {
-    // initConnect
-    SUCCEED();
+    // Test method: void initConnect(())
+    EXPECT_NO_FATAL_FAILURE(obj->initConnect());
 }
 
 TEST_F(OpticalMediaWidgetTest, isSupportedUDF)
 {
-    // isSupportedUDF
-    SUCCEED();
+    // Test bool getter: isSupportedUDF()
+    bool result = obj->isSupportedUDF();
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(OpticalMediaWidgetTest, onBurnButtonClicked)
 {
-    // onBurnButtonClicked
-    SUCCEED();
+    // Test method: void onBurnButtonClicked(())
+    EXPECT_NO_FATAL_FAILURE(obj->onBurnButtonClicked());
 }
 
 TEST_F(OpticalMediaWidgetTest, onDiscUnmounted)
 {
-    // onDiscUnmounted
-    SUCCEED();
+    // Test method: void onDiscUnmounted((const QUrl &url))
+    QUrl _arg0{};
+    EXPECT_NO_FATAL_FAILURE(obj->onDiscUnmounted(_arg0));
 }
 
 TEST_F(OpticalMediaWidgetTest, onDumpButtonClicked)
 {
-    // onDumpButtonClicked
-    SUCCEED();
+    // Test method: void onDumpButtonClicked(())
+    EXPECT_NO_FATAL_FAILURE(obj->onDumpButtonClicked());
 }
 
 TEST_F(OpticalMediaWidgetTest, onStagingFileStatisticsFinished)
 {
-    // onStagingFileStatisticsFinished
-    SUCCEED();
+    // Test method: void onStagingFileStatisticsFinished(())
+    EXPECT_NO_FATAL_FAILURE(obj->onStagingFileStatisticsFinished());
 }
-

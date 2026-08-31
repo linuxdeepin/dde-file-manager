@@ -3,51 +3,77 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_low_accesscontroldbus.cpp
- * @brief Unit tests for AccessControlDBus Low-priority methods
+ * @file test_low_accesscontroldbus.cpp
+ * @brief Unit tests for AccessControlDBus methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class AccessControlDBusLowTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "services/accesscontrol/accesscontroldbus.h"
+
+#include <QTest>
+
+using namespace src;
+
+class AccessControlDBusTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new AccessControlDBus();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    AccessControlDBus *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
-TEST_F(AccessControlDBusLowTest, AccessControlDBus)
+TEST_F(AccessControlDBusTest, AccessControlDBus)
 {
-    // AccessControlDBus
-    SUCCEED();
+    // Test constructor: AccessControlDBus((const char *name, QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
-TEST_F(AccessControlDBusLowTest, Chmod)
+TEST_F(AccessControlDBusTest, Chmod)
 {
-    // Chmod
-    SUCCEED();
+    // Test method: bool Chmod((const QString &path, uint mode))
+    QString _arg0{};
+    auto result = obj->Chmod(_arg0, 0);
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(AccessControlDBusLowTest, changeMountedOnInit)
+TEST_F(AccessControlDBusTest, changeMountedOnInit)
 {
-    // changeMountedOnInit
-    SUCCEED();
+    // Test method: void changeMountedOnInit(())
+    EXPECT_NO_FATAL_FAILURE(obj->changeMountedOnInit());
 }
 
-TEST_F(AccessControlDBusLowTest, checkAuthentication)
+TEST_F(AccessControlDBusTest, checkAuthentication)
 {
-    // checkAuthentication
-    SUCCEED();
+    // Test method: bool checkAuthentication((const QString &id))
+    QString _arg0{};
+    auto result = obj->checkAuthentication(_arg0);
+    EXPECT_FALSE(result);
+
 }
 
-TEST_F(AccessControlDBusLowTest, initConnect)
+TEST_F(AccessControlDBusTest, initConnect)
 {
-    // initConnect
-    SUCCEED();
+    // Test method: void initConnect(())
+    EXPECT_NO_FATAL_FAILURE(obj->initConnect());
 }
 
-TEST_F(AccessControlDBusLowTest, AccessControlDBus_Destructor)
+TEST_F(AccessControlDBusTest, AccessControlDBus_Destructor)
 {
-    // ~AccessControlDBus
-    SUCCEED();
+    // Test method:  ~AccessControlDBus(())
+    EXPECT_NO_FATAL_FAILURE({ AccessControlDBus *tmp = new AccessControlDBus(); delete tmp; });
 }
-

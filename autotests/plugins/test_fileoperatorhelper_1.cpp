@@ -3,159 +3,203 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * @file test_test_fileoperatorhelper_1.cpp
- * @brief Unit tests for FileOperatorHelper Low-priority methods
+ * @file test_fileoperatorhelper_1.cpp
+ * @brief Unit tests for FileOperatorHelper methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class FileOperatorHelperTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "utils/fileoperatorhelper.h"
+
+#include <QTest>
+
+using namespace dfmplugin_sidebar;
+
+class FileOperatorHelperTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new FileOperatorHelper();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    FileOperatorHelper *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(FileOperatorHelperTest, FileOperatorHelper)
 {
-    // FileOperatorHelper
-    SUCCEED();
+    // Test constructor: FileOperatorHelper((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(FileOperatorHelperTest, FileOperatorHelper_FileOper)
 {
-    // FileOperatorHelper
-    SUCCEED();
+    // Test constructor: FileOperatorHelper((QObject *parent))
+    ASSERT_NE(obj, nullptr);
 }
 
 TEST_F(FileOperatorHelperTest, copyFilePath)
 {
-    // copyFilePath
-    SUCCEED();
+    // Test method: void copyFilePath((const FileView *view))
+    EXPECT_NO_FATAL_FAILURE(obj->copyFilePath(nullptr));
 }
 
 TEST_F(FileOperatorHelperTest, copyFiles)
 {
-    // copyFiles
-    SUCCEED();
+    // Test method: void copyFiles((const FileView *view))
+    EXPECT_NO_FATAL_FAILURE(obj->copyFiles(nullptr));
 }
 
 TEST_F(FileOperatorHelperTest, cutFiles)
 {
-    // cutFiles
-    SUCCEED();
+    // Test method: void cutFiles((const FileView *view))
+    EXPECT_NO_FATAL_FAILURE(obj->cutFiles(nullptr));
 }
 
 TEST_F(FileOperatorHelperTest, dropFiles)
 {
-    // dropFiles
-    SUCCEED();
+    // Test method: void dropFiles((const FileView *view, const Qt::DropAction &action, const QUrl &targetUrl, const QList<QUrl> &urls))
+    Qt::DropAction _arg1{};
+    QUrl _arg2{};
+    QList<QUrl> _arg3{};
+    EXPECT_NO_FATAL_FAILURE(obj->dropFiles(nullptr, _arg1, _arg2, _arg3));
 }
 
 TEST_F(FileOperatorHelperTest, moveToTrash)
 {
-    // moveToTrash
-    SUCCEED();
+    // Test method: void moveToTrash((const FileView *view, const QList<QUrl> &urls))
+    QList<QUrl> _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->moveToTrash(nullptr, _arg1));
 }
 
 TEST_F(FileOperatorHelperTest, openFiles)
 {
-    // openFiles
-    SUCCEED();
+    // Test method: void openFiles((const FileView *view, const QList<QUrl> &urls))
+    QList<QUrl> _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->openFiles(nullptr, _arg1));
 }
 
 TEST_F(FileOperatorHelperTest, openFilesByApp)
 {
-    // openFilesByApp
-    SUCCEED();
+    // Test method: void openFilesByApp((const FileView *view, const QList<QUrl> &urls, const QList<QString> &apps))
+    QList<QUrl> _arg1{};
+    QList<QString> _arg2{};
+    EXPECT_NO_FATAL_FAILURE(obj->openFilesByApp(nullptr, _arg1, _arg2));
 }
 
 TEST_F(FileOperatorHelperTest, openInTerminal)
 {
-    // openInTerminal
-    SUCCEED();
+    // Test method: void openInTerminal((const FileView *view))
+    EXPECT_NO_FATAL_FAILURE(obj->openInTerminal(nullptr));
 }
 
 TEST_F(FileOperatorHelperTest, pasteClipboardImage)
 {
-    // pasteClipboardImage
-    SUCCEED();
+    // Test method: void pasteClipboardImage((const FileView *view))
+    EXPECT_NO_FATAL_FAILURE(obj->pasteClipboardImage(nullptr));
 }
 
 TEST_F(FileOperatorHelperTest, pasteFiles)
 {
-    // pasteFiles
-    SUCCEED();
+    // Test method: void pasteFiles((quint64 windowId, const QList<QUrl> &srcUrls, const QUrl &targetUrl, const Qt::DropAction &action))
+    QList<QUrl> _arg1{};
+    QUrl _arg2{};
+    Qt::DropAction _arg3{};
+    EXPECT_NO_FATAL_FAILURE(obj->pasteFiles(0, _arg1, _arg2, _arg3));
 }
 
 TEST_F(FileOperatorHelperTest, pasteFiles_pasteFil)
 {
-    // pasteFiles
-    SUCCEED();
+    // Test method: void pasteFiles((quint64 windowId, const QList<QUrl> &srcUrls, const QUrl &targetUrl, const Qt::DropAction &action))
+    QList<QUrl> _arg1{};
+    QUrl _arg2{};
+    Qt::DropAction _arg3{};
+    EXPECT_NO_FATAL_FAILURE(obj->pasteFiles(0, _arg1, _arg2, _arg3));
 }
 
 TEST_F(FileOperatorHelperTest, previewFiles)
 {
-    // previewFiles
-    SUCCEED();
+    // Test method: void previewFiles((const FileView *view, const QList<QUrl> &selectUrls, const QList<QUrl> &currentDirUrls))
+    QList<QUrl> _arg1{};
+    QList<QUrl> _arg2{};
+    EXPECT_NO_FATAL_FAILURE(obj->previewFiles(nullptr, _arg1, _arg2));
 }
 
 TEST_F(FileOperatorHelperTest, redoFiles)
 {
-    // redoFiles
-    SUCCEED();
+    // Test method: void redoFiles((const FileView *view))
+    EXPECT_NO_FATAL_FAILURE(obj->redoFiles(nullptr));
 }
 
 TEST_F(FileOperatorHelperTest, renameFile)
 {
-    // renameFile
-    SUCCEED();
+    // Test method: void renameFile((const FileView *view, const QUrl &oldUrl, const QUrl &newUrl))
+    QUrl _arg1{};
+    QUrl _arg2{};
+    EXPECT_NO_FATAL_FAILURE(obj->renameFile(nullptr, _arg1, _arg2));
 }
 
 TEST_F(FileOperatorHelperTest, renameFilesByAdd)
 {
-    // renameFilesByAdd
-    SUCCEED();
+    // Test method: void renameFilesByAdd((const QWidget *sender, const QList<QUrl> &urlList, const QPair<QString, AbstractJobHandler::FileNameAddFlag> &addPair))
+    QList<QUrl> _arg1{};
+    QPair<QString, AbstractJobHandler::FileNameAddFlag> _arg2{};
+    EXPECT_NO_FATAL_FAILURE(obj->renameFilesByAdd(nullptr, _arg1, _arg2));
 }
 
 TEST_F(FileOperatorHelperTest, renameFilesByCustom)
 {
-    // renameFilesByCustom
-    SUCCEED();
+    // Test method: void renameFilesByCustom((const QWidget *sender, const QList<QUrl> &urlList, const QPair<QString, QString> &customPair))
+    QList<QUrl> _arg1{};
+    QPair<QString, QString> _arg2{};
+    EXPECT_NO_FATAL_FAILURE(obj->renameFilesByCustom(nullptr, _arg1, _arg2));
 }
 
 TEST_F(FileOperatorHelperTest, renameFilesByReplace)
 {
-    // renameFilesByReplace
-    SUCCEED();
+    // Test method: void renameFilesByReplace((const QWidget *sender, const QList<QUrl> &urlList, const QPair<QString, QString> &replacePair))
+    QList<QUrl> _arg1{};
+    QPair<QString, QString> _arg2{};
+    EXPECT_NO_FATAL_FAILURE(obj->renameFilesByReplace(nullptr, _arg1, _arg2));
 }
 
 TEST_F(FileOperatorHelperTest, showFilesProperty)
 {
-    // showFilesProperty
-    SUCCEED();
+    // Test method: void showFilesProperty((const FileView *view))
+    EXPECT_NO_FATAL_FAILURE(obj->showFilesProperty(nullptr));
 }
 
 TEST_F(FileOperatorHelperTest, touchFiles)
 {
-    // touchFiles
-    SUCCEED();
+    // Test method: void touchFiles((const FileView *view, const QUrl &source))
+    QUrl _arg1{};
+    EXPECT_NO_FATAL_FAILURE(obj->touchFiles(nullptr, _arg1));
 }
 
 TEST_F(FileOperatorHelperTest, touchFolder)
 {
-    // touchFolder
-    SUCCEED();
+    // Test method: void touchFolder((const FileView *view))
+    EXPECT_NO_FATAL_FAILURE(obj->touchFolder(nullptr));
 }
 
 TEST_F(FileOperatorHelperTest, undoCallBackFunction)
 {
-    // undoCallBackFunction
-    SUCCEED();
+    // Test method: void undoCallBackFunction((QSharedPointer<AbstractJobHandler> handler))
+    EXPECT_NO_FATAL_FAILURE(obj->undoCallBackFunction(QSharedPointer<AbstractJobHandler>()));
 }
 
 TEST_F(FileOperatorHelperTest, undoFiles)
 {
-    // undoFiles
-    SUCCEED();
+    // Test method: void undoFiles((const FileView *view))
+    EXPECT_NO_FATAL_FAILURE(obj->undoFiles(nullptr));
 }
-

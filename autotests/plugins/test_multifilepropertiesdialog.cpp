@@ -4,49 +4,82 @@
 
 /**
  * @file test_multifilepropertiesdialog.cpp
- * @brief Unit tests for MultiFilePropertiesDialog Mid-priority methods
+ * @brief Unit tests for MultiFilePropertiesDialog methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class MultiFilePropertiesDialogTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "views/multifilepropertiesdialog.h"
+
+#include <QTest>
+
+using namespace dfmplugin_propertydialog;
+
+class MultiFilePropertiesDialogTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new MultiFilePropertiesDialog();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    MultiFilePropertiesDialog *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(MultiFilePropertiesDialogTest, changeFilesGroupState)
 {
-    // changeFilesGroupState
-    SUCCEED();
+    // Test method: bool changeFilesGroupState((int index, QString &strChange))
+    QString _arg1{};
+    auto result = obj->changeFilesGroupState(0, _arg1);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(MultiFilePropertiesDialogTest, changeFilesHideState)
 {
-    // changeFilesHideState
-    SUCCEED();
+    // Test method: bool changeFilesHideState((int state, QString &strChange))
+    QString _arg1{};
+    auto result = obj->changeFilesHideState(0, _arg1);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(MultiFilePropertiesDialogTest, changeFilesOtherState)
 {
-    // changeFilesOtherState
-    SUCCEED();
+    // Test method: bool changeFilesOtherState((int index, QString &strChange))
+    QString _arg1{};
+    auto result = obj->changeFilesOtherState(0, _arg1);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(MultiFilePropertiesDialogTest, changeFilesOwnerState)
 {
-    // changeFilesOwnerState
-    SUCCEED();
+    // Test method: bool changeFilesOwnerState((int index, QString &strChange))
+    QString _arg1{};
+    auto result = obj->changeFilesOwnerState(0, _arg1);
+    EXPECT_FALSE(result);
+
 }
 
 TEST_F(MultiFilePropertiesDialogTest, initUI)
 {
-    // initUI
-    SUCCEED();
+    // Test method: void initUI(())
+    EXPECT_NO_FATAL_FAILURE(obj->initUI());
 }
 
 TEST_F(MultiFilePropertiesDialogTest, saveBtnClicked)
 {
-    // saveBtnClicked
-    SUCCEED();
+    // Test method: void saveBtnClicked(())
+    EXPECT_NO_FATAL_FAILURE(obj->saveBtnClicked());
 }

@@ -4,19 +4,42 @@
 
 /**
  * @file test_operationsettings.cpp
- * @brief Unit tests for OperationSettings Mid-priority methods
+ * @brief Unit tests for OperationSettings methods with real assertions
  */
 
 #include <gtest/gtest.h>
 
-class OperationSettingsTest : public ::testing::Test {
+#include "stubext.h"
+
+#include "settings/operationsettings.h"
+
+#include <QTest>
+
+using namespace dfmplugin_fileoperations;
+
+class OperationSettingsTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+        obj = new OperationSettings();
+    }
+
+    void TearDown() override
+    {
+        delete obj;
+        obj = nullptr;
+        stub.clear();
+    }
+
+    OperationSettings *obj = nullptr;
+    stub_ext::StubExt stub;
 };
 
 TEST_F(OperationSettingsTest, createSyncModeItem)
 {
-    // createSyncModeItem
-    SUCCEED();
+    // Test method: DCORE_USE_NAMESPACE createSyncModeItem((QObject *opt))
+    auto result = obj->createSyncModeItem(nullptr);
+    EXPECT_NO_FATAL_FAILURE({ obj->createSyncModeItem(nullptr); });
+
 }
