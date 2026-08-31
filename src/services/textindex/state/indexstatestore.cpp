@@ -244,11 +244,13 @@ void IndexStateStore::saveLastUpdateTime(const QDateTime &lastUpdateTime) const
 
 QStringList IndexStateStore::createFileListCache() const
 {
+    QMutexLocker locker(&m_createFileListCacheMutex);
     return m_createFileListCache;
 }
 
 void IndexStateStore::setCreateFileListCache(const QStringList &cache) const
 {
+    QMutexLocker locker(&m_createFileListCacheMutex);
     m_createFileListCache = cache;
 }
 

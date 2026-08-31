@@ -10,6 +10,7 @@
 
 #include <QAtomicInteger>
 #include <QDateTime>
+#include <QMutex>
 #include <QStringList>
 
 SERVICETEXTINDEX_BEGIN_NAMESPACE
@@ -240,15 +241,46 @@ public:
      */
     void saveLastUpdateTime(const QDateTime &lastUpdateTime) const;
 
+    /**
+     * @brief 读取 Create 续建缓存的文件列表（线程安全）
+     * @return 缓存的文件路径列表，若不存在或已清除则返回空列表
+     *
+     * 由 worker 线程在 CreateResumeHandler / resolveFileListForCreateResume 中调用，
+     * 与 setCreateFileListCache（可能在主线程调用）通过内部互斥锁保证线程安全。
+     */
     QStringList createFileListCache() const;
+
+    /**
+     * @brief 设置 Create 续建缓存的文件列表（线程安全）
+     * @param cache 从 ANYTHING 获取的全量文件路径列表
+     *
+     * 调用场景：
+     * - 主线程 startTask 启动新 Create 时清除旧缓存（传空列表）
+     * - 主线程 finalizeIndexState 全量任务成功后清除缓存（传空列表）
+     * - worker 线程 CreateIndexHandler / resolveFileListForCreateResume 中缓存文件列表
+     */
     void setCreateFileListCache(const QStringList &cache) const;
 
+    /**
+     * @brief 读取 Create 续建的检查点偏移（线程安全）
+     * @return 已处理的文件索引偏移，0 表示从头开始
+     *
+     * 使用 QAtomicInteger 保证跨线程可见性。
+     */
     int createCheckpoint() const;
+
+    /**
+     * @brief 设置 Create 续建的检查点偏移（线程安全）
+     * @param checkpoint 已处理的文件索引偏移
+     *
+     * 由 worker 线程在遍历文件时每处理一个文件更新一次。
+     */
     void setCreateCheckpoint(int checkpoint) const;
 
 private:
     IndexProfile m_profile;
     mutable QStringList m_createFileListCache;
+    mutable QMutex m_createFileListCacheMutex;
     mutable QAtomicInteger<int> m_createCheckpoint { 0 };
 };
 
