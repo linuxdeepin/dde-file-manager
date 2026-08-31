@@ -54,6 +54,7 @@ public:
     qint64 totalCount() override;
     QString name() override { return "DirectFileListProvider"; }
 
+    /// Extract all file paths as a QStringList without traversing.
     QStringList filePaths() const;
 
 private:

@@ -642,6 +642,34 @@ void removeDirectoryIndex(const IndexContext &context, const QString &dirPath, c
     }
 }
 
+/// RAII wrapper that opens IndexReader + IndexWriter on construction and closes them on destruction.
+/// Eliminates duplicated ScopeGuard boilerplate across handler lambdas.
+struct IndexAccessor {
+    IndexReaderPtr reader;
+    IndexWriterPtr writer;
+
+    IndexAccessor(const QString &indexDir, const IndexContext &context)
+    {
+        reader = IndexReader::open(FSDirectory::open(indexDir.toStdWString()), true);
+        writer = newLucene<IndexWriter>(
+                FSDirectory::open(indexDir.toStdWString()),
+                boost::static_pointer_cast<Lucene::Analyzer>(context.profile().createAnalyzer()),
+                false,
+                IndexWriter::MaxFieldLengthUNLIMITED);
+    }
+
+    ~IndexAccessor()
+    {
+        try { if (reader) reader->close(); } catch (...) {
+            fmWarning() << "[IndexAccessor] Exception closing index reader";
+        }
+        try { if (writer) writer->close(); } catch (...) {
+            fmWarning() << "[IndexAccessor] Exception closing index writer";
+        }
+    }
+};
+
+/// Result of resolving the file list for a Create-resume task.
 struct CreateResumeFileList {
     QStringList fileList;
     int checkpoint { 0 };
@@ -649,6 +677,20 @@ struct CreateResumeFileList {
     bool hasFileList { false };   // true = fileList 可直接迭代; false = 需走 BFS traverse
 };
 
+/**
+ * @brief 为 Create 续建任务解析文件列表和检查点
+ * @param context 索引上下文
+ * @param path 索引根路径
+ * @param running 任务运行状态（用于 provider traverse 中的暂停检查）
+ * @param createInProgress 是否处于 Create 续建模式
+ * @return 解析结果，包含文件列表、检查点偏移和来源标记
+ *
+ * 解析优先级：
+ * 1. 若 createInProgress 且 stateStore 中已有缓存列表，直接使用缓存 + checkpoint
+ * 2. 否则通过 createFileProvider 获取文件列表
+ *    - DirectFileListProvider (ANYTHING)：提取路径列表并缓存到 stateStore
+ *    - FileSystemProvider (BFS)：返回 hasFileList=false，调用方需自行 traverse
+ */
 CreateResumeFileList resolveFileListForCreateResume(const IndexContext &context, const QString &path,
                                                     TaskState &running, bool createInProgress)
 {
@@ -687,6 +729,23 @@ CreateResumeFileList resolveFileListForCreateResume(const IndexContext &context,
     return resolved;
 }
 
+/**
+ * @brief 使用检查点偏移迭代处理文件列表，每个文件调用 updateFile
+ * @param context 索引上下文
+ * @param fileList 待处理的文件路径列表
+ * @param checkpoint 起始偏移（跳过前 checkpoint 个文件）
+ * @param createInProgress 是否处于 Create 续建模式（决定是否更新 checkpoint）
+ * @param excludeMatcher 黑名单匹配器
+ * @param reader 索引读取器
+ * @param writer 索引写入器
+ * @param reporter 进度报告器
+ * @param migrator 旧索引内容迁移器
+ * @param running 任务运行状态（用于暂停/中断检查）
+ *
+ * 遍历 fileList[checkpoint..end)，逐文件调用 updateFile。
+ * 若 createInProgress，每处理一个文件更新 stateStore 中的 checkpoint。
+ * 遇到暂停请求或中断时立即退出循环。
+ */
 void processFileListWithCheckpoint(const IndexContext &context, const QStringList &fileList,
                                     int checkpoint, bool createInProgress,
                                     const PathExcludeMatcher &excludeMatcher,
@@ -878,34 +937,10 @@ TaskHandler TaskHandlers::UpdateIndexHandler(const IndexContext &context)
         }
 
         try {
-            IndexReaderPtr reader = IndexReader::open(
-                    FSDirectory::open(indexDir.toStdWString()), true);
+            IndexAccessor accessor(indexDir, context);
+            ProgressReporter reporter(accessor.writer);
 
-            ScopeGuard readerCloser([&reader]() {
-                try {
-                    if (reader) reader->close();
-                } catch (...) {
-                    fmWarning() << "[UpdateIndexHandler] Exception closing index reader";
-                }
-            });
-
-            IndexWriterPtr writer = newLucene<IndexWriter>(
-                    FSDirectory::open(indexDir.toStdWString()),
-                    boost::static_pointer_cast<Lucene::Analyzer>(context.profile().createAnalyzer()),
-                    false,
-                    IndexWriter::MaxFieldLengthUNLIMITED);
-
-            ScopeGuard writerCloser([&writer]() {
-                try {
-                    if (writer) writer->close();
-                } catch (...) {
-                    fmWarning() << "[UpdateIndexHandler] Exception closing index writer";
-                }
-            });
-
-            ProgressReporter reporter(writer);
-
-            if (!cleanupIndexs(context, reader, writer, running, &reporter)) {
+            if (!cleanupIndexs(context, accessor.reader, accessor.writer, running, &reporter)) {
                 fmCritical() << "[UpdateIndexHandler] Index cleanup failed, aborting update";
                 result.success = false;
                 result.fatal = true;
@@ -914,7 +949,7 @@ TaskHandler TaskHandlers::UpdateIndexHandler(const IndexContext &context)
 
             if (running.isPauseRequested()) {
                 fmInfo() << "[UpdateIndexHandler] Index update paused during index cleanup";
-                writer->commit();
+                accessor.writer->commit();
                 result.paused = true;
                 result.success = false;
                 return result;
@@ -936,13 +971,13 @@ TaskHandler TaskHandlers::UpdateIndexHandler(const IndexContext &context)
             fmDebug() << "[UpdateIndexHandler] Starting file update processing, estimated total files:" << provider->totalCount();
 
             provider->traverse(running, [&](const QString &file) {
-                updateFile(context, file, excludeMatcher, reader, writer, &reporter,
+                updateFile(context, file, excludeMatcher, accessor.reader, accessor.writer, &reporter,
                            migrator.isActive() ? &migrator : nullptr);
             });
 
             if (running.isPauseRequested()) {
                 fmInfo() << "[UpdateIndexHandler] Index update paused by scheduler request";
-                writer->commit();
+                accessor.writer->commit();
                 result.paused = true;
                 result.success = false;
                 return result;
@@ -953,7 +988,7 @@ TaskHandler TaskHandlers::UpdateIndexHandler(const IndexContext &context)
                 result.interrupted = true;
             }
 
-            writer->commit();
+            accessor.writer->commit();
             if (!result.interrupted)
                 migrator.cleanup();
 
@@ -987,32 +1022,8 @@ TaskHandler TaskHandlers::CreateResumeHandler(const IndexContext &context)
         }
 
         try {
-            IndexReaderPtr reader = IndexReader::open(
-                    FSDirectory::open(indexDir.toStdWString()), true);
-
-            ScopeGuard readerCloser([&reader]() {
-                try {
-                    if (reader) reader->close();
-                } catch (...) {
-                    fmWarning() << "[CreateResumeHandler] Exception closing index reader";
-                }
-            });
-
-            IndexWriterPtr writer = newLucene<IndexWriter>(
-                    FSDirectory::open(indexDir.toStdWString()),
-                    boost::static_pointer_cast<Lucene::Analyzer>(context.profile().createAnalyzer()),
-                    false,
-                    IndexWriter::MaxFieldLengthUNLIMITED);
-
-            ScopeGuard writerCloser([&writer]() {
-                try {
-                    if (writer) writer->close();
-                } catch (...) {
-                    fmWarning() << "[CreateResumeHandler] Exception closing index writer";
-                }
-            });
-
-            ProgressReporter reporter(writer);
+            IndexAccessor accessor(indexDir, context);
+            ProgressReporter reporter(accessor.writer);
             const PathExcludeMatcher excludeMatcher = PathExcludeMatcher::createForIndex();
 
             fmInfo() << "[CreateResumeHandler] Create in progress, skipping cleanup";
@@ -1020,7 +1031,6 @@ TaskHandler TaskHandlers::CreateResumeHandler(const IndexContext &context)
             auto resolved = resolveFileListForCreateResume(context, path, running, true);
 
             if (!resolved.hasFileList) {
-                // BFS path: traverse directly, cannot materialize full list.
                 auto provider = createFileProvider(context, path);
                 if (!provider) {
                     fmCritical() << "[CreateResumeHandler] Failed to create file provider for path:" << path;
@@ -1032,7 +1042,7 @@ TaskHandler TaskHandlers::CreateResumeHandler(const IndexContext &context)
 
                 int bfsIndex = 0;
                 provider->traverse(running, [&](const QString &file) {
-                    updateFile(context, file, excludeMatcher, reader, writer, &reporter,
+                    updateFile(context, file, excludeMatcher, accessor.reader, accessor.writer, &reporter,
                                migrator.isActive() ? &migrator : nullptr);
                     if (context.stateStore())
                         context.stateStore()->setCreateCheckpoint(++bfsIndex);
@@ -1040,7 +1050,7 @@ TaskHandler TaskHandlers::CreateResumeHandler(const IndexContext &context)
 
                 if (running.isPauseRequested()) {
                     fmInfo() << "[CreateResumeHandler] Paused by scheduler request";
-                    writer->commit();
+                    accessor.writer->commit();
                     result.paused = true;
                     result.success = false;
                     return result;
@@ -1049,7 +1059,7 @@ TaskHandler TaskHandlers::CreateResumeHandler(const IndexContext &context)
                     fmWarning() << "[CreateResumeHandler] Interrupted by user request";
                     result.interrupted = true;
                 }
-                writer->commit();
+                accessor.writer->commit();
                 if (!result.interrupted)
                     migrator.cleanup();
                 result.success = true;
@@ -1065,11 +1075,11 @@ TaskHandler TaskHandlers::CreateResumeHandler(const IndexContext &context)
 
             processFileListWithCheckpoint(context, resolved.fileList, resolved.checkpoint,
                                           true, excludeMatcher,
-                                          reader, writer, reporter, migrator, running);
+                                          accessor.reader, accessor.writer, reporter, migrator, running);
 
             if (running.isPauseRequested()) {
                 fmInfo() << "[CreateResumeHandler] Paused by scheduler request";
-                writer->commit();
+                accessor.writer->commit();
                 result.paused = true;
                 result.success = false;
                 return result;
@@ -1080,7 +1090,7 @@ TaskHandler TaskHandlers::CreateResumeHandler(const IndexContext &context)
                 result.interrupted = true;
             }
 
-            writer->commit();
+            accessor.writer->commit();
             if (!result.interrupted)
                 migrator.cleanup();
 
