@@ -129,17 +129,17 @@ TEST(StandardPathsTest, ToStandardUrlUnmappedReturnsEmpty)
 
 TEST(StandardPathsTest, GetCachePathCallable)
 {
-    EXPECT_NO_FATAL_FAILURE({ StandardPaths::getCachePath(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)StandardPaths::getCachePath(); });
 }
 
 TEST(StandardPathsTest, IconNameByDirNameCallable)
 {
-    EXPECT_NO_FATAL_FAILURE({ StandardPaths::iconName(QString("Desktop")); });
+    EXPECT_NO_FATAL_FAILURE({ (void)StandardPaths::iconName(QString("Desktop")); });
 }
 
 TEST(StandardPathsTest, DisplayNameByDirNameCallable)
 {
-    EXPECT_NO_FATAL_FAILURE({ StandardPaths::displayName(QString("Documents")); });
+    EXPECT_NO_FATAL_FAILURE({ (void)StandardPaths::displayName(QString("Documents")); });
 }
 
 TEST(StandardPathsTest, LocalInstanceConstructsCleanly)
@@ -148,31 +148,3 @@ TEST(StandardPathsTest, LocalInstanceConstructsCleanly)
 }
 
 
-
-
-TEST(StandardPathsTest, fromStandardUrl)
-{
-    StandardPaths obj;
-    QUrl _arg0{};
-    EXPECT_NO_FATAL_FAILURE({ obj.fromStandardUrl(_arg0); });
-}
-
-TEST(StandardPathsTest, getCachePath)
-{
-    StandardPaths obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.getCachePath(); });
-}
-
-TEST(StandardPathsTest, location)
-{
-    StandardPaths obj;
-    QString _arg0{};
-    EXPECT_NO_FATAL_FAILURE({ obj.location(_arg0); });
-}
-
-TEST(StandardPathsTest, toStandardUrl)
-{
-    StandardPaths obj;
-    QString _arg0{};
-    EXPECT_NO_FATAL_FAILURE({ obj.toStandardUrl(_arg0); });
-}

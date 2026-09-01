@@ -85,7 +85,7 @@ void Search::initialize()
                 DFMSEARCH::HighlightOptions opts;
                 int posLen = HighlightProvider::instance()->positioningMaxLength();
                 if (posLen > 0)
-                    opts.setPositioningMaxLength(posLen);
+                    opts.positioningMaxLength = posLen;
 
                 return retriever.fetchHighlight(path, keyword,
                                                 static_cast<DFMSEARCH::SearchType>(searchType),

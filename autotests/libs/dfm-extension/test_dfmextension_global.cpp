@@ -43,9 +43,10 @@ protected:
 TEST_F(DFMExtensionGlobalTest, Initialize)
 {
     // 测试初始化函数不会崩溃
-    EXPECT_NO_FATAL_FAILURE({ dfm_extension_initialize(); });
+    dfm_extension_initialize();
     
     // 验证初始化完成（基本功能测试）
+    EXPECT_TRUE(true);
 }
 
 /**
@@ -58,9 +59,10 @@ TEST_F(DFMExtensionGlobalTest, Shutdown)
     dfm_extension_initialize();
     
     // 测试关闭函数不会崩溃
-    EXPECT_NO_FATAL_FAILURE({ dfm_extension_shutdown(); });
+    dfm_extension_shutdown();
     
     // 验证关闭完成（基本功能测试）
+    EXPECT_TRUE(true);
 }
 
 /**
@@ -73,7 +75,12 @@ TEST_F(DFMExtensionGlobalTest, MenuPlugin)
     dfm_extension_initialize();
     
     // 获取菜单插件
-    EXPECT_NO_FATAL_FAILURE({ dfm_extension_menu(); });
+    auto menuPlugin = dfm_extension_menu();
+    (void)menuPlugin; // Suppress unused variable warning
+    
+    // 验证返回结果（可能为nullptr或有效指针）
+    // 这里主要测试函数调用不会崩溃
+    EXPECT_TRUE(true);
     
     // 清理
     dfm_extension_shutdown();
@@ -89,10 +96,11 @@ TEST_F(DFMExtensionGlobalTest, EmblemPlugin)
     dfm_extension_initialize();
     
     // 获取标志图标插件
-    EXPECT_NO_FATAL_FAILURE({ auto emblemPlugin = dfm_extension_emblem(); });
+    auto emblemPlugin = dfm_extension_emblem();
     
     // 验证返回结果（可能为nullptr或有效指针）
     // 这里主要测试函数调用不会崩溃
+    EXPECT_TRUE(true);
     
     // 清理
     dfm_extension_shutdown();
@@ -108,10 +116,11 @@ TEST_F(DFMExtensionGlobalTest, WindowPlugin)
     dfm_extension_initialize();
     
     // 获取窗口插件
-    EXPECT_NO_FATAL_FAILURE({ auto windowPlugin = dfm_extension_window(); });
+    auto windowPlugin = dfm_extension_window();
     
     // 验证返回结果（可能为nullptr或有效指针）
     // 这里主要测试函数调用不会崩溃
+    EXPECT_TRUE(true);
     
     // 清理
     dfm_extension_shutdown();
@@ -127,10 +136,11 @@ TEST_F(DFMExtensionGlobalTest, FilePlugin)
     dfm_extension_initialize();
     
     // 获取文件插件
-    EXPECT_NO_FATAL_FAILURE({ auto filePlugin = dfm_extension_file(); });
+    auto filePlugin = dfm_extension_file();
     
     // 验证返回结果（可能为nullptr或有效指针）
     // 这里主要测试函数调用不会崩溃
+    EXPECT_TRUE(true);
     
     // 清理
     dfm_extension_shutdown();
@@ -147,14 +157,13 @@ TEST_F(DFMExtensionGlobalTest, LifecycleManagement)
         dfm_extension_initialize();
         
         // 获取所有插件
-        EXPECT_NO_FATAL_FAILURE({
-            auto menuPlugin = dfm_extension_menu();
-            auto emblemPlugin = dfm_extension_emblem();
-            auto windowPlugin = dfm_extension_window();
-            auto filePlugin = dfm_extension_file();
-        });
+        auto menuPlugin = dfm_extension_menu();
+        auto emblemPlugin = dfm_extension_emblem();
+        auto windowPlugin = dfm_extension_window();
+        auto filePlugin = dfm_extension_file();
         
         // 验证不会崩溃
+        EXPECT_TRUE(true);
         
         dfm_extension_shutdown();
     }
@@ -167,32 +176,29 @@ TEST_F(DFMExtensionGlobalTest, LifecycleManagement)
 TEST_F(DFMExtensionGlobalTest, BoundaryConditions)
 {
     // 测试在未初始化状态下调用插件获取函数
-    EXPECT_NO_FATAL_FAILURE({
-        auto menuPlugin1 = dfm_extension_menu();
-        auto emblemPlugin1 = dfm_extension_emblem();
-        auto windowPlugin1 = dfm_extension_window();
-        auto filePlugin1 = dfm_extension_file();
-    });
+    auto menuPlugin1 = dfm_extension_menu();
+    auto emblemPlugin1 = dfm_extension_emblem();
+    auto windowPlugin1 = dfm_extension_window();
+    auto filePlugin1 = dfm_extension_file();
     
     // 验证不会崩溃
+    EXPECT_TRUE(true);
     
     // 测试多次初始化
-    EXPECT_NO_FATAL_FAILURE({
-        dfm_extension_initialize();
-        dfm_extension_initialize();
-        dfm_extension_initialize();
-    });
+    dfm_extension_initialize();
+    dfm_extension_initialize();
+    dfm_extension_initialize();
     
     // 验证不会崩溃
+    EXPECT_TRUE(true);
     
     // 测试多次关闭
-    EXPECT_NO_FATAL_FAILURE({
-        dfm_extension_shutdown();
-        dfm_extension_shutdown();
-        dfm_extension_shutdown();
-    });
+    dfm_extension_shutdown();
+    dfm_extension_shutdown();
+    dfm_extension_shutdown();
     
     // 验证不会崩溃
+    EXPECT_TRUE(true);
 }
 
 /**

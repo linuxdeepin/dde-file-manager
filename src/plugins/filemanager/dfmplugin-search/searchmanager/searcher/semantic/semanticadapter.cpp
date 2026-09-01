@@ -76,7 +76,7 @@ DFMSearchResultMap SemanticAdapter::takeAll()
 void SemanticAdapter::onIntentParsed(const DFMSEARCH::ParsedIntent &intent)
 {
     QMutexLocker lk(&keywordMutex);
-    cachedKeywords = intent.keywords();
+    cachedKeywords = intent.keywords;
 }
 
 void SemanticAdapter::processResult(const DFMSEARCH::SearchResult &result)

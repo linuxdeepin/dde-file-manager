@@ -85,21 +85,21 @@ TEST(MimeTypeDisplayTest, SupportArchiveMimeTypesReturnsList)
     auto *mgr = MimeTypeDisplayManager::instance();
     QStringList archives = mgr->supportArchiveMimetypes();
     // May be empty if the mimetype files are not installed, but should not crash
-    EXPECT_NO_FATAL_FAILURE({ archives; });
+    EXPECT_NO_FATAL_FAILURE({ (void)archives; });
 }
 
 TEST(MimeTypeDisplayTest, SupportVideoMimeTypesReturnsList)
 {
     auto *mgr = MimeTypeDisplayManager::instance();
     QStringList videos = mgr->supportVideoMimeTypes();
-    EXPECT_NO_FATAL_FAILURE({ videos; });
+    EXPECT_NO_FATAL_FAILURE({ (void)videos; });
 }
 
 TEST(MimeTypeDisplayTest, SupportAudioMimeTypesReturnsList)
 {
     auto *mgr = MimeTypeDisplayManager::instance();
     QStringList audios = mgr->supportAudioMimeTypes();
-    EXPECT_NO_FATAL_FAILURE({ audios; });
+    EXPECT_NO_FATAL_FAILURE({ (void)audios; });
 }
 
 TEST(MimeTypeDisplayTest, AccurateDisplayTypeFromPathForTextFile)

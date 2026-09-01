@@ -43,8 +43,8 @@ TEST(ClipBoardTest, ClipboardFileUrlList)
 {
     QList<QUrl> urls { QUrl("file:///tmp/clip_test") };
     ClipBoard::setUrlsToClipboard(urls, ClipBoard::ClipboardAction::kCopyAction);
-    EXPECT_NO_FATAL_FAILURE({ ClipBoard::instance()->clipboardFileUrlList(); });
-    EXPECT_NO_FATAL_FAILURE({ ClipBoard::instance()->clipboardAction(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)ClipBoard::instance()->clipboardFileUrlList(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)ClipBoard::instance()->clipboardAction(); });
 }
 
 TEST(ClipBoardTest, RemoveUrls)
@@ -79,7 +79,7 @@ TEST(ClipBoardTest, ClearClipboard)
 
 TEST(ClipBoardTest, SupportCut)
 {
-    EXPECT_NO_FATAL_FAILURE({ ClipBoard::supportCut(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)ClipBoard::supportCut(); });
 }
 
 // ---- Coverage additions: clipboard data accessors ----
@@ -112,38 +112,4 @@ TEST(ClipBoardTest, GetUrlsByX11ReturnsEmptyWhenNoRemoteContent)
 {
     QList<QUrl> urls = ClipBoard::instance()->getUrlsByX11();
     EXPECT_TRUE(urls.isEmpty());
-}
-
-
-TEST(ClipBoardTest, clearClipboard)
-{
-    ClipBoard obj;
-    EXPECT_NO_FATAL_FAILURE(obj.clearClipboard());
-}
-
-TEST(ClipBoardTest, instance)
-{
-    ClipBoard obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.instance(); });
-}
-
-TEST(ClipBoardTest, removeUrls)
-{
-    ClipBoard obj;
-    QList<QUrl> _arg0{};
-    EXPECT_NO_FATAL_FAILURE(obj.removeUrls(_arg0));
-}
-
-TEST(ClipBoardTest, setCurUrlToClipboardForRemote)
-{
-    ClipBoard obj;
-    QUrl _arg0{};
-    EXPECT_NO_FATAL_FAILURE(obj.setCurUrlToClipboardForRemote(_arg0));
-}
-
-TEST(ClipBoardTest, supportCut)
-{
-    ClipBoard obj;
-    bool result = obj.supportCut();
-    EXPECT_FALSE(result);
 }

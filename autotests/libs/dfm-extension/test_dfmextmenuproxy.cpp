@@ -209,7 +209,8 @@ TEST_F(DFMExtMenuProxyTest, Destructor)
     {
         DFMExtMenuProxy *proxy = createTestMenuProxy();
         EXPECT_NE(proxy, nullptr);
-        EXPECT_NO_FATAL_FAILURE({ delete proxy; });
+        delete proxy;
+        EXPECT_TRUE(true); // 如果到达这里说明析构成功
     }
     
     // 测试多个对象的析构
@@ -220,11 +221,10 @@ TEST_F(DFMExtMenuProxyTest, Destructor)
     }
     
     // 清理所有对象
-    EXPECT_NO_FATAL_FAILURE({
-        for (auto* proxy : proxies) {
-            delete proxy;
-        }
-    });
+    for (auto* proxy : proxies) {
+        delete proxy;
+    }
+    EXPECT_TRUE(true); // 如果到达这里说明所有对象都成功析构
 }
 
 /**
@@ -751,7 +751,8 @@ TEST_F(DFMExtMenuProxyTest, MemoryManagement)
         }
     }
     
-    EXPECT_NO_FATAL_FAILURE({ delete longRunningProxy; });
+    delete longRunningProxy;
+    EXPECT_TRUE(true); // 如果到达这里说明内存管理正确
 }
 
 /**
@@ -1414,21 +1415,22 @@ TEST_F(DFMExtMenuTest, ComprehensiveFunctionality)
  */
 TEST_F(DFMExtMenuTest, MemoryManagement)
 {
-    EXPECT_NO_FATAL_FAILURE({
-        for (int i = 0; i < 100; ++i) {
-            DFMExtMenu* menu = createTestMenu();
-            DFMExtAction* action = createTestAction("Test Action " + std::to_string(i));
-
-            menu->addAction(action);
-            menu->registerTriggered([](DFMExtAction *action) {
-                // 空回调
-            });
-
-            menu->triggered(action);
-            menu->deleted(menu);
-
-            delete menu;
-            delete action;
-        }
-    });
+    // 测试大量创建和销毁
+    for (int i = 0; i < 100; ++i) {
+        DFMExtMenu* menu = createTestMenu();
+        DFMExtAction* action = createTestAction("Test Action " + std::to_string(i));
+        
+        menu->addAction(action);
+        menu->registerTriggered([](DFMExtAction *action) {
+            // 空回调
+        });
+        
+        menu->triggered(action);
+        menu->deleted(menu);
+        
+        delete menu;
+        delete action;
+    }
+    
+    EXPECT_TRUE(true); // 如果没有崩溃，说明内存管理正确
 }

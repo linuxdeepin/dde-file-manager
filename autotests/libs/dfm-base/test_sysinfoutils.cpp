@@ -86,95 +86,10 @@ TEST(SysInfoUtilsTest, GetOriginalUserHomeNonEmpty)
 
 TEST(SysInfoUtilsTest, IsDeepin23IsBool)
 {
-    EXPECT_NO_FATAL_FAILURE({ isDeepin23(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)isDeepin23(); });
 }
 
 TEST(SysInfoUtilsTest, IsDeveloperModeEnabledIsBool)
 {
-    EXPECT_NO_FATAL_FAILURE({ isDeveloperModeEnabled(); });
-}
-
-
-TEST(SysInfoUtilsTest, getAllUsersOfHome)
-{
-    SysInfoUtils obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.getAllUsersOfHome(); });
-}
-
-TEST(SysInfoUtilsTest, getHostName)
-{
-    SysInfoUtils obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.getHostName(); });
-}
-
-TEST(SysInfoUtilsTest, getOriginalUserHome)
-{
-    SysInfoUtils obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.getOriginalUserHome(); });
-}
-
-TEST(SysInfoUtilsTest, getUser)
-{
-    SysInfoUtils obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.getUser(); });
-}
-
-TEST(SysInfoUtilsTest, getUserId)
-{
-    SysInfoUtils obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.getUserId(); });
-}
-
-TEST(SysInfoUtilsTest, isDeepin23)
-{
-    SysInfoUtils obj;
-    bool result = obj.isDeepin23();
-    EXPECT_FALSE(result);
-}
-
-TEST(SysInfoUtilsTest, isDesktopSys)
-{
-    SysInfoUtils obj;
-    bool result = obj.isDesktopSys();
-    EXPECT_FALSE(result);
-}
-
-TEST(SysInfoUtilsTest, isDeveloperModeEnabled)
-{
-    SysInfoUtils obj;
-    bool result = obj.isDeveloperModeEnabled();
-    EXPECT_FALSE(result);
-}
-
-TEST(SysInfoUtilsTest, isOpenAsAdmin)
-{
-    SysInfoUtils obj;
-    bool result = obj.isOpenAsAdmin();
-    EXPECT_FALSE(result);
-}
-
-TEST(SysInfoUtilsTest, isRootUser)
-{
-    SysInfoUtils obj;
-    bool result = obj.isRootUser();
-    EXPECT_FALSE(result);
-}
-
-TEST(SysInfoUtilsTest, isSameUser)
-{
-    SysInfoUtils obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.isSameUser(nullptr); });
-}
-
-TEST(SysInfoUtilsTest, isServerSys)
-{
-    SysInfoUtils obj;
-    bool result = obj.isServerSys();
-    EXPECT_FALSE(result);
-}
-
-TEST(SysInfoUtilsTest, setMimeDataUserId)
-{
-    SysInfoUtils obj;
-    EXPECT_NO_FATAL_FAILURE(obj.setMimeDataUserId(nullptr));
+    EXPECT_NO_FATAL_FAILURE({ (void)isDeveloperModeEnabled(); });
 }

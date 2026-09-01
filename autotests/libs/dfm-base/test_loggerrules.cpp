@@ -70,30 +70,3 @@ TEST(LoggerRulesTest, RulesAccessorReturnsString)
     rules.setRules("accessor.test=true");
     EXPECT_EQ(rules.rules().toStdString(), "accessor.test=true");
 }
-
-
-TEST(LoggerRulesTest, appendRules)
-{
-    LoggerRules obj;
-    QString _arg0{};
-    EXPECT_NO_FATAL_FAILURE(obj.appendRules(_arg0));
-}
-
-TEST(LoggerRulesTest, initLoggerRules)
-{
-    LoggerRules obj;
-    EXPECT_NO_FATAL_FAILURE(obj.initLoggerRules());
-}
-
-TEST(LoggerRulesTest, rules)
-{
-    LoggerRules obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.rules(); });
-}
-
-TEST(LoggerRulesTest, setRules)
-{
-    LoggerRules obj;
-    QString _arg0{};
-    EXPECT_NO_FATAL_FAILURE(obj.setRules(_arg0));
-}

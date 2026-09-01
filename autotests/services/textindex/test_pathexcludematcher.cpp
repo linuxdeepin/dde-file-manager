@@ -122,7 +122,7 @@ TEST(PathExcludeMatcherTest, PatternsListReturnsOriginals)
 TEST(PathExcludeMatcherTest, CreateForIndexReturnsMatcher)
 {
     PathExcludeMatcher matcher = PathExcludeMatcher::createForIndex();
-    EXPECT_NO_FATAL_FAILURE({ matcher.hasPatterns(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)matcher.hasPatterns(); });
 }
 
 TEST(PathExcludeMatcherTest, GlobToRegexSimple)
@@ -144,57 +144,4 @@ TEST(PathExcludeMatcherTest, GlobToRegexEscapesSpecialChars)
     QRegularExpression re = PathExcludeMatcher::globToRegex("a.b");
     EXPECT_TRUE(re.match("a.b").hasMatch());
     EXPECT_FALSE(re.match("axb").hasMatch());
-}
-
-
-TEST(PathExcludeMatcherTest, addPattern)
-{
-    PathExcludeMatcher obj;
-    QString _arg0{};
-    EXPECT_NO_FATAL_FAILURE(obj.addPattern(_arg0));
-}
-
-TEST(PathExcludeMatcherTest, addPatterns)
-{
-    PathExcludeMatcher obj;
-    QStringList _arg0{};
-    EXPECT_NO_FATAL_FAILURE(obj.addPatterns(_arg0));
-}
-
-TEST(PathExcludeMatcherTest, clear)
-{
-    PathExcludeMatcher obj;
-    EXPECT_NO_FATAL_FAILURE(obj.clear());
-}
-
-TEST(PathExcludeMatcherTest, createForIndex)
-{
-    PathExcludeMatcher obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.createForIndex(); });
-}
-
-TEST(PathExcludeMatcherTest, patternCount)
-{
-    PathExcludeMatcher obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.patternCount(); });
-}
-
-TEST(PathExcludeMatcherTest, patterns)
-{
-    PathExcludeMatcher obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.patterns(); });
-}
-
-TEST(PathExcludeMatcherTest, removePattern)
-{
-    PathExcludeMatcher obj;
-    QString _arg0{};
-    EXPECT_NO_FATAL_FAILURE(obj.removePattern(_arg0));
-}
-
-TEST(PathExcludeMatcherTest, shouldExclude)
-{
-    PathExcludeMatcher obj;
-    QString _arg0{};
-    EXPECT_NO_FATAL_FAILURE({ obj.shouldExclude(_arg0); });
 }

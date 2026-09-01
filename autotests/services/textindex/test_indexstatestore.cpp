@@ -4,148 +4,150 @@
 
 /**
  * @file test_indexstatestore.cpp
- * @brief Unit tests for IndexStateStore methods with real assertions
+ * @brief Unit tests for IndexStateStore (indexstatestore.cpp)
  */
 
 #include <gtest/gtest.h>
+#include <QTemporaryDir>
+#include <QDateTime>
+#include <QString>
 
-#include "stubext.h"
-
+#include "services/textindex/service_textindex_global.h"
 #include "services/textindex/state/indexstatestore.h"
+#include "services/textindex/profile/indexprofile.h"
 
-#include <QTest>
+using namespace SERVICETEXTINDEX_NAMESPACE;
 
-using namespace src;
-
-class IndexStateStoreTest : public ::testing::Test
+class IndexStateStoreTest : public testing::Test
 {
 protected:
     void SetUp() override
     {
-        obj = new IndexStateStore();
+        ASSERT_TRUE(tmpDir.isValid());
+        indexDir = tmpDir.path();
+        profile = IndexProfile(IndexProfile::Type::Content,
+                               "statetest",
+                               "state_status.json",
+                               "state_version",
+                               1,
+                               [this]() -> QString { return indexDir; },
+                               []() -> bool { return true; },
+                               [](const QString &) -> bool { return true; },
+                               [](const QString &) -> bool { return true; });
+        store.reset(new IndexStateStore(profile));
     }
 
-    void TearDown() override
-    {
-        delete obj;
-        obj = nullptr;
-        stub.clear();
-    }
-
-    IndexStateStore *obj = nullptr;
-    stub_ext::StubExt stub;
+    QTemporaryDir tmpDir;
+    QString indexDir;
+    IndexProfile profile;
+    std::unique_ptr<IndexStateStore> store;
 };
 
-TEST_F(IndexStateStoreTest, IndexStateStore)
+TEST_F(IndexStateStoreTest, StatusFilePathContainsFileName)
 {
-    // Test constructor: IndexStateStore((IndexProfile profile))
-    ASSERT_NE(obj, nullptr);
+    QString sfp = store->statusFilePath();
+    EXPECT_TRUE(sfp.contains("state_status.json"));
 }
 
-TEST_F(IndexStateStoreTest, needsRebuild)
+TEST_F(IndexStateStoreTest, GetIndexStateUnknownWhenNoFile)
 {
-    // Test bool getter: needsRebuild()
-    bool result = obj->needsRebuild();
-    EXPECT_FALSE(result);
-
+    EXPECT_EQ(store->getIndexState(), IndexUtility::IndexState::Unknown);
 }
 
-TEST_F(IndexStateStoreTest, statusFilePath)
+TEST_F(IndexStateStoreTest, SetIndexStateClean)
 {
-    // Test getter: QString statusFilePath()
-    auto result = obj->statusFilePath();
-    EXPECT_TRUE(result.isEmpty());
-
+    store->setIndexState(IndexUtility::IndexState::Clean);
+    EXPECT_EQ(store->getIndexState(), IndexUtility::IndexState::Clean);
 }
 
-TEST_F(IndexStateStoreTest, getIndexState)
+TEST_F(IndexStateStoreTest, SetIndexStateDirty)
 {
-    // Test getter: IndexUtility::IndexState getIndexState()
-    auto result = obj->getIndexState();
-    EXPECT_GE(static_cast<int>(result), 0);
-
+    store->setIndexState(IndexUtility::IndexState::Dirty);
+    EXPECT_EQ(store->getIndexState(), IndexUtility::IndexState::Dirty);
 }
 
-TEST_F(IndexStateStoreTest, setIndexState)
+TEST_F(IndexStateStoreTest, SetIndexStateUnknownIgnored)
 {
-    // Test setter: void setIndexState((IndexUtility::IndexState state))
-    EXPECT_NO_FATAL_FAILURE(obj->setIndexState(IndexUtility::IndexState()));
+    store->setIndexState(IndexUtility::IndexState::Clean);
+    store->setIndexState(IndexUtility::IndexState::Unknown);
+    EXPECT_EQ(store->getIndexState(), IndexUtility::IndexState::Clean);
 }
 
-TEST_F(IndexStateStoreTest, isCleanState)
+TEST_F(IndexStateStoreTest, IsCleanState)
 {
-    // Test bool getter: isCleanState()
-    bool result = obj->isCleanState();
-    EXPECT_FALSE(result);
-
+    store->setIndexState(IndexUtility::IndexState::Clean);
+    EXPECT_TRUE(store->isCleanState());
+    store->setIndexState(IndexUtility::IndexState::Dirty);
+    EXPECT_FALSE(store->isCleanState());
 }
 
-TEST_F(IndexStateStoreTest, setNeedsRebuild)
+TEST_F(IndexStateStoreTest, NeedsRebuildDefault)
 {
-    // Test setter: void setNeedsRebuild((bool need))
-    EXPECT_NO_FATAL_FAILURE(obj->setNeedsRebuild(false));
+    EXPECT_NO_FATAL_FAILURE({ (void)store->needsRebuild(); });
 }
 
-TEST_F(IndexStateStoreTest, getIndexVersion)
+TEST_F(IndexStateStoreTest, SetNeedsRebuild)
 {
-    // Test getter: int getIndexVersion()
-    auto result = obj->getIndexVersion();
-    EXPECT_EQ(result, 0);
-
+    store->setNeedsRebuild(true);
+    EXPECT_TRUE(store->needsRebuild());
+    store->setNeedsRebuild(false);
+    EXPECT_FALSE(store->needsRebuild());
 }
 
-TEST_F(IndexStateStoreTest, isCompatibleVersion)
+TEST_F(IndexStateStoreTest, GetLastUpdateTime)
 {
-    // Test bool getter: isCompatibleVersion()
-    bool result = obj->isCompatibleVersion();
-    EXPECT_FALSE(result);
-
+    EXPECT_NO_FATAL_FAILURE({ (void)store->getLastUpdateTime(); });
 }
 
-TEST_F(IndexStateStoreTest, clearIndexDirectory)
+TEST_F(IndexStateStoreTest, GetIndexVersion)
 {
-    // Test method: void clearIndexDirectory(())
-    EXPECT_NO_FATAL_FAILURE(obj->clearIndexDirectory());
+    EXPECT_NO_FATAL_FAILURE({ (void)store->getIndexVersion(); });
 }
 
-TEST_F(IndexStateStoreTest, saveIndexStatus)
+TEST_F(IndexStateStoreTest, IsCompatibleVersion)
 {
-    // Test method: void saveIndexStatus((const QDateTime &lastUpdateTime, int version))
-    QDateTime _arg0{};
-    EXPECT_NO_FATAL_FAILURE(obj->saveIndexStatus(_arg0, 0));
+    EXPECT_NO_FATAL_FAILURE({ (void)store->isCompatibleVersion(); });
 }
 
-TEST_F(IndexStateStoreTest, isCreateInProgress)
+TEST_F(IndexStateStoreTest, SaveLastUpdateTime)
 {
-    // Test bool getter: isCreateInProgress()
-    bool result = obj->isCreateInProgress();
-    EXPECT_FALSE(result);
-
+    QDateTime now = QDateTime::currentDateTime();
+    EXPECT_NO_FATAL_FAILURE({ store->saveLastUpdateTime(now); });
 }
 
-TEST_F(IndexStateStoreTest, setCreateInProgress)
+TEST_F(IndexStateStoreTest, SaveIndexStatusWithTime)
 {
-    // Test setter: void setCreateInProgress((bool inProgress))
-    EXPECT_NO_FATAL_FAILURE(obj->setCreateInProgress(false));
+    QDateTime now = QDateTime::currentDateTime();
+    EXPECT_NO_FATAL_FAILURE({ store->saveIndexStatus(now); });
 }
 
-TEST_F(IndexStateStoreTest, getLastUpdateTime)
+TEST_F(IndexStateStoreTest, SaveIndexStatusWithTimeAndVersion)
 {
-    // Test getter: QString getLastUpdateTime()
-    auto result = obj->getLastUpdateTime();
-    EXPECT_TRUE(result.isEmpty());
-
+    QDateTime now = QDateTime::currentDateTime();
+    EXPECT_NO_FATAL_FAILURE({ store->saveIndexStatus(now, 6); });
 }
 
-TEST_F(IndexStateStoreTest, removeIndexStatusFile)
+TEST_F(IndexStateStoreTest, RemoveIndexStatusFile)
 {
-    // Test method: void removeIndexStatusFile(())
-    EXPECT_NO_FATAL_FAILURE(obj->removeIndexStatusFile());
+    store->setIndexState(IndexUtility::IndexState::Clean);
+    EXPECT_NO_FATAL_FAILURE({ store->removeIndexStatusFile(); });
+    EXPECT_EQ(store->getIndexState(), IndexUtility::IndexState::Unknown);
 }
 
-TEST_F(IndexStateStoreTest, saveLastUpdateTime)
+TEST_F(IndexStateStoreTest, ClearIndexDirectory)
 {
-    // Test method: void saveLastUpdateTime((const QDateTime &lastUpdateTime))
-    QDateTime _arg0{};
-    EXPECT_NO_FATAL_FAILURE(obj->saveLastUpdateTime(_arg0));
+    EXPECT_NO_FATAL_FAILURE({ store->clearIndexDirectory(); });
+}
+
+TEST_F(IndexStateStoreTest, IsCreateInProgressDefault)
+{
+    EXPECT_NO_FATAL_FAILURE({ (void)store->isCreateInProgress(); });
+}
+
+TEST_F(IndexStateStoreTest, SetCreateInProgress)
+{
+    store->setCreateInProgress(true);
+    EXPECT_TRUE(store->isCreateInProgress());
+    store->setCreateInProgress(false);
+    EXPECT_FALSE(store->isCreateInProgress());
 }

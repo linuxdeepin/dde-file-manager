@@ -41,22 +41,22 @@ TEST(UniversalUtilsExtTest, NotifyMessageFull)
 
 TEST(UniversalUtilsExtTest, UserLoginState)
 {
-    EXPECT_NO_FATAL_FAILURE({ UniversalUtils::userLoginState(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)UniversalUtils::userLoginState(); });
 }
 
 TEST(UniversalUtilsExtTest, CurrentLoginUser)
 {
-    EXPECT_NO_FATAL_FAILURE({ UniversalUtils::currentLoginUser(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)UniversalUtils::currentLoginUser(); });
 }
 
 TEST(UniversalUtilsExtTest, IsLogined)
 {
-    EXPECT_NO_FATAL_FAILURE({ UniversalUtils::isLogined(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)UniversalUtils::isLogined(); });
 }
 
 TEST(UniversalUtilsExtTest, ComputerMemory)
 {
-    EXPECT_NO_FATAL_FAILURE({ UniversalUtils::computerMemory(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)UniversalUtils::computerMemory(); });
 }
 
 TEST(UniversalUtilsExtTest, ComputerInformation)
@@ -78,17 +78,17 @@ TEST(UniversalUtilsExtTest, RunCommandFalse)
 
 TEST(UniversalUtilsExtTest, DockHeight)
 {
-    EXPECT_NO_FATAL_FAILURE({ UniversalUtils::dockHeight(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)UniversalUtils::dockHeight(); });
 }
 
 TEST(UniversalUtilsExtTest, GetKernelParameters)
 {
-    EXPECT_NO_FATAL_FAILURE({ UniversalUtils::getKernelParameters(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)UniversalUtils::getKernelParameters(); });
 }
 
 TEST(UniversalUtilsExtTest, IsInLiveSys)
 {
-    EXPECT_NO_FATAL_FAILURE({ UniversalUtils::isInLiveSys(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)UniversalUtils::isInLiveSys(); });
 }
 
 TEST(UniversalUtilsExtTest, UrlTransformToLocal)
@@ -111,7 +111,7 @@ TEST(UniversalUtilsExtTest, UrlsTransformToLocal)
 
 TEST(UniversalUtilsExtTest, GetCurrentUser)
 {
-    EXPECT_NO_FATAL_FAILURE({ UniversalUtils::getCurrentUser(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)UniversalUtils::getCurrentUser(); });
 }
 
 TEST(UniversalUtilsExtTest, IsParentOnly)
@@ -136,5 +136,5 @@ TEST(UniversalUtilsExtTest, LockUnlockScreenSaver)
 {
     uint32_t cookie = 0;
     EXPECT_NO_FATAL_FAILURE({ cookie = UniversalUtils::lockScreenSaver(); });
-    EXPECT_NO_FATAL_FAILURE({ UniversalUtils::unlockScreenSaver(cookie); });
+    EXPECT_NO_FATAL_FAILURE({ (void)UniversalUtils::unlockScreenSaver(cookie); });
 }

@@ -92,29 +92,29 @@ TEST(IndexUtilityTest, CheckFileSizeExceedsLimit)
 TEST(IndexUtilityTest, CheckFileSizeNonExistent)
 {
     QFileInfo info("/no/such/file/here.txt");
-    EXPECT_NO_FATAL_FAILURE({ IndexUtility::checkFileSize(info, 50); });
+    EXPECT_NO_FATAL_FAILURE({ (void)IndexUtility::checkFileSize(info, 50); });
 }
 
 TEST(IndexUtilityTest, IsSupportedTextFileBySuffix)
 {
-    EXPECT_NO_FATAL_FAILURE({ IndexUtility::isSupportedTextFile("/some/path/readme.txt"); });
-    EXPECT_NO_FATAL_FAILURE({ IndexUtility::isSupportedTextFile("/some/path/unknown.xyz"); });
+    EXPECT_NO_FATAL_FAILURE({ (void)IndexUtility::isSupportedTextFile("/some/path/readme.txt"); });
+    EXPECT_NO_FATAL_FAILURE({ (void)IndexUtility::isSupportedTextFile("/some/path/unknown.xyz"); });
 }
 
 TEST(IndexUtilityTest, IsSupportedOCRFileBySuffix)
 {
-    EXPECT_NO_FATAL_FAILURE({ IndexUtility::isSupportedOCRFile("/some/path/image.png"); });
-    EXPECT_NO_FATAL_FAILURE({ IndexUtility::isSupportedOCRFile("/some/path/unknown.xyz"); });
+    EXPECT_NO_FATAL_FAILURE({ (void)IndexUtility::isSupportedOCRFile("/some/path/image.png"); });
+    EXPECT_NO_FATAL_FAILURE({ (void)IndexUtility::isSupportedOCRFile("/some/path/unknown.xyz"); });
 }
 
 TEST(IndexUtilityTest, IsDefaultIndexedDirectory)
 {
-    EXPECT_NO_FATAL_FAILURE({ IndexUtility::isDefaultIndexedDirectory("/no/such/indexed/dir"); });
+    EXPECT_NO_FATAL_FAILURE({ (void)IndexUtility::isDefaultIndexedDirectory("/no/such/indexed/dir"); });
 }
 
 TEST(IndexUtilityTest, IsIndexWithAnything)
 {
-    EXPECT_NO_FATAL_FAILURE({ IndexUtility::isIndexWithAnything("/no/such/dir"); });
+    EXPECT_NO_FATAL_FAILURE({ (void)IndexUtility::isIndexWithAnything("/no/such/dir"); });
 }
 
 TEST(IndexUtilityTest, AnythingConfigWatcherInstance)
@@ -124,14 +124,14 @@ TEST(IndexUtilityTest, AnythingConfigWatcherInstance)
 
 TEST(IndexUtilityTest, AnythingConfigWatcherDefaultPaths)
 {
-    EXPECT_NO_FATAL_FAILURE({ IndexUtility::AnythingConfigWatcher::instance()->defaultAnythingIndexPaths(); });
-    EXPECT_NO_FATAL_FAILURE({ IndexUtility::AnythingConfigWatcher::instance()->defaultAnythingIndexPathsRealtime(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)IndexUtility::AnythingConfigWatcher::instance()->defaultAnythingIndexPaths(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)IndexUtility::AnythingConfigWatcher::instance()->defaultAnythingIndexPathsRealtime(); });
 }
 
 TEST(IndexUtilityTest, AnythingConfigWatcherBlacklistPaths)
 {
-    EXPECT_NO_FATAL_FAILURE({ IndexUtility::AnythingConfigWatcher::instance()->defaultBlacklistPaths(); });
-    EXPECT_NO_FATAL_FAILURE({ IndexUtility::AnythingConfigWatcher::instance()->defaultBlacklistPathsRealtime(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)IndexUtility::AnythingConfigWatcher::instance()->defaultBlacklistPaths(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)IndexUtility::AnythingConfigWatcher::instance()->defaultBlacklistPathsRealtime(); });
 }
 
 // ---- Coverage additions: config watcher destructors + handleConfigChanged ----
@@ -143,15 +143,17 @@ TEST(IndexUtilityTest, AnythingConfigWatcherHandleConfigChangedCallable)
 
 TEST(IndexUtilityTest, DlnfsConfigWatcherInstanceCallable)
 {
-    EXPECT_NO_FATAL_FAILURE({ IndexUtility::DlnfsConfigWatcher::instance(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)IndexUtility::DlnfsConfigWatcher::instance(); });
 }
 
 TEST(IndexUtilityTest, PathCalculatorCalculateNewPathForDirectoryMove)
 {
-    EXPECT_NO_FATAL_FAILURE({ PathCalculator::calculateNewPathForDirectoryMove("/old", "/old/sub", "/new"); });
+    EXPECT_NO_FATAL_FAILURE({
+        (void)PathCalculator::calculateNewPathForDirectoryMove("/old", "/old/sub", "/new");
+    });
 }
 
 TEST(IndexUtilityTest, SearchUtilityRunCliCallable)
 {
-    EXPECT_NO_FATAL_FAILURE({ SearchUtility::runCli({ "echo", "hello" }, 5000); });
+    EXPECT_NO_FATAL_FAILURE({ (void)SearchUtility::runCli({ "echo", "hello" }, 5000); });
 }

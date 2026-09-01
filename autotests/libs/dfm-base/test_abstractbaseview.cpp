@@ -74,15 +74,3 @@ TEST(AbstractBaseViewTest, LocalViewDestructsCleanly)
 {
     EXPECT_NO_FATAL_FAILURE({ TestAbstractBaseView view; });
 }
-
-TEST(AbstractBaseViewTest, deleteLater)
-{
-    AbstractBaseView obj;
-    EXPECT_NO_FATAL_FAILURE(obj.deleteLater());
-}
-
-TEST(AbstractBaseViewTest, notifyStateChanged)
-{
-    AbstractBaseView obj;
-    EXPECT_NO_FATAL_FAILURE(obj.notifyStateChanged());
-}

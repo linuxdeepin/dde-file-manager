@@ -83,14 +83,14 @@ TEST_F(UrlRouteExtTest, FromUserInputLocalPath)
 TEST_F(UrlRouteExtTest, FromUserInputWithWorkdir)
 {
     QUrl u = UrlRoute::fromUserInput("somefile", rootPath, true, QUrl::AssumeLocalFile);
-    EXPECT_NO_FATAL_FAILURE({ u; });
+    EXPECT_NO_FATAL_FAILURE({ (void)u; });
 }
 
 TEST_F(UrlRouteExtTest, PathToRealNoMatchReturnsEmpty)
 {
     QUrl u = UrlRoute::pathToReal(rootPath + "/no_such_under_any_root");
     // path under tmp dir matches no registered scheme root -> empty
-    EXPECT_NO_FATAL_FAILURE({ u; });
+    EXPECT_NO_FATAL_FAILURE({ (void)u; });
 }
 
 TEST_F(UrlRouteExtTest, FromLocalFile)

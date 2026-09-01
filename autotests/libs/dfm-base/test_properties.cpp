@@ -161,34 +161,3 @@ TEST(PropertiesTest, SaveToInvalidPathReturnsFalse)
     p.set("k", QString("v"));
     EXPECT_FALSE(p.save("/no/such/dir/out/file.props"));
 }
-
-
-TEST(PropertiesTest, Properties)
-{
-    Properties obj;
-    EXPECT_NO_FATAL_FAILURE({ Properties obj; });
-    }
-
-
-TEST(PropertiesTest, contains)
-{
-    Properties obj;
-    QString _arg0{};
-    EXPECT_NO_FATAL_FAILURE({ obj.contains(_arg0); });
-}
-
-TEST(PropertiesTest, save)
-{
-    Properties obj;
-    QString _arg0{};
-    QString _arg1{};
-    EXPECT_NO_FATAL_FAILURE({ obj.save(_arg0, _arg1); });
-}
-
-TEST(PropertiesTest, value)
-{
-    Properties obj;
-    QString _arg0{};
-    QVariant _arg1{};
-    EXPECT_NO_FATAL_FAILURE({ obj.value(_arg0, _arg1); });
-}

@@ -32,7 +32,7 @@ TEST(WatcherCacheTest, LocalInstanceLifecycleRunsDestructor)
 {
     // A stack instance exercises the (otherwise never-invoked) destructor of
     // the heap singleton held by instance().
-    EXPECT_NO_FATAL_FAILURE({ WatcherCache wc; });
+    EXPECT_NO_FATAL_FAILURE({ WatcherCache wc; (void)wc; });
 }
 
 TEST(WatcherCacheTest, CacheWatcherWithNullIsNoop)
@@ -88,55 +88,4 @@ TEST(WatcherCacheTest, SetCacheDisableRoundTrips)
     EXPECT_TRUE(WatcherCache::instance().cacheDisable(scheme));
     // cleanup
     WatcherCache::instance().setCacheDisbale(scheme, false);
-}
-
-
-TEST(WatcherCacheTest, WatcherCache)
-{
-    WatcherCache obj;
-    EXPECT_NO_FATAL_FAILURE({ WatcherCache obj; });
-    }
-
-
-TEST(WatcherCacheTest, cacheDisable)
-{
-    WatcherCache obj;
-    QString _arg0{};
-    EXPECT_NO_FATAL_FAILURE({ obj.cacheDisable(_arg0); });
-}
-
-TEST(WatcherCacheTest, cacheWatcher)
-{
-    WatcherCache obj;
-    QUrl _arg0{};
-    QSharedPointer<AbstractFileWatcher> _arg1{};
-    EXPECT_NO_FATAL_FAILURE(obj.cacheWatcher(_arg0, _arg1));
-}
-
-TEST(WatcherCacheTest, getCacheWatcher)
-{
-    WatcherCache obj;
-    QUrl _arg0{};
-    EXPECT_NO_FATAL_FAILURE({ obj.getCacheWatcher(_arg0); });
-}
-
-TEST(WatcherCacheTest, removeCacheWatcher)
-{
-    WatcherCache obj;
-    QUrl _arg0{};
-    EXPECT_NO_FATAL_FAILURE(obj.removeCacheWatcher(_arg0, false));
-}
-
-TEST(WatcherCacheTest, removeCacheWatcherByParent)
-{
-    WatcherCache obj;
-    QUrl _arg0{};
-    EXPECT_NO_FATAL_FAILURE(obj.removeCacheWatcherByParent(_arg0));
-}
-
-TEST(WatcherCacheTest, setCacheDisbale)
-{
-    WatcherCache obj;
-    QString _arg0{};
-    EXPECT_NO_FATAL_FAILURE(obj.setCacheDisbale(_arg0, false));
 }

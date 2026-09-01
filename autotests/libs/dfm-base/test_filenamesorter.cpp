@@ -133,33 +133,3 @@ TEST(FileNameSorterTest, SortByKeyDescending)
     EXPECT_EQ(items[1].first, QString("b"));
     EXPECT_EQ(items[2].first, QString("a"));
 }
-
-
-TEST(FileNameSorterTest, compare)
-{
-    FileNameSorter obj;
-    QString _arg0{};
-    QString _arg1{};
-    EXPECT_NO_FATAL_FAILURE({ obj.compare(_arg0, _arg1, Qt::SortOrder()); });
-}
-
-TEST(FileNameSorterTest, sort)
-{
-    FileNameSorter obj;
-    QStringList _arg0{};
-    EXPECT_NO_FATAL_FAILURE(obj.sort(_arg0, Qt::SortOrder()));
-}
-
-TEST(FileNameSorterTest, sortKey)
-{
-    FileNameSorter obj;
-    QString _arg0{};
-    EXPECT_NO_FATAL_FAILURE({ obj.sortKey(_arg0); });
-}
-
-TEST(FileNameSorterTest, sortUrls)
-{
-    FileNameSorter obj;
-    QList<QUrl> _arg0{};
-    EXPECT_NO_FATAL_FAILURE(obj.sortUrls(_arg0, Qt::SortOrder()));
-}

@@ -17,7 +17,7 @@ using namespace dfmbase;
 
 TEST(AppLaunchUtilsTest, InstanceReturnsRef)
 {
-    EXPECT_NO_FATAL_FAILURE({ &AppLaunchUtils::instance(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)&AppLaunchUtils::instance(); });
 }
 
 TEST(AppLaunchUtilsTest, AddCustomStrategyAndLaunch)
@@ -41,13 +41,13 @@ TEST(AppLaunchUtilsTest, LaunchAppNoStrategyFails)
     auto &utils = AppLaunchUtils::instance();
     bool ok = utils.launchApp("/no/such/app.desktop", {});
     // may succeed if an earlier strategy returns true, but generally false here
-    EXPECT_NO_FATAL_FAILURE({ ok; });
+    EXPECT_NO_FATAL_FAILURE({ (void)ok; });
 }
 
 TEST(AppLaunchUtilsTest, DefaultLaunchAppNonExistent)
 {
     auto &utils = AppLaunchUtils::instance();
-    EXPECT_NO_FATAL_FAILURE({ utils.defaultLaunchApp("/no/such/app.desktop", {}); });
+    EXPECT_NO_FATAL_FAILURE({ (void)utils.defaultLaunchApp("/no/such/app.desktop", {}); });
 }
 
 TEST(AppLaunchUtilsTest, ExecuteCommandNonExistentProgram)

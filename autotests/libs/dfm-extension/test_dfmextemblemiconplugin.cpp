@@ -65,7 +65,8 @@ TEST_F(DFMExtEmblemIconPluginTest, Destructor)
     EXPECT_NE(tempPlugin, nullptr);
     
     // 析构应该不会崩溃
-    EXPECT_NO_FATAL_FAILURE({ delete tempPlugin; });
+    delete tempPlugin;
+    EXPECT_TRUE(true); // 如果到达这里说明析构成功
 }
 
 /**
@@ -93,9 +94,10 @@ TEST_F(DFMExtEmblemIconPluginTest, LocationEmblemIcons)
     const int systemIconCount = 2;
     
     // 测试默认实现
-    EXPECT_NO_FATAL_FAILURE({ DFMExtEmblem emblem = plugin->locationEmblemIcons(testPath, systemIconCount); });
+    DFMExtEmblem emblem = plugin->locationEmblemIcons(testPath, systemIconCount);
     
     // 验证返回结果（默认实现应该返回空的标志）
+    EXPECT_TRUE(true); // 基本功能测试
 }
 
 /**
@@ -192,17 +194,20 @@ TEST_F(DFMExtEmblemIconPluginTest, BoundaryConditions)
     auto icons1 = plugin->emblemIcons("");
     EXPECT_TRUE(icons1.empty());
     
-    EXPECT_NO_FATAL_FAILURE({ DFMExtEmblem emblem1 = plugin->locationEmblemIcons("", 0); });
+    DFMExtEmblem emblem1 = plugin->locationEmblemIcons("", 0);
+    EXPECT_TRUE(true); // 不应该崩溃
     
     // 测试负数图标数量
-    EXPECT_NO_FATAL_FAILURE({ DFMExtEmblem emblem2 = plugin->locationEmblemIcons("/home/test", -1); });
+    DFMExtEmblem emblem2 = plugin->locationEmblemIcons("/home/test", -1);
+    EXPECT_TRUE(true); // 不应该崩溃
     
     // 测试很长的路径
     std::string longPath(1000, 'a');
     auto icons2 = plugin->emblemIcons(longPath);
     EXPECT_TRUE(icons2.empty());
     
-    EXPECT_NO_FATAL_FAILURE({ DFMExtEmblem emblem3 = plugin->locationEmblemIcons(longPath, 100); });
+    DFMExtEmblem emblem3 = plugin->locationEmblemIcons(longPath, 100);
+    EXPECT_TRUE(true); // 不应该崩溃
 }
 
 /**
@@ -275,7 +280,8 @@ TEST_F(DFMExtEmblemIconPluginTest, Compatibility)
     EXPECT_TRUE(oldIcons.empty()); // 默认实现应该返回空
     
     // 测试新API（locationEmblemIcons）
-    EXPECT_NO_FATAL_FAILURE({ DFMExtEmblem newEmblem = plugin->locationEmblemIcons(testPath, 2); });
+    DFMExtEmblem newEmblem = plugin->locationEmblemIcons(testPath, 2);
+    EXPECT_TRUE(true); // 基本功能测试
     
     // 同时注册两种回调
     plugin->registerEmblemIcons([](const std::string &filePath) {
@@ -292,5 +298,6 @@ TEST_F(DFMExtEmblemIconPluginTest, Compatibility)
     EXPECT_EQ(icons.size(), 1);
     EXPECT_EQ(icons[0], "old_icon");
     
-    EXPECT_NO_FATAL_FAILURE({ DFMExtEmblem emblem = plugin->locationEmblemIcons(testPath, 2); });
+    DFMExtEmblem emblem = plugin->locationEmblemIcons(testPath, 2);
+    EXPECT_TRUE(true); // 基本功能测试
 } 

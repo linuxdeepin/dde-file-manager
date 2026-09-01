@@ -4,245 +4,207 @@
 
 /**
  * @file test_urlroute.cpp
- * @brief Unit tests for UrlRoute methods with real assertions
+ * @brief Unit tests for UrlRoute (urlroute.cpp)
  */
 
 #include <gtest/gtest.h>
+#include <QTemporaryDir>
+#include <QUrl>
+#include <QIcon>
 
-#include "stubext.h"
+#include <dfm-base/base/urlroute.h>
+#include <dfm-base/dfm_global_defines.h>
 
-#include "dfm-base/base/urlroute.h"
+using namespace dfmbase;
 
-#include <QTest>
-
-using namespace src;
-
-class UrlRouteTest : public ::testing::Test
+class UrlRouteTest : public testing::Test
 {
 protected:
     void SetUp() override
     {
-        obj = new UrlRoute();
+        tmpDir.isValid();
+        rootPath = tmpDir.path();
+        // Ensure root path ends without trailing slash for regScheme formatting
     }
 
-    void TearDown() override
-    {
-        delete obj;
-        obj = nullptr;
-        stub.clear();
-    }
-
-    UrlRoute *obj = nullptr;
-    stub_ext::StubExt stub;
+    QTemporaryDir tmpDir;
+    QString rootPath;
 };
 
-TEST_F(UrlRouteTest, icon)
+TEST_F(UrlRouteTest, HasSchemeUnregisteredReturnsFalse)
 {
-    // Test method: QIcon icon((const QString &scheme))
-    QString _arg0{};
-    auto result = obj->icon(_arg0);
-    EXPECT_TRUE(result.isNull());
-
+    EXPECT_FALSE(UrlRoute::hasScheme("myscheme_unregistered_xyz"));
 }
 
-TEST_F(UrlRouteTest, schemeInfos)
+TEST_F(UrlRouteTest, RegisterVirtualSchemeSucceeds)
 {
-    // Test getter: QHash<QString, SchemeNode> schemeInfos()
-    auto result = obj->schemeInfos();
-    EXPECT_TRUE(result.isEmpty());
-
+    QString err;
+    bool ok = UrlRoute::regScheme("testvirtualscheme", "", QIcon(), true, "TestVirtual", &err);
+    EXPECT_TRUE(ok);
+    EXPECT_TRUE(UrlRoute::hasScheme("testvirtualscheme"));
 }
 
-TEST_F(UrlRouteTest, regScheme)
+TEST_F(UrlRouteTest, RegisterDuplicateSchemeFails)
 {
-    // Test method: bool regScheme((const QString &scheme,
-                         const QString &root,
-                         const QIcon &icon,
-                         const bool isVirtual,
-                         const QString &displayName,
-                         QString *errorString))
-    QString _arg0{};
-    QString _arg1{};
-    QIcon _arg2{};
-    QString _arg4{};
-    auto result = obj->regScheme(_arg0, _arg1, _arg2, false, _arg4, nullptr);
-    EXPECT_FALSE(result);
-
+    QString err;
+    UrlRoute::regScheme("testdup", "", QIcon(), true, "TestDup", &err);
+    bool ok = UrlRoute::regScheme("testdup", "", QIcon(), true, "TestDup2", &err);
+    EXPECT_FALSE(ok);
 }
 
-TEST_F(UrlRouteTest, toString)
+TEST_F(UrlRouteTest, RegisterNonVirtualWithExistingRoot)
 {
-    // Test method: QString toString((const QUrl &url, QUrl::FormattingOptions options))
-    QUrl _arg0{};
-    auto result = obj->toString(_arg0, QUrl::FormattingOptions());
-    EXPECT_TRUE(result.isEmpty());
-
+    QString err;
+    bool ok = UrlRoute::regScheme("testlocal", rootPath + "/", QIcon(), false, "TestLocal", &err);
+    EXPECT_TRUE(ok);
 }
 
-TEST_F(UrlRouteTest, hasScheme)
+TEST_F(UrlRouteTest, RegisterNonVirtualWithNonExistentRootFails)
 {
-    // Test method: bool hasScheme((const QString &scheme))
-    QString _arg0{};
-    auto result = obj->hasScheme(_arg0);
-    EXPECT_FALSE(result);
-
+    QString err;
+    bool ok = UrlRoute::regScheme("testbadroot", "/no/such/path/xyz/", QIcon(), false, "TestBad", &err);
+    EXPECT_FALSE(ok);
 }
 
-TEST_F(UrlRouteTest, isVirtual)
+TEST_F(UrlRouteTest, IsVirtualForVirtualScheme)
 {
-    // Test method: bool isVirtual((const QString &scheme))
-    QString _arg0{};
-    auto result = obj->isVirtual(_arg0);
-    EXPECT_FALSE(result);
-
+    UrlRoute::regScheme("testv2", "", QIcon(), true, "V2", nullptr);
+    QUrl url;
+    url.setScheme("testv2");
+    url.setPath("/");
+    EXPECT_TRUE(UrlRoute::isVirtual(url));
 }
 
-TEST_F(UrlRouteTest, urlParent)
+TEST_F(UrlRouteTest, IsVirtualForUnregisteredReturnsFalse)
 {
-    // Test method: QUrl urlParent((const QUrl &url))
-    QUrl _arg0{};
-    auto result = obj->urlParent(_arg0);
-    EXPECT_FALSE(result.isValid());
-
+    QUrl url;
+    url.setScheme("nosuchschemev");
+    url.setPath("/");
+    EXPECT_FALSE(UrlRoute::isVirtual(url));
 }
 
-TEST_F(UrlRouteTest, rootPath)
+TEST_F(UrlRouteTest, IsVirtualBySchemeString)
 {
-    // Test method: QString rootPath((const QString &scheme))
-    QString _arg0{};
-    auto result = obj->rootPath(_arg0);
-    EXPECT_TRUE(result.isEmpty());
-
+    UrlRoute::regScheme("testv3", "", QIcon(), true, "V3", nullptr);
+    EXPECT_TRUE(UrlRoute::isVirtual("testv3"));
+    EXPECT_FALSE(UrlRoute::isVirtual("testv3_missing"));
 }
 
-TEST_F(UrlRouteTest, rootUrl)
+TEST_F(UrlRouteTest, RootPathForRegisteredScheme)
 {
-    // Test method: QUrl rootUrl((const QString &scheme))
-    QString _arg0{};
-    auto result = obj->rootUrl(_arg0);
-    EXPECT_FALSE(result.isValid());
-
+    UrlRoute::regScheme("testroot", rootPath + "/", QIcon(), false, "TestRoot", nullptr);
+    QString rp = UrlRoute::rootPath("testroot");
+    EXPECT_FALSE(rp.isEmpty());
 }
 
-TEST_F(UrlRouteTest, schemeRealTree)
+TEST_F(UrlRouteTest, RootUrlForRegisteredScheme)
 {
-    // Test getter: QMultiMap<int, QString> schemeRealTree()
-    auto result = obj->schemeRealTree();
-    EXPECT_TRUE(result.isEmpty());
-
+    UrlRoute::regScheme("testrooturl", rootPath + "/", QIcon(), false, "TestRootUrl", nullptr);
+    QUrl u = UrlRoute::rootUrl("testrooturl");
+    EXPECT_EQ(u.scheme(), QString("testrooturl"));
 }
 
-TEST_F(UrlRouteTest, isRootUrl)
+TEST_F(UrlRouteTest, UrlParentOfChild)
 {
-    // Test method: bool isRootUrl((const QUrl &url))
-    QUrl _arg0{};
-    auto result = obj->isRootUrl(_arg0);
-    EXPECT_FALSE(result);
-
+    UrlRoute::regScheme("testparent", rootPath + "/", QIcon(), false, "TestParent", nullptr);
+    QUrl child;
+    child.setScheme("testparent");
+    child.setPath(UrlRoute::rootPath("testparent") + "/sub");
+    QUrl parent = UrlRoute::urlParent(child);
+    EXPECT_EQ(parent.scheme(), QString("testparent"));
 }
 
-TEST_F(UrlRouteTest, isAncestorsUrl)
-{
-    // Test method: bool isAncestorsUrl((QUrl url, const QUrl &ancestorsUrl, QList<QUrl> *list))
-    QUrl _arg1{};
-    auto result = obj->isAncestorsUrl(QUrl(), _arg1, nullptr);
-    EXPECT_FALSE(result);
+// ---- Coverage additions for previously-uncovered UrlRoute / SchemeNode API ----
 
+TEST_F(UrlRouteTest, IconForUnregisteredSchemeReturnsNullIcon)
+{
+    // Unregistered scheme hits the early-return branch.
+    EXPECT_TRUE(UrlRoute::icon("scheme_not_registered_zzz").isNull());
 }
 
-TEST_F(UrlRouteTest, urlParentList)
+TEST_F(UrlRouteTest, IconForRegisteredSchemeReturnsStoredIcon)
 {
-    // Test method: void urlParentList((QUrl url, QList<QUrl> *list))
-    EXPECT_NO_FATAL_FAILURE(obj->urlParentList(QUrl(), nullptr));
+    QString err;
+    ASSERT_TRUE(UrlRoute::regScheme("uticonscheme", rootPath + "/", QIcon(), false, "UtIcon", &err));
+    // Registered scheme hits the lookup branch (stored icon is null here).
+    QIcon ic = UrlRoute::icon("uticonscheme");
+    EXPECT_TRUE(ic.isNull());
 }
 
-TEST_F(UrlRouteTest, rootDisplayName)
+TEST_F(UrlRouteTest, FromStringListConvertsStringsToUrls)
 {
-    // Test method: QString rootDisplayName((const QString &scheme))
-    QString _arg0{};
-    auto result = obj->rootDisplayName(_arg0);
-    EXPECT_TRUE(result.isEmpty());
-
+    const QStringList strs { "file:///tmp", "file:///home" };
+    const QList<QUrl> urls = UrlRoute::fromStringList(strs);
+    EXPECT_EQ(urls.size(), 2);
+    EXPECT_EQ(urls.at(0).scheme().toStdString(), "file");
+    EXPECT_EQ(urls.at(1).scheme().toStdString(), "file");
 }
 
-TEST_F(UrlRouteTest, fromUserInput)
+TEST_F(UrlRouteTest, UrlsToByteArrayRoundTripsThroughByteArrayToUrls)
 {
-    // Test method: QUrl fromUserInput((const QString &userInput, QString workingDirectory, bool preferredLocalPath, QUrl::UserInputResolutionOptions options))
-    QString _arg0{};
-    auto result = obj->fromUserInput(_arg0, QString(), false, QUrl::UserInputResolutionOptions());
-    EXPECT_FALSE(result.isValid());
-
+    QList<QUrl> original;
+    original << QUrl("file:///a/1") << QUrl("file:///b/2") << QUrl("file:///c/3");
+    const QByteArray blob = UrlRoute::urlsToByteArray(original);
+    EXPECT_FALSE(blob.isEmpty());
+    const QList<QUrl> restored = UrlRoute::byteArrayToUrls(blob);
+    EXPECT_EQ(restored.size(), original.size());
+    for (int i = 0; i < original.size(); ++i)
+        EXPECT_EQ(restored.at(i).toString(), original.at(i).toString());
 }
 
-TEST_F(UrlRouteTest, fromStringList)
+TEST_F(UrlRouteTest, IsAncestorsUrlReturnsTrueWhenAncestorInChain)
 {
-    // Test method: QList<QUrl> fromStringList((const QStringList &strList))
-    QStringList _arg0{};
-    auto result = obj->fromStringList(_arg0);
-    EXPECT_TRUE(result.isEmpty());
-
+    QString err;
+    ASSERT_TRUE(UrlRoute::regScheme("utanc", rootPath + "/", QIcon(), false, "UtAnc", &err));
+    QUrl child;
+    child.setScheme("utanc");
+    child.setPath(UrlRoute::rootPath("utanc") + "a/b");
+    QUrl ancestor;
+    ancestor.setScheme("utanc");
+    ancestor.setPath(UrlRoute::rootPath("utanc") + "a");
+    QList<QUrl> list;
+    EXPECT_TRUE(UrlRoute::isAncestorsUrl(child, ancestor, &list));
+    EXPECT_FALSE(list.isEmpty());
 }
 
-TEST_F(UrlRouteTest, pathToReal)
+TEST_F(UrlRouteTest, IsAncestorsUrlReturnsFalseWhenAncestorNotInChain)
 {
-    // Test method: QUrl pathToReal((const QString &path))
-    QString _arg0{};
-    auto result = obj->pathToReal(_arg0);
-    EXPECT_FALSE(result.isValid());
-
+    QString err;
+    ASSERT_TRUE(UrlRoute::regScheme("utanc2", rootPath + "/", QIcon(), false, "UtAnc2", &err));
+    QUrl child;
+    child.setScheme("utanc2");
+    child.setPath(UrlRoute::rootPath("utanc2") + "a/b");
+    QUrl stranger;
+    stranger.setScheme("utanc2");
+    stranger.setPath(UrlRoute::rootPath("utanc2") + "x");
+    QList<QUrl> list;
+    EXPECT_FALSE(UrlRoute::isAncestorsUrl(child, stranger, &list));
 }
 
-TEST_F(UrlRouteTest, fromLocalFile)
+TEST_F(UrlRouteTest, SchemeNodeDefaultIsEmpty)
 {
-    // Test method: QUrl fromLocalFile((const QString &path))
-    QString _arg0{};
-    auto result = obj->fromLocalFile(_arg0);
-    EXPECT_FALSE(result.isValid());
-
+    SchemeNode node;
+    EXPECT_TRUE(node.isEmpty());
 }
 
-TEST_F(UrlRouteTest, pathToUrl)
+TEST_F(UrlRouteTest, SchemeNodeWithPathIsNotEmpty)
 {
-    // Test method: QUrl pathToUrl((const QString &path, const QString &scheme))
-    QString _arg0{};
-    QString _arg1{};
-    auto result = obj->pathToUrl(_arg0, _arg1);
-    EXPECT_FALSE(result.isValid());
-
+    SchemeNode node(rootPath);
+    EXPECT_FALSE(node.isEmpty());
+    EXPECT_EQ(node.rootPath().toStdString(), rootPath.toStdString());
 }
 
-TEST_F(UrlRouteTest, urlToPath)
+TEST_F(UrlRouteTest, SchemeNodeOperatorAssignCopiesPathAndVirtualFlag)
 {
-    // Test method: QString urlToPath((const QUrl &url))
-    QUrl _arg0{};
-    auto result = obj->urlToPath(_arg0);
-    EXPECT_TRUE(result.isEmpty());
-
+    SchemeNode src(rootPath, QIcon(), true, "srcname");
+    SchemeNode dst;
+    dst = src;
+    EXPECT_EQ(dst.rootPath().toStdString(), rootPath.toStdString());
+    EXPECT_TRUE(dst.isVirtual());
 }
 
-TEST_F(UrlRouteTest, urlsToByteArray)
+TEST_F(UrlRouteTest, SchemeNodePathIconReturnsStoredIcon)
 {
-    // Test method: QByteArray urlsToByteArray((const QList<QUrl> &list))
-    QList<QUrl> _arg0{};
-    auto result = obj->urlsToByteArray(_arg0);
-    EXPECT_TRUE(result.isEmpty());
-
-}
-
-TEST_F(UrlRouteTest, byteArrayToUrls)
-{
-    // Test method: QList<QUrl> byteArrayToUrls((const QByteArray &arr))
-    QByteArray _arg0{};
-    auto result = obj->byteArrayToUrls(_arg0);
-    EXPECT_TRUE(result.isEmpty());
-
-}
-
-TEST_F(UrlRouteTest, urlToLocalPath)
-{
-    // Test method: QString urlToLocalPath((const QUrl &url))
-    QUrl _arg0{};
-    auto result = obj->urlToLocalPath(_arg0);
-    EXPECT_TRUE(result.isEmpty());
-
+    SchemeNode node(rootPath, QIcon());
+    EXPECT_TRUE(node.pathIcon().isNull());
 }

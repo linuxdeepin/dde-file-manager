@@ -84,12 +84,14 @@ TEST_F(FileUtilsExt2Test, IsSameFileByUrl)
     f.write("x");
     f.close();
     QUrl url = QUrl::fromLocalFile(path);
-    EXPECT_NO_FATAL_FAILURE({ FileUtils::isSameFile(url, url, Global::CreateFileInfoType::kCreateFileInfoSync); });
+    EXPECT_NO_FATAL_FAILURE({
+        (void)FileUtils::isSameFile(url, url, Global::CreateFileInfoType::kCreateFileInfoSync);
+    });
 }
 
 TEST_F(FileUtilsExt2Test, IsCdRomDevice)
 {
-    EXPECT_NO_FATAL_FAILURE({ FileUtils::isCdRomDevice(QUrl("file:///tmp")); });
+    EXPECT_NO_FATAL_FAILURE({ (void)FileUtils::isCdRomDevice(QUrl("file:///tmp")); });
 }
 
 TEST_F(FileUtilsExt2Test, TrashRootUrl)
@@ -107,17 +109,17 @@ TEST_F(FileUtilsExt2Test, DirFfileCountForDir)
 {
     QString dir = rootPath + "/countdir";
     QDir().mkpath(dir);
-    EXPECT_NO_FATAL_FAILURE({ FileUtils::dirFfileCount(QUrl::fromLocalFile(dir)); });
+    EXPECT_NO_FATAL_FAILURE({ (void)FileUtils::dirFfileCount(QUrl::fromLocalFile(dir)); });
 }
 
 TEST_F(FileUtilsExt2Test, BindUrlTransformNonTrash)
 {
-    EXPECT_NO_FATAL_FAILURE({ FileUtils::bindUrlTransform(QUrl("file:///tmp/x")); });
+    EXPECT_NO_FATAL_FAILURE({ (void)FileUtils::bindUrlTransform(QUrl("file:///tmp/x")); });
 }
 
 TEST_F(FileUtilsExt2Test, FindIconFromXdgTheme)
 {
-    EXPECT_NO_FATAL_FAILURE({ FileUtils::findIconFromXdg("folder"); });
+    EXPECT_NO_FATAL_FAILURE({ (void)FileUtils::findIconFromXdg("folder"); });
 }
 
 TEST_F(FileUtilsExt2Test, CacheCopyingFileUrlLifecycle)
@@ -138,23 +140,23 @@ TEST_F(FileUtilsExt2Test, NotifyFileChangeManualNoCrash)
 
 TEST_F(FileUtilsExt2Test, SetBackGroundNoCrash)
 {
-    EXPECT_NO_FATAL_FAILURE({ FileUtils::setBackGround("/no/such/picture.png"); });
+    EXPECT_NO_FATAL_FAILURE({ (void)FileUtils::setBackGround("/no/such/picture.png"); });
 }
 
 TEST_F(FileUtilsExt2Test, FileBatchCustomText)
 {
     QList<QUrl> urls { QUrl("file:///tmp/a.txt"), QUrl("file:///tmp/b.txt") };
     QPair<QString, QString> pair { "a", "A" };
-    EXPECT_NO_FATAL_FAILURE({ FileUtils::fileBatchCustomText(urls, pair); });
+    EXPECT_NO_FATAL_FAILURE({ (void)FileUtils::fileBatchCustomText(urls, pair); });
 }
 
 TEST_F(FileUtilsExt2Test, ComputerAndHomeDesktopFileUrl)
 {
-    EXPECT_NO_FATAL_FAILURE({ DesktopAppUrl::computerDesktopFileUrl(); });
-    EXPECT_NO_FATAL_FAILURE({ DesktopAppUrl::homeDesktopFileUrl(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)DesktopAppUrl::computerDesktopFileUrl(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)DesktopAppUrl::homeDesktopFileUrl(); });
 }
 
 TEST_F(FileUtilsExt2Test, TrashDesktopFileUrl)
 {
-    EXPECT_NO_FATAL_FAILURE({ DesktopAppUrl::trashDesktopFileUrl(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)DesktopAppUrl::trashDesktopFileUrl(); });
 }

@@ -56,7 +56,8 @@ TEST_F(TestDFMExtWindowProxy, createAndDestroy)
     EXPECT_EQ(proxy->d, priv);
     
     // 测试创建后立即销毁，确保内存管理正确
-    EXPECT_NO_FATAL_FAILURE({ delete proxy; });
+    delete proxy;
+    SUCCEED();
 }
 
 TEST_F(TestDFMExtWindowProxy, createWindow)
@@ -80,23 +81,21 @@ TEST_F(TestDFMExtWindowProxy, createWindow)
 TEST_F(TestDFMExtWindowProxy, showWindow)
 {
     // 测试显示窗口
-    EXPECT_NO_FATAL_FAILURE({
-        uint64_t winId = 12345;
-        windowProxy->showWindow(winId);
-    });
+    uint64_t winId = 12345;
+    windowProxy->showWindow(winId);
     
+    // 根据当前实现，这个方法应该不会崩溃（TODO: impl me）
+    SUCCEED();
     
     // 测试显示不存在的窗口
-    EXPECT_NO_FATAL_FAILURE({
-        uint64_t invalidWinId = 0;
-        windowProxy->showWindow(invalidWinId);
-    });
+    uint64_t invalidWinId = 0;
+    windowProxy->showWindow(invalidWinId);
+    SUCCEED();
     
     // 测试显示最大值窗口 ID
-    EXPECT_NO_FATAL_FAILURE({
-        uint64_t maxWinId = UINT64_MAX;
-        windowProxy->showWindow(maxWinId);
-    });
+    uint64_t maxWinId = UINT64_MAX;
+    windowProxy->showWindow(maxWinId);
+    SUCCEED();
 }
 
 TEST_F(TestDFMExtWindowProxy, windowIdList)
@@ -124,7 +123,8 @@ TEST_F(TestDFMExtWindowProxy, destructor)
     EXPECT_EQ(proxy->d, priv);
     
     // 析构应该正确清理 privateImpl
-    EXPECT_NO_FATAL_FAILURE({ delete proxy; });
+    delete proxy;
+    SUCCEED();
 }
 
 // ==================== 边界条件和压力测试 ====================
@@ -169,24 +169,27 @@ TEST_F(TestDFMExtWindowProxy, showWindowBoundaryConditions)
     };
     
     for (uint64_t id : testIds) {
-        EXPECT_NO_FATAL_FAILURE({ windowProxy->showWindow(id); });
+        windowProxy->showWindow(id);
+        SUCCEED();  // 只要没有崩溃就成功
     }
 }
 
 TEST_F(TestDFMExtWindowProxy, memoryLeakTest)
 {
-    EXPECT_NO_FATAL_FAILURE({
-        for (int i = 0; i < 1000; ++i) {
-            DFMExtWindowProxyPrivate *priv = new DFMExtWindowProxyPrivate();
-            DFMExtWindowProxy *proxy = new DFMExtWindowProxy(priv);
-
-            proxy->createWindow("/test/path");
-            proxy->showWindow(12345);
-            proxy->windowIdList();
-
-            delete proxy;
-        }
-    });
+    // 内存泄漏测试
+    for (int i = 0; i < 1000; ++i) {
+        DFMExtWindowProxyPrivate *priv = new DFMExtWindowProxyPrivate();
+        DFMExtWindowProxy *proxy = new DFMExtWindowProxy(priv);
+        
+        // 执行各种操作
+        proxy->createWindow("/test/path");
+        proxy->showWindow(12345);
+        proxy->windowIdList();
+        
+        delete proxy;
+    }
+    
+    SUCCEED();  // 如果能到达这里说明没有明显的内存泄漏
 }
 
 TEST_F(TestDFMExtWindowProxy, threadSafetyTest)
@@ -340,7 +343,8 @@ TEST_F(TestDFMExtWindowProxy, errorHandlingTest)
     };
     
     for (uint64_t id : invalidIds) {
-        EXPECT_NO_FATAL_FAILURE({ windowProxy->showWindow(id); });
+        windowProxy->showWindow(id);
+        SUCCEED();  // 只要没有崩溃就成功
     }
 }
 

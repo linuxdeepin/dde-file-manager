@@ -84,22 +84,3 @@ TEST(AbstractBasePreviewTest, LocalPreviewDestructsCleanly)
 {
     EXPECT_NO_FATAL_FAILURE({ TestAbstractBasePreview preview; });
 }
-
-TEST(AbstractBasePreviewTest, AbstractBasePreview)
-{
-    AbstractBasePreview obj;
-    EXPECT_NO_FATAL_FAILURE({ AbstractBasePreview obj; });
-    }
-
-
-TEST(AbstractBasePreviewTest, handleBeforDestroy)
-{
-    AbstractBasePreview obj;
-    EXPECT_NO_FATAL_FAILURE(obj.handleBeforDestroy());
-}
-
-TEST(AbstractBasePreviewTest, title)
-{
-    AbstractBasePreview obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.title(); });
-}

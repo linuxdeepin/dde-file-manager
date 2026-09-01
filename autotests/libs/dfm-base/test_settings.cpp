@@ -4,280 +4,239 @@
 
 /**
  * @file test_settings.cpp
- * @brief Unit tests for Settings methods with real assertions
+ * @brief Unit tests for Settings (settings.cpp)
  */
 
 #include <gtest/gtest.h>
+#include <QTemporaryDir>
+#include <QFile>
+#include <QTextStream>
+#include <QUrl>
+#include <QVariant>
+#include <QSet>
+#include <QStringList>
 
-#include "stubext.h"
+#include <dfm-base/base/application/settings.h>
 
-#include "dfm-base/base/application/settings.h"
+using namespace dfmbase;
 
-#include <QTest>
-
-using namespace src;
-
-class SettingsTest : public ::testing::Test
+class SettingsTest : public testing::Test
 {
 protected:
     void SetUp() override
     {
-        obj = new Settings();
+        ASSERT_TRUE(tmpDir.isValid());
+        rootPath = tmpDir.path();
+
+        defaultFile = rootPath + "/default.json";
+        settingFile = rootPath + "/settings.json";
+        writeFile(defaultFile, "{ \"General\": { \"name\": \"default\" } }");
+        writeFile(settingFile, "{ \"General\": { \"name\": \"current\" } }");
     }
 
-    void TearDown() override
+    void writeFile(const QString &path, const QString &content)
     {
-        delete obj;
-        obj = nullptr;
-        stub.clear();
+        QFile f(path);
+        ASSERT_TRUE(f.open(QIODevice::WriteOnly));
+        f.write(content.toUtf8());
+        f.close();
     }
 
-    Settings *obj = nullptr;
-    stub_ext::StubExt stub;
+    QTemporaryDir tmpDir;
+    QString rootPath;
+    QString defaultFile;
+    QString settingFile;
 };
 
-TEST_F(SettingsTest, Settings)
+TEST_F(SettingsTest, ConstructWithExplicitFiles)
 {
-    // Test constructor: Settings((const QString &name, ConfigType type, QObject *parent))
-    ASSERT_NE(obj, nullptr);
+    Settings s(defaultFile, defaultFile, settingFile);
+    EXPECT_EQ(s.value("General", "name").toString(), QString("current"));
 }
 
-TEST_F(SettingsTest, M_~Settings)
+TEST_F(SettingsTest, ContainsExistingKey)
 {
-    // Test method:  ~Settings(())
-    EXPECT_NO_FATAL_FAILURE({ Settings *tmp = new Settings(); delete tmp; });
+    Settings s(defaultFile, defaultFile, settingFile);
+    EXPECT_TRUE(s.contains("General", "name"));
+    EXPECT_FALSE(s.contains("General", "no_such_key"));
 }
 
-TEST_F(SettingsTest, contains)
+TEST_F(SettingsTest, ValueWithDefault)
 {
-    // Test method: bool contains((const QString &group, const QString &key))
-    QString _arg0{};
-    QString _arg1{};
-    auto result = obj->contains(_arg0, _arg1);
-    EXPECT_FALSE(result);
-
+    Settings s(defaultFile, defaultFile, settingFile);
+    EXPECT_EQ(s.value("General", "no_such_key", QString("fallback")).toString(), QString("fallback"));
 }
 
-TEST_F(SettingsTest, groups)
+TEST_F(SettingsTest, SetValueThenRead)
 {
-    // Test getter: QSet<QString> groups()
-    auto result = obj->groups();
-    EXPECT_TRUE(result.isEmpty());
-
+    Settings s(defaultFile, defaultFile, settingFile);
+    s.setValue("General", "name", QString("updated"));
+    EXPECT_EQ(s.value("General", "name").toString(), QString("updated"));
 }
 
-TEST_F(SettingsTest, keys)
+TEST_F(SettingsTest, SetValueNoNotify)
 {
-    // Test method: QSet<QString> keys((const QString &group))
-    QString _arg0{};
-    auto result = obj->keys(_arg0);
-    EXPECT_TRUE(result.isEmpty());
-
+    Settings s(defaultFile, defaultFile, settingFile);
+    bool ok = s.setValueNoNotify("General", "name", QString("nn"));
+    EXPECT_EQ(s.value("General", "name").toString(), QString("nn"));
 }
 
-TEST_F(SettingsTest, value)
+TEST_F(SettingsTest, GroupsReturnsGeneral)
 {
-    // Test method: QVariant value((const QString &group, const QUrl &key, const QVariant &defaultValue))
-    QString _arg0{};
-    QUrl _arg1{};
-    QVariant _arg2{};
-    auto result = obj->value(_arg0, _arg1, _arg2);
-    EXPECT_FALSE(result.isValid());
-
+    Settings s(defaultFile, defaultFile, settingFile);
+    QSet<QString> g = s.groups();
+    EXPECT_TRUE(g.contains("General"));
 }
 
-TEST_F(SettingsTest, remove)
+TEST_F(SettingsTest, KeysReturnsName)
 {
-    // Test method: void remove((const QString &group, const QUrl &key))
-    QString _arg0{};
-    QUrl _arg1{};
-    EXPECT_NO_FATAL_FAILURE(obj->remove(_arg0, _arg1));
+    Settings s(defaultFile, defaultFile, settingFile);
+    QSet<QString> k = s.keys("General");
+    EXPECT_TRUE(k.contains("name"));
 }
 
-TEST_F(SettingsTest, clear)
+TEST_F(SettingsTest, KeyListReturnsName)
 {
-    // Test method: void clear(())
-    EXPECT_NO_FATAL_FAILURE(obj->clear());
+    Settings s(defaultFile, defaultFile, settingFile);
+    QStringList k = s.keyList("General");
+    EXPECT_TRUE(k.contains("name"));
 }
 
-TEST_F(SettingsTest, reload)
+TEST_F(SettingsTest, DefaultConfigValue)
 {
-    // Test method: void reload(())
-    EXPECT_NO_FATAL_FAILURE(obj->reload());
+    Settings s(defaultFile, defaultFile, settingFile);
+    EXPECT_NO_FATAL_FAILURE({ (void)s.defaultConfigValue("General", "name"); });
 }
 
-TEST_F(SettingsTest, sync)
+TEST_F(SettingsTest, DefaultConfigkeyList)
 {
-    // Test bool getter: sync()
-    bool result = obj->sync();
-    EXPECT_FALSE(result);
-
+    Settings s(defaultFile, defaultFile, settingFile);
+    EXPECT_NO_FATAL_FAILURE({ (void)s.defaultConfigkeyList("General"); });
 }
 
-TEST_F(SettingsTest, keyList)
+TEST_F(SettingsTest, UrlValue)
 {
-    // Test method: QStringList keyList((const QString &group))
-    QString _arg0{};
-    auto result = obj->keyList(_arg0);
-    EXPECT_TRUE(result.isEmpty());
-
+    Settings s(defaultFile, defaultFile, settingFile);
+    s.setValue("General", "url", QUrl("file:///tmp/x").toString());
+    EXPECT_NO_FATAL_FAILURE({ (void)s.urlValue("General", "url"); });
+    EXPECT_NO_FATAL_FAILURE({ (void)s.urlValue("General", QUrl("key"), QUrl()); });
 }
 
-TEST_F(SettingsTest, urlValue)
+TEST_F(SettingsTest, ValueByUrlKey)
 {
-    // Test method: QUrl urlValue((const QString &group, const QUrl &key, const QUrl &defaultValue))
-    QString _arg0{};
-    QUrl _arg1{};
-    QUrl _arg2{};
-    auto result = obj->urlValue(_arg0, _arg1, _arg2);
-    EXPECT_FALSE(result.isValid());
-
+    Settings s(defaultFile, defaultFile, settingFile);
+    EXPECT_NO_FATAL_FAILURE({ (void)s.value("General", QUrl("name")); });
 }
 
-TEST_F(SettingsTest, setValue)
+TEST_F(SettingsTest, ToUrlValue)
 {
-    // Test setter: void setValue((const QString &group, const QUrl &key, const QVariant &value))
-    QString _arg0{};
-    QUrl _arg1{};
-    QVariant _arg2{};
-    EXPECT_NO_FATAL_FAILURE(obj->setValue(_arg0, _arg1, _arg2));
+    QUrl url = Settings::toUrlValue(QVariant(QString("file:///tmp/x")));
+    EXPECT_EQ(url.scheme(), QString("file"));
 }
 
-TEST_F(SettingsTest, removeGroup)
+TEST_F(SettingsTest, SetValueByUrlKey)
 {
-    // Test method: void removeGroup((const QString &group))
-    QString _arg0{};
-    EXPECT_NO_FATAL_FAILURE(obj->removeGroup(_arg0));
+    Settings s(defaultFile, defaultFile, settingFile);
+    EXPECT_NO_FATAL_FAILURE({ s.setValue("General", QUrl("urlkey"), QVariant(1)); });
+    EXPECT_NO_FATAL_FAILURE({ s.setValueNoNotify("General", QUrl("urlkey"), QVariant(2)); });
 }
 
-TEST_F(SettingsTest, isRemovable)
+TEST_F(SettingsTest, RemoveKey)
 {
-    // Test method: bool isRemovable((const QString &group, const QUrl &key))
-    QString _arg0{};
-    QUrl _arg1{};
-    auto result = obj->isRemovable(_arg0, _arg1);
-    EXPECT_FALSE(result);
-
+    Settings s(defaultFile, defaultFile, settingFile);
+    s.setValue("General", "toremove", QString("v"));
+    EXPECT_TRUE(s.contains("General", "toremove"));
+    EXPECT_NO_FATAL_FAILURE({ s.remove("General", "toremove"); });
+    EXPECT_NO_FATAL_FAILURE({ s.remove("General", QUrl("toremove")); });
 }
 
-TEST_F(SettingsTest, autoSync)
+TEST_F(SettingsTest, IsRemovable)
 {
-    // Test bool getter: autoSync()
-    bool result = obj->autoSync();
-    EXPECT_FALSE(result);
-
+    Settings s(defaultFile, defaultFile, settingFile);
+    EXPECT_NO_FATAL_FAILURE({ (void)s.isRemovable("General", "name"); });
+    EXPECT_NO_FATAL_FAILURE({ (void)s.isRemovable("General", QUrl("name")); });
 }
 
-TEST_F(SettingsTest, watchChanges)
+TEST_F(SettingsTest, RemoveGroup)
 {
-    // Test bool getter: watchChanges()
-    bool result = obj->watchChanges();
-    EXPECT_FALSE(result);
-
+    Settings s(defaultFile, defaultFile, settingFile);
+    s.setValue("ToRemove", "k", QString("v"));
+    EXPECT_NO_FATAL_FAILURE({ s.removeGroup("ToRemove"); });
 }
 
-TEST_F(SettingsTest, defaultConfigkeyList)
+TEST_F(SettingsTest, ClearAndReload)
 {
-    // Test method: QStringList defaultConfigkeyList((const QString &group))
-    QString _arg0{};
-    auto result = obj->defaultConfigkeyList(_arg0);
-    EXPECT_TRUE(result.isEmpty());
-
+    Settings s(defaultFile, defaultFile, settingFile);
+    EXPECT_NO_FATAL_FAILURE({ s.clear(); });
+    EXPECT_NO_FATAL_FAILURE({ s.reload(); });
 }
 
-TEST_F(SettingsTest, toUrlValue)
+TEST_F(SettingsTest, Sync)
 {
-    // Test method: QUrl toUrlValue((const QVariant &url))
-    QVariant _arg0{};
-    auto result = obj->toUrlValue(_arg0);
-    EXPECT_FALSE(result.isValid());
-
+    Settings s(defaultFile, defaultFile, settingFile);
+    EXPECT_NO_FATAL_FAILURE({ (void)s.sync(); });
 }
 
-TEST_F(SettingsTest, defaultConfigValue)
+TEST_F(SettingsTest, AutoSyncAccessors)
 {
-    // Test method: QVariant defaultConfigValue((const QString &group, const QUrl &key, const QVariant &defaultValue))
-    QString _arg0{};
-    QUrl _arg1{};
-    QVariant _arg2{};
-    auto result = obj->defaultConfigValue(_arg0, _arg1, _arg2);
-    EXPECT_FALSE(result.isValid());
-
+    Settings s(defaultFile, defaultFile, settingFile);
+    EXPECT_FALSE(s.autoSync());
+    s.setAutoSync(true);
+    EXPECT_TRUE(s.autoSync());
+    s.setAutoSync(false);
+    EXPECT_FALSE(s.autoSync());
+    EXPECT_NO_FATAL_FAILURE({ s.autoSyncExclude("General"); });
 }
 
-TEST_F(SettingsTest, autoSyncExclude)
+TEST_F(SettingsTest, WatchChangesAccessors)
 {
-    // Test method: void autoSyncExclude((const QString &group, bool sync /*= false*/))
-    QString _arg0{};
-    EXPECT_NO_FATAL_FAILURE(obj->autoSyncExclude(_arg0, nullptr));
+    Settings s(defaultFile, defaultFile, settingFile);
+    EXPECT_NO_FATAL_FAILURE({ s.setWatchChanges(true); });
+    EXPECT_NO_FATAL_FAILURE({ (void)s.watchChanges(); });
 }
 
-TEST_F(SettingsTest, isReadOnly)
+TEST_F(SettingsTest, ReadOnlyAccessors)
 {
-    // Test bool getter: isReadOnly()
-    bool result = obj->isReadOnly();
-    EXPECT_FALSE(result);
-
+    Settings s(defaultFile, defaultFile, settingFile);
+    EXPECT_FALSE(s.isReadOnly());
+    s.setReadOnly(true);
+    EXPECT_TRUE(s.isReadOnly());
 }
 
-TEST_F(SettingsTest, setAutoSync)
+TEST_F(SettingsTest, ConstructByNameGenericConfig)
 {
-    // Test setter: void setAutoSync((bool autoSync))
-    EXPECT_NO_FATAL_FAILURE(obj->setAutoSync(false));
+    EXPECT_NO_FATAL_FAILURE({ Settings s("test_generic_cfg", Settings::kGenericConfig); });
 }
 
-TEST_F(SettingsTest, onFileChanged)
+// ---- Coverage additions for Settings watcher / default-config / destructor ----
+
+TEST_F(SettingsTest, DefaultConfigValueByUrlKeyReturnsFallback)
 {
-    // Test method: void onFileChanged((const QUrl &url))
-    QUrl _arg0{};
-    EXPECT_NO_FATAL_FAILURE(obj->onFileChanged(_arg0));
+    Settings s("ut_dcfg_test", Settings::kGenericConfig);
+    QUrl url = QUrl::fromLocalFile(settingFile);
+    // Unknown group/key with a QUrl key resolves to the supplied fallback.
+    QVariant v = s.defaultConfigValue("NoSuchGroup", url, QVariant("fb"));
+    EXPECT_EQ(v.toString().toStdString(), "fb");
 }
 
-TEST_F(SettingsTest, setWatchChanges)
+TEST_F(SettingsTest, SetWatchChangesTrueRestartsWatcherSafely)
 {
-    // Test setter: void setWatchChanges((bool watchChanges))
-    EXPECT_NO_FATAL_FAILURE(obj->setWatchChanges(false));
+    Settings s("ut_watch_test", Settings::kGenericConfig);
+    s.setWatchChanges(true);
+    EXPECT_TRUE(s.watchChanges());
+    s.setWatchChanges(false);
+    EXPECT_FALSE(s.watchChanges());
 }
 
-TEST_F(SettingsTest, setReadOnly)
+TEST_F(SettingsTest, OnFileChangedWithSelfUrlIsSafe)
 {
-    // Test setter: void setReadOnly((bool readOnly))
-    EXPECT_NO_FATAL_FAILURE(obj->setReadOnly(false));
+    Settings s("ut_onfile_test", Settings::kGenericConfig);
+    QUrl url = QUrl::fromLocalFile(settingFile);
+    EXPECT_NO_FATAL_FAILURE({ s.onFileChanged(url); });
 }
 
-TEST_F(SettingsTest, setValueNoNotify)
+TEST_F(SettingsTest, LocalSettingsDestructsCleanly)
 {
-    // Test method: bool setValueNoNotify((const QString &group, const QUrl &key, const QVariant &value))
-    QString _arg0{};
-    QUrl _arg1{};
-    QVariant _arg2{};
-    auto result = obj->setValueNoNotify(_arg0, _arg1, _arg2);
-    EXPECT_FALSE(result);
-
-}
-
-TEST_F(SettingsTest, SettingsPrivate)
-{
-    // Test method:  SettingsPrivate(())
-    EXPECT_NO_FATAL_FAILURE(obj->SettingsPrivate());
-}
-
-TEST_F(SettingsTest, ConfigType)
-{
-    // Test method:  ConfigType(())
-    EXPECT_NO_FATAL_FAILURE(obj->ConfigType());
-}
-
-TEST_F(SettingsTest, friend)
-{
-    // Test getter: Q_OBJECT friend()
-    EXPECT_NO_FATAL_FAILURE({ obj->friend(); });
-}
-
-TEST_F(SettingsTest, d)
-{
-    // Test getter: QScopedPointer<SettingsPrivate> d()
-    auto result = obj->d();
-    EXPECT_EQ(result.get(), nullptr);
-
+    // Exercise the destructor (and SettingsPrivate teardown) on a stack instance.
+    EXPECT_NO_FATAL_FAILURE({ Settings s("ut_dtor_test", Settings::kGenericConfig); });
 }

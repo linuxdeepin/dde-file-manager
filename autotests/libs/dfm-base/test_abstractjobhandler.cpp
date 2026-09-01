@@ -122,17 +122,3 @@ TEST(AbstractJobHandlerTest, LocalHandlerDestructsCleanly)
 {
     EXPECT_NO_FATAL_FAILURE({ TestJobHandler h; });
 }
-
-
-TEST(AbstractJobHandlerTest, AbstractJobHandler)
-{
-    AbstractJobHandler obj;
-    EXPECT_NO_FATAL_FAILURE({ AbstractJobHandler obj; });
-    }
-
-
-TEST(AbstractJobHandlerTest, currentSize)
-{
-    AbstractJobHandler obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.currentSize(); });
-}

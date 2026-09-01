@@ -17,6 +17,7 @@ TEST(FinallyUtilTest, ExitFuncCalledOnDestruction)
     bool called = false;
     {
         FinallyUtil f([&]() { called = true; });
+        (void)f;
     }
     EXPECT_TRUE(called);
 }
@@ -50,11 +51,4 @@ TEST(FinallyUtilTest, ExitFuncModifiesExternalValue)
         EXPECT_EQ(value, 0);
     }
     EXPECT_EQ(value, 42);
-}
-
-
-TEST(FinallyUtilTest, dismiss)
-{
-    FinallyUtil obj;
-    EXPECT_NO_FATAL_FAILURE(obj.dismiss(false));
 }

@@ -4,236 +4,162 @@
 
 /**
  * @file test_settingjsongenerator.cpp
- * @brief Unit tests for SettingJsonGenerator methods with real assertions
+ * @brief Unit tests for SettingJsonGenerator pure-logic API.
  */
 
 #include <gtest/gtest.h>
 
-#include "stubext.h"
+#include <dfm-base/settingdialog/settingjsongenerator.h>
 
-#include "dfm-base/base/configs/settingjsongenerator.h"
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
 
-#include <QTest>
+using namespace dfmbase;
 
-using namespace src;
-
-class SettingJsonGeneratorTest : public ::testing::Test
+class SettingJsonGeneratorTest : public testing::Test
 {
 protected:
+    SettingJsonGenerator *gen { nullptr };
+
     void SetUp() override
     {
-        obj = new SettingJsonGenerator();
+        gen = SettingJsonGenerator::instance();
     }
-
-    void TearDown() override
-    {
-        delete obj;
-        obj = nullptr;
-        stub.clear();
-    }
-
-    SettingJsonGenerator *obj = nullptr;
-    stub_ext::StubExt stub;
 };
 
-TEST_F(SettingJsonGeneratorTest, SettingJsonGenerator)
+TEST_F(SettingJsonGeneratorTest, AddTopGroupSucceeds)
 {
-    // Test constructor: SettingJsonGenerator(())
-    ASSERT_NE(obj, nullptr);
+    EXPECT_TRUE(gen->addGroup("top1", "Top One"));
 }
 
-TEST_F(SettingJsonGeneratorTest, instance)
+TEST_F(SettingJsonGeneratorTest, AddDuplicateTopGroupFails)
 {
-    // Test getter: SettingJsonGenerator instance()
-    auto result = obj->instance();
-    EXPECT_TRUE(result.isEmpty());
-
+    EXPECT_TRUE(gen->addGroup("topdup", "Dup"));
+    EXPECT_FALSE(gen->addGroup("topdup", "Dup Again"));
 }
 
-TEST_F(SettingJsonGeneratorTest, hasGroup)
+TEST_F(SettingJsonGeneratorTest, AddTooDeepGroupFails)
 {
-    // Test method: bool hasGroup((const QString &key))
-    QString _arg0{};
-    auto result = obj->hasGroup(_arg0);
-    EXPECT_FALSE(result);
-
+    EXPECT_FALSE(gen->addGroup("a.b.c", "Too Deep"));
 }
 
-TEST_F(SettingJsonGeneratorTest, hasConfig)
+TEST_F(SettingJsonGeneratorTest, AddGroupWithLeadingDotFails)
 {
-    // Test method: bool hasConfig((const QString &key))
-    QString _arg0{};
-    auto result = obj->hasConfig(_arg0);
-    EXPECT_FALSE(result);
-
+    EXPECT_FALSE(gen->addGroup(".bad", "Bad"));
 }
 
-TEST_F(SettingJsonGeneratorTest, addGroup)
+TEST_F(SettingJsonGeneratorTest, AddGroupWithTrailingDotFails)
 {
-    // Test method: bool addGroup((const QString &key, const QString &name))
-    QString _arg0{};
-    QString _arg1{};
-    auto result = obj->addGroup(_arg0, _arg1);
-    EXPECT_FALSE(result);
-
+    EXPECT_FALSE(gen->addGroup("bad.", "Bad"));
 }
 
-TEST_F(SettingJsonGeneratorTest, removeGroup)
+TEST_F(SettingJsonGeneratorTest, AddSubGroupAutoCreatesTop)
 {
-    // Test method: bool removeGroup((const QString &key))
-    QString _arg0{};
-    auto result = obj->removeGroup(_arg0);
-    EXPECT_FALSE(result);
-
+    EXPECT_TRUE(gen->addGroup("top2.sub1", "Sub One"));
+    EXPECT_TRUE(gen->hasGroup("top2.sub1"));
 }
 
-TEST_F(SettingJsonGeneratorTest, addConfig)
+TEST_F(SettingJsonGeneratorTest, RemoveTopGroupSucceeds)
 {
-    // Test method: bool addConfig((const QString &key, const QVariantMap &config))
-    QString _arg0{};
-    QVariantMap _arg1{};
-    auto result = obj->addConfig(_arg0, _arg1);
-    EXPECT_FALSE(result);
-
+    gen->addGroup("toprm", "Rm");
+    EXPECT_TRUE(gen->removeGroup("toprm"));
+    EXPECT_FALSE(gen->hasGroup("toprm"));
 }
 
-TEST_F(SettingJsonGeneratorTest, removeConfig)
+TEST_F(SettingJsonGeneratorTest, RemoveNonExistentGroupFails)
 {
-    // Test method: bool removeConfig((const QString &key))
-    QString _arg0{};
-    auto result = obj->removeConfig(_arg0);
-    EXPECT_FALSE(result);
-
+    EXPECT_FALSE(gen->removeGroup("no.such.group"));
 }
 
-TEST_F(SettingJsonGeneratorTest, mergeGroups)
+TEST_F(SettingJsonGeneratorTest, AddConfigWithWrongDepthFails)
 {
-    // Test method: void mergeGroups(())
-    EXPECT_NO_FATAL_FAILURE(obj->mergeGroups());
+    QVariantMap cfg;
+    cfg["key"] = "item1";
+    cfg["text"] = "Item";
+    // only 1 dot (2 fragments) -> wrong depth, needs 2 dots
+    EXPECT_FALSE(gen->addConfig("top3.sub2", cfg));
 }
 
-TEST_F(SettingJsonGeneratorTest, constructConfig)
+TEST_F(SettingJsonGeneratorTest, AddConfigKeyMismatchFails)
 {
-    // Test method: QJsonObject constructConfig((const QString &key))
-    QString _arg0{};
-    auto result = obj->constructConfig(_arg0);
-    EXPECT_TRUE(result.isEmpty());
-
+    QVariantMap cfg;
+    cfg["key"] = "wrongkey";
+    cfg["text"] = "Item";
+    EXPECT_FALSE(gen->addConfig("topcfg.subcfg.itemX", cfg));
 }
 
-TEST_F(SettingJsonGeneratorTest, genSettingJson)
+TEST_F(SettingJsonGeneratorTest, AddCheckBoxConfigSucceeds)
 {
-    // Test getter: QByteArray genSettingJson()
-    auto result = obj->genSettingJson();
-    EXPECT_TRUE(result.isEmpty());
-
+    EXPECT_TRUE(gen->addCheckBoxConfig("cbgrp.cbsub.cbitem", "Check Me", true));
+    EXPECT_TRUE(gen->hasConfig("cbgrp.cbsub.cbitem"));
 }
 
-TEST_F(SettingJsonGeneratorTest, addComboboxConfig)
+TEST_F(SettingJsonGeneratorTest, AddComboboxStringListConfigSucceeds)
 {
-    // Test method: bool addComboboxConfig((const QString &key, const QString &name, const QVariantMap &options, QVariant defaultVal))
-    QString _arg0{};
-    QString _arg1{};
-    QVariantMap _arg2{};
-    auto result = obj->addComboboxConfig(_arg0, _arg1, _arg2, QVariant());
-    EXPECT_FALSE(result);
-
+    EXPECT_TRUE(gen->addComboboxConfig("combo.grp.item", "Choose",
+                                       QStringList { "a", "b" }, 0));
 }
 
-TEST_F(SettingJsonGeneratorTest, addSliderConfig)
+TEST_F(SettingJsonGeneratorTest, AddComboboxVariantMapConfigSucceeds)
 {
-    // Test method: bool addSliderConfig((const QString &key,
-                                           const QString &name,
-                                           const QString &leftIcon,
-                                           const QString &rightIcon,
-                                           int maxVal,
-                                           int minVal,
-                                           QVariantList valueList,
-                                           int defaultVal))
-    QString _arg0{};
-    QString _arg1{};
-    QString _arg2{};
-    QString _arg3{};
-    auto result = obj->addSliderConfig(_arg0, _arg1, _arg2, _arg3, 0, 0, QVariantList(), 0);
-    EXPECT_FALSE(result);
-
+    QVariantMap opts;
+    opts["a"] = 1;
+    opts["b"] = 2;
+    EXPECT_TRUE(gen->addComboboxConfig("combo2.grp2.item", "Choose", opts, QVariant(1)));
 }
 
-TEST_F(SettingJsonGeneratorTest, constructTopGroup)
+TEST_F(SettingJsonGeneratorTest, AddPathComboboxConfigSucceeds)
 {
-    // Test method: QJsonObject constructTopGroup((const QString &key))
-    QString _arg0{};
-    auto result = obj->constructTopGroup(_arg0);
-    EXPECT_TRUE(result.isEmpty());
-
+    QVariantMap opts;
+    opts["p1"] = "/tmp";
+    EXPECT_TRUE(gen->addPathComboboxConfig("pcmb.grp.item", "Path", opts, QVariant("/tmp")));
 }
 
-TEST_F(SettingJsonGeneratorTest, constructConfigGroup)
+TEST_F(SettingJsonGeneratorTest, AddSliderConfigSimpleSucceeds)
 {
-    // Test method: QJsonObject constructConfigGroup((const QString &key))
-    QString _arg0{};
-    auto result = obj->constructConfigGroup(_arg0);
-    EXPECT_TRUE(result.isEmpty());
-
+    EXPECT_TRUE(gen->addSliderConfig("slider.grp.item", "Slider", 100, 0, 50));
 }
 
-TEST_F(SettingJsonGeneratorTest, addCheckBoxConfig)
+TEST_F(SettingJsonGeneratorTest, AddSliderConfigWithIconsSucceeds)
 {
-    // Test method: bool addCheckBoxConfig((const QString &key, const QString &text, bool defaultVal))
-    QString _arg0{};
-    QString _arg1{};
-    auto result = obj->addCheckBoxConfig(_arg0, _arg1, false);
-    EXPECT_FALSE(result);
-
+    EXPECT_TRUE(gen->addSliderConfig("slider2.grp.item", "Slider", "left", "right", 100, 0, 50));
 }
 
-TEST_F(SettingJsonGeneratorTest, addPathComboboxConfig)
+TEST_F(SettingJsonGeneratorTest, AddSliderConfigWithValuesSucceeds)
 {
-    // Test method: bool addPathComboboxConfig((const QString &key, const QString &name, const QVariantMap &options, QVariant defaultVal))
-    QString _arg0{};
-    QString _arg1{};
-    QVariantMap _arg2{};
-    auto result = obj->addPathComboboxConfig(_arg0, _arg1, _arg2, QVariant());
-    EXPECT_FALSE(result);
-
+    EXPECT_TRUE(gen->addSliderConfig("slider3.grp.item", "Slider", "left", "right", 100, 0,
+                                     QVariantList { 10, 20 }, 50));
 }
 
-TEST_F(SettingJsonGeneratorTest, configs)
+TEST_F(SettingJsonGeneratorTest, RemoveConfigSucceeds)
 {
-    // Test getter: QMap<QString, QVariantMap> configs()
-    auto result = obj->configs();
-    EXPECT_TRUE(result.isEmpty());
-
+    gen->addCheckBoxConfig("rmgrp.rmsub.rmitem", "Rm", false);
+    EXPECT_TRUE(gen->removeConfig("rmgrp.rmsub.rmitem"));
+    EXPECT_FALSE(gen->hasConfig("rmgrp.rmsub.rmitem"));
 }
 
-TEST_F(SettingJsonGeneratorTest, topGroups)
+TEST_F(SettingJsonGeneratorTest, RemoveConfigWrongDepthFails)
 {
-    // Test getter: QMap<QString, QString> topGroups()
-    auto result = obj->topGroups();
-    EXPECT_TRUE(result.isEmpty());
-
+    EXPECT_FALSE(gen->removeConfig("only.one.dot"));
 }
 
-TEST_F(SettingJsonGeneratorTest, configGroups)
+TEST_F(SettingJsonGeneratorTest, GenSettingJsonProducesValidJson)
 {
-    // Test getter: QMap<QString, QString> configGroups()
-    auto result = obj->configGroups();
-    EXPECT_TRUE(result.isEmpty());
-
+    gen->addGroup("jsontop", "JSON Top");
+    gen->addCheckBoxConfig("jsontop.jsonsub.jsonitem", "JSON Item", true);
+    QByteArray json = gen->genSettingJson();
+    EXPECT_FALSE(json.isEmpty());
+    QJsonParseError err;
+    QJsonDocument doc = QJsonDocument::fromJson(json, &err);
+    ASSERT_EQ(err.error, QJsonParseError::NoError) << err.errorString().toStdString();
+    ASSERT_TRUE(doc.isObject());
+    QJsonObject obj = doc.object();
+    ASSERT_TRUE(obj.contains("groups"));
+    EXPECT_TRUE(obj.value("groups").isArray());
 }
 
-TEST_F(SettingJsonGeneratorTest, tmpTopGroups)
+TEST_F(SettingJsonGeneratorTest, HasConfigNonExistentReturnsFalse)
 {
-    // Test getter: QMap<QString, QString> tmpTopGroups()
-    auto result = obj->tmpTopGroups();
-    EXPECT_TRUE(result.isEmpty());
-
-}
-
-TEST_F(SettingJsonGeneratorTest, tmpConfigGroups)
-{
-    // Test getter: QMap<QString, QString> tmpConfigGroups()
-    auto result = obj->tmpConfigGroups();
-    EXPECT_TRUE(result.isEmpty());
-
+    EXPECT_FALSE(gen->hasConfig("nonexistent.config.key"));
 }

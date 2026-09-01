@@ -89,25 +89,25 @@ TEST(IndexProfileTest, IsCandidateFile)
 TEST(IndexProfileTest, SupportsAnything)
 {
     IndexProfile p = makeProfile();
-    EXPECT_NO_FATAL_FAILURE({ p.supportsAnything(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)p.supportsAnything(); });
 }
 
 TEST(IndexProfileTest, AnythingSearchOptions)
 {
     IndexProfile p = makeProfile();
-    EXPECT_NO_FATAL_FAILURE({ p.anythingSearchOptions(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)p.anythingSearchOptions(); });
 }
 
 TEST(IndexProfileTest, ComputeChecksumUnsupported)
 {
     IndexProfile p = makeProfile();
-    EXPECT_NO_FATAL_FAILURE({ p.computeChecksum("/some/file"); });
+    EXPECT_NO_FATAL_FAILURE({ (void)p.computeChecksum("/some/file"); });
 }
 
 TEST(IndexProfileTest, LookupCachedTextUnsupported)
 {
     IndexProfile p = makeProfile();
-    EXPECT_NO_FATAL_FAILURE({ p.lookupCachedText("checksum"); });
+    EXPECT_NO_FATAL_FAILURE({ (void)p.lookupCachedText("checksum"); });
 }
 
 TEST(IndexProfileTest, SupportsChecksum)
@@ -137,19 +137,19 @@ TEST(IndexProfileTest, AncestorPathsFieldNonEmpty)
 TEST(IndexProfileTest, ModifyTimeField)
 {
     IndexProfile p = makeProfile();
-    EXPECT_NO_FATAL_FAILURE({ p.modifyTimeField(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)p.modifyTimeField(); });
 }
 
 TEST(IndexProfileTest, SupportsModifiedTimestampCheck)
 {
     IndexProfile p = makeProfile();
-    EXPECT_NO_FATAL_FAILURE({ p.supportsModifiedTimestampCheck(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)p.supportsModifiedTimestampCheck(); });
 }
 
 TEST(IndexProfileTest, CreateAnalyzer)
 {
     IndexProfile p = makeProfile();
-    EXPECT_NO_FATAL_FAILURE({ p.createAnalyzer(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)p.createAnalyzer(); });
 }
 
 TEST(IndexProfileTest, MaxFileTruncationSizeMBPositive)
@@ -176,193 +176,53 @@ TEST(IndexProfileTest, ProfileIdAndStatusFilePath)
 {
     auto p = makeProfile();
     EXPECT_FALSE(p.id().isEmpty());
-    EXPECT_NO_FATAL_FAILURE({ p.statusFilePath(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)p.statusFilePath(); });
 }
 
 TEST(IndexProfileTest, ProfileIndexDirectoryCallable)
 {
     auto p = makeProfile();
-    EXPECT_NO_FATAL_FAILURE({ p.indexDirectory(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)p.indexDirectory(); });
 }
 
 TEST(IndexProfileTest, ProfileVersionKeyCallable)
 {
     auto p = makeProfile();
-    EXPECT_NO_FATAL_FAILURE({ p.versionKey(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)p.versionKey(); });
 }
 
 TEST(IndexProfileTest, ProfileIsIndexAvailableCallable)
 {
     auto p = makeProfile();
-    EXPECT_NO_FATAL_FAILURE({ p.isIndexAvailable(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)p.isIndexAvailable(); });
 }
 
 TEST(IndexProfileTest, ProfileRuntimeIndexVersionCallable)
 {
     auto p = makeProfile();
-    EXPECT_NO_FATAL_FAILURE({ p.runtimeIndexVersion(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)p.runtimeIndexVersion(); });
 }
 
 TEST(IndexProfileTest, ProfileSupportsAnythingCallable)
 {
     auto p = makeProfile();
-    EXPECT_NO_FATAL_FAILURE({ p.supportsAnything(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)p.supportsAnything(); });
 }
 
 TEST(IndexProfileTest, ProfileIsPathInScopeCallable)
 {
     auto p = makeProfile();
-    EXPECT_NO_FATAL_FAILURE({ p.isPathInScope("/tmp"); });
+    EXPECT_NO_FATAL_FAILURE({ (void)p.isPathInScope("/tmp"); });
 }
 
 TEST(IndexProfileTest, ProfileIsCandidateFileCallable)
 {
     auto p = makeProfile();
-    EXPECT_NO_FATAL_FAILURE({ p.isCandidateFile("/tmp/test.txt"); });
+    EXPECT_NO_FATAL_FAILURE({ (void)p.isCandidateFile("/tmp/test.txt"); });
 }
 
 TEST(IndexProfileTest, ProfileComputeChecksumCallable)
 {
     auto p = makeProfile();
-    EXPECT_NO_FATAL_FAILURE({ p.computeChecksum("/tmp/test.txt"); });
-}
-
-
-TEST(IndexProfileTest, ancestorPathsField)
-{
-    IndexProfile obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.ancestorPathsField(); });
-}
-
-TEST(IndexProfileTest, anythingSearchOptions)
-{
-    IndexProfile obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.anythingSearchOptions(); });
-}
-
-TEST(IndexProfileTest, computeChecksum)
-{
-    IndexProfile obj;
-    QString _arg0{};
-    EXPECT_NO_FATAL_FAILURE({ obj.computeChecksum(_arg0); });
-}
-
-TEST(IndexProfileTest, content)
-{
-    IndexProfile obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.content(); });
-}
-
-TEST(IndexProfileTest, contentField)
-{
-    IndexProfile obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.contentField(); });
-}
-
-TEST(IndexProfileTest, createAnalyzer)
-{
-    IndexProfile obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.createAnalyzer(); });
-}
-
-TEST(IndexProfileTest, id)
-{
-    IndexProfile obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.id(); });
-}
-
-TEST(IndexProfileTest, indexDirectory)
-{
-    IndexProfile obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.indexDirectory(); });
-}
-
-TEST(IndexProfileTest, isCandidateFile)
-{
-    IndexProfile obj;
-    QString _arg0{};
-    EXPECT_NO_FATAL_FAILURE({ obj.isCandidateFile(_arg0); });
-}
-
-TEST(IndexProfileTest, isIndexAvailable)
-{
-    IndexProfile obj;
-    bool result = obj.isIndexAvailable();
-    EXPECT_FALSE(result);
-}
-
-TEST(IndexProfileTest, isPathInScope)
-{
-    IndexProfile obj;
-    QString _arg0{};
-    EXPECT_NO_FATAL_FAILURE({ obj.isPathInScope(_arg0); });
-}
-
-TEST(IndexProfileTest, lookupCachedText)
-{
-    IndexProfile obj;
-    QString _arg0{};
-    EXPECT_NO_FATAL_FAILURE({ obj.lookupCachedText(_arg0); });
-}
-
-TEST(IndexProfileTest, maxFileTruncationSizeMB)
-{
-    IndexProfile obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.maxFileTruncationSizeMB(); });
-}
-
-TEST(IndexProfileTest, modifyTimeField)
-{
-    IndexProfile obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.modifyTimeField(); });
-}
-
-TEST(IndexProfileTest, ocr)
-{
-    IndexProfile obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.ocr(); });
-}
-
-TEST(IndexProfileTest, pathField)
-{
-    IndexProfile obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.pathField(); });
-}
-
-TEST(IndexProfileTest, runtimeIndexVersion)
-{
-    IndexProfile obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.runtimeIndexVersion(); });
-}
-
-TEST(IndexProfileTest, statusFilePath)
-{
-    IndexProfile obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.statusFilePath(); });
-}
-
-TEST(IndexProfileTest, supportsAnything)
-{
-    IndexProfile obj;
-    bool result = obj.supportsAnything();
-    EXPECT_FALSE(result);
-}
-
-TEST(IndexProfileTest, supportsModifiedTimestampCheck)
-{
-    IndexProfile obj;
-    bool result = obj.supportsModifiedTimestampCheck();
-    EXPECT_FALSE(result);
-}
-
-TEST(IndexProfileTest, type)
-{
-    IndexProfile obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.type(); });
-}
-
-TEST(IndexProfileTest, versionKey)
-{
-    IndexProfile obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.versionKey(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)p.computeChecksum("/tmp/test.txt"); });
 }

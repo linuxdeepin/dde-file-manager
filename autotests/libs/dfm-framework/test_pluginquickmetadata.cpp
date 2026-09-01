@@ -494,34 +494,3 @@ TEST_F(PluginQuickMetadataTest, CreatorTest)
     creator.setParent("should_not_be_set_either");
     creator.setApplet("should_not_be_set_either");
 }
-
-
-TEST(PluginQuickMetaDataTest, applet)
-{
-    PluginQuickMetaData obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.applet(); });
-}
-
-TEST(PluginQuickMetaDataTest, id)
-{
-    PluginQuickMetaData obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.id(); });
-}
-
-TEST(PluginQuickMetaDataTest, parent)
-{
-    PluginQuickMetaData obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.parent(); });
-}
-
-TEST(PluginQuickMetaDataTest, type)
-{
-    PluginQuickMetaData obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.type(); });
-}
-
-TEST(PluginQuickMetaDataTest, url)
-{
-    PluginQuickMetaData obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.url(); });
-}

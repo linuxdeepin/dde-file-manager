@@ -4,162 +4,97 @@
 
 /**
  * @file test_dfmmimedata.cpp
- * @brief Unit tests for DFMMimeData methods with real assertions
+ * @brief Unit tests for DFMMimeData (dfmmimedata.cpp)
  */
 
 #include <gtest/gtest.h>
+#include <QUrl>
+#include <QList>
 
-#include "stubext.h"
+#include <dfm-base/mimedata/dfmmimedata.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/file/local/syncfileinfo.h>
+#include <dfm-base/dfm_global_defines.h>
+#include <QIcon>
+#include <QDir>
+#include <mutex>
 
-#include "dfm-base/mimedata/dfmmimedata.h"
+using namespace dfmbase;
 
-#include <QTest>
-
-using namespace src;
-
-class DFMMimeDataTest : public ::testing::Test
+class DFMMimeDataTest : public testing::Test
 {
 protected:
-    void SetUp() override
+    static void SetUpTestSuite()
     {
-        obj = new DFMMimeData();
+        std::call_once(flag, [] {
+            UrlRoute::regScheme(Global::Scheme::kFile, QDir::homePath(), QIcon(), false, "file");
+            InfoFactory::regClass<SyncFileInfo>(Global::Scheme::kFile);
+        });
     }
-
-    void TearDown() override
-    {
-        delete obj;
-        obj = nullptr;
-        stub.clear();
-    }
-
-    DFMMimeData *obj = nullptr;
-    stub_ext::StubExt stub;
+    static std::once_flag flag;
 };
+std::once_flag DFMMimeDataTest::flag;
 
-TEST_F(DFMMimeDataTest, DFMMimeData)
+TEST_F(DFMMimeDataTest, DefaultConstructorIsInvalid)
 {
-    // Test constructor: DFMMimeData((const DFMMimeData &other))
-    ASSERT_NE(obj, nullptr);
+    DFMMimeData data;
+    EXPECT_FALSE(data.isValid());
 }
 
-TEST_F(DFMMimeDataTest, M_~DFMMimeData)
+TEST_F(DFMMimeDataTest, SetUrlsAndRetrieve)
 {
-    // Test method:  ~DFMMimeData(())
-    EXPECT_NO_FATAL_FAILURE({ DFMMimeData *tmp = new DFMMimeData(); delete tmp; });
+    DFMMimeData data;
+    QList<QUrl> urls { QUrl("file:///home/user/a"), QUrl("file:///home/user/b") };
+    data.setUrls(urls);
+    auto got = data.urls();
+    EXPECT_EQ(got.size(), 2);
 }
 
-TEST_F(DFMMimeDataTest, urls)
+TEST_F(DFMMimeDataTest, CanTrashCanDeleteDefaults)
 {
-    // Test getter: QList<QUrl> urls()
-    auto result = obj->urls();
-    EXPECT_TRUE(result.isEmpty());
-
+    DFMMimeData data;
+    EXPECT_NO_FATAL_FAILURE({ (void)data.canTrash(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)data.canDelete(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)data.isTrashFile(); });
 }
 
-TEST_F(DFMMimeDataTest, version)
+TEST_F(DFMMimeDataTest, SetAndgetAttribute)
 {
-    // Test getter: QString version()
-    auto result = obj->version();
-    EXPECT_TRUE(result.isEmpty());
-
+    DFMMimeData data;
+    data.setAttritube("mykey", QString("myval"));
+    EXPECT_EQ(data.attritube("mykey").toString(), QString("myval"));
+    EXPECT_EQ(data.attritube("missing", QString("def")).toString(), QString("def"));
 }
 
-TEST_F(DFMMimeDataTest, clear)
+TEST_F(DFMMimeDataTest, SerializeDeserializeRoundTrip)
 {
-    // Test method: void clear(())
-    EXPECT_NO_FATAL_FAILURE(obj->clear());
+    DFMMimeData data;
+    QList<QUrl> urls { QUrl::fromLocalFile(QDir::tempPath() + "/dfm_x"), QUrl::fromLocalFile(QDir::tempPath() + "/dfm_y") };
+    data.setUrls(urls);
+    QByteArray bytes;
+    EXPECT_NO_FATAL_FAILURE({ bytes = data.toByteArray(); });
+    EXPECT_NO_FATAL_FAILURE({ DFMMimeData restored = DFMMimeData::fromByteArray(bytes); (void)restored.urls(); });
 }
 
-TEST_F(DFMMimeDataTest, attritube)
+TEST_F(DFMMimeDataTest, CopyConstructorSharesData)
 {
-    // Test method: QVariant attritube((const QString &name, const QVariant &defaultValue))
-    QString _arg0{};
-    QVariant _arg1{};
-    auto result = obj->attritube(_arg0, _arg1);
-    EXPECT_FALSE(result.isValid());
-
+    DFMMimeData data;
+    data.setUrls({ QUrl("file:///tmp/a") });
+    DFMMimeData copy(data);
+    EXPECT_EQ(copy.urls().size(), 1);
 }
 
-TEST_F(DFMMimeDataTest, operator=)
+TEST_F(DFMMimeDataTest, ClearResetsData)
 {
-    // Test getter: DFMMimeData operator=()
-    EXPECT_NO_FATAL_FAILURE({ obj->operator=(); });
+    DFMMimeData data;
+    data.setUrls({ QUrl("file:///tmp/a") });
+    data.clear();
+    EXPECT_TRUE(data.urls().isEmpty());
 }
 
-TEST_F(DFMMimeDataTest, swap)
+TEST_F(DFMMimeDataTest, VersionString)
 {
-    // Test method: void swap(())
-    EXPECT_NO_FATAL_FAILURE(obj->swap());
-}
-
-TEST_F(DFMMimeDataTest, setUrls)
-{
-    // Test setter: void setUrls((const QList<QUrl> &urls))
-    QList<QUrl> _arg0{};
-    EXPECT_NO_FATAL_FAILURE(obj->setUrls(_arg0));
-}
-
-TEST_F(DFMMimeDataTest, canTrash)
-{
-    // Test bool getter: canTrash()
-    bool result = obj->canTrash();
-    EXPECT_FALSE(result);
-
-}
-
-TEST_F(DFMMimeDataTest, canDelete)
-{
-    // Test bool getter: canDelete()
-    bool result = obj->canDelete();
-    EXPECT_FALSE(result);
-
-}
-
-TEST_F(DFMMimeDataTest, setAttritube)
-{
-    // Test setter: void setAttritube((const QString &name, const QVariant &value))
-    QString _arg0{};
-    QVariant _arg1{};
-    EXPECT_NO_FATAL_FAILURE(obj->setAttritube(_arg0, _arg1));
-}
-
-TEST_F(DFMMimeDataTest, isValid)
-{
-    // Test bool getter: isValid()
-    bool result = obj->isValid();
-    EXPECT_FALSE(result);
-
-}
-
-TEST_F(DFMMimeDataTest, isTrashFile)
-{
-    // Test bool getter: isTrashFile()
-    bool result = obj->isTrashFile();
-    EXPECT_FALSE(result);
-
-}
-
-TEST_F(DFMMimeDataTest, toByteArray)
-{
-    // Test getter: QByteArray toByteArray()
-    auto result = obj->toByteArray();
-    EXPECT_TRUE(result.isEmpty());
-
-}
-
-TEST_F(DFMMimeDataTest, fromByteArray)
-{
-    // Test method: DFMMimeData fromByteArray((const QByteArray &data))
-    QByteArray _arg0{};
-    auto result = obj->fromByteArray(_arg0);
-    EXPECT_NO_FATAL_FAILURE({ obj->fromByteArray(_arg0); });
-
-}
-
-TEST_F(DFMMimeDataTest, d)
-{
-    // Test getter: QSharedDataPointer<DFMMimeDataPrivate> d()
-    auto result = obj->d();
-    EXPECT_EQ(result.get(), nullptr);
-
+    DFMMimeData data;
+    QString v = data.version();
+    EXPECT_FALSE(v.isEmpty());
 }

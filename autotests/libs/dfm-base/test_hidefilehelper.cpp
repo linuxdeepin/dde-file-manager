@@ -4,111 +4,96 @@
 
 /**
  * @file test_hidefilehelper.cpp
- * @brief Unit tests for HideFileHelper methods with real assertions
+ * @brief Unit tests for HideFileHelper (hidefilehelper.cpp)
  */
 
 #include <gtest/gtest.h>
+#include <QTemporaryDir>
+#include <QFile>
+#include <QDir>
+#include <QUrl>
+#include <mutex>
 
-#include "stubext.h"
+#include <dfm-base/utils/hidefilehelper.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/file/local/syncfileinfo.h>
+#include <dfm-base/dfm_global_defines.h>
 
-#include "dfm-base/utils/hidefilehelper.h"
+using namespace dfmbase;
 
-#include <QTest>
-
-using namespace src;
-
-class HideFileHelperTest : public ::testing::Test
+class HideFileHelperTest : public testing::Test
 {
 protected:
+    static void SetUpTestSuite()
+    {
+        std::call_once(flag, [] {
+            UrlRoute::regScheme(Global::Scheme::kFile, QDir::homePath(), QIcon(), false, "file");
+            InfoFactory::regClass<SyncFileInfo>(Global::Scheme::kFile);
+        });
+    }
+
     void SetUp() override
     {
-        obj = new HideFileHelper();
+        ASSERT_TRUE(tmpDir.isValid());
+        dirPath = tmpDir.path();
     }
 
-    void TearDown() override
-    {
-        delete obj;
-        obj = nullptr;
-        stub.clear();
-    }
-
-    HideFileHelper *obj = nullptr;
-    stub_ext::StubExt stub;
+    QTemporaryDir tmpDir;
+    QString dirPath;
+    static std::once_flag flag;
 };
 
-TEST_F(HideFileHelperTest, HideFileHelper)
+std::once_flag HideFileHelperTest::flag;
+
+TEST_F(HideFileHelperTest, DirUrlAndFileUrl)
 {
-    // Test constructor: HideFileHelper((const QUrl &dir))
-    ASSERT_NE(obj, nullptr);
+    HideFileHelper helper(QUrl::fromLocalFile(dirPath));
+    EXPECT_FALSE(helper.dirUrl().isEmpty());
+    EXPECT_FALSE(helper.fileUrl().isEmpty());
+    EXPECT_TRUE(helper.fileUrl().path().endsWith(".hidden"));
 }
 
-TEST_F(HideFileHelperTest, M_~HideFileHelper)
+TEST_F(HideFileHelperTest, InsertRemoveContains)
 {
-    // Test method:  ~HideFileHelper(())
-    EXPECT_NO_FATAL_FAILURE({ HideFileHelper *tmp = new HideFileHelper(); delete tmp; });
+    HideFileHelper helper(QUrl::fromLocalFile(dirPath));
+    EXPECT_TRUE(helper.insert("secret.txt"));
+    EXPECT_TRUE(helper.contains("secret.txt"));
+    EXPECT_FALSE(helper.contains("nope.txt"));
+    EXPECT_TRUE(helper.remove("secret.txt"));
+    EXPECT_FALSE(helper.contains("secret.txt"));
 }
 
-TEST_F(HideFileHelperTest, save)
+TEST_F(HideFileHelperTest, HideFileList)
 {
-    // Test bool getter: save()
-    bool result = obj->save();
-    EXPECT_FALSE(result);
-
+    HideFileHelper helper(QUrl::fromLocalFile(dirPath));
+    helper.insert("a.txt");
+    helper.insert("b.txt");
+    QSet<QString> list = helper.hideFileList();
+    EXPECT_TRUE(list.contains("a.txt"));
+    EXPECT_TRUE(list.contains("b.txt"));
 }
 
-TEST_F(HideFileHelperTest, insert)
+TEST_F(HideFileHelperTest, SaveWritesHiddenFile)
 {
-    // Test method: bool insert((const QString &name))
-    QString _arg0{};
-    auto result = obj->insert(_arg0);
-    EXPECT_FALSE(result);
-
+    HideFileHelper helper(QUrl::fromLocalFile(dirPath));
+    helper.insert("c.txt");
+    bool ok = false;
+    EXPECT_NO_FATAL_FAILURE({ ok = helper.save(); });
+    // save may return true if writable
+    if (ok) {
+        QFile f(dirPath + "/.hidden");
+        EXPECT_TRUE(f.exists());
+    }
 }
 
-TEST_F(HideFileHelperTest, remove)
+TEST_F(HideFileHelperTest, ConstructWithExistingHiddenFile)
 {
-    // Test method: bool remove((const QString &name))
-    QString _arg0{};
-    auto result = obj->remove(_arg0);
-    EXPECT_FALSE(result);
+    // Create a .hidden file first, then construct helper to read it back.
+    QFile f(dirPath + "/.hidden");
+    ASSERT_TRUE(f.open(QIODevice::WriteOnly));
+    f.write("existing.txt\n");
+    f.close();
 
-}
-
-TEST_F(HideFileHelperTest, contains)
-{
-    // Test method: bool contains((const QString &name))
-    QString _arg0{};
-    auto result = obj->contains(_arg0);
-    EXPECT_FALSE(result);
-
-}
-
-TEST_F(HideFileHelperTest, dirUrl)
-{
-    // Test getter: QUrl dirUrl()
-    auto result = obj->dirUrl();
-    EXPECT_TRUE(result.isEmpty() || result.isValid());
-}
-
-TEST_F(HideFileHelperTest, fileUrl)
-{
-    // Test getter: QUrl fileUrl()
-    auto result = obj->fileUrl();
-    EXPECT_TRUE(result.isEmpty() || result.isValid());
-}
-
-TEST_F(HideFileHelperTest, hideFileList)
-{
-    // Test getter: QSet<QString> hideFileList()
-    auto result = obj->hideFileList();
-    EXPECT_TRUE(result.isEmpty());
-
-}
-
-TEST_F(HideFileHelperTest, d)
-{
-    // Test getter: QScopedPointer<HideFileHelperPrivate> d()
-    auto result = obj->d();
-    EXPECT_EQ(result.get(), nullptr);
-
+    HideFileHelper helper(QUrl::fromLocalFile(dirPath));
+    EXPECT_TRUE(helper.contains("existing.txt"));
 }

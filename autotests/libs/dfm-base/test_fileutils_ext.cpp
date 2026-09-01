@@ -59,8 +59,8 @@ TEST_F(FileUtilsExtTest, IsDesktopFileSuffix)
 TEST_F(FileUtilsExtTest, IsTrashFileAndRoot)
 {
     QUrl trashUrl("trash:///");
-    EXPECT_NO_FATAL_FAILURE({ FileUtils::isTrashFile(trashUrl); });
-    EXPECT_NO_FATAL_FAILURE({ FileUtils::isTrashRootFile(trashUrl); });
+    EXPECT_NO_FATAL_FAILURE({ (void)FileUtils::isTrashFile(trashUrl); });
+    EXPECT_NO_FATAL_FAILURE({ (void)FileUtils::isTrashRootFile(trashUrl); });
 }
 
 TEST_F(FileUtilsExtTest, TrashPathToNormal)
@@ -85,7 +85,7 @@ TEST_F(FileUtilsExtTest, BindPathTransformIdentity)
 TEST_F(FileUtilsExtTest, BindUrlTransformNonTrash)
 {
     QUrl url = QUrl::fromLocalFile(rootPath + "/test.txt");
-    EXPECT_NO_FATAL_FAILURE({ FileUtils::bindUrlTransform(url); });
+    EXPECT_NO_FATAL_FAILURE({ (void)FileUtils::bindUrlTransform(url); });
 }
 
 TEST_F(FileUtilsExtTest, SymlinkTargetAndResolve)
@@ -99,7 +99,7 @@ TEST_F(FileUtilsExtTest, SymlinkTargetAndResolve)
     QFile::link(target, link);
 
     EXPECT_EQ(FileUtils::symlinkTarget(QUrl::fromLocalFile(link)), target);
-    EXPECT_NO_FATAL_FAILURE({ FileUtils::resolveSymlink(QUrl::fromLocalFile(link)); });
+    EXPECT_NO_FATAL_FAILURE({ (void)FileUtils::resolveSymlink(QUrl::fromLocalFile(link)); });
 }
 
 TEST_F(FileUtilsExtTest, SymlinkTargetNonExistent)
@@ -118,7 +118,7 @@ TEST_F(FileUtilsExtTest, ConvertToSRgbColorSpaceNormalImage)
 {
     QImage img(2, 2, QImage::Format_RGB32);
     img.fill(Qt::red);
-    EXPECT_NO_FATAL_FAILURE({ FileUtils::convertToSRgbColorSpace(img); });
+    EXPECT_NO_FATAL_FAILURE({ (void)FileUtils::convertToSRgbColorSpace(img); });
 }
 
 TEST_F(FileUtilsExtTest, ToUnicode)
@@ -136,12 +136,12 @@ TEST_F(FileUtilsExtTest, DirFfileCountInvalidUrl)
 TEST_F(FileUtilsExtTest, SupportLongName)
 {
     QUrl url = QUrl::fromLocalFile(rootPath);
-    EXPECT_NO_FATAL_FAILURE({ FileUtils::supportLongName(url); });
+    EXPECT_NO_FATAL_FAILURE({ (void)FileUtils::supportLongName(url); });
 }
 
 TEST_F(FileUtilsExtTest, FindIconFromXdg)
 {
-    EXPECT_NO_FATAL_FAILURE({ FileUtils::findIconFromXdg("folder"); });
+    EXPECT_NO_FATAL_FAILURE({ (void)FileUtils::findIconFromXdg("folder"); });
 }
 
 TEST_F(FileUtilsExtTest, IsContainProhibitPathEmpty)
@@ -163,5 +163,5 @@ TEST_F(FileUtilsExtTest, IsHigherHierarchy)
 
 TEST_F(FileUtilsExtTest, PreprocessingFileName)
 {
-    EXPECT_NO_FATAL_FAILURE({ FileUtils::preprocessingFileName("test_file"); });
+    EXPECT_NO_FATAL_FAILURE({ (void)FileUtils::preprocessingFileName("test_file"); });
 }

@@ -37,7 +37,7 @@ TEST(AbstractMenuSceneTest, CreateWithNullParent)
 {
     TestMenuScene scene("test");
     QMenu menu;
-    EXPECT_NO_FATAL_FAILURE({ scene.create(&menu); });
+    EXPECT_NO_FATAL_FAILURE({ (void)scene.create(&menu); });
 }
 
 TEST(AbstractMenuSceneTest, UpdateStateNoCrash)
@@ -121,29 +121,4 @@ TEST(AbstractMenuSceneTest, InitializeParamsIsValidWithEmptyAreaTrue)
     AbstractMenuScenePrivate priv(nullptr);
     priv.isEmptyArea = true;
     EXPECT_TRUE(priv.initializeParamsIsValid());
-}
-
-
-TEST(AbstractMenuSceneTest, create)
-{
-    AbstractMenuScene obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.create(nullptr); });
-}
-
-TEST(AbstractMenuSceneTest, removeSubscene)
-{
-    AbstractMenuScene obj;
-    EXPECT_NO_FATAL_FAILURE(obj.removeSubscene(nullptr));
-}
-
-TEST(AbstractMenuSceneTest, scene)
-{
-    AbstractMenuScene obj;
-    EXPECT_NO_FATAL_FAILURE({ obj.scene(nullptr); });
-}
-
-TEST(AbstractMenuSceneTest, setSubscene)
-{
-    AbstractMenuScene obj;
-    EXPECT_NO_FATAL_FAILURE(obj.setSubscene(nullptr));
 }
