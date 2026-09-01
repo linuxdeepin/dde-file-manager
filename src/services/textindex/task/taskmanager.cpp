@@ -201,6 +201,17 @@ bool TaskManager::startTask(IndexTask::Type type, const QStringList &pathList,
     // 清除队列中与新任务同类型同路径的冗余任务，避免暂停→手动更新→完成后重复执行
     removeDuplicateFullScanTasks(type, pathList);
 
+    // force-bypass 全量任务覆盖了所有增量变更，清除队列中所有被阻塞的任务。
+    // 否则任务完成后队列非空 → finalizeIndexState 不设 Clean → 状态卡在 Waiting*。
+    // 全量扫描覆盖了所有路径，包括 FileList 任务的 path 格式（FileList-yyyymmdd-hhmmss）
+    // 和 MoveFileList 任务的 path 格式（MoveList-yyyymmdd-hhmmss），这些路径无法通过
+    // 路径匹配来识别，因此直接清空整个队列。
+    if (forceBypass && isFullScanTask(type) && !taskQueue.isEmpty()) {
+        fmInfo() << "[TaskManager::startTask] Clearing" << taskQueue.size()
+                 << "blocked task(s) from queue - force-bypass full-scan supersedes all pending work";
+        taskQueue.clear();
+    }
+
     // 获取对应的任务处理器
     TaskHandler handler = getTaskHandler(type);
     if (!handler) {
