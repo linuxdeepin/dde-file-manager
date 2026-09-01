@@ -29,6 +29,8 @@ public:
         IndexFailed,
         IndexPausedBattery,
         IndexPausedPowerSave,
+        IndexPausedIdle,
+        IndexWaitingUpgrade,
         IndexUpdating,
     };
 
@@ -67,8 +69,7 @@ private:
     void dismissAndReevaluate(quint64 winId, HintType actedType);
 
     void openSettingsPage(quint64 winId) const;
-    void requestContinueUpdate(HintType type) const;
-    void requestRetryUpdate(HintType type) const;
+    void requestUpdate(HintType type) const;
 
     struct WindowState
     {

@@ -291,7 +291,7 @@ SearchHintController::HintType SearchHintController::evaluateHint(quint64 winId)
             return HintType::IndexFailed;
     }
 
-    // 3. Paused (battery > power save)
+    // 3. Paused (battery > power save > idle > upgrade)
     if (!ws.dismissedTypes.contains(HintType::IndexPausedBattery)) {
         if ((m_textStatusValid && m_textState == "WaitingPower")
             || (m_ocrStatusValid && m_ocrState == "WaitingPower"))
@@ -304,7 +304,19 @@ SearchHintController::HintType SearchHintController::evaluateHint(quint64 winId)
             return HintType::IndexPausedPowerSave;
     }
 
-    // 4. Updating
+    if (!ws.dismissedTypes.contains(HintType::IndexPausedIdle)) {
+        if ((m_textStatusValid && m_textState == "WaitingIdle")
+            || (m_ocrStatusValid && m_ocrState == "WaitingIdle"))
+            return HintType::IndexPausedIdle;
+    }
+
+    if (!ws.dismissedTypes.contains(HintType::IndexWaitingUpgrade)) {
+        if ((m_textStatusValid && m_textState == "WaitingUpgrade")
+            || (m_ocrStatusValid && m_ocrState == "WaitingUpgrade"))
+            return HintType::IndexWaitingUpgrade;
+    }
+
+    // 5. Updating
     if (!ws.dismissedTypes.contains(HintType::IndexUpdating)) {
         if ((m_textStatusValid && m_textState == "Running")
             || (m_ocrStatusValid && m_ocrState == "Running"))
@@ -345,6 +357,18 @@ QVariantMap SearchHintController::buildHintContent(quint64 winId, HintType type)
         content[QStringLiteral("icon")] = QStringLiteral("waiting");
         content[QStringLiteral("text")] = tr("Power save mode is enabled. Some content indexing has been paused.");
         actions.append(QVariantMap { { "id", "continue-update" }, { "label", tr("Continue updating") } });
+        actions.append(QVariantMap { { "id", "view-status" }, { "label", tr("View") } });
+        break;
+    case HintType::IndexPausedIdle:
+        content[QStringLiteral("icon")] = QStringLiteral("waiting");
+        content[QStringLiteral("text")] = tr("Waiting for the device to become idle. Some content indexing has been paused.");
+        actions.append(QVariantMap { { "id", "continue-update" }, { "label", tr("Continue updating") } });
+        actions.append(QVariantMap { { "id", "view-status" }, { "label", tr("View") } });
+        break;
+    case HintType::IndexWaitingUpgrade:
+        content[QStringLiteral("icon")] = QStringLiteral("waiting");
+        content[QStringLiteral("text")] = tr("Waiting for index service upgrade. Some content indexing has been paused.");
+        actions.append(QVariantMap { { "id", "retry-update" }, { "label", tr("Update index now") } });
         actions.append(QVariantMap { { "id", "view-status" }, { "label", tr("View") } });
         break;
     case HintType::IndexUpdating:
@@ -414,11 +438,8 @@ void SearchHintController::onHintAction(quint64 winId, const QString &id)
         dismissAndReevaluate(winId, actedType);
     } else if (id == "close") {
         dismissAndReevaluate(winId, actedType);
-    } else if (id == "continue-update") {
-        requestContinueUpdate(actedType);
-        dismissAndReevaluate(winId, actedType);
-    } else if (id == "retry-update") {
-        requestRetryUpdate(actedType);
+    } else if (id == "continue-update" || id == "retry-update") {
+        requestUpdate(actedType);
         dismissAndReevaluate(winId, actedType);
     } else if (id == "view-status") {
         openSettingsPage(winId);
@@ -443,39 +464,48 @@ void SearchHintController::openSettingsPage(quint64 winId) const
     dpfSignalDispatcher->publish(GlobalEventType::kShowSettingDialog, winId, QString(SEARCH_SETTING_GROUP));
 }
 
-void SearchHintController::requestContinueUpdate(HintType type) const
+void SearchHintController::requestUpdate(HintType type) const
 {
-    // Only update the index that is actually in the paused state matching the hint type.
+    // Only update the index that is actually in the state matching the hint type.
     QString targetState;
-    if (type == HintType::IndexPausedBattery)
+    bool force = false;
+    switch (type) {
+    case HintType::IndexPausedBattery:
         targetState = QStringLiteral("WaitingPower");
-    else if (type == HintType::IndexPausedPowerSave)
+        break;
+    case HintType::IndexPausedPowerSave:
         targetState = QStringLiteral("WaitingPowerSave");
-    else
-        return;   // No continue-update action for other hint types
+        break;
+    case HintType::IndexPausedIdle:
+        targetState = QStringLiteral("WaitingIdle");
+        break;
+    case HintType::IndexFailed:
+        targetState = QStringLiteral("Failed");
+        force = true;
+        break;
+    case HintType::IndexWaitingUpgrade:
+        targetState = QStringLiteral("WaitingUpgrade");
+        force = true;
+        break;
+    default:
+        return;   // No update action for other hint types
+    }
 
     const QStringList &paths = DFMSEARCH::Global::defaultIndexedDirectory();
-    fmInfo() << "User requested continue update (bypass env) for" << paths.size() << "paths, type:" << static_cast<int>(type);
+    fmInfo() << "User requested" << (force ? "force update" : "continue update (bypass env)")
+             << "for" << paths.size() << "paths, type:" << static_cast<int>(type);
+
+    auto applyToClient = [force, &paths](AbstractIndexClient *client) {
+        if (force)
+            client->forceUpdateIndex(paths);
+        else
+            client->updateIndexBypassEnv(paths);
+    };
 
     if (m_textStatusValid && m_textState == targetState)
-        TextIndexClient::instance()->updateIndexBypassEnv(paths);
+        applyToClient(TextIndexClient::instance());
     if (m_ocrStatusValid && m_ocrState == targetState)
-        OcrIndexClient::instance()->updateIndexBypassEnv(paths);
-}
-
-void SearchHintController::requestRetryUpdate(HintType type) const
-{
-    // Only retry the index that is actually in the Failed state.
-    if (type != HintType::IndexFailed)
-        return;
-
-    const QStringList &paths = DFMSEARCH::Global::defaultIndexedDirectory();
-    fmInfo() << "User requested retry update (force) for" << paths.size() << "paths, type:" << static_cast<int>(type);
-
-    if (m_textStatusValid && m_textState == "Failed")
-        TextIndexClient::instance()->forceUpdateIndex(paths);
-    if (m_ocrStatusValid && m_ocrState == "Failed")
-        OcrIndexClient::instance()->forceUpdateIndex(paths);
+        applyToClient(OcrIndexClient::instance());
 }
 
 QStringList SearchHintController::disabledSearchModes() const
