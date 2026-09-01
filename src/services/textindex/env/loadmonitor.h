@@ -41,6 +41,9 @@ public:
     bool isCpuBelowThreshold() const;
     bool isDiskBelowThreshold() const;
 
+    int cpuThresholdPercent() const { return m_cpuThresholdPercent; }
+    int diskThresholdPercent() const { return m_diskThresholdPercent; }
+
 Q_SIGNALS:
     void loadChanged(double cpuAvgPercent, double diskBusyPercent);
 
