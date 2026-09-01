@@ -17,6 +17,8 @@
 
 #include <QDebug>
 #include <QUrl>
+#include <QtConcurrent>
+#include <QFutureWatcher>
 
 using namespace dfmplugin_trashcore;
 DFMBASE_USE_NAMESPACE
@@ -49,17 +51,34 @@ void TrashCoreEventSender::initTrashWatcher()
 
 bool TrashCoreEventSender::checkAndStartWatcher()
 {
-    if (NetworkUtils::instance()->checkAllCIFSBusy()) {
-        timer.start();
+    if (cifsCheckInProgress)
         return false;
-    }
 
-    if (!trashFileWatcher->startWatcher()) {
-        timer.start();
-        return false;
-    }
+    cifsCheckInProgress = true;
+    auto *watcher = new QFutureWatcher<bool>(this);
+    connect(watcher, &QFutureWatcher<bool>::finished, this, [this, watcher]() {
+        cifsCheckInProgress = false;
+        bool cifsBusy = watcher->result();
+        watcher->deleteLater();
 
-    return true;
+        if (cifsBusy) {
+            timer.start();
+            return;
+        }
+
+        if (!trashFileWatcher->startWatcher()) {
+            timer.start();
+            return;
+        }
+
+        watcherInitialized = true;
+        initTrashState();
+    });
+    watcher->setFuture(QtConcurrent::run([]() {
+        return NetworkUtils::instance()->checkAllCIFSBusy();
+    }));
+
+    return false;
 }
 
 TrashCoreEventSender *TrashCoreEventSender::instance()

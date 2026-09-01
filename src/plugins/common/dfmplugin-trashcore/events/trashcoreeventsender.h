@@ -52,6 +52,7 @@ private:
     TrashState trashState { TrashState::Unknown };
     QTimer timer;
     bool watcherInitialized { false };
+    bool cifsCheckInProgress { false };
 };
 
 }
