@@ -207,6 +207,7 @@ bool SideBarModel::insertRow(int row, SideBarItem *item)
     SideBarItemSeparator *groupItem = dynamic_cast<SideBarItemSeparator *>(item);
     if (groupItem) {   // top item
         QStandardItemModel::insertRow(row + 1, item);   // insert the top item
+        setItemAccessibleName(item);
         return true;
     } else {   // sub item
         int count = this->rowCount();
@@ -219,12 +220,16 @@ bool SideBarModel::insertRow(int row, SideBarItem *item)
             SideBarItem *groupItem = this->itemFromIndex(index);
             if (groupItem) {
                 int rows = groupItem->rowCount();
-                if (row == 0 || (row > 0 && row < rows))
+                if (row == 0 || (row > 0 && row < rows)) {
                     groupItem->insertRow(row, item);
-                else if (row >= rows)
+                    setItemAccessibleName(item);
+                } else if (row >= rows) {
                     groupItem->appendRow(item);
-                else if (row == -1)
+                    setItemAccessibleName(item);
+                } else if (row == -1) {
                     groupItem->insertRow(0, item);
+                    setItemAccessibleName(item);
+                }
             }
             return true;
         }
@@ -249,6 +254,7 @@ int SideBarModel::appendRow(SideBarItem *item, bool direct)
     if (topItem) {   // Top item
         auto t = topItem->group();
         QStandardItemModel::appendRow(item);
+        setItemAccessibleName(item);
         return rowCount() - 1;   // The return value is the index of top item.
     } else {   // Sub item
         int count = this->rowCount();
@@ -275,22 +281,27 @@ int SideBarModel::appendRow(SideBarItem *item, bool direct)
                 bool sorted = { dpfHookSequence->run("dfmplugin_sidebar", "hook_Group_Sort", groupId, item->subGourp(), item->url(), tmpItem->url()) };
                 if (sorted) {
                     groupItem->insertRow(row, item);
+                    setItemAccessibleName(item);
                     itemInserted = true;
                     break;
                 }
             }
-            if (!itemInserted)
+            if (!itemInserted) {
                 groupItem->appendRow(item);
+                setItemAccessibleName(item);
+            }
 
             return row;   // The position after sorted
         }
     }
     if (groupOther && !topItem) {   // If can not find out the parent item, just append it to Group_Other
         groupOther->appendRow(item);
+        setItemAccessibleName(item);
         fmInfo() << "Item added to groupOther";
         return groupOther->rowCount() - 1;
     }
     QStandardItemModel::appendRow(item);
+    setItemAccessibleName(item);
     fmInfo() << "Item added to the end of sidebar.";
     return rowCount() - 1;
 }
@@ -360,6 +371,7 @@ void SideBarModel::updateRow(const QUrl &url, const ItemInfo &newInfo)
                 else
                     flags &= (~Qt::ItemIsEditable);
                 subItem->setFlags(flags);
+                setItemAccessibleName(subItem);
                 return;
             }
         }
@@ -668,6 +680,7 @@ void SideBarModel::addSubItem(const QModelIndex &index, const QUrl &url)
     }
 
     parentItem->insertRow(insertRow, item);
+    setItemAccessibleName(item);
 }
 
 void SideBarModel::removeSubItem(const QModelIndex &index, const QUrl &url)
@@ -720,5 +733,18 @@ void SideBarModel::removeSubItem(const QModelIndex &index, const QUrl &url)
         SideBarInfoCacheMananger::instance()->removeItemInfoCache(url);
         parentItem->removeRow(index.row());
         fmDebug() << "Item removed from sidebar:" << url;
+    }
+}
+
+void SideBarModel::setItemAccessibleName(SideBarItem *item) const
+{
+    if (!item)
+        return;
+    // Use the display text (already translated) as both objectName and accessibleName
+    // for AT-SPI accessibility tree lookup.
+    const QString &text = item->text();
+    if (!text.isEmpty()) {
+        item->setObjectName(text);
+        item->setAccessibleName(text);
     }
 }
