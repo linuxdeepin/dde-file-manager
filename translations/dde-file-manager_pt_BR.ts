@@ -7178,27 +7178,27 @@ Você precisa atualizar este cofre para continuar usando-o.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="24"/>
         <source>Currently using battery, index update has been paused</source>
-        <translation type="unfinished"/>
+        <translation>Atualmente usando a bateria, a atualização do índice foi pausada</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="25"/>
         <source>Power saving mode is enabled, index update has been paused</source>
-        <translation type="unfinished"/>
+        <translation>O modo de economia de energia está ativado, a atualização do índice foi pausada</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="26"/>
         <source>Waiting for the device to become idle to continue updating</source>
-        <translation type="unfinished"/>
+        <translation>Aguardando o dispositivo ficar ocioso para continuar a atualização</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="27"/>
         <source>Waiting for index service upgrade</source>
-        <translation type="unfinished"/>
+        <translation>Aguardando a atualização do serviço de indexação</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="28"/>
         <source>Continue updating</source>
-        <translation type="unfinished"/>
+        <translation>Continuar atualização</translation>
     </message>
 </context>
 <context>
@@ -7261,32 +7261,32 @@ Você precisa atualizar este cofre para continuar usando-o.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="119"/>
         <source>Authorize to enable %1</source>
-        <translation type="unfinished"/>
+        <translation>Autorizar para ativar %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="144"/>
         <source>File Manager</source>
-        <translation type="unfinished"/>
+        <translation>Gerenciador de Arquivos</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="145"/>
         <source>You can manually enable %1 in Settings — Advanced — Search.</source>
-        <translation type="unfinished"/>
+        <translation>Você pode ativar %1 manualmente em Configurações — Avançado — Pesquisa.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="341"/>
         <source>Enable</source>
-        <translation type="unfinished"/>
+        <translation>Ativar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="346"/>
         <source>Some index updates failed. Search results may be incomplete.</source>
-        <translation type="unfinished"/>
+        <translation>Algumas atualizações do índice falharam. Os resultados da pesquisa podem estar incompletos.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="347"/>
         <source>Retry update</source>
-        <translation type="unfinished"/>
+        <translation>Tentar atualizar novamente</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="348"/>
