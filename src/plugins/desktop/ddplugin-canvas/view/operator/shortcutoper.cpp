@@ -30,6 +30,8 @@ using namespace ddplugin_canvas;
 ShortcutOper::ShortcutOper(CanvasView *parent)
     : QObject(parent), view(parent)
 {
+    view->setObjectName("CanvasView");
+    view->setAccessibleName("CanvasView");
 }
 
 bool ShortcutOper::keyPressed(QKeyEvent *event)

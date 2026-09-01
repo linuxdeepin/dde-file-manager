@@ -13,12 +13,17 @@ CollectionViewBroker::CollectionViewBroker(CollectionView *parent)
     : QObject(parent)
     , view(parent)
 {
-
+    view->setObjectName("CollectionView");
+    view->setAccessibleName("CollectionView");
 }
 
 void CollectionViewBroker::setView(CollectionView *v)
 {
     view = v;
+    if (view) {
+        view->setObjectName("CollectionView");
+        view->setAccessibleName("CollectionView");
+    }
     setParent(v);
 }
 
