@@ -394,3 +394,5 @@ elements:
     name: TipsBtn
   ToggleModeBtn:
     name: ToggleModeBtn
+  CollectionView:
+    name: CollectionView

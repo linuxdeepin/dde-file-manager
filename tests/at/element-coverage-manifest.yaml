@@ -1,746 +1,743 @@
-# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
-#
-# SPDX-License-Identifier: GPL-3.0-or-later
 scan_total: 148
 total: 148
 elements:
   CloseBtn:
     role: ''
-    source: apps/dde-file-manager-preview/libdfm-preview/views/filepreviewdialog.cpp
+    source: src/apps/dde-file-manager-preview/libdfm-preview/views/filepreviewdialog.cpp
     type: Dtk::Widget::DFloatingButton *
     name_source: accessible
   StatusBar:
     role: status bar
-    source: apps/dde-file-manager-preview/libdfm-preview/views/filepreviewdialog.cpp
+    source: src/apps/dde-file-manager-preview/libdfm-preview/views/filepreviewdialog.cpp
     type: FilePreviewDialogStatusBar *
     name_source: accessible
   IconLabel:
     role: label
-    source: apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp
+    source: src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp
     type: QLabel *
     name_source: object
   NameLabel:
     role: label
-    source: apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp
+    source: src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp
     type: QLabel *
     name_source: object
   SizeLabel:
     role: label
-    source: apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp
+    source: src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp
     type: QLabel *
     name_source: object
   TypeLabel:
     role: label
-    source: apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp
+    source: src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp
     type: QLabel *
     name_source: object
   AvailableSizeCombo:
     role: combo box
-    source: apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp
+    source: src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp
     type: QComboBox *
     name_source: accessible
   ForegroundPaletteEdit:
     role: text
-    source: apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp
+    source: src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp
     type: QLineEdit *
     name_source: accessible
   BackgroundPaletteEdit:
     role: text
-    source: apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp
+    source: src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp
     type: QLineEdit *
     name_source: accessible
   HightlightPaletteEdit:
     role: text
-    source: apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp
+    source: src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp
     type: QLineEdit *
     name_source: accessible
   HFpaletteEdit:
     role: text
-    source: apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp
+    source: src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp
     type: QLineEdit *
     name_source: accessible
   ThemeCom:
     role: combo box
-    source: apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp
+    source: src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp
     type: QComboBox *
     name_source: accessible
   ModeCom:
     role: combo box
-    source: apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp
+    source: src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp
     type: QComboBox *
     name_source: accessible
   CustomSizeEdit:
     role: text
-    source: apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp
+    source: src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp
     type: QLineEdit *
     name_source: accessible
   TitleLabel:
     role: label
-    source: plugins/filedialog/core/views/filedialogstatusbar.cpp
+    source: src/plugins/filedialog/core/views/filedialogstatusbar.cpp
     type: Dtk::Widget::DLabel *
     name_source: accessible
   ArtistLabel:
     role: label
-    source: apps/dde-file-manager-preview/pluginpreviews/music-preview/musicmessageview.cpp
+    source: src/apps/dde-file-manager-preview/pluginpreviews/music-preview/musicmessageview.cpp
     type: QLabel *
     name_source: accessible
   AlbumLabel:
     role: label
-    source: apps/dde-file-manager-preview/pluginpreviews/music-preview/musicmessageview.cpp
+    source: src/apps/dde-file-manager-preview/pluginpreviews/music-preview/musicmessageview.cpp
     type: QLabel *
     name_source: accessible
   ArtistValue:
     role: label
-    source: apps/dde-file-manager-preview/pluginpreviews/music-preview/musicmessageview.cpp
+    source: src/apps/dde-file-manager-preview/pluginpreviews/music-preview/musicmessageview.cpp
     type: QLabel *
     name_source: accessible
   AlbumValue:
     role: label
-    source: apps/dde-file-manager-preview/pluginpreviews/music-preview/musicmessageview.cpp
+    source: src/apps/dde-file-manager-preview/pluginpreviews/music-preview/musicmessageview.cpp
     type: QLabel *
     name_source: accessible
   PlayControlButton:
     role: push button
-    source: apps/dde-file-manager-preview/pluginpreviews/music-preview/toolbarframe.cpp
+    source: src/apps/dde-file-manager-preview/pluginpreviews/music-preview/toolbarframe.cpp
     type: QPushButton *
     name_source: accessible
   ProgressSlider:
     role: slider
-    source: apps/dde-file-manager-preview/pluginpreviews/music-preview/toolbarframe.cpp
+    source: src/apps/dde-file-manager-preview/pluginpreviews/music-preview/toolbarframe.cpp
     type: Dtk::Widget::DSlider *
     name_source: accessible
   Nextbutton:
     role: push button
-    source: apps/dde-file-manager-preview/pluginpreviews/pdf-preview/encryptionpage.cpp
+    source: src/apps/dde-file-manager-preview/pluginpreviews/pdf-preview/encryptionpage.cpp
     type: Dtk::Widget::DPushButton *
     name_source: accessible
   PasswordEdit:
     role: ''
-    source: plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp
+    source: src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp
     type: Dtk::Widget::DPasswordEdit *
     name_source: accessible
   ItemViewParent:
     role: ''
-    source: apps/dde-file-manager-preview/pluginpreviews/pdf-preview/thumbnaildelegate.cpp
+    source: src/apps/dde-file-manager-preview/pluginpreviews/pdf-preview/thumbnaildelegate.cpp
     type: QAbstractItemView *
     name_source: accessible
   View_ImageList:
     role: list
-    source: apps/dde-file-manager-preview/pluginpreviews/pdf-preview/thumbnailwidget.cpp
+    source: src/apps/dde-file-manager-preview/pluginpreviews/pdf-preview/thumbnailwidget.cpp
     type: SideBarImageListView *
     name_source: accessible
   Slider_2:
     role: slider
-    source: apps/dde-file-manager-preview/pluginpreviews/video-preview/videostatusbar.cpp
+    source: src/apps/dde-file-manager-preview/pluginpreviews/video-preview/videostatusbar.cpp
     type: Dtk::Widget::DSlider *
     name_source: accessible
   ControlButton:
     role: ''
-    source: apps/dde-file-manager-preview/pluginpreviews/video-preview/videostatusbar.cpp
+    source: src/apps/dde-file-manager-preview/pluginpreviews/video-preview/videostatusbar.cpp
     type: Dtk::Widget::DIconButton *
     name_source: accessible
   UsernameLineEdit:
     role: text
-    source: dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.cpp
+    source: src/dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.cpp
     type: QLineEdit *
     name_source: accessible
   DomainLineEdit:
     role: text
-    source: dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.cpp
+    source: src/dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.cpp
     type: QLineEdit *
     name_source: accessible
   PasswordLineEdit:
     role: ''
-    source: plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp
+    source: src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp
     type: Dtk::Widget::DPasswordEdit *
     name_source: accessible
   PasswordCheckBox:
     role: check box
-    source: dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.cpp
+    source: src/dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.cpp
     type: QCheckBox *
     name_source: accessible
   PasswordButtonGroup:
     role: ''
-    source: dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.cpp
+    source: src/dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.cpp
     type: QButtonGroup *
     name_source: object
   AnonymousButton:
     role: ''
-    source: dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.cpp
+    source: src/dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.cpp
     type: Dtk::Widget::DButtonBoxButton *
     name_source: accessible
   RegisterButton:
     role: ''
-    source: dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.cpp
+    source: src/dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.cpp
     type: Dtk::Widget::DButtonBoxButton *
     name_source: accessible
   CheckBox:
     role: check box
-    source: plugins/filemanager/dfmplugin-search/utils/indexstatuscheckbox.cpp
+    source: src/plugins/filemanager/dfmplugin-search/utils/indexstatuscheckbox.cpp
     type: QCheckBox *
     name_source: accessible
   PasswordEdit_2:
     role: ''
-    source: dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp
+    source: src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp
     type: Dtk::Widget::DPasswordEdit *
     name_source: accessible
   TaskListWidget:
     role: ''
-    source: dfm-base/dialogs/taskdialog/taskdialog.cpp
+    source: src/dfm-base/dialogs/taskdialog/taskdialog.cpp
     type: QListWidget *
     name_source: accessible
   BtnStop:
     role: ''
-    source: dfm-base/dialogs/taskdialog/taskwidget.cpp
+    source: src/dfm-base/dialogs/taskdialog/taskwidget.cpp
     type: Dtk::Widget::DIconButton *
     name_source: accessible
   BtnPause:
     role: ''
-    source: dfm-base/dialogs/taskdialog/taskwidget.cpp
+    source: src/dfm-base/dialogs/taskdialog/taskwidget.cpp
     type: Dtk::Widget::DIconButton *
     name_source: accessible
   ChkboxNotAskAgain:
     role: check box
-    source: dfm-base/dialogs/taskdialog/taskwidget.cpp
+    source: src/dfm-base/dialogs/taskdialog/taskwidget.cpp
     type: QCheckBox *
     name_source: accessible
   BtnCoexist:
     role: push button
-    source: dfm-base/dialogs/taskdialog/taskwidget.cpp
+    source: src/dfm-base/dialogs/taskdialog/taskwidget.cpp
     type: Dtk::Widget::DPushButton *
     name_source: accessible
   BtnSkip:
     role: push button
-    source: dfm-base/dialogs/taskdialog/taskwidget.cpp
+    source: src/dfm-base/dialogs/taskdialog/taskwidget.cpp
     type: Dtk::Widget::DPushButton *
     name_source: accessible
   BtnReplace:
     role: push button
-    source: dfm-base/dialogs/taskdialog/taskwidget.cpp
+    source: src/dfm-base/dialogs/taskdialog/taskwidget.cpp
     type: Dtk::Widget::DPushButton *
     name_source: accessible
   BtnDelete:
     role: ''
-    source: dfm-base/dialogs/taskdialog/taskwidget.cpp
+    source: src/dfm-base/dialogs/taskdialog/taskwidget.cpp
     type: Dtk::Widget::DWarningButton *
     name_source: accessible
   RightValueEdit:
     role: ''
-    source: dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.cpp
+    source: src/dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.cpp
     type: RightValueWidget *
     name_source: accessible
   IconButton:
     role: ''
-    source: dfm-base/widgets/viewhintmessage/viewhintwidget.cpp
+    source: src/dfm-base/widgets/viewhintmessage/viewhintwidget.cpp
     type: Dtk::Widget::DIconButton *
     name_source: accessible
   CloseButton:
     role: ''
-    source: dfm-base/widgets/viewhintmessage/viewhintwidget.cpp
+    source: src/dfm-base/widgets/viewhintmessage/viewhintwidget.cpp
     type: Dtk::Widget::DIconButton *
     name_source: accessible
   TipsLabel:
     role: ''
-    source: external/dde-dock-plugins/disk-mount/diskmountplugin.cpp
+    source: src/external/dde-dock-plugins/disk-mount/diskmountplugin.cpp
     type: TipsWidget *
     name_source: accessible
   AdvanceBtn:
     role: ''
-    source: plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp
+    source: src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp
     type: Dtk::Widget::DCommandLinkButton *
     name_source: accessible
   VolnameEdit:
     role: text
-    source: plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp
+    source: src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp
     type: QLineEdit *
     name_source: accessible
   WritespeedComb:
     role: combo box
-    source: plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp
+    source: src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp
     type: QComboBox *
     name_source: accessible
   FsComb:
     role: combo box
-    source: plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp
+    source: src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp
     type: QComboBox *
     name_source: accessible
   FinalizeDiscCheckbox:
     role: check box
-    source: plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp
+    source: src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp
     type: QCheckBox *
     name_source: accessible
   CheckdiscCheckbox:
     role: check box
-    source: plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp
+    source: src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp
     type: QCheckBox *
     name_source: accessible
   ChecksumCheckbox:
     role: check box
-    source: plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp
+    source: src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp
     type: QCheckBox *
     name_source: accessible
   EjectCheckbox:
     role: check box
-    source: plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp
+    source: src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp
     type: QCheckBox *
     name_source: accessible
   CreateImgBtn:
     role: ''
-    source: plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp
+    source: src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp
     type: QAbstractButton *
     name_source: accessible
   FileChooser:
     role: ''
-    source: plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp
+    source: src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp
     type: Dtk::Widget::DFileChooserEdit *
     name_source: accessible
   ShareSwitcher:
     role: check box
-    source: plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp
+    source: src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp
     type: QCheckBox *
     name_source: accessible
   ShareNameEditor:
     role: text
-    source: plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp
+    source: src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp
     type: Dtk::Widget::DLineEdit *
     name_source: accessible
   SharePermissionSelector:
     role: combo box
-    source: plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp
+    source: src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp
     type: QComboBox *
     name_source: accessible
   ShareAnonymousSelector:
     role: combo box
-    source: plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp
+    source: src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp
     type: QComboBox *
     name_source: accessible
   CopyNetAddr:
     role: push button
-    source: plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp
+    source: src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp
     type: QPushButton *
     name_source: accessible
   CopyUserNameBt:
     role: push button
-    source: plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp
+    source: src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp
     type: QPushButton *
     name_source: accessible
   SetPasswordBt:
     role: ''
-    source: plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp
+    source: src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp
     type: Dtk::Widget::DCommandLinkButton *
     name_source: accessible
   HideFile:
     role: check box
-    source: plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp
+    source: src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp
     type: QCheckBox *
     name_source: accessible
   AlertTooltip:
     role: ''
-    source: plugins/common/dfmplugin-propertydialog/views/editstackedwidget.cpp
+    source: src/plugins/common/dfmplugin-propertydialog/views/editstackedwidget.cpp
     type: Dtk::Widget::DArrowRectangle *
     name_source: object
-  NameEditIcon:
-    role: ''
-    source: plugins/common/dfmplugin-propertydialog/views/editstackedwidget.cpp
-    type: Dtk::Widget::DIconButton *
-    name_source: accessible
   PropertyDialog-QScrollArea:
     role: scroll pane
-    source: plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/vaultpropertydialog.cpp
+    source: src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/vaultpropertydialog.cpp
     type: QScrollArea *
     name_source: object
   HideFile_2:
     role: check box
-    source: plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp
+    source: src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp
     type: SkipPartiallyCheckBox *
     name_source: accessible
   OwnerComboBox:
     role: combo box
-    source: plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp
+    source: src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp
     type: QComboBox *
     name_source: accessible
   GroupComboBox:
     role: combo box
-    source: plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp
+    source: src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp
     type: QComboBox *
     name_source: accessible
   OtherComboBox:
     role: combo box
-    source: plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp
+    source: src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp
     type: QComboBox *
     name_source: accessible
   CancelBtn:
     role: push button
-    source: plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp
+    source: src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp
     type: Dtk::Widget::DPushButton *
     name_source: accessible
   ExecutableCheckBox:
     role: check box
-    source: plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp
+    source: src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp
     type: QCheckBox *
     name_source: accessible
   TagLable:
     role: label
-    source: plugins/common/dfmplugin-tag/widgets/private/tagwidget_p.cpp
+    source: src/plugins/common/dfmplugin-tag/widgets/private/tagwidget_p.cpp
     type: DLabel *
     name_source: accessible
   TagLeftLable:
     role: label
-    source: plugins/common/dfmplugin-tag/widgets/private/tagwidget_p.cpp
+    source: src/plugins/common/dfmplugin-tag/widgets/private/tagwidget_p.cpp
     type: DLabel *
     name_source: accessible
   ToolTip:
     role: label
-    source: plugins/common/dfmplugin-tag/widgets/tagcolorlistwidget.cpp
+    source: src/plugins/common/dfmplugin-tag/widgets/tagcolorlistwidget.cpp
     type: DLabel *
     name_source: accessible
   Edit_2:
     role: text
-    source: plugins/common/dfmplugin-tag/widgets/tagcrumbedit.cpp
+    source: src/plugins/common/dfmplugin-tag/widgets/tagcrumbedit.cpp
     type: QTextEdit *
     name_source: accessible
   CrumbEdit:
     role: ''
-    source: plugins/common/dfmplugin-tag/widgets/tageditor.cpp
+    source: src/plugins/common/dfmplugin-tag/widgets/tageditor.cpp
     type: Dtk::Widget::DCrumbEdit *
     name_source: accessible
   DevicesListView:
     role: list
-    source: plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp
+    source: src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp
     type: DListView *
     name_source: accessible
   CheckButton:
     role: ''
-    source: plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp
+    source: src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp
     type: DIconButton *
     name_source: accessible
   OpenWithDialog-QScrollArea:
     role: scroll pane
-    source: plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp
+    source: src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp
     type: QScrollArea *
     name_source: object
   OpenFileChooseButton:
     role: ''
-    source: plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp
+    source: src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp
     type: Dtk::Widget::DCommandLinkButton *
     name_source: accessible
   SetToDefaultCheckBox:
     role: check box
-    source: plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp
+    source: src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp
     type: QCheckBox *
     name_source: accessible
   CancelButton:
     role: push button
-    source: plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp
+    source: src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp
     type: DPushButton *
     name_source: accessible
   ChooseButton:
     role: ''
-    source: plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp
+    source: src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp
     type: DSuggestButton *
     name_source: accessible
   OpenWithListWidget:
     role: ''
-    source: plugins/common/dfmplugin-utils/openwith/openwithwidget.cpp
+    source: src/plugins/common/dfmplugin-utils/openwith/openwithwidget.cpp
     type: QListWidget *
     name_source: accessible
   OpenWithBtnGroup:
     role: ''
-    source: plugins/common/dfmplugin-utils/openwith/openwithwidget.cpp
+    source: src/plugins/common/dfmplugin-utils/openwith/openwithwidget.cpp
     type: QButtonGroup *
     name_source: object
   Tooltip:
     role: ''
-    source: plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp
+    source: src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp
     type: Dtk::Widget::DToolTip *
     name_source: accessible
   MenuPtr:
     role: menu
-    source: plugins/filemanager/dfmplugin-workspace/utils/fileviewmenuhelper.cpp
+    source: src/plugins/filemanager/dfmplugin-workspace/utils/fileviewmenuhelper.cpp
     type: Dtk::Widget::DMenu *
     name_source: accessible
   TextLabel:
     role: label
-    source: plugins/desktop/ddplugin-canvas/watermask/watermasksystem.cpp
+    source: src/plugins/desktop/ddplugin-canvas/watermask/watermasksystem.cpp
     type: QLabel *
     name_source: accessible
   ComboBox:
     role: combo box
-    source: plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp
+    source: src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp
     type: QComboBox *
     name_source: accessible
   Slider:
     role: slider
-    source: plugins/desktop/ddplugin-organizer/options/sizeslider.cpp
+    source: src/plugins/desktop/ddplugin-organizer/options/sizeslider.cpp
     type: Dtk::Widget::DSlider *
     name_source: accessible
   KeyEdit:
     role: text
-    source: plugins/desktop/ddplugin-organizer/options/widgets/shortcutwidget.cpp
+    source: src/plugins/desktop/ddplugin-organizer/options/widgets/shortcutwidget.cpp
     type: Dtk::Widget::DKeySequenceEdit *
     name_source: accessible
   SwitchBtn:
     role: ''
-    source: plugins/desktop/ddplugin-organizer/options/widgets/switchwidget.cpp
+    source: src/plugins/desktop/ddplugin-organizer/options/widgets/switchwidget.cpp
     type: Dtk::Widget::DSwitchButton *
+    name_source: accessible
+  CollectionView:
+    role: ''
+    source: src/plugins/desktop/ddplugin-organizer/view/collectionviewmenu.cpp
+    type: CollectionView *
     name_source: accessible
   FileNameLabel:
     role: label
-    source: plugins/filedialog/core/views/filedialogstatusbar.cpp
+    source: src/plugins/filedialog/core/views/filedialogstatusbar.cpp
     type: Dtk::Widget::DLabel *
     name_source: accessible
   FiltersLabel:
     role: label
-    source: plugins/filedialog/core/views/filedialogstatusbar.cpp
+    source: src/plugins/filedialog/core/views/filedialogstatusbar.cpp
     type: Dtk::Widget::DLabel *
     name_source: accessible
   FileNameEdit:
     role: text
-    source: plugins/filedialog/core/views/filedialogstatusbar.cpp
+    source: src/plugins/filedialog/core/views/filedialogstatusbar.cpp
     type: Dtk::Widget::DLineEdit *
     name_source: accessible
   FiltersComboBox:
     role: combo box
-    source: plugins/filedialog/core/views/filedialogstatusbar.cpp
+    source: src/plugins/filedialog/core/views/filedialogstatusbar.cpp
     type: Dtk::Widget::DComboBox *
     name_source: accessible
   CurAcceptButton:
     role: ''
-    source: plugins/filedialog/core/views/filedialogstatusbar.cpp
+    source: src/plugins/filedialog/core/views/filedialogstatusbar.cpp
     type: Dtk::Widget::DSuggestButton *
     name_source: accessible
   CurRejectButton:
     role: push button
-    source: plugins/filedialog/core/views/filedialogstatusbar.cpp
+    source: src/plugins/filedialog/core/views/filedialogstatusbar.cpp
     type: Dtk::Widget::DPushButton *
     name_source: accessible
   RenameEditor:
     role: text
-    source: plugins/filemanager/dfmplugin-computer/delegate/computeritemdelegate.cpp
+    source: src/plugins/filemanager/dfmplugin-computer/delegate/computeritemdelegate.cpp
     type: QLineEdit *
     name_source: accessible
   ScrollArea:
     role: scroll pane
-    source: plugins/filemanager/dfmplugin-computer/deviceproperty/devicepropertydialog.cpp
+    source: src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicepropertydialog.cpp
     type: QScrollArea *
     name_source: accessible
   OldPass:
     role: ''
-    source: plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp
+    source: src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp
     type: Dtk::Widget::DPasswordEdit *
     name_source: accessible
   NewPass1:
     role: ''
-    source: plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp
+    source: src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp
     type: Dtk::Widget::DPasswordEdit *
     name_source: accessible
   NewPass2:
     role: ''
-    source: plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp
+    source: src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp
     type: Dtk::Widget::DPasswordEdit *
     name_source: accessible
   RecSwitch:
     role: ''
-    source: plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp
+    source: src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp
     type: Dtk::Widget::DCommandLinkButton *
     name_source: accessible
   Editor_2:
     role: ''
-    source: plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp
+    source: src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp
     type: Dtk::Widget::DPasswordEdit *
     name_source: accessible
   EncType:
     role: combo box
-    source: plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp
+    source: src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp
     type: Dtk::Widget::DComboBox *
     name_source: accessible
   EncKeyEdit1:
     role: ''
-    source: plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp
+    source: src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp
     type: Dtk::Widget::DPasswordEdit *
     name_source: accessible
   EncKeyEdit2:
     role: ''
-    source: plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp
+    source: src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp
     type: Dtk::Widget::DPasswordEdit *
     name_source: accessible
   KeyExportInput:
     role: ''
-    source: plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp
+    source: src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp
     type: Dtk::Widget::DFileChooserEdit *
     name_source: accessible
   ChgUnlockType:
     role: ''
-    source: plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp
+    source: src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp
     type: Dtk::Widget::DCommandLinkButton *
     name_source: accessible
   PbBurn:
     role: push button
-    source: plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp
+    source: src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp
     type: Dtk::Widget::DPushButton *
     name_source: accessible
   PbDump:
     role: push button
-    source: plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp
+    source: src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp
     type: Dtk::Widget::DPushButton *
     name_source: accessible
   SideBarView:
     role: ''
-    source: plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp
+    source: src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp
     type: SideBarView *
     name_source: object
   ServerComboBox:
     role: combo box
-    source: plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp
+    source: src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp
     type: Dtk::Widget::DComboBox *
     name_source: accessible
   SchemeComboBox:
     role: combo box
-    source: plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp
+    source: src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp
     type: Dtk::Widget::DComboBox *
     name_source: accessible
   TheAddButton:
     role: ''
-    source: plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp
+    source: src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp
     type: Dtk::Widget::DIconButton *
     name_source: accessible
   CollectionServerView:
     role: list
-    source: plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp
+    source: src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp
     type: Dtk::Widget::DListView *
     name_source: accessible
   CharsetComboBox:
     role: combo box
-    source: plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp
+    source: src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp
     type: Dtk::Widget::DComboBox *
     name_source: accessible
   OldPwdEdit:
     role: ''
-    source: plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp
+    source: src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp
     type: Dtk::Widget::DPasswordEdit *
     name_source: accessible
   NewPwdEdit:
     role: ''
-    source: plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp
+    source: src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp
     type: Dtk::Widget::DPasswordEdit *
     name_source: accessible
   RepeatPwdEdit:
     role: ''
-    source: plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp
+    source: src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp
     type: Dtk::Widget::DPasswordEdit *
     name_source: accessible
   SaveBtn:
     role: ''
-    source: plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp
+    source: src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp
     type: Dtk::Widget::DSuggestButton *
     name_source: accessible
   AddBtn:
     role: ''
-    source: plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp
+    source: src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp
     type: DIconButton *
     name_source: accessible
   LeftBtn:
     role: ''
-    source: plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp
+    source: src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp
     type: DIconButton *
     name_source: accessible
   TabBar:
     role: page tab
-    source: plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp
+    source: src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp
     type: QTabBar *
     name_source: accessible
   BottomBar:
     role: page tab
-    source: plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp
+    source: src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp
     type: TabBar *
     name_source: accessible
   Placeholder:
     role: ''
-    source: plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp
+    source: src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp
     type: QWidget *
     name_source: accessible
   FinishedBtn:
     role: ''
-    source: plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp
+    source: src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp
     type: Dtk::Widget::DSuggestButton *
     name_source: accessible
   TypeCombo:
     role: combo box
-    source: plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp
+    source: src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp
     type: Dtk::Widget::DComboBox *
     name_source: accessible
   RepeatPasswordEdit:
     role: ''
-    source: plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp
+    source: src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp
     type: Dtk::Widget::DPasswordEdit *
     name_source: accessible
   TipsEdit:
     role: text
-    source: plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp
+    source: src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp
     type: Dtk::Widget::DLineEdit *
     name_source: accessible
   NextBtn:
     role: ''
-    source: plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp
+    source: src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp
     type: Dtk::Widget::DSuggestButton *
     name_source: accessible
   PwdEdit:
     role: ''
-    source: plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp
+    source: src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp
     type: Dtk::Widget::DPasswordEdit *
     name_source: accessible
   TipsBtn:
     role: push button
-    source: plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp
+    source: src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp
     type: QPushButton *
     name_source: accessible
   ToggleModeBtn:
     role: ''
-    source: plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp
+    source: src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp
     type: Dtk::Widget::DCommandLinkButton *
     name_source: accessible
   FilePathEdit:
     role: ''
-    source: plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp
+    source: src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp
     type: Dtk::Widget::DFileChooserEdit *
     name_source: accessible
   KeyFileEdit:
     role: ''
-    source: plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp
+    source: src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp
     type: Dtk::Widget::DFileChooserEdit *
     name_source: accessible
   NewPasswordEdit:
     role: ''
-    source: plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp
+    source: src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp
     type: Dtk::Widget::DPasswordEdit *
     name_source: accessible
   PasswordHintEdit:
     role: text
-    source: plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp
+    source: src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp
     type: Dtk::Widget::DLineEdit *
     name_source: accessible
   OldPasswordEdit:
     role: ''
-    source: plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp
+    source: src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp
     type: Dtk::Widget::DPasswordEdit *
     name_source: accessible
   RecoveryKeyEdit:
     role: text
-    source: plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp
+    source: src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp
     type: QPlainTextEdit *
     name_source: accessible
   TipsButton:
     role: push button
-    source: plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp
+    source: src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp
     type: QPushButton *
     name_source: accessible
   ScaleSlider:
     role: slider
-    source: plugins/filemanager/dfmplugin-workspace/views/fileviewstatusbar.cpp
+    source: src/plugins/filemanager/dfmplugin-workspace/views/fileviewstatusbar.cpp
     type: DSlider *
     name_source: accessible
   RenameBtn:
     role: ''
-    source: plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp
+    source: src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp
     type: DSuggestButton *
     name_source: accessible

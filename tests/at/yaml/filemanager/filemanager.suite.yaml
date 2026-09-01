@@ -892,5 +892,19 @@ suites:
     action: assert_not_exists
     selector:
       name: ToggleModeBtn
+- id: suite_filemanager_016_s1
+  name: 桌面收藏视图控件验证
+  description: 验证桌面 CollectionView 控件可定位
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: CollectionView
+    do: focus
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
 teardown:
 - action: session_stop
