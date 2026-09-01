@@ -19,6 +19,10 @@ OperState::OperState(QObject *parent) : QObject(parent)
 void OperState::setView(CanvasView *v)
 {
     view = v;
+    if (view) {
+        view->setObjectName("CanvasView");
+        view->setAccessibleName("CanvasView");
+    }
 }
 
 QModelIndex OperState::current() const

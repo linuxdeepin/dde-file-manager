@@ -31,6 +31,8 @@ using namespace ddplugin_canvas;
 DragDropOper::DragDropOper(CanvasView *parent)
     : QObject(parent), view(parent)
 {
+    view->setObjectName("CanvasView");
+    view->setAccessibleName("CanvasView");
 }
 
 bool DragDropOper::enter(QDragEnterEvent *event)

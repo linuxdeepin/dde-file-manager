@@ -14,7 +14,8 @@ ClickSelector::ClickSelector(CanvasView *parent)
     : QObject(parent)
     , view(parent)
 {
-
+    view->setObjectName("CanvasView");
+    view->setAccessibleName("CanvasView");
 }
 
 void ClickSelector::click(const QModelIndex &index)

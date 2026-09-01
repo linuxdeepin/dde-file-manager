@@ -33,6 +33,8 @@ using namespace ddplugin_canvas;
 CanvasViewMenuProxy::CanvasViewMenuProxy(CanvasView *parent)
     : QObject(parent), view(parent)
 {
+    view->setObjectName("CanvasView");
+    view->setAccessibleName("CanvasView");
 }
 
 CanvasViewMenuProxy::~CanvasViewMenuProxy()
