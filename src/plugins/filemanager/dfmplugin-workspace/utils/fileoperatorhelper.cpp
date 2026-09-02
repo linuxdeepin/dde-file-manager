@@ -10,6 +10,7 @@
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/utils/clipboard.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/trashutils.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/dialogmanager.h>
 #include <dfm-base/base/schemefactory.h>
@@ -252,7 +253,7 @@ void FileOperatorHelper::pasteFiles(const FileView *view)
     fmInfo() << "Paste file by clipboard and current dir: " << view->rootUrl();
 
     // Check if target directory is trash
-    if (FileUtils::isTrashFile(view->rootUrl())) {
+    if (TrashUtils::isTrashFile(view->rootUrl())) {
         fmDebug() << "Paste operation blocked - target is trash directory";
         return;
     }

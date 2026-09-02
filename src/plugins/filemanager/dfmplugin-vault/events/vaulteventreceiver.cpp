@@ -16,6 +16,7 @@
 #include <dfm-base/utils/dialogmanager.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/trashutils.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -197,7 +198,7 @@ bool VaultEventReceiver::handleShortCutPasteFiles(const quint64 &winId, const QL
         return false;
     }
 
-    if (VaultHelper::isVaultFile(fromUrls.first()) && FileUtils::isTrashFile(to)) {
+    if (VaultHelper::isVaultFile(fromUrls.first()) && TrashUtils::isTrashFile(to)) {
         fmDebug() << "Vault: Allowing paste from vault to trash";
         return true;
     }

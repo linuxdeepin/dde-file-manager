@@ -7,6 +7,7 @@
 #include "private/syncfileinfo_p.h"
 
 #include <dfm-base/base/urlroute.h>
+#include <dfm-base/utils/trashutils.h>
 #include <dfm-base/base/standardpaths.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/chinese2pinyin.h>
@@ -659,7 +660,7 @@ FileInfo::FileType SyncFileInfoPrivate::updateFileType()
 {
     FileInfo::FileType fileType = FileInfo::FileType::kUnknown;
     const QUrl &fileUrl = q->fileUrl();
-    if (FileUtils::isTrashFile(fileUrl) && q->isAttributes(FileInfo::FileIsType::kIsSymLink)) {
+    if (TrashUtils::isTrashFile(fileUrl) && q->isAttributes(FileInfo::FileIsType::kIsSymLink)) {
         {
             QMutexLocker locker(&lock);
             this->fileType = FileInfo::FileType::kRegularFile;

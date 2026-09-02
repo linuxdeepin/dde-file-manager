@@ -10,6 +10,7 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/trashutils.h>
 
 #include <gtest/gtest.h>
 #include <QUrl>
@@ -171,7 +172,7 @@ TEST_F(CrumbInterfaceTest, SeprateUrl_TrashUrl_ReturnsTrashCrumb)
 {
     QUrl url("trash:///");
 
-    stub.set_lamda(&FileUtils::trashRootUrl, []() {
+    stub.set_lamda(&TrashUtils::trashRootUrl, []() {
         __DBG_STUB_INVOKE__
         return QUrl("trash:///");
     });

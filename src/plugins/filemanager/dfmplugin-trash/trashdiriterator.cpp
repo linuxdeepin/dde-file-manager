@@ -4,27 +4,42 @@
 
 #include "trashdiriterator.h"
 #include "utils/trashhelper.h"
+#include <dfm-base/utils/trashutils.h>
 #include "private/trashdiriterator_p.h"
 
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/standardpaths.h>
 #include <dfm-base/base/device/deviceutils.h>
 #include <dfm-base/utils/universalutils.h>
+#include <dfm-base/utils/fileutils.h>
+
+#include <QDir>
+#include <QFileInfo>
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_trash;
 
 TrashDirIteratorPrivate::TrashDirIteratorPrivate(const QUrl &url, const QStringList &nameFilters,
-                                                 DFMIO::DEnumerator::DirFilters filters, DFMIO::DEnumerator::IteratorFlags flags,
+                                                 QDir::Filters filters, QDirIterator::IteratorFlags flags,
                                                  TrashDirIterator *qq)
     : q(qq)
 {
     fstabMap = DeviceUtils::fstabBindInfo();
-    dEnumerator.reset(new DFMIO::DEnumerator(url, nameFilters, filters, flags));
+    rootUrl = url;
+
+    // Iterate local trash directories instead of using DEnumerator on trash:///
+    // which would go through gvfsd and block on stale CIFS mounts.
+    const auto &dirs = TrashUtils::localTrashDirs();
+    for (const QString &dir : dirs) {
+        if (QDir(dir).exists())
+            iterators.append(new QDirIterator(dir, nameFilters, filters, flags));
+    }
 }
 
 TrashDirIteratorPrivate::~TrashDirIteratorPrivate()
 {
+    for (auto *it : iterators)
+        delete it;
 }
 
 TrashDirIterator::TrashDirIterator(const QUrl &url,
@@ -32,8 +47,7 @@ TrashDirIterator::TrashDirIterator(const QUrl &url,
                                    QDir::Filters filters,
                                    QDirIterator::IteratorFlags flags)
     : AbstractDirIterator(url, nameFilters, filters, flags),
-      d(new TrashDirIteratorPrivate(url, nameFilters, static_cast<DFMIO::DEnumerator::DirFilter>(static_cast<int32_t>(filters)),
-                                    static_cast<DFMIO::DEnumerator::IteratorFlag>(static_cast<uint8_t>(flags)), this))
+      d(new TrashDirIteratorPrivate(url, nameFilters, filters, flags, this))
 {
 }
 
@@ -43,39 +57,45 @@ TrashDirIterator::~TrashDirIterator()
 
 QUrl TrashDirIterator::next()
 {
-    if (d->dEnumerator)
-        d->currentUrl = d->dEnumerator->next();
-
     return d->currentUrl;
 }
 
 bool TrashDirIterator::hasNext() const
 {
-    bool has = false;
-    if (d->dEnumerator)
-        has = d->dEnumerator->hasNext();
+    while (d->currentIteratorIndex < d->iterators.size()) {
+        QDirIterator *it = d->iterators[d->currentIteratorIndex];
+        if (!it->hasNext()) {
+            d->currentIteratorIndex++;
+            continue;
+        }
 
-    if (!has)
-        return has;
+        QString localPath = it->next();
+        QFileInfo fi(localPath);
 
-    if (d->dEnumerator) {
-        if (!d->once &&  UniversalUtils::urlEquals(d->dEnumerator->uri(),
-                                                   TrashHelper::instance()->rootUrl()))
-            TrashHelper::instance()->trashNotEmpty();
+        // Convert local trash file path to trash:/// URL
+        QUrl trashUrl = TrashUtils::localFileToTrashUrl(localPath);
+        d->currentUrl = trashUrl;
 
-        d->once = true;
-        const QUrl &urlNext = d->dEnumerator->next();
-        d->fileInfo = InfoFactory::create<FileInfo>(urlNext);
+        // Create FileInfo for the trash URL
+        d->fileInfo = InfoFactory::create<FileInfo>(trashUrl);
         if (d->fileInfo) {
             const QUrl &urlTarget = d->fileInfo->urlOf(UrlInfoType::kRedirectedFileUrl);
+            // Skip files whose target path is on a fstab bind mount (avoid duplicates)
             for (const QString &key : d->fstabMap.keys()) {
                 if (urlTarget.path().startsWith(key))
                     return hasNext();
             }
         }
+
+        if (!d->once) {
+            TrashHelper::instance()->trashNotEmpty();
+            d->once = true;
+        }
+
+        return true;
     }
 
-    return has;
+    return false;
 }
 
 QString TrashDirIterator::fileName() const
@@ -110,7 +130,5 @@ const FileInfoPointer TrashDirIterator::fileInfo() const
 
 QUrl TrashDirIterator::url() const
 {
-    if (d->dEnumerator)
-        return d->dEnumerator->uri();
-    return TrashHelper::rootUrl();
+    return d->rootUrl.isValid() ? d->rootUrl : TrashUtils::trashRootUrl();
 }

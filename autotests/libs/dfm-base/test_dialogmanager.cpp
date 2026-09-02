@@ -27,6 +27,7 @@
 #include <dfm-base/file/local/syncfileinfo.h>
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/trashutils.h>
 
 #include <dfm-mount/base/dmount_global.h>
 
@@ -737,8 +738,8 @@ TEST_F(DialogManagerTest, ShowBreakSymlinkDialog_ConfirmNonTrash)
 {
     auto *dm = DialogManager::instance();
     g_dialogExecReturn = 1;   // Confirm button
-    // Stub FileUtils::isTrashFile to return false
-    stub.set_lamda(&FileUtils::isTrashFile, [](const QUrl &) -> bool {
+    // Stub TrashUtils::isTrashFile to return false
+    stub.set_lamda(&TrashUtils::isTrashFile, [](const QUrl &) -> bool {
         __DBG_STUB_INVOKE__
         return false;
     });
@@ -750,7 +751,7 @@ TEST_F(DialogManagerTest, ShowBreakSymlinkDialog_ConfirmTrash)
 {
     auto *dm = DialogManager::instance();
     g_dialogExecReturn = 1;   // Confirm button
-    stub.set_lamda(&FileUtils::isTrashFile, [](const QUrl &) -> bool {
+    stub.set_lamda(&TrashUtils::isTrashFile, [](const QUrl &) -> bool {
         __DBG_STUB_INVOKE__
         return true;
     });

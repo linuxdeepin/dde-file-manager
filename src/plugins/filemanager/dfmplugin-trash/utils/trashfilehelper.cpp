@@ -7,6 +7,7 @@
 #include "events/trasheventcaller.h"
 
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/trashutils.h>
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/utils/dialogmanager.h>
 #include <dfm-base/file/local/localfilehandler.h>
@@ -69,8 +70,8 @@ bool TrashFileHelper::moveToTrash(const quint64 windowId, const QList<QUrl> sour
     if (sources.first().scheme() != scheme())
         return false;
     // trash sub dir file do not run
-    bool isTrashRoot = FileUtils::isTrashRootFile(sources.first());
-    bool isParentTrashRoot = FileUtils::isTrashRootFile(UrlRoute::urlParent(sources.first()));
+    bool isTrashRoot = TrashUtils::isTrashRootFile(sources.first());
+    bool isParentTrashRoot = TrashUtils::isTrashRootFile(UrlRoute::urlParent(sources.first()));
     if (!isTrashRoot && !isParentTrashRoot) {
         fmDebug() << "Trash: Files are not in trash root directory, operation skipped";
         return true;
@@ -92,8 +93,8 @@ bool TrashFileHelper::deleteFile(const quint64 windowId, const QList<QUrl> sourc
     if (sources.first().scheme() != scheme())
         return false;
     // trash sub dir file do not run
-    bool isTrashRoot = FileUtils::isTrashRootFile(sources.first());
-    bool isParentTrashRoot = FileUtils::isTrashRootFile(UrlRoute::urlParent(sources.first()));
+    bool isTrashRoot = TrashUtils::isTrashRootFile(sources.first());
+    bool isParentTrashRoot = TrashUtils::isTrashRootFile(UrlRoute::urlParent(sources.first()));
     if (!isTrashRoot && !isParentTrashRoot) {
         fmDebug() << "Trash: Files are not in trash root directory, delete operation skipped";
         return true;
@@ -156,7 +157,7 @@ bool TrashFileHelper::disableOpenWidgetWidget(const QUrl &url, bool *result)
 
 bool TrashFileHelper::handleCanTag(const QUrl &url, bool *canTag)
 {
-    if (url.scheme() == scheme() || FileUtils::isTrashFile(url)) {
+    if (url.scheme() == scheme() || TrashUtils::isTrashFile(url)) {
         if (canTag)
             *canTag = false;
         return true;
@@ -169,9 +170,9 @@ bool TrashFileHelper::handleIsSubFile(const QUrl &parent, const QUrl &sub)
 {
     if (parent.scheme() != scheme())
         return false;
-    if (!FileUtils::isTrashFile(sub))
+    if (!TrashUtils::isTrashFile(sub))
         return false;
-    if (UniversalUtils::urlEquals(FileUtils::trashRootUrl(), parent))
+    if (UniversalUtils::urlEquals(TrashUtils::trashRootUrl(), parent))
         return true;
 
     return sub.path().contains(parent.path());
@@ -208,6 +209,6 @@ bool TrashFileHelper::handleNotCdComputer(const QUrl &url, QUrl *cdUrl)
         return false;
 
     // 回收站中只能最上层目录可以删除和还原，那么它们的父目录都是回收站
-    *cdUrl = FileUtils::trashRootUrl();
+    *cdUrl = TrashUtils::trashRootUrl();
     return true;
 }

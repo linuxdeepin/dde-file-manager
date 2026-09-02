@@ -48,7 +48,7 @@ private:
 
 private:
     TrashCoreStartupProbe *startupProbe { nullptr };
-    QSharedPointer<DFMBASE_NAMESPACE::AbstractFileWatcher> trashFileWatcher = nullptr;
+    QList<QSharedPointer<DFMBASE_NAMESPACE::AbstractFileWatcher>> trashWatchers;
     TrashState trashState { TrashState::Unknown };
     QTimer timer;
     bool watcherInitialized { false };

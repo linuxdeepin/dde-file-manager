@@ -5,6 +5,7 @@
 #include "dorestoretrashfilesworker.h"
 
 #include <dfm-base/base/schemefactory.h>
+#include <dfm-base/utils/trashutils.h>
 #include <dfm-base/base/standardpaths.h>
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/utils/universalutils.h>
@@ -55,7 +56,7 @@ bool DoRestoreTrashFilesWorker::statisticsFilesSize()
 
     if (sourceUrls.size() == 1) {
         const QUrl &urlSource = sourceUrls[0];
-        if (UniversalUtils::urlEquals(urlSource, FileUtils::trashRootUrl())) {
+        if (UniversalUtils::urlEquals(urlSource, TrashUtils::trashRootUrl())) {
             DFMIO::DEnumerator enumerator(urlSource);
             while (enumerator.hasNext())
                 allFilesList.append(enumerator.next());
@@ -130,7 +131,7 @@ bool DoRestoreTrashFilesWorker::translateUrls()
         }
         if (sourceUrls.length() <= 0) {
             fmWarning() << "No trash URLs found - error:" << errorMsg;
-            action = doHandleErrorAndWait(targetUrls.keys().length() > 0 ? targetUrls.keys().first() : FileUtils::trashRootUrl(), QUrl(),
+            action = doHandleErrorAndWait(targetUrls.keys().length() > 0 ? targetUrls.keys().first() : TrashUtils::trashRootUrl(), QUrl(),
                                           AbstractJobHandler::JobErrorType::kFailedObtainTrashOriginalFile, false, errorMsg);
         }
     } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);

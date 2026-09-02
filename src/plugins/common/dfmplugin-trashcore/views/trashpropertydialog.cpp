@@ -8,6 +8,7 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/standardpaths.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/trashutils.h>
 
 #include <DHorizontalLine>
 
@@ -29,7 +30,7 @@ void TrashPropertyDialog::initUI()
     setFixedWidth(320);
     setTitle(tr("Trash"));
 
-    const QUrl &trashRootUrl = FileUtils::trashRootUrl();
+    const QUrl &trashRootUrl = TrashUtils::trashRootUrl();
     FileInfoPointer info = InfoFactory::create<FileInfo>(trashRootUrl);
 
     trashIconLabel = new DLabel(this);

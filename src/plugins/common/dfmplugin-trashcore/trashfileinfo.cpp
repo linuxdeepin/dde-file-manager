@@ -9,13 +9,13 @@
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/trashutils.h>
 #include <dfm-base/file/local/desktopfileinfo.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/base/standardpaths.h>
 
-#include <dfm-io/denumerator.h>
-
 #include <QCoreApplication>
+#include <QDir>
 
 DFMBASE_USE_NAMESPACE
 namespace dfmplugin_trashcore {
@@ -26,49 +26,6 @@ TrashFileInfoPrivate::~TrashFileInfoPrivate()
 
 QUrl TrashFileInfoPrivate::initTarget()
 {
-    QVariant attributeTargetUri = dFileInfo->attribute(DFileInfo::AttributeID::kStandardTargetUri);
-    if (!attributeTargetUri.toString().isEmpty())
-        targetUrl = dFileInfo->attribute(DFileInfo::AttributeID::kStandardTargetUri).toUrl();
-
-    originalUrl = QUrl::fromUserInput(dFileInfo->attribute(DFileInfo::AttributeID::kTrashOrigPath).toString());
-    const bool urlIsRoot = UniversalUtils::urlEquals(TrashCoreHelper::rootUrl(), q->fileUrl());
-    if (!targetUrl.isValid() && !urlIsRoot) {
-        QUrl ancestors = q->fileUrl();
-        while (TrashCoreHelper::rootUrl().isParentOf(ancestors)) {
-            QUrl urlPre = ancestors;
-            ancestors = UrlRoute::urlParent(ancestors);
-            if (UniversalUtils::urlEquals(TrashCoreHelper::rootUrl(), ancestors)) {
-                ancestors = urlPre;
-                break;
-            }
-        }
-
-        QSharedPointer<DFileInfo> fileinfo { new DFileInfo(ancestors) };
-        if (fileinfo->initQuerier()) {
-            const QUrl &ancestorsTargetUrl = fileinfo->attribute(DFileInfo::AttributeID::kStandardTargetUri).toUrl();
-            if (ancestorsTargetUrl.isValid()) {
-                QString localRootPath = ancestorsTargetUrl.toString();
-                const QString &fileSuffix = q->fileUrl().path().mid(q->fileUrl().path().indexOf("/", 1));
-                const QUrl &urlReal = localRootPath + fileSuffix;
-
-                targetUrl = urlReal;
-                QString localRootOriginalPath = fileinfo->attribute(DFileInfo::AttributeID::kTrashOrigPath).toString();
-                originalUrl = QUrl::fromUserInput(localRootOriginalPath + fileSuffix);
-                dAncestorsFileInfo = fileinfo;
-                return urlReal;
-            }
-        }
-    } else if (urlIsRoot) {
-        const QUrl &urlTrashFiles = QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kTrashLocalFilesPath));
-        QSharedPointer<DFileInfo> fileinfo { new DFileInfo(urlTrashFiles) };
-        if (fileinfo->initQuerier()) {
-            targetUrl = urlTrashFiles;
-            originalUrl = QUrl();
-            dAncestorsFileInfo = fileinfo;
-            return targetUrl;
-        }
-    }
-
     return targetUrl;
 }
 
@@ -146,7 +103,7 @@ QDateTime TrashFileInfoPrivate::deletionTime() const
         return QDateTime::fromString(dAncestorsFileInfo->attribute(DFileInfo::AttributeID::kTrashDeletionDate).toString(), Qt::ISODate);
 
     if (!dFileInfo)
-        return QDateTime();
+        return cachedDeletionTime;
 
     return QDateTime::fromString(dFileInfo->attribute(DFileInfo::AttributeID::kTrashDeletionDate).toString(), Qt::ISODate);
 }
@@ -154,25 +111,26 @@ QDateTime TrashFileInfoPrivate::deletionTime() const
 TrashFileInfo::TrashFileInfo(const QUrl &url)
     : ProxyFileInfo(url), d(new TrashFileInfoPrivate(this))
 {
-    d->dFileInfo.reset(new DFileInfo(url));
-    if (!d->dFileInfo) {
-        fmWarning() << "dfm-io use factory create fileinfo Failed, url: " << url;
-        return;
-    }
-    bool init = d->dFileInfo->initQuerier();
-    if (!init) {
-        //        fmWarning() << "querier init failed, url: " << url;
+    if (TrashUtils::isTrashRootFile(url)) {
+        // Root trash URL: resolve to local trash files directory without dfm-io.
+        d->targetUrl = QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kTrashLocalFilesPath));
+        setProxy(InfoFactory::create<FileInfo>(d->targetUrl));
         return;
     }
 
-    const QUrl &urlTarget = d->initTarget();
-    if (urlTarget.isValid()) {
-        d->targetUrl.setPath(urlTarget.path());
-        setProxy(InfoFactory::create<FileInfo>(d->targetUrl));
-    } else {
-        if (!FileUtils::isTrashRootFile(url))
-            fmWarning() << "create proxy failed, target url is invalid, url: " << url;
+    // Non-root trash URL: resolve to local file path via .trashinfo metadata.
+    // This bypasses gvfsd entirely, avoiding blocks on stale CIFS mounts.
+    // No DFileInfo is created — all attribute queries are delegated to the proxy.
+    TrashUtils::TrashItemInfo item = TrashUtils::resolveTrashUrl(url);
+    if (!item.localFileUrl.isValid()) {
+        fmWarning() << "Trash: Failed to resolve trash URL to local path:" << url;
+        return;
     }
+
+    d->targetUrl = item.localFileUrl;
+    d->originalUrl = item.originalUrl;
+    d->cachedDeletionTime = item.deletionTime;
+    setProxy(InfoFactory::create<FileInfo>(d->targetUrl));
 }
 
 TrashFileInfo::~TrashFileInfo()
@@ -181,14 +139,13 @@ TrashFileInfo::~TrashFileInfo()
 
 bool TrashFileInfo::exists() const
 {
-    if (FileUtils::isTrashRootFile(urlOf(UrlInfoType::kUrl)))
+    if (TrashUtils::isTrashRootFile(urlOf(UrlInfoType::kUrl)))
         return true;
 
     if (d->dFileInfo)
         return d->dFileInfo->exists();
 
-    return ProxyFileInfo::exists()
-            || FileUtils::isTrashRootFile(urlOf(UrlInfoType::kUrl));
+    return ProxyFileInfo::exists();
 }
 
 Qt::DropActions TrashFileInfo::supportedOfAttributes(const FileInfo::SupportType type) const
@@ -215,17 +172,24 @@ QString TrashFileInfo::nameOf(const NameInfoType type) const
 {
     switch (type) {
     case NameInfoType::kFileName:
-        return d->fileName();
+        if (d->dFileInfo)
+            return d->fileName();
+        return ProxyFileInfo::nameOf(type);
     case NameInfoType::kFileCopyName: {
         if (d->targetUrl.isValid()) {
             if (FileUtils::isDesktopFileSuffix(d->targetUrl)) {
-                return d->copyName();
+                DesktopFileInfo dfi(d->targetUrl);
+                return dfi.nameOf(NameInfoType::kFileCopyName);
             }
         }
-        return displayOf(DisPlayInfoType::kFileDisplayName);
+        if (d->dFileInfo)
+            return d->copyName();
+        return ProxyFileInfo::nameOf(type);
     }
     case NameInfoType::kMimeTypeName:
-        return d->mimeTypeName();
+        if (d->dFileInfo)
+            return d->mimeTypeName();
+        return ProxyFileInfo::nameOf(type);
     default:
         return ProxyFileInfo::nameOf(type);
     }
@@ -237,9 +201,6 @@ QString TrashFileInfo::displayOf(const DisPlayInfoType type) const
         if (urlOf(UrlInfoType::kUrl) == TrashCoreHelper::rootUrl())
             return QCoreApplication::translate("PathManager", "Trash");
 
-        if (!d->dFileInfo)
-            return QString();
-
         if (d->targetUrl.isValid()) {
             if (FileUtils::isDesktopFileSuffix(d->targetUrl)) {
                 DesktopFileInfo dfi(d->targetUrl);
@@ -247,7 +208,9 @@ QString TrashFileInfo::displayOf(const DisPlayInfoType type) const
             }
         }
 
-        return d->dFileInfo->attribute(DFileInfo::AttributeID::kStandardDisplayName).toString();
+        if (d->dFileInfo)
+            return d->dFileInfo->attribute(DFileInfo::AttributeID::kStandardDisplayName).toString();
+        return ProxyFileInfo::displayOf(type);
     }
 
     return ProxyFileInfo::displayOf(type);
@@ -256,7 +219,9 @@ QString TrashFileInfo::pathOf(const PathInfoType type) const
 {
     switch (type) {
     case FilePathInfoType::kSymLinkTarget:
-        return d->symLinkTarget();
+        if (d->dFileInfo)
+            return d->symLinkTarget();
+        return ProxyFileInfo::pathOf(type);
     default:
         return ProxyFileInfo::pathOf(type);
     }
@@ -282,22 +247,19 @@ bool TrashFileInfo::canAttributes(const CanableInfoType type) const
 {
     switch (type) {
     case FileCanType::kCanDelete:
-        if (!d->dFileInfo)
-            return false;
-
-        return d->dFileInfo->attribute(DFileInfo::AttributeID::kAccessCanDelete, nullptr).toBool();
+        if (d->dFileInfo)
+            return d->dFileInfo->attribute(DFileInfo::AttributeID::kAccessCanDelete, nullptr).toBool();
+        return ProxyFileInfo::canAttributes(type);
     case FileCanType::kCanTrash:
-        if (!d->dFileInfo)
-            return false;
-
-        return d->dFileInfo->attribute(DFileInfo::AttributeID::kAccessCanTrash, nullptr).toBool();
+        if (d->dFileInfo)
+            return d->dFileInfo->attribute(DFileInfo::AttributeID::kAccessCanTrash, nullptr).toBool();
+        return ProxyFileInfo::canAttributes(type);
     case FileCanType::kCanRename:
-        if (!d->dFileInfo)
-            return false;
-
-        return d->dFileInfo->attribute(DFileInfo::AttributeID::kAccessCanRename, nullptr).toBool();
+        if (d->dFileInfo)
+            return d->dFileInfo->attribute(DFileInfo::AttributeID::kAccessCanRename, nullptr).toBool();
+        return ProxyFileInfo::canAttributes(type);
     case FileCanType::kCanDrop:
-        return FileUtils::isTrashRootFile(urlOf(UrlInfoType::kUrl));
+        return TrashUtils::isTrashRootFile(urlOf(UrlInfoType::kUrl));
     case FileCanType::kCanHidden:
         return false;
     case FileCanType::kCanRedirectionFileUrl:
@@ -313,6 +275,8 @@ QFile::Permissions TrashFileInfo::permissions() const
 
     if (d->dFileInfo) {
         ps = static_cast<QFileDevice::Permissions>(static_cast<uint16_t>(d->dFileInfo->permissions()));
+    } else {
+        ps = ProxyFileInfo::permissions();
     }
 
     ps &= ~QFileDevice::WriteOwner;
@@ -337,19 +301,19 @@ QIcon TrashFileInfo::fileIcon()
 
 qint64 TrashFileInfo::size() const
 {
-    if (!d->dFileInfo)
-        return qint64();
-
-    qint64 size = 0;
     const QUrl &fileUrl = urlOf(UrlInfoType::kUrl);
-    if (FileUtils::isTrashRootFile(fileUrl)) {
+    if (TrashUtils::isTrashRootFile(fileUrl)) {
         auto data = TrashCoreHelper::calculateTrashRoot();
         return data.first;
     }
 
-    bool success = false;
-    size = d->dFileInfo->attribute(DFileInfo::AttributeID::kStandardSize, &success).value<qint64>();
-    return size;
+    if (d->dFileInfo) {
+        bool success = false;
+        qint64 size = d->dFileInfo->attribute(DFileInfo::AttributeID::kStandardSize, &success).value<qint64>();
+        return size;
+    }
+
+    return ProxyFileInfo::size();
 }
 
 QString TrashFileInfoPrivate::symLinkTarget() const
@@ -365,14 +329,14 @@ QString TrashFileInfoPrivate::symLinkTarget() const
 
 int TrashFileInfo::countChildFile() const
 {
-    if (FileUtils::isTrashRootFile(urlOf(UrlInfoType::kUrl))) {
-        DFileInfo trashRootFileInfo(FileUtils::trashRootUrl());
-        return trashRootFileInfo.attribute(DFMIO::DFileInfo::AttributeID::kTrashItemCount).toInt();
+    if (TrashUtils::isTrashRootFile(urlOf(UrlInfoType::kUrl))) {
+        return TrashUtils::countTrashItems();
     }
 
     if (isAttributes(OptInfoType::kIsDir)) {
-        DFMIO::DEnumerator enumerator(urlOf(UrlInfoType::kUrl));
-        return int(enumerator.fileCount());
+        QDir dir(d->targetUrl.toLocalFile());
+        if (dir.exists())
+            return static_cast<int>(dir.entryList(QDir::NoDotAndDotDot | QDir::AllEntries).size());
     }
 
     return -1;
@@ -382,31 +346,26 @@ bool TrashFileInfo::isAttributes(const OptInfoType type) const
 {
     switch (type) {
     case FileIsType::kIsDir:
-        if (FileUtils::isTrashRootFile(urlOf(UrlInfoType::kUrl)))
+        if (TrashUtils::isTrashRootFile(urlOf(UrlInfoType::kUrl)))
             return true;
         return ProxyFileInfo::isAttributes(type);
     case FileIsType::kIsReadable:
         if (!d->dFileInfo)
-            return false;
-
+            return ProxyFileInfo::isAttributes(type);
         if (d->targetUrl.isValid())
             return ProxyFileInfo::isAttributes(OptInfoType::kIsReadable);
-
         return d->dFileInfo->attribute(DFileInfo::AttributeID::kAccessCanRead, nullptr).toBool();
     case FileIsType::kIsWritable:
         if (!d->dFileInfo)
-            return false;
-
+            return ProxyFileInfo::isAttributes(type);
         if (d->targetUrl.isValid())
             return ProxyFileInfo::isAttributes(type);
-
         return d->dFileInfo->attribute(DFileInfo::AttributeID::kAccessCanWrite, nullptr).toBool();
     case FileIsType::kIsHidden:
         return false;
     case FileIsType::kIsSymLink:
         if (!d->dFileInfo)
-            return false;
-
+            return ProxyFileInfo::isAttributes(type);
         return d->dFileInfo->attribute(DFileInfo::AttributeID::kStandardIsSymlink, nullptr).toBool();
     default:
         return ProxyFileInfo::isAttributes(type);
@@ -417,9 +376,13 @@ QVariant TrashFileInfo::timeOf(const TimeInfoType type) const
 {
     switch (type) {
     case TimeInfoType::kLastRead:
-        return d->lastRead();
+        if (d->dFileInfo)
+            return d->lastRead();
+        return ProxyFileInfo::timeOf(type);
     case TimeInfoType::kLastModified:
-        return d->lastModified();
+        if (d->dFileInfo)
+            return d->lastModified();
+        return ProxyFileInfo::timeOf(type);
     case TimeInfoType::kCustomerSupport:
         [[fallthrough]];
     case TimeInfoType::kDeletionTime:

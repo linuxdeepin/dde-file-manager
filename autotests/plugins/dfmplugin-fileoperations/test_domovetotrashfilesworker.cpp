@@ -21,6 +21,7 @@
 #include <dfm-base/file/local/localfilewatcher.h>
 #include <dfm-base/interfaces/fileinfo.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/trashutils.h>
 
 DFMBASE_USE_NAMESPACE
 DPFILEOPERATIONS_USE_NAMESPACE
@@ -259,7 +260,7 @@ TEST_F(TestDoMoveToTrashFilesWorker, IsCanMoveToTrash_ValidFile)
     auto testFile = createTestFile("can_trash.txt");
     QUrl fileUrl = testFile->urlOf(UrlInfoType::kUrl);
 
-    stub.set_lamda(&FileUtils::trashIsEmpty, []() -> bool {
+    stub.set_lamda(&TrashUtils::trashIsEmpty, []() -> bool {
         __DBG_STUB_INVOKE__
         return false;
     });
@@ -274,7 +275,7 @@ TEST_F(TestDoMoveToTrashFilesWorker, IsCanMoveToTrash_LargeFile)
 {
     QUrl fileUrl = QUrl::fromLocalFile("/tmp/large_file.bin");
 
-    stub.set_lamda(&FileUtils::trashIsEmpty, []() -> bool {
+    stub.set_lamda(&TrashUtils::trashIsEmpty, []() -> bool {
         __DBG_STUB_INVOKE__
         return false;
     });
@@ -295,7 +296,7 @@ TEST_F(TestDoMoveToTrashFilesWorker, IsCanMoveToTrash_TrashIsEmpty)
 {
     QUrl fileUrl = QUrl::fromLocalFile("/tmp/test.txt");
 
-    stub.set_lamda(&FileUtils::trashIsEmpty, []() -> bool {
+    stub.set_lamda(&TrashUtils::trashIsEmpty, []() -> bool {
         __DBG_STUB_INVOKE__
         return true;
     });

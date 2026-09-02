@@ -46,15 +46,12 @@ public:
         return QIcon::fromTheme("user-trash-symbolic");
     }
 
-    static QUrl rootUrl();
     static quint64 windowId(QWidget *sender);
     static void contenxtMenuHandle(const quint64 windowId, const QUrl &url, const QPoint &globalPos);
     static QFrame *createEmptyTrashTopWidget();
     static bool showTopWidget(QWidget *w, const QUrl &url);
     static QUrl transToTrashFile(const QString &filePath);
     static QUrl trashFileToTargetUrl(const QUrl &url);
-    static bool isTrashFile(const QUrl &url);
-    static bool isTrashRootFile(const QUrl &url);
     static void emptyTrash(const quint64 windowId = 0);
     static ExpandFieldMap propetyExtensionFunc(const QUrl &url);
     static ExpandFieldMap detailExtensionFunc(const QUrl &url);

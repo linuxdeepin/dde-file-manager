@@ -4,6 +4,7 @@
 
 #include "docleantrashfilesworker.h"
 #include <dfm-base/base/schemefactory.h>
+#include <dfm-base/utils/trashutils.h>
 #include <dfm-base/base/standardpaths.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/file/local/localfilehandler.h>
@@ -52,7 +53,7 @@ bool DoCleanTrashFilesWorker::statisticsFilesSize()
 
     if (sourceUrls.size() == 1) {
         const QUrl &urlSource = sourceUrls[0];
-        if (UniversalUtils::urlEquals(urlSource, FileUtils::trashRootUrl())) {
+        if (UniversalUtils::urlEquals(urlSource, TrashUtils::trashRootUrl())) {
             DFMIO::DEnumerator enumerator(urlSource);
             while (enumerator.hasNext()) {
                 auto url = FileUtils::bindUrlTransform(enumerator.next());

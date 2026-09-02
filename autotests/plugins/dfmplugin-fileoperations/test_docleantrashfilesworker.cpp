@@ -21,6 +21,7 @@
 #include <dfm-base/file/local/localfilewatcher.h>
 #include <dfm-base/interfaces/fileinfo.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/trashutils.h>
 
 DFMBASE_USE_NAMESPACE
 DPFILEOPERATIONS_USE_NAMESPACE
@@ -117,7 +118,7 @@ TEST_F(TestDoCleanTrashFilesWorker, InitArgs_Success)
         __DBG_STUB_INVOKE__
         return true;
     });
-    stub.set_lamda(&FileUtils::trashRootUrl, []() {
+    stub.set_lamda(&TrashUtils::trashRootUrl, []() {
         __DBG_STUB_INVOKE__
         return QUrl("trash:///");
     });

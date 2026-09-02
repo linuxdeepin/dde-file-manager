@@ -8,6 +8,7 @@
 
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/trashutils.h>
 
 #include <dfm-io/dfmio_utils.h>
 
@@ -134,7 +135,7 @@ bool DoCutFilesWorker::doCutFile(const DFileInfoPointer &fromInfo, const DFileIn
 {
     QUrl trashInfoUrl;
     QString fileName = fromInfo->attribute(DFileInfo::AttributeID::kStandardFileName).toString();
-    const bool isTrashFile = FileUtils::isTrashFile(fromInfo->uri());
+    const bool isTrashFile = TrashUtils::isTrashFile(fromInfo->uri());
     if (isTrashFile) {
         trashInfoUrl = trashInfo(fromInfo);
         fileName = fileOriginName(trashInfoUrl);
@@ -208,7 +209,7 @@ bool DoCutFilesWorker::doCutFile(const DFileInfoPointer &fromInfo, const DFileIn
     QUrl orignalUrl = fromInfo->uri();
     if (isTrashFile) {
         removeTrashInfo(trashInfoUrl);
-        orignalUrl.setScheme("trash");
+        orignalUrl.setScheme(Global::Scheme::kTrash);
         orignalUrl.setPath("/" + orignalUrl.path().replace("/", "\\"));
         auto tmpFileName = fromInfo->uri().fileName();
         auto orignalName = QUrl::toPercentEncoding(tmpFileName);

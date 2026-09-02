@@ -16,6 +16,7 @@
 #include <dfm-base/utils/systempathutil.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/trashutils.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -42,15 +43,6 @@ TrashHelper *TrashHelper::instance()
     return &instance;
 }
 
-QUrl TrashHelper::rootUrl()
-{
-    QUrl url;
-    url.setScheme(scheme());
-    url.setPath("/");
-    url.setHost("");
-    return url;
-}
-
 quint64 TrashHelper::windowId(QWidget *sender)
 {
     return FMWindowsIns.findWindowId(sender);
@@ -74,7 +66,7 @@ void TrashHelper::contenxtMenuHandle(const quint64 windowId, const QUrl &url, co
     auto emptyTrashAct = menu->addAction(QObject::tr("Empty Trash"), [windowId, url]() {
         TrashEventCaller::sendEmptyTrash(windowId, {});
     });
-    emptyTrashAct->setDisabled(FileUtils::trashIsEmpty());
+    emptyTrashAct->setDisabled(TrashUtils::trashIsEmpty());
 
     menu->addSeparator();
 
@@ -122,32 +114,6 @@ QUrl TrashHelper::trashFileToTargetUrl(const QUrl &url)
         return fileInfo->urlOf(UrlInfoType::kRedirectedFileUrl);
 
     return url;
-}
-
-bool TrashHelper::isTrashFile(const QUrl &url)
-{
-    if (url.scheme() == TrashHelper::scheme())
-        return true;
-    if (url.path().startsWith(StandardPaths::location(StandardPaths::kTrashLocalFilesPath)))
-        return true;
-
-    const QString &rule = QString("/.Trash-%1/(files|info)/").arg(getuid());
-    QRegularExpression reg(rule);
-    QRegularExpressionMatch matcher = reg.match(url.toString());
-    return matcher.hasMatch();
-}
-
-bool TrashHelper::isTrashRootFile(const QUrl &url)
-{
-    if (UniversalUtils::urlEquals(url, TrashHelper::rootUrl()))
-        return true;
-    if (url.path().endsWith(StandardPaths::location(StandardPaths::kTrashLocalFilesPath)))
-        return true;
-
-    const QString &rule = QString("/.Trash-%1/(files|info)$").arg(getuid());
-    QRegularExpression reg(rule);
-    QRegularExpressionMatch matcher = reg.match(url.toString());
-    return matcher.hasMatch();
 }
 
 void TrashHelper::emptyTrash(const quint64 windowId)
@@ -213,9 +179,9 @@ bool TrashHelper::checkDragDropAction(const QList<QUrl> &urls, const QUrl &urlTo
     if (!action)
         return false;
 
-    const bool fromIsTrash = isTrashFile(urls.first());
-    const bool toIsTrash = isTrashFile(urlTo);
-    const bool toIsTrashRoot = isTrashRootFile(urlTo);
+    const bool fromIsTrash = TrashUtils::isTrashFile(urls.first());
+    const bool toIsTrash = TrashUtils::isTrashFile(urlTo);
+    const bool toIsTrashRoot = TrashUtils::isTrashRootFile(urlTo);
 
     if (fromIsTrash && toIsTrash) {
         *action = Qt::IgnoreAction;
@@ -234,7 +200,7 @@ bool TrashHelper::checkCanMove(const QUrl &url)
 {
     if (url.scheme() != scheme())
         return false;
-    if (!FileUtils::isTrashRootFile(UrlRoute::urlParent(url)))
+    if (!TrashUtils::isTrashRootFile(UrlRoute::urlParent(url)))
         return false;
 
     return true;
@@ -242,7 +208,7 @@ bool TrashHelper::checkCanMove(const QUrl &url)
 
 bool TrashHelper::detailViewIcon(const QUrl &url, QString *iconName)
 {
-    if (UniversalUtils::urlEquals(url, rootUrl())) {
+    if (UniversalUtils::urlEquals(url, TrashUtils::trashRootUrl())) {
         *iconName = SystemPathUtil::instance()->systemPathIconName("Trash");
         if (!iconName->isEmpty())
             return true;
@@ -285,12 +251,12 @@ bool TrashHelper::customRoleDisplayName(const QUrl &url, const Global::ItemRoles
 
 void TrashHelper::onTrashStateChanged()
 {
-    const auto cachedState = FileUtils::trashEmptyState();
-    if (cachedState == FileUtils::TrashEmptyState::kUnknown) {
-        bool actuallyEmpty = FileUtils::trashIsEmpty();
+    const auto cachedState = TrashUtils::trashEmptyState();
+    if (cachedState == TrashUtils::TrashEmptyState::kUnknown) {
+        bool actuallyEmpty = TrashUtils::trashIsEmpty();
         trashState = actuallyEmpty ? TrashState::Empty : TrashState::NotEmpty;
     } else {
-        trashState = (cachedState == FileUtils::TrashEmptyState::kEmpty)
+        trashState = (cachedState == TrashUtils::TrashEmptyState::kEmpty)
                 ? TrashState::Empty
                 : TrashState::NotEmpty;
     }
@@ -314,7 +280,7 @@ void TrashHelper::onTrashStateChanged()
 void TrashHelper::onTrashEmptyState()
 {
     // Force refresh the actual state
-    bool actuallyEmpty = FileUtils::trashIsEmpty();
+    bool actuallyEmpty = TrashUtils::trashIsEmpty();
     trashState = actuallyEmpty ? TrashState::Empty : TrashState::NotEmpty;
 
     if (trashState != TrashState::Empty) {
@@ -364,7 +330,7 @@ void TrashHelper::onTrashNotEmptyState()
 TrashHelper::TrashHelper(QObject *parent)
     : QObject(parent)
 {
-    // Remove blocking FileUtils::trashIsEmpty() call from constructor
+    // Remove blocking TrashUtils::trashIsEmpty() call from constructor
     // State will be lazily initialized when needed
     initEvent();
 }

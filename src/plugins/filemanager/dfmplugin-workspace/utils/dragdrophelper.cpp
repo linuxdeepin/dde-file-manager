@@ -11,6 +11,7 @@
 #include <dfm-base/utils/windowutils.h>
 #include <dfm-base/utils/sysinfoutils.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/trashutils.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/mimedata/dfmmimedata.h>
@@ -466,7 +467,7 @@ bool DragDropHelper::checkTargetEnable(const QUrl &targetUrl) const
     if (!dfmmimeData.isValid())
         return true;
 
-    if (FileUtils::isTrashFile(targetUrl) || FileUtils::isTrashDesktopFile(targetUrl))
+    if (TrashUtils::isTrashFile(targetUrl) || FileUtils::isTrashDesktopFile(targetUrl))
         return dfmmimeData.canTrash() || dfmmimeData.canDelete();
 
     return true;
@@ -494,7 +495,7 @@ bool DragDropHelper::checkDragEnable(const QUrl &dragUrl, const QUrl &targetUrl)
         return true;
 
     // Some desktop files may allow trash even if not movable/renamable.
-    bool dragToDelete = (FileUtils::isTrashFile(targetUrl) || FileUtils::isTrashDesktopFile(targetUrl)) && info->canAttributes(CanableInfoType::kCanTrash);
+    bool dragToDelete = (TrashUtils::isTrashFile(targetUrl) || FileUtils::isTrashDesktopFile(targetUrl)) && info->canAttributes(CanableInfoType::kCanTrash);
 
     return dragToDelete;
 }
@@ -508,7 +509,7 @@ bool DragDropHelper::checkMoveEnable(const QUrl &dragUrl, const QUrl &toUrl) con
     // but they all allow to be deleted to trash
     FileInfoPointer info = InfoFactory::create<FileInfo>(dragUrl);
     if (FileUtils::isDesktopFile(info->urlOf(UrlInfoType::kUrl))) {
-        return info->canAttributes(CanableInfoType::kCanMoveOrCopy) || (FileUtils::isTrashFile(toUrl) || FileUtils::isTrashDesktopFile(toUrl));
+        return info->canAttributes(CanableInfoType::kCanMoveOrCopy) || (TrashUtils::isTrashFile(toUrl) || FileUtils::isTrashDesktopFile(toUrl));
     }
     return !info->exists() || info->canAttributes(CanableInfoType::kCanRename);
 }

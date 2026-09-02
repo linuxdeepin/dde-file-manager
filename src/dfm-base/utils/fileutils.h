@@ -18,12 +18,6 @@ namespace dfmbase {
 class FileUtils
 {
 public:
-    enum class TrashEmptyState {
-        kUnknown,
-        kEmpty,
-        kNotEmpty
-    };
-
     struct FilesSizeInfo
     {
         qint64 totalSize { 0 };
@@ -55,12 +49,6 @@ public:
                            const Global::CreateFileInfoType infoCache = Global::CreateFileInfoType::kCreateFileInfoAuto);
     static bool isSameFile(const QString &path1, const QString &path2);
     static bool isCdRomDevice(const QUrl &url);
-    static bool trashIsEmpty();
-    static TrashEmptyState trashEmptyState();
-    static void setTrashEmptyState(TrashEmptyState state);
-    static QUrl trashRootUrl();
-    static bool isTrashFile(const QUrl &url);
-    static bool isTrashRootFile(const QUrl &url);
     static bool isHigherHierarchy(const QUrl &urlBase, const QUrl &urlCompare);
     static int getFileNameLength(const QUrl &url, const QString &name);
 
@@ -91,10 +79,7 @@ public:
     // otherwise convert the path to the mount point name
     static QString bindPathTransform(const QString &path, bool toDevice);
     static int dirFfileCount(const QUrl &url);
-    static bool fileCanTrash(const QUrl &url);
     static QUrl bindUrlTransform(const QUrl &url);
-    static QString trashPathToNormal(const QString &trash);
-    static QString normalPathToTrash(const QString &normal);
     static bool supportLongName(const QUrl &url);
 
     static QString symlinkTarget(const QUrl &url);

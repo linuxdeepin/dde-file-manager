@@ -18,6 +18,7 @@
 #include <dfm-base/base/application/settings.h>
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/trashutils.h>
 #include <dfm-base/utils/sysinfoutils.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/base/application/application.h>
@@ -1155,7 +1156,7 @@ void FileViewModel::onRemoveFinish()
 
     endRemoveRows();
 
-    if (filterSortWorker && filterSortWorker->childrenCount() <= 0 && UniversalUtils::urlEquals(rootUrl(), FileUtils::trashRootUrl()))
+    if (filterSortWorker && filterSortWorker->childrenCount() <= 0 && UniversalUtils::urlEquals(rootUrl(), TrashUtils::trashRootUrl()))
         WorkspaceEventCaller::sendModelFilesEmpty();
 }
 
@@ -1190,7 +1191,7 @@ void FileViewModel::onGroupRemoveFinish()
     }
     endRemoveRows();
 
-    if (filterSortWorker && filterSortWorker->childrenCount() <= 0 && UniversalUtils::urlEquals(rootUrl(), FileUtils::trashRootUrl()))
+    if (filterSortWorker && filterSortWorker->childrenCount() <= 0 && UniversalUtils::urlEquals(rootUrl(), TrashUtils::trashRootUrl()))
         WorkspaceEventCaller::sendModelFilesEmpty();
 }
 

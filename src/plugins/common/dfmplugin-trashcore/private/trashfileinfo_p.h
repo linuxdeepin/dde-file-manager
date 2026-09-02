@@ -35,6 +35,7 @@ public:
     QSharedPointer<DFileInfo> dAncestorsFileInfo { nullptr };
     QUrl targetUrl;
     QUrl originalUrl;
+    QDateTime cachedDeletionTime;
     TrashFileInfo *const q;
 };
 

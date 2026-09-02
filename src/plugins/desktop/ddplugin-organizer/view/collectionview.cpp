@@ -19,6 +19,7 @@
 #include <dfm-base/utils/windowutils.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/trashutils.h>
 #include <dfm-base/utils/sysinfoutils.h>
 #include <dfm-base/base/standardpaths.h>
 #include <dfm-base/utils/clipboard.h>
@@ -510,7 +511,7 @@ void CollectionViewPrivate::preproccessDropEvent(QDropEvent *event, const QUrl &
     }
 
     // is from or to trash
-    if (FileUtils::isTrashFile(from))
+    if (TrashUtils::isTrashFile(from))
         defaultAction = Qt::MoveAction;
 
     const bool sameUser = SysInfoUtils::isSameUser(event->mimeData());

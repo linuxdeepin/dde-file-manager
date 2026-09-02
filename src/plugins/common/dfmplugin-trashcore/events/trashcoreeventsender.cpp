@@ -8,6 +8,7 @@
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/base/standardpaths.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/trashutils.h>
 #include <dfm-base/utils/networkutils.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/file/local/localfilewatcher.h>
@@ -17,6 +18,7 @@
 
 #include <QDebug>
 #include <QUrl>
+#include <QDir>
 #include <QtConcurrent>
 #include <QFutureWatcher>
 
@@ -26,7 +28,7 @@ DFMBASE_USE_NAMESPACE
 TrashCoreEventSender::TrashCoreEventSender(QObject *parent)
     : QObject(parent)
 {
-    FileUtils::setTrashEmptyState(FileUtils::TrashEmptyState::kUnknown);
+    TrashUtils::setTrashEmptyState(TrashUtils::TrashEmptyState::kUnknown);
 
     timer.setSingleShot(true);
     timer.setInterval(5000);
@@ -40,13 +42,22 @@ TrashCoreEventSender::TrashCoreEventSender(QObject *parent)
 
 void TrashCoreEventSender::initTrashWatcher()
 {
-    if (trashFileWatcher)
+    if (!trashWatchers.isEmpty())
         return;
 
-    trashFileWatcher.reset(new LocalFileWatcher(FileUtils::trashRootUrl(), this));
+    const auto &dirs = TrashUtils::localTrashDirs();
+    for (const QString &dir : dirs) {
+        if (!QDir(dir).exists())
+            continue;
+        QUrl localUrl = QUrl::fromLocalFile(dir);
+        auto watcher = QSharedPointer<AbstractFileWatcher>(new LocalFileWatcher(localUrl, this));
+        connect(watcher.data(), &AbstractFileWatcher::subfileCreated, this, &TrashCoreEventSender::sendTrashStateChangedAdd);
+        connect(watcher.data(), &AbstractFileWatcher::fileDeleted, this, &TrashCoreEventSender::sendTrashStateChangedDel);
+        trashWatchers.append(watcher);
+    }
 
-    connect(trashFileWatcher.data(), &AbstractFileWatcher::subfileCreated, this, &TrashCoreEventSender::sendTrashStateChangedAdd);
-    connect(trashFileWatcher.data(), &AbstractFileWatcher::fileDeleted, this, &TrashCoreEventSender::sendTrashStateChangedDel);
+    if (trashWatchers.isEmpty())
+        fmWarning() << "TrashCore: No local trash directories found for watching";
 }
 
 bool TrashCoreEventSender::checkAndStartWatcher()
@@ -66,7 +77,14 @@ bool TrashCoreEventSender::checkAndStartWatcher()
             return;
         }
 
-        if (!trashFileWatcher->startWatcher()) {
+        bool allStarted = true;
+        for (auto &w : trashWatchers) {
+            if (!w->startWatcher()) {
+                allStarted = false;
+            }
+        }
+
+        if (!allStarted) {
             timer.start();
             return;
         }
@@ -102,10 +120,10 @@ void TrashCoreEventSender::tryInitialize()
 
 void TrashCoreEventSender::initTrashState()
 {
-    const bool actuallyEmpty = FileUtils::trashIsEmpty();
+    const bool actuallyEmpty = TrashUtils::trashIsEmpty();
     trashState = actuallyEmpty ? TrashState::Empty : TrashState::NotEmpty;
-    FileUtils::setTrashEmptyState(actuallyEmpty ? FileUtils::TrashEmptyState::kEmpty
-                                                : FileUtils::TrashEmptyState::kNotEmpty);
+    TrashUtils::setTrashEmptyState(actuallyEmpty ? TrashUtils::TrashEmptyState::kEmpty
+                                                : TrashUtils::TrashEmptyState::kNotEmpty);
 
     // Startup defaults to the non-empty icon, so only an empty result needs
     // an immediate correction signal.
@@ -115,10 +133,10 @@ void TrashCoreEventSender::initTrashState()
 
 void TrashCoreEventSender::sendTrashStateChangedDel()
 {
-    bool actuallyEmpty = FileUtils::trashIsEmpty();
+    bool actuallyEmpty = TrashUtils::trashIsEmpty();
     TrashState newState = actuallyEmpty ? TrashState::Empty : TrashState::NotEmpty;
-    FileUtils::setTrashEmptyState(actuallyEmpty ? FileUtils::TrashEmptyState::kEmpty
-                                                : FileUtils::TrashEmptyState::kNotEmpty);
+    TrashUtils::setTrashEmptyState(actuallyEmpty ? TrashUtils::TrashEmptyState::kEmpty
+                                                : TrashUtils::TrashEmptyState::kNotEmpty);
 
     // Only send signal if state actually changed
     if (trashState == TrashState::Unknown || newState != trashState) {
@@ -135,7 +153,7 @@ void TrashCoreEventSender::sendTrashStateChangedDel()
 void TrashCoreEventSender::sendTrashStateChangedAdd()
 {
     // If trash was empty and files are being added, it's now not empty
-    FileUtils::setTrashEmptyState(FileUtils::TrashEmptyState::kNotEmpty);
+    TrashUtils::setTrashEmptyState(TrashUtils::TrashEmptyState::kNotEmpty);
     if (trashState == TrashState::Unknown || trashState == TrashState::Empty) {
         trashState = TrashState::NotEmpty;
         qInfo() << "TrashCore: Trash became non-empty, sending state changed signal";

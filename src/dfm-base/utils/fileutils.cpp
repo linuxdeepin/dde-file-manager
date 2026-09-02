@@ -59,11 +59,6 @@
 
 #include <DDBusSender>
 
-#include <atomic>
-
-namespace {
-std::atomic<int> kTrashEmptyState { static_cast<int>(dfmbase::FileUtils::TrashEmptyState::kUnknown) };
-}
 
 #include <unistd.h>
 #include <sys/stat.h>
@@ -79,8 +74,25 @@ namespace dfmbase {
 static constexpr char kDDETrashId[] { "dde-trash" };
 static constexpr char kDDEComputerId[] { "dde-computer" };
 static constexpr char kDDEHomeId[] { "dde-home" };
-static constexpr char kFileAllTrash[] { "dfm.trash.allfiletotrash" };
 const static int kDefaultMemoryPageSize = 4096;
+
+static QString trashPathToNormal(const QString &trash)
+{
+    if (!trash.contains("\\"))
+        return trash;
+    QString normal = trash;
+    normal = normal.replace("\\", "/");
+    normal = normal.replace("//", "/");
+    return normal;
+}
+
+static QString normalPathToTrash(const QString &normal)
+{
+    QString trash = normal;
+    trash = trash.replace("/", "\\");
+    trash.push_front("/");
+    return trash;
+}
 
 QMutex FileUtils::cacheCopyingMutex;
 QSet<QUrl> FileUtils::copyingUrl;
@@ -370,65 +382,6 @@ bool FileUtils::isSameFile(const QString &path1, const QString &path2)
 bool FileUtils::isCdRomDevice(const QUrl &url)
 {
     return DFMIO::DFMUtils::devicePathFromUrl(url).startsWith("/dev/sr");
-}
-
-bool FileUtils::trashIsEmpty()
-{
-    if (NetworkUtils::instance()->checkAllCIFSBusy()) {
-        return true;
-    }
-
-    // not use cache, because some times info unreliable, such as watcher inited temporality
-    auto info = InfoFactory::create<FileInfo>(trashRootUrl(), Global::CreateFileInfoType::kCreateFileInfoSync);
-    if (info) {
-        return info->countChildFile() == 0;
-    }
-    return true;
-}
-
-FileUtils::TrashEmptyState FileUtils::trashEmptyState()
-{
-    return static_cast<TrashEmptyState>(kTrashEmptyState.load());
-}
-
-void FileUtils::setTrashEmptyState(TrashEmptyState state)
-{
-    kTrashEmptyState.store(static_cast<int>(state));
-}
-
-QUrl FileUtils::trashRootUrl()
-{
-    QUrl url;
-    url.setScheme(DFMBASE_NAMESPACE::Global::Scheme::kTrash);
-    url.setPath("/");
-    url.setHost("");
-    return url;
-}
-
-bool FileUtils::isTrashFile(const QUrl &url)
-{
-    if (url.scheme() == DFMBASE_NAMESPACE::Global::Scheme::kTrash)
-        return true;
-    if (url.path().startsWith(StandardPaths::location(StandardPaths::kTrashLocalFilesPath)))
-        return true;
-
-    const QString &rule = QString("/.Trash-%1/(files|info)/").arg(getuid());
-    QRegularExpression reg(rule);
-    QRegularExpressionMatch matcher = reg.match(url.toString());
-    return matcher.hasMatch();
-}
-
-bool FileUtils::isTrashRootFile(const QUrl &url)
-{
-    if (UniversalUtils::urlEquals(url, trashRootUrl()))
-        return true;
-
-    if (UniversalUtils::urlEquals(url, QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kTrashLocalFilesPath))))
-        return true;
-
-    const QString &rule = QString("/.Trash-%1/files").arg(getuid());
-
-    return url.toString().endsWith(rule);
 }
 
 bool FileUtils::isHigherHierarchy(const QUrl &urlBase, const QUrl &urlCompare)
@@ -1167,94 +1120,23 @@ int FileUtils::dirFfileCount(const QUrl &url)
     return int(enumerator.fileCount());
 }
 
-bool FileUtils::fileCanTrash(const QUrl &url)
-{
-    auto info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
-    if (!info) {
-        qCWarning(logDFMBase) << "Failed to create file info for URL:" << url;
-        return false;
-    }
-
-    // gio does not support root user to move ordinary user files to trash
-    if (SysInfoUtils::isRootUser()) {
-        int currentEffectiveUid = SysInfoUtils::getUserId();
-        int ownerId = info->extendAttributes(FileInfo::FileExtendedInfoType::kOwnerId).toInt();
-        if (ownerId != currentEffectiveUid) {
-            qCWarning(logDFMBase) << "A root process is trying to trash a non-root file, predicting failure.";
-            return false;
-        }
-    }
-
-    // 检查文件是否位于原始用户的“领域”（主目录）内
-    if (SysInfoUtils::isOpenAsAdmin()) {
-        const QString &originalHomePath = SysInfoUtils::getOriginalUserHome();
-        const QString &canonicalFilePath = info->pathOf(PathInfoType::kCanonicalPath);   // 获取文件所在目录的规范路径
-        if (originalHomePath.isEmpty() || canonicalFilePath.isEmpty()) {
-            qCWarning(logDFMBase) << "Invalid path detected: originalHomePath or canonicalFilePath is empty.";
-            return false;   // 路径无效
-        }
-
-        // Use more reliable path comparison to handle symlinks and mount points
-        QString normalizedOriginalHome = QDir::cleanPath(originalHomePath);
-        QString normalizedFilePath = QDir::cleanPath(canonicalFilePath);
-
-        // Ensure proper path boundary comparison
-        if (!normalizedOriginalHome.endsWith('/')) {
-            normalizedOriginalHome += '/';
-        }
-
-        // Check if file is within the original user's home directory
-        bool isInHomeDir = (normalizedFilePath.startsWith(normalizedOriginalHome) || normalizedFilePath == normalizedOriginalHome.chopped(1));
-
-        if (isInHomeDir) {
-            // 文件位于原始用户的主目录中。
-            // 这是 GIO 会拒绝的“领域冲突”场景。
-            qCWarning(logDFMBase) << " A root process is trying to trash a file inside another user's home directory ("
-                                  << url << "). Predicting GIO failure.";
-            return false;
-        }
-    }
-
-    bool alltotrash = DConfigManager::instance()->value(kDefaultCfgPath, kFileAllTrash).toBool();
-    if (alltotrash)
-        return info->canAttributes(CanableInfoType::kCanTrash);
-
-    return ProtocolUtils::isLocalFile(url) && info->canAttributes(CanableInfoType::kCanTrash);
-}
 
 QUrl FileUtils::bindUrlTransform(const QUrl &url)
 {
     auto tmp = url;
 
-    if (!FileUtils::isTrashFile(url) || !url.path().contains("\\")) {
+    if (url.scheme() != Global::Scheme::kTrash || !url.path().contains("\\")) {
         tmp.setPath(FileUtils::bindPathTransform(url.path(), false));
         return tmp;
     }
 
-    auto path = FileUtils::trashPathToNormal(url.path());
+    auto path = trashPathToNormal(url.path());
     path = FileUtils::bindPathTransform(path, false);
-    path = FileUtils::normalPathToTrash(path);
+    path = normalPathToTrash(path);
     tmp.setPath(path);
     return tmp;
 }
 
-QString FileUtils::trashPathToNormal(const QString &trash)
-{
-    if (!trash.contains("\\"))
-        return trash;
-    QString normal = trash;
-    normal = normal.replace("\\", "/");
-    normal = normal.replace("//", "/");
-    return normal;
-}
-
-QString FileUtils::normalPathToTrash(const QString &normal)
-{
-    QString trash = normal;
-    trash = trash.replace("/", "\\");
-    trash.push_front("/");
-    return trash;
-}
 
 bool FileUtils::supportLongName(const QUrl &url)
 {

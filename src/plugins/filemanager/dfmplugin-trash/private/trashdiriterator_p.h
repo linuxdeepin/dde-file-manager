@@ -8,9 +8,8 @@
 #include "dfmplugin_trash_global.h"
 #include <dfm-base/interfaces/abstractdiriterator.h>
 
-#include <dfm-io/denumerator.h>
-
 #include <QDirIterator>
+#include <QUrl>
 
 namespace dfmplugin_trash {
 
@@ -22,14 +21,16 @@ class TrashDirIteratorPrivate
 
 public:
     TrashDirIteratorPrivate(const QUrl &url, const QStringList &nameFilters,
-                            DFMIO::DEnumerator::DirFilters filters, DFMIO::DEnumerator::IteratorFlags flags,
+                            QDir::Filters filters, QDirIterator::IteratorFlags flags,
                             TrashDirIterator *qq);
     ~TrashDirIteratorPrivate();
 
 private:
     TrashDirIterator *q { nullptr };
-    QSharedPointer<DFMIO::DEnumerator> dEnumerator = nullptr;
+    QList<QDirIterator *> iterators;
+    int currentIteratorIndex { 0 };
     QUrl currentUrl;
+    QUrl rootUrl;
     QMap<QString, QString> fstabMap;
     FileInfoPointer fileInfo{nullptr};
     std::atomic_bool once{ false };

@@ -15,6 +15,7 @@
 #include <dfm-base/interfaces/fileinfo.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/trashutils.h>
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/utils/properties.h>
 #include <dfm-base/utils/systempathutil.h>
@@ -93,10 +94,10 @@ JobHandlePointer TrashFileEventReceiver::doMoveToTrash(const quint64 windowId, c
                 && !info->isAttributes(OptInfoType::kIsWritable);
     }
 
-    if (nullDirDelete || !FileUtils::fileCanTrash(sourceFirst)) {
+    if (nullDirDelete || !TrashUtils::fileCanTrash(sourceFirst)) {
         fmInfo() << "File cannot be moved to trash, will perform direct delete operation:"
                  << "nullDirDelete=" << nullDirDelete
-                 << "canTrash=" << FileUtils::fileCanTrash(sourceFirst);
+                 << "canTrash=" << TrashUtils::fileCanTrash(sourceFirst);
 
         if (DialogManagerInstance->showDeleteFilesDialog(sources, true) != QDialog::Accepted) {
             fmInfo() << "Delete operation cancelled by user";
@@ -213,7 +214,7 @@ JobHandlePointer TrashFileEventReceiver::doCleanTrash(const quint64 windowId, co
 
     QList<QUrl> urls = std::move(sources);
     if (urls.isEmpty())
-        urls.push_back(FileUtils::trashRootUrl());
+        urls.push_back(TrashUtils::trashRootUrl());
 
     JobHandlePointer handle = copyMoveJob->cleanTrash(urls);
     FileOperationsEventHandler::instance()->handleJobResult(AbstractJobHandler::JobType::kCleanTrashType, handle);
@@ -233,7 +234,7 @@ void TrashFileEventReceiver::countTrashFile(const quint64 windowId, const DFMBAS
     }
 
     fmInfo() << "Starting trash file enumeration";
-    DFMIO::DEnumerator enumerator(FileUtils::trashRootUrl());
+    DFMIO::DEnumerator enumerator(TrashUtils::trashRootUrl());
     QList<QUrl> allFilesList;
     int processedCount = 0;
 

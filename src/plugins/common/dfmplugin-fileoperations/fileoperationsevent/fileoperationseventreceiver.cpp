@@ -20,6 +20,7 @@
 #include <dfm-base/interfaces/fileinfo.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/trashutils.h>
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/utils/properties.h>
 #include <dfm-base/utils/systempathutil.h>
@@ -697,7 +698,7 @@ JobHandlePointer FileOperationsEventReceiver::doCleanTrash(const quint64 windowI
     } else {
         // Show clear trash dialog
         int count = 0;
-        auto info = InfoFactory::create<FileInfo>(FileUtils::trashRootUrl());
+        auto info = InfoFactory::create<FileInfo>(TrashUtils::trashRootUrl());
         if (info) {
             count = info->countChildFile();
         }
@@ -706,7 +707,7 @@ JobHandlePointer FileOperationsEventReceiver::doCleanTrash(const quint64 windowI
 
     QList<QUrl> urls = std::move(sources);
     if (urls.isEmpty())
-        urls.push_back(FileUtils::trashRootUrl());
+        urls.push_back(TrashUtils::trashRootUrl());
 
     JobHandlePointer handle = copyMoveJob->cleanTrash(urls);
     if (handleCallback)

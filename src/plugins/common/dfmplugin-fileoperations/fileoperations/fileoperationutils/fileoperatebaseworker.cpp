@@ -9,6 +9,7 @@
 #include "workerdata.h"
 
 #include <dfm-base/interfaces/abstractdiriterator.h>
+#include <dfm-base/utils/trashutils.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/device/deviceutils.h>
 #include <dfm-base/base/device/deviceproxymanager.h>
@@ -498,7 +499,7 @@ DFileInfoPointer FileOperateBaseWorker::doCheckFile(const DFileInfoPointer &from
     // 创建新的目标文件并做检查
     QString fileNewName = fileName;
     // bug 205732, 回收站文件找到源文件名称
-    bool isTrashFile = FileUtils::isTrashFile(fromInfo->uri());
+    bool isTrashFile = TrashUtils::isTrashFile(fromInfo->uri());
     if (isTrashFile) {
         auto trashInfoUrl = trashInfo(fromInfo);
         fileNewName = trashInfoUrl.isValid() ? fileOriginName(trashInfoUrl) : fileName;

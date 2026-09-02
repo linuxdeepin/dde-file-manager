@@ -10,6 +10,7 @@
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/trashutils.h>
 
 #include <dfm-framework/event/event.h>
 
@@ -65,7 +66,7 @@ QList<CrumbData> CrumbInterface::seprateUrl(const QUrl &url)
         QStringList pathList { curUrl.path().split("/", Qt::SkipEmptyParts) };
         QString displayText = pathList.isEmpty() ? "" : pathList.last();
         if (curUrl.scheme() == Global::Scheme::kTrash) {
-            if (UniversalUtils::urlEquals(curUrl, FileUtils::trashRootUrl())) {
+            if (UniversalUtils::urlEquals(curUrl, TrashUtils::trashRootUrl())) {
                 displayText = QCoreApplication::translate("PathManager", "Trash");
             } else {
                 auto info = InfoFactory::create<FileInfo>(curUrl);

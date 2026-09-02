@@ -20,6 +20,7 @@
 #include <mutex>
 
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/trashutils.h>
 #include <dfm-base/interfaces/abstractjobhandler.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/file/local/syncfileinfo.h>
@@ -194,15 +195,15 @@ TEST(FileUtilsTest, CacheRemoveContainsCopyingFileUrl)
 
 TEST(FileUtilsTest, SetGetTrashEmptyState)
 {
-    FileUtils::setTrashEmptyState(FileUtils::TrashEmptyState::kEmpty);
-    EXPECT_EQ(FileUtils::trashEmptyState(), FileUtils::TrashEmptyState::kEmpty);
-    FileUtils::setTrashEmptyState(FileUtils::TrashEmptyState::kNotEmpty);
-    EXPECT_EQ(FileUtils::trashEmptyState(), FileUtils::TrashEmptyState::kNotEmpty);
+    TrashUtils::setTrashEmptyState(TrashUtils::TrashEmptyState::kEmpty);
+    EXPECT_EQ(TrashUtils::trashEmptyState(), TrashUtils::TrashEmptyState::kEmpty);
+    TrashUtils::setTrashEmptyState(TrashUtils::TrashEmptyState::kNotEmpty);
+    EXPECT_EQ(TrashUtils::trashEmptyState(), TrashUtils::TrashEmptyState::kNotEmpty);
 }
 
 TEST(FileUtilsTest, TrashRootUrlScheme)
 {
-    QUrl url = FileUtils::trashRootUrl();
+    QUrl url = TrashUtils::trashRootUrl();
     EXPECT_FALSE(url.scheme().isEmpty());
     EXPECT_EQ(url.path(), QString("/"));
 }
@@ -317,12 +318,12 @@ TEST(FileUtilsTest, FileCanTrashForLocalTempFileIsCallable)
     ASSERT_TRUE(f.open(QIODevice::WriteOnly));
     f.write("hello");
     f.close();
-    EXPECT_NO_FATAL_FAILURE({ (void)FileUtils::fileCanTrash(QUrl::fromLocalFile(path)); });
+    EXPECT_NO_FATAL_FAILURE({ (void)TrashUtils::fileCanTrash(QUrl::fromLocalFile(path)); });
 }
 
 TEST(FileUtilsTest, TrashIsEmptyIsBool)
 {
-    EXPECT_NO_FATAL_FAILURE({ (void)FileUtils::trashIsEmpty(); });
+    EXPECT_NO_FATAL_FAILURE({ (void)TrashUtils::trashIsEmpty(); });
 }
 
 // ---- Coverage additions: batch text operations + prohibit path ----
@@ -410,13 +411,13 @@ TEST(FileUtilsTest, IsCdRomDeviceNonCdRom)
 TEST(FileUtilsTest, IsTrashFileNonTrash)
 {
     QUrl url = QUrl::fromLocalFile(QDir::tempPath() + "/regular_file.txt");
-    EXPECT_FALSE(FileUtils::isTrashFile(url));
+    EXPECT_FALSE(TrashUtils::isTrashFile(url));
 }
 
 TEST(FileUtilsTest, IsTrashRootFileNonTrashRoot)
 {
     QUrl url = QUrl::fromLocalFile(QDir::tempPath());
-    EXPECT_FALSE(FileUtils::isTrashRootFile(url));
+    EXPECT_FALSE(TrashUtils::isTrashRootFile(url));
 }
 
 TEST(FileUtilsTest, GetFileNameLength)
@@ -563,7 +564,7 @@ TEST(FileUtilsTest, DirFileCountNonExistent)
 TEST(FileUtilsTest, FileCanTrashRootDir)
 {
     QUrl url = QUrl::fromLocalFile("/");
-    bool result = FileUtils::fileCanTrash(url);
+    bool result = TrashUtils::fileCanTrash(url);
     EXPECT_FALSE(result);
 }
 
@@ -584,14 +585,14 @@ TEST(FileUtilsTest, BindUrlTransformLocal)
 TEST(FileUtilsTest, TrashPathToNormal)
 {
     // Normal path unchanged
-    QString result = FileUtils::trashPathToNormal("/tmp/file.txt");
+    QString result = TrashUtils::trashPathToNormal("/tmp/file.txt");
     EXPECT_EQ(result, "/tmp/file.txt");
 }
 
 TEST(FileUtilsTest, NormalPathToTrash)
 {
     // Normal paths are returned as-is (trash transform is a no-op for non-trash paths)
-    QString result = FileUtils::normalPathToTrash("/tmp/file.txt");
+    QString result = TrashUtils::normalPathToTrash("/tmp/file.txt");
     // Just verify no crash
     EXPECT_NO_FATAL_FAILURE({ (void)result; });
 }
@@ -647,18 +648,18 @@ TEST(FileUtilsTest, ContainsCopyingFileUrlNonExistent)
 TEST(FileUtilsTest, FileCanTrashNonExistent)
 {
     QUrl url = QUrl::fromLocalFile("/nonexistent_for_trash.txt");
-    bool result = FileUtils::fileCanTrash(url);
+    bool result = TrashUtils::fileCanTrash(url);
     EXPECT_FALSE(result);
 }
 
 TEST(FileUtilsTest, TrashEmptyStateAfterSet)
 {
-    FileUtils::setTrashEmptyState(FileUtils::TrashEmptyState::kEmpty);
-    EXPECT_EQ(FileUtils::trashEmptyState(), FileUtils::TrashEmptyState::kEmpty);
-    FileUtils::setTrashEmptyState(FileUtils::TrashEmptyState::kUnknown);
-    EXPECT_EQ(FileUtils::trashEmptyState(), FileUtils::TrashEmptyState::kUnknown);
-    FileUtils::setTrashEmptyState(FileUtils::TrashEmptyState::kNotEmpty);
-    EXPECT_EQ(FileUtils::trashEmptyState(), FileUtils::TrashEmptyState::kNotEmpty);
+    TrashUtils::setTrashEmptyState(TrashUtils::TrashEmptyState::kEmpty);
+    EXPECT_EQ(TrashUtils::trashEmptyState(), TrashUtils::TrashEmptyState::kEmpty);
+    TrashUtils::setTrashEmptyState(TrashUtils::TrashEmptyState::kUnknown);
+    EXPECT_EQ(TrashUtils::trashEmptyState(), TrashUtils::TrashEmptyState::kUnknown);
+    TrashUtils::setTrashEmptyState(TrashUtils::TrashEmptyState::kNotEmpty);
+    EXPECT_EQ(TrashUtils::trashEmptyState(), TrashUtils::TrashEmptyState::kNotEmpty);
 }
 
 TEST(FileUtilsTest, IsHigherHierarchySameUrl)

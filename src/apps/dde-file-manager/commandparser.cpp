@@ -14,6 +14,7 @@
 #include <dfm-base/interfaces/abstractjobhandler.h>
 #include <dfm-base/utils/systempathutil.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/trashutils.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/base/application/application.h>
 
@@ -488,7 +489,7 @@ void CommandParser::processEvent()
     }
     case GlobalEventType::kMoveToTrash: {
         if (SystemPathUtil::instance()->checkContainsSystemPath(srcUrls)
-            || FileUtils::isTrashFile(srcUrls.first())) {
+            || TrashUtils::isTrashFile(srcUrls.first())) {
             qCWarning(logAppFileManager) << "Cannot move system files or trash files to trash";
             return;
         }

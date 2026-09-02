@@ -8,6 +8,7 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/trashutils.h>
 
 #include <QJsonDocument>
 
@@ -56,7 +57,7 @@ void DFMMimeDataPrivate::parseUrls(const QList<QUrl> &urls)
         if (!canTrash && !canDelete)
             break;
     }
-    isTrashUrl = urls.isEmpty() ? false : FileUtils::isTrashFile(urls.first()) && !FileUtils::isTrashRootFile(urls.first());
+    isTrashUrl = urls.isEmpty() ? false : TrashUtils::isTrashFile(urls.first()) && !TrashUtils::isTrashRootFile(urls.first());
     attributes.insert(kCanTrashAttr, canTrash);
     attributes.insert(kCanDeleteAttr, canDelete);
     attributes.insert(kIsTrashAttr, isTrashUrl);

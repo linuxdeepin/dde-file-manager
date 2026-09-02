@@ -17,6 +17,7 @@
 #include <dfm-base/utils/windowutils.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/trashutils.h>
 #include <dfm-base/utils/iconutils.h>
 
 #include <DBackgroundGroup>
@@ -514,7 +515,7 @@ int DialogManager::showNormalDeleteConfirmDialog(const QList<QUrl> &urls)
     }
 
     QFontMetrics fm(d.font());
-    const auto &icon = FileUtils::trashIsEmpty() ? QIcon::fromTheme("user-trash") : QIcon::fromTheme("user-trash-full");
+    const auto &icon = TrashUtils::trashIsEmpty() ? QIcon::fromTheme("user-trash") : QIcon::fromTheme("user-trash-full");
     d.setIcon(icon);
 
     QString deleteFileName = tr("Do you want to delete %1?");
@@ -778,7 +779,7 @@ DFMBASE_NAMESPACE::GlobalEventType DialogManager::showBreakSymlinkDialog(const Q
     if (code == 1) {
         QList<QUrl> urls;
         urls << linkfile;
-        if (Q_UNLIKELY(FileUtils::isTrashFile(linkfile))) {
+        if (Q_UNLIKELY(TrashUtils::isTrashFile(linkfile))) {
             return DFMBASE_NAMESPACE::GlobalEventType::kDeleteFiles;
         } else {
             return DFMBASE_NAMESPACE::GlobalEventType::kMoveToTrash;

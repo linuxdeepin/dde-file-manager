@@ -19,6 +19,7 @@
 #include <dfm-base/utils/dialogmanager.h>
 #include <dfm-base/utils/systempathutil.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/trashutils.h>
 #include <dfm-io/denumerator.h>
 
 DFMBASE_USE_NAMESPACE
@@ -128,7 +129,7 @@ TEST_F(TestTrashFileEventReceiver, DoMoveToTrash_UserCancelsDialog)
         return false;
     });
 
-    stub.set_lamda(&FileUtils::fileCanTrash, [](const QUrl &) -> bool {
+    stub.set_lamda(&TrashUtils::fileCanTrash, [](const QUrl &) -> bool {
         __DBG_STUB_INVOKE__
         return true;
     });
@@ -248,7 +249,7 @@ TEST_F(TestTrashFileEventReceiver, HandleOperationMoveToTrash_BasicCall)
         return false;
     });
 
-    stub.set_lamda(&FileUtils::fileCanTrash, [](const QUrl &) -> bool {
+    stub.set_lamda(&TrashUtils::fileCanTrash, [](const QUrl &) -> bool {
         __DBG_STUB_INVOKE__
         return true;
     });
@@ -279,7 +280,7 @@ TEST_F(TestTrashFileEventReceiver, HandleOperationMoveToTrash_WithCallback)
         return false;
     });
 
-    stub.set_lamda(&FileUtils::fileCanTrash, [](const QUrl &) -> bool {
+    stub.set_lamda(&TrashUtils::fileCanTrash, [](const QUrl &) -> bool {
         __DBG_STUB_INVOKE__
         return true;
     });
@@ -460,7 +461,7 @@ TEST_F(TestTrashFileEventReceiver, EdgeCase_NullHandleCallback)
         return false;
     });
 
-    stub.set_lamda(&FileUtils::fileCanTrash, [](const QUrl &) -> bool {
+    stub.set_lamda(&TrashUtils::fileCanTrash, [](const QUrl &) -> bool {
         __DBG_STUB_INVOKE__
         return true;
     });
@@ -491,7 +492,7 @@ TEST_F(TestTrashFileEventReceiver, EdgeCase_RevocationFlag)
         return false;
     });
 
-    stub.set_lamda(&FileUtils::fileCanTrash, [](const QUrl &) -> bool {
+    stub.set_lamda(&TrashUtils::fileCanTrash, [](const QUrl &) -> bool {
         __DBG_STUB_INVOKE__
         return true;
     });

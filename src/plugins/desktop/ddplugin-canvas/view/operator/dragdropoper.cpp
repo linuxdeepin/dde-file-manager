@@ -14,6 +14,7 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/standardpaths.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/trashutils.h>
 #include <dfm-base/utils/sysinfoutils.h>
 #include <dfm-base/mimedata/dfmmimedata.h>
 
@@ -223,7 +224,7 @@ void DragDropOper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> &ur
         }
 
         // is from trash
-        if (FileUtils::isTrashFile(from)) {
+        if (TrashUtils::isTrashFile(from)) {
             defaultAction = Qt::MoveAction;
             fmDebug() << "Source is trash file - using MoveAction";
         }

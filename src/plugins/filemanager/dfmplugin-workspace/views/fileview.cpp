@@ -36,6 +36,7 @@
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/networkutils.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/trashutils.h>
 #include <dfm-base/utils/dialogmanager.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
@@ -1472,7 +1473,7 @@ void FileView::setFilterCallback(const QUrl &url, const FileViewFilterCallback c
 void FileView::trashStateChanged()
 {
     if (Q_LIKELY(model()))
-        model()->updateFile(FileUtils::trashRootUrl());
+        model()->updateFile(TrashUtils::trashRootUrl());
 }
 
 void FileView::onHeaderViewSectionChanged(const QUrl &url)

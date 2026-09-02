@@ -6,6 +6,7 @@
 #include <dfm-base/utils/desktopfile.h>
 #include <dfm-base/utils/properties.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/trashutils.h>
 #include <dfm-base/utils/protocolutils.h>
 #include <dfm-base/base/schemefactory.h>
 
@@ -102,8 +103,8 @@ QString DesktopFileInfo::desktopIconName() const
 {
     // special handling for trash desktop file which has tash datas
     if (d->iconName == "user-trash") {
-        const auto trashState = FileUtils::trashEmptyState();
-        if (trashState == FileUtils::TrashEmptyState::kEmpty)
+        const auto trashState = TrashUtils::trashEmptyState();
+        if (trashState == TrashUtils::TrashEmptyState::kEmpty)
             return d->iconName;
 
         // Fix: desktop startup must not synchronously touch trash:///.

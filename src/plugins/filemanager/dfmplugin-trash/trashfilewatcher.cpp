@@ -9,8 +9,10 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/trashutils.h>
 
-#include <dfm-io/dwatcher.h>
+#include <dfm-base/file/local/localfilewatcher.h>
+#include <dfm-base/interfaces/abstractfilewatcher.h>
 
 #include <QEvent>
 #include <QDir>
@@ -27,50 +29,71 @@ TrashFileWatcherPrivate::TrashFileWatcherPrivate(const QUrl &fileUrl, TrashFileW
 
 bool TrashFileWatcherPrivate::start()
 {
-    if (watcher.isNull()) {
-        fmWarning() << "Trash: Cannot start watcher, watcher is null";
+    if (watchers.isEmpty()) {
+        fmWarning() << "Trash: Cannot start watcher, no watchers available";
         return false;
     }
-    started = watcher->start();
-    if (!started)
-        fmWarning() << "Trash: Watcher start failed, error:" << watcher->lastError().errorMsg();
+    started = true;
+    for (auto &w : watchers) {
+        if (w && !w->startWatcher()) {
+            fmWarning() << "Trash: Watcher start failed for local trash dir";
+            started = false;
+        }
+    }
     return started;
 }
 
 bool TrashFileWatcherPrivate::stop()
 {
-    if (watcher.isNull()) {
-        fmWarning() << "Trash: Cannot stop watcher, watcher is null";
+    if (watchers.isEmpty()) {
+        fmWarning() << "Trash: Cannot stop watcher, no watchers available";
         return false;
     }
-    started = watcher->stop();
-    return started;
+    started = false;
+    for (auto &w : watchers) {
+        if (w)
+            w->stopWatcher();
+    }
+    return true;
 }
 
 void TrashFileWatcherPrivate::initFileWatcher()
 {
-    const QUrl &trashUrl = url;
-    watcher.reset(new DWatcher(trashUrl));
-    if (!watcher) {
-        fmWarning() << "Trash: File watcher creation failed";
-        abort();
+    // Create LocalFileWatcher on local trash directories instead of DWatcher
+    // on trash:/// URL to avoid blocking through gvfsd on stale CIFS mounts.
+    // LocalFileWatcher reuses the project's existing watcher infrastructure
+    // and avoids wasting extra inotify instances.
+    const auto &dirs = TrashUtils::localTrashDirs();
+    for (const QString &dir : dirs) {
+        if (!QDir(dir).exists())
+            continue;
+        QUrl localUrl = QUrl::fromLocalFile(dir);
+        watchers.append(QSharedPointer<AbstractFileWatcher>(new LocalFileWatcher(localUrl, q)));
+    }
+
+    if (watchers.isEmpty()) {
+        fmWarning() << "Trash: No local trash directories found for watching";
     }
 }
 
 void TrashFileWatcherPrivate::initConnect()
 {
-    connect(watcher.data(), &DWatcher::fileChanged, q, [&](const QUrl &url) {
-        emit q->fileAttributeChanged(FileUtils::bindUrlTransform(url));
-    });
-    connect(watcher.data(), &DWatcher::fileDeleted, q, [&](const QUrl &url) {
-        emit q->fileDeleted(FileUtils::bindUrlTransform(url));
-    });
-    connect(watcher.data(), &DWatcher::fileAdded, q, [&](const QUrl &url) {
-        emit q->subfileCreated(FileUtils::bindUrlTransform(url));
-    });
-    connect(watcher.data(), &DWatcher::fileRenamed, q, [&](const QUrl &from, const QUrl &to) {
-        emit q->fileRename(FileUtils::bindUrlTransform(from), FileUtils::bindUrlTransform(to));
-    });
+    for (auto &w : watchers) {
+        if (!w)
+            continue;
+        connect(w.data(), &AbstractFileWatcher::fileAttributeChanged, q, [&](const QUrl &url) {
+            emit q->fileAttributeChanged(FileUtils::bindUrlTransform(url));
+        });
+        connect(w.data(), &AbstractFileWatcher::fileDeleted, q, [&](const QUrl &url) {
+            emit q->fileDeleted(FileUtils::bindUrlTransform(url));
+        });
+        connect(w.data(), &AbstractFileWatcher::subfileCreated, q, [&](const QUrl &url) {
+            emit q->subfileCreated(FileUtils::bindUrlTransform(url));
+        });
+        connect(w.data(), &AbstractFileWatcher::fileRename, q, [&](const QUrl &from, const QUrl &to) {
+            emit q->fileRename(FileUtils::bindUrlTransform(from), FileUtils::bindUrlTransform(to));
+        });
+    }
 }
 
 TrashFileWatcher::TrashFileWatcher(const QUrl &url, QObject *parent)

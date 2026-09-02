@@ -7,6 +7,7 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/trashutils.h>
 
 #include <dfm-framework/event/event.h>
 
@@ -39,7 +40,7 @@ void CoreHelper::cd(quint64 windowId, const QUrl &url)
     fmInfo() << "cd to " << url;
     window->cd(url);
 
-    if (UniversalUtils::urlEquals(url, FileUtils::trashRootUrl())) {
+    if (UniversalUtils::urlEquals(url, TrashUtils::trashRootUrl())) {
         window->setWindowTitle(QCoreApplication::translate("PathManager", "Trash"));
         return;
     }

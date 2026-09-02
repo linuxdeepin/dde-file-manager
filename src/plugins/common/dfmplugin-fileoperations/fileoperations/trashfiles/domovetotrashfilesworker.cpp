@@ -5,6 +5,7 @@
 #include "domovetotrashfilesworker.h"
 
 #include <dfm-base/base/schemefactory.h>
+#include <dfm-base/utils/trashutils.h>
 #include <dfm-base/base/standardpaths.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/base/device/deviceutils.h>
@@ -57,7 +58,7 @@ bool DoMoveToTrashFilesWorker::doWork()
 bool DoMoveToTrashFilesWorker::statisticsFilesSize()
 {
     sourceFilesCount = sourceUrls.size();
-    targetUrl = FileUtils::trashRootUrl();
+    targetUrl = TrashUtils::trashRootUrl();
     return true;
 }
 
@@ -89,7 +90,7 @@ bool DoMoveToTrashFilesWorker::doMoveToTrash()
         if (!stateCheck())
             return false;
 
-        if (FileUtils::isTrashFile(urlSource)) {
+        if (TrashUtils::isTrashFile(urlSource)) {
             fmDebug() << "File is already in trash, skipped - file:" << urlSource;
             completeFilesCount++;
             completeSourceFiles.append(urlSource);

@@ -6,6 +6,7 @@
 #include "trashdiriterator.h"
 #include "trashfilewatcher.h"
 #include "utils/trashhelper.h"
+#include <dfm-base/utils/trashutils.h>
 #include "utils/trashfilehelper.h"
 #include "menus/trashmenuscene.h"
 
@@ -113,7 +114,7 @@ void Trash::updateTrashItemToSideBar()
             { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) },
         };
 
-        dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", TrashHelper::rootUrl(), map);
+        dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", TrashUtils::trashRootUrl(), map);
     });
 }
 

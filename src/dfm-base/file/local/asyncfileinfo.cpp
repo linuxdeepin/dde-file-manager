@@ -7,6 +7,7 @@
 #include "private/asyncfileinfo_p.h"
 
 #include <dfm-base/base/urlroute.h>
+#include <dfm-base/utils/trashutils.h>
 #include <dfm-base/base/standardpaths.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/chinese2pinyin.h>
@@ -1052,7 +1053,7 @@ FileInfo::FileType AsyncFileInfoPrivate::fileType() const
     FileInfo::FileType fileType { FileInfo::FileType::kUnknown };
 
     const QUrl &fileUrl = q->fileUrl();
-    if (FileUtils::isTrashFile(fileUrl)
+    if (TrashUtils::isTrashFile(fileUrl)
         && asyncAttribute(FileInfo::FileInfoAttributeID::kStandardIsSymlink).toBool()) {
         return FileInfo::FileType::kRegularFile;
     }

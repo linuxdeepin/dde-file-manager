@@ -13,6 +13,7 @@
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/trashutils.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -119,7 +120,7 @@ bool TrashMenuScene::initialize(const QVariantHash &params)
 bool TrashMenuScene::create(QMenu *parent)
 {
     if (d->isEmptyArea) {
-        auto isDisabled = FileUtils::trashIsEmpty() || !FileUtils::isTrashRootFile(d->currentDir);
+        auto isDisabled = TrashUtils::trashIsEmpty() || !TrashUtils::isTrashRootFile(d->currentDir);
 
         auto act = parent->addAction(d->predicateName[TrashActionId::kRestoreAll]);
         act->setProperty(ActionPropertyKey::kActionID, TrashActionId::kRestoreAll);
@@ -266,7 +267,7 @@ void TrashMenuScenePrivate::updateMenu(QMenu *menu)
             auto actId = act->property(ActionPropertyKey::kActionID).toString();
             if (actId == TrashActionId::kRestoreAll
                 || actId == TrashActionId::kEmptyTrash)
-                act->setEnabled(FileUtils::isTrashRootFile(curDir) && !FileUtils::trashIsEmpty());
+                act->setEnabled(TrashUtils::isTrashRootFile(curDir) && !TrashUtils::trashIsEmpty());
 
             if (sceneName == "SortAndDisplayMenu" && actId == kSortByActionId) {
                 auto subMenu = act->menu();
@@ -323,7 +324,7 @@ void TrashMenuScenePrivate::updateMenu(QMenu *menu)
                 || actId == dfmplugin_menu::ActionID::kCut) {
                 // 这还应该判断当前文件的父目录
                 auto fileurl = focusFileInfo->urlOf(UrlInfoType::kParentUrl);
-                act->setEnabled(FileUtils::isTrashRootFile(fileurl));
+                act->setEnabled(TrashUtils::isTrashRootFile(fileurl));
             }
 
             if (actId == TrashActionId::kRestore)

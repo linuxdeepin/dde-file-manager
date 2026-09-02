@@ -14,6 +14,7 @@
 #include <dfm-base/mimetype/mimesappsmanager.h>
 #include <dfm-base/utils/properties.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/trashutils.h>
 #include <dfm-base/base/standardpaths.h>
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
@@ -161,7 +162,7 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
 
     if (FileUtils::isTrashDesktopFile(d->focusFile)) {
         if (auto clearTrash = d->predicateAction.value(ActionID::kEmptyTrash)) {
-            auto info = InfoFactory::create<FileInfo>(FileUtils::trashRootUrl());
+            auto info = InfoFactory::create<FileInfo>(TrashUtils::trashRootUrl());
             if (info->countChildFile() <= 0)
                 clearTrash->setDisabled(true);
         }

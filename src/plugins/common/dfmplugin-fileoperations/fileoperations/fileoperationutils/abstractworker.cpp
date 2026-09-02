@@ -7,6 +7,7 @@
 #include "errormessageandaction.h"
 
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/trashutils.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/base/application/settings.h>
@@ -200,7 +201,7 @@ FileInfo::FileType AbstractWorker::fileType(const DFileInfoPointer &info)
 {
     FileInfo::FileType fileType { FileInfo::FileType::kUnknown };
     const QUrl &fileUrl = info->uri();
-    if (FileUtils::isTrashFile(fileUrl) && info->attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool()) {
+    if (TrashUtils::isTrashFile(fileUrl) && info->attribute(DFileInfo::AttributeID::kStandardIsSymlink).toBool()) {
         fileType = FileInfo::FileType::kRegularFile;
         return fileType;
     }
@@ -692,7 +693,7 @@ void AbstractWorker::saveOperations()
                 break;
             case AbstractJobHandler::JobType::kCutType:
                 operatorType = GlobalEventType::kCutFile;
-                if (!sourceUrls.isEmpty() && FileUtils::isTrashFile(sourceUrls.first())) {
+                if (!sourceUrls.isEmpty() && TrashUtils::isTrashFile(sourceUrls.first())) {
                     operatorType = GlobalEventType::kMoveToTrash;
                 } else {
                     targetUrls.append(parentUrl(completeSourceFiles.first()));

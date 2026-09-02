@@ -19,6 +19,7 @@
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/trashutils.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/sysinfoutils.h>
 #include <dfm-base/utils/traversaldirthread.h>
@@ -517,7 +518,7 @@ bool SideBarViewPrivate::checkTargetEnable(const QUrl &targetUrl)
     if (!dfmMimeData.isValid())
         return true;
 
-    if (FileUtils::isTrashFile(targetUrl))
+    if (TrashUtils::isTrashFile(targetUrl))
         return dfmMimeData.canTrash() || dfmMimeData.canDelete();
 
     return true;
@@ -1427,7 +1428,7 @@ Qt::DropAction SideBarView::canDropMimeData(SideBarItem *item, const QMimeData *
         action = Qt::CopyAction;
     }
 
-    if (FileUtils::isTrashFile(targetItemUrl) && !SysInfoUtils::isSameUser(data))
+    if (TrashUtils::isTrashFile(targetItemUrl) && !SysInfoUtils::isSameUser(data))
         action = Qt::IgnoreAction;
 
     return action;

@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef TRASHDIRITERATORPRIVATE_H
-#define TRASHDIRITERATORPRIVATE_H
+#ifndef TRASHFILEWATCHERPRIVATE_H
+#define TRASHFILEWATCHERPRIVATE_H
 
 #include "dfmplugin_trash_global.h"
 #include <dfm-base/interfaces/private/abstractfilewatcher_p.h>
@@ -25,10 +25,8 @@ public:
     void initFileWatcher();
     void initConnect();
 
-    AbstractFileWatcherPointer proxy;
-    QMap<QUrl, AbstractFileWatcherPointer> urlToWatcherMap;
-    QSharedPointer<DWatcher> watcher { nullptr };
+    QList<QSharedPointer<DFMBASE_NAMESPACE::AbstractFileWatcher>> watchers;
 };
 
 }
-#endif   // TRASHDIRITERATORPRIVATE_H
+#endif   // TRASHFILEWATCHERPRIVATE_H
