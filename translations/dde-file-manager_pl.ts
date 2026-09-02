@@ -7120,7 +7120,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="28"/>
         <source>Continue updating</source>
-        <translation>Kontynuuj aktualizacje</translation>
+        <translation>Kontynuuj aktualizację</translation>
     </message>
 </context>
 <context>
@@ -7197,7 +7197,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="28"/>
         <source>Continue updating</source>
-        <translation>Kontynuuj aktualizacje</translation>
+        <translation>Kontynuuj aktualizację</translation>
     </message>
 </context>
 <context>
@@ -7307,7 +7307,7 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="359"/>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="365"/>
         <source>Continue updating</source>
-        <translation>Kontynuuj aktualizacje</translation>
+        <translation>Kontynuuj aktualizację</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="358"/>
@@ -7317,7 +7317,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="364"/>
         <source>Waiting for the device to become idle. Some content indexing has been paused.</source>
-        <translation type="unfinished"/>
+        <translation>Niektóre indeksy zostaną zaktualizowane po przejściu w stan bezczynności.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="370"/>
@@ -7332,17 +7332,17 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="393"/>
         <source>Index is being updated. File name and file content search are available.</source>
-        <translation>Indeks jest aktualizowany. Dostępne jest wyszukiwanie według nazwy lub treści.</translation>
+        <translation>Indeks jest aktualizowany. Dostępne wyszukiwanie według nazwy lub zawartości pliku.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="395"/>
         <source>Index is being updated. File name and image content search are available.</source>
-        <translation type="unfinished"/>
+        <translation>Indeks jest aktualizowany. Dostępne wyszukiwanie według nazwy lub zawartości obrazu.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="396"/>
         <source>Index is being updated. File name search is available.</source>
-        <translation type="unfinished"/>
+        <translation>Indeks jest aktualizowany. Dostępne wyszukiwanie według nazwy pliku.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="516"/>
