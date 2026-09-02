@@ -5,10 +5,13 @@
 #include "rootinfo.h"
 #include "fileitemdata.h"
 
+#include "utils/keywordextractor.h"
+
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/base/application/settings.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/finallyutil.h>
 
 #include <dfm-framework/event/event.h>
 
@@ -19,72 +22,587 @@
 #include <QtConcurrent>
 #include <QElapsedTimer>
 
+
 using namespace dfmbase;
 using namespace dfmplugin_workspace;
+
+
+FileWatcherWorker::FileWatcherWorker(RootInfoWorker *root, QObject *parent)
+    : QObject(parent), rootptr(root)
+{
+}
+
+FileWatcherWorker::~FileWatcherWorker()
+{
+}
+
+void FileWatcherWorker::doFileDeleted(const QUrl &fileUrl)
+{
+    assert(qApp->thread() != QThread::currentThread());
+    fmInfo() << "FileWatcherWorker::doFileDeleted: url=" << fileUrl << "stopped=" << rootptr->stopped;
+    // 自己删除可以执行
+    if (rootptr->stopped || !isSubFile(fileUrl))
+        return;
+
+    FinallyUtil defer([this]{
+        doCheckAndStartTimer();
+    });
+    // 删除的是自己
+    if (UniversalUtils::urlEquals(fileUrl, rootptr->url)) {
+        fmWarning() << "Root directory deleted:" << fileUrl;
+        // 移除缓存和监视器
+        emit InfoCacheController::instance().removeCacheFileInfo({ fileUrl });
+        WatcherCache::instance().removeCacheWatcherByParent(fileUrl);
+
+        // 处理和关闭窗口
+        emit rootptr->requestCloseTab(fileUrl);
+        emit rootptr->requestClearRoot(fileUrl);
+        rootptr->childrenUrlList.clear();
+        rootptr->sourceDataList.clear();
+        return;
+    }
+
+    adds.remove(fileUrl);
+    updates.remove(fileUrl);
+    if (!removes.contains(fileUrl))
+        removes.insert(fileUrl);
+}
+
+void FileWatcherWorker::doFileMoved(const QUrl &fromUrl, const QUrl &toUrl)
+{
+    assert(qApp->thread() != QThread::currentThread());
+    fmInfo() << "FileWatcherWorker::dofileMoved: from=" << fromUrl << "to=" << toUrl;
+    if (rootptr->stopped)
+        return;
+    // 补充：发射重命名过程开始信号（UI反馈）
+    emit rootptr->renameFileProcessStarted();
+    doFileDeleted(fromUrl);
+    // 补充：刷新目标URL缓存
+    auto info = InfoCacheController::instance().getCacheInfo(toUrl);
+    if (info)
+        info->updateAttributes();
+
+    doFileCreated(toUrl);
+}
+
+void FileWatcherWorker::doFileCreated(const QUrl &fileUrl)
+{
+    assert(qApp->thread() != QThread::currentThread());
+    fmInfo() << "FileWatcherWorker::dofileCreated: url=" << fileUrl << "stopped=" << rootptr->stopped;
+    if (rootptr->stopped || !isSubFile(fileUrl))
+        return;
+
+    // 判断update和remove中是否存在存在就移除
+    updates.remove(fileUrl);
+    removes.remove(fileUrl);
+    if (!adds.contains(fileUrl))
+        adds.insert(fileUrl);
+
+    doCheckAndStartTimer();
+}
+
+void FileWatcherWorker::doFileUpdated(const QUrl &fileUrl)
+{
+    assert(qApp->thread() != QThread::currentThread());
+    fmInfo() << "FileWatcherWorker::doFileUpdated: url=" << fileUrl << "stopped=" << rootptr->stopped;
+    if (rootptr->stopped || !isSubFile(fileUrl) || UniversalUtils::urlEquals(fileUrl, rootptr->url))
+        return;
+
+    FinallyUtil defer([this]{
+        doCheckAndStartTimer();
+    });
+    // 如果在增加或者移除中就不添加
+    if (adds.contains(fileUrl) || removes.contains(fileUrl) || updates.contains(fileUrl))
+        return;
+
+    bool fileShowNow = rootptr->childrenUrlList.contains(fileUrl);
+    // 收到update信号但是没有收到fileadd信号，那么添加一个fileadd信号
+    if (fileShowNow) {
+        updates.insert(fileUrl);
+    } else if (dfmio::DFile(fileUrl).exists()) {
+        adds.insert(fileUrl);
+    }
+}
+
+void FileWatcherWorker::doWatcherEvent()
+{
+    assert(qApp->thread() != QThread::currentThread());
+    delayTimeStart = false;
+    doWatcherSubEvent();
+}
+
+void FileWatcherWorker::doWatcherSubEvent()
+{
+    if (rootptr->stopped)
+        return;
+    // 处理添加文件
+    if (!removes.isEmpty()) {
+        rootptr->removeChildren(removes);
+        removes.clear();
+    }
+    if (!adds.isEmpty()) {
+        rootptr->addChildren(adds);
+        adds.clear();
+    }
+    if (!updates.isEmpty()) {
+        rootptr->updateChildren(updates);
+        updates.clear();
+    }
+}
+
+void FileWatcherWorker::doCheckAndStartTimer()
+{
+    if (delayTimeStart)
+        return;
+    delayTimeStart = true;
+    emit rootptr->watcherTimerStart();
+}
+
+bool FileWatcherWorker::isSubFile(const QUrl &fileUrl)
+{
+    // 不是本地文件判读不了是否是子目录
+    if (!fileUrl.isLocalFile())
+        return true;
+
+    auto url = fileUrl;
+    // 判断是否是当前目录的子文件，不是就不处理
+    auto parentUrl = rootptr->url;
+    // 清除掉用户信息和查询信息
+    parentUrl.setUserInfo(QString());
+    parentUrl.setQuery(QString());
+    url.setUserInfo(QString());
+    url.setQuery(QString());
+
+    auto parentPath = parentUrl.path();
+    auto filePath = url.path();
+    if (parentPath.endsWith(QDir::separator()))
+        parentPath.chop(1);
+    if (!filePath.startsWith(parentPath))
+        return false;
+
+    return true;
+}
+
+FileIteratorWorker::FileIteratorWorker(RootInfoWorker *root, QObject *parent)
+    : QObject(parent), rootptr(root)
+{
+}
+
+FileIteratorWorker::~FileIteratorWorker()
+{
+}
+
+// 处理迭代器迭代的文件信息，转换为SortInfo
+void FileIteratorWorker::handleTraversalResults(const QList<FileInfoPointer> &children, const QString &travseToken)
+{
+    assert(qApp->thread() != QThread::currentThread());
+    if (rootptr->stopped)
+        return;
+
+    QList<SortInfoPointer> sortInfos;
+    QList<FileInfoPointer> infos;
+    std::for_each(children.begin(), children.end(), [this, &sortInfos, &infos](const FileInfoPointer &info){
+        if (rootptr->stopped)
+            return;
+        auto sortInfo = rootptr->addChild(info);
+        if (!sortInfo)
+            return;
+        sortInfos.append(sortInfo);
+
+        infos.append(info);
+    });
+
+    fmDebug() << "FileIteratorWorker::handleTraversalResults: sortInfos count=" << sortInfos.size();
+    if (sortInfos.length() > 0)
+        Q_EMIT rootptr->iteratorAddFiles(travseToken, sortInfos, infos);
+}
+
+// 处理search的后面的搜索结果
+void FileIteratorWorker::handleTraversalResultsUpdate(const QList<SortInfoPointer> &children, const QString &travseToken, bool increment)
+{
+    assert(qApp->thread() != QThread::currentThread());
+    if (children.isEmpty() || rootptr->stopped)
+        return;
+
+    if (!increment) {
+        // 首批或全量更新（如搜索结果刷新）：替换整个列表并重建 URL 索引
+        rootptr->childrenUrlList.clear();
+        rootptr->sourceDataList = children;
+        for (const auto &file : children) {
+            if (file)
+                rootptr->childrenUrlList.append(file->fileUrl());
+        }
+    } else {
+        // 增量批次（如 dirent 逐批遍历）：追加到已有列表
+        for (const auto &file : children) {
+            if (!file)
+                continue;
+            rootptr->childrenUrlList.append(file->fileUrl());
+            rootptr->sourceDataList.append(file);
+        }
+    }
+
+    emit rootptr->iteratorUpdateFiles(travseToken, rootptr->sourceDataList, false);
+}
+
+// 处理搜索的第一次推送的结果或者迭代器使用sortFileInfoList迭代出来的文件
+void FileIteratorWorker::handleTraversalLocalResult(QList<SortInfoPointer> children, dfmio::DEnumerator::SortRoleCompareFlag sortRole, Qt::SortOrder sortOrder, bool isMixDirAndFile, const QString &travseToken)
+{
+    assert(qApp->thread() != QThread::currentThread());
+    if (rootptr->stopped)
+        return;
+    rootptr->originSortRole = sortRole;
+    rootptr->originSortOrder = sortOrder;
+    rootptr->originMixSort = isMixDirAndFile;
+
+    rootptr->addChildren(children);
+
+    Q_EMIT rootptr->iteratorLocalFiles(travseToken, rootptr->sourceDataList, rootptr->originSortRole, rootptr->originSortOrder, rootptr->originMixSort, true);
+}
+
+void FileIteratorWorker::handleTraversalFinish(const QString &travseToken)
+{
+    if (rootptr->stopped)
+        return;
+    rootptr->itStatus = RootInfoWorker::IteratorStatus::kFinished;
+    emit rootptr->traversalFinished(travseToken);
+}
+
+void FileIteratorWorker::handleTraversalSort(const QString &travseToken)
+{
+    if (rootptr->stopped)
+        return;
+    emit rootptr->requestSort(travseToken, rootptr->url);
+}
+
+RootInfoWorker::RootInfoWorker(const QUrl &url, QObject *parent)
+    : QObject(parent), url(url)
+{
+    // 补充hiddenFileUrl初始化（从旧代码迁移）
+    hiddenFileUrl.setScheme(url.scheme());
+    hiddenFileUrl.setPath(DFMIO::DFMUtils::buildFilePath(url.path().toStdString().c_str(), ".hidden", nullptr));
+    it.reset(new FileIteratorWorker(this));
+    watch.reset(new FileWatcherWorker(this));
+    keyWords = KeywordExtractorManager::instance().extractor().extractFromUrl(url);
+}
+
+RootInfoWorker::~RootInfoWorker()
+{
+}
+
+void RootInfoWorker::stop()
+{
+    stopped = true;
+}
+
+QSharedPointer<FileIteratorWorker> RootInfoWorker::iteratorWorker() const
+{
+    return it;
+}
+
+QSharedPointer<FileWatcherWorker> RootInfoWorker::watcherWorker() const
+{
+    return watch;
+}
+
+void RootInfoWorker::addChildren(const QSet<QUrl> &urlList)
+{
+    if (stopped)
+        return;
+    fmInfo() << "RootInfoWorker::addChildren(QSet): url count=" << urlList.size() << "stopped=" << stopped;
+    QList<SortInfoPointer> newSortInfo;
+
+    bool isContainHidd = false;
+    std::for_each(urlList.begin(), urlList.end(), [this, &isContainHidd, &newSortInfo](QUrl url) {
+        if (stopped)
+            return;
+        url.setPath(url.path());
+
+        auto child = fileInfo(url);
+
+        if (!child)
+            return;
+
+        if (UniversalUtils::urlEquals(url, hiddenFileUrl))
+            isContainHidd = true;
+
+        auto sortInfo = addChild(child);
+        if (sortInfo)
+            newSortInfo.append(sortInfo);
+    });
+
+    fmDebug() << "RootInfoWorker::addChildren(QSet): newSortInfo count=" << newSortInfo.size();
+    if (newSortInfo.count() > 0) {
+        originSortRole = dfmio::DEnumerator::SortRoleCompareFlag::kSortRoleCompareDefault;
+        emit watcherAddFiles(newSortInfo);
+    }
+
+    if (isContainHidd)
+        Q_EMIT watcherUpdateHideFile(hiddenFileUrl);
+}
+
+void RootInfoWorker::addChildren(const QList<SortInfoPointer> &children, const int start)
+{
+    // 这里搜索时不能使用增量更新，以前的SortInfo也有修改，所以前面搜索出来的有可能搜索的内容没有显示出来
+    Q_UNUSED(start);
+    if (stopped)
+        return;
+
+    childrenUrlList.clear();
+    sourceDataList = children;
+
+    std::for_each(children.begin(), children.end(), [this](const SortInfoPointer &sortInfo) {
+        if (stopped || !sortInfo)
+            return;
+        childrenUrlList.append(sortInfo->fileUrl());
+    });
+}
+
+SortInfoPointer RootInfoWorker::addChild(const FileInfoPointer &child)
+{
+    if (stopped || !child)
+        return nullptr;
+
+    auto childUrl = child->urlOf(UrlInfoType::kUrl);
+    if (childrenUrlList.contains(childUrl))
+        return nullptr;
+
+    auto sort = sortFileInfo(child);
+    if (!sort)
+        return nullptr;
+
+    childrenUrlList.append(childUrl);
+    sourceDataList.append(sort);
+
+    return sort;
+}
+
+SortInfoPointer RootInfoWorker::sortFileInfo(const FileInfoPointer &info)
+{
+    if (!info || stopped)
+        return nullptr;
+
+    SortInfoPointer sortInfo(new SortFileInfo);
+    sortInfo->setUrl(info->urlOf(UrlInfoType::kUrl));
+    sortInfo->setSize(info->size());
+    sortInfo->setFile(!info->isAttributes(OptInfoType::kIsDir));
+    sortInfo->setDir(info->isAttributes(OptInfoType::kIsDir));
+    sortInfo->setHide(info->isAttributes(OptInfoType::kIsHidden));
+    sortInfo->setSymlink(info->isAttributes(OptInfoType::kIsSymLink));
+    sortInfo->setReadable(info->isAttributes(OptInfoType::kIsReadable));
+    sortInfo->setWriteable(info->isAttributes(OptInfoType::kIsWritable));
+    sortInfo->setExecutable(info->isAttributes(OptInfoType::kIsExecutable));
+
+    sortInfo->setLastReadTime(info->timeOf(TimeInfoType::kLastRead).value<QDateTime>().toSecsSinceEpoch());
+    sortInfo->setLastModifiedTime(info->timeOf(TimeInfoType::kLastModified).value<QDateTime>().toSecsSinceEpoch());
+    sortInfo->setCreateTime(info->timeOf(TimeInfoType::kCreateTime).value<QDateTime>().toSecsSinceEpoch());
+    sortInfo->setInfoCompleted(true);
+
+    return sortInfo;
+}
+
+void RootInfoWorker::removeChildren(const QSet<QUrl> &urlList)
+{
+    if (stopped)
+        return;
+    QList<SortInfoPointer> removeChildren {};
+    int childIndex = -1;
+    QList<QUrl> removeUrls;
+    emit InfoCacheController::instance().removeCacheFileInfo(urlList.values());
+    std::for_each(urlList.begin(), urlList.end(), [this, &removeUrls, &removeChildren, &childIndex](const QUrl &fileUrl){
+        if (stopped)
+            return;
+        auto url = fileUrl;
+        url.setPath(url.path());
+
+        // 优化：先检查 childrenUrlList 是否已包含此 URL，命中则直接使用 sourceDataList
+        // 中缓存的 SortInfo，避免创建 FileInfo 的同步 I/O。
+        childIndex = childrenUrlList.indexOf(url);
+        if (childIndex >= 0 && childIndex < childrenUrlList.length()) {
+            bool isDir = sourceDataList.at(childIndex)->isDir();
+            if (isDir) {
+                WatcherCache::instance().removeCacheWatcherByParent(url);
+                emit requestCloseTab(url);
+            }
+            removeUrls.append(url);
+            childrenUrlList.removeAt(childIndex);
+            removeChildren.append(sourceDataList.takeAt(childIndex));
+            return;
+        }
+
+        // 未命中缓存，回退到创建 FileInfo 获取真实 URL
+        auto child = fileInfo(url);
+        if (!child)
+            return;
+
+        auto realUrl = child->urlOf(UrlInfoType::kUrl);
+        childIndex = childrenUrlList.indexOf(realUrl);
+
+        // 处理各个窗口显示的父目录删除
+        // 删除事件到达时文件已不存在，fileInfo() 重新查询 isDir 会失败并返回 false，
+        // 因此优先使用已加载子项列表 sourceDataList 中缓存的 SortInfo（其 isDir 在文件
+        // 存在时设置、可靠）；仅在子项尚未加载时才回退到实时查询，避免删除一个正被其它
+        // 窗口打开的目录后，那些窗口收不到 requestCloseTab 而无法自动跳转。
+        bool isDir = (childIndex >= 0 && childIndex < sourceDataList.length())
+                ? sourceDataList.at(childIndex)->isDir()
+                : child->isDir();
+        if (isDir) {
+            WatcherCache::instance().removeCacheWatcherByParent(url);
+            emit requestCloseTab(url);
+        }
+
+        removeUrls.append(realUrl);
+        if (childIndex < 0 || childIndex >= childrenUrlList.length()) {
+            removeChildren.append(sortFileInfo(child));
+            return;
+        }
+        childrenUrlList.removeAt(childIndex);
+        removeChildren.append(sourceDataList.takeAt(childIndex));
+    });
+
+    // 移除缓存
+    if (removeUrls.count() > 0)
+        emit InfoCacheController::instance().removeCacheFileInfo(removeUrls);
+
+    // 移除显示的项
+    if (removeChildren.count() > 0)
+        emit watcherRemoveFiles(removeChildren);
+
+    // 跟新隐藏文件的显示项
+    if (removeUrls.contains(hiddenFileUrl))
+        Q_EMIT watcherUpdateHideFile(hiddenFileUrl);
+}
+
+bool RootInfoWorker::containsChild(const QUrl &url)
+{
+    if (stopped)
+        return false;
+    return childrenUrlList.contains(url);
+}
+
+FileInfoPointer RootInfoWorker::fileInfo(const QUrl &url)
+{
+    if (stopped)
+        return nullptr;
+    FileInfoPointer info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
+    if (!info.isNull())
+        return info;
+
+    // 不是当前目录的就不处理
+    const QUrl &parentUrl = QUrl::fromPercentEncoding(this->url.toString().toUtf8());
+    auto path = url.path();
+    if (path.isEmpty() || path == QDir::separator() || url.fileName().isEmpty())
+        return info;
+
+    auto pathParent = path.endsWith(QDir::separator()) ? path.left(path.length() - 1) : path;
+    auto parentPath = parentUrl.path().endsWith(QDir::separator())
+            ? parentUrl.path().left(parentUrl.path().length() - 1)
+            : parentUrl.path();
+    pathParent = pathParent.left(pathParent.lastIndexOf(QDir::separator()));
+    if (!parentPath.endsWith(pathParent.mid(1)))
+        return info;
+
+    auto currentUrl = parentUrl;
+    currentUrl.setPath(currentUrl.path(QUrl::PrettyDecoded) + QDir::separator() + url.fileName());
+    info = InfoFactory::create<FileInfo>(currentUrl);
+    return info;
+}
+
+SortInfoPointer RootInfoWorker::updateChild(const QUrl &url)
+{
+    if (stopped)
+        return nullptr;
+    SortInfoPointer sort { nullptr };
+
+    auto info = fileInfo(url);
+    if (info.isNull())
+        return nullptr;
+
+    auto realUrl = info->urlOf(UrlInfoType::kUrl);
+    if (!childrenUrlList.contains(realUrl))
+        return nullptr;
+    sort = sortFileInfo(info);
+    if (sort.isNull())
+        return nullptr;
+    sourceDataList.replace(childrenUrlList.indexOf(realUrl), sort);
+
+    // NOTE: GlobalEventType::kHideFiles event is watched in fileview, but this can be used to notify update view
+    // when the file is modified in other way.
+    if (UniversalUtils::urlEquals(hiddenFileUrl, url))
+        Q_EMIT watcherUpdateHideFile(url);
+
+    return sort;
+}
+
+void RootInfoWorker::updateChildren(const QSet<QUrl> &urls)
+{
+    if (stopped)
+        return;
+    QList<SortInfoPointer> updates;
+    std::for_each(urls.begin(), urls.end(), [this, &updates](const QUrl url) {
+        if (stopped)
+            return;
+        auto sort = updateChild(url);
+        if (sort)
+            updates.append(sort);
+    });
+    if (updates.isEmpty())
+        return;
+    emit watcherUpdateFiles(updates);
+}
+
+void RootInfoWorker::onResetData()
+{
+    childrenUrlList.clear();
+    sourceDataList.clear();
+}
+
+void RootInfoWorker::onSetIteratorStatus(const RootInfoWorker::IteratorStatus &status)
+{
+    itStatus = status;
+}
+
 RootInfo::RootInfo(const QUrl &u, QObject *parent)
     : QObject(parent), url(u)
 {
-    fmInfo() << "RootInfo created for URL:" << url.toString();
+    fmInfo() << "RootInfo created for url:" << u;
+    rootWorker.reset(new RootInfoWorker(url));
 
-    hiddenFileUrl.setScheme(url.scheme());
-    hiddenFileUrl.setPath(DFMIO::DFMUtils::buildFilePath(url.path().toStdString().c_str(), ".hidden", nullptr));
+    initConnection();
+    rootWorker->moveToThread(&rootThread);
+    rootWorker->watcherWorker()->moveToThread(&rootThread);
+    rootWorker->iteratorWorker()->moveToThread(&rootThread);
+
+    keyWords = KeywordExtractorManager::instance().extractor().extractFromUrl(url);
+
+    connect(qApp, &QApplication::aboutToQuit, this, [this]{
+        // 保证所有的迭代线程退出
+        this->clearAllThread();
+    });
+    rootThread.start();
 }
 
 RootInfo::~RootInfo()
 {
-    isDying.store(true);
-    fmInfo() << "RootInfo destructor started for URL:" << url.toString();
-
-    disconnect();
-    if (watcher) {
-        fmDebug() << "Stopping file watcher";
-        watcher->stopWatcher();
-    }
-
-    cancelWatcherEvent = true;
-    for (auto &future : watcherEventFutures) {
-        future.waitForFinished();
-    }
-
-    fmDebug() << "Stopping" << traversalThreads.size() << "traversal threads";
-    for (const auto &thread : traversalThreads) {
-        thread->traversalThread->stop();
-        thread->traversalThread->wait();
-    }
-
-    // wait old dir iterator thread
-    for (const auto &thread : discardedThread) {
-        thread->disconnect();
-        thread->stop();
-        thread->quit();
-        thread->wait();
-    }
-
-    fmInfo() << "RootInfo destructor completed for URL:" << url.toString();
+    fmInfo() << "RootInfo destroyed for url:" << url;
+    clearAllThread();
 }
 
 void RootInfo::initThreadOfFileData(const QString &key, DFMGLOBAL_NAMESPACE::ItemRoles role, Qt::SortOrder order, bool isMixFileAndFolder)
 {
-    fmDebug() << "Initializing file data thread for key:" << key << "role:" << role
-              << "order:" << (order == Qt::AscendingOrder ? "Ascending" : "Descending")
-              << "mixFileAndFolder:" << isMixFileAndFolder;
-
     // clear old dir iterator thread
-    for (auto it = discardedThread.begin(); it != discardedThread.end();) {
+    for (auto it = discardedThread.begin(); it != discardedThread.end(); ) {
         if (!(*it)->isRunning()) {
             it = discardedThread.erase(it);
         } else {
             it++;
         }
     }
-
     // create traversal thread
     QSharedPointer<DirIteratorThread> traversalThread = traversalThreads.value(key);
     if (!traversalThread.isNull()) {
-        fmDebug() << "Disconnecting existing traversal thread for key:" << key;
         traversalThread->traversalThread->disconnect();
     }
-    fmDebug() << "Creating new traversal thread for URL:" << url.toString();
 
     traversalThread.reset(new DirIteratorThread);
     traversalThread->traversalThread.reset(
@@ -93,7 +611,7 @@ void RootInfo::initThreadOfFileData(const QString &key, DFMGLOBAL_NAMESPACE::Ite
                                           QDirIterator::FollowSymlinks));
     traversalThread->traversalThread->setSortAgruments(order, role, isMixFileAndFolder);
     traversalThread->traversalThread->setTraversalToken(key);
-    initConnection(traversalThread->traversalThread);
+    initIteratorConnection(traversalThread->traversalThread);
     traversalThreads.insert(key, traversalThread);
 
     switch (role) {
@@ -116,36 +634,26 @@ void RootInfo::initThreadOfFileData(const QString &key, DFMGLOBAL_NAMESPACE::Ite
     traversalThread->originSortOrder = order;
 }
 
-void RootInfo::startWork(const QString &key)
+void RootInfo::startIteratorWork(const QString &key)
 {
     if (!traversalThreads.contains(key)) {
-        fmWarning() << "Cannot start work: traversal thread not found for key:" << key;
+        fmWarning() << "startIteratorWork: key not found" << key;
         return;
     }
 
-    fmDebug() << "Starting work for key:" << key;
-
-    fmInfo() << "Starting directory traversal for URL:" << url.toString();
-    {
-        QWriteLocker lk(&childrenLock);
-        childrenUrlList.clear();
-        sourceDataList.clear();
-    }
+    fmInfo() << "startIteratorWork: key=" << key << "url=" << url;
+    traversaling = true;
+    emit resetData();
+    emit iteratorStatus(RootInfoWorker::IteratorStatus::kRunning);
     traversalThreads.value(key)->traversalThread->start();
 }
 
 void RootInfo::startWatcher()
 {
-    if (needStartWatcher == false) {
-        fmDebug() << "File watcher already started or not needed for URL:" << url.toString();
+    if (needStartWatcher == false)
         return;
-    }
-
-    fmInfo() << "Starting file watcher for URL:" << url.toString();
     needStartWatcher = false;
-
     if (watcher) {
-        fmDebug() << "Stopping existing watcher before restart";
         watcher->stopWatcher();
         watcher->disconnect(this);
     }
@@ -157,75 +665,57 @@ void RootInfo::startWatcher()
         return;
     }
 
-    fmDebug() << "Connecting watcher signals for URL:" << url.toString();
+    // worker 子线程执行
     connect(watcher.data(), &AbstractFileWatcher::fileDeleted,
-            this, &RootInfo::doFileDeleted);
+            rootWorker->watcherWorker().data(), &FileWatcherWorker::doFileDeleted, Qt::QueuedConnection);
     connect(watcher.data(), &AbstractFileWatcher::subfileCreated,
-            this, &RootInfo::dofileCreated);
+            rootWorker->watcherWorker().data(), &FileWatcherWorker::doFileCreated, Qt::QueuedConnection);
     connect(watcher.data(), &AbstractFileWatcher::fileAttributeChanged,
-            this, &RootInfo::doFileUpdated);
+            rootWorker->watcherWorker().data(), &FileWatcherWorker::doFileUpdated, Qt::QueuedConnection);
     connect(watcher.data(), &AbstractFileWatcher::fileRename,
-            this, &RootInfo::dofileMoved);
+            rootWorker->watcherWorker().data(), &FileWatcherWorker::doFileMoved, Qt::QueuedConnection);
 
     watcher->restartWatcher();
-    fmDebug() << "File watcher started successfully for URL:" << url.toString();
 }
 
 int RootInfo::clearTraversalThread(const QString &key, const bool isRefresh)
 {
-    if (!traversalThreads.contains(key)) {
-        fmDebug() << "No traversal thread to clear for key:" << key;
+    if (!traversalThreads.contains(key))
         return traversalThreads.count();
-    }
-
-    fmDebug() << "Clearing traversal thread for key:" << key << "isRefresh:" << isRefresh;
 
     auto thread = traversalThreads.take(key);
     auto traversalThread = thread->traversalThread;
-    if (traversalThread->isRunning()) {
-        fmDebug() << "Emitting traversal finished signal for running thread";
-        emit traversalFinished(key, false);
-    }
     traversalThread->disconnect(this);
     if (traversalThread->isRunning()) {
-        fmDebug() << "Moving running thread to discarded list";
         discardedThread.append(traversalThread);
+        traversaling = false;
     }
     thread->traversalThread->stop();
-    if (traversalThreads.isEmpty()) {
-        fmDebug() << "All traversal threads cleared, enabling watcher restart";
+    if (traversalThreads.isEmpty())
         needStartWatcher = true;
-    }
 
     this->isRefresh = isRefresh;
-    fmDebug() << "Traversal threads remaining:" << traversalThreads.count();
     return traversalThreads.count();
 }
 
 void RootInfo::setFirstBatch(bool first)
 {
-    isFirstBatch = first;
+    isFirstBatch.store(first);
 }
 
 void RootInfo::reset()
 {
-    fmInfo() << "Resetting RootInfo for URL:" << url.toString();
+    fmInfo() << "RootInfo::reset: url=" << url;
 
-    disconnect();
-
-    {
-        QWriteLocker lk(&childrenLock);
-        childrenUrlList.clear();
-        sourceDataList.clear();
-    }
+    emit resetData();
 
     if (watcher) {
-        fmDebug() << "Disconnecting and stopping file watcher";
-        watcher->disconnect(this);
         watcher->stopWatcher();
     }
+    needStartWatcher = true;
 
-    cancelWatcherEvent = true;
+    emit iteratorStatus(RootInfoWorker::IteratorStatus::kNone);
+
     for (const auto &thread : traversalThreads) {
         thread->traversalThread->stop();
     }
@@ -241,26 +731,15 @@ void RootInfo::reset()
 
 bool RootInfo::canDelete() const
 {
-    for (auto &future : watcherEventFutures) {
-        if (!future.isFinished()) {
-            fmDebug() << "Cannot delete: watcher event future still running";
-            return false;
-        }
-    }
     for (const auto &thread : traversalThreads) {
-        if (!thread->traversalThread->isFinished()) {
-            fmDebug() << "Cannot delete: traversal thread still running";
+        if (!thread->traversalThread->isFinished())
             return false;
-        }
     }
     // wait old dir iterator thread
     for (const auto &thread : discardedThread) {
-        if (!thread->isFinished()) {
-            fmDebug() << "Cannot delete: discarded thread still running";
+        if (!thread->isFinished())
             return false;
-        }
     }
-    fmDebug() << "RootInfo can be safely deleted for URL:" << url.toString();
     return true;
 }
 
@@ -274,255 +753,14 @@ bool RootInfo::checkKeyOnly(const QString &key) const
     return true;
 }
 
-void RootInfo::doFileDeleted(const QUrl &url)
+QStringList RootInfo::getKeyWords() const
 {
-    fmDebug() << "File deleted event for URL:" << url.toString();
-    enqueueEvent(QPair<QUrl, EventType>(url, kRmFile));
-    metaObject()->invokeMethod(this, QT_STRINGIFY(doThreadWatcherEvent), Qt::QueuedConnection);
-}
-
-void RootInfo::dofileMoved(const QUrl &fromUrl, const QUrl &toUrl)
-{
-    fmInfo() << "File moved from:" << fromUrl.toString() << "to:" << toUrl.toString();
-    Q_EMIT renameFileProcessStarted();
-    doFileDeleted(fromUrl);
-
-    AbstractFileInfoPointer info = InfoCacheController::instance().getCacheInfo(toUrl);
-    if (info)
-        info->refresh();
-
-    dofileCreated(toUrl);
-}
-
-void RootInfo::dofileCreated(const QUrl &url)
-{
-    fmDebug() << "File created event for URL:" << url.toString();
-    enqueueEvent(QPair<QUrl, EventType>(url, kAddFile));
-    metaObject()->invokeMethod(this, QT_STRINGIFY(doThreadWatcherEvent), Qt::QueuedConnection);
-}
-
-void RootInfo::doFileUpdated(const QUrl &url)
-{
-    fmDebug() << "File updated event for URL:" << url.toString();
-    enqueueEvent(QPair<QUrl, EventType>(url, kUpdateFile));
-    metaObject()->invokeMethod(this, QT_STRINGIFY(doThreadWatcherEvent), Qt::QueuedConnection);
-}
-
-void RootInfo::doWatcherEvent()
-{
-    // 使用原子性的 test_and_set 操作
-    bool expected = false;
-    // 如果 processFileEventRuning 是 false，则将其设置为 true，并返回 true
-    // 如果已经是 true，则什么都不做，并返回 false
-    if (!processFileEventRuning.compare_exchange_strong(expected, true)) {
-        fmDebug() << "Watcher event processing already running, skipping";
-        return;   // 已经有其他线程在运行，直接返回
-    }
-
-    fmDebug() << "Starting watcher event processing for URL:" << url.toString();
-
-    QElapsedTimer timer;
-    timer.start();
-    QList<QUrl> adds, updates, removes;
-    qint64 oldtime = 0;
-    int emptyLoopCount = 0;
-    while (checkFileEventQueue() || timer.elapsed() < 200) {
-        // 检查超时，重新设置起始时间
-        if (timer.elapsed() - oldtime >= 200) {
-            // 处理添加文件
-            if (!adds.isEmpty()) {
-                fmDebug() << "Processing" << adds.size() << "add events";
-                addChildren(adds);
-            }
-            if (!updates.isEmpty()) {
-                fmDebug() << "Processing" << updates.size() << "update events";
-                updateChildren(updates);
-            }
-            if (!removes.isEmpty()) {
-                fmDebug() << "Processing" << removes.size() << "remove events";
-                removeChildren(removes);
-            }
-
-            adds.clear();
-            updates.clear();
-            removes.clear();
-
-            oldtime = timer.elapsed();
-        }
-
-        if (cancelWatcherEvent) {
-            fmDebug() << "Watcher event processing cancelled";
-            return;
-        }
-
-        if (!checkFileEventQueue()) {
-            if (emptyLoopCount >= 5)
-                break;
-
-            QThread::msleep(20);
-            if (adds.isEmpty() && updates.isEmpty() && removes.isEmpty())
-                oldtime = timer.elapsed();
-
-            ++emptyLoopCount;
-            continue;
-        }
-
-        emptyLoopCount = 0;
-        QPair<QUrl, EventType> event = dequeueEvent();
-        const QUrl &fileUrl = event.first;
-
-        if (cancelWatcherEvent)
-            return;
-
-        if (!fileUrl.isValid())
-            continue;
-
-        if (UniversalUtils::urlEquals(fileUrl, url)) {
-            if (event.second == kAddFile)
-                continue;
-            else if (event.second == kRmFile) {
-                fmDebug() << "Root directory deleted, clearing all data for URL:" << url.toString();
-                emit InfoCacheController::instance().removeCacheFileInfo({ fileUrl });
-                WatcherCache::instance().removeCacheWatcherByParent(fileUrl);
-                emit requestCloseTab(fileUrl);
-                emit requestClearRoot(fileUrl);
-                QWriteLocker lk(&childrenLock);
-                childrenUrlList.clear();
-                sourceDataList.clear();
-                break;
-            }
-        }
-
-        if (cancelWatcherEvent)
-            return;
-
-        if (event.second == kAddFile) {
-            // 判断update和remove中是否存在存在就移除
-            updates.removeOne(fileUrl);
-            removes.removeOne(fileUrl);
-            if (adds.contains(fileUrl))
-                continue;
-
-            adds.append(fileUrl);
-        } else if (event.second == kUpdateFile) {
-            // 如果在增加或者移除中就不添加
-            if (adds.contains(fileUrl) || removes.contains(fileUrl) || updates.contains(fileUrl))
-                continue;
-            updates.append(fileUrl);
-        } else {
-            adds.removeOne(fileUrl);
-            updates.removeOne(fileUrl);
-            if (removes.contains(fileUrl))
-                continue;
-            removes.append(fileUrl);
-        }
-    }
-    processFileEventRuning.store(false);   // 运行完毕，重置标志
-
-    // 处理添加文件
-    if (!removes.isEmpty())
-        removeChildren(removes);
-    if (!adds.isEmpty())
-        addChildren(adds);
-    if (!updates.isEmpty())
-        updateChildren(updates);
-}
-
-void RootInfo::doThreadWatcherEvent()
-{
-    if (isDying.load() || processFileEventRuning)
-        return;
-    for (auto it = watcherEventFutures.begin(); it != watcherEventFutures.end();) {
-        if (it->isFinished()) {
-            it = watcherEventFutures.erase(it);
-        } else {
-            it++;
-        }
-    }
-
-    watcherEventFutures << QtConcurrent::run([&]() {
-        if (cancelWatcherEvent || isDying.load())
-            return;
-        doWatcherEvent();
-    });
-}
-
-void RootInfo::handleTraversalResults(const QList<FileInfoPointer> children, const QString &travseToken)
-{
-    fmDebug() << "Handling traversal results for token:" << travseToken << "children count:" << children.size();
-
-    QList<SortInfoPointer> sortInfos;
-    QList<FileInfoPointer> infos;
-    for (const auto &info : children) {
-        auto sortInfo = addChild(info);
-        if (!sortInfo)
-            continue;
-        sortInfos.append(sortInfo);
-
-        infos.append(info);
-    }
-
-    if (sortInfos.length() > 0) {
-        bool isFirst = isFirstBatch.exchange(false);   // Get and reset the flag
-        fmDebug() << "Emitting iterator add files signal - sortInfos:" << sortInfos.size() << "isFirst:" << isFirst;
-        Q_EMIT iteratorAddFiles(travseToken, sortInfos, infos, isFirst);
-    }
-}
-
-void RootInfo::handleTraversalResultsUpdate(const QList<SortInfoPointer> children, const QString &travseToken, bool increment)
-{
-    if (children.isEmpty()) {
-        fmDebug() << "Empty traversal results update for token:" << travseToken;
-        return;
-    }
-
-    QWriteLocker lk(&childrenLock);
-    if (!increment) {
-        // 首批或全量更新（如搜索结果刷新）：替换整个列表并重建 URL 索引
-        childrenUrlList.clear();
-        sourceDataList = children;
-        for (const auto &file : children) {
-            if (file)
-                childrenUrlList.append(file->fileUrl());
-        }
-    } else {
-        // 增量批次（如 dirent 逐批遍历）：追加到已有列表
-        for (const auto &file : children) {
-            if (!file)
-                continue;
-            childrenUrlList.append(file->fileUrl());
-            sourceDataList.append(file);
-        }
-    }
-
-    bool isFirst = isFirstBatch.exchange(false);   // Get and reset the flag
-    fmDebug() << "Emitting iterator update files signal - children:" << children.size() << "isFirst:" << isFirst;
-    Q_EMIT iteratorUpdateFiles(travseToken, sourceDataList, isFirst);
-}
-
-void RootInfo::handleTraversalLocalResult(QList<SortInfoPointer> children,
-                                          dfmio::DEnumerator::SortRoleCompareFlag sortRole,
-                                          Qt::SortOrder sortOrder, bool isMixDirAndFile, const QString &travseToken)
-{
-    originSortRole = sortRole;
-    originSortOrder = sortOrder;
-    originMixSort = isMixDirAndFile;
-
-    if (children.isEmpty()) {
-        fmDebug() << "Empty local traversal results for token:" << travseToken;
-        return;
-    }
-
-    addChildren(children);
-
-    bool isFirst = isFirstBatch.exchange(false);   // Get and reset the flag
-    fmDebug() << "Emitting iterator local files signal - children:" << children.size() << "isFirst:" << isFirst;
-    Q_EMIT iteratorLocalFiles(travseToken, children, originSortRole, originSortOrder, originMixSort, isFirst);
+    return keyWords;
 }
 
 void RootInfo::handleTraversalFinish(const QString &travseToken)
 {
-    fmInfo() << "Traversal finished for token:" << travseToken << "URL:" << url.toString();
+    fmInfo() << "RootInfo::handleTraversalFinish:" << travseToken << "url:" << url;
 
     // Check if isFirstBatch is still true, which means no directory data was produced
     bool noDataProduced = isFirstBatch.load();
@@ -530,295 +768,113 @@ void RootInfo::handleTraversalFinish(const QString &travseToken)
     isFirstBatch.store(false);
 
     fmDebug() << "Emitting traversal finished signal - noDataProduced:" << noDataProduced;
-    // Emit signal with additional parameter indicating if no data was produced
     emit traversalFinished(travseToken, noDataProduced);
+
+    traversaling = false;
+    traversalFinish = true;
     if (isRefresh) {
-        fmDebug() << "Refresh completed, resetting refresh flag";
+        fmDebug() << "RootInfo::handleTraversalFinish: refresh completed";
         isRefresh = false;
     }
 }
 
-void RootInfo::handleTraversalSort(const QString &travseToken)
+void RootInfo::onWatcherTimerStart()
 {
-    fmDebug() << "Emitting traversal sort request for token:" << travseToken << "URL:" << url.toString();
-    emit requestSort(travseToken, url);
+    QTimer::singleShot(100, this, [this]{
+        emit watcherTimerEvent();
+    });
 }
 
-void RootInfo::initConnection(const TraversalThreadManagerPointer &traversalThread)
+void RootInfo::initIteratorConnection(const TraversalThreadManagerPointer &traversalThread)
 {
+    // 再worker的子线程中执行
     connect(traversalThread.data(), &TraversalDirThreadManager::updateChildrenManager,
-            this, &RootInfo::handleTraversalResults, Qt::DirectConnection);
-    connect(traversalThread.data(), &TraversalDirThreadManager::updateChildrenInfo,
-            this, &RootInfo::handleTraversalResultsUpdate, Qt::DirectConnection);
+            rootWorker->iteratorWorker().data(), &FileIteratorWorker::handleTraversalResults, Qt::QueuedConnection);
     connect(traversalThread.data(), &TraversalDirThreadManager::updateLocalChildren,
-            this, &RootInfo::handleTraversalLocalResult, Qt::DirectConnection);
+            rootWorker->iteratorWorker().data(), &FileIteratorWorker::handleTraversalLocalResult, Qt::QueuedConnection);
     connect(traversalThread.data(), &TraversalDirThreadManager::traversalRequestSort,
-            this, &RootInfo::handleTraversalSort, Qt::DirectConnection);
-    // 主线中执行
+            rootWorker->iteratorWorker().data(), &FileIteratorWorker::handleTraversalSort, Qt::QueuedConnection);
+    connect(traversalThread.data(), &TraversalDirThreadManager::updateChildrenInfo,
+            rootWorker->iteratorWorker().data(), &FileIteratorWorker::handleTraversalResultsUpdate, Qt::QueuedConnection);
     connect(traversalThread.data(), &TraversalDirThreadManager::traversalFinished,
-            this, &RootInfo::handleTraversalFinish, Qt::QueuedConnection);
+            rootWorker->iteratorWorker().data(), &FileIteratorWorker::handleTraversalFinish, Qt::QueuedConnection);
+
+    // 主线中执行，启动监视器
     connect(traversalThread.data(), &TraversalDirThreadManager::iteratorInitFinished,
             this, &RootInfo::startWatcher, Qt::QueuedConnection);
 }
 
-void RootInfo::addChildren(const QList<QUrl> &urlList)
+void RootInfo::initConnection()
 {
-    QList<SortInfoPointer> newSortInfo;
+    // 连接迭代器信号 —— 三个数据信号使用 lambda 转发 isFirstBatch
+    connect(rootWorker.data(), &RootInfoWorker::iteratorLocalFiles, this,
+            [this](const QString &key,
+                   const QList<SortInfoPointer> children,
+                   const dfmio::DEnumerator::SortRoleCompareFlag sortRole,
+                   const Qt::SortOrder sortOrder,
+                   const bool isMixDirAndFile, const bool isFirst) {
+                Q_UNUSED(isFirst)
+                bool firstBatch = children.isEmpty() ? false : isFirstBatch.exchange(false);
+                emit iteratorLocalFiles(key, children, sortRole, sortOrder, isMixDirAndFile, firstBatch);
+            }, Qt::QueuedConnection);
 
-    bool hasHiddenFile = false;
-    for (auto url : urlList) {
-        url.setPath(url.path());
+    connect(rootWorker.data(), &RootInfoWorker::iteratorUpdateFiles, this,
+            [this](const QString &key, const QList<SortInfoPointer> children, const bool isFirst) {
+                Q_UNUSED(isFirst)
+                bool firstBatch = children.isEmpty() ? false : isFirstBatch.exchange(false);
+                emit iteratorUpdateFiles(key, children, firstBatch);
+            }, Qt::QueuedConnection);
 
-        auto child = fileInfo(url);
+    connect(rootWorker.data(), &RootInfoWorker::iteratorAddFile, this, &RootInfo::iteratorAddFile, Qt::QueuedConnection);
 
-        if (!child) {
-            fmDebug() << "Failed to get file info for URL:" << url.toString();
-            continue;
-        }
+    connect(rootWorker.data(), &RootInfoWorker::iteratorAddFiles, this,
+            [this](const QString &key, const QList<SortInfoPointer> sortInfos, const QList<FileInfoPointer> infos) {
+                bool firstBatch = sortInfos.isEmpty() ? false : isFirstBatch.exchange(false);
+                emit iteratorAddFiles(key, sortInfos, infos, firstBatch);
+            }, Qt::QueuedConnection);
 
-        if (UniversalUtils::urlEquals(url, hiddenFileUrl))
-            hasHiddenFile = true;
+    connect(rootWorker.data(), &RootInfoWorker::requestSort, this, &RootInfo::requestSort, Qt::QueuedConnection);
+    connect(rootWorker.data(), &RootInfoWorker::traversalFinished, this, &RootInfo::handleTraversalFinish, Qt::QueuedConnection);
 
-        auto sortInfo = addChild(child);
-        if (sortInfo)
-            newSortInfo.append(sortInfo);
-    }
+    // 连接监视器信号
+    connect(rootWorker.data(), &RootInfoWorker::watcherAddFiles, this, &RootInfo::watcherAddFiles, Qt::QueuedConnection);
+    connect(rootWorker.data(), &RootInfoWorker::watcherRemoveFiles, this, &RootInfo::watcherRemoveFiles, Qt::QueuedConnection);
+    connect(rootWorker.data(), &RootInfoWorker::watcherUpdateHideFile, this, &RootInfo::watcherUpdateHideFile, Qt::QueuedConnection);
+    connect(rootWorker.data(), &RootInfoWorker::watcherUpdateFile, this, &RootInfo::watcherUpdateFile, Qt::QueuedConnection);
+    connect(rootWorker.data(), &RootInfoWorker::watcherUpdateFiles, this, &RootInfo::watcherUpdateFiles, Qt::QueuedConnection);
+    connect(rootWorker.data(), &RootInfoWorker::renameFileProcessStarted, this, &RootInfo::renameFileProcessStarted, Qt::QueuedConnection);
 
-    if (newSortInfo.count() > 0) {
-        originSortRole = dfmio::DEnumerator::SortRoleCompareFlag::kSortRoleCompareDefault;
-        fmDebug() << "Emitting watcher add files signal - count:" << newSortInfo.count();
-        emit watcherAddFiles(newSortInfo);
-    }
+    // 连接root处理信号
+    connect(rootWorker.data(), &RootInfoWorker::requestCloseTab, this, &RootInfo::requestCloseTab, Qt::QueuedConnection);
+    connect(rootWorker.data(), &RootInfoWorker::requestClearRoot, this, &RootInfo::requestClearRoot, Qt::QueuedConnection);
 
-    if (hasHiddenFile) {
-        fmDebug() << "Emitting watcher update hide file signal for:" << hiddenFileUrl.toString();
-        Q_EMIT watcherUpdateHideFile(hiddenFileUrl);
-    }
+    connect(this, &RootInfo::resetData, rootWorker.data(), &RootInfoWorker::onResetData, Qt::QueuedConnection);
+    connect(this, &RootInfo::iteratorStatus, rootWorker.data(), &RootInfoWorker::onSetIteratorStatus, Qt::QueuedConnection);
+    connect(rootWorker.data(), &RootInfoWorker::watcherTimerStart, this, &RootInfo::onWatcherTimerStart, Qt::QueuedConnection);
+    connect(this, &RootInfo::watcherTimerEvent, rootWorker->watcherWorker().data(), &FileWatcherWorker::doWatcherEvent, Qt::QueuedConnection);
 }
 
-void RootInfo::addChildren(const QList<FileInfoPointer> &children)
+void RootInfo::clearAllThread()
 {
-    for (auto &child : children) {
-        addChild(child);
+    disconnect();
+    if (watcher)
+        watcher->stopWatcher();
+
+    for (const auto &thread : traversalThreads) {
+        thread->traversalThread->stop();
+        thread->traversalThread->wait();
     }
-}
-
-void RootInfo::addChildren(const QList<SortInfoPointer> &children)
-{
-    for (auto &file : children) {
-        if (!file)
-            continue;
-
-        QWriteLocker lk(&childrenLock);
-        childrenUrlList.append(file->fileUrl());
-        sourceDataList.append(file);
-    }
-}
-
-SortInfoPointer RootInfo::addChild(const FileInfoPointer &child)
-{
-    if (!child) {
-        fmDebug() << "Cannot add child: null file info";
-        return nullptr;
+    // wait old dir iterator thread
+    for (const auto &thread : discardedThread) {
+        thread->disconnect();
+        thread->stop();
+        thread->quit();
+        thread->wait();
     }
 
-    QUrl childUrl = child->urlOf(dfmbase::UrlInfoType::kUrl);
-    childUrl.setPath(childUrl.path());
+    if (rootWorker)
+        rootWorker->stop();
 
-    SortInfoPointer sort = sortFileInfo(child);
-    if (!sort) {
-        fmDebug() << "Failed to create sort info for child:" << childUrl.toString();
-        return nullptr;
-    }
-
-    {
-        QWriteLocker lk(&childrenLock);
-        if (childrenUrlList.contains(childUrl)) {
-            fmDebug() << "Replacing existing child:" << childUrl.toString();
-            sourceDataList.replace(childrenUrlList.indexOf(childUrl), sort);
-            return sort;
-        }
-        childrenUrlList.append(childUrl);
-        sourceDataList.append(sort);
-        fmDebug() << "Added new child:" << childUrl.toString() << "total children:" << childrenUrlList.size();
-    }
-
-    return sort;
-}
-
-SortInfoPointer RootInfo::sortFileInfo(const FileInfoPointer &info)
-{
-    if (!info) {
-        fmDebug() << "Cannot create sort info: null file info";
-        return nullptr;
-    }
-
-    SortInfoPointer sortInfo(new SortFileInfo);
-    sortInfo->setUrl(info->urlOf(UrlInfoType::kUrl));
-    sortInfo->setSize(info->size());
-    sortInfo->setFile(!info->isAttributes(OptInfoType::kIsDir));
-    sortInfo->setDir(info->isAttributes(OptInfoType::kIsDir));
-    sortInfo->setHide(info->isAttributes(OptInfoType::kIsHidden));
-    sortInfo->setSymlink(info->isAttributes(OptInfoType::kIsSymLink));
-    sortInfo->setReadable(info->isAttributes(OptInfoType::kIsReadable));
-    sortInfo->setWriteable(info->isAttributes(OptInfoType::kIsWritable));
-    sortInfo->setExecutable(info->isAttributes(OptInfoType::kIsExecutable));
-    sortInfo->setLastReadTime(info->timeOf(TimeInfoType::kLastRead).value<QDateTime>().toSecsSinceEpoch());
-    sortInfo->setLastModifiedTime(info->timeOf(TimeInfoType::kLastModified).value<QDateTime>().toSecsSinceEpoch());
-    sortInfo->setCreateTime(info->timeOf(TimeInfoType::kCreateTime).value<QDateTime>().toSecsSinceEpoch());
-    sortInfo->setInfoCompleted(true);
-
-    return sortInfo;
-}
-
-void RootInfo::removeChildren(const QList<QUrl> &urlList)
-{
-    QList<SortInfoPointer> removeChildren {};
-    int childIndex = -1;
-    QList<QUrl> removeUrls;
-    emit InfoCacheController::instance().removeCacheFileInfo(urlList);
-    for (QUrl url : urlList) {
-        WatcherCache::instance().removeCacheWatcherByParent(url);
-        emit requestCloseTab(url);
-        url.setPath(url.path());
-        auto child = fileInfo(url);
-        if (!child)
-            continue;
-
-        auto realUrl = child->urlOf(UrlInfoType::kUrl);
-        removeUrls.append(realUrl);
-        QWriteLocker lk(&childrenLock);
-        childIndex = childrenUrlList.indexOf(realUrl);
-        if (childIndex < 0 || childIndex >= childrenUrlList.length()) {
-            removeChildren.append(sortFileInfo(child));
-            continue;
-        }
-        childrenUrlList.removeAt(childIndex);
-        removeChildren.append(sourceDataList.takeAt(childIndex));
-    }
-
-    if (removeUrls.count() > 0)
-        emit InfoCacheController::instance().removeCacheFileInfo(removeUrls);
-
-    if (removeChildren.count() > 0)
-        emit watcherRemoveFiles(removeChildren);
-
-    if (removeUrls.contains(hiddenFileUrl))
-        Q_EMIT watcherUpdateHideFile(hiddenFileUrl);
-}
-
-bool RootInfo::containsChild(const QUrl &url)
-{
-    QReadLocker lk(&childrenLock);
-    return childrenUrlList.contains(url);
-}
-
-SortInfoPointer RootInfo::updateChild(const QUrl &url)
-{
-    SortInfoPointer sort { nullptr };
-
-    auto info = fileInfo(url);
-    if (info.isNull()) {
-        fmWarning() << "Failed to get file info for update:" << url.toString();
-        return nullptr;
-    }
-
-    auto realUrl = info->urlOf(UrlInfoType::kUrl);
-
-    sort = sortFileInfo(info);
-    if (sort.isNull()) {
-        fmWarning() << "Failed to create sort info for update:" << url.toString();
-        return nullptr;
-    }
-
-    {
-        QWriteLocker lk(&childrenLock);
-        int index = childrenUrlList.indexOf(realUrl);
-        if (index < 0) {
-            fmDebug() << "Child no longer in list for update:" << realUrl.toString();
-            return nullptr;
-        }
-        sourceDataList.replace(index, sort);
-    }
-    // NOTE: GlobalEventType::kHideFiles event is watched in fileview, but this can be used to notify update view
-    // when the file is modified in other way.
-    if (UniversalUtils::urlEquals(hiddenFileUrl, url)) {
-        fmDebug() << "Emitting watcher update hide file signal for:" << url.toString();
-        Q_EMIT watcherUpdateHideFile(url);
-    }
-
-    return sort;
-}
-
-void RootInfo::updateChildren(const QList<QUrl> &urls)
-{
-    QList<SortInfoPointer> updates;
-    for (auto url : urls) {
-        auto sort = updateChild(url);
-        if (sort)
-            updates.append(sort);
-    }
-    if (updates.isEmpty()) {
-        fmDebug() << "No valid updates generated";
-        return;
-    }
-    emit watcherUpdateFiles(updates);
-}
-
-bool RootInfo::checkFileEventQueue()
-{
-    QMutexLocker lk(&watcherEventMutex);
-    return !watcherEvent.isEmpty();
-}
-
-void RootInfo::enqueueEvent(const QPair<QUrl, EventType> &e)
-{
-    QMutexLocker lk(&watcherEventMutex);
-    watcherEvent.enqueue(e);
-}
-
-QPair<QUrl, RootInfo::EventType> RootInfo::dequeueEvent()
-{
-    QMutexLocker lk(&watcherEventMutex);
-    if (!watcherEvent.isEmpty())
-        return watcherEvent.dequeue();
-
-    return QPair<QUrl, RootInfo::EventType>();
-}
-
-// When monitoring the mtp directory, the monitor monitors that the scheme of the
-// url used for adding and deleting files is mtp (mtp://path).
-// Here, the monitor's url is used to re-complete the current url
-FileInfoPointer RootInfo::fileInfo(const QUrl &url)
-{
-    FileInfoPointer info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
-    if (!info.isNull())
-        return info;
-
-    if (!watcher) {
-        fmDebug() << "No watcher available for fallback file info creation";
-        return nullptr;
-    }
-
-    const QUrl &parentUrl = QUrl::fromPercentEncoding(watcher->url().toString().toUtf8());
-    auto path = url.path();
-    if (path.isEmpty() || path == QDir::separator() || url.fileName().isEmpty()) {
-        fmDebug() << "Invalid path for fallback file info creation:" << path;
-        return info;
-    }
-
-    auto pathParent = path.endsWith(QDir::separator()) ? path.left(path.length() - 1) : path;
-    auto parentPath = parentUrl.path().endsWith(QDir::separator())
-            ? parentUrl.path().left(parentUrl.path().length() - 1)
-            : parentUrl.path();
-    pathParent = pathParent.left(pathParent.lastIndexOf(QDir::separator()));
-    if (!parentPath.endsWith(pathParent.mid(1))) {
-        fmDebug() << "Path mismatch for fallback file info creation";
-        return info;
-    }
-
-    auto currentUrl = parentUrl;
-    currentUrl.setPath(currentUrl.path(QUrl::PrettyDecoded) + QDir::separator() + url.fileName());
-    info = InfoFactory::create<FileInfo>(currentUrl);
-    return info;
+    rootThread.quit();
+    rootThread.wait();
 }
