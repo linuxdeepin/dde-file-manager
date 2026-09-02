@@ -7280,7 +7280,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="346"/>
         <source>Some index updates failed. Search results may be incomplete.</source>
-        <translation>Nie udało się zaktualizować niektórych indeksów. Wyniki wyszukiwania mogą być niekompletne.</translation>
+        <translation>Błąd aktualizacji niektórych indeksów. Wyniki wyszukiwania mogą być niekompletne.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="347"/>
@@ -7300,7 +7300,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="352"/>
         <source>Running on battery. Some content indexing has been paused.</source>
-        <translation>Aktualizacja niektórych indeksów jest wstrzymana podczas zasilania na baterii</translation>
+        <translation>Aktualizacja niektórych indeksów jest wstrzymana podczas zasilania na baterii.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="353"/>
@@ -7312,7 +7312,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="358"/>
         <source>Power save mode is enabled. Some content indexing has been paused.</source>
-        <translation type="unfinished"/>
+        <translation>Aktualizacja niektórych indeksów jest wstrzymana w trybie oszczędzania energii.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="364"/>
@@ -7322,17 +7322,17 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="370"/>
         <source>Waiting for index service upgrade. Some content indexing has been paused.</source>
-        <translation type="unfinished"/>
+        <translation>Oczekiwanie na aktualizację usługi indeksowania. Indeksowanie niektórych treści zostało wstrzymane.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="371"/>
         <source>Update index now</source>
-        <translation type="unfinished"/>
+        <translation>Zaktualizuj indeks teraz</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="393"/>
         <source>Index is being updated. File name and file content search are available.</source>
-        <translation type="unfinished"/>
+        <translation>Indeks jest aktualizowany. Dostępne jest wyszukiwanie według nazwy lub treści.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="395"/>
