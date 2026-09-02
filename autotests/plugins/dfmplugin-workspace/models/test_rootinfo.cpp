@@ -76,7 +76,10 @@ protected:
     {
         QString path = testDir->path() + "/" + name;
         QFile file(path);
-        file.open(QIODevice::WriteOnly);
+        if (!file.open(QIODevice::WriteOnly)) {
+            qWarning() << "Failed to open file for writing:" << path;
+            return;
+        }
         file.write(content);
         file.close();
     }
@@ -291,13 +294,16 @@ TEST_F(RootInfoTest, Watcher_FileRenamed_EmitsWatcherSignals)
     // Rename should trigger remove + add (or rename process started)
     QSignalSpy removeSpy(rootInfo, &RootInfo::watcherRemoveFiles);
     QSignalSpy addSpy(rootInfo, &RootInfo::watcherAddFiles);
+    QSignalSpy renameSpy(rootInfo, &RootInfo::renameFileProcessStarted);
 
     QFile::rename(testDir->path() + "/oldname.txt", testDir->path() + "/newname.txt");
 
-    // Wait for both signals
+    // Wait for signals
     removeSpy.wait(5000);
     addSpy.wait(5000);
+    renameSpy.wait(5000);
 
+    EXPECT_GE(renameSpy.count(), 1);
     EXPECT_GE(removeSpy.count() + addSpy.count(), 1);
 }
 
@@ -526,4 +532,147 @@ TEST_F(RootInfoTest, Watcher_RapidMultipleOperations)
     addSpy.wait(1000); // extra wait for consolidated events
 
     EXPECT_GE(addSpy.count(), 1);
+}
+
+// ========== Watcher: file updated ==========
+
+TEST_F(RootInfoTest, Watcher_FileUpdated_EmitsWatcherUpdateFiles)
+{
+    createRootInfo();
+    createFile("update_me.txt", "initial");
+
+    QSignalSpy finishSpy(rootInfo, &RootInfo::traversalFinished);
+    doTraversal("key1");
+    waitForSignal(finishSpy, 10000);
+
+    QTest::qWait(500);
+    ASSERT_FALSE(rootInfo->watcher.isNull());
+
+    QSignalSpy updateSpy(rootInfo, &RootInfo::watcherUpdateFiles);
+
+    createFile("update_me.txt", "modified");
+
+    int count = waitForSignal(updateSpy, 10000);
+    EXPECT_GE(count, 1);
+}
+
+// ========== Watcher: directory created ==========
+
+TEST_F(RootInfoTest, Watcher_DirCreated_EmitsWatcherAddFiles_IsDir)
+{
+    createRootInfo();
+
+    QSignalSpy finishSpy(rootInfo, &RootInfo::traversalFinished);
+    doTraversal("key1");
+    waitForSignal(finishSpy, 10000);
+
+    QTest::qWait(500);
+    ASSERT_FALSE(rootInfo->watcher.isNull());
+
+    QSignalSpy addSpy(rootInfo, &RootInfo::watcherAddFiles);
+
+    QDir().mkpath(testDir->path() + "/subdir");
+
+    int count = waitForSignal(addSpy, 10000);
+    ASSERT_GE(count, 1);
+
+    QList<QVariant> args = addSpy.takeFirst();
+    auto children = args.at(0).value<QList<SortInfoPointer>>();
+    ASSERT_GE(children.size(), 1);
+
+    bool foundDir = false;
+    for (const auto &child : children) {
+        if (child && child->isDir()) {
+            foundDir = true;
+            break;
+        }
+    }
+    EXPECT_TRUE(foundDir);
+}
+
+// ========== Watcher: directory deleted ==========
+
+TEST_F(RootInfoTest, Watcher_DirDeleted_EmitsWatcherRemoveFilesAndCloseTab)
+{
+    createRootInfo();
+    QDir().mkpath(testDir->path() + "/to_delete_dir");
+
+    QSignalSpy finishSpy(rootInfo, &RootInfo::traversalFinished);
+    doTraversal("key1");
+    waitForSignal(finishSpy, 10000);
+
+    QTest::qWait(500);
+    ASSERT_FALSE(rootInfo->watcher.isNull());
+
+    QSignalSpy removeSpy(rootInfo, &RootInfo::watcherRemoveFiles);
+    QSignalSpy closeTabSpy(rootInfo, &RootInfo::requestCloseTab);
+
+    QDir(testDir->path() + "/to_delete_dir").removeRecursively();
+
+    removeSpy.wait(10000);
+    closeTabSpy.wait(5000);
+
+    EXPECT_GE(removeSpy.count(), 1);
+    EXPECT_GE(closeTabSpy.count(), 1);
+}
+
+// ========== Watcher: root directory deleted ==========
+
+TEST_F(RootInfoTest, Watcher_RootDirDeleted_EmitsClearRootAndCloseTab)
+{
+    QString nestedPath = testDir->path() + "/nested_root";
+    QDir().mkpath(nestedPath);
+    QUrl nestedUrl = QUrl::fromLocalFile(nestedPath);
+
+    if (rootInfo) {
+        delete rootInfo;
+        rootInfo = nullptr;
+        QTest::qWait(100);
+    }
+    rootInfo = new RootInfo(nestedUrl);
+
+    QSignalSpy finishSpy(rootInfo, &RootInfo::traversalFinished);
+    doTraversal("key1");
+    waitForSignal(finishSpy, 10000);
+
+    QTest::qWait(500);
+    ASSERT_FALSE(rootInfo->watcher.isNull());
+
+    QSignalSpy clearRootSpy(rootInfo, &RootInfo::requestClearRoot);
+    QSignalSpy closeTabSpy(rootInfo, &RootInfo::requestCloseTab);
+
+    QDir(nestedPath).removeRecursively();
+
+    clearRootSpy.wait(10000);
+    closeTabSpy.wait(5000);
+
+    EXPECT_GE(clearRootSpy.count(), 1);
+    EXPECT_GE(closeTabSpy.count(), 1);
+}
+
+// ========== Watcher: hidden file ==========
+
+TEST_F(RootInfoTest, Watcher_HiddenFile_EmitsWatcherUpdateHideFile)
+{
+    createRootInfo();
+
+    QSignalSpy finishSpy(rootInfo, &RootInfo::traversalFinished);
+    doTraversal("key1");
+    waitForSignal(finishSpy, 10000);
+
+    QTest::qWait(500);
+    ASSERT_FALSE(rootInfo->watcher.isNull());
+
+    QSignalSpy hideSpy(rootInfo, &RootInfo::watcherUpdateHideFile);
+
+    createFile(".hidden", "entry1\n");
+
+    int count = waitForSignal(hideSpy, 10000);
+    EXPECT_GE(count, 1);
+
+    hideSpy.clear();
+    QFile::remove(testDir->path() + "/.hidden");
+
+    int count2 = waitForSignal(hideSpy, 10000);
+    EXPECT_GE(count2, 1);
 }
