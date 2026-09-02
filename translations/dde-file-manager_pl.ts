@@ -7120,7 +7120,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="28"/>
         <source>Continue updating</source>
-        <translation>Kontynuuj aktualizację</translation>
+        <translation>Wznów aktualizację</translation>
     </message>
 </context>
 <context>
@@ -7197,7 +7197,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="28"/>
         <source>Continue updating</source>
-        <translation>Kontynuuj aktualizację</translation>
+        <translation>Wznów aktualizację</translation>
     </message>
 </context>
 <context>
@@ -7307,7 +7307,7 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="359"/>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="365"/>
         <source>Continue updating</source>
-        <translation>Kontynuuj aktualizację</translation>
+        <translation>Wznów aktualizację</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="358"/>
