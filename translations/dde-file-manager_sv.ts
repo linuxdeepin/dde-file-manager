@@ -6305,12 +6305,12 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="45"/>
         <source>Rena&amp;me</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Byt namn</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="46"/>
         <source>&amp;Delete</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Ta bort</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="47"/>
@@ -6361,7 +6361,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/opendirmenuscene.cpp" line="32"/>
         <source>Open as administrator</source>
-        <translation type="unfinished"/>
+        <translation>Öppna som administratör</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/opendirmenuscene.cpp" line="33"/>
@@ -6386,7 +6386,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/opendirmenuscene.cpp" line="37"/>
         <source>Reverse select</source>
-        <translation type="unfinished"/>
+        <translation>Omvänd markering</translation>
     </message>
 </context>
 <context>
@@ -6412,7 +6412,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="258"/>
         <source>Bluetooth</source>
-        <translation type="unfinished"/>
+        <translation>Bluetooth</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="259"/>
@@ -6430,7 +6430,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/sharemenuscene.cpp" line="117"/>
         <source>Share</source>
-        <translation type="unfinished"/>
+        <translation>Dela</translation>
     </message>
 </context>
 <context>
@@ -6438,7 +6438,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/menu/mysharemenuscene.cpp" line="122"/>
         <source>&amp;Open</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Öppna</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/menu/mysharemenuscene.cpp" line="123"/>
@@ -6458,7 +6458,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/menu/mysharemenuscene.cpp" line="126"/>
         <source>P&amp;roperties</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Egenskaper</translation>
     </message>
 </context>
 <context>
@@ -6474,12 +6474,12 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="107"/>
         <source>It does not support burning UDF discs</source>
-        <translation type="unfinished"/>
+        <translation>Det går inte att bränna UDF-skivor</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="117"/>
         <source>Save as Image File</source>
-        <translation type="unfinished"/>
+        <translation>Spara som avbildsfil</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="118"/>
@@ -6489,28 +6489,29 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="171"/>
         <source>%1 burning is not supported</source>
-        <translation type="unfinished"/>
+        <translation>%1-bränning stöds inte</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="175"/>
         <source>1. It is not %1 disc;
 2. The version of this file system does not support adding files yet.</source>
-        <translation type="unfinished"/>
+        <translation>1. Det är inte en %1-skiva;
+2. Denna version av filsystemet har ännu inte stöd för att lägga till filer.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="222"/>
         <source>Mounting failed</source>
-        <translation type="unfinished"/>
+        <translation>Montering misslyckades</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="267"/>
         <source>No files to burn</source>
-        <translation type="unfinished"/>
+        <translation>Inga filer att bränna</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="305"/>
         <source>Unable to burn. Not enough free space on the target disk.</source>
-        <translation type="unfinished"/>
+        <translation>Det går inte att bränna. Det finns inte tillräckligt med ledigt utrymme på måldisken.</translation>
     </message>
 </context>
 <context>
@@ -6518,7 +6519,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="171"/>
         <source>Basic info</source>
-        <translation type="unfinished"/>
+        <translation>Grundläggande information</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="179"/>
@@ -6558,7 +6559,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="191"/>
         <source>Hide this file</source>
-        <translation type="unfinished"/>
+        <translation>Dölj den här filen</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="194"/>
@@ -6592,7 +6593,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/closealldialog.cpp" line="82"/>
         <source>Total size: %1, %2 files</source>
-        <translation type="unfinished"/>
+        <translation>Total storlek: %1, %2 filer</translation>
     </message>
 </context>
 <context>
@@ -6600,17 +6601,17 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="307"/>
         <source>For Secrets Security</source>
-        <translation type="unfinished"/>
+        <translation>För säkerhetsskyddade uppgifter</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="314"/>
         <source>For Government</source>
-        <translation type="unfinished"/>
+        <translation>För myndigheter</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="316"/>
         <source>For Enterprise</source>
-        <translation type="unfinished"/>
+        <translation>För företag</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="344"/>
@@ -6620,7 +6621,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="405"/>
         <source>Available</source>
-        <translation type="unfinished"/>
+        <translation>Tillgänglig</translation>
     </message>
 </context>
 <context>
@@ -6638,7 +6639,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="76"/>
         <source>Computer name</source>
-        <translation type="unfinished"/>
+        <translation>Datornamn</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="81"/>
@@ -6648,12 +6649,12 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="86"/>
         <source>Edition</source>
-        <translation type="unfinished"/>
+        <translation>Utgåva</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="91"/>
         <source>OS build</source>
-        <translation type="unfinished"/>
+        <translation>OS-version</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="96"/>
@@ -6806,7 +6807,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/editstackedwidget.cpp" line="122"/>
         <source>%1 are not allowed</source>
-        <translation type="unfinished"/>
+        <translation>%1 är inte tillåtna</translation>
     </message>
 </context>
 <context>
@@ -6821,7 +6822,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="140"/>
         <source>Permissions</source>
-        <translation type="unfinished"/>
+        <translation>Behörigheter</translation>
     </message>
 </context>
 <context>
@@ -6829,7 +6830,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/menu/propertymenuscene.cpp" line="34"/>
         <source>P&amp;roperties</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Egenskaper</translation>
     </message>
 </context>
 <context>
@@ -6906,12 +6907,12 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="63"/>
         <source>Time Accessed:</source>
-        <translation type="unfinished"/>
+        <translation>Tid för åtkomst:</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="64"/>
         <source>Time Created:</source>
-        <translation type="unfinished"/>
+        <translation>Tid för skapande:</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="66"/>
@@ -7234,7 +7235,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="222"/>
         <source>Full-Text search</source>
-        <translation type="unfinished"/>
+        <translation>Fulltextsökning</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="244"/>
@@ -7375,7 +7376,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="227"/>
         <source>Path</source>
-        <translation type="unfinished"/>
+        <translation>Sökväg</translation>
     </message>
 </context>
 <context>
@@ -7383,32 +7384,32 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="421"/>
         <source>Quick access</source>
-        <translation type="unfinished"/>
+        <translation>Snabbåtkomst</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="422"/>
         <source>Partitions</source>
-        <translation type="unfinished"/>
+        <translation>Partitioner</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="423"/>
         <source>Network</source>
-        <translation type="unfinished"/>
+        <translation>Nätverk</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="424"/>
         <source>Tag</source>
-        <translation type="unfinished"/>
+        <translation>Tagg</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="425"/>
         <source>Other</source>
-        <translation type="unfinished"/>
+        <translation>Annat</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="426"/>
         <source>Unknown Group</source>
-        <translation type="unfinished"/>
+        <translation>Okänd grupp</translation>
     </message>
 </context>
 <context>
@@ -7416,7 +7417,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.cpp" line="165"/>
         <source>&amp;Open</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Öppna</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.cpp" line="166"/>
@@ -7426,12 +7427,12 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.cpp" line="167"/>
         <source>Open in new tab</source>
-        <translation type="unfinished"/>
+        <translation>Öppna i ny flik</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.cpp" line="168"/>
         <source>P&amp;roperties</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Egenskaper</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.cpp" line="169"/>
@@ -7449,17 +7450,17 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/menu/virtualentrymenuscene.cpp" line="192"/>
         <source>Unmount</source>
-        <translation type="unfinished"/>
+        <translation>Avmontera</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/menu/virtualentrymenuscene.cpp" line="193"/>
         <source>Clear saved password and unmount</source>
-        <translation type="unfinished"/>
+        <translation>Rensa sparat lösenord och avmontera</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/displaycontrol/menu/virtualentrymenuscene.cpp" line="194"/>
         <source>Remove</source>
-        <translation type="unfinished"/>
+        <translation>Ta bort</translation>
     </message>
 </context>
 <context>
@@ -7467,7 +7468,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/tag.cpp" line="54"/>
         <source>Tag</source>
-        <translation type="unfinished"/>
+        <translation>Tagg</translation>
     </message>
 </context>
 <context>
@@ -7483,7 +7484,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/widgets/tageditor.cpp" line="103"/>
         <source>Input tag info, such as work, family. A comma is used between two tags.</source>
-        <translation type="unfinished"/>
+        <translation>Ange tagginformation, till exempel arbete eller familj. Använd kommatecken mellan två taggar.</translation>
     </message>
 </context>
 <context>
@@ -7491,17 +7492,17 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/menu/tagmenuscene.cpp" line="63"/>
         <source>Tag information</source>
-        <translation type="unfinished"/>
+        <translation>Tagginformation</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/menu/tagmenuscene.cpp" line="208"/>
         <source>Remove tag &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Ta bort taggen ”%1”</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/menu/tagmenuscene.cpp" line="210"/>
         <source>Add tag &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Lägg till taggen ”%1”</translation>
     </message>
 </context>
 <context>
@@ -7509,7 +7510,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/widgets/private/tagwidget_p.cpp" line="40"/>
         <source>Tag</source>
-        <translation type="unfinished"/>
+        <translation>Tagg</translation>
     </message>
 </context>
 <context>
@@ -7525,17 +7526,17 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="72"/>
         <source>Connect to Server</source>
-        <translation type="unfinished"/>
+        <translation>Anslut till server</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="285"/>
         <source>Clear History</source>
-        <translation type="unfinished"/>
+        <translation>Rensa historik</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="225"/>
         <source>Unfavorite</source>
-        <translation type="unfinished"/>
+        <translation>Ta bort från favoriter</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="140"/>
@@ -7546,12 +7547,12 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="308"/>
         <source>Error</source>
-        <translation type="unfinished"/>
+        <translation>Fel</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="309"/>
         <source>Unable to favorite illegitimate url!</source>
-        <translation type="unfinished"/>
+        <translation>Det går inte att lägga till en ogiltig URL som favorit!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="366"/>
@@ -7568,27 +7569,27 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="415"/>
         <source>Charset Encoding</source>
-        <translation type="unfinished"/>
+        <translation>Teckenkodning</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="422"/>
         <source>Default</source>
-        <translation type="unfinished"/>
+        <translation>Standard</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="483"/>
         <source>My Favorites</source>
-        <translation type="unfinished"/>
+        <translation>Mina favoriter</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="470"/>
         <source>No favorites yet</source>
-        <translation type="unfinished"/>
+        <translation>Inga favoriter ännu</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="225"/>
         <source>Favorite</source>
-        <translation type="unfinished"/>
+        <translation>Favorit</translation>
     </message>
 </context>
 <context>
@@ -7619,22 +7620,22 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="73"/>
         <source>Change disk password</source>
-        <translation type="unfinished"/>
+        <translation>Ändra disklösenord</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="99"/>
         <source>Current password:</source>
-        <translation type="unfinished"/>
+        <translation>Nuvarande lösenord:</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="100"/>
         <source>New password:</source>
-        <translation type="unfinished"/>
+        <translation>Nytt lösenord:</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="101"/>
         <source>Repeat password:</source>
-        <translation type="unfinished"/>
+        <translation>Upprepa lösenordet:</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="114"/>
@@ -7651,34 +7652,34 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="191"/>
         <source>Passwords do not match</source>
-        <translation type="unfinished"/>
+        <translation>Lösenorden stämmer inte överens</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="208"/>
         <source>New password should differ from the current one</source>
-        <translation type="unfinished"/>
+        <translation>Det nya lösenordet måste skilja sig från det nuvarande</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="263"/>
         <source>Minimum of 8 characters. At least 3 types: 0-9, a-z, A-Z and symbols. Different from the username.</source>
-        <translation type="unfinished"/>
+        <translation>Minst 8 tecken. Minst 3 av följande typer: 0–9, a–z, A–Z och symboler. Får inte vara samma som användarnamnet.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="299"/>
         <source>Password must be no more than %1 characters</source>
-        <translation type="unfinished"/>
+        <translation>Lösenordet får inte innehålla fler än %1 tecken</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="308"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="313"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="318"/>
         <source>Password cannot be empty</source>
-        <translation type="unfinished"/>
+        <translation>Lösenordet får inte vara tomt</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="394"/>
         <source>Wrong password</source>
-        <translation type="unfinished"/>
+        <translation>Fel lösenord</translation>
     </message>
 </context>
 <context>
@@ -7686,27 +7687,27 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="49"/>
         <source>Changing disk password...</source>
-        <translation type="unfinished"/>
+        <translation>Ändrar disklösenord …</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="56"/>
         <source>The window cannot be closed during the process</source>
-        <translation type="unfinished"/>
+        <translation>Fönstret kan inte stängas under processen</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="116"/>
         <source>Passwords of disks are different</source>
-        <translation type="unfinished"/>
+        <translation>Diskarnas lösenord skiljer sig åt</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="119"/>
         <source>Unable to get the encrypted disk list</source>
-        <translation type="unfinished"/>
+        <translation>Det gick inte att hämta listan över krypterade diskar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="123"/>
         <source>Initialization failed</source>
-        <translation type="unfinished"/>
+        <translation>Initieringen misslyckades</translation>
     </message>
 </context>
 <context>
@@ -7714,12 +7715,12 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcresultwidget.cpp" line="32"/>
         <source>Disk password changed</source>
-        <translation type="unfinished"/>
+        <translation>Disklösenordet har ändrats</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcresultwidget.cpp" line="35"/>
         <source>Failed to change the disk password</source>
-        <translation type="unfinished"/>
+        <translation>Det gick inte att ändra disklösenordet</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcresultwidget.cpp" line="61"/>
@@ -7733,12 +7734,12 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/navwidget.cpp" line="169"/>
         <source>back</source>
-        <translation type="unfinished"/>
+        <translation>bakåt</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/navwidget.cpp" line="174"/>
         <source>forward</source>
-        <translation type="unfinished"/>
+        <translation>framåt</translation>
     </message>
 </context>
 <context>
