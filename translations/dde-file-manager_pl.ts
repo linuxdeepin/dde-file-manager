@@ -7317,12 +7317,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="364"/>
         <source>Waiting for the device to become idle. Some content indexing has been paused.</source>
-        <translation>Niektóre indeksy zostaną zaktualizowane po przejściu w stan bezczynności.</translation>
+        <translation>Niektóre indeksy zostaną zaktualizowane po przejściu urządzenia w stan bezczynności.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="370"/>
         <source>Waiting for index service upgrade. Some content indexing has been paused.</source>
-        <translation>Oczekiwanie na aktualizację usługi indeksowania. Indeksowanie niektórych treści zostało wstrzymane.</translation>
+        <translation>Niektóre indeksy zostaną zaktualizowane po aktualizacji usługi indeksowania.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="371"/>
