@@ -61,7 +61,7 @@ bool FileDataManager::fetchFiles(const QUrl &rootUrl, const QString &key, DFMGLO
     }
 
     root->initThreadOfFileData(key, role, order, isMixFileAndFolder);
-    root->startWork(key);
+    root->startIteratorWork(key);
     fmInfo() << "File fetch started successfully for URL:" << normalizedRootUrl.toString();
     return true;
 }
