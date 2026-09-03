@@ -25,6 +25,7 @@ public:
     MockFileInfoModelShell() : FileInfoModelShell(nullptr) {}
 };
 
+namespace {
 class MockModelDataHandler : public ModelDataHandler
 {
 public:
@@ -34,6 +35,7 @@ public:
     bool acceptRename(const QUrl &oldUrl, const QUrl &newUrl) override { Q_UNUSED(oldUrl); Q_UNUSED(newUrl); return true; }
     bool acceptUpdate(const QUrl &url, const QVector<int> &roles = {}) override { Q_UNUSED(url); Q_UNUSED(roles); return true; }
 };
+}  // namespace
 
 class MockSourceModel : public QAbstractItemModel
 {

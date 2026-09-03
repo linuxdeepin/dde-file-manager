@@ -38,4 +38,12 @@ target_include_directories(${test_name} PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
+# Local debugging helper: enable ASan instrumentation for this target only
+# via -DORGANIZER_UT_ASAN=ON, to track down heap corruption in the
+# plugin/test sources that are compiled directly into the binary.
+if(ORGANIZER_UT_ASAN)
+    target_compile_options(${test_name} PRIVATE -fsanitize=address -fno-omit-frame-pointer -O0 -g)
+    target_link_options(${test_name} PRIVATE -fsanitize=address)
+endif()
+
 message(STATUS "DFM: Created enhanced desktop organizer plugin test: ${test_name}")
