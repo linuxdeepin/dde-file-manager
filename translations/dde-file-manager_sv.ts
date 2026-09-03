@@ -1967,17 +1967,17 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="98"/>
         <source>Connection closed by peer</source>
-        <translation type="unfinished"/>
+        <translation>Anslutningen stängdes av motparten</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="100"/>
         <source>Transport endpoint is not connected</source>
-        <translation type="unfinished"/>
+        <translation>Transportändpunkten är inte ansluten</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="102"/>
         <source>Message too large</source>
-        <translation type="unfinished"/>
+        <translation>Meddelandet är för stort</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="104"/>
@@ -1987,17 +1987,17 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="106"/>
         <source>File open flag error</source>
-        <translation type="unfinished"/>
+        <translation>Fel i filöppningsflagga</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="108"/>
         <source>File info has no attribute</source>
-        <translation type="unfinished"/>
+        <translation>Filinformationen saknar attribut</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="110"/>
         <source>Host is down</source>
-        <translation type="unfinished"/>
+        <translation>Värden är nere</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="112"/>
@@ -2012,7 +2012,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="10"/>
         <source>Generic error condition for when an operation fails and no more specific DFMIOErrorEnum value is defined</source>
-        <translation type="unfinished"/>
+        <translation>Allmänt fel när en operation misslyckas och inget mer specifikt DFMIOErrorEnum-värde har definierats</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="62"/>
@@ -2047,12 +2047,12 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="248"/>
         <source>Sidebar tree directory</source>
-        <translation type="unfinished"/>
+        <translation>Trädkatalog i sidofältet</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="250"/>
         <source>Display sidebar disk partitions as a tree structure</source>
-        <translation type="unfinished"/>
+        <translation>Visa diskpartitioner i sidofältet som en trädstruktur</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="25"/>
@@ -2068,57 +2068,57 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="355"/>
         <source>Unknow</source>
-        <translation type="unfinished"/>
+        <translation>Okänd</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="328"/>
         <source>search</source>
-        <translation type="unfinished"/>
+        <translation>sök</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="347"/>
         <source>advanced search</source>
-        <translation type="unfinished"/>
+        <translation>avancerad sökning</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="566"/>
         <source>Recovery key export path cannot be empty!</source>
-        <translation type="unfinished"/>
+        <translation>Exportkatalogen för återställningsnyckeln får inte vara tom!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="572"/>
         <source>Recovery key export path is not exists!</source>
-        <translation type="unfinished"/>
+        <translation>Exportkatalogen för återställningsnyckeln finns inte!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="579"/>
         <source>Recovery key export path cannot be a symlink or non-directory!</source>
-        <translation type="unfinished"/>
+        <translation>Exportkatalogen för återställningsnyckeln får inte vara en symbolisk länk eller något annat än en katalog!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="587"/>
         <source>Cannot access the export path directory!</source>
-        <translation type="unfinished"/>
+        <translation>Det går inte att komma åt exportkatalogen!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="593"/>
         <source>The export path directory is world-writable, please choose a safer location!</source>
-        <translation type="unfinished"/>
+        <translation>Exportkatalogen är skrivbar för alla. Välj en säkrare plats!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="601"/>
         <source>This partition is read-only, please export to a writable partition</source>
-        <translation type="unfinished"/>
+        <translation>Partitionen är skrivskyddad. Exportera till en skrivbar partition.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="628"/>
         <source>Please export to an external device such as a non-encrypted partition or USB flash drive.</source>
-        <translation type="unfinished"/>
+        <translation>Exportera till en extern enhet, till exempel en okrypterad partition eller ett USB-minne.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="642"/>
         <source>The partition is encrypted, please export to a non-encrypted partition or external device such as a USB flash drive.</source>
-        <translation type="unfinished"/>
+        <translation>Partitionen är krypterad. Exportera till en okrypterad partition eller extern enhet, till exempel ett USB-minne.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="878"/>
@@ -2173,7 +2173,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="983"/>
         <source>Decrypt &quot;%1&quot; partition?</source>
-        <translation type="unfinished"/>
+        <translation>Dekryptera partitionen &quot;%1&quot;?</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="984"/>
@@ -2183,7 +2183,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/services/diskencrypt/helpers/abrecoveryhelper.cpp" line="66"/>
         <source>Updating grub...</source>
-        <translation type="unfinished"/>
+        <translation>Uppdaterar GRUB…</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/fileutils/vaultfileinfo.cpp" line="311"/>
@@ -2199,19 +2199,19 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="211"/>
         <source>Last access</source>
-        <translation type="unfinished"/>
+        <translation>Senast använd</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="154"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="42"/>
         <source>Group by</source>
-        <translation type="unfinished"/>
+        <translation>Gruppera efter</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="125"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="53"/>
         <source>None</source>
-        <translation type="unfinished"/>
+        <translation>Ingen</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="54"/>
@@ -2246,42 +2246,42 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/namegroupstrategy.cpp" line="37"/>
         <source>Chinese A-H</source>
-        <translation type="unfinished"/>
+        <translation>Kinesiska A–H</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/namegroupstrategy.cpp" line="38"/>
         <source>Chinese I-P</source>
-        <translation type="unfinished"/>
+        <translation>Kinesiska I–P</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/namegroupstrategy.cpp" line="39"/>
         <source>Chinese Q-Z</source>
-        <translation type="unfinished"/>
+        <translation>Kinesiska Q–Z</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="33"/>
         <source>Today</source>
-        <translation type="unfinished"/>
+        <translation>I dag</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="34"/>
         <source>Yesterday</source>
-        <translation type="unfinished"/>
+        <translation>I går</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="35"/>
         <source>Past 7 Days</source>
-        <translation type="unfinished"/>
+        <translation>Senaste 7 dagarna</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="36"/>
         <source>Past 30 Days</source>
-        <translation type="unfinished"/>
+        <translation>Senaste 30 dagarna</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/timegroupstrategy.cpp" line="37"/>
         <source>Earlier</source>
-        <translation type="unfinished"/>
+        <translation>Tidigare</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/typegroupstrategy.cpp" line="36"/>
@@ -2321,27 +2321,27 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewswitchbutton.cpp" line="51"/>
         <source>Icon view</source>
-        <translation type="unfinished"/>
+        <translation>Ikonvy</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewswitchbutton.cpp" line="55"/>
         <source>List view</source>
-        <translation type="unfinished"/>
+        <translation>Listvy</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewswitchbutton.cpp" line="59"/>
         <source>Tree view</source>
-        <translation type="unfinished"/>
+        <translation>Trädvy</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/repair_dialog_main.cpp" line="64"/>
         <source>Cannot connect to repair service</source>
-        <translation type="unfinished"/>
+        <translation>Det går inte att ansluta till reparationstjänsten</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/repair_dialog_main.cpp" line="151"/>
         <source>Mount failed after repair</source>
-        <translation type="unfinished"/>
+        <translation>Monteringen misslyckades efter reparationen</translation>
     </message>
 </context>
 <context>
@@ -2349,73 +2349,73 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="108"/>
         <source>Repair Storage Device</source>
-        <translation type="unfinished"/>
+        <translation>Reparera lagringsenhet</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="113"/>
         <source>Preparing to repair device: %1 (%2 %3)</source>
-        <translation type="unfinished"/>
+        <translation>Förbereder reparation av enheten: %1 (%2 %3)</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="118"/>
         <source>The device will be unmounted during repair. It will be automatically remounted after repair is complete. Please do not remove the device during the repair process.</source>
-        <translation type="unfinished"/>
+        <translation>Enheten avmonteras under reparationen och monteras automatiskt igen när reparationen är klar. Ta inte bort enheten under reparationsprocessen.</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="132"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Avbryt</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="133"/>
         <source>Start Repair</source>
-        <translation type="unfinished"/>
+        <translation>Starta reparation</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="142"/>
         <source>Repairing Storage Device</source>
-        <translation type="unfinished"/>
+        <translation>Reparerar lagringsenhet</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="147"/>
         <source>Repairing device: %1 (%2 %3)</source>
-        <translation type="unfinished"/>
+        <translation>Reparerar enheten: %1 (%2 %3)</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="174"/>
         <source>Repair Complete</source>
-        <translation type="unfinished"/>
+        <translation>Reparationen är klar</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="179"/>
         <source>The device has been successfully repaired. The device has been remounted and is now ready to use.</source>
-        <translation type="unfinished"/>
+        <translation>Enheten har reparerats. Den har monterats igen och är klar att användas.</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="191"/>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="244"/>
         <source>Close</source>
-        <translation type="unfinished"/>
+        <translation>Stäng</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="192"/>
         <source>Open Device</source>
-        <translation type="unfinished"/>
+        <translation>Öppna enheten</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="201"/>
         <source>Repair Failed</source>
-        <translation type="unfinished"/>
+        <translation>Reparationen misslyckades</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="206"/>
         <source>Failed to repair the device. This may be due to serious format errors or physical damage. To protect your data, it is recommended to stop writing new files and try using professional data recovery software or seek manual assistance.</source>
-        <translation type="unfinished"/>
+        <translation>Det gick inte att reparera enheten. Det kan bero på allvarliga formatfel eller fysisk skada. För att skydda dina data rekommenderas att du slutar skriva nya filer och försöker använda professionell dataåterställningsprogramvara eller söker manuell hjälp.</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="220"/>
         <source>Error Code: %1</source>
-        <translation type="unfinished"/>
+        <translation>Felkod: %1</translation>
     </message>
 </context>
 <context>
@@ -2423,7 +2423,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/services/diskencrypt/workers/resumeencryptworker.cpp" line="75"/>
         <source>Encrypting </source>
-        <translation type="unfinished"/>
+        <translation>Krypterar </translation>
     </message>
 </context>
 <context>
@@ -2432,23 +2432,23 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="158"/>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="439"/>
         <source>Filesystem type cannot be detected. The device may be severely damaged or formatted with an unsupported filesystem. Data recovery may require professional tools.</source>
-        <translation type="unfinished"/>
+        <translation>Filsystemstypen kan inte identifieras. Enheten kan vara allvarligt skadad eller formaterad med ett filsystem som inte stöds. Dataåterställning kan kräva professionella verktyg.</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="173"/>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="454"/>
         <source>Device is hardware write-protected, flash memory may be failing. Please back up data immediately.</source>
-        <translation type="unfinished"/>
+        <translation>Enheten är maskinvaruskrivskyddad; flashminnet kan vara på väg att gå sönder. Säkerhetskopiera data omedelbart.</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="190"/>
         <source>Filesystem error detected, device may not have been safely ejected. Mount might have failed due to filesystem corruption.</source>
-        <translation type="unfinished"/>
+        <translation>Ett filsystemsfel har upptäckts. Enheten kanske inte har matats ut säkert. Monteringen kan ha misslyckats på grund av filsystemskador.</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="462"/>
         <source>Filesystem is severely corrupted and cannot be recognized. Data may be recoverable through repair.</source>
-        <translation type="unfinished"/>
+        <translation>Filsystemet är allvarligt skadat och kan inte identifieras. Det kan vara möjligt att återställa data genom reparation.</translation>
     </message>
 </context>
 <context>
@@ -2456,73 +2456,73 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="40"/>
         <source>Invalid device path: %1</source>
-        <translation type="unfinished"/>
+        <translation>Ogiltig enhetssökväg: %1</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="46"/>
         <source>Device is already being repaired: %1</source>
-        <translation type="unfinished"/>
+        <translation>Enheten repareras redan: %1</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="53"/>
         <source>Cannot detect filesystem type for: %1</source>
-        <translation type="unfinished"/>
+        <translation>Det går inte att identifiera filsystemstypen för: %1</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="59"/>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="410"/>
         <source>Unsupported filesystem type: %1</source>
-        <translation type="unfinished"/>
+        <translation>Filsystemstypen stöds inte: %1</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="74"/>
         <source>Device is hardware write-protected, cannot repair</source>
-        <translation type="unfinished"/>
+        <translation>Enheten är maskinvaruskrivskyddad och kan inte repareras</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="80"/>
         <source>Authorization failed</source>
-        <translation type="unfinished"/>
+        <translation>Auktoriseringen misslyckades</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="99"/>
         <source>Failed to unmount device: %1</source>
-        <translation type="unfinished"/>
+        <translation>Det gick inte att avmontera enheten: %1</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="185"/>
         <source>Filesystem repair completed successfully</source>
-        <translation type="unfinished"/>
+        <translation>Filsystemsreparationen slutfördes</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="188"/>
         <source>NTFS repair capability is limited on Linux. Please connect the device to a Windows system for deep repair.</source>
-        <translation type="unfinished"/>
+        <translation>NTFS-reparation har begränsad funktionalitet i Linux. Anslut enheten till ett Windows-system för en djupare reparation.</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="193"/>
         <source>Filesystem errors have been repaired</source>
-        <translation type="unfinished"/>
+        <translation>Filsystemsfelen har reparerats</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="195"/>
         <source>Filesystem repair failed (exit code: %1)</source>
-        <translation type="unfinished"/>
+        <translation>Filsystemsreparationen misslyckades (slutkod: %1)</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="235"/>
         <source>Failed to start repair process: %1</source>
-        <translation type="unfinished"/>
+        <translation>Det gick inte att starta reparationsprocessen: %1</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="237"/>
         <source>unknown error</source>
-        <translation type="unfinished"/>
+        <translation>okänt fel</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="181"/>
         <source>Repair timed out after %1 seconds</source>
-        <translation type="unfinished"/>
+        <translation>Reparationen tog slut efter %1 sekunder</translation>
     </message>
 </context>
 <context>
@@ -2576,7 +2576,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="142"/>
         <source>Time created</source>
-        <translation type="unfinished"/>
+        <translation>Skapandetid</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="143"/>
@@ -2834,7 +2834,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="235"/>
         <source>Desktop Settings</source>
-        <translation type="unfinished"/>
+        <translation>Skrivbordsinställningar</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="236"/>
@@ -2877,7 +2877,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="187"/>
         <source>To disable the One-Click Hide feature, invoke the &quot;Desktop Settings&quot; window in the desktop context menu and turn off the &quot;One-Click Hide Collection&quot;.</source>
-        <translation type="unfinished"/>
+        <translation>För att inaktivera funktionen Dölj med ett klick öppnar du fönstret &quot;Skrivbordsinställningar&quot; från skrivbordets snabbmeny och stänger av &quot;Samling med ett klick&quot;.</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="199"/>
@@ -2921,7 +2921,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="91"/>
         <source>Desktop Settings</source>
-        <translation type="unfinished"/>
+        <translation>Skrivbordsinställningar</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="110"/>
@@ -3289,7 +3289,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="629"/>
         <source>Unable to connect to %1</source>
-        <translation type="unfinished"/>
+        <translation>Det går inte att ansluta till %1</translation>
     </message>
 </context>
 <context>
@@ -3373,7 +3373,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="171"/>
         <source>Authentication failed</source>
-        <translation type="unfinished"/>
+        <translation>Autentiseringen misslyckades</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="165"/>
@@ -3571,17 +3571,17 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="567"/>
         <source>File operation failed: %1</source>
-        <translation type="unfinished"/>
+        <translation>Filåtgärden misslyckades: %1</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="596"/>
         <source>File Name</source>
-        <translation type="unfinished"/>
+        <translation>Filnamn</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="596"/>
         <source>Error Reason</source>
-        <translation type="unfinished"/>
+        <translation>Felorsak</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="652"/>
@@ -3893,12 +3893,12 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="354"/>
         <source>Default icon grid density:</source>
-        <translation type="unfinished"/>
+        <translation>Standardtäthet för ikonrutnät:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="364"/>
         <source>Default list height:</source>
-        <translation type="unfinished"/>
+        <translation>Standardhöjd för listor:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="374"/>
@@ -3913,12 +3913,12 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="406"/>
         <source>Load thumbnails for network, mobile, and optical disc directories</source>
-        <translation type="unfinished"/>
+        <translation>Läs in miniatyrbilder för nätverks-, mobil- och optiska skivkataloger</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="407"/>
         <source>Thumbnails will be loaded for high-latency devices like network shares, phones, and optical drives, which may affect loading speed</source>
-        <translation type="unfinished"/>
+        <translation>Miniatyrbilder läses in för enheter med hög svarstid, till exempel nätverksresurser, telefoner och optiska enheter. Det kan påverka inläsningshastigheten.</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="371"/>
@@ -3928,37 +3928,37 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="244"/>
         <source>Open new folder in a new tab</source>
-        <translation type="unfinished"/>
+        <translation>Öppna ny mapp på en ny flik</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="247"/>
         <source>Activate existing window when reopening folder</source>
-        <translation type="unfinished"/>
+        <translation>Aktivera befintligt fönster när mappen öppnas igen</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="269"/>
         <source>New window</source>
-        <translation type="unfinished"/>
+        <translation>Nytt fönster</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="272"/>
         <source>Display when launching a new window:</source>
-        <translation type="unfinished"/>
+        <translation>Visa när ett nytt fönster öppnas:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="275"/>
         <source>Default Directory</source>
-        <translation type="unfinished"/>
+        <translation>Standardkatalog</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="296"/>
         <source>New tab</source>
-        <translation type="unfinished"/>
+        <translation>Ny flik</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="344"/>
         <source>Default icon size:</source>
-        <translation type="unfinished"/>
+        <translation>Standardikonstorlek:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="371"/>
@@ -4141,7 +4141,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="34"/>
         <source>Copy file path</source>
-        <translation type="unfinished"/>
+        <translation>Kopiera filsökväg</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="35"/>
@@ -4399,12 +4399,12 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="244"/>
         <source>Cannot move &quot;%1&quot; to the Trash. Delete it immediately?</source>
-        <translation type="unfinished"/>
+        <translation>Det går inte att flytta &quot;%1&quot; till papperskorgen. Ta bort den omedelbart?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="245"/>
         <source>This action cannot be undone. Please proceed with caution!</source>
-        <translation type="unfinished"/>
+        <translation>Åtgärden kan inte ångras. Fortsätt med försiktighet!</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="393"/>
@@ -4435,7 +4435,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="566"/>
         <source>Permanently delete</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Ta bort permanent</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="593"/>
@@ -4539,22 +4539,22 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="94"/>
         <source>Verifying files...</source>
-        <translation type="unfinished"/>
+        <translation>Verifierar filer…</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="171"/>
         <source>File verification successful.</source>
-        <translation type="unfinished"/>
+        <translation>Filverifieringen lyckades.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="178"/>
         <source>File checksum mismatch detected</source>
-        <translation type="unfinished"/>
+        <translation>Felaktig filkontrollsumma upptäcktes</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="182"/>
         <source>Data verification failed</source>
-        <translation type="unfinished"/>
+        <translation>Dataverifieringen misslyckades</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="185"/>
@@ -4603,12 +4603,12 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="48"/>
         <source>Erase failed</source>
-        <translation type="unfinished"/>
+        <translation>Raderingen misslyckades</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="49"/>
         <source>Unable to complete disc erasure. This may be due to read/write limitations or the disc media status. Please check the relevant settings and try again.</source>
-        <translation type="unfinished"/>
+        <translation>Det gick inte att slutföra skivraderingen. Det kan bero på begränsningar i läsning/skrivning eller skivmediets status. Kontrollera relevanta inställningar och försök igen.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="233"/>
@@ -4634,7 +4634,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="258"/>
         <source>File verification failed</source>
-        <translation type="unfinished"/>
+        <translation>Filverifieringen misslyckades</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="261"/>
@@ -4738,12 +4738,12 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="652"/>
         <source>Not enough free space on the disc</source>
-        <translation type="unfinished"/>
+        <translation>Det finns inte tillräckligt med ledigt utrymme på skivan</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="653"/>
         <source>The remaining space on the current disc is insufficient to hold the files to be burned. Please reduce the number of files and try again.</source>
-        <translation type="unfinished"/>
+        <translation>Det återstående utrymmet på den aktuella skivan räcker inte för filerna som ska brännas. Minska antalet filer och försök igen.</translation>
     </message>
 </context>
 <context>
@@ -4862,7 +4862,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="339"/>
         <source>Authorization dismissed</source>
-        <translation type="unfinished"/>
+        <translation>Auktoriseringen avbröts</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="583"/>
@@ -4984,37 +4984,37 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="45"/>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>Namn</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="46"/>
         <source>Size</source>
-        <translation type="unfinished"/>
+        <translation>Storlek</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="47"/>
         <source>Resolution</source>
-        <translation type="unfinished"/>
+        <translation>Upplösning</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="49"/>
         <source>Duration</source>
-        <translation type="unfinished"/>
+        <translation>Längd</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="50"/>
         <source>Type</source>
-        <translation type="unfinished"/>
+        <translation>Typ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="51"/>
         <source>Accessed</source>
-        <translation type="unfinished"/>
+        <translation>Senast använd</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="52"/>
         <source>Modified</source>
-        <translation type="unfinished"/>
+        <translation>Ändrad</translation>
     </message>
 </context>
 <context>
@@ -5158,7 +5158,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="614"/>
         <source>The shared name is too long and will be truncated.</source>
-        <translation type="unfinished"/>
+        <translation>Det delade namnet är för långt och kommer att kortas av.</translation>
     </message>
 </context>
 <context>
@@ -5327,12 +5327,12 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="54"/>
         <source>Please input recovery key to decrypt partition</source>
-        <translation type="unfinished"/>
+        <translation>Ange återställningsnyckeln för att dekryptera partitionen</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="60"/>
         <source>Please input %1 to decrypt partition</source>
-        <translation type="unfinished"/>
+        <translation>Ange %1 för att dekryptera partitionen</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="61"/>
@@ -5362,7 +5362,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="111"/>
         <source>Decrypt partition</source>
-        <translation type="unfinished"/>
+        <translation>Dekryptera partition</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="123"/>
@@ -5400,7 +5400,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="206"/>
         <source>Continue partition decryption</source>
-        <translation type="unfinished"/>
+        <translation>Fortsätt partitionsdekrypteringen</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="210"/>
@@ -5434,18 +5434,18 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="433"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="440"/>
         <source>Re-encryption failed</source>
-        <translation type="unfinished"/>
+        <translation>Omkrypteringen misslyckades</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="434"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="441"/>
         <source>Failed to get TPM information. Please check whether TPM is available.</source>
-        <translation type="unfinished"/>
+        <translation>Det gick inte att hämta TPM-information. Kontrollera att TPM är tillgängligt.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="710"/>
         <source>Unlock partition failed</source>
-        <translation type="unfinished"/>
+        <translation>Det gick inte att låsa upp partitionen</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="711"/>
