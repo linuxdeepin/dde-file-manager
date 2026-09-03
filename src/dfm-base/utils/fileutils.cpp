@@ -243,11 +243,15 @@ bool FileUtils::isContainProhibitPath(const QList<QUrl> &urls)
 
 bool FileUtils::isDesktopFile(const QUrl &url)
 {
-    // At present, there is no dfmio library code. For temporary repair, use the method on v20 to obtain mimeType
-    auto info = InfoFactory::create<FileInfo>(url);
-    if (!info)
-        return false;
-    return isDesktopFileInfo(info);
+    if (isDesktopFileSuffix(url))
+        return true;
+
+    const QString &target = symlinkTarget(url);
+    if (!target.isEmpty()
+        && target.endsWith(QString(".") + DFMBASE_NAMESPACE::Global::Scheme::kDesktop, Qt::CaseInsensitive))
+        return true;
+
+    return false;
 }
 
 bool FileUtils::isDesktopFileSuffix(const QUrl &url)
@@ -263,17 +267,14 @@ bool FileUtils::isDesktopFileInfo(const FileInfoPointer &info)
 {
     Q_ASSERT(info);
     const QString &suffix = info->nameOf(NameInfoType::kSuffix);
-    if (suffix == DFMBASE_NAMESPACE::Global::Scheme::kDesktop
-        || info->urlOf(UrlInfoType::kParentUrl).path() == StandardPaths::location(StandardPaths::StandardLocation::kDesktopPath)
-        || info->extendAttributes(ExtInfoType::kFileLocalDevice).toBool()) {
-        const QUrl &url = info->urlOf(UrlInfoType::kUrl);
-        QMimeType type = info->fileMimeType();
-        if (!type.isValid())
-            type = DMimeDatabase().mimeTypeForFile(url.path(), QMimeDatabase::MatchDefault, QString());
+    if (suffix == DFMBASE_NAMESPACE::Global::Scheme::kDesktop)
+        return true;
 
-        // QMimeType::suffixes is not the same as fileinfo's `kSuffix`.
-        if (type.name() == "application/x-desktop"
-            && type.suffixes().contains(DFMBASE_NAMESPACE::Global::Scheme::kDesktop, Qt::CaseInsensitive))
+    if ((info->urlOf(UrlInfoType::kParentUrl).path() == StandardPaths::location(StandardPaths::StandardLocation::kDesktopPath)
+         || info->extendAttributes(ExtInfoType::kFileLocalDevice).toBool())
+        && info->isAttributes(OptInfoType::kIsSymLink)) {
+        const QString &target = info->pathOf(PathInfoType::kSymLinkTarget);
+        if (target.endsWith(QString(".") + DFMBASE_NAMESPACE::Global::Scheme::kDesktop, Qt::CaseInsensitive))
             return true;
     }
 
