@@ -9,6 +9,8 @@
 #include <QUrl>
 #include <QRect>
 #include <QPoint>
+#include <QObject>
+#include <QWidget>
 
 #include "gtest/gtest.h"
 
@@ -19,6 +21,15 @@ class UT_NormalizedModeBroker : public testing::Test
 protected:
     void SetUp() override
     {
+        // CollectionViewBroker ctor (created inside broker methods) calls
+        // QObject::setObjectName / QWidget::setAccessibleName, which crash on
+        // half-initialized views in the offscreen environment.
+        using SetObjNameFunc = void (QObject::*)(QAnyStringView);
+        stub.set_lamda(static_cast<SetObjNameFunc>(&QObject::setObjectName), [](QObject *, QAnyStringView) {
+        });
+        stub.set_lamda(&QWidget::setAccessibleName, [](QWidget *, const QString &) {
+        });
+
         mode = new NormalizedMode();
         broker = new NormalizedModeBroker(mode);
     }
