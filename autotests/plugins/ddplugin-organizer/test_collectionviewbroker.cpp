@@ -22,6 +22,17 @@ class UT_CollectionViewBroker : public testing::Test
 protected:
     virtual void SetUp() override
     {
+        // CollectionViewBroker's constructor dereferences the view pointer
+        // unconditionally; stub the naming setters so a null-parent broker
+        // can be constructed safely (this is what the null-view tests expect).
+        using SetObjNameFunc = void (QObject::*)(QAnyStringView);
+        stub.set_lamda(static_cast<SetObjNameFunc>(&QObject::setObjectName), [](QObject *, QAnyStringView) {
+            __DBG_STUB_INVOKE__
+        });
+        stub.set_lamda(&QWidget::setAccessibleName, [](QWidget *, const QString &) {
+            __DBG_STUB_INVOKE__
+        });
+
         stub.set_lamda(&CollectionViewPrivate::initUI, []() {
             __DBG_STUB_INVOKE__
         });
