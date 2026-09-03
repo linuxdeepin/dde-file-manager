@@ -8,5 +8,5 @@ file(GLOB_RECURSE TEST_SOURCES
 
 dfm_add_test(ut-dfm-framework
     SOURCES ${TEST_SOURCES}
-    LINK_LIBRARIES DFM6::framework Qt6::Test
+    LINK_LIBRARIES DFM6::framework DFM6::base Qt6::Test Qt6::Widgets Qt6::Gui
 )
