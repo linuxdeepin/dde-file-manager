@@ -97,30 +97,42 @@ void TitleBarHelper::createSettingsMenu(quint64 id)
 
     QAction *action { new QAction(QObject::tr("New window"), menu) };
     action->setData(MenuAction::kNewWindow);
+    action->setObjectName(QObject::tr("New window"));
+    action->setAccessibleName(QObject::tr("New window"));
     menu->addAction(action);
 
     action = new QAction(QObject::tr("New tab"), menu);
     action->setData(MenuAction::kOpenInNewTab);
+    action->setObjectName(QObject::tr("New tab"));
+    action->setAccessibleName(QObject::tr("New tab"));
     menu->addAction(action);
 
     menu->addSeparator();
 
     action = new QAction(QObject::tr("Connect to Server"), menu);
     action->setData(MenuAction::kConnectToServer);
+    action->setObjectName(QObject::tr("Connect to Server"));
+    action->setAccessibleName(QObject::tr("Connect to Server"));
     menu->addAction(action);
 
     action = new QAction(QObject::tr("Set share password"), menu);
     action->setData(MenuAction::kSetUserSharePassword);
+    action->setObjectName(QObject::tr("Set share password"));
+    action->setAccessibleName(QObject::tr("Set share password"));
     menu->addAction(action);
 
     if (DeviceUtils::checkDiskEncrypted()) {
         action = new QAction(QObject::tr("Change disk password"), menu);
         action->setData(MenuAction::kChangeDiskPassword);
+        action->setObjectName(QObject::tr("Change disk password"));
+        action->setAccessibleName(QObject::tr("Change disk password"));
         menu->addAction(action);
     }
 
     action = new QAction(QObject::tr("Settings"), menu);
     action->setData(MenuAction::kSettings);
+    action->setObjectName(QObject::tr("Settings"));
+    action->setAccessibleName(QObject::tr("Settings"));
     menu->addAction(action);
 
     QObject::connect(menu, &QMenu::triggered, [id](QAction *act) {
