@@ -7353,12 +7353,12 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="518"/>
         <source>&quot;Image-Content search&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Sökning i bildinnehåll</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="521"/>
         <source>&quot;Smart search&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Smart sökning</translation>
     </message>
 </context>
 <context>
@@ -7518,7 +7518,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/private/addressbar_p.h" line="46"/>
         <source>Enter address</source>
-        <translation type="unfinished"/>
+        <translation>Ange adress</translation>
     </message>
 </context>
 <context>
@@ -7542,7 +7542,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="140"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="289"/>
         <source>No history</source>
-        <translation type="unfinished"/>
+        <translation>Ingen historik</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="308"/>
@@ -7597,22 +7597,22 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="62"/>
         <source>Custom Directory</source>
-        <translation type="unfinished"/>
+        <translation>Anpassad katalog</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="102"/>
         <source>Invalid Directory</source>
-        <translation type="unfinished"/>
+        <translation>Ogiltig katalog</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="103"/>
         <source>This directory does not support pinning</source>
-        <translation type="unfinished"/>
+        <translation>Den här katalogen kan inte fästas</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="57"/>
         <source>Add Directory</source>
-        <translation type="unfinished"/>
+        <translation>Lägg till katalog</translation>
     </message>
 </context>
 <context>
@@ -7747,27 +7747,27 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="266"/>
         <source>Icon view</source>
-        <translation type="unfinished"/>
+        <translation>Ikonvy</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="274"/>
         <source>List view</source>
-        <translation type="unfinished"/>
+        <translation>Listvy</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="286"/>
         <source>Tree view</source>
-        <translation type="unfinished"/>
+        <translation>Trädvy</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="309"/>
         <source>Sort by</source>
-        <translation type="unfinished"/>
+        <translation>Sortera efter</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="315"/>
         <source>View options</source>
-        <translation type="unfinished"/>
+        <translation>Visningsalternativ</translation>
     </message>
 </context>
 <context>
@@ -7776,33 +7776,33 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="315"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="378"/>
         <source>Unpin tab</source>
-        <translation type="unfinished"/>
+        <translation>Ta bort fästning av flik</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="317"/>
         <source>Pin tab</source>
-        <translation type="unfinished"/>
+        <translation>Fäst flik</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="322"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="378"/>
         <source>Close tab</source>
-        <translation type="unfinished"/>
+        <translation>Stäng flik</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="325"/>
         <source>Close other tabs</source>
-        <translation type="unfinished"/>
+        <translation>Stäng andra flikar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="326"/>
         <source>Close tabs to the left</source>
-        <translation type="unfinished"/>
+        <translation>Stäng flikarna till vänster</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="329"/>
         <source>Close tabs to the right</source>
-        <translation type="unfinished"/>
+        <translation>Stäng flikarna till höger</translation>
     </message>
 </context>
 <context>
@@ -7810,24 +7810,24 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="618"/>
         <source>Directory not found</source>
-        <translation type="unfinished"/>
+        <translation>Katalogen hittades inte</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="619"/>
         <source>Directory not found. Remove it?</source>
-        <translation type="unfinished"/>
+        <translation>Katalogen hittades inte. Ta bort den?</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="620"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Avbryt</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="620"/>
         <source>Remove</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Ta bort</translation>
     </message>
 </context>
 <context>
@@ -7835,27 +7835,27 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="64"/>
         <source>View Options</source>
-        <translation type="unfinished"/>
+        <translation>Visningsalternativ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="79"/>
         <source>Icon size</source>
-        <translation type="unfinished"/>
+        <translation>Ikonstorlek</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="113"/>
         <source>Grid density</source>
-        <translation type="unfinished"/>
+        <translation>Rutnätsdensitet</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="147"/>
         <source>List height</source>
-        <translation type="unfinished"/>
+        <translation>Listhöjd</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="175"/>
         <source>Display preview</source>
-        <translation type="unfinished"/>
+        <translation>Visa förhandsgranskning</translation>
     </message>
 </context>
 <context>
@@ -8033,7 +8033,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="56"/>
         <source>Error: The filename is too long</source>
-        <translation type="unfinished"/>
+        <translation>Fel: Filnamnet är för långt</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="58"/>
@@ -8081,7 +8081,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="39"/>
         <source>Analyzing files...</source>
-        <translation type="unfinished"/>
+        <translation>Analyserar filer …</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="43"/>
@@ -8091,32 +8091,32 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="163"/>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="217"/>
         <source>Operation cancelled</source>
-        <translation type="unfinished"/>
+        <translation>Åtgärden avbröts</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="66"/>
         <source>Starting file shredding...</source>
-        <translation type="unfinished"/>
+        <translation>Startar säker radering av filer …</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="91"/>
         <source>All files have been successfully shredded</source>
-        <translation type="unfinished"/>
+        <translation>Alla filer har raderats säkert</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="207"/>
         <source>Failed to start shred command</source>
-        <translation type="unfinished"/>
+        <translation>Det gick inte att starta kommandot för säker radering</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="237"/>
         <source>Permission denied</source>
-        <translation type="unfinished"/>
+        <translation>Åtkomst nekas</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/fileshredworker.cpp" line="240"/>
         <source>The file has been moved or the process has exited</source>
-        <translation type="unfinished"/>
+        <translation>Filen har flyttats eller processen har avslutats</translation>
     </message>
 </context>
 <context>
@@ -8182,17 +8182,17 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="112"/>
         <source>File shredder failure</source>
-        <translation type="unfinished"/>
+        <translation>Fel vid säker radering av fil</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="114"/>
         <source>Close</source>
-        <translation type="unfinished"/>
+        <translation>Stäng</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="138"/>
         <source>Shredding file</source>
-        <translation type="unfinished"/>
+        <translation>Raderar fil säkert</translation>
     </message>
 </context>
 <context>
@@ -8200,7 +8200,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/progressdialog.cpp" line="43"/>
         <source>Shredding file &quot; %1 &quot;</source>
-        <translation type="unfinished"/>
+        <translation>Raderar filen &quot;%1&quot; säkert</translation>
     </message>
 </context>
 <context>
@@ -8208,7 +8208,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredmenuscene.cpp" line="80"/>
         <source>File Shred</source>
-        <translation type="unfinished"/>
+        <translation>Säker radering</translation>
     </message>
 </context>
 <context>
@@ -8216,32 +8216,32 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="163"/>
         <source>Enable File Shred</source>
-        <translation type="unfinished"/>
+        <translation>Aktivera säker radering</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="169"/>
         <source>Once enable, the &apos;File Shred&apos; option becomes available in the context menu for secure file deletion</source>
-        <translation type="unfinished"/>
+        <translation>När funktionen är aktiverad blir Säker radering tillgänglig i snabbmenyn för säker borttagning av filer</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="202"/>
         <source>Are you sure to shred these %1 items?</source>
-        <translation type="unfinished"/>
+        <translation>Vill du säkert radera dessa %1 objekt?</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="203"/>
         <source>The file will be completely deleted and cannot be recovered.</source>
-        <translation type="unfinished"/>
+        <translation>Filen raderas helt och kan inte återställas.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="233"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Avbryt</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/shredutils.cpp" line="234"/>
         <source>Shred</source>
-        <translation type="unfinished"/>
+        <translation>Radera säkert</translation>
     </message>
 </context>
 <context>
@@ -8257,7 +8257,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/shred/vitrualshredplugin.cpp" line="51"/>
         <source>File shred</source>
-        <translation type="unfinished"/>
+        <translation>Säker radering av fil</translation>
     </message>
 </context>
 <context>
@@ -8308,52 +8308,52 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="192"/>
         <source>Failed to create public key: The key length is too long!</source>
-        <translation type="unfinished"/>
+        <translation>Det gick inte att skapa offentlig nyckel: Nyckellängden är för lång!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="200"/>
         <source>Failed to save rsa ciphertext file: %1</source>
-        <translation type="unfinished"/>
+        <translation>Det gick inte att spara RSA-chiffertextfilen: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="216"/>
         <source>Failed to save public key file: The public key is empty.</source>
-        <translation type="unfinished"/>
+        <translation>Det gick inte att spara den offentliga nyckelfilen: Den offentliga nyckeln är tom.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="224"/>
         <source>Failed to save public key file: %1</source>
-        <translation type="unfinished"/>
+        <translation>Det gick inte att spara den offentliga nyckelfilen: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="362"/>
         <source>Failed to create config dir: %1</source>
-        <translation type="unfinished"/>
+        <translation>Det gick inte att skapa konfigurationskatalogen: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="394"/>
         <source>Failed to create rsa private key file: %1</source>
-        <translation type="unfinished"/>
+        <translation>Det gick inte att skapa RSA-filen med privat nyckel: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="409"/>
         <source>Failed to create rsa ciphertext file: %1</source>
-        <translation type="unfinished"/>
+        <translation>Det gick inte att skapa RSA-chiffertextfilen: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="426"/>
         <source>Failed to create hint file: %1</source>
-        <translation type="unfinished"/>
+        <translation>Det gick inte att skapa ledtrådsfilen: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="458"/>
         <source>Failed to save hint info: %1</source>
-        <translation type="unfinished"/>
+        <translation>Det gick inte att spara ledtrådsinformationen: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/encryption/operatorcenter.cpp" line="789"/>
         <source>Save password failed: %1</source>
-        <translation type="unfinished"/>
+        <translation>Det gick inte att spara lösenordet: %1</translation>
     </message>
 </context>
 <context>
@@ -8391,13 +8391,14 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/pathmanager.cpp" line="79"/>
         <source>Unlock failed</source>
-        <translation type="unfinished"/>
+        <translation>Det gick inte att låsa upp</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/pathmanager.cpp" line="80"/>
         <source>The %1 directory is occupied,
  please clear the files in this directory and try to unlock the safe again.</source>
-        <translation type="unfinished"/>
+        <translation>Katalogen %1 används.
+Töm katalogen på filer och försök sedan låsa upp det skyddade utrymmet igen.</translation>
     </message>
 </context>
 <context>
@@ -8427,7 +8428,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="129"/>
         <source>Invalid recovery key format</source>
-        <translation type="unfinished"/>
+        <translation>Ogiltigt format för återställningsnyckel</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="150"/>
@@ -8450,118 +8451,118 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="45"/>
         <source>Select Key File</source>
-        <translation type="unfinished"/>
+        <translation>Välj nyckelfil</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="49"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="338"/>
         <source>Select key file save path</source>
-        <translation type="unfinished"/>
+        <translation>Välj var nyckelfilen ska sparas</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="57"/>
         <source>Enter New Password</source>
-        <translation type="unfinished"/>
+        <translation>Ange nytt lösenord</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="64"/>
         <source>At least 8 characters, including A-Z, a-z, 0-9, and symbols</source>
-        <translation type="unfinished"/>
+        <translation>Minst 8 tecken, inklusive A–Z, a–z, 0–9 och symboler</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="67"/>
         <source>Repeat Password</source>
-        <translation type="unfinished"/>
+        <translation>Upprepa lösenordet</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="72"/>
         <source>Enter new password again</source>
-        <translation type="unfinished"/>
+        <translation>Ange det nya lösenordet igen</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="75"/>
         <source>Password hint</source>
-        <translation type="unfinished"/>
+        <translation>Lösenordsledtråd</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="80"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="352"/>
         <source>Optional</source>
-        <translation type="unfinished"/>
+        <translation>Valfritt</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="82"/>
         <source>Use old password verification</source>
-        <translation type="unfinished"/>
+        <translation>Använd verifiering med tidigare lösenord</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="152"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Avbryt</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="152"/>
         <source>Reset Password</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Återställ lösenord</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="157"/>
         <source>Reset Password</source>
-        <translation type="unfinished"/>
+        <translation>Återställ lösenord</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="169"/>
         <source>Unable to get the key file</source>
-        <translation type="unfinished"/>
+        <translation>Det gick inte att hämta nyckelfilen</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="179"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="266"/>
         <source>≥ 8 chars, contains A-Z, a-z, 0-9, and symbols</source>
-        <translation type="unfinished"/>
+        <translation>≥ 8 tecken, innehåller A–Z, a–z, 0–9 och symboler</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="188"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="274"/>
         <source>Passwords do not match</source>
-        <translation type="unfinished"/>
+        <translation>Lösenorden stämmer inte överens</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="197"/>
         <source>Cannot reset password for old version vault. Please upgrade the vault first.</source>
-        <translation type="unfinished"/>
+        <translation>Det går inte att återställa lösenordet för ett valv med en äldre version. Uppgradera valvet först.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="206"/>
         <source>Unable to read key file</source>
-        <translation type="unfinished"/>
+        <translation>Det gick inte att läsa nyckelfilen</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="219"/>
         <source>Invalid recovery key format: expected 32 characters, got %1</source>
-        <translation type="unfinished"/>
+        <translation>Ogiltigt format för återställningsnyckel: förväntade 32 tecken, fick %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="229"/>
         <source>Invalid recovery key format: must contain only letters and numbers</source>
-        <translation type="unfinished"/>
+        <translation>Ogiltigt format för återställningsnyckel: får endast innehålla bokstäver och siffror</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="398"/>
         <source>Success</source>
-        <translation type="unfinished"/>
+        <translation>Lyckades</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="398"/>
         <source>Password reset successfully</source>
-        <translation type="unfinished"/>
+        <translation>Lösenordet har återställts</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="402"/>
         <source>Failed to reset password. Please check your key file.</source>
-        <translation type="unfinished"/>
+        <translation>Det gick inte att återställa lösenordet. Kontrollera nyckelfilen.</translation>
     </message>
 </context>
 <context>
@@ -8569,92 +8570,92 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="46"/>
         <source>Enter Old Password</source>
-        <translation type="unfinished"/>
+        <translation>Ange tidigare lösenord</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="50"/>
         <source>Please enter old password</source>
-        <translation type="unfinished"/>
+        <translation>Ange tidigare lösenord</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="53"/>
         <source>Enter New Password</source>
-        <translation type="unfinished"/>
+        <translation>Ange nytt lösenord</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="60"/>
         <source>At least 8 characters, including A-Z, a-z, 0-9, and symbols</source>
-        <translation type="unfinished"/>
+        <translation>Minst 8 tecken, inklusive A–Z, a–z, 0–9 och symboler</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="63"/>
         <source>Repeat Password</source>
-        <translation type="unfinished"/>
+        <translation>Upprepa lösenordet</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="68"/>
         <source>Enter new password again</source>
-        <translation type="unfinished"/>
+        <translation>Ange det nya lösenordet igen</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="71"/>
         <source>Password hint</source>
-        <translation type="unfinished"/>
+        <translation>Lösenordsledtråd</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="76"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="312"/>
         <source>Optional</source>
-        <translation type="unfinished"/>
+        <translation>Valfritt</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="78"/>
         <source>Use key verification</source>
-        <translation type="unfinished"/>
+        <translation>Använd nyckelverifiering</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="147"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Avbryt</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="147"/>
         <source>Reset Password</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Återställ lösenord</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="152"/>
         <source>Reset Password</source>
-        <translation type="unfinished"/>
+        <translation>Återställ lösenord</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="164"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="225"/>
         <source>≥ 8 chars, contains A-Z, a-z, 0-9, and symbols</source>
-        <translation type="unfinished"/>
+        <translation>≥ 8 tecken, innehåller A–Z, a–z, 0–9 och symboler</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="173"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="233"/>
         <source>Passwords do not match</source>
-        <translation type="unfinished"/>
+        <translation>Lösenorden stämmer inte överens</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="184"/>
         <source>Please try again %1 minutes later</source>
-        <translation type="unfinished"/>
+        <translation>Försök igen om %1 minuter</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="361"/>
         <source>Success</source>
-        <translation type="unfinished"/>
+        <translation>Lyckades</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="361"/>
         <source>Password reset successfully</source>
-        <translation type="unfinished"/>
+        <translation>Lösenordet har återställts</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="377"/>
