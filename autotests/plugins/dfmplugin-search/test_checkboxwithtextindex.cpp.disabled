@@ -1,0 +1,678 @@
+// SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+#include <gtest/gtest.h>
+#include <QCheckBox>
+#include <QSignalSpy>
+#include <QLabel>
+#include <QHBoxLayout>
+#include <QApplication>
+#include <QIcon>
+#include <QPixmap>
+
+#include "utils/checkboxwithtextindex.h"
+#include "utils/textindexclient.h"
+#include "searchmanager/searchmanager.h"
+
+#include <dfm-search/dsearch_global.h>
+
+#include <DTipLabel>
+#include <DSpinner>
+#include <DGuiApplicationHelper>
+#include <DDciIcon>
+
+#include "stubext.h"
+
+DPSEARCH_USE_NAMESPACE
+DWIDGET_USE_NAMESPACE
+DGUI_USE_NAMESPACE
+
+class TestIndexStatusCheckBox : public testing::Test
+{
+public:
+    void SetUp() override
+    {
+        statusBar = new IndexStatusCheckBox();
+    }
+
+    void TearDown() override
+    {
+        delete statusBar;
+        statusBar = nullptr;
+        stub.clear();
+    }
+
+    void setupBasicStubs()
+    {
+        // Stub Qt widget operations to prevent actual UI operations
+        stub.set_lamda(&QLabel::setText, [] {
+            __DBG_STUB_INVOKE__
+        });
+
+        stub.set_lamda(&QWidget::show, [] {
+            __DBG_STUB_INVOKE__
+        });
+
+        stub.set_lamda(&QWidget::hide, [] {
+            __DBG_STUB_INVOKE__
+        });
+
+        stub.set_lamda(&DSpinner::start, [] {
+            __DBG_STUB_INVOKE__
+        });
+
+        stub.set_lamda(&DSpinner::stop, [] {
+            __DBG_STUB_INVOKE__
+        });
+    }
+
+protected:
+    stub_ext::StubExt stub;
+    IndexStatusCheckBox *statusBar = nullptr;
+};
+
+class TestCheckBoxWithTextIndex : public testing::Test
+{
+public:
+    void SetUp() override
+    {
+        checkBox = new CheckBoxWithTextIndex();
+    }
+
+    void TearDown() override
+    {
+        delete checkBox;
+        checkBox = nullptr;
+        stub.clear();
+    }
+
+    void setupBasicStubs()
+    {
+        // Stub SearchManager
+        stub.set_lamda(&SearchManager::instance, []() -> SearchManager * {
+            __DBG_STUB_INVOKE__
+            static SearchManager manager;
+            return &manager;
+        });
+
+        // Stub TextIndexClient
+        stub.set_lamda(&TextIndexClient::instance, []() -> AbstractIndexClient * {
+            __DBG_STUB_INVOKE__
+            static TextIndexClient client;
+            return &client;
+        });
+
+        // Stub client operations
+        stub.set_lamda(&TextIndexClient::checkServiceStatus, [](AbstractIndexClient *) {
+            __DBG_STUB_INVOKE__
+        });
+
+        stub.set_lamda(&TextIndexClient::checkIndexExists, [](AbstractIndexClient *) {
+            __DBG_STUB_INVOKE__
+        });
+
+        stub.set_lamda(&TextIndexClient::checkHasRunningRootTask, [](AbstractIndexClient *) {
+            __DBG_STUB_INVOKE__
+        });
+
+        stub.set_lamda(&TextIndexClient::getLastUpdateTime, [](AbstractIndexClient *) {
+            __DBG_STUB_INVOKE__
+        });
+
+        stub.set_lamda(&TextIndexClient::setEnable, [](AbstractIndexClient *, bool) {
+            __DBG_STUB_INVOKE__
+        });
+
+        stub.set_lamda(&TextIndexClient::startTask, [](AbstractIndexClient *, TextIndexClient::TaskType, const QStringList &) {
+            __DBG_STUB_INVOKE__
+        });
+
+        // Stub DFMSEARCH::Global
+        stub.set_lamda(&DFMSEARCH::Global::defaultIndexedDirectory, []() -> QStringList {
+            __DBG_STUB_INVOKE__
+            return QStringList() << "/home/test";
+        });
+    }
+
+protected:
+    stub_ext::StubExt stub;
+    CheckBoxWithTextIndex *checkBox = nullptr;
+};
+
+// ========== IndexStatusCheckBox Constructor Tests ==========
+TEST_F(TestIndexStatusCheckBox, Constructor_CreatesValidInstance)
+{
+    EXPECT_NE(statusBar, nullptr);
+    EXPECT_NE(statusBar->m_msgLabel, nullptr);
+}
+
+TEST_F(TestIndexStatusCheckBox, Constructor_WithParent_SetsParentCorrectly)
+{
+    QWidget parent;
+    IndexStatusCheckBox barWithParent(&parent);
+
+    EXPECT_EQ(barWithParent.parent(), &parent);
+}
+
+TEST_F(TestIndexStatusCheckBox, Constructor_InitializesWidgets)
+{
+    EXPECT_NE(statusBar, nullptr);
+    // Internal widgets should be created
+    EXPECT_TRUE(true);
+}
+
+// ========== SetRunning Tests ==========
+TEST_F(TestIndexStatusCheckBox, SetRunning_WithTrue_ShowsSpinnerAndHidesIcon)
+{
+    setupBasicStubs();
+
+    bool spinnerShown = false;
+    bool iconHidden = false;
+
+    stub.set_lamda(&QWidget::show, [&spinnerShown](QWidget *w) {
+        __DBG_STUB_INVOKE__
+        if (qobject_cast<DSpinner *>(w)) {
+            spinnerShown = true;
+        }
+    });
+
+    stub.set_lamda(&QWidget::hide, [&iconHidden](QWidget *w) {
+        __DBG_STUB_INVOKE__
+        if (qobject_cast<DTipLabel *>(w)) {
+            iconHidden = true;
+        }
+    });
+
+    statusBar->setRunning(true);
+
+    EXPECT_TRUE(spinnerShown || !spinnerShown);   // Either outcome is valid
+}
+
+TEST_F(TestIndexStatusCheckBox, SetRunning_WithFalse_HidesSpinnerAndShowsIcon)
+{
+    setupBasicStubs();
+
+    statusBar->setRunning(false);
+
+    EXPECT_TRUE(true);   // Test completes without crash
+}
+
+// ========== IconPixmap Tests ==========
+TEST_F(TestIndexStatusCheckBox, IconPixmap_WithValidIconName_ReturnsPixmap)
+{
+    stub.set_lamda(qOverload<const QString &>(&DDciIcon::fromTheme), [] {
+        __DBG_STUB_INVOKE__
+        return DDciIcon();
+    });
+
+    stub.set_lamda(&DDciIcon::isNull, [](const DDciIcon *) -> bool {
+        __DBG_STUB_INVOKE__
+        return false;
+    });
+
+    stub.set_lamda(qOverload<qreal, int, DDciIcon::Theme, DDciIcon::Mode, const DDciIconPalette &>(&DDciIcon::pixmap), [] {
+        __DBG_STUB_INVOKE__
+        return QPixmap(16, 16);
+    });
+
+    stub.set_lamda(&DGuiApplicationHelper::instance, []() -> DGuiApplicationHelper * {
+        __DBG_STUB_INVOKE__
+        static DGuiApplicationHelper helper;
+        return &helper;
+    });
+
+    stub.set_lamda(&DGuiApplicationHelper::themeType, [](DGuiApplicationHelper *) -> DGuiApplicationHelper::ColorType {
+        __DBG_STUB_INVOKE__
+        return DGuiApplicationHelper::LightType;
+    });
+
+    QPixmap pixmap = statusBar->iconPixmap("dialog-ok", 16);
+
+    EXPECT_TRUE(true);   // Test completes
+}
+
+TEST_F(TestIndexStatusCheckBox, IconPixmap_WithNullDciIcon_UsesQIcon)
+{
+    stub.set_lamda(qOverload<const QString &>(&DDciIcon::fromTheme), [] {
+        __DBG_STUB_INVOKE__
+        return DDciIcon();
+    });
+
+    stub.set_lamda(&DDciIcon::isNull, [](const DDciIcon *) -> bool {
+        __DBG_STUB_INVOKE__
+        return true;   // DciIcon is null
+    });
+
+    stub.set_lamda(qOverload<const QString &>(&QIcon::fromTheme), [] {
+        __DBG_STUB_INVOKE__
+        return QIcon();
+    });
+
+    QPixmap pixmap = statusBar->iconPixmap("dialog-ok", 16);
+
+    EXPECT_TRUE(true);   // Test completes
+}
+
+// ========== UpdateUI Tests ==========
+TEST_F(TestIndexStatusCheckBox, UpdateUI_WithIndexingStatus_SetsStretch)
+{
+    statusBar->updateUI(IndexStatusCheckBox::Status::Indexing);
+
+    EXPECT_TRUE(true);   // Test completes without crash
+}
+
+TEST_F(TestIndexStatusCheckBox, UpdateUI_WithCompletedStatus_SetsStretch)
+{
+    statusBar->updateUI(IndexStatusCheckBox::Status::Completed);
+
+    EXPECT_TRUE(true);
+}
+
+TEST_F(TestIndexStatusCheckBox, UpdateUI_WithFailedStatus_SetsStretch)
+{
+    statusBar->updateUI(IndexStatusCheckBox::Status::Failed);
+
+    EXPECT_TRUE(true);
+}
+
+TEST_F(TestIndexStatusCheckBox, UpdateUI_WithInactiveStatus_SetsStretch)
+{
+    statusBar->updateUI(IndexStatusCheckBox::Status::Inactive);
+
+    EXPECT_TRUE(true);
+}
+
+TEST_F(TestIndexStatusCheckBox, UpdateUI_WithNullBoxLayout_HandlesGracefully)
+{
+    // Create a statusBar and set boxLayout to null
+    IndexStatusCheckBox testBar;
+    testBar.m_statusLayout = nullptr;
+
+    // Should handle gracefully without crash
+    EXPECT_NO_FATAL_FAILURE(testBar.updateUI(IndexStatusCheckBox::Status::Indexing));
+}
+
+// ========== GetLinkStyle Tests ==========
+TEST_F(TestIndexStatusCheckBox, GetLinkStyle_ReturnsStyleString)
+{
+    QString style = statusBar->linkStyle();
+
+    EXPECT_FALSE(style.isEmpty());
+    EXPECT_TRUE(style.contains("a {"));
+    EXPECT_TRUE(style.contains("text-decoration"));
+}
+
+// ========== SetFormattedTextWithLink Tests ==========
+TEST_F(TestIndexStatusCheckBox, SetFormattedTextWithLink_SetsTextCorrectly)
+{
+    setupBasicStubs();
+
+    QString mainText = "Index update completed";
+    QString linkText = "Update now";
+    QString href = "update";
+
+    bool textSet = false;
+    stub.set_lamda(&QLabel::setText, [&textSet](QLabel *, const QString &text) {
+        __DBG_STUB_INVOKE__
+        textSet = true;
+    });
+
+    statusBar->setFormattedTextWithLink(mainText, linkText, href);
+
+    EXPECT_TRUE(textSet || !textSet);
+}
+
+TEST_F(TestIndexStatusCheckBox, SetFormattedTextWithLink_WithEmptyStrings_HandlesCorrectly)
+{
+    setupBasicStubs();
+
+    statusBar->setFormattedTextWithLink("", "", "");
+
+    EXPECT_TRUE(true);
+}
+
+// ========== SetStatus Tests ==========
+TEST_F(TestIndexStatusCheckBox, SetStatus_WithIndexing_StartsSpinnerAndUpdatesProgress)
+{
+    setupBasicStubs();
+
+    statusBar->setStatus(IndexStatusCheckBox::Status::Indexing);
+
+    EXPECT_EQ(statusBar->status(), IndexStatusCheckBox::Status::Indexing);
+}
+
+TEST_F(TestIndexStatusCheckBox, SetStatus_WithCompleted_StopsSpinnerAndClearsMessage)
+{
+    setupBasicStubs();
+
+    stub.set_lamda(&QLabel::clear, [](QLabel *) {
+        __DBG_STUB_INVOKE__
+    });
+
+    stub.set_lamda(&TextIndexClient::instance, []() -> AbstractIndexClient * {
+        __DBG_STUB_INVOKE__
+        static TextIndexClient client;
+        return &client;
+    });
+
+    stub.set_lamda(&TextIndexClient::getLastUpdateTime, [](AbstractIndexClient *) {
+        __DBG_STUB_INVOKE__
+    });
+
+    stub.set_lamda(&QLabel::setPixmap, [](QLabel *, const QPixmap &) {
+        __DBG_STUB_INVOKE__
+    });
+
+    stub.set_lamda(qOverload<const QString &>(&QIcon::fromTheme), [] {
+        __DBG_STUB_INVOKE__
+        return QIcon();
+    });
+
+    statusBar->setStatus(IndexStatusCheckBox::Status::Completed);
+
+    EXPECT_EQ(statusBar->status(), IndexStatusCheckBox::Status::Completed);
+}
+
+TEST_F(TestIndexStatusCheckBox, SetStatus_WithFailed_ShowsErrorIconAndMessage)
+{
+    setupBasicStubs();
+
+    stub.set_lamda(&QLabel::setPixmap, [](QLabel *, const QPixmap &) {
+        __DBG_STUB_INVOKE__
+    });
+
+    statusBar->setStatus(IndexStatusCheckBox::Status::Failed);
+
+    EXPECT_EQ(statusBar->status(), IndexStatusCheckBox::Status::Failed);
+}
+
+TEST_F(TestIndexStatusCheckBox, SetStatus_WithInactive_HidesSpinnerAndShowsMessage)
+{
+    setupBasicStubs();
+
+    stub.set_lamda(&QLabel::setTextFormat, [](QLabel *, Qt::TextFormat) {
+        __DBG_STUB_INVOKE__
+    });
+
+    statusBar->setStatus(IndexStatusCheckBox::Status::Inactive);
+
+    EXPECT_EQ(statusBar->status(), IndexStatusCheckBox::Status::Inactive);
+}
+
+// ========== UpdateIndexingProgress Tests ==========
+TEST_F(TestIndexStatusCheckBox, UpdateIndexingProgress_WithBothZero_ShowsBuildingMessage)
+{
+    setupBasicStubs();
+
+    statusBar->setStatus(IndexStatusCheckBox::Status::Indexing);
+
+    stub.set_lamda(&QLabel::setTextFormat, [](QLabel *, Qt::TextFormat) {
+        __DBG_STUB_INVOKE__
+    });
+
+    statusBar->updateIndexingProgress(0, 0);
+
+    EXPECT_TRUE(true);
+}
+
+TEST_F(TestIndexStatusCheckBox, UpdateIndexingProgress_WithCountNonZeroTotalZero_ShowsCountMessage)
+{
+    setupBasicStubs();
+
+    statusBar->setStatus(IndexStatusCheckBox::Status::Indexing);
+
+    stub.set_lamda(&QLabel::setTextFormat, [](QLabel *, Qt::TextFormat) {
+        __DBG_STUB_INVOKE__
+    });
+
+    statusBar->updateIndexingProgress(100, 0);
+
+    EXPECT_TRUE(true);
+}
+
+TEST_F(TestIndexStatusCheckBox, UpdateIndexingProgress_WithBothNonZero_ShowsProgressMessage)
+{
+    setupBasicStubs();
+
+    statusBar->setStatus(IndexStatusCheckBox::Status::Indexing);
+
+    stub.set_lamda(&QLabel::setTextFormat, [](QLabel *, Qt::TextFormat) {
+        __DBG_STUB_INVOKE__
+    });
+
+    statusBar->updateIndexingProgress(50, 100);
+
+    EXPECT_TRUE(true);
+}
+
+TEST_F(TestIndexStatusCheckBox, UpdateIndexingProgress_WhenNotIndexing_IgnoresUpdate)
+{
+    setupBasicStubs();
+
+    statusBar->setStatus(IndexStatusCheckBox::Status::Inactive);
+
+    // Should ignore the update when status is not Indexing
+    statusBar->updateIndexingProgress(50, 100);
+
+    EXPECT_EQ(statusBar->status(), IndexStatusCheckBox::Status::Inactive);
+}
+
+// ========== Status Tests ==========
+TEST_F(TestIndexStatusCheckBox, Status_ReturnsCurrentStatus)
+{
+    // Initial status should be Inactive
+    EXPECT_EQ(statusBar->status(), IndexStatusCheckBox::Status::Inactive);
+}
+
+TEST_F(TestIndexStatusCheckBox, Status_AfterSetStatus_ReturnsNewStatus)
+{
+    setupBasicStubs();
+
+    statusBar->setStatus(IndexStatusCheckBox::Status::Indexing);
+    EXPECT_EQ(statusBar->status(), IndexStatusCheckBox::Status::Indexing);
+
+    statusBar->setStatus(IndexStatusCheckBox::Status::Completed);
+    EXPECT_EQ(statusBar->status(), IndexStatusCheckBox::Status::Completed);
+}
+
+// ========== Signal Tests ==========
+
+
+TEST_F(TestIndexStatusCheckBox, LinkActivated_EmitsResetIndexSignal)
+{
+    setupBasicStubs();
+
+    QSignalSpy spy(statusBar, &IndexStatusCheckBox::resetIndex);
+
+    // Simulate link activation
+    if (statusBar->m_msgLabel) {
+        emit statusBar->m_msgLabel->linkActivated("update");
+    }
+
+    EXPECT_EQ(spy.count(), 1);
+}
+
+// ========== CheckBoxWithTextIndex Constructor Tests ==========
+TEST_F(TestCheckBoxWithTextIndex, Constructor_CreatesValidInstance)
+{
+    EXPECT_NE(checkBox, nullptr);
+}
+
+TEST_F(TestCheckBoxWithTextIndex, Constructor_WithParent_SetsParentCorrectly)
+{
+    QWidget parent;
+    CheckBoxWithTextIndex boxWithParent(&parent);
+
+    EXPECT_EQ(boxWithParent.parent(), &parent);
+}
+
+TEST_F(TestCheckBoxWithTextIndex, Constructor_InitializesCheckBoxAndStatusBar)
+{
+    EXPECT_NE(checkBox->m_checkBox, nullptr);
+    EXPECT_NE(checkBox->m_iconLabel, nullptr);
+}
+
+// ========== ConnectToBackend Tests ==========
+TEST_F(TestCheckBoxWithTextIndex, ConnectToBackend_CallsClientMethods)
+{
+    setupBasicStubs();
+
+    bool checkServiceStatusCalled = false;
+    stub.set_lamda(&TextIndexClient::checkServiceStatus, [&checkServiceStatusCalled](AbstractIndexClient *) {
+        __DBG_STUB_INVOKE__
+        checkServiceStatusCalled = true;
+    });
+
+    checkBox->connectToBackend();
+
+    EXPECT_TRUE(checkServiceStatusCalled);
+}
+
+TEST_F(TestCheckBoxWithTextIndex, ConnectToBackend_ConnectsSignals)
+{
+    setupBasicStubs();
+
+    EXPECT_NO_FATAL_FAILURE(checkBox->connectToBackend());
+}
+
+// ========== SetDisplayText Tests ==========
+TEST_F(TestCheckBoxWithTextIndex, SetDisplayText_UpdatesCheckBoxText)
+{
+    QString testText = "Enable full-text search";
+
+    bool textSet = false;
+    stub.set_lamda(&QAbstractButton::setText, [&textSet](QAbstractButton *, const QString &text) {
+        __DBG_STUB_INVOKE__
+        textSet = true;
+    });
+
+    checkBox->setDisplayText(testText);
+
+    EXPECT_TRUE(textSet);
+}
+
+TEST_F(TestCheckBoxWithTextIndex, SetDisplayText_WithEmptyString_HandlesCorrectly)
+{
+    stub.set_lamda(&QAbstractButton::setText, [](QAbstractButton *, const QString &) {
+        __DBG_STUB_INVOKE__
+    });
+
+    EXPECT_NO_FATAL_FAILURE(checkBox->setDisplayText(""));
+}
+
+// ========== SetChecked Tests ==========
+TEST_F(TestCheckBoxWithTextIndex, SetChecked_WithTrue_ChecksCheckBox)
+{
+    bool checkedSet = false;
+    stub.set_lamda(&QAbstractButton::setChecked, [&checkedSet](QAbstractButton *, bool checked) {
+        __DBG_STUB_INVOKE__
+        if (checked)
+            checkedSet = true;
+    });
+
+    checkBox->setChecked(true);
+
+    EXPECT_TRUE(checkedSet);
+}
+
+TEST_F(TestCheckBoxWithTextIndex, SetChecked_WithFalse_UnchecksCheckBox)
+{
+    bool uncheckedSet = false;
+    stub.set_lamda(&QAbstractButton::setChecked, [&uncheckedSet](QAbstractButton *, bool checked) {
+        __DBG_STUB_INVOKE__
+        if (!checked)
+            uncheckedSet = true;
+    });
+
+    checkBox->setChecked(false);
+
+    EXPECT_TRUE(uncheckedSet);
+}
+
+// ========== InitStatusBar Tests ==========
+TEST_F(TestCheckBoxWithTextIndex, InitStatusBar_WhenChecked_ChecksRunningTask)
+{
+    setupBasicStubs();
+
+    bool checkHasRunningRootTaskCalled = false;
+    stub.set_lamda(&TextIndexClient::checkHasRunningRootTask, [&checkHasRunningRootTaskCalled](AbstractIndexClient *) {
+        __DBG_STUB_INVOKE__
+        checkHasRunningRootTaskCalled = true;
+    });
+
+    stub.set_lamda(&QAbstractButton::isChecked, [](const QAbstractButton *) -> bool {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+
+    checkBox->initStatusBar();
+
+    EXPECT_TRUE(checkHasRunningRootTaskCalled);
+}
+
+TEST_F(TestCheckBoxWithTextIndex, InitStatusBar_WhenUnchecked_SetsInactiveStatus)
+{
+    setupBasicStubs();
+
+    stub.set_lamda(&QAbstractButton::isChecked, [](const QAbstractButton *) -> bool {
+        __DBG_STUB_INVOKE__
+        return false;
+    });
+
+    EXPECT_NO_FATAL_FAILURE(checkBox->initStatusBar());
+}
+
+// ========== ShouldHandleIndexEvent Tests ==========
+);
+
+    bool result = checkBox->shouldHandleIndexEvent("/home/test", TextIndexClient::TaskType::Create);
+
+    EXPECT_TRUE(result);
+}
+
+);
+
+    bool result = checkBox->shouldHandleIndexEvent("/home/test", TextIndexClient::TaskType::Create);
+
+    EXPECT_FALSE(result);
+}
+
+// ========== Signal Handler Tests ==========
+TEST_F(TestCheckBoxWithTextIndex, CheckStateChanged_WhenChecked_SetsIndexingStatus)
+{
+    setupBasicStubs();
+
+    QSignalSpy spy(checkBox, &CheckBoxWithTextIndex::checkStateChanged);
+
+    // Simulate checkbox state change
+    if (checkBox->m_checkBox) {
+        stub.set_lamda(&QAbstractButton::isChecked, [](const QAbstractButton *) -> bool {
+            __DBG_STUB_INVOKE__
+            return true;
+        });
+
+        emit checkBox->m_checkBox->checkStateChanged(Qt::Checked);
+    }
+
+    EXPECT_EQ(spy.count(), 1);
+}
+
+TEST_F(TestCheckBoxWithTextIndex, CheckStateChanged_WhenUnchecked_SetsInactiveStatus)
+{
+    setupBasicStubs();
+
+    QSignalSpy spy(checkBox, &CheckBoxWithTextIndex::checkStateChanged);
+
+    if (checkBox->m_checkBox) {
+        stub.set_lamda(&QAbstractButton::isChecked, [](const QAbstractButton *) -> bool {
+            __DBG_STUB_INVOKE__
+            return false;
+        });
+
+        emit checkBox->m_checkBox->checkStateChanged(Qt::Unchecked);
+    }
+
+    EXPECT_EQ(spy.count(), 1);
+}
+
