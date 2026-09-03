@@ -118,19 +118,18 @@ TEST_F(TestDoRestoreTrashFilesWorker, Destructor_CallsStop)
 
 // ========== initArgs Tests ==========
 
-TEST_F(TestDoRestoreTrashFilesWorker, InitArgs_ClearsHandleSourceFiles)
+TEST_F(TestDoRestoreTrashFilesWorker, InitArgs_ClearsCompleteTargetFiles)
 {
-    worker->handleSourceFiles.append(QUrl::fromLocalFile("/tmp/test.txt"));
-
-    stub.set_lamda(VADDR(DoRestoreTrashFilesWorker, initArgs), [](FileOperateBaseWorker *) -> bool {
-        __DBG_STUB_INVOKE__
-        return true;
-    });
+    // Product initArgs() clears completeTargetFiles (and delegates to
+    // AbstractWorker::initArgs); it never touches handleSourceFiles, so call
+    // the real implementation instead of stubbing the function under test
+    worker->completeTargetFiles.append(QUrl::fromLocalFile("/tmp/test.txt"));
 
     bool result = worker->initArgs();
 
     EXPECT_TRUE(result);
-    EXPECT_TRUE(worker->handleSourceFiles.isEmpty());
+    EXPECT_TRUE(worker->completeTargetFiles.isEmpty());
+    EXPECT_EQ(worker->currentState, AbstractJobHandler::JobState::kRunningState);
 }
 
 // ========== statisticsFilesSize Tests ==========
@@ -139,9 +138,10 @@ TEST_F(TestDoRestoreTrashFilesWorker, StatisticsFilesSize_EmptySources)
 {
     worker->sourceUrls.clear();
 
+    // Product returns false when the source list is empty
     bool result = worker->statisticsFilesSize();
 
-    EXPECT_TRUE(result);
+    EXPECT_FALSE(result);
 }
 
 TEST_F(TestDoRestoreTrashFilesWorker, StatisticsFilesSize_WithSources)
@@ -234,14 +234,21 @@ TEST_F(TestDoRestoreTrashFilesWorker, TranslateUrls_Success)
     EXPECT_TRUE(result);
 }
 
-TEST_F(TestDoRestoreTrashFilesWorker, TranslateUrls_StateCheckFails)
+TEST_F(TestDoRestoreTrashFilesWorker, TranslateUrls_ParseErrorCancel)
 {
+    // A file-scheme url without "startTime-endTime" user info hits the
+    // parse-error path; translateUrls() itself has no stateCheck, so exercise
+    // the real failure path: user chooses cancel on the error dialog
     worker->sourceUrls.append(QUrl::fromLocalFile("/tmp/test.txt"));
 
-    stub.set_lamda(VADDR(AbstractWorker, stateCheck), [](AbstractWorker *) -> bool {
-        __DBG_STUB_INVOKE__
-        return false;
-    });
+    stub.set_lamda(&FileOperateBaseWorker::doHandleErrorAndWait,
+                   [](FileOperateBaseWorker *, const QUrl &, const QUrl &,
+                      const AbstractJobHandler::JobErrorType &,
+                      const bool, const QString &,
+                      const bool) -> AbstractJobHandler::SupportAction {
+                       __DBG_STUB_INVOKE__
+                       return AbstractJobHandler::SupportAction::kCancelAction;
+                   });
 
     bool result = worker->translateUrls();
 
@@ -292,6 +299,15 @@ TEST_F(TestDoRestoreTrashFilesWorker, DoRestoreTrashFiles_WithFiles)
     stub.set_lamda(&FileOperateBaseWorker::doCopyFile,
                    [](FileOperateBaseWorker *, const DFileInfoPointer &,
                       const DFileInfoPointer &, bool *) -> bool {
+                       __DBG_STUB_INVOKE__
+                       return true;
+                   });
+
+    // The actual restore uses LocalFileHandler::moveFile; stub it so the
+    // real trash/target filesystem is not touched
+    stub.set_lamda(&LocalFileHandler::moveFile,
+                   [](LocalFileHandler *, const QUrl &, const QUrl &,
+                      DFMIO::DFile::CopyFlag) -> bool {
                        __DBG_STUB_INVOKE__
                        return true;
                    });
@@ -370,15 +386,19 @@ TEST_F(TestDoRestoreTrashFilesWorker, MergeDir_Success)
     SUCCEED();   // Just verify it doesn't crash
 }
 
-TEST_F(TestDoRestoreTrashFilesWorker, MergeDir_StateCheckFails)
+TEST_F(TestDoRestoreTrashFilesWorker, MergeDir_CopyFails)
 {
     auto sourceDir = createTestDir("merge_source_fail");
     auto targetDir = createTestDir("merge_target_fail");
 
-    stub.set_lamda(VADDR(AbstractWorker, stateCheck), [](AbstractWorker *) -> bool {
-        __DBG_STUB_INVOKE__
-        return false;
-    });
+    // mergeDir() delegates to copyFileFromTrash(); no stateCheck involved.
+    // Make the underlying copy fail to verify the false return
+    stub.set_lamda(&FileOperateBaseWorker::copyFileFromTrash,
+                   [](FileOperateBaseWorker *, const QUrl &, const QUrl &,
+                      DFile::CopyFlag) -> bool {
+                       __DBG_STUB_INVOKE__
+                       return false;
+                   });
 
     bool result = worker->mergeDir(sourceDir->urlOf(UrlInfoType::kUrl),
                                    targetDir->urlOf(UrlInfoType::kUrl),
@@ -389,7 +409,7 @@ TEST_F(TestDoRestoreTrashFilesWorker, MergeDir_StateCheckFails)
 
 // ========== Signal Emission Tests ==========
 
-TEST_F(TestDoRestoreTrashFilesWorker, SignalEmission_FileAdded)
+TEST_F(TestDoRestoreTrashFilesWorker, SignalEmission_FileRenamed)
 {
     auto testFile = createTestFile("signal_added.txt");
     worker->sourceUrls.append(testFile->urlOf(UrlInfoType::kUrl));
@@ -426,9 +446,17 @@ TEST_F(TestDoRestoreTrashFilesWorker, SignalEmission_FileAdded)
                        return true;
                    });
 
+    // Product emits fileRenamed (not fileAdded) after a successful restore
+    stub.set_lamda(&LocalFileHandler::moveFile,
+                   [](LocalFileHandler *, const QUrl &, const QUrl &,
+                      DFMIO::DFile::CopyFlag) -> bool {
+                       __DBG_STUB_INVOKE__
+                       return true;
+                   });
+
     bool signalEmitted = false;
-    QObject::connect(worker, &DoRestoreTrashFilesWorker::fileAdded,
-                     [&signalEmitted](const QUrl &) {
+    QObject::connect(worker, &DoRestoreTrashFilesWorker::fileRenamed,
+                     [&signalEmitted](const QUrl &, const QUrl &) {
                          signalEmitted = true;
                      });
 
@@ -470,8 +498,11 @@ TEST_F(TestDoRestoreTrashFilesWorker, EdgeCase_MultipleFiles)
                        return DFileInfoPointer(new DFileInfo(tempDirUrl));
                    });
 
-    stub.set_lamda(&FileOperateBaseWorker::doCopyFile,
-                   []() -> bool {
+    // The actual restore uses LocalFileHandler::moveFile (doCopyFile is not
+    // involved); stub it so all three files restore successfully
+    stub.set_lamda(&LocalFileHandler::moveFile,
+                   [](LocalFileHandler *, const QUrl &, const QUrl &,
+                      DFMIO::DFile::CopyFlag) -> bool {
                        __DBG_STUB_INVOKE__
                        return true;
                    });

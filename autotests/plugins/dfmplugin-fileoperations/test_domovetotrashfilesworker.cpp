@@ -13,6 +13,7 @@
 #include "stubext.h"
 
 #include "fileoperations/trashfiles/domovetotrashfilesworker.h"
+#include <dfm-io/trashhelper.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/file/local/syncfileinfo.h>
 #include <dfm-base/file/local/asyncfileinfo.h>
@@ -310,7 +311,21 @@ TEST_F(TestDoMoveToTrashFilesWorker, IsCanMoveToTrash_TrashIsEmpty)
 
 TEST_F(TestDoMoveToTrashFilesWorker, TrashTargetUrl_ValidUrl)
 {
+    // Product requires a trash url carrying "startTime-endTime" user info;
+    // the actual trash name resolution is done by dfm-io TrashHelper which
+    // depends on the real trash dir, so stub it
     QUrl sourceUrl = QUrl::fromLocalFile("/tmp/test.txt");
+    sourceUrl.setUserInfo("1720000000-1720000001");
+
+    stub.set_lamda(&DFMIO::TrashHelper::getTrashUrls,
+                   [](DFMIO::TrashHelper *, QList<QUrl> *trashUrls, QString *) -> bool {
+                       __DBG_STUB_INVOKE__
+                       if (trashUrls)
+                           trashUrls->append(QUrl::fromLocalFile(
+                                   "/home/user/.local/share/Trash/files/test.txt"));
+                       return true;
+                   });
+
     QUrl trashUrl = worker->trashTargetUrl(sourceUrl);
 
     EXPECT_TRUE(trashUrl.isValid());
@@ -319,6 +334,17 @@ TEST_F(TestDoMoveToTrashFilesWorker, TrashTargetUrl_ValidUrl)
 TEST_F(TestDoMoveToTrashFilesWorker, TrashTargetUrl_DuplicateName)
 {
     QUrl sourceUrl = QUrl::fromLocalFile("/tmp/duplicate.txt");
+    sourceUrl.setUserInfo("1720000000-1720000001");
+
+    // Duplicate names are resolved inside TrashHelper (e.g. "duplicate.2.txt")
+    stub.set_lamda(&DFMIO::TrashHelper::getTrashUrls,
+                   [](DFMIO::TrashHelper *, QList<QUrl> *trashUrls, QString *) -> bool {
+                       __DBG_STUB_INVOKE__
+                       if (trashUrls)
+                           trashUrls->append(QUrl::fromLocalFile(
+                                   "/home/user/.local/share/Trash/files/duplicate.2.txt"));
+                       return true;
+                   });
 
     QUrl trashUrl = worker->trashTargetUrl(sourceUrl);
 
@@ -353,7 +379,7 @@ TEST_F(TestDoMoveToTrashFilesWorker, DoHandleErrorNoSpace_UserAction)
 
 // ========== Signal Emission Tests ==========
 
-TEST_F(TestDoMoveToTrashFilesWorker, SignalEmission_FileDeleted)
+TEST_F(TestDoMoveToTrashFilesWorker, SignalEmission_FileRenamed)
 {
     auto testFile = createTestFile("signal_test.txt");
     worker->sourceUrls.append(testFile->urlOf(UrlInfoType::kUrl));
@@ -376,9 +402,17 @@ TEST_F(TestDoMoveToTrashFilesWorker, SignalEmission_FileDeleted)
                        return QUrl::fromLocalFile("/tmp/.Trash/file.txt");
                    });
 
+    // Product emits fileRenamed (not fileDeleted) after a successful
+    // trashFile(); stub it to avoid touching the real trash
+    stub.set_lamda(&LocalFileHandler::trashFile,
+                   [](LocalFileHandler *, const QUrl &) -> QString {
+                       __DBG_STUB_INVOKE__
+                       return QString("1720000000-1720000001");
+                   });
+
     bool signalEmitted = false;
-    QObject::connect(worker, &DoMoveToTrashFilesWorker::fileDeleted,
-                     [&signalEmitted](const QList<QUrl> &) {
+    QObject::connect(worker, &DoMoveToTrashFilesWorker::fileRenamed,
+                     [&signalEmitted](const QUrl &, const QUrl &) {
                          signalEmitted = true;
                      });
     using WaitFunc = bool (QWaitCondition::*)(QMutex *, QDeadlineTimer);
@@ -454,7 +488,9 @@ TEST_F(TestDoMoveToTrashFilesWorker, EdgeCase_CannotMoveToTrash)
                    });
 
     bool result = worker->doMoveToTrash();
-    EXPECT_TRUE(result);   // Should continue even if can't trash
+    // Product aborts (returns false) when the file cannot be trashed and
+    // the skip flag is not set
+    EXPECT_FALSE(result);
 }
 
 TEST_F(TestDoMoveToTrashFilesWorker, EdgeCase_RenameFileFails)
@@ -478,6 +514,21 @@ TEST_F(TestDoMoveToTrashFilesWorker, EdgeCase_RenameFileFails)
                    [](DoMoveToTrashFilesWorker *, const QUrl &) -> QUrl {
                        __DBG_STUB_INVOKE__
                        return QUrl::fromLocalFile("/tmp/.Trash/file.txt");
+                   });
+    // Force the trash (rename) failure path
+    stub.set_lamda(&LocalFileHandler::trashFile,
+                   [](LocalFileHandler *, const QUrl &) -> QString {
+                       __DBG_STUB_INVOKE__
+                       return QString();
+                   });
+    // User chooses cancel on the error dialog
+    stub.set_lamda(&FileOperateBaseWorker::doHandleErrorAndWait,
+                   [](FileOperateBaseWorker *, const QUrl &, const QUrl &,
+                      const AbstractJobHandler::JobErrorType &,
+                      const bool, const QString &,
+                      const bool) -> AbstractJobHandler::SupportAction {
+                       __DBG_STUB_INVOKE__
+                       return AbstractJobHandler::SupportAction::kCancelAction;
                    });
     using WaitFunc = bool (QWaitCondition::*)(QMutex *, QDeadlineTimer);
     stub.set_lamda(static_cast<WaitFunc>(&QWaitCondition::wait),

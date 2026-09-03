@@ -145,9 +145,10 @@ TEST_F(TestDoCleanTrashFilesWorker, StatisticsFilesSize_EmptySources)
 {
     worker->sourceUrls.clear();
 
+    // Product returns false when the source list is empty
     bool result = worker->statisticsFilesSize();
 
-    EXPECT_TRUE(result);
+    EXPECT_FALSE(result);
 }
 
 TEST_F(TestDoCleanTrashFilesWorker, StatisticsFilesSize_WithSources)
@@ -242,6 +243,14 @@ TEST_F(TestDoCleanTrashFilesWorker, CleanAllTrashFiles_WithFiles)
                        __DBG_STUB_INVOKE__
                        return true;
                    });
+    // Non-trash scheme urls trigger the error path; skip them to keep looping
+    stub.set_lamda(&DoCleanTrashFilesWorker::doHandleErrorAndWait,
+                   [](DoCleanTrashFilesWorker *, const QUrl &,
+                      const AbstractJobHandler::JobErrorType &,
+                      const bool, const QString &) -> AbstractJobHandler::SupportAction {
+                       __DBG_STUB_INVOKE__
+                       return AbstractJobHandler::SupportAction::kSkipAction;
+                   });
     using WaitFunc = bool (QWaitCondition::*)(QMutex *, QDeadlineTimer);
     stub.set_lamda(static_cast<WaitFunc>(&QWaitCondition::wait),
                    [](QWaitCondition *, QMutex *, QDeadlineTimer) -> bool {
@@ -314,7 +323,7 @@ TEST_F(TestDoCleanTrashFilesWorker, ClearTrashFile_Directory)
     EXPECT_TRUE(result);
 }
 
-TEST_F(TestDoCleanTrashFilesWorker, ClearTrashFile_StateCheckFails)
+TEST_F(TestDoCleanTrashFilesWorker, ClearTrashFile_DeleteSuccess)
 {
     auto testFile = createTestFile("state_fail.txt");
     FileInfoPointer fileInfo = testFile;
@@ -324,8 +333,11 @@ TEST_F(TestDoCleanTrashFilesWorker, ClearTrashFile_StateCheckFails)
         return false;
     });
 
+    // clearTrashFile() never checks the state; deleting a real file succeeds
+    // and returns true (action == kNoAction)
     bool result = worker->clearTrashFile(fileInfo);
-    EXPECT_FALSE(result);
+    EXPECT_TRUE(result);
+    EXPECT_FALSE(QFile::exists(tempDirPath + QDir::separator() + "state_fail.txt"));
 }
 
 // ========== deleteFile Tests ==========
@@ -360,16 +372,10 @@ TEST_F(TestDoCleanTrashFilesWorker, DeleteFile_Failure)
                        return "Permission denied";
                    });
 
-    stub.set_lamda(&DoCleanTrashFilesWorker::doHandleErrorAndWait,
-                   [](DoCleanTrashFilesWorker *, const QUrl &,
-                      const AbstractJobHandler::JobErrorType &,
-                      const bool, const QString &) -> AbstractJobHandler::SupportAction {
-                       __DBG_STUB_INVOKE__
-                       return AbstractJobHandler::SupportAction::kSkipAction;
-                   });
-
+    // Product deleteFile() simply forwards the handler result: a failed
+    // delete returns false (error handling is done by clearTrashFile)
     bool result = worker->deleteFile(fileUrl);
-    EXPECT_TRUE(result);   // Should return true when skipped
+    EXPECT_FALSE(result);
 }
 
 // ========== doHandleErrorAndWait Tests ==========
@@ -475,6 +481,14 @@ TEST_F(TestDoCleanTrashFilesWorker, EdgeCase_MultipleTrashDirectories)
                        __DBG_STUB_INVOKE__
                        return true;
                    });
+    // Non-trash scheme urls are skipped via the error path
+    stub.set_lamda(&DoCleanTrashFilesWorker::doHandleErrorAndWait,
+                   [](DoCleanTrashFilesWorker *, const QUrl &,
+                      const AbstractJobHandler::JobErrorType &,
+                      const bool, const QString &) -> AbstractJobHandler::SupportAction {
+                       __DBG_STUB_INVOKE__
+                       return AbstractJobHandler::SupportAction::kSkipAction;
+                   });
     using WaitFunc = bool (QWaitCondition::*)(QMutex *, QDeadlineTimer);
     stub.set_lamda(static_cast<WaitFunc>(&QWaitCondition::wait),
                    [](QWaitCondition *, QMutex *, QDeadlineTimer) -> bool {
@@ -494,6 +508,14 @@ TEST_F(TestDoCleanTrashFilesWorker, EdgeCase_EmptyTrash)
         __DBG_STUB_INVOKE__
         return true;
     });
+    // Non-trash scheme url is skipped via the error path
+    stub.set_lamda(&DoCleanTrashFilesWorker::doHandleErrorAndWait,
+                   [](DoCleanTrashFilesWorker *, const QUrl &,
+                      const AbstractJobHandler::JobErrorType &,
+                      const bool, const QString &) -> AbstractJobHandler::SupportAction {
+                       __DBG_STUB_INVOKE__
+                       return AbstractJobHandler::SupportAction::kSkipAction;
+                   });
     using WaitFunc = bool (QWaitCondition::*)(QMutex *, QDeadlineTimer);
     stub.set_lamda(static_cast<WaitFunc>(&QWaitCondition::wait),
                    [](QWaitCondition *, QMutex *, QDeadlineTimer) -> bool {
@@ -529,8 +551,9 @@ TEST_F(TestDoCleanTrashFilesWorker, EdgeCase_DeleteFileFails_ThenSkip)
                        return AbstractJobHandler::SupportAction::kSkipAction;
                    });
 
+    // deleteFile() forwards the handler result; failed delete returns false
     bool result = worker->deleteFile(fileUrl);
-    EXPECT_TRUE(result);
+    EXPECT_FALSE(result);
 }
 
 TEST_F(TestDoCleanTrashFilesWorker, EdgeCase_DeleteFileFails_ThenCancel)

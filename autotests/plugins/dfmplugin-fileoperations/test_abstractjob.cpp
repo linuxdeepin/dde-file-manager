@@ -50,26 +50,20 @@ public:
 
     void TearDown() override
     {
-        // The constructor already started the thread for real (AbstractJob::start()
-        // is called from the ctor). Do NOT stub quit/wait here: stubbing them makes
-        // ~AbstractJob believe the thread stopped while it is still running, which
-        // crashes when the QThread member is destroyed. The real quit() + wait()
-        // pair exits the idle event loop within milliseconds.
-        //
-        // worker lives on the job's QThread (moveToThread in the AbstractJob ctor).
-        // Qt requires objects moved to a thread to be pulled back before that
-        // thread is destroyed, so move it to the main thread first. Deleting job
-        // afterwards stops the thread AND releases the QSharedPointer<AbstractWorker>
-        // doWorker member, which deletes worker automatically. Do NOT delete
-        // worker explicitly here - that would double-free it.
-        // Guard against null: some tests (e.g. Destructor_StopsThread) delete job
-        // and null worker in the test body, so TearDown must not dereference it.
-        if (worker)
-            worker->moveToThread(QThread::currentThread());
+        // Drop stubs FIRST: otherwise stubs set inside a test body (e.g. a
+        // no-op QThread::quit) would still be in effect when ~AbstractJob
+        // runs below, leaving the thread alive while its QThread member is
+        // destroyed, which aborts the process.
+        stub.clear();
+        // worker lives on the job's QThread (moveToThread in the AbstractJob
+        // ctor). Qt6 rejects cross-thread moveToThread calls, so the worker
+        // cannot be pulled back from here; it is released by ~AbstractJob
+        // (QSharedPointer doWorker) AFTER the real quit()+wait() pair has
+        // exited the thread, which is safe. Do NOT delete worker explicitly
+        // here - that would double-free it.
         delete job;
         job = nullptr;
         worker = nullptr;
-        stub.clear();
     }
 
 protected:
@@ -101,10 +95,8 @@ TEST_F(TestAbstractJob, Destructor_StopsThread)
     // Let the real ~AbstractJob run: real quit() + real wait() must stop the
     // thread (the event loop is idle, so wait returns almost immediately).
     // Stubbing wait/quit here would leave a live thread behind and crash on
-    // QThread destruction. Follow the same safe teardown order as TearDown:
-    // pull worker back to the main thread, then delete job - its QSharedPointer
-    // doWorker member deletes worker automatically (do NOT delete twice).
-    worker->moveToThread(QThread::currentThread());
+    // QThread destruction. worker is released by ~AbstractJob automatically
+    // (QSharedPointer doWorker; do NOT delete twice).
     delete job;
     job = nullptr;
     worker = nullptr;
@@ -113,18 +105,25 @@ TEST_F(TestAbstractJob, Destructor_StopsThread)
 
 TEST_F(TestAbstractJob, Destructor_ThreadTimeout)
 {
-    stub.set_lamda(&QThread::quit, [](QThread *) {
-        __DBG_STUB_INVOKE__
-    });
+    // Destroying a QThread that is still running aborts the process, so the
+    // thread must be dead before ~AbstractJob runs. Exit it for real here,
+    // then fake a wait() timeout return value to cover the warning branch
+    // of ~AbstractJob. Delete inside the test body while the stub is active
+    // (TearDown's stub.clear() would be too late).
+    ASSERT_TRUE(job);
+    job->thread.quit();
+    ASSERT_TRUE(job->thread.wait());
 
     using WaitFuncPtr = bool (QThread::*)(QDeadlineTimer);
-    stub.set_lamda(static_cast<WaitFuncPtr>(&QThread::wait), [&](QThread *, QDeadlineTimer) {
+    stub.set_lamda(static_cast<WaitFuncPtr>(&QThread::wait), [](QThread *, QDeadlineTimer) {
         __DBG_STUB_INVOKE__
         return false;
     });
 
-    // delete job;
-    // job = nullptr;
+    delete job;
+    job = nullptr;
+    worker = nullptr;
+    stub.clear();
 
     SUCCEED();
 }
@@ -464,6 +463,16 @@ TEST_F(TestAbstractJob, HandleFileAdded_EmitsSignal)
 
 TEST_F(TestAbstractJob, EdgeCase_NullWorker)
 {
+    AbstractJob *nullJob = new AbstractJob(nullptr, nullptr);
+    EXPECT_TRUE(nullJob);
+
+    // The ctor starts the thread even with a null worker. A live thread
+    // aborts the process when the QThread member is destroyed, so exit it
+    // for real first, then fake a successful wait() return value to cover
+    // the destructor's normal-exit branch.
+    nullJob->thread.quit();
+    ASSERT_TRUE(nullJob->thread.wait());
+
     stub.set_lamda(&QThread::quit, [](QThread *) {
         __DBG_STUB_INVOKE__
     });
@@ -473,8 +482,6 @@ TEST_F(TestAbstractJob, EdgeCase_NullWorker)
         return true;
     });
 
-    AbstractJob *nullJob = new AbstractJob(nullptr, nullptr);
-    EXPECT_TRUE(nullJob);
     delete nullJob;
 }
 
