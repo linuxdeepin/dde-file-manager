@@ -1,3 +1,20 @@
+dde-file-manager (6.5.169) unstable; urgency=medium
+
+  * fix: emblem still shows after disabling UDisk emblem
+  * fix: resolve intermittent QPersistentModelIndex crash on shutdown
+  * fix: fix incorrect grouping of files after rename or create in tree view under group mode
+  * fix: remove network I/O from desktop file detection
+  * fix: treat remote .desktop files as regular files
+  * fix: correct encryption type detection for interrupted decrypt
+  * feat: migrate TimezoneWatcher from v20 to v25
+  * feat: optimize fileinfo query and add isCacheMiss overload
+  * perf(workspace): migrate local dirent iteration optimization from v20
+  * feat(fileoperations): migrate FTS-based file deletion from v20 to v25
+  * feat(networkutils): migrate TTL network connection cache from v20
+  * refine(networkutils): align cache short-circuit with non-cache semantics
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 03 Sep 2026 16:55:09 +0800
+
 dde-file-manager (6.5.168) unstable; urgency=medium
 
   * fix: add ref-counted CPU quota for index tasks
