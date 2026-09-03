@@ -140,18 +140,30 @@ QString GroupingEngine::getGroupKeyForFiles(const QList<FileItemDataPointer> &fi
 {
     QString groupKey;
     FileItemDataPointer groupKeyItem;
+    Q_UNUSED(anchorUrl)
 
     // 区分新增的文件是树形item展开的，还是当前目录新增的
-    // 如果是树形展开的文件，其所属分组应该属于anchorUrl的分组
-    auto anchorPointer = m_childrenDataMap->value(anchorUrl);
-    int anchorExpandedCount = !anchorPointer.isNull() ? findExpandedFiles(anchorPointer).size() : 0;
-    if (anchorExpandedCount == 0) {
+    // 通过检查待插入文件的父目录是否为展开的树形节点来判断，
+    // 而非依赖前置锚点（前置锚点可能是兄弟文件而非父目录）
+    bool isTreeChild = false;
+    QUrl parentUrl;
+    if (!filesToInsert.isEmpty() && filesToInsert.first()) {
+        const QUrl &fileUrl = filesToInsert.first()->data(ItemRoles::kItemUrlRole).toUrl();
+        parentUrl = fileUrl.adjusted(QUrl::RemoveFilename | QUrl::StripTrailingSlash);
+    }
+
+    if (parentUrl.isValid() && m_visibleTreeChildren && parentUrl != m_rootUrl
+        && m_visibleTreeChildren->contains(parentUrl)) {
+        isTreeChild = true;
+    }
+
+    if (isTreeChild) {
+        // 树形item展开：使用顶层祖先的分组 key
+        const QUrl &topLevelUrl = findTopLevelAncestorOf(parentUrl);
+        groupKeyItem = m_childrenDataMap->value(topLevelUrl);
+    } else {
         // 文件新增
         groupKeyItem = filesToInsert.first();
-    } else {
-        // 树形item展开
-        const QUrl &topLevelUrl = findTopLevelAncestorOf(anchorUrl);
-        groupKeyItem = m_childrenDataMap->value(topLevelUrl);
     }
 
     if (!groupKeyItem.isNull()) {
