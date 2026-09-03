@@ -14,11 +14,14 @@
  */
 
 #include <gtest/gtest.h>
+#include <stub-ext/stubext.h>
 #include <dfm-base/dbusservice/opticalshareproxy.h>
 
 #include <QVariantMap>
 #include <QMetaObject>
 #include <QObject>
+#include <QDBusConnection>
+#include <QDBusMessage>
 
 using namespace dfmbase;
 
@@ -38,6 +41,20 @@ TEST(OpticalShareProxyTest, BurnStateReturnsEmptyWhenServiceUnavailable)
 
 TEST(OpticalShareProxyTest, BurnStatesReturnsEmptyWhenServiceUnavailable)
 {
+    // burnStates() returns whatever the service reports for ALL devices, so
+    // when a real optical-share DBus service happens to run in the test
+    // environment the result is not empty.  Force the "service unavailable"
+    // path instead: QDBusConnection::call (non-virtual) returns a default
+    // (invalid) message, the QDBusReply becomes invalid and the proxy
+    // returns an empty map.
+    stub_ext::StubExt stub;
+    using CallFn = QDBusMessage (QDBusConnection::*)(const QDBusMessage &, QDBus::CallMode, int) const;
+    stub.set_lamda(static_cast<CallFn>(&QDBusConnection::call),
+                   [](const QDBusConnection *, const QDBusMessage &, QDBus::CallMode, int) -> QDBusMessage {
+                       __DBG_STUB_INVOKE__
+                       return QDBusMessage();
+                   });
+
     auto &proxy = OpticalShareProxy::instance();
     QVariantMap result = proxy.burnStates();
     EXPECT_TRUE(result.isEmpty());
