@@ -11,6 +11,7 @@
 
 using namespace ddplugin_organizer;
 
+namespace {
 class MockModelDataHandler : public ModelDataHandler
 {
 public:
@@ -65,6 +66,7 @@ public:
     QVector<int> lastUpdateRoles;
     bool mockAcceptUpdateResult = true;
 };
+}  // namespace
 
 class UT_GeneralModelFilter : public testing::Test
 {
