@@ -33,6 +33,7 @@ Makefile.*
 debug
 release
 build
+build-autotests/
 
 *.pro.user
 *.pro.user*

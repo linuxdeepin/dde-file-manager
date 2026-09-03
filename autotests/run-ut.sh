@@ -103,15 +103,23 @@ echo ""
 # Run each test binary with gtest XML output
 # Temporarily disable 'set -e' so a failing test binary doesn't abort the script;
 # we track failures via any_failed and report them at the end.
+# Each binary is capped at 10 minutes so a hung test can never block the
+# remaining ones; the run always produces a complete result set.
+UT_TIMEOUT_SEC=600
 any_failed=0
 set +e
 for bin in "${test_bins[@]}"; do
     name=$(basename "$bin")
-    echo "---- Running ${name} ----"
-    if "$bin" --gtest_output="xml:${GTEST_RESULTS_DIR}/${name}.xml"; then
+    echo "---- Running ${name} (timeout ${UT_TIMEOUT_SEC}s) ----"
+    if timeout "${UT_TIMEOUT_SEC}" "$bin" --gtest_output="xml:${GTEST_RESULTS_DIR}/${name}.xml"; then
         echo "  ${name}: PASSED"
     else
-        echo "  ${name}: FAILED"
+        rc=$?
+        if [ "$rc" -eq 124 ]; then
+            echo "  ${name}: FAILED (timeout after ${UT_TIMEOUT_SEC}s)"
+        else
+            echo "  ${name}: FAILED (exit ${rc})"
+        fi
         any_failed=1
     fi
 done
