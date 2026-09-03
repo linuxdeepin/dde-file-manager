@@ -153,6 +153,15 @@ FileView::~FileView()
         d->selectHelper = nullptr;
     }
 
+    // 3.5 显式清理无障碍接口缓存中的 QAccessibleTableCell 对象。
+    //     QAccessibleTableCell 持有 QPersistentModelIndex 且 object() 返回 nullptr,
+    //     不会被 objectDestroyed() 清理, 仅在 ~QAccessibleCache() (~QApplication) 时析构。
+    //     若不在模型存活时清理, 模型销毁后 ~QPersistentModelIndex 将访问悬空模型指针。
+#if QT_CONFIG(accessibility)
+    if (auto *iface = QAccessible::queryAccessibleInterface(this))
+        QAccessible::deleteAccessibleInterface(QAccessible::uniqueId(iface));
+#endif
+
     // 4. 解绑 model(关键步骤): 会触发 QAbstractItemView 清理持有的 QPersistentModelIndex
     DListView::setModel(nullptr);
 
