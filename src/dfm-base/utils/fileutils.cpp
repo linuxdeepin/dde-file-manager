@@ -243,6 +243,9 @@ bool FileUtils::isContainProhibitPath(const QList<QUrl> &urls)
 
 bool FileUtils::isDesktopFile(const QUrl &url)
 {
+    if (ProtocolUtils::isRemoteFile(url))
+        return false;
+
     if (isDesktopFileSuffix(url))
         return true;
 
@@ -260,7 +263,9 @@ bool FileUtils::isDesktopFileSuffix(const QUrl &url)
     // but there are interfaces that call "isDesktopFile"
     // so often that it would be a performance loss to
     // create a fileinfo
-    return url.toString().endsWith(".desktop");
+    if (!url.toString().endsWith(".desktop"))
+        return false;
+    return !ProtocolUtils::isRemoteFile(url);
 }
 
 bool FileUtils::isDesktopFileInfo(const FileInfoPointer &info)
