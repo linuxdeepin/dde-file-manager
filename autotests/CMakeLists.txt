@@ -21,3 +21,4 @@ add_subdirectory(plugins)
 
 # App-level plugin tests (dde-file-manager-preview)
 add_subdirectory(apps)
+add_subdirectory(tools)
