@@ -5460,7 +5460,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="779"/>
         <source>unmount</source>
-        <translation type="unfinished"/>
+        <translation>Avmontera</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="779"/>
@@ -5545,7 +5545,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="308"/>
         <source>Please continue to encrypt &quot;%1&quot; partition</source>
-        <translation type="unfinished"/>
+        <translation>Fortsätt kryptera partitionen &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="309"/>
@@ -5673,12 +5673,12 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="258"/>
         <source>Partition %1 has been encrypted</source>
-        <translation type="unfinished"/>
+        <translation>Partitionen %1 har krypterats</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="264"/>
         <source>Partition %1 encrypt failed, please see log for more information.(%2)</source>
-        <translation type="unfinished"/>
+        <translation>Det gick inte att kryptera partitionen %1. Mer information finns i loggen. (%2)</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="378"/>
@@ -5729,52 +5729,52 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="531"/>
         <source>Partition %1 has been preencrypt, please reboot to finish encryption.</source>
-        <translation type="unfinished"/>
+        <translation>Partitionen %1 har förkrypterats. Starta om för att slutföra krypteringen.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="540"/>
         <source>Partition %1 preencrypt failed, please see log for more information.(%2)</source>
-        <translation type="unfinished"/>
+        <translation>Förkrypteringen av partitionen %1 misslyckades. Mer information finns i loggen. (%2)</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="559"/>
         <source>Partition %1 has been decrypted</source>
-        <translation type="unfinished"/>
+        <translation>Partitionen %1 har dekrypterats</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="566"/>
         <source>Decrypt partition</source>
-        <translation type="unfinished"/>
+        <translation>Dekryptera partition</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="572"/>
         <source>Partition %1 is under encrypting, please decrypt after encryption finished.</source>
-        <translation type="unfinished"/>
+        <translation>Partitionen %1 krypteras. Dekryptera den när krypteringen är klar.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="578"/>
         <source>Partition %1 Decrypt failed, please see log for more information.(%2)</source>
-        <translation type="unfinished"/>
+        <translation>Det gick inte att dekryptera partitionen %1. Mer information finns i loggen. (%2)</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="627"/>
         <source>Partition %1 change %2 failed, please see log for more information.(%3)</source>
-        <translation type="unfinished"/>
+        <translation>Det gick inte att ändra %2 för partitionen %1. Mer information finns i loggen. (%3)</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="657"/>
         <source>Partition is not fully decrypted, please finish decryption before access.</source>
-        <translation type="unfinished"/>
+        <translation>Partitionen är inte helt dekrypterad. Slutför dekrypteringen innan du använder den.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="664"/>
         <source>Unlocking partition failed</source>
-        <translation type="unfinished"/>
+        <translation>Det gick inte att låsa upp partitionen</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="665"/>
         <source>Please click &quot;Continue Partition Encryption&quot; in the right-click menu to complete the partition encryption.</source>
-        <translation type="unfinished"/>
+        <translation>Klicka på &quot;Fortsätt partitionskryptering&quot; i högerklicksmenyn för att slutföra partitionskrypteringen.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="539"/>
@@ -5784,12 +5784,12 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="377"/>
         <source>The &quot;%1&quot; partition is under encrypting...</source>
-        <translation type="unfinished"/>
+        <translation>Partitionen &quot;%1&quot; krypteras…</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="398"/>
         <source>The &quot;%1&quot; partition is under decrypting...</source>
-        <translation type="unfinished"/>
+        <translation>Partitionen &quot;%1&quot; dekrypteras…</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="558"/>
@@ -5841,52 +5841,52 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="774"/>
         <source>Partition Encryption Non-Reboot Mode Rolled Back</source>
-        <translation type="unfinished"/>
+        <translation>Icke-omstartsläget för partitionskryptering återställdes</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="775"/>
         <source>A previous configuration of Partition Encryption Non-Reboot Mode was interrupted and has been rolled back to the disabled state. Please reboot your system to ensure consistency. You may re-enable the feature after reboot if needed.</source>
-        <translation type="unfinished"/>
+        <translation>En tidigare konfiguration av icke-omstartsläget för partitionskryptering avbröts och har återställts till inaktiverat läge. Starta om systemet för att säkerställa konsekvens. Du kan aktivera funktionen igen efter omstart vid behov.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="784"/>
         <source>Partition Encryption Non-Reboot Mode Enabled</source>
-        <translation type="unfinished"/>
+        <translation>Icke-omstartsläget för partitionskryptering är aktiverat</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="785"/>
         <source>Partition Encryption Non-Reboot Mode has been enabled successfully. Please reboot your system for the changes to take effect. After reboot, partition encryption operations will not require system restart.</source>
-        <translation type="unfinished"/>
+        <translation>Icke-omstartsläget för partitionskryptering har aktiverats. Starta om systemet för att ändringarna ska börja gälla. Efter omstart kräver partitionskryptering inte att systemet startas om.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="789"/>
         <source>Partition Encryption Non-Reboot Mode Disabled</source>
-        <translation type="unfinished"/>
+        <translation>Icke-omstartsläget för partitionskryptering är inaktiverat</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="790"/>
         <source>Partition Encryption Non-Reboot Mode has been disabled successfully. Please reboot your system for the changes to take effect. After reboot, partition encryption operations will require system restart.</source>
-        <translation type="unfinished"/>
+        <translation>Icke-omstartsläget för partitionskryptering har inaktiverats. Starta om systemet för att ändringarna ska börja gälla. Efter omstart kräver partitionskryptering en systemomstart.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="798"/>
         <source>Operation Failed</source>
-        <translation type="unfinished"/>
+        <translation>Åtgärden misslyckades</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="800"/>
         <source>Failed to enable Partition Encryption Non-Reboot Mode. The system may not support this feature or encountered an error during initramfs update.</source>
-        <translation type="unfinished"/>
+        <translation>Det gick inte att aktivera icke-omstartsläget för partitionskryptering. Systemet kanske inte stöder funktionen eller ett fel uppstod när initramfs uppdaterades.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="803"/>
         <source>Failed to disable Partition Encryption Non-Reboot Mode. An error occurred during initramfs update.</source>
-        <translation type="unfinished"/>
+        <translation>Det gick inte att inaktivera icke-omstartsläget för partitionskryptering. Ett fel uppstod när initramfs uppdaterades.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="815"/>
         <source>dde-file-manager</source>
-        <translation type="unfinished"/>
+        <translation>dde-file-manager</translation>
     </message>
 </context>
 <context>
@@ -5925,17 +5925,17 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="102"/>
         <source>Please enter the 24-digit recovery key</source>
-        <translation type="unfinished"/>
+        <translation>Ange den 24-siffriga återställningsnyckeln</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="110"/>
         <source>Please input passphrase to unlock partition</source>
-        <translation type="unfinished"/>
+        <translation>Ange lösenfrasen för att låsa upp partitionen</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="114"/>
         <source>Please input PIN to unlock partition</source>
-        <translation type="unfinished"/>
+        <translation>Ange PIN-koden för att låsa upp partitionen</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="128"/>
@@ -6201,12 +6201,12 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations.cpp" line="345"/>
         <source>External storage device</source>
-        <translation type="unfinished"/>
+        <translation>Extern lagringsenhet</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations.cpp" line="356"/>
         <source>External storage device usage patterns</source>
-        <translation type="unfinished"/>
+        <translation>Användningsmönster för externa lagringsenheter</translation>
     </message>
 </context>
 <context>
@@ -6243,22 +6243,22 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="43"/>
         <source>Real-time data synchronization (Recommended)</source>
-        <translation type="unfinished"/>
+        <translation>Realtidssynkronisering av data (rekommenderas)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="50"/>
         <source>Once the files are copied, you can unplug the external drive without needing to &quot;Safely Remove&quot; it.</source>
-        <translation type="unfinished"/>
+        <translation>När filerna har kopierats kan du koppla ur den externa enheten utan att använda &quot;Säker borttagning&quot;.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="61"/>
         <source>Performance First (Requires Safe Removal)</source>
-        <translation type="unfinished"/>
+        <translation>Prestanda först (kräver säker borttagning)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="68"/>
         <source>File copy data is not synchronized in real-time. After the copy is complete, you must use &quot;Safe Removal&quot; to disconnect the external storage device. Otherwise, file corruption or data loss may occur.</source>
-        <translation type="unfinished"/>
+        <translation>Fildata vid kopiering synkroniseras inte i realtid. När kopieringen är klar måste du använda &quot;Säker borttagning&quot; för att koppla från den externa lagringsenheten. Annars kan filer skadas eller data gå förlorade.</translation>
     </message>
 </context>
 <context>
@@ -6274,7 +6274,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/utils/previewfileoperation.cpp" line="41"/>
         <source>Failed to open %1, which may be moved or renamed</source>
-        <translation type="unfinished"/>
+        <translation>Det gick inte att öppna %1. Filen kan ha flyttats eller bytt namn.</translation>
     </message>
 </context>
 <context>
@@ -6544,17 +6544,17 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="183"/>
         <source>Created</source>
-        <translation type="unfinished"/>
+        <translation>Skapad</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="184"/>
         <source>Accessed</source>
-        <translation type="unfinished"/>
+        <translation>Senast använd</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="185"/>
         <source>Modified</source>
-        <translation type="unfinished"/>
+        <translation>Ändrad</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="191"/>
@@ -6564,12 +6564,12 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="194"/>
         <source>Resolution</source>
-        <translation type="unfinished"/>
+        <translation>Upplösning</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="195"/>
         <source>Duration</source>
-        <translation type="unfinished"/>
+        <translation>Längd</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="381"/>
@@ -6677,37 +6677,37 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="62"/>
         <source>Basic info</source>
-        <translation type="unfinished"/>
+        <translation>Grundläggande information</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="69"/>
         <source>Total size</source>
-        <translation type="unfinished"/>
+        <translation>Total storlek</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="71"/>
         <source>Number of files</source>
-        <translation type="unfinished"/>
+        <translation>Antal filer</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="73"/>
         <source>Time accessed</source>
-        <translation type="unfinished"/>
+        <translation>Senast använd</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="75"/>
         <source>Time modified</source>
-        <translation type="unfinished"/>
+        <translation>Ändringstid</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="82"/>
         <source>Hide this file</source>
-        <translation type="unfinished"/>
+        <translation>Dölj den här filen</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="115"/>
         <source>%1 file(s), %2 folder(s)</source>
-        <translation type="unfinished"/>
+        <translation>%1 fil(er), %2 mapp(ar)</translation>
     </message>
 </context>
 <context>
@@ -6715,21 +6715,21 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="59"/>
         <source>Permissions</source>
-        <translation type="unfinished"/>
+        <translation>Behörigheter</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="182"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="198"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="214"/>
         <source>No read/write</source>
-        <translation type="unfinished"/>
+        <translation>Ingen läsning/skrivning</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="186"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="202"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="218"/>
         <source>--</source>
-        <translation type="unfinished"/>
+        <translation>--</translation>
     </message>
 </context>
 <context>
@@ -6737,69 +6737,69 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="109"/>
         <source>Set %1 and %2 file attributes to %3.</source>
-        <translation type="unfinished"/>
+        <translation>Ange filattributen %1 och %2 till %3.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="113"/>
         <source>File Manager</source>
-        <translation type="unfinished"/>
+        <translation>Filhanterare</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="164"/>
         <source>Multiple Files</source>
-        <translation type="unfinished"/>
+        <translation>Flera filer</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="203"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Avbryt</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="212"/>
         <source>Save</source>
-        <translation type="unfinished"/>
+        <translation>Spara</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="295"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="297"/>
         <source>Hidden files</source>
-        <translation type="unfinished"/>
+        <translation>Dolda filer</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="302"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="304"/>
         <source>Unhide files</source>
-        <translation type="unfinished"/>
+        <translation>Visa dolda filer</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="338"/>
         <source>Owner&gt;Read-write</source>
-        <translation type="unfinished"/>
+        <translation>Ägare&gt;Läsning och skrivning</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="340"/>
         <source>Owner&gt;Read only</source>
-        <translation type="unfinished"/>
+        <translation>Ägare&gt;Endast läsning</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="374"/>
         <source>Group&gt;Read-write</source>
-        <translation type="unfinished"/>
+        <translation>Grupp&gt;Läsning och skrivning</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="376"/>
         <source>Group&gt;Read only</source>
-        <translation type="unfinished"/>
+        <translation>Grupp&gt;Endast läsning</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="410"/>
         <source>Others&gt;Read-write</source>
-        <translation type="unfinished"/>
+        <translation>Övriga&gt;Läsning och skrivning</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="412"/>
         <source>Others&gt;Read only</source>
-        <translation type="unfinished"/>
+        <translation>Övriga&gt;Endast läsning</translation>
     </message>
 </context>
 <context>
@@ -6846,17 +6846,17 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/events/recenteventreceiver.cpp" line="89"/>
         <source>Path</source>
-        <translation type="unfinished"/>
+        <translation>Sökväg</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/events/recenteventreceiver.cpp" line="94"/>
         <source>Last access</source>
-        <translation type="unfinished"/>
+        <translation>Senast använd</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/events/recenteventreceiver.cpp" line="117"/>
         <source>Recent</source>
-        <translation type="unfinished"/>
+        <translation>Senaste</translation>
     </message>
 </context>
 <context>
@@ -7015,44 +7015,44 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="28"/>
         <source>Enable to build the file index immediately for faster file name searches</source>
-        <translation type="unfinished"/>
+        <translation>Aktivera för att bygga filindexet omedelbart och snabba upp sökningar efter filnamn</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="29"/>
         <source>Building index</source>
-        <translation type="unfinished"/>
+        <translation>Bygger index</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="143"/>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="158"/>
         <source>Index update failed</source>
-        <translation type="unfinished"/>
+        <translation>Indexuppdateringen misslyckades</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="143"/>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="158"/>
         <source>try updating again</source>
-        <translation type="unfinished"/>
+        <translation>försök uppdatera igen</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="167"/>
         <source>Index update completed, last update time: %1</source>
-        <translation type="unfinished"/>
+        <translation>Indexuppdateringen är klar. Senast uppdaterad: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="168"/>
         <source>Update index now</source>
-        <translation type="unfinished"/>
+        <translation>Uppdatera index nu</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="192"/>
         <source>Confirm turning off file index?</source>
-        <translation type="unfinished"/>
+        <translation>Vill du stänga av filindexet?</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="193"/>
         <source>If turned off, file searches will traverse the file system and severely reduce search speed, and the smart search feature will be unavailable.</source>
-        <translation type="unfinished"/>
+        <translation>Om indexet stängs av söker filsystemet igenom vid filsökning, vilket kraftigt sänker sökhastigheten, och den smarta sökfunktionen blir otillgänglig.</translation>
     </message>
 </context>
 <context>
@@ -7060,68 +7060,68 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="16"/>
         <source>Enable to search text in images</source>
-        <translation type="unfinished"/>
+        <translation>Aktivera för att söka text i bilder</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="17"/>
         <source>Building index</source>
-        <translation type="unfinished"/>
+        <translation>Bygger index</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="18"/>
         <source>Building index, %1 files indexed</source>
-        <translation type="unfinished"/>
+        <translation>Bygger index, %1 filer indexerade</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="19"/>
         <source>Building index, %1/%2 items indexed</source>
-        <translation type="unfinished"/>
+        <translation>Bygger index, %1/%2 objekt indexerade</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="20"/>
         <source>Index update failed, please</source>
-        <translation type="unfinished"/>
+        <translation>Indexuppdateringen misslyckades. </translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="21"/>
         <source>try updating again</source>
-        <translation type="unfinished"/>
+        <translation>försök uppdatera igen</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="22"/>
         <source>Index update completed, last update time: %1</source>
-        <translation type="unfinished"/>
+        <translation>Indexuppdateringen är klar. Senast uppdaterad: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="23"/>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="29"/>
         <source>Update index now</source>
-        <translation type="unfinished"/>
+        <translation>Uppdatera index nu</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="24"/>
         <source>Currently using battery, index update has been paused</source>
-        <translation type="unfinished"/>
+        <translation>Batteridrift används. Indexuppdateringen har pausats.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="25"/>
         <source>Power saving mode is enabled, index update has been paused</source>
-        <translation type="unfinished"/>
+        <translation>Energisparläge är aktiverat. Indexuppdateringen har pausats.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="26"/>
         <source>Waiting for the device to become idle to continue updating</source>
-        <translation type="unfinished"/>
+        <translation>Väntar på att enheten ska bli ledig för att fortsätta uppdateringen</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="27"/>
         <source>Waiting for index service upgrade</source>
-        <translation type="unfinished"/>
+        <translation>Väntar på uppgradering av indextjänsten</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="28"/>
         <source>Continue updating</source>
-        <translation type="unfinished"/>
+        <translation>Fortsätt uppdateringen</translation>
     </message>
 </context>
 <context>
@@ -7129,7 +7129,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithsemanticindex.cpp" line="17"/>
         <source>Enable to search files using natural language, e.g. &quot;PPT documents edited yesterday&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Aktivera för att söka filer med naturligt språk, till exempel &quot;PPT-dokument som redigerades i går&quot;</translation>
     </message>
 </context>
 <context>
@@ -7137,68 +7137,68 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="16"/>
         <source>Enable to search file contents. Indexing may take a few minutes</source>
-        <translation type="unfinished"/>
+        <translation>Aktivera för att söka i filinnehåll. Indexeringen kan ta några minuter.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="17"/>
         <source>Building index</source>
-        <translation type="unfinished"/>
+        <translation>Bygger index</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="18"/>
         <source>Building index, %1 files indexed</source>
-        <translation type="unfinished"/>
+        <translation>Bygger index, %1 filer indexerade</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="19"/>
         <source>Building index, %1/%2 items indexed</source>
-        <translation type="unfinished"/>
+        <translation>Bygger index, %1/%2 objekt indexerade</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="20"/>
         <source>Index update failed, please</source>
-        <translation type="unfinished"/>
+        <translation>Indexuppdateringen misslyckades. </translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="21"/>
         <source>try updating again</source>
-        <translation type="unfinished"/>
+        <translation>försök uppdatera igen</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="22"/>
         <source>Index update completed, last update time: %1</source>
-        <translation type="unfinished"/>
+        <translation>Indexuppdateringen är klar. Senast uppdaterad: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="23"/>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="29"/>
         <source>Update index now</source>
-        <translation type="unfinished"/>
+        <translation>Uppdatera index nu</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="24"/>
         <source>Currently using battery, index update has been paused</source>
-        <translation type="unfinished"/>
+        <translation>Batteridrift används. Indexuppdateringen har pausats.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="25"/>
         <source>Power saving mode is enabled, index update has been paused</source>
-        <translation type="unfinished"/>
+        <translation>Energisparläge är aktiverat. Indexuppdateringen har pausats.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="26"/>
         <source>Waiting for the device to become idle to continue updating</source>
-        <translation type="unfinished"/>
+        <translation>Väntar på att enheten ska bli ledig för att fortsätta uppdateringen</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="27"/>
         <source>Waiting for index service upgrade</source>
-        <translation type="unfinished"/>
+        <translation>Väntar på uppgradering av indextjänsten</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="28"/>
         <source>Continue updating</source>
-        <translation type="unfinished"/>
+        <translation>Fortsätt uppdateringen</translation>
     </message>
 </context>
 <context>
@@ -7206,12 +7206,12 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/groups/matchmethodgroupstrategy.cpp" line="56"/>
         <source>Exact match</source>
-        <translation type="unfinished"/>
+        <translation>Exakt matchning</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/groups/matchmethodgroupstrategy.cpp" line="58"/>
         <source>Smart match</source>
-        <translation type="unfinished"/>
+        <translation>Smart matchning</translation>
     </message>
 </context>
 <context>
@@ -7225,12 +7225,12 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="178"/>
         <source>Match method</source>
-        <translation type="unfinished"/>
+        <translation>Matchningsmetod</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="201"/>
         <source>File index</source>
-        <translation type="unfinished"/>
+        <translation>Filindex</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="222"/>
@@ -7240,12 +7240,12 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="244"/>
         <source>Image-Content search</source>
-        <translation type="unfinished"/>
+        <translation>Sökning i bildinnehåll</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="266"/>
         <source>Smart search</source>
-        <translation type="unfinished"/>
+        <translation>Smart sökning</translation>
     </message>
 </context>
 <context>
@@ -7261,32 +7261,32 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="119"/>
         <source>Authorize to enable %1</source>
-        <translation type="unfinished"/>
+        <translation>Auktorisera för att aktivera %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="144"/>
         <source>File Manager</source>
-        <translation type="unfinished"/>
+        <translation>Filhanterare</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="145"/>
         <source>You can manually enable %1 in Settings — Advanced — Search.</source>
-        <translation type="unfinished"/>
+        <translation>Du kan aktivera %1 manuellt under Inställningar — Avancerat — Sök.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="341"/>
         <source>Enable</source>
-        <translation type="unfinished"/>
+        <translation>Aktivera</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="346"/>
         <source>Some index updates failed. Search results may be incomplete.</source>
-        <translation type="unfinished"/>
+        <translation>Vissa indexuppdateringar misslyckades. Sökresultaten kan vara ofullständiga.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="347"/>
         <source>Retry update</source>
-        <translation type="unfinished"/>
+        <translation>Försök uppdatera igen</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="348"/>
@@ -7296,59 +7296,59 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="372"/>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="377"/>
         <source>View</source>
-        <translation type="unfinished"/>
+        <translation>Visa</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="352"/>
         <source>Running on battery. Some content indexing has been paused.</source>
-        <translation type="unfinished"/>
+        <translation>Batteridrift används. Viss innehållsindexering har pausats.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="353"/>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="359"/>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="365"/>
         <source>Continue updating</source>
-        <translation type="unfinished"/>
+        <translation>Fortsätt uppdateringen</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="358"/>
         <source>Power save mode is enabled. Some content indexing has been paused.</source>
-        <translation type="unfinished"/>
+        <translation>Energisparläge är aktiverat. Viss innehållsindexering har pausats.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="364"/>
         <source>Waiting for the device to become idle. Some content indexing has been paused.</source>
-        <translation type="unfinished"/>
+        <translation>Väntar på att enheten ska bli ledig. Viss innehållsindexering har pausats.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="370"/>
         <source>Waiting for index service upgrade. Some content indexing has been paused.</source>
-        <translation type="unfinished"/>
+        <translation>Väntar på uppgradering av indextjänsten. Viss innehållsindexering har pausats.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="371"/>
         <source>Update index now</source>
-        <translation type="unfinished"/>
+        <translation>Uppdatera index nu</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="393"/>
         <source>Index is being updated. File name and file content search are available.</source>
-        <translation type="unfinished"/>
+        <translation>Indexet uppdateras. Sökning efter filnamn och filinnehåll är tillgänglig.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="395"/>
         <source>Index is being updated. File name and image content search are available.</source>
-        <translation type="unfinished"/>
+        <translation>Indexet uppdateras. Sökning efter filnamn och bildinnehåll är tillgänglig.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="396"/>
         <source>Index is being updated. File name search is available.</source>
-        <translation type="unfinished"/>
+        <translation>Indexet uppdateras. Sökning efter filnamn är tillgänglig.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="516"/>
         <source>&quot;Full-Text search&quot;</source>
-        <translation type="unfinished"/>
+        <translation>&quot;Fulltextsökning&quot;</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="518"/>
