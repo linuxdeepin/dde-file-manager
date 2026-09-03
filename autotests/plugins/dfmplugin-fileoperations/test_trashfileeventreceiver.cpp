@@ -19,6 +19,7 @@
 #include <dfm-base/utils/dialogmanager.h>
 #include <dfm-base/utils/systempathutil.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/base/application/application.h>
 #include <dfm-io/denumerator.h>
 
 DFMBASE_USE_NAMESPACE
@@ -131,6 +132,14 @@ TEST_F(TestTrashFileEventReceiver, DoMoveToTrash_UserCancelsDialog)
     stub.set_lamda(&FileUtils::fileCanTrash, [](const QUrl &) -> bool {
         __DBG_STUB_INVOKE__
         return true;
+    });
+
+    // Other suites may have initialized the DSettings backend, syncing the
+    // template default (false) into the process-wide generic setting, which
+    // would skip the confirm dialog entirely. Force it on.
+    stub.set_lamda(&Application::genericAttribute, [](Application::GenericAttribute ga) -> QVariant {
+        __DBG_STUB_INVOKE__
+        return ga == Application::kShowDeleteConfirmDialog ? QVariant(true) : QVariant();
     });
 
     stub.set_lamda(&DialogManager::showNormalDeleteConfirmDialog, []() -> int {
