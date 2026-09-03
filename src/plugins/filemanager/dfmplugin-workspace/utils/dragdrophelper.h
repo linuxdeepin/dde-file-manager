@@ -36,7 +36,7 @@ public:
     bool dragLeave(QDragLeaveEvent *event);
     bool drop(QDropEvent *event);
 
-    bool isDragTarget(const QModelIndex &index) const;
+    bool isDropTarget(const QModelIndex &index) const;
 
     // Drag auto-scroll & highlight state (migrated from FileView).
     // State is owned by this helper, matching the existing self-contained

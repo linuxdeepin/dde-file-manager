@@ -97,6 +97,7 @@ enum ItemRoles {
     kItemFileNameOfRenameRole = Qt::UserRole + 14,
     kItemFileBaseNameOfRenameRole = Qt::UserRole + 15,
     kItemFileSuffixOfRenameRole = Qt::UserRole + 16,
+    kItemFileIconNameRole = Qt::UserRole + 48, // item file real file icon name
     kItemFileIconModelToolTipRole = Qt::UserRole + 19,
     kItemFileOriginalPath = Qt::UserRole + 23,
     kItemFileDeletionDate = Qt::UserRole + 24,

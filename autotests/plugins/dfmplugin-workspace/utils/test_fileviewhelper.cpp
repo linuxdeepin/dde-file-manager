@@ -236,8 +236,8 @@ TEST_F(FileViewHelperTest, IsDropTarget_DropTargetIndex_ReturnsTrue)
     // Test that isDropTarget returns true for drop target index
     QModelIndex mockIndex;
     
-    // Mock isDragTarget
-    stub.set_lamda(ADDR(FileView, isDragTarget), [](FileView *, const QModelIndex &) {
+    // Mock isDropTarget
+    stub.set_lamda(ADDR(FileView, isDropTarget), [](FileView *, const QModelIndex &) {
         return true;
     });
     

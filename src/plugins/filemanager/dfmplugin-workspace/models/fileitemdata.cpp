@@ -144,6 +144,8 @@ QIcon FileItemData::fileIcon() const
             return thumbIcon;
     }
 
+    // 无缩略图时回退到文件类型图标（与 v20 行为一致），避免 kItemIconRole
+    // 等未迁移消费方拿到空图标（#5）
     return info->fileIcon();
 }
 
@@ -181,14 +183,15 @@ QVariant FileItemData::data(int role) const
             return info->displayOf(DisPlayInfoType::kFileDisplayPath);
         return url.path();
     case kItemFileLastModifiedRole: {
-        QDateTime lastModified;
         if (sortInfo && sortInfo->isInfoCompleted()) {
-            lastModified = QDateTime::fromSecsSinceEpoch(sortInfo->lastModifiedTime());
+            auto lastModified = QDateTime::fromSecsSinceEpoch(sortInfo->lastModifiedTime());
+            return lastModified.isValid() ? lastModified.toString(FileUtils::dateTimeFormat()) : "-";
         }
         if (info) {
-            lastModified = info->timeOf(TimeInfoType::kLastModified).value<QDateTime>();
+            auto lastModified = info->timeOf(TimeInfoType::kLastModified).value<QDateTime>();
+            return lastModified.isValid() ? lastModified.toString(FileUtils::dateTimeFormat()) : "-";
         }
-        return lastModified.isValid() ? lastModified.toString(FileUtils::dateTimeFormat()) : "-";
+        return "-";
     }
     case kItemFileCreatedRole: {
         QDateTime created;
@@ -268,16 +271,16 @@ QVariant FileItemData::data(int role) const
         return strToolTip;
     }
     case kItemFileIsWritableRole:
-        if (info)
-            return info->isAttributes(OptInfoType::kIsWritable);
         if (sortInfo)
             return sortInfo->isWriteable();
+        if (info)
+            return info->isAttributes(OptInfoType::kIsWritable);
         return true;
     case kItemFileIsDirRole:
-        if (info)
-            return info->isAttributes(OptInfoType::kIsDir);
         if (sortInfo)
             return sortInfo->isDir();
+        if (info)
+            return info->isAttributes(OptInfoType::kIsDir);
         return true;
     case kItemFileCanRenameRole:
         if (info)
@@ -344,6 +347,14 @@ QVariant FileItemData::data(int role) const
         if (!info)
             return QIcon::fromTheme("empty");
         return info->fileIcon();
+    case kItemFileIconNameRole:
+        if (sortInfo && sortInfo->isDir())
+            return "inode-directory";
+
+        if (info)
+            return info->nameOf(NameInfoType::kIconName);
+
+        return "unknown";
     default:
         return QVariant();
     }
@@ -384,10 +395,11 @@ void FileItemData::transFileInfo()
 
 bool FileItemData::isDir() const
 {
-    if (info)
-        return info->isAttributes(OptInfoType::kIsDir);
     if (sortInfo)
         return sortInfo->isDir();
+
+    if (info)
+        return info->isAttributes(OptInfoType::kIsDir);
 
     return false;
 }

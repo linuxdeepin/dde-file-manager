@@ -11,6 +11,7 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/chinese2pinyin.h>
 #include <dfm-base/utils/sysinfoutils.h>
+#include <dfm-base/utils/iconutils.h>
 #include <dfm-base/file/local/localfileiconprovider.h>
 #include <dfm-base/mimetype/dmimedatabase.h>
 #include <dfm-base/mimetype/mimetypedisplaymanager.h>
@@ -791,20 +792,8 @@ QString AsyncFileInfoPrivate::completeSuffix() const
 
 QString AsyncFileInfoPrivate::iconName() const
 {
-    QString iconNameValue;
-    if (SystemPathUtil::instance()->isSystemPath(asyncAttribute(FileInfo::FileInfoAttributeID::kStandardFilePath).toString()))
-        iconNameValue = SystemPathUtil::instance()->systemPathIconNameByPath(asyncAttribute(FileInfo::FileInfoAttributeID::kStandardFilePath).toString());
-
-    if (iconNameValue.isEmpty()) {
-        const QStringList &list = asyncAttribute(FileInfo::FileInfoAttributeID::kStandardIcon).toStringList();
-        if (!list.isEmpty())
-            iconNameValue = list.first();
-    }
-    if (!ProtocolUtils::isRemoteFile(q->fileUrl()) && iconNameValue.isEmpty())
-        iconNameValue = q->fileMimeType().iconName();
-    if (iconNameValue.isEmpty() && q->isAttributes(OptInfoType::kIsDir))
-        iconNameValue = "folder";
-    return iconNameValue;
+    QReadLocker wlk(&iconLock);
+    return fileIconName;
 }
 
 QString AsyncFileInfoPrivate::mimeTypeName() const
@@ -1193,6 +1182,7 @@ int AsyncFileInfoPrivate::cacheAllAttributes(const QString &attributes)
     if (q->nameOf(NameInfoType::kIconName) != attribute(DFileInfo::AttributeID::kStandardIcon)) {
         QWriteLocker rlk(&iconLock);
         fileIcon = QIcon();
+        fileIconName.clear();
     }
 
     {
@@ -1209,6 +1199,8 @@ int AsyncFileInfoPrivate::cacheAllAttributes(const QString &attributes)
         if (changesAttributes.contains(FileInfo::FileInfoAttributeID::kStandardFileType) || changesAttributes.contains(FileInfo::FileInfoAttributeID::kStandardFileExists) || changesAttributes.contains(FileInfo::FileInfoAttributeID::kStandardContentType))
             fileMimeTypeAsync();   // kMimeTypeName
     }
+
+    updateFileIconName();
 
     return 2;
 }
@@ -1281,6 +1273,37 @@ bool AsyncFileInfoPrivate::hasAsyncAttribute(FileInfo::FileInfoAttributeID key)
 {
     QMutexLocker lk(&lock);
     return cacheAsyncAttributes.contains(key);
+}
+
+void AsyncFileInfoPrivate::updateFileIconName()
+{
+    QWriteLocker wlk(&iconLock);
+    if (this->attribute(DFileInfo::AttributeID::kStandardIsDir).toBool()) {
+        fileIconName = "inode-directory";
+        return;
+    }
+
+    QString iconNameValue;
+    if (SystemPathUtil::instance()->isSystemPath(asyncAttribute(FileInfo::FileInfoAttributeID::kStandardFilePath).toString()))
+        iconNameValue = SystemPathUtil::instance()->systemPathIconNameByPath(asyncAttribute(FileInfo::FileInfoAttributeID::kStandardFilePath).toString());
+
+    auto mimetype = q->fileMimeType();
+    if (iconNameValue.isEmpty())
+        iconNameValue = mimetype.iconName();
+
+    if (!QIcon::hasThemeIcon(iconNameValue))
+        iconNameValue = mimetype.genericIconName();
+
+    if (!QIcon::hasThemeIcon(iconNameValue)) {
+        const QStringList &list = mimetype.parentMimeTypes();
+        const auto &iter = std::find_if(list.begin(), list.end(), [](const QString &name) { return QIcon::hasThemeIcon(name); });
+        if (iter != list.end())
+            iconNameValue = *iter;
+    }
+
+    iconNameValue = IconUtils::normalizeIconName(iconNameValue);
+
+    fileIconName = iconNameValue;
 }
 
 }

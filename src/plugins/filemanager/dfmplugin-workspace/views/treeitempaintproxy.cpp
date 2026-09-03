@@ -21,19 +21,33 @@ TreeItemPaintProxy::TreeItemPaintProxy(QObject *parent)
 void TreeItemPaintProxy::drawIcon(QPainter *painter, QRectF *rect, const QStyleOptionViewItem &option, const QModelIndex &index)
 {
     *rect = iconRect(index, rect->toRect());
+    auto iconName = index.data(dfmbase::Global::ItemRoles::kItemFileIconNameRole).toString();
 
     int nameColumnWidth = view()->getColumnWidth(0);
     firstColumnRightBoundary = option.rect.x() + nameColumnWidth - 1 - view()->viewportMargins().left();
+    auto isThumnail = isThumnailIconIndex(index);
 
     if (rect->right() <= firstColumnRightBoundary) {
         bool isEnabled = option.state & QStyle::State_Enabled;
-        auto drawFileIcon = ItemDelegateHelper::paintIcon(painter, option.icon, { *rect, Qt::AlignCenter, isEnabled ? QIcon::Normal : QIcon::Disabled, QIcon::Off, dfmbase::Global::ViewMode::kTreeMode,
-                                                                                  isThumnailIconIndex(index) });
+        auto drawFileIcon = ItemDelegateHelper::paintIcon(painter, (iconName.startsWith("desktopNotThemeIcon::") && !isThumnail)
+                                                          ? index.data(dfmbase::Global::ItemRoles::kItemFileIconRole).value<QIcon>()
+                                                          : option.icon,
+                                                          { *rect, Qt::AlignCenter,
+                                                            isEnabled ? QIcon::Normal : QIcon::Disabled,
+                                                            QIcon::Off,
+                                                            isThumnail,
+                                                            iconName.startsWith("desktopNotThemeIcon::") ? "" : iconName,
+                                                            dfmbase::Global::ViewMode::kTreeMode });
         // If the thumbnail drawing is empty, then redraw the file fileicon
         if (!drawFileIcon) {
             const QIcon &fileIcon = index.data(dfmbase::Global::ItemRoles::kItemFileIconRole).value<QIcon>();
-            ItemDelegateHelper::paintIcon(painter, fileIcon, { *rect, Qt::AlignCenter, isEnabled ? QIcon::Normal : QIcon::Disabled, QIcon::Off, dfmbase::Global::ViewMode::kTreeMode,
-                                                               isThumnailIconIndex(index) });
+            ItemDelegateHelper::paintIcon(painter, fileIcon,
+                                          { *rect, Qt::AlignCenter,
+                                            isEnabled ? QIcon::Normal : QIcon::Disabled,
+                                            QIcon::Off,
+                                            isThumnail,
+                                            "",
+                                            dfmbase::Global::ViewMode::kTreeMode });
         }
     }
 
@@ -85,7 +99,7 @@ void TreeItemPaintProxy::drawExpandArrow(QPainter *painter, const QRectF &rect, 
 
     painter->save();
     bool isSelected = (opt.state & QStyle::State_Selected) && opt.showDecorationSelected;
-    bool isDropTarget = view()->isDragTarget(index);
+    bool isDropTarget = view()->isDropTarget(index);
     if (isSelected || isDropTarget) {
         painter->setPen(opt.palette.color(QPalette::Active, QPalette::HighlightedText));
     } else {

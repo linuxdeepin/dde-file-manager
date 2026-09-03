@@ -19,15 +19,29 @@ void ListItemPaintProxy::drawIcon(QPainter *painter, QRectF *rect, const QStyleO
     Q_UNUSED(index)
 
     *rect = iconRect(index, rect->toRect());
+    auto iconName = index.data(dfmbase::Global::ItemRoles::kItemFileIconNameRole).toString();
+    auto isThumnail = isThumnailIconIndex(index);
 
     bool isEnabled = option.state & QStyle::State_Enabled;
-    auto drawFileIcon = ItemDelegateHelper::paintIcon(painter, option.icon, { *rect, Qt::AlignCenter, isEnabled ? QIcon::Normal : QIcon::Disabled, QIcon::Off, dfmbase::Global::ViewMode::kListMode,
-                                                                              isThumnailIconIndex(index) });
+    auto drawFileIcon = ItemDelegateHelper::paintIcon(painter, (iconName.startsWith("desktopNotThemeIcon::") && !isThumnail)
+                                                      ? index.data(dfmbase::Global::ItemRoles::kItemFileIconRole).value<QIcon>()
+                                                      : option.icon,
+                                                      { *rect, Qt::AlignCenter,
+                                                        isEnabled ? QIcon::Normal : QIcon::Disabled,
+                                                        QIcon::Off,
+                                                        isThumnail,
+                                                        iconName.startsWith("desktopNotThemeIcon::") ? "" : iconName,
+                                                        dfmbase::Global::ViewMode::kListMode });
     // If the thumbnail drawing is empty, then redraw the file fileicon
     if (!drawFileIcon) {
         const QIcon &fileIcon = index.data(dfmbase::Global::ItemRoles::kItemFileIconRole).value<QIcon>();
-        ItemDelegateHelper::paintIcon(painter, fileIcon, { *rect, Qt::AlignCenter, isEnabled ? QIcon::Normal : QIcon::Disabled , QIcon::Off, dfmbase::Global::ViewMode::kListMode,
-                                                           isThumnailIconIndex(index) });
+        ItemDelegateHelper::paintIcon(painter, fileIcon,
+                                      { *rect, Qt::AlignCenter,
+                                        isEnabled ? QIcon::Normal : QIcon::Disabled,
+                                        QIcon::Off,
+                                        isThumnail,
+                                        "",
+                                        dfmbase::Global::ViewMode::kListMode });
     }
 }
 

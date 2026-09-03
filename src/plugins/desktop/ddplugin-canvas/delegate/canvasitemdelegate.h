@@ -8,6 +8,8 @@
 #include "ddplugin_canvas_global.h"
 
 #include <dfm-base/interfaces/fileinfo.h>
+#include <dfm-base/utils/iconcachemanager.h>
+#include <dfm-base/utils/iconpainterutils.h>
 
 #include <QStyledItemDelegate>
 #include <QTextOption>
@@ -25,14 +27,7 @@ class CanvasItemDelegate : public QStyledItemDelegate
     friend class CanvasViewBroker;
 
 public:
-    struct PaintIconOpts
-    {
-        QRectF rect;
-        Qt::Alignment alignment { Qt::AlignCenter };
-        QIcon::Mode mode { QIcon::Normal };
-        QIcon::State state { QIcon::Off };
-        bool isThumb { false };
-    };
+    using PaintIconOpts = DFMBASE_NAMESPACE::IconPainterUtils::PaintIconOpts;
 
     explicit CanvasItemDelegate(QAbstractItemView *parentPtr = nullptr);
     ~CanvasItemDelegate() override;
@@ -63,7 +58,6 @@ public:
 protected:
     void initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const override;
     QRect textPaintRect(const QStyleOptionViewItem &option, const QModelIndex &index, const QRect &rText, bool elide) const;
-    static std::optional<QRectF> paintIcon(QPainter *painter, const QIcon &icon, const PaintIconOpts &opts);
     static QRectF paintEmblems(QPainter *painter, const QRectF &rect, const FileInfoPointer &info);
 
     void paintBackground(QPainter *painter, const QStyleOptionViewItem &option, const QRect &iconRect) const;
@@ -72,12 +66,8 @@ protected:
     void drawHighlightText(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const QRect &rText) const;
     void drawExpandText(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const QRectF &rect) const;
 
-    static QPixmap getIconPixmap(const QIcon &icon, const QSize &size, qreal pixelRatio,
-                                 QIcon::Mode mode = QIcon::Normal, QIcon::State state = QIcon::Off);
-    static Qt::Alignment visualAlignment(Qt::LayoutDirection direction, Qt::Alignment alignment);
     QList<QRectF> elideTextRect(const QModelIndex &index, const QRect &rect, const Qt::TextElideMode &elideMode) const;
     bool isTransparent(const QModelIndex &index) const;
-    bool isThumnailIconIndex(const QModelIndex &index) const;
 
 public slots:
     void updateItemSizeHint() const;

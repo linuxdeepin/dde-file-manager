@@ -8,6 +8,7 @@
 #include "stubext.h"
 
 #include "utils/itemdelegatehelper.h"
+#include <dfm-base/utils/iconpainterutils.h>
 
 #include <QIcon>
 #include <QSize>
@@ -46,7 +47,7 @@ TEST_F(ItemDelegateHelperTest, GetIconPixmap_NullIcon_ReturnsEmptyPixmap)
     QIcon::Mode mode = QIcon::Normal;
     QIcon::State state = QIcon::Off;
     
-    QPixmap result = ItemDelegateHelper::getIconPixmap(nullIcon, size, pixelRatio, mode, state);
+    QPixmap result = IconPainterUtils::getIconPixmap(nullIcon, size, pixelRatio, mode, state);
     
     EXPECT_TRUE(result.isNull());
 }
@@ -60,7 +61,7 @@ TEST_F(ItemDelegateHelperTest, GetIconPixmap_InvalidSize_ReturnsEmptyPixmap)
     QIcon::Mode mode = QIcon::Normal;
     QIcon::State state = QIcon::Off;
     
-    QPixmap result = ItemDelegateHelper::getIconPixmap(testIcon, invalidSize, pixelRatio, mode, state);
+    QPixmap result = IconPainterUtils::getIconPixmap(testIcon, invalidSize, pixelRatio, mode, state);
     
     EXPECT_TRUE(result.isNull());
 }
@@ -74,7 +75,7 @@ TEST_F(ItemDelegateHelperTest, GetIconPixmap_ValidParameters_ReturnsPixmap)
     QIcon::Mode mode = QIcon::Normal;
     QIcon::State state = QIcon::Off;
     
-    QPixmap result = ItemDelegateHelper::getIconPixmap(testIcon, size, pixelRatio, mode, state);
+    QPixmap result = IconPainterUtils::getIconPixmap(testIcon, size, pixelRatio, mode, state);
     
     // In offscreen/test environments, icon themes may not be available,
     // so the icon may be null. Only assert non-null when theme is available.

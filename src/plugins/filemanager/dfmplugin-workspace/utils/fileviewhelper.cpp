@@ -129,7 +129,7 @@ bool FileViewHelper::isSelected(const QModelIndex &index) const
 
 bool FileViewHelper::isDropTarget(const QModelIndex &index) const
 {
-    return parent()->isDragTarget(index);
+    return parent()->isDropTarget(index);
 }
 
 void FileViewHelper::initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const

@@ -13,6 +13,7 @@
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/utils/clipboard.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/iconpainterutils.h>
 #include <dfm-base/utils/elidetextlayout.h>
 
 #include <QPainter>
@@ -213,42 +214,42 @@ TEST_F(UT_CollectionItemDelegate, MayExpand_SingleSelection_ReturnsTrue)
 TEST_F(UT_CollectionItemDelegate, VisualAlignment_LeftToRight_KeepsAlignment)
 {
     Qt::Alignment align = Qt::AlignLeft | Qt::AlignTop;
-    Qt::Alignment result = CollectionItemDelegate::visualAlignment(Qt::LeftToRight, align);
+    Qt::Alignment result = IconPainterUtils::visualAlignment(Qt::LeftToRight, align);
     EXPECT_TRUE(result & Qt::AlignLeft);
 }
 
 TEST_F(UT_CollectionItemDelegate, VisualAlignment_RightToLeft_SwapsLeftRight)
 {
     Qt::Alignment align = Qt::AlignLeft | Qt::AlignTop;
-    Qt::Alignment result = CollectionItemDelegate::visualAlignment(Qt::RightToLeft, align);
+    Qt::Alignment result = IconPainterUtils::visualAlignment(Qt::RightToLeft, align);
     EXPECT_TRUE(result & Qt::AlignRight);
 }
 
 TEST_F(UT_CollectionItemDelegate, VisualAlignment_NoHorizontal_AddsLeft)
 {
     Qt::Alignment align = Qt::AlignTop;
-    Qt::Alignment result = CollectionItemDelegate::visualAlignment(Qt::LeftToRight, align);
+    Qt::Alignment result = IconPainterUtils::visualAlignment(Qt::LeftToRight, align);
     EXPECT_TRUE(result & Qt::AlignLeft);
 }
 
 TEST_F(UT_CollectionItemDelegate, GetIconPixmap_NullIcon_ReturnsEmptyPixmap)
 {
     QIcon nullIcon;
-    QPixmap result = CollectionItemDelegate::getIconPixmap(nullIcon, QSize(48, 48), 1.0);
+    QPixmap result = IconPainterUtils::getIconPixmap(nullIcon, QSize(48, 48), 1.0);
     EXPECT_TRUE(result.isNull());
 }
 
 TEST_F(UT_CollectionItemDelegate, GetIconPixmap_ZeroSize_ReturnsEmptyPixmap)
 {
     QIcon icon = QIcon::fromTheme("folder");
-    QPixmap result = CollectionItemDelegate::getIconPixmap(icon, QSize(0, 0), 1.0);
+    QPixmap result = IconPainterUtils::getIconPixmap(icon, QSize(0, 0), 1.0);
     EXPECT_TRUE(result.isNull());
 }
 
 TEST_F(UT_CollectionItemDelegate, GetIconPixmap_NegativeSize_ReturnsEmptyPixmap)
 {
     QIcon icon = QIcon::fromTheme("folder");
-    QPixmap result = CollectionItemDelegate::getIconPixmap(icon, QSize(-10, 48), 1.0);
+    QPixmap result = IconPainterUtils::getIconPixmap(icon, QSize(-10, 48), 1.0);
     EXPECT_TRUE(result.isNull());
 }
 
@@ -305,10 +306,10 @@ TEST_F(UT_CollectionItemDelegate, IsTransparent_CutActionNoFile_ReturnsFalse)
     EXPECT_FALSE(delegate->isTransparent(index));
 }
 
-TEST_F(UT_CollectionItemDelegate, IsThumnailIconIndex_InvalidIndex_ReturnsFalse)
+TEST_F(UT_CollectionItemDelegate, IsThumbnailIcon_NullInfo_ReturnsFalse)
 {
-    QModelIndex invalidIndex;
-    EXPECT_FALSE(delegate->isThumnailIconIndex(invalidIndex));
+    FileInfoPointer nullInfo(nullptr);
+    EXPECT_FALSE(IconPainterUtils::isThumbnailIcon(nullInfo));
 }
 
 TEST_F(UT_CollectionItemDelegate, UpdateItemSizeHint_UpdatesSizeHint)

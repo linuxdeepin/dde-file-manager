@@ -616,10 +616,17 @@ QRectF IconItemDelegate::paintItemIcon(QPainter *painter, const QStyleOptionView
 
     // init icon geomerty
     QRectF iconRect = itemIconRect(drawingRect);
+    auto iconName = index.data(Global::ItemRoles::kItemFileIconNameRole).toString();
 
     bool isDropTarget = parent()->isDropTarget(index);
+    // 拖拽图标绘制
     if (isDropTarget) {
-        QPixmap pixmap = opt.icon.pixmap(iconRect.size().toSize());
+        QPixmap pixmap;
+        if (opt.icon.isNull() && !iconName.isEmpty()) {
+            pixmap = IconPainterUtils::getIconPixmap(iconName, iconRect.size().toSize(), painter->device()->devicePixelRatioF());
+        } else {
+            pixmap = opt.icon.pixmap(iconRect.size().toSize());
+        }
         QPainter p(&pixmap);
 
         p.setCompositionMode(QPainter::CompositionMode_SourceAtop);
@@ -627,15 +634,19 @@ QRectF IconItemDelegate::paintItemIcon(QPainter *painter, const QStyleOptionView
         p.end();
         painter->drawPixmap(iconRect.toRect(), pixmap);
     } else {
+        auto isThumnail = isThumnailIconIndex(index);
         bool isEnabled = opt.state & QStyle::State_Enabled;
         // draw icon
-        auto drawFileIcon = ItemDelegateHelper::paintIcon(painter, opt.icon,
+        auto drawFileIcon = ItemDelegateHelper::paintIcon(painter, (iconName.startsWith("desktopNotThemeIcon::") && !isThumnail)
+                                                          ? index.data(dfmbase::Global::ItemRoles::kItemFileIconRole).value<QIcon>()
+                                                          : opt.icon,
                                                           { iconRect,
                                                             Qt::AlignCenter,
                                                             isEnabled ? QIcon::Normal : QIcon::Disabled,
                                                             QIcon::Off,
-                                                            ViewMode::kIconMode,
-                                                            isThumnailIconIndex(index) });
+                                                            isThumnail,
+                                                            iconName.startsWith("desktopNotThemeIcon::") ? "" : iconName,
+                                                            ViewMode::kIconMode });
         // If the thumbnail drawing is empty, then redraw the file fileicon
         if (!drawFileIcon) {
             const QIcon &fileIcon = index.data(Global::ItemRoles::kItemFileIconRole).value<QIcon>();
@@ -644,8 +655,9 @@ QRectF IconItemDelegate::paintItemIcon(QPainter *painter, const QStyleOptionView
                                             Qt::AlignCenter,
                                             isEnabled ? QIcon::Normal : QIcon::Disabled,
                                             QIcon::Off,
-                                            ViewMode::kIconMode,
-                                            false });
+                                            false,
+                                            "",
+                                            ViewMode::kIconMode });
         }
     }
 
