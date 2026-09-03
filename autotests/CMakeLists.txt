@@ -18,3 +18,6 @@ endif()
 add_subdirectory(libs)
 add_subdirectory(services)
 add_subdirectory(plugins)
+
+# App-level plugin tests (dde-file-manager-preview)
+add_subdirectory(apps)
