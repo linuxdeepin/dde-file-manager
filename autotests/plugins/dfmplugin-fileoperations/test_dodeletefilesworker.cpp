@@ -24,6 +24,7 @@
 #include <dfm-base/utils/fileutils.h>
 
 #include "fileoperations/deletefiles/dodeletefilesworker.h"
+#include "fileoperations/fileoperationutils/fileoperationsutils.h"
 
 DFMBASE_USE_NAMESPACE
 DPFILEOPERATIONS_USE_NAMESPACE
@@ -424,6 +425,13 @@ TEST_F(TestDoDeleteFilesWorker, DeleteAllFiles_LocalDevice)
 {
     worker->isSourceFileLocal = true;
 
+    // Disable the FTS path (DConfig default true) so the local-device
+    // branch is actually taken
+    stub.set_lamda(&FileOperationsUtils::useFtsDelete, []() -> bool {
+        __DBG_STUB_INVOKE__
+        return false;
+    });
+
     stub.set_lamda(&DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice,
                    [](DoDeleteFilesWorker *) -> bool {
                        __DBG_STUB_INVOKE__
@@ -437,6 +445,13 @@ TEST_F(TestDoDeleteFilesWorker, DeleteAllFiles_LocalDevice)
 TEST_F(TestDoDeleteFilesWorker, DeleteAllFiles_OtherDevice)
 {
     worker->isSourceFileLocal = false;
+
+    // Disable the FTS path (DConfig default true) so the other-device
+    // branch is actually taken
+    stub.set_lamda(&FileOperationsUtils::useFtsDelete, []() -> bool {
+        __DBG_STUB_INVOKE__
+        return false;
+    });
 
     stub.set_lamda(&DoDeleteFilesWorker::deleteFilesOnOtherDevice,
                    [](DoDeleteFilesWorker *) -> bool {
