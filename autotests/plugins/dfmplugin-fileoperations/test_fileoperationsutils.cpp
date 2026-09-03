@@ -8,6 +8,7 @@
 #include <QFile>
 #include <QTimer>
 #include <QSignalSpy>
+#include <QTest>
 
 #include "stubext.h"
 
@@ -83,8 +84,9 @@ TEST_F(TestFileOperationsUtils, UpdateProgressTimer_SignalEmission)
 
     timer.doStartTime();
 
-    // Wait for at least one timeout
-    QThread::msleep(600);
+    // QTimer needs a running event loop to fire; QTest::qWait processes events
+    // while waiting, unlike QThread::msleep which blocks the event dispatch.
+    QTest::qWait(700);
 
     // Should have emitted at least one signal
     EXPECT_GT(spy.count(), 0);
@@ -172,7 +174,8 @@ TEST_F(TestFileOperationsUtils, StatisticsFilesSize_MultipleFiles)
 
     ASSERT_NE(sizeInfo, nullptr);
     EXPECT_EQ(sizeInfo->fileCount, 3);
-    EXPECT_GT(sizeInfo->totalSize, 3584);  // At least sum of file sizes
+    // FTS sums the exact logical st_size of each file: 1024 + 2048 + 512
+    EXPECT_EQ(sizeInfo->totalSize, 3584);
 }
 
 TEST_F(TestFileOperationsUtils, StatisticsFilesSize_WithRecordUrl)

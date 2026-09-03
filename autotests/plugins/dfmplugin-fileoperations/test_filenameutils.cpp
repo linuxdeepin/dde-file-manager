@@ -527,7 +527,10 @@ TEST_F(TestFileNameUtils, Integration_CompleteWorkflow_HiddenFileWithMultipleExt
     QString result = FileNamingUtils::generateNonConflictingName(hiddenFile, targetDirInfo);
     EXPECT_TRUE(result.contains(".backup"));
     EXPECT_TRUE(result.contains("copy"));
-    EXPECT_TRUE(result.endsWith(".data.gz"));
+    // QMimeDatabase only recognizes ".gz" as the extension for ".backup.data.gz",
+    // so the generated name keeps ".backup.data" as base name and appends ".gz"
+    EXPECT_TRUE(result.endsWith(".gz"));
+    EXPECT_TRUE(result.startsWith(".backup.data"));
 
     // Verify it doesn't exist
     EXPECT_FALSE(FileExistenceChecker::fileExists(targetDirInfo, result));

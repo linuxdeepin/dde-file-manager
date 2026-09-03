@@ -78,9 +78,12 @@ TEST_F(TestErrorMessageAndAction, ErrorMsg_WithCustomErrorMsg)
     QUrl to = QUrl::fromLocalFile("/tmp/dest.txt");
     QString customMsg = "Custom error message";
 
-    QString msg = ErrorMessageAndAction::errorMsg(from, to, AbstractJobHandler::JobErrorType::kProrogramError, false, customMsg);
+    // errorToStringByCause only has a custom-message branch for concrete error types;
+    // kProrogramError falls to default and returns an empty string.
+    QString msg = ErrorMessageAndAction::errorMsg(from, to, AbstractJobHandler::JobErrorType::kWriteError, false, customMsg);
 
     EXPECT_FALSE(msg.isEmpty());
+    EXPECT_TRUE(msg.contains(customMsg));
 }
 
 TEST_F(TestErrorMessageAndAction, ErrorMsg_IsToFlagTrue)
@@ -182,9 +185,12 @@ TEST_F(TestErrorMessageAndAction, SrcAndDestString_EmptyUrls)
 
 TEST_F(TestErrorMessageAndAction, SupportActions_NoError)
 {
+    // For kNoError the implementation falls to the default branch and only offers cancel
     AbstractJobHandler::SupportActions actions = ErrorMessageAndAction::supportActions(AbstractJobHandler::JobErrorType::kNoError);
 
-    EXPECT_EQ(actions, AbstractJobHandler::SupportAction::kNoAction);
+    EXPECT_TRUE(actions & AbstractJobHandler::SupportAction::kCancelAction);
+    EXPECT_FALSE(actions & AbstractJobHandler::SupportAction::kSkipAction);
+    EXPECT_FALSE(actions & AbstractJobHandler::SupportAction::kRetryAction);
 }
 
 TEST_F(TestErrorMessageAndAction, SupportActions_PermissionError)
