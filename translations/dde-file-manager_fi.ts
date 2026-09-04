@@ -7342,22 +7342,22 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="396"/>
         <source>Index is being updated. File name search is available.</source>
-        <translation type="unfinished"/>
+        <translation>Indeksi on päivitetty. Tiedostonimen haku on käytettävissä.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="516"/>
         <source>&quot;Full-Text search&quot;</source>
-        <translation type="unfinished"/>
+        <translation>&quot;Täysi tekstihaku&quot;</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="518"/>
         <source>&quot;Image-Content search&quot;</source>
-        <translation type="unfinished"/>
+        <translation>&quot;Kuvasisällön haku&quot;</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="521"/>
         <source>&quot;Smart search&quot;</source>
-        <translation type="unfinished"/>
+        <translation>&quot;Älykäs haku&quot;</translation>
     </message>
 </context>
 <context>
