@@ -4042,7 +4042,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="438"/>
         <source>Use the file chooser dialog of File Manager</source>
-        <translation>Valitse tiedosto tiedostonhallinnan kautta</translation>
+        <translation>Käytä tiedostonhallinnan valintaikkunaa</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="440"/>
@@ -7270,22 +7270,22 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="145"/>
         <source>You can manually enable %1 in Settings — Advanced — Search.</source>
-        <translation type="unfinished"/>
+        <translation>Voit ottaa %1:n käyttöön kohdassa Asetukset — Lisäasetukset — Haku.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="341"/>
         <source>Enable</source>
-        <translation type="unfinished"/>
+        <translation>Käytä</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="346"/>
         <source>Some index updates failed. Search results may be incomplete.</source>
-        <translation type="unfinished"/>
+        <translation>Jokin indeksipäivitys epäonnistui. Hakutulokset saattavat olla puutteellisia.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="347"/>
         <source>Retry update</source>
-        <translation type="unfinished"/>
+        <translation>Päivitä uudelleen</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="348"/>
@@ -7295,12 +7295,12 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="372"/>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="377"/>
         <source>View</source>
-        <translation type="unfinished"/>
+        <translation>Näytä</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="352"/>
         <source>Running on battery. Some content indexing has been paused.</source>
-        <translation type="unfinished"/>
+        <translation>Akkuvirralla osa sisällön indeksoinnista on keskeytetty.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="353"/>
