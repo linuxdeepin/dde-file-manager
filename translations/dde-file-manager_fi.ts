@@ -7317,27 +7317,27 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="364"/>
         <source>Waiting for the device to become idle. Some content indexing has been paused.</source>
-        <translation>Odotetaan siirtymistä joutotilaan ja osa sisällön indeksoinnista on keskeytetty.</translation>
+        <translation>Odotetaan siirtymistä joutotilaan. Osa sisällön indeksoinnista on keskeytetty.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="370"/>
         <source>Waiting for index service upgrade. Some content indexing has been paused.</source>
-        <translation type="unfinished"/>
+        <translation>Odotetaan indeksipalvelun päivitystä. Osa sisällön indeksoinnista on keskeytetty.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="371"/>
         <source>Update index now</source>
-        <translation type="unfinished"/>
+        <translation>Päivitä indeksi</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="393"/>
         <source>Index is being updated. File name and file content search are available.</source>
-        <translation type="unfinished"/>
+        <translation>Indeksi on päivitetty. Tiedostonimen ja sisällön haku on käytettävissä.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="395"/>
         <source>Index is being updated. File name and image content search are available.</source>
-        <translation type="unfinished"/>
+        <translation>Indeksi on päivitetty. Tiedostonimen ja kuvasisällön haku on käytettävissä.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="396"/>
