@@ -69,6 +69,12 @@ bool isHiddenMenu(const QString &app)
 
 bool isHiddenDesktopMenu()
 {
+    bool enableMenu { DConfigManager::instance()
+                              ->value(kDesktopDConfName, "enableContextMenu", true)
+                              .toBool() };
+    if (!enableMenu)
+        return true;
+
     return Application::appObtuselySetting()->value("ApplicationAttribute", "DisableDesktopContextMenu", false).toBool();
 }
 
