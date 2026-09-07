@@ -386,8 +386,12 @@ QVariantMap SearchHintController::buildHintContent(quint64 winId, HintType type)
 
 QString SearchHintController::updatingHintText() const
 {
-    bool textReady = m_textStatusValid && m_textState == "Idle";
-    bool ocrReady = m_ocrStatusValid && m_ocrState == "Idle";
+    const QString &cfg = DConfig::kSearchCfgPath;
+    const bool fullTextEnabled = DConfigManager::instance()->value(cfg, DConfig::kEnableFullTextSearch, true).toBool();
+    const bool ocrEnabled = DConfigManager::instance()->value(cfg, DConfig::kEnableOcrTextSearch, false).toBool();
+
+    const bool textReady = m_textStatusValid && m_textState == "Idle" && fullTextEnabled;
+    const bool ocrReady = m_ocrStatusValid && m_ocrState == "Idle" && ocrEnabled;
 
     if (textReady && !ocrReady)
         return tr("Index is being updated. File name and file content search are available.");
