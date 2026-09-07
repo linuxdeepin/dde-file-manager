@@ -130,8 +130,10 @@ void TaskDialog::addTaskWidget(const JobHandlePointer taskHandler, TaskWidget *w
 
     blockShutdown();
 
+    wid->blockSignals(true);
+
     QListWidgetItem *item = new QListWidgetItem();
-    item->setSizeHint(QSize(wid->width(), wid->height()));
+    item->setSizeHint(QSize(wid->width(), 0));
     item->setFlags(Qt::NoItemFlags);
     taskListWidget->addItem(item);
     taskListWidget->setItemWidget(item, wid);
@@ -147,6 +149,12 @@ void TaskDialog::addTaskWidget(const JobHandlePointer taskHandler, TaskWidget *w
     setModal(false);
     show();
     activateWindow();
+
+    adjustSize();
+    if (taskItems.count() == 1)
+        moveToCenter();
+
+    wid->blockSignals(false);
 }
 /*!
  * \brief TaskDialog::setTitle 设置任务进度对话框的title
@@ -168,7 +176,6 @@ void TaskDialog::adjustSize(int hight)
         QListWidgetItem *item = taskListWidget->item(i);
         auto wg = taskListWidget->itemWidget(item);
         int h = widgit == wg && hight > 0 ? hight : wg->height();
-        item->setSizeHint(QSize(item->sizeHint().width(), h));
         listHeight += h;
     }
 
@@ -186,6 +193,14 @@ void TaskDialog::adjustSize(int hight)
     // 如果高度发生了变化，重新居中对话框以避免位置偏移
     if (oldHeight != height()) {
         moveYCenter();
+    }
+
+    // 对话框尺寸和位置就绪后，才设置 item 的 sizeHint 使新控件显示
+    for (int i = 0; i < taskListWidget->count(); i++) {
+        QListWidgetItem *item = taskListWidget->item(i);
+        auto wg = taskListWidget->itemWidget(item);
+        int h = widgit == wg && hight > 0 ? hight : wg->height();
+        item->setSizeHint(QSize(item->sizeHint().width(), h));
     }
 }
 /*!
