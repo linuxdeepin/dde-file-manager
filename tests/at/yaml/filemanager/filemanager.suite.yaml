@@ -906,5 +906,367 @@ suites:
     action: assert_element
     selector:
       name: CollectionView
+- id: suite_filemanager_017_s1
+  name: 保险箱解锁视图密码输入与提示
+  description: 验证保险箱解锁视图 PasswordEdit 和 TipsButton 交互
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: PasswordEdit
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: TipsButton
+      role: push button
+    do: click
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: PasswordEdit
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TipsButton
+      role: push button
+- id: suite_filemanager_018_s1
+  name: 保险箱创建向导解锁方式选择
+  description: 验证保险箱创建向导 TypeCombo 选择与 NextBtn 导航
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: TypeCombo
+      role: combo box
+    do: click
+  - step_type: action
+    action: element_action
+    selector:
+      name: TipsEdit
+      role: text
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: NextBtn
+    do: click
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TypeCombo
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: NextBtn
+- id: suite_filemanager_019_s1
+  name: 保险箱创建完成视图
+  description: 验证保险箱创建完成 FinishedBtn 按钮可交互
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: FinishedBtn
+    do: focus
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: FinishedBtn
+- id: suite_filemanager_020_s1
+  name: 保险箱删除视图密码与模式切换
+  description: 验证保险箱删除视图 PwdEdit 输入与 ToggleModeBtn 切换
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: PwdEdit
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: TipsBtn
+      role: push button
+    do: click
+  - step_type: action
+    action: element_action
+    selector:
+      name: ToggleModeBtn
+    do: click
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: PwdEdit
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ToggleModeBtn
+- id: suite_filemanager_021_s1
+  name: 保险箱密码重置视图
+  description: 验证保险箱密码重置 OldPasswordEdit/NewPasswordEdit/RepeatPasswordEdit 交互
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: OldPasswordEdit
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: NewPasswordEdit
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: RepeatPasswordEdit
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: PasswordHintEdit
+      role: text
+    do: focus
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: OldPasswordEdit
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: NewPasswordEdit
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: RepeatPasswordEdit
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: PasswordHintEdit
+      role: text
+- id: suite_filemanager_022_s1
+  name: 磁盘加密解锁类型与口令修改
+  description: 验证磁盘加密 ChgUnlockType 切换与 EncType/EncKeyEdit 交互
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: ChgUnlockType
+    do: click
+  - step_type: action
+    action: element_action
+    selector:
+      name: EncType
+      role: combo box
+    do: click
+  - step_type: action
+    action: element_action
+    selector:
+      name: EncKeyEdit1
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: EncKeyEdit2
+    do: focus
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ChgUnlockType
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: EncType
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: EncKeyEdit1
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: EncKeyEdit2
+- id: suite_filemanager_023_s1
+  name: 标题栏标签页导航控件
+  description: 验证标题栏 AddBtn/LeftBtn/TabBar/BottomBar/Placeholder 交互
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: AddBtn
+    do: click
+  - step_type: action
+    action: element_action
+    selector:
+      name: LeftBtn
+    do: click
+  - step_type: action
+    action: element_action
+    selector:
+      name: TabBar
+      role: page tab
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: BottomBar
+      role: page tab
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: Placeholder
+    do: focus
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TabBar
+      role: page tab
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: BottomBar
+      role: page tab
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddBtn
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: Placeholder
+- id: suite_filemanager_024_s1
+  name: 标题栏 DPC 密码修改对话框
+  description: 验证标题栏 DPC OldPwdEdit/NewPwdEdit/RepeatPwdEdit/SaveBtn 交互
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: OldPwdEdit
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: NewPwdEdit
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: RepeatPwdEdit
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: SaveBtn
+    do: click
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: OldPwdEdit
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: NewPwdEdit
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SaveBtn
+- id: suite_filemanager_025_s1
+  name: 连接服务器对话框高级选项
+  description: 验证连接服务器 ServerComboBox/SchemeComboBox/TheAddButton/ComboBox 交互
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: ServerComboBox
+      role: combo box
+    do: click
+  - step_type: action
+    action: element_action
+    selector:
+      name: SchemeComboBox
+      role: combo box
+    do: click
+  - step_type: action
+    action: element_action
+    selector:
+      name: TheAddButton
+    do: click
+  - step_type: action
+    action: element_action
+    selector:
+      name: CollectionServerView
+      role: list
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: ComboBox
+      role: combo box
+    do: click
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ServerComboBox
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TheAddButton
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionServerView
+      role: list
+- id: suite_filemanager_026_s1
+  name: 工作区缩放滑块与重命名栏
+  description: 验证工作区 ScaleSlider 滑块和 RenameBtn/RenameEditor/ScrollArea 交互
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: ScaleSlider
+      role: slider
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: RenameBtn
+    do: click
+  - step_type: action
+    action: element_action
+    selector:
+      name: RenameEditor
+      role: text
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: ScrollArea
+      role: scroll pane
+    do: focus
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ScaleSlider
+      role: slider
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: RenameBtn
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ScrollArea
+      role: scroll pane
 teardown:
 - action: session_stop
