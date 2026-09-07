@@ -1,3 +1,249 @@
+dde-file-manager (6.6.4) unstable; urgency=medium
+
+  * fix(preview): avoid UI freeze on rapid preview switching
+  * refactor: move version definitions to cmake configuration
+  * feat: enhance multi-screen support for sort animation
+  * fix: avoid UI freeze on property dialog FileScanner retirement
+  * fix(smb): preserve '#' in SMB share names during CIFS mount
+  * Fix(disk-encrypt): change translate of tpm
+  * fix: preserve backup header during interrupted decryption
+  * fix: handle empty address in mount and SMB URL fragment
+  * fix: fix SMB mount detection issue
+  * test: prevent unit test from causing full disk traversal
+  * test: add autotests for dde-file-manager (1/1 classes)
+  * test: add autotests for dde-file-manager (1/1 classes)
+  * test: add autotests for dde-file-manager (1/1 classes)
+  * test: add autotests for dde-file-manager (1/1 classes)
+  * test: add autotests for dde-file-manager (3 classes)
+  * test: add autotests for dde-file-manager (3 classes)
+  * i18n: Translate dde-file-manager.ts in ru
+  * i18n: Translate dde-file-manager.ts in ru
+  * i18n: Translate dde-file-manager.ts in ru
+  * i18n: Translate dde-file-manager.ts in ru
+  * test: add autotests for dde-file-manager (3 classes)
+  * test: add autotests for dde-file-manager (3 classes)
+  * test: add autotests for dfm-base SQLite data-access layer
+  * test: add autotests for dde-file-manager (3 classes)
+  * test: add autotests for dde-file-manager (3 classes)
+  * test: add unit tests for DThreadList/DThreadMap/DThreadHash
+  * test: add autotests for dde-file-manager (3 classes)
+  * test: add autotests for dde-file-manager (3 classes)
+  * fix: detect interrupted overlay DM mode and roll back to disabled state
+  * fix: remove permission settings for marker file and directory
+  * feat: add dconfig-gated Latin-first sort strategy for zh_CN
+  * fix: recreate desktop window when screen changes to fix layer-shell output binding
+  * perf: adopt QCollator buffer strategy for ICU sort key generation
+  * fix(sidebar): unify group header arrow style
+  * test: add unit tests for new collation sort strategy in dfm-base
+  * fix(disk-encrypt): set proper DBus timeout for TPM interface to prevent premature auth fallback
+  * fix(openwith): unify separator line lengths in OpenWith dialog
+  * fix(sidebar): route partition expand/collapse through onChangeExpandState
+  * fix: add null-pointer guards in MimesAppsManager and EventFilterUtils
+  * test: add autotests for dde-file-manager (dfm-base coverage boost)
+  * test: add autotests for dde-file-manager (textindex coverage boost)
+  * test: isolate test configuration and improve stub reliability
+  * fix(sidebar): guard stale QModelIndex across async sidebar expansion
+  * fix: invalidate icon cache on item update
+  * feat: add sidebar tree view display option
+  * chore: update translations
+  * i18n: Translate dde-file-manager.ts in pt_BR
+  * i18n: Translate dde-file-manager.ts in pt_BR
+  * i18n: Translate dde-file-manager.ts in pt_BR
+  * i18n: Translate dde-file-manager.ts in pt_BR
+  * test: stabilize YouQu AT launch and window assertions
+  * test: make YouQu AT suites self-contained
+  * fix: sync title-bar placeholder with actual sidebar width during resize
+  * fix: add AT-SPI accessible names (File Preview)
+  * i18n: Translate dde-file-manager.ts in ru
+  * test: stabilize YouQu AT suites against headless CI
+  * i18n: Translate dde-file-manager.ts in pl
+  * i18n: Translate dde-file-manager.ts in pl
+  * i18n: Translate dde-file-manager.ts in pl
+  * i18n: Translate dde-file-manager.ts in pl
+  * i18n: Translate dde-file-manager.ts in ca
+  * fix: normalize VFS monitor root aliases and skip inotify watch setup in vfs mode
+  * Revert "fix: sync title-bar placeholder with actual sidebar width during resize"
+  * test: fix ProcessExtractor and WindowUtils unit test failures
+  * feat(test): add ut-summary.json generation for test results and coverageo
+  * fix: refresh sidebar highlight immediately on url change
+  * i18n: Translate dde-file-manager.ts in fi
+  * i18n: Translate dde-file-manager.ts in fi
+  * fix(preview): correct arrow colors in multi-select
+  * fix(openwith): adjust list item width and spacing
+  * fix(openwith): pin title separator above scroll area
+  * feat(dfm-base): add AT-SPI accessible names for dialog controls
+  * feat(common): add AT-SPI accessible names for plugins
+  * feat(desktop): add AT-SPI accessible names for desktop plugins
+  * feat(filemanager): add AT-SPI accessible names for misc plugins
+  * feat(disk-encrypt): add AT-SPI accessible names for dialogs
+  * feat(titlebar): add AT-SPI accessible names for titlebar controls
+  * feat(vault): add AT-SPI accessible names for vault controls
+  * fix: unify sidebar tree sort with file view using numeric-aware collation
+  * fix: sidebar tree view blocks double-click rename
+  * feat(workspace): add AT-SPI accessible names for workspace controls
+  * test(spi): update expected AT-SPI names baseline
+  * feat(test): migrate plugin unit tests to new autotest framework
+  * test(autotests): add dfmplugin-menu unit tests with 100% function coverage
+  * test(autotests): add dfmplugin-menu and myshares unit tests
+  * fix(autotests): correct SPDX copyright year to single year for new test files
+  * fix: align sidebar tree with file workspace display
+  * fix: fix sidebar setting panel initialization
+  * fix: show resume decrypt option correctly for overlay encryption
+  * fix: use icon name instead of url as sidebar icon cache key
+  * feat(at-spi): add accessible names for 6 file manager widgets
+  * chore: Sync by https://github.com/linuxdeepin/.github/commit/a300f8523d4876677112edab6a0772f7ad112976
+  * feat(at-spi): add accessible names for 57 file manager widgets
+  * fix: hide resume decrypt option for non-LUKS devices after interrupted decrypt job
+  * fix(disk-encrypt): extend TPM DBus timeout and harden DM suspend/resume
+  * refactor: extract validateExportPath to recovery_key_utils
+  * fix: store isExpandable in item data role
+  * chore: update translations
+  * test: fix 9 failing unit tests in workspace
+  * i18n: Translate dde-file-manager.ts in pt_BR
+  * i18n: Translate dde-file-manager.ts in pt_BR
+  * i18n: Translate dde-file-manager.ts in pt_BR
+  * i18n: Translate dde-file-manager.ts in pt_BR
+  * i18n: Translate dde-file-manager.ts in pt
+  * i18n: Translate dde-file-manager.ts in pl
+  * i18n: Translate dde-file-manager.ts in pl
+  * feat: migrate TimezoneWatcher from v20 to v25
+  * fix: sync sidebar editDisplayText on device rename
+  * fix: sidebar double highlight on duplicate URL
+  * fix: ensure fallback fd for failed D-Bus methods
+  * fix: improve sidebar URL highlight deduplication
+  * fix: enable Latin-first sort by default for zh_CN
+  * feat(networkutils): migrate TTL network connection cache from v20
+  * refine(networkutils): align cache short-circuit with non-cache semantics
+  * fix(ut): adapt test_devicehelper stub to new checkNetConnection signature
+  * test: fix 4 failing unit tests in workspace views
+  * test: stub singleShotImpl in deferred-init UT for CI stability
+  * i18n: Translate dde-file-manager.ts in fi
+  * i18n: Translate dde-file-manager.ts in fi
+  * i18n: Translate dde-file-manager.ts in fi
+  * feat(fileoperations): migrate FTS-based file deletion from v20 to v25
+  * feat: optimize fileinfo query and add isCacheMiss overload
+  * perf(workspace): migrate local dirent iteration optimization from v20
+  * feat: implement intelligent task scheduling with environmental awareness
+  * feat: add environment-aware task scheduling with priority queuing
+  * refactor: extract task launching and queuing logic
+  * refactor: refine CPU quota management with reference counting
+  * feat: refine index task status reporting with detailed blocking conditions
+  * feat: implement server-driven index status management
+  * fix: remove silent parameter from index task calls
+  * feat: add comprehensive unit tests for TaskManager grading logic
+  * feat: add force bypass for critical file tasks
+  * feat: refine index status logic with environmental checks
+  * feat: enhance indexing control with manual and bypass options
+  * fix: remove task preemption logic and adjust test utilities
+  * refactor(workspace): apply Qt code review fixes to fileview
+  * refactor(workspace): replace default with explicit kNoneMode case in setViewMode
+  * feat: add view hint live-update and side widgets
+  * fix(at-spi): add missing setObjectName/setAccessibleName for 4 widgets
+  * test(at): add AT-SPI element references to 3 module suites
+  * refactor: move sort utility functions to namespace and add error logging
+  * chore(at): normalize AT test suite directory structure
+  * fix: show gvfs-mounted files in recent access list
+  * fix: skip stale remote gvfs paths in recent access to avoid worker thread blocking
+  * i18n: Translate dde-file-manager.ts in ca
+  * fix(at-spi): add missing accessible names for sidebar and password dialog
+  * fix: sidebar quick access missing remove option on same URL
+  * fix: scope sidebar item update to group on rename
+  * fix(accesscontrol): activate diskencrypt service when enableEncrypt flips to true
+  * refactor: rewrite search hint controller
+  * fix: remove redundant hint type check
+  * fix: resolve symlink path in search method selection
+  * fix(at-spi): add accessible names for custom view widgets
+  * fix: update Arabic (ar) translations
+  * fix: replace DApplication with QCoreApplication and remove translation loading in daemon
+  * fix(propertydialog): left-align name edit text
+  * test(at): add AT-SPI test suites for dde-file-manager
+  * chore(at): add SPDX license headers to AT test YAML files
+  * feat: add actionID support for menu items
+  * feat: add index creation resume support
+  * fix: set data path before starting EnvDetector
+  * feat: enhance thread safety and refactor create resume indexing
+  * feat: fix index status logic for version mismatch and create progress
+  * fix(propertydialog): add hover/pressed effect for edit button
+  * fix: right-align size labels in conflict dialog
+  * i18n: Translate desktop.ts in sv
+  * fix: correct encryption type detection for interrupted decrypt
+  * fix: emblem still shows after disabling UDisk emblem
+  * fix(at-spi): add accessible names for CanvasView and CollectionView
+  * i18n: Translate dde-file-manager.ts in ar
+  * test(at): add CollectionView coverage to reach 100% element gate
+  * feat: add getters for load thresholds and improve display refresh
+  * feat: add idle and upgrade pause hints
+  * fix: clear task queue on force-bypass full scan
+  * fix: async CIFS busy check in TrashCoreEventSender to prevent startup stall
+  * chore: update translations
+  * i18n: Translate dde-file-manager.ts in pl
+  * i18n: Translate dde-file-manager.ts in pl
+  * i18n: Translate dde-file-manager.ts in pl
+  * i18n: Translate dde-file-manager.ts in pl
+  * i18n: Translate dde-file-manager.ts in pl
+  * i18n: Translate dde-file-manager.ts in pl
+  * i18n: Translate dde-file-manager.ts in ca
+  * i18n: Translate dde-file-manager.ts in ca
+  * i18n: Translate dde-file-manager.ts in sv
+  * i18n: Translate dde-file-manager.ts in sv
+  * i18n: Translate dde-file-manager.ts in sv
+  * i18n: Translate dde-file-manager.ts in sv
+  * i18n: Translate dde-file-manager.ts in sv
+  * fix: resolve intermittent QPersistentModelIndex crash on shutdown
+  * fix: fix incorrect grouping of files after rename or create in tree view under group mode
+  * fix: remove network I/O from desktop file detection
+  * fix: treat remote .desktop files as regular files
+  * i18n: Translate dde-file-manager.ts in sv
+  * i18n: Translate dde-file-manager.ts in sv
+  * i18n: Translate dde-file-manager.ts in sv
+  * i18n: Translate dde-file-manager.ts in sv
+  * test(preview): add unit tests for dde-file-manager-preview pluginpreviews
+  * fix(workspace): refactor RootInfo to eliminate watcher event race condition
+  * refactor(workspace): clean up RootInfo dead code, tighten encapsulation, and simplify watcher timer
+  * chore: add hook-event registry, UT timeout and build ignore
+  * test: extend optical share proxy tests in dfm-base
+  * test: add event template and invoke helper tests for framework
+  * test: add unit tests for dfmplugin-avfsbrowser
+  * test: add unit tests for dfmplugin-burn
+  * test: add unit tests for ddplugin-canvas
+  * test: add unit tests for dfmplugin-computer
+  * test: add unit tests for ddplugin-background
+  * test: add unit tests for ddplugin-core
+  * test: add unit tests for dfmplugin-bookmark
+  * test: add unit tests for dfmdaemon-recent
+  * test: add unit tests for dfmplugin-detailspace
+  * test: add unit tests for dfmdaemon-core
+  * test: add unit tests for dfmdaemon-filemanager1
+  * test: add unit tests for dfmdaemon-tag
+  * test: add unit tests for dfmdaemon-vault
+  * test: add unit tests for dfmplugin-core
+  * test: add unit tests for dfmplugin-dirshare
+  * test: add unit tests for dfmplugin-disk-encrypt-entry
+  * test: add unit tests for dfmplugin-emblem
+  * test: add unit tests for filedialog-core
+  * test: extend unit tests for dfmplugin-fileoperations
+  * test: add real-events test for dfmplugin-myshares
+  * test: add unit tests for dfmplugin-optical
+  * test: extend unit tests for ddplugin-organizer
+  * test: add unit tests for dfmplugin-propertydialog
+  * test: add unit tests for dfmplugin-recent
+  * test: register new plugin test binaries in autotests build
+  * test: add unit tests for dfmplugin-search
+  * test: add unit tests for dfmplugin-sidebar
+  * test: add unit tests for dfmplugin-smbbrowser
+  * test: add unit tests for dfmplugin-tag
+  * test: add upgrade tools unit tests and enable tools build
+  * test: add unit tests for dfmplugin-trash
+  * test: add unit tests for dfmplugin-trashcore
+  * test: add unit tests for dfmplugin-vault
+  * test: add unit tests for ddplugin-wallpapersetting
+  * test: add FileViewSorter test for dfmplugin-workspace
+  * test: add unit tests for dfmplugin-utils
+  * refactor: modularize unit test builds with category options
+  * fix: check search feature flags in updating hint
+
+ -- Liu Zhangjian <liuzhangjian@uniontech.com>  Mon, 07 Sep 2026 14:49:55 +0800
+
 dde-file-manager (6.6.3) unstable; urgency=medium
 
   * fix(openwith): adjust dialog button gap
