@@ -12,6 +12,7 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/iconcachemanager.h>
 #include <dfm-base/dbusservice/global_server_defines.h>
 #include <dfm-base/base/device/deviceutils.h>
 #include <dfm-base/base/device/devicealiasmanager.h>
@@ -515,7 +516,18 @@ void SideBarItemDelegate::drawIcon(const QStyleOptionViewItem &option,
         dciIcon = qvariant_cast<DDciIcon>(icon);
     if (dciIcon.isNull()) {
         QIcon::State state = option.state & QStyle::State_Open ? QIcon::On : QIcon::Off;
-        option.icon.paint(painter, iconRect, option.decorationAlignment, iconMode, state);
+
+        // 使用 IconCacheManager 缓存图标
+        const QString iconName = option.icon.name();
+        if (!iconName.isEmpty()) {
+            const qreal ratio = painter->device()->devicePixelRatioF();
+            QPixmap px = IconCacheManager::getPixmap(iconName, iconSize, ratio, iconMode, state);
+            px.setDevicePixelRatio(ratio);
+            painter->drawPixmap(iconRect.topLeft(), px);
+        } else {
+            // 非主题图标（如自定义文件图标）回退到 QIcon::paint
+            option.icon.paint(painter, iconRect, option.decorationAlignment, iconMode, state);
+        }
     } else {
         drawDciIcon(optForIcon, painter, dciIcon, iconRect, cg, keepHighlighted,
                     index.data(SideBarItem::kItemIconNameRole).toString());
@@ -540,8 +552,9 @@ void SideBarItemDelegate::drawIcon(const QStyleOptionViewItem &option,
         iconRect = QRect(ejectIconTopLeft, ejectIconBottomRight);
         DDciIcon dciIcon = DDciIcon::fromTheme("media-eject-symbolic");
         if (dciIcon.isNull()) {
-            QIcon ejectIcon = QIcon::fromTheme("media-eject-symbolic");
-            auto px { ejectIcon.pixmap(iconSize, pixmapMode, QIcon::On) };
+            const qreal ratio = painter->device()->devicePixelRatioF();
+            QPixmap px = IconCacheManager::getPixmap("media-eject-symbolic", ejectIconSize, ratio, pixmapMode, QIcon::On);
+            px.setDevicePixelRatio(ratio);
             QStyle *style { option.widget ? option.widget->style() : QApplication::style() };
             style->drawItemPixmap(painter, iconRect, Qt::AlignCenter, px);
         } else {

@@ -13,6 +13,7 @@
 
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/dfm_event_defines.h>
+#include <dfm-base/base/application/application.h>
 #include <dfm-framework/dpf.h>
 #include <dfm-framework/event/event.h>
 
@@ -109,6 +110,11 @@ protected:
         registerWorkspaceTopics();
         WorkspaceEventReceiver::instance()->initConnection();
         channel = dpfSlotChannel;
+
+        stub.set_lamda(ADDR(dfmbase::Application, appAttribute),
+                       [](dfmbase::Application::ApplicationAttribute) { return QVariant(1); });
+        stub.set_lamda(ADDR(dfmbase::Application, setAppAttribute),
+                       [](dfmbase::Application::ApplicationAttribute, const QVariant &) {});
     }
 
     void TearDown() override

@@ -15,6 +15,14 @@
 #include <QStringList>
 #include <QtGlobal>
 #include <QMutex>
+#include <QTextOption>
+#include <QColor>
+#include <QCache>
+#include <QUrl>
+#include <QPixmap>
+#include <QIcon>
+
+#include <memory>
 
 QT_BEGIN_NAMESPACE
 class QLineEdit;
@@ -31,7 +39,28 @@ public:
     explicit BaseItemDelegatePrivate(BaseItemDelegate *qq);
     virtual ~BaseItemDelegatePrivate();
 
+    void setupElideLayout(dfmbase::ElideTextLayout *layout,
+                          const QString &text,
+                          QTextOption::WrapMode wrapMode,
+                          int lineHeight,
+                          int alignment,
+                          QPainter *painter,
+                          bool highlightEnabled,
+                          const QStringList &keywords,
+                          const QColor &highlightColor) const;
+
+    void clearIconEmblemsCache();
+
+    void removeIconEmblemsCache(const QList<QUrl> &urls);
+
+    const QPixmap *getIconEmblemsCache(const QUrl &url) const;
+
+    void cacheIconEmblems(const QUrl &url, QPixmap *pixmap) const;
+
+    QPixmap *createCachedPixmap(const QRectF &iconRect, qreal dpr,
+                                qreal padW, qreal padH) const;
     void init();
+
 
     int textLineHeight { -1 };
     QSize itemSizeHint;
@@ -45,6 +74,13 @@ public:
     DFMBASE_NAMESPACE::ViewDefines viewDefines;
     QString hoveredTruncateGroupKey {};
     QString pressedTruncateGroupKey {};
+    // reusable ElideTextLayout for paint optimization, avoids repeated new/delete per paint cycle
+    mutable std::unique_ptr<dfmbase::ElideTextLayout> reusableElideLayout { nullptr };
+
+    static constexpr qreal kEmblemPaddingRatio = 6.0;
+    static constexpr int kMaxIconEmblemsCacheSize = 300;
+
+    mutable QCache<QUrl, QPixmap> iconEmblemsCache { kMaxIconEmblemsCacheSize };
 
     BaseItemDelegate *q_ptr;
     Q_DECLARE_PUBLIC(BaseItemDelegate)

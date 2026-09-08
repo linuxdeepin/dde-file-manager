@@ -98,6 +98,20 @@ bool IconUtils::shouldSkipThumbnailFrame(const QString &mimeType)
     return kExcludedMimes.contains(mimeType);
 }
 
+QString IconUtils::normalizeIconName(const QString &iconName)
+{
+    // 历史 mime -> 主题图标名兼容映射，集中维护（#6）
+    if (iconName == QLatin1String("application-vnd.debian.binary-package"))
+        return QStringLiteral("application-x-deb");
+    if (iconName == QLatin1String("application-vnd.rar"))
+        return QStringLiteral("application-zip");
+    if (iconName == QLatin1String("application-vnd.ms-htmlhelp"))
+        return QStringLiteral("chmsee");
+    if (iconName == QLatin1String("Zoom.png"))
+        return QStringLiteral("application-x-zoom");
+    return iconName;
+}
+
 QPixmap IconUtils::hiDpiPixmap(const QIcon &icon, const QSize &size, const QWidget *widget)
 {
     qreal dpr = widget ? widget->devicePixelRatioF() : qApp->devicePixelRatio();

@@ -36,6 +36,7 @@ public:
     virtual Qt::DropActions supportedOfAttributes(const SupportType type) const override;
     virtual bool canAttributes(const FileCanType type) const override;
     virtual void updateAttributes(const QList<FileInfoAttributeID> &types = {}) override;
+    virtual QVariant extendAttributes(const FileExtendedInfoType type) const override;
     static QMap<QString, QVariant> desktopFileInfo(const QUrl &fileUrl);
     static QSharedPointer<FileInfo> convert(QSharedPointer<FileInfo> fileInfo);
 

@@ -270,8 +270,8 @@ void FileView::setViewMode(Global::ViewMode mode)
         break;
     case Global::ViewMode::kAllViewMode:
         break;
-    // 无 default 分支:新增 ViewMode 时由 -Wswitch 提示补全
-    // No default label: -Wswitch prompts completion when new ViewMode values are added
+        // 无 default 分支:新增 ViewMode 时由 -Wswitch 提示补全
+        // No default label: -Wswitch prompts completion when new ViewMode values are added
     }
     fmDebug() << "View mode change completed for URL:" << rootUrl().toString();
 }
@@ -883,9 +883,9 @@ QModelIndex FileView::currentPressIndex() const
     return d->selectHelper->getCurrentPressedIndex();
 }
 
-bool FileView::isDragTarget(const QModelIndex &index) const
+bool FileView::isDropTarget(const QModelIndex &index) const
 {
-    return d->dragDropHelper->isDragTarget(index);
+    return d->dragDropHelper->isDropTarget(index);
 }
 
 QRectF FileView::itemRect(const QUrl &url, const ItemRoles role) const

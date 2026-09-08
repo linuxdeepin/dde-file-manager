@@ -40,13 +40,14 @@ public:
     QList<DFileInfo::AttributeExtendID> extendIDs;
     QMimeType mimeType;
     mutable QMutex lock;
-    QReadWriteLock iconLock;
+    mutable QReadWriteLock iconLock;
     QIcon fileIcon;
     QVariant isLocalDevice = true;
     QVariant isCdRomDevice;
     QSharedPointer<InfoDataFuture> mediaFuture { nullptr };
     InfoHelperUeserDataPointer fileMimeTypeFuture { nullptr };
     QMap<DFMIO::DFileInfo::AttributeID, QVariant> cacheAttributes;
+    mutable QString fileIconName;
 
 public:
     explicit SyncFileInfoPrivate(SyncFileInfo *qq);

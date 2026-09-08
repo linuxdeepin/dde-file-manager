@@ -846,6 +846,13 @@ QString FileViewModel::roleDisplayString(int role) const
 
 void FileViewModel::updateFile(const QUrl &url)
 {
+    auto index = getIndexByUrl(url);
+    if (index.isValid()) {
+        auto info = fileInfo(index);
+        if (info)
+            info->setExtendedAttributes(ExtInfoType::kFileEmblems, QVariant());
+    }
+
     Q_EMIT requestUpdateFile(url);
 }
 
@@ -946,6 +953,28 @@ void FileViewModel::setTreeView(const bool isTree)
 QStringList FileViewModel::getKeyWords()
 {
     return highlightKeywordsCache;
+}
+
+QList<QUrl> FileViewModel::getUrlsByRowIndex(int rowFirst, int rowEnd)
+{
+    QList<QUrl> urls;
+    for (int row = rowFirst; row <= rowEnd; ++row) {
+        if (filterSortWorker) {
+            auto data = filterSortWorker->childData(row);
+            if (data) {
+                auto url = data->data(Global::ItemRoles::kItemUrlRole).toUrl();
+                if (url.isValid())
+                    urls.append(url);
+            }
+            continue;
+        }
+
+        auto curIndex = index(row, 0);
+        if (!curIndex.isValid())
+            continue;
+        urls.append(curIndex.data(Global::ItemRoles::kItemUrlRole).toUrl());
+    }
+    return urls;
 }
 
 int FileViewModel::getFileOnlyCount() const

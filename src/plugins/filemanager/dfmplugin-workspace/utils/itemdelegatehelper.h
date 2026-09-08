@@ -8,10 +8,13 @@
 #include "dfmplugin_workspace_global.h"
 
 #include <dfm-base/utils/elidetextlayout.h>
+#include <dfm-base/utils/iconcachemanager.h>
+#include <dfm-base/utils/iconpainterutils.h>
 #include <dfm-base/dfm_global_defines.h>
 
 #include <QStyledItemDelegate>
 #include <QTextLayout>
+#include <QRectF>
 
 namespace dfmplugin_workspace {
 
@@ -35,36 +38,21 @@ inline constexpr int kListModeColumnPadding = { 10 };
 class ItemDelegateHelper
 {
 public:
-    using ViewMode = DFMBASE_NAMESPACE::Global::ViewMode;
-    struct PaintIconOpts
+    using PaintIconOpts = DFMBASE_NAMESPACE::IconPainterUtils::PaintIconOpts;
+    static bool paintIcon(QPainter *painter, const QIcon &icon, const PaintIconOpts &opts)
     {
-        QRectF rect;
-        Qt::Alignment alignment { Qt::AlignCenter };
-        QIcon::Mode mode { QIcon::Normal };
-        QIcon::State state { QIcon::Off };
-        ViewMode viewMode { ViewMode::kNoneMode };
-        bool isThumb { false };
-    };
-
-    static inline Qt::Alignment visualAlignment(Qt::LayoutDirection direction, Qt::Alignment alignment)
-    {
-        if (!(alignment & Qt::AlignHorizontal_Mask))
-            alignment |= Qt::AlignLeft;
-        if (!(alignment & Qt::AlignAbsolute) && (alignment & (Qt::AlignLeft | Qt::AlignRight))) {
-            if (direction == Qt::RightToLeft)
-                alignment ^= (Qt::AlignLeft | Qt::AlignRight);
-            alignment |= Qt::AlignAbsolute;
-        }
-        return alignment;
+        return DFMBASE_NAMESPACE::IconPainterUtils::paintIcon(painter, icon, opts).has_value();
     }
-    static QPixmap getIconPixmap(const QIcon &icon, const QSize &size, qreal pixelRatio,
-                                 QIcon::Mode mode = QIcon::Normal, QIcon::State state = QIcon::Off);
-    static bool paintIcon(QPainter *painter, const QIcon &icon, const PaintIconOpts &opts);
 
     static void hideTooltipImmediately();
 
     static dfmbase::ElideTextLayout *createTextLayout(const QString &name, QTextOption::WrapMode wordWrap,
                                                       qreal lineHeight, int alignmentFlag, QPainter *painter = nullptr);
+
+    static void paintIconWithFallback(QPainter *painter, const QStyleOptionViewItem &opt,
+                                       const QModelIndex &index, const QRectF &iconRect,
+                                       bool isThumnail,
+                                       dfmbase::Global::ViewMode viewMode = dfmbase::Global::ViewMode::kIconMode);
 
 private:
     static void drawBackground(const qreal &backgroundRadius, const QRectF &rect,

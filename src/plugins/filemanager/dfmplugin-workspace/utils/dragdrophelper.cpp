@@ -342,7 +342,7 @@ bool DragDropHelper::drop(QDropEvent *event)
     return false;
 }
 
-bool DragDropHelper::isDragTarget(const QModelIndex &index) const
+bool DragDropHelper::isDropTarget(const QModelIndex &index) const
 {
     auto info = view->model()->fileInfo(index);
     if (info)

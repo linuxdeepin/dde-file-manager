@@ -43,7 +43,7 @@ public:
     QList<DFileInfo::AttributeExtendID> extendIDs;
     QMimeType mimeType;
     mutable QMutex lock;
-    QReadWriteLock iconLock;
+    mutable QReadWriteLock iconLock;
     QIcon fileIcon;
     QSharedPointer<InfoDataFuture> mediaFuture { nullptr };
     InfoHelperUeserDataPointer fileCountFuture { nullptr };
@@ -55,6 +55,7 @@ public:
     AsyncFileInfo *const q;
     mutable QMutex changesLock;
     QList<FileInfo::FileInfoAttributeID> changesAttributes;
+    QString fileIconName;
 
 public:
     explicit AsyncFileInfoPrivate(AsyncFileInfo *qq);
@@ -95,6 +96,7 @@ public:
     QIcon updateIcon();
     void updateMediaInfo(const DFileInfo::MediaType type, const QList<DFileInfo::AttributeExtendID> &ids);
     bool hasAsyncAttribute(FileInfo::FileInfoAttributeID key);
+    void updateFileIconName();
 };
 
 }

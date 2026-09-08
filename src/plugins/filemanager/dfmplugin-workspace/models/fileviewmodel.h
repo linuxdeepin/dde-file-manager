@@ -100,6 +100,14 @@ public:
     // Paint path safe: returns cached keywords, no RootInfo/DataManager access.
     QStringList getKeyWords();
 
+    /*!
+     * \brief Get list of file URLs by row index range (inclusive)
+     * \param rowFirst First row index (inclusive)
+     * \param rowEnd Last row index (inclusive, matching Qt signal semantics)
+     * \return List of URLs for the given row range
+     */
+    QList<QUrl> getUrlsByRowIndex(int rowFirst, int rowEnd);
+
     // Get file-only count for status bar (excludes group headers)
     int getFileOnlyCount() const;
     int getGroupOnlyCount() const;

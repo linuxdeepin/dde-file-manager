@@ -47,9 +47,9 @@ public:
         return attributes.value(attr).value<T>();
     }
 
-    // 设置高亮关键字
+    // 设置高亮关键字（替换语义：覆盖而非追加，复用 layout 时每次 paint 前由 setupElideLayout 全量重置，无需单独调用清理）
     inline void setHighlightKeywords(const QStringList &keywords) {
-        highlightKeywords.append(keywords);
+        highlightKeywords = keywords;
     }
 
     // 设置高亮颜色

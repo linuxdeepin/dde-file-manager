@@ -117,7 +117,7 @@ public:
 
     QModelIndex currentPressIndex() const;
 
-    bool isDragTarget(const QModelIndex &index) const;
+    bool isDropTarget(const QModelIndex &index) const;
 
     QRectF itemRect(const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role) const;
 
