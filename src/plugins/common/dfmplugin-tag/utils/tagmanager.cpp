@@ -124,10 +124,19 @@ bool TagManager::canTagFile(const FileInfoPointer &info) const
 
 bool TagManager::paintListTagsHandle(int role, const FileInfoPointer &info, QPainter *painter, QRectF *rect)
 {
-    if (!canTagFile(info))
+    if ((role != kItemFileDisplayNameRole && role != kItemNameRole) || info.isNull())
         return false;
 
-    if (role != kItemFileDisplayNameRole && role != kItemNameRole)
+    auto tagStat = info->extendAttributes(ExtInfoType::kFileCanTag);
+    bool canTag = false;
+    if (tagStat.isValid()) {
+        canTag = tagStat.toBool();
+    } else {
+        canTag = canTagFile(info);
+        info->setExtendedAttributes(ExtInfoType::kFileCanTag, canTag);
+    }
+
+    if (!canTag)
         return false;
 
     QString path = info->pathOf(PathInfoType::kFilePath);
@@ -152,7 +161,16 @@ bool TagManager::paintListTagsHandle(int role, const FileInfoPointer &info, QPai
 
 bool TagManager::addIconTagsHandle(const FileInfoPointer &info, ElideTextLayout *layout)
 {
-    if (!canTagFile(info))
+    auto tagStat = info->extendAttributes(ExtInfoType::kFileCanTag);
+    bool canTag = false;
+    if (tagStat.isValid()) {
+        canTag = tagStat.toBool();
+    } else {
+        canTag = canTagFile(info);
+        info->setExtendedAttributes(ExtInfoType::kFileCanTag, canTag);
+    }
+
+    if (!canTag)
         return false;
 
     QString path = info->pathOf(PathInfoType::kFilePath);

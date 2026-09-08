@@ -5,9 +5,6 @@
 #include "fsmonitor_p.h"
 #include "utils/textindexconfig.h"
 
-#include <dfm-base/utils/protocolutils.h>
-#include <dfm-base/base/device/deviceproxymanager.h>
-
 #include <dfm-search/dsearch_global.h>
 
 #include <QDir>
@@ -114,9 +111,9 @@ bool FSMonitorPrivate::init(const QStringList &rootPaths)
     // Pass shouldExcludePath as the exclude predicate so filtering happens
     // before any socket-delivered events are emitted.
     vfsWatcher.reset(VfsMonitorFileSystemWatcher::create(
-        this->rootPaths,
-        [this](const QString &path) { return shouldExcludePath(path); },
-        q_ptr));
+            this->rootPaths,
+            [this](const QString &path) { return shouldExcludePath(path); },
+            q_ptr));
     vfsMonitorAvailable = (vfsWatcher != nullptr);
 
     if (vfsMonitorAvailable) {
@@ -459,12 +456,11 @@ void FSMonitorPrivate::setupVfsMonitorConnections()
 
     QObject::connect(vfsWatcher.data(), &VfsMonitorFileSystemWatcher::fileDeleted,
                      q_ptr, [this](const QString &path, const QString &name) {
-                          handleFileDeleted(path, name);
-                      });
+                         handleFileDeleted(path, name);
+                     });
 
     QObject::connect(vfsWatcher.data(), &VfsMonitorFileSystemWatcher::fileMoved,
-                     q_ptr, [this](const QString &fromPath, const QString &fromName,
-                                   const QString &toPath, const QString &toName) {
+                     q_ptr, [this](const QString &fromPath, const QString &fromName, const QString &toPath, const QString &toName) {
                          handleFileMoved(fromPath, fromName, toPath, toName);
                      });
 
@@ -484,8 +480,7 @@ void FSMonitorPrivate::setupVfsMonitorConnections()
                      });
 
     QObject::connect(vfsWatcher.data(), &VfsMonitorFileSystemWatcher::directoryMoved,
-                     q_ptr, [this](const QString &fromPath, const QString &fromName,
-                                   const QString &toPath, const QString &toName) {
+                     q_ptr, [this](const QString &fromPath, const QString &fromName, const QString &toPath, const QString &toName) {
                          fmDebug() << "FSMonitor: Directory moved (vfs):" << fromPath << "/" << fromName
                                    << "->" << toPath << "/" << toName;
 

@@ -119,6 +119,9 @@ public:
         kFileNeedTransInfo = 52,   // 文件信息需要转换为desktopfileinfo
         kFileHighlightContent = 53,   // 文件需要高亮内容
         kExpectedSize = 54,   // 文件预期大小（用于正在拷贝/移动的文件）
+        kFileCanTag = 55,   // 文件是否可以tag
+        kFileDesktop = 56,  // 是否是desktopfile
+        kFileEmblems = 57,  // 文件的角标
         kUnknowExtendedInfo = 255,
     };
     /*!

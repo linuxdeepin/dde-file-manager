@@ -85,7 +85,6 @@ void ListItemDelegate::paint(QPainter *painter,
 
     QStyleOptionViewItem opt = option;
 
-    auto info = parent()->fileInfo(index);
     initStyleOption(&opt, index);
     painter->setFont(opt.font);
 
@@ -544,14 +543,54 @@ void ListItemDelegate::paintItemBackground(QPainter *painter, const QStyleOption
  **/
 QRectF ListItemDelegate::paintItemIcon(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+    D_DC(ListItemDelegate);
     if (!parent() || !parent()->parent() || !d->paintProxy)
         return QRect();
 
-    // draw icon
+    // compute icon area rect (same logic as ListItemPaintProxy::iconRect)
     QRectF iconRect = option.rect;
+    // tree view uses variable-depth indent per item, skip icon+emblems cache
+    bool isTreeView = (parent()->parent()->currentViewMode() == dfmbase::Global::ViewMode::kTreeMode);
+    if (!isTreeView) {
+        QSize iconSize = parent()->parent()->iconSize();
+        iconRect.setSize(iconSize);
+        iconRect.moveLeft(option.rect.left() + kListModeLeftMargin + kListModeLeftPadding);
+        iconRect.moveTop(option.rect.top() + ((option.rect.bottom() - iconRect.bottom()) / 2));
+        // combined icon+emblems cache keyed by file url
+        const QUrl &fileUrl = index.data(kItemUrlRole).toUrl();
+
+        qreal padW = iconRect.width() / BaseItemDelegatePrivate::kEmblemPaddingRatio;
+        qreal padH = iconRect.height() / BaseItemDelegatePrivate::kEmblemPaddingRatio;
+        QPointF cacheOrigin(iconRect.left() - padW, iconRect.top() - padH);
+
+        const QPixmap *cached = d->getIconEmblemsCache(fileUrl);
+        if (cached) {
+            painter->drawPixmap(cacheOrigin, *cached);
+            return iconRect;
+        }
+
+        // cache miss: render icon+emblems to offscreen pixmap, cache, then draw to screen
+        qreal dpr = painter->device()->devicePixelRatioF();
+        QPixmap *cachePixmap = d->createCachedPixmap(iconRect, dpr, padW, padH);
+        if (cachePixmap) {
+            QPainter cachePainter(cachePixmap);
+            cachePainter.setRenderHints(painter->renderHints());
+            cachePainter.translate(-cacheOrigin);
+
+            QRectF cacheIconRect = option.rect;
+            d->paintProxy->drawIcon(&cachePainter, &cacheIconRect, option, index);
+            paintEmblems(&cachePainter, cacheIconRect, index);
+            cachePainter.end();
+
+            d->cacheIconEmblems(fileUrl, cachePixmap);
+            painter->drawPixmap(cacheOrigin, *cachePixmap);
+            return iconRect;
+        }
+    }
+
+    // non-cached path (tree view always, list view fallback)
     d->paintProxy->drawIcon(painter, &iconRect, option, index);
     paintEmblems(painter, iconRect, index);
-
     return iconRect;
 }
 /*!
@@ -608,9 +647,8 @@ void ListItemDelegate::paintItemColumn(QPainter *painter, const QStyleOptionView
         Qt::TextElideMode elideMode = Qt::ElideRight;
 
         QRectF textRect = columnRect;
-        const QUrl &url = parent()->parent()->model()->data(index, kItemUrlRole).toUrl();
         if (rol == kItemNameRole || rol == kItemFileDisplayNameRole) {
-            paintFileName(painter, opt, index, rol, textRect, d->textLineHeight, url);
+            paintFileName(painter, opt, index, rol, textRect, d->textLineHeight, info);
         } else {
             textRect.setHeight(d->textLineHeight);
             textRect.moveTop(((columnRect.height() - textRect.height()) / 2) + columnRect.top());
@@ -619,18 +657,20 @@ void ListItemDelegate::paintItemColumn(QPainter *painter, const QStyleOptionView
                 painter->setPen(opt.palette.color(cGroup, QPalette::Text));
 
             if (data.canConvert<QString>()) {
-                QScopedPointer<ElideTextLayout> layout(ItemDelegateHelper::createTextLayout(index.data(rol).toString().remove('\n'),
-                                                                                            QTextOption::WrapAtWordBoundaryOrAnywhere,
-                                                                                            d->textLineHeight, index.data(Qt::TextAlignmentRole).toInt(),
-                                                                                            painter));
-                layout->layout(textRect, elideMode, painter);
+                // 直接用 QFontMetrics 省略 + drawText，跳过 ElideTextLayout
+                const QString rawText = index.data(rol).toString().remove('\n');
+                painter->drawText(textRect,
+                                  option.fontMetrics.elidedText(rawText, elideMode,
+                                                                qRound(textRect.width())),
+                                  QTextOption(static_cast<Qt::Alignment>(
+                                      index.data(Qt::TextAlignmentRole).toInt())));
             }
         }
     }
 }
 
 void ListItemDelegate::paintFileName(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const int &role, const QRectF &rect, const int &textLineHeight,
-                                     const QUrl &url) const
+                                     const FileInfoPointer &info) const
 {
     const QVariant &data = index.data(role);
     if (!data.canConvert<QString>())
@@ -656,19 +696,14 @@ void ListItemDelegate::paintFileName(QPainter *painter, const QStyleOptionViewIt
         textRect.setHeight(textLineHeight);
         textRect.moveTop(((topRect.height() - textRect.height()) / 2) + topRect.top());
 
-        QString fileName = getCorrectDisplayName(painter, index, option, url, role, textLineHeight, textRect);
-        // 绘制文件名(上半部分)
-        QScopedPointer<ElideTextLayout> nameLayout(ItemDelegateHelper::createTextLayout(
-                fileName,
-                QTextOption::WrapAtWordBoundaryOrAnywhere,
-                textLineHeight,
-                index.data(Qt::TextAlignmentRole).toInt(),
-                painter));
-
-        nameLayout->setHighlightEnabled(!isSelected);
-        nameLayout->setHighlightKeywords(effectiveHighlightKeywords(index));
-        nameLayout->setHighlightColor(QColor(ThemeColor::kHighlightPressColor));
-        nameLayout->layout(textRect, Qt::ElideRight, painter);
+        QString fileName = getCorrectDisplayName(painter, index, option, info, role, textLineHeight, textRect);
+        // 绘制文件名(上半部分) — 使用 reusable layout 避免重复 new/delete
+        d->setupElideLayout(d->reusableElideLayout.get(), fileName,
+                            QTextOption::WrapAtWordBoundaryOrAnywhere, textLineHeight,
+                            index.data(Qt::TextAlignmentRole).toInt(), painter,
+                            !isSelected, effectiveHighlightKeywords(index),
+                            QColor(ThemeColor::kHighlightPressColor));
+        d->reusableElideLayout->layout(textRect, Qt::ElideRight, painter);
 
         // 绘制文件内容预览(下半部分)
         painter->save();
@@ -684,45 +719,44 @@ void ListItemDelegate::paintFileName(QPainter *painter, const QStyleOptionViewIt
         painter->setFont(previewFont);
         painter->setPen(option.palette.color(isSelected ? QPalette::BrightText : QPalette::PlaceholderText));
 
-        QScopedPointer<ElideTextLayout> contentLayout(ItemDelegateHelper::createTextLayout(
-                previewContent,
-                QTextOption::WrapAtWordBoundaryOrAnywhere,
-                contentHeight,
-                index.data(Qt::TextAlignmentRole).toInt(),
-                painter));
-
-        contentLayout->setHighlightEnabled(!isSelected);
-        contentLayout->setHighlightKeywords(effectiveHighlightKeywords(index));
-        contentLayout->setHighlightColor(QColor(ThemeColor::kHighlightPressColor));
-        contentLayout->layout(contentRect, Qt::ElideRight, painter);
+        // 复用同一个 layout，setText 会重置 QTextDocument 内部状态
+        d->setupElideLayout(d->reusableElideLayout.get(), previewContent,
+                            QTextOption::WrapAtWordBoundaryOrAnywhere, contentHeight,
+                            index.data(Qt::TextAlignmentRole).toInt(), painter,
+                            !isSelected, effectiveHighlightKeywords(index),
+                            QColor(ThemeColor::kHighlightPressColor));
+        d->reusableElideLayout->layout(contentRect, Qt::ElideRight, painter);
         painter->restore();
     } else {
         textRect.setHeight(d->textLineHeight);
-        textRect.moveTop(((rect.height() - textRect.height()) / 2) + rect.top());
-        QString fileName = getCorrectDisplayName(painter, index, option, url, role, textLineHeight, textRect);
-        // 原有的单行文件名绘制逻辑
-        QScopedPointer<ElideTextLayout> layout(ItemDelegateHelper::createTextLayout(
-                fileName,
-                QTextOption::WrapAtWordBoundaryOrAnywhere,
-                textLineHeight,
-                index.data(Qt::TextAlignmentRole).toInt(),
-                painter));
-
-        layout->setHighlightEnabled(!isSelected);
-        layout->setHighlightKeywords(effectiveHighlightKeywords(index));
-        layout->setHighlightColor(QColor(ThemeColor::kHighlightPressColor));
-        layout->layout(textRect, Qt::ElideRight, painter);
+        QString fileName = getCorrectDisplayName(painter, index, option, info, role, textLineHeight, textRect);
+        // 原有的单行文件名绘制逻辑 — 复用 reusable layout
+        d->setupElideLayout(d->reusableElideLayout.get(), fileName,
+                            QTextOption::WrapAtWordBoundaryOrAnywhere, textLineHeight,
+                            index.data(Qt::TextAlignmentRole).toInt(), painter,
+                            !isSelected, effectiveHighlightKeywords(index),
+                            QColor(ThemeColor::kHighlightPressColor));
+        d->reusableElideLayout->layout(textRect, Qt::ElideRight, painter);
     }
 }
 
 QString ListItemDelegate::getCorrectDisplayName(QPainter *painter, const QModelIndex &index, const QStyleOptionViewItem &option,
-                                                const QUrl &url, const int &role, const int &textLineHeight, const QRectF &rect) const
+                                                const FileInfoPointer &info, const int &role, const int &textLineHeight, const QRectF &rect) const
 {
+    Q_UNUSED(painter);
+    Q_UNUSED(option);
+    Q_UNUSED(textLineHeight);
+    Q_UNUSED(rect);
+
     QString displayName { "" };
 
     // 获取完整的显示名称，不进行省略处理
     // 省略处理将由 ElideTextLayout::layout 统一完成，以确保高亮功能正常工作
-    if (Q_LIKELY(!FileUtils::isDesktopFileSuffix(url))) {
+    // 通过缓存的 FileInfo 判断是否为 desktop 文件，避免每次 paint 重新解析 URL 后缀
+    const QUrl &url = info ? info->urlOf(UrlInfoType::kUrl) : index.data(kItemUrlRole).toUrl();
+    const bool isDesktopFile = info ? info->extendAttributes(ExtInfoType::kFileDesktop).toBool()
+                                    : FileUtils::isDesktopFileSuffix(url);
+    if (Q_LIKELY(!isDesktopFile)) {
         do {
             if (role != kItemNameRole && role != kItemFileDisplayNameRole)
                 break;

@@ -113,7 +113,7 @@ QIcon LocalFileIconProvider::icon(const QString &path, const QIcon &feedback) co
 
 QIcon LocalFileIconProvider::icon(FileInfoPointer info, const QIcon &feedback)
 {
-    QIcon icon = d->fromTheme(info->nameOf(NameInfoType::kIconName));
+    QIcon icon = d->fromTheme(info->nameOf(NameInfoType::kIconName).replace("desktopNotThemeIcon::", ""));
 
     if (Q_LIKELY(!icon.isNull()))
         return icon;

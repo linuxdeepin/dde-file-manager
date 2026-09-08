@@ -4,8 +4,6 @@
 
 #include "fsmonitorworker.h"
 
-#include <dfm-base/base/application/application.h>
-
 #include <dfm-search/searchengine.h>
 #include <dfm-search/searchfactory.h>
 #include <dfm-search/filenamesearchapi.h>
@@ -20,7 +18,6 @@
 
 #include <algorithm>
 
-DFMBASE_USE_NAMESPACE
 DFM_SEARCH_USE_NS
 
 SERVICETEXTINDEX_BEGIN_NAMESPACE

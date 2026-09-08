@@ -51,6 +51,11 @@ protected:
 
         stub.set_lamda(&dfmbase::NetworkUtils::checkFtpOrSmbBusy,
                        [](dfmbase::NetworkUtils *, const QUrl &) { return false; });
+
+        stub.set_lamda(ADDR(dfmbase::Application, appAttribute),
+                       [](dfmbase::Application::ApplicationAttribute) { return QVariant(1); });
+        stub.set_lamda(ADDR(dfmbase::Application, setAppAttribute),
+                       [](dfmbase::Application::ApplicationAttribute, const QVariant &) {});
     }
 
     void TearDown() override

@@ -12,18 +12,19 @@
 #include "models/fileviewmodel.h"
 
 #include <dfm-base/dfm_base_global.h>
-#include <dfm-base/utils/iconutils.h>
+#include <dfm-base/utils/iconpainterutils.h>
 
 #include <DPalette>
 #include <DPaletteHelper>
 #include <DGuiApplicationHelper>
-#include <DStyleOption>
+#include <DApplication>
 
 #include <QTextLayout>
 #include <QPainter>
 #include <QApplication>
 #include <QStyle>
 #include <QPainterPath>
+#include <QPointer>
 
 DWIDGET_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
@@ -37,6 +38,19 @@ inline constexpr int kTruncateButtonVerticalMargin { 3 };
 inline constexpr int kTruncateButtonHorizontalPadding { 12 };
 inline constexpr int kTruncateButtonTextSpacing { 6 };
 inline constexpr int kTruncateButtonWidthSlack { 10 };
+
+void removeUrlsFromCache(BaseItemDelegatePrivate *d, FileViewModel *fileViewModel, int first, int last)
+{
+    if (!d)
+        return;
+
+    if (fileViewModel) {
+        auto urls = fileViewModel->getUrlsByRowIndex(first, last);
+        d->removeIconEmblemsCache(urls);
+    } else {
+        d->clearIconEmblemsCache();
+    }
+}
 }   // namespace
 
 BaseItemDelegate::BaseItemDelegate(FileViewHelper *parent)
@@ -49,6 +63,38 @@ BaseItemDelegate::BaseItemDelegate(BaseItemDelegatePrivate &dd, FileViewHelper *
       d(&dd)
 {
     dd.init();
+    auto *view = parent->parent();
+    auto *model = view ? view->model() : nullptr;
+    QPointer<FileViewModel> fileViewModel = qobject_cast<FileViewModel*>(model);
+    Q_D(BaseItemDelegate);
+    if (model) {
+        connect(model, &QAbstractItemModel::modelReset, this, [d]() {
+            d->clearIconEmblemsCache();
+        });
+
+        connect(model, &QAbstractItemModel::rowsAboutToBeRemoved, this, [d, fileViewModel](const QModelIndex &parent, int first, int last) {
+            Q_UNUSED(parent);
+            if (fileViewModel)
+                removeUrlsFromCache(d, fileViewModel, first, last);
+            else
+                d->clearIconEmblemsCache();
+        });
+        connect(model, &QAbstractItemModel::dataChanged, this, [d, fileViewModel](const QModelIndex &topLeft, const QModelIndex &bottomRight) {
+            if (fileViewModel)
+                removeUrlsFromCache(d, fileViewModel, topLeft.row(), bottomRight.row());
+            else
+                d->clearIconEmblemsCache();
+        });
+    }
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged, this, [d]() {
+        d->clearIconEmblemsCache();
+    });
+    connect(qApp, &QApplication::paletteChanged, this, [d]() {
+        d->clearIconEmblemsCache();
+    });
+    connect(qApp, &DApplication::iconThemeChanged, this, [d]() {
+        d->clearIconEmblemsCache();
+    });
 }
 
 void BaseItemDelegate::initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const
@@ -85,16 +131,7 @@ bool BaseItemDelegate::isThumnailIconIndex(const QModelIndex &index) const
     if (!index.isValid() || !parent())
         return false;
 
-    FileInfoPointer info { parent()->fileInfo(index) };
-    if (info) {
-        if (IconUtils::shouldSkipThumbnailFrame(info->nameOf(NameInfoType::kMimeTypeName)))
-            return false;
-
-        const auto &attribute { info->extendAttributes(ExtInfoType::kFileThumbnail) };
-        if (attribute.isValid() && !attribute.value<QIcon>().isNull())
-            return true;
-    }
-    return false;
+    return IconPainterUtils::isThumbnailIcon(parent()->fileInfo(index));
 }
 
 BaseItemDelegate::~BaseItemDelegate()
@@ -239,19 +276,24 @@ void BaseItemDelegate::paintDragIcon(QPainter *painter, const QStyleOptionViewIt
     QRectF iconRect = opt.rect;
     iconRect.setSize(size);
 
+    auto iconName = index.data(dfmbase::Global::ItemRoles::kItemFileIconNameRole).toString();
     painter->setRenderHint(QPainter::Antialiasing, true);
     painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
     auto drawFileIcon = ItemDelegateHelper::paintIcon(painter, opt.icon,
                                                       { iconRect, Qt::AlignCenter,
                                                         QIcon::Normal, QIcon::Off,
-                                                        ViewMode::kIconMode, isThumnailIconIndex(index) });
+                                                        isThumnailIconIndex(index),
+                                                        iconName,
+                                                        ViewMode::kIconMode });
     // If the thumbnail drawing is empty, then redraw the file fileicon
     if (!drawFileIcon) {
         const QIcon &fileIcon = index.data(dfmbase::Global::ItemRoles::kItemFileIconRole).value<QIcon>();
         ItemDelegateHelper::paintIcon(painter, fileIcon,
                                       { iconRect, Qt::AlignCenter,
                                         QIcon::Normal, QIcon::Off,
-                                        ViewMode::kIconMode, false });
+                                        false,
+                                        iconName,
+                                        ViewMode::kIconMode });
     }
 }
 
@@ -276,7 +318,7 @@ void BaseItemDelegate::setPaintProxy(AbstractItemPaintProxy *proxy)
         delete d->paintProxy;
         d->paintProxy = nullptr;
     }
-
+    d->clearIconEmblemsCache();
     d->paintProxy = proxy;
 }
 
