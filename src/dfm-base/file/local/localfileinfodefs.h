@@ -21,9 +21,9 @@ DFMBASE_BEGIN_NAMESPACE
 //   mimetype 检测（额外 I/O 开销），而文件管理器通过 QMimeDatabase 独立计算
 //   mimetype，不依赖 GIO 的 content-type。
 inline constexpr char kFileAttributes[] { "standard::name,standard::type,standard::is-file,standard::is-dir,"
-    "standard::display-name,standard::size,standard::is-symlink,standard::symlink-target,standard::is-hidden,"
-    "access::*,time::*,"
-    "owner::*,unix::uid,unix::inode,unix::gid,unix::mode,id::filesystem" };
+                                          "standard::display-name,standard::size,standard::is-symlink,standard::symlink-target,standard::is-hidden,"
+                                          "access::*,time::*,"
+                                          "owner::*,unix::uid,unix::inode,unix::gid,unix::mode,id::filesystem,metadata::emblems" };
 
 DFMBASE_END_NAMESPACE
 
