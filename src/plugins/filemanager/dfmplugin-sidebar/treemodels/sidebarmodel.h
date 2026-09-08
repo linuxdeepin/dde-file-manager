@@ -61,8 +61,6 @@ private slots:
 
     void addSubItem(const QModelIndex &index, const QUrl &url);
     void removeSubItem(const QModelIndex &index, const QUrl &url);
-    // Set AT-SPI accessible name for sidebar items
-    void setItemAccessibleName(SideBarItem *item) const;
 
 private:
     QMutex locker;
