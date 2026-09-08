@@ -5,6 +5,7 @@
 #include "stubext.h"
 
 #include "mode/normalizedmode.h"
+#include "mode/normalized/normalizedmode_p.h"
 #include "mode/canvasorganizer.h"
 #include "mode/normalized/fileclassifier.h"
 #include "mode/normalized/normalizedmodebroker.h"
@@ -446,4 +447,41 @@ TEST_F(NormalizedModeImpl, SetSurfaces_DoesNotCrash)
 {
     mode->setSurfaces({});
     EXPECT_TRUE(mode->getSurfaces().isEmpty());
+}
+
+TEST_F(NormalizedModeImpl, TryPlaceRect_EmptySeats_PlacesItemAtRightEdge)
+{
+    QRect item(0, 0, 50, 50);
+    const QSize table(100, 100);
+
+    bool placed = mode->d->tryPlaceRect(item, {}, table);
+
+    EXPECT_TRUE(placed);
+    EXPECT_EQ(item.topLeft(), QPoint(50, 0));
+    EXPECT_EQ(item.size(), QSize(50, 50));
+}
+
+TEST_F(NormalizedModeImpl, TryPlaceRect_OccupiedLeftHalf_PlacesItemOnRight)
+{
+    QRect item(0, 0, 50, 50);
+    const QList<QRect> seats { QRect(0, 0, 50, 100) };
+    const QSize table(100, 100);
+
+    bool placed = mode->d->tryPlaceRect(item, seats, table);
+
+    EXPECT_TRUE(placed);
+    EXPECT_EQ(item.topLeft(), QPoint(50, 0));
+    EXPECT_FALSE(item.intersects(seats.first()));
+}
+
+TEST_F(NormalizedModeImpl, TryPlaceRect_FullyOccupiedTable_ReturnsFalse)
+{
+    QRect item(0, 0, 60, 60);
+    const QList<QRect> seats { QRect(0, 0, 100, 100) };
+    const QSize table(100, 100);
+
+    bool placed = mode->d->tryPlaceRect(item, seats, table);
+
+    EXPECT_FALSE(placed);
+    EXPECT_EQ(item.size(), QSize(60, 60));
 }
