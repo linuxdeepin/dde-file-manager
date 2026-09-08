@@ -76,12 +76,12 @@ TEST_F(TaskDialogTest, BlockShutdown)
     EXPECT_NO_FATAL_FAILURE({ d.blockShutdown(); });
 }
 
-TEST_F(TaskDialogTest, AdjustSize)
+TEST_F(TaskDialogTest, ResizeAndCenter)
 {
     TaskDialog d;
     d.initUI();
-    d.adjustSize(100);
-    d.adjustSize(0);
+    d.resizeAndCenter();
+    d.scheduleResize();
 }
 
 TEST_F(TaskDialogTest, MoveYCenter)
@@ -124,11 +124,11 @@ TEST_F(TaskDialogTest, SetTitle_Multiple)
     SUCCEED();
 }
 
-TEST_F(TaskDialogTest, AdjustSize_WithPositiveHeight)
+TEST_F(TaskDialogTest, ResizeAndCenter_WithHeight)
 {
     TaskDialog d;
     d.initUI();
-    d.adjustSize(200);
+    d.resizeAndCenter();
     SUCCEED();
 }
 

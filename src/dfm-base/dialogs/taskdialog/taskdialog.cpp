@@ -13,6 +13,7 @@
 #include <QMutex>
 #include <QKeyEvent>
 #include <QScreen>
+#include <QTimer>
 
 using namespace dfmbase;
 
@@ -46,7 +47,7 @@ void TaskDialog::addTask(const JobHandlePointer taskHandler)
 
     wid = new TaskWidget(this);
 
-    connect(wid, &TaskWidget::heightChanged, this, &TaskDialog::adjustSize, Qt::QueuedConnection);
+    connect(wid, &TaskWidget::heightChanged, this, &TaskDialog::scheduleResize, Qt::QueuedConnection);
     connect(this, &TaskDialog::closed, wid, &TaskWidget::parentClose, Qt::QueuedConnection);
     taskHandler->connect(taskHandler.get(), &AbstractJobHandler::requestRemoveTaskWidget, this, &TaskDialog::removeTask);
 
@@ -139,10 +140,7 @@ void TaskDialog::addTaskWidget(const JobHandlePointer taskHandler, TaskWidget *w
 
     setWindowFlags(Qt::WindowMinimizeButtonHint | Qt::WindowCloseButtonHint);
     setTitle(taskListWidget->count());
-    adjustSize();
-
-    if (taskItems.count() == 1)
-        moveToCenter();
+    scheduleResize();
 
     setModal(false);
     show();
@@ -158,18 +156,35 @@ void TaskDialog::setTitle(int taskCount)
 }
 
 /*!
- * \brief TaskDialog::adjustSize 调整整个进度显示的高度，当每个item中的widget发生变化时
+ * \brief TaskDialog::scheduleResize 合并同帧内的多次几何请求，事件循环末帧只执行一次几何更新
+ * 新增/移除任务、widget 内部高度变化都会触发本方法，用布尔标志去重，
+ * 保证单帧内无论触发多少次，都只做一次 resizeAndCenter，从而消除抖动。
  */
-void TaskDialog::adjustSize(int hight)
+void TaskDialog::scheduleResize()
 {
-    auto widgit = sender();
+    if (m_resizeScheduled)
+        return;
+    m_resizeScheduled = true;
+    QTimer::singleShot(0, this, [this]() {
+        m_resizeScheduled = false;
+        resizeAndCenter();
+    });
+}
+
+/*!
+ * \brief TaskDialog::resizeAndCenter 计算任务列表高度并一次性完成窗口高度调整与居中
+ * 将「变高/变矮」与「居中移动」合并到同一次事件处理中，中间不产生错位帧，避免视觉抖动。
+ */
+void TaskDialog::resizeAndCenter()
+{
     int listHeight = 2;
     for (int i = 0; i < taskListWidget->count(); i++) {
         QListWidgetItem *item = taskListWidget->item(i);
         auto wg = taskListWidget->itemWidget(item);
-        int h = widgit == wg && hight > 0 ? hight : wg->height();
-        item->setSizeHint(QSize(item->sizeHint().width(), h));
-        listHeight += h;
+        if (!wg)
+            continue;
+        item->setSizeHint(QSize(item->sizeHint().width(), wg->height()));
+        listHeight += wg->height();
     }
 
     int oldHeight = height();
@@ -182,9 +197,15 @@ void TaskDialog::adjustSize(int hight)
     }
 
     layout()->setSizeConstraint(QLayout::SetNoConstraint);
-    
-    // 如果高度发生了变化，重新居中对话框以避免位置偏移
-    if (oldHeight != height()) {
+
+    // 高度未变化时无需移动，避免无谓的窗口重定位
+    if (oldHeight == height())
+        return;
+
+    // 未显示时整体居中；已显示时仅重算纵向位置，保持水平位置不变
+    if (!isVisible()) {
+        moveToCenter();
+    } else {
         moveYCenter();
     }
 }
@@ -233,7 +254,7 @@ void TaskDialog::removeTask()
     if (taskListWidget->count() == 0) {
         close();
     } else {
-        adjustSize();
+        scheduleResize();
     }
 }
 /*!
