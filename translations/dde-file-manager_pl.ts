@@ -620,7 +620,7 @@ Wprowadź nazwę użytkownika i hasło dla %1</translation>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="29"/>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="289"/>
         <source>Tag</source>
-        <translation>Znacznik</translation>
+        <translation>Tag</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="30"/>
@@ -628,7 +628,7 @@ Wprowadź nazwę użytkownika i hasło dla %1</translation>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="30"/>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/taghelper.cpp" line="243"/>
         <source>Added tags</source>
-        <translation>Dodane znaczniki</translation>
+        <translation>Dodane tagi</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="32"/>
@@ -1871,7 +1871,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="56"/>
         <source>File&apos;s Entity Tag was incorrect</source>
-        <translation>Znacznik własności pliku był nieprawidłowy</translation>
+        <translation>Tag własności pliku był nieprawidłowy</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="60"/>
@@ -7398,7 +7398,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="424"/>
         <source>Tag</source>
-        <translation>Znacznik</translation>
+        <translation>Tag</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="425"/>
@@ -7467,7 +7467,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/tag.cpp" line="54"/>
         <source>Tag</source>
-        <translation>Znacznik</translation>
+        <translation>Tag</translation>
     </message>
 </context>
 <context>
@@ -7483,7 +7483,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/widgets/tageditor.cpp" line="103"/>
         <source>Input tag info, such as work, family. A comma is used between two tags.</source>
-        <translation>Dodaj informacje o znaczniku, takie jak praca, rodzina. Między nazwami znaczników użyj przecinka.</translation>
+        <translation>Dodaj informacje o tagu, takie jak praca czy rodzina. Między nazwami tagów użyj przecinka.</translation>
     </message>
 </context>
 <context>
@@ -7491,17 +7491,17 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/menu/tagmenuscene.cpp" line="63"/>
         <source>Tag information</source>
-        <translation>Utwórz znacznik</translation>
+        <translation>Utwórz tag</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/menu/tagmenuscene.cpp" line="208"/>
         <source>Remove tag &quot;%1&quot;</source>
-        <translation>Usuń znacznik &quot;%1&quot;</translation>
+        <translation>Usuń tag &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/menu/tagmenuscene.cpp" line="210"/>
         <source>Add tag &quot;%1&quot;</source>
-        <translation>Dodaj znacznik &quot;%1&quot;</translation>
+        <translation>Dodaj tag &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
@@ -7509,7 +7509,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/widgets/private/tagwidget_p.cpp" line="40"/>
         <source>Tag</source>
-        <translation>Znacznik</translation>
+        <translation>Tag</translation>
     </message>
 </context>
 <context>
