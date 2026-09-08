@@ -8,7 +8,6 @@
 #include <dfm-base/utils/fileutils.h>
 
 #include <QDir>
-#include <QRegularExpression>
 
 namespace dfmbase {
 
@@ -22,6 +21,16 @@ QMultiMap<int, QString> &UrlRoute::schemeRealTree()
 {
     static QMultiMap<int, QString> *s_schemeRealTree = new QMultiMap<int, QString>();
     return *s_schemeRealTree;
+}
+
+static QString squeezeSlashes(QString path)
+{
+    int dup = path.indexOf(QLatin1String("//"));
+    while (dup >= 0) {
+        path.remove(dup, 1);
+        dup = path.indexOf(QLatin1String("//"), dup);
+    }
+    return path;
 }
 
 /*!
@@ -66,8 +75,7 @@ bool UrlRoute::regScheme(const QString &scheme,
             return false;
         }
 
-        QString temp = formatRoot;
-        temp.replace(QRegularExpression("/{1,}"), "/");
+        QString temp = squeezeSlashes(formatRoot);
         int treeLevel = temp.count("/") - 1;
         schemeRealTree().insert(treeLevel, scheme);   // 缓存层级
     }
@@ -312,8 +320,7 @@ QUrl UrlRoute::rootUrl(const QString &scheme)
  */
 QUrl UrlRoute::pathToReal(const QString &path)
 {
-    QString temp = path;
-    temp.replace(QRegularExpression("/{1,}"), "/");
+    QString temp = squeezeSlashes(path);
     int treeLevel = temp.count("/");
     while (treeLevel >= 0) {
         // 同层级所有的scheme
@@ -390,8 +397,7 @@ QString UrlRoute::urlToPath(const QUrl &url)
     if (!hasScheme(url.scheme()))
         return "";
 
-    QString result = schemeInfos()[url.scheme()].rootPath() + url.path();
-    result.replace(QRegularExpression("/{1,}"), "/");
+    QString result = squeezeSlashes(schemeInfos()[url.scheme()].rootPath() + url.path());
     return result;
 }
 
