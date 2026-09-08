@@ -228,6 +228,13 @@ bool UsbRepairMonitor::isUsbDevice(const QString &blockObjPath, QString *deviceN
         return false;
     }
 
+    // Skip optical drives (e.g., virtual CD-ROM from Android MTP)
+    bool optical = driveIface.property("Optical").toBool();
+    if (optical) {
+        fmDebug() << "UsbRepairMonitor: optical drive, skipping:" << blockObjPath;
+        return false;
+    }
+
     if (deviceName) {
         *deviceName = driveIface.property("Id").toString();
         QString vendor = driveIface.property("Vendor").toString();
