@@ -424,14 +424,24 @@ bool EventsHandler::onAcquireDevicePwd(const QString &dev, QString *pwd, bool *c
 
     // test tpm
     bool testTPM = (type == kPin || type == kTpm);
-    if (testTPM && tpm_utils::checkTPM() != 0) {
-        fmWarning() << "TPM service is not available for device:" << dev;
-        int ret = dialog_utils::showDialog(tr("Error"), tr("TPM status is abnormal, please use the recovery key to unlock it"));
-        // unlock by recovery key.
-        if (ret == 0)
-            *pwd = acquirePassphraseByRec(dev, *cancelled);
+    if (testTPM) {
+        bool authFailed = false;
+        int tpmRet = tpm_utils::checkTPM(&authFailed);
+        if (authFailed) {
+            // PolicyKit authorization failed/cancelled by user, treat as cancel this unlock.
+            fmInfo() << "TPM authorization cancelled by user for device:" << dev;
+            *cancelled = true;
+            return true;
+        }
+        if (tpmRet != 0) {
+            fmWarning() << "TPM service is not available for device:" << dev;
+            int ret = dialog_utils::showDialog(tr("Error"), tr("TPM status is abnormal, please use the recovery key to unlock it"));
+            // unlock by recovery key.
+            if (ret == 0)
+                *pwd = acquirePassphraseByRec(dev, *cancelled);
 
-        return true;
+            return true;
+        }
     }
 
     switch (type) {
