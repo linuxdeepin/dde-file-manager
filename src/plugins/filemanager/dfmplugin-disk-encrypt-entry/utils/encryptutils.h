@@ -18,7 +18,7 @@ typedef QSharedPointer<dfmmount::DBlockDevice> BlockDev;
 namespace dfmplugin_diskenc {
 
 namespace tpm_utils {
-int checkTPM();
+int checkTPM(bool *authFailed = nullptr);
 int checkTPMLockoutStatus();
 int getRandomByTPM(int size, QString *output);
 int isSupportAlgoByTPM(const QString &algoName, bool *support);
