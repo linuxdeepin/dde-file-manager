@@ -1,3 +1,9 @@
+dde-file-manager (6.5.170) unstable; urgency=medium
+
+  * fix: add metadata::emblems to GIO file attributes query
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Tue, 08 Sep 2026 14:04:00 +0800
+
 dde-file-manager (6.5.169) unstable; urgency=medium
 
   * fix: emblem still shows after disabling UDisk emblem
