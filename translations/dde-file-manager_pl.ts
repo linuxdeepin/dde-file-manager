@@ -3495,17 +3495,17 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="409"/>
         <source>Cannot move the selected %1 items to the trash. Do you want to permanently delete them?</source>
-        <translation>Nie można przenieść %1 zaznaczonych przedmiotów do kosza. Czy chcesz je usunąć permanentnie?</translation>
+        <translation>Nie można przenieść %1 zaznaczonych przedmiotów do kosza. Czy chcesz je trwale usunąć?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="410"/>
         <source>Permanently delete %1 items?</source>
-        <translation>Czy usunąć permanentnie %1 przedmiotów?</translation>
+        <translation>Czy usunąć trwale %1 przedmiotów?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="451"/>
         <source>Cannot move &quot;%1&quot; to the trash. Do you want to permanently delete it?</source>
-        <translation>Nie można przenieść &quot;%1&quot; do kosza. Czy usunąć plik permanentnie?</translation>
+        <translation>Nie można przenieść &quot;%1&quot; do kosza. Czy usunąć trwale plik?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="416"/>
@@ -3524,7 +3524,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="452"/>
         <source>Permanently delete %1?</source>
-        <translation>Usunąć permanentnie %1?</translation>
+        <translation>Usunąć trwale %1?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="458"/>
@@ -4105,7 +4105,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="27"/>
         <source>Permanently delete</source>
-        <translation>Usuń permanentnie</translation>
+        <translation>Usuń trwale</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="28"/>
@@ -4434,7 +4434,7 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="566"/>
         <source>Permanently delete</source>
         <comment>button</comment>
-        <translation>Usuń permanentnie</translation>
+        <translation>Usuń trwale</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="593"/>
@@ -4899,7 +4899,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="313"/>
         <source>Once enabled, read/write permission will be granted permanently</source>
-        <translation>Po włączeniu, uprawnienia odczytu/zapisu zostaną nadane permanentnie.</translation>
+        <translation>Po włączeniu, uprawnienia odczytu/zapisu zostaną nadane na stałe.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="315"/>
