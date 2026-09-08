@@ -116,33 +116,33 @@ TEST_F(RecentTest, FollowEvents)
 {
     stub_ext::StubExt st;
     st.set_lamda(&RecentManager::init, []() {});
-    // type of RecentManager::customColumnRole
-    typedef bool (RecentManager::*HookFunc1)(const QUrl &, QList<Global::ItemRoles> *);
-    typedef bool (EventSequenceManager::*HookType1)(const QString &, const QString &, RecentManager *, HookFunc1);
+    // type of RecentEventReceiver::customColumnRole
+    typedef bool (RecentEventReceiver::*HookFunc1)(const QUrl &, QList<Global::ItemRoles> *);
+    typedef bool (EventSequenceManager::*HookType1)(const QString &, const QString &, RecentEventReceiver *, HookFunc1);
 
-    // type of RecentManager::customRoleDisplayName
-    typedef bool (RecentManager::*HookFunc2)(const QUrl &, const Global::ItemRoles, QString *);
-    typedef bool (EventSequenceManager::*HookType2)(const QString &, const QString &, RecentManager *, HookFunc2);
+    // type of RecentEventReceiver::customRoleDisplayName
+    typedef bool (RecentEventReceiver::*HookFunc2)(const QUrl &, const Global::ItemRoles, QString *);
+    typedef bool (EventSequenceManager::*HookType2)(const QString &, const QString &, RecentEventReceiver *, HookFunc2);
 
-    // type of RecentManager::isTransparent
-    typedef bool (RecentManager::*HookFunc3)(const QUrl &, DFMGLOBAL_NAMESPACE::TransparentStatus *);
-    typedef bool (EventSequenceManager::*HookType3)(const QString &, const QString &, RecentManager *, HookFunc3);
+    // type of RecentEventReceiver::isTransparent
+    typedef bool (RecentEventReceiver::*HookFunc3)(const QUrl &, DFMGLOBAL_NAMESPACE::TransparentStatus *);
+    typedef bool (EventSequenceManager::*HookType3)(const QString &, const QString &, RecentEventReceiver *, HookFunc3);
 
-    // type of RecentManager::checkDragDropAction
-    typedef bool (RecentManager::*HookFunc4)(const QList<QUrl> &, const QUrl &, Qt::DropAction *);
-    typedef bool (EventSequenceManager::*HookType4)(const QString &, const QString &, RecentManager *, HookFunc4);
+    // type of RecentEventReceiver::checkDragDropAction
+    typedef bool (RecentEventReceiver::*HookFunc4)(const QList<QUrl> &, const QUrl &, Qt::DropAction *);
+    typedef bool (EventSequenceManager::*HookType4)(const QString &, const QString &, RecentEventReceiver *, HookFunc4);
 
-    // type of RecentManager::handleDropFiles
-    typedef bool (RecentManager::*HookFunc5)(const QList<QUrl> &, const QUrl &);
-    typedef bool (EventSequenceManager::*HookType5)(const QString &, const QString &, RecentManager *, HookFunc5);
+    // type of RecentEventReceiver::handleDropFiles
+    typedef bool (RecentEventReceiver::*HookFunc5)(const QList<QUrl> &, const QUrl &);
+    typedef bool (EventSequenceManager::*HookType5)(const QString &, const QString &, RecentEventReceiver *, HookFunc5);
 
-    // type of RecentManager::detailViewIcon
-    typedef bool (RecentManager::*HookFunc6)(const QUrl &, QString *);
-    typedef bool (EventSequenceManager::*HookType6)(const QString &, const QString &, RecentManager *, HookFunc6);
+    // type of RecentEventReceiver::detailViewIcon
+    typedef bool (RecentEventReceiver::*HookFunc6)(const QUrl &, QString *);
+    typedef bool (EventSequenceManager::*HookType6)(const QString &, const QString &, RecentEventReceiver *, HookFunc6);
 
-    // type of RecentManager::sepateTitlebarCrumb
-    typedef bool (RecentManager::*HookFunc7)(const QUrl &, QList<QVariantMap> *);
-    typedef bool (EventSequenceManager::*HookType7)(const QString &, const QString &, RecentManager *, HookFunc7);
+    // type of RecentEventReceiver::sepateTitlebarCrumb
+    typedef bool (RecentEventReceiver::*HookFunc7)(const QUrl &, QList<QVariantMap> *);
+    typedef bool (EventSequenceManager::*HookType7)(const QString &, const QString &, RecentEventReceiver *, HookFunc7);
 
     // type of RecentFileHelper::cutFile
     typedef bool (RecentFileHelper::*HookFunc8)(const quint64, const QList<QUrl>,
@@ -166,8 +166,8 @@ TEST_F(RecentTest, FollowEvents)
     typedef bool (RecentFileHelper::*HookFunc12)(quint64, QList<QUrl>);
     typedef bool (EventSequenceManager::*HookType12)(const QString &, const QString &, RecentFileHelper *, HookFunc12);
 
-    // type of RecentFileHelper::linkFile
-    typedef bool (RecentFileHelper::*HookFunc13)(const quint64, const QUrl, const QUrl, const bool, const bool);
+    // type of RecentFileHelper::setPermissionHandle
+    typedef bool (RecentFileHelper::*HookFunc13)(const quint64, const QUrl, QFileDevice::Permissions, bool *, QString *);
     typedef bool (EventSequenceManager::*HookType13)(const QString &, const QString &, RecentFileHelper *, HookFunc13);
 
     // type of RecentFileHelper::writeUrlsToClipboard
