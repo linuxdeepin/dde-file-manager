@@ -62,8 +62,11 @@ QString config_utils::cipherType()
     return cipher;
 }
 
-int tpm_utils::checkTPM()
+int tpm_utils::checkTPM(bool *authFailed)
 {
+    if (authFailed)
+        *authFailed = false;
+
     QDBusInterface iface(kTPMControlService, kTPMControlPath, kTPMControlInterface, QDBusConnection::systemBus());
     iface.setTimeout(kTPMDBusTimeoutMs);
     if (!iface.isValid()) {
@@ -72,7 +75,17 @@ int tpm_utils::checkTPM()
     }
 
     QDBusReply<int> reply = iface.call("IsTPMAvailable");
-    return reply.isValid() ? reply.value() : -1;
+    if (!reply.isValid()) {
+        fmWarning() << "IsTPMAvailable DBus call failed";
+        return -1;
+    }
+
+    int ret = reply.value();
+    // A valid reply carrying -1 means the service side returned kAuthFailed
+    // (PolicyKit authorization failed/cancelled by user).
+    if (authFailed)
+        *authFailed = (ret == -1);
+    return ret;
 }
 
 int tpm_utils::checkTPMLockoutStatus()
