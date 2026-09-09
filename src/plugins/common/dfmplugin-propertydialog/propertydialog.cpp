@@ -6,15 +6,25 @@
 #include "events/propertyeventreceiver.h"
 #include "menu/propertymenuscene.h"
 #include "utils/propertydialogmanager.h"
+#include "views/computerpropertydialog.h"
 
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
+
 namespace dfmplugin_propertydialog {
 DFM_LOG_REGISTER_CATEGORY(DPPROPERTYDIALOG_NAMESPACE)
+DFMBASE_USE_NAMESPACE
 
 void PropertyDialog::initialize()
 {
     PropertyEventReceiver::instance()->bindEvents();
+
+    QString err;
+    auto ret = DConfigManager::instance()->addConfig(ComputerCustomLogoConfig::kConfName, &err);
+    if (!ret) {
+        fmWarning() << "PropertyDialog: create dconfig failed:" << err;
+    }
 }
 
 bool PropertyDialog::start()
