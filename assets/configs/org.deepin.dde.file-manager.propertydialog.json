@@ -1,0 +1,72 @@
+{
+    "magic":"dsg.config.meta",
+    "version":"1.0",
+    "contents":{
+        "computerCustomLogo.enable":{
+            "value": false,
+            "serial":0,
+            "flags":["global"],
+            "name":"Enable custom logo on the computer property dialog",
+            "name[zh_CN]":"启用计算机属性对话框自定义图标",
+            "description[zh_CN]":"用于控制计算机属性对话框中是否显示自定义图标",
+            "description":"It's used to control whether to display the custom logo in the computer property dialog",
+            "permissions":"readwrite",
+            "visibility":"public"
+        },
+        "computerCustomLogo.resourcePath":{
+            "value": "",
+            "serial":0,
+            "flags":["global"],
+            "name":"Custom logo resource path",
+            "name[zh_CN]":"自定义图标资源路径",
+            "description[zh_CN]":"自定义图标图片的本地文件路径，为空时不显示",
+            "description":"The local file path of the custom logo image. It is not displayed when empty",
+            "permissions":"readwrite",
+            "visibility":"public"
+        },
+        "computerCustomLogo.verticalOffset":{
+            "value": 0,
+            "serial":0,
+            "flags":["global"],
+            "name":"Custom logo vertical offset",
+            "name[zh_CN]":"自定义图标垂直偏移",
+            "description[zh_CN]":"自定义图标的垂直偏移量（逻辑像素）。不与系统 logo 重叠：大于等于 0 在其下方（间距即偏移量），小于 0 在其上方（绝对值为间距）",
+            "description":"The vertical offset of the custom logo (in logical pixels). It does not overlap the system logo: >=0 places it below (offset is the gap), <0 places it above (absolute value is the gap)",
+            "permissions":"readwrite",
+            "visibility":"public"
+        },
+        "computerCustomLogo.horizontalOffset":{
+            "value": 0,
+            "serial":0,
+            "flags":["global"],
+            "name":"Custom logo horizontal offset",
+            "name[zh_CN]":"自定义图标水平偏移",
+            "description[zh_CN]":"自定义图标的水平偏移量（逻辑像素），0 与系统 logo 水平居中，大于 0 向右，小于 0 向左",
+            "description":"The horizontal offset of the custom logo (in logical pixels). 0 centers it horizontally on the system logo, greater than 0 moves right, less than 0 moves left",
+            "permissions":"readwrite",
+            "visibility":"public"
+        },
+        "computerCustomLogo.width":{
+            "value": 0,
+            "serial":0,
+            "flags":["global"],
+            "name":"Custom logo width",
+            "name[zh_CN]":"自定义图标宽度",
+            "description[zh_CN]":"自定义图标的最大宽度（逻辑像素），作为等比缩放约束框",
+            "description":"The maximum width of the custom logo (in logical pixels), used as the proportional scaling bounding box",
+            "permissions":"readwrite",
+            "visibility":"public"
+        },
+        "computerCustomLogo.height":{
+            "value": 0,
+            "serial":0,
+            "flags":["global"],
+            "name":"Custom logo height",
+            "name[zh_CN]":"自定义图标高度",
+            "description[zh_CN]":"自定义图标的最大高度（逻辑像素），作为等比缩放约束框",
+            "description":"The maximum height of the custom logo (in logical pixels), used as the proportional scaling bounding box",
+            "permissions":"readwrite",
+            "visibility":"public"
+        }
+    }
+}

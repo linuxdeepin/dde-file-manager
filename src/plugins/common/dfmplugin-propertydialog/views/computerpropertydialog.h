@@ -16,6 +16,16 @@
 #include <QThread>
 
 namespace dfmplugin_propertydialog {
+namespace ComputerCustomLogoConfig {
+inline constexpr char kConfName[] { "org.deepin.dde.file-manager.propertydialog" };
+inline constexpr char kEnable[] { "computerCustomLogo.enable" };
+inline constexpr char kResourcePath[] { "computerCustomLogo.resourcePath" };
+inline constexpr char kVerticalOffset[] { "computerCustomLogo.verticalOffset" };
+inline constexpr char kHorizontalOffset[] { "computerCustomLogo.horizontalOffset" };
+inline constexpr char kWidth[] { "computerCustomLogo.width" };
+inline constexpr char kHeight[] { "computerCustomLogo.height" };
+}
+
 class ComputerInfoThread : public QThread
 {
     Q_OBJECT
@@ -72,6 +82,7 @@ public:
 private:
     void iniUI();
     void iniThread();
+    void loadCustomerLogoConfig();
 
 signals:
 
@@ -84,7 +95,9 @@ protected:
 
 private:
     DTK_WIDGET_NAMESPACE::DLabel *computer { nullptr };
+    QWidget *logoContainer { nullptr };
     DTK_WIDGET_NAMESPACE::DLabel *computerIcon { nullptr };
+    DTK_WIDGET_NAMESPACE::DLabel *customerLogo { nullptr };
     DTK_WIDGET_NAMESPACE::DLabel *basicInfo { nullptr };
     DFMBASE_NAMESPACE::KeyValueLabel *computerName { nullptr };
     DFMBASE_NAMESPACE::KeyValueLabel *computerVersionNum { nullptr };

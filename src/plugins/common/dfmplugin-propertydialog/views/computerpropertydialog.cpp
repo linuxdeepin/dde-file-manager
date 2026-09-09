@@ -4,6 +4,7 @@
 
 #include "computerpropertydialog.h"
 #include <dfm-base/utils/universalutils.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <DSysInfo>
 #include <DFontSizeManager>
@@ -12,8 +13,14 @@
 
 #include <QVBoxLayout>
 #include <QFile>
+#include <QFileInfo>
+#include <QDir>
+#include <QPainter>
 #include <QDBusInterface>
+#include <QImageReader>
+#include <QtSvg/QSvgRenderer>
 
+#include <algorithm>
 #include <cmath>
 
 #define SYSTEM_INFO_SERVICE "org.deepin.dde.SystemInfo1"
@@ -23,6 +30,8 @@ static constexpr int kMaximumHeightOfTwoRow { 52 };
 static constexpr int kMaximumHeightOfOneRow { 31 };
 inline constexpr int kIconWidth { 152 };
 inline constexpr int kIconHeight { 39 };
+inline constexpr int kMaxCustomerLogoBytes { 500 << 10 };
+inline constexpr int kMaxCustomerLogoSize { 1024 };
 
 DCORE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
@@ -53,7 +62,10 @@ void ComputerPropertyDialog::iniUI()
     DFontSizeManager::instance()->bind(titleLabel, DFontSizeManager::T5, QFont::DemiBold);
     titleLabel->setForegroundRole(DPalette::TextTitle);
 
-    computerIcon = new DLabel(this);
+    logoContainer = new QWidget(this);
+    logoContainer->setFixedSize(kIconWidth, kIconHeight);
+
+    computerIcon = new DLabel(logoContainer);
     QString distributerLogoPath = DSysInfo::distributionOrgLogo();
     QIcon logoIcon;
     if (!distributerLogoPath.isEmpty() && QFile::exists(distributerLogoPath)) {
@@ -66,6 +78,11 @@ void ComputerPropertyDialog::iniUI()
     computerIcon->setFixedSize(iconSize);
     computerIcon->setAlignment(Qt::AlignCenter);
     computerIcon->setPixmap(logoIcon.pixmap(iconSize, dpr));
+    computerIcon->move(0, 0);
+
+    customerLogo = new DLabel(logoContainer);
+    customerLogo->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    customerLogo->hide();
 
     basicInfo = new DLabel(tr("Basic Info"), this);
     DFontSizeManager::instance()->bind(basicInfo, DFontSizeManager::T5, QFont::DemiBold);
@@ -127,7 +144,7 @@ void ComputerPropertyDialog::iniUI()
     mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->addWidget(titleLabel);
     mainLayout->addSpacing(10);
-    mainLayout->addWidget(computerIcon, 0, Qt::AlignHCenter);
+    mainLayout->addWidget(logoContainer, 0, Qt::AlignHCenter);
     mainLayout->addSpacing(15);
     mainLayout->addWidget(basicInfoFrame);
 
@@ -183,8 +200,109 @@ void ComputerPropertyDialog::computerProcess(QMap<ComputerInfoItem, QString> com
 
 void ComputerPropertyDialog::showEvent(QShowEvent *event)
 {
+    loadCustomerLogoConfig();
     thread->startThread();
     DDialog::showEvent(event);
+}
+
+static QPixmap loadLogoPixmap(const QString &uri, const QSize &size, qreal pixelRatio, QSize *logicalSize)
+{
+    if (logicalSize)
+        *logicalSize = QSize();
+
+    QFileInfo file(uri);
+    if (!file.exists()) {
+        fmWarning() << "customer logo file does not exist:" << uri;
+        return QPixmap();
+    }
+
+    if (file.size() > kMaxCustomerLogoBytes) {
+        fmWarning() << "customer logo size exceed 500KB!";
+        return QPixmap();
+    }
+
+    QPixmap pix;
+    if (file.suffix().compare("svg", Qt::CaseInsensitive) == 0) {
+        QSvgRenderer svg(uri);
+        QSize natural = svg.defaultSize();
+        if (natural.isEmpty()) {
+            const QRectF viewBox = svg.viewBoxF();
+            if (!viewBox.isEmpty())
+                natural = viewBox.size().toSize();
+        }
+        if (natural.isEmpty())
+            return pix;
+
+        const QSize fitted = natural.scaled(size, Qt::KeepAspectRatio);
+        const QSize physical = fitted * pixelRatio;
+
+        pix = QPixmap(physical);
+        pix.fill(Qt::transparent);
+        {
+            QPainter painter(&pix);
+            svg.render(&painter, QRect(QPoint(0, 0), pix.size()));
+        }
+        pix.setDevicePixelRatio(pixelRatio);
+        if (logicalSize)
+            *logicalSize = fitted;
+    } else {
+        QImageReader reader(uri);
+        reader.setScaledSize(size * pixelRatio);
+        const QImage image = reader.read();
+        if (image.isNull())
+            return pix;
+        pix = QPixmap::fromImage(image);
+        pix.setDevicePixelRatio(pixelRatio);
+        if (logicalSize)
+            *logicalSize = pix.deviceIndependentSize().toSize();
+    }
+
+    return pix;
+}
+
+void ComputerPropertyDialog::loadCustomerLogoConfig()
+{
+    const bool enable = DConfigManager::instance()->value(ComputerCustomLogoConfig::kConfName, ComputerCustomLogoConfig::kEnable, false).toBool();
+    QString resourcePath = DConfigManager::instance()->value(ComputerCustomLogoConfig::kConfName, ComputerCustomLogoConfig::kResourcePath, QString()).toString();
+    const int verticalOffset = DConfigManager::instance()->value(ComputerCustomLogoConfig::kConfName, ComputerCustomLogoConfig::kVerticalOffset, 0).toInt();
+    const int horizontalOffset = DConfigManager::instance()->value(ComputerCustomLogoConfig::kConfName, ComputerCustomLogoConfig::kHorizontalOffset, 0).toInt();
+    const int width = std::clamp(DConfigManager::instance()->value(ComputerCustomLogoConfig::kConfName, ComputerCustomLogoConfig::kWidth, 0).toInt(), 0, kMaxCustomerLogoSize);
+    const int height = std::clamp(DConfigManager::instance()->value(ComputerCustomLogoConfig::kConfName, ComputerCustomLogoConfig::kHeight, 0).toInt(), 0, kMaxCustomerLogoSize);
+
+    if (!enable || resourcePath.isEmpty() || width <= 0 || height <= 0) {
+        customerLogo->hide();
+        computerIcon->move(0, 0);
+        logoContainer->setFixedSize(kIconWidth, kIconHeight);
+        return;
+    }
+
+    if (resourcePath.startsWith("~/"))
+        resourcePath.replace(0, 1, QDir::homePath());
+
+    QSize actualSize;
+    QPixmap logoPixmap = loadLogoPixmap(resourcePath, QSize(width, height), devicePixelRatioF(), &actualSize);
+    if (logoPixmap.isNull()) {
+        customerLogo->hide();
+        computerIcon->move(0, 0);
+        logoContainer->setFixedSize(kIconWidth, kIconHeight);
+        return;
+    }
+
+    const int logoX = (kIconWidth - actualSize.width()) / 2 + horizontalOffset;
+    const int logoY = verticalOffset >= 0 ? kIconHeight + verticalOffset : verticalOffset - actualSize.height();
+
+    const int left = (std::min)(0, logoX);
+    const int top = (std::min)(0, logoY);
+    const int right = (std::max)(kIconWidth, logoX + actualSize.width());
+    const int bottom = (std::max)(kIconHeight, logoY + actualSize.height());
+
+    customerLogo->setPixmap(logoPixmap);
+    customerLogo->setFixedSize(actualSize);
+    customerLogo->move(logoX - left, logoY - top);
+    customerLogo->show();
+
+    computerIcon->move(-left, -top);
+    logoContainer->setFixedSize(right - left, bottom - top);
 }
 
 void ComputerPropertyDialog::closeEvent(QCloseEvent *event)
