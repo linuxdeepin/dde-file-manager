@@ -241,7 +241,7 @@ bool FileUtils::isDesktopFile(const QUrl &url)
         return false;
 
     if (isDesktopFileSuffix(url))
-        return true;
+        return QFileInfo(url.toLocalFile()).isFile();
 
     const QString &target = symlinkTarget(url);
     if (!target.isEmpty()
@@ -267,7 +267,7 @@ bool FileUtils::isDesktopFileInfo(const FileInfoPointer &info)
     Q_ASSERT(info);
     const QString &suffix = info->nameOf(NameInfoType::kSuffix);
     if (suffix == DFMBASE_NAMESPACE::Global::Scheme::kDesktop)
-        return true;
+        return !info->isAttributes(OptInfoType::kIsDir);
 
     if ((info->urlOf(UrlInfoType::kParentUrl).path() == StandardPaths::location(StandardPaths::StandardLocation::kDesktopPath)
          || info->extendAttributes(ExtInfoType::kFileLocalDevice).toBool())
