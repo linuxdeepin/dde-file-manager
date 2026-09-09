@@ -1,3 +1,11 @@
+dde-file-manager (6.5.171) unstable; urgency=medium
+
+  * fix: eliminate task dialog resize jitter
+  * feat: add custom logo to computer property dialog
+  * fix: exclude directories from desktop file detection
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Wed, 09 Sep 2026 17:57:38 +0800
+
 dde-file-manager (6.5.170) unstable; urgency=medium
 
   * fix: add metadata::emblems to GIO file attributes query
