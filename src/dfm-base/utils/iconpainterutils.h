@@ -79,7 +79,7 @@ public:
      * @return true 如果文件有有效缩略图（排除 AppImage / UAB）
      *
      * @note 替换 BaseItemDelegate/CanvasItemDelegate/CollectionItemDelegate
-     *       中重复的 isThumnailIconIndex 方法
+     *       中重复的 isThumbnailIconIndex 方法
      */
     static bool isThumbnailIcon(const FileInfoPointer &info);
 };

@@ -20,7 +20,7 @@ void ListItemPaintProxy::drawIcon(QPainter *painter, QRectF *rect, const QStyleO
 
     ItemDelegateHelper::paintIconWithFallback(
             painter, option, index, *rect,
-            isThumnailIconIndex(index),
+            isThumbnailIconIndex(index),
             dfmbase::Global::ViewMode::kListMode);
 }
 

@@ -650,7 +650,7 @@ QRectF IconItemDelegate::paintItemIcon(QPainter *painter, const QStyleOptionView
     }
 
     // Cache miss: render icon+emblems to offscreen pixmap, cache, then draw
-    bool isThumnail = isThumnailIconIndex(index);
+    bool isThumbnail = isThumbnailIconIndex(index);
 
     qreal dpr = painter->device()->devicePixelRatioF();
     QPixmap *cachePixmap = d->createCachedPixmap(iconRect, dpr, padW, padH);
@@ -660,7 +660,7 @@ QRectF IconItemDelegate::paintItemIcon(QPainter *painter, const QStyleOptionView
         cachePainter.translate(-cacheOrigin);
 
         ItemDelegateHelper::paintIconWithFallback(
-                &cachePainter, opt, index, iconRect, isThumnail);
+                &cachePainter, opt, index, iconRect, isThumbnail);
 
         paintEmblems(&cachePainter, iconRect, index);
         cachePainter.end();
@@ -672,7 +672,7 @@ QRectF IconItemDelegate::paintItemIcon(QPainter *painter, const QStyleOptionView
 
     // Fallback (pixmap creation failed): draw directly
     ItemDelegateHelper::paintIconWithFallback(
-            painter, opt, index, iconRect, isThumnail);
+            painter, opt, index, iconRect, isThumbnail);
 
     paintEmblems(painter, iconRect, index);
     return iconRect;
