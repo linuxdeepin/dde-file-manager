@@ -15,13 +15,14 @@
 #include <QApplication>
 #include <QAtomicInteger>
 #include <DGuiApplicationHelper>
+#include <DPlatformTheme>
 
 DGUI_USE_NAMESPACE
 using namespace dfmbase;
 
 namespace dfmbase {
 
-// 主题版本号：主题类型/调色板变化时自增，用于失效桌面项缓存的图标状态（#8）
+// 主题版本号：主题类型/调色板/图标主题变化时自增，用于失效桌面项缓存的图标状态（#8）
 static QAtomicInteger<int> s_iconThemeGeneration { 0 };
 static void invalidateDesktopIconCache()
 {
@@ -35,6 +36,9 @@ static int iconThemeGeneration()
                          &DGuiApplicationHelper::themeTypeChanged,
                          &invalidateDesktopIconCache);
         QObject::connect(qApp, &QApplication::paletteChanged,
+                         &invalidateDesktopIconCache);
+        QObject::connect(DGuiApplicationHelper::instance()->systemTheme(),
+                         &DPlatformTheme::iconThemeNameChanged,
                          &invalidateDesktopIconCache);
         return true;
     }();
@@ -93,9 +97,9 @@ public:
     void ensureIconCacheFresh()
     {
         const int gen = iconThemeGeneration();
-        if (iconThemeGen == gen)
+        if (iconThemeGen.loadAcquire() == gen)
             return;
-        iconThemeGen = gen;
+        iconThemeGen.storeRelease(gen);
         icon = QIcon();
         useProxyIcon.storeRelease(false);
         hasThemeIcon.storeRelease(!iconName.isEmpty() && QIcon::hasThemeIcon(iconName));
@@ -114,7 +118,7 @@ public:
     QString deepinVendor;
     QAtomicInteger<bool> hasThemeIcon { false };
     QAtomicInteger<bool> useProxyIcon { false };
-    qint64 iconThemeGen { -1 };   // 上次校验图标缓存时所用的主题版本号
+    QAtomicInteger<int> iconThemeGen { -1 };   // 上次校验图标缓存时所用的主题版本号
 };
 }
 
@@ -162,10 +166,7 @@ QString DesktopFileInfo::desktopIconName() const
         return "user-trash-full";
     }
 
-    if (d->hasThemeIcon.loadAcquire())
-        return d->iconName;
-
-    return "desktopNotThemeIcon::" + d->iconName;
+    return d->iconName;
 }
 
 QString DesktopFileInfo::desktopType() const
@@ -189,7 +190,7 @@ QIcon DesktopFileInfo::fileIcon()
     if (d->useProxyIcon)
         return proxy->fileIcon();
 
-    const QString iconName = this->nameOf(NameInfoType::kIconName).replace("desktopNotThemeIcon::", "");
+    const QString iconName = nameOf(NameInfoType::kIconName);
 
     if (iconName.startsWith("data:image/")) {
         int firstSemicolon = iconName.indexOf(';', 11);
@@ -291,13 +292,6 @@ void DesktopFileInfo::updateAttributes(const QList<FileInfo::FileInfoAttributeID
 {
     ProxyFileInfo::updateAttributes(types);
     d->updateInfo(urlOf(UrlInfoType::kUrl));
-}
-
-QVariant DesktopFileInfo::extendAttributes(const FileInfo::FileExtendedInfoType type) const
-{
-    if (type == FileInfo::FileExtendedInfoType::kFileDesktop)
-        return true;
-    return ProxyFileInfo::extendAttributes(type);
 }
 
 bool DesktopFileInfo::canTag() const

@@ -56,7 +56,7 @@ public:
     /**
      * @brief 基于 iconName 获取 icon 的 pixmap（带 QPixmapCache 缓存）
      * @details 主题图标专用路径：通过 IconCacheManager 实现进程级共享缓存。
-     *          缩略图不走此路径（使用 QIcon 版本）。
+     *          缩略图或非主题图标不走此路径（使用 QIcon 版本）。
      */
     static QPixmap getIconPixmap(const QString &iconName, const QSize &size, qreal pixelRatio,
                                  QIcon::Mode mode = QIcon::Normal, QIcon::State state = QIcon::Off);

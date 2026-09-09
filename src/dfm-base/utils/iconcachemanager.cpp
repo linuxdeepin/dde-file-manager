@@ -6,6 +6,7 @@
 
 #include <dtkwidget_global.h>
 #include <DGuiApplicationHelper>
+#include <DPlatformTheme>
 
 #include <QApplication>
 #include <QScreen>
@@ -54,6 +55,11 @@ void IconCacheManager::initialize()
         // 监听 DTK 主题类型变化（深色/浅色切换）
         QObject::connect(DGuiApplicationHelper::instance(),
                          &DGuiApplicationHelper::themeTypeChanged,
+                         &IconCacheManager::clear);
+
+        // 监听图标主题名称变化（图标集切换，非深色/浅色切换）
+        QObject::connect(DGuiApplicationHelper::instance()->systemTheme(),
+                         &DPlatformTheme::iconThemeNameChanged,
                          &IconCacheManager::clear);
 
         // 监听 Qt 调色板变化（兼容非 DTK 场景，如只改强调色不改主题类型）

@@ -729,6 +729,7 @@ void ListItemDelegate::paintFileName(QPainter *painter, const QStyleOptionViewIt
         painter->restore();
     } else {
         textRect.setHeight(d->textLineHeight);
+        textRect.moveTop(((rect.height() - textRect.height()) / 2) + rect.top());
         QString fileName = getCorrectDisplayName(painter, index, option, info, role, textLineHeight, textRect);
         // 原有的单行文件名绘制逻辑 — 复用 reusable layout
         d->setupElideLayout(d->reusableElideLayout.get(), fileName,
@@ -752,11 +753,8 @@ QString ListItemDelegate::getCorrectDisplayName(QPainter *painter, const QModelI
 
     // 获取完整的显示名称，不进行省略处理
     // 省略处理将由 ElideTextLayout::layout 统一完成，以确保高亮功能正常工作
-    // 通过缓存的 FileInfo 判断是否为 desktop 文件，避免每次 paint 重新解析 URL 后缀
     const QUrl &url = info ? info->urlOf(UrlInfoType::kUrl) : index.data(kItemUrlRole).toUrl();
-    const bool isDesktopFile = info ? info->extendAttributes(ExtInfoType::kFileDesktop).toBool()
-                                    : FileUtils::isDesktopFileSuffix(url);
-    if (Q_LIKELY(!isDesktopFile)) {
+    if (Q_LIKELY(!FileUtils::isDesktopFileSuffix(url))) {
         do {
             if (role != kItemNameRole && role != kItemFileDisplayNameRole)
                 break;
