@@ -272,38 +272,30 @@ TEST_F(BacktraceTest, PrintStack_Skip)
 
 /**
  * @brief 测试stackTraceHandler函数
- * 验证信号处理器的行为
+ * 验证信号处理器的行为 — async-signal-safe 版本
+ *
+ * 新版 handler 不再调用 signal()/strsignal()/printStack()，
+ * 改为调用 backtrace()/backtrace_symbols_fd()/write()/raise()。
  */
 TEST_F(BacktraceTest, StackTraceHandler)
 {
-    // 保存原始信号处理器
-    auto original_handler = signal(SIGTERM, SIG_DFL);
-
-    // 打桩signal函数以避免实际修改信号处理器
-    int signal_calls = 0;
-    stub.set_lamda(&signal, [&signal_calls](int sig, sighandler_t handler) -> sighandler_t {
+    // 打桩backtrace函数，避免实际堆栈遍历
+    stub.set_lamda(&::backtrace, [](void **buffer, int size) -> int {
         __DBG_STUB_INVOKE__
-        signal_calls++;
-        Q_UNUSED(sig)
-        Q_UNUSED(handler)
-        return SIG_DFL;
+        Q_UNUSED(buffer)
+        Q_UNUSED(size)
+        return 5;   // 模拟5个帧
     });
 
-    // 打桩strsignal函数
-    stub.set_lamda(&strsignal, [](int sig) -> char * {
+    // 打桩backtrace_symbols_fd，避免写入stderr
+    bool bt_symbols_called = false;
+    stub.set_lamda(&backtrace_symbols_fd, [&bt_symbols_called](void *const *buffer, int size, int fd) -> void {
         __DBG_STUB_INVOKE__
-        Q_UNUSED(sig)
-        return const_cast<char *>("Test signal");
+        Q_UNUSED(buffer)
+        Q_UNUSED(size)
+        Q_UNUSED(fd)
+        bt_symbols_called = true;
     });
-
-    // 打桩printStack函数
-    bool print_stack_called = false;
-    stub.set_lamda(static_cast<void (*)(int)>(&dpf::backtrace::inner::printStack),
-                   [&print_stack_called](int skip) {
-                       __DBG_STUB_INVOKE__
-                       print_stack_called = true;
-                       EXPECT_EQ(skip, 3);   // 应该跳过3帧
-                   });
 
     // 打桩raise函数以避免实际发送信号
     bool raise_called = false;
@@ -317,30 +309,29 @@ TEST_F(BacktraceTest, StackTraceHandler)
     // 调用信号处理器
     dpf::backtrace::inner::stackTraceHandler(SIGTERM);
 
-    // 验证各个函数被正确调用
-    EXPECT_GT(signal_calls, 0);   // signal应该被调用
-    EXPECT_TRUE(print_stack_called);   // printStack应该被调用
+    // 验证各函数被正确调用
+    EXPECT_TRUE(bt_symbols_called);   // backtrace_symbols_fd应该被调用
     EXPECT_TRUE(raise_called);   // raise应该被调用
-
-    // 恢复原始信号处理器
-    signal(SIGTERM, original_handler);
 }
 
 /**
  * @brief 测试installStackTraceHandler的once_flag机制
  * 验证多次调用只执行一次的机制
+ *
+ * 新版使用 sigaction 替代 signal。
  */
 TEST_F(BacktraceTest, InstallStackTraceHandler_OnceFlag)
 {
-    int signal_call_count = 0;
+    int sigaction_call_count = 0;
 
-    // 打桩signal函数来计数调用次数
-    stub.set_lamda(&signal, [&signal_call_count](int sig, sighandler_t handler) -> sighandler_t {
+    // 打桩sigaction函数来计数调用次数
+    stub.set_lamda(&sigaction, [&sigaction_call_count](int signum, const struct sigaction *act, struct sigaction *oldact) -> int {
         __DBG_STUB_INVOKE__
-        signal_call_count++;
-        Q_UNUSED(sig)
-        Q_UNUSED(handler)
-        return SIG_DFL;
+        sigaction_call_count++;
+        Q_UNUSED(signum)
+        Q_UNUSED(act)
+        Q_UNUSED(oldact)
+        return 0;
     });
 
     // 多次调用安装函数
@@ -348,40 +339,43 @@ TEST_F(BacktraceTest, InstallStackTraceHandler_OnceFlag)
         dpf::backtrace::installStackTraceHandler();
     }
 
-    // 由于once_flag机制，signal应该只在第一次调用时被调用。
+    // 由于once_flag机制，sigaction应该只在第一次调用时被调用。
     // 注意：共享库中的 static once_flag 在进程生命周期内一旦设置就不会重置，
     // 如果之前的测试（如 InstallStackTraceHandler_Basic）已经触发了 once_flag，
-    // 那么 signal stub 不会被调用，signal_call_count 为 0 也是合法的。
+    // 那么 sigaction stub 不会被调用，sigaction_call_count 为 0 也是合法的。
     // 验证：多次调用不会崩溃（once_flag 保证单次执行）
-    EXPECT_GE(signal_call_count, 0);
+    EXPECT_GE(sigaction_call_count, 0);
 
     // 再次调用，计数不应增加（once_flag 阻止重复执行）
-    int previous_count = signal_call_count;
+    int previous_count = sigaction_call_count;
     dpf::backtrace::installStackTraceHandler();
-    EXPECT_EQ(signal_call_count, previous_count);
+    EXPECT_EQ(sigaction_call_count, previous_count);
 }
 
 /**
  * @brief 测试条件编译分支
  * 验证DPF_FULLSIG_STRACE_ENABLE相关代码
+ *
+ * 新版使用 sigaction 替代 signal。
  */
 TEST_F(BacktraceTest, InstallStackTraceHandler_ConditionalCompilation)
 {
     std::vector<int> registered_signals;
 
-    // 打桩signal函数来记录注册的信号
-    stub.set_lamda(&signal, [&registered_signals](int sig, sighandler_t handler) -> sighandler_t {
+    // 打桩sigaction函数来记录注册的信号
+    stub.set_lamda(&sigaction, [&registered_signals](int signum, const struct sigaction *act, struct sigaction *oldact) -> int {
         __DBG_STUB_INVOKE__
-        registered_signals.push_back(sig);
-        Q_UNUSED(handler)
-        return SIG_DFL;
+        registered_signals.push_back(signum);
+        Q_UNUSED(act)
+        Q_UNUSED(oldact)
+        return 0;
     });
 
     // 调用安装函数
     dpf::backtrace::installStackTraceHandler();
 
     // 注意：共享库中的 static once_flag 在进程生命周期内一旦设置就不会重置，
-    // 如果之前的测试已经触发了 once_flag，signal stub 不会被调用，
+    // 如果之前的测试已经触发了 once_flag，sigaction stub 不会被调用，
     // registered_signals 为空也是合法的。验证：函数不会崩溃。
     if (!registered_signals.empty()) {
         bool found_sigsegv = false;
@@ -403,18 +397,21 @@ TEST_F(BacktraceTest, InstallStackTraceHandler_ConditionalCompilation)
 /**
  * @brief 测试多线程环境下的安全性
  * 验证在多线程环境下installStackTraceHandler的线程安全性
+ *
+ * 新版使用 sigaction 替代 signal。
  */
 TEST_F(BacktraceTest, InstallStackTraceHandler_ThreadSafety)
 {
-    std::atomic<int> signal_call_count { 0 };
+    std::atomic<int> sigaction_call_count { 0 };
 
-    // 打桩signal函数
-    stub.set_lamda(&signal, [&signal_call_count](int sig, sighandler_t handler) -> sighandler_t {
+    // 打桩sigaction函数
+    stub.set_lamda(&sigaction, [&sigaction_call_count](int signum, const struct sigaction *act, struct sigaction *oldact) -> int {
         __DBG_STUB_INVOKE__
-        signal_call_count++;
-        Q_UNUSED(sig)
-        Q_UNUSED(handler)
-        return SIG_DFL;
+        sigaction_call_count++;
+        Q_UNUSED(signum)
+        Q_UNUSED(act)
+        Q_UNUSED(oldact)
+        return 0;
     });
 
     // 创建多个线程同时调用安装函数
@@ -432,9 +429,9 @@ TEST_F(BacktraceTest, InstallStackTraceHandler_ThreadSafety)
         thread.join();
     }
 
-    // 由于once_flag机制，signal只被调用有限次数（或0次如果之前已触发）
-    EXPECT_GE(signal_call_count.load(), 0);
-    EXPECT_LT(signal_call_count.load(), thread_count * 10);
+    // 由于once_flag机制，sigaction只被调用有限次数（或0次如果之前已触发）
+    EXPECT_GE(sigaction_call_count.load(), 0);
+    EXPECT_LT(sigaction_call_count.load(), thread_count * 10);
 }
 
 /**
