@@ -161,6 +161,9 @@ bool TagManager::paintListTagsHandle(int role, const FileInfoPointer &info, QPai
 
 bool TagManager::addIconTagsHandle(const FileInfoPointer &info, ElideTextLayout *layout)
 {
+    if (info.isNull())
+        return false;
+
     auto tagStat = info->extendAttributes(ExtInfoType::kFileCanTag);
     bool canTag = false;
     if (tagStat.isValid()) {
