@@ -153,6 +153,44 @@ TEST_F(DesktopFileInfoTest, FileIconAndRefresh)
     EXPECT_NO_FATAL_FAILURE({ desktop.updateAttributes({}); });
 }
 
+TEST_F(DesktopFileInfoTest, FileIconZeroByteDesktopFileFallback)
+{
+    // Bug: 0 字节 .desktop 文件（无 Icon= 条目）图标为空白，
+    // 应通过 ProxyFileInfo 回退到 unknown 图标，图标永远不能为空白。
+    QString path = rootPath + "/empty.desktop";
+    {
+        QFile f(path);
+        ASSERT_TRUE(f.open(QIODevice::WriteOnly));
+        f.close();   // 创建 0 字节空文件
+    }
+
+    QUrl url = QUrl::fromLocalFile(path);
+    auto real = InfoFactory::create<FileInfo>(url);
+    ASSERT_NE(real, nullptr);
+    real->initQuerier();
+
+    DesktopFileInfo desktop(url, real);
+    QIcon icon;
+    EXPECT_NO_FATAL_FAILURE({ icon = desktop.fileIcon(); });
+    // 图标永远不能为空白：即使无 Icon= 条目，也应通过 ProxyFileInfo 回退到非空图标
+    EXPECT_FALSE(icon.isNull());
+}
+
+TEST_F(DesktopFileInfoTest, FileIconEmptyIconEntryFallback)
+{
+    // Bug: .desktop 文件有 Icon= 但值为空时，同样需要回退到 ProxyFileInfo。
+    QString path = makeDesktopFile("noicon.desktop", "noicon", "", "Application");
+    QUrl url = QUrl::fromLocalFile(path);
+    auto real = InfoFactory::create<FileInfo>(url);
+    ASSERT_NE(real, nullptr);
+    real->initQuerier();
+
+    DesktopFileInfo desktop(url, real);
+    QIcon icon;
+    EXPECT_NO_FATAL_FAILURE({ icon = desktop.fileIcon(); });
+    EXPECT_FALSE(icon.isNull());
+}
+
 TEST_F(DesktopFileInfoTest, DesktopFileInfoStatic)
 {
     QString path = makeDesktopFile("static.desktop", "staticapp", "static", "Application");
