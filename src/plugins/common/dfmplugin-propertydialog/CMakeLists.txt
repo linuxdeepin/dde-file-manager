@@ -4,8 +4,8 @@ project(dfmplugin-propertydialog)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-# Include plugin configuration
-include(DFMPluginConfig)
+# Include shared dependencies configuration
+include(${CMAKE_CURRENT_SOURCE_DIR}/dependencies.cmake)
 
 # 设置二进制文件名
 set(BIN_NAME dfm-propertydialog-plugin)
@@ -34,8 +34,8 @@ add_library(${BIN_NAME}
 set_target_properties(${BIN_NAME} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${DFM_BUILD_PLUGIN_COMMON_DIR})
 
-# Use default plugin configuration
-dfm_apply_default_plugin_config(${BIN_NAME})
+# Apply propertydialog plugin specific configuration
+dfm_setup_propertydialog_dependencies(${BIN_NAME})
 
 # 安装库文件
 install(TARGETS
@@ -44,6 +44,9 @@ install(TARGETS
     DESTINATION
     ${DFM_PLUGIN_COMMON_CORE_DIR}
 )
+
+# install dconfig files.
+INSTALL_DCONFIG("org.deepin.dde.file-manager.propertydialog.json")
 
 
 
