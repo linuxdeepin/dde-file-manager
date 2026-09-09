@@ -35,7 +35,7 @@ public:
 
     void setStyleProxy(QStyle *style);
 protected:
-    bool isThumnailIconIndex(const QModelIndex &index) const;
+    bool isThumbnailIconIndex(const QModelIndex &index) const;
 
 protected:
     QStyle *style;

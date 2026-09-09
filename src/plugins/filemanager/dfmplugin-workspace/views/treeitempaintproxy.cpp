@@ -24,12 +24,12 @@ void TreeItemPaintProxy::drawIcon(QPainter *painter, QRectF *rect, const QStyleO
 
     int nameColumnWidth = view()->getColumnWidth(0);
     firstColumnRightBoundary = option.rect.x() + nameColumnWidth - 1 - view()->viewportMargins().left();
-    auto isThumnail = isThumnailIconIndex(index);
+    auto isThumbnail = isThumbnailIconIndex(index);
 
     if (rect->right() <= firstColumnRightBoundary) {
         ItemDelegateHelper::paintIconWithFallback(
                 painter, option, index, *rect,
-                isThumnail,
+                isThumbnail,
                 dfmbase::Global::ViewMode::kTreeMode);
     }
 

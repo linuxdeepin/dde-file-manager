@@ -126,7 +126,7 @@ void BaseItemDelegate::paintEmblems(QPainter *painter, const QRectF &iconRect, c
         WorkspaceEventCaller::sendPaintEmblems(painter, iconRect, info);
 }
 
-bool BaseItemDelegate::isThumnailIconIndex(const QModelIndex &index) const
+bool BaseItemDelegate::isThumbnailIconIndex(const QModelIndex &index) const
 {
     if (!index.isValid() || !parent())
         return false;
@@ -281,10 +281,10 @@ void BaseItemDelegate::paintDragIcon(QPainter *painter, const QStyleOptionViewIt
     painter->setRenderHint(QPainter::Antialiasing, true);
     painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
     auto drawFileIcon = ItemDelegateHelper::paintIcon(painter,
-                                                      isThumnailIconIndex(index) ? opt.icon : fileIcon,
+                                                      isThumbnailIconIndex(index) ? opt.icon : fileIcon,
                                                       { iconRect, Qt::AlignCenter,
                                                         QIcon::Normal, QIcon::Off,
-                                                        isThumnailIconIndex(index),
+                                                        isThumbnailIconIndex(index),
                                                         iconName,
                                                         ViewMode::kIconMode });
     // If the thumbnail drawing is empty, then redraw the file fileicon

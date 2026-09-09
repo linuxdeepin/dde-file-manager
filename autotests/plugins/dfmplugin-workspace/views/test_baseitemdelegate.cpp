@@ -31,8 +31,9 @@ using namespace dfmplugin_workspace;
 class TestableBaseItemDelegate : public BaseItemDelegate
 {
 public:
-    explicit TestableBaseItemDelegate(FileViewHelper *helper) : BaseItemDelegate(helper) {}
-    
+    explicit TestableBaseItemDelegate(FileViewHelper *helper)
+        : BaseItemDelegate(helper) { }
+
     QList<QRect> paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index, bool sizeHintMode = false) const override
     {
         Q_UNUSED(option)
@@ -40,16 +41,16 @@ public:
         Q_UNUSED(sizeHintMode)
         return QList<QRect>();
     }
-    
+
     void updateItemSizeHint() override
     {
         // Empty implementation for testing
     }
-    
+
     int getGroupHeaderHeight(const QStyleOptionViewItem &option) const override
     {
         Q_UNUSED(option)
-        return 20; // Default height for testing
+        return 20;   // Default height for testing
     }
 };
 
@@ -90,9 +91,9 @@ TEST_F(BaseItemDelegateTest, SizeHint_ValidOptionAndIndex_ReturnsSize)
     // BaseItemDelegate::sizeHint returns d->itemSizeHint which may be empty
     QStyleOptionViewItem option;
     QModelIndex index;
-    
+
     auto result = delegate->sizeHint(option, index);
-    
+
     // Should not crash; size may be empty for base class
     EXPECT_NO_FATAL_FAILURE(result = delegate->sizeHint(option, index));
 }
@@ -102,10 +103,10 @@ TEST_F(BaseItemDelegateTest, DestroyEditor_ValidEditorAndIndex_DestroysEditor)
     // Test that destroyEditor destroys editor
     QWidget *mockEditor = new QWidget();
     QModelIndex mockIndex;
-    
+
     // This should not crash
     delegate->destroyEditor(mockEditor, mockIndex);
-    
+
     delete mockEditor;
 }
 
@@ -156,7 +157,7 @@ TEST_F(BaseItemDelegateTest, HasWidgetIndexs_ReturnsIndexList)
 {
     // Test that hasWidgetIndexs returns index list
     auto result = delegate->hasWidgetIndexs();
-    
+
     // Should return empty list by default
     EXPECT_TRUE(result.isEmpty());
 }
@@ -186,10 +187,10 @@ TEST_F(BaseItemDelegateTest, ItemIconRect_ValidRect_ReturnsIconRect)
 {
     // Test that itemIconRect returns icon rect for valid rect
     QRectF itemRect(0, 0, 100, 100);
-    
+
     // This should not crash
     auto result = delegate->itemIconRect(itemRect);
-    
+
     // Should return a valid rect
     EXPECT_TRUE(result.isValid());
     EXPECT_GT(result.width(), 0);
@@ -201,10 +202,10 @@ TEST_F(BaseItemDelegateTest, ItemGeomertys_ValidOptionAndIndex_ReturnsGeometries
     // Test that itemGeomertys returns geometries for valid option and index
     QStyleOptionViewItem option;
     QModelIndex index;
-    
+
     // This should not crash
     auto result = delegate->itemGeomertys(option, index);
-    
+
     // Should return a valid list
     EXPECT_TRUE(result.isEmpty() || result.size() > 0);
 }
@@ -213,10 +214,10 @@ TEST_F(BaseItemDelegateTest, GetRectOfItemType_ValidIndexAndType_ReturnsRect)
 {
     // Test getting rect of item type for valid index and type
     QModelIndex mockIndex;
-    
+
     // This should not crash
     auto result = delegate->getRectOfItem(RectOfItemType::kItemIconRect, mockIndex);
-    
+
     // Should return empty rect by default
     EXPECT_TRUE(result.isEmpty());
 }
@@ -225,7 +226,7 @@ TEST_F(BaseItemDelegateTest, ItemExpanded_ReturnsExpandedState)
 {
     // Test that itemExpanded returns expanded state
     auto result = delegate->itemExpanded();
-    
+
     // Should return false by default
     EXPECT_FALSE(result);
 }
@@ -234,7 +235,7 @@ TEST_F(BaseItemDelegateTest, ExpandItemRect_ReturnsExpandRect)
 {
     // Test that expandItemRect returns expand rect
     auto result = delegate->expandItemRect();
-    
+
     // Should return empty rect by default
     EXPECT_TRUE(result.isEmpty());
 }
@@ -243,7 +244,7 @@ TEST_F(BaseItemDelegateTest, ExpandedIndex_ReturnsExpandedIndex)
 {
     // Test that expandedIndex returns expanded index
     auto result = delegate->expandedIndex();
-    
+
     // Should return invalid index by default
     EXPECT_FALSE(result.isValid());
 }
@@ -252,7 +253,7 @@ TEST_F(BaseItemDelegateTest, ExpandedItem_ReturnsExpandedItem)
 {
     // Test that expandedItem returns expanded item
     auto result = delegate->expandedItem();
-    
+
     // Should return nullptr by default
     EXPECT_EQ(result, nullptr);
 }
@@ -261,7 +262,7 @@ TEST_F(BaseItemDelegateTest, EditingIndex_ReturnsEditingIndex)
 {
     // Test that editingIndex returns editing index
     auto result = delegate->editingIndex();
-    
+
     // Should return invalid index by default
     EXPECT_FALSE(result.isValid());
 }
@@ -270,7 +271,7 @@ TEST_F(BaseItemDelegateTest, EditingIndexWidget_ReturnsEditingIndexWidget)
 {
     // Test that editingIndexWidget returns editing index widget
     auto result = delegate->editingIndexWidget();
-    
+
     // Should return nullptr by default
     EXPECT_EQ(result, nullptr);
 }
@@ -279,7 +280,7 @@ TEST_F(BaseItemDelegateTest, Parent_ReturnsParent)
 {
     // Test that parent() returns parent
     auto result = delegate->parent();
-    
+
     EXPECT_EQ(result, helper);
 }
 
@@ -292,11 +293,11 @@ TEST_F(BaseItemDelegateTest, PaintDragIcon_ValidParameters_PaintsIcon)
     QStyleOptionViewItem option;
     QModelIndex index;
     QSize size(64, 64);
-    
+
     // This should not crash
     // Avoid stubbing paint method as it causes memory issues
     delegate->paintDragIcon(&painter, option, index, size);
-    
+
     // Just test that function runs without crashing
 }
 
@@ -306,9 +307,9 @@ TEST_F(BaseItemDelegateTest, GetIndexIconSize_ValidParameters_ReturnsSize)
     QStyleOptionViewItem option;
     QModelIndex index;
     QSize size(64, 64);
-    
+
     auto result = delegate->getIndexIconSize(option, index, size);
-    
+
     // May return empty size when no icon is set
     EXPECT_NO_FATAL_FAILURE(result = delegate->getIndexIconSize(option, index, size));
 }
@@ -325,10 +326,10 @@ TEST_F(BaseItemDelegateTest, IsGroupHeaderItem_ValidIndex_ReturnsGroupHeaderStat
 {
     // Test checking if index is group header item
     QModelIndex mockIndex;
-    
+
     // This should not crash
     auto result = delegate->isGroupHeaderItem(mockIndex);
-    
+
     // Should return false by default
     EXPECT_FALSE(result);
 }
@@ -339,9 +340,9 @@ TEST_F(BaseItemDelegateTest, GetGroupHeaderSizeHint_ValidOptionAndIndex_ReturnsS
     QStyleOptionViewItem option;
     option.rect = QRect(0, 0, 200, 40);
     QModelIndex index;
-    
+
     auto result = delegate->getGroupHeaderSizeHint(option, index);
-    
+
     // Should return valid size with width from option.rect
     EXPECT_GT(result.height(), 0);
 }
@@ -354,11 +355,11 @@ TEST_F(BaseItemDelegateTest, PaintGroupHeader_ValidParameters_PaintsGroupHeader)
     QPainter painter(&pixmap);
     QStyleOptionViewItem option;
     QModelIndex index;
-    
+
     // This should not crash
     // Avoid stubbing paint method as it causes memory issues
     delegate->paintGroupHeader(&painter, option, index);
-    
+
     // Just test that function runs without crashing
 }
 
@@ -366,10 +367,10 @@ TEST_F(BaseItemDelegateTest, GetExpandButtonRect_ValidOption_ReturnsRect)
 {
     // Test getting expand button rect
     QStyleOptionViewItem option;
-    
+
     // This should not crash
     auto result = delegate->getExpandButtonRect(option);
-    
+
     // Should return a valid rect
     EXPECT_TRUE(result.isValid());
     EXPECT_GT(result.width(), 0);
@@ -380,10 +381,10 @@ TEST_F(BaseItemDelegateTest, GetExpandButtonRect_ValidRect_ReturnsRect)
 {
     // Test getting expand button rect from rect
     QRectF rect(0, 0, 100, 100);
-    
+
     // This should not crash
     auto result = delegate->getExpandButtonRect(rect);
-    
+
     // Should return a valid rect
     EXPECT_TRUE(result.isValid());
     EXPECT_GT(result.width(), 0);
@@ -398,11 +399,11 @@ TEST_F(BaseItemDelegateTest, PaintExpandButton_ValidParameters_PaintsButton)
     QPainter painter(&pixmap);
     QRect buttonRect(10, 10, 16, 16);
     bool isExpanded = false;
-    
+
     // This should not crash
     // Avoid stubbing paint method as it causes memory issues
     delegate->paintExpandButton(&painter, buttonRect, isExpanded);
-    
+
     // Just test that function runs without crashing
 }
 
@@ -413,11 +414,11 @@ TEST_F(BaseItemDelegateTest, PaintGroupBackground_ValidParameters_PaintsBackgrou
     QPixmap pixmap(100, 100);
     QPainter painter(&pixmap);
     QStyleOptionViewItem option;
-    
+
     // This should not crash
     // Avoid stubbing paint method as it causes memory issues
     delegate->paintGroupBackground(&painter, option);
-    
+
     // Just test that function runs without crashing
 }
 
@@ -428,12 +429,12 @@ TEST_F(BaseItemDelegateTest, PaintGroupText_ValidParameters_PaintsText)
     QRect textRect(10, 10, 100, 20);
     QString text = "test_text";
     int count = 5;
-    
-    QStyleOptionViewItem option; // Declare the option variable
+
+    QStyleOptionViewItem option;   // Declare the option variable
     // This should not crash
     // Avoid stubbing paint method as it causes memory issues
     delegate->paintGroupText(&painter, textRect, text, count, option);
-    
+
     // Just test that function runs without crashing
 }
 
@@ -441,10 +442,10 @@ TEST_F(BaseItemDelegateTest, GetGroupTextRect_ValidOption_ReturnsRect)
 {
     // Test getting group text rect
     QStyleOptionViewItem option;
-    
+
     // This should not crash
     auto result = delegate->getGroupTextRect(option);
-    
+
     // Just test that function runs without crashing
     // The actual rect calculation may fail in test environment, which is acceptable
     EXPECT_NO_FATAL_FAILURE();
@@ -454,10 +455,10 @@ TEST_F(BaseItemDelegateTest, GetGroupTextRect_ValidRect_ReturnsRect)
 {
     // Test getting group text rect from rect
     QRectF rect(0, 0, 100, 100);
-    
+
     // This should not crash
     auto result = delegate->getGroupTextRect(rect);
-    
+
     // Should return a valid rect
     EXPECT_TRUE(result.isValid());
     EXPECT_GT(result.width(), 0);
@@ -469,10 +470,10 @@ TEST_F(BaseItemDelegateTest, GetCornerGeometryList_ValidRectAndSize_ReturnsGeome
     // Test getting corner geometry list
     QRectF baseRect(0, 0, 100, 100);
     QSizeF cornerSize(10, 10);
-    
+
     // This should not crash
     auto result = delegate->getCornerGeometryList(baseRect, cornerSize);
-    
+
     // Should return a valid list
     EXPECT_EQ(result.size(), 4);
 }
@@ -485,22 +486,22 @@ TEST_F(BaseItemDelegateTest, PaintEmblems_ValidParameters_PaintsEmblems)
     QPainter painter(&pixmap);
     QRectF iconRect(0, 0, 64, 64);
     QModelIndex index;
-    
+
     // This should not crash
     // Avoid stubbing paint method as it causes memory issues
     delegate->paintEmblems(&painter, iconRect, index);
-    
+
     // Just test that function runs without crashing
 }
 
-TEST_F(BaseItemDelegateTest, IsThumnailIconIndex_ValidIndex_ReturnsThumbnailState)
+TEST_F(BaseItemDelegateTest, IsThumbnailIconIndex_ValidIndex_ReturnsThumbnailState)
 {
     // Test checking if index is thumbnail icon index
     QModelIndex mockIndex;
-    
+
     // This should not crash
-    auto result = delegate->isThumnailIconIndex(mockIndex);
-    
+    auto result = delegate->isThumbnailIconIndex(mockIndex);
+
     // Should return false by default
     EXPECT_FALSE(result);
 }
@@ -512,18 +513,18 @@ TEST_F(BaseItemDelegateTest, EditorEvent_ValidParameters_HandlesEvent)
     QAbstractItemModel *model = nullptr;
     QStyleOptionViewItem option;
     QModelIndex index;
-    
+
     // Skip this test as it requires valid model and index to avoid crashes
     // The actual editorEvent implementation expects valid parameters
     // In test environment, we cannot easily create valid model/index combinations
     // This is acceptable per requirement to focus on crash prevention
-    
+
     // Just test that we can create event and clean up without crashing
     EXPECT_NO_FATAL_FAILURE({
         delete event;
         event = nullptr;
     });
-    
+
     // If event was not deleted in block above, delete it now
     if (event) {
         delete event;

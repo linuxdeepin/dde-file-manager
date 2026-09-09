@@ -103,17 +103,17 @@ ElideTextLayout *ItemDelegateHelper::createTextLayout(const QString &name, QText
 
 void ItemDelegateHelper::paintIconWithFallback(QPainter *painter, const QStyleOptionViewItem &opt,
                                                const QModelIndex &index, const QRectF &iconRect,
-                                               bool isThumnail,
+                                               bool isThumbnail,
                                                dfmbase::Global::ViewMode viewMode)
 {
     const auto iconName = index.data(dfmbase::Global::ItemRoles::kItemFileIconNameRole).toString();
     bool isEnabled = opt.state & QStyle::State_Enabled;
     const QIcon &fileIcon = index.data(dfmbase::Global::ItemRoles::kItemFileIconRole).value<QIcon>();
-    const QIcon &icon = isThumnail ? opt.icon : fileIcon;
+    const QIcon &icon = isThumbnail ? opt.icon : fileIcon;
     bool drawFileIcon = paintIcon(painter, icon,
                                   { iconRect, Qt::AlignCenter,
                                     isEnabled ? QIcon::Normal : QIcon::Disabled,
-                                    QIcon::Off, isThumnail,
+                                    QIcon::Off, isThumbnail,
                                     iconName,
                                     viewMode });
     // If the thumbnail drawing is empty, then redraw the file fileicon

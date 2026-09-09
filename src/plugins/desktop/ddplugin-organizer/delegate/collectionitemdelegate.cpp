@@ -160,15 +160,15 @@ void CollectionItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem
         // draw icon and background
         const QRect rIcon = iconRect(option.rect);
         paintBackground(painter, indexOption, rIcon);
-        auto isThumnail = IconPainterUtils::isThumbnailIcon(parent()->model()->fileInfo(index));
-        const auto &pIcon = IconPainterUtils::paintIcon(painter, isThumnail
+        auto isThumbnail = IconPainterUtils::isThumbnailIcon(parent()->model()->fileInfo(index));
+        const auto &pIcon = IconPainterUtils::paintIcon(painter, isThumbnail
                                                       ? indexOption.icon
                                                       : index.data(dfmbase::Global::ItemRoles::kItemFileIconRole).value<QIcon>(),
                                                       { rIcon,
                                                         Qt::AlignCenter,
                                                         (option.state & QStyle::State_Enabled) ? QIcon::Normal : QIcon::Disabled,
                                                         QIcon::Off,
-                                                        isThumnail,
+                                                        isThumbnail,
                                                         iconName,
                                                         Global::ViewMode::kIconMode });   // why Enabled?
         // If the thumbnail drawing is empty, then redraw the file fileicon

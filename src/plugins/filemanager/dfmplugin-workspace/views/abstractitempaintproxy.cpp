@@ -72,7 +72,7 @@ void AbstractItemPaintProxy::setStyleProxy(QStyle *style)
     this->style = style;
 }
 
-bool AbstractItemPaintProxy::isThumnailIconIndex(const QModelIndex &index) const
+bool AbstractItemPaintProxy::isThumbnailIconIndex(const QModelIndex &index) const
 {
     if (!index.isValid())
         return false;
