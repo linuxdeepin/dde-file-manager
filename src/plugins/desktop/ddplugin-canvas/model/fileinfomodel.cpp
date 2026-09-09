@@ -49,7 +49,7 @@ QIcon FileInfoModelPrivate::fileIcon(FileInfoPointer info)
             return thumbIcon;
     }
 
-    return QIcon();
+    return info->fileIcon();
 }
 
 void FileInfoModelPrivate::resetData(const QList<QUrl> &urls)

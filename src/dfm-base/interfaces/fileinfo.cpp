@@ -148,6 +148,7 @@ QString dfmbase::FileInfo::nameOf(const NameInfoType type) const
         return QString();
     }
 }
+
 /*!
  * \brief 获取文件路径，默认是文件全路径，此接口不会实现异步，全部使用Qurl去
  * 处理或者字符串处理，这都比较快

@@ -37,7 +37,6 @@ QPixmap IconPainterUtils::getIconPixmap(const QString &iconName, const QSize &si
         return QPixmap();
 
     QPixmap px = IconCacheManager::getPixmap(iconName, size, pixelRatio, mode, state);
-    px.setDevicePixelRatio(pixelRatio);
     return px;
 }
 
@@ -47,9 +46,9 @@ QPixmap IconPainterUtils::getIconPixmap(const QString &iconName, const QSize &si
 QPixmap IconPainterUtils::getIconPixmap(const QIcon &icon, const QSize &size,
                                         qreal pixelRatio, QIcon::Mode mode, QIcon::State state)
 {
-    // 不用绘制空白的图片，使用unknown
+    // Keep a null input null; callers decide whether a default icon is needed.
     if (icon.isNull())
-        return getIconPixmap("unknown", size, pixelRatio, mode, state);
+        return QPixmap();
 
     // 确保当前参数参入获取图片大小大于0
     if (size.width() <= 0 || size.height() <= 0)
@@ -75,9 +74,10 @@ std::optional<QRect> IconPainterUtils::paintIcon(QPainter *painter, const QIcon 
     Qt::Alignment alignment { visualAlignment(painter->layoutDirection(), opts.alignment) };
     const qreal pixelRatio = painter->device()->devicePixelRatioF();
 
-    // 主题图标：使用 iconName 走 QPixmapCache 缓存路径
+    // 主题图标走共享缓存；名称不存在或与传入的 QIcon 不一致时使用调用方提供的 QIcon。
     QPixmap px;
-    if (!opts.isThumb && !opts.iconName.isEmpty()) {
+    if (!opts.isThumb && !opts.iconName.isEmpty() && QIcon::hasThemeIcon(opts.iconName)
+        && (icon.isNull() || icon.name() == opts.iconName)) {
         px = getIconPixmap(opts.iconName, opts.rect.size().toSize(), pixelRatio, opts.mode, opts.state);
     } else {
         px = getIconPixmap(icon, opts.rect.size().toSize(), pixelRatio, opts.mode, opts.state);

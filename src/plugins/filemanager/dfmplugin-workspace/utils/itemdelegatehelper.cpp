@@ -106,20 +106,18 @@ void ItemDelegateHelper::paintIconWithFallback(QPainter *painter, const QStyleOp
                                                bool isThumnail,
                                                dfmbase::Global::ViewMode viewMode)
 {
-    auto iconName = index.data(dfmbase::Global::ItemRoles::kItemFileIconNameRole).toString();
+    const auto iconName = index.data(dfmbase::Global::ItemRoles::kItemFileIconNameRole).toString();
     bool isEnabled = opt.state & QStyle::State_Enabled;
-    const QIcon &icon = (iconName.startsWith("desktopNotThemeIcon::") && !isThumnail)
-                        ? index.data(dfmbase::Global::ItemRoles::kItemFileIconRole).value<QIcon>()
-                        : opt.icon;
+    const QIcon &fileIcon = index.data(dfmbase::Global::ItemRoles::kItemFileIconRole).value<QIcon>();
+    const QIcon &icon = isThumnail ? opt.icon : fileIcon;
     bool drawFileIcon = paintIcon(painter, icon,
                                   { iconRect, Qt::AlignCenter,
                                     isEnabled ? QIcon::Normal : QIcon::Disabled,
                                     QIcon::Off, isThumnail,
-                                    iconName.startsWith("desktopNotThemeIcon::") ? "" : iconName,
+                                    iconName,
                                     viewMode });
     // If the thumbnail drawing is empty, then redraw the file fileicon
     if (!drawFileIcon) {
-        const QIcon &fileIcon = index.data(dfmbase::Global::ItemRoles::kItemFileIconRole).value<QIcon>();
         paintIcon(painter, fileIcon,
                   { iconRect, Qt::AlignCenter,
                     isEnabled ? QIcon::Normal : QIcon::Disabled,

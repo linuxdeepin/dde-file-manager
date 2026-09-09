@@ -85,7 +85,7 @@ TEST_F(DesktopFileInfoTest, ParseStandardDesktopFile)
     DesktopFileInfo desktop(url, real);
     EXPECT_NO_FATAL_FAILURE({ (void)desktop.desktopName(); });
     EXPECT_NO_FATAL_FAILURE({ (void)desktop.desktopExec(); });
-    EXPECT_NO_FATAL_FAILURE({ (void)desktop.desktopIconName(); });
+    EXPECT_EQ(desktop.desktopIconName(), QStringLiteral("myapp-icon"));
     EXPECT_NO_FATAL_FAILURE({ (void)desktop.desktopType(); });
     EXPECT_NO_FATAL_FAILURE({ (void)desktop.desktopCategories(); });
     EXPECT_NO_FATAL_FAILURE({ (void)desktop.canTag(); });

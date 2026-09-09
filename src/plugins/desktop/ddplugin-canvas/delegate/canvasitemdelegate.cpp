@@ -133,7 +133,7 @@ void CanvasItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
     painter->setOpacity(isTransparent(index) ? 0.3 : 1.0);
 
     // 获取 iconName 用于 QPixmapCache 缓存
-    QString iconName = index.data(Global::ItemRoles::kItemFileIconNameRole).toString();
+    const auto iconName = index.data(Global::ItemRoles::kItemFileIconNameRole).toString();
 
     // get item paint geomerty
     // the method to get rect for each element is equal to paintGeomertys(option, index);
@@ -142,15 +142,15 @@ void CanvasItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
         const QRect rIcon = iconRect(option.rect);
         paintBackground(painter, indexOption, rIcon);
         auto isThumnail = IconPainterUtils::isThumbnailIcon(parent()->model()->fileInfo(index));
-        const auto &pIcon = IconPainterUtils::paintIcon(painter, (iconName.startsWith("desktopNotThemeIcon::") && !isThumnail)
-                                                       ? index.data(dfmbase::Global::ItemRoles::kItemFileIconRole).value<QIcon>()
-                                                       : option.icon,
+        const auto &pIcon = IconPainterUtils::paintIcon(painter, isThumnail
+                                                       ? indexOption.icon
+                                                       : index.data(dfmbase::Global::ItemRoles::kItemFileIconRole).value<QIcon>(),
                                                        { rIcon,
                                                          Qt::AlignCenter,
                                                          (option.state & QStyle::State_Enabled) ? QIcon::Normal : QIcon::Disabled,
                                                          QIcon::Off,
                                                          isThumnail,
-                                                         iconName.startsWith("desktopNotThemeIcon::") ? "" : iconName,
+                                                         iconName,
                                                          Global::ViewMode::kIconMode });   // why Enabled?
 
         // If the thumbnail drawing is empty, then redraw the file fileicon

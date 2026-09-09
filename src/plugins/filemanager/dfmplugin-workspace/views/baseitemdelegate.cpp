@@ -276,10 +276,12 @@ void BaseItemDelegate::paintDragIcon(QPainter *painter, const QStyleOptionViewIt
     QRectF iconRect = opt.rect;
     iconRect.setSize(size);
 
-    auto iconName = index.data(dfmbase::Global::ItemRoles::kItemFileIconNameRole).toString();
+    const auto iconName = index.data(dfmbase::Global::ItemRoles::kItemFileIconNameRole).toString();
+    const QIcon &fileIcon = index.data(dfmbase::Global::ItemRoles::kItemFileIconRole).value<QIcon>();
     painter->setRenderHint(QPainter::Antialiasing, true);
     painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
-    auto drawFileIcon = ItemDelegateHelper::paintIcon(painter, opt.icon,
+    auto drawFileIcon = ItemDelegateHelper::paintIcon(painter,
+                                                      isThumnailIconIndex(index) ? opt.icon : fileIcon,
                                                       { iconRect, Qt::AlignCenter,
                                                         QIcon::Normal, QIcon::Off,
                                                         isThumnailIconIndex(index),

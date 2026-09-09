@@ -1284,8 +1284,8 @@ bool AsyncFileInfoPrivate::hasAsyncAttribute(FileInfo::FileInfoAttributeID key)
 
 void AsyncFileInfoPrivate::updateFileIconName()
 {
-    QWriteLocker wlk(&iconLock);
     if (this->attribute(DFileInfo::AttributeID::kStandardIsDir).toBool()) {
+        QWriteLocker wlk(&iconLock);
         fileIconName = "inode-directory";
         return;
     }
@@ -1310,6 +1310,7 @@ void AsyncFileInfoPrivate::updateFileIconName()
 
     iconNameValue = IconUtils::normalizeIconName(iconNameValue);
 
+    QWriteLocker wlk(&iconLock);
     fileIconName = iconNameValue;
 }
 

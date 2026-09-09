@@ -617,17 +617,14 @@ QRectF IconItemDelegate::paintItemIcon(QPainter *painter, const QStyleOptionView
 
     // init icon geomerty
     QRectF iconRect = itemIconRect(drawingRect);
-    auto iconName = index.data(Global::ItemRoles::kItemFileIconNameRole).toString();
+    const auto iconName = index.data(Global::ItemRoles::kItemFileIconNameRole).toString();
 
     bool isDropTarget = parent()->isDropTarget(index);
     // 拖拽图标绘制,不走缓存
     if (isDropTarget) {
         QPixmap pixmap;
-        if (opt.icon.isNull() && !iconName.isEmpty()) {
-            pixmap = IconPainterUtils::getIconPixmap(iconName, iconRect.size().toSize(), painter->device()->devicePixelRatioF());
-        } else {
-            pixmap = opt.icon.pixmap(iconRect.size().toSize());
-        }
+        pixmap = index.data(Global::ItemRoles::kItemFileIconRole).value<QIcon>()
+                         .pixmap(iconRect.size().toSize());
         QPainter p(&pixmap);
 
         p.setCompositionMode(QPainter::CompositionMode_SourceAtop);
