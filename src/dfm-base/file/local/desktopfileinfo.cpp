@@ -13,6 +13,8 @@
 #include <QSettings>
 #include <QLocale>
 #include <QApplication>
+#include <QCoreApplication>
+#include <QThread>
 #include <QAtomicInteger>
 #include <DGuiApplicationHelper>
 #include <DPlatformTheme>
@@ -96,6 +98,7 @@ public:
     // 主题变化时失效缓存的图标状态（#8）：icon / useProxyIcon / hasThemeIcon
     void ensureIconCacheFresh()
     {
+        Q_ASSERT(QThread::currentThread() == qApp->thread());
         const int gen = iconThemeGeneration();
         if (iconThemeGen.loadAcquire() == gen)
             return;
@@ -181,6 +184,7 @@ QStringList DesktopFileInfo::desktopCategories() const
 
 QIcon DesktopFileInfo::fileIcon()
 {
+    Q_ASSERT(QThread::currentThread() == qApp->thread());
     d->ensureIconCacheFresh();   // 主题切换后失效陈旧的 icon / useProxyIcon 缓存（#8）
 
     if (Q_LIKELY(!d->icon.isNull())) {
