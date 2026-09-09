@@ -635,42 +635,9 @@ QRectF IconItemDelegate::paintItemIcon(QPainter *painter, const QStyleOptionView
         return iconRect;
     }
 
-    // Normal path: use combined icon+emblems cache
     Q_D(const IconItemDelegate);
-    const QUrl &fileUrl = index.data(kItemUrlRole).toUrl();
-
-    qreal padW = iconRect.width() / BaseItemDelegatePrivate::kEmblemPaddingRatio;
-    qreal padH = iconRect.height() / BaseItemDelegatePrivate::kEmblemPaddingRatio;
-    QPointF cacheOrigin(iconRect.left() - padW, iconRect.top() - padH);
-
-    const QPixmap *cached = d->getIconEmblemsCache(fileUrl);
-    if (cached) {
-        painter->drawPixmap(cacheOrigin, *cached);
-        return iconRect;
-    }
-
-    // Cache miss: render icon+emblems to offscreen pixmap, cache, then draw
     bool isThumbnail = isThumbnailIconIndex(index);
 
-    qreal dpr = painter->device()->devicePixelRatioF();
-    QPixmap *cachePixmap = d->createCachedPixmap(iconRect, dpr, padW, padH);
-    if (cachePixmap) {
-        QPainter cachePainter(cachePixmap);
-        cachePainter.setRenderHints(painter->renderHints());
-        cachePainter.translate(-cacheOrigin);
-
-        ItemDelegateHelper::paintIconWithFallback(
-                &cachePainter, opt, index, iconRect, isThumbnail);
-
-        paintEmblems(&cachePainter, iconRect, index);
-        cachePainter.end();
-
-        d->cacheIconEmblems(fileUrl, cachePixmap);
-        painter->drawPixmap(cacheOrigin, *cachePixmap);
-        return iconRect;
-    }
-
-    // Fallback (pixmap creation failed): draw directly
     ItemDelegateHelper::paintIconWithFallback(
             painter, opt, index, iconRect, isThumbnail);
 

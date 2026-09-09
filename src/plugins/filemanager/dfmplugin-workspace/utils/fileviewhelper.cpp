@@ -27,6 +27,7 @@
 
 #include <QTextEdit>
 #include <QAbstractItemView>
+#include <QPixmapCache>
 #include <QTimer>
 
 #include <climits>
@@ -487,7 +488,13 @@ void FileViewHelper::init()
 
     auto *view = parent();
     if (view) {
-        connect(qApp, &DApplication::iconThemeChanged, view, static_cast<void (QWidget::*)()>(&QWidget::update));
+        connect(qApp, &DApplication::iconThemeChanged, view, [view]() {
+            // IconCacheManager::clear() uses a 0ms timer to coalesce clear calls, which fires
+            // after the repaint has already read stale pixmaps. Clear the cache synchronously
+            // here so the pending paint event regenerates icons from the new theme.
+            QPixmapCache::clear();
+            view->update();
+        });
         connect(view, &FileView::triggerEdit, this, &FileViewHelper::triggerEdit);
     }
     connect(ClipBoard::instance(), &ClipBoard::clipboardDataChanged, this, &FileViewHelper::clipboardDataChanged);

@@ -39,9 +39,11 @@ static int iconThemeGeneration()
                          &invalidateDesktopIconCache);
         QObject::connect(qApp, &QApplication::paletteChanged,
                          &invalidateDesktopIconCache);
-        QObject::connect(DGuiApplicationHelper::instance()->systemTheme(),
-                         &DPlatformTheme::iconThemeNameChanged,
-                         &invalidateDesktopIconCache);
+        if (auto theme = DGuiApplicationHelper::instance()->systemTheme()) {
+            QObject::connect(theme,
+                             &DPlatformTheme::iconThemeNameChanged,
+                             &invalidateDesktopIconCache);
+        }
         return true;
     }();
     Q_UNUSED(s_connected)
@@ -245,6 +247,13 @@ QIcon DesktopFileInfo::fileIcon()
         }
     }
 
+    // 图标无论如何都不能为空白：iconName 为空（如 0 字节 .desktop 文件）
+    // 或所有解析路径均失败时，最终回退到 ProxyFileInfo（进而解析为 unknown 图标）
+    if (d->icon.isNull()) {
+        d->useProxyIcon.storeRelease(true);
+        return ProxyFileInfo::fileIcon();
+    }
+
     return d->icon;
 }
 
@@ -263,7 +272,8 @@ QString DesktopFileInfo::nameOf(const NameInfoType type) const
         return desktopIconName();
     case NameInfoType::kGenericIconName:
         return !d->genericName.isEmpty() && QIcon::hasThemeIcon(d->genericName)
-                ? d->genericName : QStringLiteral("application-default-icon");
+                ? d->genericName
+                : QStringLiteral("application-default-icon");
     default:
         return ProxyFileInfo::nameOf(type);
     }
