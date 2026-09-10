@@ -862,7 +862,9 @@ bool LocalFileHandlerPrivate::openExcutableScriptFile(const QString &path, int f
     case 2: {
         QStringList args;
         args << "-e" << path;
-        result = UniversalUtils::runCommand(q->defaultTerminalPath(), args, QUrl(path).adjusted(QUrl::RemoveFilename).toString());
+        const QString workdir = QUrl(path).adjusted(QUrl::RemoveFilename).toString();
+        if (!AppLaunchUtils::instance().executeCommand(q->defaultTerminalPath(), args, QStringLiteral("shortcut"), workdir))
+            result = QProcess::startDetached(q->defaultTerminalPath(), args, workdir);
         break;
     }
     case 3:
@@ -884,7 +886,9 @@ bool LocalFileHandlerPrivate::openExcutableFile(const QString &path, int flag)
     case 1: {
         QStringList args;
         args << "-e" << path;
-        result = UniversalUtils::runCommand(q->defaultTerminalPath(), args, QUrl(path).adjusted(QUrl::RemoveFilename).toString());
+        const QString workdir = QUrl(path).adjusted(QUrl::RemoveFilename).toString();
+        if (!AppLaunchUtils::instance().executeCommand(q->defaultTerminalPath(), args, QStringLiteral("shortcut"), workdir))
+            result = QProcess::startDetached(q->defaultTerminalPath(), args, workdir);
         break;
     }
     case 2: {
