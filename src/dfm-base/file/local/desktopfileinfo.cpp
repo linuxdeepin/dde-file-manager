@@ -16,6 +16,7 @@
 #include <QCoreApplication>
 #include <QThread>
 #include <QAtomicInteger>
+#include <QStyle>
 #include <DGuiApplicationHelper>
 #include <DPlatformTheme>
 
@@ -251,7 +252,10 @@ QIcon DesktopFileInfo::fileIcon()
     // 或所有解析路径均失败时，最终回退到 ProxyFileInfo（进而解析为 unknown 图标）
     if (d->icon.isNull()) {
         d->useProxyIcon.storeRelease(true);
-        return ProxyFileInfo::fileIcon();
+        QIcon proxyIcon = ProxyFileInfo::fileIcon();
+        if (!proxyIcon.isNull())
+            return proxyIcon;
+        return QIcon(QApplication::style()->standardIcon(QStyle::SP_FileIcon));
     }
 
     return d->icon;

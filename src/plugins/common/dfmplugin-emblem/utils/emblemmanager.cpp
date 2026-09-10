@@ -33,6 +33,8 @@ bool EmblemManager::paintEmblems(int role, const FileInfoPointer &info, QPainter
     Q_ASSERT(painter);
     Q_ASSERT(paintArea);
 
+    painter->setRenderHints(QPainter::SmoothPixmapTransform);
+
     if (role != kItemIconRole || info.isNull())
         return false;
     QList<QIcon> emblems;
@@ -67,8 +69,6 @@ bool EmblemManager::paintEmblems(int role, const FileInfoPointer &info, QPainter
 
     if (emblems.isEmpty())
         return false;
-
-    painter->setRenderHints(QPainter::SmoothPixmapTransform);
 
     const QList<QRectF> &paintRects = helper->emblemRects(*paintArea);
     for (int i = 0; i < qMin(paintRects.count(), emblems.count()); ++i) {
