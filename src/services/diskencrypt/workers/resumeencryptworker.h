@@ -44,7 +44,6 @@ protected:
     void setRecoveryKey();
     void setPhyDevLabel();
     void updateCryptTab();
-    void saveRecoveryKey();
 
     void loadJobFromDevice();
 
