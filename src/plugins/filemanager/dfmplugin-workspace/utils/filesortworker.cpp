@@ -967,6 +967,11 @@ void FileSortWorker::handleRefresh()
     }
 
     {
+        QReadLocker lk(&childrenDataLocker);
+        emit dfmbase::InfoCacheController::instance().removeCacheFileInfo(childrenDataMap.keys());
+    }
+
+    {
         QWriteLocker lk(&childrenDataLocker);
         childrenDataMap.clear();
     }
