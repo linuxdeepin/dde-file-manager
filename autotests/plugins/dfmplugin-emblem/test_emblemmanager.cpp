@@ -89,14 +89,24 @@ TEST_F(UT_EmblemManager, PaintEmblems_SetsRenderHints)
 
     auto mockInfo = QSharedPointer<FileInfo>(new FileInfo(QUrl::fromLocalFile("/tmp/test")));
 
-    stub.set_lamda(&EmblemHelper::systemEmblems, [](EmblemHelper *, const FileInfoPointer &) {
+    // 源码在 emblems 为空时提前 return（setRenderHints 之前），
+    // 桩入非空 emblems 使执行流走到 setRenderHints 分支
+    QList<QIcon> nonEmptyEmblems;
+    nonEmptyEmblems << QIcon::fromTheme("emblem-symbolic-link");
+
+    stub.set_lamda(&EmblemHelper::systemEmblems, [&nonEmptyEmblems](EmblemHelper *, const FileInfoPointer &) {
         __DBG_STUB_INVOKE__
-        return QList<QIcon>();
+        return nonEmptyEmblems;
     });
 
     stub.set_lamda(&EmblemHelper::isExtEmblemProhibited, [](EmblemHelper *, const FileInfoPointer &, const QUrl &) {
         __DBG_STUB_INVOKE__
         return true;  // Prohibit to simplify test
+    });
+
+    stub.set_lamda(&EmblemHelper::emblemRects, [](EmblemHelper *, const QRectF &) {
+        __DBG_STUB_INVOKE__
+        return QList<QRectF>();  // 无需实际绘制，仅验证渲染提示
     });
 
     manager->paintEmblems(kItemIconRole, mockInfo, &painter, &paintArea);
