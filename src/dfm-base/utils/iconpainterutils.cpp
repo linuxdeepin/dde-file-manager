@@ -9,6 +9,7 @@
 
 #include <QApplication>
 #include <QPainterPath>
+#include <QThread>
 
 DFMBASE_USE_NAMESPACE
 
@@ -70,6 +71,8 @@ QPixmap IconPainterUtils::getIconPixmap(const QIcon &icon, const QSize &size,
  */
 std::optional<QRect> IconPainterUtils::paintIcon(QPainter *painter, const QIcon &icon, const PaintIconOpts &opts)
 {
+    Q_ASSERT(QThread::currentThread() == qApp->thread());
+
     // Copy of QStyle::alignedRect
     Qt::Alignment alignment { visualAlignment(painter->layoutDirection(), opts.alignment) };
     const qreal pixelRatio = painter->device()->devicePixelRatioF();
