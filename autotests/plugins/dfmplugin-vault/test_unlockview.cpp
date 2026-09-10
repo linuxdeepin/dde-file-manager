@@ -6,10 +6,15 @@
 #include <QTest>
 #include <QString>
 #include <QStringList>
+#include <QCloseEvent>
 
 #include "stubext.h"
 
+#define private public
+#define protected public
 #include "views/unlockview/unlockview.h"
+#undef protected
+#undef private
 
 DPVAULT_USE_NAMESPACE
 
@@ -115,4 +120,32 @@ TEST_F(UnlockViewTest, OnVaultUlocked_StateZero_NoCrash)
 TEST_F(UnlockViewTest, ButtonClicked_CancelIndex_NoCrash)
 {
     EXPECT_NO_FATAL_FAILURE(view->buttonClicked(0, "Cancel"));
+}
+
+// --- slotTooltipTimerTimeout ---
+
+TEST_F(UnlockViewTest, SlotTooltipTimerTimeout_NoCrash)
+{
+    view->showToolTip("test tip", 1000, UnlockView::ENToolTip::kInformation);
+    EXPECT_NO_FATAL_FAILURE(view->slotTooltipTimerTimeout());
+}
+
+// --- closeEvent ---
+
+TEST_F(UnlockViewTest, CloseEvent_NoCrash)
+{
+    QCloseEvent event;
+    EXPECT_NO_FATAL_FAILURE(view->closeEvent(&event));
+}
+
+// --- showToolTip ---
+
+TEST_F(UnlockViewTest, ShowToolTip_Tips_NoCrash)
+{
+    EXPECT_NO_FATAL_FAILURE(view->showToolTip("test tip", 1000, UnlockView::ENToolTip::kInformation));
+}
+
+TEST_F(UnlockViewTest, ShowToolTip_Warning_NoCrash)
+{
+    EXPECT_NO_FATAL_FAILURE(view->showToolTip("test warning", 1000, UnlockView::ENToolTip::kWarning));
 }

@@ -9,7 +9,11 @@
 
 #include "stubext.h"
 
+#define private public
+#define protected public
 #include "views/createvaultview/vaultactivesetunlockmethodview.h"
+#undef protected
+#undef private
 #include "utils/encryption/vaultconfig.h"
 
 DPVAULT_USE_NAMESPACE
@@ -88,4 +92,43 @@ TEST_F(VaultActiveSetUnlockMethodViewTest, SlotTypeChanged_NoCrash)
 {
     EXPECT_NO_FATAL_FAILURE(view->slotTypeChanged(0));
     EXPECT_NO_FATAL_FAILURE(view->slotTypeChanged(1));
+}
+
+// --- slotPasswordEditFocusChanged ---
+
+TEST_F(VaultActiveSetUnlockMethodViewTest, SlotPasswordEditFocusChanged_True_NoCrash)
+{
+    EXPECT_NO_FATAL_FAILURE(view->slotPasswordEditFocusChanged(true));
+}
+
+TEST_F(VaultActiveSetUnlockMethodViewTest, SlotPasswordEditFocusChanged_False_NoCrash)
+{
+    EXPECT_NO_FATAL_FAILURE(view->slotPasswordEditFocusChanged(false));
+}
+
+// --- slotRepeatPasswordEditFocusChanged ---
+
+TEST_F(VaultActiveSetUnlockMethodViewTest, SlotRepeatPasswordEditFocusChanged_True_NoCrash)
+{
+    EXPECT_NO_FATAL_FAILURE(view->slotRepeatPasswordEditFocusChanged(true));
+}
+
+TEST_F(VaultActiveSetUnlockMethodViewTest, SlotRepeatPasswordEditFocusChanged_False_NoCrash)
+{
+    EXPECT_NO_FATAL_FAILURE(view->slotRepeatPasswordEditFocusChanged(false));
+}
+
+// --- setEncryptInfo ---
+
+TEST_F(VaultActiveSetUnlockMethodViewTest, SetEncryptInfo_NoCrash)
+{
+    EncryptInfo info;
+    EXPECT_NO_FATAL_FAILURE(view->setEncryptInfo(info));
+}
+
+// --- slotLimiPasswordLength ---
+
+TEST_F(VaultActiveSetUnlockMethodViewTest, SlotLimiPasswordLength_Short_NoCrash)
+{
+    EXPECT_NO_FATAL_FAILURE(view->slotLimiPasswordLength("short"));
 }
