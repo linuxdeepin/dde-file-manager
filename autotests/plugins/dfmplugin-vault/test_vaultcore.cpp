@@ -109,6 +109,13 @@ TEST_F(VaultCoreTest, EntryEntity_MetaGetters_ReturnExpectedDefaults)
     EXPECT_FALSE(entity.showUsageSize());
 }
 
+TEST_F(VaultCoreTest, EntryEntity_Icon_ReturnsSafeboxIcon)
+{
+    VaultEntryFileEntity entity;
+    EXPECT_NO_FATAL_FAILURE(entity.icon());
+}
+
+
 TEST_F(VaultCoreTest, EntryEntity_Order_IsCustomPlusOne)
 {
     VaultEntryFileEntity entity;
@@ -315,6 +322,11 @@ TEST_F(VaultCoreTest, VisibleManager_SidebarHelpers_RunQuietly)
     VaultVisibleManager::instance()->removeSideBarVaultItem();
     VaultVisibleManager::instance()->removeComputerVaultItem();
     SUCCEED();
+}
+
+TEST_F(VaultCoreTest, VisibleManager_AddVaultComputerMenu_NoCrash)
+{
+    EXPECT_NO_FATAL_FAILURE(VaultVisibleManager::instance()->addVaultComputerMenu());
 }
 
 #include "test_vaultcore.moc"

@@ -15,6 +15,7 @@
 #include "dbus/vaultdbusutils.h"
 #include "utils/encryption/operatorcenter.h"
 #include "utils/encryption/vaultconfig.h"
+#include "events/vaulteventcaller.h"
 
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/utils/universalutils.h>
@@ -271,6 +272,9 @@ TEST_F(VaultHelperImpl, LockVault_DelegatesToFileEncryptHandle)
 
 TEST_F(VaultHelperImpl, OpenWidWindow)
 {
+    stub.set_lamda(&VaultEventCaller::sendItemActived,
+                   [](quint64, const QUrl &) {});
+
     VaultHelper::instance()->appendWinID(100);
     VaultHelper::instance()->openWidWindow(100, QUrl("dfmvault:///"));
     SUCCEED();
@@ -278,6 +282,9 @@ TEST_F(VaultHelperImpl, OpenWidWindow)
 
 TEST_F(VaultHelperImpl, DefaultCdAction)
 {
+    stub.set_lamda(&VaultEventCaller::sendItemActived,
+                   [](quint64, const QUrl &) {});
+
     VaultHelper::instance()->defaultCdAction(100, QUrl("dfmvault:///"));
     SUCCEED();
 }
