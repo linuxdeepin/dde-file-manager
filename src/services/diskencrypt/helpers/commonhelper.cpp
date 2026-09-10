@@ -52,7 +52,7 @@ void common_helper::createRebootFlagFile(const QString &dev)
 {
     qInfo() << "[common_helper::createRebootFlagFile] Creating reboot flag file for device:" << dev;
 
-    QString fileName = disk_encrypt::kRebootFlagFilePrefix + dev.mid(5);
+    QString fileName = disk_encrypt::kRebootFlagFilePrefix + QString(dev).replace("/", "_");
     QFile f(fileName);
     if (!f.open(QIODevice::Truncate | QIODevice::WriteOnly)) {
         qCritical() << "[common_helper::createRebootFlagFile] Failed to create reboot flag file:" << fileName;

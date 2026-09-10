@@ -9,9 +9,9 @@ ExecStart=/usr/bin/deepin-diskencrypt-service
 User=root
 
 # ProtectSystem=full
-# ProtectHome=true
+ProtectHome=true
 # ProtectProc=invisible
-# PrivateTmp=true
+PrivateTmp=true
 # PrivateDevices=false
 # ProtectKernelTunables=true
 # ProtectKernelModules=false

@@ -592,8 +592,11 @@ void DiskEncryptSetupPrivate::onResumeEncryptFinished()
                                 { kKeyDeviceName, args.value(kKeyDeviceName).toString() },
                                 { kKeyOperationResult, code } };
 
-    // save failed, ask front to save it again.
-    if (code == -disk_encrypt::KErrorRequestExportRecKey)
+    // The service always returns the recovery key (when one was generated) to the
+    // front-end. Writing the recovery key file to the user-selected export path is
+    // now done by the front-end in the user session, because the hardened service
+    // (PrivateTmp/ProtectHome) can no longer write to user-selected directories.
+    if (!worker->recoveryKey().isEmpty())
         result.insert(kKeyRecoveryKey, worker->recoveryKey());
 
     Q_EMIT qptr->EncryptResult(result);
