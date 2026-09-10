@@ -297,8 +297,9 @@ bool EmblemHelper::isExtEmblemProhibited(const FileInfoPointer &info, const QUrl
 
 void EmblemHelper::onEmblemChanged(const QUrl &url, const Product &product)
 {
+    bool hadEmblem = !productQueue.value(url).isEmpty();
     productQueue[url] = product;
-    if (product.isEmpty())
+    if (product.isEmpty() && !hadEmblem)
         return;
     auto eventID { DPF_NAMESPACE::Event::instance()->eventType("ddplugin_canvas", "slot_FileInfoModel_UpdateFile") };
     if (eventID != DPF_NAMESPACE::EventTypeScope::kInValid)
