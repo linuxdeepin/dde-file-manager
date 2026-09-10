@@ -16,14 +16,6 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
-#include <QDir>
-
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <errno.h>
-#include <string.h>
 
 FILE_ENCRYPT_USE_NS
 
@@ -171,10 +163,10 @@ void ResumeEncryptWorker::setRecoveryKey()
     }
 
     qInfo() << "[ResumeEncryptWorker::setRecoveryKey] Generating recovery key";
-    m_authArgs.recoveryKey = common_helper::genRecoveryKey();
+    const QString recKey = common_helper::genRecoveryKey();
     int r = crypt_setup::csAddPassphrase(m_jobArgs.devPath,
                                          m_authArgs.passphrase,
-                                         m_authArgs.recoveryKey);
+                                         recKey);
     if (r < 0) {
         qCritical() << "[ResumeEncryptWorker::setRecoveryKey] Cannot add recovery key, device:" << m_jobArgs.devPath << "error:" << r;
         return;
@@ -186,9 +178,10 @@ void ResumeEncryptWorker::setRecoveryKey()
         return;
     }
 
+    // Publish the key only after it is successfully enrolled (keyslot + token),
+    // so a partial failure never returns a recovery key that cannot unlock the device.
+    m_authArgs.recoveryKey = recKey;
     qInfo() << "[ResumeEncryptWorker::setRecoveryKey] Recovery key set successfully, device:" << m_jobArgs.devPath;
-
-    saveRecoveryKey();
 }
 
 void ResumeEncryptWorker::setPhyDevLabel()
@@ -211,83 +204,6 @@ void ResumeEncryptWorker::updateCryptTab()
     }
     crypttab_helper::addCryptOption(m_jobArgs.volume, "tpm2-device=auto");
     qInfo() << "[ResumeEncryptWorker::updateCryptTab] Crypttab updated with TPM option";
-}
-
-void ResumeEncryptWorker::saveRecoveryKey()
-{
-    qDebug() << "[ResumeEncryptWorker::saveRecoveryKey] Saving recovery key";
-    setExitCode(-disk_encrypt::KErrorRequestExportRecKey);
-
-    auto fileName = QString("%1/%2_recovery_key.txt")
-                            .arg(m_authArgs.recoveryPath)
-                            .arg(m_authArgs.device.mid(5));
-    qDebug() << "[ResumeEncryptWorker::saveRecoveryKey] Saving recovery key to:" << fileName;
-
-    // Step 1: Open parent directory fd with O_PATH | O_NOFOLLOW to pin it and reject symlinks
-    QByteArray parentPath = m_authArgs.recoveryPath.toLocal8Bit();
-    int dirFd = ::open(parentPath.constData(), O_PATH | O_NOFOLLOW | O_DIRECTORY);
-    if (dirFd < 0) {
-        qCritical() << "[ResumeEncryptWorker::saveRecoveryKey] Cannot open parent directory (not a dir or is symlink):"
-                    << m_authArgs.recoveryPath << "error:" << strerror(errno);
-        return;
-    }
-
-    // Step 2: Verify parent directory is not world-writable (prevent arbitrary target redirection)
-    struct stat dirStat;
-    if (::fstat(dirFd, &dirStat) != 0) {
-        qCritical() << "[ResumeEncryptWorker::saveRecoveryKey] Cannot stat parent directory:" << m_authArgs.recoveryPath;
-        ::close(dirFd);
-        return;
-    }
-    if (dirStat.st_mode & S_IWOTH) {
-        qCritical() << "[ResumeEncryptWorker::saveRecoveryKey] Parent directory is world-writable, refusing:"
-                    << m_authArgs.recoveryPath;
-        ::close(dirFd);
-        return;
-    }
-
-    // Step 3: Create/truncate file via openat with dirFd-pinned path
-    // O_NOFOLLOW: reject symlinks (fails with ELOOP if filename is a symlink)
-    // O_CREAT | O_TRUNC: create or truncate (matches original QFile::Truncate semantics)
-    // TOCTOU is eliminated because dirFd is pinned to the parent directory inode
-    QByteArray baseName = (m_authArgs.device.mid(5) + "_recovery_key.txt").toLocal8Bit();
-    int fd = ::openat(dirFd, baseName.constData(),
-                       O_NOFOLLOW | O_CREAT | O_TRUNC | O_WRONLY,
-                       S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
-
-    if (fd < 0) {
-        qCritical() << "[ResumeEncryptWorker::saveRecoveryKey] Cannot create/open recovery key file:" << fileName
-                    << "error:" << strerror(errno);
-        ::close(dirFd);
-        return;
-    }
-
-    // Step 4: fstat the opened file to verify it is a regular file (defense in depth)
-    struct stat fileStat;
-    if (::fstat(fd, &fileStat) != 0 || !S_ISREG(fileStat.st_mode)) {
-        qCritical() << "[ResumeEncryptWorker::saveRecoveryKey] Opened file is not a regular file:" << fileName;
-        ::close(fd);
-        ::close(dirFd);
-        return;
-    }
-
-    // Step 5: Write recovery key through fd
-    QByteArray keyData = m_authArgs.recoveryKey.toLocal8Bit();
-    ssize_t written = ::write(fd, keyData.constData(), keyData.size());
-    if (written != keyData.size()) {
-        qCritical() << "[ResumeEncryptWorker::saveRecoveryKey] Failed to write recovery key completely:" << fileName;
-        ::close(fd);
-        ::unlinkat(dirFd, baseName.constData(), 0);
-        ::close(dirFd);
-        return;
-    }
-
-    // Step 6: Sync to disk and close
-    ::fsync(fd);
-    ::close(fd);
-    ::close(dirFd);
-    qInfo() << "[ResumeEncryptWorker::saveRecoveryKey] Recovery key saved successfully, device:" << m_jobArgs.devPath;
-    setExitCode(disk_encrypt::kSuccess);
 }
 
 void ResumeEncryptWorker::loadJobFromDevice()

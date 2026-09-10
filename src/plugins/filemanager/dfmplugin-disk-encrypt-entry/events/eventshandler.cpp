@@ -28,6 +28,10 @@
 #include <DDBusSender>
 #include <DUtil>
 
+#include <fcntl.h>
+#include <unistd.h>
+#include <errno.h>
+
 #define DDE_SHUTDOWN_SERVICE "org.deepin.dde.ShutdownFront1"
 #define DDE_SHUTDOWN_PATH "/org/deepin/dde/ShutdownFront1"
 #define DDE_SHUTDOWN_INTERFACE "org.deepin.dde.ShutdownFront1"
@@ -253,7 +257,6 @@ void EventsHandler::onEncryptFinished(const QVariantMap &result)
         ignoreParamRequest();
         return;
     case kSuccess:
-    case KErrorRequestExportRecKey:
         title = tr("Encrypt done");
         msg = tr("Partition %1 has been encrypted").arg(device);
         success = true;
@@ -273,11 +276,19 @@ void EventsHandler::onEncryptFinished(const QVariantMap &result)
         dialog_utils::showDialog(title, msg);
     else {
         dialog->showResultPage(success, title, msg);
-        if (code == -KErrorRequestExportRecKey) {
-            auto recKey = result.value(encrypt_param_keys::kKeyRecoveryKey).toString();
-            dialog->setRecoveryKey(recKey, dev);
-            dialog->showExportPage();
+
+        // The service now always returns the recovery key (when generated) via
+        // kKeyRecoveryKey; write it to the user-selected export path in the user
+        // session, falling back to the re-export page only when the write fails.
+        auto recKey = result.value(encrypt_param_keys::kKeyRecoveryKey).toString();
+        if (!recKey.isEmpty()) {
+            auto exportPath = exportPaths.take(dev);
+            if (exportPath.isEmpty() || !saveRecoveryKeyToFile(recKey, dev, exportPath)) {
+                dialog->setRecoveryKey(recKey, dev);
+                dialog->showExportPage();
+            }
         }
+
         dialog->raise();
     }
 
@@ -345,7 +356,13 @@ void EventsHandler::onRequestAuthArgs(const QVariantMap &devInfo)
             encryptInputs.take(devPath)->deleteLater();   // also will be deleted when encryption started.
         } else {
             fmInfo() << "User provided auth input for device:" << devPath << "proceeding with re-encryption";
-            if (!DiskEncryptMenuScene::doReencryptDevice(dlg->getInputs())) {
+            auto inputs = dlg->getInputs();
+            // Remember the user-selected export path so the recovery key can be
+            // written by the front-end (in the user session) once the service
+            // returns it via EncryptResult.
+            if (!inputs.exportPath.isEmpty())
+                exportPaths.insert(devPath, inputs.exportPath);
+            if (!DiskEncryptMenuScene::doReencryptDevice(inputs)) {
                 ignoreParamRequest();
                 if (encryptInputs.contains(devPath))
                     encryptInputs.take(devPath)->deleteLater();
@@ -767,6 +784,36 @@ void EventsHandler::setAutoStartDFM(bool enable)
             fmInfo() << "Autostart file does not exist, no need to remove";
         }
     }
+}
+
+bool EventsHandler::saveRecoveryKeyToFile(const QString &recKey, const QString &dev, const QString &exportPath)
+{
+    // Align with EncryptProgressDialog::saveRecKey(): write <exportPath>/<dev>_recovery_key.txt.
+    // The recovery key is a secret, so O_NOFOLLOW rejects a symlink at the target
+    // path, 0600 keeps the file private, and fsync restores the durability that the
+    // removed service-side writer used to guarantee.
+    const QString fileName = QString("%1/%2_recovery_key.txt").arg(exportPath).arg(dev.mid(5));
+
+    int fd = ::open(fileName.toLocal8Bit().constData(),
+                    O_WRONLY | O_CREAT | O_TRUNC | O_NOFOLLOW | O_CLOEXEC, 0600);
+    if (fd < 0) {
+        fmCritical() << "Failed to create recovery key file:" << fileName << "errno:" << errno;
+        return false;
+    }
+
+    const QByteArray keyData = recKey.toLocal8Bit();
+    const ssize_t written = ::write(fd, keyData.constData(), keyData.size());
+    if (written != keyData.size()) {
+        fmCritical() << "Failed to write recovery key completely:" << fileName;
+        ::close(fd);
+        ::unlink(fileName.toLocal8Bit().constData());
+        return false;
+    }
+
+    ::fsync(fd);
+    ::close(fd);
+    fmInfo() << "Recovery key successfully saved to:" << fileName;
+    return true;
 }
 
 void EventsHandler::onOverlayDMModeChanged(bool enabled, int result)
