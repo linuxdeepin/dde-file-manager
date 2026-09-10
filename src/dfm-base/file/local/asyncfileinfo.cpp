@@ -1298,16 +1298,6 @@ void AsyncFileInfoPrivate::updateFileIconName()
     if (iconNameValue.isEmpty())
         iconNameValue = mimetype.iconName();
 
-    if (!QIcon::hasThemeIcon(iconNameValue))
-        iconNameValue = mimetype.genericIconName();
-
-    if (!QIcon::hasThemeIcon(iconNameValue)) {
-        const QStringList &list = mimetype.parentMimeTypes();
-        const auto &iter = std::find_if(list.begin(), list.end(), [](const QString &name) { return QIcon::hasThemeIcon(name); });
-        if (iter != list.end())
-            iconNameValue = *iter;
-    }
-
     iconNameValue = IconUtils::normalizeIconName(iconNameValue);
 
     QWriteLocker wlk(&iconLock);

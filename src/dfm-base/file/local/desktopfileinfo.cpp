@@ -91,13 +91,11 @@ public:
                 iconName = "user-trash-full";
         }
 
-        if (!iconName.isEmpty() && QIcon::hasThemeIcon(iconName))
-            hasThemeIcon.storeRelease(true);
-
         icon = QIcon();
+        iconThemeGen.storeRelease(-1);   // 失效图标缓存，使 ensureIconCacheFresh() 重算 genericIconName / useProxyIcon
     }
 
-    // 主题变化时失效缓存的图标状态（#8）：icon / useProxyIcon / hasThemeIcon
+    // 主题变化时失效缓存的图标状态（#8）：icon / useProxyIcon / genericIconName
     void ensureIconCacheFresh()
     {
         Q_ASSERT(QThread::currentThread() == qApp->thread());
@@ -107,7 +105,9 @@ public:
         iconThemeGen.storeRelease(gen);
         icon = QIcon();
         useProxyIcon.storeRelease(false);
-        hasThemeIcon.storeRelease(!iconName.isEmpty() && QIcon::hasThemeIcon(iconName));
+        genericIconName = (!genericName.isEmpty() && QIcon::hasThemeIcon(genericName))
+                          ? genericName
+                          : QStringLiteral("application-default-icon");
     }
 
 public:
@@ -121,7 +121,7 @@ public:
     QStringList mimeType;
     QString deepinID;
     QString deepinVendor;
-    QAtomicInteger<bool> hasThemeIcon { false };
+    QString genericIconName { QStringLiteral("application-default-icon") };
     QAtomicInteger<bool> useProxyIcon { false };
     QAtomicInteger<int> iconThemeGen { -1 };   // 上次校验图标缓存时所用的主题版本号
 };
@@ -158,7 +158,7 @@ QString DesktopFileInfo::desktopExec() const
 
 QString DesktopFileInfo::desktopIconName() const
 {
-    d->ensureIconCacheFresh();   // 主题切换后失效陈旧的 hasThemeIcon 缓存（#8）
+    d->ensureIconCacheFresh();   // 主题切换后失效陈旧的 iconName 缓存（#8）
 
     // special handling for trash desktop file which has tash datas
     if (d->iconName == "user-trash") {
@@ -271,9 +271,8 @@ QString DesktopFileInfo::nameOf(const NameInfoType type) const
     case NameInfoType::kIconName:
         return desktopIconName();
     case NameInfoType::kGenericIconName:
-        return !d->genericName.isEmpty() && QIcon::hasThemeIcon(d->genericName)
-                ? d->genericName
-                : QStringLiteral("application-default-icon");
+        d->ensureIconCacheFresh();   // 主题切换后失效陈旧的 genericIconName 缓存（#8）
+        return d->genericIconName;
     default:
         return ProxyFileInfo::nameOf(type);
     }
