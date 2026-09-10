@@ -25,15 +25,15 @@ static QString toBase64(const QString rawstr)
 
 inline constexpr char kUSecConfigDir[] { "/etc/usec-crypt" };
 inline constexpr char kReencryptDesktopFile[] { "/usr/share/applications/dfm-reencrypt.desktop" };
-inline constexpr char kRebootFlagFilePrefix[] { "/tmp/dfm_encrypt_reboot_flag_" };
+inline constexpr char kRebootFlagFilePrefix[] { "/run/dfm-encrypt/reboot_flag_" };
 
 // Overlay DM mode settings directory and marker files
 inline constexpr char kOverlayDMSettingsDir[] { "/etc/usec-crypt/settings" };
 inline constexpr char kOverlayDMFlagFile[] { "/etc/usec-crypt/settings/overlay-dm" };
 inline constexpr char kOverlayDMPendingFile[] { "/etc/usec-crypt/settings/overlay-dm.pending" };
 
-inline constexpr char kOverlayDMNotifyDir[] { "/tmp/dfm-overlay-dm-notify" };
-inline constexpr char kOverlayDMNotifyFile[] { "/tmp/dfm-overlay-dm-notify/pending.json" };
+inline constexpr char kOverlayDMNotifyDir[] { "/run/dfm-encrypt/overlay-dm-notify" };
+inline constexpr char kOverlayDMNotifyFile[] { "/run/dfm-encrypt/overlay-dm-notify/pending.json" };
 
 // Overlay DM Mode change result codes (shared by service and plugin)
 enum OverlayDMModeChangeResult {
@@ -109,7 +109,6 @@ enum EncryptOperationStatus {
     kErrorDisabledMountPoint,
     kErrorSetLabel,
     kErrorNotFullyEncrypted,
-    KErrorRequestExportRecKey,
     kErrorSetFsPassno,
     kErrorCheckReencryptStatus,
 

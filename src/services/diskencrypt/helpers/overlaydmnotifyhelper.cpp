@@ -124,19 +124,23 @@ void OverlayDMNotifyHelper::launchFileManager(uint uid, const QString &username)
 {
     qInfo() << "[OverlayDMNotifyHelper::launchFileManager] Launching file manager for user:" << username << "UID:" << uid;
 
-    const QString busAddr = QString("unix:path=/run/user/%1/bus").arg(uid);
+    // Launch inside the target user's session via systemd-run --user --machine,
+    // so the spawned process runs in the user's own mount namespace and graphical
+    // session environment (its own /run/user, DISPLAY/WAYLAND_DISPLAY and session
+    // bus). This avoids inheriting the service's isolated namespace introduced by
+    // PrivateTmp/ProtectHome, and no longer hand-builds unix:path=/run/user/<uid>/bus.
+    const QString machine = QString("%1@.host").arg(username);
 
     QProcess process;
-    process.setProgram("runuser");
-    process.setArguments({ "-u", username, "--",
-                           "env", QString("DBUS_SESSION_BUS_ADDRESS=%1").arg(busAddr),
+    process.setProgram("systemd-run");
+    process.setArguments({ "--user", "--machine", machine, "--",
                            "/usr/libexec/dde-file-manager", "-d" });
 
     qint64 pid = 0;
     if (process.startDetached(&pid)) {
-        qInfo() << "[OverlayDMNotifyHelper::launchFileManager] File manager launched, PID:" << pid;
+        qInfo() << "[OverlayDMNotifyHelper::launchFileManager] File manager launched via systemd-run, PID:" << pid;
     } else {
-        qWarning() << "[OverlayDMNotifyHelper::launchFileManager] Failed to launch file manager:" << process.errorString();
+        qWarning() << "[OverlayDMNotifyHelper::launchFileManager] Failed to launch file manager via systemd-run:" << process.errorString();
     }
 }
 
