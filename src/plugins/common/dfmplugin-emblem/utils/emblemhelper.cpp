@@ -86,7 +86,12 @@ QMap<int, QIcon> GioEmblemWorker::getGioEmblems(const FileInfoPointer &info) con
 
     if (!info)
         return {};
-    const QStringList &emblemData = info->customAttribute("metadata::emblems", DFileInfo::DFileAttributeType::kTypeStringV).toStringList();
+
+    const QUrl &url = info->urlOf(UrlInfoType::kUrl);
+    DFMIO::DFileInfo dfi(url);
+    if (!dfi.initQuerier())
+        return emblemsMap;
+    const QStringList &emblemData = dfi.customAttribute("metadata::emblems", DFileInfo::DFileAttributeType::kTypeStringV).toStringList();
 
     if (emblemData.isEmpty())
         return emblemsMap;
@@ -163,18 +168,20 @@ bool GioEmblemWorker::iconNamesEqual(const QList<QIcon> &first, const QList<QIco
     if (first.size() != second.size())
         return false;
 
-    QVector<QString> firstNames { first.size(), QString() };
-    QVector<QString> secondNames { second.size(), QString() };
+    for (int i = 0; i < first.size(); ++i) {
+        const auto &nameA = first.at(i).name();
+        const auto &nameB = second.at(i).name();
 
-    std::transform(first.begin(), first.end(), firstNames.begin(), [](const QIcon &icon) {
-        return icon.name();
-    });
+        if (!nameA.isEmpty() || !nameB.isEmpty()) {
+            if (nameA != nameB)
+                return false;
+        } else {
+            if (first.at(i).cacheKey() != second.at(i).cacheKey())
+                return false;
+        }
+    }
 
-    std::transform(second.begin(), second.end(), secondNames.begin(), [](const QIcon &icon) {
-        return icon.name();
-    });
-
-    return firstNames == secondNames;
+    return true;
 }
 
 void GioEmblemWorker::setEmblemIntoIcons(const QString &pos, const QIcon &emblem, QMap<int, QIcon> *iconMap) const
