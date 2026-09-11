@@ -263,6 +263,8 @@ bool DragDropHelper::drop(QDropEvent *event)
         event->accept();
     } else {
         QModelIndex hoverIndex = view->indexAt(event->pos());
+        if (hoverIndex.isValid() && hoverIndex.data(Global::kItemIsGroupHeaderType).toBool())
+            hoverIndex = view->rootIndex();
 
         if (event->source() == view && dragFileFromCurrent && (!hoverIndex.isValid() || view->isSelected(hoverIndex)) && !WindowUtils::keyCtrlIsPressed()) {
             fmDebug() << "Drop canceled - dragging from current view to selected item";
@@ -443,7 +445,7 @@ void DragDropHelper::handleDropEvent(QDropEvent *event, bool *fall)
 QSharedPointer<FileInfo> DragDropHelper::fileInfoAtPos(const QPoint &pos)
 {
     QModelIndex index = view->indexAt(pos);
-    if (!index.isValid())
+    if (!index.isValid() || index.data(Global::kItemIsGroupHeaderType).toBool())
         index = view->rootIndex();
 
     return view->model()->fileInfo(index);
