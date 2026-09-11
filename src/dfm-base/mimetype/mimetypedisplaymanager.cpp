@@ -112,6 +112,16 @@ FileInfo::FileType MimeTypeDisplayManager::displayNameToEnum(const QString &mime
         return FileInfo::FileType::kUnknown;
     }
 
+    // Check aliases — handles cases where shared-mime-info renames a MIME type
+    // but keeps the old name as an alias (e.g. application/vnd.efi.iso aliases
+    // application/x-cd-image).
+    for (const QString &alias : resolvedMime.aliases()) {
+        const FileInfo::FileType aliasType = displayNameToEnumDirect(alias);
+        if (aliasType != FileInfo::FileType::kUnknown) {
+            return aliasType;
+        }
+    }
+
     // Fallback to ancestor MIME types so vendor-specific overrides can still
     // inherit the same top-level category as their standard parent MIME.
     for (const QString &ancestorMimeType : resolvedMime.allAncestors()) {

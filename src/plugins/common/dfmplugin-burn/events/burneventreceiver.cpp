@@ -86,9 +86,8 @@ void BurnEventReceiver::handlePasteTo(const QList<QUrl> &urls, const QUrl &dest,
         bool isBlank { DeviceUtils::isBlankOpticalDisc(devId) };
 
         auto fi { InfoFactory::create<FileInfo>(urls.front()) };
-        static const QSet<QString> imageTypes { Global::Mime::kTypeCdImage, Global::Mime::kTypeISO9660Image };
 
-        if (isBlank && fi && imageTypes.contains(fi->nameOf(NameInfoType::kMimeTypeName)) && destDir.count() == 0) {
+        if (isBlank && fi && BurnHelper::isMountableImage(fi->nameOf(NameInfoType::kMimeTypeName)) && destDir.count() == 0) {
             int r { BurnHelper::showOpticalImageOpSelectionDialog() };
             if (r == 1) {
                 qint64 srcSize { fi->size() };
