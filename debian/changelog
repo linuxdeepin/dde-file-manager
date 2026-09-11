@@ -1,3 +1,28 @@
+dde-file-manager (6.6.5) unstable; urgency=medium
+
+  * fix: add metadata::emblems to GIO file attributes query
+  * Revert "fix(at-spi): add accessible names for sidebar items and menu actions"
+  * refactor: consolidate icon rendering utilities and caching
+  * fix: optimize desktop file icon handling and caching
+  * fix: correct typos in thumbnail method naming
+  * fix: add thread safety checks in icon and tag handling
+  * refactor: remove icon+emblems caching in delegates
+  * fix: skip optical drives in USB repair device filter
+  * fix: exclude directories from desktop file detection
+  * fix: make crash backtrace handler async-signal-safe
+  * fix: migrate terminal launch to AM1 for executables
+  * fix: remove redundant thread-unsafe QIcon::hasThemeIcon calls
+  * fix: clear InfoCache on refresh and fix emblem clear notification
+  * fix: clear cached thumbnail marks on toggle switch
+  * fix: eliminate task dialog resize jitter
+  * fix: improve share name handling and cursor position
+  * fix: handle TPM auth cancellation in disk encrypt unlock
+  * feat: add custom logo to computer property dialog
+  * perf(urlroute): replace per-call QRegularExpression with allocation-free slash squeezing
+  * feat(menu): add dconfig switch to disable desktop context menu
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Fri, 11 Sep 2026 10:00:12 +0800
+
 dde-file-manager (6.6.4) unstable; urgency=medium
 
   * fix(preview): avoid UI freeze on rapid preview switching
