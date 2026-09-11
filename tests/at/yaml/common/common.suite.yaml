@@ -582,5 +582,338 @@ suites:
     action: assert_window
     selector:
       name: dde-file-manager
+- id: suite_common_013_s1
+  name: 光盘烧录高级选项与镜像转储
+  description: 验证 PbBurn/PbDump/VolnameEdit/WritespeedComb/FsComb/FinalizeDiscCheckbox 交互
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: VolnameEdit
+      role: text
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: WritespeedComb
+      role: combo box
+    do: click
+  - step_type: action
+    action: element_action
+    selector:
+      name: FsComb
+      role: combo box
+    do: click
+  - step_type: action
+    action: element_action
+    selector:
+      name: FinalizeDiscCheckbox
+      role: check box
+    do: click
+  - step_type: action
+    action: element_action
+    selector:
+      name: PbBurn
+      role: push button
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: PbDump
+      role: push button
+    do: focus
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: VolnameEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: PbBurn
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: PbDump
+      role: push button
+- id: suite_common_014_s1
+  name: 文件属性对话框隐藏文件与告警提示
+  description: 验证 HideFile/HideFile_2/AlertTooltip/PropertyDialog-QScrollArea 交互
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: HideFile
+      role: check box
+    do: click
+  - step_type: action
+    action: element_action
+    selector:
+      name: HideFile_2
+      role: check box
+    do: click
+  - step_type: action
+    action: element_action
+    selector:
+      name: PropertyDialog-QScrollArea
+      role: scroll pane
+    do: focus
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: HideFile
+      role: check box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: PropertyDialog-QScrollArea
+      role: scroll pane
+- id: suite_common_015_s1
+  name: 文件属性权限管理控件
+  description: 验证 ExecutableCheckBox/OwnerComboBox/GroupComboBox/OtherComboBox/NameEditIcon 交互
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: ExecutableCheckBox
+      role: check box
+    do: click
+  - step_type: action
+    action: element_action
+    selector:
+      name: OwnerComboBox
+      role: combo box
+    do: click
+  - step_type: action
+    action: element_action
+    selector:
+      name: GroupComboBox
+      role: combo box
+    do: click
+  - step_type: action
+    action: element_action
+    selector:
+      name: OtherComboBox
+      role: combo box
+    do: click
+  - step_type: action
+    action: element_action
+    selector:
+      name: NameEditIcon
+    do: focus
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ExecutableCheckBox
+      role: check box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: OwnerComboBox
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: NameEditIcon
+- id: suite_common_016_s1
+  name: 打开方式对话框列表与默认设置
+  description: 验证 OpenWithListWidget/OpenWithBtnGroup/OpenFileChooseButton/SetToDefaultCheckBox/CancelButton/OpenWithDialog-QScrollArea 交互
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: OpenWithListWidget
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: SetToDefaultCheckBox
+      role: check box
+    do: click
+  - step_type: action
+    action: element_action
+    selector:
+      name: OpenFileChooseButton
+    do: click
+  - step_type: action
+    action: element_action
+    selector:
+      name: OpenWithDialog-QScrollArea
+      role: scroll pane
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: CancelButton
+      role: push button
+    do: click
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: OpenWithListWidget
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SetToDefaultCheckBox
+      role: check box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CancelButton
+      role: push button
+- id: suite_common_017_s1
+  name: 文件夹共享属性设置
+  description: 验证 ShareSwitcher/ShareNameEditor/SharePermissionSelector/ShareAnonymousSelector/CopyNetAddr/CopyUserNameBt/SetPasswordBt/DevicesListView 交互
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: ShareSwitcher
+      role: check box
+    do: click
+  - step_type: action
+    action: element_action
+    selector:
+      name: ShareNameEditor
+      role: text
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: SharePermissionSelector
+      role: combo box
+    do: click
+  - step_type: action
+    action: element_action
+    selector:
+      name: ShareAnonymousSelector
+      role: combo box
+    do: click
+  - step_type: action
+    action: element_action
+    selector:
+      name: CopyNetAddr
+      role: push button
+    do: click
+  - step_type: action
+    action: element_action
+    selector:
+      name: CopyUserNameBt
+      role: push button
+    do: click
+  - step_type: action
+    action: element_action
+    selector:
+      name: SetPasswordBt
+    do: click
+  - step_type: action
+    action: element_action
+    selector:
+      name: DevicesListView
+    do: focus
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ShareSwitcher
+      role: check box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ShareNameEditor
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: DevicesListView
+- id: suite_common_018_s1
+  name: 文件标签信息展示控件
+  description: 验证 TagLable/TagLeftLable/ToolTip 控件可定位
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: TagLable
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: TagLeftLable
+    do: focus
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TagLable
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TagLeftLable
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ToolTip
+- id: suite_common_019_s1
+  name: 预览窗口关闭按钮与状态栏
+  description: 验证 CloseBtn/StatusBar/IconButton 控件交互
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: CloseBtn
+    do: click
+  - step_type: action
+    action: element_action
+    selector:
+      name: IconButton
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: StatusBar
+      role: status bar
+    do: focus
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CloseBtn
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: IconButton
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: StatusBar
+      role: status bar
+- id: suite_common_020_s1
+  name: 属性对话框面包屑导航
+  description: 验证 CrumbEdit/Edit_2 控件交互
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: CrumbEdit
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: Edit_2
+    do: focus
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CrumbEdit
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: Edit_2
 teardown:
 - action: session_stop

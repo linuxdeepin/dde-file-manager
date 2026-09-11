@@ -366,5 +366,239 @@ suites:
     selector:
       name: ThemeCom
       role: combo box
+- id: suite_dde_file_manager_preview_008_s1
+  name: 视频预览播放控制与进度滑块
+  description: 验证 Slider_2/ControlButton 视频预览交互
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: Slider_2
+      role: slider
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: ControlButton
+    do: click
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: Slider_2
+      role: slider
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ControlButton
+- id: suite_dde_file_manager_preview_009_s1
+  name: PDF 预览翻页与缩略图列表
+  description: 验证 Nextbutton/ItemViewParent/View_ImageList 交互
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: Nextbutton
+      role: push button
+    do: click
+  - step_type: action
+    action: element_action
+    selector:
+      name: View_ImageList
+      role: list
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: ItemViewParent
+    do: focus
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: Nextbutton
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: View_ImageList
+      role: list
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ItemViewParent
+- id: suite_dde_file_manager_preview_010_s1
+  name: 音乐预览信息与播放控制
+  description: 验证 ArtistLabel/AlbumLabel/ArtistValue/AlbumValue/PlayControlButton/ProgressSlider 交互
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: ArtistLabel
+      role: label
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: AlbumLabel
+      role: label
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: ArtistValue
+      role: label
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: AlbumValue
+      role: label
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: PlayControlButton
+      role: push button
+    do: click
+  - step_type: action
+    action: element_action
+    selector:
+      name: ProgressSlider
+      role: slider
+    do: focus
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ArtistLabel
+      role: label
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: PlayControlButton
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ProgressSlider
+      role: slider
+- id: suite_dde_file_manager_preview_011_s1
+  name: DCI 图标预览调色板与尺寸设置
+  description: 验证 AvailableSizeCombo/ForegroundPaletteEdit/BackgroundPaletteEdit/HightlightPaletteEdit/HFpaletteEdit/ThemeCom/ModeCom/CustomSizeEdit 交互
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: AvailableSizeCombo
+      role: combo box
+    do: click
+  - step_type: action
+    action: element_action
+    selector:
+      name: CustomSizeEdit
+      role: text
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: ForegroundPaletteEdit
+      role: text
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: BackgroundPaletteEdit
+      role: text
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: HightlightPaletteEdit
+      role: text
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: HFpaletteEdit
+      role: text
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: ThemeCom
+      role: combo box
+    do: click
+  - step_type: action
+    action: element_action
+    selector:
+      name: ModeCom
+      role: combo box
+    do: click
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AvailableSizeCombo
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ThemeCom
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ModeCom
+      role: combo box
+- id: suite_dde_file_manager_preview_012_s1
+  name: 未知文件预览信息展示
+  description: 验证 IconLabel/NameLabel/SizeLabel/TypeLabel 信息展示
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: IconLabel
+      role: label
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: NameLabel
+      role: label
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: SizeLabel
+      role: label
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: TypeLabel
+      role: label
+    do: focus
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: IconLabel
+      role: label
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: NameLabel
+      role: label
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SizeLabel
+      role: label
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TypeLabel
+      role: label
 teardown:
 - action: session_stop

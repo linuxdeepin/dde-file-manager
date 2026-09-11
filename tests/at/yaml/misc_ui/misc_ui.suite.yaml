@@ -137,5 +137,113 @@ suites:
     action: assert_element
     selector:
       name: RightValueEdit
+- id: suite_misc_ui_004_s1
+  name: 菜单与组合框控件
+  description: 验证 TextLabel/MenuPtr/ComboBox 交互
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: TextLabel
+      role: label
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: MenuPtr
+      role: menu
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: ComboBox
+      role: combo box
+    do: click
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TextLabel
+      role: label
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: MenuPtr
+      role: menu
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ComboBox
+      role: combo box
+- id: suite_misc_ui_005_s1
+  name: 滑块快捷键与开关控件
+  description: 验证 Slider/KeyEdit/SwitchBtn 交互
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: Slider
+      role: slider
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: KeyEdit
+      role: text
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: SwitchBtn
+    do: click
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: Slider
+      role: slider
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: KeyEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SwitchBtn
+- id: suite_misc_ui_006_s1
+  name: 复选框侧边栏与地址栏控件
+  description: 验证 CheckBox/Tooltip/SideBarView/AddressBar 交互
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: CheckBox
+      role: check box
+    do: click
+  - step_type: action
+    action: element_action
+    selector:
+      name: SideBarView
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: AddressBar
+    do: focus
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CheckBox
+      role: check box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SideBarView
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddressBar
 teardown:
 - action: session_stop
