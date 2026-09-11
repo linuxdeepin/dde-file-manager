@@ -582,5 +582,169 @@ suites:
     action: assert_window
     selector:
       name: dde-file-manager
+- id: suite_common_013_s1
+  name: 文件名编辑器输入验证
+  description: ''
+  steps:
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: FileNameEdit
+      role: text
+    items:
+    - 重命名
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: FileNameEdit
+      role: text
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: FileNameEdit
+      role: text
+    text: test_file.txt
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: FileNameEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: FileNameLabel
+      role: label
+- id: suite_common_014_s1
+  name: 筛选器下拉框交互
+  description: ''
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: FiltersComboBox
+      role: combo box
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: FiltersComboBox
+      role: combo box
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 0.5
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: FiltersComboBox
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: FiltersLabel
+      role: label
+- id: suite_common_015_s1
+  name: 隐藏文件复选框切换
+  description: ''
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: HideFile
+      role: check box
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: HideFile
+      role: check box
+    do: click
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: HideFile
+      role: check box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ItemViewParent
+      role: list
+- id: suite_common_016_s1
+  name: 滚动区域导航验证
+  description: ''
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: ScrollArea
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: page_down
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: page_up
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ScrollArea
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ItemViewParent
+      role: list
+- id: suite_common_017_s1
+  name: 通用组合框选择验证
+  description: ''
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: ComboBox
+      role: combo box
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: ComboBox
+      role: combo box
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 0.5
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ComboBox
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: StatusBar
+      role: status bar
 teardown:
 - action: session_stop
