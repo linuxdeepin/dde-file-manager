@@ -113,9 +113,9 @@ bool DoDeleteFilesWorker::deleteFilesByFts()
     // Flush any buffered fileDeleted signals on every exit path.
     dfmbase::FinallyUtil atFinish([&] { flushFileDeletedBatch(); });
 
-    // FTS only traverses local files (non-local sources are filtered above), so the
-    // local inotify watcher already delivers delete notifications - no manual notify
-    // is needed here (mirrors deleteFilesOnCanNotRemoveDevice's local behavior).
+    // FTS traverses local file paths; for GVFS FUSE-mounted remote shares (FTP/SMB/etc.)
+    // these paths are file:// URLs that inotify cannot monitor, so notifyFileChangeManual
+    // is called per-file to trigger view refresh on protocols that lack file watchers.
     QSet<QUrl> sourceUrlsSet(sourceUrls.begin(), sourceUrls.end());
     bool success = true;
     int errorCount = 0;
@@ -197,6 +197,7 @@ bool DoDeleteFilesWorker::deleteFilesByFts()
             continue;
 
         batchEmitFileDeleted(url);
+        FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType::kFileDeleted, url);
 
         if (sourceUrlsSet.contains(url)) {
             completeSourceFiles.append(url);
