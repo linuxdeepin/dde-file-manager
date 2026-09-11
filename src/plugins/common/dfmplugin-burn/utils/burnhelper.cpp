@@ -22,6 +22,9 @@
 #include <QStandardPaths>
 #include <QRegularExpression>
 #include <QApplication>
+#include <QMimeDatabase>
+#include <QMimeType>
+#include <QSet>
 
 using namespace dfmplugin_burn;
 DWIDGET_USE_NAMESPACE
@@ -272,4 +275,20 @@ QFileInfoList BurnHelper::localFileInfoListRecursive(const QString &path, QDir::
     }
 
     return fileList;
+}
+
+bool BurnHelper::isMountableImage(const QString &mimeTypeName)
+{
+    static const QSet<QString> mountable { Global::Mime::kTypeCdImage, Global::Mime::kTypeISO9660Image };
+    if (mountable.contains(mimeTypeName))
+        return true;
+
+    const QMimeType mime = QMimeDatabase().mimeTypeForName(mimeTypeName);
+    if (mime.isValid()) {
+        for (const QString &alias : mime.aliases()) {
+            if (mountable.contains(alias))
+                return true;
+        }
+    }
+    return false;
 }
