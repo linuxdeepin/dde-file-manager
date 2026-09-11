@@ -1,3 +1,14 @@
+dde-file-manager (6.5.172) unstable; urgency=medium
+
+  * fix: handle TPM auth cancellation in disk encrypt unlock
+  * fix: improve share name handling and cursor position
+  * fix: harden disk encrypt service and move recovery key export to user session
+  * fix: clear InfoCache on refresh and fix emblem clear notification
+  * fix: support MIME type aliases for ISO image recognition
+  * fix: add notifyFileChangeManual to deleteFilesByFts for remote mount refresh
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Fri, 11 Sep 2026 15:35:56 +0800
+
 dde-file-manager (6.5.171) unstable; urgency=medium
 
   * fix: eliminate task dialog resize jitter
