@@ -27,7 +27,7 @@ class InfoCachePrivate
     QAtomicInt status { kCacheMain };   // 当前状态缓存的状态
     QHash<QUrl, FileInfoPointer> mainCache;   // 主信息缓存
     QHash<QUrl, FileInfoPointer> copyCache;   // 副信息缓存
-    QReadWriteLock mianLock;
+    QReadWriteLock mainLock;
     QReadWriteLock copyLock;
 
     // 时间排序url,利用map的有序性，来处理时间到了要移除的url

@@ -85,6 +85,7 @@ private:
     void timeRemoveCache();
     void removeInfosTimeWorker(const QList<QUrl> urls);
     void updateSortTimeWatcherWorker(const QList<QUrl> &urls, const bool add);
+    void clearCachedExtendedAttribute(ExtInfoType type);
 
 private Q_SLOTS:
     void fileAttributeChanged(const QUrl url);
@@ -110,6 +111,7 @@ public:
     bool cacheDisable(const QString &scheme);
     void setCacheDisbale(const QString &scheme, bool disable = true);
     FileInfoPointer getCacheInfo(const QUrl &url);
+    void clearCachedExtendedAttribute(ExtInfoType type);
 Q_SIGNALS:
     void cacheFileInfo(const QUrl url, const FileInfoPointer info);
     void removeCacheFileInfo(const QList<QUrl> &urls);

@@ -136,7 +136,7 @@ void InfoCache::cacheInfo(const QUrl url, const FileInfoPointer info)
         return;
 
     {
-        QReadLocker rlk(&d->mianLock);
+        QReadLocker rlk(&d->mainLock);
         if (d->mainCache.contains(url))
             return;
     }
@@ -174,7 +174,7 @@ void InfoCache::cacheInfo(const QUrl url, const FileInfoPointer info)
     // 插入到主和副的所有缓存中
     d->status = kCacheCopy;
     {
-        QWriteLocker wlk(&d->mianLock);
+        QWriteLocker wlk(&d->mainLock);
         d->mainCache.insert(url, info);
     }
     d->status = kCacheMain;
@@ -232,7 +232,7 @@ void InfoCache::removeCaches(const QList<QUrl> urls)
     d->status = kCacheCopy;
     QMap<QUrl, FileInfoPointer> infos;
     {
-        QWriteLocker wlk(&d->mianLock);
+        QWriteLocker wlk(&d->mainLock);
         for (const auto &url : urls) {
             auto info = d->mainCache.take(url);
             if (info)
@@ -268,7 +268,7 @@ FileInfoPointer InfoCache::getCacheInfo(const QUrl &url)
     // 读取副缓存和临时缓存返回
     FileInfoPointer info(nullptr);
     if (d->status == kCacheMain) {   // 可以读取主缓存返回
-        QReadLocker wlk(&d->mianLock);
+        QReadLocker wlk(&d->mainLock);
         info = d->mainCache.value(url);
     } else {
         QReadLocker wlk(&d->copyLock);
@@ -280,6 +280,25 @@ FileInfoPointer InfoCache::getCacheInfo(const QUrl &url)
         emit cacheUpdateInfoTime(url);
 
     return info;
+}
+
+void InfoCache::clearCachedExtendedAttribute(ExtInfoType type)
+{
+    Q_D(InfoCache);
+    {
+        QReadLocker lk(&d->mainLock);
+        for (const auto &info : d->mainCache) {
+            if (info)
+                info->setExtendedAttributes(type, QVariant());
+        }
+    }
+    {
+        QReadLocker lk(&d->copyLock);
+        for (const auto &info : d->copyCache) {
+            if (info)
+                info->setExtendedAttributes(type, QVariant());
+        }
+    }
 }
 /*!
  * \brief refreshFileInfo 刷新缓存fileinfo
@@ -454,6 +473,11 @@ void InfoCacheController::setCacheDisbale(const QString &scheme, bool disable)
 FileInfoPointer InfoCacheController::getCacheInfo(const QUrl &url)
 {
     return InfoCache::instance().getCacheInfo(url);
+}
+
+void InfoCacheController::clearCachedExtendedAttribute(ExtInfoType type)
+{
+    InfoCache::instance().clearCachedExtendedAttribute(type);
 }
 
 InfoCacheController::InfoCacheController(QObject *parent)
