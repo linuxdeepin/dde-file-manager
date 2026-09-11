@@ -162,6 +162,17 @@ QList<SurfacePointer> FrameManagerPrivate::surfaces() const
     return ret;
 }
 
+void FrameManagerPrivate::relayoutSurfaces()
+{
+    QList<QWidget *> root = ddplugin_desktop_util::desktopFrameRootWindows();
+    for (auto win : root) {
+        QString screen = win->property(DesktopFrameProperty::kPropScreenName).toString();
+        auto surface = surfaceWidgets.value(screen);
+        if (surface)
+            layoutSurface(win, surface);
+    }
+}
+
 void FrameManagerPrivate::refeshCanvas()
 {
     // refresh immediately to prevent show the files which is move to collection view.
@@ -439,7 +450,7 @@ void FrameManager::turnOn(bool build)
     CanvasCoreSubscribe(signal_DesktopFrame_WindowAboutToBeBuilded, &FrameManager::onDetachWindows);
     CanvasCoreSubscribe(signal_DesktopFrame_WindowBuilded, &FrameManager::onBuild);
     CanvasCoreSubscribe(signal_DesktopFrame_WindowShowed, &FrameManager::onWindowShowed);
-    CanvasCoreSubscribe(signal_DesktopFrame_GeometryChanged, &FrameManager::onGeometryChanged);
+    CanvasCoreSubscribe(signal_DesktopFrame_GeometryChanged, &FrameManager::onScreenGeometryChanged);
     CanvasCoreSubscribe(signal_DesktopFrame_AvailableGeometryChanged, &FrameManager::onGeometryChanged);
 
     d->canvas = new CanvasInterface(this);
@@ -470,7 +481,7 @@ void FrameManager::turnOff()
     CanvasCoreUnsubscribe(signal_DesktopFrame_WindowAboutToBeBuilded, &FrameManager::onDetachWindows);
     CanvasCoreUnsubscribe(signal_DesktopFrame_WindowBuilded, &FrameManager::onBuild);
     CanvasCoreUnsubscribe(signal_DesktopFrame_WindowShowed, &FrameManager::onWindowShowed);
-    CanvasCoreUnsubscribe(signal_DesktopFrame_GeometryChanged, &FrameManager::onGeometryChanged);
+    CanvasCoreUnsubscribe(signal_DesktopFrame_GeometryChanged, &FrameManager::onScreenGeometryChanged);
     CanvasCoreUnsubscribe(signal_DesktopFrame_AvailableGeometryChanged, &FrameManager::onGeometryChanged);
 
     delete d->organizer;
@@ -530,15 +541,46 @@ void FrameManager::onDetachWindows()
 
 void FrameManager::onGeometryChanged()
 {
-    QList<QWidget *> root = ddplugin_desktop_util::desktopFrameRootWindows();
-    for (auto win : root) {
-        QString screen = win->property(DesktopFrameProperty::kPropScreenName).toString();
-        auto surface = d->surfaceWidgets.value(screen);
-        if (surface)
-            d->layoutSurface(win, surface);
-    }
+    d->relayoutSurfaces();
 
     // layout collection widgets
     if (d->organizer)
         d->organizer->layout();
+}
+
+void FrameManager::onScreenGeometryChanged()
+{
+    // Collections are already visible when the screen geometry changes after
+    // login (e.g. the compositor applies the display scaling after the desktop
+    // is shown). Re-laying them out in place would visibly move/resize them.
+    // Hide the surfaces for the re-layout and restore their previous visibility
+    // so the collections appear directly at their final positions, matching
+    // the canvas icons which also reposition atomically.
+
+    // record each surface's visibility before the re-layout so the "hide all
+    // collections" state (and any other visibility state) is preserved.
+    QMap<QString, bool> surfaceVisible;
+    for (auto it = d->surfaceWidgets.constBegin(); it != d->surfaceWidgets.constEnd(); ++it)
+        surfaceVisible.insert(it.key(), it.value()->isVisible());
+
+    // resize surfaces to the new screen geometry. layoutSurface may reparent
+    // the surface and reset its visibility, so re-hide afterwards to be safe.
+    d->relayoutSurfaces();
+
+    // hide all surfaces so the setGeometry calls done by layout() are not
+    // painted until the final positions are reached.
+    for (const SurfacePointer &sur : d->surfaceWidgets)
+        sur->setVisible(false);
+
+    // re-layout collections while they are invisible.
+    if (d->organizer)
+        d->organizer->layout();
+
+    // restore each surface's previous visibility. surfaces that were visible
+    // are shown again (painting the collections at their final positions),
+    // surfaces that were hidden (e.g. "hide all collections") stay hidden.
+    for (auto it = d->surfaceWidgets.constBegin(); it != d->surfaceWidgets.constEnd(); ++it) {
+        if (surfaceVisible.contains(it.key()))
+            it.value()->setVisible(surfaceVisible.value(it.key()));
+    }
 }
