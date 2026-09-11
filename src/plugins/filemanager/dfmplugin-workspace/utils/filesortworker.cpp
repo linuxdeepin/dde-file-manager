@@ -11,6 +11,7 @@
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/base/device/deviceproxymanager.h>
 #include <dfm-base/utils/fileinfohelper.h>
+#include <dfm-base/utils/infocache.h>
 #include <dfm-base/base/standardpaths.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/mimetype/mimetypedisplaymanager.h>
@@ -989,6 +990,8 @@ void FileSortWorker::handleClearThumbnail()
         if (Q_LIKELY(item))
             item->clearThumbnail();
     }
+
+    InfoCacheController::instance().clearCachedExtendedAttribute(ExtInfoType::kFileThumbnail);
 
     Q_EMIT requestUpdateView();
 }

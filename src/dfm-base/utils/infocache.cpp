@@ -281,6 +281,25 @@ FileInfoPointer InfoCache::getCacheInfo(const QUrl &url)
 
     return info;
 }
+
+void InfoCache::clearCachedExtendedAttribute(ExtInfoType type)
+{
+    Q_D(InfoCache);
+    {
+        QReadLocker lk(&d->mianLock);
+        for (const auto &info : d->mainCache) {
+            if (info)
+                info->setExtendedAttributes(type, QVariant());
+        }
+    }
+    {
+        QReadLocker lk(&d->copyLock);
+        for (const auto &info : d->copyCache) {
+            if (info)
+                info->setExtendedAttributes(type, QVariant());
+        }
+    }
+}
 /*!
  * \brief refreshFileInfo 刷新缓存fileinfo
  *
@@ -454,6 +473,11 @@ void InfoCacheController::setCacheDisbale(const QString &scheme, bool disable)
 FileInfoPointer InfoCacheController::getCacheInfo(const QUrl &url)
 {
     return InfoCache::instance().getCacheInfo(url);
+}
+
+void InfoCacheController::clearCachedExtendedAttribute(ExtInfoType type)
+{
+    InfoCache::instance().clearCachedExtendedAttribute(type);
 }
 
 InfoCacheController::InfoCacheController(QObject *parent)
