@@ -39,6 +39,12 @@ bool EmblemManager::paintEmblems(int role, const FileInfoPointer &info, QPainter
     const auto &infoEmblems = info->extendAttributes(ExtInfoType::kFileEmblems);
     if (infoEmblems.isValid()) {
         emblems = infoEmblems.value<QList<QIcon>>();
+        const QUrl &url = info->urlOf(UrlInfoType::kUrl);
+        if (!helper->isExtEmblemProhibited(info, url)) {
+            helper->pending(info);
+            QList<QIcon> tmpEmblems;
+            EmblemEventSequence::instance()->doFetchExtendEmblems(url, &tmpEmblems);
+        }
     } else {
         // add system emblem icons
         emblems = helper->systemEmblems(info);
