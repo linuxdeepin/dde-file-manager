@@ -32,6 +32,7 @@ public:
     static bool burnIsOnLocalStaging(const QUrl &url);
     static QFileInfoList localFileInfoList(const QString &path);
     static QFileInfoList localFileInfoListRecursive(const QString &path, QDir::Filters filters = (QDir::Files | QDir::NoSymLinks));
+    static bool isMountableImage(const QString &mimeTypeName);
 };
 
 }   // namespace dfmplugin_burn
