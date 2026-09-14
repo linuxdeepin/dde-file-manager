@@ -311,16 +311,6 @@ void AbstractIndexClient::getLastUpdateTime()
             });
 }
 
-void AbstractIndexClient::setEnable(bool enabled)
-{
-    if (!ensureInterface()) {
-        fmWarning() << "[" << m_descriptor.clientName << "] cannot set enabled state: interface unavailable";
-        return;
-    }
-
-    interface->asyncCall(QStringLiteral("SetEnabled"), enabled);
-}
-
 void AbstractIndexClient::handleGetLastUpdateTimeReply(QDBusPendingCallWatcher *watcher)
 {
     FinallyUtil finaly([watcher]() {

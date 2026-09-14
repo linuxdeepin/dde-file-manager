@@ -261,10 +261,9 @@ void AbstractIndexController::activeBackend(bool isInit)
     }
 
     if (isInit) {
-        // 延迟 2s 后发送 Init/SetEnabled，等待插件服务真正启动注册完成
+        // 延迟 2s 后发送 SetEnabled，等待插件服务真正启动注册完成
         QTimer::singleShot(2000, this, [this]() {
             if (interface) {
-                interface->asyncCall(QStringLiteral("Init"));
                 interface->asyncCall(QStringLiteral("SetEnabled"), isConfigEnabled);
             }
         });

@@ -20,6 +20,13 @@ using namespace Lucene;
 void TextIndexDBusPrivate::initialize()
 {
     runtime->fsEventController()->setupFSEventCollector();
+
+    // Mark silently-refresh-started so that the first SetEnabled(true) triggers
+    // the silent index update path. Previously this was done via a separate
+    // DBus "Init" method called by the daemon; now it is set at construction
+    // time because the service process is always started fresh by the daemon.
+    runtime->fsEventController()->setSilentlyRefreshStarted(true);
+
     initializeSupportedExtensions();
 
     // Check for dirty state at startup and set recovery pending flag
@@ -181,12 +188,6 @@ void TextIndexDBus::cleanup()
     }
 
     StopCurrentTask();
-}
-
-void TextIndexDBus::Init()
-{
-    // 预防启动时没有开启全文检索，后续手动去开启全文检索，将造成 2 次索引
-    d->runtime->fsEventController()->setSilentlyRefreshStarted(true);
 }
 
 bool TextIndexDBus::IsEnabled()

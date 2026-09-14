@@ -8,7 +8,6 @@
 #include "service_textindex_global.h"
 #include "core/indexruntime.h"
 #include "textindexadaptor.h"
-#include "utils/textindexconfig.h"
 
 #include <FileUtils.h>
 #include <FilterIndexReader.h>
@@ -51,7 +50,7 @@ private:
     TextIndexDBus *q { nullptr };
     TextIndexAdaptor *adapter { nullptr };
     IndexRuntime *runtime { nullptr };
-    
+
     // Store current supported file extensions for comparison
     QStringList m_currentSupportedExtensions;
 };

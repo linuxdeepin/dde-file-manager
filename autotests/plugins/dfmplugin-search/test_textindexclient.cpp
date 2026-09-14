@@ -194,32 +194,6 @@ TEST_F(TestTextIndexClient, GetLastUpdateTime_CallsAsyncMethod)
     EXPECT_NO_FATAL_FAILURE(client->getLastUpdateTime());
 }
 
-TEST_F(TestTextIndexClient, SetEnable_WithTrue_CallsCorrectly)
-{
-    bool enabled = true;
-
-    // Mock interface operations
-    stub.set_lamda(&TextIndexClient::ensureInterface, [](AbstractIndexClient *) -> bool {
-        __DBG_STUB_INVOKE__
-        return true;
-    });
-
-    EXPECT_NO_FATAL_FAILURE(client->setEnable(enabled));
-}
-
-TEST_F(TestTextIndexClient, SetEnable_WithFalse_CallsCorrectly)
-{
-    bool enabled = false;
-
-    // Mock interface operations
-    stub.set_lamda(&TextIndexClient::ensureInterface, [](AbstractIndexClient *) -> bool {
-        __DBG_STUB_INVOKE__
-        return true;
-    });
-
-    EXPECT_NO_FATAL_FAILURE(client->setEnable(enabled));
-}
-
 TEST_F(TestTextIndexClient, OnDBusTaskFinished_WithValidParameters_EmitsCorrectSignal)
 {
     QString taskType = "Create";
@@ -292,7 +266,7 @@ TEST_F(TestTextIndexClient, ServiceStatusEnum_AllValuesWork)
 
     // Just verify the enum values exist and can be used
     for (auto status : allStatuses) {
-        EXPECT_TRUE(true); // Basic test that enum values are accessible
+        EXPECT_TRUE(true);   // Basic test that enum values are accessible
     }
 }
 
@@ -305,7 +279,7 @@ TEST_F(TestTextIndexClient, EnsureInterface_CanBeCalled)
     // Mock the interface to prevent actual D-Bus operations
     stub.set_lamda(&TextIndexClient::ensureInterface, [](AbstractIndexClient *) -> bool {
         __DBG_STUB_INVOKE__
-        return false; // Simulate interface creation failure
+        return false;   // Simulate interface creation failure
     });
 
     // These calls should handle the interface creation failure gracefully

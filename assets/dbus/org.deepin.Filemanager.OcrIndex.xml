@@ -16,8 +16,6 @@
       <arg name="state" type="s" direction="out"/>
       <arg name="grade" type="s" direction="out"/>
     </signal>
-    <method name="Init">
-    </method>
     <method name="IsEnabled">
       <arg type="b" direction="out"/>
     </method>

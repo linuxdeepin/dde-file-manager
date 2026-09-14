@@ -128,11 +128,7 @@ TEST_F(OcrIndexDBusPrivateTest, HandleConfigChanged_NoIndexDb)
 TEST_F(OcrIndexDBusPrivateTest, HandleConfigChanged_WithIndexDb)
 {
     const QString indexDir = tmp.path() + "/ocr-index";
-    writeStatusJson(indexDir, {
-        { "version", Defines::kOcrIndexVersion },
-        { "lastUpdateTime", "2026-01-01T00:00:00" },
-        { "state", "clean" }
-    });
+    writeStatusJson(indexDir, { { "version", Defines::kOcrIndexVersion }, { "lastUpdateTime", "2026-01-01T00:00:00" }, { "state", "clean" } });
 
     EXPECT_NO_FATAL_FAILURE({ d->handleConfigChanged(); });
 }
@@ -141,11 +137,7 @@ TEST_F(OcrIndexDBusPrivateTest, HandleConfigChanged_WithIndexDb)
 TEST_F(OcrIndexDBusPrivateTest, Cleanup_NoRunningTasks)
 {
     const QString indexDir = tmp.path() + "/ocr-index";
-    writeStatusJson(indexDir, {
-        { "version", Defines::kOcrIndexVersion },
-        { "lastUpdateTime", "2026-01-01T00:00:00" },
-        { "state", "clean" }
-    });
+    writeStatusJson(indexDir, { { "version", Defines::kOcrIndexVersion }, { "lastUpdateTime", "2026-01-01T00:00:00" }, { "state", "clean" } });
 
     EXPECT_NO_FATAL_FAILURE({ dbus->cleanup(); });
 }
@@ -173,22 +165,14 @@ TEST_F(OcrIndexDBusPrivateTest, GetLastUpdateTime)
 TEST_F(OcrIndexDBusPrivateTest, IndexDatabaseExists_IncompatibleVersion)
 {
     const QString indexDir = tmp.path() + "/ocr-index";
-    writeStatusJson(indexDir, {
-        { "version", "wrong_version" },
-        { "lastUpdateTime", "2026-01-01T00:00:00" },
-        { "state", "clean" }
-    });
+    writeStatusJson(indexDir, { { "version", "wrong_version" }, { "lastUpdateTime", "2026-01-01T00:00:00" }, { "state", "clean" } });
     EXPECT_FALSE(dbus->IndexDatabaseExists());
 }
 
 TEST_F(OcrIndexDBusPrivateTest, IndexDatabaseExists_EmptyUpdateTime)
 {
     const QString indexDir = tmp.path() + "/ocr-index";
-    writeStatusJson(indexDir, {
-        { "version", Defines::kOcrIndexVersion },
-        { "lastUpdateTime", "" },
-        { "state", "clean" }
-    });
+    writeStatusJson(indexDir, { { "version", Defines::kOcrIndexVersion }, { "lastUpdateTime", "" }, { "state", "clean" } });
     EXPECT_FALSE(dbus->IndexDatabaseExists());
 }
 
@@ -220,11 +204,4 @@ TEST_F(OcrIndexDBusPrivateTest, Destructor)
 {
     auto *d2 = new OcrIndexDBus();
     EXPECT_NO_FATAL_FAILURE({ delete d2; });
-}
-
-// ---- Init multiple times ----
-TEST_F(OcrIndexDBusPrivateTest, InitMultipleTimes)
-{
-    EXPECT_NO_FATAL_FAILURE({ dbus->Init(); });
-    EXPECT_NO_FATAL_FAILURE({ dbus->Init(); });
 }

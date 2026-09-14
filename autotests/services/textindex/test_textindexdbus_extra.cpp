@@ -82,11 +82,7 @@ protected:
 TEST_F(TextIndexDBusExtraTest, IndexDatabaseExists_DirtyState)
 {
     const QString indexDir = tmp.path() + "/content-index";
-    writeStatusJson(indexDir, {
-        { "version", Defines::kTextIndexVersion },
-        { "lastUpdateTime", "2026-01-01T00:00:00" },
-        { "state", "dirty" }
-    });
+    writeStatusJson(indexDir, { { "version", Defines::kTextIndexVersion }, { "lastUpdateTime", "2026-01-01T00:00:00" }, { "state", "dirty" } });
 
     TextIndexDBus dbus;
     EXPECT_TRUE(dbus.IndexDatabaseExists());
@@ -95,11 +91,7 @@ TEST_F(TextIndexDBusExtraTest, IndexDatabaseExists_DirtyState)
 TEST_F(TextIndexDBusExtraTest, IndexDatabaseExists_CleanState)
 {
     const QString indexDir = tmp.path() + "/content-index";
-    writeStatusJson(indexDir, {
-        { "version", Defines::kTextIndexVersion },
-        { "lastUpdateTime", "2026-01-01T00:00:00" },
-        { "state", "clean" }
-    });
+    writeStatusJson(indexDir, { { "version", Defines::kTextIndexVersion }, { "lastUpdateTime", "2026-01-01T00:00:00" }, { "state", "clean" } });
 
     TextIndexDBus dbus;
     EXPECT_TRUE(dbus.IndexDatabaseExists());
@@ -192,22 +184,9 @@ TEST_F(TextIndexDBusExtraTest, CreateIndexTask_SilentFalse)
 TEST_F(TextIndexDBusExtraTest, Cleanup_NoRunningTasks)
 {
     const QString indexDir = tmp.path() + "/content-index";
-    writeStatusJson(indexDir, {
-        { "version", Defines::kTextIndexVersion },
-        { "lastUpdateTime", "2026-01-01T00:00:00" },
-        { "state", "clean" }
-    });
+    writeStatusJson(indexDir, { { "version", Defines::kTextIndexVersion }, { "lastUpdateTime", "2026-01-01T00:00:00" }, { "state", "clean" } });
 
     TextIndexDBus dbus;
     dbus.cleanup();
     SUCCEED();
-}
-
-// --- Test Init multiple times ---
-TEST_F(TextIndexDBusExtraTest, InitMultipleTimes)
-{
-    TextIndexDBus dbus;
-    EXPECT_NO_FATAL_FAILURE({ dbus.Init(); });
-    EXPECT_NO_FATAL_FAILURE({ dbus.Init(); });
-    EXPECT_NO_FATAL_FAILURE({ dbus.Init(); });
 }

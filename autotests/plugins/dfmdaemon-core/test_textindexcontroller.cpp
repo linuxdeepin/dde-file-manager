@@ -221,22 +221,12 @@ TEST_F(TestTextIndexController, ActiveBackend_InterfaceNotAvailable)
 TEST_F(TestTextIndexController, ActiveBackend_WithInit)
 {
     bool isBackendAvailableCalled = false;
-    bool initCalled = false;
     bool setEnabledCalled = false;
-
-    // Mock interface
-    auto mockInterface = new OrgDeepinFilemanagerTextIndexInterface("", "", QDBusConnection::sessionBus());
 
     stub.set_lamda(&AbstractIndexController::isBackendAvaliable, [&](AbstractIndexController *) {
         __DBG_STUB_INVOKE__
         isBackendAvailableCalled = true;
         return true;
-    });
-
-    stub.set_lamda(&OrgDeepinFilemanagerTextIndexInterface::Init, [&](OrgDeepinFilemanagerTextIndexInterface *) {
-        __DBG_STUB_INVOKE__
-        initCalled = true;
-        return QDBusPendingReply<void>();
     });
 
     stub.set_lamda(&OrgDeepinFilemanagerTextIndexInterface::SetEnabled, [&](OrgDeepinFilemanagerTextIndexInterface *, bool enabled) {
@@ -248,7 +238,6 @@ TEST_F(TestTextIndexController, ActiveBackend_WithInit)
     controller->activeBackend(true);
 
     EXPECT_TRUE(isBackendAvailableCalled);
-    // Note: initCalled and setEnabledCalled would need proper interface mocking
 }
 
 TEST_F(TestTextIndexController, KeepBackendAlive_BackendNotAvailable)
@@ -278,10 +267,10 @@ TEST_F(TestTextIndexController, KeepBackendAlive_BackendDisabledButConfigEnabled
     using DoCallFunc = QDBusMessage (QDBusAbstractInterface::*)(QDBus::CallMode, const QString &, const QVariant *, size_t);
     stub.set_lamda(static_cast<DoCallFunc>(&QDBusAbstractInterface::doCall),
                    [](QDBusAbstractInterface *, QDBus::CallMode, const QString &, const QVariant *, size_t) -> QDBusMessage {
-        __DBG_STUB_INVOKE__
-        QDBusMessage reply;
-        return reply.createReply(QList<QVariant> { false });
-    });
+                       __DBG_STUB_INVOKE__
+                       QDBusMessage reply;
+                       return reply.createReply(QList<QVariant> { false });
+                   });
 
     stub.set_lamda(&AbstractIndexController::isBackendAvaliable, [&](AbstractIndexController *) {
         __DBG_STUB_INVOKE__
@@ -409,10 +398,10 @@ TEST_F(TestTextIndexController, UpdateState_SameState_NoTransition)
 {
     // Set initial state to Disabled
     controller->updateState(AbstractIndexController::State::Disabled);
-    
+
     // Update to same state
     controller->updateState(AbstractIndexController::State::Disabled);
-    
+
     // Should not cause any issues - this test mainly ensures no crash
 }
 
@@ -420,10 +409,10 @@ TEST_F(TestTextIndexController, UpdateState_DisabledToIdle_Transition)
 {
     // Set initial state to Disabled
     controller->updateState(AbstractIndexController::State::Disabled);
-    
+
     // Transition to Idle
     controller->updateState(AbstractIndexController::State::Idle);
-    
+
     // Should not cause any issues - this test mainly ensures no crash
 }
 
@@ -431,10 +420,10 @@ TEST_F(TestTextIndexController, UpdateState_IdleToRunning_Transition)
 {
     // Set initial state to Idle
     controller->updateState(AbstractIndexController::State::Idle);
-    
+
     // Transition to Running
     controller->updateState(AbstractIndexController::State::Running);
-    
+
     // Should not cause any issues - this test mainly ensures no crash
 }
 
@@ -442,33 +431,33 @@ TEST_F(TestTextIndexController, UpdateState_RunningToDisabled_Transition)
 {
     // Set initial state to Running
     controller->updateState(AbstractIndexController::State::Running);
-    
+
     // Transition to Disabled
     controller->updateState(AbstractIndexController::State::Disabled);
-    
+
     // Should not cause any issues - this test mainly ensures no crash
 }
 
 TEST_F(TestTextIndexController, UpdateState_AllStateTransitions_NoCrash)
 {
     // Test all possible state transitions to ensure no crashes
-    
+
     // Disabled -> Idle
     controller->updateState(AbstractIndexController::State::Disabled);
     controller->updateState(AbstractIndexController::State::Idle);
-    
+
     // Idle -> Running
     controller->updateState(AbstractIndexController::State::Running);
-    
+
     // Running -> Disabled
     controller->updateState(AbstractIndexController::State::Disabled);
-    
+
     // Disabled -> Running (direct transition)
     controller->updateState(AbstractIndexController::State::Running);
-    
+
     // Running -> Idle
     controller->updateState(AbstractIndexController::State::Idle);
-    
+
     // All transitions should complete without crashing
 }
 

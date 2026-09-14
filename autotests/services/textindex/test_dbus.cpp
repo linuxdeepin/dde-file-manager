@@ -135,12 +135,6 @@ TEST_F(DBusTest, TextIndexDBusConstructAndDestruct)
     }
 }
 
-TEST_F(DBusTest, TextIndexDBusInit)
-{
-    TextIndexDBus dbus;
-    EXPECT_NO_FATAL_FAILURE({ dbus.Init(); });
-}
-
 TEST_F(DBusTest, TextIndexDBusIsEnabled)
 {
     TextIndexDBus dbus;
@@ -269,12 +263,6 @@ TEST_F(DBusTest, OcrIndexDBusConstructAndDestruct)
         OcrIndexDBus dbus;
         SUCCEED();
     }
-}
-
-TEST_F(DBusTest, OcrIndexDBusInit)
-{
-    OcrIndexDBus dbus;
-    EXPECT_NO_FATAL_FAILURE({ dbus.Init(); });
 }
 
 TEST_F(DBusTest, OcrIndexDBusIsEnabled)
