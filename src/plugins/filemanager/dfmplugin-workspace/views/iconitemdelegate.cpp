@@ -335,7 +335,6 @@ int IconItemDelegate::setIconSizeByIconSizeLevel(int level)
         d->currentIconSizeIndex = level;
         d->itemIconSize = iconSizeByIconSizeLevel();
         parent()->parent()->setIconSize(iconSizeByIconSizeLevel());
-        d->clearIconEmblemsCache();
 
         fmInfo() << "Icon size changed to level" << d->currentIconSizeIndex << "size:" << d->itemIconSize;
         return d->currentIconSizeIndex;
