@@ -606,6 +606,12 @@ bool recovery_key_utils::validateExportPath(const QString &path, const QString &
         setMsg(QObject::tr("The export path directory is world-writable, please choose a safer location!"));
         return false;
     }
+    if (::faccessat(dirFd, ".", W_OK, 0) != 0) {
+        ::close(dirFd);
+        fmWarning() << "Export path directory is not writable:" << path;
+        setMsg(QObject::tr("The export path directory is not writable, please choose a writable directory!"));
+        return false;
+    }
     ::close(dirFd);
 
     QStorageInfo storage(path);
