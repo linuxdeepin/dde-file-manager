@@ -26,9 +26,6 @@ void FSEventController::setupFSEventCollector()
     m_fsEventCollector->setCollectionInterval(m_collectorIntervalSecs);
     m_fsEventCollector->setMaxEventCount(10000);   // Default 10k events
 
-    // FSEventController uses monitoring start delay
-    m_monitoringStartDelaySecs = TextIndexConfig::instance().monitoringStartDelaySeconds();
-
     // FSEventController uses silent start delay
     m_silentStartDelaySecs = TextIndexConfig::instance().silentIndexUpdateDelay();
 
@@ -95,16 +92,14 @@ void FSEventController::setEnabled(bool enabled)
     if (m_enabled) {
         m_stopTimer->stop();
 
-        // Start monitoring timer based on silent flag
+        // Always start monitoring immediately — no artificial delay.
+        m_monitoringStartTimer->start(0);
+
+        // On first start (silentlyRefreshStarted), schedule a delayed
+        // silent index update to avoid heavy I/O during system boot.
         if (silentlyRefreshStarted()) {
-            // Use monitoring start delay for first start
-            m_monitoringStartTimer->start(m_monitoringStartDelaySecs * 1000);
-            // Use silent start delay for silent start
             m_silentStartTimer->start(m_silentStartDelaySecs * 1000);
             setSilentlyRefreshStarted(false);
-        } else {
-            // Start monitoring immediately
-            m_monitoringStartTimer->start(0);
         }
     } else {
         m_monitoringStartTimer->stop();
@@ -274,7 +269,6 @@ void FSEventController::clearCollections()
 void FSEventController::onConfigChanged()
 {
     const int newIntervalSecs = TextIndexConfig::instance().autoIndexUpdateInterval();
-    const int newMonitoringDelaySecs = TextIndexConfig::instance().monitoringStartDelaySeconds();
     const int newSilentDelaySecs = TextIndexConfig::instance().silentIndexUpdateDelay();
 
     // Update event collection interval for FSEventCollector
@@ -290,13 +284,6 @@ void FSEventController::onConfigChanged()
             fmInfo() << "FSEventController: Updated FSEventCollector collection interval to"
                      << m_collectorIntervalSecs << "seconds";
         }
-    }
-
-    // Update monitoring start delay for FSEventController
-    if (newMonitoringDelaySecs != m_monitoringStartDelaySecs) {
-        fmInfo() << "FSEventController: Monitoring start delay changed from"
-                 << m_monitoringStartDelaySecs << "to" << newMonitoringDelaySecs << "seconds";
-        m_monitoringStartDelaySecs = newMonitoringDelaySecs;
     }
 
     // Update silent start delay for FSEventController

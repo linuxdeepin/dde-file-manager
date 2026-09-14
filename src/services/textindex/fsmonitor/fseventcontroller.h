@@ -55,7 +55,6 @@ private:
     bool m_enabled { false };
     bool m_silentlyFlag { false };
     int m_collectorIntervalSecs { 3 };   // FSEventCollector event collection interval (seconds)
-    int m_monitoringStartDelaySecs { 30 };   // FSEventController monitoring start delay (seconds)
     int m_silentStartDelaySecs { 180 };   // FSEventController silent start delay (seconds)
     std::unique_ptr<FSEventCollector> m_fsEventCollector;
     QTimer *m_monitoringStartTimer { nullptr };

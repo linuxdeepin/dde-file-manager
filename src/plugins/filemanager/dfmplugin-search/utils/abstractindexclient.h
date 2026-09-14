@@ -47,7 +47,6 @@ public:
     void checkHasRunningRootTask();
     void checkHasRunningTask();
     void getLastUpdateTime();
-    void setEnable(bool enabled);
     void getIndexStatus();
     void forceUpdateIndex(const QStringList &paths);
     void updateIndexBypassEnv(const QStringList &paths);
