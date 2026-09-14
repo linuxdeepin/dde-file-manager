@@ -82,11 +82,7 @@ protected:
 TEST_F(OcrIndexDBusExtraTest, IndexDatabaseExists_DirtyState)
 {
     const QString indexDir = tmp.path() + "/ocr-index";
-    writeStatusJson(indexDir, {
-        { "version", Defines::kOcrIndexVersion },
-        { "lastUpdateTime", "2026-01-01T00:00:00" },
-        { "state", "dirty" }
-    });
+    writeStatusJson(indexDir, { { "version", Defines::kOcrIndexVersion }, { "lastUpdateTime", "2026-01-01T00:00:00" }, { "state", "dirty" } });
 
     OcrIndexDBus dbus;
     EXPECT_TRUE(dbus.IndexDatabaseExists());
@@ -95,11 +91,7 @@ TEST_F(OcrIndexDBusExtraTest, IndexDatabaseExists_DirtyState)
 TEST_F(OcrIndexDBusExtraTest, IndexDatabaseExists_CleanState)
 {
     const QString indexDir = tmp.path() + "/ocr-index";
-    writeStatusJson(indexDir, {
-        { "version", Defines::kOcrIndexVersion },
-        { "lastUpdateTime", "2026-01-01T00:00:00" },
-        { "state", "clean" }
-    });
+    writeStatusJson(indexDir, { { "version", Defines::kOcrIndexVersion }, { "lastUpdateTime", "2026-01-01T00:00:00" }, { "state", "clean" } });
 
     OcrIndexDBus dbus;
     EXPECT_TRUE(dbus.IndexDatabaseExists());
@@ -171,34 +163,18 @@ TEST_F(OcrIndexDBusExtraTest, CreateIndexTask_NoOptions)
 TEST_F(OcrIndexDBusExtraTest, Cleanup_NoRunningTasks)
 {
     const QString indexDir = tmp.path() + "/ocr-index";
-    writeStatusJson(indexDir, {
-        { "version", Defines::kOcrIndexVersion },
-        { "lastUpdateTime", "2026-01-01T00:00:00" },
-        { "state", "clean" }
-    });
+    writeStatusJson(indexDir, { { "version", Defines::kOcrIndexVersion }, { "lastUpdateTime", "2026-01-01T00:00:00" }, { "state", "clean" } });
 
     OcrIndexDBus dbus;
     dbus.cleanup();
     SUCCEED();
 }
 
-// --- Init multiple times ---
-TEST_F(OcrIndexDBusExtraTest, InitMultipleTimes)
-{
-    OcrIndexDBus dbus;
-    EXPECT_NO_FATAL_FAILURE({ dbus.Init(); });
-    EXPECT_NO_FATAL_FAILURE({ dbus.Init(); });
-}
-
 // --- GetLastUpdateTime with valid time ---
 TEST_F(OcrIndexDBusExtraTest, GetLastUpdateTime_DirtyState)
 {
     const QString indexDir = tmp.path() + "/ocr-index";
-    writeStatusJson(indexDir, {
-        { "version", Defines::kOcrIndexVersion },
-        { "lastUpdateTime", "2026-06-15T10:30:00" },
-        { "state", "dirty" }
-    });
+    writeStatusJson(indexDir, { { "version", Defines::kOcrIndexVersion }, { "lastUpdateTime", "2026-06-15T10:30:00" }, { "state", "dirty" } });
 
     OcrIndexDBus dbus;
     QString t = dbus.GetLastUpdateTime();

@@ -29,6 +29,13 @@ QStringList defaultPathsToProcess()
 void OcrIndexDBusPrivate::initialize()
 {
     runtime->fsEventController()->setupFSEventCollector();
+
+    // Mark silently-refresh-started so that the first SetEnabled(true) triggers
+    // the silent index update path. Previously this was done via a separate
+    // DBus "Init" method called by the daemon; now it is set at construction
+    // time because the service process is always started fresh by the daemon.
+    runtime->fsEventController()->setSilentlyRefreshStarted(true);
+
     initializeSupportedExtensions();
 
     // Check for dirty state at startup and set recovery pending flag
@@ -176,11 +183,6 @@ void OcrIndexDBus::cleanup()
     }
 
     StopCurrentTask();
-}
-
-void OcrIndexDBus::Init()
-{
-    d->runtime->fsEventController()->setSilentlyRefreshStarted(true);
 }
 
 bool OcrIndexDBus::IsEnabled()

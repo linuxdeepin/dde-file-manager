@@ -78,18 +78,6 @@ TEST_F(AbstractIndexClientTest, GetIndexStatus_NoCrash)
     spy.wait(500);
 }
 
-// --- setEnable ---
-
-TEST_F(AbstractIndexClientTest, SetEnable_NoCrash)
-{
-    EXPECT_NO_FATAL_FAILURE(client->setEnable(true));
-}
-
-TEST_F(AbstractIndexClientTest, SetEnable_False_NoCrash)
-{
-    EXPECT_NO_FATAL_FAILURE(client->setEnable(false));
-}
-
 // --- checkIndexExists ---
 
 TEST_F(AbstractIndexClientTest, CheckIndexExists_NoCrash)
@@ -130,51 +118,51 @@ TEST_F(AbstractIndexClientTest, GetLastUpdateTime_NoCrash)
 
 TEST_F(AbstractIndexClientTest, ForceUpdateIndex_NoCrash)
 {
-    EXPECT_NO_FATAL_FAILURE(client->forceUpdateIndex({"/tmp", "/home"}));
+    EXPECT_NO_FATAL_FAILURE(client->forceUpdateIndex({ "/tmp", "/home" }));
 }
 
 // --- updateIndexBypassEnv ---
 
 TEST_F(AbstractIndexClientTest, UpdateIndexBypassEnv_NoCrash)
 {
-    EXPECT_NO_FATAL_FAILURE(client->updateIndexBypassEnv({"/tmp"}));
+    EXPECT_NO_FATAL_FAILURE(client->updateIndexBypassEnv({ "/tmp" }));
 }
 
 // --- startTask (various types) ---
 
 TEST_F(AbstractIndexClientTest, StartTask_Create_NoCrash)
 {
-    EXPECT_NO_FATAL_FAILURE(client->startTask(AbstractIndexClient::TaskType::Create, {"/tmp"}));
+    EXPECT_NO_FATAL_FAILURE(client->startTask(AbstractIndexClient::TaskType::Create, { "/tmp" }));
 }
 
 TEST_F(AbstractIndexClientTest, StartTask_Update_NoCrash)
 {
-    EXPECT_NO_FATAL_FAILURE(client->startTask(AbstractIndexClient::TaskType::Update, {"/tmp"}));
+    EXPECT_NO_FATAL_FAILURE(client->startTask(AbstractIndexClient::TaskType::Update, { "/tmp" }));
 }
 
 TEST_F(AbstractIndexClientTest, StartTask_CreateFileList_NoCrash)
 {
-    EXPECT_NO_FATAL_FAILURE(client->startTask(AbstractIndexClient::TaskType::CreateFileList, {"/tmp"}));
+    EXPECT_NO_FATAL_FAILURE(client->startTask(AbstractIndexClient::TaskType::CreateFileList, { "/tmp" }));
 }
 
 TEST_F(AbstractIndexClientTest, StartTask_UpdateFileList_NoCrash)
 {
-    EXPECT_NO_FATAL_FAILURE(client->startTask(AbstractIndexClient::TaskType::UpdateFileList, {"/tmp"}));
+    EXPECT_NO_FATAL_FAILURE(client->startTask(AbstractIndexClient::TaskType::UpdateFileList, { "/tmp" }));
 }
 
 TEST_F(AbstractIndexClientTest, StartTask_RemoveFileList_NoCrash)
 {
-    EXPECT_NO_FATAL_FAILURE(client->startTask(AbstractIndexClient::TaskType::RemoveFileList, {"/tmp"}));
+    EXPECT_NO_FATAL_FAILURE(client->startTask(AbstractIndexClient::TaskType::RemoveFileList, { "/tmp" }));
 }
 
 TEST_F(AbstractIndexClientTest, StartTask_MoveFileList_NoCrash)
 {
-    EXPECT_NO_FATAL_FAILURE(client->startTask(AbstractIndexClient::TaskType::MoveFileList, {"/tmp", "/home"}));
+    EXPECT_NO_FATAL_FAILURE(client->startTask(AbstractIndexClient::TaskType::MoveFileList, { "/tmp", "/home" }));
 }
 
 TEST_F(AbstractIndexClientTest, StartTask_WithOptions_NoCrash)
 {
     QVariantMap options;
     options["force"] = true;
-    EXPECT_NO_FATAL_FAILURE(client->startTask(AbstractIndexClient::TaskType::Update, {"/tmp"}, options));
+    EXPECT_NO_FATAL_FAILURE(client->startTask(AbstractIndexClient::TaskType::Update, { "/tmp" }, options));
 }

@@ -29,7 +29,6 @@ public:
     void cleanup();
 
 public Q_SLOTS:
-    void Init();
     bool IsEnabled();
     void SetEnabled(bool enabled);
     bool CreateIndexTask(const QStringList &paths, const QVariantMap &options = QVariantMap());
