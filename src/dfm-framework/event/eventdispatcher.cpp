@@ -77,17 +77,13 @@ bool EventDispatcherManager::globalFiltered(EventType type, const QVariantList &
 {
     QReadLocker lk(&rwLock);
 
-    qsizetype size { globalFilterMap.size() };
-    for (qsizetype i = 0; i != size; ++i) {
-        auto key { globalFilterMap.keys()[i] };
-        if (key) {
-            auto func { globalFilterMap.value(key) };
-            lk.unlock();
-            return func(type, params);
-        }
-    }
+    auto filtersCopy = globalFilterMap.values();
+    lk.unlock();
 
-    return false;
+    return std::any_of(filtersCopy.begin(), filtersCopy.end(),
+                       [type, &params](const GlobalFilter &filter) {
+                           return filter && filter(type, params);
+                       });
 }
 
 bool EventDispatcherManager::unsubscribe(const QString &space, const QString &topic)
