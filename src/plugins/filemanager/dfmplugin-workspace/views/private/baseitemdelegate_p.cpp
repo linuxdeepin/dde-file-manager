@@ -21,41 +21,6 @@ BaseItemDelegatePrivate::BaseItemDelegatePrivate(BaseItemDelegate *qq)
 }
 BaseItemDelegatePrivate::~BaseItemDelegatePrivate() = default;
 
-void BaseItemDelegatePrivate::clearIconEmblemsCache()
-{
-    iconEmblemsCache.clear();
-}
-
-void BaseItemDelegatePrivate::removeIconEmblemsCache(const QList<QUrl> &urls)
-{
-    for (const auto &url : urls)
-        iconEmblemsCache.remove(url);
-}
-
-const QPixmap *BaseItemDelegatePrivate::getIconEmblemsCache(const QUrl &url) const
-{
-    return iconEmblemsCache.object(url);
-}
-
-void BaseItemDelegatePrivate::cacheIconEmblems(const QUrl &url, QPixmap *pixmap) const
-{
-    iconEmblemsCache.insert(url, pixmap);
-}
-
-QPixmap *BaseItemDelegatePrivate::createCachedPixmap(const QRectF &iconRect, qreal dpr,
-                                                      qreal padW, qreal padH) const
-{
-    QSizeF expandedSize(iconRect.width() + 2 * padW, iconRect.height() + 2 * padH);
-    QPixmap *pixmap = new QPixmap((expandedSize * dpr).toSize());
-    pixmap->setDevicePixelRatio(dpr);
-    if (pixmap->isNull()) {
-        delete pixmap;
-        return nullptr;
-    }
-    pixmap->fill(Qt::transparent);
-    return pixmap;
-}
-
 void BaseItemDelegatePrivate::setupElideLayout(dfmbase::ElideTextLayout *layout,
                                                 const QString &text,
                                                 QTextOption::WrapMode wrapMode,

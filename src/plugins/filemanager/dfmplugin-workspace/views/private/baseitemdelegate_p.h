@@ -17,9 +17,6 @@
 #include <QMutex>
 #include <QTextOption>
 #include <QColor>
-#include <QCache>
-#include <QUrl>
-#include <QPixmap>
 #include <QIcon>
 
 #include <memory>
@@ -49,16 +46,6 @@ public:
                           const QStringList &keywords,
                           const QColor &highlightColor) const;
 
-    void clearIconEmblemsCache();
-
-    void removeIconEmblemsCache(const QList<QUrl> &urls);
-
-    const QPixmap *getIconEmblemsCache(const QUrl &url) const;
-
-    void cacheIconEmblems(const QUrl &url, QPixmap *pixmap) const;
-
-    QPixmap *createCachedPixmap(const QRectF &iconRect, qreal dpr,
-                                qreal padW, qreal padH) const;
     void init();
 
 
@@ -76,11 +63,6 @@ public:
     QString pressedTruncateGroupKey {};
     // reusable ElideTextLayout for paint optimization, avoids repeated new/delete per paint cycle
     mutable std::unique_ptr<dfmbase::ElideTextLayout> reusableElideLayout { nullptr };
-
-    static constexpr qreal kEmblemPaddingRatio = 6.0;
-    static constexpr int kMaxIconEmblemsCacheSize = 300;
-
-    mutable QCache<QUrl, QPixmap> iconEmblemsCache { kMaxIconEmblemsCacheSize };
 
     BaseItemDelegate *q_ptr;
     Q_DECLARE_PUBLIC(BaseItemDelegate)
