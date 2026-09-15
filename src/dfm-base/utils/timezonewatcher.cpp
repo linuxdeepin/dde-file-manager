@@ -7,6 +7,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QDBusConnection>
+#include <QTimeZone>
 
 #include <ctime>
 
@@ -56,6 +57,13 @@ void TimezoneWatcher::readAndSetTimezone()
 
     // 1. Try /etc/timezone first
     tz = readTimezoneFromEtcTimezone();
+
+    // 1.5 Validate IANA timezone ID
+    if (!tz.isEmpty() && !QTimeZone(tz.toUtf8()).isValid()) {
+        qCWarning(logDFMBase) << "Invalid timezone from /etc/timezone:" << tz
+                               << ", falling back to /etc/localtime";
+        tz.clear();
+    }
 
     // 2. Fallback: /etc/localtime symlink
     if (tz.isEmpty()) {
