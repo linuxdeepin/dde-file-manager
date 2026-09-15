@@ -7,6 +7,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QDBusConnection>
+#include <QTimeZone>
 
 #include <ctime>
 
@@ -57,9 +58,18 @@ void TimezoneWatcher::readAndSetTimezone()
     // 1. Try /etc/timezone first
     tz = readTimezoneFromEtcTimezone();
 
+    // 1.5 Validate IANA timezone ID
+    if (!tz.isEmpty() && !QTimeZone(tz.toUtf8()).isValid()) {
+        qCWarning(logDFMBase) << "Invalid timezone from /etc/timezone:" << tz
+                              << ", falling back to /etc/localtime";
+        tz.clear();
+    }
+
     // 2. Fallback: /etc/localtime symlink
     if (tz.isEmpty()) {
         tz = readTimezoneFromLocaltime();
+        if (!tz.isEmpty() && !QTimeZone(tz.toUtf8()).isValid())
+            tz.clear();
     }
 
     // 3. Final fallback to UTC
@@ -70,7 +80,7 @@ void TimezoneWatcher::readAndSetTimezone()
     if (tz != m_currentTimezone) {
         m_currentTimezone = tz;
         qputenv("TZ", tz.toUtf8());
-        tzset();  // Apply immediately
+        tzset();   // Apply immediately
         emit timezoneChanged(tz);
         qCInfo(logDFMBase) << "Timezone updated to:" << tz;
     }
@@ -121,24 +131,24 @@ void TimezoneWatcher::connectDbusSignals()
     //
     // 注意：slot 内仍按 interface == "org.freedesktop.timedate1" 二次过滤。
     QDBusConnection::systemBus().connect(
-                QString(),   // empty service: non-blocking, no GetNameOwner
-                QStringLiteral("/org/freedesktop/timedate1"),
-                QStringLiteral("org.freedesktop.DBus.Properties"),
-                QStringLiteral("PropertiesChanged"),
-                this,
-                SLOT(onPropertiesChanged(QString,QVariantMap,QStringList)));
+            QString(),   // empty service: non-blocking, no GetNameOwner
+            QStringLiteral("/org/freedesktop/timedate1"),
+            QStringLiteral("org.freedesktop.DBus.Properties"),
+            QStringLiteral("PropertiesChanged"),
+            this,
+            SLOT(onPropertiesChanged(QString, QVariantMap, QStringList)));
 }
 
 void TimezoneWatcher::onPropertiesChanged(const QString &interface,
-                                      const QVariantMap &changed,
-                                      const QStringList &invalidated)
+                                          const QVariantMap &changed,
+                                          const QStringList &invalidated)
 {
     // Only handle org.freedesktop.timedate1 interface
     if (interface == QStringLiteral("org.freedesktop.timedate1")) {
         // PropertiesChanged 的 changed 是已重新获取的属性，invalidated 是已失效
         // 需重新读取的属性。Timezone 可能出现在任一列表中，两者都需处理。
         if (changed.contains(QStringLiteral("Timezone"))
-                || invalidated.contains(QStringLiteral("Timezone"))) {
+            || invalidated.contains(QStringLiteral("Timezone"))) {
             qCInfo(logDFMBase) << "Timezone D-Bus properties changed, re-reading timezone";
             readAndSetTimezone();
         }
