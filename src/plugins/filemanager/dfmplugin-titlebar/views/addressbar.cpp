@@ -414,7 +414,7 @@ void AddressBarPrivate::onCompletionModelCountChanged()
     }
 
     if (q->isVisible())
-        doComplete();
+        QMetaObject::invokeMethod(this, [this]() { doComplete(); }, Qt::QueuedConnection);
 }
 
 bool AddressBarPrivate::eventFilterHide(AddressBar *addressbar, QHideEvent *event)
