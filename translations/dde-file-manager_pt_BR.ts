@@ -2051,7 +2051,7 @@ Você precisa atualizar este cofre para continuar usando-o.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="612"/>
         <source>The export path directory is not writable, please choose a writable directory!</source>
-        <translation type="unfinished"/>
+        <translation>A pasta escolhida para exportação não permite gravação. Escolha outra pasta.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="620"/>
