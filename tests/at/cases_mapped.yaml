@@ -2160,3 +2160,503 @@ cases:
     action: assert_element
     selector:
       name: CollectionView
+- id: suite_scenarios_001_s1
+  name: 历史导航-后退与前进
+  module: scenarios
+  steps:
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /tmp
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: LeftBtn
+      role: push button
+    do: click
+    wait: 1.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: LeftBtn
+      role: push button
+    do: click
+    wait: 1.5
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: LeftBtn
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CrumbEdit
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+- id: suite_scenarios_002_s1
+  name: 视图模式切换-图标/列表/树形
+  module: scenarios
+  steps:
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+1
+    wait: 1.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+2
+    wait: 1.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+3
+    wait: 1.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+1
+    wait: 1.0
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ScrollArea
+      role: scroll pane
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+- id: suite_scenarios_003_s1
+  name: 搜索-输入关键词与清空
+  module: scenarios
+  steps:
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: test
+    wait: 1.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+- id: suite_scenarios_004_s1
+  name: 标签页-新建切换与关闭
+  module: scenarios
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: AddBtn
+      role: push button
+    do: click
+    wait: 1.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: BottomBar
+      role: page tab
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+w
+    wait: 1.5
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TabBar
+      role: page tab
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddBtn
+      role: push button
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+- id: suite_scenarios_005_s1
+  name: 右键空白处-新建文件夹与排序
+  module: scenarios
+  steps:
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 新建文件夹
+    wait: 2.0
+  - step_type: action
+    action: keyboard_type_text
+    text: at_test_folder
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 1.5
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 排序
+    - 按名称
+    wait: 2.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+z
+    wait: 1.5
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+- id: suite_scenarios_006_s1
+  name: 撤销与重做-新建文件夹后撤销再重做
+  module: scenarios
+  steps:
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 新建文件夹
+    wait: 2.0
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 1.5
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+z
+    wait: 1.5
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+y
+    wait: 1.5
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+z
+    wait: 1.5
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+- id: suite_scenarios_007_s1
+  name: 地址栏-输入路径导航
+  module: scenarios
+  steps:
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /usr/share
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CrumbEdit
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+- id: suite_scenarios_008_s1
+  name: 侧边栏-导航到回收站
+  module: scenarios
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: SideBarView
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 0.5
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: trash:/
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SideBarView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+- id: suite_scenarios_009_s1
+  name: 复制文件地址-Ctrl+Shift+C
+  module: scenarios
+  steps:
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /tmp
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+shift+c
+    wait: 1.0
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CrumbEdit
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddressBar
+      role: text
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+- id: suite_scenarios_010_s1
+  name: 文件列表-排序方式切换
+  module: scenarios
+  steps:
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 排序
+    - 按名称
+    wait: 2.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 排序
+    - 按修改时间
+    wait: 2.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 排序
+    - 按大小
+    wait: 2.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 排序
+    - 按类型
+    wait: 2.0
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+- id: suite_scenarios_011_s1
+  name: 文件列表-分组开关
+  module: scenarios
+  steps:
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 分组
+    - 按类型
+    wait: 2.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 分组
+    - 按名称
+    wait: 2.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 分组
+    - 不分组
+    wait: 2.0
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+- id: suite_scenarios_012_s1
+  name: 缩放滑块-调整文件图标大小
+  module: scenarios
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: ScaleSlider
+      role: slider
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: right
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: right
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: left
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: left
+    wait: 0.5
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ScaleSlider
+      role: slider
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+- id: suite_scenarios_013_s1
+  name: 右键文件-打开属性对话框
+  module: scenarios
+  steps:
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 属性
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: ScrollArea
+      role: scroll pane
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ScrollArea
+      role: scroll pane
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+- id: suite_scenarios_014_s1
+  name: 主菜单-新建窗口与连接服务器
+  module: scenarios
+  steps:
+  - step_type: action
+    action: dtk_main_menu
+    items:
+    - 文件
+    - 新建窗口
+    wait: 2.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+w
+    wait: 1.5
+  - step_type: action
+    action: dtk_main_menu
+    items:
+    - 文件
+    - 连接到服务器
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: CollectionServerView
+      role: list
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionServerView
+      role: list
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
