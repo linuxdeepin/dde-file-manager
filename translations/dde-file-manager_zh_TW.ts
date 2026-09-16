@@ -6499,7 +6499,7 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="175"/>
         <source>1. It is not %1 disc;
 2. The version of this file system does not support adding files yet.</source>
-        <translation>1. 它不是%1磁碟; 
+        <translation>1. 它不是%1磁碟;
 2. 這個文件系統的版本還不支援添加文件。</translation>
     </message>
     <message>
