@@ -44,17 +44,17 @@
 <context>
     <name>DiskMountPlugin</name>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskmountplugin.cpp" line="39"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/diskmountplugin.cpp" line="38"/>
         <source>Disk</source>
         <translation>Diskas</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskmountplugin.cpp" line="86"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/diskmountplugin.cpp" line="85"/>
         <source>Open</source>
         <translation>Atverti</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskmountplugin.cpp" line="93"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/diskmountplugin.cpp" line="92"/>
         <source>Eject all</source>
         <translation>Išstumti visus</translation>
     </message>
@@ -71,81 +71,35 @@
 <context>
     <name>DockItemDataManager</name>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="214"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="209"/>
         <source>The device has been safely removed</source>
         <translation>Įrenginys saugiai pašalintas</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="231"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="226"/>
         <source>eject</source>
         <translation>išstumti</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="232"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="227"/>
         <source>unmount</source>
         <translation>Atjungti</translation>
     </message>
     <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="228"/>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="233"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="238"/>
         <source>remove</source>
         <translation>šalinti</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="235"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="230"/>
         <source>Operation failed</source>
         <translation>Operacija nepavyko</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="236"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="231"/>
         <source>Device (%1) is busy, cannot %2 now.</source>
         <translation>Perkeli (%1) yra įkurtas, negaliu jį %2 dabar.</translation>
-    </message>
-    <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="508"/>
-        <source>Detect Device Abnormality, Repair Recommended</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="509"/>
-        <source>Your %1 has data errors, possibly caused by unsafe removal!</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="512"/>
-        <source>Repair Immediately</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="513"/>
-        <source>Ignore for Now</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="517"/>
-        <source>Hardware Failure Warning</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="518"/>
-        <source>%1 is in hardware write-protected mode.
-Flash memory may be failing. Please back up data immediately.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="524"/>
-        <source>Device Damaged, Cannot Auto Repair</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="525"/>
-        <source>The data structure of %1 is severely damaged and cannot be recognized or repaired by the system. If there are important files inside, please stop using it. It is recommended to use professional data recovery software or seek professional assistance.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="735"/>
-        <source>Repair operation failed</source>
-        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -188,7 +142,7 @@ Flash memory may be failing. Please back up data immediately.</source>
 <context>
     <name>MimeTypeDisplayManager</name>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="862"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="850"/>
         <source>Unknown</source>
         <translation>Nežinoma</translation>
     </message>
@@ -440,54 +394,54 @@ sistemos tvarkytoju.</translation>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskdialog.cpp" line="155"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskdialog.cpp" line="153"/>
         <source>%1 tasks in progress</source>
         <translation>%1 užduotys eigoje</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="869"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="512"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="857"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="458"/>
         <source>%1 item</source>
         <translation>%1 elementas</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="870"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="513"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="858"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="459"/>
         <source>%1 items</source>
         <translation>%1 elementai</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="1355"/>
+        <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="1347"/>
         <source>Unable to find the original file</source>
         <translation>Nepavyko rasti pradinio failo</translation>
     </message>
     <message>
+        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="441"/>
         <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="444"/>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="447"/>
-        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="503"/>
-        <source>File or directory not found</source>
-        <translation type="unfinished"/>
+        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="501"/>
+        <source>File has been moved or deleted</source>
+        <translation>Failas buvo perkeltas arba ištrintas</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="450"/>
-        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="505"/>
+        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="447"/>
+        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="503"/>
         <source>You do not have permission to access this folder</source>
         <translation>Jūs neturite leidimų gauti prieigą prie šio aplanko</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="453"/>
-        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="508"/>
+        <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="450"/>
+        <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="506"/>
         <source>You do not have permission to traverse files in it</source>
         <translation>Neturiate leidimo peržiūrėti failus jame</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/interfaces/fileinfo.cpp" line="438"/>
+        <location filename="../src/dfm-base/interfaces/fileinfo.cpp" line="437"/>
         <location filename="../src/plugins/filemanager/dfmplugin-optical/mastered/masteredmediafileinfo.cpp" line="193"/>
         <source>Folder is empty</source>
         <translation>Aplankas tuščias</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/interfaces/fileinfo.cpp" line="440"/>
+        <location filename="../src/dfm-base/interfaces/fileinfo.cpp" line="439"/>
         <source>Loading...</source>
         <translation>Įkeliama...</translation>
     </message>
@@ -973,8 +927,8 @@ sistemos tvarkytoju.</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="39"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="51"/>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="113"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="50"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="110"/>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="56"/>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="41"/>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="67"/>
@@ -983,29 +937,29 @@ sistemos tvarkytoju.</translation>
         <location filename="../src/plugins/filedialog/core/utils/corehelper.cpp" line="75"/>
         <location filename="../src/plugins/filedialog/core/utils/corehelper.cpp" line="106"/>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="279"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="135"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="133"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Atsisakyti</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="52"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="51"/>
         <source>Stop</source>
         <comment>button</comment>
         <translation>Stabdyti</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="577"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="561"/>
         <source>View details</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="577"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="561"/>
         <source>Hide details</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="579"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="563"/>
         <source>Failed to operate on %1 files, %2</source>
         <translation type="unfinished"/>
     </message>
@@ -1015,7 +969,7 @@ sistemos tvarkytoju.</translation>
         <translation>Šaukinys</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1115"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1099"/>
         <source>This system wallpaper is locked. Please contact your admin.</source>
         <translation>Šis darbalaukio fonas yra užrakintas. Susisiekite su administratoriumi.</translation>
     </message>
@@ -1033,21 +987,20 @@ sistemos tvarkytoju.</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/utils/previewfileoperation.cpp" line="40"/>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="66"/>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="89"/>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="120"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="63"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="86"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="116"/>
         <source>dde-file-manager</source>
         <translation>dde-file-manager</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="195"/>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="554"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="161"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="520"/>
         <source>Files are being processed</source>
         <translation>Failai yra apdorojami</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="228"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="194"/>
         <source>Bit</source>
         <translation>Bitų</translation>
     </message>
@@ -1065,7 +1018,7 @@ sistemos tvarkytoju.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="40"/>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="664"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="643"/>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="12"/>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="72"/>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="343"/>
@@ -1079,7 +1032,7 @@ sistemos tvarkytoju.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="43"/>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="668"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="647"/>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="16"/>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="75"/>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="347"/>
@@ -1092,7 +1045,7 @@ sistemos tvarkytoju.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="50"/>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="677"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="656"/>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="28"/>
         <source>Rename</source>
         <translation>Pervadinti</translation>
@@ -1159,83 +1112,74 @@ sistemos tvarkytoju.</translation>
         <translation>Tik rašyti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="71"/>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="81"/>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="91"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="148"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="149"/>
         <source>Read only</source>
         <translation>Tik skaityti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="70"/>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="80"/>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="90"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="150"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="151"/>
         <source>Read-write</source>
         <translation>Skaityti, rašyti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="63"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="157"/>
         <source>Owner</source>
         <translation>Savininkas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="73"/>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="163"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="161"/>
         <source>Group</source>
         <translation>Grupė</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="83"/>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="169"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="165"/>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="26"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/groups/namegroupstrategy.cpp" line="40"/>
         <source>Others</source>
         <translation>Kita</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="114"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="111"/>
         <source>Burn</source>
         <comment>button</comment>
         <translation>Grįžkite</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="125"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="122"/>
         <source>Disc name:</source>
         <translation>Disko pavadinimas:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="200"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="191"/>
         <source>Write speed:</source>
         <translation>Rašymo greitis:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="205"/>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="207"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="194"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="196"/>
         <source>Maximum</source>
         <translation>Didžiausias</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="212"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="201"/>
         <source>Finalize disc after burning 
 (no additional data can be appended)</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="224"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="211"/>
         <source>Verify data</source>
         <translation>Patikrinti duomenis</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="230"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="215"/>
         <source>Verify files (checksum)</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="236"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="219"/>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="32"/>
         <source>Eject</source>
         <translation>Išstumti</translation>
@@ -1321,29 +1265,29 @@ sistemos tvarkytoju.</translation>
         <translation>Užverti</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/filepreviewdialogstatusbar.cpp" line="74"/>
+        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/filepreviewdialogstatusbar.cpp" line="39"/>
         <source>Open</source>
         <comment>button</comment>
         <translation>Atverti</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="156"/>
-        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="204"/>
+        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="153"/>
+        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="169"/>
         <source>Size: %1</source>
         <translation>Dydis: %1</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="157"/>
+        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="154"/>
         <source>Type: %1</source>
         <translation>Tipas: %1</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="173"/>
+        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="160"/>
         <source>Size: 0</source>
         <translation>Dydis: 0</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="205"/>
+        <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/views/unknowfilepreview.cpp" line="170"/>
         <source>Items: %1</source>
         <translation>Elementai: %1</translation>
     </message>
@@ -1388,14 +1332,14 @@ sistemos tvarkytoju.</translation>
         <translation>Pilka</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="681"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="660"/>
         <source>Remove</source>
         <translation>Šalinti</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/utils/renamedialog.cpp" line="330"/>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="331"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="140"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="136"/>
         <source>Rename</source>
         <comment>button</comment>
         <translation>Pervadinti</translation>
@@ -1585,75 +1529,75 @@ sistemos tvarkytoju.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="174"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="103"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="101"/>
         <source>Location</source>
         <translation>Vieta</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="69"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="67"/>
         <source>Replace Text</source>
         <translation>Pakeisti tekstą</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="69"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="67"/>
         <source>Add Text</source>
         <translation>Pridėti tekstą</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="69"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="67"/>
         <source>Custom Text</source>
         <translation>Tinkintas tekstas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="76"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="74"/>
         <source>Find</source>
         <translation>Rasti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="79"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="96"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="113"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="120"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="77"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="94"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="111"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="118"/>
         <source>Required</source>
         <translation>Būtina</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="85"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="83"/>
         <source>Replace</source>
         <translation>Pakeisti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="87"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="85"/>
         <source>Optional</source>
         <translation>Nebūtina</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="95"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="93"/>
         <source>Add</source>
         <translation>Pridėti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="104"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="102"/>
         <source>Before file name</source>
         <translation>Prieš failo pavadinimą</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="104"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="102"/>
         <source>After file name</source>
         <translation>Po failo pavadinimo</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="112"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="110"/>
         <source>File name</source>
         <translation>Failo pavadinimas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="119"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="117"/>
         <source>Start at</source>
         <translation>Pradėti su</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="130"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp" line="128"/>
         <source>Tips: Sort by selected file order</source>
         <translation>Patarimai: Rikiuoti pagal pasirinktą failų tvarką</translation>
     </message>
@@ -1664,7 +1608,7 @@ sistemos tvarkytoju.</translation>
         <translation>Mano viešiniai</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="166"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="162"/>
         <source>Free Space %1</source>
         <translation>Laisva vieta %1</translation>
     </message>
@@ -2068,12 +2012,12 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Nežinomas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="328"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="326"/>
         <source>search</source>
         <translation>paieška</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="347"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp" line="341"/>
         <source>advanced search</source>
         <translation>išplėstinė paieška</translation>
     </message>
@@ -2155,7 +2099,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="990"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="1005"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="194"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="241"/>
         <source>Cancel</source>
         <translation>Atsisakyti</translation>
     </message>
@@ -2168,7 +2112,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="992"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="1006"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="195"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="242"/>
         <source>Confirm</source>
         <translation>Patvirtinti</translation>
     </message>
@@ -2204,39 +2148,39 @@ You need to upgrade this vault to continue using it.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="154"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="42"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="131"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="41"/>
         <source>Group by</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="125"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="53"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/sortbybutton.cpp" line="115"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="52"/>
         <source>None</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="54"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="53"/>
         <source>Name</source>
         <translation>Pavadinimas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="55"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="54"/>
         <source>Time modified</source>
         <translation>Modifikavimo laikas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="56"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="55"/>
         <source>Time created</source>
         <translation>Sukūrimo laikas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="57"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="56"/>
         <source>Size</source>
         <translation>Dydis</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="58"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="57"/>
         <source>Type</source>
         <translation>Tipas</translation>
     </message>
@@ -2335,90 +2279,6 @@ You need to upgrade this vault to continue using it.</source>
         <source>Tree view</source>
         <translation type="unfinished"/>
     </message>
-    <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/repair_dialog_main.cpp" line="64"/>
-        <source>Cannot connect to repair service</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/repair_dialog_main.cpp" line="151"/>
-        <source>Mount failed after repair</source>
-        <translation type="unfinished"/>
-    </message>
-</context>
-<context>
-    <name>RepairDialog</name>
-    <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="108"/>
-        <source>Repair Storage Device</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="113"/>
-        <source>Preparing to repair device: %1 (%2 %3)</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="118"/>
-        <source>The device will be unmounted during repair. It will be automatically remounted after repair is complete. Please do not remove the device during the repair process.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="132"/>
-        <source>Cancel</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="133"/>
-        <source>Start Repair</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="142"/>
-        <source>Repairing Storage Device</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="147"/>
-        <source>Repairing device: %1 (%2 %3)</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="174"/>
-        <source>Repair Complete</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="179"/>
-        <source>The device has been successfully repaired. The device has been remounted and is now ready to use.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="191"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="244"/>
-        <source>Close</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="192"/>
-        <source>Open Device</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="201"/>
-        <source>Repair Failed</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="206"/>
-        <source>Failed to repair the device. This may be due to serious format errors or physical damage. To protect your data, it is recommended to stop writing new files and try using professional data recovery software or seek manual assistance.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="220"/>
-        <source>Error Code: %1</source>
-        <translation type="unfinished"/>
-    </message>
 </context>
 <context>
     <name>ResumeEncryptWorker</name>
@@ -2426,105 +2286,6 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/services/diskencrypt/workers/resumeencryptworker.cpp" line="67"/>
         <source>Encrypting </source>
         <translation>Šifruojama </translation>
-    </message>
-</context>
-<context>
-    <name>UsbRepairMonitor</name>
-    <message>
-        <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="158"/>
-        <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="446"/>
-        <source>Filesystem type cannot be detected. The device may be severely damaged or formatted with an unsupported filesystem. Data recovery may require professional tools.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="173"/>
-        <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="461"/>
-        <source>Device is hardware write-protected, flash memory may be failing. Please back up data immediately.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="190"/>
-        <source>Filesystem error detected, device may not have been safely ejected. Mount might have failed due to filesystem corruption.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="469"/>
-        <source>Filesystem is severely corrupted and cannot be recognized. Data may be recoverable through repair.</source>
-        <translation type="unfinished"/>
-    </message>
-</context>
-<context>
-    <name>UsbRepairWorker</name>
-    <message>
-        <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="40"/>
-        <source>Invalid device path: %1</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="46"/>
-        <source>Device is already being repaired: %1</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="53"/>
-        <source>Cannot detect filesystem type for: %1</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="59"/>
-        <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="410"/>
-        <source>Unsupported filesystem type: %1</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="74"/>
-        <source>Device is hardware write-protected, cannot repair</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="80"/>
-        <source>Authorization failed</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="99"/>
-        <source>Failed to unmount device: %1</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="185"/>
-        <source>Filesystem repair completed successfully</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="188"/>
-        <source>NTFS repair capability is limited on Linux. Please connect the device to a Windows system for deep repair.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="193"/>
-        <source>Filesystem errors have been repaired</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="195"/>
-        <source>Filesystem repair failed (exit code: %1)</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="235"/>
-        <source>Failed to start repair process: %1</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="237"/>
-        <source>unknown error</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="181"/>
-        <source>Repair timed out after %1 seconds</source>
-        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2619,7 +2380,7 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>ddplugin_canvas::ItemEditor</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-canvas/delegate/itemeditor.cpp" line="264"/>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/delegate/itemeditor.cpp" line="261"/>
         <source>%1 are not allowed</source>
         <translation>%1 nėra leidžiami</translation>
     </message>
@@ -2711,14 +2472,14 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>ddplugin_canvas::WaterMaskFrame</name>
     <message>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermaskframe.cpp" line="132"/>
         <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermaskframe.cpp" line="133"/>
-        <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermaskframe.cpp" line="134"/>
         <source>Not authorized</source>
         <translation>Nepriimtas</translation>
     </message>
     <message>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermaskframe.cpp" line="140"/>
         <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermaskframe.cpp" line="141"/>
-        <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermaskframe.cpp" line="142"/>
         <source>In trial period</source>
         <translation>Bandymo metu</translation>
     </message>
@@ -2726,14 +2487,14 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>ddplugin_canvas::WatermaskSystem</name>
     <message>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermasksystem.cpp" line="286"/>
         <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermasksystem.cpp" line="287"/>
-        <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermasksystem.cpp" line="288"/>
         <source>Not authorized</source>
         <translation>Nepriimtas</translation>
     </message>
     <message>
+        <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermasksystem.cpp" line="292"/>
         <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermasksystem.cpp" line="293"/>
-        <location filename="../src/plugins/desktop/ddplugin-canvas/watermask/watermasksystem.cpp" line="294"/>
         <source>In trial period</source>
         <translation>Bandymo metu</translation>
     </message>
@@ -2905,7 +2666,7 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>ddplugin_organizer::ItemEditor</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/itemeditor.cpp" line="259"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/itemeditor.cpp" line="256"/>
         <source>%1 are not allowed</source>
         <translation>&apos;&apos;%1&apos; nepiecas&apos;</translation>
     </message>
@@ -2913,7 +2674,7 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>ddplugin_organizer::MethodComBox</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/methodcombox.cpp" line="36"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/methodcombox.cpp" line="34"/>
         <source>Type</source>
         <translation>Tipas</translation>
     </message>
@@ -3046,7 +2807,7 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>ddplugin_organizer::SizeSlider</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/options/sizeslider.cpp" line="89"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/sizeslider.cpp" line="87"/>
         <source>Icon size</source>
         <translation>Piktogramų dydis</translation>
     </message>
@@ -3297,356 +3058,356 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmbase::DialogManager</name>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="65"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="698"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="712"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="751"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="772"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="64"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="682"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="696"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="735"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="756"/>
         <location filename="../src/dfm-base/utils/dialogmanager.h" line="51"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Patvirtinti</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="96"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="95"/>
         <source>Operating failed</source>
         <translation>Veikimas nepavyko</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="97"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="96"/>
         <source>Mount failed</source>
         <translation>Nepavyko prijungti</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="98"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="97"/>
         <source>Unmount failed</source>
         <translation>Nepavyko atprenkti</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="104"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="103"/>
         <source>Unmounting device now...</source>
         <translation>Isprenkama įrenginys dabar...</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="107"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="106"/>
         <source>Mounting device now...</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="110"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="109"/>
         <source>Erasing device now...</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="113"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="112"/>
         <source>Making filesystem for device now...</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="116"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="115"/>
         <source>Locking device now...</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="119"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="118"/>
         <source>Unlocking device now...</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="143"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="142"/>
         <source>The device is busy now</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="155"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="154"/>
         <source>Anonymous mount is not allowed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="157"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="156"/>
         <source>Wrong password</source>
         <translation>Neteisingas slaptažodis</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="161"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="160"/>
         <source>Cannot create the mountpoint: the file name is too long</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="171"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="170"/>
         <source>Authentication failed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="165"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="164"/>
         <source>No such file or directory</source>
         <translation>Nėra tokio failo ar katalogo</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="174"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="173"/>
         <source>The device has been blocked and you do not have permission to access it. Please configure its connection policy in Security Center or contact your administrator.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="183"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="182"/>
         <source>The device is busy, cannot remove now</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="206"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="205"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>Jūs neturite leidimo dirbti su failu/aplanku!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="223"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="222"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
         <translation>Atleiskite, jūs neturite leidimo dirbti su šiuo %1 failu(-ais)/aplanku(-ais)!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="252"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="262"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="557"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="642"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="808"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="251"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="261"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="541"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="626"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="792"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>Gerai</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="259"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="550"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="564"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="258"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="534"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="548"/>
         <source>Operation failed!</source>
         <translation>Operacija nepavyko!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="260"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="259"/>
         <source>Target folder is inside the source folder!</source>
         <translation>Paskirties aplankas yra šaltinio aplanko viduje!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="337"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="321"/>
         <source>The passphrase is needed to access encrypted data on %1.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="345"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="365"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="394"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="415"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="475"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="536"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="659"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="771"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="795"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="329"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="349"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="378"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="399"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="459"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="520"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="643"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="755"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="779"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Atsisakyti</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="346"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="330"/>
         <source>Format</source>
         <comment>button</comment>
         <translation>Formatas</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="347"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="331"/>
         <source>To access the device, you must format the disk first. Are you sure you want to format it now?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="361"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="345"/>
         <source>Do you want to run %1 or display its content?</source>
         <translation>Jūs norite vykdyti %1 ar rodyti jo turinį?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="362"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="346"/>
         <source>It is an executable text file.</source>
         <translation>Tai yra vykdomasis tekstinis failas.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="366"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="396"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="796"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="350"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="380"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="780"/>
         <source>Run</source>
         <comment>button</comment>
         <translation>Vykdyti</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="367"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="395"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="351"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="379"/>
         <source>Run in terminal</source>
         <comment>button</comment>
         <translation>Vykdyti terminale</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="368"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="352"/>
         <source>Display</source>
         <comment>button</comment>
         <translation>Rodyti</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="391"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="375"/>
         <source>Do you want to run %1?</source>
         <translation>Ar norite vykdyti %1?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="392"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="376"/>
         <source>It is an executable file.</source>
         <translation>Tai yra vykdomasis failas.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="409"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="393"/>
         <source>Cannot move the selected %1 items to the trash. Do you want to permanently delete them?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="410"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="394"/>
         <source>Permanently delete %1 items?</source>
         <translation>Ištrinti %1 elementus visiems laikams?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="451"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="435"/>
         <source>Cannot move &quot;%1&quot; to the trash. Do you want to permanently delete it?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="416"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="476"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="537"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="660"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="400"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="460"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="521"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="644"/>
         <source>Delete</source>
         <comment>button</comment>
         <translation>Ištrinti</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="163"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="162"/>
         <source>Permission denied</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="452"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="436"/>
         <source>Permanently delete %1?</source>
         <translation>Ištrinti %1 visiems laikams?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="458"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="495"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="442"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="479"/>
         <source>This action cannot be undone</source>
         <translation>Šio veiksmo negalima bus atšaukti</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="471"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="455"/>
         <source>Are you sure you want to empty %1 item?</source>
         <translation>Ar tikrai norite išvalyti %1 elementą?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="472"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="456"/>
         <source>Are you sure you want to empty %1 items?</source>
         <translation>Ar tikrai norite išvalyti %1 elementus(-ų)?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="481"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="465"/>
         <source>Empty</source>
         <translation>Išvalyti</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="520"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="504"/>
         <source>Do you want to delete %1?</source>
         <translation>Ar norite ištrinti %1?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="521"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="505"/>
         <source>Do you want to delete the selected %1 items?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="552"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="536"/>
         <source>Failed to restore %1 file, the target folder is read-only</source>
         <translation>Nepavyko atkurti %1 failo, paskirties aplankas yra tik skaitymui</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="554"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="538"/>
         <source>Failed to restore %1 files, the target folder is read-only</source>
         <translation>Nepavyko atkurti %1 failų, paskirties aplankas yra tik skaitymui</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="567"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="551"/>
         <source>File operation failed: %1</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="596"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="580"/>
         <source>File Name</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="596"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="580"/>
         <source>Error Reason</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="652"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="636"/>
         <source>After revocation, it will be completely deleted %1, do you want to delete it completely?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="655"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="639"/>
         <source>These %1 contents will be completely deleted after revocation. Do you want to delete them completely?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="680"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="664"/>
         <source>This operation cannot be reversed.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="696"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="680"/>
         <source>&quot;%1&quot; already exists, please use another name.</source>
         <translation>&quot;%1&quot; jau yra, prašome naudoti kitą pavadinimą.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="710"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="694"/>
         <source>Device or resource busy</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="723"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="707"/>
         <source>This file will be hidden if the file name starts with &apos;.&apos;. Do you want to hide it?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="724"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="708"/>
         <source>Hide</source>
         <translation>Slėpti</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="725"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="709"/>
         <source>Cancel</source>
         <translation>Atsisakyti</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="748"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="732"/>
         <source>Unable to access %1</source>
         <translation>Nepavyko gauti prieigą prie %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="765"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="749"/>
         <source>%1 that this shortcut refers to has been changed or moved</source>
         <translation>%1, į kurį nurodo šis šaukinys, buvo pakeistas arba perkeltas</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="769"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="753"/>
         <source>Do you want to delete this shortcut？</source>
         <translation>Ar norite ištrinti šį šaukinį?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="794"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="778"/>
         <source>This file is not executable, do you want to add the execute permission and run?</source>
         <translation>Šis failas nėra vykdomasis, ar norite pridėti vykdymo leidimą ir paleisti šį failą?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="806"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="790"/>
         <source>The selected files contain system file/directory, and it cannot be deleted</source>
         <translation>Pažymėtuose failuose yra sisteminiai failai/katalogai ir jie negali būti ištrinti</translation>
     </message>
@@ -3729,27 +3490,27 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Anonimiškai</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.cpp" line="50"/>
+        <location filename="../src/dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.cpp" line="49"/>
         <source>Registered user</source>
         <translation>Registruotas naudotojas</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.cpp" line="66"/>
+        <location filename="../src/dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.cpp" line="64"/>
         <source>Username</source>
         <translation>Naudotojo vardas</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.cpp" line="76"/>
+        <location filename="../src/dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.cpp" line="72"/>
         <source>Domain</source>
         <translation>Sritis</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.cpp" line="86"/>
+        <location filename="../src/dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.cpp" line="80"/>
         <source>Password</source>
         <translation>Slaptažodis</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.cpp" line="104"/>
+        <location filename="../src/dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.cpp" line="93"/>
         <source>Remember password</source>
         <translation>Prisiminti slaptažodį</translation>
     </message>
@@ -3777,7 +3538,7 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmbase::RightValueWidget</name>
     <message>
-        <location filename="../src/dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.cpp" line="333"/>
+        <location filename="../src/dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.cpp" line="331"/>
         <source>Copy complete info</source>
         <translation type="unfinished"/>
     </message>
@@ -4354,46 +4115,46 @@ You need to upgrade this vault to continue using it.</source>
 </translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="859"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="847"/>
         <source>Time modified: %1</source>
         <translation>Pakeistas laikas: %1
 </translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="864"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="852"/>
         <source>Original folder</source>
         <translation>Pradinis aplankas</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="871"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="859"/>
         <source>Contains: %1</source>
         <translation>Rašoma: %1
 </translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="874"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="862"/>
         <source>Original file</source>
         <translation>Pradinis failas</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="875"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="863"/>
         <source>Size: %1</source>
         <translation>Dydis: %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="864"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="852"/>
         <source>Target folder</source>
         <translation>Paskirties aplankas</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="636"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="863"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="626"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="851"/>
         <source>In data statistics ...</source>
         <translation>Duomenų statistika ...
 </translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="874"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="862"/>
         <source>Target file</source>
         <translation>Paskirties failas</translation>
     </message>
@@ -4427,37 +4188,37 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Palikti abu</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="549"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="547"/>
         <source>Skip</source>
         <comment>button</comment>
         <translation>Praleisti</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="556"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="731"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="552"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="719"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>Pakeisti</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="566"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="558"/>
         <source>Permanently delete</source>
         <comment>button</comment>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="593"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="585"/>
         <source>Do not ask again</source>
         <translation>Daugiau nebeklausti</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="728"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="716"/>
         <source>Retry</source>
         <comment>button</comment>
         <translation>Bandyti dar kartą</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="734"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="722"/>
         <source>Merge</source>
         <comment>button</comment>
         <translation>Sulieti</translation>
@@ -4472,7 +4233,7 @@ You need to upgrade this vault to continue using it.</source>
 </translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="57"/>
+        <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="55"/>
         <source>Set a password on the shared folder for non-anonymous access</source>
         <translation>Nustatokite slaptažodį daliniamosiose prieigos kataloguose, kad leidžtumėte nesanoniminį prieigas
 </translation>
@@ -4712,45 +4473,45 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_burn::BurnOptDialog</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="149"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="144"/>
         <source>Advanced settings</source>
         <translation>Išplėstiniai nustatymai</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="175"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="168"/>
         <source>File system: </source>
         <translation>Failų sistema: </translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="178"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="171"/>
         <source>ISO9660 Only</source>
         <translation>Tik ISO9660</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="179"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="172"/>
         <source>ISO9660/Joliet (For Windows)</source>
         <translation>ISO9660/Joliet (Parašoma Windows)
 </translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="180"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="173"/>
         <source>ISO9660/Rock Ridge (For Unix)</source>
         <translation>ISO9660/Rock Ridge (Parašoma Unix)
 </translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="192"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="183"/>
         <source>%1 (Compatible with Windows CD/DVD mode)</source>
         <translation>%1 (Sutinkamas su Windows CD/DVD mode)
 </translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="347"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="328"/>
         <source>Device error</source>
         <translation>Įrenginio klaida</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="347"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="328"/>
         <source>Optical device %1 doesn&apos;t exist</source>
         <translation>Optinio įrenginio %1 nėra</translation>
     </message>
@@ -4796,17 +4557,17 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Sukurti ISO paveikslą</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="73"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="70"/>
         <source>Save as Image File</source>
         <translation>Saugoti kaip paveikslėlio failą</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="84"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="81"/>
         <source>All files in the disc will be packaged and created as an ISO image file.</source>
         <translation>Visi failai diske bus pakopūti ir sukurti kaip ISO paveikslėlio failą.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="95"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="92"/>
         <source>Save the ISO image here:</source>
         <translation>Išsaugokite ISO paveikslą čia:</translation>
     </message>
@@ -4957,42 +4718,42 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_computer::DeviceBasicWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="34"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="33"/>
         <source>Basic info</source>
         <translation>Pagrindinė informacija</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="42"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="41"/>
         <source>Device type</source>
         <translation>Įrenginio tipas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="45"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="44"/>
         <source>Total space</source>
         <translation>Bendra vieta</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="48"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="47"/>
         <source>File system</source>
         <translation>Failų sistema</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="51"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="50"/>
         <source>Contains</source>
         <translation>Turi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="55"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="54"/>
         <source>Free space</source>
         <translation>Laisva vieta</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="110"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="103"/>
         <source>%1 items</source>
         <translation>%1 elementai</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="110"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="103"/>
         <source>%1 item</source>
         <translation>%1 elementas</translation>
     </message>
@@ -5066,7 +4827,7 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Bendrinimas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="164"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="162"/>
         <source>Share this folder</source>
         <translation>Bendrinti šį aplanką</translation>
     </message>
@@ -5086,22 +4847,22 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Anonimiškai</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="199"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="193"/>
         <source>Read and write</source>
         <translation>Skaityti ir rašyti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="199"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="193"/>
         <source>Read only</source>
         <translation>Tik skaityti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="214"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="206"/>
         <source>Not allow</source>
         <translation>Neleisti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="214"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="206"/>
         <source>Allow</source>
         <translation>Leisti</translation>
     </message>
@@ -5111,8 +4872,8 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Tinklo kelias</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="230"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="266"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="220"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="254"/>
         <source>Copy</source>
         <translation>Kopijuoti</translation>
     </message>
@@ -5122,21 +4883,21 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Naudotojo vardas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="298"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="607"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="286"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="593"/>
         <source>None</source>
         <translation>Nėra</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="300"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="303"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="608"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="288"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="289"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="594"/>
         <source>Set password</source>
         <translation>Nustatyti slaptažodį</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="303"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="608"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="289"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="594"/>
         <source>Change password</source>
         <translation>Keisti slaptažodį</translation>
     </message>
@@ -5146,45 +4907,45 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Dalypti slaptažodį</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="321"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="307"/>
         <source>This password will be applied to all shared folders, and users without the password can only access shared folders that allow anonymous access. </source>
         <translation>Šis slaptažodis bus taikomas visiems dalijamoms aplankams, o naudotojai, be slaptažodžio, gali tik prieigoti prie dalijamų aplankų, leidžiančių nemokamą prieigą.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="424"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="410"/>
         <source>The share name must not be two dots (..) or one dot (.)</source>
         <translation>Dalijamoji pavadinimą neleidžia du taškus (..) ar vieną tašką (.)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="442"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="428"/>
         <source>The share name is used by another user.</source>
         <translation>Dalijamojo pavadinimas yra kitame naudotojo vartojime.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="443"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="429"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>Gerai</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="445"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="431"/>
         <source>The share name already exists. Do you want to replace the shared folder?</source>
         <translation>Dalijamojo pavadinimas jau egzistuoja. Ar norite pakeisti dalijamą aplanką?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="446"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="432"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Atsisakyti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="447"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="433"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>Pakeisti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="638"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="624"/>
         <source>The shared name is too long and will be truncated.</source>
         <translation>Dalijamojo pavadinimas yra per ilgas ir bus užkrautas.</translation>
     </message>
@@ -5240,14 +5001,14 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="18"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="54"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="103"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="95"/>
         <source>passphrase</source>
         <translation>apibūdinimo fraza</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="20"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="56"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="105"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="97"/>
         <source>PIN</source>
         <translation>PIN kodas</translation>
     </message>
@@ -5257,78 +5018,78 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Keisti %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="75"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="69"/>
         <source>Please enter %1 again</source>
         <translation>Iveskite %1 dar kartą</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="78"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="72"/>
         <source>New %1</source>
         <translation>Naujas %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="79"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="73"/>
         <source>Repeat %1</source>
         <translation>Pakartokite %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="87"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="79"/>
         <source>Cancel</source>
         <translation>Atsisakyti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="88"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="80"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="819"/>
         <source>Confirm</source>
         <translation>Patvirtinti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="111"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="118"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="103"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="110"/>
         <source>%1 cannot be empty</source>
         <translation>&apos;%1 negali būti tuščias</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="120"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="185"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="112"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="177"/>
         <source>Recovery key</source>
         <translation>Atkūrimo žymes</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="127"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="119"/>
         <source>Recovery key is not valid!</source>
         <translation>Atvyksios kodas yra netinkamas!
 </translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="155"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="196"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="199"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="147"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="188"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="191"/>
         <source>At least 8 bits, contains 3 types of A-Z, a-z, 0-9 and symbols</source>
         <translation>Visa vietoj reikia bent 8 simbolių, turėtų būti 3 tipai: A-Z, a-z, 0-9 ir simboliai</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="161"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="153"/>
         <source>%1 inconsistency</source>
         <translation>%1 nesutampa</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="188"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="180"/>
         <source>Validate with %1</source>
         <translation>Patikrinkite naudojant %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="189"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="181"/>
         <source>Please input recovery key</source>
         <translation>Įveskite atvyksio kodą</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="192"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="184"/>
         <source>Old %1</source>
         <translation>Senas %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="195"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="187"/>
         <source>Validate with recovery key</source>
         <translation>Patikrinkite naudojant atvyksį kodą</translation>
     </message>
@@ -5396,7 +5157,7 @@ You need to upgrade this vault to continue using it.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="123"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="119"/>
         <source>Confirm</source>
         <translation>Patvirtinti</translation>
     </message>
@@ -5522,140 +5283,140 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_diskenc::EncryptParamsInputDialog</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="118"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="116"/>
         <source>Unlock type</source>
         <translation>Atidarymo tipas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="142"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="136"/>
         <source>Unlocked by passphrase</source>
         <translation>Atidarytas slaptažodžiu</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="143"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="137"/>
         <source>Use TPM+PIN to unlock on this computer (recommended)</source>
         <translation>Naudokite TPM+PIN, kad atidarytumėte šį kompiuterį (rekomenduojama),</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="144"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="138"/>
         <source>Automatic unlocking on this computer by TPM</source>
         <translation>Automatinis atidarymas šiame kompiuteriumi per TPM</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="171"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="165"/>
         <source>In special cases such as forgetting the password or the encryption hardware is damaged, you can decrypt the encrypted partition with the recovery key, please export it to a non-encrypted partition and keep it in a safe place!</source>
         <translation>Specifičiuose atvejais, kai prarandysite slaptažodį arba šifravimo įrenginys bus sukuriamas, galite atšifravti šifravtą dalį naudojant atstatymo žyme, juo į eksportuokite į nešifravtą dalį ir saugykite ją gerai įsigilę vietėje!
 </translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="188"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="180"/>
         <source>Please select a non-encrypted partition as the key file export path.</source>
         <translation>Pasirinkite nešifravtą dalį kaip šifravimo failo eksportavimo kelio.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="212"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="333"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="204"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="325"/>
         <source>Passphrase</source>
         <translation>Slaptafrazė</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="214"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="206"/>
         <source>%1 cannot be empty</source>
         <translation>&apos;&apos;%1&apos;&apos; negali būti tuščias&apos;,</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="244"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="324"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="236"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="316"/>
         <source>At least 8 bits, contains 3 types of A-Z, a-z, 0-9 and symbols</source>
         <translation>Kelintai 8 simbolių, turėtų 3 tipai: A-Z, a-z, 0-9 ir simboliai</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="250"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="242"/>
         <source>%1 inconsistency</source>
         <translation>&apos;&apos;%1&apos;&apos; nesutampa&apos;,</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="308"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="300"/>
         <source>Please continue to encrypt &quot;%1&quot; partition</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="309"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="301"/>
         <source>Next</source>
         <translation>Kitas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="309"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="315"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="301"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="307"/>
         <source>Confirm encrypt</source>
         <translation>Patvirtinti šifravimą</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="313"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="305"/>
         <source>Export Recovery Key</source>
         <translation>Eksportuoti atstatymo žymę</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="314"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="306"/>
         <source>Previous</source>
         <translation>Ankstesnis</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="322"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="314"/>
         <source>Set %1</source>
         <translation>Nustatyti %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="323"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="315"/>
         <source>Repeat %1</source>
         <translation>Atkurti %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="325"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="317"/>
         <source>Please enter the %1 again</source>
         <translation>Įveskite %1 dar kartą</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="330"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="331"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="322"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="323"/>
         <source>passphrase</source>
         <translation>slaptafrazė</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="334"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="326"/>
         <source>Access to the partition will be unlocked using a passphrase.</source>
         <translation>Dalijos prie šaltinio atidarymas bus atidarytas naudodamiesi paroliu.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="338"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="339"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="341"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="330"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="331"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="333"/>
         <source>PIN</source>
         <translation>PIN</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="342"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="334"/>
         <source>Access to the partition will be unlocked using the TPM security chip and PIN.</source>
         <translation>Dalijos prie šaltinio atidarymas bus atidarytas naudodamiesi TPM saugumo čipu ir PIN.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="346"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="338"/>
         <source>Access to the partition will be automatically unlocked using the TPM security chip, no passphrase checking is required.</source>
         <translation>Dalijos prie šaltinio atidarymas bus automatiškai atidarytas naudodamiesi TPM saugumo čipu, parolių patikrinimas nepieciešams.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="410"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="402"/>
         <source>TPM is locked and cannot be used for partition encryption. Please cancel the TPM password or choose another unlocking method.</source>
         <translation>TPM yra užrakintas ir negali būti naudojamas šaltinio užšifravimui. Prašome atšalinti TPM slaptažodį arba pasirinkite kitą atidarymo metodą.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="412"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="417"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="404"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="409"/>
         <source>TPM error</source>
         <translation>TPM klaida</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="417"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="409"/>
         <source>TPM status error!</source>
         <translation>TPM statuso klaida!!</translation>
     </message>
@@ -5926,53 +5687,53 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_diskenc::UnlockPartitionDialog</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="59"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="55"/>
         <source>Cancel</source>
         <translation>Atsisakyti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="60"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="56"/>
         <source>Unlock</source>
         <translation>Atrakinti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="89"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="85"/>
         <source>Unlock encryption partition</source>
         <translation>Atidaryti šifruotą dalinę šalį</translation>
     </message>
     <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="89"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="93"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="97"/>
         <source>Unlock by recovery key</source>
         <translation>Atidaryti naudojant atkūrimo žetoną</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="99"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="95"/>
         <source>Unlock by passphrase</source>
         <translation>Atidaryti naudojant slaptažodį</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="100"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="96"/>
         <source>Unlock by PIN</source>
         <translation>Atverkitės naudojant PIN-kodą</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="102"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="98"/>
         <source>Please enter the 24-digit recovery key</source>
         <translation>Įveskite 24-raštesnius atkūrimo ženklinį kodą</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="110"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="106"/>
         <source>Please input passphrase to unlock partition</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="114"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="110"/>
         <source>Please input PIN to unlock partition</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="128"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/unlockpartitiondialog.cpp" line="124"/>
         <source>Recovery key is not valid!</source>
         <translation>Atkūrimo ženklinis kodas yra neteisingas</translation>
     </message>
@@ -6233,12 +5994,12 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_fileoperations::FileOperations</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations.cpp" line="345"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations.cpp" line="339"/>
         <source>External storage device</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations.cpp" line="356"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations.cpp" line="350"/>
         <source>External storage device usage patterns</source>
         <translation type="unfinished"/>
     </message>
@@ -6511,39 +6272,39 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Nepalaiko UDF diskų gražinimo</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="117"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="113"/>
         <source>Save as Image File</source>
         <translation>Išsaugoti kaip paveikslėlio failą</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="118"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="114"/>
         <source>Burn</source>
         <translation>Gražinti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="171"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="167"/>
         <source>%1 burning is not supported</source>
         <translation>Gražinimas %1 nepalaikomas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="175"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="171"/>
         <source>1. It is not %1 disc;
 2. The version of this file system does not support adding files yet.</source>
         <translation>1. tai neatitinka %1 disko;
 2. šio failo sistema dar negali pridėti failų.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="222"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="218"/>
         <source>Mounting failed</source>
         <translation>Nepavyko prireikti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="267"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="263"/>
         <source>No files to burn</source>
         <translation>Nėra failų, kuriuos galima išdėlioti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="305"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="301"/>
         <source>Unable to burn. Not enough free space on the target disk.</source>
         <translation>Nepavyko išdėlioti. Išreiškiniui yra nepakankamai laisvojo vietos.</translation>
     </message>
@@ -6551,68 +6312,68 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_propertydialog::BasicWidget</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="171"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="94"/>
         <source>Basic info</source>
         <translation>Pagrindiniai duomenys</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="179"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="102"/>
         <source>Size</source>
         <translation>Dydis</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="180"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="103"/>
         <source>Contains</source>
         <translation>Turi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="181"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="104"/>
         <source>Type</source>
         <translation>Tipas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="182"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="105"/>
         <source>Location</source>
         <translation>Vieta</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="183"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="106"/>
         <source>Created</source>
         <translation> Sukurtas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="184"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="107"/>
         <source>Accessed</source>
         <translation>Prieinamas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="185"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="108"/>
         <source>Modified</source>
         <translation>Pakeistas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="191"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="112"/>
         <source>Hide this file</source>
         <translation>Slėpti šį failą</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="194"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="115"/>
         <source>Resolution</source>
         <translation>Išsakymas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="195"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="116"/>
         <source>Duration</source>
         <translation>Trukmė</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="381"/>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="487"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="302"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="408"/>
         <source>%1 item</source>
         <translation>%1 elementas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="487"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="408"/>
         <source>%1 items</source>
         <translation>%1 elementai</translation>
     </message>
@@ -6625,7 +6386,7 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Užverti visus</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/closealldialog.cpp" line="82"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/closealldialog.cpp" line="80"/>
         <source>Total size: %1, %2 files</source>
         <translation>Bendras dydis: %1, %2 failų</translation>
     </message>
@@ -6707,139 +6468,47 @@ You need to upgrade this vault to continue using it.</source>
     </message>
 </context>
 <context>
-    <name>dfmplugin_propertydialog::MultiFileBasicInfoWidget</name>
+    <name>dfmplugin_propertydialog::MultiFilePropertyDialog</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="62"/>
-        <source>Basic info</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="69"/>
-        <source>Total size</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="71"/>
-        <source>Number of files</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="73"/>
-        <source>Time accessed</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="75"/>
-        <source>Time modified</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="82"/>
-        <source>Hide this file</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilebasicinfowidget.cpp" line="115"/>
-        <source>%1 file(s), %2 folder(s)</source>
-        <translation type="unfinished"/>
-    </message>
-</context>
-<context>
-    <name>dfmplugin_propertydialog::MultiFilePermissionWidget</name>
-    <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="59"/>
-        <source>Permissions</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="182"/>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="198"/>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="214"/>
-        <source>No read/write</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="186"/>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="202"/>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="218"/>
-        <source>--</source>
-        <translation type="unfinished"/>
-    </message>
-</context>
-<context>
-    <name>dfmplugin_propertydialog::MultiFilePropertiesDialog</name>
-    <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="109"/>
-        <source>Set %1 and %2 file attributes to %3.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="113"/>
-        <source>File Manager</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="164"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="57"/>
         <source>Multiple Files</source>
-        <translation type="unfinished"/>
+        <translation>Keli failai</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="203"/>
-        <source>Cancel</source>
-        <translation type="unfinished"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="61"/>
+        <source>Basic info</source>
+        <translation>Pagrindinė informacija</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="212"/>
-        <source>Save</source>
-        <translation type="unfinished"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="66"/>
+        <source>Total size</source>
+        <translation>Bendras dydis</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="295"/>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="297"/>
-        <source>Hidden files</source>
-        <translation type="unfinished"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="73"/>
+        <source>Number of files</source>
+        <translation>Failų skaičius</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="302"/>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="304"/>
-        <source>Unhide files</source>
-        <translation type="unfinished"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="80"/>
+        <source>Time accessed</source>
+        <translation>Prieigos laikas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="338"/>
-        <source>Owner&gt;Read-write</source>
-        <translation type="unfinished"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="86"/>
+        <source>Time modified</source>
+        <translation>Modifikavimo laikas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="340"/>
-        <source>Owner&gt;Read only</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="374"/>
-        <source>Group&gt;Read-write</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="376"/>
-        <source>Group&gt;Read only</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="410"/>
-        <source>Others&gt;Read-write</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="412"/>
-        <source>Others&gt;Read only</source>
-        <translation type="unfinished"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="125"/>
+        <source>%1 file(s), %2 folder(s)</source>
+        <translation>%1 failų(-ai), %2 aplankų(-ai)</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_propertydialog::NameTextEdit</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/editstackedwidget.cpp" line="122"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/editstackedwidget.cpp" line="130"/>
         <source>%1 are not allowed</source>
         <translation>%1 nepaliktių</translation>
     </message>
@@ -6848,8 +6517,8 @@ You need to upgrade this vault to continue using it.</source>
     <name>dfmplugin_propertydialog::PermissionManagerWidget</name>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="96"/>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="178"/>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="325"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="170"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="317"/>
         <source>Allow to execute as program</source>
         <translation>Leisti vykdyti kaip programą</translation>
     </message>
@@ -7045,354 +6714,166 @@ You need to upgrade this vault to continue using it.</source>
     </message>
 </context>
 <context>
-    <name>dfmplugin_search::CheckBoxWithFileIndex</name>
+    <name>dfmplugin_search::CheckBoxWidthFileIndex</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="28"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="27"/>
         <source>Enable to build the file index immediately for faster file name searches</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="29"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="28"/>
         <source>Building index</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="143"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="158"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="153"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="171"/>
         <source>Index update failed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="143"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="158"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="153"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="171"/>
         <source>try updating again</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="167"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="177"/>
         <source>Index update completed, last update time: %1</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="168"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="178"/>
         <source>Update index now</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="192"/>
-        <source>Confirm turning off file index?</source>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="239"/>
+        <source>Turn off file index?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="193"/>
-        <source>If turned off, file searches will traverse the file system and severely reduce search speed, and the smart search feature will be unavailable.</source>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthfileindex.cpp" line="240"/>
+        <source>If turned off, file searches will traverse the file system and severely reduce search speed.</source>
         <translation type="unfinished"/>
     </message>
 </context>
 <context>
-    <name>dfmplugin_search::CheckBoxWithOcrIndex</name>
+    <name>dfmplugin_search::CheckBoxWidthOcrIndex</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="16"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthocrindex.cpp" line="16"/>
         <source>Enable to search text in images</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="17"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthocrindex.cpp" line="17"/>
         <source>Building index</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="18"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthocrindex.cpp" line="18"/>
         <source>Building index, %1 files indexed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="19"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthocrindex.cpp" line="19"/>
         <source>Building index, %1/%2 items indexed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="20"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthocrindex.cpp" line="20"/>
         <source>Index update failed, please</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="21"/>
-        <source>try updating again</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="22"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthocrindex.cpp" line="22"/>
         <source>Index update completed, last update time: %1</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="23"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="29"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthocrindex.cpp" line="21"/>
+        <source>try updating again</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthocrindex.cpp" line="23"/>
         <source>Update index now</source>
         <translation type="unfinished"/>
     </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="24"/>
-        <source>Currently using battery, index update has been paused</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="25"/>
-        <source>Power saving mode is enabled, index update has been paused</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="26"/>
-        <source>Waiting for the device to become idle to continue updating</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="27"/>
-        <source>Waiting for index service upgrade</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="28"/>
-        <source>Continue updating</source>
-        <translation type="unfinished"/>
-    </message>
 </context>
 <context>
-    <name>dfmplugin_search::CheckBoxWithSemanticIndex</name>
+    <name>dfmplugin_search::CheckBoxWidthTextIndex</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithsemanticindex.cpp" line="17"/>
-        <source>Enable to search files using natural language, e.g. &quot;PPT documents edited yesterday&quot;</source>
-        <translation type="unfinished"/>
-    </message>
-</context>
-<context>
-    <name>dfmplugin_search::CheckBoxWithTextIndex</name>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="16"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="16"/>
         <source>Enable to search file contents. Indexing may take a few minutes</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="17"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="17"/>
         <source>Building index</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="18"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="18"/>
         <source>Building index, %1 files indexed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="19"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="19"/>
         <source>Building index, %1/%2 items indexed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="20"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="20"/>
         <source>Index update failed, please</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="21"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="21"/>
         <source>try updating again</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="22"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="22"/>
         <source>Index update completed, last update time: %1</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="23"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="29"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwidthtextindex.cpp" line="23"/>
         <source>Update index now</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="24"/>
-        <source>Currently using battery, index update has been paused</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="25"/>
-        <source>Power saving mode is enabled, index update has been paused</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="26"/>
-        <source>Waiting for the device to become idle to continue updating</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="27"/>
-        <source>Waiting for index service upgrade</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="28"/>
-        <source>Continue updating</source>
-        <translation type="unfinished"/>
-    </message>
-</context>
-<context>
-    <name>dfmplugin_search::MatchMethodGroupStrategy</name>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/groups/matchmethodgroupstrategy.cpp" line="56"/>
-        <source>Exact match</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/groups/matchmethodgroupstrategy.cpp" line="58"/>
-        <source>Smart match</source>
         <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>dfmplugin_search::Search</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="63"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="195"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="54"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="169"/>
         <source>Search</source>
         <translation>Paieška</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="178"/>
-        <source>Match method</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="201"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="175"/>
         <source>File index</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="222"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="196"/>
         <source>Full-Text search</source>
         <translation>Visuāli paieška</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="244"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="218"/>
         <source>Image-Content search</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="266"/>
-        <source>Smart search</source>
         <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>dfmplugin_search::SearchHelper</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="224"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="192"/>
         <source>Path</source>
         <translation>Kelias</translation>
-    </message>
-</context>
-<context>
-    <name>dfmplugin_search::SearchHintController</name>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="119"/>
-        <source>Authorize to enable %1</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="144"/>
-        <source>File Manager</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="145"/>
-        <source>You can manually enable %1 in Settings — Advanced — Search.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="341"/>
-        <source>Enable</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="346"/>
-        <source>Some index updates failed. Search results may be incomplete.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="347"/>
-        <source>Retry update</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="348"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="354"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="360"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="366"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="372"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="377"/>
-        <source>View</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="352"/>
-        <source>Running on battery. Some content indexing has been paused.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="353"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="359"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="365"/>
-        <source>Continue updating</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="358"/>
-        <source>Power save mode is enabled. Some content indexing has been paused.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="364"/>
-        <source>Waiting for the device to become idle. Some content indexing has been paused.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="370"/>
-        <source>Waiting for index service upgrade. Some content indexing has been paused.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="371"/>
-        <source>Update index now</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="397"/>
-        <source>Index is being updated. File name and file content search are available.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="399"/>
-        <source>Index is being updated. File name and image content search are available.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="400"/>
-        <source>Index is being updated. File name search is available.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="520"/>
-        <source>&quot;Full-Text search&quot;</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="522"/>
-        <source>&quot;Image-Content search&quot;</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="525"/>
-        <source>&quot;Smart search&quot;</source>
-        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7416,32 +6897,32 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_sidebar::SideBarWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="421"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="419"/>
         <source>Quick access</source>
         <translation>Greitas pasiekimas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="422"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="420"/>
         <source>Partitions</source>
         <translation>Dalijimai</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="423"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="421"/>
         <source>Network</source>
         <translation>Tinklas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="424"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="422"/>
         <source>Tag</source>
         <translation>Žymė</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="425"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="423"/>
         <source>Other</source>
         <translation>Kita</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="426"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="424"/>
         <source>Unknown Group</source>
         <translation>Nežinomas grupė</translation>
     </message>
@@ -7516,7 +6997,7 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_tag::TagEditor</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-tag/widgets/tageditor.cpp" line="103"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/widgets/tageditor.cpp" line="101"/>
         <source>Input tag info, such as work, family. A comma is used between two tags.</source>
         <translation>Įveskite žymės informaciją, tokią kaip darbas, šeima. Kablelis yra naudojamas atskirti dvi žymes.</translation>
     </message>
@@ -7601,22 +7082,22 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Prisijungti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="415"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="409"/>
         <source>Charset Encoding</source>
         <translation>Karakterų kodavimas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="422"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="414"/>
         <source>Default</source>
         <translation>Numatytas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="483"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="473"/>
         <source>My Favorites</source>
         <translation>Mano užimomykos</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="470"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="460"/>
         <source>No favorites yet</source>
         <translation>Nevyko nurodyti užimomykų</translation>
     </message>
@@ -7629,22 +7110,22 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_titlebar::CustomTabSettingWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="62"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="60"/>
         <source>Custom Directory</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="102"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="100"/>
         <source>Invalid Directory</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="103"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="101"/>
         <source>This directory does not support pinning</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="57"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp" line="55"/>
         <source>Add Directory</source>
         <translation type="unfinished"/>
     </message>
@@ -7657,61 +7138,61 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Pakeisti disko slaptažodį</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="99"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="93"/>
         <source>Current password:</source>
         <translation>Dabartinis slaptažodis:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="100"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="94"/>
         <source>New password:</source>
         <translation>Naujas slaptažodis:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="101"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="95"/>
         <source>Repeat password:</source>
         <translation>Pakartokite slaptažodį:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="114"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="108"/>
         <source>Save</source>
         <comment>button</comment>
         <translation>Įrašyti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="118"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="110"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Atsisakyti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="191"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="181"/>
         <source>Passwords do not match</source>
         <translation>Slaptažodžiai nesutampa</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="208"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="198"/>
         <source>New password should differ from the current one</source>
         <translation>Naujas slaptažodis turi skirtis nuo dabartinio</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="263"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="253"/>
         <source>Minimum of 8 characters. At least 3 types: 0-9, a-z, A-Z and symbols. Different from the username.</source>
         <translation>Minimo 8 simboliai. Tris įvairius tipus: 0-9, a-z, A-Z ir simboliai. Naudokite kitą vartotojo vardą.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="299"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="289"/>
         <source>Password must be no more than %1 characters</source>
         <translation>Slaptažodis turi būti ne daugiau nei %1 simboliai</translation>
     </message>
     <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="298"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="303"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="308"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="313"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="318"/>
         <source>Password cannot be empty</source>
         <translation>Slaptažodis negali būti tuščias</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="394"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="384"/>
         <source>Wrong password</source>
         <translation>Neteisingas slaptažodis</translation>
     </message>
@@ -7807,34 +7288,34 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_titlebar::TabBar</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="315"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="378"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="310"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="373"/>
         <source>Unpin tab</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="317"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="312"/>
         <source>Pin tab</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="322"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="378"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="317"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="373"/>
         <source>Close tab</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="325"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="320"/>
         <source>Close other tabs</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="326"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="321"/>
         <source>Close tabs to the left</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="329"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="324"/>
         <source>Close tabs to the right</source>
         <translation type="unfinished"/>
     </message>
@@ -7842,23 +7323,23 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_titlebar::TitleBarWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="618"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="605"/>
         <source>Directory not found</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="619"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="606"/>
         <source>Directory not found. Remove it?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="620"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="607"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="620"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="607"/>
         <source>Remove</source>
         <comment>button</comment>
         <translation type="unfinished"/>
@@ -8156,49 +7637,49 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_utils::OpenWithDialog</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="273"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="264"/>
         <source>Open with</source>
         <translation>Atverti naudojant</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="295"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="286"/>
         <source>Add other programs</source>
         <translation>Pridėti kitas programas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="298"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="287"/>
         <source>Set as default</source>
         <translation>Nustatyti kaip numatytąją</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="302"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="289"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Atsisakyti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="305"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="290"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Patvirtinti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="314"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="297"/>
         <source>Recommended Applications</source>
         <translation>Rekomenduojamos programos</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="316"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="299"/>
         <source>Other Applications</source>
         <translation>Kitos programos</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="477"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="453"/>
         <source>Open File</source>
         <translation>Atidaryti failą</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="479"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="455"/>
         <source>Applications (*.desktop);;All files (*)</source>
         <translation>Programos (*.desktop);;Visi failai (*</translation>
     </message>
@@ -8437,44 +7918,44 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_vault::RecoveryKeyView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="70"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="68"/>
         <source>Unlock by Key</source>
         <translation>Atidarykite naudojant valdymo klavišą</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="37"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="35"/>
         <source>Input the 32-digit recovery key</source>
         <translation>Įveskite 32-čių skaičių atkūrimo klavizą</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="65"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="63"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Atsisakyti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="65"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="63"/>
         <source>Unlock</source>
         <comment>button</comment>
         <translation>Atrakinti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="129"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="126"/>
         <source>Invalid recovery key format</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="150"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="147"/>
         <source>Wrong recovery key</source>
         <translation>Neteisingas atkūrimo klavys</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="274"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="271"/>
         <source>Failed to unlock file vault</source>
         <translation>Nepavyko atidaryti failų krepšinio</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="278"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="275"/>
         <source>OK</source>
         <translation>Gerai</translation>
     </message>
@@ -8487,113 +7968,113 @@ You need to upgrade this vault to continue using it.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="49"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="338"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="47"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="330"/>
         <source>Select key file save path</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="57"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="55"/>
         <source>Enter New Password</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="64"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="60"/>
         <source>At least 8 characters, including A-Z, a-z, 0-9, and symbols</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="67"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="63"/>
         <source>Repeat Password</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="72"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="66"/>
         <source>Enter new password again</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="75"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="69"/>
         <source>Password hint</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="80"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="352"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="72"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="344"/>
         <source>Optional</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="82"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="74"/>
         <source>Use old password verification</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="152"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="144"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="152"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="144"/>
         <source>Reset Password</source>
         <comment>button</comment>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="157"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="149"/>
         <source>Reset Password</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="169"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="161"/>
         <source>Unable to get the key file</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="179"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="266"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="171"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="258"/>
         <source>≥ 8 chars, contains A-Z, a-z, 0-9, and symbols</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="188"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="274"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="180"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="266"/>
         <source>Passwords do not match</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="197"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="189"/>
         <source>Cannot reset password for old version vault. Please upgrade the vault first.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="206"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="198"/>
         <source>Unable to read key file</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="219"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="211"/>
         <source>Invalid recovery key format: expected 32 characters, got %1</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="229"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="221"/>
         <source>Invalid recovery key format: must contain only letters and numbers</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="398"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="390"/>
         <source>Success</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="398"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="390"/>
         <source>Password reset successfully</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="402"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbykeyfileview.cpp" line="394"/>
         <source>Failed to reset password. Please check your key file.</source>
         <translation type="unfinished"/>
     </message>
@@ -8606,102 +8087,102 @@ You need to upgrade this vault to continue using it.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="50"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="48"/>
         <source>Please enter old password</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="53"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="51"/>
         <source>Enter New Password</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="60"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="56"/>
         <source>At least 8 characters, including A-Z, a-z, 0-9, and symbols</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="63"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="59"/>
         <source>Repeat Password</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="68"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="62"/>
         <source>Enter new password again</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="71"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="65"/>
         <source>Password hint</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="76"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="312"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="68"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="304"/>
         <source>Optional</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="78"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="70"/>
         <source>Use key verification</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="147"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="139"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="147"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="139"/>
         <source>Reset Password</source>
         <comment>button</comment>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="152"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="144"/>
         <source>Reset Password</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="164"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="225"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="156"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="217"/>
         <source>≥ 8 chars, contains A-Z, a-z, 0-9, and symbols</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="173"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="233"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="165"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="225"/>
         <source>Passwords do not match</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="184"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="176"/>
         <source>Please try again %1 minutes later</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="361"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="353"/>
         <source>Success</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="361"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="353"/>
         <source>Password reset successfully</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="377"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="369"/>
         <source>Failed to reset password. Please try again %1 minutes later</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="380"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="372"/>
         <source>Failed to reset password. One chance left</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="382"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/resetpasswordview/resetpasswordbyoldpasswordview.cpp" line="374"/>
         <source>Failed to reset password. %1 chances left</source>
         <translation type="unfinished"/>
     </message>
@@ -8714,50 +8195,50 @@ You need to upgrade this vault to continue using it.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="60"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="58"/>
         <source>Select Key File</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="123"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="121"/>
         <source>Unable to get the key file</source>
         <translation>Nepavyko gauti klavišo failo</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="178"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="176"/>
         <source>Failed to generate recovery key. Please try again.</source>
         <translation type="unfinished"/>
     </message>
     <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="188"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="190"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="192"/>
         <source>Upgrade vault</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="233"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="231"/>
         <source>Unlock vault failed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="159"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="157"/>
         <source>Verification failed</source>
         <translation>Patikrinimas nepavyko</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="248"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="246"/>
         <source>Back</source>
         <comment>button</comment>
         <translation>Atgal</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="248"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="246"/>
         <source>Key Unlock</source>
         <comment>button</comment>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="253"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="251"/>
         <source>Key Unlocks Safe</source>
         <translation type="unfinished"/>
     </message>
@@ -8817,66 +8298,66 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Atverkoti naudojant klavišą</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="84"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="82"/>
         <source>Password</source>
         <translation>Slaptažodis</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="126"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="122"/>
         <source>Password hint: %1</source>
         <translation>Slaptažodžio pranešimas: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="155"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="151"/>
         <source>Can&apos;t unlock the vault under the networking!</source>
         <translation>Neįmanoma atverkoti skyriaus ryšiuose!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="166"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="162"/>
         <source>Please try again %1 minutes later</source>
         <translation>Bandykite dar kartą po %1 minutes</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="213"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="209"/>
         <source>Failed to generate recovery key. Please try again.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="225"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="227"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="221"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="223"/>
         <source>Upgrade vault</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="272"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="268"/>
         <source>Wrong password, please try again %1 minutes later</source>
         <translation>Neteisingas slaptažodis, bandykite dar kartą po %1 minutes</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="275"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="271"/>
         <source>Wrong password, one chance left</source>
         <translation>Neteisingas slaptažodis, liko 1 įgaliojimas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="277"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="273"/>
         <source>Wrong password, %1 chances left</source>
         <translation>Neteisingas slaptažodis, liko %1 įgaliojimai</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="331"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="338"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="327"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="334"/>
         <source>Wrong password</source>
         <translation>Neteisingas slaptažodis</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="340"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="349"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="336"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="345"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>Gerai</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="345"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="341"/>
         <source>Failed to unlock file vault, error code is %1</source>
         <translation>Nepavyko atverkoti failų skyriaus, klaidos kodas yra %1</translation>
     </message>
@@ -8899,27 +8380,27 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Šifruojama...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="186"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="184"/>
         <source>The setup is complete</source>
         <translation>Nustatymas baigtas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="199"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="197"/>
         <source>Close</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="82"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="159"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="211"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="235"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="157"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="209"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="233"/>
         <source>Encrypt</source>
         <translation>Šifruoti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="187"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="221"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="250"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="185"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="219"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="248"/>
         <source>OK</source>
         <translation>Gerai</translation>
     </message>
@@ -8947,61 +8428,61 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Nėra teisių, pasirinkite iš naujo</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="97"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="95"/>
         <source>Select a path</source>
         <translation>Pasirinkite kelio</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="109"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="107"/>
         <source>Next</source>
         <translation>Kitas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="211"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="218"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="234"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="242"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="288"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="207"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="214"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="230"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="238"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="284"/>
         <source>Vault</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="211"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="207"/>
         <source>Recovery key is not available. Please try again.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="218"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="214"/>
         <source>Please select a path to save the recovery key.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="234"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="230"/>
         <source>Failed to save recovery key. Please check the path and try again.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="242"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="238"/>
         <source>Failed to start migration. Please try again.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="288"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="284"/>
         <source>Failed to upgrade vault. Please try again.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="297"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="293"/>
         <source>Success</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="311"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="307"/>
         <source>Vault upgraded successfully. Please keep your recovery key safe.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="318"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="314"/>
         <source>Enter Vault</source>
         <comment>button</comment>
         <translation type="unfinished"/>
@@ -9020,59 +8501,59 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Šifrovimo metodas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="53"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="51"/>
         <source>Key encryption</source>
         <translation>Klavišo šifruavimas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="54"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="52"/>
         <source>Transparent encryption</source>
         <translation>Transliptinis šifrinimas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="59"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="57"/>
         <source>Password</source>
         <translation>Slaptažodis</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="64"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="231"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="60"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="221"/>
         <source>≥ 8 chars, contains A-Z, a-z, 0-9, and symbols</source>
         <translation>≥ 8 simbolių, yra A-Z, a-z, 0-9 ir simboliai</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="67"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="63"/>
         <source>Repeat password</source>
         <translation>Pakartokite slaptažodį</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="72"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="66"/>
         <source>Input the password again</source>
         <translation>Iveskite slaptažodį dar kartą</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="75"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="69"/>
         <source>Password hint</source>
         <translation>Slaptažodžio užkirstinys</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="80"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="72"/>
         <source>Optional</source>
         <translation>Nebūtina</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="84"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="76"/>
         <source>The file vault will be automatically unlocked when accessed, without verifying the password. Files in it will be inaccessible under other user accounts. </source>
         <translation>Failų valtys bus automatiškai atidarytos, kai bus prieinama, be slaptažodžio patikrinimo. Failai jame bus neprieinami kitais vartotojų paskyromis.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="93"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="85"/>
         <source>Next</source>
         <translation>Kitas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="256"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="276"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="246"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="266"/>
         <source>Passwords do not match</source>
         <translation>Slaptažodžiai nesutampa</translation>
     </message>
@@ -9222,47 +8703,47 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Jei bus ištrintas, failai jame bus ištrinti beatgališkai</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="42"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="40"/>
         <source>Password</source>
         <translation>Slaptažodis</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="55"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="51"/>
         <source>Key delete</source>
         <translation>Šifravimo rakto ištrinimas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="71"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="65"/>
         <source>Password hint: %1</source>
         <translation>Slaptažodžio užkirstinys: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="97"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="91"/>
         <source>Cancel</source>
         <translation>Atšaukti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="97"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="91"/>
         <source>Delete</source>
         <translation>Ištrinti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="102"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="96"/>
         <source>Delete File Vault</source>
         <translation>Ištrinti failų klipstą</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="143"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="137"/>
         <source>Wrong password</source>
         <translation>Neteisingas slaptažodis</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="244"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="237"/>
         <source>Failed to delete file vault</source>
         <translation>Neįmanoma ištrinti failų klipso</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="248"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="241"/>
         <source>OK</source>
         <translation>Gerai</translation>
     </message>
@@ -9270,42 +8751,42 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_vault::VaultRemoveByRecoverykeyView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="67"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="65"/>
         <source>Input the 32-digit recovery key</source>
         <translation>Įveskite 32-raštes rekonvalescencijos žodį</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="130"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="127"/>
         <source>Cancel</source>
         <translation>Atšaukti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="130"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="127"/>
         <source>Delete</source>
         <translation>Ištrinti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="135"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="132"/>
         <source>Delete File Vault</source>
         <translation>Ištrinti failų klipstą</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="303"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="300"/>
         <source>Please select a recovery key file</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="371"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="368"/>
         <source>Wrong recovery key</source>
         <translation>Neteisingas rekonvalescencijos žodis</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="395"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="392"/>
         <source>Invalid recovery key file</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="224"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="221"/>
         <source>Failed to delete file vault</source>
         <translation>Neįmanoma ištrinti failų klipso</translation>
     </message>
@@ -9315,12 +8796,12 @@ You need to upgrade this vault to continue using it.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="55"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="53"/>
         <source>Select Key File</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="228"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="225"/>
         <source>OK</source>
         <translation>Gerai</translation>
     </message>
@@ -9358,19 +8839,6 @@ You need to upgrade this vault to continue using it.</source>
     </message>
 </context>
 <context>
-    <name>dfmplugin_workspace::BaseItemDelegate</name>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="666"/>
-        <source>Show all</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="666"/>
-        <source>Show partial</source>
-        <translation type="unfinished"/>
-    </message>
-</context>
-<context>
     <name>dfmplugin_workspace::FileOperatorHelper</name>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="117"/>
@@ -9381,12 +8849,12 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_workspace::FileView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2486"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2556"/>
         <source>Mount error</source>
         <translation>Prymklaidos klaida</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2487"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2557"/>
         <source>Server login credentials are invalid. Please uninstall and remount</source>
         <translation>Prisijungimo duomenys serveriui yra neteisingi. Atsinstallykite ir pridėkite iš naujo</translation>
     </message>
@@ -9394,27 +8862,27 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_workspace::FileViewModel</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="833"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="807"/>
         <source>Name</source>
         <translation>Pavadinimas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="835"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="809"/>
         <source>Time modified</source>
         <translation>Paskutinė pakeitimo data</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="837"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="811"/>
         <source>Time created</source>
         <translation>Sukurtos data</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="839"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="813"/>
         <source>Size</source>
         <translation>Dydis</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="841"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/models/fileviewmodel.cpp" line="815"/>
         <source>Type</source>
         <translation>Tipas</translation>
     </message>
@@ -9489,52 +8957,52 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_workspace::SortAndDisplayMenuScene</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="41"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="40"/>
         <source>Sort by</source>
         <translation>Rikiuoti pagal</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="43"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="42"/>
         <source>Display as</source>
         <translation>Rodyti kaip</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="46"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="45"/>
         <source>Name</source>
         <translation>Pavadinimas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="47"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="46"/>
         <source>Time modified</source>
         <translation>Modifikavimo laikas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="48"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="47"/>
         <source>Time created</source>
         <translation>Sukurtas laikas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="49"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="48"/>
         <source>Size</source>
         <translation>Dydis</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="50"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="49"/>
         <source>Type</source>
         <translation>Tipas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="61"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="60"/>
         <source>Icon</source>
         <translation>Piktogramos</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="62"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="61"/>
         <source>List</source>
         <translation>Sąrašas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="63"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="62"/>
         <source>Tree</source>
         <translation>Dalykinės struktūra</translation>
     </message>
@@ -9550,7 +9018,7 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>filedialog_core::FileDialog</name>
     <message>
-        <location filename="../src/plugins/filedialog/core/views/filedialog.cpp" line="1022"/>
+        <location filename="../src/plugins/filedialog/core/views/filedialog.cpp" line="1014"/>
         <source>Save</source>
         <comment>button</comment>
         <translation>Įrašyti</translation>
@@ -9583,18 +9051,18 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Atverti failą</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filedialog/core/views/filedialogstatusbar.cpp" line="242"/>
+        <location filename="../src/plugins/filedialog/core/views/filedialogstatusbar.cpp" line="241"/>
         <source>File Name</source>
         <translation>Failo pavadinimas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filedialog/core/views/filedialogstatusbar.cpp" line="243"/>
+        <location filename="../src/plugins/filedialog/core/views/filedialogstatusbar.cpp" line="242"/>
         <source>Format</source>
         <translation>Formatas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filedialog/core/views/filedialogstatusbar.cpp" line="280"/>
-        <location filename="../src/plugins/filedialog/core/views/filedialogstatusbar.cpp" line="283"/>
+        <location filename="../src/plugins/filedialog/core/views/filedialogstatusbar.cpp" line="272"/>
+        <location filename="../src/plugins/filedialog/core/views/filedialogstatusbar.cpp" line="274"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Atsisakyti</translation>
@@ -9608,107 +9076,107 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Galimi dydžiai: </translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="283"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="281"/>
         <source>Custom Size</source>
         <translation>Paskelbtas dydis</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="312"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="308"/>
         <source>Device Pixel Ratio: </source>
         <translation>Įrenginio pikselio santykis: </translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="334"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="330"/>
         <source>Theme: </source>
         <translation>Tema: </translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="338"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="332"/>
         <source>Light</source>
         <translation>Laisva</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="338"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="332"/>
         <source>Dark</source>
         <translation>Tamsus</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="342"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="336"/>
         <source>Mode: </source>
         <translation>Režimas: </translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="346"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="338"/>
         <source>Normal</source>
         <translation>Normalus</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="346"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="338"/>
         <source>Disabled</source>
         <translation>Ilgai užjungtas</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="346"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="338"/>
         <source>Hovered</source>
         <translation>Nuoširdai</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="346"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="338"/>
         <source>Pressed</source>
         <translation>Spausdintas</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="350"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="342"/>
         <source>Palette</source>
         <translation>Paleta</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="352"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="344"/>
         <source>Current mode icon does not support the palette</source>
         <translation>Dabartinis ikonika režimui nepalaikoma paletės</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="371"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="363"/>
         <source>Foreground:</source>
         <translation>Pirmenybė:</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="388"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="378"/>
         <source>Background:</source>
         <translation>Fone:</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="403"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="391"/>
         <source>Highlight:</source>
         <translation>Iškirtinė:</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="417"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="403"/>
         <source>HighlightForeground:</source>
         <translation>Iškirtinė pirmenybė:</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="435"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="419"/>
         <source>Background Color: </source>
         <translation>Fono spalva: </translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="437"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="421"/>
         <source>White</source>
         <translation>Baltas</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="437"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="421"/>
         <source>Black</source>
         <translation>Rudas</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="437"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="421"/>
         <source>Transparent</source>
         <translation>Transliptinis</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="437"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="421"/>
         <source>Custom</source>
         <translation>Pasirinktas</translation>
     </message>
@@ -9721,18 +9189,18 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Sifruotas failas, prašome įvesti slaptažodį</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/pdf-preview/encryptionpage.cpp" line="44"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/pdf-preview/encryptionpage.cpp" line="42"/>
         <source>Password</source>
         <translation>Slaptažodis</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/pdf-preview/encryptionpage.cpp" line="50"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/pdf-preview/encryptionpage.cpp" line="47"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>Gerai</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/pdf-preview/encryptionpage.cpp" line="93"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/pdf-preview/encryptionpage.cpp" line="90"/>
         <source>Wrong password</source>
         <translation>Neteisingas slaptažodis</translation>
     </message>
@@ -9740,22 +9208,22 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>plugin_filepreview::MusicMessageView</name>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="62"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="60"/>
         <source>Artist:</source>
         <translation>Artistė:</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="76"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="72"/>
         <source>Album:</source>
         <translation>Albomas:</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="142"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="137"/>
         <source>unknown artist</source>
         <translation>nežinomas artystė</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="146"/>
+        <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="141"/>
         <source>unknown album</source>
         <translation>nežinomas albomas</translation>
     </message>
