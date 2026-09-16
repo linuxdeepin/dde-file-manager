@@ -1,0 +1,546 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 保险箱_suite
+app: dde-file-manager
+description: 保险箱模块 AT-SPI 用例
+module: 保险箱
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: case_smoke_保险箱_001
+  name: 保险箱内各菜单功能检查-新建文件
+  description: '来源用例编号: 1970083'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: dtk_context_menu
+    selector:
+      name: 主目录
+    items:
+    - 新建文件夹
+    wait: 2.0
+  - action: dtk_context_menu
+    selector:
+      name: 主目录
+    items:
+    - 刷新
+    wait: 2.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_保险箱_002
+  name: 保险箱内各菜单功能检查-排序&显示方式
+  description: '来源用例编号: 1970081'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  - action: dtk_context_menu
+    selector:
+      name: 主目录
+    items:
+    - 排序
+    - 名称
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 保险箱
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_保险箱_003
+  name: 保险箱内各菜单功能检查-文件操作
+  description: '来源用例编号: 1811843'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: right_click
+    wait: 1.0
+  - action: dtk_context_menu
+    selector:
+      name: 主目录
+    items:
+    - 属性
+    wait: 2.0
+  - action: dtk_context_menu
+    selector:
+      name: 主目录
+    items:
+    - 全选
+    wait: 2.0
+  - action: dtk_context_menu
+    selector:
+      name: 主目录
+    items:
+    - 粘贴
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_保险箱_004
+  name: '[123][core]右键菜单-侧边栏/计算机目录右键删除保险箱-密钥删除'
+  description: '来源用例编号: 1811735'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: dtk_context_menu
+    selector:
+      name: 保险箱
+    items:
+    - 删除
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_保险箱_005
+  name: 【保险箱】保险箱-开启保险箱完整流程
+  description: '来源用例编号: 1811707'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: double_click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: 保险箱
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: 保险箱
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_保险箱_006
+  name: 【保险箱】透明加解密 - 创建完成访问无需验证密码
+  description: '来源用例编号: 1811279'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: right_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 保险箱
+  - action: assert_element
+    ref: 保险箱
+  - action: assert_element
+    ref: 保险箱
+  - action: assert_element
+    ref: 保险箱
+- id: case_smoke_保险箱_007
+  name: '[004]保险箱-侧边栏/计算机目录下右键解锁-密码解锁'
+  description: '来源用例编号: 1809243'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: right_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_保险箱_008
+  name: '[126]保险箱-保险箱上锁后侧边栏/计算机目录正常呼出右键菜单'
+  description: '来源用例编号: 1809241'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: double_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_保险箱_009
+  name: '[123]保险箱-侧边栏/计算机目录右键删除保险箱-密码删除'
+  description: '来源用例编号: 1809239'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: dtk_context_menu
+    selector:
+      name: 保险箱
+    items:
+    - 删除
+    - 删除
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: 保险箱
+- id: case_smoke_保险箱_010
+  name: '[125]保险箱-侧边栏/计算机目录右键自动上锁默认检查'
+  description: '来源用例编号: 1809237'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 显示预览
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 保险箱
+- id: case_smoke_保险箱_011
+  name: '[003]保险箱单-侧边栏/计算机目录右键立即上锁'
+  description: '来源用例编号: 1809235'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: right_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 保险箱
+- id: case_smoke_保险箱_012
+  name: '[124]保险箱-已开启侧边栏/计算机目录呼出右键菜单正常'
+  description: '来源用例编号: 1809233'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: double_click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: right_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 保险箱
+  - action: assert_element
+    ref: 保险箱
+- id: case_smoke_保险箱_013
+  name: 【保险箱】保险箱-剪切文件/文件夹到保险箱内
+  description: '来源用例编号: 1809225'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 保险箱
+  - action: assert_element
+    ref: 保险箱
+  - action: assert_element
+    ref: 保险箱
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_保险箱_014
+  name: 【保险箱】透明加解密 - 删除非空保险箱
+  description: '来源用例编号: 1809217'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: right_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: 保险箱
+- id: case_smoke_保险箱_015
+  name: 透明加解密 - 保险箱右键菜单检查
+  description: '来源用例编号: 1809209'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: right_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 保险箱
+  - action: assert_element
+    ref: 保险箱
+- id: case_smoke_保险箱_016
+  name: '[129]透明加解密 - 文件操作'
+  description: '来源用例编号: 1809207'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: right_click
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_保险箱_017
+  name: 透明加解密 - 访问时间校验
+  description: '来源用例编号: 1809205'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_保险箱_018
+  name: 透明加解密 - 创建时间校验
+  description: '来源用例编号: 1809203'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 保险箱
+  - action: assert_element
+    ref: 保险箱
+  - action: assert_element
+    ref: 保险箱
+- id: case_smoke_保险箱_019
+  name: 透明加解密 - 【加密方式】选择“透明加密”，“加密保险箱”按钮
+  description: '来源用例编号: 1809197'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: double_click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 保险箱
+  - action: assert_element
+    ref: 保险箱
+- id: case_smoke_保险箱_020
+  name: 透明加解密 - 【加密方式】选择“密钥加密”，并完成保险箱创建
+  description: '来源用例编号: 1809191'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: double_click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 保险箱
+- id: case_smoke_保险箱_021
+  name: 透明加解密 - 取消原窗口的【类型】选项，替换为【加密方式】
+  description: '来源用例编号: 1809189'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: double_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+teardown:
+- action: session_stop

@@ -1,0 +1,2018 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+name: scenarios_suite
+app: dde-file-manager
+module: scenarios
+setup:
+- action: session_start
+  command: dde-file-manager
+  wait: 3.0
+suites:
+# ── 历史导航：后退/前进 (xlsx 1805091, 1805093, 1805095, 1808013) ──
+- id: suite_scenarios_001_s1
+  name: 历史导航-后退与前进
+  description: '覆盖 xlsx 1805091/1805093/1805095/1808013：进入子目录后点后退回到上级，再点前进恢复子目录'
+  steps:
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /tmp
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: LeftBtn
+      role: push button
+    do: click
+    wait: 1.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: LeftBtn
+      role: push button
+    do: click
+    wait: 1.5
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: LeftBtn
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CrumbEdit
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+# ── 视图模式切换 (xlsx 1816683, 1805207) ──
+- id: suite_scenarios_002_s1
+  name: 视图模式切换-图标/列表/树形
+  description: '覆盖 xlsx 1816683/1805207：通过快捷键切换图标视图→列表视图→树形视图，每次验证视图区域存在'
+  steps:
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+1
+    wait: 1.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+2
+    wait: 1.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+3
+    wait: 1.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+1
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ScrollArea
+      role: scroll pane
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+# ── 搜索功能 (xlsx 1816683, 1816685, 1816687) ──
+- id: suite_scenarios_003_s1
+  name: 搜索-输入关键词与清空
+  description: '覆盖 xlsx 1816683/1816685/1816687：打开搜索框输入关键词，验证搜索激活后清空搜索框'
+  steps:
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: test
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: f
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+# ── 标签页管理 (xlsx 1935223, 1936025, 1964025) ──
+- id: suite_scenarios_004_s1
+  name: 标签页-新建切换与关闭
+  description: '覆盖 xlsx 1935223/1936025/1964025：新建标签页，验证标签栏存在，关闭标签页回到原标签'
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: AddBtn
+      role: push button
+    do: click
+    wait: 1.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: BottomBar
+      role: page tab
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+w
+    wait: 1.5
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TabBar
+      role: page tab
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddBtn
+      role: push button
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+# ── 右键空白处菜单 (xlsx 1806061, 1807651) ──
+- id: suite_scenarios_005_s1
+  name: 右键空白处-新建文件夹与排序
+  description: '覆盖 xlsx 1806061/1807651：在文件视图空白处右键，选择新建文件夹，验证新建文件夹后右键排序'
+  steps:
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 新建文件夹
+    wait: 2.0
+  - step_type: action
+    action: keyboard_type_text
+    text: at_test_folder
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 1.5
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 排序
+    - 按名称
+    wait: 2.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+z
+    wait: 1.5
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+# ── 撤销/重做 (xlsx 1809803, 1809811, 1809865) ──
+- id: suite_scenarios_006_s1
+  name: 撤销与重做-新建文件夹后撤销再重做
+  description: '覆盖 xlsx 1809803/1809811/1809865：右键新建文件夹，Ctrl+Z撤销删除，Ctrl+Y重做恢复'
+  steps:
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 新建文件夹
+    wait: 2.0
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 1.5
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+z
+    wait: 1.5
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+y
+    wait: 1.5
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+z
+    wait: 1.5
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+# ── 地址栏导航 (xlsx 1816685, 1810389) ──
+- id: suite_scenarios_007_s1
+  name: 地址栏-输入路径导航
+  description: '覆盖 xlsx 1816685/1810389：通过Ctrl+L聚焦地址栏，输入路径跳转，验证面包屑更新'
+  steps:
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /usr/share
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CrumbEdit
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+# ── 侧边栏导航 (xlsx 1806109, 1806121, 1805689) ──
+- id: suite_scenarios_008_s1
+  name: 侧边栏-导航到回收站
+  description: '覆盖 xlsx 1806109/1805689/1805761：通过侧边栏导航到回收站，验证回收站视图存在'
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: SideBarView
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 0.5
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: trash:/
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SideBarView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+# ── 复制文件地址 (xlsx 1940091) ──
+- id: suite_scenarios_009_s1
+  name: 复制文件地址-Ctrl+Shift+C
+  description: '覆盖 xlsx 1940091：通过Ctrl+Shift+C复制当前路径到剪贴板，验证地址栏内容可读'
+  steps:
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /tmp
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+shift+c
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CrumbEdit
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddressBar
+      role: text
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+# ── 文件排序切换 (xlsx 1816685, 1936355) ──
+- id: suite_scenarios_010_s1
+  name: 文件列表-排序方式切换
+  description: '覆盖 xlsx 1816685/1936355：右键空白处依次切换按名称/大小/类型排序，验证视图存在'
+  steps:
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 排序
+    - 按名称
+    wait: 2.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 排序
+    - 按修改时间
+    wait: 2.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 排序
+    - 按大小
+    wait: 2.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 排序
+    - 按类型
+    wait: 2.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+# ── 文件分组 (xlsx 1936355, 1936501) ──
+- id: suite_scenarios_011_s1
+  name: 文件列表-分组开关
+  description: '覆盖 xlsx 1936355/1936501：右键切换分组模式，验证视图存在且窗口正常'
+  steps:
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 分组
+    - 按类型
+    wait: 2.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 分组
+    - 按名称
+    wait: 2.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 分组
+    - 不分组
+    wait: 2.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+# ── 缩放滑块调节 (xlsx 1805207, V25设计改版) ──
+- id: suite_scenarios_012_s1
+  name: 缩放滑块-调整文件图标大小
+  description: '覆盖 xlsx 1805207：操作底部缩放滑块调节图标大小，验证滑块与视图存在'
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: ScaleSlider
+      role: slider
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: right
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: right
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: left
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: left
+    wait: 0.5
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ScaleSlider
+      role: slider
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+# ── 右键文件属性 (xlsx 1807683, 110825) ──
+- id: suite_scenarios_013_s1
+  name: 右键文件-打开属性对话框
+  description: '覆盖 xlsx 1807683：右键文件选择属性，验证属性对话框弹出后关闭'
+  steps:
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 属性
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: ScrollArea
+      role: scroll pane
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ScrollArea
+      role: scroll pane
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+# ── 主菜单文件操作 (xlsx 110807) ──
+- id: suite_scenarios_014_s1
+  name: 主菜单-新建窗口与连接服务器
+  description: '覆盖 xlsx 110807：通过主菜单打开新建窗口和连接服务器对话框，验证对话框元素存在后关闭'
+  steps:
+  - step_type: action
+    action: dtk_main_menu
+    items:
+    - 文件
+    - 新建窗口
+    wait: 2.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+w
+    wait: 1.5
+  - step_type: action
+    action: dtk_main_menu
+    items:
+    - 文件
+    - 连接到服务器
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: CollectionServerView
+      role: list
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionServerView
+      role: list
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+- id: suite_scenarios_015_s1
+  name: 文件复制粘贴-Ctrl+C与Ctrl+V
+  description: 覆盖 xlsx 1977283/1977285/1816691：导航到目录后全选文件，Ctrl+C复制，导航到子目录Ctrl+V粘贴，验证视图正常
+  steps:
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /tmp
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+a
+    wait: 1.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+c
+    wait: 1.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /tmp/at_test_folder
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+v
+    wait: 2.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+- id: suite_scenarios_016_s1
+  name: 文件重命名-F2键重命名
+  description: 覆盖 xlsx 1815913/1816693/1977283：新建文件夹后按F2重命名，输入新名称回车确认，验证重命名编辑器与视图
+  steps:
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 新建文件夹
+    wait: 2.0
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 1.5
+  - step_type: action
+    action: keyboard_hot_key
+    key: f2
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: at_renamed_folder
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 1.5
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+z
+    wait: 1.5
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+- id: suite_scenarios_017_s1
+  name: 全选并删除到回收站-Ctrl+A与Delete
+  description: 覆盖 xlsx 1850141/1977285/1816695：新建测试文件夹后Ctrl+A全选，Delete删除到回收站，验证视图更新
+  steps:
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 新建文件夹
+    wait: 2.0
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 1.5
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+a
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: delete
+    wait: 1.5
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+z
+    wait: 1.5
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+- id: suite_scenarios_018_s1
+  name: 文件剪切粘贴-Ctrl+X与Ctrl+V
+  description: 覆盖 xlsx 1977283/1816691/1816693：导航到目录后全选Ctrl+X剪切，导航到子目录Ctrl+V粘贴，验证视图正常
+  steps:
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /tmp
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+a
+    wait: 1.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+x
+    wait: 1.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+v
+    wait: 2.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+z
+    wait: 1.5
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+- id: suite_scenarios_019_s1
+  name: 打开方式-右键选择打开方式对话框
+  description: 覆盖 xlsx 1816721/1816723/1816725：右键文件选择打开方式，验证打开方式对话框列表存在后关闭
+  steps:
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 打开方式
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: OpenWithListWidget
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: OpenWithDialog-QScrollArea
+      role: scroll pane
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: OpenWithDialog-QScrollArea
+      role: scroll pane
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: OpenWithListWidget
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+- id: suite_scenarios_020_s1
+  name: 刷新文件列表-F5与Ctrl+R
+  description: 覆盖 xlsx 1970083/1816685：通过F5和Ctrl+R刷新文件列表，验证视图区域存在且窗口正常
+  steps:
+  - step_type: action
+    action: keyboard_press
+    key: f5
+    wait: 1.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+r
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: f5
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+- id: suite_scenarios_021_s1
+  name: 侧边栏-显示与隐藏F9
+  description: 覆盖 xlsx 1806109/1806121/1806123：通过F9切换侧边栏显示隐藏，验证侧边栏与视图状态
+  steps:
+  - step_type: action
+    action: keyboard_press
+    key: f9
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: f9
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: SideBarView
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SideBarView
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+- id: suite_scenarios_022_s1
+  name: 预览面板-开关切换
+  description: 覆盖 xlsx 1816707/1816709/1816711：通过F3切换预览面板开关，验证视图与窗口正常
+  steps:
+  - step_type: action
+    action: keyboard_press
+    key: f3
+    wait: 1.5
+  - step_type: action
+    action: keyboard_press
+    key: f3
+    wait: 1.5
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+- id: suite_scenarios_023_s1
+  name: 标签页-Ctrl+T新建与Ctrl+W关闭
+  description: 覆盖 xlsx 1816717/1935223/1936025：通过Ctrl+T快捷键新建标签页，验证标签栏存在后Ctrl+W关闭
+  steps:
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+t
+    wait: 1.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: TabBar
+      role: page tab
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+w
+    wait: 1.5
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TabBar
+      role: page tab
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddBtn
+      role: push button
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+- id: suite_scenarios_024_s1
+  name: 上级目录导航-Alt+Up
+  description: 覆盖 xlsx 1816671/1805093/1816667：导航到子目录后Alt+Up返回上级目录，验证面包屑更新
+  steps:
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /tmp
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: alt+up
+    wait: 2.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CrumbEdit
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+- id: suite_scenarios_025_s1
+  name: 文件属性-属性对话框详细信息
+  description: 覆盖 xlsx 1816729/1816727/1807683：右键文件选择属性，验证属性对话框滚动区域存在后关闭
+  steps:
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 属性
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: PropertyDialog-QScrollArea
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: PropertyDialog-QScrollArea
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ScrollArea
+      role: scroll pane
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+- id: suite_scenarios_026_s1
+  name: 主菜单-帮助与关于
+  description: 覆盖 xlsx 1968781/110825/110807：通过主菜单打开帮助和关于对话框，验证窗口正常后关闭
+  steps:
+  - step_type: action
+    action: dtk_main_menu
+    items:
+    - 帮助
+    - 帮助手册
+    wait: 2.0
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  - step_type: action
+    action: dtk_main_menu
+    items:
+    - 帮助
+    - 关于
+    wait: 2.0
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+# ── 隐藏文件显示与隐藏 (xlsx 1806861) ──
+- id: suite_scenarios_027_s1
+  name: 隐藏文件显示与隐藏-Ctrl+H
+  description: '覆盖 xlsx 1806861：导航到/tmp后用Ctrl+H切换隐藏文件显示，再次切换隐藏，验证视图正常'
+  steps:
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /tmp
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+h
+    wait: 1.5
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+h
+    wait: 1.5
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+# ── 键盘导航Home/End (xlsx 1806877, 1806865) ──
+- id: suite_scenarios_028_s1
+  name: 键盘导航-Home/End定位首末文件
+  description: '覆盖 xlsx 1806877/1806865：导航到/tmp后用Home定位首个文件，用End定位末尾文件，验证视图正常'
+  steps:
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /tmp
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: keyboard_press
+    key: home
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: end
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+# ── 键盘扩展选择Shift+Home/End (xlsx 1806867, 1806869) ──
+- id: suite_scenarios_029_s1
+  name: 键盘扩展选择-Shift+Home/End
+  description: '覆盖 xlsx 1806867/1806869：导航到/usr/share后用Shift+Home选择到首个文件，Shift+End选择到末尾文件，验证视图正常'
+  steps:
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /usr/share
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: shift+home
+    wait: 1.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: shift+end
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+# ── 右键空白处全选 (xlsx 1806103) ──
+- id: suite_scenarios_030_s1
+  name: 右键空白处-全选
+  description: '覆盖 xlsx 1806103：在文件视图空白处右键选择全选，验证视图和窗口正常'
+  steps:
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 全选
+    wait: 2.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+# ── 右键显示方式切换 (xlsx 1806093) ──
+- id: suite_scenarios_031_s1
+  name: 右键空白处-显示方式切换
+  description: '覆盖 xlsx 1806093：右键空白处依次切换显示方式为列表视图和图标视图，验证视图正常'
+  steps:
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 显示方式
+    - 列表视图
+    wait: 2.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 显示方式
+    - 图标视图
+    wait: 2.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+# ── 右键排序方式名称与大小 (xlsx 1806095, 1806097) ──
+- id: suite_scenarios_032_s1
+  name: 右键排序方式-名称与大小
+  description: '覆盖 xlsx 1806095/1806097：右键空白处依次切换排序方式为名称和大小，验证视图正常'
+  steps:
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 排序方式
+    - 名称
+    wait: 2.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 排序方式
+    - 大小
+    wait: 2.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+# ── 右键排序方式类型与修改时间 (xlsx 1806099, 1806101) ──
+- id: suite_scenarios_033_s1
+  name: 右键排序方式-类型与修改时间
+  description: '覆盖 xlsx 1806099/1806101：右键空白处依次切换排序方式为类型和修改时间，验证视图正常'
+  steps:
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 排序方式
+    - 类型
+    wait: 2.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 排序方式
+    - 修改时间
+    wait: 2.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+# ── 反向选择Ctrl+Shift+I (xlsx 1806103) ──
+- id: suite_scenarios_034_s1
+  name: 反向选择-Ctrl+Shift+I
+  description: '覆盖 xlsx 1806103：使用Ctrl+Shift+I反向选择文件，验证视图和窗口正常'
+  steps:
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+shift+i
+    wait: 1.5
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+# ── 新建文件夹快捷键Ctrl+Shift+N (xlsx 1806061, 1935223) ──
+- id: suite_scenarios_035_s1
+  name: 新建文件夹-Ctrl+Shift+N快捷键
+  description: '覆盖 xlsx 1806061/1935223：导航到/tmp后用Ctrl+Shift+N快捷键新建文件夹，输入名称后确认，再用Ctrl+Z撤销清理'
+  steps:
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /tmp
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+shift+n
+    wait: 1.5
+  - step_type: action
+    action: keyboard_type_text
+    text: at_test_shortcut_folder
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 1.5
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+z
+    wait: 1.5
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+# ── 标签页切换Ctrl+Tab与Ctrl+Shift+Tab (xlsx 1816717, 1936025) ──
+- id: suite_scenarios_036_s1
+  name: 标签页切换-Ctrl+Tab与Ctrl+Shift+Tab
+  description: '覆盖 xlsx 1816717/1936025：新建标签页后用Ctrl+Tab切换到下一个标签页，Ctrl+Shift+Tab切换回上一个，关闭标签页验证窗口正常'
+  steps:
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+t
+    wait: 1.5
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+tab
+    wait: 1.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+shift+tab
+    wait: 1.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+w
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TabBar
+      role: page tab
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddBtn
+      role: push button
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+# ── 标签页按序号切换Alt+数字键 (xlsx 1816719, 1816721) ──
+- id: suite_scenarios_037_s1
+  name: 标签页按序号切换-Alt+数字键
+  description: '覆盖 xlsx 1816719/1816721：新建标签页后用Alt+1切换回第一个标签页，关闭标签页验证窗口正常'
+  steps:
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+t
+    wait: 1.5
+  - step_type: action
+    action: keyboard_hot_key
+    key: alt+1
+    wait: 1.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+w
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TabBar
+      role: page tab
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddBtn
+      role: push button
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+# ── 文件信息Ctrl+I (xlsx 1807683, 1816729) ──
+- id: suite_scenarios_038_s1
+  name: 文件信息-Ctrl+I查看详情
+  description: '覆盖 xlsx 1807683/1816729：使用Ctrl+I打开文件信息面板，按Escape关闭，验证视图和窗口正常'
+  steps:
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+i
+    wait: 1.5
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+# ── 地址栏复制路径与导航 (xlsx 1940091, 1810389) ──
+- id: suite_scenarios_039_s1
+  name: 地址栏复制路径与导航
+  description: '覆盖 xlsx 1940091/1810389：导航到/tmp后用Ctrl+Shift+C复制路径，验证地址栏和面包屑导航正常'
+  steps:
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /tmp
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+shift+c
+    wait: 1.5
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CrumbEdit
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddressBar
+      role: text
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+# ── 新建文档右键文本文档 (xlsx 1806061, 1806063) ──
+- id: suite_scenarios_040_s1
+  name: 新建文档-右键文本文档
+  description: '覆盖 xlsx 1806061/1806063：右键空白处选择新建文档→文本文档，输入名称后确认，再用Ctrl+Z撤销清理'
+  steps:
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 新建文档
+    - 文本文档
+    wait: 2.0
+  - step_type: action
+    action: keyboard_type_text
+    text: at_test_doc
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 1.5
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+z
+    wait: 1.5
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+
+# ── 最近使用排序方式遍历 (xlsx 2022349) ──
+- id: suite_scenarios_041_s1
+  name: 最近使用-排序方式遍历
+  description: '覆盖 xlsx 2022349：导航到最近使用目录，右键依次切换排序方式为名称/修改时间/大小/类型，验证视图正常'
+  steps:
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: recent:/
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 排序方式
+    - 名称
+    wait: 2.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 排序方式
+    - 修改时间
+    wait: 2.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 排序方式
+    - 大小
+    wait: 2.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 排序方式
+    - 类型
+    wait: 2.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+# ── 最近使用分组方式遍历 (xlsx 1936529) ──
+- id: suite_scenarios_042_s1
+  name: 最近使用-分组方式遍历
+  description: '覆盖 xlsx 1936529：导航到最近使用目录，右键依次切换分组方式为名称/创建时间/大小/类型，验证视图正常'
+  steps:
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: recent:/
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 分组
+    - 按名称
+    wait: 2.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 分组
+    - 按类型
+    wait: 2.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 分组
+    - 按大小
+    wait: 2.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 分组
+    - 不分组
+    wait: 2.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+# ── 回收站分组方式遍历 (xlsx 1936527) ──
+- id: suite_scenarios_043_s1
+  name: 回收站-分组方式遍历
+  description: '覆盖 xlsx 1936527：导航到回收站，右键依次切换分组方式为名称/删除时间/大小/类型，验证视图正常'
+  steps:
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: trash:/
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 分组
+    - 按名称
+    wait: 2.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 分组
+    - 按类型
+    wait: 2.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 分组
+    - 按大小
+    wait: 2.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 分组
+    - 不分组
+    wait: 2.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+# ── 类型排序切换 (xlsx 1924281) ──
+- id: suite_scenarios_044_s1
+  name: 类型排序-同类型聚合排序
+  description: '覆盖 xlsx 1924281：在文件管理器中切换排序方式为类型排序，验证文管无崩溃视图正常'
+  steps:
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /tmp
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 排序方式
+    - 类型
+    wait: 2.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+# ── 主目录搜索文件 (xlsx 1963325) ──
+- id: suite_scenarios_045_s1
+  name: 主目录-搜索文件
+  description: '覆盖 xlsx 1963325：导航到主目录后使用Ctrl+F搜索test文件，验证搜索输入框和视图正常'
+  steps:
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: ~
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.5
+  - step_type: action
+    action: keyboard_type_text
+    text: test
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+# ── 工具栏搜索按钮 (xlsx 1805487) ──
+- id: suite_scenarios_046_s1
+  name: 工具栏-搜索按钮
+  description: '覆盖 xlsx 1805487：点击工具栏搜索按钮，验证搜索输入框显示后关闭'
+  steps:
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.5
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+# ── 空白处右键快捷键R打开属性 (xlsx 1807815) ──
+- id: suite_scenarios_047_s1
+  name: 右键空白处-快捷键R打开属性
+  description: '覆盖 xlsx 1807815：在文管空白处唤起右键菜单后按快捷键R，验证属性窗口打开后关闭'
+  steps:
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 属性
+    wait: 2.0
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+# ── /tmp全选删除 (xlsx 1990351) ──
+- id: suite_scenarios_048_s1
+  name: /tmp目录-全选删除
+  description: '覆盖 xlsx 1990351：导航到/tmp目录后Ctrl+A全选并按Delete删除，处理删除对话框后Ctrl+Z撤销恢复'
+  steps:
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /tmp
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+a
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: delete
+    wait: 2.0
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+z
+    wait: 2.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+# ── 多目录空白处右键 (xlsx 1976581) ──
+- id: suite_scenarios_049_s1
+  name: 多目录-空白处右键菜单
+  description: '覆盖 xlsx 1976581：在/tmp和主目录空白处分别唤起右键菜单，验证右键菜单正常弹出后关闭'
+  steps:
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /tmp
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 属性
+    wait: 2.0
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: ~
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 属性
+    wait: 2.0
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+# ── 标签页固定与取消固定 (xlsx 1964033) ──
+- id: suite_scenarios_050_s1
+  name: 标签页-固定与取消固定
+  description: '覆盖 xlsx 1964033：右键标签页选择固定标签，再右键选择取消固定标签，验证标签栏正常'
+  steps:
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: TabBar
+      role: page tab
+    items:
+    - 固定标签
+    wait: 2.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: TabBar
+      role: page tab
+    items:
+    - 取消固定标签
+    wait: 2.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TabBar
+      role: page tab
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+# ── 回收站全部还原 (xlsx 1805879) ──
+- id: suite_scenarios_051_s1
+  name: 回收站-空白处右键全部还原
+  description: '覆盖 xlsx 1805879：导航到回收站后右键空白处选择全部还原，验证视图正常（空回车站时全部还原不可用）'
+  steps:
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: trash:/
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 全部还原
+    wait: 2.0
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+# ── 固定标签页导航 (xlsx 1964031) ──
+- id: suite_scenarios_052_s1
+  name: 固定标签页-导航行为
+  description: '覆盖 xlsx 1964031：固定标签页后通过地址栏导航到其他目录，验证以新标签页打开，再关闭新标签页和取消固定'
+  steps:
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: TabBar
+      role: page tab
+    items:
+    - 固定标签
+    wait: 2.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /tmp
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+w
+    wait: 1.5
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: TabBar
+      role: page tab
+    items:
+    - 取消固定标签
+    wait: 2.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TabBar
+      role: page tab
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+# ── 侧边栏导航-最近使用 (xlsx 1810955) ──
+- id: suite_scenarios_053_s1
+  name: 侧边栏-导航到最近使用
+  description: '覆盖 xlsx 1810955：通过地址栏导航到最近使用目录，验证视图和窗口正常'
+  steps:
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: recent:/
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SideBarView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+# ── 侧边栏导航-主目录 (xlsx 1810953) ──
+- id: suite_scenarios_054_s1
+  name: 侧边栏-导航到主目录
+  description: '覆盖 xlsx 1810953：通过地址栏导航到主目录，验证视图和窗口正常'
+  steps:
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: ~
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SideBarView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+
+teardown:
+- action: session_stop
