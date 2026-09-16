@@ -2107,7 +2107,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="612"/>
         <source>The export path directory is not writable, please choose a writable directory!</source>
-        <translation type="unfinished"/>
+        <translation>Ścieżka eksportu nie ma uprawnień zapisu, wybierz katalog, który je posiada!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="620"/>
