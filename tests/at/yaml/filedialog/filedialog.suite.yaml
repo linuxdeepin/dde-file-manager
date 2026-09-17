@@ -10,16 +10,22 @@ setup:
   wait: 3.0
 suites:
 - id: suite_filedialog_001_s1
-  name: 打开文件对话框基本交互
-  description: ''
+  name: 打开文件对话框文件名输入与过滤器选择
+  description: 在打开文件对话框中输入文件名，验证标题标签显示正确，文件名/过滤器标签可定位，过滤器下拉框可选择，确认按钮可聚焦
   steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: TitleLabel
+      role: label
+    do: focus
   - step_type: action
     action: element_set_value
     selector:
       name: FileNameEdit
       role: text
     text: test.txt
-    wait: 1.0
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
@@ -38,13 +44,7 @@ suites:
       name: FiltersComboBox
       role: combo box
     do: click
-    wait: 1.0
-  - step_type: action
-    action: element_action
-    selector:
-      name: FiltersComboBox
-      role: combo box
-    do: focus
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
@@ -59,10 +59,30 @@ suites:
   - step_type: assert
     action: assert_element
     selector:
+      name: FileNameEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: FileNameLabel
+      role: label
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: FiltersLabel
+      role: label
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: FiltersComboBox
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
       name: CurAcceptButton
 - id: suite_filedialog_002_s1
-  name: 保存文件对话框与取消操作
-  description: ''
+  name: 保存文件对话框文件名输入与取消操作
+  description: 在保存文件对话框中输入新文件名，验证标题标签持续显示，过滤器下拉框可选择，取消按钮可聚焦定位并触发取消操作
   steps:
   - step_type: action
     action: element_action
@@ -70,7 +90,7 @@ suites:
       name: TitleLabel
       role: label
     do: focus
-    wait: 1.0
+    wait: 0.5
   - step_type: action
     action: element_set_value
     selector:
@@ -80,17 +100,10 @@ suites:
   - step_type: action
     action: element_action
     selector:
-      name: FileNameEdit
-      role: text
-    do: focus
-    wait: 1.0
-  - step_type: action
-    action: element_action
-    selector:
       name: FiltersComboBox
       role: combo box
     do: click
-    wait: 1.0
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
@@ -103,13 +116,27 @@ suites:
       name: CurRejectButton
       role: push button
     do: focus
-  - step_type: action
-    action: element_action
-    selector:
-      name: CurRejectButton
-      role: push button
-    do: point
   assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TitleLabel
+      role: label
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: FileNameEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: FiltersComboBox
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: FiltersLabel
+      role: label
   - step_type: assert
     action: assert_element
     selector:
