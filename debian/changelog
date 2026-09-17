@@ -1,3 +1,13 @@
+dde-file-manager (6.5.173) unstable; urgency=medium
+
+  * fix: validate timezone from /etc/timezone before setting TZ
+  * fix: remove FTS_NOSTAT to fix SMB directory deletion failure
+  * fix: fix terminal open for paths ending with space
+  * fix: add directory write permission check in validateExportPath
+  * chore: update translations
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 17 Sep 2026 19:59:07 +0800
+
 dde-file-manager (6.5.172) unstable; urgency=medium
 
   * fix: handle TPM auth cancellation in disk encrypt unlock
