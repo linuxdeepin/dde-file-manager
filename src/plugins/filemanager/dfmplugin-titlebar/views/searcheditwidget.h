@@ -11,6 +11,10 @@
 #include <QCompleter>
 #include <QSpacerItem>
 
+class QPropertyAnimation;
+class QVariantAnimation;
+class QGraphicsOpacityEffect;
+
 DWIDGET_BEGIN_NAMESPACE
 class DSearchEdit;
 class DToolButton;
@@ -86,6 +90,9 @@ private:
     int determineSearchDelay(const QString &inputText);
     bool shouldDelaySearch(const QString &inputText);
 
+    void animateToLayout(int targetWidth, bool showSearchEdit, bool showSearchButton, bool showAdvancedButton);
+    void applyLayoutDirectly(int targetWidth, bool showSearchEdit, bool showSearchButton, bool showAdvancedButton);
+
     DTK_WIDGET_NAMESPACE::DIconButton *searchButton { nullptr };   // 搜索栏按钮
     DTK_WIDGET_NAMESPACE::DToolButton *advancedButton { nullptr };   // 高级搜索按钮
     DTK_WIDGET_NAMESPACE::DSearchEdit *searchEdit { nullptr };
@@ -102,6 +109,10 @@ private:
     QTimer *delayTimer { nullptr };
     qint64 lastSearchTime { 0 };
     bool quitSearchActive { false };   // Flag: onUrlChanged should preserve focus
+
+    QVariantAnimation *widthAnimation { nullptr };
+    QPropertyAnimation *searchEditFadeAnimation { nullptr };
+    QGraphicsOpacityEffect *searchEditOpacityEffect { nullptr };
 };
 
 }   // namespace dfmplugin_titlebar

@@ -29,6 +29,9 @@
 #include <QMetaObject>
 #include <QResizeEvent>
 #include <QKeyEvent>
+#include <QVariantAnimation>
+#include <QPropertyAnimation>
+#include <QGraphicsOpacityEffect>
 
 DGUI_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
@@ -39,6 +42,8 @@ inline constexpr int kSearchEditMaxWidth { 240 };   // Maximum width of search b
 inline constexpr int kSearchEditMediumWidth { 200 };   // Medium width of search box
 inline constexpr int kWidthThresholdCollapse { 900 };   // Threshold width to collapse search box
 inline constexpr int kWidthThresholdExpand { 1100 };   // Threshold width to expand search box
+
+inline constexpr int kSearchAnimationDuration { 250 };   // Search box expand/collapse animation duration in ms
 
 SearchEditWidget::SearchEditWidget(QWidget *parent)
     : QWidget(parent)
@@ -61,6 +66,12 @@ SearchEditWidget::~SearchEditWidget()
 {
     if (delayTimer) {
         delayTimer->stop();
+    }
+    if (widthAnimation) {
+        widthAnimation->stop();
+    }
+    if (searchEditFadeAnimation) {
+        searchEditFadeAnimation->stop();
     }
 }
 
@@ -316,6 +327,7 @@ void SearchEditWidget::initUI()
     QHBoxLayout *layout = new QHBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(0);
+    layout->setSizeConstraint(QLayout::SetNoConstraint);
 
     // search button
     searchButton = new CustomDIconButton(this);
@@ -337,6 +349,10 @@ void SearchEditWidget::initUI()
     // searchEdit->setFocusPolicy(Qt::StrongFocus);
     searchEdit->lineEdit()->setFocusPolicy(Qt::ClickFocus);
 
+    searchEditOpacityEffect = new QGraphicsOpacityEffect(searchEdit);
+    searchEditOpacityEffect->setOpacity(1.0);
+    searchEdit->setGraphicsEffect(searchEditOpacityEffect);
+
     // advanced search button
     advancedButton = new CustomDToolButton(this);
     advancedButton->setObjectName("AdvancedButton");
@@ -357,6 +373,17 @@ void SearchEditWidget::initUI()
 
     delayTimer = new QTimer(this);
     delayTimer->setSingleShot(true);
+
+    widthAnimation = new QVariantAnimation(this);
+    connect(widthAnimation, &QVariantAnimation::valueChanged, this, [this](const QVariant &value) {
+        setFixedWidth(value.toInt());
+    });
+    connect(widthAnimation, &QVariantAnimation::finished, this, [this]() {
+        // Re-assert the final width to lock it against any subsequent
+        // layout invalidation that could override setFixedWidth (BUG-306509).
+        setFixedWidth(widthAnimation->endValue().toInt());
+    });
+    searchEditFadeAnimation = new QPropertyAnimation(searchEditOpacityEffect, "opacity", this);
 }
 
 void SearchEditWidget::initConnect()
@@ -369,6 +396,11 @@ void SearchEditWidget::initConnect()
     });
     connect(advancedButton, &DToolButton::clicked, this, &SearchEditWidget::onAdvancedButtonClicked);
     connect(delayTimer, &QTimer::timeout, this, &SearchEditWidget::performSearch);   // 连接计时器超时信号
+
+    connect(searchEditFadeAnimation, &QPropertyAnimation::finished, this, [this]() {
+        if (qFuzzyIsNull(searchEditOpacityEffect->opacity()))
+            searchEdit->setVisible(false);
+    });
 
     // fix bug#31692 搜索框输入中文后,全选已输入的,再次输入未覆盖之前的内容
     // 选中内容时，记录光标开始位置以及选中的长度
@@ -387,8 +419,10 @@ QString SearchEditWidget::text() const
 
 void SearchEditWidget::handleFocusInEvent(QFocusEvent *e)
 {
-    advancedButton->setVisible(true);
-    updateSpacing(true);   // Advanced button is now visible
+    // Route through updateSearchWidgetLayout so advanced button visibility
+    // and spacing changes are handled via the animation path, preventing
+    // sudden layout jumps after the width animation finishes.
+    updateSearchWidgetLayout();
 
     QMetaObject::invokeMethod(this, [this] {
         if (searchEdit->lineEdit()->hasFocus())
@@ -407,12 +441,8 @@ void SearchEditWidget::handleFocusOutEvent(QFocusEvent *e)
               << "hasText:" << !searchEdit->text().isEmpty()
               << "focusWidget:" << (QApplication::focusWidget() ? QApplication::focusWidget()->metaObject()->className() : "nullptr");
 
-    if (searchEdit->lineEdit()->text().isEmpty() && !advancedButton->isChecked()) {
-        advancedButton->setVisible(false);
-        updateSpacing(false);   // Advanced button is now hidden
-    }
-
-    // Normal focus out - allow collapse
+    // Let updateSearchEditWidget -> setSearchMode -> updateSearchWidgetLayout
+    // handle advanced button visibility and spacing through the animation path.
     if (parentWidget()) {
         updateSearchEditWidget(parentWidget()->width());
     }
@@ -431,24 +461,92 @@ void SearchEditWidget::handleInputMethodEvent(QInputMethodEvent *e)
 
 void SearchEditWidget::updateSearchWidgetLayout()
 {
+    int targetWidth;
+    bool showSearchEdit;
+    bool showSearchButton;
+    bool showAdvancedButton;
+
     if (currentMode == SearchMode::kCollapsed && searchEdit->text().isEmpty()) {
-        setFixedWidth(searchButton->width());
-        searchEdit->setVisible(false);
-        searchButton->setVisible(true);
-        advancedButton->setVisible(false);
-        updateSpacing(false);   // No advanced button in collapsed mode
+        targetWidth = searchButton->width();
+        showSearchEdit = false;
+        showSearchButton = true;
+        showAdvancedButton = false;
+        updateSpacing(false);
     } else {
         int width = kSearchEditMediumWidth;
         if (currentMode == SearchMode::kExtraLarge)
             width = (parentWidget()->width() - kWidthThresholdExpand) + kSearchEditMediumWidth;
-        setFixedWidth(qMin(width, kSearchEditMaxWidth));
-        searchEdit->setVisible(true);
-        searchButton->setVisible(false);
-
-        bool shouldShowAdvancedButton = searchEdit->hasFocus() || !searchEdit->text().isEmpty() || advancedButton->isChecked();
-        advancedButton->setVisible(shouldShowAdvancedButton);
-        updateSpacing(shouldShowAdvancedButton);
+        targetWidth = qMin(width, kSearchEditMaxWidth);
+        showSearchEdit = true;
+        showSearchButton = false;
+        showAdvancedButton = searchEdit->hasFocus() || !searchEdit->text().isEmpty() || advancedButton->isChecked();
+        updateSpacing(showAdvancedButton);
     }
+
+    if (isVisible() && (width() != targetWidth
+                         || searchEdit->isVisible() != showSearchEdit
+                         || searchButton->isVisible() != showSearchButton)) {
+        animateToLayout(targetWidth, showSearchEdit, showSearchButton, showAdvancedButton);
+    } else {
+        applyLayoutDirectly(targetWidth, showSearchEdit, showSearchButton, showAdvancedButton);
+    }
+}
+
+void SearchEditWidget::animateToLayout(int targetWidth, bool showSearchEdit,
+                                       bool showSearchButton, bool showAdvancedButton)
+{
+    widthAnimation->stop();
+    searchEditFadeAnimation->stop();
+
+    int startWidth = width();
+
+    // Update child widget visibility first, then re-assert setFixedWidth.
+    // setVisible() on children triggers layout invalidation; with
+    // SetDefaultConstraint the layout could override setFixedWidth by
+    // raising minimumWidth above the current fixed width, forcing Qt to
+    // adjust maximumWidth upward — the ~30px post-animation jump (BUG-306509).
+    // SetNoConstraint on the layout prevents this, and re-asserting
+    // setFixedWidth here locks the width before the animation takes over.
+    searchButton->setVisible(showSearchButton);
+    advancedButton->setVisible(showAdvancedButton);
+    setFixedWidth(startWidth);
+
+    if (startWidth != targetWidth) {
+        widthAnimation->setDuration(kSearchAnimationDuration);
+        widthAnimation->setStartValue(startWidth);
+        widthAnimation->setEndValue(targetWidth);
+        widthAnimation->setEasingCurve(QEasingCurve::OutCubic);
+        widthAnimation->start();
+    }
+
+    if (showSearchEdit) {
+        if (!searchEdit->isVisible()) {
+            searchEdit->setVisible(true);
+            searchEditOpacityEffect->setOpacity(0.0);
+        }
+        searchEditFadeAnimation->setDuration(kSearchAnimationDuration);
+        searchEditFadeAnimation->setStartValue(searchEditOpacityEffect->opacity());
+        searchEditFadeAnimation->setEndValue(1.0);
+        searchEditFadeAnimation->setEasingCurve(QEasingCurve::OutCubic);
+        searchEditFadeAnimation->start();
+    } else if (searchEdit->isVisible()) {
+        searchEditFadeAnimation->setDuration(kSearchAnimationDuration);
+        searchEditFadeAnimation->setStartValue(searchEditOpacityEffect->opacity());
+        searchEditFadeAnimation->setEndValue(0.0);
+        searchEditFadeAnimation->setEasingCurve(QEasingCurve::OutCubic);
+        searchEditFadeAnimation->start();
+    }
+
+}
+
+void SearchEditWidget::applyLayoutDirectly(int targetWidth, bool showSearchEdit,
+                                           bool showSearchButton, bool showAdvancedButton)
+{
+    searchEdit->setVisible(showSearchEdit);
+    searchEditOpacityEffect->setOpacity(showSearchEdit ? 1.0 : 0.0);
+    searchButton->setVisible(showSearchButton);
+    advancedButton->setVisible(showAdvancedButton);
+    setFixedWidth(targetWidth);
 }
 
 void SearchEditWidget::quitSearch()
@@ -478,10 +576,11 @@ void SearchEditWidget::updateSpacing(bool showAdvancedButton)
     int spacing = showAdvancedButton ? 10 : 0;
     spacingItem->changeSize(spacing, 0, QSizePolicy::Fixed, QSizePolicy::Minimum);
 
-    // Force layout update to ensure immediate visual effect
-    if (layout()) {
-        layout()->invalidate();
-    }
+    // Layout will be re-activated by setFixedWidth() in animateToLayout()
+    // or applyLayoutDirectly(), or by setVisible() on child widgets.
+    // Do NOT call layout()->invalidate() here — it forces a layout
+    // recalculation that can override setFixedWidth() during animation,
+    // causing the visual width jump (BUG-306509).
 
     fmDebug() << "Updated spacing to" << spacing << "px, advancedButton visible:" << showAdvancedButton;
 }
