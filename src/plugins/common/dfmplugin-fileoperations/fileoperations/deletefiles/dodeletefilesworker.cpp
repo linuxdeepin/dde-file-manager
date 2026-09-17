@@ -105,7 +105,7 @@ bool DoDeleteFilesWorker::deleteFilesByFts()
     for (int i = 0; i < pathData.size(); ++i)
         pathPtrs[i] = pathData[i].data();
 
-    FTS *fts = fts_open(pathPtrs.data(), FTS_PHYSICAL | FTS_NOSTAT | FTS_NOCHDIR, nullptr);
+    FTS *fts = fts_open(pathPtrs.data(), FTS_PHYSICAL | FTS_NOCHDIR, nullptr);
     if (!fts) {
         fmWarning() << "deleteFilesByFts: fts_open failed:" << strerror(errno);
         return false;
