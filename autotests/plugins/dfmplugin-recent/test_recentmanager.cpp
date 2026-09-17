@@ -325,11 +325,9 @@ TEST_F(RecentManagerTest, InvalidUrlFormat_HandlesGracefully)
  */
 TEST_F(RecentManagerTest, MultiThreadAccess_ThreadSafe)
 {
-    // Mock thread operations
-    stub.set_lamda(&QThread::currentThread, []() {
-        __DBG_STUB_INVOKE__
-        return QCoreApplication::instance()->thread();
-    });
+    // NOTE: no QThread::currentThread stub -- see the comment in SetUp().
+    // Both instance() calls run on the main thread, and RecentManager's
+    // `qApp->thread() == currentThread()` assert passes naturally.
 
     // Test concurrent access
     EXPECT_NO_THROW({

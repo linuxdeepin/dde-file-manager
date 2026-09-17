@@ -54,11 +54,13 @@ protected:
         testUrls = { QUrl("recent:///test1.txt"), QUrl("recent:///test2.txt") };
         globalPos = QPoint(100, 100);
 
-        // Mock basic operations
-        stub.set_lamda(&QThread::currentThread, []() {
-            __DBG_STUB_INVOKE__
-            return QCoreApplication::instance() ? QCoreApplication::instance()->thread() : nullptr;
-        });
+        // NOTE: do NOT stub QThread::currentThread here (or in any test of this
+        // binary): stub-ext patches the function code process-wide, so worker
+        // threads of dfm-base singletons (InfoCache/WatcherCache ...) would
+        // also see the fake "main thread" result and hit their
+        // `qApp->thread() != currentThread()` asserts -> SIGABRT/SIGSEGV.
+        // All instance() calls in these tests happen on the main thread anyway,
+        // so the thread-affinity asserts pass naturally without any stub.
     }
 
     void TearDown() override
