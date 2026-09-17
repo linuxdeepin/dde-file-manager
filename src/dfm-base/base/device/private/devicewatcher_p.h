@@ -50,9 +50,11 @@ private Q_SLOTS:
     void onPollingIntervalChanged();
 
 private:
-    void queryUsageOfItem(const QVariantMap &itemData, DFMMOUNT::DeviceType type);
-    DevStorage queryUsageOfBlock(const QVariantMap &itemData);
-    DevStorage queryUsageOfProtocol(const QVariantMap &itemData);
+    // NOTE: keep these static/stateless -- they are executed on pool threads
+    // and must never dereference a (possibly destroyed) DeviceWatcherPrivate.
+    static void queryUsageOfItem(const QVariantMap &itemData, DFMMOUNT::DeviceType type);
+    static DevStorage queryUsageOfBlock(const QVariantMap &itemData);
+    static DevStorage queryUsageOfProtocol(const QVariantMap &itemData);
 
 private:
     DeviceWatcher *q { nullptr };
