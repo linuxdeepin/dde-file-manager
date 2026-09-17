@@ -1046,7 +1046,8 @@ bool FileOperationsEventReceiver::doOpenInTerminal(const QUrl &url)
 
     if (!terminalPath.isEmpty()) {
         // systemd支持的单个文件名最长为255字节，导致长文件名在终端打开失败，使用命令参数的方式打开路径
-        if (url.fileName().toLocal8Bit().size() > NAME_MAX) {
+        // 路径以空格结尾时，default-terminal 的工作目录方式无法正确处理，使用命令参数的方式打开路径
+        if (url.fileName().toLocal8Bit().size() > NAME_MAX || url.toLocalFile().endsWith(' ')) {
             return QProcess::startDetached(terminalPath, { "-w", url.toLocalFile() });
         } else {
             // 使用命令参数的方式会造成终端DSG_APP_ID与应用一致，导致终端修改主题时影响文管/桌面
