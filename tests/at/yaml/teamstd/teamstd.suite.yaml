@@ -1,0 +1,870 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 团标_suite
+app: dde-file-manager
+description: 团标模块 AT-SPI 用例
+module: 团标
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: case_teamstd_团标_001
+  name: 支持将光盘镜像文件刻录到光盘
+  description: '来源用例编号: 1850203'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_teamstd_团标_002
+  name: 桌面名称排序、修改时间排序、大小排序、类型排序
+  description: '来源用例编号: 1850197'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: dtk_context_menu
+    selector:
+      name: 主目录
+    items:
+    - 排序
+    - 名称
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: dtk_context_menu
+    selector:
+      name: 主目录
+    items:
+    - 排序
+    - 修改时间
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: dtk_context_menu
+    selector:
+      name: 主目录
+    items:
+    - 排序
+    - 大小
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: dtk_context_menu
+    selector:
+      name: 主目录
+    items:
+    - 排序
+    - 类型
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 计算机
+- id: case_teamstd_团标_003
+  name: 支持右键选单创建文件夹、新建纯文本
+  description: '来源用例编号: 1850195'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 桌面
+- id: case_teamstd_团标_004
+  name: 支持桌面图标按照网格式排列
+  description: '来源用例编号: 1850193'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_teamstd_团标_005
+  name: 显示文件夹、文本文档、压缩文件图标
+  description: '来源用例编号: 1850191'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 桌面
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 桌面
+- id: case_teamstd_团标_006
+  name: 桌面显示应用程序图标
+  description: '来源用例编号: 1850189'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: keyboard_type
+    text: 文件管理器
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 桌面
+- id: case_teamstd_团标_007
+  name: 支持文件图标的拖拽摆放以及名称修改
+  description: '来源用例编号: 1850187'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Return
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: 桌面
+- id: case_teamstd_团标_008
+  name: 支持右键选单进行复制、剪切和粘贴文件
+  description: '来源用例编号: 1850185'
+  tags: []
+  steps:
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 桌面
+- id: case_teamstd_团标_009
+  name: 支持应用程序快捷方式与文件共存
+  description: '来源用例编号: 1850183'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: keyboard_type
+    text: 文件管理器
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: 桌面
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: 桌面
+- id: case_teamstd_团标_010
+  name: 回收站清空、回收站删除
+  description: '来源用例编号: 1850181'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: double_click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: right_click
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: right_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 回收站
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: 回收站
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: 回收站
+- id: case_teamstd_团标_011
+  name: 透明加解密保险箱
+  description: '来源用例编号: 1850175'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 确定
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: 保险箱
+- id: case_teamstd_团标_012
+  name: 独立口令和密钥保护的文件保险箱
+  description: '来源用例编号: 1850173'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  - action: dtk_context_menu
+    selector:
+      name: 主目录
+    items:
+    - 排序
+    - 类型
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 确定
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: 保险箱
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: 保险箱
+- id: case_teamstd_团标_013
+  name: 文件内容搜索、纯文本文件搜索
+  description: '来源用例编号: 1850171'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 显示预览
+    do: click
+    wait: 1.0
+  - action: keyboard_press
+    key: Return
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_teamstd_团标_014
+  name: 文件名最大长度不小于255字节
+  description: '来源用例编号: 1850169'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_teamstd_团标_015
+  name: 按文件名、修改时间段、文件大小搜索
+  description: '来源用例编号: 1850167'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Return
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_teamstd_团标_016
+  name: 文件不同程序打开方式
+  description: '来源用例编号: 1850165'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_teamstd_团标_017
+  name: 文件右键-复制粘贴、剪切粘贴、删除、重命名、压缩
+  description: '来源用例编号: 1850163'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Return
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: 回收站
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_teamstd_团标_018
+  name: 右键选中、鼠标拖动选中、ctrl键选中、shift键选中、快捷键多选
+  description: '来源用例编号: 1850161'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: ctrl+shift+i
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_teamstd_团标_019
+  name: 文本、图片、视频、音乐快速访问
+  description: '来源用例编号: 1850159'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: 视频
+  - action: assert_element
+    ref: 音乐
+- id: case_teamstd_团标_020
+  name: 创建wps文档
+  description: '来源用例编号: 1850157'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: 桌面
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_teamstd_团标_021
+  name: 新建文档、新建文件夹、创建快捷方式
+  description: '来源用例编号: 1850155'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: keyboard_press
+    key: Return
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Return
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: 文档
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_teamstd_团标_022
+  name: 图标展示、列表展示
+  description: '来源用例编号: 1850153'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  - action: dtk_context_menu
+    selector:
+      name: 主目录
+    items:
+    - 视图模式
+    - 图标模式
+    wait: 1.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  - action: dtk_context_menu
+    selector:
+      name: 主目录
+    items:
+    - 视图模式
+    - 列表模式
+    wait: 1.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  - action: dtk_context_menu
+    selector:
+      name: 主目录
+    items:
+    - 视图模式
+    - 树形模式
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_teamstd_团标_023
+  name: 绝对路径的搜索
+  description: '来源用例编号: 1850151'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Return
+    wait: 1.0
+  - action: keyboard_press
+    key: Return
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: 主目录
+- id: case_teamstd_团标_024
+  name: 主目录、桌面、文档、下载、回收站
+  description: '来源用例编号: 1850141'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 主目录
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 下载
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: 回收站
+- id: case_teamstd_团标_025
+  name: 文本文件缩略图、图片缩略图、视频首帧缩略图
+  description: '来源用例编号: 1850139'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: 图片
+- id: case_teamstd_团标_026
+  name: 文件名称、文件类型、文件修改时间、文件大小排序
+  description: '来源用例编号: 1850137'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: dtk_context_menu
+    selector:
+      name: 主目录
+    items:
+    - 排序
+    - 名称
+    wait: 1.0
+  - action: dtk_context_menu
+    selector:
+      name: 主目录
+    items:
+    - 排序
+    - 名称
+    wait: 1.0
+  - action: dtk_context_menu
+    selector:
+      name: 主目录
+    items:
+    - 排序
+    - 类型
+    wait: 1.0
+  - action: dtk_context_menu
+    selector:
+      name: 主目录
+    items:
+    - 排序
+    - 类型
+    wait: 1.0
+  - action: dtk_context_menu
+    selector:
+      name: 主目录
+    items:
+    - 排序
+    - 修改时间
+    wait: 1.0
+  - action: dtk_context_menu
+    selector:
+      name: 主目录
+    items:
+    - 排序
+    - 修改时间
+    wait: 1.0
+  - action: dtk_context_menu
+    selector:
+      name: 主目录
+    items:
+    - 排序
+    - 大小
+    wait: 1.0
+  - action: dtk_context_menu
+    selector:
+      name: 主目录
+    items:
+    - 排序
+    - 大小
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_teamstd_团标_027
+  name: 双盘加密硬盘，可作为移动硬盘挂载
+  description: '来源用例编号: 1850135'
+  tags: []
+  steps:
+  - action: element_action
+    ref: 系统盘
+    do: click
+    wait: 1.0
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+teardown:
+- action: session_stop
