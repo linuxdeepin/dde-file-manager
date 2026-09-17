@@ -8,6 +8,7 @@
 #include <QDBusAbstractInterface>
 #include <QDBusConnection>
 #include <QDBusConnectionInterface>
+#include <QDBusMessage>
 #include <QDBusPendingCall>
 #include <QDBusPendingCallWatcher>
 #include <QDBusPendingReply>
@@ -279,16 +280,21 @@ void AbstractIndexController::keepBackendAlive()
         return;
     }
 
-    QDBusReply<bool> reply = interface->call(QStringLiteral("IsEnabled"));
-    if (!reply.isValid()) {
-        fmWarning() << "[" << m_descriptor.controllerName << "] Failed to query backend enabled state:" << reply.error().message();
-        return;
-    }
-
-    if (!reply.value() && isConfigEnabled) {
-        fmWarning() << "[" << m_descriptor.controllerName << "] Backend is disabled but config requires it enabled, reactivating backend";
-        activeBackend();
-    }
+    QDBusPendingCall pendingCall = interface->asyncCall(QStringLiteral("IsEnabled"));
+    auto *watcher = new QDBusPendingCallWatcher(pendingCall, this);
+    connect(watcher, &QDBusPendingCallWatcher::finished, this, [this, watcher](QDBusPendingCallWatcher *) {
+        QDBusMessage reply = watcher->reply();
+        if (reply.type() == QDBusMessage::ErrorMessage) {
+            fmWarning() << "[" << m_descriptor.controllerName << "] Failed to query backend enabled state:" << reply.errorMessage();
+        } else {
+            bool enabled = reply.arguments().isEmpty() ? true : reply.arguments().at(0).toBool();
+            if (!enabled && isConfigEnabled) {
+                fmWarning() << "[" << m_descriptor.controllerName << "] Backend is disabled but config requires it enabled, reactivating backend";
+                activeBackend();
+            }
+        }
+        watcher->deleteLater();
+    });
 }
 
 bool AbstractIndexController::isBackendAvaliable()
