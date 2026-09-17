@@ -409,6 +409,15 @@ elements:
   保险箱:
     name: 保险箱
     role: table cell
+  关闭:
+    name: 关闭
+    role: push button
+  取消:
+    name: 取消
+    role: push button
+  后退:
+    name: 后退
+    role: push button
   回收站:
     name: 回收站
     role: table cell
@@ -433,6 +442,9 @@ elements:
   桌面:
     name: 桌面
     role: table cell
+  确定:
+    name: 确定
+    role: push button
   系统盘:
     name: 系统盘
     role: table cell

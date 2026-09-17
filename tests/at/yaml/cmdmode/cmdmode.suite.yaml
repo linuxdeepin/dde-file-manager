@@ -1,0 +1,137 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 命令方式_suite
+app: dde-file-manager
+description: 命令方式模块 AT-SPI 用例
+module: 命令方式
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: case_cmdmode_命令方式_001
+  name: dde-file-manager -p 显示文件属性对话框_
+  description: '来源用例编号: 1805557'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: 系统盘
+  - action: assert_element
+    ref: 计算机
+- id: case_cmdmode_命令方式_002
+  name: 使用命令打开 root 模式文件管理器
+  description: '来源用例编号: 1805555'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_cmdmode_命令方式_003
+  name: dde-file-manager -d 无窗口显示
+  description: '来源用例编号: 1805553'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_cmdmode_命令方式_004
+  name: 命令行新建文件管理器窗口
+  description: '来源用例编号: 1805551'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_cmdmode_命令方式_005
+  name: 在命令行查看文件管理器版本_
+  description: '来源用例编号: 1805549'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_cmdmode_命令方式_006
+  name: 在命令行查看文件管理器帮助信息_
+  description: '来源用例编号: 1805547'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_cmdmode_命令方式_007
+  name: '[078]命令行启动'
+  description: '来源用例编号: 1805545'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Escape
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 主目录
+teardown:
+- action: session_stop
