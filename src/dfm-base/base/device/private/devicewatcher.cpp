@@ -80,13 +80,21 @@ void DeviceWatcher::refreshUsage()
 void DeviceWatcherPrivate::queryUsageAsync()
 {
     qCInfo(logDFMBase) << "Query device usage";
-    QThreadPool::globalInstance()->start([this] {
-        auto blocks = allBlockInfos;
-        auto protocols = allProtocolInfos;
+
+    // Snapshot the device infos on the caller (watcher) thread and never touch
+    // `this` inside the pooled task: the DeviceWatcher may already be destroyed
+    // when the pooled task starts to run (daemon shutdown, unit tests ...), and
+    // reading the member hashes through a dangling `this` caused SIGSEGV.
+    // All mutations of the two hashes below happen on this same thread (slots
+    // are queued connections), so the snapshot itself is race free.
+    const QHash<QString, QVariantMap> blocks = allBlockInfos;
+    const QHash<QString, QVariantMap> protocols = allProtocolInfos;
+
+    QThreadPool::globalInstance()->start([blocks, protocols] {
         std::for_each(blocks.cbegin(), blocks.cend(),
-                      [this](const QVariantMap &item) { queryUsageOfItem(item, DeviceType::kBlockDevice); });
+                      [](const QVariantMap &item) { queryUsageOfItem(item, DeviceType::kBlockDevice); });
         std::for_each(protocols.cbegin(), protocols.cend(),
-                      [this](const QVariantMap &item) { queryUsageOfItem(item, DeviceType::kProtocolDevice); });
+                      [](const QVariantMap &item) { queryUsageOfItem(item, DeviceType::kProtocolDevice); });
     });
 }
 
@@ -110,7 +118,7 @@ void DeviceWatcherPrivate::updateStorage(const QString &id, quint64 total, quint
         update(allProtocolInfos);
 }
 
-void DeviceWatcherPrivate::queryUsageOfItem(const QVariantMap &itemData, dfmmount::DeviceType type)
+void DeviceWatcherPrivate::queryUsageOfItem(const QVariantMap &itemData, DFMMOUNT::DeviceType type)
 {
     const QString &mpt = itemData.value(DeviceProperty::kMountPoint).toString();
     if (mpt.isEmpty())
@@ -339,13 +347,12 @@ void DeviceWatcher::onBlkDevRemoved(const QString &id)
 
 void DeviceWatcher::onBlkDevMounted(const QString &id, const QString &mpt)
 {
-    const QVariantMap &info = d->allBlockInfos.value(id);
+    QVariantMap info = d->allBlockInfos.value(id);
     // query info async avoid blocking main thread when disks' IO load is too high.
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
-    QtConcurrent::run(&DeviceWatcherPrivate::queryUsageOfItem, d.data(), info, DFMMOUNT::DeviceType::kBlockDevice);
-#else
-    QtConcurrent::run(d.data(), &DeviceWatcherPrivate::queryUsageOfItem, info, DFMMOUNT::DeviceType::kBlockDevice);
-#endif
+    // `queryUsageOfItem` is stateless (static): passing `d.data()` here kept a raw
+    // pointer to the watcher private alive in the pool and crashed when the
+    // watcher was destroyed before the task ran.
+    QtConcurrent::run(&DeviceWatcherPrivate::queryUsageOfItem, info, DFMMOUNT::DeviceType::kBlockDevice);
     emit DevMngIns->blockDevMounted(id, mpt);
 }
 

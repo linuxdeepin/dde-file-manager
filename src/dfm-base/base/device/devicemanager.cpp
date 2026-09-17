@@ -55,8 +55,12 @@ static constexpr char kDlnfsIface[] { "org.deepin.dlnfs.Control" };
 
 DeviceManager *DeviceManager::instance()
 {
-    static DeviceManager ins;
-    return &ins;
+    // Intentionally leaked: destruction order of static singletons at process
+    // exit is unpredictable, while pooled/async tasks (e.g. device usage
+    // queries) may still emit signals on this singleton afterwards. Leaking
+    // keeps those emits safe (same approach as InfoCache::instance()).
+    static DeviceManager *ins = new DeviceManager();
+    return ins;
 }
 
 // DeviceManager instance might be used in different process,
