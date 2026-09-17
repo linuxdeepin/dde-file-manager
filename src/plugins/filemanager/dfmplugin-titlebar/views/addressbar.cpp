@@ -216,6 +216,14 @@ void AddressBarPrivate::doComplete()
     return;
 }
 
+void AddressBarPrivate::tryQueueDoComplete()
+{
+    if (doCompleteQueued)
+        return;
+    doCompleteQueued = true;
+    QMetaObject::invokeMethod(this, [this]() { doCompleteQueued = false; doComplete(); }, Qt::QueuedConnection);
+}
+
 void AddressBarPrivate::appendToCompleterModel(const QStringList &stringList)
 {
     for (const QString &str : stringList) {
@@ -232,7 +240,7 @@ void AddressBarPrivate::onTravelCompletionListFinished()
 {
     if (urlCompleter->completionCount() > 0) {
         if (urlCompleter->popup()->isHidden() && q->isVisible())
-            doComplete();
+            tryQueueDoComplete();
     } else {
         completionPrefix.clear();
         completerView->hide();
@@ -414,7 +422,7 @@ void AddressBarPrivate::onCompletionModelCountChanged()
     }
 
     if (q->isVisible())
-        doComplete();
+        tryQueueDoComplete();
 }
 
 bool AddressBarPrivate::eventFilterHide(AddressBar *addressbar, QHideEvent *event)

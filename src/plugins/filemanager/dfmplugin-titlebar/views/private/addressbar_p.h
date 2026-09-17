@@ -64,6 +64,7 @@ class AddressBarPrivate : public QObject
     QRegularExpression protocolIPRegExp;   // smb://ip, ftp://ip, sftp://ip
     QString completionPrefix;
     bool inputIsIpAddress { false };
+    bool doCompleteQueued { false };
 
 public:
     explicit AddressBarPrivate(AddressBar *qq);
@@ -75,6 +76,7 @@ public:
     void clearCompleterModel();
     void updateCompletionState(const QString &text);
     void doComplete();
+    void tryQueueDoComplete();
     void requestCompleteByUrl(const QUrl &url);
 
     void completeIpAddress(const QString &text);
