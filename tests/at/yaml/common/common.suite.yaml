@@ -11,7 +11,7 @@ setup:
 suites:
 - id: suite_common_001_s1
   name: 光盘烧录选项与镜像转储对话框
-  description: ''
+  description: 右键文件选择刻录到光盘打开烧录对话框，设置校验/弹出/终结光盘选项并进入高级设置，关闭后再次通过右键打开转换为镜像对话框验证控件
   steps:
   - step_type: action
     action: dtk_context_menu
@@ -44,6 +44,7 @@ suites:
       name: AdvanceBtn
       role: push button
     do: click
+    wait: 1.0
   - step_type: action
     action: keyboard_press
     key: escape
@@ -83,8 +84,8 @@ suites:
       name: CreateImgBtn
       role: push button
 - id: suite_common_002_s1
-  name: 打开方式对话框
-  description: ''
+  name: 打开方式选择对话框交互与取消关闭
+  description: 右键文件选择打开方式打开对话框，验证选择默认程序按钮与确定/取消按钮可交互，点击取消后对话框关闭
   steps:
   - step_type: action
     action: dtk_context_menu
@@ -99,7 +100,8 @@ suites:
     selector:
       name: CheckButton
       role: push button
-    do: click
+    do: focus
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
@@ -112,6 +114,7 @@ suites:
       name: CancelButton
       role: push button
     do: click
+    wait: 1.0
   assert_steps:
   - step_type: assert
     action: assert_element
@@ -129,8 +132,8 @@ suites:
       name: CancelButton
       role: push button
 - id: suite_common_003_s1
-  name: 文件属性对话框（权限管理与标签编辑）
-  description: ''
+  name: 文件属性对话框权限管理与标签编辑
+  description: 右键文件选择属性打开属性对话框，验证路径编辑框可修改、可执行权限复选框可切换，并通过告警提示验证非法路径输入被拦截
   steps:
   - step_type: action
     action: dtk_context_menu
@@ -146,12 +149,6 @@ suites:
       role: text
     do: click
   - step_type: action
-    action: element_action
-    selector:
-      name: Edit_2
-      role: text
-    do: focus
-  - step_type: action
     action: element_set_value
     selector:
       name: Edit_2
@@ -163,6 +160,12 @@ suites:
       name: ExecutableCheckBox
       role: check box
     do: click
+    wait: 0.5
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AlertTooltip
+      role: tool tip
   - step_type: action
     action: keyboard_press
     key: escape
@@ -176,11 +179,6 @@ suites:
   - step_type: assert
     action: assert_element
     selector:
-      name: AlertTooltip
-      role: tool tip
-  - step_type: assert
-    action: assert_element
-    selector:
       name: ExecutableCheckBox
       role: check box
   - step_type: assert
@@ -189,8 +187,8 @@ suites:
       name: ExecutableCheckBox
       role: check box
 - id: suite_common_004_s1
-  name: 目录共享与蓝牙传输对话框
-  description: ''
+  name: 目录共享设置与蓝牙发送设备列表验证
+  description: 右键设备列表选择共享文件夹打开共享设置对话框，验证复制网络地址与用户名按钮可用；关闭后再通过右键发送到蓝牙验证设备列表可定位
   steps:
   - step_type: action
     action: dtk_context_menu
@@ -205,12 +203,14 @@ suites:
       name: CopyNetAddr
       role: push button
     do: click
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: CopyUserNameBt
       role: push button
     do: click
+    wait: 0.5
   - step_type: action
     action: keyboard_press
     key: escape
@@ -229,12 +229,6 @@ suites:
       name: DevicesListView
       role: list
     do: focus
-  - step_type: action
-    action: element_action
-    selector:
-      name: DevicesListView
-      role: list
-    do: point
   assert_steps:
   - step_type: assert
     action: assert_element
@@ -251,14 +245,9 @@ suites:
     selector:
       name: DevicesListView
       role: list
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: DevicesListView
-      role: list
 - id: suite_common_005_s1
-  name: 打开方式选择对话框
-  description: ''
+  name: 打开方式选择对话框默认程序设置
+  description: 右键文件选择打开方式打开对话框，验证应用列表可滚动浏览、设为默认复选框可勾选、按钮组与选择文件按钮可交互
   steps:
   - step_type: action
     action: dtk_context_menu
@@ -277,11 +266,6 @@ suites:
     action: element_action
     selector:
       name: OpenWithListWidget
-    do: focus
-  - step_type: action
-    action: element_action
-    selector:
-      name: OpenWithListWidget
     do: click
     wait: 1.0
   - step_type: action
@@ -295,7 +279,7 @@ suites:
       name: SetToDefaultCheckBox
       role: check box
     do: click
-    wait: 1.0
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
@@ -306,9 +290,27 @@ suites:
     action: assert_element
     selector:
       name: OpenWithListWidget
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: OpenWithDialog-QScrollArea
+      role: scroll pane
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: OpenWithBtnGroup
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SetToDefaultCheckBox
+      role: check box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: OpenFileChooseButton
 - id: suite_common_007_s1
-  name: 文件属性对话框-隐藏文件属性设置
-  description: ''
+  name: 文件属性隐藏文件权限复选框切换
+  description: 右键隐藏文件选择属性打开属性对话框，验证隐藏文件权限复选框可勾选切换并保持可定位
   steps:
   - step_type: action
     action: dtk_context_menu
@@ -323,27 +325,14 @@ suites:
       name: HideFile
       role: check box
     do: click
-    wait: 1.0
-  - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: HideFile_2
-    items:
-    - 属性
-    wait: 2.0
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: HideFile_2
       role: check box
     do: click
-    wait: 1.0
-  - step_type: action
-    action: element_action
-    selector:
-      name: HideFile_2
-      role: check box
-    do: focus
+    wait: 0.5
   assert_steps:
   - step_type: assert
     action: assert_element
@@ -356,8 +345,8 @@ suites:
       name: HideFile_2
       role: check box
 - id: suite_common_008_s1
-  name: 刻录选项与目录共享设置
-  description: ''
+  name: 光盘刻录终结选项与目录共享密码设置
+  description: 右键文件系统下拉框选择刻录到光盘打开刻录对话框，勾选终结光盘选项后关闭；再通过右键共享打开共享设置，验证共享名称编辑、匿名访问选择与设置密码按钮可用
   steps:
   - step_type: action
     action: dtk_context_menu
@@ -372,19 +361,17 @@ suites:
       name: FsComb
       role: combo box
     do: click
-    wait: 1.0
-  - step_type: action
-    action: element_action
-    selector:
-      name: FsComb
-      role: combo box
-    do: focus
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: FinalizeDiscCheckbox
       role: check box
     do: click
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: escape
     wait: 1.0
   - step_type: action
     action: dtk_context_menu
@@ -394,25 +381,18 @@ suites:
     - 共享
     wait: 2.0
   - step_type: action
-    action: element_action
+    action: element_set_value
     selector:
       name: ShareNameEditor
       role: text
-    do: click
-    wait: 1.0
-  - step_type: action
-    action: element_action
-    selector:
-      name: ShareNameEditor
-      role: text
-    do: focus
+    text: MyShare
   - step_type: action
     action: element_action
     selector:
       name: ShareAnonymousSelector
       role: combo box
     do: click
-    wait: 1.0
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
@@ -429,9 +409,18 @@ suites:
     selector:
       name: ShareNameEditor
       role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ShareAnonymousSelector
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SetPasswordBt
 - id: suite_common_009_s1
-  name: 文件夹共享属性设置
-  description: ''
+  name: 文件夹共享开关与权限选择设置
+  description: 右键共享开关选择属性打开共享属性对话框，验证共享开关可切换、共享权限下拉框可选择
   steps:
   - step_type: action
     action: dtk_context_menu
@@ -446,12 +435,14 @@ suites:
       name: ShareSwitcher
       role: check box
     do: click
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: SharePermissionSelector
       role: combo box
     do: click
+    wait: 0.5
   assert_steps:
   - step_type: assert
     action: assert_element
@@ -461,9 +452,10 @@ suites:
     action: assert_element
     selector:
       name: SharePermissionSelector
+      role: combo box
 - id: suite_common_010_s1
-  name: 文件标签信息展示
-  description: ''
+  name: 文件标签信息与属性提示展示
+  description: 右键标签控件选择属性打开属性对话框，验证标签名称、左侧标签与提示信息控件可定位
   steps:
   - step_type: action
     action: dtk_context_menu
@@ -492,8 +484,8 @@ suites:
     selector:
       name: ToolTip
 - id: suite_common_011_s1
-  name: 光盘刻录选项设置
-  description: ''
+  name: 光盘刻录卷标名称与写入速度设置
+  description: 右键卷标编辑框选择发送到光盘打开刻录对话框，验证卷标名称可编辑填写、写入速度下拉框可选择
   steps:
   - step_type: action
     action: dtk_context_menu
@@ -514,22 +506,21 @@ suites:
       name: WritespeedComb
       role: combo box
     do: click
+    wait: 0.5
   assert_steps:
   - step_type: assert
     action: assert_element
     selector:
       name: VolnameEdit
+      role: text
   - step_type: assert
     action: assert_element
     selector:
       name: WritespeedComb
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: VolnameEdit
+      role: combo box
 - id: suite_common_012_s1
-  name: ''
-  description: ''
+  name: 文件属性对话框所有者与权限组设置
+  description: 通过快捷键导航到根目录并触发右键菜单打开属性对话框，验证所有者/组/其他权限下拉框与名称编辑图标可定位，并确认文件管理器窗口持续存在
   steps:
   - step_type: action
     action: keyboard_hot_key
@@ -582,5 +573,455 @@ suites:
     action: assert_window
     selector:
       name: dde-file-manager
+- id: suite_common_013_s1
+  name: 文件属性权限与隐藏文件设置综合流程
+  description: 通过右键菜单打开属性对话框，依次操作所有者、用户组、其他权限下拉框与隐藏文件复选框，验证权限管理控件可用
+  steps:
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: FileChooser
+    items:
+    - 属性
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: PropertyDialog-QScrollArea
+      role: scroll pane
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: OwnerComboBox
+      role: combo box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: GroupComboBox
+      role: combo box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: OtherComboBox
+      role: combo box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: HideFile
+      role: check box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: NameEditIcon
+    do: focus
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: PropertyDialog-QScrollArea
+      role: scroll pane
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: OwnerComboBox
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: GroupComboBox
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: OtherComboBox
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: HideFile
+      role: check box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: NameEditIcon
+- id: suite_common_014_s1
+  name: 光盘刻录卷标与写入速度综合设置流程
+  description: 通过右键菜单打开刻录对话框，设置卷标名称与写入速度，勾选终结光盘选项，然后验证镜像转储按钮可用
+  steps:
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: FileChooser
+    items:
+    - 刻录到光盘
+    wait: 2.0
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: VolnameEdit
+    text: 数据光盘_2026
+  - step_type: action
+    action: element_action
+    selector:
+      name: WritespeedComb
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: FinalizeDiscCheckbox
+      role: check box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: PbBurn
+      role: push button
+    do: focus
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: FileChooser
+    items:
+    - 转换为镜像
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: PbDump
+      role: push button
+    do: focus
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: VolnameEdit
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: WritespeedComb
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: FinalizeDiscCheckbox
+      role: check box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: PbBurn
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: PbDump
+      role: push button
+- id: suite_common_015_s1
+  name: 打开方式选择与共享设置综合流程
+  description: 打开打开方式对话框选择应用程序并设置默认程序，然后操作共享名称与匿名访问权限设置验证控件可用
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: OpenWithDialog-QScrollArea
+      role: scroll pane
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: OpenWithListWidget
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: SetToDefaultCheckBox
+      role: check box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: ShareNameEditor
+      role: text
+    text: 共享文件夹_2026
+  - step_type: action
+    action: element_action
+    selector:
+      name: ShareAnonymousSelector
+      role: combo box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: SharePermissionSelector
+      role: combo box
+    do: click
+    wait: 0.5
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: OpenWithDialog-QScrollArea
+      role: scroll pane
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: OpenWithListWidget
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SetToDefaultCheckBox
+      role: check box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ShareNameEditor
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ShareAnonymousSelector
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SharePermissionSelector
+      role: combo box
+- id: suite_common_016_s1
+  name: 文件属性所有者权限与名称编辑综合流程
+  description: 右键文件打开属性对话框，依次操作所有者、组、其他权限下拉框，聚焦名称编辑图标，验证属性滚动区域可定位
+  steps:
+  - step_type: action
+    action: dtk_context_menu
+    items:
+    - 属性
+    selector:
+      name: CrumbEdit
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: PropertyDialog-QScrollArea
+      role: scroll pane
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: OwnerComboBox
+      role: combo box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: GroupComboBox
+      role: combo box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: OtherComboBox
+      role: combo box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: NameEditIcon
+    do: focus
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: PropertyDialog-QScrollArea
+      role: scroll pane
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: OwnerComboBox
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: GroupComboBox
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: OtherComboBox
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: NameEditIcon
+- id: suite_common_017_s1
+  name: 光盘刻录校验选项与镜像创建双流程
+  description: 右键文件打开刻录对话框，依次勾选校验光盘、校验数据、弹出光盘选项，点击高级设置后关闭；再通过右键打开镜像创建对话框验证创建按钮可用
+  steps:
+  - step_type: action
+    action: dtk_context_menu
+    items:
+    - 刻录到光盘
+    selector:
+      name: FileChooser
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: CheckdiscCheckbox
+      role: check box
+    do: click
+  - step_type: action
+    action: element_action
+    selector:
+      name: ChecksumCheckbox
+      role: check box
+    do: click
+  - step_type: action
+    action: element_action
+    selector:
+      name: EjectCheckbox
+      role: check box
+    do: click
+  - step_type: action
+    action: element_action
+    selector:
+      name: AdvanceBtn
+      role: push button
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  - step_type: action
+    action: dtk_context_menu
+    items:
+    - 转换为镜像
+    selector:
+      name: FileChooser
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: CreateImgBtn
+      role: push button
+    do: focus
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CheckdiscCheckbox
+      role: check box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ChecksumCheckbox
+      role: check box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: EjectCheckbox
+      role: check box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AdvanceBtn
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CreateImgBtn
+      role: push button
+- id: suite_common_018_s1
+  name: 共享设置密码与匿名权限综合流程
+  description: 在共享设置对话框中操作共享开关，设置共享名称与匿名访问权限，点击设置密码按钮验证全部共享控件可定位
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: ShareSwitcher
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: ShareNameEditor
+      role: text
+    text: SharedFolder_2026
+  - step_type: action
+    action: element_action
+    selector:
+      name: ShareAnonymousSelector
+      role: combo box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: SharePermissionSelector
+      role: combo box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: SetPasswordBt
+    do: focus
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ShareSwitcher
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ShareNameEditor
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ShareAnonymousSelector
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SharePermissionSelector
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SetPasswordBt
 teardown:
 - action: session_stop

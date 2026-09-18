@@ -10,8 +10,8 @@ setup:
   wait: 3.0
 suites:
 - id: suite_dialogs_001_s1
-  name: 网络挂载认证对话框
-  description: ''
+  name: 网络挂载认证对话框匿名与注册模式切换
+  description: 在网络挂载认证对话框中切换匿名/注册模式，填写用户名与域名为实际值，勾选记住密码复选框后验证密码按钮组出现
   steps:
   - step_type: action
     action: element_action
@@ -45,14 +45,40 @@ suites:
       name: PasswordCheckBox
       role: check box
     do: click
+    wait: 0.5
   assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AnonymousButton
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: RegisterButton
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: UsernameLineEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: DomainLineEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: PasswordCheckBox
+      role: check box
   - step_type: assert
     action: assert_element
     selector:
       name: PasswordButtonGroup
 - id: suite_dialogs_002_s1
-  name: 文件冲突确认对话框
-  description: ''
+  name: 文件冲突确认对话框保留与跳过操作
+  description: 在文件冲突确认对话框中勾选不再询问复选框，验证共存/跳过/删除/替换按钮可聚焦定位，确认操作选项可用
   steps:
   - step_type: action
     action: element_action
@@ -60,14 +86,14 @@ suites:
       name: ChkboxNotAskAgain
       role: check box
     do: click
-    wait: 1.0
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: ChkboxNotAskAgain
       role: check box
     do: click
-    wait: 1.0
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
@@ -89,11 +115,30 @@ suites:
   - step_type: assert
     action: assert_element
     selector:
+      name: ChkboxNotAskAgain
+      role: check box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: BtnCoexist
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: BtnSkip
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: BtnDelete
+  - step_type: assert
+    action: assert_element
+    selector:
       name: BtnReplace
       role: push button
 - id: suite_dialogs_003_s1
-  name: 批量操作进度对话框
-  description: ''
+  name: 批量操作进度对话框暂停与停止控制
+  description: 在批量操作进度对话框中验证任务列表可定位，暂停按钮可点击切换暂停/继续状态，停止按钮可定位
   steps:
   - step_type: action
     action: element_action
@@ -123,9 +168,17 @@ suites:
     action: assert_element
     selector:
       name: TaskListWidget
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: BtnPause
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: BtnStop
 - id: suite_dialogs_004_s1
-  name: SMB共享密码设置对话框
-  description: ''
+  name: SMB共享密码设置对话框输入验证
+  description: 在SMB共享密码设置对话框中填写实际密码值，验证密码编辑框可输入并聚焦定位
   steps:
   - step_type: action
     action: element_set_value
@@ -137,16 +190,250 @@ suites:
     selector:
       name: PasswordEdit_2
     do: focus
-    wait: 1.0
-  - step_type: action
-    action: element_action
-    selector:
-      name: PasswordEdit_2
-    do: point
+    wait: 0.5
   assert_steps:
   - step_type: assert
     action: assert_element
     selector:
       name: PasswordEdit_2
+
+- id: suite_dialogs_005_s1
+  name: 网络认证对话框注册模式完整输入与密码组验证
+  description: 在网络挂载认证对话框中切换到注册模式，依次填写用户名、域名，勾选记住密码后验证密码按钮组与密码编辑框联动可用
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: RegisterButton
+      role: push button
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: UsernameLineEdit
+      role: text
+    text: admin
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: DomainLineEdit
+      role: text
+    text: DEEPIN
+  - step_type: action
+    action: element_action
+    selector:
+      name: PasswordCheckBox
+      role: check box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: PasswordButtonGroup
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: AnonymousButton
+      role: push button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: RegisterButton
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: UsernameLineEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: DomainLineEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: PasswordCheckBox
+      role: check box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: PasswordButtonGroup
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AnonymousButton
+      role: push button
+- id: suite_dialogs_006_s1
+  name: 文件冲突对话框全选项与替换操作综合流程
+  description: 在文件冲突确认对话框中勾选不再询问复选框，依次聚焦共存、跳过、替换按钮，取消勾选后验证按钮组持续可定位
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: ChkboxNotAskAgain
+      role: check box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: BtnCoexist
+      role: push button
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: BtnSkip
+      role: push button
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: BtnReplace
+      role: push button
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: BtnDelete
+    do: point
+  - step_type: action
+    action: element_action
+    selector:
+      name: ChkboxNotAskAgain
+      role: check box
+    do: click
+    wait: 0.5
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ChkboxNotAskAgain
+      role: check box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: BtnCoexist
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: BtnSkip
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: BtnReplace
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: BtnDelete
+- id: suite_dialogs_007_s1
+  name: 网络认证匿名注册模式切换与密码编辑验证
+  description: 在网络认证对话框中先切换到匿名模式再切回注册模式，填写密码编辑框与密码行编辑框，验证模式切换后控件持续可用
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: AnonymousButton
+      role: push button
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: RegisterButton
+      role: push button
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: PasswordEdit
+    text: NetAuthPwd_2026
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: PasswordLineEdit
+    text: NetAuthPwd_2026
+  - step_type: action
+    action: element_action
+    selector:
+      name: PasswordCheckBox
+      role: check box
+    do: click
+    wait: 0.5
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AnonymousButton
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: RegisterButton
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: PasswordEdit
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: PasswordLineEdit
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: PasswordCheckBox
+      role: check box
+- id: suite_dialogs_008_s1
+  name: 批量操作任务列表与暂停停止控制综合流程
+  description: 在批量操作进度对话框中聚焦任务列表，依次点击暂停按钮两次恢复执行，聚焦停止按钮，验证全部进度控制控件可定位
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: TaskListWidget
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: BtnPause
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: BtnPause
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: BtnStop
+    do: click
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TaskListWidget
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: BtnPause
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: BtnStop
 teardown:
 - action: session_stop

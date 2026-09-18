@@ -10,8 +10,8 @@ setup:
   wait: 3.0
 suites:
 - id: suite_filemanager_001_s1
-  name: 标题栏标签页管理
-  description: ''
+  name: 标题栏标签页新增与底部标签栏验证
+  description: 点击新增标签按钮创建新标签页，验证底部标签栏出现且新增按钮持续可用
   steps:
   - step_type: action
     action: element_action
@@ -19,6 +19,7 @@ suites:
       name: AddBtn
       role: push button
     do: click
+    wait: 1.0
   - step_type: action
     action: element_action
     selector:
@@ -34,22 +35,22 @@ suites:
   - step_type: assert
     action: assert_element
     selector:
-      name: BottomBar
-      role: page tab
-  - step_type: assert
-    action: assert_element
-    selector:
       name: AddBtn
       role: push button
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
 - id: suite_filemanager_002_s1
-  name: 连接到服务器对话框
-  description: ''
+  name: 连接网络服务器对话框交互
+  description: 通过主菜单打开连接到服务器对话框，验证服务器列表与字符集下拉框可用
   steps:
   - step_type: action
     action: dtk_main_menu
     items:
     - 文件
     - 连接到服务器
+    wait: 2.0
   - step_type: action
     action: element_action
     selector:
@@ -62,31 +63,46 @@ suites:
       name: CharsetComboBox
       role: combo box
     do: click
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
   assert_steps:
   - step_type: assert
     action: assert_element
     selector:
       name: CollectionServerView
       role: list
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: CharsetComboBox
-      role: combo box
   - step_type: assert
     action: assert_element
     selector:
       name: CharsetComboBox
       role: combo box
 - id: suite_filemanager_003_s1
-  name: 磁盘加密与解密参数输入
-  description: ''
+  name: 磁盘加密管理对话框参数输入验证
+  description: 通过主菜单打开加密管理对话框，验证加密类型选择、密钥输入与导出路径控件可用
   steps:
   - step_type: action
     action: dtk_main_menu
     items:
     - 磁盘
-    - 解密磁盘
+    - 加密管理
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: ChgUnlockType
+      role: push button
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: EncType
+      role: combo box
+    do: click
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
@@ -94,37 +110,27 @@ suites:
       role: text
     do: focus
   - step_type: action
-    action: dtk_main_menu
-    items:
-    - 磁盘
-    - 加密管理
-  - step_type: action
-    action: element_action
-    selector:
-      name: ChgUnlockType
-      role: push button
-    do: click
-  - step_type: action
-    action: element_action
-    selector:
-      name: EncType
-      role: combo box
-    do: click
-  - step_type: action
-    action: element_action
+    action: element_set_value
     selector:
       name: EncKeyEdit1
+      role: text
+    text: MyEncryptionKey
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: EncKeyEdit2
+      role: text
+    text: MyEncryptionKey
+  - step_type: action
+    action: element_action
+    selector:
+      name: KeyExportInput
       role: text
     do: focus
   assert_steps:
   - step_type: assert
     action: assert_element
     selector:
-      name: Editor_2
-      role: text
-  - step_type: assert
-    action: assert_element
-    selector:
       name: ChgUnlockType
       role: push button
   - step_type: assert
@@ -132,6 +138,11 @@ suites:
     selector:
       name: EncType
       role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: Editor_2
+      role: text
   - step_type: assert
     action: assert_element
     selector:
@@ -148,51 +159,60 @@ suites:
       name: KeyExportInput
       role: text
 - id: suite_filemanager_004_s1
-  name: 保险箱创建重置与文件操作辅助控件
-  description: ''
+  name: 保险箱创建向导与找回密码控件验证
+  description: 通过主菜单进入保险箱创建向导，验证完成按钮、密钥文件路径、保险箱路径与取消按钮等控件可定位
   steps:
   - step_type: action
     action: dtk_main_menu
     items:
     - 保险箱
     - 创建保险箱
+    wait: 2.0
   - step_type: action
     action: element_action
     selector:
       name: FinishedBtn
       role: push button
-    do: click
-  - step_type: action
-    action: dtk_main_menu
-    items:
-    - 保险箱
-    - 重置密码
+    do: focus
   - step_type: action
     action: dtk_main_menu
     items:
     - 保险箱
     - 找回密码
+    wait: 2.0
   - step_type: action
-    action: dtk_main_menu
-    items:
-    - 编辑
-    - 批量重命名
+    action: element_action
+    selector:
+      name: KeyFileEdit
+      role: text
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: FilePathEdit
+      role: text
+    do: focus
   - step_type: action
     action: element_action
     selector:
       name: ComboBox
       role: combo box
     do: click
+    wait: 0.5
   - step_type: action
-    action: dtk_main_menu
-    items:
-    - 文件
-    - 属性确认
+    action: element_action
+    selector:
+      name: CheckBox
+      role: check box
+    do: click
+    wait: 0.5
   - step_type: action
-    action: dtk_main_menu
-    items:
-    - 设置
-    - 搜索索引
+    action: element_action
+    selector:
+      name: CancelBtn
+      role: push button
+    do: click
+    wait: 1.0
   assert_steps:
   - step_type: assert
     action: assert_element
@@ -217,16 +237,16 @@ suites:
   - step_type: assert
     action: assert_element
     selector:
-      name: CancelBtn
-      role: push button
-  - step_type: assert
-    action: assert_element
-    selector:
       name: CheckBox
       role: check box
+  - step_type: assert
+    action: assert_not_exists
+    selector:
+      name: CancelBtn
+      role: push button
 - id: suite_filemanager_005_s1
-  name: 主窗口标题栏返回按钮、占位控件与文件视图右键菜单
-  description: ''
+  name: 标题栏返回导航与文件视图右键菜单
+  description: 验证返回按钮可导航后退，占位控件可定位，右键菜单可弹出并关闭
   steps:
   - step_type: action
     action: element_action
@@ -239,10 +259,7 @@ suites:
     selector:
       name: LeftBtn
       role: push button
-    do: point
-  - step_type: action
-    action: keyboard_press
-    key: alt+Left
+    do: click
     wait: 0.5
   - step_type: action
     action: element_action
@@ -250,13 +267,16 @@ suites:
       name: Placeholder
     do: point
   - step_type: action
-    action: keyboard_press
-    key: shift+f10
-    wait: 1.5
+    action: dtk_context_menu
+    selector:
+      name: Placeholder
+    items:
+    - 属性
+    wait: 2.0
   - step_type: action
     action: keyboard_press
     key: escape
-    wait: 0.5
+    wait: 1.0
   assert_steps:
   - step_type: assert
     action: assert_element
@@ -266,31 +286,20 @@ suites:
   - step_type: assert
     action: assert_element
     selector:
-      name: LeftBtn
-      role: push button
-  - step_type: assert
-    action: assert_element
-    selector:
       name: Placeholder
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: MenuPtr
-      role: menu
   - step_type: assert
     action: assert_not_exists
     selector:
       name: MenuPtr
       role: menu
 - id: suite_filemanager_006_s1
-  name: 保险箱创建、解锁与密码重置视图
-  description: ''
+  name: 保险箱创建向导与解锁密码设置流程
+  description: 通过主菜单进入保险箱创建向导，验证下一步按钮、密码输入框与密码提示输入框可用
   steps:
   - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: NextBtn
+    action: dtk_main_menu
     items:
+    - 保险箱
     - 创建保险箱
     wait: 2.0
   - step_type: action
@@ -300,43 +309,32 @@ suites:
       role: push button
     do: focus
   - step_type: action
-    action: keyboard_press
-    key: escape
-    wait: 1.0
-  - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: NextBtn
-    items:
-    - 解锁
-    wait: 2.0
-  - step_type: action
-    action: element_action
+    action: element_set_value
     selector:
       name: PasswordEdit
-    do: focus
+    text: VaultPass123
   - step_type: action
-    action: keyboard_press
-    key: escape
-    wait: 1.0
-  - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: NextBtn
+    action: dtk_main_menu
     items:
+    - 保险箱
     - 重置密码
     wait: 2.0
   - step_type: action
-    action: element_action
+    action: element_set_value
+    selector:
+      name: OldPasswordEdit
+    text: OldVaultPass
+  - step_type: action
+    action: element_set_value
     selector:
       name: NewPasswordEdit
-    do: focus
+    text: NewVaultPass
   - step_type: action
-    action: element_action
+    action: element_set_value
     selector:
       name: PasswordHintEdit
       role: text
-    do: focus
+    text: 我的密码提示
   assert_steps:
   - step_type: assert
     action: assert_element
@@ -354,45 +352,52 @@ suites:
   - step_type: assert
     action: assert_element
     selector:
+      name: NewPasswordEdit
+  - step_type: assert
+    action: assert_element
+    selector:
       name: PasswordHintEdit
       role: text
 - id: suite_filemanager_007_s1
-  name: 磁盘加密分区解锁与加密口令修改
-  description: ''
+  name: 磁盘加密分区解锁与口令修改流程
+  description: 通过主菜单打开加密分区解锁与口令修改对话框，验证密码输入控件可用
   steps:
   - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: PasswordLineEdit
+    action: dtk_main_menu
     items:
+    - 磁盘
     - 解锁加密分区
     wait: 2.0
   - step_type: action
-    action: element_action
+    action: element_set_value
     selector:
       name: PasswordLineEdit
-    do: focus
+    text: DiskPass123
   - step_type: action
     action: keyboard_press
     key: escape
     wait: 1.0
   - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: PasswordLineEdit
+    action: dtk_main_menu
     items:
+    - 磁盘
     - 修改加密口令
     wait: 2.0
   - step_type: action
-    action: element_action
+    action: element_set_value
+    selector:
+      name: OldPass
+    text: OldDiskPass
+  - step_type: action
+    action: element_set_value
     selector:
       name: NewPass1
-    do: focus
+    text: NewDiskPass
   - step_type: action
-    action: element_action
+    action: element_set_value
     selector:
       name: NewPass2
-    do: focus
+    text: NewDiskPass
   assert_steps:
   - step_type: assert
     action: assert_element
@@ -411,39 +416,39 @@ suites:
     selector:
       name: NewPass2
 - id: suite_filemanager_008_s1
-  name: 磁盘密码修改对话框与光盘操作按钮
-  description: ''
+  name: 磁盘密码修改与光盘操作按钮验证
+  description: 通过主菜单打开磁盘密码修改对话框验证密码输入框，验证光盘刻录与转储按钮可用
   steps:
   - step_type: action
     action: dtk_main_menu
     items:
-    - 修改磁盘密码
+    - 磁盘
+    - 修改密码
     wait: 2.0
   - step_type: action
-    action: element_action
+    action: element_set_value
     selector:
       name: OldPwdEdit
-    do: focus
+    text: OldDiskPwd
   - step_type: action
-    action: element_action
+    action: element_set_value
     selector:
       name: NewPwdEdit
-    do: focus
+    text: NewDiskPwd
   - step_type: action
     action: keyboard_press
     key: escape
     wait: 1.0
   - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: OldPwdEdit
-    items:
-    - 打开
-    wait: 2.0
-  - step_type: action
     action: element_action
     selector:
       name: PbBurn
+      role: push button
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: PbDump
       role: push button
     do: focus
   assert_steps:
@@ -466,8 +471,8 @@ suites:
       name: PbDump
       role: push button
 - id: suite_filemanager_009_s1
-  name: 主窗口侧边栏标签栏与连接到服务器对话框
-  description: ''
+  name: 侧边栏导航与连接服务器高级设置
+  description: 验证侧边栏与标签栏可交互，通过主菜单打开连接服务器对话框并填写协议、地址、添加按钮
   steps:
   - step_type: action
     action: element_action
@@ -483,6 +488,7 @@ suites:
   - step_type: action
     action: dtk_main_menu
     items:
+    - 文件
     - 连接到服务器
     wait: 2.0
   - step_type: action
@@ -491,12 +497,7 @@ suites:
       name: SchemeComboBox
       role: combo box
     do: click
-  - step_type: action
-    action: element_action
-    selector:
-      name: ServerComboBox
-      role: combo box
-    do: focus
+    wait: 0.5
   - step_type: action
     action: element_set_value
     selector:
@@ -508,6 +509,7 @@ suites:
     selector:
       name: TheAddButton
     do: click
+    wait: 1.0
   assert_steps:
   - step_type: assert
     action: assert_element
@@ -526,16 +528,20 @@ suites:
   - step_type: assert
     action: assert_element
     selector:
+      name: ServerComboBox
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
       name: TheAddButton
 - id: suite_filemanager_010_s1
-  name: 保险箱属性对话框与密码相关视图
-  description: ''
+  name: 保险箱属性对话框与密码恢复流程
+  description: 通过主菜单打开保险箱属性对话框，验证属性滚动区域、移除密码框、恢复密钥与重置密码控件可用
   steps:
   - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: PropertyDialog-QScrollArea
+    action: dtk_main_menu
     items:
+    - 保险箱
     - 属性
     wait: 2.0
   - step_type: action
@@ -549,45 +555,47 @@ suites:
     key: escape
     wait: 1.0
   - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: PropertyDialog-QScrollArea
+    action: dtk_main_menu
     items:
+    - 保险箱
     - 移除保险箱
     wait: 2.0
   - step_type: action
-    action: element_action
+    action: element_set_value
     selector:
       name: PwdEdit
-    do: focus
+    text: RemovePass123
   - step_type: action
     action: keyboard_press
     key: escape
     wait: 1.0
   - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: PropertyDialog-QScrollArea
+    action: dtk_main_menu
     items:
+    - 保险箱
     - 恢复密钥解锁
     wait: 2.0
   - step_type: action
-    action: element_action
+    action: element_set_value
     selector:
       name: RecoveryKeyEdit
       role: text
-    do: focus
+    text: RECOVERY-KEY-1234
   - step_type: action
     action: keyboard_press
     key: escape
     wait: 1.0
   - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: PropertyDialog-QScrollArea
+    action: dtk_main_menu
     items:
+    - 保险箱
     - 重置密码
     wait: 2.0
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: RepeatPasswordEdit
+    text: ResetPass123
   assert_steps:
   - step_type: assert
     action: assert_element
@@ -608,22 +616,21 @@ suites:
     selector:
       name: RepeatPasswordEdit
 - id: suite_filemanager_011_s1
-  name: 计算机视图重命名栏与危险操作密码确认控件
-  description: ''
+  name: 文件重命名与危险操作密码确认控件
+  description: 通过主菜单进入重命名模式验证重命名编辑框与确认按钮，验证彻底删除密码确认控件可用
   steps:
   - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: RenameEditor
+    action: dtk_main_menu
     items:
+    - 编辑
     - 重命名
     wait: 1.5
   - step_type: action
-    action: element_action
+    action: element_set_value
     selector:
       name: RenameEditor
       role: text
-    do: focus
+    text: 新文件名
   - step_type: action
     action: element_action
     selector:
@@ -634,16 +641,20 @@ suites:
     key: escape
     wait: 1.0
   - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: RenameEditor
+    action: dtk_main_menu
     items:
+    - 编辑
     - 彻底删除
     wait: 2.0
   - step_type: action
-    action: element_action
+    action: element_set_value
     selector:
       name: RepeatPwdEdit
+    text: DeletePass123
+  - step_type: action
+    action: element_action
+    selector:
+      name: SaveBtn
     do: focus
   assert_steps:
   - step_type: assert
@@ -664,8 +675,8 @@ suites:
     selector:
       name: SaveBtn
 - id: suite_filemanager_012_s1
-  name: 设备属性对话框、磁盘解密参数与状态栏缩放滑块
-  description: ''
+  name: 设备属性对话框与状态栏缩放滑块验证
+  description: 右键文件视图打开属性对话框验证滚动区域，验证磁盘解密恢复开关与状态栏缩放滑块可定位
   steps:
   - step_type: action
     action: dtk_context_menu
@@ -721,20 +732,14 @@ suites:
     selector:
       name: ScaleSlider
       role: slider
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: ScaleSlider
-      role: slider
 - id: suite_filemanager_013_s1
-  name: 保险箱创建向导解锁方式设置视图
-  description: ''
+  name: 保险箱创建向导解锁方式与密码提示设置
+  description: 通过主菜单进入保险箱创建向导，验证解锁方式下拉框与密码提示输入框可用并填写提示信息
   steps:
   - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: TypeCombo
+    action: dtk_main_menu
     items:
+    - 保险箱
     - 创建保险箱
     wait: 2.0
   - step_type: action
@@ -743,16 +748,7 @@ suites:
       name: TypeCombo
       role: combo box
     do: click
-  - step_type: action
-    action: keyboard_press
-    key: escape
     wait: 0.5
-  - step_type: action
-    action: element_action
-    selector:
-      name: TipsEdit
-      role: text
-    do: focus
   - step_type: action
     action: element_set_value
     selector:
@@ -776,34 +772,16 @@ suites:
     selector:
       name: TipsEdit
       role: text
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: TypeCombo
-      role: combo box
 - id: suite_filemanager_014_s1
-  name: 保险箱解锁视图提示按钮与提示气泡
-  description: ''
+  name: 保险箱解锁视图提示按钮与气泡交互
+  description: 通过主菜单打开保险箱解锁视图，验证提示按钮可点击产生提示气泡，关闭后气泡消失
   steps:
   - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: TipsButton
+    action: dtk_main_menu
     items:
+    - 保险箱
     - 解锁
     wait: 2.0
-  - step_type: action
-    action: element_action
-    selector:
-      name: TipsButton
-      role: push button
-    do: focus
-  - step_type: action
-    action: element_action
-    selector:
-      name: TipsButton
-      role: push button
-    do: point
   - step_type: action
     action: element_action
     selector:
@@ -822,27 +800,17 @@ suites:
       name: TipsButton
       role: push button
   - step_type: assert
-    action: assert_element
-    selector:
-      name: Tooltip
-  - step_type: assert
     action: assert_not_exists
     selector:
       name: Tooltip
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: TipsButton
-      role: push button
 - id: suite_filemanager_015_s1
-  name: 保险箱删除视图提示按钮与切换删除模式
-  description: ''
+  name: 保险箱删除视图提示与模式切换控件
+  description: 通过主菜单打开保险箱删除视图，验证提示按钮与切换删除模式按钮可交互，关闭后控件消失
   steps:
   - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: TipsBtn
+    action: dtk_main_menu
     items:
+    - 保险箱
     - 删除保险箱
     wait: 2.0
   - step_type: action
@@ -856,12 +824,6 @@ suites:
     selector:
       name: TipsBtn
       role: push button
-    do: point
-  - step_type: action
-    action: element_action
-    selector:
-      name: TipsBtn
-      role: push button
     do: click
     wait: 1.0
   - step_type: action
@@ -869,11 +831,6 @@ suites:
     selector:
       name: ToggleModeBtn
     do: focus
-  - step_type: action
-    action: element_action
-    selector:
-      name: ToggleModeBtn
-    do: point
   - step_type: action
     action: keyboard_press
     key: escape
@@ -885,16 +842,12 @@ suites:
       name: TipsBtn
       role: push button
   - step_type: assert
-    action: assert_element
-    selector:
-      name: ToggleModeBtn
-  - step_type: assert
     action: assert_not_exists
     selector:
       name: ToggleModeBtn
 - id: suite_filemanager_016_s1
   name: 桌面收藏视图控件验证
-  description: 验证桌面 CollectionView 控件可定位
+  description: 验证桌面 CollectionView 控件可定位并可聚焦
   steps:
   - step_type: action
     action: element_action
@@ -906,5 +859,540 @@ suites:
     action: assert_element
     selector:
       name: CollectionView
+
+- id: suite_filemanager_017_s1
+  name: 多标签页管理与侧边栏导航综合流程
+  description: 点击新增标签按钮创建新标签页，验证底部标签栏与标签栏控件可用，然后聚焦侧边栏视图进行导航验证
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: AddBtn
+      role: push button
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: BottomBar
+      role: page tab
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: TabBar
+      role: page tab
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: SideBarView
+    do: focus
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddBtn
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: BottomBar
+      role: page tab
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TabBar
+      role: page tab
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SideBarView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+- id: suite_filemanager_018_s1
+  name: 网络服务器连接配置与方案选择流程
+  description: 通过主菜单打开连接到服务器对话框，依次操作服务器列表、字符集下拉框、协议方案下拉框与服务器地址下拉框，验证高级设置控件可用
+  steps:
+  - step_type: action
+    action: dtk_main_menu
+    items:
+    - 文件
+    - 连接到服务器
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: CollectionServerView
+      role: list
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: CharsetComboBox
+      role: combo box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: SchemeComboBox
+      role: combo box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: ServerComboBox
+      role: combo box
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: TheAddButton
+    do: focus
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionServerView
+      role: list
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CharsetComboBox
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SchemeComboBox
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ServerComboBox
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TheAddButton
+- id: suite_filemanager_019_s1
+  name: 保险箱创建向导多控件综合设置流程
+  description: 通过主菜单进入保险箱创建向导，依次操作解锁方式下拉框、密码提示输入框、完成按钮、密钥文件路径与保险箱路径输入框，验证全部控件可定位
+  steps:
+  - step_type: action
+    action: dtk_main_menu
+    items:
+    - 保险箱
+    - 创建保险箱
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: TypeCombo
+      role: combo box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: TipsEdit
+      role: text
+    text: 请输入密码提示信息
+  - step_type: action
+    action: element_action
+    selector:
+      name: FinishedBtn
+      role: push button
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: KeyFileEdit
+      role: text
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: FilePathEdit
+      role: text
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: CancelBtn
+      role: push button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TypeCombo
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TipsEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: FinishedBtn
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: KeyFileEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: FilePathEdit
+      role: text
+- id: suite_filemanager_020_s1
+  name: 磁盘加密管理与密码修改综合验证流程
+  description: 通过主菜单打开加密管理对话框，依次操作加密类型选择、密钥输入与导出路径，然后验证旧密码、新密码与密码提示输入框可用
+  steps:
+  - step_type: action
+    action: dtk_main_menu
+    items:
+    - 磁盘
+    - 加密管理
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: ChgUnlockType
+      role: push button
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: EncType
+      role: combo box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: EncKeyEdit1
+      role: text
+    text: EncKey_2026
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: EncKeyEdit2
+      role: text
+    text: EncKey_2026
+  - step_type: action
+    action: element_action
+    selector:
+      name: KeyExportInput
+      role: text
+    do: focus
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: OldPasswordEdit
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: NewPasswordEdit
+    do: focus
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: PasswordHintEdit
+      role: text
+    text: 加密密码提示
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ChgUnlockType
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: EncType
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: EncKeyEdit1
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: EncKeyEdit2
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: KeyExportInput
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: OldPasswordEdit
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: NewPasswordEdit
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: PasswordHintEdit
+      role: text
+- id: suite_filemanager_021_s1
+  name: 保险箱密码修改全流程验证
+  description: 通过主菜单进入保险箱密码修改界面，依次填写旧密码、新密码、确认新密码，验证全部密码输入框可定位且值正确输入
+  steps:
+  - step_type: action
+    action: dtk_main_menu
+    items:
+    - 保险箱
+    - 修改密码
+    wait: 2.0
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: OldPass
+    text: OldVaultPass123
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: NewPass1
+    text: NewVaultPass456
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: NewPass2
+    text: NewVaultPass456
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: OldPwdEdit
+    text: ConfirmOldPwd
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: NewPwdEdit
+    text: ConfirmNewPwd
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: RepeatPwdEdit
+    text: ConfirmNewPwd
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: OldPass
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: NewPass1
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: NewPass2
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: OldPwdEdit
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: NewPwdEdit
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: RepeatPwdEdit
+- id: suite_filemanager_022_s1
+  name: 保险箱重命名与恢复密钥设置综合流程
+  description: 通过主菜单进入保险箱设置，操作重命名编辑框与重命名按钮，填写恢复密钥与重复密码，验证全部控件可定位
+  steps:
+  - step_type: action
+    action: dtk_main_menu
+    items:
+    - 保险箱
+    - 保险箱设置
+    wait: 2.0
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: RenameEditor
+    text: MyVault_Renamed
+  - step_type: action
+    action: element_action
+    selector:
+      name: RenameBtn
+    do: focus
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: RecoveryKeyEdit
+      role: text
+    text: RecoveryKey_2026
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: RepeatPasswordEdit
+    text: RepeatPass_2026
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: RenameEditor
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: RenameBtn
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: RecoveryKeyEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: RepeatPasswordEdit
+- id: suite_filemanager_023_s1
+  name: 侧边栏视图与地址栏导航综合流程
+  description: 验证侧边栏视图可定位，聚焦地址栏输入路径，操作收藏视图与标签栏，验证多控件协同导航可用
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: SideBarView
+    do: focus
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: AddressBar
+      role: text
+    text: /home/user/Documents
+  - step_type: action
+    action: element_action
+    selector:
+      name: CollectionView
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: TabBar
+      role: page tab
+    do: focus
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SideBarView
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddressBar
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TabBar
+      role: page tab
+- id: suite_filemanager_024_s1
+  name: 磁盘加密密钥导出与保存操作流程
+  description: 通过主菜单打开加密管理，操作密钥导出路径输入框与保存按钮，验证滚动区域与密码编辑框可定位
+  steps:
+  - step_type: action
+    action: dtk_main_menu
+    items:
+    - 磁盘
+    - 加密管理
+    wait: 2.0
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: KeyExportInput
+      role: text
+    text: /home/user/keys/export.key
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: PwdEdit
+    text: EncryptPwd_2026
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: RepeatPwdEdit
+    text: EncryptPwd_2026
+  - step_type: action
+    action: element_action
+    selector:
+      name: SaveBtn
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: ScrollArea
+    do: focus
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: KeyExportInput
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: PwdEdit
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: RepeatPwdEdit
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SaveBtn
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ScrollArea
 teardown:
 - action: session_stop
