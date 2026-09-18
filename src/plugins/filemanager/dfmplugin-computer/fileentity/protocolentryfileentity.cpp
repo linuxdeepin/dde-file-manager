@@ -35,7 +35,7 @@ ProtocolEntryFileEntity::ProtocolEntryFileEntity(const QUrl &url)
         abort();
     }
 
-    refresh();
+    ProtocolEntryFileEntity::refresh();
 }
 
 QString ProtocolEntryFileEntity::displayName() const

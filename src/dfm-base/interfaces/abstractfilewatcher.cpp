@@ -50,7 +50,7 @@ bool AbstractFileWatcherPrivate::stop()
 
 AbstractFileWatcher::~AbstractFileWatcher()
 {
-    stopWatcher();
+    AbstractFileWatcher::stopWatcher();
 }
 /*!
  * \brief formatPath 获取文件的绝对路径
