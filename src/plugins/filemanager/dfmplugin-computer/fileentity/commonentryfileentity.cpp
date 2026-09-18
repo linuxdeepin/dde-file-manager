@@ -113,7 +113,7 @@ bool CommonEntryFileEntity::showUsageSize() const
 AbstractEntryFileEntity::EntryOrder CommonEntryFileEntity::order() const
 {
     if (reflection() && hasMethod("order")) {
-        AbstractEntryFileEntity::EntryOrder theOrder;
+        AbstractEntryFileEntity::EntryOrder theOrder { AbstractEntryFileEntity::EntryOrder::kOrderCustom };
         bool ret { QMetaObject::invokeMethod(reflectionObj, "order", Qt::DirectConnection,
                                              Q_RETURN_ARG(AbstractEntryFileEntity::EntryOrder, theOrder)) };
         if (ret)
@@ -147,7 +147,7 @@ quint64 CommonEntryFileEntity::sizeTotal() const
 quint64 CommonEntryFileEntity::sizeUsage() const
 {
     if (reflection() && hasMethod("sizeUsage")) {
-        quint64 size;
+        quint64 size { 0 };
         bool ret { QMetaObject::invokeMethod(reflectionObj, "sizeUsage",
                                              Qt::DirectConnection, Q_RETURN_ARG(quint64, size)) };
         if (ret)

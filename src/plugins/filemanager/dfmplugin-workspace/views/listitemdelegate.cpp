@@ -286,7 +286,7 @@ bool ListItemDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, con
             }
         }
 
-        if (tooltip.isEmpty() || index == view->rootIndex()) {
+        if (tooltip.isEmpty() || !view || index == view->rootIndex()) {
             ItemDelegateHelper::hideTooltipImmediately();
         } else {
             int tooltipSize = tooltip.size();

@@ -143,7 +143,7 @@ int SideBarWidget::findItem(const QUrl &url) const
     // TODO(zhuangshu): In sidebar tree-model mode, this function is deprecated and be instead of findItemIndex()
     for (int i = 0; i < kSidebarModelIns->rowCount(); i++) {
         SideBarItem *item = kSidebarModelIns->itemFromIndex(i);
-        if (!dynamic_cast<SideBarItemSeparator *>(item)) {
+        if (item && !dynamic_cast<SideBarItemSeparator *>(item)) {
             bool foundByCb = item->itemInfo().findMeCb && item->itemInfo().findMeCb(item->url(), url);
             if (foundByCb || (item->url().scheme() == url.scheme() && item->url().path() == url.path()))
                 return i;
