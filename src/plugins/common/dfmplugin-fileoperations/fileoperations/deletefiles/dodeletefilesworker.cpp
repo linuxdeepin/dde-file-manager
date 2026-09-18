@@ -24,7 +24,7 @@ DoDeleteFilesWorker::DoDeleteFilesWorker(QObject *parent)
 
 DoDeleteFilesWorker::~DoDeleteFilesWorker()
 {
-    stop();
+    DoDeleteFilesWorker::stop();
     fmDebug() << "Delete files worker destroyed";
 }
 

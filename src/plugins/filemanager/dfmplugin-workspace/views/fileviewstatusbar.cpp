@@ -160,7 +160,7 @@ void FileViewStatusBar::setCustomLayout()
 {
     fmInfo() << "Setting up custom layout for FileViewStatusBar";
 
-    clearLayoutAndAnchors();
+    FileViewStatusBar::clearLayoutAndAnchors();
 
     if (!centerContainer) {
         // Create a container widget for center alignment

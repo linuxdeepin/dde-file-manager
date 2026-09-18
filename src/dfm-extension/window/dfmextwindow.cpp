@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 
 #include "dfmextwindow.h"
+#include "private/dfmextwindowprivate.h"
 
 #include <cassert>
 

@@ -33,7 +33,7 @@ DoCopyFilesWorker::DoCopyFilesWorker(QObject *parent)
 
 DoCopyFilesWorker::~DoCopyFilesWorker()
 {
-    stop();
+    DoCopyFilesWorker::stop();
 }
 
 bool DoCopyFilesWorker::doWork()

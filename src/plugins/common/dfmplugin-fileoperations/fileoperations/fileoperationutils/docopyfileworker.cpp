@@ -1040,7 +1040,7 @@ bool DoCopyFileWorker::verifyFileIntegrity(const qint64 &blockSize, const ulong 
     }
     delete[] data;
 
-    fmDebug("Time spent of integrity check of the file: %d", t.elapsed());
+    fmDebug("Time spent of integrity check of the file: %lld", t.elapsed());
 
     if (sourceCheckSum != targetCheckSum) {
         fmWarning("Integrity check failed - source checksum: 0x%lx, target checksum: 0x%lx, file: %s",
