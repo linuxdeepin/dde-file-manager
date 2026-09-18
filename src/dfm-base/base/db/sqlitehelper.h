@@ -390,12 +390,13 @@ public:
         Q_ASSERT(fieldFixes);
         const QString &field { constraint.field };
         if (!field.isEmpty()) {
-            Q_ASSERT_X(fieldFixes->contains(field), "Sqlite", "Invalid Constraint Field Name");
             if (fieldFixes->contains(field)) {
                 if (constraint.constraint == "NULLABLE" || constraint.constraint.contains("PRIMARY KEY"))
                     (*fieldFixes)[field].remove(" NOT NULL");
                 if (constraint.constraint != "NULLABLE")   // add constraint at field end
                     (*fieldFixes)[field] += constraint.constraint;
+            } else {
+                qCWarning(logDFMBase).noquote() << "Sqlite: Invalid Constraint Field Name:" << field;
             }
         } else {
             if (!constraint.constraint.isEmpty())   // add constraint at table end
