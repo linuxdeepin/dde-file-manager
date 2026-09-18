@@ -384,5 +384,196 @@ suites:
     selector:
       name: ThemeCom
       role: combo box
+
+- id: suite_dde_file_manager_preview_008_s1
+  name: 音乐文件预览播放控制与元数据综合验证流程
+  description: 选中音乐文件预览，验证艺术家与专辑标签及值正确显示，点击播放控制按钮播放，验证进度滑块与状态栏可定位，按Escape关闭
+  steps:
+  - step_type: action
+    action: keyboard_press
+    key: space
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: ArtistLabel
+      role: label
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: AlbumValue
+      role: label
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: PlayControlButton
+      role: push button
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: ProgressSlider
+      role: slider
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: StatusBar
+      role: status bar
+    do: focus
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ArtistLabel
+      role: label
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ArtistValue
+      role: label
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AlbumLabel
+      role: label
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AlbumValue
+      role: label
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: PlayControlButton
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ProgressSlider
+      role: slider
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: StatusBar
+      role: status bar
+- id: suite_dde_file_manager_preview_009_s1
+  name: DCI图标预览主题与调色板参数综合设置流程
+  description: 选中DCI图标文件预览，依次切换主题下拉框、预览模式与可用尺寸下拉框，设置自定义尺寸与全部调色板参数值后关闭
+  steps:
+  - step_type: action
+    action: keyboard_press
+    key: space
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: ThemeCom
+      role: combo box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: down
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: ModeCom
+      role: combo box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: AvailableSizeCombo
+      role: combo box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: CustomSizeEdit
+      role: text
+    text: '128'
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: ForegroundPaletteEdit
+      role: text
+    text: '255'
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: BackgroundPaletteEdit
+      role: text
+    text: '0'
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: HightlightPaletteEdit
+      role: text
+    text: '128'
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: HFpaletteEdit
+      role: text
+    text: '255'
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ThemeCom
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ModeCom
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AvailableSizeCombo
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CustomSizeEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ForegroundPaletteEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: BackgroundPaletteEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: HightlightPaletteEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: HFpaletteEdit
+      role: text
 teardown:
 - action: session_stop

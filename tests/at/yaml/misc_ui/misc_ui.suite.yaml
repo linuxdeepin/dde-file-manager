@@ -112,5 +112,80 @@ suites:
     action: assert_element
     selector:
       name: RightValueEdit
+
+- id: suite_misc_ui_004_s1
+  name: 桌面图标整理与磁盘属性综合操作流程
+  description: 验证桌面图标整理滑块可定位，切换自动整理开关，聚焦快捷键编辑框，然后验证磁盘托盘提示标签与右键属性值编辑框可用
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: Slider
+      role: slider
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: SwitchBtn
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: KeyEdit
+      role: text
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: TextLabel
+      role: label
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: TipsLabel
+    do: point
+    wait: 1.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: TextLabel
+    items:
+    - 属性
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: RightValueEdit
+    do: focus
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: Slider
+      role: slider
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SwitchBtn
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: KeyEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TextLabel
+      role: label
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TipsLabel
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: RightValueEdit
 teardown:
 - action: session_stop

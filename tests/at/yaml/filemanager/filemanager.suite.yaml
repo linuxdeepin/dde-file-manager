@@ -859,5 +859,307 @@ suites:
     action: assert_element
     selector:
       name: CollectionView
+
+- id: suite_filemanager_017_s1
+  name: 多标签页管理与侧边栏导航综合流程
+  description: 点击新增标签按钮创建新标签页，验证底部标签栏与标签栏控件可用，然后聚焦侧边栏视图进行导航验证
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: AddBtn
+      role: push button
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: BottomBar
+      role: page tab
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: TabBar
+      role: page tab
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: SideBarView
+    do: focus
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddBtn
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: BottomBar
+      role: page tab
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TabBar
+      role: page tab
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SideBarView
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
+- id: suite_filemanager_018_s1
+  name: 网络服务器连接配置与方案选择流程
+  description: 通过主菜单打开连接到服务器对话框，依次操作服务器列表、字符集下拉框、协议方案下拉框与服务器地址下拉框，验证高级设置控件可用
+  steps:
+  - step_type: action
+    action: dtk_main_menu
+    items:
+    - 文件
+    - 连接到服务器
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: CollectionServerView
+      role: list
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: CharsetComboBox
+      role: combo box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: SchemeComboBox
+      role: combo box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: ServerComboBox
+      role: combo box
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: TheAddButton
+    do: focus
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionServerView
+      role: list
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CharsetComboBox
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SchemeComboBox
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ServerComboBox
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TheAddButton
+- id: suite_filemanager_019_s1
+  name: 保险箱创建向导多控件综合设置流程
+  description: 通过主菜单进入保险箱创建向导，依次操作解锁方式下拉框、密码提示输入框、完成按钮、密钥文件路径与保险箱路径输入框，验证全部控件可定位
+  steps:
+  - step_type: action
+    action: dtk_main_menu
+    items:
+    - 保险箱
+    - 创建保险箱
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: TypeCombo
+      role: combo box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: TipsEdit
+      role: text
+    text: 请输入密码提示信息
+  - step_type: action
+    action: element_action
+    selector:
+      name: FinishedBtn
+      role: push button
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: KeyFileEdit
+      role: text
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: FilePathEdit
+      role: text
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: CancelBtn
+      role: push button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TypeCombo
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TipsEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: FinishedBtn
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: KeyFileEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: FilePathEdit
+      role: text
+- id: suite_filemanager_020_s1
+  name: 磁盘加密管理与密码修改综合验证流程
+  description: 通过主菜单打开加密管理对话框，依次操作加密类型选择、密钥输入与导出路径，然后验证旧密码、新密码与密码提示输入框可用
+  steps:
+  - step_type: action
+    action: dtk_main_menu
+    items:
+    - 磁盘
+    - 加密管理
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: ChgUnlockType
+      role: push button
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: EncType
+      role: combo box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: EncKeyEdit1
+      role: text
+    text: EncKey_2026
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: EncKeyEdit2
+      role: text
+    text: EncKey_2026
+  - step_type: action
+    action: element_action
+    selector:
+      name: KeyExportInput
+      role: text
+    do: focus
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: OldPasswordEdit
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: NewPasswordEdit
+    do: focus
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: PasswordHintEdit
+      role: text
+    text: 加密密码提示
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ChgUnlockType
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: EncType
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: EncKeyEdit1
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: EncKeyEdit2
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: KeyExportInput
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: OldPasswordEdit
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: NewPasswordEdit
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: PasswordHintEdit
+      role: text
 teardown:
 - action: session_stop
