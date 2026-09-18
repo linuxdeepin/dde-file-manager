@@ -48,7 +48,7 @@ using namespace dfmplugin_workspace;
 ListItemDelegate::ListItemDelegate(FileViewHelper *parent)
     : BaseItemDelegate(*new ListItemDelegatePrivate(this), parent)
 {
-    setIconSizeByIconSizeLevel(1);
+    ListItemDelegate::setIconSizeByIconSizeLevel(1);
 }
 
 ListItemDelegate::~ListItemDelegate()
@@ -461,7 +461,7 @@ int ListItemDelegate::setIconSizeByIconSizeLevel(int level)
     }
 
     d->currentHeightLevel = level;
-    updateItemSizeHint();
+    ListItemDelegate::updateItemSizeHint();
     int iconHeight = d->itemSizeHint.height() * 0.75;
     parent()->parent()->setIconSize(QSize(iconHeight, iconHeight));   // Set iconSize to 0.75 of row height
 

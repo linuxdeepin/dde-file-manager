@@ -1222,7 +1222,7 @@ bool LocalFileHandler::renameFilesBatch(const QMap<QUrl, QUrl> &urls, QMap<QUrl,
         }
     }
 
-    qCInfo(logDFMBase, "rename Files Batch, source files count : %d, success files count : %d .\
+    qCInfo(logDFMBase, "rename Files Batch, source files count : %lld, success files count : %lld .\
           ",
            urls.count(), successUrls.count());
 
