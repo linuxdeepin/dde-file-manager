@@ -750,7 +750,7 @@ bool Settings::setValueNoNotify(const QString &group, const QString &key, const 
 
         changed = true;
     } else {
-        changed = SettingsPrivate::normalizeValue(this->value(group, key, value)) != normalizedValue;
+        changed = SettingsPrivate::normalizeValue(this->value(group, key, QVariant())) != normalizedValue;
     }
 
     d->writableData.setValue(group, key, normalizedValue);
