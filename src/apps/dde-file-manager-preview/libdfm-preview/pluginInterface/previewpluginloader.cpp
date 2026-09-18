@@ -243,7 +243,7 @@ void PreviewPluginLoader::update()
                 const QString &key = keys.at(k);
 
                 if (dptr->rki) {
-                    dptr->keyMap.insertMulti(key, loader);
+                    dptr->keyMap.insert(key, loader);
                     ++keyUsageCount;
                 } else {
                     QPluginLoader *previous = dptr->keyMap.value(key);
@@ -253,7 +253,7 @@ void PreviewPluginLoader::update()
                     }
                     int dfm_version = static_cast<int>(loader->metaData().value(versionKeyLiteral()).toDouble());
                     if (!previous || (prev_dfm_version > QString(VERSION).toDouble() && dfm_version <= QString(VERSION).toDouble())) {
-                        dptr->keyMap.insertMulti(key, loader);
+                        dptr->keyMap.insert(key, loader);
                         ++keyUsageCount;
                         if (previous) {
                             qCDebug(logLibFilePreview) << "PreviewPluginLoader: replaced plugin for key:" << key << "old version:" << prev_dfm_version << "new version:" << dfm_version;

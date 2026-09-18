@@ -439,7 +439,7 @@ void SheetBrowser::mousePressEvent(QMouseEvent *e)
 {
     if (e->button() == Qt::LeftButton) {
         isPressed = true;
-        mouseStartPos = e->globalPos();
+        mouseStartPos = e->globalPosition().toPoint();
         QWidget *pWidget = getMainDialog();
         if (pWidget)
             windowStartPos = pWidget->frameGeometry().topLeft();
@@ -449,7 +449,7 @@ void SheetBrowser::mousePressEvent(QMouseEvent *e)
 void SheetBrowser::mouseMoveEvent(QMouseEvent *e)
 {
     if (isPressed) {
-        QPoint mouseMoveDistance = e->globalPos() - mouseStartPos;
+        QPoint mouseMoveDistance = e->globalPosition().toPoint() - mouseStartPos;
         QWidget *pWidget = getMainDialog();
         if (pWidget)
             pWidget->move(windowStartPos + mouseMoveDistance);

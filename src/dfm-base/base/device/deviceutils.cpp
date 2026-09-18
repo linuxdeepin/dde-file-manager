@@ -484,7 +484,6 @@ QString DeviceUtils::nameOfSize(const quint64 &size)
     QStringListIterator i(list);
     QString unit = i.hasNext() ? i.next() : QStringLiteral("B");
 
-    int index = 0;
     while (i.hasNext()) {
         if (fileSize < 1024) {
             break;
@@ -492,7 +491,6 @@ QString DeviceUtils::nameOfSize(const quint64 &size)
 
         unit = i.next();
         fileSize /= 1024;
-        index++;
     }
     return QString("%1 %2").arg(QString::number(fileSize, 'f', 1)).arg(unit);
 }

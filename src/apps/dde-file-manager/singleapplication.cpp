@@ -88,12 +88,8 @@ void SingleApplication::openAsAdmin()
 void SingleApplication::handleNewClient(const QString &uniqueKey)
 {
     QByteArray data { nullptr };
-    bool isSetGetMonitorFiles = false;
 
     for (const QString &arg : arguments()) {
-        if (arg == "--get-monitor-files")
-            isSetGetMonitorFiles = true;
-
         if (!arg.startsWith("-") && QFile::exists(arg))
             data.append(QDir(arg).absolutePath().toLocal8Bit().toBase64());
         else
