@@ -1161,5 +1161,238 @@ suites:
     selector:
       name: PasswordHintEdit
       role: text
+- id: suite_filemanager_021_s1
+  name: 保险箱密码修改全流程验证
+  description: 通过主菜单进入保险箱密码修改界面，依次填写旧密码、新密码、确认新密码，验证全部密码输入框可定位且值正确输入
+  steps:
+  - step_type: action
+    action: dtk_main_menu
+    items:
+    - 保险箱
+    - 修改密码
+    wait: 2.0
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: OldPass
+    text: OldVaultPass123
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: NewPass1
+    text: NewVaultPass456
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: NewPass2
+    text: NewVaultPass456
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: OldPwdEdit
+    text: ConfirmOldPwd
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: NewPwdEdit
+    text: ConfirmNewPwd
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: RepeatPwdEdit
+    text: ConfirmNewPwd
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: OldPass
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: NewPass1
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: NewPass2
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: OldPwdEdit
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: NewPwdEdit
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: RepeatPwdEdit
+- id: suite_filemanager_022_s1
+  name: 保险箱重命名与恢复密钥设置综合流程
+  description: 通过主菜单进入保险箱设置，操作重命名编辑框与重命名按钮，填写恢复密钥与重复密码，验证全部控件可定位
+  steps:
+  - step_type: action
+    action: dtk_main_menu
+    items:
+    - 保险箱
+    - 保险箱设置
+    wait: 2.0
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: RenameEditor
+    text: MyVault_Renamed
+  - step_type: action
+    action: element_action
+    selector:
+      name: RenameBtn
+    do: focus
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: RecoveryKeyEdit
+      role: text
+    text: RecoveryKey_2026
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: RepeatPasswordEdit
+    text: RepeatPass_2026
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: RenameEditor
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: RenameBtn
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: RecoveryKeyEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: RepeatPasswordEdit
+- id: suite_filemanager_023_s1
+  name: 侧边栏视图与地址栏导航综合流程
+  description: 验证侧边栏视图可定位，聚焦地址栏输入路径，操作收藏视图与标签栏，验证多控件协同导航可用
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: SideBarView
+    do: focus
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: AddressBar
+      role: text
+    text: /home/user/Documents
+  - step_type: action
+    action: element_action
+    selector:
+      name: CollectionView
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: TabBar
+      role: page tab
+    do: focus
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SideBarView
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddressBar
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TabBar
+      role: page tab
+- id: suite_filemanager_024_s1
+  name: 磁盘加密密钥导出与保存操作流程
+  description: 通过主菜单打开加密管理，操作密钥导出路径输入框与保存按钮，验证滚动区域与密码编辑框可定位
+  steps:
+  - step_type: action
+    action: dtk_main_menu
+    items:
+    - 磁盘
+    - 加密管理
+    wait: 2.0
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: KeyExportInput
+      role: text
+    text: /home/user/keys/export.key
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: PwdEdit
+    text: EncryptPwd_2026
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: RepeatPwdEdit
+    text: EncryptPwd_2026
+  - step_type: action
+    action: element_action
+    selector:
+      name: SaveBtn
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: ScrollArea
+    do: focus
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: KeyExportInput
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: PwdEdit
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: RepeatPwdEdit
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SaveBtn
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ScrollArea
 teardown:
 - action: session_stop

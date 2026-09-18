@@ -187,5 +187,57 @@ suites:
     action: assert_element
     selector:
       name: RightValueEdit
+- id: suite_misc_ui_005_s1
+  name: 视图提示图标与快捷键编辑综合流程
+  description: 验证视图提示图标按钮可聚焦，操作桌面图标整理滑块与自动整理开关，聚焦快捷键编辑框输入值，验证全部控件可定位
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: IconButton
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: Slider
+      role: slider
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: SwitchBtn
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: KeyEdit
+      role: text
+    text: Ctrl+Shift+D
+  - step_type: action
+    action: element_action
+    selector:
+      name: CloseButton
+    do: click
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: IconButton
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: Slider
+      role: slider
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SwitchBtn
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: KeyEdit
+      role: text
 teardown:
 - action: session_stop

@@ -575,5 +575,159 @@ suites:
     selector:
       name: HFpaletteEdit
       role: text
+- id: suite_dde_file_manager_preview_010_s1
+  name: 视频预览翻页与文件列表切换综合流程
+  description: 选中视频文件按空格键打开预览，点击播放控制按钮播放，按右方向键翻页，验证文件列表视图与项目视图父控件可定位
+  steps:
+  - step_type: action
+    action: keyboard_press
+    key: space
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: ControlButton
+      role: push button
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: right
+    wait: 1.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: View_ImageList
+      role: list
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: ItemViewParent
+      role: list
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: Nextbutton
+      role: push button
+    do: focus
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ControlButton
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: View_ImageList
+      role: list
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ItemViewParent
+      role: list
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: Nextbutton
+      role: push button
+- id: suite_dde_file_manager_preview_011_s1
+  name: DCI图标尺寸与调色板组合设置流程
+  description: 选中DCI图标文件预览，依次切换预览模式与可用尺寸下拉框，设置自定义尺寸与全部调色板前景背景参数，验证控件可定位
+  steps:
+  - step_type: action
+    action: keyboard_press
+    key: space
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: ModeCom
+      role: combo box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: AvailableSizeCombo
+      role: combo box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: CustomSizeEdit
+      role: text
+    text: 256
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: ForegroundPaletteEdit
+      role: text
+    text: 128
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: BackgroundPaletteEdit
+      role: text
+    text: 64
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: HightlightPaletteEdit
+      role: text
+    text: 200
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: HFpaletteEdit
+      role: text
+    text: 100
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ModeCom
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AvailableSizeCombo
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CustomSizeEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ForegroundPaletteEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: BackgroundPaletteEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: HightlightPaletteEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: HFpaletteEdit
+      role: text
 teardown:
 - action: session_stop
