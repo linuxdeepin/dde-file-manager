@@ -225,10 +225,6 @@ QList<QByteArray> MusicMessageView::detectEncodings(const QByteArray &rawData)
 
     for (int32_t match = 0; match < matchCount; match += 1) {
         const char *name = ucsdet_getName(csm[match], &status);
-        const char *lang = ucsdet_getLanguage(csm[match], &status);
-        if (lang == nullptr || strlen(lang) == 0) {
-            lang = "**";
-        }
         charsets << name;
     }
 

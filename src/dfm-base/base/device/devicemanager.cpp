@@ -37,10 +37,6 @@ DFM_MOUNT_USE_NS
 using namespace GlobalServerDefines;
 using namespace GlobalDConfDefines::ConfigPath;
 
-static constexpr char kSavePasswd[] { "savePasswd" };
-static constexpr char kStashedSmbDevices[] { "StashedSmbDevices" };
-static constexpr char kSavedPasswordType[] { "SavedPasswordType" };
-
 static constexpr char kDaemonService[] { "org.deepin.Filemanager.MountControl" };
 static constexpr char kDaemonPath[] { "/org/deepin/Filemanager/MountControl" };
 static constexpr char kDaemonMountPath[] { "/org/deepin/Filemanager/MountControl" };
