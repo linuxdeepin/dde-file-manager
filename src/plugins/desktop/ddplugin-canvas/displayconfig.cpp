@@ -84,7 +84,8 @@ DisplayConfig::DisplayConfig(QObject *parent)
     connect(
             syncTimer, &QTimer::timeout, this, [this]() {
                 QMutexLocker lk(&mtxLock);
-                settings->sync();
+                if (settings)
+                    settings->sync();
             },
             Qt::QueuedConnection);
 }
