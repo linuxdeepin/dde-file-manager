@@ -101,7 +101,7 @@ protected:
                            return path.startsWith(tmp.path());
                        });
 
-        // Prevent handleSlientStart() from scanning real system directories
+        // Prevent handleSilentStart() from scanning real system directories
         stub.set_lamda(ADDR(Global, defaultIndexedDirectory),
                        [this]() -> QStringList {
                            __DBG_STUB_INVOKE__

@@ -36,11 +36,11 @@ protected:
     {
         ASSERT_TRUE(tmp.isValid());
         runtime = std::make_unique<IndexRuntime>(
-            IndexProfile(IndexProfile::Type::Content, "tm_priv", "tm_priv_status.json", "tm_priv_ver", 1,
-                         [this]() -> QString { return tmp.path(); },
-                         []() -> bool { return true; },
-                         [](const QString &) -> bool { return true; },
-                         [](const QString &) -> bool { return true; }));
+            IndexProfile({ IndexProfile::Type::Content, "tm_priv", "tm_priv_status.json", "tm_priv_ver", 1 },
+                         { [this]() -> QString { return tmp.path(); },
+                           []() -> bool { return true; },
+                           [](const QString &) -> bool { return true; },
+                           [](const QString &) -> bool { return true; } }));
         mgr = runtime->taskManager();
         ASSERT_NE(mgr, nullptr);
     }

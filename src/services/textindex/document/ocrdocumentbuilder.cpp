@@ -81,4 +81,29 @@ DocumentPtr OcrDocumentBuilder::build(const QString &filePath, const QString &te
     return doc;
 }
 
+std::list<PathDerivedFieldSpec> OcrDocumentBuilder::pathDerivedFields() const
+{
+    // 与 build() 中对应字段的存储/索引属性保持一致；纯元数据重算，无 OCR 提取
+    return {
+        { OcrText::kFilename, [](const QString &newPath) -> FieldPtr {
+             return newLucene<Field>(OcrText::kFilename, QFileInfo(newPath).fileName().toStdWString(),
+                                     Field::STORE_YES, Field::INDEX_ANALYZED);
+         } },
+        { OcrText::kIsHidden, [](const QString &newPath) -> FieldPtr {
+             const QString hiddenTag = DFMSEARCH::Global::isHiddenPathOrInHiddenDir(QFileInfo(newPath).absoluteFilePath())
+                     ? QStringLiteral("Y")
+                     : QStringLiteral("N");
+             return newLucene<Field>(OcrText::kIsHidden, hiddenTag.toStdWString(),
+                                     Field::STORE_YES, Field::INDEX_NOT_ANALYZED);
+         } },
+        { OcrText::kFileExt, [](const QString &newPath) -> FieldPtr {
+             const QString fileExt = QFileInfo(newPath).suffix().toLower();
+             if (fileExt.isEmpty())
+                 return nullptr;   // 与 build() 一致：无扩展名则不加该字段
+             return newLucene<Field>(OcrText::kFileExt, fileExt.toStdWString(),
+                                     Field::STORE_YES, Field::INDEX_NOT_ANALYZED);
+         } },
+    };
+}
+
 SERVICETEXTINDEX_END_NAMESPACE

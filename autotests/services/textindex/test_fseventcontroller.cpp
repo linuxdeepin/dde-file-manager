@@ -47,15 +47,15 @@ protected:
 
     IndexProfile makeProfile()
     {
-        return IndexProfile(IndexProfile::Type::Content,
-                            "fsec_test",
-                            "fsec_status.json",
-                            "fsec_version",
-                            1,
-                            [this]() -> QString { return tmp.path(); },
-                            []() -> bool { return true; },
-                            [](const QString &) -> bool { return true; },
-                            [](const QString &) -> bool { return true; });
+        return IndexProfile({ IndexProfile::Type::Content,
+                              "fsec_test",
+                              "fsec_status.json",
+                              "fsec_version",
+                              1 },
+                            { [this]() -> QString { return tmp.path(); },
+                              []() -> bool { return true; },
+                              [](const QString &) -> bool { return true; },
+                              [](const QString &) -> bool { return true; } });
     }
 };
 

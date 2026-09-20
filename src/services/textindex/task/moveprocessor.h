@@ -47,6 +47,18 @@ private:
      */
     bool isFileInIndex(const QString &path);
 
+    /**
+     * @brief Rebuild the document for a moved file from its new path
+     *
+     * Executed for profiles declaring IndexProfile::MoveUpdatePolicy::RebuildDocument
+     * (document fields derived from path, e.g. filename). Locates the old
+     * document by fromPath so no stale document is left behind.
+     * @param fromPath Source file path
+     * @param toPath Target file path
+     * @return true if rebuilt successfully, false otherwise
+     */
+    bool rebuildDocumentForMove(const QString &fromPath, const QString &toPath);
+
 
 
     /**

@@ -24,7 +24,15 @@ FileSystemProvider::FileSystemProvider(IndexProfile profile, const QString &root
     : m_profile(std::move(profile)),
       m_rootPath(rootPath)
 {
-    fmInfo() << "[FileSystemProvider] Initialized with root path:" << rootPath;
+    // Per-profile 黑名单（filename: anything blacklist + 索引目录，避免索引器
+    // 遍历进自身索引目录造成死循环/索引污染）；未提供时不过滤（Content/Ocr 行为不变，
+    // 其黑名单在 TaskHandler 的 shouldSkipExcludedFile 层生效）。
+    if (m_profile.filterPolicy().blacklistProvider) {
+        m_excludeMatcher.addPatterns(m_profile.filterPolicy().blacklistProvider());
+    }
+
+    fmInfo() << "[FileSystemProvider] Initialized with root path:" << rootPath
+             << "blacklist patterns:" << m_excludeMatcher.patternCount();
 }
 
 void FileSystemProvider::traverse(TaskState &state, const FileHandler &handler)
@@ -75,6 +83,12 @@ void FileSystemProvider::traverse(TaskState &state, const FileHandler &handler)
             continue;
         }
 
+        // 目录自身也作为文档写入索引（filename profile，file_type=dir）。
+        // 置于所有跳过检查之后、递归之前：入索引的目录集合与实际遍历的目录集合严格一致，
+        // 且目录先于其子条目建档，搜索语义上父子同步可见
+        if (m_profile.filterPolicy().indexDirectories)
+            handler(currentPath);
+
         DIR *dir = opendir(currentPath.toStdString().c_str());
         if (!dir) {
             fmWarning() << "[FileSystemProvider::traverse] Failed to open directory:" << currentPath
@@ -92,10 +106,17 @@ void FileSystemProvider::traverse(TaskState &state, const FileHandler &handler)
                 break;
             }
 
-            if (IndexTraverseUtils::isHiddenFile(entry->d_name) || IndexTraverseUtils::isSpecialDir(entry->d_name))
+            if (IndexTraverseUtils::isSpecialDir(entry->d_name))
                 continue;
 
             QString fullPath = QDir::cleanPath(currentPath + QDir::separator() + QString::fromUtf8(entry->d_name));
+
+            // 隐藏文件策略由 profile 统一决定（IndexProfile::shouldSkipHiddenEntry）：
+            // Content/Ocr 跳过所有隐藏条目；filename 索引隐藏文件（标记 is_hidden 字段），
+            // 但屏蔽策略命中的条目（默认主目录下的隐藏条目，其子树同样不入遍历队列）
+            if (IndexTraverseUtils::isHiddenFile(entry->d_name)
+                && m_profile.shouldSkipHiddenEntry(fullPath))
+                continue;
 
             struct stat st;
             if (lstat(fullPath.toStdString().c_str(), &st) == -1) {
@@ -108,15 +129,27 @@ void FileSystemProvider::traverse(TaskState &state, const FileHandler &handler)
             if (S_ISREG(st.st_mode)) {
                 QString fileName = QString::fromUtf8(entry->d_name);
                 // 早期扩展名过滤 - 避免昂贵的路径验证
-                if (IndexTraverseUtils::isValidFile(fullPath) && m_profile.isCandidateFile(fullPath)) {
+                if (IndexTraverseUtils::isValidFile(fullPath) && m_profile.isCandidateFile(fullPath)
+                    && !m_excludeMatcher.shouldExclude(fullPath)) {
                     handler(fullPath);
                     processedFiles++;
                 }
             }
-            // 对于目录，检查是否应该跳过，然后加入队列
+            // 对于目录，检查是否应该跳过（含 per-profile 黑名单，如索引目录），然后加入队列
             else if (S_ISDIR(st.st_mode)) {
-                if (!IndexTraverseUtils::shouldSkipDirectory(fullPath)) {
+                if (!IndexTraverseUtils::shouldSkipDirectory(fullPath)
+                    && !m_excludeMatcher.shouldExclude(fullPath)) {
                     dirQueue.enqueue(fullPath);
+                }
+            }
+            // 符号链接条目（lstat 视角）：link 本身作为条目入索引（filename profile），
+            // 绝不跟随——dir link 不入遍历队列（S_ISDIR 经 lstat 不会命中 link），
+            // link 内部内容不经链接路径入索引。dangling link 也是文件管理器中的
+            // 真实可见条目，同样收录（filename 文档全部路径派生，无需目标存在）。
+            else if (S_ISLNK(st.st_mode) && m_profile.filterPolicy().indexSymlinks) {
+                if (m_profile.isCandidateFile(fullPath) && !m_excludeMatcher.shouldExclude(fullPath)) {
+                    handler(fullPath);
+                    processedFiles++;
                 }
             }
         }
@@ -167,7 +200,14 @@ MixedPathListProvider::MixedPathListProvider(IndexProfile profile, const QString
     : m_profile(std::move(profile)),
       m_pathList(pathList)
 {
-    fmInfo() << "[MixedPathListProvider] Initialized with" << pathList.size() << "paths";
+    // Per-profile 黑名单（filename: anything blacklist + 索引目录，死循环防护）；
+    // 未提供时不过滤（Content/Ocr 维持原有 folderExcludeFilters 逻辑）
+    if (m_profile.filterPolicy().blacklistProvider) {
+        m_excludeMatcher.addPatterns(m_profile.filterPolicy().blacklistProvider());
+    }
+
+    fmInfo() << "[MixedPathListProvider] Initialized with" << pathList.size() << "paths,"
+             << "profile blacklist patterns:" << m_excludeMatcher.patternCount();
 }
 
 void MixedPathListProvider::traverse(TaskState &state, const FileHandler &handler)
@@ -193,6 +233,29 @@ void MixedPathListProvider::traverse(TaskState &state, const FileHandler &handle
         }
 
         QFileInfo fileInfo(path);
+        // 与 FileSystemProvider 同构的隐藏条目过滤（防御事件之外来源的路径，
+        // 如 DBus 手动触发）：策略命中的隐藏条目不建档、不入遍历队列
+        if (m_profile.shouldSkipHiddenEntry(path)) {
+            fmDebug() << "[MixedPathListProvider::traverse] Skipping hidden entry per profile policy:" << path;
+            continue;
+        }
+
+        // 符号链接条目（lstat 视角，filename profile）：link 本身作为条目建档，
+        // 不按目标类型分流——dangling link 的 exists()/isFile() 均为 false，
+        // 必须在 exists 检查之前识别；dir link 绝不入遍历队列。
+        if (fileInfo.isSymLink()) {
+            if (m_profile.filterPolicy().indexSymlinks
+                && m_profile.isPathInScope(path)
+                && m_profile.isCandidateFile(path)
+                && !m_excludeMatcher.shouldExclude(path)
+                && !processedFiles.contains(path)) {
+                handler(path);
+                processedFiles.insert(path);
+                initialFiles++;
+            }
+            continue;
+        }
+
         if (!fileInfo.exists()) {
             fmWarning() << "[MixedPathListProvider::traverse] Path does not exist:" << path;
             continue;
@@ -214,16 +277,22 @@ void MixedPathListProvider::traverse(TaskState &state, const FileHandler &handle
                 fmDebug() << "[MixedPathListProvider::traverse] Skipping invalid or out-of-scope file:" << path;
             }
         } else if (fileInfo.isDir() && !fileInfo.isSymLink()) {
-            // 检查目录是否在黑名单中
+            // 检查目录是否在黑名单中（TextIndexConfig 目录名 + per-profile 黑名单路径）
             bool isBlacklisted = false;
             QString dirName = fileInfo.fileName();
-            if (defaultBlacklistedDirs.contains(dirName)) {
+            if (defaultBlacklistedDirs.contains(dirName) || m_excludeMatcher.shouldExclude(path)) {
                 isBlacklisted = true;
                 fmDebug() << "[MixedPathListProvider::traverse] Directory blacklisted:" << path;
             }
 
             // 只有不在黑名单中的目录才加入队列
             if (!isBlacklisted) {
+                // 目录自身建档（filename profile）：与上方文件分支同构，
+                // 同样受 scope 约束，避免范围外路径混入索引
+                if (m_profile.filterPolicy().indexDirectories
+                    && m_profile.isPathInScope(path)) {
+                    handler(path);
+                }
                 dirQueue.enqueue(path);
                 initialDirs++;
             }
@@ -266,6 +335,10 @@ void MixedPathListProvider::traverse(TaskState &state, const FileHandler &handle
             continue;
         }
 
+        // 目录自身建档（filename profile），与递归集合一致（同 FileSystemProvider）
+        if (m_profile.filterPolicy().indexDirectories)
+            handler(currentDir);
+
         DIR *dir = opendir(currentDir.toStdString().c_str());
         if (!dir) {
             fmWarning() << "[MixedPathListProvider::traverse] Failed to open directory:" << currentDir
@@ -287,13 +360,18 @@ void MixedPathListProvider::traverse(TaskState &state, const FileHandler &handle
                 continue;
 
             QString entryName = QString::fromUtf8(entry->d_name);
-            // 检查目录名是否在黑名单中
+            // 检查目录名是否在黑名单中（TextIndexConfig 目录名）
             if (defaultBlacklistedDirs.contains(entryName)) {
                 fmDebug() << "[MixedPathListProvider::traverse] Skipping blacklisted entry:" << entryName;
                 continue;
             }
 
             QString fullPath = QDir::cleanPath(currentDir + QDir::separator() + entryName);
+
+            // 与 FileSystemProvider 同构的隐藏条目过滤（策略命中的条目不建档、不入队）
+            if (IndexTraverseUtils::isHiddenFile(entry->d_name)
+                && m_profile.shouldSkipHiddenEntry(fullPath))
+                continue;
 
             struct stat st;
             if (lstat(fullPath.toStdString().c_str(), &st) == -1) {
@@ -306,7 +384,8 @@ void MixedPathListProvider::traverse(TaskState &state, const FileHandler &handle
             if (S_ISREG(st.st_mode)) {
                 if (IndexTraverseUtils::isValidFile(fullPath)
                     && m_profile.isPathInScope(fullPath)
-                    && m_profile.isCandidateFile(fullPath)) {
+                    && m_profile.isCandidateFile(fullPath)
+                    && !m_excludeMatcher.shouldExclude(fullPath)) {
                     handler(fullPath);
                     processedFiles.insert(fullPath);
                     additionalFiles++;
@@ -314,10 +393,23 @@ void MixedPathListProvider::traverse(TaskState &state, const FileHandler &handle
                     skippedFilesByExtension++;
                 }
             }
-            // 对于目录，加入队列
+            // 对于目录，加入队列（per-profile 黑名单目录不遍历）
             else if (S_ISDIR(st.st_mode)) {
-                // 目录已在上面检查过黑名单，所以这里直接加入队列
-                dirQueue.enqueue(fullPath);
+                if (!m_excludeMatcher.shouldExclude(fullPath)) {
+                    dirQueue.enqueue(fullPath);
+                }
+            }
+            // 符号链接条目（filename profile）：link 本身作为条目入索引，
+            // 绝不跟随/入队（dir link 内部内容不经链接路径索引）
+            else if (S_ISLNK(st.st_mode) && m_profile.filterPolicy().indexSymlinks) {
+                if (m_profile.isPathInScope(fullPath)
+                    && m_profile.isCandidateFile(fullPath)
+                    && !m_excludeMatcher.shouldExclude(fullPath)
+                    && !processedFiles.contains(fullPath)) {
+                    handler(fullPath);
+                    processedFiles.insert(fullPath);
+                    additionalFiles++;
+                }
             }
         }
     }

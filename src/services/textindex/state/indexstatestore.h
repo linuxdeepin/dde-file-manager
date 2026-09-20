@@ -71,7 +71,7 @@ SERVICETEXTINDEX_BEGIN_NAMESPACE
  * 2. 服务重启，initialize() 检测到 Dirty，设置 m_recoveryPending=true
  * 3. 此时文件系统监控（FSEventController）检测到文件变化，触发了一个小的增量更新任务
  * 4. 增量任务完成 → finalizeIndexState() 检查 m_recoveryPending == true → **不设 Clean**，保持 Dirty
- * 5. 同时，handleSlientStart() 检测到 recoveryPending，启动完整 Update 任务
+ * 5. 同时，handleSilentStart() 检测到 recoveryPending，启动完整 Update 任务
  * 6. 完整 Update 任务成功 → m_recoveryPending 被清除为 false → state 设为 Clean
  *
  * ### 4. version + lastUpdateTime —— 版本与时间管理
@@ -98,7 +98,7 @@ SERVICETEXTINDEX_BEGIN_NAMESPACE
  * | MoveFileList | 否 | saveLastUpdateTime(仅时间), state=Clean(若非recoveryPending) |
  *
  * @see TaskManager::finalizeIndexState() 状态转换的核心逻辑
- * @see TextIndexDBusPrivate::handleSlientStart() 启动恢复逻辑
+ * @see TextIndexDBusPrivate::handleSilentStart() 启动恢复逻辑
  */
 class IndexStateStore
 {
@@ -147,7 +147,7 @@ public:
      * @param need 是否需要重建
      *
      * 通常由 ConfigWatcher 的信号触发（ANYTHING/DLNFS 配置变更），
-     * 也可在 handleSlientStart 中主动清除（启动 Update 任务前）。
+     * 也可在 handleSilentStart 中主动清除（启动 Update 任务前）。
      */
     void setNeedsRebuild(bool need) const;
 
@@ -173,6 +173,36 @@ public:
      * 不破坏文件中的其他字段（如 state、needsRebuild、version 等）。
      */
     void setCreateInProgress(bool inProgress) const;
+
+    /**
+     * @brief 读取 updateInProgress 标记
+     * @return true 表示全量对比型 UPDATE 任务（恢复/rebuild）未完成；false 表示无此类任务进行中
+     *
+     * 状态机（由全量对比型 Update 任务的生命周期驱动）：
+     * - UPDATE startTask 时置 true（覆盖恢复 Update / needsRebuild Update / 手动 Update）
+     * - Update 全量任务成功完成时（finalizeIndexState）置 false
+     * - 失败/中断时不操作（保持 true），下次启动继续恢复，搜索持续降级直到恢复成功
+     * - 普通事件增量任务（UpdateFileList/MoveFileList/CreateFileList/RemoveFileList）不操作此标记
+     *
+     * 用途：恢复/rebuild Update 是"cleanup + 按 mtime 全量对比"的扫盘过程，期间索引滞后
+     * （新文件漏报、已删文件误报），对外可见性应视为 "scanning"（搜索降级），
+     * 与 createInProgress（首次创建/版本重建窗口）互补。
+     *
+     * 字段缺失时默认返回 false（旧版遗留文件或文件不存在）。
+     */
+    bool isUpdateInProgress() const;
+
+    /**
+     * @brief 设置 updateInProgress 标记并持久化
+     * @param inProgress 全量对比型 UPDATE 任务是否未完成
+     *
+     * 采用 read-modify-write 模式：先读取整个 JSON，更新字段，再写回。
+     * 不破坏文件中的其他字段（如 state、needsRebuild、version 等）。
+     */
+    void setUpdateInProgress(bool inProgress) const;
+
+    bool isBacklogExceeded() const;
+    void setBacklogExceeded(bool exceeded) const;
 
     /**
      * @brief 获取上次更新时间

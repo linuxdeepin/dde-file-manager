@@ -15,6 +15,9 @@ public:
     Lucene::DocumentPtr build(const QString &filePath,
                               const QString &text,
                               const BuilderOptions &options = {}) const override;
+
+    // kFilename/kIsHidden/kFileExt 由路径派生，move 后按新路径重算
+    std::list<PathDerivedFieldSpec> pathDerivedFields() const override;
 };
 
 SERVICETEXTINDEX_END_NAMESPACE

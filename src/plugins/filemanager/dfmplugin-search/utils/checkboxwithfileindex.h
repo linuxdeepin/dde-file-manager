@@ -6,12 +6,9 @@
 
 #include "indexstatuscheckbox.h"
 
-#include <DDialog>
-
-#include <QDateTime>
-#include <QTimer>
-
 namespace dfmplugin_search {
+
+class IndexStatusController;
 
 class CheckBoxWithFileIndex : public IndexStatusCheckBox
 {
@@ -19,49 +16,16 @@ class CheckBoxWithFileIndex : public IndexStatusCheckBox
 
 public:
     explicit CheckBoxWithFileIndex(QWidget *parent = nullptr);
-
+    void connectToBackend();
     void initStatusBar();
 
 protected:
     bool acceptCheckStateChange(Qt::CheckState oldState, Qt::CheckState newState) override;
 
 private:
-    struct FileIndexState
-    {
-        bool querySuccess { false };
-        bool enabled { false };
-        bool serviceActive { false };
-        QString status;
-        QString lastUpdateTime;
-    };
-
-    struct CommandResult
-    {
-        bool started { false };
-        bool finished { false };
-        int exitCode { -1 };
-        bool normalExit { false };
-        QString standardOutput;
-        QString standardError;
-    };
-
-    void handleCheckStateChanged(Qt::CheckState state);
-    void refreshState();
-    FileIndexState queryState() const;
-    void applyState(const FileIndexState &state);
-    bool restartFileIndex();
+    IndexStatusController *m_controller { nullptr };
     bool confirmDisableFileIndex();
-    bool createRefreshIndexFile() const;
-    CommandResult runSystemctlCommand(const QStringList &arguments) const;
-    QString statusFilePath() const;
-    QString refreshFilePath() const;
-    QString formatDisplayTime(const QString &isoTime) const;
-
-private:
-    QTimer *m_pollTimer { nullptr };
-    bool m_syncingState { false };
 };
 
 }   // namespace dfmplugin_search
-
 #endif   // CHECKBOXWITHFILEINDEX_H

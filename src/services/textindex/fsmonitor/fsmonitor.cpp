@@ -105,7 +105,15 @@ bool FSMonitorPrivate::init(const QStringList &rootPaths)
 
     // Use static factory method to create configured blacklist matcher
     // BEFORE creating VfsMonitor watcher (needs it for excludePredicate).
+    // 该 matcher 仅用于 inotify watch 的建立与 worker 目录遍历（并集黑名单：
+    // Content/Ocr 的 TextIndexConfig+anything 黑名单 + filename 的索引目录），
+    // 不用于 VfsMonitor 事件过滤——事件分发保持仅结构性过滤（符号链接+rootPaths），
+    // 策略性过滤由各 runtime 的 FSEventCollector::shouldTrackPath() 完成。
     excludeMatcher = PathExcludeMatcher::createForIndex();
+    excludeMatcher.addPattern(DFMSEARCH::Global::fileNameIndexDirectory());
+    excludeMatcher.addPattern(DFMSEARCH::Global::contentIndexDirectory());
+    excludeMatcher.addPattern(DFMSEARCH::Global::ocrTextIndexDirectory());
+    excludeMatcher.addPattern(QStringLiteral(".avfs"));
 
     // Try to create VfsMonitorFileSystemWatcher for global file system events.
     // Pass shouldExcludePath as the exclude predicate so filtering happens
@@ -131,9 +139,11 @@ bool FSMonitorPrivate::init(const QStringList &rootPaths)
     fmDebug() << "FSMonitor: Initialized with" << excludeMatcher.patternCount()
               << "blacklist patterns";
 
-    // Configure worker with exclusion logic
+    // Configure worker with exclusion logic:
+    // 结构性过滤（符号链接，绝不遍历进 link——防索引环）+ 并集黑名单
+    //（不为黑名单/索引目录建立 inotify watch）
     worker->setExclusionChecker([this](const QString &path) {
-        return shouldExcludePath(path);
+        return shouldExcludePath(path) || isSymbolicLink(path) || excludeMatcher.shouldExclude(path);
     });
     worker->setMaxFastScanResults(getMaxUserWatches());
 
@@ -307,35 +317,13 @@ bool FSMonitorPrivate::shouldExcludePath(const QString &path) const
         return true;
     }
 
-    // Check if path is a symlink
-    if (isSymbolicLink(path)) {
-        fmDebug() << "FSMonitor: Excluding symbolic link:" << path;
-        return true;
-    }
+    // 符号链接事件不再在此排除：link 条目本身是合法的索引条目（filename
+    // profile 按链接自身路径建档，见 FilterPolicy::indexSymlinks），是否收录
+    // 由各 runtime 的 pathPredicate 决定。watch/worker 范围（addWatchForDirectory、
+    // exclusionChecker）仍显式排除 symlink——绝不监控/遍历 link 内部，防索引环。
 
-    // Skip hidden files/dirs if hidden files aren't enabled in settings
-    if (!showHidden()) {
-        QFileInfo fileInfo(path);
-        if (fileInfo.fileName().startsWith('.')) {
-            fmDebug() << "FSMonitor: Excluding hidden file/directory:" << path;
-            return true;
-        }
-
-        // Check if any parent directory is hidden
-        if (DFMSEARCH::Global::isHiddenPathOrInHiddenDir(fileInfo.absoluteFilePath())) {
-            fmDebug() << "FSMonitor: Excluding file in hidden directory:" << path;
-            return true;
-        }
-    }
-
-    // Calculate absolute path safely
-    QDir dir(path);
-    const QString absolutePath = dir.exists() ? dir.absolutePath() : path;
-
-    // Check against blacklisted paths using PathExcludeMatcher
-    if (excludeMatcher.shouldExclude(absolutePath)) {
-        return true;
-    }
+    // Hidden file and blacklist filtering moved to per-runtime pathPredicate
+    // in FSEventController::setupFSEventCollector() to support per-profile policies.
 
     // 以下判断严重影响性能，如无问题反馈则屏蔽
     // // Check if path is on external mount
@@ -366,8 +354,12 @@ bool FSMonitorPrivate::showHidden() const
 
 bool FSMonitorPrivate::addWatchForDirectory(const QString &path)
 {
-    // Skip if path is empty or should exclude
-    if (path.isEmpty() || shouldExcludePath(path)) {
+    // Skip if path is empty, structurally excluded, a symlink (绝不监控 link
+    // 内部——防索引环), or in the union blacklist (union of all active
+    // runtimes' blacklists incl. index directories — only controls watch
+    // resources, event dispatch is unaffected)
+    if (path.isEmpty() || isSymbolicLink(path) || shouldExcludePath(path)
+        || excludeMatcher.shouldExclude(path)) {
         return false;
     }
 
@@ -486,16 +478,19 @@ void FSMonitorPrivate::setupVfsMonitorConnections()
 
                          Q_EMIT q_ptr->directoryMoved(fromPath, fromName, toPath, toName);
                      });
+
+    // Lost events (dispatcher disconnect / queue overflow) cannot be
+    // replayed — surface them so runtimes schedule a compensating update.
+    QObject::connect(vfsWatcher.data(), &VfsMonitorFileSystemWatcher::eventsLost,
+                     q_ptr, [this]() {
+                         fmWarning() << "FSMonitor: vfs monitor lost filesystem events, recovery update required";
+                         Q_EMIT q_ptr->eventsLost();
+                     });
 }
 
 void FSMonitorPrivate::handleFileCreated(const QString &path, const QString &name)
 {
     if (!active || path.isEmpty()) {
-        return;
-    }
-
-    // Skip hidden files if needed
-    if (!showHidden() && name.startsWith('.')) {
         return;
     }
 
@@ -521,11 +516,6 @@ void FSMonitorPrivate::handleFileDeleted(const QString &path, const QString &nam
         return;
     }
 
-    // Skip hidden files if needed
-    if (!showHidden() && name.startsWith('.')) {
-        return;
-    }
-
     QString fullPath = QDir(path).absoluteFilePath(name);
 
     if (watchedDirectories.contains(fullPath)) {
@@ -548,11 +538,6 @@ void FSMonitorPrivate::handleFileClosed(const QString &path, const QString &name
         return;
     }
 
-    // Skip hidden files if needed
-    if (!showHidden() && name.startsWith('.')) {
-        return;
-    }
-
     Q_EMIT q_ptr->fileClosed(path, name);
 }
 
@@ -560,11 +545,6 @@ void FSMonitorPrivate::handleFileMoved(const QString &fromPath, const QString &f
                                        const QString &toPath, const QString &toName)
 {
     if (!active) {
-        return;
-    }
-
-    // Skip hidden files if needed
-    if (!showHidden() && toName.startsWith('.')) {
         return;
     }
 

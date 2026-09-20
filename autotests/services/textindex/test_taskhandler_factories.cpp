@@ -36,15 +36,15 @@ protected:
 
     IndexProfile makeProfile()
     {
-        return IndexProfile(IndexProfile::Type::Content,
-                            "th_test",
-                            "th_status.json",
-                            "th_version",
-                            1,
-                            [this]() -> QString { return tmp.path(); },
-                            []() -> bool { return true; },
-                            [](const QString &) -> bool { return true; },
-                            [](const QString &) -> bool { return true; });
+        return IndexProfile({ IndexProfile::Type::Content,
+                              "th_test",
+                              "th_status.json",
+                              "th_version",
+                              1 },
+                            { [this]() -> QString { return tmp.path(); },
+                              []() -> bool { return true; },
+                              [](const QString &) -> bool { return true; },
+                              [](const QString &) -> bool { return true; } });
     }
 
     std::unique_ptr<IndexRuntime> runtime;

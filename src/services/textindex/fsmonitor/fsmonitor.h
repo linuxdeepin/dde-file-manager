@@ -106,6 +106,11 @@ Q_SIGNALS:
     // Emitted when resource usage reaches the limit
     void resourceLimitReached(int currentCount, int maxCount);
 
+    // Emitted when monitored filesystem events were lost (dispatcher
+    // disconnect or internal queue overflow) and a full index update is
+    // required to re-sync. VfsMonitor mode only.
+    void eventsLost();
+
     // Emitted when an error occurs
     void errorOccurred(const QString &errorMessage);
 

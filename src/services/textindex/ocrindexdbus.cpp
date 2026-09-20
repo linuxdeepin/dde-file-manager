@@ -72,10 +72,14 @@ void OcrIndexDBusPrivate::initConnect()
                      q, [this](bool start) {
                          handleMonitoring(start);
                      });
-    QObject::connect(runtime->fsEventController(), &FSEventController::requestSlientStart,
+    QObject::connect(runtime->fsEventController(), &FSEventController::requestSilentStart,
                      q, [this]() {
-                         handleSlientStart();
+                         handleSilentStart();
                      });
+
+    // 丢事件（dispatcher 断连/事件队列溢出）时不做补偿更新：OCR 全量重建
+    // 代价过高，监控重连后继续监听增量事件即可。补偿语义仅由
+    // FileNameIndexDBus 承担（见其 requestEventsRecovery 连接）。
 
     QObject::connect(&TextIndexConfig::instance(), &TextIndexConfig::configChanged,
                      q, [this]() {
@@ -104,7 +108,7 @@ void OcrIndexDBusPrivate::handleMonitoring(bool start)
     runtime->fsEventController()->startFSMonitoring();
 }
 
-void OcrIndexDBusPrivate::handleSlientStart()
+void OcrIndexDBusPrivate::handleSilentStart()
 {
     static std::once_flag flag;
     std::call_once(flag, [this]() {
@@ -137,7 +141,9 @@ void OcrIndexDBusPrivate::handleSlientStart()
         if (needsRebuild || needsRecovery) {
             fmInfo() << "OcrIndexDBus: Starting update task - needsRebuild:" << needsRebuild
                      << "needsRecovery:" << needsRecovery << "for:" << pathsToProcess;
-            runtime->taskManager()->startTask(IndexTask::Type::Update, pathsToProcess);
+            // 内部恢复（Dirty/needsRebuild）静默更新：跳过全库清理，见 UpdateIndexHandler 注释
+            runtime->taskManager()->startTask(IndexTask::Type::Update, pathsToProcess,
+                                              IndexTask::Grade::None, false, true);
             return;
         }
 
@@ -335,7 +341,9 @@ void OcrIndexDBusPrivate::handleConfigChanged()
         const QStringList pathsToProcess = defaultPathsToProcess();
         if (q->IndexDatabaseExists()) {
             fmInfo() << "OcrIndexDBus: Starting index update task due to supported OCR image extensions change for paths:" << pathsToProcess;
-            runtime->taskManager()->startTask(IndexTask::Type::Update, pathsToProcess);
+            // 内部配置变更更新：跳过全库清理，见 UpdateIndexHandler 注释
+            runtime->taskManager()->startTask(IndexTask::Type::Update, pathsToProcess,
+                                              IndexTask::Grade::None, false, true);
         } else {
             fmWarning() << "OcrIndexDBus: Cannot start index update task, index database does not exist";
         }

@@ -32,7 +32,7 @@ public:
     void initialize();
     void initConnect();
     void handleMonitoring(bool start);
-    void handleSlientStart();
+    void handleSilentStart();
     bool canSilentlyRefreshIndex(const QString &path) const;
 
 private:

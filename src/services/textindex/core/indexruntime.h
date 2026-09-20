@@ -8,13 +8,16 @@
 #include "core/indexcontext.h"
 #include "document/contentdocumentbuilder.h"
 #include "document/ocrdocumentbuilder.h"
+#include "document/filenamedocumentbuilder.h"
 #include "fsmonitor/fseventcontroller.h"
 #include "extractor/processextractor.h"
 #include "profile/indexprofile.h"
 #include "state/indexstatestore.h"
 #include "task/taskmanager.h"
+#include "task/backlogtracker.h"
 
 #include <QObject>
+#include <memory>
 
 SERVICETEXTINDEX_BEGIN_NAMESPACE
 
@@ -41,7 +44,9 @@ private:
     ProcessExtractor m_processExtractor;
     ContentDocumentBuilder m_contentDocumentBuilder;
     OcrDocumentBuilder m_ocrDocumentBuilder;
+    FileNameDocumentBuilder m_fileNameDocumentBuilder;
     IndexContext m_context;
+    std::unique_ptr<BacklogTracker> m_backlogTracker;
     TaskManager *m_taskManager { nullptr };
     FSEventController *m_fsEventController { nullptr };
 };

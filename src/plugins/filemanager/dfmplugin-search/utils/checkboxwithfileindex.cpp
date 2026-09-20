@@ -3,185 +3,56 @@
 
 #include "checkboxwithfileindex.h"
 
-#include "dfmplugin_search_global.h"
+#include "indexstatuscontroller.h"
+#include "filenameindexclient.h"
 #include "searchmanager/searchmanager.h"
 
-#include <QDir>
-#include <QFile>
-#include <QFileInfo>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QProcess>
-#include <unistd.h>
+#include <DDialog>
+
+#include <QApplication>
 
 namespace dfmplugin_search {
-
-namespace {
-constexpr int kPollIntervalMs = 3000;
-constexpr int kCommandTimeoutMs = 3000;
-const char kAnythingServiceName[] = "deepin-anything-daemon.service";
-}
 
 CheckBoxWithFileIndex::CheckBoxWithFileIndex(QWidget *parent)
     : IndexStatusCheckBox(parent)
 {
-    setInactiveText(tr("Enable to build the file index immediately for faster file name searches"));
-    setIndexingTexts(tr("Building index"), QString(), QString());
+    IndexStatusControllerOptions options;
+    options.logTag = QStringLiteral("FileIndex");
+    options.inactiveText = tr("Enable to build the file index immediately for faster file name searches");
+    options.indexingInitialText = tr("Building index");
+    options.indexingFilesText = tr("Building index, %1 files indexed");
+    options.indexingItemsText = tr("Building index, %1/%2 items indexed");
+    options.failedMainText = tr("Index update failed, please");
+    options.failedLinkText = tr("try updating again");
+    options.completedMainText = tr("Index update completed, last update time: %1");
+    options.completedLinkText = tr("Update index now");
+    options.waitingPowerMainText = tr("Currently using battery, index update has been paused");
+    options.waitingPowerSaveMainText = tr("Power saving mode is enabled, index update has been paused");
+    options.waitingIdleMainText = tr("Waiting for the device to become idle to continue updating");
+    options.waitingUpgradeMainText = tr("Waiting for index service upgrade");
+    options.waitingUpdateLinkText = tr("Continue updating");
+    options.waitingUpgradeLinkText = tr("Update index now");
 
-    m_pollTimer = new QTimer(this);
-    m_pollTimer->setInterval(kPollIntervalMs);
-
-    connect(this, &IndexStatusCheckBox::checkStateChanged,
-            this, &CheckBoxWithFileIndex::handleCheckStateChanged);
-    connect(this, &IndexStatusCheckBox::resetRequested, this, [this]() {
-        if (!isChecked())
-            return;
-
-        setStatus(Status::Indexing);
-        if (!restartFileIndex())
-            fmWarning() << "[FileIndex] Failed to restart file index daemon";
-        refreshState();
-    });
-    connect(m_pollTimer, &QTimer::timeout, this, &CheckBoxWithFileIndex::refreshState);
-
+    m_controller = new IndexStatusController(this, FileNameIndexClient::instance(), options, this);
     connect(SearchManager::instance(), &SearchManager::enableFileIndexSearchChanged, this, [this](bool enable) {
-        m_syncingState = true;
-        setChecked(enable);
-        m_syncingState = false;
+        m_controller->syncCheckedState(enable);
     });
+}
+
+void CheckBoxWithFileIndex::connectToBackend()
+{
+    m_controller->connectToBackend();
 }
 
 void CheckBoxWithFileIndex::initStatusBar()
 {
-    refreshState();
-    m_pollTimer->start();
+    m_controller->initStatusBar();
 }
 
 bool CheckBoxWithFileIndex::acceptCheckStateChange(Qt::CheckState oldState, Qt::CheckState newState)
 {
-    if (m_syncingState)
-        return true;
-
     if (oldState == Qt::CheckState::Checked && newState == Qt::CheckState::Unchecked)
         return confirmDisableFileIndex();
-
-    return true;
-}
-
-void CheckBoxWithFileIndex::handleCheckStateChanged(Qt::CheckState state)
-{
-    if (m_syncingState)
-        return;
-
-    if (state == Qt::CheckState::Checked)
-        setStatus(Status::Indexing);
-    else
-        setStatus(Status::Inactive);
-}
-
-void CheckBoxWithFileIndex::refreshState()
-{
-    applyState(queryState());
-}
-
-CheckBoxWithFileIndex::FileIndexState CheckBoxWithFileIndex::queryState() const
-{
-    FileIndexState state;
-
-    const auto enabledResult = runSystemctlCommand({ "--user", "is-enabled", kAnythingServiceName });
-    if (!enabledResult.started || !enabledResult.finished) {
-        fmWarning() << "[FileIndex] Failed to query is-enabled";
-        return state;
-    }
-
-    const QString enabledText = enabledResult.standardOutput.trimmed();
-    if (enabledText == QStringLiteral("masked")) {
-        state.querySuccess = true;
-        state.enabled = false;
-        return state;
-    }
-
-    if (enabledText != QStringLiteral("static")) {
-        fmWarning() << "[FileIndex] Unexpected is-enabled output:" << enabledText
-                    << "stderr:" << enabledResult.standardError.trimmed();
-        return state;
-    }
-
-    state.enabled = true;
-
-    const auto activeResult = runSystemctlCommand({ "--user", "is-active", kAnythingServiceName });
-    if (!activeResult.started || !activeResult.finished) {
-        fmWarning() << "[FileIndex] Failed to query is-active";
-        return state;
-    }
-
-    state.serviceActive = (activeResult.standardOutput.trimmed() == QStringLiteral("active"));
-
-    QFile statusFile(statusFilePath());
-    if (statusFile.exists() && statusFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        const auto document = QJsonDocument::fromJson(statusFile.readAll());
-        if (document.isObject()) {
-            const auto object = document.object();
-            state.status = object.value(QStringLiteral("status")).toString();
-            state.lastUpdateTime = object.value(QStringLiteral("time")).toString();
-        } else {
-            fmWarning() << "[FileIndex] status.json is not a JSON object";
-        }
-    } else if (statusFile.exists()) {
-        fmWarning() << "[FileIndex] Failed to read status file:" << statusFile.fileName();
-    }
-
-    state.querySuccess = true;
-    return state;
-}
-
-void CheckBoxWithFileIndex::applyState(const FileIndexState &state)
-{
-    if (!state.querySuccess) {
-        if (isChecked()) {
-            setStatus(Status::Failed);
-            setFailedText(tr("Index update failed"), tr("try updating again"));
-        } else {
-            setStatus(Status::Inactive);
-        }
-        return;
-    }
-
-    if (!state.enabled) {
-        setStatus(Status::Inactive);
-        return;
-    }
-
-    if (!state.serviceActive) {
-        if (isChecked()) {
-            setStatus(Status::Failed);
-            setFailedText(tr("Index update failed"), tr("try updating again"));
-        } else {
-            setStatus(Status::Inactive);
-        }
-        return;
-    }
-
-    if (state.status == QStringLiteral("monitoring")) {
-        setStatus(Status::Completed);
-        setCompletedText(tr("Index update completed, last update time: %1").arg(formatDisplayTime(state.lastUpdateTime)),
-                         tr("Update index now"));
-        return;
-    }
-
-    setStatus(Status::Indexing);
-}
-
-bool CheckBoxWithFileIndex::restartFileIndex()
-{
-    if (!createRefreshIndexFile())
-        return false;
-
-    const auto restartResult = runSystemctlCommand({ "--user", "restart", "deepin-anything-daemon" });
-    if (!restartResult.started || !restartResult.finished || !restartResult.normalExit || restartResult.exitCode != 0) {
-        fmWarning() << "[FileIndex] Failed to restart service:" << restartResult.standardError.trimmed();
-        return false;
-    }
 
     return true;
 }
@@ -195,73 +66,6 @@ bool CheckBoxWithFileIndex::confirmDisableFileIndex()
     dialog.addButton(QObject::tr("Confirm"), true, Dtk::Widget::DDialog::ButtonRecommend);
 
     return dialog.exec() == Dtk::Widget::DDialog::Accepted;
-}
-
-bool CheckBoxWithFileIndex::createRefreshIndexFile() const
-{
-    const QFileInfo fileInfo(refreshFilePath());
-    QDir dir = fileInfo.dir();
-    if (!dir.exists() && !dir.mkpath(QStringLiteral("."))) {
-        fmWarning() << "[FileIndex] Failed to create refresh directory:" << dir.path();
-        return false;
-    }
-
-    QFile refreshFile(fileInfo.filePath());
-    if (!refreshFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text)) {
-        fmWarning() << "[FileIndex] Failed to create refresh file:" << refreshFile.fileName();
-        return false;
-    }
-
-    refreshFile.close();
-    return true;
-}
-
-CheckBoxWithFileIndex::CommandResult CheckBoxWithFileIndex::runSystemctlCommand(const QStringList &arguments) const
-{
-    CommandResult result;
-
-    QProcess process;
-    process.setProgram(QStringLiteral("systemctl"));
-    process.setArguments(arguments);
-    process.start();
-    result.started = process.waitForStarted(kCommandTimeoutMs);
-    if (!result.started) {
-        fmWarning() << "[FileIndex] Failed to start command: systemctl" << arguments;
-        return result;
-    }
-
-    result.finished = process.waitForFinished(kCommandTimeoutMs);
-    if (!result.finished) {
-        fmWarning() << "[FileIndex] Command timed out: systemctl" << arguments;
-        process.kill();
-        process.waitForFinished();
-        return result;
-    }
-
-    result.exitCode = process.exitCode();
-    result.normalExit = (process.exitStatus() == QProcess::NormalExit);
-    result.standardOutput = QString::fromLocal8Bit(process.readAllStandardOutput());
-    result.standardError = QString::fromLocal8Bit(process.readAllStandardError());
-    return result;
-}
-
-QString CheckBoxWithFileIndex::statusFilePath() const
-{
-    return QStringLiteral("/run/user/%1/deepin-anything-server/status.json").arg(::getuid());
-}
-
-QString CheckBoxWithFileIndex::refreshFilePath() const
-{
-    return QStringLiteral("/run/user/%1/deepin-anything-server/refresh_index").arg(::getuid());
-}
-
-QString CheckBoxWithFileIndex::formatDisplayTime(const QString &isoTime) const
-{
-    const QDateTime parsedTime = QDateTime::fromString(isoTime, Qt::ISODate);
-    if (parsedTime.isValid())
-        return parsedTime.toString(QStringLiteral("yyyy-MM-dd hh:mm:ss"));
-
-    return QString(isoTime).replace(QLatin1Char('T'), QLatin1Char(' '));
 }
 
 }   // namespace dfmplugin_search

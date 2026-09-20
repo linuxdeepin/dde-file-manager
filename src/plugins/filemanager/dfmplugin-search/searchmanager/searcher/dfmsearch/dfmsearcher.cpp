@@ -8,15 +8,30 @@
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/device/deviceproxymanager.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <dfm-search/searchfactory.h>
 
 #include <QDebug>
+#include <QDir>
 #include <QFileInfo>
 
 DFMBASE_USE_NAMESPACE
 DPSEARCH_USE_NAMESPACE
 DFM_SEARCH_USE_NS
+
+namespace {
+
+// 设置页"文件索引"开关。关闭后索引停止增量更新会逐渐过期，
+// 搜索必须回退实时遍历，不得再使用 Indexed 策略。
+bool isFileIndexSearchEnabled()
+{
+    return DConfigManager::instance()->value(DConfig::kSearchCfgPath,
+                                             DConfig::kEnableFileIndexSearch, true)
+            .toBool();
+}
+
+}   // namespace
 
 DFMSearcher::DFMSearcher(const QUrl &url, const QString &keyword, QObject *parent, SearchType type)
     : AbstractSearcher(url, keyword, parent)
@@ -260,8 +275,9 @@ bool DFMSearcher::shouldExcludeIndexedPaths(const QString &transformedPath) cons
         return false;
     }
 
-    // 当索引目录不可用时，不排除索引路径
-    if (engine->searchType() == SearchType::FileName && !DFMSEARCH::Global::isFileNameIndexReadyForSearch()) {
+    // 当索引目录不可用或文件索引被关闭时，不排除索引路径
+    if (engine->searchType() == SearchType::FileName
+        && (!DFMSEARCH::Global::isFileNameIndexReadyForSearch() || !isFileIndexSearchEnabled())) {
         fmDebug() << "Not excluding indexed paths due to unavailable filename index directory";
         return false;
     }
@@ -331,6 +347,12 @@ SearchMethod DFMSearcher::getSearchMethod(const QString &path) const
     if (engine->searchType() != SearchType::FileName)
         return SearchMethod::Indexed;
 
+    // 对于文件名搜索，设置中关闭了文件索引时必须回退实时搜索
+    if (!isFileIndexSearchEnabled()) {
+        fmInfo() << "File index is disabled in settings, use realtime method to:" << path;
+        return SearchMethod::Realtime;
+    }
+
     // 对于文件名搜索，首先检查文件名索引目录是否可用
     if (!DFMSEARCH::Global::isFileNameIndexReadyForSearch()) {
         fmWarning() << "File name index directory is not available, falling back to realtime search for path:" << path;
@@ -344,6 +366,21 @@ SearchMethod DFMSearcher::getSearchMethod(const QString &path) const
     if (!inIndexDir || inHiddenDir) {
         fmInfo() << "Use realtime method to: " << path << "- in index dir:" << inIndexDir << "in hidden dir:" << inHiddenDir;
         return SearchMethod::Realtime;
+    }
+
+    // filename 索引默认不收录主目录第一级的隐藏条目（见 textindex FilterPolicy::
+    // hiddenIndexExclusion，如 ~/.local 整个子树）。用户开启"显示隐藏文件"后，
+    // 索引搜索在主目录（或其祖先目录）范围内会缺失这些隐藏条目，必须回退实时
+    // 搜索兜底；主目录内的普通子目录仍走 Indexed（其中的深层隐藏目录依然被
+    // 索引，无需实时遍历）
+    if (Application::instance()->genericAttribute(Application::kShowedHiddenFiles).toBool()) {
+        static const QString homePath = QDir::homePath();
+        const bool coversHome = path == homePath
+                || homePath.startsWith(path.endsWith('/') ? path : path + QLatin1Char('/'));
+        if (coversHome) {
+            fmInfo() << "Show hidden files enabled and search scope covers home directory, use realtime method to:" << path;
+            return SearchMethod::Realtime;
+        }
     }
 
     // 一个文件即使在anything的索引挂载点下，但是用户依然可能继续

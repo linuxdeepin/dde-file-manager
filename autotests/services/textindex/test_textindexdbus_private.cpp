@@ -6,7 +6,7 @@
  * @file test_textindexdbus_private.cpp
  * @brief Tests for TextIndexDBusPrivate methods accessed via d (friend access).
  *        Covers initializeSupportedExtensions, handleConfigChanged, handleMonitoring,
- *        handleSlientStart, canSilentlyRefreshIndex, cleanup.
+ *        handleSilentStart, canSilentlyRefreshIndex, cleanup.
  */
 
 #include <gtest/gtest.h>
@@ -119,12 +119,12 @@ TEST_F(TextIndexDBusPrivateTest, HandleMonitoring_Start)
     EXPECT_NO_FATAL_FAILURE({ d->handleMonitoring(true); });
 }
 
-// ---- handleSlientStart (once_flag - only runs once) ----
-TEST_F(TextIndexDBusPrivateTest, HandleSlientStart)
+// ---- handleSilentStart (once_flag - only runs once) ----
+TEST_F(TextIndexDBusPrivateTest, HandleSilentStart)
 {
     // This uses std::call_once, so it runs once and then never again
     // But we can still call it to cover the function
-    EXPECT_NO_FATAL_FAILURE({ d->handleSlientStart(); });
+    EXPECT_NO_FATAL_FAILURE({ d->handleSilentStart(); });
 }
 
 // ---- handleConfigChanged ----

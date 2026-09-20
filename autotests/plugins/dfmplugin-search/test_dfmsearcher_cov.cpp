@@ -43,7 +43,13 @@
 //   [4] FileName + ready + in dir + hidden dir -> Realtime (GetSearchMethod_HiddenDir_*)
 //   [5] FileName + ready + in dir + external mount -> Realtime (GetSearchMethod_ExternalMount_*)
 //   [6] FileName + ready + symlink resolves outside index -> Realtime (GetSearchMethod_SymlinkOutsideIndex_*)
+//   [5] FileName + ready + in dir + external mount -> Realtime (GetSearchMethod_ExternalMount_*)
+//   [6] FileName + ready + symlink resolves outside index -> Realtime (GetSearchMethod_SymlinkOutsideIndex_*)
 //   [7] fallback -> Indexed (canonical path empty) (GetSearchMethod_InIndexDirNoSymlink_*)
+//   [8] FileName + ready + show-hidden enabled + scope covers home -> Realtime
+//       (GetSearchMethod_ShowHiddenEnabled_HomeDirectory_* / NormalSubdir_*)
+//   [9] FileName + ready + in dir + show-hidden disabled + home -> Indexed
+//       (GetSearchMethod_ShowHiddenDisabled_HomeDirectory_*)
 // DFMSEARCH::SearchEngine methods are non-virtual, so the engine is isolated by
 // stubbing SearchEngine::search/status/searchType/searchOptions/setSearchOptions/cancel.
 // ============================================================================
@@ -723,18 +729,59 @@ TEST_F(UT_DFMSearcherCov, GetSearchMethod_SymlinkOutsideIndex_UsesRealtime)
     EXPECT_EQ(capturedOptions.method(), DFMSEARCH::SearchMethod::Realtime);
 }
 
-TEST_F(UT_DFMSearcherCov, GetSearchMethod_InIndexDirNoSymlink_UsesIndexed)
+TEST_F(UT_DFMSearcherCov, GetSearchMethod_ShowHiddenEnabled_HomeDirectory_UsesRealtime)
 {
-    // Arrange
-    stub.set_lamda(&UrlRoute::urlToPath, [](const QUrl &) -> QString {
-        return "/home/test/not-exist-path";   // canonicalFilePath() empty -> symlink check skipped
-    });
+    // filename 索引不收录主目录下的隐藏条目：显示隐藏文件开启 + 搜索主目录
+    // 时索引结果缺失隐藏条目，必须回退实时搜索兜底
     DFMSearcher *searcher = createSearcher(DFMSEARCH::SearchType::FileName, true, true);
+    stub.set_lamda(static_cast<QVariant (*)(Application::GenericAttribute)>(&Application::genericAttribute),
+                   [](Application::GenericAttribute) -> QVariant {
+                       return QVariant(true);   // kShowedHiddenFiles enabled
+                   });
+    const QString home = QDir::homePath();
+    stub.set_lamda(&UrlRoute::urlToPath, [](const QUrl &) -> QString {
+        return QDir::homePath();
+    });
 
     // Act
     bool ok = searcher->search();
 
     // Assert
+    EXPECT_TRUE(ok);
+    EXPECT_EQ(capturedOptions.method(), DFMSEARCH::SearchMethod::Realtime);
+    EXPECT_TRUE(capturedOptions.includeHidden());   // realtime with hidden files included
+}
+
+TEST_F(UT_DFMSearcherCov, GetSearchMethod_ShowHiddenEnabled_NormalSubdir_StillIndexed)
+{
+    // 显示隐藏开启，但搜索主目录内的普通子目录（不覆盖主目录）：仍走 Indexed
+    // （避免每次普通搜索都全树实时遍历）
+    DFMSearcher *searcher = createSearcher(DFMSEARCH::SearchType::FileName, true, true);
+    stub.set_lamda(static_cast<QVariant (*)(Application::GenericAttribute)>(&Application::genericAttribute),
+                   [](Application::GenericAttribute) -> QVariant {
+                       return QVariant(true);   // show hidden files enabled
+                   });
+    stub.set_lamda(&UrlRoute::urlToPath, [](const QUrl &) -> QString {
+        return QDir::homePath() + "/Documents";
+    });
+
+    bool ok = searcher->search();
+
+    EXPECT_TRUE(ok);
+    EXPECT_EQ(capturedOptions.method(), DFMSEARCH::SearchMethod::Indexed);
+}
+
+TEST_F(UT_DFMSearcherCov, GetSearchMethod_ShowHiddenDisabled_HomeDirectory_UsesIndexed)
+{
+    // 显示隐藏关闭（默认）：主目录搜索仍走 Indexed（索引不含主目录隐藏条目，
+    // includeHidden=false 时结果集恰好一致）
+    stub.set_lamda(&UrlRoute::urlToPath, [](const QUrl &) -> QString {
+        return QDir::homePath();
+    });
+    DFMSearcher *searcher = createSearcher(DFMSEARCH::SearchType::FileName, true, true);
+
+    bool ok = searcher->search();
+
     EXPECT_TRUE(ok);
     EXPECT_EQ(capturedOptions.method(), DFMSEARCH::SearchMethod::Indexed);
 }

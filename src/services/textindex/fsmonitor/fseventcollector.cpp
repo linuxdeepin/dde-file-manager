@@ -231,6 +231,7 @@ void FSEventCollectorPrivate::stopCollecting()
     deletedFilesList.clear();
     modifiedFilesList.clear();
     movedFilesList.clear();
+    directoryHintCache.clear();
 
     fmInfo() << "FSEventCollector: Stopped event collection";
 }
@@ -476,12 +477,17 @@ void FSEventCollectorPrivate::handleDirectoryCreated(const QString &path, const 
 {
     QString fullPath = normalizePath(path, name);
     deletedDirectoriesMarker.remove(fullPath);
+    deletedFilesList.remove(fullPath);
+    // Known directory: pre-seed the cache so isDirectory() never re-stats.
+    directoryHintCache.insert(fullPath, true);
     handleFileCreated(path, name);
 }
 
 void FSEventCollectorPrivate::handleDirectoryDeleted(const QString &path, const QString &name)
 {
     QString fullPath = normalizePath(path, name);
+    // The entry is gone (or about to be); drop any stale dir-ness.
+    directoryHintCache.remove(fullPath);
 
     // Mark as directory
     deletedDirectoriesMarker.insert(fullPath);
@@ -506,6 +512,8 @@ void FSEventCollectorPrivate::handleDirectoryMoved(const QString &fromPath, cons
     }
 
     // Regular move within monitored directories
+    directoryHintCache.insert(normalizePath(toPath, toName), true);
+    directoryHintCache.remove(normalizePath(fromPath, fromName));
     handleFileMoved(fromPath, fromName, toPath, toName);
 }
 
@@ -526,6 +534,7 @@ void FSEventCollectorPrivate::flushCollectedEvents()
     modifiedFilesList.clear();
     movedFilesList.clear();
     deletedDirectoriesMarker.clear();
+    directoryHintCache.clear();
 
     // Log statistics
     fmDebug() << "FSEventCollector: Flushing events - Created:" << created.size()
@@ -617,8 +626,17 @@ bool FSEventCollectorPrivate::isChildOfAnyPath(const QString &path, const QSet<Q
 
 bool FSEventCollectorPrivate::isDirectory(const QString &path) const
 {
+    // Burst-path hot spot: called once per set entry per event. Cache within
+    // the collection window to avoid an O(n²) stat storm (see member docs).
+    auto it = directoryHintCache.find(path);
+    if (it != directoryHintCache.end()) {
+        return it.value();
+    }
+
     QFileInfo fileInfo(path);
-    return fileInfo.isDir() && !fileInfo.isSymLink();
+    const bool isDir = fileInfo.isDir() && !fileInfo.isSymLink();
+    directoryHintCache.insert(path, isDir);
+    return isDir;
 }
 
 void FSEventCollectorPrivate::cleanupRedundantEntries()
@@ -783,6 +801,26 @@ void FSEventCollector::setCollectionInterval(int seconds)
     fmInfo() << "FSEventCollector: Collection interval set to" << seconds << "seconds";
 }
 
+
+void FSEventCollector::setCollectionIntervalMs(int ms)
+{
+    Q_D(FSEventCollector);
+
+    if (ms <= 0) {
+        fmWarning() << "FSEventCollector: Invalid collection interval:" << ms << "ms, must be positive";
+        return;
+    }
+
+    d->collectionIntervalMs = ms;
+
+    if (d->active && d->collectionTimer.isActive()) {
+        d->collectionTimer.stop();
+        d->collectionTimer.start(d->collectionIntervalMs);
+    }
+
+    fmInfo() << "FSEventCollector: Collection interval set to" << ms << "ms";
+}
+
 int FSEventCollector::collectionInterval() const
 {
     Q_D(const FSEventCollector);
@@ -830,6 +868,7 @@ void FSEventCollector::clearEvents()
     d->modifiedFilesList.clear();
     d->movedFilesList.clear();
     d->deletedDirectoriesMarker.clear();
+    d->directoryHintCache.clear();
 
     fmInfo() << "FSEventCollector: Cleared all collected events";
 }

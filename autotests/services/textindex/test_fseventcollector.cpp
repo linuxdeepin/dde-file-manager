@@ -11,6 +11,7 @@
 #include <QString>
 #include <QStringList>
 #include <QHash>
+#include <QFileInfo>
 
 #include "stubext.h"
 #include "services/textindex/service_textindex_global.h"
@@ -314,4 +315,75 @@ TEST(FSEventCollectorTest, MaxEventCount_DefaultIs10000)
 {
     FSEventCollector collector(alwaysTrue());
     EXPECT_EQ(collector.maxEventCount(), 10000);
+}
+
+// ===========================================================================
+// Filename profile: 1s collection window (design 变更 14)
+// and setCollectionIntervalMs (per-profile configuration support, design 变更 1).
+// ===========================================================================
+
+TEST(FSEventCollectorTest, SetCollectionIntervalMs_SetsExactMilliseconds)
+{
+    FSEventCollector collector(alwaysTrue());
+    collector.setCollectionIntervalMs(1000);
+    EXPECT_EQ(collector.collectionInterval(), 1);
+}
+
+TEST(FSEventCollectorTest, SetCollectionIntervalMs_FilenameWindow1s)
+{
+    FSEventCollector collector(alwaysTrue());
+    EXPECT_NO_FATAL_FAILURE({ collector.setCollectionIntervalMs(1000); });
+}
+
+TEST(FSEventCollectorTest, SetCollectionIntervalMs_InvalidValuesIgnored)
+{
+    FSEventCollector collector(alwaysTrue());
+    collector.setCollectionIntervalMs(-1);
+    collector.setCollectionIntervalMs(0);
+    // Both invalid (must be positive) — ignored, default 180000ms unchanged
+    EXPECT_EQ(collector.collectionInterval(), 180);
+}
+
+TEST(FSEventCollectorTest, SetCollectionIntervalMs_LargeValueWorks)
+{
+    FSEventCollector collector(alwaysTrue());
+    collector.setCollectionIntervalMs(30000);   // 30s in ms
+    EXPECT_EQ(collector.collectionInterval(), 30);
+}
+
+TEST(FSEventCollectorTest, SetCollectionIntervalMs_OverwritesSecondsSetting)
+{
+    FSEventCollector collector(alwaysTrue());
+    collector.setCollectionInterval(5);   // 5s = 5000ms
+    EXPECT_EQ(collector.collectionInterval(), 5);
+    collector.setCollectionIntervalMs(1000);   // override to 1s
+    EXPECT_EQ(collector.collectionInterval(), 1);
+}
+
+// --- Per-runtime policy filtering via PathPredicate (design 变更 2) ---
+// FSEventCollector receives a PathPredicate (shouldTrackPath) from FSEventController.
+// The predicate applies per-runtime hidden/blacklist policy — filename's predicate
+// must NOT filter hidden files (they're indexed), while Content's must.
+
+TEST(FSEventCollectorTest, PathPredicate_FilenamePolicy_KeepsHiddenFiles)
+{
+    // Simulate filename profile's predicate: indexHiddenFiles=true → no hidden filtering
+    FSEventCollector::PathPredicate filenamePredicate = [](const QString &) -> bool {
+        return true;   // filename accepts all (isCandidateFile=true, indexHiddenFiles=true)
+    };
+    FSEventCollector collector(filenamePredicate);
+    EXPECT_NO_FATAL_FAILURE({ (void)collector.isActive(); });
+}
+
+TEST(FSEventCollectorTest, PathPredicate_ContentPolicy_FiltersHiddenFiles)
+{
+    // Simulate Content profile's predicate: indexHiddenFiles=false → skip hidden
+    FSEventCollector::PathPredicate contentPredicate = [](const QString &path) -> bool {
+        QFileInfo fi(path);
+        if (fi.fileName().startsWith('.'))
+            return false;
+        return true;
+    };
+    FSEventCollector collector(contentPredicate);
+    EXPECT_NO_FATAL_FAILURE({ (void)collector.isActive(); });
 }

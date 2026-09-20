@@ -3,9 +3,23 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "fseventcontroller.h"
 
-#include <utils/textindexconfig.h>
+#include "utils/pathexcludematcher.h"
+#include "utils/textindexconfig.h"
+
+#include <dfm-search/dsearch_global.h>
+
+#include <QFileInfo>
+#include <memory>
 
 SERVICETEXTINDEX_BEGIN_NAMESPACE
+
+namespace {
+
+// Debounce window for lost-event recovery so a storm of disconnects or
+// overflow reports coalesces into a single compensating update task.
+constexpr int kEventsRecoveryDebounceMs = 5000;
+
+}
 
 FSEventController::FSEventController(IndexProfile profile, QObject *parent)
     : QObject { parent },
@@ -15,19 +29,62 @@ FSEventController::FSEventController(IndexProfile profile, QObject *parent)
 
 void FSEventController::setupFSEventCollector()
 {
+    // Per-runtime blacklist matcher:
+    // - profile 提供黑名单（filename: anything blacklist + 索引目录 + .avfs，死循环防护）
+    // - 未提供时沿用全局匹配器（Content/Ocr: TextIndexConfig folderExcludeFilters
+    //   + anything blacklist，保持现有行为不变）
+    std::shared_ptr<PathExcludeMatcher> filterMatcher;
+    const auto &filterPolicy = m_profile.filterPolicy();
+    if (filterPolicy.blacklistProvider) {
+        filterMatcher = std::make_shared<PathExcludeMatcher>(filterPolicy.blacklistProvider());
+    } else {
+        filterMatcher = std::make_shared<PathExcludeMatcher>(PathExcludeMatcher::createForIndex());
+    }
+
     m_fsEventCollector = std::make_unique<FSEventCollector>(
-            [this](const QString &path) {
-                return m_profile.isCandidateFile(path);
+            [this, filterMatcher](const QString &path) {
+                // Per-profile symlink policy: link 条目仅 filename profile 收录
+                // （FSMonitor 事件分发已放行 symlink，这里按策略拦截，Content/Ocr
+                // 行为保持不变——symlink 事件照旧被丢弃）
+                if (!m_profile.filterPolicy().indexSymlinks && QFileInfo(path).isSymLink())
+                    return false;
+
+                if (!m_profile.isCandidateFile(path))
+                    return false;
+
+                // Per-profile hidden file filtering：三类入口（全盘遍历/增量路径列表/
+                // 事件谓词）共用 IndexProfile::shouldSkipHiddenEntry，保证判定一致——
+                // Content/Ocr 丢弃所有隐藏条目事件；filename 丢弃屏蔽策略命中的
+                // 条目事件（默认主目录下的隐藏条目）
+                if (m_profile.shouldSkipHiddenEntry(QFileInfo(path).absoluteFilePath()))
+                    return false;
+
+                // Per-profile blacklist filtering
+                if (filterMatcher->shouldExclude(path))
+                    return false;
+
+                return true;
             },
             this);
 
-    // FSEventCollector uses event collection interval
-    m_collectorIntervalSecs = TextIndexConfig::instance().autoIndexUpdateInterval();
-    m_fsEventCollector->setCollectionInterval(m_collectorIntervalSecs);
+    // Use runtime policy interval if specified, otherwise fall back to config
+    const auto &rp = m_profile.runtimePolicy();
+    if (rp.eventCollectionWindowMs > 0) {
+        m_fsEventCollector->setCollectionIntervalMs(rp.eventCollectionWindowMs);
+    } else {
+        m_collectorIntervalSecs = TextIndexConfig::instance().autoIndexUpdateInterval();
+        m_fsEventCollector->setCollectionInterval(m_collectorIntervalSecs);
+    }
     m_fsEventCollector->setMaxEventCount(10000);   // Default 10k events
 
-    // FSEventController uses silent start delay
-    m_silentStartDelaySecs = TextIndexConfig::instance().silentIndexUpdateDelay();
+    // Silent start delay: profile-specific recovery delay takes precedence
+    // (filename: 30s to shorten the updateInProgress degraded-search window),
+    // otherwise fall back to the global config (Content/Ocr, default 180s).
+    if (rp.recoveryUpdateDelayMs > 0) {
+        m_silentStartDelayMs = rp.recoveryUpdateDelayMs;
+    } else {
+        m_silentStartDelayMs = TextIndexConfig::instance().silentIndexUpdateDelay() * 1000;
+    }
 
     connect(m_fsEventCollector.get(), &FSEventCollector::filesCreated,
             this, &FSEventController::onFilesCreated);
@@ -52,6 +109,23 @@ void FSEventController::setupFSEventCollector()
     m_silentStartTimer->setSingleShot(true);
     m_stopTimer->setSingleShot(true);
 
+    // Lost-event recovery: debounce repeated eventsLost notifications, then
+    // ask the runtimes to schedule a compensating full update task.
+    m_recoveryTimer = new QTimer(this);
+    m_recoveryTimer->setSingleShot(true);
+    m_recoveryTimer->setInterval(kEventsRecoveryDebounceMs);
+    connect(m_recoveryTimer, &QTimer::timeout, this, [this]() {
+        if (!m_enabled) {
+            return;
+        }
+
+        fmInfo() << "FSEventController: requesting events recovery update";
+        emit requestEventsRecovery();
+    });
+
+    connect(&FSMonitor::instance(), &FSMonitor::eventsLost,
+            this, &FSEventController::onEventsLost);
+
     // Monitoring start timer - only responsible for starting monitoring
     connect(m_monitoringStartTimer, &QTimer::timeout, this, [this]() {
         if (!m_enabled) {
@@ -67,7 +141,7 @@ void FSEventController::setupFSEventCollector()
             fmWarning() << "Cannot trigger silent start, enabled state has been changed";
             return;
         }
-        emit requestSlientStart();
+        emit requestSilentStart();
     });
 
     connect(m_stopTimer, &QTimer::timeout, this, [this]() {
@@ -98,7 +172,7 @@ void FSEventController::setEnabled(bool enabled)
         // On first start (silentlyRefreshStarted), schedule a delayed
         // silent index update to avoid heavy I/O during system boot.
         if (silentlyRefreshStarted()) {
-            m_silentStartTimer->start(m_silentStartDelaySecs * 1000);
+            m_silentStartTimer->start(m_silentStartDelayMs);
             setSilentlyRefreshStarted(false);
         }
     } else {
@@ -266,13 +340,24 @@ void FSEventController::clearCollections()
     m_collectedMovedFiles.clear();
 }
 
+void FSEventController::onEventsLost()
+{
+    if (!m_enabled) {
+        return;
+    }
+
+    fmWarning() << "FSEventController: filesystem events lost, scheduling recovery update";
+    m_recoveryTimer->start();
+}
+
 void FSEventController::onConfigChanged()
 {
     const int newIntervalSecs = TextIndexConfig::instance().autoIndexUpdateInterval();
     const int newSilentDelaySecs = TextIndexConfig::instance().silentIndexUpdateDelay();
 
     // Update event collection interval for FSEventCollector
-    if (newIntervalSecs != m_collectorIntervalSecs) {
+    // Skip if profile uses a custom interval (runtime policy)
+    if (m_profile.runtimePolicy().eventCollectionWindowMs <= 0 && newIntervalSecs != m_collectorIntervalSecs) {
         fmInfo() << "FSEventController: Collection interval changed from"
                  << m_collectorIntervalSecs << "to" << newIntervalSecs << "seconds";
 
@@ -287,10 +372,12 @@ void FSEventController::onConfigChanged()
     }
 
     // Update silent start delay for FSEventController
-    if (newSilentDelaySecs != m_silentStartDelaySecs) {
+    // Skip if profile uses a custom recovery delay (runtime policy)
+    if (m_profile.runtimePolicy().recoveryUpdateDelayMs <= 0
+        && newSilentDelaySecs * 1000 != m_silentStartDelayMs) {
         fmInfo() << "FSEventController: Silent start delay changed from"
-                 << m_silentStartDelaySecs << "to" << newSilentDelaySecs << "seconds";
-        m_silentStartDelaySecs = newSilentDelaySecs;
+                 << m_silentStartDelayMs << "to" << newSilentDelaySecs * 1000 << "ms";
+        m_silentStartDelayMs = newSilentDelaySecs * 1000;
     }
 }
 
